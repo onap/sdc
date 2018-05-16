@@ -1,5 +1,5 @@
 /*
- * Copyright © 2018 European Support Limited
+ * Copyright © 2016-2018 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,17 +12,24 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
-*/
+ */
 
 package org.openecomp.sdc.translator.services.heattotosca.impl.resourcetranslation;
 
-import org.openecomp.sdc.common.errors.CoreException;
-import org.openecomp.sdc.heat.datatypes.HeatBoolean;
-import org.openecomp.sdc.heat.datatypes.model.Resource;
-import org.openecomp.sdc.tosca.datatypes.ToscaFunctions;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+
 import org.onap.sdc.tosca.datatypes.model.NodeTemplate;
 import org.onap.sdc.tosca.datatypes.model.ParameterDefinition;
 import org.onap.sdc.tosca.datatypes.model.PropertyType;
+import org.openecomp.sdc.common.errors.CoreException;
+import org.openecomp.sdc.heat.datatypes.HeatBoolean;
+import org.openecomp.sdc.heat.datatypes.model.Resource;
+import org.openecomp.sdc.heat.services.HeatConstants;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
+import org.openecomp.sdc.tosca.datatypes.ToscaFunctions;
 import org.openecomp.sdc.tosca.services.DataModelUtil;
 import org.openecomp.sdc.tosca.services.ToscaConstants;
 import org.openecomp.sdc.translator.datatypes.heattotosca.AttachedResourceId;
@@ -32,131 +39,124 @@ import org.openecomp.sdc.translator.services.heattotosca.ResourceTranslationFact
 import org.openecomp.sdc.translator.services.heattotosca.errors.MissingMandatoryPropertyErrorBuilder;
 import org.openecomp.sdc.translator.services.heattotosca.mapping.TranslatorHeatToToscaPropertyConverter;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-
 public class ResourceTranslationNeutronSubnetImpl extends ResourceTranslationBase {
 
-  @Override
-  public void translate(TranslateTo translateTo) {
-    Optional<AttachedResourceId> subnetNetwork = getAttachedNetworkResource(translateTo);
+    private static final Logger logger = LoggerFactory.getLogger(ResourceTranslationNeutronSubnetImpl.class);
+    private static final String IP_VERSION_PROPERTY_NAME = "ip_version";
 
-    if (!subnetNetwork.isPresent() || !subnetNetwork.get().isGetResource()) {
-      return;
+    @Override
+    public void translate(TranslateTo translateTo) {
+        Optional<AttachedResourceId> subnetNetwork = getAttachedNetworkResource(translateTo);
+        if (!subnetNetwork.get().isGetResource()) {
+            return;
+        }
+        Resource networkResource = HeatToToscaUtil.getResource(translateTo.getHeatOrchestrationTemplate(),
+                        (String) subnetNetwork.get().getEntityId(), translateTo.getHeatFileName());
+        Optional<String> translatedNetworkId = ResourceTranslationFactory.getInstance(networkResource)
+                .translateResource(translateTo.getHeatFileName(), translateTo.getServiceTemplate(),
+                        translateTo.getHeatOrchestrationTemplate(), networkResource,
+                        (String) subnetNetwork.get().getEntityId(), translateTo.getContext());
+        if (!translatedNetworkId.isPresent()) {
+            return;
+        }
+        NodeTemplate networkNodeTemplate = DataModelUtil.getNodeTemplate(translateTo.getServiceTemplate(),
+                translatedNetworkId.get());
+        Map<String, Map<String, Object>> subNetMap = (Map<String, Map<String, Object>>) networkNodeTemplate
+                .getProperties().get(HeatConstants.SUBNETS_PROPERTY_NAME);
+        if (subNetMap == null) {
+            subNetMap = addSubnetProperties(translateTo, networkNodeTemplate);
+        }
+        Map<String, Object> properties = TranslatorHeatToToscaPropertyConverter
+                .getToscaPropertiesSimpleConversion(translateTo.getServiceTemplate(),
+                        translateTo.getResourceId(), translateTo.getResource().getProperties(), null,
+                        translateTo.getHeatFileName(), translateTo.getHeatOrchestrationTemplate(),
+                        translateTo.getResource().getType(), networkNodeTemplate, translateTo.getContext());
+        subNetMap.put(translateTo.getResourceId(), properties);
     }
 
-    Resource networkResource = HeatToToscaUtil
-        .getResource(translateTo.getHeatOrchestrationTemplate(),
-            (String) subnetNetwork.get().getEntityId(), translateTo.getHeatFileName());
-    Optional<String> translatedNetworkId = ResourceTranslationFactory.getInstance(networkResource)
-        .translateResource(translateTo.getHeatFileName(), translateTo.getServiceTemplate(),
-            translateTo.getHeatOrchestrationTemplate(), networkResource,
-            (String) subnetNetwork.get().getEntityId(), translateTo.getContext());
-    if (translatedNetworkId.isPresent()) {
-      NodeTemplate networkNodeTemplate = DataModelUtil
-          .getNodeTemplate(translateTo.getServiceTemplate(), translatedNetworkId.get());
-
-      Map<String, Map<String, Object>> subNetMap =
-          (Map<String, Map<String, Object>>) networkNodeTemplate.getProperties().get("subnets");
-      if (subNetMap == null) {
-        subNetMap = new HashMap<>();
-        networkNodeTemplate.getProperties().put("subnets", subNetMap);
+    private Map<String, Map<String, Object>> addSubnetProperties(TranslateTo translateTo,
+                                                                 NodeTemplate networkNodeTemplate) {
+        Map<String, Map<String, Object>> subNetMap = new HashMap<>();
+        networkNodeTemplate.getProperties().put(HeatConstants.SUBNETS_PROPERTY_NAME, subNetMap);
         TranslatorHeatToToscaPropertyConverter
-            .setSimpleProperty(translateTo.getServiceTemplate(),translateTo.getTranslatedId(),
-                translateTo.getResource().getProperties(),
-                translateTo.getHeatFileName(), translateTo.getResource().getType(),
-                translateTo.getHeatOrchestrationTemplate(), translateTo.getContext(),
-                networkNodeTemplate.getProperties(), "enable_dhcp",
-                ToscaConstants.DHCP_ENABLED_PROPERTY_NAME, networkNodeTemplate); //dhcp_enabled
+                .setSimpleProperty(translateTo.getServiceTemplate(), translateTo.getTranslatedId(),
+                        translateTo.getResource().getProperties(),
+                        translateTo.getHeatFileName(), translateTo.getResource().getType(),
+                        translateTo.getHeatOrchestrationTemplate(), translateTo.getContext(),
+                        networkNodeTemplate.getProperties(), HeatConstants.ENABLE_DHCP_PROPERTY_NAME,
+                        ToscaConstants.DHCP_ENABLED_PROPERTY_NAME, networkNodeTemplate); //dhcp_enabled
         TranslatorHeatToToscaPropertyConverter
-            .setSimpleProperty(translateTo.getServiceTemplate(),translateTo.getTranslatedId(),
-                translateTo.getResource().getProperties(),
-                translateTo.getHeatFileName(), translateTo.getResource().getType(),
-                translateTo.getHeatOrchestrationTemplate(), translateTo.getContext(),
-                networkNodeTemplate.getProperties(), "ip_version", null, networkNodeTemplate);
+                .setSimpleProperty(translateTo.getServiceTemplate(), translateTo.getTranslatedId(),
+                        translateTo.getResource().getProperties(),
+                        translateTo.getHeatFileName(), translateTo.getResource().getType(),
+                        translateTo.getHeatOrchestrationTemplate(), translateTo.getContext(),
+                        networkNodeTemplate.getProperties(), IP_VERSION_PROPERTY_NAME, null, networkNodeTemplate);
         handleDhcpProperty(translateTo, networkNodeTemplate);
-      }
-
-      Map<String, Object> properties;
-      properties = TranslatorHeatToToscaPropertyConverter
-          .getToscaPropertiesSimpleConversion(translateTo.getServiceTemplate(),translateTo.
-                  getResourceId(),translateTo.getResource().getProperties(), null,
-              translateTo.getHeatFileName(), translateTo.getHeatOrchestrationTemplate(),
-              translateTo.getResource().getType(), networkNodeTemplate, translateTo.getContext());
-
-      subNetMap.put(translateTo.getResourceId(), properties);
+        return subNetMap;
     }
-  }
 
-  @Override
-  protected String generateTranslatedId(TranslateTo translateTo) {
-    Optional<AttachedResourceId> subnetNetwork = getAttachedNetworkResource(translateTo);
-
-    if (!subnetNetwork.isPresent() || !subnetNetwork.get().isGetResource()) {
-      logger.warn("Heat resource: '" + translateTo.getResourceId() + "' with type: '"
-          + translateTo.getResource().getType()
-          + "' include 'network_id/'network'' property without 'get_resource' function, therefore"
-          + " this resource will be ignored in TOSCA translation.");
-      return null;
+    @Override
+    protected String generateTranslatedId(TranslateTo translateTo) {
+        Optional<AttachedResourceId> subnetNetwork = getAttachedNetworkResource(translateTo);
+        if (!subnetNetwork.get().isGetResource()) {
+            logger.warn("Heat resource: '{}' with type: '{}' include 'network_id/'network'' property without "
+                    + "'get_resource' function, therefore this resource will be ignored in TOSCA translation.",
+                    translateTo.getResourceId(), translateTo.getResource().getType());
+            return null;
+        }
+        return (String) subnetNetwork.get().getTranslatedId();
     }
-    return (String) subnetNetwork.get().getTranslatedId();
-  }
 
-  private void handleDhcpProperty(TranslateTo translateTo, NodeTemplate networkNodeTemplate) {
-    Object dhcpEnabled =
-        networkNodeTemplate.getProperties().get(ToscaConstants.DHCP_ENABLED_PROPERTY_NAME);
-    if (dhcpEnabled instanceof Map) {
-      Object dhcpEnabledParameterName =
-          ((Map) dhcpEnabled).get(ToscaFunctions.GET_INPUT.getDisplayName());
-      if (dhcpEnabledParameterName != null) {
+    private void handleDhcpProperty(TranslateTo translateTo, NodeTemplate networkNodeTemplate) {
+        Object dhcpEnabled = networkNodeTemplate.getProperties().get(ToscaConstants.DHCP_ENABLED_PROPERTY_NAME);
+        if (!(dhcpEnabled instanceof Map)) {
+            return;
+        }
+        Object dhcpEnabledParameterName = ((Map) dhcpEnabled).get(ToscaFunctions.GET_INPUT.getDisplayName());
+        if (dhcpEnabledParameterName == null) {
+            return;
+        }
         ParameterDefinition dhcpParameterDefinition = null;
         if (translateTo.getServiceTemplate().getTopology_template().getInputs() != null) {
-          dhcpParameterDefinition =
-              translateTo.getServiceTemplate().getTopology_template().getInputs()
-                  .get(dhcpEnabledParameterName);
+            dhcpParameterDefinition =
+                    translateTo.getServiceTemplate().getTopology_template().getInputs().get(dhcpEnabledParameterName);
         }
         if (dhcpParameterDefinition == null) {
-          logger.warn("Missing input parameter " + dhcpEnabledParameterName);
+            logger.warn("Missing input parameter : {} ", dhcpEnabledParameterName);
         } else {
-          Object defaultVal = dhcpParameterDefinition.get_default();
-          if (defaultVal != null) {
+            Object defaultVal = dhcpParameterDefinition.get_default();
+            if (defaultVal == null) {
+                return;
+            }
             try {
-              Boolean booleanValue = HeatBoolean.eval(defaultVal);
-              dhcpParameterDefinition.set_default(booleanValue);
+                Boolean booleanValue = HeatBoolean.eval(defaultVal);
+                dhcpParameterDefinition.set_default(booleanValue);
             } catch (CoreException coreException) {
-              dhcpParameterDefinition.set_default(true);
-              logger.warn("Parameter '" + dhcpEnabledParameterName + "' used for "
-                  + ToscaConstants.DHCP_ENABLED_PROPERTY_NAME
-                  + " boolean property, but it's value is not a valid boolean value, therefore "
-                  + ToscaConstants.DHCP_ENABLED_PROPERTY_NAME
-                  + " property will be set with default value of 'true'.", coreException);
+                dhcpParameterDefinition.set_default(true);
+                logger.warn("Parameter '{}' used for {} boolean property, but it's value is not a valid boolean "
+                        + "value, therefore {} property will be set with default value of 'true'.",
+                        dhcpEnabledParameterName, ToscaConstants.DHCP_ENABLED_PROPERTY_NAME, ToscaConstants
+                                .DHCP_ENABLED_PROPERTY_NAME, coreException);
             }
             dhcpParameterDefinition.setType(PropertyType.BOOLEAN.getDisplayName());
-          }
         }
-      }
     }
-  }
 
-  private Optional<AttachedResourceId> getAttachedNetworkResource(TranslateTo translateTo) {
-    Optional<AttachedResourceId> subnetNetwork;
-    Optional<AttachedResourceId> attachedNetworkId =
-        HeatToToscaUtil.extractAttachedResourceId(translateTo, "network_id");
-    if (!attachedNetworkId.isPresent()) {
-      Optional<AttachedResourceId> attachedNetwork =
-          HeatToToscaUtil.extractAttachedResourceId(translateTo, "network");
-      if (!attachedNetwork.isPresent()) {
+    private Optional<AttachedResourceId> getAttachedNetworkResource(TranslateTo translateTo) {
+        Optional<AttachedResourceId> attachedNetworkId =
+                HeatToToscaUtil.extractAttachedResourceId(translateTo, HeatConstants.NETWORK_ID_PROPERTY_NAME);
+        if (attachedNetworkId.isPresent()) {
+            return attachedNetworkId;
+        }
+        Optional<AttachedResourceId> attachedNetwork =
+                HeatToToscaUtil.extractAttachedResourceId(translateTo, HeatConstants.NETWORK_PROPERTY_NAME);
+        if (attachedNetwork.isPresent()) {
+            return attachedNetwork;
+        }
         throw new CoreException(
-            new MissingMandatoryPropertyErrorBuilder("network_id/'network'").build());
-      } else {
-        subnetNetwork = attachedNetwork;
-      }
-    } else {
-      subnetNetwork = attachedNetworkId;
+                new MissingMandatoryPropertyErrorBuilder(HeatConstants.NETWORK_ID_PROPERTY_NAME + "/"
+                       + HeatConstants.NETWORK_PROPERTY_NAME).build());
     }
-    return subnetNetwork;
-  }
 }
 
 
