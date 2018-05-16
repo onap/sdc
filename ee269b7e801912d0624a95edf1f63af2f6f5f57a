@@ -76,6 +76,24 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_20568dce",
+        "filename": "openecomp-be/lib/openecomp-core-lib/openecomp-utilities-lib/src/main/java/org/openecomp/core/utilities/json/JsonUtil.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 199,
+      "author": {
+        "id": 553
+      },
+      "writtenOn": "2018-05-16T11:46:59Z",
+      "side": 1,
+      "message": "I kept like original message only for consistency.\n\nOriginal message for name is e.g. \n\nField does not conform to predefined criteria: name : must match ^[a-zA-Z0-9_]*$",
+      "parentUuid": "5a93c517_a0bb7d0d",
+      "revId": "ee269b7e801912d0624a95edf1f63af2f6f5f57a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_e097458e",
         "filename": "openecomp-be/tools/install/database/schemaTemplates/composition/nic.ftl",
         "patchSetId": 2
