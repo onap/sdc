@@ -2,6 +2,57 @@
   "comments": [
     {
       "key": {
+        "uuid": "5a93c517_20b44d80",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/datatypes/heattotosca/unifiedmodel/consolidation/ComputeConsolidationDataHandler.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-05-16T13:52:56Z",
+      "side": 1,
+      "message": "Sonar - always evaluates to true",
+      "revId": "def3c6a5c80d51d3d21ee2dffa320d796c6e686e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_c0a2493e",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/datatypes/heattotosca/unifiedmodel/consolidation/ComputeConsolidationDataHandler.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-05-16T13:52:56Z",
+      "side": 1,
+      "message": "Sonar - always evaluates to true",
+      "revId": "def3c6a5c80d51d3d21ee2dffa320d796c6e686e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_6065751c",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/datatypes/heattotosca/unifiedmodel/consolidation/ComputeConsolidationDataHandler.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-05-16T13:52:56Z",
+      "side": 1,
+      "message": "Sonar - always evaluates to true",
+      "revId": "def3c6a5c80d51d3d21ee2dffa320d796c6e686e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_a0e29d9d",
         "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/datatypes/heattotosca/unifiedmodel/consolidation/EntityConsolidationData.java",
         "patchSetId": 5
