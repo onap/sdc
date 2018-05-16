@@ -316,7 +316,7 @@ public class AssetMetadataConverter {
         }
 
         metadata.setArtifactDescription(artifact.getDescription());
-        metadata.setArtifactTimeout(artifact.getTimeout() > 0 ? artifact.getTimeout() : null);
+        metadata.setArtifactTimeout(artifact.getTimeout() != null && artifact.getTimeout() > 0 ? artifact.getTimeout() : null);
         metadata.setArtifactChecksum(artifact.getArtifactChecksum());
         metadata.setArtifactUUID(artifact.getArtifactUUID());
         metadata.setArtifactVersion(artifact.getArtifactVersion());

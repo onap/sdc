@@ -1,0 +1,263 @@
+package org.openecomp.sdc.be.ecomp.converters;
+
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
+import org.junit.Assert;
+import org.junit.Test;
+import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
+import org.openecomp.sdc.be.externalapi.servlet.representation.ArtifactMetadata;
+import org.openecomp.sdc.be.externalapi.servlet.representation.AssetMetadata;
+import org.openecomp.sdc.be.externalapi.servlet.representation.ResourceAssetDetailedMetadata;
+import org.openecomp.sdc.be.externalapi.servlet.representation.ResourceAssetMetadata;
+import org.openecomp.sdc.be.externalapi.servlet.representation.ResourceInstanceMetadata;
+import org.openecomp.sdc.be.externalapi.servlet.representation.ServiceAssetDetailedMetadata;
+import org.openecomp.sdc.be.externalapi.servlet.representation.ServiceAssetMetadata;
+import org.openecomp.sdc.be.model.ArtifactDefinition;
+import org.openecomp.sdc.be.model.Component;
+import org.openecomp.sdc.be.model.ComponentInstance;
+import org.openecomp.sdc.be.model.DistributionStatusEnum;
+import org.openecomp.sdc.be.model.LifecycleStateEnum;
+import org.openecomp.sdc.be.model.Resource;
+import org.openecomp.sdc.be.model.Service;
+import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
+import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
+import org.openecomp.sdc.exception.ResponseFormat;
+
+import fj.data.Either;
+import mockit.Deencapsulation;
+
+public class AssetMetadataConverterTest {
+
+	private AssetMetadataConverter createTestSubject() {
+		return new AssetMetadataConverter();
+	}
+
+	@Test
+	public void testConvertToAssetMetadata() throws Exception {
+		AssetMetadataConverter testSubject;
+		List<? extends Component> componentList = null;
+		String serverBaseURL = "";
+		boolean detailed = false;
+		Either<List<? extends AssetMetadata>, ResponseFormat> result;
+
+		// test 1
+		testSubject = createTestSubject();
+		componentList = null;
+		result = testSubject.convertToAssetMetadata(componentList, serverBaseURL, detailed);
+	}
+
+	@Test
+	public void testConvertToSingleAssetMetadata() throws Exception {
+		AssetMetadataConverter testSubject;
+		Resource component = new Resource();
+		String serverBaseURL = "";
+		boolean detailed = false;
+		Either<? extends AssetMetadata, ResponseFormat> result;
+		component.setLifecycleState(LifecycleStateEnum.CERTIFICATION_IN_PROGRESS);
+
+		// default test
+		testSubject = createTestSubject();
+		result = testSubject.convertToSingleAssetMetadata(component, serverBaseURL, detailed);
+	}
+
+	@Test
+	public void testConvertToMetadata() throws Exception {
+		AssetMetadataConverter testSubject;
+		String serverBaseURL = "";
+		boolean detailed = false;
+		Resource curr = new Resource();
+		Either<? extends AssetMetadata, ResponseFormat> result;
+		curr.setLifecycleState(LifecycleStateEnum.CERTIFICATION_IN_PROGRESS);
+		// default test
+		testSubject = createTestSubject();
+		result = Deencapsulation.invoke(testSubject, "convertToMetadata", ComponentTypeEnum.RESOURCE, serverBaseURL,
+				detailed, curr);
+	}
+
+	@Test
+	public void testGenerateResourceMeatdata() throws Exception {
+		AssetMetadataConverter testSubject;
+		String serverBaseURL = "";
+		Resource curr = new Resource();
+		Either<? extends AssetMetadata, ResponseFormat> result;
+		curr.setLifecycleState(LifecycleStateEnum.CERTIFICATION_IN_PROGRESS);
+		// default test
+		testSubject = createTestSubject();
+		result = Deencapsulation.invoke(testSubject, "generateResourceMeatdata", serverBaseURL, true, curr);
+	}
+
+	@Test
+	public void testCreateMetadaObject() throws Exception {
+		AssetMetadataConverter testSubject;
+		AssetMetadata result;
+
+		// default test
+		testSubject = createTestSubject();
+		result = Deencapsulation.invoke(testSubject, "createMetadaObject", true, ComponentTypeEnum.RESOURCE);
+	}
+
+	@Test
+	public void testGenerateServiceMetadata() throws Exception {
+		AssetMetadataConverter testSubject;
+		String serverBaseURL = "";
+		boolean detailed = false;
+		Service curr = new Service();
+		curr.setLifecycleState(LifecycleStateEnum.CERTIFICATION_IN_PROGRESS);
+		curr.setDistributionStatus(DistributionStatusEnum.DISTRIBUTED);
+		Either<? extends AssetMetadata, ResponseFormat> result;
+
+		// default test
+		testSubject = createTestSubject();
+		result = Deencapsulation.invoke(testSubject, "generateServiceMetadata", serverBaseURL, detailed, curr);
+	}
+
+	@Test
+	public void testConvertToAsset() throws Exception {
+		AssetMetadataConverter testSubject;
+		ResourceAssetMetadata asset = new ResourceAssetMetadata();
+		Resource component = new Resource();
+		String serverBaseURL = "";
+		ResourceAssetMetadata result;
+
+		// default test
+		testSubject = createTestSubject();
+		result = Deencapsulation.invoke(testSubject, "convertToAsset", asset, component, serverBaseURL, true);
+	}
+
+	@Test
+	public void testConvertToResourceMetadata() throws Exception {
+		AssetMetadataConverter testSubject;
+		ResourceAssetMetadata assetToPopulate = new ResourceAssetMetadata();
+		Resource resource = new Resource();
+		String serverBaseURL = "";
+		boolean detailed = false;
+		ResourceAssetMetadata result;
+		resource.setLifecycleState(LifecycleStateEnum.CERTIFICATION_IN_PROGRESS);
+
+		// default test
+		testSubject = createTestSubject();
+		result = Deencapsulation.invoke(testSubject, "convertToResourceMetadata", assetToPopulate, resource,
+				serverBaseURL, true);
+	}
+
+	@Test
+	public void testConvertToServiceAssetMetadata() throws Exception {
+		AssetMetadataConverter testSubject;
+		ServiceAssetMetadata assetToPopulate = new ServiceAssetMetadata();
+		Service service = new Service();
+		service.setLifecycleState(LifecycleStateEnum.CERTIFICATION_IN_PROGRESS);
+		service.setDistributionStatus(DistributionStatusEnum.DISTRIBUTED);
+		String serverBaseURL = "";
+		boolean detailed = false;
+		ServiceAssetMetadata result;
+
+		// default test
+		testSubject = createTestSubject();
+		result = Deencapsulation.invoke(testSubject, "convertToServiceAssetMetadata", assetToPopulate, service,
+				serverBaseURL, true);
+	}
+
+	@Test
+	public void testConvertToResourceDetailedMetadata() throws Exception {
+		AssetMetadataConverter testSubject;
+		ResourceAssetDetailedMetadata assetToPopulate = new ResourceAssetDetailedMetadata();
+		Resource resource = new Resource();
+		String serverBaseURL = "";
+		Either<ResourceAssetDetailedMetadata, StorageOperationStatus> result;
+
+		// default test
+		testSubject = createTestSubject();
+		result = Deencapsulation.invoke(testSubject, "convertToResourceDetailedMetadata", assetToPopulate, resource,
+				serverBaseURL);
+	}
+
+	@Test
+	public void testConvertToServiceDetailedMetadata() throws Exception {
+		AssetMetadataConverter testSubject;
+		ServiceAssetDetailedMetadata assetToPopulate = new ServiceAssetDetailedMetadata();
+		Service service = new Service();
+		String serverBaseURL = "";
+		Either<ServiceAssetDetailedMetadata, StorageOperationStatus> result;
+
+		// default test
+		testSubject = createTestSubject();
+		result = Deencapsulation.invoke(testSubject, "convertToServiceDetailedMetadata", assetToPopulate, service,
+				serverBaseURL);
+	}
+
+	@Test
+	public void testPopulateResourceWithArtifacts() throws Exception {
+		AssetMetadataConverter testSubject;
+		ResourceAssetDetailedMetadata asset = new ResourceAssetDetailedMetadata();
+		Resource resource = new Resource();
+		String serverBaseURL = "";
+		Map<String, ArtifactDefinition> artifacts = new HashMap<>();
+		ResourceAssetDetailedMetadata result;
+
+		// default test
+		testSubject = createTestSubject();
+		result = Deencapsulation.invoke(testSubject, "populateResourceWithArtifacts", asset, resource, serverBaseURL,
+				artifacts);
+	}
+
+	@Test
+	public void testPopulateServiceWithArtifacts() throws Exception {
+		AssetMetadataConverter testSubject;
+		ServiceAssetDetailedMetadata asset = new ServiceAssetDetailedMetadata();
+		Service service = new Service();
+		Map<String, ArtifactDefinition> artifacts = new HashMap<>();
+		ServiceAssetDetailedMetadata result;
+		service.setLifecycleState(LifecycleStateEnum.CERTIFICATION_IN_PROGRESS);
+		service.setDistributionStatus(DistributionStatusEnum.DISTRIBUTED);
+		// default test
+		testSubject = createTestSubject();
+		result = Deencapsulation.invoke(testSubject, "populateServiceWithArtifacts",
+				asset, Service.class, artifacts);
+	}
+
+	@Test
+	public void testPopulateAssetWithArtifacts() throws Exception {
+		AssetMetadataConverter testSubject;
+		Resource component = new Resource();
+		Map<String, ArtifactDefinition> artifacts = new HashMap<>();
+		List<ArtifactMetadata> result;
+
+		// test 1
+		testSubject = createTestSubject();
+		result = Deencapsulation.invoke(testSubject, "populateAssetWithArtifacts", component, artifacts);
+		Assert.assertEquals(null, result);
+	}
+
+	@Test
+	public void testConvertToArtifactMetadata() throws Exception {
+		AssetMetadataConverter testSubject;
+		ArtifactDefinition artifact = new ArtifactDefinition();
+		artifact.setArtifactGroupType(ArtifactGroupTypeEnum.DEPLOYMENT);
+		String componentType = "";
+		String componentUUID = "";
+		String resourceInstanceName = "";
+		ArtifactMetadata result;
+
+		// test 1
+		testSubject = createTestSubject();
+		result = Deencapsulation.invoke(testSubject, "convertToArtifactMetadata", artifact, componentType,
+				componentUUID, resourceInstanceName);
+	}
+
+	@Test
+	public void testConvertToResourceInstanceMetadata() throws Exception {
+		AssetMetadataConverter testSubject;
+		List<ComponentInstance> componentInstances = new LinkedList<>();
+		String componentType = "";
+		String componentUUID = "";
+		Either<List<ResourceInstanceMetadata>, StorageOperationStatus> result;
+
+		// default test
+		testSubject = createTestSubject();
+		result = Deencapsulation.invoke(testSubject, "convertToResourceInstanceMetadata",
+				new Object[] { componentInstances, componentType, componentUUID });
+	}
+}
