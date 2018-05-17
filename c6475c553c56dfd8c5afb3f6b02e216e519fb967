@@ -1,0 +1,106 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_b4c09f4a",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/impl/resourcetranslation/ResourceTranslationNeutronSubnetImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-05-17T06:34:38Z",
+      "side": 1,
+      "message": "sonar remark, remove this expression always evaluates to true.",
+      "revId": "c6475c553c56dfd8c5afb3f6b02e216e519fb967",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_54a35bb1",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/impl/resourcetranslation/ResourceTranslationNeutronSubnetImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 101,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-05-17T06:34:38Z",
+      "side": 1,
+      "message": "sonar remark - remove this expression always evaluates to true.",
+      "revId": "c6475c553c56dfd8c5afb3f6b02e216e519fb967",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_74945736",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/impl/resourcetranslation/ResourceTranslationNeutronSubnetImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 126,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-05-17T06:34:38Z",
+      "side": 1,
+      "message": "use API of log.earn(text, variables...).",
+      "revId": "c6475c553c56dfd8c5afb3f6b02e216e519fb967",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_1497133b",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/impl/resourcetranslation/ResourceTranslationNeutronSubnetImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 135,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-05-17T06:34:38Z",
+      "side": 1,
+      "message": "same issue with logging.",
+      "revId": "c6475c553c56dfd8c5afb3f6b02e216e519fb967",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_34b56fec",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/impl/resourcetranslation/ResourceTranslationResourceGroupImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-05-17T06:34:38Z",
+      "side": 1,
+      "message": "sonar - Use built in formatting to construct this argument.",
+      "revId": "c6475c553c56dfd8c5afb3f6b02e216e519fb967",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_f478672c",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/impl/resourcetranslation/ResourceTranslationResourceGroupImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 110,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-05-17T06:34:38Z",
+      "side": 1,
+      "message": "The return value should be Map\u003cString,List\u003cString\u003e\u003e\nConsider using ListMultiMAphttps://google.github.io/guava/releases/19.0/api/docs/com/google/common/collect/ListMultimap.html",
+      "revId": "c6475c553c56dfd8c5afb3f6b02e216e519fb967",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
