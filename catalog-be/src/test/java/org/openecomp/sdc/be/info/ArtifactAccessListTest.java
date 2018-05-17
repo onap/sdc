@@ -11,7 +11,7 @@ public class ArtifactAccessListTest {
 		return new ArtifactAccessList(null);
 	}
 
-	
+
 	@Test
 	public void testGetArtifacts() throws Exception {
 		ArtifactAccessList testSubject;
@@ -22,7 +22,7 @@ public class ArtifactAccessListTest {
 		result = testSubject.getArtifacts();
 	}
 
-	
+
 	@Test
 	public void testSetArtifacts() throws Exception {
 		ArtifactAccessList testSubject;
