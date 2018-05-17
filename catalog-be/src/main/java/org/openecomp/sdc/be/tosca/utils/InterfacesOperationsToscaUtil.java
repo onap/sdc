@@ -176,7 +176,8 @@ public class InterfacesOperationsToscaUtil {
 
     private static void fillToscaOperationInputs(OperationDataDefinition operation,
             ToscaLifecycleOperationDefinition toscaOperation) {
-        if (Objects.isNull(operation.getInputs())) {
+        if (operation.getInputs().isEmpty()) {
+            toscaOperation.setInputs(null);
             return;
         }
         Map<String, ToscaProperty> toscaInputs = new HashMap<>();
