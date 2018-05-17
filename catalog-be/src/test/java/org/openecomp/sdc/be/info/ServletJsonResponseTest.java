@@ -2,54 +2,13 @@ package org.openecomp.sdc.be.info;
 
 import org.junit.Test;
 
+import static com.google.code.beanmatchers.BeanMatchers.hasValidGettersAndSetters;
+import static org.hamcrest.MatcherAssert.assertThat;
+
 
 public class ServletJsonResponseTest {
-
-	private ServletJsonResponse createTestSubject() {
-		return new ServletJsonResponse();
-	}
-
-	
-	@Test
-	public void testGetDescription() throws Exception {
-		ServletJsonResponse testSubject;
-		String result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getDescription();
-	}
-
-	
-	@Test
-	public void testSetDescription() throws Exception {
-		ServletJsonResponse testSubject;
-		String description = "";
-
-		// default test
-		testSubject = createTestSubject();
-		testSubject.setDescription(description);
-	}
-
-	
-	@Test
-	public void testGetSource() throws Exception {
-		ServletJsonResponse testSubject;
-		String result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getSource();
-	}
-
-	
-	@Test
-	public void testSetSource() throws Exception {
-		ServletJsonResponse testSubject;
-		String source = "";
-
-		// default test
-		testSubject = createTestSubject();
-		testSubject.setSource(source);
-	}
+    @Test
+    public void shouldHaveValidGettersAndSetters() {
+        assertThat(ServletJsonResponse.class, hasValidGettersAndSetters());
+    }
 }
