@@ -1,35 +1,17 @@
 package org.openecomp.sdc.be.info;
 
-import java.util.List;
-
 import org.junit.Test;
+
+import static com.google.code.beanmatchers.BeanMatchers.hasValidGettersAndSetters;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 
 public class ToscaNodeTypeInterfaceTest {
 
-	private ToscaNodeTypeInterface createTestSubject() {
-		return new ToscaNodeTypeInterface();
-	}
 
-	
-	@Test
-	public void testGetScripts() throws Exception {
-		ToscaNodeTypeInterface testSubject;
-		List<String> result;
+    @Test
+    public void shouldHaveValidGettersAndSetters() {
+        assertThat(ToscaNodeTypeInterface.class, hasValidGettersAndSetters());
+    }
 
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getScripts();
-	}
-
-	
-	@Test
-	public void testSetScripts() throws Exception {
-		ToscaNodeTypeInterface testSubject;
-		List<String> scripts = null;
-
-		// default test
-		testSubject = createTestSubject();
-		testSubject.setScripts(scripts);
-	}
 }
