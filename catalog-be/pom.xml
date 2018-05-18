@@ -1,5 +1,5 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>catalog-be</artifactId>
@@ -117,7 +117,7 @@
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-			<version>${logback.version}</version>
+            <version>${logback.version}</version>
             <scope>compile</scope>
         </dependency>
 
@@ -125,7 +125,7 @@
         <dependency>
             <groupId>org.yaml</groupId>
             <artifactId>snakeyaml</artifactId>
-			<version>${snakeyaml.version}</version>
+            <version>${snakeyaml.version}</version>
             <scope>compile</scope>
         </dependency>
 
@@ -160,60 +160,60 @@
             <scope>compile</scope>
         </dependency>
 
-		<dependency>
-			<groupId>org.glassfish.jersey.ext</groupId>
-			<artifactId>jersey-spring4</artifactId>
-			<version>${jersey-bom.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>org.springframework</groupId>
-					<artifactId>spring-web</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.springframework</groupId>
-					<artifactId>spring-beans</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.springframework</groupId>
-					<artifactId>spring-core</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.springframework</groupId>
-					<artifactId>spring-aop</artifactId>
-				</exclusion>
-				<!-- Transitive dependency of spring-bridge -->
-				<exclusion>
-					<groupId>org.springframework</groupId>
-					<artifactId>spring-context</artifactId>
-				</exclusion>
-			</exclusions>
+        <dependency>
+            <groupId>org.glassfish.jersey.ext</groupId>
+            <artifactId>jersey-spring4</artifactId>
+            <version>${jersey-bom.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-web</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-beans</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-aop</artifactId>
+                </exclusion>
+                <!-- Transitive dependency of spring-bridge -->
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-context</artifactId>
+                </exclusion>
+            </exclusions>
 
-		</dependency>
+        </dependency>
 
-		<!--asm-all-repackaged is a jersey dependency. in current version jersey depends on a version that was compiled using java 9 compiler
-			currently our jetty (v9.3.6) does not support java 9. as soon as jetty gets upgraded we will remove this dependency-->
-		<dependency>
-			<groupId>org.glassfish.hk2.external</groupId>
-			<artifactId>asm-all-repackaged</artifactId>
-		</dependency>
+        <!--asm-all-repackaged is a jersey dependency. in current version jersey depends on a version that was compiled using java 9 compiler
+          currently our jetty (v9.3.6) does not support java 9. as soon as jetty gets upgraded we will remove this dependency-->
+        <dependency>
+            <groupId>org.glassfish.hk2.external</groupId>
+            <artifactId>asm-all-repackaged</artifactId>
+        </dependency>
 
-		<dependency>
-			<groupId>org.glassfish.jersey.ext</groupId>
-			<artifactId>jersey-bean-validation</artifactId>
-		</dependency>
+        <dependency>
+            <groupId>org.glassfish.jersey.ext</groupId>
+            <artifactId>jersey-bean-validation</artifactId>
+        </dependency>
 
         <!-- http client -->
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
-			<version>${httpclient.version}</version>
+            <version>${httpclient.version}</version>
             <scope>compile</scope>
         </dependency>
 
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpcore</artifactId>
-			<version>${httpcore.version}</version>
+            <version>${httpcore.version}</version>
             <scope>compile</scope>
         </dependency>
 
@@ -227,7 +227,7 @@
         <dependency>
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>
-			<version>${commons-codec}</version>
+            <version>${commons-codec}</version>
             <scope>compile</scope>
         </dependency>
         <!-- http client END -->
@@ -235,7 +235,7 @@
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>servlet-api</artifactId>
-			<version>${servlet-api.version}</version>
+            <version>${servlet-api.version}</version>
             <scope>provided</scope>
         </dependency>
 
@@ -377,7 +377,7 @@
         <dependency>
             <groupId>org.elasticsearch</groupId>
             <artifactId>elasticsearch</artifactId>
-			<version>${elastic-search.version}</version>
+            <version>${elastic-search.version}</version>
             <scope>compile</scope>
         </dependency>
 
@@ -420,8 +420,8 @@
             <scope>compile</scope>
             <exclusions>
                 <exclusion>
-		    <groupId>com.att.nsa</groupId>
-		    <artifactId>saClientLibrary</artifactId>
+                    <groupId>com.att.nsa</groupId>
+                    <artifactId>saClientLibrary</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -541,46 +541,46 @@
             <scope>compile</scope>
         </dependency>
 
-		<dependency>
-			<groupId>org.onap.dmaap.messagerouter.dmaapclient</groupId>
-			<artifactId>dmaapClient</artifactId>
-			<version>1.1.3</version>
-			<scope>compile</scope>
-			<exclusions>
-				<exclusion>
-					<groupId>com.att.aft</groupId>
-					<artifactId>dme2</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
+        <dependency>
+            <groupId>org.onap.dmaap.messagerouter.dmaapclient</groupId>
+            <artifactId>dmaapClient</artifactId>
+            <version>1.1.3</version>
+            <scope>compile</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.att.aft</groupId>
+                    <artifactId>dme2</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
             <groupId>com.att.aft</groupId>
             <artifactId>dme2</artifactId>
             <version>3.1.200-oss</version>
         </dependency>
-		
-		<dependency>
-			<groupId>javax.jms</groupId>
-			<artifactId>jms</artifactId>
-			<version>1.1</version>
-			<scope>provided</scope>
-		</dependency>
 
-		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>javax.servlet-api</artifactId>
-			<version>3.1.0</version>
-			<scope>provided</scope>
-		</dependency>
+        <dependency>
+            <groupId>javax.jms</groupId>
+            <artifactId>jms</artifactId>
+            <version>1.1</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>3.1.0</version>
+            <scope>provided</scope>
+        </dependency>
 
         <!-- TEST -->
         <dependency>
-			<groupId>org.assertj</groupId>
-			<artifactId>assertj-core</artifactId>
-			<scope>test</scope>
-		</dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <scope>test</scope>
+        </dependency>
 
-		<dependency>
+        <dependency>
             <groupId>org.glassfish.jersey.test-framework.providers</groupId>
             <artifactId>jersey-test-framework-provider-bundle</artifactId>
             <version>${jersey-bom.version}</version>
@@ -588,37 +588,37 @@
             <scope>test</scope>
         </dependency>
 
-		<!--<dependency>-->
-			<!--<groupId>org.glassfish.jersey.test-framework.providers</groupId>-->
-			<!--<artifactId>jersey-test-framework-provider-inmemory</artifactId>-->
-			<!--<version>${jersey-bom.version}</version>-->
-			<!--<scope>test</scope>-->
-		<!--</dependency>-->
+        <!--<dependency>-->
+        <!--<groupId>org.glassfish.jersey.test-framework.providers</groupId>-->
+        <!--<artifactId>jersey-test-framework-provider-inmemory</artifactId>-->
+        <!--<version>${jersey-bom.version}</version>-->
+        <!--<scope>test</scope>-->
+        <!--</dependency>-->
 
-		<dependency>
-			<groupId>org.glassfish.jersey.core</groupId>
-			<artifactId>jersey-client</artifactId>
-			<version>${jersey-bom.version}</version>
-			<!--<scope>test</scope>-->
-		</dependency>
+        <dependency>
+            <groupId>org.glassfish.jersey.core</groupId>
+            <artifactId>jersey-client</artifactId>
+            <version>${jersey-bom.version}</version>
+            <!--<scope>test</scope>-->
+        </dependency>
 
-		<dependency>
-			<groupId>com.github.tomakehurst</groupId>
-			<artifactId>wiremock</artifactId>
-			<scope>test</scope>
-		</dependency>
+        <dependency>
+            <groupId>com.github.tomakehurst</groupId>
+            <artifactId>wiremock</artifactId>
+            <scope>test</scope>
+        </dependency>
 
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-servlet</artifactId>
-			<version>${jetty.version}</version>
+            <version>${jetty.version}</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-webapp</artifactId>
-			<version>${jetty.version}</version>
+            <version>${jetty.version}</version>
             <scope>test</scope>
         </dependency>
 
@@ -649,27 +649,27 @@
             <scope>test</scope>
         </dependency>
 
-		<dependency>
-			<groupId>io.cucumber</groupId>
-			<artifactId>cucumber-java</artifactId>
-			<scope>test</scope>
-		</dependency>
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-java</artifactId>
+            <scope>test</scope>
+        </dependency>
 
-		<dependency>
-			<groupId>io.cucumber</groupId>
-			<artifactId>cucumber-junit</artifactId>
-			<scope>test</scope>
-		</dependency>
-    	
-    	<dependency>
-    		<groupId>org.jmockit</groupId>
-			<artifactId>jmockit</artifactId>
-			<version>${jmockit.version}</version>
-			<scope>test</scope>
-		</dependency>
-		
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jmockit</groupId>
+            <artifactId>jmockit</artifactId>
+            <version>${jmockit.version}</version>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
-	
+
     <build>
 
         <finalName>${project.artifactId}-${project.version}</finalName>
@@ -703,25 +703,52 @@
                     <attachClasses>true</attachClasses>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>com.github.sylvainlaurent.maven</groupId>
+                <artifactId>yaml-json-validator-maven-plugin</artifactId>
+                <version>1.0.1</version>
+                <executions>
+                    <execution>
+                        <id>validate</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>validate</goal>
+                        </goals>
+                        <configuration>
+                            <validationSets>
+                                <validationSet>
+                                    <includes>
+                                        <include>src/main/resources/import/tosca/**/*.yml</include>
+                                    </includes>
+                                </validationSet>
+                                <validationSet>
+                                    <includes>
+                                        <include>src/main/resources/import/tosca/**/*.json</include>
+                                    </includes>
+                                </validationSet>
+                            </validationSets>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-dependencies</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <includeScope>compile</includeScope>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
 
             <plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-dependency-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>copy-dependencies</id>
-						<phase>package</phase>
-						<goals>
-							<goal>copy-dependencies</goal>
-						</goals>
-						<configuration>
-							<includeScope>compile</includeScope>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-
-			<plugin>
                 <groupId>com.jcabi</groupId>
                 <artifactId>jcabi-maven-plugin</artifactId>
                 <version>${jcabi.plugin.version}</version>
@@ -735,30 +762,30 @@
             </plugin>
 
             <plugin>
-				<artifactId>maven-resources-plugin</artifactId>
-				<version>2.6</version>
-				<executions>
-					<execution>
-						<id>copy-tosca-folder</id>
-						<!-- here the phase you need -->
-						<phase>install</phase>
-						<goals>
-							<goal>copy-resources</goal>
-						</goals>
-						<configuration>
-							<outputDirectory>${project.parent.basedir}/asdctool/tosca</outputDirectory>
-							<resources>
-								<resource>
-									<directory>${project.parent.basedir}/catalog-be/src/main/resources/import/tosca</directory>
-									<filtering>true</filtering>
-								</resource>
-							</resources>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>2.6</version>
+                <executions>
+                    <execution>
+                        <id>copy-tosca-folder</id>
+                        <!-- here the phase you need -->
+                        <phase>install</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.parent.basedir}/asdctool/tosca</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${project.parent.basedir}/catalog-be/src/main/resources/import/tosca</directory>
+                                    <filtering>true</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
 
-			<plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <executions>
@@ -825,23 +852,23 @@
                             </filesets>
                         </configuration>
                     </execution>
-                    
+
                     <execution>
-						<id>clean-static-files</id>
-						<phase>clean</phase>
-						<goals>
-							<goal>clean</goal>
-						</goals>
-						<configuration>
-							<filesets>
-								<!-- tosca files -->
-								<fileset>
-									<directory>${project.parent.basedir}/asdctool/tosca</directory>
-									<followSymlinks>false</followSymlinks>
-								</fileset>
-							</filesets>
-						</configuration>
-					</execution>
+                        <id>clean-static-files</id>
+                        <phase>clean</phase>
+                        <goals>
+                            <goal>clean</goal>
+                        </goals>
+                        <configuration>
+                            <filesets>
+                                <!-- tosca files -->
+                                <fileset>
+                                    <directory>${project.parent.basedir}/asdctool/tosca</directory>
+                                    <followSymlinks>false</followSymlinks>
+                                </fileset>
+                            </filesets>
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
 
