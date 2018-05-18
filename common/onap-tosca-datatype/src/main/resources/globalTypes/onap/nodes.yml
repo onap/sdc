@@ -122,369 +122,100 @@ node_types:
         - 0
         - UNBOUNDED
 
-  tosca.nodes.nfv.VDU.Compute:
-    attributes:
-      private_address:
-        type: string
-      public_address:
-        type: string
-      networks:
-        type: string
-      ports:
-        type: string
-    capabilities:
-      scalable:
-        type: tosca.capabilities.Scalable
-      virtual_compute:
-        type: tosca.capabilities.nfv.VirtualCompute
-      endpoint:
-        type: tosca.capabilities.Endpoint.Admin
-      os:
-        type: tosca.capabilities.OperatingSystem
-      virtual_binding:
-        type: tosca.capabilities.nfv.VirtualBindable
-      host:
-        type: tosca.capabilities.Container
-      binding:
-        type: tosca.capabilities.network.Bindable
-      monitoring_parameter:
-        type: tosca.capabilities.nfv.Metric
+  tosca.nodes.nfv.Vdu.Compute:
     derived_from: tosca.nodes.Root
     properties:
-      configurable_properties:
-        entry_schema:
-          type: tosca.datatypes.nfv.VnfcConfigurableProperties
-        type: map
       name:
         type: string
-      nfvi_constraints:
-        entry_schema:
-          type: string
-        required: false
-        type: list
-      descrption:
+        required: true
+      description:
         type: string
+        required: true
       boot_order:
+        type: map
         entry_schema:
           type: string
         required: false
-        type: list
-    requirements:
-    - local_storage:
-        capability: tosca.capabilities.Attachment
+      nfvi_constraints:
+        type: map # Align with IM, it shoul be a array of KeyValuePair/NameValuePair
+        entry_schema:
+          type: string
+        required: false
+      configurable_properties:
+         type: map   #In the IM, the multipilicity of VnfcConfigurableProperties is 1, not a map.
+         entry_schema:
+            type: tosca.datatypes.nfv.VnfcConfigurableProperties
+         required: true
+      vdu_profile:
+         type: tosca.datatypes.nfv.VduProfile
+         required: true
+      inject_files: # Used for vCPE usecase Aligned with ONAP R2 IM. not defined in IFA011 v2.4.1 and SOL001 v0.6.0.
+         type: tosca.datatypes.nfv.injectFile
+         required: false  #Aligned with ONAP R2 IM. it should be false.
+      meta_data: #metadata attached to the VM or container
+         type: map
+         entry_schema:
+           type: string
+         required: false
+      user_data: #cloudinit userdata script support
+        type: string
+        required: false
+    capabilities:
+      virtual_compute:
+        type: tosca.capabilities.nfv.VirtualCompute
+      virtual_binding:
+        type: tosca.capabilities.nfv.VirtualBindable
+        occurrences:
+        - 1
+        - UNBOUNDED
+      monitoring_parameter:
+        type: tosca.capabilities.nfv.Metric
         occurrences:
         - 0
         - UNBOUNDED
+    requirements:
     - virtual_storage:
         capability: tosca.capabilities.nfv.VirtualStorage
-        occurrences:
+        relationship: tosca.relationships.nfv.Vdu.AttachedTo
+        node: tosca.nodes.nfv.VDU.VirtualStorage
+        occurences:
         - 0
-        - UNBOUNDED
+        - UNBOUNDED 
+    artifacts:
+      sw_image:
+        file:
+        type: tosca.artifacts.nfv.SwImage
 
-  tosca.nodes.nfv.VDU.VirtualStorage:
+
+  tosca.nodes.nfv.Vdu.VirtualStorage:
+    derived_from: tosca.nodes.Root
+    properties:
+      #id:
+        # node name
+      type_of_storage:
+        type: string
+        constraints:
+        - valid_values: [volume, object, root, block]
+        required: true
+      size_of_storage:
+        type: scalar-unit.size
+        required: true
+      vdu_storage_requirements:
+        type: map
+        entry_schema:
+          type: string
+        required: false
+      rdma_enabled:
+        type: boolean
+        required: false
     capabilities:
       virtual_storage:
         type: tosca.capabilities.nfv.VirtualStorage
-    derived_from: tosca.nodes.Root
-    properties:
-      id:
-        type: string
-      size_of_storage:
-        type: string
-      rdma_enabled:
-        required: false
-        type: boolean
-      type_of_storage:
-        type: string
+    artifacts:
+      sw_image:
+        file:
+        type: tosca.artifacts.Deployment.Image
 
-  tosca.nodes.nfv.VduCpd:
-    derived_from: tosca.nodes.Root
-    properties:
-      virtual_network_interface_requirements:
-        entry_schema:
-          type: tosca.datatypes.nfv.VirtualNetworkInterfaceRequirements
-        required: false
-        type: list
-      role:
-        constraints:
-        - valid_values:
-          - root
-          - leaf
-        required: false
-        type: string
-      bitrate_requirement:
-        required: false
-        type: integer
-      description:
-        required: false
-        type: string
-      layer_protocol:
-        constraints:
-        - valid_values:
-          - ethernet
-          - mpls
-          - odu2
-          - ipv4
-          - ipv6
-          - pseudo_wire
-        type: string
-      address_data:
-        entry_schema:
-          type: tosca.datatype.nfv.AddressData
-        required: false
-        type: list
-    requirements:
-    - virtual_binding:
-        capability: tosca.capabilities.nfv.VirtualBindable
-        occurrences:
-        - 0
-        - UNBOUNDED
-    - virtual_link:
-        capability: tosca.capabilities.nfv.VirtualBindable
-        occurrences:
-        - 0
-        - UNBOUNDED
-  tosca.nodes.nfv.ext.ImageFile:
-    capabilities:
-      guest_os:
-        type: tosca.capabilities.nfv.ext.GuestOs
-      image_fle:
-        type: tosca.capabilities.nfv.ext.ImageFile
-    derived_from: tosca.nodes.Root
-    properties:
-      file_url:
-        required: false
-        type: string
-      container_type:
-        required: false
-        type: string
-      name:
-        required: false
-        type: string
-      disk_format:
-        required: false
-        type: string
-      version:
-        required: false
-        type: string
-  tosca.nodes.nfv.ext.LocalStorage:
-    capabilities:
-      local_attachment:
-        type: tosca.capabilities.nfv.ext.LocalAttachment
-    derived_from: tosca.nodes.Root
-    properties:
-      size:
-        required: false
-        type: string
-      disk_type:
-        required: false
-        type: string
-  tosca.nodes.nfv.ext.zte.CP:
-    capabilities:
-      forwarder:
-        type: tosca.capabilities.nfv.Forwarder
-    derived_from: tosca.nodes.Root
-    properties:
-      guest_os_mtu:
-        required: false
-        type: integer
-      bandwidth:
-        required: false
-        type: integer
-      interface_name:
-        required: false
-        type: string
-      allowed_address_pairs:
-        entry_schema:
-          type: tosca.datatypes.nfv.ext.AddressPairs
-        required: false
-        type: list
-      ip_address:
-        required: false
-        type: string
-      bond:
-        required: false
-        type: string
-      proxiedVNFs:
-        entry_schema:
-          type: string
-        required: false
-        type: list
-      sfc_encapsulation:
-        required: false
-        type: string
-      floating_ip_address:
-        required: false
-        type: tosca.datatypes.nfv.ext.FloatingIP
-      service_ip_address:
-        required: false
-        type: string
-      mac_address:
-        required: false
-        type: string
-      proxiedVNFtype:
-        required: false
-        type: string
-      macbond:
-        required: false
-        type: string
-      vnic_type:
-        required: false
-        type: string
-      direction:
-        required: false
-        type: string
-      order:
-        required: false
-        type: integer
-    requirements:
-    - forwarder:
-        capability: tosca.capabilities.nfv.Forwarder
-        occurrences:
-        - 0
-        - UNBOUNDED
-    - virtualbinding:
-        capability: tosca.capabilities.nfv.VirtualBindable
-        occurrences:
-        - 0
-        - UNBOUNDED
-    - virtualLink:
-        capability: tosca.capabilities.nfv.VirtualBindable
-        occurrences:
-        - 0
-        - UNBOUNDED
-  tosca.nodes.nfv.ext.zte.VDU:
-    capabilities:
-      scalable:
-        type: tosca.capabilities.Scalable
-      monitoring_parameter:
-        type: tosca.capabilities.nfv.Metric
-      nfv_compute:
-        type: tosca.capabilities.nfv.ext.Compute.Container.Architecture
-      virtualbinding:
-        type: tosca.capabilities.nfv.VirtualBindable
-    derived_from: tosca.nodes.Root
-    properties:
-      manual_scale_select_vim:
-        required: false
-        type: boolean
-      vdu_type:
-        required: false
-        type: string
-      watchdog:
-        required: false
-        type: tosca.datatypes.nfv.ext.zte.WatchDog
-      name:
-        required: false
-        type: string
-      local_affinity_antiaffinity_rule:
-        required: false
-        type: tosca.datatypes.nfv.ext.LocalAffinityOrAntiAffinityRule
-      support_scaling:
-        required: false
-        type: boolean
-      storage_policy:
-        required: false
-        type: string
-      key_vdu:
-        required: false
-        type: boolean
-      location_info:
-        required: false
-        type: tosca.datatypes.nfv.ext.LocationInfo
-      inject_data_list:
-        entry_schema:
-          type: tosca.datatypes.nfv.ext.InjectData
-        required: false
-        type: list
-    requirements:
-    - guest_os:
-        capability: tosca.capabilities.nfv.ext.GuestOs
-        occurrences:
-        - 0
-        - UNBOUNDED
-    - local_storage:
-        capability: tosca.capabilities.nfv.ext.LocalAttachment
-        occurrences:
-        - 0
-        - UNBOUNDED
-    - volume_storage:
-        capability: tosca.capabilities.Attachment
-        occurrences:
-        - 0
-        - UNBOUNDED
-    - dependency:
-        capability: tosca.capabilities.Node
-        occurrences:
-        - 0
-        - UNBOUNDED
-  tosca.nodes.nfv.ext.zte.VL:
-    capabilities:
-      virtual_linkable:
-        type: tosca.capabilities.nfv.VirtualLinkable
-    derived_from: tosca.nodes.Root
-    properties:
-      segmentation_id:
-        required: false
-        type: string
-      network_name:
-        required: false
-        type: string
-      is_predefined:
-        required: false
-        type: boolean
-      mtu:
-        required: false
-        type: integer
-      dns_nameservers:
-        entry_schema:
-          type: string
-        required: false
-        type: list
-      physical_network:
-        required: false
-        type: string
-      dhcp_enabled:
-        required: false
-        type: boolean
-      network_id:
-        required: false
-        type: string
-      host_routes:
-        entry_schema:
-          type: tosca.datatypes.nfv.ext.HostRouteInfo
-        required: false
-        type: list
-      ip_version:
-        required: false
-        type: integer
-      vendor:
-        required: false
-        type: string
-      name:
-        required: false
-        type: string
-      start_ip:
-        required: false
-        type: string
-      vlan_transparent:
-        required: false
-        type: boolean
-      cidr:
-        required: false
-        type: string
-      gateway_ip:
-        required: false
-        type: string
-      network_type:
-        required: false
-        type: string
-      end_ip:
-        required: false
-        type: string
-      location_info:
-        required: false
-        type: tosca.datatypes.nfv.ext.LocationInfo
   tosca.nodes.nfv.ext.zte.VNF:
     capabilities:
       forwarder:
@@ -559,25 +290,160 @@ node_types:
         - 0
         - UNBOUNDED
 
-  tosca.nodes.nfv.VnfVirtualLinkDesc:
-    capabilities:
-      monitoring_parameters:
-        type: tosca.capabilities.nfv.Metric
-      virtual_linkable:
-        type: tosca.capabilities.nfv.VirtualLinkable
+  tosca.nodes.nfv.Cp:
     derived_from: tosca.nodes.Root
     properties:
-      vl_flavours:
-        entry_schema:
-          type: string
-        type: map
-      description:
-        required: false
-        type: string
-      test_access:
-        entry_schema:
-          type: string
-        required: false
+      layer_protocol:
         type: list
+        entry_schema:
+          type: string
+          constraints:
+            - valid_values: [ethernet, mpls, odu2, ipv4, ipv6, pseudo_wire ]
+        required: true
+      role: #Name in ETSI NFV IFA011 v0.7.3 cpRole
+        type: string
+        constraints:
+          - valid_values: [ root, leaf ]
+        required: false
+      description:
+        type: string
+        required: false
+      protocol_data:
+        type: list
+        entry_schema:
+          type: tosca.datatypes.nfv.CpProtocolData
+        required: true
+      trunk_mode:
+        type: boolean
+        required: true
+      allowed_address_data: # Aligned with ONAP R2 Im.not defined in IFA011 v2.4.1 and SOL001 v0.6.0.
+        type: tosca.datatypes.nfv.AddressData   #In the IM, it is a array, but here it is not a array. TBD.
+        required: false
+
+
+  tosca.nodes.nfv.VNF:
+    derived_from: tosca.nodes.Root
+    properties:
+      descriptor_id: # instead of vnfd_id
+        type: string # GUID
+        required: true
+      descriptor_version: # instead of vnfd_version
+        type: string
+        required: true
+      provider: # instead of vnf_provider
+        type: string
+        required: true
+      product_name: # instead of vnf_product_name
+        type: string
+        required: true
+      software_version: # instead of vnf_software_version
+        type: string
+        required: true
+      product_info_name: # instead of vnf_product_info_name
+        type: string
+        required: false
+      product_info_description: # instead of vnf_product_info_description
+        type: string
+        required: false
+      vnfm_info:
+        type: list
+        entry_schema:
+          type: string
+        required: true
+      localization_languages:
+        type: list
+        entry_schema:
+          type: string
+        required: false
+      default_localization_language:
+        type: string
+        required: false
+      configurable_properties:
+        type: tosca.datatypes.nfv.VnfConfigurableProperties
+        required: false
+        #        modifiable_attributes:
+        #          type: tosca.datatypes.nfv.VnfInfoModifiableAttributes
+        #          required: false  # true in IFA011, but all of members are false. Align with the IM, it is false
+      flavour_id:
+        type: string
+        required: true
+      flavour_description:
+        type: string
+        required: true
+    capabilities:
+      # monitoring_parameter:
+      # modelled as ad hoc capabilities in the VNF node template
+    requirements:
+    - virtual_link:
+        capability: tosca.capabilities.nfv.VirtualLinkable
+        relationship: tosca.relationships.nfv.VirtualLinksTo
+        node: tosca.nodes.nfv.VnfVirtualLink
+        occurrences:
+        - 0
+        - UNBOUNDED
+    interfaces:
+      Nfv:
+        type: tosca.interfaces.node.lifecycle.Standard
+
+  tosca.nodes.nfv.VduCp:
+    derived_from: tosca.nodes.nfv.Cp
+    properties:
+      bitrate_requirement:
+        type: integer
+        required: false
+      vnic_name: #  Aligned with ONAP R2 Im.not defined in IFA011 v2.4.1 and SOL001 v0.6.0.
+        type: string
+        required: false
+      vnic_order: # Aligned with ONAP R2 Im. not defined in IFA011 v2.4.1 and SOL001 v0.6.0.
+        type: integer
+        required: false
+      vnic_type: # Aligned with ONAP R2 Im. not defined in IFA011 v2.4.1 and SOL001 v0.6.0
+        type: string
+        constraints:
+        - valid_values: [normal, macvtap, direct, baremetal, direct-physical, virtio-forwarder]
+        required: false
+      virtual_network_interface_requirements:
+        type: list
+        entry_schema:
+          type: tosca.datatypes.nfv.VirtualNetworkInterfaceRequirements
+        required: false
+        # order:      #there is no this attribute in IM.
+        #   type: integer
+        #   required: false
+        #   constraints:
+        #     - greater_or_equal: 0
+    requirements:
+    - virtual_link:
+        capability: tosca.capabilities.nfv.VirtualLinkable
+        relationship: tosca.relationships.nfv.VirtualLinksTo
+        node: tosca.nodes.nfv.VnfVirtualLink
+    - virtual_binding:
+        capability: tosca.capabilities.nfv.VirtualBindable
+        relationship: tosca.relationships.nfv.VirtualBindsTo
+        node: tosca.nodes.nfv.Vdu.Compute
+
+  tosca.nodes.nfv.VnfVirtualLink:
+    derived_from: tosca.nodes.Root
+    properties:
       connectivity_type:
         type: tosca.datatypes.nfv.ConnectivityType
+        required: true
+      description:
+        type: string
+        required: false
+      test_access:
+        type: list
+        entry_schema:
+          type: string
+        required: false
+      vl_profile:
+        type: tosca.datatypes.nfv.VlProfile
+        required: true
+    capabilities:
+      monitoring_parameter:   # this is not a very clear data structure enough to be coded, suggest to be annotated.
+        type: tosca.capabilities.nfv.Metric
+        occurrences:
+        - 0
+        - UNBOUNDED
+      virtual_linkable:
+        type: tosca.capabilities.nfv.VirtualLinkable
