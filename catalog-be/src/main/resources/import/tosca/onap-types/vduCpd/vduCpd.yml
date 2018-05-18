@@ -43,7 +43,7 @@ node_types:
         required: false
         status: SUPPORTED
         entry_schema:
-          type: tosca.datatype.nfv.AddressData
+          type: tosca.datatypes.nfv.AddressData
     requirements:
     - virtual_binding:
         capability: tosca.capabilities.nfv.VirtualBindable

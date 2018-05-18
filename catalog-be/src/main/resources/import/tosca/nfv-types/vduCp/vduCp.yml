@@ -1,0 +1,39 @@
+#NOT SPEC COMPLAINT!!!!!!!!!!!!!!!!!!!!!!
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+node_types:
+    tosca.nodes.nfv.VduCp:
+      derived_from: tosca.nodes.nfv.Cp
+      properties:
+        bitrate_requirement:
+          type: integer
+          required: false
+        vnic_name: #  Aligned with ONAP R2 Im.not defined in IFA011 v2.4.1 and SOL001 v0.6.0.
+          type: string
+          required: false
+        vnic_order: # Aligned with ONAP R2 Im. not defined in IFA011 v2.4.1 and SOL001 v0.6.0.
+          type: integer
+          required: false
+        vnic_type: # Aligned with ONAP R2 Im. not defined in IFA011 v2.4.1 and SOL001 v0.6.0
+          type: string
+          constraints:
+              - valid_values: [normal, macvtap, direct, baremetal, direct-physical, virtio-forwarder]
+          required: false
+        virtual_network_interface_requirements:
+          type: list
+          entry_schema:
+            type: tosca.datatypes.nfv.VirtualNetworkInterfaceRequirements
+          required: false
+       # order:      #there is no this attribute in IM.
+       #   type: integer
+       #   required: false
+       #   constraints:
+       #     - greater_or_equal: 0
+        requirements:
+        - virtual_link:
+            capability: tosca.capabilities.nfv.VirtualLinkable
+            relationship: tosca.relationships.nfv.VirtualLinksTo
+            node: tosca.nodes.nfv.VnfVirtualLink   
+        - virtual_binding:
+            capability: tosca.capabilities.nfv.VirtualBindable
+            relationship: tosca.relationships.nfv.VirtualBindsTo
+            node: tosca.nodes.nfv.Vdu.Compute
