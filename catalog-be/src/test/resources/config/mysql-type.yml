@@ -40,7 +40,7 @@ node_types:
       db_password:
         type: string
         default: pass
-        description: The password associated with the user account provided in the ‘db_user’ property.
+        description: The password associated with the user account provided in the db_user property.
       bind_address:
         type: boolean
         default: true
