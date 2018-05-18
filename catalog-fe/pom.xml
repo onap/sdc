@@ -371,6 +371,35 @@
 					</execution>
 				</executions>
 			</plugin>
+			<plugin>
+				<groupId>com.github.sylvainlaurent.maven</groupId>
+				<artifactId>yaml-json-validator-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>validate</id>
+						<phase>validate</phase>
+						<goals>
+							<goal>validate</goal>
+						</goals>
+						<configuration>
+							<validationSets>
+								<validationSet>
+									<includes>
+										<include>src/main/resources/**/*.y*ml</include>
+										<include>src/test/resources/**/*.y*ml</include>
+									</includes>
+								</validationSet>
+								<validationSet>
+									<includes>
+										<include>src/main/resources/**/*.json</include>
+										<include>src/test/resources/**/*.json</include>
+									</includes>
+								</validationSet>
+							</validationSets>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 
 		</plugins>
 

@@ -275,6 +275,11 @@
                     <artifactId>nexus-staging-maven-plugin</artifactId>
                     <version>1.6.8</version>
                 </plugin>
+                <plugin>
+                    <groupId>com.github.sylvainlaurent.maven</groupId>
+                    <artifactId>yaml-json-validator-maven-plugin</artifactId>
+                    <version>1.0.1</version>
+                </plugin>
             </plugins>
         </pluginManagement>
 
