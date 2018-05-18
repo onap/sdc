@@ -1,9 +1,9 @@
 {
-	"payloadName": "extZteCP.yml",
+	"payloadName": "vduCp.yml",
 	"contactId": "jh0003",
-	"name": "ext ZTE CP",
-	"description": "Ext ZTE CP",
-	"resourceIconPath": "network",
+	"name": "VDU Cp",
+	"description": "VDU Cp",
+	"resourceIconPath": "port",
 	"resourceType": "CP",
 	"categories": [{
 		"name": "Generic",
@@ -11,5 +11,5 @@
 			"name": "Network Elements"
 		}]
 	}],
-	"tags": ["ext ZTE CP"]
+	"tags": ["VDU Cp"]
 }
