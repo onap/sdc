@@ -1,8 +1,8 @@
 {
-	"payloadName": "vduCompute.yml",
+	"payloadName": "VNF.yml",
 	"contactId": "jh0003",
-	"name": "VDU Compute",
-	"description": "VDU Compute",
+	"name": "VNF",
+	"description": "VNF",
 	"resourceIconPath": "compute",
 	"resourceType": "VFC",
 	"categories": [{
@@ -11,5 +11,5 @@
 			"name": "Infrastructure"
 		}]
 	}],
-	"tags": ["VDU Compute"]
+	"tags": ["VNF"]
 }

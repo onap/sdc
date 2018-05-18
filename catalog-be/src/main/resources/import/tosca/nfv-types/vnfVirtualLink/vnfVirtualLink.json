@@ -1,8 +1,8 @@
 {
-	"payloadName": "vnfVirtualLinkDesc.yml",
+	"payloadName": "vnfVirtualLink.yml",
 	"contactId": "jh0003",
-	"name": "VnfVirtualLinkDesc",
-	"description": "VnfVirtualLinkDesc",
+	"name": "VnfVirtualLink",
+	"description": "VnfVirtualLink",
 	"resourceIconPath": "network",
 	"resourceType": "VL",
 	"categories": [{
@@ -11,5 +11,5 @@
 			"name": "Infrastructure"
 		}]
 	}],
-	"tags": ["VnfVirtualLinkDesc"]
+	"tags": ["VnfVirtualLink"]
 }
