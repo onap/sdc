@@ -15,25 +15,13 @@
 tosca_definitions_version: tosca_simple_yaml_1_1
 
 metadata:
-  filename: onap/_index.yml
+  filename: onap/artifacts.yml
   version: '1.0'
   
-
 imports:
-- tosca_index:
-    file: ../tosca/_index.yml
-- capabilities:
-    file: capabilities.yml
-- nodes:
-    file: nodes.yml
-- relationships:
-    file: relationships.yml
-- groups:
-    file: groups.yml
-- data:
-    file: data.yml
-- interfaces:
-    file: interfaces.yml
-- artifacts:
-    file: artifacts.yml
+- onap_index:
+    file: _index.yml
 
+artifact_types:
+  tosca.artifacts.nfv.SwImage:
+    derived_from: tosca.artifacts.Deployment.Image
