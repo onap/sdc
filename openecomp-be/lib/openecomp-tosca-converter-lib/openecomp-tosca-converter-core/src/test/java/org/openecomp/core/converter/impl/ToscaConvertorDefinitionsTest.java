@@ -12,6 +12,7 @@ import static org.openecomp.core.impl.GlobalSubstitutionServiceTemplate.TEMPLATE
 import static org.openecomp.sdc.common.utils.CommonUtil.validateAndUploadFileContent;
 
 import org.apache.commons.io.IOUtils;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openecomp.core.impl.GlobalSubstitutionServiceTemplate;
 import org.openecomp.core.impl.ToscaConverterImpl;
@@ -26,6 +27,7 @@ import java.util.Set;
 public class ToscaConvertorDefinitionsTest {
 
 
+    @Ignore
     @Test
     public void loadCsar() throws Exception {
         URL resource = ToscaConvertorDefinitionsTest.class.getResource("/csar/vCSCF.csar");
