@@ -22,21 +22,24 @@ import importCommon
 def importNfvTypes(scheme, beHost, bePort, adminUser, fileDir, updateversion):
 	
 	nfvTypes = [ "underlayVpn",
-	              "overlayTunnel",
-                  "genericNeutronNet",
-                  "allottedResource",
-	              "extImageFile",
-	              "extLocalStorage",
-	              "extZteCP",
-	              "extZteVDU",
-	              "extZteVL",
-	              "NSD",
-				  "VDU",
-	              "vduCompute",
-				  "vduCpd",
-				  "vduVirtualStorage",
-				  "vnfVirtualLinkDesc"
-				  ]
+	             "overlayTunnel",
+               "genericNeutronNet",
+               "allottedResource",
+	             "extImageFile",
+	             "extLocalStorage",
+	             "extZteCP",
+	             "extZteVDU",
+	             "extZteVL",
+	             "NSD",
+				       "VDU",
+	             "vduCompute",
+	             "Cp",
+				       "vduVirtualStorage",
+				       "vnfVirtualLinkDesc",
+				       "vnfVirtualLink",
+				       "vduCp",
+				       "VNF"
+				     ]
 		
 	responseCodes = [200, 201]
 		

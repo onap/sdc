@@ -1,8 +1,8 @@
 {
-	"payloadName": "extZteVDU.yml",
+	"payloadName": "Cp.yml",
 	"contactId": "jh0003",
-	"name": "Ext Zte VDU",
-	"description": "Ext Zte VDU",
+	"name": "Cp",
+	"description": "Cp",
 	"resourceIconPath": "compute",
 	"resourceType": "VFC",
 	"categories": [{
@@ -11,5 +11,5 @@
 			"name": "Infrastructure"
 		}]
 	}],
-	"tags": ["Ext Zte VDU"]
+	"tags": ["Cp"]
 }
