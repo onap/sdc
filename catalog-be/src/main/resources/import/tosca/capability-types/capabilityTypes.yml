@@ -225,6 +225,12 @@ tosca.capabilities.nfv.VirtualStorage:
 tosca.capabilities.nfv.VirtualCompute:
   derived_from: tosca.capabilities.Root
   properties:
+    logical_node:
+      type: tosca.datatypes.nfv.LogicalNodeData
+      required: false
+#    compute_requirements: Type is TBD
+#      type: map
+#      required: false
     requested_additional_capabilities:
       type: map
       entry_schema:
@@ -240,6 +246,8 @@ tosca.capabilities.nfv.VirtualBindable:
   derived_from: tosca.capabilities.Root
 tosca.capabilities.nfv.VirtualLinkable:
   derived_from: tosca.capabilities.Root
+tosca.capabilities.nfv.ExtVirtualLinkable:
+  derived_from: tosca.capabilities.Root    
 tosca.capabilities.nfv.Forwarder: 
   derived_from: tosca.capabilities.Root
 tosca.capabilities.nfv.ext.GuestOs: 
