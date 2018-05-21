@@ -2521,10 +2521,8 @@ public class UnifiedCompositionService {
                                  EntrySchema entrySchema,
                                  ServiceTemplate serviceTemplate) {
 
-    ParameterDefinition parameterDefinition = DataModelUtil.createParameterDefinition
-            (parameterType, null, null,
-                    true, null, null,
-                    entrySchema, null);
+    ParameterDefinition parameterDefinition = DataModelUtil.createParameterDefinition(parameterType, null,  true,
+            null, entrySchema, null);
 
 
     DataModelUtil
@@ -2775,8 +2773,8 @@ public class UnifiedCompositionService {
   private void createIndexInputParameter(ServiceTemplate substitutionServiceTemplate) {
     ParameterDefinition indexParameterDefinition =
             DataModelUtil.createParameterDefinition(PropertyType.INTEGER.getDisplayName(),
-                    "Index value of this substitution service template runtime instance", null,
-                    false, createIndexValueConstraint(), null, null, 0);
+                    "Index value of this substitution service template runtime instance",
+                    false, createIndexValueConstraint(), null, 0);
     DataModelUtil.addInputParameterToTopologyTemplate(substitutionServiceTemplate,
             ToscaConstants.INDEX_VALUE_PROPERTY_NAME, indexParameterDefinition);
   }
