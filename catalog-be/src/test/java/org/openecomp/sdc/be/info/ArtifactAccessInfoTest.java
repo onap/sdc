@@ -1,6 +1,7 @@
 package org.openecomp.sdc.be.info;
 
 import org.junit.Test;
+import org.openecomp.sdc.be.resources.data.ESArtifactData;
 
 
 public class ArtifactAccessInfoTest {
@@ -9,6 +10,11 @@ public class ArtifactAccessInfoTest {
 		return new ArtifactAccessInfo();
 	}
 
+	@Test
+	public void testCtor() throws Exception {
+		 new ArtifactAccessInfo(new ESArtifactData());
+		 new ArtifactAccessInfo(new ESArtifactData(), "mock");
+	}
 	
 	@Test
 	public void testGetName() throws Exception {

@@ -82,7 +82,7 @@ public final class EcompUserConverter {
         convertedUser.setFirstName(ecompUser.getFirstName());
         convertedUser.setLastName(ecompUser.getLastName());
 
-        if (!ecompUser.getLoginId().isEmpty()) {
+        if (ecompUser.getLoginId() != null && !ecompUser.getLoginId().isEmpty()) {
             convertedUser.setUserId(ecompUser.getLoginId());
         } else {
             convertedUser.setUserId(ecompUser.getOrgUserId());
