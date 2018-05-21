@@ -9,6 +9,10 @@ public class DistributionStatusOfServiceInfoTest {
 		return new DistributionStatusOfServiceInfo();
 	}
 
+	@Test
+	public void testCtor() throws Exception {
+		new DistributionStatusOfServiceInfo("","","","");
+	}
 	
 	@Test
 	public void testGetDistributionID() throws Exception {
