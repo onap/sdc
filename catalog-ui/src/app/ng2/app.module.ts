@@ -64,8 +64,10 @@ export const upgradeAdapter = new UpgradeAdapter(forwardRef(() => AppModule));
 
 export function configServiceFactory(config:ConfigService) {
     return () => {
-        config.loadValidationConfiguration();
-        config.loadPluginsConfiguration();
+        return Promise.all([
+            config.loadValidationConfiguration(),
+            config.loadPluginsConfiguration()
+        ]);
     }
 }
 
