@@ -64,6 +64,7 @@ public class ToscaConstants {
     public static final String CONTRAIL_SERVICE_INSTANCE_IND = "contrail_service_instance_ind";
     static final String ST_METADATA_FILE_NAME = "filename";
     public static final String MANDATORY_PROPERTY_NAME = "mandatory";
+    public static final String HEAT_NODE_TYPE_SUFFIX = "heat.";
 
     private ToscaConstants() {
         //Hiding the implicit public constructor

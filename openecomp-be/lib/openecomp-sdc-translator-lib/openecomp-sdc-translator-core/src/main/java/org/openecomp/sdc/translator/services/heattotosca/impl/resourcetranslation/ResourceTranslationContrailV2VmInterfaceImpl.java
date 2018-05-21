@@ -16,105 +16,93 @@
 
 package org.openecomp.sdc.translator.services.heattotosca.impl.resourcetranslation;
 
+import java.util.List;
+import java.util.Map;
+
+import org.onap.sdc.tosca.datatypes.model.NodeTemplate;
 import org.openecomp.sdc.common.togglz.ToggleableFeature;
 import org.openecomp.sdc.heat.services.HeatConstants;
-import org.openecomp.sdc.logging.api.Logger;
-import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.tosca.datatypes.ToscaNodeType;
-import org.onap.sdc.tosca.datatypes.model.NodeTemplate;
 import org.openecomp.sdc.tosca.services.DataModelUtil;
 import org.openecomp.sdc.translator.datatypes.heattotosca.to.TranslateTo;
 import org.openecomp.sdc.translator.services.heattotosca.HeatToToscaUtil;
 import org.openecomp.sdc.translator.services.heattotosca.helper.ContrailV2VirtualMachineInterfaceHelper;
 import org.openecomp.sdc.translator.services.heattotosca.mapping.TranslatorHeatToToscaPropertyConverter;
 
-import java.util.List;
-import java.util.Map;
-
 
 public class ResourceTranslationContrailV2VmInterfaceImpl extends ResourceTranslationBase {
-  protected static final Logger LOGGER = LoggerFactory.getLogger(ResourceTranslationContrailV2VmInterfaceImpl.class);
-  final ContrailV2VirtualMachineInterfaceHelper contrailV2VirtualMachineInterfaceHelper =
-      new ContrailV2VirtualMachineInterfaceHelper();
+    private final ContrailV2VirtualMachineInterfaceHelper contrailV2VirtualMachineInterfaceHelper =
+            new ContrailV2VirtualMachineInterfaceHelper();
 
-  @Override
-  protected boolean isEssentialRequirementsValid(TranslateTo translateTo) {
-    if(contrailV2VirtualMachineInterfaceHelper
-        .isVlanSubInterfaceResource(translateTo.getResource())) {
-      return ToggleableFeature.VLAN_TAGGING.isActive() && contrailV2VirtualMachineInterfaceHelper
-          .isVlanSubInterfaceConnectedToPortIndirectly(translateTo);
-    }
-    return true;
-  }
-
-  @Override
-  protected void translate(TranslateTo translateTo) {
-    if (contrailV2VirtualMachineInterfaceHelper
-        .isVlanSubInterfaceResource(translateTo.getResource())) {
-      translateVlanSubInterfaceResource(translateTo);
-    } else {
-      translateVirtualMachineInterfaceResource(translateTo);
-    }
-  }
-
-
-  private void translateVirtualMachineInterfaceResource(TranslateTo translateTo) {
-    NodeTemplate nodeTemplate = new NodeTemplate();
-    nodeTemplate.setType(ToscaNodeType.CONTRAILV2_VIRTUAL_MACHINE_INTERFACE);
-    nodeTemplate.setProperties(TranslatorHeatToToscaPropertyConverter
-        .getToscaPropertiesSimpleConversion(translateTo.getServiceTemplate(), translateTo.
-                getResourceId(), translateTo.getResource().getProperties(),
-            nodeTemplate.getProperties(), translateTo.getHeatFileName(),
-            translateTo.getHeatOrchestrationTemplate(), translateTo.getResource().getType(),
-            nodeTemplate, translateTo.getContext()));
-    String toscaVmiRefsPropertyName =
-        HeatToToscaUtil.getToscaPropertyName(translateTo, HeatConstants.VMI_REFS_PROPERTY_NAME);
-    if (nodeTemplate.getProperties().containsKey(toscaVmiRefsPropertyName)) {
-      nodeTemplate.getProperties().remove(toscaVmiRefsPropertyName);
+    @Override
+    protected boolean isEssentialRequirementsValid(TranslateTo translateTo) {
+        if (contrailV2VirtualMachineInterfaceHelper
+                .isVlanSubInterfaceResource(translateTo.getResource())) {
+            return ToggleableFeature.VLAN_TAGGING.isActive() && contrailV2VirtualMachineInterfaceHelper
+                    .isVlanSubInterfaceConnectedToPortIndirectly(translateTo);
+        }
+        return true;
     }
 
-    handleVmiMacAddressesInProperties(translateTo, nodeTemplate);
-
-    contrailV2VirtualMachineInterfaceHelper
-        .connectVmiToNetwork(this, translateTo, nodeTemplate);
-    DataModelUtil.addNodeTemplate(translateTo.getServiceTemplate(), translateTo.getTranslatedId(),
-        nodeTemplate);
-  }
-
-  private void handleVmiMacAddressesInProperties(TranslateTo translateTo,
-                                                 NodeTemplate nodeTemplate) {
-    String toscaVmiMacAddressesName =
-        HeatToToscaUtil.getToscaPropertyName(translateTo, HeatConstants.VMI_MAC_ADDRESSES);
-    String toscaVmiMacAddressesMacAddressesName =
-        HeatToToscaUtil
-            .getToscaPropertyName(translateTo, HeatConstants.VMI_MAC_ADDRESSES_MAC_ADDRESSES);
-
-    if (nodeTemplate.getProperties().containsKey(toscaVmiMacAddressesName)) {
-      Object macAddressesValue = nodeTemplate.getProperties().get(toscaVmiMacAddressesName);
-      if (macAddressesValue instanceof Map && ((Map<String, Object>) macAddressesValue).containsKey
-          (toscaVmiMacAddressesMacAddressesName)) {
-        updateMacAddressesMacAddressesInProperties(nodeTemplate, toscaVmiMacAddressesName,
-            toscaVmiMacAddressesMacAddressesName,
-            (Map<String, Object>) macAddressesValue);
-      }
+    @Override
+    protected void translate(TranslateTo translateTo) {
+        if (contrailV2VirtualMachineInterfaceHelper
+                .isVlanSubInterfaceResource(translateTo.getResource())) {
+            translateVlanSubInterfaceResource(translateTo);
+        } else {
+            translateVirtualMachineInterfaceResource(translateTo);
+        }
     }
-  }
 
-  private void updateMacAddressesMacAddressesInProperties(NodeTemplate nodeTemplate,
-                                                          String toscaVmiMacAddressesName,
-                                                          String toscaVmiMacAddressesMacAddressesName,
-                                                          Map<String, Object> macAddressesValue) {
-    Object macAddressesMacAddressesValue =
-        macAddressesValue.get(toscaVmiMacAddressesMacAddressesName);
-    if (macAddressesMacAddressesValue instanceof List) {
-      nodeTemplate.getProperties().put(toscaVmiMacAddressesName, macAddressesMacAddressesValue);
-    } else {
-      nodeTemplate.getProperties().remove(toscaVmiMacAddressesName);
+
+    private void translateVirtualMachineInterfaceResource(TranslateTo translateTo) {
+        NodeTemplate nodeTemplate = new NodeTemplate();
+        nodeTemplate.setType(ToscaNodeType.CONTRAILV2_VIRTUAL_MACHINE_INTERFACE);
+        nodeTemplate.setProperties(TranslatorHeatToToscaPropertyConverter
+                .getToscaPropertiesSimpleConversion(translateTo.getServiceTemplate(),
+                        translateTo.getResourceId(), translateTo.getResource().getProperties(),
+                        nodeTemplate.getProperties(), translateTo.getHeatFileName(),
+                        translateTo.getHeatOrchestrationTemplate(), translateTo.getResource().getType(),
+                        nodeTemplate, translateTo.getContext()));
+        String toscaVmiRefsPropertyName =
+                HeatToToscaUtil.getToscaPropertyName(translateTo, HeatConstants.VMI_REFS_PROPERTY_NAME);
+        nodeTemplate.getProperties().remove(toscaVmiRefsPropertyName);
+        handleVmiMacAddressesInProperties(translateTo, nodeTemplate);
+        contrailV2VirtualMachineInterfaceHelper.connectVmiToNetwork(this, translateTo, nodeTemplate);
+        DataModelUtil.addNodeTemplate(translateTo.getServiceTemplate(), translateTo.getTranslatedId(), nodeTemplate);
     }
-  }
 
-  private void translateVlanSubInterfaceResource(TranslateTo translateTo) {
-    new ResourceTranslationContrailV2VlanSubInterfaceImpl().translate(translateTo);
-  }
+    private void handleVmiMacAddressesInProperties(TranslateTo translateTo,
+                                                   NodeTemplate nodeTemplate) {
+        String toscaVmiMacAddressesName =
+                HeatToToscaUtil.getToscaPropertyName(translateTo, HeatConstants.VMI_MAC_ADDRESSES);
+        String toscaVmiMacAddressesMacAddressesName = HeatToToscaUtil
+                        .getToscaPropertyName(translateTo, HeatConstants.VMI_MAC_ADDRESSES_MAC_ADDRESSES);
+        if (nodeTemplate.getProperties().containsKey(toscaVmiMacAddressesName)) {
+            Object macAddressesValue = nodeTemplate.getProperties().get(toscaVmiMacAddressesName);
+            if (macAddressesValue instanceof Map && ((Map<String, Object>) macAddressesValue).containsKey(
+                    toscaVmiMacAddressesMacAddressesName)) {
+                updateMacAddressesMacAddressesInProperties(nodeTemplate, toscaVmiMacAddressesName,
+                        toscaVmiMacAddressesMacAddressesName, (Map<String, Object>) macAddressesValue);
+            }
+        }
+    }
+
+    private void updateMacAddressesMacAddressesInProperties(NodeTemplate nodeTemplate,
+                                                            String toscaVmiMacAddressesName,
+                                                            String toscaVmiMacAddressesMacAddressesName,
+                                                            Map<String, Object> macAddressesValue) {
+        Object macAddressesMacAddressesValue =
+                macAddressesValue.get(toscaVmiMacAddressesMacAddressesName);
+        if (macAddressesMacAddressesValue instanceof List) {
+            nodeTemplate.getProperties().put(toscaVmiMacAddressesName, macAddressesMacAddressesValue);
+        } else {
+            nodeTemplate.getProperties().remove(toscaVmiMacAddressesName);
+        }
+    }
+
+    private void translateVlanSubInterfaceResource(TranslateTo translateTo) {
+        new ResourceTranslationContrailV2VlanSubInterfaceImpl().translate(translateTo);
+    }
 
 }
