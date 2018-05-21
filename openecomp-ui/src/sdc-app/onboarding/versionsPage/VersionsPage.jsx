@@ -40,19 +40,22 @@ const VersionPageTitle = ({
     depricatedTitle,
     isArchived,
     onRestore,
-    onArchive
+    onArchive,
+    isCollaborator
 }) => {
     return (
         <div className="version-page-header">
             <div className="versions-page-title">{`${i18n(
                 'Available Versions'
             )} - ${itemName}  ${depricatedTitle}`}</div>
-            <FeatureDepricatedButton
-                depricateAction={
-                    isArchived ? () => onRestore() : () => onArchive()
-                }
-                title={i18n(isArchived ? 'RESTORE' : 'ARCHIVE')}
-            />
+            {isCollaborator && (
+                <FeatureDepricatedButton
+                    depricateAction={
+                        isArchived ? () => onRestore() : () => onArchive()
+                    }
+                    title={i18n(isArchived ? 'RESTORE' : 'ARCHIVE')}
+                />
+            )}
         </div>
     );
 };
@@ -91,6 +94,7 @@ class VersionsPage extends React.Component {
                     onArchive={onArchive}
                     isArchived={isArchived}
                     onRestore={onRestore}
+                    isCollaborator={isCollaborator}
                 />
                 <PermissionsView
                     owner={owner}
