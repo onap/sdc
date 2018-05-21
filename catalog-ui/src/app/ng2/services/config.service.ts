@@ -72,15 +72,19 @@ export class ConfigService {
     loadPluginsConfiguration(): Promise<PluginsConfiguration> {
         let url:string = this.api.no_proxy_root + this.api.GET_plugins_configuration;
         let promise: Promise<any> = this.http.get(url).map((res: Response) => res.json()).toPromise();
-        promise.then((pluginsData: Plugins) => {
-            PluginsConfiguration.plugins = pluginsData;
-        }).catch((ex) => {
-           console.error("Error loading plugins configuration from BE", ex);
+        return new Promise<PluginsConfiguration>((resolve) => {
+            promise.then((pluginsData: Plugins) => {
+                PluginsConfiguration.plugins = pluginsData;
+                console.log('RESOLVED PLUGINS!!!');
+                resolve();
+            }).catch((ex) => {
+                console.error("Error loading plugins configuration from BE", ex);
 
-            PluginsConfiguration.plugins = [] as Plugins;
+                PluginsConfiguration.plugins = [] as Plugins;
+            });
         });
 
-        return promise;
+        // return promise;
     }
 
 }
