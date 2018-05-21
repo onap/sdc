@@ -49,8 +49,8 @@ class DetailsCatalogView extends React.Component {
         VSPList: PropTypes.array,
         onSelectVLM: PropTypes.func.isRequired,
         onSelectVSP: PropTypes.func.isRequired,
-        onAddVLM: PropTypes.func,
-        onAddVSP: PropTypes.func,
+        onAddVLM: PropTypes.oneOfType([PropTypes.func, PropTypes.bool]),
+        onAddVSP: PropTypes.oneOfType([PropTypes.func, PropTypes.bool]),
         filter: PropTypes.string.isRequired
     };
 
