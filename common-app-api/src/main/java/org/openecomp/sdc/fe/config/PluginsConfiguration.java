@@ -120,10 +120,20 @@ public class PluginsConfiguration extends BasicConfiguration {
             this.displayRoles = displayRoles;
         }
 
-
-
+        @Override
+        public String toString() {
+            return "PluginDisplayOptions[" +
+                    "displayName='" + displayName +
+                    ", displayContext=" + displayContext +
+                    ", displayRoles=" + displayRoles +
+                    ']';
+        }
     }
 
+    @Override
+    public String toString() {
+        return "PluginsConfiguration[" + "pluginsList=" + pluginsList + ", connectionTimeout=" + connectionTimeout +']';
+    }
 }
 
 

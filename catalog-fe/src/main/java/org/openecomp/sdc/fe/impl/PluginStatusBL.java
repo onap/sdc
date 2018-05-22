@@ -20,18 +20,24 @@ import com.google.gson.GsonBuilder;
 
 public class PluginStatusBL {
 
-	private static Logger log = LoggerFactory.getLogger(PluginStatusBL.class.getName());
-	private static  Gson gson = new GsonBuilder().setPrettyPrinting().create();
-	private CloseableHttpClient client = null;
-	private PluginsConfiguration pluginsConfiguration = ConfigurationManager.getConfigurationManager().getPluginsConfiguration();
+	private static final Logger log = LoggerFactory.getLogger(PluginStatusBL.class.getName());
+	private final Gson gson;
+	private final CloseableHttpClient client;
+	private final PluginsConfiguration pluginsConfiguration;
 	private Integer connectionTimeout;
+	private RequestConfig requestConfig;
 
 	public PluginStatusBL() {
+		this.pluginsConfiguration = ConfigurationManager.getConfigurationManager().getPluginsConfiguration();
 		this.client = HttpClients.createDefault();
+		this.gson = new GsonBuilder().setPrettyPrinting().create();
 	}
 
 	public PluginStatusBL(CloseableHttpClient client) {
+		this.pluginsConfiguration = ConfigurationManager.getConfigurationManager().getPluginsConfiguration();
 		this.client = client;
+
+		this.gson = new GsonBuilder().setPrettyPrinting().create();
 				
 	}
 
@@ -43,6 +49,10 @@ public class PluginStatusBL {
 		} else {
 			log.debug("The value returned from getConfig is {}", pluginsConfiguration);
 			connectionTimeout = pluginsConfiguration.getConnectionTimeout();
+			this.requestConfig = RequestConfig.custom()
+					.setSocketTimeout(connectionTimeout)
+					.setConnectTimeout(connectionTimeout)
+					.setConnectionRequestTimeout(connectionTimeout).build();
 
 			List<Plugin> availablePluginsList = new ArrayList<>();
 
@@ -58,17 +68,14 @@ public class PluginStatusBL {
 
 	private boolean checkPluginAvailability(Plugin plugin) {
 		boolean result = false;
-
+		log.debug("sending head request to id:{} url:{}",plugin.getPluginId(),plugin.getPluginDiscoveryUrl());
 		HttpHead head = new HttpHead(plugin.getPluginDiscoveryUrl());
-		RequestConfig requestConfig = RequestConfig.custom()
-				.setSocketTimeout(connectionTimeout)
-				.setConnectTimeout(connectionTimeout)
-				.setConnectionRequestTimeout(connectionTimeout).build();
 
-		head.setConfig(requestConfig);
+		head.setConfig(this.requestConfig);
 
 		try (CloseableHttpResponse response = this.client.execute(head)) {
 			result = response != null && response.getStatusLine().getStatusCode() == 200;
+			log.debug("The plugin {} is online", plugin.getPluginId());
 		} catch (IOException e) {
 			log.debug("The plugin {} is offline", plugin.getPluginId());
 		}
