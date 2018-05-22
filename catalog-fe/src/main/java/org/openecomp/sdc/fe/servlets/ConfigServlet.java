@@ -20,113 +20,67 @@
 
 package org.openecomp.sdc.fe.servlets;
 
-import java.util.concurrent.TimeUnit;
+import org.openecomp.sdc.common.api.Constants;
+import org.openecomp.sdc.fe.config.FeEcompErrorManager;
+import org.openecomp.sdc.fe.impl.PluginStatusBL;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import javax.ws.rs.container.AsyncResponse;
-import javax.ws.rs.container.Suspended;
-import javax.ws.rs.container.TimeoutHandler;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import org.openecomp.sdc.common.api.ConfigurationSource;
-import org.openecomp.sdc.common.api.Constants;
-import org.openecomp.sdc.common.servlets.BasicServlet;
-import org.openecomp.sdc.fe.config.Configuration;
-import org.openecomp.sdc.fe.impl.PluginStatusBL;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * Root resource (exposed at "/" path)
  */
 @Path("/config")
-public class ConfigServlet extends BasicServlet {
+public class ConfigServlet extends LoggingServlet {
 
-	private static final long serialVersionUID = 1L;
-	private static Logger log = LoggerFactory.getLogger(ConfigServlet.class.getName());
+	private static final Logger log = LoggerFactory.getLogger(ConfigServlet.class.getName());
 
-	//@GET
-	//@Path("/get")
-	//@Produces(MediaType.APPLICATION_JSON)
-	public String getConfig(@Context final HttpServletRequest request) {
-
-		String result = null;
-
-		ServletContext context = request.getSession().getServletContext();
-
-		ConfigurationSource configurationSource = (ConfigurationSource) context
-				.getAttribute(Constants.CONFIGURATION_SOURCE_ATTR);
-		if (configurationSource != null) {
-			Configuration configuration = configurationSource.getAndWatchConfiguration(Configuration.class, null);
-
-			if (configuration == null) {
-				log.warn("Configuration of type {} was not found", Configuration.class);
-			}
-			log.debug("{}", configuration);
-			if (log.isInfoEnabled()) {
-				log.info("Info level ENABLED...");
-			}
-			log.info("The value returned from getConfig is {}", configuration);
-
-			result = gson.toJson(configuration);
-
-		} else {
-			log.warn("Source Configuration object was not initialized in the context.");
-		}
-
-		return result;
-
-	}
-
-	//@GET
-	//@Path("/asyncget")
-	public void asyncGet(@Suspended final AsyncResponse asyncResponse) {
-
-		asyncResponse.setTimeoutHandler(new TimeoutHandler() {
-
-			@Override
-			public void handleTimeout(AsyncResponse asyncResponse) {
-				asyncResponse.resume(
-						Response.status(Response.Status.SERVICE_UNAVAILABLE).entity("Operation time out.").build());
-			}
-		});
-		asyncResponse.setTimeout(3, TimeUnit.SECONDS);
-
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				String result = veryExpensiveOperation();
-				asyncResponse.resume(result);
-			}
-
-			private String veryExpensiveOperation() {
-
-				return "veryExpensiveOperation SUCCESS";
-
-			}
-		}).start();
-	}
 
 	@GET
 	@Path("/ui/plugins")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getPluginsConfiguration(@Context final HttpServletRequest request) {
-		String result = null;
 
-		ServletContext context = request.getSession().getServletContext();
+		try {
+			logFeRequest(request);
 
-		PluginStatusBL pluginStatusBL = (PluginStatusBL) context.getAttribute(Constants.PLUGIN_BL_COMPONENT);
+			ServletContext context = request.getSession().getServletContext();
 
-		result = pluginStatusBL.checkPluginsListAvailability();
+			PluginStatusBL pluginStatusBL = (PluginStatusBL) context.getAttribute(Constants.PLUGIN_BL_COMPONENT);
 
-		return Response.status(Status.OK).entity(result).build();
+            String result = pluginStatusBL.checkPluginsListAvailability();
 
-	}	
+			Response response = Response.status(Status.OK).entity(result).build();
+
+			logFeResponse(request, response);
+
+			return response;
+		} catch (Exception e) {
+			FeEcompErrorManager.getInstance().logFeHttpLoggingError("FE Response");
+			log.error("Unexpected FE response logging error :", e);
+			return Response.status(Status.OK).entity(null).build();
+		}
+
+	}
+
+    protected  void inHttpRequest(HttpServletRequest httpRequest) {
+        log.info("{} {} {}", httpRequest.getMethod(), httpRequest.getRequestURI(), httpRequest.getProtocol());
+    }
+
+    /**
+     * Extracted for purpose of clear method name, for logback %M parameter
+     * @param response http response
+     */
+    protected void outHttpResponse(Response response) {
+        log.info("SC=\"{}\"", response.getStatus());
+    }
 }
