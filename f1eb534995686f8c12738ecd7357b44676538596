@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_ec22d3b9",
+        "filename": "openecomp-ui/src/nfvo-components/panel/versionController/components/ActionButtons.jsx",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1921
+      },
+      "writtenOn": "2018-05-22T06:17:52Z",
+      "side": 1,
+      "message": "please remove comments",
+      "revId": "f1eb534995686f8c12738ecd7357b44676538596",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_ac2ccbad",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/onboard/DetailsCatalogView.jsx",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1921
+      },
+      "writtenOn": "2018-05-22T06:17:52Z",
+      "side": 1,
+      "message": "in what case can these props be boolean?",
+      "revId": "f1eb534995686f8c12738ecd7357b44676538596",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
