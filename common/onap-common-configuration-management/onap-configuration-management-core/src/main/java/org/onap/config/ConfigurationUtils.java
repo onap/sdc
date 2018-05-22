@@ -37,21 +37,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Deque;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Queue;
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Executors;
@@ -217,7 +203,8 @@ public class ConfigurationUtils {
      * @return the namespace
      */
     public static String getNamespace(URL url) {
-        String namespace = getNamespace(getConfiguration(url));
+        Optional<FileBasedConfiguration> configuration = getConfiguration(url);
+        String namespace = configuration.map(ConfigurationUtils::getNamespace).orElse(null);
         if (namespace != null) {
             return namespace.toUpperCase();
         }
@@ -231,7 +218,8 @@ public class ConfigurationUtils {
      * @return the namespace
      */
     public static String getNamespace(File file) {
-        String namespace = getNamespace(getConfiguration(file));
+        Optional<FileBasedConfiguration> configuration = getConfiguration(file);
+        String namespace = configuration.map(ConfigurationUtils::getNamespace).orElse(null);
         if (namespace != null) {
             return namespace.toUpperCase();
         }
@@ -283,7 +271,8 @@ public class ConfigurationUtils {
      * @return the merge strategy
      */
     public static ConfigurationMode getMergeStrategy(URL url) {
-        String configMode = getMergeStrategy(getConfiguration(url));
+        Optional<FileBasedConfiguration> configuration = getConfiguration(url);
+        String configMode = configuration.map(ConfigurationUtils::getMergeStrategy).orElse(null);
         if (configMode != null) {
             try {
                 return Enum.valueOf(ConfigurationMode.class, configMode);
@@ -306,7 +295,8 @@ public class ConfigurationUtils {
      * @return the merge strategy
      */
     public static ConfigurationMode getMergeStrategy(File file) {
-        String configMode = getMergeStrategy(getConfiguration(file));
+        Optional<FileBasedConfiguration> configuration = getConfiguration(file);
+        String configMode = configuration.map(ConfigurationUtils::getMergeStrategy).orElse(null);
         if (configMode != null) {
             try {
                 return Enum.valueOf(ConfigurationMode.class, configMode);
@@ -356,22 +346,22 @@ public class ConfigurationUtils {
      * @param url the url
      * @return the configuration
      */
-    public static FileBasedConfiguration getConfiguration(URL url) {
-        FileBasedConfiguration builder = null;
+    public static Optional<FileBasedConfiguration> getConfiguration(URL url) {
+        Optional<FileBasedConfiguration> builder = Optional.empty();
         try {
             ConfigurationType configType = ConfigurationUtils.getConfigType(url);
             switch (configType) {
                 case PROPERTIES:
-                    builder = new Configurations().fileBased(PropertiesConfiguration.class, url);
+                    builder = Optional.of(new Configurations().fileBased(PropertiesConfiguration.class, url));
                     break;
                 case XML:
-                    builder = new Configurations().fileBased(XMLConfiguration.class, url);
+                    builder = Optional.of(new Configurations().fileBased(XMLConfiguration.class, url));
                     break;
                 case JSON:
-                    builder = new Configurations().fileBased(JsonConfiguration.class, url);
+                    builder = Optional.of(new Configurations().fileBased(JsonConfiguration.class, url));
                     break;
                 case YAML:
-                    builder = new Configurations().fileBased(YamlConfiguration.class, url);
+                    builder = Optional.of(new Configurations().fileBased(YamlConfiguration.class, url));
                     break;
                 default:
                     throw new ConfigurationException("Configuration type not supported:"+ configType);
@@ -388,22 +378,22 @@ public class ConfigurationUtils {
      * @param file the file
      * @return the configuration
      */
-    public static FileBasedConfiguration getConfiguration(File file) {
-        FileBasedConfiguration builder = null;
+    public static Optional<FileBasedConfiguration> getConfiguration(File file) {
+        Optional<FileBasedConfiguration> builder = Optional.empty();
         try {
             ConfigurationType configType = ConfigurationUtils.getConfigType(file);
             switch (configType) {
                 case PROPERTIES:
-                    builder = new Configurations().fileBased(PropertiesConfiguration.class, file);
+                    builder = Optional.of(new Configurations().fileBased(PropertiesConfiguration.class, file));
                     break;
                 case XML:
-                    builder = new Configurations().fileBased(XMLConfiguration.class, file);
+                    builder = Optional.of(new Configurations().fileBased(XMLConfiguration.class, file));
                     break;
                 case JSON:
-                    builder = new Configurations().fileBased(JsonConfiguration.class, file);
+                    builder = Optional.of(new Configurations().fileBased(JsonConfiguration.class, file));
                     break;
                 case YAML:
-                    builder = new Configurations().fileBased(YamlConfiguration.class, file);
+                    builder = Optional.of(new Configurations().fileBased(YamlConfiguration.class, file));
                     break;
                 default:
                     throw new ConfigurationException("Configuration type not supported:"+ configType);
