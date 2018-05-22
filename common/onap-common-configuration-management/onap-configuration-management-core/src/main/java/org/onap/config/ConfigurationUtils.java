@@ -48,6 +48,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Queue;
 import java.util.Set;
 import java.util.SortedSet;
@@ -217,7 +218,8 @@ public class ConfigurationUtils {
      * @return the namespace
      */
     public static String getNamespace(URL url) {
-        String namespace = getNamespace(getConfiguration(url));
+        Optional<FileBasedConfiguration> configuration = getConfiguration(url);
+        String namespace = configuration.map(ConfigurationUtils::getNamespace).orElse(null);
         if (namespace != null) {
             return namespace.toUpperCase();
         }
@@ -231,7 +233,8 @@ public class ConfigurationUtils {
      * @return the namespace
      */
     public static String getNamespace(File file) {
-        String namespace = getNamespace(getConfiguration(file));
+        Optional<FileBasedConfiguration> configuration = getConfiguration(file);
+        String namespace = configuration.map(ConfigurationUtils::getNamespace).orElse(null);
         if (namespace != null) {
             return namespace.toUpperCase();
         }
@@ -283,7 +286,8 @@ public class ConfigurationUtils {
      * @return the merge strategy
      */
     public static ConfigurationMode getMergeStrategy(URL url) {
-        String configMode = getMergeStrategy(getConfiguration(url));
+        Optional<FileBasedConfiguration> configuration = getConfiguration(url);
+        String configMode = configuration.map(ConfigurationUtils::getMergeStrategy).orElse(null);
         if (configMode != null) {
             try {
                 return Enum.valueOf(ConfigurationMode.class, configMode);
@@ -306,7 +310,8 @@ public class ConfigurationUtils {
      * @return the merge strategy
      */
     public static ConfigurationMode getMergeStrategy(File file) {
-        String configMode = getMergeStrategy(getConfiguration(file));
+        Optional<FileBasedConfiguration> configuration = getConfiguration(file);
+        String configMode = configuration.map(ConfigurationUtils::getMergeStrategy).orElse(null);
         if (configMode != null) {
             try {
                 return Enum.valueOf(ConfigurationMode.class, configMode);
@@ -356,7 +361,7 @@ public class ConfigurationUtils {
      * @param url the url
      * @return the configuration
      */
-    public static FileBasedConfiguration getConfiguration(URL url) {
+    public static Optional<FileBasedConfiguration> getConfiguration(URL url) {
         FileBasedConfiguration builder = null;
         try {
             ConfigurationType configType = ConfigurationUtils.getConfigType(url);
@@ -374,12 +379,12 @@ public class ConfigurationUtils {
                     builder = new Configurations().fileBased(YamlConfiguration.class, url);
                     break;
                 default:
-                    throw new ConfigurationException("Configuration type not supported:"+ configType);
+                    throw new ConfigurationException("Configuration type not supported:" + configType);
             }
         } catch (ConfigurationException exception) {
             exception.printStackTrace();
         }
-        return builder;
+        return Optional.ofNullable(builder);
     }
 
     /**
@@ -388,7 +393,7 @@ public class ConfigurationUtils {
      * @param file the file
      * @return the configuration
      */
-    public static FileBasedConfiguration getConfiguration(File file) {
+    public static Optional<FileBasedConfiguration> getConfiguration(File file) {
         FileBasedConfiguration builder = null;
         try {
             ConfigurationType configType = ConfigurationUtils.getConfigType(file);
@@ -411,7 +416,7 @@ public class ConfigurationUtils {
         } catch (ConfigurationException exception) {
             exception.printStackTrace();
         }
-        return builder;
+        return Optional.ofNullable(builder);
     }
 
     /**
