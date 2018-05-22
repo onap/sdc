@@ -65,7 +65,7 @@ public enum PropertyType {
    */
   public static PropertyType getPropertyTypeByDisplayName(String displayName) {
     if (mMap == null) {
-      initializeMapping();
+      Collections.unmodifiableMap(initializeMapping());
     }
     if (mMap.containsKey(displayName)) {
       return mMap.get(displayName);
