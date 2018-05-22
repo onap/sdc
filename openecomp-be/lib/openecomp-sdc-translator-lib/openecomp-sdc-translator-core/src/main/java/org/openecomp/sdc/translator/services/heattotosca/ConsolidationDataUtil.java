@@ -168,11 +168,10 @@ public class ConsolidationDataUtil {
 
         Optional<String> parentPortNodeTemplateId =
                 HeatToToscaUtil.getSubInterfaceParentPortNodeTemplateId(subInterfaceTo);
-        if (parentPortNodeTemplateId.isPresent()) {
-            return Optional.ofNullable(getSubInterfaceTemplateConsolidationData(subInterfaceTo,
-                    parentPortNodeTemplateId.get(), subInterfaceNodeTemplateId));
-        }
-        return Optional.empty();
+
+        return parentPortNodeTemplateId.map(s -> getSubInterfaceTemplateConsolidationData(subInterfaceTo,
+                s, subInterfaceNodeTemplateId));
+
     }
 
     private static SubInterfaceTemplateConsolidationData getSubInterfaceTemplateConsolidationData(
@@ -201,7 +200,7 @@ public class ConsolidationDataUtil {
                     portTemplateConsolidationData);
         }
 
-        return portTemplateConsolidationData.getSubInterfaceResourceTemplateConsolidationData(
+        return portTemplateConsolidationData.addSubInterfaceTemplateConsolidationData(
                 subInterfaceTo.getResource(), subInterfaceNodeTemplateId, parentPortNodeTemplateId);
     }
 
@@ -323,14 +322,19 @@ public class ConsolidationDataUtil {
                                                             String portResourceType,
                                                             String portNodeTemplateId) {
         TranslationContext translationContext = translateTo.getContext();
+        String computeNodeTemplateId = translateTo.getTranslatedId();
+        String portType = getPortType(portNodeTemplateId);
+        // add port to compute consolidation data
+        translationContext.getConsolidationData().getComputeConsolidationDataHandler()
+                .addPortToComputeConsolidationData(translateTo, computeNodeType, computeNodeTemplateId,
+                        portType, portNodeTemplateId);
+
+        // create port consolidation data
         ServiceTemplate serviceTemplate = translateTo.getServiceTemplate();
-        ComputeTemplateConsolidationData computeTemplateConsolidationData =
-                getComputeTemplateConsolidationData(translationContext, serviceTemplate, computeNodeType,
-                        translateTo.getTranslatedId());
-        computeTemplateConsolidationData.addPort(getPortType(portNodeTemplateId), portNodeTemplateId);
-        // create port in consolidation data
-        getPortTemplateConsolidationData(translationContext, serviceTemplate, portResourceId,
-                portResourceType, portNodeTemplateId);
+        String serviceTemplateFileName = ToscaUtil.getServiceTemplateFileName(serviceTemplate);
+        translationContext.getConsolidationData().getPortConsolidationDataHandler()
+                .addPortConsolidationData(serviceTemplateFileName, portResourceId,
+                        portResourceType, portNodeTemplateId);
     }
 
     /**
@@ -402,7 +406,7 @@ public class ConsolidationDataUtil {
      * @param translateTo             the translate to
      * @param sourceNodeTemplateId    the node template id of the source node
      * @param consolidationEntityType Entity type (compute or port)
-     * @param targetResourceId           Target Resource Id
+     * @param targetResourceId        Target Resource Id
      * @param requirementId           Requirement Id
      * @param requirementAssignment   the requirement assignment
      */
@@ -557,8 +561,12 @@ public class ConsolidationDataUtil {
     public static void updateNestedNodeTemplateId(TranslateTo translateTo) {
         TranslationContext context = translateTo.getContext();
         ServiceTemplate serviceTemplate = translateTo.getServiceTemplate();
-        getNestedTemplateConsolidationData(
-                context, serviceTemplate, translateTo.getHeatFileName(), translateTo.getTranslatedId());
+        String serviceTemplateFileName = ToscaUtil.getServiceTemplateFileName(serviceTemplate);
+        // create nested in consolidation data
+        context.getConsolidationData().getNestedConsolidationDataHandler()
+                .addNestedConsolidationData(serviceTemplateFileName, context,
+                  translateTo.getHeatFileName(), translateTo.getTranslatedId());
+
     }
 
     public static void removeSharedResource(ServiceTemplate serviceTemplate,

@@ -76,61 +76,62 @@ public class ComputeConsolidationDataHandler implements ConsolidationDataHandler
 
         NodeTemplate nodeTemplate = DataModelUtil.getNodeTemplate(serviceTemplate, sharedTranslatedResourceId);
         EntityConsolidationData entityConsolidationData =
-                getComputeTemplateConsolidationData(serviceTemplate, nodeTemplate.getType(),
-                        sharedTranslatedResourceId);
+                getComputeTemplateConsolidationData(ToscaUtil
+                    .getServiceTemplateFileName(serviceTemplate), nodeTemplate.getType(), sharedTranslatedResourceId);
 
         if (Objects.nonNull(entityConsolidationData)) {
             entityConsolidationData.removeParamNameFromAttrFuncList(paramName);
         }
     }
 
+    /**
+     * Add compute in consolidation data entity base on given keys.
+     *
+     */
+    public void addComputeConsolidationData(String serviceTemplateFileName,
+               String computeNodeType, String computeNodeTemplateId) {
+
+        getComputeTemplateConsolidationData(serviceTemplateFileName, computeNodeType,  computeNodeTemplateId);
+
+    }
+
+    /**
+     * Add port to compute consolidation data entity base on given keys.s
+     *
+     */
+    public void addPortToComputeConsolidationData(TranslateTo translateTo, String computeNodeType,
+                String computeNodeTemplateId, String portType, String portNodeTemplateId) {
+        ComputeTemplateConsolidationData entityConsolidationData =
+                getComputeTemplateConsolidationData(translateTo, computeNodeType, computeNodeTemplateId);
+        entityConsolidationData.addPort(portType, portNodeTemplateId);
+    }
+
     private ComputeTemplateConsolidationData getComputeTemplateConsolidationData(
             TranslateTo translateTo, String computeNodeType, String computeNodeTemplateId) {
 
         ServiceTemplate serviceTemplate = translateTo.getServiceTemplate();
-        return getComputeTemplateConsolidationData(serviceTemplate, computeNodeType, computeNodeTemplateId);
-    }
-
-    private ComputeTemplateConsolidationData getComputeTemplateConsolidationData(ServiceTemplate serviceTemplate,
-            String computeNodeType, String computeNodeTemplateId) {
-
         String serviceTemplateFileName = ToscaUtil.getServiceTemplateFileName(serviceTemplate);
+        return getComputeTemplateConsolidationData(serviceTemplateFileName, computeNodeType, computeNodeTemplateId);
 
-        FileComputeConsolidationData fileComputeConsolidationData =
-                computeConsolidationData.getFileComputeConsolidationData(serviceTemplateFileName);
-        if (fileComputeConsolidationData == null) {
-            fileComputeConsolidationData = new FileComputeConsolidationData();
-            computeConsolidationData.setFileComputeConsolidationData(serviceTemplateFileName,
-                    fileComputeConsolidationData);
-        }
-
-        TypeComputeConsolidationData typeComputeConsolidationData =
-                fileComputeConsolidationData.getTypeComputeConsolidationData(computeNodeType);
-        if (typeComputeConsolidationData == null) {
-            typeComputeConsolidationData = new TypeComputeConsolidationData();
-            fileComputeConsolidationData.setTypeComputeConsolidationData(computeNodeType, typeComputeConsolidationData);
-        }
-
-        ComputeTemplateConsolidationData computeTemplateConsolidationData =
-                typeComputeConsolidationData.getComputeTemplateConsolidationData(computeNodeTemplateId);
-        if (computeTemplateConsolidationData == null) {
-            computeTemplateConsolidationData = new ComputeTemplateConsolidationData();
-            computeTemplateConsolidationData.setNodeTemplateId(computeNodeTemplateId);
-            typeComputeConsolidationData.setComputeTemplateConsolidationData(computeNodeTemplateId,
-                    computeTemplateConsolidationData);
-        }
-
-        return computeTemplateConsolidationData;
     }
 
-    private String getNodeType(NodeTemplate computeNodeTemplate, TranslateTo translateTo, String targetResourceId,
-            String nodeTemplateId) {
+
+    private ComputeTemplateConsolidationData getComputeTemplateConsolidationData(
+            String serviceTemplateFileName, String computeNodeType, String computeNodeTemplateId) {
+
+        return computeConsolidationData.addComputeTemplateConsolidationData(
+                        serviceTemplateFileName, computeNodeType, computeNodeTemplateId);
+
+    }
+
+    private String getNodeType(NodeTemplate computeNodeTemplate, TranslateTo translateTo,
+                                     String targetResourceId, String nodeTemplateId) {
 
         if (Objects.isNull(computeNodeTemplate)) {
             Resource targetResource = translateTo.getHeatOrchestrationTemplate().getResources().get(targetResourceId);
             NameExtractor nodeTypeNameExtractor = TranslationContext.getNameExtractorImpl(targetResource.getType());
             return nodeTypeNameExtractor.extractNodeTypeName(translateTo.getHeatOrchestrationTemplate()
-                                    .getResources().get(nodeTemplateId), nodeTemplateId, nodeTemplateId);
+                                        .getResources().get(nodeTemplateId), nodeTemplateId, nodeTemplateId);
         }
 
         return computeNodeTemplate.getType();
