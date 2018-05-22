@@ -1,88 +1,68 @@
-package org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation;
+/*
+ * Copyright © 2016-2018 European Support Limited
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
-import org.onap.sdc.tosca.datatypes.model.RequirementAssignment;
+package org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * The type Compute template consolidation data.
- */
+import org.onap.sdc.tosca.datatypes.model.RequirementAssignment;
+
 public class ComputeTemplateConsolidationData extends EntityConsolidationData {
-  // key - volume node template id
-  // List of requirement id and the requirement assignment on the
-  // compute node which connect to this volume
-  private Map<String,List<RequirementAssignmentData>> volumes;
+    // key - volume node template id
+    // value - List of requirement id and the requirement assignment on the
+    // compute node which connect to this volume
+    private Map<String,List<RequirementAssignmentData>> volumes;
 
-  // key - port type (port id excluding index),
-  // value - List of connected port node template ids, with this port type
-  private Map<String, List<String>> ports;
+    // key - port type (port id excluding index),
+    // value - List of connected port node template ids, with this port type
+    private Map<String, List<String>> ports;
 
-  /**
-   * Gets volumes.
-   *
-   * @return the volumes
-   */
-  public Map<String,List<RequirementAssignmentData>> getVolumes() {
-    return volumes;
-  }
-
-  /**
-   * Sets volumes.
-   *
-   * @param volumes the volumes
-   */
-  public void setVolumes(Map<String,List<RequirementAssignmentData>> volumes) {
-    this.volumes = volumes;
-  }
-
-  /**
-   * Gets ports.
-   *
-   * @return the ports
-   */
-  public Map<String, List<String>> getPorts() {
-    return ports;
-  }
-
-  /**
-   * Sets ports.
-   *
-   * @param ports the ports
-   */
-  public void setPorts(Map<String, List<String>> ports) {
-    this.ports = ports;
-  }
-
-  /**
-   * Add port.
-   *
-   * @param portType           the port type
-   * @param portNodeTemplateId the port node template id
-   */
-  public void addPort(String portType, String portNodeTemplateId) {
-    if (this.ports == null) {
-      this.ports = new HashMap<>();
+    public Map<String,List<RequirementAssignmentData>> getVolumes() {
+        return volumes;
     }
-    this.ports.putIfAbsent(portType, new ArrayList<>());
-    this.ports.get(portType).add(portNodeTemplateId);
-  }
 
-
-  /**
-   * Add volume.
-   *
-   * @param requirementId         the requirement id
-   * @param requirementAssignment the requirement assignment
-   */
-  public void addVolume(String requirementId, RequirementAssignment requirementAssignment) {
-    if (this.volumes == null) {
-      this.volumes = new HashMap<>();
+    public void setVolumes(Map<String,List<RequirementAssignmentData>> volumes) {
+        this.volumes = volumes;
     }
-    this.volumes.computeIfAbsent(requirementAssignment.getNode(), k -> new ArrayList<>())
-        .add(new RequirementAssignmentData(requirementId,
-            requirementAssignment));
-  }
+
+    public Map<String, List<String>> getPorts() {
+        return ports;
+    }
+
+    public void setPorts(Map<String, List<String>> ports) {
+        this.ports = ports;
+    }
+
+    public void addPort(String portType, String portNodeTemplateId) {
+        if (this.ports == null) {
+            this.ports = new HashMap<>();
+        }
+        this.ports.putIfAbsent(portType, new ArrayList<>());
+        this.ports.get(portType).add(portNodeTemplateId);
+    }
+
+    public void addVolume(String requirementId, RequirementAssignment requirementAssignment) {
+        if (this.volumes == null) {
+            this.volumes = new HashMap<>();
+        }
+        this.volumes.computeIfAbsent(requirementAssignment.getNode(), k -> new ArrayList<>())
+                .add(new RequirementAssignmentData(requirementId,
+                requirementAssignment));
+    }
 }
