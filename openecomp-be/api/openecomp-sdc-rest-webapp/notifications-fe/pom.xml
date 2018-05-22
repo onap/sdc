@@ -16,7 +16,6 @@
     </parent>
 
     <properties>
-        <spring.version>4.3.4.RELEASE</spring.version>
         <jetty.version>9.3.6.v20151106</jetty.version>
     </properties>
 
