@@ -1,5 +1,5 @@
 /*!
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright © 2016-2018 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,9 +13,12 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 import React from 'react';
 import PropTypes from 'prop-types';
 import i18n from 'nfvo-utils/i18n/i18n.js';
+import ClickOutsideWrapper from 'nfvo-components/clickOutsideWrapper/ClickOutsideWrapper.jsx';
+
 import {
     Tile,
     TileInfo,
@@ -71,12 +74,15 @@ class VendorItem extends React.Component {
                         </Button>
                         {shouldShowOverlay &&
                             softwareProductList.length > 0 && (
-                                <VSPOverlay
-                                    onMigrate={onMigrate}
-                                    VSPList={softwareProductList}
-                                    onSelectVSP={onSelectVSP}
-                                    onSeeMore={() => onVendorSelect(vendor)}
-                                />
+                                <ClickOutsideWrapper
+                                    onClose={this.handleClickOutSide}>
+                                    <VSPOverlay
+                                        onMigrate={onMigrate}
+                                        VSPList={softwareProductList}
+                                        onSelectVSP={onSelectVSP}
+                                        onSeeMore={() => onVendorSelect(vendor)}
+                                    />
+                                </ClickOutsideWrapper>
                             )}
                     </TileInfoLine>
                 </TileInfo>
@@ -101,6 +107,9 @@ class VendorItem extends React.Component {
         const { onAddVSP, vendor: { id } } = this.props;
         onAddVSP(id);
     }
+    handleClickOutSide = () => {
+        this.props.onVSPButtonClick(false);
+    };
 
     handleVspCountClick(e) {
         e.stopPropagation();

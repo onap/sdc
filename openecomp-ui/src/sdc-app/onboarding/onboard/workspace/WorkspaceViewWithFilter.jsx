@@ -44,12 +44,12 @@ const WorkspaceView = props => {
                 onAddVLM={
                     catalogActiveTab === catalogTabsMappping.ACTIVE
                         ? onAddLicenseModelClick
-                        : false
+                        : undefined
                 }
                 onAddVSP={
                     catalogActiveTab === catalogTabsMappping.ACTIVE
                         ? onAddSoftwareProductClick
-                        : false
+                        : undefined
                 }
                 onSelectVLM={(item, users) =>
                     onSelectLicenseModel(item, users, tabsMapping.WORKSPACE)
