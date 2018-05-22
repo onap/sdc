@@ -26,7 +26,6 @@ import org.onap.sdc.generator.data.GeneratorConstants;
 import org.onap.sdc.generator.error.IllegalAccessException;
 
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -36,7 +35,6 @@ public abstract class Model {
   protected Set<Widget> widgets = new HashSet<>();
   private String modelId;
   private String modelName;
-  private ModelType modelType;
   private String modelVersion;
   private String modelNameVersionId;
   private String modelDescription;
@@ -50,7 +48,7 @@ public abstract class Model {
   public static Model getModelFor(String toscaType) {
 
     Model modelToBeReturned = null;
-    while (toscaType != null && toscaType.lastIndexOf(".") != -1 && modelToBeReturned == null) {
+    while (isModelNotSet(toscaType, modelToBeReturned)) {
 
       switch (toscaType) {
 
@@ -90,6 +88,7 @@ public abstract class Model {
 
     return modelToBeReturned;
   }
+
 
   public abstract boolean addResource(Resource resource);
 
@@ -152,7 +151,6 @@ public abstract class Model {
    * @return the model type
    */
   public ModelType getModelType() {
-    //checkSupported();
     if (this instanceof Service) {
       return ModelType.SERVICE;
     } else if (this instanceof Resource) {
@@ -165,12 +163,10 @@ public abstract class Model {
   }
 
   public String getModelName() {
-    //checkSupported();
     return modelName;
   }
 
   public String getModelVersion() {
-    //checkSupported();
     return modelVersion;
   }
 
@@ -180,7 +176,6 @@ public abstract class Model {
   }
 
   public String getModelDescription() {
-    //checkSupported();
     return modelDescription;
   }
 
@@ -190,10 +185,8 @@ public abstract class Model {
    * @param modelIdentInfo the model ident info
    */
   public void populateModelIdentificationInformation(Map<String, String> modelIdentInfo) {
-    Iterator<String> iter = modelIdentInfo.keySet().iterator();
-    String property;
-    while (iter.hasNext()) {
-      switch (property = iter.next()) {
+    for (String property : modelIdentInfo.keySet()) {
+      switch (property) {
 
         case "vfModuleModelInvariantUUID":
         case "serviceInvariantUUID":
@@ -234,7 +227,6 @@ public abstract class Model {
         default:
           break;
       }
-      property = null;
     }
 
 
@@ -249,11 +241,14 @@ public abstract class Model {
     return widgets;
   }
 
-  private void checkSupported() throws IllegalAccessException {
+  private void checkSupported() {
     if (this instanceof Widget) {
       throw new IllegalAccessException(GeneratorConstants
           .GENERATOR_AAI_ERROR_UNSUPPORTED_WIDGET_OPERATION);
     }
   }
 
+  private static boolean isModelNotSet(String toscaType, Model modelToBeReturned) {
+    return toscaType != null && toscaType.lastIndexOf(".") != -1 && modelToBeReturned == null;
+  }
 }
