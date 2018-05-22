@@ -16,6 +16,8 @@ import org.apache.commons.configuration2.builder.fluent.Parameters;
 import org.apache.commons.configuration2.convert.DefaultListDelimiterHandler;
 import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.onap.config.api.Config;
 import org.onap.config.api.ConfigurationManager;
 import org.onap.config.impl.ConfigurationRepository;
@@ -48,6 +50,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Queue;
 import java.util.Set;
 import java.util.SortedSet;
@@ -65,6 +68,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.google.common.collect.ImmutableMap.builder;
+
+import static java.util.Optional.ofNullable;
 import static org.onap.config.api.Hint.EXTERNAL_LOOKUP;
 import static org.onap.config.api.Hint.LATEST_LOOKUP;
 import static org.onap.config.api.Hint.NODE_SPECIFIC;
@@ -73,19 +78,20 @@ import static org.onap.config.api.Hint.NODE_SPECIFIC;
  * The type Configuration utils.
  */
 public class ConfigurationUtils {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ConfigurationUtils.class);
 
     private ConfigurationUtils() {
     }
 
-    private static ImmutableMap<Class,Class> arrayClassMap;
+    private static ImmutableMap<Class, Class> arrayClassMap;
 
     static {
-        ImmutableMap.Builder<Class,Class> builder = builder();
-        builder.put(Byte.class,Byte[].class).put(Short.class, Short[].class)
-                .put(Integer.class,Integer[].class).put(Long.class,Long[].class)
-                .put(Float.class,Float[].class).put(Double.class,Double[].class)
-                .put(Boolean.class,Boolean[].class).put(Character.class,Character[].class)
-                .put(String.class,String[].class);
+        ImmutableMap.Builder<Class, Class> builder = builder();
+        builder.put(Byte.class, Byte[].class).put(Short.class, Short[].class)
+                .put(Integer.class, Integer[].class).put(Long.class, Long[].class)
+                .put(Float.class, Float[].class).put(Double.class, Double[].class)
+                .put(Boolean.class, Boolean[].class).put(Character.class, Character[].class)
+                .put(String.class, String[].class);
         arrayClassMap = builder.build();
     }
 
@@ -217,11 +223,10 @@ public class ConfigurationUtils {
      * @return the namespace
      */
     public static String getNamespace(URL url) {
-        String namespace = getNamespace(getConfiguration(url));
-        if (namespace != null) {
-            return namespace.toUpperCase();
-        }
-        return getNamespace(url.getFile().toUpperCase());
+
+        Optional<String> namespace = getConfiguration(url).flatMap(ConfigurationUtils::getNamespace).map(String::toUpperCase);
+
+        return namespace.orElseGet(() -> getNamespace(url.getFile().toUpperCase()));
     }
 
     /**
@@ -231,16 +236,16 @@ public class ConfigurationUtils {
      * @return the namespace
      */
     public static String getNamespace(File file) {
-        String namespace = getNamespace(getConfiguration(file));
-        if (namespace != null) {
-            return namespace.toUpperCase();
-        }
-        return getNamespace(file.getName().toUpperCase());
+        Optional<String> namespace = getConfiguration(file)
+                .flatMap(ConfigurationUtils::getNamespace)
+                .map(String::toUpperCase);
+        return namespace.orElseGet(() -> getNamespace(file.getName().toUpperCase()));
     }
 
-    private static String getNamespace(Configuration config) {
-        return config.getString(Constants.NAMESPACE_KEY) == null ? null
-                : config.getString(Constants.NAMESPACE_KEY).toUpperCase();
+    private static Optional<String> getNamespace(Configuration config) {
+        return ofNullable(config)
+                .flatMap(configuration -> ofNullable(configuration.getString(Constants.NAMESPACE_KEY)))
+                .map(String::toUpperCase);
     }
 
     /**
@@ -283,21 +288,26 @@ public class ConfigurationUtils {
      * @return the merge strategy
      */
     public static ConfigurationMode getMergeStrategy(URL url) {
-        String configMode = getMergeStrategy(getConfiguration(url));
-        if (configMode != null) {
-            try {
-                return Enum.valueOf(ConfigurationMode.class, configMode);
-            } catch (Exception exception) {
-                //do nothing
-            }
-        }
-        return getMergeStrategy(url.getFile().toUpperCase());
+        Optional<ConfigurationMode> configurationMode = getConfiguration(url).flatMap(ConfigurationUtils::getMergeStrategy).flatMap(ConfigurationUtils::convertConfigurationMode);
+        return configurationMode.orElseGet(() -> getMergeStrategy(url.getFile().toUpperCase()));
     }
 
-    private static String getMergeStrategy(Configuration config) {
-        return config.getString(Constants.MODE_KEY) == null ? null
-                : config.getString(Constants.MODE_KEY).toUpperCase();
+    private static Optional<ConfigurationMode> convertConfigurationMode(String configMode) {
+        ConfigurationMode configurationMode = null;
+        try {
+            configurationMode = ConfigurationMode.valueOf(configMode);
+        } catch (Exception exception) {
+            LOGGER.error("Could not find convert {} into configuration mode", configMode);
+        }
+        return Optional.ofNullable(configurationMode);
     }
+
+    private static Optional<String> getMergeStrategy(Configuration config) {
+        return ofNullable(config)
+                .flatMap(configuration -> ofNullable(configuration.getString(Constants.MODE_KEY)))
+                .map(String::toUpperCase);
+    }
+
 
     /**
      * Gets merge strategy.
@@ -306,15 +316,8 @@ public class ConfigurationUtils {
      * @return the merge strategy
      */
     public static ConfigurationMode getMergeStrategy(File file) {
-        String configMode = getMergeStrategy(getConfiguration(file));
-        if (configMode != null) {
-            try {
-                return Enum.valueOf(ConfigurationMode.class, configMode);
-            } catch (Exception exception) {
-                //do nothing
-            }
-        }
-        return getMergeStrategy(file.getName().toUpperCase());
+        Optional<ConfigurationMode> configurationMode = getConfiguration(file).flatMap(ConfigurationUtils::getMergeStrategy).flatMap(ConfigurationUtils::convertConfigurationMode);
+        return configurationMode.orElseGet(() -> getMergeStrategy(file.getName().toUpperCase()));
     }
 
     /**
@@ -356,7 +359,7 @@ public class ConfigurationUtils {
      * @param url the url
      * @return the configuration
      */
-    public static FileBasedConfiguration getConfiguration(URL url) {
+    public static Optional<FileBasedConfiguration> getConfiguration(URL url) {
         FileBasedConfiguration builder = null;
         try {
             ConfigurationType configType = ConfigurationUtils.getConfigType(url);
@@ -374,12 +377,12 @@ public class ConfigurationUtils {
                     builder = new Configurations().fileBased(YamlConfiguration.class, url);
                     break;
                 default:
-                    throw new ConfigurationException("Configuration type not supported:"+ configType);
+                    throw new ConfigurationException("Configuration type not supported:" + configType);
             }
         } catch (ConfigurationException exception) {
             exception.printStackTrace();
         }
-        return builder;
+        return ofNullable(builder);
     }
 
     /**
@@ -388,7 +391,7 @@ public class ConfigurationUtils {
      * @param file the file
      * @return the configuration
      */
-    public static FileBasedConfiguration getConfiguration(File file) {
+    public static Optional<FileBasedConfiguration> getConfiguration(File file) {
         FileBasedConfiguration builder = null;
         try {
             ConfigurationType configType = ConfigurationUtils.getConfigType(file);
@@ -406,12 +409,12 @@ public class ConfigurationUtils {
                     builder = new Configurations().fileBased(YamlConfiguration.class, file);
                     break;
                 default:
-                    throw new ConfigurationException("Configuration type not supported:"+ configType);
+                    throw new ConfigurationException("Configuration type not supported:" + configType);
             }
         } catch (ConfigurationException exception) {
             exception.printStackTrace();
         }
-        return builder;
+        return ofNullable(builder);
     }
 
     /**
@@ -439,7 +442,6 @@ public class ConfigurationUtils {
         }
         return String[].class;
     }
-
 
 
     /**
@@ -534,7 +536,7 @@ public class ConfigurationUtils {
                 builder = new ReloadingFileBasedConfigurationBuilder<>(YamlConfiguration.class);
                 break;
             default:
-                throw new IllegalArgumentException("Configuration type not supported:"+ configType);
+                throw new IllegalArgumentException("Configuration type not supported:" + configType);
         }
         return builder;
     }
