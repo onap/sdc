@@ -78,45 +78,26 @@ public class SubInterfaceConsolidationDataHandler implements ConsolidationDataHa
                                                        String sharedTranslatedResourceId) {
 
 
-        throw new UnsupportedOperationException(
-                "API removeParamNameFromAttrFuncList not supported for SubInterfaceConsolidationDataHandler");
+        throw new UnsupportedOperationException("API removeParamNameFromAttrFuncList "
+                  + "not supported for SubInterfaceConsolidationDataHandler");
+
 
     }
 
     private Optional<SubInterfaceTemplateConsolidationData> getSubInterfaceTemplateConsolidationData(
             TranslateTo subInterfaceTo, String subInterfaceNodeTemplateId) {
-
         Optional<String> parentPortNodeTemplateId =
                 HeatToToscaUtil.getSubInterfaceParentPortNodeTemplateId(subInterfaceTo);
-        return parentPortNodeTemplateId.map(s -> getSubInterfaceTemplateConsolidationData(subInterfaceTo, s,
-                subInterfaceNodeTemplateId));
-
+        return parentPortNodeTemplateId.map(s -> getSubInterfaceTemplateConsolidationData(subInterfaceTo,
+                s, subInterfaceNodeTemplateId));
     }
 
-    private SubInterfaceTemplateConsolidationData getSubInterfaceTemplateConsolidationData(TranslateTo subInterfaceTo,
-            String parentPortNodeTemplateId, String subInterfaceNodeTemplateId) {
-
+    private SubInterfaceTemplateConsolidationData getSubInterfaceTemplateConsolidationData(
+            TranslateTo subInterfaceTo, String parentPortNodeTemplateId,String subInterfaceNodeTemplateId) {
         String serviceTemplateFileName = ToscaUtil.getServiceTemplateFileName(subInterfaceTo.getServiceTemplate());
-        FilePortConsolidationData filePortConsolidationData =
-                portConsolidationData.getFilePortConsolidationData(serviceTemplateFileName);
-
-        if (filePortConsolidationData == null) {
-            filePortConsolidationData = new FilePortConsolidationData();
-            portConsolidationData.setFilePortConsolidationData(serviceTemplateFileName,
-                    filePortConsolidationData);
-        }
-
-        PortTemplateConsolidationData portTemplateConsolidationData =
-                filePortConsolidationData.getPortTemplateConsolidationData(parentPortNodeTemplateId);
-        if (portTemplateConsolidationData == null) {
-            portTemplateConsolidationData = new PortTemplateConsolidationData();
-            portTemplateConsolidationData.setNodeTemplateId(parentPortNodeTemplateId);
-            filePortConsolidationData.setPortTemplateConsolidationData(parentPortNodeTemplateId,
-                    portTemplateConsolidationData);
-        }
-
-        return portTemplateConsolidationData.getSubInterfaceResourceTemplateConsolidationData(
-                subInterfaceTo.getResource(), subInterfaceNodeTemplateId, parentPortNodeTemplateId);
+        Resource resource = subInterfaceTo.getResource();
+        return portConsolidationData.addSubInterfaceTemplateConsolidationData(
+                    serviceTemplateFileName, resource, subInterfaceNodeTemplateId, parentPortNodeTemplateId);
     }
 
 }
