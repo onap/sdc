@@ -1,0 +1,303 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_f75b8053",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/impl/resourcetranslation/ResourceTranslationContrailAttachPolicyImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-05-22T11:29:27Z",
+      "side": 1,
+      "message": "this message is too long to put directly in the BL. please set it as a template(String) as a class member and then use string format.",
+      "range": {
+        "startLine": 77,
+        "startChar": 25,
+        "endLine": 79,
+        "endChar": 111
+      },
+      "revId": "28f8f2078f1a0231f3d2719b67a021a794c4d580",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_17594c5b",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/impl/resourcetranslation/ResourceTranslationContrailServiceInstanceImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-05-22T11:29:27Z",
+      "side": 1,
+      "message": "this message is too long to put directly in the BL. please set it as a template(String) as a class member and then use string format.",
+      "range": {
+        "startLine": 84,
+        "startChar": 24,
+        "endLine": 86,
+        "endChar": 110
+      },
+      "revId": "28f8f2078f1a0231f3d2719b67a021a794c4d580",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_b755f81f",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/impl/resourcetranslation/ResourceTranslationContrailServiceInstanceImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 100,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-05-22T11:29:27Z",
+      "side": 1,
+      "message": "this message is too long to put directly in the BL. please set it as a template(String) as a class member and then use string format.",
+      "range": {
+        "startLine": 98,
+        "startChar": 25,
+        "endLine": 100,
+        "endChar": 82
+      },
+      "revId": "28f8f2078f1a0231f3d2719b67a021a794c4d580",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_d7520435",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/impl/resourcetranslation/ResourceTranslationContrailServiceInstanceImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 129,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-05-22T11:29:27Z",
+      "side": 1,
+      "message": "this message is too long to put directly in the BL. please set it as a template(String) as a class member and then use string format.",
+      "range": {
+        "startLine": 128,
+        "startChar": 25,
+        "endLine": 129,
+        "endChar": 106
+      },
+      "revId": "28f8f2078f1a0231f3d2719b67a021a794c4d580",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_573ef4db",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/impl/resourcetranslation/ResourceTranslationContrailServiceInstanceImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 334,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-05-22T11:29:27Z",
+      "side": 1,
+      "message": "this message is too long to put directly in the BL. please set it as a template(String) as a class member and then use string format.",
+      "range": {
+        "startLine": 331,
+        "startChar": 24,
+        "endLine": 334,
+        "endChar": 67
+      },
+      "revId": "28f8f2078f1a0231f3d2719b67a021a794c4d580",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_17206caf",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/impl/resourcetranslation/ResourceTranslationContrailServiceInstanceImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 358,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-05-22T11:29:27Z",
+      "side": 1,
+      "message": "this message is too long to put directly in the BL. please set it as a template(String) as a class member and then use string format.",
+      "range": {
+        "startLine": 357,
+        "startChar": 29,
+        "endLine": 358,
+        "endChar": 89
+      },
+      "revId": "28f8f2078f1a0231f3d2719b67a021a794c4d580",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_b72c18ae",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/impl/resourcetranslation/ResourceTranslationContrailServiceInstanceImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 373,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-05-22T11:29:27Z",
+      "side": 1,
+      "message": "this message is too long to put directly in the BL. please set it as a template(String) as a class member and then use string format.",
+      "range": {
+        "startLine": 370,
+        "startChar": 16,
+        "endLine": 373,
+        "endChar": 70
+      },
+      "revId": "28f8f2078f1a0231f3d2719b67a021a794c4d580",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_9229ea8b",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/impl/resourcetranslation/ResourceTranslationContrailV2VirtualNetworkImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 83,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-05-22T11:29:27Z",
+      "side": 1,
+      "message": "this function return immutable list. Although you can return this (and only because you check for empty list in the calling function), not a lot of developers know this function and might be thinking to add value to it in the calling function. therefor, I would prefer that you will return Optionl.empty and change the check to isPresent in the calling function.( I leave it to your decision)",
+      "range": {
+        "startLine": 83,
+        "startChar": 15,
+        "endLine": 83,
+        "endChar": 38
+      },
+      "revId": "28f8f2078f1a0231f3d2719b67a021a794c4d580",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_522362a7",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/impl/resourcetranslation/ResourceTranslationContrailV2VirtualNetworkImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 121,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-05-22T11:29:27Z",
+      "side": 1,
+      "message": "this message is too long to put directly in the BL. please set it as a template(String) as a class member and then use string format.",
+      "range": {
+        "startLine": 119,
+        "startChar": 25,
+        "endLine": 121,
+        "endChar": 95
+      },
+      "revId": "28f8f2078f1a0231f3d2719b67a021a794c4d580",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_f2370ee3",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/impl/resourcetranslation/ResourceTranslationContrailV2VirtualNetworkImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 166,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-05-22T11:29:27Z",
+      "side": 1,
+      "message": "this message is too long to put directly in the BL. please set it as a template(String) as a class member and then use string format.",
+      "range": {
+        "startLine": 164,
+        "startChar": 27,
+        "endLine": 166,
+        "endChar": 56
+      },
+      "revId": "28f8f2078f1a0231f3d2719b67a021a794c4d580",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_b23186ef",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/impl/resourcetranslation/ResourceTranslationContrailV2VirtualNetworkImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 202,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-05-22T11:29:27Z",
+      "side": 1,
+      "message": "this message is too long to put directly in the BL. please set it as a template(String) as a class member and then use string format.",
+      "range": {
+        "startLine": 200,
+        "startChar": 25,
+        "endLine": 202,
+        "endChar": 43
+      },
+      "revId": "28f8f2078f1a0231f3d2719b67a021a794c4d580",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_d22e928c",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/impl/resourcetranslation/ResourceTranslationContrailV2VlanSubInterfaceImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-05-22T11:29:27Z",
+      "side": 1,
+      "message": "this message is too long to put directly in the BL. please set it as a template(String) as a class member and then use string format.",
+      "range": {
+        "startLine": 69,
+        "startChar": 25,
+        "endLine": 71,
+        "endChar": 34
+      },
+      "revId": "28f8f2078f1a0231f3d2719b67a021a794c4d580",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_724bfe5f",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/impl/resourcetranslation/ResourceTranslationContrailV2VlanSubInterfaceImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 94,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-05-22T11:29:27Z",
+      "side": 1,
+      "message": "this message is too long to put directly in the BL. please set it as a template(String) as a class member and then use string format.",
+      "range": {
+        "startLine": 92,
+        "startChar": 28,
+        "endLine": 94,
+        "endChar": 73
+      },
+      "revId": "28f8f2078f1a0231f3d2719b67a021a794c4d580",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
