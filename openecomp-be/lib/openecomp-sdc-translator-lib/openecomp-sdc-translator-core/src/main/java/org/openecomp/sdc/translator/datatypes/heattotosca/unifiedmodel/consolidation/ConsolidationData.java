@@ -21,10 +21,10 @@ import org.openecomp.sdc.translator.services.heattotosca.ConsolidationEntityType
 
 public class ConsolidationData {
 
-    private ComputeConsolidationData computeConsolidationData;
+    private final ComputeConsolidationData computeConsolidationData;
     private final ComputeConsolidationDataHandler computeConsolidationDataHandler;
 
-    private PortConsolidationData portConsolidationData;
+    private final PortConsolidationData portConsolidationData;
     private final PortConsolidationDataHandler portConsolidationDataHandler;
     private final SubInterfaceConsolidationDataHandler subInterfaceConsolidationDataHandler;
 
@@ -54,7 +54,7 @@ public class ConsolidationData {
 
         switch (type) {
             case COMPUTE:
-                return Optional.of(getComputeConsolidationDataHelper());
+                return Optional.of(getComputeConsolidationDataHandler());
             case PORT:
                 return Optional.of(getPortConsolidationDataHandler());
             case SUB_INTERFACE:
@@ -67,7 +67,7 @@ public class ConsolidationData {
         }
     }
 
-    public ComputeConsolidationDataHandler getComputeConsolidationDataHelper() {
+    public ComputeConsolidationDataHandler getComputeConsolidationDataHandler() {
         return computeConsolidationDataHandler;
     }
 
@@ -83,56 +83,18 @@ public class ConsolidationData {
         return subInterfaceConsolidationDataHandler;
     }
 
-    /**
-     * Gets compute consolidation data.
-     *
-     * @return the compute consolidation data
-     */
     public ComputeConsolidationData getComputeConsolidationData() {
         return computeConsolidationData;
     }
 
-    /**
-     * Sets compute consolidation data.
-     *
-     * @param computeConsolidationData the compute consolidation data
-     */
-    public void setComputeConsolidationData(ComputeConsolidationData computeConsolidationData) {
-        this.computeConsolidationData = computeConsolidationData;
-    }
-
-    /**
-     * Gets port consolidation data.
-     *
-     * @return the port consolidation data
-     */
     public PortConsolidationData getPortConsolidationData() {
         return portConsolidationData;
     }
 
-    /**
-     * Sets port consolidation data.
-     *
-     * @param portConsolidationData the port consolidation data
-     */
-    public void setPortConsolidationData(PortConsolidationData portConsolidationData) {
-        this.portConsolidationData = portConsolidationData;
-    }
-
-    /**
-     * Gets nested consolidation data.
-     *
-     * @return the nested consolidation data
-     */
     public NestedConsolidationData getNestedConsolidationData() {
         return nestedConsolidationData;
     }
 
-    /**
-     * Sets nested consolidation data.
-     *
-     * @param nestedConsolidationData the nested consolidation data
-     */
     public void setNestedConsolidationData(NestedConsolidationData nestedConsolidationData) {
         this.nestedConsolidationData = nestedConsolidationData;
     }

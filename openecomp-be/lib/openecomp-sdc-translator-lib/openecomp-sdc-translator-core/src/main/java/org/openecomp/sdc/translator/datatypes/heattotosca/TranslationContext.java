@@ -35,8 +35,9 @@ import org.openecomp.sdc.tosca.services.ToscaUtil;
 import org.openecomp.sdc.translator.datatypes.heattotosca.to.TranslatedHeatResource;
 import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.composition.UnifiedCompositionEntity;
 import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.composition.UnifiedSubstitutionData;
-import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.ConsolidationData;
+import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.*;
 import org.openecomp.sdc.translator.services.heattotosca.ConfigConstants;
+import org.openecomp.sdc.translator.services.heattotosca.ConsolidationEntityType;
 import org.openecomp.sdc.translator.services.heattotosca.Constants;
 import org.openecomp.sdc.translator.services.heattotosca.NameExtractor;
 import org.openecomp.sdc.translator.services.heattotosca.errors.DuplicateResourceIdsInDifferentFilesErrorBuilder;
@@ -54,50 +55,52 @@ import java.util.Set;
 
 public class TranslationContext {
 
+  private ManifestFile manifest;
 
-  private static Map<String, Map<String, Map<String, String>>> translationMapping;
-  private static Map<String, ServiceTemplate> globalServiceTemplates;
-  private static Map<String, ImplementationConfiguration> nameExtractorImplMap;
+
+  private static final Map<String, Map<String, Map<String, String>>> translationMapping;
+  private static final Map<String, ServiceTemplate> globalServiceTemplates;
+  private static final Map<String, ImplementationConfiguration> nameExtractorImplMap;
+  private static final List<String> vfcGroupSubInterfaceExposedProperties;
+  private static final List<String> enrichPortResourceProperties;
+  private static final ImplementationConfiguration vfcInstanceGroupConfiguration;
+
   private static Map<String, ImplementationConfiguration> supportedConsolidationComputeResources;
   private static Map<String, ImplementationConfiguration> supportedConsolidationPortResources;
-  private static List<String> vfcGroupSubInterfaceExposedProperties;
-  private static List<String> enrichPortResourceProperties;
-  private static ImplementationConfiguration vfcInstanceGroupConfiguration;
-  private ManifestFile manifest;
-  private FileContentHandler files = new FileContentHandler();
-  private Map<String, FileData.Type> manifestFiles = new HashMap<>();
+
+  private final FileContentHandler files = new FileContentHandler();
+  private final Map<String, FileData.Type> manifestFiles = new HashMap<>();
   //Key - file name, value - file type
-  private Set<String> nestedHeatsFiles = new HashSet<>();
-  private FileContentHandler externalArtifacts = new FileContentHandler();
+  private final Set<String> nestedHeatsFiles = new HashSet<>();
+  private final FileContentHandler externalArtifacts = new FileContentHandler();
   // Key - heat file name,value - set of heat resource ids which were translated
-  private Map<String, Set<String>> translatedResources = new HashMap<>();
+  private final Map<String, Set<String>> translatedResources = new HashMap<>();
   // Key - heat file name, value - translated Node template id
-  private Map<String, Set<String>> heatStackGroupMembers = new HashMap<>();
+  private final Map<String, Set<String>> heatStackGroupMembers = new HashMap<>();
   // Key - heat file name, value - Map with Key - heat resource Id, Value - tosca entity template id
-  private Map<String, Map<String, String>> translatedIds = new HashMap<>();
+  private final Map<String, Map<String, String>> translatedIds = new HashMap<>();
   // key - service template type, value - translated service templates
-  private Map<String, ServiceTemplate> translatedServiceTemplates = new HashMap<>();
+  private final Map<String, ServiceTemplate> translatedServiceTemplates = new HashMap<>();
   //key - heat param name, value - shared resource data
-  private Map<String, TranslatedHeatResource> heatSharedResourcesByParam = new HashMap<>();
+  private final Map<String, TranslatedHeatResource> heatSharedResourcesByParam = new HashMap<>();
   //key - translated substitute service template file name, value - source nested heat file name
-  private Map<String, String> nestedHeatFileName = new HashMap<>();
+  private final Map<String, String> nestedHeatFileName = new HashMap<>();
   //Key - heat file name,value - Map eith key - heat pseudo param name,
   // value - translated tosca parameter name
-  private Map<String, Map<String, String>> usedHeatPseudoParams = new HashMap<>();
+  private final Map<String, Map<String, String>> usedHeatPseudoParams = new HashMap<>();
   //Consolidation data gathered for Unified TOSCA model
   private ConsolidationData consolidationData = new ConsolidationData();
   private Map<String, UnifiedSubstitutionData> unifiedSubstitutionData = new HashMap<>();
-  private Set<String> unifiedHandledServiceTemplates = new HashSet<>();
+  private final Set<String> unifiedHandledServiceTemplates = new HashSet<>();
 
-  private Map<String, Map<String, Map<String, Integer>>>
-      requirementIdAppearanceInNodeTemplate = new HashMap<>();
+  private final Map<String, Map<String, Map<String, Integer>>> requirementIdAppearanceInNodeTemplate = new HashMap<>();
 
-  private Set<String> serviceTemplatesWithoutNodeTemplateSection = new HashSet<>();
+  private final Set<String> serviceTemplatesWithoutNodeTemplateSection = new HashSet<>();
 
-  private Set<String> nodeTemplateIdsPointingToStWithoutNodeTemplates = new HashSet<>();
+  private final Set<String> nodeTemplateIdsPointingToStWithoutNodeTemplates = new HashSet<>();
 
   //Key - service template name, value - Map of key: node template id, value: properties with %index%
-  private Map<String, ListMultimap<String, String>> indexVarProperties = new HashMap<>();
+  private final Map<String, ListMultimap<String, String>> indexVarProperties = new HashMap<>();
 
   static {
     Configuration config = ConfigurationManager.lookup();
@@ -111,27 +114,23 @@ public class TranslationContext {
     }
     nameExtractorImplMap = config.populateMap(ConfigConstants.TRANSLATOR_NAMESPACE,
             ConfigConstants.NAMING_CONVENTION_EXTRACTOR_IMPL_KEY, ImplementationConfiguration.class);
-    supportedConsolidationComputeResources = config.populateMap(ConfigConstants
-            .MANDATORY_UNIFIED_MODEL_NAMESPACE, ConfigConstants
-            .SUPPORTED_CONSOLIDATION_COMPUTE_RESOURCES_KEY, ImplementationConfiguration.class);
-    supportedConsolidationPortResources = config.populateMap(ConfigConstants
-            .MANDATORY_UNIFIED_MODEL_NAMESPACE, ConfigConstants
-            .SUPPORTED_CONSOLIDATION_PORT_RESOURCES_KEY, ImplementationConfiguration.class);
-    enrichPortResourceProperties = config.getAsStringValues(ConfigConstants
-            .MANDATORY_UNIFIED_MODEL_NAMESPACE, ConfigConstants
-            .ENRICH_PORT_RESOURCE_PROP);
+    supportedConsolidationComputeResources = config.populateMap(ConfigConstants.MANDATORY_UNIFIED_MODEL_NAMESPACE,
+            ConfigConstants.SUPPORTED_CONSOLIDATION_COMPUTE_RESOURCES_KEY, ImplementationConfiguration.class);
+    supportedConsolidationPortResources = config.populateMap(ConfigConstants.MANDATORY_UNIFIED_MODEL_NAMESPACE,
+            ConfigConstants.SUPPORTED_CONSOLIDATION_PORT_RESOURCES_KEY, ImplementationConfiguration.class);
+    enrichPortResourceProperties = config.getAsStringValues(ConfigConstants.MANDATORY_UNIFIED_MODEL_NAMESPACE,
+            ConfigConstants.ENRICH_PORT_RESOURCE_PROP);
     vfcInstanceGroupConfiguration = getVfcInstanceGroupConfiguration(config);
-    vfcGroupSubInterfaceExposedProperties = config.getAsStringValues(ConfigConstants
-        .UNIFIED_MODEL_NAMESPACE, ConfigConstants.FULL_EXPOSED_PROPERTIES_KEY);
+    vfcGroupSubInterfaceExposedProperties = config.getAsStringValues(ConfigConstants.UNIFIED_MODEL_NAMESPACE,
+            ConfigConstants.FULL_EXPOSED_PROPERTIES_KEY);
   }
 
 
   private static ImplementationConfiguration getVfcInstanceGroupConfiguration(Configuration config) {
     Map<String, ImplementationConfiguration> supportedUnifiedModelProperties =
-        config.populateMap(ConfigConstants.UNIFIED_MODEL_NAMESPACE, ConfigConstants.UNIFIED_MODEL_IMPL_KEY,
-            ImplementationConfiguration.class);
-    return MapUtils.isEmpty(supportedUnifiedModelProperties) ? null :
-        supportedUnifiedModelProperties.get(ConfigConstants.VFC_INSTANCE_GROUP_KEY);
+            config.populateMap(ConfigConstants.UNIFIED_MODEL_NAMESPACE, ConfigConstants.UNIFIED_MODEL_IMPL_KEY,
+                    ImplementationConfiguration.class);
+    return MapUtils.isEmpty(supportedUnifiedModelProperties) ? null : supportedUnifiedModelProperties.get(ConfigConstants.VFC_INSTANCE_GROUP_KEY);
   }
 
   public static boolean isVfcInstanceGroupingEnabled() {
@@ -146,23 +145,19 @@ public class TranslationContext {
     return enrichPortResourceProperties;
   }
 
-  public static Map<String, ImplementationConfiguration>
-  getSupportedConsolidationComputeResources() {
+  public static Map<String, ImplementationConfiguration> getSupportedConsolidationComputeResources() {
     return supportedConsolidationComputeResources;
   }
 
-  public static void setSupportedConsolidationComputeResources(
-      Map<String, ImplementationConfiguration> supportedConsolidationComputeResources) {
-    TranslationContext.supportedConsolidationComputeResources =
-        supportedConsolidationComputeResources;
+  public static void setSupportedConsolidationComputeResources(Map<String, ImplementationConfiguration> supportedConsolidationComputeResources) {
+    TranslationContext.supportedConsolidationComputeResources = supportedConsolidationComputeResources;
   }
 
   public static Map<String, ImplementationConfiguration> getSupportedConsolidationPortResources() {
     return supportedConsolidationPortResources;
   }
 
-  public static void setSupportedConsolidationPortResources(
-      Map<String, ImplementationConfiguration> supportedConsolidationPortResources) {
+  public static void setSupportedConsolidationPortResources(Map<String, ImplementationConfiguration> supportedConsolidationPortResources) {
     TranslationContext.supportedConsolidationPortResources = supportedConsolidationPortResources;
   }
 
@@ -173,8 +168,7 @@ public class TranslationContext {
    * @return implemetation class instance
    */
   public static NameExtractor getNameExtractorImpl(String extractorImplKey) {
-    String nameExtractorImplClassName =
-        nameExtractorImplMap.get(extractorImplKey).getImplementationClass();
+    String nameExtractorImplClassName = nameExtractorImplMap.get(extractorImplKey).getImplementationClass();
 
     return CommonMethods.newInstance(nameExtractorImplClassName, NameExtractor.class);
   }
@@ -183,74 +177,54 @@ public class TranslationContext {
     return unifiedSubstitutionData;
   }
 
-  public void setUnifiedSubstitutionData(
-      Map<String, UnifiedSubstitutionData> unifiedSubstitutionData) {
+  public void setUnifiedSubstitutionData(Map<String, UnifiedSubstitutionData> unifiedSubstitutionData) {
     this.unifiedSubstitutionData = unifiedSubstitutionData;
   }
 
-  public void addCleanedNodeTemplate(String serviceTemplateName,
-                                     String nodeTemplateId,
-                                     UnifiedCompositionEntity unifiedCompositionEntity,
-                                     NodeTemplate nodeTemplate) {
+  public void addCleanedNodeTemplate(String serviceTemplateName, String nodeTemplateId, UnifiedCompositionEntity unifiedCompositionEntity,
+                                            NodeTemplate nodeTemplate) {
     this.unifiedSubstitutionData.putIfAbsent(serviceTemplateName, new UnifiedSubstitutionData());
-    this.unifiedSubstitutionData
-        .get(serviceTemplateName)
-        .addCleanedNodeTemplate(nodeTemplateId, unifiedCompositionEntity, nodeTemplate);
+    this.unifiedSubstitutionData.get(serviceTemplateName)
+                                .addCleanedNodeTemplate(nodeTemplateId, unifiedCompositionEntity, nodeTemplate);
   }
 
-  public Optional<List<String>> getIndexVarProperties(String serviceTemplateName,
-                                    String nodeTemplateId) {
-    ListMultimap<String, String> serviceTemplateIndexVarProperties = this.indexVarProperties
-        .get(serviceTemplateName);
+  public Optional<List<String>> getIndexVarProperties(String serviceTemplateName, String nodeTemplateId) {
+    ListMultimap<String, String> serviceTemplateIndexVarProperties = this.indexVarProperties.get(serviceTemplateName);
     if (Objects.nonNull(serviceTemplateIndexVarProperties)) {
       return Optional.of(this.indexVarProperties.get(serviceTemplateName).get(nodeTemplateId));
     }
     return Optional.empty();
   }
 
-  public void addIndexVarProperties(String serviceTemplateName,
-                                     String nodeTemplateId,
-                                     List<String> indexVarProperties) {
+  public void addIndexVarProperties(String serviceTemplateName, String nodeTemplateId, List<String> indexVarProperties) {
     this.indexVarProperties.putIfAbsent(serviceTemplateName, ArrayListMultimap.create());
-    this.indexVarProperties
-        .get(serviceTemplateName)
-        .putAll(nodeTemplateId, indexVarProperties);
+    this.indexVarProperties.get(serviceTemplateName).putAll(nodeTemplateId, indexVarProperties);
   }
 
-  public NodeTemplate getCleanedNodeTemplate(String serviceTemplateName,
-                                             String nodeTemplateId) {
-    return this.unifiedSubstitutionData.get(serviceTemplateName)
-        .getCleanedNodeTemplate(nodeTemplateId);
+  public NodeTemplate getCleanedNodeTemplate(String serviceTemplateName, String nodeTemplateId) {
+    return this.unifiedSubstitutionData.get(serviceTemplateName).getCleanedNodeTemplate(nodeTemplateId);
   }
 
-  public void addUnifiedNestedNodeTemplateId(String serviceTemplateName,
-                                             String nestedNodeTemplateId,
-                                             String unifiedNestedNodeTemplateId) {
+  public void addUnifiedNestedNodeTemplateId(String serviceTemplateName, String nestedNodeTemplateId, String unifiedNestedNodeTemplateId) {
     this.unifiedSubstitutionData.putIfAbsent(serviceTemplateName, new UnifiedSubstitutionData());
     this.unifiedSubstitutionData.get(serviceTemplateName)
-        .addUnifiedNestedNodeTemplateId(nestedNodeTemplateId, unifiedNestedNodeTemplateId);
+                                .addUnifiedNestedNodeTemplateId(nestedNodeTemplateId, unifiedNestedNodeTemplateId);
   }
 
-  public Optional<String> getUnifiedNestedNodeTemplateId(String serviceTemplateName,
-                                                         String nestedNodeTemplateId) {
-    return this.unifiedSubstitutionData.get(serviceTemplateName) == null ? Optional.empty()
-        : this.unifiedSubstitutionData.get(serviceTemplateName)
-            .getUnifiedNestedNodeTemplateId(nestedNodeTemplateId);
+  public Optional<String> getUnifiedNestedNodeTemplateId(String serviceTemplateName, String nestedNodeTemplateId) {
+    return this.unifiedSubstitutionData.get(serviceTemplateName) == null ? Optional.empty() :
+                   this.unifiedSubstitutionData.get(serviceTemplateName).getUnifiedNestedNodeTemplateId(nestedNodeTemplateId);
   }
 
-  public void addUnifiedNestedNodeTypeId(String serviceTemplateName,
-                                         String nestedNodeTypeId,
-                                         String unifiedNestedNodeTypeId) {
+  public void addUnifiedNestedNodeTypeId(String serviceTemplateName, String nestedNodeTypeId, String unifiedNestedNodeTypeId) {
     this.unifiedSubstitutionData.putIfAbsent(serviceTemplateName, new UnifiedSubstitutionData());
     this.unifiedSubstitutionData.get(serviceTemplateName)
-        .addUnifiedNestedNodeTypeId(nestedNodeTypeId, unifiedNestedNodeTypeId);
+                                .addUnifiedNestedNodeTypeId(nestedNodeTypeId, unifiedNestedNodeTypeId);
   }
 
-  public Optional<String> getUnifiedNestedNodeTypeId(String serviceTemplateName,
-                                                     String nestedNodeTemplateId) {
-    return this.unifiedSubstitutionData.get(serviceTemplateName) == null ? Optional.empty()
-        : this.unifiedSubstitutionData.get(serviceTemplateName)
-            .getUnifiedNestedNodeTypeId(nestedNodeTemplateId);
+  public Optional<String> getUnifiedNestedNodeTypeId(String serviceTemplateName, String nestedNodeTemplateId) {
+    return this.unifiedSubstitutionData.get(serviceTemplateName) == null ? Optional.empty() :
+                   this.unifiedSubstitutionData.get(serviceTemplateName).getUnifiedNestedNodeTypeId(nestedNodeTemplateId);
   }
 
   public ConsolidationData getConsolidationData() {
@@ -259,6 +233,26 @@ public class TranslationContext {
 
   public void setConsolidationData(ConsolidationData consolidationData) {
     this.consolidationData = consolidationData;
+  }
+
+  public Optional<ConsolidationDataHandler> getConsolidationDataHandler(ConsolidationEntityType type) {
+    return consolidationData.getConsolidationDataHandler(type);
+  }
+
+  public ComputeConsolidationDataHandler getComputeConsolidationDataHandler() {
+    return consolidationData.getComputeConsolidationDataHandler();
+  }
+
+  public PortConsolidationDataHandler getPortConsolidationDataHandler() {
+    return consolidationData.getPortConsolidationDataHandler();
+  }
+
+  public NestedConsolidationDataHandler getNestedConsolidationDataHandler() {
+    return consolidationData.getNestedConsolidationDataHandler();
+  }
+
+  public SubInterfaceConsolidationDataHandler getSubInterfaceComputeConsolidationDataHandler() {
+    return consolidationData.getSubInterfaceConsolidationDataHandler();
   }
 
   public void addManifestFile(String fileName, FileData.Type fileType) {
@@ -558,10 +552,7 @@ public class TranslationContext {
 
   public boolean isUnifiedHandledServiceTemplate(ServiceTemplate serviceTemplate) {
     String serviceTemplateFileName = ToscaUtil.getServiceTemplateFileName(serviceTemplate);
-    if (unifiedHandledServiceTemplates.contains(serviceTemplateFileName)) {
-      return true;
-    }
-    return false;
+    return unifiedHandledServiceTemplates.contains(serviceTemplateFileName)? true:false;
   }
 
 

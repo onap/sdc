@@ -41,7 +41,6 @@ public class EntityConsolidationData {
     private Map<String, List<RequirementAssignmentData>> nodesConnectedOut;
 
     //key - node template id which include get attribute function from this entity
-    //key - node template id which include get attribute function from this entity
     //value - List of getAttr data
     private Map<String, List<GetAttrFuncData>> nodesGetAttrIn;
 
@@ -52,20 +51,10 @@ public class EntityConsolidationData {
     //List of getAttr data
     private List<GetAttrFuncData> outputParametersGetAttrIn;
 
-    /**
-    * Gets node template id.
-    *
-    * @return the node template id
-    */
     public String getNodeTemplateId() {
         return nodeTemplateId;
     }
 
-    /**
-    * Sets node template id.
-    *
-    * @param nodeTemplateId the node template id
-    */
     public void setNodeTemplateId(String nodeTemplateId) {
         this.nodeTemplateId = nodeTemplateId;
     }
