@@ -26,7 +26,6 @@ import org.onap.sdc.generator.data.GeneratorConstants;
 import org.onap.sdc.generator.error.IllegalAccessException;
 
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -36,7 +35,6 @@ public abstract class Model {
   protected Set<Widget> widgets = new HashSet<>();
   private String modelId;
   private String modelName;
-  private ModelType modelType;
   private String modelVersion;
   private String modelNameVersionId;
   private String modelDescription;
@@ -50,7 +48,7 @@ public abstract class Model {
   public static Model getModelFor(String toscaType) {
 
     Model modelToBeReturned = null;
-    while (toscaType != null && toscaType.lastIndexOf(".") != -1 && modelToBeReturned == null) {
+    while (isModelNotSet(toscaType, modelToBeReturned)) {
 
       switch (toscaType) {
 
@@ -90,6 +88,7 @@ public abstract class Model {
 
     return modelToBeReturned;
   }
+
 
   public abstract boolean addResource(Resource resource);
 
@@ -152,7 +151,6 @@ public abstract class Model {
    * @return the model type
    */
   public ModelType getModelType() {
-    //checkSupported();
     if (this instanceof Service) {
       return ModelType.SERVICE;
     } else if (this instanceof Resource) {
@@ -165,12 +163,10 @@ public abstract class Model {
   }
 
   public String getModelName() {
-    //checkSupported();
     return modelName;
   }
 
   public String getModelVersion() {
-    //checkSupported();
     return modelVersion;
   }
 
@@ -180,7 +176,6 @@ public abstract class Model {
   }
 
   public String getModelDescription() {
-    //checkSupported();
     return modelDescription;
   }
 
@@ -190,51 +185,49 @@ public abstract class Model {
    * @param modelIdentInfo the model ident info
    */
   public void populateModelIdentificationInformation(Map<String, String> modelIdentInfo) {
-    Iterator<String> iter = modelIdentInfo.keySet().iterator();
-    String property;
-    while (iter.hasNext()) {
-      switch (property = iter.next()) {
+    for (Map.Entry<String,String> entry : modelIdentInfo.entrySet()) {
+      String property=entry.getKey();
+      switch (property) {
 
         case "vfModuleModelInvariantUUID":
         case "serviceInvariantUUID":
         case "resourceInvariantUUID":
         case "invariantUUID":
         case "providing_service_invariant_uuid":
-          modelId = modelIdentInfo.get(property);
+          modelId = entry.getValue();
           break;
         case "vfModuleModelUUID":
         case "resourceUUID":
         case "serviceUUID":
         case "UUID":
         case "providing_service_uuid":
-          modelNameVersionId = modelIdentInfo.get(property);
+          modelNameVersionId = entry.getValue();
           break;
         case "vfModuleModelVersion":
         case "serviceVersion":
         case "resourceversion":
         case "version":
-          modelVersion = modelIdentInfo.get(property);
+          modelVersion = entry.getValue();
           break;
         case "vfModuleModelName":
         case "serviceName":
         case "resourceName":
         case "name":
-          modelName = modelIdentInfo.get(property);
+          modelName = entry.getValue();
           break;
         case "serviceDescription":
         case "resourceDescription":
         case "vf_module_description":
         case "description":
-          modelDescription = modelIdentInfo.get(property);
+          modelDescription = entry.getValue();
           break;
         case "providing_service_name":
-          modelName = modelIdentInfo.get(property);
-          modelDescription = modelIdentInfo.get(property);
+          modelName = entry.getValue();
+          modelDescription = entry.getValue();
           break;
         default:
           break;
       }
-      property = null;
     }
 
 
@@ -249,11 +242,14 @@ public abstract class Model {
     return widgets;
   }
 
-  private void checkSupported() throws IllegalAccessException {
+  private void checkSupported() {
     if (this instanceof Widget) {
       throw new IllegalAccessException(GeneratorConstants
           .GENERATOR_AAI_ERROR_UNSUPPORTED_WIDGET_OPERATION);
     }
   }
 
+  private static boolean isModelNotSet(String toscaType, Model modelToBeReturned) {
+    return toscaType != null && toscaType.lastIndexOf(".") != -1 && modelToBeReturned == null;
+  }
 }
