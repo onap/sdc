@@ -63,9 +63,6 @@ public enum PropertyTypeExt {
    * @return the property type by display name
    */
   public static PropertyTypeExt getPropertyTypeByDisplayName(String displayName) {
-    if (mMap == null) {
-      initializeMapping();
-    }
     if (mMap.containsKey(displayName)) {
       return mMap.get(displayName);
     }

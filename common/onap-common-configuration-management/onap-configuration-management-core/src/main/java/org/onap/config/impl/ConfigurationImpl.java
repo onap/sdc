@@ -206,12 +206,13 @@ public class ConfigurationImpl implements org.onap.config.api.Configuration {
   @Override
   public <T> T get(String tenant, String namespace, String key, Class<T> clazz, Hint... hints) {
 
-    String[] tenantNamespaceArrayy = null;
-    if (tenant == null && namespace != null
-        && (tenantNamespaceArrayy = namespace.split(Constants.TENANT_NAMESPACE_SAPERATOR)).length
-        > 1) {
-      tenant = tenantNamespaceArrayy[0];
-      namespace = tenantNamespaceArrayy[1];
+    String[] tenantNamespaceArrayy;
+    if (tenant == null && namespace != null) {
+      tenantNamespaceArrayy = namespace.split(Constants.TENANT_NAMESPACE_SAPERATOR);
+      if (tenantNamespaceArrayy.length > 1) {
+        tenant = tenantNamespaceArrayy[0];
+        namespace = tenantNamespaceArrayy[1];
+      }
     }
 
     tenant = ConfigurationRepository.lookup().isValidTenant(tenant) ? tenant.toUpperCase()
