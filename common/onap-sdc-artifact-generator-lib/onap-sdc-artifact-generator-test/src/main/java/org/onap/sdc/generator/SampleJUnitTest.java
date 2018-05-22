@@ -1556,14 +1556,15 @@ public class SampleJUnitTest extends TestCase {
 
     public static void readPayload(List<Artifact> inputArtifacts,InputStream fis, String fileName) throws IOException {
         byte[] payload = new byte[fis.available()];
-        fis.read(payload);
-        String checksum = GeneratorUtil.checkSum(payload);
-        byte[] encodedPayload = GeneratorUtil.encode(payload);
-        Artifact artifact = new Artifact(AAI_ARTIFACT_TYPE, AAI_ARTIFACT_GROUP_TYPE, checksum, encodedPayload);
-        artifact.setName(fileName);
-        artifact.setLabel(fileName);
-        artifact.setDescription(fileName);
-        inputArtifacts.add(artifact);
+        if (fis.read(payload) > 0) {
+            String checksum = GeneratorUtil.checkSum(payload);
+            byte[] encodedPayload = GeneratorUtil.encode(payload);
+            Artifact artifact = new Artifact(AAI_ARTIFACT_TYPE, AAI_ARTIFACT_GROUP_TYPE, checksum, encodedPayload);
+            artifact.setName(fileName);
+            artifact.setLabel(fileName);
+            artifact.setDescription(fileName);
+            inputArtifacts.add(artifact);
+        }
     }
 
 
