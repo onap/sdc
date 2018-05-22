@@ -168,11 +168,10 @@ public class ConsolidationDataUtil {
 
         Optional<String> parentPortNodeTemplateId =
                 HeatToToscaUtil.getSubInterfaceParentPortNodeTemplateId(subInterfaceTo);
-        if (parentPortNodeTemplateId.isPresent()) {
-            return Optional.ofNullable(getSubInterfaceTemplateConsolidationData(subInterfaceTo,
-                    parentPortNodeTemplateId.get(), subInterfaceNodeTemplateId));
-        }
-        return Optional.empty();
+
+        return parentPortNodeTemplateId.map(s -> getSubInterfaceTemplateConsolidationData(subInterfaceTo,
+                s, subInterfaceNodeTemplateId));
+
     }
 
     private static SubInterfaceTemplateConsolidationData getSubInterfaceTemplateConsolidationData(
@@ -201,7 +200,7 @@ public class ConsolidationDataUtil {
                     portTemplateConsolidationData);
         }
 
-        return portTemplateConsolidationData.getSubInterfaceResourceTemplateConsolidationData(
+        return portTemplateConsolidationData.addSubInterfaceTemplateConsolidationData(
                 subInterfaceTo.getResource(), subInterfaceNodeTemplateId, parentPortNodeTemplateId);
     }
 
@@ -323,14 +322,16 @@ public class ConsolidationDataUtil {
                                                             String portResourceType,
                                                             String portNodeTemplateId) {
         TranslationContext translationContext = translateTo.getContext();
+        String computeNodeTemplateId = translateTo.getTranslatedId();
+        String portType = getPortType(portNodeTemplateId);
+
+        translationContext.getComputeConsolidationDataHandler().addPortToConsolidationData(
+                translateTo, computeNodeType, computeNodeTemplateId, portType, portNodeTemplateId);
+
         ServiceTemplate serviceTemplate = translateTo.getServiceTemplate();
-        ComputeTemplateConsolidationData computeTemplateConsolidationData =
-                getComputeTemplateConsolidationData(translationContext, serviceTemplate, computeNodeType,
-                        translateTo.getTranslatedId());
-        computeTemplateConsolidationData.addPort(getPortType(portNodeTemplateId), portNodeTemplateId);
-        // create port in consolidation data
-        getPortTemplateConsolidationData(translationContext, serviceTemplate, portResourceId,
-                portResourceType, portNodeTemplateId);
+        String serviceTemplateFileName = ToscaUtil.getServiceTemplateFileName(serviceTemplate);
+        translationContext.getPortConsolidationDataHandler().addConsolidationData(
+                serviceTemplateFileName, portResourceId, portResourceType, portNodeTemplateId);
     }
 
     /**
@@ -390,7 +391,7 @@ public class ConsolidationDataUtil {
                 requirementId);
 
         Optional<ConsolidationDataHandler> consolidationDataHandler =
-                translationContext.getConsolidationData().getConsolidationDataHandler(consolidationEntityType);
+                translationContext.getConsolidationDataHandler(consolidationEntityType);
         consolidationDataHandler.ifPresent(handler -> handler.addNodesConnectedOut(
                 translateTo, nodeTemplateId, requirementId, requirementAssignment));
 
@@ -402,7 +403,7 @@ public class ConsolidationDataUtil {
      * @param translateTo             the translate to
      * @param sourceNodeTemplateId    the node template id of the source node
      * @param consolidationEntityType Entity type (compute or port)
-     * @param targetResourceId           Target Resource Id
+     * @param targetResourceId        Target Resource Id
      * @param requirementId           Requirement Id
      * @param requirementAssignment   the requirement assignment
      */
@@ -415,7 +416,7 @@ public class ConsolidationDataUtil {
 
         TranslationContext translationContext = translateTo.getContext();
         Optional<ConsolidationDataHandler> consolidationDataHandler =
-                translationContext.getConsolidationData().getConsolidationDataHandler(consolidationEntityType);
+                translationContext.getConsolidationDataHandler(consolidationEntityType);
         String dependentNodeTemplateId = requirementAssignment.getNode();
         consolidationDataHandler.ifPresent(
                 handler -> handler.addNodesConnectedIn(translateTo, sourceNodeTemplateId, dependentNodeTemplateId,
@@ -557,8 +558,12 @@ public class ConsolidationDataUtil {
     public static void updateNestedNodeTemplateId(TranslateTo translateTo) {
         TranslationContext context = translateTo.getContext();
         ServiceTemplate serviceTemplate = translateTo.getServiceTemplate();
-        getNestedTemplateConsolidationData(
-                context, serviceTemplate, translateTo.getHeatFileName(), translateTo.getTranslatedId());
+        String serviceTemplateFileName = ToscaUtil.getServiceTemplateFileName(serviceTemplate);
+        // create nested in consolidation data
+        context.getNestedConsolidationDataHandler()
+                .addConsolidationData(serviceTemplateFileName, context,
+                  translateTo.getHeatFileName(), translateTo.getTranslatedId());
+
     }
 
     public static void removeSharedResource(ServiceTemplate serviceTemplate,
@@ -577,16 +582,13 @@ public class ConsolidationDataUtil {
     }
 
 
-    public static Optional<ConsolidationDataHandler> getConsolidationDataHandler(
+    private static Optional<ConsolidationDataHandler> getConsolidationDataHandler(
             HeatOrchestrationTemplate heatOrchestrationTemplate, TranslationContext context,
             String contrailSharedResourceId) {
-
         Resource resource = heatOrchestrationTemplate.getResources().get(contrailSharedResourceId);
         ConsolidationEntityType consolidationEntityType = ConsolidationEntityType.OTHER;
         consolidationEntityType.setEntityType(resource, resource, context);
-        return context.getConsolidationData().getConsolidationDataHandler(
-                consolidationEntityType.getSourceEntityType());
-
+        return context.getConsolidationDataHandler(consolidationEntityType.getSourceEntityType());
     }
 
     public static void updateNodeGetAttributeIn(EntityConsolidationData entityConsolidationData,

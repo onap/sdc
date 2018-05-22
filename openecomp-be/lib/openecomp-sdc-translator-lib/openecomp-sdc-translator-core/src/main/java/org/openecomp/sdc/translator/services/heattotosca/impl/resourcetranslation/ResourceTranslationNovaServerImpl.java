@@ -49,6 +49,7 @@ import org.openecomp.sdc.tosca.datatypes.ToscaNodeType;
 import org.openecomp.sdc.tosca.datatypes.ToscaRelationshipType;
 import org.openecomp.sdc.tosca.services.DataModelUtil;
 import org.openecomp.sdc.tosca.services.ToscaConstants;
+import org.openecomp.sdc.tosca.services.ToscaUtil;
 import org.openecomp.sdc.translator.datatypes.heattotosca.AttachedResourceId;
 import org.openecomp.sdc.translator.datatypes.heattotosca.PropertyRegexMatcher;
 import org.openecomp.sdc.translator.datatypes.heattotosca.TranslationContext;
@@ -75,9 +76,11 @@ public class ResourceTranslationNovaServerImpl extends ResourceTranslationBase {
         ServiceTemplate serviceTemplate = translateTo.getServiceTemplate();
         String nodeTypeRef = createLocalNodeType(serviceTemplate, translateTo.getResource(),
                 translateTo.getResourceId(), translateTo.getTranslatedId());
-        //create compute in consolidation data
-        ConsolidationDataUtil.getComputeTemplateConsolidationData(context, serviceTemplate,
-                nodeTypeRef, translateTo.getTranslatedId());
+        String serviceTemplateFileName = ToscaUtil.getServiceTemplateFileName(serviceTemplate);
+
+        context.getComputeConsolidationDataHandler().addConsolidationData(
+                serviceTemplateFileName, nodeTypeRef, translateTo.getTranslatedId());
+
         NodeTemplate novaNodeTemplate = new NodeTemplate();
         novaNodeTemplate.setType(nodeTypeRef);
         HeatOrchestrationTemplate heatOrchestrationTemplate =
@@ -96,13 +99,13 @@ public class ResourceTranslationNovaServerImpl extends ResourceTranslationBase {
     }
 
     private void manageNovaServerGroupMapping(TranslateTo translateTo,
-                                              NodeTemplate novaNodeTemplate) {
-        Map<String, Object> properties = translateTo.getResource().getProperties();
+                                                     NodeTemplate novaNodeTemplate) {
+        Map properties = translateTo.getResource().getProperties();
         if (isSchedulerHintsPropExist(properties)) {
             Object schedulerHints = properties.get(ResourceReferenceFunctions.SCHEDULER_HINTS.getFunction());
             if (schedulerHints instanceof Map) {
                 addServerGroupHintsToPoliciesGroups(translateTo,
-                        novaNodeTemplate, (Map<String, Object>) schedulerHints);
+                        novaNodeTemplate, (Map) schedulerHints);
             } else {
                 logger.warn("'scheduler_hints' property of resource '{}' is not valid. This property should be a map",
                         translateTo.getResourceId());
@@ -111,8 +114,8 @@ public class ResourceTranslationNovaServerImpl extends ResourceTranslationBase {
     }
 
     private void addServerGroupHintsToPoliciesGroups(TranslateTo translateTo,
-                                                     NodeTemplate novaNodeTemplate,
-                                                     Map<String, Object> schedulerHints) {
+                                                            NodeTemplate novaNodeTemplate,
+                                                            Map schedulerHints) {
         for (Object hint : schedulerHints.values()) {
             Optional<AttachedResourceId> attachedResourceId = HeatToToscaUtil
                     .extractAttachedResourceId(translateTo.getHeatFileName(), translateTo
@@ -130,18 +133,18 @@ public class ResourceTranslationNovaServerImpl extends ResourceTranslationBase {
     }
 
     private void addServerGroupHintGetParam(TranslateTo translateTo, NodeTemplate novaNodeTemplate,
-                                            Object serverGroupResourceToTranslate) {
+                                                   Object serverGroupResourceToTranslate) {
         TranslatedHeatResource translatedServerGroupResource = translateTo.getContext()
                 .getHeatSharedResourcesByParam().get(serverGroupResourceToTranslate);
         if (Objects.nonNull(translatedServerGroupResource)
-                && !HeatToToscaUtil.isHeatFileNested(translateTo, translateTo.getHeatFileName())
-                && isResourceTypeServerGroup(translatedServerGroupResource)) {
+                    && !HeatToToscaUtil.isHeatFileNested(translateTo, translateTo.getHeatFileName())
+                    && isResourceTypeServerGroup(translatedServerGroupResource)) {
             Map<String, GroupDefinition> groups =
                     translateTo.getServiceTemplate().getTopology_template().getGroups();
             if (MapUtils.isNotEmpty(groups) && Objects.nonNull(groups.get(translatedServerGroupResource
-                    .getTranslatedId()))) {
+                                                                                  .getTranslatedId()))) {
                 groups.get(translatedServerGroupResource.getTranslatedId()).getMembers()
-                        .add(translateTo.getTranslatedId());
+                      .add(translateTo.getTranslatedId());
                 //Add group Id to compute consolidation data
                 updateComputeConsolidationDataGroup(translateTo, novaNodeTemplate,
                         translatedServerGroupResource.getTranslatedId());
@@ -150,7 +153,7 @@ public class ResourceTranslationNovaServerImpl extends ResourceTranslationBase {
     }
 
     private void addServerGroupHintGetResource(TranslateTo translateTo, NodeTemplate novaNodeTemplate,
-                                               Object serverGroupResourceToTranslate) {
+                                                      Object serverGroupResourceToTranslate) {
         boolean isHintOfTypeNovaServerGroup = isHintOfTypeNovaServerGroup(translateTo
                 .getHeatOrchestrationTemplate(), serverGroupResourceToTranslate);
         if (isHintOfTypeNovaServerGroup) {
@@ -164,25 +167,25 @@ public class ResourceTranslationNovaServerImpl extends ResourceTranslationBase {
     }
 
     private void updateComputeConsolidationDataGroup(TranslateTo translateTo,
-                                                     NodeTemplate novaNodeTemplate,
-                                                     String groupId) {
+                                                            NodeTemplate novaNodeTemplate,
+                                                            String groupId) {
         TranslationContext translationContext = translateTo.getContext();
         ServiceTemplate serviceTemplate = translateTo.getServiceTemplate();
         ComputeTemplateConsolidationData computeTemplateConsolidationData = ConsolidationDataUtil
                 .getComputeTemplateConsolidationData(translationContext, serviceTemplate,
-                        novaNodeTemplate.getType(), translateTo.getTranslatedId());
+                novaNodeTemplate.getType(), translateTo.getTranslatedId());
         ConsolidationDataUtil.updateGroupIdInConsolidationData(computeTemplateConsolidationData, groupId);
     }
 
     private boolean isHintOfTypeNovaServerGroup(HeatOrchestrationTemplate heatOrchestrationTemplate,
-                                                Object resourceToTranslate) {
+                                                       Object resourceToTranslate) {
         return heatOrchestrationTemplate.getResources().get(resourceToTranslate).getType()
-                .equals(HeatResourcesTypes.NOVA_SERVER_GROUP_RESOURCE_TYPE.getHeatResource());
+                                        .equals(HeatResourcesTypes.NOVA_SERVER_GROUP_RESOURCE_TYPE.getHeatResource());
     }
 
     private void addNovaServerToPolicyGroup(TranslateTo translateTo,
-                                            String resourceToTranslate,
-                                            NodeTemplate novaNodeTemplate) {
+                                                   String resourceToTranslate,
+                                                   NodeTemplate novaNodeTemplate) {
         Resource serverGroup =
                 HeatToToscaUtil.getResource(translateTo.getHeatOrchestrationTemplate(), resourceToTranslate,
                         translateTo.getHeatFileName());
@@ -192,18 +195,18 @@ public class ResourceTranslationNovaServerImpl extends ResourceTranslationBase {
                         translateTo.getContext());
         if (serverGroupTranslatedId.isPresent()) {
             translateTo.getServiceTemplate().getTopology_template().getGroups().get(serverGroupTranslatedId.get())
-                    .getMembers().add(translateTo.getTranslatedId());
+                       .getMembers().add(translateTo.getTranslatedId());
             updateComputeConsolidationDataGroup(translateTo, novaNodeTemplate, serverGroupTranslatedId.get());
         }
     }
 
-    private boolean isSchedulerHintsPropExist(Map<String, Object> properties) {
+    private boolean isSchedulerHintsPropExist(Map properties) {
         return !MapUtils.isEmpty(properties)
-                && Objects.nonNull(properties.get(ResourceReferenceFunctions.SCHEDULER_HINTS.getFunction()));
+                       && Objects.nonNull(properties.get(ResourceReferenceFunctions.SCHEDULER_HINTS.getFunction()));
     }
 
     private void manageNovaServerBlockDeviceMapping(TranslateTo translateTo,
-                                                    NodeTemplate novaNodeTemplate) {
+                                                           NodeTemplate novaNodeTemplate) {
         Resource resource = translateTo.getResource();
         List<Map<String, Object>> blockDeviceMappingList = getBlockDeviceMappingList(resource);
         if (CollectionUtils.isEmpty(blockDeviceMappingList)) {
@@ -216,13 +219,13 @@ public class ResourceTranslationNovaServerImpl extends ResourceTranslationBase {
     }
 
     private int connectBlockDeviceToNovaServer(TranslateTo translateTo, NodeTemplate novaNodeTemplate, int index,
-                                               Map<String, Object> blockDeviceMapping) {
+                                                      Map<String, Object> blockDeviceMapping) {
         Object volumeIdObject = blockDeviceMapping.get(VOL_ID_PROPERTY_NAME);
         Object snapshotIdObject = blockDeviceMapping.get(SNAPSHOT_ID_PROPERTY_NAME);
 
         if (volumeIdObject == null && snapshotIdObject == null) {
             logger.warn("Resource '{}' has block_device_mapping property with empty/missing volume_id and snapshot_id "
-                    + "properties. Entry number {}, this entry will be ignored in TOSCA translation.",
+                                + "properties. Entry number {}, this entry will be ignored in TOSCA translation.",
                     translateTo.getResourceId(), (index + 1));
             index++;
             return index;
@@ -238,7 +241,7 @@ public class ResourceTranslationNovaServerImpl extends ResourceTranslationBase {
     }
 
     private void connectBlockDeviceUsingVolumeId(TranslateTo translateTo, NodeTemplate novaNodeTemplate,
-                                                 Object volumeIdObject) {
+                                                        Object volumeIdObject) {
         Optional<AttachedResourceId> attachedVolumeId = HeatToToscaUtil
                 .extractAttachedResourceId(translateTo.getHeatFileName(), translateTo.getHeatOrchestrationTemplate(),
                         translateTo.getContext(), volumeIdObject);
@@ -249,8 +252,8 @@ public class ResourceTranslationNovaServerImpl extends ResourceTranslationBase {
     }
 
     private void connectBlockDeviceUsingSnapshotId(TranslateTo translateTo, NodeTemplate novaNodeTemplate,
-                                                   Object snapshotIdObject, int index,
-                                                   Map<String, Object> blockDeviceMapping) {
+                                                          Object snapshotIdObject, int index,
+                                                          Map<String, Object> blockDeviceMapping) {
         String novaServerTranslatedId = translateTo.getTranslatedId();
         String volumeResourceId;
         Optional<AttachedResourceId> attachedSnapshotId = HeatToToscaUtil
@@ -269,7 +272,7 @@ public class ResourceTranslationNovaServerImpl extends ResourceTranslationBase {
     }
 
     private void connectNovaServerToVolume(NodeTemplate novaNodeTemplate, String volumeResourceId,
-                                           String relationshipId, TranslateTo translateTo) {
+                                                  String relationshipId, TranslateTo translateTo) {
         RequirementAssignment requirementAssignment = new RequirementAssignment();
         requirementAssignment.setCapability(ToscaCapabilityType.NATIVE_ATTACHMENT);
         requirementAssignment.setNode(volumeResourceId);
@@ -287,8 +290,8 @@ public class ResourceTranslationNovaServerImpl extends ResourceTranslationBase {
     }
 
     private void createCinderVolumeNodeTemplate(TranslateTo translateTo,
-                                                String volumeResourceId,
-                                                Map<String, Object> blockDeviceMapping) {
+                                                       String volumeResourceId,
+                                                       Map<String, Object> blockDeviceMapping) {
         NodeTemplate cinderVolumeNodeTemplate = new NodeTemplate();
         cinderVolumeNodeTemplate.setType(ToscaNodeType.CINDER_VOLUME);
         cinderVolumeNodeTemplate.setProperties(TranslatorHeatToToscaPropertyConverter
@@ -301,8 +304,8 @@ public class ResourceTranslationNovaServerImpl extends ResourceTranslationBase {
     }
 
     private void createVolumeAttachesToRelationship(ServiceTemplate serviceTemplate,
-                                                    String deviceName, String novaServerTranslatedId,
-                                                    String volumeId, String relationshipId) {
+                                                           String deviceName, String novaServerTranslatedId,
+                                                           String volumeId, String relationshipId) {
         RelationshipTemplate relationshipTemplate = new RelationshipTemplate();
         relationshipTemplate.setType(ToscaRelationshipType.CINDER_VOLUME_ATTACHES_TO);
         Map<String, Object> properties = new HashMap<>();
@@ -327,7 +330,7 @@ public class ResourceTranslationNovaServerImpl extends ResourceTranslationBase {
         if (blockDeviceMappingList != null && blockDeviceMappingV2List != null) {
             blockDeviceMappingList.addAll(blockDeviceMappingV2List);
         } else if (CollectionUtils.isEmpty(blockDeviceMappingList)
-                && CollectionUtils.isEmpty(blockDeviceMappingV2List)) {
+                           && CollectionUtils.isEmpty(blockDeviceMappingV2List)) {
             return Collections.emptyList();
 
         } else {
@@ -338,7 +341,7 @@ public class ResourceTranslationNovaServerImpl extends ResourceTranslationBase {
     }
 
     private void manageNovaServerNetwork(TranslateTo translateTo,
-                                         NodeTemplate novaNodeTemplate) {
+                                                NodeTemplate novaNodeTemplate) {
         Resource resource = translateTo.getResource();
         String translatedId = translateTo.getTranslatedId();
 
@@ -359,9 +362,9 @@ public class ResourceTranslationNovaServerImpl extends ResourceTranslationBase {
     }
 
     private void getOrTranslatePortTemplate(TranslateTo translateTo,
-                                            Object port,
-                                            String novaServerResourceId,
-                                            NodeTemplate novaNodeTemplate) {
+                                                   Object port,
+                                                   String novaServerResourceId,
+                                                   NodeTemplate novaNodeTemplate) {
         String heatFileName = translateTo.getHeatFileName();
         HeatOrchestrationTemplate heatOrchestrationTemplate = translateTo.getHeatOrchestrationTemplate();
         TranslationContext context = translateTo.getContext();
@@ -373,13 +376,14 @@ public class ResourceTranslationNovaServerImpl extends ResourceTranslationBase {
         String resourceId = (String) attachedPortId.get().getEntityId();
         Resource portResource = HeatToToscaUtil.getResource(heatOrchestrationTemplate, resourceId, heatFileName);
         if (!isSupportedPortResource(portResource)) {
-            logger.warn("NovaServer connect to port resource with id : {} and type : {}. This resource type is not "
-                           + "supported, therefore the connection to the port is ignored. Supported types are: {}, {}",
-                    resourceId, portResource.getType(), HeatResourcesTypes.NEUTRON_PORT_RESOURCE_TYPE.getHeatResource(),
+            logger.warn("NovaServer connect to port resource with id : {} and type : {}. This resource type is "
+                    + "not " + "supported, therefore the connection to the port is ignored. "
+                    + "Supported types are: {}, {}", resourceId, portResource.getType(),
+                    HeatResourcesTypes.NEUTRON_PORT_RESOURCE_TYPE.getHeatResource(),
                     HeatResourcesTypes.CONTRAIL_V2_VIRTUAL_MACHINE_INTERFACE_RESOURCE_TYPE.getHeatResource());
             return;
         } else if (HeatResourcesTypes.CONTRAIL_V2_VIRTUAL_MACHINE_INTERFACE_RESOURCE_TYPE
-                .getHeatResource().equals(portResource.getType())) {
+                           .getHeatResource().equals(portResource.getType())) {
             Map<String, Object> properties = portResource.getProperties();
             if (!MapUtils.isEmpty(properties) && Objects.nonNull(properties.get(HeatConstants.PORT_TUPLE_REFS))) {
                 novaNodeTemplate.getProperties().put(ToscaConstants.CONTRAIL_SERVICE_INSTANCE_IND, true);
@@ -397,21 +401,21 @@ public class ResourceTranslationNovaServerImpl extends ResourceTranslationBase {
             ConsolidationDataUtil.updatePortInConsolidationData(translateTo, novaNodeTemplate.getType(), resourceId,
                     portResource.getType(), translatedPortId.get());
         } else {
-            logger.warn("NovaServer connect to port resource with id : {} and type : {}. This resource type is not "
-                    + "supported, therefore the connection to the port is ignored.", resourceId, portResource
-                    .getType());
+            logger.warn("NovaServer connect to port resource with id : {} and type : {}. This resource type"
+                    + " is not supported, therefore the connection to the port is ignored.", resourceId,
+                    portResource.getType());
         }
     }
 
     private boolean isSupportedPortResource(Resource portResource) {
         return Arrays.asList(HeatResourcesTypes.NEUTRON_PORT_RESOURCE_TYPE.getHeatResource(),
                 HeatResourcesTypes.CONTRAIL_V2_VIRTUAL_MACHINE_INTERFACE_RESOURCE_TYPE.getHeatResource())
-                .contains(portResource.getType());
+                     .contains(portResource.getType());
     }
 
 
     private String createLocalNodeType(ServiceTemplate serviceTemplate, Resource resource,
-                                       String resourceId, String translatedId) {
+                                              String resourceId, String translatedId) {
         NameExtractor nodeTypeNameExtractor = TranslationContext.getNameExtractorImpl(resource.getType());
         String nodeTypeName =
                 nodeTypeNameExtractor.extractNodeTypeName(resource, resourceId, translatedId);
@@ -435,16 +439,16 @@ public class ResourceTranslationNovaServerImpl extends ResourceTranslationBase {
                         Arrays.asList(".+_name$", ".+_names$", ".+_name_[0-9]+"), "_name"));
         propertyRegexMatchers
                 .add(new PropertyRegexMatcher("image", Collections.singletonList(".+_image_name$"),
-                        "_image_name"));
+                                                     "_image_name"));
         propertyRegexMatchers
                 .add(new PropertyRegexMatcher("flavor", Collections.singletonList(".+_flavor_name$"),
-                        "_flavor_name"));
+                                                     "_flavor_name"));
         return propertyRegexMatchers;
     }
 
     private boolean isNodeTypeCreated(ServiceTemplate serviceTemplate, String nodeTypeName) {
         return !MapUtils.isEmpty(serviceTemplate.getNode_types())
-                && Objects.nonNull(serviceTemplate.getNode_types().get(nodeTypeName));
+                       && Objects.nonNull(serviceTemplate.getNode_types().get(nodeTypeName));
     }
 
     private NodeType createNodeType() {
