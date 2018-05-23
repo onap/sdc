@@ -1,5 +1,5 @@
 /*
- * Copyright © 2016-2017 European Support Limited
+ * Copyright © 2016-2018 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,6 +47,8 @@ import { tabsMapping as attachmentsTabsMapping } from 'sdc-app/onboarding/softwa
 import SoftwareProductAttachmentsActionHelper from 'sdc-app/onboarding/softwareProduct/attachments/SoftwareProductAttachmentsActionHelper.js';
 import { actionTypes as filterActionTypes } from './onboard/filter/FilterConstants.js';
 import FeaturesActionHelper from 'sdc-app/features/FeaturesActionHelper.js';
+import { notificationActions } from 'nfvo-components/notification/NotificationsConstants.js';
+import i18n from 'nfvo-utils/i18n/i18n.js';
 
 function setCurrentScreen(dispatch, screen, props = {}) {
     dispatch({
@@ -208,38 +210,84 @@ const OnboardingActionHelper = {
             status
         });
     },
+    navigateToSoftwareProductLandingPageContinue(
+        dispatch,
+        { response, version, status }
+    ) {
+        let {
+            vendorId: licenseModelId,
+            licensingVersion,
+            id: softwareProductId
+        } = response;
+        SoftwareProductActionHelper.loadSoftwareProductDetailsData(dispatch, {
+            licenseModelId,
+            licensingVersion
+        });
+        SoftwareProductComponentsActionHelper.fetchSoftwareProductComponents(
+            dispatch,
+            { softwareProductId, version }
+        );
+        if (response.onboardingOrigin === onboardingOriginTypes.ZIP) {
+            SoftwareProductActionHelper.loadSoftwareProductHeatCandidate(
+                dispatch,
+                { softwareProductId, version }
+            );
+        }
+        setCurrentScreen(dispatch, enums.SCREEN.SOFTWARE_PRODUCT_LANDING_PAGE, {
+            softwareProductId,
+            licenseModelId,
+            version,
+            status
+        });
+    },
 
-    navigateToSoftwareProductLandingPage(
+    async navigateToSoftwareProductLandingPage(
         dispatch,
         { softwareProductId, version, status }
     ) {
         SoftwareProductComponentsActionHelper.clearComponentsStore(dispatch);
+        /**
+         * TODO remove when Filter toggle will be removed
+         */
         LicenseModelActionHelper.fetchFinalizedLicenseModels(dispatch);
-        SoftwareProductActionHelper.fetchSoftwareProduct(dispatch, {
-            softwareProductId,
-            version
-        }).then(response => {
-            let { vendorId: licenseModelId, licensingVersion } = response[0];
-            SoftwareProductActionHelper.loadSoftwareProductDetailsData(
-                dispatch,
-                { licenseModelId, licensingVersion }
-            );
-            SoftwareProductComponentsActionHelper.fetchSoftwareProductComponents(
-                dispatch,
-                { softwareProductId, version: version }
-            );
-            if (response[0].onboardingOrigin === onboardingOriginTypes.ZIP) {
-                SoftwareProductActionHelper.loadSoftwareProductHeatCandidate(
-                    dispatch,
-                    { softwareProductId, version: version }
-                );
+        const response = await SoftwareProductActionHelper.fetchSoftwareProduct(
+            dispatch,
+            {
+                softwareProductId,
+                version
             }
-            setCurrentScreen(
+        );
+        if (response[0].version !== version.id) {
+            const newResponse = await SoftwareProductActionHelper.fetchSoftwareProduct(
                 dispatch,
-                enums.SCREEN.SOFTWARE_PRODUCT_LANDING_PAGE,
-                { softwareProductId, licenseModelId, version, status }
+                {
+                    softwareProductId,
+                    version: { ...version, id: response[0].version }
+                }
             );
-        });
+            const newVersion = await ItemsHelper.fetchVersion({
+                itemId: softwareProductId,
+                versionId: response[0].version
+            });
+            this.navigateToSoftwareProductLandingPageContinue(dispatch, {
+                response: newResponse[0],
+                version: newVersion,
+                status
+            });
+            dispatch(
+                notificationActions.showInfo({
+                    message: i18n(
+                        'This is the current version of the VSP, as a result of healing'
+                    )
+                })
+            );
+        } else {
+            this.navigateToSoftwareProductLandingPageContinue(dispatch, {
+                response: response[0],
+                version,
+                status
+            });
+        }
     },
 
     navigateToSoftwareProductDetails(
