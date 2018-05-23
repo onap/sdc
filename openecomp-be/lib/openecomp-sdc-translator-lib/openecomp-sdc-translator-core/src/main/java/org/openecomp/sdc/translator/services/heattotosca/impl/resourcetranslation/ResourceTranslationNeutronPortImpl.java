@@ -17,6 +17,7 @@
 package org.openecomp.sdc.translator.services.heattotosca.impl.resourcetranslation;
 
 import static org.openecomp.sdc.translator.services.heattotosca.Constants.SECURITY_GROUPS_PROPERTY_NAME;
+import static org.openecomp.sdc.translator.services.heattotosca.HeatToToscaLogConstants.LOG_UNSUPPORTED_RESOURCE_REQUIREMENT_CONNECTION;
 
 import com.google.common.collect.ImmutableList;
 
@@ -224,10 +225,9 @@ public class ResourceTranslationNeutronPortImpl extends ResourceTranslationBase 
                                                                 List<String> supportedTypes,
                                                                 Resource heatResource,
                                                                 final String propertyName) {
-        if (!isResourceTypeSupported(heatResource, supportedTypes)) {
+        if (isUnsupportedResourceType(heatResource, supportedTypes)) {
             String supportedResourceTypes = supportedTypes.toString();
-            logger.warn("'{}' property of port resource('{}') is pointing to a resource of type '{}' which is not "
-                    + "supported for this requirement. Supported types are: {}", propertyName, translateTo
+            logger.warn(LOG_UNSUPPORTED_RESOURCE_REQUIREMENT_CONNECTION, propertyName, translateTo
                     .getResourceId(), heatResource.getType(), supportedResourceTypes);
             return true;
         }

@@ -65,6 +65,8 @@ public class ToscaConstants {
     static final String ST_METADATA_FILE_NAME = "filename";
     public static final String MANDATORY_PROPERTY_NAME = "mandatory";
     public static final String HEAT_NODE_TYPE_SUFFIX = "heat.";
+    public static final String CAPABILITY = "capability";
+    public static final String REQUIREMENT = "requirement";
 
     private ToscaConstants() {
         //Hiding the implicit public constructor
