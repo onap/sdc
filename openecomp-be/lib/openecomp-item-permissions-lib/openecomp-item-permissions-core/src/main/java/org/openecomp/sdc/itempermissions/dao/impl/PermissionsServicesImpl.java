@@ -90,7 +90,7 @@ public class PermissionsServicesImpl implements PermissionsServices {
   }
 
   @Override
-  public String getUserItemPermiission(String itemId, String userId) {
+  public String getUserItemPermission(String itemId, String userId) {
     return itemPermissionsDao.getUserItemPermission(itemId,userId);
   }
 

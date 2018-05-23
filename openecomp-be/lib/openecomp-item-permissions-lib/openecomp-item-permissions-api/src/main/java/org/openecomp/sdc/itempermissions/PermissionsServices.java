@@ -36,7 +36,7 @@ public interface PermissionsServices {
 
   void execute(String itemId,String userId,String action);
 
-  String getUserItemPermiission(String itemId, String userId);
+  String getUserItemPermission(String itemId, String userId);
 
 
     void deleteItemPermissions(String itemId);

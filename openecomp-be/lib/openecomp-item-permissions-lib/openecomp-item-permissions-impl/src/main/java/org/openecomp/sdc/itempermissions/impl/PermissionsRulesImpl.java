@@ -17,6 +17,7 @@ package org.openecomp.sdc.itempermissions.impl;
 
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.itempermissions.PermissionsRules;
+import org.openecomp.sdc.itempermissions.PermissionsServices;
 import org.openecomp.sdc.itempermissions.PermissionsServicesFactory;
 import org.openecomp.sdc.itempermissions.errors.PermissionsErrorMessagesBuilder;
 import org.openecomp.sdc.itempermissions.impl.types.PermissionActionTypes;
@@ -118,33 +119,39 @@ public class PermissionsRulesImpl implements PermissionsRules {
         }
     }
 
-    @Override
-    public void updatePermission(String itemId, String currentUserId, String permission, Set<String>
-            addedUsersIds, Set<String> removedUsersIds) {
-        try {
-            PermissionTypes.valueOf(permission);
-        } catch (IllegalArgumentException ex) {
-            throw new CoreException(new PermissionsErrorMessagesBuilder(INVALID_PERMISSION_TYPE).build());
-        }
-
-        if (permission.equals(PermissionTypes.Owner.name())) {
-          makeCurrentUserContributor(itemId,currentUserId);
-        }
+  @Override
+  public void updatePermission(String itemId, String currentUserId, String permission, Set<String>
+      addedUsersIds, Set<String> removedUsersIds) {
+    try {
+      PermissionTypes.valueOf(permission);
+    } catch (IllegalArgumentException ex) {
+      throw new CoreException(new PermissionsErrorMessagesBuilder(INVALID_PERMISSION_TYPE).build());
     }
 
-    private void makeCurrentUserContributor(String itemId, String currentUserId) {
+    if (isOwnerAdded(permission, addedUsersIds)) {
+      handleCurrentOwner(itemId, currentUserId);
+    }
+  }
 
-        String currentPermission = PermissionsServicesFactory.getInstance().createInterface().
-                getUserItemPermiission(itemId,currentUserId);
+  private boolean isOwnerAdded(String permission, Set<String> addedUsersIds) {
+    return permission.equals(PermissionTypes.Owner.name()) &&
+        addedUsersIds != null && !addedUsersIds.isEmpty();
+  }
 
-        if(currentPermission != null) {
-
-            PermissionsServicesFactory.getInstance().createInterface()
-                    .updateItemPermissions(itemId, PermissionTypes.Contributor.name(),
-                            Collections.singleton(currentUserId), new HashSet<>());
+  private void handleCurrentOwner(String itemId, String currentUserId) {
+    PermissionsServices permissionsServices =
+        PermissionsServicesFactory.getInstance().createInterface();
+    if (permissionsServices.getUserItemPermission(itemId, currentUserId) == null) {
+      return; // no current owner - first owner addition
     }
 
-}
+    Set<String> currentUserSet = Collections.singleton(currentUserId);
+    permissionsServices
+        .updateItemPermissions(itemId, PermissionTypes.Contributor.name(), currentUserSet,
+            new HashSet<>());
+    permissionsServices.updateItemPermissions(itemId, PermissionTypes.Owner.name(), new HashSet<>(),
+        currentUserSet);
+  }
 
     private void caseCreateItem(String userId, String itemId) {
         HashSet<String> ownerId = new HashSet<>();

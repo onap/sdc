@@ -151,7 +151,7 @@ public class PermissionsManagerImpl implements PermissionsManager {
 
   @Override
   public String getUserItemPermission(String itemId, String userId) {
-    return permissionsServices.getUserItemPermiission(itemId, userId);
+    return permissionsServices.getUserItemPermission(itemId, userId);
   }
 
   @Override
