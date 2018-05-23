@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_7c02f073",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/onboard/onboardingCatalog/VendorItem.jsx",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1921
+      },
+      "writtenOn": "2018-05-23T07:24:00Z",
+      "side": 1,
+      "message": "I know it sounds a bit perfectionist, but can you please change the Side to lower case in the function handleClickOutSide ?",
+      "revId": "ceb403804c602f1bc2c0076c83e2e609339b1991",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
