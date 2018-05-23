@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_fcffe033",
+        "filename": "openecomp-be/lib/openecomp-item-permissions-lib/openecomp-item-permissions-core/src/main/java/org/openecomp/sdc/itempermissions/dao/impl/ItemPermissionsDaoImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-05-23T07:26:01Z",
+      "side": 1,
+      "message": "stream filter is cleaner",
+      "range": {
+        "startLine": 47,
+        "startChar": 6,
+        "endLine": 50,
+        "endChar": 7
+      },
+      "revId": "d1b9e49fd5d64442f20180b0ef5e863b647d9478",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_7c93d000",
+        "filename": "openecomp-be/lib/openecomp-item-permissions-lib/openecomp-item-permissions-core/src/main/java/org/openecomp/sdc/itempermissions/dao/impl/ItemPermissionsDaoImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-05-23T07:26:01Z",
+      "side": 1,
+      "message": "don\u0027t return null from public interface. return optional (it may require more changes)",
+      "range": {
+        "startLine": 57,
+        "startChar": 54,
+        "endLine": 57,
+        "endChar": 58
+      },
+      "revId": "d1b9e49fd5d64442f20180b0ef5e863b647d9478",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_1c840cb0",
+        "filename": "openecomp-be/lib/openecomp-item-permissions-lib/openecomp-item-permissions-impl/src/main/java/org/openecomp/sdc/itempermissions/impl/PermissionsRulesImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 138,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-05-23T07:26:01Z",
+      "side": 1,
+      "message": "replace with CollectionUtils.isNotEmpty",
+      "range": {
+        "startLine": 138,
+        "startChar": 8,
+        "endLine": 138,
+        "endChar": 58
+      },
+      "revId": "d1b9e49fd5d64442f20180b0ef5e863b647d9478",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
