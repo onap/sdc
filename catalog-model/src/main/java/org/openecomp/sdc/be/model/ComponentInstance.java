@@ -26,6 +26,7 @@ import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
 
 import java.io.Serializable;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -84,6 +85,13 @@ public class ComponentInstance extends ComponentInstanceDataDefinition implement
 
     public Map<String, ArtifactDefinition> getArtifacts() {
         return artifacts;
+    }
+
+    public Map<String, ArtifactDefinition> getAllArtifacts() {
+        Map<String, ArtifactDefinition> result = new HashMap<>();
+        result.putAll(artifacts);
+        result.putAll(deploymentArtifacts);
+        return result;
     }
 
     public Map<String, ArtifactDefinition> safeGetArtifacts() {
