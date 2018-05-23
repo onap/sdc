@@ -66,6 +66,7 @@
   <bean id="tosca-operation-facade" class="org.openecomp.sdc.be.components.path.beans.ForwardingPathToscaOperationFacade" />
   <bean id="distributionEngine" class="org.openecomp.sdc.be.components.path.beans.DistributionEngineMock"/>
   <bean id="forwardingPathValidator" class="org.openecomp.sdc.be.components.path.beans.ForwardingPathValidatorMock" />
+  <bean id="sdcSchemaUtils" class="org.openecomp.sdc.be.dao.cassandra.schema.SdcSchemaUtils" />
   <util:properties id="elasticsearchConfig" location="paths/elasticsearch.yml" />
 
 </beans>
