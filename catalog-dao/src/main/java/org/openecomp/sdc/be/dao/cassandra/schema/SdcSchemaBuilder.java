@@ -25,11 +25,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.config.Configuration;
-import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.cassandra.schema.tables.OldExternalApiEventTableDesc;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingTypesConstants;
 import org.slf4j.Logger;
@@ -46,6 +46,13 @@ import com.datastax.driver.core.schemabuilder.SchemaStatement;
 
 public class SdcSchemaBuilder {
 
+	private SdcSchemaUtils sdcSchemaUtils;
+	private Supplier<Configuration.CassandrConfig> cassandraConfigSupplier;
+
+	public SdcSchemaBuilder(SdcSchemaUtils sdcSchemaUtils, Supplier<Configuration.CassandrConfig> cassandraConfigSupplier) {
+		this.sdcSchemaUtils = sdcSchemaUtils;
+		this.cassandraConfigSupplier = cassandraConfigSupplier;
+	}
 	/**
 	 * creat key space statment for SimpleStrategy
 	 */
@@ -72,22 +79,17 @@ public class SdcSchemaBuilder {
 	 * internal enums and external configuration for its operation	 * 
 	 * @return true if the create operation was successful
 	 */
-	public static boolean createSchema() {
-		Cluster cluster = null;
-		Session session = null;
-		try {
+	public boolean createSchema() {
+		boolean res = false;
+		try(Cluster cluster = sdcSchemaUtils.createCluster();
+				Session session = cluster.connect()) {
 			log.info("creating Schema for Cassandra.");
-			cluster = SdcSchemaUtils.createCluster();
-			if (cluster == null) {
-				return false;
-			}
-			session = cluster.connect();
 			List<KeyspaceMetadata> keyspacesMetadateFromCassandra = cluster.getMetadata().getKeyspaces();
 			if (keyspacesMetadateFromCassandra == null) {
-				log.debug("filed to retrive a list of keyspaces from cassndra");
+				log.debug("filed to retrieve a list of keyspaces from cassandra");
 				return false;
 			}
-			log.debug("retrived Cassndra metadata.");
+			log.debug("retrieved Cassandra metadata.");
 			Map<String, Map<String, List<String>>> cassndraMetadata = parseKeyspaceMetadata(keyspacesMetadateFromCassandra);
 			Map<String, Map<String, List<String>>> metadataTablesStructure = getMetadataTablesStructure(keyspacesMetadateFromCassandra);
 			Map<String, List<ITableDescription>> schemeData = getSchemeData();
@@ -101,38 +103,26 @@ public class SdcSchemaBuilder {
 				Map<String, List<String>> keyspaceMetadate = cassndraMetadata.get(keyspace);
 				createTables(schemeData.get(keyspace), keyspaceMetadate, session,metadataTablesStructure.get(keyspace));
 			}
-			return true;
+			res = true;
 		} catch (Exception e) {
 			log.info("createSchema failed with exception.", e);
-		} finally {
-			if (session != null) {
-				session.close();
-			}
-			if (cluster != null) {
-				cluster.close();
-			}
-
+			res = false;
 		}
 
-		return false;
+		return res;
 	}
 
-	public static boolean deleteSchema() {
-		Cluster cluster = null;
-		Session session = null;
-		try {
+	public boolean deleteSchema() {
+		boolean res = false;
+		try(Cluster cluster = sdcSchemaUtils.createCluster();
+				Session session = cluster.connect()) {
 			log.info("delete Data from Cassandra.");
-			cluster = SdcSchemaUtils.createCluster();
-			if (cluster == null) {
-				return false;
-			}
-			session = cluster.connect();
 			List<KeyspaceMetadata> keyspacesMetadateFromCassandra = cluster.getMetadata().getKeyspaces();
 			if (keyspacesMetadateFromCassandra == null) {
-				log.debug("filed to retrive a list of keyspaces from cassndra");
+				log.debug("filed to retrieve a list of keyspaces from cassandra");
 				return false;
 			}
-			log.debug("retrived Cassndra metadata.");
+			log.debug("retrieved Cassandra metadata.");
 			Map<String, Map<String, List<String>>> cassndraMetadata = parseKeyspaceMetadata(keyspacesMetadateFromCassandra);
 			cassndraMetadata.forEach((k, v) -> {
 				if (AuditingTypesConstants.TITAN_KEYSPACE.equals(k)) {
@@ -145,20 +135,12 @@ public class SdcSchemaBuilder {
 			});
 
 			System.out.println(cassndraMetadata);
-			return true;
+			res = true;
 		} catch (Exception e) {
 			log.info("deleteSchema failed with exception.", e);
-		} finally {
-			if (session != null) {
-				session.close();
-			}
-			if (cluster != null) {
-				cluster.close();
-			}
-
+			res = false;
 		}
-
-		return false;
+		return res;
 	}
 
 	
@@ -300,8 +282,8 @@ public class SdcSchemaBuilder {
 	 * @param session: the session object used for the execution of the query.
 	 * @return true in case the operation was successful
 	 */
-	private static boolean createKeyspace(String keyspace, Map<String, Map<String, List<String>>> cassndraMetadata, Session session) {
-		List<Configuration.CassandrConfig.KeyspaceConfig> keyspaceConfigList = ConfigurationManager.getConfigurationManager().getConfiguration().getCassandraConfig().getKeySpaces();
+	private boolean createKeyspace(String keyspace, Map<String, Map<String, List<String>>> cassndraMetadata, Session session) {
+		List<Configuration.CassandrConfig.KeyspaceConfig> keyspaceConfigList = cassandraConfigSupplier.get().getKeySpaces();
 		log.info("creating keyspace:{}.", keyspace);
 		if (!cassndraMetadata.keySet().contains(keyspace)) {
 			Optional<Configuration.CassandrConfig.KeyspaceConfig> keyspaceConfig = keyspaceConfigList.stream().filter(keyspaceInfo -> keyspace.equalsIgnoreCase(keyspaceInfo.getName())).findFirst();

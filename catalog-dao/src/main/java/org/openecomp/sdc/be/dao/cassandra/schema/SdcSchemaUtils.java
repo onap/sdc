@@ -20,19 +20,23 @@
 
 package org.openecomp.sdc.be.dao.cassandra.schema;
 
-import java.util.List;
-
+import com.datastax.driver.core.Cluster;
+import com.datastax.driver.core.Session;
 import com.datastax.driver.core.SocketOptions;
+import org.openecomp.sdc.be.config.Configuration;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.datastax.driver.core.Cluster;
-import com.datastax.driver.core.Session;
+import java.util.List;
+import java.util.function.Supplier;
 
 public class SdcSchemaUtils {
 
     private static Logger log = LoggerFactory.getLogger(SdcSchemaUtils.class.getName());
+
+    public SdcSchemaUtils() {
+    }
 
     /**
      * the method creates the cluster object using the supplied cassandra nodes
@@ -40,32 +44,31 @@ public class SdcSchemaUtils {
      *
      * @return cluster object our null in case of an invalid configuration
      */
-    public static Cluster createCluster() {
-        List<String> nodes = ConfigurationManager.getConfigurationManager().getConfiguration().getCassandraConfig().getCassandraHosts();
+    public Cluster createCluster() {
+        final Configuration.CassandrConfig config = getCassandraConfig();
+        List<String> nodes = config.getCassandraHosts();
         if (nodes == null) {
             log.info("no nodes were supplied in configuration.");
             return null;
         }
         log.info("connecting to node:{}.", nodes);
         Cluster.Builder clusterBuilder = Cluster.builder();
-        nodes.forEach(host -> clusterBuilder.addContactPoint(host));
+        nodes.forEach(clusterBuilder::addContactPoint);
 
         clusterBuilder.withMaxSchemaAgreementWaitSeconds(60);
 
-        boolean authenticate = ConfigurationManager.getConfigurationManager().getConfiguration().getCassandraConfig().isAuthenticate();
-        if (authenticate) {
-            String username = ConfigurationManager.getConfigurationManager().getConfiguration().getCassandraConfig().getUsername();
-            String password = ConfigurationManager.getConfigurationManager().getConfiguration().getCassandraConfig().getPassword();
+        if (config.isAuthenticate()) {
+            String username = config.getUsername();
+            String password = config.getPassword();
             if (username == null || password == null) {
                 log.info("authentication is enabled but username or password were not supplied.");
                 return null;
             }
             clusterBuilder.withCredentials(username, password);
         }
-        boolean ssl = ConfigurationManager.getConfigurationManager().getConfiguration().getCassandraConfig().isSsl();
-        if (ssl) {
-            String truststorePath = ConfigurationManager.getConfigurationManager().getConfiguration().getCassandraConfig().getTruststorePath();
-            String truststorePassword = ConfigurationManager.getConfigurationManager().getConfiguration().getCassandraConfig().getTruststorePassword();
+        if (config.isSsl()) {
+            String truststorePath = config.getTruststorePath();
+            String truststorePassword = config.getTruststorePassword();
             if (truststorePath == null || truststorePassword == null) {
                 log.info("ssl is enabled but truststorePath or truststorePassword were not supplied.");
                 return null;
@@ -75,12 +78,12 @@ public class SdcSchemaUtils {
             clusterBuilder.withSSL();
         }
         SocketOptions socketOptions =new SocketOptions();
-        Integer socketConnectTimeout = ConfigurationManager.getConfigurationManager().getConfiguration().getCassandraConfig().getSocketConnectTimeout();
+        Integer socketConnectTimeout = config.getSocketConnectTimeout();
         if( socketConnectTimeout!=null ){
             log.info("SocketConnectTimeout was provided, setting Cassandra client to use SocketConnectTimeout: {} .",socketConnectTimeout);
             socketOptions.setConnectTimeoutMillis(socketConnectTimeout);
         }
-        Integer socketReadTimeout = ConfigurationManager.getConfigurationManager().getConfiguration().getCassandraConfig().getSocketReadTimeout();
+        Integer socketReadTimeout = config.getSocketReadTimeout();
         if( socketReadTimeout != null ){
             log.info("SocketReadTimeout was provided, setting Cassandra client to use SocketReadTimeout: {} .",socketReadTimeout);
             socketOptions.setReadTimeoutMillis(socketReadTimeout);
@@ -89,37 +92,33 @@ public class SdcSchemaUtils {
         return clusterBuilder.build();
     }
 
-    public static boolean executeStatement(String statement) {
-        return executeStatements(statement);
+    public boolean executeStatement(String statement) {
+        return executeStatement(this::createCluster, statement);
     }
 
-    public static boolean executeStatements(String ... statements) {
-        Cluster cluster = null;
-        Session session = null;
-        try {
-            cluster = createCluster();
-            if (cluster == null) {
-                return false;
-            }
-            session = cluster.connect();
+    public boolean executeStatements(String ... statements) {
+        return executeStatements(this::createCluster, statements);
+    }
+
+    boolean executeStatement(Supplier<Cluster> clusterSupplier, String statement) {
+        return executeStatements(clusterSupplier, statement);
+    }
+
+    boolean executeStatements(Supplier<Cluster> clusterSupplier, String ... statements) {
+        try(Cluster cluster = clusterSupplier.get();
+                Session session = cluster.connect()) {
             for (String statement : statements) {
                 session.execute(statement);
             }
             return true;
         } catch (RuntimeException e) {
-            log.error(String.format("could not execute statements"), e);
-            return false;
-        } finally {
-            if (session != null) {
-                session.close();
-            }
-            if (cluster != null) {
-                cluster.close();
-            }
-
+            log.error("could not execute statements", e);
         }
+        return false;
     }
 
-
+    Configuration.CassandrConfig getCassandraConfig() {
+        return ConfigurationManager.getConfigurationManager().getConfiguration().getCassandraConfig();
+    }
 
 }
