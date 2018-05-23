@@ -46,6 +46,11 @@ import com.datastax.driver.core.schemabuilder.SchemaStatement;
 
 public class SdcSchemaBuilder {
 
+	private SdcSchemaUtils sdcSchemaUtils;
+
+	public SdcSchemaBuilder() {
+		this.sdcSchemaUtils = new SdcSchemaUtils();
+	}
 	/**
 	 * creat key space statment for SimpleStrategy
 	 */
@@ -72,12 +77,12 @@ public class SdcSchemaBuilder {
 	 * internal enums and external configuration for its operation	 * 
 	 * @return true if the create operation was successful
 	 */
-	public static boolean createSchema() {
+	public boolean createSchema() {
 		Cluster cluster = null;
 		Session session = null;
 		try {
 			log.info("creating Schema for Cassandra.");
-			cluster = SdcSchemaUtils.createCluster();
+			cluster = sdcSchemaUtils.createCluster();
 			if (cluster == null) {
 				return false;
 			}
@@ -117,12 +122,12 @@ public class SdcSchemaBuilder {
 		return false;
 	}
 
-	public static boolean deleteSchema() {
+	public boolean deleteSchema() {
 		Cluster cluster = null;
 		Session session = null;
 		try {
 			log.info("delete Data from Cassandra.");
-			cluster = SdcSchemaUtils.createCluster();
+			cluster = sdcSchemaUtils.createCluster();
 			if (cluster == null) {
 				return false;
 			}
