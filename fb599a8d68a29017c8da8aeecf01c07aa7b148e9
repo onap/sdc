@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_dc48e4b5",
+        "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/main/DataSchemaMenu.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 3885
+      },
+      "writtenOn": "2018-05-23T07:09:43Z",
+      "side": 1,
+      "message": "schemaBuilder",
+      "range": {
+        "startLine": 38,
+        "startChar": 19,
+        "endLine": 38,
+        "endChar": 35
+      },
+      "revId": "fb599a8d68a29017c8da8aeecf01c07aa7b148e9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
