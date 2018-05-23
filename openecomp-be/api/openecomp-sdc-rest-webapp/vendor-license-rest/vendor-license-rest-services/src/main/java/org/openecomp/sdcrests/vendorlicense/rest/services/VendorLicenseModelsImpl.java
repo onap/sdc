@@ -300,9 +300,10 @@ public class VendorLicenseModelsImpl implements VendorLicenseModels {
     }
 
     private boolean userHasPermission(String itemId, String userId) {
-        String permission = permissionsManager.getUserItemPermission(itemId, userId);
-        return (permission != null && permission.matches(
-                PermissionTypes.Contributor.name() + "|" + PermissionTypes.Owner.name()));
+        return permissionsManager.getUserItemPermission(itemId, userId)
+            .map(permission -> permission
+                .matches(PermissionTypes.Contributor.name() + "|" + PermissionTypes.Owner.name()))
+            .orElse(false);
     }
 
     private Predicate<Item> createItemPredicate(String versionStatus, String itemStatus, String user) {

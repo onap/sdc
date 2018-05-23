@@ -585,11 +585,12 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
         }
     }
 
-    private boolean userHasPermission(String itemId, String userId) {
-    String permission = permissionsManager.getUserItemPermission(itemId, userId);
-        return permission != null && permission
-                .matches(PermissionTypes.Contributor.name() + "|" + PermissionTypes.Owner.name());
-    }
+  private boolean userHasPermission(String itemId, String userId) {
+    return permissionsManager.getUserItemPermission(itemId, userId)
+        .map(permission -> permission
+            .matches(PermissionTypes.Contributor.name() + "|" + PermissionTypes.Owner.name()))
+        .orElse(false);
+  }
 
     private Predicate<Item> createItemPredicate(String versionStatus,
                                                 String itemStatus,

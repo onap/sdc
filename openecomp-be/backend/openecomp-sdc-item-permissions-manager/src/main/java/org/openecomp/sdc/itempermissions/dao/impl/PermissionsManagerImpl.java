@@ -26,6 +26,7 @@ import static org.openecomp.sdc.itempermissions.notifications.NotificationConsta
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.ErrorCategory;
@@ -150,8 +151,8 @@ public class PermissionsManagerImpl implements PermissionsManager {
   }
 
   @Override
-  public String getUserItemPermission(String itemId, String userId) {
-    return permissionsServices.getUserItemPermiission(itemId, userId);
+  public Optional<String> getUserItemPermission(String itemId, String userId) {
+    return permissionsServices.getUserItemPermission(itemId, userId);
   }
 
   @Override
