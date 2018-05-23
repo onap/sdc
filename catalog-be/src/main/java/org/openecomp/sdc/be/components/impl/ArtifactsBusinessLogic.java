@@ -36,6 +36,7 @@ import java.util.Set;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.XMLConstants;
@@ -3628,36 +3629,26 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
 
         boolean found = false;
         List<ComponentInstance> resourceInstances = component.getComponentInstances();
-        ComponentInstance resourceInstance = null;
-        for (ComponentInstance ri : resourceInstances) {
-            if (ri.getUniqueId().equals(resourceInstanceId)) {
-                resourceInstance = ri;
-                break;
-            }
-        }
-        if (resourceInstance != null) {
-            Map<String, ArtifactDefinition> artifacts = resourceInstance.getDeploymentArtifacts();
-            if (artifacts != null) {
-                for (Map.Entry<String, ArtifactDefinition> entry : artifacts.entrySet()) {
-                    if (entry.getValue().getUniqueId().equals(artifactId)) {
-                        found = true;
-                        break;
-                    }
-                }
-            }
+        Optional<ComponentInstance> componentInstanceOptional = findResourceInstance(resourceInstanceId, resourceInstances);
+        if (componentInstanceOptional.isPresent()) {
+            ComponentInstance resource = componentInstanceOptional.get();
+            found = containsArtifact(resource.getDeploymentArtifacts(), artifactId);
             if (!found) {
-                artifacts = resourceInstance.getArtifacts();
-                if (artifacts != null) {
-                    for (Map.Entry<String, ArtifactDefinition> entry : artifacts.entrySet()) {
-                        if (entry.getValue().getUniqueId().equals(artifactId)) {
-                            found = true;
-                            break;
-                        }
-                    }
-                }
+                found = containsArtifact(resource.getArtifacts(), artifactId);
             }
         }
         return found;
+    }
+
+    private Optional<ComponentInstance> findResourceInstance(String resourceInstanceId, List<ComponentInstance> resourceInstances) {
+        return resourceInstances.stream().filter(ri -> ri.getUniqueId().equals(resourceInstanceId)).findFirst();
+    }
+
+    private boolean containsArtifact(Map<String, ArtifactDefinition> artifacts, String artifactId) {
+        if (artifacts != null) {
+            return artifacts.values().stream().anyMatch(v -> v.getUniqueId().equals(artifactId));
+        }
+        return false;
     }
 
     private Either<? extends org.openecomp.sdc.be.model.Component, ResponseFormat> validateComponentExists(String componentId, AuditingActionEnum auditingAction, User user, String artifactId, ComponentTypeEnum componentType,
@@ -5049,7 +5040,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
                 }
             }
         }
-        if (errorWrapper.isEmpty()) {
+        if (errorWrapper.isEmpty() && actionResult != null) {
             updateArtifact = actionResult.left().value().left().value();
             updateArtifactResult = Either.left(updateArtifact);
 
