@@ -86,6 +86,13 @@ public class ComponentInstance extends ComponentInstanceDataDefinition implement
         return artifacts;
     }
 
+    public Map<String, ArtifactDefinition> getAllArtifacts() {
+        Map<String, ArtifactDefinition> result = Collections.emptyMap();
+        result.putAll(artifacts);
+        result.putAll(deploymentArtifacts);
+        return result;
+    }
+
     public Map<String, ArtifactDefinition> safeGetArtifacts() {
         return artifacts == null ? Collections.emptyMap() : artifacts;
     }
