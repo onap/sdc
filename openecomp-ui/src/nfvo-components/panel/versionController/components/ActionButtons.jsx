@@ -13,26 +13,13 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-import React, { Component } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
-import enhanceWithClickOutside from 'react-click-outside';
 import i18n from 'nfvo-utils/i18n/i18n.js';
+import ClickOutsideWrapper from 'nfvo-components/clickOutsideWrapper/ClickOutsideWrapper.jsx';
 import SVGIcon from 'sdc-ui/lib/react/SVGIcon.js';
 import Overlay from 'nfvo-components/overlay/Overlay.jsx';
 import Permissions from './Permissions.jsx';
-
-class ClickOutsideWrapper extends Component {
-    handleClickOutside() {
-        this.props.onClose();
-    }
-    render() {
-        return <div>{this.props.children}</div>;
-    }
-}
-
-const EnhancedClickOutsideWrapper = enhanceWithClickOutside(
-    ClickOutsideWrapper
-);
 
 const VCButton = ({ name, tooltipText, disabled, onClick, dataTestId }) => {
     let onClickAction = disabled ? () => {} : onClick;
@@ -95,7 +82,7 @@ const ActionButtons = ({
     }
 }) => (
     <div className="action-buttons">
-        <EnhancedClickOutsideWrapper onClose={onClosePermissions}>
+        <ClickOutsideWrapper onClose={onClosePermissions}>
             <VCButton
                 disabled={isManual}
                 dataTestId="vc-permission-btn"
@@ -113,7 +100,7 @@ const ActionButtons = ({
                     />
                 </Overlay>
             )}
-        </EnhancedClickOutsideWrapper>
+        </ClickOutsideWrapper>
         {isCollaborator &&
             !isArchived && (
                 <div className="collaborator-action-buttons">
