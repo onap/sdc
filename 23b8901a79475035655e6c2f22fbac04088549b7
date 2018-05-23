@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_ff091233",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ArtifactsBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 3649,
+      "author": {
+        "id": 3873
+      },
+      "writtenOn": "2018-05-23T12:56:39Z",
+      "side": 1,
+      "message": "maybe artifacts!\u003dnull ? artifacts.values().stream().anyMatch(v -\u003e v.getUniqueId().equals(artifactId)) : false",
+      "range": {
+        "startLine": 3649,
+        "startChar": 18,
+        "endLine": 3649,
+        "endChar": 97
+      },
+      "revId": "23b8901a79475035655e6c2f22fbac04088549b7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
