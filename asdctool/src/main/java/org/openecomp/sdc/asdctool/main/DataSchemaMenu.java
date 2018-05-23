@@ -23,6 +23,7 @@ package org.openecomp.sdc.asdctool.main;
 import org.openecomp.sdc.asdctool.impl.TitanGraphInitializer;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.cassandra.schema.SdcSchemaBuilder;
+import org.openecomp.sdc.be.dao.cassandra.schema.SdcSchemaUtils;
 import org.openecomp.sdc.common.api.ConfigurationSource;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;
 import org.openecomp.sdc.common.impl.FSConfigurationSource;
@@ -34,6 +35,9 @@ public class DataSchemaMenu {
 	private static Logger log = LoggerFactory.getLogger(DataSchemaMenu.class.getName());
 
 	public static void main(String[] args) {
+
+		SdcSchemaBuilder sdcSchemaBuilder = new SdcSchemaBuilder(new SdcSchemaUtils(),
+				ConfigurationManager.getConfigurationManager().getConfiguration()::getCassandraConfig);
 
 		String operation = args[0];
 
@@ -51,7 +55,7 @@ public class DataSchemaMenu {
 			switch (operation.toLowerCase()) {
 			case "create-cassandra-structures":
 				log.debug("Start create cassandra keyspace, tables and indexes");
-				if (SdcSchemaBuilder.createSchema()) {
+				if (sdcSchemaBuilder.createSchema()) {
 					log.debug("create cassandra keyspace, tables and indexes successfull");
 					System.exit(0);
 				} else {
@@ -70,7 +74,7 @@ public class DataSchemaMenu {
 				}
 			case "clean-cassndra":
 				log.debug("Start clean keyspace, tables");
-				if (SdcSchemaBuilder.deleteSchema()) {
+				if (sdcSchemaBuilder.deleteSchema()) {
 					log.debug(" successfull");
 					System.exit(0);
 				} else {
