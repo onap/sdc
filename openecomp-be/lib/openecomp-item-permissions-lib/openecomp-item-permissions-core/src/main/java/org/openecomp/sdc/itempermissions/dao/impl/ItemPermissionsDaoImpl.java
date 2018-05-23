@@ -25,6 +25,7 @@ import org.openecomp.sdc.itempermissions.dao.ItemPermissionsDao;
 import org.openecomp.sdc.itempermissions.type.ItemPermissionsEntity;
 
 import java.util.Collection;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -43,23 +44,25 @@ public class ItemPermissionsDaoImpl implements ItemPermissionsDao {
   @Override
   public void updateItemPermissions(String itemId, String permission, Set<String> addedUsersIds,
                                     Set<String> removedUsersIds) {
-    addedUsersIds.forEach(userId ->  accessor.addPermission(itemId,userId,permission));
-    removedUsersIds.forEach(userId -> accessor.deletePermission(itemId,userId));
+    addedUsersIds.forEach(userId -> accessor.addPermission(itemId, userId, permission));
+    removedUsersIds.stream()
+        .filter(userId -> getUserItemPermission(itemId, userId)
+            .map(userPermissionOnItem -> userPermissionOnItem.equals(permission))
+            .orElse(false))
+        .forEach(userId -> accessor.deletePermission(itemId, userId));
   }
 
   @Override
-  public String getUserItemPermission(String itemId, String userId) {
-
-    ResultSet result =  accessor.getUserItemPermission(itemId,userId);
-    if (result.getAvailableWithoutFetching() < 1) {
-      return null;
-    }
-    return result.one().getString(0);
+  public Optional<String> getUserItemPermission(String itemId, String userId) {
+    ResultSet result = accessor.getUserItemPermission(itemId, userId);
+    return result.getAvailableWithoutFetching() < 1
+        ? Optional.empty()
+        : Optional.of(result.one().getString(0));
   }
 
   @Override
   public void deleteItemPermissions(String itemId) {
-   accessor.deleteItemPermissions(itemId);
+    accessor.deleteItemPermissions(itemId);
   }
 
 
@@ -69,13 +72,13 @@ public class ItemPermissionsDaoImpl implements ItemPermissionsDao {
     Result<ItemPermissionsEntity> getItemPermissions(String itemId);
 
     @Query("select permission from dox.item_permissions WHERE item_id = ? AND user_id=?")
-    ResultSet getUserItemPermission(String itemId,String userId);
+    ResultSet getUserItemPermission(String itemId, String userId);
 
     @Query("delete from dox.item_permissions where item_id = ? and user_id = ?")
     void deletePermission(String itemId, String userId);
 
     @Query("insert into dox.item_permissions (item_id,user_id,permission) values (?,?,?)")
-    void addPermission(String itemId,String userId, String permission);
+    void addPermission(String itemId, String userId, String permission);
 
     @Query("delete from dox.item_permissions where item_id=?")
     void deleteItemPermissions(String itemId);
