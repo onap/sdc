@@ -147,15 +147,8 @@ public class UserBusinessLogic implements IUserBusinessLogic {
 
         Either<User, StorageOperationStatus> addOrUpdateUserReq;
 
-        if (ActionStatus.USER_INACTIVE.equals(eitherUserInDB.right().value())) { // user
-                                                                                    // exist
-                                                                                    // with
-                                                                                    // inactive
-                                                                                    // state
-                                                                                    // -
-                                                                                    // update
-                                                                                    // user
-                                                                                    // data
+        if (eitherUserInDB.isRight() && ActionStatus.USER_INACTIVE.equals(eitherUserInDB.right().value())) { 
+        	// user exist with inactive state - update user data
             newUser.setLastLoginTime(0L);
             addOrUpdateUserReq = userAdminOperation.updateUserData(newUser);
 
@@ -172,7 +165,7 @@ public class UserBusinessLogic implements IUserBusinessLogic {
 
         if (addOrUpdateUserReq.isRight() || addOrUpdateUserReq.left().value() == null) {
             log.debug("createUser method - failed to create user");
-            Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(addOrUpdateUserReq.right().value())));
+            return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(addOrUpdateUserReq.right().value())));
         }
         log.debug("createUser method - user created");
         User createdUser = addOrUpdateUserReq.left().value();
@@ -321,6 +314,9 @@ public class UserBusinessLogic implements IUserBusinessLogic {
         } else {
             rolesStr = "All";
             getResponse = getUsersPerRole(null, user, rolesStr);
+            if(getResponse.isRight()) {
+            	return getResponse;
+            }
             resultList.addAll(getResponse.left().value());
         }
         responseFormat = componentsUtils.getResponseFormat(ActionStatus.OK);
@@ -487,9 +483,10 @@ public class UserBusinessLogic implements IUserBusinessLogic {
         Either<User, StorageOperationStatus> updateUserReq = userAdminOperation.updateUserData(user);
 
         if (updateUserReq.isRight()) {
-            responseFormat = componentsUtils.getResponseFormatByUser(eitherCreator.right().value(), user);
+        	ActionStatus convertFromStorageResponse = componentsUtils.convertFromStorageResponse(updateUserReq.right().value());
+            responseFormat = componentsUtils.getResponseFormatByUser(convertFromStorageResponse, user);
             handleUserAccessAuditing(user, responseFormat, AuditingActionEnum.USER_ACCESS);
-            return Either.right(componentsUtils.getResponseFormatByUser(eitherCreator.right().value(), user));
+            return Either.right(responseFormat);
         }
 
         User updatedUser = updateUserReq.left().value();
@@ -569,9 +566,10 @@ public class UserBusinessLogic implements IUserBusinessLogic {
         Either<User, StorageOperationStatus> updateUserReq = userAdminOperation.updateUserData(user);
 
         if (updateUserReq.isRight()) {
-            responseFormat = componentsUtils.getResponseFormatByUser(eitherCreator.right().value(), user);
+        	ActionStatus convertFromStorageResponse = componentsUtils.convertFromStorageResponse(updateUserReq.right().value());
+            responseFormat = componentsUtils.getResponseFormatByUser(convertFromStorageResponse, user);
             handleUserAccessAuditing(user, responseFormat, AuditingActionEnum.USER_ACCESS);
-            return Either.right(componentsUtils.getResponseFormatByUser(eitherCreator.right().value(), user));
+            return Either.right(responseFormat);
         }
 
         User updatedUser = updateUserReq.left().value();
