@@ -1,5 +1,5 @@
 /*
- * Copyright © 2016-2017 European Support Limited
+ * Copyright © 2016-2018 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 import { createStore, applyMiddleware, compose } from 'redux';
 import Reducers from './Reducers.js';
 import filterUpdater from 'sdc-app/onboarding/onboard/filter/FilterMiddleware.js';
+import notifications from 'nfvo-components/notification/NotificationsMiddleware.js';
 
 const thunk = store => next => action =>
     typeof action === 'function'
@@ -29,7 +30,7 @@ export const storeCreator = initialState =>
     createStore(
         Reducers,
         initialState,
-        composeEnhancers(applyMiddleware(thunk, filterUpdater))
+        composeEnhancers(applyMiddleware(thunk, filterUpdater, notifications))
     );
 
 const store = storeCreator();

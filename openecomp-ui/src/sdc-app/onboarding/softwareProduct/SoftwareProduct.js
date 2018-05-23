@@ -127,7 +127,8 @@ const buildNavigationBarProps = ({
     screen,
     componentId,
     componentsList,
-    mapOfExpandedIds
+    mapOfExpandedIds,
+    isCertified
 }) => {
     const {
         softwareProductEditor: { data: currentSoftwareProduct = {} }
@@ -235,7 +236,7 @@ const buildNavigationBarProps = ({
     return {
         activeItemId,
         groups,
-        disabled: !!candidateOnboardingOrigin
+        disabled: !!candidateOnboardingOrigin && !isCertified
     };
 };
 
@@ -268,7 +269,8 @@ const buildVersionControllerProps = ({
         userInfo,
         usersList,
         isManual: onboardingMethod === onboardingMethodType.MANUAL,
-        candidateInProcess: !!candidateOnboardingOrigin
+        candidateInProcess:
+            !!candidateOnboardingOrigin && !itemPermission.isCertified
     };
 };
 
@@ -360,7 +362,8 @@ const mapStateToProps = (
             screen,
             componentId,
             componentsList,
-            mapOfExpandedIds
+            mapOfExpandedIds,
+            isCertified: itemPermission.isCertified
         }),
         meta
     };

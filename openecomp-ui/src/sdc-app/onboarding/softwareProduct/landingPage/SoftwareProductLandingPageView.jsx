@@ -65,8 +65,12 @@ class SoftwareProductLandingPageView extends React.Component {
         onAddComponent: PropTypes.func
     };
     componentDidMount() {
-        const { onCandidateInProcess, currentSoftwareProduct } = this.props;
-        if (currentSoftwareProduct.candidateOnboardingOrigin) {
+        const {
+            onCandidateInProcess,
+            currentSoftwareProduct,
+            isCertified
+        } = this.props;
+        if (currentSoftwareProduct.candidateOnboardingOrigin && !isCertified) {
             onCandidateInProcess(currentSoftwareProduct.id);
         }
     }

@@ -1,5 +1,5 @@
 /*!
- * Copyright © 2016-2017 European Support Limited
+ * Copyright © 2016-2018 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Provider } from 'react-redux';
 import GlobalModal from 'nfvo-components/modal/GlobalModal.js';
+import Notifications from 'nfvo-components/notification/Notifications.js';
 import Loader from 'nfvo-components/loader/Loader.jsx';
 import WebSocketUtil from 'nfvo-utils/WebSocketUtil.js';
 import UserNotificationsActionHelper from 'sdc-app/onboarding/userNotifications/UserNotificationsActionHelper.js';
@@ -44,6 +45,7 @@ class Application extends React.Component {
             <Provider store={store}>
                 <div>
                     <GlobalModal />
+                    <Notifications />
                     {this.props.children}
                     <Loader />
                 </div>
