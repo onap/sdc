@@ -19,16 +19,16 @@ package org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolid
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Multimaps;
-import org.apache.commons.collections4.CollectionUtils;
-import org.openecomp.core.utilities.file.FileUtils;
-import org.openecomp.sdc.heat.datatypes.model.Resource;
-import org.openecomp.sdc.tosca.datatypes.ToscaNodeType;
-import org.openecomp.sdc.translator.services.heattotosca.HeatToToscaUtil;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import org.apache.commons.collections4.CollectionUtils;
+import org.openecomp.core.utilities.file.FileUtils;
+import org.openecomp.sdc.heat.datatypes.model.Resource;
+import org.openecomp.sdc.tosca.datatypes.ToscaNodeType;
+import org.openecomp.sdc.translator.services.heattotosca.HeatToToscaUtil;
 
 /**
  * The type Port template consolidation data.

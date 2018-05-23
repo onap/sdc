@@ -18,15 +18,6 @@ package org.openecomp.sdc.translator.services.heattotosca;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
-import org.apache.commons.collections4.MapUtils;
-import org.onap.sdc.tosca.datatypes.model.NodeTemplate;
-import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
-import org.openecomp.sdc.tosca.services.DataModelUtil;
-import org.openecomp.sdc.translator.datatypes.heattotosca.TranslationContext;
-import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.composition.UnifiedCompositionData;
-import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.ComputeTemplateConsolidationData;
-import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.PortTemplateConsolidationData;
-import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.SubInterfaceTemplateConsolidationData;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -37,6 +28,15 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
+import org.onap.sdc.tosca.datatypes.model.NodeTemplate;
+import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
+import org.openecomp.sdc.tosca.services.DataModelUtil;
+import org.openecomp.sdc.translator.datatypes.heattotosca.TranslationContext;
+import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.composition.UnifiedCompositionData;
+import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.ComputeTemplateConsolidationData;
+import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.PortTemplateConsolidationData;
+import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.SubInterfaceTemplateConsolidationData;
+
 /**
  * Utility class for consolidation data collection helper methods.
  */
@@ -44,28 +44,6 @@ public class UnifiedCompositionUtil {
 
   private UnifiedCompositionUtil() {
     //Hiding the implicit public constructor
-  }
-
-  /**
-   * Gets all ports per port type, which are connected to the computes from the input
-   * computeTemplateConsolidationDataCollection.
-   *
-   * @param computeTemplateConsolidationDataCollection collection of compute template
-   *                                                   consolidation data
-   * @return set of port ids, per port type
-   */
-  static Map<String, List<String>> collectAllPortsFromEachTypesFromComputes(
-      Collection<ComputeTemplateConsolidationData> computeTemplateConsolidationDataCollection) {
-    Map<String, List<String>> portTypeToIds = new HashMap<>();
-
-    for (ComputeTemplateConsolidationData compute : computeTemplateConsolidationDataCollection) {
-      Map<String, List<String>> ports = compute.getPorts();
-      if (!MapUtils.isEmpty(ports)) {
-        addPortsToMap(portTypeToIds, ports);
-      }
-    }
-
-    return portTypeToIds;
   }
 
   static ListMultimap<String, SubInterfaceTemplateConsolidationData>
@@ -76,14 +54,6 @@ public class UnifiedCompositionUtil {
       port.copyMappedInto(subInterfaceDataByType);
     }
     return subInterfaceDataByType;
-  }
-
-  private static void addPortsToMap(Map<String, List<String>> portTypeToIds,
-                                    Map<String, List<String>> ports) {
-    for (Map.Entry<String, List<String>> portTypeToIdEntry : ports.entrySet()) {
-      portTypeToIds.putIfAbsent(portTypeToIdEntry.getKey(), new ArrayList<>());
-      portTypeToIds.get(portTypeToIdEntry.getKey()).addAll(portTypeToIdEntry.getValue());
-    }
   }
 
   static String getComputeTypeSuffix(ServiceTemplate serviceTemplate,
@@ -185,4 +155,23 @@ public class UnifiedCompositionUtil {
     //Add sub interface type since we have only one subinterface per type
     return getSubInterfaceTypeSuffix(subInterfaceNodeTemplate.getType());
   }
+
+    public static Map<String, List<String>> collectAllPortsOfEachTypeFromComputes(
+            List<UnifiedCompositionData> unifiedCompositionDataList) {
+        Map<String, List<String>> portIdsPerPortType = new HashMap<>();
+        unifiedCompositionDataList.forEach(unifiedCompositionData -> UnifiedCompositionUtil.fillPorTypeToPortIdsMap(
+                unifiedCompositionData.getComputeTemplateConsolidationData(), portIdsPerPortType));
+
+        return portIdsPerPortType;
+    }
+
+    public static void fillPorTypeToPortIdsMap(ComputeTemplateConsolidationData computeTemplateConsolidationData,
+                                                      Map<String, List<String>> portTypeToIds) {
+        Map<String, List<String>> listMap = computeTemplateConsolidationData.collectAllPortsOfEachTypeFromCompute();
+
+        listMap.forEach((key, value) -> {
+            portTypeToIds.putIfAbsent(key, new ArrayList<>());
+            portTypeToIds.get(key).addAll(value);
+        });
+    }
 }

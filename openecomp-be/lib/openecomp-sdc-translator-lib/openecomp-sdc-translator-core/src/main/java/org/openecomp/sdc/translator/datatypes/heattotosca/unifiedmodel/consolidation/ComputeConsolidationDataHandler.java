@@ -32,7 +32,12 @@ public class ComputeConsolidationDataHandler implements ConsolidationDataHandler
 
     private final ComputeConsolidationData computeConsolidationData;
 
-    ComputeConsolidationDataHandler(ComputeConsolidationData computeConsolidationData) {
+    /**
+     * Instantiates a new Compute consolidation data handler.
+     *
+     * @param computeConsolidationData the compute consolidation data
+     */
+    public ComputeConsolidationDataHandler(ComputeConsolidationData computeConsolidationData) {
         this.computeConsolidationData = computeConsolidationData;
     }
 
@@ -134,5 +139,10 @@ public class ComputeConsolidationDataHandler implements ConsolidationDataHandler
         }
 
         return computeNodeTemplate.getType();
+    }
+
+    public FileComputeConsolidationData getFileComputeConsolidationData(ServiceTemplate serviceTemplate) {
+        return computeConsolidationData.getFileComputeConsolidationData(
+                ToscaUtil.getServiceTemplateFileName(serviceTemplate));
     }
 }
