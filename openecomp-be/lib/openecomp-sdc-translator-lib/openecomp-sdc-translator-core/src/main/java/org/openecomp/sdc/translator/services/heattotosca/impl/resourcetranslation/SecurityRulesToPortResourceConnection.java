@@ -16,6 +16,8 @@
 
 package org.openecomp.sdc.translator.services.heattotosca.impl.resourcetranslation;
 
+import static org.openecomp.sdc.translator.services.heattotosca.HeatToToscaLogConstants.LOG_UNSUPPORTED_SECURITY_RULE_PORT_CAPABILITY_CONNECTION;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -120,10 +122,8 @@ class SecurityRulesToPortResourceConnection extends ResourceConnectionUsingCapab
                                                         List<String> supportedTypes) {
 
 
-        if (!resourceTranslationBase.isResourceTypeSupported(connectedResource, supportedTypes)) {
-            logger.warn("Nested resource '{}' property '{}' is pointing to resource with type '{}' which is not "
-                            + "supported for capability '{}' connection, (security rules to port connection)."
-                            + "Supported types are: '{}', therefore, this TOSCA capability will not be connected.",
+        if (resourceTranslationBase.isUnsupportedResourceType(connectedResource, supportedTypes)) {
+            logger.warn(LOG_UNSUPPORTED_SECURITY_RULE_PORT_CAPABILITY_CONNECTION,
                     nestedResourceId, nestedPropertyName, connectedResource.getType(),
                     connectionPointId, supportedTypes.toString());
 

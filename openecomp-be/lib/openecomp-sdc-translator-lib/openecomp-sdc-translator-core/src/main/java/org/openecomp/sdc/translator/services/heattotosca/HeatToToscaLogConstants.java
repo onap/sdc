@@ -79,6 +79,68 @@ public class HeatToToscaLogConstants {
             + "include '{}' property which is connect to unsupported/incorrect {} resource '{}' with type '{}', "
             + LOG_UNSUPPORTED_RESOURCE_CONNECTION_SUFFIX;
 
+    //Security rules to port
+    public static final String LOG_UNSUPPORTED_SECURITY_RULE_PORT_CAPABILITY_CONNECTION =
+            "Nested resource '{}' property '{}' is pointing to resource with type '{}' which is not supported for "
+                    + "capability '{}' connection, (security rules to port connection). Supported types are: '{}', "
+                    + "therefore, this TOSCA capability will not be connected.";
+
+    //Neutron Port
+    public static final String LOG_UNSUPPORTED_RESOURCE_REQUIREMENT_CONNECTION =
+            "'{}' property of port resource('{}') is pointing to a resource of type '{}' which is not supported for "
+                    + "this requirement. Supported types are: {}";
+    //Volume Attachment
+    public static final String LOG_INVALID_INSTANCE_UUID = LOG_HEAT_RESOURCE_TYPE_PREFIX
+            + "include 'instance_uuid' property without 'get_resource' function, "
+            + LOG_UNSUPPORTED_HEAT_RESOURCE_SUFFIX;
+    public static final String LOG_UNSUPPORTED_VOLUME_ATTACHMENT_MSG =
+            "Volume attachment with id '{}' is pointing to unsupported resource type({}) through the property "
+                    + "'volume_id'. The connection to the volume is ignored. Supported types are: {}";
+
+    //Capability/Requirement helpers
+    public static final String LOG_NESTED_RESOURCE_PROPERTY_NOT_DEFINED = "'{}' property is not define in nested "
+            + "resource '{}' for the nested heat file, therefore, '{}' TOSCA {} will not be connected.";
+    public static final String LOG_UNSUPPORTED_CAPABILITY_CONNECTION =
+            "'{}' connection to '{}' capability of type '{}' is not supported/invalid,"
+                    + LOG_UNSUPPORTED_RESOURCE_CONNECTION_SUFFIX;
+
+    //Port to Net Resource Connection
+    public static final String LOG_UNSUPPORTED_PORT_NETWORK_REQUIREMENT_CONNECTION =
+            "Nested resource '{}' property '{}' is pointing to a resource with type '{}' which is not "
+                    + "supported for requirement '{}' that connect port to network. Supported types are: '{}', "
+                    + "therefore, this TOSCA requirement will not be connected.";
+
+    public static final String LOG_UNSUPPORTED_VOL_ATTACHMENT_VOLUME_REQUIREMENT_CONNECTION =
+            "Nested resource '{}' property '{}' is pointing to a resource with type '{}' which is not "
+                    + "supported for requirement '{}' that connect VolumeAttachment to Volume. Supported "
+                    + "types are: '{}', therefore, this TOSCA requirement will not be connected.";
+
+    //Contrail v2 vmi to net resource connection
+    public static final String LOG_MULTIPLE_VIRTUAL_NETWORK_REFS_VALUES =
+            "Heat resource: '{}' with nested heat file: '{}' has resource '{}' with "
+                    + "type '{}' which include 'virtual_network_refs' property with more than one network values, "
+                    + "only the first network will be translated, all rest will be ignored in TOSCA translation.";
+    public static final String LOG_UNSUPPORTED_VMI_NETWORK_REQUIREMENT_CONNECTION =
+            "Nested resource '{}' property '{}' is pointing to a resource with type '{}' which is not supported for "
+                    + "requirement '{}' that connect virtual machine interface to network. Supported "
+                    + "types are: '{}', therefore, this TOSCA requirement will not be connected.";
+
+    //Contrail v2 vlan to interface connection
+    public static final String LOG_UNSUPPORTED_VMI_VLAN_SUB_INTERFACE_REQUIREMENT_CONNECTION =
+            "Nested resource '{}' property '{}' is pointing to a {} resource with type '{}' which is not supported "
+                    + "for requirement '{}' that connect vmi vlan sub interface to interface. Supported types are: "
+                    + "'{}' (excluding Vlan), therefore, this TOSCA requirement will not be connected.";
+
+    public static final String LOG_MULTIPLE_INTERFACE_VALUES_NESTED =
+            "Heat resource: '{}' with nested heat file: '{}' has resource '{}' with type '{}' which include '{}' "
+                    + "property with more than one interface values, only the first interface will be connected, all "
+                    + "rest will be ignored in TOSCA translation.";
+
+    public static final String LOG_UNSUPPORTED_CONTRAIL_PORT_NETWORK_REQUIREMENT_CONNECTION =
+            "Nested resource '{}' property '{}' is pointing to a resource with type '{}' which is not supported"
+                    + "for requirement '{}' that connect contrail port to network. Supported types "
+                    + "are: '{}', therefore, this TOSCA requirement will not be connected.";
+
     private HeatToToscaLogConstants() {
         //Hiding implicit constructor
     }

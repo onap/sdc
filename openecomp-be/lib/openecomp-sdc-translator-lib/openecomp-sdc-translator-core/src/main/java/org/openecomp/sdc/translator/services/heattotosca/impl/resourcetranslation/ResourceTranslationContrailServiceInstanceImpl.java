@@ -25,8 +25,9 @@ import static org.openecomp.sdc.translator.services.heattotosca.HeatToToscaLogCo
 import static org.openecomp.sdc.translator.services.heattotosca.HeatToToscaLogConstants.LOG_SERVICE_TEMPLATE_PROPERTY_UNSUPPORTED_RESOURCE;
 import static org.openecomp.sdc.translator.services.heattotosca.HeatToToscaLogConstants.LOG_UNSUPPORTED_NETWORK_RESOURCE_CONNECTION;
 
+import com.google.common.collect.ImmutableList;
+
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -320,9 +321,9 @@ public class ResourceTranslationContrailServiceInstanceImpl extends ResourceTran
     private void connectPortToNetwork(TranslateTo translateTo, Object interfacePropertyValue,
                                       NodeTemplate substitutedNodeTemplate,
                                       String portReqMappingKey) {
-        List<String> validNetworksForConnections = Arrays
-                .asList(HeatResourcesTypes.NEUTRON_NET_RESOURCE_TYPE.getHeatResource(),
-                        HeatResourcesTypes.CONTRAIL_VIRTUAL_NETWORK_RESOURCE_TYPE.getHeatResource());
+        List<String> validNetworksForConnections = ImmutableList.of(
+                HeatResourcesTypes.NEUTRON_NET_RESOURCE_TYPE.getHeatResource(),
+                HeatResourcesTypes.CONTRAIL_VIRTUAL_NETWORK_RESOURCE_TYPE.getHeatResource());
         if (!(interfacePropertyValue instanceof Map)) {
             return;
         }
