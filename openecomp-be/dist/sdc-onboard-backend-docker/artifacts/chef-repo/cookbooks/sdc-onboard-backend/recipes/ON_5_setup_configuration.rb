@@ -7,6 +7,9 @@ template "onboard-be-config" do
    variables({
       :onboard_ip             => node['ONBOARDING_BE_VIP'],
       :onboard_port           => node['ONBOARDING_BE'][:http_port],
+      :host_ip                => node['BE_VIP'],
+      :catalog_http_port      => node['BE'][:http_port],
+      :catalog_https_port     => node['BE'][:https_port],
       :ssl_port               => node['ONBOARDING_BE'][:https_port],
       :cassandra_ip           => node['Nodes']['CS'].join(",").gsub(/[|]/,''),
       :DC_NAME                => node['cassandra'][:cluster_name]+node.chef_environment,

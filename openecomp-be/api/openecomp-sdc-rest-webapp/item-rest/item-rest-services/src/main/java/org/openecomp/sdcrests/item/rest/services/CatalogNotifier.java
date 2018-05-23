@@ -30,6 +30,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -52,7 +53,8 @@ public class CatalogNotifier {
     private static final String CONFIG_FILE = "configuration.yaml";
     private static final String PROTOCOL_KEY = "beProtocol";
     private static final String HOST_KEY = "beFqdn";
-    private static final String PORT_KEY = "beHttpPort";
+    private static final String HTTP_PORT_KEY = "beHttpPort";
+    private static final String HTTPS_PORT_KEY = "beSslPort";
     private static final String URL_KEY = "onboardCatalogNotificationUrl";
     private static final String URL_DEFAULT_FORMAT = "%s://%s:%s/sdc2/rest/v1/catalog/notif/vsp/";
 
@@ -60,7 +62,6 @@ public class CatalogNotifier {
     private static String notifyCatalogUrl;
 
     private static ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
-    private static boolean executeNotificationFlag = true;
 
 
     static {
@@ -75,11 +76,17 @@ public class CatalogNotifier {
             configurationMap = readFromFile(configurationYamlFile, reader);
             Object protocol = configurationMap.get(PROTOCOL_KEY);
             Object host = configurationMap.get(HOST_KEY);
-            Object port = configurationMap.get(PORT_KEY);
 
-            if (protocol == null || host == null || port == null) {
-                LOGGER.error("Could not read configuration file configuration.yaml");
-                executeNotificationFlag = false;
+            if (protocol == null || host == null) {
+                throw new ExceptionInInitializerError("Could not read configuration file configuration.yaml.");
+            }
+
+            Object port = null;
+            if (String.valueOf(protocol).equals("http")) {
+                port = configurationMap.get(HTTP_PORT_KEY);
+            }
+            if (String.valueOf(protocol).equals("https")) {
+                port = configurationMap.get(HTTPS_PORT_KEY);
             }
 
             if (configurationMap.get(URL_KEY) != null) {
@@ -93,22 +100,20 @@ public class CatalogNotifier {
             }
 
         } catch (Exception e) {
-           LOGGER.error("Could not read configuration file configuration.yaml");
-           executeNotificationFlag = false;
+            throw new ExceptionInInitializerError(
+                    "Could not read configuration file configuration.yaml. Error: " + e.getMessage());
+
         }
     }
 
 
     public void execute(Collection<String> itemIds, ItemAction action, int numOfRetries) {
 
-        if (executeNotificationFlag) {
+        String userId = SessionContextProviderFactory.getInstance().createInterface().get().getUser().getUserId();
 
-            String userId = SessionContextProviderFactory.getInstance().createInterface().get().getUser().getUserId();
+        Callable callable = createCallable(JsonUtil.object2Json(itemIds), action, numOfRetries, userId);
 
-            Callable callable = createCallable(JsonUtil.object2Json(itemIds), action, numOfRetries, userId);
-
-            executor.submit(callable);
-        }
+        executor.submit(callable);
 
     }
 
@@ -121,22 +126,22 @@ public class CatalogNotifier {
     private Void handleHttpRequest(String url, String itemIds, ItemAction action, String userId,
             int numOfRetries) {
 
-        try (CloseableHttpClient httpclient =  HttpClients.createDefault()) {
+        try (CloseableHttpClient httpclient = HttpClients.createDefault()) {
             HttpPost request = createPostRequest(url, itemIds, userId);
             HttpResponse response = httpclient.execute(request);
-            LOGGER.error(
-                    String.format("Catalog notification on vspId - %s action  - %s. Response: %s", itemIds,
-                            action.name(), response.getStatusLine()));
+            LOGGER.debug(String.format("Catalog notification on vspId - %s action  - %s. Response: %s", itemIds,
+                    action.name(), response.getStatusLine()));
 
-            if (numOfRetries > 1 && response.getStatusLine().getStatusCode() == 500) {
+            if (numOfRetries > 1 && response.getStatusLine().getStatusCode() == Response.Status.INTERNAL_SERVER_ERROR
+                                                                                        .getStatusCode()) {
                 Callable callable =
                         createCallable(getFailedIds(itemIds, response.getEntity()), action, --numOfRetries, userId);
-                executor.schedule(callable, 5 , TimeUnit.SECONDS);
+                executor.schedule(callable, 5, TimeUnit.SECONDS);
             }
 
         } catch (Exception e) {
-            LOGGER.error(String.format("Catalog notification on vspId - %s action  - %s FAILED. Error: %S",
-                    itemIds.toString(), action.name(), e.getMessage()));
+            LOGGER.error(String.format("Catalog notification on vspId - %s action  - %s FAILED. Error: %S", itemIds,
+                    action.name(), e.getMessage()));
         }
         return null;
     }
@@ -173,7 +178,7 @@ public class CatalogNotifier {
         } else if (action == ItemAction.RESTORE) {
             actionStr = "restored";
         }
-        LOGGER.error("Catalog notification on URL - " + notifyCatalogUrl + actionStr);
+        LOGGER.debug("Catalog notification on URL - " + notifyCatalogUrl + actionStr);
         return notifyCatalogUrl + actionStr;
     }
 
