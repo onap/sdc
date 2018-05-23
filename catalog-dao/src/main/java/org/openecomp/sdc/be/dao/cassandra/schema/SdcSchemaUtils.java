@@ -20,16 +20,23 @@
 
 package org.openecomp.sdc.be.dao.cassandra.schema;
 
-import com.datastax.driver.core.*;
+import com.datastax.driver.core.Cluster;
+import com.datastax.driver.core.Session;
+import org.openecomp.sdc.be.config.Configuration;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.function.Supplier;
 
 public class SdcSchemaUtils {
 
     private static Logger log = LoggerFactory.getLogger(SdcSchemaUtils.class.getName());
+
+    public SdcSchemaUtils() {
+    }
 
     /**
      * the method creates the cluster object using the supplied cassandra nodes
@@ -37,32 +44,32 @@ public class SdcSchemaUtils {
      *
      * @return cluster object our null in case of an invalid configuration
      */
-    public static Cluster createCluster() {
-        List<String> nodes = ConfigurationManager.getConfigurationManager().getConfiguration().getCassandraConfig().getCassandraHosts();
+    public Cluster createCluster() {
+        List<String> nodes = getCassandraConfig().getCassandraHosts();
         if (nodes == null) {
             log.info("no nodes were supplied in configuration.");
             return null;
         }
         log.info("connecting to node:{}.", nodes);
         Cluster.Builder clusterBuilder = Cluster.builder();
-        nodes.forEach(host -> clusterBuilder.addContactPoint(host));
+        nodes.forEach(clusterBuilder::addContactPoint);
 
         clusterBuilder.withMaxSchemaAgreementWaitSeconds(60);
 
-        boolean authenticate = ConfigurationManager.getConfigurationManager().getConfiguration().getCassandraConfig().isAuthenticate();
+        boolean authenticate = getCassandraConfig().isAuthenticate();
         if (authenticate) {
-            String username = ConfigurationManager.getConfigurationManager().getConfiguration().getCassandraConfig().getUsername();
-            String password = ConfigurationManager.getConfigurationManager().getConfiguration().getCassandraConfig().getPassword();
+            String username = getCassandraConfig().getUsername();
+            String password = getCassandraConfig().getPassword();
             if (username == null || password == null) {
                 log.info("authentication is enabled but username or password were not supplied.");
                 return null;
             }
             clusterBuilder.withCredentials(username, password);
         }
-        boolean ssl = ConfigurationManager.getConfigurationManager().getConfiguration().getCassandraConfig().isSsl();
+        boolean ssl = getCassandraConfig().isSsl();
         if (ssl) {
-            String truststorePath = ConfigurationManager.getConfigurationManager().getConfiguration().getCassandraConfig().getTruststorePath();
-            String truststorePassword = ConfigurationManager.getConfigurationManager().getConfiguration().getCassandraConfig().getTruststorePassword();
+            String truststorePath = getCassandraConfig().getTruststorePath();
+            String truststorePassword = getCassandraConfig().getTruststorePassword();
             if (truststorePath == null || truststorePassword == null) {
                 log.info("ssl is enabled but truststorePath or truststorePassword were not supplied.");
                 return null;
@@ -74,37 +81,42 @@ public class SdcSchemaUtils {
         return clusterBuilder.build();
     }
 
-    public static boolean executeStatement(String statement) {
-        return executeStatements(statement);
+    public boolean executeStatement(String statement) {
+        return executeStatement(this::createCluster, statement);
     }
 
-    public static boolean executeStatements(String ... statements) {
-        Cluster cluster = null;
-        Session session = null;
+    public boolean executeStatements(String ... statements) {
+        return executeStatements(this::createCluster, statements);
+    }
+
+    boolean executeStatement(Supplier<Cluster> clusterSupplier, String statement) {
+        return executeStatements(clusterSupplier, statement);
+    }
+
+    boolean executeStatements(Supplier<Cluster> clusterSupplier, String ... statements) {
+        Optional<Cluster> cluster = Optional.empty();
+        Optional<Session> session = Optional.empty();
         try {
-            cluster = createCluster();
-            if (cluster == null) {
-                return false;
+            cluster = Optional.ofNullable(clusterSupplier.get());
+            session = cluster.map(Cluster::connect);
+            if(session.isPresent()) {
+                final Session s = session.get();
+                for (String statement : statements) {
+                    s.execute(statement);
+                }
+                return true;
             }
-            session = cluster.connect();
-            for (String statement : statements) {
-                session.execute(statement);
-            }
-            return true;
         } catch (RuntimeException e) {
-            log.error(String.format("could not execute statements"), e);
-            return false;
+            log.error("could not execute statements", e);
         } finally {
-            if (session != null) {
-                session.close();
-            }
-            if (cluster != null) {
-                cluster.close();
-            }
-
+            session.ifPresent(Session::close);
+            cluster.ifPresent(Cluster::close);
         }
+        return false;
     }
 
-
+    Configuration.CassandrConfig getCassandraConfig() {
+        return ConfigurationManager.getConfigurationManager().getConfiguration().getCassandraConfig();
+    }
 
 }
