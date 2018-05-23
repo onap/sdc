@@ -1,88 +1,128 @@
-package org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation;
+/*
+ * Copyright © 2016-2018 European Support Limited
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
-import org.onap.sdc.tosca.datatypes.model.RequirementAssignment;
+package org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections4.MapUtils;
+import org.onap.sdc.tosca.datatypes.model.RequirementAssignment;
+
 /**
  * The type Compute template consolidation data.
  */
 public class ComputeTemplateConsolidationData extends EntityConsolidationData {
-  // key - volume node template id
-  // List of requirement id and the requirement assignment on the
-  // compute node which connect to this volume
-  private Map<String,List<RequirementAssignmentData>> volumes;
 
-  // key - port type (port id excluding index),
-  // value - List of connected port node template ids, with this port type
-  private Map<String, List<String>> ports;
+    // key - volume node template id
+    // List of requirement id and the requirement assignment on the
+    // compute node which connect to this volume
+    private Map<String, List<RequirementAssignmentData>> volumes;
 
-  /**
-   * Gets volumes.
-   *
-   * @return the volumes
-   */
-  public Map<String,List<RequirementAssignmentData>> getVolumes() {
-    return volumes;
-  }
+    // key - port type (port id excluding index),
+    // value - List of connected port node template ids, with this port type
+    private Map<String, List<String>> ports;
 
-  /**
-   * Sets volumes.
-   *
-   * @param volumes the volumes
-   */
-  public void setVolumes(Map<String,List<RequirementAssignmentData>> volumes) {
-    this.volumes = volumes;
-  }
-
-  /**
-   * Gets ports.
-   *
-   * @return the ports
-   */
-  public Map<String, List<String>> getPorts() {
-    return ports;
-  }
-
-  /**
-   * Sets ports.
-   *
-   * @param ports the ports
-   */
-  public void setPorts(Map<String, List<String>> ports) {
-    this.ports = ports;
-  }
-
-  /**
-   * Add port.
-   *
-   * @param portType           the port type
-   * @param portNodeTemplateId the port node template id
-   */
-  public void addPort(String portType, String portNodeTemplateId) {
-    if (this.ports == null) {
-      this.ports = new HashMap<>();
+    /**
+     * Gets volumes.
+     *
+     * @return the volumes
+     */
+    public Map<String, List<RequirementAssignmentData>> getVolumes() {
+        return volumes;
     }
-    this.ports.putIfAbsent(portType, new ArrayList<>());
-    this.ports.get(portType).add(portNodeTemplateId);
-  }
 
-
-  /**
-   * Add volume.
-   *
-   * @param requirementId         the requirement id
-   * @param requirementAssignment the requirement assignment
-   */
-  public void addVolume(String requirementId, RequirementAssignment requirementAssignment) {
-    if (this.volumes == null) {
-      this.volumes = new HashMap<>();
+    /**
+     * Sets volumes.
+     *
+     * @param volumes the volumes
+     */
+    public void setVolumes(Map<String, List<RequirementAssignmentData>> volumes) {
+        this.volumes = volumes;
     }
-    this.volumes.computeIfAbsent(requirementAssignment.getNode(), k -> new ArrayList<>())
-        .add(new RequirementAssignmentData(requirementId,
-            requirementAssignment));
-  }
+
+    /**
+     * Gets ports.
+     *
+     * @return the ports
+     */
+    public Map<String, List<String>> getPorts() {
+        return ports;
+    }
+
+    /**
+     * Sets ports.
+     *
+     * @param ports the ports
+     */
+    public void setPorts(Map<String, List<String>> ports) {
+        this.ports = ports;
+    }
+
+    /**
+     * Add port.
+     *
+     * @param portType           the port type
+     * @param portNodeTemplateId the port node template id
+     */
+    public void addPort(String portType, String portNodeTemplateId) {
+        if (this.ports == null) {
+            this.ports = new HashMap<>();
+        }
+        this.ports.putIfAbsent(portType, new ArrayList<>());
+        this.ports.get(portType).add(portNodeTemplateId);
+    }
+
+
+    /**
+    * Add volume.
+    *
+    * @param requirementId         the requirement id
+    * @param requirementAssignment the requirement assignment
+    */
+    public void addVolume(String requirementId, RequirementAssignment requirementAssignment) {
+        if (this.volumes == null) {
+            this.volumes = new HashMap<>();
+        }
+        this.volumes.computeIfAbsent(requirementAssignment.getNode(), k -> new ArrayList<>())
+                    .add(new RequirementAssignmentData(requirementId, requirementAssignment));
+    }
+
+    /**
+    * Gets all ports per port type, which are connected to the compute from the input
+    * computeTemplateConsolidationData.
+    *
+    * @param portTypeToIds map will contain all ports
+    * @return Map containing key as port type and value as ports id
+    */
+    public void collectAllPortsOfEachTypeFromCompute(Map<String, List<String>> portTypeToIds) {
+
+        Map<String, List<String>> ports = getPorts();
+        if (!MapUtils.isEmpty(ports)) {
+
+            addPortsToMap(portTypeToIds, ports);
+        }
+    }
+
+    private static void addPortsToMap(Map<String, List<String>> portTypeToIds, Map<String, List<String>> ports) {
+        for (Map.Entry<String, List<String>> portTypeToIdEntry : ports.entrySet()) {
+            portTypeToIds.putIfAbsent(portTypeToIdEntry.getKey(), new ArrayList<>());
+            portTypeToIds.get(portTypeToIdEntry.getKey()).addAll(portTypeToIdEntry.getValue());
+        }
+    }
 }

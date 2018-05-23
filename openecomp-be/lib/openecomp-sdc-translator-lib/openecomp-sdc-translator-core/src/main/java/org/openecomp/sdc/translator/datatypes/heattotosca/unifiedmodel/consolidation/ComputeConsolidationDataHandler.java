@@ -28,11 +28,19 @@ import org.openecomp.sdc.translator.datatypes.heattotosca.TranslationContext;
 import org.openecomp.sdc.translator.datatypes.heattotosca.to.TranslateTo;
 import org.openecomp.sdc.translator.services.heattotosca.NameExtractor;
 
+/**
+ * The type Compute consolidation data handler.
+ */
 public class ComputeConsolidationDataHandler implements ConsolidationDataHandler {
 
     private final ComputeConsolidationData computeConsolidationData;
 
-    ComputeConsolidationDataHandler(ComputeConsolidationData computeConsolidationData) {
+    /**
+     * Instantiates a new Compute consolidation data handler.
+     *
+     * @param computeConsolidationData the compute consolidation data
+     */
+    public ComputeConsolidationDataHandler(ComputeConsolidationData computeConsolidationData) {
         this.computeConsolidationData = computeConsolidationData;
     }
 
@@ -134,5 +142,23 @@ public class ComputeConsolidationDataHandler implements ConsolidationDataHandler
         }
 
         return computeNodeTemplate.getType();
+    }
+
+    public FileComputeConsolidationData getFileComputeConsolidationData(ServiceTemplate serviceTemplate) {
+        return computeConsolidationData.getFileComputeConsolidationData(
+                ToscaUtil.getServiceTemplateFileName(serviceTemplate));
+    }
+
+    /**
+     * Is number of compute types legal boolean.
+     *
+     * @param serviceTemplate the service template
+     * @return the boolean
+     */
+    public boolean isNumberOfComputeTypesLegal(ServiceTemplate serviceTemplate) {
+        FileComputeConsolidationData fileComputeConsolidationData = getFileComputeConsolidationData(serviceTemplate);
+        return Objects.nonNull(fileComputeConsolidationData)
+                       && fileComputeConsolidationData.isNumberOfComputeTypesLegal()
+                       && fileComputeConsolidationData.isNumberOfComputeConsolidationDataPerTypeLegal();
     }
 }
