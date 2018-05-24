@@ -26,7 +26,7 @@ import java.util.Map;
 
 public class CapabilityFilter {
 
-    List<Map<String, List<Constraint>>> properties;
+    private List<Map<String, List<Constraint>>> properties;
 
     public List<Map<String, List<Constraint>>> getProperties() {
         return properties;
@@ -38,9 +38,10 @@ public class CapabilityFilter {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("CapabilityFilter{");
-        sb.append("properties=").append(properties);
-        sb.append('}');
-        return sb.toString();
+        return "CapabilityFilter{" + "properties=" + properties + '}';
+    }
+
+    public CapabilityFilter() {
+        //default constructor
     }
 }

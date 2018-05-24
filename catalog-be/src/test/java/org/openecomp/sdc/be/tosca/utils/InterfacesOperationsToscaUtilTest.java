@@ -43,7 +43,7 @@ import org.openecomp.sdc.be.tosca.model.ToscaTemplate;
 public class InterfacesOperationsToscaUtilTest {
 
     @BeforeClass
-    public static void setUp() throws Exception {
+    public static void setUp() {
         new DummyConfigurationManager();
     }
 
