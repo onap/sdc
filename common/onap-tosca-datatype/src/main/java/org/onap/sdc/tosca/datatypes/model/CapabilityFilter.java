@@ -41,7 +41,7 @@ public class CapabilityFilter {
         return "CapabilityFilter{" + "properties=" + properties + '}';
     }
 
-    public CapabilityFilter(List<Map<String, List<Constraint>>> properties) {
-        this.properties = properties;
+    public CapabilityFilter() {
+        //default constructor
     }
 }
