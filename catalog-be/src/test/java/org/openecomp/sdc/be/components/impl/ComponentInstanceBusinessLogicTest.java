@@ -3,6 +3,7 @@ package org.openecomp.sdc.be.components.impl;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anySet;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
@@ -14,14 +15,19 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.BiPredicate;
 
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.assertj.core.util.Lists;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.openecomp.sdc.be.components.validation.UserValidations;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
+import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
 import org.openecomp.sdc.be.datatypes.elements.CapabilityDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ForwardingPathDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ForwardingPathElementDataDefinition;
@@ -29,8 +35,11 @@ import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.RequirementDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
+import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
+import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.ServletUtils;
+import org.openecomp.sdc.be.info.CreateAndAssotiateInfo;
 import org.openecomp.sdc.be.model.CapabilityDefinition;
 import org.openecomp.sdc.be.model.CapabilityRequirementRelationship;
 import org.openecomp.sdc.be.model.Component;
@@ -47,11 +56,19 @@ import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.jsontitan.operations.ForwardingPathOperation;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
+import org.openecomp.sdc.be.model.operations.api.IComponentInstanceOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
+import org.openecomp.sdc.be.model.operations.impl.ArtifactOperation;
+import org.openecomp.sdc.be.resources.data.ComponentInstanceData;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.exception.ResponseFormat;
+import org.openecomp.sdc.common.datastructure.Wrapper;
 
 import fj.data.Either;
+import javassist.CodeConverter.ArrayAccessReplacementMethodNames;
+import mockit.Deencapsulation;
+
+import java.util.*;
 
 /**
  * The test suite designed for test functionality of
@@ -76,6 +93,7 @@ public class ComponentInstanceBusinessLogicTest {
 	private static ServletUtils servletUtils;
 	private static ResponseFormat responseFormat;
 	private static ToscaOperationFacade toscaOperationFacade;
+	private static IComponentInstanceOperation componentInstanceOperation;
 	private static UserBusinessLogic userAdmin;
 
 	private static ComponentInstanceBusinessLogic componentInstanceBusinessLogic;
@@ -90,7 +108,8 @@ public class ComponentInstanceBusinessLogicTest {
 	private static RequirementDataDefinition requirement;
 	private static RequirementCapabilityRelDef relation;
 	private static BaseBusinessLogic baseBusinessLogic;
-	
+	private static ArtifactsBusinessLogic artifactsBusinessLogic;
+	private static ToscaDataDefinition toscaDataDefinition;
 
 //	@BeforeClass
 //	public static void setup() {
@@ -302,6 +321,9 @@ public class ComponentInstanceBusinessLogicTest {
 		baseBusinessLogic = Mockito.mock(BaseBusinessLogic.class);
 		userValidations = Mockito.mock(UserValidations.class);
 		forwardingPathOperation = Mockito.mock(ForwardingPathOperation.class);
+		componentInstanceOperation = Mockito.mock(IComponentInstanceOperation.class);
+		artifactsBusinessLogic = Mockito.mock(ArtifactsBusinessLogic.class);
+		toscaDataDefinition = Mockito.mock(ToscaDataDefinition.class);
 	}
 
 	private static void setMocks() {
@@ -319,6 +341,10 @@ public class ComponentInstanceBusinessLogicTest {
 				.thenReturn(Either.left(user));
 		when(componentsUtils.getResponseFormat(eq(ActionStatus.RELATION_NOT_FOUND), eq(RELATION_ID), eq(COMPONENT_ID)))
 				.thenReturn(responseFormat);
+		Either<User, ActionStatus> eitherGetUser = Either.left(user);
+		when(userAdmin.getUser("jh0003", false)).thenReturn(eitherGetUser);
+		when(userValidations.validateUserExists(eq(user.getUserId()), anyString(), eq(false)))
+				.thenReturn(Either.left(user));
 	}
 
 	private static void createComponents() {
@@ -328,7 +354,7 @@ public class ComponentInstanceBusinessLogicTest {
 		createResource();
 	}
 
-	private static void createResource() {
+	private static Component createResource() {
 		resource = new Resource();
 		resource.setUniqueId(COMPONENT_ID);
 		resource.setComponentInstancesRelations(Lists.newArrayList(relation));
@@ -336,9 +362,10 @@ public class ComponentInstanceBusinessLogicTest {
 		resource.setCapabilities(toInstance.getCapabilities());
 		resource.setRequirements(fromInstance.getRequirements());
 		resource.setComponentType(ComponentTypeEnum.RESOURCE);
+		return resource;
 	}
 
-	private static void createService() {
+	private static Component createService() {
 		service = new Service();
 		service.setUniqueId(COMPONENT_ID);
 		service.setComponentInstancesRelations(Lists.newArrayList(relation));
@@ -346,11 +373,14 @@ public class ComponentInstanceBusinessLogicTest {
 		service.setCapabilities(toInstance.getCapabilities());
 		service.setRequirements(fromInstance.getRequirements());
 		service.setComponentType(ComponentTypeEnum.SERVICE);
+		return service;
 	}
 
-	private static void createInstances() {
+	private static ComponentInstance createInstances() {
 		toInstance = new ComponentInstance();
 		toInstance.setUniqueId(TO_INSTANCE_ID);
+		toInstance.setComponentUid("uuuiiid");
+		toInstance.setName("tests");
 
 		fromInstance = new ComponentInstance();
 		fromInstance.setUniqueId(FROM_INSTANCE_ID);
@@ -374,6 +404,7 @@ public class ComponentInstanceBusinessLogicTest {
 
 		toInstance.setCapabilities(capabilities);
 		fromInstance.setRequirements(requirements);
+		return toInstance;
 	}
 
 	private static void createRelation() {
@@ -399,6 +430,11 @@ public class ComponentInstanceBusinessLogicTest {
 		relationInfo.setRelationships(relationshipImpl);
 	}
 
+	///////////////////////////////////////////////////////////////////////////////
+	/////////////////////////////new test//////////////////////////////////////////
+	///////////////////////////////////////////////////////////////////////////////
+	
+	
 	private ComponentInstanceBusinessLogic createTestSubject() {
 			return componentInstanceBusinessLogic;
 	}
@@ -413,7 +449,7 @@ public class ComponentInstanceBusinessLogicTest {
 		String containerComponentType = "";
 		String containerComponentId = "";
 		String serviceProxyId = "";
-		String userId = "";
+		String userId = user.getUserId();
 		Either<ComponentInstance, ResponseFormat> result;
 
 		// default test
@@ -433,8 +469,8 @@ public class ComponentInstanceBusinessLogicTest {
 		ComponentInstanceBusinessLogic testSubject;
 		String containerComponentType = "";
 		String containerComponentId = "";
-		String userId = "";
-		ComponentInstance componentInstance = null;
+		String userId = user.getUserId();
+		ComponentInstance componentInstance = createInstances();
 		Either<ComponentInstance, ResponseFormat> result;
 
 		// default test
@@ -445,6 +481,7 @@ public class ComponentInstanceBusinessLogicTest {
 
 
 
+	
 	
 	@Test
 	public void testDeleteForwardingPathsRelatedTobeDeletedComponentInstance() throws Exception {
@@ -468,7 +505,7 @@ public class ComponentInstanceBusinessLogicTest {
 		String containerComponentType = "";
 		String containerComponentId = "";
 		String serviceProxyId = "";
-		String userId = "";
+		String userId = user.getUserId();
 		Either<ComponentInstance, ResponseFormat> result;
 
 		// default test
@@ -513,13 +550,601 @@ public class ComponentInstanceBusinessLogicTest {
 		ComponentInstanceBusinessLogic testSubject;
 		String componentId = "";
 		String relationId = "";
-		String userId = "";
+		String userId = user.getUserId();
 		ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.RESOURCE_INSTANCE;
 		Either<RequirementCapabilityRelDef, ResponseFormat> result;
 
 		// default test
 		testSubject = createTestSubject();
 		result = testSubject.getRelationById(componentId, relationId, userId, componentTypeEnum);
+	}
+
+	
+
+
+	
+	@Test
+	public void testCreateComponentInstance_1() throws Exception {
+	ComponentInstanceBusinessLogic testSubject;String containerComponentParam = "";
+	String containerComponentId = "";
+	String userId = user.getUserId();
+	ComponentInstance resourceInstance = null;
+	boolean inTransaction = false;
+	boolean needLock = false;
+	Either<ComponentInstance,ResponseFormat> result;
+	
+	// default test
+	testSubject=createTestSubject();result=testSubject.createComponentInstance(containerComponentParam, containerComponentId, userId, resourceInstance, inTransaction, needLock);
+	}
+
+	
+
+
+	
+	@Test
+	public void testCreateAndAssociateRIToRI() throws Exception {
+	ComponentInstanceBusinessLogic testSubject;
+	
+	String containerComponentParam = "";
+	String containerComponentId = "";
+	String userId = user.getUserId();
+	CreateAndAssotiateInfo createAndAssotiateInfo = new CreateAndAssotiateInfo(null, null);
+	Either<CreateAndAssotiateInfo,ResponseFormat> result;
+	
+	// default test
+	testSubject=createTestSubject();result=testSubject.createAndAssociateRIToRI(containerComponentParam, containerComponentId, userId, createAndAssotiateInfo);
+	}
+	
+	@Test
+	public void testGetOriginComponentFromComponentInstance_1() throws Exception {
+	ComponentInstanceBusinessLogic testSubject;
+	Component compoent = createResource();
+	String componentInstanceName = "";
+	String origComponetId = compoent.getUniqueId();
+	Either<Component, StorageOperationStatus> oldResourceRes = Either.left(compoent);
+	when(toscaOperationFacade.getToscaFullElement(compoent.getUniqueId())).thenReturn(oldResourceRes);
+	Either<Component,ResponseFormat> result;
+	
+	// default test
+	testSubject=createTestSubject();result=Deencapsulation.invoke(testSubject, "getOriginComponentFromComponentInstance", new Object[]{componentInstanceName, origComponetId});
+	}
+
+	
+	@Test
+	public void testCreateComponentInstanceOnGraph() throws Exception {
+	ComponentInstanceBusinessLogic testSubject;
+	Component containerComponent = createResource();
+	Component originComponent = null;
+	ComponentInstance componentInstance = createInstances();
+	Either<ComponentInstance,ResponseFormat> result;
+	
+	Either<ImmutablePair<Component, String>, StorageOperationStatus> result2 = Either.right(StorageOperationStatus.ARTIFACT_NOT_FOUND);
+	when(toscaOperationFacade.addComponentInstanceToTopologyTemplate(containerComponent, containerComponent,componentInstance, false, user)).thenReturn(result2);
+	
+	// default test
+	testSubject=createTestSubject();result=Deencapsulation.invoke(testSubject, "createComponentInstanceOnGraph", new Object[]{containerComponent, containerComponent, componentInstance, user});
+	}
+	
+	@Test(expected=NullPointerException.class)
+	public void testCreateComponentInstanceOnGraph2() throws Exception {
+	ComponentInstanceBusinessLogic testSubject;
+	Component containerComponent = createResource();
+	containerComponent.setName("name");
+	ComponentInstance componentInstance = createInstances();
+	Either<ComponentInstance,ResponseFormat> result;
+	ImmutablePair<Component, String> pair =  new ImmutablePair<>(containerComponent,"");
+	
+	
+	
+	
+	Either<ImmutablePair<Component, String>, StorageOperationStatus> result2 = Either.left(pair);
+	when(toscaOperationFacade.addComponentInstanceToTopologyTemplate(containerComponent, containerComponent,componentInstance, false, user)).thenReturn(result2);
+	
+	// default test
+	testSubject=createTestSubject();result=Deencapsulation.invoke(testSubject, "createComponentInstanceOnGraph", new Object[]{containerComponent, containerComponent, componentInstance, user});
+	}
+	
+	@Test
+	public void testUpdateComponentInstanceMetadata() throws Exception {
+	ComponentInstanceBusinessLogic testSubject;
+	String containerComponentParam = "";
+	String containerComponentId = "";
+	String componentInstanceId = "";
+	String userId = user.getUserId();
+	ComponentInstance componentInstance = createInstances();
+	Either<ComponentInstance,ResponseFormat> result;
+	
+	// default test
+	testSubject=createTestSubject();result=testSubject.updateComponentInstanceMetadata(containerComponentParam, containerComponentId, componentInstanceId, userId, componentInstance);
+	}
+
+	
+	@Test
+	public void testUpdateComponentInstanceMetadata_1() throws Exception {
+	ComponentInstanceBusinessLogic testSubject;String containerComponentParam = "";
+	String containerComponentId = "";
+	String componentInstanceId = "";
+	String userId = user.getUserId();
+	ComponentInstance componentInstance = createInstances();
+	boolean inTransaction = false;
+	boolean needLock = false;
+	boolean createNewTransaction = false;
+	Either<ComponentInstance,ResponseFormat> result;
+	
+	// default test
+	testSubject=createTestSubject();result=testSubject.updateComponentInstanceMetadata(containerComponentParam, containerComponentId, componentInstanceId, userId, componentInstance, inTransaction, needLock, createNewTransaction);
+	}
+
+	
+
+
+	
+	@Test
+	public void testValidateParent() throws Exception {
+	ComponentInstanceBusinessLogic testSubject;
+	Component containerComponent = createResource();
+	String nodeTemplateId = "";
+	boolean result;
+	
+	// default test
+	testSubject=createTestSubject();result=Deencapsulation.invoke(testSubject, "validateParent", new Object[]{containerComponent, nodeTemplateId});
+	}
+
+	
+	@Test
+	public void testGetComponentType() throws Exception {
+	ComponentInstanceBusinessLogic testSubject;
+	ComponentTypeEnum containerComponentType = ComponentTypeEnum.RESOURCE;
+	ComponentTypeEnum result;
+	
+	// default test
+	testSubject=createTestSubject();result=Deencapsulation.invoke(testSubject, "getComponentType", new Object[]{ComponentTypeEnum.class});
+	}
+
+	
+	
+	@Test
+	public void testGetNewGroupName() throws Exception {
+	ComponentInstanceBusinessLogic testSubject;String oldPrefix = "";
+	String newNormailzedPrefix = "";
+	String qualifiedGroupInstanceName = "";
+	String result;
+	
+	// test 1
+	testSubject=createTestSubject();
+	result=Deencapsulation.invoke(testSubject, "getNewGroupName", new Object[]{oldPrefix, newNormailzedPrefix, qualifiedGroupInstanceName});
+	}
+
+	
+	@Test
+	public void testUpdateComponentInstanceMetadata_3() throws Exception {
+	ComponentInstanceBusinessLogic testSubject;
+	ComponentInstance oldComponentInstance = createInstances();
+	ComponentInstance newComponentInstance = null;
+	ComponentInstance result;
+	
+	// default test
+	testSubject=createTestSubject();result=Deencapsulation.invoke(testSubject, "updateComponentInstanceMetadata", new Object[]{oldComponentInstance, oldComponentInstance});
+	}
+
+	
+	@Test
+	public void testDeleteComponentInstance() throws Exception {
+	ComponentInstanceBusinessLogic testSubject;String containerComponentParam = "";
+	String containerComponentId = "";
+	String componentInstanceId = "";
+	String userId = user.getUserId();
+	Either<ComponentInstance,ResponseFormat> result;
+	
+	// default test
+	testSubject=createTestSubject();result=testSubject.deleteComponentInstance(containerComponentParam, containerComponentId, componentInstanceId, userId);
+	}
+
+	
+	@Test
+	public void testDeleteForwardingPaths() throws Exception {
+	ComponentInstanceBusinessLogic testSubject;
+	Component service = createService();
+	String serviceId = service.getUniqueId();
+	List<String> pathIdsToDelete = new ArrayList<>();
+	Either<Set<String>,ResponseFormat> result;
+	
+//	Either<Service, StorageOperationStatus> storageStatus = toscaOperationFacade.getToscaElement(serviceId);
+	when(toscaOperationFacade.getToscaElement(serviceId)).thenReturn(Either.right(StorageOperationStatus.BAD_REQUEST));
+	
+	// default test
+	testSubject=createTestSubject();result=Deencapsulation.invoke(testSubject, "deleteForwardingPaths", new Object[]{serviceId, pathIdsToDelete});
+	}
+
+	
+	@Test
+	public void testAssociateRIToRIOnGraph() throws Exception {
+	ComponentInstanceBusinessLogic testSubject;
+	Component containerComponent = createResource();
+	RequirementCapabilityRelDef requirementDef = new RequirementCapabilityRelDef();
+	ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.RESOURCE;
+	boolean inTransaction = false;
+	Either<RequirementCapabilityRelDef,ResponseFormat> result;
+	
+	
+
+	Either<RequirementCapabilityRelDef, StorageOperationStatus> getResourceResult = Either.left(requirementDef);
+	when(toscaOperationFacade.associateResourceInstances(containerComponent.getUniqueId(), requirementDef)).thenReturn(getResourceResult);
+	
+	// default test
+	testSubject=createTestSubject();result=testSubject.associateRIToRIOnGraph(containerComponent, requirementDef, componentTypeEnum, inTransaction);
+	}
+
+
+	
+	@Test
+	public void testFindRelation() throws Exception {
+	ComponentInstanceBusinessLogic testSubject;
+	String relationId = "";
+	List<RequirementCapabilityRelDef> requirementCapabilityRelations = new ArrayList<>();
+	RequirementCapabilityRelDef result;
+	
+	// default test
+	testSubject=createTestSubject();result=Deencapsulation.invoke(testSubject, "findRelation", new Object[]{relationId, requirementCapabilityRelations});
+	}
+
+		
+	@Test
+	public void testIsNetworkRoleServiceProperty() throws Exception {
+	ComponentInstanceBusinessLogic testSubject;
+	ComponentInstanceProperty property = new ComponentInstanceProperty();
+	ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.RESOURCE;
+	boolean result;
+	
+	// default test
+	testSubject=createTestSubject();result=Deencapsulation.invoke(testSubject, "isNetworkRoleServiceProperty", new Object[]{property, componentTypeEnum});
+	}
+
+	
+	@Test
+	public void testConcatServiceNameToVLINetworkRolePropertiesValues() throws Exception {
+	ComponentInstanceBusinessLogic testSubject;
+	ToscaOperationFacade toscaOperationFacade = new ToscaOperationFacade();
+	ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.RESOURCE;
+	String componentId = "";
+	String resourceInstanceId = "";
+	List<ComponentInstanceProperty> properties = new ArrayList<>();
+	StorageOperationStatus result;
+	
+	// default test
+	testSubject=createTestSubject();result=Deencapsulation.invoke(testSubject, "concatServiceNameToVLINetworkRolePropertiesValues", new Object[]{toscaOperationFacade, componentTypeEnum, componentId, resourceInstanceId, properties});
+	}
+
+	
+	@Test
+	public void testCreateOrUpdatePropertiesValues() throws Exception {
+	ComponentInstanceBusinessLogic testSubject;
+	ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.RESOURCE;
+	Component component = createResource();
+	String componentId = component.getUniqueId();
+	String resourceInstanceId = "";
+	List<ComponentInstanceProperty> properties = new ArrayList<>();
+	String userId = user.getUserId();
+	Either<List<ComponentInstanceProperty>,ResponseFormat> result;
+	
+//	Either<Component, StorageOperationStatus> getResourceResult = toscaOperationFacade.getToscaElement(componentId, JsonParseFlagEnum.ParseAll);
+	when(toscaOperationFacade.getToscaElement(componentId, JsonParseFlagEnum.ParseAll)).thenReturn(Either.left(component));
+	
+	// test 1
+	testSubject=createTestSubject();
+	result=testSubject.createOrUpdatePropertiesValues(componentTypeEnum, componentId, resourceInstanceId, properties, userId);
+	
+	componentTypeEnum =null;
+	result=testSubject.createOrUpdatePropertiesValues(componentTypeEnum, componentId, resourceInstanceId, properties, userId);
+	
+	when(toscaOperationFacade.getToscaElement(componentId, JsonParseFlagEnum.ParseAll)).thenReturn(Either.right(StorageOperationStatus.BAD_REQUEST));
+	result=testSubject.createOrUpdatePropertiesValues(componentTypeEnum, componentId, resourceInstanceId, properties, userId);
+	
+	}
+
+	
+	@Test
+	public void testUpdateCapabilityPropertyOnContainerComponent() throws Exception {
+	ComponentInstanceBusinessLogic testSubject;
+	ComponentInstanceProperty property = new ComponentInstanceProperty();
+	String newValue = "";
+	Component containerComponent = createResource();
+	ComponentInstance foundResourceInstance = createInstances();
+	String capabilityType = "";
+	String capabilityName = "";
+	ResponseFormat result;
+	
+	// default test
+	testSubject=createTestSubject();result=Deencapsulation.invoke(testSubject, "updateCapabilityPropertyOnContainerComponent", new Object[]{property, newValue, containerComponent, foundResourceInstance, capabilityType, capabilityName});
+	}
+
+	
+	
+	@Test
+	public void testCreateOrUpdateInstanceInputValues() throws Exception {
+	ComponentInstanceBusinessLogic testSubject;
+	ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.RESOURCE;
+	Component resource = createResource();
+	String componentId = resource.getUniqueId();
+	String resourceInstanceId = "";
+	List<ComponentInstanceInput> inputs = new ArrayList<>();
+	String userId = user.getUserId();
+	Either<List<ComponentInstanceInput>,ResponseFormat> result;
+	
+	 when(toscaOperationFacade.getToscaElement(componentId, JsonParseFlagEnum.ParseAll)).thenReturn(Either.left(resource));
+	
+	// test 1
+	testSubject=createTestSubject();
+	result=testSubject.createOrUpdateInstanceInputValues(componentTypeEnum, componentId, resourceInstanceId, inputs, userId);
+	componentTypeEnum =null;
+	result=testSubject.createOrUpdateInstanceInputValues(componentTypeEnum, componentId, resourceInstanceId, inputs, userId);
+	
+	
+	 when(toscaOperationFacade.getToscaElement(componentId, JsonParseFlagEnum.ParseAll)).thenReturn(Either.right(StorageOperationStatus.BAD_REQUEST));
+	 result=testSubject.createOrUpdateInstanceInputValues(componentTypeEnum, componentId, resourceInstanceId, inputs, userId);
+	
+	}
+
+	
+	@Test
+	public void testCreateOrUpdateGroupInstancePropertyValue() throws Exception {
+	ComponentInstanceBusinessLogic testSubject;
+	ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.RESOURCE;
+	Component resource = createResource();
+	String componentId = resource.getUniqueId();
+	String resourceInstanceId = "";
+	String groupInstanceId = "";
+	ComponentInstanceProperty property = new ComponentInstanceProperty();
+	String userId = user.getUserId();
+	Either<ComponentInstanceProperty,ResponseFormat> result;
+	
+	
+	 when(toscaOperationFacade.getToscaElement(componentId, JsonParseFlagEnum.ParseMetadata)).thenReturn(Either.left(resource));
+	
+	// test 1
+	testSubject=createTestSubject();
+	result=testSubject.createOrUpdateGroupInstancePropertyValue(componentTypeEnum, componentId, resourceInstanceId, groupInstanceId, property, userId);
+	componentTypeEnum = null;
+	result=testSubject.createOrUpdateGroupInstancePropertyValue(componentTypeEnum, componentId, resourceInstanceId, groupInstanceId, property, userId);
+	
+	 when(toscaOperationFacade.getToscaElement(componentId, JsonParseFlagEnum.ParseMetadata)).thenReturn(Either.right(StorageOperationStatus.BAD_REQUEST));
+	 result=testSubject.createOrUpdateGroupInstancePropertyValue(componentTypeEnum, componentId, resourceInstanceId, groupInstanceId, property, userId);
+	}
+
+	
+	@Test
+	public void testCreateOrUpdateInputValue() throws Exception {
+	ComponentInstanceBusinessLogic testSubject;
+	Component component = createResource();
+	ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.RESOURCE;
+	String componentId = component.getUniqueId();
+	String resourceInstanceId = component.getUniqueId();
+	ComponentInstanceInput inputProperty = new ComponentInstanceInput();
+	String userId = user.getUserId();
+	Either<ComponentInstanceInput,ResponseFormat> result;
+	
+
+	Either<Component, StorageOperationStatus> getResourceResult = Either.left(component);
+	when(toscaOperationFacade.getToscaElement(component.getUniqueId(), JsonParseFlagEnum.ParseMetadata)).thenReturn(getResourceResult);
+	
+	// test 1
+	testSubject=createTestSubject();
+	result=testSubject.createOrUpdateInputValue(componentTypeEnum, componentId, resourceInstanceId, inputProperty, userId);
+	
+	componentTypeEnum = null;
+	result=testSubject.createOrUpdateInputValue(componentTypeEnum, componentId, resourceInstanceId, inputProperty, userId);
+	
+	when(toscaOperationFacade.getToscaElement(component.getUniqueId(), JsonParseFlagEnum.ParseMetadata)).thenReturn(Either.right(StorageOperationStatus.BAD_REQUEST));
+	result=testSubject.createOrUpdateInputValue(componentTypeEnum, componentId, resourceInstanceId, inputProperty, userId);			
+	}
+
+	
+	@Test
+	public void testDeletePropertyValue() throws Exception {
+	ComponentInstanceBusinessLogic testSubject;
+	ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.RESOURCE;
+	Component service = createService();
+	String serviceId = service.getUniqueId();
+	String resourceInstanceId = "";
+	String propertyValueId = "";
+	String userId = user.getUserId();
+	Either<ComponentInstanceProperty,ResponseFormat> result;
+	
+	 when(toscaOperationFacade.getToscaElement(serviceId, JsonParseFlagEnum.ParseMetadata)).thenReturn(Either.left(service));
+	
+	// test 1
+	testSubject=createTestSubject();
+	result=testSubject.deletePropertyValue(componentTypeEnum, serviceId, resourceInstanceId, propertyValueId, userId);
+	componentTypeEnum= null;
+	result=testSubject.deletePropertyValue(componentTypeEnum, serviceId, resourceInstanceId, propertyValueId, userId);
+	
+	 when(toscaOperationFacade.getToscaElement(serviceId, JsonParseFlagEnum.ParseMetadata)).thenReturn(Either.right(StorageOperationStatus.BAD_REQUEST));
+	result=testSubject.deletePropertyValue(componentTypeEnum, serviceId, resourceInstanceId, propertyValueId, userId);
+	}
+
+	
+	@Test
+	public void testGetAndValidateOriginComponentOfComponentInstance() throws Exception {
+	ComponentInstanceBusinessLogic testSubject;
+	ComponentTypeEnum containerComponentType = ComponentTypeEnum.RESOURCE;
+	Component resource = createResource();
+	ComponentInstance componentInstance = createInstances();
+	Either<Component,ResponseFormat> result;
+	
+	 when(toscaOperationFacade.getToscaFullElement(componentInstance.getComponentUid())).thenReturn(Either.left(resource));
+	
+	// default test
+	testSubject=createTestSubject();result=Deencapsulation.invoke(testSubject, "getAndValidateOriginComponentOfComponentInstance", new Object[]{containerComponentType, componentInstance});
+	}
+
+	
+
+
+	
+	@Test
+	public void testGetComponentParametersViewForForwardingPath() throws Exception {
+	ComponentInstanceBusinessLogic testSubject;
+	ComponentParametersView result;
+	
+	// default test
+	testSubject=createTestSubject();result=Deencapsulation.invoke(testSubject, "getComponentParametersViewForForwardingPath");
+	}
+
+	
+	@Test
+	public void testChangeComponentInstanceVersion() throws Exception {
+	ComponentInstanceBusinessLogic testSubject;
+	String containerComponentParam = "";
+	String containerComponentId = "";
+	String componentInstanceId = "";
+	String userId = user.getUserId();
+	ComponentInstance newComponentInstance = createInstances();
+	Either<ComponentInstance,ResponseFormat> result;
+	
+	// default test
+	testSubject=createTestSubject();result=testSubject.changeComponentInstanceVersion(containerComponentParam, containerComponentId, componentInstanceId, userId, newComponentInstance);
+	newComponentInstance = null;
+	testSubject=createTestSubject();result=testSubject.changeComponentInstanceVersion(containerComponentParam, containerComponentId, componentInstanceId, userId, newComponentInstance);
+	
+	}
+	
+	@Test
+	public void testValidateInstanceNameUniquenessUponUpdate() throws Exception {
+	ComponentInstanceBusinessLogic testSubject;
+	Component containerComponent = createResource();
+	ComponentInstance oldComponentInstance = createInstances();
+	String newInstanceName = oldComponentInstance.getName();
+	Boolean result;
+	
+	// default test
+	testSubject=createTestSubject();result=Deencapsulation.invoke(testSubject, "validateInstanceNameUniquenessUponUpdate", new Object[]{containerComponent, oldComponentInstance, newInstanceName});
+	}
+
+	
+	@Test
+	public void testGetResourceInstanceById() throws Exception {
+	ComponentInstanceBusinessLogic testSubject;
+	Component containerComponent = createResource();
+	String instanceId = "";
+	Either<ComponentInstance,StorageOperationStatus> result;
+	
+	// default test
+	testSubject=createTestSubject();result=Deencapsulation.invoke(testSubject, "getResourceInstanceById", new Object[]{containerComponent, instanceId});
+	}
+
+	
+	@Test
+	public void testBuildComponentInstance() throws Exception {
+	ComponentInstanceBusinessLogic testSubject;
+	ComponentInstance resourceInstanceForUpdate = createInstances();
+	ComponentInstance origInstanceForUpdate = null;
+	ComponentInstance result;
+	
+	// default test
+	testSubject=createTestSubject();result=Deencapsulation.invoke(testSubject, "buildComponentInstance", new Object[]{resourceInstanceForUpdate, resourceInstanceForUpdate});
+	}
+
+	
+
+
+	
+	@Test
+	public void testFindCapabilityOfInstance() throws Exception {
+	ComponentInstanceBusinessLogic testSubject;String componentId = "";
+	String instanceId = "";
+	String capabilityType = "";
+	String capabilityName = "";
+	String ownerId = "";
+	Map<String,List<CapabilityDefinition>> instanceCapabilities = new HashMap<>();
+	Either<List<ComponentInstanceProperty>,ResponseFormat> result;
+	
+	// default test
+	testSubject=createTestSubject();result=Deencapsulation.invoke(testSubject, "findCapabilityOfInstance", new Object[]{componentId, instanceId, capabilityType, capabilityName, ownerId, instanceCapabilities});
+	}
+
+	
+	@Test
+	public void testFetchComponentInstanceCapabilityProperties() throws Exception {
+	ComponentInstanceBusinessLogic testSubject;String componentId = "";
+	String instanceId = "";
+	String capabilityType = "";
+	String capabilityName = "";
+	String ownerId = "";
+	Either<List<ComponentInstanceProperty>,ResponseFormat> result;
+	
+	// default test
+	testSubject=createTestSubject();result=Deencapsulation.invoke(testSubject, "fetchComponentInstanceCapabilityProperties", new Object[]{componentId, instanceId, capabilityType, capabilityName, ownerId});
+	}
+
+	
+	@Test
+	public void testUpdateCapabilityPropertyOnContainerComponent_1() throws Exception {
+	ComponentInstanceBusinessLogic testSubject;
+	ComponentInstanceProperty property = new ComponentInstanceProperty();
+	String newValue = "";
+	Component containerComponent = createResource();
+	ComponentInstance foundResourceInstance = createInstances();
+	String capabilityType = "";
+	String capabilityName = "";
+	String ownerId = "";
+	ResponseFormat result;
+	
+	// default test
+	testSubject=createTestSubject();result=Deencapsulation.invoke(testSubject, "updateCapabilityPropertyOnContainerComponent", new Object[]{property, newValue, containerComponent, foundResourceInstance, capabilityType, capabilityName, ownerId});
+	}
+
+	
+	@Test
+	public void testUpdateInstanceCapabilityProperties() throws Exception {
+	ComponentInstanceBusinessLogic testSubject;
+	ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.RESOURCE;
+	Component resource = createResource();
+	String containerComponentId = resource.getUniqueId();
+	String componentInstanceUniqueId = "";
+	String capabilityType = "";
+	String capabilityName = "";
+	String ownerId = "";
+	List<ComponentInstanceProperty> properties = new ArrayList<>();
+	String userId = user.getUserId();
+	Either<List<ComponentInstanceProperty>,ResponseFormat> result;
+	
+	
+	 when(toscaOperationFacade.getToscaFullElement(containerComponentId)).thenReturn(Either.left(resource));
+	
+	
+	
+	// test 1
+	testSubject=createTestSubject();
+	result=testSubject.updateInstanceCapabilityProperties(componentTypeEnum, containerComponentId, componentInstanceUniqueId, capabilityType, capabilityName, ownerId, properties, userId);
+	when(toscaOperationFacade.getToscaFullElement(containerComponentId)).thenReturn(Either.right(StorageOperationStatus.ARTIFACT_NOT_FOUND));
+	result=testSubject.updateInstanceCapabilityProperties(componentTypeEnum, containerComponentId, componentInstanceUniqueId, capabilityType, capabilityName, ownerId, properties, userId);
+	componentTypeEnum = null;
+	result=testSubject.updateInstanceCapabilityProperties(componentTypeEnum, containerComponentId, componentInstanceUniqueId, capabilityType, capabilityName, ownerId, properties, userId);
+	
+	
+	}
+
+	
+	@Test
+	public void testUpdateInstanceCapabilityProperties_1() throws Exception {
+	ComponentInstanceBusinessLogic testSubject;
+	ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.RESOURCE;
+	Component component = createResource();
+	String containerComponentId = component.getUniqueId();
+	String componentInstanceUniqueId = "";
+	String capabilityType = "";
+	String capabilityName = "";
+	List<ComponentInstanceProperty> properties = new ArrayList<>();
+	String userId = user.getUserId();
+	Either<List<ComponentInstanceProperty>,ResponseFormat> result;
+	
+	 
+	 when(toscaOperationFacade.getToscaFullElement(containerComponentId)).thenReturn(Either.right(StorageOperationStatus.BAD_REQUEST));
+	// test 1
+	testSubject=createTestSubject();
+	result=testSubject.updateInstanceCapabilityProperties(componentTypeEnum, containerComponentId, componentInstanceUniqueId, capabilityType, capabilityName, properties, userId);
+	 when(toscaOperationFacade.getToscaFullElement(containerComponentId)).thenReturn(Either.left(component));
+	 result=testSubject.updateInstanceCapabilityProperties(componentTypeEnum, containerComponentId, componentInstanceUniqueId, capabilityType, capabilityName, properties, userId);
 	}
 
 
