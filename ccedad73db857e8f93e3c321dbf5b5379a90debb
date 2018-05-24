@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_0e2fe989",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/ComponentInstance.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 3663
+      },
+      "writtenOn": "2018-05-24T10:11:43Z",
+      "side": 1,
+      "message": "Are you sure it works? I think that this is unmodifiable collection here.",
+      "revId": "ccedad73db857e8f93e3c321dbf5b5379a90debb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
