@@ -25,7 +25,8 @@ import VNFImportActionHelper from '../vnfMarketPlace/VNFImportActionHelper.js';
 
 export const mapStateToProps = ({
     softwareProduct,
-    licenseModel: { licenseAgreement }
+    licenseModel: { licenseAgreement },
+    currentScreen: { itemPermission: { isCertified } }
 }) => {
     let {
         softwareProductEditor: { data: currentSoftwareProduct = {} },
@@ -67,6 +68,7 @@ export const mapStateToProps = ({
             licenseAgreementName,
             fullCategoryDisplayName
         },
+        isCertified,
         componentsList,
         isManual:
             currentSoftwareProduct.onboardingMethod === onboardingMethod.MANUAL

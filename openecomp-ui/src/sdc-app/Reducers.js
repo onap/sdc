@@ -1,5 +1,5 @@
 /*
- * Copyright © 2016-2017 European Support Limited
+ * Copyright © 2016-2018 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ import flowsReducersMap from './flows/FlowsReducersMap.js';
 import loaderReducer from 'nfvo-components/loader/LoaderReducer.js';
 import globalModalReducer from 'nfvo-components/modal/GlobalModalReducer.js';
 import notificationsReducer from 'sdc-app/onboarding/userNotifications/NotificationsReducer.js';
-
+import { default as popupNotifications } from 'nfvo-components/notification/NotificationsReducer.js';
 export default combineReducers({
     // on-boarding reducers
     ...onBoardingReducersMap,
@@ -29,5 +29,6 @@ export default combineReducers({
     ...flowsReducersMap,
     modal: globalModalReducer,
     loader: loaderReducer,
-    notifications: notificationsReducer
+    notifications: notificationsReducer,
+    popupNotifications
 });
