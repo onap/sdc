@@ -67,7 +67,9 @@ public class HealingManagerImpl implements HealingManager {
   public Optional<Version> healItemVersion(final String itemId, final Version version,
                                            final ItemType itemType, final boolean force) {
     String user = getUser();
-    if (!force && !isPrivateHealingNeededByFlags(itemId, version.getId(), user)) {
+    populateVersionInfo(itemId, version);
+
+    if (!isHealingNeeded(itemId, version, force, user)) {
       return Optional.empty();
     }
 
@@ -102,8 +104,26 @@ public class HealingManagerImpl implements HealingManager {
     return healVersion;
   }
 
+  private void populateVersionInfo(String itemId, Version version) {
+    if (version.getStatus() != null) {
+      return;
+    }
+
+    Version retrievedVersion = versioningManager.get(itemId, version);
+    version.setStatus(retrievedVersion.getStatus());
+    version.setBaseId(retrievedVersion.getBaseId());
+  }
+
+  private boolean isHealingNeeded(String itemId, Version version, boolean force, String user) {
+    return force || isHealingFlagOn(itemId, version.getId(), user)
+        .orElse(isHealingFlagOn(itemId, version.getId(), PUBLIC_USER)
+            .orElse(version.getStatus() == VersionStatus.Draft && version.getBaseId() != null &&
+                isHealingFlagOn(itemId, version.getBaseId(), user)
+                    .orElse(isHealingFlagOn(itemId, version.getBaseId(), PUBLIC_USER)
+                        .orElse(false))));
+  }
+
   private Optional<Version> getHealVersion(String itemId, Version version) {
-    version.setStatus(versioningManager.get(itemId, version).getStatus());
     return version.getStatus() == VersionStatus.Certified
         ? createNewVersion(itemId, version.getId())
         : Optional.of(version);
@@ -124,9 +144,12 @@ public class HealingManagerImpl implements HealingManager {
                               List<Healer> structureHealersToRun,
                               List<Healer> dataHealersToRun, String user,
                               boolean force) {
+    boolean publicFlagOn = isHealingFlagOn(itemId, origVersion.getId(), PUBLIC_USER)
+        .orElse(origVersion.getBaseId() != null &&
+            isHealingFlagOn(itemId, origVersion.getBaseId(), PUBLIC_USER).orElse(false));
+
     List<String> failureMessages =
-        force || origVersion.getStatus() == VersionStatus.Certified ||
-            isPublicHealingNeededByFlag(itemId, origVersion.getId())
+        force || origVersion.getStatus() == VersionStatus.Certified || publicFlagOn
             ? healPublic(itemId, version, origVersion, structureHealersToRun, dataHealersToRun,
             user)
             : new LinkedList<>();
@@ -203,17 +226,7 @@ public class HealingManagerImpl implements HealingManager {
     return failureMessages;
   }
 
-  private boolean isPrivateHealingNeededByFlags(String itemId, String version, String user) {
-    Optional<Boolean> userHealingFlag = getHealingFlag(itemId, version, user);
-    return userHealingFlag.orElseGet(() -> isPublicHealingNeededByFlag(itemId, version));
-  }
-
-  private boolean isPublicHealingNeededByFlag(String itemId, String versionId) {
-    Optional<Boolean> publicHealingFlag = getHealingFlag(itemId, versionId, PUBLIC_USER);
-    return publicHealingFlag.isPresent() && publicHealingFlag.get();
-  }
-
-  private Optional<Boolean> getHealingFlag(String itemId, String version, String user) {
+  private Optional<Boolean> isHealingFlagOn(String itemId, String version, String user) {
     return healingDao.getItemHealingFlag(user, itemId, version);
   }
 
@@ -232,13 +245,13 @@ public class HealingManagerImpl implements HealingManager {
   private List<Healer> getHealersToRun(Collection<String> healersClassNames, String itemId,
                                        Version version, List<String> failureMessages) {
     return healersClassNames == null
-                   ? Collections.emptyList()
-                   : healersClassNames.stream()
-                      .map(healerClassName -> getHealerInstance(healerClassName, failureMessages))
-                      .filter(Optional::isPresent)
-                      .map(Optional::get)
-                      .filter(healer -> healer.isHealingNeeded(itemId, version))
-                      .collect(Collectors.toList());
+        ? Collections.emptyList()
+        : healersClassNames.stream()
+            .map(healerClassName -> getHealerInstance(healerClassName, failureMessages))
+            .filter(Optional::isPresent)
+            .map(Optional::get)
+            .filter(healer -> healer.isHealingNeeded(itemId, version))
+            .collect(Collectors.toList());
   }
 
   private Optional<Healer> getHealerInstance(String healerClassName, List<String> failureMessages) {
@@ -255,7 +268,8 @@ public class HealingManagerImpl implements HealingManager {
     Map healingConfig = FileUtils
         .readViaInputStream(HEALERS_BY_ENTITY_TYPE_FILE,
             stream -> JsonUtil.json2Object(stream, Map.class));
-    return (Map<String, Collection<String>>) healingConfig.getOrDefault(itemType.name(), Collections.emptyMap());
+    return (Map<String, Collection<String>>) healingConfig
+        .getOrDefault(itemType.name(), Collections.emptyMap());
   }
 
   private String getUser() {
