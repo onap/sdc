@@ -47,12 +47,15 @@ public class InterfacesOperationsToscaUtil {
     private static final String OPERATIONS_KEY = "operations";
 
     private static final String DEFAULT = "default";
-    private static final String _DEFAULT = "_default";
+    private static final String DEFAULT_HAS_UNDERSCORE = "_default";
     private static final String DOT = ".";
     private static final String DEFAULT_INPUT_TYPE = "string";
     private static final String SELF = "SELF";
     private static final String GET_PROPERTY = "get_property";
-    public static final String DEFAULTP = "defaultp";
+    private static final String DEFAULTP = "defaultp";
+
+    private InterfacesOperationsToscaUtil() {
+    }
 
     /**
      * Creates the interface_types element
@@ -67,7 +70,7 @@ public class InterfacesOperationsToscaUtil {
         }
 
         final Map<String, InterfaceDefinition> interfaces = ((Resource) component).getInterfaces();
-        if ( MapUtils.isEmpty(interfaces)) {
+        if (MapUtils.isEmpty(interfaces)) {
             return null;
         }
 
@@ -78,8 +81,8 @@ public class InterfacesOperationsToscaUtil {
             final Map<String, OperationDataDefinition> operations = interfaceDefinition.getOperations();
             Map<String, Object> toscaOperations = new HashMap<>();
 
-            for (String operationId : operations.keySet()) {
-                toscaOperations.put(operations.get(operationId).getName(),
+            for (Map.Entry<String, OperationDataDefinition> operationEntry : operations.entrySet()) {
+                toscaOperations.put(operationEntry.getValue().getName(),
                         null); //currently not initializing any of the operations' fields as it is not needed
             }
 
@@ -108,7 +111,7 @@ public class InterfacesOperationsToscaUtil {
         }
 
         final Map<String, InterfaceDefinition> interfaces = ((Resource) component).getInterfaces();
-        if ( MapUtils.isEmpty(interfaces)) {
+        if (MapUtils.isEmpty(interfaces)) {
             return;
         }
         for (InterfaceDefinition interfaceDefinition : interfaces.values()) {
@@ -150,23 +153,21 @@ public class InterfacesOperationsToscaUtil {
      * @param operationsMap the map to update
      */
     private static void handleDefaults(Map<String, Object> operationsMap) {
-        for (String key : operationsMap.keySet()) {
-            Object value = operationsMap.get(key);
+        for (Map.Entry<String, Object> operationEntry : operationsMap.entrySet()) {
+            final Object value = operationEntry.getValue();
             if (value instanceof Map) {
                 handleDefaults((Map<String, Object>) value);
             }
+            final String key = operationEntry.getKey();
             if (key.equals(DEFAULTP)) {
                 Object removed = operationsMap.remove(key);
                 operationsMap.put(DEFAULT, removed);
             }
         }
-
-
     }
 
     private static String getLastPartOfName(String toscaResourceName) {
         return toscaResourceName.substring(toscaResourceName.lastIndexOf(DOT) + 1);
-
     }
 
     private static boolean isArtifactPresent(Map.Entry<String, OperationDataDefinition> operationEntry) {
@@ -215,9 +216,8 @@ public class InterfacesOperationsToscaUtil {
         if (objectAsMap.containsKey(DEFAULT)) {
             Object defaultValue = objectAsMap.get(DEFAULT);
             objectAsMap.remove(DEFAULT);
-            objectAsMap.put(_DEFAULT, defaultValue);
+            objectAsMap.put(DEFAULT_HAS_UNDERSCORE, defaultValue);
         }
         return objectAsMap;
     }
-
 }
