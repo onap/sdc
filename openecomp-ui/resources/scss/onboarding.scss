@@ -210,3 +210,12 @@ div[data-reactroot].tooltip {
     }
   }
 }
+
+/* Out of namespace context for notifications */
+.onboarding-notifications-container {
+  position: absolute;
+  &.position-top-right {
+    right: 30px;
+    top: 50px;
+  }
+}

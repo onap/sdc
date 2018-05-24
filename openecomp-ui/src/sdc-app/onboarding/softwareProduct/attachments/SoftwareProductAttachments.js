@@ -36,7 +36,8 @@ export const mapStateToProps = state => {
                 heatSetupCache,
                 heatValidation: { errorList }
             }
-        }
+        },
+        currentScreen: { itemPermission: { isCertified } }
     } = state;
 
     let { unassigned = [], modules = [] } = heatSetup;
@@ -61,7 +62,8 @@ export const mapStateToProps = state => {
         version,
         onboardingOrigin,
         activeTab,
-        candidateInProcess: !!currentSoftwareProduct.candidateOnboardingOrigin
+        candidateInProcess:
+            !!currentSoftwareProduct.candidateOnboardingOrigin && !isCertified
     };
 };
 
