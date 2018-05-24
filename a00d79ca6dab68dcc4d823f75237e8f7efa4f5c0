@@ -71,6 +71,30 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_ab026770",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/datatypes/heattotosca/unifiedmodel/consolidation/ComputeConsolidationDataHandler.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 158,
+      "author": {
+        "id": 1879
+      },
+      "writtenOn": "2018-05-24T09:42:32Z",
+      "side": 1,
+      "message": "Why change name to serviceTemplateName as we are passing serviceTemplate object",
+      "parentUuid": "5a93c517_1fd63ec4",
+      "range": {
+        "startLine": 158,
+        "startChar": 19,
+        "endLine": 158,
+        "endChar": 79
+      },
+      "revId": "a00d79ca6dab68dcc4d823f75237e8f7efa4f5c0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_7fec2293",
         "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/datatypes/heattotosca/unifiedmodel/consolidation/ComputeConsolidationDataHandler.java",
         "patchSetId": 1
@@ -82,6 +106,30 @@
       "writtenOn": "2018-05-24T07:12:39Z",
       "side": 1,
       "message": "Move this logic to ComputeConsolidationData new API: \nisNumberOfComputeTypesLegal(String serviceTemplateFileName).\nIn class ComputeConsolidationData no need separate to two APIs - check logic of both isNumberOfComputeTypesLegal and isNumberOfComputeConsolidationDataPerTypeLegal in one API",
+      "range": {
+        "startLine": 159,
+        "startChar": 5,
+        "endLine": 162,
+        "endChar": 104
+      },
+      "revId": "a00d79ca6dab68dcc4d823f75237e8f7efa4f5c0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_8b01ab6c",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/datatypes/heattotosca/unifiedmodel/consolidation/ComputeConsolidationDataHandler.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 162,
+      "author": {
+        "id": 1879
+      },
+      "writtenOn": "2018-05-24T09:42:32Z",
+      "side": 1,
+      "message": "In your previous mail you mentioned to add it here in Point 4 in think. Please confirm.",
+      "parentUuid": "5a93c517_7fec2293",
       "range": {
         "startLine": 159,
         "startChar": 5,
@@ -278,6 +326,30 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_2b23b7bf",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/test/java/org/openecomp/sdc/translator/datatypes/heattotosca/unifiedmodel/consolidation/EntityConsolidationDataTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 1879
+      },
+      "writtenOn": "2018-05-24T09:42:32Z",
+      "side": 1,
+      "message": "Not added new tests as you said we will be adding afterwards",
+      "parentUuid": "5a93c517_3a91c89a",
+      "range": {
+        "startLine": 28,
+        "startChar": 13,
+        "endLine": 28,
+        "endChar": 40
+      },
+      "revId": "a00d79ca6dab68dcc4d823f75237e8f7efa4f5c0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_7a44301b",
         "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/test/java/org/openecomp/sdc/translator/datatypes/heattotosca/unifiedmodel/consolidation/TypeComputeConsolidationDataTest.java",
         "patchSetId": 1
@@ -289,6 +361,30 @@
       "writtenOn": "2018-05-24T07:12:39Z",
       "side": 1,
       "message": "1. Please add negative test:\nIf no ports exists in ComputeTemplateConsArray\na) check that no exception\nb) verify that stringListMap is empty\n2. Please add additional test when more than one port type in Hash and verify that count of each type is correct",
+      "range": {
+        "startLine": 27,
+        "startChar": 13,
+        "endLine": 27,
+        "endChar": 45
+      },
+      "revId": "a00d79ca6dab68dcc4d823f75237e8f7efa4f5c0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_4b2083b0",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/test/java/org/openecomp/sdc/translator/datatypes/heattotosca/unifiedmodel/consolidation/TypeComputeConsolidationDataTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 1879
+      },
+      "writtenOn": "2018-05-24T09:42:32Z",
+      "side": 1,
+      "message": "Not added new tests as you said we will be adding afterwards",
+      "parentUuid": "5a93c517_7a44301b",
       "range": {
         "startLine": 27,
         "startChar": 13,
