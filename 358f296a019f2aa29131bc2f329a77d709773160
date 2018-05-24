@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_6e554df9",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/ComponentInstance.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 3873
+      },
+      "writtenOn": "2018-05-24T10:18:57Z",
+      "side": 1,
+      "message": "Map\u003cString, ArtifactDefinition\u003e stringArtifactDefinitionHashMap \u003d Maps.newHashMap(artifacts);\n        stringArtifactDefinitionHashMap.putAll(deploymentArtifacts);",
+      "range": {
+        "startLine": 91,
+        "startChar": 49,
+        "endLine": 91,
+        "endChar": 65
+      },
+      "revId": "358f296a019f2aa29131bc2f329a77d709773160",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
