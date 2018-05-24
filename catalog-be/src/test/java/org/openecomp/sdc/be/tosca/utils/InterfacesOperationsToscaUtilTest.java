@@ -43,7 +43,7 @@ import org.openecomp.sdc.be.tosca.model.ToscaTemplate;
 public class InterfacesOperationsToscaUtilTest {
 
     @BeforeClass
-    public static void setUp() throws Exception {
+    public static void setUp() {
         new DummyConfigurationManager();
     }
 
@@ -121,6 +121,7 @@ public class InterfacesOperationsToscaUtilTest {
         template.setNode_types(nodeTypes);
         final ToscaRepresentation toscaRepresentation = handler.createToscaRepresentation(template);
 
+        System.out.println("toscaRepresentation = " + toscaRepresentation.getMainYaml());
         Assert.assertFalse(toscaRepresentation.getMainYaml().contains("operations"));
         Assert.assertFalse(toscaRepresentation.getMainYaml().contains("input_"));
         Assert.assertFalse(toscaRepresentation.getMainYaml().contains("defaultp"));
