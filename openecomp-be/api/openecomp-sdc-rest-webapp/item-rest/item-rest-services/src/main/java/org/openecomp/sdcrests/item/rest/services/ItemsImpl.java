@@ -86,7 +86,7 @@ public class ItemsImpl implements Items {
     private NotificationPropagationManager notifier =
             NotificationPropagationManagerFactory.getInstance().createInterface();
 
-    private CatalogNotifier catalogNotifier = new CatalogNotifier();
+
 
     private Map<ItemAction, ActionSideAffects> actionSideAffectsMap = new EnumMap<>(ItemAction.class);
 
@@ -120,7 +120,12 @@ public class ItemsImpl implements Items {
         }
 
         actionSideAffectsMap.get(request.getAction()).execute(item, user);
-        catalogNotifier.execute(Collections.singleton(itemId),request.getAction(),2);
+        try {
+            CatalogNotifier catalogNotifier = new CatalogNotifier();
+            catalogNotifier.execute(Collections.singleton(itemId), request.getAction(), 2);
+        } catch (Exception e){
+            LOGGER.error("Failed to send catalog notification on item " + itemId + " Error: " + e.getMessage());
+        }
 
         return Response.ok().build();
     }
