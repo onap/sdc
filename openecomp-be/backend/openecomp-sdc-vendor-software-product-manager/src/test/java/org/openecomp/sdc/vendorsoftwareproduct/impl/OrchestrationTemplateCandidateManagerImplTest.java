@@ -95,7 +95,7 @@ public class OrchestrationTemplateCandidateManagerImplTest {
   private OrchestrationUtil orchestrationUtil;
 
   @BeforeClass
-  public void setUp() throws Exception {
+  public void setUp() {
     MockitoAnnotations.initMocks(this);
   }
 
@@ -129,7 +129,7 @@ public class OrchestrationTemplateCandidateManagerImplTest {
         "    }\n" +
         "  ]\n" +
         "}");
-    doReturn(orchTemplate)
+    doReturn(Optional.of(orchTemplate))
         .when(candidateServiceMock).getOrchestrationTemplateCandidate(any(), any());
 
     doReturn(new VspDetails(VSP_ID, VERSION01))
@@ -260,7 +260,7 @@ public class OrchestrationTemplateCandidateManagerImplTest {
 
   @Test
   public void testGetFileDataStructure() {
-    Optional<String> jsonFileDataStructure = Optional.of(new String("{\n" +
+    Optional<String> jsonFileDataStructure = Optional.of("{\n" +
         "  \"modules\": [\n" +
         "    {\n" +
         "      \"yaml\": \"hot-mog-0108-bs1271.yml\",\n" +
@@ -270,7 +270,7 @@ public class OrchestrationTemplateCandidateManagerImplTest {
         "  \"unassigned\": [],\n" +
         "  \"artifacts\": [],\n" +
         "  \"nested\": []\n" +
-        "}"));
+        "}");
     Optional<FilesDataStructure> filesDataStructureOptional = Optional.of(JsonUtil.json2Object
         (jsonFileDataStructure.get(), FilesDataStructure.class));
     doReturn(filesDataStructureOptional).when(candidateServiceMock)

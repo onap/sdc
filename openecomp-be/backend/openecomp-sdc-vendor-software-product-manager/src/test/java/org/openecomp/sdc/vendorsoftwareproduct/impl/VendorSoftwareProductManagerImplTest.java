@@ -16,14 +16,6 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.impl;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyObject;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.InjectMocks;
@@ -67,7 +59,6 @@ import org.openecomp.sdc.vendorsoftwareproduct.types.UploadFileResponse;
 import org.openecomp.sdc.vendorsoftwareproduct.types.ValidationResponse;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.DeploymentFlavor;
 import org.openecomp.sdc.versioning.ActionVersioningManager;
-import org.openecomp.sdc.versioning.VersioningManager;
 import org.openecomp.sdc.versioning.dao.types.Version;
 import org.openecomp.sdc.versioning.dao.types.VersionStatus;
 import org.openecomp.sdc.versioning.types.VersionInfo;
@@ -88,22 +79,26 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyObject;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+
 
 public class VendorSoftwareProductManagerImplTest {
-  private static final String INVALID_VERSION_MSG = "Invalid requested version.";
 
-  private static String VSP_ID = "vspId";
-  private static String VERSION_ID = "versionId";
-  public static final Version VERSION01 = new Version(0, 1);
-  private static final Version VERSION10 = new Version(1, 0);
+  private static final String VSP_ID = "vspId";
+  private static final Version VERSION01 = new Version("0, 1");
+  private static final Version VERSION10 = new Version("1, 0");
   private static final String USER1 = "vspTestUser1";
   private static final String USER2 = "vspTestUser2";
-  private static final String USER3 = "vspTestUser3";
-  private static String id006 = null;
-  private static String id007 = null;
 
   @Mock
   private ActionVersioningManager versioningManagerMock;
@@ -148,12 +143,12 @@ public class VendorSoftwareProductManagerImplTest {
   private ArgumentCaptor<ActivityLogEntity> activityLogEntityArg;
 
   @BeforeMethod
-  public void setUp() throws Exception {
+  public void setUp() {
     MockitoAnnotations.initMocks(this);
   }
 
   @AfterMethod
-  public void tearDown(){
+  public void tearDown() {
     vendorSoftwareProductManager = null;
   }
 
@@ -232,7 +227,7 @@ public class VendorSoftwareProductManagerImplTest {
     doReturn(versionInfo).when(versioningManagerMock).getEntityVersionInfo(
         VendorSoftwareProductConstants.VENDOR_SOFTWARE_PRODUCT_VERSIONABLE_TYPE, VSP_ID, USER1,
         VersionableEntityAction.Write);
-    List<String> fgs = new ArrayList<String>();
+    List<String> fgs = new ArrayList<>();
     fgs.add("fg1");
     fgs.add("fg2");
     VspDetails existingVsp =
@@ -240,7 +235,7 @@ public class VendorSoftwareProductManagerImplTest {
             "category",
             "subCategory", "456", fgs);
 
-    List<String> updFgs = new ArrayList<String>();
+    List<String> updFgs = new ArrayList<>();
     //updFgs.add("fg2");
     VspDetails updatedVsp =
         createVspDetails(VSP_ID, VERSION01, "VSP1_updated", null, "vendorName", "vlm1Id", "icon",
@@ -256,7 +251,7 @@ public class VendorSoftwareProductManagerImplTest {
     flavor.setFeatureGroupId("fg1");
     dfEntity.setDeploymentFlavorCompositionData(flavor);
 
-    List<DeploymentFlavorEntity> dfList = new ArrayList<DeploymentFlavorEntity>();
+    List<DeploymentFlavorEntity> dfList = new ArrayList<>();
     dfList.add(dfEntity);
 
     doReturn(dfList).when(deploymentFlavorDaoMock).list(anyObject());
@@ -271,7 +266,7 @@ public class VendorSoftwareProductManagerImplTest {
 
   @Test(expectedExceptions = CoreException.class)
   public void testGetNonExistingVersion_negative() {
-    Version notExistversion = new Version(43, 8);
+    Version notExistversion = new Version("43, 8");
     doReturn(null).when(vspInfoDaoMock).get(any(VspDetails.class));
     vendorSoftwareProductManager.getVsp(VSP_ID, notExistversion);
   }
@@ -301,8 +296,8 @@ public class VendorSoftwareProductManagerImplTest {
   @Test
   public void testGetOldVersion() {
     VersionInfo versionInfo = new VersionInfo();
-    versionInfo.setActiveVersion(new Version(0, 2));
-    versionInfo.setViewableVersions(Arrays.asList(VERSION01, new Version(0, 2)));
+    versionInfo.setActiveVersion(new Version("0, 2"));
+    versionInfo.setViewableVersions(Arrays.asList(VERSION01, new Version("0, 2")));
     versionInfo.setStatus(VersionStatus.Locked);
     versionInfo.setLockingUser(USER2);
     doReturn(versionInfo).when(versioningManagerMock).getEntityVersionInfo(
@@ -440,7 +435,7 @@ public class VendorSoftwareProductManagerImplTest {
   }
 
   @Test
-  public void testCreatePackage() throws IOException {
+  public void testCreatePackage() {
     /*VspDetails vspDetailsMock = new VspDetails("vspId", new Version(1, 0));
     doReturn(vspDetailsMock).when(vspInfoDaoMock).get(anyObject());*/
     VersionInfo versionInfo = new VersionInfo();
@@ -472,7 +467,7 @@ public class VendorSoftwareProductManagerImplTest {
     try (InputStream zis = getFileInputStream("/vspmanager/zips/missingYml.zip")) {
 
       UploadFileResponse uploadFileResponse =
-              candidateManager.upload(VSP_ID, VERSION01, zis, "zip", "file");
+          candidateManager.upload(VSP_ID, VERSION01, zis, "zip", "file");
 
       Assert.assertEquals(uploadFileResponse.getErrors().size(), 0);
     }
@@ -480,7 +475,7 @@ public class VendorSoftwareProductManagerImplTest {
 
   // TODO: 3/15/2017 fix and enable
   //@Test(dependsOnMethods = {"testUploadFileMissingFile"})
-  public void testUploadNotZipFile() throws IOException {
+  public void testUploadNotZipFile() {
     URL url = this.getClass().getResource("/notZipFile");
 
     try {
@@ -596,7 +591,8 @@ public class VendorSoftwareProductManagerImplTest {
     orchestrationTemplateCandidateData.setFileSuffix("zip");
     orchestrationTemplateCandidateData.setFilesDataStructure("testdata");
     orchestrationTemplateCandidateData.setValidationData("");
-    doReturn(orchestrationTemplateCandidateData).when(orchestrationTemplateCandidateManagerMock)
+    doReturn(Optional.of(orchestrationTemplateCandidateData))
+        .when(orchestrationTemplateCandidateManagerMock)
         .getInfo(VSP_ID, VERSION01);
     ValidationResponse validationResponse =
         vendorSoftwareProductManager.validate(VSP_ID, VERSION01);
@@ -619,7 +615,8 @@ public class VendorSoftwareProductManagerImplTest {
         OrchestrationTemplateCandidateData();
     orchestrationTemplateCandidateData.setFileSuffix("zip");
     orchestrationTemplateCandidateData.setValidationData("Invalid processed data");
-    doReturn(orchestrationTemplateCandidateData).when(orchestrationTemplateCandidateManagerMock)
+    doReturn(Optional.of(orchestrationTemplateCandidateData))
+        .when(orchestrationTemplateCandidateManagerMock)
         .getInfo(VSP_ID, VERSION01);
     ValidationResponse validationResponse =
         vendorSoftwareProductManager.validate(VSP_ID, VERSION01);
@@ -639,7 +636,7 @@ public class VendorSoftwareProductManagerImplTest {
   }
 
 
-  public InputStream getFileInputStream(String fileName) {
+  private InputStream getFileInputStream(String fileName) {
     URL url = this.getClass().getResource(fileName);
     try {
       return url.openStream();
@@ -649,7 +646,7 @@ public class VendorSoftwareProductManagerImplTest {
     }
   }
 
-  static VspDetails createVspDetails(String id, Version version, String name, String desc,
+  private static VspDetails createVspDetails(String id, Version version, String name, String desc,
                                      String vendorName, String vlm, String icon,
                                      String category, String subCategory,
                                      String licenseAgreement, List<String> featureGroups) {
@@ -661,14 +658,14 @@ public class VendorSoftwareProductManagerImplTest {
     vspDetails.setSubCategory(subCategory);
     vspDetails.setVendorName(vendorName);
     vspDetails.setVendorId(vlm);
-    vspDetails.setVlmVersion(new Version(1, 0));
+    vspDetails.setVlmVersion(new Version("1, 0"));
     vspDetails.setLicenseAgreement(licenseAgreement);
     vspDetails.setFeatureGroups(featureGroups);
     vspDetails.setOnboardingMethod("HEAT");
     return vspDetails;
   }
 
-  static void assertVspsEquals(VspDetails actual, VspDetails expected) {
+  private static void assertVspsEquals(VspDetails actual, VspDetails expected) {
     Assert.assertEquals(actual.getId(), expected.getId());
     Assert.assertEquals(actual.getVersion(), expected.getVersion());
     Assert.assertEquals(actual.getName(), expected.getName());

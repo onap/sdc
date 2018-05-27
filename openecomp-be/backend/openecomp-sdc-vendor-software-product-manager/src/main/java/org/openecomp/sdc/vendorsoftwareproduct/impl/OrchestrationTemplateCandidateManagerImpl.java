@@ -45,7 +45,6 @@ import java.io.InputStream;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 
 public class OrchestrationTemplateCandidateManagerImpl
@@ -78,9 +77,10 @@ public class OrchestrationTemplateCandidateManagerImpl
 
   @Override
   public OrchestrationTemplateActionResponse process(String vspId, Version version) {
-    OrchestrationTemplateCandidateData candidate = fetchCandidateDataEntity(vspId, version)
-        .orElseThrow(
-            () -> new CoreException(new OrchestrationTemplateNotFoundErrorBuilder(vspId).build()));
+    OrchestrationTemplateCandidateData candidate =
+        candidateService.getOrchestrationTemplateCandidate(vspId, version)
+            .orElseThrow(() -> new CoreException(
+                new OrchestrationTemplateNotFoundErrorBuilder(vspId).build()));
 
     return OrchestrationProcessFactory.getInstance(candidate.getFileSuffix())
         .map(processor -> processor.process(getVspDetails(vspId, version), candidate))
@@ -117,27 +117,22 @@ public class OrchestrationTemplateCandidateManagerImpl
     VspDetails vspDetails = getVspDetails(vspId, version);
 
     Optional<OrchestrationTemplateCandidateData> candidateDataEntity =
-        fetchCandidateDataEntity(vspId, version);
+        candidateService.getOrchestrationTemplateCandidate(vspId, version);
 
     if (!candidateDataEntity.isPresent()) {
       return Optional.empty();
     }
 
-    if(Objects.isNull(candidateDataEntity.get().getFileSuffix())) {
-      return Optional.empty();
-    }
-
-    OnboardingTypesEnum type =
-        OnboardingTypesEnum.getOnboardingTypesEnum(candidateDataEntity.get().getFileSuffix());
-
     if (CommonUtil.isFileOriginFromZip(candidateDataEntity.get().getFileSuffix())) {
       FilesDataStructure structure = JsonUtil
           .json2Object(candidateDataEntity.get().getFilesDataStructure(), FilesDataStructure.class);
       String manifest = candidateService.createManifest(vspDetails, structure);
+      OnboardingTypesEnum type =
+          OnboardingTypesEnum.getOnboardingTypesEnum(candidateDataEntity.get().getFileSuffix());
       return Optional.of(
           new ImmutablePair<>(OnboardingTypesEnum.ZIP.toString(), candidateService
               .replaceManifestInZip(candidateDataEntity.get().getContentData(),
-                  manifest, vspId, type)));
+                  manifest, type)));
     }
 
     return Optional.of(
@@ -146,7 +141,7 @@ public class OrchestrationTemplateCandidateManagerImpl
   }
 
   @Override
-  public OrchestrationTemplateCandidateData getInfo(String vspId, Version version) {
+  public Optional<OrchestrationTemplateCandidateData> getInfo(String vspId, Version version) {
     return candidateService.getOrchestrationTemplateCandidateInfo(vspId, version);
   }
 
@@ -155,16 +150,7 @@ public class OrchestrationTemplateCandidateManagerImpl
     candidateService.deleteOrchestrationTemplateCandidate(vspId, version);
   }
 
-  private Optional<OrchestrationTemplateCandidateData> fetchCandidateDataEntity(
-      String vspId, Version version) {
-    return Optional
-        .ofNullable(candidateService.getOrchestrationTemplateCandidate(vspId, version));
-  }
-
   private VspDetails getVspDetails(String vspId, Version version) {
-
     return vspInfoDao.get(new VspDetails(vspId, version));
   }
-
-
 }

@@ -36,7 +36,6 @@ import org.openecomp.sdc.versioning.dao.types.Version;
 
 import java.io.ByteArrayInputStream;
 import java.nio.ByteBuffer;
-import java.util.Collection;
 import java.util.Optional;
 
 import static org.openecomp.core.zusammen.api.ZusammenUtil.buildStructuralElement;
@@ -48,7 +47,7 @@ public class OrchestrationTemplateCandidateDaoZusammenImpl
   private static final Logger logger =
       LoggerFactory.getLogger(OrchestrationTemplateCandidateDaoZusammenImpl.class);
 
-  private ZusammenAdaptor zusammenAdaptor;
+  private final ZusammenAdaptor zusammenAdaptor;
 
   private static final String EMPTY_DATA = "{}";
 
@@ -62,8 +61,8 @@ public class OrchestrationTemplateCandidateDaoZusammenImpl
   }
 
   @Override
-  public OrchestrationTemplateCandidateData get(String vspId, Version version) {
-    logger.info("Getting orchestration template for VendorSoftwareProduct id -> " + vspId);
+  public Optional<OrchestrationTemplateCandidateData> get(String vspId, Version version) {
+    logger.info("Getting orchestration template for vsp id {}", vspId);
 
     SessionContext context = createSessionContext();
     ElementContext elementContext = new ElementContext(vspId, version.getId());
@@ -71,93 +70,75 @@ public class OrchestrationTemplateCandidateDaoZusammenImpl
     Optional<Element> candidateElement =
         zusammenAdaptor.getElementByName(context, elementContext, null,
             ElementType.OrchestrationTemplateCandidate.name());
-    if (candidateElement.isPresent()) {
-      if (VspZusammenUtil.hasEmptyData(candidateElement.get().getData())) {
-        return null;
-      }
-      OrchestrationTemplateCandidateData candidateData = new OrchestrationTemplateCandidateData();
-      candidateData.setFilesDataStructure(
-          new String(FileUtils.toByteArray(candidateElement.get().getData())));
 
-      Collection<Element> subElements = candidateElement.get().getSubElements();
-      if (subElements.isEmpty()) {
-        return candidateData;
-      }
-
-      for (Element element : subElements) {
-        Optional<Element> subElement = zusammenAdaptor.getElement(context,
-            elementContext, element.getElementId().toString());
-
-        if (subElement.get().getInfo().getName()
-            .equals(ElementType.OrchestrationTemplateCandidateContent
-                .name())) {
-          candidateData.setContentData(
-              ByteBuffer.wrap(FileUtils.toByteArray(subElement.get().getData())));
-          candidateData.setFileSuffix(subElement.get().getInfo()
-              .getProperty(InfoPropertyName.FILE_SUFFIX.getVal()));
-          candidateData.setFileName(subElement.get().getInfo()
-              .getProperty(InfoPropertyName.FILE_NAME.getVal()));
-        } else if (subElement.get().getInfo().getName()
-            .equals(ElementType.OrchestrationTemplateCandidateValidationData.name())) {
-          candidateData.setValidationData(new String(FileUtils.toByteArray(subElement
-              .get().getData())));
-        }
-      }
-
-      logger
-          .info("Finished getting orchestration template for VendorSoftwareProduct id -> " + vspId);
-      return candidateData;
+    if (!candidateElement.isPresent() ||
+        VspZusammenUtil.hasEmptyData(candidateElement.get().getData()) ||
+        candidateElement.get().getSubElements().isEmpty()) {
+      logger.info("Orchestration template for vsp id {} does not exist / has empty data", vspId);
+      return Optional.empty();
     }
-    logger.info(String
-        .format("Orchestration template for VendorSoftwareProduct id %s does not exist", vspId));
-    return null;
+
+    OrchestrationTemplateCandidateData candidate = new OrchestrationTemplateCandidateData();
+    candidate.setFilesDataStructure(
+        new String(FileUtils.toByteArray(candidateElement.get().getData())));
+
+    candidateElement.get().getSubElements().stream()
+        .map(element -> zusammenAdaptor
+            .getElement(context, elementContext, element.getElementId().toString()))
+        .forEach(element -> element.ifPresent(
+            candidateInfoElement -> populateCandidate(candidate, candidateInfoElement, true)));
+
+    logger.info("Finished getting orchestration template for vsp id {}", vspId);
+    return Optional.of(candidate);
   }
 
   @Override
-  public OrchestrationTemplateCandidateData getInfo(String vspId, Version version) {
-    logger.info("Getting orchestration template info for VendorSoftwareProduct id -> " + vspId);
+  public Optional<OrchestrationTemplateCandidateData> getInfo(String vspId, Version version) {
+    logger.info("Getting orchestration template info for vsp id {}", vspId);
 
     SessionContext context = createSessionContext();
     ElementContext elementContext = new ElementContext(vspId, version.getId());
-
-    OrchestrationTemplateCandidateData candidateData = new OrchestrationTemplateCandidateData();
 
     Optional<ElementInfo> candidateElement =
         zusammenAdaptor.getElementInfoByName(context, elementContext, null,
             ElementType.OrchestrationTemplateCandidate.name());
 
-    if (candidateElement.isPresent()) {
-      Collection<ElementInfo> subElements = candidateElement.get().getSubElements();
-      if (subElements.isEmpty()) {
-        return candidateData;
-      }
-
-      for (ElementInfo elementInfo : subElements) {
-        Optional<Element> subElement = zusammenAdaptor.getElement(context,
-            elementContext, elementInfo.getId().toString());
-
-        if (subElement.get().getInfo().getName().equals(ElementType
-            .OrchestrationTemplateCandidateContent.name())) {
-
-          candidateData.setFileSuffix(subElement.get().getInfo()
-              .getProperty(InfoPropertyName.FILE_SUFFIX.getVal()));
-          candidateData.setFileName(subElement.get().getInfo()
-              .getProperty(InfoPropertyName.FILE_NAME.getVal()));
-        } else if (subElement.get().getInfo().getName().equals(ElementType
-            .OrchestrationTemplateCandidateValidationData.name())) {
-          candidateData.setValidationData(new String(FileUtils.toByteArray(subElement.get()
-              .getData())));
-        }
-      }
-
-      logger.info(
-          "Finished getting orchestration template info for VendorSoftwareProduct id -> " + vspId);
-      return candidateData;
+    if (!candidateElement.isPresent() || candidateElement.get().getSubElements().isEmpty()) {
+      logger.info("Orchestration template info for vsp id {} does not exist", vspId);
+      return Optional.empty();
     }
-    logger.info(String
-        .format("Orchestration template info for VendorSoftwareProduct id %s does not exist",
-            vspId));
-    return null;
+
+    OrchestrationTemplateCandidateData candidate = new OrchestrationTemplateCandidateData();
+    candidateElement.get().getSubElements().stream()
+        .map(elementInfo -> zusammenAdaptor
+            .getElement(context, elementContext, elementInfo.getId().toString()))
+        .forEach(element -> element.ifPresent(
+            candidateInfoElement -> populateCandidate(candidate, candidateInfoElement, false)));
+    logger.info("Finished getting orchestration template info for vsp id {}", vspId);
+    return candidate.getFileSuffix() == null ? Optional.empty() : Optional.of(candidate);
+  }
+
+  private void populateCandidate(OrchestrationTemplateCandidateData candidate,
+                                 Element candidateInfoElement,
+                                 boolean fullData) {
+    if (candidateInfoElement.getInfo().getName()
+        .equals(ElementType.OrchestrationTemplateCandidateContent.name())) {
+
+      if (fullData) {
+        candidate
+            .setContentData(ByteBuffer.wrap(FileUtils.toByteArray(candidateInfoElement.getData())));
+      }
+      candidate.setFileSuffix(
+          candidateInfoElement.getInfo().getProperty(InfoPropertyName.FILE_SUFFIX.getVal()));
+      candidate.setFileName(
+          candidateInfoElement.getInfo().getProperty(InfoPropertyName.FILE_NAME.getVal()));
+
+    } else if (candidateInfoElement.getInfo().getName()
+        .equals(ElementType.OrchestrationTemplateCandidateValidationData.name())) {
+
+      candidate
+          .setValidationData(new String(FileUtils.toByteArray(candidateInfoElement.getData())));
+    }
   }
 
   @Override
@@ -187,7 +168,7 @@ public class OrchestrationTemplateCandidateDaoZusammenImpl
   @Override
   public void update(String vspId, Version version,
                      OrchestrationTemplateCandidateData candidateData) {
-    logger.info("Uploading candidate data entity for VendorSoftwareProduct id -> " + vspId);
+    logger.info("Uploading candidate data entity for vsp id {}", vspId);
 
     ZusammenElement candidateElement =
         buildStructuralElement(ElementType.OrchestrationTemplateCandidate, Action.UPDATE);
@@ -215,15 +196,14 @@ public class OrchestrationTemplateCandidateDaoZusammenImpl
     ElementContext elementContext = new ElementContext(vspId, version.getId());
     zusammenAdaptor.saveElement(context, elementContext, candidateElement,
         "Update Orchestration Template Candidate");
-    logger
-        .info("Finished uploading candidate data entity for VendorSoftwareProduct id -> " + vspId);
+    logger.info("Finished uploading candidate data entity for vsp id {}", vspId);
   }
 
   @Override
-  public void updateValidationData(String vspId, Version version, ValidationStructureList
-      validationData) {
-    logger.info("Updating validation data of  orchestration template candidate for VSP id -> "
-        + vspId);
+  public void updateValidationData(String vspId, Version version,
+                                   ValidationStructureList validationData) {
+    logger
+        .info("Updating validation data of orchestration template candidate for VSP id {} ", vspId);
 
     ZusammenElement validationDataElement = buildStructuralElement(ElementType
         .OrchestrationTemplateCandidateValidationData, Action.UPDATE);
@@ -238,13 +218,14 @@ public class OrchestrationTemplateCandidateDaoZusammenImpl
     ElementContext elementContext = new ElementContext(vspId, version.getId());
     zusammenAdaptor.saveElement(context, elementContext, candidateElement,
         "Update Orchestration Template Candidate validation data");
-    logger.info("Finished updating validation data of  orchestration template candidate for VSP "
-        + "id -> " + vspId);
+    logger
+        .info("Finished updating validation data of orchestration template candidate for VSP id {}",
+            vspId);
   }
 
   @Override
   public void updateStructure(String vspId, Version version, FilesDataStructure fileDataStructure) {
-    logger.info("Updating orchestration template for VSP id -> " + vspId);
+    logger.info("Updating orchestration template for VSP id {}", vspId);
 
     ZusammenElement candidateElement =
         buildStructuralElement(ElementType.OrchestrationTemplateCandidate, Action.UPDATE);
@@ -255,15 +236,13 @@ public class OrchestrationTemplateCandidateDaoZusammenImpl
     ElementContext elementContext = new ElementContext(vspId, version.getId());
     zusammenAdaptor.saveElement(context, elementContext, candidateElement,
         "Update Orchestration Template Candidate structure");
-    logger
-        .info("Finished uploading candidate data entity for VendorSoftwareProduct id -> " + vspId);
+    logger.info("Finished uploading candidate data entity for vsp id {}", vspId);
   }
 
 
   @Override
   public Optional<String> getStructure(String vspId, Version version) {
-    logger.info("Getting orchestration template candidate structure for VendorSoftwareProduct id "
-        + "-> " + vspId);
+    logger.info("Getting orchestration template candidate structure for vsp id {}", vspId);
 
     SessionContext context = createSessionContext();
     ElementContext elementContext = new ElementContext(vspId, version.getId());
@@ -275,9 +254,7 @@ public class OrchestrationTemplateCandidateDaoZusammenImpl
       return Optional.of(new String(FileUtils.toByteArray(element.get().getData())));
     }
 
-    logger.info(
-        "Finished getting orchestration template candidate structure for VendorSoftwareProduct "
-            + "id -> " + vspId);
+    logger.info("Finished getting orchestration template candidate structure for vsp id {}", vspId);
 
     return Optional.empty();
   }
@@ -286,13 +263,13 @@ public class OrchestrationTemplateCandidateDaoZusammenImpl
     FILE_SUFFIX("fileSuffix"),
     FILE_NAME("fileName");
 
-    private String val;
+    private final String val;
 
-    InfoPropertyName(String val){
+    InfoPropertyName(String val) {
       this.val = val;
     }
 
-    public String getVal() {
+    String getVal() {
       return val;
     }
   }
