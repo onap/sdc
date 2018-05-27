@@ -16,29 +16,6 @@
 
 package org.openecomp.sdcrests.vsp.rest.services;
 
-import static javax.ws.rs.core.HttpHeaders.CONTENT_DISPOSITION;
-import static org.openecomp.sdc.itempermissions.notifications.NotificationConstants.PERMISSION_USER;
-import static org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductConstants.UniqueValues.VENDOR_SOFTWARE_PRODUCT_NAME;
-import static org.openecomp.sdc.vendorsoftwareproduct.dao.type.OnboardingMethod.NetworkPackage;
-import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.ITEM_ID;
-import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.ITEM_NAME;
-import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.SUBMIT_DESCRIPTION;
-import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.VERSION_ID;
-import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.VERSION_NAME;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-import javax.inject.Named;
-import javax.ws.rs.core.Response;
 import org.apache.commons.collections4.MapUtils;
 import org.openecomp.core.dao.UniqueValueDaoFactory;
 import org.openecomp.core.util.UniqueValueUtil;
@@ -108,6 +85,30 @@ import org.openecomp.sdcrests.vsp.rest.mapping.MapVspDetailsToDto;
 import org.openecomp.sdcrests.wrappers.GenericCollectionWrapper;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
+
+import javax.inject.Named;
+import javax.ws.rs.core.Response;
+import java.io.File;
+import java.io.IOException;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+
+import static javax.ws.rs.core.HttpHeaders.CONTENT_DISPOSITION;
+import static org.openecomp.sdc.itempermissions.notifications.NotificationConstants.PERMISSION_USER;
+import static org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductConstants.UniqueValues.VENDOR_SOFTWARE_PRODUCT_NAME;
+import static org.openecomp.sdc.vendorsoftwareproduct.dao.type.OnboardingMethod.NetworkPackage;
+import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.ITEM_ID;
+import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.ITEM_NAME;
+import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.SUBMIT_DESCRIPTION;
+import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.VERSION_ID;
+import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.VERSION_NAME;
 
 @Named
 @Service("vendorSoftwareProducts")
@@ -565,25 +566,29 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
                 .build();
     }
 
-    private void addNetworkPackageInfo(String vspId, Version version, VspDetailsDto vspDetailsDto) {
-        OrchestrationTemplateCandidateData candidateInfo =
-                OrchestrationTemplateCandidateManagerFactory.getInstance().createInterface()
-                        .getInfo(vspId, version);
-        if (Objects.nonNull(candidateInfo) && Objects.nonNull(candidateInfo.getFileSuffix())) {
-            vspDetailsDto.setValidationData(candidateInfo.getValidationDataStructure());
-            vspDetailsDto.setNetworkPackageName(candidateInfo.getFileName());
-            vspDetailsDto.setCandidateOnboardingOrigin(candidateInfo.getFileSuffix());
-        } else {
-            OrchestrationTemplateEntity orchestrationTemplateInfo =
-                    vendorSoftwareProductManager.getOrchestrationTemplateInfo(vspId, version);
-            if (Objects.nonNull(orchestrationTemplateInfo) && Objects.nonNull(orchestrationTemplateInfo
-                    .getFileSuffix())) {
-                vspDetailsDto.setValidationData(orchestrationTemplateInfo.getValidationDataStructure());
-                vspDetailsDto.setNetworkPackageName(orchestrationTemplateInfo.getFileName());
-                vspDetailsDto.setOnboardingOrigin(orchestrationTemplateInfo.getFileSuffix());
-            }
+  private void addNetworkPackageInfo(String vspId, Version version, VspDetailsDto vspDetailsDto) {
+    Optional<OrchestrationTemplateCandidateData> candidateInfo =
+        OrchestrationTemplateCandidateManagerFactory.getInstance().createInterface()
+            .getInfo(vspId, version);
+    if (candidateInfo.isPresent()) {
+      if (candidateInfo.get().getValidationDataStructure() != null) {
+        vspDetailsDto.setValidationData(candidateInfo.get().getValidationDataStructure());
+      }
+      vspDetailsDto.setNetworkPackageName(candidateInfo.get().getFileName());
+      vspDetailsDto.setCandidateOnboardingOrigin(candidateInfo.get().getFileSuffix());
+    } else {
+      OrchestrationTemplateEntity orchestrationTemplateInfo =
+          vendorSoftwareProductManager.getOrchestrationTemplateInfo(vspId, version);
+      if (Objects.nonNull(orchestrationTemplateInfo) && Objects.nonNull(orchestrationTemplateInfo
+          .getFileSuffix())) {
+        if (orchestrationTemplateInfo.getValidationDataStructure() != null) {
+          vspDetailsDto.setValidationData(orchestrationTemplateInfo.getValidationDataStructure());
         }
+        vspDetailsDto.setNetworkPackageName(orchestrationTemplateInfo.getFileName());
+        vspDetailsDto.setOnboardingOrigin(orchestrationTemplateInfo.getFileSuffix());
+      }
     }
+  }
 
   private boolean userHasPermission(String itemId, String userId) {
     return permissionsManager.getUserItemPermission(itemId, userId)

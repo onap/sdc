@@ -26,9 +26,9 @@ import java.util.Optional;
 
 public interface OrchestrationTemplateCandidateDao extends VersionableDao {
 
-  OrchestrationTemplateCandidateData get(String vspId, Version version);
+  Optional<OrchestrationTemplateCandidateData> get(String vspId, Version version);
 
-  OrchestrationTemplateCandidateData getInfo(String vspId, Version version);
+  Optional<OrchestrationTemplateCandidateData> getInfo(String vspId, Version version);
 
   void delete(String vspId, Version version);
 

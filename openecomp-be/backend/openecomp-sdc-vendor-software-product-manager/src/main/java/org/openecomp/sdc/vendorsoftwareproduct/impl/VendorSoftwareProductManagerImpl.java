@@ -68,7 +68,6 @@ import org.openecomp.sdc.vendorsoftwareproduct.dao.type.DeploymentFlavorEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ImageEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.NicEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.OnboardingMethod;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.type.OrchestrationTemplateCandidateData;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.OrchestrationTemplateEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.PackageInfo;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
@@ -126,6 +125,10 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
+
+import static org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProductInvalidErrorBuilder.candidateDataNotProcessedOrAbortedErrorBuilder;
+import static org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProductInvalidErrorBuilder.invalidProcessedCandidate;
+import static org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProductInvalidErrorBuilder.vspMissingDeploymentFlavorErrorBuilder;
 
 public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductManager {
 
@@ -258,19 +261,14 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
   private void validateOrchestrationTemplateCandidate(ValidationResponse validationResponse,
                                                       List<ErrorCode> vspErrors, String vspId,
                                                       Version version) {
-    OrchestrationTemplateCandidateData orchestrationTemplateCandidateData =
-        orchestrationTemplateCandidateManager.getInfo(vspId, version);
-    String validationData = orchestrationTemplateCandidateData.getValidationData();
-    String fileName = orchestrationTemplateCandidateData.getFileName();
-    if (Objects.nonNull(orchestrationTemplateCandidateData.getFileSuffix())) {
-      if (validationData.isEmpty()) {
-        vspErrors.add(VendorSoftwareProductInvalidErrorBuilder
-            .candidateDataNotProcessedOrAbortedErrorBuilder(fileName));
-      } else {
-        vspErrors.add(VendorSoftwareProductInvalidErrorBuilder.invalidProcessedCandidate(fileName));
-      }
-      validationResponse.setVspErrors(vspErrors);
-    }
+    orchestrationTemplateCandidateManager.getInfo(vspId, version)
+        .ifPresent(candidateInfo -> {
+          String fileName = candidateInfo.getFileName();
+          vspErrors.add(candidateInfo.getValidationData().isEmpty()
+              ? candidateDataNotProcessedOrAbortedErrorBuilder(fileName)
+              : invalidProcessedCandidate(fileName));
+          validationResponse.setVspErrors(vspErrors);
+        });
   }
 
   private void validateManualOnboardingMethod(VspDetails vspDetails,
@@ -281,8 +279,7 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
     Collection<DeploymentFlavorEntity> deploymentFlavors = deploymentFlavorDao
         .list(new DeploymentFlavorEntity(vspDetails.getId(), vspDetails.getVersion(), null));
     if (CollectionUtils.isEmpty(deploymentFlavors)) {
-      vspErrors
-          .add(VendorSoftwareProductInvalidErrorBuilder.vspMissingDeploymentFlavorErrorBuilder());
+      vspErrors.add(vspMissingDeploymentFlavorErrorBuilder());
     }
     vspErrors.addAll(validateDeploymentFlavors(deploymentFlavors));
 
@@ -675,7 +672,7 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
     return packageInfo;
   }
 
-  protected void populateVersionsForVlm(String vlmId, Version vlmVersion) {
+  void populateVersionsForVlm(String vlmId, Version vlmVersion) {
     VersioningManager versioningManager = VersioningManagerFactory.getInstance().createInterface();
     versioningManager.list(vlmId).stream()
         .filter(version -> version.getId().equalsIgnoreCase(vlmVersion.getId()))
@@ -852,11 +849,12 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
     return computeDao.listByVsp(vspId, version);
   }
 
-  private boolean isOrchestrationTemplateMissing(OrchestrationTemplateEntity orchestrationTemplate) {
+  private boolean isOrchestrationTemplateMissing(
+      OrchestrationTemplateEntity orchestrationTemplate) {
     return orchestrationTemplate == null
-            || orchestrationTemplate.getContentData() == null
-            || orchestrationTemplate.getFileSuffix() == null
-            || orchestrationTemplate.getFileName() == null;
+        || orchestrationTemplate.getContentData() == null
+        || orchestrationTemplate.getFileSuffix() == null
+        || orchestrationTemplate.getFileName() == null;
   }
 
   private boolean isServiceModelMissing(ToscaServiceModel serviceModel) {
