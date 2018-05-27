@@ -8,17 +8,15 @@ import org.junit.Test;
 
 import com.datastax.driver.core.DataType;
 
+public class EcompOperationalEnvironmentEventTableDescTest {
 
-public class UserAdminEventTableDescriptionTest {
-
-	private UserAdminEventTableDescription createTestSubject() {
-		return new UserAdminEventTableDescription();
+	private EcompOperationalEnvironmentEventTableDesc createTestSubject() {
+		return new EcompOperationalEnvironmentEventTableDesc();
 	}
 
-	
 	@Test
 	public void testPrimaryKeys() throws Exception {
-		UserAdminEventTableDescription testSubject;
+		EcompOperationalEnvironmentEventTableDesc testSubject;
 		List<ImmutablePair<String, DataType>> result;
 
 		// default test
@@ -26,10 +24,9 @@ public class UserAdminEventTableDescriptionTest {
 		result = testSubject.primaryKeys();
 	}
 
-	
 	@Test
 	public void testClusteringKeys() throws Exception {
-		UserAdminEventTableDescription testSubject;
+		EcompOperationalEnvironmentEventTableDesc testSubject;
 		List<ImmutablePair<String, DataType>> result;
 
 		// default test
@@ -37,12 +34,9 @@ public class UserAdminEventTableDescriptionTest {
 		result = testSubject.clusteringKeys();
 	}
 
-	
-
-	
 	@Test
 	public void testGetKeyspace() throws Exception {
-		UserAdminEventTableDescription testSubject;
+		EcompOperationalEnvironmentEventTableDesc testSubject;
 		String result;
 
 		// default test
@@ -50,27 +44,23 @@ public class UserAdminEventTableDescriptionTest {
 		result = testSubject.getKeyspace();
 	}
 
-	
-	@Test
-	public void testGetTableName() throws Exception {
-		UserAdminEventTableDescription testSubject;
-		String result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getTableName();
-	}
-	
 	@Test
 	public void testGetColumnDescription() throws Exception {
-		UserAdminEventTableDescription testSubject;
+		EcompOperationalEnvironmentEventTableDesc testSubject;
 		Map<String, ImmutablePair<DataType, Boolean>> result;
 
 		// default test
 		testSubject = createTestSubject();
 		result = testSubject.getColumnDescription();
-		
-		UserAdminEventTableDescription.UAEFieldsDescription.ACTION.getType();
-		UserAdminEventTableDescription.UAEFieldsDescription.ACTION.isIndexed();
+	}
+
+	@Test
+	public void testGetTableName() throws Exception {
+		EcompOperationalEnvironmentEventTableDesc testSubject;
+		String result;
+
+		// default test
+		testSubject = createTestSubject();
+		result = testSubject.getTableName();
 	}
 }

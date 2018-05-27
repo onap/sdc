@@ -2,15 +2,12 @@ package org.openecomp.sdc.be.dao.titan;
 
 import java.util.Collection;
 import java.util.Map;
-
-import javax.annotation.Generated;
+import java.util.Map.Entry;
 
 import org.apache.tinkerpop.gremlin.structure.T;
 import org.junit.Test;
 
 import com.thinkaurelius.titan.graphdb.query.TitanPredicate;
-
-import java.util.Map.Entry;
 public class TitanUtilsTest {
 
 	@Test

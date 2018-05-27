@@ -1,17 +1,14 @@
 package org.openecomp.sdc.be.dao.cassandra.schema;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import org.junit.Test;
+import org.openecomp.sdc.be.config.ConfigurationManager;
+import org.openecomp.sdc.be.utils.DAOConfDependentTest;
 
 
-public class SdcSchemaUtilsTest {
-
-	private SdcSchemaUtils createTestSubject() {
-		return new SdcSchemaUtils();
-	}
-
-	
-
-
+public class SdcSchemaUtilsTest extends DAOConfDependentTest{
 	
 	@Test
 	public void testExecuteStatement() throws Exception {
@@ -19,6 +16,13 @@ public class SdcSchemaUtilsTest {
 		boolean result;
 
 		// default test
+		result = SdcSchemaUtils.executeStatement(statement);
+		
+		List<String> cassandraHosts = new LinkedList<>();
+		ConfigurationManager.getConfigurationManager().getConfiguration().getCassandraConfig().setCassandraHosts(cassandraHosts);
+		ConfigurationManager.getConfigurationManager().getConfiguration().getCassandraConfig().setAuthenticate(true);
+		ConfigurationManager.getConfigurationManager().getConfiguration().getCassandraConfig().setSsl(true);
+		
 		result = SdcSchemaUtils.executeStatement(statement);
 	}
 

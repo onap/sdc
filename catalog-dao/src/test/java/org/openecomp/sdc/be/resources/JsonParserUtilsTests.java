@@ -20,23 +20,24 @@
 
 package org.openecomp.sdc.be.resources;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.google.common.collect.ImmutableList;
-import org.junit.Test;
-import org.openecomp.sdc.be.dao.jsongraph.utils.JsonParserUtils;
-import org.openecomp.sdc.be.datatypes.elements.CapabilityDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.ListCapabilityDataDefinition;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.openecomp.sdc.be.utils.FixtureHelpers.fixture;
+import static org.openecomp.sdc.be.utils.JsonTester.testJsonMap;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatCode;
-import static org.openecomp.sdc.be.utils.FixtureHelpers.fixture;
-import static org.openecomp.sdc.be.utils.JsonTester.testJsonMap;
+import org.junit.Test;
+import org.openecomp.sdc.be.dao.jsongraph.utils.JsonParserUtils;
+import org.openecomp.sdc.be.datatypes.elements.CapabilityDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.ListCapabilityDataDefinition;
+
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.google.common.collect.ImmutableList;
 
 public class JsonParserUtilsTests {
 

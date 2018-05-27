@@ -20,7 +20,10 @@
 
 package org.openecomp.sdc.be.dao.jsongraph;
 
-import com.thinkaurelius.titan.core.TitanVertex;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
@@ -29,9 +32,7 @@ import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
+import com.thinkaurelius.titan.core.TitanVertex;
 
 public class GraphVertex {
 	private String uniqueId;

@@ -8,17 +8,15 @@ import org.junit.Test;
 
 import com.datastax.driver.core.DataType;
 
+public class OperationalEnvironmentsTableDescriptionTest {
 
-public class UserAdminEventTableDescriptionTest {
-
-	private UserAdminEventTableDescription createTestSubject() {
-		return new UserAdminEventTableDescription();
+	private OperationalEnvironmentsTableDescription createTestSubject() {
+		return new OperationalEnvironmentsTableDescription();
 	}
 
-	
 	@Test
 	public void testPrimaryKeys() throws Exception {
-		UserAdminEventTableDescription testSubject;
+		OperationalEnvironmentsTableDescription testSubject;
 		List<ImmutablePair<String, DataType>> result;
 
 		// default test
@@ -26,10 +24,9 @@ public class UserAdminEventTableDescriptionTest {
 		result = testSubject.primaryKeys();
 	}
 
-	
 	@Test
 	public void testClusteringKeys() throws Exception {
-		UserAdminEventTableDescription testSubject;
+		OperationalEnvironmentsTableDescription testSubject;
 		List<ImmutablePair<String, DataType>> result;
 
 		// default test
@@ -37,12 +34,19 @@ public class UserAdminEventTableDescriptionTest {
 		result = testSubject.clusteringKeys();
 	}
 
-	
+	@Test
+	public void testGetColumnDescription() throws Exception {
+		OperationalEnvironmentsTableDescription testSubject;
+		Map<String, ImmutablePair<DataType, Boolean>> result;
 
-	
+		// default test
+		testSubject = createTestSubject();
+		result = testSubject.getColumnDescription();
+	}
+
 	@Test
 	public void testGetKeyspace() throws Exception {
-		UserAdminEventTableDescription testSubject;
+		OperationalEnvironmentsTableDescription testSubject;
 		String result;
 
 		// default test
@@ -50,27 +54,13 @@ public class UserAdminEventTableDescriptionTest {
 		result = testSubject.getKeyspace();
 	}
 
-	
 	@Test
 	public void testGetTableName() throws Exception {
-		UserAdminEventTableDescription testSubject;
+		OperationalEnvironmentsTableDescription testSubject;
 		String result;
 
 		// default test
 		testSubject = createTestSubject();
 		result = testSubject.getTableName();
-	}
-	
-	@Test
-	public void testGetColumnDescription() throws Exception {
-		UserAdminEventTableDescription testSubject;
-		Map<String, ImmutablePair<DataType, Boolean>> result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getColumnDescription();
-		
-		UserAdminEventTableDescription.UAEFieldsDescription.ACTION.getType();
-		UserAdminEventTableDescription.UAEFieldsDescription.ACTION.isIndexed();
 	}
 }

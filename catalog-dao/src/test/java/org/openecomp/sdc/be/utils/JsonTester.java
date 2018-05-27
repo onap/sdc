@@ -1,13 +1,13 @@
 package org.openecomp.sdc.be.utils;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.type.MapType;
-import com.fasterxml.jackson.databind.type.TypeFactory;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.openecomp.sdc.be.utils.FixtureHelpers.fixture;
 
 import java.util.Map;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.openecomp.sdc.be.utils.FixtureHelpers.fixture;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.type.MapType;
+import com.fasterxml.jackson.databind.type.TypeFactory;
 
 public class JsonTester {
     private static final ObjectMapper MAPPER = new ObjectMapper();

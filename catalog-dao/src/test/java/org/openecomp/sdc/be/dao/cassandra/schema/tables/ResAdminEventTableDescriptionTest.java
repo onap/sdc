@@ -1,6 +1,7 @@
 package org.openecomp.sdc.be.dao.cassandra.schema.tables;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.junit.Test;
@@ -59,5 +60,18 @@ public class ResAdminEventTableDescriptionTest {
 		// default test
 		testSubject = createTestSubject();
 		result = testSubject.getTableName();
+	}
+	
+	@Test
+	public void testGetColumnDescription() throws Exception {
+		ResAdminEventTableDescription testSubject;
+		Map<String, ImmutablePair<DataType, Boolean>> result;
+
+		// default test
+		testSubject = createTestSubject();
+		result = testSubject.getColumnDescription();
+		
+		ResAdminEventTableDescription.AEFieldsDescription.ACTION.getType();
+		ResAdminEventTableDescription.AEFieldsDescription.ACTION.isIndexed();
 	}
 }

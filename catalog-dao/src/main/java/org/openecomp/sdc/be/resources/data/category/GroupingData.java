@@ -20,13 +20,13 @@
 
 package org.openecomp.sdc.be.resources.data.category;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.openecomp.sdc.be.dao.graph.datatype.GraphNode;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
 import org.openecomp.sdc.be.datatypes.category.GroupingDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class GroupingData extends GraphNode {
 

@@ -2,8 +2,6 @@ package org.openecomp.sdc.be.resources.data.category;
 
 import java.util.Map;
 
-import javax.annotation.Generated;
-
 import org.junit.Test;
 import org.openecomp.sdc.be.datatypes.category.GroupingDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;

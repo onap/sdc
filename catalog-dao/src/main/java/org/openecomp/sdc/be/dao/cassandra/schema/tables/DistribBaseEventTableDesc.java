@@ -1,14 +1,15 @@
 package org.openecomp.sdc.be.dao.cassandra.schema.tables;
 
-import com.datastax.driver.core.DataType;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.openecomp.sdc.be.dao.cassandra.schema.ITableDescription;
-import org.openecomp.sdc.be.resources.data.auditing.AuditingTypesConstants;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.openecomp.sdc.be.dao.cassandra.schema.ITableDescription;
+import org.openecomp.sdc.be.resources.data.auditing.AuditingTypesConstants;
+
+import com.datastax.driver.core.DataType;
 
 public abstract class DistribBaseEventTableDesc implements ITableDescription {
     @Override

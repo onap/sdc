@@ -1,12 +1,15 @@
 package org.openecomp.sdc.be.dao.cassandra.schema.tables;
 
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.junit.Test;
+import org.openecomp.sdc.be.dao.cassandra.schema.tables.DistribStatusEventTableDesc.DSEFieldsDescription;
 
 import com.datastax.driver.core.DataType;
 
+import mockit.Deencapsulation;
 
 public class DistribStatusEventTableDescTest {
 
@@ -14,43 +17,16 @@ public class DistribStatusEventTableDescTest {
 		return new DistribStatusEventTableDesc();
 	}
 
-	
 	@Test
-	public void testPrimaryKeys() throws Exception {
+	public void testUpdateColumnDistribDescription() throws Exception {
 		DistribStatusEventTableDesc testSubject;
-		List<ImmutablePair<String, DataType>> result;
+		Map<String, ImmutablePair<DataType, Boolean>> columns = new HashMap<>();
 
 		// default test
 		testSubject = createTestSubject();
-		result = testSubject.primaryKeys();
+		Deencapsulation.invoke(testSubject, "updateColumnDistribDescription", columns);
 	}
 
-	
-	@Test
-	public void testClusteringKeys() throws Exception {
-		DistribStatusEventTableDesc testSubject;
-		List<ImmutablePair<String, DataType>> result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.clusteringKeys();
-	}
-
-	
-
-
-	
-	@Test
-	public void testGetKeyspace() throws Exception {
-		DistribStatusEventTableDesc testSubject;
-		String result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getKeyspace();
-	}
-
-	
 	@Test
 	public void testGetTableName() throws Exception {
 		DistribStatusEventTableDesc testSubject;
@@ -59,5 +35,14 @@ public class DistribStatusEventTableDescTest {
 		// default test
 		testSubject = createTestSubject();
 		result = testSubject.getTableName();
+	}
+	
+	@Test
+	public void testDSEFieldsDescription() throws Exception {
+		DSEFieldsDescription testSubject = DistribStatusEventTableDesc.DSEFieldsDescription.CONSUMER_ID;
+		
+		testSubject.getName();
+		testSubject.getType();
+		testSubject.isIndexed();
 	}
 }
