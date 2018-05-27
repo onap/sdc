@@ -9,6 +9,11 @@ public class AccountTest {
 	}
 
 	@Test
+	public void testCtor() throws Exception {
+		new Account("mock", "mock");
+	}
+	
+	@Test
 	public void testGetName() throws Exception {
 		Account testSubject;
 		String result;
@@ -57,6 +62,8 @@ public class AccountTest {
 		// default test
 		testSubject = createTestSubject();
 		result = testSubject.equals(other);
+		result = testSubject.equals(testSubject);
+		result = testSubject.equals(createTestSubject());
 	}
 
 	@Test

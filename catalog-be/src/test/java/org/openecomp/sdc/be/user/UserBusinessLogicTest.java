@@ -9,7 +9,6 @@ import javax.servlet.ServletContext;
 import org.apache.tinkerpop.gremlin.structure.Edge;
 import org.apache.tinkerpop.gremlin.structure.util.detached.DetachedEdge;
 import org.javatuples.Pair;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;

@@ -101,9 +101,7 @@ public class ComponentCassandraDao extends CassandraDao {
 			}
 			events.all().forEach(event -> {
 				components.add(event);
-				if (logger.isTraceEnabled()) {
-					logger.trace("Fetch component uid = {} isDirty = {}", event.getId(), event.getIsDirty());
-				}
+				logger.trace("Fetch component uid = {} isDirty = {}", event.getId(), event.getIsDirty());
 			});
 
 			logger.debug("Number of components to fetch was {}. Actually, {} components fetched", ids.size(),
@@ -128,9 +126,7 @@ public class ComponentCassandraDao extends CassandraDao {
 			}
 			events.all().forEach(event -> {
 				components.add(event);
-				if (logger.isTraceEnabled()) {
 					logger.trace("Fetch component uid = {} isDirty = {}", event.getId(), event.getIsDirty());
-				}
 			});
 
 			logger.debug("Number of components fetched was {}.", components.size());
