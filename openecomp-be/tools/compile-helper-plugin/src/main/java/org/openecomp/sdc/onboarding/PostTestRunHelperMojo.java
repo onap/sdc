@@ -16,6 +16,7 @@
 
 package org.openecomp.sdc.onboarding;
 
+import static org.openecomp.sdc.onboarding.Constants.SKIP_TESTS;
 import static org.openecomp.sdc.onboarding.Constants.SKIP_TEST_RUN;
 import static org.openecomp.sdc.onboarding.Constants.UNICORN;
 
@@ -49,11 +50,13 @@ public class PostTestRunHelperMojo extends AbstractMojo {
         if (project.getPackaging().equals(excludePackaging)) {
             return;
         }
-        buildState.saveResourceBuildData(moduleCoordinates);
+
         if (project.getProperties().containsKey(SKIP_TEST_RUN) && !Boolean.valueOf(
                 project.getProperties().getProperty(SKIP_TEST_RUN))) {
-            if (!System.getProperties().containsKey("skipTests")) {
+            if (!System.getProperties().containsKey(SKIP_TESTS)) {
+                buildState.saveResourceBuildData(moduleCoordinates);
                 buildState.addResourceBuildTime(moduleCoordinates, System.currentTimeMillis());
+
             }
         }
 

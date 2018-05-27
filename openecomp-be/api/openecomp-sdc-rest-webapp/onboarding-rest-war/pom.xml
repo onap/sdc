@@ -205,7 +205,6 @@
                 <artifactId>maven-war-plugin</artifactId>
                 <version>${mvn.war.version}</version>
                 <configuration>
-                    <attachClasses>true</attachClasses>
                     <webResources>
                         <resource>
                             <!-- this is relative to the pom.xml directory -->
