@@ -44,7 +44,7 @@ public interface CandidateService {
 
   OrchestrationTemplateCandidateData createCandidateDataEntity(
       CandidateDataEntityTo candidateDataEntityTo, InputStream zipFileManifest,
-      AnalyzedZipHeatFiles analyzedZipHeatFiles) throws Exception;
+      AnalyzedZipHeatFiles analyzedZipHeatFiles);
 
   void updateCandidateUploadData(String vspId, Version version,
                                  OrchestrationTemplateCandidateData uploadData);
@@ -55,11 +55,11 @@ public interface CandidateService {
   void updateOrchestrationTemplateCandidateFileDataStructure(String vspId, Version version,
                                                              FilesDataStructure fileDataStructure);
 
-  OrchestrationTemplateCandidateData getOrchestrationTemplateCandidate(String vspId,
-                                                                       Version version);
+  Optional<OrchestrationTemplateCandidateData> getOrchestrationTemplateCandidate(String vspId,
+                                                                                 Version version);
 
-  OrchestrationTemplateCandidateData getOrchestrationTemplateCandidateInfo(String vspId,
-                                                                       Version version);
+  Optional<OrchestrationTemplateCandidateData> getOrchestrationTemplateCandidateInfo(String vspId,
+                                                                                     Version version);
 
   byte[] getZipData(ByteBuffer contentData) throws IOException;
 
@@ -71,7 +71,7 @@ public interface CandidateService {
                                                                   OnboardingTypesEnum type,
                                                                   Map<String, List<ErrorMessage>> uploadErrors);
 
-  byte[] replaceManifestInZip(ByteBuffer contentData, String manifest, String vspId,
+  byte[] replaceManifestInZip(ByteBuffer contentData, String manifest,
                               OnboardingTypesEnum type) throws IOException;
 
   Optional<ManifestContent> createManifest(VspDetails vspDetails,

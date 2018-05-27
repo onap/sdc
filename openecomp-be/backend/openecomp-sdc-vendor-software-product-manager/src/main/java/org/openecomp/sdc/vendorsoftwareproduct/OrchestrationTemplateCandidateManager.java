@@ -41,7 +41,7 @@ public interface OrchestrationTemplateCandidateManager {
 
   Optional<Pair<String, byte[]>> get(String vspId, Version version) throws IOException;
 
-  OrchestrationTemplateCandidateData getInfo(String vspId, Version version);
+  Optional<OrchestrationTemplateCandidateData> getInfo(String vspId, Version version);
 
   void abort(String vspId, Version version);
 }

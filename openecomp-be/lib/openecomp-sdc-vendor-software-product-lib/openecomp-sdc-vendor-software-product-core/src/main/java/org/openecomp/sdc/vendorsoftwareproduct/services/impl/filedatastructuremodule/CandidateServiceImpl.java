@@ -70,7 +70,7 @@ import java.util.zip.ZipOutputStream;
 import static org.openecomp.core.validation.errors.ErrorMessagesFormatBuilder.getErrorWithParameters;
 
 public class CandidateServiceImpl implements CandidateService {
-  protected static final Logger logger = LoggerFactory.getLogger(CandidateServiceImpl.class);
+  private static final Logger logger = LoggerFactory.getLogger(CandidateServiceImpl.class);
   private CandidateServiceValidator candidateServiceValidator = new CandidateServiceValidator();
   private ManifestCreator manifestCreator;
   private OrchestrationTemplateCandidateDao orchestrationTemplateCandidateDao;
@@ -79,7 +79,6 @@ public class CandidateServiceImpl implements CandidateService {
                               OrchestrationTemplateCandidateDao orchestrationTemplateCandidateDao) {
     this.manifestCreator = manifestCreator;
     this.orchestrationTemplateCandidateDao = orchestrationTemplateCandidateDao;
-
   }
 
   public CandidateServiceImpl() {
@@ -125,8 +124,7 @@ public class CandidateServiceImpl implements CandidateService {
   private String heatStructureTreeToFileDataStructure(HeatStructureTree tree,
                                                       FileContentHandler zipContentMap,
                                                       Map<String, List<ErrorMessage>> uploadErrors,
-                                                      AnalyzedZipHeatFiles analyzedZipHeatFiles)
-      throws Exception {
+                                                      AnalyzedZipHeatFiles analyzedZipHeatFiles) {
     FilesDataStructure structure = new FilesDataStructure();
     Set<String> usedEnvFiles = new HashSet<>();
     addHeatsToFileDataStructure(tree, usedEnvFiles, structure, uploadErrors,
@@ -150,7 +148,7 @@ public class CandidateServiceImpl implements CandidateService {
   @Override
   public OrchestrationTemplateCandidateData createCandidateDataEntity(
       CandidateDataEntityTo candidateDataEntityTo, InputStream zipFileManifest,
-      AnalyzedZipHeatFiles analyzedZipHeatFiles) throws Exception {
+      AnalyzedZipHeatFiles analyzedZipHeatFiles) {
     FileContentHandler zipContentMap = candidateDataEntityTo.getContentMap();
     FilesDataStructure filesDataStructure;
     String dataStructureJson;
@@ -183,8 +181,7 @@ public class CandidateServiceImpl implements CandidateService {
 
   private void balanceManifestFilesWithZipFiles(
       FilesDataStructure filesDataStructure,
-      FileContentHandler fileContentHandler, AnalyzedZipHeatFiles analyzedZipHeatFiles)
-      throws Exception {
+      FileContentHandler fileContentHandler, AnalyzedZipHeatFiles analyzedZipHeatFiles) {
     Set<String> zipFileList = fileContentHandler.getFileList();
     filesDataStructure.getNested().addAll(analyzedZipHeatFiles.getNestedFiles());
     List<Module> modules = filesDataStructure.getModules();
@@ -249,9 +246,9 @@ public class CandidateServiceImpl implements CandidateService {
         CollectionUtils.addIgnoreNull(fileNames, module.getYaml());
       }
     }
-    fileNames.addAll(filesDataStructure.getArtifacts().stream().collect(Collectors.toSet()));
-    fileNames.addAll(filesDataStructure.getNested().stream().collect(Collectors.toSet()));
-    fileNames.addAll(filesDataStructure.getUnassigned().stream().collect(Collectors.toSet()));
+    fileNames.addAll(new HashSet<>(filesDataStructure.getArtifacts()));
+    fileNames.addAll(new HashSet<>(filesDataStructure.getNested()));
+    fileNames.addAll(new HashSet<>(filesDataStructure.getUnassigned()));
 
     return fileNames;
   }
@@ -336,24 +333,23 @@ public class CandidateServiceImpl implements CandidateService {
   }
 
   @Override
-  public OrchestrationTemplateCandidateData getOrchestrationTemplateCandidate(String vspId,
-                                                                              Version version) {
+  public Optional<OrchestrationTemplateCandidateData> getOrchestrationTemplateCandidate(String vspId,
+                                                                                        Version version) {
     return orchestrationTemplateCandidateDao.get(vspId, version);
   }
 
   @Override
-  public OrchestrationTemplateCandidateData getOrchestrationTemplateCandidateInfo(String vspId,
-                                                                                  Version version) {
+  public Optional<OrchestrationTemplateCandidateData> getOrchestrationTemplateCandidateInfo(
+      String vspId,
+      Version version) {
     return orchestrationTemplateCandidateDao.getInfo(vspId, version);
   }
 
   @Override
   public String createManifest(VspDetails vspDetails, FilesDataStructure structure) {
-    Optional<ManifestContent> manifest = manifestCreator.createManifest(vspDetails, structure);
-    if (!manifest.isPresent()) {
-      throw new RuntimeException(Messages.CREATE_MANIFEST_FROM_ZIP.getErrorMessage());
-    }
-    return JsonUtil.object2Json(manifest.get());
+    return JsonUtil.object2Json(manifestCreator.createManifest(vspDetails, structure)
+        .orElseThrow(() -> new CoreException(new ErrorCode.ErrorCodeBuilder()
+            .withMessage(Messages.CREATE_MANIFEST_FROM_ZIP.getErrorMessage()).build())));
   }
 
   @Override
@@ -372,7 +368,7 @@ public class CandidateServiceImpl implements CandidateService {
     byte[] file;
     ByteArrayInputStream byteArrayInputStream = null;
     try {
-      file = replaceManifestInZip(candidateDataEntity.getContentData(), manifest, vspId, type);
+      file = replaceManifestInZip(candidateDataEntity.getContentData(), manifest, type);
       byteArrayInputStream = new ByteArrayInputStream(
           Objects.isNull(file) ? candidateDataEntity.getContentData().array()
               : file);
@@ -388,7 +384,7 @@ public class CandidateServiceImpl implements CandidateService {
   }
 
   @Override
-  public byte[] replaceManifestInZip(ByteBuffer contentData, String manifest, String vspId,
+  public byte[] replaceManifestInZip(ByteBuffer contentData, String manifest,
                                      OnboardingTypesEnum type)
       throws IOException {
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -525,19 +521,14 @@ public class CandidateServiceImpl implements CandidateService {
   }
 
   private boolean isEnvFileUsedByHeatFile(Set<String> usedEnvFiles, HeatStructureTree other) {
-    if (HeatFileAnalyzer.isEnvFile(other.getFileName())) {
-      if (usedEnvFiles.contains(other.getFileName())) {
-        return true;
-      }
-    }
-    return false;
+    return HeatFileAnalyzer.isEnvFile(other.getFileName()) &&
+        usedEnvFiles.contains(other.getFileName());
   }
 
   private void addHeatsToFileDataStructure(HeatStructureTree tree, Set<String> usedEnvFiles,
                                            FilesDataStructure structure,
                                            Map<String, List<ErrorMessage>> uploadErrors,
-                                           AnalyzedZipHeatFiles analyzedZipHeatFiles)
-      throws Exception {
+                                           AnalyzedZipHeatFiles analyzedZipHeatFiles) {
     List<Module> modules = new ArrayList<>();
     Set<HeatStructureTree> heatsSet = tree.getHeat();
     if (Objects.isNull(heatsSet)) {
