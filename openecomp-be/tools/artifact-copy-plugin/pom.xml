@@ -5,9 +5,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.openecomp.sdc.onboarding</groupId>
-    <artifactId>compile-helper-plugin</artifactId>
+    <artifactId>artifact-copy-plugin</artifactId>
     <packaging>maven-plugin</packaging>
-
     <parent>
         <artifactId>sdc-onboarding</artifactId>
         <groupId>org.openecomp.sdc</groupId>

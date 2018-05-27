@@ -102,8 +102,8 @@
                         <execution>
                             <goals>
                                 <goal>compile</goal>
-                                <goal>test-compile</goal>
                             </goals>
+                            <phase>test-compile</phase>
                         </execution>
                     </executions>
                 </plugin>

@@ -17,14 +17,13 @@
 package org.openecomp.sdc.onboarding;
 
 import static org.openecomp.sdc.onboarding.Constants.JACOCO_SKIP;
-import static org.openecomp.sdc.onboarding.Constants.SKIP_TEST_RUN;
 import static org.openecomp.sdc.onboarding.Constants.RESOURCES_CHANGED;
+import static org.openecomp.sdc.onboarding.Constants.SKIP_TESTS;
+import static org.openecomp.sdc.onboarding.Constants.SKIP_TEST_RUN;
 import static org.openecomp.sdc.onboarding.Constants.UNICORN;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.UncheckedIOException;
-import java.util.stream.Collectors;
+import java.util.List;
+import org.apache.maven.model.Plugin;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -33,23 +32,20 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.util.xml.Xpp3Dom;
 
-@Mojo(name = "pre-test-compile-helper", threadSafe = true, defaultPhase = LifecyclePhase.GENERATE_TEST_RESOURCES,
+@Mojo(name = "pre-test-compile-helper", threadSafe = true, defaultPhase = LifecyclePhase.PROCESS_TEST_CLASSES,
         requiresDependencyResolution = ResolutionScope.TEST)
 public class PreTestCompileHelperMojo extends AbstractMojo {
 
-    @Parameter
-    private File compiledFilesList;
-    @Parameter
-    private Long staleThreshold;
-    @Parameter
-    private File inputTestFilesList;
     @Parameter
     private BuildState buildState;
     @Parameter(defaultValue = "${project}", readonly = true)
     private MavenProject project;
     @Parameter(defaultValue = "${project.artifact.groupId}:${project.artifact.artifactId}")
     private String moduleCoordinates;
+    @Parameter(defaultValue = "${project.buildPlugins}", readonly = true)
+    private List<Plugin> plugins;
     @Parameter
     private String excludePackaging;
 
@@ -61,30 +57,35 @@ public class PreTestCompileHelperMojo extends AbstractMojo {
         if (project.getPackaging().equals(excludePackaging)) {
             return;
         }
-        if (compiledFilesList.exists()
-                    && compiledFilesList.lastModified() > System.currentTimeMillis() - staleThreshold) {
-            try {
-                buildState.markModuleDirty(inputTestFilesList);
-                project.getProperties().setProperty(SKIP_TEST_RUN, Boolean.FALSE.toString());
-            } catch (IOException e) {
-                throw new UncheckedIOException(e);
-            }
+        if (buildState.isTestExecutionMandatory()) {
+            project.getProperties().setProperty(SKIP_TEST_RUN, Boolean.FALSE.toString());
         }
-        boolean isTestMust = buildState.isTestMust(moduleCoordinates,
-                project.getDependencies().stream().map(d -> d.getGroupId() + ":" + d.getArtifactId())
-                       .collect(Collectors.toList()));
+        boolean isTestMust = buildState.isTestMust(moduleCoordinates);
         if (isTestMust) {
             project.getProperties().setProperty(RESOURCES_CHANGED, Boolean.TRUE.toString());
             if (!project.getProperties().containsKey(SKIP_TEST_RUN)) {
                 project.getProperties().setProperty(SKIP_TEST_RUN, Boolean.FALSE.toString());
             }
         }
-        if (!project.getProperties().containsKey(SKIP_TEST_RUN)) {
+        if (!project.getProperties().containsKey(SKIP_TEST_RUN) || isTestSkippedExplicitly()) {
             project.getProperties().setProperty(SKIP_TEST_RUN, Boolean.TRUE.toString());
         }
         if (System.getProperties().containsKey(JACOCO_SKIP) && Boolean.FALSE.equals(Boolean.valueOf(
                 System.getProperties().getProperty(JACOCO_SKIP)))) {
             project.getProperties().setProperty(SKIP_TEST_RUN, Boolean.FALSE.toString());
         }
+    }
+
+
+    private boolean isTestSkippedExplicitly() {
+        for (Plugin p : plugins) {
+            if ("org.apache.maven.plugins:maven-surefire-plugin".equals(p.getKey())) {
+                Xpp3Dom dom = Xpp3Dom.class.cast(p.getConfiguration());
+                if (dom.getChild(SKIP_TESTS) != null) {
+                    return Boolean.TRUE.equals(Boolean.valueOf(dom.getValue()));
+                }
+            }
+        }
+        return false;
     }
 }
