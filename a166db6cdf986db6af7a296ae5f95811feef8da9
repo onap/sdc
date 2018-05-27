@@ -1,0 +1,157 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_f7eccd2b",
+        "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-core/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/dao/impl/zusammen/OrchestrationTemplateCandidateDaoZusammenImpl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-05-27T11:22:28Z",
+      "side": 1,
+      "message": "logging should use {}",
+      "revId": "a166db6cdf986db6af7a296ae5f95811feef8da9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_d7e75145",
+        "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-core/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/dao/impl/zusammen/OrchestrationTemplateCandidateDaoZusammenImpl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-05-27T11:22:28Z",
+      "side": 1,
+      "message": "logging should use {}",
+      "revId": "a166db6cdf986db6af7a296ae5f95811feef8da9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_178e197a",
+        "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-core/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/dao/impl/zusammen/OrchestrationTemplateCandidateDaoZusammenImpl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 98,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-05-27T11:22:28Z",
+      "side": 1,
+      "message": "logging should use {}",
+      "revId": "a166db6cdf986db6af7a296ae5f95811feef8da9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_977a2976",
+        "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-core/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/dao/impl/zusammen/OrchestrationTemplateCandidateDaoZusammenImpl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 200,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-05-27T11:22:28Z",
+      "side": 1,
+      "message": "loggingh should be with {}. Otherwise string is always built",
+      "revId": "a166db6cdf986db6af7a296ae5f95811feef8da9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_5794a18b",
+        "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-core/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/dao/impl/zusammen/OrchestrationTemplateCandidateDaoZusammenImpl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 241,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-05-27T11:22:28Z",
+      "side": 1,
+      "message": "logging should use {}",
+      "revId": "a166db6cdf986db6af7a296ae5f95811feef8da9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_17e5b937",
+        "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-core/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/services/impl/filedatastructuremodule/CandidateServiceImpl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 249,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-05-27T11:22:28Z",
+      "side": 1,
+      "message": "why new HashSet\u003c\u003e is required ? addAll does not require Collection.",
+      "revId": "a166db6cdf986db6af7a296ae5f95811feef8da9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_57c26187",
+        "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-core/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/services/impl/filedatastructuremodule/CandidateServiceImpl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 376,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-05-27T11:22:28Z",
+      "side": 1,
+      "message": "you should check that byteArrayInputStream is not null and close it in Exception handling.",
+      "revId": "a166db6cdf986db6af7a296ae5f95811feef8da9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_b7cde5b9",
+        "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-core/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/services/impl/filedatastructuremodule/CandidateServiceImpl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 390,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-05-27T11:22:28Z",
+      "side": 1,
+      "message": "why baos is not in the try resource?",
+      "revId": "a166db6cdf986db6af7a296ae5f95811feef8da9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_d73511a9",
+        "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-core/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/services/impl/filedatastructuremodule/CandidateServiceImpl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 399,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-05-27T11:22:28Z",
+      "side": 1,
+      "message": "sonar remark - variableName should change.",
+      "revId": "a166db6cdf986db6af7a296ae5f95811feef8da9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
