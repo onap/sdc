@@ -98,7 +98,7 @@
                 <configuration>
                     <schemaDirectory>src/main/resources</schemaDirectory>
                     <generatePackage>org.onap.sdc.generator.aai.xml</generatePackage>
-                    <generateDirectory>target/generated-sources/custom/aai/xml</generateDirectory>
+                    <generateDirectory>target/generated-sources/aai/xml</generateDirectory>
                     <removeOldOutput>false</removeOldOutput>
                     <cleanPackageDirectories>true</cleanPackageDirectories>
                     <forceRegenerate>false</forceRegenerate>
