@@ -5,21 +5,21 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.openecomp.sdc.onboarding</groupId>
-    <artifactId>compile-helper-plugin</artifactId>
+    <artifactId>pmd-helper-plugin</artifactId>
     <packaging>maven-plugin</packaging>
 
     <parent>
         <artifactId>sdc-onboarding</artifactId>
         <groupId>org.openecomp.sdc</groupId>
-        <version>1.3.0-SNAPSHOT</version>
+        <version>1.2.0-SNAPSHOT</version>
         <relativePath>../../../onboarding</relativePath>
     </parent>
     <properties>
         <skipPMD>true</skipPMD>
         <classes>classes/**/*.class</classes>
         <mavenStatus>maven-status/**</mavenStatus>
-        <skipTestRun>true</skipTestRun>
     </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.apache.maven</groupId>
