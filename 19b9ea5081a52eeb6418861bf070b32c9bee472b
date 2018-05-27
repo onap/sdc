@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_147ff7ac",
+        "filename": "common/onap-tosca-datatype/src/main/java/org/onap/sdc/tosca/datatypes/model/CapabilityFilter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-05-27T06:29:36Z",
+      "side": 1,
+      "message": "Can we use ListMultimap ?https://google.github.io/guava/releases/17.0/api/docs/com/google/common/collect/ListMultimap.html",
+      "revId": "19b9ea5081a52eeb6418861bf070b32c9bee472b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
