@@ -1,9 +1,0 @@
-cassandraConfig:
-    cassandraHosts: ['CASSANDRA_HOST']
-    reconnectTimeout : 30000
-    authenticate: false
-    username: asdc_user
-    password: Aa1234%^!
-    ssl: false
-    truststorePath : /path/path
-    truststorePassword : Aa123456
