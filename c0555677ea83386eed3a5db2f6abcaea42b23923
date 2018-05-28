@@ -2,6 +2,92 @@
   "comments": [
     {
       "key": {
+        "uuid": "5a93c517_4a7ab426",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/VendorSoftwareProductManagerImpl.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 175,
+      "author": {
+        "id": 2167
+      },
+      "writtenOn": "2018-05-28T09:04:25Z",
+      "side": 1,
+      "message": "remove this. a new instance of this class must be used at each call as it is state-full.",
+      "range": {
+        "startLine": 175,
+        "startChar": 6,
+        "endLine": 175,
+        "endChar": 63
+      },
+      "revId": "c0555677ea83386eed3a5db2f6abcaea42b23923",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_aa857808",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/VendorSoftwareProductManagerImpl.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 490,
+      "author": {
+        "id": 2167
+      },
+      "writtenOn": "2018-05-28T09:04:25Z",
+      "side": 1,
+      "message": "see comment in vsp.ftl - remote this entire change.",
+      "range": {
+        "startLine": 472,
+        "startChar": 0,
+        "endLine": 490,
+        "endChar": 5
+      },
+      "revId": "c0555677ea83386eed3a5db2f6abcaea42b23923",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_2a716844",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/VspManagerFactoryImpl.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 2167
+      },
+      "writtenOn": "2018-05-28T09:04:25Z",
+      "side": 1,
+      "message": "remove - see vsp mgr impl",
+      "range": {
+        "startLine": 53,
+        "startChar": 42,
+        "endLine": 54,
+        "endChar": 77
+      },
+      "revId": "c0555677ea83386eed3a5db2f6abcaea42b23923",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_6a77703c",
+        "filename": "openecomp-be/lib/openecomp-core-lib/openecomp-utilities-lib/src/main/java/org/openecomp/core/utilities/UtilityConstants.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 2167
+      },
+      "writtenOn": "2018-05-28T09:04:25Z",
+      "side": 1,
+      "message": "Remove - add an private enum instead: ValidationType",
+      "revId": "c0555677ea83386eed3a5db2f6abcaea42b23923",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_ca80044c",
         "filename": "openecomp-be/lib/openecomp-core-lib/openecomp-utilities-lib/src/main/java/org/openecomp/core/utilities/UtilityConstants.java",
         "patchSetId": 5
@@ -36,6 +122,98 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_ca86c416",
+        "filename": "openecomp-be/lib/openecomp-core-lib/openecomp-utilities-lib/src/main/java/org/openecomp/core/utilities/json/JsonUtil.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 167,
+      "author": {
+        "id": 2167
+      },
+      "writtenOn": "2018-05-28T09:04:25Z",
+      "side": 1,
+      "message": "Remove to keep the method names consistent.",
+      "range": {
+        "startLine": 167,
+        "startChar": 22,
+        "endLine": 167,
+        "endChar": 28
+      },
+      "revId": "c0555677ea83386eed3a5db2f6abcaea42b23923",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_ea8b801c",
+        "filename": "openecomp-be/lib/openecomp-core-lib/openecomp-utilities-lib/src/main/java/org/openecomp/core/utilities/json/JsonUtil.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 170,
+      "author": {
+        "id": 2167
+      },
+      "writtenOn": "2018-05-28T09:04:25Z",
+      "side": 1,
+      "message": "Remove to keep the method names consistent.",
+      "range": {
+        "startLine": 170,
+        "startChar": 22,
+        "endLine": 170,
+        "endChar": 28
+      },
+      "revId": "c0555677ea83386eed3a5db2f6abcaea42b23923",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_0a9d8c66",
+        "filename": "openecomp-be/lib/openecomp-core-lib/openecomp-utilities-lib/src/main/java/org/openecomp/core/utilities/json/JsonUtil.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 187,
+      "author": {
+        "id": 2167
+      },
+      "writtenOn": "2018-05-28T09:04:25Z",
+      "side": 1,
+      "message": "Add an internal enum in this class (as it\u0027s the only one using it), add \"required\" value as well.",
+      "range": {
+        "startLine": 187,
+        "startChar": 48,
+        "endLine": 187,
+        "endChar": 72
+      },
+      "revId": "c0555677ea83386eed3a5db2f6abcaea42b23923",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_8a80bcf8",
+        "filename": "openecomp-be/lib/openecomp-core-lib/openecomp-utilities-lib/src/main/java/org/openecomp/core/utilities/json/JsonUtil.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 190,
+      "author": {
+        "id": 2167
+      },
+      "writtenOn": "2018-05-28T09:04:25Z",
+      "side": 1,
+      "message": "same as in line 200",
+      "range": {
+        "startLine": 189,
+        "startChar": 13,
+        "endLine": 190,
+        "endChar": 92
+      },
+      "revId": "c0555677ea83386eed3a5db2f6abcaea42b23923",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_0a8eec79",
         "filename": "openecomp-be/lib/openecomp-core-lib/openecomp-utilities-lib/src/main/java/org/openecomp/core/utilities/json/JsonUtil.java",
         "patchSetId": 5
@@ -53,6 +231,29 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_8aa99c92",
+        "filename": "openecomp-be/lib/openecomp-core-lib/openecomp-utilities-lib/src/main/java/org/openecomp/core/utilities/json/JsonUtil.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 196,
+      "author": {
+        "id": 2167
+      },
+      "writtenOn": "2018-05-28T09:04:25Z",
+      "side": 1,
+      "message": "add to enum as well",
+      "range": {
+        "startLine": 196,
+        "startChar": 48,
+        "endLine": 196,
+        "endChar": 58
+      },
+      "revId": "c0555677ea83386eed3a5db2f6abcaea42b23923",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_cae7a445",
         "filename": "openecomp-be/lib/openecomp-core-lib/openecomp-utilities-lib/src/main/java/org/openecomp/core/utilities/json/JsonUtil.java",
         "patchSetId": 5
@@ -64,6 +265,46 @@
       "writtenOn": "2018-05-28T06:45:20Z",
       "side": 1,
       "message": "Sonar replace StringBuffer with Stringbuilder.",
+      "revId": "c0555677ea83386eed3a5db2f6abcaea42b23923",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_ca9fa464",
+        "filename": "openecomp-be/lib/openecomp-core-lib/openecomp-utilities-lib/src/main/java/org/openecomp/core/utilities/json/JsonUtil.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 200,
+      "author": {
+        "id": 2167
+      },
+      "writtenOn": "2018-05-28T09:04:25Z",
+      "side": 1,
+      "message": "All the validation msgs should be in the same format of:\n#/\u003cpath to field\u003e: \u003cmsg that includes the current value and explanation why is it not valid\u003e\nLike in the case of enum for example:\n\"#/name: Tali is not a valid value. org.openecomp.resource.vfc.nodes.heat.pd_server is the only possible value for this field\"",
+      "range": {
+        "startLine": 200,
+        "startChar": 13,
+        "endLine": 200,
+        "endChar": 98
+      },
+      "revId": "c0555677ea83386eed3a5db2f6abcaea42b23923",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_0a74ac34",
+        "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-api/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/dao/type/VspDataEntity.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 2167
+      },
+      "writtenOn": "2018-05-28T09:04:25Z",
+      "side": 1,
+      "message": "Remove",
       "revId": "c0555677ea83386eed3a5db2f6abcaea42b23923",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
@@ -121,6 +362,23 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_ca8d642c",
+        "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-api/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/types/schemagenerator/VspCompositionSchemaInput.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 2167
+      },
+      "writtenOn": "2018-05-28T09:04:25Z",
+      "side": 1,
+      "message": "remove",
+      "revId": "c0555677ea83386eed3a5db2f6abcaea42b23923",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_8af19c03",
         "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-api/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/types/schemagenerator/VspCompositionSchemaInput.java",
         "patchSetId": 5
@@ -149,6 +407,40 @@
       "writtenOn": "2018-05-28T06:45:20Z",
       "side": 1,
       "message": "sonar - variable should start with lower case.",
+      "revId": "c0555677ea83386eed3a5db2f6abcaea42b23923",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_ea92a04a",
+        "filename": "openecomp-be/tools/install/database/init_schemas.cql",
+        "patchSetId": 5
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 2167
+      },
+      "writtenOn": "2018-05-28T09:04:25Z",
+      "side": 1,
+      "message": "remove",
+      "revId": "c0555677ea83386eed3a5db2f6abcaea42b23923",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_2ac3a858",
+        "filename": "openecomp-be/tools/install/database/schemaTemplates/composition/vsp.ftl",
+        "patchSetId": 5
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 2167
+      },
+      "writtenOn": "2018-05-28T09:04:25Z",
+      "side": 1,
+      "message": "I think that since these are not schema \"classic\" validations there\u0027s no need to create a schema specially for it - it can remain in the code.\nI the future we\u0027ll create a separate class for vsp validations and it\u0027ll be there.",
       "revId": "c0555677ea83386eed3a5db2f6abcaea42b23923",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
