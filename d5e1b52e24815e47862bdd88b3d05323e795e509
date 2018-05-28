@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_ad5a7228",
+        "filename": "openecomp-be/tools/compile-helper-plugin/src/main/java/org/openecomp/sdc/onboarding/PreCompileHelperMojo.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 121,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-05-28T13:27:33Z",
+      "side": 1,
+      "message": "you ignored(or did not noticed) the comment about the length of this method. split it in several functions. it is not readable",
+      "range": {
+        "startLine": 121,
+        "startChar": 16,
+        "endLine": 121,
+        "endChar": 23
+      },
+      "revId": "d5e1b52e24815e47862bdd88b3d05323e795e509",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_2d2f428a",
+        "filename": "openecomp-be/tools/compile-helper-plugin/src/main/java/org/openecomp/sdc/onboarding/PreCompileHelperMojo.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 250,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-05-28T13:27:33Z",
+      "side": 1,
+      "message": "you are using get without validating isEmpty",
+      "range": {
+        "startLine": 250,
+        "startChar": 70,
+        "endLine": 250,
+        "endChar": 88
+      },
+      "revId": "d5e1b52e24815e47862bdd88b3d05323e795e509",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_8d6c56d2",
+        "filename": "openecomp-be/tools/compile-helper-plugin/src/main/java/org/openecomp/sdc/onboarding/PreCompileHelperMojo.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 326,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-05-28T13:27:33Z",
+      "side": 1,
+      "message": "can be replaced by val.orElseGet(HashMap::new)",
+      "range": {
+        "startLine": 326,
+        "startChar": 15,
+        "endLine": 326,
+        "endChar": 61
+      },
+      "revId": "d5e1b52e24815e47862bdd88b3d05323e795e509",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
