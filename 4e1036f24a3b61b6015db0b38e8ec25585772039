@@ -1,0 +1,740 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_aacd78b9",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-impl/src/test/java/org/openecomp/sdc/validation/util/ValidationTestUtil.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-05-28T08:46:37Z",
+      "side": 1,
+      "message": "there are a lot of code duplication with the same class in openecomp-sdc-validation-sdk package.\n\nplease fix them",
+      "range": {
+        "startLine": 50,
+        "startChar": 13,
+        "endLine": 50,
+        "endChar": 31
+      },
+      "revId": "4e1036f24a3b61b6015db0b38e8ec25585772039",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_8a7afc75",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-impl/src/test/java/org/openecomp/sdc/validation/util/ValidationTestUtil.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-05-28T08:46:37Z",
+      "side": 1,
+      "message": "use ArrayUtils.isEmpty(files);",
+      "range": {
+        "startLine": 76,
+        "startChar": 8,
+        "endLine": 76,
+        "endChar": 42
+      },
+      "revId": "4e1036f24a3b61b6015db0b38e8ec25585772039",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_6abf70fd",
+        "filename": "openecomp-be/tools/artifact-copy-plugin/src/main/java/org/openecomp/sdc/onboarding/util/ArtifactHelper.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-05-28T08:46:37Z",
+      "side": 1,
+      "message": "can be package private",
+      "range": {
+        "startLine": 16,
+        "startChar": 0,
+        "endLine": 16,
+        "endChar": 6
+      },
+      "revId": "4e1036f24a3b61b6015db0b38e8ec25585772039",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_4ac2b487",
+        "filename": "openecomp-be/tools/artifact-copy-plugin/src/main/java/org/openecomp/sdc/onboarding/util/ArtifactHelper.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-05-28T08:46:37Z",
+      "side": 1,
+      "message": "not in use",
+      "range": {
+        "startLine": 18,
+        "startChar": 25,
+        "endLine": 18,
+        "endChar": 32
+      },
+      "revId": "4e1036f24a3b61b6015db0b38e8ec25585772039",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_ca3564a9",
+        "filename": "openecomp-be/tools/artifact-copy-plugin/src/main/java/org/openecomp/sdc/onboarding/util/ArtifactHelper.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-05-28T08:46:37Z",
+      "side": 1,
+      "message": "use \u0026\u0026",
+      "range": {
+        "startLine": 23,
+        "startChar": 12,
+        "endLine": 26,
+        "endChar": 17
+      },
+      "revId": "4e1036f24a3b61b6015db0b38e8ec25585772039",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_ea3aa097",
+        "filename": "openecomp-be/tools/artifact-copy-plugin/src/main/java/org/openecomp/sdc/onboarding/util/ArtifactHelper.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-05-28T08:46:37Z",
+      "side": 1,
+      "message": "use else if",
+      "range": {
+        "startLine": 27,
+        "startChar": 14,
+        "endLine": 27,
+        "endChar": 20
+      },
+      "revId": "4e1036f24a3b61b6015db0b38e8ec25585772039",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_0abcac05",
+        "filename": "openecomp-be/tools/artifact-copy-plugin/src/main/java/org/openecomp/sdc/onboarding/util/ArtifactHelper.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-05-28T08:46:37Z",
+      "side": 1,
+      "message": "too short",
+      "range": {
+        "startLine": 47,
+        "startChar": 21,
+        "endLine": 47,
+        "endChar": 23
+      },
+      "revId": "4e1036f24a3b61b6015db0b38e8ec25585772039",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_2ab96815",
+        "filename": "openecomp-be/tools/artifact-copy-plugin/src/main/java/org/openecomp/sdc/onboarding/util/ArtifactHelper.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-05-28T08:46:37Z",
+      "side": 1,
+      "message": "use foreach",
+      "range": {
+        "startLine": 48,
+        "startChar": 8,
+        "endLine": 48,
+        "endChar": 51
+      },
+      "revId": "4e1036f24a3b61b6015db0b38e8ec25585772039",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_aa44981b",
+        "filename": "openecomp-be/tools/artifact-copy-plugin/src/main/java/org/openecomp/sdc/onboarding/util/CalibrateArtifactPlugin.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-05-28T08:46:37Z",
+      "side": 1,
+      "message": "null check (if needed).\nIs MavenProject.getXXX methos are NPE protected?",
+      "range": {
+        "startLine": 49,
+        "startChar": 12,
+        "endLine": 49,
+        "endChar": 34
+      },
+      "revId": "4e1036f24a3b61b6015db0b38e8ec25585772039",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_2a5088d3",
+        "filename": "openecomp-be/tools/artifact-copy-plugin/src/main/java/org/openecomp/sdc/onboarding/util/CalibrateArtifactPlugin.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-05-28T08:46:37Z",
+      "side": 1,
+      "message": "redundent",
+      "range": {
+        "startLine": 54,
+        "startChar": 21,
+        "endLine": 54,
+        "endChar": 25
+      },
+      "revId": "4e1036f24a3b61b6015db0b38e8ec25585772039",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_ea6140a9",
+        "filename": "openecomp-be/tools/artifact-copy-plugin/src/main/java/org/openecomp/sdc/onboarding/util/CalibrateArtifactPlugin.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-05-28T08:46:37Z",
+      "side": 1,
+      "message": "extract to variable",
+      "range": {
+        "startLine": 55,
+        "startChar": 34,
+        "endLine": 55,
+        "endChar": 89
+      },
+      "revId": "4e1036f24a3b61b6015db0b38e8ec25585772039",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_6a6d3099",
+        "filename": "openecomp-be/tools/artifact-copy-plugin/src/main/java/org/openecomp/sdc/onboarding/util/CopyArtifactPlugin.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-05-28T08:46:37Z",
+      "side": 1,
+      "message": "split to functions. it is too big",
+      "range": {
+        "startLine": 55,
+        "startChar": 12,
+        "endLine": 90,
+        "endChar": 13
+      },
+      "revId": "4e1036f24a3b61b6015db0b38e8ec25585772039",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_0a6a6c81",
+        "filename": "openecomp-be/tools/artifact-copy-plugin/src/main/java/org/openecomp/sdc/onboarding/util/CopyArtifactPlugin.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-05-28T08:46:37Z",
+      "side": 1,
+      "message": "not in use",
+      "range": {
+        "startLine": 97,
+        "startChar": 12,
+        "endLine": 97,
+        "endChar": 19
+      },
+      "revId": "4e1036f24a3b61b6015db0b38e8ec25585772039",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_ca0324bd",
+        "filename": "openecomp-be/tools/artifact-copy-plugin/src/main/java/org/openecomp/sdc/onboarding/util/CopyArtifactPlugin.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 108,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-05-28T08:46:37Z",
+      "side": 1,
+      "message": "unnecessary, but what about logging the exception?",
+      "range": {
+        "startLine": 108,
+        "startChar": 16,
+        "endLine": 108,
+        "endChar": 24
+      },
+      "revId": "4e1036f24a3b61b6015db0b38e8ec25585772039",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_ea0860db",
+        "filename": "openecomp-be/tools/artifact-copy-plugin/src/main/java/org/openecomp/sdc/onboarding/util/CopyArtifactPlugin.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 115,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-05-28T08:46:37Z",
+      "side": 1,
+      "message": "never thrown",
+      "range": {
+        "startLine": 115,
+        "startChar": 61,
+        "endLine": 115,
+        "endChar": 85
+      },
+      "revId": "4e1036f24a3b61b6015db0b38e8ec25585772039",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_8a0d1ceb",
+        "filename": "openecomp-be/tools/compile-helper-plugin/src/main/java/org/openecomp/sdc/onboarding/BuildHelper.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-05-28T08:46:37Z",
+      "side": 1,
+      "message": "can be package private",
+      "range": {
+        "startLine": 46,
+        "startChar": 0,
+        "endLine": 46,
+        "endChar": 6
+      },
+      "revId": "4e1036f24a3b61b6015db0b38e8ec25585772039",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_aa125807",
+        "filename": "openecomp-be/tools/compile-helper-plugin/src/main/java/org/openecomp/sdc/onboarding/BuildHelper.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-05-28T08:46:37Z",
+      "side": 1,
+      "message": "according to your PMD tool, this is too sgort",
+      "range": {
+        "startLine": 65,
+        "startChar": 21,
+        "endLine": 65,
+        "endChar": 23
+      },
+      "revId": "4e1036f24a3b61b6015db0b38e8ec25585772039",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_4af714d5",
+        "filename": "openecomp-be/tools/compile-helper-plugin/src/main/java/org/openecomp/sdc/onboarding/BuildHelper.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-05-28T08:46:37Z",
+      "side": 1,
+      "message": "use foreach",
+      "range": {
+        "startLine": 66,
+        "startChar": 7,
+        "endLine": 66,
+        "endChar": 52
+      },
+      "revId": "4e1036f24a3b61b6015db0b38e8ec25585772039",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_6af450cf",
+        "filename": "openecomp-be/tools/compile-helper-plugin/src/main/java/org/openecomp/sdc/onboarding/BuildHelper.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-05-28T08:46:37Z",
+      "side": 1,
+      "message": "replace with contains",
+      "range": {
+        "startLine": 95,
+        "startChar": 39,
+        "endLine": 95,
+        "endChar": 46
+      },
+      "revId": "4e1036f24a3b61b6015db0b38e8ec25585772039",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_0a010caf",
+        "filename": "openecomp-be/tools/compile-helper-plugin/src/main/java/org/openecomp/sdc/onboarding/BuildHelper.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 168,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-05-28T08:46:37Z",
+      "side": 1,
+      "message": "do not return null from non privte methods. change the signature to return Optional",
+      "range": {
+        "startLine": 168,
+        "startChar": 15,
+        "endLine": 168,
+        "endChar": 19
+      },
+      "revId": "4e1036f24a3b61b6015db0b38e8ec25585772039",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_2afe48af",
+        "filename": "openecomp-be/tools/compile-helper-plugin/src/main/java/org/openecomp/sdc/onboarding/BuildHelper.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 177,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-05-28T08:46:37Z",
+      "side": 1,
+      "message": "do not return null from non private methods. change the signature to return Optional",
+      "range": {
+        "startLine": 177,
+        "startChar": 19,
+        "endLine": 177,
+        "endChar": 23
+      },
+      "revId": "4e1036f24a3b61b6015db0b38e8ec25585772039",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_ca2a442f",
+        "filename": "openecomp-be/tools/compile-helper-plugin/src/main/java/org/openecomp/sdc/onboarding/BuildState.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-05-28T08:46:37Z",
+      "side": 1,
+      "message": "redundant",
+      "range": {
+        "startLine": 48,
+        "startChar": 55,
+        "endLine": 48,
+        "endChar": 67
+      },
+      "revId": "4e1036f24a3b61b6015db0b38e8ec25585772039",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_ea2f003d",
+        "filename": "openecomp-be/tools/compile-helper-plugin/src/main/java/org/openecomp/sdc/onboarding/BuildState.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-05-28T08:46:37Z",
+      "side": 1,
+      "message": "not in use",
+      "range": {
+        "startLine": 57,
+        "startChar": 19,
+        "endLine": 57,
+        "endChar": 39
+      },
+      "revId": "4e1036f24a3b61b6015db0b38e8ec25585772039",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_8a243c61",
+        "filename": "openecomp-be/tools/compile-helper-plugin/src/main/java/org/openecomp/sdc/onboarding/BuildState.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 101,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-05-28T08:46:37Z",
+      "side": 1,
+      "message": "what if the mkdir fails? why are you ignoring the returned value?",
+      "range": {
+        "startLine": 101,
+        "startChar": 8,
+        "endLine": 101,
+        "endChar": 38
+      },
+      "revId": "4e1036f24a3b61b6015db0b38e8ec25585772039",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_aae018fb",
+        "filename": "openecomp-be/tools/compile-helper-plugin/src/main/java/org/openecomp/sdc/onboarding/BuildState.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 167,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-05-28T08:46:37Z",
+      "side": 1,
+      "message": "cant it e more specific type?",
+      "range": {
+        "startLine": 167,
+        "startChar": 16,
+        "endLine": 167,
+        "endChar": 22
+      },
+      "revId": "4e1036f24a3b61b6015db0b38e8ec25585772039",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_4ae5d408",
+        "filename": "openecomp-be/tools/compile-helper-plugin/src/main/java/org/openecomp/sdc/onboarding/BuildState.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 205,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-05-28T08:46:37Z",
+      "side": 1,
+      "message": "cant it e more specific type?",
+      "range": {
+        "startLine": 205,
+        "startChar": 16,
+        "endLine": 205,
+        "endChar": 22
+      },
+      "revId": "4e1036f24a3b61b6015db0b38e8ec25585772039",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_6ae21003",
+        "filename": "openecomp-be/tools/compile-helper-plugin/src/main/java/org/openecomp/sdc/onboarding/InitializationHelperMojo.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-05-28T08:46:37Z",
+      "side": 1,
+      "message": "delete unused code",
+      "range": {
+        "startLine": 64,
+        "startChar": 12,
+        "endLine": 68,
+        "endChar": 119
+      },
+      "revId": "4e1036f24a3b61b6015db0b38e8ec25585772039",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_0aefccea",
+        "filename": "openecomp-be/tools/compile-helper-plugin/src/main/java/org/openecomp/sdc/onboarding/PreCompileHelperMojo.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 120,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-05-28T08:46:37Z",
+      "side": 1,
+      "message": "refactor this method. it way too long",
+      "range": {
+        "startLine": 120,
+        "startChar": 16,
+        "endLine": 120,
+        "endChar": 23
+      },
+      "revId": "4e1036f24a3b61b6015db0b38e8ec25585772039",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_aab7b8f4",
+        "filename": "openecomp-be/tools/pmd-helper-plugin/src/main/java/org/openecomp/sdc/onboarding/pmd/InitializationHelperMojo.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-05-28T08:46:37Z",
+      "side": 1,
+      "message": "do not ignore the return value",
+      "range": {
+        "startLine": 76,
+        "startChar": 41,
+        "endLine": 76,
+        "endChar": 47
+      },
+      "revId": "4e1036f24a3b61b6015db0b38e8ec25585772039",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_aaaed896",
+        "filename": "openecomp-be/tools/pmd-helper-plugin/src/main/java/org/openecomp/sdc/onboarding/pmd/PMDHelperUtils.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 152,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-05-28T08:46:37Z",
+      "side": 1,
+      "message": "use contains",
+      "range": {
+        "startLine": 152,
+        "startChar": 20,
+        "endLine": 152,
+        "endChar": 27
+      },
+      "revId": "4e1036f24a3b61b6015db0b38e8ec25585772039",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_4a93945c",
+        "filename": "openecomp-be/tools/pmd-helper-plugin/src/main/java/org/openecomp/sdc/onboarding/pmd/PMDHelperUtils.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 197,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-05-28T08:46:37Z",
+      "side": 1,
+      "message": "split to functions",
+      "range": {
+        "startLine": 176,
+        "startChar": 7,
+        "endLine": 197,
+        "endChar": 9
+      },
+      "revId": "4e1036f24a3b61b6015db0b38e8ec25585772039",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_6a90d04e",
+        "filename": "openecomp-be/tools/pmd-helper-plugin/src/main/java/org/openecomp/sdc/onboarding/pmd/Table.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 96,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-05-28T08:46:37Z",
+      "side": 1,
+      "message": "why not using List interface?",
+      "range": {
+        "startLine": 96,
+        "startChar": 12,
+        "endLine": 96,
+        "endChar": 21
+      },
+      "revId": "4e1036f24a3b61b6015db0b38e8ec25585772039",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
