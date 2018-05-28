@@ -573,8 +573,7 @@ dcae:
     protocol: http
     port: <%= node['DCAE']['BE'][:http_port] %>
     <% end -%>
-    
-    healthCheckUri: "/dcaed/healthCheck"
+    healthCheckUri: "/dcae/healthCheck"
 
 # #GSS IDNS
 switchoverDetector:
