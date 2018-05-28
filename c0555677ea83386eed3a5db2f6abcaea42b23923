@@ -1,0 +1,157 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_ca80044c",
+        "filename": "openecomp-be/lib/openecomp-core-lib/openecomp-utilities-lib/src/main/java/org/openecomp/core/utilities/UtilityConstants.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-05-28T06:45:20Z",
+      "side": 1,
+      "message": "Sonar remark add private constructor",
+      "revId": "c0555677ea83386eed3a5db2f6abcaea42b23923",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_ea85c059",
+        "filename": "openecomp-be/lib/openecomp-core-lib/openecomp-utilities-lib/src/main/java/org/openecomp/core/utilities/json/JsonUtil.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 166,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-05-28T06:45:20Z",
+      "side": 1,
+      "message": "extract a variable \n  Object stringSchema \u003d validationException.getViolatedSchema();",
+      "revId": "c0555677ea83386eed3a5db2f6abcaea42b23923",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_0a8eec79",
+        "filename": "openecomp-be/lib/openecomp-core-lib/openecomp-utilities-lib/src/main/java/org/openecomp/core/utilities/json/JsonUtil.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 196,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-05-28T06:45:20Z",
+      "side": 1,
+      "message": "Sonar - move required to the left side.",
+      "revId": "c0555677ea83386eed3a5db2f6abcaea42b23923",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_cae7a445",
+        "filename": "openecomp-be/lib/openecomp-core-lib/openecomp-utilities-lib/src/main/java/org/openecomp/core/utilities/json/JsonUtil.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 197,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-05-28T06:45:20Z",
+      "side": 1,
+      "message": "Sonar replace StringBuffer with Stringbuilder.",
+      "revId": "c0555677ea83386eed3a5db2f6abcaea42b23923",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_2ae2c82f",
+        "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-api/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/dao/type/VspDataEntity.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 85,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-05-28T06:45:20Z",
+      "side": 1,
+      "message": "Methods should not be empty\n \nCode smell\n \nMajor\nsquid:S1186\n \nThere are several reasons for a method not to have a method body:\nIt is an unintentional omission, and should be fixed to prevent an unexpected behavior in production.\nIt is not yet, or never will be, supported. In this case an UnsupportedOperationException should be thrown.\nThe method is an intentionally-blank override. In this case a nested comment should explain the reason for the blank override.\nNoncompliant Code Example\npublic void doSomething() {\n}\n\npublic void doSomethingElse() {\n}\nCompliant Solution\n@Override\npublic void doSomething() {\n  // Do nothing because of X and Y.\n}\n\n@Override\npublic void doSomethingElse() {\n  throw new UnsupportedOperationException();\n}\nExceptions\nDefault (no-argument) constructors are ignored when there are other constructors in the class, as are empty methods in abstract classes.\npublic abstract class Animal {\n  void speak() {  // default implementation ignored\n  }\n}",
+      "revId": "c0555677ea83386eed3a5db2f6abcaea42b23923",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_0ae58c37",
+        "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-api/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/dao/type/VspDataEntity.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 109,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-05-28T06:45:20Z",
+      "side": 1,
+      "message": "Methods should not be empty\n \nCode smell\n \nMajor\nsquid:S1186\n \nThere are several reasons for a method not to have a method body:\nIt is an unintentional omission, and should be fixed to prevent an unexpected behavior in production.\nIt is not yet, or never will be, supported. In this case an UnsupportedOperationException should be thrown.\nThe method is an intentionally-blank override. In this case a nested comment should explain the reason for the blank override.\nNoncompliant Code Example\npublic void doSomething() {\n}\n\npublic void doSomethingElse() {\n}\nCompliant Solution\n@Override\npublic void doSomething() {\n  // Do nothing because of X and Y.\n}\n\n@Override\npublic void doSomethingElse() {\n  throw new UnsupportedOperationException();\n}\nExceptions\nDefault (no-argument) constructors are ignored when there are other constructors in the class, as are empty methods in abstract classes.\npublic abstract class Animal {\n  void speak() {  // default implementation ignored\n  }\n}",
+      "revId": "c0555677ea83386eed3a5db2f6abcaea42b23923",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_6ad8d07f",
+        "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-api/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/dao/type/VspDataEntity.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 119,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-05-28T06:45:20Z",
+      "side": 1,
+      "message": "Methods should not be empty\n \nCode smell\n \nMajor\nsquid:S1186\n \nThere are several reasons for a method not to have a method body:\nIt is an unintentional omission, and should be fixed to prevent an unexpected behavior in production.\nIt is not yet, or never will be, supported. In this case an UnsupportedOperationException should be thrown.\nThe method is an intentionally-blank override. In this case a nested comment should explain the reason for the blank override.\nNoncompliant Code Example\npublic void doSomething() {\n}\n\npublic void doSomethingElse() {\n}\nCompliant Solution\n@Override\npublic void doSomething() {\n  // Do nothing because of X and Y.\n}\n\n@Override\npublic void doSomethingElse() {\n  throw new UnsupportedOperationException();\n}\nExceptions\nDefault (no-argument) constructors are ignored when there are other constructors in the class, as are empty methods in abstract classes.\npublic abstract class Animal {\n  void speak() {  // default implementation ignored\n  }\n}",
+      "revId": "c0555677ea83386eed3a5db2f6abcaea42b23923",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_8af19c03",
+        "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-api/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/types/schemagenerator/VspCompositionSchemaInput.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-05-28T06:45:20Z",
+      "side": 1,
+      "message": "varaible should start with lower case.",
+      "revId": "c0555677ea83386eed3a5db2f6abcaea42b23923",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_aaf6d8f7",
+        "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-api/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/types/schemagenerator/VspCompositionSchemaInput.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-05-28T06:45:20Z",
+      "side": 1,
+      "message": "sonar - variable should start with lower case.",
+      "revId": "c0555677ea83386eed3a5db2f6abcaea42b23923",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
