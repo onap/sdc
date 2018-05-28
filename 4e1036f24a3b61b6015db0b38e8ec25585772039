@@ -166,6 +166,30 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_6d354ada",
+        "filename": "openecomp-be/tools/artifact-copy-plugin/src/main/java/org/openecomp/sdc/onboarding/util/ArtifactHelper.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-05-28T13:27:33Z",
+      "side": 1,
+      "message": "OK. didn\u0027t see it. Intellij shows this worning",
+      "parentUuid": "5a93c517_4ac2b487",
+      "range": {
+        "startLine": 18,
+        "startChar": 25,
+        "endLine": 18,
+        "endChar": 32
+      },
+      "revId": "4e1036f24a3b61b6015db0b38e8ec25585772039",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_ca3564a9",
         "filename": "openecomp-be/tools/artifact-copy-plugin/src/main/java/org/openecomp/sdc/onboarding/util/ArtifactHelper.java",
         "patchSetId": 7
@@ -201,6 +225,30 @@
       "side": 1,
       "message": "I am intentionally using two separate If here because i donot want else clause to be evaluated if second condition is false.",
       "parentUuid": "5a93c517_ca3564a9",
+      "range": {
+        "startLine": 23,
+        "startChar": 12,
+        "endLine": 26,
+        "endChar": 17
+      },
+      "revId": "4e1036f24a3b61b6015db0b38e8ec25585772039",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_4d388ed4",
+        "filename": "openecomp-be/tools/artifact-copy-plugin/src/main/java/org/openecomp/sdc/onboarding/util/ArtifactHelper.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-05-28T13:27:33Z",
+      "side": 1,
+      "message": "OK",
+      "parentUuid": "5a93c517_eae060ce",
       "range": {
         "startLine": 23,
         "startChar": 12,
