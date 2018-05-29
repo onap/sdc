@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_2d2ae290",
+        "filename": "openecomp-be/lib/openecomp-core-lib/openecomp-utilities-lib/src/main/java/org/openecomp/core/utilities/json/JsonUtil.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 182,
+      "author": {
+        "id": 2167
+      },
+      "writtenOn": "2018-05-29T10:19:55Z",
+      "side": 1,
+      "message": "better to put this on the left side to prevent null pointer exception",
+      "range": {
+        "startLine": 182,
+        "startChar": 48,
+        "endLine": 182,
+        "endChar": 83
+      },
+      "revId": "c92aa6cf90b602777727cbf55a314c60b634340a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_cd16de58",
+        "filename": "openecomp-ui/src/nfvo-components/notification/NotificationsReducer.js",
+        "patchSetId": 6
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 2167
+      },
+      "writtenOn": "2018-05-29T10:19:55Z",
+      "side": 1,
+      "message": "Is this a mistake?...",
+      "revId": "c92aa6cf90b602777727cbf55a314c60b634340a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
