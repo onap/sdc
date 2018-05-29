@@ -1417,6 +1417,7 @@ tosca.datatypes.nfv.L3AddressData:
         type: string
       required: false
 tosca.datatypes.nfv.AddressData:
+  derived_from: tosca.datatypes.Root
   properties: 
     address_type: 
       constraints: 
@@ -1446,7 +1447,8 @@ tosca.datatypes.nfv.VlFlavour:
   properties:
     flavourId:
       type: string
-tosca.datatypes.nfv.ext.AddressPairs: 
+tosca.datatypes.nfv.ext.AddressPairs:
+  derived_from: tosca.datatypes.Root
   properties: 
     ip: 
       type: string
@@ -1454,7 +1456,8 @@ tosca.datatypes.nfv.ext.AddressPairs:
     mac: 
       type: string
       required: false
-tosca.datatypes.nfv.ext.FloatingIP: 
+tosca.datatypes.nfv.ext.FloatingIP:
+  derived_from: tosca.datatypes.Root
   properties: 
     external_network: 
       type: string
@@ -1462,7 +1465,8 @@ tosca.datatypes.nfv.ext.FloatingIP:
     ip_address: 
       type: string
       required: false
-tosca.datatypes.nfv.ext.LocationInfo: 
+tosca.datatypes.nfv.ext.LocationInfo:
+  derived_from: tosca.datatypes.Root
   properties: 
     availability_zone: 
       type: string
@@ -1473,7 +1477,8 @@ tosca.datatypes.nfv.ext.LocationInfo:
     tenant: 
       type: string
       required: false
-tosca.datatypes.nfv.ext.HostRouteInfo: 
+tosca.datatypes.nfv.ext.HostRouteInfo:
+  derived_from: tosca.datatypes.Root
   properties: 
     destination: 
       type: string
@@ -1481,8 +1486,8 @@ tosca.datatypes.nfv.ext.HostRouteInfo:
     nexthop: 
       type: string
       required: false
-      
-tosca.datatypes.nfv.ext.InjectData: 
+tosca.datatypes.nfv.ext.InjectData:
+  derived_from: tosca.datatypes.Root
   properties: 
     file_name: 
       type: string
@@ -1490,7 +1495,8 @@ tosca.datatypes.nfv.ext.InjectData:
     file_data: 
       type: string
       required: false
-tosca.datatypes.nfv.ext.zte.WatchDog: 
+tosca.datatypes.nfv.ext.zte.WatchDog:
+  derived_from: tosca.datatypes.Root
   properties: 
     enable_delay: 
       type: integer
@@ -1498,7 +1504,8 @@ tosca.datatypes.nfv.ext.zte.WatchDog:
     action: 
       type: string
       required: false
-tosca.datatypes.nfv.ext.LocalAffinityOrAntiAffinityRule: 
+tosca.datatypes.nfv.ext.LocalAffinityOrAntiAffinityRule:
+  derived_from: tosca.datatypes.Root
   properties: 
     scope: 
       type: string
