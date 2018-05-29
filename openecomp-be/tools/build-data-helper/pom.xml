@@ -53,7 +53,7 @@
         <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-dependency-plugin</artifactId>
-            <version>3.1.0</version>
+            <version>${maven.dependency.version}</version>
             <executions>
                 <execution>
                     <id>id1</id>
