@@ -37,14 +37,6 @@ export default (state = {}, action) => {
                             LicenseAgreementEnums.SELECTED_LICENSE_AGREEMENT_TAB
                                 .GENERAL
                     },
-                    requirementsAndConstrains: {
-                        isValid: true,
-                        errorText: '',
-                        validations: [{ type: 'maxLength', data: 1000 }],
-                        tabId:
-                            LicenseAgreementEnums.SELECTED_LICENSE_AGREEMENT_TAB
-                                .GENERAL
-                    },
                     licenseTerm: {
                         isValid: true,
                         errorText: '',

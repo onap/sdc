@@ -36,8 +36,6 @@ import {
     validateStartDate,
     thresholdValueValidation
 } from '../LicenseModelValidations.js';
-import { other as optionInputOther } from 'nfvo-components/input/validation/InputOptions.jsx';
-import InputOptions from 'nfvo-components/input/validation/InputOptions.jsx';
 
 import { DATE_FORMAT } from 'sdc-app/onboarding/OnboardingConstants.js';
 
@@ -52,10 +50,6 @@ const LicenseKeyGroupPropType = PropTypes.shape({
     name: PropTypes.string,
     description: PropTypes.string,
     increments: PropTypes.string,
-    operationalScope: PropTypes.shape({
-        choices: PropTypes.array,
-        other: PropTypes.string
-    }),
     type: PropTypes.string,
     thresholdUnits: PropTypes.string,
     thresholdValue: PropTypes.number,
@@ -75,7 +69,6 @@ const LicenseKeyGroupFormContent = ({
         name,
         description,
         increments,
-        operationalScope,
         type,
         thresholdUnits,
         thresholdValue,
@@ -99,82 +92,6 @@ const LicenseKeyGroupFormContent = ({
                     isRequired={true}
                     type="text"
                 />
-            </GridItem>
-            <GridItem colSpan={2} lastColInRow>
-                <InputOptions
-                    onInputChange={() => {}}
-                    isMultiSelect={true}
-                    onEnumChange={operationalScope =>
-                        onDataChanged(
-                            {
-                                operationalScope: {
-                                    choices: operationalScope,
-                                    other: ''
-                                }
-                            },
-                            LKG_FORM_NAME
-                        )
-                    }
-                    onOtherChange={operationalScope =>
-                        onDataChanged(
-                            {
-                                operationalScope: {
-                                    choices: [optionInputOther.OTHER],
-                                    other: operationalScope
-                                }
-                            },
-                            LKG_FORM_NAME
-                        )
-                    }
-                    label={i18n('Operational Scope')}
-                    data-test-id="create-lkg-operational-scope"
-                    type="select"
-                    multiSelectedEnum={
-                        operationalScope && operationalScope.choices
-                    }
-                    otherValue={operationalScope && operationalScope.other}
-                    values={licenseKeyGroupOptionsInputValues.OPERATIONAL_SCOPE}
-                    isValid={genericFieldInfo.operationalScope.isValid}
-                    errorText={genericFieldInfo.operationalScope.errorText}
-                />
-            </GridItem>
-            <GridItem colSpan={2}>
-                <Input
-                    onChange={description =>
-                        onDataChanged({ description }, LKG_FORM_NAME)
-                    }
-                    label={i18n('Description')}
-                    data-test-id="create-lkg-description"
-                    value={description}
-                    isValid={genericFieldInfo.description.isValid}
-                    errorText={genericFieldInfo.description.errorText}
-                    type="textarea"
-                    overlayPos="bottom"
-                />
-            </GridItem>
-            <GridItem colSpan={2} lastColInRow>
-                <Input
-                    isRequired={true}
-                    onChange={e => {
-                        const selectedIndex = e.target.selectedIndex;
-                        const val = e.target.options[selectedIndex].value;
-                        onDataChanged({ type: val }, LKG_FORM_NAME);
-                    }}
-                    value={type}
-                    label={i18n('Type')}
-                    data-test-id="create-lkg-type"
-                    isValid={genericFieldInfo.type.isValid}
-                    errorText={genericFieldInfo.type.errorText}
-                    groupClassName="bootstrap-input-options"
-                    className="input-options-select"
-                    overlayPos="bottom"
-                    type="select">
-                    {licenseKeyGroupOptionsInputValues.TYPE.map(type => (
-                        <option key={type.enum} value={type.enum}>
-                            {type.title}
-                        </option>
-                    ))}
-                </Input>
             </GridItem>
             <GridItem>
                 <Input
@@ -209,7 +126,7 @@ const LicenseKeyGroupFormContent = ({
                     )}
                 </Input>
             </GridItem>
-            <GridItem>
+            <GridItem lastColInRow>
                 <Input
                     className="entitlement-pools-form-row-threshold-value"
                     onChange={thresholdValue =>
@@ -224,6 +141,55 @@ const LicenseKeyGroupFormContent = ({
                     value={thresholdValue}
                     type="text"
                 />
+            </GridItem>
+            <GridItem colSpan={2}>
+                <Input
+                    onChange={description =>
+                        onDataChanged({ description }, LKG_FORM_NAME)
+                    }
+                    label={i18n('Description')}
+                    data-test-id="create-lkg-description"
+                    value={description}
+                    isValid={genericFieldInfo.description.isValid}
+                    errorText={genericFieldInfo.description.errorText}
+                    type="textarea"
+                    overlayPos="bottom"
+                />
+            </GridItem>
+            <GridItem colSpan={2} lastColInRow>
+                <Input
+                    onChange={increments =>
+                        onDataChanged({ increments }, LKG_FORM_NAME)
+                    }
+                    label={i18n('Increments')}
+                    value={increments}
+                    data-test-id="create-ep-increments"
+                    type="text"
+                />
+            </GridItem>
+            <GridItem colSpan={2}>
+                <Input
+                    isRequired={true}
+                    onChange={e => {
+                        const selectedIndex = e.target.selectedIndex;
+                        const val = e.target.options[selectedIndex].value;
+                        onDataChanged({ type: val }, LKG_FORM_NAME);
+                    }}
+                    value={type}
+                    label={i18n('Type')}
+                    data-test-id="create-lkg-type"
+                    isValid={genericFieldInfo.type.isValid}
+                    errorText={genericFieldInfo.type.errorText}
+                    groupClassName="bootstrap-input-options"
+                    className="input-options-select"
+                    overlayPos="bottom"
+                    type="select">
+                    {licenseKeyGroupOptionsInputValues.TYPE.map(type => (
+                        <option key={type.enum} value={type.enum}>
+                            {type.title}
+                        </option>
+                    ))}
+                </Input>
             </GridItem>
             <GridItem>
                 <Input
@@ -273,17 +239,6 @@ const LicenseKeyGroupFormContent = ({
                     isValid={genericFieldInfo.expiryDate.isValid}
                     errorText={genericFieldInfo.expiryDate.errorText}
                     selectsEnd
-                />
-            </GridItem>
-            <GridItem colSpan={2}>
-                <Input
-                    onChange={increments =>
-                        onDataChanged({ increments }, LKG_FORM_NAME)
-                    }
-                    label={i18n('Increments')}
-                    value={increments}
-                    data-test-id="create-ep-increments"
-                    type="text"
                 />
             </GridItem>
         </GridSection>

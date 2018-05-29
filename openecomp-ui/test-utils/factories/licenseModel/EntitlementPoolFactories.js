@@ -25,10 +25,9 @@ Factory.define('EntitlementPoolBaseFactory')
 Factory.define('EntitlementPoolExtendedBaseFactory')
 	.extend('EntitlementPoolBaseFactory')
 	.attrs({
-		thresholdValue: 75,
+		thresholdValue: 76,
 		thresholdUnits: '%',
-		increments: 'string',		
-		operationalScope: {'choices': ['Other'], 'other': 'blabla'},		
+		increments: 'string',
 		startDate: (new Date()).getTime(),
 		expiryDate: (new Date()).getTime()
 	});
