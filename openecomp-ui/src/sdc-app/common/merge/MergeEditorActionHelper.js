@@ -26,7 +26,6 @@ import ItemsHelper from '../../common/helpers/ItemsHelper.js';
 import { modalContentMapper } from 'sdc-app/common/modal/ModalContentMapper.js';
 import { actionTypes as modalActionTypes } from 'nfvo-components/modal/GlobalModalConstants.js';
 import i18n from 'nfvo-utils/i18n/i18n.js';
-import { optionsInputValues as epOptionsValues } from 'sdc-app/onboarding/licenseModel/entitlementPools/EntitlementPoolsConstants.js';
 import { optionsInputValues as laOptionsValues } from 'sdc-app/onboarding/licenseModel/licenseAgreement/LicenseAgreementConstants.js';
 import { optionsInputValues as processOptionValues } from 'sdc-app/onboarding/softwareProduct/components/processes/SoftwareProductComponentProcessesConstants.js';
 import { selectValues as limitSelectValues } from 'sdc-app/onboarding/licenseModel/limits/LimitEditorConstants.js';
@@ -442,7 +441,6 @@ const MergeEditorActionHelper = {
     getEnumList({ fieldName }) {
         const enumLists = {
             licenseTerm: laOptionsValues.LICENSE_MODEL_TYPE,
-            operationalScope: epOptionsValues.OPERATIONAL_SCOPE,
             processType: processOptionValues.PROCESS_TYPE,
             limitType: [
                 { title: 'Service Provider', enum: 'ServiceProvider' },

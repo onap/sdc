@@ -35,24 +35,13 @@ export const actionTypes = keyMirror({
 
 export const defaultState = {
     licenseKeyGroupsEditor: {
-        type: '',
-        operationalScope: { choices: [], other: '' }
+        type: ''
     }
 };
 
 export const LKG_FORM_NAME = 'LKGFORM';
 
 export const optionsInputValues = {
-    OPERATIONAL_SCOPE: [
-        { enum: '', title: i18n('please select…') },
-        { enum: 'Network_Wide', title: 'Network Wide' },
-        { enum: 'Availability_Zone', title: 'Availability Zone' },
-        { enum: 'Data_Center', title: 'Data Center' },
-        { enum: 'Tenant', title: 'Tenant' },
-        { enum: 'VM', title: 'VM' },
-        { enum: 'CPU', title: 'CPU' },
-        { enum: 'Core', title: 'Core' }
-    ],
     TYPE: [
         { enum: '', title: i18n('please select…') },
         { enum: 'Universal', title: 'Universal' },
@@ -71,27 +60,6 @@ export const extractValue = item => {
           ? item
           : InputOptions.getTitleByName(optionsInputValues, item)
         : '';
-};
-
-export const getOperationalScopes = operationalScope => {
-    if (
-        operationalScope.choices.toString() === i18n(optionInputOther.OTHER) &&
-        operationalScope.other !== ''
-    ) {
-        return operationalScope.other;
-    } else {
-        let allOpScopes = '';
-        for (let opScope of operationalScope.choices) {
-            allOpScopes +=
-                allOpScopes === ''
-                    ? InputOptions.getTitleByName(optionsInputValues, opScope)
-                    : `, ${InputOptions.getTitleByName(
-                          optionsInputValues,
-                          opScope
-                      )}`;
-        }
-        return allOpScopes;
-    }
 };
 
 export const tabIds = {

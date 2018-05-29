@@ -64,11 +64,6 @@ export default (state = {}, action) => {
                         errorText: '',
                         validations: [{ type: 'required', data: true }]
                     },
-                    operationalScope: {
-                        isValid: true,
-                        errorText: '',
-                        validations: []
-                    },
                     thresholdUnits: {
                         isValid: true,
                         errorText: '',

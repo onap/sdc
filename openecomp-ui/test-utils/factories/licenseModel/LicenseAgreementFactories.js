@@ -27,10 +27,7 @@ Factory.define('LicenseAgreementBaseFactory')
 	});
 
 Factory.define('LicenseAgreementExtendedBaseFactory')
-	.extend('LicenseAgreementBaseFactory')
-	.attrs({
-		requirementsAndConstrains: 'req_and_constraints_ADDED_LA'
-	});
+	.extend('LicenseAgreementBaseFactory');
 
 export const LicenseAgreementListItemFactory = new Factory()
 	.extend('LicenseAgreementExtendedBaseFactory')

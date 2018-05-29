@@ -245,7 +245,7 @@ directiveModule.directive('ng2ServicePathSelector', downgradeComponent({
 
 directiveModule.directive('ng2InterfaceOperation', downgradeComponent({
     component: InterfaceOperationComponent,
-    inputs: ['component', 'readonly', 'state'],
+    inputs: ['component', 'readonly'],
     outputs: []
 }) as angular.IDirectiveFactory);
 

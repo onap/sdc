@@ -40,7 +40,6 @@ function postLicenseKeyGroup(licenseModelId, licenseKeyGroup, version) {
     return RestAPIUtil.post(baseUrl(licenseModelId, version), {
         name: licenseKeyGroup.name,
         description: licenseKeyGroup.description,
-        operationalScope: getValue(licenseKeyGroup.operationalScope),
         type: licenseKeyGroup.type,
         increments: licenseKeyGroup.increments,
         thresholdValue: licenseKeyGroup.thresholdValue,
@@ -56,7 +55,6 @@ function putLicenseKeyGroup(licenseModelId, licenseKeyGroup, version) {
         {
             name: licenseKeyGroup.name,
             description: licenseKeyGroup.description,
-            operationalScope: getValue(licenseKeyGroup.operationalScope),
             type: licenseKeyGroup.type,
             increments: licenseKeyGroup.increments,
             thresholdValue: licenseKeyGroup.thresholdValue,

@@ -106,18 +106,10 @@ class LicenseKeyGroupsListEditorView extends React.Component {
         if (localFilter.trim()) {
             const filter = new RegExp(escape(localFilter), 'i');
             return licenseKeyGroupsList.filter(
-                ({
-                    name = '',
-                    description = '',
-                    operationalScope = '',
-                    type = ''
-                }) => {
+                ({ name = '', description = '', type = '' }) => {
                     return (
                         escape(name).match(filter) ||
                         escape(description).match(filter) ||
-                        escape(this.extractValue(operationalScope)).match(
-                            filter
-                        ) ||
                         escape(type).match(filter)
                     );
                 }
@@ -128,7 +120,7 @@ class LicenseKeyGroupsListEditorView extends React.Component {
     }
 
     renderLicenseKeyGroupListItem(licenseKeyGroup, isReadOnlyMode) {
-        let { id, name, description, operationalScope, type } = licenseKeyGroup;
+        let { id, name, description, type } = licenseKeyGroup;
         let {
             onEditLicenseKeyGroupClick,
             onDeleteLicenseKeyGroupClick
@@ -146,49 +138,18 @@ class LicenseKeyGroupsListEditorView extends React.Component {
                 </div>
 
                 <div className="list-editor-item-view-field">
-                    <div className="title">{i18n('Operational Scope')}</div>
-                    <div className="text operational-scope">
-                        {operationalScope &&
-                            this.getOperationalScopes(operationalScope)}
-                    </div>
-
                     <div className="title">{i18n('Type')}</div>
                     <div className="text type">
                         {InputOptions.getTitleByName(optionsInputValues, type)}
                     </div>
                 </div>
+
                 <div className="list-editor-item-view-field">
                     <div className="title">{i18n('Description')}</div>
                     <div className="text description">{description}</div>
                 </div>
             </ListEditorItemView>
         );
-    }
-
-    getOperationalScopes(operationalScope) {
-        if (
-            operationalScope.choices &&
-            operationalScope.choices.toString() === i18n(optionInputOther.OTHER)
-        ) {
-            return operationalScope.other;
-        } else if (operationalScope.choices) {
-            let allOpScopes = '';
-            for (let opScope of operationalScope.choices) {
-                allOpScopes +=
-                    allOpScopes === ''
-                        ? InputOptions.getTitleByName(
-                              optionsInputValues,
-                              opScope
-                          )
-                        : `, ${InputOptions.getTitleByName(
-                              optionsInputValues,
-                              opScope
-                          )}`;
-            }
-            return allOpScopes;
-        } else {
-            return '';
-        }
     }
 
     extractValue(item) {
