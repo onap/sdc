@@ -1,0 +1,89 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_c8e7ac45",
+        "filename": "openecomp-be/tools/artifact-copy-plugin/src/main/java/org/openecomp/sdc/onboarding/util/CopyArtifactPlugin.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 113,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-05-29T12:25:25Z",
+      "side": 1,
+      "message": "This is an error, why not error level of log?",
+      "revId": "fe04a988276d8a3d16726993094dcac665041a2e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_285df015",
+        "filename": "openecomp-be/tools/artifact-copy-plugin/src/main/java/org/openecomp/sdc/onboarding/util/InitializationHelperMojo.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-05-29T12:25:25Z",
+      "side": 1,
+      "message": "missing license",
+      "revId": "fe04a988276d8a3d16726993094dcac665041a2e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_e8d3885d",
+        "filename": "openecomp-be/tools/artifact-copy-plugin/src/main/java/org/openecomp/sdc/onboarding/util/InitializationHelperMojo.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-05-29T12:25:25Z",
+      "side": 1,
+      "message": "errors should be logged in error level.",
+      "revId": "fe04a988276d8a3d16726993094dcac665041a2e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_c8ceccb7",
+        "filename": "openecomp-be/tools/artifact-copy-plugin/src/main/java/org/openecomp/sdc/onboarding/util/InitializationHelperMojo.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 94,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-05-29T12:25:25Z",
+      "side": 1,
+      "message": "http and https should be constants",
+      "revId": "fe04a988276d8a3d16726993094dcac665041a2e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_6863f8dd",
+        "filename": "openecomp-be/tools/artifact-copy-plugin/src/main/java/org/openecomp/sdc/onboarding/util/InitializationHelperMojo.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 96,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-05-29T12:25:25Z",
+      "side": 1,
+      "message": "Please format according to omsp guidelines",
+      "revId": "fe04a988276d8a3d16726993094dcac665041a2e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
