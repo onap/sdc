@@ -16,6 +16,7 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.settings.Proxy;
 
 @Mojo(name = "init-artifact-helper", threadSafe = true, defaultPhase = LifecyclePhase.PRE_CLEAN,
         requiresDependencyResolution = ResolutionScope.NONE)
@@ -67,9 +68,10 @@ public class InitializationHelperMojo extends AbstractMojo {
         String buildNumber = null;
         for (ArtifactRepository repo : list) {
             try {
-                String content = artifactHelper.getContents(
-                        new URL(repo.getUrl() + (groupId.replace('.', '/')) + '/' + artifactId + '/' + version
-                                        + "/maven-metadata.xml"));
+                URL url = new URL(repo.getUrl() + (groupId.replace('.', '/')) + '/' + artifactId + '/' + version
+                                          + "/maven-metadata.xml");
+                setProxy(url);
+                String content = artifactHelper.getContents(url);
                 Matcher m = timestampPattern.matcher(content);
                 if (m.find()) {
                     timestamp = m.group(1);
@@ -79,10 +81,30 @@ public class InitializationHelperMojo extends AbstractMojo {
                     buildNumber = m.group(1);
                 }
             } catch (IOException e) {
-                continue;
+                getLog().debug(e);
+            }
+            if (timestamp != null && buildNumber != null){
+                return timestamp + "-" + buildNumber;
             }
         }
-        return timestamp != null && buildNumber != null ? timestamp + "-" + buildNumber : version;
+        return version;
     }
 
+    private void setProxy(URL url){
+        if (url.getProtocol().toLowerCase().equals("http")){
+            setProperties("http.proxyHost", "http.proxyPort", "http.nonProxyHosts", "http");
+        }else if (url.getProtocol().toLowerCase().equals("https")){
+            setProperties("https.proxyHost", "https.proxyPort", "https.nonProxyHosts", "https");
+        }
+    }
+
+    private void setProperties(String proxyHostProperty, String proxyPortProperty, String nonProxyHostsProperty, String protocol){
+        for(Proxy proxy : session.getSettings().getProxies()){
+            if (proxy.isActive() && proxy.getProtocol().toLowerCase().equals(protocol)){
+                System.setProperty(proxyHostProperty, proxy.getHost());
+                System.setProperty(proxyPortProperty, String.valueOf(proxy.getPort()));
+                System.setProperty(nonProxyHostsProperty, proxy.getNonProxyHosts());
+            }
+        }
+    }
 }

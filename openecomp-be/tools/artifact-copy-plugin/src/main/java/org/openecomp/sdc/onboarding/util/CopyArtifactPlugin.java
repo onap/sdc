@@ -110,7 +110,7 @@ public class CopyArtifactPlugin extends AbstractMojo {
                                         + ".jar"));
                 return true;
             } catch (IOException e) {
-                getLog().warn(e);
+                getLog().debug(e);
             }
         }
         return false;
