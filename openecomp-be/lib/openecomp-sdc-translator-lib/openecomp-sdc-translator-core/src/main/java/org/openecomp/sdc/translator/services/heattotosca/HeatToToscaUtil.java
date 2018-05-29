@@ -16,9 +16,41 @@
 
 package org.openecomp.sdc.translator.services.heattotosca;
 
+import static org.openecomp.sdc.translator.services.heattotosca.impl.functiontranslation.FunctionTranslator.getFunctionTranslateTo;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.onap.sdc.tosca.datatypes.model.AttributeDefinition;
+import org.onap.sdc.tosca.datatypes.model.CapabilityDefinition;
+import org.onap.sdc.tosca.datatypes.model.Import;
+import org.onap.sdc.tosca.datatypes.model.NodeTemplate;
+import org.onap.sdc.tosca.datatypes.model.NodeType;
+import org.onap.sdc.tosca.datatypes.model.ParameterDefinition;
+import org.onap.sdc.tosca.datatypes.model.PropertyDefinition;
+import org.onap.sdc.tosca.datatypes.model.PropertyType;
+import org.onap.sdc.tosca.datatypes.model.RequirementAssignment;
+import org.onap.sdc.tosca.datatypes.model.RequirementDefinition;
+import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
+import org.onap.sdc.tosca.datatypes.model.Template;
+import org.onap.sdc.tosca.datatypes.model.TopologyTemplate;
+import org.onap.sdc.tosca.services.ToscaExtensionYamlUtil;
+import org.onap.sdc.tosca.services.YamlUtil;
 import org.openecomp.core.translator.api.HeatToToscaTranslator;
 import org.openecomp.core.translator.datatypes.TranslatorOutput;
 import org.openecomp.core.translator.factory.HeatToToscaTranslatorFactory;
@@ -50,25 +82,10 @@ import org.openecomp.sdc.tosca.datatypes.ToscaFunctions;
 import org.openecomp.sdc.tosca.datatypes.ToscaNodeType;
 import org.openecomp.sdc.tosca.datatypes.ToscaRelationshipType;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
-import org.onap.sdc.tosca.datatypes.model.AttributeDefinition;
-import org.onap.sdc.tosca.datatypes.model.CapabilityDefinition;
-import org.onap.sdc.tosca.datatypes.model.Import;
-import org.onap.sdc.tosca.datatypes.model.NodeTemplate;
-import org.onap.sdc.tosca.datatypes.model.NodeType;
-import org.onap.sdc.tosca.datatypes.model.ParameterDefinition;
-import org.onap.sdc.tosca.datatypes.model.PropertyDefinition;
-import org.onap.sdc.tosca.datatypes.model.PropertyType;
-import org.onap.sdc.tosca.datatypes.model.RequirementAssignment;
-import org.onap.sdc.tosca.datatypes.model.RequirementDefinition;
-import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
-import org.onap.sdc.tosca.datatypes.model.Template;
-import org.onap.sdc.tosca.datatypes.model.TopologyTemplate;
 import org.openecomp.sdc.tosca.services.DataModelUtil;
 import org.openecomp.sdc.tosca.services.ToscaAnalyzerService;
 import org.openecomp.sdc.tosca.services.ToscaConstants;
-import org.onap.sdc.tosca.services.ToscaExtensionYamlUtil;
 import org.openecomp.sdc.tosca.services.ToscaUtil;
-import org.onap.sdc.tosca.services.YamlUtil;
 import org.openecomp.sdc.tosca.services.impl.ToscaAnalyzerServiceImpl;
 import org.openecomp.sdc.translator.datatypes.heattotosca.AttachedPropertyVal;
 import org.openecomp.sdc.translator.datatypes.heattotosca.AttachedResourceId;
@@ -79,24 +96,9 @@ import org.openecomp.sdc.translator.datatypes.heattotosca.to.TranslateTo;
 import org.openecomp.sdc.translator.services.heattotosca.errors.ResourceNotFoundInHeatFileErrorBuilder;
 import org.openecomp.sdc.translator.services.heattotosca.globaltypes.GlobalTypesGenerator;
 import org.openecomp.sdc.translator.services.heattotosca.helper.ContrailV2VirtualMachineInterfaceHelper;
-import org.openecomp.sdc.translator.services.heattotosca.helper.FunctionTranslationHelper;
+import org.openecomp.sdc.translator.services.heattotosca.impl.functiontranslation.FunctionTranslator;
 import org.openecomp.sdc.translator.services.heattotosca.impl.resourcetranslation.ResourceTranslationBase;
 import org.openecomp.sdc.translator.services.heattotosca.mapping.TranslatorHeatToToscaPropertyConverter;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 /**
  * The type Heat to tosca util.
@@ -382,12 +384,13 @@ public class HeatToToscaUtil {
       if (!FunctionTranslationFactory.getInstance(entry.getKey()).isPresent()) {
         translatedId = null;
       } else {
+        FunctionTranslator functionTranslator = new FunctionTranslator(getFunctionTranslateTo(null, null,
+                heatFileName, heatOrchestrationTemplate, context), null, entry.getValue(), null);
         translatedId = FunctionTranslationFactory.getInstance(entry.getKey()).get()
-            .translateFunction(null, null, null, entry.getKey(), entry.getValue(), heatFileName,
-                heatOrchestrationTemplate, null, context);
+            .translateFunction(functionTranslator);
       }
       if (translatedId instanceof String
-          && !FunctionTranslationHelper.isResourceSupported((String) translatedId)) {
+          && !new FunctionTranslator().isResourceSupported((String) translatedId)) {
         translatedId = null;
       }
 
