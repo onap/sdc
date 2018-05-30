@@ -2,11 +2,7 @@
 
 const proxy = require('http-proxy-middleware');
 
-let localDevConfig = {};
-try {
-	localDevConfig = require('./devConfig');
-} catch (e) {}
-const devConfig = Object.assign({}, require('./devConfig.defaults'), localDevConfig);
+const devConfig = require('./tools/getDevConfig');
 let devPort = process.env.PORT || devConfig.port;
 
 
@@ -46,11 +42,19 @@ module.exports = function (server) {
 			devConfig.proxyConfig.jsReplaceRules.forEach(function(rule) {
 				let regex = new RegExp('^(.*)' + rule.replace);
 				let match = req.url.match(regex);
-				let newUrl = match && match[1] + rule.with + '.js';
+                let newUrl = match && match[1] + rule.with + '.js';
+                if (newUrl) {
+                    console.log(`REWRITING URL: ${req.url} -> ${newUrl}`);
+                    req.url = newUrl;
+                }
+				/*if (match && match[1]) {
+					let newUrl = rule.with;
 				if (newUrl) {
 					console.log(`REWRITING URL: ${req.url} -> ${newUrl}`);
 					req.url = newUrl;
-				}
+					}
+				}*/
+
 			});
 			next();
 		}
@@ -67,7 +71,7 @@ module.exports = function (server) {
 			config: devConfig.proxyConfig.onboardingProxy}
 		);
 	} else {
-		console.log('Catalog proxy set to : ' + devConfig.proxyCatalogTarget);
+		console.log('Onboarding proxy set to : ' + devConfig.proxyCatalogTarget);
 	}
 	console.log('Catalog proxy set to : ' + devConfig.proxyCatalogTarget);
 	proxies.push({

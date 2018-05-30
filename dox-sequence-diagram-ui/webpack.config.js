@@ -17,6 +17,8 @@ if (devmode) {
 
 var config = {
 	entry: entry,
+	mode: (devmode) ? 'development' : 'production',
+	performance: { hints: false },
 	output: {
 		path: PATHS.TARGET,
 		filename: 'index.js',
@@ -28,9 +30,8 @@ var config = {
 	devtool: 'eval-source-map',
 	module: {
 		rules: [
-    		{test: /\.(js|jsx)$/, loader: 'eslint-loader', exclude: [/node_modules/], enforce: 'pre'},
+    		{test: /\.(js|jsx)$/, loader: 'eslint-loader', include: [/src/], enforce: 'pre'},
             {test: /\.(js|jsx)$/, loader: 'babel-loader',
-				exclude: /node_modules/,
 				include: path.join(PATHS.SRC, 'lib')},
 			{test: /\.(css)$/, use: [
                     {loader: 'style-loader'},
@@ -48,23 +49,27 @@ var config = {
             },
             {
                 test: /\.svg$/,
-                loader: 'svg-sprite-loader?' + JSON.stringify({
-                    name: '[name]_[hash]',
-                    prefixize: true
-                })
+                loader: 'svg-sprite-loader',
+	            options: {
+		            symbolId: '[name]_[hash]',
+		            extract: false
+	            }//
             }
 		]
 	},
 	externals: (devmode ? {} : {
-		'd3': 'd3',
-		'lodash': 'lodash',
+		'd3-zoom': 'd3-zoom',
+        'd3-selection': 'd3-selection',
+		'lodash/merge': 'lodash/merge',
+        'lodash/template': 'lodash/template',
 		'react': 'react',
 		'react-dnd': 'react-dnd',
 		'react-dnd-html5-backend': 'react-dnd-html5-backend',
 		'react-dom': 'react-dom',
 		'react-redux': 'react-redux',
 		'react-select': 'react-select',
-		'redux': 'redux'
+		'redux': 'redux',
+		'prop-types': 'prop-types'
 	}),
 	devServer: {
 		port: 4096,
@@ -79,8 +84,8 @@ var config = {
 	},
     plugins: [
         new webpack.DefinePlugin({
-            DEV: true,
-            DEBUG: true
+	        DEBUG: (devmode === true),
+	        DEV: (devmode === true)
         }),
         new webpack.HotModuleReplacementPlugin(),
         new webpack.LoaderOptionsPlugin({
