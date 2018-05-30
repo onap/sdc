@@ -16,7 +16,7 @@
 import React from 'react';
 import Form from 'nfvo-components/input/validation/Form.jsx';
 import i18n from 'nfvo-utils/i18n/i18n.js';
-import ShowMore from 'react-show-more';
+import ShowMore from 'react-show-more-text';
 import SVGIcon from 'sdc-ui/lib/react/SVGIcon.js';
 
 import ListEditorView from 'nfvo-components/listEditor/ListEditorView.jsx';
