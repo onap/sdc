@@ -49,7 +49,6 @@ export const defaultState = {
     ENTITLEMENT_POOLS_EDITOR_DATA: {
         entitlementMetric: { choice: '', other: '' },
         aggregationFunction: { choice: '', other: '' },
-        operationalScope: { choices: [], other: '' },
         time: { choice: '', other: '' }
     }
 };
@@ -60,16 +59,6 @@ export const thresholdUnitType = {
 };
 
 export const optionsInputValues = {
-    OPERATIONAL_SCOPE: [
-        { enum: '', title: i18n('please select…') },
-        { enum: 'Network_Wide', title: 'Network Wide' },
-        { enum: 'Availability_Zone', title: 'Availability Zone' },
-        { enum: 'Data_Center', title: 'Data Center' },
-        { enum: 'Tenant', title: 'Tenant' },
-        { enum: 'VM', title: 'VM' },
-        { enum: 'CPU', title: 'CPU' },
-        { enum: 'Core', title: 'Core' }
-    ],
     TIME: [
         { enum: '', title: i18n('please select…') },
         { enum: 'Hour', title: 'Hour' },

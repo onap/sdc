@@ -119,10 +119,6 @@ export const dataRules = {
         referencingFeatureGroups: {
             rule: rules.SKIP,
             functionName: 'getFeatureGroups'
-        },
-        operationalScope: {
-            rule: rules.FUNCTION,
-            functionName: 'processChoices'
         }
     },
     [fileTypes.FG]: {
@@ -150,10 +146,6 @@ export const dataRules = {
         }
     },
     [fileTypes.LKG]: {
-        operationalScope: {
-            rule: rules.FUNCTION,
-            functionName: 'processChoices'
-        },
         referencingFeatureGroups: {
             rule: rules.SKIP,
             functionName: 'getFeatureGroups'

@@ -42,7 +42,6 @@ const LicenseAgreementPropType = PropTypes.shape({
     id: PropTypes.string,
     name: PropTypes.string,
     description: PropTypes.string,
-    requirementsAndConstrains: PropTypes.string,
     licenseTerm: PropTypes.object,
     featureGroupsIds: PropTypes.arrayOf(PropTypes.string),
     version: PropTypes.object
@@ -54,7 +53,7 @@ const GeneralTabContent = ({
     onDataChanged,
     validateName
 }) => {
-    let { name, description, requirementsAndConstrains, licenseTerm } = data;
+    let { name, description, licenseTerm } = data;
     return (
         <GridSection hasLastColSet>
             <GridItem colSpan={2}>
@@ -72,23 +71,6 @@ const GeneralTabContent = ({
                     name="license-agreement-name"
                     isRequired={true}
                     type="text"
-                />
-                <Input
-                    isValid={genericFieldInfo.requirementsAndConstrains.isValid}
-                    errorText={
-                        genericFieldInfo.requirementsAndConstrains.errorText
-                    }
-                    onChange={requirementsAndConstrains =>
-                        onDataChanged(
-                            { requirementsAndConstrains },
-                            LA_EDITOR_FORM
-                        )
-                    }
-                    label={i18n('Requirements and Constraints')}
-                    value={requirementsAndConstrains}
-                    data-test-id="create-la-requirements-constants"
-                    name="license-agreement-requirements-and-constraints"
-                    type="textarea"
                 />
                 <InputOptions
                     onInputChange={() => {}}

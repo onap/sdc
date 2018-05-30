@@ -40,7 +40,6 @@ function postLicenseAgreement(licenseModelId, licenseAgreement, version) {
         name: licenseAgreement.name,
         description: licenseAgreement.description,
         licenseTerm: licenseAgreement.licenseTerm,
-        requirementsAndConstrains: licenseAgreement.requirementsAndConstrains,
         addedFeatureGroupsIds: licenseAgreement.featureGroupsIds
     });
 }
@@ -61,8 +60,6 @@ function putLicenseAgreement(
             name: licenseAgreement.name,
             description: licenseAgreement.description,
             licenseTerm: licenseAgreement.licenseTerm,
-            requirementsAndConstrains:
-                licenseAgreement.requirementsAndConstrains,
             addedFeatureGroupsIds: featureGroupsIds.filter(
                 featureGroupId =>
                     prevFeatureGroupsIds.indexOf(featureGroupId) === -1

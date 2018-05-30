@@ -20,10 +20,7 @@ Factory.define('LicenseKeyGroupBaseFactory')
 	.attrs({
 		name: 'License Key Group',
 		description: 'wewe',
-		type: 'Unique',
-		operationalScope: {
-			choices: ['Data_Center']
-		}
+		type: 'Unique'
 	});
 
 export const LicenseKeyGroupListItemFactory = new Factory()

@@ -37,7 +37,6 @@ function postEntitlementPool(licenseModelId, entitlementPool, version) {
         thresholdValue: entitlementPool.thresholdValue,
         thresholdUnits: getValue(entitlementPool.thresholdUnits),
         increments: entitlementPool.increments,
-        operationalScope: getValue(entitlementPool.operationalScope),
         time: entitlementPool.time,
         startDate: entitlementPool.startDate,
         expiryDate: entitlementPool.expiryDate
@@ -58,7 +57,6 @@ function putEntitlementPool(
             thresholdValue: entitlementPool.thresholdValue,
             thresholdUnits: getValue(entitlementPool.thresholdUnits),
             increments: entitlementPool.increments,
-            operationalScope: getValue(entitlementPool.operationalScope),
             time: entitlementPool.time,
             startDate: entitlementPool.startDate,
             expiryDate: entitlementPool.expiryDate

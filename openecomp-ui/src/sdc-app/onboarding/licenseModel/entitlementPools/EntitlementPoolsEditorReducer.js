@@ -61,11 +61,6 @@ export default (state = {}, action) => {
                         errorText: '',
                         validations: [{ type: 'maxLength', data: 120 }]
                     },
-                    operationalScope: {
-                        isValid: true,
-                        errorText: '',
-                        validations: []
-                    },
                     thresholdUnits: {
                         isValid: true,
                         errorText: '',

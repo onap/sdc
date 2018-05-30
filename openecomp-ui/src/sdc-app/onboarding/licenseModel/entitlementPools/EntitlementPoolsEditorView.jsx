@@ -20,13 +20,11 @@ import i18n from 'nfvo-utils/i18n/i18n.js';
 import Validator from 'nfvo-utils/Validator.js';
 
 import Input from 'nfvo-components/input/validation/Input.jsx';
-import InputOptions from 'nfvo-components/input/validation/InputOptions.jsx';
 import Form from 'nfvo-components/input/validation/Form.jsx';
 import Button from 'sdc-ui/lib/react/Button.js';
 import GridSection from 'nfvo-components/grid/GridSection.jsx';
 import GridItem from 'nfvo-components/grid/GridItem.jsx';
 import {
-    optionsInputValues as EntitlementPoolsOptionsInputValues,
     SP_ENTITLEMENT_POOL_FORM,
     tabIds
 } from './EntitlementPoolsConstants.js';
@@ -36,7 +34,6 @@ import {
     thresholdValueValidation
 } from '../LicenseModelValidations.js';
 import { DATE_FORMAT } from 'sdc-app/onboarding/OnboardingConstants.js';
-import { other as optionInputOther } from 'nfvo-components/input/validation/InputOptions.jsx';
 import Tabs from 'sdc-ui/lib/react/Tabs.js';
 import Tab from 'sdc-ui/lib/react/Tab.js';
 import EntitlementPoolsLimits from './EntitlementPoolsLimits.js';
@@ -49,10 +46,6 @@ const EntitlementPoolPropType = PropTypes.shape({
     id: PropTypes.string,
     name: PropTypes.string,
     description: PropTypes.string,
-    operationalScope: PropTypes.shape({
-        choices: PropTypes.array,
-        other: PropTypes.string
-    }),
     thresholdUnits: PropTypes.string,
     thresholdValue: PropTypes.string,
     increments: PropTypes.string,
@@ -71,7 +64,6 @@ const EntitlementPoolsFormContent = ({
     let {
         name,
         description,
-        operationalScope,
         thresholdUnits,
         thresholdValue,
         increments,
@@ -94,59 +86,6 @@ const EntitlementPoolsFormContent = ({
                     value={name}
                     data-test-id="create-ep-name"
                     type="text"
-                />
-            </GridItem>
-            <GridItem colSpan={2} lastColInRow>
-                <InputOptions
-                    onInputChange={() => {}}
-                    isMultiSelect={true}
-                    onEnumChange={operationalScope =>
-                        onDataChanged(
-                            {
-                                operationalScope: {
-                                    choices: operationalScope,
-                                    other: ''
-                                }
-                            },
-                            SP_ENTITLEMENT_POOL_FORM
-                        )
-                    }
-                    onOtherChange={operationalScope =>
-                        onDataChanged(
-                            {
-                                operationalScope: {
-                                    choices: [optionInputOther.OTHER],
-                                    other: operationalScope
-                                }
-                            },
-                            SP_ENTITLEMENT_POOL_FORM
-                        )
-                    }
-                    label={i18n('Operational Scope')}
-                    data-test-id="create-ep-operational-scope"
-                    type="select"
-                    multiSelectedEnum={
-                        operationalScope && operationalScope.choices
-                    }
-                    otherValue={operationalScope && operationalScope.other}
-                    values={
-                        EntitlementPoolsOptionsInputValues.OPERATIONAL_SCOPE
-                    }
-                    isValid={genericFieldInfo.operationalScope.isValid}
-                    errorText={genericFieldInfo.operationalScope.errorText}
-                />
-            </GridItem>
-            <GridItem colSpan={2} stretch>
-                <Input
-                    onChange={description =>
-                        onDataChanged({ description }, SP_ENTITLEMENT_POOL_FORM)
-                    }
-                    isValid={genericFieldInfo.description.isValid}
-                    errorText={genericFieldInfo.description.errorText}
-                    label={i18n('Description')}
-                    value={description}
-                    data-test-id="create-ep-description"
-                    type="textarea"
                 />
             </GridItem>
             <GridItem colSpan={2} lastColInRow>
@@ -205,6 +144,21 @@ const EntitlementPoolsFormContent = ({
                         type="text"
                     />
                 </div>
+            </GridItem>
+            <GridItem colSpan={2} stretch>
+                <Input
+                    onChange={description =>
+                        onDataChanged({ description }, SP_ENTITLEMENT_POOL_FORM)
+                    }
+                    isValid={genericFieldInfo.description.isValid}
+                    errorText={genericFieldInfo.description.errorText}
+                    label={i18n('Description')}
+                    value={description}
+                    data-test-id="create-ep-description"
+                    type="textarea"
+                />
+            </GridItem>
+            <GridItem colSpan={2} lastColInRow>
                 <Input
                     onChange={increments =>
                         onDataChanged({ increments }, SP_ENTITLEMENT_POOL_FORM)
