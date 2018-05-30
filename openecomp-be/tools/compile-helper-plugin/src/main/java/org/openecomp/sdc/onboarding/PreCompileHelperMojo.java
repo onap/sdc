@@ -37,8 +37,10 @@ import static org.openecomp.sdc.onboarding.Constants.RESOURCE_CHECKSUM;
 import static org.openecomp.sdc.onboarding.Constants.RESOURCE_ONLY;
 import static org.openecomp.sdc.onboarding.Constants.RESOURCE_WITH_TEST_ONLY;
 import static org.openecomp.sdc.onboarding.Constants.SHA1;
+import static org.openecomp.sdc.onboarding.Constants.SKIP_INSTALL;
 import static org.openecomp.sdc.onboarding.Constants.SKIP_MAIN_SOURCE_COMPILE;
 import static org.openecomp.sdc.onboarding.Constants.SKIP_PMD;
+import static org.openecomp.sdc.onboarding.Constants.SKIP_RESOURCE_COLLECTION;
 import static org.openecomp.sdc.onboarding.Constants.SKIP_TEST_RUN;
 import static org.openecomp.sdc.onboarding.Constants.SKIP_TEST_SOURCE_COMPILE;
 import static org.openecomp.sdc.onboarding.Constants.TEST;
@@ -114,6 +116,10 @@ public class PreCompileHelperMojo extends AbstractMojo {
     private Map<String, Object> resourceBuildData;
 
     private static Map<String, String> checksumMap;
+    private long mainChecksum = 0;
+    private long testChecksum = 0;
+    private long resourceChecksum = 0;
+    Optional<String> artifactPath;
 
     static {
         checksumMap = readCurrentPMDState("pmd.dat");
@@ -121,29 +127,18 @@ public class PreCompileHelperMojo extends AbstractMojo {
 
     public void execute() throws MojoExecutionException, MojoFailureException {
 
-        long mainChecksum = 0, testChecksum = 0, resourceChecksum = 0;
-        Optional<String> artifactPath;
 
         if (project.getPackaging().equals(excludePackaging)) {
             return;
         }
         init();
-        project.getProperties()
-               .setProperty(MAIN_CHECKSUM, String.valueOf(mainChecksum = getChecksum(mainSourceLocation, JAVA_EXT)));
-        project.getProperties()
-               .setProperty(TEST_CHECKSUM, String.valueOf(testChecksum = getChecksum(testSourceLocation, JAVA_EXT)));
-        String checksum = mainChecksum + COLON + testChecksum;
-        if (!checksum.equals(checksumMap.get(moduleCoordinates)) || isPMDMandatory(project.getArtifacts())) {
-            project.getProperties().setProperty(SKIP_PMD, Boolean.FALSE.toString());
-            buildState.recordPMDRun(moduleCoordinates);
-        }
+        processPMDCheck();
         project.getProperties().setProperty(EMPTY_JAR, "");
         if (!System.getProperties().containsKey(UNICORN)) {
             return;
         }
-
-        project.getProperties().setProperty(RESOURCE_CHECKSUM,
-                String.valueOf(resourceChecksum = getChecksum(mainResourceLocation, ANY_EXT)));
+        resourceChecksum = getChecksum(mainResourceLocation, ANY_EXT);
+        project.getProperties().setProperty(RESOURCE_CHECKSUM, String.valueOf(resourceChecksum));
         byte[] sourceChecksum = calculateChecksum(mainChecksum, resourceChecksum).getBytes();
         boolean instrumented = isCurrentModuleInstrumented();
         artifactPath = getArtifactPathInLocalRepo(session.getLocalRepository().getUrl(), project, sourceChecksum);
@@ -180,14 +175,13 @@ public class PreCompileHelperMojo extends AbstractMojo {
         setInstallFlags(mainToBeCompiled, instrumented, project.getPackaging(),
                 !resourceMainBuildDataSameWithPreviousBuild);
 
-        if (!mainToBeCompiled && !instrumented && JAR.equals(project.getPackaging())
-                    && resourceMainBuildDataSameWithPreviousBuild) {
-            project.getProperties().setProperty("artifactPathToCopy", artifactPath.orElse(null));
-        }
+        setArtifactPath(mainToBeCompiled, instrumented, JAR.equals(project.getPackaging()),
+                resourceMainBuildDataSameWithPreviousBuild);
     }
 
     private void generateSignature(byte[] sourceChecksum) {
         try {
+            Paths.get(project.getBuild().getDirectory()).toFile().mkdirs();
             Files.write(Paths.get(project.getBuild().getDirectory(), project.getBuild().getFinalName() + DOT + UNICORN),
                     sourceChecksum, StandardOpenOption.CREATE);
         } catch (IOException e) {
@@ -234,10 +228,17 @@ public class PreCompileHelperMojo extends AbstractMojo {
         }
     }
 
+    private void setArtifactPath(boolean mainToBeCompiled, boolean instrumented, boolean isJar,
+            boolean resourceDataSame) {
+        if (!mainToBeCompiled && !instrumented && isJar && resourceDataSame) {
+            project.getProperties().setProperty("artifactPathToCopy", artifactPath.orElse(null));
+        }
+    }
+
     private void setResourceBuild(boolean resourceMainBuildDataSameWithPreviousBuild, boolean mainToBeCompiled,
             boolean testToBeCompiled) {
         if (resourceMainBuildDataSameWithPreviousBuild) {
-            project.getProperties().setProperty("skipResourceCollection", Boolean.TRUE.toString());
+            project.getProperties().setProperty(SKIP_RESOURCE_COLLECTION, Boolean.TRUE.toString());
         } else {
             project.getProperties().setProperty(RESOURCES_CHANGED, Boolean.TRUE.toString());
         }
@@ -292,12 +293,12 @@ public class PreCompileHelperMojo extends AbstractMojo {
 
     private void setInstallFlags(boolean compile, boolean instrumented, String packaging, boolean resourceChanged) {
         if (!compile && !instrumented && !resourceChanged && JAR.equals(packaging)) {
-            project.getProperties().setProperty("skipInstall", Boolean.TRUE.toString());
+            project.getProperties().setProperty(SKIP_INSTALL, Boolean.TRUE.toString());
         }
     }
 
     private boolean isCompileNeeded(Collection<String> dependencyCoordinates, boolean isFirstBuild,
-            boolean buildDataSame) throws MojoFailureException {
+            boolean buildDataSame) {
         return isFirstBuild || !buildDataSame || buildState.isCompileMust(moduleCoordinates, dependencyCoordinates);
     }
 
@@ -306,6 +307,7 @@ public class PreCompileHelperMojo extends AbstractMojo {
             return scanModuleFor(LifecyclePhase.PROCESS_CLASSES.id(), LifecyclePhase.PROCESS_TEST_CLASSES.id(),
                     LifecyclePhase.COMPILE.id(), LifecyclePhase.TEST_COMPILE.id());
         } catch (Exception e) {
+            getLog().debug(e);
             return true;
         }
     }
@@ -315,6 +317,7 @@ public class PreCompileHelperMojo extends AbstractMojo {
             return scanModuleFor(LifecyclePhase.GENERATE_RESOURCES.id(), LifecyclePhase.GENERATE_SOURCES.id(),
                     LifecyclePhase.GENERATE_TEST_RESOURCES.id(), LifecyclePhase.GENERATE_TEST_SOURCES.id());
         } catch (Exception e) {
+            getLog().debug(e);
             return true;
         }
     }
@@ -358,7 +361,7 @@ public class PreCompileHelperMojo extends AbstractMojo {
 
     private boolean isPMDMandatory(Set<Artifact> dependencies) {
         for (Artifact artifact : dependencies) {
-            if (buildState.isPMDRun(artifact.getGroupId() + COLON + artifact.getArtifactId())) {
+            if (BuildState.isPMDRun(artifact.getGroupId() + COLON + artifact.getArtifactId())) {
                 return true;
             }
         }
@@ -369,9 +372,10 @@ public class PreCompileHelperMojo extends AbstractMojo {
             throws InvalidPluginDescriptorException, PluginResolutionException, MojoNotFoundException,
                            PluginDescriptorParsingException {
         for (Plugin plugin : project.getBuildPlugins()) {
-            if (!(plugin.getGroupId().equals("org.apache.maven.plugins") && plugin.getArtifactId().startsWith("maven"))
+            if (!("org.apache.maven.plugins".equals(plugin.getGroupId()) && plugin.getArtifactId().startsWith("maven"))
                         && !plugin.getGroupId().startsWith("org.openecomp.sdc")) {
-                if (scanPlugin(plugin, types)) {
+                boolean success = scanPlugin(plugin, types);
+                if (success) {
                     return true;
                 }
             }
@@ -384,7 +388,8 @@ public class PreCompileHelperMojo extends AbstractMojo {
                            PluginResolutionException {
         for (PluginExecution pluginExecution : plugin.getExecutions()) {
             if (pluginExecution.getPhase() != null) {
-                if (Arrays.asList(types).contains(pluginExecution.getPhase())) {
+                boolean phaseAvailable = Arrays.asList(types).contains(pluginExecution.getPhase());
+                if (phaseAvailable) {
                     return true;
                 }
             }
@@ -427,6 +432,18 @@ public class PreCompileHelperMojo extends AbstractMojo {
         }
         if (testResourceLocation == null) {
             testResourceLocation = Paths.get(project.getBuild().getTestResources().get(0).getDirectory()).toFile();
+        }
+    }
+
+    private void processPMDCheck() {
+        mainChecksum = getChecksum(mainSourceLocation, JAVA_EXT);
+        testChecksum = getChecksum(testSourceLocation, JAVA_EXT);
+        project.getProperties().setProperty(MAIN_CHECKSUM, String.valueOf(mainChecksum));
+        project.getProperties().setProperty(TEST_CHECKSUM, String.valueOf(testChecksum));
+        String checksum = mainChecksum + COLON + testChecksum;
+        if (!checksum.equals(checksumMap.get(moduleCoordinates)) || isPMDMandatory(project.getArtifacts())) {
+            project.getProperties().setProperty(SKIP_PMD, Boolean.FALSE.toString());
+            BuildState.recordPMDRun(moduleCoordinates);
         }
     }
 }

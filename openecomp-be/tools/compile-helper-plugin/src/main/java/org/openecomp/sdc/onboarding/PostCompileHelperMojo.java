@@ -65,15 +65,8 @@ public class PostCompileHelperMojo extends AbstractMojo {
             project.getProperties().setProperty(SKIP_MAIN_SOURCE_COMPILE, Boolean.TRUE.toString());
             project.getProperties().remove(TEST_ONLY);
         }
-        if (project.getProperties().containsKey(INSTRUMENT_ONLY)) {
-            project.getProperties().setProperty(SKIP_MAIN_SOURCE_COMPILE, Boolean.TRUE.toString());
-            project.getProperties().setProperty(SKIP_TEST_SOURCE_COMPILE, Boolean.TRUE.toString());
-            project.getProperties().remove(INSTRUMENT_ONLY);
-        }
-        if (project.getProperties().containsKey(INSTRUMENT_WITH_TEST_ONLY)) {
-            project.getProperties().setProperty(SKIP_MAIN_SOURCE_COMPILE, Boolean.TRUE.toString());
-            project.getProperties().remove(INSTRUMENT_WITH_TEST_ONLY);
-        }
+        postProcessInstrumentedModules();
+
         if (project.getProperties().containsKey(RESOURCE_WITH_TEST_ONLY)) {
             project.getProperties().setProperty(SKIP_MAIN_SOURCE_COMPILE, Boolean.TRUE.toString());
             project.getProperties().remove(RESOURCE_WITH_TEST_ONLY);
@@ -96,5 +89,17 @@ public class PostCompileHelperMojo extends AbstractMojo {
             project.getProperties().setProperty(SKIP_PMD, Boolean.FALSE.toString());
         }
         buildState.saveModuleBuildData(moduleCoordinates);
+    }
+
+    private void postProcessInstrumentedModules() {
+        if (project.getProperties().containsKey(INSTRUMENT_ONLY)) {
+            project.getProperties().setProperty(SKIP_MAIN_SOURCE_COMPILE, Boolean.TRUE.toString());
+            project.getProperties().setProperty(SKIP_TEST_SOURCE_COMPILE, Boolean.TRUE.toString());
+            project.getProperties().remove(INSTRUMENT_ONLY);
+        }
+        if (project.getProperties().containsKey(INSTRUMENT_WITH_TEST_ONLY)) {
+            project.getProperties().setProperty(SKIP_MAIN_SOURCE_COMPILE, Boolean.TRUE.toString());
+            project.getProperties().remove(INSTRUMENT_WITH_TEST_ONLY);
+        }
     }
 }

@@ -28,10 +28,8 @@ import static org.openecomp.sdc.onboarding.Constants.RESOURCE_BUILD_DATA;
 import static org.openecomp.sdc.onboarding.Constants.SKIP_MAIN_SOURCE_COMPILE;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Collection;
 import java.util.HashMap;
@@ -39,7 +37,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.project.MavenProject;
