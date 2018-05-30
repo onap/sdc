@@ -15,28 +15,30 @@
  */
 package org.openecomp.sdc.vendorsoftwareproduct.dao.impl.zusammen;
 
-import static org.openecomp.core.zusammen.api.ZusammenUtil.buildStructuralElement;
-import static org.openecomp.core.zusammen.api.ZusammenUtil.createSessionContext;
-
 import com.amdocs.zusammen.adaptor.inbound.api.types.item.ZusammenElement;
 import com.amdocs.zusammen.datatypes.SessionContext;
 import com.amdocs.zusammen.datatypes.item.Action;
 import com.amdocs.zusammen.datatypes.item.ElementContext;
 import com.amdocs.zusammen.datatypes.item.Info;
-import java.io.ByteArrayInputStream;
-import java.util.Collection;
-import java.util.stream.Collectors;
 import org.openecomp.core.zusammen.api.ZusammenAdaptor;
 import org.openecomp.sdc.datatypes.model.ElementType;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductInfoDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.impl.zusammen.convertor.ElementToVSPGeneralConvertor;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.impl.zusammen.convertor.ElementToVSPQuestionnaireConvertor;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.type.OnboardingMethod;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspQuestionnaireEntity;
 import org.openecomp.sdc.versioning.ActionVersioningManagerFactory;
 import org.openecomp.sdc.versioning.dao.types.Version;
 import org.openecomp.sdc.versioning.types.VersionableEntityMetadata;
 import org.openecomp.sdc.versioning.types.VersionableEntityStoreType;
+
+import java.io.ByteArrayInputStream;
+import java.util.Collection;
+import java.util.stream.Collectors;
+
+import static org.openecomp.core.zusammen.api.ZusammenUtil.buildStructuralElement;
+import static org.openecomp.core.zusammen.api.ZusammenUtil.createSessionContext;
 
 public class VendorSoftwareProductInfoDaoZusammenImpl implements VendorSoftwareProductInfoDao {
   private static final String EMPTY_DATA = "{}";
@@ -171,13 +173,15 @@ public class VendorSoftwareProductInfoDaoZusammenImpl implements VendorSoftwareP
     SessionContext context = createSessionContext();
     ElementContext elementContext =
         new ElementContext(vspDetails.getId(), vspDetails.getVersion().getId());
-    VspDetails vsp = zusammenAdaptor.getElementInfoByName(context, elementContext, null,
+    return zusammenAdaptor.getElementInfoByName(context, elementContext, null,
         ElementType.VendorSoftwareProduct.name())
         .map(new ElementToVSPGeneralConvertor()::convert)
+        .map(vsp -> {
+          vsp.setId(vspDetails.getId());
+          vsp.setVersion(vspDetails.getVersion());
+          return vsp;
+        })
         .orElse(null);
-    vsp.setId(vspDetails.getId());
-    vsp.setVersion(vspDetails.getVersion());
-    return vsp;
   }
 
   @Override
@@ -204,12 +208,11 @@ public class VendorSoftwareProductInfoDaoZusammenImpl implements VendorSoftwareP
 
   @Override
   public VspQuestionnaireEntity getQuestionnaire(String vspId, Version version) {
-
     SessionContext context = createSessionContext();
-    ElementToVSPQuestionnaireConvertor convertor = new ElementToVSPQuestionnaireConvertor();
-    VspQuestionnaireEntity entity = convertor.convert(zusammenAdaptor
+    VspQuestionnaireEntity entity = new ElementToVSPQuestionnaireConvertor().convert(zusammenAdaptor
         .getElementByName(context, new ElementContext(vspId, version.getId()), null,
-            ElementType.VSPQuestionnaire.name()).map(element -> element).orElse(null));
+            ElementType.VSPQuestionnaire.name())
+        .orElse(null));
     entity.setId(vspId);
     entity.setVersion(version);
     return entity;
@@ -218,10 +221,8 @@ public class VendorSoftwareProductInfoDaoZusammenImpl implements VendorSoftwareP
   @Override
   public boolean isManual(String vspId, Version version) {
     final VspDetails vspDetails = get(new VspDetails(vspId, version));
-    if (vspDetails != null && "Manual".equals(vspDetails.getOnboardingMethod())) {
-      return true;
-    }
-    return false;
+    return vspDetails != null &&
+        OnboardingMethod.Manual.name().equals(vspDetails.getOnboardingMethod());
   }
 
   private ZusammenElement mapVspDetailsToZusammenElement(VspDetails vspDetails, Action action) {
@@ -247,11 +248,14 @@ public class VendorSoftwareProductInfoDaoZusammenImpl implements VendorSoftwareP
     info.addProperty(InfoPropertyName.VENDOR_ID.getValue(), vspDetails.getVendorId());
     info.addProperty(InfoPropertyName.VENDOR_NAME.getValue(), vspDetails.getVendorName());
     if (vspDetails.getVlmVersion() != null) {
-      info.addProperty(InfoPropertyName.VENDOR_VERSION.getValue(), vspDetails.getVlmVersion().getId());
+      info.addProperty(InfoPropertyName.VENDOR_VERSION.getValue(),
+          vspDetails.getVlmVersion().getId());
     }
-    info.addProperty(InfoPropertyName.LICENSE_AGREEMENT.getValue(), vspDetails.getLicenseAgreement());
+    info.addProperty(InfoPropertyName.LICENSE_AGREEMENT.getValue(),
+        vspDetails.getLicenseAgreement());
     info.addProperty(InfoPropertyName.FEATURE_GROUPS.getValue(), vspDetails.getFeatureGroups());
-    info.addProperty(InfoPropertyName.ON_BOARDING_METHOD.getValue(), vspDetails.getOnboardingMethod());
+    info.addProperty(InfoPropertyName.ON_BOARDING_METHOD.getValue(),
+        vspDetails.getOnboardingMethod());
   }
 
   public enum InfoPropertyName {
@@ -269,11 +273,11 @@ public class VendorSoftwareProductInfoDaoZusammenImpl implements VendorSoftwareP
 
     private String value;
 
-    InfoPropertyName(String value){
-      this.value=value;
+    InfoPropertyName(String value) {
+      this.value = value;
     }
 
-    public String getValue(){
+    public String getValue() {
       return value;
     }
   }
