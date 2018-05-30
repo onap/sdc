@@ -1,17 +1,29 @@
 package org.openecomp.sdc.be.dao.es;
 
-import javax.annotation.Generated;
-
 import org.elasticsearch.client.Client;
 import org.junit.Test;
+import org.openecomp.sdc.be.utils.DAOConfDependentTest;
 
-@Generated(value = "org.junit-tools-1.0.6")
-public class ElasticSearchClientTest {
+public class ElasticSearchClientTest extends DAOConfDependentTest{
 
 	private ElasticSearchClient createTestSubject() {
 		return new ElasticSearchClient();
 	}
 
+	@Test
+	public void testInitialize() throws Exception {
+		ElasticSearchClient testSubject;
+
+		// default test
+		testSubject = createTestSubject();
+		testSubject.setTransportClient("true");
+		testSubject.setLocal("true");
+		testSubject.initialize();
+		testSubject.setTransportClient("false");
+		testSubject.setClusterName("false");
+		testSubject.initialize();
+	}
+	
 	@Test
 	public void testClose() throws Exception {
 		ElasticSearchClient testSubject;
@@ -80,6 +92,9 @@ public class ElasticSearchClientTest {
 		testSubject = createTestSubject();
 		strIsLocal = "";
 		testSubject.setLocal(strIsLocal);
+		
+		strIsLocal = "true";
+		testSubject.setLocal(strIsLocal);
 	}
 
 	
@@ -106,7 +121,7 @@ public class ElasticSearchClientTest {
 
 		// test 2
 		testSubject = createTestSubject();
-		strIsTransportclient = "";
+		strIsTransportclient = "true";
 		testSubject.setTransportClient(strIsTransportclient);
 	}
 }
