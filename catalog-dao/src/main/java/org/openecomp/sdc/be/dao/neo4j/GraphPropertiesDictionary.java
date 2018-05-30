@@ -20,10 +20,6 @@
 
 package org.openecomp.sdc.be.dao.neo4j;
 
-import java.util.ArrayList;
-import java.util.List;
-
-
 public enum GraphPropertiesDictionary {
 //						field name					class type    				unique		indexed 
 //													stored in graph 			index	
@@ -153,10 +149,10 @@ public enum GraphPropertiesDictionary {
 
 
 
-	private String property;
-	private Class clazz;
-	private boolean unique;
-	private boolean indexed;
+	private final String property;
+	private final Class clazz;
+	private final boolean unique;
+	private final boolean indexed;
 	
 	
 	GraphPropertiesDictionary(String property,Class clazz, boolean unique,boolean indexed) {
@@ -171,44 +167,15 @@ public enum GraphPropertiesDictionary {
 		return property;
 	}
 
-	public void setProperty(String property) {
-		this.property = property;
-	}
-
 	public Class getClazz() {
 		return clazz;
-	}
-	public void setClazz(Class clazz) {
-		this.clazz = clazz;
 	}
 	
 	public boolean isUnique() {
 		return unique;
 	}
-	public void setUnique(boolean unique) {
-		this.unique = unique;
-	}
 
 	public boolean isIndexed() {
 		return indexed;
 	}
-
-
-	public void setIndexed(boolean indexed) {
-		this.indexed = indexed;
-	}
-
-
-	public static List<String> getAllProperties() {
-
-		List<String> arrayList = new ArrayList<String>();
-
-		for (GraphPropertiesDictionary graphProperty : GraphPropertiesDictionary
-				.values()) {
-			arrayList.add(graphProperty.getProperty());
-		}
-
-		return arrayList;
-	}
-
 }
