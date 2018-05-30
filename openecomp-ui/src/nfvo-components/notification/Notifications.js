@@ -17,7 +17,7 @@
 import React from 'react';
 import { Portal, Notification } from 'sdc-ui/lib/react/';
 import { connect } from 'react-redux';
-import { removeNotification } from './NotificationsConstants.js';
+import { notificationActions } from './NotificationsConstants.js';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 
 export const mapStateToProps = ({ popupNotifications = [] }) => {
@@ -29,7 +29,7 @@ export const mapStateToProps = ({ popupNotifications = [] }) => {
 const mapActionToProps = dispatch => {
     return {
         onClick: item => {
-            dispatch(removeNotification(item));
+            dispatch(notificationActions.removeNotification(item));
         }
     };
 };

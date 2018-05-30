@@ -34,10 +34,10 @@ export const ItemStatus = ({ data, onDataChanged, byVendorView }) => (
         value={data.itemStatus}
         onChange={e => onDataChanged({ itemStatus: e.target.value }, data)}>
         <option key={itemStatus.ACTIVE} value={itemStatus.ACTIVE}>
-            {i18n('Active Items')}
+            {i18n('ACTIVE ITEMS')}
         </option>
         <option key={itemStatus.ARCHIVED} value={itemStatus.ARCHIVED}>
-            {i18n('Archived Items')}
+            {i18n('ARCHIVED ITEMS')}
         </option>
     </Input>
 );

@@ -163,6 +163,26 @@ const currentScreen = (
             };
         }
 
+        case actionTypes.UPDATE_ITEM_ARCHIVE_STATUS: {
+            const itemPermission = {
+                ...state.itemPermission,
+                isArchived: action.isArchived
+            };
+            const isReadOnlyMode = checkReadOnly(itemPermission);
+            const props = {
+                ...state.props,
+                status: action.isArchived
+                    ? catalogItemStatuses.ARCHIVED
+                    : undefined,
+                isReadOnlyMode
+            };
+            return {
+                ...state,
+                itemPermission,
+                props
+            };
+        }
+
         default:
             return state;
     }
