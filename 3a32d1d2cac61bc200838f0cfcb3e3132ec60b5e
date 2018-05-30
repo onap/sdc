@@ -1,0 +1,119 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_1e8e2ed1",
+        "filename": "openecomp-ui/resources/scss/modules/_versionsPage.scss",
+        "patchSetId": 1
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 1921
+      },
+      "writtenOn": "2018-05-30T11:28:40Z",
+      "side": 1,
+      "message": "spelling mistake. please fix deprecate",
+      "range": {
+        "startLine": 66,
+        "startChar": 3,
+        "endLine": 66,
+        "endChar": 12
+      },
+      "revId": "3a32d1d2cac61bc200838f0cfcb3e3132ec60b5e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_beba9a6f",
+        "filename": "openecomp-ui/src/nfvo-utils/i18n/en.json",
+        "patchSetId": 1
+      },
+      "lineNbr": 369,
+      "author": {
+        "id": 1921
+      },
+      "writtenOn": "2018-05-30T11:28:40Z",
+      "side": 1,
+      "message": "weird capitalization. Either all upper case or just \"Item\".",
+      "range": {
+        "startLine": 369,
+        "startChar": 33,
+        "endLine": 369,
+        "endChar": 59
+      },
+      "revId": "3a32d1d2cac61bc200838f0cfcb3e3132ec60b5e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_debf665f",
+        "filename": "openecomp-ui/src/nfvo-utils/i18n/en.json",
+        "patchSetId": 1
+      },
+      "lineNbr": 370,
+      "author": {
+        "id": 1921
+      },
+      "writtenOn": "2018-05-30T11:28:40Z",
+      "side": 1,
+      "message": "same as above",
+      "range": {
+        "startLine": 370,
+        "startChar": 32,
+        "endLine": 370,
+        "endChar": 60
+      },
+      "revId": "3a32d1d2cac61bc200838f0cfcb3e3132ec60b5e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_7eb41282",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/OnboardingReducers.js",
+        "patchSetId": 1
+      },
+      "lineNbr": 176,
+      "author": {
+        "id": 1921
+      },
+      "writtenOn": "2018-05-30T11:28:40Z",
+      "side": 1,
+      "message": "why do you have both this and isArchived. it is advised to keep in the state the minimal data that you can infer from the rest. Also why undefined ? Is it related to what we discussed last week ?",
+      "range": {
+        "startLine": 174,
+        "startChar": 16,
+        "endLine": 176,
+        "endChar": 32
+      },
+      "revId": "3a32d1d2cac61bc200838f0cfcb3e3132ec60b5e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_3eae8a30",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/onboard/filter/FilterComponents.jsx",
+        "patchSetId": 1
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 1921
+      },
+      "writtenOn": "2018-05-30T11:28:40Z",
+      "side": 1,
+      "message": "any reason to change the text instead of using css style of uppercase?",
+      "range": {
+        "startLine": 37,
+        "startChar": 12,
+        "endLine": 37,
+        "endChar": 34
+      },
+      "revId": "3a32d1d2cac61bc200838f0cfcb3e3132ec60b5e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
