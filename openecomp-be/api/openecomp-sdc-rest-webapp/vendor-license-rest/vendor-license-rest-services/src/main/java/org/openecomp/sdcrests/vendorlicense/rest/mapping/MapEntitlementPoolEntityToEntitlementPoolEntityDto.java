@@ -45,5 +45,6 @@ public class MapEntitlementPoolEntityToEntitlementPoolEntityDto
 
     target.setStartDate(source.getStartDate());
     target.setExpiryDate(source.getExpiryDate());
+    target.setVersionUUID(source.getVersionUuId());
   }
 }

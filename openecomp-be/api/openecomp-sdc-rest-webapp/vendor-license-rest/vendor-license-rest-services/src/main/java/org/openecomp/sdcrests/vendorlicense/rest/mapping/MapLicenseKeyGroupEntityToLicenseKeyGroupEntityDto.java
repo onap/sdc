@@ -41,5 +41,6 @@ public class MapLicenseKeyGroupEntityToLicenseKeyGroupEntityDto
     target.setThresholdUnits(source.getThresholdUnits());
     target.setThresholdValue(source.getThresholdValue());
     target.setIncrements(source.getIncrements());
+    target.setVersionUUID(source.getVersionUuId());
   }
 }
