@@ -19,9 +19,7 @@ package org.openecomp.sdc.onboarding;
 import static org.openecomp.sdc.onboarding.Constants.JAVA_EXT;
 import static org.openecomp.sdc.onboarding.Constants.UNICORN;
 
-import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
@@ -35,6 +33,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -63,7 +62,7 @@ class BuildHelper {
         md.update(data.getBytes());
         byte[] hashBytes = md.digest();
 
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         for (byte hashByte : hashBytes) {
             buffer.append(Integer.toString((hashByte & 0xff) + 0x100, 16).substring(1));
         }
@@ -71,8 +70,8 @@ class BuildHelper {
     }
 
 
-    private static Map<String, String> readSources(File file, String fileType) throws IOException {
-        Map<String, String> source = new HashMap<>();
+    private static Map<String, List<String>> readSources(File file, String fileType) throws IOException {
+        Map<String, List<String>> source = new HashMap<>();
         if (file.exists()) {
             List<File> list = Files.walk(Paths.get(file.getAbsolutePath()))
                                    .filter(JAVA_EXT.equals(fileType) ? BuildHelper::isRegularJavaFile :
@@ -89,42 +88,35 @@ class BuildHelper {
         return file.isFile() && file.getName().endsWith(JAVA_EXT);
     }
 
-    private static String getData(File file, byte[] buffer) {
-        try (FileInputStream fis = new FileInputStream(file);
-             BufferedInputStream bis = new BufferedInputStream(fis, 64 * 1024)) {
-            bis.read(buffer, 0, ((int) file.length()));
-            if (file.getAbsolutePath().contains(File.separator + "generated-sources" + File.separator)) {
-                StringBuffer sb = new StringBuffer();
-                List<String> coll = Files.readAllLines(file.toPath());
-                for (String s : coll) {
-                    if (s != null && !s.trim().startsWith("/") && !s.trim().startsWith("*")) {
-                        sb.append(s);
-                    }
-                }
-                return sb.toString();
-            }
-        } catch (IOException ioe) {
-            throw new UncheckedIOException(ioe);
-        }
-        return new String(buffer, 0, ((int) file.length()));
-    }
+    private static class FileReadTask extends RecursiveTask<Map<String, List<String>>> {
 
-
-    private static class FileReadTask extends RecursiveTask<Map<String, String>> {
-
-        Map<String, String> store = new HashMap<>();
-        private byte[] buffer = new byte[1024 * 1024];
+        private Map<String, List<String>> store = new HashMap<>();
         File[] files;
         String pathPrefix;
-        private final int MAX_FILES = 10;
+        private static final int MAX_FILES = 10;
 
         FileReadTask(File[] files, String pathPrefix) {
             this.files = files;
             this.pathPrefix = pathPrefix;
         }
 
+        private static List<String> getData(File file) throws IOException {
+            List<String> coll = Files.readAllLines(file.toPath());
+            if (file.getAbsolutePath().contains(File.separator + "generated-sources" + File.separator)) {
+                Iterator<String> itr = coll.iterator();
+                while (itr.hasNext()) {
+                    String s = itr.next();
+                    if (s == null || s.trim().startsWith("/") || s.trim().startsWith("*")) {
+                        itr.remove();
+                    }
+                }
+            }
+            return coll;
+        }
+
+
         @Override
-        protected Map<String, String> compute() {
+        protected Map<String, List<String>> compute() {
             if (files.length > MAX_FILES) {
                 FileReadTask task1 = new FileReadTask(Arrays.copyOfRange(files, 0, files.length / 2), pathPrefix);
                 FileReadTask task2 =
@@ -135,7 +127,12 @@ class BuildHelper {
                 store.putAll(task2.join());
             } else {
                 for (File toRead : files) {
-                    store.put(toRead.getAbsolutePath().substring(pathPrefix.length()), getData(toRead, buffer));
+                    try {
+                        store.put(toRead.getAbsolutePath().substring(pathPrefix.length())
+                                        .replace(File.separatorChar, '.'), getData(toRead));
+                    } catch (IOException e) {
+                        throw new UncheckedIOException(e);
+                    }
                 }
             }
 
@@ -151,7 +148,7 @@ class BuildHelper {
             uri = new URI(repoPath + (project.getGroupId().replace('.', '/')) + '/' + project.getArtifactId() + '/'
                                   + project.getVersion());
         } catch (URISyntaxException e) {
-            throw new MojoFailureException(e.getMessage());
+            throw new MojoFailureException(e.getMessage(), e);
         }
         File f = new File(uri);
         File[] list = f.listFiles(t -> t.getName().equals(project.getArtifactId() + "-" + project.getVersion() + "."
