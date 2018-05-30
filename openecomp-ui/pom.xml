@@ -17,6 +17,7 @@
 
     <properties>
         <maven.war.plugin.version>3.0.0</maven.war.plugin.version>
+        <app.context.path>onboarding</app.context.path>
         <jest.command />
     </properties>
 
@@ -107,7 +108,7 @@
                         </goals>
                         <configuration>
                             <nodeVersion>v9.4.0</nodeVersion>
-                            <yarnVersion>v1.3.2</yarnVersion>
+                            <yarnVersion>v1.6.0</yarnVersion>
                         </configuration>
                     </execution>
 
@@ -131,7 +132,7 @@
                             <workingDirectory>${project.basedir}/../dox-sequence-diagram-ui
                             </workingDirectory>
                              <yarnInheritsProxyConfigFromMaven>false</yarnInheritsProxyConfigFromMaven>
-                            <arguments>run build</arguments>
+                            <arguments>build</arguments>
                         </configuration>
                     </execution>
 
@@ -146,13 +147,13 @@
                     </execution>
 
                     <execution>
-                        <id>yarn run build</id>
+                        <id>yarn build</id>
                         <goals>
                             <goal>yarn</goal>
                         </goals>
                         <configuration>
                             <yarnInheritsProxyConfigFromMaven>false</yarnInheritsProxyConfigFromMaven>
-                            <arguments>run build --version=${project.version}</arguments>
+                            <arguments>build --version=${project.version} --env.version=${project.version} --env.language=en</arguments>
                         </configuration>
                     </execution>
                     <execution>
@@ -162,33 +163,11 @@
                         </goals>
                         <configuration>
                             <yarnInheritsProxyConfigFromMaven>false</yarnInheritsProxyConfigFromMaven>
-                            <arguments>run test-build ${jest.command}</arguments>
+                            <arguments>test-build ${jest.command}</arguments>
+                            <skip>${skipTests}</skip>
                         </configuration>
                         <!-- for some reason does not fail on test phase -->
-                        <phase>install</phase>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <plugin>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>repack war</id>
-                        <phase>prepare-package</phase>
-                        <configuration>
-                            <tasks>
-                                <echo message="Building test environment"/>
-                                <unzip src="dist/onboarding.war" dest="${basedir}/target/dist">
-                                    <patternset>
-                                        <include name="**/*"/>
-                                    </patternset>
-                                </unzip>
-                            </tasks>
-                        </configuration>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
+                        <phase>test</phase>
                     </execution>
                 </executions>
             </plugin>
@@ -200,7 +179,29 @@
                 <configuration>
                     <webResources>
                         <resource>
-                            <directory>${basedir}/target/dist</directory>
+                            <directory>${basedir}/dist</directory>
+                            <includes>
+                                <include>*.html</include>
+                                <include>*.js</include>
+                            </includes>
+                        </resource>
+                        <resource>
+                            <directory>${basedir}/src</directory>
+                            <includes>
+                                <include>**/*.json</include>
+                            </includes>
+                        </resource>
+                        <resource>
+                            <directory>${basedir}/external-resources/healthcheck/</directory>
+                            <targetPath>v1.0</targetPath>
+                            <filtering>true</filtering>
+                            <includes>
+                                <include>healthcheck</include>
+                            </includes>
+                        </resource>
+                        <resource>
+                            <directory>${basedir}/webapp-onboarding</directory>
+                            <filtering>true</filtering>
                         </resource>
                     </webResources>
                 </configuration>

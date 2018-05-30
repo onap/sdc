@@ -16,3 +16,4 @@ coverage
 .storybook-dist
 .storybook/resources
 yarn-error.log
+stats.json
