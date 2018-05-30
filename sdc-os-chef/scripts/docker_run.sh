@@ -358,7 +358,7 @@ if [ ${LOCAL} = false ]; then
 fi
 docker run --name sdc-cs-onboard-init --env RELEASE="${RELEASE}" --env CS_HOST_IP=${IP}  --env SDC_USER="${SDC_USER}" --env SDC_PASSWORD="${SDC_PASSWORD}" --env CS_PASSWORD="${CS_PASSWORD}" --env ENVNAME="${DEP_ENV}" --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --ulimit nofile=4096:100000 $LOCAL_TIME_MOUNT_CMD --volume ${WORKSPACE}/data/CS:/var/lib/cassandra --volume ${WORKSPACE}/data/environments:/root/chef-solo/environments --volume ${WORKSPACE}/data/CS-Init:/root/chef-solo/cache ${PREFIX}/sdc-onboard-cassandra-init:${RELEASE}
 rc=$?
-docker_logs sdc-onboard-cs-init
+docker_logs sdc-cs-onboard-init
 if [[ $rc != 0 ]]; then exit $rc; fi
 }
 
