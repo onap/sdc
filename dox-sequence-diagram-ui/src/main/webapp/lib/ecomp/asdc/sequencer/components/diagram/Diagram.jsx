@@ -18,7 +18,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import _template from 'lodash/template';
 import _merge from 'lodash/merge';
-import * as d3 from 'd3';
+import { select, event as d3event } from 'd3-selection';
+import { zoom as d3zoom } from 'd3-zoom';
 
 import Common from '../../common/Common';
 import Logger from '../../common/Logger';
@@ -220,7 +221,7 @@ class Diagram extends React.Component {
         if (!this.svg) {
             const svgparams = _merge({}, this.options.svg);
             this.wrapper.innerHTML = this.templates.diagram(svgparams);
-            this.svg = d3.select(this.wrapper).select('svg');
+            this.svg = select(this.wrapper).select('svg');
         }
 
         if (this.state.height === 0) {
@@ -766,7 +767,7 @@ class Diagram extends React.Component {
             .on('mouseenter', function f() {
                 timer = setTimeout(() => {
                     self.application.selectLifeline(
-                        d3.select(this.parentNode).attr('data-id')
+                        select(this.parentNode).attr('data-id')
                     );
                 }, 150);
             })
@@ -775,7 +776,7 @@ class Diagram extends React.Component {
                 self.application.selectLifeline();
             })
             .on('click', function f() {
-                const id = d3.select(this.parentNode).attr('data-id');
+                const id = select(this.parentNode).attr('data-id');
                 window.postMessage({ source, id, type: 'lifeline' }, origin);
             });
 
@@ -784,7 +785,7 @@ class Diagram extends React.Component {
             .on('mouseenter', function f() {
                 timer = setTimeout(() => {
                     self.application.selectLifeline(
-                        d3.select(this.parentNode).attr('data-id')
+                        select(this.parentNode).attr('data-id')
                     );
                 }, 150);
             })
@@ -793,7 +794,7 @@ class Diagram extends React.Component {
                 self.application.selectLifeline();
             })
             .on('click', function f() {
-                const id = d3.select(this.parentNode).attr('data-id');
+                const id = select(this.parentNode).attr('data-id');
                 window.postMessage(
                     { source, id, type: 'lifelineHeader' },
                     origin
@@ -803,10 +804,10 @@ class Diagram extends React.Component {
         gCanvas
             .selectAll('.asdcs-diagram-message-selectable')
             .on('mouseenter', function f() {
-                self.events.message = { x: d3.event.pageX, y: d3.event.pageY };
+                self.events.message = { x: d3event.pageX, y: d3event.pageY };
                 timer = setTimeout(() => {
                     self.application.selectMessage(
-                        d3.select(this.parentNode).attr('data-id')
+                        select(this.parentNode).attr('data-id')
                     );
                 }, 200);
             })
@@ -816,7 +817,7 @@ class Diagram extends React.Component {
                 self.application.selectMessage();
             })
             .on('click', function f() {
-                const id = d3.select(this.parentNode).attr('data-id');
+                const id = select(this.parentNode).attr('data-id');
                 window.postMessage({ source, id, type: 'message' }, origin);
             });
     }
@@ -870,16 +871,16 @@ class Diagram extends React.Component {
     _initZoom(gContent, width, height) {
         const zoomed = function zoomed() {
             if (!this.initialTransformX && !this.initialTransformY) {
-                this.initialTransformX = d3.event.transform.x;
-                this.initialTransformY = d3.event.transform.y;
+                this.initialTransformX = d3event.transform.x;
+                this.initialTransformY = d3event.transform.y;
             }
 
             gContent.attr(
                 'transform',
-                `translate(${d3.event.transform.x -
-                    this.initialTransformX}, ${d3.event.transform.y -
-                    this.initialTransformY})scale(${d3.event.transform.k}, ${
-                    d3.event.transform.k
+                `translate(${d3event.transform.x -
+                    this.initialTransformX}, ${d3event.transform.y -
+                    this.initialTransformY})scale(${d3event.transform.k}, ${
+                    d3event.transform.k
                 })`
             );
         };
@@ -922,7 +923,7 @@ class Diagram extends React.Component {
             gContent.attr('transform', `scale(${scale})`);
         }
 
-        const zoom = d3.zoom().on('zoom', zoomed);
+        const zoom = d3zoom().on('zoom', zoomed);
 
         this.svg.call(zoom);
         this.svg.call(zoom.scaleBy, scale);
