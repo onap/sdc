@@ -1,9 +1,6 @@
 package org.openecomp.sdc.be.dao.utils;
 
-import org.apache.tinkerpop.gremlin.structure.T;
-import org.elasticsearch.common.recycler.Recycler.V;
 import org.junit.Test;
-
 
 public class MapEntryTest {
 
@@ -11,29 +8,45 @@ public class MapEntryTest {
 		return new MapEntry();
 	}
 
+	@Test
+	public void testCtor() throws Exception {
+		new MapEntry(new Object(), new Object());
+	}
 	
+	@Test
+	public void testGetKey() throws Exception {
+		MapEntry testSubject;
+		Object result;
 
+		// default test
+		testSubject = createTestSubject();
+		result = testSubject.getKey();
+	}
 
-
-	
 	@Test
 	public void testSetKey() throws Exception {
 		MapEntry testSubject;
-		T key = null;
+		Object key = null;
 
 		// default test
 		testSubject = createTestSubject();
 		testSubject.setKey(key);
 	}
 
-	
+	@Test
+	public void testGetValue() throws Exception {
+		MapEntry testSubject;
+		Object result;
 
+		// default test
+		testSubject = createTestSubject();
+		result = testSubject.getValue();
+	}
 
-	
 	@Test
 	public void testSetValue() throws Exception {
 		MapEntry testSubject;
-		V value = null;
+		Object value = null;
 
 		// default test
 		testSubject = createTestSubject();

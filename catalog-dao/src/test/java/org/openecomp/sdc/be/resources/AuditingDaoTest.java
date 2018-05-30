@@ -39,13 +39,10 @@ import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mockito;
 import org.openecomp.sdc.be.config.Configuration;
 import org.openecomp.sdc.be.config.Configuration.ElasticSearchConfig.IndicesTimeFrequencyEntry;
-import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.es.ElasticSearchClient;
 import org.openecomp.sdc.be.dao.impl.AuditingDao;
@@ -55,12 +52,10 @@ import org.openecomp.sdc.be.resources.data.auditing.DistributionStatusEvent;
 import org.openecomp.sdc.be.resources.data.auditing.ResourceAdminEvent;
 import org.openecomp.sdc.be.resources.data.auditing.UserAccessEvent;
 import org.openecomp.sdc.be.resources.data.auditing.UserAdminEvent;
-import org.openecomp.sdc.common.api.ConfigurationSource;
+import org.openecomp.sdc.be.utils.DAOConfDependentTest;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.datastructure.AuditingFieldsKeysEnum;
 import org.openecomp.sdc.common.datastructure.ESTimeBasedEvent;
-import org.openecomp.sdc.common.impl.ExternalConfiguration;
-import org.openecomp.sdc.common.impl.FSConfigurationSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.test.context.ContextConfiguration;
@@ -76,27 +71,13 @@ import fj.data.Either;
 @ContextConfiguration("classpath:application-context-test.xml")
 @TestExecutionListeners(listeners = { DependencyInjectionTestExecutionListener.class,
 		DirtiesContextTestExecutionListener.class, TransactionalTestExecutionListener.class })
-public class AuditingDaoTest {
+public class AuditingDaoTest extends DAOConfDependentTest{
 	private static Logger log = LoggerFactory.getLogger(AuditingDaoTest.class.getName());
 	@Resource(name = "elasticsearch-client")
 	private ElasticSearchClient esclient;
 
 	@Resource(name = "auditingDao")
 	private AuditingDao auditingDao;
-
-	private static ConfigurationManager configurationManager;
-	// private static Map<AuditingFieldsKeysEnum, String> auditField2esField;
-
-	@BeforeClass
-	public static void setupBeforeClass() {
-
-		ExternalConfiguration.setAppName("catalog-dao");
-		String appConfigDir = "src/test/resources/config/catalog-dao";
-		ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(),
-				appConfigDir);
-		configurationManager = new ConfigurationManager(configurationSource);
-		// initAudit2EsMap();
-	}
 
 	@After
 	public void tearDown() {
