@@ -26,6 +26,7 @@ import java.util.Set;
 public class LicenseKeyGroupEntityDto extends LicenseKeyGroupRequestDto {
   private String id;
   private Set<String> referencingFeatureGroups;
+  private String versionUuId;
 
   public String getId() {
     return id;
@@ -41,5 +42,13 @@ public class LicenseKeyGroupEntityDto extends LicenseKeyGroupRequestDto {
 
   public void setReferencingFeatureGroups(Set<String> referencingFeatureGroups) {
     this.referencingFeatureGroups = referencingFeatureGroups;
+  }
+
+  public String getVersionUuId() {
+    return versionUuId;
+  }
+
+  public void setVersionUuId(String versionUuId) {
+    this.versionUuId = versionUuId;
   }
 }

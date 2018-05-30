@@ -29,6 +29,7 @@ import java.util.Set;
 public class EntitlementPoolEntityDto extends EntitlementPoolRequestDto {
   private String id;
   private Set<String> referencingFeatureGroups;
+  private String versionUuId;
 
   public String getId() {
     return id;
@@ -44,5 +45,13 @@ public class EntitlementPoolEntityDto extends EntitlementPoolRequestDto {
 
   public void setReferencingFeatureGroups(Set<String> referencingFeatureGroups) {
     this.referencingFeatureGroups = referencingFeatureGroups;
+  }
+
+  public String getVersionUuId() {
+    return versionUuId;
+  }
+
+  public void setVersionUuId(String versionUuId) {
+    this.versionUuId = versionUuId;
   }
 }
