@@ -29,7 +29,11 @@ import com.google.gson.Gson;
  *         Utility class for convertation to/from JSON string
  */
 public class DaoUtils {
-
+	
+	private DaoUtils() {
+		
+	}
+	
 	/**
 	 * Convert from Object to Json string
 	 * 
@@ -52,6 +56,10 @@ public class DaoUtils {
 	 * @return object
 	 */
 	public static <T> T convertFromJson(Class<T> clazz, String json) {
+		if (clazz == null) {
+			throw new RuntimeException("The Class cannot be NULL!!!");
+		}
+		
 		Gson gson = new Gson(); // Or use new GsonBuilder().create();
 		return gson.fromJson(json, clazz); // deserializes json into target2
 	}

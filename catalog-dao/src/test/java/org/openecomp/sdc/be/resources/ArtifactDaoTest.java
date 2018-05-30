@@ -52,16 +52,11 @@ import fj.data.Either;
 @TestExecutionListeners(listeners = { DependencyInjectionTestExecutionListener.class,
 		DirtiesContextTestExecutionListener.class, TransactionalTestExecutionListener.class }) // ,
 																								// CassandraUnitTestExecutionListener.class})
-// @EmbeddedCassandra(host ="localhost", port=9042)
 public class ArtifactDaoTest extends DAOConfDependentTest {
 	private static final String TEST_IMAGES_DIRECTORY = "src/test/resources/images";
 
 	@Resource
 	ElasticSearchClient esclient;
-
-	/*
-	 * @Resource(name = "artifact-dao") private IArtifactDAO artifactDAO;
-	 */
 
 	@Resource(name = "resource-upload")
 	private IResourceUploader daoUploader;
@@ -73,32 +68,6 @@ public class ArtifactDaoTest extends DAOConfDependentTest {
 	private String nodeTypeVersion = "1.0.0";
 
 	private static ConfigurationManager configurationManager;
-
-	@Before
-	public void before() {
-		// try {
-		// clearIndex(ICatalogDAO.RESOURCES_INDEX, ArtifactData.class);
-		// clearIndex(ICatalogDAO.RESOURCES_INDEX, ServiceArtifactData.class);
-		// } catch (InterruptedException e) {
-		// e.printStackTrace();
-		// }
-
-	}
-
-	/*@BeforeClass
-	public static void setupBeforeClass() {
-		ExternalConfiguration.setAppName("catalog-dao");
-		String appConfigDir = "src/test/resources/config/catalog-dao";
-		ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(),
-				appConfigDir);
-		configurationManager = new ConfigurationManager(configurationSource);
-	}*/
-
-	// @Before
-	// public void createSchema(){
-	// SdcSchemaBuilder.createSchema();
-	// }
-	//
 
 	@Test
 	public void testSaveNewArtifact() {
