@@ -72,7 +72,9 @@ public class GraphRelation extends GraphElement {
 	}
 
 	public void addPropertis(Map<String, Object> props) {
-		properties.putAll(props);
+		if(props != null) {
+			properties.putAll(props);
+		}
 	}
 
 	public void overwritePropertis(Map<String, Object> props) {
