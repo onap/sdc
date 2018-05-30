@@ -48,10 +48,12 @@
           "properties": {
               "bootDiskSizePerVM": {
                 "type": "number",
+                "minimum": 0,
                 "maximum": 100
               },
              "ephemeralDiskSizePerVM": {
                "type": "number",
+               "minimum": 0,
                "maximum": 400
               }
            },
@@ -104,10 +106,10 @@
             "maximum": {
               "type": "number",
             "minimum": <#if (componentQuestionnaireData.compute.numOfVMs.minimum)??
-            && (componentQuestionnaireData.compute.numOfVMs.minimum)?is_number
-            && ((componentQuestionnaireData.compute.numOfVMs.minimum) > 0
-            && (componentQuestionnaireData.compute.numOfVMs.minimum) <= 100)>
-            ${componentQuestionnaireData.compute.numOfVMs.minimum}<#else>
+&& (componentQuestionnaireData.compute.numOfVMs.minimum)?is_number
+&& ((componentQuestionnaireData.compute.numOfVMs.minimum) > 0
+&& (componentQuestionnaireData.compute.numOfVMs.minimum) <= 100)>
+    ${componentQuestionnaireData.compute.numOfVMs.minimum}<#else>
             0</#if> ,
               "exclusiveMinimum": true,
               "maximum": 100
@@ -198,7 +200,8 @@
               "default": ""
             },
             "networkTransactionsPerSecond": {
-              "type": "number"
+              "type": "number",
+              "minimum": 0
             }
           },
           "additionalProperties": false
@@ -221,7 +224,8 @@
               "default": "On Site"
             },
             "backupStorageSize": {
-              "type": "number"
+              "type": "number",
+              "minimum": 0
             },
             "backupSolution": {
               "type": "string"
@@ -253,17 +257,20 @@
           "type": "object",
           "properties": {
             "sizeOfLogFiles": {
-              "type": "number",
+              "type": "integer",
+              "minimum": 0,
               "maximum": 5,
               "exclusiveMaximum": true
             },
             "logBackupFrequency": {
-              "type": "number",
+              "type": "integer",
+              "minimum": 0,
               "maximum": 4,
               "exclusiveMaximum": true
             },
             "logRetentionPeriod": {
-              "type": "number",
+              "type": "integer",
+              "minimum": 0,
               "maximum": 15,
               "exclusiveMaximum": true
             },
