@@ -66,6 +66,7 @@ import org.openecomp.sdc.versioning.dao.types.Version;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -85,7 +86,8 @@ public class CompositionEntityDataManagerImpl implements CompositionEntityDataMa
   private static final Logger logger =
       LoggerFactory.getLogger(CompositionEntityDataManagerImpl.class);
   private Map<CompositionEntityId, CompositionEntityData> entities = new HashMap<>();
-  private Map<CompositionEntityType, String> nonDynamicSchemas = new HashMap<>();
+  private Map<CompositionEntityType, String> nonDynamicSchemas =
+      new EnumMap<>(CompositionEntityType.class);
   private List<CompositionEntityValidationData> roots = new ArrayList<>();
 
   private VendorSoftwareProductInfoDao vspInfoDao;
@@ -175,10 +177,10 @@ public class CompositionEntityDataManagerImpl implements CompositionEntityDataMa
   @Override
   public Map<CompositionEntityId, Collection<String>> validateEntitiesQuestionnaire() {
     Map<CompositionEntityId, Collection<String>> errorsByEntityId = new HashMap<>();
-    entities.entrySet().forEach(entry -> {
-      Collection<String> errors = validateQuestionnaire(entry.getValue());
+    entities.forEach((key, value) -> {
+      Collection<String> errors = validateQuestionnaire(value);
       if (errors != null) {
-        errorsByEntityId.put(entry.getKey(), errors);
+        errorsByEntityId.put(key, errors);
       }
     });
     return errorsByEntityId;
@@ -191,9 +193,8 @@ public class CompositionEntityDataManagerImpl implements CompositionEntityDataMa
   public void buildTrees() {
     Map<CompositionEntityId, CompositionEntityValidationData> entitiesValidationData =
         new HashMap<>();
-    entities.entrySet().forEach(
-        entry -> addValidationDataEntity(entitiesValidationData, entry.getKey(),
-            entry.getValue().entity));
+    entities.forEach((key, value) -> addValidationDataEntity(entitiesValidationData, key,
+        value.entity));
   }
 
   public Collection<CompositionEntityValidationData> getTrees() {
@@ -225,7 +226,7 @@ public class CompositionEntityDataManagerImpl implements CompositionEntityDataMa
       return entitiesWithErrors;
     }
 
-    return null;
+    return new HashSet<>();
   }
 
   private boolean isThereErrorsInSubTree(CompositionEntityValidationData entity) {
@@ -445,6 +446,10 @@ public class CompositionEntityDataManagerImpl implements CompositionEntityDataMa
         Image image = JsonUtil.json2Object(compositionData, Image.class);
         return image.getFileName();
 
+      case compute:
+        ComputeData compute = JsonUtil.json2Object(compositionData, ComputeData.class);
+        return compute.getName();
+
       case vsp:
         CompositionEntityData vspEntity = getCompositionEntityDataById(entity);
         if (Objects.isNull(vspEntity)) {
@@ -455,9 +460,9 @@ public class CompositionEntityDataManagerImpl implements CompositionEntityDataMa
             vspInfoDao.get(new VspDetails(vspQuestionnaireEntity.getId(),
                 vspQuestionnaireEntity.getVersion()));
         return vspDetails.getName();
+      default:
+        return null;
     }
-
-    return null;
   }
 
   private void removeNodesWithoutErrors(CompositionEntityValidationData node,
