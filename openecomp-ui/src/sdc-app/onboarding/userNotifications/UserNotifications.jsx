@@ -20,7 +20,7 @@ import ReactDOM from 'react-dom';
 import classnames from 'classnames';
 import i18n from 'nfvo-utils/i18n/i18n.js';
 import { notificationType } from './UserNotificationsConstants.js';
-import ShowMore from 'react-show-more';
+import ShowMore from 'react-show-more-text';
 
 const Notification = ({
     notification,

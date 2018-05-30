@@ -4,7 +4,7 @@
 
 <Configure id="onBoardWebapp" class="org.eclipse.jetty.webapp.WebAppContext">
 
-  <Set name="contextPath">/onboarding</Set>
+  <Set name="contextPath">/${app.context.path}</Set>
   <Set name="war"><Property name="jetty.webapps" default="."/>/onboarding-fe.war</Set>
 
   <!-- Enable WebSocket container -->

@@ -15,12 +15,9 @@
    version="1.1"
    inkscape:version="0.48.5 r10040"
    sodipodi:docname="occurrence-end.svg">
-  <g
-     inkscape:label="Layer 1"
-     inkscape:groupmode="layer"
-     id="layer1">
+
     <path
        d="M 100 100 L 100 900 L 475 900 L 475 100 L 100 100 z M 525 100 L 525 500 L 900 500 L 900 100 L 525 100 z "
        id="rect2984" />
-  </g>
+
 </svg>
