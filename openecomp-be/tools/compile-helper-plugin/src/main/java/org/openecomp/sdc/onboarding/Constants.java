@@ -1,26 +1,43 @@
+/*
+ * Copyright © 2018 European Support Limited
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on a "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.openecomp.sdc.onboarding;
 
 public class Constants {
 
-    private Constants() {
-    }
 
+    public static final String UNICORN = "unicorn";
+    public static final String EMPTY_STRING = "";
+    public static final String PREFIX = System.getProperties().contains(UNICORN) ? EMPTY_STRING : UNICORN;
+    ;
     public static final String JACOCO_SKIP = "jacoco.skip";
     public static final String FORK_COUNT = "fork.count";
     public static final String FORK_MODE = "fork.mode";
     public static final String SKIP_PMD = "skipPMD";
     public static final String JAVA_EXT = ".java";
     public static final String ANY_EXT = "*";
-    public static final String SKIP_TEST_RUN = "skipTestRun";
+    public static final String SKIP_TEST_RUN = PREFIX + "skipTestRun";
     public static final String SKIP_TESTS = "skipTests";
     public static final String MAIN = "main";
     public static final String TEST = "test";
     public static final String RESOURCES_CHANGED = "resourcesChanged";
-    public static final String UNICORN = "unicorn";
     public static final String ANSI_YELLOW = "\u001B[43m";
     public static final String ANSI_COLOR_RESET = "\u001B[0m";
-    public static final String SKIP_MAIN_SOURCE_COMPILE = "skipMainSourceCompile";
-    public static final String SKIP_TEST_SOURCE_COMPILE = "skipTestSourceCompile";
+    public static final String SKIP_MAIN_SOURCE_COMPILE = PREFIX + "skipMainSourceCompile";
+    public static final String SKIP_TEST_SOURCE_COMPILE = PREFIX + "skipTestSourceCompile";
     public static final String MAIN_CHECKSUM = "mainChecksum";
     public static final String TEST_CHECKSUM = "testChecksum";
     public static final String RESOURCE_CHECKSUM = "resourceChecksum";
@@ -42,4 +59,10 @@ public class Constants {
     public static final String RESOURCE_WITH_TEST_ONLY = "resourceWithTestOnly";
     public static final String INSTRUMENT_ONLY = "instrumentOnly";
     public static final String TEST_ONLY = "testOnly";
+    public static final String SKIP_RESOURCE_COLLECTION = PREFIX + "skipResourceCollection";
+    public static final String SKIP_INSTALL = PREFIX + "skipInstall";
+
+
+    private Constants() {
+    }
 }

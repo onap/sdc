@@ -21,6 +21,7 @@ import static org.openecomp.sdc.onboarding.Constants.FORK_MODE;
 import static org.openecomp.sdc.onboarding.Constants.JACOCO_SKIP;
 import static org.openecomp.sdc.onboarding.Constants.SKIP_PMD;
 import static org.openecomp.sdc.onboarding.Constants.UNICORN;
+import static org.openecomp.sdc.onboarding.Constants.PREFIX;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -42,12 +43,15 @@ public class InitializationHelperMojo extends AbstractMojo {
     @Parameter
     private String excludePackaging;
 
+    @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
-
+        if (PREFIX == UNICORN) {
+            System.getProperties().setProperty(UNICORN, Boolean.TRUE.toString());
+        }
         if (project.getPackaging().equals(excludePackaging)) {
             return;
         }
-        project.getProperties().setProperty("skipGet", "false");
+        project.getProperties().setProperty("skipGet", Boolean.FALSE.toString());
         if (System.getProperties().containsKey(JACOCO_SKIP) && Boolean.FALSE.equals(Boolean.valueOf(
                 System.getProperties().getProperty(JACOCO_SKIP)))) {
             project.getProperties().setProperty(FORK_COUNT, "1");
@@ -62,8 +66,8 @@ public class InitializationHelperMojo extends AbstractMojo {
         if (System.getProperties().containsKey(UNICORN)) {
             buildState.init();
         } else {
-            project.getProperties().setProperty("skipMainSourceCompile", "false");
-            project.getProperties().setProperty("skipTestSourceCompile", "false");
+            project.getProperties().setProperty("skipMainSourceCompile", Boolean.FALSE.toString());
+            project.getProperties().setProperty("skipTestSourceCompile", Boolean.FALSE.toString());
         }
 
     }
