@@ -6,11 +6,12 @@ import java.util.Map;
 
 import org.apache.tinkerpop.gremlin.structure.Edge;
 import org.apache.tinkerpop.gremlin.structure.Element;
+import org.apache.tinkerpop.gremlin.structure.Property;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.openecomp.sdc.be.config.ConfigurationManager;
+import org.mockito.Mockito;
 import org.openecomp.sdc.be.dao.DAOTitanStrategy;
 import org.openecomp.sdc.be.dao.jsongraph.types.EdgeLabelEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.EdgePropertyEnum;
@@ -19,9 +20,7 @@ import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
 import org.openecomp.sdc.be.dao.titan.TitanGraphClient;
 import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
 import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
-import org.openecomp.sdc.common.api.ConfigurationSource;
-import org.openecomp.sdc.common.impl.ExternalConfiguration;
-import org.openecomp.sdc.common.impl.FSConfigurationSource;
+import org.openecomp.sdc.be.utils.DAOConfDependentTest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,17 +28,11 @@ import com.thinkaurelius.titan.core.TitanGraph;
 
 import fj.data.Either;
 
-public class TitanDaoTest {
+public class TitanDaoTest extends DAOConfDependentTest{
 	
 	
 	private static Logger logger = LoggerFactory.getLogger(TitanDaoTest.class);
 	private TitanDao dao = new TitanDao(new TitanGraphClient(new DAOTitanStrategy()));
-	
-	static {
-		String appConfigDir = "src/test/resources/config/catalog-dao";
-	    ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(), appConfigDir);
-		ConfigurationManager configurationManager = new ConfigurationManager(configurationSource);
-	}
 	
 	@Before
 	public void init(){
@@ -51,6 +44,25 @@ public class TitanDaoTest {
 		dao.titanClient.cleanupGraph();
 	}
 
+	@Test
+	public void testCreateVertex() throws Exception {
+		Either<GraphVertex, TitanOperationStatus> result;
+
+		// default test
+		GraphVertex graphVertex = new GraphVertex(VertexTypeEnum.REQUIREMENTS);
+		result = dao.createVertex(graphVertex);
+		
+		graphVertex = new GraphVertex();
+		result = dao.createVertex(graphVertex);
+	}
+	
+	@Test
+	public void testGetVertexByLabel() throws Exception {
+		Either<GraphVertex, TitanOperationStatus> result;
+
+		// default test
+		result = dao.getVertexByLabel(VertexTypeEnum.ADDITIONAL_INFORMATION);
+	}
 	
 	@Test
 	public void testCommit() throws Exception {
@@ -72,7 +84,6 @@ public class TitanDaoTest {
 		result = dao.rollback();
 	}
 
-	
 	@Test
 	public void testGetGraph() throws Exception {
 		
@@ -83,10 +94,6 @@ public class TitanDaoTest {
 		result = dao.getGraph();
 	}
 
-	
-	
-
-	
 	@Test
 	public void testGetVertexByPropertyAndLabel() throws Exception {
 		
@@ -98,13 +105,10 @@ public class TitanDaoTest {
 		// default test
 		
 		result = dao.getVertexByPropertyAndLabel(name, value, label);
+		
+		result = dao.getVertexByPropertyAndLabel(GraphPropertyEnum.COMPONENT_TYPE, new Object(), VertexTypeEnum.ADDITIONAL_INFORMATION);
 	}
 
-
-	
-
-
-	
 	@Test
 	public void testGetVertexByPropertyAndLabel_1() throws Exception {
 		
@@ -131,7 +135,6 @@ public class TitanDaoTest {
 		result = dao.getVertexById(id);
 	}
 
-	
 	@Test
 	public void testGetVertexById_1() throws Exception {
 		
@@ -150,19 +153,6 @@ public class TitanDaoTest {
 		result = dao.getVertexById(id, parseFlag);
 	}
 
-	
-
-	
-
-
-	
-
-
-	
-
-	
-	
-	
 	@Test
 	public void testGetVertexProperties() throws Exception {
 		
@@ -188,10 +178,6 @@ public class TitanDaoTest {
 		result = dao.getEdgeProperties(element);
 	}
 
-	
-
-
-	
 	@Test
 	public void testGetByCriteria() throws Exception {
 		
@@ -204,7 +190,6 @@ public class TitanDaoTest {
 		result = dao.getByCriteria(type, props);
 	}
 
-	
 	@Test
 	public void testGetByCriteria_1() throws Exception {
 		
@@ -233,7 +218,6 @@ public class TitanDaoTest {
 		result = dao.getByCriteria(type, props, hasNotProps, parseFlag);
 	}
 
-	
 	@Test
 	public void testGetCatalogVerticies() throws Exception {
 		
@@ -243,21 +227,6 @@ public class TitanDaoTest {
 		
 		result = dao.getCatalogVerticies();
 	}
-
-
-	
-
-	
-
-	
-
-	
-
-
-	
-
-	
-
 	
 	@Test
 	public void testGetParentVertecies_1() throws Exception {
@@ -272,9 +241,6 @@ public class TitanDaoTest {
 		result = dao.getParentVertecies(parentVertex, edgeLabel, parseFlag);
 	}
 
-
-
-	
 	@Test
 	public void testGetChildrenVertecies_1() throws Exception {
 		
@@ -288,34 +254,6 @@ public class TitanDaoTest {
 		result = dao.getChildrenVertecies(parentVertex, edgeLabel, parseFlag);
 	}
 
-
-
-	
-	
-
-	
-	
-
-	
-
-	
-
-
-	
-	
-
-	
-
-	
-
-	
-	
-	
-
-
-	
-
-	
 	@Test
 	public void testUpdateVertexMetadataPropertiesWithJson() throws Exception {
 		
@@ -328,26 +266,38 @@ public class TitanDaoTest {
 		result = dao.updateVertexMetadataPropertiesWithJson(vertex, properties);
 	}
 
-	
-
-
-
+	@Test
+	public void testGetProperty() throws Exception {
+		Edge edge = Mockito.mock(Edge.class);;
+		Object result;
+		
+		Property<Object> value = Mockito.mock(Property.class);
+		Mockito.when(edge.property(Mockito.any())).thenReturn(value);
+		
+		// default test
+		result = dao.getProperty(edge, EdgePropertyEnum.STATE);
+	}
 	
 	@Test
 	public void testGetProperty_1() throws Exception {
-		
-		Edge edge = null;
-		EdgePropertyEnum key = null;
+		Edge edge = Mockito.mock(Edge.class);;
 		Object result;
 
 		// default test
-		
-		result = dao.getProperty(edge, key);
+		result = dao.getProperty(edge, EdgePropertyEnum.STATE);
 	}
 
-	
-
-
+	@Test
+	public void testGetPropertyexception() throws Exception {
+		Edge edge = Mockito.mock(Edge.class);;
+		Object result;
+		
+		Property<Object> value = Mockito.mock(Property.class);
+		Mockito.when(edge.property(Mockito.any())).thenThrow(RuntimeException.class);
+		
+		// default test
+		result = dao.getProperty(edge, EdgePropertyEnum.STATE);
+	}
 	
 	@Test
 	public void testGetBelongingEdgeByCriteria_1() throws Exception {
