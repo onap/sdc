@@ -29,7 +29,6 @@ import javax.annotation.Resource;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexResponse;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openecomp.sdc.be.config.ConfigurationManager;
@@ -38,9 +37,7 @@ import org.openecomp.sdc.be.dao.api.ResourceUploadStatus;
 import org.openecomp.sdc.be.dao.es.ElasticSearchClient;
 import org.openecomp.sdc.be.resources.api.IResourceUploader;
 import org.openecomp.sdc.be.resources.data.ESArtifactData;
-import org.openecomp.sdc.common.api.ConfigurationSource;
-import org.openecomp.sdc.common.impl.ExternalConfiguration;
-import org.openecomp.sdc.common.impl.FSConfigurationSource;
+import org.openecomp.sdc.be.utils.DAOConfDependentTest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -56,7 +53,7 @@ import fj.data.Either;
 		DirtiesContextTestExecutionListener.class, TransactionalTestExecutionListener.class }) // ,
 																								// CassandraUnitTestExecutionListener.class})
 // @EmbeddedCassandra(host ="localhost", port=9042)
-public class ArtifactDaoTest {
+public class ArtifactDaoTest extends DAOConfDependentTest {
 	private static final String TEST_IMAGES_DIRECTORY = "src/test/resources/images";
 
 	@Resource
@@ -73,22 +70,7 @@ public class ArtifactDaoTest {
 	@Resource(name = "resource-dao")
 	private IGenericSearchDAO resourceDAO;
 
-	private String nodeType = "NodeType1";
 	private String nodeTypeVersion = "1.0.0";
-
-	private String nodeType2 = "NodeType2";
-	private String nodeTypeVersion2 = "1.0.1";
-
-	private String nodeType3 = "NodeType3";
-	private String nodeNypeVersion3 = "1.1.1";
-
-	private String topologyId = "topology";
-	private String topologyTemplateName = "topologyTemplate";
-	private String topologyTemplateVersion = "1.1.1";
-
-	private String nodeTypeTemplate1 = "NodeTypeTemplate1";
-	private String nodeTypeTemplate2 = "NodeTypeTemplate2";
-	private String nodeTypeTemplate3 = "NodeTypeTemplate3";
 
 	private static ConfigurationManager configurationManager;
 
@@ -103,14 +85,14 @@ public class ArtifactDaoTest {
 
 	}
 
-	@BeforeClass
+	/*@BeforeClass
 	public static void setupBeforeClass() {
 		ExternalConfiguration.setAppName("catalog-dao");
 		String appConfigDir = "src/test/resources/config/catalog-dao";
 		ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(),
 				appConfigDir);
 		configurationManager = new ConfigurationManager(configurationSource);
-	}
+	}*/
 
 	// @Before
 	// public void createSchema(){
