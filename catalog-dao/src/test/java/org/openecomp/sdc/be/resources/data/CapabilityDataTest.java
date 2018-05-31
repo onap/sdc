@@ -1,5 +1,6 @@
 package org.openecomp.sdc.be.resources.data;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -11,7 +12,11 @@ public class CapabilityDataTest {
 	private CapabilityData createTestSubject() {
 		return new CapabilityData();
 	}
-
+	
+	@Test
+	public void testCtor() throws Exception {
+		new CapabilityData(new HashMap<>());
+	}
 	
 	@Test
 	public void testGetUniqueId() throws Exception {

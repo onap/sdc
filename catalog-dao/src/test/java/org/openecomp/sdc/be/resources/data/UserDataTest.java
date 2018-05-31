@@ -1,5 +1,6 @@
 package org.openecomp.sdc.be.resources.data;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.Assert;
@@ -9,9 +10,14 @@ import org.junit.Test;
 public class UserDataTest {
 
 	private UserData createTestSubject() {
-		return new UserData("", "", "", "", "", "", null);
+		return new UserData();
 	}
 
+	@Test
+	public void testCtor() throws Exception {
+		new UserData(new HashMap<>());
+		new UserData("mock", "mock", "mock", "mock", "mock", "mock", 0L);
+	}
 	
 	@Test
 	public void testGetFirstName() throws Exception {
@@ -187,6 +193,15 @@ public class UserDataTest {
 		testSubject = createTestSubject();
 		obj = null;
 		result = testSubject.equals(obj);
+		Assert.assertEquals(false, result);
+		
+		result = testSubject.equals(createTestSubject());
+		Assert.assertEquals(true, result);
+		
+		result = testSubject.equals(testSubject);
+		Assert.assertEquals(true, result);
+		
+		result = testSubject.equals(new Object());
 		Assert.assertEquals(false, result);
 	}
 

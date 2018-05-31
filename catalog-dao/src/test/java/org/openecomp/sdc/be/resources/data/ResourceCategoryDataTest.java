@@ -1,5 +1,6 @@
 package org.openecomp.sdc.be.resources.data;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.Test;
@@ -11,6 +12,11 @@ public class ResourceCategoryDataTest {
 		return new ResourceCategoryData();
 	}
 
+	@Test
+	public void testCtor() throws Exception {
+		new ResourceCategoryData(new HashMap<>());
+		new ResourceCategoryData("mock", "mock");
+	}
 	
 	@Test
 	public void testGetCategoryName() throws Exception {

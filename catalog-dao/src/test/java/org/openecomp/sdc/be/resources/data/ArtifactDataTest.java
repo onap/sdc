@@ -1,5 +1,6 @@
 package org.openecomp.sdc.be.resources.data;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.Test;
@@ -12,6 +13,11 @@ public class ArtifactDataTest {
 		return new ArtifactData();
 	}
 
+	@Test
+	public void testCtor() throws Exception {
+		new ArtifactData(new ArtifactDataDefinition());
+		new ArtifactData(new HashMap<>());
+	}
 	
 	@Test
 	public void testGetArtifactDataDefinition() throws Exception {
