@@ -4,10 +4,28 @@
 Release Notes
 =============
 
+Version: 1.2.0
+==============
+
+:Release Date: 2018-06-07
+
+Security Notes
+--------------
+
+SDC code has been formally scanned during build time using NexusIQ and all Critical vulnerabilities have been addressed, items that remain open have been assessed for risk and determined to be false positive. The SDC open Critical security vulnerabilities and their risk assessment have been documented as part of the `project <https://wiki.onap.org/pages/viewpage.action?pageId=28377537>`_.
+
+Quick Links:
+ 	- `SDC project page <https://wiki.onap.org/pages/viewpage.action?pageId=6592847>`_
+
+ 	- `Passing Badge information for SDC <https://bestpractices.coreinfrastructure.org/en/projects/1629>`_
+
+ 	- `Project Vulnerability Review Table for SDC <https://wiki.onap.org/pages/viewpage.action?pageId=28377537>`_
+
+
 Version: 1.1.0
 ==============
 
-:Release Date: 2017-11-15
+:Release Date: 2017-11-16
 
 
 
