@@ -1,8 +1,10 @@
 package org.openecomp.sdc.be.resources.data;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.Test;
+import org.openecomp.sdc.be.datatypes.elements.ProductMetadataDataDefinition;
 
 
 public class ProductMetadataDataTest {
@@ -11,6 +13,11 @@ public class ProductMetadataDataTest {
 		return new ProductMetadataData();
 	}
 
+	@Test
+	public void testCtor() throws Exception {
+		new ProductMetadataData(new ProductMetadataDataDefinition());
+		new ProductMetadataData(new HashMap<>());
+	}
 	
 	@Test
 	public void testGetUniqueIdKey() throws Exception {

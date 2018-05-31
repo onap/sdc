@@ -1,5 +1,6 @@
 package org.openecomp.sdc.be.resources.data;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.Test;
@@ -8,9 +9,14 @@ import org.junit.Test;
 public class UserFunctionalMenuDataTest {
 
 	private UserFunctionalMenuData createTestSubject() {
-		return new UserFunctionalMenuData("", "");
+		return new UserFunctionalMenuData();
 	}
 
+	@Test
+	public void testCtor() throws Exception {
+		new UserFunctionalMenuData(new HashMap<>());
+		new UserFunctionalMenuData("mock", "mock");
+	}
 	
 	@Test
 	public void testGetFunctionalMenu() throws Exception {

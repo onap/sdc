@@ -1,5 +1,6 @@
 package org.openecomp.sdc.be.resources.data;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.Test;
@@ -12,6 +13,13 @@ public class OperationDataTest {
 		return new OperationData();
 	}
 
+	@Test
+	public void testCtor() throws Exception {
+		new OperationData(new HashMap<>());
+		new OperationData(new OperationData());
+		new OperationData(new OperationDataDefinition());
+		
+	}
 	
 	@Test
 	public void testGetOperationDataDefinition() throws Exception {
