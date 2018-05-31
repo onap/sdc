@@ -1,0 +1,107 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_152a88e7",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/datatypes/heattotosca/TranslationContext.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-05-31T11:14:34Z",
+      "side": 1,
+      "message": "Please don\u0027t use star imports.",
+      "revId": "a25528fe82700d1563e7808db8930b3cd13c20c1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_d533c060",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/datatypes/heattotosca/TranslationContext.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-05-31T11:14:34Z",
+      "side": 1,
+      "message": "If these static final members aren\u0027t going to change after initialization, name them with all capitals like constants.",
+      "revId": "a25528fe82700d1563e7808db8930b3cd13c20c1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_3516a4a8",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/datatypes/heattotosca/TranslationContext.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 226,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-05-31T11:14:34Z",
+      "side": 1,
+      "message": "Store this in a local variable instead of calling get(serviceTemplateName) twice.",
+      "range": {
+        "startLine": 226,
+        "startChar": 11,
+        "endLine": 226,
+        "endChar": 64
+      },
+      "revId": "a25528fe82700d1563e7808db8930b3cd13c20c1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_75442cb7",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/datatypes/heattotosca/TranslationContext.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 555,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-05-31T11:14:34Z",
+      "side": 1,
+      "message": "It should be just \"return unifiedHandledServiceTemplates.contains(serviceTemplateFileName);\"",
+      "range": {
+        "startLine": 555,
+        "startChar": 4,
+        "endLine": 555,
+        "endChar": 88
+      },
+      "revId": "a25528fe82700d1563e7808db8930b3cd13c20c1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_157848f7",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/datatypes/heattotosca/unifiedmodel/consolidation/PortTemplateConsolidationData.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 120,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-05-31T11:14:34Z",
+      "side": 1,
+      "message": "I think it\u0027s a bug. You have an OR between two conditions that produce opposite results.",
+      "range": {
+        "startLine": 119,
+        "startChar": 0,
+        "endLine": 120,
+        "endChar": 72
+      },
+      "revId": "a25528fe82700d1563e7808db8930b3cd13c20c1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
