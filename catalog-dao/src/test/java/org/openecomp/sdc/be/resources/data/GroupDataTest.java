@@ -1,5 +1,6 @@
 package org.openecomp.sdc.be.resources.data;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.Test;
@@ -12,6 +13,11 @@ public class GroupDataTest {
 		return new GroupData();
 	}
 
+	@Test
+	public void testCtor() throws Exception {
+		new GroupData(new GroupDataDefinition());
+		new GroupData(new HashMap<>());
+	}
 	
 	@Test
 	public void testGetUniqueId() throws Exception {

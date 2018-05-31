@@ -2,6 +2,7 @@ package org.openecomp.sdc.be.resources.data;
 
 import java.util.Map;
 
+import org.apache.commons.collections.map.HashedMap;
 import org.junit.Test;
 import org.openecomp.sdc.be.datatypes.elements.CapabilityTypeDataDefinition;
 
@@ -12,6 +13,11 @@ public class CapabilityTypeDataTest {
 		return new CapabilityTypeData();
 	}
 
+	@Test
+	public void testCtor() throws Exception {
+		new CapabilityTypeData(new CapabilityTypeDataDefinition());
+		new CapabilityTypeData(new HashedMap());
+	}
 	
 	@Test
 	public void testToGraphMap() throws Exception {

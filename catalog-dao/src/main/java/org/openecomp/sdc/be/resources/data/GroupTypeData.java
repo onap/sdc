@@ -60,9 +60,11 @@ public class GroupTypeData extends GraphNode {
 		groupTypeDataDefinition.setType((String) properties.get(GraphPropertiesDictionary.TYPE.getProperty()));
 
 		groupTypeDataDefinition.setVersion((String) properties.get(GraphPropertiesDictionary.VERSION.getProperty()));
-
-		groupTypeDataDefinition.setHighestVersion(
-				(boolean) properties.get(GraphPropertiesDictionary.IS_HIGHEST_VERSION.getProperty()));
+		
+		if (properties.get(GraphPropertiesDictionary.IS_HIGHEST_VERSION.getProperty()) != null) {
+			groupTypeDataDefinition.setHighestVersion(
+					(boolean) properties.get(GraphPropertiesDictionary.IS_HIGHEST_VERSION.getProperty()));
+		}
 
 		groupTypeDataDefinition
 				.setDescription((String) properties.get(GraphPropertiesDictionary.DESCRIPTION.getProperty()));

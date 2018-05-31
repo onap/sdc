@@ -1,11 +1,8 @@
 package org.openecomp.sdc.be.resources.data.auditing.model;
 
-import javax.annotation.Generated;
-
 import org.junit.Test;
 import org.openecomp.sdc.be.resources.data.auditing.model.ResourceAuditData.Builder;
 
-@Generated(value = "org.junit-tools-1.0.6")
 public class ResourceAuditDataTest {
 
 	private ResourceAuditData createTestSubject() {

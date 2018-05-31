@@ -1,5 +1,6 @@
 package org.openecomp.sdc.be.resources.data;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.Test;
@@ -12,6 +13,11 @@ public class ConsumerDataTest {
 		return new ConsumerData();
 	}
 
+	@Test
+	public void testCtor() throws Exception {
+		new ConsumerData(new ConsumerDataDefinition());
+		new ConsumerData(new HashMap<>());
+	}
 	
 	@Test
 	public void testGetUniqueIdKey() throws Exception {

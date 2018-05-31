@@ -42,7 +42,9 @@ public class ResourceMetadataData extends ComponentMetadataData {
 		super(NodeTypeEnum.Resource, new ResourceMetadataDataDefinition(), properties);
 		((ResourceMetadataDataDefinition) metadataDataDefinition).setVendorName((String) properties.get(GraphPropertiesDictionary.VENDOR_NAME.getProperty()));
 		((ResourceMetadataDataDefinition) metadataDataDefinition).setVendorRelease((String) properties.get(GraphPropertiesDictionary.VENDOR_RELEASE.getProperty()));
-		((ResourceMetadataDataDefinition) metadataDataDefinition).setResourceType(ResourceTypeEnum.valueOf((String) properties.get(GraphPropertiesDictionary.RESOURCE_TYPE.getProperty())));
+		if (properties.get(GraphPropertiesDictionary.RESOURCE_TYPE.getProperty()) != null) {
+			((ResourceMetadataDataDefinition) metadataDataDefinition).setResourceType(ResourceTypeEnum.valueOf((String) properties.get(GraphPropertiesDictionary.RESOURCE_TYPE.getProperty())));
+		}
 		((ResourceMetadataDataDefinition) metadataDataDefinition).setAbstract((Boolean) properties.get(GraphPropertiesDictionary.IS_ABSTRACT.getProperty()));
 		((ResourceMetadataDataDefinition) metadataDataDefinition).setCost((String) properties.get(GraphPropertiesDictionary.COST.getProperty()));
 		((ResourceMetadataDataDefinition) metadataDataDefinition).setLicenseType((String) properties.get(GraphPropertiesDictionary.LICENSE_TYPE.getProperty()));
