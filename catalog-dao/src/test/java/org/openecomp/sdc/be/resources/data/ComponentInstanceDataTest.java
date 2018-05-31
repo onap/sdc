@@ -1,5 +1,6 @@
 package org.openecomp.sdc.be.resources.data;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.Test;
@@ -12,6 +13,12 @@ public class ComponentInstanceDataTest {
 		return new ComponentInstanceData();
 	}
 
+	@Test
+	public void testCtor() throws Exception {
+		new ComponentInstanceData(new ComponentInstanceDataDefinition());
+		new ComponentInstanceData(new ComponentInstanceDataDefinition(), new Integer(0));
+		new ComponentInstanceData(new HashMap<>());
+	}
 	
 	@Test
 	public void testToGraphMap() throws Exception {

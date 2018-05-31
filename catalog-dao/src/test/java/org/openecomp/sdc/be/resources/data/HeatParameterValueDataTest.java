@@ -1,5 +1,6 @@
 package org.openecomp.sdc.be.resources.data;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.Test;
@@ -11,6 +12,10 @@ public class HeatParameterValueDataTest {
 		return new HeatParameterValueData();
 	}
 
+	@Test
+	public void testCtor() throws Exception {
+		new HeatParameterValueData(new HashMap<>());
+	}
 	
 	@Test
 	public void testGetUniqueId() throws Exception {

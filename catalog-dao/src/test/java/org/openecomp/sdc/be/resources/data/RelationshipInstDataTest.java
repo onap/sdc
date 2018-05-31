@@ -1,5 +1,6 @@
 package org.openecomp.sdc.be.resources.data;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.Test;
@@ -11,6 +12,10 @@ public class RelationshipInstDataTest {
 		return new RelationshipInstData();
 	}
 
+	@Test
+	public void testCtor() throws Exception {
+		new RelationshipInstData(new HashMap<>());
+	}
 	
 	@Test
 	public void testToGraphMap() throws Exception {

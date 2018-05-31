@@ -1,5 +1,6 @@
 package org.openecomp.sdc.be.resources.data;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.Test;
@@ -12,6 +13,11 @@ public class RelationshipTypeDataTest {
 		return new RelationshipTypeData();
 	}
 
+	@Test
+	public void testCtor() throws Exception {
+		new RelationshipTypeData(new HashMap<>());
+		new RelationshipTypeData(new RelationshipInstDataDefinition());
+	}
 	
 	@Test
 	public void testToGraphMap() throws Exception {

@@ -1,5 +1,6 @@
 package org.openecomp.sdc.be.resources.data;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.Test;
@@ -12,6 +13,11 @@ public class AttributeDataTest {
 		return new AttributeData();
 	}
 
+	@Test
+	public void testCtor() throws Exception {
+		new AttributeData(new HashMap<>());
+		new AttributeData(new PropertyDataDefinition());
+	}
 	
 	@Test
 	public void testToString() throws Exception {
