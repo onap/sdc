@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_159a88c5",
+        "filename": "openecomp-be/tools/compile-helper-plugin/src/main/java/org/openecomp/sdc/onboarding/BuildHelper.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 2819
+      },
+      "writtenOn": "2018-05-31T06:27:59Z",
+      "side": 1,
+      "message": "This Map is not intended to be read anywhere else in the software. it is used to calculate Hash using java default. i donot need to use other custom maps.",
+      "parentUuid": "5a93c517_157368b5",
+      "revId": "303271075aad05f0d16e4134a318f547110a11fc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_f5711ca9",
         "filename": "openecomp-be/tools/compile-helper-plugin/src/main/java/org/openecomp/sdc/onboarding/BuildHelper.java",
         "patchSetId": 2
@@ -30,6 +48,24 @@
       "writtenOn": "2018-05-31T06:21:21Z",
       "side": 1,
       "message": "Please use guave listMultiMap\nhttps://google.github.io/guava/releases/17.0/api/docs/com/google/common/collect/ListMultimap.html",
+      "revId": "303271075aad05f0d16e4134a318f547110a11fc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_359f84b6",
+        "filename": "openecomp-be/tools/compile-helper-plugin/src/main/java/org/openecomp/sdc/onboarding/BuildHelper.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 119,
+      "author": {
+        "id": 2819
+      },
+      "writtenOn": "2018-05-31T06:27:59Z",
+      "side": 1,
+      "message": "see above comment.",
+      "parentUuid": "5a93c517_f5711ca9",
       "revId": "303271075aad05f0d16e4134a318f547110a11fc",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
