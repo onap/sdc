@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_157368b5",
+        "filename": "openecomp-be/tools/compile-helper-plugin/src/main/java/org/openecomp/sdc/onboarding/BuildHelper.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-05-31T06:21:21Z",
+      "side": 1,
+      "message": "Please use guava ListMultiMap\nhttps://google.github.io/guava/releases/17.0/api/docs/com/google/common/collect/ListMultimap.html",
+      "revId": "303271075aad05f0d16e4134a318f547110a11fc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_f5711ca9",
+        "filename": "openecomp-be/tools/compile-helper-plugin/src/main/java/org/openecomp/sdc/onboarding/BuildHelper.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 119,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-05-31T06:21:21Z",
+      "side": 1,
+      "message": "Please use guave listMultiMap\nhttps://google.github.io/guava/releases/17.0/api/docs/com/google/common/collect/ListMultimap.html",
+      "revId": "303271075aad05f0d16e4134a318f547110a11fc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
