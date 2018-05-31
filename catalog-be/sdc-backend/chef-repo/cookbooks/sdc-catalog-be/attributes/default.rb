@@ -12,4 +12,4 @@ default['jetty'][:truststore_pwd] = "OBF:1cp61iuj194s194u194w194y1is31cok"
 #Reserved for DCAE backend
 default['DCAE']['BE'][:http_port] = 8082
 default['DCAE']['BE'][:https_port] = 8444
-default['DCAE_BE_VIP'] = "dcaed-be"
+default['DCAE_BE_VIP'] = "dcae-be"
