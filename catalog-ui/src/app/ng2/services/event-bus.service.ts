@@ -54,7 +54,12 @@ export class EventBusService extends BasePubSub {
     }
 
     public disableNavigation(isDisable: boolean) {
+        let iframes = document.getElementsByClassName("plugin-iframe");
+
         if (isDisable) {
+            _.forEach(iframes, (iframeElement: HTMLElement) => {
+                iframeElement.style.zIndex = '1300';
+            });
             let disableDiv = document.createElement('div');
             disableDiv.style.cssText = "position: fixed;\n" +
                 "z-index: 1029;\n" +
@@ -68,6 +73,10 @@ export class EventBusService extends BasePubSub {
         }
         else {
             document.getElementsByClassName("disable-navigation-div")[0].remove();
+
+            _.forEach(iframes, (iframeElement: HTMLElement) => {
+                iframeElement.style.zIndex = '';
+            });
         }
     }
 
