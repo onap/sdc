@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_f05b6af4",
+        "filename": "openecomp-be/tools/compile-helper-plugin/src/main/java/org/openecomp/sdc/onboarding/PreCompileHelperMojo.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 287,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-05-31T14:10:25Z",
+      "side": 1,
+      "message": "Please format the file with onap code style.\nhttp://d2athenaconf:8090/confluence/display/AS/Java+Code+Style",
+      "revId": "33a2e7ea2e5e244637834841b4de348cae17352a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
