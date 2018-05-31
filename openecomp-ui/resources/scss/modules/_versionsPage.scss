@@ -51,11 +51,32 @@
 			text-transform: uppercase;
 			margin-bottom: 29px;
 			color: $blue;
+			display: flex;
+			.archived-title {
+				@extend .body-3;
+				color: $white;
+				background-color: $dark-purple;
+				margin-left: 20px;
+				border-radius: 3px;
+				padding: 1px 10px;
+				align-self: center;
+				text-transform: none;
+			}
 		}
-		.depricate-btn-wrapper {
+		.deprecate-btn-wrapper {
 			display: flex;
 			justify-content: flex-end;
 			margin-bottom: 10px;
+			align-self: center;
+			.svg-icon-wrapper {
+				&:hover {
+					fill: $light-blue;
+				}
+				.svg-icon {
+					width: 24px;
+					height: 24px;
+				}
+			}
 		}
 	}		
 	.versions-page-permissions-view-wrapper {

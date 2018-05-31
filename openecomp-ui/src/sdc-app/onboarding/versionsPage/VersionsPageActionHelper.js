@@ -20,7 +20,12 @@ import { modalContentMapper } from 'sdc-app/common/modal/ModalContentMapper.js';
 import { actionTypes as modalActionTypes } from 'nfvo-components/modal/GlobalModalConstants.js';
 import i18n from 'nfvo-utils/i18n/i18n.js';
 import ScreensHelper from 'sdc-app/common/helpers/ScreensHelper.js';
-import { enums, screenTypes } from 'sdc-app/onboarding/OnboardingConstants.js';
+import {
+    enums,
+    screenTypes,
+    onboardingActions
+} from 'sdc-app/onboarding/OnboardingConstants.js';
+import { notificationActions } from 'nfvo-components/notification/NotificationsConstants.js';
 
 const VersionsPageActionHelper = {
     fetchVersions(dispatch, { itemType, itemId }) {
@@ -89,20 +94,24 @@ const VersionsPageActionHelper = {
         this.selectVersion(dispatch, { version });
     },
 
-    archiveItem(dispatch, itemId) {
-        ItemsHelper.archiveItem(itemId).then(() => {
-            ScreensHelper.loadScreen(dispatch, {
-                screen: enums.SCREEN.ONBOARDING_CATALOG
-            });
-        });
+    async archiveItem(dispatch, itemId) {
+        await ItemsHelper.archiveItem(itemId);
+        dispatch(onboardingActions.updateItemArchivedStatus(true));
+        dispatch(
+            notificationActions.showSuccess({
+                message: i18n('Item successfully archived')
+            })
+        );
     },
 
-    restoreItemFromArchive(dispatch, itemId) {
-        ItemsHelper.restoreItem(itemId).then(() => {
-            ScreensHelper.loadScreen(dispatch, {
-                screen: enums.SCREEN.ONBOARDING_CATALOG
-            });
-        });
+    async restoreItemFromArchive(dispatch, itemId) {
+        await ItemsHelper.restoreItem(itemId);
+        dispatch(onboardingActions.updateItemArchivedStatus(false));
+        dispatch(
+            notificationActions.showSuccess({
+                message: i18n('Item successfully restored')
+            })
+        );
     }
 };
 

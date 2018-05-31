@@ -22,22 +22,36 @@ import Button from 'sdc-ui/lib/react/Button.js';
 import i18n from 'nfvo-utils/i18n/i18n.js';
 import featureToggle from 'sdc-app/features/featureToggle.js';
 
-const DepricateButton = ({ depricateAction, title }) => (
-    <div className="depricate-btn-wrapper">
-        <Button
-            data-test-id="depricate-action-btn"
-            className="depricate-btn"
-            onClick={depricateAction}>
-            {title}
-        </Button>
+const ArchiveRestoreButton = ({ depricateAction, title, isArchived }) => (
+    <div className="deprecate-btn-wrapper">
+        {isArchived ? (
+            <Button
+                data-test-id="deprecate-action-btn"
+                className="depricate-btn"
+                onClick={depricateAction}>
+                {title}
+            </Button>
+        ) : (
+            <SVGIcon
+                name="archiveBox"
+                title={i18n('Archive item')}
+                color="secondary"
+                onClick={depricateAction}
+            />
+        )}
     </div>
 );
 
-const FeatureDepricatedButton = featureToggle('ARCHIVE_ITEM')(DepricateButton);
+const ArchivedTitle = () => (
+    <div className="archived-title">{i18n('Archived')}</div>
+);
+
+const FeatureDepricatedButton = featureToggle('ARCHIVE_ITEM')(
+    ArchiveRestoreButton
+);
 
 const VersionPageTitle = ({
     itemName,
-    depricatedTitle,
     isArchived,
     onRestore,
     onArchive,
@@ -45,11 +59,13 @@ const VersionPageTitle = ({
 }) => {
     return (
         <div className="version-page-header">
-            <div className="versions-page-title">{`${i18n(
-                'Available Versions'
-            )} - ${itemName}  ${depricatedTitle}`}</div>
+            <div className="versions-page-title">
+                {`${i18n('Available Versions')} - ${itemName}`}
+                {isArchived ? <ArchivedTitle /> : null}
+            </div>
             {isCollaborator && (
                 <FeatureDepricatedButton
+                    isArchived={isArchived}
                     depricateAction={
                         isArchived ? () => onRestore() : () => onArchive()
                     }

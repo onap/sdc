@@ -50,7 +50,7 @@
         "react-sortable": "^1.2.0",
         "react-transition-group": "^2.3.1",
         "redux": "^3.7.2",
-        "sdc-ui": "1.6.43",
+        "sdc-ui": "1.6.46",
         "uuid-js": "^0.7.5",
         "validator": "^4.3.0"
     },

@@ -363,6 +363,9 @@
   "Active Items": "Active Items",
   "Archived Items": "Archived Items",
   "This is the current version of the VSP, as a result of healing": "This is the current version of the VSP, as a result of healing",
+  "Archive item": "Archive item",
+  "Item successfully Archived": "Item successfully Archived",
+  "Item successfully Restored": "Item successfully Restored",
   
   "VendorSoftwareProduct": "VSP",
   "VendorSoftwareProduct/category": "Category",
