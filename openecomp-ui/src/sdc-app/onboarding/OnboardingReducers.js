@@ -163,6 +163,19 @@ const currentScreen = (
             };
         }
 
+        case actionTypes.UPDATE_ITEM_ARCHIVE_STATUS: {
+            const props = {
+                ...state.props,
+                status: action.isArchived
+                    ? catalogItemStatuses.ARCHIVED
+                    : catalogItemStatuses.ACTIVE
+            };
+            return {
+                ...state,
+                props
+            };
+        }
+
         default:
             return state;
     }

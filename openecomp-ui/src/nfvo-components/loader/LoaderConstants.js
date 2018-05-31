@@ -19,6 +19,6 @@ export const actionTypes = keyMirror({
     SHOW: null,
     HIDE: null,
 
-    SEND_REQUEST: null,
-    RECEIVE_RESPONSE: null
+    SEND_REQUEST: 'SEND_REQUEST',
+    RECEIVE_RESPONSE: 'RECEIVE_RESPONSE'
 });
