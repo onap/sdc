@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_35bea4d5",
+        "filename": "openecomp-be/tools/compile-helper-plugin/src/main/java/org/openecomp/sdc/onboarding/BuildHelper.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 2819
+      },
+      "writtenOn": "2018-05-31T08:51:05Z",
+      "side": 1,
+      "message": "1.\tI don’t see benefit of using Guava MultiMap in my usecase. As in my case No one will be reading and writing over and over again that Map. It gets populated using a pre-populated List\u003cString\u003e which is returned by one of java 8 API. I never intends to use get followed by put in this usecase.\n2.\tI don’t want compile-helper-plugin to be dependent on third party libraries as long as possible that’s why I am trying my level best to achieve the needful using standard java 8 sdk. I am not interested in increasing memory footprints of maven build without any gains.\n3. Guava is known for its incompatibilities across versions including conflicts with peers and have faced such issues earlier in SDC where we need to forcefully use old guava jar because of latest guava library was causing conflicts with other existing libraries. https://bugs.eclipse.org/bugs/show_bug.cgi?id\u003d427862",
+      "parentUuid": "5a93c517_159a88c5",
+      "revId": "303271075aad05f0d16e4134a318f547110a11fc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_f5711ca9",
         "filename": "openecomp-be/tools/compile-helper-plugin/src/main/java/org/openecomp/sdc/onboarding/BuildHelper.java",
         "patchSetId": 2
