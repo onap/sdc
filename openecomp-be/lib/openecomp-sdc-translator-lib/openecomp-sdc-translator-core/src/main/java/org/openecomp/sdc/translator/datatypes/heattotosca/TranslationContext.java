@@ -35,7 +35,12 @@ import org.openecomp.sdc.tosca.services.ToscaUtil;
 import org.openecomp.sdc.translator.datatypes.heattotosca.to.TranslatedHeatResource;
 import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.composition.UnifiedCompositionEntity;
 import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.composition.UnifiedSubstitutionData;
-import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.*;
+import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.ComputeConsolidationDataHandler;
+import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.ConsolidationData;
+import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.ConsolidationDataHandler;
+import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.PortConsolidationDataHandler;
+import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.NestedConsolidationDataHandler;
+import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.SubInterfaceConsolidationDataHandler;
 import org.openecomp.sdc.translator.services.heattotosca.ConfigConstants;
 import org.openecomp.sdc.translator.services.heattotosca.ConsolidationEntityType;
 import org.openecomp.sdc.translator.services.heattotosca.Constants;
@@ -223,8 +228,9 @@ public class TranslationContext {
   }
 
   public Optional<String> getUnifiedNestedNodeTypeId(String serviceTemplateName, String nestedNodeTemplateId) {
-    return this.unifiedSubstitutionData.get(serviceTemplateName) == null ? Optional.empty() :
-                   this.unifiedSubstitutionData.get(serviceTemplateName).getUnifiedNestedNodeTypeId(nestedNodeTemplateId);
+    UnifiedSubstitutionData substitutionData = this.unifiedSubstitutionData.get(serviceTemplateName);
+    return substitutionData == null ? Optional.empty() :
+                   substitutionData.getUnifiedNestedNodeTypeId(nestedNodeTemplateId);
   }
 
   public ConsolidationData getConsolidationData() {
@@ -552,7 +558,7 @@ public class TranslationContext {
 
   public boolean isUnifiedHandledServiceTemplate(ServiceTemplate serviceTemplate) {
     String serviceTemplateFileName = ToscaUtil.getServiceTemplateFileName(serviceTemplate);
-    return unifiedHandledServiceTemplates.contains(serviceTemplateFileName)? true:false;
+    return unifiedHandledServiceTemplates.contains(serviceTemplateFileName);
   }
 
 

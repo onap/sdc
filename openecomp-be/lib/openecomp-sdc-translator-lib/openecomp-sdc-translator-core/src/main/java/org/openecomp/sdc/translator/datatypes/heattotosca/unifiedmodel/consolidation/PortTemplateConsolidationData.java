@@ -117,16 +117,21 @@ public class PortTemplateConsolidationData extends EntityConsolidationData {
 
     public boolean isNumberOfSubInterfacesPerTypeSimilar(PortTemplateConsolidationData other) {
         return isBothSubInterfaceConsolidationDataEmpty(this, other)
-               || !isBothSubInterfaceConsolidationDataEmpty(this, other)
-             && this.subInterfaceConsolidationData.keySet().stream().allMatch(
-                 subInterfaceType -> calculateSize(other.subInterfaceConsolidationData.get(subInterfaceType))
-                  ==  calculateSize(this.subInterfaceConsolidationData.get(subInterfaceType)));
+               || isBothSubInterfaceConsolidationDataNotEmpty(this, other)
+                 && this.subInterfaceConsolidationData.keySet().stream().allMatch(
+                         subInterfaceType -> calculateSize(other.subInterfaceConsolidationData.get(subInterfaceType))
+                         ==  calculateSize(this.subInterfaceConsolidationData.get(subInterfaceType)));
 
     }
 
     private boolean isBothSubInterfaceConsolidationDataEmpty(
             PortTemplateConsolidationData object, PortTemplateConsolidationData other) {
         return object.subInterfaceConsolidationData.isEmpty() && other.subInterfaceConsolidationData.isEmpty();
+    }
+
+    private boolean isBothSubInterfaceConsolidationDataNotEmpty(
+            PortTemplateConsolidationData object, PortTemplateConsolidationData other) {
+        return !object.subInterfaceConsolidationData.isEmpty() && !other.subInterfaceConsolidationData.isEmpty();
     }
 
     public boolean isSubInterfaceNodeTemplateIdParameter(String nodeTemplateType) {
