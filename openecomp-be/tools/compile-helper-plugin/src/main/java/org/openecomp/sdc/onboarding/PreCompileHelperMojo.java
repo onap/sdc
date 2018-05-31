@@ -49,6 +49,7 @@ import static org.openecomp.sdc.onboarding.Constants.TEST_ONLY;
 import static org.openecomp.sdc.onboarding.Constants.TEST_RESOURCE_ONLY;
 import static org.openecomp.sdc.onboarding.Constants.TEST_SOURCE_CHECKSUM;
 import static org.openecomp.sdc.onboarding.Constants.UNICORN;
+import static org.openecomp.sdc.onboarding.Constants.PREFIX;
 
 import java.io.File;
 import java.io.IOException;
@@ -283,7 +284,7 @@ public class PreCompileHelperMojo extends AbstractMojo {
     }
 
     private void setJarFlags(boolean compile, boolean instrumented, boolean resourceChanged) {
-        if (compile || instrumented || resourceChanged) {
+        if (compile || instrumented || resourceChanged || PREFIX==UNICORN) {
             project.getProperties().setProperty(EMPTY_JAR, "");
         } else {
             project.getProperties().setProperty(EMPTY_JAR, "**/*");
