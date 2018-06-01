@@ -184,7 +184,6 @@
                     <execution>
                         <goals>
                             <goal>init-artifact-helper</goal>
-                            <goal>copy-helper</goal>
                             <goal>calibrate-artifact-helper</goal>
                         </goals>
                     </execution>
@@ -193,43 +192,11 @@
                     <groupId>org.openecomp.sdc</groupId>
                     <artifactId>build-data-installer</artifactId>
                     <version>${project.version}</version>
-                    <targetLocation>build-data-helper</targetLocation>
-                    <name>build-data-helper-${project.version}.jar</name>
                     <artifactHelper>
                         <project>${project}</project>
+                        <session>${session}</session>
+                        <unicornRoot>org.openecomp.sdc:sdc-onboarding/target/build-data</unicornRoot>
                     </artifactHelper>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <version>${maven.dependency.version}</version>
-                <executions>
-                    <execution>
-                        <id>id1</id>
-                        <goals>
-                            <goal>get</goal>
-                        </goals>
-                        <phase>pre-clean</phase>
-                        <configuration>
-                            <artifactId>build-data-helper</artifactId>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>id2</id>
-                        <goals>
-                            <goal>get</goal>
-                        </goals>
-                        <phase>pre-clean</phase>
-                        <configuration>
-                            <artifactId>build-data-installer</artifactId>
-                        </configuration>
-                    </execution>
-                </executions>
-                <configuration>
-                    <groupId>org.openecomp.sdc</groupId>
-                    <version>${project.version}</version>
-                    <skip>${skipGet}</skip>
                 </configuration>
             </plugin>
             <plugin>
@@ -237,11 +204,6 @@
                 <artifactId>compile-helper-plugin</artifactId>
                 <version>${project.version}</version>
                 <dependencies>
-                    <dependency>
-                        <groupId>org.openecomp.sdc</groupId>
-                        <artifactId>build-data-helper</artifactId>
-                        <version>${project.version}</version>
-                    </dependency>
                     <dependency>
                         <groupId>org.openecomp.sdc.onboarding</groupId>
                         <artifactId>pmd-helper-plugin</artifactId>
@@ -325,13 +287,6 @@
                 <groupId>org.openecomp.sdc.onboarding</groupId>
                 <artifactId>pmd-helper-plugin</artifactId>
                 <version>${project.version}</version>
-                <dependencies>
-                    <dependency>
-                    <groupId>org.openecomp.sdc</groupId>
-                    <artifactId>build-data-helper</artifactId>
-                    <version>${project.version}</version>
-                </dependency>
-                </dependencies>
                 <executions>
                     <execution>
                         <goals>
