@@ -105,6 +105,7 @@
                         <phase>pre-clean</phase>
                         <configuration>
                             <artifactId>build-data-helper</artifactId>
+                            <remoteRepositories>${build-data-helper-URL}</remoteRepositories>
                         </configuration>
                     </execution>
                     <execution>
@@ -115,6 +116,7 @@
                         <phase>pre-clean</phase>
                         <configuration>
                             <artifactId>build-data-installer</artifactId>
+                            <remoteRepositories>${build-data-installer-URL}</remoteRepositories>
                         </configuration>
                     </execution>
                 </executions>
@@ -122,6 +124,7 @@
                     <groupId>org.openecomp.sdc</groupId>
                     <version>${project.version}</version>
                     <skip>${skipGet}</skip>
+                    <transitive>false</transitive>
                 </configuration>
             </plugin>
             <plugin>

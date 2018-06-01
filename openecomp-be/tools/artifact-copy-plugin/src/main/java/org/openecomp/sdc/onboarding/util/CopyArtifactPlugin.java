@@ -18,16 +18,13 @@ package org.openecomp.sdc.onboarding.util;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
-import java.util.List;
-import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -41,6 +38,14 @@ import org.apache.maven.project.MavenProject;
 @Mojo(name = "copy-helper", threadSafe = true, defaultPhase = LifecyclePhase.CLEAN,
         requiresDependencyResolution = ResolutionScope.NONE)
 public class CopyArtifactPlugin extends AbstractMojo {
+
+    private static final String DOT = ".";
+    private static final String HYPHEN = "-";
+    private static final String JAR = "jar";
+    private static final String SHA1 = "sha1";
+    private static final String MD5 = "md5";
+    private static final String RESOLVED_VERSION = "resolvedVersion";
+    private static final String SNAPSHOT = "SNAPSHOT";
 
     @Parameter(defaultValue = "${session}")
     private MavenSession session;
@@ -61,29 +66,27 @@ public class CopyArtifactPlugin extends AbstractMojo {
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
-        if (!project.getProperties().containsKey("resolvedVersion")) {
+        if (!project.getProperties().containsKey(RESOLVED_VERSION)) {
             return;
         }
-        boolean isSnapshot = version.contains("SNAPSHOT");
-        List<ArtifactRepository> artRepoList = artifactHelper.getRepositories(isSnapshot);
-        String resolvedVersion = project.getProperties().getProperty("resolvedVersion");
+        String resolvedVersion = project.getProperties().getProperty(RESOLVED_VERSION);
         try {
             if (!version.equals(resolvedVersion)) {
-                boolean result = copyResolvedArtifact(artRepoList, resolvedVersion);
+                boolean result = copyResolvedArtifact();
                 if (result && getLog().isInfoEnabled()) {
                     getLog().info("Data Artifact Copied with " + resolvedVersion);
                 }
 
             }
             File orgFile = new File(
-                    session.getLocalRepository().getBasedir() + File.separator + (groupId.replace(".", File.separator))
+                    session.getLocalRepository().getBasedir() + File.separator + (groupId.replace(DOT, File.separator))
                             + File.separator + artifactId + File.separator + version);
             if (!orgFile.exists()) {
                 return;
             }
-            File[] list = orgFile.listFiles(t -> t.getName().equals(artifactId + "-" + version + ".jar"));
+            File[] list = orgFile.listFiles(t -> t.getName().equals(artifactId + HYPHEN + version + DOT + JAR));
             if (list != null && list.length > 0) {
-                String directory = session.getLocalRepository().getBasedir() + File.separator + (groupId.replace(".",
+                String directory = session.getLocalRepository().getBasedir() + File.separator + (groupId.replace(DOT,
                         File.separator)) + File.separator + targetLocation + File.separator + version;
                 if (!Paths.get(directory, name).toFile().exists()) {
                     return;
@@ -98,16 +101,16 @@ public class CopyArtifactPlugin extends AbstractMojo {
 
     private void copyTargetArtifact(String directory, File source) throws IOException, NoSuchAlgorithmException {
         File[] files = new File(directory).listFiles(
-                f -> f.getName().endsWith(".jar") && !f.getName().equals(name) && f.getName().startsWith(
-                        name.substring(0, name.lastIndexOf('-'))));
+                f -> f.getName().endsWith(DOT + JAR) && !f.getName().equals(name) && f.getName().startsWith(
+                        name.substring(0, name.lastIndexOf(HYPHEN))));
         if (files == null || files.length == 0) {
             return;
         }
         Arrays.sort(files, this::compare);
         File tgtFile = files[files.length - 1];
         Files.copy(source.toPath(), tgtFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-        for (String checksumType : Arrays.asList("sha1", "md5")) {
-            File potentialFile = new File(tgtFile.getAbsolutePath() + "." + checksumType);
+        for (String checksumType : Arrays.asList(SHA1, MD5)) {
+            File potentialFile = new File(tgtFile.getAbsolutePath() + DOT + checksumType);
             if (potentialFile.exists()) {
                 Files.write(potentialFile.toPath(),
                         artifactHelper.getChecksum(source.getAbsolutePath(), checksumType).getBytes(),
@@ -117,32 +120,29 @@ public class CopyArtifactPlugin extends AbstractMojo {
     }
 
 
-    private boolean copyResolvedArtifact(List<ArtifactRepository> list, String resolvedVersion) {
-        for (ArtifactRepository repo : list) {
-            try {
-                writeContents(
-                        new URL(repo.getUrl() + (groupId.replace('.', '/')) + '/' + artifactId + '/' + version + '/'
-                                        + artifactId + "-" + (version.equals(resolvedVersion) ? version :
-                                                                      version.replace("SNAPSHOT", resolvedVersion))
-                                        + ".jar"));
-                return true;
-            } catch (IOException e) {
-                getLog().debug(e);
-            }
+    private boolean copyResolvedArtifact() {
+        try {
+            writeContents(artifactId, null);
+            writeContents(targetLocation, project.getProperties().getProperty(targetLocation + HYPHEN + "Version"));
+            return true;
+        } catch (IOException e) {
+            getLog().debug(e);
         }
         return false;
     }
 
 
-    private void writeContents(URL path) throws IOException {
+    private void writeContents(String artifactId, String snapshotVersion) throws IOException {
         String directory =
-                session.getLocalRepository().getBasedir() + File.separator + (groupId.replace(".", File.separator))
+                session.getLocalRepository().getBasedir() + File.separator + (groupId.replace(DOT, File.separator))
                         + File.separator + artifactId + File.separator + version;
-        try (InputStream is = path.openStream()) {
-            Files.copy(is, Paths.get(directory, artifactId + "-" + version + ".jar"),
-                    StandardCopyOption.REPLACE_EXISTING);
+        Path path = Paths.get(directory,
+                artifactId + HYPHEN + (snapshotVersion == null ? version : version.replace(SNAPSHOT, snapshotVersion))
+                        + DOT + JAR);
+        if (!path.toFile().getParentFile().exists()) {
+            path.toFile().getParentFile().mkdirs();
         }
-
+        Files.write(path, artifactHelper.getArtifact(this.artifactId), StandardOpenOption.CREATE);
     }
 
     private int compare(File file1, File file2) {
