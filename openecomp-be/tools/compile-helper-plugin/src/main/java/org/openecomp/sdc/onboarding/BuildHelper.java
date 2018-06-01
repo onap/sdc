@@ -16,6 +16,8 @@
 
 package org.openecomp.sdc.onboarding;
 
+import static org.openecomp.sdc.onboarding.Constants.CHECKSUM;
+import static org.openecomp.sdc.onboarding.Constants.DOT;
 import static org.openecomp.sdc.onboarding.Constants.JAVA_EXT;
 import static org.openecomp.sdc.onboarding.Constants.UNICORN;
 
@@ -26,10 +28,12 @@ import java.io.ObjectInputStream;
 import java.io.UncheckedIOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
@@ -40,6 +44,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.RecursiveTask;
+import java.util.jar.JarFile;
 import java.util.stream.Collectors;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
@@ -155,9 +160,14 @@ class BuildHelper {
         File[] list = f.listFiles(t -> t.getName().equals(project.getArtifactId() + "-" + project.getVersion() + "."
                                                                   + project.getPackaging()));
         if (list != null && list.length > 0) {
-            File checksumFile = new File(list[0].getParentFile(), project.getBuild().getFinalName() + "." + UNICORN);
             try {
-                if (checksumFile.exists() && Arrays.equals(sourceChecksum, Files.readAllBytes(checksumFile.toPath()))) {
+                File tempFile = Paths.get(project.getBuild().getDirectory(), "signature").toFile();
+                tempFile.mkdirs();
+                Files.copy(list[0].toPath(), Paths.get(tempFile.getAbsolutePath(), list[0].getName()),
+                        StandardCopyOption.REPLACE_EXISTING);
+                boolean success = verifySignature(Paths.get(tempFile.getAbsolutePath(), list[0].getName()).toFile(),
+                        sourceChecksum);
+                if (success) {
                     return Optional.of(list[0].getAbsolutePath());
                 }
             } catch (IOException e) {
@@ -165,6 +175,21 @@ class BuildHelper {
             }
         }
         return Optional.empty();
+    }
+
+    private static boolean verifySignature(File jar, byte[] sourceChecksum) throws IOException {
+        try (JarFile jarFile = new JarFile(jar)) {
+            if (jarFile.getJarEntry(UNICORN + DOT + CHECKSUM) == null) {
+                return false;
+            }
+        }
+        URL url = new URL("jar:file:/" + jar.getAbsolutePath() + "!/" + UNICORN + DOT + CHECKSUM);
+        try (InputStream is = url.openStream()) {
+            Files.copy(is, Paths.get(System.getProperties().getProperty("java.io.tmpdir"), UNICORN + DOT + CHECKSUM),
+                    StandardCopyOption.REPLACE_EXISTING);
+            return Arrays.equals(sourceChecksum, Files.readAllBytes(
+                    Paths.get(System.getProperties().getProperty("java.io.tmpdir"), UNICORN + DOT + CHECKSUM)));
+        }
     }
 
     static <T> Optional<T> readState(String fileName, Class<T> clazz) {
