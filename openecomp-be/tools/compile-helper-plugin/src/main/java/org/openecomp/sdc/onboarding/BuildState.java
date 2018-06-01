@@ -28,9 +28,13 @@ import static org.openecomp.sdc.onboarding.Constants.RESOURCE_BUILD_DATA;
 import static org.openecomp.sdc.onboarding.Constants.SKIP_MAIN_SOURCE_COMPILE;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -43,12 +47,16 @@ import org.apache.maven.project.MavenProject;
 
 public class BuildState {
 
+    private static final String SHUTDOWN_TIME = "shutdownTime";
+
     private static Map<String, Map> compileDataStore = new HashMap<>();
     private static Map<String, Object> moduleBuildData = new HashMap<>();
     private static Map<String, Object> resourceBuildData = new HashMap<>();
     private static Map<String, Artifact> artifacts = new HashMap<>();
     private static Set<String> executeTestsIfDependsOnStore = new HashSet<>();
     private static Set<String> pmdExecutedInRun = new HashSet<>();
+    private static File stateFileLocation =
+            new File(Paths.get(System.getProperties().getProperty("java.io.tmpdir")).toFile(), "compileState.dat");
 
     private static File compileStateFile;
     private MavenProject project;
@@ -58,6 +66,12 @@ public class BuildState {
         initializeStore();
         Optional<HashMap> masterStore = readState("compile.dat", HashMap.class);
         compileDataStore = masterStore.isPresent() ? masterStore.get() : compileDataStore;
+        if (stateFileLocation.exists()) {
+            HashMap dat = loadState(stateFileLocation);
+            if (swapStates((HashMap<?, ?>) compileDataStore, dat)) {
+                compileDataStore = dat;
+            }
+        }
     }
 
     void init() {
@@ -67,8 +81,10 @@ public class BuildState {
                 artifacts.put(artifact.getGroupId() + ":" + artifact.getArtifactId(), artifact);
             }
         }
-        compileStateFile =
-                getCompileStateFile(compileStateFilePath.substring(0, compileStateFilePath.indexOf('/')), project);
+        if (compileStateFile == null) {
+            compileStateFile =
+                    getCompileStateFile(compileStateFilePath.substring(0, compileStateFilePath.indexOf('/')), project);
+        }
     }
 
     static void initializeStore() {
@@ -124,7 +140,8 @@ public class BuildState {
         Long lastTime = Long.class.cast(compileDataStore.get(FULL_BUILD_DATA).put(moduleCoordinates, buildTime));
         try {
             if (lastTime == null || !lastTime.equals(buildTime)) {
-                if (!project.getProperties().containsKey(SKIP_MAIN_SOURCE_COMPILE)) {
+                boolean skipMainCompile = project.getProperties().containsKey(SKIP_MAIN_SOURCE_COMPILE);
+                if (!skipMainCompile) {
                     writeCompileState();
                 }
             }
@@ -209,8 +226,9 @@ public class BuildState {
     boolean isCompileMust(String moduleCoordinates, Collection<String> dependencies) {
         for (String d : dependencies) {
             if (artifacts.containsKey(d) && JAR.equals(artifacts.get(d).getType())) {
-                if (artifacts.get(d).getVersion().equals(project.getVersion()) && getBuildTime(d) == 0) {
-                    System.out.println(ANSI_YELLOW + "[WARNING:]" + "You have module[" + d
+                boolean versionEqual = artifacts.get(d).getVersion().equals(project.getVersion());
+                if (versionEqual && getBuildTime(d) == 0) {
+                    System.err.println(ANSI_YELLOW + "[WARNING:]" + "You have module[" + d
                                                + "] not locally compiled even once, please compile your project once daily from root to have reliable build results."
                                                + ANSI_COLOR_RESET);
                     return true;
@@ -247,5 +265,25 @@ public class BuildState {
         }
         return false;
     }
+
+    private static HashMap loadState(File file) {
+        try (InputStream is = new FileInputStream(file); ObjectInputStream ois = new ObjectInputStream(is)) {
+            return HashMap.class.cast(ois.readObject());
+        } catch (Exception e) {
+            return new HashMap<>();
+        }
+    }
+
+    private static boolean swapStates(HashMap repo, HashMap last) {
+        Long repoTime = repo.get(SHUTDOWN_TIME) == null ? 0 : (Long) repo.get(SHUTDOWN_TIME);
+        Long lastTime = last.get(SHUTDOWN_TIME) == null ? 0 : (Long) last.get(SHUTDOWN_TIME);
+        long repoBuildNumber = repoTime / 1000;
+        long lastBuildNumber = lastTime / 1000;
+        if (repoBuildNumber != lastBuildNumber) {
+            return false;
+        }
+        return Long.compare(repoTime, lastTime) < 0;
+    }
+
 
 }
