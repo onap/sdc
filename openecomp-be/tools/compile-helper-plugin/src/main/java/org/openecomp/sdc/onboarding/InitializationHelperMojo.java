@@ -70,6 +70,8 @@ public class InitializationHelperMojo extends AbstractMojo {
             project.getProperties().setProperty("skipTestSourceCompile", Boolean.FALSE.toString());
         }
 
+
     }
+
 
 }

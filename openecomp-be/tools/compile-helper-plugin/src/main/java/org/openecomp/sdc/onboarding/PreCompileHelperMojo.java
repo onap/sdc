@@ -21,6 +21,7 @@ import static org.openecomp.sdc.onboarding.BuildHelper.getChecksum;
 import static org.openecomp.sdc.onboarding.BuildHelper.getSourceChecksum;
 import static org.openecomp.sdc.onboarding.BuildHelper.readState;
 import static org.openecomp.sdc.onboarding.Constants.ANY_EXT;
+import static org.openecomp.sdc.onboarding.Constants.CHECKSUM;
 import static org.openecomp.sdc.onboarding.Constants.COLON;
 import static org.openecomp.sdc.onboarding.Constants.DOT;
 import static org.openecomp.sdc.onboarding.Constants.EMPTY_JAR;
@@ -182,9 +183,9 @@ public class PreCompileHelperMojo extends AbstractMojo {
 
     private void generateSignature(byte[] sourceChecksum) {
         try {
-            Paths.get(project.getBuild().getDirectory()).toFile().mkdirs();
-            Files.write(Paths.get(project.getBuild().getDirectory(), project.getBuild().getFinalName() + DOT + UNICORN),
-                    sourceChecksum, StandardOpenOption.CREATE);
+            Paths.get(project.getBuild().getOutputDirectory()).toFile().mkdirs();
+            Files.write(Paths.get(project.getBuild().getOutputDirectory(), UNICORN + DOT + CHECKSUM), sourceChecksum,
+                    StandardOpenOption.CREATE);
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
@@ -339,18 +340,18 @@ public class PreCompileHelperMojo extends AbstractMojo {
             return moduleBuildData;
         }
         for (Artifact dependency : project.getArtifacts()) {
-            String fileNme = dependency.getFile().getName();
+            String fileName = dependency.getFile().getName();
             if (excludeDependencies.contains(dependency.getScope())) {
                 HashMap.class.cast(moduleBuildData.get(TEST))
                              .put(dependency.getGroupId() + COLON + dependency.getArtifactId(),
-                                     fileNme.endsWith(dependency.getVersion() + DOT + JAR) ? dependency.getVersion() :
-                                             fileNme);
+                                     fileName.endsWith(dependency.getVersion() + DOT + JAR) ? dependency.getVersion() :
+                                             dependency.getVersion());
                 continue;
             }
             HashMap.class.cast(moduleBuildData.get(MAIN))
                          .put(dependency.getGroupId() + COLON + dependency.getArtifactId(),
-                                 fileNme.endsWith(dependency.getVersion() + DOT + JAR) ? dependency.getVersion() :
-                                         fileNme);
+                                 fileName.endsWith(dependency.getVersion() + DOT + JAR) ? dependency.getVersion() :
+                                         dependency.getVersion());
         }
         return moduleBuildData;
     }
