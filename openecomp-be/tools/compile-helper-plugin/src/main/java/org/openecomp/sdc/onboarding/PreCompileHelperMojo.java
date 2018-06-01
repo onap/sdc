@@ -21,6 +21,7 @@ import static org.openecomp.sdc.onboarding.BuildHelper.getChecksum;
 import static org.openecomp.sdc.onboarding.BuildHelper.getSourceChecksum;
 import static org.openecomp.sdc.onboarding.BuildHelper.readState;
 import static org.openecomp.sdc.onboarding.Constants.ANY_EXT;
+import static org.openecomp.sdc.onboarding.Constants.CHECKSUM;
 import static org.openecomp.sdc.onboarding.Constants.COLON;
 import static org.openecomp.sdc.onboarding.Constants.DOT;
 import static org.openecomp.sdc.onboarding.Constants.EMPTY_JAR;
@@ -47,6 +48,7 @@ import static org.openecomp.sdc.onboarding.Constants.SKIP_TEST_SOURCE_COMPILE;
 import static org.openecomp.sdc.onboarding.Constants.TEST;
 import static org.openecomp.sdc.onboarding.Constants.TEST_CHECKSUM;
 import static org.openecomp.sdc.onboarding.Constants.TEST_ONLY;
+import static org.openecomp.sdc.onboarding.Constants.TEST_RESOURCE_CHECKSUM;
 import static org.openecomp.sdc.onboarding.Constants.TEST_RESOURCE_ONLY;
 import static org.openecomp.sdc.onboarding.Constants.TEST_SOURCE_CHECKSUM;
 import static org.openecomp.sdc.onboarding.Constants.UNICORN;
@@ -120,6 +122,7 @@ public class PreCompileHelperMojo extends AbstractMojo {
     private long mainChecksum = 0;
     private long testChecksum = 0;
     private long resourceChecksum = 0;
+    private long testResourceChecksum = 0;
     Optional<String> artifactPath;
 
     static {
@@ -139,7 +142,9 @@ public class PreCompileHelperMojo extends AbstractMojo {
             return;
         }
         resourceChecksum = getChecksum(mainResourceLocation, ANY_EXT);
+        testResourceChecksum = getChecksum(testResourceLocation, ANY_EXT);
         project.getProperties().setProperty(RESOURCE_CHECKSUM, String.valueOf(resourceChecksum));
+        project.getProperties().setProperty(TEST_RESOURCE_CHECKSUM, String.valueOf(testResourceChecksum));
         byte[] sourceChecksum = calculateChecksum(mainChecksum, resourceChecksum).getBytes();
         boolean instrumented = isCurrentModuleInstrumented();
         artifactPath = getArtifactPathInLocalRepo(session.getLocalRepository().getUrl(), project, sourceChecksum);
@@ -150,7 +155,11 @@ public class PreCompileHelperMojo extends AbstractMojo {
         Map<String, Object> lastTimeModuleBuildData = buildState.readModuleBuildData();
         resourceBuildData = getCurrentResourceBuildData();
         Map<String, Object> lastTimeResourceBuildData = buildState.readResourceBuildData();
-
+        generateSyncAlert(lastTimeResourceBuildData != null && (
+                !resourceBuildData.get(MAIN).equals(lastTimeResourceBuildData.get(MAIN)) || !resourceBuildData.get(TEST)
+                                                                                                              .equals(lastTimeResourceBuildData
+                                                                                                                              .get(TEST)
+                                                                                                                              .toString())));
         boolean buildDataSameWithPreviousBuild =
                 isBuildDataSameWithPreviousBuild(lastTimeModuleBuildData, moduleBuildData);
         boolean resourceMainBuildDataSameWithPreviousBuild =
@@ -182,9 +191,9 @@ public class PreCompileHelperMojo extends AbstractMojo {
 
     private void generateSignature(byte[] sourceChecksum) {
         try {
-            Paths.get(project.getBuild().getDirectory()).toFile().mkdirs();
-            Files.write(Paths.get(project.getBuild().getDirectory(), project.getBuild().getFinalName() + DOT + UNICORN),
-                    sourceChecksum, StandardOpenOption.CREATE);
+            Paths.get(project.getBuild().getOutputDirectory()).toFile().mkdirs();
+            Files.write(Paths.get(project.getBuild().getOutputDirectory(), UNICORN + DOT + CHECKSUM), sourceChecksum,
+                    StandardOpenOption.CREATE);
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
@@ -323,7 +332,7 @@ public class PreCompileHelperMojo extends AbstractMojo {
         }
     }
 
-    private Map<String, Object> getCurrentModuleBuildData() {
+    private Map<String, Object> getCurrentModuleBuildData() throws MojoExecutionException {
         Map<String, Object> moduleBuildData = new HashMap<>();
         moduleBuildData.put(MAIN, new HashMap<String, String>());
         moduleBuildData.put(TEST, new HashMap<String, String>());
@@ -339,18 +348,14 @@ public class PreCompileHelperMojo extends AbstractMojo {
             return moduleBuildData;
         }
         for (Artifact dependency : project.getArtifacts()) {
-            String fileNme = dependency.getFile().getName();
             if (excludeDependencies.contains(dependency.getScope())) {
                 HashMap.class.cast(moduleBuildData.get(TEST))
                              .put(dependency.getGroupId() + COLON + dependency.getArtifactId(),
-                                     fileNme.endsWith(dependency.getVersion() + DOT + JAR) ? dependency.getVersion() :
-                                             fileNme);
+                                     dependency.getVersion());
                 continue;
             }
             HashMap.class.cast(moduleBuildData.get(MAIN))
-                         .put(dependency.getGroupId() + COLON + dependency.getArtifactId(),
-                                 fileNme.endsWith(dependency.getVersion() + DOT + JAR) ? dependency.getVersion() :
-                                         fileNme);
+                         .put(dependency.getGroupId() + COLON + dependency.getArtifactId(), dependency.getVersion());
         }
         return moduleBuildData;
     }
@@ -408,7 +413,7 @@ public class PreCompileHelperMojo extends AbstractMojo {
     private Map<String, Object> getCurrentResourceBuildData() {
         HashMap<String, Object> resourceBuildStateData = new HashMap<>();
         resourceBuildStateData.put(MAIN, project.getProperties().getProperty(RESOURCE_CHECKSUM));
-        resourceBuildStateData.put(TEST, getChecksum(testResourceLocation, ANY_EXT));
+        resourceBuildStateData.put(TEST, project.getProperties().getProperty(TEST_RESOURCE_CHECKSUM));
         resourceBuildStateData.put("dependency", getDependencies().hashCode());
         return resourceBuildStateData;
     }
@@ -445,6 +450,14 @@ public class PreCompileHelperMojo extends AbstractMojo {
         if (!checksum.equals(checksumMap.get(moduleCoordinates)) || isPMDMandatory(project.getArtifacts())) {
             project.getProperties().setProperty(SKIP_PMD, Boolean.FALSE.toString());
             BuildState.recordPMDRun(moduleCoordinates);
+            generateSyncAlert(!checksum.equals(checksumMap.get(moduleCoordinates)));
+        }
+    }
+
+    private void generateSyncAlert(boolean required) {
+        if (required) {
+            getLog().warn(
+                    "\u001B[33m\u001B[1m UNICORN Alert!!! Source code in version control system for this module is different than your local one. \u001B[0m");
         }
     }
 }

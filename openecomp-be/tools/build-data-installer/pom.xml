@@ -22,13 +22,6 @@
             <groupId>org.openecomp.sdc.onboarding</groupId>
             <artifactId>pmd-helper-plugin</artifactId>
             <version>${project.version}</version>
-            <dependencies>
-                <dependency>
-                    <groupId>org.openecomp.sdc</groupId>
-                    <artifactId>build-data-helper</artifactId>
-                    <version>${project.version}</version>
-                </dependency>
-            </dependencies>
             <executions>
                 <execution>
                     <goals>
@@ -45,6 +38,29 @@
                 <persistingModuleCoordinates>org.openecomp.sdc:build-data-installer</persistingModuleCoordinates>
                 <pmdCurrentStateFilePath>org.openecomp.sdc:sdc-onboarding/target/build-data/pmdState.dat</pmdCurrentStateFilePath>
                 <pmdStateFile>${project.build.outputDirectory}/pmd.dat</pmdStateFile>
+            </configuration>
+        </plugin>
+        <plugin>
+            <groupId>org.openecomp.sdc.onboarding</groupId>
+            <artifactId>artifact-copy-plugin</artifactId>
+            <version>${project.version}</version>
+            <executions>
+                <execution>
+                    <goals>
+                        <goal>init-artifact-helper</goal>
+                        <goal>calibrate-artifact-helper</goal>
+                    </goals>
+                </execution>
+            </executions>
+            <configuration>
+                <groupId>org.openecomp.sdc</groupId>
+                <artifactId>build-data-installer</artifactId>
+                <version>${project.version}</version>
+                <artifactHelper>
+                    <project>${project}</project>
+                    <session>${session}</session>
+                    <unicornRoot>org.openecomp.sdc:sdc-onboarding/target/build-data</unicornRoot>
+                </artifactHelper>
             </configuration>
         </plugin>
     </plugins>

@@ -22,7 +22,6 @@ public class Constants {
     public static final String UNICORN = "unicorn";
     public static final String EMPTY_STRING = "";
     public static final String PREFIX = System.getProperties().contains(UNICORN) ? EMPTY_STRING : UNICORN;
-    ;
     public static final String JACOCO_SKIP = "jacoco.skip";
     public static final String FORK_COUNT = "fork.count";
     public static final String FORK_MODE = "fork.mode";
@@ -39,8 +38,10 @@ public class Constants {
     public static final String SKIP_MAIN_SOURCE_COMPILE = PREFIX + "skipMainSourceCompile";
     public static final String SKIP_TEST_SOURCE_COMPILE = PREFIX + "skipTestSourceCompile";
     public static final String MAIN_CHECKSUM = "mainChecksum";
+    public static final String CHECKSUM = "checksum";
     public static final String TEST_CHECKSUM = "testChecksum";
     public static final String RESOURCE_CHECKSUM = "resourceChecksum";
+    public static final String TEST_RESOURCE_CHECKSUM = "testResourceChecksum";
     public static final String MAIN_SOURCE_CHECKSUM = "mainSourceChecksum";
     public static final String TEST_SOURCE_CHECKSUM = "testSourceChecksum";
     public static final String GENERATED_SOURCE_CHECKSUM = "generatedSourceChecksum";
@@ -65,4 +66,6 @@ public class Constants {
 
     private Constants() {
     }
+
+
 }
