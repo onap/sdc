@@ -18,7 +18,6 @@
         <module>../openecomp-be/tools/pmd-helper-plugin</module>
         <module>../common</module>
         <module>../openecomp-be</module>
-        <module>../openecomp-be/tools/build-data-helper</module>
         <module>../openecomp-be/tools/build-data-installer</module>
         <module>../openecomp-ui</module>
     </modules>
