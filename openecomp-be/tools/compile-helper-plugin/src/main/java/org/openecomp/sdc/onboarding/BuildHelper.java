@@ -16,9 +16,13 @@
 
 package org.openecomp.sdc.onboarding;
 
+import static org.openecomp.sdc.onboarding.Constants.CHECKSUM;
+import static org.openecomp.sdc.onboarding.Constants.COLON;
+import static org.openecomp.sdc.onboarding.Constants.DOT;
 import static org.openecomp.sdc.onboarding.Constants.JAVA_EXT;
 import static org.openecomp.sdc.onboarding.Constants.UNICORN;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -40,14 +44,43 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.RecursiveTask;
+import java.util.jar.JarEntry;
+import java.util.jar.JarInputStream;
 import java.util.stream.Collectors;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 
 class BuildHelper {
 
+    private static Log logger;
+
+    private static Map<String, String> store = new HashMap<>();
+
     private BuildHelper() {
         // donot remove.
+    }
+
+    static void setLogger(Log log) {
+        logger = log;
+    }
+
+    static String getSnapshotSignature(File snapshotFile, String moduleCoordinate,
+            String version) {
+        String key = moduleCoordinate + ":" + version;
+        String signature = store.get(key);
+        if (signature != null) {
+            return signature;
+        }
+        try {
+            signature = new String(fetchSnapshotSignature(snapshotFile, version));
+            store.put(key, signature);
+            return signature;
+        } catch (IOException ioe) {
+            logger.debug(ioe);
+            return version;
+        }
+
     }
 
     static long getChecksum(File file, String fileType) {
@@ -143,7 +176,8 @@ class BuildHelper {
 
     static Optional<String> getArtifactPathInLocalRepo(String repoPath, MavenProject project, byte[] sourceChecksum)
             throws MojoFailureException {
-
+        store.put(project.getGroupId() + COLON + project.getArtifactId() + COLON + project.getVersion(),
+                new String(sourceChecksum));
         URI uri = null;
         try {
             uri = new URI(repoPath + (project.getGroupId().replace('.', '/')) + '/' + project.getArtifactId() + '/'
@@ -155,9 +189,8 @@ class BuildHelper {
         File[] list = f.listFiles(t -> t.getName().equals(project.getArtifactId() + "-" + project.getVersion() + "."
                                                                   + project.getPackaging()));
         if (list != null && list.length > 0) {
-            File checksumFile = new File(list[0].getParentFile(), project.getBuild().getFinalName() + "." + UNICORN);
             try {
-                if (checksumFile.exists() && Arrays.equals(sourceChecksum, Files.readAllBytes(checksumFile.toPath()))) {
+                if (Arrays.equals(sourceChecksum, fetchSnapshotSignature(list[0], project.getVersion()))) {
                     return Optional.of(list[0].getAbsolutePath());
                 }
             } catch (IOException e) {
@@ -167,12 +200,27 @@ class BuildHelper {
         return Optional.empty();
     }
 
+    private static byte[] fetchSnapshotSignature(File file, String version) throws IOException {
+        byte[] data = Files.readAllBytes(file.toPath());
+        try (ByteArrayInputStream bais = new ByteArrayInputStream(data);
+             JarInputStream jis = new JarInputStream(bais)) {
+            JarEntry entry = null;
+            while ((entry = jis.getNextJarEntry()) != null) {
+                if (entry.getName().equals(UNICORN + DOT + CHECKSUM)) {
+                    byte[] sigStore = new byte[1024];
+                    return new String(sigStore, 0, jis.read(sigStore, 0, 1024)).getBytes();
+                }
+            }
+        }
+        return version.getBytes();
+    }
+
     static <T> Optional<T> readState(String fileName, Class<T> clazz) {
         try (InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(fileName);
              ObjectInputStream ois = new ObjectInputStream(is)) {
             return Optional.of(clazz.cast(ois.readObject()));
         } catch (Exception ignored) {
-            //ignore. it is taken care.
+            logger.debug(ignored);
             return Optional.empty();
         }
     }

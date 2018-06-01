@@ -64,12 +64,15 @@ public class InitializationHelperMojo extends AbstractMojo {
         project.getProperties().setProperty(SKIP_PMD, Boolean.TRUE.toString());
 
         if (System.getProperties().containsKey(UNICORN)) {
-            buildState.init();
+            buildState.init(getLog());
+            BuildHelper.setLogger(getLog());
         } else {
             project.getProperties().setProperty("skipMainSourceCompile", Boolean.FALSE.toString());
             project.getProperties().setProperty("skipTestSourceCompile", Boolean.FALSE.toString());
         }
 
+
     }
+
 
 }
