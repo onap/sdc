@@ -17,9 +17,9 @@
 package org.openecomp.sdc.onboarding.pmd;
 
 import static org.openecomp.sdc.onboarding.pmd.PMDHelperUtils.getStateFile;
+import static org.openecomp.sdc.onboarding.pmd.PMDHelperUtils.isReportEmpty;
 import static org.openecomp.sdc.onboarding.pmd.PMDHelperUtils.readCurrentPMDState;
 import static org.openecomp.sdc.onboarding.pmd.PMDHelperUtils.writeCurrentPMDState;
-import static org.openecomp.sdc.onboarding.pmd.PMDHelperUtils.isReportEmpty;
 
 import java.io.File;
 import java.io.IOException;
@@ -93,13 +93,16 @@ public class VerifyHelperMojo extends AbstractMojo {
         if (PMDState.getHistoricState() != null && PMDState.getHistoricState().isEmpty()) {
             getLog().error("PMD Check is skipped. problem while loading data.");
         }
-        if (Boolean.FALSE.equals(Boolean.valueOf(project.getProperties().getProperty(SKIP_PMD))) && !isReportEmpty(pmdReportFile)) {
+        if (Boolean.FALSE.equals(Boolean.valueOf(project.getProperties().getProperty(SKIP_PMD))) && !isReportEmpty(
+                pmdReportFile)) {
             Map<String, List<Violation>> data = readCurrentPMDState(pmdCurrentStateFile);
             Map<String, List<Violation>> cv = readCurrentModulePMDReport();
             data.putAll(cv);
+            boolean error = false;
             if (!PMDState.getHistoricState().isEmpty() && !PMDHelperUtils
                                                                    .evaluateCodeQuality(PMDState.getHistoricState(), cv,
                                                                            pmdFailureReportLocation, getLog())) {
+                error = true;
                 if (validatePMDReport) {
                     throw new MojoFailureException(
                             "PMD Failures encountered. Build halted. For details refer " + pmdFailureReportLocation
@@ -111,6 +114,9 @@ public class VerifyHelperMojo extends AbstractMojo {
                                     + " and address them before committing this code in Version Control System. \u001B[0m");
                 }
             }
+            if (!error) {
+                data = readCurrentPMDState(pmdCurrentStateFile);
+            }
             Map<String, Object> checksumStore = HashMap.class.cast(data);
             checksumStore.put(moduleCoordinates,
                     project.getProperties().getProperty("mainChecksum") + ":" + project.getProperties()
@@ -118,11 +124,11 @@ public class VerifyHelperMojo extends AbstractMojo {
             writeCurrentPMDState(pmdCurrentStateFile, data);
         }
         if (Boolean.FALSE.equals(Boolean.valueOf(project.getProperties().getProperty(SKIP_PMD)))) {
-            if (isReportEmpty(pmdReportFile)){
+            if (isReportEmpty(pmdReportFile)) {
                 HashMap data = HashMap.class.cast(readCurrentPMDState(pmdCurrentStateFile));
                 data.put(moduleCoordinates,
-                        project.getProperties().getProperty("mainChecksum") + ":" + project.getProperties()
-                                                                                           .getProperty("testChecksum"));
+                        project.getProperties().getProperty("mainChecksum") + ":" + project.getProperties().getProperty(
+                                "testChecksum"));
                 writeCurrentPMDState(pmdCurrentStateFile, data);
             }
             pmdReportFile.delete();

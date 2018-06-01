@@ -18,7 +18,11 @@ package org.openecomp.sdc.onboarding.util;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -41,6 +45,8 @@ public class InitializationHelperMojo extends AbstractMojo {
     private static final String SKIP_GET = "skipGet";
     private static final String HTTP = "http";
     private static final String HTTPS = "https";
+    private static final String SNAPSHOT = "SNAPSHOT";
+    private static final String DOT = ".";
 
     @Parameter(defaultValue = "${session}")
     private MavenSession session;
@@ -60,6 +66,8 @@ public class InitializationHelperMojo extends AbstractMojo {
     private String excludePackaging;
     @Parameter
     private ArtifactHelper artifactHelper;
+    @Parameter
+    private String cleanupRoot;
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -68,19 +76,25 @@ public class InitializationHelperMojo extends AbstractMojo {
                    .setProperty(SKIP_GET, Boolean.toString(System.getProperties().containsKey(SKIP_GET)));
             return;
         } else {
-            File orgFile = new File(
-                    session.getLocalRepository().getBasedir() + File.separator + (groupId.replace(".", File.separator))
-                            + File.separator + artifactId + File.separator + version);
-            String resolvedVersion = getResolvedVersion(artifactHelper.getRepositories(version.contains("SNAPSHOT")));
+            String resolvedVersion =
+                    getResolvedVersion(artifactHelper.getRepositories(version.contains(SNAPSHOT)), artifactId);
+            String resolvedDataVersion =
+                    getResolvedVersion(artifactHelper.getRepositories(version.contains(SNAPSHOT)), targetLocation);
             project.getProperties().setProperty("resolvedVersion", resolvedVersion);
             System.getProperties().setProperty(SKIP_GET, Boolean.TRUE.toString());
-            if (resolvedVersion.equals(version) && !orgFile.exists()) {
+            File fileToBeCleaned = getCleanupRootFile(cleanupRoot.substring(0, cleanupRoot.indexOf('/')), project);
+            deleteAll(fileToBeCleaned);
+            deleteAll(Paths.get(session.getLocalRepository().getBasedir() + File.separator + (groupId.replace(DOT, File.separator))
+                              + File.separator + artifactId).toFile());
+            deleteAll(Paths.get(session.getLocalRepository().getBasedir() + File.separator + (groupId.replace(DOT, File.separator))
+                                        + File.separator + targetLocation).toFile());
+            if (resolvedVersion.equals(version) || resolvedDataVersion.equals(version)) {
                 project.getProperties().setProperty(SKIP_GET, Boolean.TRUE.toString());
             }
         }
     }
 
-    private String getResolvedVersion(List<ArtifactRepository> list) {
+    private String getResolvedVersion(List<ArtifactRepository> list, String artifactId) {
         Pattern timestampPattern = Pattern.compile(".*<timestamp>(.*)</timestamp>.*");
         Pattern buildNumberPattern = Pattern.compile(".*<buildNumber>(.*)</buildNumber>.*");
         String timestamp = null;
@@ -99,14 +113,32 @@ public class InitializationHelperMojo extends AbstractMojo {
                 if (m.find()) {
                     buildNumber = m.group(1);
                 }
+                if (timestamp != null && buildNumber != null) {
+                    project.getProperties().setProperty(artifactId + "-Version", timestamp + "-" + buildNumber);
+                    byte[] data = fetchContents(repo.getUrl(), artifactId, timestamp + "-" + buildNumber);
+                    artifactHelper.store(artifactId, data);
+                    project.getProperties().setProperty(artifactId + "-URL", repo.getUrl());
+                    getLog().info(artifactId + " Version to be copied is " + timestamp + "-" + buildNumber);
+                    return timestamp + "-" + buildNumber;
+                }
             } catch (IOException e) {
                 getLog().debug(e);
             }
-            if (timestamp != null && buildNumber != null) {
-                return timestamp + "-" + buildNumber;
-            }
         }
         return version;
+    }
+
+    private byte[] fetchContents(String repoUrl, String artifactId, String resolvedVersion) throws IOException {
+        File file = File.createTempFile("data", "jar");
+        URL path = new URL(repoUrl + (groupId.replace('.', '/')) + '/' + artifactId + '/' + version + '/' + artifactId
+                                   + "-" + (version.equals(resolvedVersion) ? version :
+                                                    version.replace(SNAPSHOT, resolvedVersion)) + ".jar");
+        try (InputStream is = path.openStream()) {
+            Files.copy(is, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
+        }
+        byte[] data = Files.readAllBytes(file.toPath());
+        file.delete();
+        return data;
     }
 
     private void setProxy(URL url) {
@@ -121,10 +153,48 @@ public class InitializationHelperMojo extends AbstractMojo {
             String protocol) {
         for (Proxy proxy : session.getSettings().getProxies()) {
             if (proxy.isActive() && proxy.getProtocol().equalsIgnoreCase(protocol)) {
-                System.setProperty(proxyHostProperty, proxy.getHost());
-                System.setProperty(proxyPortProperty, String.valueOf(proxy.getPort()));
-                System.setProperty(nonProxyHostsProperty, proxy.getNonProxyHosts());
+                if (proxy.getHost() != null && !proxy.getHost().trim().isEmpty()) {
+                    System.setProperty(proxyHostProperty, proxy.getHost());
+                    System.setProperty(proxyPortProperty, String.valueOf(proxy.getPort()));
+                }
+                if (proxy.getNonProxyHosts() != null && !proxy.getNonProxyHosts().trim().isEmpty()) {
+                    System.setProperty(nonProxyHostsProperty, proxy.getNonProxyHosts());
+                }
             }
         }
+    }
+
+    private File getStateFile(String moduleCoordinate, MavenProject proj, String filePath) {
+        return new File(getTopParentProject(moduleCoordinate, proj).getBasedir(),
+                filePath.substring(filePath.indexOf('/') + 1));
+    }
+
+    MavenProject getTopParentProject(String moduleCoordinate, MavenProject proj) {
+        if (getModuleCoordinate(proj).equals(moduleCoordinate) || proj.getParent() == null) {
+            return proj;
+        } else {
+            return getTopParentProject(moduleCoordinate, proj.getParent());
+        }
+    }
+
+    private String getModuleCoordinate(MavenProject project) {
+        return project.getGroupId() + ":" + project.getArtifactId();
+    }
+
+    private File getCleanupRootFile(String moduleCoordinate, MavenProject proj) {
+        return getStateFile(moduleCoordinate, proj, cleanupRoot);
+    }
+
+    private void deleteAll(File f){
+            if (!f.exists()){
+                return;
+            }
+            for(File file : f.listFiles()) {
+                if (file.isDirectory() && file.listFiles().length > 0) {
+                    deleteAll(file);
+                } else {
+                    file.delete();
+                }
+            }
     }
 }
