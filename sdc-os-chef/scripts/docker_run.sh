@@ -322,8 +322,6 @@ function sdc-cs {
 
 #Cassandra-init
 function sdc-cs-init {
-    #fix for csit failuer
-    sleep 30
     echo "docker run sdc-cassandra-init..."
     if [ ${LOCAL} = false ]; then
         docker pull ${PREFIX}/sdc-cassandra-init:${RELEASE}
