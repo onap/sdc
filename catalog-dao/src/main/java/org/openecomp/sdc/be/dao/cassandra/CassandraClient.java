@@ -24,6 +24,7 @@ import java.util.List;
 
 import javax.annotation.PreDestroy;
 
+import com.datastax.driver.core.SocketOptions;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.slf4j.Logger;
@@ -65,6 +66,7 @@ public class CassandraClient {
 					.withRetryPolicy(DefaultRetryPolicy.INSTANCE);
 
 			cassandraHosts.forEach(host -> clusterBuilder.addContactPoint(host));
+			setSocketOptions(clusterBuilder);
 			enableAuthentication(clusterBuilder);
 			enableSsl(clusterBuilder);
 			setLocalDc(clusterBuilder);
@@ -76,6 +78,21 @@ public class CassandraClient {
 		}
 
 		logger.info("** CassandraClient created");
+	}
+
+	private void setSocketOptions(Cluster.Builder clusterBuilder) {
+		SocketOptions socketOptions =new SocketOptions();
+		Integer socketConnectTimeout = ConfigurationManager.getConfigurationManager().getConfiguration().getCassandraConfig().getSocketConnectTimeout();
+		if( socketConnectTimeout!=null ){
+			logger.info("SocketConnectTimeout was provided, setting Cassandra client to use SocketConnectTimeout: {} .",socketConnectTimeout);
+			socketOptions.setConnectTimeoutMillis(socketConnectTimeout);
+		}
+		Integer socketReadTimeout = ConfigurationManager.getConfigurationManager().getConfiguration().getCassandraConfig().getSocketReadTimeout();
+		if( socketReadTimeout != null ){
+			logger.info("SocketReadTimeout was provided, setting Cassandra client to use SocketReadTimeout: {} .",socketReadTimeout);
+			socketOptions.setReadTimeoutMillis(socketReadTimeout);
+		}
+		clusterBuilder.withSocketOptions(socketOptions);
 	}
 
 	private void setLocalDc(Cluster.Builder clusterBuilder) {
