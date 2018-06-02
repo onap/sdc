@@ -1,9 +1,11 @@
 package org.openecomp.sdc.be.dao.jsongraph;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.Test;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
+import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
@@ -16,7 +18,11 @@ public class GraphVertexTest {
 	private GraphVertex createTestSubject() {
 		return new GraphVertex();
 	}
-
+	
+	@Test
+	public void testCtor() throws Exception {
+		new GraphVertex(VertexTypeEnum.ADDITIONAL_INFORMATION);
+	}
 	
 	@Test
 	public void testGetUniqueId() throws Exception {
@@ -181,12 +187,14 @@ public class GraphVertexTest {
 	@Test
 	public void testGetJsonMetadataField() throws Exception {
 		GraphVertex testSubject;
-		JsonPresentationFields field = null;
 		Object result;
 
 		// default test
 		testSubject = createTestSubject();
-		result = testSubject.getJsonMetadataField(field);
+		result = testSubject.getJsonMetadataField(JsonPresentationFields.API_URL);
+		testSubject = createTestSubject();
+		testSubject.setType(ComponentTypeEnum.RESOURCE);
+		result = testSubject.getJsonMetadataField(JsonPresentationFields.API_URL);
 	}
 
 	
@@ -197,5 +205,38 @@ public class GraphVertexTest {
 		// default test
 		testSubject = createTestSubject();
 		testSubject.updateMetadataJsonWithCurrentMetadataProperties();
+		Map<GraphPropertyEnum, Object> metadataProperties = new HashMap<>();
+		metadataProperties.put(GraphPropertyEnum.COMPONENT_TYPE, "mock");
+		testSubject.setMetadataProperties(metadataProperties );
+		testSubject.updateMetadataJsonWithCurrentMetadataProperties();
 	}
+	
+	@Test
+	public void testGetType() throws Exception {
+		GraphVertex testSubject;
+
+		// default test
+		testSubject = createTestSubject();
+		testSubject.setType(ComponentTypeEnum.RESOURCE);
+		testSubject.getType();
+	}
+	
+	@Test
+	public void testCloneData() throws Exception {
+		GraphVertex testSubject;
+
+		// default test
+		testSubject = createTestSubject();
+		testSubject.cloneData(new GraphVertex());
+	}
+	
+	@Test
+	public void testSetJsonMetadataField() throws Exception {
+		GraphVertex testSubject;
+
+		// default test
+		testSubject = createTestSubject();
+		testSubject.setJsonMetadataField(JsonPresentationFields.API_URL, "mock");
+	}
+
 }

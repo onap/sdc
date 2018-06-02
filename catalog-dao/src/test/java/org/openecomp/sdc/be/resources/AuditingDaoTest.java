@@ -42,6 +42,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.openecomp.sdc.be.config.Configuration;
 import org.openecomp.sdc.be.config.Configuration.ElasticSearchConfig.IndicesTimeFrequencyEntry;
 import org.openecomp.sdc.be.config.ConfigurationManager;
@@ -231,6 +232,22 @@ public class AuditingDaoTest {
 		testCreationPeriodScenario(params, creationPeriod, expectedIndexName, ResourceAdminEvent.class);
 	}
 
+	@Test
+	public void testGetFilteredResourceAdminAuditingEvents() {
+		Map<AuditingFieldsKeysEnum, Object> filterMap = new HashMap<>();
+		filterMap.put(AuditingFieldsKeysEnum.AUDIT_ACTION, new Object());
+		Either<List<ESTimeBasedEvent>, ActionStatus> filteredResourceAdminAuditingEvents = auditingDao
+				.getFilteredResourceAdminAuditingEvents(filterMap);
+	}
+
+	@Test
+	public void testGetListOfDistributionByAction() {
+		Either<List<ESTimeBasedEvent>, ActionStatus> filteredResourceAdminAuditingEvents = auditingDao
+				.getListOfDistributionByAction("mock", "mock", "mock", AuditingGenericEvent.class);
+		filteredResourceAdminAuditingEvents = auditingDao
+				.getListOfDistributionByAction("mock", "mock", null, AuditingGenericEvent.class);
+	}
+	
 	private SearchResponse testCreationPeriodScenario(Map<AuditingFieldsKeysEnum, Object> params, String creationPeriod,
 			String expectedIndexName, Class<? extends AuditingGenericEvent> clazz) {
 
