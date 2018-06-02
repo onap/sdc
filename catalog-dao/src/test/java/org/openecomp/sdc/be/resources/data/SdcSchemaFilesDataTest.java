@@ -1,5 +1,6 @@
 package org.openecomp.sdc.be.resources.data;
 
+import java.nio.ByteBuffer;
 import java.util.Date;
 
 import org.junit.Test;
@@ -11,6 +12,10 @@ public class SdcSchemaFilesDataTest {
 		return new SdcSchemaFilesData();
 	}
 
+	@Test
+	public void testCtor() throws Exception {
+		new SdcSchemaFilesData("mock", new Date(), "mock", "mock", new byte[0], "mock");
+	}
 	
 	@Test
 	public void testGetSdcReleaseNum() throws Exception {
@@ -77,7 +82,24 @@ public class SdcSchemaFilesDataTest {
 		testSubject.setFileName(fileName);
 	}
 
+	@Test
+	public void testGetPayload() throws Exception {
+		SdcSchemaFilesData testSubject;
+
+		// default test
+		testSubject = createTestSubject();
+		testSubject.getPayload();
+	}
 	
+	@Test
+	public void testSetPayload() throws Exception {
+		SdcSchemaFilesData testSubject;
+		ByteBuffer payload = ByteBuffer.wrap(new byte[0]);
+
+		// default test
+		testSubject = createTestSubject();
+		testSubject.setPayload(payload);
+	}
 
 
 	

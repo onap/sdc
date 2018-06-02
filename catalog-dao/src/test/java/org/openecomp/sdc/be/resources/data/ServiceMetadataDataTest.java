@@ -1,8 +1,10 @@
 package org.openecomp.sdc.be.resources.data;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.Test;
+import org.openecomp.sdc.be.datatypes.components.ServiceMetadataDataDefinition;
 
 
 public class ServiceMetadataDataTest {
@@ -11,6 +13,11 @@ public class ServiceMetadataDataTest {
 		return new ServiceMetadataData();
 	}
 
+	@Test
+	public void testCtor() throws Exception {
+		new ServiceMetadataData(new HashMap());
+		new ServiceMetadataData(new ServiceMetadataDataDefinition());
+	}
 	
 	@Test
 	public void testGetUniqueIdKey() throws Exception {

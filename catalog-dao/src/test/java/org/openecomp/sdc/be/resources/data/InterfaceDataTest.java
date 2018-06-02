@@ -1,5 +1,6 @@
 package org.openecomp.sdc.be.resources.data;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.Test;
@@ -12,6 +13,12 @@ public class InterfaceDataTest {
 		return new InterfaceData();
 	}
 
+	@Test
+	public void testCtor() throws Exception {
+		new InterfaceData(new InterfaceData());
+		new InterfaceData(new InterfaceDataDefinition());
+		new InterfaceData(new HashMap<>());
+	}
 	
 	@Test
 	public void testGetInterfaceDataDefinition() throws Exception {

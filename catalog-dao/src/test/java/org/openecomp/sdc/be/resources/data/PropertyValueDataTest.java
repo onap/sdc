@@ -1,5 +1,6 @@
 package org.openecomp.sdc.be.resources.data;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -13,6 +14,10 @@ public class PropertyValueDataTest {
 		return new PropertyValueData();
 	}
 
+	@Test
+	public void testCtor() throws Exception {
+		new PropertyValueData(new HashMap<>());
+	}
 	
 	@Test
 	public void testGetUniqueId() throws Exception {

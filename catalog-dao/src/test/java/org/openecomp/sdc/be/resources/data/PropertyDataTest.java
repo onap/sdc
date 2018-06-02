@@ -1,5 +1,7 @@
 package org.openecomp.sdc.be.resources.data;
 
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -13,6 +15,11 @@ public class PropertyDataTest {
 		return new PropertyData();
 	}
 
+	@Test
+	public void testCtor() throws Exception {
+		new PropertyData(new HashMap<>());
+		new PropertyData(new PropertyDataDefinition(), new LinkedList<>());
+	}
 	
 	@Test
 	public void testToGraphMap() throws Exception {

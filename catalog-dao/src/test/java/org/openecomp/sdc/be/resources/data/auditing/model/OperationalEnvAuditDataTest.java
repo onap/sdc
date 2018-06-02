@@ -1,10 +1,7 @@
 package org.openecomp.sdc.be.resources.data.auditing.model;
 
-import javax.annotation.Generated;
-
 import org.junit.Test;
 
-@Generated(value = "org.junit-tools-1.0.6")
 public class OperationalEnvAuditDataTest {
 
 	private OperationalEnvAuditData createTestSubject() {

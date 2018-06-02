@@ -69,8 +69,10 @@ public class PolicyTypeData extends GraphNode {
         policyTypeDataDefinition
                 .setDescription((String) properties.get(GraphPropertiesDictionary.DESCRIPTION.getProperty()));
 
-        policyTypeDataDefinition.setHighestVersion(
-                (boolean) properties.get(GraphPropertiesDictionary.IS_HIGHEST_VERSION.getProperty()));
+        if (properties.get(GraphPropertiesDictionary.IS_HIGHEST_VERSION.getProperty()) != null) {
+        	policyTypeDataDefinition.setHighestVersion(
+        			(boolean) properties.get(GraphPropertiesDictionary.IS_HIGHEST_VERSION.getProperty()));
+		}
 
         policyTypeDataDefinition.setVersion((String) properties.get(GraphPropertiesDictionary.VERSION.getProperty()));
 

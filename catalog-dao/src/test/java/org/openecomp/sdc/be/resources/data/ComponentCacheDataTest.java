@@ -1,5 +1,6 @@
 package org.openecomp.sdc.be.resources.data;
 
+import java.nio.ByteBuffer;
 import java.util.Date;
 
 import org.junit.Test;
@@ -10,7 +11,13 @@ public class ComponentCacheDataTest {
 	private ComponentCacheData createTestSubject() {
 		return new ComponentCacheData();
 	}
-
+	
+	@Test
+	public void testCtor() throws Exception {
+		new ComponentCacheData("mock");
+		new ComponentCacheData("mock", new byte[0]);
+		new ComponentCacheData("mock", new byte[0], new Date(), "mock", true, true);
+	}
 	
 	@Test
 	public void testGetDataAsArray() throws Exception {
@@ -40,8 +47,24 @@ public class ComponentCacheDataTest {
 	}
 
 	
+	@Test
+	public void testGetData() throws Exception {
+		ComponentCacheData testSubject ;
+		
+		testSubject = createTestSubject();
+		
+		testSubject.getData();
+	}
 
-
+	@Test
+	public void testSetData() throws Exception {
+		ComponentCacheData testSubject ;
+		
+		testSubject = createTestSubject();
+		
+		ByteBuffer data = ByteBuffer.allocate(0);
+		testSubject.setData(data);
+	}
 	
 	@Test
 	public void testGetId() throws Exception {
