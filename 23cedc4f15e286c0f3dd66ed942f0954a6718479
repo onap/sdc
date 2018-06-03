@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_8307391d",
+        "filename": "openecomp-be/tools/artifact-copy-plugin/src/main/java/org/openecomp/sdc/onboarding/util/ArtifactHelper.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 2819
+      },
+      "writtenOn": "2018-06-03T13:06:50Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5a93c517_8359795d",
+      "revId": "23cedc4f15e286c0f3dd66ed942f0954a6718479",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_43f7f159",
         "filename": "openecomp-be/tools/artifact-copy-plugin/src/main/java/org/openecomp/sdc/onboarding/util/ArtifactHelper.java",
         "patchSetId": 7
@@ -30,6 +48,24 @@
       "writtenOn": "2018-06-03T12:17:13Z",
       "side": 1,
       "message": "Consider using third parties or Files.walk.\n\nDo we have apache utils in the classpath? Use FileUtils.cleanDirectory(directory); \nOtherwise use Files.walk(Paths.get(\"C:/test/ABC/\"))\n                .filter(Files::isRegularFile)\n                .map(Path::toFile)\n                .forEach(File::delete);\nAnd maybe just Files.delete(path).",
+      "revId": "23cedc4f15e286c0f3dd66ed942f0954a6718479",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_23042517",
+        "filename": "openecomp-be/tools/artifact-copy-plugin/src/main/java/org/openecomp/sdc/onboarding/util/ArtifactHelper.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 2819
+      },
+      "writtenOn": "2018-06-03T13:06:50Z",
+      "side": 1,
+      "message": "I donot want to use Streams here. Files.delete deletes just one file which is equivalent to file.delete(). do you see any benefit with Filed.delete(Path) over file.delete(). I donot see Sonar complaining on this method for anything BTW. Apache is not in dependencies list of this plugin. it is just a simple recursive function to delete a directory recursively.",
+      "parentUuid": "5a93c517_43f7f159",
       "revId": "23cedc4f15e286c0f3dd66ed942f0954a6718479",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_fefd7409",
+        "filename": "openecomp-be/tools/artifact-copy-plugin/src/main/java/org/openecomp/sdc/onboarding/util/InitializationHelperMojo.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 111,
+      "author": {
+        "id": 2819
+      },
+      "writtenOn": "2018-06-03T13:06:50Z",
+      "side": 1,
+      "message": "it is not a error condition for this usecase as per design. i applied debug.log() here just to suppress sonar warning. fallback is in place. log.error would unnecessarily add noise in the build.",
+      "parentUuid": "5a93c517_0399e91e",
+      "revId": "23cedc4f15e286c0f3dd66ed942f0954a6718479",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_63878db7",
         "filename": "openecomp-be/tools/compile-helper-plugin/src/main/java/org/openecomp/sdc/onboarding/BuildState.java",
         "patchSetId": 7
@@ -64,6 +118,24 @@
       "writtenOn": "2018-06-03T12:17:13Z",
       "side": 1,
       "message": "Log the error.",
+      "revId": "23cedc4f15e286c0f3dd66ed942f0954a6718479",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_1e03800e",
+        "filename": "openecomp-be/tools/compile-helper-plugin/src/main/java/org/openecomp/sdc/onboarding/BuildState.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 273,
+      "author": {
+        "id": 2819
+      },
+      "writtenOn": "2018-06-03T13:06:50Z",
+      "side": 1,
+      "message": "It is not a error condition as per usecase. in case of error a blank Hashmap suffice. since it is not a error so adding a log.error() woudld unnecessarily add the noise in the build flow and confuse the developers.",
+      "parentUuid": "5a93c517_63878db7",
       "revId": "23cedc4f15e286c0f3dd66ed942f0954a6718479",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
