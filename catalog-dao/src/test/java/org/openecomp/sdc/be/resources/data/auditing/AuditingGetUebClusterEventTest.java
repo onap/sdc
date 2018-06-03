@@ -1,9 +1,12 @@
 package org.openecomp.sdc.be.resources.data.auditing;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.UUID;
 
 import org.junit.Test;
+import org.openecomp.sdc.be.resources.data.auditing.model.CommonAuditData;
+import org.openecomp.sdc.be.resources.data.auditing.model.CommonAuditData.Builder;
 
 public class AuditingGetUebClusterEventTest {
 
@@ -11,6 +14,14 @@ public class AuditingGetUebClusterEventTest {
 		return new AuditingGetUebClusterEvent();
 	}
 
+	@Test
+	public void testCtor() throws Exception {
+		new AuditingGetUebClusterEvent(new HashMap<>());
+		Builder newBuilder = CommonAuditData.newBuilder();
+		CommonAuditData build = newBuilder.build();
+		new AuditingGetUebClusterEvent("mock", build, "mock");
+	}
+	
 	@Test
 	public void testFillFields() throws Exception {
 		AuditingGetUebClusterEvent testSubject;

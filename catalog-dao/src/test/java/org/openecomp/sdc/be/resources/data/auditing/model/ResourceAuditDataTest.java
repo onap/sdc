@@ -19,6 +19,41 @@ public class ResourceAuditDataTest {
 		result = ResourceAuditData.newBuilder();
 	}
 
+	@Test
+	public void testArtifactUuid() throws Exception {
+		Builder result;
+
+		// default test
+		result = ResourceAuditData.newBuilder();
+		result.artifactUuid("mock");
+	}
+	
+	@Test
+	public void testState() throws Exception {
+		Builder result;
+
+		// default test
+		result = ResourceAuditData.newBuilder();
+		result.state("mock");
+	}
+	
+	@Test
+	public void testvVersion() throws Exception {
+		Builder result;
+
+		// default test
+		result = ResourceAuditData.newBuilder();
+		result.version("mock");
+	}
+	
+	@Test
+	public void testDistributionStatus() throws Exception {
+		Builder result;
+
+		// default test
+		result = ResourceAuditData.newBuilder();
+		result.distributionStatus("mock");
+	}
 	
 	@Test
 	public void testGetArtifactUuid() throws Exception {

@@ -10,6 +10,13 @@ public class ResourceDAOExceptionTest {
 		return new ResourceDAOException("", null);
 	}
 
+	@Test
+	public void testCtor() throws Exception {
+		new ResourceDAOException("mock");
+		new ResourceDAOException("mock", new Throwable());
+		new ResourceDAOException(ResourceUploadStatus.ALREADY_EXIST, "mock");
+		new ResourceDAOException(ResourceUploadStatus.ALREADY_EXIST, "mock", new Throwable());
+	}
 	
 	@Test
 	public void testGetStatus() throws Exception {

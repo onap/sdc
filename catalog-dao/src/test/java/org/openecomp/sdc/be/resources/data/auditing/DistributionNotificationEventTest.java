@@ -1,9 +1,12 @@
 package org.openecomp.sdc.be.resources.data.auditing;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.UUID;
 
 import org.junit.Test;
+import org.openecomp.sdc.be.resources.data.auditing.model.CommonAuditData;
+import org.openecomp.sdc.be.resources.data.auditing.model.OperationalEnvAuditData;
 
 public class DistributionNotificationEventTest {
 
@@ -11,6 +14,11 @@ public class DistributionNotificationEventTest {
 		return new DistributionNotificationEvent();
 	}
 
+	@Test
+	public void testCtor() throws Exception {
+		new DistributionNotificationEvent(new HashMap<>());
+		new DistributionNotificationEvent("mock", CommonAuditData.newBuilder().build(), "mock", "mock", "mock", "mock", "mock", "mock", "mock", new OperationalEnvAuditData("mock", "mock", "mock"));
+	}
 	
 	@Test
 	public void testFillFields() throws Exception {
@@ -338,5 +346,32 @@ public class DistributionNotificationEventTest {
 		// default test
 		testSubject = createTestSubject();
 		result = testSubject.toString();
+	}
+	
+	@Test
+	public void testSetVnfWorkloadContext() throws Exception {
+		DistributionNotificationEvent testSubject;
+
+		// default test
+		testSubject = createTestSubject();
+		testSubject.setVnfWorkloadContext("mock");
+	}
+	
+	@Test
+	public void testSetEnvId() throws Exception {
+		DistributionNotificationEvent testSubject;
+
+		// default test
+		testSubject = createTestSubject();
+		testSubject.setEnvId("mock");
+	}
+	
+	@Test
+	public void testSetTenant() throws Exception {
+		DistributionNotificationEvent testSubject;
+
+		// default test
+		testSubject = createTestSubject();
+		testSubject.setTenant("mock");
 	}
 }

@@ -1,9 +1,11 @@
 package org.openecomp.sdc.be.resources.data.auditing;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.UUID;
 
 import org.junit.Test;
+import org.openecomp.sdc.be.resources.data.auditing.model.CommonAuditData;
 
 
 public class UserAccessEventTest {
@@ -12,6 +14,11 @@ public class UserAccessEventTest {
 		return new UserAccessEvent();
 	}
 
+	@Test
+	public void testCtor() throws Exception {
+		new UserAccessEvent(new HashMap<>());
+		new UserAccessEvent("mock", CommonAuditData.newBuilder().build(), "mock");
+	}
 	
 	@Test
 	public void testFillFields() throws Exception {
@@ -176,6 +183,14 @@ public class UserAccessEventTest {
 		testSubject.setTimestamp1(timestamp);
 	}
 
+	@Test
+	public void testSetServiceInstanceId() throws Exception {
+		UserAccessEvent testSubject;
+
+		// default test
+		testSubject = createTestSubject();
+		testSubject.setServiceInstanceId("mock");
+	}
 	
 	@Test
 	public void testToString() throws Exception {

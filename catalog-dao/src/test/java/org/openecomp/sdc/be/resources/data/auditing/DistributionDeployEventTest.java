@@ -1,9 +1,11 @@
 package org.openecomp.sdc.be.resources.data.auditing;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.UUID;
 
 import org.junit.Test;
+import org.openecomp.sdc.be.resources.data.auditing.model.CommonAuditData;
 
 
 public class DistributionDeployEventTest {
@@ -12,6 +14,11 @@ public class DistributionDeployEventTest {
 		return new DistributionDeployEvent();
 	}
 
+	@Test
+	public void testCtor() throws Exception {
+		new DistributionDeployEvent(new HashMap<>());
+		new DistributionDeployEvent("mock", CommonAuditData.newBuilder().build(), "mock", "mock", "mock", "mock", "mock");
+	}
 	
 	@Test
 	public void testFillFields() throws Exception {
@@ -264,7 +271,6 @@ public class DistributionDeployEventTest {
 		testSubject.setModifier(modifier);
 	}
 
-	
 	@Test
 	public void testGetDid() throws Exception {
 		DistributionDeployEvent testSubject;

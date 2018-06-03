@@ -1,9 +1,11 @@
 package org.openecomp.sdc.be.resources.data.auditing;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.UUID;
 
 import org.junit.Test;
+import org.openecomp.sdc.be.resources.data.auditing.model.CommonAuditData;
 
 
 public class GetCategoryHierarchyEventTest {
@@ -12,6 +14,11 @@ public class GetCategoryHierarchyEventTest {
 		return new GetCategoryHierarchyEvent();
 	}
 
+	@Test
+	public void testCtor() throws Exception {
+		new GetCategoryHierarchyEvent(new HashMap<>());
+		new GetCategoryHierarchyEvent("mock", CommonAuditData.newBuilder().build(), "mock", "mock");
+	}
 	
 	@Test
 	public void testFillFields() throws Exception {

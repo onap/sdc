@@ -1,10 +1,12 @@
 package org.openecomp.sdc.be.resources.data.auditing;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.UUID;
 
 import org.junit.Test;
-
+import org.openecomp.sdc.be.resources.data.auditing.model.CommonAuditData;
+import org.openecomp.sdc.be.resources.data.auditing.model.ResourceAuditData;
 
 public class ResourceAdminEventTest {
 
@@ -12,7 +14,13 @@ public class ResourceAdminEventTest {
 		return new ResourceAdminEvent();
 	}
 
-	
+	@Test
+	public void testCtor() throws Exception {
+		new ResourceAdminEvent(new HashMap<>());
+		new ResourceAdminEvent("mock", CommonAuditData.newBuilder().build(), ResourceAuditData.newBuilder().build(),
+				ResourceAuditData.newBuilder().build(), "mock", "mock", "mock", "mock", "mock", "mock", "mock", "mock");
+	}
+
 	@Test
 	public void testFillFields() throws Exception {
 		ResourceAdminEvent testSubject;
@@ -22,7 +30,6 @@ public class ResourceAdminEventTest {
 		testSubject.fillFields();
 	}
 
-	
 	@Test
 	public void testGetResourceName() throws Exception {
 		ResourceAdminEvent testSubject;
@@ -33,7 +40,6 @@ public class ResourceAdminEventTest {
 		result = testSubject.getResourceName();
 	}
 
-	
 	@Test
 	public void testSetResourceName() throws Exception {
 		ResourceAdminEvent testSubject;
@@ -44,7 +50,6 @@ public class ResourceAdminEventTest {
 		testSubject.setResourceName(resourceName);
 	}
 
-	
 	@Test
 	public void testGetResourceType() throws Exception {
 		ResourceAdminEvent testSubject;
@@ -55,7 +60,6 @@ public class ResourceAdminEventTest {
 		result = testSubject.getResourceType();
 	}
 
-	
 	@Test
 	public void testSetResourceType() throws Exception {
 		ResourceAdminEvent testSubject;
@@ -66,7 +70,6 @@ public class ResourceAdminEventTest {
 		testSubject.setResourceType(resourceType);
 	}
 
-	
 	@Test
 	public void testGetPrevVersion() throws Exception {
 		ResourceAdminEvent testSubject;
@@ -77,7 +80,6 @@ public class ResourceAdminEventTest {
 		result = testSubject.getPrevVersion();
 	}
 
-	
 	@Test
 	public void testSetPrevVersion() throws Exception {
 		ResourceAdminEvent testSubject;
@@ -88,7 +90,6 @@ public class ResourceAdminEventTest {
 		testSubject.setPrevVersion(prevVersion);
 	}
 
-	
 	@Test
 	public void testGetCurrVersion() throws Exception {
 		ResourceAdminEvent testSubject;
@@ -99,7 +100,6 @@ public class ResourceAdminEventTest {
 		result = testSubject.getCurrVersion();
 	}
 
-	
 	@Test
 	public void testSetCurrVersion() throws Exception {
 		ResourceAdminEvent testSubject;
@@ -110,7 +110,6 @@ public class ResourceAdminEventTest {
 		testSubject.setCurrVersion(currVersion);
 	}
 
-	
 	@Test
 	public void testGetPrevState() throws Exception {
 		ResourceAdminEvent testSubject;
@@ -121,7 +120,6 @@ public class ResourceAdminEventTest {
 		result = testSubject.getPrevState();
 	}
 
-	
 	@Test
 	public void testSetPrevState() throws Exception {
 		ResourceAdminEvent testSubject;
@@ -132,7 +130,6 @@ public class ResourceAdminEventTest {
 		testSubject.setPrevState(prevState);
 	}
 
-	
 	@Test
 	public void testGetCurrState() throws Exception {
 		ResourceAdminEvent testSubject;
@@ -143,7 +140,6 @@ public class ResourceAdminEventTest {
 		result = testSubject.getCurrState();
 	}
 
-	
 	@Test
 	public void testSetCurrState() throws Exception {
 		ResourceAdminEvent testSubject;
@@ -154,7 +150,6 @@ public class ResourceAdminEventTest {
 		testSubject.setCurrState(currState);
 	}
 
-	
 	@Test
 	public void testGetTimebaseduuid() throws Exception {
 		ResourceAdminEvent testSubject;
@@ -165,7 +160,6 @@ public class ResourceAdminEventTest {
 		result = testSubject.getTimebaseduuid();
 	}
 
-	
 	@Test
 	public void testSetTimebaseduuid() throws Exception {
 		ResourceAdminEvent testSubject;
@@ -176,7 +170,6 @@ public class ResourceAdminEventTest {
 		testSubject.setTimebaseduuid(timebaseduuid);
 	}
 
-	
 	@Test
 	public void testGetTimestamp1() throws Exception {
 		ResourceAdminEvent testSubject;
@@ -187,7 +180,6 @@ public class ResourceAdminEventTest {
 		result = testSubject.getTimestamp1();
 	}
 
-	
 	@Test
 	public void testSetTimestamp1() throws Exception {
 		ResourceAdminEvent testSubject;
@@ -198,7 +190,6 @@ public class ResourceAdminEventTest {
 		testSubject.setTimestamp1(timestamp1);
 	}
 
-	
 	@Test
 	public void testGetAction() throws Exception {
 		ResourceAdminEvent testSubject;
@@ -209,7 +200,6 @@ public class ResourceAdminEventTest {
 		result = testSubject.getAction();
 	}
 
-	
 	@Test
 	public void testSetAction() throws Exception {
 		ResourceAdminEvent testSubject;
@@ -220,7 +210,6 @@ public class ResourceAdminEventTest {
 		testSubject.setAction(action);
 	}
 
-	
 	@Test
 	public void testGetRequestId() throws Exception {
 		ResourceAdminEvent testSubject;
@@ -231,7 +220,6 @@ public class ResourceAdminEventTest {
 		result = testSubject.getRequestId();
 	}
 
-	
 	@Test
 	public void testSetRequestId() throws Exception {
 		ResourceAdminEvent testSubject;
@@ -242,7 +230,6 @@ public class ResourceAdminEventTest {
 		testSubject.setRequestId(requestId);
 	}
 
-	
 	@Test
 	public void testGetServiceInstanceId() throws Exception {
 		ResourceAdminEvent testSubject;
@@ -253,7 +240,6 @@ public class ResourceAdminEventTest {
 		result = testSubject.getServiceInstanceId();
 	}
 
-	
 	@Test
 	public void testSetServiceInstanceId() throws Exception {
 		ResourceAdminEvent testSubject;
@@ -264,7 +250,6 @@ public class ResourceAdminEventTest {
 		testSubject.setServiceInstanceId(serviceInstanceId);
 	}
 
-	
 	@Test
 	public void testGetStatus() throws Exception {
 		ResourceAdminEvent testSubject;
@@ -275,7 +260,6 @@ public class ResourceAdminEventTest {
 		result = testSubject.getStatus();
 	}
 
-	
 	@Test
 	public void testSetStatus() throws Exception {
 		ResourceAdminEvent testSubject;
@@ -286,7 +270,6 @@ public class ResourceAdminEventTest {
 		testSubject.setStatus(status);
 	}
 
-	
 	@Test
 	public void testGetDesc() throws Exception {
 		ResourceAdminEvent testSubject;
@@ -297,7 +280,6 @@ public class ResourceAdminEventTest {
 		result = testSubject.getDesc();
 	}
 
-	
 	@Test
 	public void testSetDesc() throws Exception {
 		ResourceAdminEvent testSubject;
@@ -308,7 +290,6 @@ public class ResourceAdminEventTest {
 		testSubject.setDesc(desc);
 	}
 
-	
 	@Test
 	public void testGetModifier() throws Exception {
 		ResourceAdminEvent testSubject;
@@ -319,7 +300,6 @@ public class ResourceAdminEventTest {
 		result = testSubject.getModifier();
 	}
 
-	
 	@Test
 	public void testSetModifier() throws Exception {
 		ResourceAdminEvent testSubject;
@@ -330,7 +310,6 @@ public class ResourceAdminEventTest {
 		testSubject.setModifier(modifier);
 	}
 
-	
 	@Test
 	public void testGetPrevArtifactUUID() throws Exception {
 		ResourceAdminEvent testSubject;
@@ -341,7 +320,6 @@ public class ResourceAdminEventTest {
 		result = testSubject.getPrevArtifactUUID();
 	}
 
-	
 	@Test
 	public void testSetPrevArtifactUUID() throws Exception {
 		ResourceAdminEvent testSubject;
@@ -352,7 +330,6 @@ public class ResourceAdminEventTest {
 		testSubject.setPrevArtifactUUID(prevArtifactUUID);
 	}
 
-	
 	@Test
 	public void testGetCurrArtifactUUID() throws Exception {
 		ResourceAdminEvent testSubject;
@@ -363,7 +340,6 @@ public class ResourceAdminEventTest {
 		result = testSubject.getCurrArtifactUUID();
 	}
 
-	
 	@Test
 	public void testSetCurrArtifactUUID() throws Exception {
 		ResourceAdminEvent testSubject;
@@ -374,7 +350,6 @@ public class ResourceAdminEventTest {
 		testSubject.setCurrArtifactUUID(currArtifactUUID);
 	}
 
-	
 	@Test
 	public void testGetArtifactData() throws Exception {
 		ResourceAdminEvent testSubject;
@@ -385,7 +360,6 @@ public class ResourceAdminEventTest {
 		result = testSubject.getArtifactData();
 	}
 
-	
 	@Test
 	public void testSetArtifactData() throws Exception {
 		ResourceAdminEvent testSubject;
@@ -396,7 +370,6 @@ public class ResourceAdminEventTest {
 		testSubject.setArtifactData(artifactData);
 	}
 
-	
 	@Test
 	public void testGetDid() throws Exception {
 		ResourceAdminEvent testSubject;
@@ -407,7 +380,6 @@ public class ResourceAdminEventTest {
 		result = testSubject.getDid();
 	}
 
-	
 	@Test
 	public void testSetDid() throws Exception {
 		ResourceAdminEvent testSubject;
@@ -418,7 +390,6 @@ public class ResourceAdminEventTest {
 		testSubject.setDid(did);
 	}
 
-	
 	@Test
 	public void testGetDprevStatus() throws Exception {
 		ResourceAdminEvent testSubject;
@@ -429,7 +400,6 @@ public class ResourceAdminEventTest {
 		result = testSubject.getDprevStatus();
 	}
 
-	
 	@Test
 	public void testSetDprevStatus() throws Exception {
 		ResourceAdminEvent testSubject;
@@ -440,7 +410,6 @@ public class ResourceAdminEventTest {
 		testSubject.setDprevStatus(dprevStatus);
 	}
 
-	
 	@Test
 	public void testGetDcurrStatus() throws Exception {
 		ResourceAdminEvent testSubject;
@@ -451,7 +420,6 @@ public class ResourceAdminEventTest {
 		result = testSubject.getDcurrStatus();
 	}
 
-	
 	@Test
 	public void testSetDcurrStatus() throws Exception {
 		ResourceAdminEvent testSubject;
@@ -462,7 +430,6 @@ public class ResourceAdminEventTest {
 		testSubject.setDcurrStatus(dcurrStatus);
 	}
 
-	
 	@Test
 	public void testGetToscaNodeType() throws Exception {
 		ResourceAdminEvent testSubject;
@@ -473,7 +440,6 @@ public class ResourceAdminEventTest {
 		result = testSubject.getToscaNodeType();
 	}
 
-	
 	@Test
 	public void testSetToscaNodeType() throws Exception {
 		ResourceAdminEvent testSubject;
@@ -484,7 +450,6 @@ public class ResourceAdminEventTest {
 		testSubject.setToscaNodeType(toscaNodeType);
 	}
 
-	
 	@Test
 	public void testGetComment() throws Exception {
 		ResourceAdminEvent testSubject;
@@ -495,7 +460,6 @@ public class ResourceAdminEventTest {
 		result = testSubject.getComment();
 	}
 
-	
 	@Test
 	public void testSetComment() throws Exception {
 		ResourceAdminEvent testSubject;
@@ -506,7 +470,6 @@ public class ResourceAdminEventTest {
 		testSubject.setComment(comment);
 	}
 
-	
 	@Test
 	public void testGetInvariantUUID() throws Exception {
 		ResourceAdminEvent testSubject;
@@ -517,7 +480,6 @@ public class ResourceAdminEventTest {
 		result = testSubject.getInvariantUUID();
 	}
 
-	
 	@Test
 	public void testSetInvariantUUID() throws Exception {
 		ResourceAdminEvent testSubject;
@@ -528,7 +490,6 @@ public class ResourceAdminEventTest {
 		testSubject.setInvariantUUID(invariantUUID);
 	}
 
-	
 	@Test
 	public void testToString() throws Exception {
 		ResourceAdminEvent testSubject;

@@ -1,16 +1,26 @@
 package org.openecomp.sdc.be.resources.data.auditing;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.UUID;
 
 import org.junit.Test;
+import org.openecomp.sdc.be.resources.data.auditing.model.CommonAuditData;
+import org.openecomp.sdc.be.resources.data.auditing.model.CommonAuditData.Builder;
 
 public class AuthEventTest {
 
 	private AuthEvent createTestSubject() {
 		return new AuthEvent();
 	}
-
+	
+	@Test
+	public void testCtor() throws Exception {
+		new AuthEvent(new HashMap<>());
+		Builder newBuilder = CommonAuditData.newBuilder();
+		new AuthEvent("mock", newBuilder.build(), "mock", "mock", "mock", "mock");
+	}
+	
 	@Test
 	public void testGetUrl() throws Exception {
 		AuthEvent testSubject;

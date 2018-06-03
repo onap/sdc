@@ -104,19 +104,12 @@ public enum AuditingActionEnum {
 	GET_ASSET_METADATA("GetAssetMetadata", AuditingTypesConstants.EXTERNAL_API_EVENT_TYPE), 
 	GET_TOSCA_MODEL("GetToscaModel", AuditingTypesConstants.EXTERNAL_API_EVENT_TYPE);
 
-	private String name;
-	// private Class<? extends AuditingGenericEvent> auditingEsType;
-	private String auditingEsType;
+	private final String name;
+	private final String auditingEsType;
 
 	private static Logger log = LoggerFactory.getLogger(AuditingActionEnum.class.getName());
 
-	// AuditingActionEnum(String name, Class<? extends AuditingGenericEvent>
-	// auditingEsType){
-	// this.name = name;
-	// this.auditingEsType = auditingEsType;
-	// }
-
-	AuditingActionEnum(String name, String auditingEsType) {
+	private AuditingActionEnum(String name, String auditingEsType) {
 		this.name = name;
 		this.auditingEsType = auditingEsType;
 	}
@@ -125,15 +118,11 @@ public enum AuditingActionEnum {
 		return name;
 	}
 
-	// public Class<? extends AuditingGenericEvent> getAuditingEsType(){
-	// return auditingEsType;
-	// }
-
 	public String getAuditingEsType() {
 		return auditingEsType;
 	}
 
-	public static AuditingActionEnum getActionByName(String name) {
+	public static AuditingActionEnum getActionByName(String name) { 
 		AuditingActionEnum res = null;
 		AuditingActionEnum[] values = values();
 		for (AuditingActionEnum value : values) {

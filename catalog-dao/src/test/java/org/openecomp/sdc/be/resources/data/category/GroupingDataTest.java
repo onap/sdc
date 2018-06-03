@@ -1,5 +1,6 @@
 package org.openecomp.sdc.be.resources.data.category;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.Test;
@@ -12,6 +13,11 @@ public class GroupingDataTest {
 		return new GroupingData(NodeTypeEnum.AdditionalInfoParameters);
 	}
 
+	@Test
+	public void testCtor() throws Exception {
+		new GroupingData(new HashMap<>());
+		new GroupingData(NodeTypeEnum.AdditionalInfoParameters, new GroupingDataDefinition());
+	}
 	
 	@Test
 	public void testGetGroupingDataDefinition() throws Exception {

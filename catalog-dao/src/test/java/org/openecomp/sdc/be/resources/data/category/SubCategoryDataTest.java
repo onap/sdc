@@ -1,5 +1,6 @@
 package org.openecomp.sdc.be.resources.data.category;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.Test;
@@ -12,6 +13,11 @@ public class SubCategoryDataTest {
 		return new SubCategoryData(NodeTypeEnum.AdditionalInfoParameters);
 	}
 
+	@Test
+	public void testCtor() throws Exception {
+		new SubCategoryData(new HashMap<>());
+		new SubCategoryData(NodeTypeEnum.AdditionalInfoParameters, new SubCategoryDataDefinition());
+	}
 	
 	@Test
 	public void testGetSubCategoryDataDefinition() throws Exception {

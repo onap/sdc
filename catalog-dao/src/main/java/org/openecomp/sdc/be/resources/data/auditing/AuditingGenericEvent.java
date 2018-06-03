@@ -76,13 +76,6 @@ public class AuditingGenericEvent extends ESTimeBasedEvent {
 	public void setDesc(String desc) {
 		this.desc = desc;
 	}
-	// public Map<String, Object> getFields() {
-	// return fields;
-	// }
-	//
-	// public void setFields(Map<String, Object> fields) {
-	// this.fields = fields;
-	// }
 
 	public void fillFields() {
 

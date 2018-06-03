@@ -6,13 +6,9 @@ import org.openecomp.sdc.be.resources.data.auditing.model.CommonAuditData.Builde
 public class CommonAuditDataTest {
 
 	private CommonAuditData createTestSubject() {
-		Builder newBuilder = CommonAuditData.newBuilder();
-		return newBuilder.build();
+		return CommonAuditData.newBuilder().build();
 	}
-	
-	
 
-	
 	@Test
 	public void testGetStatus() throws Exception {
 		CommonAuditData testSubject;
@@ -23,7 +19,6 @@ public class CommonAuditDataTest {
 		result = testSubject.getStatus();
 	}
 
-	
 	@Test
 	public void testGetDescription() throws Exception {
 		CommonAuditData testSubject;
@@ -34,7 +29,6 @@ public class CommonAuditDataTest {
 		result = testSubject.getDescription();
 	}
 
-	
 	@Test
 	public void testGetRequestId() throws Exception {
 		CommonAuditData testSubject;
@@ -45,7 +39,6 @@ public class CommonAuditDataTest {
 		result = testSubject.getRequestId();
 	}
 
-	
 	@Test
 	public void testGetServiceInstanceId() throws Exception {
 		CommonAuditData testSubject;
@@ -56,7 +49,6 @@ public class CommonAuditDataTest {
 		result = testSubject.getServiceInstanceId();
 	}
 
-	
 	@Test
 	public void testSetServiceInstanceId() throws Exception {
 		CommonAuditData testSubject;
@@ -67,12 +59,48 @@ public class CommonAuditDataTest {
 		testSubject.setServiceInstanceId(serviceInstanceId);
 	}
 
-	
 	@Test
 	public void testNewBuilder() throws Exception {
 		Builder result;
 
 		// default test
 		result = CommonAuditData.newBuilder();
+	}
+	
+	@Test
+	public void testDescription() throws Exception {
+		Builder result;
+
+		// default test
+		result = CommonAuditData.newBuilder();
+		result.description("mock");
+	}
+	
+	@Test
+	public void testStatus() throws Exception {
+		Builder result;
+
+		// default test
+		result = CommonAuditData.newBuilder();
+		result.status(1);
+		result.status("mock");
+	}
+	
+	@Test
+	public void testRequestId() throws Exception {
+		Builder result;
+
+		// default test
+		result = CommonAuditData.newBuilder();
+		result.requestId("mock");
+	}
+	
+	@Test
+	public void testServiceInstanceId() throws Exception {
+		Builder result;
+
+		// default test
+		result = CommonAuditData.newBuilder();
+		result.serviceInstanceId("mock");
 	}
 }

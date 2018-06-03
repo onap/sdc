@@ -26,8 +26,14 @@ import org.openecomp.sdc.common.datastructure.AuditingFieldsKeysEnum;
 
 public final class AuditRecordFactory {
 	public static AuditingGenericEvent createAuditRecord(Map<AuditingFieldsKeysEnum, Object> auditingFields) {
+		if (auditingFields == null) {
+			return null;
+		}
 		AuditingActionEnum actionEnum = AuditingActionEnum
 				.getActionByName((String) auditingFields.get(AuditingFieldsKeysEnum.AUDIT_ACTION));
+		if (actionEnum == null) {
+			return null;
+		}
 		String tableName = actionEnum.getAuditingEsType();
 		AuditingGenericEvent event = null;
 		switch (tableName) {
