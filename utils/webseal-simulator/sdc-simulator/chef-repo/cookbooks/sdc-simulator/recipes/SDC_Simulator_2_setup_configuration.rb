@@ -1,6 +1,6 @@
 jetty_base="/var/lib/jetty"
 
-if !ENV['FE_URL'].empty?
+if !ENV['FE_URL'].nil?
     fe_url="#{ENV['FE_URL']}"
 elsif  node['disableHttp']
     fe_url="https://#{node['Nodes']['FE']}:#{node['FE'][:https_port]}"
