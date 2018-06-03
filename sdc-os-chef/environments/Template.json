@@ -50,8 +50,8 @@
         },
         "Plugins": {
             "DCAE": {
-                "dcae_discovery_url": "yyy",
-                "dcae_source_url": "yyy"
+                "dcae_discovery_url": "http://yyy:8183/dcaed/#/demo",
+                "dcae_source_url": "http://yyy:8183/dcaed/#/demo"
             },
             "WORKFLOW": {
                 "workflow_discovery_url": "yyy",
