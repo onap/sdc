@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_43f7f159",
+        "filename": "openecomp-be/tools/artifact-copy-plugin/src/main/java/org/openecomp/sdc/onboarding/util/ArtifactHelper.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-06-03T12:17:13Z",
+      "side": 1,
+      "message": "Consider using third parties or Files.walk.\n\nDo we have apache utils in the classpath? Use FileUtils.cleanDirectory(directory); \nOtherwise use Files.walk(Paths.get(\"C:/test/ABC/\"))\n                .filter(Files::isRegularFile)\n                .map(Path::toFile)\n                .forEach(File::delete);\nAnd maybe just Files.delete(path).",
+      "revId": "23cedc4f15e286c0f3dd66ed942f0954a6718479",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_0399e91e",
+        "filename": "openecomp-be/tools/artifact-copy-plugin/src/main/java/org/openecomp/sdc/onboarding/util/InitializationHelperMojo.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 111,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-06-03T12:17:13Z",
+      "side": 1,
+      "message": "error should be logged as errors, not debug. Please use logfetLog().error()",
+      "revId": "23cedc4f15e286c0f3dd66ed942f0954a6718479",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_63878db7",
+        "filename": "openecomp-be/tools/compile-helper-plugin/src/main/java/org/openecomp/sdc/onboarding/BuildState.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 273,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-06-03T12:17:13Z",
+      "side": 1,
+      "message": "Log the error.",
+      "revId": "23cedc4f15e286c0f3dd66ed942f0954a6718479",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
