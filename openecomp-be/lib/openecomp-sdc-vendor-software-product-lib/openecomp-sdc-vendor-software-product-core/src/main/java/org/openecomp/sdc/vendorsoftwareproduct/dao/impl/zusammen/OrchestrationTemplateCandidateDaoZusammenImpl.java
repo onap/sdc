@@ -89,7 +89,7 @@ public class OrchestrationTemplateCandidateDaoZusammenImpl
             candidateInfoElement -> populateCandidate(candidate, candidateInfoElement, true)));
 
     logger.info("Finished getting orchestration template for vsp id {}", vspId);
-    return Optional.of(candidate);
+    return candidate.getFileSuffix() == null ? Optional.empty() : Optional.of(candidate);
   }
 
   @Override
