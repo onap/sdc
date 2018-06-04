@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections4.MapUtils;
 import org.onap.sdc.tosca.datatypes.model.RequirementAssignment;
 
 public class ComputeTemplateConsolidationData extends EntityConsolidationData {
@@ -64,5 +65,19 @@ public class ComputeTemplateConsolidationData extends EntityConsolidationData {
         this.volumes.computeIfAbsent(requirementAssignment.getNode(), k -> new ArrayList<>())
                 .add(new RequirementAssignmentData(requirementId,
                 requirementAssignment));
+    }
+
+    /**
+     * Collect all ports of each type from compute.
+     *
+     * @param portTypeToIds will be populated with all port of each type
+     */
+    public void collectAllPortsOfEachTypeFromCompute(Map<String, List<String>> portTypeToIds) {
+        if (MapUtils.isNotEmpty(ports)) {
+            for (Map.Entry<String, List<String>> portTypeToIdEntry : ports.entrySet()) {
+                portTypeToIds.putIfAbsent(portTypeToIdEntry.getKey(), new ArrayList<>());
+                portTypeToIds.get(portTypeToIdEntry.getKey()).addAll(portTypeToIdEntry.getValue());
+            }
+        }
     }
 }
