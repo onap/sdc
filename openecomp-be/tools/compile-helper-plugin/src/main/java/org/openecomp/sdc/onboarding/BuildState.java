@@ -76,12 +76,8 @@ public class BuildState {
         }
     }
 
-    private static void setLogger(Log log) {
-        logger = log;
-    }
 
-    void init(Log log) {
-        setLogger(log);
+    void init() {
         artifacts.clear();
         for (Artifact artifact : project.getArtifacts()) {
             if (artifact.isSnapshot() && JAR.equals(artifact.getType())) {
