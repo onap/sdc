@@ -80,6 +80,34 @@ public class FileComputeConsolidationDataTest {
         checkComputeConsolidationData(consolidationData, COMPUTE_NODE_TYPE_1, expectedComputeNodeTypes);
     }
 
+    @Test
+    public void isNumberOfComputeTypesLegalPositive() {
+        ComputeTemplateConsolidationData computeTemplateConsolidationData = new ComputeTemplateConsolidationData();
+        TypeComputeConsolidationData typeComputeConsolidationData = new TypeComputeConsolidationData();
+        typeComputeConsolidationData.setComputeTemplateConsolidationData(
+                "server_oam_1", computeTemplateConsolidationData);
+
+        FileComputeConsolidationData fileComputeConsolidationData = new FileComputeConsolidationData();
+        fileComputeConsolidationData.setTypeComputeConsolidationData("server_oam", typeComputeConsolidationData);
+
+        Assert.assertTrue(fileComputeConsolidationData.isNumberOfComputeTypesLegal());
+    }
+
+    @Test
+    public void isNumberOfComputeTypesLegalNegative() {
+        TypeComputeConsolidationData typeComputeConsolidationData = new TypeComputeConsolidationData();
+        typeComputeConsolidationData.setComputeTemplateConsolidationData(
+                "server_oam_1", new ComputeTemplateConsolidationData());
+        typeComputeConsolidationData.setComputeTemplateConsolidationData(
+                "server_oam_2", new ComputeTemplateConsolidationData());
+
+
+        FileComputeConsolidationData fileComputeConsolidationData = new FileComputeConsolidationData();
+        fileComputeConsolidationData.setTypeComputeConsolidationData("server_oam", typeComputeConsolidationData);
+
+        Assert.assertFalse(fileComputeConsolidationData.isNumberOfComputeTypesLegal());
+    }
+
     private void checkComputeConsolidationData(FileComputeConsolidationData fileComputeConsolidationData,
             String computeNodeType, Set<String> expectedComputeNodeTypes) {
         TypeComputeConsolidationData typeComputeConsolidationData =

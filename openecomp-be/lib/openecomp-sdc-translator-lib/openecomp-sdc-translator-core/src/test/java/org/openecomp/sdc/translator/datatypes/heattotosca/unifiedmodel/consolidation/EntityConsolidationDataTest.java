@@ -73,16 +73,10 @@ public class EntityConsolidationDataTest {
         Map<String, List<GetAttrFuncData>> getAttOutMap = new HashMap<>();
         getAttOutMap.put("server_0_networkrole_1_port", Collections.singletonList(getAttrFuncData));
 
-        GetAttrFuncData getAttrFuncData1 = new GetAttrFuncData("vmac_address", "accessIPv4");
-        Map<String, List<GetAttrFuncData>> getAttOutMap1 = new HashMap<>();
-        getAttOutMap.put("server_0_networkrole_2_port", Collections.singletonList(getAttrFuncData1));
-
-
         EntityConsolidationData entityConsolidationData = new EntityConsolidationData();
         entityConsolidationData.setNodesGetAttrOut(getAttOutMap);
 
         EntityConsolidationData entityConsolidationData1 = new EntityConsolidationData();
-        //entityConsolidationData1.setNodesGetAttrOut(getAttOutMap1);
 
         List<EntityConsolidationData> entityConsolidationDataList =
                 Arrays.asList(entityConsolidationData, entityConsolidationData1);
@@ -107,7 +101,7 @@ public class EntityConsolidationDataTest {
 
         GetAttrFuncData getAttrFuncData1 = new GetAttrFuncData("vmac_address", "accessIPv4");
         Map<String, List<GetAttrFuncData>> getAttOutMap1 = new HashMap<>();
-        getAttOutMap.put("server_0_networkrole_1_port", Collections.singletonList(getAttrFuncData1));
+        getAttOutMap1.put("server_0_networkrole_1_port", Collections.singletonList(getAttrFuncData1));
 
 
         EntityConsolidationData entityConsolidationData = new EntityConsolidationData();

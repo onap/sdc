@@ -29,6 +29,8 @@ public class ComputeConsolidationDataTest {
     private static final String COMPUTE_NODE_TEMPLATE_ID_2 = "computeNodeTemplateId2";
     private static final String COMPUTE_NODE_TYPE_1 = "computeNodeType1";
     private static final String COMPUTE_NODE_TYPE_2 = "computeNodeType2";
+    private static final String MAIN_SERVICE_TEMPLATE = "MainServiceTemplate.yaml";
+    private static final String SERVER_OAM = "server_oam";
 
     @Test
     public void testAddComputeTemplateConsolidationData() {
@@ -107,5 +109,35 @@ public class ComputeConsolidationDataTest {
         Assert.assertTrue(allServiceTemplateFileNames.containsAll(expectedServiceTemplateNames));
     }
 
+    @Test
+    public void isNumberOfComputeTypesLegalPositive() {
+        ComputeTemplateConsolidationData computeTemplateConsolidationData = new ComputeTemplateConsolidationData();
+        TypeComputeConsolidationData typeComputeConsolidationData = new TypeComputeConsolidationData();
+        typeComputeConsolidationData.setComputeTemplateConsolidationData(SERVER_OAM + "_1", computeTemplateConsolidationData);
+
+        FileComputeConsolidationData fileComputeConsolidationData = new FileComputeConsolidationData();
+        fileComputeConsolidationData.setTypeComputeConsolidationData(SERVER_OAM, typeComputeConsolidationData);
+
+        ComputeConsolidationData computeConsolidationData = new ComputeConsolidationData();
+        computeConsolidationData.setFileComputeConsolidationData(MAIN_SERVICE_TEMPLATE, fileComputeConsolidationData);
+
+        Assert.assertTrue(computeConsolidationData.isNumberOfComputeTypesLegal(MAIN_SERVICE_TEMPLATE));
+    }
+
+    @Test
+    public void isNumberOfComputeTypesLegalNegative() {
+        TypeComputeConsolidationData typeComputeConsolidationData = new TypeComputeConsolidationData();
+        typeComputeConsolidationData.setComputeTemplateConsolidationData(SERVER_OAM + "_1", new ComputeTemplateConsolidationData());
+        typeComputeConsolidationData.setComputeTemplateConsolidationData(SERVER_OAM + "_2", new ComputeTemplateConsolidationData());
+
+
+        FileComputeConsolidationData fileComputeConsolidationData = new FileComputeConsolidationData();
+        fileComputeConsolidationData.setTypeComputeConsolidationData(SERVER_OAM, typeComputeConsolidationData);
+
+        ComputeConsolidationData computeConsolidationData = new ComputeConsolidationData();
+        computeConsolidationData.setFileComputeConsolidationData(MAIN_SERVICE_TEMPLATE, fileComputeConsolidationData);
+
+        Assert.assertFalse(computeConsolidationData.isNumberOfComputeTypesLegal(MAIN_SERVICE_TEMPLATE));
+    }
 
 }
