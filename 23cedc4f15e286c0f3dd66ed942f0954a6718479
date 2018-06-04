@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_9e4f90be",
+        "filename": "openecomp-be/tools/artifact-copy-plugin/src/main/java/org/openecomp/sdc/onboarding/util/ArtifactHelper.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 2819
+      },
+      "writtenOn": "2018-06-04T08:06:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5a93c517_1e086090",
+      "revId": "23cedc4f15e286c0f3dd66ed942f0954a6718479",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_8359795d",
         "filename": "openecomp-be/tools/artifact-copy-plugin/src/main/java/org/openecomp/sdc/onboarding/util/ArtifactHelper.java",
         "patchSetId": 7
@@ -107,6 +125,24 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_3e4c3cc8",
+        "filename": "openecomp-be/tools/artifact-copy-plugin/src/main/java/org/openecomp/sdc/onboarding/util/ArtifactHelper.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 2819
+      },
+      "writtenOn": "2018-06-04T08:06:46Z",
+      "side": 1,
+      "message": "removed recursion.\ndonot want to use streams here. no gains. let me know incase other concerns.",
+      "parentUuid": "5a93c517_5ed6e8f2",
+      "revId": "23cedc4f15e286c0f3dd66ed942f0954a6718479",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_0399e91e",
         "filename": "openecomp-be/tools/artifact-copy-plugin/src/main/java/org/openecomp/sdc/onboarding/util/InitializationHelperMojo.java",
         "patchSetId": 7
@@ -159,6 +195,24 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_fec5740a",
+        "filename": "openecomp-be/tools/compile-helper-plugin/src/main/java/org/openecomp/sdc/onboarding/BuildHelper.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 2819
+      },
+      "writtenOn": "2018-06-04T08:06:46Z",
+      "side": 1,
+      "message": "amended accordingly. Done.",
+      "parentUuid": "5a93c517_befccc73",
+      "revId": "23cedc4f15e286c0f3dd66ed942f0954a6718479",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_fe025471",
         "filename": "openecomp-be/tools/compile-helper-plugin/src/main/java/org/openecomp/sdc/onboarding/BuildHelper.java",
         "patchSetId": 7
@@ -176,6 +230,24 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_becfec28",
+        "filename": "openecomp-be/tools/compile-helper-plugin/src/main/java/org/openecomp/sdc/onboarding/BuildHelper.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 2819
+      },
+      "writtenOn": "2018-06-04T08:06:46Z",
+      "side": 1,
+      "message": "Not sure how to handle it. its Minor so thinking of to live with Lambda. let me know incase of other concerns.",
+      "parentUuid": "5a93c517_fe025471",
+      "revId": "23cedc4f15e286c0f3dd66ed942f0954a6718479",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_de01986b",
         "filename": "openecomp-be/tools/compile-helper-plugin/src/main/java/org/openecomp/sdc/onboarding/BuildState.java",
         "patchSetId": 7
@@ -187,6 +259,24 @@
       "writtenOn": "2018-06-04T06:13:41Z",
       "side": 1,
       "message": "This function returns boolean. If fails you cannot continue.",
+      "revId": "23cedc4f15e286c0f3dd66ed942f0954a6718479",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_ded438bf",
+        "filename": "openecomp-be/tools/compile-helper-plugin/src/main/java/org/openecomp/sdc/onboarding/BuildState.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 196,
+      "author": {
+        "id": 2819
+      },
+      "writtenOn": "2018-06-04T08:06:46Z",
+      "side": 1,
+      "message": "does not matter here. this function returns false when directory is already present. fallback is in place. nothing to worry.",
+      "parentUuid": "5a93c517_de01986b",
       "revId": "23cedc4f15e286c0f3dd66ed942f0954a6718479",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
@@ -239,6 +329,24 @@
       "writtenOn": "2018-06-04T06:13:41Z",
       "side": 1,
       "message": "CodeStyle remark\nDistance between variable \u0027instrumented\u0027 declaration and its first usage is 7, but allowed 3.  Consider making that variable final if you still need to store its value in advance (before method calls that might have side effects on the original value). (150:0) [VariableDeclarationUsageDistanceCheck]",
+      "revId": "23cedc4f15e286c0f3dd66ed942f0954a6718479",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_9ed6b0c2",
+        "filename": "openecomp-be/tools/compile-helper-plugin/src/main/java/org/openecomp/sdc/onboarding/PreCompileHelperMojo.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 149,
+      "author": {
+        "id": 2819
+      },
+      "writtenOn": "2018-06-04T08:06:46Z",
+      "side": 1,
+      "message": "made variable final as per suggestion. Done.",
+      "parentUuid": "5a93c517_9ef3109f",
       "revId": "23cedc4f15e286c0f3dd66ed942f0954a6718479",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
