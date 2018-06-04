@@ -43,7 +43,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 
 public class BuildState {
@@ -62,7 +61,6 @@ public class BuildState {
     private static File compileStateFile;
     private MavenProject project;
     private String compileStateFilePath;
-    private static Log logger;
 
     static {
         initializeStore();
@@ -76,12 +74,8 @@ public class BuildState {
         }
     }
 
-    private static void setLogger(Log log) {
-        logger = log;
-    }
 
-    void init(Log log) {
-        setLogger(log);
+    void init() {
         artifacts.clear();
         for (Artifact artifact : project.getArtifacts()) {
             if (artifact.isSnapshot() && JAR.equals(artifact.getType())) {
@@ -157,7 +151,7 @@ public class BuildState {
                 }
             }
         } catch (IOException ignored) {
-            logger.debug(ignored);
+            // ignored. No need to handle. System will take care.
         }
     }
 
@@ -168,7 +162,7 @@ public class BuildState {
                 compileDataStore.get(FULL_RESOURCE_BUILD_DATA).put(moduleCoordinates, buildTime);
                 writeCompileState();
             } catch (IOException ignored) {
-                logger.debug(ignored);
+                // ignored. No need to handle. System will take care.
             }
         }
     }
@@ -210,7 +204,7 @@ public class BuildState {
                  ObjectOutputStream ois = new ObjectOutputStream(fos)) {
                 ois.writeObject(dataToSave);
             } catch (IOException ignored) {
-                logger.debug(ignored);
+                // ignored. No need to handle. System will take care.
             }
         }
     }
@@ -239,9 +233,9 @@ public class BuildState {
             if (artifacts.containsKey(d) && JAR.equals(artifacts.get(d).getType())) {
                 boolean versionEqual = artifacts.get(d).getVersion().equals(project.getVersion());
                 if (versionEqual && getBuildTime(d) == 0) {
-                    logger.warn(ANSI_YELLOW + "[WARNING:]" + "You have module[" + d
-                                        + "] not locally compiled even once, please compile your project once daily from root to have reliable build results."
-                                        + ANSI_COLOR_RESET);
+                    System.err.println(ANSI_YELLOW + "[WARNING:]" + "You have module[" + d
+                                               + "] not locally compiled even once, please compile your project once daily from root to have reliable build results."
+                                               + ANSI_COLOR_RESET);
                     return true;
                 }
             }
@@ -281,7 +275,6 @@ public class BuildState {
         try (InputStream is = new FileInputStream(file); ObjectInputStream ois = new ObjectInputStream(is)) {
             return HashMap.class.cast(ois.readObject());
         } catch (Exception e) {
-            logger.debug(e);
             return new HashMap<>();
         }
     }

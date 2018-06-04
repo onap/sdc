@@ -48,21 +48,15 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 import java.util.stream.Collectors;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 
 class BuildHelper {
 
-    private static Log logger;
 
     private static Map<String, String> store = new HashMap<>();
 
     private BuildHelper() {
         // donot remove.
-    }
-
-    static void setLogger(Log log) {
-        logger = log;
     }
 
     static String getSnapshotSignature(File snapshotFile, String moduleCoordinate, String version) {
@@ -76,7 +70,6 @@ class BuildHelper {
             store.put(key, signature);
             return signature;
         } catch (IOException ioe) {
-            logger.debug(ioe);
             return version;
         }
 
@@ -218,7 +211,6 @@ class BuildHelper {
              ObjectInputStream ois = new ObjectInputStream(is)) {
             return Optional.of(clazz.cast(ois.readObject()));
         } catch (Exception ignored) {
-            logger.debug(ignored);
             return Optional.empty();
         }
     }
