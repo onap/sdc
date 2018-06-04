@@ -18,15 +18,6 @@ package org.openecomp.sdc.translator.services.heattotosca;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
-import org.apache.commons.collections4.MapUtils;
-import org.onap.sdc.tosca.datatypes.model.NodeTemplate;
-import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
-import org.openecomp.sdc.tosca.services.DataModelUtil;
-import org.openecomp.sdc.translator.datatypes.heattotosca.TranslationContext;
-import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.composition.UnifiedCompositionData;
-import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.ComputeTemplateConsolidationData;
-import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.PortTemplateConsolidationData;
-import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.SubInterfaceTemplateConsolidationData;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -36,6 +27,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+
+import org.apache.commons.collections4.MapUtils;
+import org.onap.sdc.tosca.datatypes.model.NodeTemplate;
+import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
+import org.openecomp.sdc.tosca.services.DataModelUtil;
+import org.openecomp.sdc.translator.datatypes.heattotosca.TranslationContext;
+import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.composition.UnifiedCompositionData;
+import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.ComputeTemplateConsolidationData;
+import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.PortTemplateConsolidationData;
+import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.SubInterfaceTemplateConsolidationData;
 
 /**
  * Utility class for consolidation data collection helper methods.
@@ -185,4 +186,15 @@ public class UnifiedCompositionUtil {
     //Add sub interface type since we have only one subinterface per type
     return getSubInterfaceTypeSuffix(subInterfaceNodeTemplate.getType());
   }
+
+    public static Map<String, List<String>> collectAllPortsOfEachTypeFromComputes(
+                                                             List<UnifiedCompositionData> unifiedCompositionDataList) {
+        Map<String, List<String>> portIdsPerPortType = new HashMap<>();
+        unifiedCompositionDataList
+                .forEach(unifiedCompositionData ->
+                                 unifiedCompositionData.getComputeTemplateConsolidationData()
+                                                       .collectAllPortsOfEachTypeFromCompute(portIdsPerPortType));
+
+        return portIdsPerPortType;
+    }
 }

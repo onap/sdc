@@ -134,4 +134,8 @@ public class ComputeConsolidationDataHandler implements ConsolidationDataHandler
 
         return computeNodeTemplate.getType();
     }
+
+    public boolean isNumberOfComputeTypesLegal(String serviceTemplateName) {
+        return computeConsolidationData.isNumberOfComputeTypesLegal(serviceTemplateName);
+    }
 }

@@ -68,4 +68,17 @@ public class FileComputeConsolidationData {
         }
         return consolidationData;
     }
+
+    /**
+     * Is number of compute types legal boolean.
+     *
+     * @return the boolean
+     */
+    public boolean isNumberOfComputeTypesLegal() {
+        Collection<TypeComputeConsolidationData> typeComputeConsolidationDataCollection =
+                getAllTypeComputeConsolidationData();
+        return typeComputeConsolidationDataCollection.size() == 1
+                       && typeComputeConsolidationDataCollection.iterator().next()
+                                                                .isNumberOfComputeConsolidationDataPerTypeLegal();
+    }
 }
