@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "5a93c517_1e086090",
+        "filename": "openecomp-be/tools/artifact-copy-plugin/src/main/java/org/openecomp/sdc/onboarding/util/ArtifactHelper.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-06-04T06:13:41Z",
+      "side": 1,
+      "message": "Please format file with code style.",
+      "revId": "23cedc4f15e286c0f3dd66ed942f0954a6718479",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_8359795d",
         "filename": "openecomp-be/tools/artifact-copy-plugin/src/main/java/org/openecomp/sdc/onboarding/util/ArtifactHelper.java",
         "patchSetId": 7
@@ -72,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_5ed6e8f2",
+        "filename": "openecomp-be/tools/artifact-copy-plugin/src/main/java/org/openecomp/sdc/onboarding/util/ArtifactHelper.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-06-04T06:13:41Z",
+      "side": 1,
+      "message": "1. Recursion is hard to follow , and should not be used when not required.\n2. Stream will reduce this function to 1-2 lines instead of 10.\n3.We already use stream API in BuildHelper. So why not here too?",
+      "parentUuid": "5a93c517_23042517",
+      "revId": "23cedc4f15e286c0f3dd66ed942f0954a6718479",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_0399e91e",
         "filename": "openecomp-be/tools/artifact-copy-plugin/src/main/java/org/openecomp/sdc/onboarding/util/InitializationHelperMojo.java",
         "patchSetId": 7
@@ -107,6 +142,57 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_befccc73",
+        "filename": "openecomp-be/tools/compile-helper-plugin/src/main/java/org/openecomp/sdc/onboarding/BuildHelper.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-06-04T06:13:41Z",
+      "side": 1,
+      "message": "CodeStyle remark    \nOverload method should not be split.\nline 70 and 231\n getSnapshotSignatur",
+      "revId": "23cedc4f15e286c0f3dd66ed942f0954a6718479",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_fe025471",
+        "filename": "openecomp-be/tools/compile-helper-plugin/src/main/java/org/openecomp/sdc/onboarding/BuildHelper.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-06-04T06:13:41Z",
+      "side": 1,
+      "message": "Sonar remark - \nLambdas should be replaced with method references\n \nCode smell\n \nMinor\nsquid:S1612\n \nMethod/constructor references are more compact and readable than using lambdas, and are therefore preferred. Similarly, null checks can be replaced with references to the Objects::isNull and Objects::nonNull methods.\nNote that this rule is automatically disabled when the project\u0027s sonar.java.source is lower than 8.\nNoncompliant Code Example\nclass A {\n  void process(List\u003cA\u003e list) {\n    list.stream()\n      .map(a -\u003e a.\u003cString\u003egetObject())\n      .forEach(a -\u003e { System.out.println(a); });\n  }\n\n  \u003cT\u003e T getObject() {\n    return null;\n  }\n}\nCompliant Solution\nclass A {\n  void process(List\u003cA\u003e list) {\n    list.stream()\n      .map(A::\u003cString\u003egetObject)\n      .forEach(System.out::println);\n  }\n\n  \u003cT\u003e T getObject() {\n    return null;\n  }\n}",
+      "revId": "23cedc4f15e286c0f3dd66ed942f0954a6718479",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_de01986b",
+        "filename": "openecomp-be/tools/compile-helper-plugin/src/main/java/org/openecomp/sdc/onboarding/BuildState.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 196,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-06-04T06:13:41Z",
+      "side": 1,
+      "message": "This function returns boolean. If fails you cannot continue.",
+      "revId": "23cedc4f15e286c0f3dd66ed942f0954a6718479",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_63878db7",
         "filename": "openecomp-be/tools/compile-helper-plugin/src/main/java/org/openecomp/sdc/onboarding/BuildState.java",
         "patchSetId": 7
@@ -136,6 +222,23 @@
       "side": 1,
       "message": "It is not a error condition as per usecase. in case of error a blank Hashmap suffice. since it is not a error so adding a log.error() woudld unnecessarily add the noise in the build flow and confuse the developers.",
       "parentUuid": "5a93c517_63878db7",
+      "revId": "23cedc4f15e286c0f3dd66ed942f0954a6718479",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_9ef3109f",
+        "filename": "openecomp-be/tools/compile-helper-plugin/src/main/java/org/openecomp/sdc/onboarding/PreCompileHelperMojo.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 149,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-06-04T06:13:41Z",
+      "side": 1,
+      "message": "CodeStyle remark\nDistance between variable \u0027instrumented\u0027 declaration and its first usage is 7, but allowed 3.  Consider making that variable final if you still need to store its value in advance (before method calls that might have side effects on the original value). (150:0) [VariableDeclarationUsageDistanceCheck]",
       "revId": "23cedc4f15e286c0f3dd66ed942f0954a6718479",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
