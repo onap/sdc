@@ -146,7 +146,7 @@ public class CrudExternalServlet extends AbstractValidationsServlet {
             @ApiParam(value = "Determines the format of the body of the response", required = false)@HeaderParam(value = Constants.ACCEPT_HEADER) String accept,
             @ApiParam(value = "The username and password", required = true)@HeaderParam(value = Constants.AUTHORIZATION_HEADER) String authorization,
             @ApiParam(value = "The requested asset type", required = true, allowableValues = "resources, services")@PathParam("assetType") final String assetType,
-            String data) {
+            @ApiParam( hidden = true) String data) {
 
         init(log);
 
@@ -285,7 +285,7 @@ public class CrudExternalServlet extends AbstractValidationsServlet {
             @ApiParam(allowableValues = "checkout, checkin", required = true) @PathParam(value = "lifecycleOperation") final String lifecycleTransition,
             @ApiParam(value = "id of component to be changed") @PathParam(value = "uuid") final String uuid,
             @ApiParam(value = "validValues: resources / services ", allowableValues = ComponentTypeEnum.RESOURCE_PARAM_NAME + "," + ComponentTypeEnum.SERVICE_PARAM_NAME) @PathParam(value = "assetType") final String assetType,
-            String jsonChangeInfo) {
+            @ApiParam( hidden = true) String jsonChangeInfo) {
 
         Response response = null;
         EnumMap<AuditingFieldsKeysEnum, Object> additionalParams = new EnumMap<>(AuditingFieldsKeysEnum.class);

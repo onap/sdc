@@ -117,7 +117,7 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
             @ApiParam(value = "The uuid of the asset as published in the metadata", required = true)@PathParam("uuid") final String uuid,
             @ApiParam(value = "The uuid of the operation", required = true)@PathParam("operationUUID") final String operationUUID,
             @ApiParam(value = "The uuid of the artifact", required = true)@PathParam("artifactUUID") final String artifactUUID,
-            String data) {
+            @ApiParam( hidden = true) String data) {
         Wrapper<Response> responseWrapper = new Wrapper<>();
         ResponseFormat responseFormat = null;
         String requestURI = request.getRequestURI();
@@ -212,7 +212,7 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
             @ApiParam(value = "The username and password", required = true)@HeaderParam(value = Constants.AUTHORIZATION_HEADER) String authorization,
             @ApiParam(value = "The requested asset type", required = true, allowableValues = "resources, services")@PathParam("assetType") final String assetType,
             @ApiParam(value = "The uuid of the asset as published in the metadata", required = true)@PathParam("uuid") final String uuid,
-            String data) {
+            @ApiParam( hidden = true) String data) {
 
         init(log);
 
@@ -305,7 +305,7 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
             @ApiParam(value = "The requested asset type", required = true, allowableValues = "resources, services")@PathParam("assetType") final String assetType,
             @ApiParam(value = "The uuid of the asset as published in the metadata", required = true)@PathParam("uuid") final String uuid,
             @ApiParam(value = "The component instance name (as publishedin the response of the detailed query)", required = true)@PathParam("resourceInstanceName") final String resourceInstanceName,
-            String data) {
+            @ApiParam( hidden = true) String data) {
 
         Wrapper<Response> responseWrapper = new Wrapper<>();
         ResponseFormat responseFormat = null;
@@ -405,7 +405,7 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
             @ApiParam(value = "The requested asset type", required = true, allowableValues = "resources, services")@PathParam("assetType") final String assetType,
             @ApiParam(value = "The uuid of the asset as published in the metadata", required = true)@PathParam("uuid") final String uuid,
             @ApiParam(value = "The uuid of the artifact as published in the asset detailed metadata or in the response of the upload / update operation", required = true)@PathParam("artifactUUID") final String artifactUUID,
-            String data) {
+            @ApiParam(hidden = true) String data) {
 
         Wrapper<Response> responseWrapper = new Wrapper<>();
         ResponseFormat responseFormat = null;
@@ -500,7 +500,7 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
             @ApiParam(value = "The uuid of the asset as published in the metadata", required = true)@PathParam("uuid") final String uuid,
             @ApiParam(value = "The uuid of the artifact as published in the asset detailed metadata or in the response of the upload / update operation", required = true)@PathParam("artifactUUID") final String artifactUUID,
             @ApiParam(value = "The component instance name (as publishedin the response of the detailed query)", required = true)@PathParam("resourceInstanceName") final String resourceInstanceName,
-            String data) {
+            @ApiParam( hidden = true) String data) {
 
         Wrapper<Response> responseWrapper = new Wrapper<>();
         ResponseFormat responseFormat = null;

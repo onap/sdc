@@ -16,29 +16,41 @@ Below is a diagram of the SDC project docker containers and the connections betw
     blockdiag delivery {
         node_width = 170;
         orientation = portrait;
-        SDC-Elasticsearch[shape = flowchart.database]
-        SDC-Cassandra[shape = flowchart.database]
-        SDC-Frontend -> SDC-Backend;
-        SDC-Backend -> SDC-Elasticsearch, SDC-Cassandra;
-        SDC-Sanity -> SDC-Backend;
-        group ui_group {
-            color = blue;
-            label = "UI Layer";
-            SDC-Frontend;
-        }
-        group bi_group {
-            color = yellow;
-            label = "Business Login Layer"
-            SDC-Backend;
-        }
-        group data_storage_group {
-            color = orange;
-            label = "Data Storage Layer"
-            SDC-Elasticsearch; SDC-Cassandra;
+        sdc-elasticsearch[shape = flowchart.database , color = grey]
+        sdc-cassandra[shape = flowchart.database , color = grey]
+        sdc-frontend [color = blue]
+        sdc-backend [color = yellow]
+        sdc-kibana [color = yellow]
+        sdc-onboarding-backend [color = yellow]
+        sdc-cassandra-Config [color = orange]
+        sdc-elasticsearch-config [color = orange]
+        sdc-backend-config [color = orange]
+        sdc-onboarding-init [color = orange]
+        sdc-onboarding-init -> sdc-onboarding-backend;
+        sdc-cassandra-Config -> sdc-cassandra;
+        sdc-elasticsearch-config -> sdc-elasticsearch;
+        sdc-backend-config -> sdc-backend;
+        sdc-wss-simulator -> sdc-frontend;
+        sdc-frontend -> sdc-backend, sdc-onboarding-backend;
+        sdc-backend -> sdc-elasticsearch, sdc-cassandra;
+        sdc-backend -> sdc-kibana;
+        sdc-kibana -> sdc-backend;
+        sdc-onboarding-backend -> sdc-cassandra;
+        sdc-sanity -> sdc-backend;
+        sdc-ui-sanity -> sdc-frontend;
+        group deploy_group {
+            color = green;
+            label = "Aplication Layer"
+            sdc-backend; sdc-onboarding-backend; sdc-kibana; sdc-frontend;sdc-elasticsearch; sdc-cassandra; sdc-cassandra-Config; sdc-elasticsearch-config; sdc-backend-config; sdc-onboarding-init;
         }
         group testing_group {
-            color = green;
+            color = purple;
             label = "Testing Layer";
-            SDC-Sanity;
+            sdc-sanity; sdc-ui-sanity
+        }
+        group util_group {
+            color = purple;
+            label = "Util Layer";
+            sdc-wss-simulator;
         }
     }

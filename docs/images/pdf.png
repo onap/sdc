@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+<title>pdf.png\images\docs - clamp - CLAMP is a platform for designing and managing control loops.</title>
+<meta name='generator' content='cgit v1.1'/>
+<meta name='robots' content='noindex, nofollow'/>
+<link rel='stylesheet' type='text/css' href='/cgit-data/cgit.css'/>
+<link rel='shortcut icon' href='/favicon.ico'/>
+<link rel='alternate' title='Atom feed' href='http://git.onap.org/clamp/atom/docs/images/pdf.png?h=master' type='application/atom+xml'/>
+<link rel='vcs-git' href='https://git.onap.org/clamp' title='clamp Git repository'/>
+</head>
+<body>
+    <div id="lfcollabprojects-header">
+      <div class="gray-diagonal">
+        <div class="header-inner">
+          <a id="lfcollabprojects-logo" href="http://collabprojects.linuxfoundation.org">Linux Foundation Collaborative Projects</a>
+        </div>
+      </div>
+    </div>
+<div id='cgit'><table id='header'>
+<tr>
+<td class='logo' rowspan='2'><a href='/'><img src='/cgit-data/cgit.png' alt='cgit logo'/></a></td>
+<td class='main'><a href='/'>index</a> : <a title='clamp' href='/clamp/'>clamp</a></td><td class='form'><form method='get'>
+<select name='h' onchange='this.form.submit();'>
+<option value='amsterdam'>amsterdam</option>
+<option value='master' selected='selected'>master</option>
+<option value='release-1.1.1'>release-1.1.1</option>
+</select> <input type='submit' value='switch'/></form></td></tr>
+<tr><td class='sub'>CLAMP is a platform for designing and managing control loops.</td><td class='sub right'>Grokmirror</td></tr></table>
+<table class='tabs'><tr><td>
+<a href='/clamp/about/'>about</a><a href='/clamp/'>summary</a><a href='/clamp/refs/'>refs</a><a href='/clamp/log/docs/images/pdf.png'>log</a><a class='active' href='/clamp/tree/docs/images/pdf.png'>tree</a><a href='/clamp/commit/docs/images/pdf.png'>commit</a><a href='/clamp/diff/docs/images/pdf.png'>diff</a><a href='/clamp/stats/docs/images/pdf.png'>stats</a></td><td class='form'><form class='right' method='get' action='/clamp/log/docs/images/pdf.png'>
+<select name='qt'>
+<option value='grep'>log msg</option>
+<option value='author'>author</option>
+<option value='committer'>committer</option>
+<option value='range'>range</option>
+</select>
+<input class='txt' type='text' size='10' name='q' value=''/>
+<input type='submit' value='search'/>
+</form>
+</td></tr></table>
+<div class='path'>path: <a href='/clamp/tree/'>root</a>/<a href='/clamp/tree/docs'>docs</a>/<a href='/clamp/tree/docs/images'>images</a>/<a href='/clamp/tree/docs/images/pdf.png'>pdf.png</a></div><div class='content'>blob: fed52f963d592b1115e80549743019b708515536 (<a href='/clamp/plain/docs/images/pdf.png'>plain</a>)
+<table summary='blob content' class='bin-blob'>
+<tr><th>ofs</th><th>hex dump</th><th>ascii</th></tr><tr><td class='right'>0000</td><td class='hex'> 89 50 4e 47 0d 0a 1a 0a 00 00 00 0d 49 48 44 52    00 00 00 e1 00 00 00 e1 08 03 00 00 00 09 6d 22 </td><td class='hex'>.PNG........IHDR..............m"</td></tr>
+<tr><td class='right'>0020</td><td class='hex'> 48 00 00 00 a2 50 4c 54 45 e2 e5 e7 ff ff ff f1    56 42 ca d1 d8 b0 b7 bd f1 54 3f e1 e9 ec c7 d7 </td><td class='hex'>H....PLTE.......VB.......T?.....</td></tr>
+<tr><td class='right'>0040</td><td class='hex'> df ea a2 9c f2 4f 38 ed 67 58 e6 e9 ea e1 ec ef    ef 70 63 ad b4 bb f0 46 2d d5 d9 dc c5 cc d2 f0 </td><td class='hex'>.....O8.gX.......pc....F-.......</td></tr>
+<tr><td class='right'>0060</td><td class='hex'> f1 f2 f0 4d 36 fd ea e7 f2 64 52 f0 43 28 f2 6e    5f f0 4a 32 f8 b1 ab f9 bb b5 f7 ac a4 f5 8c 82 </td><td class='hex'>...M6....dR.C(.n_.J2............</td></tr>
+<tr><td class='right'>0080</td><td class='hex'> fc e2 e0 fa cd c9 fe f3 f1 fa c6 c1 fb d8 d5 f7    a5 9d f2 5c 48 f5 92 87 f6 99 8f f4 7e 71 f4 86 </td><td class='hex'>...................\H.......~q..</td></tr>
+<tr><td class='right'>00a0</td><td class='hex'> 7a f2 61 4f f3 78 6a fd ee ec e9 79 6f fc e4 e2    fb d1 cc f0 40 22 e5 97 92 d5 c2 c5 e9 ab a6 e6 </td><td class='hex'>z.aO.xj....yo.......@"..........</td></tr>
+<tr><td class='right'>00c0</td><td class='hex'> c3 c1 e3 d9 d9 f6 9e 95 ef 32 0a 83 a6 96 8d 00    00 06 b3 49 44 41 54 78 9c ed dd 6b 43 e2 38 14 </td><td class='hex'>.........2.........IDATx...kC.8.</td></tr>
+<tr><td class='right'>00e0</td><td class='hex'> 06 e0 16 27 3b 53 5d a7 48 15 03 8a 14 10 14 84    b9 ec ba ff ff af 2d 62 5b 7a 49 4e 92 16 da 73 </td><td class='hex'>...';S].H.............-b[zIN...s</td></tr>
+<tr><td class='right'>0100</td><td class='hex'> 32 79 3f 42 81 f3 98 36 4d d2 82 9e 5f 23 83 c1    95 77 fe f4 07 75 6a ab c4 33 7f 49 1b ba 83 f0 </td><td class='hex'>2y?B...6M..._#...w...uj..3.I....</td></tr>
+<tr><td class='right'>0120</td><td class='hex'> fb 49 88 c6 c2 41 4b be 0f e1 49 88 a6 c2 d6 7c    1f c2 2f a7 20 1a 0a 5b 04 7e 08 4f 41 34 13 b6 </td><td class='hex'>.I...AK...I....|../....[.~.OA4..</td></tr>
+<tr><td class='right'>0140</td><td class='hex'> 09 3c 08 4f 40 34 12 b6 77 0c 66 c2 e6 44 23 61    ab c0 44 d8 98 68 22 6c b7 09 53 61 53 a2 89 b0 </td><td class='hex'>.&lt;.O@4..w.f..D#a..D..h"l..SaS...</td></tr>
+<tr><td class='right'>0160</td><td class='hex'> 5d 60 26 6c 48 34 10 b6 dc 84 47 61 33 22 09 61    23 a2 81 b0 ad d1 9a 40 d8 84 48 44 d8 80 48 45 </td><td class='hex'>]`&amp;lH4....Ga3".a#......@..HD..HE</td></tr>
+<tr><td class='right'>0180</td><td class='hex'> 58 9f 48 46 58 9b 48 47 58 97 48 48 58 93 48 49    58 8f 48 4a 58 8b 48 4b 58 87 48 4c 58 83 48 4d </td><td class='hex'>X.HFX.HGX.HHX.HIX.HJX.HKX.HLX.HM</td></tr>
+<tr><td class='right'>01a0</td><td class='hex'> 68 4e 24 27 34 26 d2 13 9a 12 09 0a 0d 89 14 85    66 44 92 42 23 22 4d a1 09 91 a8 d0 80 48 55 a8 </td><td class='hex'>hN$'4&amp;..........fD.B#"M......HU.</td></tr>
+<tr><td class='right'>01c0</td><td class='hex'> 4f 24 2b d4 26 d2 15 ea 12 09 0b 35 89 94 85 7a    44 d2 42 2d 22 6d a1 0e 91 b8 50 83 48 5d a8 26 </td><td class='hex'>O$+.&amp;......5...zD.B-"m....P.H].&amp;</td></tr>
+<tr><td class='right'>01e0</td><td class='hex'> 92 17 2a 89 f4 85 2a a2 05 42 05 d1 06 21 4c b4    42 08 12 11 0b 3d 7d 21 44 c4 2c d4 07 42 44 cc </td><td class='hex'>..*...*..B...!L.B....=}!D.,..BD.</td></tr>
+<tr><td class='right'>0200</td><td class='hex'> c2 9b 93 10 31 0b 0d 0e 44 80 88 59 68 b4 9b 4a    89 a8 85 66 8d 28 21 a2 16 7a 37 27 20 e2 16 9e </td><td class='hex'>....1...D..Yh..J...f.(!..z7'....</td></tr>
+<tr><td class='right'>0220</td><td class='hex'> 82 88 5c 78 02 22 76 61 73 22 7a e1 55 ff cb 77    13 64 85 88 5e b8 4f ff 66 8f d4 4f 89 48 41 b8 </td><td class='hex'>..\x."vas"z.U..w.d..^.O.f..O.HA.</td></tr>
+<tr><td class='right'>0240</td><td class='hex'> 6f 48 af df bf d1 0e 45 e1 21 17 ba 21 2b d4 26    d2 15 ea 12 09 0b 35 89 94 85 7a 44 d2 42 2d 22 </td><td class='hex'>oH.....E.!..!+.&amp;......5...zD.B-"</td></tr>
+<tr><td class='right'>0260</td><td class='hex'> 6d a1 0e 91 b8 50 83 48 5d a8 26 92 17 2a 89 f4    85 2a a2 05 42 05 d1 06 21 4c b4 42 08 12 ed 10 </td><td class='hex'>m....P.H].&amp;..*...*..B...!L.B....</td></tr>
+<tr><td class='right'>0280</td><td class='hex'> 42 44 4b 84 00 d1 16 a1 9c 68 8d 50 4a b4 47 28    23 5a 24 94 10 6d 12 8a 89 56 09 85 44 bb 84 22 </td><td class='hex'>BDK......h.PJ.G(#Z$..m...V..D.."</td></tr>
+<tr><td class='right'>02a0</td><td class='hex'> a2 65 42 01 d1 36 61 95 68 9d b0 42 b4 4f 58 26    5a 28 f4 ec 17 7a f6 0b 3d fb 85 9e fd 42 cf 7e </td><td class='hex'>.eB..6a.h..B.OX&amp;Z(...z..=....B.~</td></tr>
+<tr><td class='right'>02c0</td><td class='hex'> a1 67 bf d0 b3 5f e8 d9 2f f4 ec 17 7a f6 0b 3d    fb 85 9e fd 42 cf 7e a1 67 bf b0 44 72 42 27 c4 </td><td class='hex'>.g..._../...z..=....B.~.g..DrB'.</td></tr>
+<tr><td class='right'>02e0</td><td class='hex'> 18 27 fc 83 85 7f 21 c9 09 84 bb f1 48 94 6f 28    f2 fb 1f a5 51 25 7c e0 3c 12 26 c0 11 ce 7e ff </td><td class='hex'>.'....!.....H.o(....Q%|.&lt;.&amp;...~.</td></tr>
+<tr><td class='right'>0300</td><td class='hex'> dd 48 b8 e6 3d e4 61 e1 23 dc 8a b0 f0 31 ea 1a    a0 11 fe 13 6c 45 50 38 19 76 5d bd 56 c2 7f 6b </td><td class='hex'>.H..=.a.#....1......lEP8.v].V..k</td></tr>
+<tr><td class='right'>0320</td><td class='hex'> 0b 97 41 d7 c5 6b 25 f8 06 ed a7 a0 f0 8e 75 5d    bc 56 d8 1b b4 9b 82 c2 1e 11 e1 75 7d 21 8d 38 </td><td class='hex'>..A..k%.......u].V.........u}!.8</td></tr>
+<tr><td class='right'>0340</td><td class='hex'> a1 13 e2 8f 13 3a 21 fe 38 a1 13 e2 8f 13 3a 21    fe 38 a1 13 42 6f 1d f1 62 a2 40 38 a3 64 c5 80 </td><td class='hex'>.....:!.8.....:!.8..Bo..b.@8.d..</td></tr>
+<tr><td class='right'>0360</td><td class='hex'> 6f 29 4c 57 42 d6 1b 3d 15 12 8f 96 af 61 79 e5    83 71 76 97 cf eb fe 91 30 12 17 1d f0 c5 9d 20 </td><td class='hex'>o)LWB..=.....ay..qv.....0.......</td></tr>
+<tr><td class='right'>0380</td><td class='hex'> 0b 0e 2e a7 9c 4d c8 ee 7d 41 b6 f3 a8 50 0e 63    71 65 9b e9 64 bc 12 21 f9 f3 46 f4 96 be bf 59 </td><td class='hex'>.....M..}A...P.cqe..d..!..F....Y</td></tr>
+<tr><td class='right'>03a0</td><td class='hex'> 42 ab 9a 67 13 86 53 71 39 d3 e7 30 5f f5 ad 64    ab f1 a2 5c 75 f0 28 de f4 23 8f 40 2b 9e 4b c8 </td><td class='hex'>B..g..Sq9..0_..d...\u.(..#.@+.K.</td></tr>
+<tr><td class='right'>03c0</td><td class='hex'> d6 d2 72 e2 23 31 78 96 57 3d 0e 8b cd c8 67 f2    6d 67 40 23 9e 4b 08 fd c5 67 d9 42 6b f4 20 df </td><td class='hex'>..r.#1x.W=....g.mg@#.K...g.Bk...</td></tr>
+<tr><td class='right'>03e0</td><td class='hex'> ca df dc 17 5a 26 94 34 f7 61 d3 b0 5a 41 97 42    7f 9c fe c9 41 a1 ef af f2 8b ea 90 f0 09 59 1b </td><td class='hex'>....Z&amp;.4.a..ZA.B....A.........Y.</td></tr>
+<tr><td class='right'>0400</td><td class='hex'> ee 4b 67 5a 42 ff 25 d7 8a 90 f0 15 38 63 9c 5d    f8 30 4f 33 9a 64 2f dd 0e 4b c2 59 96 49 a1 87 </td><td class='hex'>.KgZB.%.....8c.].0O3.d/..K.Y.I..</td></tr>
+<tr><td class='right'>0420</td><td class='hex'> ca ad 3a cb 85 9b 35 74 ba 38 bb 70 91 5d 69 8b    86 77 59 91 49 23 66 c2 ff b2 61 41 38 5c bc 6f </td><td class='hex'>..:...5t.8.p.]i..wY.I#f...aA8\.o</td></tr>
+<tr><td class='right'>0440</td><td class='hex'> 8f c5 1f 0f b0 54 18 df 5f 17 b3 08 e1 51 c2 b9    85 f9 1d 88 65 fd 61 cc 8b c2 fc 45 1e 16 84 cb </td><td class='hex'>.....T.._....Q......e.a....E....</td></tr>
+<tr><td class='right'>0460</td><td class='hex'> ec 43 46 d9 11 96 0a c7 1c c7 98 46 28 dc 17 9f    3c 3a 05 84 1f 8f bf 66 fb ea 22 7d 7d 26 34 bc </td><td class='hex'>.CF........F(...&lt;:.....f.."}}&amp;4.</td></tr>
+<tr><td class='right'>0480</td><td class='hex'> a6 d7 ae b0 17 cd 0b 0f cb 84 3d b6 48 3f 25 eb    77 89 08 b3 ca 57 b0 b0 17 bc f8 a5 a7 88 08 7b </td><td class='hex'>..........=.H?%.w....W.........{</td></tr>
+<tr><td class='right'>04a0</td><td class='hex'> c3 64 6c f9 79 f1 51 2e ec 85 bb e4 a9 74 44 46    45 18 26 a7 8c b9 4a c8 ae 93 a7 92 4e 89 8e 30 </td><td class='hex'>.dl.y.Q......tDFE.&amp;...J.....N..0</td></tr>
+<tr><td class='right'>04c0</td><td class='hex'> a9 f3 5d 25 cc b6 4c 4f 18 c7 be 14 b5 90 b1 e4    e1 47 a5 30 1a 27 cf 25 bd 69 26 fc 51 9c 57 ab </td><td class='hex'>..]%..LO.........G.0.'.%.i&amp;.Q.W.</td></tr>
+<tr><td class='right'>04e0</td><td class='hex'> ae b5 77 d5 97 5e 2a 7a 9a dc bc e3 be 28 f4 a7    85 dc ce 15 6d da f2 f9 30 ed 4a a7 9f 07 13 24 </td><td class='hex'>..w..^*z.....(......m...0.J....$</td></tr>
+<tr><td class='right'>0500</td><td class='hex'> cc e6 5f 49 57 23 1d b5 41 53 a7 b6 85 41 90 56    b9 83 cf f8 87 ca 2e 93 e7 96 0a a1 ff 00 f6 3d </td><td class='hex'>.._IW#..AS...A.V...............=</td></tr>
+<tr><td class='right'>0520</td><td class='hex'> 67 17 f6 8e 47 4c f8 98 8d 54 5e 4a e3 d2 46 42    68 76 d8 82 f0 29 4e f3 74 9c 35 dc 96 e7 16 22 </td><td class='hex'>g...GL...T^J..FBhv...)N.t.5...."</td></tr>
+<tr><td class='right'>0540</td><td class='hex'> 61 7a ba 78 56 09 a7 dd 0a 85 59 97 e7 87 a2 9e    26 7d 87 55 a9 a7 a9 64 d4 ed 5e 2a 2c a9 32 c7 </td><td class='hex'>az.xV.....Y.....&amp;}.U...d..^*,.2.</td></tr>
+<tr><td class='right'>0560</td><td class='hex'> 17 9d 2d 46 c9 73 97 0a 61 dc 71 4f 23 2a a9 ba    4e 23 3a e3 a7 b3 c4 d2 a8 6d 56 bc 93 75 7e 09 </td><td class='hex'>..-F.s..a.qO#*..N#:......mV..u~.</td></tr>
+<tr><td class='right'>0580</td><td class='hex'> ee a3 9d 08 47 c7 92 a0 51 db 5d f2 d4 a4 3c a6    19 16 ef 64 55 dd 99 d5 ba 70 9b bf 29 15 1a 79 </td><td class='hex'>....G...Q.]...&lt;....dU....p..)..y</td></tr>
+<tr><td class='right'>05a0</td><td class='hex'> a7 4b c5 e9 51 86 76 5c 5a cc ee 85 e7 ff e6 72    61 76 ae 48 0f 43 bc c2 e3 4a d4 7c b9 0e 79 71 </td><td class='hex'>.K..Q.v\Z......rav.H.C...J.|..yq</td></tr>
+<tr><td class='right'>05c0</td><td class='hex'> 9f 92 0b 87 69 bf b2 45 3f 3f 5c e4 ee f9 ae 1c    32 32 21 0b 9f d2 4f 79 4e 47 d6 68 85 d0 52 a6 </td><td class='hex'>....i..E??\.....22!...OyNG.h..R.</td></tr>
+<tr><td class='right'>05e0</td><td class='hex'> 4c 18 44 b3 f4 43 8e e3 15 5b 84 8c 05 9c 3f 1f    47 3f ab ec e5 c4 85 3f b2 95 c1 f5 32 ce ad 09 </td><td class='hex'>L.D..C...[....?.G?.....?....2...</td></tr>
+<tr><td class='right'>0600</td><td class='hex'> c7 d5 f5 52 a2 42 49 b6 b9 b3 b9 95 c2 4d 7e b5    d7 46 e1 a4 d0 f9 62 13 66 33 74 70 50 15 cc 7d </td><td class='hex'>...R.BI......M~..F....b.f3tpP..}</td></tr>
+<tr><td class='right'>0620</td><td class='hex'> 79 c6 c5 93 27 36 61 2f fc dc 68 03 0e fc d9 4a    de 80 eb d2 88 9a 27 c3 38 e8 8a 76 ab c2 64 37 </td><td class='hex'>y...'6a/..h....J......'.8..v..d7</td></tr>
+<tr><td class='right'>0640</td><td class='hex'> 7d 81 eb e1 3b 5f 98 dd aa 72 41 89 2d 0e 8b c9    33 c5 54 a2 3d 61 2f ba 8f 27 f1 b5 6a 97 e2 ef </td><td class='hex'>}...;_...rA.-...3.T.=a/..'..j...</td></tr>
+<tr><td class='right'>0660</td><td class='hex'> b3 ed a4 90 59 3c 5f 47 5c b0 73 b3 e0 61 36 79    30 fe 32 d9 39 ef 18 e2 e5 61 a8 28 01 0f 8b e1 </td><td class='hex'>....Y&lt;_G\.s..a6y0.2.9....a.(....</td></tr>
+<tr><td class='right'>0680</td><td class='hex'> 5c 3a 21 8a d4 ab a3 82 32 dc 5d 5f 4e 88 3e 4e    e8 84 f8 e3 84 4e 88 3f 4e e8 84 f8 e3 84 80 70 </td><td class='hex'>\:!.....2.]_N.&gt;N.....N.?N......p</td></tr>
+<tr><td class='right'>06a0</td><td class='hex'> a1 9e 38 60 48 83 ef e3 bf d0 10 06 3f 6b ff a6    42 6c 3a db ee 26 e1 2f e8 07 8f 40 21 8d 9f 8d </td><td class='hex'>..8`H.......?k..Bl:..&amp;./...@!...</td></tr>
+<tr><td class='right'>06c0</td><td class='hex'> 08 de be 02 40 85 f0 56 f2 dd 16 4c 09 ee 2e 2e    ea 0b fd cd 65 18 88 bf 8a 84 24 41 f8 76 d1 48 </td><td class='hex'>....@..V...L........e.....$A.v.H</td></tr>
+<tr><td class='right'>06e0</td><td class='hex'> e8 fb bb e5 fa 5e 94 4b 14 79 fb f9 eb 6b 53 a1    2c 5f 91 e4 f0 2b ac 67 11 f6 2b ff 84 a0 bb f4 </td><td class='hex'>.....^.K.y...kS.,_...+.g..+.....</td></tr>
+<tr><td class='right'>0700</td><td class='hex'> ad 17 42 40 27 24 21 04 81 36 08 61 20 79 21 d8    c9 34 13 da ff db 97 4e 88 26 4e e8 84 f8 e3 84 </td><td class='hex'>..B@'$!..6.a.y!..4.....N.&amp;N.....</td></tr>
+<tr><td class='right'>0720</td><td class='hex'> 4e 88 3f 4e e8 84 f8 e3 84 4e 88 3f d6 0b af 6a    0b 07 5d 97 ae 19 fb 85 83 da 42 bf eb d2 35 53 </td><td class='hex'>N.?N.....N.?...j..].......B...5S</td></tr>
+<tr><td class='right'>0740</td><td class='hex'> ae da 40 48 a3 11 4b 3b a9 91 90 46 23 56 8a 36    11 52 68 c4 72 13 9a 09 29 34 62 b5 66 23 21 7e </td><td class='hex'>..@H..K;...F#V.6.Rh.r...)4b.f#!~</td></tr>
+<tr><td class='right'>0760</td><td class='hex'> a2 a0 64 33 21 76 a2 a8 62 43 21 ea 63 b1 72 0c    d6 12 e2 1d bd 5d 0d 84 e5 d6 10 ee db 71 80 4d </td><td class='hex'>..d3!v..bC!.c.r......].......q.M</td></tr>
+<tr><td class='right'>0780</td><td class='hex'> 79 25 e1 ed f3 3f 03 cb 4c 54 10 3c c4 c2 00 00    00 00 49 45 4e 44 ae 42 60 82 </td><td class='hex'>y%...?..LT.&lt;......IEND.B`.</td></tr>
+</table>
+</div> <!-- class=content -->
+    <div id="lfcollabprojects-footer">
+      <div class="gray-diagonal">
+        <div class="footer-inner">
+	  <p>&copy; 2016 <a href="https://www.fd.io/">FD.io</a> a Linux Foundation Collaborative Project. All Rights Reserved.</p>
+	  <p>Linux Foundation is a registered trademark of The Linux Foundation.
+	     Linux is a registered <a href="http://www.linuxfoundation.org/programs/legal/trademark"
+	     title="Linux Mark Institute">trademark</a> of Linus Torvalds.</p>
+	  <p>Please see our <a href="http://www.linuxfoundation.org/privacy">privacy policy</a>
+	     and <a href="http://www.linuxfoundation.org/terms">terms of use</a></p>
+        </div>
+      </div>
+    </div>
+</div> <!-- id=cgit -->
+</body>
+</html>

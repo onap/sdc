@@ -4,6 +4,55 @@
 Release Notes
 =============
 
+Version: 1.2.0
+==============
+
+:Release Date: 2018-06-07
+
+Security Notes
+--------------
+
+SDC code has been formally scanned during build time using NexusIQ and all Critical vulnerabilities have been addressed, items that remain open have been assessed for risk and determined to be false positive. The SDC open Critical security vulnerabilities and their risk assessment have been documented as part of the `project <https://wiki.onap.org/pages/viewpage.action?pageId=28377537>`_.
+
+Quick Links:
+ 	- `SDC project page <https://wiki.onap.org/pages/viewpage.action?pageId=6592847>`_
+
+ 	- `Passing Badge information for SDC <https://bestpractices.coreinfrastructure.org/en/projects/1629>`_
+
+ 	- `Project Vulnerability Review Table for SDC <https://wiki.onap.org/pages/viewpage.action?pageId=28377537>`_
+
+
+SDC SDKs Versions
+-----------------
+
+-  sdc-distribution-client
+
+   :Version: 1.1.32
+
+|
+
+-  sdc-tosca
+
+   :Version: 1.1.32
+
+Release Purpose
+----------------
+The Amsterdam release is the first ONAP release.
+This release is focused on creating a merged architecture between the OpenECOMP and OpenO comonents.
+In addition, the release enhances the list of supported use cases to support the `VoLTE <https://wiki.onap.org/pages/viewpage.action?pageId=6593603>`_ snd 'vCPE <https://wiki.onap.org/pages/viewpage.action?pageId=3246168>`_ use cases.
+
+New Features
+------------
+
+Main Fetures
+-  Full and comprehensive VNF/Software Application(VF) and service design
+-  Collaborative design
+-  VNF/VF/SERVICE testing and certification
+-  Distribution to ONAP
+-  External API- for VNF/VF and  service
+-  Integration with BSS / Customer ordering.
+
+
 Version: 1.1.0
 ==============
 

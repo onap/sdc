@@ -7,38 +7,42 @@ Logging
 
 Where to Access Information
 ---------------------------
+the logs for the application are available in the docker it self at /var/lib/jetty/logs/
+in Heat deployment the dockers are maped into /data/logs on the vm where the application is running.
+In OOM you can use the logging project to accses the logging collected from the applications.
 
-+--------+------------------------------------------+---------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+---------------------+
-| Server | Location                                 | Type                | Description                                                                                                                                                                               | Rolling             |
-+========+==========================================+=====================+===========================================================================================================================================================================================+=====================+
-| BE     | /data/logs/BE/2017_03_10.stderrout.log   | Jetty server log    | The log describes info regarding Jetty startup and execution                                                                                                                              | the log rolls daily |
-+        +------------------------------------------+---------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+---------------------+
-|        | /data/logs/BE/SDC/SDC-BE/audit.log       | application audit   | An audit record is created for each operation in SDC                                                                                                                                      | rolls at 20 mb      |
-+        +------------------------------------------+---------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+---------------------+
-|        | /data/logs/BE/SDC/SDC-BE/debug.log       | application logging | We can enable higher logging on demand by editing the logback.xml inside the server docker.                                                                                               | rolls at 20 mb      |
-|        |                                          |                     | The file is located under:,config/catalog-be/logback.xml.                                                                                                                                 |                     |
-|        |                                          |                     | This log holds the debug and trace level output of the application.                                                                                                                       |                     |
-+        +------------------------------------------+---------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+---------------------+
-|        | /data/logs/BE/SDC/SDC-BE/error.log       | application logging | This log holds the info and error level output of the application.                                                                                                                        | rolls at 20 mb      |
-+        +------------------------------------------+---------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+---------------------+
-|        | /data/logs/BE/SDC/SDC-BE/transaction.log | application logging | Not currently in use. will be used in future relases.                                                                                                                                     | rolls at 20 mb      |
-+        +------------------------------------------+---------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+---------------------+
-|        | /data/logs/BE/SDC/SDC-BE/all.log         | application logging | On demand, we can enable log aggregation into one file for easier debugging. This is done by editing the logback.xml inside the server docker.                                            | rolls at 20 mb      |
-|        |                                          |                     | The file is located under:,config/catalog-be/logback.xml.                                                                                                                                 |                     |
-|        |                                          |                     | To allow this logger, set the value for this property to true This log holds all logging output of the application.                                                                       |                     |
-+--------+------------------------------------------+---------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+---------------------+
-| FE     | /data/logs/FE/2017_03_10.stderrout.log   |  Jetty server log   | The log describes info regarding the Jetty startup and execution                                                                                                                          | the log rolls daily |
-+        +------------------------------------------+---------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+---------------------+
-|        | /data/logs/FE/SDC/SDC-FE/debug.log       | application logging | We can enable higher logging on demand by editing the logback.xml inside the server docker.                                                                                               | rolls at 20 mb      |
-|        |                                          |                     | The file is located,under: config/catalog-fe/logback.xml.                                                                                                                                 |                     |
-|        |                                          |                     | This log holds the debug and trace level output of the application.                                                                                                                       |                     |
-+        +------------------------------------------+---------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+---------------------+
-|        | /data/logs/FE/SDC/SDC-FE/error.log       | application logging | This log holds the Info and Error level output of the application.                                                                                                                        | rolls at 20 mb      |
-+        +------------------------------------------+---------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+---------------------+
-|        | /data/logs/FE/SDC/SDC-FE/all.log         | application logging | On demand we can enable log aggregation into one file for easier debuging, by editing the logback.xml inside the server docker.The file is located under: config/catalog-fe/logback.xml.  | rolls               |
-|        |                                          |                     | To allow this logger set this property to true                                                                                                                                            |                     |
-|        |                                          |                     | This log holds all the logging output of the application.                                                                                                                                 |                     |
-+--------+------------------------------------------+---------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+---------------------+
+
++-------------------------------+------------------------------------------+---------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+---------------------+
+| Server                        | Location                                 | Type                | Description                                                                                                                                                                               | Rolling             |
++===============================+==========================================+=====================+===========================================================================================================================================================================================+=====================+
+| BE catalog and onboarding     | /data/logs/BE/2017_03_10.stderrout.log   | Jetty server log    | The log describes info regarding Jetty startup and execution                                                                                                                              | the log rolls daily |
++                               +------------------------------------------+---------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+---------------------+
+|                               | /data/logs/BE/SDC/SDC-BE/audit.log       | application audit   | An audit record is created for each operation in SDC                                                                                                                                      | rolls at 20 mb      |
++                               +------------------------------------------+---------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+---------------------+
+|                               | /data/logs/BE/SDC/SDC-BE/debug.log       | application logging | We can enable higher logging on demand by editing the logback.xml inside the server docker.                                                                                               | rolls at 20 mb      |
+|                               |                                          |                     | The file is located under:,config/catalog-be/logback.xml.                                                                                                                                 |                     |
+|                               |                                          |                     | This log holds the debug and trace level output of the application.                                                                                                                       |                     |
++                               +------------------------------------------+---------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+---------------------+
+|                               | /data/logs/BE/SDC/SDC-BE/error.log       | application logging | This log holds the info and error level output of the application.                                                                                                                        | rolls at 20 mb      |
++                               +------------------------------------------+---------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+---------------------+
+|                               | /data/logs/BE/SDC/SDC-BE/transaction.log | application logging | Not currently in use. will be used in future relases.                                                                                                                                     | rolls at 20 mb      |
++                               +------------------------------------------+---------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+---------------------+
+|                               | /data/logs/BE/SDC/SDC-BE/all.log         | application logging | On demand, we can enable log aggregation into one file for easier debugging. This is done by editing the logback.xml inside the server docker.                                            | rolls at 20 mb      |
+|                               |                                          |                     | The file is located under:,config/catalog-be/logback.xml.                                                                                                                                 |                     |
+|                               |                                          |                     | To allow this logger, set the value for this property to true This log holds all logging output of the application.                                                                       |                     |
++-------------------------------+------------------------------------------+---------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+---------------------+
+| FE                            | /data/logs/FE/2017_03_10.stderrout.log   |  Jetty server log   | The log describes info regarding the Jetty startup and execution                                                                                                                          | the log rolls daily |
++                               +------------------------------------------+---------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+---------------------+
+|                               | /data/logs/FE/SDC/SDC-FE/debug.log       | application logging | We can enable higher logging on demand by editing the logback.xml inside the server docker.                                                                                               | rolls at 20 mb      |
+|                               |                                          |                     | The file is located,under: config/catalog-fe/logback.xml.                                                                                                                                 |                     |
+|                               |                                          |                     | This log holds the debug and trace level output of the application.                                                                                                                       |                     |
++                               +------------------------------------------+---------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+---------------------+
+|                               | /data/logs/FE/SDC/SDC-FE/error.log       | application logging | This log holds the Info and Error level output of the application.                                                                                                                        | rolls at 20 mb      |
++                               +------------------------------------------+---------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+---------------------+
+|                               | /data/logs/FE/SDC/SDC-FE/all.log         | application logging | On demand we can enable log aggregation into one file for easier debuging, by editing the logback.xml inside the server docker.The file is located under: config/catalog-fe/logback.xml.  | rolls               |
+|                               |                                          |                     | To allow this logger set this property to true                                                                                                                                            |                     |
+|                               |                                          |                     | This log holds all the logging output of the application.                                                                                                                                 |                     |
++-------------------------------+------------------------------------------+---------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+---------------------+
 
 
 Error / Warning Messages
@@ -3310,4 +3314,423 @@ Respone Types
         code: 400,
         message: 'Error: VSP %1 cannot be imported. The VSP contains internal loop in VFC %2',
         messageId: "SVC4671"
+    }
+
+---------SVC4672------------------------------
+==============================================
+
+- %1 - capability uniqueId
+- %2 - instance uniqueId
+- %3 - container uniqueId
+
+::
+
+    CAPABILITY_OF_INSTANCE_NOT_FOUND_ON_CONTAINER: {
+        code: 404,
+        message: "Error: Requested capability %1 of instance %2 was not found on the container %3.",
+        messageId: "SVC4672"
+    }
+
+---------SVC4673------------------------------
+==============================================
+
+- %1 - requirement uniqueId
+- %2 - instance uniqueId
+- %3 - container uniqueId
+
+::
+
+    REQUIREMENT_OF_INSTANCE_NOT_FOUND_ON_CONTAINER: {
+        code: 404,
+        message: "Error: Requested requirement %1 of instance %2 was not found on the container %3.",
+        messageId: "SVC4673"
+    }
+
+---------SVC4674-----------------------------
+=============================================
+
+- %1 - relation Id
+- %2 - container uniqueId
+
+::
+
+    RELATION_NOT_FOUND: {
+        code: 404,
+        message: "Error: Requested relation %1 was not found on the container %2.",
+        messageId: "SVC4674"
+    }
+
+---------SVC4675------------------------------
+==============================================
+
+::
+
+    INVALID_SERVICE_STATE: {
+        code: 409,
+        message: "Service state is invalid for this action",
+        messageId: "SVC4675"
+    }
+
+---------SVC4676------------------------------
+==============================================
+
+::
+
+    INVALID_RESPONSE_FROM_PROXY: {
+        code: 502,
+        message: "Error: The server was acting as a gateway or proxy and received an invalid response from the upstream server",
+        messageId: "SVC4676"
+    }
+
+---------SVC4677------------------------------
+==============================================
+
+::
+
+    API_RESOURCE_NOT_FOUND: {
+        code: 404,
+        message: "Error: Requested '%1' was not found.",
+        messageId: "SVC4677"
+    }
+
+---------SVC4678------------------------------
+==============================================
+
+::
+
+    BAD_REQUEST_MISSING_RESOURCE: {
+        code: 400,
+        message: "Error: The required resource name/id  is missing in the request",
+        messageId: "SVC4678"
+    }
+
+---------SVC4679------------------------------
+==============================================
+
+- %1 forwarding path name maximum length
+
+::
+
+    FORWARDING_PATH_NAME_MAXIMUM_LENGTH: {
+        code: 400,
+        message: "Forwarding path name too long, , maximum allowed 200 characters : '%1'.",
+        messageId: "SVC4679"
+    }
+
+---------SVC4680------------------------------
+==============================================
+
+- %1 Forwarding path name already in use
+
+::
+
+    FORWARDING_PATH_NAME_ALREADY_IN_USE: {
+        code: 400,
+        message: "Forwarding path name already in use : '%1'.",
+        messageId: "SVC4680"
+    }
+
+---------SVC4681------------------------------
+==============================================
+
+- %1 Forwarding path name empty
+
+::
+
+    FORWARDING_PATH_NAME_EMPTY: {
+        code: 400,
+        message: "Forwarding Path Name can't be empty .",
+        messageId: "SVC4681"
+    }
+
+---------SVC4682------------------------------
+==============================================
+
+- %1 - resource uniqueId
+- %2 - resource component type
+
+::
+
+    RESOURCE_CANNOT_CONTAIN_POLICIES: {
+        code: 400,
+        message: "Error: The resource %1 type of %2 cannot contain policies.",
+        messageId: "SVC4682"
+    }
+
+---------SVC4683------------------------------
+==============================================
+
+- %1 - policy uniqueId
+- %2 - component uniqueId
+
+::
+
+    POLICY_NOT_FOUND_ON_CONTAINER: {
+        code: 404,
+        message: "Error: Requested policy %1 was not found on the container %2.",
+        messageId: "SVC4683"
+    }
+
+---------SVC4684------------------------------
+==============================================
+
+- %1 - policy name
+
+::
+
+    INVALID_POLICY_NAME: {
+        code: 400,
+        message: "Error: Invalid policy name %1 received.",
+        messageId: "SVC4684"
+    }
+
+---------SVC4685------------------------------
+==============================================
+
+- %1 - policy name
+
+::
+
+    POLICY_NAME_ALREADY_EXIST: {
+        code: 409,
+        message: "Error: The policy with the name %1 already exists.",
+        messageId: "SVC4685"
+    }
+
+---------SVC4686------------------------------
+==============================================
+
+- %1 - policy name
+
+::
+
+    POLICY_TARGET_DOES_NOT_EXIST: {
+        code: 400,
+        message: "Error: The targets %1 are not valid, all targets have to be on the topologyTemplate.",
+        messageId: "SVC4686"
+    }
+
+---------SVC4687------------------------------
+==============================================
+
+- %1 - policy type
+- %2 - component type
+
+::
+
+    EXCLUDED_POLICY_TYPE: {
+        code: 400,
+        message: "Error: The policy of the type %1 excluded to add to a component of the type %2.",
+        messageId: "SVC4687"
+    }
+
+---------SVC4688------------------------------
+==============================================
+
+- %1 - group type
+- %2 - component type
+
+::
+
+    GROUP_TYPE_ILLEGAL_PER_COMPONENT: {
+        code: 400,
+        message: "Error: group type %1 not permitted in component of type %2",
+        messageId: "SVC4688"
+    }
+
+---------SVC4689------------------------------
+==============================================
+
+- %1 - group type
+- %2 - component type
+
+::
+
+    POLICY_TARGET_TYPE_DOES_NOT_EXIST: {
+        code: 400,
+        message: "Error: The target types %1 are not valid.",
+        messageId: "SVC4689"
+    }
+
+---------SVC4690------------------------------
+==============================================
+
+- %1 forwarding path protocol maximum length
+
+::
+
+    FORWARDING_PATH_PROTOCOL_MAXIMUM_LENGTH: {
+        code: 400,
+        message: "Forwarding path protocol too long, , maximum allowed 200 characters : '%1'.",
+        messageId: "SVC4690"
+    }
+
+---------SVC4691------------------------------
+==============================================
+
+- %1 forwarding path destination port maximum length
+
+::
+
+    FORWARDING_PATH_DESTINATION_PORT_MAXIMUM_LENGTH: {
+        code: 400,
+        message: "Forwarding path destination port too long, , maximum allowed 200 characters : '%1'.",
+        messageId: "SVC4691"
+    }
+
+---------POL4692------------------------------
+==============================================
+
+::
+
+    MISSING_OLD_COMPONENT_INSTANCE: {
+        code: 400  ,
+        message: "Error: Missing 'componentInstanceId' HTTP param.",
+        messageId: "POL4692"
+    }
+
+---------POL4693------------------------------
+==============================================
+
+::
+
+    MISSING_NEW_COMPONENT_INSTANCE: {
+        code: 400  ,
+        message: "Error: Missing 'newComponentInstanceId' HTTP param.",
+        messageId: "POL4693"
+    }
+
+---------SVC4694------------------------------
+==============================================
+- %1 External Reference Value
+
+::
+
+    EXT_REF_NOT_FOUND: {
+        code: 404,
+        message: "Error: External Reference '%1' was not found.",
+        messageId: "SVC4694"
+    }
+
+---------SVC4695-----------------------------
+==============================================
+
+- %1 - Interface operation type
+
+::
+
+    INTERFACE_OPERATION_TYPE_ALREADY_IN_USE: {
+      code: 400,
+      message: "Error: Interface Operation type %1 already in use",
+      messageId: "SVC4695"
+    }
+
+---------SVC4696-----------------------------
+==============================================
+
+- %1 - workflow operation type
+
+::
+
+    INTERFACE_OPERATION_TYPE_INVALID: {
+      code: 400,
+      message: "Error: Interface Operation type %1 is Invalid, Operation type should not contain
+                	special character, space, numbers  and  should not be greater than 200 characters ",
+      messageId: "SVC4696"
+    }
+
+---------SVC4697-----------------------------
+==============================================
+
+::
+
+    INTERFACE_OPERATION_TYPE_MANDATORY: {
+      code: 404,
+      message: "Error: Interface Operation type is mandatory, Operation type can't be empty",
+      messageId: "SVC4697"
+    }
+
+---------SVC4698-----------------------------
+==============================================
+
+- %1 - workflow operation description
+
+::
+
+
+    INTERFACE_OPERATION_DESCRIPTION_MAX_LENGTH: {
+      code: 400,
+      message: "Error: Interface Operation description %1 is invalid, maximum 200 characters allowed",
+      messageId: "SVC4698"
+    }
+
+---------SVC4699-----------------------------
+==============================================
+
+::
+
+    INTERFACE_OPERATION_INPUT_NAME_ALREADY_IN_USE: {
+      code: 400,
+      message: "Error: Interface Operation input parameter names %1 already in use",
+      messageId: "SVC4699"
+    }
+
+---------SVC4700-----------------------------
+==============================================
+
+::
+
+    INTERFACE_OPERATION_OUTPUT_NAME_INVALID: {
+      code: 400,
+      message: "Error: Interface Operation output parameters invalid, should be unique and mandatory",
+      messageId: "SVC4700"
+    }
+
+---------SVC4701-----------------------------
+==============================================
+
+- %1 - resource Id
+
+::
+
+    INTERFACE_OPERATION_NOT_FOUND: {
+      code: 404,
+      message: "Error: Interface operations not found in the resource %1",
+      messageId: "SVC4701"
+    }
+
+---------SVC46702-----------------------------
+==============================================
+
+::
+
+    INTERFACE_OPERATION_NOT_DELETED: {
+      code: 404,
+      message: "Error: Failed to delete interface operation.",
+      messageId: "SVC4702"
+    }
+
+---------SVC4703-----------------------------
+==============================================
+
+- %1 – asset type [service / resource ]
+- %2 – main asset uuid
+
+::
+
+    ERROR_DURING_CSAR_CREATION: {
+      code: 404,
+      message: "Error: CSAR packaging failed for %1 %2.",
+      messageId: "SVC4702"
+    }
+
+---------SVC46703-----------------------------
+==============================================
+
+::
+
+    INTERFACE_OPERATION_INPUT_NAME_MANDATORY: {
+      code: 404,
+      message: "Error: Interface operation input  parameter name should not be empty",
+      messageId: "SVC46703"
     }
