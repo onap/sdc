@@ -20,21 +20,18 @@
 
 package org.openecomp.sdc.tosca.services;
 
+import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.onap.sdc.tosca.datatypes.model.*;
 import org.openecomp.sdc.common.errors.CoreException;
-import org.onap.sdc.tosca.datatypes.model.GroupDefinition;
-import org.onap.sdc.tosca.datatypes.model.NodeTemplate;
-import org.onap.sdc.tosca.datatypes.model.NodeType;
-import org.onap.sdc.tosca.datatypes.model.PolicyDefinition;
-import org.onap.sdc.tosca.datatypes.model.RelationshipTemplate;
-import org.onap.sdc.tosca.datatypes.model.RequirementAssignment;
-import org.onap.sdc.tosca.datatypes.model.SubstitutionMapping;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Optional;
 
 /**
  * @author shiria
@@ -124,5 +121,35 @@ public class DataModelUtilTest {
     thrown.expectMessage(
         "Invalid action, can't add 'Group Definition' to 'Service Template', 'Service Template' entity is NULL.");
     DataModelUtil.addGroupDefinitionToTopologyTemplate(null, "123", new GroupDefinition());
+  }
+
+
+  @Test
+  public void testGetRelationshipTemplate(){
+    RelationshipTemplate relationshipTemplate = new RelationshipTemplate();
+    String testingRelationshipType = "testingRelationshipType";
+    relationshipTemplate.setType(testingRelationshipType);
+    TopologyTemplate topologyTemplate = new TopologyTemplate();
+    topologyTemplate.setRelationship_templates(new HashMap<>());
+    String relationId = "rtest";
+    topologyTemplate.getRelationship_templates().put(relationId, relationshipTemplate);
+    ServiceTemplate serviceTemplate = new ServiceTemplate();
+    serviceTemplate.setTopology_template(topologyTemplate);
+
+    Optional<RelationshipTemplate> relationshipTemplateOut =
+            DataModelUtil.getRelationshipTemplate(serviceTemplate, relationId);
+    Assert.assertNotNull(relationshipTemplateOut);
+    Assert.assertEquals(true,relationshipTemplateOut.isPresent());
+    Assert.assertEquals(testingRelationshipType, relationshipTemplateOut.get().getType());
+  }
+
+  @Test
+  public void testGetEmptyRelationshipTemplate(){
+    ServiceTemplate serviceTemplate = new ServiceTemplate();
+    String relationId = "rtest";
+    Optional<RelationshipTemplate> relationshipTemplateOut =
+            DataModelUtil.getRelationshipTemplate(serviceTemplate, relationId);
+    Assert.assertNotNull(relationshipTemplateOut);
+    Assert.assertEquals(false,relationshipTemplateOut.isPresent());
   }
 }
