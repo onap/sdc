@@ -17,10 +17,17 @@
 package org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import org.apache.commons.collections4.MapUtils;
 import org.onap.sdc.tosca.datatypes.model.RequirementAssignment;
+import org.openecomp.sdc.translator.services.heattotosca.ConsolidationDataUtil;
 
 /**
  * The type Entity consolidation data.
@@ -260,5 +267,44 @@ public class EntityConsolidationData {
         }
 
         outputParametersGetAttrIn.removeIf(outputParameters -> paramName.equals(outputParameters.getFieldName()));
+    }
+
+    /**
+     * Per port type compare get attr of entity with given consolidation data list.
+     *
+     * @param entityConsolidationDataList consolidation data list
+     * @param portTypeToIds               the port type to ids
+     * @return true in case get attr list same for all port types.
+     *         otherwise return false
+     */
+    public boolean isGetAttrOutFromEntityLegal(
+                                                      Collection<? extends EntityConsolidationData> entityConsolidationDataList,
+                                                      Map<String, List<String>> portTypeToIds) {
+
+        for (String portType : portTypeToIds.keySet()) {
+            Set<GetAttrFuncData> startingGetAttrFunc =
+                    getEntityGetAttrFuncAsSet(portType);
+
+            for (EntityConsolidationData entity : entityConsolidationDataList) {
+                Set<GetAttrFuncData> currentGetAttrFuncData =
+                        entity.getEntityGetAttrFuncAsSet(portType);
+                if (!(startingGetAttrFunc.equals(currentGetAttrFuncData))) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    private Set<GetAttrFuncData> getEntityGetAttrFuncAsSet(String portType) {
+        if (MapUtils.isEmpty(nodesGetAttrOut)) {
+            return new HashSet<>();
+        }
+
+        return nodesGetAttrOut.entrySet().stream()
+                              .filter(entry -> portType.equals(ConsolidationDataUtil.getPortType(entry.getKey())))
+                              .flatMap(entry -> entry.getValue().stream())
+                              .collect(Collectors.toSet());
     }
 }

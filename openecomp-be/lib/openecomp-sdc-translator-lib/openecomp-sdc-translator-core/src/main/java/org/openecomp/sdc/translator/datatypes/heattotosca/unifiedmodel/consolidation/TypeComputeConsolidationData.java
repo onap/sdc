@@ -18,7 +18,10 @@ package org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolid
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import org.apache.commons.collections4.CollectionUtils;
 
 public class TypeComputeConsolidationData {
 
@@ -69,4 +72,43 @@ public class TypeComputeConsolidationData {
         return consolidationData;
     }
 
+    /**
+     * Gets all ports per port type, which are connected to the computes consolidation data entities
+     * computeTemplateConsolidationDataCollection.
+     *
+     * @return Map containing key as port type and value as ports id
+     */
+    public Map<String, List<String>> collectAllPortsOfEachTypeFromComputes() {
+        Map<String, List<String>> portTypeToIds = new HashMap<>();
+        Collection<ComputeTemplateConsolidationData> computeTemplateConsolidationDataCollection =
+                getAllComputeTemplateConsolidationData();
+
+        computeTemplateConsolidationDataCollection
+                .forEach(computeTemplateConsolidationData1 ->
+                                 computeTemplateConsolidationData1.collectAllPortsOfEachTypeFromCompute(portTypeToIds));
+
+        return portTypeToIds;
+    }
+
+    /**
+     * Check if get attr out from entity are legal for given port list
+     *
+     * @param portTypeToIds list of port Ids per port type
+     * @return true if get attr out are legal else false
+     */
+    public boolean isGetAttrOutFromEntityLegal(Map<String, List<String>> portTypeToIds) {
+
+        Collection<ComputeTemplateConsolidationData> entities = getAllComputeTemplateConsolidationData();
+
+        if (CollectionUtils.isEmpty(entities)) {
+            return true;
+        }
+
+        EntityConsolidationData firstEntity = entities.iterator().next();
+        return firstEntity.isGetAttrOutFromEntityLegal(entities, portTypeToIds);
+    }
+
+    public boolean isNumberOfComputeConsolidationDataPerTypeLegal() {
+        return getAllComputeTemplateConsolidationData().size() == 1;
+    }
 }

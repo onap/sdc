@@ -18,6 +18,7 @@ package org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolid
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 public class ComputeConsolidationData {
@@ -61,5 +62,18 @@ public class ComputeConsolidationData {
             setFileComputeConsolidationData(serviceTemplateFileName, consolidationData);
         }
         return consolidationData;
+    }
+
+    /**
+     * Is number of compute types legal.
+     *
+     * @param serviceTemplateName the service template name
+     * @return the boolean
+     */
+    public boolean isNumberOfComputeTypesLegal(String serviceTemplateName) {
+        FileComputeConsolidationData fileComputeConsolidationData =
+                getFileComputeConsolidationData(serviceTemplateName);
+        return Objects.nonNull(fileComputeConsolidationData)
+                       && fileComputeConsolidationData.isNumberOfComputeTypesLegal();
     }
 }
