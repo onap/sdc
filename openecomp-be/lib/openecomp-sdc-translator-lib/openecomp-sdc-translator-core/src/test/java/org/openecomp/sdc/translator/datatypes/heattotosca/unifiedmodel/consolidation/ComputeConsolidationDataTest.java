@@ -19,7 +19,11 @@ package org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolid
 import java.util.HashSet;
 import java.util.Set;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 
 public class ComputeConsolidationDataTest {
 
@@ -29,6 +33,15 @@ public class ComputeConsolidationDataTest {
     private static final String COMPUTE_NODE_TEMPLATE_ID_2 = "computeNodeTemplateId2";
     private static final String COMPUTE_NODE_TYPE_1 = "computeNodeType1";
     private static final String COMPUTE_NODE_TYPE_2 = "computeNodeType2";
+    private static final String MAIN_SERVICE_TEMPLATE = "MainServiceTemplate.yaml";
+
+    @Mock
+    private FileComputeConsolidationData fileComputeConsolidationDataMock;
+
+    @Before
+    public void setUp() {
+        MockitoAnnotations.initMocks(this);
+    }
 
     @Test
     public void testAddComputeTemplateConsolidationData() {
@@ -107,5 +120,22 @@ public class ComputeConsolidationDataTest {
         Assert.assertTrue(allServiceTemplateFileNames.containsAll(expectedServiceTemplateNames));
     }
 
+    @Test
+    public void isNumberOfComputeTypesLegal() {
+        ComputeConsolidationData computeConsolidationData = new ComputeConsolidationData();
+        computeConsolidationData.setFileComputeConsolidationData(MAIN_SERVICE_TEMPLATE,
+                fileComputeConsolidationDataMock);
+
+        computeConsolidationData.isNumberOfComputeTypesLegal(MAIN_SERVICE_TEMPLATE);
+
+        Mockito.verify(fileComputeConsolidationDataMock).isNumberOfComputeTypesLegal();
+    }
+
+    @Test
+    public void isNumberOfComputeTypesLegalNegative() {
+        ComputeConsolidationData computeConsolidationData = new ComputeConsolidationData();
+
+        Assert.assertFalse(computeConsolidationData.isNumberOfComputeTypesLegal(MAIN_SERVICE_TEMPLATE));
+    }
 
 }

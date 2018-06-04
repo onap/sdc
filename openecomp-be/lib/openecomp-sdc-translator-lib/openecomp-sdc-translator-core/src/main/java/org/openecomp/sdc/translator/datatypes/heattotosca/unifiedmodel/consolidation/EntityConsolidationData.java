@@ -278,7 +278,7 @@ public class EntityConsolidationData {
      *         otherwise return false
      */
     public boolean isGetAttrOutFromEntityLegal(
-                                                      Collection<? extends EntityConsolidationData> entityConsolidationDataList,
+            Collection<? extends EntityConsolidationData> entityConsolidationDataList,
                                                       Map<String, List<String>> portTypeToIds) {
 
         for (String portType : portTypeToIds.keySet()) {
