@@ -13,13 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.onap.sdc.tosca.datatypes.model;
 
-import java.util.Map;
+package org.onap.sdc.tosca.datatypes.model;
 
 public abstract class InterfaceDefinition {
 
-  protected Map<String, OperationDefinition> operations;
-
-  public abstract void addOperation(String operationName, OperationDefinition operationDefinition);
+    public abstract void addOperation(String operationName, OperationDefinition operationDefinition);
 }

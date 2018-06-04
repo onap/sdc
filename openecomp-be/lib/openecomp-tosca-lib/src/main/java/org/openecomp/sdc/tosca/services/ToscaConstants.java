@@ -36,6 +36,9 @@ public class ToscaConstants {
     //General
     public static final String TOSCA_DEFINITIONS_VERSION = "tosca_simple_yaml_1_0_0";
     public static final String MODELABLE_ENTITY_NAME_SELF = "SELF";
+    public static final String MODELABLE_ENTITY_NAME_HOST = "HOST";
+    public static final String MODELABLE_ENTITY_NAME_SOURCE = "SOURCE";
+    public static final String MODELABLE_ENTITY_NAME_TARGET = "TARGET";
     public static final String NODE_TEMPLATE_DIRECTIVE_SUBSTITUTABLE = "substitutable";
     public static final String UNBOUNDED = "UNBOUNDED";
     public static final String ST_METADATA_TEMPLATE_NAME = "template_name";

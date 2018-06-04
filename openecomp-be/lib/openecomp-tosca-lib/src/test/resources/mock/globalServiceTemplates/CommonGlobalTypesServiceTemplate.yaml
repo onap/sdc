@@ -3,6 +3,9 @@ metadata:
   template_name: CommonGlobalTypes
   template_version: 1.0.0
 description: TOSCA Global Types
+imports:
+- toscaIndex:
+    file: _index.yml
 data_types:
   org.openecomp.datatypes.heat.network.AddressPair:
     derived_from: tosca.datatypes.Root

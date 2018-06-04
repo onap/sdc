@@ -15,16 +15,23 @@
 tosca_definitions_version: tosca_simple_yaml_1_1
 
 metadata:
-  filename: tosca/groups.yml
+  filename: _index.yml
   version: '1.0'
 
 imports:
-- tosca_index:
-    file: _index.yml
-
-group_types:
-  tosca.groups.Root:
-    description: This is the default (root) TOSCA Group Type definition that all other TOSCA base Group Types derive from.
-    interfaces:
-      Standard:
-        type: tosca.interfaces.node.lifecycle.Standard
+- capabilities:
+    file: capabilities.yml
+- nodes:
+    file: nodes.yml
+- relationships:
+    file: relationships.yml
+- groups:
+    file: groups.yml
+- data:
+    file: data.yml 
+- interfaces:
+    file: interfaces.yml 
+- artifacts:
+    file: artifacts.yml   
+- policies:
+    file: policies.yml           

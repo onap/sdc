@@ -1,3 +1,19 @@
+/*
+ * Copyright © 2016-2018 European Support Limited
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.openecomp.sdc.enrichment.impl.tosca;
 
 import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.HIGH_AVAIL_MODE;
@@ -18,17 +34,16 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
 import org.openecomp.sdc.tosca.datatypes.ToscaElementTypes;
-import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
 import org.onap.sdc.tosca.datatypes.model.NodeTemplate;
 import org.onap.sdc.tosca.datatypes.model.NodeType;
 import org.onap.sdc.tosca.datatypes.model.RequirementAssignment;
 import org.onap.sdc.tosca.datatypes.model.RequirementDefinition;
 import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
+import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
 import org.openecomp.sdc.tosca.services.DataModelUtil;
 import org.openecomp.sdc.tosca.services.ToscaAnalyzerService;
 import org.openecomp.sdc.tosca.services.ToscaConstants;
 import org.openecomp.sdc.tosca.services.impl.ToscaAnalyzerServiceImpl;
-import org.openecomp.sdc.versioning.dao.types.Version;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,236 +52,233 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
+import org.openecomp.sdc.versioning.dao.types.Version;
+
 public class AbstractSubstituteToscaEnricher {
-  private ToscaAnalyzerService toscaAnalyzerService ;
-  private ComponentQuestionnaireData componentQuestionnaireData;
+
+    private ToscaAnalyzerService toscaAnalyzerService;
+    private ComponentQuestionnaireData componentQuestionnaireData;
 
 
-  public Map<String,List<ErrorMessage>> enrich(ToscaServiceModel toscaModel, String vspId, Version
-      version) {
-    componentQuestionnaireData = getComponentQuestionnaireData();
-    toscaAnalyzerService = new ToscaAnalyzerServiceImpl();
+    public Map<String, List<ErrorMessage>> enrich(ToscaServiceModel toscaModel, String vspId, Version version) {
+        componentQuestionnaireData = getComponentQuestionnaireData();
+        toscaAnalyzerService = new ToscaAnalyzerServiceImpl();
 
-    Map<String, Map<String, Object>> componentProperties =
-        componentQuestionnaireData.getPropertiesfromCompQuestionnaire(vspId, version);
+        Map<String, Map<String, Object>> componentProperties =
+                componentQuestionnaireData.getPropertiesfromCompQuestionnaire(vspId, version);
 
-    final Map<String, List<String>> sourceToTargetDependencies =
-        componentQuestionnaireData.populateDependencies(vspId, version,
-            componentQuestionnaireData.getSourceToTargetComponent());
+        final Map<String, List<String>> sourceToTargetDependencies = componentQuestionnaireData
+                                                                             .populateDependencies(vspId, version,
+                                                                                     componentQuestionnaireData
+                                                                                             .getSourceToTargetComponent());
+        Map<String, List<ErrorMessage>> errors = new HashMap<>();
 
-    Map<String, List<ErrorMessage>> errors = new HashMap<>();
+        final ServiceTemplate serviceTemplate =
+                toscaModel.getServiceTemplates().get(toscaModel.getEntryDefinitionServiceTemplate());
 
-    final ServiceTemplate serviceTemplate = toscaModel.getServiceTemplates()
-        .get(toscaModel.getEntryDefinitionServiceTemplate());
+        if (serviceTemplate == null) {
+            return errors;
+        }
 
-    if (serviceTemplate == null) return errors;
+        final Map<String, NodeTemplate> node_templates = serviceTemplate.getTopology_template().getNode_templates();
+        if (node_templates == null) {
+            return errors;
+        }
 
-    final Map<String, NodeTemplate> node_templates =
-        serviceTemplate.getTopology_template().getNode_templates();
-    if(node_templates == null) return errors;
+        final Map<String, List<String>> componentDisplayNameToNodeTempalteIds =
+                populateAllNodeTemplateIdForComponent(node_templates, serviceTemplate, toscaModel);
 
-    final Map<String, List<String>> componentDisplayNameToNodeTempalteIds =
-        populateAllNodeTemplateIdForComponent(node_templates, serviceTemplate, toscaModel);
+        node_templates.keySet().stream().forEach(nodeTemplateId -> {
+            final Optional<NodeTemplate> nodeTemplateById =
+                    toscaAnalyzerService.getNodeTemplateById(serviceTemplate, nodeTemplateId);
+            final NodeTemplate nodeTemplate = nodeTemplateById.isPresent() ? nodeTemplateById.get() : null;
 
-    node_templates.keySet()
-        .stream()
-        .forEach(nodeTemplateId -> {
-          final Optional<NodeTemplate> nodeTemplateById =
-              toscaAnalyzerService.getNodeTemplateById(serviceTemplate, nodeTemplateId);
-          final NodeTemplate nodeTemplate =
-              nodeTemplateById.isPresent() ? nodeTemplateById.get() : null;
+            if (toscaAnalyzerService.isTypeOf(nodeTemplate, VFC_ABSTRACT_SUBSTITUTE, serviceTemplate, toscaModel)) {
 
-          if (toscaAnalyzerService.isTypeOf(nodeTemplate, VFC_ABSTRACT_SUBSTITUTE, serviceTemplate,
-              toscaModel)) {
+                String componentDisplayName = getComponentDisplayName(nodeTemplateId, nodeTemplate);
 
-            String componentDisplayName = getComponentDisplayName(nodeTemplateId, nodeTemplate);
+                setProperty(nodeTemplate, VM_TYPE_TAG, componentDisplayName);
 
-            setProperty(nodeTemplate, VM_TYPE_TAG, componentDisplayName);
+                if (componentProperties != null && componentProperties.containsKey(componentDisplayName)) {
+                    final String mandatory =
+                            getValueFromQuestionnaireDetails(componentProperties, componentDisplayName, MANDATORY);
 
-            if (componentProperties != null && componentProperties.containsKey
-                (componentDisplayName)) {
-              final String mandatory =
-                  getValueFromQuestionnaireDetails(componentProperties, componentDisplayName,
-                      MANDATORY);
+                    boolean isServiceTemplateFilterNotExists = false;
+                    if (!StringUtils.isEmpty(mandatory)) {
+                        Map innerProps = (Map<String, Object>) nodeTemplate.getProperties()
+                                                                           .get(SERVICE_TEMPLATE_FILTER_PROPERTY_NAME);
 
-              boolean isServiceTemplateFilterNotExists = false;
-              if (!StringUtils.isEmpty(mandatory)) {
-                Map innerProps = (Map<String, Object>) nodeTemplate.getProperties()
-                    .get(SERVICE_TEMPLATE_FILTER_PROPERTY_NAME);
+                        if (innerProps == null) {
+                            innerProps = new HashMap<String, Object>();
+                            isServiceTemplateFilterNotExists = true;
+                        }
 
-                if (innerProps == null) {
-                  innerProps = new HashMap<String, Object>();
-                  isServiceTemplateFilterNotExists = true;
+                        innerProps.put(MANDATORY, getValue(mandatory));
+
+                        if (isServiceTemplateFilterNotExists) {
+                            nodeTemplate.getProperties().put(SERVICE_TEMPLATE_FILTER_PROPERTY_NAME, innerProps);
+                        }
+                    }
+
+                    setProperty(nodeTemplate, HIGH_AVAIL_MODE,
+                            getValueFromQuestionnaireDetails(componentProperties, componentDisplayName,
+                                    HIGH_AVAIL_MODE));
+
+                    setProperty(nodeTemplate, VFC_NAMING_CODE,
+                            getValueFromQuestionnaireDetails(componentProperties, componentDisplayName,
+                                    VFC_NAMING_CODE));
+
+                    setProperty(nodeTemplate, VFC_CODE,
+                            getValueFromQuestionnaireDetails(componentProperties, componentDisplayName, VFC_CODE));
+
+                    setProperty(nodeTemplate, VFC_FUNCTION,
+                            getValueFromQuestionnaireDetails(componentProperties, componentDisplayName, VFC_FUNCTION));
+
+                    if (componentProperties.get(componentDisplayName).get(MIN_INSTANCES) != null) {
+                        nodeTemplate.getProperties().put(MIN_INSTANCES,
+                                componentProperties.get(componentDisplayName).get(MIN_INSTANCES));
+                    }
+
+                    if (componentProperties.get(componentDisplayName).get(MAX_INSTANCES) != null) {
+                        nodeTemplate.getProperties().put(MAX_INSTANCES,
+                                componentProperties.get(componentDisplayName).get(MAX_INSTANCES));
+                    }
                 }
 
-                innerProps.put(MANDATORY, getValue(mandatory));
-
-                if(isServiceTemplateFilterNotExists)
-                  nodeTemplate.getProperties().put(SERVICE_TEMPLATE_FILTER_PROPERTY_NAME,
-                    innerProps);
-              }
-
-              setProperty(nodeTemplate, HIGH_AVAIL_MODE, getValueFromQuestionnaireDetails
-                  (componentProperties, componentDisplayName, HIGH_AVAIL_MODE));
-
-              setProperty(nodeTemplate, VFC_NAMING_CODE, getValueFromQuestionnaireDetails
-                  (componentProperties, componentDisplayName, VFC_NAMING_CODE));
-
-              setProperty(nodeTemplate, VFC_CODE, getValueFromQuestionnaireDetails
-                  (componentProperties, componentDisplayName, VFC_CODE));
-
-              setProperty(nodeTemplate, VFC_FUNCTION, getValueFromQuestionnaireDetails
-                  (componentProperties, componentDisplayName, VFC_FUNCTION));
-
-              if(componentProperties.get(componentDisplayName).get(MIN_INSTANCES) != null) {
-                nodeTemplate.getProperties().put(MIN_INSTANCES,
-                    componentProperties.get(componentDisplayName).get(MIN_INSTANCES));
-              }
-
-              if(componentProperties.get(componentDisplayName).get(MAX_INSTANCES) != null) {
-                nodeTemplate.getProperties().put(MAX_INSTANCES,
-                    componentProperties.get(componentDisplayName).get(MAX_INSTANCES));
-              }
+                enrichRequirements(sourceToTargetDependencies, componentDisplayName, nodeTemplate,
+                        componentDisplayNameToNodeTempalteIds, serviceTemplate, toscaModel);
             }
-
-            enrichRequirements(sourceToTargetDependencies, componentDisplayName, nodeTemplate,
-                componentDisplayNameToNodeTempalteIds, serviceTemplate, toscaModel);
-          }
         });
-    return errors;
-  }
-
-  private Map<String,List<String>> populateAllNodeTemplateIdForComponent(Map<String,
-      NodeTemplate> node_templates, ServiceTemplate serviceTemplate, ToscaServiceModel
-      toscaModel) {
-
-
-    Map<String,List<String>> componentDisplayNameToNodeTempalteIds = new HashMap<String,
-        List<String>>();
-
-    //set dependency target
-    node_templates.keySet()
-        .stream()
-        .forEach(nodeTemplateId -> {
-
-          final Optional<NodeTemplate> nodeTemplateById =
-              toscaAnalyzerService.getNodeTemplateById(serviceTemplate, nodeTemplateId);
-          final NodeTemplate nodeTemplate =
-              nodeTemplateById.isPresent() ? nodeTemplateById.get() : null;
-
-          if (toscaAnalyzerService.isTypeOf(nodeTemplate, VFC_ABSTRACT_SUBSTITUTE, serviceTemplate,
-              toscaModel)) {
-
-            String componentDisplayName = getComponentDisplayName(nodeTemplateId, nodeTemplate);
-
-            if (componentDisplayNameToNodeTempalteIds.containsKey(componentDisplayName)) {
-              componentDisplayNameToNodeTempalteIds.get(componentDisplayName).add(nodeTemplateId);
-            } else {
-              List<String> nodeTemplateIds = new ArrayList<String>();
-              nodeTemplateIds.add(nodeTemplateId);
-              componentDisplayNameToNodeTempalteIds.put(componentDisplayName, nodeTemplateIds);
-            }
-
-          }
-        });
-
-    return componentDisplayNameToNodeTempalteIds;
-  }
-
-  private void enrichRequirements(Map<String, List<String>> sourceToTargetDependencies,
-                                  String componentDisplayName, NodeTemplate nodeTemplate,
-                                  Map<String, List<String>> componentDisplayNameToNodeTempalteIds,
-                                  ServiceTemplate serviceTemplate, ToscaServiceModel toscaServiceModel) {
-    final List<String> targets = sourceToTargetDependencies.get(componentDisplayName);
-    if (CollectionUtils.isEmpty(targets)) {
-      return;
+        return errors;
     }
 
-    for (String target : targets) {
-      List<String> targetNodeTemplateIds = componentDisplayNameToNodeTempalteIds.get(target);
-      if (CollectionUtils.isEmpty(targetNodeTemplateIds)) {
-        continue;
-      }
-      for (String targetNodeTemplateId : targetNodeTemplateIds) {
-        Optional<String> dependencyRequirementKey =
-            getDependencyRequirementKey(serviceTemplate, componentDisplayName, nodeTemplate, toscaServiceModel);
-        if (dependencyRequirementKey.isPresent()) {
-          RequirementAssignment requirementAssignment = new RequirementAssignment();
-          requirementAssignment.setCapability(NATIVE_NODE);
-          requirementAssignment.setRelationship(NATIVE_DEPENDS_ON);
-          requirementAssignment.setNode(targetNodeTemplateId);
-          DataModelUtil.addRequirementAssignment(nodeTemplate, dependencyRequirementKey.get(), requirementAssignment);
+    private Map<String, List<String>> populateAllNodeTemplateIdForComponent(Map<String, NodeTemplate> node_templates,
+                                                                                   ServiceTemplate serviceTemplate,
+                                                                                   ToscaServiceModel toscaModel) {
+
+
+        Map<String, List<String>> componentDisplayNameToNodeTempalteIds = new HashMap<>();
+
+        //set dependency target
+        node_templates.keySet().stream().forEach(nodeTemplateId -> {
+
+            final Optional<NodeTemplate> nodeTemplateById =
+                    toscaAnalyzerService.getNodeTemplateById(serviceTemplate, nodeTemplateId);
+            final NodeTemplate nodeTemplate = nodeTemplateById.isPresent() ? nodeTemplateById.get() : null;
+
+            if (toscaAnalyzerService.isTypeOf(nodeTemplate, VFC_ABSTRACT_SUBSTITUTE, serviceTemplate, toscaModel)) {
+
+                String componentDisplayName = getComponentDisplayName(nodeTemplateId, nodeTemplate);
+
+                if (componentDisplayNameToNodeTempalteIds.containsKey(componentDisplayName)) {
+                    componentDisplayNameToNodeTempalteIds.get(componentDisplayName).add(nodeTemplateId);
+                } else {
+                    List<String> nodeTemplateIds = new ArrayList<>();
+                    nodeTemplateIds.add(nodeTemplateId);
+                    componentDisplayNameToNodeTempalteIds.put(componentDisplayName, nodeTemplateIds);
+                }
+
+            }
+        });
+
+        return componentDisplayNameToNodeTempalteIds;
+    }
+
+    private void enrichRequirements(Map<String, List<String>> sourceToTargetDependencies, String componentDisplayName,
+                                           NodeTemplate nodeTemplate,
+                                           Map<String, List<String>> componentDisplayNameToNodeTempalteIds,
+                                           ServiceTemplate serviceTemplate, ToscaServiceModel toscaServiceModel) {
+        final List<String> targets = sourceToTargetDependencies.get(componentDisplayName);
+        if (CollectionUtils.isEmpty(targets)) {
+            return;
         }
-      }
-    }
-  }
 
-  private Optional<String> getDependencyRequirementKey(ServiceTemplate serviceTemplate,
-                                                       String componentDisplayName,
-                                                       NodeTemplate nodeTemplate,
-                                                       ToscaServiceModel toscaServiceModel) {
-    String nodeType = nodeTemplate.getType();
-    NodeType flatNodeType = (NodeType) toscaAnalyzerService
-        .getFlatEntity(ToscaElementTypes.NODE_TYPE, nodeType, serviceTemplate, toscaServiceModel);
-    List<Map<String, RequirementDefinition>> flatNodeTypeRequirements = flatNodeType.getRequirements();
-    if (Objects.isNull(flatNodeTypeRequirements)) {
-      return Optional.empty() ;
+        for (String target : targets) {
+            List<String> targetNodeTemplateIds = componentDisplayNameToNodeTempalteIds.get(target);
+            if (CollectionUtils.isEmpty(targetNodeTemplateIds)) {
+                continue;
+            }
+            for (String targetNodeTemplateId : targetNodeTemplateIds) {
+                Optional<String> dependencyRequirementKey =
+                        getDependencyRequirementKey(serviceTemplate, componentDisplayName, nodeTemplate,
+                                toscaServiceModel);
+                if (dependencyRequirementKey.isPresent()) {
+                    RequirementAssignment requirementAssignment = new RequirementAssignment();
+                    requirementAssignment.setCapability(NATIVE_NODE);
+                    requirementAssignment.setRelationship(NATIVE_DEPENDS_ON);
+                    requirementAssignment.setNode(targetNodeTemplateId);
+                    DataModelUtil.addRequirementAssignment(nodeTemplate, dependencyRequirementKey.get(),
+                            requirementAssignment);
+                }
+            }
+        }
     }
-    for (Map<String, RequirementDefinition> requirementDefinitionMap : flatNodeTypeRequirements) {
-      String requirementKey = requirementDefinitionMap.keySet().iterator().next();
-      String expectedKey = ToscaConstants.DEPENDS_ON_REQUIREMENT_ID + "_" + componentDisplayName;
-      if (requirementKey.equals(expectedKey)) {
-        return Optional.of(requirementKey);
-      }
+
+    private Optional<String> getDependencyRequirementKey(ServiceTemplate serviceTemplate, String componentDisplayName,
+                                                                NodeTemplate nodeTemplate,
+                                                                ToscaServiceModel toscaServiceModel) {
+        String nodeType = nodeTemplate.getType();
+        NodeType flatNodeType = (NodeType) toscaAnalyzerService.getFlatEntity(ToscaElementTypes.NODE_TYPE, nodeType,
+                serviceTemplate, toscaServiceModel).getFlatEntity();
+        List<Map<String, RequirementDefinition>> flatNodeTypeRequirements = flatNodeType.getRequirements();
+        if (Objects.isNull(flatNodeTypeRequirements)) {
+            return Optional.empty();
+        }
+        for (Map<String, RequirementDefinition> requirementDefinitionMap : flatNodeTypeRequirements) {
+            String requirementKey = requirementDefinitionMap.keySet().iterator().next();
+            String expectedKey = ToscaConstants.DEPENDS_ON_REQUIREMENT_ID + "_" + componentDisplayName;
+            if (requirementKey.equals(expectedKey)) {
+                return Optional.of(requirementKey);
+            }
+        }
+        return Optional.empty();
     }
-    return Optional.empty();
-  }
 
-  private String getComponentDisplayName(String nodeTemplateId, NodeTemplate nodeTemplate) {
-    String componentDisplayName = null;
-    if (nodeTemplateId.contains(ABSTRACT_NODE_TEMPLATE_ID_PREFIX)) {
-      String removedPrefix = nodeTemplateId.split(ABSTRACT_NODE_TEMPLATE_ID_PREFIX)[1];
-      final String[] removedSuffix = removedPrefix.split("_\\d");
-      componentDisplayName = removedSuffix[0];
-    } else {
-      final String type = nodeTemplate.getType();
-      final String[] splitted = type.split("\\.");
-      componentDisplayName = splitted[splitted.length - 1];
+    private String getComponentDisplayName(String nodeTemplateId, NodeTemplate nodeTemplate) {
+        String componentDisplayName;
+        if (nodeTemplateId.contains(ABSTRACT_NODE_TEMPLATE_ID_PREFIX)) {
+            String removedPrefix = nodeTemplateId.split(ABSTRACT_NODE_TEMPLATE_ID_PREFIX)[1];
+            final String[] removedSuffix = removedPrefix.split("_\\d");
+            componentDisplayName = removedSuffix[0];
+        } else {
+            final String type = nodeTemplate.getType();
+            final String[] splitted = type.split("\\.");
+            componentDisplayName = splitted[splitted.length - 1];
 
+        }
+        return componentDisplayName;
     }
-    return componentDisplayName;
-  }
 
-  private String getValueFromQuestionnaireDetails(
-      Map<String, Map<String, Object>> componentTypetoParams, String componentDisplayName, String
-      propertyName) {
-    return (String) componentTypetoParams.get(componentDisplayName).get(propertyName);
-  }
-
-  private void setProperty(NodeTemplate nodeTemplate, String key, String value) {
-    if (!StringUtils.isEmpty(value)) {
-      //YamlUtil throws IllegalStateException("duplicate key: " + key) if key is already present.
-      // So first removing and then populating same key with new updated value
-      nodeTemplate.getProperties().remove(key);
-      nodeTemplate.getProperties().put(key, value);
+    private String getValueFromQuestionnaireDetails(Map<String, Map<String, Object>> componentTypetoParams,
+                                                           String componentDisplayName, String propertyName) {
+        return (String) componentTypetoParams.get(componentDisplayName).get(propertyName);
     }
-  }
 
-  private Boolean getValue(String value) {
-    String returnValue = null;
-    switch (value) {
-      case "YES" :
-        return true;
-      case "NO" :
-          return false;
-      default: return null;
+    private void setProperty(NodeTemplate nodeTemplate, String key, String value) {
+        if (!StringUtils.isEmpty(value)) {
+            //YamlUtil throws IllegalStateException("duplicate key: " + key) if key is already present.
+            // So first removing and then populating same key with new updated value
+            nodeTemplate.getProperties().remove(key);
+            nodeTemplate.getProperties().put(key, value);
+        }
     }
-  }
 
-  private ComponentQuestionnaireData getComponentQuestionnaireData() {
-    if (componentQuestionnaireData == null) {
-      componentQuestionnaireData = new ComponentQuestionnaireData();
+    private Boolean getValue(String value) {
+        String returnValue = null;
+        switch (value) {
+            case "YES":
+                return true;
+            case "NO":
+                return false;
+            default:
+                return null;
+        }
     }
-    return componentQuestionnaireData;
-  }
+
+    private ComponentQuestionnaireData getComponentQuestionnaireData() {
+        if (componentQuestionnaireData == null) {
+            componentQuestionnaireData = new ComponentQuestionnaireData();
+        }
+        return componentQuestionnaireData;
+    }
 }
