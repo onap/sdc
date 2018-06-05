@@ -19,6 +19,7 @@
         <module>../common</module>
         <module>../openecomp-be</module>
         <module>../openecomp-be/tools/build-data-installer</module>
+        <module>../openecomp-be/tools/snapshot-signature-plugin</module>
         <module>../openecomp-ui</module>
     </modules>
 
