@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_15afda7e",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/ConsolidationService.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 843,
+      "author": {
+        "id": 2727
+      },
+      "writtenOn": "2018-06-05T14:57:37Z",
+      "side": 1,
+      "message": "Please back\n if (CollectionUtils.isNotEmpty(nestedHeatFileNames)) { before for.\nIn case nestedHeatFileNames will be null -\u003e it will failed\nI mean may be need return false in case its null but please check if its correct.\nFor now please back if.",
+      "range": {
+        "startLine": 843,
+        "startChar": 7,
+        "endLine": 843,
+        "endChar": 18
+      },
+      "revId": "dd93cbe33c00264d5b99b1e1e02bee7d0e27d538",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_9560cad0",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/ConsolidationService.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 843,
+      "author": {
+        "id": 2727
+      },
+      "writtenOn": "2018-06-05T14:57:37Z",
+      "side": 1,
+      "message": "substituteServiceTemplateNamesNames - please change NameNames to Names. \nWhy you remember nestedHeatFileNames to substituteServiceTemplateNamesNames \nIts looks very long. I think Original nestedHeatFileNames is ok because subsitutesServiceTemplate this is same as nested",
+      "range": {
+        "startLine": 843,
+        "startChar": 31,
+        "endLine": 843,
+        "endChar": 66
+      },
+      "revId": "dd93cbe33c00264d5b99b1e1e02bee7d0e27d538",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
