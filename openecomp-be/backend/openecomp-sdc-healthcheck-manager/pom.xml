@@ -13,11 +13,6 @@
     <artifactId>openecomp-sdc-healthcheck-manager</artifactId>
     <version>1.3.0-SNAPSHOT</version>
 
-
-    <properties>
-        <jacoco.skip>true</jacoco.skip>  <sonar.skip>true</sonar.skip>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>org.openecomp.sdc.core</groupId>

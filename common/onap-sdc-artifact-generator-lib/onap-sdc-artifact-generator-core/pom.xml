@@ -12,10 +12,6 @@
         <relativePath>../../</relativePath>
     </parent>
 
-    <properties>
-        <sonar.skip>true</sonar.skip>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>org.aspectj</groupId>

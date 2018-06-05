@@ -13,10 +13,6 @@
     <artifactId>openecomp-sdc-vendor-software-product-api</artifactId>
 
 
-    <properties>
-        <jacoco.skip>true</jacoco.skip>  <sonar.skip>true</sonar.skip>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>org.openecomp.sdc.core</groupId>

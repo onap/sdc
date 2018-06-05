@@ -13,10 +13,6 @@
         <relativePath>../../</relativePath>
     </parent>
 
-    <properties>
-        <sonar.skip>true</sonar.skip>
-    </properties>
-
     <build>
         <plugins>
             <!-- any other plugins -->

@@ -13,10 +13,6 @@
     <artifactId>conflict-rest-services</artifactId>
 
 
-    <properties>
-        <sonar.skip>true</sonar.skip>
-        <jacoco.skip>true</jacoco.skip>
-    </properties>
 
     <dependencies>
 

@@ -7,11 +7,6 @@
     <artifactId>validation-rest-types</artifactId>
     <name>validation-rest-types</name>
 
-
-    <properties>
-        <sonar.skip>true</sonar.skip>  <jacoco.skip>true</jacoco.skip>
-    </properties>
-
     <parent>
         <groupId>org.openecomp.sdc.onboarding</groupId>
         <artifactId>validation-rest</artifactId>

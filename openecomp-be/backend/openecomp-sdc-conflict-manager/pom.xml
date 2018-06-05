@@ -31,9 +31,4 @@
         </dependency>
     </dependencies>
 
-
-    <properties>
-        <jacoco.skip>true</jacoco.skip>  <sonar.skip>true</sonar.skip>
-    </properties>
-
 </project>
