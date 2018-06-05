@@ -18,9 +18,4 @@
         <module>/action-library-rest-services</module>
         <module>/action-library-rest-types</module>
     </modules>
-
-
-    <properties>
-        <sonar.skip>true</sonar.skip> <jacoco.skip>true</jacoco.skip>
-    </properties>
 </project>

@@ -11,12 +11,6 @@
         <version>1.3.0-SNAPSHOT</version>
     </parent>
 
-
-    <properties>
-        <jacoco.skip>true</jacoco.skip>
-        <sonar.skip>true</sonar.skip>
-    </properties>
-
     <dependencies>
     <dependency>
         <groupId>org.springframework</groupId>

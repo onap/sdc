@@ -13,10 +13,5 @@
     <artifactId>healthcheck-rest-types</artifactId>
     <version>1.3.0-SNAPSHOT</version>
 
-
-    <properties>
-        <sonar.skip>true</sonar.skip> <jacoco.skip>true</jacoco.skip>
-    </properties>
-
     
 </project>

@@ -14,9 +14,6 @@
 
     <properties>
         <errorcode.dir>${project.build.directory}/generated-sources/error-codes</errorcode.dir>
-        <jacoco.skip>true</jacoco.skip>
-        <sonar.skip>true</sonar.skip>
-
     </properties>
 
     <dependencies>
