@@ -67,6 +67,11 @@ public class InitializationHelperMojo extends AbstractMojo {
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         if (System.getProperties().containsKey(UNICORN_INITIALIZED)) {
+            try {
+                artifactHelper.shutDown(project);
+            } catch (IOException | ClassNotFoundException e) {
+                throw new MojoExecutionException("Unexpected Error Occured during shutdown activities", e);
+            }
             return;
         }
         artifactHelper.init(groupId + ":" + artifactId);
@@ -105,7 +110,7 @@ public class InitializationHelperMojo extends AbstractMojo {
                     byte[] data = fetchContents(repo.getUrl(), artifactId, timestamp + "-" + buildNumber);
                     artifactHelper.store(artifactId, data);
                     getLog().info(artifactId + " Version to be copied is " + timestamp + "-" + buildNumber);
-                    artifactHelper.setSnapshotBuildNumber(Integer.parseInt(buildNumber));
+                    ArtifactHelper.setSnapshotBuildNumber(Integer.parseInt(buildNumber));
                     return timestamp + "-" + buildNumber;
                 }
             } catch (IOException e) {

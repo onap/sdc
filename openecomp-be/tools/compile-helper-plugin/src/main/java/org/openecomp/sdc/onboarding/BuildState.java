@@ -48,6 +48,7 @@ import org.apache.maven.project.MavenProject;
 public class BuildState {
 
     private static final String SHUTDOWN_TIME = "shutdownTime";
+    private static final String VERSION = "version";
 
     private static Map<String, Map> compileDataStore = new HashMap<>();
     private static Map<String, Object> moduleBuildData = new HashMap<>();
@@ -66,6 +67,11 @@ public class BuildState {
         initializeStore();
         Optional<HashMap> masterStore = readState("compile.dat", HashMap.class);
         compileDataStore = masterStore.isPresent() ? masterStore.get() : compileDataStore;
+        String version = String.class.cast(compileDataStore.get(VERSION));
+        if (version != null) {
+            stateFileLocation = new File(Paths.get(System.getProperties().getProperty("java.io.tmpdir")).toFile(),
+                    "compileState.dat-" + version);
+        }
         if (stateFileLocation.exists()) {
             HashMap dat = loadState(stateFileLocation);
             if (swapStates((HashMap<?, ?>) compileDataStore, dat)) {
@@ -282,9 +288,14 @@ public class BuildState {
     private static boolean swapStates(HashMap repo, HashMap last) {
         Long repoTime = repo.get(SHUTDOWN_TIME) == null ? 0 : (Long) repo.get(SHUTDOWN_TIME);
         Long lastTime = last.get(SHUTDOWN_TIME) == null ? 0 : (Long) last.get(SHUTDOWN_TIME);
-        long repoBuildNumber = repoTime / 1000;
-        long lastBuildNumber = lastTime / 1000;
+        String repoVersion = repo.get(VERSION) == null ? "" : (String) repo.get(VERSION);
+        String lastVersion = last.get(VERSION) == null ? "" : (String) last.get(VERSION);
+        long repoBuildNumber = repoTime % 1000;
+        long lastBuildNumber = lastTime % 1000;
         if (repoBuildNumber != lastBuildNumber) {
+            return false;
+        }
+        if (!repoVersion.equals(lastVersion)) {
             return false;
         }
         return Long.compare(repoTime, lastTime) < 0;

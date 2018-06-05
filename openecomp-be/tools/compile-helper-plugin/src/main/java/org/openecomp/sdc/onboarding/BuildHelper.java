@@ -20,6 +20,7 @@ import static org.openecomp.sdc.onboarding.Constants.CHECKSUM;
 import static org.openecomp.sdc.onboarding.Constants.COLON;
 import static org.openecomp.sdc.onboarding.Constants.DOT;
 import static org.openecomp.sdc.onboarding.Constants.JAVA_EXT;
+import static org.openecomp.sdc.onboarding.Constants.SHA1;
 import static org.openecomp.sdc.onboarding.Constants.UNICORN;
 
 import java.io.ByteArrayInputStream;
@@ -67,12 +68,23 @@ class BuildHelper {
         }
         try {
             signature = new String(fetchSnapshotSignature(snapshotFile, version));
+            if (version.equals(signature)) {
+                signature = getSHA1For(snapshotFile);
+            }
             store.put(key, signature);
             return signature;
-        } catch (IOException ioe) {
+        } catch (IOException | NoSuchAlgorithmException e) {
             return version;
         }
 
+    }
+
+    private static String getSHA1For(File file) throws IOException, NoSuchAlgorithmException {
+        File f = new File(file.getParentFile(), file.getName() + DOT + SHA1);
+        if (f.exists()) {
+            return new String(Files.readAllBytes(f.toPath()));
+        }
+        return getSourceChecksum(Files.readAllBytes(file.toPath()), SHA1);
     }
 
     static long getChecksum(File file, String fileType) {
@@ -84,8 +96,12 @@ class BuildHelper {
     }
 
     static String getSourceChecksum(String data, String hashType) throws NoSuchAlgorithmException {
+        return getSourceChecksum(data.getBytes(), hashType);
+    }
+
+    static String getSourceChecksum(byte[] data, String hashType) throws NoSuchAlgorithmException {
         MessageDigest md = MessageDigest.getInstance(hashType);
-        md.update(data.getBytes());
+        md.update(data);
         byte[] hashBytes = md.digest();
 
         StringBuilder buffer = new StringBuilder();
