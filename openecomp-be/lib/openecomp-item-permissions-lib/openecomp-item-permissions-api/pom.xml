@@ -13,7 +13,7 @@
     <artifactId>openecomp-item-permissions-api</artifactId>
 
     <properties>
-        <jacoco.skip>true</jacoco.skip>  <sonar.skip>true</sonar.skip>
+        <jacoco.skip>true</jacoco.skip>
     </properties>
 
     <dependencies>
