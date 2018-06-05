@@ -1,0 +1,23 @@
+{
+  "name": "vMME_Small",
+  "description": "HOT template to create 2 cinder volume attachment",
+  "version": "2013-05-23",
+  "data": [
+    {
+      "file": "vdbeav_base_heat_template.yaml",
+      "type": "HEAT",
+      "isBase": "true",
+      "data": [
+        {
+          "file": "vdbeav_base_heat_template.env",
+          "type": "HEAT_ENV"
+        }
+      ]
+    },
+    {
+      "file": "vdbeav_subinterface_heat_template.yaml",
+      "type": "HEAT",
+      "isBase": "false"
+    }
+  ]
+}

@@ -1,0 +1,919 @@
+description: "HOT template to deploy a vDBE HA of type DBE-I, DBE-P, DBE-AFC, and DBE-V (non-trunkport) cluster into an existing tenant network and assign network interfaces to the vDBE"
+heat_template_version: 2015-04-30
+parameters: 
+  aap_address_mode: 
+    description: "Address mode for the vDBE cluster IP"
+    type: string
+  availability_zone_0: 
+    description: "The availability zone of primary node0 vDBE vm in the local HA pair."
+    type: string
+  availability_zone_1: 
+    description: "The availability zone of secondary node1 vDBE vm in the local HA pair."
+    type: string
+  control_int_net_flood_unknown_unicast: 
+    description: "forwarding mode of the control virtual network"
+    type: boolean
+  control_int_net_forwarding_mode: 
+    description: "forwarding mode of the control virtual network"
+    type: string
+  control_int_net_rpf: 
+    description: "Reverse Path Filtering enable or disable for the control virtual network"
+    type: string
+  control_int_net_shared: 
+    description: "control virtual network shared"
+    type: boolean
+  control_subnet_cidr: 
+    description: "control subnet CIDR"
+    type: string
+  fabric_int_net_flood_unknown_unicast: 
+    description: "forwarding mode of the fabric virtual network"
+    type: boolean
+  fabric_int_net_forwarding_mode: 
+    description: "forwarding mode of the fabric virtual network"
+    type: string
+  fabric_int_net_rpf: 
+    description: "Reverse Path Filtering enable or disable for the fabric virtual network"
+    type: string
+  fabric_int_net_shared: 
+    description: "fabric virtual network shared"
+    type: boolean
+  fabric_subnet_cidr: 
+    description: "fabric subnet CIDR"
+    type: string
+  oam_net_name: 
+    description: "Name of NSDNet network from which the management IP addresses will be allocated"
+    type: string
+  trusted_net_name: 
+    description: "Name of public trusted network into which this vDBE HA cluster is deployed"
+    type: string
+  untrusted_net_name: 
+    description: "Name of public untrusted network into which this vDBE HA cluster is deployed"
+    type: string
+  untrusted_num_vn: 
+    constraints: 
+      - 
+        range: 
+          max: 77
+          min: 1
+    description: "Number of vDBE subinterface virtual Networks"
+    type: number
+  untrusted_vlan_tags: 
+    description: "List of subinterface vlan tags"
+    type: comma_delimited_list
+  untrusted_vn_networks: 
+    description: "List of subinterface virtual networks"
+    type: comma_delimited_list
+  vdbe_aap_sec_trusted_ip_prefix: 
+    description: "ip prefix for the secondary vDBE VM aap on the VAN trusted network"
+    type: string
+  vdbe_aap_sec_trusted_ip_prefix_len: 
+    description: "ip prefix length for the secondary vDBE VM aap on the VAN trusted network"
+    type: string
+  vdbe_aap_sec_untrusted_ip_prefix: 
+    description: "ip prefix for secondary vDBE VM aap on the VAN untrusted network"
+    type: string
+  vdbe_aap_sec_untrusted_ip_prefix_len: 
+    description: "ip prefix length for the secondary DBE VM aap on the VAN untrusted network"
+    type: string
+  vdbe_aap_trusted_ip_prefix: 
+    description: "ip prefix for the primary vDBE VM on the VAN trusted network"
+    type: string
+  vdbe_aap_trusted_ip_prefix_len: 
+    description: "ip prefix length for the primary vDBE VM on the VAN trusted network"
+    type: string
+  vdbe_aap_trusted_v6_ip_prefix: 
+    description: "ipv6 prefix for the primary vDBE VM on the VAN trusted network"
+    type: string
+  vdbe_aap_trusted_v6_ip_prefix_len: 
+    description: "ipv6 prefix length for the primary vDBE VM on the VAN trusted network"
+    type: string
+  vdbe_aap_untrusted_ip_prefix: 
+    description: "ip prefix for primary vDBE VM on the VAN untrusted network"
+    type: string
+  vdbe_aap_untrusted_ip_prefix_len: 
+    description: "ip prefix length for the primary vDBE VM on the VAN untrusted network"
+    type: string
+  vdbe_aap_untrusted_v6_ip_prefix: 
+    description: "ipv6 prefix for the primary vDBE VM on the VAN untrusted network"
+    type: string
+  vdbe_aap_untrusted_v6_ip_prefix_len: 
+    description: "ipv6 prefix length for the primary vDBE VM on the VAN untrusted network"
+    type: string
+  vdbe_control_ip_0: 
+    description: "IP address of the primary vDBE VM on the HA control network"
+    type: string
+  vdbe_control_ip_1: 
+    description: "IP address of the secondary vDBE VM on the HA control network"
+    type: string
+  vdbe_device_name: 
+    description: "VDBE device Name for this vdbe VNF"
+    type: string
+  vdbe_fabric_ip_0: 
+    description: "IP address of the primary vDBE VM on the HA fabric network"
+    type: string
+  vdbe_fabric_ip_1: 
+    description: "IP address of the secondary vDBE VM on the HA fabric network"
+    type: string
+  vdbe_flavor_name: 
+    description: "Flavor to use for vDBE"
+    type: string
+  vdbe_hw_trst_mac_0: 
+    description: "Secondary MAC address of the primary vDBE VM on the VAN trusted network"
+    type: string
+  vdbe_hw_trst_mac_1: 
+    description: "Secondary MAC address of the secondary vDBE VM on the VAN trusted network"
+    type: string
+  vdbe_hw_untr_mac_0: 
+    description: "Secondary MAC address of the primary vDBE VM on the VAN untrusted network"
+    type: string
+  vdbe_hw_untr_mac_1: 
+    description: "Secondary MAC address of the secondary vDBE VM on the VAN untrusted network"
+    type: string
+  vdbe_image_name: 
+    description: "Name of image to use for vDBE"
+    type: string
+  vdbe_name_0: 
+    description: "VM Name for this vdbe node 0"
+    type: string
+  vdbe_name_1: 
+    description: "VM Name for this vdbe node 1"
+    type: string
+  vdbe_oam_ip_0: 
+    description: "IP address of the primary vDBE VM on the OAM network"
+    type: string
+  vdbe_oam_ip_1: 
+    description: "IP address of the secondary vDBE VM on the OAM network"
+    type: string
+  vdbe_oam_mac_0: 
+    description: "MAC address of the primary vDBE VM on the OAM network"
+    type: string
+  vdbe_oam_mac_1: 
+    description: "MAC address of the secondary vDBE VM on the OAM network"
+    type: string
+  vdbe_trusted_ip_0: 
+    description: "IPV4 address of the primary vDBE VM on the VAN trusted network"
+    type: string
+  vdbe_trusted_ip_1: 
+    description: "IPV4 address of the secondary vDBE VM on the VAN trusted network"
+    type: string
+  vdbe_trusted_v6_ip_0: 
+    description: "IPV6 address of the primary vDBE VM on the VAN trusted network"
+    type: string
+  vdbe_trusted_v6_ip_1: 
+    description: "IPV6 address of the secondary vDBE VM on the VAN trusted network"
+    type: string
+  vdbe_trusted_vmac_address: 
+    description: "Virtual MAC for the primary vDBE VM on the VAN trusted network"
+    type: string
+  vdbe_untrusted_ip_0: 
+    description: "IPV4 address of the primary vDBE VM on the VAN untrusted network"
+    type: string
+  vdbe_untrusted_ip_1: 
+    description: "IPV4 address of the secondary vDBE VM on the VAN untrusted network"
+    type: string
+  vdbe_untrusted_v6_ip_0: 
+    description: "IPV6 address of the primary vDBE VM on the VAN untrusted network"
+    type: string
+  vdbe_untrusted_v6_ip_1: 
+    description: "IPV6 address of the secondary vDBE VM on the VAN untrusted network"
+    type: string
+  vdbe_untrusted_vmac_address: 
+    description: "Virtual MAC of the primary vDBE VM on the VAN untrusted network"
+    type: string
+  vf_module_id: 
+    description: "Unique ID for this VF module inst"
+    type: string
+  vnf_id: 
+    description: "Unique ID for this VF inst"
+    type: string
+  vnf_name: 
+    description: "Unique name for this VF instance"
+    type: string
+resources: 
+  control_int_net: 
+    properties: 
+      flood_unknown_unicast: 
+        get_param: control_int_net_flood_unknown_unicast
+      is_shared: 
+        get_param: control_int_net_shared
+      name: 
+        str_replace: 
+          params: 
+            VNF_NAME: 
+              get_param: vnf_name
+          template: VNF_NAME_control_net
+      virtual_network_properties: 
+        virtual_network_properties_forwarding_mode: 
+          get_param: control_int_net_forwarding_mode
+        virtual_network_properties_rpf: 
+          get_param: control_int_net_rpf
+    type: "OS::ContrailV2::VirtualNetwork"
+  control_subnet: 
+    properties: 
+      cidr: 
+        get_param: control_subnet_cidr
+      name: 
+        str_replace: 
+          params: 
+            VNF_NAME: 
+              get_param: vnf_name
+          template: VNF_NAME_control_subnet
+      network: 
+        get_resource: control_int_net
+    type: "OS::Neutron::Subnet"
+  fabric_int_net: 
+    properties: 
+      flood_unknown_unicast: 
+        get_param: fabric_int_net_flood_unknown_unicast
+      is_shared: 
+        get_param: fabric_int_net_shared
+      name: 
+        str_replace: 
+          params: 
+            VNF_NAME: 
+              get_param: vnf_name
+          template: VNF_NAME_fabric_net
+      virtual_network_properties: 
+        virtual_network_properties_forwarding_mode: 
+          get_param: fabric_int_net_forwarding_mode
+        virtual_network_properties_rpf: 
+          get_param: fabric_int_net_rpf
+    type: "OS::ContrailV2::VirtualNetwork"
+  fabric_subnet: 
+    properties: 
+      cidr: 
+        get_param: fabric_subnet_cidr
+      name: 
+        str_replace: 
+          params: 
+            VNF_NAME: 
+              get_param: vnf_name
+          template: VNF_NAME_fabric_subnet
+      network: 
+        get_resource: fabric_int_net
+    type: "OS::Neutron::Subnet"
+  vdbe_0_untr_vmi_0: 
+    properties: 
+      name: 
+        str_replace: 
+          params: 
+            DBE: 
+              get_param: vdbe_device_name
+            VM_NAME: 
+              get_param: vdbe_name_0
+          template: VM_NAMEDBE001p1n004
+      virtual_machine_interface_allowed_address_pairs: 
+        virtual_machine_interface_allowed_address_pairs_allowed_address_pair: 
+          - 
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_address_mode: 
+              get_param: aap_address_mode
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip: 
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix: 
+                get_param: vdbe_aap_untrusted_ip_prefix
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix_len: 
+                get_param: vdbe_aap_untrusted_ip_prefix_len
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_mac: 
+              get_param: vdbe_untrusted_vmac_address
+          - 
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_address_mode: 
+              get_param: aap_address_mode
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip: 
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix: 
+                get_param: vdbe_aap_sec_untrusted_ip_prefix
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix_len: 
+                get_param: vdbe_aap_sec_untrusted_ip_prefix_len
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_mac: 
+              get_param: vdbe_hw_untr_mac_0
+          - 
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_address_mode: 
+              get_param: aap_address_mode
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip: 
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix: 
+                get_param: vdbe_aap_untrusted_v6_ip_prefix
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix_len: 
+                get_param: vdbe_aap_untrusted_v6_ip_prefix_len
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_mac: 
+              get_param: vdbe_untrusted_vmac_address
+      virtual_machine_interface_mac_addresses: 
+        virtual_machine_interface_mac_addresses_mac_address: 
+          - 
+            get_param: vdbe_hw_untr_mac_0
+      virtual_network_refs: 
+        - 
+          get_param: untrusted_net_name
+    type: "OS::ContrailV2::VirtualMachineInterface"
+  vdbe_1_untr_vmi_1: 
+    properties: 
+      name: 
+        str_replace: 
+          params: 
+            DBE: 
+              get_param: vdbe_device_name
+            VM_NAME: 
+              get_param: vdbe_name_1
+          template: VM_NAMEDBE001p1n004
+      virtual_machine_interface_allowed_address_pairs: 
+        virtual_machine_interface_allowed_address_pairs_allowed_address_pair: 
+          - 
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_address_mode: 
+              get_param: aap_address_mode
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip: 
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix: 
+                get_param: vdbe_aap_untrusted_ip_prefix
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix_len: 
+                get_param: vdbe_aap_untrusted_ip_prefix_len
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_mac: 
+              get_param: vdbe_untrusted_vmac_address
+          - 
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_address_mode: 
+              get_param: aap_address_mode
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip: 
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix: 
+                get_param: vdbe_aap_sec_untrusted_ip_prefix
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix_len: 
+                get_param: vdbe_aap_sec_untrusted_ip_prefix_len
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_mac: 
+              get_param: vdbe_hw_untr_mac_1
+          - 
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_address_mode: 
+              get_param: aap_address_mode
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip: 
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix: 
+                get_param: vdbe_aap_untrusted_v6_ip_prefix
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix_len: 
+                get_param: vdbe_aap_untrusted_v6_ip_prefix_len
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_mac: 
+              get_param: vdbe_untrusted_vmac_address
+      virtual_machine_interface_mac_addresses: 
+        virtual_machine_interface_mac_addresses_mac_address: 
+          - 
+            get_param: vdbe_hw_untr_mac_1
+      virtual_network_refs: 
+        - 
+          get_param: untrusted_net_name
+    type: "OS::ContrailV2::VirtualMachineInterface"
+  vdbe_ServerGroup: 
+    properties: 
+      policies: 
+        - anti-affinity
+    type: "OS::Nova::ServerGroup"
+  vdbe_control_Iip_0: 
+    depends_on: 
+      - vdbe_ctrl_0_port
+    properties: 
+      instance_ip_address: 
+        get_param: vdbe_control_ip_0
+      virtual_machine_interface_refs: 
+        - 
+          get_resource: vdbe_ctrl_0_port
+      virtual_network_refs: 
+        - 
+          get_resource: control_int_net
+    type: "OS::ContrailV2::InstanceIp"
+  vdbe_control_Iip_1: 
+    depends_on: 
+      - vdbe_ctrl_1_port
+    properties: 
+      instance_ip_address: 
+        get_param: vdbe_control_ip_1
+      virtual_machine_interface_refs: 
+        - 
+          get_resource: vdbe_ctrl_1_port
+      virtual_network_refs: 
+        - 
+          get_resource: control_int_net
+    type: "OS::ContrailV2::InstanceIp"
+  vdbe_ctrl_0_port: 
+    properties: 
+      name: 
+        str_replace: 
+          params: 
+            DBE: 
+              get_param: vdbe_device_name
+            VM_NAME: 
+              get_param: vdbe_name_0
+          template: VM_NAMEDBE001p1n002
+      virtual_network_refs: 
+        - 
+          get_resource: control_int_net
+    type: "OS::ContrailV2::VirtualMachineInterface"
+  vdbe_ctrl_1_port: 
+    properties: 
+      name: 
+        str_replace: 
+          params: 
+            DBE: 
+              get_param: vdbe_device_name
+            VM_NAME: 
+              get_param: vdbe_name_1
+          template: VM_NAMEDBE001p1n002
+      virtual_network_refs: 
+        - 
+          get_resource: control_int_net
+    type: "OS::ContrailV2::VirtualMachineInterface"
+  vdbe_fabr_0_port: 
+    properties: 
+      name: 
+        str_replace: 
+          params: 
+            DBE: 
+              get_param: vdbe_device_name
+            VM_NAME: 
+              get_param: vdbe_name_0
+          template: VM_NAMEDBE001p1n003
+      virtual_network_refs: 
+        - 
+          get_resource: fabric_int_net
+    type: "OS::ContrailV2::VirtualMachineInterface"
+  vdbe_fabr_1_port: 
+    properties: 
+      name: 
+        str_replace: 
+          params: 
+            DBE: 
+              get_param: vdbe_device_name
+            VM_NAME: 
+              get_param: vdbe_name_1
+          template: VM_NAMEDBE001p1n003
+      virtual_network_refs: 
+        - 
+          get_resource: fabric_int_net
+    type: "OS::ContrailV2::VirtualMachineInterface"
+  vdbe_fabric_Iip_0: 
+    depends_on: 
+      - vdbe_fabr_0_port
+    properties: 
+      instance_ip_address: 
+        get_param: vdbe_fabric_ip_0
+      virtual_machine_interface_refs: 
+        - 
+          get_resource: vdbe_fabr_0_port
+      virtual_network_refs: 
+        - 
+          get_resource: fabric_int_net
+    type: "OS::ContrailV2::InstanceIp"
+  vdbe_fabric_Iip_1: 
+    depends_on: 
+      - vdbe_fabr_1_port
+    properties: 
+      instance_ip_address: 
+        get_param: vdbe_fabric_ip_1
+      virtual_machine_interface_refs: 
+        - 
+          get_resource: vdbe_fabr_1_port
+      virtual_network_refs: 
+        - 
+          get_resource: fabric_int_net
+    type: "OS::ContrailV2::InstanceIp"
+  vdbe_node_0: 
+    depends_on: 
+      - vdbe_oam_Iip_0
+      - vdbe_control_Iip_0
+      - vdbe_fabric_Iip_0
+      - vdbe_untrusted_Iip_0
+      - vdbe_untrusted_v6_Iip_0
+      - vdbe_trusted_Iip_0
+      - vdbe_trusted_v6_Iip_0
+    properties: 
+      availability_zone: 
+        get_param: availability_zone_0
+      flavor: 
+        get_param: vdbe_flavor_name
+      image: 
+        get_param: vdbe_image_name
+      metadata: 
+        vf_module_id: 
+          get_param: vf_module_id
+        vnf_id: 
+          get_param: vnf_id
+        vnf_name: 
+          get_param: vnf_name
+      name: 
+        get_param: vdbe_name_0
+      networks: 
+        - 
+          port: 
+            get_resource: vdbe_oam_0_port
+        - 
+          port: 
+            get_resource: vdbe_ctrl_0_port
+        - 
+          port: 
+            get_resource: vdbe_fabr_0_port
+        - 
+          port: 
+            get_resource: vdbe_0_untr_vmi_0
+        - 
+          port: 
+            get_resource: vdbe_trst_0_port
+      scheduler_hints: 
+        group: 
+          get_resource: vdbe_ServerGroup
+    type: "OS::Nova::Server"
+  vdbe_node_1: 
+    depends_on: 
+      - vdbe_oam_Iip_1
+      - vdbe_control_Iip_1
+      - vdbe_fabric_Iip_1
+      - vdbe_untrusted_Iip_1
+      - vdbe_untrusted_v6_Iip_1
+      - vdbe_trusted_Iip_1
+      - vdbe_trusted_v6_Iip_1
+    properties: 
+      availability_zone: 
+        get_param: availability_zone_1
+      flavor: 
+        get_param: vdbe_flavor_name
+      image: 
+        get_param: vdbe_image_name
+      metadata: 
+        vf_module_id: 
+          get_param: vf_module_id
+        vnf_id: 
+          get_param: vnf_id
+        vnf_name: 
+          get_param: vnf_name
+      name: 
+        get_param: vdbe_name_1
+      networks: 
+        - 
+          port: 
+            get_resource: vdbe_oam_1_port
+        - 
+          port: 
+            get_resource: vdbe_ctrl_1_port
+        - 
+          port: 
+            get_resource: vdbe_fabr_1_port
+        - 
+          port: 
+            get_resource: vdbe_1_untr_vmi_1
+        - 
+          port: 
+            get_resource: vdbe_trst_1_port
+      scheduler_hints: 
+        group: 
+          get_resource: vdbe_ServerGroup
+    type: "OS::Nova::Server"
+  vdbe_oam_0_port: 
+    properties: 
+      name: 
+        str_replace: 
+          params: 
+            DBE: 
+              get_param: vdbe_device_name
+            VM_NAME: 
+              get_param: vdbe_name_0
+          template: VM_NAMEDBE001p1n001
+      virtual_machine_interface_mac_addresses: 
+        virtual_machine_interface_mac_addresses_mac_address: 
+          - 
+            get_param: vdbe_oam_mac_0
+      virtual_network_refs: 
+        - 
+          get_param: oam_net_name
+    type: "OS::ContrailV2::VirtualMachineInterface"
+  vdbe_oam_1_port: 
+    properties: 
+      name: 
+        str_replace: 
+          params: 
+            DBE: 
+              get_param: vdbe_device_name
+            VM_NAME: 
+              get_param: vdbe_name_1
+          template: VM_NAMEDBE001p1n001
+      virtual_machine_interface_mac_addresses: 
+        virtual_machine_interface_mac_addresses_mac_address: 
+          - 
+            get_param: vdbe_oam_mac_1
+      virtual_network_refs: 
+        - 
+          get_param: oam_net_name
+    type: "OS::ContrailV2::VirtualMachineInterface"
+  vdbe_oam_Iip_0: 
+    depends_on: 
+      - vdbe_oam_0_port
+    properties: 
+      instance_ip_address: 
+        get_param: vdbe_oam_ip_0
+      virtual_machine_interface_refs: 
+        - 
+          get_resource: vdbe_oam_0_port
+      virtual_network_refs: 
+        - 
+          get_param: oam_net_name
+    type: "OS::ContrailV2::InstanceIp"
+  vdbe_oam_Iip_1: 
+    depends_on: 
+      - vdbe_oam_1_port
+    properties: 
+      instance_ip_address: 
+        get_param: vdbe_oam_ip_1
+      virtual_machine_interface_refs: 
+        - 
+          get_resource: vdbe_oam_1_port
+      virtual_network_refs: 
+        - 
+          get_param: oam_net_name
+    type: "OS::ContrailV2::InstanceIp"
+  vdbe_trst_0_port: 
+    properties: 
+      name: 
+        str_replace: 
+          params: 
+            DBE: 
+              get_param: vdbe_device_name
+            VM_NAME: 
+              get_param: vdbe_name_0
+          template: VM_NAMEDBE001p1n005
+      virtual_machine_interface_allowed_address_pairs: 
+        virtual_machine_interface_allowed_address_pairs_allowed_address_pair: 
+          - 
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_address_mode: 
+              get_param: aap_address_mode
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip: 
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix: 
+                get_param: vdbe_aap_trusted_ip_prefix
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix_len: 
+                get_param: vdbe_aap_trusted_ip_prefix_len
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_mac: 
+              get_param: vdbe_trusted_vmac_address
+          - 
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_address_mode: 
+              get_param: aap_address_mode
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip: 
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix: 
+                get_param: vdbe_aap_sec_trusted_ip_prefix
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix_len: 
+                get_param: vdbe_aap_sec_trusted_ip_prefix_len
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_mac: 
+              get_param: vdbe_hw_trst_mac_0
+          - 
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_address_mode: 
+              get_param: aap_address_mode
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip: 
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix: 
+                get_param: vdbe_aap_trusted_v6_ip_prefix
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix_len: 
+                get_param: vdbe_aap_trusted_v6_ip_prefix_len
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_mac: 
+              get_param: vdbe_trusted_vmac_address
+      virtual_machine_interface_mac_addresses: 
+        virtual_machine_interface_mac_addresses_mac_address: 
+          - 
+            get_param: vdbe_hw_trst_mac_0
+      virtual_network_refs: 
+        - 
+          get_param: trusted_net_name
+    type: "OS::ContrailV2::VirtualMachineInterface"
+  vdbe_trst_1_port: 
+    properties: 
+      name: 
+        str_replace: 
+          params: 
+            DBE: 
+              get_param: vdbe_device_name
+            VM_NAME: 
+              get_param: vdbe_name_1
+          template: VM_NAMEDBE001p1n005
+      virtual_machine_interface_allowed_address_pairs: 
+        virtual_machine_interface_allowed_address_pairs_allowed_address_pair: 
+          - 
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_address_mode: 
+              get_param: aap_address_mode
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip: 
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix: 
+                get_param: vdbe_aap_trusted_ip_prefix
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix_len: 
+                get_param: vdbe_aap_trusted_ip_prefix_len
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_mac: 
+              get_param: vdbe_trusted_vmac_address
+          - 
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_address_mode: 
+              get_param: aap_address_mode
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip: 
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix: 
+                get_param: vdbe_aap_sec_trusted_ip_prefix
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix_len: 
+                get_param: vdbe_aap_sec_trusted_ip_prefix_len
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_mac: 
+              get_param: vdbe_hw_trst_mac_1
+          - 
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_address_mode: 
+              get_param: aap_address_mode
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip: 
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix: 
+                get_param: vdbe_aap_trusted_v6_ip_prefix
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix_len: 
+                get_param: vdbe_aap_trusted_v6_ip_prefix_len
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_mac: 
+              get_param: vdbe_trusted_vmac_address
+      virtual_machine_interface_mac_addresses: 
+        virtual_machine_interface_mac_addresses_mac_address: 
+          - 
+            get_param: vdbe_hw_trst_mac_1
+      virtual_network_refs: 
+        - 
+          get_param: trusted_net_name
+    type: "OS::ContrailV2::VirtualMachineInterface"
+  vdbe_trusted_Iip_0: 
+    depends_on: 
+      - vdbe_trst_0_port
+    properties: 
+      instance_ip_address: 
+        get_param: vdbe_trusted_ip_0
+      virtual_machine_interface_refs: 
+        - 
+          get_resource: vdbe_trst_0_port
+      virtual_network_refs: 
+        - 
+          get_param: trusted_net_name
+    type: "OS::ContrailV2::InstanceIp"
+  vdbe_trusted_Iip_1: 
+    depends_on: 
+      - vdbe_trst_1_port
+    properties: 
+      instance_ip_address: 
+        get_param: vdbe_trusted_ip_1
+      virtual_machine_interface_refs: 
+        - 
+          get_resource: vdbe_trst_1_port
+      virtual_network_refs: 
+        - 
+          get_param: trusted_net_name
+    type: "OS::ContrailV2::InstanceIp"
+  vdbe_trusted_v6_Iip_0: 
+    depends_on: 
+      - vdbe_trst_0_port
+    properties: 
+      instance_ip_address: 
+        get_param: vdbe_trusted_v6_ip_0
+      instance_ip_family: v6
+      virtual_machine_interface_refs: 
+        - 
+          get_resource: vdbe_trst_0_port
+      virtual_network_refs: 
+        - 
+          get_param: trusted_net_name
+    type: "OS::ContrailV2::InstanceIp"
+  vdbe_trusted_v6_Iip_1: 
+    depends_on: 
+      - vdbe_trst_1_port
+    properties: 
+      instance_ip_address: 
+        get_param: vdbe_trusted_v6_ip_1
+      instance_ip_family: v6
+      virtual_machine_interface_refs: 
+        - 
+          get_resource: vdbe_trst_1_port
+      virtual_network_refs: 
+        - 
+          get_param: trusted_net_name
+    type: "OS::ContrailV2::InstanceIp"
+  vdbe_untr_0_subports: 
+    depends_on: vdbe_0_untr_vmi_0
+    properties: 
+      count: 
+        get_param: untrusted_num_vn
+      resource_def: 
+        properties: 
+          aap_address_mode: 
+            get_param: aap_address_mode
+          aap_sec_untrusted_ip_prefix: 
+            get_param: vdbe_aap_sec_untrusted_ip_prefix
+          aap_sec_untrusted_ip_prefix_len: 
+            get_param: vdbe_aap_sec_untrusted_ip_prefix_len
+          aap_untrusted_ip_prefix: 
+            get_param: vdbe_aap_untrusted_ip_prefix
+          aap_untrusted_ip_prefix_len: 
+            get_param: vdbe_aap_untrusted_ip_prefix_len
+          aap_untrusted_v6_ip_prefix: 
+            get_param: vdbe_aap_untrusted_v6_ip_prefix
+          aap_untrusted_v6_ip_prefix_len: 
+            get_param: vdbe_aap_untrusted_v6_ip_prefix_len
+          counter: "%index%"
+          ip_address: 
+            get_param: vdbe_untrusted_ip_0
+          ip_v6_address: 
+            get_param: vdbe_untrusted_v6_ip_0
+          mac_address: 
+            get_param: vdbe_hw_untr_mac_0
+          parent_interface: 
+            get_resource: vdbe_0_untr_vmi_0
+          subinterfaces_name_prefix: 
+            str_replace: 
+              params: 
+                DBE: 
+                  get_param: vdbe_device_name
+                VM_NAME: 
+                  get_param: vdbe_name_0
+              template: VM_NAMEDBE001p1n004
+          vlan_tag_list: 
+            get_param: untrusted_vlan_tags
+          vmac_address: 
+            get_param: vdbe_untrusted_vmac_address
+          vn_network_list: 
+            get_param: untrusted_vn_networks
+        type: vdbeav_subinterface_heat_template.yaml
+    type: "OS::Heat::ResourceGroup"
+  vdbe_untr_1_subports: 
+    depends_on: vdbe_1_untr_vmi_1
+    properties: 
+      count: 
+        get_param: untrusted_num_vn
+      resource_def: 
+        properties: 
+          aap_address_mode: 
+            get_param: aap_address_mode
+          aap_sec_untrusted_ip_prefix: 
+            get_param: vdbe_aap_sec_untrusted_ip_prefix
+          aap_sec_untrusted_ip_prefix_len: 
+            get_param: vdbe_aap_sec_untrusted_ip_prefix_len
+          aap_untrusted_ip_prefix: 
+            get_param: vdbe_aap_untrusted_ip_prefix
+          aap_untrusted_ip_prefix_len: 
+            get_param: vdbe_aap_untrusted_ip_prefix_len
+          aap_untrusted_v6_ip_prefix: 
+            get_param: vdbe_aap_untrusted_v6_ip_prefix
+          aap_untrusted_v6_ip_prefix_len: 
+            get_param: vdbe_aap_untrusted_v6_ip_prefix_len
+          counter: "%index%"
+          ip_address: 
+            get_param: vdbe_untrusted_ip_1
+          ip_v6_address: 
+            get_param: vdbe_untrusted_v6_ip_1
+          mac_address: 
+            get_param: vdbe_hw_untr_mac_1
+          parent_interface: 
+            get_resource: vdbe_1_untr_vmi_1
+          subinterfaces_name_prefix: 
+            str_replace: 
+              params: 
+                DBE: 
+                  get_param: vdbe_device_name
+                VM_NAME: 
+                  get_param: vdbe_name_1
+              template: VM_NAMEDBE001p1n004
+          vlan_tag_list: 
+            get_param: untrusted_vlan_tags
+          vmac_address: 
+            get_param: vdbe_untrusted_vmac_address
+          vn_network_list: 
+            get_param: untrusted_vn_networks
+        type: vdbeav_subinterface_heat_template.yaml
+    type: "OS::Heat::ResourceGroup"
+  vdbe_untrusted_Iip_0: 
+    depends_on: 
+      - vdbe_0_untr_vmi_0
+    properties: 
+      instance_ip_address: 
+        get_param: vdbe_untrusted_ip_0
+      virtual_machine_interface_refs: 
+        - 
+          get_resource: vdbe_0_untr_vmi_0
+      virtual_network_refs: 
+        - 
+          get_param: untrusted_net_name
+    type: "OS::ContrailV2::InstanceIp"
+  vdbe_untrusted_Iip_1: 
+    depends_on: 
+      - vdbe_1_untr_vmi_1
+    properties: 
+      instance_ip_address: 
+        get_param: vdbe_untrusted_ip_1
+      virtual_machine_interface_refs: 
+        - 
+          get_resource: vdbe_1_untr_vmi_1
+      virtual_network_refs: 
+        - 
+          get_param: untrusted_net_name
+    type: "OS::ContrailV2::InstanceIp"
+  vdbe_untrusted_v6_Iip_0: 
+    depends_on: 
+      - vdbe_0_untr_vmi_0
+    properties: 
+      instance_ip_address: 
+        get_param: vdbe_untrusted_v6_ip_0
+      instance_ip_family: v6
+      virtual_machine_interface_refs: 
+        - 
+          get_resource: vdbe_0_untr_vmi_0
+      virtual_network_refs: 
+        - 
+          get_param: untrusted_net_name
+    type: "OS::ContrailV2::InstanceIp"
+  vdbe_untrusted_v6_Iip_1: 
+    depends_on: 
+      - vdbe_1_untr_vmi_1
+    properties: 
+      instance_ip_address: 
+        get_param: vdbe_untrusted_v6_ip_1
+      instance_ip_family: v6
+      virtual_machine_interface_refs: 
+        - 
+          get_resource: vdbe_1_untr_vmi_1
+      virtual_network_refs: 
+        - 
+          get_param: untrusted_net_name
+    type: "OS::ContrailV2::InstanceIp"

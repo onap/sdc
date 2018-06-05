@@ -1,0 +1,1174 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: Main
+imports:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+- GlobalSubstitutionTypes:
+    file: GlobalSubstitutionTypesServiceTemplate.yaml
+topology_template:
+  inputs:
+    fabric_int_net_rpf:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - vdbeav_base_heat_template
+            source_type: HEAT
+            param_name: fabric_int_net_rpf
+      type: string
+      description: Reverse Path Filtering enable or disable for the fabric virtual network
+      default: disable
+    control_int_net_rpf:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - vdbeav_base_heat_template
+            source_type: HEAT
+            param_name: control_int_net_rpf
+      type: string
+      description: Reverse Path Filtering enable or disable for the control virtual network
+      default: disable
+    vdbe_aap_sec_trusted_ip_prefix_len:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - vdbeav_base_heat_template
+            source_type: HEAT
+            param_name: vdbe_aap_sec_trusted_ip_prefix_len
+      type: string
+      description: ip prefix length for the secondary vDBE VM aap on the VAN trusted network
+    control_int_net_forwarding_mode:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - vdbeav_base_heat_template
+            source_type: HEAT
+            param_name: control_int_net_forwarding_mode
+      type: string
+      description: forwarding mode of the control virtual network
+      default: l2
+    vdbe_fabric_ip_0:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - vdbeav_base_heat_template
+            source_type: HEAT
+            param_name: vdbe_fabric_ip_0
+      type: string
+      description: IP address of the primary vDBE VM on the HA fabric network
+    vdbe_fabric_ip_1:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - vdbeav_base_heat_template
+            source_type: HEAT
+            param_name: vdbe_fabric_ip_1
+      type: string
+      description: IP address of the secondary vDBE VM on the HA fabric network
+    vdbe_oam_ip_0:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - vdbeav_base_heat_template
+            source_type: HEAT
+            param_name: vdbe_oam_ip_0
+      type: string
+      description: IP address of the primary vDBE VM on the OAM network
+    control_subnet_cidr:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - vdbeav_base_heat_template
+            source_type: HEAT
+            param_name: control_subnet_cidr
+      type: string
+      description: control subnet CIDR
+    vdbe_aap_untrusted_ip_prefix_len:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - vdbeav_base_heat_template
+            source_type: HEAT
+            param_name: vdbe_aap_untrusted_ip_prefix_len
+      type: string
+      description: ip prefix length for the primary vDBE VM on the VAN untrusted network
+    vdbe_oam_ip_1:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - vdbeav_base_heat_template
+            source_type: HEAT
+            param_name: vdbe_oam_ip_1
+      type: string
+      description: IP address of the secondary vDBE VM on the OAM network
+    untrusted_num_vn:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - vdbeav_base_heat_template
+            source_type: HEAT
+            param_name: untrusted_num_vn
+      type: float
+      description: Number of vDBE subinterface virtual Networks
+      constraints:
+      - in_range:
+        - 1
+        - 77
+    control_int_net_shared:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - vdbeav_base_heat_template
+            source_type: HEAT
+            param_name: control_int_net_shared
+      type: boolean
+      description: control virtual network shared
+      default: false
+    control_int_net_flood_unknown_unicast:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - vdbeav_base_heat_template
+            source_type: HEAT
+            param_name: control_int_net_flood_unknown_unicast
+      type: boolean
+      description: forwarding mode of the control virtual network
+      default: true
+    vdbe_trusted_vmac_address:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - vdbeav_base_heat_template
+            source_type: HEAT
+            param_name: vdbe_trusted_vmac_address
+      type: string
+      description: Virtual MAC for the primary vDBE VM on the VAN trusted network
+    vdbe_trusted_ip_1:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - vdbeav_base_heat_template
+            source_type: HEAT
+            param_name: vdbe_trusted_ip_1
+      type: string
+      description: IPV4 address of the secondary vDBE VM on the VAN trusted network
+    vdbe_trusted_ip_0:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - vdbeav_base_heat_template
+            source_type: HEAT
+            param_name: vdbe_trusted_ip_0
+      type: string
+      description: IPV4 address of the primary vDBE VM on the VAN trusted network
+    vdbe_image_name:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - vdbeav_base_heat_template
+            source_type: HEAT
+            param_name: vdbe_image_name
+      type: string
+      description: Name of image to use for vDBE
+      default: vSRX-15.1X49-D50.3
+    oam_net_name:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - vdbeav_base_heat_template
+            source_type: HEAT
+            param_name: oam_net_name
+      type: string
+      description: Name of NSDNet network from which the management IP addresses will be allocated
+    vdbe_aap_untrusted_v6_ip_prefix_len:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - vdbeav_base_heat_template
+            source_type: HEAT
+            param_name: vdbe_aap_untrusted_v6_ip_prefix_len
+      type: string
+      description: ipv6 prefix length for the primary vDBE VM on the VAN untrusted network
+    vdbe_aap_trusted_ip_prefix:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - vdbeav_base_heat_template
+            source_type: HEAT
+            param_name: vdbe_aap_trusted_ip_prefix
+      type: string
+      description: ip prefix for the primary vDBE VM on the VAN trusted network
+      default: 0.0.0.0
+    vdbe_flavor_name:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - vdbeav_base_heat_template
+            source_type: HEAT
+            param_name: vdbe_flavor_name
+      type: string
+      description: Flavor to use for vDBE
+      default: m1.vsrx.dpdk
+    fabric_int_net_forwarding_mode:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - vdbeav_base_heat_template
+            source_type: HEAT
+            param_name: fabric_int_net_forwarding_mode
+      type: string
+      description: forwarding mode of the fabric virtual network
+      default: l2
+    fabric_int_net_shared:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - vdbeav_base_heat_template
+            source_type: HEAT
+            param_name: fabric_int_net_shared
+      type: boolean
+      description: fabric virtual network shared
+      default: false
+    untrusted_net_name:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - vdbeav_base_heat_template
+            source_type: HEAT
+            param_name: untrusted_net_name
+      type: string
+      description: Name of public untrusted network into which this vDBE HA cluster is deployed
+    vdbe_oam_mac_1:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - vdbeav_base_heat_template
+            source_type: HEAT
+            param_name: vdbe_oam_mac_1
+      type: string
+      description: MAC address of the secondary vDBE VM on the OAM network
+    vdbe_oam_mac_0:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - vdbeav_base_heat_template
+            source_type: HEAT
+            param_name: vdbe_oam_mac_0
+      type: string
+      description: MAC address of the primary vDBE VM on the OAM network
+    vf_module_id:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - vdbeav_base_heat_template
+            source_type: HEAT
+            param_name: vf_module_id
+      type: string
+      description: Unique ID for this VF module inst
+    vdbe_hw_trst_mac_0:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - vdbeav_base_heat_template
+            source_type: HEAT
+            param_name: vdbe_hw_trst_mac_0
+      type: string
+      description: Secondary MAC address of the primary vDBE VM on the VAN trusted network
+    vdbe_hw_trst_mac_1:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - vdbeav_base_heat_template
+            source_type: HEAT
+            param_name: vdbe_hw_trst_mac_1
+      type: string
+      description: Secondary MAC address of the secondary vDBE VM on the VAN trusted network
+    vdbe_untrusted_ip_0:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - vdbeav_base_heat_template
+            source_type: HEAT
+            param_name: vdbe_untrusted_ip_0
+      type: string
+      description: IPV4 address of the primary vDBE VM on the VAN untrusted network
+    vnf_name:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - vdbeav_base_heat_template
+            source_type: HEAT
+            param_name: vnf_name
+      type: string
+      description: Unique name for this VF instance
+    vdbe_aap_sec_trusted_ip_prefix:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - vdbeav_base_heat_template
+            source_type: HEAT
+            param_name: vdbe_aap_sec_trusted_ip_prefix
+      type: string
+      description: ip prefix for the secondary vDBE VM aap on the VAN trusted network
+    vdbe_untrusted_ip_1:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - vdbeav_base_heat_template
+            source_type: HEAT
+            param_name: vdbe_untrusted_ip_1
+      type: string
+      description: IPV4 address of the secondary vDBE VM on the VAN untrusted network
+    vdbe_aap_trusted_ip_prefix_len:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - vdbeav_base_heat_template
+            source_type: HEAT
+            param_name: vdbe_aap_trusted_ip_prefix_len
+      type: string
+      description: ip prefix length for the primary vDBE VM on the VAN trusted network
+      default: '0'
+    aap_address_mode:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - vdbeav_base_heat_template
+            source_type: HEAT
+            param_name: aap_address_mode
+      type: string
+      description: Address mode for the vDBE cluster IP
+      default: active-standby
+    vdbe_untrusted_v6_ip_1:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - vdbeav_base_heat_template
+            source_type: HEAT
+            param_name: vdbe_untrusted_v6_ip_1
+      type: string
+      description: IPV6 address of the secondary vDBE VM on the VAN untrusted network
+    vdbe_untrusted_v6_ip_0:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - vdbeav_base_heat_template
+            source_type: HEAT
+            param_name: vdbe_untrusted_v6_ip_0
+      type: string
+      description: IPV6 address of the primary vDBE VM on the VAN untrusted network
+    vdbe_untrusted_vmac_address:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - vdbeav_base_heat_template
+            source_type: HEAT
+            param_name: vdbe_untrusted_vmac_address
+      type: string
+      description: Virtual MAC of the primary vDBE VM on the VAN untrusted network
+    vdbe_aap_sec_untrusted_ip_prefix:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - vdbeav_base_heat_template
+            source_type: HEAT
+            param_name: vdbe_aap_sec_untrusted_ip_prefix
+      type: string
+      description: ip prefix for secondary vDBE VM aap on the VAN untrusted network
+    vnf_id:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - vdbeav_base_heat_template
+            source_type: HEAT
+            param_name: vnf_id
+      type: string
+      description: Unique ID for this VF inst
+    vdbe_name_0:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - vdbeav_base_heat_template
+            source_type: HEAT
+            param_name: vdbe_name_0
+      type: string
+      description: VM Name for this vdbe node 0
+    availability_zone_0:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - vdbeav_base_heat_template
+            source_type: HEAT
+            param_name: availability_zone_0
+      type: string
+      description: The availability zone of primary node0 vDBE vm in the local HA pair.
+      default: novadpdk1
+    vdbe_name_1:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - vdbeav_base_heat_template
+            source_type: HEAT
+            param_name: vdbe_name_1
+      type: string
+      description: VM Name for this vdbe node 1
+    availability_zone_1:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - vdbeav_base_heat_template
+            source_type: HEAT
+            param_name: availability_zone_1
+      type: string
+      description: The availability zone of secondary node1 vDBE vm in the local HA pair.
+      default: novadpdk2
+    untrusted_vn_networks:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - vdbeav_base_heat_template
+            source_type: HEAT
+            param_name: untrusted_vn_networks
+      type: list
+      description: List of subinterface virtual networks
+      entry_schema:
+        type: string
+    vdbe_aap_sec_untrusted_ip_prefix_len:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - vdbeav_base_heat_template
+            source_type: HEAT
+            param_name: vdbe_aap_sec_untrusted_ip_prefix_len
+      type: string
+      description: ip prefix length for the secondary DBE VM aap on the VAN untrusted network
+    vdbe_aap_untrusted_v6_ip_prefix:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - vdbeav_base_heat_template
+            source_type: HEAT
+            param_name: vdbe_aap_untrusted_v6_ip_prefix
+      type: string
+      description: ipv6 prefix for the primary vDBE VM on the VAN untrusted network
+    fabric_int_net_flood_unknown_unicast:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - vdbeav_base_heat_template
+            source_type: HEAT
+            param_name: fabric_int_net_flood_unknown_unicast
+      type: boolean
+      description: forwarding mode of the fabric virtual network
+      default: true
+    untrusted_vlan_tags:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - vdbeav_base_heat_template
+            source_type: HEAT
+            param_name: untrusted_vlan_tags
+      type: list
+      description: List of subinterface vlan tags
+      entry_schema:
+        type: string
+    untr_network_collection_function:
+      type: string
+      required: true
+    untr_vfc_instance_group_function:
+      type: string
+      required: true
+    vdbe_control_ip_0:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - vdbeav_base_heat_template
+            source_type: HEAT
+            param_name: vdbe_control_ip_0
+      type: string
+      description: IP address of the primary vDBE VM on the HA control network
+    vdbe_control_ip_1:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - vdbeav_base_heat_template
+            source_type: HEAT
+            param_name: vdbe_control_ip_1
+      type: string
+      description: IP address of the secondary vDBE VM on the HA control network
+    vdbe_aap_trusted_v6_ip_prefix_len:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - vdbeav_base_heat_template
+            source_type: HEAT
+            param_name: vdbe_aap_trusted_v6_ip_prefix_len
+      type: string
+      description: ipv6 prefix length for the primary vDBE VM on the VAN trusted network
+      default: '0'
+    fabric_subnet_cidr:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - vdbeav_base_heat_template
+            source_type: HEAT
+            param_name: fabric_subnet_cidr
+      type: string
+      description: fabric subnet CIDR
+    vdbe_hw_untr_mac_0:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - vdbeav_base_heat_template
+            source_type: HEAT
+            param_name: vdbe_hw_untr_mac_0
+      type: string
+      description: Secondary MAC address of the primary vDBE VM on the VAN untrusted network
+    vdbe_hw_untr_mac_1:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - vdbeav_base_heat_template
+            source_type: HEAT
+            param_name: vdbe_hw_untr_mac_1
+      type: string
+      description: Secondary MAC address of the secondary vDBE VM on the VAN untrusted network
+    trusted_net_name:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - vdbeav_base_heat_template
+            source_type: HEAT
+            param_name: trusted_net_name
+      type: string
+      description: Name of public trusted network into which this vDBE HA cluster is deployed
+    vdbe_trusted_v6_ip_1:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - vdbeav_base_heat_template
+            source_type: HEAT
+            param_name: vdbe_trusted_v6_ip_1
+      type: string
+      description: IPV6 address of the secondary vDBE VM on the VAN trusted network
+    vdbe_aap_trusted_v6_ip_prefix:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - vdbeav_base_heat_template
+            source_type: HEAT
+            param_name: vdbe_aap_trusted_v6_ip_prefix
+      type: string
+      description: ipv6 prefix for the primary vDBE VM on the VAN trusted network
+      default: '::'
+    vdbe_trusted_v6_ip_0:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - vdbeav_base_heat_template
+            source_type: HEAT
+            param_name: vdbe_trusted_v6_ip_0
+      type: string
+      description: IPV6 address of the primary vDBE VM on the VAN trusted network
+    vdbe_device_name:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - vdbeav_base_heat_template
+            source_type: HEAT
+            param_name: vdbe_device_name
+      type: string
+      description: VDBE device Name for this vdbe VNF
+    vdbe_aap_untrusted_ip_prefix:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - vdbeav_base_heat_template
+            source_type: HEAT
+            param_name: vdbe_aap_untrusted_ip_prefix
+      type: string
+      description: ip prefix for primary vDBE VM on the VAN untrusted network
+  node_templates:
+    fabric_int_net:
+      type: org.openecomp.resource.vl.nodes.heat.network.contrailV2.VirtualNetwork
+      properties:
+        network_name:
+          str_replace:
+            template: VNF_NAME_fabric_net
+            params:
+              VNF_NAME:
+                get_input: vnf_name
+        subnets:
+          fabric_subnet:
+            name:
+              str_replace:
+                template: VNF_NAME_fabric_subnet
+                params:
+                  VNF_NAME:
+                    get_input: vnf_name
+            cidr:
+              get_input: fabric_subnet_cidr
+    control_int_net:
+      type: org.openecomp.resource.vl.nodes.heat.network.contrailV2.VirtualNetwork
+      properties:
+        network_name:
+          str_replace:
+            template: VNF_NAME_control_net
+            params:
+              VNF_NAME:
+                get_input: vnf_name
+        subnets:
+          control_subnet:
+            name:
+              str_replace:
+                template: VNF_NAME_control_subnet
+                params:
+                  VNF_NAME:
+                    get_input: vnf_name
+            cidr:
+              get_input: control_subnet_cidr
+    abstract_vdbe_1:
+      type: org.openecomp.resource.abstract.nodes.vdbe_1
+      directives:
+      - substitutable
+      properties:
+        subinterface_vdbeav_subinterface_heat_template_aap_address_mode:
+        - get_input: aap_address_mode
+        compute_vdbe_availability_zone:
+        - get_input: availability_zone_1
+        vm_flavor_name:
+          get_input: vdbe_flavor_name
+        port_vdbe_oam_1_port_name:
+        - str_replace:
+            template: VM_NAMEDBE001p1n001
+            params:
+              DBE:
+                get_input: vdbe_device_name
+              VM_NAME:
+                get_input: vdbe_name_1
+        port_vdbe_trst_1_port_virtual_network_refs:
+        - - get_input: trusted_net_name
+        vm_image_name:
+          get_input: vdbe_image_name
+        compute_vdbe_metadata:
+        - vf_module_id:
+            get_input: vf_module_id
+          vnf_id:
+            get_input: vnf_id
+          vnf_name:
+            get_input: vnf_name
+        subinterface_vdbeav_subinterface_heat_template_aap_sec_untrusted_ip_prefix_len:
+        - get_input: vdbe_aap_sec_untrusted_ip_prefix_len
+        port_vdbe_fabr_1_port_name:
+        - str_replace:
+            template: VM_NAMEDBE001p1n003
+            params:
+              DBE:
+                get_input: vdbe_device_name
+              VM_NAME:
+                get_input: vdbe_name_1
+        subinterface_vdbeav_subinterface_heat_template_parent_interface:
+        - vdbe_1_untr_vmi_1
+        subinterface_vdbeav_subinterface_heat_template_aap_untrusted_ip_prefix:
+        - get_input: vdbe_aap_untrusted_ip_prefix
+        subinterface_vdbeav_subinterface_heat_template_vlan_tag_list:
+        - get_input: untrusted_vlan_tags
+        port_vdbe_fabr_1_port_virtual_network_refs:
+        - - fabric_int_net
+        subinterface_vdbeav_subinterface_heat_template_vn_network_list:
+        - get_input: untrusted_vn_networks
+        subinterface_vdbeav_subinterface_heat_template_subinterfaces_name_prefix:
+        - str_replace:
+            template: VM_NAMEDBE001p1n004
+            params:
+              DBE:
+                get_input: vdbe_device_name
+              VM_NAME:
+                get_input: vdbe_name_1
+        port_vdbe_untr_vmi_name:
+        - str_replace:
+            template: VM_NAMEDBE001p1n004
+            params:
+              DBE:
+                get_input: vdbe_device_name
+              VM_NAME:
+                get_input: vdbe_name_1
+        subinterface_vdbeav_subinterface_heat_template_aap_untrusted_ip_prefix_len:
+        - get_input: vdbe_aap_untrusted_ip_prefix_len
+        compute_vdbe_name:
+        - get_input: vdbe_name_1
+        subinterface_vdbeav_subinterface_heat_template_service_template_filter_count:
+        - get_input: untrusted_num_vn
+        subinterface_vdbeav_subinterface_heat_template_mac_address:
+        - get_input: vdbe_hw_untr_mac_1
+        subinterface_vdbeav_subinterface_heat_template_ip_address:
+        - get_input: vdbe_untrusted_ip_1
+        subinterface_vdbeav_subinterface_heat_template_vmac_address:
+        - get_input: vdbe_untrusted_vmac_address
+        port_vdbe_untr_vmi_virtual_machine_interface_mac_addresses:
+        - - get_input: vdbe_hw_untr_mac_1
+        port_vdbe_ctrl_1_port_name:
+        - str_replace:
+            template: VM_NAMEDBE001p1n002
+            params:
+              DBE:
+                get_input: vdbe_device_name
+              VM_NAME:
+                get_input: vdbe_name_1
+        compute_vdbe_scheduler_hints:
+        - group: vdbe_ServerGroup_group
+        subinterface_vdbeav_subinterface_heat_template_aap_untrusted_v6_ip_prefix_len:
+        - get_input: vdbe_aap_untrusted_v6_ip_prefix_len
+        port_vdbe_untr_vmi_virtual_network_refs:
+        - - get_input: untrusted_net_name
+        port_vdbe_trst_1_port_virtual_machine_interface_mac_addresses:
+        - - get_input: vdbe_hw_trst_mac_1
+        subinterface_vdbeav_subinterface_heat_template_aap_sec_untrusted_ip_prefix:
+        - get_input: vdbe_aap_sec_untrusted_ip_prefix
+        port_vdbe_oam_1_port_virtual_network_refs:
+        - - get_input: oam_net_name
+        port_vdbe_ctrl_1_port_virtual_network_refs:
+        - - control_int_net
+        subinterface_vdbeav_subinterface_heat_template_aap_untrusted_v6_ip_prefix:
+        - get_input: vdbe_aap_untrusted_v6_ip_prefix
+        subinterface_vdbeav_subinterface_heat_template_ip_v6_address:
+        - get_input: vdbe_untrusted_v6_ip_1
+        port_vdbe_oam_1_port_virtual_machine_interface_mac_addresses:
+        - - get_input: vdbe_oam_mac_1
+        port_vdbe_trst_1_port_name:
+        - str_replace:
+            template: VM_NAMEDBE001p1n005
+            params:
+              DBE:
+                get_input: vdbe_device_name
+              VM_NAME:
+                get_input: vdbe_name_1
+        service_template_filter:
+          substitute_service_template: Nested_vdbe_1ServiceTemplate.yaml
+          count: 1
+        index_value:
+          get_property:
+          - SELF
+          - service_template_filter
+          - index_value
+      requirements:
+      - link_vdbe_vdbe_ctrl_1_port:
+          capability: tosca.capabilities.network.Linkable
+          node: control_int_net
+          relationship: tosca.relationships.network.LinksTo
+      - link_vdbe_vdbe_fabr_1_port:
+          capability: tosca.capabilities.network.Linkable
+          node: fabric_int_net
+          relationship: tosca.relationships.network.LinksTo
+    abstract_vdbe:
+      type: org.openecomp.resource.abstract.nodes.vdbe
+      directives:
+      - substitutable
+      properties:
+        subinterface_vdbeav_subinterface_heat_template_aap_address_mode:
+        - get_input: aap_address_mode
+        port_vdbe_trst_0_port_virtual_machine_interface_mac_addresses:
+        - - get_input: vdbe_hw_trst_mac_0
+        compute_vdbe_availability_zone:
+        - get_input: availability_zone_0
+        vm_flavor_name:
+          get_input: vdbe_flavor_name
+        vm_image_name:
+          get_input: vdbe_image_name
+        compute_vdbe_metadata:
+        - vf_module_id:
+            get_input: vf_module_id
+          vnf_id:
+            get_input: vnf_id
+          vnf_name:
+            get_input: vnf_name
+        subinterface_vdbeav_subinterface_heat_template_aap_sec_untrusted_ip_prefix_len:
+        - get_input: vdbe_aap_sec_untrusted_ip_prefix_len
+        port_vdbe_oam_0_port_virtual_network_refs:
+        - - get_input: oam_net_name
+        port_vdbe_trst_0_port_name:
+        - str_replace:
+            template: VM_NAMEDBE001p1n005
+            params:
+              DBE:
+                get_input: vdbe_device_name
+              VM_NAME:
+                get_input: vdbe_name_0
+        subinterface_vdbeav_subinterface_heat_template_parent_interface:
+        - vdbe_0_untr_vmi_0
+        subinterface_vdbeav_subinterface_heat_template_aap_untrusted_ip_prefix:
+        - get_input: vdbe_aap_untrusted_ip_prefix
+        subinterface_vdbeav_subinterface_heat_template_vlan_tag_list:
+        - get_input: untrusted_vlan_tags
+        subinterface_vdbeav_subinterface_heat_template_vn_network_list:
+        - get_input: untrusted_vn_networks
+        subinterface_vdbeav_subinterface_heat_template_subinterfaces_name_prefix:
+        - str_replace:
+            template: VM_NAMEDBE001p1n004
+            params:
+              DBE:
+                get_input: vdbe_device_name
+              VM_NAME:
+                get_input: vdbe_name_0
+        port_vdbe_untr_vmi_name:
+        - str_replace:
+            template: VM_NAMEDBE001p1n004
+            params:
+              DBE:
+                get_input: vdbe_device_name
+              VM_NAME:
+                get_input: vdbe_name_0
+        subinterface_vdbeav_subinterface_heat_template_aap_untrusted_ip_prefix_len:
+        - get_input: vdbe_aap_untrusted_ip_prefix_len
+        port_vdbe_fabr_0_port_virtual_network_refs:
+        - - fabric_int_net
+        compute_vdbe_name:
+        - get_input: vdbe_name_0
+        subinterface_vdbeav_subinterface_heat_template_service_template_filter_count:
+        - get_input: untrusted_num_vn
+        subinterface_vdbeav_subinterface_heat_template_mac_address:
+        - get_input: vdbe_hw_untr_mac_0
+        subinterface_vdbeav_subinterface_heat_template_ip_address:
+        - get_input: vdbe_untrusted_ip_0
+        subinterface_vdbeav_subinterface_heat_template_vmac_address:
+        - get_input: vdbe_untrusted_vmac_address
+        port_vdbe_untr_vmi_virtual_machine_interface_mac_addresses:
+        - - get_input: vdbe_hw_untr_mac_0
+        compute_vdbe_scheduler_hints:
+        - group: vdbe_ServerGroup_group
+        subinterface_vdbeav_subinterface_heat_template_aap_untrusted_v6_ip_prefix_len:
+        - get_input: vdbe_aap_untrusted_v6_ip_prefix_len
+        port_vdbe_untr_vmi_virtual_network_refs:
+        - - get_input: untrusted_net_name
+        port_vdbe_oam_0_port_name:
+        - str_replace:
+            template: VM_NAMEDBE001p1n001
+            params:
+              DBE:
+                get_input: vdbe_device_name
+              VM_NAME:
+                get_input: vdbe_name_0
+        subinterface_vdbeav_subinterface_heat_template_aap_sec_untrusted_ip_prefix:
+        - get_input: vdbe_aap_sec_untrusted_ip_prefix
+        port_vdbe_oam_0_port_virtual_machine_interface_mac_addresses:
+        - - get_input: vdbe_oam_mac_0
+        subinterface_vdbeav_subinterface_heat_template_aap_untrusted_v6_ip_prefix:
+        - get_input: vdbe_aap_untrusted_v6_ip_prefix
+        port_vdbe_fabr_0_port_name:
+        - str_replace:
+            template: VM_NAMEDBE001p1n003
+            params:
+              DBE:
+                get_input: vdbe_device_name
+              VM_NAME:
+                get_input: vdbe_name_0
+        port_vdbe_ctrl_0_port_name:
+        - str_replace:
+            template: VM_NAMEDBE001p1n002
+            params:
+              DBE:
+                get_input: vdbe_device_name
+              VM_NAME:
+                get_input: vdbe_name_0
+        subinterface_vdbeav_subinterface_heat_template_ip_v6_address:
+        - get_input: vdbe_untrusted_v6_ip_0
+        port_vdbe_ctrl_0_port_virtual_network_refs:
+        - - control_int_net
+        port_vdbe_trst_0_port_virtual_network_refs:
+        - - get_input: trusted_net_name
+        service_template_filter:
+          substitute_service_template: Nested_vdbeServiceTemplate.yaml
+          count: 1
+        index_value:
+          get_property:
+          - SELF
+          - service_template_filter
+          - index_value
+      requirements:
+      - link_vdbe_vdbe_ctrl_0_port:
+          capability: tosca.capabilities.network.Linkable
+          node: control_int_net
+          relationship: tosca.relationships.network.LinksTo
+      - link_vdbe_vdbe_fabr_0_port:
+          capability: tosca.capabilities.network.Linkable
+          node: fabric_int_net
+          relationship: tosca.relationships.network.LinksTo
+  groups:
+    vdbe_ServerGroup_group:
+      type: tosca.groups.Root
+      members:
+      - abstract_vdbe
+      - abstract_vdbe_1
+    untr_group:
+      type: org.openecomp.groups.VfcInstanceGroup
+      properties:
+        vfc_parent_port_role: untr
+        network_collection_function:
+          get_input: untr_network_collection_function
+        vfc_instance_group_function:
+          get_input: untr_vfc_instance_group_function
+        subinterface_role: untr
+      members:
+      - abstract_vdbe
+      - abstract_vdbe_1
+    vdbeav_base_heat_template_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/vdbeav_base_heat_template.yaml
+        description: HOT template to deploy a vDBE HA of type DBE-I, DBE-P, DBE-AFC, and DBE-V (non-trunkport) cluster into an existing tenant network and assign network interfaces to the vDBE
+      members:
+      - fabric_int_net
+      - control_int_net
+      - abstract_vdbe
+      - abstract_vdbe_1
+  policies:
+    vdbe_ServerGroup_policy:
+      type: org.openecomp.policies.placement.Antilocate
+      properties:
+        container_type: host
+      targets:
+      - vdbe_ServerGroup_group

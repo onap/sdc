@@ -194,14 +194,36 @@ public class ConsolidationDataUtil {
         PortTemplateConsolidationData portTemplateConsolidationData =
                 filePortConsolidationData.getPortTemplateConsolidationData(parentPortNodeTemplateId);
         if (portTemplateConsolidationData == null) {
-            portTemplateConsolidationData = new PortTemplateConsolidationData();
-            portTemplateConsolidationData.setNodeTemplateId(parentPortNodeTemplateId);
+            Optional<String> portResourceId = getSubInterfaceParentPortResourceId(parentPortNodeTemplateId,
+                    subInterfaceTo);
+            if (portResourceId.isPresent()) {
+                portTemplateConsolidationData = getInitPortTemplateConsolidationData(parentPortNodeTemplateId,
+                        portResourceId.get(), HeatToToscaUtil.getResourceType(portResourceId.get(), subInterfaceTo
+                                .getHeatOrchestrationTemplate(), subInterfaceTo.getHeatFileName()));
+            } else {
+                portTemplateConsolidationData = new PortTemplateConsolidationData();
+                portTemplateConsolidationData.setNodeTemplateId(parentPortNodeTemplateId);
+            }
             filePortConsolidationData.setPortTemplateConsolidationData(parentPortNodeTemplateId,
                     portTemplateConsolidationData);
         }
-
         return portTemplateConsolidationData.addSubInterfaceTemplateConsolidationData(
                 subInterfaceTo.getResource(), subInterfaceNodeTemplateId, parentPortNodeTemplateId);
+    }
+
+    private static Optional<String> getSubInterfaceParentPortResourceId(String parentPortNodeTemplateId,
+                                                                        TranslateTo subInterfaceTo) {
+        Map<String, String> resourceIdTranslatedResourceIdMap =
+                subInterfaceTo.getContext().getTranslatedIds().get(subInterfaceTo.getHeatFileName());
+        if (MapUtils.isEmpty(resourceIdTranslatedResourceIdMap)) {
+            return Optional.empty();
+        }
+        for (Map.Entry<String, String> entry : resourceIdTranslatedResourceIdMap.entrySet()) {
+            if (entry.getValue().equals(parentPortNodeTemplateId)) {
+                return Optional.of(entry.getKey());
+            }
+        }
+        return Optional.empty();
     }
 
     /**
