@@ -349,16 +349,19 @@ public class PreCompileHelperMojo extends AbstractMojo {
             return moduleBuildData;
         }
         for (Artifact dependency : project.getArtifacts()) {
-            String version = dependency.isSnapshot() ? getSnapshotSignature(dependency.getFile(),
-                    dependency.getGroupId() + COLON + dependency.getArtifactId(), dependency.getVersion()) :
-                                     dependency.getVersion();
-            if (excludeDependencies.contains(dependency.getScope())) {
-                HashMap.class.cast(moduleBuildData.get(TEST))
+            if (JAR.equals(dependency.getType())) {
+                String version = dependency.isSnapshot() || dependency.getFile().getName().contains("SNAPSHOT") ?
+                                         getSnapshotSignature(dependency.getFile(),
+                                                 dependency.getGroupId() + COLON + dependency.getArtifactId(),
+                                                 dependency.getVersion()) : dependency.getVersion();
+                if (excludeDependencies.contains(dependency.getScope())) {
+                    HashMap.class.cast(moduleBuildData.get(TEST))
+                                 .put(dependency.getGroupId() + COLON + dependency.getArtifactId(), version);
+                    continue;
+                }
+                HashMap.class.cast(moduleBuildData.get(MAIN))
                              .put(dependency.getGroupId() + COLON + dependency.getArtifactId(), version);
-                continue;
             }
-            HashMap.class.cast(moduleBuildData.get(MAIN))
-                         .put(dependency.getGroupId() + COLON + dependency.getArtifactId(), version);
         }
         return moduleBuildData;
     }

@@ -19,7 +19,9 @@ package org.openecomp.sdc.onboarding;
 import static org.openecomp.sdc.onboarding.Constants.CHECKSUM;
 import static org.openecomp.sdc.onboarding.Constants.COLON;
 import static org.openecomp.sdc.onboarding.Constants.DOT;
+import static org.openecomp.sdc.onboarding.Constants.JAR;
 import static org.openecomp.sdc.onboarding.Constants.JAVA_EXT;
+import static org.openecomp.sdc.onboarding.Constants.SHA1;
 import static org.openecomp.sdc.onboarding.Constants.UNICORN;
 
 import java.io.ByteArrayInputStream;
@@ -67,12 +69,24 @@ class BuildHelper {
         }
         try {
             signature = new String(fetchSnapshotSignature(snapshotFile, version));
+            if (version.equals(signature)) {
+                signature = getSHA1For(snapshotFile, Paths.get(snapshotFile.getParentFile().getAbsolutePath(),
+                        moduleCoordinate.substring(moduleCoordinate.indexOf(':') + 1) + "-" + version + DOT + JAR + DOT
+                                + SHA1).toFile());
+            }
             store.put(key, signature);
             return signature;
-        } catch (IOException ioe) {
+        } catch (IOException | NoSuchAlgorithmException e) {
             return version;
         }
 
+    }
+
+    private static String getSHA1For(File file, File signatureFile) throws IOException, NoSuchAlgorithmException {
+        if (signatureFile.exists()) {
+            return new String(Files.readAllBytes(signatureFile.toPath()));
+        }
+        return getSourceChecksum(Files.readAllBytes(file.toPath()), SHA1);
     }
 
     static long getChecksum(File file, String fileType) {
@@ -84,8 +98,12 @@ class BuildHelper {
     }
 
     static String getSourceChecksum(String data, String hashType) throws NoSuchAlgorithmException {
+        return getSourceChecksum(data.getBytes(), hashType);
+    }
+
+    static String getSourceChecksum(byte[] data, String hashType) throws NoSuchAlgorithmException {
         MessageDigest md = MessageDigest.getInstance(hashType);
-        md.update(data.getBytes());
+        md.update(data);
         byte[] hashBytes = md.digest();
 
         StringBuilder buffer = new StringBuilder();
@@ -197,7 +215,7 @@ class BuildHelper {
              JarInputStream jis = new JarInputStream(bais)) {
             JarEntry entry = null;
             while ((entry = jis.getNextJarEntry()) != null) {
-                if (entry.getName().equals(UNICORN + DOT + CHECKSUM)) {
+                if (entry.getName().endsWith(UNICORN + DOT + CHECKSUM)) {
                     byte[] sigStore = new byte[1024];
                     return new String(sigStore, 0, jis.read(sigStore, 0, 1024)).getBytes();
                 }
