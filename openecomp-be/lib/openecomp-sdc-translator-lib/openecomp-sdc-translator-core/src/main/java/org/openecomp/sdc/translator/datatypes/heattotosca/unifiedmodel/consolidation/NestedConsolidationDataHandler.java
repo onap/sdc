@@ -122,4 +122,8 @@ public class NestedConsolidationDataHandler implements ConsolidationDataHandler 
         return Objects.nonNull(nestedHeatFileName) && context.getAllTranslatedResourceIdsFromDiffNestedFiles(
                 nestedHeatFileName).contains(nestedNodeTemplateId);
     }
+
+    public boolean isNestedConsolidationDataExist(String serviceTemplateName) {
+        return nestedConsolidationData.isNestedConsolidationDataExist(serviceTemplateName);
+    }
 }

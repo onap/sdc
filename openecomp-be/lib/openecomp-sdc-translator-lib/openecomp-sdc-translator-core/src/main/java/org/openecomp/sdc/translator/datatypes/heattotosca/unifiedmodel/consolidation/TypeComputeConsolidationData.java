@@ -20,6 +20,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.collections4.CollectionUtils;
 
@@ -110,5 +111,31 @@ public class TypeComputeConsolidationData {
 
     public boolean isNumberOfComputeConsolidationDataPerTypeLegal() {
         return getAllComputeTemplateConsolidationData().size() == 1;
+    }
+
+    public boolean isThereMoreThanOneComputeTypeInstance() {
+        return getAllComputeNodeTemplateIds().size() > 1;
+    }
+
+    public boolean isNumberOfPortFromEachTypeLegal() {
+        return getAllComputeTemplateConsolidationData().stream().allMatch(
+                ComputeTemplateConsolidationData::isNumberOfPortFromEachTypeLegal);
+    }
+
+    public boolean isPortTypesEqualsBetweenComputeNodes() {
+        Set<String> staringPortIds = getAllComputeTemplateConsolidationData().iterator().next().getPortsIds();
+
+        return getAllComputeTemplateConsolidationData()
+                       .stream().allMatch(compute -> compute.getPortsIds().equals(staringPortIds));
+    }
+
+    public boolean isNumberOfPortsEqualsBetweenComputeNodes() {
+        ComputeTemplateConsolidationData computeTemplateConsolidationData =
+                getAllComputeTemplateConsolidationData().iterator().next();
+
+        return getAllComputeTemplateConsolidationData()
+                .stream().allMatch(compute -> compute.getNumberOfPortsPerCompute()
+                                                      == computeTemplateConsolidationData.getNumberOfPortsPerCompute());
+
     }
 }

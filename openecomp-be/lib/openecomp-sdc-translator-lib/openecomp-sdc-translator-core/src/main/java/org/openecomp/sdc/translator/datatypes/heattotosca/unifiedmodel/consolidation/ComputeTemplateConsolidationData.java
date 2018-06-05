@@ -18,8 +18,10 @@ package org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolid
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.collections4.MapUtils;
 import org.onap.sdc.tosca.datatypes.model.RequirementAssignment;
@@ -79,5 +81,24 @@ public class ComputeTemplateConsolidationData extends EntityConsolidationData {
                 portTypeToIds.get(portTypeToIdEntry.getKey()).addAll(portTypeToIdEntry.getValue());
             }
         }
+    }
+
+    /**
+     * Is number of port from each compute type legal.
+     *
+     * @return the boolean
+     */
+    public boolean isNumberOfPortFromEachTypeLegal() {
+        Map<String, List<String>> currPortsMap = getPorts();
+        return MapUtils.isEmpty(currPortsMap) || currPortsMap.values().stream()
+                                                             .allMatch(portList -> portList.size() <= 1);
+    }
+
+    public Set<String> getPortsIds() {
+        return MapUtils.isEmpty(getPorts()) ? new HashSet<>() : getPorts().keySet();
+    }
+
+    public int getNumberOfPortsPerCompute() {
+        return getPortsIds().size();
     }
 }
