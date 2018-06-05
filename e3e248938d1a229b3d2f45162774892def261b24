@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_8f7517fc",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/datatypes/heattotosca/unifiedmodel/consolidation/ComputeTemplateConsolidationData.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 101,
+      "author": {
+        "id": 2727
+      },
+      "writtenOn": "2018-06-05T08:51:59Z",
+      "side": 1,
+      "message": "I think we can rename this API to getNumberOfPorts because now this API is part of ComputeTemplateConsolidationData and its clear that its num of ports in this compute",
+      "range": {
+        "startLine": 101,
+        "startChar": 15,
+        "endLine": 101,
+        "endChar": 41
+      },
+      "revId": "e3e248938d1a229b3d2f45162774892def261b24",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_cf6b1f1e",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/datatypes/heattotosca/unifiedmodel/consolidation/TypeComputeConsolidationData.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 138,
+      "author": {
+        "id": 2727
+      },
+      "writtenOn": "2018-06-05T08:51:59Z",
+      "side": 1,
+      "message": "Please define it as local variable, e.g. startingNumberOfPorts because its called in loop multiple time and also it will be more clean to understanding:\nint startingNumberOfPorts \u003d getAllComputeTemplateConsolidationData().iterator().next().\ngetNumberOfPortsPerCompute()",
+      "range": {
+        "startLine": 138,
+        "startChar": 57,
+        "endLine": 138,
+        "endChar": 118
+      },
+      "revId": "e3e248938d1a229b3d2f45162774892def261b24",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_cf247f10",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/ConsolidationService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 826,
+      "author": {
+        "id": 2727
+      },
+      "writtenOn": "2018-06-05T08:51:59Z",
+      "side": 1,
+      "message": "1) I think no need this check (selected line). You are checking it inside of ifAllResources... method.\n\n2) I have me some doubt regarding Original logic (not related to your current change)-\u003e \nif nestedHEATFilesNames empty -\u003e it will return true. This mean that ifAllResourceAreSubInterface will return true but actually there are no subInterfaces ( no nested heat files). I see that this API is called only for nested file and it looks that heatFile will not be empty but its looks me wrong logic that ifAllResourceAreSubInterface  will return true if no nested heat file. Can you please recheck it? I will send mail with more details",
+      "range": {
+        "startLine": 826,
+        "startChar": 15,
+        "endLine": 826,
+        "endChar": 62
+      },
+      "revId": "e3e248938d1a229b3d2f45162774892def261b24",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
