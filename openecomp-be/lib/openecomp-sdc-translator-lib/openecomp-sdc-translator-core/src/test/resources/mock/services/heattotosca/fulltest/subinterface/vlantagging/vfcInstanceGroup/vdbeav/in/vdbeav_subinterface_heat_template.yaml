@@ -1,0 +1,152 @@
+heat_template_version: 2015-04-30
+
+description: >
+  HOT template to instantiate a single Contrail VLAN sub-interface with associated instance IP addresses and allowed address pairs
+
+parameters:
+  counter:
+    type: number
+    description: Index of instance among multiple instances.  Use to retrieve correct parameter for this instance when passed all parameters for all instances.
+
+  subinterfaces_name_prefix:
+    type: string
+    description: Combined with subinterface_instance_index, this is used as the name of the subinterface resource
+
+  parent_interface:
+    type: string
+    description: Parent Contrail interface
+
+  mac_address:
+    type: string
+    description: HW MAC address to use for subinterface
+
+  vmac_address:
+    type: string
+    description: virtual MAC address to use for subinterface
+
+  ip_address:
+    type: string
+    description: IPv4 address associated with subinterfaces
+
+  ip_v6_address:
+    type: string
+    description: IPv6 address associated with subinterfaces	
+
+  aap_untrusted_ip_prefix:
+    description: ip prefix for primary vDBE VM on the VAN untrusted network
+    type: string
+
+  aap_untrusted_ip_prefix_len:
+    description: ip prefix length for the primary vDBE VM on the VAN untrusted network
+    type: string
+
+  aap_sec_untrusted_ip_prefix:
+    description: ip prefix for secondary vDBE VM aap on the VAN untrusted network
+    type: string
+
+  aap_sec_untrusted_ip_prefix_len:
+    description: ip prefix length for the secondary DBE VM aap on the VAN untrusted network
+    type: string
+
+  aap_untrusted_v6_ip_prefix:
+    description: ipv6 prefix for the primary vDBE VM on the VAN untrusted network
+    type: string
+
+  aap_untrusted_v6_ip_prefix_len:
+    description: ipv6 prefix length for the primary vDBE VM on the VAN untrusted network
+    type: string  
+
+  aap_address_mode:
+    description: Address mode for the vDBE cluster IP
+    type: string
+
+  vlan_tag_list:
+    type: comma_delimited_list
+    description: List of VLAN IDs to use for subinterfaces
+
+  vn_network_list:
+    type: comma_delimited_list
+    description: List of Contrail VLAN networks to use for the subinterfaces.   The order and number of these must match the VLAN ID list
+
+resources:
+
+  vdbe_0_subint_untr_vmi_0:
+    type: OS::ContrailV2::VirtualMachineInterface
+    properties:
+      name:
+        str_replace:
+          template: $NAME_$INDEX
+          params:
+            $NAME: { get_param: subinterfaces_name_prefix }
+            $INDEX: { get_param: [ vlan_tag_list, { get_param: counter } ] }
+      virtual_network_refs: [{ get_param: [ vn_network_list, { get_param: counter } ] }]
+      virtual_machine_interface_refs: [{ get_param: parent_interface }]
+      virtual_machine_interface_mac_addresses:
+        { virtual_machine_interface_mac_addresses_mac_address: [{ get_param: mac_address}]
+        }
+      virtual_machine_interface_properties:
+        {
+      virtual_machine_interface_properties_sub_interface_vlan_tag: { get_param: [ vlan_tag_list, { get_param: counter} ] },
+        } 
+      virtual_machine_interface_allowed_address_pairs:
+        {          
+        virtual_machine_interface_allowed_address_pairs_allowed_address_pair:
+            [
+            {          
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip:
+            {                  
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix: { get_param: aap_untrusted_ip_prefix },                  
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix_len: { get_param: aap_untrusted_ip_prefix_len },
+            },
+        virtual_machine_interface_allowed_address_pairs_allowed_address_pair_mac: { get_param: vmac_address },
+        virtual_machine_interface_allowed_address_pairs_allowed_address_pair_address_mode: { get_param: aap_address_mode },
+
+           },
+
+            {           
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip:
+            {                  
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix: { get_param: aap_sec_untrusted_ip_prefix },                  
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix_len: { get_param: aap_sec_untrusted_ip_prefix_len },
+            },
+
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_mac: { get_param: mac_address},
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_address_mode: { get_param: aap_address_mode },
+
+            },
+            
+            {
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip:
+            {                  
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix: { get_param: aap_untrusted_v6_ip_prefix },                  
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix_len: { get_param: aap_untrusted_v6_ip_prefix_len },
+            },
+            
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_mac: { get_param: vmac_address },
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_address_mode: { get_param: aap_address_mode },
+
+           }
+
+           ]
+        }
+
+  vdbe_untrusted_Iip_0:
+    type: OS::ContrailV2::InstanceIp
+    depends_on: [ vdbe_0_subint_untr_vmi_0 ]
+    properties:
+      virtual_machine_interface_refs: [ { get_resource: vdbe_0_subint_untr_vmi_0} ]
+      virtual_network_refs: [{ get_param: [ vn_network_list, { get_param: counter } ] }]
+      instance_ip_address: { get_param: ip_address }
+
+
+  
+  vdbe_untrusted_v6_Iip_0:
+    type: OS::ContrailV2::InstanceIp
+    depends_on: [ vdbe_0_subint_untr_vmi_0 ]
+    properties:
+      virtual_machine_interface_refs: [ { get_resource: vdbe_0_subint_untr_vmi_0} ]
+      virtual_network_refs: [{ get_param: [ vn_network_list, { get_param: counter } ] }]
+      instance_ip_address: { get_param: ip_v6_address }
+      instance_ip_family: "v6"  
+
+ 

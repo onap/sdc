@@ -485,4 +485,12 @@ public class UnifiedCompositionSubInterfaceFullTest extends BaseFullTranslationT
     testTranslationWithInit(VFC_INSTANCE_GROUP_BASE_DIRECTORY + "pattern4SubInterfaceNodesConnectedOut");
   }
 
+  @Test
+  public void testSubInterfaceVdbeav() throws IOException {
+    /*
+     * vlan tagging vdbeav production heat
+     */
+    testTranslationWithInit(VFC_INSTANCE_GROUP_BASE_DIRECTORY + "vdbeav");
+  }
+
 }

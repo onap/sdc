@@ -1,0 +1,971 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: Nested_vdbe
+imports:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+- GlobalSubstitutionTypes:
+    file: GlobalSubstitutionTypesServiceTemplate.yaml
+node_types:
+  org.openecomp.resource.vfc.compute.nodes.heat.vdbe:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+topology_template:
+  inputs:
+    port_vdbe_untr_vmi_virtual_machine_interface_allowed_address_pairs:
+      type: org.openecomp.datatypes.heat.contrailV2.virtual.machine.subInterface.AddressPairs
+      required: true
+    subinterface_vdbeav_subinterface_heat_template_aap_address_mode:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_vdbe_oam_0_port_vlan_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.VlanRequirements
+    port_vdbe_trst_0_port_ip_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.IpRequirements
+    port_vdbe_trst_0_port_virtual_machine_interface_mac_addresses:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    port_vdbe_fabr_0_port_network_role_tag:
+      type: string
+      required: true
+    port_vdbe_fabr_0_port_subnetpoolid:
+      type: string
+      required: true
+    compute_vdbe_availability_zone:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_vdbe_trst_0_port_network_role_tag:
+      type: string
+      required: true
+    vm_flavor_name:
+      type: string
+      required: true
+    port_vdbe_ctrl_0_port_mac_requirements:
+      type: org.openecomp.datatypes.network.MacRequirements
+      required: true
+    port_vdbe_trst_0_port_vlan_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.VlanRequirements
+    vm_image_name:
+      type: string
+      required: true
+    port_vdbe_oam_0_port_mac_requirements:
+      type: org.openecomp.datatypes.network.MacRequirements
+      required: true
+    compute_vdbe_metadata:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    subinterface_vdbeav_subinterface_heat_template_aap_sec_untrusted_ip_prefix_len:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_vdbe_oam_0_port_virtual_network_refs:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    port_vdbe_trst_0_port_name:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_vdbe_untr_vmi_ip_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.IpRequirements
+    subinterface_vdbeav_subinterface_heat_template_parent_interface:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_vdbe_ctrl_0_port_exCP_naming:
+      type: org.openecomp.datatypes.Naming
+      required: true
+    port_vdbe_ctrl_0_port_network_role_tag:
+      type: string
+      required: true
+    port_vdbe_ctrl_0_port_ip_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.IpRequirements
+    subinterface_vdbeav_subinterface_heat_template_aap_untrusted_ip_prefix:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_vdbe_fabr_0_port_ip_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.IpRequirements
+    subinterface_vdbeav_subinterface_heat_template_vlan_tag_list:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    port_vdbe_fabr_0_port_mac_requirements:
+      type: org.openecomp.datatypes.network.MacRequirements
+      required: true
+    port_vdbe_fabr_0_port_vlan_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.VlanRequirements
+    port_vdbe_untr_vmi_network_role:
+      type: string
+      required: true
+    port_vdbe_trst_0_port_order:
+      type: integer
+      required: true
+    port_vdbe_oam_0_port_network_role_tag:
+      type: string
+      required: true
+    subinterface_vdbeav_subinterface_heat_template_vn_network_list:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    subinterface_vdbeav_subinterface_heat_template_subinterfaces_name_prefix:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_vdbe_trst_0_port_network_role:
+      type: string
+      required: true
+    port_vdbe_oam_0_port_subnetpoolid:
+      type: string
+      required: true
+    port_vdbe_ctrl_0_port_order:
+      type: integer
+      required: true
+    port_vdbe_ctrl_0_port_subnetpoolid:
+      type: string
+      required: true
+    port_vdbe_untr_vmi_name:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    subinterface_vdbeav_subinterface_heat_template_aap_untrusted_ip_prefix_len:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_vdbe_fabr_0_port_virtual_network_refs:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    compute_vdbe_name:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_vdbe_untr_vmi_subnetpoolid:
+      type: string
+      required: true
+    port_vdbe_oam_0_port_network_role:
+      type: string
+      required: true
+    port_vdbe_ctrl_0_port_network_role:
+      type: string
+      required: true
+    subinterface_vdbeav_subinterface_heat_template_service_template_filter_count:
+      type: list
+      required: true
+      entry_schema:
+        type: float
+    port_vdbe_trst_0_port_subnetpoolid:
+      type: string
+      required: true
+    port_vdbe_untr_vmi_network_role_tag:
+      type: string
+      required: true
+    subinterface_vdbeav_subinterface_heat_template_mac_address:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    subinterface_vdbeav_subinterface_heat_template_ip_address:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_vdbe_trst_0_port_exCP_naming:
+      type: org.openecomp.datatypes.Naming
+      required: true
+    port_vdbe_fabr_0_port_network_role:
+      type: string
+      required: true
+    subinterface_vdbeav_subinterface_heat_template_vmac_address:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_vdbe_untr_vmi_virtual_machine_interface_mac_addresses:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    compute_vdbe_scheduler_hints:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    port_vdbe_trst_0_port_virtual_machine_interface_allowed_address_pairs:
+      type: org.openecomp.datatypes.heat.contrailV2.virtual.machine.subInterface.AddressPairs
+      required: true
+    port_vdbe_ctrl_0_port_vlan_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.VlanRequirements
+    subinterface_vdbeav_subinterface_heat_template_aap_untrusted_v6_ip_prefix_len:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_vdbe_oam_0_port_ip_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.IpRequirements
+    port_vdbe_untr_vmi_virtual_network_refs:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    port_vdbe_untr_vmi_mac_requirements:
+      type: org.openecomp.datatypes.network.MacRequirements
+      required: true
+    port_vdbe_fabr_0_port_exCP_naming:
+      type: org.openecomp.datatypes.Naming
+      required: true
+    port_vdbe_trst_0_port_mac_requirements:
+      type: org.openecomp.datatypes.network.MacRequirements
+      required: true
+    port_vdbe_untr_vmi_order:
+      type: integer
+      required: true
+    port_vdbe_oam_0_port_name:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    subinterface_vdbeav_subinterface_heat_template_aap_sec_untrusted_ip_prefix:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_vdbe_oam_0_port_virtual_machine_interface_mac_addresses:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    index_value:
+      type: integer
+      description: Index value of this substitution service template runtime instance
+      required: false
+      default: 0
+      constraints:
+      - greater_or_equal: 0
+    port_vdbe_untr_vmi_exCP_naming:
+      type: org.openecomp.datatypes.Naming
+      required: true
+    subinterface_vdbeav_subinterface_heat_template_aap_untrusted_v6_ip_prefix:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_vdbe_fabr_0_port_name:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_vdbe_ctrl_0_port_name:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_vdbe_fabr_0_port_order:
+      type: integer
+      required: true
+    subinterface_vdbeav_subinterface_heat_template_ip_v6_address:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_vdbe_ctrl_0_port_virtual_network_refs:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    port_vdbe_oam_0_port_exCP_naming:
+      type: org.openecomp.datatypes.Naming
+      required: true
+    port_vdbe_trst_0_port_virtual_network_refs:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    port_vdbe_oam_0_port_order:
+      type: integer
+      required: true
+    port_vdbe_untr_vmi_vlan_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.VlanRequirements
+  node_templates:
+    vdbe_vdbe_fabr_0_port:
+      type: org.openecomp.resource.cp.nodes.heat.contrailV2.VirtualMachineInterface
+      properties:
+        exCP_naming:
+          get_input: port_vdbe_fabr_0_port_exCP_naming
+        vlan_requirements:
+          get_input: port_vdbe_fabr_0_port_vlan_requirements
+        subinterface_indicator: false
+        ip_requirements:
+          get_input: port_vdbe_fabr_0_port_ip_requirements
+        virtual_network_refs:
+          get_input:
+          - port_vdbe_fabr_0_port_virtual_network_refs
+          - index_value
+        network_role_tag:
+          get_input: port_vdbe_fabr_0_port_network_role_tag
+        mac_requirements:
+          get_input: port_vdbe_fabr_0_port_mac_requirements
+        order:
+          get_input: port_vdbe_fabr_0_port_order
+        network_role:
+          get_input: port_vdbe_fabr_0_port_network_role
+        subnetpoolid:
+          get_input: port_vdbe_fabr_0_port_subnetpoolid
+        name:
+          get_input:
+          - port_vdbe_fabr_0_port_name
+          - index_value
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: vdbe
+          relationship: tosca.relationships.network.BindsTo
+    vdbe_vdbe_oam_0_port:
+      type: org.openecomp.resource.cp.nodes.heat.contrailV2.VirtualMachineInterface
+      properties:
+        mac_requirements:
+          get_input: port_vdbe_oam_0_port_mac_requirements
+        order:
+          get_input: port_vdbe_oam_0_port_order
+        exCP_naming:
+          get_input: port_vdbe_oam_0_port_exCP_naming
+        vlan_requirements:
+          get_input: port_vdbe_oam_0_port_vlan_requirements
+        subinterface_indicator: false
+        virtual_network_refs:
+          get_input:
+          - port_vdbe_oam_0_port_virtual_network_refs
+          - index_value
+        ip_requirements:
+          get_input: port_vdbe_oam_0_port_ip_requirements
+        network_role_tag:
+          get_input: port_vdbe_oam_0_port_network_role_tag
+        virtual_machine_interface_mac_addresses:
+          get_input:
+          - port_vdbe_oam_0_port_virtual_machine_interface_mac_addresses
+          - index_value
+        network_role:
+          get_input: port_vdbe_oam_0_port_network_role
+        subnetpoolid:
+          get_input: port_vdbe_oam_0_port_subnetpoolid
+        name:
+          get_input:
+          - port_vdbe_oam_0_port_name
+          - index_value
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: vdbe
+          relationship: tosca.relationships.network.BindsTo
+    vdbe_vdbe_trst_0_port:
+      type: org.openecomp.resource.cp.nodes.heat.contrailV2.VirtualMachineInterface
+      properties:
+        mac_requirements:
+          get_input: port_vdbe_trst_0_port_mac_requirements
+        order:
+          get_input: port_vdbe_trst_0_port_order
+        exCP_naming:
+          get_input: port_vdbe_trst_0_port_exCP_naming
+        virtual_machine_interface_allowed_address_pairs:
+          get_input:
+          - port_vdbe_trst_0_port_virtual_machine_interface_allowed_address_pairs
+          - index_value
+        vlan_requirements:
+          get_input: port_vdbe_trst_0_port_vlan_requirements
+        subinterface_indicator: false
+        virtual_network_refs:
+          get_input:
+          - port_vdbe_trst_0_port_virtual_network_refs
+          - index_value
+        ip_requirements:
+          get_input: port_vdbe_trst_0_port_ip_requirements
+        network_role_tag:
+          get_input: port_vdbe_trst_0_port_network_role_tag
+        virtual_machine_interface_mac_addresses:
+          get_input:
+          - port_vdbe_trst_0_port_virtual_machine_interface_mac_addresses
+          - index_value
+        network_role:
+          get_input: port_vdbe_trst_0_port_network_role
+        subnetpoolid:
+          get_input: port_vdbe_trst_0_port_subnetpoolid
+        name:
+          get_input:
+          - port_vdbe_trst_0_port_name
+          - index_value
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: vdbe
+          relationship: tosca.relationships.network.BindsTo
+    vdbe:
+      type: org.openecomp.resource.vfc.compute.nodes.heat.vdbe
+      properties:
+        availability_zone:
+          get_input:
+          - compute_vdbe_availability_zone
+          - index_value
+        flavor:
+          get_input: vm_flavor_name
+        metadata:
+          get_input:
+          - compute_vdbe_metadata
+          - index_value
+        image:
+          get_input: vm_image_name
+        name:
+          get_input:
+          - compute_vdbe_name
+          - index_value
+        scheduler_hints:
+          get_input:
+          - compute_vdbe_scheduler_hints
+          - index_value
+    vdbe_vdbe_untr_vmi:
+      type: org.openecomp.resource.cp.nodes.heat.contrailV2.VirtualMachineInterface
+      properties:
+        mac_requirements:
+          get_input: port_vdbe_untr_vmi_mac_requirements
+        order:
+          get_input: port_vdbe_untr_vmi_order
+        exCP_naming:
+          get_input: port_vdbe_untr_vmi_exCP_naming
+        virtual_machine_interface_allowed_address_pairs:
+          get_input:
+          - port_vdbe_untr_vmi_virtual_machine_interface_allowed_address_pairs
+          - index_value
+        vlan_requirements:
+          get_input: port_vdbe_untr_vmi_vlan_requirements
+        subinterface_indicator: true
+        virtual_network_refs:
+          get_input:
+          - port_vdbe_untr_vmi_virtual_network_refs
+          - index_value
+        ip_requirements:
+          get_input: port_vdbe_untr_vmi_ip_requirements
+        network_role_tag:
+          get_input: port_vdbe_untr_vmi_network_role_tag
+        virtual_machine_interface_mac_addresses:
+          get_input:
+          - port_vdbe_untr_vmi_virtual_machine_interface_mac_addresses
+          - index_value
+        network_role:
+          get_input: port_vdbe_untr_vmi_network_role
+        subnetpoolid:
+          get_input: port_vdbe_untr_vmi_subnetpoolid
+        name:
+          get_input:
+          - port_vdbe_untr_vmi_name
+          - index_value
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: vdbe
+          relationship: tosca.relationships.network.BindsTo
+    vdbe_vdbe_ctrl_0_port:
+      type: org.openecomp.resource.cp.nodes.heat.contrailV2.VirtualMachineInterface
+      properties:
+        exCP_naming:
+          get_input: port_vdbe_ctrl_0_port_exCP_naming
+        vlan_requirements:
+          get_input: port_vdbe_ctrl_0_port_vlan_requirements
+        subinterface_indicator: false
+        ip_requirements:
+          get_input: port_vdbe_ctrl_0_port_ip_requirements
+        virtual_network_refs:
+          get_input:
+          - port_vdbe_ctrl_0_port_virtual_network_refs
+          - index_value
+        network_role_tag:
+          get_input: port_vdbe_ctrl_0_port_network_role_tag
+        mac_requirements:
+          get_input: port_vdbe_ctrl_0_port_mac_requirements
+        order:
+          get_input: port_vdbe_ctrl_0_port_order
+        network_role:
+          get_input: port_vdbe_ctrl_0_port_network_role
+        subnetpoolid:
+          get_input: port_vdbe_ctrl_0_port_subnetpoolid
+        name:
+          get_input:
+          - port_vdbe_ctrl_0_port_name
+          - index_value
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: vdbe
+          relationship: tosca.relationships.network.BindsTo
+    vdbe_vdbe_untr_vmi_vdbeav_subinterface_heat_template:
+      type: org.openecomp.resource.abstract.nodes.heat.subinterface.vdbeav_subinterface_heat_template
+      directives:
+      - substitutable
+      properties:
+        aap_untrusted_ip_prefix:
+          get_input:
+          - subinterface_vdbeav_subinterface_heat_template_aap_untrusted_ip_prefix
+          - index_value
+        aap_sec_untrusted_ip_prefix:
+          get_input:
+          - subinterface_vdbeav_subinterface_heat_template_aap_sec_untrusted_ip_prefix
+          - index_value
+        ip_v6_address:
+          get_input:
+          - subinterface_vdbeav_subinterface_heat_template_ip_v6_address
+          - index_value
+        counter:
+          get_property:
+          - SELF
+          - service_template_filter
+          - index_value
+        ip_address:
+          get_input:
+          - subinterface_vdbeav_subinterface_heat_template_ip_address
+          - index_value
+        subinterfaces_name_prefix:
+          get_input:
+          - subinterface_vdbeav_subinterface_heat_template_subinterfaces_name_prefix
+          - index_value
+        aap_address_mode:
+          get_input:
+          - subinterface_vdbeav_subinterface_heat_template_aap_address_mode
+          - index_value
+        service_template_filter:
+          count:
+            get_input:
+            - subinterface_vdbeav_subinterface_heat_template_service_template_filter_count
+            - index_value
+          substitute_service_template: vdbeav_subinterface_heat_templateServiceTemplate.yaml
+          mandatory: false
+        aap_untrusted_v6_ip_prefix:
+          get_input:
+          - subinterface_vdbeav_subinterface_heat_template_aap_untrusted_v6_ip_prefix
+          - index_value
+        parent_interface:
+          get_input:
+          - subinterface_vdbeav_subinterface_heat_template_parent_interface
+          - index_value
+        vn_network_list:
+          get_input:
+          - subinterface_vdbeav_subinterface_heat_template_vn_network_list
+          - index_value
+        mac_address:
+          get_input:
+          - subinterface_vdbeav_subinterface_heat_template_mac_address
+          - index_value
+        vlan_tag_list:
+          get_input:
+          - subinterface_vdbeav_subinterface_heat_template_vlan_tag_list
+          - index_value
+        aap_sec_untrusted_ip_prefix_len:
+          get_input:
+          - subinterface_vdbeav_subinterface_heat_template_aap_sec_untrusted_ip_prefix_len
+          - index_value
+        vmac_address:
+          get_input:
+          - subinterface_vdbeav_subinterface_heat_template_vmac_address
+          - index_value
+        aap_untrusted_v6_ip_prefix_len:
+          get_input:
+          - subinterface_vdbeav_subinterface_heat_template_aap_untrusted_v6_ip_prefix_len
+          - index_value
+        aap_untrusted_ip_prefix_len:
+          get_input:
+          - subinterface_vdbeav_subinterface_heat_template_aap_untrusted_ip_prefix_len
+          - index_value
+      requirements:
+      - binding_vdbe_0_subint_untr_vmi_0:
+          capability: tosca.capabilities.network.Bindable
+          node: vdbe_vdbe_untr_vmi
+          relationship: tosca.relationships.network.BindsTo
+  substitution_mappings:
+    node_type: org.openecomp.resource.abstract.nodes.vdbe
+    capabilities:
+      network.incoming.packets.rate_vdbe_vdbe_untr_vmi:
+      - vdbe_vdbe_untr_vmi
+      - network.incoming.packets.rate
+      network.incoming.packets_vdbe_vdbe_trst_0_port:
+      - vdbe_vdbe_trst_0_port
+      - network.incoming.packets
+      feature_vdbe:
+      - vdbe
+      - feature
+      network.outgoing.packets.rate_vdbe_vdbe_ctrl_0_port:
+      - vdbe_vdbe_ctrl_0_port
+      - network.outgoing.packets.rate
+      network.outpoing.packets_vdbe_vdbe_fabr_0_port:
+      - vdbe_vdbe_fabr_0_port
+      - network.outpoing.packets
+      disk.device.iops_vdbe:
+      - vdbe
+      - disk.device.iops
+      network.incoming.packets.rate_vdbe_vdbe_fabr_0_port:
+      - vdbe_vdbe_fabr_0_port
+      - network.incoming.packets.rate
+      network.incoming.bytes.rate_vdbe_vdbe_fabr_0_port:
+      - vdbe_vdbe_fabr_0_port
+      - network.incoming.bytes.rate
+      endpoint_vdbe:
+      - vdbe
+      - endpoint
+      network.incoming.packets.rate_vdbe_vdbe_ctrl_0_port:
+      - vdbe_vdbe_ctrl_0_port
+      - network.incoming.packets.rate
+      network.incoming.bytes.rate_vdbe_vdbe_ctrl_0_port:
+      - vdbe_vdbe_ctrl_0_port
+      - network.incoming.bytes.rate
+      cpu_util_vdbe:
+      - vdbe
+      - cpu_util
+      vcpus_vdbe:
+      - vdbe
+      - vcpus
+      disk.write.requests_vdbe:
+      - vdbe
+      - disk.write.requests
+      network.outgoing.packets.rate_vdbe_vdbe_fabr_0_port:
+      - vdbe_vdbe_fabr_0_port
+      - network.outgoing.packets.rate
+      network.outpoing.packets_vdbe_vdbe_ctrl_0_port:
+      - vdbe_vdbe_ctrl_0_port
+      - network.outpoing.packets
+      disk.device.latency_vdbe:
+      - vdbe
+      - disk.device.latency
+      scalable_vdbe:
+      - vdbe
+      - scalable
+      disk.iops_vdbe:
+      - vdbe
+      - disk.iops
+      network.incoming.bytes_vdbe_vdbe_ctrl_0_port:
+      - vdbe_vdbe_ctrl_0_port
+      - network.incoming.bytes
+      disk.device.allocation_vdbe:
+      - vdbe
+      - disk.device.allocation
+      network.outgoing.bytes.rate_vdbe_vdbe_fabr_0_port:
+      - vdbe_vdbe_fabr_0_port
+      - network.outgoing.bytes.rate
+      binding_vdbe_vdbe_oam_0_port:
+      - vdbe_vdbe_oam_0_port
+      - binding
+      feature_vdbe_vdbe_oam_0_port:
+      - vdbe_vdbe_oam_0_port
+      - feature
+      instance_vdbe:
+      - vdbe
+      - instance
+      network.incoming.packets_vdbe_vdbe_oam_0_port:
+      - vdbe_vdbe_oam_0_port
+      - network.incoming.packets
+      memory.resident_vdbe:
+      - vdbe
+      - memory.resident
+      network.outpoing.packets_vdbe_vdbe_trst_0_port:
+      - vdbe_vdbe_trst_0_port
+      - network.outpoing.packets
+      network.incoming.bytes.rate_vdbe_vdbe_untr_vmi:
+      - vdbe_vdbe_untr_vmi
+      - network.incoming.bytes.rate
+      cpu_vdbe:
+      - vdbe
+      - cpu
+      network.outgoing.bytes.rate_vdbe_vdbe_oam_0_port:
+      - vdbe_vdbe_oam_0_port
+      - network.outgoing.bytes.rate
+      disk.write.bytes_vdbe:
+      - vdbe
+      - disk.write.bytes
+      feature_vdbe_vdbe_ctrl_0_port:
+      - vdbe_vdbe_ctrl_0_port
+      - feature
+      disk.latency_vdbe:
+      - vdbe
+      - disk.latency
+      network.outgoing.bytes.rate_vdbe_vdbe_trst_0_port:
+      - vdbe_vdbe_trst_0_port
+      - network.outgoing.bytes.rate
+      feature_vdbe_0_subint_untr_vmi_0_vdbe_vdbe_untr_vmi_vdbeav_subinterface_heat_template:
+      - vdbe_vdbe_untr_vmi_vdbeav_subinterface_heat_template
+      - feature_vdbe_0_subint_untr_vmi_0
+      network.outgoing.bytes.rate_vdbe_vdbe_untr_vmi:
+      - vdbe_vdbe_untr_vmi
+      - network.outgoing.bytes.rate
+      network.outgoing.bytes_vdbe_vdbe_trst_0_port:
+      - vdbe_vdbe_trst_0_port
+      - network.outgoing.bytes
+      disk.allocation_vdbe:
+      - vdbe
+      - disk.allocation
+      disk.read.bytes.rate_vdbe:
+      - vdbe
+      - disk.read.bytes.rate
+      network.outgoing.bytes_vdbe_vdbe_fabr_0_port:
+      - vdbe_vdbe_fabr_0_port
+      - network.outgoing.bytes
+      network.outgoing.bytes_vdbe_vdbe_oam_0_port:
+      - vdbe_vdbe_oam_0_port
+      - network.outgoing.bytes
+      os_vdbe:
+      - vdbe
+      - os
+      forwarder_vdbe_vdbe_untr_vmi:
+      - vdbe_vdbe_untr_vmi
+      - forwarder
+      network.incoming.packets.rate_vdbe_vdbe_trst_0_port:
+      - vdbe_vdbe_trst_0_port
+      - network.incoming.packets.rate
+      network.incoming.bytes.rate_vdbe_vdbe_trst_0_port:
+      - vdbe_vdbe_trst_0_port
+      - network.incoming.bytes.rate
+      forwarder_vdbe_vdbe_ctrl_0_port:
+      - vdbe_vdbe_ctrl_0_port
+      - forwarder
+      disk.root.size_vdbe:
+      - vdbe
+      - disk.root.size
+      network.outgoing.packets.rate_vdbe_vdbe_trst_0_port:
+      - vdbe_vdbe_trst_0_port
+      - network.outgoing.packets.rate
+      network.incoming.packets_vdbe_vdbe_ctrl_0_port:
+      - vdbe_vdbe_ctrl_0_port
+      - network.incoming.packets
+      network.outgoing.bytes_vdbe_vdbe_untr_vmi:
+      - vdbe_vdbe_untr_vmi
+      - network.outgoing.bytes
+      memory_vdbe:
+      - vdbe
+      - memory
+      binding_vdbe:
+      - vdbe
+      - binding
+      disk.device.write.bytes_vdbe:
+      - vdbe
+      - disk.device.write.bytes
+      disk.device.read.requests.rate_vdbe:
+      - vdbe
+      - disk.device.read.requests.rate
+      disk.ephemeral.size_vdbe:
+      - vdbe
+      - disk.ephemeral.size
+      network.outpoing.packets_vdbe_vdbe_oam_0_port:
+      - vdbe_vdbe_oam_0_port
+      - network.outpoing.packets
+      feature_vdbe_vdbe_untr_vmi:
+      - vdbe_vdbe_untr_vmi
+      - feature
+      disk.device.write.requests.rate_vdbe:
+      - vdbe
+      - disk.device.write.requests.rate
+      network.incoming.bytes_vdbe_vdbe_oam_0_port:
+      - vdbe_vdbe_oam_0_port
+      - network.incoming.bytes
+      binding_vdbe_vdbe_ctrl_0_port:
+      - vdbe_vdbe_ctrl_0_port
+      - binding
+      feature_vdbe_vdbe_trst_0_port:
+      - vdbe_vdbe_trst_0_port
+      - feature
+      network.incoming.bytes.rate_vdbe_vdbe_oam_0_port:
+      - vdbe_vdbe_oam_0_port
+      - network.incoming.bytes.rate
+      disk.write.bytes.rate_vdbe:
+      - vdbe
+      - disk.write.bytes.rate
+      feature_vdbe_vdbe_untr_vmi_vdbeav_subinterface_heat_template:
+      - vdbe_vdbe_untr_vmi_vdbeav_subinterface_heat_template
+      - feature
+      disk.device.write.requests_vdbe:
+      - vdbe
+      - disk.device.write.requests
+      disk.device.capacity_vdbe:
+      - vdbe
+      - disk.device.capacity
+      disk.usage_vdbe:
+      - vdbe
+      - disk.usage
+      memory.usage_vdbe:
+      - vdbe
+      - memory.usage
+      disk.read.requests_vdbe:
+      - vdbe
+      - disk.read.requests
+      forwarder_vdbe_vdbe_oam_0_port:
+      - vdbe_vdbe_oam_0_port
+      - forwarder
+      network.outpoing.packets_vdbe_vdbe_untr_vmi:
+      - vdbe_vdbe_untr_vmi
+      - network.outpoing.packets
+      network.incoming.packets_vdbe_vdbe_fabr_0_port:
+      - vdbe_vdbe_fabr_0_port
+      - network.incoming.packets
+      cpu.delta_vdbe:
+      - vdbe
+      - cpu.delta
+      network.outgoing.bytes_vdbe_vdbe_ctrl_0_port:
+      - vdbe_vdbe_ctrl_0_port
+      - network.outgoing.bytes
+      disk.device.read.bytes.rate_vdbe:
+      - vdbe
+      - disk.device.read.bytes.rate
+      disk.device.write.bytes.rate_vdbe:
+      - vdbe
+      - disk.device.write.bytes.rate
+      network.incoming.packets_vdbe_vdbe_untr_vmi:
+      - vdbe_vdbe_untr_vmi
+      - network.incoming.packets
+      disk.write.requests.rate_vdbe:
+      - vdbe
+      - disk.write.requests.rate
+      binding_vdbe_vdbe_untr_vmi:
+      - vdbe_vdbe_untr_vmi
+      - binding
+      disk.device.usage_vdbe:
+      - vdbe
+      - disk.device.usage
+      network.outgoing.bytes.rate_vdbe_vdbe_ctrl_0_port:
+      - vdbe_vdbe_ctrl_0_port
+      - network.outgoing.bytes.rate
+      disk.device.read.bytes_vdbe:
+      - vdbe
+      - disk.device.read.bytes
+      forwarder_vdbe_vdbe_fabr_0_port:
+      - vdbe_vdbe_fabr_0_port
+      - forwarder
+      network.incoming.packets.rate_vdbe_vdbe_oam_0_port:
+      - vdbe_vdbe_oam_0_port
+      - network.incoming.packets.rate
+      network.incoming.bytes_vdbe_vdbe_trst_0_port:
+      - vdbe_vdbe_trst_0_port
+      - network.incoming.bytes
+      network.outgoing.packets.rate_vdbe_vdbe_oam_0_port:
+      - vdbe_vdbe_oam_0_port
+      - network.outgoing.packets.rate
+      binding_vdbe_vdbe_fabr_0_port:
+      - vdbe_vdbe_fabr_0_port
+      - binding
+      disk.capacity_vdbe:
+      - vdbe
+      - disk.capacity
+      host_vdbe:
+      - vdbe
+      - host
+      binding_vdbe_vdbe_trst_0_port:
+      - vdbe_vdbe_trst_0_port
+      - binding
+      network.outgoing.packets.rate_vdbe_vdbe_untr_vmi:
+      - vdbe_vdbe_untr_vmi
+      - network.outgoing.packets.rate
+      network.incoming.bytes_vdbe_vdbe_untr_vmi:
+      - vdbe_vdbe_untr_vmi
+      - network.incoming.bytes
+      feature_vdbe_vdbe_fabr_0_port:
+      - vdbe_vdbe_fabr_0_port
+      - feature
+      network.incoming.bytes_vdbe_vdbe_fabr_0_port:
+      - vdbe_vdbe_fabr_0_port
+      - network.incoming.bytes
+      forwarder_vdbe_vdbe_trst_0_port:
+      - vdbe_vdbe_trst_0_port
+      - forwarder
+      disk.device.read.requests_vdbe:
+      - vdbe
+      - disk.device.read.requests
+      disk.read.bytes_vdbe:
+      - vdbe
+      - disk.read.bytes
+    requirements:
+      link_vdbe_vdbe_ctrl_0_port:
+      - vdbe_vdbe_ctrl_0_port
+      - link
+      dependency_vdbe_vdbe_oam_0_port:
+      - vdbe_vdbe_oam_0_port
+      - dependency
+      link_vdbe_vdbe_trst_0_port:
+      - vdbe_vdbe_trst_0_port
+      - link
+      link_vdbe_vdbe_fabr_0_port:
+      - vdbe_vdbe_fabr_0_port
+      - link
+      local_storage_vdbe:
+      - vdbe
+      - local_storage
+      dependency_vdbe_vdbe_fabr_0_port:
+      - vdbe_vdbe_fabr_0_port
+      - dependency
+      link_vdbe_vdbe_oam_0_port:
+      - vdbe_vdbe_oam_0_port
+      - link
+      dependency_vdbe:
+      - vdbe
+      - dependency
+      dependency_vdbe_vdbe_ctrl_0_port:
+      - vdbe_vdbe_ctrl_0_port
+      - dependency
+      link_vdbe_vdbe_untr_vmi:
+      - vdbe_vdbe_untr_vmi
+      - link
+      dependency_vdbe_vdbe_untr_vmi_vdbeav_subinterface_heat_template:
+      - vdbe_vdbe_untr_vmi_vdbeav_subinterface_heat_template
+      - dependency
+      dependency_vdbe_vdbe_trst_0_port:
+      - vdbe_vdbe_trst_0_port
+      - dependency
+      dependency_vdbe_0_subint_untr_vmi_0_vdbe_vdbe_untr_vmi_vdbeav_subinterface_heat_template:
+      - vdbe_vdbe_untr_vmi_vdbeav_subinterface_heat_template
+      - dependency_vdbe_0_subint_untr_vmi_0
+      dependency_vdbe_vdbe_untr_vmi:
+      - vdbe_vdbe_untr_vmi
+      - dependency
+      subinterface_link_vdbe_0_subint_untr_vmi_0_vdbe_vdbe_untr_vmi_vdbeav_subinterface_heat_template:
+      - vdbe_vdbe_untr_vmi_vdbeav_subinterface_heat_template
+      - subinterface_link_vdbe_0_subint_untr_vmi_0

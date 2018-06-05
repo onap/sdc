@@ -1,0 +1,176 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: vdbeav_subinterface_heat_template
+imports:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+- GlobalSubstitutionTypes:
+    file: GlobalSubstitutionTypesServiceTemplate.yaml
+topology_template:
+  inputs:
+    aap_untrusted_ip_prefix:
+      hidden: false
+      immutable: false
+      type: string
+      description: ip prefix for primary vDBE VM on the VAN untrusted network
+    aap_sec_untrusted_ip_prefix:
+      hidden: false
+      immutable: false
+      type: string
+      description: ip prefix for secondary vDBE VM aap on the VAN untrusted network
+    ip_v6_address:
+      hidden: false
+      immutable: false
+      type: string
+      description: IPv6 address associated with subinterfaces
+    counter:
+      hidden: false
+      immutable: false
+      type: float
+      description: Index of instance among multiple instances.  Use to retrieve correct parameter for this instance when passed all parameters for all instances.
+    subinterfaces_name_prefix:
+      hidden: false
+      immutable: false
+      type: string
+      description: Combined with subinterface_instance_index, this is used as the name of the subinterface resource
+    ip_address:
+      hidden: false
+      immutable: false
+      type: string
+      description: IPv4 address associated with subinterfaces
+    aap_address_mode:
+      hidden: false
+      immutable: false
+      type: string
+      description: Address mode for the vDBE cluster IP
+    parent_interface:
+      hidden: false
+      immutable: false
+      type: string
+      description: Parent Contrail interface
+    aap_untrusted_v6_ip_prefix:
+      hidden: false
+      immutable: false
+      type: string
+      description: ipv6 prefix for the primary vDBE VM on the VAN untrusted network
+    vn_network_list:
+      hidden: false
+      immutable: false
+      type: list
+      description: List of Contrail VLAN networks to use for the subinterfaces.   The order and number of these must match the VLAN ID list
+      entry_schema:
+        type: string
+    mac_address:
+      hidden: false
+      immutable: false
+      type: string
+      description: HW MAC address to use for subinterface
+    vlan_tag_list:
+      hidden: false
+      immutable: false
+      type: list
+      description: List of VLAN IDs to use for subinterfaces
+      entry_schema:
+        type: string
+    vmac_address:
+      hidden: false
+      immutable: false
+      type: string
+      description: virtual MAC address to use for subinterface
+    aap_sec_untrusted_ip_prefix_len:
+      hidden: false
+      immutable: false
+      type: string
+      description: ip prefix length for the secondary DBE VM aap on the VAN untrusted network
+    aap_untrusted_v6_ip_prefix_len:
+      hidden: false
+      immutable: false
+      type: string
+      description: ipv6 prefix length for the primary vDBE VM on the VAN untrusted network
+    aap_untrusted_ip_prefix_len:
+      hidden: false
+      immutable: false
+      type: string
+      description: ip prefix length for the primary vDBE VM on the VAN untrusted network
+  node_templates:
+    vdbe_0_subint_untr_vmi_0:
+      type: org.openecomp.resource.cp.nodes.heat.network.v2.contrailV2.VLANSubInterface
+      properties:
+        virtual_machine_interface_refs:
+        - get_input: parent_interface
+        name:
+          str_replace:
+            template: $NAME_$INDEX
+            params:
+              $NAME:
+                get_input: subinterfaces_name_prefix
+              $INDEX:
+                get_input:
+                - vlan_tag_list
+                - get_input: counter
+        virtual_network_refs:
+        - get_input:
+          - vn_network_list
+          - get_input: counter
+        virtual_machine_interface_properties:
+          sub_interface_vlan_tag:
+            get_input:
+            - vlan_tag_list
+            - get_input: counter
+        virtual_machine_interface_allowed_address_pairs:
+          allowed_address_pair:
+          - address_mode:
+              get_input: aap_address_mode
+            ip:
+              ip_prefix:
+                get_input: aap_untrusted_ip_prefix
+              ip_prefix_len:
+                get_input: aap_untrusted_ip_prefix_len
+            mac:
+              get_input: vmac_address
+          - address_mode:
+              get_input: aap_address_mode
+            ip:
+              ip_prefix:
+                get_input: aap_sec_untrusted_ip_prefix
+              ip_prefix_len:
+                get_input: aap_sec_untrusted_ip_prefix_len
+            mac:
+              get_input: mac_address
+          - address_mode:
+              get_input: aap_address_mode
+            ip:
+              ip_prefix:
+                get_input: aap_untrusted_v6_ip_prefix
+              ip_prefix_len:
+                get_input: aap_untrusted_v6_ip_prefix_len
+            mac:
+              get_input: vmac_address
+        virtual_machine_interface_mac_addresses:
+          mac_address:
+          - get_input: mac_address
+  groups:
+    vdbeav_subinterface_heat_template_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/vdbeav_subinterface_heat_template.yaml
+        description: |
+          HOT template to instantiate a single Contrail VLAN sub-interface with associated instance IP addresses and allowed address pairs
+      members:
+      - vdbe_0_subint_untr_vmi_0
+  substitution_mappings:
+    node_type: org.openecomp.resource.abstract.nodes.heat.subinterface.vdbeav_subinterface_heat_template
+    capabilities:
+      feature_vdbe_0_subint_untr_vmi_0:
+      - vdbe_0_subint_untr_vmi_0
+      - feature
+    requirements:
+      dependency_vdbe_0_subint_untr_vmi_0:
+      - vdbe_0_subint_untr_vmi_0
+      - dependency
+      subinterface_link_vdbe_0_subint_untr_vmi_0:
+      - vdbe_0_subint_untr_vmi_0
+      - subinterface_link
+      binding_vdbe_0_subint_untr_vmi_0:
+      - vdbe_0_subint_untr_vmi_0
+      - binding
