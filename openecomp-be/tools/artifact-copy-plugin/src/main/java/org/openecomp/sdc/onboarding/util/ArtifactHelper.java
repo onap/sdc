@@ -49,6 +49,7 @@ public class ArtifactHelper {
     private static File unicornMetaLocation = null;
     private File tempLocation = Paths.get(System.getProperties().getProperty("java.io.tmpdir")).toFile();
     private static int snapshotBuildNumber = 0;
+    private static final String HYPHEN = "-";
 
     void init(String terminalModuleCoordinate) {
         setUnicornMetaLocation(getUnicornRootFile(unicornRoot.substring(0, unicornRoot.indexOf('/')), project));
@@ -141,11 +142,13 @@ public class ArtifactHelper {
             try (InputStream is = new FileInputStream(file); ObjectInputStream ois = new ObjectInputStream(is)) {
                 dataStore = HashMap.class.cast(ois.readObject());
                 dataStore.put("shutdownTime", (System.currentTimeMillis() / 1000) * 1000 + snapshotBuildNumber);
+                dataStore.put("version", project.getVersion());
             }
             try (OutputStream os = new FileOutputStream(file); ObjectOutputStream oos = new ObjectOutputStream(os)) {
                 oos.writeObject(dataStore);
             }
-            Files.copy(file.toPath(), Paths.get(tempLocation.getAbsolutePath(), file.getName()),
+            Files.copy(file.toPath(),
+                    Paths.get(tempLocation.getAbsolutePath(), file.getName() + HYPHEN + project.getVersion()),
                     StandardCopyOption.REPLACE_EXISTING);
         }
     }

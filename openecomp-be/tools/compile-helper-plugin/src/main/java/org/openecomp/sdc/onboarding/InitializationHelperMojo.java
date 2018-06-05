@@ -18,7 +18,8 @@ package org.openecomp.sdc.onboarding;
 
 import static org.openecomp.sdc.onboarding.Constants.FORK_COUNT;
 import static org.openecomp.sdc.onboarding.Constants.FORK_MODE;
-import static org.openecomp.sdc.onboarding.Constants.JACOCO_SKIP;
+import static org.openecomp.sdc.onboarding.Constants.JACOCO;
+import static org.openecomp.sdc.onboarding.Constants.JACOCO_BUILD;
 import static org.openecomp.sdc.onboarding.Constants.PREFIX;
 import static org.openecomp.sdc.onboarding.Constants.SKIP_PMD;
 import static org.openecomp.sdc.onboarding.Constants.UNICORN;
@@ -45,15 +46,13 @@ public class InitializationHelperMojo extends AbstractMojo {
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
-        if (PREFIX == UNICORN) {
+        if (PREFIX == UNICORN || JACOCO == UNICORN) {
             System.getProperties().setProperty(UNICORN, Boolean.TRUE.toString());
         }
         if (project.getPackaging().equals(excludePackaging)) {
             return;
         }
-        project.getProperties().setProperty("skipGet", Boolean.FALSE.toString());
-        if (System.getProperties().containsKey(JACOCO_SKIP) && Boolean.FALSE.equals(Boolean.valueOf(
-                System.getProperties().getProperty(JACOCO_SKIP)))) {
+        if (Boolean.valueOf(JACOCO_BUILD)) {
             project.getProperties().setProperty(FORK_COUNT, "1");
             project.getProperties().setProperty(FORK_MODE, "once");
         } else {

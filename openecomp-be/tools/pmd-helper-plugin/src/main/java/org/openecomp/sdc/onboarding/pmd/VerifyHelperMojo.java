@@ -128,7 +128,11 @@ public class VerifyHelperMojo extends AbstractMojo {
 
     private void removeProcessFiles() {
         if (moduleCoordinates.equals(persistingModuleCoordinates) && pmdStateFile.exists()) {
-            pmdStateFile.delete();
+            for (File file : pmdStateFile.getParentFile().listFiles()) {
+                if (file.isFile()) {
+                    file.delete();
+                }
+            }
         }
         if (pmdTargetLocation.exists()) {
             pmdTargetLocation.delete();

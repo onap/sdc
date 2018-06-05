@@ -21,22 +21,26 @@ public class Constants {
 
     public static final String UNICORN = "unicorn";
     public static final String EMPTY_STRING = "";
-    public static final String PREFIX = System.getProperties().contains(UNICORN) ? EMPTY_STRING : UNICORN;
     public static final String JACOCO_SKIP = "jacoco.skip";
+    public static final String JACOCO_BUILD = Boolean.toString(
+            System.getProperties().containsKey(JACOCO_SKIP) && Boolean.FALSE.equals(Boolean.valueOf(
+                    System.getProperties().getProperty(JACOCO_SKIP))));
+    public static final String JACOCO = Boolean.valueOf(JACOCO_BUILD) ? UNICORN : EMPTY_STRING;
+    public static final String PREFIX = System.getProperties().contains(UNICORN) ? EMPTY_STRING : UNICORN;
     public static final String FORK_COUNT = "fork.count";
     public static final String FORK_MODE = "fork.mode";
     public static final String SKIP_PMD = "skipPMD";
     public static final String JAVA_EXT = ".java";
     public static final String ANY_EXT = "*";
-    public static final String SKIP_TEST_RUN = PREFIX + "skipTestRun";
+    public static final String SKIP_TEST_RUN = PREFIX + JACOCO + "skipTestRun";
     public static final String SKIP_TESTS = "skipTests";
     public static final String MAIN = "main";
     public static final String TEST = "test";
     public static final String RESOURCES_CHANGED = "resourcesChanged";
     public static final String ANSI_YELLOW = "\u001B[43m";
     public static final String ANSI_COLOR_RESET = "\u001B[0m";
-    public static final String SKIP_MAIN_SOURCE_COMPILE = PREFIX + "skipMainSourceCompile";
-    public static final String SKIP_TEST_SOURCE_COMPILE = PREFIX + "skipTestSourceCompile";
+    public static final String SKIP_MAIN_SOURCE_COMPILE = PREFIX + JACOCO + "skipMainSourceCompile";
+    public static final String SKIP_TEST_SOURCE_COMPILE = PREFIX + JACOCO + "skipTestSourceCompile";
     public static final String MAIN_CHECKSUM = "mainChecksum";
     public static final String CHECKSUM = "checksum";
     public static final String TEST_CHECKSUM = "testChecksum";
@@ -60,8 +64,8 @@ public class Constants {
     public static final String RESOURCE_WITH_TEST_ONLY = "resourceWithTestOnly";
     public static final String INSTRUMENT_ONLY = "instrumentOnly";
     public static final String TEST_ONLY = "testOnly";
-    public static final String SKIP_RESOURCE_COLLECTION = PREFIX + "skipResourceCollection";
-    public static final String SKIP_INSTALL = PREFIX + "skipInstall";
+    public static final String SKIP_RESOURCE_COLLECTION = PREFIX + JACOCO + "skipResourceCollection";
+    public static final String SKIP_INSTALL = PREFIX + JACOCO + "skipInstall";
 
 
     private Constants() {
