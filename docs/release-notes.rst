@@ -9,27 +9,12 @@ Version: 1.2.0
 
 :Release Date: 2018-06-07
 
-Security Notes
---------------
-
-SDC code has been formally scanned during build time using NexusIQ and all Critical vulnerabilities have been addressed, items that remain open have been assessed for risk and determined to be false positive. The SDC open Critical security vulnerabilities and their risk assessment have been documented as part of the `project <https://wiki.onap.org/pages/viewpage.action?pageId=28377537>`_.
-
-Quick Links:
- 	- `SDC project page <https://wiki.onap.org/pages/viewpage.action?pageId=6592847>`_
-
- 	- `Passing Badge information for SDC <https://bestpractices.coreinfrastructure.org/en/projects/1629>`_
-
- 	- `Project Vulnerability Review Table for SDC <https://wiki.onap.org/pages/viewpage.action?pageId=28377537>`_
-
-
 SDC SDKs Versions
 -----------------
 
 -  sdc-distribution-client
 
    :Version: 1.3.0
-
-|
 
 -  sdc-tosca
 
@@ -53,7 +38,6 @@ The main goal of the Beijing release was to:
 
 DCAE-D information is available here: `DCAE-DS <https://wiki.onap.org/display/DW/SDC-DCAE-D>`_
 Workflow information is available in readthedocs
-
 
 **Epics**
 
@@ -459,36 +443,37 @@ Workflow information is available in readthedocs
 -  [`SDC-1376 <https://jira.onap.org/browse/SDC-1376>`__\ ] - dcae_fe: Update context path to dcaed
 -  [`SDC-1382 <https://jira.onap.org/browse/SDC-1382>`__\ ] - "Property Assignment" does not show the list of properties in OOM-deployed env
 
-Issues
-------
+Security Notes
+--------------
+
+SDC code has been formally scanned during build time using NexusIQ and all Critical vulnerabilities have been addressed, items that remain open have been assessed for risk and determined to be false positive. The SDC open Critical security vulnerabilities and their risk assessment have been documented as part of the `project <https://wiki.onap.org/pages/viewpage.action?pageId=28377537>`_.
+
+Quick Links:
+
+- `SDC project page <https://wiki.onap.org/pages/viewpage.action?pageId=6592847>`_
+- `Passing Badge information for SDC <https://bestpractices.coreinfrastructure.org/en/projects/1629>`_
+- `Project Vulnerability Review Table for SDC <https://wiki.onap.org/pages/viewpage.action?pageId=28377537>`_
 
 **Known Issues**
 -  [`SDC-1380 <https://jira.onap.org/browse/SDC-1380>`__\ ] - Missing Inheritance of VduCp in SDC distributed CSAR package
 -  [`SDC-1182 <https://jira.onap.org/browse/SDC-1182>`__\ ] - SDC must no log serviceInstanceID and SERVICE_INSTANCE_ID
 
-
-Notes
------
-
 **Upgrade Notes**
+
+	N/A
 
 **Deprecation Notes**
 
+	N/A
+
 **Other**
 
-===========
-
-End of Release Notes
-
-
-
+	N/A
 
 Version: 1.1.0
 ==============
 
 :Release Date: 2017-11-15
-
-
 
 SDC SDKs Versions
 -----------------
@@ -496,8 +481,6 @@ SDC SDKs Versions
 -  sdc-distribution-client
 
    :Version: 1.1.32
-
-|
 
 -  sdc-tosca
 
@@ -713,12 +696,8 @@ Main Fetures
 -  [`SDC-623 <https://jira.onap.org/browse/SDC-623>`__\ ] - Independent
    Versioning and Release Process
 
-
-
-
 Bug Fixes
 ---------
-
 
 -  [`SDC-160 <https://jira.onap.org/browse/SDC-160>`__\ ] - substitution
    mapping problem
@@ -850,27 +829,20 @@ Bug Fixes
 -  [`SDC-561 <https://jira.onap.org/browse/SDC-561>`__\ ] - SDC version
    1.1.32 is not available in nexus, blocking SO docker build
 
-
-Issues
-------
-
 **Known Issues**
 
 	N/A
 
-
-Notes
------
-
 **Upgrade Notes**
 
-n Beijing back word compatibility to Amsterdam is not supported.
+Beijing back word compatibility to Amsterdam is not supported.
 
 **Deprecation Notes**
 
+	N/A
+
 **Other**
 
-===========
+	N/A
 
 End of Release Notes
-
