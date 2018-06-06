@@ -110,7 +110,7 @@ public class InitializationHelperMojo extends AbstractMojo {
                     byte[] data = fetchContents(repo.getUrl(), artifactId, timestamp + "-" + buildNumber);
                     artifactHelper.store(artifactId, data);
                     getLog().info(artifactId + " Version to be copied is " + timestamp + "-" + buildNumber);
-                    ArtifactHelper.setSnapshotBuildNumber(Integer.parseInt(buildNumber));
+                    ArtifactHelper.setSnapshotBuildNumber(Integer.parseInt(buildNumber) + 1);
                     return timestamp + "-" + buildNumber;
                 }
             } catch (IOException e) {

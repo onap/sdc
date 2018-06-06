@@ -48,6 +48,8 @@ import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.RecursiveTask;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
@@ -56,6 +58,7 @@ class BuildHelper {
 
 
     private static Map<String, String> store = new HashMap<>();
+    private static Logger log = Logger.getAnonymousLogger();
 
     private BuildHelper() {
         // donot remove.
@@ -77,6 +80,7 @@ class BuildHelper {
             store.put(key, signature);
             return signature;
         } catch (IOException | NoSuchAlgorithmException e) {
+            log.log(Level.FINE, e.getMessage(), e);
             return version;
         }
 
@@ -229,6 +233,7 @@ class BuildHelper {
              ObjectInputStream ois = new ObjectInputStream(is)) {
             return Optional.of(clazz.cast(ois.readObject()));
         } catch (Exception ignored) {
+            log.log(Level.FINE, ignored.getMessage(), ignored);
             return Optional.empty();
         }
     }
