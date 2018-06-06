@@ -23,6 +23,7 @@ package org.openecomp.sdc.be.model;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.utils.MapUtil;
@@ -324,8 +325,7 @@ public class Resource extends Component implements Serializable {
 	}
 
 	private String getInstanceNameFromInstanceId(Resource resource, String instId) {
-		return resource.getComponentInstanceById(instId).get().getName();
+		Optional<ComponentInstance> componentInstanceById = resource.getComponentInstanceById(instId);
+		return componentInstanceById.isPresent() ? componentInstanceById.get().getName() : null;
 	}
-
-
 }

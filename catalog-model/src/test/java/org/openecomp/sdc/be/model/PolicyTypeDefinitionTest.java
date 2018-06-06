@@ -3,6 +3,7 @@ package org.openecomp.sdc.be.model;
 import java.util.List;
 
 import org.junit.Test;
+import org.openecomp.sdc.be.datatypes.elements.PolicyTypeDataDefinition;
 
 
 public class PolicyTypeDefinitionTest {
@@ -11,6 +12,10 @@ public class PolicyTypeDefinitionTest {
 		return new PolicyTypeDefinition();
 	}
 
+	@Test
+	public void testCtor() throws Exception {
+		new PolicyTypeDefinition(new PolicyTypeDataDefinition());
+	}
 	
 	@Test
 	public void testGetProperties() throws Exception {

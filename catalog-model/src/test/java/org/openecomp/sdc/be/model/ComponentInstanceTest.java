@@ -168,5 +168,7 @@ public class ComponentInstanceTest {
 		// default test
 		testSubject = createTestSubject();
 		result = testSubject.isArtifactExists(groupType, artifactLabel);
+		testSubject = createTestSubject();
+		result = testSubject.isArtifactExists(ArtifactGroupTypeEnum.DEPLOYMENT, artifactLabel);
 	}
 }

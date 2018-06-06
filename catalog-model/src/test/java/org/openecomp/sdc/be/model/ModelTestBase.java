@@ -31,16 +31,15 @@ public class ModelTestBase {
 	protected static ConfigurationManager configurationManager;
 
 	public static void init() {
-		if (ConfigurationManager.getConfigurationManager() == null) {
-			String appConfigDir = "src/test/resources/config";
-			ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(), appConfigDir);
-			configurationManager = new ConfigurationManager(configurationSource);
+		String appConfigDir = "src/test/resources/config";
+		ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(),
+				appConfigDir);
+		configurationManager = new ConfigurationManager(configurationSource);
 
-			Configuration configuration = new Configuration();
-			
-			configuration.setTitanInMemoryGraph(true);
+		Configuration configuration = new Configuration();
 
-			configurationManager.setConfiguration(configuration);
-		}
+		configuration.setTitanInMemoryGraph(true);
+
+		configurationManager.setConfiguration(configuration);
 	}
 }
