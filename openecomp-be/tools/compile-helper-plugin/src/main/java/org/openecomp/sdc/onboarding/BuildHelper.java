@@ -16,8 +16,13 @@
 
 package org.openecomp.sdc.onboarding;
 
-import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.project.MavenProject;
+import static org.openecomp.sdc.onboarding.Constants.CHECKSUM;
+import static org.openecomp.sdc.onboarding.Constants.COLON;
+import static org.openecomp.sdc.onboarding.Constants.DOT;
+import static org.openecomp.sdc.onboarding.Constants.JAR;
+import static org.openecomp.sdc.onboarding.Constants.JAVA_EXT;
+import static org.openecomp.sdc.onboarding.Constants.SHA1;
+import static org.openecomp.sdc.onboarding.Constants.UNICORN;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -35,7 +40,6 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -43,41 +47,45 @@ import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.RecursiveTask;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
-import java.util.stream.Collectors;
-
-import static org.openecomp.sdc.onboarding.Constants.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.stream.Stream;
+import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.project.MavenProject;
 
 class BuildHelper {
 
 
-    private static Map<String, String> store = new HashMap<>();
+    private static final Map<String, String> STORE = new HashMap<>();
+    private static final Logger LOG = Logger.getAnonymousLogger();
 
     private BuildHelper() {
-        // donot remove.
+        // do not remove.
     }
 
     static String getSnapshotSignature(File snapshotFile, String moduleCoordinate, String version) {
         String key = moduleCoordinate + ":" + version;
-        String signature = store.get(key);
+        String signature = STORE.get(key);
         if (signature != null) {
             return signature;
         }
         try {
             signature = new String(fetchSnapshotSignature(snapshotFile, version));
             if (version.equals(signature)) {
-                signature = getSHA1For(snapshotFile, Paths.get(snapshotFile.getParentFile().getAbsolutePath(),
+                signature = getSha1For(snapshotFile, Paths.get(snapshotFile.getParentFile().getAbsolutePath(),
                         moduleCoordinate.substring(moduleCoordinate.indexOf(':') + 1) + "-" + version + DOT + JAR + DOT
                                 + SHA1).toFile());
             }
-            store.put(key, signature);
+            STORE.put(key, signature);
             return signature;
         } catch (IOException | NoSuchAlgorithmException e) {
+            LOG.log(Level.FINE, e.getMessage(), e);
             return version;
         }
 
     }
 
-    private static String getSHA1For(File file, File signatureFile) throws IOException, NoSuchAlgorithmException {
+    private static String getSha1For(File file, File signatureFile) throws IOException, NoSuchAlgorithmException {
         if (signatureFile.exists()) {
             return new String(Files.readAllBytes(signatureFile.toPath()));
         }
@@ -111,14 +119,19 @@ class BuildHelper {
 
     private static Map<String, List<String>> readSources(File file, String fileType) throws IOException {
         Map<String, List<String>> source = new HashMap<>();
-        if (file.exists()) {
-            List<File> list = Files.walk(Paths.get(file.getAbsolutePath()))
-                                   .filter(JAVA_EXT.equals(fileType) ? BuildHelper::isRegularJavaFile :
-                                                   Files::isRegularFile).map(Path::toFile).collect(Collectors.toList());
-            source.putAll(ForkJoinPool.commonPool()
-                                      .invoke(new FileReadTask(list.toArray(new File[0]), file.getAbsolutePath())));
+
+        if (!file.exists()) {
+            return source;
         }
-        return source;
+
+        try (Stream<Path> pathStream = Files.walk(Paths.get(file.getAbsolutePath()))) {
+            File[] selectedFiles = pathStream.filter(
+                    JAVA_EXT.equals(fileType) ? BuildHelper::isRegularJavaFile : Files::isRegularFile)
+                                           .map(Path::toFile).toArray(File[]::new);
+            source.putAll(ForkJoinPool.commonPool()
+                                  .invoke(new FileReadTask(selectedFiles, file.getAbsolutePath())));
+            return source;
+        }
     }
 
     private static boolean isRegularJavaFile(Path path) {
@@ -128,9 +141,9 @@ class BuildHelper {
 
     private static class FileReadTask extends RecursiveTask<Map<String, List<String>>> {
 
-        private Map<String, List<String>> store = new HashMap<>();
-        File[] files;
-        String pathPrefix;
+        private final Map<String, List<String>> store = new HashMap<>();
+        final File[] files;
+        final String pathPrefix;
         private static final int MAX_FILES = 10;
 
         FileReadTask(File[] files, String pathPrefix) {
@@ -141,13 +154,7 @@ class BuildHelper {
         private static List<String> getData(File file) throws IOException {
             List<String> coll = Files.readAllLines(file.toPath(), StandardCharsets.ISO_8859_1);
             if (file.getAbsolutePath().contains(File.separator + "generated-sources" + File.separator)) {
-                Iterator<String> itr = coll.iterator();
-                while (itr.hasNext()) {
-                    String s = itr.next();
-                    if (s == null || s.trim().startsWith("/") || s.trim().startsWith("*")) {
-                        itr.remove();
-                    }
-                }
+                coll.removeIf(s -> s == null || s.trim().startsWith("/") || s.trim().startsWith("*"));
             }
             return coll;
         }
@@ -180,9 +187,9 @@ class BuildHelper {
 
     static Optional<String> getArtifactPathInLocalRepo(String repoPath, MavenProject project, byte[] sourceChecksum)
             throws MojoFailureException {
-        store.put(project.getGroupId() + COLON + project.getArtifactId() + COLON + project.getVersion(),
+        STORE.put(project.getGroupId() + COLON + project.getArtifactId() + COLON + project.getVersion(),
                 new String(sourceChecksum));
-        URI uri = null;
+        URI uri;
         try {
             uri = new URI(repoPath + (project.getGroupId().replace('.', '/')) + '/' + project.getArtifactId() + '/'
                                   + project.getVersion());
@@ -205,14 +212,16 @@ class BuildHelper {
     }
 
     private static byte[] fetchSnapshotSignature(File file, String version) throws IOException {
+
         byte[] data = Files.readAllBytes(file.toPath());
-        try (ByteArrayInputStream bais = new ByteArrayInputStream(data);
-             JarInputStream jis = new JarInputStream(bais)) {
-            JarEntry entry = null;
-            while ((entry = jis.getNextJarEntry()) != null) {
+        try (ByteArrayInputStream byteInputStream = new ByteArrayInputStream(data);
+                JarInputStream jarInputStream = new JarInputStream(byteInputStream)) {
+
+            JarEntry entry;
+            while ((entry = jarInputStream.getNextJarEntry()) != null) {
                 if (entry.getName().endsWith(UNICORN + DOT + CHECKSUM)) {
                     byte[] sigStore = new byte[1024];
-                    return new String(sigStore, 0, jis.read(sigStore, 0, 1024)).getBytes();
+                    return new String(sigStore, 0, jarInputStream.read(sigStore, 0, 1024)).getBytes();
                 }
             }
         }
@@ -220,10 +229,12 @@ class BuildHelper {
     }
 
     static <T> Optional<T> readState(String fileName, Class<T> clazz) {
+
         try (InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(fileName);
-             ObjectInputStream ois = new ObjectInputStream(is)) {
+                ObjectInputStream ois = new ObjectInputStream(is)) {
             return Optional.of(clazz.cast(ois.readObject()));
-        } catch (Exception ignored) {
+        } catch (Exception e) {
+            LOG.log(Level.FINE, e.getMessage(), e);
             return Optional.empty();
         }
     }

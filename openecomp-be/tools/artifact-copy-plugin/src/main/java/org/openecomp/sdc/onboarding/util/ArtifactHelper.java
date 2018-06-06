@@ -44,11 +44,11 @@ public class ArtifactHelper {
 
     private MavenProject project;
     private MavenSession session;
-    private static Map<String, byte[]> store = new HashMap<>();
-    private static Set<String> terminalModuleCoordinates = new HashSet<>();
+    private static final Map<String, byte[]> store = new HashMap<>();
+    private static final Set<String> terminalModuleCoordinates = new HashSet<>();
     private String unicornRoot = null;
     private static File unicornMetaLocation = null;
-    private File tempLocation = Paths.get(System.getProperties().getProperty("java.io.tmpdir")).toFile();
+    private final File tempLocation = Paths.get(System.getProperties().getProperty("java.io.tmpdir")).toFile();
     private static int snapshotBuildNumber = 0;
     private static final String HYPHEN = "-";
 
@@ -95,8 +95,8 @@ public class ArtifactHelper {
     }
 
     String getContents(URL path) throws IOException {
-        try (InputStream is = path.openStream(); Scanner scnr = new Scanner(is).useDelimiter("\\A")) {
-            return scnr.hasNext() ? scnr.next() : "";
+        try (InputStream is = path.openStream(); Scanner scanner = new Scanner(is).useDelimiter("\\A")) {
+            return scanner.hasNext() ? scanner.next() : "";
         }
     }
 
@@ -105,11 +105,19 @@ public class ArtifactHelper {
     }
 
     void deleteAll(File f) {
-        if (!f.exists() && !f.isDirectory()) {
+
+        if (!f.exists() || !f.isDirectory()) {
             return;
         }
-        for (File file : f.listFiles()) {
-            if (f.isFile()) {
+
+        File[] fileList = f.listFiles();
+        if (fileList == null) {
+            return;
+        }
+
+        for (File file : fileList) {
+
+            if (file.isFile()) {
                 file.delete();
             }
         }
@@ -119,30 +127,32 @@ public class ArtifactHelper {
         return project.getGroupId() + ":" + project.getArtifactId();
     }
 
-    private File getUnicornRootFile(String moduleCoordinate, MavenProject proj) {
-        return getStateFile(moduleCoordinate, proj, unicornRoot);
+    private File getUnicornRootFile(String moduleCoordinate, MavenProject mavenProject) {
+        return getStateFile(moduleCoordinate, mavenProject, unicornRoot);
     }
 
-    private File getStateFile(String moduleCoordinate, MavenProject proj, String filePath) {
-        return new File(getTopParentProject(moduleCoordinate, proj).getBasedir(),
+    private File getStateFile(String moduleCoordinate, MavenProject mavenProject, String filePath) {
+        return new File(getTopParentProject(moduleCoordinate, mavenProject).getBasedir(),
                 filePath.substring(filePath.indexOf('/') + 1));
     }
 
-    MavenProject getTopParentProject(String moduleCoordinate, MavenProject proj) {
-        if (getModuleCoordinate(proj).equals(moduleCoordinate) || proj.getParent() == null) {
-            return proj;
+    MavenProject getTopParentProject(String moduleCoordinate, MavenProject mavenProject) {
+        if (getModuleCoordinate(mavenProject).equals(moduleCoordinate) || mavenProject.getParent() == null) {
+            return mavenProject;
         } else {
-            return getTopParentProject(moduleCoordinate, proj.getParent());
+            return getTopParentProject(moduleCoordinate, mavenProject.getParent());
         }
     }
 
     void shutDown(MavenProject project) throws IOException, ClassNotFoundException {
         File file = new File(unicornMetaLocation, "compileState.dat");
-        Map dataStore = null;
+        HashMap dataStore;
         if (isModuleTerminal(project) && file.exists()) {
             try (InputStream is = new FileInputStream(file); ObjectInputStream ois = new ObjectInputStream(is)) {
-                dataStore = HashMap.class.cast(ois.readObject());
+                dataStore = (HashMap) ois.readObject();
+                //noinspection unchecked
                 dataStore.put("shutdownTime", (System.currentTimeMillis() / 1000) * 1000 + snapshotBuildNumber);
+                //noinspection unchecked
                 dataStore.put("version", project.getVersion());
             }
             try (OutputStream os = new FileOutputStream(file); ObjectOutputStream oos = new ObjectOutputStream(os)) {
