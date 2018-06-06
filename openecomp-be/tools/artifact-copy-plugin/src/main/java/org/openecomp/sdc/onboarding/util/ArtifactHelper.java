@@ -104,11 +104,11 @@ public class ArtifactHelper {
     }
 
     void deleteAll(File f) {
-        if (!f.exists() && !f.isDirectory()) {
+        if (!f.exists() || !f.isDirectory()) {
             return;
         }
         for (File file : f.listFiles()) {
-            if (f.isFile()) {
+            if (file.isFile()) {
                 file.delete();
             }
         }
