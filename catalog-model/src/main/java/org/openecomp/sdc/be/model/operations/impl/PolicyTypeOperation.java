@@ -20,8 +20,15 @@
 
 package org.openecomp.sdc.be.model.operations.impl;
 
-import com.thinkaurelius.titan.graphdb.query.TitanPredicate;
-import fj.data.Either;
+import static org.openecomp.sdc.be.dao.titan.TitanUtils.buildNotInPredicate;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphRelation;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
@@ -40,14 +47,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
+import com.thinkaurelius.titan.graphdb.query.TitanPredicate;
 
-import static org.openecomp.sdc.be.dao.titan.TitanUtils.buildNotInPredicate;
+import fj.data.Either;
 
 @Component("policy-type-operation")
 public class PolicyTypeOperation extends AbstractOperation implements IPolicyTypeOperation {

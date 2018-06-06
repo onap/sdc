@@ -20,12 +20,12 @@
 
 package org.openecomp.sdc.be.model;
 
-import org.apache.commons.collections.MapUtils;
-import org.apache.commons.lang3.tuple.Pair;
-
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang3.tuple.Pair;
 
 public class ComponentInstInputsMap implements Serializable {
 

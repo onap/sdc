@@ -1,9 +1,10 @@
 package org.openecomp.sdc.be.model.operations.api;
 
-import fj.data.Either;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphNode;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphRelation;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
+
+import fj.data.Either;
 
 public interface DerivedFromOperation {
 

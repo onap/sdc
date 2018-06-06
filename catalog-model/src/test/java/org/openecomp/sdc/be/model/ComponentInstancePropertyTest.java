@@ -3,6 +3,7 @@ package org.openecomp.sdc.be.model;
 import java.util.List;
 
 import org.junit.Test;
+import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyRule;
 
 
@@ -12,6 +13,13 @@ public class ComponentInstancePropertyTest {
 		return new ComponentInstanceProperty();
 	}
 
+	@Test
+	public void testCtor() throws Exception {
+		new ComponentInstanceProperty(new PropertyDataDefinition());
+		new ComponentInstanceProperty(new PropertyDefinition());
+		new ComponentInstanceProperty(false, new PropertyDefinition(), "mock");
+		new ComponentInstanceProperty(new PropertyDefinition(), "mock", "mock");
+	}
 	
 	@Test
 	public void testGetComponentInstanceName() throws Exception {

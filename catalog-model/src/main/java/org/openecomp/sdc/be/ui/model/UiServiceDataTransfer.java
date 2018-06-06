@@ -20,10 +20,10 @@
 
 package org.openecomp.sdc.be.ui.model;
 
+import java.util.Map;
+
 import org.openecomp.sdc.be.datatypes.elements.ForwardingPathDataDefinition;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
-
-import java.util.Map;
 public class UiServiceDataTransfer extends UiComponentDataTransfer {
 	
 

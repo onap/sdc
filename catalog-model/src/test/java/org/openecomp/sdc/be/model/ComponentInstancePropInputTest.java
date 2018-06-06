@@ -9,6 +9,10 @@ public class ComponentInstancePropInputTest {
 		return new ComponentInstancePropInput();
 	}
 
+	@Test
+	public void testCtor() throws Exception {
+		new ComponentInstancePropInput(new ComponentInstanceProperty());
+	}
 	
 	@Test
 	public void testGetPropertiesName() throws Exception {
@@ -61,6 +65,8 @@ public class ComponentInstancePropInputTest {
 
 		// default test
 		testSubject = createTestSubject();
+		result = testSubject.getParsedPropNames();
+		testSubject.setPropertiesName("mock");
 		result = testSubject.getParsedPropNames();
 	}
 }

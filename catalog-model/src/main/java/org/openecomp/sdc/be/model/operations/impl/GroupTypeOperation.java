@@ -20,9 +20,18 @@
 
 package org.openecomp.sdc.be.model.operations.impl;
 
-import com.google.common.base.Strings;
-import com.thinkaurelius.titan.graphdb.query.TitanPredicate;
-import fj.data.Either;
+import static org.openecomp.sdc.be.dao.titan.TitanUtils.buildNotInPredicate;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import javax.annotation.Resource;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.tinkerpop.gremlin.structure.Edge;
@@ -50,16 +59,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
+import com.google.common.base.Strings;
+import com.thinkaurelius.titan.graphdb.query.TitanPredicate;
 
-import static org.openecomp.sdc.be.dao.titan.TitanUtils.buildNotInPredicate;
+import fj.data.Either;
 
 @Component("group-type-operation")
 public class GroupTypeOperation extends AbstractOperation implements IGroupTypeOperation {

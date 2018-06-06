@@ -1,13 +1,13 @@
 package org.openecomp.sdc.be.model;
 
-import org.openecomp.sdc.be.datatypes.elements.PolicyDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.PropertiesOwner;
-import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
-
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import org.openecomp.sdc.be.datatypes.elements.PolicyDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.PropertiesOwner;
+import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 /**
  * public class representing the component policy
  */

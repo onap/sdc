@@ -20,13 +20,14 @@
 
 package org.openecomp.sdc.be.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.openecomp.sdc.be.datatypes.elements.InterfaceDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.OperationDataDefinition;
-
 import java.io.Serializable;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import org.openecomp.sdc.be.datatypes.elements.InterfaceDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.OperationDataDefinition;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * Definition of the operations that can be performed on (instances of) a Node
@@ -59,7 +60,6 @@ public class InterfaceDefinition extends InterfaceDataDefinition implements IOpe
 
     @Override
     public boolean isDefinition() {
-        // TODO Auto-generated method stub
         return false;
     }
 

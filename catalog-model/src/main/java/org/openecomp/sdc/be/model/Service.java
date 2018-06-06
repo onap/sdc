@@ -23,6 +23,7 @@ package org.openecomp.sdc.be.model;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.openecomp.sdc.be.datatypes.components.ComponentMetadataDataDefinition;
 import org.openecomp.sdc.be.datatypes.components.ServiceMetadataDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ForwardingPathDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
@@ -40,7 +41,10 @@ public class Service extends Component {
 
 	public Service(ComponentMetadataDefinition serviceMetadataDefinition) {
 		super(serviceMetadataDefinition);
-		this.getComponentMetadataDefinition().getMetadataDataDefinition().setComponentType(ComponentTypeEnum.SERVICE);
+		ComponentMetadataDataDefinition metadataDataDefinition = this.getComponentMetadataDefinition().getMetadataDataDefinition();
+		if(metadataDataDefinition != null) {
+			metadataDataDefinition.setComponentType(ComponentTypeEnum.SERVICE);
+		}
 		this.setToscaType(ToscaElementTypeEnum.TopologyTemplate.getValue());
 	}
 

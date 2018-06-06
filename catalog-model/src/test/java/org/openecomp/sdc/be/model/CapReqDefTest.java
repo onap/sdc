@@ -1,5 +1,6 @@
 package org.openecomp.sdc.be.model;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -12,6 +13,10 @@ public class CapReqDefTest {
 		return new CapReqDef();
 	}
 
+	@Test
+	public void testCtor() throws Exception {
+		new CapReqDef(new HashMap<>(), new HashMap<>());
+	}
 	
 	@Test
 	public void testGetCapabilities() throws Exception {

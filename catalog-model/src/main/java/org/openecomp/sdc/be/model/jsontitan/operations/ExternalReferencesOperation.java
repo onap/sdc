@@ -1,6 +1,11 @@
 package org.openecomp.sdc.be.model.jsontitan.operations;
 
-import fj.data.Either;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
@@ -14,7 +19,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
+import fj.data.Either;
 
 /**
  * Created by yavivi on 26/01/2018.

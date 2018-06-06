@@ -3,6 +3,7 @@ package org.openecomp.sdc.be.model;
 import java.util.Map;
 
 import org.junit.Test;
+import org.openecomp.sdc.be.datatypes.elements.CapabilityTypeDataDefinition;
 
 
 public class CapabilityTypeDefinitionTest {
@@ -11,6 +12,10 @@ public class CapabilityTypeDefinitionTest {
 		return new CapabilityTypeDefinition();
 	}
 
+	@Test
+	public void testCtor() throws Exception {
+		new CapabilityTypeDefinition(new CapabilityTypeDataDefinition());
+	}
 	
 	@Test
 	public void testGetDerivedFrom() throws Exception {

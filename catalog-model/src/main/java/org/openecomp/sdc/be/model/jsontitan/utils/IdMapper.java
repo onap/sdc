@@ -1,5 +1,8 @@
 package org.openecomp.sdc.be.model.jsontitan.utils;
 
+import java.util.Map;
+import java.util.Optional;
+
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 import org.openecomp.sdc.be.datatypes.elements.ComponentInstanceDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.CompositionDataDefinition;
@@ -8,9 +11,6 @@ import org.openecomp.sdc.be.model.jsontitan.operations.ExternalReferencesOperati
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-
-import java.util.Map;
-import java.util.Optional;
 
 /**
  * Created by yavivi on 12/02/2018.

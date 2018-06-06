@@ -20,14 +20,15 @@
 
 package org.openecomp.sdc.be.model.operations.api;
 
-import fj.data.Either;
+import java.util.Map;
+
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.IComplexDefaultValue;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 
-import java.util.Map;
+import fj.data.Either;
 
 public interface IPropertyOperation {
 

@@ -71,15 +71,21 @@ public class GroupInstance extends GroupInstanceDataDefinition implements Serial
 	private void removeArtifactsDuplicates() {
 		List<String> artifacts = getArtifacts();
 		Set<String> artifactsSet = new HashSet<>();
-		artifactsSet.addAll(artifacts);
-		artifacts.clear();
-		artifacts.addAll(artifactsSet);
+		
+		if (artifacts != null && !artifacts.isEmpty()) {
+			artifactsSet.addAll(artifacts);
+			artifacts.clear();
+			artifacts.addAll(artifactsSet);
+		}
 		
 		List<String> giArtifacts = getGroupInstanceArtifacts();
 		Set<String> giArtifactsSet = new HashSet<>();
-		giArtifactsSet.addAll(giArtifacts);
-		giArtifacts.clear();
-		giArtifacts.addAll(giArtifactsSet);
+		
+		if (giArtifacts != null && !giArtifacts.isEmpty()) {
+			giArtifactsSet.addAll(giArtifacts);
+			giArtifacts.clear();
+			giArtifacts.addAll(giArtifactsSet);
+		}
 	}
 
 	private void clearArtifactsUuid() {
@@ -104,7 +110,7 @@ public class GroupInstance extends GroupInstanceDataDefinition implements Serial
 	 */
 	public void alignArtifactsUuid(Map<String, ArtifactDefinition> deploymentArtifacts) {
 		List<String> artifactIds = getArtifacts();
-		if(CollectionUtils.isNotEmpty(artifactIds)){
+		if(CollectionUtils.isNotEmpty(artifactIds) && deploymentArtifacts != null){
 			removeArtifactsDuplicates();
 			clearArtifactsUuid();
 			List<String> artifactUuids = getArtifactsUuid();

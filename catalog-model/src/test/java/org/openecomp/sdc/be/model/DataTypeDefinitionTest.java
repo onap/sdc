@@ -3,6 +3,7 @@ package org.openecomp.sdc.be.model;
 import java.util.List;
 
 import org.junit.Test;
+import org.openecomp.sdc.be.datatypes.elements.DataTypeDataDefinition;
 
 
 public class DataTypeDefinitionTest {
@@ -11,6 +12,11 @@ public class DataTypeDefinitionTest {
 		return new DataTypeDefinition();
 	}
 
+	@Test
+	public void testCtor() throws Exception {
+		new DataTypeDefinition(new DataTypeDefinition());
+		new DataTypeDefinition(new DataTypeDataDefinition());
+	}
 	
 	@Test
 	public void testGetConstraints() throws Exception {

@@ -20,11 +20,12 @@
 
 package org.openecomp.sdc.be.model.operations.api;
 
-import fj.data.Either;
-import org.openecomp.sdc.be.model.PolicyTypeDefinition;
-
 import java.util.List;
 import java.util.Set;
+
+import org.openecomp.sdc.be.model.PolicyTypeDefinition;
+
+import fj.data.Either;
 
 public interface IPolicyTypeOperation {
 

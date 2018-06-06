@@ -20,20 +20,27 @@
 
 package org.openecomp.sdc.be.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import static java.util.Collections.emptyList;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 import org.openecomp.sdc.be.config.ConfigurationManager;
+import org.openecomp.sdc.be.dao.utils.MapUtil;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
 import org.openecomp.sdc.be.model.category.SubCategoryDefinition;
-
-import static java.util.Collections.emptyList;
-import org.openecomp.sdc.be.dao.utils.MapUtil;
 import org.openecomp.sdc.be.model.jsontitan.datamodel.ToscaElementTypeEnum;
 import org.openecomp.sdc.common.api.ArtifactTypeEnum;
 
-import java.io.Serializable;
-import java.util.*;
-import java.util.stream.Collectors;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public abstract class Component implements Serializable {
 

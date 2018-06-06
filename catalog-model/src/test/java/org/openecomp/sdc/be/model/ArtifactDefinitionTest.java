@@ -1,8 +1,11 @@
 package org.openecomp.sdc.be.model;
 
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.junit.Test;
+import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
 
 
 public class ArtifactDefinitionTest {
@@ -11,6 +14,13 @@ public class ArtifactDefinitionTest {
 		return new ArtifactDefinition();
 	}
 
+	@Test
+	public void testCtor() throws Exception {
+		new ArtifactDefinition(new ArtifactDefinition());
+		new ArtifactDefinition(new ArtifactDataDefinition());
+		new ArtifactDefinition(new HashMap<>());
+		new ArtifactDefinition(new ArtifactDataDefinition(), "mock");
+	}
 	
 	@Test
 	public void testGetPayloadData() throws Exception {
@@ -59,6 +69,8 @@ public class ArtifactDefinitionTest {
 		// default test
 		testSubject = createTestSubject();
 		result = testSubject.getListHeatParameters();
+		testSubject.setHeatParameters(new LinkedList<>());
+		result = testSubject.getListHeatParameters();
 	}
 
 	
@@ -69,7 +81,8 @@ public class ArtifactDefinitionTest {
 
 		// test 1
 		testSubject = createTestSubject();
-		properties = null;
+		testSubject.setListHeatParameters(properties);
+		properties = new LinkedList<>();
 		testSubject.setListHeatParameters(properties);
 	}
 
@@ -81,6 +94,8 @@ public class ArtifactDefinitionTest {
 
 		// default test
 		testSubject = createTestSubject();
+		result = testSubject.checkEsIdExist();
+		testSubject.setEsId("mock");
 		result = testSubject.checkEsIdExist();
 	}
 
@@ -99,11 +114,13 @@ public class ArtifactDefinitionTest {
 	@Test
 	public void testEquals() throws Exception {
 		ArtifactDefinition testSubject;
-		Object obj = null;
 		boolean result;
 
 		// default test
 		testSubject = createTestSubject();
-		result = testSubject.equals(obj);
+		result = testSubject.equals(null);
+		result = testSubject.equals(testSubject);
+		result = testSubject.equals(new Object());
+		result = testSubject.equals(createTestSubject());
 	}
 }
