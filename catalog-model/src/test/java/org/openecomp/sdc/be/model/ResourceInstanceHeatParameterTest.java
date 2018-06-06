@@ -9,6 +9,10 @@ public class ResourceInstanceHeatParameterTest {
 		return new ResourceInstanceHeatParameter();
 	}
 
+	@Test
+	public void testCtor() throws Exception {
+		new ResourceInstanceHeatParameter(new HeatParameterDefinition(), "mock");
+	}
 	
 	@Test
 	public void testGetValueUniqueId() throws Exception {

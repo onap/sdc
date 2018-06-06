@@ -6,8 +6,6 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.junit.Test;
-import org.openecomp.sdc.be.datatypes.elements.OperationInputDefinition;
-import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.Operation;
 import org.openecomp.sdc.be.model.Resource;

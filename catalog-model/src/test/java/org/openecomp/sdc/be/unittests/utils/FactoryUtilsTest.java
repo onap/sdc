@@ -2,8 +2,6 @@ package org.openecomp.sdc.be.unittests.utils;
 
 import java.util.List;
 
-import javax.annotation.Generated;
-
 import org.junit.Test;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphEdge;
 import org.openecomp.sdc.be.model.CapabilityDefinition;

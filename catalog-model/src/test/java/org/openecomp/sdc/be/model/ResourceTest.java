@@ -7,13 +7,19 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.openecomp.sdc.be.datatypes.elements.InterfaceOperationDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
+import org.openecomp.sdc.be.unittests.utils.ModelConfDependentTest;
 
-public class ResourceTest {
+public class ResourceTest extends ModelConfDependentTest{
 
 	private Resource createTestSubject() {
 		return new Resource();
 	}
 
+	@Test
+	public void testCtor() throws Exception {
+		ComponentMetadataDefinition componentMetadataDefinition = new ComponentMetadataDefinition();
+		new Resource(componentMetadataDefinition);
+	}
 	
 	@Test
 	public void testGetDerivedFrom() throws Exception {
@@ -254,9 +260,17 @@ public class ResourceTest {
 
 		// test 1
 		testSubject = createTestSubject();
-		obj = null;
 		result = testSubject.equals(obj);
 		Assert.assertEquals(false, result);
+		obj = new Object();
+		result = testSubject.equals(obj);
+		Assert.assertEquals(false, result);
+		result = testSubject.equals(testSubject);
+		Assert.assertEquals(true, result);
+		
+		Resource testSubject2 = createTestSubject();
+		result = testSubject.equals(testSubject2);
+		Assert.assertEquals(true, result);
 	}
 
 	

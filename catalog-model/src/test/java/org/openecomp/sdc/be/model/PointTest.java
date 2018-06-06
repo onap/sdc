@@ -9,6 +9,10 @@ public class PointTest {
 		return new Point();
 	}
 
+	@Test
+	public void testCtor() throws Exception {
+		new Point("mock", "mock");
+	}
 	
 	@Test
 	public void testGetX() throws Exception {

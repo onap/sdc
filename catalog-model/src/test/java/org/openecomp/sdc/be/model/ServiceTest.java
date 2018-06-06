@@ -12,6 +12,11 @@ public class ServiceTest {
 	}
 	
 	@Test
+	public void testCtor() throws Exception {
+		new Service(new ComponentMetadataDefinition());
+	}
+	
+	@Test
 	public void testGetServiceApiArtifacts() throws Exception {
 		Service testSubject;
 		Map<String, ArtifactDefinition> result;
@@ -109,6 +114,7 @@ public class ServiceTest {
 		testSubject = createTestSubject();
 		distributionStatus = null;
 		testSubject.setDistributionStatus(distributionStatus);
+		testSubject.setDistributionStatus(DistributionStatusEnum.DISTRIBUTED);
 	}
 
 	

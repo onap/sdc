@@ -1,19 +1,9 @@
 package org.openecomp.sdc.be.model.operations.impl;
 
-import static org.junit.Assert.*;
-import java.util.*;
-import org.junit.Assert;
 import org.junit.Test;
-import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
 import org.openecomp.sdc.be.dao.titan.TitanGenericDao;
-import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
-import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.ComponentInstanceInput;
-import org.openecomp.sdc.be.model.ComponentInstanceProperty;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
-import org.openecomp.sdc.be.resources.data.AttributeData;
-import org.openecomp.sdc.be.resources.data.AttributeValueData;
-import org.openecomp.sdc.be.resources.data.ComponentInstanceData;
 
 import fj.data.Either;
 
