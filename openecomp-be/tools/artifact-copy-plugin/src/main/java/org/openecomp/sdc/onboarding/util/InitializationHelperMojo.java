@@ -16,18 +16,6 @@
 
 package org.openecomp.sdc.onboarding.util;
 
-import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.execution.MavenSession;
-import org.apache.maven.plugin.AbstractMojo;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.LifecyclePhase;
-import org.apache.maven.plugins.annotations.Mojo;
-import org.apache.maven.plugins.annotations.Parameter;
-import org.apache.maven.plugins.annotations.ResolutionScope;
-import org.apache.maven.project.MavenProject;
-import org.apache.maven.settings.Proxy;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -39,6 +27,17 @@ import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.execution.MavenSession;
+import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.plugins.annotations.ResolutionScope;
+import org.apache.maven.project.MavenProject;
+import org.apache.maven.settings.Proxy;
 
 @Mojo(name = "init-artifact-helper", threadSafe = true, defaultPhase = LifecyclePhase.PRE_CLEAN,
         requiresDependencyResolution = ResolutionScope.NONE)
@@ -66,12 +65,12 @@ public class InitializationHelperMojo extends AbstractMojo {
     private ArtifactHelper artifactHelper;
 
     @Override
-    public void execute() throws MojoExecutionException, MojoFailureException {
+    public void execute() throws MojoExecutionException {
         if (System.getProperties().containsKey(UNICORN_INITIALIZED)) {
             try {
                 artifactHelper.shutDown(project);
             } catch (IOException | ClassNotFoundException e) {
-                throw new MojoExecutionException("Unexpected Error Occured during shutdown activities", e);
+                throw new MojoExecutionException("Unexpected Error Occurred during shutdown activities", e);
             }
             return;
         }
@@ -94,8 +93,6 @@ public class InitializationHelperMojo extends AbstractMojo {
             try {
                 URL url = new URL(repo.getUrl() + (groupId.replace('.', '/')) + '/' + artifactId + '/' + version
                                           + "/maven-metadata.xml");
-                URL fallbackUrl =
-                        new URL(repo.getUrl() + (groupId.replace('.', '/')) + '/' + artifactId + '/' + version + '/');
                 setProxy(url);
                 String content = artifactHelper.getContents(url);
                 Matcher m = timestampPattern.matcher(content);
@@ -106,12 +103,15 @@ public class InitializationHelperMojo extends AbstractMojo {
                 if (m.find()) {
                     buildNumber = m.group(1);
                 }
+
+                URL fallbackUrl =
+                        new URL(repo.getUrl() + (groupId.replace('.', '/')) + '/' + artifactId + '/' + version + '/');
                 timestamp = verifyBuildTimestamp(buildNumber, timestamp, fallbackUrl);
                 if (timestamp != null && buildNumber != null) {
                     byte[] data = fetchContents(repo.getUrl(), artifactId, timestamp + "-" + buildNumber);
                     artifactHelper.store(artifactId, data);
                     getLog().info(artifactId + " Version to be copied is " + timestamp + "-" + buildNumber);
-                    ArtifactHelper.setSnapshotBuildNumber(Integer.parseInt(buildNumber));
+                    ArtifactHelper.setSnapshotBuildNumber(Integer.parseInt(buildNumber) + 1);
                     return timestamp + "-" + buildNumber;
                 }
             } catch (IOException e) {
@@ -188,12 +188,12 @@ public class InitializationHelperMojo extends AbstractMojo {
             ClassLoader cl = ClassLoader.getSystemClassLoader();
             Class<?> clazz = cl.getClass();
 
-            Method method = clazz.getSuperclass().getDeclaredMethod("addURL", new Class[] {URL.class});
+            Method method = clazz.getSuperclass().getDeclaredMethod("addURL", URL.class);
 
             method.setAccessible(true);
-            method.invoke(cl, new Object[] {jar.toURI().toURL()});
+            method.invoke(cl, jar.toURI().toURL());
         } catch (Exception e) {
-            throw new MojoFailureException("Problem while loadig build-data", e);
+            throw new MojoFailureException("Problem while loading build-data", e);
         }
     }
 
