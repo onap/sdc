@@ -181,8 +181,7 @@ public class DistributionServlet extends BeGenericServlet {
             @ApiResponse(code = 403, message = "ECOMP component is not authorized - POL5003"),
             @ApiResponse(code = 405, message = "Method  Not Allowed  :  Invalid HTTP method type used to  register for  distribution ( PUT,DELETE,GET  will be rejected) - POL4050"),
             @ApiResponse(code = 500, message = "The registration failed due to internal SDC problem or Cambria Service failure ECOMP Component  should  continue the attempts to  register for  distribution - POL5000")})
-    //TODO Tal G fix response headers and to check missing header validations with Michael L
-    @ApiImplicitParams({@ApiImplicitParam(required = true, dataType = "org.openecomp.sdc.be.distribution.api.client.RegistrationRequest", paramType = "body", value = "json describe the artifact")})
+    @ApiImplicitParams({@ApiImplicitParam(name = "requestJson", required = true, dataType = "org.openecomp.sdc.be.distribution.api.client.RegistrationRequest", paramType = "body", value = "json describe the artifact")})
     public Response registerForDistribution(
             @ApiParam(value = "X-ECOMP-RequestID header", required = false)@HeaderParam(value = Constants.X_ECOMP_REQUEST_ID_HEADER) String requestId,
             @ApiParam(value = "X-ECOMP-InstanceID header", required = true)@HeaderParam(value = Constants.X_ECOMP_INSTANCE_ID_HEADER) String instanceId,
@@ -190,7 +189,7 @@ public class DistributionServlet extends BeGenericServlet {
             @ApiParam(value = "Determines the format of the body of the request", required = true)@HeaderParam(value = Constants.CONTENT_TYPE_HEADER) String contenType,
             @ApiParam(value = "Length  of  the request body", required = true)@HeaderParam(value = Constants.CONTENT_LENGTH_HEADER) String contenLength,
             @ApiParam(value = "The username and password", required = true)@HeaderParam(value = Constants.AUTHORIZATION_HEADER) String authorization,
-            String requestJson) {
+            @ApiParam( hidden = true) String requestJson) {
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug("Start handle request of {}", url);
         init(request);
@@ -288,7 +287,7 @@ public class DistributionServlet extends BeGenericServlet {
             @ApiResponse(code = 403, message = "ECOMP component is not authorized - POL5003"),
             @ApiResponse(code = 405, message = "Method  Not Allowed  :  Invalid HTTP method type used to  register for  distribution ( PUT,DELETE,GET will be rejected) - POL4050"),
             @ApiResponse(code = 500, message = "The registration failed due to internal SDC problem or Cambria Service failure ECOMP Component  should  continue the attempts to  register for  distribution - POL5000")})
-    @ApiImplicitParams({@ApiImplicitParam(required = true, dataType = "org.openecomp.sdc.be.distribution.api.client.RegistrationRequest", paramType = "body", value = "json describe the artifact")})
+    @ApiImplicitParams({@ApiImplicitParam(name = "requestJson", required = true, dataType = "org.openecomp.sdc.be.distribution.api.client.RegistrationRequest", paramType = "body", value = "json describe the artifact")})
     public Response unRegisterForDistribution(
             @ApiParam(value = "X-ECOMP-RequestID header", required = false)@HeaderParam(value = Constants.X_ECOMP_REQUEST_ID_HEADER) String requestId,
             @ApiParam(value = "X-ECOMP-InstanceID header", required = true)@HeaderParam(value = Constants.X_ECOMP_INSTANCE_ID_HEADER) String instanceId,
@@ -296,7 +295,7 @@ public class DistributionServlet extends BeGenericServlet {
             @ApiParam(value = "Determines the format of the body of the request", required = true)@HeaderParam(value = Constants.CONTENT_TYPE_HEADER) String contenType,
             @ApiParam(value = "Length  of  the request body", required = true)@HeaderParam(value = Constants.CONTENT_LENGTH_HEADER) String contenLength,
             @ApiParam(value = "The username and password", required = true)@HeaderParam(value = Constants.AUTHORIZATION_HEADER) String authorization,
-            String requestJson) {
+            @ApiParam( hidden = true) String requestJson) {
 
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug("Start handle request of {}", url);
