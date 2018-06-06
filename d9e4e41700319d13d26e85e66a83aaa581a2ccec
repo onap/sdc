@@ -1,0 +1,165 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_5ba58cb3",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/datatypes/heattotosca/unifiedmodel/consolidation/ComputeTemplateConsolidationData.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 94,
+      "author": {
+        "id": 2727
+      },
+      "writtenOn": "2018-06-06T15:53:31Z",
+      "side": 1,
+      "message": "In case when size \u003c 1 is actually case when currPortsMap is Empty and in this case you will return before on \nMapUtils.isEmpty(currPortsMap)\nso I think you can changes portList.size() \u003c\u003d 1 to portList.size() \u003d 1",
+      "range": {
+        "startLine": 94,
+        "startChar": 99,
+        "endLine": 94,
+        "endChar": 103
+      },
+      "revId": "d9e4e41700319d13d26e85e66a83aaa581a2ccec",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_1b13840e",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/test/java/org/openecomp/sdc/translator/datatypes/heattotosca/unifiedmodel/consolidation/ComputeConsolidationDataHandlerTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 2727
+      },
+      "writtenOn": "2018-06-06T15:53:31Z",
+      "side": 1,
+      "message": "In this test you need only to test that computeConsolidationData.isNumberOfComputeTypesLegal was called with serviceTemplateName that you sent;\nPlease mock ComputeConsolidationData computeConsolidationData;",
+      "range": {
+        "startLine": 28,
+        "startChar": 16,
+        "endLine": 28,
+        "endChar": 54
+      },
+      "revId": "d9e4e41700319d13d26e85e66a83aaa581a2ccec",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_dbf43cd1",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/test/java/org/openecomp/sdc/translator/datatypes/heattotosca/unifiedmodel/consolidation/ComputeConsolidationDataHandlerTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 2727
+      },
+      "writtenOn": "2018-06-06T15:53:31Z",
+      "side": 1,
+      "message": "You no need negative test in this class. Create Negative Test in ComputeConsolidationDataTest",
+      "range": {
+        "startLine": 46,
+        "startChar": 16,
+        "endLine": 46,
+        "endChar": 51
+      },
+      "revId": "d9e4e41700319d13d26e85e66a83aaa581a2ccec",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_1b2aa42c",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/test/java/org/openecomp/sdc/translator/datatypes/heattotosca/unifiedmodel/consolidation/ComputeConsolidationDataTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 113,
+      "author": {
+        "id": 2727
+      },
+      "writtenOn": "2018-06-06T15:53:31Z",
+      "side": 1,
+      "message": "You need test only what your class doing.\nCurrenlty you testing also \nFileComputeConsolidationData class\n\nPlease mock FileComputeConsolidationData fileComputeConsolidationData for your serviceTemplateName and verify on mock that  \nfileComputeConsolidationData.isNumberOfComputeTypesLegal()\nwas called\nI will send you my tests as example.",
+      "range": {
+        "startLine": 113,
+        "startChar": 16,
+        "endLine": 113,
+        "endChar": 51
+      },
+      "revId": "d9e4e41700319d13d26e85e66a83aaa581a2ccec",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_fbdb384d",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/test/java/org/openecomp/sdc/translator/datatypes/heattotosca/unifiedmodel/consolidation/ComputeConsolidationDataTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 128,
+      "author": {
+        "id": 2727
+      },
+      "writtenOn": "2018-06-06T15:53:31Z",
+      "side": 1,
+      "message": "For negative test, test case when fileComputeConsolidationData is NULL ( was not set for this service template files name) - Test that it will return true and no exception\nFunctionality of FileComputeConsolidationData will test in its test class",
+      "range": {
+        "startLine": 128,
+        "startChar": 16,
+        "endLine": 128,
+        "endChar": 51
+      },
+      "revId": "d9e4e41700319d13d26e85e66a83aaa581a2ccec",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_3bb9a0ec",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/test/java/org/openecomp/sdc/translator/datatypes/heattotosca/unifiedmodel/consolidation/ComputeTemplateConsolidationDataTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 2727
+      },
+      "writtenOn": "2018-06-06T15:53:31Z",
+      "side": 1,
+      "message": "This test testing case when one port\nI think need rename test to something like isNumberOfPortFromEachTypeLegal_OnePorts",
+      "range": {
+        "startLine": 77,
+        "startChar": 16,
+        "endLine": 77,
+        "endChar": 58
+      },
+      "revId": "d9e4e41700319d13d26e85e66a83aaa581a2ccec",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_1b862414",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/test/java/org/openecomp/sdc/translator/datatypes/heattotosca/unifiedmodel/consolidation/EntityConsolidationDataTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 2727
+      },
+      "writtenOn": "2018-06-06T15:53:31Z",
+      "side": 1,
+      "message": "Please see additional tests:\n\n1) EntityConsolidationDataList is empty \n\n2) EntityConsolidationData is null - not sure if its relevant in our flow. Try do it anyway",
+      "range": {
+        "startLine": 67,
+        "startChar": 16,
+        "endLine": 67,
+        "endChar": 55
+      },
+      "revId": "d9e4e41700319d13d26e85e66a83aaa581a2ccec",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
