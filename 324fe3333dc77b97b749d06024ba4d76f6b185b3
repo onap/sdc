@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_2972bbad",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/ConsolidationDataUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 221,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-06-06T05:56:24Z",
+      "side": 1,
+      "message": "consider using stream findAny.It will reduce 6 lines to one.",
+      "revId": "324fe3333dc77b97b749d06024ba4d76f6b185b3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
