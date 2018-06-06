@@ -16,6 +16,7 @@
 
 package org.openecomp.sdcrests.vsp.rest.services;
 
+import java.util.Date;
 import org.apache.commons.collections4.MapUtils;
 import org.openecomp.core.dao.UniqueValueDaoFactory;
 import org.openecomp.core.util.UniqueValueUtil;
@@ -273,6 +274,8 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
 
         vendorSoftwareProductManager.updateVsp(vspDetails);
 
+        updateVspItem(vspId,vspDescriptionDto);
+
         return Response.ok().build();
     }
 
@@ -503,6 +506,23 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
         }
 
         return Response.ok(results).build();
+    }
+
+
+    private void updateVspItem(String vspId, VspDescriptionDto vspDescriptionDto) {
+        Item retrievedItem = itemManager.get(vspId);
+        Item item = new MapVspDescriptionDtoToItem().applyMapping(vspDescriptionDto, Item.class);
+        item.setId(vspId);
+        item.setType(retrievedItem.getType());
+        item.setOwner(retrievedItem.getOwner());
+        item.setStatus(retrievedItem.getStatus());
+        item.setVersionStatusCounters(retrievedItem.getVersionStatusCounters());
+        item.setCreationTime(retrievedItem.getCreationTime());
+        item.setModificationTime(new Date());
+        item.addProperty(VspItemProperty.ONBOARDING_METHOD,
+                retrievedItem.getProperties().get(VspItemProperty.ONBOARDING_METHOD));
+
+        itemManager.update(item);
     }
 
     private Optional<ValidationResponse> submit(String vspId, Version version, String message,
