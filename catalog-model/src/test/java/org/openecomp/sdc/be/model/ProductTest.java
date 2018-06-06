@@ -11,6 +11,10 @@ public class ProductTest {
 		return new Product();
 	}
 
+	@Test
+	public void testCtor() throws Exception {
+		new Product(new ProductMetadataDefinition());
+	}
 	
 	@Test
 	public void testGetFullName() throws Exception {

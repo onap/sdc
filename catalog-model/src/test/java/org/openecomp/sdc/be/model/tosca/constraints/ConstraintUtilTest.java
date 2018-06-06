@@ -1,10 +1,7 @@
 package org.openecomp.sdc.be.model.tosca.constraints;
 
-import javax.annotation.Generated;
-
 import org.junit.Test;
 import org.openecomp.sdc.be.model.tosca.ToscaType;
-import org.openecomp.sdc.be.model.tosca.constraints.ConstraintUtil.ConstraintInformation;
 
 public class ConstraintUtilTest {
 
