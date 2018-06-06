@@ -1,13 +1,17 @@
 package org.openecomp.sdc.be.model;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.datatypes.elements.InterfaceOperationDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.unittests.utils.ModelConfDependentTest;
+
+import mockit.Deencapsulation;
 
 public class ResourceTest extends ModelConfDependentTest{
 
@@ -394,6 +398,15 @@ public class ResourceTest extends ModelConfDependentTest{
 		result = testSubject.getResourceVendorModelNumber();
 	}
 
+	@Test
+	public void testFetchGenericTypeToscaNameFromConfig() throws Exception {
+		Resource testSubject;
+		String result;
+
+		// default test
+		testSubject = createTestSubject();
+		result = testSubject.fetchGenericTypeToscaNameFromConfig();
+	}
 	
 	@Test
 	public void testAssetType() throws Exception {
@@ -427,6 +440,27 @@ public class ResourceTest extends ModelConfDependentTest{
 		result = testSubject.deriveFromGeneric();
 	}
 
+	@Test
+	public void testGroupRelationsByInstanceName() throws Exception {
+		Resource testSubject;
+		Map<String, List<RequirementCapabilityRelDef>> result;
 
+		// default test
+		testSubject = createTestSubject();
+		Resource resource = new Resource();
+		resource.setComponentInstancesRelations(new LinkedList<RequirementCapabilityRelDef>());
+		result = testSubject.groupRelationsByInstanceName(resource);
+	}
 
+	@Test
+	public void testGetInstanceNameFromInstanceId() throws Exception {
+		Resource testSubject;
+		Resource resource = new Resource();
+		String instId = "mock";
+		boolean result;
+
+		// default test
+		testSubject = createTestSubject();
+		Deencapsulation.invoke(testSubject, "getInstanceNameFromInstanceId", resource, instId);
+	}
 }

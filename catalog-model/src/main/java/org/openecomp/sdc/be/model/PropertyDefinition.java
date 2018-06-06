@@ -45,8 +45,8 @@ public class PropertyDefinition extends PropertyDataDefinition
 		AVAILABILTY_ZONE_COUNT("availability_zone_count", GroupInstancePropertyValueUpdateBehavior.UPDATABLE_ON_SERVICE_LEVEL),
 		VFC_LIST("vfc_list", GroupInstancePropertyValueUpdateBehavior.UPDATABLE_ON_SERVICE_LEVEL);
 		
-		private String propertyName;
-		private GroupInstancePropertyValueUpdateBehavior updateBehavior;
+		private final String propertyName;
+		private final GroupInstancePropertyValueUpdateBehavior updateBehavior;
 		
 		private PropertyNames(String propertyName,GroupInstancePropertyValueUpdateBehavior updateBehavior){
 			this.propertyName = propertyName;
@@ -84,8 +84,8 @@ public class PropertyDefinition extends PropertyDataDefinition
 		UPDATABLE_ON_RESOURCE_LEVEL("UPDATABLE_ON_VF_LEVEL", 0),
 		UPDATABLE_ON_SERVICE_LEVEL("UPDATABLE_ON_SERVICE_LEVEL", 1);
 		
-		String levelName;
-		int levelNumber;
+		private final String levelName;
+		private final int levelNumber;
 		
 		private GroupInstancePropertyValueUpdateBehavior(String name, int levelNumber){
 			this.levelName = name;
@@ -141,25 +141,6 @@ public class PropertyDefinition extends PropertyDataDefinition
 				+ constraints + "]]";
 	}
 
-	// public void setSchema(Schema entrySchema) {
-	// this.schema = entrySchema;
-	//
-	// }
-	//
-	// public Schema getSchema() {
-	// return schema;
-	// }
-
-//	public String getStatus() {
-//		return status;
-//	}
-//
-//	public void setStatus(String status) {
-//		this.status = status;
-//	}
-
-	
-
 	@Override
 	public boolean isDefinition() {
 		return false;
@@ -198,11 +179,6 @@ public class PropertyDefinition extends PropertyDataDefinition
 				return false;
 		} else if (!getName().equals(other.getName()))
 			return false;
-//		if (status == null) {
-//			if (other.status != null)
-//				return false;
-//		} else if (!status.equals(other.status))
-//			return false;
 		return true;
 	}
 

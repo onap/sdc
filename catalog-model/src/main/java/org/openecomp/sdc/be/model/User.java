@@ -45,9 +45,9 @@ public class User {
 	public User() {
 	}
 
-	public User(UserData userDate) {
-		this(userDate.getFirstName(), userDate.getLastName(), userDate.getUserId(), userDate.getEmail(),
-				userDate.getRole(), userDate.getLastLoginTime());
+	public User(UserData userData) {
+		this(userData.getFirstName(), userData.getLastName(), userData.getUserId(), userData.getEmail(),
+				userData.getRole(), userData.getLastLoginTime());
 	}
 
 	public User(String firstName, String lastName, String userId, String emailAddress, String role,
@@ -62,6 +62,9 @@ public class User {
 	}
 
 	public void copyData(User other) {
+		if(other == null) {
+			return;
+		}
 		this.firstName = other.getFirstName();
 		this.lastName = other.getLastName();
 		this.userId = other.getUserId();
