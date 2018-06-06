@@ -41,18 +41,18 @@ The Beijing release was focused on improving platform stability and resiliency.
 
 **New Features**
 
-The Beijing release is the second release of the Service Designe and Creation (SDC).
+The Beijing release is the second release of the Service Design and Creation (SDC).
 
 The main goal of the Beijing release was to:
     - Enhance Platform maturity by improving SDC maturity matrix see `Wiki <https://wiki.onap.org/display/DW/Beijing+Release+Platform+Maturity>`_.
     - SDC made improvements to the deployment to allow an easy and stable integration with OOM.
-    - SDC change the docker structure to allow easyer and the beginning of braking the aplication into Micro Services.
-    - SDC introduced a generic frame work to allow different Modeling plugins to be easily integrated with SDC.
+    - SDC change the docker structure to allow easier and the beginning of breaking the application into Micro Services.
+    - SDC introduced a generic framework to allow different Modeling plugins to be easily integrated with SDC.
     - improve code coverage of the SDC code.
-    - SDC introduced two new exorbitantly projects the DCAE-D and WorkFlow which enhance the modeling capabilities avilable in sdc.
+    - SDC introduced two new exorbitantly projects the DCAE-D and WorkFlow which enhance the modeling capabilities of SDC.
 
-DCAE-D information is available here: 'DCAE-DS <https://wiki.onap.org/display/DW/SDC-DCAE-D>'_
-Work flow information is avilable in readthedocs
+DCAE-D information is available here: `DCAE-DS <https://wiki.onap.org/display/DW/SDC-DCAE-D>`_
+Workflow information is available in readthedocs
 
 
 **Epics**
