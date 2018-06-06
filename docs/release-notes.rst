@@ -91,7 +91,6 @@ Work flow information is avilable in readthedocs
 
 **Stories**
 
-Story
 -  [`SDC-10 <https://jira.onap.org/browse/SDC-10>`__\ ] - Deploy a SDC high availability environment
 -  [`SDC-51 <https://jira.onap.org/browse/SDC-51>`__\ ] - vCPE_UC: Add Close-Loop (CL) Blueprint Monitoring-Template (MT) to a VNF-I
 -  [`SDC-73 <https://jira.onap.org/browse/SDC-73>`__\ ] - Import WorkFlow
@@ -226,6 +225,7 @@ Story
 -  [`SDC-1310 <https://jira.onap.org/browse/SDC-1310>`__\ ] - Fix additional library CVEs in sdc-docker-base
 
 **Bugs**
+
 -  [`SDC-176 <https://jira.onap.org/browse/SDC-176>`__\ ] - Cannot access Kibana dashboard after logged into SDC as an Admin user.
 -  [`SDC-249 <https://jira.onap.org/browse/SDC-249>`__\ ] - Temporary files and directories not completely removed during execution
 -  [`SDC-250 <https://jira.onap.org/browse/SDC-250>`__\ ] - CSAR files are decompressed twice in the same thread
@@ -377,8 +377,8 @@ Story
 -  [`SDC-1110 <https://jira.onap.org/browse/SDC-1110>`__\ ] - Fix BDD Test failure
 -  [`SDC-1113 <https://jira.onap.org/browse/SDC-1113>`__\ ] - E2E/Internal Defect - multiple ports (extCP) with wrong network-role
 -  [`SDC-1120 <https://jira.onap.org/browse/SDC-1120>`__\ ] - Empty error message during Proceed To Validation
--  [`SDC-1123 <https://jira.onap.org/browse/SDC-1123>`__\ ] - The *.csar packages not passing onboarding during SDC sanity
--  [`SDC-1124 <https://jira.onap.org/browse/SDC-1124>`__\ ] - Bug - The *.csar packages not passing onboarding during SDC sanity
+-  [`SDC-1123 <https://jira.onap.org/browse/SDC-1123>`__\ ] - The csar packages not passing onboarding during SDC sanity
+-  [`SDC-1124 <https://jira.onap.org/browse/SDC-1124>`__\ ] - Bug - The csar packages not passing onboarding during SDC sanity
 -  [`SDC-1126 <https://jira.onap.org/browse/SDC-1126>`__\ ] - Fixed merge issues regarding the plugins development
 -  [`SDC-1134 <https://jira.onap.org/browse/SDC-1134>`__\ ] - healed version of VSP is missing a Description
 -  [`SDC-1143 <https://jira.onap.org/browse/SDC-1143>`__\ ] - SDC docs: fix a typo in release notes
@@ -504,7 +504,7 @@ SDC SDKs Versions
 -  sdc-tosca
 
    :Version: 1.1.32
-   
+
 
 Release Purpose
 ----------------
@@ -520,7 +520,7 @@ Main Fetures
 -  Collaborative design
 -  VNF/VF/SERVICE testing and certification
 -  Distribution to ONAP
--  External API- for VNF/VF and  service 
+-  External API- for VNF/VF and  service
 -  Integration with BSS / Customer ordering.
 
 **Epics**
@@ -721,7 +721,6 @@ Main Fetures
 Bug Fixes
 ---------
 
-**Bugs**
 
 -  [`SDC-160 <https://jira.onap.org/browse/SDC-160>`__\ ] - substitution
    mapping problem
@@ -861,14 +860,13 @@ Issues
 
 	N/A
 
-**Security Issues**
-
-	N/A
 
 Notes
 -----
 
 **Upgrade Notes**
+
+n Beijing back word compatibility to Amsterdam is not supported.
 
 **Deprecation Notes**
 
