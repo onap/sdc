@@ -1,6 +1,7 @@
 package org.openecomp.sdc.be.model;
 
 import org.junit.Test;
+import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 
 
 public class GroupPropertyTest {
@@ -9,6 +10,12 @@ public class GroupPropertyTest {
 		return new GroupProperty();
 	}
 
+	@Test
+	public void testCtor() throws Exception {
+		new GroupProperty(new GroupProperty());
+		new GroupProperty(new PropertyDataDefinition());
+		new GroupProperty(new PropertyDefinition(), "mock", "mock");
+	}
 	
 	@Test
 	public void testGetValueUniqueUid() throws Exception {

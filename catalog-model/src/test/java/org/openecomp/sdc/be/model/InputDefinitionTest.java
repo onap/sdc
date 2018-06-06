@@ -3,6 +3,7 @@ package org.openecomp.sdc.be.model;
 import java.util.List;
 
 import org.junit.Test;
+import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 
 
 public class InputDefinitionTest {
@@ -11,6 +12,11 @@ public class InputDefinitionTest {
 		return new InputDefinition();
 	}
 
+	@Test
+	public void testCtor() throws Exception {
+		new InputDefinition(new PropertyDefinition());
+		new InputDefinition(new PropertyDataDefinition());
+	}
 	
 	@Test
 	public void testGetInputs() throws Exception {

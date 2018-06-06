@@ -1,8 +1,10 @@
 package org.openecomp.sdc.be.model;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.Test;
+import org.openecomp.sdc.be.datatypes.elements.InterfaceDataDefinition;
 
 
 public class InterfaceDefinitionTest {
@@ -11,6 +13,12 @@ public class InterfaceDefinitionTest {
 		return new InterfaceDefinition();
 	}
 
+	@Test
+	public void testCtor() throws Exception {
+		new InterfaceDefinition(new InterfaceDataDefinition());
+		new InterfaceDefinition("mock", "mock", new HashMap<>());
+	}
+	
 	@Test
 	public void testIsDefinition() throws Exception {
 		InterfaceDefinition testSubject;

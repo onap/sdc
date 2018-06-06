@@ -20,11 +20,11 @@
 
 package org.openecomp.sdc.be.model;
 
+import java.util.List;
+
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.datatypes.enums.ComponentFieldsEnum;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
-
-import java.util.List;
 
 public class ComponentParametersView {
 

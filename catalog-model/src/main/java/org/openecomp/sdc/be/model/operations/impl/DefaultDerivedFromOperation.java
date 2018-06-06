@@ -1,6 +1,5 @@
 package org.openecomp.sdc.be.model.operations.impl;
 
-import fj.data.Either;
 import org.apache.commons.lang3.tuple.Pair;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphNode;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphRelation;
@@ -14,6 +13,8 @@ import org.openecomp.sdc.be.resources.data.UniqueIdData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+
+import fj.data.Either;
 
 @Component
 public class DefaultDerivedFromOperation implements DerivedFromOperation {

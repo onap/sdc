@@ -1,7 +1,10 @@
 package org.openecomp.sdc.be.model;
 
+import java.util.LinkedList;
+
 import org.junit.Test;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
+import org.openecomp.sdc.be.datatypes.enums.ComponentFieldsEnum;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 
 public class ComponentParametersViewTest {
@@ -10,6 +13,16 @@ public class ComponentParametersViewTest {
 		return new ComponentParametersView();
 	}
 
+	@Test
+	public void testCtor() throws Exception {
+		new ComponentParametersView(true);
+		
+		LinkedList<String> linkedList = new LinkedList<>();
+		for (ComponentFieldsEnum iterable_element : ComponentFieldsEnum.values()) {
+			linkedList.add(iterable_element.getValue());
+		}
+		new ComponentParametersView(linkedList);
+	}
 	
 	@Test
 	public void testFilter() throws Exception {
@@ -21,6 +34,8 @@ public class ComponentParametersViewTest {
 		// default test
 		testSubject = createTestSubject();
 		result = testSubject.filter(component, componentType);
+		testSubject.disableAll();
+		result = testSubject.filter(new Resource(), componentType);
 	}
 
 	

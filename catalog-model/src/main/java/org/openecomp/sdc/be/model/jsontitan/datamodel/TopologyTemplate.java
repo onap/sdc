@@ -20,13 +20,28 @@
 
 package org.openecomp.sdc.be.model.jsontitan.datamodel;
 
-import org.apache.commons.collections.MapUtils;
-import org.openecomp.sdc.be.datatypes.elements.*;
-import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
-import org.openecomp.sdc.be.model.jsontitan.enums.JsonConstantKeysEnum;
-
 import java.util.HashMap;
 import java.util.Map;
+
+import org.apache.commons.collections.MapUtils;
+import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.ComponentInstanceDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.CompositionDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.ForwardingPathDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.GroupDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.InterfaceDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.MapArtifactDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.MapCapabiltyProperty;
+import org.openecomp.sdc.be.datatypes.elements.MapComponentInstanceExternalRefs;
+import org.openecomp.sdc.be.datatypes.elements.MapGroupsDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.MapListCapabiltyDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.MapListRequirementDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.MapPropertiesDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.PolicyDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.RelationshipInstDataDefinition;
+import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
+import org.openecomp.sdc.be.model.jsontitan.enums.JsonConstantKeysEnum;
 
 public class TopologyTemplate extends ToscaElement{
 

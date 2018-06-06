@@ -1,8 +1,10 @@
 package org.openecomp.sdc.be.model;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import org.junit.Test;
+import org.openecomp.sdc.be.datatypes.elements.CapabilityDataDefinition;
 
 
 public class CapabilityDefinitionTest {
@@ -11,6 +13,14 @@ public class CapabilityDefinitionTest {
 		return new CapabilityDefinition();
 	}
 
+	@Test
+	public void testCtor() throws Exception {
+		CapabilityDefinition other = new CapabilityDefinition();
+		new CapabilityDefinition(other);
+		other.setProperties(new LinkedList<>());
+		new CapabilityDefinition(other);
+		new CapabilityDefinition(new CapabilityDataDefinition());
+	}
 	
 	@Test
 	public void testHashCode() throws Exception {
@@ -32,6 +42,14 @@ public class CapabilityDefinitionTest {
 		// default test
 		testSubject = createTestSubject();
 		result = testSubject.equals(obj);
+		result = testSubject.equals(new Object());
+		result = testSubject.equals(testSubject);
+		CapabilityDefinition createTestSubject = createTestSubject();
+		result = testSubject.equals(createTestSubject);
+		createTestSubject.setProperties(new LinkedList<>());
+		result = testSubject.equals(createTestSubject);
+		testSubject.setProperties(new LinkedList<>());
+		result = testSubject.equals(createTestSubject);
 	}
 
 	

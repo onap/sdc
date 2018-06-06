@@ -50,8 +50,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import com.thinkaurelius.titan.core.TitanVertex;
-
 import fj.data.Either;
 
 @Component("interface-operation")

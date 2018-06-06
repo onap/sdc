@@ -20,14 +20,14 @@
 
 package org.openecomp.sdc.be.model;
 
-import org.openecomp.sdc.be.datatypes.elements.ComponentInstanceDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.PropertiesOwner;
-import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
-
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+
+import org.openecomp.sdc.be.datatypes.elements.ComponentInstanceDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.PropertiesOwner;
+import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
 
 public class ComponentInstance extends ComponentInstanceDataDefinition implements Serializable, PropertiesOwner {
 

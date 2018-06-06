@@ -43,6 +43,9 @@ public class Resource extends Component implements Serializable {
 
 	public Resource(ComponentMetadataDefinition componentMetadataDefinition) {
 		super(componentMetadataDefinition);
+		if(this.getComponentMetadataDefinition().getMetadataDataDefinition() == null) {
+			this.getComponentMetadataDefinition().componentMetadataDataDefinition = new ResourceMetadataDataDefinition();
+		}
 		this.getComponentMetadataDefinition().getMetadataDataDefinition().setComponentType(ComponentTypeEnum.RESOURCE);
 	}
 

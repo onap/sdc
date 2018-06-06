@@ -1,5 +1,9 @@
 package org.openecomp.sdc.be.model.jsontitan.operations;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
@@ -11,10 +15,6 @@ import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.DaoStatusConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 @org.springframework.stereotype.Component
 public class PolicyOperation {
