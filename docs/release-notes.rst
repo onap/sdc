@@ -386,7 +386,6 @@ Workflow information is available in readthedocs
 -  [`SDC-1145 <https://jira.onap.org/browse/SDC-1145>`__\ ] - fix a SDC sonar NullPointer bug
 -  [`SDC-1146 <https://jira.onap.org/browse/SDC-1146>`__\ ] - fix sonar NullPointer bugs in SDC
 -  [`SDC-1150 <https://jira.onap.org/browse/SDC-1150>`__\ ] - Json Serialization of collections should hide empty attribute.
--  [`SDC-1182 <https://jira.onap.org/browse/SDC-1182>`__\ ] - SDC must no log serviceInstanceID and SERVICE_INSTANCE_ID
 -  [`SDC-1184 <https://jira.onap.org/browse/SDC-1184>`__\ ] - Unable to create VF after creating component dependency in VSP due to error
 -  [`SDC-1188 <https://jira.onap.org/browse/SDC-1188>`__\ ] - User Permission items
 -  [`SDC-1190 <https://jira.onap.org/browse/SDC-1190>`__\ ] - Java proxy classname in audit logs instead of resource name
@@ -458,15 +457,14 @@ Workflow information is available in readthedocs
 -  [`SDC-1356 <https://jira.onap.org/browse/SDC-1356>`__\ ] - Wrong FE version name
 -  [`SDC-1366 <https://jira.onap.org/browse/SDC-1366>`__\ ] - New version created based on old-unhealed version is not getting healed
 -  [`SDC-1376 <https://jira.onap.org/browse/SDC-1376>`__\ ] - dcae_fe: Update context path to dcaed
--  [`SDC-1380 <https://jira.onap.org/browse/SDC-1380>`__\ ] - Missing Inheritance of VduCp in SDC distributed CSAR package
 -  [`SDC-1382 <https://jira.onap.org/browse/SDC-1382>`__\ ] - "Property Assignment" does not show the list of properties in OOM-deployed env
 
 Issues
 ------
 
 **Known Issues**
-
-	N/A
+-  [`SDC-1380 <https://jira.onap.org/browse/SDC-1380>`__\ ] - Missing Inheritance of VduCp in SDC distributed CSAR package
+-  [`SDC-1182 <https://jira.onap.org/browse/SDC-1182>`__\ ] - SDC must no log serviceInstanceID and SERVICE_INSTANCE_ID
 
 
 Notes
