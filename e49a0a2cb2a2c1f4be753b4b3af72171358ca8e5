@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_0713230e",
+        "filename": "catalog-dao/src/main/java/org/openecomp/sdc/be/dao/cassandra/schema/SdcSchemaUtils.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 3873
+      },
+      "writtenOn": "2018-06-07T07:02:06Z",
+      "side": 1,
+      "message": "redundant, can be removed",
+      "revId": "e49a0a2cb2a2c1f4be753b4b3af72171358ca8e5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
