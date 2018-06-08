@@ -455,6 +455,7 @@ Quick Links:
 - `Project Vulnerability Review Table for SDC <https://wiki.onap.org/pages/viewpage.action?pageId=28377537>`_
 
 **Known Issues**
+
 -  [`SDC-1380 <https://jira.onap.org/browse/SDC-1380>`__\ ] - Missing Inheritance of VduCp in SDC distributed CSAR package
 -  [`SDC-1182 <https://jira.onap.org/browse/SDC-1182>`__\ ] - SDC must no log serviceInstanceID and SERVICE_INSTANCE_ID
 
@@ -491,7 +492,7 @@ Release Purpose
 ----------------
 The Amsterdam release is the first ONAP release.
 This release is focused on creating a merged architecture between the OpenECOMP and OpenO comonents.
-In addition, the release enhances the list of supported use cases to support the `VoLTE <https://wiki.onap.org/pages/viewpage.action?pageId=6593603>`_ snd 'vCPE <https://wiki.onap.org/pages/viewpage.action?pageId=3246168>`_ use cases.
+In addition, the release enhances the list of supported use cases to support the `VoLTE <https://wiki.onap.org/pages/viewpage.action?pageId=6593603>`_ and `vCPE <https://wiki.onap.org/pages/viewpage.action?pageId=3246168>`_ use cases.
 
 New Features
 ------------
@@ -835,7 +836,7 @@ Bug Fixes
 
 **Upgrade Notes**
 
-Beijing back word compatibility to Amsterdam is not supported.
+Beijing backward compatibility to Amsterdam is not supported.
 
 **Deprecation Notes**
 
