@@ -74,7 +74,7 @@ public class ComponentCache {
 
 	@Autowired
 	ComponentCassandraDao componentCassandraDao;
-	
+
 	@Autowired
 	ToscaOperationFacade toscaOperationFacade;
 
@@ -157,64 +157,6 @@ public class ComponentCache {
 	}
 
 	/**
-	 * get components for catalog
-	 *
-	 * @param components
-	 * @param componentTypeEnum
-	 * @return
-	 */
-	@Deprecated
-	public Either<ImmutableTriple<List<Component>, List<Component>, Set<String>>, ActionStatus> getComponentsForCatalog(
-			Set<String> components, ComponentTypeEnum componentTypeEnum) {
-
-		if (false == isEnabled()) {
-			logger.debug("In getComponentsForCatalog for type {}. Cache is disabled.",
-					componentTypeEnum.name().toLowerCase());
-			return Either.right(ActionStatus.NOT_ALLOWED);
-		}
-		logger.debug("In getComponentsForCatalog for type {}", componentTypeEnum.name().toLowerCase());
-
-		Function<List<Component>, List<Component>> filterFieldsFunc = x -> filterForCatalog(x);
-
-		Set<String> leftComponentsForSearch = new HashSet<>();
-		leftComponentsForSearch.addAll(components);
-
-		// get components from inmemory cache
-		List<Component> componentsFromMemory = null;
-		if (true == catalogInMemoryEnabled) {
-			componentsFromMemory = getDataFromInMemoryCache(components, componentTypeEnum);
-			logger.debug("The number of components of type {} fetched from memory is {}",
-					componentTypeEnum.name().toLowerCase(),
-					componentsFromMemory == null ? 0 : componentsFromMemory.size());
-			if (componentsFromMemory != null) {
-				componentsFromMemory.forEach(p -> leftComponentsForSearch.remove(p.getUniqueId()));
-			}
-		} else {
-			logger.debug("Catalog InMemory cache is disabled");
-		}
-
-		logger.debug("Number of components from type {} needed to fetch is {}", componentTypeEnum.name().toLowerCase(),
-				leftComponentsForSearch.size());
-
-		// get components from cassandra cache and filter each component
-		Either<ImmutableTriple<List<Component>, List<Component>, Set<String>>, ActionStatus> result = getComponents(
-				leftComponentsForSearch, filterFieldsFunc);
-
-		if (result.isLeft()) {
-			// add inmemory components to the valid components(not dirty)
-			List<Component> foundComponents = result.left().value().getLeft();
-			if (componentsFromMemory != null) {
-				foundComponents.addAll(componentsFromMemory);
-			}
-			if (true == catalogInMemoryEnabled) {
-				updateCatalogInMemoryCacheWithCertified(foundComponents, componentTypeEnum);
-			}
-		}
-
-		return result;
-	}
-
-	/**
 	 * @param foundComponents
 	 * @param componentTypeEnum
 	 */
@@ -267,13 +209,13 @@ public class ComponentCache {
 
 	/**
 	 *
-	 * get full components from cassandra. On each component apply filter
-	 * function in order to remove unused members
+	 * get full components from cassandra. On each component apply filter function
+	 * in order to remove unused members
 	 *
 	 * @param components
 	 * @param filterFieldsFunc
-	 * @return <found components, found dirty components, not found components
-	 *         list> or Error
+	 * @return <found components, found dirty components, not found components list>
+	 *         or Error
 	 */
 	public Either<ImmutableTriple<List<Component>, List<Component>, Set<String>>, ActionStatus> getComponents(
 			Set<String> components, Function<List<Component>, List<Component>> filterFieldsFunc) {
@@ -466,8 +408,8 @@ public class ComponentCache {
 	 *
 	 * @param filteredResources
 	 * @return ImmutableTripple or ActionStatus. | |-- components |-- dirty
-	 *         components - components with dirty flag = true. |-- set of non
-	 *         cached components
+	 *         components - components with dirty flag = true. |-- set of non cached
+	 *         components
 	 *
 	 */
 	private Either<ImmutableTriple<List<Component>, List<Component>, Set<String>>, ActionStatus> getComponentsFull(
@@ -546,11 +488,9 @@ public class ComponentCache {
 				.collect(Collectors.toSet());
 		notFoundResources.addAll(notCachedResources);
 
-		if (logger.isDebugEnabled()) {
-			logger.debug("Number of components fetched is {}", foundResources.size());
-			logger.debug("Number of components fetched dirty is {}", foundDirtyResources.size());
-			logger.debug("Number of components non cached is {}", notCachedResources.size());
-		}
+		logger.debug("Number of components fetched is {}", foundResources.size());
+		logger.debug("Number of components fetched dirty is {}", foundDirtyResources.size());
+		logger.debug("Number of components non cached is {}", notCachedResources.size());
 
 		return Either.left(result);
 	}
@@ -603,7 +543,6 @@ public class ComponentCache {
 	public Either<Component, ActionStatus> getComponent(String componentUid) {
 
 		return getComponent(componentUid, null, Function.identity());
-
 	}
 
 	public Either<Component, ActionStatus> getComponent(String componentUid, Long lastModificationTime) {
@@ -663,9 +602,6 @@ public class ComponentCache {
 			} catch (IOException e) {
 				logger.debug("Failed to prepare component {} of type {} for cache", componentUid,
 						nodeTypeEnum.name().toLowerCase());
-				if (logger.isTraceEnabled()) {
-					logger.trace("Failed to prepare component {} of type {} for cache",componentUid,nodeTypeEnum.name().toLowerCase());
-				}
 			}
 		} else {
 			logger.debug("Failed to serialize component {} of type {} for cache", componentUid,
@@ -768,10 +704,8 @@ public class ComponentCache {
 		Set<String> notFoundInCache = immutablePair.getRight();
 		notFoundResources.addAll(notFoundInCache);
 
-		if (logger.isDebugEnabled()) {
-			logger.debug("Number of components fetched is {}", foundResources.size());
-			logger.debug("Number of components non cached is {}", notFoundResources.size());
-		}
+		logger.debug("Number of components fetched is {}", foundResources.size());
+		logger.debug("Number of components non cached is {}", notFoundResources.size());
 
 		return Either.left(result);
 	}
@@ -955,7 +889,7 @@ public class ComponentCache {
 		if (false == isEnabled()) {
 			return ActionStatus.NOT_ALLOWED;
 		}
-		CassandraOperationStatus status = this.componentCassandraDao.deleteComponent(id);
+		CassandraOperationStatus status = componentCassandraDao.deleteComponent(id);
 		if (CassandraOperationStatus.OK.equals(status)) {
 			return ActionStatus.OK;
 		} else {
