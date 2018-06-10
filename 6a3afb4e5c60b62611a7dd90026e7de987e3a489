@@ -1,0 +1,211 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_1b405b34",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/ConsolidationService.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 825,
+      "author": {
+        "id": 2727
+      },
+      "writtenOn": "2018-06-10T18:18:43Z",
+      "side": 1,
+      "message": "Please move this check isEmpty inside of ifAllResourceAreSubInterface, It should be inside of API because if this API will be called from other place if will be failed in case nestedHeatFileNames is null.\nBecause ifAllResourceAreSubInterface access to nestedHeatFileNames  check should be inside of this API",
+      "range": {
+        "startLine": 825,
+        "startChar": 15,
+        "endLine": 825,
+        "endChar": 59
+      },
+      "revId": "6a3afb4e5c60b62611a7dd90026e7de987e3a489",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_3b3bd7c9",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/test/java/org/openecomp/sdc/translator/datatypes/heattotosca/unifiedmodel/consolidation/ComputeConsolidationDataTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 124,
+      "author": {
+        "id": 2727
+      },
+      "writtenOn": "2018-06-10T18:18:43Z",
+      "side": 1,
+      "message": "You need add additional test when you have mock like in this test but \nfileComputeConsolidationData.isNumberOfComputeTypesLegal() return false. See that in this case computeConsolidationData.isNumberOfComputeTypesLegal()  also return false.\nYou need mock fileComputeConsolidationData.isNumberOfComputeTypesLegal()something like this: When(fileComputeConsolidationData.isNumberOfComputeTypesLegal()).thenreturn false",
+      "range": {
+        "startLine": 124,
+        "startChar": 16,
+        "endLine": 124,
+        "endChar": 45
+      },
+      "revId": "6a3afb4e5c60b62611a7dd90026e7de987e3a489",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_1b67fbeb",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/test/java/org/openecomp/sdc/translator/datatypes/heattotosca/unifiedmodel/consolidation/ComputeTemplateConsolidationDataTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 2727
+      },
+      "writtenOn": "2018-06-10T18:18:43Z",
+      "side": 1,
+      "message": "Please add additional test when you \n- first setPorts ports for one type, e.g. PORT_NEUTRON\ncall to collectAllPortsOfEachTypeFromCompute  and verify \n(like you have now in this test)\n- second setPorts with Map of other type, e.g. PORT_NEUTRON_2\nand call to collectAllPortsOfEachTypeFromCompute and see for each port type that it collected correct ports\n- For both steps check  that values for each port type that its as expected",
+      "range": {
+        "startLine": 41,
+        "startChar": 16,
+        "endLine": 41,
+        "endChar": 62
+      },
+      "revId": "6a3afb4e5c60b62611a7dd90026e7de987e3a489",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_3b62f7d9",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/test/java/org/openecomp/sdc/translator/datatypes/heattotosca/unifiedmodel/consolidation/ComputeTemplateConsolidationDataTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 2727
+      },
+      "writtenOn": "2018-06-10T18:18:43Z",
+      "side": 1,
+      "message": "Please also add check at end of test that mapToBeModified.get(PORT_NEUTRON) return correct values",
+      "range": {
+        "startLine": 50,
+        "startChar": 37,
+        "endLine": 50,
+        "endChar": 69
+      },
+      "revId": "6a3afb4e5c60b62611a7dd90026e7de987e3a489",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_7b707fa4",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/test/java/org/openecomp/sdc/translator/datatypes/heattotosca/unifiedmodel/consolidation/ComputeTemplateConsolidationDataTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 2727
+      },
+      "writtenOn": "2018-06-10T18:18:43Z",
+      "side": 1,
+      "message": "Please also add check at end of test that mapToBeModified.get(PORT_NEUTRON) return correct values",
+      "range": {
+        "startLine": 55,
+        "startChar": 15,
+        "endLine": 55,
+        "endChar": 63
+      },
+      "revId": "6a3afb4e5c60b62611a7dd90026e7de987e3a489",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_bb7607a2",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/test/java/org/openecomp/sdc/translator/datatypes/heattotosca/unifiedmodel/consolidation/ComputeTemplateConsolidationDataTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 98,
+      "author": {
+        "id": 2727
+      },
+      "writtenOn": "2018-06-10T18:18:43Z",
+      "side": 1,
+      "message": "I think that it will be good if you will check also values of portIds that its as expected",
+      "range": {
+        "startLine": 98,
+        "startChar": 16,
+        "endLine": 98,
+        "endChar": 35
+      },
+      "revId": "6a3afb4e5c60b62611a7dd90026e7de987e3a489",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_db60b3d1",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/test/java/org/openecomp/sdc/translator/datatypes/heattotosca/unifiedmodel/consolidation/FileComputeConsolidationDataTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 111,
+      "author": {
+        "id": 2727
+      },
+      "writtenOn": "2018-06-10T18:18:43Z",
+      "side": 1,
+      "message": "You are checking here behavior of TypeComputeConsolidationData.isNumberOfComputeConsolidationDataPerTypeLegal and you no need add it here. Need check it in TypeComputeConsolidationDataTest.\nNeed mock TypeComputeConsolidationDataTest and you already did it in isNumberOfComputeTypesLegalPositive test and its ok.\nTo test negative case you need not set \nfileComputeConsolidationData.setTypeComputeConsolidationData\nso that computeTemplateConsolidationData will be empty.\nJust see that isNumberOfComputeTypesLegal will return false in this case",
+      "range": {
+        "startLine": 111,
+        "startChar": 16,
+        "endLine": 111,
+        "endChar": 51
+      },
+      "revId": "6a3afb4e5c60b62611a7dd90026e7de987e3a489",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_fb5b2f20",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/test/java/org/openecomp/sdc/translator/datatypes/heattotosca/unifiedmodel/consolidation/TypeComputeConsolidationDataTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 198,
+      "author": {
+        "id": 2727
+      },
+      "writtenOn": "2018-06-10T18:18:43Z",
+      "side": 1,
+      "message": "Please add also negative test when computeTemplateConsolidationData is empty -\u003e \nisThereMoreThanOneComputeTypeInstanceNegative will return false",
+      "range": {
+        "startLine": 198,
+        "startChar": 16,
+        "endLine": 198,
+        "endChar": 61
+      },
+      "revId": "6a3afb4e5c60b62611a7dd90026e7de987e3a489",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_9b9a2bc4",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/test/java/org/openecomp/sdc/translator/datatypes/heattotosca/unifiedmodel/consolidation/TypeComputeConsolidationDataTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 235,
+      "author": {
+        "id": 2727
+      },
+      "writtenOn": "2018-06-10T18:18:43Z",
+      "side": 1,
+      "message": "You again testing in this test not only what doing your member, also testing what doing its internal object\ne.g.    you no need setPorts and test it as Complex test. You need only test UT of this class. May be using mocks.\nIn other tests you also still testing more than needed in one class. \nPlease first fix all my comments for other test because for part of them I am explaining what should be changed and how. After that please try over all your tests again and see which tests still you need change in order to each test will test only whats related to its logic. Thanks",
+      "range": {
+        "startLine": 235,
+        "startChar": 16,
+        "endLine": 235,
+        "endChar": 75
+      },
+      "revId": "6a3afb4e5c60b62611a7dd90026e7de987e3a489",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
