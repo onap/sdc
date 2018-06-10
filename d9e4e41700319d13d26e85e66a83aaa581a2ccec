@@ -184,6 +184,30 @@
       "revId": "d9e4e41700319d13d26e85e66a83aaa581a2ccec",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_db499361",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/test/java/org/openecomp/sdc/translator/datatypes/heattotosca/unifiedmodel/consolidation/EntityConsolidationDataTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 2727
+      },
+      "writtenOn": "2018-06-10T18:18:43Z",
+      "side": 1,
+      "message": "You all right that in current using of this API it will not be situation when list is null but you writing tests for this specific API which in the future can be called with list null. So I think we need add anyway \nCollectionUtils.isEmpty(entityConsolidationDataList)\n   return true;\nat start of isGetAttrOutFromEntityLegal in EntityConsolidationData class\nand also add test for this case ans see that isGetAttrOutFromEntityLegal return true",
+      "parentUuid": "5a93c517_8715f3e6",
+      "range": {
+        "startLine": 67,
+        "startChar": 16,
+        "endLine": 67,
+        "endChar": 55
+      },
+      "revId": "d9e4e41700319d13d26e85e66a83aaa581a2ccec",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
