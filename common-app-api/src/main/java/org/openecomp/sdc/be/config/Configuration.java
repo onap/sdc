@@ -1336,7 +1336,9 @@ public class Configuration extends BasicConfiguration {
 				.append(format("Service Api Artifacts: %s%n", serviceApiArtifacts))
 				.append(format("heat env artifact header: %s%n", heatEnvArtifactHeader))
 				.append(format("heat env artifact footer: %s%n", heatEnvArtifactFooter))
-				.append(format("onboarding: %s%n", onboarding)).toString();
+				.append(format("onboarding: %s%n", onboarding))
+				.append(format("tosca conformance level: %s%n", toscaConformanceLevel))
+				.toString();
 	}
 
 	public List<String> getUnLoggedUrls() {
