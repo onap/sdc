@@ -282,6 +282,8 @@ topology_template:
             connection_point:
               nf_type: ''
               nfc_type: ''
+              nf_naming_code: ''
+              nfc_naming_code: ''
               network_role: ''
               pps_capacity: ''
     template_VMInt_OAM_lb_external_VMI:
@@ -319,6 +321,8 @@ topology_template:
             connection_point:
               nf_type: ''
               nfc_type: ''
+              nf_naming_code: ''
+              nfc_naming_code: ''
               network_role: ''
               pps_capacity: ''
     pd05_port_0:

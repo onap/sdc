@@ -6,6 +6,9 @@ import java.util.Objects;
 public class PortMirroringConnectionPointDescription {
   private String nf_type;
   private String nfc_type;
+  private String nf_naming_code;
+  private String nfc_naming_code;
+
   //Keeping below attributes as objects to accomodate for tosca functions for property
   // values like get_input, get_attribute
   private Object network_role;
@@ -15,6 +18,8 @@ public class PortMirroringConnectionPointDescription {
     //Populating empty strings as default values to be populated in tosca
     nf_type = "";
     nfc_type = "";
+    nf_naming_code = "";
+    nfc_naming_code = "";
     network_role = "";
     pps_capacity = "";
   }
@@ -33,6 +38,22 @@ public class PortMirroringConnectionPointDescription {
 
   public void setNfc_type(String nfc_type) {
     this.nfc_type = nfc_type;
+  }
+
+  public String getNf_naming_code() {
+    return nf_naming_code;
+  }
+
+  public void setNf_naming_code(String nf_naming_code) {
+    this.nf_naming_code = nf_naming_code;
+  }
+
+  public String getNfc_naming_code() {
+    return nfc_naming_code;
+  }
+
+  public void setNfc_naming_code(String nfc_naming_code) {
+    this.nfc_naming_code = nfc_naming_code;
   }
 
   public Object getNetwork_role() {
@@ -54,6 +75,8 @@ public class PortMirroringConnectionPointDescription {
   public boolean isEmpty() {
     return Objects.isNull(nf_type)
         && Objects.isNull(nfc_type)
+        && Objects.isNull(nf_naming_code)
+        && Objects.isNull(nfc_naming_code)
         && Objects.isNull(network_role)
         && Objects.isNull(pps_capacity);
   }

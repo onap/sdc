@@ -110,7 +110,9 @@ topology_template:
           properties:
             connection_point:
               nf_type: ''
-              nfc_type: FSB1
+              nfc_type: ''
+              nf_naming_code: ''
+              nfc_naming_code: FSB1
               network_role:
                 get_input: port_FSB1_OAM_network_role
               pps_capacity: ''

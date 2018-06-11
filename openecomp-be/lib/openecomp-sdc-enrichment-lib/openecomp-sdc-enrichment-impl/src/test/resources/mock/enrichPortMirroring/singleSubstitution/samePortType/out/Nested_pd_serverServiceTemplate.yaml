@@ -271,7 +271,9 @@ topology_template:
           properties:
             connection_point:
               nf_type: ''
-              nfc_type: pd_server
+              nfc_type: ''
+              nf_naming_code: ''
+              nfc_naming_code: pd_server
               network_role:
                 get_input: port_pd01_port_2_network_role
               pps_capacity: ''

@@ -560,7 +560,13 @@ data_types:
     properties:
       nf_type:
         type: string
+        description: deprecated
       nfc_type:
+        type: string
+        description: deprecated
+      nf_naming_code:
+        type: string
+      nfc_naming_code:
         type: string
       network_role:
         type: string

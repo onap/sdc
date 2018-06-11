@@ -260,6 +260,8 @@ topology_template:
             connection_point:
               nf_type: ''
               nfc_type: ''
+              nf_naming_code: ''
+              nfc_naming_code: ''
               network_role: ''
               pps_capacity: ''
     pcm_2port_2:
@@ -328,7 +330,9 @@ topology_template:
           properties:
             connection_point:
               nf_type: ''
-              nfc_type: server_pcm
+              nfc_type: ''
+              nf_naming_code: ''
+              nfc_naming_code: server_pcm
               network_role:
                 get_input: port_pcm_2port_1_network_role
               pps_capacity: ''
