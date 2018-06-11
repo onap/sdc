@@ -36,6 +36,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.openecomp.sdc.asdctool.enums.SchemaZipFileEnum;
 import org.openecomp.sdc.asdctool.impl.EsToCassandraDataMigrationConfig;
 import org.openecomp.sdc.be.config.ConfigurationManager;
@@ -53,16 +54,16 @@ import org.yaml.snakeyaml.Yaml;
 public class SdcSchemaFileImport {
 	
 	private static final String SEPARATOR = FileSystems.getDefault().getSeparator();
-
-	private static SdcSchemaFilesCassandraDao schemaFilesCassandraDao;
 	
 	private static final String TOSCA_VERSION = "tosca_simple_yaml_1_1";
 		
 	private static String importToscaPath;
 	
-	private static byte[] buffer = new byte[1024];
+	private static final byte[] buffer = new byte[1024];
 	
-	private static String YAML_EXTENSION = ".yml";
+	private static final String YAML_EXTENSION = ".yml";
+
+	private static final String DEPLOYMENT_TYPE_ONAP = "onap";
 	
 	private static String LICENSE_TXT;
 	
@@ -74,7 +75,7 @@ public class SdcSchemaFileImport {
 		System.out.println("Starting SdcSchemaFileImport procedure...");
 		final String FILE_NAME = "SDC.zip";
 		
-		if (args == null || args.length < 4) {
+		if (args == null || !(args.length ==4 || args.length == 5 )) {
 			usageAndExit();
 		}
 		
@@ -82,6 +83,11 @@ public class SdcSchemaFileImport {
 		String sdcReleaseNum = args[1];
 		String conformanceLevel = args[2];
 		String appConfigDir = args[3];
+		String deploymentType=null;
+		if(args.length==5){
+			deploymentType=args[4];
+		}
+
 				
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
@@ -116,7 +122,7 @@ public class SdcSchemaFileImport {
 			}
 		}
 		
-		createAndSaveNodeSchemaFile();
+		createAndSaveNodeSchemaFile(deploymentType);
 		
     	try  {
     		//close the ZipOutputStream
@@ -128,10 +134,10 @@ public class SdcSchemaFileImport {
     		System.exit(1);
     	}
 		
-    	//Generation flow end - generating SDC from normatives
+    	//Generation flow end - generating SDC from narratives
 				
 		AnnotationConfigApplicationContext context = initContext(appConfigDir);
-		schemaFilesCassandraDao = (SdcSchemaFilesCassandraDao) context.getBean("sdc-schema-files-cassandra-dao");
+        SdcSchemaFilesCassandraDao schemaFilesCassandraDao = (SdcSchemaFilesCassandraDao) context.getBean("sdc-schema-files-cassandra-dao");
 		
 		byte[] fileBytes = baos.toByteArray();
 
@@ -166,7 +172,7 @@ public class SdcSchemaFileImport {
 		yaml.setName(fileName);
 		 
 		//Initialize the yaml contents
-		Map<String, Object> data = new LinkedHashMap<String, Object>();
+		Map<String, Object> data = new LinkedHashMap<>();
 					
 		data.put("tosca_definitions_version", TOSCA_VERSION);
 		
@@ -199,29 +205,40 @@ public class SdcSchemaFileImport {
     			zos.write(buffer, 0, len);
     		}
     		//close the InputStream
-    		stream.close();
+            file.delete();
+            stream.close();
     		zos.closeEntry();
-    		file.delete();
+
     		
 		} catch (IOException e) {
 			System.out.println("Error in file creation : " + fileName + ", " + e.getMessage());
 			System.exit(1);
 		}
 	}
-	
-	public static void createAndSaveNodeSchemaFile() throws IOException  {
+
+	/**
+	 *the method is responsible for creating and storing the sdc normatives in the DB
+	 * @param deploymentType if the deployments type is onap the onap narratives will be add to the zip
+	 * @throws IOException thrown in case of issues in reding files.
+	 */
+	public static void createAndSaveNodeSchemaFile(String deploymentType) throws IOException  {
 		
 		//Initialize the snake yaml dumper option
 		DumperOptions options = new DumperOptions();
 		options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
 		
-		Map<String, Object> nodeTypeList = new LinkedHashMap<String, Object>();
+		Map<String, Object> nodeTypeList = new LinkedHashMap<>();
 		
 		String[] importFileList = new String[]{"data.yml", "artifacts.yml", "capabilities.yml", "interfaces.yml", "relationships.yml"}; 
 		String collectionTitle = "node_types";
 		
 		//Create node.yaml - collect all types from normative-types and heat-types directories
 		String[] nodeTypesMainFolders = new String[]{"normative-types", "heat-types"};
+
+		if(DEPLOYMENT_TYPE_ONAP.equals(deploymentType)){
+            String[] onapNodeTypesMainFolders = new String[]{"nfv-types"};
+            nodeTypesMainFolders=ArrayUtils.addAll(nodeTypesMainFolders,onapNodeTypesMainFolders);
+		}
 		
 		for (String nodeTypesMainFolder : nodeTypesMainFolders) {
 			Files.walk(Paths.get(importToscaPath + SEPARATOR + nodeTypesMainFolder))
@@ -232,7 +249,7 @@ public class SdcSchemaFileImport {
 						System.out.println("Processing node type file "+path+"...");
 						FileInputStream inputStream = new FileInputStream(path);
 				    	Yaml yaml = new Yaml();
-				    	Map<String, Object> load = (Map<String, Object>) yaml.load(inputStream);
+				    	Map<String, Object> load = yaml.loadAs(inputStream,Map.class);
 						Map<String, Object> nodeType = (Map<String, Object>) load.get(collectionTitle);
 						nodeTypeList.putAll(nodeType);
 						
@@ -251,13 +268,12 @@ public class SdcSchemaFileImport {
 	}
 	
 	private static void SdcSchemaFileImportUsage()  {
-		System.err.println("Usage: <file dir/filename> <SDC release number> <Schema conformance level> <configuration dir>");
+		System.err.println("Usage: <file dir/filename> <SDC release number> <Schema conformance level> <configuration dir> <deployment type optional>");
 	}
 	
 	private static AnnotationConfigApplicationContext initContext(String appConfigDir) {
 		ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(), appConfigDir);
-		ConfigurationManager configurationManager = new ConfigurationManager(configurationSource);
-		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(EsToCassandraDataMigrationConfig.class);
-		return context;
+		new ConfigurationManager(configurationSource);
+		return  new AnnotationConfigApplicationContext(EsToCassandraDataMigrationConfig.class);
 	}
 }

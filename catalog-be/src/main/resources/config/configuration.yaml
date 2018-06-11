@@ -23,7 +23,7 @@ beSslPort: 8443
 
 version: 1.1.0
 released: 2012-11-30
-toscaConformanceLevel: 7.0
+toscaConformanceLevel: 10.0
 minToscaConformanceLevel: 3.0
 
 titanCfgFile: /home/vagrant/catalog-be/config/catalog-be/titan.properties

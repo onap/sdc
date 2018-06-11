@@ -15,7 +15,14 @@ public class SdcSchemaFileImportTest {
 	public void testCreateAndSaveNodeSchemaFile() throws Exception {
 
 		// default test
-		SdcSchemaFileImport.createAndSaveNodeSchemaFile();
+		SdcSchemaFileImport.createAndSaveNodeSchemaFile("");
+	}
+
+	@Test(expected=NoSuchFileException.class)
+	public void testCreateAndSaveNodeSchemaFileOnap() throws Exception {
+
+		// default test
+		SdcSchemaFileImport.createAndSaveNodeSchemaFile("onap");
 	}
 
 	@Test(expected=NullPointerException.class)

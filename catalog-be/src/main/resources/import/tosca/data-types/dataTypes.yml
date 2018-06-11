@@ -1371,6 +1371,8 @@ tosca.datatypes.nfv.VirtualNetworkInterfaceRequirements:
     support_mandatory:
       type: boolean
       required: true
+    requirement:
+      type: string      # not specified
     network_interface_requirements:
       type: map
       entry_schema:
@@ -1394,6 +1396,9 @@ tosca.datatypes.nfv.L2AddressData:
     mac_address_assignment: 
       type: boolean
       required: true
+    address:
+      type: string
+      required: false
 tosca.datatypes.nfv.L3AddressData:
   derived_from: tosca.datatypes.Root
   properties: 

@@ -14,7 +14,7 @@ bash "import-Comformance" do
 
     cd /tmp/sdctool/scripts
     /bin/chmod +x sdcSchemaFileImport.sh
-    echo "execute /tmp/sdctool/scripts/sdcSchemaFileImport.sh ${tosca_dir} #{cl_release} ${cl_version} ${conf_dir} "
+    echo "execute /tmp/sdctool/scripts/sdcSchemaFileImport.sh ${tosca_dir} #{cl_release} ${cl_version} ${conf_dir} onap"
     ./sdcSchemaFileImport.sh ${tosca_dir} #{cl_release} ${cl_version} ${conf_dir}
   EOH
 end
