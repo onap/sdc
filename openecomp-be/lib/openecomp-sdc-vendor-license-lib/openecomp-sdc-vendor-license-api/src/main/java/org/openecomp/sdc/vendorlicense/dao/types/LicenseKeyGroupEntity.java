@@ -22,7 +22,6 @@ package org.openecomp.sdc.vendorlicense.dao.types;
 
 import com.datastax.driver.mapping.annotations.ClusteringColumn;
 import com.datastax.driver.mapping.annotations.Column;
-import com.datastax.driver.mapping.annotations.Enumerated;
 import com.datastax.driver.mapping.annotations.Frozen;
 import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
@@ -56,7 +55,6 @@ public class LicenseKeyGroupEntity implements VersionableEntity {
   private String id;
   private String name;
   private String description;
-  @Enumerated
   private LicenseKeyType type;
   @Column(name = "operational_scope")
   @Frozen

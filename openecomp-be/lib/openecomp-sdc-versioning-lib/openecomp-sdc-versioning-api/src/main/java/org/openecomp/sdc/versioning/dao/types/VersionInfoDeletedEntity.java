@@ -22,7 +22,6 @@ package org.openecomp.sdc.versioning.dao.types;
 
 import com.datastax.driver.mapping.annotations.ClusteringColumn;
 import com.datastax.driver.mapping.annotations.Column;
-import com.datastax.driver.mapping.annotations.Enumerated;
 import com.datastax.driver.mapping.annotations.Frozen;
 import com.datastax.driver.mapping.annotations.FrozenValue;
 import com.datastax.driver.mapping.annotations.PartitionKey;
@@ -46,7 +45,6 @@ public class VersionInfoDeletedEntity {
   @Frozen
   private Version activeVersion;
 
-  @Enumerated
   private VersionStatus status;
 
   @Frozen

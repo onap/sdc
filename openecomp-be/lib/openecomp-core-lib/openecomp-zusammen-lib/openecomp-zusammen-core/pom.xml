@@ -39,7 +39,7 @@
             <artifactId>zusammen-collaboration-cassandra-plugin</artifactId>
             <version>${zusammen-collaboration-store.version}</version>
             <scope>runtime</scope>
-            <exclusions>
+<!--            <exclusions>
                 <exclusion>
                     <groupId>com.datastax.cassandra</groupId>
                     <artifactId>cassandra-driver-core</artifactId>
@@ -48,7 +48,7 @@
                     <groupId>com.datastax.cassandra</groupId>
                     <artifactId>cassandra-driver-mapping</artifactId>
                 </exclusion>
-            </exclusions>
+            </exclusions>-->
         </dependency>
         <dependency>
             <groupId>com.amdocs.zusammen.plugin</groupId>

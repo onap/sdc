@@ -81,9 +81,9 @@ public class ImportSingleTable {
                 break;
             case TIMESTAMP:
                 if (StringUtils.isEmpty(rowData)){
-                    bind.setDate(i, null);
+                    bind.setTimestamp(i, null);
                 } else {
-                    bind.setDate(i, new Date(Long.parseLong(rowData)));
+                    bind.setTimestamp(i, new Date(Long.parseLong(rowData)));
                 }
                 break;
             case BOOLEAN:

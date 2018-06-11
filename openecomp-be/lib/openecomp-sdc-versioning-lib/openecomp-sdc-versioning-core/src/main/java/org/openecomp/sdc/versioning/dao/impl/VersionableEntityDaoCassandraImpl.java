@@ -23,7 +23,6 @@ package org.openecomp.sdc.versioning.dao.impl;
 import com.datastax.driver.core.ColumnDefinitions;
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Row;
-import com.datastax.driver.mapping.UDTMapper;
 import org.openecomp.core.dao.UniqueValueDao;
 import org.openecomp.core.nosqldb.api.NoSqlDb;
 import org.openecomp.core.nosqldb.factory.NoSqlDbFactory;
@@ -49,8 +48,6 @@ class VersionableEntityDaoCassandraImpl implements VersionableEntityDao {
   private static final NoSqlDb noSqlDb = NoSqlDbFactory.getInstance().createInterface();
   private static Logger Logger =
       (Logger) LoggerFactory.getLogger(VersionableEntityDaoCassandraImpl.class);
-  private static UDTMapper<Version> versionMapper =
-      noSqlDb.getMappingManager().udtMapper(Version.class);
 
   public VersionableEntityDaoCassandraImpl(
       UniqueValueDao uniqueValueDao) {
@@ -88,7 +85,7 @@ class VersionableEntityDaoCassandraImpl implements VersionableEntityDao {
 
       for (String columnName : columnNames) {
         if (metadata.getVersionIdentifierName().equals(columnName)) {
-          columnValues.add(versionMapper.toUDT(newVersion));
+          columnValues.add(newVersion);
           columnNameToValue.put(columnName, newVersion.toString());
         } else {
           Object value = row.getObject(columnName);
@@ -110,7 +107,7 @@ class VersionableEntityDaoCassandraImpl implements VersionableEntityDao {
 
     String deleteCql = String.format("delete from %s where %s=? and %s=?", metadata.getName(),
         metadata.getIdentifierName(), metadata.getVersionIdentifierName());
-    noSqlDb.execute(deleteCql, entityId, versionMapper.toUDT(versionToDelete));
+    noSqlDb.execute(deleteCql, entityId, versionToDelete);
   }
 
   @Override
@@ -127,7 +124,7 @@ class VersionableEntityDaoCassandraImpl implements VersionableEntityDao {
     Logger.debug("entityId", entityId);
     Logger.debug("version", version);
 
-    return noSqlDb.execute(selectCql, entityId, versionMapper.toUDT(version));
+    return noSqlDb.execute(selectCql, entityId, version);
   }
 
   private void initRowUniqueValues(List<UniqueValueMetadata> metadata,

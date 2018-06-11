@@ -15,25 +15,33 @@
  */
 package org.openecomp.sdc.activitylog.dao.impl;
 
+import com.datastax.driver.extras.codecs.enums.EnumNameCodec;
 import com.datastax.driver.mapping.Mapper;
+import com.datastax.driver.mapping.MappingManager;
 import com.datastax.driver.mapping.Result;
 import com.datastax.driver.mapping.annotations.Accessor;
 import com.datastax.driver.mapping.annotations.Query;
+import java.util.Collection;
 import org.openecomp.core.dao.impl.CassandraBaseDao;
-import org.openecomp.core.nosqldb.api.NoSqlDb;
 import org.openecomp.core.nosqldb.factory.NoSqlDbFactory;
 import org.openecomp.sdc.activitylog.dao.ActivityLogDao;
 import org.openecomp.sdc.activitylog.dao.type.ActivityLogEntity;
-
-import java.util.Collection;
+import org.openecomp.sdc.activitylog.dao.type.ActivityType;
 
 public class ActivityLogDaoCassandraImpl extends CassandraBaseDao<ActivityLogEntity>
     implements ActivityLogDao {
-  private static final NoSqlDb noSqlDb = NoSqlDbFactory.getInstance().createInterface();
-  private static final Mapper<ActivityLogEntity> mapper =
-      noSqlDb.getMappingManager().mapper(ActivityLogEntity.class);
-  private static final ActivityLogAccessor accessor =
-      noSqlDb.getMappingManager().createAccessor(ActivityLogAccessor.class);
+
+  private static final Mapper<ActivityLogEntity> mapper;
+  private static final ActivityLogAccessor accessor;
+
+  static {
+    MappingManager mappingManager = NoSqlDbFactory.getInstance().createInterface().getMappingManager();
+    mappingManager.getSession().getCluster().getConfiguration().getCodecRegistry()
+                  .register(new EnumNameCodec<>(ActivityType.class));
+
+    mapper = mappingManager.mapper(ActivityLogEntity.class);
+    accessor = mappingManager.createAccessor(ActivityLogAccessor.class);
+  }
 
   @Override
   protected Mapper<ActivityLogEntity> getMapper() {

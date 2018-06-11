@@ -177,6 +177,7 @@ public class Version {
     return new Version(major + 1, 0);
   }
 
+  @Transient
   public boolean isFinal() {
     return major != 0 && minor == 0;
   }

@@ -8,6 +8,8 @@ import com.amdocs.zusammen.datatypes.item.ElementContext;
 import com.amdocs.zusammen.datatypes.item.Resolution;
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Row;
+import com.datastax.driver.extras.codecs.enums.EnumNameCodec;
+import com.datastax.driver.mapping.MappingManager;
 import com.datastax.driver.mapping.annotations.Accessor;
 import com.datastax.driver.mapping.annotations.Query;
 import org.openecomp.core.nosqldb.factory.NoSqlDbFactory;
@@ -27,9 +29,14 @@ public class VspMergeDaoImpl implements VspMergeDao {
   private static final String VSP_MODEL_NOT_EXIST =
       "Vsp model does not exist for Vsp %s, version %s.";
 
-  private static VspMergeHintAccessor accessor =
-      NoSqlDbFactory.getInstance().createInterface()
-          .getMappingManager().createAccessor(VspMergeHintAccessor.class);
+  private static final VspMergeHintAccessor accessor;
+
+  static {
+      MappingManager mappingManager = NoSqlDbFactory.getInstance().createInterface().getMappingManager();
+      mappingManager.getSession().getCluster().getConfiguration().getCodecRegistry()
+                    .register(new EnumNameCodec<>(Resolution.class));
+      accessor = mappingManager.createAccessor(VspMergeHintAccessor.class);
+  }
 
   private ZusammenAdaptor zusammenAdaptor;
 

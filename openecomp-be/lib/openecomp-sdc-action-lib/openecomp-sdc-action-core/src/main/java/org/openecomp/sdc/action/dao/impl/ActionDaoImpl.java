@@ -43,12 +43,10 @@ import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_QUERY_
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Row;
 import com.datastax.driver.core.Statement;
-import com.datastax.driver.core.UDTValue;
 import com.datastax.driver.core.exceptions.NoHostAvailableException;
 import com.datastax.driver.core.querybuilder.QueryBuilder;
 import com.datastax.driver.mapping.Mapper;
 import com.datastax.driver.mapping.Result;
-import com.datastax.driver.mapping.UDTMapper;
 import com.datastax.driver.mapping.annotations.Accessor;
 import com.datastax.driver.mapping.annotations.Query;
 import java.util.ArrayList;
@@ -95,8 +93,6 @@ public class ActionDaoImpl extends CassandraBaseDao<ActionEntity> implements Act
       noSqlDb.getMappingManager().mapper(ActionEntity.class);
   private static ActionAccessor accessor =
       noSqlDb.getMappingManager().createAccessor(ActionAccessor.class);
-  private static UDTMapper<Version> versionMapper =
-      noSqlDb.getMappingManager().udtMapper(Version.class);
   private static VersionInfoDao versionInfoDao =
       VersionInfoDaoFactory.getInstance().createInterface();
   private static VersionInfoDeletedDao versionInfoDeletedDao =
@@ -159,7 +155,7 @@ public class ActionDaoImpl extends CassandraBaseDao<ActionEntity> implements Act
       Version activeVersion = activeVersionEntity.getActiveVersion();
       Statement getNameFromInvUuId = QueryBuilder.select().column("name").from("dox", "Action")
           .where(eq("actioninvariantuuid", actionInvariantUuId))
-          .and(in("version", versionMapper.toUDT(activeVersion)));
+          .and(in("version", activeVersion));
       ActionUtil
           .actionLogPreProcessor(ActionSubOperation.GET_NAME_BY_ACTIONINVID, TARGET_ENTITY_DB);
       ResultSet results = getSession().execute(getNameFromInvUuId);
@@ -430,7 +426,7 @@ public class ActionDaoImpl extends CassandraBaseDao<ActionEntity> implements Act
 
   @Override
   protected Object[] getKeys(ActionEntity entity) {
-    return new Object[]{entity.getActionInvariantUuId(), versionMapper.toUDT(entity.getVersion())};
+    return new Object[]{entity.getActionInvariantUuId(), entity.getVersion()};
   }
 
   @Override
@@ -438,25 +434,15 @@ public class ActionDaoImpl extends CassandraBaseDao<ActionEntity> implements Act
     return accessor.getAllActions().all();
   }
 
-  /**
-   *
-   * @param actionInvariantUUID.
-   * @param versions.
-   */
   private void updateActionStatusForDelete(String actionInvariantUuId, List<Version> versions) {
     log.debug(
         "entering updateActionStatusForDelete with actionInvariantUuId = " + actionInvariantUuId
             + " for versions " + versions);
-    List<UDTValue> versionUdt = new ArrayList<>();
-    for (Version v : versions) {
-      versionUdt.add(versionMapper.toUDT(v));
-    }
-
     ActionUtil.actionLogPreProcessor(ActionSubOperation.UPDATE_ACTION_STATUS, TARGET_ENTITY_DB);
     //Update the status column of action table
     Statement updateStatusStatement =
         QueryBuilder.update("dox", "Action").with(set("status", ActionStatus.Deleted.name()))
-            .where(eq("actioninvariantuuid", actionInvariantUuId)).and(in("version", versionUdt));
+            .where(eq("actioninvariantuuid", actionInvariantUuId)).and(in("version", versions));
     getSession().execute(updateStatusStatement);
     ActionUtil.actionLogPostProcessor(StatusCode.COMPLETE, null, "", false);
     log.metrics("");
@@ -506,7 +492,7 @@ public class ActionDaoImpl extends CassandraBaseDao<ActionEntity> implements Act
 
     List<Version> versionList = new ArrayList<>();
     for (Row row : results) {
-      Version version = versionMapper.fromUDT((UDTValue) row.getObject("version"));
+      Version version =  row.get("version",Version.class);
       versionList.add(version);
     }
     log.debug("exit getVersionsByName for Action Name = " + name);

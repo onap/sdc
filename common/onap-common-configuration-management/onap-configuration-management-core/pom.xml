@@ -47,7 +47,7 @@
         <dependency>
             <groupId>com.github.adejanovski</groupId>
             <artifactId>cassandra-jdbc-wrapper</artifactId>
-            <version>${cassandra.version}</version>
+            <version>3.1.0</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>

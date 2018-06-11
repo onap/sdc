@@ -59,12 +59,12 @@
         <dependency>
             <groupId>com.datastax.cassandra</groupId>
             <artifactId>cassandra-driver-core</artifactId>
-            <version>${cassandra.version}</version>
+            <version>${datastax.cassandra.version}</version>
         </dependency>
         <dependency>
             <groupId>com.datastax.cassandra</groupId>
             <artifactId>cassandra-driver-mapping</artifactId>
-            <version>${cassandra.version}</version>
+            <version>${datastax.cassandra.version}</version>
         </dependency>
         <dependency>
             <groupId>javax.ws.rs</groupId>

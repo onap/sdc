@@ -97,7 +97,7 @@ public class ExportSerializer {
                 data = Base64.getEncoder().encodeToString(bytes.array());
                 break;
             case TIMESTAMP:
-                Date rowDate = row.getDate(i);
+                Date rowDate = row.getTimestamp(i);
                 if (rowDate != null) {
                     data = rowDate.getTime();
                 } else {

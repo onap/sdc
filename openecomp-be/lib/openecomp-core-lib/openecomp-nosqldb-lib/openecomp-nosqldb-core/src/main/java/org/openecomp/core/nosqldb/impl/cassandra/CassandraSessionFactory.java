@@ -19,6 +19,7 @@ package org.openecomp.core.nosqldb.impl.cassandra;
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.ConsistencyLevel;
 import com.datastax.driver.core.QueryOptions;
+import com.datastax.driver.core.RemoteEndpointAwareJdkSSLOptions;
 import com.datastax.driver.core.SSLOptions;
 import com.datastax.driver.core.Session;
 import com.datastax.driver.core.policies.DCAwareRoundRobinPolicy;
@@ -132,7 +133,7 @@ public class CassandraSessionFactory {
 
         SSLContext context = getSslContext(trustStorePath.get(), trustStorePassword.get());
         String[] css = new String[]{"TLS_RSA_WITH_AES_128_CBC_SHA"};
-        return new SSLOptions(context, css);
+        return RemoteEndpointAwareJdkSSLOptions.builder().withSSLContext(context).withCipherSuites(css).build();
     }
 
     private static SSLContext getSslContext(String truststorePath, String trustStorePassword) {

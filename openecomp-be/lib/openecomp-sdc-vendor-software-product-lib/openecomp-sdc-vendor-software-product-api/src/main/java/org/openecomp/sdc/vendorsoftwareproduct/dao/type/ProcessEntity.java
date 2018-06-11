@@ -22,7 +22,6 @@ package org.openecomp.sdc.vendorsoftwareproduct.dao.type;
 
 import com.datastax.driver.mapping.annotations.ClusteringColumn;
 import com.datastax.driver.mapping.annotations.Column;
-import com.datastax.driver.mapping.annotations.Enumerated;
 import com.datastax.driver.mapping.annotations.Frozen;
 import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
@@ -49,7 +48,6 @@ public class ProcessEntity implements VersionableEntity {
   private String name;
   private String description;
   @Column(name = "type")
-  @Enumerated
   private ProcessType type;
   @Column(name = "artifact_name")
   private String artifactName;

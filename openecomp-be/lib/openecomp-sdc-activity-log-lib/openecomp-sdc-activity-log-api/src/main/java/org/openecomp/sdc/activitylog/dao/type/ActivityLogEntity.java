@@ -18,12 +18,12 @@ package org.openecomp.sdc.activitylog.dao.type;
 
 import com.datastax.driver.mapping.annotations.ClusteringColumn;
 import com.datastax.driver.mapping.annotations.Column;
-import com.datastax.driver.mapping.annotations.Enumerated;
 import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
 import org.openecomp.sdc.versioning.dao.types.Version;
 
 import java.util.Date;
+
 
 @Table(keyspace = "dox", name = "activity_log")
 public class ActivityLogEntity {
@@ -36,7 +36,6 @@ public class ActivityLogEntity {
   @ClusteringColumn
   @Column(name = "activity_id")
   private String id;
-  @Enumerated
   private ActivityType type;
   private String user;
   private Date timestamp;
@@ -55,7 +54,7 @@ public class ActivityLogEntity {
 
   public ActivityLogEntity(String itemId, Version version) {
     this.itemId = itemId;
-    setVersion(version);
+    this.versionId = version == null ? null : version.getId();
   }
 
   public ActivityLogEntity(String itemId, Version version, ActivityType type, String user,
@@ -75,14 +74,6 @@ public class ActivityLogEntity {
 
   public void setItemId(String itemId) {
     this.itemId = itemId;
-  }
-
-  public Version getVersion() {
-    return versionId == null ? null : new Version(versionId);
-  }
-
-  public void setVersion(Version version) {
-    this.versionId = version == null ? null : version.getId();
   }
 
   public String getVersionId() {
