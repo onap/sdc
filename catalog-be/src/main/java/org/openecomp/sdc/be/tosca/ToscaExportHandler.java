@@ -680,7 +680,7 @@ public class ToscaExportHandler {
                                                                                  componentInstance, dataTypes,
                                                                                  nodeTemplate);
             if (capabilities.isRight()) {
-                convertNodeTemplatesRes = Either.right(requirements.right().value());
+                convertNodeTemplatesRes = Either.right(capabilities.right().value());
                 break;
             }
             log.debug("Component instance Capabilities converted for instance {}", instanceUniqueId);
