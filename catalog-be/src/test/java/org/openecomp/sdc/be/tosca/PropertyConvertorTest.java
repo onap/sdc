@@ -16,6 +16,7 @@ import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 import org.openecomp.sdc.be.components.utils.PropertyDataDefinitionBuilder;
+import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.Resource;
@@ -38,6 +39,15 @@ public class PropertyConvertorTest {
         dataTypes.put(property.getName(), new DataTypeDefinition());
     }
 
+    @Test
+    public void testConvertProperty() {
+    	SchemaDefinition schema = new SchemaDefinition();
+    	schema.setProperty(property);
+    	
+    	property.setSchema(schema);
+    	
+    	PropertyConvertor.getInstance().convertProperty(dataTypes, property, true);
+    }
 
     @Test
     public void convertPropertyWhenValueAndDefaultNull() {
@@ -140,6 +150,29 @@ public class PropertyConvertorTest {
                 .build();
         ToscaProperty toscaProperty = PropertyConvertor.getInstance().convertProperty(Collections.emptyMap(), property1, false);
         assertThat(toscaProperty.getDefaultp()).isEqualTo("/");
+    }
+    
+    @Test
+    public void testConvertToToscaObject() {
+		dataTypes.put(ToscaPropertyType.Root.getType(), new DataTypeDefinition());
+    	
+    	PropertyConvertor.getInstance().convertToToscaObject(ToscaPropertyType.Root.getType(), "", "innerType", dataTypes);   	
+    }
+    
+    @Test
+    public void testConvertToToscaObjectWhenPropertyTypeAndInnerTypeNull() {
+    	dataTypes.put(ToscaPropertyType.Root.getType(), new DataTypeDefinition());
+    	
+    	PropertyConvertor.getInstance().convertToToscaObject(null, "value", null, dataTypes);
+    }
+    
+    @Test
+    public void testConvertToToscaObjectWhenIsScalarTypeIsNotNull() {
+    	DataTypeDefinition def = new DataTypeDefinition();
+    	def.setName("integer");
+    	dataTypes.put("type", def);
+    	
+    	PropertyConvertor.getInstance().convertToToscaObject("type", "value", "innerType", dataTypes);
     }
 
 }

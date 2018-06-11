@@ -26,6 +26,7 @@ import org.openecomp.sdc.common.test.BaseConfDependent;
 public class BeConfDependentTest extends BaseConfDependent {
     @BeforeClass
     public static void setupBeforeClass() {
+        System.out.println("BaseConfDependent setupBeforeClass");
         componentName = "catalog-be";
         confPath = "src/test/resources/config";
         setUp();

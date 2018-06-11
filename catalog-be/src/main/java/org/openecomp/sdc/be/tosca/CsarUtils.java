@@ -111,6 +111,7 @@ public class CsarUtils {
 
     private static final Logger log = LoggerFactory.getLogger(CsarUtils.class);
 
+
     @Autowired
     private SdcSchemaFilesCassandraDao sdcSchemaFilesCassandraDao;
     @Autowired
@@ -124,14 +125,13 @@ public class CsarUtils {
     @Autowired
     protected ToscaOperationFacade toscaOperationFacade;
 
-
     @javax.annotation.Resource
     private ServiceBusinessLogic serviceBusinessLogic;
 
     private Gson gson = new Gson();
 
-    public static final String CONFORMANCE_LEVEL = ConfigurationManager.getConfigurationManager().getConfiguration().getToscaConformanceLevel();
-    public static final String SDC_VERSION = ExternalConfiguration.getAppVersion();
+    private String CONFORMANCE_LEVEL;
+    private String SDC_VERSION ;
 
     public static final Pattern UUID_NORMATIVE_NEW_VERSION = Pattern.compile("^\\d{1,}.0");
     public static final String ARTIFACTS_PATH = "Artifacts/";
@@ -174,6 +174,10 @@ public class CsarUtils {
     public static final String ARTIFACT_CREATED_FROM_CSAR = "Artifact created from csar";
 
     public CsarUtils() {
+        this.CONFORMANCE_LEVEL = ConfigurationManager.getConfigurationManager().getConfiguration().getToscaConformanceLevel();
+        this.SDC_VERSION=ExternalConfiguration.getAppVersion();
+        System.out.println("CsarUtils");
+        System.out.println("CONFORMANCE_LEVEL:"+CONFORMANCE_LEVEL);
         if(SDC_VERSION != null && !SDC_VERSION.isEmpty()){
             Matcher matcher = Pattern.compile("(?!\\.)(\\d+(\\.\\d+)+)(?![\\d\\.])").matcher(SDC_VERSION);
             matcher.find();
@@ -237,7 +241,7 @@ public class CsarUtils {
             byte[] byteArray = out.toByteArray();
 
             return Either.left(byteArray);
-        } catch (IOException e) {
+        } catch (IOException | NullPointerException e) {
             log.debug("Failed with IOexception to create CSAR zip for component {}", component.getUniqueId(), e);
 
             ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR);
@@ -435,7 +439,7 @@ public class CsarUtils {
                 zip.flush();
                 out.reset();
             }
-        } catch (IOException e) {
+        } catch (IOException | NullPointerException e) {
             log.error("Error while writing the SDC schema file to the CSAR {}", e);
             return Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
         }
@@ -457,21 +461,22 @@ public class CsarUtils {
                 if (componentRecord == null) {
                     // all resource must be only once!
                     Either<Resource, StorageOperationStatus> resource = toscaOperationFacade.getToscaElement(ci.getComponentUid());
-                    if (resource.isRight()) {
+                    if (resource == null || resource.isRight()) {
                         log.debug("Failed to fetch resource with id {} for instance {}");
-                    }
-                    Component componentRI = resource.left().value();
-
-                    Map<String, ArtifactDefinition> childToscaArtifacts = componentRI.getToscaArtifacts();
-                    ArtifactDefinition childArtifactDefinition = childToscaArtifacts.get(ToscaExportHandler.ASSET_TOSCA_TEMPLATE);
-                    if (childArtifactDefinition != null) {
-                        //add to cache
-                        addComponentToCache(componentCache, childArtifactDefinition.getEsId(), childArtifactDefinition.getArtifactName(), componentRI);
-                    }
-
-                    //if not atomic - insert inner components as well
-                    if(!ModelConverter.isAtomicComponent(componentRI)) {
-                        addInnerComponentsToCache(componentCache, componentRI);
+                    } else {
+                    	Component componentRI = resource.left().value();
+                    	
+                    	Map<String, ArtifactDefinition> childToscaArtifacts = componentRI.getToscaArtifacts();
+                    	ArtifactDefinition childArtifactDefinition = childToscaArtifacts.get(ToscaExportHandler.ASSET_TOSCA_TEMPLATE);
+                    	if (childArtifactDefinition != null) {
+                    		//add to cache
+                    		addComponentToCache(componentCache, childArtifactDefinition.getEsId(), childArtifactDefinition.getArtifactName(), componentRI);
+                    	}
+                    	
+                    	//if not atomic - insert inner components as well
+                    	if(!ModelConverter.isAtomicComponent(componentRI)) {
+                    		addInnerComponentsToCache(componentCache, componentRI);
+                    	}
                     }
                 }
             });
@@ -656,6 +661,7 @@ public class CsarUtils {
 
         String componentUniqueId = component.getUniqueId();
         ComponentTypeEnum componentType = component.getComponentType();
+        Either<ActionStatus, ResponseFormat> result = Either.left(ActionStatus.OK);
 
         for (ArtifactDefinition artDef : generatedArtifactsDefinitions) {
             String data = gson.toJson(artDef);
@@ -677,14 +683,14 @@ public class CsarUtils {
                 if (ArtifactOperationEnum.isCreateOrLink(operationType.getArtifactOperationEnum()) || ArtifactOperationEnum.UPDATE == operationType.getArtifactOperationEnum()) {
                     ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.AAI_ARTIFACT_GENERATION_FAILED, componentType.getValue(), component.getName(), validateAndHandleArtifact.right().value().toString());
 
-                    Either.right(responseFormat);
+                    result = Either.right(responseFormat);
                 } else {
                     log.warn("Generated artifact {} could not be deleted", artDef.getArtifactLabel());
                 }
             }
         }
 
-        return Either.left(ActionStatus.OK);
+        return result;
     }
 
     private List<ArtifactDefinition> convertToArtifactDefinitionFromArtifactGeneratedData(List<Artifact> generatorOutput) {
@@ -765,6 +771,9 @@ public class CsarUtils {
     }
 
     private Either<byte[], ResponseFormat> getLatestSchemaFilesFromCassandra() {
+    	System.out.println("versionFirstThreeOctates" + versionFirstThreeOctates);
+    	System.out.println("CONFORMANCE_LEVEL" + CONFORMANCE_LEVEL);
+    	System.out.println("In CSARUtils: \n" + ConfigurationManager.getConfigurationManager().getConfiguration());
         Either<List<SdcSchemaFilesData>, CassandraOperationStatus> specificSchemaFiles = sdcSchemaFilesCassandraDao.getSpecificSchemaFiles(versionFirstThreeOctates, CONFORMANCE_LEVEL);
 
         if(specificSchemaFiles.isRight()){
@@ -1144,7 +1153,7 @@ public class CsarUtils {
         }
 
         ComponentTypeArtifacts mainTypeAndCIArtifacts = componentArtifacts.getMainTypeAndCIArtifacts();
-        writeComponentArtifactsToSpecifiedPath = writeArtifactsInfoToSpecifiedtPath(mainComponent, mainTypeAndCIArtifacts.getComponentArtifacts(), zipstream, ARTIFACTS_PATH, isInCertificationRequest);
+        writeComponentArtifactsToSpecifiedPath = writeArtifactsInfoToSpecifiedPath(mainComponent, mainTypeAndCIArtifacts.getComponentArtifacts(), zipstream, ARTIFACTS_PATH, isInCertificationRequest);
 
         if(writeComponentArtifactsToSpecifiedPath.isRight()){
             return Either.right(writeComponentArtifactsToSpecifiedPath.right().value());
@@ -1157,7 +1166,7 @@ public class CsarUtils {
         for (String keyAssetName : keySet) {
             ArtifactsInfo artifactsInfo = componentInstancesArtifacts.get(keyAssetName);
             String pathWithAssetName = currentPath + keyAssetName + "/";
-            writeComponentArtifactsToSpecifiedPath = writeArtifactsInfoToSpecifiedtPath(mainComponent, artifactsInfo, zipstream, pathWithAssetName, isInCertificationRequest);
+            writeComponentArtifactsToSpecifiedPath = writeArtifactsInfoToSpecifiedPath(mainComponent, artifactsInfo, zipstream, pathWithAssetName, isInCertificationRequest);
 
             if(writeComponentArtifactsToSpecifiedPath.isRight()){
                 return Either.right(writeComponentArtifactsToSpecifiedPath.right().value());
@@ -1216,7 +1225,7 @@ public class CsarUtils {
                             component.getNormalizedName(), interfaceEntry.getValue().getToscaResourceName(), operation)));
                     zipstream.write(payloadData);
 
-                } catch (IOException e) {
+                } catch (IOException | NullPointerException e) {
                     log.error("Component Name {},  Interface Name {}, Operation Name {}", component.getNormalizedName(),
                             interfaceEntry.getKey(), operation.getName());
                     log.error("Error while writing the operation's artifacts to the CSAR " + "{}", e);
@@ -1241,7 +1250,7 @@ public class CsarUtils {
             ComponentTypeArtifacts componentInstanceArtifacts = componentTypeArtifacts.get(keyAssetName);
             ArtifactsInfo componentArtifacts2 = componentInstanceArtifacts.getComponentArtifacts();
             String pathWithAssetName = currentPath + keyAssetName + "/";
-            Either<ZipOutputStream, ResponseFormat> writeArtifactsInfoToSpecifiedtPath = writeArtifactsInfoToSpecifiedtPath(mainComponent, componentArtifacts2, zipstream, pathWithAssetName, isInCertificationRequest);
+            Either<ZipOutputStream, ResponseFormat> writeArtifactsInfoToSpecifiedtPath = writeArtifactsInfoToSpecifiedPath(mainComponent, componentArtifacts2, zipstream, pathWithAssetName, isInCertificationRequest);
 
             if(writeArtifactsInfoToSpecifiedtPath.isRight()){
                 return writeArtifactsInfoToSpecifiedtPath;
@@ -1251,7 +1260,7 @@ public class CsarUtils {
         return Either.left(zipstream);
     }
 
-    private Either<ZipOutputStream, ResponseFormat> writeArtifactsInfoToSpecifiedtPath(Component mainComponent, ArtifactsInfo currArtifactsInfo, ZipOutputStream zip, String path, boolean isInCertificationRequest) throws IOException {
+    private Either<ZipOutputStream, ResponseFormat> writeArtifactsInfoToSpecifiedPath(Component mainComponent, ArtifactsInfo currArtifactsInfo, ZipOutputStream zip, String path, boolean isInCertificationRequest) throws IOException {
         Map<ArtifactGroupTypeEnum, Map<ArtifactTypeEnum, List<ArtifactDefinition>>> artifactsInfo = currArtifactsInfo
                                                                                                             .getArtifactsInfo();
         Set<ArtifactGroupTypeEnum> groupTypeEnumKeySet = artifactsInfo.keySet();

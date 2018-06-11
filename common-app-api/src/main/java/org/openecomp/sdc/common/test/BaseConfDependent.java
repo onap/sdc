@@ -34,9 +34,11 @@ public class BaseConfDependent {
 	
 	
 	protected static void setUp(){
+		System.out.println("BaseConfDependent setUp");
 		ExternalConfiguration.setAppName(componentName);
 		ExternalConfiguration.setConfigDir(confPath);
 		ExternalConfiguration.listenForChanges();
+		ExternalConfiguration.setAppVersion("1806.666");
 
 		ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(), ExternalConfiguration.getConfigDir() + File.separator + ExternalConfiguration.getAppName());
 

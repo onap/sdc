@@ -1,54 +1,32 @@
 package org.openecomp.sdc.be.tosca;
 
-import java.util.List;
 import java.util.Map;
 
 import org.junit.Test;
+import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.model.Component;
-
-import com.datastax.driver.core.UserType.Field;
+import org.openecomp.sdc.be.model.Resource;
 
 public class ToscaUtilsTest {
-
-	private ToscaUtils createTestSubject() {
-		return new ToscaUtils();
-	}
-
-	
-	@Test
-	public void testIsAtomicType() throws Exception {
-		Component component = null;
-		boolean result;
-
-		// default test
-	}
-
 	
 	@Test
 	public void testIsComplexVfc() throws Exception {
-		Component component = null;
+		Component component = new Resource();		
+		component.setComponentType(ComponentTypeEnum.RESOURCE);
 		boolean result;
 
 		// default test
+		ToscaUtils.isComplexVfc(component);
 	}
 
 	
 	@Test
 	public void testObjectToMap() throws Exception {
 		Object objectToConvert = null;
-		Class clazz = null;
+		Object obj = new Object();
 		Map<String, Object> result;
 
 		// default test
-	}
-
-	
-	@Test
-	public void testGetAllFields() throws Exception {
-		List<Field> fields = null;
-		Class<?> type = null;
-		List<Field> result;
-
-		// default test
+		ToscaUtils.objectToMap(objectToConvert, obj.getClass());
 	}
 }
