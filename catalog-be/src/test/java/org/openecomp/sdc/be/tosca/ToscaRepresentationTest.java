@@ -50,10 +50,10 @@ public class ToscaRepresentationTest {
 	@Test
 	public void testSetDependencies() throws Exception {
 		ToscaRepresentation testSubject;
-		List<Triple<String, String, Component>> dependancies = null;
+		List<Triple<String, String, Component>> dependencies = null;
 
 		// default test
 		testSubject = createTestSubject();
-		testSubject.setDependencies(dependancies);
+		testSubject.setDependencies(dependencies);
 	}
 }
