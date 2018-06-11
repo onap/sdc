@@ -248,7 +248,7 @@ public class PortMirroringEnricher {
         if (requirementAssignment.isPresent()) {
             RequirementAssignment bindingRequirementAssignment = requirementAssignment.get().get(0);
             String node = bindingRequirementAssignment.getNode();
-            connectionPoint.setNfc_type(node);
+            connectionPoint.setNfc_naming_code(node);
         }
     }
 
