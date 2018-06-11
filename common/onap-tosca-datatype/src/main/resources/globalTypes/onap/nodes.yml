@@ -177,7 +177,7 @@ node_types:
     - virtual_storage:
         capability: tosca.capabilities.nfv.VirtualStorage
         relationship: tosca.relationships.nfv.Vdu.AttachedTo
-        node: tosca.nodes.nfv.VDU.VirtualStorage
+        node: tosca.nodes.nfv.Vdu.VirtualStorage
         occurences:
         - 0
         - UNBOUNDED 

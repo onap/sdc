@@ -1543,7 +1543,7 @@ tosca.datatypes.nfv.VduProfile:
       required: true
     vmBootUpTimeOut: #Align with ONAP R2 IM. not defined in IFA011 v2.4.1 and SOL001 v.6.0
       type: integer
-      required: optional
+      required: false
 tosca.datatypes.nfv.LinkBitRateRequirements:
   derived_from: tosca.datatypes.Root
   properties:

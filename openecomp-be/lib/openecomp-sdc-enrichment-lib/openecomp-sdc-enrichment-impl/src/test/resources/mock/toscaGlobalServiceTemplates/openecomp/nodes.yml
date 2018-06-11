@@ -1064,7 +1064,7 @@ node_types:
         - 0
         - UNBOUNDED
 
-  tosca.nodes.nfv.VDU.VirtualStorage:
+  tosca.nodes.nfv.Vdu.VirtualStorage:
     capabilities:
       virtual_storage:
         type: tosca.capabilities.nfv.VirtualStorage
