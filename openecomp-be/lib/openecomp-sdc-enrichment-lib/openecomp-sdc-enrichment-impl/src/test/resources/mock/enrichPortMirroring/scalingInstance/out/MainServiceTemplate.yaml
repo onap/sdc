@@ -140,6 +140,8 @@ topology_template:
             connection_point:
               nf_type: ''
               nfc_type: ''
+              nf_naming_code: ''
+              nfc_naming_code: ''
               network_role: ''
               pps_capacity: ''
     pd04_port_1:
@@ -161,6 +163,8 @@ topology_template:
             connection_point:
               nf_type: ''
               nfc_type: ''
+              nf_naming_code: ''
+              nfc_naming_code: ''
               network_role: ''
               pps_capacity: ''
     pd03_port_1:
