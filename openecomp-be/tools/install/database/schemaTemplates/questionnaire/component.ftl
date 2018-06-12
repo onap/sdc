@@ -5,6 +5,15 @@
     "general": {
       "type": "object",
       "properties": {
+        <#if !manual>
+        "nfcNamingCode": {
+          "type": "string",
+          "maxLength": 1000<#if componentDisplayName??>,
+          "default": "${componentDisplayName}"</#if>
+        },</#if>
+        "nfcFunction": {
+          "type": "string"
+        },
         "hypervisor": {
           "type": "object",
           "properties": {

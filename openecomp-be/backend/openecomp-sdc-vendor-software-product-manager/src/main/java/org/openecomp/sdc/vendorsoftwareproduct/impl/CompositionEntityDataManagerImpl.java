@@ -1,21 +1,17 @@
-/*-
- * ============LICENSE_START=======================================================
- * SDC
- * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
- * ================================================================================
+/*
+ * Copyright © 2016-2018 European Support Limited
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * ============LICENSE_END=========================================================
  */
 
 package org.openecomp.sdc.vendorsoftwareproduct.impl;
@@ -38,15 +34,7 @@ import org.openecomp.sdc.vendorsoftwareproduct.dao.ImageDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.NetworkDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.NicDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductInfoDao;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComponentEntity;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.type.CompositionEntity;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComputeEntity;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.type.DeploymentFlavorEntity;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ImageEntity;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.type.NetworkEntity;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.type.NicEntity;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspQuestionnaireEntity;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.type.*;
 import org.openecomp.sdc.vendorsoftwareproduct.services.schemagenerator.SchemaGenerator;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.Component;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.ComponentData;
@@ -59,6 +47,7 @@ import org.openecomp.sdc.vendorsoftwareproduct.types.composition.Image;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.Network;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.NetworkType;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.Nic;
+import org.openecomp.sdc.vendorsoftwareproduct.types.schemagenerator.ComponentQuestionnaireSchemaInput;
 import org.openecomp.sdc.vendorsoftwareproduct.types.schemagenerator.SchemaTemplateContext;
 import org.openecomp.sdc.vendorsoftwareproduct.types.schemagenerator.SchemaTemplateInput;
 import org.openecomp.sdc.versioning.dao.types.Version;
@@ -268,7 +257,7 @@ public class CompositionEntityDataManagerImpl implements CompositionEntityDataMa
         ComponentEntity componentEntity = new ComponentEntity(vspId, version, null);
         componentEntity.setComponentCompositionData(component.getData());
 
-        String componentId = createComponent(componentEntity).getId();
+        String componentId = createComponent(componentEntity, false).getId();
 
         saveImagesByComponent(vspId, version, component, componentId);
         saveComputesFlavorByComponent(vspId, version, component, componentId);
@@ -321,13 +310,13 @@ public class CompositionEntityDataManagerImpl implements CompositionEntityDataMa
   }
 
   @Override
-  public ComponentEntity createComponent(ComponentEntity component) {
+  public ComponentEntity createComponent(ComponentEntity component, boolean isManualVsp) {
     //component.setId(CommonMethods.nextUuId()); will be set by the dao
-    component.setQuestionnaireData(
-        new JsonSchemaDataGenerator(
-            generateSchema(SchemaTemplateContext.questionnaire, CompositionEntityType.component,
-                null))
-            .generateData());
+    ComponentQuestionnaireSchemaInput schemaInput = new ComponentQuestionnaireSchemaInput(null,
+        null, component.getComponentCompositionData().getDisplayName(), isManualVsp);
+    String questionnarieData = new JsonSchemaDataGenerator(generateSchema(SchemaTemplateContext.questionnaire,
+            CompositionEntityType.component, schemaInput)).generateData();
+    component.setQuestionnaireData(questionnarieData);
 
     componentDao.create(component);
     return component;

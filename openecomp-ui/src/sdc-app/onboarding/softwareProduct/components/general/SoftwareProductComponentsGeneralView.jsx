@@ -1,17 +1,17 @@
-/*!
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+/*
+ * Copyright © 2016-2018 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
- * or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 import React from 'react';
 import i18n from 'nfvo-utils/i18n/i18n.js';
@@ -24,12 +24,13 @@ import GridItem from 'nfvo-components/grid/GridItem.jsx';
 const GeneralSection = ({
     onDataChanged,
     displayName,
-    vfcCode,
-    nfcFunction,
     description,
     isReadOnlyMode,
     genericFieldInfo,
-    isManual
+    isManual,
+    dataMap,
+    onQDataChanged,
+    qgenericFieldInfo
 }) => (
     <GridSection title={i18n('General')}>
         {/* disabled until backend will be ready to implement it
@@ -53,23 +54,29 @@ const GeneralSection = ({
                 <Input
                     data-test-id="vfcCode"
                     label={i18n('Naming Code')}
-                    value={vfcCode}
-                    isValid={genericFieldInfo.vfcCode.isValid}
-                    errorText={genericFieldInfo.vfcCode.errorText}
-                    onChange={vfcCode => onDataChanged({ vfcCode })}
                     disabled={isReadOnlyMode}
                     type="text"
+                    onChange={nfcFunction =>
+                        onQDataChanged({ 'general/nfcNamingCode': nfcFunction })
+                    }
+                    isValid={qgenericFieldInfo['general/nfcNamingCode'].isValid}
+                    errorText={
+                        qgenericFieldInfo['general/nfcNamingCode'].errorText
+                    }
+                    value={dataMap['general/nfcNamingCode']}
                 />
             )}
             <Input
                 data-test-id="nfcFunction"
                 label={i18n('Function')}
-                value={nfcFunction}
-                isValid={genericFieldInfo.nfcFunction.isValid}
-                errorText={genericFieldInfo.nfcFunction.errorText}
-                onChange={nfcFunction => onDataChanged({ nfcFunction })}
                 disabled={isReadOnlyMode}
                 type="text"
+                onChange={nfcFunction =>
+                    onQDataChanged({ 'general/nfcFunction': nfcFunction })
+                }
+                isValid={qgenericFieldInfo['general/nfcFunction'].isValid}
+                errorText={qgenericFieldInfo['general/nfcFunction'].errorText}
+                value={dataMap['general/nfcFunction']}
             />
         </GridItem>
         <GridItem colSpan={2}>
@@ -350,7 +357,7 @@ class SoftwareProductComponentsGeneralView extends React.Component {
             genericFieldInfo,
             dataMap,
             qGenericFieldInfo,
-            componentData: { displayName, vfcCode, nfcFunction, description },
+            componentData: { displayName, vfcCode, description },
             isReadOnlyMode
         } = this.props;
         return (
@@ -370,11 +377,13 @@ class SoftwareProductComponentsGeneralView extends React.Component {
                                     onDataChanged={onDataChanged}
                                     displayName={displayName}
                                     vfcCode={vfcCode}
-                                    nfcFunction={nfcFunction}
                                     description={description}
                                     isManual={isManual}
                                     isReadOnlyMode={isReadOnlyMode}
                                     genericFieldInfo={genericFieldInfo}
+                                    dataMap={dataMap}
+                                    onQDataChanged={onQDataChanged}
+                                    qgenericFieldInfo={qGenericFieldInfo}
                                 />
                                 <HypervisorSection
                                     onQDataChanged={onQDataChanged}

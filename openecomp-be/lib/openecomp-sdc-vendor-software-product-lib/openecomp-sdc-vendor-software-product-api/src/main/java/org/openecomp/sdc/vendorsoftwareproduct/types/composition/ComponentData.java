@@ -1,21 +1,17 @@
-/*-
- * ============LICENSE_START=======================================================
- * SDC
- * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
- * ================================================================================
+/*
+ * Copyright © 2016-2018 European Support Limited
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
- *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * ============LICENSE_END=========================================================
  */
 
 package org.openecomp.sdc.vendorsoftwareproduct.types.composition;
@@ -24,9 +20,6 @@ public class ComponentData implements CompositionDataEntity {
   private String name;
   private String description;
   private String displayName;
-  private String vfcCode;
-  private String nfcCode;
-  private String nfcFunction;
 
   public String getName() {
     return name;
@@ -50,22 +43,6 @@ public class ComponentData implements CompositionDataEntity {
 
   public void setDisplayName(String displayName) {
     this.displayName = displayName;
-  }
-
-  public String getNfcCode() {
-    return nfcCode;
-  }
-
-  public void setNfcCode(String nfcCode) {
-    this.nfcCode = nfcCode;
-  }
-
-  public String getNfcFunction() {
-    return nfcFunction;
-  }
-
-  public void setNfcFunction(String nfcFunction) {
-    this.nfcFunction = nfcFunction;
   }
 
   @Override
@@ -95,13 +72,5 @@ public class ComponentData implements CompositionDataEntity {
     }
     return displayName != null ? displayName.equals(that.displayName) : that.displayName == null;
 
-  }
-
-  public String getVfcCode() {
-    return vfcCode;
-  }
-
-  public void setVfcCode(String vfcCode) {
-    this.vfcCode = vfcCode;
   }
 }

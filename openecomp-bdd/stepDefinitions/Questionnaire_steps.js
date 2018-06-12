@@ -78,3 +78,33 @@ Then('I want to check this questionnaire has value {string} for property {string
 Then('I want to update this questionnaire', function () {
 	return util.request(this.context, 'PUT', this.context.qurl, this.context.qdata);
 });
+
+/**
+ * @module Questionnaire
+ * @description Checks if the value of given property name in questionnaire data on the context is same as provided value
+ * @exampleFile ComponentData.feature
+ * @step I want to check value of {string} in the questionnaire data with value of property {string}
+ */
+Then('I want to check value of {string} in the questionnaire data with value of property {string}', function (string,
+																									propertyName) {
+    expectedValue = _.get(this.context, propertyName)
+	data1 = this.context.qdata;
+    assert.equal(_.get(data1, string), expectedValue);
+});
+
+/**
+ * @module Questionnaire - Defined in Questionnaire module since this is used to fetch componentId for which questionnaire is to be fetched
+ * @description Finds and set componentId in context from list of components in responseData for component name in given property
+ * @exampleFile ComponentData.feature
+ * @step I want to set componentId for component name in property {string}
+ */
+Then('I want to set componentId for component name in property {string}', function (string) {
+    displayName = _.get(this.context, string);
+    results = this.context.responseData.results;
+    for (i=0; i<results.length; i++) {
+        if (results[i].displayName == displayName ){
+            this.context.componentId = results[i].id;
+            return;
+        }
+    }
+});

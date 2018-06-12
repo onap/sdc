@@ -21,8 +21,8 @@ import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.MANDATO
 import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.MAX_INSTANCES;
 import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.MIN_INSTANCES;
 import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.VFC_CODE;
-import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.VFC_FUNCTION;
-import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.VFC_NAMING_CODE;
+import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.NFC_FUNCTION;
+import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.NFC_NAMING_CODE;
 import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.VM_TYPE_TAG;
 import static org.openecomp.sdc.tosca.datatypes.ToscaCapabilityType.NATIVE_NODE;
 import static org.openecomp.sdc.tosca.datatypes.ToscaNodeType.VFC_ABSTRACT_SUBSTITUTE;
@@ -70,7 +70,7 @@ public class AbstractSubstituteToscaEnricher {
         final Map<String, List<String>> sourceToTargetDependencies = componentQuestionnaireData
                                                                              .populateDependencies(vspId, version,
                                                                                      componentQuestionnaireData
-                                                                                             .getSourceToTargetComponent());
+                                                                                      .getSourceToTargetComponent());
         Map<String, List<ErrorMessage>> errors = new HashMap<>();
 
         final ServiceTemplate serviceTemplate =
@@ -124,15 +124,15 @@ public class AbstractSubstituteToscaEnricher {
                             getValueFromQuestionnaireDetails(componentProperties, componentDisplayName,
                                     HIGH_AVAIL_MODE));
 
-                    setProperty(nodeTemplate, VFC_NAMING_CODE,
+                    setProperty(nodeTemplate, NFC_NAMING_CODE,
                             getValueFromQuestionnaireDetails(componentProperties, componentDisplayName,
-                                    VFC_NAMING_CODE));
+                                    NFC_NAMING_CODE));
 
                     setProperty(nodeTemplate, VFC_CODE,
                             getValueFromQuestionnaireDetails(componentProperties, componentDisplayName, VFC_CODE));
 
-                    setProperty(nodeTemplate, VFC_FUNCTION,
-                            getValueFromQuestionnaireDetails(componentProperties, componentDisplayName, VFC_FUNCTION));
+                    setProperty(nodeTemplate, NFC_FUNCTION,
+                            getValueFromQuestionnaireDetails(componentProperties, componentDisplayName, NFC_FUNCTION));
 
                     if (componentProperties.get(componentDisplayName).get(MIN_INSTANCES) != null) {
                         nodeTemplate.getProperties().put(MIN_INSTANCES,
