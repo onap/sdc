@@ -19,7 +19,6 @@ package org.openecomp.sdc.validation.impl.validators.heatresource;
 import org.openecomp.core.validation.ErrorMessageCode;
 import org.openecomp.core.validation.errors.ErrorMessagesFormatBuilder;
 import org.openecomp.core.validation.types.GlobalValidationContext;
-import org.openecomp.sdc.common.togglz.ToggleableFeature;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.heat.datatypes.model.Resource;
 import org.openecomp.sdc.heat.services.HeatConstants;
@@ -40,7 +39,6 @@ public class VirtualMachineInterfaceValidator implements ResourceValidator {
   @Override
   public void validate(String fileName, Map.Entry<String, Resource> resourceEntry,
                        GlobalValidationContext globalContext, ValidationContext validationContext) {
-    if (ToggleableFeature.VLAN_TAGGING.isActive()) {
       HeatResourceValidationContext heatResourceValidationContext =
           (HeatResourceValidationContext) validationContext;
       final ValidityStatus status = calculateValidityStatus(resourceEntry.getValue());
@@ -77,7 +75,6 @@ public class VirtualMachineInterfaceValidator implements ResourceValidator {
           throw new IllegalArgumentException("Received a value for which no handling is " +
               "available " + status);
       }
-    }
   }
 
   private ValidityStatus calculateValidityStatus(Resource resource) {

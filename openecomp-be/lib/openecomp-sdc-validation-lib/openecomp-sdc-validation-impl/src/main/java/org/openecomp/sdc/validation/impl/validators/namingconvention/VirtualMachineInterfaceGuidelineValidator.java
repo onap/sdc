@@ -3,7 +3,6 @@ package org.openecomp.sdc.validation.impl.validators.namingconvention;
 import org.openecomp.core.validation.ErrorMessageCode;
 import org.openecomp.core.validation.errors.ErrorMessagesFormatBuilder;
 import org.openecomp.core.validation.types.GlobalValidationContext;
-import org.openecomp.sdc.common.togglz.ToggleableFeature;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.heat.datatypes.DefinedHeatParameterTypes;
 import org.openecomp.sdc.heat.datatypes.model.Resource;
@@ -45,7 +44,6 @@ public class VirtualMachineInterfaceGuidelineValidator implements ResourceValida
   @Override
   public void validate(String fileName, Map.Entry<String, Resource> resourceEntry,
                        GlobalValidationContext globalContext, ValidationContext validationContext) {
-    if (ToggleableFeature.VLAN_TAGGING.isActive()) {
       NamingConventionValidationContext namingConventionValidationContext =
           (NamingConventionValidationContext) validationContext;
       Optional<Object> tagPropertyValue = getVlanTagPropertyValue(resourceEntry.getValue());
@@ -58,9 +56,7 @@ public class VirtualMachineInterfaceGuidelineValidator implements ResourceValida
         validateNamingConvention(fileName, resourceEntry, globalContext
         );
       }
-    }
   }
-
 
   private void validateModeledByResourceGroup(String fileName,
                                               Map.Entry<String, Resource> resourceEntry,
