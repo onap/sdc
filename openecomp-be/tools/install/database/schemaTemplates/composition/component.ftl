@@ -16,16 +16,7 @@
       ],
       "default": "${component.displayName}"</#if>
     },
-    "vfcCode": {
-      "type": "string"
-    },
-"nfcCode": {
-"type": "string"
-},
-"nfcFunction": {
-"type": "string"
-},
-"description": {
+    "description": {
       "type": "string"
     }
   },

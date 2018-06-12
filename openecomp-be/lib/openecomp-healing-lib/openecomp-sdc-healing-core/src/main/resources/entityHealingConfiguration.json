@@ -5,7 +5,8 @@
       "org.openecomp.sdc.healing.healers.NetworkPackageHealer"
     ],
     "data": [
-      "org.openecomp.sdc.healing.healers.ToscaServiceModelHealer"
+      "org.openecomp.sdc.healing.healers.ToscaServiceModelHealer",
+      "org.openecomp.sdc.healing.healers.ComponentDataHealer"
     ]
   },
   "vlm": {

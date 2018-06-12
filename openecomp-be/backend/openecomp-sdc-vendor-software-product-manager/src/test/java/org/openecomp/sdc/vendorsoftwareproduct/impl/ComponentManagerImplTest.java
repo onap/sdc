@@ -1,9 +1,6 @@
 package org.openecomp.sdc.vendorsoftwareproduct.impl;
 
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.mockito.Spy;
+import org.mockito.*;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.vendorsoftwareproduct.NicManager;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.ComponentDao;
@@ -106,7 +103,7 @@ public class ComponentManagerImplTest {
     doReturn(true).when(vspInfoDao).isManual(anyObject(), anyObject());
     Collection<ComponentEntity> vspComponentList = new ArrayList<>();
     doReturn(vspComponentList).when(componentDaoMock).list(anyObject());
-    doReturn(expected).when(compositionEntityDataManagerMock).createComponent(anyObject());
+    doReturn(expected).when(compositionEntityDataManagerMock).createComponent(anyObject(), Matchers.anyBoolean());
 
     ComponentEntity created = componentManager.createComponent(expected);
     Assert.assertNotNull(created);
@@ -234,9 +231,6 @@ public class ComponentManagerImplTest {
     ComponentData compData = new ComponentData();
     compData.setName(COMP1_ID + " name");                // no change
     compData.setDisplayName(COMP1_ID + " display name"); // no change
-    compData.setVfcCode(COMP1_ID + " display name"); // no change
-    compData.setNfcCode(COMP1_ID + " display name"); // no change
-    compData.setNfcFunction(COMP1_ID + " display name"); // no change
     compData.setDescription(COMP1_ID + " desc updated"); // allowed change
     component.setComponentCompositionData(compData);
 
@@ -457,7 +451,6 @@ public class ComponentManagerImplTest {
     ComponentData compData = new ComponentData();
     compData.setName(compId + " name");
     compData.setDisplayName(compId + " display name");
-    compData.setVfcCode(compId + " display name");
     compData.setDescription(compId + " desc");
     componentEntity.setComponentCompositionData(compData);
     componentEntity.setQuestionnaireData("{}");

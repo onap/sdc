@@ -28,10 +28,6 @@ public class ComponentRequestDto {
     @NotNull(message = "VFC displayName is mandatory.")
     @Size(min = 1, max = 30, message = "VFC displayName length should be between 1 and 30.")
     private String displayName;
-    @Size(min = 0, max = 1000, message = "description length should not exceed 1000.")
-    private String vfcCode;
-    private String nfcCode;
-    private String nfcFunction;
     private String description;
 
 }

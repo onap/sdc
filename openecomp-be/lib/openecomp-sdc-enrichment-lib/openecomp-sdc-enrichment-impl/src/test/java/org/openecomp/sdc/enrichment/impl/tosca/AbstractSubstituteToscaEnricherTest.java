@@ -7,8 +7,8 @@ import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.MANDATO
 import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.MAX_INSTANCES;
 import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.MIN_INSTANCES;
 import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.VFC_CODE;
-import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.VFC_FUNCTION;
-import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.VFC_NAMING_CODE;
+import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.NFC_FUNCTION;
+import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.NFC_NAMING_CODE;
 
 import org.apache.commons.collections.map.HashedMap;
 import org.mockito.InjectMocks;
@@ -57,9 +57,9 @@ public class AbstractSubstituteToscaEnricherTest extends BaseToscaEnrichmentTest
     Map<String, Object> innerProps = new HashMap<>();
     innerProps.put(MANDATORY, "YES");
     innerProps.put(HIGH_AVAIL_MODE, "geo-activestandby");
-    innerProps.put(VFC_NAMING_CODE, "Code1");
+    innerProps.put(NFC_NAMING_CODE, "Code1");
     innerProps.put(VFC_CODE, "pd_server_code");
-    innerProps.put(VFC_FUNCTION, "pd_server_description");
+    innerProps.put(NFC_FUNCTION, "pd_server_description");
     innerProps.put(MIN_INSTANCES, 1);
     innerProps.put(MAX_INSTANCES, 2);
 
@@ -99,9 +99,9 @@ public class AbstractSubstituteToscaEnricherTest extends BaseToscaEnrichmentTest
     Map<String, Object> innerProps = new HashedMap();
     innerProps.put(MANDATORY, "NO");
     innerProps.put(HIGH_AVAIL_MODE, "");
-    innerProps.put(VFC_NAMING_CODE, "pd_server_code1");
+    innerProps.put(NFC_NAMING_CODE, "pd_server_code1");
     innerProps.put(VFC_CODE, "pd_server_code");
-    innerProps.put(VFC_FUNCTION, "pd_server_description");
+    innerProps.put(NFC_FUNCTION, "pd_server_description");
     innerProps.put(MIN_INSTANCES, null);
     innerProps.put(MAX_INSTANCES, null);
 
