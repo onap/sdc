@@ -6,12 +6,6 @@ import org.togglz.core.context.FeatureContext;
 
 public enum ToggleableFeature implements Feature {
 
-  @Label ("VLAN Tagging")
-  VLAN_TAGGING,
-
-  @Label ("Annotations")
-  ANNOTATIONS,
-
   @Label("Archive Item")
   ARCHIVE_ITEM,
 

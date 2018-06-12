@@ -174,7 +174,7 @@ public class TranslatorHeatToToscaParameterConverter {
   }
 
   private static boolean isAnnotationRequired(TranslationContext context, String heatFileName){
-    return HeatToToscaUtil.shouldAnnotationsToBeAdded() && !isNestedServiceTemplate(context,  heatFileName);
+    return !isNestedServiceTemplate(context, heatFileName);
   }
 
   private static boolean isNestedServiceTemplate(TranslationContext context, String heatFileName) {

@@ -80,7 +80,6 @@ import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
 import org.onap.sdc.tosca.datatypes.model.SubstitutionMapping;
 import org.onap.sdc.tosca.datatypes.model.heatextend.PropertyTypeExt;
 import org.openecomp.core.utilities.CommonMethods;
-import org.openecomp.sdc.common.togglz.ToggleableFeature;
 import org.openecomp.sdc.datatypes.configuration.ImplementationConfiguration;
 import org.openecomp.sdc.heat.services.HeatConstants;
 import org.openecomp.sdc.tosca.datatypes.ToscaFunctions;
@@ -2147,10 +2146,8 @@ public class UnifiedCompositionService {
 
   private void addPortSubInterfaceIndicatorProperty(Map<String, Object> properties,
                                                     EntityConsolidationData entityConsolidationData) {
-    if (ToggleableFeature.VLAN_TAGGING.isActive()) {
       properties.put(SUB_INTERFACE_INDICATOR_PROPERTY,
           ((PortTemplateConsolidationData) entityConsolidationData).isPortBoundToSubInterface());
-    }
   }
 
   private void handleNodeTemplateProperties(UnifiedCompositionTo unifiedCompositionTo,

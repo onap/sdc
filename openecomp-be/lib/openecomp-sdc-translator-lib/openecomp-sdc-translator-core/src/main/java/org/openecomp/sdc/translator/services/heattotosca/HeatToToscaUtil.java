@@ -59,7 +59,6 @@ import org.openecomp.core.utilities.file.FileUtils;
 import org.openecomp.core.utilities.orchestration.OnboardingTypesEnum;
 import org.openecomp.core.validation.util.MessageContainerUtil;
 import org.openecomp.sdc.common.errors.CoreException;
-import org.openecomp.sdc.common.togglz.ToggleableFeature;
 import org.openecomp.sdc.common.utils.SdcCommon;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
@@ -541,10 +540,6 @@ public class HeatToToscaUtil {
      * @return true if the resource is of sub interface type and false otherwise
      */
     public static boolean isSubInterfaceResource(Resource resource, TranslationContext context) {
-        if (!ToggleableFeature.VLAN_TAGGING.isActive()) {
-            //Remove this once feature is stable and moved to production
-            return false;
-        }
         //Check if resource group is a nested resource
         if (!isNestedResource(resource)) {
             return false;
@@ -1229,10 +1224,6 @@ public class HeatToToscaUtil {
                     capabilityNodeEntry -> addCapabilityToSubMapping(templateName, capabilityNodeEntry,
                             nodeTypeCapabilitiesDefinition, capabilitySubstitutionMapping));
         }
-    }
-
-    public static boolean shouldAnnotationsToBeAdded() {
-        return ToggleableFeature.ANNOTATIONS.isActive();
     }
 
     private static void addCapabilityToSubMapping(String templateName,

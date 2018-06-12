@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.onap.sdc.tosca.datatypes.model.NodeTemplate;
-import org.openecomp.sdc.common.togglz.ToggleableFeature;
 import org.openecomp.sdc.heat.services.HeatConstants;
 import org.openecomp.sdc.tosca.datatypes.ToscaNodeType;
 import org.openecomp.sdc.tosca.services.DataModelUtil;
@@ -38,7 +37,7 @@ public class ResourceTranslationContrailV2VmInterfaceImpl extends ResourceTransl
     protected boolean isEssentialRequirementsValid(TranslateTo translateTo) {
         if (contrailV2VirtualMachineInterfaceHelper
                 .isVlanSubInterfaceResource(translateTo.getResource())) {
-            return ToggleableFeature.VLAN_TAGGING.isActive() && contrailV2VirtualMachineInterfaceHelper
+            return contrailV2VirtualMachineInterfaceHelper
                     .isVlanSubInterfaceConnectedToPortIndirectly(translateTo);
         }
         return true;
