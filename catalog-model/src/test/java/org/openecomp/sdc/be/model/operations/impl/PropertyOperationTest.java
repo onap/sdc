@@ -34,7 +34,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.tinkerpop.gremlin.structure.T;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -51,7 +50,6 @@ import org.openecomp.sdc.be.model.IComplexDefaultValue;
 import org.openecomp.sdc.be.model.ModelTestBase;
 import org.openecomp.sdc.be.model.PropertyConstraint;
 import org.openecomp.sdc.be.model.PropertyDefinition;
-import org.openecomp.sdc.be.model.operations.api.DerivedFromOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
 import org.openecomp.sdc.be.model.tosca.ToscaType;

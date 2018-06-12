@@ -1,6 +1,12 @@
 package org.openecomp.sdc.be.model.jsontitan.operations;
 
-import fj.data.Either;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.when;
+
+import java.util.Collections;
+import java.util.HashMap;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,13 +27,7 @@ import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
 
 import com.thinkaurelius.titan.core.TitanVertex;
 
-import java.util.Collections;
-import java.util.HashMap;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.when;
+import fj.data.Either;
 
 @RunWith(MockitoJUnitRunner.class)
 //error scenarios

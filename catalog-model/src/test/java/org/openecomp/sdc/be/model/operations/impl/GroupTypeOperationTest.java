@@ -1,6 +1,19 @@
 package org.openecomp.sdc.be.model.operations.impl;
 
-import fj.data.Either;
+import static com.google.common.collect.Sets.newHashSet;
+import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+
 import org.apache.tinkerpop.gremlin.structure.Edge;
 import org.junit.After;
 import org.junit.BeforeClass;
@@ -21,16 +34,7 @@ import org.openecomp.sdc.be.resources.data.GroupTypeData;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import javax.annotation.Resource;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static com.google.common.collect.Sets.newHashSet;
-import static java.util.Arrays.asList;
-import static java.util.Collections.singletonList;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.*;
+import fj.data.Either;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:application-context-test.xml")

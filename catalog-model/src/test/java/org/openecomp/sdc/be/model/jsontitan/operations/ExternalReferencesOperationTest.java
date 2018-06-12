@@ -1,6 +1,14 @@
 package org.openecomp.sdc.be.model.jsontitan.operations;
 
-import fj.data.Either;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.when;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -19,13 +27,7 @@ import org.openecomp.sdc.be.model.jsontitan.utils.IdMapper;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import javax.annotation.Resource;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.when;
+import fj.data.Either;
 
 /**
  * Created by yavivi on 26/01/2018.

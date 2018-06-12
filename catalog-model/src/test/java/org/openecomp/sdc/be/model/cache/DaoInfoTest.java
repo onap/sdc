@@ -9,7 +9,6 @@ public class DaoInfoTest {
 	private DaoInfo createTestSubject() {
 		return new DaoInfo(new ToscaOperationFacade(), new ComponentCache());
 	}
-
 	
 	@Test
 	public void testGetToscaOperationFacade() throws Exception {
@@ -20,7 +19,6 @@ public class DaoInfoTest {
 		testSubject = createTestSubject();
 		result = testSubject.getToscaOperationFacade();
 	}
-
 	
 	@Test
 	public void testGetComponentCache() throws Exception {

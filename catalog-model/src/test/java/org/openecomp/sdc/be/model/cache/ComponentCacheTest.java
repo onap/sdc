@@ -1,7 +1,5 @@
 package org.openecomp.sdc.be.model.cache;
 
-import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.nio.ByteBuffer;
 import java.util.Date;
 import java.util.HashMap;
