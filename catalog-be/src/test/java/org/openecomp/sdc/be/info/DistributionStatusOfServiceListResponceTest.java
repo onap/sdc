@@ -1,35 +1,14 @@
 package org.openecomp.sdc.be.info;
 
-import java.util.List;
-
 import org.junit.Test;
+
+import static com.google.code.beanmatchers.BeanMatchers.hasValidGettersAndSetters;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 
 public class DistributionStatusOfServiceListResponceTest {
-
-	private DistributionStatusOfServiceListResponce createTestSubject() {
-		return new DistributionStatusOfServiceListResponce();
-	}
-
-	
-	@Test
-	public void testGetDistributionStatusOfServiceList() throws Exception {
-		DistributionStatusOfServiceListResponce testSubject;
-		List<DistributionStatusOfServiceInfo> result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getDistributionStatusOfServiceList();
-	}
-
-	
-	@Test
-	public void testSetDistributionStatusOfServiceList() throws Exception {
-		DistributionStatusOfServiceListResponce testSubject;
-		List<DistributionStatusOfServiceInfo> distribStatusOfServiceInfoList = null;
-
-		// default test
-		testSubject = createTestSubject();
-		testSubject.setDistributionStatusOfServiceList(distribStatusOfServiceInfoList);
-	}
+    @Test
+    public void shouldHaveValidGettersAndSetters() {
+        assertThat(DistributionStatusOfServiceListResponce.class, hasValidGettersAndSetters());
+    }
 }

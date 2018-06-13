@@ -1,5 +1,6 @@
 package org.openecomp.sdc.be.info;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import org.junit.Test;
@@ -11,6 +12,10 @@ public class ArtifactTemplateInfoTest {
 		return new ArtifactTemplateInfo();
 	}
 
+	@Test
+	public void testCtor() throws Exception {
+		new ArtifactTemplateInfo("mock", "mock", "mock", new LinkedList<>());
+	}
 	
 	@Test
 	public void testGetType() throws Exception {
