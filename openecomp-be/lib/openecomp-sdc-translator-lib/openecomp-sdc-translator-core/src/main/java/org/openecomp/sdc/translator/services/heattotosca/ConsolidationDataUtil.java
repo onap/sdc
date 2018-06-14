@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.onap.sdc.tosca.datatypes.model.RequirementAssignment;
@@ -142,26 +143,14 @@ public class ConsolidationDataUtil {
         PortTemplateConsolidationData portTemplateConsolidationData =
                 filePortConsolidationData.getPortTemplateConsolidationData(portNodeTemplateId);
         if (portTemplateConsolidationData == null) {
-            portTemplateConsolidationData = getInitPortTemplateConsolidationData(portNodeTemplateId,
-                    portResourceId, portResourceType);
+            portTemplateConsolidationData = filePortConsolidationData
+                    .createPortTemplateConsolidationData(portNodeTemplateId, portResourceId, portResourceType);
             filePortConsolidationData.setPortTemplateConsolidationData(portNodeTemplateId,
                     portTemplateConsolidationData);
         }
 
         return portTemplateConsolidationData;
     }
-
-    private static PortTemplateConsolidationData getInitPortTemplateConsolidationData(String portNodeTemplateId,
-                                                                                             String portResourceId,
-                                                                                             String portResourceType) {
-        PortTemplateConsolidationData portTemplateConsolidationData = new PortTemplateConsolidationData();
-        portTemplateConsolidationData.setNodeTemplateId(portNodeTemplateId);
-        Optional<String> portNetworkRole = HeatToToscaUtil.evaluateNetworkRoleFromResourceId(portResourceId,
-                portResourceType);
-        portNetworkRole.ifPresent(portTemplateConsolidationData::setNetworkRole);
-        return portTemplateConsolidationData;
-    }
-
 
     public static Optional<SubInterfaceTemplateConsolidationData> getSubInterfaceTemplateConsolidationData(
             TranslateTo subInterfaceTo, String subInterfaceNodeTemplateId) {
@@ -197,8 +186,9 @@ public class ConsolidationDataUtil {
             Optional<String> portResourceId = getSubInterfaceParentPortResourceId(parentPortNodeTemplateId,
                     subInterfaceTo);
             if (portResourceId.isPresent()) {
-                portTemplateConsolidationData = getInitPortTemplateConsolidationData(parentPortNodeTemplateId,
-                        portResourceId.get(), HeatToToscaUtil.getResourceType(portResourceId.get(), subInterfaceTo
+                portTemplateConsolidationData = filePortConsolidationData.createPortTemplateConsolidationData(
+                        parentPortNodeTemplateId, portResourceId.get(),
+                        HeatToToscaUtil.getResourceType(portResourceId.get(), subInterfaceTo
                                 .getHeatOrchestrationTemplate(), subInterfaceTo.getHeatFileName()));
             } else {
                 portTemplateConsolidationData = new PortTemplateConsolidationData();

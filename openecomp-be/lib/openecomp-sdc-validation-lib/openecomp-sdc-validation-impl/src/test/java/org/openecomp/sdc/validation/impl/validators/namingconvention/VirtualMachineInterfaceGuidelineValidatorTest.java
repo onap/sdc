@@ -1,13 +1,13 @@
 package org.openecomp.sdc.validation.impl.validators.namingconvention;
 
+import java.util.Map;
+
 import org.openecomp.core.validation.types.MessageContainer;
 import org.openecomp.sdc.heat.datatypes.model.HeatResourcesTypes;
 import org.openecomp.sdc.validation.impl.validators.NamingConventionGuideLineValidator;
 import org.openecomp.sdc.validation.util.ValidationTestUtil;
 import org.testng.Assert;
 import org.testng.annotations.Test;
-
-import java.util.Map;
 
 public class VirtualMachineInterfaceGuidelineValidatorTest {
   private static final String PATH =
@@ -47,7 +47,7 @@ public class VirtualMachineInterfaceGuidelineValidatorTest {
     Assert.assertEquals(
         messages.get("nested.yml").getErrorMessageList().get(0).getMessage(),
         "WARNING: [VlANG1]: VLAN Resource will not be translated as the VLAN Sub-interface " +
-            "[template_vmi_Vlan_2] is not modeled as resource group");
+            "[vdbe_0_subint_untr_vmi_0] is not modeled as resource group");
   }
 
   @Test
@@ -68,7 +68,7 @@ public class VirtualMachineInterfaceGuidelineValidatorTest {
     Assert.assertEquals(
         messages.get("nested.yml").getErrorMessageList().get(0).getMessage(),
         "WARNING: [VlANG1]: VLAN Resource will not be translated as the VLAN Sub-interface " +
-            "[template_vmi_Vlan_2] is not modeled as resource group");
+            "[vdbe_0_subint_untr_vmi_0] is not modeled as resource group");
   }
 
   @Test
@@ -89,7 +89,7 @@ public class VirtualMachineInterfaceGuidelineValidatorTest {
     Assert.assertEquals(
         messages.get("nested.yml").getErrorMessageList().get(0).getMessage(),
         "WARNING: [VlANG1]: VLAN Resource will not be translated as the VLAN Sub-interface " +
-            "[template_vmi_Vlan_2] is not modeled as resource group");
+            "[vdbe_0_subint_untr_vmi_0] is not modeled as resource group");
   }
 
 
