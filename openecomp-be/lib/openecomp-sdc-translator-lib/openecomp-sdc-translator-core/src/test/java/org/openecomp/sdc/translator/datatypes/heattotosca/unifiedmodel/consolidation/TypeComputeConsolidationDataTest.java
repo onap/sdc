@@ -33,51 +33,47 @@ public class TypeComputeConsolidationDataTest {
 
     private static final String COMPUTE_NODE_TEMPLATE_ID_1 = "computeNodeTemplateId1";
     private static final String COMPUTE_NODE_TEMPLATE_ID_2 = "computeNodeTemplateId2";
-    private static final String SERVER_NETWORKROLE_1_PORT = "server_networkrole_1_port";
-    private static final String SERVER_NETWORKROLE_2_PORT = "server_networkrole_2_port";
+    private static final String SERVER_NETWORK_ROLE_1_PORT = "server_network_role_1_port";
+    private static final String SERVER_NETWORK_ROLE_2_PORT = "server_network_role_2_port";
+
+    private final TypeComputeConsolidationData consolidationData = new TypeComputeConsolidationData();
 
     @Test
     public void testCollectAllPortsOfEachTypeFromComputesNoPorts() {
-        TypeComputeConsolidationData typeComputeConsolidationData = new TypeComputeConsolidationData();
-
         ComputeTemplateConsolidationData computeTemplateConsolidationData = new ComputeTemplateConsolidationData();
-
-        typeComputeConsolidationData.setComputeTemplateConsolidationData("server_type",
+        consolidationData.setComputeTemplateConsolidationData("server_type",
                 computeTemplateConsolidationData);
 
-        Map<String, List<String>> stringListMap = typeComputeConsolidationData.collectAllPortsOfEachTypeFromComputes();
+        Map<String, List<String>> stringListMap = consolidationData.collectAllPortsOfEachTypeFromComputes();
         Assert.assertTrue(Objects.nonNull(stringListMap) && MapUtils.isEmpty(stringListMap));
-
     }
 
     @Test
     public void testCollectAllPortsOfEachTypeFromComputes() {
-        TypeComputeConsolidationData typeComputeConsolidationData = new TypeComputeConsolidationData();
         Map<String, List<String>> ports = new HashMap<>();
-        ports.put(SERVER_NETWORKROLE_1_PORT,
-                Arrays.asList("server_0_networkrole_1_port", "server_1_networkrole_1_port"));
+        ports.put(SERVER_NETWORK_ROLE_1_PORT,
+                Arrays.asList("server_0_network_role_1_port", "server_1_network_role_1_port"));
 
         ComputeTemplateConsolidationData computeTemplateConsolidationData = new ComputeTemplateConsolidationData();
         computeTemplateConsolidationData.setPorts(ports);
 
-        typeComputeConsolidationData.setComputeTemplateConsolidationData("server_type",
+        consolidationData.setComputeTemplateConsolidationData("server_type",
                 computeTemplateConsolidationData);
 
-        Map<String, List<String>> stringListMap = typeComputeConsolidationData.collectAllPortsOfEachTypeFromComputes();
-        Assert.assertTrue(stringListMap.containsKey(SERVER_NETWORKROLE_1_PORT)
-                                  && stringListMap.get(SERVER_NETWORKROLE_1_PORT).size() == 2);
-
+        Map<String, List<String>> stringListMap = consolidationData.collectAllPortsOfEachTypeFromComputes();
+        Assert.assertTrue(stringListMap.containsKey(SERVER_NETWORK_ROLE_1_PORT)
+                                  && stringListMap.get(SERVER_NETWORK_ROLE_1_PORT).size() == 2);
     }
 
     @Test
     public void testCollectAllPortsOfEachTypeFromComputesWithMultipleCompute() {
         Map<String, List<String>> ports = new HashMap<>();
-        ports.put(SERVER_NETWORKROLE_1_PORT,
-                Arrays.asList("server_0_networkrole_1_port_1", "server_1_networkrole_1_port_2"));
+        ports.put(SERVER_NETWORK_ROLE_1_PORT,
+                Arrays.asList("server_0_network_role_1_port_1", "server_1_network_role_1_port_2"));
 
         Map<String, List<String>> ports1 = new HashMap<>();
-        ports1.put(SERVER_NETWORKROLE_2_PORT,
-                Arrays.asList("server_0_networkrole_2_port_1", "server_1_networkrole_2_port_2"));
+        ports1.put(SERVER_NETWORK_ROLE_2_PORT,
+                Arrays.asList("server_0_network_role_2_port_1", "server_1_network_role_2_port_2"));
 
         ComputeTemplateConsolidationData computeTemplateConsolidationData = new ComputeTemplateConsolidationData();
         computeTemplateConsolidationData.setPorts(ports);
@@ -85,27 +81,25 @@ public class TypeComputeConsolidationDataTest {
         ComputeTemplateConsolidationData computeTemplateConsolidationData1 = new ComputeTemplateConsolidationData();
         computeTemplateConsolidationData1.setPorts(ports1);
 
-        TypeComputeConsolidationData typeComputeConsolidationData = new TypeComputeConsolidationData();
-        typeComputeConsolidationData.setComputeTemplateConsolidationData("server_type",
+        consolidationData.setComputeTemplateConsolidationData("server_type",
                 computeTemplateConsolidationData);
 
-        typeComputeConsolidationData.setComputeTemplateConsolidationData("server_type1",
+        consolidationData.setComputeTemplateConsolidationData("server_type1",
                 computeTemplateConsolidationData1);
 
-        Map<String, List<String>> stringListMap = typeComputeConsolidationData.collectAllPortsOfEachTypeFromComputes();
+        Map<String, List<String>> stringListMap = consolidationData.collectAllPortsOfEachTypeFromComputes();
         Assert.assertTrue(stringListMap.size() == 2);
-        Assert.assertTrue(stringListMap.get(SERVER_NETWORKROLE_1_PORT).size() == 2);
-        Assert.assertTrue(stringListMap.get(SERVER_NETWORKROLE_1_PORT).contains("server_0_networkrole_1_port_1")
-                                  && stringListMap.get(SERVER_NETWORKROLE_1_PORT).contains("server_1_networkrole_1_port_2"));
+        Assert.assertTrue(stringListMap.get(SERVER_NETWORK_ROLE_1_PORT).size() == 2);
+        Assert.assertTrue(stringListMap.get(SERVER_NETWORK_ROLE_1_PORT).contains("server_0_network_role_1_port_1")
+                && stringListMap.get(SERVER_NETWORK_ROLE_1_PORT).contains("server_1_network_role_1_port_2"));
 
-        Assert.assertTrue(stringListMap.get(SERVER_NETWORKROLE_2_PORT).size() == 2);
-        Assert.assertTrue(stringListMap.get(SERVER_NETWORKROLE_2_PORT).contains("server_0_networkrole_2_port_1")
-                                  && stringListMap.get(SERVER_NETWORKROLE_2_PORT).contains("server_1_networkrole_2_port_2"));
+        Assert.assertTrue(stringListMap.get(SERVER_NETWORK_ROLE_2_PORT).size() == 2);
+        Assert.assertTrue(stringListMap.get(SERVER_NETWORK_ROLE_2_PORT).contains("server_0_network_role_2_port_1")
+                && stringListMap.get(SERVER_NETWORK_ROLE_2_PORT).contains("server_1_network_role_2_port_2"));
     }
 
     @Test
     public void testAddComputeTemplateConsolidationData() {
-        TypeComputeConsolidationData consolidationData = new TypeComputeConsolidationData();
         consolidationData.addComputeTemplateConsolidationData(COMPUTE_NODE_TEMPLATE_ID_1);
 
         Set<String> expectedNodeTemplateIds =  new HashSet<>();
@@ -115,7 +109,6 @@ public class TypeComputeConsolidationDataTest {
 
     @Test
     public void testAddSameConsolidationDataTwice_noNewCreated() {
-        TypeComputeConsolidationData consolidationData = new TypeComputeConsolidationData();
         consolidationData.addComputeTemplateConsolidationData(COMPUTE_NODE_TEMPLATE_ID_1);
         ComputeTemplateConsolidationData firstComputeTemplateConsolidationData =
                 consolidationData.getComputeTemplateConsolidationData(COMPUTE_NODE_TEMPLATE_ID_1);
@@ -128,8 +121,6 @@ public class TypeComputeConsolidationDataTest {
 
     @Test
     public void testAddDiffConsolidationData_DiffNodeTemplateId() {
-        TypeComputeConsolidationData consolidationData = new TypeComputeConsolidationData();
-
         final ComputeTemplateConsolidationData firstComputeTemplateConsolidationData = consolidationData
                 .addComputeTemplateConsolidationData(COMPUTE_NODE_TEMPLATE_ID_1);
         Set<String> expectedNodeTemplateIds1 =  new HashSet<>();

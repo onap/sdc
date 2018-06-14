@@ -67,42 +67,42 @@ public class EntityConsolidationData {
     }
 
     /**
-    * Gets group ids point to me.
-    *
-    * @return the group ids point to me
-    */
+     * Gets group ids point to me.
+     *
+     * @return the group ids point to me
+     */
     public List<String> getGroupIds() {
         return groupIds;
     }
 
     /**
-    * Sets group ids point to me.
-    *
-    * @param groupIds the group ids point to me
-    */
+     * Sets group ids point to me.
+     *
+     * @param groupIds the group ids point to me
+     */
     public void setGroupIds(List<String> groupIds) {
         this.groupIds = groupIds;
     }
 
 
     /**
-    * Sets node connected to me.
-    *
-    * @param nodesConnectedIn the node connected to me
-    */
+     * Sets node connected to me.
+     *
+     * @param nodesConnectedIn the node connected to me
+     */
     public void setNodesConnectedIn(Map<String, List<RequirementAssignmentData>> nodesConnectedIn) {
         this.nodesConnectedIn = nodesConnectedIn;
     }
 
     /**
-    * Add nodeConnectedIn.
-    *
-    * @param nodeTemplateId        the node template id which has connection to me
-    * @param requirementId         the requirement id
-    * @param requirementAssignment the requirement assignment
-    */
+     * Add node connected to me.
+     *
+     * @param nodeTemplateId        the node template id which has connection to me
+     * @param requirementId         the requirement id
+     * @param requirementAssignment the requirement assignment
+     */
     public void addNodesConnectedIn(String nodeTemplateId, String requirementId,
-                                  RequirementAssignment requirementAssignment) {
+                                           RequirementAssignment requirementAssignment) {
 
         if (this.nodesConnectedIn == null) {
             this.nodesConnectedIn = new HashMap<>();
@@ -114,42 +114,42 @@ public class EntityConsolidationData {
     }
 
     /**
-    * Gets node connected to me.
-    *
-    * @return the node connected to me
-    */
+     * Gets node connected to me.
+     *
+     * @return the node connected to me
+     */
     public Map<String, List<RequirementAssignmentData>> getNodesConnectedIn() {
         return nodesConnectedIn;
     }
 
 
     /**
-    * Gets node connected from me.
-    *
-    * @return the node connected from me
-    */
+     * Gets node connected from me.
+     *
+     * @return the node connected from me
+     */
     public Map<String, List<RequirementAssignmentData>> getNodesConnectedOut() {
         return nodesConnectedOut;
     }
 
     /**
-    * Sets node connected from me.
-    *
-    * @param nodesConnectedOut the node connected from me
-    */
+     * Sets node connected from me.
+     *
+     * @param nodesConnectedOut the node connected from me
+     */
     public void setNodesConnectedOut(Map<String, List<RequirementAssignmentData>> nodesConnectedOut) {
         this.nodesConnectedOut = nodesConnectedOut;
     }
 
     /**
-    * Add nodeConnectedOut.
-    *
-    * @param nodeTemplateId        the node template id which is connected from me
-    * @param requirementId         the requirement id
-    * @param requirementAssignment the requirement assignment
-    */
+     * Add nodeConnectedOut.
+     *
+     * @param nodeTemplateId        the node template id which is connected from me
+     * @param requirementId         the requirement id
+     * @param requirementAssignment the requirement assignment
+     */
     public void addNodesConnectedOut(String nodeTemplateId, String requirementId,
-                                   RequirementAssignment requirementAssignment) {
+                                            RequirementAssignment requirementAssignment) {
 
         if (this.nodesConnectedOut == null) {
             this.nodesConnectedOut = new HashMap<>();
@@ -161,29 +161,29 @@ public class EntityConsolidationData {
     }
 
     /**
-    * Gets nodes get attr in.
-    *
-    * @return the get attr in
-    */
+     * Gets nodes get attr in.
+     *
+     * @return the get attr in
+     */
     public Map<String, List<GetAttrFuncData>> getNodesGetAttrIn() {
         return nodesGetAttrIn;
     }
 
     /**
-    * Sets nodes get attr in.
-    *
-    * @param nodesGetAttrIn the get attr in
-    */
+     * Sets nodes get attr in.
+     *
+     * @param nodesGetAttrIn the get attr in
+     */
     public void setNodesGetAttrIn(Map<String, List<GetAttrFuncData>> nodesGetAttrIn) {
         this.nodesGetAttrIn = nodesGetAttrIn;
     }
 
     /**
-    * Add nodes get attr in data.
-    *
-    * @param nodeTemplateId  the node template id
-    * @param getAttrFuncData get attr data
-    */
+     * Add nodes get attr in data.
+     *
+     * @param nodeTemplateId  the node template id
+     * @param getAttrFuncData get attr data
+     */
     public void addNodesGetAttrIn(String nodeTemplateId, GetAttrFuncData getAttrFuncData) {
 
         if (nodesGetAttrIn == null) {
@@ -195,28 +195,28 @@ public class EntityConsolidationData {
     }
 
     /**
-    * Gets output parameters get attr from me.
-    *
-    * @return the get attr from me
-    */
+     * Gets output parameters get attr from me.
+     *
+     * @return the get attr from me
+     */
     public List<GetAttrFuncData> getOutputParametersGetAttrIn() {
         return outputParametersGetAttrIn;
     }
 
     /**
-    * Sets output parameters get attr from me.
-    *
-    * @param outputParametersGetAttrIn the output parameters get attr from me
-    */
+     * Sets output parameters get attr from me.
+     *
+     * @param outputParametersGetAttrIn the output parameters get attr from me
+     */
     public void setOutputParametersGetAttrIn(List<GetAttrFuncData> outputParametersGetAttrIn) {
         this.outputParametersGetAttrIn = outputParametersGetAttrIn;
     }
 
     /**
-    * Add output parameters get attr data.
-    *
-    * @param getAttrFuncData get attr data
-    */
+     * Add output parameters get attr data.
+     *
+     * @param getAttrFuncData get attr data
+     */
     public void addOutputParamGetAttrIn(GetAttrFuncData getAttrFuncData) {
 
         if (outputParametersGetAttrIn == null) {
@@ -227,29 +227,29 @@ public class EntityConsolidationData {
     }
 
     /**
-    * Gets nodes get attr out.
-    *
-    * @return the get attr out
-    */
+     * Gets nodes get attr out.
+     *
+     * @return the get attr out
+     */
     public Map<String, List<GetAttrFuncData>> getNodesGetAttrOut() {
         return nodesGetAttrOut;
     }
 
     /**
-    * Sets nodes get attr out.
-    *
-    * @param nodesGetAttrOut the get attr out
-    */
+     * Sets nodes get attr out.
+     *
+     * @param nodesGetAttrOut the get attr out
+     */
     public void setNodesGetAttrOut(Map<String, List<GetAttrFuncData>> nodesGetAttrOut) {
         this.nodesGetAttrOut = nodesGetAttrOut;
     }
 
     /**
-    * Add nodes get attr out data.
-    *
-    * @param nodeTemplateId  the node template id
-    * @param getAttrFuncData get attr data
-    */
+     * Add nodes get attr out data.
+     *
+     * @param nodeTemplateId  the node template id
+     * @param getAttrFuncData get attr data
+     */
     public void addNodesGetAttrOut(String nodeTemplateId, GetAttrFuncData getAttrFuncData) {
 
         if (nodesGetAttrOut == null) {
@@ -277,10 +277,8 @@ public class EntityConsolidationData {
      * @return true in case get attr list same for all port types.
      *         otherwise return false
      */
-    public boolean isGetAttrOutFromEntityLegal(
-                                                      Collection<? extends EntityConsolidationData> entityConsolidationDataList,
-                                                      Map<String, List<String>> portTypeToIds) {
-
+    public boolean isGetAttrOutFromEntityLegal(Collection<? extends EntityConsolidationData>
+                    entityConsolidationDataList, Map<String, List<String>> portTypeToIds) {
         for (String portType : portTypeToIds.keySet()) {
             Set<GetAttrFuncData> startingGetAttrFunc =
                     getEntityGetAttrFuncAsSet(portType);
@@ -293,7 +291,6 @@ public class EntityConsolidationData {
                 }
             }
         }
-
         return true;
     }
 
@@ -306,5 +303,18 @@ public class EntityConsolidationData {
                               .filter(entry -> portType.equals(ConsolidationDataUtil.getPortType(entry.getKey())))
                               .flatMap(entry -> entry.getValue().stream())
                               .collect(Collectors.toSet());
+    }
+
+    /**
+     * Add group id information to consolidation data.
+     *
+     * @param groupId       Group id of which compute node is a part
+     */
+
+    void addGroupId(String groupId) {
+        if (groupIds == null) {
+            groupIds = new ArrayList<>();
+        }
+        groupIds.add(groupId);
     }
 }

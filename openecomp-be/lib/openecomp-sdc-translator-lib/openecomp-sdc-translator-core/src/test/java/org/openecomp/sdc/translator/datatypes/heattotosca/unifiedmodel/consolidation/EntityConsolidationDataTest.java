@@ -34,6 +34,13 @@ public class EntityConsolidationDataTest {
     private static final String NODE_TEMPLATE_ID_2 = "nodeTemplateId2";
     private static final String REQUIREMENT_ID_1 = "requirementId1";
     private static final String REQUIREMENT_ID_2 = "requirementId2";
+    private static final String GROUP_ID_1 = "groupId1";
+    private static final String GROUP_ID_2 = "groupId2";
+    private static final String FIELD_1 = "field1";
+    private static final String FIELD_2 = "field2";
+
+
+    private final EntityConsolidationData consolidationData = new EntityConsolidationData();
 
     @Test
     public void testIsGetAttrOutFromEntityLegal() {
@@ -74,7 +81,6 @@ public class EntityConsolidationDataTest {
         getAttOutMap.put("server_0_networkrole_1_port", Collections.singletonList(getAttrFuncData));
 
         GetAttrFuncData getAttrFuncData1 = new GetAttrFuncData("vmac_address", "accessIPv4");
-        Map<String, List<GetAttrFuncData>> getAttOutMap1 = new HashMap<>();
         getAttOutMap.put("server_0_networkrole_2_port", Collections.singletonList(getAttrFuncData1));
 
 
@@ -82,7 +88,6 @@ public class EntityConsolidationDataTest {
         entityConsolidationData.setNodesGetAttrOut(getAttOutMap);
 
         EntityConsolidationData entityConsolidationData1 = new EntityConsolidationData();
-        //entityConsolidationData1.setNodesGetAttrOut(getAttOutMap1);
 
         List<EntityConsolidationData> entityConsolidationDataList =
                 Arrays.asList(entityConsolidationData, entityConsolidationData1);
@@ -125,9 +130,7 @@ public class EntityConsolidationDataTest {
 
     @Test
     public void testAddNodesConnectedIn_SameNodeTemplateIds() {
-        EntityConsolidationData consolidationData = new EntityConsolidationData();
         Map<String, String[]> expectedNodesConnectedData = new HashMap<>();
-
         addNodesConnectedIn(consolidationData,NODE_TEMPLATE_ID_1, REQUIREMENT_ID_1);
         expectedNodesConnectedData.put(NODE_TEMPLATE_ID_1, new String[]{REQUIREMENT_ID_1});
         checkNodesConnected(consolidationData.getNodesConnectedIn(), expectedNodesConnectedData);
@@ -139,9 +142,7 @@ public class EntityConsolidationDataTest {
 
     @Test
     public void testAddNodesConnectedIn_DiffNodeTemplateIds() {
-        EntityConsolidationData consolidationData = new EntityConsolidationData();
         Map<String, String[]> expectedNodesConnectedData = new HashMap<>();
-
         addNodesConnectedIn(consolidationData, NODE_TEMPLATE_ID_1, REQUIREMENT_ID_1);
         expectedNodesConnectedData.put(NODE_TEMPLATE_ID_1, new String[]{REQUIREMENT_ID_1});
         checkNodesConnected(consolidationData.getNodesConnectedIn(), expectedNodesConnectedData);
@@ -153,9 +154,7 @@ public class EntityConsolidationDataTest {
 
     @Test
     public void testAddNodesConnectedOut_SameNodeTemplateIds() {
-        EntityConsolidationData consolidationData = new EntityConsolidationData();
         Map<String, String[]> expectedNodesConnectedData = new HashMap<>();
-
         addNodesConnectedOut(consolidationData, NODE_TEMPLATE_ID_1, REQUIREMENT_ID_1);
         expectedNodesConnectedData.put(NODE_TEMPLATE_ID_1, new String[]{REQUIREMENT_ID_1});
         checkNodesConnected(consolidationData.getNodesConnectedOut(), expectedNodesConnectedData);
@@ -167,9 +166,7 @@ public class EntityConsolidationDataTest {
 
     @Test
     public void testAddNodesConnectedOut_DiffNodeTemplateIds() {
-        EntityConsolidationData consolidationData = new EntityConsolidationData();
         Map<String, String[]> expectedNodesConnectedData = new HashMap<>();
-
         addNodesConnectedOut(consolidationData, NODE_TEMPLATE_ID_1, REQUIREMENT_ID_1);
         expectedNodesConnectedData.put(NODE_TEMPLATE_ID_1, new String[]{REQUIREMENT_ID_1});
         checkNodesConnected(consolidationData.getNodesConnectedOut(), expectedNodesConnectedData);
@@ -181,15 +178,13 @@ public class EntityConsolidationDataTest {
 
     @Test
     public void testAddOutputParamGetAttrIn() {
-        EntityConsolidationData consolidationData = new EntityConsolidationData();
-        GetAttrFuncData getAttrFuncData1 = createGetAttrFuncData("field1");
-
+        GetAttrFuncData getAttrFuncData1 = createGetAttrFuncData(FIELD_1);
         consolidationData.addOutputParamGetAttrIn(getAttrFuncData1);
         List<GetAttrFuncData> outputParametersGetAttrIn = consolidationData.getOutputParametersGetAttrIn();
         Assert.assertEquals(1, outputParametersGetAttrIn.size());
         Assert.assertTrue(outputParametersGetAttrIn.contains(getAttrFuncData1));
 
-        GetAttrFuncData getAttrFuncData2 = createGetAttrFuncData("field2");
+        GetAttrFuncData getAttrFuncData2 = createGetAttrFuncData(FIELD_2);
         consolidationData.addOutputParamGetAttrIn(getAttrFuncData2);
         Assert.assertEquals(2,outputParametersGetAttrIn.size());
         Assert.assertTrue(outputParametersGetAttrIn.contains(getAttrFuncData1));
@@ -198,15 +193,13 @@ public class EntityConsolidationDataTest {
 
     @Test
     public void testRemoveParamNameFromAttrFuncList() {
-        EntityConsolidationData consolidationData = new EntityConsolidationData();
-        GetAttrFuncData getAttrFuncData1 = createGetAttrFuncData("field1");
-
+        GetAttrFuncData getAttrFuncData1 = createGetAttrFuncData(FIELD_1);
         consolidationData.addOutputParamGetAttrIn(getAttrFuncData1);
         // verify that getAttrFuncData was added
         List<GetAttrFuncData> outputParametersGetAttrIn = consolidationData.getOutputParametersGetAttrIn();
         Assert.assertEquals(1, outputParametersGetAttrIn.size());
 
-        consolidationData.removeParamNameFromAttrFuncList("field2");
+        consolidationData.removeParamNameFromAttrFuncList(FIELD_2);
         //verify that not existing getAttrFuncData parameter wasn't removed and no Exception
         outputParametersGetAttrIn = consolidationData.getOutputParametersGetAttrIn();
         Assert.assertEquals(1, outputParametersGetAttrIn.size());
@@ -215,6 +208,19 @@ public class EntityConsolidationDataTest {
         //verify that existing getAttrFuncData parameter was removed
         outputParametersGetAttrIn = consolidationData.getOutputParametersGetAttrIn();
         Assert.assertEquals(0, outputParametersGetAttrIn.size());
+    }
+
+    @Test
+    public void testAddGroupId() {
+        consolidationData.addGroupId(GROUP_ID_1);
+        List<String> groupIds = consolidationData.getGroupIds();
+        Assert.assertNotNull(groupIds);
+        Assert.assertTrue(groupIds.contains(GROUP_ID_1));
+        Assert.assertEquals(1, consolidationData.getGroupIds().size());
+
+        consolidationData.addGroupId(GROUP_ID_2);
+        Assert.assertEquals(2, consolidationData.getGroupIds().size());
+        Assert.assertTrue(groupIds.contains(GROUP_ID_2));
     }
 
     private GetAttrFuncData createGetAttrFuncData(String field) {
