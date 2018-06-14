@@ -29,7 +29,7 @@ parameters:
 resources:
 
   
-  template_vmi_Vlan_2:
+  vdbe_0_subint_untr_vmi_0:
     type: OS::ContrailV2::VirtualMachineInterface
     properties:
       name:

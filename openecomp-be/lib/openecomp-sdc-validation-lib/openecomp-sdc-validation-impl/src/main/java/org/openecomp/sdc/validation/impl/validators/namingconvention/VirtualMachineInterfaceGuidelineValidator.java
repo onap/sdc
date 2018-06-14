@@ -1,18 +1,9 @@
 package org.openecomp.sdc.validation.impl.validators.namingconvention;
 
-import org.openecomp.core.validation.ErrorMessageCode;
-import org.openecomp.core.validation.errors.ErrorMessagesFormatBuilder;
-import org.openecomp.core.validation.types.GlobalValidationContext;
-import org.openecomp.sdc.datatypes.error.ErrorLevel;
-import org.openecomp.sdc.heat.datatypes.DefinedHeatParameterTypes;
-import org.openecomp.sdc.heat.datatypes.model.Resource;
-import org.openecomp.sdc.heat.services.HeatConstants;
-import org.openecomp.sdc.heat.services.HeatStructureUtil;
-import org.openecomp.sdc.validation.ResourceValidator;
-import org.openecomp.sdc.validation.ValidationContext;
-import org.openecomp.sdc.validation.type.NamingConventionValidationContext;
+import static org.openecomp.sdc.heat.datatypes.model.HeatResourcesTypes.CONTRAIL_V2_VIRTUAL_MACHINE_INTERFACE_RESOURCE_TYPE;
+import static org.openecomp.sdc.heat.datatypes.model.HeatResourcesTypes.NEUTRON_PORT_RESOURCE_TYPE;
+import static org.openecomp.sdc.heat.datatypes.model.HeatResourcesTypes.NOVA_SERVER_RESOURCE_TYPE;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -21,14 +12,18 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static org.openecomp.sdc.heat.datatypes.model.HeatResourcesTypes.CONTRAIL_V2_VIRTUAL_MACHINE_INTERFACE_RESOURCE_TYPE;
-import static org.openecomp.sdc.heat.datatypes.model.HeatResourcesTypes.NEUTRON_PORT_RESOURCE_TYPE;
-import static org.openecomp.sdc.heat.datatypes.model.HeatResourcesTypes.NOVA_SERVER_RESOURCE_TYPE;
-
-/**
- * @author KATYR
- * @since February 05, 2018
- */
+import org.openecomp.core.validation.ErrorMessageCode;
+import org.openecomp.core.validation.errors.ErrorMessagesFormatBuilder;
+import org.openecomp.core.validation.types.GlobalValidationContext;
+import org.openecomp.sdc.datatypes.error.ErrorLevel;
+import org.openecomp.sdc.heat.datatypes.DefinedHeatParameterTypes;
+import org.openecomp.sdc.heat.datatypes.model.Resource;
+import org.openecomp.sdc.heat.services.HeatConstants;
+import org.openecomp.sdc.heat.services.HeatResourceUtil;
+import org.openecomp.sdc.heat.services.HeatStructureUtil;
+import org.openecomp.sdc.validation.ResourceValidator;
+import org.openecomp.sdc.validation.ValidationContext;
+import org.openecomp.sdc.validation.type.NamingConventionValidationContext;
 
 public class VirtualMachineInterfaceGuidelineValidator implements ResourceValidator {
   private static final ErrorMessageCode ERROR_CODE_VLAN_GUIDELINE1 = new ErrorMessageCode
@@ -37,8 +32,6 @@ public class VirtualMachineInterfaceGuidelineValidator implements ResourceValida
       ("VlANG2");
   private static final ErrorMessageCode ERROR_CODE_VLAN_GUIDELINE3 = new ErrorMessageCode
       ("VlANG3");
-  private static final String UNDERSCORE = "_";
-  private static final String VMI = "vmi";
 
 
   @Override
@@ -53,8 +46,7 @@ public class VirtualMachineInterfaceGuidelineValidator implements ResourceValida
             namingConventionValidationContext);
         validateSingleVirtualMachineInterfaceInFile(fileName, globalContext,
             namingConventionValidationContext);
-        validateNamingConvention(fileName, resourceEntry, globalContext
-        );
+        validateSubInterfaceNamingConvention(fileName, resourceEntry, globalContext);
       }
   }
 
@@ -63,32 +55,28 @@ public class VirtualMachineInterfaceGuidelineValidator implements ResourceValida
                                               GlobalValidationContext globalContext,
                                               NamingConventionValidationContext namingConventionValidationContext) {
 
-    Object refsPropertyValue = resourceEntry.getValue().getProperties()
-        .get(HeatConstants.VMI_REFS_PROPERTY_NAME);
+    Object refsPropertyValue = resourceEntry.getValue().getProperties().get(HeatConstants.VMI_REFS_PROPERTY_NAME);
     if (Objects.isNull(refsPropertyValue)) {
       addViolationToContext(fileName, globalContext, ErrorLevel.WARNING, ERROR_CODE_VLAN_GUIDELINE1,
-          Messages.VLAN_GUIDELINE_VALIDATION_NOT_MODELED_THROUGH_RESOURCE_GROUP,
-          resourceEntry.getKey());
+          Messages.VLAN_GUIDELINE_VALIDATION_NOT_MODELED_THROUGH_RESOURCE_GROUP, resourceEntry.getKey());
       return;
     }
-    final boolean modeledThroughResourceGroup =
-        isModeledThroughResourceGroup(fileName, globalContext,
-            namingConventionValidationContext,
-            refsPropertyValue);
+    final boolean modeledThroughResourceGroup = isModeledThroughResourceGroup(fileName, globalContext,
+            namingConventionValidationContext, refsPropertyValue);
     if (!modeledThroughResourceGroup) {
       addViolationToContext(fileName, globalContext, ErrorLevel.WARNING, ERROR_CODE_VLAN_GUIDELINE1,
-          Messages.VLAN_GUIDELINE_VALIDATION_NOT_MODELED_THROUGH_RESOURCE_GROUP,
-          resourceEntry.getKey());
+          Messages.VLAN_GUIDELINE_VALIDATION_NOT_MODELED_THROUGH_RESOURCE_GROUP, resourceEntry.getKey());
     }
 
   }
 
 
-  private void validateNamingConvention(String fileName, Map.Entry<String, Resource>
-      resourceEntry, GlobalValidationContext globalContext) {
+  private void validateSubInterfaceNamingConvention(String fileName, Map.Entry<String, Resource> resourceEntry,
+                                                    GlobalValidationContext globalContext) {
     final String resourceId = resourceEntry.getKey();
-    final String networkRole = extractNetworkRoleFromResourceId(resourceId);
-    if (Objects.isNull(networkRole)) {
+    final Optional<String> networkRole = HeatResourceUtil.extractNetworkRoleFromSubInterfaceId(resourceId, resourceEntry
+            .getValue().getType());
+    if (!networkRole.isPresent()) {
       addViolationToContext(fileName, globalContext, ErrorLevel.WARNING, ERROR_CODE_VLAN_GUIDELINE3,
           Messages.VLAN_GUIDELINE_VALIDATION_NAMING_CONVENTION, resourceId);
     }
@@ -115,8 +103,8 @@ public class VirtualMachineInterfaceGuidelineValidator implements ResourceValida
 
   private boolean fileContainsNonVlanResources(Map<String, Resource> resources,
                                                Set<String> forbiddenTypes) {
-    for (String resourceName : resources.keySet()) {
-      if (forbiddenTypes.contains(resources.get(resourceName).getType())) {
+    for (Map.Entry<String, Resource> resourceEntry : resources.entrySet()) {
+      if (forbiddenTypes.contains(resourceEntry.getValue().getType())) {
         return true;
       }
     }
@@ -125,8 +113,8 @@ public class VirtualMachineInterfaceGuidelineValidator implements ResourceValida
 
   private int countVlanResources(Map<String, Resource> resources) {
     int numVlanResources = 0;
-    for (String resourceName : resources.keySet()) {
-      final String resourceType = resources.get(resourceName).getType();
+    for (Map.Entry<String, Resource> resourceEntry : resources.entrySet()) {
+      final String resourceType = resourceEntry.getValue().getType();
       if (resourceType.equals
           (CONTRAIL_V2_VIRTUAL_MACHINE_INTERFACE_RESOURCE_TYPE.getHeatResource())) {
         numVlanResources++;
@@ -149,8 +137,7 @@ public class VirtualMachineInterfaceGuidelineValidator implements ResourceValida
 
 
   private Optional<Object> getVlanTagPropertyValue(Resource resource) {
-    Object vmiProperties = resource.getProperties()
-        .get(HeatConstants.VMI_PROPERTIES_PROPERTY_NAME);
+    Object vmiProperties = resource.getProperties().get(HeatConstants.VMI_PROPERTIES_PROPERTY_NAME);
     if (Objects.nonNull(vmiProperties) && vmiProperties instanceof Map) {
       return Optional.ofNullable(((Map) vmiProperties)
           .get(HeatConstants.VMI_SUB_INTERFACE_VLAN_TAG_PROPERTY_NAME));
@@ -205,19 +192,6 @@ public class VirtualMachineInterfaceGuidelineValidator implements ResourceValida
   }
 
 
-  private static String extractNetworkRoleFromResourceId(String resourceId) {
-
-    List<String> splitSubInterfaceResourceId =
-        Arrays.asList(resourceId.toLowerCase().split(UNDERSCORE));
-
-    int vmiIndex = splitSubInterfaceResourceId.indexOf(VMI);
-    if (vmiIndex > 0) {
-      return splitSubInterfaceResourceId.get(vmiIndex - 1);
-    }
-
-    return null;
-  }
-
 
   private enum Messages {
     VLAN_GUIDELINE_VALIDATION_NOT_MODELED_THROUGH_RESOURCE_GROUP("VLAN Resource will not be " +
@@ -225,9 +199,7 @@ public class VirtualMachineInterfaceGuidelineValidator implements ResourceValida
     VLAN_GUIDELINE_VALIDATION_SINGLE_VLAN("There should not be any Compute Server Node, Port, " +
         "Parent Port in nested file [%s]"),
     VLAN_GUIDELINE_VALIDATION_NAMING_CONVENTION(
-        "Network role associated with VLAN Sub-interface " +
-            "id" +
-            "[%s] is not following the naming convention");
+        "Network role associated with VLAN Sub-interface id[%s] is not following the naming convention");
 
     private final String errorMessage;
 

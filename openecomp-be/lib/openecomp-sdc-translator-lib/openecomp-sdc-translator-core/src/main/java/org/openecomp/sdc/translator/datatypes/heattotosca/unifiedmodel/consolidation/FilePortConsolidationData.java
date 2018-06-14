@@ -23,7 +23,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import org.openecomp.sdc.heat.datatypes.model.Resource;
-import org.openecomp.sdc.translator.services.heattotosca.HeatToToscaUtil;
+import org.openecomp.sdc.heat.services.HeatResourceUtil;
 
 
 public class FilePortConsolidationData {
@@ -93,16 +93,14 @@ public class FilePortConsolidationData {
         return consolidationData;
     }
 
-    private PortTemplateConsolidationData createPortTemplateConsolidationData(
-            String portNodeTemplateId, String portResourceId, String portResourceType) {
+    public PortTemplateConsolidationData createPortTemplateConsolidationData(String portNodeTemplateId,
+                                                                             String portResourceId,
+                                                                             String portResourceType) {
         PortTemplateConsolidationData consolidationData = new PortTemplateConsolidationData();
         consolidationData.setNodeTemplateId(portNodeTemplateId);
-        Optional<String> portNetworkRole = HeatToToscaUtil.evaluateNetworkRoleFromResourceId(portResourceId,
+        Optional<String> portNetworkRole = HeatResourceUtil.evaluateNetworkRoleFromResourceId(portResourceId,
                 portResourceType);
         portNetworkRole.ifPresent(consolidationData::setNetworkRole);
         return consolidationData;
     }
-
-
-
 }

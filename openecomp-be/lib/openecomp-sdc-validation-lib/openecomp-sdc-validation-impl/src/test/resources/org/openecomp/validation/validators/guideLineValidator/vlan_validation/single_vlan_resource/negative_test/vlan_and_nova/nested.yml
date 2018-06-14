@@ -35,7 +35,7 @@ resources:
       security_groups: [{get_param: p1}, {get_param: p2}]
       replacement_policy: AUTO
   
-  template_vmi_Vlan_2:
+  vdbe_0_subint_untr_vmi_0:
     type: OS::ContrailV2::VirtualMachineInterface
     properties:
       name:

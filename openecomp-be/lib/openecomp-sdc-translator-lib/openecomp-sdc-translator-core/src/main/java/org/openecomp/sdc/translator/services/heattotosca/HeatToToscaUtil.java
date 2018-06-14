@@ -16,6 +16,7 @@
 
 package org.openecomp.sdc.translator.services.heattotosca;
 
+import static org.openecomp.sdc.heat.services.HeatResourceUtil.extractNetworkRoleFromSubInterfaceId;
 import static org.openecomp.sdc.translator.services.heattotosca.impl.functiontranslation.FunctionTranslator.getFunctionTranslateTo;
 
 import java.io.IOException;
@@ -29,8 +30,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.CollectionUtils;
@@ -59,6 +58,7 @@ import org.openecomp.core.utilities.file.FileUtils;
 import org.openecomp.core.utilities.orchestration.OnboardingTypesEnum;
 import org.openecomp.core.validation.util.MessageContainerUtil;
 import org.openecomp.sdc.common.errors.CoreException;
+import org.openecomp.sdc.common.errors.SdcRuntimeException;
 import org.openecomp.sdc.common.utils.SdcCommon;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
@@ -110,15 +110,6 @@ public class HeatToToscaUtil {
     private static final String GET_ATTR = "get_attr";
     private static final String GET_RESOURCE = "get_resource";
     private static final String UNDERSCORE = "_";
-    private static final String WORDS_REGEX = "(\\w+)";
-    private static final String PORT_RESOURCE_ID_REGEX_SUFFIX = "(_\\d+)*";
-    private static final String PORT_RESOURCE_ID_REGEX_PREFIX = WORDS_REGEX + PORT_RESOURCE_ID_REGEX_SUFFIX;
-    private static final String PORT_INT_RESOURCE_ID_REGEX_PREFIX =
-            PORT_RESOURCE_ID_REGEX_PREFIX + UNDERSCORE + "int_" + WORDS_REGEX + UNDERSCORE;
-    private static final String SUB_INTERFACE_INT_RESOURCE_ID_REGEX_PREFIX =
-            PORT_RESOURCE_ID_REGEX_PREFIX + UNDERSCORE + "subint_" + WORDS_REGEX + UNDERSCORE;
-    private static final String SUB_INTERFACE_REGEX =
-            WORDS_REGEX + PORT_RESOURCE_ID_REGEX_SUFFIX + "_subint_(\\w_+)*vmi" + PORT_RESOURCE_ID_REGEX_SUFFIX;
 
     /**
      * Load and translate template data translator output.
@@ -132,7 +123,7 @@ public class HeatToToscaUtil {
         try (InputStream fileContent = fileNameContentMap.getFileContent(SdcCommon.MANIFEST_NAME)) {
             heatToToscaTranslator.addManifest(SdcCommon.MANIFEST_NAME, FileUtils.toByteArray(fileContent));
         } catch (IOException e) {
-            throw new RuntimeException("Failed to read manifest", e);
+            throw new SdcRuntimeException("Failed to read manifest", e);
         }
 
         fileNameContentMap.getFileList().stream().filter(fileName -> !(fileName.equals(SdcCommon.MANIFEST_NAME)))
@@ -151,7 +142,7 @@ public class HeatToToscaUtil {
             return heatToToscaTranslator.translate();
         } catch (IOException e) {
             // rethrow as a RuntimeException to keep the signature backward compatible
-            throw new RuntimeException("Failed to read Heat template tree", e);
+            throw new SdcRuntimeException("Failed to read Heat template tree", e);
         }
     }
 
@@ -348,7 +339,7 @@ public class HeatToToscaUtil {
                                                                                 Object propertyValue) {
 
         Object entity;
-        Object translatedId;
+        Object translatedId = null;
 
         if (Objects.isNull(propertyValue)) {
             return Optional.empty();
@@ -362,19 +353,16 @@ public class HeatToToscaUtil {
             String key = entry.getKey();
             referenceType = getReferenceTypeFromAttachedResouce(key);
 
-      if (!FunctionTranslationFactory.getInstance(entry.getKey()).isPresent()) {
-        translatedId = null;
-      } else {
-        FunctionTranslator functionTranslator = new FunctionTranslator(getFunctionTranslateTo(null, null,
-                heatFileName, heatOrchestrationTemplate, context), null, entry.getValue(), null);
-        translatedId = FunctionTranslationFactory.getInstance(entry.getKey()).get()
-            .translateFunction(functionTranslator);
-      }
-      if (translatedId instanceof String
-          && !new FunctionTranslator().isResourceSupported((String) translatedId)) {
-        translatedId = null;
-      }
-
+            if (FunctionTranslationFactory.getInstance(entry.getKey()).isPresent()) {
+                FunctionTranslator functionTranslator = new FunctionTranslator(getFunctionTranslateTo(null, null,
+                        heatFileName, heatOrchestrationTemplate, context), null, entry.getValue(), null);
+                translatedId = FunctionTranslationFactory.getInstance(entry.getKey()).get()
+                        .translateFunction(functionTranslator);
+                if (translatedId instanceof String
+                        && !new FunctionTranslator().isResourceSupported((String) translatedId)) {
+                    translatedId = null;
+                }
+            }
         } else {
             translatedId = propertyValue;
             entity = propertyValue;
@@ -1410,73 +1398,6 @@ public class HeatToToscaUtil {
             }
         }
         return networkRole;
-    }
-
-    public static Optional<String> evaluateNetworkRoleFromResourceId(String resourceId, String resourceType) {
-        Optional<PortType> portType = getPortType(resourceType);
-        if (portType.isPresent()) {
-            String portResourceIdRegex =
-                    PORT_RESOURCE_ID_REGEX_PREFIX + UNDERSCORE + WORDS_REGEX + UNDERSCORE + portType.get()
-                                                                                                    .getPortTypeName()
-                            + PORT_RESOURCE_ID_REGEX_SUFFIX;
-            String portIntResourceIdRegex = PORT_INT_RESOURCE_ID_REGEX_PREFIX + portType.get().getPortTypeName()
-                                                    + PORT_RESOURCE_ID_REGEX_SUFFIX;
-
-            String portNetworkRole = getNetworkRole(resourceId, portResourceIdRegex);
-            String portIntNetworkRole = getNetworkRole(resourceId, portIntResourceIdRegex);
-
-            return Optional.ofNullable(Objects.nonNull(portNetworkRole) ? portNetworkRole : portIntNetworkRole);
-        }
-        return Optional.empty();
-    }
-
-    private static Optional<PortType> getPortType(String resourceType) {
-        if (resourceType
-                    .equals(HeatResourcesTypes.CONTRAIL_V2_VIRTUAL_MACHINE_INTERFACE_RESOURCE_TYPE.getHeatResource())) {
-            return Optional.of(PortType.VMI);
-        } else if (resourceType.equals(HeatResourcesTypes.NEUTRON_PORT_RESOURCE_TYPE.getHeatResource())) {
-            return Optional.of(PortType.PORT);
-        }
-        return Optional.empty();
-    }
-
-    public static Optional<String> extractNetworkRoleFromSubInterfaceId(String resourceId, String resourceType) {
-        Optional<PortType> portType = getPortType(resourceType);
-        if (portType.isPresent()) {
-            String subInterfaceResourceIdRegex =
-                    SUB_INTERFACE_INT_RESOURCE_ID_REGEX_PREFIX + portType.get().getPortTypeName()
-                            + PORT_RESOURCE_ID_REGEX_SUFFIX;
-
-            return Optional.ofNullable(getNetworkRole(resourceId, subInterfaceResourceIdRegex));
-        }
-        return Optional.empty();
-    }
-
-    private enum PortType {
-        PORT("port"), VMI("vmi");
-
-        private String portTypeName;
-
-        PortType(String portTypeName) {
-            this.portTypeName = portTypeName;
-        }
-
-        public String getPortTypeName() {
-            return portTypeName;
-        }
-    }
-
-    private static String getNetworkRole(String portResourceId, String portIdRegex) {
-        Pattern pattern = Pattern.compile(portIdRegex);
-        Matcher matcher = pattern.matcher(portResourceId);
-        if (matcher.matches()) {
-            String networkRole = matcher.group(3);
-            //Assuming network role will not contain ONLY digits
-            if (!networkRole.matches("\\d+")) {
-                return matcher.group(3);
-            }
-        }
-        return null;
     }
 
 }

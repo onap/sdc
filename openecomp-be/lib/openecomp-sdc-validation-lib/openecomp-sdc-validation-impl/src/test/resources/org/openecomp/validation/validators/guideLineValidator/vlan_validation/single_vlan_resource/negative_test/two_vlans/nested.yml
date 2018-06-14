@@ -29,7 +29,7 @@ parameters:
 resources:
 
   
-  template_vmi_Vlan_2:
+  vdbe_0_subint_untr_vmi_0:
     type: OS::ContrailV2::VirtualMachineInterface
     properties:
       name:
@@ -72,7 +72,7 @@ resources:
       virtual_network_refs: [{ get_param: net2 },{ get_param: net1 }]
       virtual_machine_interface_refs: [ { get_param: p1 }]
 
-  template_vmi_Vlan_3_arrayParameter:
+  vdbe_0_subint_untr_vmi_1:
     type: OS::ContrailV2::VirtualMachineInterface
     properties:
       name:

@@ -18,16 +18,6 @@ package org.openecomp.sdc.translator.services.heattotosca.impl.resourcetranslati
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.openecomp.sdc.heat.datatypes.model.HeatResourcesTypes;
-import org.openecomp.sdc.heat.datatypes.model.Resource;
-import org.openecomp.sdc.heat.services.HeatConstants;
-import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.FilePortConsolidationData;
-import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.PortTemplateConsolidationData;
-import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.SubInterfaceTemplateConsolidationData;
-import org.openecomp.sdc.translator.services.heattotosca.HeatToToscaUtil;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -35,6 +25,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+import org.openecomp.sdc.heat.datatypes.model.HeatResourcesTypes;
+import org.openecomp.sdc.heat.datatypes.model.Resource;
+import org.openecomp.sdc.heat.services.HeatConstants;
+import org.openecomp.sdc.heat.services.HeatResourceUtil;
+import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.FilePortConsolidationData;
+import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.PortTemplateConsolidationData;
+import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.SubInterfaceTemplateConsolidationData;
+import org.openecomp.sdc.translator.services.heattotosca.HeatToToscaUtil;
 
 public class ContrailV2VlanToInterfaceResourceConnectionTest extends BaseResourceTranslationTest {
 
@@ -136,7 +138,7 @@ public class ContrailV2VlanToInterfaceResourceConnectionTest extends BaseResourc
         "vm_type_subint_networkrole_vmi");
 
     subInterfaceResourceIds.forEach(resourceId -> {
-      Optional<String> networkRole = HeatToToscaUtil.extractNetworkRoleFromSubInterfaceId(
+      Optional<String> networkRole = HeatResourceUtil.extractNetworkRoleFromSubInterfaceId(
         resourceId,
         HeatResourcesTypes.CONTRAIL_V2_VIRTUAL_MACHINE_INTERFACE_RESOURCE_TYPE.getHeatResource());
       Assert.assertTrue(networkRole.isPresent()
@@ -151,7 +153,7 @@ public class ContrailV2VlanToInterfaceResourceConnectionTest extends BaseResourc
         "vm_type_11_subint_11_vmi_11");
 
     subInterfaceResourceIds.forEach(resourceId -> {
-        Optional<String> networkRole = HeatToToscaUtil.extractNetworkRoleFromSubInterfaceId(
+        Optional<String> networkRole = HeatResourceUtil.extractNetworkRoleFromSubInterfaceId(
           resourceId,
           HeatResourcesTypes.CONTRAIL_V2_VIRTUAL_MACHINE_INTERFACE_RESOURCE_TYPE.getHeatResource());
         Assert.assertFalse(networkRole.isPresent());
