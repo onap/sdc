@@ -55,7 +55,7 @@ import org.openecomp.sdc.translator.datatypes.heattotosca.PropertyRegexMatcher;
 import org.openecomp.sdc.translator.datatypes.heattotosca.TranslationContext;
 import org.openecomp.sdc.translator.datatypes.heattotosca.to.TranslateTo;
 import org.openecomp.sdc.translator.datatypes.heattotosca.to.TranslatedHeatResource;
-import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.ComputeTemplateConsolidationData;
+import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.ComputeConsolidationDataHandler;
 import org.openecomp.sdc.translator.services.heattotosca.ConsolidationDataUtil;
 import org.openecomp.sdc.translator.services.heattotosca.Constants;
 import org.openecomp.sdc.translator.services.heattotosca.HeatToToscaUtil;
@@ -167,14 +167,10 @@ public class ResourceTranslationNovaServerImpl extends ResourceTranslationBase {
     }
 
     private void updateComputeConsolidationDataGroup(TranslateTo translateTo,
-                                                            NodeTemplate novaNodeTemplate,
-                                                            String groupId) {
-        TranslationContext translationContext = translateTo.getContext();
-        ServiceTemplate serviceTemplate = translateTo.getServiceTemplate();
-        ComputeTemplateConsolidationData computeTemplateConsolidationData = ConsolidationDataUtil
-                .getComputeTemplateConsolidationData(translationContext, serviceTemplate,
-                novaNodeTemplate.getType(), translateTo.getTranslatedId());
-        ConsolidationDataUtil.updateGroupIdInConsolidationData(computeTemplateConsolidationData, groupId);
+            NodeTemplate novaNodeTemplate, String groupId) {
+        ComputeConsolidationDataHandler handler = translateTo.getContext().getComputeConsolidationDataHandler();
+        handler.addGroupIdToConsolidationData(translateTo,novaNodeTemplate.getType(),
+                translateTo.getTranslatedId(), groupId);
     }
 
     private boolean isHintOfTypeNovaServerGroup(HeatOrchestrationTemplate heatOrchestrationTemplate,

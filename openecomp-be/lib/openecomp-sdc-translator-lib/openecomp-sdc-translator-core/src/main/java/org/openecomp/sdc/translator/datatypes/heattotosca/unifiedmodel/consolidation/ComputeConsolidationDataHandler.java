@@ -94,25 +94,48 @@ public class ComputeConsolidationDataHandler implements ConsolidationDataHandler
     }
 
     /**
-     * Add port to compute consolidation data entity base on given keys.s
+     * Add port to compute consolidation data entity base on given keys.
      *
      */
     public void addPortToConsolidationData(TranslateTo translateTo, String computeNodeType,
                 String computeNodeTemplateId, String portType, String portNodeTemplateId) {
-        ComputeTemplateConsolidationData entityConsolidationData =
+        ComputeTemplateConsolidationData consolidationData =
                 getComputeTemplateConsolidationData(translateTo, computeNodeType, computeNodeTemplateId);
-        entityConsolidationData.addPort(portType, portNodeTemplateId);
+        consolidationData.addPort(portType, portNodeTemplateId);
+    }
+
+    /**
+     * Add volume to consolidation data.
+     *
+     */
+    public void addVolumeToConsolidationData(TranslateTo translateTo, String computeNodeType,
+            String computeNodeTemplateId, String requirementId, RequirementAssignment requirementAssignment) {
+        ComputeTemplateConsolidationData consolidationData =
+                getComputeTemplateConsolidationData(translateTo, computeNodeType,
+                        computeNodeTemplateId);
+        consolidationData.addVolume(requirementId, requirementAssignment);
+    }
+
+    /**
+     * Add group id information to consolidation data.
+     *
+     * @param translatedGroupId Group id of which compute node is a part
+     */
+
+    public void addGroupIdToConsolidationData(TranslateTo translateTo, String computeNodeType,
+            String computeNodeTemplateId, String translatedGroupId) {
+        ComputeTemplateConsolidationData consolidationData =
+                getComputeTemplateConsolidationData(translateTo, computeNodeType,
+                        computeNodeTemplateId);
+        consolidationData.addGroupId(translatedGroupId);
     }
 
     private ComputeTemplateConsolidationData getComputeTemplateConsolidationData(
             TranslateTo translateTo, String computeNodeType, String computeNodeTemplateId) {
-
         ServiceTemplate serviceTemplate = translateTo.getServiceTemplate();
         String serviceTemplateFileName = ToscaUtil.getServiceTemplateFileName(serviceTemplate);
         return getComputeTemplateConsolidationData(serviceTemplateFileName, computeNodeType, computeNodeTemplateId);
-
     }
-
 
     private ComputeTemplateConsolidationData getComputeTemplateConsolidationData(
             String serviceTemplateFileName, String computeNodeType, String computeNodeTemplateId) {

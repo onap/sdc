@@ -16,83 +16,125 @@
 
 package org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation;
 
+import java.util.EnumMap;
 import java.util.HashSet;
 import java.util.Set;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 
 public class ComputeConsolidationDataTest {
 
-    private static final String SERVICE_TEMPLATE_FILE_NAME_1 = "serviceTemplateFileName1";
-    private static final String SERVICE_TEMPLATE_FILE_NAME_2 = "serviceTemplateFileName2";
     private static final String COMPUTE_NODE_TEMPLATE_ID_1 = "computeNodeTemplateId1";
     private static final String COMPUTE_NODE_TEMPLATE_ID_2 = "computeNodeTemplateId2";
     private static final String COMPUTE_NODE_TYPE_1 = "computeNodeType1";
     private static final String COMPUTE_NODE_TYPE_2 = "computeNodeType2";
 
+    private final EnumMap<ServiceTemplateFileNameEnum, FileComputeConsolidationData> mockMap =
+            new EnumMap<>(ServiceTemplateFileNameEnum.class);
+
+    @Mock
+    private FileComputeConsolidationData mockFileComputeConsolidationData1;
+    @Mock
+    private FileComputeConsolidationData mockFileComputeConsolidationData2;
+
+    private final ComputeConsolidationData consolidationData = new ComputeConsolidationData();
+
+    @Before
+    public void setUp() {
+        MockitoAnnotations.initMocks(this);
+        addMocksToMap();
+    }
+
     @Test
     public void testAddComputeTemplateConsolidationData() {
-        ComputeConsolidationData consolidationData = new ComputeConsolidationData();
-        consolidationData.addComputeTemplateConsolidationData(SERVICE_TEMPLATE_FILE_NAME_1,
-                COMPUTE_NODE_TYPE_1, COMPUTE_NODE_TEMPLATE_ID_1);
+        String serviceTemplate = ServiceTemplateFileNameEnum.SERVICE_TEMPLATE_FILE_NAME_1.name();
+        consolidationData.addComputeTemplateConsolidationData(
+                serviceTemplate, COMPUTE_NODE_TYPE_1, COMPUTE_NODE_TEMPLATE_ID_1);
 
         Set<String> expectedServiceTemplateNames = new HashSet<>();
-        expectedServiceTemplateNames.add(SERVICE_TEMPLATE_FILE_NAME_1);
-        checkComputeConsolidationData(consolidationData, SERVICE_TEMPLATE_FILE_NAME_1, expectedServiceTemplateNames);
+        expectedServiceTemplateNames.add(serviceTemplate);
+        checkComputeConsolidationData(consolidationData, serviceTemplate,
+                expectedServiceTemplateNames);
     }
 
     @Test
     public void testAddSameConsolidationDataTwice_noNewCreated() {
-        ComputeConsolidationData consolidationData = new ComputeConsolidationData();
-        consolidationData.addComputeTemplateConsolidationData(SERVICE_TEMPLATE_FILE_NAME_1,
+        String serviceTemplate = ServiceTemplateFileNameEnum.SERVICE_TEMPLATE_FILE_NAME_1.name();
+        consolidationData.addComputeTemplateConsolidationData(serviceTemplate,
                 COMPUTE_NODE_TYPE_1, COMPUTE_NODE_TEMPLATE_ID_1);
-        consolidationData.getFileComputeConsolidationData(SERVICE_TEMPLATE_FILE_NAME_1);
-
         Set<String> expectedServiceTemplateNames = new HashSet<>();
-        expectedServiceTemplateNames.add(SERVICE_TEMPLATE_FILE_NAME_1);
-        checkComputeConsolidationData(consolidationData, SERVICE_TEMPLATE_FILE_NAME_1, expectedServiceTemplateNames);
+        expectedServiceTemplateNames.add(serviceTemplate);
+        checkComputeConsolidationData(consolidationData, serviceTemplate, expectedServiceTemplateNames);
 
-        consolidationData.addComputeTemplateConsolidationData(SERVICE_TEMPLATE_FILE_NAME_1,
+        consolidationData.addComputeTemplateConsolidationData(serviceTemplate,
                 COMPUTE_NODE_TYPE_1, COMPUTE_NODE_TEMPLATE_ID_1);
-        consolidationData.getFileComputeConsolidationData(SERVICE_TEMPLATE_FILE_NAME_1);
-        checkComputeConsolidationData(consolidationData, SERVICE_TEMPLATE_FILE_NAME_1, expectedServiceTemplateNames);
+        checkComputeConsolidationData(consolidationData, serviceTemplate, expectedServiceTemplateNames);
     }
 
     @Test
-    public void testAddDiffConsolidationData_SameServiceTemplate_DiffNodeTypes() {
-        ComputeConsolidationData consolidationData = new ComputeConsolidationData();
-
-        consolidationData.addComputeTemplateConsolidationData(SERVICE_TEMPLATE_FILE_NAME_1,
+    public void testAddDiffConsolidationData_diffNodeTypes() {
+        String serviceTemplate = ServiceTemplateFileNameEnum.SERVICE_TEMPLATE_FILE_NAME_1.name();
+        consolidationData.addComputeTemplateConsolidationData(serviceTemplate,
                 COMPUTE_NODE_TYPE_1, COMPUTE_NODE_TEMPLATE_ID_1);
         Set<String> expectedServiceTemplateNames = new HashSet<>();
-        expectedServiceTemplateNames.add(SERVICE_TEMPLATE_FILE_NAME_1);
-        checkComputeConsolidationData(consolidationData, SERVICE_TEMPLATE_FILE_NAME_1, expectedServiceTemplateNames);
+        expectedServiceTemplateNames.add(serviceTemplate);
+        checkComputeConsolidationData(consolidationData, serviceTemplate, expectedServiceTemplateNames);
 
-        consolidationData.addComputeTemplateConsolidationData(SERVICE_TEMPLATE_FILE_NAME_1,
+        consolidationData.addComputeTemplateConsolidationData(serviceTemplate,
                 COMPUTE_NODE_TYPE_2, COMPUTE_NODE_TEMPLATE_ID_2);
-        checkComputeConsolidationData(consolidationData, SERVICE_TEMPLATE_FILE_NAME_1, expectedServiceTemplateNames);
+        checkComputeConsolidationData(consolidationData, serviceTemplate, expectedServiceTemplateNames);
     }
 
     @Test
-    public void testAddDiffConsolidationData_DiffServiceTemplate() {
-        ComputeConsolidationData consolidationData = new ComputeConsolidationData();
-
-        consolidationData.addComputeTemplateConsolidationData(SERVICE_TEMPLATE_FILE_NAME_1,
-                COMPUTE_NODE_TYPE_1, COMPUTE_NODE_TEMPLATE_ID_1);
+    public void testAddDiffConsolidationData_diffServiceTemplate() {
+        String serviceTemplate1 = ServiceTemplateFileNameEnum.SERVICE_TEMPLATE_FILE_NAME_1.name();
+        consolidationData.addComputeTemplateConsolidationData(serviceTemplate1, COMPUTE_NODE_TYPE_1,
+                COMPUTE_NODE_TEMPLATE_ID_1);
         Set<String> expectedServiceTemplateNames =  new HashSet<>();
-        expectedServiceTemplateNames.add(SERVICE_TEMPLATE_FILE_NAME_1);
-        checkComputeConsolidationData(consolidationData, SERVICE_TEMPLATE_FILE_NAME_1, expectedServiceTemplateNames);
+        expectedServiceTemplateNames.add(serviceTemplate1);
+        checkComputeConsolidationData(consolidationData, serviceTemplate1, expectedServiceTemplateNames);
 
-        consolidationData.addComputeTemplateConsolidationData(SERVICE_TEMPLATE_FILE_NAME_2,
-                COMPUTE_NODE_TYPE_2, COMPUTE_NODE_TEMPLATE_ID_2);
-        expectedServiceTemplateNames.add(SERVICE_TEMPLATE_FILE_NAME_2);
-        checkComputeConsolidationData(consolidationData, SERVICE_TEMPLATE_FILE_NAME_2, expectedServiceTemplateNames);
+        String serviceTemplate2 = ServiceTemplateFileNameEnum.SERVICE_TEMPLATE_FILE_NAME_2.name();
+        consolidationData.addComputeTemplateConsolidationData(serviceTemplate2, COMPUTE_NODE_TYPE_2,
+                COMPUTE_NODE_TEMPLATE_ID_2);
+        expectedServiceTemplateNames.add(serviceTemplate2);
+        checkComputeConsolidationData(consolidationData, serviceTemplate2, expectedServiceTemplateNames);
+    }
 
+    @Test
+    public void testAddSameConsolidationDataTwice_testWithMock() throws Exception {
+        String serviceTemplate = ServiceTemplateFileNameEnum.SERVICE_TEMPLATE_FILE_NAME_1.name();
+        addAndCheckComputeTemplateConsolidationData(serviceTemplate, COMPUTE_NODE_TYPE_1,
+                COMPUTE_NODE_TEMPLATE_ID_1);
+        addAndCheckComputeTemplateConsolidationData(serviceTemplate, COMPUTE_NODE_TYPE_1,
+                COMPUTE_NODE_TEMPLATE_ID_1, 2);
+    }
+
+    @Test
+    public void testAddDiffConsolidationData_diffNodeTypes_testWithMock() throws Exception {
+        String serviceTemplate = ServiceTemplateFileNameEnum.SERVICE_TEMPLATE_FILE_NAME_1.name();
+        addAndCheckComputeTemplateConsolidationData(serviceTemplate, COMPUTE_NODE_TYPE_1,
+                COMPUTE_NODE_TEMPLATE_ID_1);
+        addAndCheckComputeTemplateConsolidationData(serviceTemplate, COMPUTE_NODE_TYPE_2,
+                COMPUTE_NODE_TEMPLATE_ID_2);
+    }
+
+    @Test
+    public void testAddDiffConsolidationData_diffServiceTemplate_testWithMock() throws Exception {
+        String serviceTemplate1 = ServiceTemplateFileNameEnum.SERVICE_TEMPLATE_FILE_NAME_1.name();
+        addAndCheckComputeTemplateConsolidationData(serviceTemplate1, COMPUTE_NODE_TYPE_1,
+                COMPUTE_NODE_TEMPLATE_ID_1);
+        String serviceTemplate2 = ServiceTemplateFileNameEnum.SERVICE_TEMPLATE_FILE_NAME_1.name();
+        addAndCheckComputeTemplateConsolidationData(serviceTemplate2, COMPUTE_NODE_TYPE_2,
+                COMPUTE_NODE_TEMPLATE_ID_2);
     }
 
     private void checkComputeConsolidationData(ComputeConsolidationData consolidationData,
             String serviceTemplateFileName, Set<String> expectedServiceTemplateNames) {
-
         FileComputeConsolidationData fileComputeConsolidationData = consolidationData
                 .getFileComputeConsolidationData(serviceTemplateFileName);
         Assert.assertNotNull(fileComputeConsolidationData);
@@ -107,5 +149,44 @@ public class ComputeConsolidationDataTest {
         Assert.assertTrue(allServiceTemplateFileNames.containsAll(expectedServiceTemplateNames));
     }
 
+    private void addAndCheckComputeTemplateConsolidationData(String serviceTemplateFileName,
+            String computeNodeType, String computeNodeTemplateId) throws Exception {
+        addAndCheckComputeTemplateConsolidationData(serviceTemplateFileName, computeNodeType,
+                computeNodeTemplateId, 1);
+    }
+
+    private void addAndCheckComputeTemplateConsolidationData(String serviceTemplateFileName,
+            String computeNodeType, String computeNodeTemplateId, int expectedTime) throws Exception {
+        FileComputeConsolidationData fileComputeConsolidationDataMock =
+                setFileComputeConsolidationDataMock(serviceTemplateFileName);
+        consolidationData.addComputeTemplateConsolidationData(
+                serviceTemplateFileName, computeNodeType, computeNodeTemplateId);
+
+        Mockito.verify(fileComputeConsolidationDataMock, Mockito.times(expectedTime))
+               .addComputeTemplateConsolidationData(computeNodeType, computeNodeTemplateId);
+    }
+
+    private FileComputeConsolidationData setFileComputeConsolidationDataMock(
+            String serviceTemplateName) throws Exception {
+        FileComputeConsolidationData mock = getFileComputeConsolidationDataMock(serviceTemplateName);
+        consolidationData.setFileComputeConsolidationData(serviceTemplateName, mock);
+        return mock;
+    }
+
+    private void addMocksToMap() {
+        mockMap.put(ServiceTemplateFileNameEnum.SERVICE_TEMPLATE_FILE_NAME_1, mockFileComputeConsolidationData1);
+        mockMap.put(ServiceTemplateFileNameEnum.SERVICE_TEMPLATE_FILE_NAME_2, mockFileComputeConsolidationData2);
+    }
+
+    private FileComputeConsolidationData getFileComputeConsolidationDataMock(String serviceTemplateName)
+            throws Exception {
+        ServiceTemplateFileNameEnum enumValue = ServiceTemplateFileNameEnum.valueOf(serviceTemplateName);
+        FileComputeConsolidationData mock = mockMap.get(enumValue);
+        if (mock == null) {
+            throw new Exception("This service Template File Name doesn't supported. "
+                                        + "Please add it to ServiceTemplateFileName enum");
+        }
+        return mock;
+    }
 
 }

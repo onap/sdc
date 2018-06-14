@@ -16,7 +16,6 @@
 
 package org.openecomp.sdc.translator.services.heattotosca;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -35,6 +34,7 @@ import org.openecomp.sdc.tosca.services.ToscaUtil;
 import org.openecomp.sdc.translator.datatypes.heattotosca.TranslationContext;
 import org.openecomp.sdc.translator.datatypes.heattotosca.to.TranslateTo;
 import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.ComputeConsolidationData;
+import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.ComputeConsolidationDataHandler;
 import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.ComputeTemplateConsolidationData;
 import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.ConsolidationData;
 import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.ConsolidationDataHandler;
@@ -293,21 +293,6 @@ public class ConsolidationDataUtil {
     }
 
     /**
-     * Update group id information in consolidation data.
-     *
-     * @param entityConsolidationData Entity consolidation data (Port/Compute)
-     * @param translatedGroupId       Group id of which compute node is a part
-     */
-    public static void updateGroupIdInConsolidationData(EntityConsolidationData
-                                                                entityConsolidationData,
-                                                               String translatedGroupId) {
-        if (entityConsolidationData.getGroupIds() == null) {
-            entityConsolidationData.setGroupIds(new ArrayList<>());
-        }
-        entityConsolidationData.getGroupIds().add(translatedGroupId);
-    }
-
-    /**
      * Update volume information in consolidation data.
      *
      * @param translateTo           {@link TranslateTo} object
@@ -319,16 +304,12 @@ public class ConsolidationDataUtil {
                                                                     String computeType,
                                                                     String computeNodeTemplateId,
                                                                     String requirementId,
-                                                                    RequirementAssignment
-                                                                            requirementAssignment) {
-        TranslationContext translationContext = translateTo.getContext();
-        ServiceTemplate serviceTemplate = translateTo.getServiceTemplate();
-        ComputeTemplateConsolidationData computeTemplateConsolidationData =
-                getComputeTemplateConsolidationData(translationContext, serviceTemplate, computeType,
-                        computeNodeTemplateId);
-        computeTemplateConsolidationData.addVolume(requirementId, requirementAssignment);
+                                                                    RequirementAssignment requirementAssignment) {
+        ComputeConsolidationDataHandler handler =
+                translateTo.getContext().getComputeConsolidationDataHandler();
+        handler.addVolumeToConsolidationData(
+                translateTo, computeType, computeNodeTemplateId, requirementId, requirementAssignment);
     }
-
 
     /**
      * Update port in consolidation data.
