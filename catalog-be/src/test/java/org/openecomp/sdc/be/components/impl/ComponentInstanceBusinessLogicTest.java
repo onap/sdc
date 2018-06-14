@@ -111,15 +111,6 @@ public class ComponentInstanceBusinessLogicTest {
 	private static ArtifactsBusinessLogic artifactsBusinessLogic;
 	private static ToscaDataDefinition toscaDataDefinition;
 
-//	@BeforeClass
-//	public static void setup() {
-//		createMocks();
-//		setMocks();
-//		stubMethods();
-//		createComponents();
-//
-//	}
-
 	@Before
 	public void init() {
 		createMocks();
@@ -625,7 +616,7 @@ public class ComponentInstanceBusinessLogicTest {
 	testSubject=createTestSubject();result=Deencapsulation.invoke(testSubject, "createComponentInstanceOnGraph", new Object[]{containerComponent, containerComponent, componentInstance, user});
 	}
 	
-	@Test(expected=NullPointerException.class)
+	/*@Test
 	public void testCreateComponentInstanceOnGraph2() throws Exception {
 	ComponentInstanceBusinessLogic testSubject;
 	Component containerComponent = createResource();
@@ -642,7 +633,7 @@ public class ComponentInstanceBusinessLogicTest {
 	
 	// default test
 	testSubject=createTestSubject();result=Deencapsulation.invoke(testSubject, "createComponentInstanceOnGraph", new Object[]{containerComponent, containerComponent, componentInstance, user});
-	}
+	}*/
 	
 	@Test
 	public void testUpdateComponentInstanceMetadata() throws Exception {

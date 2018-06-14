@@ -171,6 +171,4 @@ public class GroupDefinitionInfo {
     public String toString() {
         return "GroupDefinitionInfo [" + super.toString() + ", isBase=" + isBase + ", artifacts=" + artifacts + "]";
     }
-
-
 }

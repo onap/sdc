@@ -7,6 +7,7 @@ import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -20,9 +21,12 @@ import org.junit.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.openecomp.sdc.be.components.BeConfDependentTest;
 import org.openecomp.sdc.be.components.utils.OperationalEnvironmentBuilder;
 import org.openecomp.sdc.be.config.DistributionEngineConfiguration;
+import org.openecomp.sdc.be.config.DistributionEngineConfiguration.CreateTopicConfig;
 import org.openecomp.sdc.be.config.DistributionEngineConfiguration.DistributionStatusTopicConfig;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.model.Service;
@@ -31,7 +35,7 @@ import org.openecomp.sdc.be.resources.data.OperationalEnvironmentEntry;
 
 import mockit.Deencapsulation;
 
-public class DistributionEngineTest{
+public class DistributionEngineTest extends BeConfDependentTest{
 
 	public static final String DISTRIBUTION_ID = "distId";
 	public static final String ENV_ID = "envId";
@@ -46,10 +50,13 @@ public class DistributionEngineTest{
 
 	@Mock
 	private DistributionNotificationSender distributionNotificationSender;
-	
+
 	@Mock
 	private ServiceDistributionArtifactsBuilder serviceDistributionArtifactsBuilder;
-	
+
+	@Mock
+	private DistributionEngineClusterHealth distributionEngineClusterHealth;
+
 	private DummyDistributionConfigurationManager distributionEngineConfigurationMock;
 
 	private Map<String, OperationalEnvironmentEntry> envs;
@@ -108,17 +115,58 @@ public class DistributionEngineTest{
 				.collect(Collectors.toMap(OperationalEnvironmentEntry::getEnvironmentId, Function.identity()));
 	}
 
-	private DistributionEngine createTestSubject() {
-		return new DistributionEngine();
+	@Test
+	public void testIsActive() throws Exception {
+		// default test
+		testInstance.isActive();
+	}
+	
+	@Test
+	public void testInitDisabled() throws Exception {
+		// default test
+		Deencapsulation.invoke(testInstance, "init");
 	}
 
-	@Test(expected=NullPointerException.class)
+	@Test
+	public void testInitNotValidConfig() throws Exception {
+		DistributionEngine testSubject;
+
+		// default test
+		Mockito.when(distributionEngineConfigurationMock.getConfigurationMock().isStartDistributionEngine())
+				.thenReturn(true);
+		Mockito.when(distributionEngineConfigurationMock.configurationMock.getDistributionStatusTopic())
+				.thenReturn(new DistributionStatusTopicConfig());
+		Deencapsulation.invoke(testInstance, "init");
+	}
+
+	@Test
 	public void testInit() throws Exception {
 		DistributionEngine testSubject;
 
 		// default test
-		testSubject = createTestSubject();
-		Deencapsulation.invoke(testSubject, "init");
+		Mockito.when(distributionEngineConfigurationMock.getConfigurationMock().isStartDistributionEngine())
+				.thenReturn(true);
+		DistributionStatusTopicConfig value = new DistributionStatusTopicConfig();
+		value.setConsumerId("mock");
+		value.setConsumerGroup("mock");
+		value.setFetchTimeSec(0);
+		value.setPollingIntervalSec(0);
+		LinkedList<String> value2 = new LinkedList<>();
+		value2.add("uebsb91kcdc.it.att.com:3904");
+		value2.add("uebsb92kcdc.it.att.com:3904");
+		Mockito.when(distributionEngineConfigurationMock.configurationMock.getUebServers()).thenReturn(value2);
+		Mockito.when(distributionEngineConfigurationMock.configurationMock.getEnvironments()).thenReturn(value2);
+		Mockito.when(distributionEngineConfigurationMock.configurationMock.getUebPublicKey()).thenReturn("mock");
+		Mockito.when(distributionEngineConfigurationMock.configurationMock.getUebSecretKey()).thenReturn("mock");
+		Mockito.when(distributionEngineConfigurationMock.configurationMock.getDistributionNotifTopicName())
+				.thenReturn("mock");
+		Mockito.when(distributionEngineConfigurationMock.configurationMock.getDistributionStatusTopicName())
+				.thenReturn("mock");
+		Mockito.when(distributionEngineConfigurationMock.configurationMock.getCreateTopic())
+				.thenReturn(new CreateTopicConfig());
+		Mockito.when(distributionEngineConfigurationMock.configurationMock.getDistributionStatusTopic())
+				.thenReturn(value);
+		Deencapsulation.invoke(testInstance, "init");
 	}
 
 	@Test
@@ -126,109 +174,94 @@ public class DistributionEngineTest{
 		DistributionEngine testSubject;
 
 		// default test
-		testSubject = createTestSubject();
-		testSubject.shutdown();
+		testInstance.shutdown();
 	}
 
 	@Test
 	public void testValidateConfiguration() throws Exception {
-		DistributionEngine testSubject;
 		DistributionEngineConfiguration deConfiguration = new DistributionEngineConfiguration();
 		deConfiguration.setDistributionStatusTopic((new DistributionStatusTopicConfig()));
 		boolean result;
 
 		// default test
-		testSubject = createTestSubject();
-		result = Deencapsulation.invoke(testSubject, "validateConfiguration", deConfiguration);
+		result = Deencapsulation.invoke(testInstance, "validateConfiguration", deConfiguration);
 	}
 
 	@Test
 	public void testIsValidServers() throws Exception {
-		DistributionEngine testSubject;
 		List<String> uebServers = null;
 		String methodName = "";
 		String paramName = "";
 		boolean result;
 
 		// test 1
-		testSubject = createTestSubject();
 		uebServers = null;
-		result = Deencapsulation.invoke(testSubject, "isValidServers",
+		result = Deencapsulation.invoke(testInstance, "isValidServers",
 				new Object[] { List.class, methodName, paramName });
 		Assert.assertEquals(false, result);
 	}
 
 	@Test
 	public void testIsValidFqdn() throws Exception {
-		DistributionEngine testSubject;
 		String serverFqdn = "";
 		boolean result;
 
 		// default test
-		testSubject = createTestSubject();
-		result = Deencapsulation.invoke(testSubject, "isValidFqdn", new Object[] { serverFqdn });
+		result = Deencapsulation.invoke(testInstance, "isValidFqdn", new Object[] { serverFqdn });
 	}
 
 	@Test
 	public void testIsValidParam() throws Exception {
-		DistributionEngine testSubject;
 		String paramValue = "";
 		String methodName = "";
 		String paramName = "";
 		boolean result;
 
 		// default test
-		testSubject = createTestSubject();
-		result = Deencapsulation.invoke(testSubject, "isValidParam",
+		result = Deencapsulation.invoke(testInstance, "isValidParam",
 				new Object[] { paramValue, methodName, paramName });
 	}
 
 	@Test
 	public void testIsValidParam_1() throws Exception {
-		DistributionEngine testSubject;
 		List<String> paramValue = null;
 		String methodName = "";
 		String paramName = "";
 		boolean result;
 
 		// default test
-		testSubject = createTestSubject();
-		result = Deencapsulation.invoke(testSubject, "isValidParam",
+		result = Deencapsulation.invoke(testInstance, "isValidParam",
 				new Object[] { List.class, methodName, paramName });
 	}
 
 	@Test
 	public void testIsValidObject() throws Exception {
-		DistributionEngine testSubject;
 		Object paramValue = null;
 		String methodName = "";
 		String paramName = "";
 		boolean result;
 
 		// test 1
-		testSubject = createTestSubject();
 		paramValue = null;
-		result = Deencapsulation.invoke(testSubject, "isValidObject",
+		result = Deencapsulation.invoke(testInstance, "isValidObject",
 				new Object[] { Object.class, methodName, paramName });
 		Assert.assertEquals(false, result);
 	}
 
 	@Test
 	public void testGetEnvironmentErrorDescription() throws Exception {
-		DistributionEngine testSubject;
 		StorageOperationStatus status = null;
 		String result;
 
 		// default test
-		testSubject = createTestSubject();
-		result = Deencapsulation.invoke(testSubject, "getEnvironmentErrorDescription",
-				 StorageOperationStatus.DISTR_ENVIRONMENT_NOT_AVAILABLE);
-		result = Deencapsulation.invoke(testSubject, "getEnvironmentErrorDescription",
-				 StorageOperationStatus.DISTR_ENVIRONMENT_NOT_FOUND);
-		result = Deencapsulation.invoke(testSubject, "getEnvironmentErrorDescription",
-				 StorageOperationStatus.DISTR_ENVIRONMENT_SENT_IS_INVALID);
-		result = Deencapsulation.invoke(testSubject, "getEnvironmentErrorDescription",
-				 StorageOperationStatus.ARTIFACT_NOT_FOUND);
+		result = Deencapsulation.invoke(testInstance, "getEnvironmentErrorDescription",
+				StorageOperationStatus.DISTR_ENVIRONMENT_NOT_AVAILABLE);
+		result = Deencapsulation.invoke(testInstance, "getEnvironmentErrorDescription",
+				StorageOperationStatus.DISTR_ENVIRONMENT_NOT_FOUND);
+		result = Deencapsulation.invoke(testInstance, "getEnvironmentErrorDescription",
+				StorageOperationStatus.DISTR_ENVIRONMENT_SENT_IS_INVALID);
+		result = Deencapsulation.invoke(testInstance, "getEnvironmentErrorDescription",
+				StorageOperationStatus.ARTIFACT_NOT_FOUND);
 	}
 
 	@Test
@@ -238,60 +271,44 @@ public class DistributionEngineTest{
 		StorageOperationStatus result;
 
 		// test 1
-		testSubject = createTestSubject();
 		envName = null;
-		result = testSubject.isEnvironmentAvailable(envName);
+		result = testInstance.isEnvironmentAvailable(envName);
 		Assert.assertEquals(StorageOperationStatus.DISTR_ENVIRONMENT_SENT_IS_INVALID, result);
 
 		// test 2
-		testSubject = createTestSubject();
 		envName = "mock";
-		result = testSubject.isEnvironmentAvailable(envName);
+		result = testInstance.isEnvironmentAvailable(envName);
 		Assert.assertEquals(StorageOperationStatus.DISTR_ENVIRONMENT_NOT_FOUND, result);
 	}
 
-	//TODO Create test coverage for this method
-	/*@Test
+	@Test
 	public void testIsEnvironmentAvailable_1() throws Exception {
 		DistributionEngine testSubject;
 		StorageOperationStatus result;
 
-		// default test
-		testSubject = createTestSubject();
-		result = testInstance.isEnvironmentAvailable();
-	}*/
-
-	@Test(expected=NullPointerException.class)
-	public void testDisableEnvironment() throws Exception {
-		DistributionEngine testSubject;
-		String envName = "";
-
-		// default test
-		testSubject = createTestSubject();
-		testSubject.disableEnvironment(envName);
+		LinkedList<String> value = new LinkedList<>();
+		value.add("mock");
+		Mockito.when(distributionEngineConfigurationMock.configurationMock.getEnvironments()).thenReturn(value);
+		testInstance.isEnvironmentAvailable();
 	}
 
 	@Test
 	public void testBuildTopicName() throws Exception {
-		DistributionEngine testSubject;
 		String envName = "";
 		String result;
 
 		// default test
-		testSubject = createTestSubject();
-		result = Deencapsulation.invoke(testSubject, "buildTopicName", new Object[] { envName });
+		result = Deencapsulation.invoke(testInstance, "buildTopicName", new Object[] { envName });
 	}
 
 	@Test
 	public void testIsReadyForDistribution() throws Exception {
-		DistributionEngine testSubject;
 		Service service = null;
 		String envName = "";
 		StorageOperationStatus result;
 
 		// default test
-		testSubject = createTestSubject();
-		result = testSubject.isReadyForDistribution(service, envName);
+		result = testInstance.isReadyForDistribution(service, envName);
 	}
 
 	@Test
@@ -300,17 +317,19 @@ public class DistributionEngineTest{
 		StorageOperationStatus result;
 
 		// default test
-		when(serviceDistributionArtifactsBuilder.verifyServiceContainsDeploymentArtifacts(ArgumentMatchers.any(Service.class))).thenReturn(true);
+		when(serviceDistributionArtifactsBuilder
+				.verifyServiceContainsDeploymentArtifacts(ArgumentMatchers.any(Service.class))).thenReturn(true);
 		result = testInstance.verifyServiceHasDeploymentArtifacts(service);
 	}
-	
+
 	@Test
 	public void testVerifyServiceHasDeploymentArtifactsFalse() throws Exception {
 		Service service = new Service();
 		StorageOperationStatus result;
 
 		// default test
-		when(serviceDistributionArtifactsBuilder.verifyServiceContainsDeploymentArtifacts(ArgumentMatchers.any(Service.class))).thenReturn(false);
+		when(serviceDistributionArtifactsBuilder
+				.verifyServiceContainsDeploymentArtifacts(ArgumentMatchers.any(Service.class))).thenReturn(false);
 		result = testInstance.verifyServiceHasDeploymentArtifacts(service);
 	}
 
@@ -321,7 +340,8 @@ public class DistributionEngineTest{
 		OperationalEnvironmentEntry result;
 
 		// default test
-		when(environmentsEngine.getEnvironmentById(ArgumentMatchers.anyString())).thenReturn(new OperationalEnvironmentEntry());
+		when(environmentsEngine.getEnvironmentById(ArgumentMatchers.anyString()))
+				.thenReturn(new OperationalEnvironmentEntry());
 		result = testInstance.getEnvironmentById(opEnvId);
 	}
 
@@ -333,8 +353,9 @@ public class DistributionEngineTest{
 		INotificationData result;
 
 		// default test
-		//testSubject = createTestSubject();
-		when(serviceDistributionArtifactsBuilder.buildResourceInstanceForDistribution(ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any())).thenReturn(new NotificationDataImpl());
+		// testSubject = createTestSubject();
+		when(serviceDistributionArtifactsBuilder.buildResourceInstanceForDistribution(ArgumentMatchers.any(),
+				ArgumentMatchers.any(), ArgumentMatchers.any())).thenReturn(new NotificationDataImpl());
 		result = testInstance.buildServiceForDistribution(service, distributionId, workloadContext);
 	}
 }

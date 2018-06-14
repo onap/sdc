@@ -8,7 +8,7 @@ import org.openecomp.sdc.common.api.ConfigurationSource;
 
 public class DummyDistributionConfigurationManager {
 
-    private DistributionEngineConfiguration configurationMock = Mockito.mock(DistributionEngineConfiguration.class);
+    DistributionEngineConfiguration configurationMock = Mockito.mock(DistributionEngineConfiguration.class);
 
     public DummyDistributionConfigurationManager() {
         new ConfigurationManager(new DummyConfigurationSource());
