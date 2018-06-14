@@ -7,4 +7,4 @@ JAVA_OPTIONS=" ${JAVA_OPTIONS} \
             -Dlogback.configurationFile=${CONFIG_FILES_DIR}/logback.xml \
             -Dconfiguration.yaml=${CONFIG_FILES_DIR}/config/configuration.yaml"
 
-java -jar "$JETTY_HOME/start.jar" ${JAVA_OPTIONS}
+java ${JAVA_OPTIONS} -jar "$JETTY_HOME/start.jar"
