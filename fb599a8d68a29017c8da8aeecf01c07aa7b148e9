@@ -42,6 +42,24 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_3f077a1a",
+        "filename": "catalog-dao/src/main/java/org/openecomp/sdc/be/dao/cassandra/schema/SdcSchemaUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 3717
+      },
+      "writtenOn": "2018-06-14T07:37:47Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5a93c517_fc512064",
+      "revId": "fb599a8d68a29017c8da8aeecf01c07aa7b148e9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_1cfdec3b",
         "filename": "catalog-dao/src/main/java/org/openecomp/sdc/be/dao/cassandra/schema/SdcSchemaUtils.java",
         "patchSetId": 1
@@ -53,6 +71,24 @@
       "writtenOn": "2018-05-23T07:24:00Z",
       "side": 1,
       "message": "could be inlined with below if",
+      "revId": "fb599a8d68a29017c8da8aeecf01c07aa7b148e9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_5f0cc63b",
+        "filename": "catalog-dao/src/main/java/org/openecomp/sdc/be/dao/cassandra/schema/SdcSchemaUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 3717
+      },
+      "writtenOn": "2018-06-14T07:37:47Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5a93c517_1cfdec3b",
       "revId": "fb599a8d68a29017c8da8aeecf01c07aa7b148e9",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
