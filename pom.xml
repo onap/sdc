@@ -31,6 +31,7 @@
         <jersey-bom.version>2.26</jersey-bom.version>
         <servlet-api.version>3.0.1</servlet-api.version>
         <wire-mock.version>2.11.0</wire-mock.version>
+        <cassandra.unit.version>3.5.0.1</cassandra.unit.version>
 
         <artifact-generator-api.version>${project.version}</artifact-generator-api.version>
         <artifact-generator-core.version>${project.version}</artifact-generator-core.version>
