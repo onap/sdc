@@ -16,6 +16,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * ============LICENSE_END=========================================================
+ * Modifications copyright (c) 2018 Nokia
+ * ================================================================================
  */
 
 package org.openecomp.sdc.be.dao.cassandra.schema;
@@ -27,18 +29,31 @@ import com.datastax.driver.core.schemabuilder.SchemaBuilder;
 import com.datastax.driver.core.schemabuilder.SchemaStatement;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.config.Configuration;
-import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.cassandra.schema.tables.OldExternalApiEventTableDesc;
+import org.openecomp.sdc.be.resources.data.auditing.AuditingTypesConstants;
 import org.openecomp.sdc.common.log.enums.EcompLoggerErrorCode;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.function.Supplier;
 
 public class SdcSchemaBuilder {
 
-	private static final String CREATE_KEYSPACE_SIMPLE_STRATEGY = "CREATE KEYSPACE IF NOT EXISTS %s WITH replication = {'class':'SimpleStrategy', %s};";
+	private SdcSchemaUtils sdcSchemaUtils;
+	private Supplier<Configuration.CassandrConfig> cassandraConfigSupplier;
 
+	public SdcSchemaBuilder(SdcSchemaUtils sdcSchemaUtils, Supplier<Configuration.CassandrConfig> cassandraConfigSupplier) {
+		this.sdcSchemaUtils = sdcSchemaUtils;
+		this.cassandraConfigSupplier = cassandraConfigSupplier;
+	}
+	/**
+	 * creat key space statment for SimpleStrategy
+	 */
+	private static final String CREATE_KEYSPACE_SIMPLE_STRATEGY = "CREATE KEYSPACE IF NOT EXISTS %s WITH replication = {'class':'SimpleStrategy', %s};";
+	/**
+	 * creat key space statment for NetworkTopologyStrategy
+	 */
 	private static final String CREATE_KEYSPACE_NETWORK_TOPOLOGY_STRATEGY = "CREATE KEYSPACE IF NOT EXISTS %s WITH replication = {'class':'NetworkTopologyStrategy', %s};";
 
 	private static Logger log = Logger.getLogger(SdcSchemaBuilder.class.getName());
@@ -58,22 +73,17 @@ public class SdcSchemaBuilder {
 	 * internal enums and external configuration for its operation	 *
 	 * @return true if the create operation was successful
 	 */
-	public static boolean createSchema() {
-		Cluster cluster = null;
-		Session session = null;
-		try {
+	public boolean createSchema() {
+		boolean res = false;
+		try(Cluster cluster = sdcSchemaUtils.createCluster();
+				Session session = cluster.connect()) {
 			log.info("creating Schema for Cassandra.");
-			cluster = SdcSchemaUtils.createCluster();
-			if (cluster == null) {
-				return false;
-			}
-			session = cluster.connect();
 			List<KeyspaceMetadata> keyspacesMetadateFromCassandra = cluster.getMetadata().getKeyspaces();
 			if (keyspacesMetadateFromCassandra == null) {
-				log.debug("filed to retrive a list of keyspaces from cassndra");
+				log.debug("filed to retrieve a list of keyspaces from cassandra");
 				return false;
 			}
-			log.debug("retrived Cassndra metadata.");
+			log.debug("retrieved Cassandra metadata.");
 			Map<String, Map<String, List<String>>> cassndraMetadata = parseKeyspaceMetadata(keyspacesMetadateFromCassandra);
 			Map<String, Map<String, List<String>>> metadataTablesStructure = getMetadataTablesStructure(keyspacesMetadateFromCassandra);
 			Map<String, List<ITableDescription>> schemeData = getSchemeData();
@@ -87,54 +97,43 @@ public class SdcSchemaBuilder {
 				Map<String, List<String>> keyspaceMetadate = cassndraMetadata.get(keyspace.getKey());
 				createTables(keyspace.getValue(), keyspaceMetadate, session,metadataTablesStructure.get(keyspace.getKey()));
 			}
-			return true;
+			res = true;
 		} catch (Exception e) {
-			log.error(EcompLoggerErrorCode.SCHEMA_ERROR, "creating Schema for Cassandra", "Cassandra", e.getLocalizedMessage());
-		} finally {
-			if (session != null) {
-				session.close();
-			}
-			if (cluster != null) {
-				cluster.close();
-			}
-
-		}
-
-		return false;
+            log.error(EcompLoggerErrorCode.SCHEMA_ERROR, "creating Schema for Cassandra", "Cassandra", e.getLocalizedMessage());
+            res = false;
+        }
+		return res;
 	}
 
-	public static boolean deleteSchema() {
-		Cluster cluster = null;
-		Session session = null;
-		try {
+	public boolean deleteSchema() {
+		boolean res = false;
+		try(Cluster cluster = sdcSchemaUtils.createCluster();
+				Session session = cluster.connect()) {
 			log.info("delete Data from Cassandra.");
-			cluster = SdcSchemaUtils.createCluster();
-			if (cluster == null) {
-				return false;
-			}
-			session = cluster.connect();
 			List<KeyspaceMetadata> keyspacesMetadateFromCassandra = cluster.getMetadata().getKeyspaces();
 			if (keyspacesMetadateFromCassandra == null) {
-				log.debug("filed to retrive a list of keyspaces from cassndra");
+				log.debug("filed to retrieve a list of keyspaces from cassandra");
 				return false;
 			}
-			log.debug("retrived Cassndra metadata.");
+			log.debug("retrieved Cassandra metadata.");
 			Map<String, Map<String, List<String>>> cassndraMetadata = parseKeyspaceMetadata(keyspacesMetadateFromCassandra);
-			log.info("Cassandra Metadata: {}" ,cassndraMetadata);
-			return true;
+      log.info("Cassandra Metadata: {}" ,cassndraMetadata);
+      cassndraMetadata.forEach((k, v) -> {
+				if (AuditingTypesConstants.TITAN_KEYSPACE.equals(k)) {
+					// session.execute("")
+				} else if (AuditingTypesConstants.ARTIFACT_KEYSPACE.equals(k)) {
+
+				} else if (AuditingTypesConstants.AUDIT_KEYSPACE.equals(k)) {
+
+				}
+			});
+
+			System.out.println(cassndraMetadata);
+			res = true;
 		} catch (Exception e) {
-			log.error(EcompLoggerErrorCode.SCHEMA_ERROR, "deleting Schema for Cassandra", "Cassandra", e.getLocalizedMessage());
-		} finally {
-			if (session != null) {
-				session.close();
-			}
-			if (cluster != null) {
-				cluster.close();
-			}
-
+            log.error(EcompLoggerErrorCode.SCHEMA_ERROR, "deleting Schema for Cassandra", "Cassandra", e.getLocalizedMessage());
 		}
-
-		return false;
+		return res;
 	}
 
 	/**
@@ -191,7 +190,7 @@ public class SdcSchemaBuilder {
 	 *			the current tables columns that exist in the cassandra under this
 	 *            keyspace
 	 */
-	private static void createTables(List<ITableDescription> iTableDescriptions, Map<String, List<String>> keyspaceMetadate, Session session, 
+	private static void createTables(List<ITableDescription> iTableDescriptions, Map<String, List<String>> keyspaceMetadate, Session session,
 			Map<String, List<String>> existingTablesMetadata) {
 		for (ITableDescription tableDescription : iTableDescriptions) {
 			String tableName = tableDescription.getTableName().toLowerCase();
@@ -261,7 +260,7 @@ public class SdcSchemaBuilder {
 				Alter alter = SchemaBuilder.alterTable(tableDescription.getKeyspace(),tableDescription.getTableName());
 				SchemaStatement addColumn = alter.addColumn(columnName).type(column.getValue().getLeft());
 				log.trace("exacuting :{}", addColumn);
-				session.execute(addColumn);						
+				session.execute(addColumn);
 			}
 		}
 	}
@@ -275,8 +274,8 @@ public class SdcSchemaBuilder {
 	 * @param session: the session object used for the execution of the query.
 	 * @return true in case the operation was successful
 	 */
-	private static boolean createKeyspace(String keyspace, Map<String, Map<String, List<String>>> cassndraMetadata, Session session) {
-		List<Configuration.CassandrConfig.KeyspaceConfig> keyspaceConfigList = ConfigurationManager.getConfigurationManager().getConfiguration().getCassandraConfig().getKeySpaces();
+	private boolean createKeyspace(String keyspace, Map<String, Map<String, List<String>>> cassndraMetadata, Session session) {
+		List<Configuration.CassandrConfig.KeyspaceConfig> keyspaceConfigList = cassandraConfigSupplier.get().getKeySpaces();
 		log.info("creating keyspace:{}.", keyspace);
 		if (!cassndraMetadata.keySet().contains(keyspace)) {
 			return createKeyspaceIfNotExists(keyspace, session, keyspaceConfigList);
