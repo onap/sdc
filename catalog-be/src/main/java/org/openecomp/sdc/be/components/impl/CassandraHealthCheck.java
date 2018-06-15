@@ -11,6 +11,7 @@ import java.util.Properties;
 import java.util.Set;
 
 import javax.annotation.PostConstruct;
+import javax.inject.Inject;
 
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.cassandra.schema.SdcSchemaUtils;
@@ -36,6 +37,9 @@ public class CassandraHealthCheck {
     private Set<String> sdcKeyspaces = new HashSet<String>();
 
     private int HC_FormulaNumber;
+
+    @Inject
+    private SdcSchemaUtils sdcSchemaUtils;
 
     @PostConstruct
     private void init() {
@@ -77,7 +81,7 @@ public class CassandraHealthCheck {
 
             log.info("creating cluster for Cassandra Health Check.");
             //Create cluster from nodes in cassandra configuration
-            cluster = SdcSchemaUtils.createCluster();
+            cluster = sdcSchemaUtils.createCluster();
             if (cluster == null) {
                 log.error("Failure create cassandra cluster.");
                 return;
@@ -150,7 +154,7 @@ public class CassandraHealthCheck {
         Session session = null;
         try {
             log.info("creating cluster for Cassandra for monitoring.");
-            cluster = SdcSchemaUtils.createCluster();
+            cluster = sdcSchemaUtils.createCluster();
             if (cluster == null) {
                 log.error("Failure create cassandra cluster.");
                 return false;

@@ -5,7 +5,6 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.cassandra.utils.vint.EncodedDataInputStream;
 import org.apache.tinkerpop.gremlin.structure.T;
 import org.junit.Ignore;
 import org.junit.Test;
