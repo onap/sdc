@@ -205,6 +205,13 @@
 			<scope>test</scope>
 		</dependency>
 
+		<dependency>
+			<groupId>org.scassandra</groupId>
+			<artifactId>java-client</artifactId>
+			<version>${scassandra.version}</version>
+			<scope>test</scope>
+		</dependency>
+
 		<!-- TITAN -->
 		<dependency>
 			<groupId>com.thinkaurelius.titan</groupId>
