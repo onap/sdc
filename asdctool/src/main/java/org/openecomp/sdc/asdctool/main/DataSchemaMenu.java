@@ -16,6 +16,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * ============LICENSE_END=========================================================
+ * Modifications copyright (c) 2018 Nokia
+ * ================================================================================
  */
 
 package org.openecomp.sdc.asdctool.main;
@@ -23,6 +25,7 @@ package org.openecomp.sdc.asdctool.main;
 import org.openecomp.sdc.asdctool.impl.TitanGraphInitializer;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.cassandra.schema.SdcSchemaBuilder;
+import org.openecomp.sdc.be.dao.cassandra.schema.SdcSchemaUtils;
 import org.openecomp.sdc.common.api.ConfigurationSource;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;
 import org.openecomp.sdc.common.impl.FSConfigurationSource;
@@ -34,7 +37,10 @@ public class DataSchemaMenu {
 
     public static void main(String[] args) {
 
-        String operation = args[0];
+		SdcSchemaBuilder sdcSchemaBuilder = new SdcSchemaBuilder(new SdcSchemaUtils(),
+				ConfigurationManager.getConfigurationManager().getConfiguration()::getCassandraConfig);
+
+		String operation = args[0];
 
         String appConfigDir = args[1];
 
@@ -48,7 +54,7 @@ public class DataSchemaMenu {
         switch (operation.toLowerCase()) {
             case "create-cassandra-structures":
                 log.debug("Start create cassandra keyspace, tables and indexes");
-                if (SdcSchemaBuilder.createSchema()) {
+                if (sdcSchemaBuilder.createSchema()) {
                     log.debug("create cassandra keyspace, tables and indexes successfull");
                     System.exit(0);
                 } else {
@@ -69,7 +75,7 @@ public class DataSchemaMenu {
                 break;
             case "clean-cassndra":
                 log.debug("Start clean keyspace, tables");
-                if (SdcSchemaBuilder.deleteSchema()) {
+                if (sdcSchemaBuilder.deleteSchema()) {
                     log.debug(" successfull");
                     System.exit(0);
                 } else {
