@@ -1,137 +1,84 @@
 package org.openecomp.sdc.be.dao.cassandra.schema;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
-import org.junit.Test;
-import org.mockito.Mockito;
-import org.openecomp.sdc.be.config.Configuration.CassandrConfig.KeyspaceConfig;
-import org.openecomp.sdc.be.dao.cassandra.schema.SdcSchemaBuilder.ReplicationStrategy;
-import org.openecomp.sdc.be.utils.DAOConfDependentTest;
-
+import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.Session;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.openecomp.sdc.be.config.Configuration;
+import org.openecomp.sdc.be.utils.CassandraTestHelper;
 
-import mockit.Deencapsulation;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
-public class SdcSchemaBuilderTest extends DAOConfDependentTest{
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.mock;
 
-	private SdcSchemaBuilder createTestSubject() {
-		return new SdcSchemaBuilder();
-	}
+public class SdcSchemaBuilderTest {
 
-	@Test
-	public void testHandle1707OSMigration() throws Exception {
-		Map<String, Map<String, List<String>>> cassndraMetadata = new HashMap<>();
-		Map<String, List<ITableDescription>> schemeData = new HashMap<>();
+    @BeforeClass
+    public static void startServer() {
+        CassandraTestHelper.startServer();
+    }
 
-		// default test
-		Deencapsulation.invoke(SdcSchemaBuilder.class, "handle1707OSMigration", cassndraMetadata, schemeData);
-	}
+    @Test
+    public void testCreateSchema() {
+        SdcSchemaUtils utils = mock(SdcSchemaUtils.class);
+        when(utils.createCluster()).thenReturn(CassandraTestHelper.createCluster());
+        SdcSchemaBuilder sdcSchemaBuilder = new SdcSchemaBuilder(utils, SdcSchemaBuilderTest::createCassandraConfig);
+        final boolean result = sdcSchemaBuilder.createSchema();
+        Assert.assertTrue(result);
+    }
 
-	@Test
-	public void testCreateSchema() throws Exception {
-		boolean result;
+    @Test
+    public void testDeleteSchemaNoKeyspaces() {
+        SdcSchemaUtils utils = mock(SdcSchemaUtils.class);
+        when(utils.createCluster()).thenReturn(CassandraTestHelper.createCluster());
+        SdcSchemaBuilder sdcSchemaBuilder = new SdcSchemaBuilder(utils, SdcSchemaBuilderTest::createCassandraConfig);
+        final boolean result = sdcSchemaBuilder.deleteSchema();
+        Assert.assertTrue(result);
+    }
 
-		// default test
-		result = SdcSchemaBuilder.createSchema();
-	}
+    @Test
+    public void testDeleteSchemaWithKeyspacesExisting() {
+        Configuration.CassandrConfig throwAwayConfig = createCassandraConfig();
+        Cluster cluster = CassandraTestHelper.createCluster();
+        createTestKeyspaces(cluster, throwAwayConfig.getKeySpaces());
+        SdcSchemaUtils utils = mock(SdcSchemaUtils.class);
+        when(utils.createCluster()).thenReturn(cluster);
+        SdcSchemaBuilder sdcSchemaBuilder = new SdcSchemaBuilder(utils, SdcSchemaBuilderTest::createCassandraConfig);
+        final boolean result = sdcSchemaBuilder.deleteSchema();
+        Assert.assertTrue(result);
+    }
 
-	@Test
-	public void testDeleteSchema() throws Exception {
-		boolean result;
+    private static Configuration.CassandrConfig createCassandraConfig() {
+        Configuration.CassandrConfig cfg = new Configuration.CassandrConfig();
+        Set<String> requiredKeyspaces = Arrays.stream(Table.values())
+                .map(t -> t.getTableDescription().getKeyspace().toLowerCase())
+                .collect(Collectors.toSet());
+        List<Configuration.CassandrConfig.KeyspaceConfig> createdKeyspaces = requiredKeyspaces.stream()
+                .map(k -> {
+                    Configuration.CassandrConfig.KeyspaceConfig keyspace = new Configuration.CassandrConfig.KeyspaceConfig();
+                    keyspace.setName(k);
+                    keyspace.setReplicationInfo(Collections.singletonList("1"));
+                    keyspace.setReplicationStrategy(SdcSchemaBuilder.ReplicationStrategy.SIMPLE_STRATEGY.getName());
+                    return keyspace;})
+                .collect(Collectors.toList());
+        cfg.setKeySpaces(createdKeyspaces);
+        return cfg;
+    }
 
-		// default test
-		result = SdcSchemaBuilder.deleteSchema();
-	}
-
-	/*@Test
-	public void testParseKeyspaceMetadata() throws Exception {
-		List<KeyspaceMetadata> keyspacesMetadata = new LinkedList<>();
-		Map<String, Map<String, List<String>>> result;
-
-		// default test
-		result = Deencapsulation.invoke(SdcSchemaBuilder.class, "parseKeyspaceMetadata", keyspacesMetadata);
-	}*/
-
-	/*@Test
-	public void testGetMetadataTablesStructure() throws Exception {
-		List<KeyspaceMetadata> keyspacesMetadata = new LinkedList<>();
-		Map<String, Map<String, List<String>>> result;
-
-		// default test
-		result = Deencapsulation.invoke(SdcSchemaBuilder.class, "getMetadataTablesStructure", keyspacesMetadata);
-	}*/
-
-	@Test
-	public void testCreateIndexName() throws Exception {
-		String table = "";
-		String column = "";
-		String result;
-
-		// default test
-		result = Deencapsulation.invoke(SdcSchemaBuilder.class, "createIndexName", table, column);
-	}
-
-	/*@Test
-	public void testAlterTable() throws Exception {
-		Session session = null;
-		Map<String, List<String>> existingTablesMetadata = null;
-		ITableDescription tableDescription = null;
-		String tableName = "";
-		Map<String, ImmutablePair<DataType, Boolean>> columnDescription = null;
-
-		// default test
-		Deencapsulation.invoke(SdcSchemaBuilder.class, "alterTable",
-				new Object[] { Session.class, Map.class, ITableDescription.class, tableName, Map.class });
-	}*/
-
-	@Test
-	public void testCreateKeyspace() throws Exception {
-		String keyspace = "mock";
-		Map<String, Map<String, List<String>>> cassndraMetadata = new HashMap<>();
-		Session session = Mockito.mock(Session.class);
-		boolean result;
-
-		// default test
-		result = Deencapsulation.invoke(SdcSchemaBuilder.class, "createKeyspace",
-				keyspace, cassndraMetadata, session);
-		
-		cassndraMetadata.put(keyspace, new HashMap<>());
-		result = Deencapsulation.invoke(SdcSchemaBuilder.class, "createKeyspace",
-				keyspace, cassndraMetadata, session);
-	}
-
-	@Test
-	public void testGetSchemeData() throws Exception {
-		Map<String, List<ITableDescription>> result;
-
-		// default test
-		result = Deencapsulation.invoke(SdcSchemaBuilder.class, "getSchemeData");
-	}
-
-	@Test
-	public void testCreateKeyspaceQuereyString() throws Exception {
-		String keyspace = "mock";
-		KeyspaceConfig keyspaceInfo = new KeyspaceConfig();
-		String result;
-
-		// default test
-		result = Deencapsulation.invoke(SdcSchemaBuilder.class, "createKeyspaceQuereyString", keyspace, keyspaceInfo);
-		
-		keyspaceInfo.setReplicationStrategy(ReplicationStrategy.NETWORK_TOPOLOGY_STRATEGY.getName());
-		LinkedList<String> replicationInfo = new LinkedList<>();
-		keyspaceInfo.setReplicationInfo(replicationInfo);
-		//Test1
-		result = Deencapsulation.invoke(SdcSchemaBuilder.class, "createKeyspaceQuereyString", keyspace, keyspaceInfo);
-		replicationInfo.add("mock1");
-		replicationInfo.add("mock2");
-		
-		result = Deencapsulation.invoke(SdcSchemaBuilder.class, "createKeyspaceQuereyString", keyspace, keyspaceInfo);
-		
-		//Test2
-		keyspaceInfo.setReplicationStrategy(ReplicationStrategy.SIMPLE_STRATEGY.getName());
-		result = Deencapsulation.invoke(SdcSchemaBuilder.class, "createKeyspaceQuereyString", keyspace, keyspaceInfo);
-	}
+    private static void createTestKeyspaces(Cluster cluster, List<Configuration.CassandrConfig.KeyspaceConfig> keyspaceConfig) {
+        try(Session session = cluster.connect()) {
+            keyspaceConfig.forEach(keyspace -> {
+                String query = String
+                        .format("CREATE KEYSPACE IF NOT EXISTS %s WITH replication = {'class':'%s', 'replication_factor' : %s};",
+                                keyspace.getName(), keyspace.getReplicationStrategy(), keyspace.getReplicationInfo().get(0));
+                session.execute(query);
+            });
+        }
+    }
 }
