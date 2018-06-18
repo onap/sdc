@@ -1,5 +1,6 @@
 package org.openecomp.sdc.itempermissions.dao.impl;
 
+import java.util.Optional;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -7,6 +8,7 @@ import org.mockito.Spy;
 import org.openecomp.sdc.common.session.SessionContextProviderFactory;
 import org.openecomp.sdc.itempermissions.PermissionsRules;
 import org.openecomp.sdc.itempermissions.dao.ItemPermissionsDao;
+import org.openecomp.sdc.itempermissions.dao.UserPermissionsDao;
 import org.openecomp.sdc.itempermissions.type.ItemPermissionsEntity;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
@@ -35,11 +37,13 @@ public class PermissionsServicesImplTest {
   private static final String CHANGE_PERMISSIONS = "Change_Item_Permissions";
 
   static {
-    SessionContextProviderFactory.getInstance().createInterface().create("testUser1");
+    SessionContextProviderFactory.getInstance().createInterface().create("testUser1", "dox");
   }
 
   @Mock
   private ItemPermissionsDao permissionsDaoMock;
+  @Mock
+  private UserPermissionsDao userPermissionsDao;  // do not delete. needed for permissionService
   @Mock
   private PermissionsRules permissionsRules;
   @InjectMocks
@@ -75,7 +79,7 @@ public class PermissionsServicesImplTest {
 
   @Test
   public void testIsAllowed(){
-    when(permissionsDaoMock.getUserItemPermiission(ITEM1_ID,USER1_ID)).thenReturn(PERMISSION);
+    when(permissionsDaoMock.getUserItemPermission(ITEM1_ID,USER1_ID)).thenReturn(Optional.of(PERMISSION));
     when(permissionsRules.isAllowed(PERMISSION,ACTION_SUBMIT)).thenReturn(true);
 
     Boolean result = permissionsServices.isAllowed(ITEM1_ID,USER1_ID,ACTION_SUBMIT);
@@ -86,16 +90,15 @@ public class PermissionsServicesImplTest {
   @Test
   public void testUpdatePermissions(){
 
-    Set<String> addedUsers = new HashSet<String>();
+    Set<String> addedUsers = new HashSet<>();
     addedUsers.add(USER2_ID);
 
-    permissionsServices.updateItemPermissions(ITEM1_ID,PERMISSION,addedUsers,
-        new HashSet<String>());
+    permissionsServices.updateItemPermissions(ITEM1_ID,PERMISSION,addedUsers, new HashSet<>());
 
     verify(permissionsRules).executeAction(ITEM1_ID,USER1_ID,CHANGE_PERMISSIONS);
-    verify(permissionsRules).updatePermission(ITEM1_ID,USER1_ID,PERMISSION,addedUsers,new HashSet<String>());
+    verify(permissionsRules).updatePermission(ITEM1_ID,USER1_ID,PERMISSION,addedUsers, new HashSet<>());
     verify(permissionsDaoMock).updateItemPermissions(ITEM1_ID,PERMISSION,addedUsers,new
-        HashSet<String>());
+        HashSet<>());
   }
 
 

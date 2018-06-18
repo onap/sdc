@@ -134,7 +134,7 @@ public class ArtifactGenerationServiceTest {
 
                     if (baseResourceWidgetModelElements.getModelElement().size() !=
                         groupIdTypeStore.size()) {
-                        org.testng.Assert.fail("Missing VFModule in VF model.xml");
+                        Assert.fail("Missing VFModule in VF model.xml");
                     }
 
                     for (String key : groupIdTypeStore.keySet()) {
@@ -285,11 +285,11 @@ public class ArtifactGenerationServiceTest {
                 ModelElements containedModelElements = modelVersion.getModelElements().getModelElement().
                     get(0).getModelElements();
 
-                org.testng.Assert.assertEquals(containedModelElements.getModelElement().get(0).getRelationshipList()
+                Assert.assertEquals(containedModelElements.getModelElement().get(0).getRelationshipList()
                      .getRelationship().get(0).getRelationshipData().get(0).getRelationshipValue(),
                         providingServiceDetails.get("providing_service_uuid"));
 
-                org.testng.Assert.assertEquals(containedModelElements.getModelElement().get(0).getRelationshipList()
+                Assert.assertEquals(containedModelElements.getModelElement().get(0).getRelationshipList()
                     .getRelationship().get(0).getRelationshipData().get(1).getRelationshipValue(),
                         providingServiceDetails.get("providing_service_invariant_uuid"));
 
@@ -363,7 +363,7 @@ public class ArtifactGenerationServiceTest {
 
         ToscaTemplate serviceTosca = getServiceTosca(toscas);
         if (serviceTosca == null) {
-            org.testng.Assert.fail("Service Tosca not found");
+            Assert.fail("Service Tosca not found");
         }
         serviceTosca.getMetadata().put("version", SampleJUnitTest.additionalParams.get(
             AdditionalParams
@@ -404,11 +404,11 @@ public class ArtifactGenerationServiceTest {
                     }
 
                     //Validate uuid and invariantuuid are populated in model-ver.model-version-id and model.model-invariant-id
-                    org.testng.Assert.assertEquals(matchedResourceElements.get(0).getRelationshipList()
+                    Assert.assertEquals(matchedResourceElements.get(0).getRelationshipList()
                         .getRelationship().get(0)
                         .getRelationshipData().get(0).getRelationshipValue(),entry.getKey());
 
-                    org.testng.Assert.assertEquals(matchedResourceElements.get(0).getRelationshipList().getRelationship().get(0)
+                    Assert.assertEquals(matchedResourceElements.get(0).getRelationshipList().getRelationship().get(0)
                         .getRelationshipData().get(1).getRelationshipValue(), nodeTemplateIdTypeStore
                         .get(entry.getKey()+ INV_UID));
                 } else if(entry.getValue().contains("org.openecomp.resource.vl")){
@@ -418,11 +418,11 @@ public class ArtifactGenerationServiceTest {
                     validateMatchedModelElementsInService(matchedResourceElements,
                         Widget.getWidget(Widget.Type.L3_NET).getName());
                     //Validate uuid and invariantuuid are populated in model-ver.model-version-id and model.model-invariant-id
-                    org.testng.Assert.assertEquals(matchedResourceElements.get(0).getRelationshipList()
+                    Assert.assertEquals(matchedResourceElements.get(0).getRelationshipList()
                         .getRelationship().get(0)
                         .getRelationshipData().get(0).getRelationshipValue(),entry.getKey());
 
-                    org.testng.Assert.assertEquals(matchedResourceElements.get(0).getRelationshipList().getRelationship().get(0)
+                    Assert.assertEquals(matchedResourceElements.get(0).getRelationshipList().getRelationship().get(0)
                         .getRelationshipData().get(1).getRelationshipValue(), nodeTemplateIdTypeStore
                         .get(entry.getKey() + INV_UID));
                 }
@@ -432,12 +432,12 @@ public class ArtifactGenerationServiceTest {
 
     private static void validateWidgetIds(List<ModelElement> matchedServiceBaseWidgetElements,
                                           String widgetName, String widgetInvUuId) {
-        org.testng.Assert.assertEquals(matchedServiceBaseWidgetElements.get(0).getRelationshipList().getRelationship().get(0)
+        Assert.assertEquals(matchedServiceBaseWidgetElements.get(0).getRelationshipList().getRelationship().get(0)
             .getRelationshipData().get(0).getRelationshipValue(), properties.getProperty(
             ArtifactType.AAI.name()
             + ".model-version-id."+ widgetName));
 
-        org.testng.Assert.assertEquals(matchedServiceBaseWidgetElements.get(0).getRelationshipList().getRelationship().get(0)
+        Assert.assertEquals(matchedServiceBaseWidgetElements.get(0).getRelationshipList().getRelationship().get(0)
             .getRelationshipData().get(1).getRelationshipValue(), widgetInvUuId);
     }
 
