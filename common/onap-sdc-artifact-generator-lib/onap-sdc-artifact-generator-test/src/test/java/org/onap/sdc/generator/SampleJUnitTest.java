@@ -31,7 +31,6 @@ import org.onap.sdc.generator.impl.ArtifactGenerationServiceImpl;
 import org.onap.sdc.generator.aai.model.Widget;
 import org.onap.sdc.generator.aai.tosca.ToscaTemplate;
 import org.onap.sdc.generator.aai.xml.Model;
-import org.onap.sdc.generator.data.*;
 
 import junit.framework.TestCase;
 import org.junit.Assert;

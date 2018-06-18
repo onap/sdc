@@ -59,7 +59,7 @@
         <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
-            <version>RELEASE</version>
+            <version>${testng.version}</version>
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
