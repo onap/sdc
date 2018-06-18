@@ -50,6 +50,10 @@
 			<artifactId>httpcore</artifactId>
 			<version>${http.core.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.testng</groupId>
+			<artifactId>testng</artifactId>
+		</dependency>
 
 		<!-- Java Stuff -->
 		<dependency>
