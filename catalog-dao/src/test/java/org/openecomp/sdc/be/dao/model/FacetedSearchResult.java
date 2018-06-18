@@ -5,9 +5,9 @@ import org.junit.Test;
 import static com.google.code.beanmatchers.BeanMatchers.hasValidGettersAndSetters;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class GetMultipleDataResultTest {
+public class FacetedSearchResult {
 	@Test
 	public void shouldHaveValidGettersAndSetters(){
-		assertThat(GetMultipleDataResultTest.class, hasValidGettersAndSetters());
+		assertThat(FacetedSearchResult.class, hasValidGettersAndSetters());
 	}
 }

@@ -5,9 +5,9 @@ import org.junit.Test;
 import static com.google.code.beanmatchers.BeanMatchers.hasValidGettersAndSetters;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class GetMultipleDataResultTest {
+public class FetchContext {
 	@Test
 	public void shouldHaveValidGettersAndSetters(){
-		assertThat(GetMultipleDataResultTest.class, hasValidGettersAndSetters());
+		assertThat(FetchContext.class, hasValidGettersAndSetters());
 	}
 }
