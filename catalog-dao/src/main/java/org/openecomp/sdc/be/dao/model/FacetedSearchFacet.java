@@ -33,6 +33,9 @@ public class FacetedSearchFacet implements Serializable {
 		this.facetValue = facetValue;
 	}
 
+	private FacetedSearchFacet() {
+	}
+
 	public String getFacetValue() {
 		return facetValue;
 	}
