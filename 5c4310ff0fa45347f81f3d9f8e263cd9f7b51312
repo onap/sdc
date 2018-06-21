@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_dd94158e",
+        "filename": "dox-sequence-diagram-ui/webpack.config.js",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1921
+      },
+      "writtenOn": "2018-06-21T06:02:44Z",
+      "side": 1,
+      "message": "better way for devmode",
+      "revId": "5c4310ff0fa45347f81f3d9f8e263cd9f7b51312",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_5d9a45c6",
+        "filename": "openecomp-ui/proxy-server.js",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1921
+      },
+      "writtenOn": "2018-06-21T06:02:44Z",
+      "side": 1,
+      "message": "remove comment",
+      "revId": "5c4310ff0fa45347f81f3d9f8e263cd9f7b51312",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_7d9dc1ba",
+        "filename": "openecomp-ui/webpack.config.js",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1921
+      },
+      "writtenOn": "2018-06-21T06:02:44Z",
+      "side": 1,
+      "message": "better way to choose dev vs. prod\nask Malek about react-select alias\nwhy include all node modules in css ?",
+      "revId": "5c4310ff0fa45347f81f3d9f8e263cd9f7b51312",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
