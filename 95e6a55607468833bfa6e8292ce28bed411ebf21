@@ -1,0 +1,95 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_bd2d8991",
+        "filename": "dox-sequence-diagram-ui/package.json",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1921
+      },
+      "writtenOn": "2018-06-21T06:02:44Z",
+      "side": 1,
+      "message": "maybe try to replace with webpack-command",
+      "revId": "95e6a55607468833bfa6e8292ce28bed411ebf21",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_3d597935",
+        "filename": "dox-sequence-diagram-ui/webpack.config.js",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1921
+      },
+      "writtenOn": "2018-06-21T06:02:44Z",
+      "side": 1,
+      "message": "need to find better solution for devmode detection",
+      "revId": "95e6a55607468833bfa6e8292ce28bed411ebf21",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_bd44a947",
+        "filename": "dox-sequence-diagram-ui/webpack.config.js",
+        "patchSetId": 4
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 1921
+      },
+      "writtenOn": "2018-06-21T06:02:44Z",
+      "side": 1,
+      "message": "remove comment",
+      "range": {
+        "startLine": 56,
+        "startChar": 14,
+        "endLine": 56,
+        "endChar": 16
+      },
+      "revId": "95e6a55607468833bfa6e8292ce28bed411ebf21",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_3d7099a3",
+        "filename": "openecomp-ui/package.json",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1921
+      },
+      "writtenOn": "2018-06-21T06:02:44Z",
+      "side": 1,
+      "message": "remove storybook\nadd back react-transition-group\nconsider removing jest-reporter",
+      "revId": "95e6a55607468833bfa6e8292ce28bed411ebf21",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_fd8f9174",
+        "filename": "openecomp-ui/webpack.config.js",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1921
+      },
+      "writtenOn": "2018-06-21T06:02:44Z",
+      "side": 1,
+      "message": "better way to choose dev mode\nask Malek about react-select alias\nwhy include all node modules in css",
+      "revId": "95e6a55607468833bfa6e8292ce28bed411ebf21",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
