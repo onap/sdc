@@ -14,7 +14,7 @@ public class OperationTest {
 	@Test
 	public void testCtor() throws Exception {
 		new Operation(new OperationDataDefinition());
-		new Operation(new ArtifactDataDefinition(), "mock", new ListDataDefinition<>());
+		new Operation(new ArtifactDataDefinition(), "mock", new ListDataDefinition<>(), new ListDataDefinition<>());
 	}
 	
 	@Test

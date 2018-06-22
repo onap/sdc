@@ -42,6 +42,7 @@ public class OperationDataDefinition extends ToscaDataDefinition implements Seri
 		setDescription(p.getDescription());
 		setImplementation(p.getImplementation());
 		setInputs(p.getInputs());
+		setOutputs(p.getOutputs());
 		setName(p.getName());
 		setUniqueId(p.getUniqueId());
 	}
@@ -97,6 +98,14 @@ public class OperationDataDefinition extends ToscaDataDefinition implements Seri
 		setToscaPresentationValue(JsonPresentationFields.OPERATION_INPUT,inputs);
 	}
 
+	public ListDataDefinition<OperationOutputDefinition> getOutputs() {
+		return (ListDataDefinition<OperationOutputDefinition>)
+				getToscaPresentationValue(JsonPresentationFields.OPERATION_OUTPUT);
+	}
+
+	public void setOutputs(ListDataDefinition<OperationOutputDefinition> outputs) {
+		setToscaPresentationValue(JsonPresentationFields.OPERATION_OUTPUT, outputs);
+	}
 	public String getName() {
 		return (String) getToscaPresentationValue(JsonPresentationFields.NAME);
 	}

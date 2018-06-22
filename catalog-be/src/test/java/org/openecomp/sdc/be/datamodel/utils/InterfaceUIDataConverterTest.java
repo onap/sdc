@@ -9,6 +9,7 @@ import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.InterfaceOperationDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationInputDefinition;
+import org.openecomp.sdc.be.datatypes.elements.OperationOutputDefinition;
 import org.openecomp.sdc.be.model.Operation;
 
 public class InterfaceUIDataConverterTest {
@@ -27,7 +28,9 @@ public class InterfaceUIDataConverterTest {
 		Operation operationData = new Operation();
 		InterfaceOperationDataDefinition result;
 		ListDataDefinition<OperationInputDefinition> inputs = new ListDataDefinition<>();
+		ListDataDefinition<OperationOutputDefinition> outputs = new ListDataDefinition<>();
 		operationData.setInputs(inputs);
+		operationData.setOutputs(outputs);
 		operationData.setImplementation(new ArtifactDataDefinition());
 		// default test
 		result = InterfaceUIDataConverter.convertOperationDataToInterfaceData(operationData);

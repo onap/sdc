@@ -29,6 +29,7 @@ import org.apache.commons.collections.MapUtils;
 import org.openecomp.sdc.be.datatypes.elements.InputDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationInputDefinition;
+import org.openecomp.sdc.be.datatypes.elements.OperationOutputDefinition;
 import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.Operation;
@@ -82,12 +83,14 @@ public class InterfaceUtils {
         }
         InterfaceDefinition interfaceDefinition = optionalInterface.get();
         interfaceDefinition.getOperationsMap().values().stream()
-            .forEach(operation -> createInput(operation, resource.getInputs()));
+            .forEach(operation -> createInputOutput(operation, resource.getInputs()));
+
+
         return interfaceDefinition.getOperationsMap();
 
     }
 
-    private static void createInput(Operation operation, List<InputDefinition> inputs) throws IllegalStateException {
+    private static void createInputOutput(Operation operation, List<InputDefinition> inputs) throws IllegalStateException {
         ListDataDefinition<OperationInputDefinition> inputDefinitionListDataDefinition = operation.getInputs();
         if (inputDefinitionListDataDefinition != null) {
             return;
@@ -97,8 +100,20 @@ public class InterfaceUtils {
         List<OperationInputDefinition> convertedInputs = listToscaDataDefinition.stream()
             .map(input -> convertInput(input, inputs))
             .collect(Collectors.toList());
+
+        ListDataDefinition<OperationOutputDefinition> outputDefinitionListDataDefinition = operation.getOutputs();
+        if (outputDefinitionListDataDefinition != null) {
+            return;
+        }
+        List<OperationOutputDefinition> outListToscaDefinition = outputDefinitionListDataDefinition
+                .getListToscaDataDefinition();
+        List<OperationOutputDefinition> convertedOutputs = outListToscaDefinition.stream()
+                .map(operationOutputDefinition -> convertOutput(operationOutputDefinition, inputs) )
+                .collect(Collectors.toList());
         inputDefinitionListDataDefinition.getListToscaDataDefinition().clear();
         inputDefinitionListDataDefinition.getListToscaDataDefinition().addAll(convertedInputs);
+        outputDefinitionListDataDefinition.getListToscaDataDefinition().clear();
+        outputDefinitionListDataDefinition.getListToscaDataDefinition().addAll(convertedOutputs);
     }
 
     private static OperationInputDefinition convertInput(OperationInputDefinition input,
@@ -111,6 +126,15 @@ public class InterfaceUtils {
         throw new IllegalStateException("Could not find input :"+ input.getLabel());
     }
 
+    private static OperationOutputDefinition convertOutput(OperationOutputDefinition output,
+                                                         List<InputDefinition> outputs) throws IllegalStateException {
+        Optional<InputDefinition> anyOutputDefinition = outputs.stream()
+                .filter(inp -> inp.getUniqueId().equals(output.getUniqueId())).findAny();
+        if (anyOutputDefinition.isPresent()) {
+            return new OperationOutputDefinition(output.getLabel(),new InputDataDefinition(anyOutputDefinition.get()));
+        }
+        throw new IllegalStateException("Could not find output :"+ output.getLabel());
+    }
     public static List<Operation> getOperationsFromInterface(Map<String, InterfaceDefinition> interfaces) {
         List<Operation> operationData = new ArrayList<>();
         if (!MapUtils.isEmpty(interfaces)) {
