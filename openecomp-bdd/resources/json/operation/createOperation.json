@@ -10,6 +10,14 @@
           }
         ]
       },
+      "outputParams": {
+        "listToscaDataDefinition": [
+          {
+            "paramName": "op1",
+            "paramId": "68443b9d-9405-458e-811f-b62dd4975fcb.nf_naming"
+          }
+        ]
+      },
       "operationType": "create"
     }
   }

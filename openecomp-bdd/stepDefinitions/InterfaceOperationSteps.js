@@ -57,6 +57,23 @@ When('I want to create an Operation', function()  {
 });
 
 
+When('I want to create an Operation with outputParameter', function()  {
+    let inputData = util.getJSONFromFile('resources/json/operation/createOperation.json');
+    //let path = '/catalog/resources/f3dc81bb-85e9-4dfd-bd1b-37f5dc5e5534/interfaceOperations';
+    let path = '/catalog/resources/' + this.context.vf.uniqueId +'/interfaceOperations';
+
+    inputData.interfaceOperations.create.operationType = makeType();
+    inputData.interfaceOperations.create.inputParams.listToscaDataDefinition[0].paramName = util.random();
+    inputData.interfaceOperations.create.inputParams.listToscaDataDefinition[0].paramId = this.context.vf.id;
+    inputData.interfaceOperations.create.outputParams.listToscaDataDefinition[0].paramName = util.random();
+    inputData.interfaceOperations.create.outputParams.listToscaDataDefinition[0].paramId = this.context.vf.id;
+
+    return util.request(this.context, 'POST', path, inputData, false, 'vf').then(result => {
+        this.context.item = {uniqueId : result.data.uniqueId, operationType : result.data.operationType};
+    this.context.operation = {uniqueId : result.data.uniqueId, operationType : result.data.operationType};
+});
+});
+
 
 When('I want to list Operations', function () {
     let path = '/catalog/resources/' + this.context.vf.uniqueId + '/filteredDataByParams?include=interfaces';
