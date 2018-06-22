@@ -35,6 +35,7 @@ import org.openecomp.sdc.be.components.InterfaceOperationTestUtils;
 import org.openecomp.sdc.be.components.impl.ResponseFormatManager;
 import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationInputDefinition;
+import org.openecomp.sdc.be.datatypes.elements.OperationOutputDefinition;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentParametersView;
@@ -61,6 +62,7 @@ public class InterfaceOperationValidationTest implements InterfaceOperationTestU
     InterfaceOperationValidationUtilTest interfaceOperationValidationUtilTest = new InterfaceOperationValidationUtilTest();
     private static final String RESOURCE_ID = "resource1";
     ListDataDefinition<OperationInputDefinition> operationInputDefinitionList = new ListDataDefinition<>();
+    ListDataDefinition<OperationOutputDefinition> operationOutputDefinitionList = new ListDataDefinition<>();
     @Before
     public void init() {
         MockitoAnnotations.initMocks(this);
@@ -75,8 +77,10 @@ public class InterfaceOperationValidationTest implements InterfaceOperationTestU
     @Test
     public void testValidInterfaceOperation() {
         operationInputDefinitionList.add(createMockOperationInputDefinition("label1"));
+        operationOutputDefinitionList.add(createMockOperationOutputDefinition("label1"));
         Collection<Operation> operations = createInterfaceOperationData("op2",
-                "interface operation2",new ArtifactDefinition(), operationInputDefinitionList,"upgrade");
+                "interface operation2",new ArtifactDefinition(), operationInputDefinitionList,
+                        operationOutputDefinitionList,"upgrade");
         Either<Boolean, ResponseFormat> booleanResponseFormatEither = interfaceOperationValidationUtilTest
                 .validateInterfaceOperations(operations, RESOURCE_ID, false);
         Assert.assertTrue(booleanResponseFormatEither.isLeft());
@@ -85,11 +89,12 @@ public class InterfaceOperationValidationTest implements InterfaceOperationTestU
     @Test
     public void testInterfaceOperationDescriptionLength() {
         operationInputDefinitionList.add(createMockOperationInputDefinition("label1"));
+        operationOutputDefinitionList.add(createMockOperationOutputDefinition("label1"));
         Collection<Operation> operations = createInterfaceOperationData("op2",
                 "interface operation2 -  The Spring Initializer provides a project generator to make you " +
                         "productive with the certain technology stack from the beginning. You can create a skeleton project" +
                         "with web, data access (relational and NoSQL datastores), cloud, or messaging support",
-                new ArtifactDefinition(), operationInputDefinitionList,"update");
+                new ArtifactDefinition(), operationInputDefinitionList, operationOutputDefinitionList,"update");
         Either<Boolean, ResponseFormat> booleanResponseFormatEither = interfaceOperationValidationUtilTest
                 .validateInterfaceOperations(operations, RESOURCE_ID, false);
         Assert.assertTrue(booleanResponseFormatEither.isRight());
@@ -100,8 +105,10 @@ public class InterfaceOperationValidationTest implements InterfaceOperationTestU
     @Test
     public void testInterfaceOperationForEmptyType() {
         operationInputDefinitionList.add(createMockOperationInputDefinition("label1"));
+        operationOutputDefinitionList.add(createMockOperationOutputDefinition("label1"));
         Collection<Operation> operations = createInterfaceOperationData("op2",
-                "interface operation2",new ArtifactDefinition(), operationInputDefinitionList,"");
+                "interface operation2",new ArtifactDefinition(), operationInputDefinitionList,
+                operationOutputDefinitionList, "");
         Either<Boolean, ResponseFormat> booleanResponseFormatEither = interfaceOperationValidationUtilTest
                 .validateInterfaceOperations(operations, RESOURCE_ID, false);
         Assert.assertTrue(booleanResponseFormatEither.isRight());
@@ -110,8 +117,10 @@ public class InterfaceOperationValidationTest implements InterfaceOperationTestU
     @Test
     public void testInterfaceOperationForEmptyInputParam() {
         operationInputDefinitionList.add(createMockOperationInputDefinition("label1"));
+        operationOutputDefinitionList.add(createMockOperationOutputDefinition("label1"));
         Collection<Operation> operations = createInterfaceOperationData("op2",
-                "interface operation2",new ArtifactDefinition(), operationInputDefinitionList,"input2");
+                "interface operation2",new ArtifactDefinition(), operationInputDefinitionList,
+                operationOutputDefinitionList,"input2");
         Either<Boolean, ResponseFormat> booleanResponseFormatEither = interfaceOperationValidationUtilTest
                 .validateInterfaceOperations(operations, RESOURCE_ID, false);
         Assert.assertTrue(booleanResponseFormatEither.isRight());
@@ -120,8 +129,10 @@ public class InterfaceOperationValidationTest implements InterfaceOperationTestU
     @Test
     public void testInterfaceOperationForNonUniqueType() {
         operationInputDefinitionList.add(createMockOperationInputDefinition("label1"));
+        operationOutputDefinitionList.add(createMockOperationOutputDefinition("label1"));
         Collection<Operation> operations = createInterfaceOperationData("op2",
-                "interface operation2",new ArtifactDefinition(), operationInputDefinitionList,"CREATE");
+                "interface operation2",new ArtifactDefinition(), operationInputDefinitionList,
+                operationOutputDefinitionList,"CREATE");
         Either<Boolean, ResponseFormat> booleanResponseFormatEither = interfaceOperationValidationUtilTest
                 .validateInterfaceOperations(operations, RESOURCE_ID, false);
         Assert.assertTrue(booleanResponseFormatEither.isRight());
@@ -130,8 +141,10 @@ public class InterfaceOperationValidationTest implements InterfaceOperationTestU
     @Test
     public void testInterfaceOperationTypeLength() {
         operationInputDefinitionList.add(createMockOperationInputDefinition("label1"));
+        operationOutputDefinitionList.add(createMockOperationOutputDefinition("label1"));
         Collection<Operation> operations = createInterfaceOperationData("op2",
                 "interface operation2",new ArtifactDefinition(), operationInputDefinitionList,
+                operationOutputDefinitionList,
                 "interface operation2 -  The Spring Initializer provides a project generator to make you " +
                         "productive with the certain technology stack from the beginning. You can create a skeleton project" +
                         "with web, data access (relational and NoSQL datastores), cloud, or messaging support");
@@ -147,8 +160,10 @@ public class InterfaceOperationValidationTest implements InterfaceOperationTestU
         operationInputDefinitionList.add(createMockOperationInputDefinition("label1"));
         operationInputDefinitionList.add(createMockOperationInputDefinition("label2"));
         operationInputDefinitionList.add(createMockOperationInputDefinition("label2"));
+        operationOutputDefinitionList.add(createMockOperationOutputDefinition("label1"));
         Collection<Operation> operations = createInterfaceOperationData("op2",
-                "interface operation2",new ArtifactDefinition(), operationInputDefinitionList,"create");
+                "interface operation2",new ArtifactDefinition(), operationInputDefinitionList,
+                operationOutputDefinitionList,"create");
 
         Either<Boolean, ResponseFormat> booleanResponseFormatEither = interfaceOperationValidationUtilTest
                 .validateInterfaceOperations(operations, RESOURCE_ID, false);
@@ -159,8 +174,10 @@ public class InterfaceOperationValidationTest implements InterfaceOperationTestU
     public void testInterfaceOperationUniqueInputParamNameValid() {
         operationInputDefinitionList.add(createMockOperationInputDefinition("label1"));
         operationInputDefinitionList.add(createMockOperationInputDefinition("label2"));
+        operationOutputDefinitionList.add(createMockOperationOutputDefinition("label1"));
         Collection<Operation> operations = createInterfaceOperationData("op2",
-                "interface operation2",new ArtifactDefinition(), operationInputDefinitionList,"update");
+                "interface operation2",new ArtifactDefinition(), operationInputDefinitionList,
+                operationOutputDefinitionList,"update");
 
 
         Either<Boolean, ResponseFormat> booleanResponseFormatEither = interfaceOperationValidationUtilTest
@@ -172,8 +189,10 @@ public class InterfaceOperationValidationTest implements InterfaceOperationTestU
     public void testInterfaceOperationeInputParamNameEmpty() {
         operationInputDefinitionList.add(createMockOperationInputDefinition("  "));
         operationInputDefinitionList.add(createMockOperationInputDefinition("label1"));
+        operationOutputDefinitionList.add(createMockOperationOutputDefinition("label1"));
         Collection<Operation> operations = createInterfaceOperationData("op2",
-                "interface operation2",new ArtifactDefinition(), operationInputDefinitionList,"update");
+                "interface operation2",new ArtifactDefinition(), operationInputDefinitionList,
+                operationOutputDefinitionList,"update");
 
 
         Either<Boolean, ResponseFormat> booleanResponseFormatEither = interfaceOperationValidationUtilTest
@@ -182,8 +201,9 @@ public class InterfaceOperationValidationTest implements InterfaceOperationTestU
     }
 
     private Set<Operation> createInterfaceOperationData( String uniqueID, String description, ArtifactDefinition artifactDefinition,
-                                                         ListDataDefinition<OperationInputDefinition> inputs, String name) {
-        return Sets.newHashSet(createInterfaceOperation(uniqueID, description, artifactDefinition, inputs, name));
+                                                         ListDataDefinition<OperationInputDefinition> inputs,
+                                                         ListDataDefinition<OperationOutputDefinition> outputs, String name) {
+        return Sets.newHashSet(createInterfaceOperation(uniqueID, description, artifactDefinition, inputs, outputs, name));
     }
 
     private  <T extends Component> Either<T, StorageOperationStatus> getToscaFullElement() {

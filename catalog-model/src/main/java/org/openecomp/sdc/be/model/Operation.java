@@ -24,6 +24,7 @@ import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationInputDefinition;
+import org.openecomp.sdc.be.datatypes.elements.OperationOutputDefinition;
 
 /**
  * Defines an operation available to manage particular aspects of the Node Type.
@@ -54,10 +55,12 @@ public class Operation extends OperationDataDefinition implements IOperationPara
 	}
 
 	public Operation(ArtifactDataDefinition implementation, String description,
-		ListDataDefinition<OperationInputDefinition> inputs) {
+					 ListDataDefinition<OperationInputDefinition> inputs,
+					 ListDataDefinition<OperationOutputDefinition> outputs) {
 		super(description);
 		setImplementation(implementation);
 		setInputs(inputs);
+		setOutputs(outputs);
 	}
 
 	@Override

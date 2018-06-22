@@ -209,7 +209,8 @@ public enum JsonPresentationFields {
 	INTERFACE ("interface", null),
 	INTERFACE_OPERATION ("operation", null),
 	OPERATION_IMPLEMENTATION("operationImplementation",null),
-	OPERATION_INPUT("operationInput",null)
+	OPERATION_INPUT("operationInput",null),
+	OPERATION_OUTPUT("operationOutput", null)
 	;
 	
 

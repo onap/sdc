@@ -89,6 +89,13 @@ public class InterfaceOperationValidation {
         if(inputParametersResponse.isRight()) {
             return Either.right(inputParametersResponse.right().value());
         }
+
+        Either<Boolean, ResponseFormat> outputParametersResponse = validateOutputParameters(interfaceOperation,
+                responseFormatManager);
+        if(outputParametersResponse.isRight()) {
+            return Either.right(outputParametersResponse.right().value());
+        }
+
         return Either.left(Boolean.TRUE);
     }
 
@@ -223,6 +230,28 @@ public class InterfaceOperationValidation {
         return Either.left(Boolean.TRUE);
     }
 
+
+    private Either<Boolean, ResponseFormat> validateOutputParameters(Operation interfaceOperation,
+                                                                    ResponseFormatManager responseFormatManager) {
+        if (isOutputParameterNameEmpty(interfaceOperation)) {
+            LOGGER.error("Interface operation output  parameter name can't be empty");
+            ResponseFormat inputResponse = responseFormatManager.getResponseFormat(ActionStatus
+                    .INTERFACE_OPERATION_OUTPUT_NAME_MANDATORY);
+            return Either.right(inputResponse);
+        }
+
+        Either<Boolean, Set<String>> validateOutputParametersUniqueResponse = isOutputParametersUnique(interfaceOperation);
+        if(validateOutputParametersUniqueResponse.isRight()) {
+            LOGGER.error("Interface operation output  parameter names {} already in use",
+                    validateOutputParametersUniqueResponse.right().value().toString());
+            ResponseFormat inputResponse = responseFormatManager.getResponseFormat(ActionStatus
+                    .INTERFACE_OPERATION_OUTPUT_NAME_ALREADY_IN_USE, validateOutputParametersUniqueResponse.right().value().toString());
+            return Either.right(inputResponse);
+        }
+        return Either.left(Boolean.TRUE);
+    }
+
+
     private Either<Boolean, Set<String>> isInputParametersUnique(Operation operationDataDefinition) {
         Set<String> inputParamNamesSet = new HashSet<>();
         Set<String> duplicateParamNamesToReturn = new HashSet<>();
@@ -238,11 +267,29 @@ public class InterfaceOperationValidation {
         return Either.left(Boolean.TRUE);
     }
 
+    private Either<Boolean, Set<String>> isOutputParametersUnique(Operation operationDataDefinition) {
+        Set<String> outputParamNamesSet = new HashSet<>();
+        Set<String> duplicateParamNamesToReturn = new HashSet<>();
+        operationDataDefinition.getOutputs().getListToscaDataDefinition()
+                .forEach(outputParam -> {
+                    if(!outputParamNamesSet.add(outputParam.getName().trim())) {
+                        duplicateParamNamesToReturn.add(outputParam.getName().trim());
+                    }
+                });
+        if(!duplicateParamNamesToReturn.isEmpty()) {
+            return Either.right(duplicateParamNamesToReturn);
+        }
+        return Either.left(Boolean.TRUE);
+    }
+
     private Boolean isInputParameterNameEmpty(Operation operationDataDefinition) {
         return operationDataDefinition.getInputs().getListToscaDataDefinition().stream()
                 .anyMatch(inputParam -> inputParam.getName() == null || inputParam.getName().trim().equals(StringUtils.EMPTY));
     }
-
+    private Boolean isOutputParameterNameEmpty(Operation operationDataDefinition) {
+        return operationDataDefinition.getInputs().getListToscaDataDefinition().stream()
+                .anyMatch(inputParam -> inputParam.getName() == null || inputParam.getName().trim().equals(StringUtils.EMPTY));
+    }
 
     private boolean validateOperationTypeUniqueForUpdate(Operation interfaceOperation,
                                                          Map<String, String> operationTypes) {

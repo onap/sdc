@@ -23,6 +23,7 @@ import org.openecomp.sdc.be.datatypes.elements.InterfaceOperationDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.InterfaceOperationParamDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationInputDefinition;
+import org.openecomp.sdc.be.datatypes.elements.OperationOutputDefinition;
 import org.openecomp.sdc.be.model.Operation;
 
 public class InterfaceUIDataConverter {
@@ -40,11 +41,21 @@ public class InterfaceUIDataConverter {
                       interfaceOperationParamDataDefinition.getParamId())).collect(Collectors.toList());
       inputList.forEach(inputs::add);
     }
+    ListDataDefinition<InterfaceOperationParamDataDefinition> outputParams = interfaceOperation.getOutputParams();
+    ListDataDefinition<OperationOutputDefinition> outputs = new ListDataDefinition<>();
+    if(outputParams != null) {
+      List<OperationOutputDefinition> outputList = outputParams.getListToscaDataDefinition().stream()
+              .map(interfaceOperationParamDataDefinition -> new OperationOutputDefinition(interfaceOperationParamDataDefinition.getParamName(),
+                      interfaceOperationParamDataDefinition.getParamId())).collect(Collectors.toList());
+      outputList.forEach(outputs::add);
+    }
+
     Operation operationData = new Operation();
     operationData.setDescription(interfaceOperation.getDescription());
     operationData.setName(interfaceOperation.getOperationType());
     operationData.setUniqueId(interfaceOperation.getUniqueId());
     operationData.setInputs(inputs);
+    operationData.setOutputs(outputs);
 
     return operationData;
   }
@@ -53,16 +64,25 @@ public class InterfaceUIDataConverter {
 
     ListDataDefinition<OperationInputDefinition> inputs = operationData.getInputs();
     List<InterfaceOperationParamDataDefinition> inputParamList = inputs.getListToscaDataDefinition().stream()
-            .map(a -> new InterfaceOperationParamDataDefinition(a.getName(), a.getInputId())).collect(
+            .map(operationInputDefinition -> new InterfaceOperationParamDataDefinition(operationInputDefinition.getName(),
+                    operationInputDefinition.getInputId())).collect(
             Collectors.toList());
     ListDataDefinition<InterfaceOperationParamDataDefinition> inputParams = new ListDataDefinition<>();
     inputParamList.forEach(inputParams::add);
+
+    ListDataDefinition<OperationOutputDefinition> outputs = operationData.getOutputs();
+    List<InterfaceOperationParamDataDefinition> outputParamList = outputs.getListToscaDataDefinition()
+            .stream().map(operationOutputDefinition -> new InterfaceOperationParamDataDefinition(operationOutputDefinition.getName(),
+                    operationOutputDefinition.getInputId())).collect(Collectors.toList());
+    ListDataDefinition<InterfaceOperationParamDataDefinition> outputParams = new ListDataDefinition<>();
+    outputParamList.forEach(outputParams::add);
 
     InterfaceOperationDataDefinition interfaceOperationDataDefinition = new InterfaceOperationDataDefinition();
     interfaceOperationDataDefinition.setUniqueId(operationData.getUniqueId());
     interfaceOperationDataDefinition.setOperationType(operationData.getName());
     interfaceOperationDataDefinition.setDescription(operationData.getDescription());
     interfaceOperationDataDefinition.setInputParams(inputParams);
+    interfaceOperationDataDefinition.setOutputParams(outputParams);
     interfaceOperationDataDefinition.setArtifactUUID(operationData.getImplementation().getArtifactUUID());
 
     return interfaceOperationDataDefinition;
