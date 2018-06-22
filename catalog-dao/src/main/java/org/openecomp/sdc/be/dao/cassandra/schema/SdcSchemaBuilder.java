@@ -20,40 +20,35 @@
 
 package org.openecomp.sdc.be.dao.cassandra.schema;
 
-		import java.util.ArrayList;
-		import java.util.HashMap;
-		import java.util.List;
-		import java.util.Map;
-		import java.util.Optional;
-		import java.util.stream.Collectors;
+import com.datastax.driver.core.AbstractTableMetadata;
+import com.datastax.driver.core.Cluster;
+import com.datastax.driver.core.DataType;
+import com.datastax.driver.core.IndexMetadata;
+import com.datastax.driver.core.KeyspaceMetadata;
+import com.datastax.driver.core.Session;
+import com.datastax.driver.core.schemabuilder.Alter;
+import com.datastax.driver.core.schemabuilder.Create;
+import com.datastax.driver.core.schemabuilder.SchemaBuilder;
+import com.datastax.driver.core.schemabuilder.SchemaStatement;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.openecomp.sdc.be.config.Configuration;
+import org.openecomp.sdc.be.config.ConfigurationManager;
+import org.openecomp.sdc.be.dao.cassandra.schema.tables.OldExternalApiEventTableDesc;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-		import org.apache.commons.lang3.tuple.ImmutablePair;
-		import org.openecomp.sdc.be.config.Configuration;
-		import org.openecomp.sdc.be.config.ConfigurationManager;
-		import org.openecomp.sdc.be.dao.cassandra.schema.tables.OldExternalApiEventTableDesc;
-		import org.openecomp.sdc.be.resources.data.auditing.AuditingTypesConstants;
-		import org.slf4j.Logger;
-		import org.slf4j.LoggerFactory;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
-		import com.datastax.driver.core.Cluster;
-		import com.datastax.driver.core.DataType;
-		import com.datastax.driver.core.KeyspaceMetadata;
-		import com.datastax.driver.core.Session;
-		import com.datastax.driver.core.schemabuilder.Alter;
-		import com.datastax.driver.core.schemabuilder.Create;
-		import com.datastax.driver.core.schemabuilder.SchemaBuilder;
-		import com.datastax.driver.core.schemabuilder.SchemaStatement;
-		import com.google.common.annotations.VisibleForTesting;
 public class SdcSchemaBuilder {
 
-	/**
-	 * creat key space statment for SimpleStrategy
-	 */
-	final static String CREATE_KEYSPACE_SIMPLE_STRATEGY = "CREATE KEYSPACE IF NOT EXISTS %s WITH replication = {'class':'SimpleStrategy', %s};";
-	/**
-	 * creat key space statment for NetworkTopologyStrategy
-	 */
-	final static String CREATE_KEYSPACE_NETWORK_TOPOLOGY_STRATEGY = "CREATE KEYSPACE IF NOT EXISTS %s WITH replication = {'class':'NetworkTopologyStrategy', %s};";
+	private static final String CREATE_KEYSPACE_SIMPLE_STRATEGY = "CREATE KEYSPACE IF NOT EXISTS %s WITH replication = {'class':'SimpleStrategy', %s};";
+
+	private static final String CREATE_KEYSPACE_NETWORK_TOPOLOGY_STRATEGY = "CREATE KEYSPACE IF NOT EXISTS %s WITH replication = {'class':'NetworkTopologyStrategy', %s};";
 
 	private static Logger log = LoggerFactory.getLogger(SdcSchemaBuilder.class.getName());
 
@@ -94,12 +89,12 @@ public class SdcSchemaBuilder {
 			//TODO remove after 1707_OS migration
 			handle1707OSMigration(cassndraMetadata, schemeData);
 			log.info("creating Keyspaces.");
-			for (String keyspace : schemeData.keySet()) {
-				if (!createKeyspace(keyspace, cassndraMetadata, session)) {
+			for (Map.Entry<String, List<ITableDescription>> keyspace : schemeData.entrySet()) {
+				if (!createKeyspace(keyspace.getKey(), cassndraMetadata, session)) {
 					return false;
 				}
-				Map<String, List<String>> keyspaceMetadate = cassndraMetadata.get(keyspace);
-				createTables(schemeData.get(keyspace), keyspaceMetadate, session,metadataTablesStructure.get(keyspace));
+				Map<String, List<String>> keyspaceMetadate = cassndraMetadata.get(keyspace.getKey());
+				createTables(keyspace.getValue(), keyspaceMetadate, session,metadataTablesStructure.get(keyspace.getKey()));
 			}
 			return true;
 		} catch (Exception e) {
@@ -134,17 +129,7 @@ public class SdcSchemaBuilder {
 			}
 			log.debug("retrived Cassndra metadata.");
 			Map<String, Map<String, List<String>>> cassndraMetadata = parseKeyspaceMetadata(keyspacesMetadateFromCassandra);
-			cassndraMetadata.forEach((k, v) -> {
-				if (AuditingTypesConstants.TITAN_KEYSPACE.equals(k)) {
-					// session.execute("")
-				} else if (AuditingTypesConstants.ARTIFACT_KEYSPACE.equals(k)) {
-
-				} else if (AuditingTypesConstants.AUDIT_KEYSPACE.equals(k)) {
-
-				}
-			});
-
-			System.out.println(cassndraMetadata);
+			log.info("Cassandra Metadata: {}" ,cassndraMetadata);
 			return true;
 		} catch (Exception e) {
 			log.info("deleteSchema failed with exception.", e);
@@ -174,25 +159,24 @@ public class SdcSchemaBuilder {
 	 * @return a map of maps of lists holding parsed info
 	 */
 	private static Map<String, Map<String, List<String>>> parseKeyspaceMetadata(List<KeyspaceMetadata> keyspacesMetadata) {
-		Map<String, Map<String, List<String>>> cassndraMetadata = keyspacesMetadata.stream()
-				.collect(Collectors.toMap(keyspaceMetadata -> keyspaceMetadata.getName(),
-						keyspaceMetadata -> keyspaceMetadata.getTables().stream()
-								.collect(Collectors.toMap(tableMetadata -> tableMetadata.getName(),
-										tableMetadata -> tableMetadata.getIndexes().stream()
-												.map(indexMetadata -> indexMetadata.getName())
-												.collect(Collectors.toList())))));
-		return cassndraMetadata;
+		return keyspacesMetadata.stream()
+				.collect(Collectors.toMap(KeyspaceMetadata::getName, keyspaceMetadata -> keyspaceMetadata.getTables()
+						.stream()
+						.collect(Collectors.toMap(AbstractTableMetadata::getName, tableMetadata -> tableMetadata.getIndexes()
+								.stream()
+								.map(IndexMetadata::getName)
+								.collect(Collectors.toList())))));
 	}
 
 	private static Map<String, Map<String, List<String>>> getMetadataTablesStructure(
 			List<KeyspaceMetadata> keyspacesMetadata) {
-		return keyspacesMetadata.stream().collect(
-				Collectors.toMap(keyspaceMetadata -> keyspaceMetadata.getName(),
-						keyspaceMetadata -> keyspaceMetadata.getTables().stream().collect(
-								Collectors.toMap(tableMetadata -> tableMetadata.getName(),
-										tableMetadata -> tableMetadata.getColumns().stream().map(
-												columnMetadata -> columnMetadata.getName().toLowerCase()).collect(
-												Collectors.toList())))));
+		return keyspacesMetadata.stream()
+				.collect(Collectors.toMap(KeyspaceMetadata::getName, keyspaceMetadata -> keyspaceMetadata.getTables()
+						.stream()
+						.collect(Collectors.toMap(AbstractTableMetadata::getName, tableMetadata -> tableMetadata.getColumns()
+								.stream()
+								.map(columnMetadata -> columnMetadata.getName().toLowerCase())
+								.collect(Collectors.toList())))));
 	}
 
 	/**
@@ -205,7 +189,7 @@ public class SdcSchemaBuilder {
 	 * @return string name of the index
 	 */
 	private static String createIndexName(String table, String column) {
-		return new StringBuilder().append(table).append("_").append(column).append("_idx").toString();
+		return table + "_" + column + "_idx";
 	}
 
 	/**
@@ -218,8 +202,8 @@ public class SdcSchemaBuilder {
 	 *			the current tables columns that exist in the cassandra under this
 	 *            keyspace
 	 */
-	private static void createTables(List<ITableDescription> iTableDescriptions, Map<String, List<String>> keyspaceMetadate, Session session,
-									 Map<String, List<String>> existingTablesMetadata) {
+	private static void createTables(List<ITableDescription> iTableDescriptions, Map<String, List<String>> keyspaceMetadate, Session session, 
+			Map<String, List<String>> existingTablesMetadata) {
 		for (ITableDescription tableDescription : iTableDescriptions) {
 			String tableName = tableDescription.getTableName().toLowerCase();
 			Map<String, ImmutablePair<DataType, Boolean>> columnDescription = tableDescription.getColumnDescription();
@@ -235,10 +219,11 @@ public class SdcSchemaBuilder {
 					}
 				}
 
-				for (String columnName : columnDescription.keySet()) {
-					create.addColumn(columnName, columnDescription.get(columnName).getLeft());
+				for (Map.Entry<String, ImmutablePair<DataType, Boolean>> entry : columnDescription.entrySet()) {
+					create.addColumn(entry.getKey(), entry.getValue().getLeft());
 				}
-				log.trace("exacuting :{}", create.toString());
+
+				log.trace("exacuting :{}", create);
 				session.execute(create);
 				log.info("table:{} created succsesfully.", tableName);
 			} else {
@@ -248,13 +233,13 @@ public class SdcSchemaBuilder {
 			log.info("keyspacemetdata{}",keyspaceMetadate);
 			List<String> indexNames = (keyspaceMetadate != null && keyspaceMetadate.get(tableName) != null ? keyspaceMetadate.get(tableName) : new ArrayList<>());
 			log.info("table:{} creating indexes.", tableName);
-			for (String columnName : columnDescription.keySet()) {
-				String indexName = createIndexName(tableName, columnName).toLowerCase();
-				if (columnDescription.get(columnName).getRight()) {
+			for (Map.Entry<String, ImmutablePair<DataType, Boolean>> description : columnDescription.entrySet()) {
+				String indexName = createIndexName(tableName, description.getKey()).toLowerCase();
+				if (description.getValue().getRight()) {
 					if (!indexNames.contains(indexName)) {
 						SchemaStatement creatIndex = SchemaBuilder.createIndex(indexName)
-								.onTable(tableDescription.getKeyspace(), tableName).andColumn(columnName);
-						log.info("executing :{}", creatIndex.toString());
+								.onTable(tableDescription.getKeyspace(), tableName).andColumn(description.getKey());
+						log.info("executing :{}", creatIndex);
 						session.execute(creatIndex);
 						log.info("index:{} created succsesfully.", indexName);
 					} else {
@@ -262,6 +247,7 @@ public class SdcSchemaBuilder {
 					}
 				}
 			}
+
 
 		}
 	}
@@ -285,8 +271,8 @@ public class SdcSchemaBuilder {
 				log.info("Adding new column {} to the table {}", columnName,tableName);
 				Alter alter = SchemaBuilder.alterTable(tableDescription.getKeyspace(),tableDescription.getTableName());
 				SchemaStatement addColumn = alter.addColumn(columnName).type(column.getValue().getLeft());
-				log.trace("exacuting :{}", addColumn.toString());
-				session.execute(addColumn);
+				log.trace("exacuting :{}", addColumn);
+				session.execute(addColumn);						
 			}
 		}
 	}
@@ -304,28 +290,30 @@ public class SdcSchemaBuilder {
 		List<Configuration.CassandrConfig.KeyspaceConfig> keyspaceConfigList = ConfigurationManager.getConfigurationManager().getConfiguration().getCassandraConfig().getKeySpaces();
 		log.info("creating keyspace:{}.", keyspace);
 		if (!cassndraMetadata.keySet().contains(keyspace)) {
-			Optional<Configuration.CassandrConfig.KeyspaceConfig> keyspaceConfig = keyspaceConfigList.stream().filter(keyspaceInfo -> keyspace.equalsIgnoreCase(keyspaceInfo.getName())).findFirst();
-			if (keyspaceConfig.isPresent()) {
-				Configuration.CassandrConfig.KeyspaceConfig keyspaceInfo = keyspaceConfig.get();
-				String createKeyspaceQuery = createKeyspaceQuereyString(keyspace, keyspaceInfo);
-				if (createKeyspaceQuery != null) {
-					log.trace("exacuting: {}", createKeyspaceQuery);
-					session.execute(createKeyspaceQuery);
-					log.info("keyspace:{} created.", keyspace);
-					return true;
-				} else {
-					return false;
-				}
-			} else {
-				log.info(
-						"keyspace:{} not present in configuration, no info on replications is available. operation failed.",
-						keyspace);
-				return false;
-			}
-		} else {
-			log.info("keyspace:{} already exists skipping.", keyspace);
+			return createKeyspaceIfNotExists(keyspace, session, keyspaceConfigList);
+		}
+		log.info("keyspace:{} already exists skipping.", keyspace);
+		return true;
+	}
+
+	private static boolean createKeyspaceIfNotExists(String keyspace, Session session, List<Configuration.CassandrConfig.KeyspaceConfig> keyspaceConfigList) {
+		Optional<Configuration.CassandrConfig.KeyspaceConfig> keyspaceConfig = keyspaceConfigList.stream().filter(keyspaceInfo -> keyspace.equalsIgnoreCase(keyspaceInfo.getName())).findFirst();
+		if (keyspaceConfig.isPresent()) {
+			return createKeyspaceWhenConfigExists(keyspace, session, keyspaceConfig.get());
+		}
+		log.info("keyspace:{} not present in configuration, no info on replications is available. operation failed.", keyspace);
+		return false;
+	}
+
+	private static boolean createKeyspaceWhenConfigExists(String keyspace, Session session, Configuration.CassandrConfig.KeyspaceConfig keyspaceConfig) {
+		String createKeyspaceQuery = createKeyspaceQuereyString(keyspace, keyspaceConfig);
+		if (createKeyspaceQuery != null) {
+			log.trace("exacuting: {}", createKeyspaceQuery);
+			session.execute(createKeyspaceQuery);
+			log.info("keyspace:{} created.", keyspace);
 			return true;
 		}
+		return false;
 	}
 
 	/**
@@ -334,7 +322,7 @@ public class SdcSchemaBuilder {
 	 * @return a map of keyspaces to there table info
 	 */
 	private static Map<String, List<ITableDescription>> getSchemeData() {
-		Map<String, List<ITableDescription>> tablesByKeyspace = new HashMap<String, List<ITableDescription>>();
+		Map<String, List<ITableDescription>> tablesByKeyspace = new HashMap<>();
 		Table[] tables = Table.values();
 		for (Table table : tables) {
 			String keyspace = table.getTableDescription().getKeyspace().toLowerCase();
@@ -365,12 +353,25 @@ public class SdcSchemaBuilder {
 	 */
 	private static String createKeyspaceQuereyString(String keyspace, Configuration.CassandrConfig.KeyspaceConfig keyspaceInfo) {
 		String query = null;
-		if (ReplicationStrategy.NETWORK_TOPOLOGY_STRATEGY.getName().equalsIgnoreCase(keyspaceInfo.getReplicationStrategy())) {
-			List<String> dcList = keyspaceInfo.getReplicationInfo();
-			if (dcList.size() % 2 != 0) {
-				log.error("the supplied replication info is in valid expected dc1,2,dc2,2 etc received:{}", dcList);
-				return query;
-			}
+		if (ReplicationStrategy.NETWORK_TOPOLOGY_STRATEGY.getStrategyName().equalsIgnoreCase(keyspaceInfo.getReplicationStrategy())) {
+			query = createNetworkTopologyStrategy(keyspaceInfo, keyspace);
+		} else if (ReplicationStrategy.SIMPLE_STRATEGY.getStrategyName().equalsIgnoreCase(keyspaceInfo.getReplicationStrategy())) {
+			query = createSimpleStrategyQuery(keyspaceInfo, keyspace);
+		} else {
+			log.error("the suplied replication Strategy  is in valide expacted {}/{} etc recived:{}",
+					ReplicationStrategy.NETWORK_TOPOLOGY_STRATEGY.getStrategyName(),
+					ReplicationStrategy.SIMPLE_STRATEGY.getStrategyName(), keyspaceInfo.getReplicationStrategy());
+		}
+		return query;
+	}
+
+	private static String createNetworkTopologyStrategy(Configuration.CassandrConfig.KeyspaceConfig keyspaceInfo, String keyspace) {
+		String query = null;
+		List<String> dcList = keyspaceInfo.getReplicationInfo();
+		if (dcList.size() % 2 != 0) {
+			log.error("the supplied replication info is in valid expected dc1,2,dc2,2 etc received:{}", dcList);
+
+		} else {
 			StringBuilder sb = new StringBuilder();
 			for (int i = 0; i < dcList.size(); i = i + 2) {
 				sb.append("'").append(dcList.get(i)).append("'").append(" : ").append(dcList.get(i + 1));
@@ -378,37 +379,36 @@ public class SdcSchemaBuilder {
 					sb.append(",");
 				}
 			}
-
 			query = String.format(CREATE_KEYSPACE_NETWORK_TOPOLOGY_STRATEGY, keyspace, sb.toString());
-		} else if (ReplicationStrategy.SIMPLE_STRATEGY.getName().equalsIgnoreCase(keyspaceInfo.getReplicationStrategy())) {
-			List<String> dcList = keyspaceInfo.getReplicationInfo();
-			if (dcList.size() != 1) {
-				log.error("the supplied replication info is in valid expected <number> etc received:{}", dcList);
-				return query;
-			}
-			StringBuilder sb = new StringBuilder();
-			sb.append("'replication_factor'").append(" : ").append(dcList.get(0));
-			query = String.format(CREATE_KEYSPACE_SIMPLE_STRATEGY, keyspace, sb.toString());
+		}
+
+		return query;
+	}
+	private static String createSimpleStrategyQuery(Configuration.CassandrConfig.KeyspaceConfig keyspaceInfo, String keyspace) {
+		String query = null;
+		List<String> dcList = keyspaceInfo.getReplicationInfo();
+		if (dcList.size() != 1) {
+			log.error("the supplied replication info is in valid expected <number> etc received:{}", dcList);
 
 		} else {
-			log.error("the suplied replication Strategy  is in valide expacted {}/{} etc recived:{}",
-					ReplicationStrategy.NETWORK_TOPOLOGY_STRATEGY.getName(),
-					ReplicationStrategy.SIMPLE_STRATEGY.getName(), keyspaceInfo.getReplicationStrategy());
+			query = String.format(CREATE_KEYSPACE_SIMPLE_STRATEGY, keyspace, "'replication_factor'" + " : " + dcList.get(0));
 		}
 		return query;
 	}
 
+
+
 	public enum ReplicationStrategy {
 		NETWORK_TOPOLOGY_STRATEGY("NetworkTopologyStrategy"), SIMPLE_STRATEGY("SimpleStrategy");
 
-		private String name;
+		private String strategyName;
 
-		ReplicationStrategy(String name) {
-			this.name = name;
+		ReplicationStrategy(String strategyName) {
+			this.strategyName = strategyName;
 		}
 
-		public String getName() {
-			return name;
+		public String getStrategyName() {
+			return strategyName;
 		}
 	}
 }

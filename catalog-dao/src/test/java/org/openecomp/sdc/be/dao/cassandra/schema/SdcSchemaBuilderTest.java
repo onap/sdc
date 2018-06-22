@@ -120,7 +120,7 @@ public class SdcSchemaBuilderTest extends DAOConfDependentTest{
 		// default test
 		result = Deencapsulation.invoke(SdcSchemaBuilder.class, "createKeyspaceQuereyString", keyspace, keyspaceInfo);
 		
-		keyspaceInfo.setReplicationStrategy(ReplicationStrategy.NETWORK_TOPOLOGY_STRATEGY.getName());
+		keyspaceInfo.setReplicationStrategy(ReplicationStrategy.NETWORK_TOPOLOGY_STRATEGY.getStrategyName());
 		LinkedList<String> replicationInfo = new LinkedList<>();
 		keyspaceInfo.setReplicationInfo(replicationInfo);
 		//Test1
@@ -131,7 +131,7 @@ public class SdcSchemaBuilderTest extends DAOConfDependentTest{
 		result = Deencapsulation.invoke(SdcSchemaBuilder.class, "createKeyspaceQuereyString", keyspace, keyspaceInfo);
 		
 		//Test2
-		keyspaceInfo.setReplicationStrategy(ReplicationStrategy.SIMPLE_STRATEGY.getName());
+		keyspaceInfo.setReplicationStrategy(ReplicationStrategy.SIMPLE_STRATEGY.getStrategyName());
 		result = Deencapsulation.invoke(SdcSchemaBuilder.class, "createKeyspaceQuereyString", keyspace, keyspaceInfo);
 	}
 }
