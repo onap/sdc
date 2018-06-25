@@ -1,21 +1,17 @@
-/*-
- * ============LICENSE_START=======================================================
- * SDC
- * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
- * ================================================================================
+/*
+ * Copyright © 2016-2018 European Support Limited
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * ============LICENSE_END=========================================================
  */
 
 package org.openecomp.sdcrests.errors;
@@ -54,7 +50,7 @@ public class DefaultExceptionMapper implements ExceptionMapper<Exception> {
           FileUtils.readViaInputStream(ERROR_CODES_TO_RESPONSE_STATUS_MAPPING_FILE,
               stream -> JsonUtil.json2Object(stream, Map.class));
 
-  private static final Logger LOGGER = (Logger) LoggerFactory.getLogger(DefaultExceptionMapper
+  private static final Logger LOGGER = LoggerFactory.getLogger(DefaultExceptionMapper
       .class);
 
   @Override
@@ -147,11 +143,11 @@ public class DefaultExceptionMapper implements ExceptionMapper<Exception> {
   }
 
   private Response transform(Exception exception) {
-    ErrorCode generalErrorCode = new GeneralErrorBuilder(exception.getMessage()).build();
-    LOGGER.error(generalErrorCode.message(), exception);
+    ErrorCode errorCode = new GeneralErrorBuilder().build();
+    LOGGER.error(errorCode.message(), exception);
     return Response
         .status(Response.Status.INTERNAL_SERVER_ERROR)
-        .entity(toEntity(Response.Status.INTERNAL_SERVER_ERROR, generalErrorCode))
+        .entity(toEntity(Response.Status.INTERNAL_SERVER_ERROR, errorCode))
         .build();
   }
 

@@ -42,7 +42,7 @@ public class VersionCassandraLoader {
     private static VersionAccessor accessor = noSqlDb.getMappingManager().createAccessor(VersionAccessor.class);
 
     public void insertElementToVersion(ElementEntity elementEntity) {
-        accessor.addElements(Sets.newHashSet(elementEntity.getElement_id()), elementEntity.getSpace(), elementEntity.getItemId(), elementEntity.getVersionId());
+        accessor.addElements(Sets.newHashSet(elementEntity.getElementId()), elementEntity.getSpace(), elementEntity.getItemId(), elementEntity.getVersionId());
     }
 
     public void insertVersion(VersionEntity versionEntity) {

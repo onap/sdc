@@ -75,10 +75,6 @@ public class OrchestrationTemplateProcessCsarHandler
       } catch (CoreException e) {
         LOGGER.error(e.getMessage());
         response.addErrorMessageToMap(e.code().id(), e.code().message(),ErrorLevel.ERROR);
-      } catch (IOException ioe) {
-        LOGGER.error(ioe.getMessage());
-        ErrorCode errorCode = new GeneralErrorBuilder(ioe.getMessage()).build();
-        response.addErrorMessageToMap(errorCode.id(), errorCode.message(),ErrorLevel.ERROR);
       }
     } else {
       if (!uploadFileResponse.getErrors().isEmpty()) {
@@ -91,7 +87,7 @@ public class OrchestrationTemplateProcessCsarHandler
   private void processCsar(VspDetails vspDetails,
                            FileContentHandler fileContentHandler,
                            OrchestrationTemplateCandidateData candidateData,
-                           OrchestrationTemplateActionResponse response) throws IOException {
+                           OrchestrationTemplateActionResponse response) {
     response.setFileNames(new ArrayList<>(fileContentHandler.getFileList()));
     Map<String, List<ErrorMessage>> errors = validateCsar(fileContentHandler);
     toscaTreeManager.createTree();
