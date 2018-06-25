@@ -12,5 +12,5 @@ Here are some links to our administration pages found in the ONAP Services websi
 
 - `SDC Jira <https://jira.onap.org/projects/SDC/issues/>`_
 - `SDC Jenkins <https://jenkins.onap.org/view/sdc/>`_
-- `SDC Confluence Portal <https://wiki.onap.org/display/DW/Service+Design+and+Creation+%28SDC%29+Portal+WORK+IN+PROGRESS>`_
+- `SDC Confluence Portal <https://wiki.onap.org/display/DW/Service+Design+and+Creation+%28SDC%29+Portal>`_
 
