@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_e5a613ab",
+        "filename": "openecomp-be/tools/zusammen-tools/src/main/java/org/openecomp/core/tools/commands/DeletePublicVersionCommand.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-06-25T13:22:30Z",
+      "side": 1,
+      "message": "log the exception and the explenation",
+      "range": {
+        "startLine": 21,
+        "startChar": 12,
+        "endLine": 21,
+        "endChar": 56
+      },
+      "revId": "1ec8c77c411b487f15c8502feb0d47aadac8ca6c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_85b5cfd1",
+        "filename": "openecomp-be/tools/zusammen-tools/src/main/java/org/openecomp/core/tools/main/ZusammenMainTool.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-06-25T13:22:30Z",
+      "side": 1,
+      "message": "this is a perfect candidate to refactor this code and use the Command design pattern",
+      "range": {
+        "startLine": 55,
+        "startChar": 4,
+        "endLine": 79,
+        "endChar": 14
+      },
+      "revId": "1ec8c77c411b487f15c8502feb0d47aadac8ca6c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
