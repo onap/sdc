@@ -14,7 +14,7 @@ public class ElementNamespaceHandler {
     private static  ElementNamespaceAccessor accessor = nnoSqlDb.getMappingManager().createAccessor(ElementNamespaceAccessor.class);
 
     public void createElementNamespace(ElementEntity elementEntity) {
-         accessor.create(elementEntity.getSpace(),elementEntity.getItemId(),elementEntity.getElement_id(),elementEntity.getNamespace());
+         accessor.create(elementEntity.getSpace(),elementEntity.getItemId(),elementEntity.getElementId(),elementEntity.getNamespace());
     }
 
     @Accessor
