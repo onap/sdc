@@ -1,6 +1,12 @@
 package org.openecomp.core.tools.main;
 
+import static org.openecomp.core.tools.util.Utils.printMessage;
+
+import java.time.Duration;
+import java.time.Instant;
 import org.openecomp.core.tools.commands.AddContributorCommand;
+import org.openecomp.core.tools.commands.CleanUserDataCommand;
+import org.openecomp.core.tools.commands.DeletePublicVersionCommand;
 import org.openecomp.core.tools.commands.HealAll;
 import org.openecomp.core.tools.commands.PopulateUserPermissions;
 import org.openecomp.core.tools.commands.SetHealingFlag;
@@ -10,11 +16,6 @@ import org.openecomp.core.tools.util.ToolsUtil;
 import org.openecomp.sdc.common.session.SessionContextProviderFactory;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
-
-import java.time.Duration;
-import java.time.Instant;
-
-import static org.openecomp.core.tools.util.Utils.printMessage;
 
 public class ZusammenMainTool {
 
@@ -41,6 +42,10 @@ public class ZusammenMainTool {
       printMessage(logger,
           "add users as contributors: -c ADD_CONTRIBUTOR [-p {item id list file path}] -u {user " +
               "list file path}");
+      printMessage(logger,
+              "clean user data: -c CLEAN_USER_DATA -i {item id} -u {user}");
+      printMessage(logger,
+              "delete public version: -c DELETE_PUBLIC_VERSION -i {item id} -v {version_id}");
       System.exit(-1);
     }
     Instant startTime = Instant.now();
@@ -65,6 +70,13 @@ public class ZusammenMainTool {
         break;
       case ADD_CONTRIBUTOR:
         AddContributorCommand.add(ToolsUtil.getParam("p", args), ToolsUtil.getParam("u", args));
+        break;
+      case CLEAN_USER_DATA:
+        CleanUserDataCommand.execute(ToolsUtil.getParam("i", args), ToolsUtil.getParam("u", args));
+        break;
+      case DELETE_PUBLIC_VERSION:
+        DeletePublicVersionCommand.execute(ToolsUtil.getParam("i", args), ToolsUtil.getParam("v", args));
+        break;
 
     }
 
@@ -98,6 +110,8 @@ public class ZusammenMainTool {
     IMPORT,
     HEAL_ALL,
     POPULATE_USER_PERMISSIONS,
-    ADD_CONTRIBUTOR
+    ADD_CONTRIBUTOR,
+    CLEAN_USER_DATA,
+    DELETE_PUBLIC_VERSION
   }
 }

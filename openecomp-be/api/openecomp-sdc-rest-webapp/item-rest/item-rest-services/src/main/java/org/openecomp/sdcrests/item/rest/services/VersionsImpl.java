@@ -167,7 +167,11 @@ public class VersionsImpl implements Versions {
         break;
       case Reset:
         throw new UnsupportedOperationException("Action reset not supported.");
+      case Clean:
+        versioningManager.clean(itemId, version);
+        break;
       default:
+        throw new UnsupportedOperationException(String.format("Action %s not supported.", request.getAction()));
     }
     return Response.ok().build();
   }

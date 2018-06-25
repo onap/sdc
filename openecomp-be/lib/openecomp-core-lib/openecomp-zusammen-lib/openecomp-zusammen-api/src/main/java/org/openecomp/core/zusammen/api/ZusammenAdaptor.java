@@ -62,6 +62,8 @@ public interface ZusammenAdaptor {
 
   void forceSyncVersion(SessionContext context, Id itemId, Id versionId);
 
+  void cleanVersion(SessionContext context, Id itemId, Id versionId);
+
   Optional<ElementInfo> getElementInfo(SessionContext context, ElementContext elementContext,
                                        Id elementId);
 
