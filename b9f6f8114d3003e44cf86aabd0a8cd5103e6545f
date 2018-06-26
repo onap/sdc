@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_c01e65bb",
+        "filename": "openecomp-be/tools/zusammen-tools/src/main/java/org/openecomp/core/tools/itemvalidation/ItemValidation.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-06-26T08:10:18Z",
+      "side": 1,
+      "message": "use List , not LinkedList",
+      "revId": "b9f6f8114d3003e44cf86aabd0a8cd5103e6545f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_e01921d2",
+        "filename": "openecomp-be/tools/zusammen-tools/src/main/java/org/openecomp/core/tools/itemvalidation/ItemValidation.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-06-26T08:10:18Z",
+      "side": 1,
+      "message": "sonar - Strings literals should be placed on the left side when checking for equality",
+      "revId": "b9f6f8114d3003e44cf86aabd0a8cd5103e6545f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_00252d09",
+        "filename": "openecomp-be/tools/zusammen-tools/src/main/java/org/openecomp/core/tools/store/ElementCassandraLoader.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-06-26T08:10:18Z",
+      "side": 1,
+      "message": "sonar - unused import",
+      "revId": "b9f6f8114d3003e44cf86aabd0a8cd5103e6545f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
