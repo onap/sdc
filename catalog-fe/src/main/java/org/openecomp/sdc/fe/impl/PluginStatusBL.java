@@ -75,9 +75,10 @@ public class PluginStatusBL {
 
 		try (CloseableHttpResponse response = this.client.execute(head)) {
 			result = response != null && response.getStatusLine().getStatusCode() == 200;
-			log.debug("The plugin {} is online", plugin.getPluginId());
+			log.debug("The plugin {} is {} with result {}",plugin.getPluginId(),( result ? "online" : "offline" ), result);
 		} catch (IOException e) {
 			log.debug("The plugin {} is offline", plugin.getPluginId());
+                        log.debug("Exception:",e);
 		}
 
 		return result;
