@@ -19,16 +19,12 @@ package org.openecomp.sdc.be.tosca.model;
 import java.util.Map;
 import java.util.Objects;
 
-/**
- * @author KATYR
- * @since March 26, 2018
- */
-
 public class ToscaLifecycleOperationDefinition {
 
     private String description;
     private String implementation;
     private Map<String, ToscaProperty> inputs;
+    private Map<String, ToscaAttribute> outputs;
 
 
     public String getImplementation() {
@@ -47,6 +43,13 @@ public class ToscaLifecycleOperationDefinition {
         this.inputs = inputs;
     }
 
+    public Map<String, ToscaAttribute> getOutputs() {
+        return outputs;
+    }
+
+    public void setOutputs(Map<String, ToscaAttribute> outputs) {
+        this.outputs = outputs;
+    }
 
     @Override
     public boolean equals(Object o) {
@@ -57,13 +60,13 @@ public class ToscaLifecycleOperationDefinition {
             return false;
         }
         ToscaLifecycleOperationDefinition that = (ToscaLifecycleOperationDefinition) o;
-        return Objects.equals(implementation, that.implementation) && Objects.equals(inputs, that.inputs);
+        return Objects.equals(implementation, that.implementation) && Objects.equals(inputs, that.inputs)
+                && Objects.equals(outputs, that.outputs);
     }
 
     @Override
     public int hashCode() {
-
-        return Objects.hash(implementation, inputs);
+        return Objects.hash(implementation, inputs, outputs);
     }
 
     public String getDescription() {
