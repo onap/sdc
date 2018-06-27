@@ -186,25 +186,32 @@ public class ComponentInstanceBusinessLogicTest {
 	}
 
 	@Test
-	public void testDeleteForwardingPathsWhenComponentinstanceDeleted() {
+	public void testDeleteForwardingPathsWhenComponentinstanceDeleted(){
 
 		ComponentTypeEnum containerComponentType = ComponentTypeEnum.findByParamName("services");
 		String containerComponentID = "Service-comp";
 		String componentInstanceID = "NodeA1";
 		Service component = new Service();
+		component.setComponentInstances(Arrays.asList(createComponentIstance("NodeA2"),createComponentIstance("NodeB2"),
+				createComponentIstance(componentInstanceID)));
 
-		component.addForwardingPath(createPath("path1", "NodeA1", "NodeB1", "1"));
-		component.addForwardingPath(createPath("Path2", "NodeA2", "NodeB2", "2"));
-		when(toscaOperationFacade.getToscaElement(eq(containerComponentID), any(ComponentParametersView.class)))
-				.thenReturn(Either.left(component));
+		component.addForwardingPath(createPath("path1", componentInstanceID, "NodeB1",  "1"));
+		component.addForwardingPath(createPath("Path2", "NodeA2","NodeB2", "2"));
+		when(toscaOperationFacade.getToscaElement(eq(containerComponentID),any(ComponentParametersView.class))).thenReturn(Either.left(component));
 		when(toscaOperationFacade.getToscaElement(eq(containerComponentID))).thenReturn(Either.left(component));
-		when(forwardingPathOperation.deleteForwardingPath(any(Service.class), anySet()))
-				.thenReturn(Either.left(new HashSet<>()));
-		Either<ComponentInstance, ResponseFormat> responseFormatEither = componentInstanceBusinessLogic
-				.deleteForwardingPathsRelatedTobeDeletedComponentInstance(containerComponentID, componentInstanceID,
-						containerComponentType, Either.left(new ComponentInstance()));
+		when(forwardingPathOperation.deleteForwardingPath(any(Service.class), anySet())).thenReturn(Either.left(new HashSet<>()));
+		final ComponentInstance ci = new ComponentInstance();
+		ci.setName(componentInstanceID);
+		Either<ComponentInstance, ResponseFormat> responseFormatEither = componentInstanceBusinessLogic.deleteForwardingPathsRelatedTobeDeletedComponentInstance(
+				containerComponentID, containerComponentType, Either.left(ci));
 		Assert.assertTrue(responseFormatEither.isLeft());
 
+	}
+
+	private ComponentInstance createComponentIstance(String path1) {
+		ComponentInstance componentInstance = new ComponentInstance();
+		componentInstance.setName(path1);
+		return componentInstance;
 	}
 
 	@Test
@@ -223,7 +230,7 @@ public class ComponentInstanceBusinessLogicTest {
 		when(forwardingPathOperation.deleteForwardingPath(any(Service.class), anySet()))
 				.thenReturn(Either.left(new HashSet<>()));
 		Either<ComponentInstance, ResponseFormat> responseFormatEither = componentInstanceBusinessLogic
-				.deleteForwardingPathsRelatedTobeDeletedComponentInstance(containerComponentID, componentInstanceID,
+				.deleteForwardingPathsRelatedTobeDeletedComponentInstance(containerComponentID,
 						containerComponentType, Either.right(new ResponseFormat()));
 		Assert.assertTrue(responseFormatEither.isRight());
 
@@ -486,7 +493,7 @@ public class ComponentInstanceBusinessLogicTest {
 		// default test
 		testSubject = createTestSubject();
 		result = testSubject.deleteForwardingPathsRelatedTobeDeletedComponentInstance(containerComponentId,
-				componentInstanceId, containerComponentType, resultOp);
+				 containerComponentType, resultOp);
 	}
 
 	

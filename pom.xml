@@ -84,7 +84,7 @@
 
         <!--TESTING-->
         <mockito.version>2.12.0</mockito.version>
-		<jmockit.version>1.33</jmockit.version>
+        <jmockit.version>1.33</jmockit.version>
         <junit.version>4.12</junit.version>
         <assertj.version>3.8.0</assertj.version>
         <testng.version>6.9.10</testng.version>
@@ -147,13 +147,13 @@
                 <artifactId>mockito-core</artifactId>
                 <version>${mockito.version}</version>
             </dependency>
-            
-			<dependency>
-			<groupId>org.jmockit</groupId>
-				<artifactId>jmockit</artifactId>
-				<version>${jmockit.version}</version>
-			</dependency>
-			
+
+            <dependency>
+                <groupId>org.jmockit</groupId>
+                <artifactId>jmockit</artifactId>
+                <version>${jmockit.version}</version>
+            </dependency>
+
 
             <dependency>
                 <groupId>com.github.tomakehurst</groupId>
