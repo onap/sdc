@@ -16,10 +16,10 @@
 
 package org.openecomp.sdc.logging.api;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNull;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
-import org.testng.annotations.Test;
+import org.junit.Test;
 
 /**
  * Unit-testing metrics builder and structure.
@@ -36,7 +36,7 @@ public class MetricsDataTest {
         final long end = start + 1000;
         final String responseCode = "Metrics-Response-Code";
         final String responseDescription = "Metrics-Response-Description";
-        final String ipAddress = "10.56.20.72";
+        final String ipAddress = "IP72";
         final String targetEntity = "Metrics-Target-Entity";
         final String targetVirtualEntity = "Metrics-Target-Virtual-Entity";
 
@@ -45,22 +45,22 @@ public class MetricsDataTest {
                                       .clientIpAddress(ipAddress).targetEntity(targetEntity)
                                       .targetVirtualEntity(targetVirtualEntity).build();
 
-        assertEquals(data.getClientIpAddress(), ipAddress);
-        assertEquals(data.getEndTime(), end);
-        assertEquals(data.getStartTime(), start);
-        assertEquals(data.getResponseCode(), responseCode);
-        assertEquals(data.getResponseDescription(), responseDescription);
-        assertEquals(data.getStatusCode(), StatusCode.COMPLETE);
-        assertEquals(data.getTargetEntity(), targetEntity);
-        assertEquals(data.getTargetVirtualEntity(), targetVirtualEntity);
+        assertEquals(ipAddress, data.getClientIpAddress());
+        assertEquals(end, data.getEndTime());
+        assertEquals(start, data.getStartTime());
+        assertEquals(responseCode, data.getResponseCode());
+        assertEquals(responseDescription, data.getResponseDescription());
+        assertEquals(StatusCode.COMPLETE, data.getStatusCode());
+        assertEquals(targetEntity, data.getTargetEntity());
+        assertEquals(targetVirtualEntity, data.getTargetVirtualEntity());
 
     }
 
     @Test
     public void allMetricsPropertiesEmptyWhenUnpopulated() {
         MetricsData data = MetricsData.builder().build();
-        assertEquals(data.getStartTime(), 0);
-        assertEquals(data.getEndTime(), 0);
+        assertEquals(0, data.getStartTime());
+        assertEquals(0, data.getEndTime());
         assertNull(data.getClientIpAddress());
         assertNull(data.getResponseCode());
         assertNull(data.getResponseDescription());

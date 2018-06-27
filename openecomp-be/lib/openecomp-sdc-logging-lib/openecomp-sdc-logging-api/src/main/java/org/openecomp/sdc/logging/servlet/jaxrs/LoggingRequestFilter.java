@@ -19,12 +19,10 @@ package org.openecomp.sdc.logging.servlet.jaxrs;
 import static org.openecomp.sdc.logging.LoggingConstants.DEFAULT_PARTNER_NAME_HEADER;
 import static org.openecomp.sdc.logging.LoggingConstants.DEFAULT_REQUEST_ID_HEADER;
 
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
 import java.util.UUID;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
-import javax.ws.rs.container.ResourceInfo;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.ext.Provider;
 import org.openecomp.sdc.logging.api.ContextData;
@@ -66,19 +64,27 @@ public class LoggingRequestFilter implements ContainerRequestFilter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LoggingRequestFilter.class);
 
-    private ResourceInfo resource;
+    private HttpServletRequest httpRequest;
 
     private HttpHeader requestIdHeader = new HttpHeader(DEFAULT_REQUEST_ID_HEADER);
     private HttpHeader partnerNameHeader = new HttpHeader(DEFAULT_PARTNER_NAME_HEADER);
+    private boolean includeHttpMethod = true;
 
     /**
-     * Injection of a resource that matches the request from JAX-RS context.
+     * Injection of HTTP request object from JAX-RS context.
      *
-     * @param resource automatically injected by JAX-RS container
+     * @param httpRequest automatically injected by JAX-RS container
      */
     @Context
-    public void setResource(ResourceInfo resource) {
-        this.resource = resource;
+    public void setHttpRequest(HttpServletRequest httpRequest) {
+        this.httpRequest = httpRequest;
+    }
+
+    /**
+     * Configuration parameter to include the HTTP method of a request in service name.
+     */
+    public void setHttpMethodInServiceName(boolean includeHttpMethod) {
+        this.includeHttpMethod = includeHttpMethod;
     }
 
     /**
@@ -100,21 +106,9 @@ public class LoggingRequestFilter implements ContainerRequestFilter {
     @Override
     public void filter(ContainerRequestContext containerRequestContext) {
 
-        if (resource == null) {
-            // JAX-RS could not find a mapping this response, probably due to HTTP 404 (not found),
-            // 405 (method not allowed), 415 (unsupported media type), etc. with a message in Web server log
-
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("No matching resource was found for URI '{}' and method '{}'",
-                        containerRequestContext.getUriInfo().getPath(), containerRequestContext.getMethod());
-            }
-
-            return;
-        }
+        LoggingContext.clear();
 
         containerRequestContext.setProperty(START_TIME_KEY, System.currentTimeMillis());
-
-        LoggingContext.clear();
 
         ContextData.ContextDataBuilder contextData = ContextData.builder();
         contextData.serviceName(getServiceName());
@@ -131,48 +125,12 @@ public class LoggingRequestFilter implements ContainerRequestFilter {
     }
 
     private String getServiceName() {
-
-        Class<?> resourceClass = resource.getResourceClass();
-        Method resourceMethod = resource.getResourceMethod();
-
-        if (Proxy.isProxyClass(resourceClass)) {
-            LOGGER.debug("Proxy class injected for JAX-RS resource");
-            return getServiceNameFromJavaProxy(resourceClass, resourceMethod);
-        }
-
-        return formatServiceName(resourceClass, resourceMethod);
+        return includeHttpMethod
+                       ? formatServiceName(this.httpRequest.getMethod(), this.httpRequest.getRequestURI())
+                       : this.httpRequest.getRequestURI();
     }
 
-    private String getServiceNameFromJavaProxy(Class<?> proxyType, Method resourceMethod) {
-
-        for (Class<?> interfaceType : proxyType.getInterfaces()) {
-
-            if (isMatchingInterface(interfaceType, resourceMethod)) {
-                return formatServiceName(interfaceType, resourceMethod);
-            }
-        }
-
-        LOGGER.debug("Failed to find method '{}' in interfaces implemented by injected Java proxy", resourceMethod);
-        return formatServiceName(proxyType, resourceMethod);
-    }
-
-    private String formatServiceName(Class<?> resourceClass, Method resourceMethod) {
-        return resourceClass.getName() + "#" + resourceMethod.getName();
-    }
-
-    private boolean isMatchingInterface(Class<?> candidateType, Method requestedMethod) {
-
-        try {
-
-            Method candidate = candidateType.getDeclaredMethod(requestedMethod.getName(),
-                    requestedMethod.getParameterTypes());
-            return candidate != null;
-
-        } catch (NoSuchMethodException ignored) {
-            // ignore and move on to the next
-            LOGGER.debug("Failed to find method '{}' in interface '{}'", requestedMethod, candidateType);
-        }
-
-        return false;
+    static String formatServiceName(String httpMethod, String requestUri) {
+        return httpMethod + " " + requestUri;
     }
 }

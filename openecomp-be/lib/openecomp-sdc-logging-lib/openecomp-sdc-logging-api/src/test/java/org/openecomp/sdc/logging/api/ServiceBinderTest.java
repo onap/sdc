@@ -16,11 +16,13 @@
 
 package org.openecomp.sdc.logging.api;
 
-import org.testng.annotations.Test;
+import static org.junit.Assert.assertFalse;
 
-import static org.testng.Assert.*;
+import org.junit.Test;
 
 /**
+ * Test default service binding.
+ *
  * @author EVITALIY
  * @since 08 Jan 18
  */

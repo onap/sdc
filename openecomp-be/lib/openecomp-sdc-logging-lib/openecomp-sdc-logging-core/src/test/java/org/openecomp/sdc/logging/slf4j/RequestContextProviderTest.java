@@ -16,13 +16,15 @@
 
 package org.openecomp.sdc.logging.slf4j;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNull;
-import static org.testng.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
-import java.util.HashMap;
+import java.util.Collections;
+import java.util.EnumMap;
+import java.util.Map;
+import org.junit.Test;
 import org.openecomp.sdc.logging.api.ContextData;
-import org.testng.annotations.Test;
 
 /**
  * Unit-test retrieving values from client-provided request data.
@@ -43,7 +45,7 @@ public class RequestContextProviderTest {
         final String service = "supplied-service-name";
         RequestContextProvider provider =
                 RequestContextProvider.from(ContextData.builder().serviceName(service).build());
-        assertEquals(provider.values().get(ContextField.SERVICE_NAME), service);
+        assertEquals(service, provider.values().get(ContextField.SERVICE_NAME));
     }
 
     @Test
@@ -51,7 +53,7 @@ public class RequestContextProviderTest {
         final String partner = "supplied-partner-name";
         RequestContextProvider provider =
                 RequestContextProvider.from(ContextData.builder().partnerName(partner).build());
-        assertEquals(provider.values().get(ContextField.PARTNER_NAME), partner);
+        assertEquals(partner, provider.values().get(ContextField.PARTNER_NAME));
     }
 
     @Test
@@ -59,12 +61,12 @@ public class RequestContextProviderTest {
         final String request = "supplied-request-id";
         RequestContextProvider provider =
                 RequestContextProvider.from(ContextData.builder().requestId(request).build());
-        assertEquals(provider.values().get(ContextField.REQUEST_ID), request);
+        assertEquals(request, provider.values().get(ContextField.REQUEST_ID));
     }
 
     @Test
     public void dataEmptyWhenValuesEmpty() {
-        ContextData data = RequestContextProvider.to(new HashMap<>());
+        ContextData data = RequestContextProvider.to(Collections.emptyMap());
         assertNull(data.getPartnerName());
         assertNull(data.getRequestId());
         assertNull(data.getServiceName());
@@ -73,7 +75,7 @@ public class RequestContextProviderTest {
     @Test
     public void serviceNameInDataWhenSuppliedInValues() {
         final String service = "values-service-name";
-        HashMap<ContextField, String> values = new HashMap<>();
+        Map<ContextField, String> values = new EnumMap<>(ContextField.class);
         values.put(ContextField.SERVICE_NAME, service);
         ContextData data = RequestContextProvider.to(values);
         assertEquals(data.getServiceName(), service);
@@ -82,7 +84,7 @@ public class RequestContextProviderTest {
     @Test
     public void partnerNameInDataWhenSuppliedInValues() {
         final String partner = "values-partner-name";
-        HashMap<ContextField, String> values = new HashMap<>();
+        Map<ContextField, String> values = new EnumMap<>(ContextField.class);
         values.put(ContextField.PARTNER_NAME, partner);
         ContextData data = RequestContextProvider.to(values);
         assertEquals(data.getPartnerName(), partner);
@@ -91,7 +93,7 @@ public class RequestContextProviderTest {
     @Test
     public void requestIdInDataWhenSuppliedInValues() {
         final String request = "values-request-id";
-        HashMap<ContextField, String> values = new HashMap<>();
+        Map<ContextField, String> values = new EnumMap<>(ContextField.class);
         values.put(ContextField.REQUEST_ID, request);
         ContextData data = RequestContextProvider.to(values);
         assertEquals(data.getRequestId(), request);

@@ -16,22 +16,22 @@
 
 package org.openecomp.sdc.logging.slf4j;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertNull;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.Arrays;
 import java.util.Map;
+import org.junit.Test;
 import org.openecomp.sdc.logging.api.AuditData;
 import org.openecomp.sdc.logging.api.MetricsData;
 import org.openecomp.sdc.logging.api.StatusCode;
 import org.slf4j.Logger;
 import org.slf4j.MDC;
 import org.slf4j.Marker;
-import org.testng.annotations.Test;
 
 /**
  * Unit-test of SLF4J implementation of Logger.
@@ -106,14 +106,14 @@ public class SLF4JLoggerWrapperTest {
     public void auditStatusCodeAvailableWhenPassed() {
         SpyLogger spy = createSpy();
         new SLF4JLoggerWrapper(spy).audit(AuditData.builder().statusCode(StatusCode.COMPLETE).build());
-        assertEquals(spy.mdc().get(AuditField.STATUS_CODE.asKey()), StatusCode.COMPLETE.name());
+        assertEquals(StatusCode.COMPLETE.name(), spy.mdc().get(AuditField.STATUS_CODE.asKey()));
     }
 
     @Test
     public void metricsStatusCodeAvailableWhenPassed() {
         SpyLogger spy = createSpy();
         new SLF4JLoggerWrapper(spy).metrics(MetricsData.builder().statusCode(StatusCode.COMPLETE).build());
-        assertEquals(spy.mdc().get(MetricsField.STATUS_CODE.asKey()), StatusCode.COMPLETE.name());
+        assertEquals(StatusCode.COMPLETE.name(), spy.mdc().get(MetricsField.STATUS_CODE.asKey()));
     }
 
     @Test
@@ -135,7 +135,7 @@ public class SLF4JLoggerWrapperTest {
         final String responseCode = "AuditSpyResponse";
         SpyLogger spy = createSpy();
         new SLF4JLoggerWrapper(spy).audit(AuditData.builder().responseCode(responseCode).build());
-        assertEquals(spy.mdc().get(AuditField.RESPONSE_CODE.asKey()), responseCode);
+        assertEquals(responseCode, spy.mdc().get(AuditField.RESPONSE_CODE.asKey()));
     }
 
     @Test
@@ -143,7 +143,7 @@ public class SLF4JLoggerWrapperTest {
         final String responseCode = "MetricsSpyResponse";
         SpyLogger spy = createSpy();
         new SLF4JLoggerWrapper(spy).metrics(MetricsData.builder().responseCode(responseCode).build());
-        assertEquals(spy.mdc().get(MetricsField.RESPONSE_CODE.asKey()), responseCode);
+        assertEquals(responseCode, spy.mdc().get(MetricsField.RESPONSE_CODE.asKey()));
     }
 
     @Test
@@ -165,7 +165,7 @@ public class SLF4JLoggerWrapperTest {
         final String responseDescription = "AuditSpyDescription";
         SpyLogger spy = createSpy();
         new SLF4JLoggerWrapper(spy).audit(AuditData.builder().responseDescription(responseDescription).build());
-        assertEquals(spy.mdc().get(AuditField.RESPONSE_DESCRIPTION.asKey()), responseDescription);
+        assertEquals(responseDescription, spy.mdc().get(AuditField.RESPONSE_DESCRIPTION.asKey()));
     }
 
     @Test
@@ -173,7 +173,7 @@ public class SLF4JLoggerWrapperTest {
         final String responseDescription = "MetricsSpyDescription";
         SpyLogger spy = createSpy();
         new SLF4JLoggerWrapper(spy).metrics(MetricsData.builder().responseDescription(responseDescription).build());
-        assertEquals(spy.mdc().get(MetricsField.RESPONSE_DESCRIPTION.asKey()), responseDescription);
+        assertEquals(responseDescription, spy.mdc().get(MetricsField.RESPONSE_DESCRIPTION.asKey()));
     }
 
     @Test
@@ -195,7 +195,7 @@ public class SLF4JLoggerWrapperTest {
         final String ipAddress = "10.56.20.20";
         SpyLogger spy = createSpy();
         new SLF4JLoggerWrapper(spy).audit(AuditData.builder().clientIpAddress(ipAddress).build());
-        assertEquals(spy.mdc().get(AuditField.CLIENT_IP_ADDRESS.asKey()), ipAddress);
+        assertEquals(ipAddress, spy.mdc().get(AuditField.CLIENT_IP_ADDRESS.asKey()));
     }
 
     @Test
@@ -203,7 +203,7 @@ public class SLF4JLoggerWrapperTest {
         final String ipAddress = "10.56.20.22";
         SpyLogger spy = createSpy();
         new SLF4JLoggerWrapper(spy).metrics(MetricsData.builder().clientIpAddress(ipAddress).build());
-        assertEquals(spy.mdc().get(MetricsField.CLIENT_IP_ADDRESS.asKey()), ipAddress);
+        assertEquals(ipAddress, spy.mdc().get(MetricsField.CLIENT_IP_ADDRESS.asKey()));
     }
 
     @Test
@@ -225,7 +225,7 @@ public class SLF4JLoggerWrapperTest {
         final String targetEntity = "MetricsTargetEntity";
         SpyLogger spy = createSpy();
         new SLF4JLoggerWrapper(spy).metrics(MetricsData.builder().targetEntity(targetEntity).build());
-        assertEquals(spy.mdc().get(MetricsField.TARGET_ENTITY.asKey()), targetEntity);
+        assertEquals(targetEntity, spy.mdc().get(MetricsField.TARGET_ENTITY.asKey()));
     }
 
     @Test
@@ -240,7 +240,7 @@ public class SLF4JLoggerWrapperTest {
         final String targetEntity = "MetricsTargetVirtualEntity";
         SpyLogger spy = createSpy();
         new SLF4JLoggerWrapper(spy).metrics(MetricsData.builder().targetVirtualEntity(targetEntity).build());
-        assertEquals(spy.mdc().get(MetricsField.TARGET_VIRTUAL_ENTITY.asKey()), targetEntity);
+        assertEquals(targetEntity, spy.mdc().get(MetricsField.TARGET_VIRTUAL_ENTITY.asKey()));
     }
 
     @Test

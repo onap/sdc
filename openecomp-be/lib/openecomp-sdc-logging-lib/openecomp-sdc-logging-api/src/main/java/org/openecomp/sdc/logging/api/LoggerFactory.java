@@ -36,8 +36,8 @@ public class LoggerFactory {
 
     // use the no-op service to prevent recursion in case of an attempt to log an exception as a
     // result of a logger initialization error
-    private static final LoggerCreationService SERVICE = ServiceBinder.getCreationServiceBinding().orElse(
-            new NoOpLoggerCreationService());
+    private static final LoggerCreationService SERVICE = ServiceBinder.getCreationServiceBinding().orElseGet(
+            NoOpLoggerCreationService::new);
 
     private LoggerFactory() {
         // prevent instantiation
@@ -53,9 +53,9 @@ public class LoggerFactory {
 
     private static class NoOpLoggerCreationService implements LoggerCreationService {
 
-        private static final Logger NO_OP_LOGGER = new NoOpLogger();
-
         private static class NoOpLogger implements Logger {
+
+            private static final Logger INSTANCE = new NoOpLogger();
 
             @Override
             public String getName() {
@@ -211,13 +211,13 @@ public class LoggerFactory {
         @Override
         public Logger getLogger(String className) {
             Objects.requireNonNull(className, "Name cannot be null");
-            return NO_OP_LOGGER;
+            return NoOpLogger.INSTANCE;
         }
 
         @Override
         public Logger getLogger(Class<?> clazz) {
             Objects.requireNonNull(clazz, "Class cannot be null");
-            return NO_OP_LOGGER;
+            return NoOpLogger.INSTANCE;
         }
     }
 }

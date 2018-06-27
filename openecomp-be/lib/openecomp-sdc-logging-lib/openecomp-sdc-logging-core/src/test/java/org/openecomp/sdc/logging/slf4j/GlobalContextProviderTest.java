@@ -16,10 +16,10 @@
 
 package org.openecomp.sdc.logging.slf4j;
 
-import static org.testng.Assert.assertNotNull;
+import static org.junit.Assert.assertNotNull;
 
 import java.util.Map;
-import org.testng.annotations.Test;
+import org.junit.Test;
 
 /**
  * Tests data supplied by the global logging context.

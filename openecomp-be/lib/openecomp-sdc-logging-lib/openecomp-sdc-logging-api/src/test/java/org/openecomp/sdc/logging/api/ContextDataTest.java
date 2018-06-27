@@ -16,10 +16,10 @@
 
 package org.openecomp.sdc.logging.api;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNull;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
-import org.testng.annotations.Test;
+import org.junit.Test;
 
 /**
  * Unit-testing context data builder.
@@ -37,11 +37,11 @@ public class ContextDataTest {
         final String requestId = "123412341234";
 
         ContextData data = ContextData.builder()
-            .serviceName(serviceName).partnerName(partnerName).requestId(requestId).build();
+                                      .serviceName(serviceName).partnerName(partnerName).requestId(requestId).build();
 
-        assertEquals(data.getRequestId(), requestId);
-        assertEquals(data.getServiceName(), serviceName);
-        assertEquals(data.getPartnerName(), partnerName);
+        assertEquals(requestId, data.getRequestId());
+        assertEquals(serviceName, data.getServiceName());
+        assertEquals(partnerName, data.getPartnerName());
     }
 
     @Test

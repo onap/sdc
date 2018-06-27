@@ -23,6 +23,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerResponseContext;
 import javax.ws.rs.container.ContainerResponseFilter;
+import javax.ws.rs.container.ResourceInfo;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.Provider;
@@ -53,7 +54,9 @@ import org.openecomp.sdc.logging.api.StatusCode;
 @Provider
 public class LoggingResponseFilter implements ContainerResponseFilter {
 
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private static final int UNKNOWN_START_TIME = 0;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(LoggingResponseFilter.class);
 
     /**
      * Tracks reporting configuration problems to the log. We want to report them only once, and not to write to log
@@ -62,6 +65,8 @@ public class LoggingResponseFilter implements ContainerResponseFilter {
     private boolean reportBadConfiguration = true;
 
     private HttpServletRequest httpRequest;
+
+    private ResourceInfo resource;
 
     /**
      * Injection of HTTP request object from JAX-RS context.
@@ -73,12 +78,29 @@ public class LoggingResponseFilter implements ContainerResponseFilter {
         this.httpRequest = httpRequest;
     }
 
+    /**
+     * Injection of a resource that matches the request from JAX-RS context.
+     *
+     * @param resource automatically injected by JAX-RS container
+     */
+    @Context
+    public void setResource(ResourceInfo resource) {
+        this.resource = resource;
+    }
+
     @Override
     public void filter(ContainerRequestContext containerRequestContext,
             ContainerResponseContext containerResponseContext) {
 
         try {
+
+            if ((resource == null) || (resource.getResourceClass() == null)) {
+                LOGGER.debug("No matching resource, skipping audit.");
+                return;
+            }
+
             writeAudit(containerRequestContext, containerResponseContext);
+
         } finally {
             LoggingContext.clear();
         }
@@ -87,7 +109,8 @@ public class LoggingResponseFilter implements ContainerResponseFilter {
     private void writeAudit(ContainerRequestContext containerRequestContext,
             ContainerResponseContext containerResponseContext) {
 
-        if (!logger.isAuditEnabled()) {
+        Logger resourceLogger = LoggerFactory.getLogger(resource.getResourceMethod().getDeclaringClass());
+        if (!resourceLogger.isAuditEnabled()) {
             return;
         }
 
@@ -102,7 +125,7 @@ public class LoggingResponseFilter implements ContainerResponseFilter {
                                        .responseCode(Integer.toString(responseCode))
                                        .responseDescription(statusInfo.getReasonPhrase())
                                        .clientIpAddress(httpRequest.getRemoteAddr()).build();
-        logger.audit(auditData);
+        resourceLogger.audit(auditData);
     }
 
     private boolean isSuccess(int responseCode) {
@@ -122,7 +145,7 @@ public class LoggingResponseFilter implements ContainerResponseFilter {
     private long handleMissingStartTime() {
         reportConfigProblem("{} key was not found in JAX-RS request context. "
                 + "Make sure you configured a request filter", LoggingRequestFilter.START_TIME_KEY);
-        return 0;
+        return UNKNOWN_START_TIME;
     }
 
     private long parseStartTime(Object startTime) {
@@ -131,7 +154,7 @@ public class LoggingResponseFilter implements ContainerResponseFilter {
             return Long.class.cast(startTime);
         } catch (ClassCastException e) {
             reportConfigProblem("{} key in JAX-RS request context contains an object of type '{}', but 'java.lang.Long'"
-                    + " is expected", LoggingRequestFilter.START_TIME_KEY, startTime.getClass().getName());
+                    + " is expected", LoggingRequestFilter.START_TIME_KEY, startTime.getClass().getName(), e);
             return 0;
         }
     }
@@ -140,7 +163,7 @@ public class LoggingResponseFilter implements ContainerResponseFilter {
 
         if (reportBadConfiguration) {
             reportBadConfiguration = false;
-            logger.error(message, arguments);
+            LOGGER.error(message, arguments);
         }
     }
 }

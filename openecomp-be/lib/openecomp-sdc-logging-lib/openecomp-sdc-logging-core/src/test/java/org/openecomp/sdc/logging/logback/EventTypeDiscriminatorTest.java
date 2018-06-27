@@ -16,15 +16,17 @@
 
 package org.openecomp.sdc.logging.logback;
 
+import static org.junit.Assert.assertEquals;
+
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.spi.LoggingEvent;
+import org.junit.Test;
 import org.openecomp.sdc.logging.slf4j.Markers;
 import org.slf4j.MarkerFactory;
-import org.testng.annotations.Test;
-
-import static org.testng.Assert.assertEquals;
 
 /**
+ * Test categorizing of events.
+ *
  * @author EVITALIY
  * @since 17/08/2016.
  */
@@ -37,7 +39,7 @@ public class EventTypeDiscriminatorTest {
     public void testGetDefaultDiscriminatingValue() {
         EventTypeDiscriminator discriminator = new EventTypeDiscriminator();
         LoggingEvent event = new LoggingEvent();
-        assertEquals(discriminator.getDiscriminatingValue(event), DEBUG);
+        assertEquals(DEBUG, discriminator.getDiscriminatingValue(event));
     }
 
     @Test
@@ -45,7 +47,7 @@ public class EventTypeDiscriminatorTest {
         EventTypeDiscriminator discriminator = new EventTypeDiscriminator();
         LoggingEvent event = new LoggingEvent();
         event.setLevel(Level.ERROR);
-        assertEquals(discriminator.getDiscriminatingValue(event), ERROR);
+        assertEquals(ERROR, discriminator.getDiscriminatingValue(event));
     }
 
     @Test
@@ -53,7 +55,7 @@ public class EventTypeDiscriminatorTest {
         EventTypeDiscriminator discriminator = new EventTypeDiscriminator();
         LoggingEvent event = new LoggingEvent();
         event.setLevel(Level.WARN);
-        assertEquals(discriminator.getDiscriminatingValue(event), ERROR);
+        assertEquals(ERROR, discriminator.getDiscriminatingValue(event));
     }
 
     @Test
@@ -61,7 +63,7 @@ public class EventTypeDiscriminatorTest {
         EventTypeDiscriminator discriminator = new EventTypeDiscriminator();
         LoggingEvent event = new LoggingEvent();
         event.setLevel(Level.INFO);
-        assertEquals(discriminator.getDiscriminatingValue(event), ERROR);
+        assertEquals(ERROR, discriminator.getDiscriminatingValue(event));
     }
 
     @Test
@@ -69,7 +71,7 @@ public class EventTypeDiscriminatorTest {
         EventTypeDiscriminator discriminator = new EventTypeDiscriminator();
         LoggingEvent event = new LoggingEvent();
         event.setLevel(Level.TRACE);
-        assertEquals(discriminator.getDiscriminatingValue(event), DEBUG);
+        assertEquals(DEBUG, discriminator.getDiscriminatingValue(event));
     }
 
     @Test
@@ -78,7 +80,7 @@ public class EventTypeDiscriminatorTest {
         LoggingEvent event = new LoggingEvent();
         event.setLevel(Level.ERROR);
         event.setMarker(Markers.AUDIT);
-        assertEquals(discriminator.getDiscriminatingValue(event), ERROR);
+        assertEquals(ERROR, discriminator.getDiscriminatingValue(event));
     }
 
     @Test
@@ -87,7 +89,7 @@ public class EventTypeDiscriminatorTest {
         LoggingEvent event = new LoggingEvent();
         event.setLevel(Level.ERROR);
         event.setMarker(Markers.METRICS);
-        assertEquals(discriminator.getDiscriminatingValue(event), ERROR);
+        assertEquals(ERROR, discriminator.getDiscriminatingValue(event));
     }
 
     @Test
@@ -96,7 +98,7 @@ public class EventTypeDiscriminatorTest {
         LoggingEvent event = new LoggingEvent();
         event.setLevel(Level.WARN);
         event.setMarker(Markers.AUDIT);
-        assertEquals(discriminator.getDiscriminatingValue(event), ERROR);
+        assertEquals(ERROR, discriminator.getDiscriminatingValue(event));
     }
 
     @Test
@@ -105,7 +107,7 @@ public class EventTypeDiscriminatorTest {
         LoggingEvent event = new LoggingEvent();
         event.setLevel(Level.WARN);
         event.setMarker(Markers.METRICS);
-        assertEquals(discriminator.getDiscriminatingValue(event), ERROR);
+        assertEquals(ERROR, discriminator.getDiscriminatingValue(event));
     }
 
     @Test
@@ -114,7 +116,7 @@ public class EventTypeDiscriminatorTest {
         LoggingEvent event = new LoggingEvent();
         event.setLevel(Level.DEBUG);
         event.setMarker(Markers.AUDIT);
-        assertEquals(discriminator.getDiscriminatingValue(event), DEBUG);
+        assertEquals(DEBUG, discriminator.getDiscriminatingValue(event));
     }
 
     @Test
@@ -123,7 +125,7 @@ public class EventTypeDiscriminatorTest {
         LoggingEvent event = new LoggingEvent();
         event.setLevel(Level.DEBUG);
         event.setMarker(Markers.METRICS);
-        assertEquals(discriminator.getDiscriminatingValue(event), DEBUG);
+        assertEquals(DEBUG, discriminator.getDiscriminatingValue(event));
     }
 
     @Test
@@ -132,7 +134,7 @@ public class EventTypeDiscriminatorTest {
         LoggingEvent event = new LoggingEvent();
         event.setLevel(Level.TRACE);
         event.setMarker(Markers.AUDIT);
-        assertEquals(discriminator.getDiscriminatingValue(event), DEBUG);
+        assertEquals(DEBUG, discriminator.getDiscriminatingValue(event));
     }
 
     @Test
@@ -141,7 +143,7 @@ public class EventTypeDiscriminatorTest {
         LoggingEvent event = new LoggingEvent();
         event.setLevel(Level.TRACE);
         event.setMarker(Markers.METRICS);
-        assertEquals(discriminator.getDiscriminatingValue(event), DEBUG);
+        assertEquals(DEBUG, discriminator.getDiscriminatingValue(event));
     }
 
     @Test
@@ -150,7 +152,7 @@ public class EventTypeDiscriminatorTest {
         LoggingEvent event = new LoggingEvent();
         event.setLevel(Level.ERROR);
         event.setMarker(MarkerFactory.getMarker("Dummy"));
-        assertEquals(discriminator.getDiscriminatingValue(event), ERROR);
+        assertEquals(ERROR, discriminator.getDiscriminatingValue(event));
     }
 
     @Test
@@ -159,7 +161,7 @@ public class EventTypeDiscriminatorTest {
         LoggingEvent event = new LoggingEvent();
         event.setLevel(Level.WARN);
         event.setMarker(MarkerFactory.getMarker("Dummy"));
-        assertEquals(discriminator.getDiscriminatingValue(event), ERROR);
+        assertEquals(ERROR, discriminator.getDiscriminatingValue(event));
     }
 
     @Test
@@ -168,7 +170,7 @@ public class EventTypeDiscriminatorTest {
         LoggingEvent event = new LoggingEvent();
         event.setLevel(Level.DEBUG);
         event.setMarker(MarkerFactory.getMarker("Dummy"));
-        assertEquals(discriminator.getDiscriminatingValue(event), DEBUG);
+        assertEquals(DEBUG, discriminator.getDiscriminatingValue(event));
     }
 
     @Test
@@ -177,7 +179,7 @@ public class EventTypeDiscriminatorTest {
         LoggingEvent event = new LoggingEvent();
         event.setLevel(Level.TRACE);
         event.setMarker(MarkerFactory.getMarker("Dummy"));
-        assertEquals(discriminator.getDiscriminatingValue(event), DEBUG);
+        assertEquals(DEBUG, discriminator.getDiscriminatingValue(event));
     }
 
     @Test
@@ -186,7 +188,7 @@ public class EventTypeDiscriminatorTest {
         LoggingEvent event = new LoggingEvent();
         event.setLevel(Level.INFO);
         event.setMarker(MarkerFactory.getMarker("Dummy"));
-        assertEquals(discriminator.getDiscriminatingValue(event), ERROR);
+        assertEquals(ERROR, discriminator.getDiscriminatingValue(event));
     }
 
     @Test
@@ -195,7 +197,7 @@ public class EventTypeDiscriminatorTest {
         LoggingEvent event = new LoggingEvent();
         event.setLevel(Level.INFO);
         event.setMarker(Markers.AUDIT);
-        assertEquals(discriminator.getDiscriminatingValue(event), "Audit");
+        assertEquals("Audit", discriminator.getDiscriminatingValue(event));
     }
 
     @Test
@@ -204,7 +206,7 @@ public class EventTypeDiscriminatorTest {
         LoggingEvent event = new LoggingEvent();
         event.setLevel(Level.INFO);
         event.setMarker(Markers.METRICS);
-        assertEquals(discriminator.getDiscriminatingValue(event), "Metrics");
+        assertEquals("Metrics", discriminator.getDiscriminatingValue(event));
     }
 
     @Test

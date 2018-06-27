@@ -16,8 +16,8 @@
 
 package org.openecomp.sdc.logging.slf4j;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNull;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import java.util.EnumMap;
 import java.util.Map;
@@ -44,6 +44,10 @@ class ContextPropagationTestHelper {
     static final String EXPECT_REVERTED_ON_EXCEPTION = "Expected context data to be reverted even in case of exception";
     static final String EXPECT_EXCEPTION_FROM_INNER = "Expected the inner class to throw exception";
 
+    private ContextPropagationTestHelper() {
+        // prevent instantiation
+    }
+
     static Map<ContextField, String> putUniqueValues() {
 
         Map<ContextField, String> values = new EnumMap<>(ContextField.class);
@@ -59,17 +63,17 @@ class ContextPropagationTestHelper {
         return values;
     }
 
-    static void assertContextFields(Map<ContextField, String> values, String error) {
+    static void assertContextFields(String error, Map<ContextField, String> values) {
 
         for (ContextField f : ContextField.values()) {
-            assertEquals(MDC.get(f.asKey()), values.get(f), error);
+            assertEquals(error, MDC.get(f.asKey()), values.get(f));
         }
     }
 
     static void assertContextEmpty(String error) {
 
         for (ContextField key : ContextField.values()) {
-            assertNull(MDC.get(key.asKey()), error);
+            assertNull(error, MDC.get(key.asKey()));
         }
     }
 }

@@ -16,13 +16,15 @@
 
 package org.openecomp.sdc.logging.slf4j;
 
+import static org.junit.Assert.assertEquals;
+
+import org.junit.Test;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
-import org.testng.annotations.Test;
-
-import static org.testng.Assert.assertEquals;
 
 /**
+ * Make sure the logger factory returns correct loggers.
+ *
  * @author EVITALIY
  * @since 08 Jan 18
  */
@@ -33,23 +35,23 @@ public class LoggerFactoryTest {
     @Test
     public void returnSlf4jLoggerWhenGetByClass() {
         Logger logger = LoggerFactory.getLogger(LoggerFactoryTest.class);
-        assertEquals(logger.getClass(), SLF4JLoggerWrapper.class);
-        assertEquals(logger.getName(), CLASS_NAME);
+        assertEquals(SLF4JLoggerWrapper.class, logger.getClass());
+        assertEquals(CLASS_NAME, logger.getName());
     }
 
     @Test
     public void returnSlf4jLoggerWhenGetByName() {
         Logger logger = LoggerFactory.getLogger(CLASS_NAME);
-        assertEquals(logger.getClass(), SLF4JLoggerWrapper.class);
-        assertEquals(logger.getName(), CLASS_NAME);
+        assertEquals(SLF4JLoggerWrapper.class, logger.getClass());
+        assertEquals(CLASS_NAME, logger.getName());
     }
 
-    @Test(expectedExceptions = NullPointerException.class)
+    @Test(expected = NullPointerException.class)
     public void throwNpeWhenGetByNameWithNull() {
         LoggerFactory.getLogger((String) null);
     }
 
-    @Test(expectedExceptions = NullPointerException.class)
+    @Test(expected = NullPointerException.class)
     public void throwNpeWhenGetByClassWithNull() {
         LoggerFactory.getLogger((Class<LoggerFactoryTest>) null);
     }

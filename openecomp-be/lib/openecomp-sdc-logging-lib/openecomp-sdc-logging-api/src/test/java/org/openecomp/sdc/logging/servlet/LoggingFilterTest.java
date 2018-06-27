@@ -32,14 +32,16 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.easymock.EasyMock;
+import org.junit.After;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.TestName;
+import org.junit.runner.RunWith;
 import org.openecomp.sdc.logging.api.ContextData;
 import org.openecomp.sdc.logging.api.LoggingContext;
 import org.powermock.api.easymock.PowerMock;
 import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.testng.PowerMockTestCase;
-import org.testng.ITestResult;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.Test;
+import org.powermock.modules.junit4.PowerMockRunner;
 
 /**
  * Unit-tests logging filter for initialization and data retrieval.
@@ -47,29 +49,33 @@ import org.testng.annotations.Test;
  * @author evitaliy
  * @since 17 Aug 2016
  */
+@RunWith(PowerMockRunner.class)
 @PrepareForTest(LoggingContext.class)
-public class LoggingFilterTest extends PowerMockTestCase {
+public class LoggingFilterTest {
 
     private static final String RANDOM_REQUEST_URI = UUID.randomUUID().toString();
     private static final String RANDOM_REQUEST_ID = UUID.randomUUID().toString();
     private static final String RANDOM_PARTNER_NAME = UUID.randomUUID().toString();
 
+    @Rule
+    public TestName testName = new TestName();
+
     /**
      * Verify all mocks after each test.
      */
-    @AfterMethod
-    public void verifyMocks(ITestResult result) {
+    @After
+    public void verifyMocks() {
 
         try {
             PowerMock.verifyAll();
         } catch (AssertionError e) {
-            throw new AssertionError("Expectations failed in: " + result.getMethod().getMethodName(), e);
+            throw new AssertionError("Expectations failed in " + testName.getMethodName() + "()", e);
         }
     }
 
 
     @Test
-    public void filterPopulatesValuesWhenNoInitParamsAndNoHeaders() throws Exception {
+    public void filterPopulatesValuesWhenNoInitParamsAndNoHeaders() throws IOException, ServletException {
 
         mockLoggingContext();
         LoggingFilter loggingFilter = new LoggingFilter();
@@ -78,7 +84,7 @@ public class LoggingFilterTest extends PowerMockTestCase {
     }
 
     @Test
-    public void filterPopulatesValuesWhenNoInitParamsAndExistingHeaders() throws Exception {
+    public void filterPopulatesValuesWhenNoInitParamsAndExistingHeaders() throws IOException, ServletException {
 
         mockLoggingContext();
 
@@ -91,7 +97,7 @@ public class LoggingFilterTest extends PowerMockTestCase {
     }
 
     @Test
-    public void filterPopulatesValuesWhenCustomInitParamsAndNoHeaders() throws Exception {
+    public void filterPopulatesValuesWhenCustomInitParamsAndNoHeaders() throws IOException, ServletException {
 
         mockLoggingContext();
 
@@ -108,7 +114,7 @@ public class LoggingFilterTest extends PowerMockTestCase {
     }
 
     @Test
-    public void filterPopulatesValuesWhenCustomInitParamsAndExistingHeaders() throws Exception {
+    public void filterPopulatesValuesWhenCustomInitParamsAndExistingHeaders() throws IOException, ServletException {
 
         mockLoggingContext();
 

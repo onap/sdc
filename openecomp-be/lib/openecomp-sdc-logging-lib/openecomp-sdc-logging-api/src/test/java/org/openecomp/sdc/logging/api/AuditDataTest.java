@@ -16,11 +16,14 @@
 
 package org.openecomp.sdc.logging.api;
 
-import static org.testng.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
-import org.testng.annotations.Test;
+import org.junit.Test;
 
 /**
+ * Test correct population of audit data.
+ *
  * @author EVITALIY
  * @since 04 Mar 18
  */
@@ -33,24 +36,25 @@ public class AuditDataTest {
         final long end = start + 100;
         final String responseCode = "Response-Code";
         final String responseDescription = "Response-Description";
-        final String ipAddress = "10.56.20.70";
+        final String ipAddress = "DUMMY.IP.ADDRESS";
 
         AuditData data = AuditData.builder().startTime(start).endTime(end).statusCode(StatusCode.COMPLETE)
-            .responseCode(responseCode).responseDescription(responseDescription).clientIpAddress(ipAddress).build();
+                                  .responseCode(responseCode).responseDescription(responseDescription)
+                                  .clientIpAddress(ipAddress).build();
 
-        assertEquals(data.getClientIpAddress(), ipAddress);
-        assertEquals(data.getEndTime(), end);
-        assertEquals(data.getStartTime(), start);
-        assertEquals(data.getResponseCode(), responseCode);
-        assertEquals(data.getResponseDescription(), responseDescription);
-        assertEquals(data.getStatusCode(), StatusCode.COMPLETE);
+        assertEquals(ipAddress, data.getClientIpAddress());
+        assertEquals(end, data.getEndTime());
+        assertEquals(start, data.getStartTime());
+        assertEquals(responseCode, data.getResponseCode());
+        assertEquals(responseDescription, data.getResponseDescription());
+        assertEquals(StatusCode.COMPLETE, data.getStatusCode());
     }
 
     @Test
     public void allPropertiesEmptyWhenUnpopulated() {
         AuditData data = AuditData.builder().build();
-        assertEquals(data.getStartTime(), 0);
-        assertEquals(data.getEndTime(), 0);
+        assertEquals(0, data.getStartTime());
+        assertEquals(0, data.getEndTime());
         assertNull(data.getClientIpAddress());
         assertNull(data.getResponseCode());
         assertNull(data.getResponseDescription());

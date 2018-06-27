@@ -16,12 +16,12 @@
 
 package org.openecomp.sdc.logging.api;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
 
 import java.lang.reflect.Field;
 import java.util.concurrent.Callable;
-import org.testng.annotations.Test;
+import org.junit.Test;
 
 /**
  * Unit-testing default context service implementation.
@@ -32,15 +32,15 @@ import org.testng.annotations.Test;
 public class LoggingContextTest {
 
     @Test
-    public void shouldHoldNoOpWhenNoBinding() throws Exception {
+    public void shouldHoldNoOpWhenNoBinding() throws NoSuchFieldException, IllegalAccessException {
         Field factory = LoggingContext.class.getDeclaredField("SERVICE");
         factory.setAccessible(true);
         Object impl = factory.get(null);
-        assertEquals(impl.getClass().getName(),
-                "org.openecomp.sdc.logging.api.LoggingContext$NoOpLoggingContextService");
+        assertEquals("org.openecomp.sdc.logging.api.LoggingContext$NoOpLoggingContextService",
+                impl.getClass().getName());
     }
 
-    @Test(expectedExceptions = NullPointerException.class)
+    @Test(expected = NullPointerException.class)
     public void throwNpeWhenContextIsNull() {
         LoggingContext.put(null);
     }
@@ -53,10 +53,10 @@ public class LoggingContextTest {
     @Test
     public void toRunnableReturnsSameInstance() {
         Runnable test = () -> { /* do nothing */ };
-        assertTrue(test == LoggingContext.copyToRunnable(test));
+        assertSame(test, LoggingContext.copyToRunnable(test));
     }
 
-    @Test(expectedExceptions = NullPointerException.class)
+    @Test(expected = NullPointerException.class)
     public void throwNpeWhenToRunnableWithNull() {
         LoggingContext.copyToRunnable(null);
     }
@@ -64,10 +64,10 @@ public class LoggingContextTest {
     @Test
     public void toCallableReturnsSameInstance() {
         Callable<String> test = () -> "";
-        assertTrue(test == LoggingContext.copyToCallable(test));
+        assertSame(test, LoggingContext.copyToCallable(test));
     }
 
-    @Test(expectedExceptions = NullPointerException.class)
+    @Test(expected = NullPointerException.class)
     public void throwNpeWhenToCallableWithNull() {
         LoggingContext.copyToCallable(null);
     }

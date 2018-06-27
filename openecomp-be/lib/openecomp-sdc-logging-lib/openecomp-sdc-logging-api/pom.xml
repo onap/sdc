@@ -28,9 +28,9 @@
         </dependency>
         <!-- testing -->
         <dependency>
-            <groupId>org.testng</groupId>
-            <artifactId>testng</artifactId>
-            <version>${testng.version}</version>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -53,7 +53,7 @@
         </dependency>
         <dependency>
             <groupId>org.powermock</groupId>
-            <artifactId>powermock-module-testng</artifactId>
+            <artifactId>powermock-module-junit4</artifactId>
             <version>${powermock.version}</version>
             <scope>test</scope>
         </dependency>

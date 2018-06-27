@@ -16,13 +16,13 @@
 
 package org.openecomp.sdc.logging.slf4j;
 
-import static org.testng.Assert.assertEquals;
+import static org.junit.Assert.assertEquals;
 
 import java.util.EnumMap;
 import java.util.Map;
+import org.junit.After;
+import org.junit.Test;
 import org.slf4j.MDC;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.Test;
 
 /**
  * Unit-tests context replacement on MDC.
@@ -36,7 +36,7 @@ public class ContextTest {
     private static final String KEY = FIELD.asKey();
     private static final String VALUE = "service-name-value";
 
-    @AfterMethod
+    @After
     public void clearMdc() {
         MDC.clear();
     }
@@ -49,7 +49,7 @@ public class ContextTest {
         MDC.put(KEY, "modified-" + VALUE);
 
         context.replace();
-        assertEquals(MDC.get(KEY), VALUE);
+        assertEquals(VALUE, MDC.get(KEY));
     }
 
     @Test
@@ -57,8 +57,8 @@ public class ContextTest {
 
         MDC.put(KEY, VALUE);
         Map<ContextField, String> old = new Context().replace();
-        assertEquals(old.size(), 1);
-        assertEquals(old.get(FIELD), VALUE);
+        assertEquals(1, old.size());
+        assertEquals(VALUE, old.get(FIELD));
     }
 
     @Test
@@ -68,6 +68,6 @@ public class ContextTest {
         Map<ContextField, String> values = new EnumMap<>(ContextField.class);
         values.put(FIELD, VALUE);
         context.revert(values);
-        assertEquals(MDC.get(KEY), VALUE);
+        assertEquals(VALUE, MDC.get(KEY));
     }
 }

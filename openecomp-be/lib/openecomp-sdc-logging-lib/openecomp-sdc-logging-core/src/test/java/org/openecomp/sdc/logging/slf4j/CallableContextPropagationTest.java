@@ -16,6 +16,8 @@
 
 package org.openecomp.sdc.logging.slf4j;
 
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assume.assumeTrue;
 import static org.openecomp.sdc.logging.slf4j.ContextPropagationTestHelper.EXPECT_EMPTY;
 import static org.openecomp.sdc.logging.slf4j.ContextPropagationTestHelper.EXPECT_EXCEPTION_FROM_INNER;
 import static org.openecomp.sdc.logging.slf4j.ContextPropagationTestHelper.EXPECT_INNER_RUN;
@@ -32,7 +34,6 @@ import static org.openecomp.sdc.logging.slf4j.ContextPropagationTestHelper.IS_SU
 import static org.openecomp.sdc.logging.slf4j.ContextPropagationTestHelper.assertContextEmpty;
 import static org.openecomp.sdc.logging.slf4j.ContextPropagationTestHelper.assertContextFields;
 import static org.openecomp.sdc.logging.slf4j.ContextPropagationTestHelper.putUniqueValues;
-import static org.testng.Assert.assertTrue;
 
 import java.util.Map;
 import java.util.concurrent.Callable;
@@ -41,8 +42,9 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import org.junit.Before;
+import org.junit.Test;
 import org.openecomp.sdc.logging.spi.LoggingContextService;
-import org.testng.annotations.Test;
 
 /**
  * Tests propagation of logging fields to Callable via the logging service.
@@ -55,7 +57,12 @@ public class CallableContextPropagationTest {
 
     private final LoggingContextService ctxService = new SLF4JLoggingServiceProvider();
 
-    @Test(enabled = IS_SUITABLE_LOGBACK_VERSION)
+    @Before
+    public void checkSuitableLogbackVersion() {
+        assumeTrue(IS_SUITABLE_LOGBACK_VERSION);
+    }
+
+    @Test
     public void testContextPropagated() throws Exception {
 
         Map<ContextField, String> values = putUniqueValues();
@@ -63,16 +70,16 @@ public class CallableContextPropagationTest {
 
         // pass the callable to the context service first
         execute(ctxService.copyToCallable(() -> {
-            assertContextFields(values, EXPECT_PROPAGATED_TO_CHILD);
+            assertContextFields(EXPECT_PROPAGATED_TO_CHILD, values);
             complete.set(true);
             return null;
         }));
 
-        assertContextFields(values, EXPECT_RETAINED_IN_CURRENT);
-        assertTrue(complete.get(), EXPECT_INNER_RUN);
+        assertContextFields(EXPECT_RETAINED_IN_CURRENT, values);
+        assertTrue(EXPECT_INNER_RUN, complete.get());
     }
 
-    @Test(enabled = IS_SUITABLE_LOGBACK_VERSION)
+    @Test
     public void testContextReplacement() throws Exception {
 
         Map<ContextField, String> innerValues = putUniqueValues();
@@ -80,7 +87,7 @@ public class CallableContextPropagationTest {
 
         // should run with the context of main thread
         Callable inner = ctxService.copyToCallable(() -> {
-            assertContextFields(innerValues, EXPECT_PROPAGATED_TO_CHILD);
+            assertContextFields(EXPECT_PROPAGATED_TO_CHILD, innerValues);
             innerComplete.set(true);
             return null;
         });
@@ -90,17 +97,17 @@ public class CallableContextPropagationTest {
         execute(() -> {
             Map<ContextField, String> outerValues = putUniqueValues();
             inner.call();
-            assertContextFields(outerValues, EXPECT_REPLACED_WITH_STORED);
+            assertContextFields(EXPECT_REPLACED_WITH_STORED, outerValues);
             outerComplete.set(true);
             return null;
         });
 
-        assertContextFields(innerValues, EXPECT_RETAINED_IN_CURRENT);
-        assertTrue(outerComplete.get(), EXPECT_OUTER_RUN);
-        assertTrue(innerComplete.get(), EXPECT_INNER_RUN);
+        assertContextFields(EXPECT_RETAINED_IN_CURRENT, innerValues);
+        assertTrue(EXPECT_OUTER_RUN, outerComplete.get());
+        assertTrue(EXPECT_INNER_RUN, innerComplete.get());
     }
 
-    @Test(enabled = IS_SUITABLE_LOGBACK_VERSION)
+    @Test
     public void testContextRemainsEmpty() throws Exception {
 
         ctxService.clear();
@@ -114,10 +121,10 @@ public class CallableContextPropagationTest {
         }));
 
         assertContextEmpty(EXPECT_EMPTY);
-        assertTrue(complete.get(), EXPECT_INNER_RUN);
+        assertTrue(EXPECT_INNER_RUN, complete.get());
     }
 
-    @Test(enabled = IS_SUITABLE_LOGBACK_VERSION)
+    @Test
     public void testContextCleanedUp() throws Exception {
 
         Map<ContextField, String> innerValues = putUniqueValues();
@@ -125,7 +132,7 @@ public class CallableContextPropagationTest {
         AtomicBoolean innerComplete = new AtomicBoolean(false);
         // should run with the context of main thread
         Callable inner = ctxService.copyToCallable((() -> {
-            assertContextFields(innerValues, EXPECT_PROPAGATED_TO_CHILD);
+            assertContextFields(EXPECT_PROPAGATED_TO_CHILD, innerValues);
             innerComplete.set(true);
             return null;
         }));
@@ -140,12 +147,12 @@ public class CallableContextPropagationTest {
             return null;
         });
 
-        assertContextFields(innerValues, EXPECT_RETAINED_IN_PARENT);
-        assertTrue(outerComplete.get(), EXPECT_OUTER_RUN);
-        assertTrue(innerComplete.get(), EXPECT_INNER_RUN);
+        assertContextFields(EXPECT_RETAINED_IN_PARENT, innerValues);
+        assertTrue(EXPECT_OUTER_RUN, outerComplete.get());
+        assertTrue(EXPECT_INNER_RUN, innerComplete.get());
     }
 
-    @Test(enabled = IS_SUITABLE_LOGBACK_VERSION)
+    @Test
     public void testCleanupAfterError() throws Exception {
 
         Map<ContextField, String> innerValues = putUniqueValues();
@@ -153,7 +160,7 @@ public class CallableContextPropagationTest {
         // should run with the context of main thread
         AtomicBoolean innerComplete = new AtomicBoolean(false);
         Callable inner = ctxService.copyToCallable(() -> {
-            assertContextFields(innerValues, EXPECT_PROPAGATED_TO_CHILD);
+            assertContextFields(EXPECT_PROPAGATED_TO_CHILD, innerValues);
             innerComplete.set(true);
             throw new IllegalArgumentException();
         });
@@ -164,24 +171,24 @@ public class CallableContextPropagationTest {
         execute(() -> {
 
             Map<ContextField, String> outerValues = putUniqueValues();
-            assertContextFields(outerValues, EXPECT_POPULATED);
+            assertContextFields(EXPECT_POPULATED, outerValues);
 
             try {
                 inner.call();
             } catch (IllegalArgumentException e) {
                 exceptionThrown.set(true);
             } finally {
-                assertContextFields(outerValues, EXPECT_REVERTED_ON_EXCEPTION);
+                assertContextFields(EXPECT_REVERTED_ON_EXCEPTION, outerValues);
                 outerComplete.set(true);
             }
 
             return null;
         });
 
-        assertContextFields(innerValues, EXPECT_RETAINED_IN_PARENT);
-        assertTrue(outerComplete.get(), EXPECT_OUTER_RUN);
-        assertTrue(innerComplete.get(), EXPECT_INNER_RUN);
-        assertTrue(exceptionThrown.get(), EXPECT_EXCEPTION_FROM_INNER);
+        assertContextFields(EXPECT_RETAINED_IN_PARENT, innerValues);
+        assertTrue(EXPECT_OUTER_RUN, outerComplete.get());
+        assertTrue(EXPECT_INNER_RUN, innerComplete.get());
+        assertTrue(EXPECT_EXCEPTION_FROM_INNER, exceptionThrown.get());
     }
 
     private void execute(Callable<Object> callable) throws Exception {

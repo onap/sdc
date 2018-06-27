@@ -36,7 +36,7 @@ import org.openecomp.sdc.logging.spi.LoggingContextService;
 public class LoggingContext {
 
     private static final LoggingContextService SERVICE =
-            ServiceBinder.getContextServiceBinding().orElse(new NoOpLoggingContextService());
+            ServiceBinder.getContextServiceBinding().orElseGet(NoOpLoggingContextService::new);
 
     private LoggingContext() {
         // prevent instantiation
@@ -64,8 +64,6 @@ public class LoggingContext {
 
     private static class NoOpLoggingContextService implements LoggingContextService {
 
-        private static final ContextData EMPTY_CONTEXT = ContextData.builder().build();
-
         @Override
         public void put(ContextData contextData) {
             Objects.requireNonNull(contextData, "Context data cannot be null");
@@ -73,7 +71,7 @@ public class LoggingContext {
 
         @Override
         public ContextData get() {
-            return EMPTY_CONTEXT;
+            return EmptyContextData.INSTANCE;
         }
 
         @Override
@@ -91,6 +89,15 @@ public class LoggingContext {
         public <V> Callable<V> copyToCallable(Callable<V> callable) {
             Objects.requireNonNull(callable, "Callable cannot be null");
             return callable;
+        }
+
+        private static class EmptyContextData {
+
+            private static final ContextData INSTANCE = ContextData.builder().build();
+
+            private EmptyContextData() {
+                // prevent instantiation
+            }
         }
     }
 }

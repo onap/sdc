@@ -16,20 +16,23 @@
 
 package org.openecomp.sdc.logging.servlet.jaxrs;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNull;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import java.util.function.Function;
+import org.junit.Test;
 import org.openecomp.sdc.logging.servlet.HttpHeader;
-import org.testng.annotations.Test;
 
 /**
- * Unit tests mutliple-option headers.
+ * Unit tests multiple-option headers.
  *
  * @author evitaliy
  * @since 25 Mar 2018
  */
 public class HttpHeaderTest {
+
+    private static final String KEY_FIRST = "First";
+    private static final String KEY_SECOND = "Second";
 
     @Test
     public void valueReturnedWhenSinglePossibleHeader() {
@@ -39,7 +42,7 @@ public class HttpHeaderTest {
 
         Function<String, String> reader = createReader(key, value);
         HttpHeader header = new HttpHeader(key);
-        assertEquals(header.getAny(reader), value);
+        assertEquals(value, header.getAny(reader));
     }
 
     @Test
@@ -66,30 +69,26 @@ public class HttpHeaderTest {
         final String value = "1234";
 
         Function<String, String> reader = createReader(lastKey, value);
-        HttpHeader header = new HttpHeader("First", "Second", lastKey);
-        assertEquals(header.getAny(reader), value);
+        HttpHeader header = new HttpHeader(KEY_FIRST, KEY_SECOND, lastKey);
+        assertEquals(value, header.getAny(reader));
     }
 
     @Test
     public void valueReturnedWhenFirstHeaderMatches() {
 
-        final String firstKey = "First";
         final String value = "1234";
-
-        Function<String, String> reader = createReader(firstKey, value);
-        HttpHeader header = new HttpHeader(firstKey, "Second", "Third");
-        assertEquals(header.getAny(reader), value);
+        Function<String, String> reader = createReader(KEY_FIRST, value);
+        HttpHeader header = new HttpHeader(KEY_FIRST, KEY_SECOND, "Third");
+        assertEquals(value, header.getAny(reader));
     }
 
     @Test
     public void valueReturnedWhenMiddleHeaderMatches() {
 
-        final String middleKey = "Second";
         final String value = "1234";
-
-        Function<String, String> reader = createReader(middleKey, value);
-        HttpHeader header = new HttpHeader("First", middleKey, "Third");
-        assertEquals(header.getAny(reader), value);
+        Function<String, String> reader = createReader(KEY_SECOND, value);
+        HttpHeader header = new HttpHeader(KEY_FIRST, KEY_SECOND, "Third");
+        assertEquals(value, header.getAny(reader));
     }
 
     private Function<String, String> createReader(String key, String value) {

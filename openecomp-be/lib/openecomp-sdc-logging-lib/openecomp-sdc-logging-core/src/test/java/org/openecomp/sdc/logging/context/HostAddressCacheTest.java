@@ -16,15 +16,16 @@
 
 package org.openecomp.sdc.logging.context;
 
-import static org.testng.Assert.assertTrue;
+import static org.junit.Assert.assertTrue;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import org.easymock.EasyMock;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.powermock.api.easymock.PowerMock;
 import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.testng.PowerMockTestCase;
-import org.testng.annotations.Test;
+import org.powermock.modules.junit4.PowerMockRunner;
 
 /**
  * Retrieval and caching of host address.
@@ -33,7 +34,8 @@ import org.testng.annotations.Test;
  * @since 28 Mar 2018
  */
 @PrepareForTest(InetAddress.class)
-public class HostAddressCacheTest extends PowerMockTestCase {
+@RunWith(PowerMockRunner.class)
+public class HostAddressCacheTest {
 
     @Test
     public void hostAddressIsAlwaysPopulated() {

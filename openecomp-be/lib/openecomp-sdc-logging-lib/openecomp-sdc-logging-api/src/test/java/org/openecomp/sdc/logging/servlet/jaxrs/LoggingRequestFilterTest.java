@@ -20,21 +20,22 @@ import static org.easymock.EasyMock.anyObject;
 import static org.easymock.EasyMock.anyString;
 import static org.openecomp.sdc.logging.servlet.jaxrs.LoggingRequestFilter.START_TIME_KEY;
 
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
 import java.util.UUID;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.container.ContainerRequestContext;
-import javax.ws.rs.container.ResourceInfo;
 import org.easymock.EasyMock;
+import org.junit.After;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.TestName;
+import org.junit.runner.RunWith;
 import org.openecomp.sdc.logging.LoggingConstants;
 import org.openecomp.sdc.logging.api.ContextData;
 import org.openecomp.sdc.logging.api.LoggingContext;
 import org.powermock.api.easymock.PowerMock;
 import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.testng.PowerMockTestCase;
-import org.testng.ITestResult;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.Test;
+import org.powermock.modules.junit4.PowerMockRunner;
+
 
 /**
  * Unit testing JAX-RS request filter.
@@ -42,52 +43,39 @@ import org.testng.annotations.Test;
  * @author evitaliy
  * @since 19 Mar 2018
  */
+@RunWith(PowerMockRunner.class)
 @PrepareForTest({LoggingContext.class, ContextData.class})
-public class LoggingRequestFilterTest extends PowerMockTestCase {
+public class LoggingRequestFilterTest {
 
-    private static final Class DEFAULT_RESOURCE_CLASS = MockResource.class;
-    private static final Method DEFAULT_RESOURCE_METHOD = MockResource.class.getDeclaredMethods()[0];
-    private static final String DEFAULT_SERVICE_NAME =
-            formatServiceName(DEFAULT_RESOURCE_CLASS, DEFAULT_RESOURCE_METHOD);
-
+    private static final String REQUEST_URI = "/test";
+    private static final String REQUEST_METHOD = "GET";
     private static final String RANDOM_REQUEST_ID = UUID.randomUUID().toString();
-
     private static final String RANDOM_PARTNER_NAME = UUID.randomUUID().toString();
 
-    private static String formatServiceName(Class resourceClass, Method resourceMethod) {
-        return resourceClass.getName() + "#" + resourceMethod.getName();
-    }
+    @Rule
+    public TestName testName = new TestName();
 
     /**
      * Verify all mocks after each test.
      */
-    @AfterMethod
-    public void verifyMocks(ITestResult result) {
+    @After
+    public void verifyMocks() {
 
         try {
             PowerMock.verifyAll();
         } catch (AssertionError e) {
-            throw new AssertionError("Expectations failed in: " + result.getMethod().getMethodName(), e);
+            throw new AssertionError("Expectations failed in " + testName.getMethodName() + "()", e);
         }
     }
 
     @Test
-    public void notHandledWhenNoMatchingResource() {
+    public void serviceNamePopulatedWhenThereIsMatchingResource() {
 
-        PowerMock.mockStatic(LoggingContext.class);
-        PowerMock.replay(LoggingContext.class);
-
-        new LoggingRequestFilter().filter(mockEmptyContainerRequestContext());
-    }
-
-    @Test
-    public void serviceNamePopulatedWhenThereIsMatchingResourceAndConcreteType() {
-
-        mockContextDataBuilder(null, DEFAULT_SERVICE_NAME, null);
+        mockContextDataBuilder(null, null, LoggingRequestFilter.formatServiceName(REQUEST_METHOD, REQUEST_URI));
         mockLoggingContext();
 
         LoggingRequestFilter filter = new LoggingRequestFilter();
-        filter.setResource(mockResource());
+        filter.setHttpRequest(mockHttpRequest(true));
 
         filter.filter(mockContainerRequestContext(
                 new RequestIdHeader(null),
@@ -95,44 +83,14 @@ public class LoggingRequestFilterTest extends PowerMockTestCase {
     }
 
     @Test
-    public void serviceNamePopulatedWhenThereIsMatchingResourceAndJavaProxyType() throws NoSuchMethodException {
+    public void serviceNameDoesNotIncludeHttpMethodWhenHttpMethodDisabled() {
 
-        Object proxyResource = Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(),
-                new Class<?>[] {MockResource.class}, (proxy, method, arguments) -> null);
-
-        final String serviceName = formatServiceName(MockResource.class, DEFAULT_RESOURCE_METHOD);
-
-        mockContextDataBuilder(null, serviceName, null);
+        mockContextDataBuilder(null, null, REQUEST_URI);
         mockLoggingContext();
 
         LoggingRequestFilter filter = new LoggingRequestFilter();
-
-        Class<?> proxyClass = proxyResource.getClass();
-        Method proxyMethod =
-                proxyClass.getMethod(DEFAULT_RESOURCE_METHOD.getName(), DEFAULT_RESOURCE_METHOD.getParameterTypes());
-
-        filter.setResource(mockResource(proxyClass, proxyMethod));
-
-        filter.filter(mockContainerRequestContext(
-                new RequestIdHeader(null),
-                new PartnerHeader(null)));
-    }
-
-    @Test
-    public void serviceNameIncludesProxyClassnameWhenJavaProxyTypeAndNoMatchingInterface() {
-
-        Object proxyResource = Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(),
-                new Class<?>[] {Comparable.class}, (proxy, method, arguments) -> null);
-
-        final String serviceName = formatServiceName(proxyResource.getClass(), DEFAULT_RESOURCE_METHOD);
-
-        mockContextDataBuilder(null, serviceName, null);
-        mockLoggingContext();
-
-        LoggingRequestFilter filter = new LoggingRequestFilter();
-
-        Class<?> proxyClass = proxyResource.getClass();
-        filter.setResource(mockResource(proxyClass, DEFAULT_RESOURCE_METHOD));
+        filter.setHttpMethodInServiceName(false);
+        filter.setHttpRequest(mockHttpRequest(false));
 
         filter.filter(mockContainerRequestContext(
                 new RequestIdHeader(null),
@@ -142,11 +100,12 @@ public class LoggingRequestFilterTest extends PowerMockTestCase {
     @Test
     public void partnerNamePopulatedWhenPresentInDefaultHeader() {
 
-        mockContextDataBuilder(null, DEFAULT_SERVICE_NAME, RANDOM_PARTNER_NAME);
+        mockContextDataBuilder(null, RANDOM_PARTNER_NAME,
+                LoggingRequestFilter.formatServiceName(REQUEST_METHOD, REQUEST_URI));
         mockLoggingContext();
 
         LoggingRequestFilter filter = new LoggingRequestFilter();
-        filter.setResource(mockResource());
+        filter.setHttpRequest(mockHttpRequest(true));
 
         filter.filter(mockContainerRequestContext(
                 new RequestIdHeader(null),
@@ -157,11 +116,12 @@ public class LoggingRequestFilterTest extends PowerMockTestCase {
     public void partnerNamePopulatedWhenPresentInCustomHeader() {
 
         final String partnerHeader = "x-partner-header";
-        mockContextDataBuilder(null, DEFAULT_SERVICE_NAME, RANDOM_PARTNER_NAME);
+        mockContextDataBuilder(null, RANDOM_PARTNER_NAME,
+                LoggingRequestFilter.formatServiceName(REQUEST_METHOD, REQUEST_URI));
         mockLoggingContext();
 
         LoggingRequestFilter filter = new LoggingRequestFilter();
-        filter.setResource(mockResource());
+        filter.setHttpRequest(mockHttpRequest(true));
         filter.setPartnerNameHeaders(partnerHeader);
 
         filter.filter(mockContainerRequestContext(
@@ -172,11 +132,12 @@ public class LoggingRequestFilterTest extends PowerMockTestCase {
     @Test
     public void requestIdPopulatedWhenPresentInDefaultHeader() {
 
-        mockContextDataBuilder(RANDOM_REQUEST_ID, DEFAULT_SERVICE_NAME, null);
+        mockContextDataBuilder(RANDOM_REQUEST_ID, null,
+                LoggingRequestFilter.formatServiceName(REQUEST_METHOD, REQUEST_URI));
         mockLoggingContext();
 
         LoggingRequestFilter filter = new LoggingRequestFilter();
-        filter.setResource(mockResource());
+        filter.setHttpRequest(mockHttpRequest(true));
 
         filter.filter(mockContainerRequestContext(
                 new RequestIdHeader(RANDOM_REQUEST_ID),
@@ -187,35 +148,30 @@ public class LoggingRequestFilterTest extends PowerMockTestCase {
     public void requestIdPopulatedWhenPresentInCustomHeader() {
 
         final String requestIdHeader = "x-request-id";
-        mockContextDataBuilder(RANDOM_REQUEST_ID, DEFAULT_SERVICE_NAME, null);
+        mockContextDataBuilder(RANDOM_REQUEST_ID, null,
+                LoggingRequestFilter.formatServiceName(REQUEST_METHOD, REQUEST_URI));
         mockLoggingContext();
 
         LoggingRequestFilter filter = new LoggingRequestFilter();
-        filter.setResource(mockResource());
         filter.setRequestIdHeaders(requestIdHeader);
+        filter.setHttpRequest(mockHttpRequest(true));
 
         filter.filter(mockContainerRequestContext(
                 new RequestIdHeader(requestIdHeader, RANDOM_REQUEST_ID),
                 new PartnerHeader(null)));
     }
 
-    private ResourceInfo mockResource() {
-        return mockResource(DEFAULT_RESOURCE_CLASS, DEFAULT_RESOURCE_METHOD);
-    }
+    private HttpServletRequest mockHttpRequest(boolean includeMethod) {
 
-    private ResourceInfo mockResource(Class resourceType, Method resourceMethod) {
-        ResourceInfo resource = EasyMock.mock(ResourceInfo.class);
-        //noinspection unchecked
-        EasyMock.expect(resource.getResourceClass()).andReturn(resourceType);
-        EasyMock.expect(resource.getResourceMethod()).andReturn(resourceMethod);
-        EasyMock.replay(resource);
-        return resource;
-    }
+        HttpServletRequest servletRequest = EasyMock.mock(HttpServletRequest.class);
+        EasyMock.expect(servletRequest.getRequestURI()).andReturn(REQUEST_URI);
 
-    private ContainerRequestContext mockEmptyContainerRequestContext() {
-        ContainerRequestContext requestContext = EasyMock.mock(ContainerRequestContext.class);
-        EasyMock.replay(requestContext);
-        return requestContext;
+        if (includeMethod) {
+            EasyMock.expect(servletRequest.getMethod()).andReturn(REQUEST_METHOD);
+        }
+
+        EasyMock.replay(servletRequest);
+        return servletRequest;
     }
 
     private ContainerRequestContext mockContainerRequestContext(Header... headers) {
@@ -233,7 +189,7 @@ public class LoggingRequestFilterTest extends PowerMockTestCase {
         return requestContext;
     }
 
-    private void mockContextDataBuilder(String requestId, String serviceName, String partnerName) {
+    private void mockContextDataBuilder(String requestId, String partnerName, String serviceName) {
 
         ContextData.ContextDataBuilder mockBuilder = EasyMock.mock(ContextData.ContextDataBuilder.class);
 
@@ -243,9 +199,7 @@ public class LoggingRequestFilterTest extends PowerMockTestCase {
             EasyMock.expect(mockBuilder.requestId(anyString())).andReturn(mockBuilder);
         }
 
-        if (serviceName != null) {
-            EasyMock.expect(mockBuilder.serviceName(serviceName)).andReturn(mockBuilder);
-        }
+        EasyMock.expect(mockBuilder.serviceName(serviceName)).andReturn(mockBuilder);
 
         if (partnerName != null) {
             EasyMock.expect(mockBuilder.partnerName(partnerName)).andReturn(mockBuilder);
@@ -267,10 +221,10 @@ public class LoggingRequestFilterTest extends PowerMockTestCase {
         PowerMock.mockStatic(LoggingContext.class);
 
         LoggingContext.clear();
-        EasyMock.expectLastCall().once();
+        EasyMock.expectLastCall();
 
         LoggingContext.put(anyObject(ContextData.class));
-        EasyMock.expectLastCall().once();
+        EasyMock.expectLastCall();
 
         PowerMock.replay(LoggingContext.class);
     }
@@ -307,20 +261,4 @@ public class LoggingRequestFilterTest extends PowerMockTestCase {
             super(key, value);
         }
     }
-
-    private interface MockResource {
-
-        @SuppressWarnings("EmptyMethod")
-        void process();
-    }
-
-    private static class MockResourceImpl implements MockResource {
-
-        @Override
-        public void process() {
-            // no-op
-        }
-    }
-
-
 }

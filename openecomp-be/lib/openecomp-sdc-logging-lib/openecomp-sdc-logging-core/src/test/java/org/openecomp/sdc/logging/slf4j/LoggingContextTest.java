@@ -16,16 +16,16 @@
 
 package org.openecomp.sdc.logging.slf4j;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertNull;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import java.util.UUID;
+import org.junit.After;
+import org.junit.Test;
 import org.openecomp.sdc.logging.api.ContextData;
 import org.openecomp.sdc.logging.api.LoggingContext;
 import org.slf4j.MDC;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.Test;
 
 /**
  * Unit-testing logging context service via its facade.
@@ -35,27 +35,27 @@ import org.testng.annotations.Test;
  */
 public class LoggingContextTest {
 
-    @AfterMethod
+    @After
     public void clearMdc() {
         MDC.clear();
     }
 
     @Test
     public void returnMdcWrapperWhenToRunnableCalled() {
-        assertEquals(LoggingContext.copyToRunnable(() -> { }).getClass(), MDCRunnableWrapper.class);
+        assertEquals(MDCRunnableWrapper.class, LoggingContext.copyToRunnable(() -> { }).getClass());
     }
 
-    @Test(expectedExceptions = NullPointerException.class)
+    @Test(expected = NullPointerException.class)
     public void throwNpeWhenToRunnableWithNull() {
         LoggingContext.copyToRunnable(null);
     }
 
     @Test
     public void returnMdcWrapperWhenToCallableCalled() {
-        assertEquals(LoggingContext.copyToCallable(() -> "").getClass(), MDCCallableWrapper.class);
+        assertEquals(MDCCallableWrapper.class, LoggingContext.copyToCallable(() -> "").getClass());
     }
 
-    @Test(expectedExceptions = NullPointerException.class)
+    @Test(expected = NullPointerException.class)
     public void throwNpeWhenToCallableWithNull() {
         LoggingContext.copyToCallable(null);
     }
@@ -82,7 +82,7 @@ public class LoggingContextTest {
 
         MDC.put(randomKey, randomValue);
         LoggingContext.clear();
-        assertEquals(MDC.get(randomKey), randomValue);
+        assertEquals(randomValue, MDC.get(randomKey));
     }
 
     @Test
@@ -94,7 +94,7 @@ public class LoggingContextTest {
         assertEquals(random, MDC.get(ContextField.SERVICE_NAME.asKey()));
     }
 
-    @Test(expectedExceptions = NullPointerException.class)
+    @Test(expected = NullPointerException.class)
     public void throwNpeWhenContextDataNull() {
         LoggingContext.put(null);
     }

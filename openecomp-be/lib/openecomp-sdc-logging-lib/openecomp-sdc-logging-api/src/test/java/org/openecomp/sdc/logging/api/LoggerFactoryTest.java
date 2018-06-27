@@ -16,11 +16,11 @@
 
 package org.openecomp.sdc.logging.api;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.lang.reflect.Field;
-import org.testng.annotations.Test;
+import org.junit.Test;
 
 /**
  * Unit-test creation of a logger via factory, assuming not default binding.
@@ -31,15 +31,15 @@ import org.testng.annotations.Test;
 public class LoggerFactoryTest {
 
     @Test
-    public void shouldHoldNoOpWhenNoBinding() throws Exception {
+    public void shouldHoldNoOpWhenNoBinding() throws NoSuchFieldException, IllegalAccessException {
 
         // set up to access the private static field
         Field factory = LoggerFactory.class.getDeclaredField("SERVICE");
         factory.setAccessible(true);
         Object impl = factory.get(null);
 
-        assertEquals(impl.getClass().getName(),
-                "org.openecomp.sdc.logging.api.LoggerFactory$NoOpLoggerCreationService");
+        assertEquals("org.openecomp.sdc.logging.api.LoggerFactory$NoOpLoggerCreationService",
+                impl.getClass().getName());
     }
 
     @Test
@@ -54,12 +54,12 @@ public class LoggerFactoryTest {
         verifyLoggerWorks(logger);
     }
 
-    @Test(expectedExceptions = NullPointerException.class)
+    @Test(expected = NullPointerException.class)
     public void throwNpeWhenGetByNameWithNull() {
         LoggerFactory.getLogger((String) null);
     }
 
-    @Test(expectedExceptions = NullPointerException.class)
+    @Test(expected = NullPointerException.class)
     public void throwNpeWhenGetByClassWithNull() {
         LoggerFactory.getLogger((Class<LoggerFactoryTest>) null);
     }
