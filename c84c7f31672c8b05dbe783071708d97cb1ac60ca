@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_9c5c451b",
+        "filename": "catalog-dao/src/main/java/org/openecomp/sdc/be/dao/cassandra/schema/SdcSchemaBuilder.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 164,
+      "author": {
+        "id": 3625
+      },
+      "writtenOn": "2018-06-28T12:15:41Z",
+      "side": 1,
+      "message": "static import for Collectors",
+      "revId": "c84c7f31672c8b05dbe783071708d97cb1ac60ca",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_3c9bb1ca",
+        "filename": "catalog-dao/src/main/java/org/openecomp/sdc/be/dao/cassandra/schema/SdcSchemaBuilder.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 227,
+      "author": {
+        "id": 3625
+      },
+      "writtenOn": "2018-06-28T12:15:41Z",
+      "side": 1,
+      "message": "typo",
+      "revId": "c84c7f31672c8b05dbe783071708d97cb1ac60ca",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
