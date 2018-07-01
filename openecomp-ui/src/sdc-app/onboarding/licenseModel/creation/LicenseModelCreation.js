@@ -14,11 +14,8 @@
  * limitations under the License.
  */
 import { connect } from 'react-redux';
-import featureToggle from 'sdc-app/features/featureToggle.js';
-import { featureToggleNames } from 'sdc-app/features/FeaturesConstants.js';
 import LicenseModelCreationActionHelper from './LicenseModelCreationActionHelper.js';
 import LicenseModelCreationView from './LicenseModelCreationView.jsx';
-import LicenseModelCreationViewWithFilter from './LicenseModelCreationViewWithFilter.jsx';
 
 import ValidationHelper from 'sdc-app/common/helpers/ValidationHelper.js';
 import LicenseModelActionHelper from 'sdc-app/onboarding/licenseModel/LicenseModelActionHelper.js';
@@ -30,13 +27,6 @@ import PermissionsActionHelper from 'sdc-app/onboarding/permissions/PermissionsA
 import UniqueTypesHelper from 'sdc-app/common/helpers/UniqueTypesHelper.js';
 import i18n from 'nfvo-utils/i18n/i18n.js';
 import { itemType } from 'sdc-app/common/helpers/ItemsHelperConstants.js';
-
-const ToggledLicenseModelCreationView = featureToggle(
-    featureToggleNames.FILTER
-)({
-    OnComp: LicenseModelCreationViewWithFilter,
-    OffComp: LicenseModelCreationView
-});
 
 export const mapStateToProps = ({
     users: { usersList },
@@ -118,5 +108,5 @@ export const mapActionsToProps = dispatch => {
 };
 
 export default connect(mapStateToProps, mapActionsToProps)(
-    ToggledLicenseModelCreationView
+    LicenseModelCreationView
 );

@@ -1,22 +1,21 @@
-/*!
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+/*
+ * Copyright © 2016-2018 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
- * or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 import React from 'react';
 import PropTypes from 'prop-types';
 import i18n from 'nfvo-utils/i18n/i18n.js';
-import Validator from 'nfvo-utils/Validator.js';
 import Input from 'nfvo-components/input/validation/Input.jsx';
 import Form from 'nfvo-components/input/validation/Form.jsx';
 import { LICENSE_MODEL_CREATION_FORM_NAME } from './LicenseModelCreationConstants.js';
@@ -61,12 +60,11 @@ class LicenseModelCreationView extends React.Component {
                             onChange={vendorName =>
                                 onDataChanged(
                                     { vendorName },
-                                    LICENSE_MODEL_CREATION_FORM_NAME,
-                                    {
-                                        vendorName: name =>
-                                            this.validateName(name)
-                                    }
+                                    LICENSE_MODEL_CREATION_FORM_NAME
                                 )
+                            }
+                            onBlur={e =>
+                                this.validateIsNameUnique(e.target.value)
                             }
                             isValid={genericFieldInfo.vendorName.isValid}
                             errorText={genericFieldInfo.vendorName.errorText}
@@ -102,24 +100,12 @@ class LicenseModelCreationView extends React.Component {
         this.props.onSubmit(licenseModel, usersList);
     }
 
-    validateName(value) {
-        const { data: { id }, VLMNames } = this.props;
-        const isExists = Validator.isItemNameAlreadyExistsInList({
-            itemId: id,
-            itemName: value,
-            list: VLMNames
-        });
-
-        return !isExists
-            ? { isValid: true, errorText: '' }
-            : {
-                  isValid: false,
-                  errorText: i18n(
-                      "License model by the name '" +
-                          value +
-                          "' already exists. License model name must be unique"
-                  )
-              };
+    validateIsNameUnique(value) {
+        this.props.isNameUnique(
+            value,
+            'vendorName',
+            LICENSE_MODEL_CREATION_FORM_NAME
+        );
     }
 
     validate() {

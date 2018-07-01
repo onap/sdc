@@ -20,7 +20,6 @@ import Tree from 'nfvo-components/tree/Tree.jsx';
 import SVGIcon from 'sdc-ui/lib/react/SVGIcon.js';
 import Button from 'sdc-ui/lib/react/Button.js';
 import i18n from 'nfvo-utils/i18n/i18n.js';
-import featureToggle from 'sdc-app/features/featureToggle.js';
 
 const ArchiveRestoreButton = ({ depricateAction, title, isArchived }) => (
     <div className="deprecate-btn-wrapper">
@@ -34,7 +33,7 @@ const ArchiveRestoreButton = ({ depricateAction, title, isArchived }) => (
         ) : (
             <SVGIcon
                 name="archiveBox"
-                title={i18n('Archive item')}
+                title={i18n('Archive')}
                 color="secondary"
                 onClick={depricateAction}
             />
@@ -44,10 +43,6 @@ const ArchiveRestoreButton = ({ depricateAction, title, isArchived }) => (
 
 const ArchivedTitle = () => (
     <div className="archived-title">{i18n('Archived')}</div>
-);
-
-const FeatureDepricatedButton = featureToggle('ARCHIVE_ITEM')(
-    ArchiveRestoreButton
 );
 
 const VersionPageTitle = ({
@@ -64,7 +59,7 @@ const VersionPageTitle = ({
                 {isArchived ? <ArchivedTitle /> : null}
             </div>
             {isCollaborator && (
-                <FeatureDepricatedButton
+                <ArchiveRestoreButton
                     isArchived={isArchived}
                     depricateAction={
                         isArchived ? () => onRestore() : () => onArchive()

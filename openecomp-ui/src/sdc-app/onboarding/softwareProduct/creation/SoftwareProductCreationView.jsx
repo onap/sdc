@@ -1,5 +1,5 @@
 /*!
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright © 2016-2018 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -91,13 +91,10 @@ class SoftwareProductCreationView extends React.Component {
                                     onChange={name =>
                                         onDataChanged(
                                             { name },
-                                            SP_CREATION_FORM_NAME,
-                                            {
-                                                name: name =>
-                                                    this.validateName(name)
-                                            }
+                                            SP_CREATION_FORM_NAME
                                         )
                                     }
+                                    onBlur={this.validateIsNameUnique}
                                     isValid={genericFieldInfo.name.isValid}
                                     errorText={genericFieldInfo.name.errorText}
                                     type="text"
@@ -207,17 +204,15 @@ class SoftwareProductCreationView extends React.Component {
     }
 
     getVendorList() {
-        let { finalizedLicenseModelList } = this.props;
+        let { vendorList } = this.props;
 
         return [{ enum: '', title: i18n('please select...') }].concat(
-            sortByStringProperty(finalizedLicenseModelList, 'name').map(
-                vendor => {
-                    return {
-                        enum: vendor.id,
-                        title: vendor.name
-                    };
-                }
-            )
+            sortByStringProperty(vendorList, 'name').map(vendor => {
+                return {
+                    enum: vendor.id,
+                    title: vendor.name
+                };
+            })
         );
     }
 
@@ -270,6 +265,13 @@ class SoftwareProductCreationView extends React.Component {
               };
     }
 
+    validateIsNameUnique = e => {
+        const value = e.target.value;
+        if (value) {
+            this.props.isNameUnique(value, 'name', SP_CREATION_FORM_NAME);
+        }
+    };
+
     validate() {
         this.props.onValidateForm(SP_CREATION_FORM_NAME);
     }
@@ -290,6 +292,7 @@ const OnboardingProcedure = ({
                         onboardingMethod ===
                         onboardingMethodConst.NETWORK_PACKAGE
                     }
+                    errorText={genericFieldInfo.onboardingMethod.errorText}
                     onChange={() =>
                         onDataChanged(
                             {

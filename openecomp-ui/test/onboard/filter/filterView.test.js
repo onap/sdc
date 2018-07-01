@@ -18,14 +18,14 @@ import React from 'react';
 import { mount } from 'enzyme';
 import { Provider } from 'react-redux';
 import { storeCreator } from 'sdc-app/AppStore.js';
-import { ConnectedFilter } from 'sdc-app/onboarding//onboard//filter/Filter.jsx';
+import Filter from 'sdc-app/onboarding//onboard//filter/Filter.jsx';
 
 describe('Filter component view Tests', () => {
     it('simple jsx test', () => {
         const store = storeCreator();
         const wrapper = mount(
             <Provider store={store}>
-                <ConnectedFilter />
+                <Filter />
             </Provider>
         );
         const filter = wrapper.find('.catalog-filter');

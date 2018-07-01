@@ -68,9 +68,9 @@ class VendorItem extends React.Component {
                             onClick={e => this.handleVspCountClick(e)}
                             data-test-id="catalog-vsp-count"
                             disabled={!softwareProductList.length}>
-                            {i18n('{length} VSPs', {
-                                length: softwareProductList.length
-                            })}
+                            {`${softwareProductList.length.toString()} ${i18n(
+                                'VSPs'
+                            )}`}
                         </Button>
                         {shouldShowOverlay &&
                             softwareProductList.length > 0 && (

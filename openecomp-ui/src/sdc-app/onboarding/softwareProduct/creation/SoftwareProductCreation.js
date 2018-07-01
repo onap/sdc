@@ -14,11 +14,8 @@
  * permissions and limitations under the License.
  */
 import { connect } from 'react-redux';
-import featureToggle from 'sdc-app/features/featureToggle.js';
-import { featureToggleNames } from 'sdc-app/features/FeaturesConstants.js';
 import SoftwareProductCreationActionHelper from './SoftwareProductCreationActionHelper.js';
 import SoftwareProductCreationView from './SoftwareProductCreationView.jsx';
-import SoftwareProductCreationViewWithFilter from './SoftwareProductCreationViewWithFilter.jsx';
 import ValidationHelper from 'sdc-app/common/helpers/ValidationHelper.js';
 import SoftwareProductActionHelper from '../SoftwareProductActionHelper.js';
 import VersionsPageActionHelper from 'sdc-app/onboarding/versionsPage/VersionsPageActionHelper.js';
@@ -29,13 +26,6 @@ import PermissionsActionHelper from 'sdc-app/onboarding/permissions/PermissionsA
 import UniqueTypesHelper from 'sdc-app/common/helpers/UniqueTypesHelper.js';
 import i18n from 'nfvo-utils/i18n/i18n.js';
 import { itemType } from 'sdc-app/common/helpers/ItemsHelperConstants.js';
-
-const ToggledSoftwareProductCreationView = featureToggle(
-    featureToggleNames.FILTER
-)({
-    OnComp: SoftwareProductCreationViewWithFilter,
-    OffComp: SoftwareProductCreationView
-});
 
 export const mapStateToProps = ({
     finalizedLicenseModelList,
@@ -130,4 +120,4 @@ export const mapActionsToProps = dispatch => {
 
 export default connect(mapStateToProps, mapActionsToProps, null, {
     withRef: true
-})(ToggledSoftwareProductCreationView);
+})(SoftwareProductCreationView);
