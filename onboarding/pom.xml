@@ -111,9 +111,9 @@
         <woodstox.version>4.4.1</woodstox.version>
         <ws.rs.version>2.0.1
         </ws.rs.version>  <!--  New version 2.0.1 to fix blackduck violation Failing with comiplation issues-->
-        <zusammen.version>1.0.0</zusammen.version>
-        <zusammen-state-store.version>1.0.0</zusammen-state-store.version>
-        <zusammen-collaboration-store.version>1.0.0</zusammen-collaboration-store.version>
+        <zusammen.version>1.0.1</zusammen.version>
+        <zusammen-state-store.version>1.0.1</zusammen-state-store.version>
+        <zusammen-collaboration-store.version>1.0.1</zusammen-collaboration-store.version>
         <zusammen-index-store.version>1.0.0</zusammen-index-store.version>
         <pmd.version>5.8.1</pmd.version>
         <build.tools.version>${project.version}</build.tools.version>
