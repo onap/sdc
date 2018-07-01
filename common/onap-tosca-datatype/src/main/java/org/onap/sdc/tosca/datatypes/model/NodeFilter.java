@@ -1,9 +1,6 @@
-/*-
- * ============LICENSE_START=======================================================
- * SDC
- * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
- * ================================================================================
+/*
+ * Copyright © 2016-2018 European Support Limited
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,10 +12,12 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * ============LICENSE_END=========================================================
  */
 
 package org.onap.sdc.tosca.datatypes.model;
+
+import org.apache.commons.collections4.CollectionUtils;
+import org.onap.sdc.tosca.services.ToscaExtensionYamlUtil;
 
 import java.util.List;
 import java.util.Map;
@@ -26,22 +25,63 @@ import java.util.Map;
 
 public class NodeFilter {
 
-  List<Map<String, List<Constraint>>> properties;
-  List<Map<String, CapabilityFilter>> capabilities;
+    List<Map<String, List<Constraint>>> properties;
+    List<Map<String, CapabilityFilter>> capabilities;
 
-  public List<Map<String, CapabilityFilter>> getCapabilities() {
-    return capabilities;
-  }
+    public List<Map<String, CapabilityFilter>> getCapabilities() {
+        return capabilities;
+    }
 
-  public void setCapabilities(List<Map<String, CapabilityFilter>> capabilities) {
-    this.capabilities = capabilities;
-  }
+    public void setCapabilities(List<Map<String, CapabilityFilter>> capabilities) {
+        this.capabilities = capabilities;
+    }
 
-  public List<Map<String, List<Constraint>>> getProperties() {
-    return properties;
-  }
+    public List<Map<String, List<Constraint>>> getProperties() {
+        return properties;
+    }
 
-  public void setProperties(List<Map<String, List<Constraint>>> properties) {
-    this.properties = properties;
-  }
+
+    public List<Map<String, List<Constraint>>> getNormalizeProperties() {
+        return getNormalizeProperties(properties);
+    }
+
+    private List<Map<String, List<Constraint>>> getNormalizeProperties(List<Map<String, List<Constraint>>> properties) {
+        ToscaExtensionYamlUtil toscaExtensionYamlUtil = new ToscaExtensionYamlUtil();
+        if (CollectionUtils.isEmpty(properties)) {
+            return properties;
+        }
+        for (Map<String, List<Constraint>> propertyConstraintsEntity : properties) {
+            String propertyKey = propertyConstraintsEntity.keySet().iterator().next();
+            List<Constraint> constraints = propertyConstraintsEntity.get(propertyKey);
+            for (Object constraintObj : constraints) {
+                Constraint constraint = toscaExtensionYamlUtil
+                                                .yamlToObject(toscaExtensionYamlUtil.objectToYaml(constraintObj),
+                                                        Constraint.class);
+                constraints.remove(constraintObj);
+                constraints.add(constraint);
+            }
+        }
+        return properties;
+    }
+
+    public List<Map<String, CapabilityFilter>> getNormalizeCapabilities() {
+        ToscaExtensionYamlUtil toscaExtensionYamlUtil = new ToscaExtensionYamlUtil();
+        if (CollectionUtils.isEmpty(capabilities)) {
+            return capabilities;
+        }
+        for (Map<String, CapabilityFilter> capabilityEntry : capabilities) {
+            String capabilityKey = capabilityEntry.keySet().iterator().next();
+            Object capabilityFilterObj = capabilityEntry.get(capabilityKey);
+            CapabilityFilter capabilityFilter = toscaExtensionYamlUtil.yamlToObject(
+                    toscaExtensionYamlUtil.objectToYaml(capabilityFilterObj), CapabilityFilter.class);
+            capabilityFilter.setProperties(getNormalizeProperties(capabilityFilter.getProperties()));
+            capabilityEntry.remove(capabilityKey);
+            capabilityEntry.put(capabilityKey,capabilityFilter);
+        }
+        return capabilities;
+    }
+
+    public void setProperties(List<Map<String, List<Constraint>>> properties) {
+        this.properties = properties;
+    }
 }
