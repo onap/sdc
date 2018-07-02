@@ -1,0 +1,441 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_62075082",
+        "filename": "common/onap-tosca-datatype/src/main/java/org/onap/sdc/tosca/datatypes/model/NodeFilter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-07-02T06:02:30Z",
+      "side": 1,
+      "message": "can be private",
+      "range": {
+        "startLine": 29,
+        "startChar": 40,
+        "endLine": 29,
+        "endChar": 52
+      },
+      "revId": "2512b0cae2dbb74de364f3ec3c65043540c0ce75",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_02fe8c6b",
+        "filename": "common/onap-tosca-datatype/src/main/java/org/onap/sdc/tosca/datatypes/model/NodeFilter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-07-02T06:02:30Z",
+      "side": 1,
+      "message": "not in use",
+      "range": {
+        "startLine": 44,
+        "startChar": 47,
+        "endLine": 44,
+        "endChar": 69
+      },
+      "revId": "2512b0cae2dbb74de364f3ec3c65043540c0ce75",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_c2f7448b",
+        "filename": "common/onap-tosca-datatype/src/main/java/org/onap/sdc/tosca/datatypes/model/NodeFilter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-07-02T06:02:30Z",
+      "side": 1,
+      "message": "do not modify the collection you are iterating in the iteration loop. if you want to do it, use loop on the iterator and don\u0027t use foreach loop",
+      "range": {
+        "startLine": 60,
+        "startChar": 16,
+        "endLine": 61,
+        "endChar": 44
+      },
+      "revId": "2512b0cae2dbb74de364f3ec3c65043540c0ce75",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_82f13c97",
+        "filename": "common/onap-tosca-datatype/src/main/java/org/onap/sdc/tosca/datatypes/model/NodeFilter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-07-02T06:02:30Z",
+      "side": 1,
+      "message": "not in use",
+      "range": {
+        "startLine": 67,
+        "startChar": 47,
+        "endLine": 67,
+        "endChar": 71
+      },
+      "revId": "2512b0cae2dbb74de364f3ec3c65043540c0ce75",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_a2ec78bc",
+        "filename": "common/onap-tosca-datatype/src/main/java/org/onap/sdc/tosca/services/ToscaExtensionYamlUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-07-02T06:02:30Z",
+      "side": 1,
+      "message": "change to 2018",
+      "range": {
+        "startLine": 2,
+        "startChar": 23,
+        "endLine": 2,
+        "endChar": 24
+      },
+      "revId": "2512b0cae2dbb74de364f3ec3c65043540c0ce75",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_622e70fc",
+        "filename": "common/onap-tosca-datatype/src/main/java/org/onap/sdc/tosca/services/ToscaExtensionYamlUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-07-02T06:02:30Z",
+      "side": 1,
+      "message": "extract constant",
+      "range": {
+        "startLine": 46,
+        "startChar": 47,
+        "endLine": 46,
+        "endChar": 101
+      },
+      "revId": "2512b0cae2dbb74de364f3ec3c65043540c0ce75",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_02352c45",
+        "filename": "common/onap-tosca-datatype/src/main/java/org/onap/sdc/tosca/services/ToscaExtensionYamlUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-07-02T06:02:30Z",
+      "side": 1,
+      "message": "extract constant",
+      "range": {
+        "startLine": 47,
+        "startChar": 47,
+        "endLine": 47,
+        "endChar": 114
+      },
+      "revId": "2512b0cae2dbb74de364f3ec3c65043540c0ce75",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_2238683c",
+        "filename": "common/onap-tosca-datatype/src/main/java/org/onap/sdc/tosca/services/ToscaExtensionYamlUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-07-02T06:02:30Z",
+      "side": 1,
+      "message": "extract constant",
+      "range": {
+        "startLine": 49,
+        "startChar": 46,
+        "endLine": 49,
+        "endChar": 104
+      },
+      "revId": "2512b0cae2dbb74de364f3ec3c65043540c0ce75",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_6215109a",
+        "filename": "common/onap-tosca-datatype/src/main/java/org/onap/sdc/tosca/services/ToscaExtensionYamlUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-07-02T06:02:30Z",
+      "side": 1,
+      "message": "why not to use \"else if\"?",
+      "range": {
+        "startLine": 49,
+        "startChar": 16,
+        "endLine": 49,
+        "endChar": 19
+      },
+      "revId": "2512b0cae2dbb74de364f3ec3c65043540c0ce75",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_c23e6429",
+        "filename": "common/onap-tosca-datatype/src/main/java/org/onap/sdc/tosca/services/ToscaExtensionYamlUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-07-02T06:02:30Z",
+      "side": 1,
+      "message": "extract constant",
+      "range": {
+        "startLine": 50,
+        "startChar": 46,
+        "endLine": 50,
+        "endChar": 114
+      },
+      "revId": "2512b0cae2dbb74de364f3ec3c65043540c0ce75",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_220f088a",
+        "filename": "common/onap-tosca-datatype/src/main/java/org/onap/sdc/tosca/services/ToscaExtensionYamlUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-07-02T06:02:30Z",
+      "side": 1,
+      "message": "wouldn\u0027t you want to throw a more specific exception with a proper message? this is an exception you can expect",
+      "range": {
+        "startLine": 53,
+        "startChar": 22,
+        "endLine": 53,
+        "endChar": 46
+      },
+      "revId": "2512b0cae2dbb74de364f3ec3c65043540c0ce75",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_e2392040",
+        "filename": "common/onap-tosca-datatype/src/main/java/org/onap/sdc/tosca/services/ToscaExtensionYamlUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-07-02T06:02:30Z",
+      "side": 1,
+      "message": "extract constant",
+      "range": {
+        "startLine": 72,
+        "startChar": 51,
+        "endLine": 72,
+        "endChar": 105
+      },
+      "revId": "2512b0cae2dbb74de364f3ec3c65043540c0ce75",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_82485ccd",
+        "filename": "common/onap-tosca-datatype/src/main/java/org/onap/sdc/tosca/services/ToscaExtensionYamlUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-07-02T06:02:30Z",
+      "side": 1,
+      "message": "extract constant",
+      "range": {
+        "startLine": 74,
+        "startChar": 47,
+        "endLine": 74,
+        "endChar": 115
+      },
+      "revId": "2512b0cae2dbb74de364f3ec3c65043540c0ce75",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_a24318ae",
+        "filename": "common/onap-tosca-datatype/src/main/java/org/onap/sdc/tosca/services/ToscaExtensionYamlUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-07-02T06:02:30Z",
+      "side": 1,
+      "message": "extract constant",
+      "range": {
+        "startLine": 78,
+        "startChar": 58,
+        "endLine": 78,
+        "endChar": 114
+      },
+      "revId": "2512b0cae2dbb74de364f3ec3c65043540c0ce75",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_421254b5",
+        "filename": "common/onap-tosca-datatype/src/main/java/org/onap/sdc/tosca/services/ToscaExtensionYamlUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-07-02T06:02:30Z",
+      "side": 1,
+      "message": "extract constant",
+      "range": {
+        "startLine": 80,
+        "startChar": 47,
+        "endLine": 80,
+        "endChar": 113
+      },
+      "revId": "2512b0cae2dbb74de364f3ec3c65043540c0ce75",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_c225040b",
+        "filename": "common/onap-tosca-datatype/src/main/java/org/onap/sdc/tosca/services/ToscaExtensionYamlUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 89,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-07-02T06:02:30Z",
+      "side": 1,
+      "message": "wouldn\u0027t you want to throw a more specific exception with a proper message? this is an exception you can expect",
+      "range": {
+        "startLine": 89,
+        "startChar": 19,
+        "endLine": 89,
+        "endChar": 51
+      },
+      "revId": "2512b0cae2dbb74de364f3ec3c65043540c0ce75",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_e22040fa",
+        "filename": "openecomp-be/lib/openecomp-tosca-lib/src/main/java/org/openecomp/sdc/tosca/services/impl/ToscaAnalyzerServiceImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 246,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-07-02T06:02:30Z",
+      "side": 1,
+      "message": "redundant null check",
+      "range": {
+        "startLine": 246,
+        "startChar": 16,
+        "endLine": 246,
+        "endChar": 45
+      },
+      "revId": "2512b0cae2dbb74de364f3ec3c65043540c0ce75",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_a21a38c4",
+        "filename": "openecomp-be/lib/openecomp-tosca-lib/src/main/java/org/openecomp/sdc/tosca/services/impl/ToscaAnalyzerServiceImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 653,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-07-02T06:02:30Z",
+      "side": 1,
+      "message": "align",
+      "range": {
+        "startLine": 649,
+        "startChar": 4,
+        "endLine": 653,
+        "endChar": 5
+      },
+      "revId": "2512b0cae2dbb74de364f3ec3c65043540c0ce75",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_821ffcb6",
+        "filename": "openecomp-be/lib/openecomp-tosca-lib/src/main/java/org/openecomp/sdc/tosca/services/impl/ToscaAnalyzerServiceImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 769,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-07-02T06:02:30Z",
+      "side": 1,
+      "message": "check if not empty before using get",
+      "range": {
+        "startLine": 769,
+        "startChar": 83,
+        "endLine": 769,
+        "endChar": 88
+      },
+      "revId": "2512b0cae2dbb74de364f3ec3c65043540c0ce75",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
