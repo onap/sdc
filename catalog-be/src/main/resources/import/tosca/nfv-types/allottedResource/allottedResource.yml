@@ -34,5 +34,4 @@ node_types:
     - service_dependency:
         capability: org.openecomp.capabilities.AllottedResource
         relationship: tosca.relationships.DependsOn
-        node: tosca.services.Root
 
