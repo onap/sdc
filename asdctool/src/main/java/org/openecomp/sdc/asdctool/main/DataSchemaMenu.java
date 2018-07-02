@@ -31,69 +31,66 @@ import org.slf4j.LoggerFactory;
 
 public class DataSchemaMenu {
 
-	private static Logger log = LoggerFactory.getLogger(DataSchemaMenu.class.getName());
+    private static Logger log = LoggerFactory.getLogger(DataSchemaMenu.class.getName());
 
-	public static void main(String[] args) {
+    public static void main(String[] args) {
 
-		String operation = args[0];
+        String operation = args[0];
 
-		String appConfigDir = args[1];
+        String appConfigDir = args[1];
 
-		if (args == null || args.length < 2) {
-			usageAndExit();
-		}
+        if (args == null || args.length < 2) {
+            usageAndExit();
+        }
 
-		ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(), appConfigDir);
-		ConfigurationManager configurationManager = new ConfigurationManager(configurationSource);
-		
-		try {
+        ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(), appConfigDir);
+        ConfigurationManager configurationManager = new ConfigurationManager(configurationSource);
 
-			switch (operation.toLowerCase()) {
-			case "create-cassandra-structures":
-				log.debug("Start create cassandra keyspace, tables and indexes");
-				if (SdcSchemaBuilder.createSchema()) {
-					log.debug("create cassandra keyspace, tables and indexes successfull");
-					System.exit(0);
-				} else {
-					log.debug("create cassandra keyspace, tables and indexes failed");
-					System.exit(2);
-				}
-			case "create-titan-structures":
-				log.debug("Start create titan keyspace");
-				String titanCfg = 2 == args.length? configurationManager.getConfiguration().getTitanCfgFile(): args[2];
-				if (TitanGraphInitializer.createGraph(titanCfg)) {
-					log.debug("create titan keyspace successfull");
-					System.exit(0);
-				} else {
-					log.debug("create titan keyspace failed");
-					System.exit(2);
-				}
-			case "clean-cassndra":
-				log.debug("Start clean keyspace, tables");
-				if (SdcSchemaBuilder.deleteSchema()) {
-					log.debug(" successfull");
-					System.exit(0);
-				} else {
-					log.debug(" failed");
-					System.exit(2);
-				}
-			default:
-				usageAndExit();
-			}
-		} catch (Throwable t) {
-			t.printStackTrace();
-			log.debug("create cassandra keyspace, tables and indexes failed");
-			System.exit(3);
-		}
-	}
+        switch (operation.toLowerCase()) {
+            case "create-cassandra-structures":
+                log.debug("Start create cassandra keyspace, tables and indexes");
+                if (SdcSchemaBuilder.createSchema()) {
+                    log.debug("create cassandra keyspace, tables and indexes successfull");
+                    System.exit(0);
+                } else {
+                    log.debug("create cassandra keyspace, tables and indexes failed");
+                    System.exit(2);
+                }
+                break;
+            case "create-titan-structures":
+                log.debug("Start create titan keyspace");
+                String titanCfg = 2 == args.length ? configurationManager.getConfiguration().getTitanCfgFile() : args[2];
+                if (TitanGraphInitializer.createGraph(titanCfg)) {
+                    log.debug("create titan keyspace successfull");
+                    System.exit(0);
+                } else {
+                    log.debug("create titan keyspace failed");
+                    System.exit(2);
+                }
+                break;
+            case "clean-cassndra":
+                log.debug("Start clean keyspace, tables");
+                if (SdcSchemaBuilder.deleteSchema()) {
+                    log.debug(" successfull");
+                    System.exit(0);
+                } else {
+                    log.debug(" failed");
+                    System.exit(2);
+                }
+                break;
+            default:
+                usageAndExit();
+                break;
+        }
+    }
 
-	private static void usageAndExit() {
-		DataSchemeUsage();
-		System.exit(1);
-	}
+    private static void usageAndExit() {
+        DataSchemeUsage();
+        System.exit(1);
+    }
 
-	private static void DataSchemeUsage() {
-		System.out.println("Usage: create-cassandra-structures <configuration dir> ");
-		System.out.println("Usage: create-titan-structures <configuration dir> ");
-	}
+    private static void DataSchemeUsage() {
+        System.out.println("Usage: create-cassandra-structures <configuration dir> ");
+        System.out.println("Usage: create-titan-structures <configuration dir> ");
+    }
 }

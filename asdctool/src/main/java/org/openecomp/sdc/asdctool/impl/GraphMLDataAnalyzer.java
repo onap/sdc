@@ -36,8 +36,12 @@ import org.jdom2.Element;
 import org.jdom2.filter.ElementFilter;
 import org.jdom2.input.SAXBuilder;
 import org.jdom2.util.IteratorIterable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class GraphMLDataAnalyzer {
+
+	private static Logger log = LoggerFactory.getLogger(GraphMLDataAnalyzer.class);
 
 	private static final String[] COMPONENT_SHEET_HEADER = { "uniqueId", "type", "name", "toscaResourceName",
 			"resourceType", "version", "deleted", "hasNonCalculatedReqCap" };
@@ -51,7 +55,7 @@ public class GraphMLDataAnalyzer {
 			result = _analyzeGraphMLData(mlFileLocation);
 			System.out.println("Analyzed ML file=" + mlFileLocation + ", XLS result=" + result);
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.info("analyze GraphML Data failed - {}" , e);
 			return null;
 		}
 		return result;

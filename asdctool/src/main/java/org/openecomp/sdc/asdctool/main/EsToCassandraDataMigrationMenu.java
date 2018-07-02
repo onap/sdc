@@ -89,7 +89,7 @@ public class EsToCassandraDataMigrationMenu {
 				usageAndExit();
 			}
 		} catch (Throwable t) {
-			t.printStackTrace();
+			log.info("data migration failed - {}", t);
 			System.exit(3);
 		}
 	}

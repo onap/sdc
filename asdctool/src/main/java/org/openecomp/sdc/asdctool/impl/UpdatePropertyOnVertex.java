@@ -102,7 +102,7 @@ public class UpdatePropertyOnVertex {
 			return numberOfUpdatedVertexes;
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.info("update Property On Service At Least Certified failed -{}" , e);
 			// graph.rollback();
 			graph.tx().rollback();
 

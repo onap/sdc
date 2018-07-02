@@ -92,7 +92,7 @@ public class ValidationUtils {
 	public final static Pattern COLON_PATTERN = Pattern.compile("[:]+");
 	public final static Pattern AT_PATTERN = Pattern.compile("[@]+");
 	public final static Pattern AND_PATTERN = Pattern.compile(" [aA][Nn][Dd] ");
-	public final static Set<String> CATEGORY_CONJUNCTIONS = new HashSet<String>(
+	protected final static Set<String> CATEGORY_CONJUNCTIONS = new HashSet<String>(
 			Arrays.asList("of", "to", "for", "as", "a", "an", "the"));
 
 	public final static Pattern COST_PATTERN = Pattern.compile("^[0-9]{1,5}\\.[0-9]{1,3}$");

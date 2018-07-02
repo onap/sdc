@@ -13,12 +13,15 @@ import java.util.Set;
 import org.apache.commons.lang.text.StrBuilder;
 import org.openecomp.sdc.asdctool.impl.validator.config.ValidationConfigManager;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Created by chaya on 7/5/2017.
  */
 public class ReportManager {
 
+    private static Logger log = LoggerFactory.getLogger(ReportManager.class);
     private static String reportOutputFilePath;
     private static String csvReportFilePath;
     private static Map<String, Set<String>> failedVerticesPerTask = new HashMap<>();
@@ -29,7 +32,7 @@ public class ReportManager {
             initCsvFile();
             initReportFile();
         } catch (IOException e) {
-            e.printStackTrace();
+            log.info("Init file failed - {}" , e);
         }
     }
 
@@ -79,7 +82,7 @@ public class ReportManager {
             Files.write(Paths.get(reportOutputFilePath), new StrBuilder().appendNewLine().toString().getBytes(), StandardOpenOption.APPEND);
             Files.write(Paths.get(reportOutputFilePath), message.getBytes(), StandardOpenOption.APPEND);
         } catch (IOException e) {
-            e.printStackTrace();
+            log.info("write to file failed - {}" , e);
         }
     }
 
@@ -128,7 +131,7 @@ public class ReportManager {
                     Files.write(Paths.get(csvReportFilePath), resultLine.getBytes(), StandardOpenOption.APPEND);
                     Files.write(Paths.get(csvReportFilePath), new StrBuilder().appendNewLine().toString().getBytes(), StandardOpenOption.APPEND);
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    log.info("write to file failed - {}" , e);
                 }
             });
         });

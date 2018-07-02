@@ -164,7 +164,7 @@ public class ExportImportTitanServlet {
 			result = outputFile;
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.info("export Graph failed - {}" , e);
 			// graph.rollback();
 			graph.tx().rollback();
 		} finally {
@@ -173,7 +173,7 @@ public class ExportImportTitanServlet {
 					out.close();
 				}
 			} catch (IOException e) {
-				e.printStackTrace();
+				log.info("close FileOutputStream failed - {}" , e);
 			}
 		}
 		return result;

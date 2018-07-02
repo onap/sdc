@@ -34,7 +34,7 @@ public class ESArtifactData {
 	public static final String SERVICE_VERSION_FIELD = "serviceVersion";
 	public static final String ARTIFACT_NAME_FIELD = "artifactName";
 
-	public static String delim = ":";
+	public final static String delim = ":";
 
 	@PartitionKey
 	@Column(name = "id")

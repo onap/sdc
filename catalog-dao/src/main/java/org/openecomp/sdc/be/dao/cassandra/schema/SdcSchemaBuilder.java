@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,30 +20,30 @@
 
 package org.openecomp.sdc.be.dao.cassandra.schema;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
+		import java.util.ArrayList;
+		import java.util.HashMap;
+		import java.util.List;
+		import java.util.Map;
+		import java.util.Optional;
+		import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.openecomp.sdc.be.config.Configuration;
-import org.openecomp.sdc.be.config.ConfigurationManager;
-import org.openecomp.sdc.be.dao.cassandra.schema.tables.OldExternalApiEventTableDesc;
-import org.openecomp.sdc.be.resources.data.auditing.AuditingTypesConstants;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+		import org.apache.commons.lang3.tuple.ImmutablePair;
+		import org.openecomp.sdc.be.config.Configuration;
+		import org.openecomp.sdc.be.config.ConfigurationManager;
+		import org.openecomp.sdc.be.dao.cassandra.schema.tables.OldExternalApiEventTableDesc;
+		import org.openecomp.sdc.be.resources.data.auditing.AuditingTypesConstants;
+		import org.slf4j.Logger;
+		import org.slf4j.LoggerFactory;
 
-import com.datastax.driver.core.Cluster;
-import com.datastax.driver.core.DataType;
-import com.datastax.driver.core.KeyspaceMetadata;
-import com.datastax.driver.core.Session;
-import com.datastax.driver.core.schemabuilder.Alter;
-import com.datastax.driver.core.schemabuilder.Create;
-import com.datastax.driver.core.schemabuilder.SchemaBuilder;
-import com.datastax.driver.core.schemabuilder.SchemaStatement;
-
+		import com.datastax.driver.core.Cluster;
+		import com.datastax.driver.core.DataType;
+		import com.datastax.driver.core.KeyspaceMetadata;
+		import com.datastax.driver.core.Session;
+		import com.datastax.driver.core.schemabuilder.Alter;
+		import com.datastax.driver.core.schemabuilder.Create;
+		import com.datastax.driver.core.schemabuilder.SchemaBuilder;
+		import com.datastax.driver.core.schemabuilder.SchemaStatement;
+		import com.google.common.annotations.VisibleForTesting;
 public class SdcSchemaBuilder {
 
 	/**
@@ -64,12 +64,12 @@ public class SdcSchemaBuilder {
 			list.add(new OldExternalApiEventTableDesc());
 			schemeData.put("attaudit", list);
 		}
-		
+
 	}
 	/**
 	 * the method creates all keyspaces, tables and indexes in case they do not
 	 * already exist. the method can be run multiple times. the method uses the
-	 * internal enums and external configuration for its operation	 * 
+	 * internal enums and external configuration for its operation	 *
 	 * @return true if the create operation was successful
 	 */
 	public static boolean createSchema() {
@@ -161,14 +161,14 @@ public class SdcSchemaBuilder {
 		return false;
 	}
 
-	
+
 
 	/**
 	 * the method prcess the metadata retrieved from the cassandra for the
 	 * creation of a map conting the names of keyspaces tabls and indexes
 	 * already defined in the cassandra keyspacename -> tablename -> list of
 	 * indexes info
-	 * 
+	 *
 	 * @param keyspacesMetadata
 	 *            cassndra mmetadata
 	 * @return a map of maps of lists holding parsed info
@@ -183,23 +183,23 @@ public class SdcSchemaBuilder {
 												.collect(Collectors.toList())))));
 		return cassndraMetadata;
 	}
-	
+
 	private static Map<String, Map<String, List<String>>> getMetadataTablesStructure(
 			List<KeyspaceMetadata> keyspacesMetadata) {
 		return keyspacesMetadata.stream().collect(
 				Collectors.toMap(keyspaceMetadata -> keyspaceMetadata.getName(),
-								 keyspaceMetadata -> keyspaceMetadata.getTables().stream().collect(
-										 Collectors.toMap(tableMetadata -> tableMetadata.getName(), 
-												 		  tableMetadata -> tableMetadata.getColumns().stream().map(
-												 				  columnMetadata -> columnMetadata.getName().toLowerCase()).collect(
-												 						  Collectors.toList())))));		
+						keyspaceMetadata -> keyspaceMetadata.getTables().stream().collect(
+								Collectors.toMap(tableMetadata -> tableMetadata.getName(),
+										tableMetadata -> tableMetadata.getColumns().stream().map(
+												columnMetadata -> columnMetadata.getName().toLowerCase()).collect(
+												Collectors.toList())))));
 	}
 
 	/**
 	 * the method builds an index name according to a defined logic
 	 * <table>
 	 * _<column>_idx
-	 * 
+	 *
 	 * @param table: table name
 	 * @param column: column name
 	 * @return string name of the index
@@ -214,12 +214,12 @@ public class SdcSchemaBuilder {
 	 * @param iTableDescriptions: a list of table description we want to create
 	 * @param keyspaceMetadate: the current tables that exist in the cassandra under this keyspace
 	 * @param session: the session object used for the execution of the query.
-	 * @param existingTablesMetadata 
+	 * @param existingTablesMetadata
 	 *			the current tables columns that exist in the cassandra under this
 	 *            keyspace
 	 */
-	private static void createTables(List<ITableDescription> iTableDescriptions, Map<String, List<String>> keyspaceMetadate, Session session, 
-			Map<String, List<String>> existingTablesMetadata) {
+	private static void createTables(List<ITableDescription> iTableDescriptions, Map<String, List<String>> keyspaceMetadate, Session session,
+									 Map<String, List<String>> existingTablesMetadata) {
 		for (ITableDescription tableDescription : iTableDescriptions) {
 			String tableName = tableDescription.getTableName().toLowerCase();
 			Map<String, ImmutablePair<DataType, Boolean>> columnDescription = tableDescription.getColumnDescription();
@@ -275,8 +275,8 @@ public class SdcSchemaBuilder {
 	 * @param columnDescription
 	 */
 	private static void alterTable(Session session, Map<String, List<String>> existingTablesMetadata,
-			ITableDescription tableDescription, String tableName,
-			Map<String, ImmutablePair<DataType, Boolean>> columnDescription) {
+								   ITableDescription tableDescription, String tableName,
+								   Map<String, ImmutablePair<DataType, Boolean>> columnDescription) {
 		List<String> definedTableColumns = existingTablesMetadata.get(tableName);
 		//add column to casandra if was added to table definition
 		for (Map.Entry<String, ImmutablePair<DataType, Boolean>> column : columnDescription.entrySet()) {
@@ -286,7 +286,7 @@ public class SdcSchemaBuilder {
 				Alter alter = SchemaBuilder.alterTable(tableDescription.getKeyspace(),tableDescription.getTableName());
 				SchemaStatement addColumn = alter.addColumn(columnName).type(column.getValue().getLeft());
 				log.trace("exacuting :{}", addColumn.toString());
-				session.execute(addColumn);						
+				session.execute(addColumn);
 			}
 		}
 	}
@@ -294,7 +294,7 @@ public class SdcSchemaBuilder {
 	/**
 	 * the method create the keyspace in case it does not already exists the
 	 * method uses configurtion to select the needed replication strategy
-	 * 
+	 *
 	 * @param keyspace: name of the keyspace we want to create
 	 * @param cassndraMetadata: cassndra metadata
 	 * @param session: the session object used for the execution of the query.
@@ -330,7 +330,7 @@ public class SdcSchemaBuilder {
 
 	/**
 	 * the method retries the schem info from the enums describing the tables
-	 * 
+	 *
 	 * @return a map of keyspaces to there table info
 	 */
 	private static Map<String, List<ITableDescription>> getSchemeData() {
@@ -349,14 +349,14 @@ public class SdcSchemaBuilder {
 	}
 
 	/**
- 	 * the methoed creates the query string for the given keyspace the methoed
+	 * the methoed creates the query string for the given keyspace the methoed
 	 * valides the given data according the the requirments of the replication
 	 * strategy SimpleStrategy: "CREATE KEYSPACE IF NOT EXISTS
 	 * <keyspaceName></keyspaceName> WITH replication =
 	 * {'class':'SimpleStrategy', 'replication_factor':2};" SimpleStrategy:
 	 * "CREATE KEYSPACE IF NOT EXISTS <keyspaceName></keyspaceName> WITH
 	 * replication = {'class':'NetworkTopologyStrategy', 'dc1' : 2 ,dc2 : 2 };"
-	 * 
+	 *
 	 * @param keyspace
 	 *            name of the keyspace we want to create
 	 * @param keyspaceInfo
@@ -401,9 +401,9 @@ public class SdcSchemaBuilder {
 	public enum ReplicationStrategy {
 		NETWORK_TOPOLOGY_STRATEGY("NetworkTopologyStrategy"), SIMPLE_STRATEGY("SimpleStrategy");
 
-		public String name;
+		private String name;
 
-		private ReplicationStrategy(String name) {
+		ReplicationStrategy(String name) {
 			this.name = name;
 		}
 
@@ -411,5 +411,4 @@ public class SdcSchemaBuilder {
 			return name;
 		}
 	}
-
 }

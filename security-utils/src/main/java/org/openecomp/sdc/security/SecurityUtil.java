@@ -23,7 +23,7 @@ public class SecurityUtil {
     public static final String ALGORITHM = "AES" ;
     public static final String CHARSET = StandardCharsets.UTF_8.name();
 
-    public static Key secKey = null ;
+    private static Key secKey = null ;
 
     /**
      *

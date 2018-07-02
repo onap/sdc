@@ -88,7 +88,8 @@ public class ZipUtil {
 			zis.close();
 
 		} catch (IOException ex) {
-			ex.printStackTrace();
+			
+			log.info("close Byte stream failed - {}" , ex);
 			return null;
 		} finally {
 			if (zis != null) {
@@ -121,7 +122,7 @@ public class ZipUtil {
 			ZipUtil.readZip(zipAsBytes);
 
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.info("close Byte stream failed - {}" , e);
 		}
 
 	}

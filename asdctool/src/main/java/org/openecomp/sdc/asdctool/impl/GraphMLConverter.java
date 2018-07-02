@@ -94,7 +94,7 @@ public class GraphMLConverter {
 			return result;
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.info("import graph failed - {} " , e);
 			return false;
 		} finally {
 			if (graph != null) {
@@ -121,7 +121,7 @@ public class GraphMLConverter {
 
 			System.out.println("Exported file=" + result);
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.info("export graph failed -{}" , e);
 			return false;
 		} finally {
 			if (graph != null) {
@@ -146,7 +146,7 @@ public class GraphMLConverter {
 
 			System.out.println("Exported file=" + result);
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.info("export exportGraphMl failed - {}" , e);
 			return null;
 		} finally {
 			if (graph != null) {
@@ -173,7 +173,7 @@ public class GraphMLConverter {
 
 			System.out.println("Exported file=" + result);
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.info("find Error In Json Graph failed - {}" , e);
 			return false;
 		} finally {
 			if (graph != null) {
@@ -221,7 +221,7 @@ public class GraphMLConverter {
 			result = outputFile;
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.info("export Json Graph failed - {}" , e);
 			graph.tx().rollback();
 		} finally {
 			try {
@@ -229,7 +229,7 @@ public class GraphMLConverter {
 					out.close();
 				}
 			} catch (IOException e) {
-				e.printStackTrace();
+				log.info("close FileOutputStream failed - {}" , e);
 			}
 		}
 		return result;
@@ -247,7 +247,7 @@ public class GraphMLConverter {
 			graph.tx().commit();
 		} catch (Exception e) {
 			graph.tx().rollback();
-			e.printStackTrace();
+			log.info("export Graph Ml failed - {}" , e);
 		}
 		return result;
 
@@ -305,7 +305,7 @@ public class GraphMLConverter {
 
 		} catch (Exception e) {
 			System.out.println("Failed to import graph " + e.getMessage());
-			e.printStackTrace();
+			log.info("Failed to import graph - {}" , e);
 			// graph.rollback();
 			graph.tx().rollback();
 		} finally {
@@ -314,7 +314,7 @@ public class GraphMLConverter {
 					is.close();
 				}
 			} catch (IOException e) {
-				e.printStackTrace();
+				log.info("close FileOutputStream failed - {}" , e);
 			}
 		}
 
@@ -396,7 +396,7 @@ public class GraphMLConverter {
 						openGraph.tx().rollback();
 
 					} catch (Exception e) {
-						e.printStackTrace();
+						log.info("run Edge Scan failed - {}" , e);
 
 						log.error("fromVertex={}", Utils.getProperties(vertexFrom));
 						log.error("toVertex={}", Utils.getProperties(vertexTo));
@@ -450,6 +450,7 @@ public class GraphMLConverter {
 
 					} catch (Exception e) {
 						e.printStackTrace();
+						log.info("run Vertex Scan failed - {}" , e);
 
 						Object property1 = vertex.value(GraphPropertiesDictionary.HEALTH_CHECK.getProperty());
 						System.out.println(property1);
@@ -508,7 +509,7 @@ public class GraphMLConverter {
 			graph.tx().rollback();
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.info("find Error In Json Graph failed - {}" , e);
 			// graph.rollback();
 			graph.tx().rollback();
 		} finally {
@@ -517,7 +518,7 @@ public class GraphMLConverter {
 					out.close();
 				}
 			} catch (IOException e) {
-				e.printStackTrace();
+				log.info("close FileOutputStream failed - {}" , e);
 			}
 		}
 		return result;
@@ -592,7 +593,7 @@ public class GraphMLConverter {
 			result = outputFile;
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.info("export Users failed - {}" , e);
 			graph.tx().rollback();
 		} finally {
 			try {
@@ -600,7 +601,7 @@ public class GraphMLConverter {
 					fileWriter.close();
 				}
 			} catch (IOException e) {
-				e.printStackTrace();
+				log.info("close FileOutputStream failed - {}" , e);
 			}
 		}
 		return result;
@@ -642,7 +643,7 @@ public class GraphMLConverter {
 
 			System.out.println("Exported file=" + result);
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.info("export Users failed - {}" , e);
 			return false;
 		} finally {
 			if (graph != null) {

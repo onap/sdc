@@ -35,7 +35,7 @@ public class ComponentCacheData {
 	public final static String SERVICE_VERSION_FIELD = "serviceVersion";
 	public final static String ARTIFACT_NAME_FIELD = "artifactName";
 
-	public static String delim = ":";
+	public final static String delim = ":";
 
 	@PartitionKey
 	@Column(name = "id")

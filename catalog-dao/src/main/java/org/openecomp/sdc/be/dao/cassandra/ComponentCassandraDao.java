@@ -49,7 +49,7 @@ public class ComponentCassandraDao extends CassandraDao {
 
 	private static Logger logger = LoggerFactory.getLogger(ComponentCassandraDao.class.getName());
 
-	public static Integer DEFAULT_FETCH_SIZE = 500;
+	public final static Integer DEFAULT_FETCH_SIZE = 500;
 
 	private ComponentCacheAccessor componentCacheAccessor;
 

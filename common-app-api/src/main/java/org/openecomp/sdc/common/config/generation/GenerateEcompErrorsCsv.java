@@ -28,6 +28,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.openecomp.sdc.common.config.EcompErrorEnum;
 import org.openecomp.sdc.common.config.EcompErrorEnum.AlarmSeverity;
@@ -35,6 +37,8 @@ import org.openecomp.sdc.common.config.EcompErrorEnum.ErrorType;
 import org.openecomp.sdc.common.config.EcompErrorLogUtil;
 
 public class GenerateEcompErrorsCsv {
+
+	private static Logger log = LoggerFactory.getLogger(GenerateEcompErrorsCsv.class);
 
 	private static String DATE_FORMAT = "dd-M-yyyy-hh-mm-ss";
 
@@ -195,14 +199,15 @@ public class GenerateEcompErrorsCsv {
 			result = true;
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.info("generate Ecomp Errors Csv File failed - {}" , e);
+
 		} finally {
 			if (writer != null) {
 				try {
 					writer.flush();
 					writer.close();
 				} catch (IOException e) {
-					e.printStackTrace();
+					log.info("close FileOutputStream failed - {}" , e);
 				}
 
 			}

@@ -77,7 +77,7 @@ public class ProductLogic {
 			graph.tx().commit();
 			return productsToDelete;
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.info("get All Products failed - {}" , e);
 			graph.tx().rollback();
 			return null;
 

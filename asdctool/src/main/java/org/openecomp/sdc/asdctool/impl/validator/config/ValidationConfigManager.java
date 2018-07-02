@@ -4,11 +4,15 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Created by chaya on 7/4/2017.
  */
 public class ValidationConfigManager {
+
+    private static Logger log = LoggerFactory.getLogger(ValidationConfigManager.class);
 
     private static Properties prop = new Properties();
     private static String outputFullFilePath;
@@ -44,7 +48,7 @@ public class ValidationConfigManager {
             input = new FileInputStream(path);
             prop.load(input);
         } catch (IOException ex) {
-            ex.printStackTrace();
+            log.info("FileInputStream failed - " , ex);
         }
         return prop;
     }

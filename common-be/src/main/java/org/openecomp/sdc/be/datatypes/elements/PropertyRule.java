@@ -33,9 +33,9 @@ public class PropertyRule extends ToscaDataDefinition implements Serializable {
 	 */
 	private static final long serialVersionUID = -3357933382124599996L;
 
-	public static String FORCE_ALL = "FORCE_ALL";
-	public static String ALL = "ALL";
-	public static String RULE_ANY_MATCH = ".+";
+	public final static String FORCE_ALL = "FORCE_ALL";
+	public final static String ALL = "ALL";
+	public final static String RULE_ANY_MATCH = ".+";
 
 	List<String> rule;
 	String value;

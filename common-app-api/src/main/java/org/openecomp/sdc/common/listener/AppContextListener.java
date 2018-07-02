@@ -117,7 +117,7 @@ public class AppContextListener implements ServletContextListener {
 				try {
 					inputStream.close();
 				} catch (IOException e) {
-					e.printStackTrace();
+					log.info("close FileOutputStream failed - {}" , e);
 				}
 			}
 		}

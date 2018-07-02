@@ -66,8 +66,8 @@ import fj.data.Either;
 
 @org.springframework.stereotype.Component("node-type-operation")
 public class NodeTypeOperation extends ToscaElementOperation {
-	public static Pattern uuidNewVersion = Pattern.compile("^\\d{1,}.1");
-	public static Pattern uuidNormativeNewVersion = Pattern.compile("^\\d{1,}.0");
+	public final static Pattern uuidNewVersion = Pattern.compile("^\\d{1,}.1");
+	public final static Pattern uuidNormativeNewVersion = Pattern.compile("^\\d{1,}.0");
 
 	private static Logger log = LoggerFactory.getLogger(NodeTypeOperation.class.getName());
 
