@@ -16,9 +16,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import OnboardingCatalogView from './onboardingCatalog/OnboardingCatalogView.jsx';
-import OnboardingCatalogViewWithFilter from './onboardingCatalog/OnboardingCatalogViewWithFilter.jsx';
 import WorkspaceView from './workspace/WorkspaceView.jsx';
-import WorkspaceViewWithFilter from './workspace/WorkspaceViewWithFilter.jsx';
 import { tabsMapping } from './OnboardConstants.js';
 import i18n from 'nfvo-utils/i18n/i18n.js';
 import classnames from 'classnames';
@@ -27,8 +25,6 @@ import objectValues from 'lodash/values.js';
 import { catalogItemTypes } from './onboardingCatalog/OnboardingCatalogConstants.js';
 import NotificationsView from 'sdc-app/onboarding/userNotifications/NotificationsView.jsx';
 import Filter from 'sdc-app/onboarding/onboard/filter/Filter.jsx';
-import featureToggle from 'sdc-app/features/featureToggle.js';
-import { featureToggleNames } from 'sdc-app/features/FeaturesConstants.js';
 const OnboardHeaderTabs = ({ onTabClick, activeTab }) => (
     <div className="onboard-header-tabs">
         <div
@@ -49,16 +45,6 @@ const OnboardHeaderTabs = ({ onTabClick, activeTab }) => (
         </div>
     </div>
 );
-
-const ToggledOnboardingCatalogView = featureToggle(featureToggleNames.FILTER)({
-    OnComp: OnboardingCatalogViewWithFilter,
-    OffComp: OnboardingCatalogView
-});
-
-const ToggledWorkspaceView = featureToggle(featureToggleNames.FILTER)({
-    OnComp: WorkspaceViewWithFilter,
-    OffComp: WorkspaceView
-});
 
 const OnboardHeader = ({ onSearch, activeTab, onTabClick, searchValue }) => (
     <div className="onboard-header">
@@ -98,11 +84,11 @@ class OnboardView extends React.Component {
     renderViewByTab(activeTab) {
         switch (activeTab) {
             case tabsMapping.WORKSPACE:
-                return <ToggledWorkspaceView {...this.props} />;
+                return <WorkspaceView {...this.props} />;
             case tabsMapping.CATALOG:
-                return <ToggledOnboardingCatalogView {...this.props} />;
+                return <OnboardingCatalogView {...this.props} />;
             default:
-                return <ToggledWorkspaceView {...this.props} />;
+                return <WorkspaceView {...this.props} />;
         }
     }
 

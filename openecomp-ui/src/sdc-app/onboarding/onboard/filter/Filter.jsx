@@ -17,8 +17,6 @@
 import { connect } from 'react-redux';
 import React from 'react';
 import PropTypes from 'prop-types';
-import featureToggle from 'sdc-app/features/featureToggle.js';
-import { featureToggleNames } from 'sdc-app/features/FeaturesConstants.js';
 import { tabsMapping as onboardTabsMapping } from '../OnboardConstants.js';
 import { actionTypes } from './FilterConstants.js';
 
@@ -69,10 +67,4 @@ Filter.PropTypes = {
     activeTab: PropTypes.number
 };
 
-export default featureToggle(featureToggleNames.FILTER)(
-    connect(mapStateToProps, mapActionsToProps)(Filter)
-);
-
-export const ConnectedFilter = connect(mapStateToProps, mapActionsToProps)(
-    Filter
-);
+export default connect(mapStateToProps, mapActionsToProps)(Filter);
