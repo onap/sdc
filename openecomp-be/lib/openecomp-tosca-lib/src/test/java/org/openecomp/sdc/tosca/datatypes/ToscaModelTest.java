@@ -60,7 +60,11 @@ import org.openecomp.sdc.tosca.services.ToscaConstants;
 
 public class ToscaModelTest {
 
+    public static final String FIRST_NODE_TEMPLATE = "firstNodeTemplate";
+    public static final String REQ1 = "req1";
+    public static final String REQ2 = "req2";
     private YamlUtil yamlUtil = new YamlUtil();
+    private ToscaExtensionYamlUtil toscaExtensionYamlUtil = new ToscaExtensionYamlUtil();
     private static final String INTERFACE_ID = "inter_1";
     private static final String NODE_TEMPLATE_ID = "firstNodeTemplate";
     private static final String NODE_TYPE_ID = "compute_node_type";
@@ -77,6 +81,7 @@ public class ToscaModelTest {
     private static final String PRIMARY_IMPL = "myImpl.yaml";
     private static final String DEPENDENCY_NAME = "script1.sh";
     private static final String STRING_TYPE = "string";
+    private static final String ST_WITH_SERVICE_FILTER = "/serviceTemplateWithServiceFilter.yaml";
 
     @Test
     public void testServiceTemplateJavaToYaml() {
@@ -254,8 +259,8 @@ public class ToscaModelTest {
         reqAssignment2.setRelationship("relationB");
         Map<String, RequirementAssignment> nodeTemplateRequirement1 = new HashMap<>();
         Map<String, RequirementAssignment> nodeTemplateRequirement2 = new HashMap<>();
-        nodeTemplateRequirement1.put("req1", reqAssignment1);
-        nodeTemplateRequirement2.put("req2", reqAssignment2);
+        nodeTemplateRequirement1.put(REQ1, reqAssignment1);
+        nodeTemplateRequirement2.put(REQ2, reqAssignment2);
         nodeTemplate.setRequirements(new ArrayList<>());
         nodeTemplate.getRequirements().add(nodeTemplateRequirement1);
         nodeTemplate.getRequirements().add(nodeTemplateRequirement2);
@@ -419,9 +424,37 @@ public class ToscaModelTest {
         }
     }
 
+    @Test
+    public void testServiceFilter() throws IOException {
+        ServiceTemplate serviceTemplateWithServiceFilter = getServiceTemplateExt(BASE_DIR + ST_WITH_SERVICE_FILTER);
+
+        NodeTemplate firstNodeTemplate =
+                DataModelUtil.getNodeTemplate(serviceTemplateWithServiceFilter, FIRST_NODE_TEMPLATE);
+        Map<String, RequirementAssignment> nodeTemplateRequirements =
+                DataModelUtil.getNodeTemplateRequirements(firstNodeTemplate);
+
+        Object req1 = nodeTemplateRequirements.get(REQ1);
+        Assert.assertEquals(true, req1 instanceof org.onap.sdc.tosca.datatypes.model.extension.RequirementAssignment);
+        Assert.assertNotNull(((org.onap.sdc.tosca.datatypes.model.extension.RequirementAssignment)req1).getService_filter());
+
+        Object req2 = nodeTemplateRequirements.get(REQ2);
+        Assert.assertEquals(true, req2 instanceof org.onap.sdc.tosca.datatypes.model.extension.RequirementAssignment);
+        Assert.assertNotNull(((org.onap.sdc.tosca.datatypes.model.extension.RequirementAssignment)req2).getService_filter());
+
+        String serviceTemplateYaml = toscaExtensionYamlUtil.objectToYaml(serviceTemplateWithServiceFilter);
+        Assert.assertNotNull(serviceTemplateYaml);
+
+    }
+
     private ServiceTemplate getServiceTemplate(String inputPath) throws IOException {
         try (InputStream yamlFile = yamlUtil.loadYamlFileIs(inputPath)) {
             return yamlUtil.yamlToObject(yamlFile, ServiceTemplate.class);
+        }
+    }
+
+    private ServiceTemplate getServiceTemplateExt(String inputPath) throws IOException {
+        try (InputStream yamlFile = toscaExtensionYamlUtil.loadYamlFileIs(inputPath)) {
+            return toscaExtensionYamlUtil.yamlToObject(yamlFile, ServiceTemplate.class);
         }
     }
 
