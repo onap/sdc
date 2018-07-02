@@ -896,7 +896,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
             if (resultOp.isRight()){
                 return resultOp;
             }
-            Either<ComponentInstance, ResponseFormat> deleteEither = deleteForwardingPathsRelatedTobeDeletedComponentInstance(containerComponentId, componentInstanceId,
+            Either<ComponentInstance, ResponseFormat> deleteEither = deleteForwardingPathsRelatedTobeDeletedComponentInstance(containerComponentId,
                 containerComponentType, resultOp);
             if (deleteEither.isRight()){
                 return deleteEither;
@@ -911,17 +911,16 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         }
     }
 
-    public Either<ComponentInstance, ResponseFormat> deleteForwardingPathsRelatedTobeDeletedComponentInstance(String containerComponentId,
-                                              String componentInstanceId, ComponentTypeEnum containerComponentType,
-                                              Either<ComponentInstance, ResponseFormat> resultOp) {
+    public Either<ComponentInstance, ResponseFormat> deleteForwardingPathsRelatedTobeDeletedComponentInstance(String containerComponentId, ComponentTypeEnum containerComponentType,
+            Either<ComponentInstance, ResponseFormat> resultOp) {
         if(containerComponentType.equals(ComponentTypeEnum.SERVICE) && resultOp.isLeft() ){
-
-        List<String> pathIDsToBeDeleted = getForwardingPathsRelatedToComponentInstance(containerComponentId, componentInstanceId);
-                if (!pathIDsToBeDeleted.isEmpty()) {
-            Either<Set<String>, ResponseFormat> deleteForwardingPathsEither = deleteForwardingPaths(containerComponentId,
-                    pathIDsToBeDeleted);
-           if(deleteForwardingPathsEither.isRight()) {
-               resultOp = Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
+            final ComponentInstance componentInstance = resultOp.left().value();
+            List<String> pathIDsToBeDeleted = getForwardingPathsRelatedToComponentInstance(containerComponentId, componentInstance.getName());
+            if (!pathIDsToBeDeleted.isEmpty()) {
+                Either<Set<String>, ResponseFormat> deleteForwardingPathsEither = deleteForwardingPaths(containerComponentId,
+                        pathIDsToBeDeleted);
+                if(deleteForwardingPathsEither.isRight()) {
+                    resultOp = Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
                 }
 
             }
