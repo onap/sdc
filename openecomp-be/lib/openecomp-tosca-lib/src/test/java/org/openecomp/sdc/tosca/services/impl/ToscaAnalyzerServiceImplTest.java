@@ -16,57 +16,30 @@
 
 package org.openecomp.sdc.tosca.services.impl;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.onap.sdc.tosca.datatypes.model.OperationDefinitionType;
+import org.onap.sdc.tosca.datatypes.model.*;
+import org.onap.sdc.tosca.services.ToscaExtensionYamlUtil;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.tosca.TestUtil;
 import org.openecomp.sdc.tosca.datatypes.ToscaElementTypes;
 import org.openecomp.sdc.tosca.datatypes.ToscaFlatData;
 import org.openecomp.sdc.tosca.datatypes.ToscaNodeType;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
-import org.onap.sdc.tosca.datatypes.model.NodeTemplate;
-import org.onap.sdc.tosca.datatypes.model.NodeType;
-import org.onap.sdc.tosca.datatypes.model.ParameterDefinition;
-import org.onap.sdc.tosca.datatypes.model.PropertyDefinition;
-import org.onap.sdc.tosca.datatypes.model.RequirementAssignment;
-import org.onap.sdc.tosca.datatypes.model.RequirementDefinition;
-import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
-import org.onap.sdc.tosca.datatypes.model.SubstitutionMapping;
-import org.onap.sdc.tosca.datatypes.model.TopologyTemplate;
-import org.onap.sdc.tosca.datatypes.model.CapabilityDefinition;
-import org.onap.sdc.tosca.datatypes.model.Import;
 import org.openecomp.sdc.tosca.services.DataModelUtil;
-import org.onap.sdc.tosca.datatypes.model.InterfaceType;
-import org.onap.sdc.tosca.datatypes.model.InterfaceDefinitionType;
-import org.onap.sdc.tosca.datatypes.model.DataType;
 import org.openecomp.sdc.tosca.services.ToscaAnalyzerService;
 import org.openecomp.sdc.tosca.services.ToscaConstants;
-import org.onap.sdc.tosca.datatypes.model.DefinitionOfDataType;
 
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.*;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.when;
-import static org.junit.Assert.assertEquals;
-
-import org.onap.sdc.tosca.services.ToscaExtensionYamlUtil;
 
 
 @RunWith(MockitoJUnitRunner.class)
@@ -249,6 +222,32 @@ public class ToscaAnalyzerServiceImplTest {
     }
 
     @Test
+    public void testGetFlatEntityDataTypeDerivedFromPrimitive() throws Exception {
+        ToscaExtensionYamlUtil toscaExtensionYamlUtil = new ToscaExtensionYamlUtil();
+        try (InputStream yamlFile = toscaExtensionYamlUtil.loadYamlFileIs(
+                "/mock/analyzerService/ServiceTemplateDatatypeFlatTest.yaml")) {
+
+            ServiceTemplate serviceTemplateFromYaml =
+                    toscaExtensionYamlUtil.yamlToObject(yamlFile, ServiceTemplate.class);
+
+            ToscaFlatData flatData = toscaAnalyzerService.getFlatEntity(ToscaElementTypes.DATA_TYPE,
+                    "org.openecomp.datatypes.heat.network.MyNewString", serviceTemplateFromYaml, toscaServiceModel);
+
+            Assert.assertNotNull(flatData);
+            Assert.assertNotNull(flatData.getFlatEntity());
+            DataType flatEntity = (DataType) flatData.getFlatEntity();
+            Assert.assertEquals("org.openecomp.datatypes.heat.network.MyString", flatEntity.getDerived_from());
+            Assert.assertEquals(2, flatEntity.getConstraints().size());
+            Assert.assertNotNull(flatEntity.getConstraints().get(0).getValid_values());
+            Assert.assertNotNull(flatEntity.getConstraints().get(1).getMax_length());
+
+            List<String> inheritanceHierarchyType = flatData.getInheritanceHierarchyType();
+            Assert.assertNotNull(inheritanceHierarchyType);
+            Assert.assertEquals(2, inheritanceHierarchyType.size());
+        }
+    }
+
+    @Test
     public void testCalculateExposedRequirements() throws Exception {
         RequirementDefinition rd = new RequirementDefinition();
         rd.setCapability("tosca.capabilities.Node");
@@ -360,8 +359,7 @@ public class ToscaAnalyzerServiceImplTest {
             ra.setNode("server_cmaui");
             ra.setRelationship("tosca.relationships.network.BindsTo");
 
-            NodeTemplate port0 =
-                    serviceTemplateFromYaml.getTopology_template().getNode_templates().get("cmaui_port_0");
+            NodeTemplate port0 = serviceTemplateFromYaml.getTopology_template().getNode_templates().get("cmaui_port_0");
             //Test With Empty requirementId
             Assert.assertEquals(false, toscaAnalyzerService.isRequirementExistInNodeTemplate(port0, "", ra));
 
@@ -386,8 +384,7 @@ public class ToscaAnalyzerServiceImplTest {
             ServiceTemplate serviceTemplateFromYaml =
                     toscaExtensionYamlUtil.yamlToObject(yamlFile, ServiceTemplate.class);
 
-            NodeTemplate port0 =
-                    serviceTemplateFromYaml.getTopology_template().getNode_templates().get("cmaui_port_0");
+            NodeTemplate port0 = serviceTemplateFromYaml.getTopology_template().getNode_templates().get("cmaui_port_0");
             List<RequirementAssignment> reqList =
                     toscaAnalyzerService.getRequirements(port0, ToscaConstants.BINDING_REQUIREMENT_ID);
             assertEquals(1, reqList.size());

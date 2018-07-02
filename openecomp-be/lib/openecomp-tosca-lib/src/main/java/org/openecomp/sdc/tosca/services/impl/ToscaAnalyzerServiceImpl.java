@@ -19,50 +19,22 @@ package org.openecomp.sdc.tosca.services.impl;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.onap.sdc.tosca.datatypes.model.*;
+import org.onap.sdc.tosca.services.ToscaExtensionYamlUtil;
 import org.openecomp.core.utilities.CommonMethods;
 import org.openecomp.sdc.common.errors.CoreException;
+import org.openecomp.sdc.common.errors.SdcRuntimeException;
 import org.openecomp.sdc.tosca.datatypes.ToscaElementTypes;
 import org.openecomp.sdc.tosca.datatypes.ToscaFlatData;
-import org.onap.sdc.tosca.datatypes.model.AttributeDefinition;
-import org.onap.sdc.tosca.datatypes.model.CapabilityDefinition;
-import org.onap.sdc.tosca.datatypes.model.CapabilityType;
-import org.onap.sdc.tosca.datatypes.model.DefinitionOfDataType;
-import org.onap.sdc.tosca.datatypes.model.DataType;
-import org.onap.sdc.tosca.datatypes.model.Import;
-import org.onap.sdc.tosca.datatypes.model.InterfaceDefinitionType;
-import org.onap.sdc.tosca.datatypes.model.NodeTemplate;
-import org.onap.sdc.tosca.datatypes.model.NodeType;
-import org.onap.sdc.tosca.datatypes.model.ParameterDefinition;
-import org.onap.sdc.tosca.datatypes.model.PropertyDefinition;
-import org.onap.sdc.tosca.datatypes.model.PropertyType;
-import org.onap.sdc.tosca.datatypes.model.RequirementAssignment;
-import org.onap.sdc.tosca.datatypes.model.RequirementDefinition;
-import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
-import org.openecomp.sdc.tosca.errors.CreateInterfaceObjectErrorBuilder;
-import org.openecomp.sdc.tosca.errors.ToscaElementTypeNotFoundErrorBuilder;
-import org.openecomp.sdc.tosca.errors.ToscaFileNotFoundErrorBuilder;
-import org.openecomp.sdc.tosca.errors.ToscaInvalidEntryNotFoundErrorBuilder;
-import org.openecomp.sdc.tosca.errors.ToscaInvalidSubstituteNodeTemplatePropertiesErrorBuilder;
-import org.openecomp.sdc.tosca.errors.ToscaInvalidSubstitutionServiceTemplateErrorBuilder;
+import org.openecomp.sdc.tosca.errors.*;
 import org.openecomp.sdc.tosca.services.DataModelUtil;
-import org.onap.sdc.tosca.services.ToscaExtensionYamlUtil;
 import org.openecomp.sdc.tosca.services.ToscaAnalyzerService;
 import org.openecomp.sdc.tosca.services.ToscaConstants;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.lang.reflect.InvocationTargetException;
-
 import org.openecomp.sdc.tosca.services.ToscaUtil;
+
+import java.lang.reflect.InvocationTargetException;
+import java.util.*;
 
 public class ToscaAnalyzerServiceImpl implements ToscaAnalyzerService {
 
@@ -272,7 +244,7 @@ public class ToscaAnalyzerServiceImpl implements ToscaAnalyzerService {
                             != null) {
             Object serviceTemplateFilter =
                     substitutableNodeTemplate.getProperties().get(ToscaConstants.SERVICE_TEMPLATE_FILTER_PROPERTY_NAME);
-            if (serviceTemplateFilter != null && serviceTemplateFilter instanceof Map) {
+            if (serviceTemplateFilter instanceof Map) {
                 Object substituteServiceTemplate =
                         ((Map) serviceTemplateFilter).get(ToscaConstants.SUBSTITUTE_SERVICE_TEMPLATE_PROPERTY_NAME);
                 handleNoSubstituteServiceTemplate(substituteNodeTemplateId, substituteServiceTemplate);
@@ -660,7 +632,7 @@ public class ToscaAnalyzerServiceImpl implements ToscaAnalyzerService {
             DataType targetDataType = (DataType) flatData.getFlatEntity();
             DataType sourceDataType = serviceTemplate.getData_types().get(typeId);
             derivedFrom = sourceDataType.getDerived_from();
-            if (derivedFrom != null) {
+            if (derivedFrom != null && !isPrimitiveType(derivedFrom)) {
                 boolean isEntityFound =
                         scanAnFlatEntity(elementType, derivedFrom, flatData, serviceTemplate, toscaModel, filesScanned,
                                 rootScanStartInx);
@@ -673,6 +645,12 @@ public class ToscaAnalyzerServiceImpl implements ToscaAnalyzerService {
             return true;
         }
         return false;
+    }
+
+    private static boolean isPrimitiveType(String toscaType) {
+        return (toscaType.equals(PropertyType.STRING.getDisplayName()) || toscaType.equals(PropertyType.INTEGER
+                                                                                                   .getDisplayName())
+                        || toscaType.equals(PropertyType.FLOAT.getDisplayName()));
     }
 
     private boolean enrichCapabilityType(ToscaElementTypes elementType, String typeId, ToscaFlatData flatData,
@@ -789,7 +767,11 @@ public class ToscaAnalyzerServiceImpl implements ToscaAnalyzerService {
         combineInterface.setOperations(
                 CommonMethods.mergeMaps(targetInterface.getOperations(), sourceInterface.getOperations()));
 
-        return DataModelUtil.convertInterfaceDefinitionTypeToObj(combineInterface).get();
+        Optional<Object> interfaceDefObject = DataModelUtil.convertInterfaceDefinitionTypeToObj(combineInterface);
+        if( !interfaceDefObject.isPresent()){
+            throw new SdcRuntimeException("Illegal Statement");
+        }
+        return interfaceDefObject.get();
     }
 
     private void combineDataTypeInfo(DataType sourceDataType, DataType targetDataType) {

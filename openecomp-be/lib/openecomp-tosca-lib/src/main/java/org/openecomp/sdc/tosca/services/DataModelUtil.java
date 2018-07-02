@@ -18,49 +18,9 @@ package org.openecomp.sdc.tosca.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.NotSerializableException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
-import org.onap.sdc.tosca.datatypes.model.AttributeDefinition;
-import org.onap.sdc.tosca.datatypes.model.CapabilityAssignment;
-import org.onap.sdc.tosca.datatypes.model.CapabilityDefinition;
-import org.onap.sdc.tosca.datatypes.model.Constraint;
-import org.onap.sdc.tosca.datatypes.model.EntrySchema;
-import org.onap.sdc.tosca.datatypes.model.GroupDefinition;
-import org.onap.sdc.tosca.datatypes.model.Import;
-import org.onap.sdc.tosca.datatypes.model.InterfaceDefinition;
-import org.onap.sdc.tosca.datatypes.model.InterfaceDefinitionType;
-import org.onap.sdc.tosca.datatypes.model.InterfaceType;
-import org.onap.sdc.tosca.datatypes.model.NodeTemplate;
-import org.onap.sdc.tosca.datatypes.model.NodeType;
-import org.onap.sdc.tosca.datatypes.model.OperationDefinition;
-import org.onap.sdc.tosca.datatypes.model.OperationDefinitionTemplate;
-import org.onap.sdc.tosca.datatypes.model.OperationDefinitionType;
-import org.onap.sdc.tosca.datatypes.model.ParameterDefinition;
-import org.onap.sdc.tosca.datatypes.model.PolicyDefinition;
-import org.onap.sdc.tosca.datatypes.model.PropertyDefinition;
-import org.onap.sdc.tosca.datatypes.model.RelationshipTemplate;
-import org.onap.sdc.tosca.datatypes.model.RequirementAssignment;
-import org.onap.sdc.tosca.datatypes.model.RequirementDefinition;
-import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
-import org.onap.sdc.tosca.datatypes.model.SubstitutionMapping;
-import org.onap.sdc.tosca.datatypes.model.TopologyTemplate;
+import org.onap.sdc.tosca.datatypes.model.*;
 import org.onap.sdc.tosca.datatypes.model.heatextend.ParameterDefinitionExt;
 import org.onap.sdc.tosca.services.ToscaExtensionYamlUtil;
 import org.onap.sdc.tosca.services.YamlUtil;
@@ -72,12 +32,11 @@ import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.tosca.datatypes.ToscaCapabilityType;
 import org.openecomp.sdc.tosca.datatypes.ToscaFunctions;
 import org.openecomp.sdc.tosca.datatypes.ToscaRelationshipType;
-import org.openecomp.sdc.tosca.errors.CreateInterfaceObjectErrorBuilder;
-import org.openecomp.sdc.tosca.errors.CreateInterfaceOperationObjectErrorBuilder;
-import org.openecomp.sdc.tosca.errors.InvalidAddActionNullEntityErrorBuilder;
-import org.openecomp.sdc.tosca.errors.InvalidRequirementAssignmentErrorBuilder;
-import org.openecomp.sdc.tosca.errors.ToscaInvalidInterfaceValueErrorBuilder;
+import org.openecomp.sdc.tosca.errors.*;
 import org.openecomp.sdc.tosca.services.impl.ToscaAnalyzerServiceImpl;
+
+import java.io.*;
+import java.util.*;
 
 /**
  * The type Data model util.
@@ -723,11 +682,11 @@ public class DataModelUtil {
         if (CollectionUtils.isEmpty(templateRequirements)) {
             return nodeTemplateRequirementsAssignment;
         }
-        YamlUtil yamlUtil = new YamlUtil();
+        ToscaExtensionYamlUtil toscaExtensionYamlUtil = new ToscaExtensionYamlUtil();
         for (Map<String, RequirementAssignment> requirementAssignmentMap : templateRequirements) {
             for (Map.Entry<String, RequirementAssignment> requirementEntry : requirementAssignmentMap.entrySet()) {
                 RequirementAssignment requirementAssignment =
-                        (yamlUtil.yamlToObject(yamlUtil.objectToYaml(requirementEntry.getValue()),
+                        (toscaExtensionYamlUtil.yamlToObject(toscaExtensionYamlUtil.objectToYaml(requirementEntry.getValue()),
                                 RequirementAssignment.class));
                 nodeTemplateRequirementsAssignment.put(requirementEntry.getKey(), requirementAssignment);
             }
@@ -782,10 +741,10 @@ public class DataModelUtil {
         List<RequirementAssignment> matchRequirementAssignmentList = new ArrayList<>();
         for (Map<String, RequirementAssignment> requirementMap : requirementsAssignmentList) {
             if (requirementMap.containsKey(requirementKey)) {
-                YamlUtil yamlUtil = new YamlUtil();
-                RequirementAssignment requirementAssignment =
-                        (yamlUtil.yamlToObject(yamlUtil.objectToYaml(requirementMap.get(requirementKey)),
-                                RequirementAssignment.class));
+                ToscaExtensionYamlUtil toscaExtensionYamlUtil = new ToscaExtensionYamlUtil();
+                RequirementAssignment requirementAssignment = (toscaExtensionYamlUtil.yamlToObject(
+                        toscaExtensionYamlUtil.objectToYaml(requirementMap.get(requirementKey)),
+                        RequirementAssignment.class));
                 matchRequirementAssignmentList.add(requirementAssignment);
             }
         }
@@ -1311,17 +1270,17 @@ public class DataModelUtil {
 
     private static <T extends OperationDefinition> void updateInterfaceDefinitionOperations(Map<String, Object> interfaceAsMap,
                                                                                                    InterfaceDefinition interfaceDefinition) {
-        {
-            Set<String> fieldNames = CommonUtil.getClassFieldNames(InterfaceDefinitionType.class);
-            Optional<? extends OperationDefinition> operationDefinition;
 
-            for (Map.Entry<String, Object> entry : interfaceAsMap.entrySet()) {
-                operationDefinition = createOperation(entry.getKey(), entry.getValue(), fieldNames,
-                        interfaceDefinition instanceof InterfaceDefinitionType ? OperationDefinitionType.class :
-                                OperationDefinitionTemplate.class);
-                operationDefinition.ifPresent(operation -> interfaceDefinition.addOperation(entry.getKey(), operation));
-            }
+        Set<String> fieldNames = CommonUtil.getClassFieldNames(InterfaceDefinitionType.class);
+        Optional<? extends OperationDefinition> operationDefinition;
+
+        for (Map.Entry<String, Object> entry : interfaceAsMap.entrySet()) {
+            operationDefinition = createOperation(entry.getKey(), entry.getValue(), fieldNames,
+                    interfaceDefinition instanceof InterfaceDefinitionType ? OperationDefinitionType.class :
+                            OperationDefinitionTemplate.class);
+            operationDefinition.ifPresent(operation -> interfaceDefinition.addOperation(entry.getKey(), operation));
         }
+
     }
 
 
