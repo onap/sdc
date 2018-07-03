@@ -3,21 +3,15 @@
  */
 package org.openecomp.core.tools.exportinfo;
 
+import static org.openecomp.core.tools.exportinfo.ExportDataCommand.NULL_REPRESENTATION;
+import static org.openecomp.core.tools.importinfo.ImportSingleTable.dataTypesMap;
+
 import com.datastax.driver.core.DataType.Name;
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Row;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
-import org.apache.commons.lang3.StringUtils;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.openecomp.core.tools.importinfo.ImportProperties;
-import org.openecomp.core.tools.model.ColumnDefinition;
-import org.openecomp.core.tools.model.TableData;
-import org.openecomp.core.tools.util.Utils;
-import org.openecomp.sdc.logging.api.Logger;
-import org.openecomp.sdc.logging.api.LoggerFactory;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -30,14 +24,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import static org.openecomp.core.tools.importinfo.ImportSingleTable.dataTypesMap;
+import org.apache.commons.lang3.StringUtils;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.openecomp.core.tools.importinfo.ImportProperties;
+import org.openecomp.core.tools.model.ColumnDefinition;
+import org.openecomp.core.tools.model.TableData;
+import org.openecomp.core.tools.util.Utils;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 
 public class ExportSerializer {
 
     private static final Logger logger = LoggerFactory.getLogger(ExportSerializer.class);
     private static final String ELEMENT_TABLE_NAME = "element";
     private static final String ELEMENT_INFO_COLUMN_NAME = "info";
+
 
     public void serializeResult(final ResultSet resultSet, final Set<String> filteredItems, final String filteredColumn, Set<String> vlms) {
         try {
@@ -79,7 +80,7 @@ public class ExportSerializer {
             case ASCII:
                 String string = row.getString(i);
                 if (string == null) {
-                    string = "";
+                    string = NULL_REPRESENTATION;
                 }
                 if (checkForVLM && vlms != null) {
                     String vlm = extractVlm(string);
@@ -117,12 +118,12 @@ public class ExportSerializer {
                 data = row.getFloat(i);
                 break;
             case SET:
-                Set<Object> set = row.getSet(i, Object.class);
+                Set<Object> set = (Set<Object>) row.getObject(i);
                 Object joined = set.stream().map(Object::toString).collect(Collectors.joining(ExportDataCommand.JOIN_DELIMITER));
                 data = Base64.getEncoder().encodeToString(joined.toString().getBytes());
                 break;
             case MAP:
-                Map<Object, Object> map = row.getMap(i, Object.class, Object.class);
+                Map<Object, Object> map = (Map<Object, Object>) row.getObject(i);
                 Set<Map.Entry<Object, Object>> entrySet = map.entrySet();
                 Object mapAsString = entrySet.parallelStream().map(entry -> entry.getKey().toString() + ExportDataCommand.MAP_DELIMITER + entry.getValue().toString())
                         .collect(Collectors.joining(ExportDataCommand.JOIN_DELIMITER));

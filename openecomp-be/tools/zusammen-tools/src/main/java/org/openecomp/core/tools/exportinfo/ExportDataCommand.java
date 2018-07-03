@@ -46,6 +46,7 @@ public final class ExportDataCommand {
     public static final String MAP_DELIMITER = "!@";
     public static final String MAP_DELIMITER_SPLITTER = "\\!\\@";
     public static final int THREAD_POOL_SIZE = 6;
+    public static final String NULL_REPRESENTATION = "nnuullll";
 
     private ExportDataCommand() {
     }

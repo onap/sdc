@@ -1,5 +1,7 @@
 package org.openecomp.core.tools.importinfo;
 
+import static org.openecomp.core.tools.exportinfo.ExportDataCommand.NULL_REPRESENTATION;
+
 import com.datastax.driver.core.BoundStatement;
 import com.datastax.driver.core.DataType.Name;
 import com.datastax.driver.core.PreparedStatement;
@@ -74,7 +76,8 @@ public class ImportSingleTable {
             case VARCHAR:
             case TEXT:
             case ASCII:
-                bind.setString(i, new String(Base64.getDecoder().decode(rowData)));
+                String string = new String(Base64.getDecoder().decode(rowData));
+                bind.setString(i, NULL_REPRESENTATION.equals(string) ? null : string);
                 break;
             case BLOB:
                 bind.setBytes(i, ByteBuffer.wrap(Base64.getDecoder().decode(rowData.getBytes())));
