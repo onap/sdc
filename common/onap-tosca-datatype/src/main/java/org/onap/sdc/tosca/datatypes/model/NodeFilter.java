@@ -29,24 +29,20 @@ public class NodeFilter {
     private List<Map<String, List<Constraint>>> properties;
     private List<Map<String, CapabilityFilter>> capabilities;
 
-    //can't not be removed, in used in snake yaml
     public List<Map<String, CapabilityFilter>> getCapabilities() {
         return capabilities;
     }
 
     public void setCapabilities(List<Map<String, CapabilityFilter>> capabilities) {
-        this.capabilities = capabilities;
+        this.capabilities = getNormalizeCapabilities(capabilities);
     }
 
-    //can't not be removed, in used in snake yaml
+    public void setProperties(List<Map<String, List<Constraint>>> properties) {
+        this.properties = getNormalizeProperties(properties);
+    }
+
     public List<Map<String, List<Constraint>>> getProperties() {
         return properties;
-    }
-
-
-    //use this function in order to get node filter properties instead of getProperties function
-    public List<Map<String, List<Constraint>>> getNormalizeProperties() {
-        return getNormalizeProperties(properties);
     }
 
     private List<Map<String, List<Constraint>>> getNormalizeProperties(List<Map<String, List<Constraint>>> properties) {
@@ -59,7 +55,7 @@ public class NodeFilter {
             List<Constraint> constraints = propertyConstraintsEntity.get(propertyKey);
             Iterator<Constraint> iterator = constraints.iterator();
             while (iterator.hasNext()) {
-                Constraint constraintObj = iterator.next();
+                Object constraintObj = iterator.next();
                 Constraint constraint = toscaExtensionYamlUtil
                                                 .yamlToObject(toscaExtensionYamlUtil.objectToYaml(constraintObj),
                                                         Constraint.class);
@@ -70,8 +66,7 @@ public class NodeFilter {
         return properties;
     }
 
-    //use this function in order to get node filter capabilities instead of getCapabilities function
-    public List<Map<String, CapabilityFilter>> getNormalizeCapabilities() {
+    public List<Map<String, CapabilityFilter>> getNormalizeCapabilities(List<Map<String, CapabilityFilter>> capabilities) {
         ToscaExtensionYamlUtil toscaExtensionYamlUtil = new ToscaExtensionYamlUtil();
         if (CollectionUtils.isEmpty(capabilities)) {
             return capabilities;
@@ -86,9 +81,5 @@ public class NodeFilter {
             capabilityEntry.put(capabilityKey, capabilityFilter);
         }
         return capabilities;
-    }
-
-    public void setProperties(List<Map<String, List<Constraint>>> properties) {
-        this.properties = properties;
     }
 }

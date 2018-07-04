@@ -80,13 +80,20 @@ topology_template:
         att2: '{ get_input: my_mysql_rootpw }'
         att1: att1Val
       requirements:
-      - req1:
-          service_filter:
-            properties:
-               - name : [{get_input : inParam1}]
-      - req2:
-          service_filter:
-             tosca_id: {get_input : inParam1}
+        - req1:
+#            capability: director
+            service_filter:
+              properties:
+                - vmdName: [{ equal : myName }]
+                - controllers: [{ equal : { get_input: controllers } }]
+              capabilities:
+                - director:
+                   properties:
+                    - url_path :
+                        - { equal : { get_input: directorUrl } }
+        - req2:
+            service_filter:
+               tosca_id: {get_input : inParam1}
   substitution_mappings:
     node_type: myNodeType.node
     capabilities:
