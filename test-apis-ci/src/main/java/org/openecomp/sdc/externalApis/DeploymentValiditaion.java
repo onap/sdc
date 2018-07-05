@@ -177,7 +177,7 @@ public class DeploymentValiditaion extends ComponentBaseTest{
 	}
 
 	@Test (enabled=false)
-	public void testYaml() throws IOException{
+	public void testYaml() throws IOException {
 
 		System.out.println("");
 
@@ -188,7 +188,6 @@ public class DeploymentValiditaion extends ComponentBaseTest{
 		byte[] data = Files.readAllBytes(path);
 		if (data != null && data.length > 0) {
 			readZip = ZipUtil.readZip(data);
-
 		}
 
 		byte[] artifactsBs = readZip.get("Definitions/VF_RI2_G6.yaml");

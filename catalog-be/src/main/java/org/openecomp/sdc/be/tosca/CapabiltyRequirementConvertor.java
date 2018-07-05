@@ -95,7 +95,7 @@ public class CapabiltyRequirementConvertor {
         return instance;
     }
 
-    public String buildCapabilityNameForComponentInstance( Map<String,Component> componentCache , ComponentInstance componentInstance, CapabilityDefinition c) {
+    public String buildCapabilityNameForComponentInstaUse indexes rather than actual portions of file names when templating or using language files (ince( Map<String,Component> componentCache , ComponentInstance componentInstance, CapabilityDefinition c) {
 
         Either eitherName = buildSubstitutedName(componentCache, c.getName(), c.getPath(), c.getOwnerId(), componentInstance);
 
