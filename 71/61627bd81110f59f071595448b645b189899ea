@@ -1,0 +1,9 @@
+Verified+1: ONAP Jobbuilder <onap-jobbuilder@jenkins.onap.org>
+Code-Review+1: Piotr Darosz <piotr.darosz@nokia.com>
+Code-Review+1: Wojciech Sliwka <wojciech.sliwka@nokia.com>
+Code-Review+2: Michael Lando <ml636r@att.com>
+Submitted-by: Michael Lando <ml636r@att.com>
+Submitted-at: Thu, 05 Jul 2018 10:00:38 +0000
+Reviewed-on: https://gerrit.onap.org/r/55311
+Project: sdc
+Branch: refs/heads/master
