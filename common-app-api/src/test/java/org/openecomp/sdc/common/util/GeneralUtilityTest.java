@@ -1,51 +1,15 @@
 package org.openecomp.sdc.common.util;
 
-import java.util.List;
-
 import org.junit.Assert;
 import org.junit.Test;
+
+import java.util.List;
 
 
 public class GeneralUtilityTest {
 
-	private GeneralUtility createTestSubject() {
-		return new GeneralUtility();
-	}
-
-	
 	@Test
-	public void testGenerateTextFile() throws Exception {
-		String fileName = "";
-		String fileData = "";
-		boolean result;
-
-		// default test
-		result = GeneralUtility.generateTextFile(fileName, fileData);
-	}
-
-	
-	@Test
-	public void testIsBase64Encoded() throws Exception {
-		byte[] data = new byte[] { ' ' };
-		boolean result;
-
-		// default test
-		result = GeneralUtility.isBase64Encoded(data);
-	}
-
-	
-	@Test
-	public void testIsBase64Encoded_1() throws Exception {
-		String str = "";
-		boolean result;
-
-		// default test
-		result = GeneralUtility.isBase64Encoded(str);
-	}
-
-	
-	@Test
-	public void testIsExceedingLimit() throws Exception {
+	public void testIsExceedingLimit() {
 		String str = "";
 		int limit = 0;
 		boolean result;
@@ -63,8 +27,8 @@ public class GeneralUtilityTest {
 
 	
 	@Test
-	public void testIsExceedingLimit_1() throws Exception {
-		List<String> strList = null;
+	public void testIsExceedingLimit_1() {
+		List<String> strList;
 		int limit = 0;
 		int delimiterLength = 0;
 		boolean result;
@@ -90,35 +54,5 @@ public class GeneralUtilityTest {
 		fileName = "";
 		result = GeneralUtility.getFilenameExtension(fileName);
 		Assert.assertEquals("", result);
-	}
-
-	
-	@Test
-	public void testCalculateMD5Base64EncodedByByteArray() throws Exception {
-		byte[] payload = new byte[] { ' ' };
-		String result;
-
-		// default test
-		result = GeneralUtility.calculateMD5Base64EncodedByByteArray(payload);
-	}
-
-	
-	@Test
-	public void testCalculateMD5Base64EncodedByString() throws Exception {
-		String data = "";
-		String result;
-
-		// default test
-		result = GeneralUtility.calculateMD5Base64EncodedByString(data);
-	}
-
-	
-	@Test
-	public void testIsEmptyString() throws Exception {
-		String str = "";
-		boolean result;
-
-		// default test
-		result = GeneralUtility.isEmptyString(str);
 	}
 }
