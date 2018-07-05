@@ -25,32 +25,9 @@ import java.util.Map;
 import java.util.Optional;
 import org.junit.Assert;
 import org.junit.Test;
-import org.onap.sdc.tosca.datatypes.model.ArtifactType;
-import org.onap.sdc.tosca.datatypes.model.AttributeDefinition;
-import org.onap.sdc.tosca.datatypes.model.CapabilityAssignment;
-import org.onap.sdc.tosca.datatypes.model.CapabilityDefinition;
-import org.onap.sdc.tosca.datatypes.model.Constraint;
-import org.onap.sdc.tosca.datatypes.model.Directive;
-import org.onap.sdc.tosca.datatypes.model.Implementation;
-import org.onap.sdc.tosca.datatypes.model.Import;
-import org.onap.sdc.tosca.datatypes.model.InterfaceDefinition;
-import org.onap.sdc.tosca.datatypes.model.InterfaceDefinitionTemplate;
-import org.onap.sdc.tosca.datatypes.model.InterfaceDefinitionType;
-import org.onap.sdc.tosca.datatypes.model.InterfaceType;
-import org.onap.sdc.tosca.datatypes.model.NodeFilter;
-import org.onap.sdc.tosca.datatypes.model.NodeTemplate;
-import org.onap.sdc.tosca.datatypes.model.NodeType;
-import org.onap.sdc.tosca.datatypes.model.OperationDefinition;
-import org.onap.sdc.tosca.datatypes.model.OperationDefinitionTemplate;
-import org.onap.sdc.tosca.datatypes.model.OperationDefinitionType;
-import org.onap.sdc.tosca.datatypes.model.ParameterDefinition;
-import org.onap.sdc.tosca.datatypes.model.PropertyDefinition;
-import org.onap.sdc.tosca.datatypes.model.PropertyType;
+import org.onap.sdc.tosca.datatypes.model.*;
 import org.onap.sdc.tosca.datatypes.model.RequirementAssignment;
-import org.onap.sdc.tosca.datatypes.model.RequirementDefinition;
-import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
-import org.onap.sdc.tosca.datatypes.model.SubstitutionMapping;
-import org.onap.sdc.tosca.datatypes.model.TopologyTemplate;
+import org.onap.sdc.tosca.datatypes.model.extension.*;
 import org.onap.sdc.tosca.datatypes.model.heatextend.ParameterDefinitionExt;
 import org.onap.sdc.tosca.services.ToscaExtensionYamlUtil;
 import org.onap.sdc.tosca.services.YamlUtil;
@@ -63,6 +40,9 @@ public class ToscaModelTest {
     public static final String FIRST_NODE_TEMPLATE = "firstNodeTemplate";
     public static final String REQ1 = "req1";
     public static final String REQ2 = "req2";
+    public static final String SERVICE_FILTER_TOSCA_ID = "{get_input=inParam1}";
+    public static final String VMD_NAME = "vmdName";
+    public static final String DIRECTOR = "director";
     private YamlUtil yamlUtil = new YamlUtil();
     private ToscaExtensionYamlUtil toscaExtensionYamlUtil = new ToscaExtensionYamlUtil();
     private static final String INTERFACE_ID = "inter_1";
@@ -436,10 +416,32 @@ public class ToscaModelTest {
         Object req1 = nodeTemplateRequirements.get(REQ1);
         Assert.assertEquals(true, req1 instanceof org.onap.sdc.tosca.datatypes.model.extension.RequirementAssignment);
         Assert.assertNotNull(((org.onap.sdc.tosca.datatypes.model.extension.RequirementAssignment)req1).getService_filter());
+        List<Map<String, List<Constraint>>> properties =
+                ((org.onap.sdc.tosca.datatypes.model.extension.RequirementAssignment) req1).getService_filter()
+                                                                                           .getProperties();
+        Assert.assertNotNull(properties);
+        List<Constraint> vmdNameConstrain = properties.get(0).get(VMD_NAME);
+        Assert.assertNotNull(vmdNameConstrain);
+        Assert.assertNotNull(vmdNameConstrain.get(0).getEqual());
+
+        List<Map<String, CapabilityFilter>> capabilities =
+                ((org.onap.sdc.tosca.datatypes.model.extension.RequirementAssignment) req1).getService_filter()
+                                                                                           .getCapabilities();
+        Assert.assertNotNull(capabilities);
+        CapabilityFilter capabilityFilter = capabilities.get(0).get(DIRECTOR);
+        Assert.assertNotNull(capabilityFilter);
+        Assert.assertNotNull(capabilityFilter.getProperties());
+
 
         Object req2 = nodeTemplateRequirements.get(REQ2);
         Assert.assertEquals(true, req2 instanceof org.onap.sdc.tosca.datatypes.model.extension.RequirementAssignment);
         Assert.assertNotNull(((org.onap.sdc.tosca.datatypes.model.extension.RequirementAssignment)req2).getService_filter());
+        Object tosca_id =
+                ((org.onap.sdc.tosca.datatypes.model.extension.RequirementAssignment) req2).getService_filter()
+                                                                                           .getTosca_id();
+        Assert.assertNotNull(tosca_id);
+        Assert.assertEquals(SERVICE_FILTER_TOSCA_ID, tosca_id.toString());
+
 
         String serviceTemplateYaml = toscaExtensionYamlUtil.objectToYaml(serviceTemplateWithServiceFilter);
         Assert.assertNotNull(serviceTemplateYaml);

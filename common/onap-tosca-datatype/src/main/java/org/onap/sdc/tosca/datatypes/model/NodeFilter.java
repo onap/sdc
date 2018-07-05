@@ -19,7 +19,8 @@ package org.onap.sdc.tosca.datatypes.model;
 import org.apache.commons.collections4.CollectionUtils;
 import org.onap.sdc.tosca.services.ToscaExtensionYamlUtil;
 
-import java.util.Iterator;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -29,66 +30,84 @@ public class NodeFilter {
     private List<Map<String, List<Constraint>>> properties;
     private List<Map<String, CapabilityFilter>> capabilities;
 
-    //can't not be removed, in used in snake yaml
     public List<Map<String, CapabilityFilter>> getCapabilities() {
         return capabilities;
     }
 
     public void setCapabilities(List<Map<String, CapabilityFilter>> capabilities) {
-        this.capabilities = capabilities;
+        this.capabilities = getNormalizeCapabilities(capabilities);
     }
 
-    //can't not be removed, in used in snake yaml
+    public void setProperties(List<Map<String, List<Constraint>>> properties) {
+        this.properties = getNormalizeProperties(properties);
+    }
+
     public List<Map<String, List<Constraint>>> getProperties() {
         return properties;
     }
 
-
-    //use this function in order to get node filter properties instead of getProperties function
-    public List<Map<String, List<Constraint>>> getNormalizeProperties() {
-        return getNormalizeProperties(properties);
-    }
-
     private List<Map<String, List<Constraint>>> getNormalizeProperties(List<Map<String, List<Constraint>>> properties) {
-        ToscaExtensionYamlUtil toscaExtensionYamlUtil = new ToscaExtensionYamlUtil();
         if (CollectionUtils.isEmpty(properties)) {
             return properties;
         }
-        for (Map<String, List<Constraint>> propertyConstraintsEntity : properties) {
-            String propertyKey = propertyConstraintsEntity.keySet().iterator().next();
-            List<Constraint> constraints = propertyConstraintsEntity.get(propertyKey);
-            Iterator<Constraint> iterator = constraints.iterator();
-            while (iterator.hasNext()) {
-                Constraint constraintObj = iterator.next();
-                Constraint constraint = toscaExtensionYamlUtil
-                                                .yamlToObject(toscaExtensionYamlUtil.objectToYaml(constraintObj),
-                                                        Constraint.class);
-                constraints.remove(constraintObj);
-                constraints.add(constraint);
-            }
+        List<Map<String, List<Constraint>>> normalizeProperties = new ArrayList<>();
+        for (Map<String, List<Constraint>> propertyEntry : properties) {
+            Map<String, List<Constraint>> normalizePropertyEntry = getNormalizePropertyEntry(propertyEntry);
+            normalizeProperties.add(normalizePropertyEntry);
         }
-        return properties;
+        return normalizeProperties;
+
     }
 
-    //use this function in order to get node filter capabilities instead of getCapabilities function
-    public List<Map<String, CapabilityFilter>> getNormalizeCapabilities() {
+    private Map<String, List<Constraint>> getNormalizePropertyEntry(Map<String, List<Constraint>> propertyEntry) {
+        Map<String, List<Constraint>> normalizePropertyEntry = new HashMap<>();
+        String propertyKey = propertyEntry.keySet().iterator().next();  //only one entry exist in the map
+        List<Constraint> constraints = propertyEntry.get(propertyKey);
+        List<Constraint> normalizeConstraints = getNormalizeConstrains(constraints);
+        normalizePropertyEntry.put(propertyKey, normalizeConstraints);
+        return normalizePropertyEntry;
+    }
+
+    private List<Constraint> getNormalizeConstrains(List<Constraint> constraints) {
         ToscaExtensionYamlUtil toscaExtensionYamlUtil = new ToscaExtensionYamlUtil();
+        List<Constraint> normalizeConstraints = new ArrayList<>();
+        for (Object constraintObj : constraints) {
+            Constraint normalizeConstraint = toscaExtensionYamlUtil
+                                                     .yamlToObject(toscaExtensionYamlUtil.objectToYaml(constraintObj),
+                                                             Constraint.class);
+            normalizeConstraints.add(normalizeConstraint);
+        }
+        return normalizeConstraints;
+    }
+
+    public List<Map<String, CapabilityFilter>> getNormalizeCapabilities(List<Map<String, CapabilityFilter>> capabilities) {
         if (CollectionUtils.isEmpty(capabilities)) {
             return capabilities;
         }
+        List<Map<String, CapabilityFilter>> normalizeCapabilities = new ArrayList<>();
         for (Map<String, CapabilityFilter> capabilityEntry : capabilities) {
-            String capabilityKey = capabilityEntry.keySet().iterator().next();
-            Object capabilityFilterObj = capabilityEntry.get(capabilityKey);
-            CapabilityFilter capabilityFilter = toscaExtensionYamlUtil.yamlToObject(
-                    toscaExtensionYamlUtil.objectToYaml(capabilityFilterObj), CapabilityFilter.class);
-            capabilityFilter.setProperties(getNormalizeProperties(capabilityFilter.getProperties()));
-            capabilityEntry.remove(capabilityKey);
-            capabilityEntry.put(capabilityKey, capabilityFilter);
+            Map<String, CapabilityFilter> normalizeCapabilityEntry = getNormalizeCapabilityEntry(capabilityEntry);
+            normalizeCapabilities.add(normalizeCapabilityEntry);
         }
-        return capabilities;
+        return normalizeCapabilities;
     }
 
-    public void setProperties(List<Map<String, List<Constraint>>> properties) {
-        this.properties = properties;
+    private Map<String, CapabilityFilter> getNormalizeCapabilityEntry(Map<String, CapabilityFilter> capabilityEntry) {
+        Map<String, CapabilityFilter> normalizeCapabilityEntry = new HashMap<>();
+        String capabilityKey = capabilityEntry.keySet().iterator().next(); //only one entry exist in the map
+        Object capabilityFilterObj = capabilityEntry.get(capabilityKey);
+        CapabilityFilter normalizeCapabilityFilter = getNormalizeCapabilityFilter(capabilityFilterObj);
+        normalizeCapabilityEntry.put(capabilityKey, normalizeCapabilityFilter);
+        return normalizeCapabilityEntry;
+    }
+
+
+    private CapabilityFilter getNormalizeCapabilityFilter(Object capabilityFilterObj) {
+        ToscaExtensionYamlUtil toscaExtensionYamlUtil = new ToscaExtensionYamlUtil();
+        CapabilityFilter capabilityFilter = toscaExtensionYamlUtil.yamlToObject(
+                toscaExtensionYamlUtil.objectToYaml(capabilityFilterObj), CapabilityFilter.class);
+        capabilityFilter.setProperties(getNormalizeProperties(capabilityFilter.getProperties()));
+
+        return capabilityFilter;
     }
 }
