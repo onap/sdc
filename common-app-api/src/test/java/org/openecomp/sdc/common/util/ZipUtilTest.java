@@ -1,50 +1,72 @@
 package org.openecomp.sdc.common.util;
 
+import org.junit.Assert;
+import org.junit.Test;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Map;
 import java.util.zip.ZipInputStream;
 
-import javax.annotation.Generated;
-
-import org.junit.Test;
-
 public class ZipUtilTest {
 
-	// private ZipUtil createTestSubject() {
-	// return new ZipUtil();
-	// }
+    private static final byte[] FILE_CONTENT = new byte[] {115, 117, 99, 99, 101, 115, 115, 10}; // "success" + EOF
 
-	@Test
-	public void testReadZip() throws Exception {
-		byte[] zipAsBytes = new byte[] { ' ' };
-		Map<String, byte[]> result;
+    private static final String ZIP_SLIP_VULNERABLE_ARCHIVE = "zipslip_archive.zip";
+    private static final String VALID_ARCHIVE = "valid_archive.zip";
+    private static final String VALID_ARCHIVE_FILE_NAME = "test_file";
 
-		// default test
-		result = ZipUtil.readZip(zipAsBytes);
-	}
 
-	@Test
-	public void testMain() throws Exception {
-		String[] args = new String[] { "" };
+    @Test
+    public void testUnzipToArray() throws Exception {
+        // given
+        byte[] zipFile = getZipAsArray(VALID_ARCHIVE);
 
-		// default test
-		ZipUtil.main(args);
-	}
+        // when
+        byte[] unzipped = ZipUtil.unzip(zipFile);
 
-	@Test
-	public void testZipBytes() throws Exception {
-		byte[] input = new byte[] { ' ' };
-		byte[] result;
+        //then
+        Assert.assertArrayEquals(FILE_CONTENT, unzipped);
+    }
 
-		// default test
-		result = ZipUtil.zipBytes(input);
-	}
 
-	@Test
-	public void testUnzip() throws Exception {
-		byte[] zipped = new byte[] { ' ' };
-		byte[] result;
+    @Test
+    public void testZipBytes() throws Exception {
+        // when
+        byte[] zipped = ZipUtil.zipBytes(FILE_CONTENT);
+        byte[] unzipped = ZipUtil.unzip(zipped);
 
-		// default test
-		result = ZipUtil.unzip(zipped);
-	}
+        //then
+        Assert.assertArrayEquals(FILE_CONTENT, unzipped);
+    }
+
+    @Test
+    public void testReadZipAsArray() throws Exception {
+        // when
+        Map<String, byte[]> fileToContent = ZipUtil.readZip(getZipAsArray(VALID_ARCHIVE));
+
+        // then
+        Assert.assertArrayEquals(FILE_CONTENT, fileToContent.get(VALID_ARCHIVE_FILE_NAME));
+    }
+
+    @Test
+    public void testReadZipAsStream() throws Exception {
+        // when
+        Map<String, byte[]> fileToContent = ZipUtil.readZip(getZipAsStream(VALID_ARCHIVE));
+
+        // then
+        Assert.assertArrayEquals(FILE_CONTENT, fileToContent.get(VALID_ARCHIVE_FILE_NAME));
+    }
+
+
+    private byte[] getZipAsArray(String fileName) throws IOException {
+        ClassLoader classLoader = getClass().getClassLoader();
+        return Files.readAllBytes(Paths.get(classLoader.getResource(fileName).getPath()));
+    }
+
+    private ZipInputStream getZipAsStream(String fileName) throws IOException {
+        return new ZipInputStream(new ByteArrayInputStream(getZipAsArray(fileName)));
+    }
 }

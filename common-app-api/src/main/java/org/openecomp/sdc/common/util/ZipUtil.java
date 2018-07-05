@@ -88,7 +88,7 @@ public class ZipUtil {
 			zis.close();
 
 		} catch (IOException ex) {
-			
+
 			log.info("close Byte stream failed - {}" , ex);
 			return null;
 		} finally {
@@ -104,26 +104,6 @@ public class ZipUtil {
 		}
 
 		return fileNameToByteArray;
-
-	}
-
-	public static void main(String[] args) {
-
-		String zipFileName = "/src/test/resources/config/config.zip";
-
-		zipFileName = "C:\\Git_work\\D2-SDnC\\catalog-be\\src\\test\\resources\\config\\config.zip";
-
-		Path path = Paths.get(zipFileName);
-
-		try {
-			byte[] zipAsBytes = Files.readAllBytes(path);
-			// encode to base
-
-			ZipUtil.readZip(zipAsBytes);
-
-		} catch (IOException e) {
-			log.info("close Byte stream failed - {}" , e);
-		}
 
 	}
 
