@@ -21,6 +21,7 @@
 package org.openecomp.sdc.be.servlets;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -160,7 +161,7 @@ public class ResourcesServlet extends AbstractValidationsServlet {
         return isUIImport;
     }
 
-    private void performUIImport(Wrapper<Response> responseWrapper, String data, final HttpServletRequest request, String userId, String resourceUniqueId) throws FileNotFoundException {
+    private void performUIImport(Wrapper<Response> responseWrapper, String data, final HttpServletRequest request, String userId, String resourceUniqueId) throws IOException {
 
         Wrapper<User> userWrapper = new Wrapper<>();
         Wrapper<UploadResourceInfo> uploadResourceInfoWrapper = new Wrapper<>();

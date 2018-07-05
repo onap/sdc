@@ -495,18 +495,21 @@ public class ComponentCache {
 		return Either.left(result);
 	}
 
-	private Either<? extends Component, Boolean> convertComponentCacheToComponent(
-			ComponentCacheData componentCacheData) {
+	private Either<? extends Component, Boolean> convertComponentCacheToComponent(ComponentCacheData componentCacheData) {
 
 		String compUid = componentCacheData.getId();
 
 		byte[] dataAsArray = componentCacheData.getDataAsArray();
 
 		if (true == componentCacheData.getIsZipped()) {
-			long startUnzip = System.nanoTime();
-			dataAsArray = ZipUtil.unzip(dataAsArray);
-			long endUnzip = System.nanoTime();
-			logger.trace("Unzip component {} took {} microsecond", compUid, (endUnzip - startUnzip) / 1000);
+			try {
+				long startUnzip = System.nanoTime();
+				dataAsArray = ZipUtil.unzip(dataAsArray);
+				long endUnzip = System.nanoTime();
+				logger.trace("Unzip component {} took {} microsecond", compUid, (endUnzip - startUnzip) / 1000);
+			} catch (IOException e) {
+				logger.trace("Unzipping component failed.");
+			}
 		}
 
 		long startDes = System.nanoTime();
@@ -671,8 +674,6 @@ public class ComponentCache {
 		logger.debug("Number of components fetched from cassandra is {}", (list == null ? 0 : list.size()));
 		if (list != null && false == list.isEmpty()) {
 
-			// List<ComponentCacheData> filteredData = list.stream().filter(p ->
-			// filteredResources.contains(p.getId())).collect(Collectors.toList());
 			logger.debug("Number of components filterd is {}", list == null ? 0 : list.size());
 
 			if (list != null) {
