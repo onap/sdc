@@ -1,3 +1,18 @@
+/*
+* Copyright © 2016-2018 European Support Limited
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
 package org.openecomp.core.tools.main;
 
 import org.openecomp.core.tools.commands.AddContributorCommand;
@@ -39,6 +54,9 @@ public class ZusammenMainTool {
       printMessage(logger,
           "heal all: -c HEAL_ALL [-t {number of threads}]");
       printMessage(logger,
+              "set heal by item version: -c SET_HEAL_BY_ITEM_VERSION -i {item id} -v {item_version_id} " +
+                      "-o {old_project_version}");
+      printMessage(logger,
           "add users as contributors: -c ADD_CONTRIBUTOR [-p {item id list file path}] -u {user " +
               "list file path}");
       System.exit(-1);
@@ -65,7 +83,10 @@ public class ZusammenMainTool {
         break;
       case ADD_CONTRIBUTOR:
         AddContributorCommand.add(ToolsUtil.getParam("p", args), ToolsUtil.getParam("u", args));
-
+      case SET_HEAL_BY_ITEM_VERSION:
+        SetHealingFlag.populateHealingTableByItemVersion(ToolsUtil.getParam("i", args),
+                ToolsUtil.getParam("v", args), ToolsUtil.getParam("o", args));
+        break;
     }
 
     Instant stopTime = Instant.now();
@@ -84,6 +105,11 @@ public class ZusammenMainTool {
 
   private static COMMANDS getCommand(String[] args) {
     String commandSrt = ToolsUtil.getParam("c", args);
+    if (commandSrt == null) {
+        printMessage(logger, "message: no command provided.");
+        return  null;
+    }
+
     try {
       return COMMANDS.valueOf(commandSrt);
     } catch (IllegalArgumentException iae) {
@@ -98,6 +124,7 @@ public class ZusammenMainTool {
     IMPORT,
     HEAL_ALL,
     POPULATE_USER_PERMISSIONS,
-    ADD_CONTRIBUTOR
+    ADD_CONTRIBUTOR,
+    SET_HEAL_BY_ITEM_VERSION
   }
 }
