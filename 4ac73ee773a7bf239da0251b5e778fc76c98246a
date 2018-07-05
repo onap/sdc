@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_781a9cc7",
+        "filename": "common-app-api/src/test/java/org/openecomp/sdc/common/util/ValidationUtilsTest.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 3541
+      },
+      "writtenOn": "2018-07-05T14:20:00Z",
+      "side": 1,
+      "message": "I agree this tests were useless (maybe checking if no exception is thrown). They were made just for coverage.\nStill, I wouldn\u0027t remove them. \nValidationUtils uses regular expressions in most of its methods and it\u0027s potential weakness. This class needs to be covered with tests. \nI\u0027ve created JIRA for this:\nhttps://jira.onap.org/browse/SDC-1468\n\nPlease leave this tests since they can serve as base for proper units.",
+      "revId": "4ac73ee773a7bf239da0251b5e778fc76c98246a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
