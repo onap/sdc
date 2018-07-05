@@ -43,37 +43,26 @@ public class ZipUtil {
 	}
 
 	public static Map<String, byte[]> readZip(byte[] zipAsBytes) {
-
-		ZipInputStream zis = null;
-		zis = new ZipInputStream(new ByteArrayInputStream(zipAsBytes));
-
-		return readZip(zis);
+		return readZip(new ZipInputStream(new ByteArrayInputStream(zipAsBytes)));
 	}
 
 	public static Map<String, byte[]> readZip(ZipInputStream zis) {
 
-		Map<String, byte[]> fileNameToByteArray = new HashMap<String, byte[]>();
+		Map<String, byte[]> fileNameToByteArray = new HashMap<>();
 
 		byte[] buffer = new byte[1024];
 		try {
-			// get the zipped file list entry
 			ZipEntry ze = zis.getNextEntry();
-
 			while (ze != null) {
-
 				String fileName = ze.getName();
-
 				if (false == ze.isDirectory()) {
-
 					ByteArrayOutputStream os = new ByteArrayOutputStream();
 					try {
 						int len;
 						while ((len = zis.read(buffer)) > 0) {
 							os.write(buffer, 0, len);
 						}
-
 						fileNameToByteArray.put(fileName, os.toByteArray());
-
 					} finally {
 						if (os != null) {
 							os.close();
@@ -81,14 +70,11 @@ public class ZipUtil {
 					}
 				}
 				ze = zis.getNextEntry();
-
 			}
-
 			zis.closeEntry();
 			zis.close();
 
 		} catch (IOException ex) {
-			
 			log.info("close Byte stream failed - {}" , ex);
 			return null;
 		} finally {
@@ -104,26 +90,6 @@ public class ZipUtil {
 		}
 
 		return fileNameToByteArray;
-
-	}
-
-	public static void main(String[] args) {
-
-		String zipFileName = "/src/test/resources/config/config.zip";
-
-		zipFileName = "C:\\Git_work\\D2-SDnC\\catalog-be\\src\\test\\resources\\config\\config.zip";
-
-		Path path = Paths.get(zipFileName);
-
-		try {
-			byte[] zipAsBytes = Files.readAllBytes(path);
-			// encode to base
-
-			ZipUtil.readZip(zipAsBytes);
-
-		} catch (IOException e) {
-			log.info("close Byte stream failed - {}" , e);
-		}
 
 	}
 
