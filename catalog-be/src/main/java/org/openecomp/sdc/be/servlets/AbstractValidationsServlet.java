@@ -32,6 +32,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
+import java.util.zip.ZipException;
 import java.util.zip.ZipInputStream;
 
 import javax.servlet.ServletContext;
@@ -182,7 +183,7 @@ public abstract class AbstractValidationsServlet extends BeGenericServlet {
 
     }
 
-    protected void validateZip(Wrapper<Response> responseWrapper, File file, String payloadName) throws FileNotFoundException {
+    protected void validateZip(Wrapper<Response> responseWrapper, File file, String payloadName) throws IOException {
         InputStream fileInputStream = new FileInputStream(file);
         Map<String, byte[]> unzippedFolder = ZipUtil.readZip(new ZipInputStream(fileInputStream));
         if (payloadName == null || payloadName.isEmpty() || !unzippedFolder.containsKey(payloadName)) {
@@ -192,7 +193,7 @@ public abstract class AbstractValidationsServlet extends BeGenericServlet {
         }
 
     }
-    protected void validateCsar(Wrapper<Response> responseWrapper, File file, String payloadName) throws FileNotFoundException {
+    protected void validateCsar(Wrapper<Response> responseWrapper, File file, String payloadName) throws IOException {
         InputStream fileInputStream = new FileInputStream(file);
         Map<String, byte[]> unzippedFolder = ZipUtil.readZip(new ZipInputStream(fileInputStream));
         if (payloadName == null || payloadName.isEmpty() || unzippedFolder.isEmpty()) {
@@ -203,14 +204,14 @@ public abstract class AbstractValidationsServlet extends BeGenericServlet {
 
     }
 
-    protected void fillZipContents(Wrapper<String> yamlStringWrapper, File file) throws FileNotFoundException {
+    protected void fillZipContents(Wrapper<String> yamlStringWrapper, File file) throws IOException {
         InputStream fileInputStream = new FileInputStream(file);
         Map<String, byte[]> unzippedFolder = ZipUtil.readZip(new ZipInputStream(fileInputStream));
         String ymlName = unzippedFolder.keySet().iterator().next();
         fillToscaTemplateFromZip(yamlStringWrapper, ymlName, file);
     }
 
-    protected void fillToscaTemplateFromZip(Wrapper<String> yamlStringWrapper, String payloadName, File file) throws FileNotFoundException {
+    protected void fillToscaTemplateFromZip(Wrapper<String> yamlStringWrapper, String payloadName, File file) throws IOException {
         InputStream fileInputStream = new FileInputStream(file);
         Map<String, byte[]> unzippedFolder = ZipUtil.readZip(new ZipInputStream(fileInputStream));
         byte[] yamlFileInBytes = unzippedFolder.get(payloadName);
@@ -496,7 +497,7 @@ public abstract class AbstractValidationsServlet extends BeGenericServlet {
     }
 
     protected void fillPayload(Wrapper<Response> responseWrapper, Wrapper<UploadResourceInfo> uploadResourceInfoWrapper, Wrapper<String> yamlStringWrapper, User user, String resourceInfoJsonString, ResourceAuthorityTypeEnum resourceAuthorityEnum,
-            File file) throws FileNotFoundException {
+            File file) throws IOException {
 
         if (responseWrapper.isEmpty()) {
             if (resourceAuthorityEnum.isBackEndImport()) {
@@ -767,11 +768,14 @@ public abstract class AbstractValidationsServlet extends BeGenericServlet {
             return Either.right(componentsUtils.getResponseFormat(ActionStatus.CSAR_NOT_FOUND, csarUUID));
         }
 
-        Map<String, byte[]> csar = ZipUtil.readZip(decodedPayload);
-        if (csar == null) {
-            log.info("Failed to unzip received csar", csarUUID);
+        Map<String, byte[]> csar = null;
+        try {
+            csar = ZipUtil.readZip(decodedPayload);
             return Either.right(componentsUtils.getResponseFormat(ActionStatus.CSAR_INVALID, csarUUID));
+        } catch (IOException e) {
+            log.info("Failed to unzip received csar", csarUUID);
         }
+
         return Either.left(csar);
     }
 
