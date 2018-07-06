@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_7ba7f6a7",
+        "filename": "openecomp-be/tools/zusammen-tools/src/main/java/org/openecomp/core/tools/commands/SetHealingFlag.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 3885
+      },
+      "writtenOn": "2018-07-06T07:51:45Z",
+      "side": 1,
+      "message": "you could initialize healing entities with stream collected to list:\nStream.filter( filter item and version ).map(to HealingEntity).collect()",
+      "range": {
+        "startLine": 57,
+        "startChar": 0,
+        "endLine": 57,
+        "endChar": 14
+      },
+      "revId": "1aa97244dc2b93d19343c60458911520a66a083d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
