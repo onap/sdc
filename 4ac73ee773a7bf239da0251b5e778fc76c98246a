@@ -34,6 +34,24 @@
       "revId": "4ac73ee773a7bf239da0251b5e778fc76c98246a",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_bb8fbe2d",
+        "filename": "common-app-api/src/test/java/org/openecomp/sdc/common/util/ValidationUtilsTest.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 3873
+      },
+      "writtenOn": "2018-07-06T05:50:01Z",
+      "side": 1,
+      "message": "I agree with Piotr, we should not keep tests which don\u0027t even have assertions",
+      "parentUuid": "5a93c517_3ba40eb8",
+      "revId": "4ac73ee773a7bf239da0251b5e778fc76c98246a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
