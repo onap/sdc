@@ -16,6 +16,24 @@
       "revId": "4ac73ee773a7bf239da0251b5e778fc76c98246a",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_3ba40eb8",
+        "filename": "common-app-api/src/test/java/org/openecomp/sdc/common/util/ValidationUtilsTest.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 3885
+      },
+      "writtenOn": "2018-07-06T05:42:19Z",
+      "side": 1,
+      "message": "There is no value in removed code. Proper base for unit test is interface of a class with all its public methods.",
+      "parentUuid": "5a93c517_781a9cc7",
+      "revId": "4ac73ee773a7bf239da0251b5e778fc76c98246a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
