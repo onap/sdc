@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_dbaf2a7c",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/model/ToscaAttribute.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 3885
+      },
+      "writtenOn": "2018-07-06T08:02:29Z",
+      "side": 1,
+      "message": "why does it start with underscore? Could you change name to something more meaningful or point me to some instruction I should have read to know it? :)",
+      "revId": "12d4d19c32748224ed3ab14e063dae6c250b06ea",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_7bbe16b0",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/utils/InterfacesOperationsToscaUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 214,
+      "author": {
+        "id": 3885
+      },
+      "writtenOn": "2018-07-06T08:02:29Z",
+      "side": 1,
+      "message": "Stream.filter().map().collect() should be more readable.",
+      "range": {
+        "startLine": 214,
+        "startChar": 6,
+        "endLine": 214,
+        "endChar": 7
+      },
+      "revId": "12d4d19c32748224ed3ab14e063dae6c250b06ea",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
