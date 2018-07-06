@@ -52,6 +52,24 @@
       "revId": "4ac73ee773a7bf239da0251b5e778fc76c98246a",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_fb9b0664",
+        "filename": "common-app-api/src/test/java/org/openecomp/sdc/common/util/ValidationUtilsTest.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 3541
+      },
+      "writtenOn": "2018-07-06T07:11:03Z",
+      "side": 1,
+      "message": "If you\u0027re sure it\u0027s good approach in this case, then I\u0027m fine with it. Still this test cases have to be written.",
+      "parentUuid": "5a93c517_bb8fbe2d",
+      "revId": "4ac73ee773a7bf239da0251b5e778fc76c98246a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
