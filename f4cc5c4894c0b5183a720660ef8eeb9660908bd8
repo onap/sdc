@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_d61f016f",
+        "filename": "catalog-be/src/main/resources/import/tosca/nfv-types/vduCompute/vduCompute.yml",
+        "patchSetId": 1
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-07-07T19:49:30Z",
+      "side": 1,
+      "message": "this fix is incorrect since the Tosca name of the node is tosca.nodes.nfv.VDU.VirtualStorage",
+      "range": {
+        "startLine": 58,
+        "startChar": 17,
+        "endLine": 58,
+        "endChar": 52
+      },
+      "revId": "f4cc5c4894c0b5183a720660ef8eeb9660908bd8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
