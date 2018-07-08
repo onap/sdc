@@ -3,7 +3,6 @@
     <modelVersion>4.0.0</modelVersion>
 
     <name>onap-common-configuration-management</name>
-    <groupId>org.onap.sdc.common</groupId>
     <artifactId>onap-common-configuration-management</artifactId>
     <packaging>pom</packaging>
 
@@ -19,12 +18,5 @@
         <module>onap-configuration-management-core</module>
         <module>onap-configuration-management-test</module>
     </modules>
-
-<repositories>
-	<repository>
-      <id>java.net</id>
-      <url>http://repo1.maven.org/maven2</url>
-    </repository>
-</repositories>
 
 </project>
