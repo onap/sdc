@@ -3,7 +3,6 @@
     <modelVersion>4.0.0</modelVersion>
 
     <name>onap-configuration-management-core</name>
-    <groupId>org.onap.sdc.common</groupId>
     <artifactId>onap-configuration-management-core</artifactId>
 
     <parent>
