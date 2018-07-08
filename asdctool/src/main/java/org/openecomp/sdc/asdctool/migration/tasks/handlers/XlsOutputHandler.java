@@ -57,8 +57,7 @@ public class XlsOutputHandler implements OutputHandler {
 			workbook.write(new FileOutputStream(fileName));
 			return true;
 		} catch (Exception e) {
-			LOGGER.error("Failed to write an output file upon  Upgrade migration 1710. Exception {} occured. ", e.getMessage());
-			e.printStackTrace();
+			LOGGER.error("Failed to write an output file upon  Upgrade migration 1710. Exception {} occured. ", e);
 			return false;
 		}
 	}

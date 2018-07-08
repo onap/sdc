@@ -1,4 +1,4 @@
-FROM onap/base_sdc-cqlsh:1.3.1
+FROM onap/base_sdc-cqlsh:1.4.0-SNAPSHOT-latest
 
 COPY chef-solo /root/chef-solo/
 

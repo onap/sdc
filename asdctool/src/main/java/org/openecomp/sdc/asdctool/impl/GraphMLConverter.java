@@ -449,7 +449,6 @@ public class GraphMLConverter {
 						}
 
 					} catch (Exception e) {
-						e.printStackTrace();
 						log.info("run Vertex Scan failed - {}" , e);
 
 						Object property1 = vertex.value(GraphPropertiesDictionary.HEALTH_CHECK.getProperty());
