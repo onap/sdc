@@ -1,103 +1,51 @@
 package org.openecomp.core.tools.main;
 
-import org.openecomp.core.tools.commands.AddContributorCommand;
-import org.openecomp.core.tools.commands.HealAll;
-import org.openecomp.core.tools.commands.PopulateUserPermissions;
-import org.openecomp.core.tools.commands.SetHealingFlag;
-import org.openecomp.core.tools.exportinfo.ExportDataCommand;
-import org.openecomp.core.tools.importinfo.ImportDataCommand;
-import org.openecomp.core.tools.util.ToolsUtil;
+import static org.openecomp.core.tools.util.Utils.printMessage;
+
+import java.time.Duration;
+import java.time.Instant;
+import java.util.Optional;
+import org.openecomp.core.tools.commands.Command;
+import org.openecomp.core.tools.commands.CommandsHolder;
 import org.openecomp.sdc.common.session.SessionContextProviderFactory;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 
-import java.time.Duration;
-import java.time.Instant;
-
-import static org.openecomp.core.tools.util.Utils.printMessage;
-
 public class ZusammenMainTool {
 
-  private static final String GLOBAL_USER = "GLOBAL_USER";
-  private static Logger logger = LoggerFactory.getLogger(ZusammenMainTool.class);
-  private static int status = 0;
+    private static final Logger LOGGER = LoggerFactory.getLogger(ZusammenMainTool.class);
 
-  public static void main(String[] args) {
+    public static void main(String[] args) {
+        Command command = getCommandToRun(args);
 
-    COMMANDS command = getCommand(args);
+        Instant startTime = Instant.now();
+        SessionContextProviderFactory.getInstance().createInterface().create("GLOBAL_USER", "dox");
+        if (!command.execute(args)) {
+            command.printUsage();
+            System.exit(-1);
+        }
+        Instant stopTime = Instant.now();
 
-    if (command == null) {
-      printMessage(logger,
-          "parameter -c is mandatory. script usage: zusammenMainTool.sh -c {command name} " +
-              "[additional arguments depending on the command] ");
-      printMessage(logger,
-          "reset old version: -c RESET_OLD_VERSION [-v {version}]");
-      printMessage(logger,
-          "export: -c EXPORT [-i {item id}]");
-      printMessage(logger,
-          "import: -c IMPORT -f {zip file full path}");
-      printMessage(logger,
-          "heal all: -c HEAL_ALL [-t {number of threads}]");
-      printMessage(logger,
-          "add users as contributors: -c ADD_CONTRIBUTOR [-p {item id list file path}] -u {user " +
-              "list file path}");
-      System.exit(-1);
-    }
-    Instant startTime = Instant.now();
-
-    SessionContextProviderFactory.getInstance().createInterface().create(GLOBAL_USER, "dox");
-
-    switch (command) {
-      case RESET_OLD_VERSION:
-        SetHealingFlag.populateHealingTable(ToolsUtil.getParam("v", args));
-        break;
-      case EXPORT:
-        ExportDataCommand.exportData(ToolsUtil.getParam("i", args));
-        break;
-      case IMPORT:
-        ImportDataCommand.execute(ToolsUtil.getParam("f", args));
-        break;
-      case HEAL_ALL:
-        HealAll.healAll(ToolsUtil.getParam("t", args));
-        break;
-      case POPULATE_USER_PERMISSIONS:
-        PopulateUserPermissions.execute();
-        break;
-      case ADD_CONTRIBUTOR:
-        AddContributorCommand.add(ToolsUtil.getParam("p", args), ToolsUtil.getParam("u", args));
-
+        printDuration(command, startTime, stopTime);
+        System.exit(0);
     }
 
-    Instant stopTime = Instant.now();
-    Duration duration = Duration.between(startTime, stopTime);
-    long minutesPart = duration.toMinutes();
-    long secondsPart = duration.minusMinutes(minutesPart).getSeconds();
-
-
-    printMessage(logger,
-        "Zusammen tools command:[] finished . Total run time was : " + minutesPart + ":" +
-            secondsPart
-            + " minutes");
-    System.exit(status);
-
-  }
-
-  private static COMMANDS getCommand(String[] args) {
-    String commandSrt = ToolsUtil.getParam("c", args);
-    try {
-      return COMMANDS.valueOf(commandSrt);
-    } catch (IllegalArgumentException iae) {
-      printMessage(logger, "message:" + commandSrt + " is illegal.");
+    private static Command getCommandToRun(String[] args) {
+        Optional<Command> command = CommandsHolder.getCommand(args);
+        if (!command.isPresent()) {
+            LOGGER.error("Illegal execution.");
+            CommandsHolder.printUsages();
+            System.exit(-1);
+        }
+        return command.get();
     }
-    return null;
-  }
 
-  private enum COMMANDS {
-    RESET_OLD_VERSION,
-    EXPORT,
-    IMPORT,
-    HEAL_ALL,
-    POPULATE_USER_PERMISSIONS,
-    ADD_CONTRIBUTOR
-  }
+    private static void printDuration(Command command, Instant startTime, Instant stopTime) {
+        Duration duration = Duration.between(startTime, stopTime);
+        long minutesPart = duration.toMinutes();
+        long secondsPart = duration.minusMinutes(minutesPart).getSeconds();
+
+        printMessage(LOGGER, String.format("Zusammen tools command %s finished. Total run time was %s:%s minutes.",
+                command.getCommandName(), minutesPart, secondsPart));
+    }
 }

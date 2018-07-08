@@ -16,31 +16,33 @@
 
 package org.openecomp.core.tools.commands;
 
+import static org.openecomp.core.tools.commands.CommandName.POPULATE_USER_PERMISSIONS;
+
+import java.util.Collections;
+import java.util.List;
 import org.openecomp.core.tools.store.PermissionHandler;
 import org.openecomp.sdc.itempermissions.type.ItemPermissionsEntity;
 
-import java.util.*;
 
+public class PopulateUserPermissions extends Command {
 
-public class PopulateUserPermissions {
-
-    private static PermissionHandler permissionHandler = new PermissionHandler();
-
-    private PopulateUserPermissions(){ }
-
-    public static void execute() {
-
+    @Override
+    public boolean execute(String[] args) {
+        PermissionHandler permissionHandler = new PermissionHandler();
         List<ItemPermissionsEntity> permissions = permissionHandler.getAll();
 
         permissions.forEach(itemPermissionsEntity -> {
             if (!itemPermissionsEntity.getUserId().isEmpty() && !itemPermissionsEntity.getPermission().isEmpty()) {
-            permissionHandler.addItem
-                    (Collections.singleton(itemPermissionsEntity.getItemId()),
-                            itemPermissionsEntity.getUserId(),itemPermissionsEntity.getPermission());
+                permissionHandler.addItem(Collections.singleton(itemPermissionsEntity.getItemId()),
+                        itemPermissionsEntity.getUserId(), itemPermissionsEntity.getPermission());
             }
         });
 
-        System.exit(0);
+        return true;
+    }
 
+    @Override
+    public CommandName getCommandName() {
+        return POPULATE_USER_PERMISSIONS;
     }
 }

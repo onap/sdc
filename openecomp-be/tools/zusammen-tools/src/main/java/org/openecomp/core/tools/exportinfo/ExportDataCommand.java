@@ -1,7 +1,11 @@
 /**
  * Copyright © 2016-2017 European Support Limited.
  */
+
 package org.openecomp.core.tools.exportinfo;
+
+import static java.nio.file.Files.createDirectories;
+import static org.openecomp.core.tools.commands.CommandName.EXPORT;
 
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.ResultSetFuture;
@@ -9,16 +13,6 @@ import com.datastax.driver.core.Session;
 import com.google.common.collect.Sets;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
-import org.apache.commons.io.FileUtils;
-import org.openecomp.core.nosqldb.impl.cassandra.CassandraSessionFactory;
-import org.openecomp.core.tools.importinfo.ImportProperties;
-import org.openecomp.core.tools.util.Utils;
-import org.openecomp.core.tools.util.ZipUtils;
-import org.openecomp.core.zusammen.impl.CassandraConnectionInitializer;
-import org.openecomp.sdc.logging.api.Logger;
-import org.openecomp.sdc.logging.api.LoggerFactory;
-import org.yaml.snakeyaml.Yaml;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -35,31 +29,55 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.Option;
+import org.apache.commons.io.FileUtils;
+import org.openecomp.core.nosqldb.impl.cassandra.CassandraSessionFactory;
+import org.openecomp.core.tools.commands.Command;
+import org.openecomp.core.tools.commands.CommandName;
+import org.openecomp.core.tools.importinfo.ImportProperties;
+import org.openecomp.core.tools.util.Utils;
+import org.openecomp.core.tools.util.ZipUtils;
+import org.openecomp.core.zusammen.impl.CassandraConnectionInitializer;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
+import org.yaml.snakeyaml.Yaml;
 
-import static java.nio.file.Files.createDirectories;
 
+public final class ExportDataCommand extends Command {
 
-public final class ExportDataCommand {
-    private static final Logger logger = LoggerFactory.getLogger(ExportDataCommand.class);
-    public static final String JOIN_DELIMITER = "$#";
+    private static final Logger LOGGER = LoggerFactory.getLogger(ExportDataCommand.class);
+    private static final String ITEM_ID_OPTION = "i";
+    static final String JOIN_DELIMITER = "$#";
     public static final String JOIN_DELIMITER_SPLITTER = "\\$\\#";
-    public static final String MAP_DELIMITER = "!@";
+    static final String MAP_DELIMITER = "!@";
     public static final String MAP_DELIMITER_SPLITTER = "\\!\\@";
-    public static final int THREAD_POOL_SIZE = 6;
+    private static final int THREAD_POOL_SIZE = 6;
     public static final String NULL_REPRESENTATION = "nnuullll";
 
-    private ExportDataCommand() {
+    public ExportDataCommand() {
+        options.addOption(
+                Option.builder(ITEM_ID_OPTION).hasArg().argName("item id").desc("id of item to export, mandatory").build());
     }
 
-    public static void exportData(String filterItem) {
+    @Override
+    public boolean execute(String[] args) {
+        CommandLine cmd = parseArgs(args);
+
+        if (!cmd.hasOption(ITEM_ID_OPTION) || cmd.getOptionValue(ITEM_ID_OPTION) == null) {
+            LOGGER.error("Argument i is mandatory");
+            return false;
+        }
+
         ExecutorService executor = null;
         try {
             CassandraConnectionInitializer.setCassandraConnectionPropertiesToSystem();
             Path rootDir = Paths.get(ImportProperties.ROOT_DIRECTORY);
             initDir(rootDir);
             try (Session session = CassandraSessionFactory.getSession()) {
-                final Set<String> filteredItems = Sets.newHashSet(filterItem);
-                Set<String> fis = filteredItems.stream().map(fi -> fi.replaceAll("\\r", "")).collect(Collectors.toSet());
+                final Set<String> filteredItems = Sets.newHashSet(cmd.getOptionValue(ITEM_ID_OPTION));
+                Set<String> fis =
+                        filteredItems.stream().map(fi -> fi.replaceAll("\\r", "")).collect(Collectors.toSet());
                 Map<String, List<String>> queries;
                 Yaml yaml = new Yaml();
                 try (InputStream is = ExportDataCommand.class.getResourceAsStream("/queries.yaml")) {
@@ -86,35 +104,39 @@ public final class ExportDataCommand {
             zipPath(rootDir);
             FileUtils.forceDelete(rootDir.toFile());
         } catch (Exception ex) {
-            Utils.logError(logger, ex);
+            Utils.logError(LOGGER, ex);
         } finally {
             if (executor != null) {
                 executor.shutdown();
             }
         }
-
+        return true;
     }
 
+    @Override
+    public CommandName getCommandName() {
+        return EXPORT;
+    }
 
-    private static void executeQuery(final Session session, final String query, final Set<String> filteredItems, final String filteredColumn,
-                                        final Set<String> vlms, final CountDownLatch donequerying, Executor executor) {
+    private static void executeQuery(final Session session, final String query, final Set<String> filteredItems,
+            final String filteredColumn, final Set<String> vlms, final CountDownLatch donequerying, Executor executor) {
         ResultSetFuture resultSetFuture = session.executeAsync(query);
         Futures.addCallback(resultSetFuture, new FutureCallback<ResultSet>() {
             @Override
             public void onSuccess(ResultSet resultSet) {
                 try {
-                    Utils.printMessage(logger, "Start to serialize " + query);
+                    Utils.printMessage(LOGGER, "Start to serialize " + query);
                     new ExportSerializer().serializeResult(resultSet, filteredItems, filteredColumn, vlms);
                     donequerying.countDown();
-                } catch (Exception e){
-                    Utils.logError(logger, "Serialization failed :" + query, e);
+                } catch (Exception e) {
+                    Utils.logError(LOGGER, "Serialization failed :" + query, e);
                     System.exit(-1);
                 }
             }
 
             @Override
             public void onFailure(Throwable t) {
-                Utils.logError(logger, "Query failed :" + query, t);
+                Utils.logError(LOGGER, "Query failed :" + query, t);
                 System.exit(-1);
             }
         }, executor);
@@ -127,7 +149,7 @@ public final class ExportDataCommand {
         dateStr = dateStr.replaceAll(":", "_");
         String zipFile = System.getProperty("user.home") + File.separatorChar + "onboarding_import" + dateStr + ".zip";
         ZipUtils.createZip(zipFile, rootDir);
-        Utils.printMessage(logger, "Exported file :" + zipFile);
+        Utils.printMessage(LOGGER, "Exported file :" + zipFile);
     }
 
 
