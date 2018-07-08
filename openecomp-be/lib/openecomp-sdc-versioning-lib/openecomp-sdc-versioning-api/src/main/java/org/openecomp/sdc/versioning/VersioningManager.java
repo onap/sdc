@@ -43,4 +43,6 @@ public interface VersioningManager {
   List<Revision> listRevisions(String itemId, Version version);
 
   void updateVersion(String itemId, Version version);
+
+  void clean(String itemId, Version version);
 }

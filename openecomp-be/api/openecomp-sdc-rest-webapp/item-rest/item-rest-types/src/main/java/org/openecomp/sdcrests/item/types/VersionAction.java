@@ -24,5 +24,6 @@ public enum VersionAction {
   Sync,
   Commit,
   Revert,
-  Reset
+  Reset,
+  Clean
 }

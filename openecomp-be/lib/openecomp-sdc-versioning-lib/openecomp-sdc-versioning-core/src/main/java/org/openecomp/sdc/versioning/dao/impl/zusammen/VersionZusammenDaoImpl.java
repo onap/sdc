@@ -1,5 +1,7 @@
 package org.openecomp.sdc.versioning.dao.impl.zusammen;
 
+import static org.openecomp.core.zusammen.api.ZusammenUtil.createSessionContext;
+
 import com.amdocs.zusammen.datatypes.Id;
 import com.amdocs.zusammen.datatypes.SessionContext;
 import com.amdocs.zusammen.datatypes.item.Info;
@@ -8,6 +10,10 @@ import com.amdocs.zusammen.datatypes.item.ItemVersionData;
 import com.amdocs.zusammen.datatypes.item.ItemVersionStatus;
 import com.amdocs.zusammen.datatypes.item.SynchronizationStatus;
 import com.amdocs.zusammen.datatypes.itemversion.ItemVersionRevisions;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 import org.openecomp.core.zusammen.api.ZusammenAdaptor;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.ErrorCategory;
@@ -18,13 +24,6 @@ import org.openecomp.sdc.versioning.dao.types.Revision;
 import org.openecomp.sdc.versioning.dao.types.SynchronizationState;
 import org.openecomp.sdc.versioning.dao.types.Version;
 import org.openecomp.sdc.versioning.dao.types.VersionState;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import static org.openecomp.core.zusammen.api.ZusammenUtil.createSessionContext;
 
 public class VersionZusammenDaoImpl implements VersionDao {
 
@@ -108,6 +107,11 @@ public class VersionZusammenDaoImpl implements VersionDao {
   public void forceSync(String itemId, Version version) {
     zusammenAdaptor
         .forceSyncVersion(createSessionContext(), new Id(itemId), new Id(version.getId()));
+  }
+
+  @Override
+  public void clean(String itemId, Version version) {
+    zusammenAdaptor.cleanVersion(createSessionContext(), new Id(itemId), new Id(version.getId()));
   }
 
   @Override

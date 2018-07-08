@@ -290,6 +290,17 @@ public class ZusammenConnectorImpl implements ZusammenConnector {
   }
 
   @Override
+  public void cleanVersion(SessionContext context, Id itemId, Id versionId) {
+    Response<Void> response =
+            versionAdaptorFactory.createInterface(context).delete(context, itemId, versionId);
+    if (!response.isSuccessful()) {
+      throw new SdcRuntimeException(String.format(
+              "failed to clean item Version. ItemId: %s, versionId: %s, message: %s",
+              itemId.getValue(), versionId.getValue(), response.getReturnCode().toString()));
+    }
+  }
+
+  @Override
   public ItemVersionConflict getVersionConflict(SessionContext context, Id itemId, Id versionId) {
     Response<ItemVersionConflict> response =
         versionAdaptorFactory.createInterface(context).getConflict(context, itemId, versionId);

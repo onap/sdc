@@ -183,4 +183,9 @@ public class VersioningManagerImpl implements VersioningManager {
     versionDao.update(itemId, version);
   }
 
+  @Override
+  public void clean(String itemId, Version version) {
+    versionDao.clean(itemId, version);
+  }
+
 }

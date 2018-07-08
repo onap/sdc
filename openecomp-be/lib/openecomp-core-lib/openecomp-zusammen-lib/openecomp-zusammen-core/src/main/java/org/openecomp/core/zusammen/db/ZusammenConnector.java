@@ -65,6 +65,8 @@ public interface ZusammenConnector {
 
   void forceSyncVersion(SessionContext context, Id itemId, Id versionId);
 
+  void cleanVersion(SessionContext context, Id itemId, Id versionId);
+
   ItemVersionConflict getVersionConflict(SessionContext context, Id itemId, Id versionId);
 
 

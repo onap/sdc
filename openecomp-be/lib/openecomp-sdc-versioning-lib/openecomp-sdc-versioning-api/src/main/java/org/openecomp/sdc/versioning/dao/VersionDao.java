@@ -1,10 +1,9 @@
 package org.openecomp.sdc.versioning.dao;
 
-import org.openecomp.sdc.versioning.dao.types.Revision;
-import org.openecomp.sdc.versioning.dao.types.Version;
-
 import java.util.List;
 import java.util.Optional;
+import org.openecomp.sdc.versioning.dao.types.Revision;
+import org.openecomp.sdc.versioning.dao.types.Version;
 
 public interface VersionDao {
   List<Version> list(String itemId);
@@ -22,6 +21,8 @@ public interface VersionDao {
   void sync(String itemId, Version version);
 
   void forceSync(String itemId, Version version);
+
+  void clean(String itemId, Version version);
 
   void revert(String itemId, Version version, String revisionId);
 

@@ -277,6 +277,11 @@ public class ZusammenAdaptorImpl implements ZusammenAdaptor {
   }
 
   @Override
+  public void cleanVersion(SessionContext context, Id itemId, Id versionId) {
+    connector.cleanVersion(context, itemId, versionId);
+  }
+
+  @Override
   public void revert(SessionContext context, Id itemId, Id versionId, Id revisionId) {
     connector.revertVersionRevision(context, itemId, versionId, revisionId);
   }

@@ -35,6 +35,8 @@ public class CommandsHolder {
         new HealAll().register();
         new PopulateUserPermissions().register();
         new AddContributorCommand().register();
+        new CleanUserDataCommand().register();
+        new DeletePublicVersionCommand().register();
     }
 
     private CommandsHolder() {

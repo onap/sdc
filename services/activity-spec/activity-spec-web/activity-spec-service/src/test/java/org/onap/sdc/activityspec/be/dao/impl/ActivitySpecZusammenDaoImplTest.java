@@ -327,6 +327,11 @@ public class ActivitySpecZusammenDaoImplTest {
         }
 
         @Override
+        public void cleanVersion(SessionContext sessionContext, Id itemId, Id versionId) {
+
+        }
+
+        @Override
         public Optional<ElementInfo> getElementInfo(SessionContext context, ElementContext elementContext,
                                                            Id elementId) {
             return Optional.empty();
