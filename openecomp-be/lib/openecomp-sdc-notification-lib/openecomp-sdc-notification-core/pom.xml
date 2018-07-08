@@ -23,7 +23,7 @@
             <groupId>org.mockito</groupId>
             <artifactId>mockito-all</artifactId>
             <scope>test</scope>
-            <version>1.10.19</version>
+            <version>${mockito.all.version}</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
