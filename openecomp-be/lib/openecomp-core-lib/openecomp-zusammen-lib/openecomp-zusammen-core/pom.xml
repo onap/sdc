@@ -39,16 +39,6 @@
             <artifactId>zusammen-collaboration-cassandra-plugin</artifactId>
             <version>${zusammen-collaboration-store.version}</version>
             <scope>runtime</scope>
-<!--            <exclusions>
-                <exclusion>
-                    <groupId>com.datastax.cassandra</groupId>
-                    <artifactId>cassandra-driver-core</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.datastax.cassandra</groupId>
-                    <artifactId>cassandra-driver-mapping</artifactId>
-                </exclusion>
-            </exclusions>-->
         </dependency>
         <dependency>
             <groupId>com.amdocs.zusammen.plugin</groupId>
@@ -71,11 +61,6 @@
             <groupId>org.openecomp.sdc.core</groupId>
             <artifactId>openecomp-facade-core</artifactId>
             <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
-            <version>3.1.0</version>
         </dependency>
         <dependency>
             <groupId>org.openecomp.sdc.core</groupId>

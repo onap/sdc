@@ -5,16 +5,22 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.security.Principal;
+import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Locale;
 import java.util.Map;
-
+import javax.servlet.AsyncContext;
+import javax.servlet.DispatcherType;
 import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletInputStream;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
+import javax.servlet.http.Part;
 import org.junit.Test;
 
 public class HttpRequestInfoTest {
@@ -283,6 +289,48 @@ public class HttpRequestInfoTest {
 		}
 
 		@Override
+		public ServletContext getServletContext() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public AsyncContext startAsync() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public AsyncContext startAsync(ServletRequest servletRequest, ServletResponse servletResponse) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public boolean isAsyncStarted() {
+			// TODO Auto-generated method stub
+			return false;
+		}
+
+		@Override
+		public boolean isAsyncSupported() {
+			// TODO Auto-generated method stub
+			return false;
+		}
+
+		@Override
+		public AsyncContext getAsyncContext() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public DispatcherType getDispatcherType() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
 		public String getAuthType() {
 			// TODO Auto-generated method stub
 			return null;
@@ -431,6 +479,34 @@ public class HttpRequestInfoTest {
 			// TODO Auto-generated method stub
 			return false;
 		}
-		
+
+		@Override
+		public boolean authenticate(HttpServletResponse httpServletResponse) {
+			// TODO Auto-generated method stub
+			return false;
+		}
+
+		@Override
+		public void login(String s, String s1) {
+			// TODO Auto-generated method stub
+		}
+
+		@Override
+		public void logout() {
+			// TODO Auto-generated method stub
+		}
+
+		@Override
+		public Collection<Part> getParts() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Part getPart(String s) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
 	}
 }

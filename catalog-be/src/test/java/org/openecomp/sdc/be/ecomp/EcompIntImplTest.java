@@ -4,17 +4,24 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.Principal;
+import java.util.Collection;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-
+import javax.servlet.AsyncContext;
+import javax.servlet.DispatcherType;
 import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletInputStream;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
+import javax.servlet.http.HttpUpgradeHandler;
+import javax.servlet.http.Part;
 import org.junit.Test;
 import org.openecomp.portalsdk.core.onboarding.exception.PortalAPIException;
 import org.openecomp.portalsdk.core.restful.domain.EcompRole;
@@ -150,6 +157,12 @@ public class EcompIntImplTest {
 
 		@Override
 		public int getContentLength() {
+			// TODO Auto-generated method stub
+			return 0;
+		}
+
+		@Override
+		public long getContentLengthLong() {
 			// TODO Auto-generated method stub
 			return 0;
 		}
@@ -299,6 +312,48 @@ public class EcompIntImplTest {
 		}
 
 		@Override
+		public ServletContext getServletContext() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public AsyncContext startAsync() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public AsyncContext startAsync(ServletRequest servletRequest, ServletResponse servletResponse) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public boolean isAsyncStarted() {
+			// TODO Auto-generated method stub
+			return false;
+		}
+
+		@Override
+		public boolean isAsyncSupported() {
+			// TODO Auto-generated method stub
+			return false;
+		}
+
+		@Override
+		public AsyncContext getAsyncContext() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public DispatcherType getDispatcherType() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
 		public String getAuthType() {
 			// TODO Auto-generated method stub
 			return null;
@@ -425,6 +480,12 @@ public class EcompIntImplTest {
 		}
 
 		@Override
+		public String changeSessionId() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
 		public boolean isRequestedSessionIdValid() {
 			// TODO Auto-generated method stub
 			return false;
@@ -447,6 +508,39 @@ public class EcompIntImplTest {
 			// TODO Auto-generated method stub
 			return false;
 		}
-		
+
+		@Override
+		public boolean authenticate(HttpServletResponse httpServletResponse) {
+			// TODO Auto-generated method stub
+			return false;
+		}
+
+		@Override
+		public void login(String s, String s1) {
+			// TODO Auto-generated method stub
+		}
+
+		@Override
+		public void logout() {
+			// TODO Auto-generated method stub
+		}
+
+		@Override
+		public Collection<Part> getParts() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Part getPart(String s) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public <T extends HttpUpgradeHandler> T upgrade(Class<T> aClass) {
+			// TODO Auto-generated method stub
+			return null;
+		}
 	}
 }

@@ -22,10 +22,7 @@ import org.openecomp.core.nosqldb.util.CassandraUtils;
 
 import java.util.function.Supplier;
 
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
-
-public class CassandraConnectionInitializer implements ServletContextListener {
+public class CassandraConnectionInitializer {
 
   private static final String CASSANDRA_PREFIX = "cassandra.";
   private static final String DATA_CENTER_PROPERTY_NAME = CASSANDRA_PREFIX + "datacenter";
@@ -42,18 +39,8 @@ public class CassandraConnectionInitializer implements ServletContextListener {
   private static final String KEYSPACE_PROPERTY_NAME = CASSANDRA_PREFIX + "keyspace";
   private static final String ZUSAMMEN = "zusammen";
 
-  @Override
-  public void contextInitialized(ServletContextEvent servletContextEvent) {
-    setCassandraConnectionPropertiesToSystem();
-  }
-
   public static void setCassandraConnectionPropertiesToSystem() {
     DeferredInitializer.init();
-  }
-
-  @Override
-  public void contextDestroyed(ServletContextEvent servletContextEvent) {
-    // no-op, required by the interface
   }
 
   private static class DeferredInitializer {
@@ -93,8 +80,8 @@ public class CassandraConnectionInitializer implements ServletContextListener {
 
     private DeferredInitializer() { }
 
-    public static void init() {
-      // just to ensure static initialization
+    static void init() {
+      // no-op, just to ensure static initialization
     }
   }
 }
