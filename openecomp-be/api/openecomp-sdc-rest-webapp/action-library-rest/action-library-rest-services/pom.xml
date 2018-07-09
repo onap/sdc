@@ -72,16 +72,6 @@
             <artifactId>javax.ws.rs-api</artifactId>
             <version>${ws.rs.version}</version>
         </dependency>
-
-        <!-- Other Stuff-->
-        <!--dependency>
-            <groupId>cglib</groupId>
-            <artifactId>cglib-nodep</artifactId>
-            <version>${cglib.nodep.version}</version>
-            <scope>runtime</scope>
-        </dependency-->
-
-        <!-- Java Stuff -->
         <dependency>
             <groupId>javax.inject</groupId>
             <artifactId>javax.inject</artifactId>
@@ -112,6 +102,12 @@
             <groupId>com.sun.jersey.contribs</groupId>
             <artifactId>jersey-multipart</artifactId>
             <version>${jersey.multipart.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>${servlet-api.version}</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
