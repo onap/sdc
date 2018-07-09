@@ -22,6 +22,30 @@
       "revId": "f4cc5c4894c0b5183a720660ef8eeb9660908bd8",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_b14a7f25",
+        "filename": "catalog-be/src/main/resources/import/tosca/nfv-types/vduCompute/vduCompute.yml",
+        "patchSetId": 1
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 2363
+      },
+      "writtenOn": "2018-07-09T03:41:54Z",
+      "side": 1,
+      "message": "but DM is tosca.nodes.nfv.Vdu.VirtualStorage, I think web site is not right.",
+      "parentUuid": "5a93c517_d61f016f",
+      "range": {
+        "startLine": 58,
+        "startChar": 17,
+        "endLine": 58,
+        "endChar": 52
+      },
+      "revId": "f4cc5c4894c0b5183a720660ef8eeb9660908bd8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
