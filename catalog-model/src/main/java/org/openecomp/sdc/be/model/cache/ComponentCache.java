@@ -426,7 +426,7 @@ public class ComponentCache {
 
 		List<ComponentCacheData> list = componentsFromCache.left().value();
 		logger.debug("Number of components fetched from cassandra is {}", (list == null ? 0 : list.size()));
-		if (list != null && false == list.isEmpty()) {
+		if (list != null && !list.isEmpty()) {
 
 			List<ComponentCacheData> filteredData = list.stream().filter(p -> filteredResources.contains(p.getId()))
 					.collect(Collectors.toList());

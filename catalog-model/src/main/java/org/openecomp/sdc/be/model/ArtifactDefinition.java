@@ -99,10 +99,7 @@ public class ArtifactDefinition extends ArtifactDataDefinition implements Serial
 
 
 	public boolean checkEsIdExist() {
-		if ((getEsId() != null) && (!getEsId().trim().isEmpty())) {
-			return true;
-		}
-		return false;
+		return (getEsId() != null) && (!getEsId().trim().isEmpty());
 	}
 
 	@Override
