@@ -82,20 +82,16 @@ public class ServiceModelDaoZusammenImpl
     logger.info("Storing service model for VendorSoftwareProduct id -> {}", vspId);
 
     ZusammenElement templatesElement = buildStructuralElement(ElementType.Templates, Action.UPDATE);
-    serviceModel.getServiceTemplates().entrySet().forEach(entry -> templatesElement.addSubElement(
-        buildServiceTemplateElement(entry.getKey(), entry.getValue(),
-            serviceModel.getEntryDefinitionServiceTemplate(), Action.CREATE)));
+    serviceModel.getServiceTemplates().forEach((key, value) -> templatesElement.addSubElement(
+            buildServiceTemplateElement(key, value, serviceModel.getEntryDefinitionServiceTemplate(), Action.CREATE)));
 
     ZusammenElement artifactsElement = buildStructuralElement(ElementType.Artifacts, Action.UPDATE);
     if (Objects.nonNull(serviceModel.getArtifactFiles())) {
-      serviceModel.getArtifactFiles().getFiles().entrySet()
-          .forEach(entry -> artifactsElement.addSubElement(
-              buildArtifactElement(entry.getKey(), entry.getValue(), Action.CREATE)));
+      serviceModel.getArtifactFiles().getFiles().forEach(
+              (key, value) -> artifactsElement.addSubElement(buildArtifactElement(key, value, Action.CREATE)));
     }
 
-    ZusammenElement serviceModelElement = buildStructuralElement(elementType, Action.UPDATE);
-    serviceModelElement.getInfo()
-        .addProperty(BASE_PROPERTY, serviceModel.getEntryDefinitionServiceTemplate());
+    ZusammenElement serviceModelElement = buildServiceModelElement(serviceModel.getEntryDefinitionServiceTemplate());
 
     serviceModelElement.addSubElement(templatesElement);
     serviceModelElement.addSubElement(artifactsElement);
@@ -169,17 +165,16 @@ public class ServiceModelDaoZusammenImpl
     SessionContext context = ZusammenUtil.createSessionContext();
     ElementContext elementContext = new ElementContext(vspId, version.getId());
 
-    ZusammenElement serviceModelElement = buildStructuralElement(elementType, Action.IGNORE);
-
     Optional<ElementInfo> origServiceModel = getServiceModelElementInfo(context, elementContext);
     if (!origServiceModel.isPresent()) {
       return;
     }
-
     Id serviceModelElementId = origServiceModel.get().getId();
+
+    ZusammenElement serviceModelElement = buildServiceModelElement(serviceModel.getEntryDefinitionServiceTemplate());
     serviceModelElement.setElementId(serviceModelElementId);
+
     overrideServiceTemplates(serviceModelElementId, serviceModel, context, elementContext, serviceModelElement);
-    serviceModelElement.getInfo().addProperty(BASE_PROPERTY, serviceModel.getEntryDefinitionServiceTemplate());
 
     zusammenAdaptor.saveElement(context, elementContext, serviceModelElement, "Override service model");
   }
@@ -247,6 +242,12 @@ public class ServiceModelDaoZusammenImpl
     }
 
     return null;
+  }
+
+  private ZusammenElement buildServiceModelElement(String entryDefinitionServiceTemplate) {
+    ZusammenElement serviceModelElement = buildStructuralElement(elementType, Action.UPDATE);
+    serviceModelElement.getInfo().addProperty(BASE_PROPERTY, entryDefinitionServiceTemplate);
+    return serviceModelElement;
   }
 
   private Element buildServiceTemplateElement(String name, ServiceTemplate serviceTemplate,
