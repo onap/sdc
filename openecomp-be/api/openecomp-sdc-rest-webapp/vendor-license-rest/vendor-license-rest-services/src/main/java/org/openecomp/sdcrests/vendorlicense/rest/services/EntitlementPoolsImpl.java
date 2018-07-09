@@ -20,6 +20,9 @@
 
 package org.openecomp.sdcrests.vendorlicense.rest.services;
 
+import org.openecomp.sdc.common.errors.CoreException;
+import org.openecomp.sdc.common.errors.ErrorCode;
+import org.openecomp.sdc.common.togglz.ToggleableFeature;
 import org.openecomp.sdc.vendorlicense.VendorLicenseManager;
 import org.openecomp.sdc.vendorlicense.VendorLicenseManagerFactory;
 import org.openecomp.sdc.vendorlicense.dao.types.EntitlementPoolEntity;
@@ -37,6 +40,7 @@ import org.springframework.stereotype.Service;
 import javax.inject.Named;
 import javax.ws.rs.core.Response;
 import java.util.Collection;
+import java.util.Objects;
 
 @Named
 @Service("entitlementPools")
@@ -76,6 +80,12 @@ public class EntitlementPoolsImpl implements EntitlementPools {
    */
   public Response createEntitlementPool(EntitlementPoolRequestDto request, String vlmId,
                                         String versionId, String user) {
+    if (ToggleableFeature.MRN.isActive()) {
+      if (Objects.isNull(request.getManufacturerReferenceNumber())) {
+        throw new CoreException((new ErrorCode.ErrorCodeBuilder().withMessage("Field does not conform to "
+            + "predefined criteria : manufacturerReferenceNumber : is mandatory and should not be empty").build()));
+      }
+    }
     EntitlementPoolEntity entitlementPoolEntity =
         new MapEntitlementPoolRequestDtoToEntitlementPoolEntity()
             .applyMapping(request, EntitlementPoolEntity.class);

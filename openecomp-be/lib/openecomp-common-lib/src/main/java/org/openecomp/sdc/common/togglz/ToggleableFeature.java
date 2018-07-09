@@ -10,7 +10,10 @@ public enum ToggleableFeature implements Feature {
   ARCHIVE_ITEM,
 
   @Label("Filter")
-  FILTER;
+  FILTER,
+
+  @Label(("MRN"))
+  MRN;
 
   public boolean isActive() {
     return FeatureContext.getFeatureManager().isActive(this);

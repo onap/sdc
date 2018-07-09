@@ -26,18 +26,6 @@ import org.openecomp.sdcrests.vendorlicense.types.FeatureGroupDescriptorDto;
 public class MapFeatureGroupEntityToFeatureGroupDescriptorDtoTest {
 
     @Test
-    public void testManufacturerReferenceNumber() {
-        FeatureGroupEntity source = new FeatureGroupEntity();
-        FeatureGroupDescriptorDto target = new FeatureGroupDescriptorDto();
-        MapFeatureGroupEntityToFeatureGroupDescriptorDto mapper =
-                new MapFeatureGroupEntityToFeatureGroupDescriptorDto();
-        String param = "02402e1e-7092-485a-9574-46e2d49cca97";
-        source.setManufacturerReferenceNumber(param);
-        mapper.doMapping(source, target);
-        assertEquals(target.getManufacturerReferenceNumber(), param);
-    }
-
-    @Test
     public void testDescription() {
         FeatureGroupEntity source = new FeatureGroupEntity();
         FeatureGroupDescriptorDto target = new FeatureGroupDescriptorDto();

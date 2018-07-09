@@ -225,6 +225,7 @@ public class EntitlementPoolZusammenDaoImpl implements EntitlementPoolDao {
     info.addProperty("operational_scope", entitlementPool.getOperationalScope());
     info.addProperty("startDate", entitlementPool.getStartDate());
     info.addProperty("expiryDate", entitlementPool.getExpiryDate());
+    info.addProperty("manufacturerReferenceNumber", entitlementPool.getManufacturerReferenceNumber());
     entitlementPoolElement.setInfo(info);
 
     if (entitlementPool.getReferencingFeatureGroups() != null

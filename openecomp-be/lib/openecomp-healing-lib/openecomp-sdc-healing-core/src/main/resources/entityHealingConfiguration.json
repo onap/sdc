@@ -12,6 +12,9 @@
   "vlm": {
     "structure": [
       "org.openecomp.sdc.healing.healers.OwnerHealer"
+    ],
+    "data": [
+      "org.openecomp.sdc.healing.healers.ManufacturerReferenceNumberHealer"
     ]
   }
 }

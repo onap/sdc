@@ -167,6 +167,18 @@ public class MapLicenseKeyGroupEntityToLicenseKeyGroupEntityDtoTest {
         assertEquals(target.getStartDate(), param);
     }
 
+    @Test
+    public void testManufacturerReferenceNumber() {
+        LicenseKeyGroupEntity source = new LicenseKeyGroupEntity();
+        LicenseKeyGroupEntityDto target = new LicenseKeyGroupEntityDto();
+        MapLicenseKeyGroupEntityToLicenseKeyGroupEntityDto mapper = new
+            MapLicenseKeyGroupEntityToLicenseKeyGroupEntityDto();
+        String param = "02402e1e-7092-485a-9574-46e2d49cca97";
+        source.setManufacturerReferenceNumber(param);
+        mapper.doMapping(source, target);
+        assertEquals(target.getManufacturerReferenceNumber(), param);
+    }
+
     enum TestEnum {
         Yes
     }

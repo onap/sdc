@@ -20,6 +20,7 @@
 
 package org.openecomp.sdcrests.vendorlicense.rest.mapping;
 
+import org.openecomp.sdc.common.togglz.ToggleableFeature;
 import org.openecomp.sdc.vendorlicense.dao.types.EntitlementPoolEntity;
 import org.openecomp.sdc.vendorlicense.dao.types.MultiChoiceOrOther;
 import org.openecomp.sdcrests.mapping.MappingBase;
@@ -30,6 +31,9 @@ public class MapEntitlementPoolRequestDtoToEntitlementPoolEntity
   @Override
   public void doMapping(EntitlementPoolRequestDto source, EntitlementPoolEntity target) {
     target.setName(source.getName());
+    if (ToggleableFeature.MRN.isActive()) {
+      target.setManufacturerReferenceNumber(source.getManufacturerReferenceNumber());
+    }
     target.setDescription(source.getDescription());
     target.setThresholdValue(source.getThresholdValue());
     target.setThresholdUnit(source.getThresholdUnits());

@@ -26,6 +26,7 @@ import org.openecomp.core.util.UniqueValueUtil;
 import org.openecomp.core.utilities.CommonMethods;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.ErrorCode;
+import org.openecomp.sdc.common.togglz.ToggleableFeature;
 import org.openecomp.sdc.vendorlicense.VendorLicenseConstants;
 import org.openecomp.sdc.vendorlicense.dao.EntitlementPoolDao;
 import org.openecomp.sdc.vendorlicense.dao.EntitlementPoolDaoFactory;
@@ -95,8 +96,10 @@ public class VendorLicenseFacadeImpl implements VendorLicenseFacade {
     FeatureGroupEntity retrieved = featureGroupDao.get(featureGroup);
     VersioningUtil
         .validateEntityExistence(retrieved, featureGroup, VendorLicenseModelEntity.ENTITY_TYPE);
-    if (retrieved.getManufacturerReferenceNumber() == null) {
-      updateManufacturerNumberInFeatureGroup(retrieved);
+    if (!ToggleableFeature.MRN.isActive()) { //Remove updateManufacturerNumberInFeatureGroup() while removing remove toggle
+      if (retrieved.getManufacturerReferenceNumber() == null) {
+        updateManufacturerNumberInFeatureGroup(retrieved);
+      }
     }
     return retrieved;
   }

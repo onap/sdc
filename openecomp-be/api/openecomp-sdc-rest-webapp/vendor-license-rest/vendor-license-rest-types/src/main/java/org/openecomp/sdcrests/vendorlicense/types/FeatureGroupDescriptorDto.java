@@ -20,7 +20,6 @@
 
 package org.openecomp.sdcrests.vendorlicense.types;
 
-import org.hibernate.validator.constraints.NotBlank;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -35,7 +34,7 @@ public class FeatureGroupDescriptorDto {
   @NotNull
   private String partNumber;
 
-  @NotBlank(message = "is mandatory and should not be empty")
+
   @Size(max = 100)
   private String manufacturerReferenceNumber;
 

@@ -30,12 +30,15 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 @ApiModel(value = "EntitlementPoolRequest")
-@JsonIgnoreProperties({"manufacturerReferenceNumber", "time", "aggregationFunction", "entitlementMetric"})
+@JsonIgnoreProperties({"time", "aggregationFunction", "entitlementMetric"})
 public class EntitlementPoolRequestDto {
 
   @NotNull
   @Size(max = 120)
   private String name;
+
+  @Size(max = 100)
+  private String manufacturerReferenceNumber;
 
   @Size(max = 1000)
   private String description;
@@ -58,6 +61,14 @@ public class EntitlementPoolRequestDto {
 
   public void setName(String name) {
     this.name = name;
+  }
+
+  public String getManufacturerReferenceNumber() {
+    return manufacturerReferenceNumber;
+  }
+
+  public void setManufacturerReferenceNumber(String manufacturerReferenceNumber) {
+    this.manufacturerReferenceNumber = manufacturerReferenceNumber;
   }
 
   public String getDescription() {

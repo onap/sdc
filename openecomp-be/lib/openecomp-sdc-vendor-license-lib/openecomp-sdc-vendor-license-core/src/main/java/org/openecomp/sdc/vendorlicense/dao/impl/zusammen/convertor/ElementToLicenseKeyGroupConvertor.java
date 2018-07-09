@@ -77,6 +77,7 @@ public class ElementToLicenseKeyGroupConvertor extends ElementConvertor {
 
     licenseKeyGroup.setThresholdValue(toInteger(info.getProperty("thresholdValue")));
     licenseKeyGroup.setIncrements(info.getProperty("increments"));
+    licenseKeyGroup.setManufacturerReferenceNumber(info.getProperty("manufacturerReferenceNumber"));
   }
 
   private void mapRelationsToLicenseKeyGroup(LicenseKeyGroupEntity licenseKeyGroup,
