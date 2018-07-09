@@ -68,6 +68,7 @@ public class ElementToEntitlementPoolConvertor extends ElementConvertor {
         getOperationalScopeMultiChoiceOrOther(info.getProperty("operational_scope")));
     entitlementPool.setStartDate(info.getProperty("startDate"));
     entitlementPool.setExpiryDate(info.getProperty("expiryDate"));
+    entitlementPool.setManufacturerReferenceNumber(info.getProperty("manufacturerReferenceNumber"));
   }
 
   private void mapRelationsToEntitlementPoolEntity(EntitlementPoolEntity entitlementPool,

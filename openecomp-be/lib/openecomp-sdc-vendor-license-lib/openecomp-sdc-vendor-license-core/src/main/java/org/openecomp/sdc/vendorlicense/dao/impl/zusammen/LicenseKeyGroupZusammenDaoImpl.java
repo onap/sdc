@@ -209,6 +209,7 @@ public class LicenseKeyGroupZusammenDaoImpl implements LicenseKeyGroupDao {
     info.addProperty("thresholdValue", licenseKeyGroup.getThresholdValue());
     info.addProperty("thresholdUnits", licenseKeyGroup.getThresholdUnits());
     info.addProperty("increments", licenseKeyGroup.getIncrements());
+    info.addProperty("manufacturerReferenceNumber", licenseKeyGroup.getManufacturerReferenceNumber());
     lkgElement.setInfo(info);
 
     if (licenseKeyGroup.getReferencingFeatureGroups() != null

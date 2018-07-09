@@ -50,18 +50,6 @@ public class MapFeatureGroupDescriptorDtoToFeatureGroupEntityTest {
     }
 
     @Test
-    public void testManufacturerReferenceNumber() {
-        FeatureGroupDescriptorDto source = new FeatureGroupDescriptorDto();
-        FeatureGroupEntity target = new FeatureGroupEntity();
-        MapFeatureGroupDescriptorDtoToFeatureGroupEntity mapper =
-                new MapFeatureGroupDescriptorDtoToFeatureGroupEntity();
-        String param = "6751e741-ffc2-4034-863b-f0083f62c033";
-        source.setManufacturerReferenceNumber(param);
-        mapper.doMapping(source, target);
-        assertEquals(target.getManufacturerReferenceNumber(), param);
-    }
-
-    @Test
     public void testPartNumber() {
         FeatureGroupDescriptorDto source = new FeatureGroupDescriptorDto();
         FeatureGroupEntity target = new FeatureGroupEntity();

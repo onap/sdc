@@ -32,8 +32,13 @@ public class LicenseKeyGroupRequestDto {
   @NotNull
   @Size(max = 120)
   private String name;
+
+  @Size(max = 100)
+  private String manufacturerReferenceNumber;
+
   @Size(max = 1000)
   private String description;
+
   @NotNull
   private LicenseKeyType type;
 
@@ -56,6 +61,14 @@ public class LicenseKeyGroupRequestDto {
 
   public void setName(String name) {
     this.name = name;
+  }
+
+  public String getManufacturerReferenceNumber() {
+    return manufacturerReferenceNumber;
+  }
+
+  public void setManufacturerReferenceNumber(String manufacturerReferenceNumber) {
+    this.manufacturerReferenceNumber = manufacturerReferenceNumber;
   }
 
   public String getDescription() {

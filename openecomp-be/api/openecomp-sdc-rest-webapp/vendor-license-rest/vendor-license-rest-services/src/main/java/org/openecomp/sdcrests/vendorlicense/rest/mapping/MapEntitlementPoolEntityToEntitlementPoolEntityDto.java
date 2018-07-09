@@ -20,6 +20,7 @@
 
 package org.openecomp.sdcrests.vendorlicense.rest.mapping;
 
+import org.openecomp.sdc.common.togglz.ToggleableFeature;
 import org.openecomp.sdc.vendorlicense.dao.types.EntitlementPoolEntity;
 import org.openecomp.sdcrests.mapping.MappingBase;
 import org.openecomp.sdcrests.vendorlicense.types.EntitlementPoolEntityDto;
@@ -46,5 +47,8 @@ public class MapEntitlementPoolEntityToEntitlementPoolEntityDto
     target.setStartDate(source.getStartDate());
     target.setExpiryDate(source.getExpiryDate());
     target.setVersionUUID(source.getVersionUuId());
+    if (ToggleableFeature.MRN.isActive()) {
+      target.setManufacturerReferenceNumber(source.getManufacturerReferenceNumber());
+    }
   }
 }

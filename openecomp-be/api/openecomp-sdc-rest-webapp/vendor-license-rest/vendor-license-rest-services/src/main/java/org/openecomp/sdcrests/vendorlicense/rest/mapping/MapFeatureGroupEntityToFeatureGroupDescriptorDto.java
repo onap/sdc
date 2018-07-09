@@ -20,6 +20,7 @@
 
 package org.openecomp.sdcrests.vendorlicense.rest.mapping;
 
+import org.openecomp.sdc.common.togglz.ToggleableFeature;
 import org.openecomp.sdc.vendorlicense.dao.types.FeatureGroupEntity;
 import org.openecomp.sdcrests.mapping.MappingBase;
 import org.openecomp.sdcrests.vendorlicense.types.FeatureGroupDescriptorDto;
@@ -31,6 +32,8 @@ public class MapFeatureGroupEntityToFeatureGroupDescriptorDto
     target.setName(source.getName());
     target.setDescription(source.getDescription());
     target.setPartNumber(source.getPartNumber());
-    target.setManufacturerReferenceNumber(source.getManufacturerReferenceNumber());
+    if (!ToggleableFeature.MRN.isActive()) {
+      target.setManufacturerReferenceNumber(source.getManufacturerReferenceNumber());
+    }
   }
 }

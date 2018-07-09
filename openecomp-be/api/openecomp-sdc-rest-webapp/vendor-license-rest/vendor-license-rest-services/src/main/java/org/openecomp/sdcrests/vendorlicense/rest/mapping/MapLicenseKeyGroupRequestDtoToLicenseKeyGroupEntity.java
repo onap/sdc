@@ -20,6 +20,7 @@
 
 package org.openecomp.sdcrests.vendorlicense.rest.mapping;
 
+import org.openecomp.sdc.common.togglz.ToggleableFeature;
 import org.openecomp.sdc.vendorlicense.dao.types.LicenseKeyGroupEntity;
 import org.openecomp.sdc.vendorlicense.dao.types.MultiChoiceOrOther;
 import org.openecomp.sdcrests.mapping.MappingBase;
@@ -30,6 +31,9 @@ public class MapLicenseKeyGroupRequestDtoToLicenseKeyGroupEntity
   @Override
   public void doMapping(LicenseKeyGroupRequestDto source, LicenseKeyGroupEntity target) {
     target.setName(source.getName());
+    if (ToggleableFeature.MRN.isActive()) {
+      target.setManufacturerReferenceNumber(source.getManufacturerReferenceNumber());
+    }
     target.setDescription(source.getDescription());
     target.setType(source.getType());
     target.setOperationalScope(new MapMultiChoiceOrOtherDtoToMultiChoiceOrOther()

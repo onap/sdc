@@ -20,6 +20,7 @@
 
 package org.openecomp.sdcrests.vendorlicense.rest.mapping;
 
+import org.openecomp.sdc.common.togglz.ToggleableFeature;
 import org.openecomp.sdc.vendorlicense.dao.types.LicenseKeyGroupEntity;
 import org.openecomp.sdcrests.mapping.MappingBase;
 import org.openecomp.sdcrests.vendorlicense.types.LicenseKeyGroupEntityDto;
@@ -42,5 +43,8 @@ public class MapLicenseKeyGroupEntityToLicenseKeyGroupEntityDto
     target.setThresholdValue(source.getThresholdValue());
     target.setIncrements(source.getIncrements());
     target.setVersionUUID(source.getVersionUuId());
+    if (ToggleableFeature.MRN.isActive()) {
+      target.setManufacturerReferenceNumber(source.getManufacturerReferenceNumber());
+    }
   }
 }

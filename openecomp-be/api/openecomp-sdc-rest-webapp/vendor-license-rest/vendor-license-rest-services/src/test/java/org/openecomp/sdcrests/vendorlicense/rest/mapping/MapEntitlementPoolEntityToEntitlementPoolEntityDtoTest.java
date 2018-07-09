@@ -141,4 +141,17 @@ public class MapEntitlementPoolEntityToEntitlementPoolEntityDtoTest {
         mapper.doMapping(source, target);
         assertEquals(target.getStartDate(), param);
     }
+
+    @Test
+    public void testManufacturerReferenceNumber() {
+        EntitlementPoolEntity source = new EntitlementPoolEntity();
+        EntitlementPoolEntityDto target = new EntitlementPoolEntityDto();
+        MapEntitlementPoolEntityToEntitlementPoolEntityDto mapper = new
+            MapEntitlementPoolEntityToEntitlementPoolEntityDto();
+
+        String param = "02402e1e-7092-485a-9574-46e2d49cca97";
+        source.setManufacturerReferenceNumber(param);
+        mapper.doMapping(source, target);
+        assertEquals(target.getManufacturerReferenceNumber(), param);
+    }
 }
