@@ -7,7 +7,7 @@ import org.openecomp.core.nosqldb.api.NoSqlDb;
 import org.openecomp.core.nosqldb.factory.NoSqlDbFactory;
 import org.openecomp.core.tools.store.zusammen.datatypes.HealingEntity;
 
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by ayalaben on 10/15/2017
@@ -19,7 +19,7 @@ public class HealingHandler {
       nnoSqlDb.getMappingManager().createAccessor(HealingAccessor.class);
 
 
-  public void populateHealingTable(ArrayList<HealingEntity> healingEntities) {
+  public void populateHealingTable(List<HealingEntity> healingEntities) {
     healingEntities.forEach(healingEntity -> {
       if (isHealingRecordExist(healingEntity)) {
         accessor.updateFlag(healingEntity.getHealingFlag(), healingEntity.getSpace(),
