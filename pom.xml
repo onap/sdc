@@ -29,7 +29,7 @@
         <spring.security.version>3.2.3.RELEASE</spring.security.version>
         <spring.ldap.version>2.0.1.RELEASE</spring.ldap.version>
         <jersey-bom.version>2.26</jersey-bom.version>
-        <servlet-api.version>2.5</servlet-api.version>
+        <servlet-api.version>3.0.1</servlet-api.version>
         <wire-mock.version>2.11.0</wire-mock.version>
 
         <artifact-generator-api.version>${project.version}</artifact-generator-api.version>

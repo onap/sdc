@@ -1,18 +1,25 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <properties>
+    <artifactId>openecomp-zusammen-tools</artifactId>
+    <groupId>org.openecomp.sdc.core.tools</groupId>
+    <name>openecomp-zusammen-tools</name>
+    <version>1.3.0-SNAPSHOT</version>
 
+    <parent>
+        <groupId>org.openecomp.sdc</groupId>
+        <artifactId>openecomp-sdc-lib</artifactId>
+        <relativePath>../../lib</relativePath>
+        <version>1.3.0-SNAPSHOT</version>
+    </parent>
+
+    <properties>
         <groovy.version>2.4.7</groovy.version>
         <janino.version>2.7.7</janino.version>
-
     </properties>
 
-
-
-    <name>openecomp-zusammen-tools</name>
     <dependencies>
         <dependency>
             <groupId>org.openecomp.sdc</groupId>
@@ -47,7 +54,7 @@
         <dependency>
             <groupId>com.amdocs.zusammen.plugin</groupId>
             <artifactId>zusammen-state-store-cassandra-plugin</artifactId>
-              <version>${zusammen-state-store.version}</version>
+            <version>${zusammen-state-store.version}</version>
         </dependency>
         <dependency>
             <groupId>org.hibernate</groupId>
@@ -76,20 +83,6 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-    <artifactId>openecomp-zusammen-tools</artifactId>
-    <groupId>org.openecomp.sdc.core.tools</groupId>
-    <version>1.3.0-SNAPSHOT</version>
-    <parent>
-        <groupId>org.openecomp.sdc</groupId>
-        <artifactId>openecomp-sdc-lib</artifactId>
-        <relativePath>../../lib</relativePath>
-        <version>1.3.0-SNAPSHOT</version>
-    </parent>
-    <!--parent>
-        <groupId>org.openecomp.sdc</groupId>
-        <artifactId>openecomp-sdc</artifactId>
-        <version>1.0-SNAPSHOT</version>
-    </parent-->
     <build>
         <plugins>
 
