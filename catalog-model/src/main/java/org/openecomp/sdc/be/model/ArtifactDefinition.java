@@ -89,12 +89,10 @@ public class ArtifactDefinition extends ArtifactDataDefinition {
     }
 
 
-    public boolean checkEsIdExist() {
-        if ((getEsId() != null) && (!getEsId().trim().isEmpty())) {
-            return true;
-        }
-        return false;
-    }
+
+	public boolean checkEsIdExist() {
+		return (getEsId() != null) && (!getEsId().trim().isEmpty());
+	}
 
     @Override
     public int hashCode() {
