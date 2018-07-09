@@ -44,6 +44,11 @@ import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ToscaAnalyzerServiceImplTest {
+
+    public static final String CAPABILITY_TYPE_A = "capabilityTypeA";
+    public static final String CAPABILITY_TYPE_B = "capabilityTypeB";
+    public static final String TOSCA_CAPABILITIES_ROOT = "tosca.capabilities.Root";
+
     /*
     Dictionary:
     SrvTmp: ServiceTemplate
@@ -873,5 +878,40 @@ public class ToscaAnalyzerServiceImplTest {
     }
 
     // not found at all should throw core exception
+
+
+    @Test
+    public void capabilityDefinitionIsTypeOfDirectTypeFound() {
+        CapabilityDefinition capabilityDefinition = new CapabilityDefinition();
+        capabilityDefinition.setType(CAPABILITY_TYPE_A);
+        assertTrue(toscaAnalyzerService.isTypeOf(capabilityDefinition, CAPABILITY_TYPE_A, new ServiceTemplate(),
+                toscaServiceModelMock));
+    }
+
+    @Test
+    public void capabilityDefinitionIsTypeOfReturnNo() {
+        CapabilityDefinition capabilityDefinition = new CapabilityDefinition();
+        capabilityDefinition.setType(CAPABILITY_TYPE_A);
+        ServiceTemplate serviceTemplate = new ServiceTemplate();
+        serviceTemplate.setCapability_types(new HashMap<>());
+        CapabilityType capabilityType = new CapabilityType();
+        capabilityType.setDerived_from(TOSCA_CAPABILITIES_ROOT);
+        serviceTemplate.getCapability_types().put(CAPABILITY_TYPE_A, capabilityType);
+        assertFalse(toscaAnalyzerService
+                            .isTypeOf(capabilityDefinition, CAPABILITY_TYPE_B, serviceTemplate, toscaServiceModelMock));
+    }
+
+    @Test
+    public void capabilityDefinitionIsTypeOfInheritanceTypeFound() {
+        CapabilityDefinition capabilityDefinition = new CapabilityDefinition();
+        capabilityDefinition.setType(CAPABILITY_TYPE_A);
+        ServiceTemplate serviceTemplate = new ServiceTemplate();
+        serviceTemplate.setCapability_types(new HashMap<>());
+        CapabilityType capabilityType = new CapabilityType();
+        capabilityType.setDerived_from(CAPABILITY_TYPE_B);
+        serviceTemplate.getCapability_types().put(CAPABILITY_TYPE_A, capabilityType);
+        assertTrue(toscaAnalyzerService
+                           .isTypeOf(capabilityDefinition, CAPABILITY_TYPE_B, serviceTemplate, toscaServiceModelMock));
+    }
 
 }
