@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_d1f38be5",
+        "filename": "openecomp-be/lib/openecomp-sdc-model-lib/openecomp-sdc-model-impl/src/main/java/org/openecomp/sdc/model/impl/zusammen/ServiceModelDaoZusammenImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 2167
+      },
+      "writtenOn": "2018-07-09T06:28:04Z",
+      "side": 1,
+      "message": "Because the called method doesn\u0027t need to know/care that these 2 values were extracted out of Map, and it\u0027s not the methods\u0027 job to take them out of the Map.Entry in order to use them.\nBTW, this is not the main change - it\u0027s just a SONAR fix...",
+      "parentUuid": "5a93c517_5108dbd8",
+      "range": {
+        "startLine": 86,
+        "startChar": 12,
+        "endLine": 86,
+        "endChar": 51
+      },
+      "revId": "b0dea56ddfe4421f33ff9c5fc09585f55d5e83b3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_31050fc2",
         "filename": "openecomp-be/lib/openecomp-sdc-model-lib/openecomp-sdc-model-impl/src/main/java/org/openecomp/sdc/model/impl/zusammen/ServiceModelDaoZusammenImpl.java",
         "patchSetId": 1
@@ -36,6 +60,30 @@
       "writtenOn": "2018-07-09T06:20:23Z",
       "side": 1,
       "message": "why not to leave it as entry and pass entry to buildArtifactElement? you can pass one parameter instead of two",
+      "range": {
+        "startLine": 90,
+        "startChar": 5,
+        "endLine": 91,
+        "endChar": 111
+      },
+      "revId": "b0dea56ddfe4421f33ff9c5fc09585f55d5e83b3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_7102b7b5",
+        "filename": "openecomp-be/lib/openecomp-sdc-model-lib/openecomp-sdc-model-impl/src/main/java/org/openecomp/sdc/model/impl/zusammen/ServiceModelDaoZusammenImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 2167
+      },
+      "writtenOn": "2018-07-09T06:28:04Z",
+      "side": 1,
+      "message": "same",
+      "parentUuid": "5a93c517_31050fc2",
       "range": {
         "startLine": 90,
         "startChar": 5,
