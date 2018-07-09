@@ -37,6 +37,7 @@ public class CommandsHolder {
         new AddContributorCommand().register();
         new CleanUserDataCommand().register();
         new DeletePublicVersionCommand().register();
+        new SetHealingFlagByItemVersionCommand().register();
     }
 
     private CommandsHolder() {
