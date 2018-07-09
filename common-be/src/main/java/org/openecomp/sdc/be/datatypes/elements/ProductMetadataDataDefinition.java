@@ -110,7 +110,7 @@ public class ProductMetadataDataDefinition extends ComponentMetadataDataDefiniti
 				return false;
 		} else if (!fullName.equals(other.fullName))
 			return false;
-		if (isActive == isActive) {
+		if (isActive == null) {
 			if (other.isActive != null)
 				return false;
 		} else if (!isActive.equals(other.isActive))
