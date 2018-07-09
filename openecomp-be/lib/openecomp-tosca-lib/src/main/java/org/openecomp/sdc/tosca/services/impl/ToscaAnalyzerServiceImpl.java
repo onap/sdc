@@ -38,13 +38,14 @@ import java.util.*;
 
 public class ToscaAnalyzerServiceImpl implements ToscaAnalyzerService {
 
-    private final String GET_NODE_TYPE_METHOD_NAME = "getNode_types";
-    private final String GET_DERIVED_FROM_METHOD_NAME = "getDerived_from";
-    private final String GET_TYPE_METHOD_NAME = "getType";
-    private final String GET_DATA_TYPE_METHOD_NAME = "getData_types";
-    private final String GET_INTERFACE_TYPE_METHOD_NAME = "getInterface_types";
-    private final String TOSCA_DOT = "tosca.";
-    private final String DOT_ROOT = ".Root";
+    private static final String GET_NODE_TYPE_METHOD_NAME = "getNode_types";
+    private static final String GET_DERIVED_FROM_METHOD_NAME = "getDerived_from";
+    private static final String GET_TYPE_METHOD_NAME = "getType";
+    private static final String GET_DATA_TYPE_METHOD_NAME = "getData_types";
+    private static final String GET_INTERFACE_TYPE_METHOD_NAME = "getInterface_types";
+    private static final String GET_CAPABILITY_TYPE_METHOD_NAME = "getCapability_types";
+    private static final String TOSCA_DOT = "tosca.";
+    private static final String DOT_ROOT = ".Root";
 
     @Override
     public List<Map<String, RequirementDefinition>> calculateExposedRequirements(List<Map<String, RequirementDefinition>> nodeTypeRequirementsDefinitionList,
@@ -925,6 +926,13 @@ public class ToscaAnalyzerServiceImpl implements ToscaAnalyzerService {
         return isTypeOf(parameterDefinition, dataType, GET_DATA_TYPE_METHOD_NAME, serviceTemplate, toscaServiceModel);
     }
 
+    @Override
+    public boolean isTypeOf(CapabilityDefinition capabilityDefinition, String capabilityType,
+                                   ServiceTemplate serviceTemplate, ToscaServiceModel toscaServiceModel) {
+        return isTypeOf(capabilityDefinition, capabilityType, GET_CAPABILITY_TYPE_METHOD_NAME, serviceTemplate, toscaServiceModel);
+    }
+
+
     private <T> boolean isTypeOf(T object, String type, String getTypesMethodName, ServiceTemplate serviceTemplate,
                                         ToscaServiceModel toscaServiceModel) {
         if (object == null) {
@@ -944,7 +952,7 @@ public class ToscaAnalyzerServiceImpl implements ToscaAnalyzerService {
                     () -> new CoreException(new ToscaElementTypeNotFoundErrorBuilder(objectType).build()));
 
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            throw new RuntimeException(e);
+            throw new SdcRuntimeException(e);
         }
     }
 }

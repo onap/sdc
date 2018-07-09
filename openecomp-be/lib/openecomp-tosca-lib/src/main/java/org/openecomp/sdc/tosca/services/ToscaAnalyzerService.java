@@ -54,6 +54,9 @@ public interface ToscaAnalyzerService {
     boolean isTypeOf(DefinitionOfDataType parameterDefinition, String dataType, ServiceTemplate serviceTemplate,
                             ToscaServiceModel toscaServiceModel);
 
+    boolean isTypeOf(CapabilityDefinition capabilityDefinition, String capabilityType, ServiceTemplate serviceTemplate,
+                            ToscaServiceModel toscaServiceModel);
+
     List<RequirementAssignment> getRequirements(NodeTemplate nodeTemplate, String requirementId);
 
     Optional<NodeTemplate> getNodeTemplateById(ServiceTemplate serviceTemplate, String nodeTemplateId);
