@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_c7398940",
+        "filename": "common-app-api/src/main/java/org/openecomp/sdc/common/util/ZipUtil.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 96,
+      "author": {
+        "id": 3885
+      },
+      "writtenOn": "2018-07-10T12:19:24Z",
+      "side": 1,
+      "message": "We are not storing the file, so normalizaytion of file name should not be a concern. Different encodings are not checked here.",
+      "revId": "ec5edf3e23c92e138e428cbecd9e0ab821ed5ac5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
