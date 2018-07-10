@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_cc1f6e6f",
+        "filename": "common/onap-common-configuration-management/onap-configuration-management-core/src/main/java/org/onap/config/NonConfigResource.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 100,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-07-10T07:45:08Z",
+      "side": 1,
+      "message": "Why did you need to wrap the Collection in a HashSet here? Also, it\u0027s not clear why you had to iterate through it twice - once to collect to a set, and a second time to add via NonConfigResource.add().",
+      "range": {
+        "startLine": 100,
+        "startChar": 36,
+        "endLine": 100,
+        "endChar": 70
+      },
+      "revId": "815b03c43cdc2930b70e7a4fb61bcc509f25c131",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
