@@ -70,6 +70,42 @@
       "revId": "4ac73ee773a7bf239da0251b5e778fc76c98246a",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_acaf822a",
+        "filename": "common-app-api/src/test/java/org/openecomp/sdc/common/util/ValidationUtilsTest.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 3885
+      },
+      "writtenOn": "2018-07-10T05:48:41Z",
+      "side": 1,
+      "message": "At least we are not lying with test coverage. Thanks for creating Jira for unittesting Validation Utils",
+      "parentUuid": "5a93c517_fb9b0664",
+      "revId": "4ac73ee773a7bf239da0251b5e778fc76c98246a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_bb76de3d",
+        "filename": "common-app-api/src/test/java/org/openecomp/sdc/common/util/ValidationUtilsTest.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 3885
+      },
+      "writtenOn": "2018-07-10T05:48:41Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5a93c517_bb8fbe2d",
+      "revId": "4ac73ee773a7bf239da0251b5e778fc76c98246a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
