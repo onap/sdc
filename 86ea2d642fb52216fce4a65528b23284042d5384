@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_2d2e0bfb",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/ecomp/EcompIntImplTest.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-07-11T14:04:31Z",
+      "side": 1,
+      "message": "consider using a mock instead of stub for HttpServletRequestImpl.\n\nIt\u0027s a big class mostly not used.",
+      "revId": "86ea2d642fb52216fce4a65528b23284042d5384",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_ed37c34b",
+        "filename": "catalog-fe/src/test/java/org/openecomp/sdc/fe/impl/HttpRequestInfoTest.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-07-11T14:04:31Z",
+      "side": 1,
+      "message": "duplicate usage of HttpServletRequestTest. consider either using mocks or using one stub class which extends HttpServletRequest",
+      "revId": "86ea2d642fb52216fce4a65528b23284042d5384",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_8df71f8c",
+        "filename": "openecomp-be/lib/openecomp-core-lib/openecomp-zusammen-lib/openecomp-zusammen-core/src/main/java/org/openecomp/core/zusammen/impl/CassandraConnectionInitializer.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-07-11T14:04:31Z",
+      "side": 1,
+      "message": "Sonar - Utility classes should not have public constructors\n\nadd private constructor\n\nUtility classes, which are collections of static members, are not meant to be instantiated. Even abstract utility classes, which can be extended, should not have public constructors.\nJava adds an implicit public constructor to every class which does not define at least one explicitly. Hence, at least one non-public constructor should be defined.",
+      "revId": "86ea2d642fb52216fce4a65528b23284042d5384",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_0d122fb4",
+        "filename": "openecomp-be/lib/openecomp-core-lib/openecomp-zusammen-lib/openecomp-zusammen-core/src/main/java/org/openecomp/core/zusammen/impl/CassandraConnectionInitializer.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 81,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-07-11T14:04:31Z",
+      "side": 1,
+      "message": "Sonar - Constructor should be on up\nThe members of an interface declaration or class should appear in a pre-defined order\n \nCode smell\n \nMinor\nsquid:S1213\n \nAccording to the Java Code Conventions as defined by Oracle, the members of a class or interface declaration should appear in the following order in the source files:\nClass and instance variables\nConstructors\nMethods",
+      "revId": "86ea2d642fb52216fce4a65528b23284042d5384",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
