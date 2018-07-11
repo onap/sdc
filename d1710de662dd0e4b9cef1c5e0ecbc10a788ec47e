@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_edf583ed",
+        "filename": "catalog-dao/src/test/java/org/openecomp/sdc/be/dao/utils/ImageResizeUtilTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 3873
+      },
+      "writtenOn": "2018-07-11T12:13:44Z",
+      "side": 1,
+      "message": "do you know what \u00271\u0027 means ? :D",
+      "range": {
+        "startLine": 51,
+        "startChar": 13,
+        "endLine": 51,
+        "endChar": 30
+      },
+      "revId": "d1710de662dd0e4b9cef1c5e0ecbc10a788ec47e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_add77b4e",
+        "filename": "common/onap-common-configuration-management/onap-configuration-management-core/src/test/java/org/onap/config/type/NonConfigResourceTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 3873
+      },
+      "writtenOn": "2018-07-11T12:13:44Z",
+      "side": 1,
+      "message": "why not assertEquals(xyz,0)?",
+      "range": {
+        "startLine": 67,
+        "startChar": 8,
+        "endLine": 67,
+        "endChar": 86
+      },
+      "revId": "d1710de662dd0e4b9cef1c5e0ecbc10a788ec47e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
