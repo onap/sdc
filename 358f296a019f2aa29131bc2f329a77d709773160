@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_6db3b34d",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ArtifactsBusinessLogic.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 3628,
+      "author": {
+        "id": 3885
+      },
+      "writtenOn": "2018-07-11T11:54:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5a93c517_e70b6422",
+      "revId": "358f296a019f2aa29131bc2f329a77d709773160",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_6e554df9",
         "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/ComponentInstance.java",
         "patchSetId": 3
@@ -54,6 +72,30 @@
       "side": 1,
       "message": "or using builder:\nImmutableMap.\u003cString,ArtifactDefinition\u003ebuilder().putAll(artifacts).putAll(deploymentArtifacts).build();",
       "parentUuid": "5a93c517_6e554df9",
+      "range": {
+        "startLine": 91,
+        "startChar": 49,
+        "endLine": 91,
+        "endChar": 65
+      },
+      "revId": "358f296a019f2aa29131bc2f329a77d709773160",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_ada9bbde",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/ComponentInstance.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 3885
+      },
+      "writtenOn": "2018-07-11T11:54:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5a93c517_4e2091b0",
       "range": {
         "startLine": 91,
         "startChar": 49,
