@@ -1,0 +1,215 @@
+heat_template_version: 2015-04-30
+#file version 1.0
+description: OCG Apps template
+
+parameters:
+  ocgapp_image_name:
+    type: string
+    description: operative system image
+  ocgapp_flavor_name:
+    type: string
+    description: resources to be applied on instances
+  ocgapp_public_key:
+    type: string
+    description: creator's ssh public key
+  oam_protected_net_name:
+    type: string
+    description: OAM network where instances will connect
+  oam_direct_net_name:
+    type: string
+    description: OAM network where instances will connect
+  cor_direct_net_name:
+    type: string
+    description: COR_DIRECT network where instances will connect
+  ocgapp_oam_protected_ip_3:
+    type: string
+    description: OCG OAM IP list
+  ocgapp_oam_direct_ip_3:
+    type: string
+    description: OCG OAM IP list
+  ocgapp_cor_direct_ip_3:
+    type: string
+    description: OCG COR_DIRECT IP list
+  ocgapp_cor_direct_v6_ip_3:
+    type: string
+    description: fixed IP assignment for VM's on the COR_DIRECT network
+  ocgapp_name_3:
+    type: string
+    description: OCG VM server name list (there should be 2, since we have 2 app vms)
+  availability_zone_1:
+    type: string
+    description: availability zone 2 ID or name
+  ocg_shared_server_grp_id:
+    type: string
+    description: OCG anti-affinity server group
+  ocgapp_shared_sec_grp_id:
+    type: string
+    description: security group
+  ocgapp_volume_id_3:
+    type: string 
+    description: Unique IDs for volumes
+  vnf_name:
+    type: string
+    description: Unique name for this VF instance
+  vnf_id:
+    type: string
+    description: Unique ID for this VF instance
+  vf_module_id:
+    type: string
+    description: Unique ID for this VF module instance
+  nameserver_ip:
+    type: string
+    description: nameserver
+  eth1_ip_range:
+    type: string 
+    description: range
+  eth1_netmask:
+    type: string
+    description: mask length 
+  eth1_ip:
+    type: string
+    description: address
+  eth2_ip_range: 
+    type: string
+    description: range
+  eth2_ip: 
+    type: string
+    description: address 
+  domain_name:
+    type: string
+    description: address
+
+resources:
+            
+  vm_config_3:
+    type: OS::Heat::SoftwareConfig
+    properties:
+      group: ungrouped
+      config:
+        str_replace:
+          template: {get_file: ocgapp_nested_0.txt}
+          params:
+            $ocg_hostname: { get_param: ocgapp_name_3 }
+            $ocg_hostip: { get_param: ocgapp_oam_protected_ip_3 }
+            $volume_id: {get_param: ocgapp_volume_id_3 }
+            
+  ocgapp_admin_key:
+    type: OS::Nova::KeyPair
+    properties:
+      name:
+        str_replace:
+          template: VNF_NAME_STACK_NAME_key_pair
+          params:
+              VNF_NAME: {get_param: vnf_name}
+              STACK_NAME: {get_param: 'OS::stack_name'}
+      public_key: {get_param: ocgapp_public_key}
+      save_private_key: false
+
+  ocgapp_config_3:
+    type: OS::Heat::MultipartMime
+    properties:
+      parts:
+        - config: {get_resource: vm_config_3}
+        
+# APP_SERVER_3
+  ocgapp_oam_protected_port_3:
+    type: OS::Neutron::Port
+    properties:
+      name:
+        str_replace:
+          template: VNF_NAME_ocgapp_oam_protected_port_3
+          params:
+            VNF_NAME: {get_param: vnf_name}
+      network: {get_param: oam_protected_net_name}
+#      fixed_ips: [{"ip_address": {get_param: [ocgapp_oam_protected_ips, 3]}}]
+      fixed_ips: [{ "ip_address": {get_param: ocgapp_oam_protected_ip_3}}]
+      security_groups: [{get_param: ocgapp_shared_sec_grp_id}]
+
+  ocgapp_oam_direct_port_3:
+    type: OS::Neutron::Port
+    properties:
+      name:
+        str_replace:
+          template: VNF_NAME_ocgapp_oam_direct_port_3
+          params:
+            VNF_NAME: {get_param: vnf_name}
+      network: {get_param: oam_direct_net_name}
+#      fixed_ips: [{"ip_address": {get_param: [ocgapp_oam_direct_ips, 3]}}]
+      fixed_ips: [{ "ip_address": {get_param: ocgapp_oam_direct_ip_3}}]
+      security_groups: [{get_param: ocgapp_shared_sec_grp_id}]
+      
+  ocgapp_cor_direct_port_3:
+    type: OS::Neutron::Port
+    properties:
+      name:
+        str_replace:
+          template: VNF_NAME_ocgapp_cor_port_3
+          params:
+            VNF_NAME: {get_param: vnf_name}
+      network: {get_param: cor_direct_net_name}
+#      fixed_ips: [{"ip_address": {get_param: [ocgapp_cor_direct_ips, 3]}}, {"ip_address": {get_param: [ocgapp_cor_direct_v6_ips, 3]}}]
+      fixed_ips: [{"ip_address": {get_param: ocgapp_cor_direct_ip_3}}, {"ip_address": {get_param: ocgapp_cor_direct_v6_ip_3}}]
+      security_groups: [{get_param: ocgapp_shared_sec_grp_id}]
+
+  ocgapp_server_3:
+    type: OS::Nova::Server
+    properties:
+      key_name: {get_resource: ocgapp_admin_key}
+      name: {get_param: [ocgapp_name_3]}
+      image: {get_param: ocgapp_image_name}
+      flavor: {get_param: ocgapp_flavor_name}
+      availability_zone: {get_param: availability_zone_1}
+      scheduler_hints:
+          group: { get_param: ocg_shared_server_grp_id }
+      personality:
+      # Add resolv.conf file
+        "/etc/resolv.conf":
+          str_replace:
+            template: |
+              nameserver ${NAME_SERVER}
+              domain ${DOMAIN_NAME}
+            params:
+              ${NAME_SERVER}: {get_param: nameserver_ip}
+              ${DOMAIN_NAME}: {get_param: domain_name}
+      # Add hostname file
+        "/etc/hostname":
+          str_replace:
+            template: |
+              ${NAME}.${DOMAIN_NAME}
+            params:
+              ${NAME}: {get_param: ocgapp_name_3}
+              ${DOMAIN_NAME}: {get_param: domain_name}
+      # Add route-eth1 file
+        "/etc/sysconfig/network-scripts/route-eth1":
+          str_replace:
+            template: |
+              ${ETH1_IP_RANGE}/${ETH1_NETMASK} via ${ETH1_IP} dev eth1
+            params:
+              ${ETH1_IP_RANGE}: {get_param: eth1_ip_range}
+              ${ETH1_NETMASK}: {get_param: eth1_netmask}
+              ${ETH1_IP}: {get_param: eth1_ip}
+      # Add route-eth2 file
+        "/etc/sysconfig/network-scripts/route-eth2":
+          str_replace:
+            template: |
+              ${ETH2_IP_RANGE} via ${ETH2_IP} dev eth2
+            params:
+              ${ETH2_IP_RANGE}: {get_param: eth2_ip_range}
+#              ${ETH2_NETMASK}: {get_param: eth2_netmask}
+              ${ETH2_IP}: {get_param: eth2_ip}
+      networks:
+        - port: {get_resource: ocgapp_oam_protected_port_3}
+        - port: {get_resource: ocgapp_oam_direct_port_3}
+        - port: {get_resource: ocgapp_cor_direct_port_3}
+      metadata:
+        vnf_id: {get_param: vnf_id}
+        vf_module_id: {get_param: vf_module_id}
+        vnf_name: {get_param: vnf_name}
+      user_data_format: RAW
+      user_data: {get_resource: ocgapp_config_3}
+
+  ocgapp_volume_attachment_3:
+    type: OS::Cinder::VolumeAttachment
+    properties:
+      volume_id: {get_param: ocgapp_volume_id_3}
+      instance_uuid: {get_resource: ocgapp_server_3}

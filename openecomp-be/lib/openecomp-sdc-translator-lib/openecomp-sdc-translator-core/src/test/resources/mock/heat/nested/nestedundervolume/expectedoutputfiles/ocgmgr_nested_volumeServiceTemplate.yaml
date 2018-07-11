@@ -1,0 +1,88 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: ocgmgr_nested_volume
+imports:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+- GlobalSubstitutionTypes:
+    file: GlobalSubstitutionTypesServiceTemplate.yaml
+topology_template:
+  inputs:
+    volume_type:
+      label: Volume Type
+      hidden: false
+      immutable: false
+      type: string
+      description: type of cinder volumes
+    size:
+      label: Volume Size
+      hidden: false
+      immutable: false
+      type: float
+      description: size of the cinder volumes
+      constraints:
+      - in_range:
+        - 50
+        - 400
+    vnf_name:
+      label: VNF Name
+      hidden: false
+      immutable: false
+      type: string
+      description: vnf name
+    index:
+      label: Volume index
+      hidden: false
+      immutable: false
+      type: float
+      description: number of volumes to spin up
+      constraints:
+      - valid_values:
+        - 0
+        - 1
+        - 2
+    OS::stack_name:
+      type: string
+      required: false
+  node_templates:
+    ocgmgr_volume_0:
+      type: org.openecomp.resource.vfc.nodes.heat.cinder.Volume
+      properties:
+        volume_type:
+          get_input: volume_type
+        size: '(get_input : size) * 1024'
+        name:
+          str_replace:
+            template: VF_NAME_STACK_NAME_INDEX
+            params:
+              VF_NAME:
+                get_input: vnf_name
+              INDEX:
+                get_input: index
+              STACK_NAME:
+                get_input: OS::stack_name
+  groups:
+    ocgmgr_nested_volume_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/ocgmgr_nested_volume.yaml
+        description: Nested volume file for ocg mgrs
+      members:
+      - ocgmgr_volume_0
+  outputs:
+    ocgmgr_volume_id_0:
+      description: the ocgmgr volume uuids
+      value: ocgmgr_volume_0
+  substitution_mappings:
+    node_type: org.openecomp.resource.abstract.nodes.heat.ocgmgr_nested_volume
+    capabilities:
+      feature_ocgmgr_volume_0:
+      - ocgmgr_volume_0
+      - feature
+      attachment_ocgmgr_volume_0:
+      - ocgmgr_volume_0
+      - attachment
+    requirements:
+      dependency_ocgmgr_volume_0:
+      - ocgmgr_volume_0
+      - dependency

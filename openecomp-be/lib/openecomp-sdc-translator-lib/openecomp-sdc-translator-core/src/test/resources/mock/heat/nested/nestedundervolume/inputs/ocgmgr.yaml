@@ -1,0 +1,209 @@
+heat_template_version: 2015-04-30
+#file version 1.0
+description: OCG Managers template
+
+parameters:
+  ocgmgr_image_name:
+    type: string
+    description: operative system image
+  ocgmgr_flavor_name:
+    type: string
+    description: resources to be applied on instances
+  ocgmgr_public_key:
+    type: string
+    description: creator's ssh public key
+  oam_protected_net_name:
+    type: string
+    description: OAM network where instances will connect
+  ocgmgr_oam_protected_ips:
+    type: comma_delimited_list
+    description: OCG OAM IP list
+  ocgmgr_names:
+    type: comma_delimited_list
+    description: OCG MGR VM names list (should be 2, since we have 2 MGR VMs)
+  availability_zone_0:
+    type: string
+    description: availability zone 0 ID or name
+  availability_zone_1:
+    type: string
+    description: availability zone 1 ID or name
+  ocgmgr_shared_sec_grp_id:
+    type: string
+    description: security group
+  ocgmgr_volume_ids:
+    type: json
+    description: Unique IDs for volumes
+  vnf_name:
+    type: string
+    description: Unique name for this VF instance
+  vnf_id:
+    type: string
+    description: Unique ID for this VF instance
+  vf_module_id:
+    type: string
+    description: Unique ID for this VF module instance
+  java_home:
+    type: string
+    description: java home    
+  ocg_user:
+    type: string
+    description: user to install ocg    
+  ocg_install_jar:
+    type: string
+    description: location of ocg installer    
+  ocg_install_properties:
+    type: string
+    description: location of ocg install properties    
+  wim_install_file:
+    type: string
+    description: WIM Install File location    
+  ovlm_install_dir:
+    type: string
+    description: Location of the ovlm-install dir    
+  keycloak_rpm_name:
+    type: string
+    description: keycloak rpm name    
+  ovlm_install_properties:
+    type: string
+    description: ovlm install properties    
+resources:
+  vm_config_0:
+    type: OS::Heat::SoftwareConfig
+    properties:
+      group: ungrouped
+      config:
+        str_replace:
+          template: {get_file: ocgmgr_nested_0.txt}
+#      resource_def:
+#        type: ocgmgr_nested.yaml
+          params:
+            $java_home: { get_param: java_home }
+            $ocg_user: { get_param: ocg_user }
+            $ocg_install_jar: { get_param: ocg_install_jar }
+            $ocg_install_properties: { get_param: ocg_install_properties }
+            $ocg_hostname: { get_param: [ocgmgr_names, 0]}
+            $ocg_hostip: { get_param: [ocgmgr_oam_protected_ips, 0]}
+            $wim_install_file: { get_param: wim_install_file }
+            $ovlm_install_properties: { get_param: ovlm_install_properties }
+            $ovlm_hostname:  {get_param: [ocgmgr_names, 0]}
+            $ovlm_mgr002_hostname:  {get_param: [ocgmgr_names, 1]}
+            $ovlm_install_dir: {get_param: ovlm_install_dir}
+            $keycloak_rpm_name: {get_param: keycloak_rpm_name}
+            $volume_id: {get_param: [ocgmgr_volume_ids, 0]}
+
+  vm_config_1:
+    type: OS::Heat::SoftwareConfig
+    properties:
+      group: ungrouped
+      config:
+        str_replace:
+          template: {get_file: ocgmgr_nested_1.txt}
+          params:
+            $ocg_hostname: { get_param: [ocgmgr_names, 1]}
+            $ocg_hostip: { get_param: [ocgmgr_oam_protected_ips, 1]}
+            $volume_id: {get_param: [ocgmgr_volume_ids, 1]}
+
+  ocgmgr_admin_key:
+    type: OS::Nova::KeyPair
+    properties:
+      name:
+        str_replace:
+          template: VNF_NAME_STACK_NAME_key_pair
+          params:
+              VNF_NAME: {get_param: vnf_name}
+              STACK_NAME: {get_param: 'OS::stack_name'}
+      public_key: {get_param: ocgmgr_public_key}
+      save_private_key: false
+
+  ocgmgr_oam_protected_0_port:
+    type: OS::Neutron::Port
+    properties:
+      name:
+          str_replace:
+            template: VNF_NAME_ocgmgr_oam_port_0
+            params:
+                VNF_NAME: {get_param: vnf_name}
+      network: {get_param: oam_protected_net_name}
+      fixed_ips: [{"ip_address": {get_param: [ocgmgr_oam_protected_ips, 0]}}]
+      security_groups: [{get_param: ocgmgr_shared_sec_grp_id}]
+  
+  ocgmgr_config_0:
+    type: OS::Heat::MultipartMime
+    properties:
+      parts:
+        - config: {get_resource: vm_config_0}
+
+  ocgmgr_config_1:
+    type: OS::Heat::MultipartMime
+    properties:
+      parts:
+        - config: {get_resource: vm_config_1}
+
+  ocgmgr_server_0:
+    type: OS::Nova::Server
+    properties:
+      key_name: {get_resource: ocgmgr_admin_key}
+      name: {get_param: [ocgmgr_names, 0]}
+      image: {get_param: ocgmgr_image_name}
+      flavor: {get_param: ocgmgr_flavor_name}
+      availability_zone: {get_param: availability_zone_0}
+      networks:
+        - port: {get_resource: ocgmgr_oam_protected_0_port}
+      metadata:
+        vnf_id: {get_param: vnf_id}
+        vf_module_id: {get_param: vf_module_id}
+        vnf_name: {get_param: vnf_name}
+      user_data_format: SOFTWARE_CONFIG
+      user_data: {get_resource: ocgmgr_config_0}
+      #user_data: {get_resource: server_interface_config}
+
+  ocgmgr_oam_protected_1_port:
+    type: OS::Neutron::Port
+    properties:
+      name:
+          str_replace:
+            template: VNF_NAME_ocgmgr_oam_port_1
+            params:
+                VNF_NAME: {get_param: vnf_name}
+      network: {get_param: oam_protected_net_name}
+      fixed_ips: [{"ip_address": {get_param: [ocgmgr_oam_protected_ips, 1]}}]
+      security_groups: [{get_param: ocgmgr_shared_sec_grp_id}]
+
+  ocgmgr_server_1:
+    type: OS::Nova::Server
+    properties:
+      key_name: {get_resource: ocgmgr_admin_key}
+      name: {get_param: [ocgmgr_names, 1]}
+      image: {get_param: ocgmgr_image_name}
+      flavor: {get_param: ocgmgr_flavor_name}
+      availability_zone: {get_param: availability_zone_1}
+      networks:
+        - port: {get_resource: ocgmgr_oam_protected_1_port}
+      metadata:
+        vnf_id: {get_param: vnf_id}
+        vf_module_id: {get_param: vf_module_id}
+        vnf_name: {get_param: vnf_name}
+      user_data_format: RAW
+      user_data: {get_resource: ocgmgr_config_1}
+      #user_data: {get_resource: server_interface_config}
+
+  ocgmgr_volume_attachment_0:
+    type: OS::Cinder::VolumeAttachment
+    properties:
+      volume_id: {get_param: [ocgmgr_volume_ids, 0]}
+      instance_uuid: {get_resource: ocgmgr_server_0}
+
+  ocgmgr_volume_attachment_1:
+    type: OS::Cinder::VolumeAttachment
+    properties:
+      volume_id: {get_param: [ocgmgr_volume_ids, 1]}
+      instance_uuid: {get_resource: ocgmgr_server_1}
+
+  #server_interface_config:
+  #  type: OS::Heat::CloudConfig
+  #  properties:
+  #    cloud_config:
+  #      write_files:
+  #        - path: /etc/sysconfig/network-scripts/route-eth0
+  #          permissions: "0644"
+  #          content: { get_param: dns_route_eth0 }
