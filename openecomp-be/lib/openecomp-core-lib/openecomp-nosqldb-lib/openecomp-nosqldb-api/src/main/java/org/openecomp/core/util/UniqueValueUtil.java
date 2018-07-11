@@ -16,14 +16,15 @@
 
 package org.openecomp.core.util;
 
+import java.util.Optional;
+
+import org.apache.commons.lang3.ArrayUtils;
 import org.openecomp.core.dao.UniqueValueDao;
 import org.openecomp.core.dao.types.UniqueValueEntity;
 import org.openecomp.core.utilities.CommonMethods;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.ErrorCategory;
 import org.openecomp.sdc.common.errors.ErrorCode;
-
-import java.util.Optional;
 
 public class UniqueValueUtil {
 
@@ -44,10 +45,16 @@ public class UniqueValueUtil {
    * @param uniqueCombination the unique combination
    */
   public void createUniqueValue(String type, String... uniqueCombination) {
-    formatValue(uniqueCombination).ifPresent(formattedValue -> {
-      validateUniqueValue(type, formattedValue, uniqueCombination);
-      uniqueValueDao.create(new UniqueValueEntity(type, formattedValue));
-    });
+    String originalEntityName = null;
+    if (ArrayUtils.isNotEmpty(uniqueCombination)) {
+      originalEntityName = uniqueCombination[uniqueCombination.length - 1];
+    }
+
+    Optional<String> formattedValue = formatValue(uniqueCombination);
+    if (formattedValue.isPresent()) {
+      validateUniqueValue(type, formattedValue.get(), originalEntityName);
+      uniqueValueDao.create(new UniqueValueEntity(type, formattedValue.get()));
+    }
   }
 
   /**
@@ -85,8 +92,15 @@ public class UniqueValueUtil {
    * @param uniqueCombination the unique combination
    */
   public void validateUniqueValue(String type, String... uniqueCombination) {
-    formatValue(uniqueCombination)
-        .ifPresent(formattedValue -> validateUniqueValue(type, formattedValue, uniqueCombination));
+    String originalEntityName = null;
+    if (ArrayUtils.isNotEmpty(uniqueCombination)) {
+      originalEntityName = uniqueCombination[uniqueCombination.length - 1];
+    }
+
+    Optional<String> formattedValue = formatValue(uniqueCombination);
+    if (formattedValue.isPresent()) {
+      validateUniqueValue(type, formattedValue.get(), originalEntityName);
+    }
   }
 
   /**
@@ -100,14 +114,13 @@ public class UniqueValueUtil {
         .orElse(false);
   }
 
-  private void validateUniqueValue(String type, String formattedValue,
-                                   String... uniqueCombination) {
+  private void validateUniqueValue(String type, String formattedValue, String originalEntityName) {
     if (isUniqueValueOccupied(type, formattedValue)) {
       throw new CoreException(new ErrorCode.ErrorCodeBuilder()
           .withCategory(ErrorCategory.APPLICATION)
           .withId(UNIQUE_VALUE_VIOLATION)
           .withMessage(String
-              .format(UNIQUE_VALUE_VIOLATION_MSG, type, getValueWithoutContext(uniqueCombination)))
+              .format(UNIQUE_VALUE_VIOLATION_MSG, type, originalEntityName))
           .build());
     }
   }

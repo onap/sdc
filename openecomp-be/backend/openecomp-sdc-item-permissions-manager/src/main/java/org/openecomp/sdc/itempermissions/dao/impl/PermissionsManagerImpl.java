@@ -89,7 +89,7 @@ public class PermissionsManagerImpl implements PermissionsManager {
     if (!permissionsServices.isAllowed(itemId, currentUser, CHANGE_PERMISSIONS)) {
       throw new CoreException(new ErrorCode.ErrorCodeBuilder()
           .withMessage(Messages.PERMISSIONS_ERROR.getErrorMessage())
-          .withId(Messages.PERMISSIONS_ERROR.getErrorMessage())
+          .withId(Messages.PERMISSIONS_ERROR.name())
           .withCategory(ErrorCategory.SECURITY).build());
     }
 
@@ -99,7 +99,7 @@ public class PermissionsManagerImpl implements PermissionsManager {
     } else {
         throw new CoreException(new ErrorCode.ErrorCodeBuilder()
             .withMessage(Messages.PERMISSIONS_OWNER_ERROR.getErrorMessage())
-            .withId(Messages.PERMISSIONS_OWNER_ERROR.getErrorMessage())
+            .withId(Messages.PERMISSIONS_OWNER_ERROR.name())
             .withCategory(ErrorCategory.SECURITY).build());
       }
     }

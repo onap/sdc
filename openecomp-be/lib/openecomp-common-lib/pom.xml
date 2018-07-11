@@ -48,6 +48,11 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-text</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.amdocs.zusammen</groupId>
+            <artifactId>zusammen-datatypes</artifactId>
+            <version>${zusammen.version}</version>
+        </dependency>
     </dependencies>
 
 </project>

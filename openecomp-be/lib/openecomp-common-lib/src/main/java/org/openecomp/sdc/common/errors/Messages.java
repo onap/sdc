@@ -39,6 +39,11 @@ public enum Messages {
   PERMISSIONS_ERROR("Permissions Error. The user does not have permission to perform this action."),
   PERMISSIONS_OWNER_ERROR("Permissions Error. Only one owner is allowed."),
 
+  ENTITY_NOT_FOUND("Incorrect item/version details provided."),
+  SUB_ENTITY_NOT_FOUND("Incorrect sub entity details provided."),
+  FAILED_TO_SYNC("Non existing version cannot be synced."),
+  FAILED_TO_PUBLISH_OUT_OF_SYNC("Publish is not allowed since the version status is Out of sync"),
+
   DELETE_VSP_ERROR("VSP has been certified and cannot be deleted."),
   DELETE_VLM_ERROR("VLM has been certified and cannot be deleted."),
 

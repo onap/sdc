@@ -84,6 +84,7 @@
             <ref bean="jsonProvider"/>
             <bean class="org.openecomp.sdc.action.errors.ActionExceptionMapper"/>
             <bean class="org.openecomp.sdcrests.errors.DefaultExceptionMapper"/>
+            <bean class="org.openecomp.sdcrests.errors.SdcRuntimeExceptionMapper"/>
             <bean class="org.openecomp.sdc.logging.servlet.jaxrs.LoggingRequestFilter">
                 <property name="requestIdHeaders" value="X-ECOMP-RequestID,X-ONAP-RequestID"/>
                 <property name="partnerNameHeaders" value="USER_ID"/>
