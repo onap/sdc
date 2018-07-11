@@ -213,7 +213,7 @@ public class HeatToToscaUtil {
         List<FileData> fileDataList = context.getManifest().getContent().getData();
         for (FileData fileData : fileDataList) {
             if (TranslationService.getTypesToProcessByTranslator().contains(fileData.getType()) && fileData.getFile()
-                                                                                                           .equals(heatFileName)) {
+                    .equals(heatFileName)) {
                 return fileData;
             }
         }
@@ -246,7 +246,7 @@ public class HeatToToscaUtil {
             }
         }
 
-        referenced.forEach(filteredFiles::remove);
+        removeReferencedFiles(filteredFiles, referenced);
         if (!CollectionUtils.isEmpty(fileDataCollection.getBaseFile())) {
             for (FileData fileData : fileDataCollection.getBaseFile()) {
                 filteredFiles.remove(fileData.getFile());
@@ -254,6 +254,20 @@ public class HeatToToscaUtil {
         }
         fileDataCollection.setAddOnFiles(filteredFiles.values());
         return fileDataCollection;
+    }
+
+
+
+    private static void removeReferencedFiles(Map<String, FileData> filteredFiles, Set<String> referenced) {
+        addAssociatedFilesToReferenced(filteredFiles, referenced);
+        referenced.forEach(filteredFiles::remove);
+    }
+
+    private static void addAssociatedFilesToReferenced(Map<String, FileData> filteredFiles, Set<String> referenced) {
+        filteredFiles.values().stream()
+                     .filter(file -> file.getParentFile() != null
+                            && FileData.Type.isCanBeAssociated(file.getType()))
+                                    .forEach(file -> referenced.add(file.getFile()));
     }
 
     private static void applyFilterOnFileCollection(HeatOrchestrationTemplate heatOrchestrationTemplate,
@@ -296,12 +310,25 @@ public class HeatToToscaUtil {
         translationContext.getNestedHeatsFiles().add(nestedFileName);
     }
 
-    private static Map<String, FileData> filterFileDataListByType(List<FileData> fileDataList,
-                                                                         Set<FileData.Type> typesToGet) {
+    private static Map<String, FileData>  filterFileDataListByType(List<FileData> fileDataList,
+            Set<FileData.Type> typesToGet) {
         Map<String, FileData> filtered = new HashMap<>();
-        fileDataList.stream().filter(file -> typesToGet.contains(file.getType()))
-                    .forEach(file -> filtered.put(file.getFile(), file));
+        filterFileDataListByType(fileDataList, filtered, typesToGet, null);
         return filtered;
+    }
+
+    private static void filterFileDataListByType(List<FileData> fileDataList, Map<String, FileData> filtered,
+            Set<FileData.Type> typesToGet, String parentFileName) {
+        fileDataList.stream().filter(file -> typesToGet.contains(file.getType()))
+                    .forEach(file -> {
+                        filtered.put(file.getFile(), file);
+                        file.setParentFile(parentFileName);
+                    });
+
+        typesToGet.removeIf(type -> !FileData.Type.isCanBeAssociated(type));
+        fileDataList.stream().filter(file -> Objects.nonNull(file.getData()))
+                    .forEach(file -> filterFileDataListByType(file.getData(), filtered, typesToGet, file.getFile()));
+
     }
 
     private static List<String> extractFilenamesFromFileDataList(Collection<FileData> fileDataList) {

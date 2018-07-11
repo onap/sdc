@@ -1,0 +1,89 @@
+heat_template_version: 2015-04-30
+#OCG Base Template
+#AUTHORS:
+description: >
+  Base HOT template to create The Security Group for the the OCG VNF
+
+#####################
+parameters:
+#####################
+
+## GLOBAL//Basic Parameters
+  vnf_name:
+    type: string
+    description: Unique name for this VF instance
+#   For manual spinups, value must be in the ENV file. Must be removed from ENV before uploading to ASDC
+
+#####################
+resources:
+#####################
+
+  OCGAPP_SECURITY_GROUP:
+    type: OS::Neutron::SecurityGroup
+    properties:
+      description: ocg app security group
+      name:
+        str_replace:
+            template: VF_NAME_sec_grp_OCGAPP
+            params:
+                VF_NAME:    {get_param: vnf_name}
+      rules: [{"direction": egress, "ethertype": IPv4, "port_range_min": 1, "port_range_max": 65535, "protocol": tcp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": egress, "ethertype": IPv4, "port_range_min": 1, "port_range_max": 65535, "protocol": udp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": egress, "ethertype": IPv4, "protocol": icmp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": ingress, "ethertype": IPv4, "port_range_min": 1, "port_range_max": 65535, "protocol": tcp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": ingress, "ethertype": IPv4, "port_range_min": 1, "port_range_max": 65535, "protocol": udp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": ingress, "ethertype": IPv4, "protocol": icmp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": egress, "ethertype": IPv6, "port_range_min": 1, "port_range_max": 65535, "protocol": tcp, "remote_ip_prefix": "::/0"},
+              {"direction": egress, "ethertype": IPv6, "port_range_min": 1, "port_range_max": 65535, "protocol": udp, "remote_ip_prefix": "::/0"},
+              {"direction": egress, "ethertype": IPv6, "protocol": icmp, "remote_ip_prefix": "::/0"},
+              {"direction": ingress, "ethertype": IPv6, "port_range_min": 1, "port_range_max": 65535, "protocol": tcp, "remote_ip_prefix": "::/0"},
+              {"direction": ingress, "ethertype": IPv6, "port_range_min": 1, "port_range_max": 65535, "protocol": udp, "remote_ip_prefix": "::/0"},
+              {"direction": ingress, "ethertype": IPv6, "protocol": icmp, "remote_ip_prefix": "::/0"}
+             ]
+
+  OCGMGR_SECURITY_GROUP:
+    type: OS::Neutron::SecurityGroup
+    properties:
+      description: ocg mgr security group
+      name:
+        str_replace:
+            template: VF_NAME_sec_grp_OCGMGR
+            params:
+                VF_NAME:    {get_param: vnf_name}
+      rules: [{"direction": egress, "ethertype": IPv4, "port_range_min": 1, "port_range_max": 65535, "protocol": tcp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": egress, "ethertype": IPv4, "port_range_min": 1, "port_range_max": 65535, "protocol": udp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": egress, "ethertype": IPv4, "protocol": icmp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": ingress, "ethertype": IPv4, "port_range_min": 1, "port_range_max": 65535, "protocol": tcp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": ingress, "ethertype": IPv4, "port_range_min": 1, "port_range_max": 65535, "protocol": udp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": ingress, "ethertype": IPv4, "protocol": icmp, "remote_ip_prefix": 0.0.0.0/0},
+              #{"direction": egress, "ethertype": IPv6, "port_range_min": 1, "port_range_max": 65535, "protocol": tcp, "remote_ip_prefix": "::/0"},
+              #{"direction": egress, "ethertype": IPv6, "port_range_min": 1, "port_range_max": 65535, "protocol": udp, "remote_ip_prefix": "::/0"},
+              #{"direction": egress, "ethertype": IPv6, "protocol": icmp, "remote_ip_prefix": "::/0"},
+              #{"direction": ingress, "ethertype": IPv6, "port_range_min": 1, "port_range_max": 65535, "protocol": tcp, "remote_ip_prefix": "::/0"},
+              #{"direction": ingress, "ethertype": IPv6, "port_range_min": 1, "port_range_max": 65535, "protocol": udp, "remote_ip_prefix": "::/0"},
+              #{"direction": ingress, "ethertype": IPv6, "protocol": icmp, "remote_ip_prefix": "::/0"}
+              ]
+
+  ocg_RSG:
+    type: OS::Nova::ServerGroup
+    properties:
+      name:
+        str_replace:
+          template: VF_NAME_server_grp_OCG
+          params:
+              VF_NAME: {get_param: vnf_name}
+      policies:
+        - anti-affinity
+        
+outputs:
+  ocgapp_shared_sec_grp_id:
+    description: UUID of OCG APP Resource SecurityGroup
+    value: { get_resource: OCGAPP_SECURITY_GROUP }
+
+  ocgmgr_shared_sec_grp_id:
+    description: UUID of OCG MGR Resource SecutiryGroup
+    value: {get_resource: OCGMGR_SECURITY_GROUP}
+    
+  ocg_shared_server_grp_id:
+    description: UUID of OCG anti-affinity server group
+    value: {get_resource: ocg_RSG}
