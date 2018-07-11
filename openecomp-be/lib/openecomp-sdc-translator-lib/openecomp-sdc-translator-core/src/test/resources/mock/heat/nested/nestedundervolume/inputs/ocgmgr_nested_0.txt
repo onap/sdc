@@ -1,0 +1,411 @@
+#cloud-config
+
+write_files:
+  - path: /tmp/ocg-bashrc   
+    content: |
+      export JAVA_HOME=$java_home
+      export FUSIONWORKS_HOME=/home/$ocg_user/ocg10/fwhome
+      export FUSIONWORKS_PROD=/home/$ocg_user/ocg10/fwprod
+      export PATH=$PATH:$JAVA_HOME/bin:$FUSIONWORKS_PROD/bin:$FUSIONWORKS_HOME:$FUSIONWORKS_PROD:$HOME:.
+      export OVLMCM_BASEURL=https://$ovlm_hostname:28010
+      export OVLMFE_BASEURL=https://$ovlm_hostname:28050
+      export OVLMDM_BASEURL=https://$ovlm_hostname:28130
+      export OVLMFA_BASEURL=https://$ovlm_hostname:28800
+      export baseurl=https://localhost:28050  
+      export OVLM_INTEGRATION_HOME=/home/$ocg_user/ovlm-integration-module
+      export OVLMFE_VERIFY_SERVER_CERTIFICATE=yes
+      export OVLMFE_CA_BUNDLE_PATH=~/weaver_install/ovlm-install/certs/ca_bundle
+      export OVLMCM_VERIFY_SERVER_CERTIFICATE=yes
+      export OVLMCM_CA_BUNDLE_PATH=~/weaver_install/ovlm-install/certs/ca_bundle
+      export OVLMDM_VERIFY_SERVER_CERTIFICATE=yes
+      export OVLMDM_CA_BUNDLE_PATH=~/weaver_install/ovlm-install/certs/ca_bundle
+      export OVLMFA_VERIFY_SERVER_CERTIFICATE=yes
+      export OVLMFA_CA_BUNDLE_PATH=~/weaver_install/ovlm-install/certs/ca_bundle
+
+  - path: /tmp/keycloak-bashrc
+    content: |
+      export JBOSS_HOME=/home/$ocg_user/keycloak
+      export JAVA_HOME=$java_home
+      export PATH=$PATH:$JAVA_HOME/bin
+ 
+  - path: /tmp/keycloak-setup.sh
+    permissions: '0755'
+    content: |
+      cp -f /tmp/keycloak.conf /home/$ocg_user/keycloak/etc/keycloak.conf
+      cp -f /tmp/keycloak.properties /home/$ocg_user/keycloak/etc/keycloak.properties
+      sed -i -e 's/<server name="default-server">/&      <https-listener name="https" socket-binding="https" security-realm="UndertowRealm"\/>/' /home/$ocg_user/keycloak/etc/standalone/standalone.xml
+      sed -i -e 's/127.0.0.1/$ovlm_hostname/' /home/$ocg_user/keycloak/etc/standalone/standalone.xml
+      sed -i -e 's/8080/8090/' /home/$ocg_user/keycloak/etc/standalone/standalone.xml
+      sed -i -e 's/8443/9443/' /home/$ocg_user/keycloak/etc/standalone/standalone.xml
+      sed -i -e "s/<security-realms>/&\
+        <security-realm name=\"UndertowRealm\">\
+            <server-identities>\
+                <ssl>\
+        <keystore path=\"keycloak.jks\" relative-to=\"jboss.server.config.dir\" keystore-password=\"password\" \/>\
+                <\/ssl>\
+            <\/server-identities>\
+        <\/security-realm>/"  /home/$ocg_user/keycloak/etc/standalone/standalone.xml
+ 
+  - path: /tmp/keycloak.conf
+    content: |
+      KEYCLOAK_MODE=standalone
+      KEYCLOAK_BIND=0.0.0.0
+      JAVA_HOME=$java_home
+      KEYCLOAK_JAVA_OPTS="\
+              -Djava.net.preferIPv4Stack=true \
+              -Djava.awt.headless=true \
+              -Xms64m -Xmx512m -XX:MetaspaceSize=96M -XX:MaxMetaspaceSize=256m"
+      KEYCLOAK_SERVER_OPTS="--properties=/home/$ocg_user/keycloak/etc/keycloak.properties"
+      JBOSS_LOG_DIR=/home/$ocg_user/keycloak/log/standalone
+      JBOSS_CONFIG_DIR=/home/$ocg_user/keycloak/etc/standalone
+      JBOSS_HOME=/home/$ocg_user/keycloak
+ 
+  - path: /tmp/keycloak.properties
+    content: |
+      jboss.http.port=8090
+      jboss.https.port=9443
+      jboss.management.http.port=9990
+      jboss.management.https.port=9993
+      jboss.server.data.dir=/home/$ocg_user/keycloak/var/standalone
+ 
+  - path: $ocg_install_properties
+    content: |
+      InstallationId=OCG_MASTER
+      TimeZone=America/New_York
+        
+      # Directories where the binaries and configuration will be stored
+      # If the specified directories exist then their content will be deleted.
+      FusionWorksHomeDirectory=/home/$ocg_user/ocg10/fwhome
+      FusionWorksProductDirectory=/home/$ocg_user/ocg10/fwprod
+      ConfigPort=25000
+      ConfigHost=$ocg_hostname
+      EventPort=25010
+      EventHost=$ocg_hostname
+      SNMPAgentPort=25020
+      MediationServerDatabasePort=25030
+        
+      JBOSSHost=$ocg_hostname
+      JBOSSHttpPort=25041
+      JBOSSHttpsPort=25042
+      JBOSSRemotePort=25043
+      JBOSSPortBase=25050
+      JAVA_HOME=$java_home
+        
+      # addons FW install.properties.template install.properties.template.1 install.properties.template.2 install.properties.template.dup.props install.properties.template.sorted install.properties.template.sorted.uniq java share xml
+      # Do not change these values
+      DatabaseUserName=OCG
+      DatabasePassword=OCG
+        
+      # Enable SSL (https) access to the OAM and Policy Manager web applications.
+      # Choices are: OFF, ON
+      EnableWebSsl=
+      # Security option choices are: ON, OFF
+      SecurityOption=
+
+  - path: $ovlm_install_properties
+    content: |
+      protocol: https
+      https_configuration:
+        server:
+          keystore_path: key_store.jks
+          keystore_password: password
+          key_password: password
+        client:
+          verify_server_certificate: true
+          truststore_path: trust_store.jks
+      service_owner:
+        user: ovlm
+        user_group: ovlm
+        ssh_user: ovlmrsync
+      log_rotation:
+        interval: monthly
+        max_file_size: 5000000
+      installer:
+        ssh_bin: /usr/bin/ssh
+        rsync_bin: /usr/bin/rsync
+        ssh_options: ''
+      installation_directories:
+        path_bin: /opt/weaver_home/bin/
+        path_cfg: /opt/weaver_home/etc/
+        path_run: /opt/weaver_home/run/
+      snmp:
+        manager: $ovlm_hostname
+        community: public
+      deployment_manager:
+        hosts:
+        - $ovlm_hostname
+        properties:
+          server:
+            port: 28130
+          spring:
+            datasource:
+              username: dm
+              password: dm
+          logging:
+            file: /opt/ocg/data/weaver_home/ovlm-dm.log
+      workflow_engine:
+        hosts:
+        - $ovlm_hostname
+        properties:
+          server:
+            port: 8099
+          logging:
+            path: /opt/ocg/data/weaver_home/WF/
+      vnfm_gui:
+        hosts:
+        - $ovlm_hostname
+        properties:
+          server:
+            port: 28200
+          logging:
+            file: /opt/ocg/data/weaver_home/ovlm-vnfm.log
+      frontend:
+        hosts:
+        - $ovlm_hostname
+        properties:
+          server:
+            port: 28050
+          logging:
+            file: /opt/ocg/data/weaver_home/ovlm-fe.log
+      configuration_manager:
+        hosts:
+        - $ovlm_hostname
+        properties:
+          server:
+            port: 28010
+          rsync_port: 28000
+          repository-root: /opt/ocg/data/weaver_home/repository-root
+          logging:
+            file: /opt/ocg/data/weaver_home/ovlm-cm.log
+      resource_manager:
+        hosts:
+        - $ovlm_hostname
+        properties:
+          server:
+            port: 28020
+          logging:
+            file: /opt/ocg/data/weaver_home/ovlm-rm.log
+      resource_agent:
+        properties:
+          server:
+            port: 28030
+          sudo_privileges_required: true
+          sudo_privileges:
+          - /bin/postgresql-setup
+          - /bin/rpm
+          - /usr/bin/yum
+          - /bin/bash
+          - /bin/sudo *
+          - /usr/bin/sudo *
+          - /usr/bin/systemctl status *
+          - /usr/bin/systemctl start *
+          - /usr/bin/systemctl stop *
+          - /usr/bin/systemctl restart *
+          - /usr/bin/systemctl is-active *
+          - /usr/bin/systemctl daemon-reload
+          - /sbin/useradd
+          - /sbin/userdel
+          - /sbin/usermod
+          - /bin/mkdir
+          - /bin/rm
+          - /bin/rsync
+          - /usr/bin/rsync
+          - /bin/chown
+          - /bin/chmod
+          resource_agent:
+            metadata:
+              stage:
+                timeout: 100
+                parameters:
+                  rsync:
+                    timeout: 100
+                    bin: rsync
+          repository-root: /opt/ocg/data/weaver_home/repository-root
+          logging:
+            path: /opt/weaver_home/RA/
+      instance_inventory_manager:
+        hosts:
+        - $ovlm_hostname
+        properties:
+          server:
+            port: 28120
+          logging:            
+            file: /opt/ocg/data/weaver_home/ovlm-iim.log
+      auth_server:
+        hosts:
+        - $ovlm_hostname
+        admin:
+            username: admin
+            password: Openet01
+        url: https://$ovlm_hostname:9443/auth
+        properties:
+          server:
+            port: 9443 
+      failover_agent:
+        hosts:
+        - $ovlm_hostname
+        properties:
+          server:
+            port: 28800
+          mode:
+            init_mode: active
+            remote_host: $ovlm_mgr002_hostname
+            remote_port: 28800
+            post_failover: 
+          rsync:
+            interval: 360
+            bin: /usr/bin/rsync
+            timeout: 100
+            location_list:
+            - destination: /tmp/ovlm_dm_failover_dbsync/
+              source:      /tmp/ovlm_dm_failover_dbsync/
+              pre:         /opt/weaver_home/bin/dm/failover/backup_dm_db.sh
+              complete:    /opt/weaver_home/bin/dm/failover/restore_dm_db.sh              
+            - destination: /opt/weaver_home/bin/dm/repository-root/
+              source:      /opt/weaver_home/bin/dm/repository-root/
+            - destination: /opt/weaver_home/repository-root/
+              source:      /opt/weaver_home/repository-root/
+            - destination: /opt/weaver_home/bin/iim/repository-root/
+              source:      /opt/weaver_home/bin/iim/repository-root/
+            - destination: /opt/weaver_home/etc/fe/meta/flow_mappings.yml
+              source:      /opt/weaver_home/etc/fe/meta/flow_mappings.yml
+            - destination: /tmp/ovlm_keycloak_backup.zip
+              source:  /tmp/ovlm_keycloak_backup.zip
+              pre:  sudo bash /home/fworks/keycloak/scripts/backup-db.sh /tmp/ovlm_keycloak_backup.zip
+              complete:  sudo bash /home/fworks/keycloak/scripts/restore-db.sh /tmp/ovlm_keycloak_backup.zip
+              post:
+            - destination: /home/fworks/ocg10/fwprod/
+              source: /home/fworks/ocg10/fwprod/
+              excludes: 
+              pre: sudo sudo -E /home/fworks/ocg10/fwprod/bin/siteReplication/ActiveSite_PreSync_hookpoint.sh $ocg_user /home/fworks/GeoReplication/datadir /home/fworks/GeoReplication/ActiveNode.env
+              post: sudo sudo -E /home/fworks/ocg10/fwprod/bin/siteReplication/ActiveSite_PostSync_hookpoint.sh $ocg_user /home/fworks/GeoReplication/datadir /home/fworks/GeoReplication/ActiveNode.env
+              complete: sudo sudo -E /home/fworks/ocg10/fwprod/bin/siteReplication/PassiveSite_CompleteSync_hookpoint.sh $ocg_user /home/fworks/GeoReplication/datadir /home/fworks/GeoReplication/ActiveNode.env 
+            - destination: /home/fworks/ocg10/fwhome/
+              source: /home/fworks/ocg10/fwhome/
+              excludes: 
+              pre: sudo sudo -E /home/fworks/ocg10/fwprod/bin/siteReplication/ActiveSite_PreSync_hookpoint.sh $ocg_user /home/fworks/GeoReplication/datadir /home/fworks/GeoReplication/ActiveNode.env
+              post: sudo sudo -E /home/fworks/ocg10/fwprod/bin/siteReplication/ActiveSite_PostSync_hookpoint.sh $ocg_user /home/fworks/GeoReplication/datadir /home/fworks/GeoReplication/ActiveNode.env
+              complete: sudo sudo -E /home/fworks/ocg10/fwprod/bin/siteReplication/PassiveSite_CompleteSync_hookpoint.sh $ocg_user /home/fworks/GeoReplication/datadir /home/fworks/GeoReplication/ActiveNode.env
+            - destination: /home/fworks/ovlm-integration-module/
+              source:      /home/fworks/ovlm-integration-module/
+          sudo_privileges_required: true
+          sudo_privileges:
+            - /bin/bash
+            - /bin/sudo *
+            - /usr/bin/sudo *
+            - /usr/bin/rsync
+            - /usr/bin/systemctl status *
+            - /usr/bin/systemctl start *
+            - /usr/bin/systemctl stop *
+            - /usr/bin/systemctl restart *
+            - /usr/bin/systemctl is-active *
+            - /usr/bin/systemctl daemon-reload
+          logging:
+            file: /opt/ocg/data/weaver_home/ovlm-fa.log
+runcmd:
+  - echo "alias l='ls -lrt'" >> /etc/bashrc
+  
+  # Allow for host resolution - With proper DNS in place, this is not needed
+  - echo "$ocg_hostip $ocg_hostname" >> /etc/hosts
+  
+  ##########################
+  # Cinder Volume Mounting
+  ##########################
+  - sudo su - root
+  - voldata_id="$volume_id"
+  - voldata_dev="/dev/disk/by-id/virtio-$(echo ${voldata_id} | cut -c -20)"
+  - mkfs.ext4 ${voldata_dev}
+  - sudo mkdir -pv /opt/ocg/data
+  - sudo chown -R fworks:fworks /opt/ocg/data
+  - echo "${voldata_dev} /opt/ocg/data ext4 defaults 1 2" >> /etc/fstab
+  - mount /opt/ocg/data
+
+  ##############
+  # OCG install
+  ##############
+  - echo "Installing ocg as user $ocg_user"
+  # Set up the ocg_user environment 
+  - su -s /bin/bash -l -c 'cat /tmp/ocg-bashrc >> ~/.bashrc' $ocg_user
+  - su -s /bin/bash -l -c 'cat /tmp/ocg-bashrc >> ~/.profile' $ocg_user
+  - su -s /bin/bash -l -c 'cd && java -jar $ocg_install_jar -install $ocg_install_properties' $ocg_user
+  - su -s /bin/bash -l -c 'cd && StartNameServ && StartMediationServer && StartJBossAppServer' $ocg_user
+  ##############
+  # WIM install
+  ##############
+  #- echo "Installing WIM as user $ocg_user"
+  - su -s /bin/bash -l -c 'cd && cp $wim_install_file .' $ocg_user
+  - su -s /bin/bash -l -c 'cd && ./ovlm-integration-module.sh' $ocg_user
+ 
+  ##############
+  # OVLM install
+  ##############
+  - echo "Installing ovlm as user $ocg_user"
+ 
+  # Need to set up password-less ssh for ocg_user so that ovlm-deploy will succeed
+  - su -s /bin/bash -l -c  'ssh-keygen -f ~/.ssh/id_rsa -t rsa -N "" ' $ocg_user
+  - su -s /bin/bash -l -c  'cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys && chmod 600 ~/.ssh/authorized_keys' $ocg_user
+  # Allow sudo on non-tty login for ovlm-install user
+  - echo "Defaults:$ocg_user !requiretty" >> /etc/sudoers
+  # Create directory and Expand the install media
+  - su -s /bin/bash -l -c  'cd && mkdir weaver_install' $ocg_user
+  - su -s /bin/bash -l -c  'cd ~/weaver_install && cp $ovlm_install_dir/ovlm-core-install-enterprise.tar .' $ocg_user
+  - su -s /bin/bash -l -c  'cd ~/weaver_install && cp $ovlm_install_dir/ovlm-thirdparty-dependencies.tar .' $ocg_user
+  - su -s /bin/bash -l -c  'cd ~/weaver_install && tar xvf $ovlm_install_dir/ovlm-core-install-enterprise.tar' $ocg_user
+  - su -s /bin/bash -l -c  'cd ~/weaver_install && cp $ovlm_install_dir/ovlm-client.sh .' $ocg_user
+  - su -s /bin/bash -l -c  'cd ~/weaver_install && tar xvf $ovlm_install_dir/ovlm-thirdparty-dependencies.tar' $ocg_user
+  # Create certs 
+  - su -s /bin/bash -l -c  'cd ~/weaver_install/ovlm-install && mkdir -p certs' $ocg_user
+  - su -s /bin/bash -l -c  'cd ~/weaver_install/ovlm-install/certs && echo "subjectAltName=DNS:$ovlm_hostname,DNS:$ovlm_mgr002_hostname" > extFile' $ocg_user
+  - su -s /bin/bash -l -c  'cd ~/weaver_install/ovlm-install/certs && openssl genrsa -out server.key 2048' $ocg_user
+  - su -s /bin/bash -l -c  'cd ~/weaver_install/ovlm-install/certs && openssl req -new -out server.csr -key server.key -subj "/C=US/L=Atlanta/O=DigiCert/CN=*.novalocal"' $ocg_user
+  - su -s /bin/bash -l -c  'cd ~/weaver_install/ovlm-install/certs && openssl x509 -req -days 365 -in server.csr -signkey server.key -out server.crt -extfile extFile' $ocg_user
+  - su -s /bin/bash -l -c  'cd ~/weaver_install/ovlm-install/certs && cp server.crt ca_bundle' $ocg_user
+  - su -s /bin/bash -l -c  'cd ~/weaver_install/ovlm-install/certs && openssl pkcs12 -export -name weaver -in server.crt -inkey server.key -out server.p12 -passout pass:password' $ocg_user
+  - su -s /bin/bash -l -c  'cd ~/weaver_install/ovlm-install/certs && $java_home/bin/keytool -importkeystore -destkeystore keycloak.jks -srckeystore server.p12 -srcstoretype pkcs12  -alias weaver -srcstorepass password -noprompt -deststorepass password -deststoretype JKS -destalias weaver' $ocg_user
+  # Configure and Install keycloak
+  #- cd ~/ovlm-install && rpm -ivh rpms/$keycloak_rpm_name
+  - su -s /bin/bash -l -c 'cat /tmp/keycloak-bashrc >> ~/.profile' $ocg_user
+  - su -s /bin/bash -l -c 'cat /tmp/keycloak-bashrc >> ~/.bashrc' $ocg_user
+  - export KEYCLOAK_USER=$ocg_user;export KEYCLOAK_USER_GROUP=$ocg_user; sudo -E rpm -ivh --relocate /opt/keycloak=/home/$ocg_user/keycloak --relocate /etc/keycloak=/home/$ocg_user/keycloak/etc --relocate /var/log/keycloak=/home/$ocg_user/keycloak/log --relocate /var/run/keycloak=/home/$ocg_user/keycloak/run --relocate /var/opt/keycloak=/home/$ocg_user/keycloak/var /home/$ocg_user/weaver_install/ovlm-install/rpms/keycloak-pkg-x86_64.rpm
+  # setup keycloak
+  - su -s /bin/bash -l -c '/tmp/keycloak-setup.sh' $ocg_user
+  # copy keystore file
+  - su -s /bin/bash -l -c 'cp /home/$ocg_user/weaver_install/ovlm-install/certs/keycloak.jks /home/$ocg_user/keycloak/etc/standalone/.' $ocg_user
+  # Config admin user
+  - su -s /bin/bash -l -c '/home/$ocg_user/keycloak/bin/add-user-keycloak.sh -u admin -p Openet01' $ocg_user
+  # Enable keycloak daemon
+  - systemctl enable keycloak
+  # Start keycloak service
+  - systemctl restart keycloak
+  # Set up the config file and do the weaver install
+  - su -s /bin/bash -l -c  'cd ~/weaver_install/ovlm-install && cp $ovlm_install_properties ./ovlm-install.yml' $ocg_user
+  - su -s /bin/bash -l -c  'cd ~/weaver_install/ovlm-install && ./utilities/cipher/encrypt_scripts/encrypt-password.sh -f ./ovlm-install.yml' $ocg_user
+  - su -s /bin/bash -l -c  'cd ~/weaver_install/ovlm-install && ./ovlm-deploy.sh -i ovlm-install.yml -u $ocg_user' $ocg_user
+  - su -s /bin/bash -l -c  'cd ~/weaver_install && sudo bash ovlm-client.sh' $ocg_user
+  
+  # Configure keycloak user for Weaver realm
+  - su -s /bin/bash -l -c '/home/$ocg_user/keycloak/bin/add-user-keycloak.sh -u weaver -p Openet01 -r weaver' $ocg_user
+ 
+  # Restart service
+  - systemctl restart keycloak
+
+  # Steps for weaver.profile
+  - su -s /bin/bash -l -c 'cd && cp ~/weaver_install/ovlm-install/weaver.profile .' $ocg_user
+  - su -s /bin/bash -l -c 'cd && source weaver.profile' $ocg_user
+  - su -s /bin/bash -l -c 'echo "source weaver.profile" >> ~/.profile' $ocg_user
+  - su -s /bin/bash -l -c 'echo "eval \$(on-auth-client -u weaver -p Openet01 --ca_bundle_path /home/fworks/weaver_install/ovlm-install/certs/ca_bundle)" >> ~/.profile' $ocg_user
+
+  # Step to prepare the upload the files
+  - su -s /bin/bash -l -c 'cd && . ~/.profile && cd ~/weaver_install/ovlm-install && ./ovlm-dm-util.sh prepare upload_files' $ocg_user
+  
+  # Step to upload the resource agent related binary file into deployment manager
+  - su -s /bin/bash -l -c 'cd && . ~/.profile && cd ~/weaver_install/ovlm-install && ovlm-dm artifact upload -f /home/fworks/weaver_install/ovlm-install/artifact/ovlm-install.tar.gz' $ocg_user
+
+  # Step to upload related configuration files into deployment manager
+  - su -s /bin/bash -l -c 'cd && . ~/.profile && cd ~/weaver_install/ovlm-install && ovlm-dm configuration create -i ovlm-install.yml -u $ocg_user -secure_stage_traffic false  -s /home/fworks/weaver_install/ovlm-install/artifact/ssh-keys.tar.gz -c /home/fworks/weaver_install/ovlm-install/artifact/certs.tar.gz -k ~/.ssh/id_rsa -e /home/fworks/weaver_install/ovlm-install/artifact/.installer.png' $ocg_user
+
+  # Step to check OCG-Mgr health status
+  - su -s /bin/bash -l -c 'cd && . ~/.profile && ovlm-fe health status' $ocg_user
+  
+  # Step for Replication Import
+  - su -s /bin/bash -l -c 'ReplicationImport -u Administrator -p Openet00 /home/fworks/Installer/OCG_BASE_CONFIG.xml' $ocg_user

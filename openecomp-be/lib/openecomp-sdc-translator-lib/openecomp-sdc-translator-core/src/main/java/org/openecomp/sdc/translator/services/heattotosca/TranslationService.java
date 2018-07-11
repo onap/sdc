@@ -131,34 +131,21 @@ public class TranslationService {
      */
     public void translateHeatFile(ServiceTemplate serviceTemplate, FileData heatFileData,
                                   TranslationContext context) {
-        translateHeatFile(serviceTemplate, heatFileData,  null, context);
-    }
-
-    /**
-     * Translate heat file.
-     *
-     * @param serviceTemplate the service template
-     * @param heatFileData    the current heat file data
-     * @param parentHeatFileName the main heat to which associated current heat file (e.g. volume heat)
-     * @param context         the context
-     */
-    public void translateHeatFile(ServiceTemplate serviceTemplate, FileData heatFileData, String parentHeatFileName,
-                                  TranslationContext context) {
         String heatFileName = heatFileData.getFile();
         HeatOrchestrationTemplate heatOrchestrationTemplate = new YamlUtil()
                 .yamlToObject(context.getFileContent(heatFileName), HeatOrchestrationTemplate.class);
 
         translateInputParameters(serviceTemplate, heatOrchestrationTemplate, heatFileData, context,
-                heatFileName, parentHeatFileName);
+                heatFileName);
+
         translateResources(heatFileName, serviceTemplate, heatOrchestrationTemplate, context);
         translateOutputParameters(serviceTemplate, heatOrchestrationTemplate, heatFileData,
                 heatFileName, context);
         createHeatStackGroup(serviceTemplate, heatFileData, heatOrchestrationTemplate, context);
         handleHeatPseudoParam(heatFileName, serviceTemplate, context);
-
         if (Objects.nonNull(heatFileData.getData())) {
-            heatFileData.getData().stream().filter(data -> data.getType() == FileData.Type.HEAT_VOL)
-                    .forEach(data -> translateHeatFile(serviceTemplate, data, heatFileData.getFile(), context));
+            heatFileData.getData().stream().filter(data -> FileData.Type.canBeAssociated(data.getType()))
+                    .forEach(data -> translateHeatFile(serviceTemplate, data, context));
         }
     }
 
@@ -244,7 +231,7 @@ public class TranslationService {
     private void translateInputParameters(ServiceTemplate serviceTemplate,
                                           HeatOrchestrationTemplate heatOrchestrationTemplate,
                                           FileData heatFileData, TranslationContext context,
-                                          String heatFileName, String parentHeatFileName) {
+                                          String heatFileName) {
         if (heatOrchestrationTemplate.getParameters() == null) {
             return;
         }
@@ -252,7 +239,7 @@ public class TranslationService {
         Map<String, ParameterDefinition> parameterDefinitionMap =
                 TranslatorHeatToToscaParameterConverter
                         .parameterConverter(serviceTemplate, heatOrchestrationTemplate.getParameters(),
-                                heatOrchestrationTemplate, heatFileName, parentHeatFileName, context);
+                                heatOrchestrationTemplate, heatFileName, heatFileData.getParentFile(), context);
         Environment heatEnvFile = getHeatEnvFile(heatFileData, context);
         Map<String, Object> parameters = heatEnvFile.getParameters();
         Object parameterValue;
@@ -286,19 +273,19 @@ public class TranslationService {
 
     }
 
-    private void updateAnnotations(Map<String, ParameterDefinition> inputParameters, Map<String, ParameterDefinition> newParameters) {
-
+    private void updateAnnotations(Map<String, ParameterDefinition> inputParameters, Map<String,
+            ParameterDefinition> newParameters) {
             newParameters.entrySet().stream().filter(stringParameterDefinitionEntry ->
-                    inputParameters.containsKey(stringParameterDefinitionEntry.getKey()) &&
-                         isHasAnnotation(inputParameters, stringParameterDefinitionEntry)).
-                            forEach(stringParameterDefinitionEntry -> {
-                                List inputParamVFModuleList = getVFModulesList(inputParameters.get(stringParameterDefinitionEntry.getKey()));
+                    inputParameters.containsKey(stringParameterDefinitionEntry.getKey())
+                         && isHasAnnotation(inputParameters, stringParameterDefinitionEntry))
+                            .forEach(stringParameterDefinitionEntry -> {
+                                List inputParamVFModuleList = getVFModulesList(
+                                        inputParameters.get(stringParameterDefinitionEntry.getKey()));
                                 List newParamVFModuleList = getVFModulesList(stringParameterDefinitionEntry.getValue());
-                                if(inputParamVFModuleList.contains(newParamVFModuleList.get(0))){
+                                if (inputParamVFModuleList.contains(newParamVFModuleList.get(0))) {
                                     newParamVFModuleList.remove(0);
                                 }
                                 newParamVFModuleList.addAll(inputParamVFModuleList);
-
                             });
 
     }

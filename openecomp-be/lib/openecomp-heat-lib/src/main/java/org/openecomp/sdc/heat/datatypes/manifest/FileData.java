@@ -22,75 +22,80 @@ package org.openecomp.sdc.heat.datatypes.manifest;
 
 import org.apache.commons.collections4.CollectionUtils;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Predicate;
 
 public class FileData {
 
-  protected static final Set<Type> heatFileTypes =
-      new HashSet<>(Arrays.asList(Type.HEAT, Type.HEAT_NET, Type.HEAT_VOL));
-  private Boolean isBase;
-  private String file;
-  private Type type;
-  private List<FileData> data;
+    protected static final Set<Type> heatFileTypes =
+        new HashSet<>(Arrays.asList(Type.HEAT, Type.HEAT_NET, Type.HEAT_VOL));
+    private Boolean isBase;
+    private String parentFile;
+    private String file;
+    private Type type;
+    private List<FileData> data;
 
-  public static Predicate<FileData> buildFileDataPredicateByType(Type... types) {
-    return fileData -> Arrays.asList(types).contains(fileData.getType());
-  }
+    public static Predicate<FileData> buildFileDataPredicateByType(Type... types) {
+        return fileData -> Arrays.asList(types).contains(fileData.getType());
+    }
 
-  public static boolean isHeatFile(Type type) {
+    public static boolean isHeatFile(Type type) {
     return heatFileTypes.contains(type);
   }
 
-  public Boolean getBase() {
-    return isBase;
+    public Boolean getBase() {
+        return isBase;
+    }
+
+    public void setBase(Boolean base) {
+        isBase = base;
+    }
+
+    public String getFile() {
+        return file;
+    }
+
+    public void setFile(String file) {
+        this.file = file;
+    }
+
+    public String getParentFile() {
+        return parentFile;
+    }
+
+    public void setParentFile(String parentFile) {
+    this.parentFile = parentFile;
   }
 
-  public void setBase(Boolean base) {
-    isBase = base;
-  }
-
-  public String getFile() {
-    return file;
-  }
-
-  public void setFile(String file) {
-    this.file = file;
-  }
-
-  public Type getType() {
+    public Type getType() {
     return type;
   }
 
-  public void setType(Type type) {
+    public void setType(Type type) {
     this.type = type;
   }
 
-  public List<FileData> getData() {
-    return data;
-  }
-
-  public void setData(List<FileData> data) {
-    this.data = data;
-  }
-
-  /**
-   * Add file data.
-   *
-   * @param data the data
-   */
-  public void addFileData(FileData data) {
-    if (CollectionUtils.isEmpty(this.data)) {
-      this.data = new ArrayList<>();
+    public List<FileData> getData() {
+        return data;
     }
-    this.data.add(data);
-  }
 
-  public enum Type {
+    public void setData(List<FileData> data) {
+        this.data = data;
+    }
+
+    /**
+    * Add file data.
+    *
+    * @param data the data
+    */
+    public void addFileData(FileData data) {
+        if (CollectionUtils.isEmpty(this.data)) {
+            this.data = new ArrayList<>();
+        }
+        this.data.add(data);
+    }
+
+    public enum Type {
 
     HEAT("HEAT"),
     HEAT_ENV("HEAT_ENV"),
@@ -108,20 +113,23 @@ public class FileData {
     VF_LICENSE("VF_LICENSE"),
     OTHER("OTHER");
 
-    private String displayName;
+        private String displayName;
 
-    Type(String displayName) {
-      this.displayName = displayName;
+        Type(String displayName) {
+            this.displayName = displayName;
+        }
+
+        public String getDisplayName() {
+            return displayName;
+        }
+
+        public static boolean isArtifact(Type fileType) {
+            return !Arrays.asList(HEAT,HEAT_ENV, HEAT_VOL).contains(fileType);
+        }
+
+        public static boolean canBeAssociated(Type fileType)
+        {
+            return HEAT_VOL == fileType;
+        }
     }
-
-    public String getDisplayName() {
-      return displayName;
-    }
-
-    public static boolean isArtifact(Type fileType)
-    {
-      return !Arrays.asList(HEAT,HEAT_ENV, HEAT_VOL).contains(fileType);
-    }
-
-  }
 }

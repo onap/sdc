@@ -1,0 +1,19 @@
+#cloud-config
+
+runcmd:
+   
+  # Allow for host resolution - With proper DNS in place, this is not needed
+  - echo "$ocg_hostip $ocg_hostname" >> /etc/hosts
+  
+  ##########################
+  # Cinder Volume Mounting
+  ##########################
+  - sudo su - root
+  - voldata_id="$volume_id"
+  - voldata_dev="/dev/disk/by-id/virtio-$(echo ${voldata_id} | cut -c -20)"
+  - mkfs.ext4 ${voldata_dev}
+  - sudo mkdir -pv /opt/ocg/data
+  - sudo chown -R fworks:fworks /opt/ocg/data
+  - echo "${voldata_dev} /opt/ocg/data ext4 defaults 1 2" >> /etc/fstab
+  - mount /opt/ocg/data
+ 

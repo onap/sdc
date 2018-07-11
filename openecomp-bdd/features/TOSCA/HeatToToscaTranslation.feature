@@ -155,3 +155,40 @@ Feature: Tosca Validation Flow
     Then I want to check property "topology_template.inputs.compute_compute_name.annotations" does not exist
 
     Then I want to create a VF for this Item
+
+  Scenario: Validate Input parameter for nested HEAT belongs to volume HEAT
+            when volume heat is associated to main HEAT
+    When I want to create a VSP with onboarding type "NetworkPackage"
+
+    Then I want to upload a NetworkPackage for this VSP from path "resources/uploads/nested-belongs-to-volume.zip"
+    And I want to process the NetworkPackage file for this VSP
+
+    Then I want to commit this Item
+    And I want to submit this VSP
+    And I want to package this VSP
+
+    Then I want to get the package for this Item to path "resources/downloads/VSPPackage.zip"
+
+    When I want to load the yaml content of the entry "Definitions/ocgmgr_nested_volumeServiceTemplate.yaml" in the zip "resources/downloads/VSPPackage.zip" to context
+    Then I want to check property "topology_template.inputs.volume_type.annotations" does not exist
+    Then I want to check property "topology_template.inputs.vnf_name.annotations" does not exist
+    Then I want to check property "topology_template.inputs.index.annotations" does not exist
+    Then I want to check property "topology_template.inputs.size.annotations" does not exist
+
+    When I want to load the yaml content of the entry "Definitions/MainServiceTemplate.yaml" in the zip "resources/downloads/VSPPackage.zip" to context
+
+    Then I want to check property "topology_template.inputs.index" does not exist
+    Then I want to check property "topology_template.inputs.size" does not exist
+    Then I want to check property "topology_template.inputs.volume_type" does not exist
+
+    Then I want to check property "topology_template.inputs.vnf_name.annotations.source.type" for value "org.openecomp.annotations.Source"
+    Then I want to check property "topology_template.inputs.vnf_name.annotations.source.properties.source_type" for value "HEAT"
+    Then I want to check property "topology_template.inputs.vnf_name.annotations.source.properties.vf_module_label" to have length 6
+    Then I want to check property "topology_template.inputs.vnf_name.annotations.source.properties.vf_module_label[0]" for value "ocgapp_03"
+    Then I want to check property "topology_template.inputs.vnf_name.annotations.source.properties.vf_module_label[1]" for value "ocgapp_02"
+    Then I want to check property "topology_template.inputs.vnf_name.annotations.source.properties.vf_module_label[2]" for value "ocgmgr"
+    Then I want to check property "topology_template.inputs.vnf_name.annotations.source.properties.vf_module_label[3]" for value "ocgapp_01"
+    Then I want to check property "topology_template.inputs.vnf_name.annotations.source.properties.vf_module_label[4]" for value "ocgapp_04"
+    Then I want to check property "topology_template.inputs.vnf_name.annotations.source.properties.vf_module_label[5]" for value "base_ocg"
+
+    Then I want to create a VF for this Item

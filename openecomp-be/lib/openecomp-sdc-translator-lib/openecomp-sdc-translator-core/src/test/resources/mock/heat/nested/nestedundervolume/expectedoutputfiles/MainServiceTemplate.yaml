@@ -1,0 +1,2252 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: Main
+imports:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+- GlobalSubstitutionTypes:
+    file: GlobalSubstitutionTypesServiceTemplate.yaml
+node_types:
+  org.openecomp.resource.vfc.nodes.heat.ocgmgr:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+  org.openecomp.resource.vfc.nodes.heat.ocgapp:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+topology_template:
+  inputs:
+    keycloak_rpm_name:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - ocgmgr
+            source_type: HEAT
+            param_name: keycloak_rpm_name
+      type: string
+      description: keycloak rpm name
+      default: keycloak-pkg-x86_64.rpm
+    ocgapp_oam_protected_ip_3:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - ocgapp_04
+            source_type: HEAT
+            param_name: ocgapp_oam_protected_ip_3
+      type: string
+      description: OCG OAM IP list
+    ocgapp_volume_type_2:
+      label: vm volume type
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - ocgapp_03
+            source_type: HEAT
+            param_name: ocgapp_volume_type_2
+      type: string
+      description: the name of the target volume backend for ocgapp1
+      default: SF-Default-SSD
+    ocgapp_volume_type_1:
+      label: vm volume type
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - ocgapp_02
+            source_type: HEAT
+            param_name: ocgapp_volume_type_1
+      type: string
+      description: the name of the target volume backend for ocgapp1
+      default: SF-Default-SSD
+    ocgapp_oam_protected_ip_2:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - ocgapp_03
+            source_type: HEAT
+            param_name: ocgapp_oam_protected_ip_2
+      type: string
+      description: OCG OAM IP list
+    ocgapp_volume_type_3:
+      label: vm volume type
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - ocgapp_04
+            source_type: HEAT
+            param_name: ocgapp_volume_type_3
+      type: string
+      description: the name of the target volume backend for ocgapp1
+      default: SF-Default-SSD
+    eth1_netmask:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - ocgapp_03
+            - ocgapp_02
+            - ocgapp_01
+            - ocgapp_04
+            source_type: HEAT
+            param_name: eth1_netmask
+      type: string
+      description: mask length
+      default: 21
+    domain_name:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - ocgapp_03
+            - ocgapp_02
+            - ocgapp_01
+            - ocgapp_04
+            source_type: HEAT
+            param_name: domain_name
+      type: string
+      description: address
+      default: eng.mobilephone.net
+    eth1_ip:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - ocgapp_03
+            - ocgapp_02
+            - ocgapp_01
+            - ocgapp_04
+            source_type: HEAT
+            param_name: eth1_ip
+      type: string
+      description: address
+      default: 107.112.168.129
+    eth2_ip_range:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - ocgapp_03
+            - ocgapp_02
+            - ocgapp_01
+            - ocgapp_04
+            source_type: HEAT
+            param_name: eth2_ip_range
+      type: string
+      description: range
+      default: 107.242.64.1
+    ocg_user:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - ocgmgr
+            source_type: HEAT
+            param_name: ocg_user
+      type: string
+      description: user to install ocg
+      default: fworks
+    ocgapp_oam_direct_ip_2:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - ocgapp_03
+            source_type: HEAT
+            param_name: ocgapp_oam_direct_ip_2
+      type: string
+      description: OCG OAM IP list
+    ocgapp_oam_direct_ip_1:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - ocgapp_02
+            source_type: HEAT
+            param_name: ocgapp_oam_direct_ip_1
+      type: string
+      description: OCG OAM IP list
+    ocgapp_oam_direct_ip_0:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - ocgapp_01
+            source_type: HEAT
+            param_name: ocgapp_oam_direct_ip_0
+      type: string
+      description: OCG OAM IP list
+    ocgapp_oam_direct_ip_3:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - ocgapp_04
+            source_type: HEAT
+            param_name: ocgapp_oam_direct_ip_3
+      type: string
+      description: OCG OAM IP list
+    ocgmgr_volume_ids:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - ocgmgr
+            source_type: HEAT
+            param_name: ocgmgr_volume_ids
+      type: json
+      description: Unique IDs for volumes
+    ocg_install_jar:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - ocgmgr
+            source_type: HEAT
+            param_name: ocg_install_jar
+      type: string
+      description: location of ocg installer
+      default: /home/fworks/Installer/ocg10/installer.jar
+    wim_install_file:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - ocgmgr
+            source_type: HEAT
+            param_name: wim_install_file
+      type: string
+      description: WIM Install File location
+      default: /home/fworks/Installer/wim/ovlm-integration-module.sh
+    ovlm_install_dir:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - ocgmgr
+            source_type: HEAT
+            param_name: ovlm_install_dir
+      type: string
+      description: Location of the ovlm-install dir
+      default: /home/fworks/Installer/weaver
+    ocg_install_properties:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - ocgmgr
+            source_type: HEAT
+            param_name: ocg_install_properties
+      type: string
+      description: location of ocg install properties
+      default: /tmp/ocg.install.properties
+    ocgmgr_names:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - ocgmgr
+            source_type: HEAT
+            param_name: ocgmgr_names
+      type: list
+      description: OCG MGR VM names list (should be 2, since we have 2 MGR VMs)
+      entry_schema:
+        type: string
+    ocgapp_volume_size_3:
+      label: Cinder volume size
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - ocgapp_04
+            source_type: HEAT
+            param_name: ocgapp_volume_size_3
+      type: float
+      description: the size of the Cinder volume
+      default: 400
+      constraints:
+      - in_range:
+        - 100
+        - 400
+    ocgapp_volume_type_0:
+      label: vm volume type
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - ocgapp_01
+            source_type: HEAT
+            param_name: ocgapp_volume_type_0
+      type: string
+      description: the name of the target volume backend for ocgapp1
+      default: SF-Default-SSD
+    ocgapp_oam_protected_ip_1:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - ocgapp_02
+            source_type: HEAT
+            param_name: ocgapp_oam_protected_ip_1
+      type: string
+      description: OCG OAM IP list
+    ocgapp_oam_protected_ip_0:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - ocgapp_01
+            source_type: HEAT
+            param_name: ocgapp_oam_protected_ip_0
+      type: string
+      description: OCG OAM IP list
+    ocgapp_volume_size_2:
+      label: Cinder volume size
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - ocgapp_03
+            source_type: HEAT
+            param_name: ocgapp_volume_size_2
+      type: float
+      description: the size of the Cinder volume
+      default: 400
+      constraints:
+      - in_range:
+        - 100
+        - 400
+    ocgapp_volume_size_1:
+      label: Cinder volume size
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - ocgapp_02
+            source_type: HEAT
+            param_name: ocgapp_volume_size_1
+      type: float
+      description: the size of the Cinder volume
+      default: 400
+      constraints:
+      - in_range:
+        - 100
+        - 400
+    ocgapp_volume_size_0:
+      label: Cinder volume size
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - ocgapp_01
+            source_type: HEAT
+            param_name: ocgapp_volume_size_0
+      type: float
+      description: the size of the Cinder volume
+      default: 400
+      constraints:
+      - in_range:
+        - 100
+        - 400
+    ocgmgr_image_name:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - ocgmgr
+            source_type: HEAT
+            param_name: ocgmgr_image_name
+      type: string
+      description: operative system image
+      default: vOCG_MGR_SNAP_20180130
+    vf_module_id:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - ocgapp_03
+            - ocgapp_02
+            - ocgmgr
+            - ocgapp_01
+            - ocgapp_04
+            source_type: HEAT
+            param_name: vf_module_id
+      type: string
+      description: Unique ID for this VF module instance
+    ocgmgr_oam_protected_ips:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - ocgmgr
+            source_type: HEAT
+            param_name: ocgmgr_oam_protected_ips
+      type: list
+      description: OCG OAM IP list
+      entry_schema:
+        type: string
+    vnf_name:
+      label: OCG VNF Name
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - ocgapp_03
+            - ocgapp_02
+            - ocgmgr
+            - ocgapp_01
+            - ocgapp_04
+            - base_ocg
+            source_type: HEAT
+            param_name: vnf_name
+      type: string
+      description: OCG VNF Name
+      default: zrdm5avocg01
+    nameserver_ip:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - ocgapp_03
+            - ocgapp_02
+            - ocgapp_01
+            - ocgapp_04
+            source_type: HEAT
+            param_name: nameserver_ip
+      type: string
+      description: nameserver
+      default: 135.214.16.119
+    ocgapp_name_3:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - ocgapp_04
+            source_type: HEAT
+            param_name: ocgapp_name_3
+      type: string
+      description: OCG VM server name list (there should be 2, since we have 2 app vms)
+    ovlm_install_properties:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - ocgmgr
+            source_type: HEAT
+            param_name: ovlm_install_properties
+      type: string
+      description: ovlm install properties
+      default: /tmp/ovlm.install.properties
+    ocgapp_name_0:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - ocgapp_01
+            source_type: HEAT
+            param_name: ocgapp_name_0
+      type: string
+      description: OCG VM server name list (there should be 2, since we have 2 app vms)
+    ocgapp_flavor_name:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - ocgapp_03
+            - ocgapp_02
+            - ocgapp_01
+            - ocgapp_04
+            source_type: HEAT
+            param_name: ocgapp_flavor_name
+      type: string
+      description: resources to be applied on instances
+      default: nv.c8r32d320
+    cor_direct_net_name:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - ocgapp_03
+            - ocgapp_02
+            - ocgapp_01
+            - ocgapp_04
+            source_type: HEAT
+            param_name: cor_direct_net_name
+      type: string
+      description: COR_DIRECT network where instances will connect
+    ocgapp_name_2:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - ocgapp_03
+            source_type: HEAT
+            param_name: ocgapp_name_2
+      type: string
+      description: OCG VM server name list (there should be 2, since we have 2 app vms)
+    oam_direct_net_name:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - ocgapp_03
+            - ocgapp_02
+            - ocgapp_01
+            - ocgapp_04
+            source_type: HEAT
+            param_name: oam_direct_net_name
+      type: string
+      description: OAM network where instances will connect
+    ocgapp_name_1:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - ocgapp_02
+            source_type: HEAT
+            param_name: ocgapp_name_1
+      type: string
+      description: OCG VM server name list (there should be 2, since we have 2 app vms)
+    vnf_id:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - ocgapp_03
+            - ocgapp_02
+            - ocgmgr
+            - ocgapp_01
+            - ocgapp_04
+            source_type: HEAT
+            param_name: vnf_id
+      type: string
+      description: Unique ID for this VF instance
+    ocgapp_cor_direct_v6_ip_0:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - ocgapp_01
+            source_type: HEAT
+            param_name: ocgapp_cor_direct_v6_ip_0
+      type: string
+      description: fixed IP assignment for VM's on the COR_DIRECT network
+    availability_zone_0:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - ocgapp_02
+            - ocgmgr
+            - ocgapp_01
+            source_type: HEAT
+            param_name: availability_zone_0
+      type: string
+      description: availability zone 1 ID or name
+    availability_zone_1:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - ocgapp_03
+            - ocgmgr
+            - ocgapp_04
+            source_type: HEAT
+            param_name: availability_zone_1
+      type: string
+      description: availability zone 2 ID or name
+    OS::stack_name:
+      type: string
+      required: false
+    ocgapp_cor_direct_v6_ip_3:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - ocgapp_04
+            source_type: HEAT
+            param_name: ocgapp_cor_direct_v6_ip_3
+      type: string
+      description: fixed IP assignment for VM's on the COR_DIRECT network
+    ocgapp_cor_direct_v6_ip_1:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - ocgapp_02
+            source_type: HEAT
+            param_name: ocgapp_cor_direct_v6_ip_1
+      type: string
+      description: fixed IP assignment for VM's on the COR_DIRECT network
+    ocgmgr_flavor_name:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - ocgmgr
+            source_type: HEAT
+            param_name: ocgmgr_flavor_name
+      type: string
+      description: resources to be applied on instances
+      default: nv.c8r32d320
+    ocgapp_cor_direct_v6_ip_2:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - ocgapp_03
+            source_type: HEAT
+            param_name: ocgapp_cor_direct_v6_ip_2
+      type: string
+      description: fixed IP assignment for VM's on the COR_DIRECT network
+    ocgmgr_public_key:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - ocgmgr
+            source_type: HEAT
+            param_name: ocgmgr_public_key
+      type: string
+      description: creator's ssh public key
+    ocgapp_volume_id_0:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - ocgapp_01
+            source_type: HEAT
+            param_name: ocgapp_volume_id_0
+      type: string
+      description: Unique IDs for volumes
+    java_home:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - ocgmgr
+            source_type: HEAT
+            param_name: java_home
+      type: string
+      description: java home
+      default: /home/fworks/java/jdk1.8.0_112
+    ocgapp_volume_id_1:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - ocgapp_02
+            source_type: HEAT
+            param_name: ocgapp_volume_id_1
+      type: string
+      description: Unique IDs for volumes
+    ocgapp_volume_id_2:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - ocgapp_03
+            source_type: HEAT
+            param_name: ocgapp_volume_id_2
+      type: string
+      description: Unique IDs for volumes
+    ocgapp_volume_id_3:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - ocgapp_04
+            source_type: HEAT
+            param_name: ocgapp_volume_id_3
+      type: string
+      description: Unique IDs for volumes
+    ocgapp_image_name:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - ocgapp_03
+            - ocgapp_02
+            - ocgapp_01
+            - ocgapp_04
+            source_type: HEAT
+            param_name: ocgapp_image_name
+      type: string
+      description: operative system image
+      default: NIMBUS_OCG-APPLICATION_20180328.qcow2
+    ocgapp_public_key:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - ocgapp_03
+            - ocgapp_02
+            - ocgapp_01
+            - ocgapp_04
+            source_type: HEAT
+            param_name: ocgapp_public_key
+      type: string
+      description: creator's ssh public key
+      default: ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAQEAh5B/f9JmJL5HcIJT+XeGnE9Jlv22NYGweMx+M2eX53X0sxdB8onhqDiLFODgDgXUuQk11NM2tQeA+xH+nlZxdETK+5uKb2SLwsPjZnxHQPrGQP1KKAZi9aKoZFjYmWrYuqzQFT9QRz3gehG+pX82mzMkkE/Da2/XJ62zu8PKfapn63MhhmxG5w5onuN2XsM2zfI6GILFM56ppLtMCkgvzXVcWOpr7pD4kpnC9WavxwAkmQPrWIbTi0MKIEeuON0B+KRgC3b8GnCpuE2GFTffAm1MBgi0Urs8e3XGHsilVMqYdaCPZwq5ZKlzivX5wZQH9yT9m9Db6XLL66ZIaBHt2w== rsa-key-20170906
+    ocg_shared_server_grp_id:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - ocgapp_03
+            - ocgapp_02
+            - ocgapp_01
+            - ocgapp_04
+            source_type: HEAT
+            param_name: ocg_shared_server_grp_id
+      type: string
+      description: OCG anti-affinity server group
+    oam_protected_net_name:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - ocgapp_03
+            - ocgapp_02
+            - ocgmgr
+            - ocgapp_01
+            - ocgapp_04
+            source_type: HEAT
+            param_name: oam_protected_net_name
+      type: string
+      description: OAM network where instances will connect
+    ocgapp_shared_sec_grp_id:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - ocgapp_03
+            - ocgapp_02
+            - ocgapp_01
+            - ocgapp_04
+            source_type: HEAT
+            param_name: ocgapp_shared_sec_grp_id
+      type: string
+      description: security group
+    ocgmgr_volume_type_0:
+      label: mgr vm 1 volume type
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - ocgmgr
+            source_type: HEAT
+            param_name: ocgmgr_volume_type_0
+      type: string
+      description: the name of the target volume backend for the first OCG MGR
+      default: SF-Default-SSD
+    ocgapp_cor_direct_ip_2:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - ocgapp_03
+            source_type: HEAT
+            param_name: ocgapp_cor_direct_ip_2
+      type: string
+      description: OCG COR_DIRECT IP list
+    ocgapp_cor_direct_ip_3:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - ocgapp_04
+            source_type: HEAT
+            param_name: ocgapp_cor_direct_ip_3
+      type: string
+      description: OCG COR_DIRECT IP list
+    volume_count:
+      label: volume count
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - ocgmgr
+            source_type: HEAT
+            param_name: volume_count
+      type: float
+      description: num of volumes needed
+      default: 2
+      constraints:
+      - valid_values:
+        - 0
+        - 1
+        - 2
+    ocgapp_cor_direct_ip_0:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - ocgapp_01
+            source_type: HEAT
+            param_name: ocgapp_cor_direct_ip_0
+      type: string
+      description: OCG COR_DIRECT IP list
+    ocgapp_cor_direct_ip_1:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - ocgapp_02
+            source_type: HEAT
+            param_name: ocgapp_cor_direct_ip_1
+      type: string
+      description: OCG COR_DIRECT IP list
+    eth2_ip:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - ocgapp_03
+            - ocgapp_02
+            - ocgapp_01
+            - ocgapp_04
+            source_type: HEAT
+            param_name: eth2_ip
+      type: string
+      description: address
+      default: 107.242.64.49
+    ocgmgr_volume_size_0:
+      label: Cinder volume 1 size
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - ocgmgr
+            source_type: HEAT
+            param_name: ocgmgr_volume_size_0
+      type: float
+      description: the size of the Cinder volume
+      default: 400
+      constraints:
+      - in_range:
+        - 50
+        - 400
+    ocgmgr_shared_sec_grp_id:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - ocgmgr
+            source_type: HEAT
+            param_name: ocgmgr_shared_sec_grp_id
+      type: string
+      description: security group
+    eth1_ip_range:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - ocgapp_03
+            - ocgapp_02
+            - ocgapp_01
+            - ocgapp_04
+            source_type: HEAT
+            param_name: eth1_ip_range
+      type: string
+      description: range
+      default: 130.4.128.0
+  node_templates:
+    ocgmgr_volume_resource_group:
+      type: org.openecomp.resource.abstract.nodes.heat.ocgmgr_nested_volume
+      directives:
+      - substitutable
+      properties:
+        service_template_filter:
+          substitute_service_template: ocgmgr_nested_volumeServiceTemplate.yaml
+          count:
+            get_input: volume_count
+          mandatory: false
+        volume_type:
+          get_input: ocgmgr_volume_type_0
+        size:
+          get_input: ocgmgr_volume_size_0
+        vnf_name:
+          get_input: vnf_name
+        index:
+          get_property:
+          - SELF
+          - service_template_filter
+          - index_value
+    OCGMGR_SECURITY_GROUP:
+      type: org.openecomp.resource.vfc.rules.nodes.heat.network.neutron.SecurityRules
+      properties:
+        name:
+          str_replace:
+            template: VF_NAME_sec_grp_OCGMGR
+            params:
+              VF_NAME:
+                get_input: vnf_name
+        description: ocg mgr security group
+        rules:
+        - protocol: tcp
+          ethertype: IPv4
+          port_range_max: 65535
+          remote_ip_prefix: 0.0.0.0/0
+          direction: egress
+          port_range_min: 1
+        - protocol: udp
+          ethertype: IPv4
+          port_range_max: 65535
+          remote_ip_prefix: 0.0.0.0/0
+          direction: egress
+          port_range_min: 1
+        - protocol: icmp
+          ethertype: IPv4
+          remote_ip_prefix: 0.0.0.0/0
+          direction: egress
+        - protocol: tcp
+          ethertype: IPv4
+          port_range_max: 65535
+          remote_ip_prefix: 0.0.0.0/0
+          direction: ingress
+          port_range_min: 1
+        - protocol: udp
+          ethertype: IPv4
+          port_range_max: 65535
+          remote_ip_prefix: 0.0.0.0/0
+          direction: ingress
+          port_range_min: 1
+        - protocol: icmp
+          ethertype: IPv4
+          remote_ip_prefix: 0.0.0.0/0
+          direction: ingress
+      requirements:
+      - port:
+          capability: tosca.capabilities.Attachment
+          node: ocgmgr_oam_protected_0_port
+          relationship: org.openecomp.relationships.AttachesTo
+      - port:
+          capability: tosca.capabilities.Attachment
+          node: ocgmgr_oam_protected_1_port
+          relationship: org.openecomp.relationships.AttachesTo
+    ocgapp_cor_direct_port_3:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        - ip_version: 6
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        security_groups:
+        - get_input: ocgapp_shared_sec_grp_id
+        fixed_ips:
+        - ip_address:
+            get_input: ocgapp_cor_direct_ip_3
+        - ip_address:
+            get_input: ocgapp_cor_direct_v6_ip_3
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        name:
+          str_replace:
+            template: VNF_NAME_ocgapp_cor_port_3
+            params:
+              VNF_NAME:
+                get_input: vnf_name
+        network_role_tag: cor_direct
+        network:
+          get_input: cor_direct_net_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: ocgapp_server_3
+          relationship: tosca.relationships.network.BindsTo
+    ocgapp_cor_direct_port_2:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        - ip_version: 6
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        security_groups:
+        - get_input: ocgapp_shared_sec_grp_id
+        fixed_ips:
+        - ip_address:
+            get_input: ocgapp_cor_direct_ip_2
+        - ip_address:
+            get_input: ocgapp_cor_direct_v6_ip_2
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        name:
+          str_replace:
+            template: VNF_NAME_ocgapp_cor_port_2
+            params:
+              VNF_NAME:
+                get_input: vnf_name
+        network_role_tag: cor_direct
+        network:
+          get_input: cor_direct_net_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: ocgapp_server_2
+          relationship: tosca.relationships.network.BindsTo
+    ocgapp_server_2:
+      type: org.openecomp.resource.vfc.nodes.heat.ocgapp
+      properties:
+        flavor:
+          get_input: ocgapp_flavor_name
+        key_name: UNSUPPORTED_RESOURCE_ocgapp_admin_key
+        availability_zone:
+          get_input: availability_zone_1
+        image:
+          get_input: ocgapp_image_name
+        metadata:
+          vf_module_id:
+            get_input: vf_module_id
+          vnf_id:
+            get_input: vnf_id
+          vnf_name:
+            get_input: vnf_name
+        personality:
+          /etc/hostname:
+            str_replace:
+              template: |
+                ${NAME}.${DOMAIN_NAME}
+              params:
+                ${NAME}:
+                  get_input: ocgapp_name_2
+                ${DOMAIN_NAME}:
+                  get_input: domain_name
+          /etc/resolv.conf:
+            str_replace:
+              template: |
+                nameserver ${NAME_SERVER}
+                domain ${DOMAIN_NAME}
+              params:
+                ${NAME_SERVER}:
+                  get_input: nameserver_ip
+                ${DOMAIN_NAME}:
+                  get_input: domain_name
+          /etc/sysconfig/network-scripts/route-eth2:
+            str_replace:
+              template: |
+                ${ETH2_IP_RANGE} via ${ETH2_IP} dev eth2
+              params:
+                ${ETH2_IP_RANGE}:
+                  get_input: eth2_ip_range
+                ${ETH2_IP}:
+                  get_input: eth2_ip
+          /etc/sysconfig/network-scripts/route-eth1:
+            str_replace:
+              template: |
+                ${ETH1_IP_RANGE}/${ETH1_NETMASK} via ${ETH1_IP} dev eth1
+              params:
+                ${ETH1_IP_RANGE}:
+                  get_input: eth1_ip_range
+                ${ETH1_IP}:
+                  get_input: eth1_ip
+                ${ETH1_NETMASK}:
+                  get_input: eth1_netmask
+        user_data_format: RAW
+        name:
+          get_input: ocgapp_name_2
+        scheduler_hints:
+          group:
+            get_input: ocg_shared_server_grp_id
+      requirements:
+      - local_storage:
+          capability: tosca.capabilities.Attachment
+          node: ocgapp_volume_2
+          relationship: ocgapp_volume_attachment_2
+    ocgapp_server_1:
+      type: org.openecomp.resource.vfc.nodes.heat.ocgapp
+      properties:
+        flavor:
+          get_input: ocgapp_flavor_name
+        key_name: UNSUPPORTED_RESOURCE_ocgapp_admin_key
+        availability_zone:
+          get_input: availability_zone_0
+        image:
+          get_input: ocgapp_image_name
+        metadata:
+          vf_module_id:
+            get_input: vf_module_id
+          vnf_id:
+            get_input: vnf_id
+          vnf_name:
+            get_input: vnf_name
+        personality:
+          /etc/hostname:
+            str_replace:
+              template: |
+                ${NAME}.${DOMAIN_NAME}
+              params:
+                ${NAME}:
+                  get_input: ocgapp_name_1
+                ${DOMAIN_NAME}:
+                  get_input: domain_name
+          /etc/resolv.conf:
+            str_replace:
+              template: |
+                nameserver ${NAME_SERVER}
+                domain ${DOMAIN_NAME}
+              params:
+                ${NAME_SERVER}:
+                  get_input: nameserver_ip
+                ${DOMAIN_NAME}:
+                  get_input: domain_name
+          /etc/sysconfig/network-scripts/route-eth2:
+            str_replace:
+              template: |
+                ${ETH2_IP_RANGE} via ${ETH2_IP} dev eth2
+              params:
+                ${ETH2_IP_RANGE}:
+                  get_input: eth2_ip_range
+                ${ETH2_IP}:
+                  get_input: eth2_ip
+          /etc/sysconfig/network-scripts/route-eth1:
+            str_replace:
+              template: |
+                ${ETH1_IP_RANGE}/${ETH1_NETMASK} via ${ETH1_IP} dev eth1
+              params:
+                ${ETH1_IP_RANGE}:
+                  get_input: eth1_ip_range
+                ${ETH1_IP}:
+                  get_input: eth1_ip
+                ${ETH1_NETMASK}:
+                  get_input: eth1_netmask
+        user_data_format: RAW
+        name:
+          get_input: ocgapp_name_1
+        scheduler_hints:
+          group:
+            get_input: ocg_shared_server_grp_id
+      requirements:
+      - local_storage:
+          capability: tosca.capabilities.Attachment
+          node: ocgapp_volume_1
+          relationship: ocgapp_volume_attachment_1
+    ocgapp_server_0:
+      type: org.openecomp.resource.vfc.nodes.heat.ocgapp
+      properties:
+        flavor:
+          get_input: ocgapp_flavor_name
+        key_name: UNSUPPORTED_RESOURCE_ocgapp_admin_key
+        availability_zone:
+          get_input: availability_zone_0
+        image:
+          get_input: ocgapp_image_name
+        metadata:
+          vf_module_id:
+            get_input: vf_module_id
+          vnf_id:
+            get_input: vnf_id
+          vnf_name:
+            get_input: vnf_name
+        personality:
+          /etc/hostname:
+            str_replace:
+              template: |
+                ${NAME}.${DOMAIN_NAME}
+              params:
+                ${NAME}:
+                  get_input: ocgapp_name_0
+                ${DOMAIN_NAME}:
+                  get_input: domain_name
+          /etc/resolv.conf:
+            str_replace:
+              template: |
+                nameserver ${NAME_SERVER}
+                domain ${DOMAIN_NAME}
+              params:
+                ${NAME_SERVER}:
+                  get_input: nameserver_ip
+                ${DOMAIN_NAME}:
+                  get_input: domain_name
+          /etc/sysconfig/network-scripts/route-eth2:
+            str_replace:
+              template: |
+                ${ETH2_IP_RANGE} via ${ETH2_IP} dev eth2
+              params:
+                ${ETH2_IP_RANGE}:
+                  get_input: eth2_ip_range
+                ${ETH2_IP}:
+                  get_input: eth2_ip
+          /etc/sysconfig/network-scripts/route-eth1:
+            str_replace:
+              template: |
+                ${ETH1_IP_RANGE}/${ETH1_NETMASK} via ${ETH1_IP} dev eth1
+              params:
+                ${ETH1_IP_RANGE}:
+                  get_input: eth1_ip_range
+                ${ETH1_IP}:
+                  get_input: eth1_ip
+                ${ETH1_NETMASK}:
+                  get_input: eth1_netmask
+        user_data_format: RAW
+        name:
+          get_input: ocgapp_name_0
+        scheduler_hints:
+          group:
+            get_input: ocg_shared_server_grp_id
+      requirements:
+      - local_storage:
+          capability: tosca.capabilities.Attachment
+          node: ocgapp_volume_0
+          relationship: ocgapp_volume_attachment_0
+    ocgmgr_oam_protected_0_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        security_groups:
+        - get_input: ocgmgr_shared_sec_grp_id
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - ocgmgr_oam_protected_ips
+            - 0
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        name:
+          str_replace:
+            template: VNF_NAME_ocgmgr_oam_port_0
+            params:
+              VNF_NAME:
+                get_input: vnf_name
+        network_role_tag: oam_protected
+        network:
+          get_input: oam_protected_net_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: ocgmgr_server_0
+          relationship: tosca.relationships.network.BindsTo
+    ocgmgr_server_0:
+      type: org.openecomp.resource.vfc.nodes.heat.ocgmgr
+      properties:
+        flavor:
+          get_input: ocgmgr_flavor_name
+        key_name: UNSUPPORTED_RESOURCE_ocgmgr_admin_key
+        availability_zone:
+          get_input: availability_zone_0
+        image:
+          get_input: ocgmgr_image_name
+        metadata:
+          vf_module_id:
+            get_input: vf_module_id
+          vnf_id:
+            get_input: vnf_id
+          vnf_name:
+            get_input: vnf_name
+        user_data_format: SOFTWARE_CONFIG
+        name:
+          get_input:
+          - ocgmgr_names
+          - 0
+    ocgmgr_server_1:
+      type: org.openecomp.resource.vfc.nodes.heat.ocgmgr
+      properties:
+        flavor:
+          get_input: ocgmgr_flavor_name
+        key_name: UNSUPPORTED_RESOURCE_ocgmgr_admin_key
+        availability_zone:
+          get_input: availability_zone_1
+        image:
+          get_input: ocgmgr_image_name
+        metadata:
+          vf_module_id:
+            get_input: vf_module_id
+          vnf_id:
+            get_input: vnf_id
+          vnf_name:
+            get_input: vnf_name
+        user_data_format: RAW
+        name:
+          get_input:
+          - ocgmgr_names
+          - 1
+    ocgapp_server_3:
+      type: org.openecomp.resource.vfc.nodes.heat.ocgapp
+      properties:
+        flavor:
+          get_input: ocgapp_flavor_name
+        key_name: UNSUPPORTED_RESOURCE_ocgapp_admin_key
+        availability_zone:
+          get_input: availability_zone_1
+        image:
+          get_input: ocgapp_image_name
+        metadata:
+          vf_module_id:
+            get_input: vf_module_id
+          vnf_id:
+            get_input: vnf_id
+          vnf_name:
+            get_input: vnf_name
+        personality:
+          /etc/hostname:
+            str_replace:
+              template: |
+                ${NAME}.${DOMAIN_NAME}
+              params:
+                ${NAME}:
+                  get_input: ocgapp_name_3
+                ${DOMAIN_NAME}:
+                  get_input: domain_name
+          /etc/resolv.conf:
+            str_replace:
+              template: |
+                nameserver ${NAME_SERVER}
+                domain ${DOMAIN_NAME}
+              params:
+                ${NAME_SERVER}:
+                  get_input: nameserver_ip
+                ${DOMAIN_NAME}:
+                  get_input: domain_name
+          /etc/sysconfig/network-scripts/route-eth2:
+            str_replace:
+              template: |
+                ${ETH2_IP_RANGE} via ${ETH2_IP} dev eth2
+              params:
+                ${ETH2_IP_RANGE}:
+                  get_input: eth2_ip_range
+                ${ETH2_IP}:
+                  get_input: eth2_ip
+          /etc/sysconfig/network-scripts/route-eth1:
+            str_replace:
+              template: |
+                ${ETH1_IP_RANGE}/${ETH1_NETMASK} via ${ETH1_IP} dev eth1
+              params:
+                ${ETH1_IP_RANGE}:
+                  get_input: eth1_ip_range
+                ${ETH1_IP}:
+                  get_input: eth1_ip
+                ${ETH1_NETMASK}:
+                  get_input: eth1_netmask
+        user_data_format: RAW
+        name:
+          get_input:
+          - ocgapp_name_3
+        scheduler_hints:
+          group:
+            get_input: ocg_shared_server_grp_id
+      requirements:
+      - local_storage:
+          capability: tosca.capabilities.Attachment
+          node: ocgapp_volume_3
+          relationship: ocgapp_volume_attachment_3
+    ocgapp_oam_direct_port_1:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        security_groups:
+        - get_input: ocgapp_shared_sec_grp_id
+        fixed_ips:
+        - ip_address:
+            get_input: ocgapp_oam_direct_ip_1
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        name:
+          str_replace:
+            template: VNF_NAME_ocgapp_oam_direct_port_1
+            params:
+              VNF_NAME:
+                get_input: vnf_name
+        network_role_tag: oam_direct
+        network:
+          get_input: oam_direct_net_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: ocgapp_server_1
+          relationship: tosca.relationships.network.BindsTo
+    ocgapp_oam_direct_port_2:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        security_groups:
+        - get_input: ocgapp_shared_sec_grp_id
+        fixed_ips:
+        - ip_address:
+            get_input: ocgapp_oam_direct_ip_2
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        name:
+          str_replace:
+            template: VNF_NAME_ocgapp_oam_direct_port_2
+            params:
+              VNF_NAME:
+                get_input: vnf_name
+        network_role_tag: oam_direct
+        network:
+          get_input: oam_direct_net_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: ocgapp_server_2
+          relationship: tosca.relationships.network.BindsTo
+    ocgapp_oam_direct_port_3:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        security_groups:
+        - get_input: ocgapp_shared_sec_grp_id
+        fixed_ips:
+        - ip_address:
+            get_input: ocgapp_oam_direct_ip_3
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        name:
+          str_replace:
+            template: VNF_NAME_ocgapp_oam_direct_port_3
+            params:
+              VNF_NAME:
+                get_input: vnf_name
+        network_role_tag: oam_direct
+        network:
+          get_input: oam_direct_net_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: ocgapp_server_3
+          relationship: tosca.relationships.network.BindsTo
+    OCGAPP_SECURITY_GROUP:
+      type: org.openecomp.resource.vfc.rules.nodes.heat.network.neutron.SecurityRules
+      properties:
+        name:
+          str_replace:
+            template: VF_NAME_sec_grp_OCGAPP
+            params:
+              VF_NAME:
+                get_input: vnf_name
+        description: ocg app security group
+        rules:
+        - protocol: tcp
+          ethertype: IPv4
+          port_range_max: 65535
+          remote_ip_prefix: 0.0.0.0/0
+          direction: egress
+          port_range_min: 1
+        - protocol: udp
+          ethertype: IPv4
+          port_range_max: 65535
+          remote_ip_prefix: 0.0.0.0/0
+          direction: egress
+          port_range_min: 1
+        - protocol: icmp
+          ethertype: IPv4
+          remote_ip_prefix: 0.0.0.0/0
+          direction: egress
+        - protocol: tcp
+          ethertype: IPv4
+          port_range_max: 65535
+          remote_ip_prefix: 0.0.0.0/0
+          direction: ingress
+          port_range_min: 1
+        - protocol: udp
+          ethertype: IPv4
+          port_range_max: 65535
+          remote_ip_prefix: 0.0.0.0/0
+          direction: ingress
+          port_range_min: 1
+        - protocol: icmp
+          ethertype: IPv4
+          remote_ip_prefix: 0.0.0.0/0
+          direction: ingress
+        - protocol: tcp
+          ethertype: IPv6
+          port_range_max: 65535
+          remote_ip_prefix: ::/0
+          direction: egress
+          port_range_min: 1
+        - protocol: udp
+          ethertype: IPv6
+          port_range_max: 65535
+          remote_ip_prefix: ::/0
+          direction: egress
+          port_range_min: 1
+        - protocol: icmp
+          ethertype: IPv6
+          remote_ip_prefix: ::/0
+          direction: egress
+        - protocol: tcp
+          ethertype: IPv6
+          port_range_max: 65535
+          remote_ip_prefix: ::/0
+          direction: ingress
+          port_range_min: 1
+        - protocol: udp
+          ethertype: IPv6
+          port_range_max: 65535
+          remote_ip_prefix: ::/0
+          direction: ingress
+          port_range_min: 1
+        - protocol: icmp
+          ethertype: IPv6
+          remote_ip_prefix: ::/0
+          direction: ingress
+      requirements:
+      - port:
+          capability: tosca.capabilities.Attachment
+          node: ocgapp_oam_protected_port_3
+          relationship: org.openecomp.relationships.AttachesTo
+      - port:
+          capability: tosca.capabilities.Attachment
+          node: ocgapp_oam_direct_port_3
+          relationship: org.openecomp.relationships.AttachesTo
+      - port:
+          capability: tosca.capabilities.Attachment
+          node: ocgapp_cor_direct_port_3
+          relationship: org.openecomp.relationships.AttachesTo
+      - port:
+          capability: tosca.capabilities.Attachment
+          node: ocgapp_oam_protected_port_0
+          relationship: org.openecomp.relationships.AttachesTo
+      - port:
+          capability: tosca.capabilities.Attachment
+          node: ocgapp_oam_direct_port_0
+          relationship: org.openecomp.relationships.AttachesTo
+      - port:
+          capability: tosca.capabilities.Attachment
+          node: ocgapp_cor_direct_port_0
+          relationship: org.openecomp.relationships.AttachesTo
+      - port:
+          capability: tosca.capabilities.Attachment
+          node: ocgapp_oam_protected_port_1
+          relationship: org.openecomp.relationships.AttachesTo
+      - port:
+          capability: tosca.capabilities.Attachment
+          node: ocgapp_oam_direct_port_1
+          relationship: org.openecomp.relationships.AttachesTo
+      - port:
+          capability: tosca.capabilities.Attachment
+          node: ocgapp_cor_direct_port_1
+          relationship: org.openecomp.relationships.AttachesTo
+      - port:
+          capability: tosca.capabilities.Attachment
+          node: ocgapp_oam_protected_port_2
+          relationship: org.openecomp.relationships.AttachesTo
+      - port:
+          capability: tosca.capabilities.Attachment
+          node: ocgapp_oam_direct_port_2
+          relationship: org.openecomp.relationships.AttachesTo
+      - port:
+          capability: tosca.capabilities.Attachment
+          node: ocgapp_cor_direct_port_2
+          relationship: org.openecomp.relationships.AttachesTo
+    ocgapp_volume_1:
+      type: org.openecomp.resource.vfc.nodes.heat.cinder.Volume
+      properties:
+        volume_type:
+          get_input: ocgapp_volume_type_1
+        size: '(get_input : ocgapp_volume_size_1) * 1024'
+        name:
+          str_replace:
+            template: VF_NAME_STACK_NAME_volume_1
+            params:
+              VF_NAME:
+                get_input: vnf_name
+              STACK_NAME:
+                get_input: OS::stack_name
+    ocgapp_volume_0:
+      type: org.openecomp.resource.vfc.nodes.heat.cinder.Volume
+      properties:
+        volume_type:
+          get_input: ocgapp_volume_type_0
+        size: '(get_input : ocgapp_volume_size_0) * 1024'
+        name:
+          str_replace:
+            template: VF_NAME_STACK_NAME_volume_1
+            params:
+              VF_NAME:
+                get_input: vnf_name
+              STACK_NAME:
+                get_input: OS::stack_name
+    ocgapp_volume_3:
+      type: org.openecomp.resource.vfc.nodes.heat.cinder.Volume
+      properties:
+        volume_type:
+          get_input: ocgapp_volume_type_3
+        size: '(get_input : ocgapp_volume_size_3) * 1024'
+        name:
+          str_replace:
+            template: VF_NAME_STACK_NAME_volume_3
+            params:
+              VF_NAME:
+                get_input: vnf_name
+              STACK_NAME:
+                get_input: OS::stack_name
+    ocgapp_oam_direct_port_0:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        security_groups:
+        - get_input: ocgapp_shared_sec_grp_id
+        fixed_ips:
+        - ip_address:
+            get_input: ocgapp_oam_direct_ip_0
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        name:
+          str_replace:
+            template: VNF_NAME_ocgapp_oam_direct_port_0
+            params:
+              VNF_NAME:
+                get_input: vnf_name
+        network_role_tag: oam_direct
+        network:
+          get_input: oam_direct_net_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: ocgapp_server_0
+          relationship: tosca.relationships.network.BindsTo
+    ocgapp_volume_2:
+      type: org.openecomp.resource.vfc.nodes.heat.cinder.Volume
+      properties:
+        volume_type:
+          get_input: ocgapp_volume_type_2
+        size: '(get_input : ocgapp_volume_size_2) * 1024'
+        name:
+          str_replace:
+            template: VF_NAME_STACK_NAME_volume_2
+            params:
+              VF_NAME:
+                get_input: vnf_name
+              STACK_NAME:
+                get_input: OS::stack_name
+    ocgapp_cor_direct_port_1:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        - ip_version: 6
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        security_groups:
+        - get_input: ocgapp_shared_sec_grp_id
+        fixed_ips:
+        - ip_address:
+            get_input: ocgapp_cor_direct_ip_1
+        - ip_address:
+            get_input: ocgapp_cor_direct_v6_ip_1
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        name:
+          str_replace:
+            template: VNF_NAME_ocgapp_cor_port_1
+            params:
+              VNF_NAME:
+                get_input: vnf_name
+        network_role_tag: cor_direct
+        network:
+          get_input: cor_direct_net_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: ocgapp_server_1
+          relationship: tosca.relationships.network.BindsTo
+    ocgapp_cor_direct_port_0:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        - ip_version: 6
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        security_groups:
+        - get_input: ocgapp_shared_sec_grp_id
+        fixed_ips:
+        - ip_address:
+            get_input: ocgapp_cor_direct_ip_0
+        - ip_address:
+            get_input: ocgapp_cor_direct_v6_ip_0
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        name:
+          str_replace:
+            template: VNF_NAME_ocgapp_cor_port_0
+            params:
+              VNF_NAME:
+                get_input: vnf_name
+        network_role_tag: cor_direct
+        network:
+          get_input: cor_direct_net_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: ocgapp_server_0
+          relationship: tosca.relationships.network.BindsTo
+    ocgapp_oam_protected_port_1:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        security_groups:
+        - get_input: ocgapp_shared_sec_grp_id
+        fixed_ips:
+        - ip_address:
+            get_input: ocgapp_oam_protected_ip_1
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        name:
+          str_replace:
+            template: VNF_NAME_ocgapp_oam_protected_port_1
+            params:
+              VNF_NAME:
+                get_input: vnf_name
+        network_role_tag: oam_protected
+        network:
+          get_input: oam_protected_net_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: ocgapp_server_1
+          relationship: tosca.relationships.network.BindsTo
+    ocgapp_oam_protected_port_0:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        security_groups:
+        - get_input: ocgapp_shared_sec_grp_id
+        fixed_ips:
+        - ip_address:
+            get_input: ocgapp_oam_protected_ip_0
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        name:
+          str_replace:
+            template: VNF_NAME_ocgapp_oam_protected_port_0
+            params:
+              VNF_NAME:
+                get_input: vnf_name
+        network_role_tag: oam_protected
+        network:
+          get_input: oam_protected_net_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: ocgapp_server_0
+          relationship: tosca.relationships.network.BindsTo
+    ocgapp_oam_protected_port_3:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        security_groups:
+        - get_input: ocgapp_shared_sec_grp_id
+        fixed_ips:
+        - ip_address:
+            get_input: ocgapp_oam_protected_ip_3
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        name:
+          str_replace:
+            template: VNF_NAME_ocgapp_oam_protected_port_3
+            params:
+              VNF_NAME:
+                get_input: vnf_name
+        network_role_tag: oam_protected
+        network:
+          get_input: oam_protected_net_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: ocgapp_server_3
+          relationship: tosca.relationships.network.BindsTo
+    ocgmgr_oam_protected_1_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        security_groups:
+        - get_input: ocgmgr_shared_sec_grp_id
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - ocgmgr_oam_protected_ips
+            - 1
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        name:
+          str_replace:
+            template: VNF_NAME_ocgmgr_oam_port_1
+            params:
+              VNF_NAME:
+                get_input: vnf_name
+        network_role_tag: oam_protected
+        network:
+          get_input: oam_protected_net_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: ocgmgr_server_1
+          relationship: tosca.relationships.network.BindsTo
+    ocgapp_oam_protected_port_2:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        security_groups:
+        - get_input: ocgapp_shared_sec_grp_id
+        fixed_ips:
+        - ip_address:
+            get_input: ocgapp_oam_protected_ip_2
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        name:
+          str_replace:
+            template: VNF_NAME_ocgapp_oam_protected_port_2
+            params:
+              VNF_NAME:
+                get_input: vnf_name
+        network_role_tag: oam_protected
+        network:
+          get_input: oam_protected_net_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: ocgapp_server_2
+          relationship: tosca.relationships.network.BindsTo
+  relationship_templates:
+    ocgapp_volume_attachment_3:
+      type: org.openecomp.relationships.VolumeAttachesTo
+      properties:
+        volume_id: ocgapp_volume_3
+        instance_uuid: ocgapp_server_3
+    ocgapp_volume_attachment_2:
+      type: org.openecomp.relationships.VolumeAttachesTo
+      properties:
+        volume_id: ocgapp_volume_2
+        instance_uuid: ocgapp_server_2
+    ocgapp_volume_attachment_1:
+      type: org.openecomp.relationships.VolumeAttachesTo
+      properties:
+        volume_id: ocgapp_volume_1
+        instance_uuid: ocgapp_server_1
+    ocgapp_volume_attachment_0:
+      type: org.openecomp.relationships.VolumeAttachesTo
+      properties:
+        volume_id: ocgapp_volume_0
+        instance_uuid: ocgapp_server_0
+  groups:
+    base_ocg_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/base_ocg.yaml
+        description: |
+          Base HOT template to create The Security Group for the the OCG VNF
+      members:
+      - OCGMGR_SECURITY_GROUP
+      - OCGAPP_SECURITY_GROUP
+    ocgapp_04_volume_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/ocgapp_04_volume.yaml
+      members:
+      - ocgapp_volume_3
+    ocgmgr_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/ocgmgr.yaml
+        description: OCG Managers template
+      members:
+      - ocgmgr_oam_protected_0_port
+      - ocgmgr_server_0
+      - ocgmgr_server_1
+      - ocgmgr_oam_protected_1_port
+    ocgapp_02_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/ocgapp_02.yaml
+        description: OCG Apps template
+      members:
+      - ocgapp_server_1
+      - ocgapp_cor_direct_port_1
+      - ocgapp_oam_direct_port_1
+      - ocgapp_oam_protected_port_1
+    ocgapp_03_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/ocgapp_03.yaml
+        description: OCG Apps template
+      members:
+      - ocgapp_server_2
+      - ocgapp_oam_direct_port_2
+      - ocgapp_cor_direct_port_2
+      - ocgapp_oam_protected_port_2
+    ocg_RSG_group:
+      type: tosca.groups.Root
+      members:
+      - ocgapp_server_3
+      - ocgapp_server_0
+      - ocgapp_server_1
+      - ocgapp_server_2
+    ocgapp_01_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/ocgapp_01.yaml
+        description: OCG Apps template
+      members:
+      - ocgapp_server_0
+      - ocgapp_cor_direct_port_0
+      - ocgapp_oam_protected_port_0
+      - ocgapp_oam_direct_port_0
+    ocgapp_04_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/ocgapp_04.yaml
+        description: OCG Apps template
+      members:
+      - ocgapp_cor_direct_port_3
+      - ocgapp_oam_direct_port_3
+      - ocgapp_oam_protected_port_3
+      - ocgapp_server_3
+    ocgapp_01_volume_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/ocgapp_01_volume.yaml
+      members:
+      - ocgapp_volume_0
+    ocgapp_02_volume_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/ocgapp_02_volume.yaml
+      members:
+      - ocgapp_volume_1
+    ocgapp_03_volume_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/ocgapp_03_volume.yaml
+      members:
+      - ocgapp_volume_2
+    ocgmgr_volume_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/ocgmgr_volume.yaml
+        description: OCG template for MGR volumes
+      members:
+      - ocgmgr_volume_resource_group
+  outputs:
+    ocgapp_volume_id_0:
+      description: the ocgapp volume id 0
+      value: ocgapp_volume_0
+    ocgapp_volume_id_1:
+      description: the ocgapp volume id 1
+      value: ocgapp_volume_1
+    ocgapp_volume_id_2:
+      description: the ocgapp volume id 2
+      value: ocgapp_volume_2
+    ocgapp_volume_id_3:
+      description: the ocgapp volume id 3
+      value: ocgapp_volume_3
+    ocgmgr_volume_ids:
+      description: ocgmgr volume ids
+      value:
+        get_attribute:
+        - ocgmgr_volume_resource_group
+        - ocgmgr_volume_id_0
+  policies:
+    ocg_RSG_policy:
+      type: org.openecomp.policies.placement.Antilocate
+      properties:
+        name:
+          str_replace:
+            template: VF_NAME_server_grp_OCG
+            params:
+              VF_NAME:
+                get_input: vnf_name
+        container_type: host
+      targets:
+      - ocg_RSG_group
