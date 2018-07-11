@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_ea8569cf",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/auditing/impl/AuditingLogFormatUtilTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 3873
+      },
+      "writtenOn": "2018-07-11T09:01:50Z",
+      "side": 1,
+      "message": "please consider extracting those assertions to separate testcases",
+      "range": {
+        "startLine": 24,
+        "startChar": 2,
+        "endLine": 24,
+        "endChar": 11
+      },
+      "revId": "b0aec4e63beb32f2f9adb27e0966d63b24cad30a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
