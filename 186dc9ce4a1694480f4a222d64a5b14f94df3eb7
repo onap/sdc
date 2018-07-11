@@ -33,6 +33,86 @@
       "revId": "186dc9ce4a1694480f4a222d64a5b14f94df3eb7",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_903978da",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/openecomp-sdc-common-rest/src/main/java/org/openecomp/sdcrests/errors/SdcRuntimeExceptionMapper.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-07-11T15:57:27Z",
+      "side": 1,
+      "message": "Is it possible to use the error codes only, without including Module.ZDB.name()?",
+      "revId": "186dc9ce4a1694480f4a222d64a5b14f94df3eb7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_f0223ca2",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/openecomp-sdc-common-rest/src/main/java/org/openecomp/sdcrests/errors/SdcRuntimeExceptionMapper.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-07-11T15:57:27Z",
+      "side": 1,
+      "message": "I think it should be named ZusammenExceptionMapper, unless there is another library that uses SdcRuntimeException.",
+      "revId": "186dc9ce4a1694480f4a222d64a5b14f94df3eb7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_d01f005a",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/openecomp-sdc-common-rest/src/main/java/org/openecomp/sdcrests/errors/SdcRuntimeExceptionMapper.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-07-11T15:57:27Z",
+      "side": 1,
+      "message": "Can this part be written once, as a common prefix for all Zusammen errors?",
+      "range": {
+        "startLine": 36,
+        "startChar": 12,
+        "endLine": 36,
+        "endChar": 35
+      },
+      "revId": "186dc9ce4a1694480f4a222d64a5b14f94df3eb7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_b034b4df",
+        "filename": "openecomp-be/lib/openecomp-common-lib/src/main/java/org/openecomp/sdc/common/errors/Messages.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-07-11T15:57:27Z",
+      "side": 1,
+      "message": "Unfortunately, this is too generic. There is no such thing from a user\u0027s perspective as \"item\", or \"version\". There is a \"VSP\", for example, or \"VSP Version\". Preferable even \"VSP \u0027Test\u0027\" and \"Version 1.0 of VSP \u0027Test\u0027\"",
+      "range": {
+        "startLine": 42,
+        "startChar": 0,
+        "endLine": 42,
+        "endChar": 18
+      },
+      "revId": "186dc9ce4a1694480f4a222d64a5b14f94df3eb7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
