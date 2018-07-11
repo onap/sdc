@@ -16,6 +16,23 @@
       "revId": "186dc9ce4a1694480f4a222d64a5b14f94df3eb7",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_0d79cffb",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/openecomp-sdc-common-rest/src/main/java/org/openecomp/sdcrests/errors/DefaultExceptionMapper.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-07-11T14:12:34Z",
+      "side": 1,
+      "message": "this comment sohlud be removed too",
+      "revId": "186dc9ce4a1694480f4a222d64a5b14f94df3eb7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
