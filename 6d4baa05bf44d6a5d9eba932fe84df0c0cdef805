@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_4d191721",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/openecomp-sdc-common-rest/src/main/java/org/openecomp/sdcrests/errors/DefaultExceptionMapper.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-07-11T12:54:49Z",
+      "side": 1,
+      "message": "Since the core task is to handle a new type of Exception (SdcRuntimeException). It is wrong to handle it with if else statements in toResponse class. The correct solution is to create a new class which implements ExceptionMapper\u003cSdcRuntimeException\u003e.\nPlease note that the new class should be registered in : WEB-INF/beans-services.xml under the  \u003cjaxrs:providers\u003e xml tag.",
+      "revId": "6d4baa05bf44d6a5d9eba932fe84df0c0cdef805",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_cd0e87e5",
+        "filename": "openecomp-be/lib/openecomp-core-lib/openecomp-nosqldb-lib/openecomp-nosqldb-api/src/main/java/org/openecomp/core/util/UniqueValueUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 94,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-07-11T12:54:49Z",
+      "side": 1,
+      "message": "Sonar remark. Please remove unused method parameter.",
+      "revId": "6d4baa05bf44d6a5d9eba932fe84df0c0cdef805",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
