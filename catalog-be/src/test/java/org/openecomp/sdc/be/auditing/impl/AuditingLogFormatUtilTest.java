@@ -1,14 +1,13 @@
 package org.openecomp.sdc.be.auditing.impl;
 
-import java.util.HashMap;
-import java.util.Map;
-
+import mockit.Deencapsulation;
 import org.junit.Assert;
 import org.junit.Test;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.common.datastructure.AuditingFieldsKeysEnum;
 
-import mockit.Deencapsulation;
+import java.util.HashMap;
+import java.util.Map;
 
 public class AuditingLogFormatUtilTest {
 
@@ -48,26 +47,6 @@ public class AuditingLogFormatUtilTest {
 		result = Deencapsulation.invoke(AuditingLogFormatUtil.class, "getModifier",
 				new Object[] { modifierName, modifierUid });
 		Assert.assertEquals("", result);
-	}
-
-	@Test
-	public void testGetUser() throws Exception {
-		String userData = "";
-		String result;
-
-		// default test
-		result = Deencapsulation.invoke(AuditingLogFormatUtil.class, "getUser", new Object[] { userData });
-	}
-
-	@Test
-	public void testLogAuditEvent() throws Exception {
-		Map<AuditingFieldsKeysEnum, Object> auditingFields = null;
-		String result;
-
-		// default test
-		HashMap<AuditingFieldsKeysEnum, Object> hashMap = new HashMap<AuditingFieldsKeysEnum, Object>();
-		result = Deencapsulation.invoke(AuditingLogFormatUtil.class, "logAuditEvent",
-				new Object[] { hashMap.getClass() });
 	}
 
 	@Test
