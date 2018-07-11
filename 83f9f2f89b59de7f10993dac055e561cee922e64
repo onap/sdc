@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_8a01453b",
+        "filename": "common-app-api/src/main/java/org/openecomp/sdc/common/util/ZipUtil.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 3873
+      },
+      "writtenOn": "2018-07-11T10:10:10Z",
+      "side": 1,
+      "message": "put private methods below public",
+      "range": {
+        "startLine": 60,
+        "startChar": 0,
+        "endLine": 65,
+        "endChar": 5
+      },
+      "revId": "83f9f2f89b59de7f10993dac055e561cee922e64",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
