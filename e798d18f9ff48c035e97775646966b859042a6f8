@@ -1,0 +1,142 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_1004887c",
+        "filename": "openecomp-be/lib/openecomp-heat-lib/src/main/java/org/openecomp/sdc/heat/datatypes/manifest/FileData.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 130,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-07-11T20:19:47Z",
+      "side": 1,
+      "message": "change to canBeAssociated",
+      "range": {
+        "startLine": 130,
+        "startChar": 30,
+        "endLine": 130,
+        "endChar": 47
+      },
+      "revId": "e798d18f9ff48c035e97775646966b859042a6f8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_f000fc67",
+        "filename": "openecomp-be/lib/openecomp-heat-lib/src/main/java/org/openecomp/sdc/heat/datatypes/manifest/FileData.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 132,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-07-11T20:19:47Z",
+      "side": 1,
+      "message": "why do you need to create a collection? it is a simple \u003d\u003d",
+      "range": {
+        "startLine": 132,
+        "startChar": 19,
+        "endLine": 132,
+        "endChar": 54
+      },
+      "revId": "e798d18f9ff48c035e97775646966b859042a6f8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_70ececbb",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/HeatToToscaUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 263,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-07-11T20:19:47Z",
+      "side": 1,
+      "message": "if you pass the whole map and not just the values to addAsso.... then you can do the remove referenced from filtered in the loop/stream",
+      "range": {
+        "startLine": 262,
+        "startChar": 8,
+        "endLine": 263,
+        "endChar": 50
+      },
+      "revId": "e798d18f9ff48c035e97775646966b859042a6f8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_90f7388c",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/HeatToToscaUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 266,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-07-11T20:19:47Z",
+      "side": 1,
+      "message": "you can pass only the values instead of the whole map",
+      "range": {
+        "startLine": 266,
+        "startChar": 55,
+        "endLine": 266,
+        "endChar": 90
+      },
+      "revId": "e798d18f9ff48c035e97775646966b859042a6f8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_b0f27499",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/HeatToToscaUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 271,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-07-11T20:19:47Z",
+      "side": 1,
+      "message": "don\u0027t change data of a parameter you get from outside the function.\nchange the signature to return a Set. create a Set inside the function, populate it and then return it. from the calling function, add the returned set to a parameter",
+      "range": {
+        "startLine": 266,
+        "startChar": 4,
+        "endLine": 271,
+        "endChar": 5
+      },
+      "revId": "e798d18f9ff48c035e97775646966b859042a6f8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_903e5828",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/HeatToToscaUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 321,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-07-11T20:19:47Z",
+      "side": 1,
+      "message": "this is always the same collection from TranslationService.getTypesToProcessByTranslator(). why do you need to pass it all the way?\nremove it from all the signatures of the function calls chain and use it here explicitly.",
+      "range": {
+        "startLine": 321,
+        "startChar": 12,
+        "endLine": 321,
+        "endChar": 41
+      },
+      "revId": "e798d18f9ff48c035e97775646966b859042a6f8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
