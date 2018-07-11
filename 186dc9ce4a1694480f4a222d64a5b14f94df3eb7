@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_8d25df0b",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/openecomp-sdc-common-rest/src/main/java/org/openecomp/sdcrests/errors/DefaultExceptionMapper.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-07-11T14:07:52Z",
+      "side": 1,
+      "message": "Remove comments.",
+      "revId": "186dc9ce4a1694480f4a222d64a5b14f94df3eb7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
