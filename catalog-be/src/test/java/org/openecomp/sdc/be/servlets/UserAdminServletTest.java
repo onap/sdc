@@ -20,17 +20,8 @@
 
 package org.openecomp.sdc.be.servlets;
 
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.when;
-
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import javax.ws.rs.core.Application;
-
+import com.google.gson.Gson;
+import fj.data.Either;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;
@@ -50,9 +41,16 @@ import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.context.WebApplicationContext;
 
-import com.google.gson.Gson;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import javax.ws.rs.core.Application;
 
-import fj.data.Either;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
 
 public class UserAdminServletTest extends JerseyTest {
 
@@ -95,30 +93,7 @@ public class UserAdminServletTest extends JerseyTest {
         when(request.getHeader("USER_ID")).thenReturn(ADMIN_ATT_UID);
     }
 
-    /*
-     * @Test public void deactivateUserSuccessfullyTest(){ String userToDeleteUserId = "admin1"; User adminUser = new User(); adminUser.setUserId(ADMIN_ATT_UID); Either<User, ActionStatus> eitherActiveUser = buildEitherUser(userToDeleteUserId, true);
-     * User userToDelete = eitherActiveUser.left().value(); doReturn(eitherActiveUser).when(userAdminManager).getUser( userToDeleteUserId);
-     *
-     * Either<User, ActionStatus> eitherInactiveUser = buildEitherUser(userToDeleteUserId, false); doReturn(eitherInactiveUser).when(userAdminManager).deActivateUser( adminUser, userToDelete.getUserId());
-     *
-     *
-     * Response response = target().path("/v1/user/"+userToDeleteUserId).request().delete(); assertTrue(response.getStatus() == HttpStatus.OK.value()); verify(userAdminManager, times(1)).deActivateUser(adminUser, userToDelete.getUserId()); }
-     *
-     *
-     * @Test public void forceDeleteUserSuccessfullyTest(){ String userToDeleteUserId = "admin1"; when(request.getHeader(User.FORCE_DELETE_HEADER_FLAG)).thenReturn(User. FORCE_DELETE_HEADER_FLAG);
-     *
-     * User adminUser = new User(); adminUser.setUserId(ADMIN_ATT_UID);
-     *
-     * Either<User, ActionStatus> eitherActiveUser = buildEitherUser(userToDeleteUserId, true); User userToDelete = eitherActiveUser.left().value(); doReturn(eitherActiveUser).when(userAdminManager).getUser( userToDeleteUserId);
-     *
-     * Either<User, ActionStatus> eitherUser = buildEitherUser(userToDeleteUserId, true); doReturn(eitherUser).when(userAdminManager).deleteUser(userToDelete. getUserId());
-     *
-     *
-     * Response response = target().path("/v1/user/"+userToDeleteUserId).request().delete(); assertTrue(response.getStatus() == HttpStatus.OK.value()); verify(userAdminManager, times(0)).deActivateUser(adminUser, userToDelete.getUserId());
-     * verify(userAdminManager, times(1)).deleteUser(userToDelete.getUserId()); }
-     */
-
-    @Override
+   @Override
     protected Application configure() {
 
         ResourceConfig resourceConfig = new ResourceConfig(UserAdminServlet.class);

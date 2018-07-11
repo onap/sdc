@@ -12,6 +12,6 @@ public @interface ResponseView {
      * The mixins that will be used when converting the resource's response into a specific view of that response.
      * A number of mixins can be declared, each of which corresponds to a different object.
      */
-    public Class<? extends Mixin>[] mixin();
+    Class<? extends Mixin>[] mixin();
 }
 

@@ -20,22 +20,7 @@
 
 package org.openecomp.sdc.be.servlets;
 
-import static org.mockito.ArgumentMatchers.anyObject;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.when;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.core.Application;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
+import com.google.gson.Gson;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
@@ -66,7 +51,20 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.web.context.WebApplicationContext;
 
-import com.google.gson.Gson;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.Application;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.mockito.ArgumentMatchers.anyObject;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.when;
 
 public class ResourceUploadServletTest extends JerseyTest {
     private static final Logger log = LoggerFactory.getLogger(ResourceUploadServletTest.class);
@@ -80,11 +78,7 @@ public class ResourceUploadServletTest extends JerseyTest {
 
     Gson gson = new Gson();
 
-    public void zipDirectory() {
-
-    }
-
-    @Before
+   @Before
     public void setup() {
         ExternalConfiguration.setAppName("catalog-be");
 
