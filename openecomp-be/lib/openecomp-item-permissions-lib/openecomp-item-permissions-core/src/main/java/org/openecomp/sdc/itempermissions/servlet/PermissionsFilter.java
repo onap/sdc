@@ -16,9 +16,7 @@
 
 package org.openecomp.sdc.itempermissions.servlet;
 
-import org.openecomp.sdc.itempermissions.PermissionsServices;
-import org.openecomp.sdc.itempermissions.PermissionsServicesFactory;
-
+import java.io.IOException;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -28,70 +26,92 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.HttpMethod;
-import java.io.IOException;
+import javax.ws.rs.core.Response;
+
+import org.codehaus.jackson.map.ObjectMapper;
+import org.openecomp.sdc.common.errors.ErrorCode;
+import org.openecomp.sdc.common.errors.ErrorCodeAndMessage;
+import org.openecomp.sdc.common.errors.Messages;
+import org.openecomp.sdc.itempermissions.PermissionsServices;
+import org.openecomp.sdc.itempermissions.PermissionsServicesFactory;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 
 /**
  * Created by ayalaben on 6/27/2017.
  */
 public class PermissionsFilter implements Filter {
 
-  private final PermissionsServices permissionsServices;
-  private static final String IRRELEVANT_REQUEST = "Irrelevant_Request";
-  private static final String EDIT_ITEM = "Edit_Item";
+    private static final Logger LOGGER = LoggerFactory.getLogger(PermissionsFilter.class);
+    private final PermissionsServices permissionsServices;
+    private static final String IRRELEVANT_REQUEST = "Irrelevant_Request";
+    private static final String EDIT_ITEM = "Edit_Item";
 
-  public PermissionsFilter() {
-    this.permissionsServices = PermissionsServicesFactory.getInstance().createInterface();
-  }
-
-  @Override
-  public void init(FilterConfig filterConfig) {
-    // required by servlet API
-  }
-
-  @Override
-  public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse,
-                       FilterChain filterChain) throws IOException, ServletException {
-
-    if ((servletRequest instanceof HttpServletRequest) &&
-      isIrrelevant((HttpServletRequest) servletRequest, servletResponse)) {
-        return;
+    public PermissionsFilter() {
+        this.permissionsServices = PermissionsServicesFactory.getInstance().createInterface();
     }
 
-    filterChain.doFilter(servletRequest, servletResponse);
-  }
+    @Override
+    public void init(FilterConfig filterConfig) {
+        // required by servlet API
+    }
 
-  private boolean isIrrelevant(HttpServletRequest servletRequest, ServletResponse servletResponse) throws IOException {
+    @Override
+    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain)
+            throws IOException, ServletException {
 
-
-    String method = servletRequest.getMethod();
-    if (method.equals(HttpMethod.POST) || method.equals(HttpMethod.PUT) || method.equals(HttpMethod.DELETE)) {
-
-      String userId = servletRequest.getHeader("USER_ID");
-      String itemId = parseItemIdFromPath(servletRequest.getPathInfo());
-
-      if (!itemId.equals(IRRELEVANT_REQUEST) && !permissionsServices.isAllowed(itemId,userId,EDIT_ITEM)) {
-          ((HttpServletResponse) servletResponse).setStatus(HttpServletResponse.SC_FORBIDDEN);
-          servletResponse.getWriter().print("Permissions Error. The user does not have " +
-              "permission to perform" +
-              " this action.");
-          return true;
+        if ((servletRequest instanceof HttpServletRequest)
+                    && isRelevant((HttpServletRequest) servletRequest, servletResponse)) {
+            filterChain.doFilter(servletRequest, servletResponse);
         }
     }
 
-    return false;
-  }
+    private boolean isRelevant(HttpServletRequest servletRequest, ServletResponse servletResponse) throws IOException {
+        String method = servletRequest.getMethod();
+        if (method.equals(HttpMethod.POST) || method.equals(HttpMethod.PUT) || method.equals(HttpMethod.DELETE)) {
 
-  private String parseItemIdFromPath(String pathInfo) {
-    String[] tokens = pathInfo.split("/");
-    if (tokens.length < 4) {
-      return IRRELEVANT_REQUEST;
-    } else {
-      return tokens[3];
+            String userId = servletRequest.getHeader("USER_ID");
+            String itemId = parseItemIdFromPath(servletRequest.getPathInfo());
+
+            if (!itemId.equals(IRRELEVANT_REQUEST) && !permissionsServices.isAllowed(itemId, userId, EDIT_ITEM)) {
+                ((HttpServletResponse) servletResponse).setStatus(HttpServletResponse.SC_FORBIDDEN);
+                servletResponse.getWriter().print(buildResponse(Response.Status.FORBIDDEN,
+                        Messages.PERMISSIONS_ERROR.getErrorMessage(),
+                        Messages.PERMISSIONS_ERROR.name()));
+                return false;
+            }
+        }
+
+        return true;
     }
-  }
 
-  @Override
-  public void destroy() {
-    // required by serlvet API
-  }
+    private String parseItemIdFromPath(String pathInfo) {
+        String[] tokens = pathInfo.split("/");
+        if (tokens.length < 4) {
+            return IRRELEVANT_REQUEST;
+        } else {
+            return tokens[3];
+        }
+    }
+
+    @Override
+    public void destroy() {
+        // required by serlvet API
+    }
+
+    private String buildResponse(Response.Status status, String message, String id) {
+        ErrorCode errorCode = new ErrorCode.ErrorCodeBuilder()
+                                      .withId(id)
+                                      .withMessage(message).build();
+        return objectToJsonString(new ErrorCodeAndMessage(status, errorCode));
+    }
+
+    private String objectToJsonString(Object obj) {
+        try {
+            return new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(obj);
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+            return "An internal error has occurred. Please contact support.";
+        }
+    }
 }
