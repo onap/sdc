@@ -42,5 +42,5 @@ public abstract class Enricher {
         this.model = model;
     }
 
-    public abstract Map<String, List<ErrorMessage>> enrich();
+    public abstract Map<String, List<ErrorMessage>> enrich() throws Exception;
 }
