@@ -25,8 +25,6 @@ import org.openecomp.core.utilities.json.JsonUtil;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
 import org.openecomp.sdc.enrichment.inter.Enricher;
 import org.openecomp.sdc.enrichment.inter.ExternalArtifactEnricherInterface;
-import org.openecomp.sdc.logging.api.Logger;
-import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
 
 import java.lang.reflect.Constructor;
@@ -40,7 +38,6 @@ public class ExternalArtifactEnricher extends Enricher {
       + ".json";
   private static Collection<String> implementingClasses =
       getExternalArtifactEnrichedImplClassesList();
-  private static Logger logger = LoggerFactory.getLogger(ExternalArtifactEnricher.class);
 
   private static Collection<String> getExternalArtifactEnrichedImplClassesList() {
     @SuppressWarnings("unchecked")
@@ -51,18 +48,13 @@ public class ExternalArtifactEnricher extends Enricher {
   }
 
   @Override
-  public Map<String, List<ErrorMessage>> enrich() {
+  public Map<String, List<ErrorMessage>> enrich() throws Exception{
     Map<String, List<ErrorMessage>> errors = new HashMap<>();
 
-        try {
             for (String implementingClassName : implementingClasses) {
                 ExternalArtifactEnricherInterface externalArtifactEnricherInstance = getExternalArtifactEnricherInstance(implementingClassName);
-                externalArtifactEnricherInstance.enrich(this.data, (ToscaServiceModel) this.model);
+                errors.putAll(externalArtifactEnricherInstance.enrich(this.data, (ToscaServiceModel) this.model));
             }
-        } catch (Exception e) {
-          logger.debug("",e);
-          logger.error(e.getMessage());
-        }
     return errors;
   }
 
