@@ -22,6 +22,7 @@ package org.openecomp.sdc.enrichment.impl;
 
 import org.openecomp.core.enrichment.api.EnrichmentManager;
 import org.openecomp.core.enrichment.types.EntityInfo;
+import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
 import org.openecomp.sdc.enrichment.EnrichmentInfo;
 import org.openecomp.sdc.enrichment.factory.EnricherHandlerFactory;
@@ -31,6 +32,7 @@ import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
 import org.openecomp.sdc.versioning.dao.types.Version;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,12 +50,18 @@ public class EnrichmentManagerImpl implements EnrichmentManager<ToscaServiceMode
     Map<String, List<ErrorMessage>> enrichErrors = new HashMap<>();
     List<Enricher> enricherList =
         EnricherHandlerFactory.getInstance().createInterface().getEnrichers();
-    for (Enricher enricher : enricherList) {
-      enricher.setData(data);
-      enricher.setModel(model);
-      enrichErrors.putAll(enricher.enrich());
-    }
+    try {
+      for (Enricher enricher : enricherList) {
+        enricher.setData(data);
+        enricher.setModel(model);
+        enrichErrors.putAll(enricher.enrich());
+      }
+    }catch (Exception exception) {
+      enrichErrors.put("Enrich", Arrays.asList(new ErrorMessage(ErrorLevel.ERROR, exception
+              .getMessage())));
+      logger.error("Exception occurred during enrichment", exception);
 
+    }
     return enrichErrors;
   }
 
