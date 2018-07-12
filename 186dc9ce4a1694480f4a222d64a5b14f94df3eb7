@@ -113,6 +113,30 @@
       "revId": "186dc9ce4a1694480f4a222d64a5b14f94df3eb7",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a9dcd25_5b74e39b",
+        "filename": "openecomp-be/lib/openecomp-common-lib/src/main/java/org/openecomp/sdc/common/errors/Messages.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 1879
+      },
+      "writtenOn": "2018-07-12T06:06:36Z",
+      "side": 1,
+      "message": "When not exists error are thrown from Zusammen we are not having any identifier to identify the entity type, that\u0027s why I kept it generic.\n\nAnd I think this is just API response, UI can represent it with more detail and UI can interpret the error type from response code and error code.\n\nTo identify the entity it would not be easy task and will require a major changes. \n\nPlease suggest any way around as I tried but did not get any solution with minimum change and get the entity type.",
+      "parentUuid": "5a93c517_b034b4df",
+      "range": {
+        "startLine": 42,
+        "startChar": 0,
+        "endLine": 42,
+        "endChar": 18
+      },
+      "revId": "186dc9ce4a1694480f4a222d64a5b14f94df3eb7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
