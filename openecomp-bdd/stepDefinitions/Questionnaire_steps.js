@@ -18,6 +18,11 @@ const assert = require('assert');
 const util = require('./Utils.js');
 const _ = require('lodash');
 
+function getPath(path, context) {
+    let compiled = _.template(path);
+    return compiled(context);
+}
+
 /**
  * @module Questionnaire
  * @description Gets the questionnaire for the current item and saves it on the context
@@ -48,6 +53,20 @@ Then('I want to get the questionnaire for this component', function () {
 	});
 });
 
+/**
+ * @module Questionnaire
+ * @description Gets the questionnaire from path and saves it on the context
+ * @exampleFile TestMD5.feature
+ * @step I want to get the questionnaire for this path {string}
+ **/
+Then('I want to get the questionnaire for this path {string}', function (string) {
+    let path = getPath(string, this.context);
+    return util.request(this.context, 'GET', path).then(result => {
+        this.context.qdata = JSON.parse(result.data.data);
+        this.context.qschema = result.data.schema;
+        this.context.qurl = path;
+    });
+});
 
 /**
  * @module Questionnaire
