@@ -13,7 +13,8 @@
         "minLength": 1
     },
     "md5": {
-        "type": "string"
+        "type": "string",
+        "maxLength": 32
     }
 },
     "additionalProperties": false,

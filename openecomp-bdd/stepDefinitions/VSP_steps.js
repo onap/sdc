@@ -48,11 +48,14 @@ When('I want to create a VSP with onboarding type {string}', function(string)  {
  *     @exampleFile Example_VSP.feature
  * @step I want to create a VSP with onboarding type {string}
  **/
-When('I want to create a VSP', function()  {
-	let inputData = util.getJSONFromFile('resources/json/createVSP.json');
+When('I want to create a VSP with onboarding type Manual', function()  {
+	let inputData = util.getJSONFromFile('resources/json/createManualVSP.json');
 	inputData.vendorName = this.context.vlm.name;
 	inputData.vendorId = this.context.vlm.id;
 	inputData.name = util.random();
+    inputData.licensingVersion = this.context.licensingVersion;
+    inputData.licensingData.licenseAgreement = this.context.licenseAgreement;
+	inputData.licensingData.featureGroups[0] = this.context.featureGroupId;
 	let path = '/vendor-software-products';
 	return util.request(this.context, 'POST', path, inputData).then(result => {
 		this.context.item = {id : result.data.itemId, versionId: result.data.version.id};

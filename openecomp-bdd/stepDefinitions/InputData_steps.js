@@ -64,6 +64,17 @@ Then('I want to update the input property {string} with value {string}', functio
 
 /**
  * @module InputData
+ * @description sets the input property on the input data to the value from property
+ * @exampleFile TestMD5.feature
+ * @step I want to update the input property {string} from property {string}
+ **/
+Then('I want to update the input property {string} from property {string}', function(string, string2)  {
+	let val = _.get(this.context, string2);
+    _.set(this.context.inputData, string, val);
+});
+
+/**
+ * @module InputData
  * @description removes a property from the input data object
  * @exampleFile Example_Rest_Calls.feature
  * @step I want to remove {string} from the input data

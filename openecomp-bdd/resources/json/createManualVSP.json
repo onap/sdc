@@ -1,0 +1,17 @@
+{
+  "vendorId":"REPLACE",
+  "name": "RANDOM",
+  "category":"resourceNewCategory.generic",
+  "subCategory":"resourceNewCategory.generic.abstract",
+  "onboardingMethod":"Manual",
+  "description":"for testing",
+  "vendorName":"REPLACE",
+  "icon":"icon",
+  "licensingVersion": "REPLACE",
+  "licensingData":{
+    "licenseAgreement": "REPLACE",
+    "featureGroups": [
+      "REPLACE"
+    ]
+  }
+}
