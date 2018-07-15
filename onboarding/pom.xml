@@ -122,6 +122,8 @@
         <maven.pmd.plugin.version>3.9.0</maven.pmd.plugin.version>
         <pmd.java.version>6.3.0</pmd.java.version>
         <pmd.core.version>6.3.0</pmd.core.version>
+        <commons-io.version>2.6</commons-io.version>
+        <swagger-models.version>2.0.0-rc2</swagger-models.version>
     </properties>
 
     <dependencyManagement>
