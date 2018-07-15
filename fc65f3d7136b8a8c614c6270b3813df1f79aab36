@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a9dcd25_4fec1dc8",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/HeatToToscaUtil.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 296,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-07-15T05:41:52Z",
+      "side": 1,
+      "message": "you always return internalResourceType",
+      "range": {
+        "startLine": 295,
+        "startChar": 16,
+        "endLine": 296,
+        "endChar": 46
+      },
+      "revId": "fc65f3d7136b8a8c614c6270b3813df1f79aab36",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a9dcd25_2fe751e6",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/HeatToToscaUtil.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 307,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-07-15T05:41:52Z",
+      "side": 1,
+      "message": "this is the same object you get. why do you return it???",
+      "range": {
+        "startLine": 307,
+        "startChar": 15,
+        "endLine": 307,
+        "endChar": 29
+      },
+      "revId": "fc65f3d7136b8a8c614c6270b3813df1f79aab36",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a9dcd25_8fe225d4",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/HeatToToscaUtil.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 318,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-07-15T05:41:52Z",
+      "side": 1,
+      "message": "why didn\u0027t you change according to my previous comment?",
+      "range": {
+        "startLine": 318,
+        "startChar": 31,
+        "endLine": 318,
+        "endChar": 41
+      },
+      "revId": "fc65f3d7136b8a8c614c6270b3813df1f79aab36",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
