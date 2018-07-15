@@ -75,7 +75,7 @@
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
-            <version>RELEASE</version>
+            <version>${commons.io.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
