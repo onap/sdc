@@ -201,12 +201,12 @@
         <dependency>
             <groupId>org.openecomp.sdc</groupId>
             <artifactId>openecomp-tosca-converter-api</artifactId>
-            <version>1.3.0-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.openecomp.sdc</groupId>
             <artifactId>openecomp-tosca-converter-core</artifactId>
-            <version>1.3.0-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
     </dependencies>
 

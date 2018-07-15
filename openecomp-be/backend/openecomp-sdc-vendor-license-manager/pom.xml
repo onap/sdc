@@ -11,8 +11,6 @@
         <version>1.3.0-SNAPSHOT</version>
     </parent>
 
-
-
     <dependencies>
         <dependency>
             <groupId>org.openecomp.sdc</groupId>
@@ -55,7 +53,7 @@
         <dependency>
             <groupId>org.openecomp.sdc</groupId>
             <artifactId>openecomp-sdc-vendor-software-product-manager</artifactId>
-            <version>1.3.0-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.dataformat</groupId>

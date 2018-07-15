@@ -7,22 +7,22 @@
         <dependency>
             <groupId>org.openecomp.sdc</groupId>
             <artifactId>openecomp-tosca-converter-api</artifactId>
-            <version>1.3.0-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.openecomp.sdc.core</groupId>
             <artifactId>openecomp-tosca-lib</artifactId>
-            <version>1.3.0-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.openecomp.sdc.core</groupId>
             <artifactId>openecomp-facade-core</artifactId>
-            <version>1.3.0-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.openecomp.sdc</groupId>
             <artifactId>openecomp-sdc-translator-core</artifactId>
-            <version>1.3.0-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -38,9 +38,6 @@
         <version>1.3.0-SNAPSHOT</version>
     </parent>
 
-    <groupId>org.openecomp.sdc</groupId>
     <artifactId>openecomp-tosca-converter-core</artifactId>
-    <version>1.3.0-SNAPSHOT</version>
-
 
 </project>
