@@ -137,6 +137,30 @@
       "revId": "e798d18f9ff48c035e97775646966b859042a6f8",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a9dcd25_3ee22504",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/HeatToToscaUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 321,
+      "author": {
+        "id": 2727
+      },
+      "writtenOn": "2018-07-15T07:25:16Z",
+      "side": 1,
+      "message": "This is Utils class and I think that it shouldn\u0027t know logic of TranslateService and this is why this parameter sent to Utils class.\nIn this API I removing from Original Collection the types which are not associated.\nI want do it dynamic. May be not good remove from input parameter. I will create new collection instead of remove.",
+      "parentUuid": "5a93c517_903e5828",
+      "range": {
+        "startLine": 321,
+        "startChar": 12,
+        "endLine": 321,
+        "endChar": 41
+      },
+      "revId": "e798d18f9ff48c035e97775646966b859042a6f8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
