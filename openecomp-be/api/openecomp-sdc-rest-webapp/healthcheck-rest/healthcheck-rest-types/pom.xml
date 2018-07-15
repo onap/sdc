@@ -11,7 +11,5 @@
     </parent>
 
     <artifactId>healthcheck-rest-types</artifactId>
-    <version>1.3.0-SNAPSHOT</version>
 
-    
 </project>
