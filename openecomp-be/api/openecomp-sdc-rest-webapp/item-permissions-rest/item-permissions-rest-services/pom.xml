@@ -36,26 +36,13 @@
         <dependency>
             <groupId>javax.inject</groupId>
             <artifactId>javax.inject</artifactId>
-            <version>1</version>
+            <version>${javax.inject.version}</version>
         </dependency>
-
-
-        <!--<dependency>-->
-            <!--<groupId>javax.ws.rs</groupId>-->
-            <!--<artifactId>javax.ws.rs-api</artifactId>-->
-            <!--<version>${ws.rs.version}</version>-->
-        <!--</dependency>-->
-
-        <!--<dependency>-->
-            <!--<groupId>org.apache.cxf</groupId>-->
-            <!--<artifactId>cxf-rt-frontend-jaxrs</artifactId>-->
-            <!--<version>${cxf.version}</version>-->
-        <!--</dependency>-->
 
         <dependency>
             <groupId>io.swagger</groupId>
             <artifactId>swagger-models</artifactId>
-            <version>RELEASE</version>
+            <version>${swagger.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
