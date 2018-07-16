@@ -1422,7 +1422,6 @@ tosca.datatypes.nfv.L3AddressData:
         type: string
       required: false
 tosca.datatypes.nfv.AddressData:
-  derived_from: tosca.datatypes.Root
   properties: 
     address_type: 
       constraints: 
@@ -1453,7 +1452,6 @@ tosca.datatypes.nfv.VlFlavour:
     flavourId:
       type: string
 tosca.datatypes.nfv.ext.AddressPairs:
-  derived_from: tosca.datatypes.Root
   properties: 
     ip: 
       type: string
@@ -1462,7 +1460,6 @@ tosca.datatypes.nfv.ext.AddressPairs:
       type: string
       required: false
 tosca.datatypes.nfv.ext.FloatingIP:
-  derived_from: tosca.datatypes.Root
   properties: 
     external_network: 
       type: string
@@ -1471,7 +1468,6 @@ tosca.datatypes.nfv.ext.FloatingIP:
       type: string
       required: false
 tosca.datatypes.nfv.ext.LocationInfo:
-  derived_from: tosca.datatypes.Root
   properties: 
     availability_zone: 
       type: string
@@ -1483,7 +1479,6 @@ tosca.datatypes.nfv.ext.LocationInfo:
       type: string
       required: false
 tosca.datatypes.nfv.ext.HostRouteInfo:
-  derived_from: tosca.datatypes.Root
   properties: 
     destination: 
       type: string
@@ -1492,7 +1487,6 @@ tosca.datatypes.nfv.ext.HostRouteInfo:
       type: string
       required: false
 tosca.datatypes.nfv.ext.InjectData:
-  derived_from: tosca.datatypes.Root
   properties: 
     file_name: 
       type: string
@@ -1501,7 +1495,6 @@ tosca.datatypes.nfv.ext.InjectData:
       type: string
       required: false
 tosca.datatypes.nfv.ext.zte.WatchDog:
-  derived_from: tosca.datatypes.Root
   properties: 
     enable_delay: 
       type: integer
@@ -1510,7 +1503,6 @@ tosca.datatypes.nfv.ext.zte.WatchDog:
       type: string
       required: false
 tosca.datatypes.nfv.ext.LocalAffinityOrAntiAffinityRule:
-  derived_from: tosca.datatypes.Root
   properties: 
     scope: 
       type: string
