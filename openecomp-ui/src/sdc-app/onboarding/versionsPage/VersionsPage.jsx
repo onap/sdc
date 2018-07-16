@@ -32,6 +32,7 @@ const ArchiveRestoreButton = ({ depricateAction, title, isArchived }) => (
             </Button>
         ) : (
             <SVGIcon
+                data-test-id="deprecate-action-btn"
                 name="archiveBox"
                 title={i18n('Archive')}
                 color="secondary"
