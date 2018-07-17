@@ -8,7 +8,7 @@
   @import "modules";
 
   &.dox-ui-punch-out {
-    background-color: $content-background-color;    
+    background-color: $content-background-color;
     &.dox-ui-punch-out-full-page {
       position: absolute;
       top: 0;
@@ -17,7 +17,7 @@
       right: 0;
       overflow-y: auto;
     }
-  }  
+  }
 }
 
 /* Out of namespace context for datepicker */
@@ -217,5 +217,18 @@ div[data-reactroot].tooltip {
   &.position-top-right {
     right: 30px;
     top: 50px;
+  }
+}
+
+
+.onboarding-loader {
+  .onboarding-loader-backdrop {
+    @import "common/variables";
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    position: absolute;
+    background-color: $transparent-black;
   }
 }
