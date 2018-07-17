@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a9dcd25_276535e1",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/cache/ComponentCache.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 509,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-07-17T13:05:05Z",
+      "side": 1,
+      "message": "Hi, The logger error function should receive the exception and not the message. This will enable the logger to print the full stack trace to the error file.\n   void error(String var1, Throwable var2);\n\nThe code that was written will not print the error message at all.\n\nlogger.error(\"Unzipping component failed.\", e);",
+      "revId": "14ed775c21afff9178fedfa26b778bd1bb745e8a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
