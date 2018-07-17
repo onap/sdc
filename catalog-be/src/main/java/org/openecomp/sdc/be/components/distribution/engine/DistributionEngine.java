@@ -20,6 +20,7 @@
 
 package org.openecomp.sdc.be.components.distribution.engine;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -73,26 +74,6 @@ public class DistributionEngine implements IDistributionEngine {
     private Map<String, DistributionEngineInitTask> envNamePerInitTask = new HashMap<>();
     private Map<String, DistributionEnginePollingTask> envNamePerPollingTask = new HashMap<>();
     private Map<String, AtomicBoolean> envNamePerStatus = new HashMap<>();
-
-    /**
-     * The main method for testing only
-     * @param args
-     */
-    public static void main(String[] args) {
-
-        List<String> servers = new ArrayList<>();
-        String server = "uebsb91kcdc.it.att.com:3904";
-        servers.add(server);
-        servers.add(server);
-        servers.add(server);
-
-        YamlToObjectConverter converter = new YamlToObjectConverter();
-        DistributionEngineConfiguration distributionEngineConfiguration = converter.convert("src/test/resources/config/catalog-be/distribEngine1/distribution-engine-configuration.yaml", DistributionEngineConfiguration.class);
-
-        DistributionEngineInitTask distributionEngineInitTask = new DistributionEngineInitTask(2l, distributionEngineConfiguration, "PROD", new AtomicBoolean(false), null, null, null);
-        distributionEngineInitTask.startTask();
-
-    }
 
     @Override
     public boolean isActive() {
