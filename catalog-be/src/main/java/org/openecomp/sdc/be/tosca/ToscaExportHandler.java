@@ -577,10 +577,10 @@ public class ToscaExportHandler {
             inputDef.forEach(i -> {
                 ToscaProperty property = propertyConvertor.convertProperty(dataTypes, i, false);
                 inputs.put(i.getName(), property);
+                addInterfaceDefinitionElement(component, toscaNodeType);
             });
             if (!inputs.isEmpty()) {
                 toscaNodeType.setProperties(inputs);
-                addInterfaceDefinitionElement(component, toscaNodeType);
             }
         }
 

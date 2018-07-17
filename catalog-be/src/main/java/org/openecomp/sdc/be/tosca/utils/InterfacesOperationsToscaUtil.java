@@ -16,31 +16,30 @@
 
 package org.openecomp.sdc.be.tosca.utils;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-
 import org.apache.commons.collections.MapUtils;
 import org.openecomp.sdc.be.datatypes.elements.OperationDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationInputDefinition;
-import org.openecomp.sdc.be.datatypes.elements.OperationOutputDefinition;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.Product;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
-import org.openecomp.sdc.be.tosca.model.ToscaAttribute;
 import org.openecomp.sdc.be.tosca.model.ToscaInterfaceDefinition;
 import org.openecomp.sdc.be.tosca.model.ToscaInterfaceNodeType;
 import org.openecomp.sdc.be.tosca.model.ToscaLifecycleOperationDefinition;
 import org.openecomp.sdc.be.tosca.model.ToscaNodeType;
 import org.openecomp.sdc.be.tosca.model.ToscaProperty;
 
+/**
+ * @author KATYR
+ * @since March 20, 2018
+ */
 
 public class InterfacesOperationsToscaUtil {
 
@@ -51,10 +50,8 @@ public class InterfacesOperationsToscaUtil {
     private static final String DEFAULT_HAS_UNDERSCORE = "_default";
     private static final String DOT = ".";
     private static final String DEFAULT_INPUT_TYPE = "string";
-    private static final String DEFAULT_OUTPUT_TYPE = "string";
     private static final String SELF = "SELF";
     private static final String GET_PROPERTY = "get_property";
-    private static final String GET_OPERATION_OUTPUT = "get_operation_output";
     private static final String DEFAULTP = "defaultp";
 
     private InterfacesOperationsToscaUtil() {
@@ -123,7 +120,7 @@ public class InterfacesOperationsToscaUtil {
             toscaInterfaceDefinition.setType(toscaResourceName);
             final Map<String, OperationDataDefinition> operations = interfaceDefinition.getOperations();
             Map<String, Object> toscaOperations = new HashMap<>();
-            String interfaceName = getLastPartOfName(toscaResourceName);
+
             String operationArtifactPath;
             for (Map.Entry<String, OperationDataDefinition> operationEntry : operations.entrySet()) {
                 ToscaLifecycleOperationDefinition toscaOperation = new ToscaLifecycleOperationDefinition();
@@ -135,8 +132,8 @@ public class InterfacesOperationsToscaUtil {
                     toscaOperation.setImplementation(operationArtifactPath);
                 }
                 toscaOperation.setDescription(operationEntry.getValue().getDescription());
-                fillToscaOperationInputs(operationEntry.getValue(), toscaOperation, nodeType);
-                fillToscaOperationOutputs(operationEntry.getValue(), toscaOperation, interfaceName, nodeType);
+                fillToscaOperationInputs(operationEntry.getValue(), toscaOperation);
+
                 toscaOperations.put(operationEntry.getValue().getName(), toscaOperation);
             }
 
@@ -182,8 +179,7 @@ public class InterfacesOperationsToscaUtil {
     }
 
     private static void fillToscaOperationInputs(OperationDataDefinition operation,
-                                                 ToscaLifecycleOperationDefinition toscaOperation,
-                                                 ToscaNodeType nodeType) {
+            ToscaLifecycleOperationDefinition toscaOperation) {
         if (Objects.isNull(operation.getInputs()) || operation.getInputs().isEmpty()) {
             toscaOperation.setInputs(null);
             return;
@@ -193,53 +189,13 @@ public class InterfacesOperationsToscaUtil {
         for (OperationInputDefinition input : operation.getInputs().getListToscaDataDefinition()) {
             ToscaProperty toscaInput = new ToscaProperty();
             toscaInput.setDescription(input.getDescription());
-            String mappedPropertyName = getLastPartOfName(input.getInputId());
-            toscaInput.setType(getOperationInputType(mappedPropertyName, nodeType));
-            toscaInput.setDefaultp(createDefaultValue(mappedPropertyName));
+            toscaInput.setType(DEFAULT_INPUT_TYPE);
+
+            toscaInput.setDefaultp(createDefaultValue(getLastPartOfName(input.getInputId())));
             toscaInputs.put(input.getName(), toscaInput);
         }
 
         toscaOperation.setInputs(toscaInputs);
-    }
-
-    private static void fillToscaOperationOutputs(OperationDataDefinition operation,
-                                                 ToscaLifecycleOperationDefinition toscaOperation,
-                                                 String interfaceName,
-                                                 ToscaNodeType nodeType) {
-        if (Objects.isNull(operation.getOutputs()) || operation.getOutputs().isEmpty()) {
-            toscaOperation.setOutputs(null);
-            return;
-        }
-        Map<String, ToscaAttribute> toscaOutputs = new HashMap<>();
-        for (OperationOutputDefinition output : operation.getOutputs().getListToscaDataDefinition()) {
-            if (Objects.nonNull(output.getInputId())) {
-                ToscaAttribute toscaOutput = new ToscaAttribute();
-                toscaOutput.setDescription(output.getDescription());
-                String outputName = output.getName();
-                String mappedAttributeName = getLastPartOfName(output.getInputId());
-                toscaOutput.setType(getOperationOutputType(mappedAttributeName, nodeType));
-                toscaOutputs.put(outputName, toscaOutput);
-                createDefaultValueForMappedAttribute(nodeType, mappedAttributeName, outputName, interfaceName,
-                        operation.getName());
-            }
-        }
-        toscaOperation.setOutputs(toscaOutputs);
-    }
-
-    private static String getOperationInputType(String inputName, ToscaNodeType nodeType) {
-        if (nodeType.getProperties() != null
-                &&  nodeType.getProperties().containsKey(inputName)) {
-            return nodeType.getProperties().get(inputName).getType();
-        }
-        return DEFAULT_INPUT_TYPE;
-    }
-
-    private static String getOperationOutputType(String inputName, ToscaNodeType nodeType) {
-        if (nodeType.getProperties() != null
-                &&  nodeType.getProperties().containsKey(inputName)) {
-            return nodeType.getProperties().get(inputName).getType();
-        }
-        return DEFAULT_OUTPUT_TYPE;
     }
 
     private static Map<String, List<String>> createDefaultValue(String propertyName) {
@@ -252,41 +208,10 @@ public class InterfacesOperationsToscaUtil {
         return getPropertyMap;
     }
 
-    private static Map<String, List<String>> createAttributeDefaultValue(String outputName,
-                                                                         String interfaceName,
-                                                                         String operationName) {
-        Map<String, List<String>> attributeDefaultValue = new HashMap<>();
-        List<String> values = new ArrayList<>();
-        values.add(SELF);
-        values.add(interfaceName);
-        values.add(operationName);
-        values.add(outputName);
-        attributeDefaultValue.put(GET_OPERATION_OUTPUT, values);
-        return attributeDefaultValue;
-    }
-
-    private static void createDefaultValueForMappedAttribute(ToscaNodeType nodeType, String mappedAttributeName,
-                                                      String outputName, String interfaceName, String operationName) {
-        if (Objects.isNull(nodeType.getAttributes())) {
-            nodeType.setAttributes(new HashMap<>());
-        }
-        if (!nodeType.getAttributes().containsKey(mappedAttributeName)) {
-            ToscaAttribute toscaAttribute = new ToscaAttribute();
-            toscaAttribute.setType(getOperationOutputType(mappedAttributeName, nodeType));
-            nodeType.getAttributes().put(mappedAttributeName, toscaAttribute);
-        }
-        nodeType.getAttributes().get(mappedAttributeName)
-                .setDefaultp(createAttributeDefaultValue(outputName, interfaceName, operationName));
-    }
 
     private static Map<String, Object> getObjectAsMap(Object obj) {
-        ObjectMapper objectMapper = new ObjectMapper();
-        if (obj instanceof ToscaInterfaceDefinition) {
-            //Prevent empty field serialization in interface definition
-            objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-        }
         Map<String, Object> objectAsMap =
-                obj instanceof Map ? (Map<String, Object>) obj : objectMapper.convertValue(obj, Map.class);
+                obj instanceof Map ? (Map<String, Object>) obj : new ObjectMapper().convertValue(obj, Map.class);
 
         if (objectAsMap.containsKey(DEFAULT)) {
             Object defaultValue = objectAsMap.get(DEFAULT);

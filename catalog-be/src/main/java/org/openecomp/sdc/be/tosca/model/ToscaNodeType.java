@@ -33,7 +33,6 @@ public class ToscaNodeType {
     private String description;
 
     private Map<String, ToscaProperty> properties;
-    private Map<String, ToscaAttribute> attributes;
     private Map<String, Object> interfaces; //ToscaInterfaceDefinition
     private Map<String, ToscaCapability> capabilities;
 
@@ -45,14 +44,6 @@ public class ToscaNodeType {
 
     public void setProperties(Map<String, ToscaProperty> properties) {
         this.properties = properties;
-    }
-
-    public Map<String, ToscaAttribute> getAttributes() {
-        return attributes;
-    }
-
-    public void setAttributes(Map<String, ToscaAttribute> attributes) {
-        this.attributes = attributes;
     }
 
     public Map<String, ToscaCapability> getCapabilities() {
