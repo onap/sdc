@@ -33,6 +33,23 @@
       "revId": "963fd5d3b07668e8025b7b47d45c039d89c24d1d",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a9dcd25_24921358",
+        "filename": "common-be/src/main/java/org/openecomp/sdc/be/datatypes/elements/ProductMetadataDataDefinition.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 120,
+      "author": {
+        "id": 3885
+      },
+      "writtenOn": "2018-07-17T06:26:20Z",
+      "side": 1,
+      "message": "could be checked in one line",
+      "revId": "963fd5d3b07668e8025b7b47d45c039d89c24d1d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
