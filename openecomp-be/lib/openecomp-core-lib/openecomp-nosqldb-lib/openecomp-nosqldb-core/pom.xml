@@ -19,7 +19,7 @@
         <dependency>
             <groupId>org.onap.sdc.common</groupId>
             <artifactId>onap-tosca-datatype</artifactId>
-            <version>${openecomp.sdc.common.version}</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.openecomp.sdc.core</groupId>

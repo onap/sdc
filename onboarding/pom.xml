@@ -46,9 +46,6 @@
         <maven-plugin-annotations.version>3.5.1</maven-plugin-annotations.version>
         <mvn.antrun.version>1.8</mvn.antrun.version>
 
-        <!-- Onboarding artifacts version -->
-        <openecomp.sdc.common.version>${project.version}</openecomp.sdc.common.version>
-
         <!-- Onboarding 3rd party versions -->
         <aspectj.version>1.8.9</aspectj.version>
         <bsh.version>2.0b5</bsh.version>
