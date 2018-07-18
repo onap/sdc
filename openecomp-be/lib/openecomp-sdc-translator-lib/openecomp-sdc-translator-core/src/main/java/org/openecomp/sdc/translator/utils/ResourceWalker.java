@@ -123,7 +123,7 @@ public class ResourceWalker {
       return zipEntry -> {
         String name = zipEntry.getName();
         return (name.equals(resource) || name.startsWith(resource + "/"))
-            && !zipEntry.isDirectory();
+            && !zipEntry.isDirectory() && !name.contains("../");
       };
     }
   }

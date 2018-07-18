@@ -13,6 +13,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipException;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
@@ -45,33 +46,43 @@ public class ZipUtils {
         if (zipFile == null || outputFolder == null) {
             return;
         }
-        if (!outputFolder.toFile().exists()) {
-            Files.createDirectories(outputFolder);
-        }
+        createDirectoryIfNotExists(outputFolder);
 
         try (FileInputStream fileInputStream = new FileInputStream(zipFile.toFile());
-             ZipInputStream zis = new ZipInputStream(fileInputStream)) {
-            ZipEntry ze = zis.getNextEntry();
-            while (ze != null) {
-                String fileName = ze.getName();
-                File newFile = new File(outputFolder.toString() + File.separator + fileName);
-                if (ze.isDirectory()) {
-                    Path path = newFile.toPath();
-                    if (!path.toFile().exists()) {
-                        Files.createDirectories(path);
-                    }
-                } else {
-                    new File(newFile.getParent()).mkdirs();
-                    try (FileOutputStream fos = new FileOutputStream(newFile)) {
-                        ByteStreams.copy(zis, fos);
-                    }
-                }
-                ze = zis.getNextEntry();
-            }
+             ZipInputStream stream = new ZipInputStream(fileInputStream)) {
 
-            zis.closeEntry();
+            ZipEntry entry;
+            while ((entry = stream.getNextEntry()) != null) {
+                assertEntryNotVulnerable(entry);
+                String fileName = entry.getName();
+                File newFile = new File(outputFolder.toString() + File.separator + fileName);
+                if (entry.isDirectory()) {
+                    createDirectoryIfNotExists(newFile.toPath());
+                } else {
+                    persistFile(stream, newFile);
+                }
+            }
         }
 
+    }
+
+    private static void persistFile(ZipInputStream stream, File newFile) throws IOException {
+        new File(newFile.getParent()).mkdirs();
+        try (FileOutputStream outputStream = new FileOutputStream(newFile)) {
+            ByteStreams.copy(stream, outputStream);
+        }
+    }
+
+    private static void createDirectoryIfNotExists(Path path) throws IOException {
+        if (!path.toFile().exists()) {
+            Files.createDirectories(path);
+        }
+    }
+
+    private static void assertEntryNotVulnerable(ZipEntry entry) throws ZipException {
+        if (entry.getName().contains("../")) {
+            throw new ZipException("Path traversal attempt discovered.");
+        }
     }
 }
 
