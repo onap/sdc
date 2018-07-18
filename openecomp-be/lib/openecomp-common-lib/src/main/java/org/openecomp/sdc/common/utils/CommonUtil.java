@@ -47,6 +47,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipException;
 import java.util.zip.ZipInputStream;
 
 public class CommonUtil {
@@ -95,8 +96,8 @@ public class CommonUtil {
       String currentEntryName;
 
       while ((zipEntry = inputZipStream.getNextEntry()) != null) {
+        assertEntryNotVulnerable(zipEntry);
         currentEntryName = zipEntry.getName();
-        // else, get the file content (as byte array) and save it in a map.
         fileByteContent = FileUtils.toByteArray(inputZipStream);
 
         int index = lastIndexFileSeparatorIndex(currentEntryName);
@@ -113,6 +114,12 @@ public class CommonUtil {
     }
 
     return new ImmutablePair<>(mapFileContent, folderList);
+  }
+
+  private static void assertEntryNotVulnerable(ZipEntry entry) throws ZipException {
+    if (entry.getName().contains("../")) {
+      throw new ZipException("Path traversal attempt discovered.");
+    }
   }
 
   private static boolean isFile(String currentEntryName) {
