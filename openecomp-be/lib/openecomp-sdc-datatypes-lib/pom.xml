@@ -36,7 +36,7 @@
         <dependency>
             <groupId>org.onap.sdc.common</groupId>
             <artifactId>onap-configuration-management-api</artifactId>
-            <version>${openecomp.sdc.common.version}</version>
+            <version>${project.version}</version>
         </dependency>
     </dependencies>
 </project>
