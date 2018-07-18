@@ -57,7 +57,7 @@ export class DataTypeService {
             });
         }
         //recurse parent (derivedFrom), in case one of parents contains properties
-        if (dataTypeObj.derivedFrom && PROPERTY_DATA.ROOT_DATA_TYPE == dataTypeObj.derivedFrom.name) {
+        if (dataTypeObj.derivedFrom && PROPERTY_DATA.ROOT_DATA_TYPE !== dataTypeObj.derivedFrom.name) {
             this.getDerivedDataTypeProperties(dataTypeObj.derivedFrom, propertiesArray, parentName);
         }
     }
