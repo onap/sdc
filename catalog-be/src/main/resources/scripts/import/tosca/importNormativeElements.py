@@ -1,9 +1,10 @@
 import pycurl
-import sys, getopt
 from StringIO import StringIO
 import json
 import copy
 from importCommon import *
+
+
 #################################################################################################################################################################################
 #																																		       									#
 # Import all users from a given file																										   									#
@@ -15,55 +16,86 @@ from importCommon import *
 #		python importUsers.py [-f <input file> | --ifile=<input file> ]												 				           									#
 #																																		       									#
 #################################################################################################################################################################################
+def import_element(scheme, be_host, be_port, admin_user, exit_on_success, file_dir, url_suffix, element_name, element_form_name,
+                   with_metadata=False):
+    result = createNormativeElement(scheme, be_host, be_port, admin_user, file_dir, url_suffix, element_name, element_form_name, with_metadata)
+    print_frame_line()
+    print_name_and_return_code(result[0], result[1])
+    print_frame_line()
 
-def createNormativeElement(scheme, beHost, bePort, adminUser, fileDir, urlSuffix, ELEMENT_NAME, elementFormName):
-	
-	try:
-		log("in create normative element ", ELEMENT_NAME)
-
-		buffer = StringIO()
-		c = pycurl.Curl()
-
-		url = scheme + '://' + beHost + ':' + bePort + urlSuffix
-		c.setopt(c.URL, url)
-		c.setopt(c.POST, 1)		
-
-		adminHeader = 'USER_ID: ' + adminUser
-		#c.setopt(pycurl.HTTPHEADER, ['Content-Type: application/json', 'Accept: application/json', adminHeader])
-		c.setopt(pycurl.HTTPHEADER, [adminHeader])
-
-			
-		path = fileDir + "/" + ELEMENT_NAME + ".zip"
-		debug(path)
-
-		send = [(elementFormName, (pycurl.FORM_FILE, path))]
-		debug(send)
-		c.setopt(pycurl.HTTPPOST, send)		
-
-		#data = json.dumps(user)
-		#c.setopt(c.POSTFIELDS, data)	
-
-		#c.setopt(c.WRITEFUNCTION, lambda x: None)
-		c.setopt(c.WRITEFUNCTION, buffer.write)
-
-		if scheme == 'https':
-			c.setopt(c.SSL_VERIFYPEER, 0)
-
-		#print("before perform")	
-		res = c.perform()
-	
-		#print("Before get response code")	
-		httpRes = c.getinfo(c.RESPONSE_CODE)
-		if (httpRes != None):
-			debug("http response=", httpRes)
-		#print('Status: ' + str(responseCode))
-		debug("response buffer", buffer.getvalue())
-		c.close()
-
-		return (ELEMENT_NAME, httpRes, buffer.getvalue())
-
-	except Exception as inst:
-		print("ERROR=" + str(inst))
-		return (ELEMENT_NAME, None, None)				
+    if result[1] is None or result[1] not in [200, 201, 409]:
+        error_and_exit(1, None)
+    else:
+        if exit_on_success:
+            error_and_exit(0, None)
 
 
+def createNormativeElement(scheme, be_host, be_port, admin_user, file_dir, url_suffix, element_name, element_form_name,
+                           with_metadata=False):
+    try:
+        log("in create normative element ", element_name)
+        buffer = StringIO()
+        c = pycurl.Curl()
+
+        url = scheme + '://' + be_host + ':' + be_port + url_suffix
+        c.setopt(c.URL, url)
+        c.setopt(c.POST, 1)
+
+        admin_header = 'USER_ID: ' + admin_user
+        c.setopt(pycurl.HTTPHEADER, [admin_header])
+
+        type_file_name = file_dir + "/" + element_name
+
+        multi_part_form_data = create_multipart_form_data(element_form_name, type_file_name, with_metadata)
+
+        c.setopt(pycurl.HTTPPOST, multi_part_form_data)
+        c.setopt(c.WRITEFUNCTION, buffer.write)
+
+        if scheme == 'https':
+            c.setopt(c.SSL_VERIFYPEER, 0)
+
+        c.perform()
+
+        http_res = c.getinfo(c.RESPONSE_CODE)
+        if http_res is not None:
+            debug("http response=", http_res)
+        debug("response buffer", buffer.getvalue())
+        c.close()
+        return (element_name, http_res, buffer.getvalue())
+
+    except Exception as inst:
+        print("ERROR=" + str(inst))
+        return (element_name, None, None)
+
+
+def create_multipart_form_data(element_form_name, type_file_name, with_metadata):
+    tosca_type_zip_part = create_zip_file_multi_part(element_form_name, type_file_name)
+    multi_part_form_data = [tosca_type_zip_part]
+    if with_metadata:
+        metadata_type_part = create_metadata_multipart(type_file_name)
+        multi_part_form_data.append(metadata_type_part)
+    debug(multi_part_form_data)
+    return multi_part_form_data
+
+
+def create_metadata_multipart(type_file_name):
+    metadata = create_json_metadata_str(type_file_name)
+    return ("toscaTypeMetadata", metadata)
+
+
+def create_zip_file_multi_part(element_form_name, type_file_name):
+    tosca_type_zip_path = type_file_name + ".zip"
+    tosca_type_zip_part = (element_form_name, (pycurl.FORM_FILE, tosca_type_zip_path))
+    return tosca_type_zip_part
+
+
+def create_json_metadata_str(file_name):
+    type_metadata_json_file = file_name + ".json"
+    debug(type_metadata_json_file)
+    json_file = open(type_metadata_json_file)
+
+    debug("before load json")
+    json_data = json.load(json_file, strict=False)
+    debug(json_data)
+
+    return json.dumps(json_data)
