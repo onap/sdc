@@ -14,18 +14,6 @@ public class GraphMLConverterTest {
 		return new GraphMLConverter();
 	}
 	
-	/*@Before
-	public void createGraphTestSubject() {
-		converter = new GraphMLConverter();
-		openGraph = converter.openGraph("src/main/resources/config/titan.properties");
-	}*/
-	
-	/*@After
-	public void destroyGraphTestSubject() {
-		converter = new GraphMLConverter();
-		converter.clearGraph(openGraph);
-	}*/
-
 	@Test
 	public void testImportGraph() throws Exception {
 		GraphMLConverter testSubject;
@@ -130,13 +118,6 @@ public class GraphMLConverterTest {
 		result = testSubject.findErrorInJsonGraph(graph, outputDirectory);
 	}
 
-	@Test
-	public void testClearGraph() throws Exception {
-		TitanGraph graph = null;
-
-		// default test
-		//GraphMLConverter.clearGraph("src/main/resources/config/titan.properties");
-	}
 
 	@Test(expected=NullPointerException.class)
 	public void testExportUsers() throws Exception {

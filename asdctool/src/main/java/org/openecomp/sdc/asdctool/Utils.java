@@ -44,7 +44,6 @@ public class Utils {
 			/*
 			 * ResponseFormat errorResponseWrapper,
 			 */int status, Object entity, Map<String, String> additionalHeaders) {
-		// int status = errorResponseWrapper.getStatus();
 		ResponseBuilder responseBuilder = Response.status(status);
 		if (entity != null) {
 			log.trace("returned entity is {}", entity.toString());
@@ -93,13 +92,10 @@ public class Utils {
 					}
 				}
 
-				// if (false == leftValue instanceof Map && false == leftValue
-				// instanceof List) {
 				if (false == leftValue.equals(rightValue)) {
 					log.trace("The value of key {} is differnet between properties. {} vs {}",key,leftValue,rightValue);
 					return false;
 				}
-				// }
 			}
 
 		}
