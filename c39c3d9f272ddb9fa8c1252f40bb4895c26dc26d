@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da7095c5_d95d534a",
+        "filename": "openecomp-be/lib/openecomp-sdc-enrichment-lib/openecomp-sdc-enrichment-core/src/main/java/org/openecomp/sdc/enrichment/impl/EnrichmentManagerImpl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-07-19T07:29:00Z",
+      "side": 1,
+      "message": "why are you try\\catch the whole loop? this is the only line that throws exception. try\\catch only this statement and if needed break the loop",
+      "range": {
+        "startLine": 57,
+        "startChar": 28,
+        "endLine": 57,
+        "endChar": 45
+      },
+      "revId": "c39c3d9f272ddb9fa8c1252f40bb4895c26dc26d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
