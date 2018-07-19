@@ -504,7 +504,8 @@ function dcae-fe {
 # apis-sanity
 function sdc-api-tests {
     if [[ ${RUN_API_TESTS} = true ]] ; then
-        healthCheck_http_code=healthCheck
+        healthCheck
+        healthCheck_http_code=$?
         if [[ ${healthCheck_http_code} == 200 ]] ; then
             echo "docker run sdc-api-tests..."
             echo "Trigger sdc-api-tests docker, please wait..."
@@ -525,7 +526,8 @@ function sdc-api-tests {
 function sdc-ui-tests {
 
     if [[ ${RUN_UI_TESTS} = true ]] ; then
-        healthCheck_http_code=healthCheck
+		healthCheck
+        healthCheck_http_code=$?
         if [[ ${healthCheck_http_code} == 200 ]]; then
             echo "docker run sdc-ui-tets..."
             echo "Trigger sdc-ui-tests docker, please wait..."
