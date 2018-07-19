@@ -9,14 +9,12 @@ import org.openecomp.sdc.be.resources.data.auditing.*;
 import org.openecomp.sdc.common.datastructure.AuditingFieldsKey;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.openecomp.sdc.common.datastructure.AuditingFieldsKey.*;
 
-@RunWith(MockitoJUnitRunner.class)
+import java.text.SimpleDateFormat;
+import java.util.EnumMap;
+import java.util.TimeZone;
+
 public class DataMigrationTest {
     private final static String DESCRIPTION = "OK";
     private final static String STATUS = "200";
@@ -109,24 +107,12 @@ public class DataMigrationTest {
 
     }
 
-    @Test
-    public void createUserAdminEvent() {
-        dataMap.put(AUDIT_ACTION, AuditingActionEnum.ADD_USER.getName());
-        AuditingGenericEvent event = dataMigration.createAuditEvent(dataMap, Table.USER_ADMIN_EVENT);
-        assertThat(AuditingActionEnum.ADD_USER.getName()).isEqualTo(event.getAction());
-        verifyCommonData(event, true);
         verifyUserAdminEvent((UserAdminEvent) event);
     }
-
-    @Test
-    public void createResourceAdminEvent() {
-        dataMap.put(AUDIT_ACTION, AuditingActionEnum.UPDATE_RESOURCE_METADATA.getName());
-        AuditingGenericEvent event = dataMigration.createAuditEvent(dataMap, Table.RESOURCE_ADMIN_EVENT);
         assertThat(AuditingActionEnum.UPDATE_RESOURCE_METADATA.getName()).isEqualTo(event.getAction());
         verifyCommonData(event, true);
         verifyResourceAdminEvent((ResourceAdminEvent)event);
     }
-
     @Test
     public void createDistributionNotificationEvent() {
         dataMap.put(AUDIT_ACTION, AuditingActionEnum.DISTRIBUTION_NOTIFY.getName());
