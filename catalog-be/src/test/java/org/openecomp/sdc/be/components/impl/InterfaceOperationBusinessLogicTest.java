@@ -72,6 +72,7 @@ import org.openecomp.sdc.be.model.jsontitan.operations.NodeTemplateOperation;
 import org.openecomp.sdc.be.model.jsontitan.operations.NodeTypeOperation;
 import org.openecomp.sdc.be.model.jsontitan.operations.TopologyTemplateOperation;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
+import org.openecomp.sdc.be.model.jsontitan.utils.InterfaceUtils;
 import org.openecomp.sdc.be.model.operations.api.IElementOperation;
 import org.openecomp.sdc.be.model.operations.api.IPropertyOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
@@ -228,8 +229,14 @@ public class InterfaceOperationBusinessLogicTest implements InterfaceOperationTe
         resourceUpdate = setUpResourceMock();
         Either<Resource, ResponseFormat> interfaceOperation = bl.createInterfaceOperation(resourceId, resourceUpdate, user, true);
         Assert.assertTrue(interfaceOperation.isLeft());
+        Map<String, Operation> interfaceOperationsFromInterfaces = InterfaceUtils
+                .getInterfaceOperationsFromInterfaces(interfaceOperation.left().value().getInterfaces(),
+                interfaceOperation.left().value());
+        for(Operation operation : interfaceOperationsFromInterfaces.values()) {
+            Assert.assertNotNull(operation.getWorkflowId());
+            Assert.assertNotNull(operation.getWorkflowVersionId());
+        }
     }
-
 
     @Test
     public void updateInterfaceOperationTest() {

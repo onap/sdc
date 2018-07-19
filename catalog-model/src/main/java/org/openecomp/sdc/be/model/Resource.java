@@ -63,9 +63,7 @@ public class Resource extends Component implements Serializable {
 
 	private List<String> defaultCapabilities;
 
-	private Map<String, InterfaceOperationDataDefinition> interfaceOperations;
-
-//	private List<AdditionalInformationDefinition> additionalInformation;
+	//	private List<AdditionalInformationDefinition> additionalInformation;
 
 	/**
 	 * Please note that more than one "derivedFrom" resource is not currently
@@ -158,14 +156,6 @@ public class Resource extends Component implements Serializable {
 				.setLicenseType(licenseType);
 	}
 
-	public Map<String, InterfaceOperationDataDefinition> getInterfaceOperations() {
-		return interfaceOperations;
-	}
-
-	public void setInterfaceOperations(Map<String, InterfaceOperationDataDefinition> interfaceOperations) {
-		this.interfaceOperations = interfaceOperations;
-	}
-
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -180,7 +170,6 @@ public class Resource extends Component implements Serializable {
 		result = prime * result + ((interfaces == null) ? 0 : interfaces.hashCode());
 		result = prime * result + ((properties == null) ? 0 : properties.hashCode());
 		result = prime * result + ((derivedList == null) ? 0 : derivedList.hashCode());
-		result = prime * result + ((interfaceOperations == null) ? 0 : interfaceOperations.hashCode());
 		// result = prime * result + ((requirements == null) ? 0 :
 		// requirements.hashCode());
 		return result;
@@ -226,11 +215,6 @@ public class Resource extends Component implements Serializable {
 				return false;
 		} else if (!properties.equals(other.properties))
 			return false;
-		if (interfaceOperations == null) {
-			if (other.interfaceOperations != null)
-				return false;
-		} else if (!interfaceOperations.equals(other.interfaceOperations))
-			return false;
 		return super.equals(obj);
 	}
 
@@ -241,7 +225,6 @@ public class Resource extends Component implements Serializable {
 				// + ", capabilities=" + capabilities + ", requirements=" +
 				// requirements
 				+ ", defaultCapabilities=" + defaultCapabilities + ", additionalInformation=" + additionalInformation
-			+ ", interfaceOperations=" + interfaceOperations
 				+ "Metadata [" + getComponentMetadataDefinition().getMetadataDataDefinition().toString() + "]";
 	}
 
