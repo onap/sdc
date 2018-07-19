@@ -32,6 +32,10 @@ public class ComputeConsolidationDataTest {
     private static final String COMPUTE_NODE_TEMPLATE_ID_2 = "computeNodeTemplateId2";
     private static final String COMPUTE_NODE_TYPE_1 = "computeNodeType1";
     private static final String COMPUTE_NODE_TYPE_2 = "computeNodeType2";
+    private static final String MAIN_SERVICE_TEMPLATE = "MainServiceTemplate.yaml";
+
+    @Mock
+    private FileComputeConsolidationData fileComputeConsolidationDataMock;
 
     private final EnumMap<ServiceTemplateFileNameEnum, FileComputeConsolidationData> mockMap =
             new EnumMap<>(ServiceTemplateFileNameEnum.class);
@@ -189,4 +193,20 @@ public class ComputeConsolidationDataTest {
         return mock;
     }
 
+    @Test
+    public void isNumberOfComputeTypesLegal() {
+        ComputeConsolidationData computeConsolidationData = new ComputeConsolidationData();
+        computeConsolidationData.setFileComputeConsolidationData(MAIN_SERVICE_TEMPLATE,
+                fileComputeConsolidationDataMock);
+
+        computeConsolidationData.isNumberOfComputeTypesLegal(MAIN_SERVICE_TEMPLATE);
+        Mockito.verify(fileComputeConsolidationDataMock).isNumberOfComputeTypesLegal();
+    }
+
+    @Test
+    public void isNumberOfComputeTypesLegalNegative() {
+        ComputeConsolidationData computeConsolidationData = new ComputeConsolidationData();
+
+        Assert.assertFalse(computeConsolidationData.isNumberOfComputeTypesLegal(MAIN_SERVICE_TEMPLATE));
+    }
 }

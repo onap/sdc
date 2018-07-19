@@ -18,6 +18,7 @@ package org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolid
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 public class NestedConsolidationData {
@@ -61,5 +62,9 @@ public class NestedConsolidationData {
             setFileNestedConsolidationData(serviceTemplateFileName, consolidationData);
         }
         return consolidationData;
+    }
+
+    public boolean isNestedConsolidationDataExist(String nestedServiceTemplateName) {
+        return Objects.nonNull(getFileNestedConsolidationData(nestedServiceTemplateName));
     }
 }

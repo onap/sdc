@@ -47,6 +47,9 @@ public class FileComputeConsolidationDataTest {
     @Mock
     private TypeComputeConsolidationData mockTypeComputeConsolidationData2;
 
+    @Mock
+    TypeComputeConsolidationData typeComputeConsolidationDataMock;
+
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
@@ -120,6 +123,33 @@ public class FileComputeConsolidationDataTest {
         String computeNodeType = ComputeNodeTypeEnum.COMPUTE_NODE_TYPE_1.name();
         addAndCheckComputeTemplateConsolidationData(computeNodeType, COMPUTE_NODE_TEMPLATE_ID_1);
         addAndCheckComputeTemplateConsolidationData(computeNodeType, COMPUTE_NODE_TEMPLATE_ID_2);
+    }
+
+    @Test
+    public void isNumberOfComputeTypesLegalPositive() {
+        FileComputeConsolidationData fileComputeConsolidationData = new FileComputeConsolidationData();
+        fileComputeConsolidationData.setTypeComputeConsolidationData("server_oam",
+                typeComputeConsolidationDataMock);
+
+        Mockito.when(typeComputeConsolidationDataMock.isNumberOfComputeConsolidationDataPerTypeLegal())
+               .thenReturn(true);
+
+        Assert.assertTrue(fileComputeConsolidationData.isNumberOfComputeTypesLegal());
+    }
+
+    @Test
+    public void isNumberOfComputeTypesLegalNegative() {
+        TypeComputeConsolidationData typeComputeConsolidationData = new TypeComputeConsolidationData();
+        typeComputeConsolidationData.setComputeTemplateConsolidationData(
+                "server_oam_1", new ComputeTemplateConsolidationData());
+        typeComputeConsolidationData.setComputeTemplateConsolidationData(
+                "server_oam_2", new ComputeTemplateConsolidationData());
+
+
+        FileComputeConsolidationData fileComputeConsolidationData = new FileComputeConsolidationData();
+        fileComputeConsolidationData.setTypeComputeConsolidationData("server_oam", typeComputeConsolidationData);
+
+        Assert.assertFalse(fileComputeConsolidationData.isNumberOfComputeTypesLegal());
     }
 
     private void checkComputeConsolidationData(FileComputeConsolidationData fileComputeConsolidationData,
