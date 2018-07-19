@@ -105,11 +105,10 @@ public class SdcSchemaFileImport {
 		//Loop over schema file list and create each yaml file from /import/tosca folder 
 		SchemaZipFileEnum[] schemaFileList = SchemaZipFileEnum.values();
 		for (SchemaZipFileEnum schemaZipFileEnum : schemaFileList) {
-			try {
+			String pathname = importToscaPath + SEPARATOR + schemaZipFileEnum.getSourceFolderName() + SEPARATOR +  schemaZipFileEnum.getSourceFileName() + YAML_EXTENSION;
+			try(InputStream input = new FileInputStream(new File(pathname));) {
 				//get the source yaml file
-				String pathname = importToscaPath + SEPARATOR + schemaZipFileEnum.getSourceFolderName() + SEPARATOR +  schemaZipFileEnum.getSourceFileName() + YAML_EXTENSION;
 				System.out.println("Processing file "+pathname+"....");
-				InputStream input = new FileInputStream(new File(pathname));
 				//Convert the content of file to yaml 
 				Yaml yamlFileSource = new Yaml();
 			    Object content = yamlFileSource.load(input);
