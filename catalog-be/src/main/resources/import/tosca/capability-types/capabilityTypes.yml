@@ -219,6 +219,11 @@ org.openecomp.capabilities.VLANAssignment:
       type: string
       description: Ability to recognize capability per vfc instance group on vnf instance
       required: true
+org.openecomp.capabilities.RoutingConfiguration:
+  derived_from: tosca.capabilities.Root
+org.openecomp.capabilities.FabricConfiguration:
+  derived_from: tosca.capabilities.Root
+
 #ONAP types
 tosca.capabilities.nfv.VirtualStorage:
     derived_from: tosca.capabilities.Root
@@ -247,7 +252,7 @@ tosca.capabilities.nfv.VirtualBindable:
 tosca.capabilities.nfv.VirtualLinkable:
   derived_from: tosca.capabilities.Root
 tosca.capabilities.nfv.ExtVirtualLinkable:
-  derived_from: tosca.capabilities.Root    
+  derived_from: tosca.capabilities.Root
 tosca.capabilities.nfv.Forwarder: 
   derived_from: tosca.capabilities.Root
 tosca.capabilities.nfv.ext.GuestOs: 

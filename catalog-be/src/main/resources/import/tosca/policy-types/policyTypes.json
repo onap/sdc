@@ -1,0 +1,51 @@
+{
+  "tosca.policies.Root": {
+    "displayName": "Root",
+    "icon": "policy-root"
+  },
+  "tosca.policies.Placement": {
+    "displayName": "Placement",
+    "icon": "policy-placement"
+  },
+  "tosca.policies.Scaling": {
+    "displayName": "Scaling",
+    "icon": "policy-scaling"
+  },
+  "tosca.policies.Update": {
+    "displayName": "Update",
+    "icon": "policy-update"
+  },
+  "tosca.policies.Performance": {
+    "displayName": "Performance",
+    "icon": "policy-performance"
+  },
+  "org.openecomp.policies.placement.Antilocate": {
+    "displayName": "Placement Antilocate",
+    "icon": "policy-placement-antilocate"
+  },
+  "org.openecomp.policies.placement.Colocate": {
+    "displayName": "Placement Colocate",
+    "icon": "policy-placement-colocate"
+  },
+  "org.openecomp.policies.placement.valet.Diversity": {
+    "displayName": "Placement Valet Diversity",
+    "icon": "policy-placement-valet-diversity"
+  },
+  "org.openecomp.policies.placement.valet.Exclusivity": {
+    "displayName": "Placement Valet Exclusivity",
+    "icon": "policy-placement-valet-exclusivity"
+  },
+  "org.openecomp.policies.placement.valet.Affinity": {
+    "displayName": "Placement Valet Affinity",
+    "icon": "placement-valet-affinity"
+  },
+  "org.openecomp.policies.scaling.Fixed": {
+    "displayName": "Scaling Fixed",
+    "icon": "policy-fixed"
+  },
+  "org.openecomp.policies.External": {
+    "displayName": "External",
+    "icon": "policy-external"
+  }
+
+}

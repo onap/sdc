@@ -62,4 +62,5 @@ node_types:
         - 0
         - UNBOUNDED
         valid_source_types:
-        - org.openecomp.resources.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        - org.openecomp.resource.cp.nodes.heat.network.v2.contrailV2.VLANSubInterface

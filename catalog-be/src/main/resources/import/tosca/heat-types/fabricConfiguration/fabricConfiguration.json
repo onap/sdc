@@ -1,0 +1,21 @@
+{
+  "payloadName": "fabricConfiguration.yml",
+  "contactId": "jh0003",
+  "name": "Fabric Configuration",
+  "description": "A fabric Configuration object",
+  "resourceIconPath": "pmc",
+  "resourceType": "Configuration",
+  "categories": [
+    {
+      "name": "Configuration",
+      "subcategories": [
+        {
+          "name": "Configuration"
+        }
+      ]
+    }
+  ],
+  "tags": [
+    "Fabric Configuration"
+  ]
+}

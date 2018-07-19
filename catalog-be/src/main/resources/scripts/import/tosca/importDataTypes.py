@@ -25,15 +25,15 @@ def usage():
 def importDataTypes(scheme, beHost, bePort, adminUser, exitOnSuccess, fileDir):
 	result = createNormativeElement(scheme, beHost, bePort, adminUser, fileDir, "/sdc2/rest/v1/catalog/uploadType/datatypes", "dataTypes", "dataTypesZip")
 
-	printFrameLine()
-        printNameAndReturnCode(result[0], result[1])
-        printFrameLine()
+	print_frame_line()
+        print_name_and_return_code(result[0], result[1])
+        print_frame_line()
 
         if ( result[1] == None or result[1] not in [200, 201, 409] ):
-                errorAndExit(1, None)
+                error_and_exit(1, None)
         else:
 		if (exitOnSuccess == True):
-                	errorAndExit(0, None)
+                	error_and_exit(0, None)
 
 def main(argv):
 	print 'Number of arguments:', len(sys.argv), 'arguments.'
@@ -47,7 +47,7 @@ def main(argv):
 		opts, args = getopt.getopt(argv,"i:p:u:h:s:",["ip=","port=","user=","scheme="])
 	except getopt.GetoptError:
 		usage()
-		errorAndExit(2, 'Invalid input')
+		error_and_exit(2, 'Invalid input')
 		 
 	for opt, arg in opts:
 	#print opt, arg
