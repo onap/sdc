@@ -57,14 +57,20 @@ tosca.datatypes.Credential:
 org.openecomp.datatypes.PortMirroringConnectionPointDescription:
   derived_from: tosca.datatypes.Root
   properties:
-    nf_type: 
-        type: string
-    nfc_type: 
-        type: string
+    nf_naming_code:
+      type: string
+    nfc_naming_code:
+      type: string
     network_role: 
-        type: string 
-    pps_capacity: 
-        type: string
+      type: string
+    pps_capacity:
+      type: string
+    nf_type:
+      type: string
+      description: deprecated
+    nfc_type:
+      type: string
+      description: deprecated
 
 tosca.datatypes.TimeInterval: 
   derived_from: tosca.datatypes.Root
@@ -1391,8 +1397,7 @@ tosca.datatypes.nfv.injectFile: #used for vCPE usecase
       type: string
       required: true
 tosca.datatypes.nfv.L2AddressData:
-  derived_from: tosca.datatypes.Root
-  properties: 
+  properties:
     mac_address_assignment: 
       type: boolean
       required: true
@@ -1452,7 +1457,7 @@ tosca.datatypes.nfv.VlFlavour:
     flavourId:
       type: string
 tosca.datatypes.nfv.ext.AddressPairs:
-  properties: 
+  properties:
     ip: 
       type: string
       required: false
@@ -1460,7 +1465,7 @@ tosca.datatypes.nfv.ext.AddressPairs:
       type: string
       required: false
 tosca.datatypes.nfv.ext.FloatingIP:
-  properties: 
+  properties:
     external_network: 
       type: string
       required: false
@@ -1468,7 +1473,7 @@ tosca.datatypes.nfv.ext.FloatingIP:
       type: string
       required: false
 tosca.datatypes.nfv.ext.LocationInfo:
-  properties: 
+  properties:
     availability_zone: 
       type: string
       required: false
@@ -1479,7 +1484,7 @@ tosca.datatypes.nfv.ext.LocationInfo:
       type: string
       required: false
 tosca.datatypes.nfv.ext.HostRouteInfo:
-  properties: 
+  properties:
     destination: 
       type: string
       required: false
@@ -1487,7 +1492,7 @@ tosca.datatypes.nfv.ext.HostRouteInfo:
       type: string
       required: false
 tosca.datatypes.nfv.ext.InjectData:
-  properties: 
+  properties:
     file_name: 
       type: string
       required: false
@@ -1495,7 +1500,7 @@ tosca.datatypes.nfv.ext.InjectData:
       type: string
       required: false
 tosca.datatypes.nfv.ext.zte.WatchDog:
-  properties: 
+  properties:
     enable_delay: 
       type: integer
       required: false
@@ -1503,7 +1508,7 @@ tosca.datatypes.nfv.ext.zte.WatchDog:
       type: string
       required: false
 tosca.datatypes.nfv.ext.LocalAffinityOrAntiAffinityRule:
-  properties: 
+  properties:
     scope: 
       type: string
       required: false

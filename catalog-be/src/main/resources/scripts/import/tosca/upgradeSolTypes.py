@@ -55,7 +55,7 @@ def main(argv):
         opts, args = getopt.getopt(argv, "i:p:u:v:h:s:", ["ip=", "port=", "user=", "updateversion=","scheme="])
     except getopt.GetoptError:
         usage()
-        errorAndExit(2, 'Invalid input')
+        error_and_exit(2, 'Invalid input')
 
     for opt, arg in opts:
         # print opt, arg
@@ -94,9 +94,9 @@ def main(argv):
 
     failedNormatives = filter(lambda x: x[1] == None or x[1] not in responseCodes, results)
     if (len(failedNormatives) > 0):
-        errorAndExit(1, None)
+        error_and_exit(1, None)
     else:
-        errorAndExit(0, None)
+        error_and_exit(0, None)
 
 
 if __name__ == "__main__":

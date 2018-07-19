@@ -1,0 +1,20 @@
+{
+   "payloadName": "configuration.yml",
+   "contactId": "jh0003",
+   "name": "Configuration",
+   "description": "Root Configuration.",
+   "resourceIconPath": "defaulticon",
+   "categories": [
+   {
+     "name": "Generic",
+     "subcategories": [
+       {
+         "name": "Abstract"
+       }
+     ]
+   }
+ ],
+   "tags": [
+     "Configuration"
+   ]
+ }

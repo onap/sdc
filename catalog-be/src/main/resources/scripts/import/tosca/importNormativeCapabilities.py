@@ -27,15 +27,15 @@ def usage():
 def importNormativeCapabilities(scheme, beHost, bePort, adminUser, exitOnSuccess, fileDir):
 	result = createNormativeElement(scheme, beHost, bePort, adminUser, fileDir, "/sdc2/rest/v1/catalog/uploadType/capability", "capabilityTypes", "capabilityTypeZip")
 	
-	printFrameLine()
-        printNameAndReturnCode(result[0], result[1])
-        printFrameLine()
+	print_frame_line()
+        print_name_and_return_code(result[0], result[1])
+        print_frame_line()
 
         if ( result[1] == None or result[1] not in [200, 201, 409] ):
-                importCommon.errorAndExit(1, None)
+                importCommon.error_and_exit(1, None)
         else:
 		if (exitOnSuccess == True):
-                	importCommon.errorAndExit(0, None)
+                	importCommon.error_and_exit(0, None)
 
 
 def main(argv):
@@ -50,7 +50,7 @@ def main(argv):
 		opts, args = getopt.getopt(argv,"i:p:u:h:s:",["ip=","port=","user=","scheme="])
 	except getopt.GetoptError:
 		usage()
-		importCommon.errorAndExit(2, 'Invalid input')
+		importCommon.error_and_exit(2, 'Invalid input')
 		 
 	for opt, arg in opts:
 	#print opt, arg
