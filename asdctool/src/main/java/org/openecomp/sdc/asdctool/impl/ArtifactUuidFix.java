@@ -133,10 +133,8 @@ public class ArtifactUuidFix {
 
 	private boolean fetchFaultVf(String fixComponent, List<Resource> vfLst, long time) {
 		log.info("Find fault VF ");
-		Writer writer = null;
-		try {
-			String fileName = "fault_" + time + ".csv";
-			writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileName), "utf-8"));
+		String fileName = "fault_" + time + ".csv";
+		try(Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileName), "utf-8"))) {
 			writer.write("vf name, vf id, state, version\n");
 
 			Map<GraphPropertyEnum, Object> hasProps = new HashMap<>();
@@ -197,12 +195,6 @@ public class ArtifactUuidFix {
 			return false;
 		} finally {
 			titanDao.commit();
-			try {
-				writer.flush();
-				writer.close();
-			} catch (Exception ex) {
-				/* ignore */
-			}
 		}
 		return true;
 	}
@@ -213,10 +205,8 @@ public class ArtifactUuidFix {
 			log.info("No services as input");
 			return true;
 		}
-		Writer writer = null;
-		try {
-			String fileName = "problemVf_" + time + ".csv";
-			writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileName), "utf-8"));
+		String fileName = "problemVf_" + time + ".csv";
+		try(Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileName), "utf-8"))) {
 			writer.write("vf name, vf id, state, version, example service name\n");
 			Set<String> vfIds = new HashSet<>();
 			for (Service service : serviceList) {
@@ -253,23 +243,14 @@ public class ArtifactUuidFix {
 			return false;
 		} finally {
 			titanDao.commit();
-			try {
-				writer.flush();
-				writer.close();
-			} catch (Exception ex) {
-				/* ignore */
-			}
 		}
 		return true;
 	}
 
 	private boolean fetchServices(String fixServices, List<Service> serviceList, long time) {
 		log.info("Find problem Services {}", fixServices);
-		Writer writer = null;
-
-		try {
-			String fileName = "problemService_" + time + ".csv";
-			writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileName), "utf-8"));
+		String fileName = "problemService_" + time + ".csv";
+		try(Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileName), "utf-8"))) {
 			writer.write("service name, service id, state, version\n");
 
 			Map<GraphPropertyEnum, Object> hasProps = new HashMap<>();
@@ -322,12 +303,6 @@ public class ArtifactUuidFix {
 			return false;
 		} finally {
 			titanDao.commit();
-			try {
-				writer.flush();
-				writer.close();
-			} catch (Exception ex) {
-				/* ignore */
-			}
 		}
 		return true;
 	}
@@ -607,9 +582,7 @@ public class ArtifactUuidFix {
 
 		long time = System.currentTimeMillis();
 		String fileName = "FailedGenerateTosca" + "_" + time + ".csv";
-		Writer writer = null;
-		try {
-			writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileName), "utf-8"));
+		try(Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileName), "utf-8"))) {
 			writer.write("componentType, name, version, UID, UUID, invariantUUID, state\n");
 			List<Component> failedList = new ArrayList<>();
 
@@ -693,11 +666,6 @@ public class ArtifactUuidFix {
 			log.error(e.getMessage());
 		} finally {
 			titanDao.commit();
-			try {
-				writer.flush();
-				writer.close();
-			} catch (Exception ex) {
-				/* ignore */}
 		}
 		log.info(" Fix finished with res {} ***** ", res);
 		return res;
@@ -1163,9 +1131,7 @@ public class ArtifactUuidFix {
 		boolean result = true;
 		long time = System.currentTimeMillis();
 		String fileName = name + "_" + time + ".csv";
-		Writer writer = null;
-		try {
-			writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileName), "utf-8"));
+		try(Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileName), "utf-8"))) {
 			writer.write("name, UUID, invariantUUID, state, version\n");
 			for (Map.Entry<String, List<Component>> entry : vertices.entrySet()) {
 				List<Component> compList = entry.getValue();
@@ -1214,11 +1180,6 @@ public class ArtifactUuidFix {
 			return false;
 		} finally {
 			titanDao.commit();
-			try {
-				writer.flush();
-				writer.close();
-			} catch (Exception ex) {
-				/* ignore */}
 		}
 		return result;
 	}
