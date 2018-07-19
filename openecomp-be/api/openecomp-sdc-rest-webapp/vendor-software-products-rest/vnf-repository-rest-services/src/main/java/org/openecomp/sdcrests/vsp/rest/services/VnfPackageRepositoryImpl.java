@@ -24,15 +24,19 @@ import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import javax.inject.Named;
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.core.Response;
-
-import org.apache.http.HttpStatus;
-import org.onap.config.api.Configuration;
 import org.onap.config.api.ConfigurationManager;
-import org.openecomp.sdc.common.http.client.api.HttpRequest;
-import org.openecomp.sdc.common.http.client.api.HttpResponse;
+import org.openecomp.sdc.common.errors.CoreException;
+import org.openecomp.sdc.common.errors.ErrorCode;
+import org.openecomp.sdc.common.errors.ErrorCodeAndMessage;
+import org.openecomp.sdc.common.errors.GeneralErrorBuilder;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.OrchestrationTemplateCandidateManager;
@@ -48,10 +52,13 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 /**
- * The class implements the API interface with VNF Repository (VNFSDK) such as
- * i) Get all the VNF Package Meta-data ii) Download the VNF Package iii) Import
- * VNF package to SDC catalog (Download & validate)
- * 
+ * Enables integration API interface with VNF Repository (VNFSDK) to
+ * <ol>
+ *     <li>Get all the VNF Package Meta-data.</li>
+ *     <li>Download a VNF Package</li>
+ *     <li>Import a VNF package to SDC catalog (Download & validate)</li>
+ * </ol>
+ *
  * @version Amsterdam release (ONAP 1.0)
  */
 @Named
@@ -61,163 +68,199 @@ public class VnfPackageRepositoryImpl implements VnfPackageRepository {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(VnfPackageRepositoryImpl.class);
 
-    private static boolean initFlag = false;
-
-    // Default VNF Repository configuration
-    private static final String CONFIG_NAMESPACE = "vnfrepo";
-
-    // Default address for VNF repository docker
-    private static final String DEF_DOCKER_COMPOSE_ADDR = "127.0.0.1";
-
-    private static String ipAddress = DEF_DOCKER_COMPOSE_ADDR;
-
-    // Default Download package URI and Get VNF package meta-data URI -
-    // configurable
-    private static String getVnfPkgUri = "/onapapi/vnfsdk-marketplace/v1/PackageResource/csars";
-
-    private static String downldPkgUri = "/onapapi/vnfsdk-marketplace/v1/PackageResource/csars/%s/files";
-
-    // Default port for VNF Repository
-    private static String port = "8702";
-
     @Override
-    public Response getVnfPackages(String vspId, String versionId, String user) throws Exception {
+    public Response getVnfPackages(String vspId, String versionId, String user) {
 
         LOGGER.debug("Get VNF Packages from Repository:{}", vspId);
 
-        // Step 1: Create REST client and configuration and prepare URI
-        init();
+        Client client = ClientBuilder.newClient();
 
-        // Step 2: Build URI based on the IP address and port allocated
-        HttpResponse<String> rsp = HttpRequest.get(getVnfPkgUri);
-        if(HttpStatus.SC_OK != rsp.getStatusCode()) {
-            LOGGER.error("Failed to query VNF package metadata:uri={}, Response={}", getVnfPkgUri, rsp);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+        final String getVnfPackageUri = Configuration.INSTANCE.getGetUri();
+        final String action = "querying VNF package metadata";
+
+        try {
+
+            Response remoteResponse = client.target(getVnfPackageUri).request().get();
+            if (remoteResponse.getStatus() != Response.Status.OK.getStatusCode()) {
+                return handleUnexpectedStatus(action, getVnfPackageUri, remoteResponse);
+            }
+
+            LOGGER.debug("Response from VNF Repository: {}", remoteResponse);
+            return Response.ok(remoteResponse.readEntity(String.class)).build();
+
+        } catch (WebApplicationException e) {
+            return handleRemoteError(action, getVnfPackageUri, e);
+        } finally {
+            client.close();
         }
-
-        // Step 3: Send the response to the client
-        LOGGER.debug("Response from VNF Repository: {}", rsp.getResponse());
-
-        return Response.ok(rsp.getResponse()).build();
     }
 
     @Override
-    public Response importVnfPackage(String vspId, String versionId, String csarId, String user) throws Exception {
+    public Response importVnfPackage(String vspId, String versionId, String csarId, String user) {
 
-        LOGGER.debug("Import VNF Packages from Repository:{}", csarId);
+        LOGGER.debug("Import VNF Packages from Repository: {}", csarId);
 
-        // Step 1: Create REST client and configuration and prepare URI
-        init();
+        final String downloadPackageUri = String.format(Configuration.INSTANCE.getDownloadUri(), csarId);
+        final String action = "downloading VNF package";
 
-        // Step 2: Build URI based on the IP address and port allocated
-        String uri = String.format(downldPkgUri, csarId);
-        HttpResponse<String> rsp = HttpRequest.get(uri);
-        if(HttpStatus.SC_OK != rsp.getStatusCode()) {
-            LOGGER.error("Failed to download package from VNF Repository:uri={}, Response={}", uri, rsp);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+        Client client = ClientBuilder.newClient();
+
+        try {
+
+            Response remoteResponse = client.target(downloadPackageUri).request().get();
+            if (remoteResponse.getStatus() != Response.Status.OK.getStatusCode()) {
+                return handleUnexpectedStatus(action, downloadPackageUri, remoteResponse);
+            }
+
+            byte[] payload = remoteResponse.readEntity(String.class).getBytes(StandardCharsets.ISO_8859_1);
+
+            LOGGER.debug("Response from VNF Repository for download package is success. URI={}", downloadPackageUri);
+            return uploadVnfPackage(vspId, versionId, csarId, payload);
+
+        } catch (WebApplicationException e) {
+            return handleRemoteError(action, downloadPackageUri, e);
+        } finally {
+            client.close();
         }
-        LOGGER.debug("Response from VNF Repository for download package is success ");
+    }
 
-        // Step 3: Import the file to SDC and validate and send the response
-        try (InputStream fileStream = new BufferedInputStream(
-                new ByteArrayInputStream(rsp.getResponse().getBytes(StandardCharsets.ISO_8859_1)))) {
+    private Response uploadVnfPackage(String vspId, String versionId, String csarId, byte[] payload) {
 
-            String filename = "temp_" + csarId + ".csar";
+        try (InputStream fileStream = new BufferedInputStream(new ByteArrayInputStream(payload))) {
+
             OrchestrationTemplateCandidateManager candidateManager =
                     OrchestrationTemplateCandidateManagerFactory.getInstance().createInterface();
-            UploadFileResponse uploadFileResponse = candidateManager.upload(vspId, getVersion(vspId, versionId),
-                    fileStream, getFileExtension(filename), getNetworkPackageName(filename));
 
-            UploadFileResponseDto uploadFileResponseDto = new MapUploadFileResponseToUploadFileResponseDto()
-                    .applyMapping(uploadFileResponse, UploadFileResponseDto.class);
+            String filename = formatFilename(csarId);
+            Version version = getVersion(vspId, versionId);
+            UploadFileResponse uploadFileResponse = candidateManager.upload(vspId, version, fileStream,
+                    getFileExtension(filename), getNetworkPackageName(filename));
+
+            UploadFileResponseDto uploadFileResponseDto =
+                    new MapUploadFileResponseToUploadFileResponseDto()
+                            .applyMapping(uploadFileResponse, UploadFileResponseDto.class);
 
             return Response.ok(uploadFileResponseDto).build();
-        } catch(Exception e) {
-            // Exception while uploading file
 
-            LOGGER.error("Exception while uploading VNF package received from VNF Repository:", e);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+        } catch (Exception e) {
+            ErrorCode error = new GeneralErrorBuilder().build();
+            LOGGER.error("Exception while uploading package received from VNF Repository:", new CoreException(error));
+            return generateInternalServerError(error);
         }
     }
 
     @Override
-    public Response downloadVnfPackage(String vspId, String versionId, String csarId, String user) throws Exception {
+    public Response downloadVnfPackage(String vspId, String versionId, String csarId, String user) {
 
-        LOGGER.debug("Download VNF Packages from Repository:csarId={}", csarId);
+        LOGGER.debug("Download VNF package from repository: csarId={}", csarId);
 
-        // Step 1: Create REST client and configuration and prepare URI
-        init();
+        final String downloadPackageUri = String.format(Configuration.INSTANCE.getDownloadUri(), csarId);
+        final String action = "downloading VNF package";
 
-        // Step 2: Build URI based on the IP address and port allocated
-        String uri = String.format(downldPkgUri, csarId);
-        HttpResponse<String> rsp = HttpRequest.get(uri);
-        if(HttpStatus.SC_OK != rsp.getStatusCode()) {
-            LOGGER.error("Failed to download package from VNF Repository:uri={}, Response={}", uri, rsp);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+        Client client = ClientBuilder.newClient();
+
+        try {
+
+            Response remoteResponse = client.target(downloadPackageUri).request().get();
+            if (remoteResponse.getStatus() != Response.Status.OK.getStatusCode()) {
+                return handleUnexpectedStatus(action, downloadPackageUri, remoteResponse);
+            }
+
+            byte[] payload = remoteResponse.readEntity(String.class).getBytes(StandardCharsets.ISO_8859_1);
+            Response.ResponseBuilder response = Response.ok(payload);
+            response.header(CONTENT_DISPOSITION, "attachment; filename=" + formatFilename(csarId));
+
+            LOGGER.debug("Response from VNF Repository for download package is success. URI={}", downloadPackageUri);
+            return response.build();
+
+        } catch (WebApplicationException e) {
+            return handleRemoteError(action, downloadPackageUri, e);
+        } finally {
+            client.close();
         }
-
-        // Step 3:Send response to the client
-        String filename = "temp_" + csarId + ".csar";
-        Response.ResponseBuilder response = Response.ok(rsp.getResponse().getBytes(StandardCharsets.ISO_8859_1));
-        response.header(CONTENT_DISPOSITION, "attachment; filename=" + filename);
-
-        LOGGER.debug("Response from VNF Repository for download package is success ");
-
-        return response.build();
     }
 
     private Version getVersion(String vspId, String versionId) {
-        // Get list of Versions from the rest call
         VersioningManager versioningManager = VersioningManagerFactory.getInstance().createInterface();
-
-        // Find the corresponding version from versionId
-        return versioningManager.list(vspId).stream().filter(ver -> ver.getId() != versionId).findAny()
-                .orElse(new Version(versionId));
+        return findVersion(versioningManager.list(vspId), versionId).orElse(new Version(versionId));
     }
 
-    private static void setVnfRepoConfig() {
+    Optional<Version> findVersion(List<Version> versions, String requestedVersion) {
+        return versions.stream().filter(ver -> Objects.equals(ver.getId(), requestedVersion)).findAny();
+    }
 
-        try {
-            // Step 1: Fetch the on-boarding configuration
-            Configuration config = ConfigurationManager.lookup();
+    private static Response handleRemoteError(String action, String uri, WebApplicationException e) {
+        ErrorCode error = new GeneralErrorBuilder().build();
+        LOGGER.error("Got error response while {}: URI={}", action, uri, new CoreException(error, e));
+        return generateInternalServerError(error);
+    }
 
-            String vnfRepoHost = config.getAsString(CONFIG_NAMESPACE, "vnfRepoHost");
-            if(null != vnfRepoHost) {
-                ipAddress = vnfRepoHost;
-            }
+    private static Response handleUnexpectedStatus(String action, String uri, Response response) {
+        ErrorCode error = new GeneralErrorBuilder().build();
+        LOGGER.error("Unexpected response status while {}: URI={}, Response={}", action, uri, response,
+                new CoreException(error));
+        return generateInternalServerError(error);
+    }
 
-            String vnfRepoPort = config.getAsString(CONFIG_NAMESPACE, "vnfRepoPort");
-            if(null != vnfRepoPort) {
-                port = vnfRepoPort;
-            }
+    private static Response generateInternalServerError(ErrorCode error) {
+        ErrorCodeAndMessage payload = new ErrorCodeAndMessage(Response.Status.INTERNAL_SERVER_ERROR, error);
+        return Response.serverError().entity(payload).build();
+    }
 
-            String getVnfUri = config.getAsString(CONFIG_NAMESPACE, "getVnfUri");
-            if(null != getVnfUri) {
-                getVnfPkgUri = getVnfUri;
-            }
+    private static String formatFilename(String csarId) {
+        return "temp_" + csarId + ".csar";
+    }
 
-            String downloadVnfUri = config.getAsString(CONFIG_NAMESPACE, "downloadVnfUri");
-            if(null != downloadVnfUri) {
-                downldPkgUri = downloadVnfUri;
-            }
+    static class Configuration {
 
-        } catch(Exception e) {
-            LOGGER.error("Failed to load configuration, Exception caught, using default configuration", e);
+        private static final String CONFIG_NAMESPACE = "vnfrepo";
+
+        private static final String DEFAULT_HOST = "localhost";
+        private static final String DEFAULT_PORT = "8702";
+
+        private static final String DEFAULT_URI_PREFIX = "/onapapi/vnfsdk-marketplace/v1/PackageResource/csars";
+        private static final String DEFAULT_LIST_URI = DEFAULT_URI_PREFIX + "/";
+        private static final String DEFAULT_DOWNLOAD_URI = DEFAULT_URI_PREFIX + "/%s/files";
+
+        static final Configuration INSTANCE = new Configuration();
+
+        private final String getUri;
+        private final String downloadUri;
+
+        private Configuration() {
+
+            org.onap.config.api.Configuration config = ConfigurationManager.lookup();
+
+            String host = readConfig(config, "vnfRepoHost", DEFAULT_HOST);
+            String port = readConfig(config, "vnfRepoPort", DEFAULT_PORT);
+            String listPackagesUri = readConfig(config, "getVnfUri", DEFAULT_LIST_URI);
+            String downloadPackageUri = readConfig(config, "downloadVnfUri", DEFAULT_DOWNLOAD_URI);
+            this.getUri = formatUri(host, port, listPackagesUri);
+            this.downloadUri = formatUri(host, port, downloadPackageUri);
         }
 
-        getVnfPkgUri =
-                new StringBuilder("http://").append(ipAddress).append(":").append(port).append(getVnfPkgUri).toString();
+        private String readConfig(org.onap.config.api.Configuration config, String key, String defaultValue) {
 
-        downldPkgUri =
-                new StringBuilder("http://").append(ipAddress).append(":").append(port).append(downldPkgUri).toString();
-    }
+            try {
+                String value = config.getAsString(CONFIG_NAMESPACE, key);
+                return (value == null) ? defaultValue : value;
+            } catch (Exception e) {
+                LOGGER.error("Failed to read VNF repository configuration key '{}', default value '{}' will be used",
+                        key, defaultValue, e);
+                return defaultValue;
+            }
+        }
 
-    private static synchronized void init() throws Exception {
-        if(!initFlag) {
-            // Step 1: Initialize configuration
-            setVnfRepoConfig();
+        private static String formatUri(String host, String port, String path) {
+            return "http://" + host + ":" + port + (path.startsWith("/") ? path : "/" + path);
+        }
 
-            initFlag = true;
+        String getGetUri() {
+            return getUri;
+        }
+
+        String getDownloadUri() {
+            return downloadUri;
         }
     }
 }
