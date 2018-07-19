@@ -94,21 +94,18 @@ public class UpdatePropertyOnVertex {
 
 			}
 
-			// graph.commit();
 			graph.tx().commit();
 
 			return numberOfUpdatedVertexes;
 
 		} catch (Exception e) {
 			log.info("update Property On Service At Least Certified failed -{}" , e);
-			// graph.rollback();
 			graph.tx().rollback();
 
 			return null;
 
 		} finally {
 			if (graph != null) {
-				// graph.shutdown();
 				graph.close();
 			}
 		}
@@ -144,7 +141,6 @@ public class UpdatePropertyOnVertex {
 					String key = entry.getKey();
 					Object value = entry.getValue();
 
-					// vertex.setProperty(key, value);
 					vertex.property(key, value);
 					
 					if (log.isDebugEnabled()){
