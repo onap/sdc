@@ -18,8 +18,8 @@ package org.openecomp.core.utilities.file;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
-import org.openecomp.core.utilities.json.JsonUtil;
 import org.onap.sdc.tosca.services.YamlUtil;
+import org.openecomp.core.utilities.json.JsonUtil;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -37,6 +37,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipException;
 import java.util.zip.ZipInputStream;
 
 /**
@@ -236,6 +237,7 @@ public class FileUtils {
       ZipEntry zipEntry;
 
       while ((zipEntry = inputZipStream.getNextEntry()) != null) {
+        assertEntryNotVulnerable(zipEntry);
         mapFileContent.addFile(zipEntry.getName(), FileUtils.toByteArray(inputZipStream));
       }
 
@@ -320,6 +322,12 @@ public class FileUtils {
   public static boolean isValidYamlExtension(String fileExtension){
     return fileExtension.equalsIgnoreCase(FileExtension.YML.getDisplayName()) ||
         fileExtension.equalsIgnoreCase(FileExtension.YAML.getDisplayName());
+  }
+
+  private static void assertEntryNotVulnerable(ZipEntry entry) throws ZipException {
+    if (entry.getName().contains("../")) {
+      throw new ZipException("Path traversal attempt discovered.");
+    }
   }
 
 }
