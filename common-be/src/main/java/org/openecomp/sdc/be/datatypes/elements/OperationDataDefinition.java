@@ -26,6 +26,9 @@ import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 
 import java.io.Serializable;
 
+import static org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields.IO_WORKFLOW_ID;
+import static org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields.IO_WORKFLOW_VERSION_ID;
+
 public class OperationDataDefinition extends ToscaDataDefinition implements Serializable {
 
 
@@ -46,6 +49,8 @@ public class OperationDataDefinition extends ToscaDataDefinition implements Seri
 		setOutputs(p.getOutputs());
 		setName(p.getName());
 		setUniqueId(p.getUniqueId());
+		setWorkflowId(p.getWorkflowId());
+		setWorkflowVersionId(p.getWorkflowVersionId());
 	}
 
 
@@ -114,4 +119,19 @@ public class OperationDataDefinition extends ToscaDataDefinition implements Seri
 	public void setName(String name) {
 		setToscaPresentationValue(JsonPresentationFields.NAME, name);
 	}
+
+	public String getWorkflowId(){
+		return (String) getToscaPresentationValue(IO_WORKFLOW_ID);
+	}
+	public void setWorkflowId(String workflowId) {
+		setToscaPresentationValue(IO_WORKFLOW_ID, workflowId);
+	}
+
+	public String getWorkflowVersionId() {
+		return (String) getToscaPresentationValue(IO_WORKFLOW_VERSION_ID);
+	}
+	public void setWorkflowVersionId(String workflowVersionId) {
+		setToscaPresentationValue(IO_WORKFLOW_VERSION_ID, workflowVersionId);
+	}
+
 }

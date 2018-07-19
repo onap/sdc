@@ -47,7 +47,7 @@ import java.util.*;
 
 @Component("interfaceOperationBusinessLogic")
 public class InterfaceOperationBusinessLogic extends ComponentBusinessLogic{
-    private static final Logger LOGGER = LoggerFactory.getLogger(ResourceBusinessLogic.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(InterfaceOperationBusinessLogic.class);
     @Autowired
     private InterfaceOperationValidation interfaceOperationValidation;
 
@@ -227,6 +227,9 @@ public class InterfaceOperationBusinessLogic extends ComponentBusinessLogic{
         dbOperation.setName(updatedOperation.getName());
         dbOperation.setDescription(updatedOperation.getDescription());
         dbOperation.setInputs(updatedOperation.getInputs());
+        dbOperation.setOutputs(updatedOperation.getOutputs());
+        dbOperation.setWorkflowId(updatedOperation.getWorkflowId());
+        dbOperation.setWorkflowVersionId(updatedOperation.getWorkflowVersionId());
         return dbOperation;
     }
 

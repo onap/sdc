@@ -79,6 +79,8 @@ public interface InterfaceOperationTestUtils {
         implementation.setUniqueId("uniqId");
         implementation.setArtifactUUID("artifactId");
         operation.setImplementation(implementation);
+        operation.setWorkflowId("workflowId");
+        operation.setWorkflowVersionId("workflowVersionId");
         Map<String, Operation> operationMap = new HashMap<>();
         operationMap.put("op1", operation);
         return operationMap;

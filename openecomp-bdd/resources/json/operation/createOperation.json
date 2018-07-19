@@ -1,12 +1,16 @@
 {
   "interfaceOperations": {
     "create": {
-      "description": "create operation",
+      "description": "abcd description",
       "inputParams": {
         "listToscaDataDefinition": [
           {
-            "paramName": "inp1",
-            "paramId": "68443b9d-9405-458e-811f-b62dd4975fcb.nf_naming"
+            "paramName": "sd",
+            "paramId": "67c72959-0a05-4436-9339-534aa44c9fd0.nf_naming"
+          },
+          {
+            "paramName": "sdf",
+            "paramId": "67c72959-0a05-4436-9339-534aa44c9fd0.nf_naming_code"
           }
         ]
       },
@@ -18,7 +22,9 @@
           }
         ]
       },
-      "operationType": "create"
+      "operationType": "create",
+      "workflowId" : "w_id1",
+      "workflowVersionId" : "w_version_id11"
     }
   }
 }
