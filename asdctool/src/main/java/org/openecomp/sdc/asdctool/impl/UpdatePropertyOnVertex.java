@@ -20,11 +20,9 @@
 
 package org.openecomp.sdc.asdctool.impl;
 
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
+import com.thinkaurelius.titan.core.TitanFactory;
+import com.thinkaurelius.titan.core.TitanGraph;
+import com.thinkaurelius.titan.core.TitanGraphQuery;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.openecomp.sdc.asdctool.Utils;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
@@ -32,9 +30,10 @@ import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.thinkaurelius.titan.core.TitanFactory;
-import com.thinkaurelius.titan.core.TitanGraph;
-import com.thinkaurelius.titan.core.TitanGraphQuery;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 public class UpdatePropertyOnVertex {
 
@@ -96,21 +95,18 @@ public class UpdatePropertyOnVertex {
 
 			}
 
-			// graph.commit();
 			graph.tx().commit();
 
 			return numberOfUpdatedVertexes;
 
 		} catch (Exception e) {
 			log.info("update Property On Service At Least Certified failed -{}" , e);
-			// graph.rollback();
 			graph.tx().rollback();
 
 			return null;
 
 		} finally {
 			if (graph != null) {
-				// graph.shutdown();
 				graph.close();
 			}
 		}
@@ -146,7 +142,6 @@ public class UpdatePropertyOnVertex {
 					String key = entry.getKey();
 					Object value = entry.getValue();
 
-					// vertex.setProperty(key, value);
 					vertex.property(key, value);
 					
 					if (log.isDebugEnabled()){

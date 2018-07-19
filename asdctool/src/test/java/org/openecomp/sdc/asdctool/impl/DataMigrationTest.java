@@ -1,32 +1,19 @@
 package org.openecomp.sdc.asdctool.impl;
 
-import java.text.SimpleDateFormat;
-import java.util.EnumMap;
-import java.util.TimeZone;
-
-import org.elasticsearch.common.settings.SettingsException;
 import org.junit.Test;
 import org.openecomp.sdc.asdctool.impl.DataMigration.TypeToTableMapping;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.common.datastructure.AuditingFieldsKeysEnum;
+
+import java.text.SimpleDateFormat;
+import java.util.EnumMap;
+import java.util.TimeZone;
 
 public class DataMigrationTest {
 
 	private DataMigration createTestSubject() {
 		return new DataMigration();
 	}
-
-	/*@Test(expected=IllegalArgumentException.class)
-	public void testMigrateDataEsToCassandra() throws Exception {
-		DataMigration testSubject;
-		String appConfigDir = "src/main/resources/config/";
-		boolean exportFromEs = false;
-		boolean importToCassandra = false;
-
-		// default test
-		testSubject = createTestSubject();
-		testSubject.migrateDataEsToCassandra(appConfigDir, exportFromEs, importToCassandra);
-	}*/
 
 	@Test(expected=NullPointerException.class)
 	public void testCreateAuditRecord() throws Exception {

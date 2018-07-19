@@ -274,40 +274,4 @@ public class ValidationToolConfigurationTest {
 		testSubject = createTestSubject();
 		result = testSubject.artifactToolBL();
 	}
-	
-	//TODO runs as single JUnit Fails on maven clean install
-	/*@Test(expected=NullPointerException.class)
-	public void testReportManager() throws Exception {
-		ValidationToolConfiguration testSubject;
-		ReportManager result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.reportManager();
-	}
-*/
-	
-	//TODO runs as single JUnit Fails on maven clean install
-	/*@Test(expected=NullPointerException.class)
-	public void testTitanMigrationClient() throws Exception {
-		ValidationToolConfiguration testSubject;
-		TitanClientStrategy titanClientStrategy = null;
-		TitanGraphClient result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.titanMigrationClient(titanClientStrategy);
-	}*/
-
-	//TODO runs as single JUnit Fails on maven clean install
-	/*@Test(expected=NullPointerException.class)
-	public void testNodeTemplateOperation() throws Exception {
-		ValidationToolConfiguration testSubject;
-		NodeTemplateOperation result;
-
-		// default test
-		testSubject = createTestSubject();
-		System.out.println("ConfigurationManager Print" + ConfigurationManager.getConfigurationManager().getConfiguration().toString());
-		result = testSubject.nodeTemplateOperation();
-	}*/
 }

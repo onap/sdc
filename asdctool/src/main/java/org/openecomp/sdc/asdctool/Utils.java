@@ -20,13 +20,8 @@
 
 package org.openecomp.sdc.asdctool;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.ResponseBuilder;
-
+import com.thinkaurelius.titan.core.TitanFactory;
+import com.thinkaurelius.titan.core.TitanGraph;
 import org.apache.commons.configuration.Configuration;
 import org.apache.tinkerpop.gremlin.structure.Element;
 import org.apache.tinkerpop.gremlin.structure.Property;
@@ -34,12 +29,11 @@ import org.apache.tinkerpop.gremlin.structure.util.ElementHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.thinkaurelius.titan.core.TitanFactory;
-import com.thinkaurelius.titan.core.TitanGraph;
-
-//import org.openecomp.sdc.be.auditing.impl.AuditingManager;
-
-//import org.openecomp.sdc.be.info.errors.ResponseFormat;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
 public class Utils {
 
@@ -51,7 +45,6 @@ public class Utils {
 			/*
 			 * ResponseFormat errorResponseWrapper,
 			 */int status, Object entity, Map<String, String> additionalHeaders) {
-		// int status = errorResponseWrapper.getStatus();
 		ResponseBuilder responseBuilder = Response.status(status);
 		if (entity != null) {
 			log.trace("returned entity is {}", entity.toString());
@@ -100,13 +93,10 @@ public class Utils {
 					}
 				}
 
-				// if (false == leftValue instanceof Map && false == leftValue
-				// instanceof List) {
 				if (false == leftValue.equals(rightValue)) {
 					log.trace("The value of key {} is differnet between properties. {} vs {}",key,leftValue,rightValue);
 					return false;
 				}
-				// }
 			}
 
 		}

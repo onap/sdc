@@ -1,20 +1,9 @@
 package org.openecomp.sdc.asdctool.impl;
 
-import java.io.BufferedWriter;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
-
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import fj.data.Either;
 import org.openecomp.sdc.asdctool.impl.validator.utils.VfModuleArtifactPayloadEx;
 import org.openecomp.sdc.be.components.distribution.engine.VfModuleArtifactPayload;
 import org.openecomp.sdc.be.dao.cassandra.ArtifactCassandraDao;
@@ -66,11 +55,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
-
-import fj.data.Either;
+import java.io.BufferedWriter;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @org.springframework.stereotype.Component("artifactUuidFix")
 public class ArtifactUuidFix {
@@ -1387,61 +1385,6 @@ public class ArtifactUuidFix {
 		return Either.left(vfModules);
 		
 	}
-
-	/*public boolean manualFix() {
-
-		Set<String> fixedIds = new HashSet<>();
-		Component component;
-		String componentId = "86683566-20e8-4cc5-872d-12abca1d57f0";//"9f6a6976-18e3-488a-98a4-c1aade480739";
-		Either<Resource, StorageOperationStatus> toscaElement = toscaOperationFacade.getToscaFullElement(componentId);
-		if (toscaElement.isRight()) {
-			log.info("Failed to fetch resources {} {}", componentId, toscaElement.right().value());
-
-		}
-		boolean res = generateToscaPerComponent(fixedIds, toscaElement.left().value());
-		log.info("Fix component return res {} ", res);
-		titanDao.commit();
-
-		return res;
-	}
-
-	
-	public boolean manualCheck() {
-
-	Set<String> fixedIds = new HashSet<>();
-	Component component;
-	String componentId = "86d50186-7b00-4bfc-abcb-9e4c6892f338";//"9f6a6976-18e3-488a-98a4-c1aade480739";
-	Either<Service, StorageOperationStatus> toscaElement = toscaOperationFacade.getToscaFullElement(componentId);
-	if (toscaElement.isRight()) {
-		log.info("Failed to fetch resources {} {}", componentId, toscaElement.right().value());
-
-	}
-	boolean res = true;
-	try {
-		res = isProblematicService(toscaElement.left().value(), toscaElement.left().value().getName());
-		if(res){
-			List<Service> services = new ArrayList<>();
-			services.add(toscaElement.left().value());
-			this.fix(new ArrayList<Resource>(), services, null, null, null);
-			
-			Either<Service, StorageOperationStatus> toscaElementNew  = toscaOperationFacade.getToscaFullElement(componentId);
-			if (toscaElement.isRight()) {
-				log.info("Failed to fetch resources {} {}", componentId, toscaElementNew.right().value());
-
-			}
-			res = isProblematicService(toscaElementNew.left().value(), toscaElementNew.left().value().getName());
-		}
-		titanDao.commit();
-
-	} catch (IOException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	}
-	log.info("Fix component return res {} ", res);
-	
-	return res;
-}*/
-
 }
 
 

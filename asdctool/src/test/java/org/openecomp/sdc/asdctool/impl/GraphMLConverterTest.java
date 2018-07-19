@@ -1,13 +1,12 @@
 package org.openecomp.sdc.asdctool.impl;
 
-import java.util.List;
-import java.util.Map;
-
+import com.thinkaurelius.titan.core.TitanGraph;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.tinkerpop.gremlin.structure.Element;
 import org.junit.Test;
 
-import com.thinkaurelius.titan.core.TitanGraph;
+import java.util.List;
+import java.util.Map;
 
 public class GraphMLConverterTest {
 	
@@ -15,18 +14,6 @@ public class GraphMLConverterTest {
 		return new GraphMLConverter();
 	}
 	
-	/*@Before
-	public void createGraphTestSubject() {
-		converter = new GraphMLConverter();
-		openGraph = converter.openGraph("src/main/resources/config/titan.properties");
-	}*/
-	
-	/*@After
-	public void destroyGraphTestSubject() {
-		converter = new GraphMLConverter();
-		converter.clearGraph(openGraph);
-	}*/
-
 	@Test
 	public void testImportGraph() throws Exception {
 		GraphMLConverter testSubject;
@@ -131,13 +118,6 @@ public class GraphMLConverterTest {
 		result = testSubject.findErrorInJsonGraph(graph, outputDirectory);
 	}
 
-	@Test
-	public void testClearGraph() throws Exception {
-		TitanGraph graph = null;
-
-		// default test
-		//GraphMLConverter.clearGraph("src/main/resources/config/titan.properties");
-	}
 
 	@Test(expected=NullPointerException.class)
 	public void testExportUsers() throws Exception {

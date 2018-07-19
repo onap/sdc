@@ -18,7 +18,6 @@ public class ArtifactUUIDFixMenu {
         }
         String fixServices = args[1];
         String runMode = args[2];
-       // String fixTosca = args[3];
         log.info("Start fixing artifact UUID after 1707 migration with arguments run with configuration [{}] , for [{}] services", runMode, fixServices);
         String appConfigDir = args[0];
         ConfigurationUploader.uploadConfigurationFiles(appConfigDir);

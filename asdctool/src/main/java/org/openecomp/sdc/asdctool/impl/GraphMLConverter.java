@@ -20,22 +20,12 @@
 
 package org.openecomp.sdc.asdctool.impl;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
+import com.google.gson.Gson;
+import com.thinkaurelius.titan.core.TitanEdge;
+import com.thinkaurelius.titan.core.TitanFactory;
+import com.thinkaurelius.titan.core.TitanGraph;
+import com.thinkaurelius.titan.core.TitanGraphQuery;
+import com.thinkaurelius.titan.core.TitanVertex;
 import org.apache.commons.configuration.BaseConfiguration;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.tinkerpop.gremlin.structure.Direction;
@@ -55,12 +45,21 @@ import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.gson.Gson;
-import com.thinkaurelius.titan.core.TitanEdge;
-import com.thinkaurelius.titan.core.TitanFactory;
-import com.thinkaurelius.titan.core.TitanGraph;
-import com.thinkaurelius.titan.core.TitanGraphQuery;
-import com.thinkaurelius.titan.core.TitanVertex;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 public class GraphMLConverter {
 
@@ -177,7 +176,6 @@ public class GraphMLConverter {
 			return false;
 		} finally {
 			if (graph != null) {
-				// graph.shutdown();
 				graph.close();
 			}
 		}
@@ -197,25 +195,18 @@ public class GraphMLConverter {
 
 		String result = null;
 
-		// GraphMLWriter graphMLWriter = new GraphMLWriter(graph);
-
 		String outputFile = outputDirectory + File.separator + "exportGraph." + System.currentTimeMillis() + ".json";
 
 		OutputStream out = null;
 		try {
 			out = new BufferedOutputStream(new FileOutputStream(outputFile));
 
-			// GraphSONWriter.outputGraph(graph, outputFile);
 			final GraphSONWriter.Builder builder = GraphSONWriter.build();
 			final GraphSONMapper mapper = newGraphSONMapper(graph);
 			builder.mapper(mapper);
 			final GraphSONWriter writer = builder.create();
 			writer.writeGraph(out, graph);
 
-			// GraphSONWriter create = GraphSONWriter.build(). create();
-			// create.writeGraph(out, graph);
-
-			// graph.commit();
 			graph.tx().commit();
 
 			result = outputFile;
@@ -255,8 +246,6 @@ public class GraphMLConverter {
 
 	private static GraphSONMapper newGraphSONMapper(final Graph graph) {
 		final GraphSONMapper.Builder builder = graph.io(IoCore.graphson()).mapper();
-		// Different failure with embedded type info.
-		// builder.embedTypes(true);
 		return builder.create();
 	}
 
@@ -294,11 +283,9 @@ public class GraphMLConverter {
 			is = new BufferedInputStream(new FileInputStream(graphJsonFile));
 			System.out.println("Before importing file " + graphJsonFile);
 
-			// GraphSONReader.inputGraph(graph, graphJsonFile);
 			GraphSONReader create = GraphSONReader.build().create();
 			create.readGraph(is, graph);
 
-			// graph.commit();
 			graph.tx().commit();
 
 			result = true;
@@ -329,8 +316,6 @@ public class GraphMLConverter {
 
 		String result = null;
 
-		// GraphMLWriter graphMLWriter = new GraphMLWriter(graph);
-
 		String outputFile = outputDirectory + File.separator + "exportGraph." + System.currentTimeMillis() + ".json";
 
 		OutputStream out = null;
@@ -343,10 +328,7 @@ public class GraphMLConverter {
 				Vertex vertexTo = null;
 				Edge edge = null;
 
-				// Iterable<Edge> edges = graph.getEdges();
-				// Iterable<Edge> edges = graph.query().edges();
 				Iterable<TitanEdge> edges = graph.query().edges();
-				// Iterator<Edge> iterator = edges.iterator();
 				Iterator<TitanEdge> iterator = edges.iterator();
 				while (iterator.hasNext()) {
 
@@ -354,8 +336,6 @@ public class GraphMLConverter {
 
 						edge = iterator.next();
 
-						// vertexFrom = edge.getVertex(Direction.OUT);
-						// vertexTo = edge.getVertex(Direction.IN);
 						vertexFrom = edge.outVertex();
 						vertexTo = edge.inVertex();
 
@@ -364,35 +344,21 @@ public class GraphMLConverter {
 						TitanGraph openGraph = Utils.openGraph(conf);
 
 						TitanVertex addVertexFrom = openGraph.addVertex();
-						// ElementHelper.setProperties(addVertexFrom,
-						// ElementHelper.getProperties(vertexFrom));
 						Utils.setProperties(addVertexFrom, Utils.getProperties(vertexFrom));
 
 						TitanVertex addVertexTo = openGraph.addVertex();
-						// ElementHelper.setProperties(addVertexTo,
-						// ElementHelper.getProperties(vertexTo));
 						Utils.setProperties(addVertexTo, Utils.getProperties(vertexTo));
 
-						// Edge addEdge = openGraph.addEdge(null, addVertexFrom,
-						// addVertexTo, edge.getLabel());
-
-						// Edge edge = tGraph.addEdge(null,
-						// fromV.left().value(), toV.left().value(), type);
-
 						Edge addEdge = addVertexFrom.addEdge(edge.label(), addVertexTo);
-						// ElementHelper.setProperties(addEdge,
-						// ElementHelper.getProperties(edge));
 						Utils.setProperties(addEdge, Utils.getProperties(edge));
 
 						log.info("fromVertex={}", Utils.getProperties(vertexFrom));
 						log.info("toVertex={}", Utils.getProperties(vertexTo));
 						log.info("edge={} {} ",edge.label(),Utils.getProperties(edge));
 
-						// GraphSONWriter.outputGraph(openGraph, outputFile);
 						GraphSONWriter create = GraphSONWriter.build().create();
 						create.writeGraph(out, openGraph);
 
-						// openGraph.rollback();
 						openGraph.tx().rollback();
 
 					} catch (Exception e) {
@@ -407,7 +373,6 @@ public class GraphMLConverter {
 					}
 				}
 
-				// graph.rollback();
 				graph.tx().rollback();
 
 			}
@@ -415,20 +380,12 @@ public class GraphMLConverter {
 			if (runVertexScan) {
 
 				Vertex vertex = null;
-				// Iterable<Vertex> vertices = graph.getVertices();
-
-				// Iterator<Vertex> iteratorVertex = vertices.iterator();
 				Iterator<Vertex> iteratorVertex = graph.vertices();
 				while (iteratorVertex.hasNext()) {
 
 					try {
 
 						vertex = iteratorVertex.next();
-
-						// Iterable<Edge> edges2 =
-						// vertex.getEdges(Direction.BOTH);
-
-						// Iterator<Edge> iterator2 = edges2.iterator();
 						Iterator<Edge> iterator2 = vertex.edges(Direction.BOTH);
 						if (false == iterator2.hasNext()) {
 
@@ -462,54 +419,28 @@ public class GraphMLConverter {
 					}
 				}
 
-				// graph.rollback();
 				graph.tx().rollback();
 
 			}
 
-			// Iterable<Vertex> vertices2 =
-			// graph.getVertices(GraphPropertiesDictionary.HEALTH_CHECK.getProperty(),
-			// "GOOD");
 			Iterable<TitanVertex> vertices2 = graph.query()
 					.has(GraphPropertiesDictionary.HEALTH_CHECK.getProperty(), "GOOD").vertices();
 			;
-			Vertex next = vertices2.iterator().next();
 
 			BaseConfiguration conf = new BaseConfiguration();
 			conf.setProperty("storage.backend", "inmemory");
-			TitanGraph openGraph = Utils.openGraph(conf);
-
-			// TitanVertex addVertexFrom = openGraph.addVertex();
-			//
-			// addVertexFrom.setProperty(GraphPropertiesDictionary.HEALTH_CHECK.getProperty(),
-			// "GOOD");
-			// addVertexFrom.setProperty("healthcheck",
-			// next.getProperty("healthcheck"));
-			//
-			// //next.remove();
-			//
-			// next.removeProperty("healthcheck");
-			// next.removeProperty("healthcheckis");
-			//
-			// next.remove();
-
-			// GraphSONWriter.outputGraph(openGraph, outputFile);
-
 			for (NodeTypeEnum nodeTypeEnum : NodeTypeEnum.values()) {
 				removeNodesByLabel(graph, nodeTypeEnum.getName());
 			}
 
-			// GraphSONWriter.outputGraph(graph, outputFile);
 
 			GraphSONWriter create = GraphSONWriter.build().create();
 			create.writeGraph(out, graph);
 
-			// graph.rollback();
 			graph.tx().rollback();
 
 		} catch (Exception e) {
 			log.info("find Error In Json Graph failed - {}" , e);
-			// graph.rollback();
 			graph.tx().rollback();
 		} finally {
 			try {
@@ -534,34 +465,10 @@ public class GraphMLConverter {
 		}
 	}
 
-	public static void clearGraph(TitanGraph graph) {
-
-		Iterable<TitanVertex> vertices = graph.query().vertices();
-
-		long erased = 0;
-
-		if (vertices != null) {
-			Iterator<TitanVertex> iterator = vertices.iterator();
-			while (iterator.hasNext()) {
-				Vertex vertex = iterator.next();
-				// graph.removeVertex(vertex);
-				vertex.remove();
-				erased++;
-			}
-
-		}
-
-		System.out.println("After erasing " + erased + " vertices.");
-		// graph.commit();
-		graph.tx().commit();
-	}
-
 	public String exportUsers(TitanGraph graph, String outputDirectory) {
 
 		List<Map<String, Object>> users = new ArrayList<>();
 		String result = null;
-
-		// GraphMLWriter graphMLWriter = new GraphMLWriter(graph);
 
 		String outputFile = outputDirectory + File.separator + "users." + System.currentTimeMillis() + ".json";
 
@@ -646,7 +553,6 @@ public class GraphMLConverter {
 			return false;
 		} finally {
 			if (graph != null) {
-				// graph.shutdown();
 				graph.close();
 			}
 		}
