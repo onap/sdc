@@ -16,12 +16,13 @@
 
 package org.openecomp.sdcrests.vsp.rest;
 
+import static org.openecomp.sdcrests.common.RestConstants.USER_ID_HEADER_PARAM;
+import static org.openecomp.sdcrests.common.RestConstants.USER_MISSING_ERROR_MSG;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import org.openecomp.sdcrests.vendorsoftwareproducts.types.UploadFileResponseDto;
-import org.springframework.validation.annotation.Validated;
-
+import java.io.File;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -32,9 +33,8 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.io.File;
-import static org.openecomp.sdcrests.common.RestConstants.USER_ID_HEADER_PARAM;
-import static org.openecomp.sdcrests.common.RestConstants.USER_MISSING_ERROR_MSG;
+import org.openecomp.sdcrests.vendorsoftwareproducts.types.UploadFileResponseDto;
+import org.springframework.validation.annotation.Validated;
 
 @Path("/v1.0/vendor-software-products/{vspId}/versions/{versionId}/vnfrepository")
 @Produces(MediaType.APPLICATION_JSON)
@@ -46,7 +46,8 @@ public interface VnfPackageRepository extends VspEntities {
     @GET
     @Path("/vnfpackages")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
-    @ApiOperation(value = "Get VNF packages from VNF Repository", notes = "Call VNF Repostory to get VNF package details", response = File.class)
+    @ApiOperation(value = "Get VNF packages from VNF Repository",
+            notes = "Call VNF Repostory to get VNF package details", response = File.class)
     Response getVnfPackages(@PathParam("vspId") String vspId,
             @ApiParam(value = "Version Id") @PathParam("versionId") String versionId,
             @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user) throws Exception;
@@ -54,7 +55,8 @@ public interface VnfPackageRepository extends VspEntities {
     @GET
     @Path("/vnfpackage/{csarId}/download")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
-    @ApiOperation(value = "Download VNF package from VNF Repository", notes = "Download VNF package from VNF repository and send to client", response = File.class)
+    @ApiOperation(value = "Download VNF package from VNF Repository",
+            notes = "Download VNF package from VNF repository and send to client", response = File.class)
     Response downloadVnfPackage(@PathParam("vspId") String vspId,
             @ApiParam(value = "Version Id") @PathParam("versionId") String versionId,
             @PathParam("csarId") String csarId,
@@ -63,7 +65,9 @@ public interface VnfPackageRepository extends VspEntities {
     @POST
     @Path("/vnfpackage/{csarId}/import")
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Import VNF package from VNF Repository", notes = "Call VNF Repostory to download VNF package, validate it and send the response", response = UploadFileResponseDto.class)
+    @ApiOperation(value = "Import VNF package from VNF Repository",
+            notes = "Call VNF Repostory to download VNF package, validate it and send the response",
+            response = UploadFileResponseDto.class)
     Response importVnfPackage(@PathParam("vspId") String vspId,
             @ApiParam(value = "Version Id") @PathParam("versionId") String versionId,
             @PathParam("csarId") String csarId,
