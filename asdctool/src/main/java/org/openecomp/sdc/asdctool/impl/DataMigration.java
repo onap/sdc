@@ -631,20 +631,18 @@ public class DataMigration {
      */
     private Map<Table, PrintWriter> createWriters(Map<Table, File> files) {
         Map<Table, PrintWriter> printerWritersMap = new EnumMap<>(Table.class);
-        try {
+      
             for (Entry<Table, File> entry : files.entrySet()) {
                 log.info("creating writer for {}", entry.getKey());
                 File file = entry.getValue();
-                FileWriter fw = new FileWriter(file, true);
-                BufferedWriter bw = new BufferedWriter(fw);
-                PrintWriter out = new PrintWriter(bw);
+                try(PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(file)) )){
                 printerWritersMap.put(entry.getKey(), out);
                 log.info("creating writer for {} was successful", entry.getKey());
-            }
-        } catch (IOException e) {
-            log.error("create writer to file failed", e);
-            return null;
-        }
+            } catch (IOException e) {
+            	log.error("create writer to file failed",e);
+            	return null;
+			} 
+        } 
         return printerWritersMap;
     }
 
