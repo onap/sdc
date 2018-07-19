@@ -22,7 +22,15 @@ import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 
 import java.io.Serializable;
 
-import static org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields.*;
+import static org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields.ARTIFACT_UUID;
+import static org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields.DESCRIPTION;
+import static org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields.IO_INPUT_PARAMETERS;
+import static org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields.IO_OPERATION_TYPE;
+import static org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields.IO_OUTPUT_PARAMETERS;
+import static org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields.IO_WORKFLOW_ID;
+import static org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields.IO_WORKFLOW_VERSION_ID;
+import static org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields.TOSCA_RESOURCE_NAME;
+import static org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields.UNIQUE_ID;
 
 public class InterfaceOperationDataDefinition extends ToscaDataDefinition implements Serializable {
 
@@ -40,6 +48,8 @@ public class InterfaceOperationDataDefinition extends ToscaDataDefinition implem
         setToscaResourceName(iodd.getToscaResourceName());
         setOperationType(iodd.getOperationType());
         setArtifactUUID(iodd.getArtifactUUID());
+        setWorkflowId(iodd.getWorkflowId());
+        setWorkflowVersionId(iodd.getWorkflowVersionId());
     }
 
     public ListDataDefinition<InterfaceOperationParamDataDefinition> getInputParams() {
@@ -86,6 +96,20 @@ public class InterfaceOperationDataDefinition extends ToscaDataDefinition implem
     }
     public void setToscaResourceName(String toscaResourceName) {
         setToscaPresentationValue(TOSCA_RESOURCE_NAME, toscaResourceName);
+    }
+
+    public String getWorkflowId(){
+        return (String) getToscaPresentationValue(IO_WORKFLOW_ID);
+    }
+    public void setWorkflowId(String workflowId) {
+        setToscaPresentationValue(IO_WORKFLOW_ID, workflowId);
+    }
+
+    public String getWorkflowVersionId() {
+        return (String) getToscaPresentationValue(IO_WORKFLOW_VERSION_ID);
+    }
+    public void setWorkflowVersionId(String workflowVersionId) {
+        setToscaPresentationValue(IO_WORKFLOW_VERSION_ID, workflowVersionId);
     }
 
     public String getArtifactUUID() {

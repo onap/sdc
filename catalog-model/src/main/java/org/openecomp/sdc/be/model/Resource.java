@@ -47,8 +47,6 @@ public class Resource extends Component {
 
     private List<String> defaultCapabilities;
     
-    private Map<String, InterfaceOperationDataDefinition> interfaceOperations;
-
     public Resource() {
         super(new ResourceMetadataDefinition());
         this.getComponentMetadataDefinition().getMetadataDataDefinition().setComponentType(ComponentTypeEnum.RESOURCE);
@@ -152,14 +150,6 @@ public class Resource extends Component {
                 .setLicenseType(licenseType);
     }
 
-    public Map<String, InterfaceOperationDataDefinition> getInterfaceOperations() {
-        return interfaceOperations;
-    }
-
-    public void setInterfaceOperations(Map<String, InterfaceOperationDataDefinition> interfaceOperations) {
-        this.interfaceOperations = interfaceOperations;
-    }
-
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -214,7 +204,6 @@ public class Resource extends Component {
                 return false;
         } else if (!properties.equals(other.properties))
             return false;
-
         return super.equals(obj);
     }
 

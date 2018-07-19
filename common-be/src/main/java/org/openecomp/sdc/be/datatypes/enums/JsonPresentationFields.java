@@ -221,6 +221,7 @@ public enum JsonPresentationFields {
     IO_PARAM_NAME("paramName", null),
     IO_PARAM_ID("paramId", null),
     IO_WORKFLOW_ID("workflowId", null),
+	IO_WORKFLOW_VERSION_ID("workflowVersionId", null),
 
     //Interface
     INTERFACE ("interface", null),

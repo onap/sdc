@@ -222,28 +222,6 @@ public class ResourceTest extends ModelConfDependentTest{
 
 	
 	@Test
-	public void testGetInterfaceOperations() throws Exception {
-		Resource testSubject;
-		Map<String, InterfaceOperationDataDefinition> result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getInterfaceOperations();
-	}
-
-	
-	@Test
-	public void testSetInterfaceOperations() throws Exception {
-		Resource testSubject;
-		Map<String, InterfaceOperationDataDefinition> interfaceOperations = null;
-
-		// default test
-		testSubject = createTestSubject();
-		testSubject.setInterfaceOperations(interfaceOperations);
-	}
-
-	
-	@Test
 	public void testHashCode() throws Exception {
 		Resource testSubject;
 		int result;
