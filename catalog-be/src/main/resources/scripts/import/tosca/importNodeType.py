@@ -95,7 +95,7 @@ def main(argv):
 		opts, args = getopt.getopt(argv,"i:p:u:d:l:e:h:s:",["ip=","port=","user=","location=","element=", "debug=","scheme="])
 	except getopt.GetoptError:
 		usage()
-		errorAndExit(2, 'Invalid input')
+		error_and_exit(2, 'Invalid input')
 		 
 	for opt, arg in opts:
 	#print opt, arg
@@ -153,9 +153,9 @@ def main(argv):
 
 	if ( result[1] == None or result[1] not in [200, 201] ) :
 		print "Failed creating normative type " + element + ". " + str(result[1]) 				
-		errorAndExit(1, None)
+		error_and_exit(1, None)
 
-	errorAndExit(0, None)
+	error_and_exit(0, None)
 
 if __name__ == "__main__":
         main(sys.argv[1:])

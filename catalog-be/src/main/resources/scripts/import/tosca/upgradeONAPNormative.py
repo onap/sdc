@@ -37,15 +37,15 @@ def usage():
 
 def handleResults(results):
 	if results is not None:
-		printFrameLine()
+		print_frame_line()
 		for result in results:
-			printNameAndReturnCode(result[0], result[1])
+			print_name_and_return_code(result[0], result[1])
 		
-		printFrameLine()
+		print_frame_line()
 
 		failedResults = filter(lambda x: x[1] == None or x[1] not in [200, 201, 409], results)
 		if (len(failedResults) > 0):
-			errorAndExit(1, None)
+			error_and_exit(1, None)
 
 def main(argv):
 	print 'Number of arguments:', len(sys.argv), 'arguments.'
@@ -63,7 +63,7 @@ def main(argv):
 		opts, args = getopt.getopt(argv,"i:p:u:d:h",["ip=","port=","user=","debug="])
 	except getopt.GetoptError:
 		usage()
-		errorAndExit(2, 'Invalid input')
+		error_and_exit(2, 'Invalid input')
 
 	for opt, arg in opts:
 	#print opt, arg
@@ -131,7 +131,7 @@ def main(argv):
 	resultsHeat = upgradeSolTypesPerConfigFile(scheme, beHost, bePort, adminUser, baseFileLocation, updateOnapVersion)
 	handleResults(resultsHeat)
 
-	errorAndExit(0, None)
+	error_and_exit(0, None)
 
 if __name__ == "__main__":
         main(sys.argv[1:])

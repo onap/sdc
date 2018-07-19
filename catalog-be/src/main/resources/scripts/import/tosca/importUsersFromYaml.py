@@ -129,7 +129,7 @@ def createUser(scheme, beHost, bePort, user, adminUser):
 		return (userId, None)				
 
 
-def errorAndExit(errorCode, errorDesc):
+def error_and_exit(errorCode, errorDesc):
 	if ( errorCode > 0 ):
 		print("status=" + str(errorCode) + ". " + errorDesc) 
 	else:
@@ -153,7 +153,7 @@ def main(argv):
 		opts, args = getopt.getopt(argv,"i:p:f:h:s:",["ip=","port=","ifile=","scheme="])
 	except getopt.GetoptError:
 		usage()
-		errorAndExit(2, 'Invalid input')
+		error_and_exit(2, 'Invalid input')
 		 
 	for opt, arg in opts:
 	#print opt, arg
@@ -204,7 +204,7 @@ def main(argv):
 
 	if ( len(result) > 0 ):
 		#print("ERROR: Failed to load the users " + ', '.join(map(lambda x: x[0],result)))
-		errorAndExit(3, "Failed to load the users " + ', '.join(map(lambda x: x[0],result)))	
+		error_and_exit(3, "Failed to load the users " + ', '.join(map(lambda x: x[0],result)))	
 
 	g = lambda x: x[1] == 409
 	result = filter(g, resultTable)
@@ -222,7 +222,7 @@ def main(argv):
 		print("Loaded users: " + ', '.join(map(lambda x: x[0],result)))
 		print("-------------------------------------------")
 
-	errorAndExit(0, None)
+	error_and_exit(0, None)
 
 
 if __name__ == "__main__":

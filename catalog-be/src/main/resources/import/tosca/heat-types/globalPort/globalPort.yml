@@ -35,6 +35,11 @@ node_types:
           type: org.openecomp.datatypes.Naming
       subnetpoolid:
           type: string	     
+      subinterface_indicator:
+        description: identifies if Port is having Sub Interface
+        type: boolean
+        required: false
+        default: false
     capabilities:
       network.incoming.packets.rate:
         type: org.openecomp.capabilities.metric.Ceilometer

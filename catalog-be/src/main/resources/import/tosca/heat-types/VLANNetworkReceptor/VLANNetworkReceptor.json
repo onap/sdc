@@ -1,0 +1,21 @@
+{
+  "payloadName": "VLANNetworkReceptor.yml",
+  "contactId": "jh0003",
+  "name": "VLAN Network Receptor Configuration",
+  "description": "VLAN network receptor configuration object",
+  "resourceIconPath": "pmc",
+  "resourceType": "Configuration",
+  "categories": [
+  {
+    "name": "Configuration",
+    "subcategories": [
+      {
+        "name": "Configuration"
+      }
+    ]
+  }
+],
+  "tags": [
+    "VLAN Network Receptor Configuration"
+  ]
+}

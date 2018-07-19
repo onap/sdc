@@ -1,0 +1,21 @@
+{
+  "payloadName": "VRFObject.yml",
+  "contactId": "jh0003",
+  "name": "VRF Object Configuration",
+  "description": "VRF Object configuration object",
+  "resourceIconPath": "pmc",
+  "resourceType": "Configuration",
+  "categories": [
+  {
+    "name": "Configuration",
+    "subcategories": [
+      {
+        "name": "Configuration"
+      }
+    ]
+  }
+],
+  "tags": [
+    "VRF Object Configuration"
+  ]
+}
