@@ -3,16 +3,10 @@ package org.openecomp.sdc.asdctool.main;
 import org.openecomp.sdc.asdctool.impl.validator.ArtifactToolBL;
 import org.openecomp.sdc.asdctool.impl.validator.config.ValidationConfigManager;
 import org.openecomp.sdc.asdctool.impl.validator.config.ValidationToolConfiguration;
-import org.openecomp.sdc.be.config.ConfigurationManager;
-import org.openecomp.sdc.common.api.ConfigurationSource;
-import org.openecomp.sdc.common.impl.ExternalConfiguration;
-import org.openecomp.sdc.common.impl.FSConfigurationSource;
-import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 public class ArtifactValidatorTool {
-	private static Logger log = Logger.getLogger(ValidationTool.class.getName());
-	
+
 	public static void main(String[] args) {
 
         String outputPath = args[0];
@@ -25,7 +19,6 @@ public class ArtifactValidatorTool {
 
         System.out.println("Start ArtifactValidation Tool");
         Boolean result = validationToolBL.validateAll();
-       // ReportManager.reportEndOfToolRun();
         if (result) {
             System.out.println("ArtifactValidation finished successfully");
             System.exit(0);
@@ -36,8 +29,6 @@ public class ArtifactValidatorTool {
 	}
 	
 	private static AnnotationConfigApplicationContext initContext(String appConfigDir) {
-		ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(), appConfigDir);
-		ConfigurationManager configurationManager = new ConfigurationManager(configurationSource);
 		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(ValidationToolConfiguration.class);
 		return context;
 	}

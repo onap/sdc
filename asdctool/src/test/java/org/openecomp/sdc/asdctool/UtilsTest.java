@@ -12,10 +12,6 @@ import java.util.Map;
 
 public class UtilsTest {
 
-	/*
-	 * private Utils createTestSubject() { return new Utils(); }
-	 */
-
 	@Test
 	public void testBuildOkResponse() throws Exception {
 		int status = 0;
