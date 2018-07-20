@@ -35,6 +35,8 @@ public class DeploymentFlavorErrorBuilder {
             + ": name : must match %s";
     private static final String INVALID_COMPUTE_FLAVOR_ID_MSG =
             "Invalid request, Compute Flavor provided does not exist for this VFC.";
+    private static final String INVALID_COMPONENT_ID_MSG =
+            "Invalid request, Component provided does not exist for this VSP.";
     private static final String INVALID_COMPONENT_COMPUTE_ASSOCIATION_ERROR_MSG="VSP cannot be " +
             "submitted with an invalid Deployment Flavor. All Deployment Flavor should have atleast a VFC included with it's required Compute needs. " +
             "Please fix the Deployment Flavor %s and re-submit the VSP.";
@@ -55,8 +57,7 @@ public class DeploymentFlavorErrorBuilder {
         return builder.build();
     }
 
-    public static ErrorCode getFeatureGroupNotexistErrorBuilder( String featureGroupId, String
-            vspId, Version activeVersion){
+    public static ErrorCode getFeatureGroupNotexistErrorBuilder(){
         ErrorCode.ErrorCodeBuilder builder = new ErrorCode.ErrorCodeBuilder();
         builder.withId(VendorSoftwareProductErrorCodes.FEATURE_GROUP_NOT_EXIST_FOR_VSP);
         builder.withCategory(ErrorCategory.APPLICATION);
@@ -89,13 +90,20 @@ public class DeploymentFlavorErrorBuilder {
         builder.withMessage(String.format(DUPLICATE_DEPLOYMENT_FLAVOR_MODEL_NOT_ALLOWED_MSG,name,vspId));
         return builder.build();
     }
-    public static ErrorCode getInvalidComputeIdErrorBuilder(String computeFlavorId, String
-            vfcId){
+
+    public static ErrorCode getInvalidComputeIdErrorBuilder() {
         ErrorCode.ErrorCodeBuilder builder = new ErrorCode.ErrorCodeBuilder();
         builder.withId(VendorSoftwareProductErrorCodes.INVALID_COMPUTE_FLAVOR_ID);
         builder.withCategory(ErrorCategory.APPLICATION);
-        builder.withMessage(String.format(INVALID_COMPUTE_FLAVOR_ID_MSG,computeFlavorId,
-                vfcId));
+        builder.withMessage(INVALID_COMPUTE_FLAVOR_ID_MSG);
+        return builder.build();
+    }
+
+    public static ErrorCode getInvalidComponentIdErrorBuilder() {
+        ErrorCode.ErrorCodeBuilder builder = new ErrorCode.ErrorCodeBuilder();
+        builder.withId(VendorSoftwareProductErrorCodes.INVALID_COMPONENT_ID);
+        builder.withCategory(ErrorCategory.APPLICATION);
+        builder.withMessage(INVALID_COMPONENT_ID_MSG);
         return builder.build();
     }
 

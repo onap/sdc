@@ -16,14 +16,23 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.impl;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.ErrorCode;
 import org.openecomp.sdc.vendorsoftwareproduct.CompositionEntityDataManager;
 import org.openecomp.sdc.vendorsoftwareproduct.DeploymentFlavorManager;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.ComponentDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.ComputeDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.DeploymentFlavorDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductInfoDao;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComponentEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComputeEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.DeploymentFlavorEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
@@ -40,26 +49,22 @@ import org.openecomp.sdc.vendorsoftwareproduct.types.schemagenerator.SchemaTempl
 import org.openecomp.sdc.versioning.VersioningUtil;
 import org.openecomp.sdc.versioning.dao.types.Version;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
 public class DeploymentFlavorManagerImpl implements DeploymentFlavorManager {
   private final VendorSoftwareProductInfoDao vspInfoDao;
   private final DeploymentFlavorDao deploymentFlavorDao;
   private final CompositionEntityDataManager compositionEntityDataManager;
   private final ComputeDao computeDao;
+  private final ComponentDao componentDao;
 
   public DeploymentFlavorManagerImpl(VendorSoftwareProductInfoDao vspInfoDao,
                                      DeploymentFlavorDao deploymentFlavorDao,
                                      CompositionEntityDataManager compositionEntityDataManager,
-                                     ComputeDao computeDao) {
+                                     ComputeDao computeDao, ComponentDao componentDao) {
     this.vspInfoDao = vspInfoDao;
     this.deploymentFlavorDao = deploymentFlavorDao;
     this.compositionEntityDataManager = compositionEntityDataManager;
     this.computeDao = computeDao;
+    this.componentDao = componentDao;
 
   }
 
@@ -72,8 +77,7 @@ public class DeploymentFlavorManagerImpl implements DeploymentFlavorManager {
   public DeploymentFlavorEntity createDeploymentFlavor(
       DeploymentFlavorEntity deploymentFlavorEntity) {
     DeploymentFlavorEntity createDeploymentFlavor;
-    if (!vspInfoDao.isManual(deploymentFlavorEntity.getVspId(),
-        deploymentFlavorEntity.getVersion())) {
+    if (!vspInfoDao.isManual(deploymentFlavorEntity.getVspId(), deploymentFlavorEntity.getVersion())) {
       ErrorCode deploymentFlavorErrorBuilder = DeploymentFlavorErrorBuilder
           .getAddDeploymentNotSupportedHeatOnboardErrorBuilder();
       throw new CoreException(deploymentFlavorErrorBuilder);
@@ -100,8 +104,7 @@ public class DeploymentFlavorManagerImpl implements DeploymentFlavorManager {
     if (featureGroup != null && featureGroup.trim().length() > 0
           && (isEmpty(featureGroups) || (!(validFeatureGroup(featureGroups, featureGroup))))) {
         ErrorCode deploymentFlavorErrorBuilder = DeploymentFlavorErrorBuilder
-            .getFeatureGroupNotexistErrorBuilder(featureGroup, deploymentFlavorEntity.getVspId(),
-                version);
+            .getFeatureGroupNotexistErrorBuilder();
         throw new CoreException(deploymentFlavorErrorBuilder);
     }
     validateComponentComputeAssociation(deploymentFlavorEntity, version);
@@ -145,47 +148,66 @@ public class DeploymentFlavorManagerImpl implements DeploymentFlavorManager {
     return valid;
   }
 
-  private void validateComponentComputeAssociation(DeploymentFlavorEntity deploymentFlavorEntity,
-                                                   Version version) {
-    List<ComponentComputeAssociation> componentComputeAssociationList = deploymentFlavorEntity
-        .getDeploymentFlavorCompositionData().getComponentComputeAssociations();
-    List<String> vfcList = new ArrayList<>();
-    if (!isEmpty(componentComputeAssociationList)) {
-      componentComputeAssociationList.forEach(componentComputeAssociation ->
-        validateComponentComputeAssocoationList(deploymentFlavorEntity,
-                version, vfcList, componentComputeAssociation));
-      Map<String, Integer> frequencyMapping = CollectionUtils.getCardinalityMap(vfcList);
+    private void validateComponentComputeAssociation(DeploymentFlavorEntity deploymentFlavorEntity,
+                                                     Version version) {
+        List<ComponentComputeAssociation> componentComputeAssociationList =
+                deploymentFlavorEntity.getDeploymentFlavorCompositionData().getComponentComputeAssociations();
+        List<String> vfcList = new ArrayList<>();
+        if (!isEmpty(componentComputeAssociationList)) {
+            componentComputeAssociationList.forEach(
+                    componentComputeAssociation -> validateComponentComputeAssocoationList(deploymentFlavorEntity,
+                            version,
+                            vfcList, componentComputeAssociation));
+            Map<String, Integer> frequencyMapping = CollectionUtils.getCardinalityMap(vfcList);
 
-      for (Integer vfcCount : frequencyMapping.values()) {
-        if (vfcCount != 1) {
-          ErrorCode duplicateVfcAssociationErrorBuilder = DeploymentFlavorErrorBuilder
-              .getDuplicateVfcAssociationErrorBuilder();
-          throw new CoreException(duplicateVfcAssociationErrorBuilder);
+            for (Integer vfcCount : frequencyMapping.values()) {
+                if (vfcCount != 1) {
+                    ErrorCode duplicateVfcAssociationErrorBuilder =
+                            DeploymentFlavorErrorBuilder.getDuplicateVfcAssociationErrorBuilder();
+                    throw new CoreException(duplicateVfcAssociationErrorBuilder);
+                }
+            }
         }
-      }
     }
-  }
 
-  private void validateComponentComputeAssocoationList(
-              DeploymentFlavorEntity deploymentFlavorEntity,
-              Version version,
-              List<String> vfcList,
-              ComponentComputeAssociation componentComputeAssociation) {
-    if ((componentComputeAssociation.getComponentId() == null || componentComputeAssociation
-        .getComponentId().trim().length() == 0)
-            && (componentComputeAssociation
-            .getComputeFlavorId() != null && componentComputeAssociation
-            .getComputeFlavorId().trim().length() > 0)) {
-      ErrorCode invalidAssociationErrorBuilder = DeploymentFlavorErrorBuilder
-          .getInvalidAssociationErrorBuilder();
-      throw new CoreException(invalidAssociationErrorBuilder);
-    } else if (componentComputeAssociation.getComponentId() != null
-            && componentComputeAssociation.getComponentId().trim().length() > 0) {
-      validateComponentComputeAssociationFlavour(deploymentFlavorEntity,
-              version, componentComputeAssociation);
-      vfcList.add(componentComputeAssociation.getComponentId());
+    private void validateComponentComputeAssocoationList(
+            DeploymentFlavorEntity deploymentFlavorEntity,
+            Version version,
+            List<String> vfcList,
+            ComponentComputeAssociation componentComputeAssociation) {
+        if ((componentComputeAssociation.getComponentId() == null || componentComputeAssociation
+                .getComponentId().trim().length() == 0)
+                && (componentComputeAssociation
+                .getComputeFlavorId() != null && componentComputeAssociation
+                .getComputeFlavorId().trim().length() > 0)) {
+            ErrorCode invalidAssociationErrorBuilder = DeploymentFlavorErrorBuilder
+                    .getInvalidAssociationErrorBuilder();
+            throw new CoreException(invalidAssociationErrorBuilder);
+        } else if (componentComputeAssociation.getComponentId() != null
+                && componentComputeAssociation.getComponentId().trim().length() > 0) {
+            validateComponentAssociation(deploymentFlavorEntity,
+                    version, componentComputeAssociation);
+
+            validateComponentComputeAssociationFlavour(deploymentFlavorEntity,
+                    version, componentComputeAssociation);
+            vfcList.add(componentComputeAssociation.getComponentId());
+        }
     }
-  }
+
+    private void validateComponentAssociation(DeploymentFlavorEntity deploymentFlavorEntity, Version version,
+                                              ComponentComputeAssociation componentComputeAssociation) {
+
+        if (StringUtils.isNotBlank(componentComputeAssociation.getComponentId())) {
+            ComponentEntity componentEntity =
+                    componentDao.get(new ComponentEntity(deploymentFlavorEntity.getVspId(), version,
+                            componentComputeAssociation.getComponentId()));
+            if (componentEntity == null) {
+                ErrorCode invalidComputeIdErrorBuilder =
+                        DeploymentFlavorErrorBuilder.getInvalidComponentIdErrorBuilder();
+                throw new CoreException(invalidComputeIdErrorBuilder);
+            }
+        }
+    }
 
   private void validateComponentComputeAssociationFlavour(
           DeploymentFlavorEntity deploymentFlavorEntity,
@@ -199,8 +221,7 @@ public class DeploymentFlavorManagerImpl implements DeploymentFlavorManager {
           componentComputeAssociation.getComputeFlavorId()));
       if (computeFlavor == null) {
         ErrorCode invalidComputeIdErrorBuilder = DeploymentFlavorErrorBuilder
-            .getInvalidComputeIdErrorBuilder(componentComputeAssociation.getComputeFlavorId(),
-                componentComputeAssociation.getComponentId());
+            .getInvalidComputeIdErrorBuilder();
         throw new CoreException(invalidComputeIdErrorBuilder);
       }
     }

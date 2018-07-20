@@ -19,6 +19,7 @@ package org.openecomp.sdc.vendorsoftwareproduct.impl;
 
 import org.openecomp.sdc.vendorsoftwareproduct.DeploymentFlavorManager;
 import org.openecomp.sdc.vendorsoftwareproduct.DeploymentFlavorManagerFactory;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.ComponentDaoFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.ComputeDaoFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.DeploymentFlavorDaoFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductInfoDaoFactory;
@@ -30,7 +31,8 @@ public class DeploymentFlavorManagerFactoryImpl extends DeploymentFlavorManagerF
       VendorSoftwareProductInfoDaoFactory.getInstance().createInterface(),
       DeploymentFlavorDaoFactory.getInstance().createInterface(),
       CompositionEntityDataManagerFactory.getInstance().createInterface(),
-      ComputeDaoFactory.getInstance().createInterface()
+      ComputeDaoFactory.getInstance().createInterface(),
+      ComponentDaoFactory.getInstance().createInterface()
   );
 
   @Override
