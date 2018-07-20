@@ -1,15 +1,7 @@
 package org.openecomp.sdc.be.components;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.ServletContext;
-
+import com.google.common.collect.Sets;
+import fj.data.Either;
 import org.junit.Before;
 import org.mockito.Mockito;
 import org.openecomp.sdc.ElementOperationMock;
@@ -51,15 +43,17 @@ import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.datastructure.AuditingFieldsKeysEnum;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;
 import org.openecomp.sdc.common.impl.FSConfigurationSource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.web.context.WebApplicationContext;
 
-import com.google.common.collect.Sets;
+import javax.servlet.ServletContext;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import fj.data.Either;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 public class BaseServiceBusinessLogicTest {
-    private static final Logger log = LoggerFactory.getLogger(ServiceBusinessLogicTest.class);
     private static final String SERVICE_CATEGORY = "Mobility";
     final ServletContext servletContext = Mockito.mock(ServletContext.class);
     UserBusinessLogic mockUserAdmin = Mockito.mock(UserBusinessLogic.class);
@@ -114,7 +108,6 @@ public class BaseServiceBusinessLogicTest {
 
         // Servlet Context attributes
         when(servletContext.getAttribute(Constants.CONFIGURATION_MANAGER_ATTR)).thenReturn(configurationManager);
-//        when(servletContext.getAttribute(Constants.SERVICE_OPERATION_MANAGER)).thenReturn(new ServiceOperation());
         when(servletContext.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR)).thenReturn(webAppContextWrapper);
         when(webAppContextWrapper.getWebAppContext(servletContext)).thenReturn(webAppContext);
         when(webAppContext.getBean(IElementOperation.class)).thenReturn(mockElementDao);
@@ -209,10 +202,8 @@ public class BaseServiceBusinessLogicTest {
         createResourceAudit.setStatus("201");
         createResourceAudit.setPrevVersion("");
         createResourceAudit.setAction("Create");
-        // fields.put("TIMESTAMP", "2015-11-22 09:19:12.977");
         createResourceAudit.setPrevState("");
         createResourceAudit.setResourceName("MyTestResource");
-        // createResourceAudit.setFields(fields);
 
         final ResourceAdminEvent checkInResourceAudit = new ResourceAdminEvent();
         checkInResourceAudit.setModifier("Carlos Santana(cs0008)");
@@ -226,7 +217,6 @@ public class BaseServiceBusinessLogicTest {
         checkInResourceAudit.setStatus("200");
         checkInResourceAudit.setPrevVersion("0.1");
         checkInResourceAudit.setAction("Checkin");
-        // fields.put("TIMESTAMP", "2015-11-22 09:25:03.797");
         checkInResourceAudit.setPrevState("NOT_CERTIFIED_CHECKOUT");
         checkInResourceAudit.setResourceName("MyTestResource");
 
@@ -242,43 +232,8 @@ public class BaseServiceBusinessLogicTest {
         checkOutResourceAudit.setStatus("200");
         checkOutResourceAudit.setPrevVersion("0.1");
         checkOutResourceAudit.setAction("Checkout");
-        // fields.put("TIMESTAMP", "2015-11-22 09:39:41.024");
         checkOutResourceAudit.setPrevState("NOT_CERTIFIED_CHECKIN");
         checkOutResourceAudit.setResourceName("MyTestResource");
-        // checkOutResourceAudit.setFields(fields);
-
-        // Mockito.doAnswer(new Answer<Either<List<ESTimeBasedEvent>,
-        // ActionStatus> >() {
-        // public Either<List<ESTimeBasedEvent>, ActionStatus>
-        // answer(InvocationOnMock invocation) {
-        // final Either<List<ESTimeBasedEvent>, ActionStatus> either;
-        // final List<ESTimeBasedEvent> list;
-        // Object[] args = invocation.getArguments();
-        // Map<AuditingFieldsKeysEnum, Object> filterMap =
-        // (Map<AuditingFieldsKeysEnum, Object>) args[0];
-        // if( filterMap.equals(FILTER_MAP_CERTIFIED_VERSION) ){
-        // list = new
-        // ArrayList<ESTimeBasedEvent>(){{add(createResourceAudit);add(checkInResourceAudit);add(checkOutResourceAudit);}};
-        // either = Either.left(list);
-        //
-        // }
-        // else if( filterMap.equals(FILTER_MAP_UNCERTIFIED_VERSION_PREV) ){
-        // list = new ArrayList<ESTimeBasedEvent>();
-        // either = Either.left(list);
-        // }
-        // else if( filterMap.equals(FILTER_MAP_UNCERTIFIED_VERSION_CURR) ){
-        // list = new
-        // ArrayList<ESTimeBasedEvent>(){{/*add(createResourceAudit);add(checkInResourceAudit);*/add(checkOutResourceAudit);}};
-        // either = Either.left(list);
-        // }
-        // else{
-        // either = null;
-        // }
-        // return either;
-        // }
-        // }).when(auditingDao).getFilteredResourceAdminAuditingEvents(Mockito.anyMap());
-        //
-        //
         List<ResourceAdminEvent> list = new ArrayList<ResourceAdminEvent>() {
             {
                 add(createResourceAudit);
@@ -300,7 +255,6 @@ public class BaseServiceBusinessLogicTest {
         };
         Either<List<ResourceAdminEvent>, ActionStatus> resultCurr = Either.left(listCurr);
         Mockito.when(auditingDao.getAuditByServiceIdAndCurrVersion(Mockito.anyString(), Mockito.anyString())).thenReturn(resultCurr);
-
     }
 
     protected Service createServiceObject(boolean afterCreate) {
@@ -316,10 +270,7 @@ public class BaseServiceBusinessLogicTest {
         List<String> tgs = new ArrayList<String>();
         tgs.add(service.getName());
         service.setTags(tgs);
-        // service.setVendorName("Motorola");
-        // service.setVendorRelease("1.0.0");
         service.setIcon("MyIcon");
-        // service.setState(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
         service.setContactId("aa1234");
         service.setProjectCode("12345");
 

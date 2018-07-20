@@ -20,29 +20,16 @@
 
 package org.openecomp.sdc.be.components.impl;
 
-import static org.junit.Assert.*;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyBoolean;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic.HEAT_ENV_NAME;
-import static org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic.HEAT_VF_ENV_NAME;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import fj.data.Either;
+import mockit.Deencapsulation;
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -77,6 +64,7 @@ import org.openecomp.sdc.be.model.GroupInstance;
 import org.openecomp.sdc.be.model.HeatParameterDefinition;
 import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
+import org.openecomp.sdc.be.model.Operation;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.User;
@@ -93,33 +81,36 @@ import org.openecomp.sdc.be.model.operations.impl.ArtifactOperation;
 import org.openecomp.sdc.be.resources.data.ESArtifactData;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.servlets.RepresentationUtils;
-import org.openecomp.sdc.be.user.IUserBusinessLogic;
 import org.openecomp.sdc.be.user.Role;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
 import org.openecomp.sdc.common.api.ArtifactTypeEnum;
 import org.openecomp.sdc.common.api.ConfigurationSource;
+import org.openecomp.sdc.common.datastructure.AuditingFieldsKeysEnum;
+import org.openecomp.sdc.common.datastructure.Wrapper;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;
 import org.openecomp.sdc.common.impl.FSConfigurationSource;
 import org.openecomp.sdc.exception.ResponseFormat;
-import org.xml.sax.XMLReader;
-import org.openecomp.sdc.be.model.Operation;
-import org.openecomp.sdc.common.datastructure.AuditingFieldsKeysEnum;
-import org.openecomp.sdc.common.datastructure.Wrapper;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonElement;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import fj.data.Either;
-import mockit.Deencapsulation;
-import java.util.*;
-import org.junit.Assert;
-import org.apache.commons.lang3.tuple.ImmutablePair;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic.HEAT_ENV_NAME;
+import static org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic.HEAT_VF_ENV_NAME;
 
 public class ArtifactsBusinessLogicTest {
 
@@ -175,10 +166,6 @@ public class ArtifactsBusinessLogicTest {
 	private IGraphLockOperation graphLockOperation;
 	@Mock
 	TitanDao titanDao;
-
-	// public static final InformationDeployedArtifactsBusinessLogic
-	// informationDeployedArtifactsBusinessLogic =
-	// Mockito.mock(InformationDeployedArtifactsBusinessLogic.class);
 
 	public static final Resource resource = Mockito.mock(Resource.class);
 	private Gson gson = new GsonBuilder().setPrettyPrinting().create();
@@ -538,9 +525,6 @@ public class ArtifactsBusinessLogicTest {
 		assertNull(heatEnvParam.getCurrentValue());
 	}
 	
-	//////////////////////////////////////////////////////////////////////////////////
-	//////////////////////////////////new tests///////////////////////////////////////
-	/////////////////////////////////////////////////////////////////////////////////
 	private ArtifactsBusinessLogic createTestSubject() {
 		return new ArtifactsBusinessLogic();
 	}
@@ -1591,23 +1575,4 @@ public class ArtifactsBusinessLogicTest {
 		testSubject = createTestSubject();
 		Deencapsulation.invoke(testSubject, "setNodeTemplateOperation", new Object[] { NodeTemplateOperation.class });
 	}
-
-	// @Test
-	// public void convertAndValidateDeploymentArtifactNonHeatSuccess(){
-	// ArtifactDefinition createArtifactDef = createArtifactDef();
-	// createArtifactDef.setArtifactType(ArtifactTypeEnum.YANG_XML.getType());
-	//
-	// Either<ArtifactDefinition, ResponseFormat> validateResult = artifactBL
-	//
-	// assertTrue(validateResult.isLeft());
-	// ArtifactDefinition validatedArtifact = validateResult.left().value();
-	//
-	// assertEquals(createArtifactDef.getArtifactGroupType(),
-	// validatedArtifact.getArtifactGroupType());
-	// assertEquals(new Integer(0), validatedArtifact.getTimeout());
-	// assertFalse(validatedArtifact.getMandatory());
-	// assertFalse(validatedArtifact.getServiceApi());
-	//
-	// }
-	
 }

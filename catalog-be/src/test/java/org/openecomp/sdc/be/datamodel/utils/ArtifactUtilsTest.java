@@ -1,15 +1,14 @@
 package org.openecomp.sdc.be.datamodel.utils;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
-import org.junit.Assert;
 import org.junit.Test;
 import org.openecomp.sdc.be.info.ArtifactTemplateInfo;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
+
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 public class ArtifactUtilsTest {
 
@@ -46,12 +45,6 @@ public class ArtifactUtilsTest {
 		artifactId = null;
 		result = ArtifactUtils.buildJsonForUpdateArtifact(artifactId, artifactName, artifactType, artifactGroupType,
 				label, displayName, description, artifactContentent, updatedRequiredArtifacts, isFromCsar);
-
-		// test 2
-		/*artifactId = "";
-		result = ArtifactUtils.buildJsonForUpdateArtifact(artifactId, artifactName, artifactType, artifactGroupType,
-				label, displayName, description, artifactContentent, updatedRequiredArtifacts, isFromCsar);
-		Assert.assertEquals(null, result);*/
 	}
 
 	@Test

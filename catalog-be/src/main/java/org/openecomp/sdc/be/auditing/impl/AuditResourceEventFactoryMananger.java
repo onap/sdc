@@ -52,11 +52,6 @@ public class AuditResourceEventFactoryMananger {
                         resourceType, resourceName, invariantUuid,
                         modifier, artifactData, comment, did);
                 break;
-//            case DOWNLOAD_ARTIFACT:
-//                factory = new AuditDownloadArtifactExternalApiEventFactory(commonFields, String resourceType, String resourceName,
-//                    String consumerId, String resourceUrl, ResourceAuditData prevParams, ResourceAuditData currParams,
-//                    String invariantUuid, User modifier, String artifactData);
-//                break;
             case DISTRIBUTION_STATE_CHANGE_REQUEST:
                 factory = new AuditDistStateChangeRequestResourceAdminEventFactory(commonFields, prevParams, currParams,
                         resourceType, resourceName, invariantUuid,

@@ -20,12 +20,6 @@
 
 package org.openecomp.sdc.be.components.distribution.engine;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.when;
-
-import java.util.List;
-
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -33,48 +27,19 @@ import org.openecomp.sdc.be.components.BeConfDependentTest;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.distribution.api.client.CambriaOperationStatus;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import java.util.List;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.when;
 
 public class DistributionEngineHealthCheckTest extends BeConfDependentTest {
 
     @Mock
     private CambriaHandler cambriaHandler = Mockito.mock(CambriaHandler.class);
 
-    DistributionEngineClusterHealth distributionEngineClusterHealth = new DistributionEngineClusterHealth();
-
-    Gson gson = new Gson();
-
-    Gson prettyGson = new GsonBuilder().setPrettyPrinting().create();
-
-    //
-    // @Test
-    // public void validateDownWhenEnvAreDown() {
-    //
-    // Map<String, AtomicBoolean> envNamePerStatus = new HashMap<>();
-    // envNamePerStatus.put("PROD1", new AtomicBoolean(false));
-    // envNamePerStatus.put("PROD2", new AtomicBoolean(false));
-    //
-    // distributionEngineClusterHealth.startHealthCheckTask(envNamePerStatus);
-    //
-    // HealthCheckInfo healthCheckInfo =
-    // distributionEngineClusterHealth.getHealthCheckInfo();
-    // assertEquals("verify down", HealthCheckStatus.DOWN,
-    // healthCheckInfo.getHealthCheckStatus());
-    // assertEquals("verify DE component", HealthCheckComponent.DE,
-    // healthCheckInfo.getHealthCheckComponent());
-    //
-    // }
-
     @Test
     public void validateUpWhenQuerySucceed() {
-
-        // Map<String, AtomicBoolean> envNamePerStatus = new HashMap<>();
-        // envNamePerStatus.put("PROD1", new AtomicBoolean(true));
-        // envNamePerStatus.put("PROD2", new AtomicBoolean(false));
-        //
-        // distributionEngineClusterHealth.startHealthCheckTask(envNamePerStatus,
-        // false);
 
         CambriaErrorResponse cambriaOkResponse = new CambriaErrorResponse(CambriaOperationStatus.OK, 200);
         CambriaErrorResponse cambriaErrorResponse = new CambriaErrorResponse(CambriaOperationStatus.INTERNAL_SERVER_ERROR, 500);

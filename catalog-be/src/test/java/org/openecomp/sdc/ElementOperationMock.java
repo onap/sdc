@@ -20,10 +20,7 @@
 
 package org.openecomp.sdc;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
+import fj.data.Either;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphNode;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
@@ -38,7 +35,9 @@ import org.openecomp.sdc.be.model.operations.api.IElementOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.resources.data.CategoryData;
 
-import fj.data.Either;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public class ElementOperationMock implements IElementOperation {
 
@@ -92,10 +91,6 @@ public class ElementOperationMock implements IElementOperation {
         return Either.left(categories);
 
     }
-
-    /*
-     * @Override public Either<Category, ActionStatus> getCategory(String name) { if (name.equals(resourceCategory.getName())){ return Either.left(resourceCategory); } else { return Either.right(ActionStatus.CATEGORY_NOT_FOUND); } }
-     */
 
     @Override
     public Either<List<Tag>, ActionStatus> getAllTags() {
