@@ -20,16 +20,7 @@
 
 package org.openecomp.sdc.be.components.impl;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
-import java.util.ArrayList;
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import fj.data.Either;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -62,7 +53,15 @@ import org.openecomp.sdc.common.impl.ExternalConfiguration;
 import org.openecomp.sdc.common.impl.FSConfigurationSource;
 import org.openecomp.sdc.exception.ResponseFormat;
 
-import fj.data.Either;
+import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 public class ResourceInstanceBusinessLogicTest {
 
@@ -152,7 +151,6 @@ public class ResourceInstanceBusinessLogicTest {
     @Before
     public void initMocks() {
         MockitoAnnotations.initMocks(this);
-//        Mockito.reset(artifactBusinessLogic, serviceOperation, componentsUtils, userAdminManager);
         setup();
     }
 
@@ -173,37 +171,9 @@ public class ResourceInstanceBusinessLogicTest {
 
         Map<String, ArtifactDefinition> deploymentArtifacts = resourceInstance.getDeploymentArtifacts();
         assertNotNull(deploymentArtifacts);
-//        assertTrue(deploymentArtifacts.size() == 2);
 
         ArtifactDefinition heatDefinition = deploymentArtifacts.get(HEAT_LABEL.toLowerCase());
         assertNotNull(heatDefinition);
-//        assertEquals(getHeatArtifactDefinition(USER_ID, RESOURCE_ID_WITH_HEAT_PARAMS, HEAT_LABEL, ARTIFACT_CREATION_TIME, false, true), heatDefinition);
-//
-//        ArtifactDefinition heatEnvDefinition = deploymentArtifacts.get(HEAT_ENV_LABEL.toLowerCase());
-//        assertNotNull(heatEnvDefinition);
-//
-//        List<HeatParameterDefinition> heatParameters = heatDefinition.getListHeatParameters();
-//        assertNotNull(heatParameters);
-//
-//        List<HeatParameterDefinition> heatEnvParameters = heatEnvDefinition.getListHeatParameters();
-//        assertNotNull(heatEnvParameters);
-//
-//        assertEquals(heatParameters.size(), heatEnvParameters.size());
-//
-//        int index = 0;
-//        for (HeatParameterDefinition heatEnvParameter : heatEnvParameters) {
-//            HeatParameterDefinition heatParameterDefinition = heatParameters.get(index);
-//            assertEquals(heatEnvParameter.getUniqueId(), heatParameterDefinition.getUniqueId());
-//            assertEquals(heatEnvParameter.getType(), heatParameterDefinition.getType());
-//            assertEquals(heatEnvParameter.getName(), heatParameterDefinition.getName());
-//            assertEquals(heatEnvParameter.getDescription(), heatParameterDefinition.getDescription());
-//            assertEquals(heatEnvParameter.getCurrentValue(), heatParameterDefinition.getCurrentValue());
-//            // current of heat parameter should be the default for heat env
-//            // parameter
-//            assertEquals(heatEnvParameter.getDefaultValue(), heatParameterDefinition.getCurrentValue());
-//
-//            index++;
-//        }
     }
 
      @Test
@@ -222,20 +192,12 @@ public class ResourceInstanceBusinessLogicTest {
 
         Map<String, ArtifactDefinition> deploymentArtifacts = resourceInstance.getDeploymentArtifacts();
         assertNotNull(deploymentArtifacts);
-//        assertTrue(deploymentArtifacts.size() == 2);
 
         ArtifactDefinition heatDefinition = deploymentArtifacts.get(HEAT_LABEL.toLowerCase());
         assertNotNull(heatDefinition);
-//        assertEquals(getHeatArtifactDefinition(USER_ID, RESOURCE_ID_NO_HEAT_PARAMS, HEAT_LABEL, ARTIFACT_CREATION_TIME, false, false), heatDefinition);
-
-//        ArtifactDefinition heatEnvDefinition = deploymentArtifacts.get(HEAT_ENV_LABEL.toLowerCase());
-//        assertNotNull(heatEnvDefinition);
 
         List<HeatParameterDefinition> heatParameters = heatDefinition.getListHeatParameters();
         assertNull(heatParameters);
-
-//        List<HeatParameterDefinition> heatEnvParameters = heatEnvDefinition.getListHeatParameters();
-//        assertNull(heatEnvParameters);
 
     }
 
@@ -273,7 +235,6 @@ public class ResourceInstanceBusinessLogicTest {
         artifactInfo.setUserIdCreator(userId);
         String fullName = "Jim H";
         artifactInfo.setUpdaterFullName(fullName);
-        // long time = System.currentTimeMillis();
         artifactInfo.setCreatorFullName(fullName);
         artifactInfo.setCreationDate(time);
         artifactInfo.setLastUpdateDate(time);

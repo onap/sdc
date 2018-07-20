@@ -20,13 +20,7 @@
 
 package org.openecomp.sdc.be.components.lifecycle;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.when;
-
-import java.util.ArrayList;
-import java.util.List;
-
+import fj.data.Either;
 import org.apache.http.HttpStatus;
 import org.junit.Before;
 import org.junit.Test;
@@ -54,7 +48,12 @@ import org.openecomp.sdc.be.tosca.ToscaExportHandler;
 import org.openecomp.sdc.be.user.Role;
 import org.openecomp.sdc.exception.ResponseFormat;
 
-import fj.data.Either;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.Silent.class)
 public class CertificationRequestTest extends LifecycleTestBase {
@@ -75,14 +74,7 @@ public class CertificationRequestTest extends LifecycleTestBase {
     public void setup() {
         super.setup();
         rfcObj = new CertificationRequestTransition(componentsUtils, toscaElementLifecycleOperation, serviceDistributionArtifactsBuilder, serviceBusinessLogic, capabilityOperation, toscaExportUtils,  toscaOperationFacade,  titanDao);
-        // checkout transition object
-//        rfcObj.setLifeCycleOperation(toscaElementLifecycleOperation);
-        // checkoutObj.setAuditingManager(iAuditingManager);
         rfcObj.setConfigurationManager(configurationManager);
-
-//        Either<ToscaRepresentation, ToscaError> either = Either.left(toscaRepresentation);
-//        when(toscaExportUtils.exportComponent(Mockito.any())).thenReturn(either);
-
     }
 
     @Test
@@ -114,14 +106,10 @@ public class CertificationRequestTest extends LifecycleTestBase {
         Either<User, ResponseFormat> ownerResponse = rfcObj.getComponentOwner(resource, ComponentTypeEnum.RESOURCE);
         assertTrue(ownerResponse.isLeft());
         User owner = ownerResponse.left().value();
-        // changeStateResult = rfcObj.changeStateOperation(resource, user,
-        // owner, false);
         changeStateResult = rfcObj.changeState(ComponentTypeEnum.RESOURCE, resource, serviceBusinessLogic, user, owner, false, false);
         assertEquals(changeStateResult.isLeft(), true);
 
         resource.setLifecycleState(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
-        // changeStateResult = rfcObj.changeStateOperation(resource, user,
-        // owner, false);
         changeStateResult = rfcObj.changeState(ComponentTypeEnum.RESOURCE, resource, serviceBusinessLogic, user, owner, false, false);
         assertEquals(changeStateResult.isLeft(), true);
     }

@@ -20,21 +20,7 @@
 
 package org.openecomp.sdc.be.components.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
-import java.io.IOException;
-import java.nio.file.FileSystems;
-import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
+import fj.data.Either;
 import org.junit.Test;
 import org.openecomp.sdc.be.components.impl.ImportUtils.ResultStatusEnum;
 import org.openecomp.sdc.be.components.impl.ImportUtils.ToscaElementTypeEnum;
@@ -46,7 +32,20 @@ import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.common.api.ArtifactTypeEnum;
 import org.yaml.snakeyaml.Yaml;
 
-import fj.data.Either;
+import java.io.IOException;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 public class ImportUtilsTest {
     @Test
@@ -235,26 +234,6 @@ public class ImportUtilsTest {
         testCreateFullHeatParameterModule("comma_delimited_list", "[one, two]");
 
     }
-
-    // @Test
-    // public void testCreateFullHeatParameterModuleWithInvalidType(){
-    //
-    // String name = "fullParameter";
-    // String description = "description_text";
-    //
-    // Map<String, Object> parametersMap = new HashMap<String, Object>();
-    // Map<String, Object> firstParam = createParameterMap("aaa", "aaa",
-    // name, description);
-    // parametersMap.put(ToscaTagNamesEnum.PARAMETERS.getElementName(),
-    // firstParam);
-    //
-    // Either<List<HeatParameterDefinition>,ResultStatusEnum> heatParameters =
-    // ImportUtils.getHeatParameters(parametersMap);
-    // assertTrue(heatParameters.isRight());
-    // assertEquals(ResultStatusEnum.INVALID_PROPERTY_TYPE,
-    // heatParameters.right().value());
-    //
-    // }
 
     @Test
     public void testCreateFullHeatParameterModuleWithMissingType() {

@@ -20,23 +20,7 @@
 
 package org.openecomp.sdc.be.components;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.when;
-
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import javax.servlet.ServletContext;
-
+import fj.data.Either;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -87,7 +71,21 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.context.WebApplicationContext;
 
-import fj.data.Either;
+import javax.servlet.ServletContext;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.when;
 
 public class ServiceBusinessLogicTest {
 
@@ -150,10 +148,7 @@ public class ServiceBusinessLogicTest {
         when(mockUserAdmin.getUser("jh0003", false)).thenReturn(eitherGetUser);
         when(userValidations.validateUserExists(eq("jh0003"), anyString(), eq(false))).thenReturn(Either.left(user));
         when(userValidations.validateUserNotEmpty(eq(user), anyString())).thenReturn(Either.left(user));
-//        when(userValidations.validateUserRole(user))
-        // Servlet Context attributes
         when(servletContext.getAttribute(Constants.CONFIGURATION_MANAGER_ATTR)).thenReturn(configurationManager);
-//        when(servletContext.getAttribute(Constants.SERVICE_OPERATION_MANAGER)).thenReturn(new ServiceOperation());
         when(servletContext.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR)).thenReturn(webAppContextWrapper);
         when(webAppContextWrapper.getWebAppContext(servletContext)).thenReturn(webAppContext);
         when(webAppContext.getBean(IElementOperation.class)).thenReturn(mockElementDao);
@@ -258,14 +253,11 @@ public class ServiceBusinessLogicTest {
         assertEquals("assert error description", expectedResponse.getFormattedMessage(), actualResponse.getFormattedMessage());
     }
 
-    /* CREATE validations - start ***********************/
-    // Service name - start
 
     @Test
     public void testFailedServiceValidations() {
         testServiceNameAlreadyExists();
         testServiceNameEmpty();
-        // testServiceNameExceedsLimit();
         testServiceNameWrongFormat();
         testServiceDescriptionEmpty();
         testServiceDescriptionMissing();
@@ -275,8 +267,6 @@ public class ServiceBusinessLogicTest {
         testServiceIconMissing();
         testResourceIconInvalid();
         testResourceIconExceedsLimit();
-        // testTagsExceedsLimitCreate();
-        // testTagsSingleExcessLimit();
         testTagsNoServiceName();
         testInvalidTag();
         testServiceTagNotExist();
@@ -328,8 +318,6 @@ public class ServiceBusinessLogicTest {
         assertResponse(createResponse, ActionStatus.INVALID_COMPONENT_NAME, ComponentTypeEnum.SERVICE.getValue());
     }
 
-    // Service name - end
-    // Service description - start
     private void testServiceDescriptionEmpty() {
         Service serviceExist = createServiceObject(false);
         serviceExist.setDescription("");
@@ -513,34 +501,6 @@ public class ServiceBusinessLogicTest {
         assertResponse(createResponse, ActionStatus.COMPONENT_MISSING_CATEGORY, ComponentTypeEnum.SERVICE.getValue());
     }
 
-    public void markDistributionAsDeployedTestAlreadyDeployed() {
-        String notifyAction = "DNotify";
-        String requestAction = "DRequest";
-        String resultAction = "DResult";
-        String did = "123456";
-
-        setupBeforeDeploy(notifyAction, requestAction, did);
-        List<DistributionDeployEvent> resultList = new ArrayList<DistributionDeployEvent>();
-        Map<String, Object> params = new HashMap<String, Object>();
-        DistributionDeployEvent event = new DistributionDeployEvent();
-
-        event.setAction(resultAction);
-        event.setDid(did);
-        event.setStatus("200");
-        // ESTimeBasedEvent deployEvent = new ESTimeBasedEvent();
-        // deployEvent.setFields(params);
-        resultList.add(event);
-        Either<List<DistributionDeployEvent>, ActionStatus> eventList = Either.left(resultList);
-
-        Mockito.when(auditingDao.getDistributionDeployByStatus(Mockito.anyString(), Mockito.eq(resultAction), Mockito.anyString())).thenReturn(eventList);
-
-        Either<Service, ResponseFormat> markDeployed = bl.markDistributionAsDeployed(did, did, user);
-        assertTrue(markDeployed.isLeft());
-
-        Mockito.verify(auditingDao, Mockito.times(0)).getDistributionRequest(did, requestAction);
-
-    }
-
     @Test
     public void markDistributionAsDeployedTestSuccess() {
         String notifyAction = "DNotify";
@@ -556,25 +516,6 @@ public class ServiceBusinessLogicTest {
         assertTrue(markDeployed.isLeft());
     }
 
-    //@Test
-    public void markDistributionAsDeployedTestNotDistributed() {
-        String notifyAction = "DNotify";
-        String requestAction = "DRequest";
-        String did = "123456";
-
-        setupBeforeDeploy(notifyAction, requestAction, did);
-        List<ResourceAdminEvent> emptyList = new ArrayList<ResourceAdminEvent>();
-        Either<List<ResourceAdminEvent>, ActionStatus> emptyEventList = Either.left(emptyList);
-        Mockito.when(auditingDao.getDistributionRequest(Mockito.anyString(), Mockito.eq(requestAction))).thenReturn(emptyEventList);
-
-        Either<Component, StorageOperationStatus> notFound = Either.right(StorageOperationStatus.NOT_FOUND);
-        Mockito.when(toscaOperationFacade.getToscaElement(did)).thenReturn(notFound);
-
-        Either<Service, ResponseFormat> markDeployed = bl.markDistributionAsDeployed(did, did, user);
-        assertTrue(markDeployed.isRight());
-        assertEquals(404, markDeployed.right().value().getStatus().intValue());
-
-    }
 
     private void testServiceBadCategoryCreate() {
 
@@ -638,20 +579,6 @@ public class ServiceBusinessLogicTest {
         assertResponse(createResponse, ActionStatus.MISSING_PROJECT_CODE);
     }
 
-//    @Test
-//    public void testDeleteMarkedServicesNoServices() {
-//        List<String> ids = new ArrayList<String>();
-//        Either<List<String>, StorageOperationStatus> eitherNoResources = Either.left(ids);
-//        when(toscaOperationFacade.getAllComponentsMarkedForDeletion()).thenReturn(eitherNoResources);
-//
-//        Either<List<String>, ResponseFormat> deleteMarkedResources = bl.deleteMarkedComponents();
-//        assertTrue(deleteMarkedResources.isLeft());
-//        assertTrue(deleteMarkedResources.left().value().isEmpty());
-//
-//        Mockito.verify(artifactBl, Mockito.times(0)).deleteAllComponentArtifactsIfNotOnGraph(Mockito.anyList());
-//
-//    }
-
     @Test
     @Ignore
     public void testDeleteMarkedServices() {
@@ -668,7 +595,6 @@ public class ServiceBusinessLogicTest {
 
         List<ArtifactDefinition> artifacts = new ArrayList<ArtifactDefinition>();
         Either<List<ArtifactDefinition>, StorageOperationStatus> getArtifactsResponse = Either.left(artifacts);
-//        when(toscaOperationFacade.getComponentArtifactsForDelete(resourceFree, NodeTypeEnum.Service, true)).thenReturn(getArtifactsResponse);
 
         when(toscaOperationFacade.isComponentInUse(resourceFree)).thenReturn(resourceFreeResponse);
         when(toscaOperationFacade.isComponentInUse(resourceInUse)).thenReturn(resourceInUseResponse);
@@ -699,10 +625,7 @@ public class ServiceBusinessLogicTest {
         List<String> tgs = new ArrayList<String>();
         tgs.add(service.getName());
         service.setTags(tgs);
-        // service.setVendorName("Motorola");
-        // service.setVendorRelease("1.0.0");
         service.setIcon("MyIcon");
-        // service.setState(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
         service.setContactId("aa1234");
         service.setProjectCode("12345");
 
@@ -770,40 +693,6 @@ public class ServiceBusinessLogicTest {
         // fields.put("TIMESTAMP", "2015-11-22 09:39:41.024");
         checkOutResourceAudit.setPrevState("NOT_CERTIFIED_CHECKIN");
         checkOutResourceAudit.setResourceName("MyTestResource");
-        // checkOutResourceAudit.setFields(fields);
-
-        // Mockito.doAnswer(new Answer<Either<List<ESTimeBasedEvent>,
-        // ActionStatus> >() {
-        // public Either<List<ESTimeBasedEvent>, ActionStatus>
-        // answer(InvocationOnMock invocation) {
-        // final Either<List<ESTimeBasedEvent>, ActionStatus> either;
-        // final List<ESTimeBasedEvent> list;
-        // Object[] args = invocation.getArguments();
-        // Map<AuditingFieldsKeysEnum, Object> filterMap =
-        // (Map<AuditingFieldsKeysEnum, Object>) args[0];
-        // if( filterMap.equals(FILTER_MAP_CERTIFIED_VERSION) ){
-        // list = new
-        // ArrayList<ESTimeBasedEvent>(){{add(createResourceAudit);add(checkInResourceAudit);add(checkOutResourceAudit);}};
-        // either = Either.left(list);
-        //
-        // }
-        // else if( filterMap.equals(FILTER_MAP_UNCERTIFIED_VERSION_PREV) ){
-        // list = new ArrayList<ESTimeBasedEvent>();
-        // either = Either.left(list);
-        // }
-        // else if( filterMap.equals(FILTER_MAP_UNCERTIFIED_VERSION_CURR) ){
-        // list = new
-        // ArrayList<ESTimeBasedEvent>(){{/*add(createResourceAudit);add(checkInResourceAudit);*/add(checkOutResourceAudit);}};
-        // either = Either.left(list);
-        // }
-        // else{
-        // either = null;
-        // }
-        // return either;
-        // }
-        // }).when(auditingDao).getFilteredResourceAdminAuditingEvents(Mockito.anyMap());
-        //
-        //
         List<ResourceAdminEvent> list = new ArrayList<ResourceAdminEvent>() {
             {
                 add(createResourceAudit);
