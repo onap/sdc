@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da7095c5_edaf2d2a",
+        "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/impl/ArtifactUuidFix.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 138,
+      "author": {
+        "id": 3201
+      },
+      "writtenOn": "2018-07-20T04:43:28Z",
+      "side": 1,
+      "message": "If the PL is ok, then you can replace the tabs in the file with space.",
+      "revId": "a31a53416c55d33ad202ce7618fce33bdeb57ff7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da7095c5_4dbbb972",
+        "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/impl/ArtifactUuidFix.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 197,
+      "author": {
+        "id": 3201
+      },
+      "writtenOn": "2018-07-20T04:43:28Z",
+      "side": 1,
+      "message": "Now dont you have to flush and close the writer? \nwriter.flush();\nwriter.close();",
+      "revId": "a31a53416c55d33ad202ce7618fce33bdeb57ff7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da7095c5_ada93526",
+        "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/impl/ArtifactUuidFix.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 245,
+      "author": {
+        "id": 3201
+      },
+      "writtenOn": "2018-07-20T04:43:28Z",
+      "side": 1,
+      "message": "same as above, why not close?",
+      "revId": "a31a53416c55d33ad202ce7618fce33bdeb57ff7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
