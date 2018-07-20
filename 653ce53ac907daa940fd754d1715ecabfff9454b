@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da7095c5_8d68f1f6",
+        "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/impl/DataMigration.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 654,
+      "author": {
+        "id": 3201
+      },
+      "writtenOn": "2018-07-20T04:49:40Z",
+      "side": 1,
+      "message": "if you wrap the Writer in the try statement then you would not need to handle IOEception in the finally block. E.g. try(Writer writer \u003d new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileName), \"utf-8\")){...}",
+      "revId": "653ce53ac907daa940fd754d1715ecabfff9454b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
