@@ -1,33 +1,17 @@
 package org.openecomp.sdc.be.components.impl;
 
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anySet;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.when;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.function.BiPredicate;
-
+import fj.data.Either;
+import mockit.Deencapsulation;
 import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
 import org.assertj.core.util.Lists;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.openecomp.sdc.be.components.validation.UserValidations;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
-import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
 import org.openecomp.sdc.be.datatypes.elements.CapabilityDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ForwardingPathDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ForwardingPathElementDataDefinition;
@@ -35,7 +19,6 @@ import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.RequirementDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
-import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.ServletUtils;
@@ -58,17 +41,24 @@ import org.openecomp.sdc.be.model.jsontitan.operations.ForwardingPathOperation;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.IComponentInstanceOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
-import org.openecomp.sdc.be.model.operations.impl.ArtifactOperation;
-import org.openecomp.sdc.be.resources.data.ComponentInstanceData;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.exception.ResponseFormat;
-import org.openecomp.sdc.common.datastructure.Wrapper;
 
-import fj.data.Either;
-import javassist.CodeConverter.ArrayAccessReplacementMethodNames;
-import mockit.Deencapsulation;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.BiPredicate;
 
-import java.util.*;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anySet;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.when;
 
 /**
  * The test suite designed for test functionality of
@@ -219,7 +209,6 @@ public class ComponentInstanceBusinessLogicTest {
 
 		ComponentTypeEnum containerComponentType = ComponentTypeEnum.findByParamName("services");
 		String containerComponentID = "Service-comp";
-		String componentInstanceID = "NodeA1";
 		Service component = new Service();
 
 		component.addForwardingPath(createPath("path1", "NodeA1", "NodeB1", "1"));
@@ -286,10 +275,6 @@ public class ComponentInstanceBusinessLogicTest {
 	}
 
 	private void getServiceRelationByIdUserValidationFailure(Component component) {
-		// Either<User, ActionStatus> eitherCreator =
-		// Either.right(ActionStatus.USER_NOT_FOUND);
-		// when(userAdmin.getUser(eq(USER_ID),
-		// eq(false))).thenReturn(eitherCreator);
 		when(userValidations.validateUserExists(eq(USER_ID), eq("get relation by Id"), eq(false)))
 				.thenReturn(Either.right(new ResponseFormat(404)));
 		Either<RequirementCapabilityRelDef, ResponseFormat> response = componentInstanceBusinessLogic

@@ -1,31 +1,15 @@
 package org.openecomp.sdc.be.servlets;
 
-import static java.util.Arrays.asList;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.anyBoolean;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Stream;
-
-import javax.ws.rs.client.Invocation;
-import javax.ws.rs.core.GenericType;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Sets;
+import fj.data.Either;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.jackson.internal.jackson.jaxrs.json.JacksonJaxbJsonProvider;
 import org.glassfish.jersey.jackson.internal.jackson.jaxrs.json.JacksonJsonProvider;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.openecomp.sdc.be.DummyConfigurationManager;
 import org.openecomp.sdc.be.components.impl.GroupTypeBusinessLogic;
@@ -33,26 +17,32 @@ import org.openecomp.sdc.be.components.impl.ResponseFormatManager;
 import org.openecomp.sdc.be.components.utils.GroupTypeBuilder;
 import org.openecomp.sdc.be.components.validation.UserValidations;
 import org.openecomp.sdc.be.config.ConfigurationManager;
-import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.GroupTypeDefinition;
 import org.openecomp.sdc.be.model.User;
-import org.openecomp.sdc.be.model.operations.StorageException;
-import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.GroupTypeOperation;
 import org.openecomp.sdc.common.api.Constants;
-import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
-import org.springframework.http.HttpStatus;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Sets;
+import javax.ws.rs.client.Invocation;
+import javax.ws.rs.core.GenericType;
+import javax.ws.rs.core.MediaType;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Stream;
 
-import fj.data.Either;
+import static java.util.Arrays.asList;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class GroupTypesEndpointTest extends JerseySpringBaseTest {
 
@@ -128,23 +118,6 @@ public class GroupTypesEndpointTest extends JerseySpringBaseTest {
         when(groupTypeOperation.getAllGroupTypes(null)).thenReturn(buildGroupTypesList());
         List<GroupTypeDefinition> fetchedGroupTypes = buildGetGroupTypesCallNoInternalComponent(USER_ID).get(new GenericType<List<GroupTypeDefinition>>(){});
         verifyGroupTypesList(testConfigGroupTypes, fetchedGroupTypes);
-    }
-
-    @Ignore
-    public void getGroupTypes_dbError() {
-        when(groupTypeOperation.getAllGroupTypes(EXCLUDED_TYPES)).thenThrow(new StorageException(StorageOperationStatus.NOT_FOUND));
-        when(componentsUtils.convertFromStorageResponse(StorageOperationStatus.NOT_FOUND)).thenReturn(ActionStatus.RESOURCE_NOT_FOUND);
-        when(componentsUtils.getResponseFormat(ActionStatus.RESOURCE_NOT_FOUND)).thenReturn(new ResponseFormat(HttpStatus.NOT_FOUND.value()));
-        Response response = buildGetGroupTypesCall(USER_ID).get();
-        assertThat(response.getStatus()).isEqualTo(HttpStatus.NOT_FOUND.value());
-    }
-
-    // TODO: simulate proper error with configuration error mapping and eactivate the test
-    @Ignore
-    public void getGroupTypes_invalidUser_Failure() {
-        when(groupTypeOperation.getAllGroupTypes(EXCLUDED_TYPES)).thenReturn(buildGroupTypesList());
-        Response response = buildGetGroupTypesCall(INVALID_USER_ID).get();
-        assertThat(response.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
     }
 
     private void verifyGroupTypesList(List<GroupTypeDefinition> groupTypes, List<GroupTypeDefinition> fetchedGroupTypes) {

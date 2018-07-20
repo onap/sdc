@@ -20,31 +20,8 @@
 
 package org.openecomp.sdc.be.components.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyObject;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.when;
-
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import javax.servlet.ServletContext;
-
+import fj.data.Either;
+import mockit.Deencapsulation;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.junit.Assert;
 import org.junit.Before;
@@ -134,8 +111,29 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.context.WebApplicationContext;
 
-import fj.data.Either;
-import mockit.Deencapsulation;
+import javax.servlet.ServletContext;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyObject;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.when;
 
 public class ResourceBusinessLogicTest implements InterfaceOperationTestUtils {
 
@@ -244,17 +242,6 @@ public class ResourceBusinessLogicTest implements InterfaceOperationTestUtils {
 		Either<Boolean, StorageOperationStatus> eitherCount = Either.left(false);
 		when(toscaOperationFacade.validateComponentNameExists(eq(RESOURCE_NAME), any(ResourceTypeEnum.class),
 				eq(ComponentTypeEnum.RESOURCE))).thenReturn(eitherCount);
-		/*
-		 * when(toscaOperationFacade.validateComponentNameExists(RESOURCE_NAME,
-		 * ResourceTypeEnum.VF,
-		 * ComponentTypeEnum.RESOURCE)).thenReturn(eitherCount);
-		 * when(toscaOperationFacade.validateComponentNameExists(RESOURCE_NAME,
-		 * ResourceTypeEnum.PNF,
-		 * ComponentTypeEnum.RESOURCE)).thenReturn(eitherCount);
-		 * when(toscaOperationFacade.validateComponentNameExists(RESOURCE_NAME,
-		 * ResourceTypeEnum.CR,
-		 * ComponentTypeEnum.RESOURCE)).thenReturn(eitherCount);
-		 */
 		when(interfaceOperation.updateInterface(anyString(), anyObject()))
 				.thenReturn(Either.left(mockInterfaceDefinitionToReturn(RESOURCE_NAME)));
 		Either<Boolean, StorageOperationStatus> validateDerivedExists = Either.left(true);
@@ -421,8 +408,6 @@ public class ResourceBusinessLogicTest implements InterfaceOperationTestUtils {
 		assertEquals(resource.getUniqueId(), updateResponse.left().value().getUniqueId());
 	}
 
-	/* CREATE validations - start ***********************/
-	// Resource name - start
 
 	@Test
 	public void testFailedResourceValidations() {
@@ -685,24 +670,6 @@ public class ResourceBusinessLogicTest implements InterfaceOperationTestUtils {
 		assertTrue(createResponse.isRight());
 		assertResponse(createResponse, ActionStatus.COMPONENT_TAGS_EXCEED_LIMIT,
 				"" + ValidationUtils.TAG_LIST_MAX_LENGTH);
-
-	}
-
-	private void testTagsSingleExceedsLimit() {
-		Resource resourceExccedsNameLimit = createResourceObject(false);
-		String tag1 = "afzs2qLBb5X6tZhiunkcEwiFX1qRQY8YZl3y3Du5M5xeQY5Nq9afcFHDZ9HaURw43gH27nAUWM36bMbMylwTFSzzNV8NO4v4ripe6Q15Vc2nPOFI";
-		String tag2 = resourceExccedsNameLimit.getName();
-		List<String> tagsList = new ArrayList<String>();
-		tagsList.add(tag1);
-		tagsList.add(tag2);
-
-		resourceExccedsNameLimit.setTags(tagsList);
-
-		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceExccedsNameLimit,
-				AuditingActionEnum.CREATE_RESOURCE, user, null, null);
-		assertTrue(createResponse.isRight());
-		assertResponse(createResponse, ActionStatus.COMPONENT_SINGLE_TAG_EXCEED_LIMIT,
-				"" + ValidationUtils.TAG_MAX_LENGTH);
 
 	}
 
@@ -1612,68 +1579,6 @@ public class ResourceBusinessLogicTest implements InterfaceOperationTestUtils {
 		assertTrue(validatePropertiesDefaultValues.isRight());
 	}
 
-	// @Test
-	// public void testDeleteMarkedResourcesNoResources() {
-	// List<GraphVertex> ids = new ArrayList<>();
-	// Either<List<GraphVertex>, StorageOperationStatus> eitherNoResources =
-	// Either.left(ids);
-	// when(topologyTemplateOperation.getAllComponentsMarkedForDeletion(ComponentTypeEnum.RESOURCE)).thenReturn(eitherNoResources);
-	//
-	// Either<List<String>, ResponseFormat> deleteMarkedResources =
-	// bl.deleteMarkedComponents();
-	// assertTrue(deleteMarkedResources.isLeft());
-	// assertTrue(deleteMarkedResources.left().value().isEmpty());
-	//
-	// Mockito.verify(artifactManager,
-	// Mockito.times(0)).deleteAllComponentArtifactsIfNotOnGraph(Mockito.anyList());
-	//
-	// }
-	//
-	// @Test
-	// public void testDeleteMarkedResources() {
-	// List<String> ids = new ArrayList<String>();
-	// String resourceInUse = "123";
-	// ids.add(resourceInUse);
-	// String resourceFree = "456";
-	// ids.add(resourceFree);
-	// Either<List<String>, StorageOperationStatus> eitherNoResources =
-	// Either.left(ids);
-	// when(toscaOperationFacade.getAllComponentsMarkedForDeletion()).thenReturn(eitherNoResources);
-	//
-	// Either<Boolean, StorageOperationStatus> resourceInUseResponse =
-	// Either.left(true);
-	// Either<Boolean, StorageOperationStatus> resourceFreeResponse =
-	// Either.left(false);
-	//
-	// List<ArtifactDefinition> artifacts = new ArrayList<ArtifactDefinition>();
-	// Either<List<ArtifactDefinition>, StorageOperationStatus>
-	// getArtifactsResponse = Either.left(artifacts);
-	// when(toscaOperationFacade.getComponentArtifactsForDelete(resourceFree,
-	// NodeTypeEnum.Resource, true)).thenReturn(getArtifactsResponse);
-	//
-	// when(toscaOperationFacade.isComponentInUse(resourceFree)).thenReturn(resourceFreeResponse);
-	// when(toscaOperationFacade.isComponentInUse(resourceInUse)).thenReturn(resourceInUseResponse);
-	//
-	// Either<Component, StorageOperationStatus> eitherDelete = Either.left(new
-	// Resource());
-	// when(toscaOperationFacade.deleteToscaComponent(resourceFree)).thenReturn(eitherDelete);
-	//
-	// when(artifactManager.deleteAllComponentArtifactsIfNotOnGraph(artifacts)).thenReturn(StorageOperationStatus.OK);
-	// List<String> deletedComponents = new ArrayList<>();
-	// deletedComponents.add(resourceFree);
-	// when(toscaOperationFacade.deleteMarkedElements(ComponentTypeEnum.RESOURCE)).thenReturn(Either.left(deletedComponents));
-	//
-	// Either<List<String>, ResponseFormat> deleteMarkedResources =
-	// bl.deleteMarkedComponents();
-	// assertTrue(deleteMarkedResources.isLeft());
-	// List<String> resourceIdList = deleteMarkedResources.left().value();
-	// assertFalse(resourceIdList.isEmpty());
-	// assertTrue(resourceIdList.contains(resourceFree));
-	// assertFalse(resourceIdList.contains(resourceInUse));
-	//
-	// Mockito.verify(artifactManager,
-	// Mockito.times(1)).deleteAllComponentArtifactsIfNotOnGraph(artifacts);
-	// }
 
 	@SuppressWarnings("unchecked")
 	@Test
@@ -2456,7 +2361,6 @@ public class ResourceBusinessLogicTest implements InterfaceOperationTestUtils {
 	public void testValidateDerivedFromNotEmpty() throws Exception {
 		ResourceBusinessLogic testSubject;
 		Resource resource = createResourceObject(true);
-		;
 		AuditingActionEnum actionEnum = AuditingActionEnum.ADD_ECOMP_USER_CREDENTIALS;
 		Either<Boolean, ResponseFormat> result;
 

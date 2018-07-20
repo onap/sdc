@@ -421,10 +421,6 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
 
     private Either<Either<ArtifactDefinition, Operation>, ResponseFormat> doAction(String componentId, ComponentTypeEnum componentType, ArtifactOperationInfo operation, String artifactId, ArtifactDefinition artifactInfo, String origMd5,
                                                                                    String originData, String interfaceName, String operationName, AuditingActionEnum auditingAction, User user, org.openecomp.sdc.be.model.Component parent, boolean shouldLock, boolean inTransaction, boolean needUpdateGroup) {
-        /*if (interfaceName != null && operationName != null) {
-            interfaceName = interfaceName.toLowerCase();
-            operationName = operationName.toLowerCase();
-        }*/
         switch (operation.getArtifactOperationEnum()) {
             case DOWNLOAD:
                 if (artifactGenerationRequired(parent, artifactInfo)) {
@@ -1190,10 +1186,8 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
                 return Either.right(validateGroupType.right().value());
             }
         }
-        // TODO TEMP !!!
         NodeTypeEnum parentType = convertParentType(componentType);
 
-        // TODO TEMP !!!
         boolean isCreate = ArtifactOperationEnum.isCreateOrLink(operation.getArtifactOperationEnum());
 
         if (isDeploymentArtifact(artifactInfo)) {

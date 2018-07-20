@@ -1,21 +1,15 @@
 package org.openecomp.sdc.be.components.merge.instance;
 
-import static org.mockito.Mockito.when;
-
-import java.util.Arrays;
-import java.util.List;
-
+import fj.data.Either;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.openecomp.sdc.be.components.merge.capability.CapabilityResolver;
 import org.openecomp.sdc.be.components.merge.property.DataDefinitionsValuesMergingBusinessLogic;
 import org.openecomp.sdc.be.components.utils.ObjectGenerator;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
-import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.ForwardingPathUtils;
 import org.openecomp.sdc.be.model.CapabilityDefinition;
 import org.openecomp.sdc.be.model.Component;
@@ -23,7 +17,10 @@ import org.openecomp.sdc.be.model.ComponentParametersView;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
 
-import fj.data.Either;
+import java.util.Arrays;
+import java.util.List;
+
+import static org.mockito.Mockito.when;
 
 public class ComponentCapabilitiesPropertiesMergeBLTest {
 
@@ -36,12 +33,6 @@ public class ComponentCapabilitiesPropertiesMergeBLTest {
 	@Mock
 	private ToscaOperationFacade toscaOperationFacadeMock;
 
-	@Mock
-	ComponentsUtils componentsUtilsMock;
-
-	@Mock
-	CapabilityResolver capabilityResolverMock;
-
 	private Resource buildBasicResource;
 
 	@Before
@@ -51,17 +42,13 @@ public class ComponentCapabilitiesPropertiesMergeBLTest {
 
 	@Test
 	public void testDescription() throws Exception {
-		// ComponentCapabilitiesPropertiesMergeBL testSubject;
 		String result;
 
-		// default test
-		// testSubject = createTestSubject();
 		result = testSubject.description();
 	}
 
 	@Test
 	public void testMergeComponents() throws Exception {
-		// ComponentCapabilitiesPropertiesMergeBL testSubject;
 		Component prevComponent = ObjectGenerator.buildResourceWithComponentInstance("mock3");
 		Component currentComponent = ObjectGenerator.buildResourceWithComponentInstance("mock1", "mock2");
 		currentComponent.setUniqueId("mock");
@@ -75,7 +62,6 @@ public class ComponentCapabilitiesPropertiesMergeBLTest {
 
 	@Test
 	public void testMergeComponentInstanceCapabilities() throws Exception {
-		// ComponentCapabilitiesPropertiesMergeBL testSubject;
 		Component currentComponent = null;
 		Component origInstanceCmpt = null;
 		String instanceId = "";
@@ -83,8 +69,6 @@ public class ComponentCapabilitiesPropertiesMergeBLTest {
 		List<CapabilityDefinition> prevInstanceCapabilities = null;
 		ActionStatus result;
 
-		// default test
-		// testSubject = createTestSubject();
 		result = testSubject.mergeComponentInstanceCapabilities(currentComponent, origInstanceCmpt, instanceId,
 				prevInstanceCapabilities);
 

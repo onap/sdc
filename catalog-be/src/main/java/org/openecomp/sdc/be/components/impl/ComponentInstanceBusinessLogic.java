@@ -20,23 +20,8 @@
 
 package org.openecomp.sdc.be.components.impl;
 
-import static org.openecomp.sdc.be.components.property.GetInputUtils.isGetInputValueForInput;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
-import java.util.function.BiConsumer;
-import java.util.stream.Collectors;
-
+import com.google.common.collect.Sets;
+import fj.data.Either;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
@@ -102,9 +87,22 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.google.common.collect.Sets;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
+import java.util.function.BiConsumer;
+import java.util.stream.Collectors;
 
-import fj.data.Either;
+import static org.openecomp.sdc.be.components.property.GetInputUtils.isGetInputValueForInput;
 
 @org.springframework.stereotype.Component
 public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
@@ -884,12 +882,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         if (lockComponent.isRight()) {
             return Either.right(lockComponent.right().value());
         }
-        // validate resource
-        /*
-         * if (!ComponentValidationUtils.canWorkOnComponent(containerComponentId, serviceOperation, userId)) { log.info( "Restricted operation for user " + userId + " on service " + containerComponentId); return Either.right(componentsUtils
-         * .getResponseFormat(ActionStatus.RESTRICTED_OPERATION)); } // lock resource StorageOperationStatus lockStatus = graphLockOperation.lockComponent( containerComponentId, NodeTypeEnum.Service); if (lockStatus != StorageOperationStatus.OK) {
-         * log.debug("Failed to lock service  {}", containerComponentId); resultOp = Either.right(componentsUtils .getResponseFormat(componentsUtils .convertFromStorageResponse(lockStatus))); return resultOp; }
-         */
+
         Either<ComponentInstance, ResponseFormat> resultOp = null;
         try {
             resultOp = deleteComponentInstance(containerComponent, componentInstanceId, containerComponentType);
@@ -904,9 +897,6 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
             return deleteEither;
 
         } finally {
-            /*
-             * if (resultOp == null || resultOp.isRight()) { titanGenericDao.rollback(); } else { titanGenericDao.commit(); } graphLockOperation.unlockComponent(containerComponentId, NodeTypeEnum.Service);
-             */
             unlockComponent(resultOp, containerComponent);
         }
     }
