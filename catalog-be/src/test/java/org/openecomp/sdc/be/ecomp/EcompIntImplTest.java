@@ -83,18 +83,6 @@ public class EcompIntImplTest {
         result = testSubject.getAvailableRoles();
     }
 
-    /*@Test
-    public void testPushUserRole() throws Exception {
-        EcompIntImpl testSubject;
-        String loginId = "";
-        List<EcompRole> roles = null;
-
-        // test 1
-        testSubject = createTestSubject();
-        roles = null;
-        testSubject.pushUserRole(loginId, roles);
-    }*/
-
     @Test(expected=PortalAPIException.class)
     public void testGetUserRoles() throws Exception {
         EcompIntImpl testSubject;

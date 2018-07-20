@@ -20,13 +20,7 @@
 
 package org.openecomp.sdc.be.components.lifecycle;
 
-import static org.mockito.Mockito.when;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.servlet.ServletContext;
-
+import fj.data.Either;
 import org.junit.BeforeClass;
 import org.mockito.InjectMocks;
 import org.mockito.Mockito;
@@ -67,7 +61,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.context.WebApplicationContext;
 
-import fj.data.Either;
+import javax.servlet.ServletContext;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.mockito.Mockito.when;
 
 public class LifecycleTestBase {
     private static final Logger log = LoggerFactory.getLogger(LifecycleTestBase.class);
@@ -101,14 +99,6 @@ public class LifecycleTestBase {
 
     public void setup() {
 
-//        ExternalConfiguration.setAppName("catalog-be");
-//
-//        // init Configuration
-//        String appConfigDir = "src/test/resources/config/catalog-be";
-//        ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(), appConfigDir);
-//        configurationManager = new ConfigurationManager(configurationSource);
-
-
         // User data and management
         user = new User();
         user.setUserId("jh003");
@@ -125,9 +115,6 @@ public class LifecycleTestBase {
         when(webAppContextWrapper.getWebAppContext(servletContext)).thenReturn(webAppContext);
         when(webAppContext.getBean(ToscaElementLifecycleOperation.class)).thenReturn(toscaElementLifecycleOperation);
         when(webAppContext.getBean(ArtifactsBusinessLogic.class)).thenReturn(artifactsManager);
-
-        // Resource Operation mock methods
-        // getCount
 
         // createResource
         resourceResponse = createResourceObject();

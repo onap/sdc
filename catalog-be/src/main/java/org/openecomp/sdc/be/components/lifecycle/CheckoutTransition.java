@@ -20,9 +20,7 @@
 
 package org.openecomp.sdc.be.components.lifecycle;
 
-import java.util.Arrays;
-import java.util.List;
-
+import fj.data.Either;
 import org.openecomp.sdc.be.components.impl.ComponentBusinessLogic;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
@@ -49,7 +47,8 @@ import org.openecomp.sdc.exception.ResponseFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fj.data.Either;
+import java.util.Arrays;
+import java.util.List;
 
 public class CheckoutTransition extends LifeCycleTransition {
 
@@ -166,12 +165,6 @@ public class CheckoutTransition extends LifeCycleTransition {
         if (userValidationResponse.isRight()) {
             return userValidationResponse;
         }
-
-        // Disabled as of 1604 patch after discussing with Ella/Eli/Michael
-
-        /*
-         * if (componentType == ComponentTypeEnum.PRODUCT){ Either<Boolean, ResponseFormat> productContactsEither = productContactsValidation((Product)component, modifier); if (productContactsEither.isRight()){ return productContactsEither; } }
-         */
 
         // check resource is not locked by another user
         if (oldState.equals(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT)) {

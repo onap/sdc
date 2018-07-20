@@ -20,12 +20,7 @@
 
 package org.openecomp.sdc.common.transaction.mngr;
 
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
+import fj.data.Either;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -51,7 +46,11 @@ import org.openecomp.sdc.common.transaction.api.TransactionUtils.TransactionCode
 import org.openecomp.sdc.common.transaction.api.TransactionUtils.TransactionStatusEnum;
 import org.slf4j.Logger;
 
-import fj.data.Either;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class SdncTransactionTest {
     private static ESCatalogDAO esCatalogDao = Mockito.mock(ESCatalogDAO.class);
@@ -119,9 +118,6 @@ public class SdncTransactionTest {
 
         TransactionCodeEnum finishTransaction = tx.finishTransaction();
         assertTrue(finishTransaction == TransactionCodeEnum.TRANSACTION_CLOSED);
-        // verify(log).error(LogMessages.COMMIT_ON_CLOSED_TRANSACTION,
-        // transactionId, TransactionStatusEnum.CLOSED.name(),
-        // TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT.name());
         verify(log).info(TransactionUtils.TRANSACTION_MARKER, LogMessages.COMMIT_ON_CLOSED_TRANSACTION, transactionId, TransactionStatusEnum.CLOSED.name(), TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT.name());
         assertTrue(tx.getStatus() == TransactionStatusEnum.CLOSED);
 
@@ -136,9 +132,6 @@ public class SdncTransactionTest {
         assertTrue(doBasicTitanAction.isRight());
         assertTrue(tx.getStatus() != TransactionStatusEnum.OPEN);
         verify(log).info(TransactionUtils.TRANSACTION_MARKER, LogMessages.DOUBLE_FINISH_FLAG_ACTION, transactionId, DBTypeEnum.TITAN.name(), TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT.name());
-        // verify(log).error( LogMessages.DOUBLE_FINISH_FLAG_ACTION,
-        // transactionId, DBTypeEnum.TITAN.name(), TransactionUtils.DUMMY_USER,
-        // ActionTypeEnum.ADD_ARTIFACT.name());
     }
 
     @Test
@@ -161,9 +154,6 @@ public class SdncTransactionTest {
         assertTrue(eitherGeneralDBAction.right().value() == TransactionCodeEnum.TRANSACTION_CLOSED);
 
         assertTrue(tx.getStatus() == TransactionStatusEnum.CLOSED);
-        // verify(log, times(3)).error(LogMessages.ACTION_ON_CLOSED_TRANSACTION,
-        // transactionId, TransactionUtils.DUMMY_USER,
-        // ActionTypeEnum.ADD_ARTIFACT.name());
         verify(log, times(3)).info(TransactionUtils.TRANSACTION_MARKER, LogMessages.ACTION_ON_CLOSED_TRANSACTION, transactionId, TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT.name());
 
     }
@@ -198,9 +188,6 @@ public class SdncTransactionTest {
         assertTrue(eitherTransactionResult.isRight());
         assertTrue(eitherTransactionResult.right().value() == TransactionCodeEnum.ROLLBACK_SUCCESS);
         assertTrue(tx.getStatus() == TransactionStatusEnum.CLOSED);
-        // verify(log).error(LogMessages.DB_ACTION_FAILED_WITH_EXCEPTION,
-        // DBTypeEnum.TITAN.name(), transactionId, crushMessage,
-        // TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT.name());
         verify(log).info(TransactionUtils.TRANSACTION_MARKER, LogMessages.DB_ACTION_FAILED_WITH_EXCEPTION, DBTypeEnum.TITAN.name(), transactionId, crushMessage, TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT.name());
 
         verify(log, times(1)).debug(LogMessages.ROLLBACK_PERSISTENT_ACTION, DBTypeEnum.ELASTIC_SEARCH.name(), transactionId, TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT.name());
@@ -227,9 +214,6 @@ public class SdncTransactionTest {
         assertTrue(eitherTransactionResult.isRight());
         assertTrue(tx.getStatus() == TransactionStatusEnum.FAILED_ROLLBACK);
         assertTrue(eitherTransactionResult.right().value() == TransactionCodeEnum.ROLLBACK_FAILED);
-        // verify(log).error(LogMessages.DB_ACTION_FAILED_WITH_EXCEPTION,
-        // DBTypeEnum.TITAN.name(), transactionId, crushMessage,
-        // TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT.name());
         verify(log).info(TransactionUtils.TRANSACTION_MARKER, LogMessages.DB_ACTION_FAILED_WITH_EXCEPTION, DBTypeEnum.TITAN.name(), transactionId, crushMessage, TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT.name());
 
         verify(log, times(1)).debug(LogMessages.ROLLBACK_PERSISTENT_ACTION, DBTypeEnum.ELASTIC_SEARCH.name(), transactionId, TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT.name());
@@ -237,13 +221,6 @@ public class SdncTransactionTest {
 
         verify(log, times(1)).debug(LogMessages.ROLLBACK_NON_PERSISTENT_ACTION, DBTypeEnum.TITAN.name(), transactionId, TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT.name());
         verify(log, times(1)).debug(TransactionUtils.TRANSACTION_MARKER, LogMessages.ROLLBACK_NON_PERSISTENT_ACTION, DBTypeEnum.TITAN.name(), transactionId, TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT.name());
-
-        // verify(log, times(1)).error(LogMessages.ROLLBACK_FAILED_GENERAL,
-        // transactionId, TransactionUtils.DUMMY_USER,
-        // ActionTypeEnum.ADD_ARTIFACT.name());
-        // verify(log, times(1)).error(TransactionUtils.TRANSACTION_MARKER,
-        // LogMessages.ROLLBACK_FAILED_GENERAL, transactionId,
-        // TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT.name());
     }
 
     @Test
@@ -291,21 +268,6 @@ public class SdncTransactionTest {
 
         verify(log, times(1)).debug(LogMessages.ROLLBACK_NON_PERSISTENT_ACTION, DBTypeEnum.TITAN.name(), transactionId, TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT.name());
         verify(log, times(1)).debug(TransactionUtils.TRANSACTION_MARKER, LogMessages.ROLLBACK_NON_PERSISTENT_ACTION, DBTypeEnum.TITAN.name(), transactionId, TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT.name());
-
-        // verify(log).error(LogMessages.ROLLBACK_FAILED_ON_DB_WITH_EXCEPTION,
-        // transactionId, DBTypeEnum.ELASTIC_SEARCH.name(), esError,
-        // TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT.name());
-        // verify(log).error(TransactionUtils.TRANSACTION_MARKER,
-        // LogMessages.ROLLBACK_FAILED_ON_DB_WITH_EXCEPTION, transactionId,
-        // DBTypeEnum.ELASTIC_SEARCH.name(), esError,
-        // TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT.name());
-
-        // verify(log, times(1)).error(LogMessages.ROLLBACK_FAILED_GENERAL,
-        // transactionId, TransactionUtils.DUMMY_USER,
-        // ActionTypeEnum.ADD_ARTIFACT.name());
-        // verify(log, times(1)).error(TransactionUtils.TRANSACTION_MARKER,
-        // LogMessages.ROLLBACK_FAILED_GENERAL, transactionId,
-        // TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT.name());
     }
 
     @Test
@@ -328,9 +290,6 @@ public class SdncTransactionTest {
         assertTrue(eitherResult.right().value() == TransactionCodeEnum.ROLLBACK_SUCCESS);
         assertTrue(tx.getStatus() == TransactionStatusEnum.CLOSED);
 
-        // verify(log).error(LogMessages.DB_ACTION_FAILED_WITH_EXCEPTION,
-        // DBTypeEnum.MYSTERY.name(), transactionId, crushMessage,
-        // TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT.name());
         verify(log).info(TransactionUtils.TRANSACTION_MARKER, LogMessages.DB_ACTION_FAILED_WITH_EXCEPTION, DBTypeEnum.MYSTERY.name(), transactionId, crushMessage, TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT.name());
 
         verify(log, times(2)).debug(LogMessages.ROLLBACK_PERSISTENT_ACTION, DBTypeEnum.MYSTERY.name(), transactionId, TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT.name());
@@ -390,7 +349,6 @@ public class SdncTransactionTest {
 
     private ESArtifactData createDummyArtifactData() {
         String strData = "qweqwqweqw34e4wrwer";
-        String myNodeType = "MyNewNodeType";
         ESArtifactData arData = new ESArtifactData("artifactNewMarina11", strData.getBytes());
         return arData;
     }

@@ -20,9 +20,7 @@
 
 package org.openecomp.sdc.be.components.lifecycle;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
+import fj.data.Either;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -36,7 +34,8 @@ import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.user.Role;
 import org.openecomp.sdc.exception.ResponseFormat;
 
-import fj.data.Either;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class CheckoutTest extends LifecycleTestBase {
 
@@ -124,8 +123,6 @@ public class CheckoutTest extends LifecycleTestBase {
         Either<User, ResponseFormat> ownerResponse = checkoutObj.getComponentOwner(resource, ComponentTypeEnum.RESOURCE);
         assertTrue(ownerResponse.isLeft());
         User owner = ownerResponse.left().value();
-        // changeStateResult = checkoutObj.changeStateOperation(resource, user,
-        // owner);
         Either<Boolean, ResponseFormat> validateBeforeTransition = checkoutObj.validateBeforeTransition(resource, ComponentTypeEnum.RESOURCE, user, owner, LifecycleStateEnum.READY_FOR_CERTIFICATION);
         assertEquals(validateBeforeTransition.isLeft(), true);
 
@@ -137,8 +134,6 @@ public class CheckoutTest extends LifecycleTestBase {
 
         // admin
         modifier.setRole(Role.ADMIN.name());
-        // changeStateResult = checkoutObj.changeStateOperation(resource, user,
-        // owner);
         validateBeforeTransition = checkoutObj.validateBeforeTransition(resource, ComponentTypeEnum.RESOURCE, modifier, owner, LifecycleStateEnum.READY_FOR_CERTIFICATION);
         assertEquals(validateBeforeTransition.isLeft(), true);
 
@@ -168,14 +163,10 @@ public class CheckoutTest extends LifecycleTestBase {
         Either<User, ResponseFormat> ownerResponse = checkoutObj.getComponentOwner(resource, ComponentTypeEnum.RESOURCE);
         assertTrue(ownerResponse.isLeft());
         User owner = ownerResponse.left().value();
-        // changeStateResult = checkoutObj.changeStateOperation(resource,
-        // modifier, owner);
         Either<Boolean, ResponseFormat> validateBeforeTransition = checkoutObj.validateBeforeTransition(resource, ComponentTypeEnum.RESOURCE, modifier, owner, LifecycleStateEnum.NOT_CERTIFIED_CHECKIN);
         assertEquals(validateBeforeTransition.isLeft(), true);
 
         modifier.setRole(Role.TESTER.name());
-        // changeStateResult = checkoutObj.changeStateOperation(resource,
-        // modifier, owner);
         validateBeforeTransition = checkoutObj.validateBeforeTransition(resource, ComponentTypeEnum.RESOURCE, modifier, owner, LifecycleStateEnum.NOT_CERTIFIED_CHECKIN);
         assertEquals(validateBeforeTransition.isRight(), true);
         changeStateResult = Either.right(validateBeforeTransition.right().value());

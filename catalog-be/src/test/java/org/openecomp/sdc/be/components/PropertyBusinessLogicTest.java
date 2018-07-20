@@ -20,19 +20,7 @@
 
 package org.openecomp.sdc.be.components;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.when;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.ServletContext;
-
+import fj.data.Either;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -45,13 +33,11 @@ import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.WebAppContextWrapper;
-import org.openecomp.sdc.be.model.PropertyConstraint;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.IPropertyOperation;
-import org.openecomp.sdc.be.resources.data.EntryData;
 import org.openecomp.sdc.be.user.Role;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.ConfigurationSource;
@@ -63,8 +49,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.context.WebApplicationContext;
 
-import fj.data.Either;
-import junit.framework.Assert;
+import javax.servlet.ServletContext;
+import java.util.Arrays;
+import java.util.Map;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.when;
 
 public class PropertyBusinessLogicTest {
 
@@ -117,34 +110,9 @@ public class PropertyBusinessLogicTest {
         when(servletContext.getAttribute(Constants.CONFIGURATION_MANAGER_ATTR)).thenReturn(configurationManager);
         when(servletContext.getAttribute(Constants.PROPERTY_OPERATION_MANAGER)).thenReturn(propertyOperation);
         when(servletContext.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR)).thenReturn(webAppContextWrapper);
-//        when(servletContext.getAttribute(Constants.RESOURCE_OPERATION_MANAGER)).thenReturn(resourceOperation);
         when(webAppContextWrapper.getWebAppContext(servletContext)).thenReturn(webAppContext);
 
-        // Resource Operation mock methods
-        // getCount
-//        Either<Integer, StorageOperationStatus> eitherCount = Either.left(0);
-//        when(resourceOperation.getNumberOfResourcesByName("MyResourceName".toLowerCase())).thenReturn(eitherCount);
-//        Either<Integer, StorageOperationStatus> eitherCountExist = Either.left(1);
-//        when(resourceOperation.getNumberOfResourcesByName("alreadyExist".toLowerCase())).thenReturn(eitherCountExist);
-//        Either<Integer, StorageOperationStatus> eitherCountRoot = Either.left(1);
-//        when(resourceOperation.getNumberOfResourcesByName("Root".toLowerCase())).thenReturn(eitherCountRoot);
-//
-//        Either<Resource, StorageOperationStatus> eitherGetResource = Either.left(createResourceObject(true));
-//        when(resourceOperation.getResource(resourceId)).thenReturn(eitherGetResource);
 
-    }
-
-    // @Test
-    public void testHappyScenario() {
-
-        String propertyName = "disk_size";
-        PropertyDefinition newPropertyDefinition = createPropertyObject(propertyName, resourceId);
-        Either<EntryData<String, PropertyDefinition>, ResponseFormat> either = bl.createProperty(resourceId, propertyName, newPropertyDefinition, user.getUserId());
-
-        if (either.isRight()) {
-            Assert.assertFalse(true);
-        }
-        Assert.assertEquals(newPropertyDefinition, either.left().value());
     }
 
     @Test
@@ -191,7 +159,6 @@ public class PropertyBusinessLogicTest {
 
     private PropertyDefinition createPropertyObject(String propertyName, String resourceId) {
         PropertyDefinition pd = new PropertyDefinition();
-        List<PropertyConstraint> constraints = new ArrayList<PropertyConstraint>();
         pd.setConstraints(null);
         pd.setDefaultValue("100");
         pd.setDescription("Size of thasdasdasdasde local disk, in Gigabytes (GB), available to applications running on the Compute node");

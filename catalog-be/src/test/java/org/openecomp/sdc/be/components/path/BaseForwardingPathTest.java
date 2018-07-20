@@ -1,12 +1,7 @@
 package org.openecomp.sdc.be.components.path;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-
+import com.google.common.collect.Lists;
+import fj.data.Either;
 import org.junit.Before;
 import org.openecomp.sdc.be.components.BeConfDependentTest;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
@@ -40,9 +35,12 @@ import org.openecomp.sdc.common.util.ValidationUtils;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.google.common.collect.Lists;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
-import fj.data.Either;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class BaseForwardingPathTest extends BeConfDependentTest implements ForwardingPathTestUtils {
 
@@ -187,23 +185,6 @@ public class BaseForwardingPathTest extends BeConfDependentTest implements Forwa
         Either<Service, ResponseFormat> serviceCreateResult = bl.createService(createTestService(), user);
         assertTrue("Failed to create service", serviceCreateResult.isLeft());
         Service service = serviceCreateResult.left().value();
-//        ComponentInstance componentInstance = new ComponentInstance();
-//        componentInstance.setName("Test1");
-//        componentInstance.setNormalizedName("Test1");
-//        componentInstance.setUniqueId("Test1");
-//        componentInstance.setInputValueCounter(1);
-//        componentInstance.setAttributeValueCounter(1);
-//        componentInstance.setIcon("network");
-//        componentInstance.setComponentVersion("1.0");
-//        componentInstance.setIsProxy(true);
-//        componentInstance.setComponentUid(service.getUniqueId());
-//        componentInstance.setPropertyValueCounter(1);
-//        componentInstance.setPosX("333");
-//        componentInstance.setPosY("333");
-//        componentInstance.setOriginType(OriginTypeEnum.VF);
-//
-//        Either<ComponentInstance, ResponseFormat> instanceResult = serviceComponentInstanceBusinessLogic.createComponentInstance("services", service.getUniqueId(), user.getUserId(), componentInstance);
-//        assertTrue("Failed to create instance", instanceResult.isLeft());
         return service;
     }
 }
