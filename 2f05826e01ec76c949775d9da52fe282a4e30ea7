@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da7095c5_eec9635b",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vnf-repository-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/VnfPackageRepositoryImpl.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 235,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-07-22T16:02:11Z",
+      "side": 1,
+      "message": "Checkstyle remark - METHOD_DEF should be separated from previous statement (EmptyLineSeperatorCheck)",
+      "revId": "2f05826e01ec76c949775d9da52fe282a4e30ea7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da7095c5_cec01f2d",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vnf-repository-rest-services/src/test/java/org/openecomp/sdcrests/vsp/rest/services/VnfPackageRepositoryImplTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-07-22T16:02:11Z",
+      "side": 1,
+      "message": "Checkstyle remark- distance between variables \u0027vnfRepository\u0027 declaration and its first usage is 4, but allowed only 3.",
+      "revId": "2f05826e01ec76c949775d9da52fe282a4e30ea7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da7095c5_0ec7f746",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vnf-repository-rest-services/src/test/java/org/openecomp/sdcrests/vsp/rest/services/VnfPackageRepositoryImplTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-07-22T16:02:11Z",
+      "side": 1,
+      "message": "Consider using Arrays.asList(new Version(...), new Version(...)) instead of four lines.",
+      "revId": "2f05826e01ec76c949775d9da52fe282a4e30ea7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da7095c5_aec36b37",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vnf-repository-rest-services/src/test/java/org/openecomp/sdcrests/vsp/rest/services/VnfPackageRepositoryImplTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-07-22T16:02:11Z",
+      "side": 1,
+      "message": "1. Consider using Arrays.aslList\n2. There is no use in setting initial value for 1. This constructor is aimed to use with large lists.",
+      "revId": "2f05826e01ec76c949775d9da52fe282a4e30ea7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
