@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da7095c5_056d9532",
+        "filename": "openecomp-be/tools/zusammen-tools/src/main/java/org/openecomp/core/tools/util/ZipUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-07-23T17:00:06Z",
+      "side": 1,
+      "message": "Nice. I personally prefer \nfor (ZipEntry entry \u003d stream.getNextEntry(); entry !\u003d null; entry \u003d stream.getNextEntry()) {\n     //process the entry\n}",
+      "revId": "85cb355a461c7dc7566bdab5728d62804ad7cb3d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
