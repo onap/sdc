@@ -26,11 +26,6 @@
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <!--
-                Use latest version for proper testing of context propagation.
-                Will not affect the application because the scope is "provided".
-            -->
-            <version>1.2.3</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
