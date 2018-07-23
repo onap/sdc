@@ -62,8 +62,6 @@ public class GraphElementFactoryTest {
 				properties);
 		result = Deencapsulation.invoke(GraphElementFactory.class, "createNode", NodeTypeEnum.Service.getName(),
 				properties);
-		// result = Deencapsulation.invoke(GraphElementFactory.class, "createNode",
-		// NodeTypeEnum.Resource.getName(), properties);
 		result = Deencapsulation.invoke(GraphElementFactory.class, "createNode", NodeTypeEnum.Property.getName(),
 				properties);
 		result = Deencapsulation.invoke(GraphElementFactory.class, "createNode", NodeTypeEnum.HeatParameter.getName(),

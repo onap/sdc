@@ -20,15 +20,10 @@
 
 package org.openecomp.sdc.be.dao.titan;
 
-import com.thinkaurelius.titan.core.*;
-import com.thinkaurelius.titan.core.schema.ConsistencyModifier;
-import com.thinkaurelius.titan.core.schema.TitanGraphIndex;
-import com.thinkaurelius.titan.core.schema.TitanManagement;
-import com.thinkaurelius.titan.core.util.TitanCleanup;
-import com.thinkaurelius.titan.diskstorage.ResourceUnavailableException;
-import com.thinkaurelius.titan.diskstorage.locking.PermanentLockingException;
-import com.thinkaurelius.titan.graphdb.database.idassigner.IDPoolExhaustedException;
-import fj.data.Either;
+import javax.annotation.PostConstruct;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.concurrent.*;
 import org.apache.commons.configuration.BaseConfiguration;
 import org.apache.tinkerpop.gremlin.structure.T;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
@@ -37,13 +32,20 @@ import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.DAOTitanStrategy;
 import org.openecomp.sdc.be.dao.TitanClientStrategy;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
-import org.openecomp.sdc.common.log.wrappers.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.concurrent.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.TimeUnit;
 
 
 @Component("titan-client")
@@ -67,12 +69,6 @@ public class TitanGraphClient {
 			healthLogger.trace("Health Check Node Found...{}", v.property(HEALTH_CHECK));
 			graph.tx().commit();
 
-			// Vertex v = graph.getVertices(HEALTH_CHECK, OK).iterator().next();
-			// v.setProperty("healthcheck", OK + "_" +
-			// System.currentTimeMillis());
-			// graph.commit();
-			// healthLogger.trace("Health Check Node
-			// Found..."+v.getProperty(HEALTH_CHECK) );
 			return v;
 		}
 	}
