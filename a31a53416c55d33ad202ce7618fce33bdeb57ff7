@@ -36,6 +36,24 @@
     },
     {
       "key": {
+        "uuid": "da7095c5_ce457fb4",
+        "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/impl/ArtifactUuidFix.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 197,
+      "author": {
+        "id": 2493
+      },
+      "writtenOn": "2018-07-23T02:43:20Z",
+      "side": 1,
+      "message": "As Writer class implements AutoCloseable and writer declared in the try-with-resources statement, we need not to call close() method separately, it will be called automatically. \nAlso we need not to call flush method separately as close() method will do \"Closes the stream, flushing it first\"\nhttps://docs.oracle.com/javase/8/docs/api/java/io/Writer.html#close--\n\nhttps://stackoverflow.com/questions/32324492/is-flush-call-necessary-when-using-try-with-resources/32324571\n\nhttps://docs.oracle.com/javase/tutorial/essential/exceptions/tryResourceClose.html",
+      "parentUuid": "da7095c5_4dbbb972",
+      "revId": "a31a53416c55d33ad202ce7618fce33bdeb57ff7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "da7095c5_ada93526",
         "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/impl/ArtifactUuidFix.java",
         "patchSetId": 1
