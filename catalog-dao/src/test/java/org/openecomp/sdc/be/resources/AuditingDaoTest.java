@@ -20,18 +20,7 @@
 
 package org.openecomp.sdc.be.resources;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import javax.annotation.Resource;
-
+import fj.data.Either;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexResponse;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.index.query.MatchAllQueryBuilder;
@@ -65,7 +54,16 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 
-import fj.data.Either;
+import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:application-context-test.xml")
@@ -394,22 +392,6 @@ public class AuditingDaoTest extends DAOConfDependentTest{
 		String expectedIndexName = auditingDao.getIndexPrefix() + "-2016-06";
 		assertTrue(!esclient.getClient().admin().indices().prepareExists(expectedIndexName).execute().actionGet()
 				.isExists());
-
-		// Client client = esclient.getClient();
-		// final CreateIndexRequestBuilder createIndexRequestBuilder =
-		// client.admin().indices().prepareCreate(expectedIndexName);
-		// final XContentBuilder mappingBuilder =
-		// jsonBuilder().startObject().startObject("resourceadminevent")
-		// .startObject("_ttl").field("enabled", "true").field("default",
-		// "1s").endObject().endObject()
-		// .endObject();
-		// System.out.println(mappingBuilder.string());
-		// createIndexRequestBuilder.addMapping(documentType, mappingBuilder);
-		//
-		// // MAPPING DONE
-		// createIndexRequestBuilder.execute().actionGet();
-		//
-		//
 
 		Map<AuditingFieldsKeysEnum, Object> params = getResourceAdminEventParams(timestamp, "DRequest");
 		params.put(AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_ID, distributionId);

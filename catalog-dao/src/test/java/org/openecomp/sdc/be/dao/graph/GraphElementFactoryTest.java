@@ -1,9 +1,6 @@
 package org.openecomp.sdc.be.dao.graph;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.apache.tinkerpop.gremlin.structure.T;
+import mockit.Deencapsulation;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphElementTypeEnum;
@@ -11,7 +8,8 @@ import org.openecomp.sdc.be.dao.graph.datatype.GraphNode;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphRelation;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 
-import mockit.Deencapsulation;
+import java.util.HashMap;
+import java.util.Map;
 
 public class GraphElementFactoryTest {
 
@@ -64,8 +62,6 @@ public class GraphElementFactoryTest {
 				properties);
 		result = Deencapsulation.invoke(GraphElementFactory.class, "createNode", NodeTypeEnum.Service.getName(),
 				properties);
-		// result = Deencapsulation.invoke(GraphElementFactory.class, "createNode",
-		// NodeTypeEnum.Resource.getName(), properties);
 		result = Deencapsulation.invoke(GraphElementFactory.class, "createNode", NodeTypeEnum.Property.getName(),
 				properties);
 		result = Deencapsulation.invoke(GraphElementFactory.class, "createNode", NodeTypeEnum.HeatParameter.getName(),

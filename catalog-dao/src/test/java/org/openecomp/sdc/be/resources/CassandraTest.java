@@ -54,8 +54,6 @@ public class CassandraTest {
 
 		Mapper<Account> mapper = new MappingManager(session).mapper(Account.class);
 		Account account = new Account("John Doe", "jd@example.com");
-		// Class<? extends Account> class1 = account.getClass();
-		// Class class2 = Account.class;
 		mapper.save(account);
 
 		Account whose = mapper.get("jd@example.com");

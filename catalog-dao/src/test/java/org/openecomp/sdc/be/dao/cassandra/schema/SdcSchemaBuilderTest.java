@@ -1,19 +1,17 @@
 package org.openecomp.sdc.be.dao.cassandra.schema;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
+import com.datastax.driver.core.Session;
+import mockit.Deencapsulation;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.openecomp.sdc.be.config.Configuration.CassandrConfig.KeyspaceConfig;
 import org.openecomp.sdc.be.dao.cassandra.schema.SdcSchemaBuilder.ReplicationStrategy;
 import org.openecomp.sdc.be.utils.DAOConfDependentTest;
 
-import com.datastax.driver.core.Session;
-
-import mockit.Deencapsulation;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 public class SdcSchemaBuilderTest extends DAOConfDependentTest{
 
@@ -46,24 +44,6 @@ public class SdcSchemaBuilderTest extends DAOConfDependentTest{
 		result = SdcSchemaBuilder.deleteSchema();
 	}
 
-	/*@Test
-	public void testParseKeyspaceMetadata() throws Exception {
-		List<KeyspaceMetadata> keyspacesMetadata = new LinkedList<>();
-		Map<String, Map<String, List<String>>> result;
-
-		// default test
-		result = Deencapsulation.invoke(SdcSchemaBuilder.class, "parseKeyspaceMetadata", keyspacesMetadata);
-	}*/
-
-	/*@Test
-	public void testGetMetadataTablesStructure() throws Exception {
-		List<KeyspaceMetadata> keyspacesMetadata = new LinkedList<>();
-		Map<String, Map<String, List<String>>> result;
-
-		// default test
-		result = Deencapsulation.invoke(SdcSchemaBuilder.class, "getMetadataTablesStructure", keyspacesMetadata);
-	}*/
-
 	@Test
 	public void testCreateIndexName() throws Exception {
 		String table = "";
@@ -73,19 +53,6 @@ public class SdcSchemaBuilderTest extends DAOConfDependentTest{
 		// default test
 		result = Deencapsulation.invoke(SdcSchemaBuilder.class, "createIndexName", table, column);
 	}
-
-	/*@Test
-	public void testAlterTable() throws Exception {
-		Session session = null;
-		Map<String, List<String>> existingTablesMetadata = null;
-		ITableDescription tableDescription = null;
-		String tableName = "";
-		Map<String, ImmutablePair<DataType, Boolean>> columnDescription = null;
-
-		// default test
-		Deencapsulation.invoke(SdcSchemaBuilder.class, "alterTable",
-				new Object[] { Session.class, Map.class, ITableDescription.class, tableName, Map.class });
-	}*/
 
 	@Test
 	public void testCreateKeyspace() throws Exception {
