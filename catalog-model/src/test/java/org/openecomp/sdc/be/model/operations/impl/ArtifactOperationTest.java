@@ -20,16 +20,7 @@
 
 package org.openecomp.sdc.be.model.operations.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import fj.data.Either;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
@@ -61,7 +52,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import fj.data.Either;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:application-context-test.xml")
@@ -444,9 +443,6 @@ public class ArtifactOperationTest extends ModelTestBase {
 		assertTrue(result.isLeft());
 		Service resultService = result.left().value();
 
-		// assertEquals("check resource unique id",
-		// UniqueIdBuilder.buildServiceUniqueId(serviceName, serviceVersion),
-		// resultService.getUniqueId());
 		assertEquals("check resource state", LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT, resultService.getLifecycleState());
 
 		return resultService;
@@ -476,13 +472,6 @@ public class ArtifactOperationTest extends ModelTestBase {
 		String[] names = category.split("/");
 		OperationTestsUtil.deleteAndCreateServiceCategory(category, titanDao);
 		OperationTestsUtil.deleteAndCreateResourceCategory(names[0], names[1], titanDao);
-
-		/*
-		 * CategoryData categoryData = new CategoryData(); categoryData.setName(category);
-		 * 
-		 * titanDao.deleteNode(categoryData, CategoryData.class); Either<CategoryData, TitanOperationStatus> createNode = titanDao.createNode(categoryData, CategoryData.class); System.out.println("after creating caetgory " + createNode);
-		 */
-
 	}
 
 	private UserData deleteAndCreateUser(String userId, String firstName, String lastName, String role) {

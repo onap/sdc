@@ -2040,27 +2040,6 @@ public class ToscaOperationFacade {
 		}
 	}
 
-	// private Either<List<Service>, StorageOperationStatus> fetchServicesByCriteria(List<Service> servicesAll, Map<GraphPropertyEnum, Object> propertiesToMatch, Map<GraphPropertyEnum, Object> propertiesNotToMatch) {
-	// Either<List<GraphVertex>, TitanOperationStatus> getRes = titanDao.getByCriteria(VertexTypeEnum.TOPOLOGY_TEMPLATE, propertiesToMatch, propertiesNotToMatch, JsonParseFlagEnum.ParseAll);
-	// if (getRes.isRight()) {
-	// if (getRes.right().value() != TitanOperationStatus.NOT_FOUND) {
-	// CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to fetch certified services by match properties {} not match properties {} . Status is {}. ", propertiesToMatch, propertiesNotToMatch, getRes.right().value());
-	// return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(getRes.right().value()));
-	// }
-	// } else {
-	// for (GraphVertex vertex : getRes.left().value()) {
-	// Either<Component, StorageOperationStatus> getServiceRes = getToscaElementByOperation(vertex);
-	// if (getServiceRes.isRight()) {
-	// CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to fetch certified service {}. Status is {}. ", vertex.getJsonMetadataField(JsonPresentationFields.NAME), getServiceRes.right().value());
-	// return Either.right(getServiceRes.right().value());
-	// } else {
-	// servicesAll.add((Service) getToscaElementByOperation(vertex).left().value());
-	// }
-	// }
-	// }
-	// return Either.left(servicesAll);
-	// }
-
 	private Either<List<Service>, StorageOperationStatus> fetchServicesByCriteria(List<Service> servicesAll, Map<GraphPropertyEnum, Object> propertiesToMatch, Map<GraphPropertyEnum, Object> propertiesNotToMatch) {
 		Either<List<GraphVertex>, TitanOperationStatus> getRes = titanDao.getByCriteria(VertexTypeEnum.TOPOLOGY_TEMPLATE, propertiesToMatch, propertiesNotToMatch, JsonParseFlagEnum.ParseAll);
 		if (getRes.isRight()) {
@@ -2120,7 +2099,6 @@ public class ToscaOperationFacade {
 		Either<PropertyDefinition, StorageOperationStatus> result = null;
 		Either<Component, StorageOperationStatus> getUpdatedComponentRes = null;
 		newPropertyDefinition.setName(propertyName);
-		// newPropertyDefinition.setParentUniqueId(resource.getUniqueId());  //todo- DELETE me after 10.18, ownerId==null => current resource is the owner.  ownerId should be null since coming for the servlet => changing self resource property, assigning a null value actually means that the property has no assigned owner ,therfor current resource is the owner
 		StorageOperationStatus status = getToscaElementOperation(resource).addToscaDataToToscaElement(resource.getUniqueId(), EdgeLabelEnum.PROPERTIES, VertexTypeEnum.PROPERTIES, newPropertyDefinition, JsonPresentationFields.NAME);
 		if (status != StorageOperationStatus.OK) {
 			CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to add the property {} to the resource {}. Status is {}. ", propertyName, resource.getName(), status);

@@ -20,16 +20,9 @@
 
 package org.openecomp.sdc.be.model.jsontitan.operations;
 
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import fj.data.Either;
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.apache.tinkerpop.gremlin.structure.Edge;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
@@ -71,10 +64,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StopWatch;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
-import fj.data.Either;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 public abstract class ToscaElementOperation extends BaseOperation {
     private static Logger log = LoggerFactory.getLogger(ToscaElementOperation.class.getName());
@@ -194,9 +192,6 @@ public abstract class ToscaElementOperation extends BaseOperation {
             while (edgesToCopyIter.hasNext()) {
                 Edge currEdge = edgesToCopyIter.next();
                 Vertex currVertex = currEdge.inVertex();
-                // if(EdgeLabelEnum.getEdgeLabelEnum(currEdge.label()).equals(EdgeLabelEnum.VERSION)){
-                // continue;
-                // }
                 status = titanDao.createEdge(createdToscaElementVertex.getVertex(), currVertex, EdgeLabelEnum.getEdgeLabelEnum(currEdge.label()), currEdge);
                 if (status != TitanOperationStatus.OK) {
                     CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to create edge with label {} from tosca element vertex {} to vertex with label {} on graph. Status is {}. ", currEdge.label(), createdToscaElementVertex.getUniqueId(),

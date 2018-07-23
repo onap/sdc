@@ -24,40 +24,6 @@ public class ComponentInstanceOperationTest {
 		testSubject.setTitanGenericDao(titanGenericDao);
 	}
 
-
-
-
-
-	
-//	@Test
-//	public void testValidateElementExistInGraph() throws Exception {
-//		ComponentInstanceOperation testSubject;
-//		String elementUniqueId = "";
-//		NodeTypeEnum elementNodeType = null;
-//		Supplier<Class<ElementData>> elementClassGen = null;
-//		Wrapper<ElementData> elementDataWrapper = null;
-//		Wrapper<TitanOperationStatus> errorWrapper = null;
-//
-//		// default test
-//		testSubject = createTestSubject();
-//		testSubject.validateElementExistInGraph(elementUniqueId, elementNodeType, elementClassGen, elementDataWrapper,
-//				errorWrapper);
-//	}
-
-	
-	
-
-	
-
-
-
-
-	
-
-
-	
-
-	
 	@Test
 	public void testUpdateInputValueInResourceInstance() throws Exception {
 		ComponentInstanceOperation testSubject;

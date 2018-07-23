@@ -20,22 +20,7 @@
 
 package org.openecomp.sdc.be.model.cache;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
-import javax.annotation.PostConstruct;
-
+import fj.data.Either;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
@@ -65,7 +50,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import fj.data.Either;
+import javax.annotation.PostConstruct;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @org.springframework.stereotype.Component("component-cache")
 public class ComponentCache {
@@ -344,9 +342,7 @@ public class ComponentCache {
 		filteredComponent.setUniqueId(component.getUniqueId());
 		filteredComponent.setIcon(component.getIcon());
 		filteredComponent.setTags(component.getTags());
-		// filteredComponent.setAllVersions(component.getAllVersions());
 		filteredComponent.setLifecycleState(component.getLifecycleState());
-		// filteredComponent.setHighestVersion(component.isHighestVersion());
 		filteredComponent.setInvariantUUID(component.getInvariantUUID());
 		filteredComponent.setUUID(component.getUUID());
 		filteredComponent.setSystemName(component.getSystemName());
@@ -356,14 +352,7 @@ public class ComponentCache {
 			Resource resource = (Resource) component;
 			Resource filteredResource = (Resource) filteredComponent;
 			filteredResource.setToscaResourceName(resource.getToscaResourceName());
-			// filteredResource.setAbstract(resource.isAbstract());
-			// filteredResource.setVendorName(resource.getVendorName());
-			// filteredResource.setVendorRelease(resource.getVendorRelease());
 			filteredResource.setResourceType(resource.getResourceType());
-		} else if (componentTypeEnum == ComponentTypeEnum.SERVICE) {
-			// Service service = (Service)component;
-			// Service filteredService = (Service)filteredComponent;
-			// filteredService.setDistributionStatus(service.getDistributionStatus());
 		}
 	}
 
@@ -377,10 +366,7 @@ public class ComponentCache {
 		filteredComponent.setUniqueId(component.getUniqueId());
 		filteredComponent.setIcon(component.getIcon());
 		filteredComponent.setTags(component.getTags());
-		// filteredComponent.setAllVersions(component.getAllVersions());
 		filteredComponent.setLifecycleState(component.getLifecycleState());
-		// filteredComponent.setHighestVersion(component.isHighestVersion());
-		// filteredComponent.setInvariantUUID(component.getInvariantUUID());
 		filteredComponent.setSystemName(component.getSystemName());
 		filteredComponent.setName(component.getName());
 		filteredComponent.setLastUpdateDate(component.getLastUpdateDate());
@@ -389,9 +375,6 @@ public class ComponentCache {
 			Resource resource = (Resource) component;
 			Resource filteredResource = (Resource) filteredComponent;
 			filteredResource.setToscaResourceName(resource.getToscaResourceName());
-			// filteredResource.setAbstract(resource.isAbstract());
-			// filteredResource.setVendorName(resource.getVendorName());
-			// filteredResource.setVendorRelease(resource.getVendorRelease());
 			filteredResource.setResourceType(resource.getResourceType());
 		} else if (componentTypeEnum == ComponentTypeEnum.SERVICE) {
 			Service service = (Service) component;

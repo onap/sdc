@@ -20,7 +20,14 @@
 
 package org.openecomp.sdc.be.model;
 
-import static java.util.Collections.emptyList;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.openecomp.sdc.be.config.ConfigurationManager;
+import org.openecomp.sdc.be.dao.utils.MapUtil;
+import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
+import org.openecomp.sdc.be.model.category.CategoryDefinition;
+import org.openecomp.sdc.be.model.category.SubCategoryDefinition;
+import org.openecomp.sdc.be.model.jsontitan.datamodel.ToscaElementTypeEnum;
+import org.openecomp.sdc.common.api.ArtifactTypeEnum;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -32,15 +39,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.openecomp.sdc.be.config.ConfigurationManager;
-import org.openecomp.sdc.be.dao.utils.MapUtil;
-import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
-import org.openecomp.sdc.be.model.category.CategoryDefinition;
-import org.openecomp.sdc.be.model.category.SubCategoryDefinition;
-import org.openecomp.sdc.be.model.jsontitan.datamodel.ToscaElementTypeEnum;
-import org.openecomp.sdc.common.api.ArtifactTypeEnum;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import static java.util.Collections.emptyList;
 
 public abstract class Component implements Serializable {
 
@@ -477,11 +476,7 @@ public abstract class Component implements Serializable {
 		result = prime * result + ((artifacts == null) ? 0 : artifacts.hashCode());
 		result = prime * result + ((categories == null) ? 0 : categories.hashCode());
 		result = prime * result + ((componentMetadataDefinition == null) ? 0 : componentMetadataDefinition.hashCode());
-//		result = prime * result + ((creatorUserId == null) ? 0 : creatorUserId.hashCode());
-//		result = prime * result + ((creatorFullName == null) ? 0 : creatorFullName.hashCode());
 		result = prime * result + ((deploymentArtifacts == null) ? 0 : deploymentArtifacts.hashCode());
-//		result = prime * result + ((lastUpdaterUserId == null) ? 0 : lastUpdaterUserId.hashCode());
-//		result = prime * result + ((lastUpdaterFullName == null) ? 0 : lastUpdaterFullName.hashCode());
 		result = prime * result + ((capabilities == null) ? 0 : capabilities.hashCode());
 		result = prime * result + ((requirements == null) ? 0 : requirements.hashCode());
 		result = prime * result + ((componentInstances == null) ? 0 : componentInstances.hashCode());
@@ -522,31 +517,11 @@ public abstract class Component implements Serializable {
 				return false;
 		} else if (!componentMetadataDefinition.equals(other.componentMetadataDefinition))
 			return false;
-//		if (creatorUserId == null) {
-//			if (other.creatorUserId != null)
-//				return false;
-//		} else if (!creatorUserId.equals(other.creatorUserId))
-//			return false;
-//		if (creatorFullName == null) {
-//			if (other.creatorFullName != null)
-//				return false;
-//		} else if (!creatorFullName.equals(other.creatorFullName))
-//			return false;
 		if (deploymentArtifacts == null) {
 			if (other.deploymentArtifacts != null)
 				return false;
 		} else if (!deploymentArtifacts.equals(other.deploymentArtifacts))
 			return false;
-//		if (lastUpdaterUserId == null) {
-//			if (other.lastUpdaterUserId != null)
-//				return false;
-//		} else if (!lastUpdaterUserId.equals(other.lastUpdaterUserId))
-//			return false;
-//		if (lastUpdaterFullName == null) {
-//			if (other.lastUpdaterFullName != null)
-//				return false;
-//		} else if (!lastUpdaterFullName.equals(other.lastUpdaterFullName))
-//			return false;
 		if (componentInstances == null) {
 			if (other.componentInstances != null)
 				return false;

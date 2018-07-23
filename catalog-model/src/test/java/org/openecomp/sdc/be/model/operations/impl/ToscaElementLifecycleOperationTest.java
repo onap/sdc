@@ -20,20 +20,9 @@
 
 package org.openecomp.sdc.be.model.operations.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.tinkerpop.gremlin.structure.io.IoCore;
+import com.thinkaurelius.titan.core.TitanGraph;
+import com.thinkaurelius.titan.core.TitanVertex;
+import fj.data.Either;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -72,10 +61,14 @@ import org.openecomp.sdc.common.util.ValidationUtils;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.thinkaurelius.titan.core.TitanGraph;
-import com.thinkaurelius.titan.core.TitanVertex;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
-import fj.data.Either;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:application-context-test.xml")
@@ -435,24 +428,6 @@ public class ToscaElementLifecycleOperationTest extends ModelTestBase {
 		derivedFrom.add("root");
 		vf.setDerivedFrom(derivedFrom);
 
-		// Map<String, PropertyDataDefinition> properties = new HashMap<>();
-		// PropertyDataDefinition prop1 = new PropertyDataDefinition();
-		// prop1.setName("prop1");
-		// prop1.setDefaultValue("def1");
-		//
-		// properties.put("prop1", prop1);
-		//
-		// PropertyDataDefinition prop2 = new PropertyDataDefinition();
-		// prop2.setName("prop2");
-		// prop2.setDefaultValue("def2");
-		// properties.put("prop2", prop2);
-		//
-		// PropertyDataDefinition prop3 = new PropertyDataDefinition();
-		// prop3.setName("prop3");
-		// prop3.setDefaultValue("def3");
-		// properties.put("prop3", prop3);
-		//
-		// vf.setProperties(properties);
 		vf.setComponentType(ComponentTypeEnum.RESOURCE);
 		Either<NodeType, StorageOperationStatus> createVFRes = nodeTypeOperation.createNodeType(vf);
 		assertTrue(createVFRes.isLeft());
@@ -636,22 +611,4 @@ public class ToscaElementLifecycleOperationTest extends ModelTestBase {
 		}
 		titanDao.commit();
 	}
-
-	private String exportGraphMl(TitanGraph graph) {
-		String result = null;
-		String outputFile = outputDirectory + File.separator + "exportGraph." + System.currentTimeMillis() + ".graphml";
-		try {
-			try (final OutputStream os = new BufferedOutputStream(new FileOutputStream(outputFile))) {
-				graph.io(IoCore.graphml()).writer().normalize(true).create().writeGraph(os, graph);
-			}
-			result = outputFile;
-			graph.tx().commit();
-		} catch (Exception e) {
-			graph.tx().rollback();
-			e.printStackTrace();
-		}
-		return result;
-
-	}
-
 }
