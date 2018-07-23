@@ -41,7 +41,6 @@
   <bean id="servletUtils" class="org.openecomp.sdc.be.impl.ServletUtils" />
   <bean id="resourceBusinessLogic" class="org.openecomp.sdc.be.components.impl.ResourceBusinessLogic" />
   <bean id="productBusinessLogic" class="org.openecomp.sdc.be.components.impl.ProductBusinessLogic" />
-  <bean id="artifactBusinessLogic" class="org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic" />
   <bean id="lifecycleBusinessLogic" class="org.openecomp.sdc.be.components.lifecycle.LifecycleBusinessLogic" />
   <bean id="transactionManager" class="org.openecomp.sdc.common.transaction.mngr.TransactionManager" />
   <bean id="userBusinessLogic" class="org.openecomp.sdc.be.user.UserBusinessLogic" />

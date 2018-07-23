@@ -133,7 +133,7 @@ import com.google.gson.GsonBuilder;
 
 import fj.data.Either;
 
-@org.springframework.stereotype.Component("artifactBusinessLogic")
+@org.springframework.stereotype.Component("artifactsBusinessLogic")
 public class ArtifactsBusinessLogic extends BaseBusinessLogic {
     private static final String ARTIFACT_TYPE_OTHER = "OTHER";
     private static final String ARTIFACT_DESCRIPTION = "artifact description";

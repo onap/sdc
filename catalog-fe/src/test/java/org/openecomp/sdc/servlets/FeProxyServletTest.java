@@ -20,6 +20,7 @@
 
 package org.openecomp.sdc.servlets;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -31,6 +32,7 @@ import java.util.List;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.eclipse.jetty.client.api.Request;
@@ -41,6 +43,7 @@ import org.mockito.Mockito;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.fe.config.Configuration;
 import org.openecomp.sdc.fe.config.ConfigurationManager;
+import org.openecomp.sdc.fe.config.PluginsConfiguration;
 import org.openecomp.sdc.fe.servlets.FeProxyServlet;
 
 public class FeProxyServletTest {
@@ -53,6 +56,7 @@ public class FeProxyServletTest {
 	 */
 	FeProxyServletForTest feProxy = new FeProxyServletForTest();
 	final static HttpServletRequest servletRequest = Mockito.mock(HttpServletRequest.class);
+	final static HttpServletResponse servletResponse = Mockito.mock(HttpServletResponse.class);
 	final static HttpSession httpSession = Mockito.mock(HttpSession.class);
 	final static ServletContext servletContext = Mockito.mock(ServletContext.class);
 	final static ConfigurationManager configurationManager = Mockito.mock(ConfigurationManager.class);
@@ -60,6 +64,8 @@ public class FeProxyServletTest {
     final static Configuration.OnboardingConfig onboardingConfiguration = Mockito.mock(Configuration.OnboardingConfig.class);
 	final static Request proxyRequest = Mockito.spy(Request.class);
 	final static HttpFields httpFields = Mockito.mock(HttpFields.class);
+	private static final PluginsConfiguration pluginsConfiguration = Mockito.mock(PluginsConfiguration.class);
+	private static final PluginsConfiguration.Plugin plugin = Mockito.mock(PluginsConfiguration.Plugin.class);
 
 	final static String BE_PROTOCOL = "http";
 	final static String BE_HOST = "172.20.43.124";
@@ -67,6 +73,9 @@ public class FeProxyServletTest {
 	final static String ONBOARDING_BE_PROTOCOL = "http";
 	final static String ONBOARDING_BE_HOST = "172.20.43.125";
 	final static int ONBOARDING_BE_PORT = 8091;
+	final static String WF_PROTOCOL = "http";
+	final static String WF_HOST = "172.20.43.126";
+	final static int WF_PORT = 8092;
 	final static String HEADER_1 = "Header1";
 	final static String HEADER_2 = "Header2";
 	final static String HEADER_3 = "Header3";
@@ -104,6 +113,14 @@ public class FeProxyServletTest {
 		when(httpFields.containsKey(HEADER_1)).thenReturn(true);
 		when(httpFields.containsKey(HEADER_2)).thenReturn(true);
 		when(httpFields.containsKey(HEADER_3)).thenReturn(false);
+
+		List<PluginsConfiguration.Plugin> pluginList = new ArrayList<PluginsConfiguration.Plugin>();
+		when(plugin.getPluginId()).thenReturn("WORKFLOW");
+		when(plugin.getPluginSourceUrl()).thenReturn(WF_PROTOCOL + "://" + WF_HOST + ":" + WF_PORT);
+		pluginList.add(plugin);
+
+		when(configurationManager.getPluginsConfiguration()).thenReturn(pluginsConfiguration);
+		when(pluginsConfiguration.getPluginsList()).thenReturn(pluginList);
 
 	}
 
@@ -176,6 +193,21 @@ public class FeProxyServletTest {
 		verify(proxyRequest).header(HEADER_3, HEADER_3_VAL);
 		verify(proxyRequest, times(1)).header(Mockito.anyString(), Mockito.anyString());
 
+	}
+
+	@Test
+	public void testRewriteURIWithWFAPIRequest() {
+		when(servletRequest.getRequestURI()).thenReturn("/sdc1/feProxy/wf/workflows");
+		String requestResourceUrl = "http://localhost:8080/sdc1/feProxy/wf/workflows";
+		String expectedChangedUrl = WF_PROTOCOL + "://" + WF_HOST + ":" + WF_PORT + "/wf/workflows";
+		when(servletRequest.getRequestURL()).thenReturn(new StringBuffer(requestResourceUrl));
+
+		when(servletRequest.getContextPath()).thenReturn("/sdc1");
+		when(servletRequest.getServletPath()).thenReturn("/feProxy/wf/workflows");
+
+		String rewriteURI = feProxy.rewriteTarget(servletRequest);
+
+		assertEquals(expectedChangedUrl, rewriteURI);
 	}
 
 	/**
