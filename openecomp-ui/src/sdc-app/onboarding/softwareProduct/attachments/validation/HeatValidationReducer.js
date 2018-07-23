@@ -16,16 +16,35 @@
 import { actionTypes as softwareProductsActionTypes } from 'sdc-app/onboarding/softwareProduct/SoftwareProductConstants.js';
 import { actionTypes, nodeFilters } from './HeatValidationConstants.js';
 
-const mapVolumeData = ({ fileName, env, errors }) => ({
+const mapNestedData = ({ fileName, env, errors }) => ({
     name: fileName,
     expanded: true,
-    type: 'volume',
+    type: 'heat',
     children: env && [
         {
             name: env.fileName,
             errors: env.errors,
             type: 'env'
         }
+    ],
+    errors
+});
+
+const mapVolumeData = ({ fileName, env, errors, nested }) => ({
+    name: fileName,
+    expanded: true,
+    type: 'volume',
+    children: [
+        ...(env
+            ? [
+                  {
+                      name: env.fileName,
+                      errors: env.errors,
+                      type: 'env'
+                  }
+              ]
+            : []),
+        ...(nested ? nested.map(mapNestedData) : [])
     ],
     errors
 });
