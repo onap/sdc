@@ -56,7 +56,7 @@ import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolida
 import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.FileNestedConsolidationData;
 import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.FilePortConsolidationData;
 import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.GetAttrFuncData;
-import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.NestedConsolidationData;
+import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.NestedConsolidationDataHandler;
 import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.NestedTemplateConsolidationData;
 import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.PortTemplateConsolidationData;
 import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.RequirementAssignmentData;
@@ -804,58 +804,60 @@ public class ConsolidationService {
 
     private boolean isThereMoreThanOneNestedLevel(ServiceTemplate nestedServiceTemplate,
                                                          TranslationContext context) {
-        FileNestedConsolidationData fileNestedConsolidationData = null;
         String nestedServiceTemplateName = ToscaUtil.getServiceTemplateFileName(nestedServiceTemplate);
         if (Objects.isNull(nestedServiceTemplateName)) {
             return false;
         }
 
-        NestedConsolidationData nestedConsolidationData = context.getConsolidationData().getNestedConsolidationData();
-        if (Objects.nonNull(nestedConsolidationData)) {
-            fileNestedConsolidationData =
-                    nestedConsolidationData.getFileNestedConsolidationData(nestedServiceTemplateName);
-        }
+        NestedConsolidationDataHandler nestedConsolidationDataHandler = context.getNestedConsolidationDataHandler();
 
         //Condition to check if there is nested file and if file contains only sub interfaces then
         // return false
-        return Objects.nonNull(fileNestedConsolidationData) && !ifNestedFileContainsOnlySubInterface(
-                nestedServiceTemplate, context);
+        return nestedConsolidationDataHandler.isNestedConsolidationDataExist(nestedServiceTemplateName)
+                       && !ifNestedFileContainsOnlySubInterface(nestedServiceTemplate, context);
     }
 
-  private boolean ifNestedFileContainsOnlySubInterface(ServiceTemplate serviceTemplate,
-                                                       TranslationContext context) {
-    Map<String, NodeTemplate> nestedNodeTemplateMap =
-        DataModelUtil.getNodeTemplates(serviceTemplate);
+    private boolean ifNestedFileContainsOnlySubInterface(ServiceTemplate serviceTemplate, TranslationContext context) {
+        Map<String, NodeTemplate> nestedNodeTemplateMap = DataModelUtil.getNodeTemplates(serviceTemplate);
 
-    ToscaAnalyzerService toscaAnalyzerService = new ToscaAnalyzerServiceImpl();
-    Set<Object> nestedHeatFileNames = nestedNodeTemplateMap.entrySet().stream()
-        .filter(entry -> toscaAnalyzerService.isSubstitutableNodeTemplate(entry.getValue())
-        && toscaAnalyzerService
-            .getSubstituteServiceTemplateName(entry.getKey(), entry.getValue()).isPresent())
-        .map(entry -> toscaAnalyzerService
-            .getSubstituteServiceTemplateName(entry.getKey(), entry.getValue()).get())
-        .collect(Collectors.toSet());
+        Set<String> nestedHeatFileNames = getNestedHeatFileNames(nestedNodeTemplateMap);
 
-    if (CollectionUtils.isNotEmpty(nestedHeatFileNames)) {
-      for (Object fileName : nestedHeatFileNames) {
-        String heatFileName = context.getNestedHeatFileName().get(String.valueOf(fileName));
+        return ifAllResourceAreSubInterface(nestedHeatFileNames, context);
+    }
 
-        if (Objects.nonNull(heatFileName)
-              && !ifAllResourceAreSubInterface(context.getTranslatedServiceTemplates()
-                    .get(heatFileName).getTopology_template().getNode_templates().values())) {
-          return false;
+    private Set<String> getNestedHeatFileNames(Map<String, NodeTemplate> nestedNodeTemplateMap) {
+        ToscaAnalyzerService toscaAnalyzerService = new ToscaAnalyzerServiceImpl();
+
+        return nestedNodeTemplateMap.entrySet().stream()
+                                    .filter(entry -> toscaAnalyzerService.isSubstitutableNodeTemplate(entry.getValue())
+                                                           && toscaAnalyzerService.getSubstituteServiceTemplateName(
+                                                                      entry.getKey(), entry.getValue()).isPresent())
+                                    .map(entry -> toscaAnalyzerService.getSubstituteServiceTemplateName(
+                                                                    entry.getKey(), entry.getValue()).get())
+                                    .collect(Collectors.toSet());
+    }
+
+    // Method returns true if all of the resource are sub interface
+    private boolean ifAllResourceAreSubInterface(Set<String> nestedHeatFileNames,
+                                                      TranslationContext context) {
+        if (nestedHeatFileNames.isEmpty()) {
+          return true;
         }
-      }
+
+        for (String fileName : nestedHeatFileNames) {
+            String heatFileName = context.getNestedHeatFileName().get(fileName);
+
+            if (Objects.nonNull(heatFileName)
+                        && !context.getTranslatedServiceTemplates().get(heatFileName).getTopology_template()
+                                .getNode_templates().values().stream()
+                                    .allMatch(nodeTemplate -> ToscaNodeType.CONTRAILV2_VLAN_SUB_INTERFACE
+                                                                      .equals(nodeTemplate.getType()))) {
+                return false;
+            }
+        }
+
+        return true;
     }
-
-    return true;
-  }
-
-  // Method returns true if all of the resource are sub interface
-  private boolean ifAllResourceAreSubInterface(Collection<NodeTemplate> nodeTemplates) {
-    return nodeTemplates.stream().allMatch(nodeTemplate ->
-        ToscaNodeType.CONTRAILV2_VLAN_SUB_INTERFACE.equals(nodeTemplate.getType()));
-  }
 
   private List<UnifiedCompositionData> createUnifiedCompositionDataList(
       ServiceTemplate serviceTemplate,
@@ -960,84 +962,15 @@ public class ConsolidationService {
       ConsolidationData consolidationData,
       TypeComputeConsolidationData typeComputeConsolidationData) {
 
-    return (isThereMoreThanOneComputeTypeInstance(typeComputeConsolidationData)
-        && isNumberOfPortsEqualsBetweenComputeNodes(typeComputeConsolidationData)
-        && isNumberOfPortFromEachTypeLegal(typeComputeConsolidationData)
-        && isPortTypesEqualsBetweenComputeNodes(typeComputeConsolidationData)
+    return (typeComputeConsolidationData.isThereMoreThanOneComputeTypeInstance()
+        && typeComputeConsolidationData.isNumberOfPortsEqualsBetweenComputeNodes()
+        && typeComputeConsolidationData.isNumberOfPortFromEachTypeLegal()
+        && typeComputeConsolidationData.isPortTypesEqualsBetweenComputeNodes()
         && checkGetAttrBetweenConsolidationDataEntitiesNotFromSameType(serviceTemplate,
         typeComputeConsolidationData, consolidationData)
         && checkSubInterfaceConsolidationPreCondition(serviceTemplate, consolidationData,
         typeComputeConsolidationData));
 
-  }
-
-  private boolean isThereMoreThanOneComputeTypeInstance(
-      TypeComputeConsolidationData typeComputeConsolidationData) {
-    return typeComputeConsolidationData.getAllComputeNodeTemplateIds().size() > 1;
-  }
-
-  private boolean isNumberOfPortsEqualsBetweenComputeNodes(
-      TypeComputeConsolidationData typeComputeConsolidationData) {
-    int startingNumberOfPorts =
-        getNumberOfPortsPerCompute(typeComputeConsolidationData
-            .getAllComputeTemplateConsolidationData().iterator().next());
-
-    for (ComputeTemplateConsolidationData compute : typeComputeConsolidationData
-        .getAllComputeTemplateConsolidationData()) {
-      if (getNumberOfPortsPerCompute(compute) != startingNumberOfPorts) {
-        return false;
-      }
-    }
-
-    return true;
-  }
-
-
-  private boolean isNumberOfPortFromEachTypeLegal(
-      TypeComputeConsolidationData typeComputeConsolidationData) {
-
-    Collection<ComputeTemplateConsolidationData> computeTemplateConsolidationDataList =
-        typeComputeConsolidationData.getAllComputeTemplateConsolidationData();
-
-    for (ComputeTemplateConsolidationData computeTemplate : computeTemplateConsolidationDataList) {
-      Map<String, List<String>> currPortsMap = computeTemplate.getPorts();
-      if (MapUtils.isEmpty(currPortsMap)) {
-        return true;
-      }
-      for (List<String> portList : currPortsMap.values()) {
-        if (portList.size() > 1) {
-          return false;
-        }
-      }
-    }
-
-    return true;
-  }
-
-  private boolean isPortTypesEqualsBetweenComputeNodes(
-      TypeComputeConsolidationData typeComputeConsolidationData) {
-    Set<String> staringPortIds = getPortsIds(
-        typeComputeConsolidationData.getAllComputeTemplateConsolidationData().iterator().next());
-
-    for (ComputeTemplateConsolidationData compute : typeComputeConsolidationData
-        .getAllComputeTemplateConsolidationData()) {
-      Set<String> currentPortIds = getPortsIds(compute);
-      if (!currentPortIds.equals(staringPortIds)) {
-        return false;
-      }
-    }
-    return true;
-  }
-
-  private int getNumberOfPortsPerCompute(
-      ComputeTemplateConsolidationData computeTemplateConsolidationData) {
-    return getPortsIds(computeTemplateConsolidationData).size();
-  }
-
-  private Set<String> getPortsIds(
-      ComputeTemplateConsolidationData computeTemplateConsolidationData) {
-    return MapUtils.isEmpty(computeTemplateConsolidationData.getPorts()) ? new HashSet<>()
-        : computeTemplateConsolidationData.getPorts().keySet();
   }
 
   List<String> getPropertiesWithIdenticalVal(UnifiedCompositionEntity entity) {
