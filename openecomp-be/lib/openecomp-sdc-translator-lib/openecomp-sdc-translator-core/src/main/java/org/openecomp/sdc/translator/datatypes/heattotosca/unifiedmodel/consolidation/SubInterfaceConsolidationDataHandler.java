@@ -1,4 +1,5 @@
 /*
+/*
  * Copyright © 2016-2018 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,8 +17,11 @@
 
 package org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation;
 
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+
+import org.apache.commons.collections4.MapUtils;
 import org.onap.sdc.tosca.datatypes.model.RequirementAssignment;
 import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
 import org.openecomp.sdc.heat.datatypes.model.HeatOrchestrationTemplate;
@@ -26,6 +30,7 @@ import org.openecomp.sdc.tosca.services.ToscaUtil;
 import org.openecomp.sdc.translator.datatypes.heattotosca.TranslationContext;
 import org.openecomp.sdc.translator.datatypes.heattotosca.to.TranslateTo;
 import org.openecomp.sdc.translator.services.heattotosca.HeatToToscaUtil;
+import org.openecomp.sdc.translator.services.heattotosca.impl.functiontranslation.FunctionTranslator;
 
 public class SubInterfaceConsolidationDataHandler implements ConsolidationDataHandler {
 
@@ -44,10 +49,8 @@ public class SubInterfaceConsolidationDataHandler implements ConsolidationDataHa
             Optional<SubInterfaceTemplateConsolidationData> subInterfaceTemplateConsolidationData =
                     getSubInterfaceTemplateConsolidationData(translateTo, translateTo.getTranslatedId());
 
-            subInterfaceTemplateConsolidationData.ifPresent(
-                    consolidationData -> consolidationData.addNodesConnectedOut(nodeTemplateId,
-                            requirementId, requirementAssignment));
-
+            subInterfaceTemplateConsolidationData.ifPresent(consolidationData ->
+                    consolidationData.addNodesConnectedOut(nodeTemplateId, requirementId, requirementAssignment));
         }
     }
 
@@ -64,24 +67,83 @@ public class SubInterfaceConsolidationDataHandler implements ConsolidationDataHa
         Optional<SubInterfaceTemplateConsolidationData> subInterfaceTemplateConsolidationData =
                 getSubInterfaceTemplateConsolidationData(subInterfaceTo, targetResourceId);
 
-        subInterfaceTemplateConsolidationData.ifPresent(
-                consolidationData -> consolidationData.addNodesConnectedIn(sourceNodeTemplateId,
-                        requirementId, requirementAssignment));
+        subInterfaceTemplateConsolidationData.ifPresent(consolidationData ->
+                consolidationData.addNodesConnectedIn(sourceNodeTemplateId, requirementId, requirementAssignment));
 
     }
 
     @Override
     public void removeParamNameFromAttrFuncList(ServiceTemplate serviceTemplate,
                                                        HeatOrchestrationTemplate heatOrchestrationTemplate,
-                                                       String paramName,
-                                                       String contrailSharedResourceId,
+                                                       String paramName, String contrailSharedResourceId,
                                                        String sharedTranslatedResourceId) {
 
 
-        throw new UnsupportedOperationException("API removeParamNameFromAttrFuncList "
-                  + "not supported for SubInterfaceConsolidationDataHandler");
+        throw new UnsupportedOperationException(
+                "API removeParamNameFromAttrFuncList " + "not supported for SubInterfaceConsolidationDataHandler");
+    }
 
+    @Override
+    public void addNodesGetAttrOut(FunctionTranslator functionTranslator, String nodeTemplateId,
+            String resourceTranslatedId, String propertyName, String attributeName) {
+        TranslateTo subInterfaceTo = createTranslateTo(functionTranslator, functionTranslator.getResourceId(),
+                resourceTranslatedId);
 
+        Optional<SubInterfaceTemplateConsolidationData> subInterfaceConsolidationData =
+                getSubInterfaceTemplateConsolidationData(subInterfaceTo, resourceTranslatedId);
+
+        subInterfaceConsolidationData.ifPresent(consolidationData -> {
+            GetAttrFuncData getAttrFuncData = createGetAttrFuncData(propertyName, attributeName);
+            consolidationData.addNodesGetAttrOut(nodeTemplateId, getAttrFuncData);
+        });
+    }
+
+    @Override
+    public void addNodesGetAttrIn(FunctionTranslator functionTranslator,String nodeTemplateId, String targetResourceId,
+            String targetResourceTranslatedId,  String propertyName, String attributeName) {
+
+        TranslateTo subInterfaceTo = createTranslateTo(functionTranslator, targetResourceId,
+                targetResourceTranslatedId);
+
+        Optional<SubInterfaceTemplateConsolidationData> subInterfaceConsolidationData =
+                getSubInterfaceTemplateConsolidationData(subInterfaceTo, targetResourceTranslatedId);
+
+        subInterfaceConsolidationData.ifPresent(consolidationData -> {
+            GetAttrFuncData getAttrFuncData = createGetAttrFuncData(propertyName, attributeName);
+            consolidationData.addNodesGetAttrIn(nodeTemplateId, getAttrFuncData);
+        });
+    }
+
+    @Override
+    public void addOutputParamGetAttrIn(FunctionTranslator functionTranslator, String targetResourceId,
+            String targetResourceTranslatedId, String propertyName, String attributeName) {
+        TranslateTo subInterfaceTo = createTranslateTo(functionTranslator, targetResourceId,
+                targetResourceTranslatedId);
+
+        Optional<SubInterfaceTemplateConsolidationData> subInterfaceConsolidationData =
+                getSubInterfaceTemplateConsolidationData(subInterfaceTo, targetResourceTranslatedId);
+
+        subInterfaceConsolidationData.ifPresent(consolidationData -> {
+            GetAttrFuncData getAttrFuncData = createGetAttrFuncData(propertyName, attributeName);
+            consolidationData.addOutputParamGetAttrIn(getAttrFuncData);
+        });
+    }
+
+    public void setNetworkRole(TranslateTo translateTo, String translatedId, String networkRole) {
+        Optional<SubInterfaceTemplateConsolidationData> subInterfaceTemplateConsolidationData =
+                getSubInterfaceTemplateConsolidationData(translateTo, translatedId);
+
+        subInterfaceTemplateConsolidationData.ifPresent(
+                consolidationData -> consolidationData.setNetworkRole(networkRole));
+    }
+
+    public void setResourceGroupCount(TranslateTo translateTo, String translatedId,
+            Object resourceGroupCount) {
+        Optional<SubInterfaceTemplateConsolidationData> subInterfaceTemplateConsolidationData =
+                getSubInterfaceTemplateConsolidationData(translateTo, translatedId);
+
+        subInterfaceTemplateConsolidationData.ifPresent(
+                consolidationData -> consolidationData.setResourceGroupCount(resourceGroupCount));
     }
 
     private Optional<SubInterfaceTemplateConsolidationData> getSubInterfaceTemplateConsolidationData(
@@ -92,12 +154,62 @@ public class SubInterfaceConsolidationDataHandler implements ConsolidationDataHa
                 s, subInterfaceNodeTemplateId));
     }
 
-    private SubInterfaceTemplateConsolidationData getSubInterfaceTemplateConsolidationData(
-            TranslateTo subInterfaceTo, String parentPortNodeTemplateId,String subInterfaceNodeTemplateId) {
+    private SubInterfaceTemplateConsolidationData getSubInterfaceTemplateConsolidationData(TranslateTo subInterfaceTo,
+            String parentPortNodeTemplateId, String subInterfaceNodeTemplateId) {
         String serviceTemplateFileName = ToscaUtil.getServiceTemplateFileName(subInterfaceTo.getServiceTemplate());
         Resource resource = subInterfaceTo.getResource();
-        return portConsolidationData.addSubInterfaceTemplateConsolidationData(
-                    serviceTemplateFileName, resource, subInterfaceNodeTemplateId, parentPortNodeTemplateId);
+        Optional<String> portResourceId = getPortResourceId(subInterfaceTo, parentPortNodeTemplateId);
+
+        if (portResourceId.isPresent()) {
+            String portResourceType = getPortResourceType(subInterfaceTo, portResourceId.get());
+            return portConsolidationData
+                    .addSubInterfaceTemplateConsolidationData(serviceTemplateFileName, resource,
+                            subInterfaceNodeTemplateId, parentPortNodeTemplateId,
+                                   portResourceId.get(), portResourceType);
+        } else {
+            return portConsolidationData
+                    .addSubInterfaceTemplateConsolidationData(serviceTemplateFileName, resource,
+                            subInterfaceNodeTemplateId, parentPortNodeTemplateId);
+        }
     }
 
+    private String getPortResourceType(TranslateTo subInterfaceTo, String portResourceId) {
+        return HeatToToscaUtil.getResourceType(portResourceId, subInterfaceTo
+        .getHeatOrchestrationTemplate(), subInterfaceTo.getHeatFileName());
+    }
+
+    private Optional<String> getPortResourceId(TranslateTo subInterfaceTo, String parentPortNodeTemplateId) {
+        Map<String, String> resourceIdTranslatedResourceIdMap =
+                subInterfaceTo.getContext().getTranslatedIds().get(subInterfaceTo.getHeatFileName());
+        return getSubInterfaceParentPortResourceId(parentPortNodeTemplateId,
+                resourceIdTranslatedResourceIdMap);
+    }
+
+    private Optional<String> getSubInterfaceParentPortResourceId(String parentPortNodeTemplateId,
+            Map<String, String> resourceIdTranslatedResourceIdMap) {
+        if (MapUtils.isEmpty(resourceIdTranslatedResourceIdMap)) {
+            return Optional.empty();
+        }
+        for (Map.Entry<String, String> entry : resourceIdTranslatedResourceIdMap.entrySet()) {
+            if (entry.getValue().equals(parentPortNodeTemplateId)) {
+                return Optional.of(entry.getKey());
+            }
+        }
+        return Optional.empty();
+    }
+
+    private TranslateTo createTranslateTo(FunctionTranslator functionTranslator, String resourceId,
+            String resourceTranslatedId) {
+        Resource resource = functionTranslator.getHeatOrchestrationTemplate().getResources().get(resourceId);
+        return new TranslateTo(ToscaUtil.getServiceTemplateFileName(functionTranslator.getServiceTemplate()),
+            functionTranslator.getServiceTemplate(), functionTranslator.getHeatOrchestrationTemplate(),
+            resource, resourceId, resourceTranslatedId, functionTranslator.getContext());
+    }
+
+    private GetAttrFuncData createGetAttrFuncData(String propertyName, String attributeName) {
+        GetAttrFuncData getAttrFuncData = new GetAttrFuncData();
+        getAttrFuncData.setFieldName(propertyName);
+        getAttrFuncData.setAttributeName(attributeName);
+        return getAttrFuncData;
+    }
 }

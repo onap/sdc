@@ -28,22 +28,17 @@ import java.util.Optional;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
-import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
 import org.onap.sdc.tosca.services.YamlUtil;
 import org.openecomp.sdc.heat.datatypes.model.HeatOrchestrationTemplate;
 import org.openecomp.sdc.heat.datatypes.model.Resource;
 import org.openecomp.sdc.heat.services.HeatConstants;
 import org.openecomp.sdc.tosca.datatypes.ToscaFunctions;
 import org.openecomp.sdc.translator.datatypes.heattotosca.TranslationContext;
-import org.openecomp.sdc.translator.datatypes.heattotosca.to.TranslateTo;
-import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.EntityConsolidationData;
-import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.SubInterfaceTemplateConsolidationData;
 import org.openecomp.sdc.translator.services.heattotosca.ConsolidationDataUtil;
 import org.openecomp.sdc.translator.services.heattotosca.Constants;
 import org.openecomp.sdc.translator.services.heattotosca.FunctionTranslation;
 import org.openecomp.sdc.translator.services.heattotosca.FunctionTranslationFactory;
 import org.openecomp.sdc.translator.services.heattotosca.HeatToToscaUtil;
-import org.openecomp.sdc.translator.services.heattotosca.NameExtractor;
 import org.openecomp.sdc.translator.services.heattotosca.impl.resourcetranslation.ResourceTranslationBase;
 
 public class FunctionTranslationGetAttrImpl implements FunctionTranslation {
@@ -90,7 +85,6 @@ public class FunctionTranslationGetAttrImpl implements FunctionTranslation {
                                                        String targetResourceId,
                                                        String targetResourceTranslatedId,
                                                        List<Object> toscaAttList) {
-
         Optional<String> resourceTranslatedId;
         String resourceId = functionTranslator.getResourceId();
         String resourceTranslatedIdValue = null;
@@ -103,8 +97,8 @@ public class FunctionTranslationGetAttrImpl implements FunctionTranslation {
                         resourceTranslatedIdValue, toscaAttList);
             }
         }
-        handleGetAttrInConsolidationData(functionTranslator, resourceTranslatedIdValue, targetResourceId,
-                targetResourceTranslatedId, toscaAttList);
+        handleGetAttrInConsolidationData(functionTranslator, resourceTranslatedIdValue,
+                targetResourceId, targetResourceTranslatedId, toscaAttList);
     }
 
     private static void handleGetAttrOutConsolidationData(FunctionTranslator functionTranslator,
@@ -114,13 +108,11 @@ public class FunctionTranslationGetAttrImpl implements FunctionTranslation {
         if (functionTranslator.getServiceTemplate() == null) {
             return;
         }
-        Optional<EntityConsolidationData> entityConsolidationData = getEntityConsolidationData(functionTranslator,
-                functionTranslator.getResourceId(), resourceTranslatedId);
-        if (entityConsolidationData.isPresent()) {
-            String attName = (String) toscaAttList.get(0);
-            handleNodeGetAttrOut(targetTranslatedResourceId, functionTranslator, entityConsolidationData.get(),
-                    attName);
-        }
+
+        String attName = (String) toscaAttList.get(0);
+        ConsolidationDataUtil.updateNodeGetAttributeOut(functionTranslator, targetTranslatedResourceId,
+                resourceTranslatedId, attName);
+
     }
 
     private static void handleGetAttrInConsolidationData(FunctionTranslator functionTranslator,
@@ -131,91 +123,14 @@ public class FunctionTranslationGetAttrImpl implements FunctionTranslation {
         if (functionTranslator.getServiceTemplate() == null) {
             return;
         }
-        Optional<EntityConsolidationData> entityConsolidationData = getEntityConsolidationData(functionTranslator,
-                targetResourceId, targetResourceTranslatedId);
-        if (!entityConsolidationData.isPresent()) {
-            return;
-        }
         String attName = (String) toscaAttList.get(0);
         if (Objects.nonNull(resourceTranslatedId)) {
-            handleNodeGetAttrIn(resourceTranslatedId, functionTranslator, entityConsolidationData.get(), attName);
+            ConsolidationDataUtil.updateNodeGetAttributeIn(functionTranslator, resourceTranslatedId,
+                    targetResourceId, targetResourceTranslatedId, attName);
         } else {
-            ConsolidationDataUtil.updateOutputGetAttributeInConsolidationData(entityConsolidationData.get(),
-                    functionTranslator.getPropertyName(), attName);
+            ConsolidationDataUtil.updateOutputParamGetAttrIn(functionTranslator, targetResourceId,
+                    targetResourceTranslatedId, functionTranslator.getPropertyName(), attName);
         }
-    }
-
-    private static void handleNodeGetAttrOut(String nodeTemplateId, FunctionTranslator functionTranslator,
-                                             EntityConsolidationData entityConsolidationData,
-                                             String attName) {
-        Resource resource = functionTranslator.getHeatOrchestrationTemplate().getResources().get(functionTranslator
-                .getResourceId());
-        boolean isNestedResource = HeatToToscaUtil.isNestedResource(resource);
-        String toscaPropertyName = functionTranslator.getPropertyName();
-        if (!isNestedResource) {
-            toscaPropertyName = HeatToToscaUtil.getToscaPropertyName(functionTranslator.getContext(), resource
-                    .getType(), functionTranslator.getPropertyName());
-        }
-        ConsolidationDataUtil.updateNodeGetAttributeOut(entityConsolidationData, nodeTemplateId, toscaPropertyName,
-                attName);
-    }
-
-    private static void handleNodeGetAttrIn(String nodeTemplateId, FunctionTranslator functionTranslator,
-                                            EntityConsolidationData entityConsolidationData,
-                                            String attName) {
-        Resource resource = functionTranslator.getHeatOrchestrationTemplate().getResources().get(functionTranslator
-                .getResourceId());
-        boolean isNestedResource = HeatToToscaUtil.isNestedResource(resource);
-        String propertyName = functionTranslator.getPropertyName();
-        String heatPropertyName = propertyName;
-        String toscaPropertyName = propertyName;
-        //For handling get_attr in inner levels for complex properties
-        if (propertyName.contains(TRANS_MAPPING_DELIMITER_CHAR)) {
-            heatPropertyName = propertyName.substring(0, propertyName.indexOf(TRANS_MAPPING_DELIMITER_CHAR));
-        }
-        if (!isNestedResource) {
-            toscaPropertyName = HeatToToscaUtil.getToscaPropertyName(functionTranslator.getContext(), resource
-                    .getType(), heatPropertyName);
-        }
-        ConsolidationDataUtil.updateNodeGetAttributeIn(entityConsolidationData, nodeTemplateId, toscaPropertyName,
-                attName);
-    }
-
-    private static Optional<EntityConsolidationData> getEntityConsolidationData(FunctionTranslator functionTranslator,
-                                                                                String resourceId,
-                                                                                String resourceTranslatedId) {
-        HeatOrchestrationTemplate heatOrchestrationTemplate = functionTranslator.getHeatOrchestrationTemplate();
-        TranslationContext context = functionTranslator.getContext();
-        ServiceTemplate serviceTemplate = functionTranslator.getServiceTemplate();
-        String heatFileName = functionTranslator.getHeatFileName();
-
-        Resource resource = heatOrchestrationTemplate.getResources().get(resourceId);
-        if (ConsolidationDataUtil.isComputeResource(heatOrchestrationTemplate, resourceId)) {
-            String resourceType = heatOrchestrationTemplate.getResources().get(resourceId).getType();
-            NameExtractor nodeTypeNameExtractor = TranslationContext.getNameExtractorImpl(resourceType);
-            String computeType = nodeTypeNameExtractor.extractNodeTypeName(resource, resourceId, context
-                    .getTranslatedIds().get(heatFileName).get(resourceId));
-
-            return Optional.of(ConsolidationDataUtil.getComputeTemplateConsolidationData(context, serviceTemplate,
-                    computeType, resourceTranslatedId));
-        } else if (ConsolidationDataUtil.isPortResource(heatOrchestrationTemplate, resourceId)) {
-            return Optional.of(ConsolidationDataUtil
-                    .getPortTemplateConsolidationData(context, serviceTemplate, resourceId, resource.getType(),
-                            resourceTranslatedId));
-        } else if (HeatToToscaUtil.isSubInterfaceResource(resource, context)) {
-            TranslateTo subInterfaceTo = new TranslateTo(heatFileName, serviceTemplate, heatOrchestrationTemplate,
-                    resource, resourceId, resourceTranslatedId, context);
-            Optional<SubInterfaceTemplateConsolidationData> subInterfaceTemplateConsolidationData =
-                    ConsolidationDataUtil.getSubInterfaceTemplateConsolidationData(subInterfaceTo,
-                            resourceTranslatedId);
-            if (subInterfaceTemplateConsolidationData.isPresent()) {
-                return Optional.of(subInterfaceTemplateConsolidationData.get());
-            }
-        } else if (HeatToToscaUtil.isNestedResource(resource)) {
-            return Optional.ofNullable(ConsolidationDataUtil
-                    .getNestedTemplateConsolidationData(context, serviceTemplate, heatFileName, resourceTranslatedId));
-        }
-        return Optional.empty();
     }
 
     private static Optional<List<Object>> handleAttributeIndexOrKey(FunctionTranslator functionTranslator,
@@ -390,6 +305,4 @@ public class FunctionTranslationGetAttrImpl implements FunctionTranslation {
         }
         return returnValue;
     }
-
-
 }

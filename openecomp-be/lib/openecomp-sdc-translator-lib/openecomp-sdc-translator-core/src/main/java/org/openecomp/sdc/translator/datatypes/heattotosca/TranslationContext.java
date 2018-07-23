@@ -257,7 +257,7 @@ public class TranslationContext {
     return consolidationData.getNestedConsolidationDataHandler();
   }
 
-  public SubInterfaceConsolidationDataHandler getSubInterfaceComputeConsolidationDataHandler() {
+  public SubInterfaceConsolidationDataHandler getSubInterfaceConsolidationDataHandler() {
     return consolidationData.getSubInterfaceConsolidationDataHandler();
   }
 

@@ -26,6 +26,8 @@ import org.openecomp.sdc.tosca.services.ToscaUtil;
 import org.openecomp.sdc.translator.datatypes.heattotosca.TranslationContext;
 import org.openecomp.sdc.translator.datatypes.heattotosca.to.TranslateTo;
 import org.openecomp.sdc.translator.services.heattotosca.errors.DuplicateResourceIdsInDifferentFilesErrorBuilder;
+import org.openecomp.sdc.translator.services.heattotosca.impl.functiontranslation.FunctionTranslator;
+
 
 public class NestedConsolidationDataHandler implements ConsolidationDataHandler {
 
@@ -51,14 +53,12 @@ public class NestedConsolidationDataHandler implements ConsolidationDataHandler 
     public void addNodesConnectedIn(TranslateTo translateTo, String sourceNodeTemplateId,
                                            String dependentNodeTemplateId, String targetResourceId,
                                            String requirementId, RequirementAssignment requirementAssignment) {
-
         EntityConsolidationData entityConsolidationData =
                 getNestedTemplateConsolidationData(translateTo, translateTo.getHeatFileName(), dependentNodeTemplateId);
 
         if (Objects.nonNull(entityConsolidationData)) {
             entityConsolidationData.addNodesConnectedIn(sourceNodeTemplateId, requirementId, requirementAssignment);
         }
-
     }
 
     @Override
@@ -73,23 +73,79 @@ public class NestedConsolidationDataHandler implements ConsolidationDataHandler 
 
     }
 
+    @Override
+    public void addNodesGetAttrOut(FunctionTranslator functionTranslator, String nodeTemplateId,
+            String resourceTranslatedId, String propertyName, String attributeName) {
+
+        EntityConsolidationData entityConsolidationData =
+                getNestedTemplateConsolidationData(functionTranslator,
+                        functionTranslator.getHeatFileName(), resourceTranslatedId);
+
+        if (Objects.nonNull(entityConsolidationData)) {
+            GetAttrFuncData getAttrFuncData = createGetAttrFuncData(propertyName, attributeName);
+            entityConsolidationData.addNodesGetAttrOut(nodeTemplateId, getAttrFuncData);
+        }
+    }
+
+    @Override
+    public void addNodesGetAttrIn(FunctionTranslator functionTranslator,String nodeTemplateId, String targetResourceId,
+            String targetResourceTranslatedId,  String propertyName, String attributeName) {
+
+        EntityConsolidationData entityConsolidationData =
+                getNestedTemplateConsolidationData(functionTranslator, functionTranslator.getHeatFileName(),
+                        targetResourceId);
+
+        if (Objects.nonNull(entityConsolidationData)) {
+            GetAttrFuncData getAttrFuncData = createGetAttrFuncData(propertyName, attributeName);
+            entityConsolidationData.addNodesGetAttrIn(nodeTemplateId, getAttrFuncData);
+        }
+    }
+
+    @Override
+    public void addOutputParamGetAttrIn(FunctionTranslator functionTranslator, String targetResourceId,
+            String targetResourceTranslatedId, String propertyName, String attributeName) {
+
+        EntityConsolidationData entityConsolidationData =
+                getNestedTemplateConsolidationData(functionTranslator, functionTranslator.getHeatFileName(),
+                        targetResourceId);
+
+        if (Objects.nonNull(entityConsolidationData)) {
+            GetAttrFuncData getAttrFuncData = createGetAttrFuncData(propertyName, attributeName);
+            entityConsolidationData.addOutputParamGetAttrIn(getAttrFuncData);
+        }
+    }
+
     /**
      * Add nested consolidation data base on given parameters.
      */
     public void addConsolidationData(String serviceTemplateFileName,  TranslationContext context,
-                String nestedHeatFileName, String nestedNodeTemplateId) {
+                                            String nestedHeatFileName, String nestedNodeTemplateId) {
         getNestedTemplateConsolidationData(serviceTemplateFileName, context,
                 nestedHeatFileName, nestedNodeTemplateId);
     }
 
-    private NestedTemplateConsolidationData getNestedTemplateConsolidationData(TranslateTo translateTo,
-                                                                                      String nestedHeatFileName,
-                                                                                      String nestedNodeTemplateId) {
-        ServiceTemplate serviceTemplate = translateTo.getServiceTemplate();
-        TranslationContext context = translateTo.getContext();
+    private GetAttrFuncData createGetAttrFuncData(String propertyName, String attributeName) {
+        GetAttrFuncData getAttrFuncData = new GetAttrFuncData();
+        getAttrFuncData.setFieldName(propertyName);
+        getAttrFuncData.setAttributeName(attributeName);
+        return getAttrFuncData;
+    }
+
+    private NestedTemplateConsolidationData getNestedTemplateConsolidationData(FunctionTranslator functionTranslator,
+            String nestedHeatFileName, String nestedNodeTemplateId) {
+        ServiceTemplate serviceTemplate = functionTranslator.getServiceTemplate();
+        TranslationContext context = functionTranslator.getContext();
         return getNestedTemplateConsolidationData(ToscaUtil
                .getServiceTemplateFileName(serviceTemplate), context, nestedHeatFileName, nestedNodeTemplateId);
 
+    }
+
+    private NestedTemplateConsolidationData getNestedTemplateConsolidationData(TranslateTo translateTo,
+            String nestedHeatFileName, String nestedNodeTemplateId) {
+        ServiceTemplate serviceTemplate = translateTo.getServiceTemplate();
+        TranslationContext context = translateTo.getContext();
+        return getNestedTemplateConsolidationData(ToscaUtil
+                .getServiceTemplateFileName(serviceTemplate), context, nestedHeatFileName, nestedNodeTemplateId);
     }
 
     private NestedTemplateConsolidationData getNestedTemplateConsolidationData(
@@ -105,8 +161,7 @@ public class NestedConsolidationDataHandler implements ConsolidationDataHandler 
             return null;
         }
         return nestedConsolidationData
-                       .addNestedTemplateConsolidationData(serviceTemplateFileName, nestedNodeTemplateId);
-
+                .addNestedTemplateConsolidationData(serviceTemplateFileName, nestedNodeTemplateId);
     }
 
     private boolean isNodeTemplatePointsToServiceTemplateWithoutNodeTemplates(String nestedNodeTemplateId,

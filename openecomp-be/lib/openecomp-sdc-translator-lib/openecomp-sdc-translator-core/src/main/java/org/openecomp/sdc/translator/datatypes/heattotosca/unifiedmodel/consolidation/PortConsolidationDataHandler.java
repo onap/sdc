@@ -16,12 +16,14 @@
 
 package org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation;
 
+import java.util.Objects;
 import org.onap.sdc.tosca.datatypes.model.RequirementAssignment;
 import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
 import org.openecomp.sdc.heat.datatypes.model.HeatOrchestrationTemplate;
 import org.openecomp.sdc.heat.datatypes.model.Resource;
 import org.openecomp.sdc.tosca.services.ToscaUtil;
 import org.openecomp.sdc.translator.datatypes.heattotosca.to.TranslateTo;
+import org.openecomp.sdc.translator.services.heattotosca.impl.functiontranslation.FunctionTranslator;
 
 public class PortConsolidationDataHandler implements ConsolidationDataHandler {
 
@@ -77,6 +79,61 @@ public class PortConsolidationDataHandler implements ConsolidationDataHandler {
                 String portResourceId, String portResourceType, String portNodeTemplateId) {
         getPortTemplateConsolidationData(
                 serviceTemplateFileName, portResourceId, portResourceType, portNodeTemplateId);
+    }
+
+    @Override
+    public void addNodesGetAttrOut(FunctionTranslator functionTranslator, String nodeTemplateId,
+            String resourceTranslatedId, String propertyName, String attributeName) {
+
+        String resourceId = functionTranslator.getResourceId();
+        EntityConsolidationData entityConsolidationData =
+                getPortTemplateConsolidationData(functionTranslator, resourceId, resourceTranslatedId);
+
+        if (Objects.nonNull(entityConsolidationData)) {
+            GetAttrFuncData getAttrFuncData = createGetAttrFuncData(propertyName, attributeName);
+            entityConsolidationData.addNodesGetAttrOut(nodeTemplateId, getAttrFuncData);
+        }
+    }
+
+    @Override
+    public void addNodesGetAttrIn(FunctionTranslator functionTranslator,String nodeTemplateId,
+            String targetResourceId, String targetResourceTranslatedId,  String propertyName, String attributeName) {
+        EntityConsolidationData entityConsolidationData =
+                getPortTemplateConsolidationData(functionTranslator, targetResourceId, targetResourceTranslatedId);
+
+        if (Objects.nonNull(entityConsolidationData)) {
+            GetAttrFuncData getAttrFuncData = createGetAttrFuncData(propertyName, attributeName);
+            entityConsolidationData.addNodesGetAttrIn(nodeTemplateId, getAttrFuncData);
+        }
+    }
+
+    @Override
+    public void addOutputParamGetAttrIn(FunctionTranslator functionTranslator, String targetResourceId,
+            String targetResourceTranslatedId, String propertyName, String attributeName) {
+
+        EntityConsolidationData entityConsolidationData =
+                getPortTemplateConsolidationData(functionTranslator, targetResourceId, targetResourceTranslatedId);
+
+        if (Objects.nonNull(entityConsolidationData)) {
+            GetAttrFuncData getAttrFuncData = createGetAttrFuncData(propertyName, attributeName);
+            entityConsolidationData.addOutputParamGetAttrIn(getAttrFuncData);
+        }
+    }
+
+    private GetAttrFuncData createGetAttrFuncData(String propertyName, String attributeName) {
+        GetAttrFuncData getAttrFuncData = new GetAttrFuncData();
+        getAttrFuncData.setFieldName(propertyName);
+        getAttrFuncData.setAttributeName(attributeName);
+        return getAttrFuncData;
+    }
+
+    private EntityConsolidationData getPortTemplateConsolidationData(FunctionTranslator functionTranslator,
+            String targetResourceId, String targetResourceTranslatedId) {
+        HeatOrchestrationTemplate heatOrchestrationTemplate = functionTranslator.getHeatOrchestrationTemplate();
+        Resource resource = heatOrchestrationTemplate.getResources().get(targetResourceId);
+        ServiceTemplate serviceTemplate = functionTranslator.getServiceTemplate();
+        return getPortTemplateConsolidationData(ToscaUtil.getServiceTemplateFileName(serviceTemplate),
+                targetResourceId, resource.getType(), targetResourceTranslatedId);
     }
 
     private PortTemplateConsolidationData getPortTemplateConsolidationData(TranslateTo translateTo,

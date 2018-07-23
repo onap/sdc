@@ -20,6 +20,7 @@ import org.onap.sdc.tosca.datatypes.model.RequirementAssignment;
 import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
 import org.openecomp.sdc.heat.datatypes.model.HeatOrchestrationTemplate;
 import org.openecomp.sdc.translator.datatypes.heattotosca.to.TranslateTo;
+import org.openecomp.sdc.translator.services.heattotosca.impl.functiontranslation.FunctionTranslator;
 
 public interface ConsolidationDataHandler {
 
@@ -51,4 +52,13 @@ public interface ConsolidationDataHandler {
                                                 HeatOrchestrationTemplate heatOrchestrationTemplate,
                                                 String paramName, String contrailSharedResourceId,
                                                 String sharedTranslatedResourceId);
+
+    void addNodesGetAttrOut(FunctionTranslator functionTranslator, String nodeTemplateId,
+            String resourceTranslatedId, String propertyName, String attributeName);
+
+    void addNodesGetAttrIn(FunctionTranslator functionTranslator,String nodeTemplateId,
+            String targetResourceId, String targetResourceTranslatedId,  String propertyName, String attributeName);
+
+    void addOutputParamGetAttrIn(FunctionTranslator functionTranslator, String targetResourceId,
+            String targetResourceTranslatedId, String propertyName, String attributeName);
 }

@@ -27,6 +27,7 @@ import org.openecomp.sdc.tosca.services.ToscaUtil;
 import org.openecomp.sdc.translator.datatypes.heattotosca.TranslationContext;
 import org.openecomp.sdc.translator.datatypes.heattotosca.to.TranslateTo;
 import org.openecomp.sdc.translator.services.heattotosca.NameExtractor;
+import org.openecomp.sdc.translator.services.heattotosca.impl.functiontranslation.FunctionTranslator;
 
 public class ComputeConsolidationDataHandler implements ConsolidationDataHandler {
 
@@ -60,7 +61,9 @@ public class ComputeConsolidationDataHandler implements ConsolidationDataHandler
 
         ServiceTemplate serviceTemplate = translateTo.getServiceTemplate();
         NodeTemplate nodeTemplate = DataModelUtil.getNodeTemplate(serviceTemplate, dependentNodeTemplateId);
-        String nodeType = getNodeType(nodeTemplate, translateTo, targetResourceId, dependentNodeTemplateId);
+        String nodeType = getNodeType(nodeTemplate, translateTo.getHeatOrchestrationTemplate(),
+                targetResourceId, dependentNodeTemplateId, dependentNodeTemplateId);
+
         EntityConsolidationData entityConsolidationData =
                 getComputeTemplateConsolidationData(translateTo, nodeType, dependentNodeTemplateId);
 
@@ -81,6 +84,46 @@ public class ComputeConsolidationDataHandler implements ConsolidationDataHandler
 
         if (Objects.nonNull(entityConsolidationData)) {
             entityConsolidationData.removeParamNameFromAttrFuncList(paramName);
+        }
+    }
+
+    @Override
+    public void addNodesGetAttrOut(FunctionTranslator functionTranslator, String nodeTemplateId,
+            String resourceTranslatedId, String propertyName, String attributeName) {
+        EntityConsolidationData entityConsolidationData =
+                getComputeTemplateConsolidationData(functionTranslator,
+                        functionTranslator.getResourceId(), resourceTranslatedId);
+
+        if (Objects.nonNull(entityConsolidationData)) {
+            GetAttrFuncData getAttrFuncData = createGetAttrFuncData(propertyName, attributeName);
+            entityConsolidationData.addNodesGetAttrOut(nodeTemplateId, getAttrFuncData);
+        }
+    }
+
+    @Override
+    public void addNodesGetAttrIn(FunctionTranslator functionTranslator,String nodeTemplateId, String targetResourceId,
+            String targetResourceTranslatedId,  String propertyName, String attributeName) {
+
+        EntityConsolidationData entityConsolidationData =
+                getComputeTemplateConsolidationData(functionTranslator, targetResourceId, targetResourceTranslatedId);
+
+        if (Objects.nonNull(entityConsolidationData)) {
+            GetAttrFuncData getAttrFuncData = createGetAttrFuncData(propertyName, attributeName);
+            entityConsolidationData.addNodesGetAttrIn(nodeTemplateId, getAttrFuncData);
+        }
+
+    }
+
+    @Override
+    public void addOutputParamGetAttrIn(FunctionTranslator functionTranslator, String targetResourceId,
+            String targetResourceTranslatedId, String propertyName, String attributeName) {
+
+        EntityConsolidationData entityConsolidationData =
+                getComputeTemplateConsolidationData(functionTranslator, targetResourceId, targetResourceTranslatedId);
+
+        if (Objects.nonNull(entityConsolidationData)) {
+            GetAttrFuncData getAttrFuncData = createGetAttrFuncData(propertyName, attributeName);
+            entityConsolidationData.addOutputParamGetAttrIn(getAttrFuncData);
         }
     }
 
@@ -130,6 +173,22 @@ public class ComputeConsolidationDataHandler implements ConsolidationDataHandler
         consolidationData.addGroupId(translatedGroupId);
     }
 
+    public boolean isNumberOfComputeTypesLegal(String serviceTemplateName) {
+        return computeConsolidationData.isNumberOfComputeTypesLegal(serviceTemplateName);
+    }
+
+    private EntityConsolidationData getComputeTemplateConsolidationData(FunctionTranslator functionTranslator,
+                                                                      String resourceId, String computeNodeTemplateId) {
+        HeatOrchestrationTemplate heatOrchestrationTemplate = functionTranslator.getHeatOrchestrationTemplate();
+        TranslationContext context = functionTranslator.getContext();
+        String heatFileName = functionTranslator.getHeatFileName();
+        String translatedId = context.getTranslatedIds().get(heatFileName).get(resourceId);
+        ServiceTemplate serviceTemplate = functionTranslator.getServiceTemplate();
+        String computeType = getNodeType(heatOrchestrationTemplate, resourceId, resourceId, translatedId);
+        return getComputeTemplateConsolidationData(
+                ToscaUtil.getServiceTemplateFileName(serviceTemplate), computeType, computeNodeTemplateId);
+    }
+
     private ComputeTemplateConsolidationData getComputeTemplateConsolidationData(
             TranslateTo translateTo, String computeNodeType, String computeNodeTemplateId) {
         ServiceTemplate serviceTemplate = translateTo.getServiceTemplate();
@@ -140,25 +199,32 @@ public class ComputeConsolidationDataHandler implements ConsolidationDataHandler
     private ComputeTemplateConsolidationData getComputeTemplateConsolidationData(
             String serviceTemplateFileName, String computeNodeType, String computeNodeTemplateId) {
 
-        return computeConsolidationData.addComputeTemplateConsolidationData(
-                        serviceTemplateFileName, computeNodeType, computeNodeTemplateId);
+        return computeConsolidationData.addComputeTemplateConsolidationData(serviceTemplateFileName, computeNodeType,
+                computeNodeTemplateId);
 
     }
 
-    private String getNodeType(NodeTemplate computeNodeTemplate, TranslateTo translateTo,
-                                     String targetResourceId, String nodeTemplateId) {
+    private String getNodeType(HeatOrchestrationTemplate heatOrchestrationTemplate,
+                                      String targetResourceId, String nodeTemplateId, String translatedId) {
+        return getNodeType(null, heatOrchestrationTemplate, targetResourceId,
+                nodeTemplateId, translatedId);
+    }
 
+    private String getNodeType(NodeTemplate computeNodeTemplate, HeatOrchestrationTemplate heatOrchestrationTemplate,
+                                      String targetResourceId, String nodeTemplateId, String translatedId) {
         if (Objects.isNull(computeNodeTemplate)) {
-            Resource targetResource = translateTo.getHeatOrchestrationTemplate().getResources().get(targetResourceId);
+            Resource targetResource = heatOrchestrationTemplate.getResources().get(targetResourceId);
             NameExtractor nodeTypeNameExtractor = TranslationContext.getNameExtractorImpl(targetResource.getType());
-            return nodeTypeNameExtractor.extractNodeTypeName(translateTo.getHeatOrchestrationTemplate()
-                                        .getResources().get(nodeTemplateId), nodeTemplateId, nodeTemplateId);
+            return nodeTypeNameExtractor.extractNodeTypeName(heatOrchestrationTemplate.getResources()
+                    .get(nodeTemplateId), nodeTemplateId, translatedId);
         }
-
         return computeNodeTemplate.getType();
     }
 
-    public boolean isNumberOfComputeTypesLegal(String serviceTemplateName) {
-        return computeConsolidationData.isNumberOfComputeTypesLegal(serviceTemplateName);
+    private GetAttrFuncData createGetAttrFuncData(String propertyName, String attributeName) {
+        GetAttrFuncData getAttrFuncData = new GetAttrFuncData();
+        getAttrFuncData.setFieldName(propertyName);
+        getAttrFuncData.setAttributeName(attributeName);
+        return getAttrFuncData;
     }
 }
