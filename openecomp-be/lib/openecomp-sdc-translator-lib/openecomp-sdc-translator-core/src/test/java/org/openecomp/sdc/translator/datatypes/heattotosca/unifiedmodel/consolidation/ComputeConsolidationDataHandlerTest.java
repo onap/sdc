@@ -47,6 +47,7 @@ public class ComputeConsolidationDataHandlerTest {
     private static final String REQUIREMENT_ID = "requirementId";
     private static final String SERVICE_FILE_NAME_PREFIX = "Main";
     private static final String SERVICE_FILE_NAME = SERVICE_FILE_NAME_PREFIX + "ServiceTemplate.yaml";
+    private static final String MAIN_SERVICE_TEMPLATE = "MainServiceTemplate.yaml";
 
     @Before
     public void setUp() {
@@ -71,23 +72,23 @@ public class ComputeConsolidationDataHandlerTest {
     @Test
     public void testAddNodesConnectedOut() {
         mockEntities(COMPUTE_NODE_TEMPLATE_ID_1);
-        consolidationDataHandler.addNodesConnectedOut(
-                translateTo, COMPUTE_NODE_TEMPLATE_ID_1, REQUIREMENT_ID, requirementAssignment);
-        Mockito.verify(computeConsolidationData).addComputeTemplateConsolidationData(
-                SERVICE_FILE_NAME, COMPUTE_NODE_TYPE_1, COMPUTE_NODE_TEMPLATE_ID_1);
-        Mockito.verify(consolidationData).addNodesConnectedOut(
-                COMPUTE_NODE_TEMPLATE_ID_1, REQUIREMENT_ID, requirementAssignment);
+        consolidationDataHandler
+                .addNodesConnectedOut(translateTo, COMPUTE_NODE_TEMPLATE_ID_1, REQUIREMENT_ID, requirementAssignment);
+        Mockito.verify(computeConsolidationData)
+               .addComputeTemplateConsolidationData(SERVICE_FILE_NAME, COMPUTE_NODE_TYPE_1, COMPUTE_NODE_TEMPLATE_ID_1);
+        Mockito.verify(consolidationData)
+               .addNodesConnectedOut(COMPUTE_NODE_TEMPLATE_ID_1, REQUIREMENT_ID, requirementAssignment);
     }
 
     @Test
     public void testAddNodesConnectedOut_consolidationDataNotExist() {
         mockEntities_NullConsolidationData(COMPUTE_NODE_TEMPLATE_ID_1);
-        consolidationDataHandler.addNodesConnectedOut(
-                translateTo, COMPUTE_NODE_TEMPLATE_ID_1, REQUIREMENT_ID, requirementAssignment);
-        Mockito.verify(computeConsolidationData).addComputeTemplateConsolidationData(
-                SERVICE_FILE_NAME, COMPUTE_NODE_TYPE_1, COMPUTE_NODE_TEMPLATE_ID_1);
-        Mockito.verify(consolidationData, Mockito.times(0)).addNodesConnectedOut(
-                Mockito.any(),  Mockito.any(),  Mockito.any());
+        consolidationDataHandler
+                .addNodesConnectedOut(translateTo, COMPUTE_NODE_TEMPLATE_ID_1, REQUIREMENT_ID, requirementAssignment);
+        Mockito.verify(computeConsolidationData)
+               .addComputeTemplateConsolidationData(SERVICE_FILE_NAME, COMPUTE_NODE_TYPE_1, COMPUTE_NODE_TEMPLATE_ID_1);
+        Mockito.verify(consolidationData, Mockito.times(0))
+               .addNodesConnectedOut(Mockito.any(), Mockito.any(), Mockito.any());
     }
 
     @Test
@@ -95,73 +96,76 @@ public class ComputeConsolidationDataHandlerTest {
         String sourceNodeTemplateId = COMPUTE_NODE_TEMPLATE_ID_1;
         String dependentNodeTemplateId = COMPUTE_NODE_TEMPLATE_ID_2;
         mockEntities(dependentNodeTemplateId);
-        consolidationDataHandler.addNodesConnectedIn(translateTo, sourceNodeTemplateId,
-                dependentNodeTemplateId, "targetResourceId", REQUIREMENT_ID, requirementAssignment);
-        Mockito.verify(computeConsolidationData).addComputeTemplateConsolidationData(
-                SERVICE_FILE_NAME, COMPUTE_NODE_TYPE_1, dependentNodeTemplateId);
-        Mockito.verify(consolidationData).addNodesConnectedIn(
-                sourceNodeTemplateId, REQUIREMENT_ID, requirementAssignment);
+        consolidationDataHandler
+                .addNodesConnectedIn(translateTo, sourceNodeTemplateId, dependentNodeTemplateId, "targetResourceId",
+                        REQUIREMENT_ID, requirementAssignment);
+        Mockito.verify(computeConsolidationData)
+               .addComputeTemplateConsolidationData(SERVICE_FILE_NAME, COMPUTE_NODE_TYPE_1, dependentNodeTemplateId);
+        Mockito.verify(consolidationData)
+               .addNodesConnectedIn(sourceNodeTemplateId, REQUIREMENT_ID, requirementAssignment);
     }
 
     @Test
     public void testAddNodesConnectedIn_consolidationDataNotExist() {
         String dependentNodeTemplateId = COMPUTE_NODE_TEMPLATE_ID_2;
         mockEntities_NullConsolidationData(dependentNodeTemplateId);
-        consolidationDataHandler.addNodesConnectedIn(translateTo, COMPUTE_NODE_TEMPLATE_ID_1,
-                dependentNodeTemplateId, "targetResourceId", REQUIREMENT_ID, requirementAssignment);
-        Mockito.verify(computeConsolidationData).addComputeTemplateConsolidationData(
-                SERVICE_FILE_NAME, COMPUTE_NODE_TYPE_1, dependentNodeTemplateId);
-        Mockito.verify(consolidationData, Mockito.times(0)).addNodesConnectedIn(
-                Mockito.any(), Mockito.any(), Mockito.any());
+        consolidationDataHandler.addNodesConnectedIn(translateTo, COMPUTE_NODE_TEMPLATE_ID_1, dependentNodeTemplateId,
+                "targetResourceId", REQUIREMENT_ID, requirementAssignment);
+        Mockito.verify(computeConsolidationData)
+               .addComputeTemplateConsolidationData(SERVICE_FILE_NAME, COMPUTE_NODE_TYPE_1, dependentNodeTemplateId);
+        Mockito.verify(consolidationData, Mockito.times(0))
+               .addNodesConnectedIn(Mockito.any(), Mockito.any(), Mockito.any());
     }
 
     @Test
     public void testRemoveParamNameFromAttrFuncList() {
         mockEntities(COMPUTE_NODE_TEMPLATE_ID_2);
-        consolidationDataHandler.removeParamNameFromAttrFuncList(serviceTemplate, heatOrchestrationTemplate,
-                        "paramName", COMPUTE_NODE_TEMPLATE_ID_1, COMPUTE_NODE_TEMPLATE_ID_2);
-        Mockito.verify(computeConsolidationData).addComputeTemplateConsolidationData(
-                SERVICE_FILE_NAME, COMPUTE_NODE_TYPE_1, COMPUTE_NODE_TEMPLATE_ID_2);
+        consolidationDataHandler
+                .removeParamNameFromAttrFuncList(serviceTemplate, heatOrchestrationTemplate, "paramName",
+                        COMPUTE_NODE_TEMPLATE_ID_1, COMPUTE_NODE_TEMPLATE_ID_2);
+        Mockito.verify(computeConsolidationData)
+               .addComputeTemplateConsolidationData(SERVICE_FILE_NAME, COMPUTE_NODE_TYPE_1, COMPUTE_NODE_TEMPLATE_ID_2);
         Mockito.verify(consolidationData).removeParamNameFromAttrFuncList("paramName");
     }
 
     @Test
     public void testRemoveParamNameFromAttrFuncList_consolidationDataNotExist() {
         mockEntities_NullConsolidationData(COMPUTE_NODE_TEMPLATE_ID_2);
-        consolidationDataHandler.removeParamNameFromAttrFuncList(serviceTemplate, heatOrchestrationTemplate,
-                "paramName", COMPUTE_NODE_TEMPLATE_ID_1, COMPUTE_NODE_TEMPLATE_ID_2);
-        Mockito.verify(computeConsolidationData).addComputeTemplateConsolidationData(
-                SERVICE_FILE_NAME, COMPUTE_NODE_TYPE_1, COMPUTE_NODE_TEMPLATE_ID_2);
-        Mockito.verify(consolidationData, Mockito.times(0))
-                .removeParamNameFromAttrFuncList(Mockito.any());
+        consolidationDataHandler
+                .removeParamNameFromAttrFuncList(serviceTemplate, heatOrchestrationTemplate, "paramName",
+                        COMPUTE_NODE_TEMPLATE_ID_1, COMPUTE_NODE_TEMPLATE_ID_2);
+        Mockito.verify(computeConsolidationData)
+               .addComputeTemplateConsolidationData(SERVICE_FILE_NAME, COMPUTE_NODE_TYPE_1, COMPUTE_NODE_TEMPLATE_ID_2);
+        Mockito.verify(consolidationData, Mockito.times(0)).removeParamNameFromAttrFuncList(Mockito.any());
     }
 
     @Test
     public void testAddConsolidationData() {
-        consolidationDataHandler.addConsolidationData(SERVICE_FILE_NAME,
-                COMPUTE_NODE_TYPE_1, COMPUTE_NODE_TEMPLATE_ID_1);
-        Mockito.verify(computeConsolidationData).addComputeTemplateConsolidationData(
-                SERVICE_FILE_NAME, COMPUTE_NODE_TYPE_1, COMPUTE_NODE_TEMPLATE_ID_1);
+        consolidationDataHandler
+                .addConsolidationData(SERVICE_FILE_NAME, COMPUTE_NODE_TYPE_1, COMPUTE_NODE_TEMPLATE_ID_1);
+        Mockito.verify(computeConsolidationData)
+               .addComputeTemplateConsolidationData(SERVICE_FILE_NAME, COMPUTE_NODE_TYPE_1, COMPUTE_NODE_TEMPLATE_ID_1);
     }
 
     @Test
     public void testAddPortToConsolidationData() {
         mockEntities(COMPUTE_NODE_TEMPLATE_ID_1);
-        consolidationDataHandler.addPortToConsolidationData(translateTo, COMPUTE_NODE_TYPE_1,
-                COMPUTE_NODE_TEMPLATE_ID_1, PORT_NODE_TYPE_1, PORT_NODE_TEMPLATE_ID_1);
-        Mockito.verify(computeConsolidationData).addComputeTemplateConsolidationData(
-                SERVICE_FILE_NAME, COMPUTE_NODE_TYPE_1, COMPUTE_NODE_TEMPLATE_ID_1);
+        consolidationDataHandler
+                .addPortToConsolidationData(translateTo, COMPUTE_NODE_TYPE_1, COMPUTE_NODE_TEMPLATE_ID_1,
+                        PORT_NODE_TYPE_1, PORT_NODE_TEMPLATE_ID_1);
+        Mockito.verify(computeConsolidationData)
+               .addComputeTemplateConsolidationData(SERVICE_FILE_NAME, COMPUTE_NODE_TYPE_1, COMPUTE_NODE_TEMPLATE_ID_1);
         Mockito.verify(consolidationData).addPort(PORT_NODE_TYPE_1, PORT_NODE_TEMPLATE_ID_1);
     }
 
     @Test
     public void testAddVolumeToConsolidationData() {
         mockEntities(COMPUTE_NODE_TEMPLATE_ID_1);
-        consolidationDataHandler.addVolumeToConsolidationData(
-                translateTo, COMPUTE_NODE_TYPE_1, COMPUTE_NODE_TEMPLATE_ID_1,
+        consolidationDataHandler
+                .addVolumeToConsolidationData(translateTo, COMPUTE_NODE_TYPE_1, COMPUTE_NODE_TEMPLATE_ID_1,
                         REQUIREMENT_ID, requirementAssignment);
-        Mockito.verify(computeConsolidationData).addComputeTemplateConsolidationData(
-                SERVICE_FILE_NAME, COMPUTE_NODE_TYPE_1, COMPUTE_NODE_TEMPLATE_ID_1);
+        Mockito.verify(computeConsolidationData)
+               .addComputeTemplateConsolidationData(SERVICE_FILE_NAME, COMPUTE_NODE_TYPE_1, COMPUTE_NODE_TEMPLATE_ID_1);
         Mockito.verify(consolidationData).addVolume(REQUIREMENT_ID, requirementAssignment);
     }
 
@@ -169,10 +173,10 @@ public class ComputeConsolidationDataHandlerTest {
     @Test
     public void testAddGroupIdToConsolidationData() {
         mockEntities(COMPUTE_NODE_TEMPLATE_ID_1);
-        consolidationDataHandler.addGroupIdToConsolidationData(
-                translateTo, COMPUTE_NODE_TYPE_1, COMPUTE_NODE_TEMPLATE_ID_1, GROUP_ID);
-        Mockito.verify(computeConsolidationData).addComputeTemplateConsolidationData(
-                SERVICE_FILE_NAME, COMPUTE_NODE_TYPE_1, COMPUTE_NODE_TEMPLATE_ID_1);
+        consolidationDataHandler
+                .addGroupIdToConsolidationData(translateTo, COMPUTE_NODE_TYPE_1, COMPUTE_NODE_TEMPLATE_ID_1, GROUP_ID);
+        Mockito.verify(computeConsolidationData)
+               .addComputeTemplateConsolidationData(SERVICE_FILE_NAME, COMPUTE_NODE_TYPE_1, COMPUTE_NODE_TEMPLATE_ID_1);
         Mockito.verify(consolidationData).addGroupId(GROUP_ID);
     }
 
@@ -204,8 +208,8 @@ public class ComputeConsolidationDataHandlerTest {
 
     private void mockComputeConsolidationData() {
         Mockito.when(computeConsolidationData
-            .addComputeTemplateConsolidationData(Mockito.anyString(), Mockito.anyString(),
-                Mockito.anyString())).thenReturn(consolidationData);
+                             .addComputeTemplateConsolidationData(Mockito.anyString(), Mockito.anyString(),
+                                     Mockito.anyString())).thenReturn(consolidationData);
     }
 
     private void mockNullConsolidationData() {
@@ -214,7 +218,7 @@ public class ComputeConsolidationDataHandlerTest {
                                      Mockito.anyString())).thenReturn(null);
     }
 
-    private  TopologyTemplate createTopologyTemplate(String nodeTemplateId) {
+    private TopologyTemplate createTopologyTemplate(String nodeTemplateId) {
         TopologyTemplate topologyTemplate = new TopologyTemplate();
         Map<String, NodeTemplate> nodeTemplates = new HashMap<>();
         NodeTemplate nodeTemplate = new NodeTemplate();
@@ -224,4 +228,13 @@ public class ComputeConsolidationDataHandlerTest {
         return topologyTemplate;
     }
 
+    @Test
+    public void isNumberOfComputeTypesLegalPositive() {
+        ComputeConsolidationDataHandler computeConsolidationDataHandler =
+                new ComputeConsolidationDataHandler(computeConsolidationData);
+
+        computeConsolidationDataHandler.isNumberOfComputeTypesLegal(MAIN_SERVICE_TEMPLATE);
+
+        Mockito.verify(computeConsolidationData).isNumberOfComputeTypesLegal(MAIN_SERVICE_TEMPLATE);
+    }
 }

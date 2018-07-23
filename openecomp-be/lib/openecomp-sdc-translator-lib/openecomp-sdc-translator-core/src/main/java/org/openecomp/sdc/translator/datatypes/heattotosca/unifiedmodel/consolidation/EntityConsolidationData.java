@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.onap.sdc.tosca.datatypes.model.RequirementAssignment;
 import org.openecomp.sdc.translator.services.heattotosca.ConsolidationDataUtil;
@@ -279,6 +280,11 @@ public class EntityConsolidationData {
      */
     public boolean isGetAttrOutFromEntityLegal(Collection<? extends EntityConsolidationData>
                     entityConsolidationDataList, Map<String, List<String>> portTypeToIds) {
+        if (CollectionUtils.isEmpty(entityConsolidationDataList)
+                || MapUtils.isEmpty(portTypeToIds)) {
+            return true;
+        }
+
         for (String portType : portTypeToIds.keySet()) {
             Set<GetAttrFuncData> startingGetAttrFunc =
                     getEntityGetAttrFuncAsSet(portType);
