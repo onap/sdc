@@ -20,9 +20,7 @@
 
 package org.openecomp.sdc.be.resources.impl;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
-
+import fj.data.Either;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ICatalogDAO;
@@ -34,7 +32,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import fj.data.Either;
+import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 
 @Component("resource-upload")
 public class ResourceUploader implements IResourceUploader {
@@ -126,26 +125,6 @@ public class ResourceUploader implements IResourceUploader {
 		return status;
 	}
 
-	/*
-	 * @Override public ResourceUploadStatus
-	 * updateServiceArtifact(ServiceArtifactData artifactUpdateData) {
-	 * ResourceUploadStatus status = ResourceUploadStatus.OK; if(resourceDAO ==
-	 * null) return ResourceUploadStatus.ERROR; Either<ServiceArtifactData,
-	 * ResourceUploadStatus> getServiceArtifactStatus =
-	 * getServiceArtifact(artifactUpdateData.getId());
-	 * 
-	 * if(getServiceArtifactStatus.isRight()){
-	 * log.debug("ResourceUploadStatus:updateArtifactt artifact with id " +
-	 * artifactUpdateData.getId() + " not exist."); status =
-	 * getServiceArtifactStatus.right().value(); }
-	 * if(getServiceArtifactStatus.isLeft()){ status =
-	 * updateServiceArtifact(artifactUpdateData,
-	 * getServiceArtifactStatus.left().value()); }
-	 * 
-	 * return status; }
-	 * 
-	 */
-
 	@Override
 	public Either<ESArtifactData, ResourceUploadStatus> getArtifact(String id) {
 		if (resourceDAO == null)
@@ -154,13 +133,6 @@ public class ResourceUploader implements IResourceUploader {
 		return resourceDAO.getArtifact(id);
 	}
 
-	/*
-	 * @Override public Either<ServiceArtifactData, ResourceUploadStatus>
-	 * getServiceArtifact(String id) { if(resourceDAO == null) return
-	 * Either.right(ResourceUploadStatus.ERROR);
-	 * 
-	 * return resourceDAO.getServiceArtifact(id); }
-	 */
 	@Override
 	public void deleteArtifact(String id) {
 		if (resourceDAO != null) {

@@ -20,16 +20,15 @@
 
 package org.openecomp.sdc.be.resources;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-
+import com.google.gson.Gson;
+import com.thinkaurelius.titan.core.PropertyKey;
+import com.thinkaurelius.titan.core.TitanEdge;
+import com.thinkaurelius.titan.core.TitanFactory;
+import com.thinkaurelius.titan.core.TitanGraph;
+import com.thinkaurelius.titan.core.TitanVertex;
+import com.thinkaurelius.titan.core.attribute.Text;
+import com.thinkaurelius.titan.core.schema.TitanManagement;
+import fj.data.Either;
 import org.apache.commons.configuration.BaseConfiguration;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.tinkerpop.gremlin.structure.Direction;
@@ -65,16 +64,14 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 
-import com.google.gson.Gson;
-import com.thinkaurelius.titan.core.PropertyKey;
-import com.thinkaurelius.titan.core.TitanEdge;
-import com.thinkaurelius.titan.core.TitanFactory;
-import com.thinkaurelius.titan.core.TitanGraph;
-import com.thinkaurelius.titan.core.TitanVertex;
-import com.thinkaurelius.titan.core.attribute.Text;
-import com.thinkaurelius.titan.core.schema.TitanManagement;
+import javax.annotation.Resource;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
-import fj.data.Either;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:application-context-test.xml")
@@ -426,70 +423,9 @@ public class TitanGenericDaoTest {
 
 		propKey = graphMgt.makePropertyKey("string2").dataType(String.class).make();
 
-		// graphMgt.buildIndex("string2", Vertex.class).addKey(propKey,
-		// Mapping.TEXT.getParameter()).buildMixedIndex("search");
 		graphMgt.buildIndex("string2", Vertex.class).addKey(propKey).unique().buildCompositeIndex();
 		graphMgt.commit();
 
-		// TitanVertex v = graph.addVertex();
-		// v.addProperty("string1", "My new String 1");
-		// v.addProperty("string2", "String11");
-		// graph.commit();
-		//
-		// v = graph.addVertex();
-		// v.addProperty("string1", "my new string 1");
-		// v.addProperty("string2", "string11");
-		// graph.commit();
-		//
-		// System.out.println("First index search - case");
-		//
-		// Iterable<Vertex> vertices = graph.getVertices("string1", "My new
-		// String 1");
-		// Iterator<Vertex> iter = vertices.iterator();
-		// while ( iter.hasNext() ){
-		// Vertex ver = iter.next();
-		// System.out.println(com.tinkerpop.blueprints.util.ElementHelper.getProperties(ver));
-		// }
-		// System.out.println("First index search non case");
-		//
-		// vertices = graph.getVertices("string1", "my new string 1");
-		// iter = vertices.iterator();
-		// while ( iter.hasNext() ){
-		// Vertex ver = iter.next();
-		// System.out.println(com.tinkerpop.blueprints.util.ElementHelper.getProperties(ver));
-		// }
-		// System.out.println("Second index search case");
-		//
-		// vertices = graph.getVertices("string2", "String11");
-		// iter = vertices.iterator();
-		// while ( iter.hasNext() ){
-		// Vertex ver = iter.next();
-		// System.out.println(com.tinkerpop.blueprints.util.ElementHelper.getProperties(ver));
-		// }
-		// System.out.println("second index search non case");
-		//
-		// vertices = graph.getVertices("string2", "string11");
-		// iter = vertices.iterator();
-		// while ( iter.hasNext() ){
-		// Vertex ver = iter.next();
-		// System.out.println(com.tinkerpop.blueprints.util.ElementHelper.getProperties(ver));
-		// }
-		// System.out.println("Query index search case");
-		// vertices = graph.query().has("string1", "My new String
-		// 1").vertices();
-		// iter = vertices.iterator();
-		// while ( iter.hasNext() ){
-		// Vertex ver = iter.next();
-		// System.out.println(com.tinkerpop.blueprints.util.ElementHelper.getProperties(ver));
-		// }
-		// System.out.println("Query index search non case");
-		// vertices = graph.query().has("string1", "my new string
-		// 1").vertices();
-		// iter = vertices.iterator();
-		// while ( iter.hasNext() ){
-		// Vertex ver = iter.next();
-		// System.out.println(com.tinkerpop.blueprints.util.ElementHelper.getProperties(ver));
-		// }
 
 		log.debug("**** predicat index search non case");
 		Iterable<TitanVertex> vertices = graph.query().has("string1", Text.REGEX, "my new string 1").vertices();
