@@ -18,5 +18,5 @@ Feature: Delete VSP Certified
 
         Then I want to delete this VSP
 
-        Then I want the following to fail with error code "GENERAL_ERROR_REST_ID"
+        Then I want the following to fail with error code "ENTITY_NOT_FOUND"
         Then I want to get path "/items/{item.id}/versions"

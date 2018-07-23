@@ -15,7 +15,7 @@ Scenario: Delete VLM with only draft
 
     Then I want to delete this VLM
 
-   Then I want the following to fail with error code "GENERAL_ERROR_REST_ID"
+   Then I want the following to fail with error code "ENTITY_NOT_FOUND"
    Then I want to get path "/items/{item.id}/versions"
 
 
