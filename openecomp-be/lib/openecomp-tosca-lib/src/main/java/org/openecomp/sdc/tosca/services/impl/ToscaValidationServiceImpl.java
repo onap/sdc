@@ -26,11 +26,11 @@ import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
-import org.openecomp.sdc.tosca.parser.config.ConfigurationManager;
-import org.openecomp.sdc.tosca.parser.exceptions.SdcToscaParserException;
-import org.openecomp.sdc.tosca.parser.impl.SdcToscaParserFactory;
+import org.onap.sdc.tosca.parser.config.ConfigurationManager;
+import org.onap.sdc.tosca.parser.exceptions.SdcToscaParserException;
+import org.onap.sdc.tosca.parser.impl.SdcToscaParserFactory;
 import org.openecomp.sdc.tosca.services.ToscaValidationService;
-import org.openecomp.sdc.toscaparser.api.common.JToscaValidationIssue;
+import org.onap.sdc.toscaparser.api.common.JToscaValidationIssue;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.BufferedInputStream;
