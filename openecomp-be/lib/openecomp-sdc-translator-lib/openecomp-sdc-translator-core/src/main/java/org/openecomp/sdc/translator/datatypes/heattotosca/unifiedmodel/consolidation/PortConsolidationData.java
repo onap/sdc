@@ -69,6 +69,21 @@ public class PortConsolidationData {
             resource, subInterfaceNodeTemplateId, parentPortNodeTemplateId);
     }
 
+    /**
+     * Create subInterface template consolidation data base on given parameters - if it doesn't exist yet.
+     *
+     * @return port template consolidation data by given keys
+     */
+    SubInterfaceTemplateConsolidationData addSubInterfaceTemplateConsolidationData(
+                String serviceTemplateFileName, Resource resource,
+                String subInterfaceNodeTemplateId, String parentPortNodeTemplateId,
+                String parentPortResourceId, String parentPortResourceType) {
+        FilePortConsolidationData consolidationData = addFilePortConsolidationData(serviceTemplateFileName);
+        return consolidationData.addSubInterfaceTemplateConsolidationData(
+                resource, subInterfaceNodeTemplateId, parentPortNodeTemplateId,
+                parentPortResourceId, parentPortResourceType);
+    }
+
     private FilePortConsolidationData addFilePortConsolidationData(String serviceTemplateFileName) {
         FilePortConsolidationData consolidationData = getFilePortConsolidationData(serviceTemplateFileName);
         if (consolidationData == null) {

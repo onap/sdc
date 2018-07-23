@@ -40,7 +40,7 @@ import org.openecomp.sdc.tosca.services.ToscaUtil;
 import org.openecomp.sdc.tosca.services.impl.ToscaAnalyzerServiceImpl;
 import org.openecomp.sdc.translator.datatypes.heattotosca.TranslationContext;
 import org.openecomp.sdc.translator.datatypes.heattotosca.to.TranslateTo;
-import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.SubInterfaceTemplateConsolidationData;
+import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.SubInterfaceConsolidationDataHandler;
 import org.openecomp.sdc.translator.services.heattotosca.ConsolidationDataUtil;
 import org.openecomp.sdc.translator.services.heattotosca.Constants;
 import org.openecomp.sdc.translator.services.heattotosca.HeatToToscaUtil;
@@ -115,17 +115,18 @@ public class ResourceTranslationNestedImpl extends ResourceTranslationBase {
     private void populateSubInterfaceTemplateConsolidationData(TranslateTo translateTo,
                                                                NodeTemplate nodeTemplate) {
 
-        Optional<SubInterfaceTemplateConsolidationData> subInterfaceTemplateConsolidationData =
-                ConsolidationDataUtil.getSubInterfaceTemplateConsolidationData(translateTo, translateTo
-                        .getTranslatedId());
-        if (!subInterfaceTemplateConsolidationData.isPresent()) {
-            return;
-        }
+        SubInterfaceConsolidationDataHandler consolidationDataHandler =
+                translateTo.getContext().getSubInterfaceConsolidationDataHandler();
+
+        String translatedId = translateTo.getTranslatedId();
         Optional<String> subInterfaceNetworkRole =
                 HeatToToscaUtil.getNetworkRoleFromSubInterfaceId(translateTo.getResource(), translateTo.getContext());
-        subInterfaceNetworkRole.ifPresent(subInterfaceTemplateConsolidationData.get()::setNetworkRole);
-        subInterfaceTemplateConsolidationData.get()
-                .setResourceGroupCount(getSubInterfaceCountFromResourceProperties(translateTo));
+        subInterfaceNetworkRole.ifPresent(networkRole -> consolidationDataHandler.setNetworkRole(translateTo,
+                translatedId, networkRole));
+
+        consolidationDataHandler.setResourceGroupCount(translateTo, translatedId,
+                getSubInterfaceCountFromResourceProperties(translateTo));
+
         if (CollectionUtils.isEmpty(nodeTemplate.getRequirements())) {
             return;
         }
@@ -134,8 +135,9 @@ public class ResourceTranslationNestedImpl extends ResourceTranslationBase {
                 requirementMap.entrySet().stream()
                         .filter(requirementAssignmentEntry -> ToscaCapabilityType.NATIVE_NETWORK_LINKABLE
                                 .equals(requirementAssignmentEntry.getValue().getCapability()))
-                        .forEach(requirementAssignmentEntry -> subInterfaceTemplateConsolidationData.get()
-                                .addNodesConnectedOut(requirementAssignmentEntry.getValue().getNode(),
+                        .forEach(requirementAssignmentEntry ->
+                                consolidationDataHandler.addNodesConnectedOut(translateTo,
+                                        requirementAssignmentEntry.getValue().getNode(),
                                         requirementAssignmentEntry.getKey(),
                                         requirementAssignmentEntry.getValue())
                         )
