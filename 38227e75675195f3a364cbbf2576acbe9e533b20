@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da7095c5_e202d70a",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vnf-repository-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/VnfPackageRepository.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-07-23T13:59:35Z",
+      "side": 1,
+      "message": "Sonar - Generic exceptions should never be thrown",
+      "revId": "38227e75675195f3a364cbbf2576acbe9e533b20",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
