@@ -41,6 +41,7 @@ import static org.openecomp.sdc.translator.services.heattotosca.UnifiedCompositi
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
+import com.google.common.collect.Multimap;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -80,6 +81,7 @@ import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
 import org.onap.sdc.tosca.datatypes.model.SubstitutionMapping;
 import org.onap.sdc.tosca.datatypes.model.heatextend.PropertyTypeExt;
 import org.openecomp.core.utilities.CommonMethods;
+import org.openecomp.sdc.common.utils.CommonUtil;
 import org.openecomp.sdc.datatypes.configuration.ImplementationConfiguration;
 import org.openecomp.sdc.heat.services.HeatConstants;
 import org.openecomp.sdc.tosca.datatypes.ToscaFunctions;
@@ -770,7 +772,7 @@ public class UnifiedCompositionService {
       //Add requirements in the abstract node template for nodes connected out for computes
       String newComputeNodeTemplateId = getNewComputeNodeTemplateId(serviceTemplate,
               computeTemplateConsolidationData.getNodeTemplateId());
-      Map<String, List<RequirementAssignmentData>> computeNodesConnectedOut =
+      Multimap<String, RequirementAssignmentData> computeNodesConnectedOut =
               computeTemplateConsolidationData.getNodesConnectedOut();
       if (computeNodesConnectedOut != null) {
         updateRequirementInAbstractNodeTemplate(serviceTemplate, computeTemplateConsolidationData,
@@ -785,7 +787,7 @@ public class UnifiedCompositionService {
               portTemplateConsolidationDataList) {
         String newPortNodeTemplateId = getNewPortNodeTemplateId(portTemplateConsolidationData
                 .getNodeTemplateId(), computeType, computeTemplateConsolidationData);
-        Map<String, List<RequirementAssignmentData>> portNodesConnectedOut =
+          Multimap<String, RequirementAssignmentData> portNodesConnectedOut =
                 portTemplateConsolidationData.getNodesConnectedOut();
         if (portNodesConnectedOut != null) {
           updateRequirementInAbstractNodeTemplate(serviceTemplate, portTemplateConsolidationData,
@@ -810,7 +812,7 @@ public class UnifiedCompositionService {
             subInterfaceTemplateConsolidationDataList) {
       String newSubInterfaceNodeTemplateId = getNewSubInterfaceNodeTemplateId(serviceTemplate, computeType,
               computeTemplateConsolidationData, subInterfaceTemplateConsolidationData, context);
-      Map<String, List<RequirementAssignmentData>> subInterfaceNodesConnectedOut =
+        Multimap<String, RequirementAssignmentData> subInterfaceNodesConnectedOut =
               subInterfaceTemplateConsolidationData.getNodesConnectedOut();
       if (subInterfaceNodesConnectedOut != null) {
         updateRequirementInAbstractNodeTemplate(serviceTemplate, subInterfaceTemplateConsolidationData,
@@ -825,8 +827,8 @@ public class UnifiedCompositionService {
                                                                  TranslationContext context) {
     NestedTemplateConsolidationData nestedTemplateConsolidationData =
             unifiedCompositionData.getNestedTemplateConsolidationData();
-    Map<String, List<RequirementAssignmentData>> nodesConnectedOut =
-            Objects.isNull(nestedTemplateConsolidationData) ? new HashMap<>()
+      Multimap<String, RequirementAssignmentData> nodesConnectedOut =
+            Objects.isNull(nestedTemplateConsolidationData) ? ArrayListMultimap.create()
                     : nestedTemplateConsolidationData.getNodesConnectedOut();
 
     FileComputeConsolidationData nestedFileComputeConsolidationData =
@@ -882,41 +884,41 @@ public class UnifiedCompositionService {
     }
   }
 
-  private void updNodesConnectedInConnectivity(ServiceTemplate serviceTemplate,
-                                               EntityConsolidationData entityConsolidationData,
-                                               String newNodeTemplateId,
-                                               TranslationContext context,
-                                               boolean isNested) {
-    Map<String, List<RequirementAssignmentData>> nodesConnectedIn =
-            entityConsolidationData.getNodesConnectedIn();
-    if (nodesConnectedIn == null) {
-      //No nodes connected in info
-      return;
-    }
-    for (Map.Entry<String, List<RequirementAssignmentData>> entry : nodesConnectedIn
-            .entrySet()) {
-      List<RequirementAssignmentData> requirementAssignmentDataList = entry.getValue();
-      for (RequirementAssignmentData requirementAssignmentData : requirementAssignmentDataList) {
-        RequirementAssignment requirementAssignment = requirementAssignmentData
-                .getRequirementAssignment();
-        if (!requirementAssignment.getNode().equals(entityConsolidationData
-                .getNodeTemplateId())) {
-          //The requirement assignment target node should be the one which we are handling in the
-          //consolidation object
-          continue;
-        }
-        //Update the requirement assignment object in the original node template
-        if (isNested) {
-          updateRequirementForNestedCompositionNodesConnectedIn(serviceTemplate,
-                  requirementAssignmentData, newNodeTemplateId);
-        } else {
-          updateRequirementForNodesConnectedIn(serviceTemplate, requirementAssignmentData,
-                  entityConsolidationData, entry.getKey(), newNodeTemplateId, context);
+    private void updNodesConnectedInConnectivity(ServiceTemplate serviceTemplate,
+                                                 EntityConsolidationData entityConsolidationData,
+                                                 String newNodeTemplateId,
+                                                 TranslationContext context,
+                                                 boolean isNested) {
+        Multimap<String, RequirementAssignmentData> nodesConnectedIn =
+                entityConsolidationData.getNodesConnectedIn();
+        if (nodesConnectedIn == null) {
+            //No nodes connected in info
+            return;
         }
 
-      }
+        for (String key : nodesConnectedIn.keySet()) {
+            Collection<RequirementAssignmentData> requirementAssignmentDataList = nodesConnectedIn.get(key);
+            for (RequirementAssignmentData requirementAssignmentData : requirementAssignmentDataList) {
+                RequirementAssignment requirementAssignment = requirementAssignmentData
+                        .getRequirementAssignment();
+                if (!requirementAssignment.getNode().equals(entityConsolidationData
+                        .getNodeTemplateId())) {
+                    //The requirement assignment target node should be the one which we are handling in the
+                    //consolidation object
+                    continue;
+                }
+                //Update the requirement assignment object in the original node template
+                if (isNested) {
+                    updateRequirementForNestedCompositionNodesConnectedIn(serviceTemplate,
+                            requirementAssignmentData, newNodeTemplateId);
+                } else {
+                    updateRequirementForNodesConnectedIn(serviceTemplate, requirementAssignmentData,
+                            entityConsolidationData, key, newNodeTemplateId, context);
+                }
+
+            }
+        }
     }
-  }
 
   private void updateSubInterfaceNodesConnectedIn(ServiceTemplate serviceTemplate,
                                                   UnifiedCompositionData unifiedCompositionData,
@@ -961,7 +963,7 @@ public class UnifiedCompositionService {
       //Add requirements in the abstract node template for compute volumes
       String newComputeNodeTemplateId = getNewComputeNodeTemplateId(serviceTemplate,
               computeTemplateConsolidationData.getNodeTemplateId());
-      Map<String, List<RequirementAssignmentData>> computeVolumes =
+        Multimap<String, RequirementAssignmentData> computeVolumes =
               computeTemplateConsolidationData.getVolumes();
       if (computeVolumes != null) {
         updateRequirementInAbstractNodeTemplate(serviceTemplate, computeTemplateConsolidationData,
@@ -1271,84 +1273,81 @@ public class UnifiedCompositionService {
   }
 
 
-  private void updateRequirementInAbstractNodeTemplate(ServiceTemplate serviceTemplate,
-                                                       EntityConsolidationData
-                                                               entityConsolidationData,
+    private void updateRequirementInAbstractNodeTemplate(ServiceTemplate serviceTemplate,
+                                                         EntityConsolidationData
+                                                                 entityConsolidationData,
+                                                         String newNodeTemplateId,
+                                                         Multimap<String, RequirementAssignmentData>
+                                                                 requirementAssignmentDataMap,
+                                                         TranslationContext context) {
+        ToscaAnalyzerService toscaAnalyzerService = new ToscaAnalyzerServiceImpl();
+        for (String key : requirementAssignmentDataMap.keySet()) {
+            String abstractNodeTemplateId = context.getUnifiedAbstractNodeTemplateId(
+                    serviceTemplate, entityConsolidationData.getNodeTemplateId());
+            NodeTemplate abstractNodeTemplate = DataModelUtil.getNodeTemplate(serviceTemplate,
+                    abstractNodeTemplateId);
+            if (abstractNodeTemplate == null) {
+                //The abstract node template is not found from id in the context
+                return;
+            }
+            Collection<RequirementAssignmentData> requirementAssignmentDataList = requirementAssignmentDataMap.get(key);
+            for (RequirementAssignmentData requirementAssignmentData : requirementAssignmentDataList) {
+                String oldRequirementId = requirementAssignmentData.getRequirementId();
+                RequirementAssignment abstractRequirementAssignment = (RequirementAssignment)
+                        getClonedObject(requirementAssignmentData.getRequirementAssignment(),
+                                RequirementAssignment.class);
+                String newRequirementId = oldRequirementId + "_" + newNodeTemplateId;
+                //Check if the requirement is not already present in the list of requirements of the
+                // abstract node template
+                if (!toscaAnalyzerService.isRequirementExistInNodeTemplate(abstractNodeTemplate,
+                        newRequirementId, abstractRequirementAssignment)) {
+                    DataModelUtil.addRequirementAssignment(abstractNodeTemplate, newRequirementId,
+                            abstractRequirementAssignment);
+                    //Update the volume relationship template if required
+                    updateVolumeRelationshipTemplate(serviceTemplate, abstractRequirementAssignment
+                            .getRelationship(), context);
+                }
+            }
+        }
+    }
+
+    private void updateRequirementInNestedNodeTemplate(ServiceTemplate serviceTemplate,
+                                                       EntityConsolidationData entityConsolidationData,
                                                        String newNodeTemplateId,
-                                                       Map<String, List<RequirementAssignmentData>>
-                                                               requirementAssignmentDataMap,
-                                                       TranslationContext context) {
-    ToscaAnalyzerService toscaAnalyzerService = new ToscaAnalyzerServiceImpl();
-    for (Map.Entry<String, List<RequirementAssignmentData>> entry : requirementAssignmentDataMap
-            .entrySet()) {
-      String abstractNodeTemplateId = context.getUnifiedAbstractNodeTemplateId(
-              serviceTemplate, entityConsolidationData.getNodeTemplateId());
-      NodeTemplate abstractNodeTemplate = DataModelUtil.getNodeTemplate(serviceTemplate,
-              abstractNodeTemplateId);
-      if (abstractNodeTemplate == null) {
-        //The abstract node template is not found from id in the context
-        return;
-      }
-      List<RequirementAssignmentData> requirementAssignmentDataList = entry.getValue();
-      for (RequirementAssignmentData requirementAssignmentData : requirementAssignmentDataList) {
-        String oldRequirementId = requirementAssignmentData.getRequirementId();
-        RequirementAssignment abstractRequirementAssignment = (RequirementAssignment)
-                getClonedObject(requirementAssignmentData.getRequirementAssignment(),
-                        RequirementAssignment.class);
-        String newRequirementId = oldRequirementId + "_" + newNodeTemplateId;
-        //Check if the requirement is not already present in the list of requirements of the
-        // abstract node template
-        if (!toscaAnalyzerService.isRequirementExistInNodeTemplate(abstractNodeTemplate,
-                newRequirementId, abstractRequirementAssignment)) {
-          DataModelUtil.addRequirementAssignment(abstractNodeTemplate, newRequirementId,
-                  abstractRequirementAssignment);
-          //Update the volume relationship template if required
-          updateVolumeRelationshipTemplate(serviceTemplate, abstractRequirementAssignment
-                  .getRelationship(), context);
+                                                       Multimap<String, RequirementAssignmentData>
+                                                               requirementAssignmentDataMap) {
+        ToscaAnalyzerService toscaAnalyzerService = new ToscaAnalyzerServiceImpl();
+
+        if (CommonUtil.isMultimapEmpty(requirementAssignmentDataMap)) {
+            return;
         }
-      }
-    }
-  }
 
-  private void updateRequirementInNestedNodeTemplate(ServiceTemplate serviceTemplate,
-                                                     EntityConsolidationData
-                                                             entityConsolidationData,
-                                                     String newNodeTemplateId,
-                                                     Map<String, List<RequirementAssignmentData>>
-                                                             requirementAssignmentDataMap) {
-    ToscaAnalyzerService toscaAnalyzerService = new ToscaAnalyzerServiceImpl();
-
-    if (MapUtils.isEmpty(requirementAssignmentDataMap)) {
-      return;
-    }
-
-    for (Map.Entry<String, List<RequirementAssignmentData>> entry : requirementAssignmentDataMap
-            .entrySet()) {
-      String nodeTemplateId = entityConsolidationData.getNodeTemplateId();
-      NodeTemplate nodeTemplate = DataModelUtil.getNodeTemplate(serviceTemplate, nodeTemplateId);
-      if (nodeTemplate == null) {
-        //The node template is not found from id in the context
-        return;
-      }
-      List<RequirementAssignmentData> requirementAssignmentDataList = entry.getValue();
-      for (RequirementAssignmentData requirementAssignmentData : requirementAssignmentDataList) {
-        String oldRequirementId = requirementAssignmentData.getRequirementId();
-        RequirementAssignment clonedRequirementAssignment = (RequirementAssignment)
-                getClonedObject(requirementAssignmentData.getRequirementAssignment(),
-                        RequirementAssignment.class);
-        String newRequirementId = oldRequirementId + "_" + newNodeTemplateId;
-        //Check if the requirement is not already present in the list of requirements of the
-        // node template
-        if (!toscaAnalyzerService.isRequirementExistInNodeTemplate(nodeTemplate,
-                newRequirementId, clonedRequirementAssignment)) {
-          DataModelUtil.removeRequirementAssignment(nodeTemplate, oldRequirementId,
-                  requirementAssignmentData.getRequirementAssignment());
-          DataModelUtil.addRequirementAssignment(nodeTemplate, newRequirementId,
-                  clonedRequirementAssignment);
+        for (String key : requirementAssignmentDataMap.keySet()) {
+            String nodeTemplateId = entityConsolidationData.getNodeTemplateId();
+            NodeTemplate nodeTemplate = DataModelUtil.getNodeTemplate(serviceTemplate, nodeTemplateId);
+            if (nodeTemplate == null) {
+                //The node template is not found from id in the context
+                return;
+            }
+            Collection<RequirementAssignmentData> requirementAssignmentDataList = requirementAssignmentDataMap.get(key);
+            for (RequirementAssignmentData requirementAssignmentData : requirementAssignmentDataList) {
+                String oldRequirementId = requirementAssignmentData.getRequirementId();
+                RequirementAssignment clonedRequirementAssignment = (RequirementAssignment)
+                        getClonedObject(requirementAssignmentData.getRequirementAssignment(),
+                                RequirementAssignment.class);
+                String newRequirementId = oldRequirementId + "_" + newNodeTemplateId;
+                //Check if the requirement is not already present in the list of requirements of the
+                // node template
+                if (!toscaAnalyzerService.isRequirementExistInNodeTemplate(nodeTemplate,
+                        newRequirementId, clonedRequirementAssignment)) {
+                    DataModelUtil.removeRequirementAssignment(nodeTemplate, oldRequirementId,
+                            requirementAssignmentData.getRequirementAssignment());
+                    DataModelUtil.addRequirementAssignment(nodeTemplate, newRequirementId,
+                            clonedRequirementAssignment);
+                }
+            }
         }
-      }
     }
-  }
 
   private void updNodeGetAttrInConnectivity(
           ServiceTemplate serviceTemplate,
@@ -2725,42 +2724,40 @@ public class UnifiedCompositionService {
         + subInterfaceType + "_" + propertyId;
   }
 
-  private void removeConnectivityOut(EntityConsolidationData entityConsolidationData,
-                                     NodeTemplate nodeTemplate) {
-    if (MapUtils.isEmpty(entityConsolidationData.getNodesConnectedOut())) {
-      return;
+    private void removeConnectivityOut(EntityConsolidationData entityConsolidationData,
+                                       NodeTemplate nodeTemplate) {
+
+        Multimap<String, RequirementAssignmentData> nodesConnectedOut = entityConsolidationData.getNodesConnectedOut();
+
+        if (CommonUtil.isMultimapEmpty(nodesConnectedOut)) {
+            return;
+        }
+
+        nodesConnectedOut.values().forEach(requirementAssignmentData ->
+                DataModelUtil.removeRequirementsAssignment(nodeTemplate.getRequirements(),
+                        requirementAssignmentData.getRequirementId())
+        );
+
+        if (nodeTemplate.getRequirements().isEmpty()) {
+            nodeTemplate.setRequirements(null);
+        }
     }
 
-    for (List<RequirementAssignmentData> requirementAssignmentDataList : entityConsolidationData
-            .getNodesConnectedOut().values()) {
-      for (RequirementAssignmentData requirementAssignmentData : requirementAssignmentDataList) {
-        DataModelUtil.removeRequirementsAssignment(nodeTemplate.getRequirements(),
-                requirementAssignmentData.getRequirementId());
-      }
-      if (nodeTemplate.getRequirements().isEmpty()) {
-        nodeTemplate.setRequirements(null);
-      }
-    }
-  }
+    private void removeVolumeConnectivity(ComputeTemplateConsolidationData computeTemplateConsolidationData,
+            NodeTemplate computeNodeTemplate) {
+        if (CommonUtil.isMultimapEmpty(computeTemplateConsolidationData.getVolumes())) {
+            return;
+        }
 
-  private void removeVolumeConnectivity(
-          ComputeTemplateConsolidationData computeTemplateConsolidationData,
-          NodeTemplate computeNodeTemplate) {
-    if (MapUtils.isEmpty(computeTemplateConsolidationData.getVolumes())) {
-      return;
+        computeTemplateConsolidationData.getVolumes().values().forEach(requirementAssignmentData ->
+                DataModelUtil.removeRequirementsAssignment(computeNodeTemplate.getRequirements(),
+                        requirementAssignmentData.getRequirementId())
+        );
+
+        if (computeNodeTemplate.getRequirements().isEmpty()) {
+            computeNodeTemplate.setRequirements(null);
+        }
     }
-    Collection<List<RequirementAssignmentData>> volumeCollection =
-            computeTemplateConsolidationData.getVolumes().values();
-    for (List<RequirementAssignmentData> requirementAssignmentDataList : volumeCollection) {
-      for (RequirementAssignmentData requirementAssignmentData : requirementAssignmentDataList) {
-        DataModelUtil.removeRequirementsAssignment(computeNodeTemplate.getRequirements(),
-                requirementAssignmentData.getRequirementId());
-      }
-    }
-    if (computeNodeTemplate.getRequirements().isEmpty()) {
-      computeNodeTemplate.setRequirements(null);
-    }
-  }
 
   private void createIndexInputParameter(ServiceTemplate substitutionServiceTemplate) {
     ParameterDefinition indexParameterDefinition =

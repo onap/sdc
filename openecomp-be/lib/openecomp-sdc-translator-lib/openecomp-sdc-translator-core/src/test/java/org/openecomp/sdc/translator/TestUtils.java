@@ -18,6 +18,9 @@ package org.openecomp.sdc.translator;
 
 import static org.junit.Assert.assertEquals;
 
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -355,7 +358,7 @@ public class TestUtils {
     initComputeNodeTemplateIdInConsolidationData(serviceTemplateFileName, computeNodeTypeName,
         computeNodeTemplateId, consolidationData);
 
-    Map<String, List<RequirementAssignmentData>> volumes =
+      Multimap<String, RequirementAssignmentData> volumes =
         consolidationData.getComputeConsolidationData().getFileComputeConsolidationData
             (serviceTemplateFileName).getTypeComputeConsolidationData(computeNodeTypeName)
             .getComputeTemplateConsolidationData(computeNodeTemplateId).getVolumes();
@@ -439,7 +442,7 @@ public class TestUtils {
   public static ComputeTemplateConsolidationData createComputeTemplateConsolidationData(
       String computeNodeTemplateId,
       List<Pair<String, String>> portTypeToIdList,
-      Map<String, List<RequirementAssignmentData>> volumes) {
+      Multimap<String, RequirementAssignmentData> volumes) {
     ComputeTemplateConsolidationData compute = new ComputeTemplateConsolidationData();
     compute.setNodeTemplateId(computeNodeTemplateId);
     if (portTypeToIdList != null) {
@@ -525,9 +528,9 @@ public class TestUtils {
         computeNodeTypeName, new TypeComputeConsolidationData());
   }
 
-  public static Map<String, List<RequirementAssignmentData>> getNodeConnectedOutList(
+  public static Multimap<String, RequirementAssignmentData> getNodeConnectedOutList(
       NodeTemplate nodeTemplate, String requirementKey) {
-    Map<String, List<RequirementAssignmentData>> requirementAssignmentDataMap = new HashMap<>();
+      Multimap<String, RequirementAssignmentData> requirementAssignmentDataMap = ArrayListMultimap.create();
     Optional<List<RequirementAssignmentData>> requirementAssignmentDataList =
         TestUtils.createRequirementAssignmentDataList(nodeTemplate, requirementKey);
     if (requirementAssignmentDataList.isPresent()) {
@@ -535,9 +538,7 @@ public class TestUtils {
           .get()) {
         String connectedNodeTemplateId = requirementAssignmentData.getRequirementAssignment()
             .getNode();
-        requirementAssignmentDataMap
-            .computeIfAbsent(connectedNodeTemplateId, k -> new ArrayList<>());
-        requirementAssignmentDataMap.get(connectedNodeTemplateId).add(requirementAssignmentData);
+        requirementAssignmentDataMap.put(connectedNodeTemplateId, requirementAssignmentData);
       }
     }
     return requirementAssignmentDataMap;
@@ -575,12 +576,12 @@ public class TestUtils {
     }
   }
 
-  public static Map<String, List<RequirementAssignmentData>> getNodeConnectedInList(
+  public static Multimap<String, RequirementAssignmentData> getNodeConnectedInList(
       String sourceNodeTemplateId,
       ServiceTemplate serviceTemplate, String requirementKey) {
-    Optional<List<RequirementAssignmentData>> requirementAssignmentDataList = Optional.empty();
+    Optional<List<RequirementAssignmentData>> requirementAssignmentDataList;
     List<RequirementAssignmentData> assignmentDataList = new ArrayList<>();
-    Map<String, List<RequirementAssignmentData>> requirementAssignmentDataMap = new HashMap<>();
+      Multimap<String, RequirementAssignmentData> requirementAssignmentDataMap = ArrayListMultimap.create();
     Map<String, NodeTemplate> nodeTemplates = serviceTemplate.getTopology_template()
         .getNode_templates();
     for (Map.Entry<String, NodeTemplate> entry : nodeTemplates.entrySet()) {
@@ -603,8 +604,7 @@ public class TestUtils {
         if (requirementAssignmentDataList.isPresent()) {
           for (RequirementAssignmentData requirementAssignmentData : requirementAssignmentDataList
               .get()) {
-            requirementAssignmentDataMap.computeIfAbsent(nodeTemplateId, k -> new ArrayList<>());
-            requirementAssignmentDataMap.get(nodeTemplateId).add(requirementAssignmentData);
+            requirementAssignmentDataMap.put(nodeTemplateId, requirementAssignmentData);
           }
         }
         requirementAssignmentDataList = Optional.empty();

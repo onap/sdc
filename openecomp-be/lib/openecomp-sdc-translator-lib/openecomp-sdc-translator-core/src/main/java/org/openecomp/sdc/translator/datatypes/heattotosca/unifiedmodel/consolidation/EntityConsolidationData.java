@@ -16,6 +16,9 @@
 
 package org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation;
 
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -25,6 +28,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.onap.sdc.tosca.datatypes.model.RequirementAssignment;
 import org.openecomp.sdc.translator.services.heattotosca.ConsolidationDataUtil;
@@ -41,11 +45,11 @@ public class EntityConsolidationData {
 
     // key - node template id which has connection to this entity
     // value - List of Requirement assignment data which connect to this entity
-    private Map<String, List<RequirementAssignmentData>> nodesConnectedIn;
+    private Multimap<String, RequirementAssignmentData> nodesConnectedIn;
 
     // key - node template id which connected from this entity
     // List of Requirement assignment data which connect to the key node template id
-    private Map<String, List<RequirementAssignmentData>> nodesConnectedOut;
+    private Multimap<String, RequirementAssignmentData> nodesConnectedOut;
 
     //key - node template id which include get attribute function from this entity
     //value - List of getAttr data
@@ -90,7 +94,7 @@ public class EntityConsolidationData {
      *
      * @param nodesConnectedIn the node connected to me
      */
-    public void setNodesConnectedIn(Map<String, List<RequirementAssignmentData>> nodesConnectedIn) {
+    public void setNodesConnectedIn(Multimap<String, RequirementAssignmentData> nodesConnectedIn) {
         this.nodesConnectedIn = nodesConnectedIn;
     }
 
@@ -105,10 +109,9 @@ public class EntityConsolidationData {
                                            RequirementAssignment requirementAssignment) {
 
         if (this.nodesConnectedIn == null) {
-            this.nodesConnectedIn = new HashMap<>();
+            this.nodesConnectedIn = ArrayListMultimap.create();
         }
 
-        this.nodesConnectedIn.computeIfAbsent(nodeTemplateId, k -> new ArrayList<>());
         this.nodesConnectedIn.get(nodeTemplateId).add(
                 new RequirementAssignmentData(requirementId, requirementAssignment));
     }
@@ -118,7 +121,7 @@ public class EntityConsolidationData {
      *
      * @return the node connected to me
      */
-    public Map<String, List<RequirementAssignmentData>> getNodesConnectedIn() {
+    public Multimap<String, RequirementAssignmentData> getNodesConnectedIn() {
         return nodesConnectedIn;
     }
 
@@ -128,7 +131,7 @@ public class EntityConsolidationData {
      *
      * @return the node connected from me
      */
-    public Map<String, List<RequirementAssignmentData>> getNodesConnectedOut() {
+    public Multimap<String, RequirementAssignmentData> getNodesConnectedOut() {
         return nodesConnectedOut;
     }
 
@@ -137,7 +140,7 @@ public class EntityConsolidationData {
      *
      * @param nodesConnectedOut the node connected from me
      */
-    public void setNodesConnectedOut(Map<String, List<RequirementAssignmentData>> nodesConnectedOut) {
+    public void setNodesConnectedOut(Multimap<String, RequirementAssignmentData> nodesConnectedOut) {
         this.nodesConnectedOut = nodesConnectedOut;
     }
 
@@ -152,10 +155,9 @@ public class EntityConsolidationData {
                                             RequirementAssignment requirementAssignment) {
 
         if (this.nodesConnectedOut == null) {
-            this.nodesConnectedOut = new HashMap<>();
+            this.nodesConnectedOut = ArrayListMultimap.create();
         }
 
-        this.nodesConnectedOut.computeIfAbsent(nodeTemplateId, k -> new ArrayList<>());
         this.nodesConnectedOut.get(nodeTemplateId).add(
                 new RequirementAssignmentData(requirementId, requirementAssignment));
     }
@@ -279,6 +281,11 @@ public class EntityConsolidationData {
      */
     public boolean isGetAttrOutFromEntityLegal(Collection<? extends EntityConsolidationData>
                     entityConsolidationDataList, Map<String, List<String>> portTypeToIds) {
+        if (CollectionUtils.isEmpty(entityConsolidationDataList)
+                || MapUtils.isEmpty(portTypeToIds)) {
+            return true;
+        }
+
         for (String portType : portTypeToIds.keySet()) {
             Set<GetAttrFuncData> startingGetAttrFunc =
                     getEntityGetAttrFuncAsSet(portType);

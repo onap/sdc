@@ -31,14 +31,19 @@ import static org.openecomp.sdc.translator.services.heattotosca.buildconsolidati
 import static org.openecomp.sdc.translator.services.heattotosca.buildconsolidationdata.TestConstants.TEST_SINGLE_NESTED_RESOURCE;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+ import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
+
 import org.apache.commons.collections4.CollectionUtils;
 import org.junit.Assert;
+import org.openecomp.sdc.tosca.datatypes.ToscaCapabilityType;
 import org.openecomp.sdc.tosca.datatypes.ToscaNodeType;
 import org.onap.sdc.tosca.datatypes.model.GroupDefinition;
 import org.onap.sdc.tosca.datatypes.model.NodeTemplate;
 import org.onap.sdc.tosca.datatypes.model.NodeType;
 import org.onap.sdc.tosca.datatypes.model.RequirementAssignment;
 import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
+import org.openecomp.sdc.tosca.datatypes.ToscaRelationshipType;
 import org.openecomp.sdc.tosca.services.DataModelUtil;
 import org.openecomp.sdc.tosca.services.ToscaConstants;
 import org.openecomp.sdc.tosca.services.impl.ToscaAnalyzerServiceImpl;
@@ -55,6 +60,7 @@ import org.openecomp.sdc.translator.services.heattotosca.ConsolidationDataUtil;
 import org.openecomp.sdc.translator.services.heattotosca.HeatToToscaUtil;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -74,7 +80,7 @@ public class ConsolidationDataTestUtil {
                                                        String testName) {
     Assert.assertNotNull(computeTemplateConsolidationData);
     //Get the volume information from consolidation data
-    Map<String, List<RequirementAssignmentData>> volumeConsolidationData =
+    Multimap<String, RequirementAssignmentData> volumeConsolidationData =
         computeTemplateConsolidationData.getVolumes();
 
     if(testName.equals("Negative")) {
@@ -111,20 +117,20 @@ public class ConsolidationDataTestUtil {
     }
   }
 
-  private static void isVolumeComputeRequirement(List<String> computeVolumeRequirementsNodes,
-                                                 Map<String, List<RequirementAssignmentData>>
-                                                     volumeConsolidationData) {
-    Assert.assertEquals(computeVolumeRequirementsNodes.size(), volumeConsolidationData.size());
-    for(String volumeNodeTemplateId : computeVolumeRequirementsNodes) {
-      Assert.assertNotNull(volumeConsolidationData.containsKey(volumeNodeTemplateId));
-      List<RequirementAssignmentData> requirementAssignmentDataList = volumeConsolidationData.get
-          (volumeNodeTemplateId);
-      for(RequirementAssignmentData requirementAssignmentData : requirementAssignmentDataList){
-        Assert.assertTrue(requirementAssignmentData.getRequirementId().equals(ToscaConstants
-            .LOCAL_STORAGE_REQUIREMENT_ID));
-      }
+    private static void isVolumeComputeRequirement(List<String> computeVolumeRequirementsNodes,
+                                                   Multimap<String, RequirementAssignmentData>
+                                                           volumeConsolidationData) {
+        Assert.assertEquals(computeVolumeRequirementsNodes.size(), volumeConsolidationData.size());
+        for (String volumeNodeTemplateId : computeVolumeRequirementsNodes) {
+            Assert.assertNotNull(volumeConsolidationData.containsKey(volumeNodeTemplateId));
+            Collection<RequirementAssignmentData> requirementAssignmentDataList = volumeConsolidationData.get
+                    (volumeNodeTemplateId);
+            for (RequirementAssignmentData requirementAssignmentData : requirementAssignmentDataList) {
+                Assert.assertTrue(requirementAssignmentData.getRequirementId().equals(ToscaConstants
+                        .LOCAL_STORAGE_REQUIREMENT_ID));
+            }
+        }
     }
-  }
 
 
   public static void validatePortsInConsolidationData(String computeNodeTemplateId,
@@ -151,94 +157,95 @@ public class ConsolidationDataTestUtil {
     }
   }
 
-  public static void validateDependsOnInConsolidationData(String computeNodeTemplateId,
-                                                          ComputeTemplateConsolidationData computeTemplateConsolidationData,
-                                                          ServiceTemplate outputServiceTemplate,
-                                                          String testName) {
-    Map<String, NodeTemplate> outputNodeTemplates = outputServiceTemplate.getTopology_template()
-        .getNode_templates();
-    Map<String, List<RequirementAssignmentData>> nodesConnectedIn =
-        computeTemplateConsolidationData.getNodesConnectedIn();
-    Map<String, List<RequirementAssignmentData>> nodesConnectedOut =
-        computeTemplateConsolidationData.getNodesConnectedOut();
+    public static void validateDependsOnInConsolidationData(String computeNodeTemplateId,
+                                                            ComputeTemplateConsolidationData
+                                                                    computeTemplateConsolidationData,
+                                                            ServiceTemplate outputServiceTemplate,
+                                                            String testName) {
+        Map<String, NodeTemplate> outputNodeTemplates = outputServiceTemplate.getTopology_template()
+                .getNode_templates();
+        Multimap<String, RequirementAssignmentData> nodesConnectedIn =
+                computeTemplateConsolidationData.getNodesConnectedIn();
+        Multimap<String, RequirementAssignmentData> nodesConnectedOut =
+                computeTemplateConsolidationData.getNodesConnectedOut();
 
-    if(testName.equals(TEST_DEPENDS_ON_INVALID_DEPENDENCY_CANDIDATE) ||
-        testName.equals(TEST_DEPENDS_ON_NO_DEPENDENCY)) {
-      Assert.assertNull(nodesConnectedIn);
-      Assert.assertNull(nodesConnectedOut);
-      return;
-    }
-    //key - nodetemplate id , value - requirementassignment
-    Map<String, List<RequirementAssignment>> outputDependsOnNodeRequirementMap = new HashMap<>();
-    for(Map.Entry<String, NodeTemplate> entry : outputNodeTemplates.entrySet()) {
-      NodeTemplate nodeTemplate = entry.getValue();
-      List<Map<String, RequirementAssignment>> nodeRequirements = nodeTemplate.getRequirements();
-      if(nodeRequirements != null){
-        for(Map<String, RequirementAssignment> req : nodeRequirements) {
-          Set<String> keySet = req.keySet();
-          for(String key : keySet) {
-            if(key.equals(ToscaConstants.DEPENDS_ON_REQUIREMENT_ID))
-              //collect all dependency requirements in a map with key -> node template id
-              outputDependsOnNodeRequirementMap.computeIfAbsent(entry.getKey(), k -> new ArrayList<>())
-                  .add(req.get(key));
-          }
+        if (testName.equals(TEST_DEPENDS_ON_INVALID_DEPENDENCY_CANDIDATE) ||
+                testName.equals(TEST_DEPENDS_ON_NO_DEPENDENCY)) {
+            Assert.assertNull(nodesConnectedIn);
+            Assert.assertNull(nodesConnectedOut);
+            return;
         }
-      }
+        //key - nodetemplate id , value - requirementassignment
+        Multimap<String, RequirementAssignment> outputDependsOnNodeRequirementMap = ArrayListMultimap.create();
+        for (Map.Entry<String, NodeTemplate> entry : outputNodeTemplates.entrySet()) {
+            NodeTemplate nodeTemplate = entry.getValue();
+            List<Map<String, RequirementAssignment>> nodeRequirements = nodeTemplate.getRequirements();
+            if (nodeRequirements != null) {
+                for (Map<String, RequirementAssignment> req : nodeRequirements) {
+                    Set<String> keySet = req.keySet();
+                    for (String key : keySet) {
+                        if (key.equals(ToscaConstants.DEPENDS_ON_REQUIREMENT_ID))
+                        //collect all dependency requirements in a map with key -> node template id
+                        {
+                            outputDependsOnNodeRequirementMap.put(entry.getKey(), req.get(key));
+                        }
+                    }
+                }
+            }
+        }
+
+        if (testName.equals(TEST_DEPENDS_ON_NODES_CONNECTED_OUT)) {
+            Assert.assertNull(nodesConnectedIn);
+            validateDependsOnNodesConnectedOut(computeNodeTemplateId, nodesConnectedOut,
+                    outputDependsOnNodeRequirementMap, outputServiceTemplate);
+        }
+
+        if (testName.equals(TEST_DEPENDS_ON_NODES_CONNECTED_IN)) {
+            Assert.assertNull(nodesConnectedOut);
+            validateDependsOnNodesConnectedIn(computeNodeTemplateId, nodesConnectedIn,
+                    outputDependsOnNodeRequirementMap,
+                    outputServiceTemplate);
+        }
+
+        if (testName.equals(TEST_DEPENDS_ON_NODES_CONNECTED_IN_AND_OUT)) {
+            Assert.assertNotNull(nodesConnectedIn);
+            Assert.assertNotNull(nodesConnectedOut);
+            validateDependsOnNodesConnectedOut(computeNodeTemplateId, nodesConnectedOut,
+                    outputDependsOnNodeRequirementMap,
+                    outputServiceTemplate);
+            validateDependsOnNodesConnectedIn(computeNodeTemplateId, nodesConnectedIn,
+                    outputDependsOnNodeRequirementMap,
+                    outputServiceTemplate);
+        }
+
+        if (testName.equals(TEST_DEPENDS_ON_MULTIPLE_COMPUTE)) {
+            if (nodesConnectedOut != null) {
+                validateDependsOnNodesConnectedOut(computeNodeTemplateId, nodesConnectedOut,
+                        outputDependsOnNodeRequirementMap,
+                        outputServiceTemplate);
+            }
+            if (nodesConnectedIn != null) {
+                validateDependsOnNodesConnectedIn(computeNodeTemplateId, nodesConnectedIn,
+                        outputDependsOnNodeRequirementMap,
+                        outputServiceTemplate);
+            }
+        }
+
+
     }
-
-    if(testName.equals(TEST_DEPENDS_ON_NODES_CONNECTED_OUT)){
-      Assert.assertNull(nodesConnectedIn);
-      validateDependsOnNodesConnectedOut(computeNodeTemplateId, nodesConnectedOut,
-          outputDependsOnNodeRequirementMap, outputServiceTemplate);
-    }
-
-    if(testName.equals(TEST_DEPENDS_ON_NODES_CONNECTED_IN)){
-      Assert.assertNull(nodesConnectedOut);
-      validateDependsOnNodesConnectedIn(computeNodeTemplateId, nodesConnectedIn,
-          outputDependsOnNodeRequirementMap,
-          outputServiceTemplate);
-    }
-
-    if(testName.equals(TEST_DEPENDS_ON_NODES_CONNECTED_IN_AND_OUT)){
-      Assert.assertNotNull(nodesConnectedIn);
-      Assert.assertNotNull(nodesConnectedOut);
-      validateDependsOnNodesConnectedOut(computeNodeTemplateId, nodesConnectedOut,
-          outputDependsOnNodeRequirementMap,
-          outputServiceTemplate);
-      validateDependsOnNodesConnectedIn(computeNodeTemplateId, nodesConnectedIn,
-          outputDependsOnNodeRequirementMap,
-          outputServiceTemplate);
-    }
-
-    if(testName.equals(TEST_DEPENDS_ON_MULTIPLE_COMPUTE)){
-      if(nodesConnectedOut != null)
-        validateDependsOnNodesConnectedOut(computeNodeTemplateId, nodesConnectedOut,
-            outputDependsOnNodeRequirementMap,
-            outputServiceTemplate);
-      if(nodesConnectedIn != null)
-        validateDependsOnNodesConnectedIn(computeNodeTemplateId, nodesConnectedIn,
-            outputDependsOnNodeRequirementMap,
-            outputServiceTemplate);
-    }
-
-
-  }
 
   private static void validateDependsOnNodesConnectedIn(String computeNodeTemplateId,
-                                                        Map<String,
-                                                            List<RequirementAssignmentData>>
+                                                        Multimap<String, RequirementAssignmentData>
                                                             nodesConnectedIn,
-                                                        Map<String, List<RequirementAssignment>>
+                                                        Multimap<String, RequirementAssignment>
                                                             outputDependsOnNodeRequirementMap,
                                                         ServiceTemplate outputServiceTemplate) {
     ToscaAnalyzerServiceImpl analyzerService = new ToscaAnalyzerServiceImpl();
-    for(Map.Entry<String, List<RequirementAssignment>> entry : outputDependsOnNodeRequirementMap
-        .entrySet()) {
-      String sourceNodeTemplateId = entry.getKey();
+    for(String sourceNodeTemplateId : outputDependsOnNodeRequirementMap.keySet()) {
       Optional<NodeTemplate> sourceNodeTemplate = analyzerService.getNodeTemplateById
           (outputServiceTemplate, sourceNodeTemplateId);
       String sourceNodeType = sourceNodeTemplate.get().getType();
-      for(Object obj : entry.getValue()){
+      for(Object obj : outputDependsOnNodeRequirementMap.get(sourceNodeTemplateId)){
         RequirementAssignment req = new ObjectMapper().convertValue(obj, RequirementAssignment
             .class);
         String targetNodeTemplateId = req.getNode();
@@ -255,8 +262,8 @@ public class ConsolidationDataTestUtil {
 
         if(isValidTargetForConnectedIn) {
           //Should be present if target node is compute or port
-          if(computeNodeTemplateId.equals(entry.getKey()))
-            Assert.assertTrue(nodesConnectedIn.containsKey(entry.getKey()));
+          if(computeNodeTemplateId.equals(sourceNodeTemplateId))
+            Assert.assertTrue(nodesConnectedIn.containsKey(sourceNodeTemplateId));
         }
 
         if(sourceNodeType.startsWith(ToscaNodeType.NOVA_SERVER)
@@ -310,59 +317,61 @@ public class ConsolidationDataTestUtil {
     return false;
   }
 
-  private static void validateDependsOnNodesConnectedOut(String computeNodeTemplateId,
-                                                         Map<String,
-                                                             List<RequirementAssignmentData>>
-                                                             nodesConnectedOut,
-                                                         Map<String, List<RequirementAssignment>>
-                                                             outputDependsOnNodeRequirementMap,
-                                                         ServiceTemplate outputServiceTemplate) {
-    ToscaAnalyzerServiceImpl analyzerService = new ToscaAnalyzerServiceImpl();
-    //Iterating the map <nodeTemplateId, all the requirements of that node>
-    for(Map.Entry<String, List<RequirementAssignment>> entry : outputDependsOnNodeRequirementMap
-        .entrySet()) {
-      String sourceNodeTemplateId = entry.getKey();
-      Optional<NodeTemplate> sourceNodeTemplate = analyzerService.getNodeTemplateById
-          (outputServiceTemplate, sourceNodeTemplateId);
-      String sourceNodeType = sourceNodeTemplate.get().getType();
-      boolean isValidSourceForConnectedOut = false;
-      if(isComputeNodeType(outputServiceTemplate, sourceNodeType)) {
-        isValidSourceForConnectedOut = true;
-      } else if(isPortNodeType(outputServiceTemplate, sourceNodeType)) {
-        isValidSourceForConnectedOut = true;
-      }
-      for(Object obj : entry.getValue()){
-        RequirementAssignment req = new ObjectMapper().convertValue(obj, RequirementAssignment
-            .class);
-        String targetNodeTemplateId = req.getNode();
-        Optional<NodeTemplate> targetNodeTemplate = analyzerService.getNodeTemplateById
-            (outputServiceTemplate, targetNodeTemplateId);
-        String targetNodeType = targetNodeTemplate.get().getType();
+    private static void validateDependsOnNodesConnectedOut(String computeNodeTemplateId,
+                                                           Multimap<String, RequirementAssignmentData>
+                                                                   nodesConnectedOut,
+                                                           Multimap<String, RequirementAssignment>
+                                                                   outputDependsOnNodeRequirementMap,
+                                                           ServiceTemplate outputServiceTemplate) {
+        ToscaAnalyzerServiceImpl analyzerService = new ToscaAnalyzerServiceImpl();
+        //Iterating the map <nodeTemplateId, all the requirements of that node>
+    /*for(Map.Entry<String, List<RequirementAssignment>> entry : outputDependsOnNodeRequirementMap
+        .entrySet()) {*/
+        for (String sourceNodeTemplateId : outputDependsOnNodeRequirementMap.keySet()) {
+            Optional<NodeTemplate> sourceNodeTemplate = analyzerService.getNodeTemplateById
+                    (outputServiceTemplate, sourceNodeTemplateId);
 
-        if(isValidSourceForConnectedOut) {
-          //Should be present if source node is compute or port
-          if(computeNodeTemplateId.equals(entry.getKey()))
-            Assert.assertTrue(nodesConnectedOut.containsKey(targetNodeTemplateId));
+            String sourceNodeType = sourceNodeTemplate.get().getType();
+            boolean isValidSourceForConnectedOut = false;
+            if (isComputeNodeType(outputServiceTemplate, sourceNodeType)) {
+                isValidSourceForConnectedOut = true;
+            } else if (isPortNodeType(outputServiceTemplate, sourceNodeType)) {
+                isValidSourceForConnectedOut = true;
+            }
+            for (Object obj : outputDependsOnNodeRequirementMap.get(sourceNodeTemplateId)) {
+                RequirementAssignment req = new ObjectMapper().convertValue(obj, RequirementAssignment
+                        .class);
+                String targetNodeTemplateId = req.getNode();
+                Optional<NodeTemplate> targetNodeTemplate = analyzerService.getNodeTemplateById
+                        (outputServiceTemplate, targetNodeTemplateId);
+                String targetNodeType = targetNodeTemplate.get().getType();
+
+                if (isValidSourceForConnectedOut) {
+                    //Should be present if source node is compute or port
+                    if (computeNodeTemplateId.equals(sourceNodeTemplateId)) {
+                        Assert.assertTrue(nodesConnectedOut.containsKey(targetNodeTemplateId));
+                    }
+                }
+
+                if (sourceNodeType.startsWith(ToscaNodeType.NOVA_SERVER)
+                        && (targetNodeType.startsWith(ToscaNodeType.NOVA_SERVER)
+                        || targetNodeType.startsWith(ToscaNodeType.NEUTRON_PORT)
+                        || targetNodeType.startsWith(ToscaNodeType.CONTRAILV2_VIRTUAL_MACHINE_INTERFACE))) {
+                    //Ignore Compute->Port, Compute->Compute, Compute->Volume relationship
+                    Assert.assertFalse(nodesConnectedOut.containsKey(targetNodeTemplateId));
+                }
+
+                if (sourceNodeType.startsWith(ToscaNodeType.NEUTRON_PORT)
+                        && (targetNodeType.startsWith(ToscaNodeType.NOVA_SERVER)
+                        || targetNodeType.startsWith(ToscaNodeType.NEUTRON_PORT)
+                        || targetNodeType.startsWith(ToscaNodeType.CONTRAILV2_VIRTUAL_MACHINE_INTERFACE))) {
+                    //Ignore Port->Port, Port->Compute, Port->Volume relationship
+                    Assert.assertFalse(nodesConnectedOut.containsKey(targetNodeTemplateId));
+                }
+            }
         }
 
-        if(sourceNodeType.startsWith(ToscaNodeType.NOVA_SERVER)
-            && (targetNodeType.startsWith(ToscaNodeType.NOVA_SERVER)
-            || targetNodeType.startsWith(ToscaNodeType.NEUTRON_PORT)
-            || targetNodeType.startsWith(ToscaNodeType.CONTRAILV2_VIRTUAL_MACHINE_INTERFACE))) {
-          //Ignore Compute->Port, Compute->Compute, Compute->Volume relationship
-          Assert.assertFalse(nodesConnectedOut.containsKey(targetNodeTemplateId));
-        }
-
-        if(sourceNodeType.startsWith(ToscaNodeType.NEUTRON_PORT)
-            && (targetNodeType.startsWith(ToscaNodeType.NOVA_SERVER)
-            || targetNodeType.startsWith(ToscaNodeType.NEUTRON_PORT)
-            || targetNodeType.startsWith(ToscaNodeType.CONTRAILV2_VIRTUAL_MACHINE_INTERFACE))) {
-          //Ignore Port->Port, Port->Compute, Port->Volume relationship
-          Assert.assertFalse(nodesConnectedOut.containsKey(targetNodeTemplateId));
-        }
-      }
     }
-  }
 
   private static Map<String,Map<String,List<String>>> getPortsInConsolidationData(ServiceTemplate
                                                                                       output){
@@ -453,180 +462,116 @@ public class ConsolidationDataTestUtil {
       Set<String> nestedNodeTemplateIds =
           fileNestedConsolidationData.getAllNestedNodeTemplateIds();
       if (nestedNodeTemplateIds != null) {
-        List<String> fileNestedNodeTemplateIds = new ArrayList<>();
-        fileNestedNodeTemplateIds.addAll(nestedNodeTemplateIds);
+        List<String> fileNestedNodeTemplateIds = new ArrayList<>(nestedNodeTemplateIds);
         nestedNodeTemplateIdMap.put(fileName, fileNestedNodeTemplateIds);
       }
     }
     return nestedNodeTemplateIdMap;
   }
 
-  private static Map<String,List<String>> getSubstituteMapping(Map<String, ServiceTemplate>
-                                                                   expectedServiceTemplateModels ){
-    Map<String,List<String>> map = new LinkedHashMap<>();
-    for(String key : expectedServiceTemplateModels.keySet()){
-      ServiceTemplate serviceTemplate = expectedServiceTemplateModels.get(key);
-      if(serviceTemplate.getTopology_template() != null && serviceTemplate
-          .getTopology_template().getNode_templates() != null) {
-        for (String key1 : serviceTemplate.getTopology_template().getNode_templates().keySet()) {
-          NodeTemplate nodeTemplate = serviceTemplate.getTopology_template().getNode_templates()
-              .get(key1);
-          if (nodeTemplate.getType().contains(ToscaNodeType.ABSTRACT_NODE_TYPE_PREFIX + "heat.")) {
-
-            List<String> subNodeTempIdList = map.get(key);
-            if (subNodeTempIdList == null) {
-              subNodeTempIdList = new ArrayList<>();
-              map.put(key, subNodeTempIdList);
+    private static Map<String, List<String>> getSubstituteMapping(Map<String, ServiceTemplate>
+                                                                          expectedServiceTemplateModels) {
+        Map<String, List<String>> map = new LinkedHashMap<>();
+        for (String key : expectedServiceTemplateModels.keySet()) {
+            ServiceTemplate serviceTemplate = expectedServiceTemplateModels.get(key);
+            if (serviceTemplate.getTopology_template() != null && serviceTemplate
+                    .getTopology_template().getNode_templates() != null) {
+                for (String key1 : serviceTemplate.getTopology_template().getNode_templates().keySet()) {
+                    NodeTemplate nodeTemplate = serviceTemplate.getTopology_template().getNode_templates()
+                            .get(key1);
+                    if (nodeTemplate.getType().contains(ToscaNodeType.ABSTRACT_NODE_TYPE_PREFIX + "heat.")) {
+                        List<String> subNodeTempIdList = map.computeIfAbsent(key, k -> new ArrayList<>());
+                        subNodeTempIdList.add(key1);
+                    }
+                }
             }
-            subNodeTempIdList.add(key1);
-          }
         }
-      }
+        return map;
     }
-    return map;
-  }
 
-  public static void validateComputeConnectivityIn(ComputeTemplateConsolidationData
-                                                       computeTemplateConsolidationData,
-                                                   ServiceTemplate expectedServiceTemplate){
-    Map<String,List<RequirementAssignmentData>> nodesConnectedIn = computeTemplateConsolidationData.
-        getNodesConnectedIn();
-    if(nodesConnectedIn==null){
-      return;
-    }
-    boolean found = false;
-    for(String nodeIdConnTo : nodesConnectedIn.keySet()){
-      List<RequirementAssignmentData> connectToList = nodesConnectedIn.get(nodeIdConnTo);
-      List<Map<String, RequirementAssignment>> requirementsList = expectedServiceTemplate
-          .getTopology_template().getNode_templates().get(nodeIdConnTo).getRequirements();
-      for(RequirementAssignmentData requirementAssignmentData : connectToList) {
-        for (Map<String, RequirementAssignment> requirementAssignmentMap : requirementsList) {
-          RequirementAssignment requirementAssignment =
-              new ObjectMapper().convertValue(requirementAssignmentMap.values().iterator().next(),
-                  RequirementAssignment.class);
-          if (requirementAssignment.getNode().equals(requirementAssignmentData.getRequirementAssignment().getNode())) {
-            Assert.assertEquals(requirementAssignment.getCapability(),requirementAssignmentData.getRequirementAssignment().getCapability());
-            Assert.assertEquals(requirementAssignment.getNode(),requirementAssignmentData.getRequirementAssignment().getNode());
-            Assert.assertEquals(requirementAssignment.getRelationship(),requirementAssignmentData.getRequirementAssignment()
-                .getRelationship());
-            found = true;
-          }
+    public static void validateComputeConnectivityIn(ComputeTemplateConsolidationData
+                                                             computeTemplateConsolidationData,
+                                                     ServiceTemplate expectedServiceTemplate) {
+        Multimap<String, RequirementAssignmentData> nodesConnectedIn =
+                computeTemplateConsolidationData.getNodesConnectedIn();
+        if (nodesConnectedIn == null) {
+            return;
         }
-        if (!found) {
-          Assert.fail();
-        }
-        found = false;
-      }
-    }
-  }
 
-  public static void validateComputeConnectivityOut(String computeNodeTemplateId,
-                                                    ComputeTemplateConsolidationData
-                                                        computeTemplateConsolidationData,
-                                                    ServiceTemplate expectedServiceTemplate){
-    Map<String,List<RequirementAssignmentData>> nodesConnectedOut = computeTemplateConsolidationData.
-        getNodesConnectedOut();
-    if(nodesConnectedOut==null){
-      return;
+        validateConnectivity(null, nodesConnectedIn, expectedServiceTemplate);
     }
-    boolean found = false;
-    for(String nodeIdConnFrom : nodesConnectedOut.keySet()){
-      List<RequirementAssignmentData> connectToList = nodesConnectedOut.get(nodeIdConnFrom);
-      List<Map<String, RequirementAssignment>> requirementsList = expectedServiceTemplate
-          .getTopology_template().getNode_templates().get(computeNodeTemplateId).getRequirements();
-      for(RequirementAssignmentData requirementAssignmentData : connectToList) {
-        for (Map<String, RequirementAssignment> requirementAssignmentMap : requirementsList) {
-          RequirementAssignment requirementAssignment =
-              new ObjectMapper().convertValue(requirementAssignmentMap.values().iterator().next(),
-                  RequirementAssignment.class);
-          if (requirementAssignment.getNode().equals(requirementAssignmentData.getRequirementAssignment().getNode())) {
-            Assert.assertEquals(requirementAssignment.getCapability(),requirementAssignmentData.getRequirementAssignment().getCapability());
-            Assert.assertEquals(requirementAssignment.getNode(),requirementAssignmentData.getRequirementAssignment().getNode());
-            Assert.assertEquals(requirementAssignment.getRelationship(),requirementAssignmentData.getRequirementAssignment()
-                .getRelationship());
-            found = true;
-          }
-        }
-        if (!found) {
-          Assert.fail();
-        }
-        found = false;
-      }
-    }
-  }
 
-  public static void validatePortConnectivityIn(PortTemplateConsolidationData
-                                                    portTemplateConsolidationData,
-                                                ServiceTemplate expectedServiceTemplate){
-    Map<String,List<RequirementAssignmentData>> nodesConnectedIn = portTemplateConsolidationData.
-        getNodesConnectedIn();
-    if(nodesConnectedIn==null){
-      return;
-    }
-    boolean found = false;
-    for(String nodeIdConnTo : nodesConnectedIn.keySet()){
-      List<RequirementAssignmentData> connectToList = nodesConnectedIn.get(nodeIdConnTo);
-      List<Map<String, RequirementAssignment>> requirementsList = expectedServiceTemplate
-          .getTopology_template().getNode_templates().get(nodeIdConnTo).getRequirements();
-      for(RequirementAssignmentData requirementAssignmentData : connectToList) {
-        for (Map<String, RequirementAssignment> requirementAssignmentMap : requirementsList) {
-          RequirementAssignment requirementAssignment =
-              new ObjectMapper().convertValue(requirementAssignmentMap.values().iterator().next(),
-                  RequirementAssignment.class);
-          if (requirementAssignment.getNode().equals(requirementAssignmentData.getRequirementAssignment().getNode())) {
-            Assert.assertEquals(requirementAssignment.getCapability(),requirementAssignmentData.getRequirementAssignment().getCapability());
-            Assert.assertEquals(requirementAssignment.getNode(),requirementAssignmentData.getRequirementAssignment().getNode());
-            Assert.assertEquals(requirementAssignment.getRelationship(),requirementAssignmentData.getRequirementAssignment()
-                .getRelationship());
-            found = true;
-          }
+    public static void validateComputeConnectivityOut(String computeNodeTemplateId,
+                                                      ComputeTemplateConsolidationData computeTemplateConsolidationData,
+                                                      ServiceTemplate expectedServiceTemplate) {
+        Multimap<String, RequirementAssignmentData> nodesConnectedOut =
+                computeTemplateConsolidationData.getNodesConnectedOut();
+        if (nodesConnectedOut == null) {
+            return;
         }
-        if (!found) {
-          Assert.fail();
-        }
-        found = false;
-      }
-    }
-  }
 
-  public static void validatePortConnectivityOut(String portNodeTemplateId,
-                                                 PortTemplateConsolidationData
-                                                     portTemplateConsolidationData,
-                                                 ServiceTemplate expectedServiceTemplate){
-    Map<String, List<RequirementAssignmentData>> nodesConnectedOut =
-        portTemplateConsolidationData.getNodesConnectedOut();
-    if(nodesConnectedOut==null){
-      return;
+        validateConnectivity(computeNodeTemplateId, nodesConnectedOut, expectedServiceTemplate);
     }
-    boolean found = false;
-    for(String nodeIdConnFrom : nodesConnectedOut.keySet()){
-      List<RequirementAssignmentData> connectToList = nodesConnectedOut.get(nodeIdConnFrom);
-      List<Map<String, RequirementAssignment>> requirementsList = expectedServiceTemplate
-          .getTopology_template().getNode_templates().get(portNodeTemplateId).getRequirements();
-      for(RequirementAssignmentData requirementAssignmentData : connectToList) {
-        for (Map<String, RequirementAssignment> requirementAssignmentMap : requirementsList) {
-          RequirementAssignment requirementAssignment =
-              new ObjectMapper().convertValue(requirementAssignmentMap.values().iterator().next(),
-                  RequirementAssignment.class);
-          if (requirementAssignment.getNode().equals(requirementAssignmentData.getRequirementAssignment().getNode())) {
-            Assert.assertEquals(requirementAssignment.getCapability(),requirementAssignmentData.getRequirementAssignment().getCapability());
-            Assert.assertEquals(requirementAssignment.getNode(),requirementAssignmentData.getRequirementAssignment().getNode());
-            Assert.assertEquals(requirementAssignment.getRelationship(),requirementAssignmentData.getRequirementAssignment()
-                .getRelationship());
-            found = true;
-          }
-        }
-        if (!found) {
-          Assert.fail();
-        }
-        found = false;
-      }
-    }
-  }
 
-  public static void validateGetAttr(TranslationContext translationContext, Map<String,
-      ServiceTemplate>
-      expectedServiceTemplateModels,String testName){
+    public static void validatePortConnectivityIn(PortTemplateConsolidationData portTemplateConsolidationData,
+                                                  ServiceTemplate expectedServiceTemplate) {
+        Multimap<String, RequirementAssignmentData> nodesConnectedIn =
+                portTemplateConsolidationData.getNodesConnectedIn();
+        if (nodesConnectedIn == null) {
+            return;
+        }
+
+        validateConnectivity(null, nodesConnectedIn, expectedServiceTemplate);
+    }
+
+    public static void validatePortConnectivityOut(String portNodeTemplateId,
+                                                   PortTemplateConsolidationData portTemplateConsolidationData,
+                                                   ServiceTemplate expectedServiceTemplate) {
+        Multimap<String, RequirementAssignmentData> nodesConnectedOut =
+                portTemplateConsolidationData.getNodesConnectedOut();
+        if (nodesConnectedOut == null) {
+            return;
+        }
+
+        validateConnectivity(portNodeTemplateId, nodesConnectedOut, expectedServiceTemplate);
+    }
+
+    private static void validateConnectivity(String nodeTemplateId,
+                                             Multimap<String, RequirementAssignmentData> nodesConnected,
+                                             ServiceTemplate expectedServiceTemplate) {
+        boolean found = false;
+        for (String nodeIdConnTo : nodesConnected.keySet()) {
+            Collection<RequirementAssignmentData> connectToList = nodesConnected.get(nodeIdConnTo);
+            List<Map<String, RequirementAssignment>> requirementsList = expectedServiceTemplate
+                    .getTopology_template().getNode_templates()
+                    .get(nodeTemplateId != null ? nodeTemplateId : nodeIdConnTo).getRequirements();
+
+            for (RequirementAssignmentData requirementAssignmentData : connectToList) {
+                for (Map<String, RequirementAssignment> requirementAssignmentMap : requirementsList) {
+                    RequirementAssignment requirementAssignment =
+                            new ObjectMapper().convertValue(requirementAssignmentMap.values().iterator().next(),
+                                    RequirementAssignment.class);
+                    if (requirementAssignment.getNode()
+                            .equals(requirementAssignmentData.getRequirementAssignment().getNode())) {
+                        Assert.assertEquals(requirementAssignment.getCapability(),
+                                requirementAssignmentData.getRequirementAssignment().getCapability());
+                        Assert.assertEquals(requirementAssignment.getNode(),
+                                requirementAssignmentData.getRequirementAssignment().getNode());
+                        Assert.assertEquals(requirementAssignment.getRelationship(),
+                                requirementAssignmentData.getRequirementAssignment()
+                                        .getRelationship());
+                        found = true;
+                    }
+                }
+                if (!found) {
+                    Assert.fail();
+                }
+                found = false;
+            }
+        }
+    }
+
+  public static void validateGetAttr(TranslationContext translationContext, String testName){
     ConsolidationData consolidationData = translationContext.getConsolidationData();
     Assert.assertNotNull(consolidationData);
     if(TestConstants.TEST_GET_ATTR_FOR_MORE_THAN_ONE_ATTR_IN_ATTR_LIST.equals(testName)){
@@ -788,328 +733,317 @@ public class ConsolidationDataTestUtil {
     }
   }
 
-  public static void validateNestedConsolidationData(TranslationContext context,
-                                              String testName) {
-    ConsolidationData consolidationData = context.getConsolidationData();
-    if (testName.equals(TEST_SINGLE_NESTED_RESOURCE)) {
-      String nestedNodeTemplateId = "server_pcm_001";
-      NestedTemplateConsolidationData nestedTemplateConsolidationData =
-          consolidationData.getNestedConsolidationData()
-              .getFileNestedConsolidationData(MAIN_SERVICE_TEMPLATE)
-              .getNestedTemplateConsolidationData(nestedNodeTemplateId);
-      //Validate basic null attributes
-      validateBasicNestedConsolidationData(nestedTemplateConsolidationData);
-      //Validate nodeTemplateId
-      Assert.assertEquals(nestedTemplateConsolidationData.getNodeTemplateId(), nestedNodeTemplateId);
-      //Validate nodes connected in (will only be populated for dependsOn relationships)
-      Map<String, List<RequirementAssignmentData>> nodesConnectedIn =
-          nestedTemplateConsolidationData.getNodesConnectedIn();
-      List<String> dependentNodes = new LinkedList<>();
-      dependentNodes.add("packet_mirror_network");
+    public static void validateNestedConsolidationData(TranslationContext context,
+                                                       String testName) {
+        ConsolidationData consolidationData = context.getConsolidationData();
+        if (testName.equals(TEST_SINGLE_NESTED_RESOURCE)) {
+            String nestedNodeTemplateId = "server_pcm_001";
+            NestedTemplateConsolidationData nestedTemplateConsolidationData =
+                    consolidationData.getNestedConsolidationData()
+                            .getFileNestedConsolidationData(MAIN_SERVICE_TEMPLATE)
+                            .getNestedTemplateConsolidationData(nestedNodeTemplateId);
+            //Validate basic null attributes
+            validateBasicNestedConsolidationData(nestedTemplateConsolidationData);
+            //Validate nodeTemplateId
+            Assert.assertEquals(nestedTemplateConsolidationData.getNodeTemplateId(), nestedNodeTemplateId);
+            //Validate nodes connected in (will only be populated for dependsOn relationships)
+            List<String> dependentNodes = new LinkedList<>();
+            dependentNodes.add("packet_mirror_network");
 
-      //Validate get attribute in
-      Map<String, List<GetAttrFuncData>> nodesGetAttrIn =
-          nestedTemplateConsolidationData.getNodesGetAttrIn();
-      String getAttrNodeTemplateId = "server_compute_get_attr_test";
-      List<GetAttrFuncData> getAttrFuncData = nodesGetAttrIn.get(getAttrNodeTemplateId);
-      Assert.assertNotNull(getAttrFuncData);
-      Assert.assertEquals(getAttrFuncData.size(), 2);
-      Assert.assertEquals(getAttrFuncData.get(0).getFieldName(), "metadata");
-      Assert.assertEquals(getAttrFuncData.get(0).getAttributeName(), "server_pcm_id");
-      Assert.assertEquals(getAttrFuncData.get(1).getFieldName(), "user_data_format");
-      Assert.assertEquals(getAttrFuncData.get(1).getAttributeName(), "oam_net_gw");
+            //Validate get attribute in
+            Map<String, List<GetAttrFuncData>> nodesGetAttrIn =
+                    nestedTemplateConsolidationData.getNodesGetAttrIn();
+            String getAttrNodeTemplateId = "server_compute_get_attr_test";
+            List<GetAttrFuncData> getAttrFuncData = nodesGetAttrIn.get(getAttrNodeTemplateId);
+            Assert.assertNotNull(getAttrFuncData);
+            Assert.assertEquals(getAttrFuncData.size(), 2);
+            Assert.assertEquals(getAttrFuncData.get(0).getFieldName(), "metadata");
+            Assert.assertEquals(getAttrFuncData.get(0).getAttributeName(), "server_pcm_id");
+            Assert.assertEquals(getAttrFuncData.get(1).getFieldName(), "user_data_format");
+            Assert.assertEquals(getAttrFuncData.get(1).getAttributeName(), "oam_net_gw");
 
-      //Validate output parameter get attribute in
-      List<GetAttrFuncData> outputParametersGetAttrIn =
-          nestedTemplateConsolidationData.getOutputParametersGetAttrIn();
-      Assert.assertNotNull(outputParametersGetAttrIn);
-      Assert.assertEquals(outputParametersGetAttrIn.size(), 1);
-      Assert.assertEquals(outputParametersGetAttrIn.get(0).getFieldName(), "output_attr_1");
-      Assert.assertEquals(outputParametersGetAttrIn.get(0).getAttributeName(), "pcm_vol");
+            //Validate output parameter get attribute in
+            List<GetAttrFuncData> outputParametersGetAttrIn =
+                    nestedTemplateConsolidationData.getOutputParametersGetAttrIn();
+            Assert.assertNotNull(outputParametersGetAttrIn);
+            Assert.assertEquals(outputParametersGetAttrIn.size(), 1);
+            Assert.assertEquals(outputParametersGetAttrIn.get(0).getFieldName(), "output_attr_1");
+            Assert.assertEquals(outputParametersGetAttrIn.get(0).getAttributeName(), "pcm_vol");
 
-    } else if (testName.equals(TEST_MULTIPLE_NESTED_RESOURCE)) {
-      List<String> nestedNodeTemplateIds = new ArrayList<>();
-      nestedNodeTemplateIds.add("server_pcm_001");
-      nestedNodeTemplateIds.add("server_pcm_002");
-      nestedNodeTemplateIds.add("server_pcm_003");
+        } else if (testName.equals(TEST_MULTIPLE_NESTED_RESOURCE)) {
+            List<String> nestedNodeTemplateIds = new ArrayList<>();
+            nestedNodeTemplateIds.add("server_pcm_001");
+            nestedNodeTemplateIds.add("server_pcm_002");
+            nestedNodeTemplateIds.add("server_pcm_003");
 
-      for (String nestedNodeTemplateId : nestedNodeTemplateIds) {
-        NestedTemplateConsolidationData nestedTemplateConsolidationData =
-            consolidationData.getNestedConsolidationData()
-                .getFileNestedConsolidationData(MAIN_SERVICE_TEMPLATE)
-                .getNestedTemplateConsolidationData(nestedNodeTemplateId);
-        //Validate basic null attributes
-        validateBasicNestedConsolidationData(nestedTemplateConsolidationData);
-        //Validate nodeTemplateId
-        Assert.assertEquals(nestedTemplateConsolidationData.getNodeTemplateId(),
-            nestedNodeTemplateId);
-        if (nestedNodeTemplateId.equals("server_pcm_001")) {
-          //Validate nodes connected in (will only be populated for dependsOn relationships)
-          Map<String, List<RequirementAssignmentData>> nodesConnectedIn =
-              nestedTemplateConsolidationData.getNodesConnectedIn();
-          List<String> dependentNodes = new LinkedList<>();
-          dependentNodes.add("packet_mirror_network");
-        } else {
-          Assert.assertNull(nestedTemplateConsolidationData.getNodesConnectedIn());
+            for (String nestedNodeTemplateId : nestedNodeTemplateIds) {
+                NestedTemplateConsolidationData nestedTemplateConsolidationData =
+                        consolidationData.getNestedConsolidationData()
+                                .getFileNestedConsolidationData(MAIN_SERVICE_TEMPLATE)
+                                .getNestedTemplateConsolidationData(nestedNodeTemplateId);
+                //Validate basic null attributes
+                validateBasicNestedConsolidationData(nestedTemplateConsolidationData);
+                //Validate nodeTemplateId
+                Assert.assertEquals(nestedTemplateConsolidationData.getNodeTemplateId(),
+                        nestedNodeTemplateId);
+                if (!nestedNodeTemplateId.equals("server_pcm_001")) {
+                    Assert.assertNull(nestedTemplateConsolidationData.getNodesConnectedIn());
+                }
+            }
+            String nestedNodeTemplateId = "server_pcm_001";
+
+            //Validate get attribute in
+            NestedTemplateConsolidationData nestedTemplateConsolidationData =
+                    consolidationData.getNestedConsolidationData()
+                            .getFileNestedConsolidationData(MAIN_SERVICE_TEMPLATE)
+                            .getNestedTemplateConsolidationData("server_pcm_002");
+            Map<String, List<GetAttrFuncData>> nodesGetAttrIn =
+                    nestedTemplateConsolidationData.getNodesGetAttrIn();
+            String getAttrNodeTemplateId = "server_pcm_001";
+            List<GetAttrFuncData> getAttrFuncData = nodesGetAttrIn.get(getAttrNodeTemplateId);
+            Assert.assertNotNull(getAttrFuncData);
+            Assert.assertEquals(getAttrFuncData.size(), 1);
+            Assert.assertEquals(getAttrFuncData.get(0).getFieldName(), "user_data_format");
+            Assert.assertEquals(getAttrFuncData.get(0).getAttributeName(), "pcm_vol");
+            //Validate output parameter get attribute in
+            List<GetAttrFuncData> outputParametersGetAttrIn =
+                    nestedTemplateConsolidationData.getOutputParametersGetAttrIn();
+            Assert.assertNotNull(outputParametersGetAttrIn);
+            Assert.assertEquals(outputParametersGetAttrIn.size(), 1);
+            Assert.assertEquals(outputParametersGetAttrIn.get(0).getFieldName(), "output_attr_2");
+            Assert.assertEquals(outputParametersGetAttrIn.get(0).getAttributeName(), "oam_net_ip");
+
+
+            nestedTemplateConsolidationData = consolidationData.getNestedConsolidationData()
+                    .getFileNestedConsolidationData(MAIN_SERVICE_TEMPLATE)
+                    .getNestedTemplateConsolidationData("server_pcm_001");
+            nodesGetAttrIn = nestedTemplateConsolidationData.getNodesGetAttrIn();
+            getAttrNodeTemplateId = "server_pcm_002";
+            getAttrFuncData = nodesGetAttrIn.get(getAttrNodeTemplateId);
+            Assert.assertNotNull(getAttrFuncData);
+            Assert.assertEquals(getAttrFuncData.size(), 1);
+            Assert.assertEquals(getAttrFuncData.get(0).getFieldName(), "metadata");
+            Assert.assertEquals(getAttrFuncData.get(0).getAttributeName(), "server_pcm_id");
+            //Validate output parameter get attribute in
+            outputParametersGetAttrIn = nestedTemplateConsolidationData.getOutputParametersGetAttrIn();
+            Assert.assertNotNull(outputParametersGetAttrIn);
+            Assert.assertEquals(outputParametersGetAttrIn.size(), 1);
+            Assert.assertEquals(outputParametersGetAttrIn.get(0).getFieldName(), "output_attr_1");
+            Assert.assertEquals(outputParametersGetAttrIn.get(0).getAttributeName(), "pcm_vol");
+
+            nestedTemplateConsolidationData = consolidationData.getNestedConsolidationData()
+                    .getFileNestedConsolidationData(MAIN_SERVICE_TEMPLATE)
+                    .getNestedTemplateConsolidationData("server_pcm_003");
+            Assert.assertNull(nestedTemplateConsolidationData.getNodesGetAttrIn());
+            Assert.assertNull(nestedTemplateConsolidationData.getOutputParametersGetAttrIn());
+
+        } else if (testName.equals(TEST_MULTIPLE_MULTI_LEVEL_NESTED_RESOURCE)) {
+            String nestedNodeTemplateId = "test_nested";
+            NestedTemplateConsolidationData nestedTemplateConsolidationData =
+                    consolidationData.getNestedConsolidationData()
+                            .getFileNestedConsolidationData(MAIN_SERVICE_TEMPLATE)
+                            .getNestedTemplateConsolidationData(nestedNodeTemplateId);
+            //Validate basic null attributes
+            validateBasicNestedConsolidationData(nestedTemplateConsolidationData);
+            //Validate nodeTemplateId
+            Assert.assertEquals(nestedTemplateConsolidationData.getNodeTemplateId(),
+                    nestedNodeTemplateId);
+            //Validate nodes connected in (will only be populated for dependsOn relationships)
+            Multimap<String, RequirementAssignmentData> nodesConnectedIn =
+                    nestedTemplateConsolidationData.getNodesConnectedIn();
+            List<String> dependentNodes = new LinkedList<>();
+            dependentNodes.add("packet_mirror_network");
+            //Validate output parameter get attribute in
+            List<GetAttrFuncData> getAttrFuncData =
+                    nestedTemplateConsolidationData.getNodesGetAttrIn().get("packet_mirror_network");
+            Assert.assertNotNull(getAttrFuncData);
+            Assert.assertEquals(getAttrFuncData.size(), 1);
+            Assert.assertEquals(getAttrFuncData.get(0).getFieldName(), "shared");
+            Assert.assertEquals(getAttrFuncData.get(0).getAttributeName(), "output_attr_1");
+            Assert.assertNull(nestedTemplateConsolidationData.getOutputParametersGetAttrIn());
+
+            nestedNodeTemplateId = "test_nested2";
+            nestedTemplateConsolidationData = consolidationData.getNestedConsolidationData()
+                    .getFileNestedConsolidationData("nestedServiceTemplate.yaml")
+                    .getNestedTemplateConsolidationData(nestedNodeTemplateId);
+            //Validate basic null attributes
+            validateBasicNestedConsolidationData(nestedTemplateConsolidationData);
+            //Validate nodeTemplateId
+            Assert.assertEquals(nestedTemplateConsolidationData.getNodeTemplateId(),
+                    nestedNodeTemplateId);
+            Assert.assertNull(nestedTemplateConsolidationData.getNodesConnectedIn());
+            //Validate output parameter get attribute in
+            getAttrFuncData = nestedTemplateConsolidationData.getNodesGetAttrIn().get("server_cmaui_1");
+            Assert.assertNotNull(getAttrFuncData);
+            Assert.assertEquals(getAttrFuncData.size(), 1);
+            Assert.assertEquals(getAttrFuncData.get(0).getFieldName(), "metadata");
+            Assert.assertEquals(getAttrFuncData.get(0).getAttributeName(), "availability_zone_0");
+
+            List<GetAttrFuncData> outputParametersGetAttrIn1 =
+                    nestedTemplateConsolidationData.getOutputParametersGetAttrIn();
+            Assert.assertNotNull(outputParametersGetAttrIn1);
+            Assert.assertEquals(outputParametersGetAttrIn1.size(), 1);
+            Assert.assertEquals(outputParametersGetAttrIn1.get(0).getFieldName(), "output_attr_1");
+            Assert.assertEquals(outputParametersGetAttrIn1.get(0).getAttributeName(), "availability_zone_0");
         }
-      }
-      String nestedNodeTemplateId = "server_pcm_001";
-
-      //Validate get attribute in
-      NestedTemplateConsolidationData nestedTemplateConsolidationData =
-          consolidationData.getNestedConsolidationData()
-              .getFileNestedConsolidationData(MAIN_SERVICE_TEMPLATE)
-              .getNestedTemplateConsolidationData("server_pcm_002");
-      Map<String, List<GetAttrFuncData>> nodesGetAttrIn =
-          nestedTemplateConsolidationData.getNodesGetAttrIn();
-      String getAttrNodeTemplateId = "server_pcm_001";
-      List<GetAttrFuncData> getAttrFuncData = nodesGetAttrIn.get(getAttrNodeTemplateId);
-      Assert.assertNotNull(getAttrFuncData);
-      Assert.assertEquals(getAttrFuncData.size(), 1);
-      Assert.assertEquals(getAttrFuncData.get(0).getFieldName(), "user_data_format");
-      Assert.assertEquals(getAttrFuncData.get(0).getAttributeName(), "pcm_vol");
-      //Validate output parameter get attribute in
-      List<GetAttrFuncData> outputParametersGetAttrIn =
-          nestedTemplateConsolidationData.getOutputParametersGetAttrIn();
-      Assert.assertNotNull(outputParametersGetAttrIn);
-      Assert.assertEquals(outputParametersGetAttrIn.size(), 1);
-      Assert.assertEquals(outputParametersGetAttrIn.get(0).getFieldName(), "output_attr_2");
-      Assert.assertEquals(outputParametersGetAttrIn.get(0).getAttributeName(), "oam_net_ip");
-
-
-      nestedTemplateConsolidationData = consolidationData.getNestedConsolidationData()
-          .getFileNestedConsolidationData(MAIN_SERVICE_TEMPLATE)
-          .getNestedTemplateConsolidationData("server_pcm_001");
-      nodesGetAttrIn = nestedTemplateConsolidationData.getNodesGetAttrIn();
-      getAttrNodeTemplateId = "server_pcm_002";
-      getAttrFuncData = nodesGetAttrIn.get(getAttrNodeTemplateId);
-      Assert.assertNotNull(getAttrFuncData);
-      Assert.assertEquals(getAttrFuncData.size(), 1);
-      Assert.assertEquals(getAttrFuncData.get(0).getFieldName(), "metadata");
-      Assert.assertEquals(getAttrFuncData.get(0).getAttributeName(), "server_pcm_id");
-      //Validate output parameter get attribute in
-      outputParametersGetAttrIn = nestedTemplateConsolidationData.getOutputParametersGetAttrIn();
-      Assert.assertNotNull(outputParametersGetAttrIn);
-      Assert.assertEquals(outputParametersGetAttrIn.size(), 1);
-      Assert.assertEquals(outputParametersGetAttrIn.get(0).getFieldName(), "output_attr_1");
-      Assert.assertEquals(outputParametersGetAttrIn.get(0).getAttributeName(), "pcm_vol");
-
-      nestedTemplateConsolidationData = consolidationData.getNestedConsolidationData()
-          .getFileNestedConsolidationData(MAIN_SERVICE_TEMPLATE)
-          .getNestedTemplateConsolidationData("server_pcm_003");
-      Assert.assertNull(nestedTemplateConsolidationData.getNodesGetAttrIn());
-      Assert.assertNull(nestedTemplateConsolidationData.getOutputParametersGetAttrIn());
-
-    } else if (testName.equals(TEST_MULTIPLE_MULTI_LEVEL_NESTED_RESOURCE)) {
-      String nestedNodeTemplateId = "test_nested";
-      NestedTemplateConsolidationData nestedTemplateConsolidationData =
-          consolidationData.getNestedConsolidationData()
-              .getFileNestedConsolidationData(MAIN_SERVICE_TEMPLATE)
-              .getNestedTemplateConsolidationData(nestedNodeTemplateId);
-      //Validate basic null attributes
-      validateBasicNestedConsolidationData(nestedTemplateConsolidationData);
-      //Validate nodeTemplateId
-      Assert.assertEquals(nestedTemplateConsolidationData.getNodeTemplateId(),
-          nestedNodeTemplateId);
-      //Validate nodes connected in (will only be populated for dependsOn relationships)
-      Map<String, List<RequirementAssignmentData>> nodesConnectedIn =
-          nestedTemplateConsolidationData.getNodesConnectedIn();
-      List<String> dependentNodes = new LinkedList<>();
-      dependentNodes.add("packet_mirror_network");
-      //Validate output parameter get attribute in
-      List<GetAttrFuncData> getAttrFuncData =
-          nestedTemplateConsolidationData.getNodesGetAttrIn().get("packet_mirror_network");
-      Assert.assertNotNull(getAttrFuncData);
-      Assert.assertEquals(getAttrFuncData.size(), 1);
-      Assert.assertEquals(getAttrFuncData.get(0).getFieldName(), "shared");
-      Assert.assertEquals(getAttrFuncData.get(0).getAttributeName(), "output_attr_1");
-      Assert.assertNull(nestedTemplateConsolidationData.getOutputParametersGetAttrIn());
-
-      nestedNodeTemplateId = "test_nested2";
-      nestedTemplateConsolidationData = consolidationData.getNestedConsolidationData()
-              .getFileNestedConsolidationData("nestedServiceTemplate.yaml")
-              .getNestedTemplateConsolidationData(nestedNodeTemplateId);
-      //Validate basic null attributes
-      validateBasicNestedConsolidationData(nestedTemplateConsolidationData);
-      //Validate nodeTemplateId
-      Assert.assertEquals(nestedTemplateConsolidationData.getNodeTemplateId(),
-          nestedNodeTemplateId);
-      Assert.assertNull(nestedTemplateConsolidationData.getNodesConnectedIn());
-      //Validate output parameter get attribute in
-      getAttrFuncData = nestedTemplateConsolidationData.getNodesGetAttrIn().get("server_cmaui_1");
-      Assert.assertNotNull(getAttrFuncData);
-      Assert.assertEquals(getAttrFuncData.size(), 1);
-      Assert.assertEquals(getAttrFuncData.get(0).getFieldName(), "metadata");
-      Assert.assertEquals(getAttrFuncData.get(0).getAttributeName(), "availability_zone_0");
-
-      List<GetAttrFuncData> outputParametersGetAttrIn1 =
-          nestedTemplateConsolidationData.getOutputParametersGetAttrIn();
-      Assert.assertNotNull(outputParametersGetAttrIn1);
-      Assert.assertEquals(outputParametersGetAttrIn1.size(), 1);
-      Assert.assertEquals(outputParametersGetAttrIn1.get(0).getFieldName(), "output_attr_1");
-      Assert.assertEquals(outputParametersGetAttrIn1.get(0).getAttributeName(), "availability_zone_0");
     }
-  }
 
-  private static void validateBasicNestedConsolidationData(NestedTemplateConsolidationData
-                                                               nestedTemplateConsolidationData) {
-    Assert.assertNull(nestedTemplateConsolidationData.getGroupIds());
-    Assert.assertNull(nestedTemplateConsolidationData.getNodesConnectedOut());
-  }
-
-  public static void validateNestedNodesConnectedInSecurityRuleToPort(String testName,
-                                                                       TranslationContext context)  {
-    ConsolidationData consolidationData = context.getConsolidationData();
-    if (testName.equals(TEST_SECURITY_RULE_PORT_NESTED_CONNECTION) ||
-        testName.equals(TestConstants.TEST_SECURITY_RULE_PORT_NESTED_SHARED_PORT)) {
-      String nestedNodeTemplateId = "test_nested";
-      NestedTemplateConsolidationData nestedTemplateConsolidationData =
-          consolidationData.getNestedConsolidationData()
-              .getFileNestedConsolidationData(MAIN_SERVICE_TEMPLATE)
-              .getNestedTemplateConsolidationData(nestedNodeTemplateId);
-      //Validate basic null attributes
-      validateBasicNestedConsolidationData(nestedTemplateConsolidationData);
-      //Validate nodeTemplateId
-      Assert
-          .assertEquals(nestedTemplateConsolidationData.getNodeTemplateId(), nestedNodeTemplateId);
-      String securityRuleNodeTemplateId = "jsa_security_group1";
-      validateNestedNodesConnectedInSecurityRuleToPort(HeatToToscaUtil
-              .getServiceTemplateFromContext(MAIN_SERVICE_TEMPLATE, context).get(),
-          nestedNodeTemplateId, securityRuleNodeTemplateId,
-          nestedTemplateConsolidationData);
-      securityRuleNodeTemplateId = "jsa_security_group2";
-      validateNestedNodesConnectedInSecurityRuleToPort(HeatToToscaUtil
-              .getServiceTemplateFromContext(MAIN_SERVICE_TEMPLATE, context).get(),
-          nestedNodeTemplateId, securityRuleNodeTemplateId,
-          nestedTemplateConsolidationData);
-      if (testName.equals(TestConstants.TEST_SECURITY_RULE_PORT_NESTED_SHARED_PORT)) {
-        nestedNodeTemplateId = "test_nestedArrayParam";
-        Assert.assertEquals(nestedNodeTemplateId, consolidationData.getNestedConsolidationData()
-            .getFileNestedConsolidationData(MAIN_SERVICE_TEMPLATE)
-            .getNestedTemplateConsolidationData(nestedNodeTemplateId).getNodeTemplateId());
-        Assert.assertNull(consolidationData.getNestedConsolidationData()
-            .getFileNestedConsolidationData(MAIN_SERVICE_TEMPLATE)
-            .getNestedTemplateConsolidationData(nestedNodeTemplateId).getNodesConnectedIn());
-      }
-    } else if (testName.equals(TEST_SECURITY_RULE_PORT_MULTI_LEVEL_NESTED_CONNECTION) ||
-        testName.equals(TEST_SECURITY_RULE_PORT_MULTI_LEVEL_NESTED_SHARED_PORT)) {
-      String nestedNodeTemplateId = "test_nested2Level";
-      Assert.assertEquals(nestedNodeTemplateId, consolidationData.getNestedConsolidationData()
-          .getFileNestedConsolidationData("nested1ServiceTemplate.yaml")
-          .getNestedTemplateConsolidationData(nestedNodeTemplateId).getNodeTemplateId());
-      Assert.assertNull(consolidationData.getNestedConsolidationData()
-          .getFileNestedConsolidationData("nested1ServiceTemplate.yaml")
-          .getNestedTemplateConsolidationData(nestedNodeTemplateId).getNodesConnectedIn());
-      nestedNodeTemplateId = "test_nested3Level";
-      Assert.assertEquals(nestedNodeTemplateId, consolidationData.getNestedConsolidationData()
-          .getFileNestedConsolidationData("nested2ServiceTemplate.yaml")
-          .getNestedTemplateConsolidationData(nestedNodeTemplateId).getNodeTemplateId());
-      Assert.assertNull(consolidationData.getNestedConsolidationData()
-          .getFileNestedConsolidationData("nested2ServiceTemplate.yaml")
-          .getNestedTemplateConsolidationData(nestedNodeTemplateId).getNodesConnectedIn());
-      nestedNodeTemplateId = "test_nested4Level";
-      Assert.assertEquals(nestedNodeTemplateId, consolidationData.getNestedConsolidationData()
-          .getFileNestedConsolidationData("nested3ServiceTemplate.yaml")
-          .getNestedTemplateConsolidationData(nestedNodeTemplateId).getNodeTemplateId());
-      Assert.assertNull(consolidationData.getNestedConsolidationData()
-          .getFileNestedConsolidationData("nested3ServiceTemplate.yaml")
-          .getNestedTemplateConsolidationData(nestedNodeTemplateId).getNodesConnectedIn());
-
-      //Validate main service template
-
-      nestedNodeTemplateId = "test_nested1Level";
-      NestedTemplateConsolidationData nestedTemplateConsolidationData =
-          consolidationData.getNestedConsolidationData()
-              .getFileNestedConsolidationData(MAIN_SERVICE_TEMPLATE)
-              .getNestedTemplateConsolidationData(nestedNodeTemplateId);
-      //Validate basic null attributes
-      validateBasicNestedConsolidationData(nestedTemplateConsolidationData);
-      //Validate nodeTemplateId
-      Assert
-          .assertEquals(nestedTemplateConsolidationData.getNodeTemplateId(), nestedNodeTemplateId);
-      String securityRuleNodeTemplateId = "jsa_security_group1";
-      validateNestedNodesConnectedInSecurityRuleToPort(HeatToToscaUtil
-              .getServiceTemplateFromContext(MAIN_SERVICE_TEMPLATE, context).get(),
-          nestedNodeTemplateId, securityRuleNodeTemplateId,
-          nestedTemplateConsolidationData);
-      securityRuleNodeTemplateId = "jsa_security_group2";
-      validateNestedNodesConnectedInSecurityRuleToPort(HeatToToscaUtil
-              .getServiceTemplateFromContext(MAIN_SERVICE_TEMPLATE, context).get(),
-          nestedNodeTemplateId, securityRuleNodeTemplateId,
-          nestedTemplateConsolidationData);
-
-      nestedNodeTemplateId = "test_resourceGroup";
-      nestedTemplateConsolidationData = consolidationData.getNestedConsolidationData()
-              .getFileNestedConsolidationData(MAIN_SERVICE_TEMPLATE)
-              .getNestedTemplateConsolidationData(nestedNodeTemplateId);
-      //Validate basic null attributes
-      validateBasicNestedConsolidationData(nestedTemplateConsolidationData);
-      //Validate nodeTemplateId
-      Assert
-          .assertEquals(nestedTemplateConsolidationData.getNodeTemplateId(), nestedNodeTemplateId);
-      securityRuleNodeTemplateId = "jsa_security_group2";
-      validateNestedNodesConnectedInSecurityRuleToPort(HeatToToscaUtil
-              .getServiceTemplateFromContext(MAIN_SERVICE_TEMPLATE, context).get(),
-          nestedNodeTemplateId, securityRuleNodeTemplateId,
-          nestedTemplateConsolidationData);
-      securityRuleNodeTemplateId = "jsa_security_group2";
-      validateNestedNodesConnectedInSecurityRuleToPort(HeatToToscaUtil
-              .getServiceTemplateFromContext(MAIN_SERVICE_TEMPLATE, context).get(),
-          nestedNodeTemplateId, securityRuleNodeTemplateId,
-          nestedTemplateConsolidationData);
-
-      nestedNodeTemplateId = "test_nestedInvalidConnectionToNova";
-      Assert.assertEquals(nestedNodeTemplateId, consolidationData.getNestedConsolidationData()
-          .getFileNestedConsolidationData(MAIN_SERVICE_TEMPLATE)
-          .getNestedTemplateConsolidationData(nestedNodeTemplateId).getNodeTemplateId());
-      Assert.assertNull(consolidationData.getNestedConsolidationData()
-          .getFileNestedConsolidationData(MAIN_SERVICE_TEMPLATE)
-          .getNestedTemplateConsolidationData(nestedNodeTemplateId).getNodesConnectedIn());
+    private static void validateBasicNestedConsolidationData(NestedTemplateConsolidationData
+                                                                     nestedTemplateConsolidationData) {
+        Assert.assertNull(nestedTemplateConsolidationData.getGroupIds());
+        Assert.assertNull(nestedTemplateConsolidationData.getNodesConnectedOut());
     }
-  }
 
-  private static void validateNestedNodesConnectedInSecurityRuleToPort(ServiceTemplate
-                                                                           serviceTemplate,
-                                                                       String nestedNodeTemplateId,
-                                                                       String
-                                                                           securityRuleNodeTemplateId,
-                                                                       NestedTemplateConsolidationData nestedTemplateConsolidationData) {
-    Map<String, List<RequirementAssignmentData>> consolidationDataNodesConnectedIn =
-        nestedTemplateConsolidationData.getNodesConnectedIn();
-    Assert.assertNotNull(consolidationDataNodesConnectedIn);
-    NodeTemplate securityRuleNodeTemplate = DataModelUtil.getNodeTemplate(serviceTemplate,
-        securityRuleNodeTemplateId);
-    List<Map<String, RequirementAssignment>> securityRuleNodeTemplateRequirements =
-        securityRuleNodeTemplate.getRequirements();
-    for (Map<String, RequirementAssignment> req : securityRuleNodeTemplateRequirements) {
-      String requirementId = req.keySet().toArray()[0].toString();
-      if (requirementId.equals(ToscaConstants.PORT_REQUIREMENT_ID)) {
-        RequirementAssignment requirementAssignment = req.get(requirementId);
-        if (requirementAssignment.getNode().equals(nestedNodeTemplateId)) {
-          validateSecurityRulePortNestedConsolidationData(requirementAssignment,
-              securityRuleNodeTemplateId, consolidationDataNodesConnectedIn);
+    public static void validateNestedNodesConnectedInSecurityRuleToPort(String testName, TranslationContext context) {
+        ConsolidationData consolidationData = context.getConsolidationData();
+        if (testName.equals(TEST_SECURITY_RULE_PORT_NESTED_CONNECTION) ||
+                testName.equals(TestConstants.TEST_SECURITY_RULE_PORT_NESTED_SHARED_PORT)) {
+            String nestedNodeTemplateId = "test_nested";
+            NestedTemplateConsolidationData nestedTemplateConsolidationData =
+                    consolidationData.getNestedConsolidationData()
+                            .getFileNestedConsolidationData(MAIN_SERVICE_TEMPLATE)
+                            .getNestedTemplateConsolidationData(nestedNodeTemplateId);
+            //Validate basic null attributes
+            validateBasicNestedConsolidationData(nestedTemplateConsolidationData);
+            //Validate nodeTemplateId
+            Assert
+                    .assertEquals(nestedTemplateConsolidationData.getNodeTemplateId(), nestedNodeTemplateId);
+            String securityRuleNodeTemplateId = "jsa_security_group1";
+            validateNestedNodesConnectedInSecurityRuleToPort(HeatToToscaUtil
+                            .getServiceTemplateFromContext(MAIN_SERVICE_TEMPLATE, context).get(),
+                    nestedNodeTemplateId, securityRuleNodeTemplateId,
+                    nestedTemplateConsolidationData);
+            securityRuleNodeTemplateId = "jsa_security_group2";
+            validateNestedNodesConnectedInSecurityRuleToPort(HeatToToscaUtil
+                            .getServiceTemplateFromContext(MAIN_SERVICE_TEMPLATE, context).get(),
+                    nestedNodeTemplateId, securityRuleNodeTemplateId,
+                    nestedTemplateConsolidationData);
+            if (testName.equals(TestConstants.TEST_SECURITY_RULE_PORT_NESTED_SHARED_PORT)) {
+                nestedNodeTemplateId = "test_nestedArrayParam";
+                Assert.assertEquals(nestedNodeTemplateId, consolidationData.getNestedConsolidationData()
+                        .getFileNestedConsolidationData(MAIN_SERVICE_TEMPLATE)
+                        .getNestedTemplateConsolidationData(nestedNodeTemplateId).getNodeTemplateId());
+                Assert.assertNull(consolidationData.getNestedConsolidationData()
+                        .getFileNestedConsolidationData(MAIN_SERVICE_TEMPLATE)
+                        .getNestedTemplateConsolidationData(nestedNodeTemplateId).getNodesConnectedIn());
+            }
+        } else if (testName.equals(TEST_SECURITY_RULE_PORT_MULTI_LEVEL_NESTED_CONNECTION) ||
+                testName.equals(TEST_SECURITY_RULE_PORT_MULTI_LEVEL_NESTED_SHARED_PORT)) {
+            String nestedNodeTemplateId = "test_nested2Level";
+            Assert.assertEquals(nestedNodeTemplateId, consolidationData.getNestedConsolidationData()
+                    .getFileNestedConsolidationData("nested1ServiceTemplate.yaml")
+                    .getNestedTemplateConsolidationData(nestedNodeTemplateId).getNodeTemplateId());
+            Assert.assertNull(consolidationData.getNestedConsolidationData()
+                    .getFileNestedConsolidationData("nested1ServiceTemplate.yaml")
+                    .getNestedTemplateConsolidationData(nestedNodeTemplateId).getNodesConnectedIn());
+            nestedNodeTemplateId = "test_nested3Level";
+            Assert.assertEquals(nestedNodeTemplateId, consolidationData.getNestedConsolidationData()
+                    .getFileNestedConsolidationData("nested2ServiceTemplate.yaml")
+                    .getNestedTemplateConsolidationData(nestedNodeTemplateId).getNodeTemplateId());
+            Assert.assertNull(consolidationData.getNestedConsolidationData()
+                    .getFileNestedConsolidationData("nested2ServiceTemplate.yaml")
+                    .getNestedTemplateConsolidationData(nestedNodeTemplateId).getNodesConnectedIn());
+            nestedNodeTemplateId = "test_nested4Level";
+            Assert.assertEquals(nestedNodeTemplateId, consolidationData.getNestedConsolidationData()
+                    .getFileNestedConsolidationData("nested3ServiceTemplate.yaml")
+                    .getNestedTemplateConsolidationData(nestedNodeTemplateId).getNodeTemplateId());
+            Assert.assertNull(consolidationData.getNestedConsolidationData()
+                    .getFileNestedConsolidationData("nested3ServiceTemplate.yaml")
+                    .getNestedTemplateConsolidationData(nestedNodeTemplateId).getNodesConnectedIn());
+
+            //Validate main service template
+
+            nestedNodeTemplateId = "test_nested1Level";
+            NestedTemplateConsolidationData nestedTemplateConsolidationData =
+                    consolidationData.getNestedConsolidationData()
+                            .getFileNestedConsolidationData(MAIN_SERVICE_TEMPLATE)
+                            .getNestedTemplateConsolidationData(nestedNodeTemplateId);
+            //Validate basic null attributes
+            validateBasicNestedConsolidationData(nestedTemplateConsolidationData);
+            //Validate nodeTemplateId
+            Assert
+                    .assertEquals(nestedTemplateConsolidationData.getNodeTemplateId(), nestedNodeTemplateId);
+            String securityRuleNodeTemplateId = "jsa_security_group1";
+            validateNestedNodesConnectedInSecurityRuleToPort(HeatToToscaUtil
+                            .getServiceTemplateFromContext(MAIN_SERVICE_TEMPLATE, context).get(),
+                    nestedNodeTemplateId, securityRuleNodeTemplateId,
+                    nestedTemplateConsolidationData);
+            securityRuleNodeTemplateId = "jsa_security_group2";
+            validateNestedNodesConnectedInSecurityRuleToPort(HeatToToscaUtil
+                            .getServiceTemplateFromContext(MAIN_SERVICE_TEMPLATE, context).get(),
+                    nestedNodeTemplateId, securityRuleNodeTemplateId,
+                    nestedTemplateConsolidationData);
+
+            nestedNodeTemplateId = "test_resourceGroup";
+            nestedTemplateConsolidationData = consolidationData.getNestedConsolidationData()
+                    .getFileNestedConsolidationData(MAIN_SERVICE_TEMPLATE)
+                    .getNestedTemplateConsolidationData(nestedNodeTemplateId);
+            //Validate basic null attributes
+            validateBasicNestedConsolidationData(nestedTemplateConsolidationData);
+            //Validate nodeTemplateId
+            Assert
+                    .assertEquals(nestedTemplateConsolidationData.getNodeTemplateId(), nestedNodeTemplateId);
+            securityRuleNodeTemplateId = "jsa_security_group2";
+            validateNestedNodesConnectedInSecurityRuleToPort(HeatToToscaUtil
+                            .getServiceTemplateFromContext(MAIN_SERVICE_TEMPLATE, context).get(),
+                    nestedNodeTemplateId, securityRuleNodeTemplateId,
+                    nestedTemplateConsolidationData);
+            securityRuleNodeTemplateId = "jsa_security_group2";
+            validateNestedNodesConnectedInSecurityRuleToPort(HeatToToscaUtil
+                            .getServiceTemplateFromContext(MAIN_SERVICE_TEMPLATE, context).get(),
+                    nestedNodeTemplateId, securityRuleNodeTemplateId,
+                    nestedTemplateConsolidationData);
+
+            nestedNodeTemplateId = "test_nestedInvalidConnectionToNova";
+            Assert.assertEquals(nestedNodeTemplateId, consolidationData.getNestedConsolidationData()
+                    .getFileNestedConsolidationData(MAIN_SERVICE_TEMPLATE)
+                    .getNestedTemplateConsolidationData(nestedNodeTemplateId).getNodeTemplateId());
+            Assert.assertNull(consolidationData.getNestedConsolidationData()
+                    .getFileNestedConsolidationData(MAIN_SERVICE_TEMPLATE)
+                    .getNestedTemplateConsolidationData(nestedNodeTemplateId).getNodesConnectedIn());
         }
-      }
     }
-  }
 
-  private static void validateSecurityRulePortNestedConsolidationData(RequirementAssignment
-                                                                        requirementAssignment,
-                                                                 String securityRuleNodeTemplateId,
-                                                                    Map<String,
-                                                                        List<RequirementAssignmentData>> consolidationDataNodesConnectedIn) {
-    List<RequirementAssignmentData> requirementAssignmentDataList =
-        consolidationDataNodesConnectedIn.get(securityRuleNodeTemplateId);
-    Assert.assertNotNull(requirementAssignmentDataList);
-    boolean result = false;
-    for (RequirementAssignmentData data : requirementAssignmentDataList) {
-      RequirementAssignment dataRequirementAssignment = data.getRequirementAssignment();
-      result = DataModelUtil
-          .compareRequirementAssignment(requirementAssignment, dataRequirementAssignment);
-      if (result) {
-        break;
-      }
+    private static void validateNestedNodesConnectedInSecurityRuleToPort(ServiceTemplate serviceTemplate,
+                                                                         String nestedNodeTemplateId,
+                                                                         String securityRuleNodeTemplateId,
+                                                                         NestedTemplateConsolidationData
+                                                                                 nestedTemplateConsolidationData) {
+        Multimap<String, RequirementAssignmentData> consolidationDataNodesConnectedIn =
+                nestedTemplateConsolidationData.getNodesConnectedIn();
+        Assert.assertNotNull(consolidationDataNodesConnectedIn);
+        NodeTemplate securityRuleNodeTemplate = DataModelUtil.getNodeTemplate(serviceTemplate,
+                securityRuleNodeTemplateId);
+        List<Map<String, RequirementAssignment>> securityRuleNodeTemplateRequirements =
+                securityRuleNodeTemplate.getRequirements();
+        for (Map<String, RequirementAssignment> req : securityRuleNodeTemplateRequirements) {
+            String requirementId = req.keySet().toArray()[0].toString();
+            if (requirementId.equals(ToscaConstants.PORT_REQUIREMENT_ID)) {
+                RequirementAssignment requirementAssignment = req.get(requirementId);
+                if (requirementAssignment.getNode().equals(nestedNodeTemplateId)) {
+                    validateSecurityRulePortNestedConsolidationData(requirementAssignment,
+                            securityRuleNodeTemplateId, consolidationDataNodesConnectedIn);
+                }
+            }
+        }
     }
-    Assert.assertTrue(result);
-  }
+
+    private static void validateSecurityRulePortNestedConsolidationData(RequirementAssignment requirementAssignment,
+                                                                        String securityRuleNodeTemplateId,
+                                                                        Multimap<String, RequirementAssignmentData>
+                                                                                consolidationDataNodesConnectedIn) {
+        Collection<RequirementAssignmentData> requirementAssignmentDataList =
+                consolidationDataNodesConnectedIn.get(securityRuleNodeTemplateId);
+        Assert.assertNotNull(requirementAssignmentDataList);
+        boolean result = false;
+        for (RequirementAssignmentData data : requirementAssignmentDataList) {
+            RequirementAssignment dataRequirementAssignment = data.getRequirementAssignment();
+            result = DataModelUtil
+                    .compareRequirementAssignment(requirementAssignment, dataRequirementAssignment);
+            if (result) {
+                break;
+            }
+        }
+        Assert.assertTrue(result);
+    }
 }

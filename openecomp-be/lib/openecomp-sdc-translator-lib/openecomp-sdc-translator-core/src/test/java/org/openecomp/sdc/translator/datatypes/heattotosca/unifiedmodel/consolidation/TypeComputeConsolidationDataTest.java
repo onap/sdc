@@ -18,6 +18,7 @@ package org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolid
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -27,21 +28,52 @@ import java.util.Set;
 
 import org.apache.commons.collections4.MapUtils;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 
 public class TypeComputeConsolidationDataTest {
 
     private static final String COMPUTE_NODE_TEMPLATE_ID_1 = "computeNodeTemplateId1";
     private static final String COMPUTE_NODE_TEMPLATE_ID_2 = "computeNodeTemplateId2";
-    private static final String SERVER_NETWORK_ROLE_1_PORT = "server_network_role_1_port";
-    private static final String SERVER_NETWORK_ROLE_2_PORT = "server_network_role_2_port";
+    private static final String SERVER_NETWORK_ROLE_1_PORT = "server_networkrole_1_port";
+    private static final String SERVER_NETWORK_ROLE_2_PORT = "server_networkrole_2_port";
+    private static final String SERVER_NETWORK_ROLE_1_PORT1 = "server_networkrole_1_port";
+    private static final String SERVER_OAM = "server_oam";
+    private static final String SERVER_CMAUI = "server_cmaui";
+    private static final String SERVER_0_NETWORK_ROLE_1_PORT = "server_0_networkrole_1_port";
+    private static final String SERVER_1_NETWORK_ROLE_1_PORT = "server_1_networkrole_1_port";
+    private static final String SERVER_TYPE = "server_type";
+
+    @Mock
+    private ComputeTemplateConsolidationData computeTemplateConsolidationDataMock;
+
+    @Before
+    public void setUp() {
+        MockitoAnnotations.initMocks(this);
+    }
+
+    private Map<String, List<String>> multipleNumberOfPortInEachTypeTypeMap = new HashMap<String, List<String>>() {
+        {
+            put("oam_untr_port", Arrays.asList("oam_1_untr_port_1", "oam_1_untr_port_2"));
+            put("cmaui_untr_port", Arrays.asList("cmaui_1_untr_port_1", "cmaui_1_untr_port_2"));
+        }
+    };
+
+    private Map<String, List<String>> singleNumberOfPortTypeMap = new HashMap<String, List<String>>() {
+        {
+            put("oam_untr_port", Collections.singletonList("oam_1_untr_port_1"));
+        }
+    };
 
     private final TypeComputeConsolidationData consolidationData = new TypeComputeConsolidationData();
 
     @Test
     public void testCollectAllPortsOfEachTypeFromComputesNoPorts() {
         ComputeTemplateConsolidationData computeTemplateConsolidationData = new ComputeTemplateConsolidationData();
-        consolidationData.setComputeTemplateConsolidationData("server_type",
+        consolidationData.setComputeTemplateConsolidationData(SERVER_TYPE,
                 computeTemplateConsolidationData);
 
         Map<String, List<String>> stringListMap = consolidationData.collectAllPortsOfEachTypeFromComputes();
@@ -52,12 +84,12 @@ public class TypeComputeConsolidationDataTest {
     public void testCollectAllPortsOfEachTypeFromComputes() {
         Map<String, List<String>> ports = new HashMap<>();
         ports.put(SERVER_NETWORK_ROLE_1_PORT,
-                Arrays.asList("server_0_network_role_1_port", "server_1_network_role_1_port"));
+                Arrays.asList(SERVER_0_NETWORK_ROLE_1_PORT, SERVER_1_NETWORK_ROLE_1_PORT));
 
         ComputeTemplateConsolidationData computeTemplateConsolidationData = new ComputeTemplateConsolidationData();
         computeTemplateConsolidationData.setPorts(ports);
 
-        consolidationData.setComputeTemplateConsolidationData("server_type",
+        consolidationData.setComputeTemplateConsolidationData(SERVER_TYPE,
                 computeTemplateConsolidationData);
 
         Map<String, List<String>> stringListMap = consolidationData.collectAllPortsOfEachTypeFromComputes();
@@ -81,19 +113,19 @@ public class TypeComputeConsolidationDataTest {
         ComputeTemplateConsolidationData computeTemplateConsolidationData1 = new ComputeTemplateConsolidationData();
         computeTemplateConsolidationData1.setPorts(ports1);
 
-        consolidationData.setComputeTemplateConsolidationData("server_type",
+        consolidationData.setComputeTemplateConsolidationData(SERVER_TYPE,
                 computeTemplateConsolidationData);
 
         consolidationData.setComputeTemplateConsolidationData("server_type1",
                 computeTemplateConsolidationData1);
 
         Map<String, List<String>> stringListMap = consolidationData.collectAllPortsOfEachTypeFromComputes();
-        Assert.assertTrue(stringListMap.size() == 2);
-        Assert.assertTrue(stringListMap.get(SERVER_NETWORK_ROLE_1_PORT).size() == 2);
+        Assert.assertEquals(2, stringListMap.size());
+        Assert.assertEquals(2, stringListMap.get(SERVER_NETWORK_ROLE_1_PORT).size());
         Assert.assertTrue(stringListMap.get(SERVER_NETWORK_ROLE_1_PORT).contains("server_0_network_role_1_port_1")
                 && stringListMap.get(SERVER_NETWORK_ROLE_1_PORT).contains("server_1_network_role_1_port_2"));
 
-        Assert.assertTrue(stringListMap.get(SERVER_NETWORK_ROLE_2_PORT).size() == 2);
+        Assert.assertEquals(2, stringListMap.get(SERVER_NETWORK_ROLE_2_PORT).size());
         Assert.assertTrue(stringListMap.get(SERVER_NETWORK_ROLE_2_PORT).contains("server_0_network_role_2_port_1")
                 && stringListMap.get(SERVER_NETWORK_ROLE_2_PORT).contains("server_1_network_role_2_port_2"));
     }
@@ -134,6 +166,133 @@ public class TypeComputeConsolidationDataTest {
         verifyComputeTemplateConsolidationData(consolidationData, COMPUTE_NODE_TEMPLATE_ID_2, expectedNodeTemplateIds2);
 
         Assert.assertNotEquals(firstComputeTemplateConsolidationData, secondComputeTemplateConsolidationData);
+    }
+
+    @Test
+    public void isThereMoreThanOneComputeTypeInstancePositive() {
+        TypeComputeConsolidationData typeComputeConsolidationData = new TypeComputeConsolidationData();
+        typeComputeConsolidationData.setComputeTemplateConsolidationData(
+                SERVER_OAM, new ComputeTemplateConsolidationData());
+        typeComputeConsolidationData.setComputeTemplateConsolidationData(
+                "server_mao", new ComputeTemplateConsolidationData());
+
+        Assert.assertTrue(typeComputeConsolidationData.isThereMoreThanOneComputeTypeInstance());
+    }
+
+    @Test
+    public void isThereMoreThanOneComputeTypeInstanceNegative() {
+        TypeComputeConsolidationData typeComputeConsolidationData = new TypeComputeConsolidationData();
+        typeComputeConsolidationData.setComputeTemplateConsolidationData(
+                "server_mao", new ComputeTemplateConsolidationData());
+
+        Assert.assertFalse(typeComputeConsolidationData.isThereMoreThanOneComputeTypeInstance());
+    }
+
+    @Test
+    public void isThereMoreThanOneComputeTypeInstanceEmpty() {
+        TypeComputeConsolidationData typeComputeConsolidationData = new TypeComputeConsolidationData();
+        Assert.assertFalse(typeComputeConsolidationData.isThereMoreThanOneComputeTypeInstance());
+    }
+
+    @Test
+    public void isNumberOfPortFromEachTypeLegal() {
+        TypeComputeConsolidationData typeComputeConsolidationData = new TypeComputeConsolidationData();
+        typeComputeConsolidationData.setComputeTemplateConsolidationData(
+                SERVER_OAM, computeTemplateConsolidationDataMock);
+
+        typeComputeConsolidationData.isNumberOfPortFromEachTypeLegal();
+
+        Mockito.verify(computeTemplateConsolidationDataMock).isNumberOfPortFromEachTypeLegal();
+    }
+
+    @Test
+    public void isPortTypesAndNumberOfPortEqualsBetweenComputeNodesPositive() {
+        TypeComputeConsolidationData typeComputeConsolidationData = new TypeComputeConsolidationData();
+
+        ComputeTemplateConsolidationData firstComputeTemplate = new ComputeTemplateConsolidationData();
+        firstComputeTemplate.setPorts(singleNumberOfPortTypeMap);
+
+        ComputeTemplateConsolidationData secondComputeTemplate = new ComputeTemplateConsolidationData();
+        secondComputeTemplate.setPorts(singleNumberOfPortTypeMap);
+
+        typeComputeConsolidationData.setComputeTemplateConsolidationData(SERVER_OAM, firstComputeTemplate);
+        typeComputeConsolidationData.setComputeTemplateConsolidationData(SERVER_CMAUI, secondComputeTemplate);
+
+        Assert.assertTrue(typeComputeConsolidationData.isPortTypesEqualsBetweenComputeNodes());
+        Assert.assertTrue(typeComputeConsolidationData.isNumberOfPortsEqualsBetweenComputeNodes());
+    }
+
+    @Test
+    public void isPortTypesAndNumberOfPortEqualsBetweenComputeNodesNegative() {
+        TypeComputeConsolidationData typeComputeConsolidationData = new TypeComputeConsolidationData();
+
+        ComputeTemplateConsolidationData firstComputeTemplate = new ComputeTemplateConsolidationData();
+        firstComputeTemplate.setPorts(multipleNumberOfPortInEachTypeTypeMap);
+        typeComputeConsolidationData.setComputeTemplateConsolidationData(SERVER_OAM, firstComputeTemplate);
+
+        ComputeTemplateConsolidationData secondComputeTemplate = new ComputeTemplateConsolidationData();
+        secondComputeTemplate.setPorts(singleNumberOfPortTypeMap);
+        typeComputeConsolidationData.setComputeTemplateConsolidationData(SERVER_CMAUI, secondComputeTemplate);
+
+        Assert.assertFalse(typeComputeConsolidationData.isPortTypesEqualsBetweenComputeNodes());
+        Assert.assertFalse(typeComputeConsolidationData.isNumberOfPortsEqualsBetweenComputeNodes());
+    }
+
+    @Test
+    public void isNumberOfComputeConsolidationDataPerTypeLegalPositive() {
+        TypeComputeConsolidationData typeComputeConsolidationData = new TypeComputeConsolidationData();
+        typeComputeConsolidationData.setComputeTemplateConsolidationData(
+                SERVER_CMAUI, new ComputeTemplateConsolidationData());
+
+        Assert.assertTrue(typeComputeConsolidationData.isNumberOfComputeConsolidationDataPerTypeLegal());
+    }
+
+    @Test
+    public void isNumberOfComputeConsolidationDataPerTypeLegalNegative() {
+        TypeComputeConsolidationData typeComputeConsolidationData = new TypeComputeConsolidationData();
+        typeComputeConsolidationData.setComputeTemplateConsolidationData(
+                SERVER_CMAUI, new ComputeTemplateConsolidationData());
+        typeComputeConsolidationData.setComputeTemplateConsolidationData(
+                SERVER_OAM, new ComputeTemplateConsolidationData());
+
+        Assert.assertFalse(typeComputeConsolidationData.isNumberOfComputeConsolidationDataPerTypeLegal());
+    }
+
+    @Test
+    public void isGetAttrOutFromEntityLegal() {
+        Map<String, List<String>> ports = new HashMap<>();
+        ports.put(SERVER_NETWORK_ROLE_1_PORT1,
+                Arrays.asList(SERVER_0_NETWORK_ROLE_1_PORT, SERVER_1_NETWORK_ROLE_1_PORT));
+
+        Mockito.when(computeTemplateConsolidationDataMock.isGetAttrOutFromEntityLegal(Mockito.any(), Mockito.any()))
+                .thenReturn(true);
+
+        TypeComputeConsolidationData typeComputeConsolidationData = new TypeComputeConsolidationData();
+        typeComputeConsolidationData.setComputeTemplateConsolidationData("server_oam_1", computeTemplateConsolidationDataMock);
+
+        Assert.assertTrue(typeComputeConsolidationData.isGetAttrOutFromEntityLegal(ports));
+        Mockito.verify(computeTemplateConsolidationDataMock, Mockito.times(1))
+                .isGetAttrOutFromEntityLegal(Mockito.any(), Mockito.any());
+    }
+
+    @Test
+    public void testIsGetAttrOutFromEntityLegalNegative() {
+        Map<String, List<String>> ports = new HashMap<>();
+        ports.put(SERVER_NETWORK_ROLE_1_PORT1,
+                Arrays.asList(SERVER_0_NETWORK_ROLE_1_PORT, SERVER_1_NETWORK_ROLE_1_PORT));
+
+        TypeComputeConsolidationData typeComputeConsolidationData = new TypeComputeConsolidationData();
+        typeComputeConsolidationData.setComputeTemplateConsolidationData("server_oam_1",
+                computeTemplateConsolidationDataMock);
+
+        Mockito.when(computeTemplateConsolidationDataMock.isGetAttrOutFromEntityLegal(Mockito.any(), Mockito.any()))
+                .thenReturn(false);
+
+        Assert.assertFalse(typeComputeConsolidationData.isGetAttrOutFromEntityLegal(ports));
+
+        Mockito.verify(computeTemplateConsolidationDataMock, Mockito.times(1))
+                .isGetAttrOutFromEntityLegal(Mockito.any(), Mockito.any());
+
     }
 
     private void verifyComputeTemplateConsolidationData(TypeComputeConsolidationData typeComputeConsolidationData,

@@ -20,6 +20,9 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Matchers.anyString;
 
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
+
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.Before;
@@ -1046,7 +1049,7 @@ public class UnifiedCompositionServiceTest {
                 .put(MAIN_SERVICE_TEMPLATE_YAML, inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML));
         context.addUnifiedNestedNodeTemplateId(MAIN_SERVICE_TEMPLATE_YAML, "server_pcm_001", "abstract_pcm_server_0");
 
-        Map<String, List<RequirementAssignmentData>> nodeConnectedInList =
+        Multimap<String, RequirementAssignmentData> nodeConnectedInList =
                 TestUtils.getNodeConnectedInList("server_pcm_001", inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML),
                         DEPENDENCY);
         UnifiedCompositionData unifiedComposition =
@@ -1080,7 +1083,7 @@ public class UnifiedCompositionServiceTest {
                 .put(MAIN_SERVICE_TEMPLATE_YAML, inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML));
         context.addUnifiedNestedNodeTemplateId(MAIN_SERVICE_TEMPLATE_YAML, "server_pcm_001", "abstract_pcm_server_0");
 
-        Map<String, List<RequirementAssignmentData>> nodeConnectedInList =
+        Multimap<String, RequirementAssignmentData> nodeConnectedInList =
                 TestUtils.getNodeConnectedInList("server_pcm_001", inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML),
                         DEPENDENCY);
         UnifiedCompositionData unifiedComposition =
@@ -1118,7 +1121,7 @@ public class UnifiedCompositionServiceTest {
                 .put(MAIN_SERVICE_TEMPLATE_YAML, inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML));
         context.addUnifiedNestedNodeTemplateId(MAIN_SERVICE_TEMPLATE_YAML, "server_pcm_001", "abstract_pcm_server_0");
 
-        Map<String, List<RequirementAssignmentData>> nodeConnectedInList =
+        Multimap<String, RequirementAssignmentData> nodeConnectedInList =
                 TestUtils.getNodeConnectedInList("server_pcm_001", inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML),
                         DEPENDENCY);
         UnifiedCompositionData unifiedComposition =
@@ -1317,7 +1320,7 @@ public class UnifiedCompositionServiceTest {
                 TestUtils.getRequirementAssignmentDataList(computeNodeTemplate, "local_storage");
         List<RequirementAssignmentData> requirementAssignmentList =
                 (requirementAssignmentDataList.isPresent()) ? requirementAssignmentDataList.get() : null;
-        Map<String, List<RequirementAssignmentData>> volume = null;
+        Multimap<String, RequirementAssignmentData> volume = null;
         if (requirementAssignmentList != null) {
             volume = getVolume(requirementAssignmentList);
         }
@@ -1329,7 +1332,7 @@ public class UnifiedCompositionServiceTest {
                 NodeTemplate portNodeTemplate =
                         DataModelUtil.getNodeTemplate(inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML), port.getRight());
 
-                Map<String, List<RequirementAssignmentData>> nodeConnectedOut =
+                Multimap<String, RequirementAssignmentData> nodeConnectedOut =
                         TestUtils.getNodeConnectedOutList(portNodeTemplate, "link");
                 PortTemplateConsolidationData portTemplateConsolidationData =
                         TestUtils.createPortTemplateConsolidationData(port.getRight());
@@ -1370,14 +1373,14 @@ public class UnifiedCompositionServiceTest {
                 DataModelUtil.getNodeTemplate(inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML), computeNodeTemplateId);
         Optional<List<RequirementAssignmentData>> requirementAssignmentDataList =
                 TestUtils.getRequirementAssignmentDataList(computeNodeTemplate, "local_storage");
-        Map<String, List<RequirementAssignmentData>> volume = null;
+        Multimap<String, RequirementAssignmentData> volume = null;
         if (requirementAssignmentDataList.isPresent()) {
             volume = getVolume(requirementAssignmentDataList.get());
         }
         UnifiedCompositionData data = new UnifiedCompositionData();
-        Map<String, List<RequirementAssignmentData>> computeNodeConnectedOut =
+        Multimap<String, RequirementAssignmentData> computeNodeConnectedOut =
                 TestUtils.getNodeConnectedOutList(computeNodeTemplate, DEPENDENCY);
-        Map<String, List<RequirementAssignmentData>> computeNodeConnectedIn =
+        Multimap<String, RequirementAssignmentData> computeNodeConnectedIn =
                 TestUtils
                         .getNodeConnectedInList(computeNodeTemplateId, inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML),
                                 DEPENDENCY);
@@ -1415,14 +1418,14 @@ public class UnifiedCompositionServiceTest {
                     }
                 }
             }
-            Map<String, List<RequirementAssignmentData>> portNodeConnectedOut =
+            Multimap<String, RequirementAssignmentData> portNodeConnectedOut =
                     TestUtils.getNodeConnectedOutList(portNodeTemplate, "link");
             PortTemplateConsolidationData portTemplateConsolidationData = TestUtils
                     .createPortTemplateConsolidationData(port.getRight());
             portTemplateConsolidationData.setNodesConnectedOut(portNodeConnectedOut);
 
             //Add node connected in info to test data
-            Map<String, List<RequirementAssignmentData>> portNodeConnectedIn =
+            Multimap<String, RequirementAssignmentData> portNodeConnectedIn =
                     TestUtils.getNodeConnectedInList(port.getRight(), inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML),
                             PORT);
             portTemplateConsolidationData.setNodesConnectedIn(portNodeConnectedIn);
@@ -1438,13 +1441,12 @@ public class UnifiedCompositionServiceTest {
         addGetAttrForPort(data);
     }
 
-    private Map<String, List<RequirementAssignmentData>> getVolume(
+    private Multimap<String, RequirementAssignmentData> getVolume(
             List<RequirementAssignmentData> requirementAssignmentList) {
-        Map<String, List<RequirementAssignmentData>> volume = new HashMap<>();
+        Multimap<String, RequirementAssignmentData> volume = ArrayListMultimap.create();
         for (RequirementAssignmentData requirementAssignmentData : requirementAssignmentList) {
             String volumeNodeTemplateId = requirementAssignmentData.getRequirementAssignment().getNode();
-            volume.computeIfAbsent(volumeNodeTemplateId, k -> new ArrayList<>());
-            volume.get(volumeNodeTemplateId).add(requirementAssignmentData);
+            volume.put(volumeNodeTemplateId, requirementAssignmentData);
         }
         return volume;
     }

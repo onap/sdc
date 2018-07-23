@@ -260,8 +260,8 @@ public class BaseResourceTranslationTest {
             case VALIDATE_CONNECTIVITY:
               validateComputeConnectivityIn(computeTemplateConsolidationData,
                   expectedServiceTemplate);
-              validateComputeConnectivityOut(computeNodeTemplateId,computeTemplateConsolidationData,
-                  expectedServiceTemplate);
+              validateComputeConnectivityOut(computeNodeTemplateId, computeTemplateConsolidationData,
+                      expectedServiceTemplate);
               break;
             case VALIDATE_DEPENDS_ON:
               validateDependsOnInConsolidationData(computeNodeTemplateId,
@@ -274,11 +274,9 @@ public class BaseResourceTranslationTest {
     }
   }
 
-  protected void validateGetAttribute(String testName){
-    Map<String, ServiceTemplate> expectedServiceTemplateModels = TestUtils.getServiceTemplates
-        (expectedResultMap);
-    validateGetAttr(translationContext,expectedServiceTemplateModels,testName);
-  }
+    protected void validateGetAttribute(String testName) {
+        validateGetAttr(translationContext, testName);
+    }
 
   protected void validateNestedTemplateConsolidationData(String testName){
     validateNestedConsolidationData(translationContext, testName);
@@ -311,8 +309,7 @@ public class BaseResourceTranslationTest {
         switch(ConsolidationDataValidationType.VALIDATE_CONNECTIVITY){
           case VALIDATE_CONNECTIVITY:
             validatePortConnectivityIn(portTemplateConsolidationData,expectedServiceTemplate);
-            validatePortConnectivityOut(portNodeTemplateId, portTemplateConsolidationData,
-                expectedServiceTemplate);
+            validatePortConnectivityOut(portNodeTemplateId, portTemplateConsolidationData, expectedServiceTemplate);
             break;
         }
       }

@@ -16,7 +16,10 @@
 
 package org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation;
 
+import com.google.common.collect.Multimap;
+
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -38,6 +41,12 @@ public class EntityConsolidationDataTest {
     private static final String GROUP_ID_2 = "groupId2";
     private static final String FIELD_1 = "field1";
     private static final String FIELD_2 = "field2";
+    private static final String SERVER_NETWORKROLE_1_PORT = "server_networkrole_1_port";
+    private static final String SERVER_0_NETWORKROLE_1_PORT = "server_0_networkrole_1_port";
+    private static final String SERVER_0_NETWORKROLE_2_PORT = "server_0_networkrole_2_port";
+    private static final String VMAC_ADDRESS = "vmac_address";
+    private static final String ACCESS_IPV4 = "accessIPv4";
+    private static final String SERVER_1_NETWORKROLE_1_PORT = "server_1_networkrole_1_port";
 
 
     private final EntityConsolidationData consolidationData = new EntityConsolidationData();
@@ -45,16 +54,16 @@ public class EntityConsolidationDataTest {
     @Test
     public void testIsGetAttrOutFromEntityLegal() {
         Map<String, List<String>> ports = new HashMap<>();
-        ports.put("server_networkrole_1_port",
-                Arrays.asList("server_0_networkrole_1_port", "server_1_networkrole_1_port"));
+        ports.put(SERVER_NETWORKROLE_1_PORT,
+                Arrays.asList(SERVER_0_NETWORKROLE_1_PORT, SERVER_1_NETWORKROLE_1_PORT));
 
-        GetAttrFuncData getAttrFuncData = new GetAttrFuncData("vmac_address", "accessIPv4");
+        GetAttrFuncData getAttrFuncData = new GetAttrFuncData(VMAC_ADDRESS, ACCESS_IPV4);
         Map<String, List<GetAttrFuncData>> getAttOutMap = new HashMap<>();
-        getAttOutMap.put("server_0_networkrole_1_port", Collections.singletonList(getAttrFuncData));
+        getAttOutMap.put(SERVER_0_NETWORKROLE_1_PORT, Collections.singletonList(getAttrFuncData));
 
-        GetAttrFuncData getAttrFuncData1 = new GetAttrFuncData("vmac_address", "accessIPv4");
+        GetAttrFuncData getAttrFuncData1 = new GetAttrFuncData(VMAC_ADDRESS, ACCESS_IPV4);
         Map<String, List<GetAttrFuncData>> getAttOutMap1 = new HashMap<>();
-        getAttOutMap1.put("server_1_networkrole_1_port", Collections.singletonList(getAttrFuncData1));
+        getAttOutMap1.put(SERVER_1_NETWORKROLE_1_PORT, Collections.singletonList(getAttrFuncData1));
 
 
         EntityConsolidationData entityConsolidationData = new EntityConsolidationData();
@@ -71,12 +80,32 @@ public class EntityConsolidationDataTest {
     }
 
     @Test
-    public void testIsGetAttrOutFromEntityLegalNegative() {
-        Map<String, List<String>> ports = new HashMap<>();
-        ports.put("server_networkrole_1_port",
-                Arrays.asList("server_0_networkrole_1_port", "server_0_networkrole_2_port"));
+    public void testIsGetAttrOutFromEntityLegal_EntityConsolidationDataListEmptyOrNull() {
+        EntityConsolidationData entityConsolidationData = new EntityConsolidationData();
 
-        GetAttrFuncData getAttrFuncData = new GetAttrFuncData("vmac_address", "accessIPv4");
+        Assert.assertTrue(entityConsolidationData.isGetAttrOutFromEntityLegal(null, null));
+        Assert.assertTrue(entityConsolidationData.isGetAttrOutFromEntityLegal(
+                Collections.emptyList(), Collections.emptyMap()));
+    }
+
+    @Test
+    public void testIsGetAttrOutFromEntityLegal_PortTypeToIdsEmptyOrNull() {
+        EntityConsolidationData entityConsolidationData = new EntityConsolidationData();
+
+        Assert.assertTrue(entityConsolidationData.isGetAttrOutFromEntityLegal(
+                Collections.singletonList(entityConsolidationData), null));
+
+        Assert.assertTrue(entityConsolidationData.isGetAttrOutFromEntityLegal(
+                Collections.singletonList(entityConsolidationData), Collections.emptyMap()));
+    }
+
+    @Test
+    public void testIsGetAttrOutFromEntityLegal_Negative() {
+        Map<String, List<String>> ports = new HashMap<>();
+        ports.put(SERVER_NETWORKROLE_1_PORT,
+                Arrays.asList(SERVER_0_NETWORKROLE_1_PORT, SERVER_0_NETWORKROLE_2_PORT));
+
+        GetAttrFuncData getAttrFuncData = new GetAttrFuncData(VMAC_ADDRESS, ACCESS_IPV4);
         Map<String, List<GetAttrFuncData>> getAttOutMap = new HashMap<>();
         getAttOutMap.put("server_0_networkrole_1_port", Collections.singletonList(getAttrFuncData));
 
@@ -97,22 +126,34 @@ public class EntityConsolidationDataTest {
     }
 
     @Test
-    public void testIsGetAttrOutFromEntityLegalMultiplePortWithDiffAttr() {
+    public void testIsGetAttrOutFromEntityLegal_EmptyList() {
         Map<String, List<String>> ports = new HashMap<>();
-        ports.put("server_networkrole_1_port",
-                Arrays.asList("server_0_networkrole_1_port", "server_1_networkrole_1_port"));
+        ports.put(SERVER_NETWORKROLE_1_PORT,
+                Arrays.asList(SERVER_0_NETWORKROLE_1_PORT, SERVER_0_NETWORKROLE_2_PORT));
+
+        EntityConsolidationData entityConsolidationData = new EntityConsolidationData();
+
+        Assert.assertTrue(entityConsolidationData
+                                   .isGetAttrOutFromEntityLegal(Collections.emptyList(), ports));
+    }
+
+    @Test
+    public void testIsGetAttrOutFromEntityLegal_MultiplePortWithDiffAttr() {
+        Map<String, List<String>> ports = new HashMap<>();
+        ports.put(SERVER_NETWORKROLE_1_PORT,
+                Arrays.asList(SERVER_0_NETWORKROLE_1_PORT, SERVER_1_NETWORKROLE_1_PORT));
 
         ports.put("server_networkrole_2_port",
-                Arrays.asList("server_0_networkrole_2_port", "server_0_networkrole_2_port"));
+                Arrays.asList(SERVER_0_NETWORKROLE_2_PORT, "server_1_networkrole_2_port"));
 
-        GetAttrFuncData getAttrFuncData = new GetAttrFuncData("vmac_address", "accessIPv4");
+        GetAttrFuncData getAttrFuncData = new GetAttrFuncData(VMAC_ADDRESS, ACCESS_IPV4);
         Map<String, List<GetAttrFuncData>> getAttOutMap = new HashMap<>();
-        getAttOutMap.put("server_0_networkrole_1_port", Collections.singletonList(getAttrFuncData));
-        getAttOutMap.put("server_0_networkrole_2_port", Collections.singletonList(getAttrFuncData));
+        getAttOutMap.put(SERVER_0_NETWORKROLE_1_PORT, Collections.singletonList(getAttrFuncData));
+        getAttOutMap.put(SERVER_0_NETWORKROLE_2_PORT, Collections.singletonList(getAttrFuncData));
 
-        GetAttrFuncData getAttrFuncData1 = new GetAttrFuncData("vmac_address", "accessIPv4");
+        GetAttrFuncData getAttrFuncData1 = new GetAttrFuncData(VMAC_ADDRESS, ACCESS_IPV4);
         Map<String, List<GetAttrFuncData>> getAttOutMap1 = new HashMap<>();
-        getAttOutMap.put("server_0_networkrole_1_port", Collections.singletonList(getAttrFuncData1));
+        getAttOutMap1.put(SERVER_0_NETWORKROLE_1_PORT, Collections.singletonList(getAttrFuncData1));
 
 
         EntityConsolidationData entityConsolidationData = new EntityConsolidationData();
@@ -230,15 +271,15 @@ public class EntityConsolidationDataTest {
         return  getAttrFuncData;
     }
 
-    private void checkNodesConnected(Map<String, List<RequirementAssignmentData>> actualNodesConnected,
+    private void checkNodesConnected(Multimap<String, RequirementAssignmentData> actualNodesConnected,
                                               Map<String, String[]> expectedNodesConnected) {
         Assert.assertNotNull(actualNodesConnected);
 
         expectedNodesConnected.keySet().forEach(expectedNodeTemplateId -> {
             Assert.assertTrue(actualNodesConnected.containsKey(expectedNodeTemplateId));
-            Assert.assertEquals(expectedNodesConnected.size(), actualNodesConnected.size());
+            Assert.assertEquals(expectedNodesConnected.size(), actualNodesConnected.keySet().size());
 
-            List<RequirementAssignmentData> actualRequirementAssignmentData =
+            Collection<RequirementAssignmentData> actualRequirementAssignmentData =
                     actualNodesConnected.get(expectedNodeTemplateId);
             List<String> expectedRequirementIdList =
                     Arrays.asList(expectedNodesConnected.get(expectedNodeTemplateId));

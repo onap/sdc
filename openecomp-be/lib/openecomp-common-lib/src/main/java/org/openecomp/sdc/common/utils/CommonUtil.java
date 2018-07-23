@@ -21,6 +21,8 @@
 package org.openecomp.sdc.common.utils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.Multimap;
+
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -223,4 +225,8 @@ public class CommonUtil {
     }
     return objectAsMap;
   }
+
+    public static <K, V> boolean isMultimapEmpty(Multimap<K, V> obj) {
+        return Objects.isNull(obj) || obj.isEmpty();
+    }
 }
