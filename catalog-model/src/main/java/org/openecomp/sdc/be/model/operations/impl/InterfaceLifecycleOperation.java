@@ -20,13 +20,7 @@
 
 package org.openecomp.sdc.be.model.operations.impl;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-
+import fj.data.Either;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphEdge;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphRelation;
@@ -50,7 +44,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import fj.data.Either;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 @Component("interface-operation")
 public class InterfaceLifecycleOperation implements IInterfaceLifecycleOperation {
@@ -193,34 +192,6 @@ public class InterfaceLifecycleOperation implements IInterfaceLifecycleOperation
 
 		return Either.left(createNodeResult.left().value());
 	}
-
-	// @Override
-	// public Either<InterfaceDefinition, StorageOperationStatus> getInterface(
-	// String interfaceId) {
-	//
-	// /*
-	// * Either<InterfaceData, TitanOperationStatus> getResult =
-	// * this.titanGenericDao
-	// * .getNode(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.Interface),
-	// * interfaceId, InterfaceData.class); if (getResult.isLeft()) {
-	// * InterfaceData propertyData = getResult.left().value(); return
-	// * Either.left(convertPropertyDataToPropertyDefinition(propertyData)); }
-	// * else { TitanOperationStatus titanStatus = getResult.right().value();
-	// * log.debug("Node with id " + propertyId +
-	// * " was not found in the graph. status: " + titanStatus);
-	// * StorageOperationStatus storageOperationStatus =
-	// * DaoStatusConverter.convertTitanStatusToStorageStatus(titanStatus);
-	// * return Either.right(storageOperationStatus); }
-	// */
-	// return null;
-	// }
-
-	// @Override
-	// public Either<InterfaceDefinition, StorageOperationStatus> getInterface(
-	// String interfaceId, boolean inTransaction) {
-	// // TODO Auto-generated method stub
-	// return null;
-	// }
 
 	@Override
 	public Either<Map<String, InterfaceDefinition>, StorageOperationStatus> getAllInterfacesOfResource(String resourceIdn, boolean recursively) {
@@ -431,18 +402,6 @@ public class InterfaceLifecycleOperation implements IInterfaceLifecycleOperation
 	@Override
 	public Either<Operation, StorageOperationStatus> updateInterfaceOperation(String resourceId, String interfaceName, String operationName, Operation operation, boolean inTransaction) {
 		Either<Operation, StorageOperationStatus> status = updateOperationOnGraph(operation, resourceId, interfaceName, operationName);
-
-		/*
-		 * if (status.isRight()) { if (false == inTransaction) { titanGenericDao.rollback(); } 
-		 * log.error("Failed to update operation {} of interfaceName {} of resource {}", operationName, interfaceName, resourceId); 
-		 * return
-		 * Either.right(DaoStatusConverter .convertTitanStatusToStorageStatus(status.right().value())); } else { if (false == inTransaction) { titanGenericDao.commit(); } OperationData operationData = status.left().value();
-		 * 
-		 * Operation operationDefResult = convertOperationDataToOperation(operationData);
-		 * 
-		 * 
-		 * log.debug("The returned OperationDefintion is {}", operationDefResult); return Either.left(operationDefResult); }
-		 */
 		return status;
 	}
 
@@ -452,11 +411,6 @@ public class InterfaceLifecycleOperation implements IInterfaceLifecycleOperation
 				InterfaceData.class);
 
 		if (childrenNodes.isRight()) {
-			/*
-			 * InterfaceDefinition intDef = new InterfaceDefinition(); intDef.setType(interfaceName); Map<String, Operation> opMap = new HashMap<String, Operation>(); opMap.put(operationName, operation); intDef.setOperations(opMap);
-			 * Either<InterfaceDefinition, StorageOperationStatus> statusRes = this .createInterfaceOnResource(intDef, resourceId, interfaceName, true); if (statusRes.isRight()) return Either.right(statusRes.right().value()); else {
-			 * InterfaceDefinition newDef = statusRes.left().value(); Operation res = newDef.getOperations().get(operationName); return Either.left(res); }
-			 */
 			return updateOperationFromParentNode(operation, resourceId, interfaceName, operationName);
 
 		} else {
@@ -634,10 +588,7 @@ public class InterfaceLifecycleOperation implements IInterfaceLifecycleOperation
 				}
 			}
 		}
-		// if(newOperation == null)
 		return Either.right(StorageOperationStatus.GENERAL_ERROR);
-		// else
-		// return Either.left(newOperation);
 	}
 
 	private Either<InterfaceData, TitanOperationStatus> findInterfaceOnParentNode(String resourceId, String interfaceName) {

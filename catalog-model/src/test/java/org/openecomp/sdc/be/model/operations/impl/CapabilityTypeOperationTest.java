@@ -20,18 +20,7 @@
 
 package org.openecomp.sdc.be.model.operations.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import javax.annotation.Resource;
-
+import fj.data.Either;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -49,14 +38,19 @@ import org.openecomp.sdc.be.model.tosca.constraints.LessOrEqualConstraint;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import fj.data.Either;
+import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:application-context-test.xml")
-// @TestExecutionListeners(listeners = {
-// DependencyInjectionTestExecutionListener.class,
-// DirtiesContextTestExecutionListener.class,
-// TransactionalTestExecutionListener.class })
 public class CapabilityTypeOperationTest extends ModelTestBase {
 
 	@Resource(name = "titan-generic-dao")
@@ -67,34 +61,6 @@ public class CapabilityTypeOperationTest extends ModelTestBase {
 
 	@BeforeClass
 	public static void setupBeforeClass() {
-		// ExternalConfiguration.setAppName("catalog-model");
-		// String appConfigDir = "src/test/resources/config/catalog-model";
-		// ConfigurationSource configurationSource = new
-		// FSConfigurationSource(ExternalConfiguration.getChangeListener(),
-		// appConfigDir);
-
-		// configurationManager = new ConfigurationManager(
-		// new ConfigurationSource() {
-		//
-		// @Override
-		// public <T> T getAndWatchConfiguration(Class<T> className,
-		// ConfigurationListener configurationListener) {
-		// // TODO Auto-generated method stub
-		// return null;
-		// }
-		//
-		// @Override
-		// public <T> void addWatchConfiguration(Class<T> className,
-		// ConfigurationListener configurationListener) {
-		// // TODO Auto-generated method stub
-		//
-		// }
-		// });
-		//
-		// Configuration configuration = new Configuration();
-		// configuration.setTitanInMemoryGraph(true);
-		//
-		// configurationManager.setConfiguration(configuration);
 		ModelTestBase.init();
 
 	}
@@ -137,10 +103,6 @@ public class CapabilityTypeOperationTest extends ModelTestBase {
 		capabilityTypeDefinition.setDerivedFrom("derivedFrom");
 
 		Either<CapabilityTypeDefinition, StorageOperationStatus> addCapabilityType1 = capabilityTypeOperation.addCapabilityType(capabilityTypeDefinition, true);
-		// assertEquals("check capability type parent not exist",
-		// StorageOperationStatus.INVALID_ID,
-		// addCapabilityType1.right().value());
-		// TODO: esofer change to INVALID_ID
 		assertEquals("check capability type parent not exist", StorageOperationStatus.INVALID_ID, addCapabilityType1.right().value());
 	}
 
@@ -315,11 +277,4 @@ public class CapabilityTypeOperationTest extends ModelTestBase {
 			return false;
 		}
 	}
-
-	public void setOperations(TitanGenericDao titanDao, CapabilityTypeOperation capabilityTypeOperation) {
-		this.titanDao = titanDao;
-		this.capabilityTypeOperation = capabilityTypeOperation;
-
-	}
-
 }

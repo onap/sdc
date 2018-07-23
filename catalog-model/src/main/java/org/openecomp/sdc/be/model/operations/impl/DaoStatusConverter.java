@@ -65,35 +65,12 @@ public class DaoStatusConverter {
 
 		case ILLEGAL_ARGUMENT:
 			return StorageOperationStatus.BAD_REQUEST;
-		// case HTTP_PROTOCOL_ERROR:
-		// return StorageOperationStatus.HTTP_PROTOCOL_ERROR;
-		// case DB_NOT_AVAILABLE:
-		// return StorageOperationStatus.STORAGE_NOT_AVAILABLE;
-		// case DB_READ_ONLY:
-		// return StorageOperationStatus.READ_ONLY_STORAGE;
-		// case BAD_REQUEST:
-		// return StorageOperationStatus.BAD_REQUEST;
-		// case LEGACY_INDEX_ERROR:
-		// return StorageOperationStatus.STORAGE_LEGACY_INDEX_ERROR;
-		// case SCHEMA_ERROR:
-		// return StorageOperationStatus.SCHEMA_ERROR;
-		// case TRANSACTION_ERROR:
-		// return StorageOperationStatus.TRANSACTION_ERROR;
-		// case EXECUTION_FAILED:
-		// return StorageOperationStatus.EXEUCTION_FAILED;
 		case ALREADY_EXIST:
 			return StorageOperationStatus.ENTITY_ALREADY_EXISTS;
 		case PROPERTY_NAME_ALREADY_EXISTS:
 			return StorageOperationStatus.PROPERTY_NAME_ALREADY_EXISTS;
 		case INVALID_PROPERTY:
 			return StorageOperationStatus.INVALID_PROPERTY;
-		// case WRONG_INPUT:
-		// return StorageOperationStatus.BAD_REQUEST;
-		// case GENERAL_ERROR:
-		// return StorageOperationStatus.GENERAL_ERROR;
-		// case NOT_SUPPORTED:
-		// return StorageOperationStatus.OPERATION_NOT_SUPPORTED;
-
 		default:
 			return StorageOperationStatus.GENERAL_ERROR;
 		}
