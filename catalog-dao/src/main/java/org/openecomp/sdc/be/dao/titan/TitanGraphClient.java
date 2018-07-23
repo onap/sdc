@@ -37,7 +37,8 @@ import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.DAOTitanStrategy;
 import org.openecomp.sdc.be.dao.TitanClientStrategy;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
-import org.openecomp.sdc.common.log.wrappers.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -48,9 +49,8 @@ import java.util.concurrent.*;
 
 @Component("titan-client")
 public class TitanGraphClient {
-
-	private static Logger logger = Logger.getLogger(TitanGraphClient.class.getName());
-	private static Logger healthLogger = Logger.getLogger("titan.healthcheck");
+	private static Logger logger = LoggerFactory.getLogger(TitanGraphClient.class.getName());
+	private static Logger healthLogger = LoggerFactory.getLogger("titan.healthcheck");
 
 	private static final String HEALTH_CHECK = GraphPropertiesDictionary.HEALTH_CHECK.getProperty();
 	private static final String OK = "GOOD";
@@ -67,12 +67,6 @@ public class TitanGraphClient {
 			healthLogger.trace("Health Check Node Found...{}", v.property(HEALTH_CHECK));
 			graph.tx().commit();
 
-			// Vertex v = graph.getVertices(HEALTH_CHECK, OK).iterator().next();
-			// v.setProperty("healthcheck", OK + "_" +
-			// System.currentTimeMillis());
-			// graph.commit();
-			// healthLogger.trace("Health Check Node
-			// Found..."+v.getProperty(HEALTH_CHECK) );
 			return v;
 		}
 	}
@@ -397,19 +391,10 @@ public class TitanGraphClient {
 				if (!graphMgt.containsGraphIndex(prop.getProperty())) {
 					if (prop.isUnique()) {
 						index = graphMgt.buildIndex(prop.getProperty(), Vertex.class).addKey(propKey).unique().buildCompositeIndex();
-
-						graphMgt.setConsistency(propKey, ConsistencyModifier.LOCK); // Ensures
-																					// only
-																					// one
-																					// name
-																					// per
-																					// vertex
-						graphMgt.setConsistency(index, ConsistencyModifier.LOCK); // Ensures
-																					// name
-																					// uniqueness
-																					// in
-																					// the
-																					// graph
+						// Ensures only one name per vertex
+						graphMgt.setConsistency(propKey, ConsistencyModifier.LOCK);
+						// Ensures name uniqueness in the graph
+						graphMgt.setConsistency(index, ConsistencyModifier.LOCK);
 
 					} else {
 						graphMgt.buildIndex(prop.getProperty(), Vertex.class).addKey(propKey).buildCompositeIndex();

@@ -86,21 +86,6 @@ public abstract class CategoryData extends GraphNode {
 		return "CategoryData [name=" + name + ", normalizedName=" + normalizedName + "uniqueId=" + uniqueId + "]";
 	}
 
-	/*
-	 * @Override public int hashCode() { final int prime = 31; int result = 1;
-	 * result = prime * result + ((name == null) ? 0 : name.hashCode()); result
-	 * = prime * result + ((uniqueId == null) ? 0 : uniqueId.hashCode()); return
-	 * result; }
-	 * 
-	 * @Override public boolean equals(Object obj) { if (this == obj) return
-	 * true; if (obj == null) return false; if (getClass() != obj.getClass())
-	 * return false; CategoryData other = (CategoryData) obj; if (name == null)
-	 * { if (other.name != null) return false; } else if
-	 * (!name.equals(other.name)) return false; if (uniqueId == null) { if
-	 * (other.uniqueId != null) return false; } else if
-	 * (!uniqueId.equals(other.uniqueId)) return false; return true; }
-	 */
-
 	@Override
 	public String getUniqueIdKey() {
 		return GraphPropertiesDictionary.UNIQUE_ID.getProperty();

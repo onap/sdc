@@ -386,22 +386,6 @@ public class AuditingDaoTest extends DAOConfDependentTest{
 		assertTrue(!esclient.getClient().admin().indices().prepareExists(expectedIndexName).execute().actionGet()
 				.isExists());
 
-		// Client client = esclient.getClient();
-		// final CreateIndexRequestBuilder createIndexRequestBuilder =
-		// client.admin().indices().prepareCreate(expectedIndexName);
-		// final XContentBuilder mappingBuilder =
-		// jsonBuilder().startObject().startObject("resourceadminevent")
-		// .startObject("_ttl").field("enabled", "true").field("default",
-		// "1s").endObject().endObject()
-		// .endObject();
-		// System.out.println(mappingBuilder.string());
-		// createIndexRequestBuilder.addMapping(documentType, mappingBuilder);
-		//
-		// // MAPPING DONE
-		// createIndexRequestBuilder.execute().actionGet();
-		//
-		//
-
 		Map<AuditingFieldsKey, Object> params = getResourceAdminEventParams(timestamp, "DRequest");
 		params.put(AuditingFieldsKey.AUDIT_DISTRIBUTION_ID, distributionId);
 		testCreationPeriodScenario(params, creationPeriod, expectedIndexName, ResourceAdminEvent.class);
