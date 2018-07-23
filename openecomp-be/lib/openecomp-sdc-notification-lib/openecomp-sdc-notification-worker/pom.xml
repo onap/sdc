@@ -37,7 +37,6 @@
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
-            <version>2.3.1</version>
         </dependency>
 		<dependency>
 		    <groupId>com.googlecode.json-simple</groupId>
@@ -56,17 +55,20 @@
             <version>${http.core.version}</version>
 			<scope>provided</scope>
 		</dependency>
+        <dependency>
+            <groupId>javax.ws.rs</groupId>
+            <artifactId>javax.ws.rs-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
 		<dependency>
-		<groupId>com.datastax.cassandra</groupId>
-		<artifactId>cassandra-driver-core</artifactId>
-		<version>3.4.0</version>
-		<scope>test</scope>
+		    <groupId>com.datastax.cassandra</groupId>
+            <artifactId>cassandra-driver-core</artifactId>
+            <scope>test</scope>
 		</dependency>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <scope>test</scope>
-            <version>${junit.version}</version>
         </dependency>
     </dependencies>
 
