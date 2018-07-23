@@ -44,24 +44,6 @@ public class SdcSchemaBuilderTest extends DAOConfDependentTest{
 		result = SdcSchemaBuilder.deleteSchema();
 	}
 
-	/*@Test
-	public void testParseKeyspaceMetadata() throws Exception {
-		List<KeyspaceMetadata> keyspacesMetadata = new LinkedList<>();
-		Map<String, Map<String, List<String>>> result;
-
-		// default test
-		result = Deencapsulation.invoke(SdcSchemaBuilder.class, "parseKeyspaceMetadata", keyspacesMetadata);
-	}*/
-
-	/*@Test
-	public void testGetMetadataTablesStructure() throws Exception {
-		List<KeyspaceMetadata> keyspacesMetadata = new LinkedList<>();
-		Map<String, Map<String, List<String>>> result;
-
-		// default test
-		result = Deencapsulation.invoke(SdcSchemaBuilder.class, "getMetadataTablesStructure", keyspacesMetadata);
-	}*/
-
 	@Test
 	public void testCreateIndexName() throws Exception {
 		String table = "";
@@ -71,19 +53,6 @@ public class SdcSchemaBuilderTest extends DAOConfDependentTest{
 		// default test
 		result = Deencapsulation.invoke(SdcSchemaBuilder.class, "createIndexName", table, column);
 	}
-
-	/*@Test
-	public void testAlterTable() throws Exception {
-		Session session = null;
-		Map<String, List<String>> existingTablesMetadata = null;
-		ITableDescription tableDescription = null;
-		String tableName = "";
-		Map<String, ImmutablePair<DataType, Boolean>> columnDescription = null;
-
-		// default test
-		Deencapsulation.invoke(SdcSchemaBuilder.class, "alterTable",
-				new Object[] { Session.class, Map.class, ITableDescription.class, tableName, Map.class });
-	}*/
 
 	@Test
 	public void testCreateKeyspace() throws Exception {

@@ -56,7 +56,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:application-context-test.xml")
@@ -385,22 +387,6 @@ public class AuditingDaoTest extends DAOConfDependentTest{
 		String expectedIndexName = auditingDao.getIndexPrefix() + "-2016-06";
 		assertTrue(!esclient.getClient().admin().indices().prepareExists(expectedIndexName).execute().actionGet()
 				.isExists());
-
-		// Client client = esclient.getClient();
-		// final CreateIndexRequestBuilder createIndexRequestBuilder =
-		// client.admin().indices().prepareCreate(expectedIndexName);
-		// final XContentBuilder mappingBuilder =
-		// jsonBuilder().startObject().startObject("resourceadminevent")
-		// .startObject("_ttl").field("enabled", "true").field("default",
-		// "1s").endObject().endObject()
-		// .endObject();
-		// System.out.println(mappingBuilder.string());
-		// createIndexRequestBuilder.addMapping(documentType, mappingBuilder);
-		//
-		// // MAPPING DONE
-		// createIndexRequestBuilder.execute().actionGet();
-		//
-		//
 
 		Map<AuditingFieldsKey, Object> params = getResourceAdminEventParams(timestamp, "DRequest");
 		params.put(AuditingFieldsKey.AUDIT_DISTRIBUTION_ID, distributionId);
