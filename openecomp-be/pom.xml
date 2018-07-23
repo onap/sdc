@@ -3,7 +3,6 @@
     <modelVersion>4.0.0</modelVersion>
 
     <name>openecomp-sdc</name>
-    <groupId>org.openecomp.sdc</groupId>
     <artifactId>openecomp-sdc</artifactId>
     <packaging>pom</packaging>
 
@@ -18,18 +17,10 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-annotations</artifactId>
-            <version>${jackson.version}</version>
-        </dependency>
-
-        <!-- Feature Toggle support libraries-->
-        <dependency>
             <groupId>org.togglz</groupId>
             <artifactId>togglz-core</artifactId>
             <version>${togglz.version}</version>
         </dependency>
-
         <dependency>
             <groupId>org.togglz</groupId>
             <artifactId>togglz-testing</artifactId>
@@ -288,72 +279,6 @@
         </plugins>
     </build>
 
-    <!--Added to resolve blackduck operational risks for indirect dependencies referred -->
-    <dependencyManagement>
-        <dependencies>
-            <!-- https://mvnrepository.com/artifact/commons-beanutils/commons-beanutils -->
-            <dependency>
-                <groupId>commons-beanutils</groupId>
-                <artifactId>commons-beanutils</artifactId>
-                <version>${commons.beanutils.version}</version>
-            </dependency>
-            <!-- https://mvnrepository.com/artifact/com.beust/jcommander -->
-            <dependency>
-                <groupId>com.beust</groupId>
-                <artifactId>jcommander</artifactId>
-                <version>${jcommander.version}</version>
-            </dependency>
-            <!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpasyncclient -->
-            <dependency>
-                <groupId>org.apache.httpcomponents</groupId>
-                <artifactId>httpasyncclient</artifactId>
-                <version>${httpasyncclient.version}</version>
-            </dependency>
-            <!-- https://mvnrepository.com/artifact/com.sun.xml.bind/jaxb-impl -->
-            <dependency>
-                <groupId>com.sun.xml.bind</groupId>
-                <artifactId>jaxb-impl</artifactId>
-                <version>${jaxb.impl.version}</version>
-            </dependency>
-            <!-- https://mvnrepository.com/artifact/org.beanshell/bsh -->
-            <dependency>
-                <groupId>org.beanshell</groupId>
-                <artifactId>bsh</artifactId>
-                <version>${bsh.version}</version>
-            </dependency>
-            <!-- https://mvnrepository.com/artifact/commons-digester/commons-digester -->
-            <dependency>
-                <groupId>commons-digester</groupId>
-                <artifactId>commons-digester</artifactId>
-                <version>${commons.digester.version}</version>
-            </dependency>
-            <!-- https://mvnrepository.com/artifact/com.fasterxml/classmate -->
-            <dependency>
-                <groupId>com.fasterxml</groupId>
-                <artifactId>classmate</artifactId>
-                <version>${classmate.version}</version>
-            </dependency>
-            <!--1702 -->
-            <!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-api -->
-            <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-api</artifactId>
-                <version>${slf4j.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.codehaus.groovy</groupId>
-                <artifactId>groovy-all</artifactId>
-                <version>${groovy.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.codehaus.janino</groupId>
-                <artifactId>janino</artifactId>
-                <version>${janino.version}</version>
-                <scope>provided</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
-
     <modules>
         <module>/api</module>
         <module>/lib</module>
@@ -362,13 +287,6 @@
         <module>/backend</module>
     </modules>
     <profiles>
-        <!--<profile>-->
-        <!--<id>docker-staging</id>-->
-        <!--<properties>-->
-        <!--<docker.tag>${project.version}-STAGING-${maven.build.timestamp}</docker.tag>-->
-        <!--<docker.latest.tag>${project.version}-STAGING-latest</docker.latest.tag>-->
-        <!--</properties>-->
-        <!--</profile>-->
 
         <profile>
             <id>docker</id>
