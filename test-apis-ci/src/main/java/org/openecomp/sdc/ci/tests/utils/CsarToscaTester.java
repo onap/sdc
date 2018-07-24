@@ -6,14 +6,14 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-import org.openecomp.sdc.tosca.parser.api.ISdcCsarHelper;
-import org.openecomp.sdc.tosca.parser.exceptions.SdcToscaParserException;
-import org.openecomp.sdc.tosca.parser.impl.SdcToscaParserFactory;
-import org.openecomp.sdc.tosca.parser.impl.SdcTypes;
-import org.openecomp.sdc.toscaparser.api.Group;
-import org.openecomp.sdc.toscaparser.api.NodeTemplate;
-import org.openecomp.sdc.toscaparser.api.elements.Metadata;
-import org.openecomp.sdc.toscaparser.api.parameters.Input;
+import org.onap.sdc.tosca.parser.api.ISdcCsarHelper;
+import org.onap.sdc.tosca.parser.exceptions.SdcToscaParserException;
+import org.onap.sdc.tosca.parser.impl.SdcToscaParserFactory;
+import org.onap.sdc.tosca.parser.impl.SdcTypes;
+import org.onap.sdc.toscaparser.api.Group;
+import org.onap.sdc.toscaparser.api.NodeTemplate;
+import org.onap.sdc.toscaparser.api.elements.Metadata;
+import org.onap.sdc.toscaparser.api.parameters.Input;
 
 public class CsarToscaTester {
 

@@ -25,11 +25,11 @@ import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
 import org.openecomp.sdc.ci.tests.utils.general.OnboardingUtillViaApis;
 import org.openecomp.sdc.ci.tests.utils.rest.PropertyRestUtils;
 import org.openecomp.sdc.ci.tests.verificator.ToscaValidation;
-import org.openecomp.sdc.tosca.parser.api.ISdcCsarHelper;
-import org.openecomp.sdc.tosca.parser.impl.SdcToscaParserFactory;
-import org.openecomp.sdc.toscaparser.api.Group;
-import org.openecomp.sdc.toscaparser.api.NodeTemplate;
-import org.openecomp.sdc.toscaparser.api.elements.Metadata;
+import org.onap.sdc.tosca.parser.api.ISdcCsarHelper;
+import org.onap.sdc.tosca.parser.impl.SdcToscaParserFactory;
+import org.onap.sdc.toscaparser.api.Group;
+import org.onap.sdc.toscaparser.api.NodeTemplate;
+import org.onap.sdc.toscaparser.api.elements.Metadata;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
