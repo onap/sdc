@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da7095c5_910567c4",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/licenseModel/licenseKeyGroups/LicenseKeyGroupsEditorView.jsx",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1951
+      },
+      "writtenOn": "2018-07-24T15:19:13Z",
+      "side": 0,
+      "message": "remove comments",
+      "revId": "e993087ad095f6242780847926b1eed5c116ea93",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}

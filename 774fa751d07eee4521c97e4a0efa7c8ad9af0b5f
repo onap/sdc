@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da7095c5_510fcfe1",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/licenseModel/components/UuId.jsx",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1951
+      },
+      "writtenOn": "2018-07-24T15:19:13Z",
+      "side": 1,
+      "message": "add propTypes for Uuid",
+      "revId": "774fa751d07eee4521c97e4a0efa7c8ad9af0b5f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da7095c5_b10aebd0",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/licenseModel/licenseKeyGroups/LicenseKeyGroupsEditorView.jsx",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1951
+      },
+      "writtenOn": "2018-07-24T15:19:13Z",
+      "side": 1,
+      "message": "remove comments",
+      "revId": "774fa751d07eee4521c97e4a0efa7c8ad9af0b5f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
