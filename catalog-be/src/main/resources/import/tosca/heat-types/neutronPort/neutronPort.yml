@@ -1,28 +1,4 @@
 tosca_definitions_version: tosca_simple_yaml_1_0_0
-metadata:
-  template_name: NeutronPortGlobalTypes
-  template_version: 1.0.0
-description: Neutron Port TOSCA Global Types
-imports:
-  common_definitions:
-    file: CommonGlobalTypesServiceTemplate.yaml
-  PortGlobalTypes:
-    file: PortGlobalTypesServiceTemplate.yaml
-data_types:
-  org.openecomp.datatypes.heat.neutron.port.FixedIps:
-    derived_from: tosca.datatypes.Root
-    description: subnet/ip_address
-    properties:
-      subnet:
-        type: string
-        description: Subnet in which to allocate the IP address for this port
-        required: false
-        status: SUPPORTED
-      ip_address:
-        type: string
-        description: IP address desired in the subnet for this port
-        required: false
-        status: SUPPORTED
 node_types:
   org.openecomp.resource.cp.nodes.heat.network.neutron.Port:
     derived_from: org.openecomp.resource.cp.nodes.network.Port

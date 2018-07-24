@@ -10,5 +10,5 @@ node_types:
                 occurrences:
                     - 1
                     - UNBOUNDED
-                capability: org.openecomp.capabilities.VLANAssignment                
+                capability: org.openecomp.capabilities.VLANAssignment
                 relationship: org.openecomp.relationships.AssignsTo
