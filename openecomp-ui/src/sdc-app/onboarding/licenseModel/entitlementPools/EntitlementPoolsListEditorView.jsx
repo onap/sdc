@@ -122,7 +122,8 @@ class EntitlementPoolsListEditorView extends React.Component {
             name,
             description,
             thresholdValue,
-            thresholdUnits
+            thresholdUnits,
+            manufacturerReferenceNumber
         } = entitlementPool;
         let {
             onEditEntitlementPoolClick,
@@ -149,7 +150,14 @@ class EntitlementPoolsListEditorView extends React.Component {
                             `${thresholdValue} ${extractUnits(thresholdUnits)}`}
                     </div>
                 </div>
-
+                <div className="list-editor-item-view-field">
+                    <div className="title">
+                        {i18n('Manufacturer Reference Number')}
+                    </div>
+                    <div className="text description">
+                        {manufacturerReferenceNumber}
+                    </div>
+                </div>
                 <div className="list-editor-item-view-field">
                     <div className="title">{i18n('Description')}</div>
                     <div className="text description">{description}</div>

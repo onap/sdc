@@ -120,7 +120,13 @@ class LicenseKeyGroupsListEditorView extends React.Component {
     }
 
     renderLicenseKeyGroupListItem(licenseKeyGroup, isReadOnlyMode) {
-        let { id, name, description, type } = licenseKeyGroup;
+        let {
+            id,
+            name,
+            description,
+            type,
+            manufacturerReferenceNumber
+        } = licenseKeyGroup;
         let {
             onEditLicenseKeyGroupClick,
             onDeleteLicenseKeyGroupClick
@@ -143,7 +149,14 @@ class LicenseKeyGroupsListEditorView extends React.Component {
                         {InputOptions.getTitleByName(optionsInputValues, type)}
                     </div>
                 </div>
-
+                <div className="list-editor-item-view-field">
+                    <div className="title">
+                        {i18n('Manufacturer Reference Number')}
+                    </div>
+                    <div className="text description">
+                        {manufacturerReferenceNumber}
+                    </div>
+                </div>
                 <div className="list-editor-item-view-field">
                     <div className="title">{i18n('Description')}</div>
                     <div className="text description">{description}</div>

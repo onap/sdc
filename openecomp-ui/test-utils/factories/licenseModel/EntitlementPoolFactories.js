@@ -13,46 +13,48 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-import {Factory} from 'rosie';
-import {overviewEditorHeaders} from 'sdc-app/onboarding/licenseModel/overview/LicenseModelOverviewConstants.js';
+import { Factory } from 'rosie';
+import { overviewEditorHeaders } from 'sdc-app/onboarding/licenseModel/overview/LicenseModelOverviewConstants.js';
 
-Factory.define('EntitlementPoolBaseFactory')
-	.attrs({
-		name: 'EntitlementPoolName',
-		description: 'description'
-	});
+Factory.define('EntitlementPoolBaseFactory').attrs({
+    name: 'EntitlementPoolName',
+    description: 'description'
+});
 
 Factory.define('EntitlementPoolExtendedBaseFactory')
-	.extend('EntitlementPoolBaseFactory')
-	.attrs({
-		thresholdValue: 76,
-		thresholdUnits: '%',
-		increments: 'string',
-		startDate: (new Date()).getTime(),
-		expiryDate: (new Date()).getTime()
-	});
+    .extend('EntitlementPoolBaseFactory')
+    .attrs({
+        manufacturerReferenceNumber: '1231322',
+        thresholdValue: 76,
+        thresholdUnits: '%',
+        increments: 'string',
+        startDate: new Date().getTime(),
+        expiryDate: new Date().getTime()
+    });
 
 export const EntitlementPoolListItemFactory = new Factory()
-	.extend('EntitlementPoolBaseFactory')
-	.attrs({
-		id: () => Math.floor(Math.random() * (1000 - 1) + 1),
-		itemType: overviewEditorHeaders.ENTITLEMENT_POOL
-	});
+    .extend('EntitlementPoolBaseFactory')
+    .attrs({
+        id: () => Math.floor(Math.random() * (1000 - 1) + 1),
+        versionUUID: () => Math.floor(Math.random() * (1000 - 1) + 1),
+        itemType: overviewEditorHeaders.ENTITLEMENT_POOL
+    });
 
 export const EntitlementPoolStoreFactory = new Factory()
-	.extend('EntitlementPoolExtendedBaseFactory')
-	.attrs({
-		id: () => Math.floor(Math.random() * (1000 - 1) + 1),
-		referencingFeatureGroups: []
-	});
+    .extend('EntitlementPoolExtendedBaseFactory')
+    .attrs({
+        id: () => Math.floor(Math.random() * (1000 - 1) + 1),
+        referencingFeatureGroups: []
+    });
 
 export const EntitlementPoolDataListFactory = new Factory()
-	.extend('EntitlementPoolExtendedBaseFactory')
-	.attrs({
-		id: () => Math.floor(Math.random() * (1000 - 1) + 1),
-		referencingFeatureGroups: [],
-		itemType: overviewEditorHeaders.ENTITLEMENT_POOL
-	});
+    .extend('EntitlementPoolExtendedBaseFactory')
+    .attrs({
+        id: () => Math.floor(Math.random() * (1000 - 1) + 1),
+        referencingFeatureGroups: [],
+        itemType: overviewEditorHeaders.ENTITLEMENT_POOL
+    });
 
-export const EntitlementPoolPostFactory = new Factory()
-	.extend('EntitlementPoolExtendedBaseFactory');
+export const EntitlementPoolPostFactory = new Factory().extend(
+    'EntitlementPoolExtendedBaseFactory'
+);

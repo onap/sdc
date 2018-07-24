@@ -45,7 +45,8 @@ function postLicenseKeyGroup(licenseModelId, licenseKeyGroup, version) {
         thresholdValue: licenseKeyGroup.thresholdValue,
         thresholdUnits: getValue(licenseKeyGroup.thresholdUnits),
         startDate: licenseKeyGroup.startDate,
-        expiryDate: licenseKeyGroup.expiryDate
+        expiryDate: licenseKeyGroup.expiryDate,
+        manufacturerReferenceNumber: licenseKeyGroup.manufacturerReferenceNumber
     });
 }
 
@@ -60,7 +61,9 @@ function putLicenseKeyGroup(licenseModelId, licenseKeyGroup, version) {
             thresholdValue: licenseKeyGroup.thresholdValue,
             thresholdUnits: getValue(licenseKeyGroup.thresholdUnits),
             startDate: licenseKeyGroup.startDate,
-            expiryDate: licenseKeyGroup.expiryDate
+            expiryDate: licenseKeyGroup.expiryDate,
+            manufacturerReferenceNumber:
+                licenseKeyGroup.manufacturerReferenceNumber
         }
     );
 }

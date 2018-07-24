@@ -19,20 +19,10 @@ import ArrowCol from './listItemsComponents/ArrowCol.jsx';
 import ItemInfo from './listItemsComponents/ItemInfo.jsx';
 import IconCol from './listItemsComponents/IconCol.jsx';
 import i18n from 'nfvo-utils/i18n/i18n.js';
-import {
-    AdditionalDataCol,
-    AdditionalDataElement
-} from './listItemsComponents/AdditionalDataCol.jsx';
-
 class FeatureGroup extends Component {
     render() {
         let {
-            fgData: {
-                name,
-                manufacturerReferenceNumber,
-                description,
-                children = []
-            },
+            fgData: { name, description, children = [] },
             isCollapsed,
             onClick,
             isOrphan
@@ -80,13 +70,6 @@ class FeatureGroup extends Component {
                         </span>
                     </div>
                 </ItemInfo>
-                <AdditionalDataCol>
-                    <AdditionalDataElement
-                        name={i18n('Manufacturer Reference Number')}
-                        value={manufacturerReferenceNumber}
-                        className="vlm-list-item-sku"
-                    />
-                </AdditionalDataCol>
             </div>
         );
     }

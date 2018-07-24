@@ -45,17 +45,6 @@ export default (state = {}, action) => {
                             FeatureGroupStateConstants
                                 .SELECTED_FEATURE_GROUP_TAB.GENERAL
                     },
-                    manufacturerReferenceNumber: {
-                        isValid: true,
-                        errorText: '',
-                        validations: [
-                            { type: 'required', data: true },
-                            { type: 'maxLength', data: 100 }
-                        ],
-                        tabId:
-                            FeatureGroupStateConstants
-                                .SELECTED_FEATURE_GROUP_TAB.GENERAL
-                    },
                     name: {
                         isValid: true,
                         errorText: '',

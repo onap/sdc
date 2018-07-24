@@ -27,7 +27,13 @@ import {
 class EntitlementPool extends Component {
     render() {
         let {
-            epData: { name, description, thresholdValue, thresholdUnits },
+            epData: {
+                name,
+                description,
+                thresholdValue,
+                thresholdUnits,
+                manufacturerReferenceNumber
+            },
             isOrphan
         } = this.props;
         return (
@@ -47,6 +53,13 @@ class EntitlementPool extends Component {
                             value={`${thresholdValue} ${extractUnits(
                                 thresholdUnits
                             )}`}
+                        />
+                    )}
+                    {manufacturerReferenceNumber && (
+                        <AdditionalDataElement
+                            className="vlm-list-item-entitlement-metric"
+                            name={i18n('Manufacturer Reference Number')}
+                            value={manufacturerReferenceNumber}
                         />
                     )}
                 </AdditionalDataCol>
