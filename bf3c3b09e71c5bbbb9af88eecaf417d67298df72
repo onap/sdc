@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da7095c5_fb7602d8",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/datatypes/heattotosca/unifiedmodel/consolidation/EntityConsolidationData.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 280,
+      "author": {
+        "id": 2727
+      },
+      "writtenOn": "2018-07-24T10:50:37Z",
+      "side": 1,
+      "message": "1) Please add check at start of isGetAttrOutFromEntityLegal API:\nif(CollectionUtils.isEmpty(entityConsolidationDataList)){\n            return true;\n}\n\n2) Currently if null will be sent as portTypeToIdsto parameter isGetAttrOutFromEntityLegal will crash.\nSo need add also check\nif(portTypeToIds !\u003d null) return true;\n+ please add 2 tests: \na) when ports is null - see that API return true\nb) when ports map paramater is empty - see that API return true\n\n3) Also need add/test use case when port map not empty but startingGetAttrFunc is empty for this portType - may be it will crash and need changes in code.\nPlease see all possible cases and handle",
+      "range": {
+        "startLine": 280,
+        "startChar": 19,
+        "endLine": 280,
+        "endChar": 46
+      },
+      "revId": "bf3c3b09e71c5bbbb9af88eecaf417d67298df72",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da7095c5_d64af554",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/test/java/org/openecomp/sdc/translator/datatypes/heattotosca/unifiedmodel/consolidation/TypeComputeConsolidationDataTest.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 266,
+      "author": {
+        "id": 2727
+      },
+      "writtenOn": "2018-07-24T10:50:37Z",
+      "side": 1,
+      "message": "For tests checking isGetAttrOutFromEntityLegal API need that \nComputeTemplateConsolidationData will be Mock. Currently its not mock so you are testing not only TypeComputeConsolidationData functionality, you are testing also ComputeTemplateConsolidationData",
+      "range": {
+        "startLine": 266,
+        "startChar": 16,
+        "endLine": 266,
+        "endChar": 43
+      },
+      "revId": "bf3c3b09e71c5bbbb9af88eecaf417d67298df72",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
