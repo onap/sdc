@@ -54,7 +54,12 @@
 			<groupId>org.testng</groupId>
 			<artifactId>testng</artifactId>
 		</dependency>
-
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>${junit.version}</version>
+			<scope>test</scope>
+		</dependency>
 		<!-- Java Stuff -->
 		<dependency>
 			<groupId>javax.inject</groupId>
@@ -78,10 +83,4 @@
 			<version>${project.version}</version>
 		</dependency>
     </dependencies>
-
-
-
-
-
-
 </project>

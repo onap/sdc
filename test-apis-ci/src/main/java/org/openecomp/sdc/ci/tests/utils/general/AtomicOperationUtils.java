@@ -93,8 +93,8 @@ import org.openecomp.sdc.ci.tests.utils.rest.ResourceRestUtils;
 import org.openecomp.sdc.ci.tests.utils.rest.ResponseParser;
 import org.openecomp.sdc.ci.tests.utils.rest.ServiceRestUtils;
 import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
-import org.openecomp.sdc.tosca.parser.api.ISdcCsarHelper;
-import org.openecomp.sdc.tosca.parser.impl.SdcToscaParserFactory;
+import org.onap.sdc.tosca.parser.api.ISdcCsarHelper;
+import org.onap.sdc.tosca.parser.impl.SdcToscaParserFactory;
 import org.testng.SkipException;
 
 import com.aventstack.extentreports.Status;

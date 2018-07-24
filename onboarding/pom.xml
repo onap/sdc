@@ -89,7 +89,7 @@
         <jetty.servlets.version>9.0.6.v20130930</jetty.servlets.version>
         <jersey.core.version>1.19.1</jersey.core.version>
         <jersey.multipart.version>1.18.1</jersey.multipart.version>
-        <junit.version>RELEASE</junit.version>
+        <junit.version>4.12</junit.version>
         <logback.version>1.1.2</logback.version>
         <mockito.all.version>1.10.19</mockito.all.version>
         <org.codehaus.jackson.version>1.9.13</org.codehaus.jackson.version> <!-- orignal 1.9.2 -->

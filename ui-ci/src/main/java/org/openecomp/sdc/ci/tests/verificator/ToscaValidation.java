@@ -5,11 +5,11 @@ import fj.data.Either;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.ci.tests.execute.setup.SetupCDTest;
 import org.openecomp.sdc.ci.tests.tosca.datatypes.*;
-import org.openecomp.sdc.tosca.parser.api.ISdcCsarHelper;
-import org.openecomp.sdc.toscaparser.api.Group;
-import org.openecomp.sdc.toscaparser.api.Property;
-import org.openecomp.sdc.toscaparser.api.elements.Metadata;
-import org.openecomp.sdc.toscaparser.api.parameters.Input;
+import org.onap.sdc.tosca.parser.api.ISdcCsarHelper;
+import org.onap.sdc.toscaparser.api.Group;
+import org.onap.sdc.toscaparser.api.Property;
+import org.onap.sdc.toscaparser.api.elements.Metadata;
+import org.onap.sdc.toscaparser.api.parameters.Input;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;

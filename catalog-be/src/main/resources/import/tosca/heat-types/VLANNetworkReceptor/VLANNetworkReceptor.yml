@@ -1,0 +1,14 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+node_types:    
+    org.openecomp.nodes.VLANNetworkReceptor:
+        derived_from: tosca.nodes.Root
+        capabilities:
+            routing_configuration_internal:
+                type: org.openecomp.capabilities.RoutingConfiguration
+        requirements:
+            - vlan_assignment:
+                occurrences:
+                    - 1
+                    - UNBOUNDED
+                capability: org.openecomp.capabilities.VLANAssignment
+                relationship: org.openecomp.relationships.AssignsTo
