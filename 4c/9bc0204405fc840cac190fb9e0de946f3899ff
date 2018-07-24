@@ -1,0 +1,8 @@
+Verified+1: ONAP Jobbuilder <onap-jobbuilder@jenkins.onap.org>
+Code-Review+1: Ganesh Chandrasekaran <ganesh.c@samsung.com>
+Code-Review+2: Yuli Shlosberg <ys9693@att.com>
+Submitted-by: Yuli Shlosberg <ys9693@att.com>
+Submitted-at: Tue, 24 Jul 2018 11:56:12 +0000
+Reviewed-on: https://gerrit.onap.org/r/56831
+Project: sdc
+Branch: refs/heads/master
