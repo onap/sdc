@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da7095c5_16770dd6",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/datatypes/heattotosca/unifiedmodel/consolidation/EntityConsolidationData.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 281,
+      "author": {
+        "id": 2727
+      },
+      "writtenOn": "2018-07-24T14:10:01Z",
+      "side": 1,
+      "message": "Please see the comments in previous version: \nitems 2) and 3) for this API.\n\nRegarding item 2) - you added tests with ports null and they not failed on NullPointer - its because you sending also empty or null entityConsolidationDataList and its return true because new check for entityConsolidationDataList:\ntestIsGetAttrOutFromEntityLegal_NullEntityConsolidationDataLis\ntestIsGetAttrOutFromEntityLegal_EmptyEntityConsolidationDataList\nBut in case when entityConsolidationDataList not empty but port parameter will be null -\u003e it will failed on NullPointer Please see again my comment 2 and add check in EntityConsolidationData and also add new tests.\nAlso please see comment 3.",
+      "range": {
+        "startLine": 281,
+        "startChar": 19,
+        "endLine": 281,
+        "endChar": 46
+      },
+      "revId": "eeba3084202ba32ef896f94fbe21dc1cdd317f8a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da7095c5_1602ad3e",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/test/java/org/openecomp/sdc/translator/datatypes/heattotosca/unifiedmodel/consolidation/TypeComputeConsolidationDataTest.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 286,
+      "author": {
+        "id": 2727
+      },
+      "writtenOn": "2018-07-24T14:10:01Z",
+      "side": 1,
+      "message": "Please change also testIsGetAttrOutFromEntityLegalNegative test to use Mock with\n Mockito.when(computeTemplateConsolidationDataMock.isGetAttrOutFromEntityLegal(Mockito.any(), Mockito.any()))\n                .thenReturn(false);\nand check that its return false",
+      "range": {
+        "startLine": 286,
+        "startChar": 16,
+        "endLine": 286,
+        "endChar": 55
+      },
+      "revId": "eeba3084202ba32ef896f94fbe21dc1cdd317f8a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da7095c5_3686d1ba",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/test/java/org/openecomp/sdc/translator/datatypes/heattotosca/unifiedmodel/consolidation/TypeComputeConsolidationDataTest.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 309,
+      "author": {
+        "id": 2727
+      },
+      "writtenOn": "2018-07-24T14:10:01Z",
+      "side": 1,
+      "message": "1) I think you need remove this test. Please verify that you testing this use case in computeTemplateConsolidationDataTest\n2) Please add test when computeTemplateConsolidationData is empty (when you not set setComputeTemplateConsolidationData on typeComputeConsolidationData). Verify thta API reeturn true",
+      "range": {
+        "startLine": 309,
+        "startChar": 16,
+        "endLine": 309,
+        "endChar": 71
+      },
+      "revId": "eeba3084202ba32ef896f94fbe21dc1cdd317f8a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
