@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da7095c5_b1798b95",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ArtifactsBusinessLogic.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1193,
+      "author": {
+        "id": 4025
+      },
+      "writtenOn": "2018-07-24T14:53:27Z",
+      "side": 0,
+      "message": "TODO\u0027s should not be removed",
+      "range": {
+        "startLine": 1193,
+        "startChar": 11,
+        "endLine": 1193,
+        "endChar": 15
+      },
+      "revId": "d0eaecacec822c0332a31f499f9d972c9b39e691",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
