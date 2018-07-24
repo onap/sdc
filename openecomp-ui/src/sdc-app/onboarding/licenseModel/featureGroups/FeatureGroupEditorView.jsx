@@ -46,10 +46,10 @@ const GeneralTab = ({
     genericFieldInfo,
     validateName
 }) => {
-    let { name, description, partNumber, manufacturerReferenceNumber } = data;
+    let { name, description, partNumber } = data;
     return (
         <GridSection hasLastColSet>
-            <GridItem colSpan={2}>
+            <GridItem colSpan={4}>
                 <Input
                     groupClassName="field-section"
                     onChange={name =>
@@ -67,7 +67,7 @@ const GeneralTab = ({
                     errorText={genericFieldInfo.name.errorText}
                 />
             </GridItem>
-            <GridItem colSpan={2} lastColInRow>
+            <GridItem colSpan={4} lastColInRow strech>
                 <Input
                     groupClassName="field-section"
                     className="description-field"
@@ -83,7 +83,7 @@ const GeneralTab = ({
                     errorText={genericFieldInfo.description.errorText}
                 />
             </GridItem>
-            <GridItem colSpan={2}>
+            <GridItem colSpan={4}>
                 <Input
                     groupClassName="field-section"
                     onChange={partNumber =>
@@ -96,28 +96,6 @@ const GeneralTab = ({
                     type="text"
                     isValid={genericFieldInfo.partNumber.isValid}
                     errorText={genericFieldInfo.partNumber.errorText}
-                />
-            </GridItem>
-            <GridItem colSpan={2} lastColInRow>
-                <Input
-                    groupClassName="field-section"
-                    onChange={manufacturerReferenceNumber =>
-                        onDataChanged(
-                            { manufacturerReferenceNumber },
-                            FG_EDITOR_FORM
-                        )
-                    }
-                    label={i18n('Manufacturer Reference Number')}
-                    data-test-id="create-fg-reference-number"
-                    value={manufacturerReferenceNumber}
-                    isRequired={true}
-                    type="text"
-                    isValid={
-                        genericFieldInfo.manufacturerReferenceNumber.isValid
-                    }
-                    errorText={
-                        genericFieldInfo.manufacturerReferenceNumber.errorText
-                    }
                 />
             </GridItem>
         </GridSection>

@@ -39,7 +39,8 @@ function postEntitlementPool(licenseModelId, entitlementPool, version) {
         increments: entitlementPool.increments,
         time: entitlementPool.time,
         startDate: entitlementPool.startDate,
-        expiryDate: entitlementPool.expiryDate
+        expiryDate: entitlementPool.expiryDate,
+        manufacturerReferenceNumber: entitlementPool.manufacturerReferenceNumber
     });
 }
 
@@ -59,7 +60,9 @@ function putEntitlementPool(
             increments: entitlementPool.increments,
             time: entitlementPool.time,
             startDate: entitlementPool.startDate,
-            expiryDate: entitlementPool.expiryDate
+            expiryDate: entitlementPool.expiryDate,
+            manufacturerReferenceNumber:
+                entitlementPool.manufacturerReferenceNumber
         }
     );
 }

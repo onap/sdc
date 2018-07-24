@@ -88,6 +88,11 @@ export default (state = {}, action) => {
                         isValid: true,
                         errorText: '',
                         validations: []
+                    },
+                    manufacturerReferenceNumber: {
+                        isValid: true,
+                        errorText: '',
+                        validations: [{ type: 'maxLength', data: 100 }]
                     }
                 }
             };
