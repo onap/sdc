@@ -31,31 +31,22 @@ public class RemoveUtils {
 
 		if (args == null || args.length < 1) {
 			removeUsage();
-		}
-
-		String operation = args[0];
-
-		switch (operation.toLowerCase()) {
-
-		case "remove-products":
-
-			boolean isValid = verifyParamsLength(args, 5);
-			if (false == isValid) {
-				removeUsage();
-				System.exit(1);
+		}else {
+			String operation = args[0];
+			if(operation.equalsIgnoreCase("remove-products")) {
+				boolean isValid = verifyParamsLength(args, 5);
+				if (!isValid) {
+					removeUsage();
+					System.exit(1);
+				}
+				ProductLogic productLogic = new ProductLogic();
+				boolean result = productLogic.deleteAllProducts(args[1], args[2], args[3], args[4]);
+	
+				if (!result) {
+					System.exit(2);
+				}
 			}
-
-			ProductLogic productLogic = new ProductLogic();
-			boolean result = productLogic.deleteAllProducts(args[1], args[2], args[3], args[4]);
-
-			if (result == false) {
-				System.exit(2);
-			}
-			break;
-		default:
-			removeUsage();
 		}
-
 	}
 
 	private static void removeUsage() {
