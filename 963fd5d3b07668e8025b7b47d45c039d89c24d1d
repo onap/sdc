@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "da7095c5_47a06c90",
+        "filename": "catalog-dao/src/test/java/org/openecomp/sdc/be/dao/utils/ImageResizeUtilTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 3843
+      },
+      "writtenOn": "2018-07-25T06:35:19Z",
+      "side": 1,
+      "message": "I made attempt to parameterize tests, but then file has grown up and readability has decreased so I decided to leave it as is.",
+      "parentUuid": "5a93c517_2d928b4b",
+      "revId": "963fd5d3b07668e8025b7b47d45c039d89c24d1d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_8d7b9f28",
         "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/cache/ComponentCache.java",
         "patchSetId": 3
