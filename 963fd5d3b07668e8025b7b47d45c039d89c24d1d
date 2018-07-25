@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "da7095c5_8711a4ae",
+        "filename": "catalog-dao/src/test/java/org/openecomp/sdc/be/dao/utils/ImageResizeUtilTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 3663
+      },
+      "writtenOn": "2018-07-25T07:42:23Z",
+      "side": 1,
+      "message": "fair enough",
+      "parentUuid": "da7095c5_47a06c90",
+      "revId": "963fd5d3b07668e8025b7b47d45c039d89c24d1d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_8d7b9f28",
         "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/cache/ComponentCache.java",
         "patchSetId": 3
