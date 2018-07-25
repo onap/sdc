@@ -66,8 +66,9 @@ public class InterfaceUtils {
 
     public static String createInterfaceToscaResourceName(String resourceName) {
         StringBuilder sb = new StringBuilder();
-        Formatter formatter = new Formatter(sb);
+        try(Formatter formatter = new Formatter(sb)){
         return formatter.format(INTERFACE_TOSCA_RESOURCE_NAME, resourceName).toString();
+        }
     }
 
     public static Map<String, Operation> getInterfaceOperationsFromInterfaces(
