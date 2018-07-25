@@ -105,11 +105,10 @@ public class SdcSchemaFileImport {
 		//Loop over schema file list and create each yaml file from /import/tosca folder 
 		SchemaZipFileEnum[] schemaFileList = SchemaZipFileEnum.values();
 		for (SchemaZipFileEnum schemaZipFileEnum : schemaFileList) {
-			try {
-				//get the source yaml file
-				String pathname = importToscaPath + SEPARATOR + schemaZipFileEnum.getSourceFolderName() + SEPARATOR +  schemaZipFileEnum.getSourceFileName() + YAML_EXTENSION;
-				System.out.println("Processing file "+pathname+"....");
-				InputStream input = new FileInputStream(new File(pathname));
+			//get the source yaml file
+			String pathname = importToscaPath + SEPARATOR + schemaZipFileEnum.getSourceFolderName() + SEPARATOR +  schemaZipFileEnum.getSourceFileName() + YAML_EXTENSION;
+			System.out.println("Processing file "+pathname+"....");
+			try(InputStream input = new FileInputStream(new File(pathname))) {
 				//Convert the content of file to yaml 
 				Yaml yamlFileSource = new Yaml();
 			    Object content = yamlFileSource.load(input);
@@ -244,15 +243,13 @@ public class SdcSchemaFileImport {
 			Files.walk(Paths.get(importToscaPath + SEPARATOR + nodeTypesMainFolder))
 		      .filter(path -> path.getFileName().toString().toLowerCase().endsWith(YAML_EXTENSION))
 		      .forEach(yamlFile -> {
-		    	  try {
-						String path = yamlFile.toAbsolutePath().toString();
-						System.out.println("Processing node type file "+path+"...");
-						FileInputStream inputStream = new FileInputStream(path);
+                  String path = yamlFile.toAbsolutePath().toString();
+                  System.out.println("Processing node type file "+path+"...");
+                  try(FileInputStream inputStream = new FileInputStream(path)) {
 				    	Yaml yaml = new Yaml();
 				    	Map<String, Object> load = yaml.loadAs(inputStream,Map.class);
 						Map<String, Object> nodeType = (Map<String, Object>) load.get(collectionTitle);
 						nodeTypeList.putAll(nodeType);
-						
 					} catch (Exception e) {
 						System.err.println("Error in opening file " + yamlFile.toAbsolutePath().toString());
 						System.exit(1);
