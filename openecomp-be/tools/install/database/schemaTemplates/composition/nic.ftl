@@ -5,7 +5,7 @@
     "name": {
         "type": "string",
          <#if manual>
-            {"pattern":"^[a-zA-Z0-9_]*$"}
+            "pattern":"^[a-zA-Z0-9_]*$"
          <#else>
             "enum": [
              "${nic.name}"
