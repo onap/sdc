@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "da7095c5_303fb027",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/datatypes/heattotosca/unifiedmodel/consolidation/PortConsolidationData.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 2727
+      },
+      "writtenOn": "2018-07-25T15:24:58Z",
+      "side": 1,
+      "message": "You all right, but I dont see how we can decrease numbers of parameters here.",
+      "parentUuid": "da7095c5_b02c204c",
+      "revId": "ce464041bbc142b300f999f0a467800c9731e7ba",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "da7095c5_7026886a",
         "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/datatypes/heattotosca/unifiedmodel/consolidation/SubInterfaceConsolidationDataHandler.java",
         "patchSetId": 1
@@ -30,6 +48,30 @@
       "writtenOn": "2018-07-25T15:06:35Z",
       "side": 1,
       "message": "This must be removed.",
+      "range": {
+        "startLine": 2,
+        "startChar": 0,
+        "endLine": 2,
+        "endChar": 2
+      },
+      "revId": "ce464041bbc142b300f999f0a467800c9731e7ba",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da7095c5_30d1f0fb",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/datatypes/heattotosca/unifiedmodel/consolidation/SubInterfaceConsolidationDataHandler.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 2727
+      },
+      "writtenOn": "2018-07-25T15:24:58Z",
+      "side": 1,
+      "message": "Thanks sure, I will handle",
+      "parentUuid": "da7095c5_7026886a",
       "range": {
         "startLine": 2,
         "startChar": 0,
@@ -65,6 +107,30 @@
     },
     {
       "key": {
+        "uuid": "da7095c5_f0da9816",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/datatypes/heattotosca/unifiedmodel/consolidation/SubInterfaceConsolidationDataHandler.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 83,
+      "author": {
+        "id": 2727
+      },
+      "writtenOn": "2018-07-25T15:24:58Z",
+      "side": 1,
+      "message": "Thanks sure, I will handle",
+      "parentUuid": "da7095c5_10170cef",
+      "range": {
+        "startLine": 83,
+        "startChar": 53,
+        "endLine": 83,
+        "endChar": 58
+      },
+      "revId": "ce464041bbc142b300f999f0a467800c9731e7ba",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "da7095c5_d0d8b455",
         "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/datatypes/heattotosca/unifiedmodel/consolidation/SubInterfaceConsolidationDataHandler.java",
         "patchSetId": 1
@@ -88,6 +154,30 @@
     },
     {
       "key": {
+        "uuid": "da7095c5_70fe886d",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/datatypes/heattotosca/unifiedmodel/consolidation/SubInterfaceConsolidationDataHandler.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 197,
+      "author": {
+        "id": 2727
+      },
+      "writtenOn": "2018-07-25T15:24:58Z",
+      "side": 1,
+      "message": "Actually, I moved this code as is. I will try improve it",
+      "parentUuid": "da7095c5_d0d8b455",
+      "range": {
+        "startLine": 193,
+        "startChar": 0,
+        "endLine": 197,
+        "endChar": 9
+      },
+      "revId": "ce464041bbc142b300f999f0a467800c9731e7ba",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "da7095c5_b088a023",
         "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/ConsolidationDataUtil.java",
         "patchSetId": 1
@@ -99,6 +189,30 @@
       "writtenOn": "2018-07-25T15:06:35Z",
       "side": 1,
       "message": "I think this code can be simplified. This nested conditions and assignments are a bit difficult to read.",
+      "range": {
+        "startLine": 410,
+        "startChar": 0,
+        "endLine": 419,
+        "endChar": 9
+      },
+      "revId": "ce464041bbc142b300f999f0a467800c9731e7ba",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da7095c5_10462cc0",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/ConsolidationDataUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 419,
+      "author": {
+        "id": 2727
+      },
+      "writtenOn": "2018-07-25T15:24:58Z",
+      "side": 1,
+      "message": "I will try see how it can be improved",
+      "parentUuid": "da7095c5_b088a023",
       "range": {
         "startLine": 410,
         "startChar": 0,
