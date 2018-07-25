@@ -53,30 +53,31 @@ public class GraphMLDataAnalyzer {
 		try {
 			String mlFileLocation = args[0];
 			result = _analyzeGraphMLData(mlFileLocation);
-			System.out.println("Analyzed ML file=" + mlFileLocation + ", XLS result=" + result);
+			log.info("Analyzed ML file=" + mlFileLocation + ", XLS result=" + result);
 		} catch (Exception e) {
-			log.info("analyze GraphML Data failed - {}" , e);
+			log.error("analyze GraphML Data failed - {}" , e);
 			return null;
 		}
 		return result;
 	}
 
 	private String _analyzeGraphMLData(String mlFileLocation) throws Exception {
-
 		// Parse ML file
 		SAXBuilder builder = new SAXBuilder();
 		File xmlFile = new File(mlFileLocation);
 		Document document = (Document) builder.build(xmlFile);
-
+		
 		// XLS data file name
 		String outputFile = mlFileLocation.replace(".graphml", ".xls");
 		Workbook wb = new HSSFWorkbook();
-		FileOutputStream fileOut = new FileOutputStream(outputFile);
-		writeComponents(wb, document);
-		writeComponentInstances(wb, document);
-		wb.write(fileOut);
-		fileOut.close();
-		return outputFile;
+		try(FileOutputStream fileOut = new FileOutputStream(outputFile)){
+			writeComponents(wb, document);
+			writeComponentInstances(wb, document);
+			wb.write(fileOut);
+		}catch(Exception e){
+			log.error("analyze GraphML Data failed - {}" , e);
+		}
+		return outputFile;	
 	}
 
 	private void writeComponents(Workbook wb, Document document) {
@@ -132,13 +133,11 @@ public class GraphMLDataAnalyzer {
 			IteratorIterable<Element> dataNodes = edge.getDescendants(filter);
 			for (Element data : dataNodes) {
 				String attributeValue = data.getAttributeValue("key");
-				switch (attributeValue) {
-				case "labelE":
+				if( attributeValue.equals("labelE")) {
 					String edgeLabel = data.getText();
 					if (edgeLabel.equals("REQUIREMENT") || edgeLabel.equals("CAPABILITY")) {
 						componentsHavingReqOrCap.add(edge.getAttributeValue("source"));
 					}
-					break;
 				}
 			}
 		}
