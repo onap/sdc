@@ -359,7 +359,11 @@ public class ToscaOperationFacade {
 
 		List<GraphVertex> resourceList = (resources.isLeft() ? resources.left().value() : null);
 
-		return Either.left(new Integer(resourceList.size()));
+		Integer value = null;
+		if(resourceList != null) {
+			 value = Integer.valueOf(resourceList.size());
+		}
+		return Either.left(value);
 
 	}
 

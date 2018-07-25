@@ -21,6 +21,7 @@
 package org.openecomp.sdc.be.model;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -110,7 +111,7 @@ public class ArtifactDefinition extends ArtifactDataDefinition implements Serial
 		final int prime = 31;
 		int result = super.hashCode();
 	
-		result = prime * result + ((payloadData == null) ? 0 : payloadData.hashCode());
+		result = prime * result + ((payloadData == null) ? 0 : Arrays.hashCode(payloadData));
 		return result;
 	}
 
@@ -128,7 +129,8 @@ public class ArtifactDefinition extends ArtifactDataDefinition implements Serial
 		if (payloadData == null) {
 			if (other.payloadData != null)
 				return false;
-		} else if (!payloadData.equals(other.payloadData))
+		} 
+		else if (!Arrays.equals(payloadData,other.payloadData))
 			return false;
 		return true;
 	}

@@ -374,7 +374,7 @@ public class DataTypeValidatorConverter {
 						String type = propertyDefinition.getType();
 						boolean isScalarType = ToscaPropertyType.isScalarType(type);
 
-						if (true == isScalarType) {
+						if (isScalarType) {
 							ToscaPropertyType propertyType = ToscaPropertyType.isValidType(type);
 							if (propertyType == null) {
 								log.debug("cannot find the {} under default tosca property types", type);
@@ -402,7 +402,7 @@ public class DataTypeValidatorConverter {
 							}
 
 							boolean isValid = validator.isValid(value, innerType, allDataTypes);
-							if (false == isValid) {
+							if (!isValid) {
 								log.debug("Failed to validate the value {} from type {}", value, propertyType);
 								return false;
 							}
@@ -417,7 +417,7 @@ public class DataTypeValidatorConverter {
 
 							boolean isValid = isValid(elementValue, typeDefinition, allDataTypes);
 
-							if (false == isValid) {
+							if (!isValid) {
 								log.debug("Failed in validation of value {} from type {}", (elementValue != null ? elementValue.toString() : null), typeDefinition.getName());
 								return false;
 							}
