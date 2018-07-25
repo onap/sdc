@@ -1104,12 +1104,14 @@ public abstract class BaseOperation {
 			}
 		}
 		if (result == null) {
-			while (edges.hasNext()) {
-				++edgeCounter;
-				edge = edges.next();
-				if (edge.outVertex().id().equals(toscaElement.getVertex().id())) {
-					edgeToDelete = edge;
-					break;
+			if(edges != null) {
+				while (edges.hasNext()) {
+					++edgeCounter;
+					edge = edges.next();
+					if (edge.outVertex().id().equals(toscaElement.getVertex().id())) {
+						edgeToDelete = edge;
+						break;
+					}
 				}
 			}
 			if (edgeToDelete == null) {
@@ -1118,7 +1120,7 @@ public abstract class BaseOperation {
 			}
 		}
 		if (result == null) {
-			if (edgeCounter > 1) {
+			if (edgeCounter > 1 && edgeToDelete !=null) {
 				edgeToDelete.remove();
 			} else {
 				toscaDataVertex.getVertex().remove();
