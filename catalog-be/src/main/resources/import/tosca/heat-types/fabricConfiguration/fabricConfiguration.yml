@@ -1,0 +1,10 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+node_types:
+   org.openecomp.nodes.FabricConfiguration:
+     derived_from: org.openecomp.nodes.Configuration
+     requirements:
+     - fabric_configuration_monitoring:
+          capability: org.openecomp.capabilities.FabricConfiguration
+          occurrences:
+          - 1
+          - UNBOUNDED

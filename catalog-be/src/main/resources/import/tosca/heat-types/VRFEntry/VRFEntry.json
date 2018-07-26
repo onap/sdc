@@ -1,0 +1,21 @@
+{
+  "payloadName": "VRFEntry.yml",
+  "contactId": "jh0003",
+  "name": "VRF Entry Configuration",
+  "description": "VRF Entry configuration object",
+  "resourceIconPath": "pmc",
+  "resourceType": "Configuration",
+  "categories": [
+  {
+    "name": "Configuration",
+    "subcategories": [
+      {
+        "name": "Configuration"
+      }
+    ]
+  }
+],
+  "tags": [
+    "VRF Entry Configuration"
+  ]
+}

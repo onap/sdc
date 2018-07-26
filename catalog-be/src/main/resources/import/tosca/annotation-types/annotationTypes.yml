@@ -1,0 +1,13 @@
+org.openecomp.annotations.Source:
+    description: Indicates the origin source of an input
+    properties:
+        source_type:
+          type: string
+        vf_module_label:
+          type: list
+          description: List of VF Modules this input was originated from
+          entry_schema:
+            type: string
+        param_name:
+            type: string
+            description: Source parameter name

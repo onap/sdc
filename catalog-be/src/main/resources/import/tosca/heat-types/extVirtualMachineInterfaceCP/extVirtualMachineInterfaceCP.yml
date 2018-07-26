@@ -1,7 +1,8 @@
+
 tosca_definitions_version: tosca_simple_yaml_1_0_0
 node_types:
-  org.openecomp.resource.cp.nodes.heat.contrailV2.VirtualMachineInterface:
-    derived_from: org.openecomp.resource.cp.nodes.network.Port
+  org.openecomp.resource.cp.v2.extVirtualMachineInterfaceCP:
+    derived_from: org.openecomp.resource.cp.v2.extCP
     properties:
       name:
         description: Virtual Machine Interface name
@@ -14,14 +15,14 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: string
-        required: false
+          required: false
       virtual_network_refs:
         description: List of virtual networks.
         type: list
         status: SUPPORTED
         entry_schema:
           type: string
-        required: false
+          required: false
       virtual_machine_interface_properties:
         description: virtual machine interface properties.
         type: org.openecomp.datatypes.heat.contrailV2.virtual.machine.interface.Properties
@@ -33,19 +34,19 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: string
-        required: false
+          required: false
       virtual_machine_interface_mac_addresses:
         description: List of mac addresses.
         type: list
         status: SUPPORTED
         entry_schema:
           type: string
-        required: false
+          required: false
       virtual_machine_interface_allowed_address_pairs:
         description: Virtual Machine Interface allowed address pairs.
         type: org.openecomp.datatypes.heat.contrailV2.virtual.machine.subInterface.AddressPairs
         status: SUPPORTED
-        required: false      
+        required: false
     attributes:
       fq_name:
         description: The FQ name of the Virtual Network.
