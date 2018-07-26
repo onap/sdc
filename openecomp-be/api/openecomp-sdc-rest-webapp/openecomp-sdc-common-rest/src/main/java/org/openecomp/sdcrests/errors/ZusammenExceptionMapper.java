@@ -81,7 +81,7 @@ public class ZusammenExceptionMapper implements ExceptionMapper<SdcRuntimeExcept
     }
 
     private Response genericError(Exception exception) {
-        ErrorCode errorCode = new GeneralErrorBuilder().build();
+        ErrorCode errorCode = new GeneralErrorBuilder(exception.getMessage()).build();
         LOGGER.error(errorCode.message(), exception);
         return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                        .entity(new ErrorCodeAndMessage(Response.Status.INTERNAL_SERVER_ERROR, errorCode)).build();
