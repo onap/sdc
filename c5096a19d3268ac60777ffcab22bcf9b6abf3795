@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da7095c5_81874c0f",
+        "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/main/RemoveUtils.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 3201
+      },
+      "writtenOn": "2018-07-26T06:38:43Z",
+      "side": 1,
+      "message": "Should this be in the else or a seperate if statement.",
+      "revId": "c5096a19d3268ac60777ffcab22bcf9b6abf3795",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
