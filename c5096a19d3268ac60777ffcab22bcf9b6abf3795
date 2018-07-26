@@ -16,6 +16,24 @@
       "revId": "c5096a19d3268ac60777ffcab22bcf9b6abf3795",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da7095c5_81118cae",
+        "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/main/RemoveUtils.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 2493
+      },
+      "writtenOn": "2018-07-26T07:27:55Z",
+      "side": 1,
+      "message": "Its better to have in else to avoid NullPointerException when args is null.",
+      "parentUuid": "da7095c5_81874c0f",
+      "revId": "c5096a19d3268ac60777ffcab22bcf9b6abf3795",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
