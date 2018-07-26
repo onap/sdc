@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da7095c5_666fa993",
+        "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/impl/GraphMLDataAnalyzer.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 3201
+      },
+      "writtenOn": "2018-07-26T22:49:23Z",
+      "side": 1,
+      "message": "do you think log.info might be a better alternative to printLn ?",
+      "revId": "43056617ea4481fd6ae3fe820ad75e4af7b3b43a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
