@@ -1,0 +1,89 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da7095c5_309c8b69",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/datatypes/heattotosca/unifiedmodel/consolidation/ComputeTemplateConsolidationData.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-07-26T14:02:49Z",
+      "side": 1,
+      "message": "consider using ListMultiMap\nhttps://google.github.io/guava/releases/19.0/api/docs/com/google/common/collect/ListMultimap.html",
+      "revId": "39c086dd0e714554f6024b43e470143dc63de07c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da7095c5_30732b4f",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/datatypes/heattotosca/unifiedmodel/consolidation/ComputeTemplateConsolidationData.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-07-26T14:02:49Z",
+      "side": 1,
+      "message": "consider using ListMultiMap\nhttps://google.github.io/guava/releases/19.0/api/docs/com/google/common/collect/ListMultimap.html",
+      "revId": "39c086dd0e714554f6024b43e470143dc63de07c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da7095c5_908237ff",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/test/java/org/openecomp/sdc/translator/datatypes/heattotosca/unifiedmodel/consolidation/ComputeTemplateConsolidationDataTest.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-07-26T14:02:49Z",
+      "side": 1,
+      "message": "consider using ListMultiMap\nhttps://google.github.io/guava/releases/19.0/api/docs/com/google/common/collect/ListMultimap.html",
+      "revId": "39c086dd0e714554f6024b43e470143dc63de07c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da7095c5_b0873b0f",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/test/java/org/openecomp/sdc/translator/datatypes/heattotosca/unifiedmodel/consolidation/ComputeTemplateConsolidationDataTest.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 154,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-07-26T14:02:49Z",
+      "side": 1,
+      "message": "consider using ListMultiMap\nhttps://google.github.io/guava/releases/19.0/api/docs/com/google/common/collect/ListMultimap.html",
+      "revId": "39c086dd0e714554f6024b43e470143dc63de07c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da7095c5_507c9f20",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/test/java/org/openecomp/sdc/translator/datatypes/heattotosca/unifiedmodel/consolidation/EntityConsolidationDataTest.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-07-26T14:02:49Z",
+      "side": 1,
+      "message": "consider using ListMultiMap\nhttps://google.github.io/guava/releases/19.0/api/docs/com/google/common/collect/ListMultimap.html",
+      "revId": "39c086dd0e714554f6024b43e470143dc63de07c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
