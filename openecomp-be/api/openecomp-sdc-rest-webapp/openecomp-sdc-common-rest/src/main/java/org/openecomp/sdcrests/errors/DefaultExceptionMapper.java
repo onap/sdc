@@ -129,7 +129,7 @@ public class DefaultExceptionMapper implements ExceptionMapper<Exception> {
     }
 
     private Response transform(Exception exception) {
-        ErrorCode errorCode = new GeneralErrorBuilder().build();
+        ErrorCode errorCode = new GeneralErrorBuilder(exception.getMessage()).build();
         LOGGER.error(errorCode.message(), exception);
         return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                        .entity(toEntity(Response.Status.INTERNAL_SERVER_ERROR, errorCode)).build();

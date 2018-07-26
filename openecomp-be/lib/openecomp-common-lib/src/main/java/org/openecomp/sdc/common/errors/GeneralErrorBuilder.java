@@ -20,24 +20,31 @@ import org.apache.commons.text.RandomStringGenerator;
 
 public class GeneralErrorBuilder {
 
-  private static final String GENERAL_ERROR_REST_ID = "GENERAL_ERROR_REST_ID";
-  private static final String GENERAL_ERROR_REST_MSG =
-          "An internal error has occurred. Please contact support. Error ID: %s";
+    private static final String GENERAL_ERROR_REST_ID = "GENERAL_ERROR_REST_ID";
+    private static final String GENERAL_ERROR_REST_MSG =
+            "An internal error has occurred. Please contact support. Error ID: %s";
+    private static final String GENERAL_ERROR_REST_MSG_WITH_DETAILS =
+            "An internal error has occurred. Please contact support. Error ID: %s. Detailed error: %s";
 
-  private final ErrorCode.ErrorCodeBuilder builder = new ErrorCode.ErrorCodeBuilder();
+    private final ErrorCode.ErrorCodeBuilder builder = new ErrorCode.ErrorCodeBuilder();
 
-  /**
-   * Instantiates a new General error builder.
-   */
-  public GeneralErrorBuilder() {
-    RandomStringGenerator generator = new RandomStringGenerator.Builder().withinRange('A', 'Z').build();
-    builder.withId(GENERAL_ERROR_REST_ID);
-    builder.withCategory(ErrorCategory.APPLICATION);
-    builder.withMessage(String.format(GENERAL_ERROR_REST_MSG, generator.generate(8)));
-  }
+    /**
+    * Instantiates a new General error builder.
+    */
+    public GeneralErrorBuilder(String detailedError) {
+        RandomStringGenerator generator = new RandomStringGenerator.Builder().withinRange('A', 'Z').build();
+        builder.withId(GENERAL_ERROR_REST_ID);
+        builder.withCategory(ErrorCategory.APPLICATION);
+        if (detailedError ==  null || detailedError.trim().isEmpty()) {
+            builder.withMessage(String.format(GENERAL_ERROR_REST_MSG, generator.generate(8)));
+        } else {
+            builder.withMessage(String.format(GENERAL_ERROR_REST_MSG_WITH_DETAILS, generator.generate(8),
+                    detailedError));
+        }
+    }
 
-  public ErrorCode build() {
-    return builder.build();
-  }
+    public ErrorCode build() {
+        return builder.build();
+    }
 
 }
