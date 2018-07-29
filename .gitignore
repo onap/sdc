@@ -50,10 +50,9 @@ version.properties
 *.iml
 *.jar
 *.war
-#Gradle
-.gradle/*
 
 #Gradle
+#build.gradle
 .gradle/*
 */*.gradle
 */settings.gradle
