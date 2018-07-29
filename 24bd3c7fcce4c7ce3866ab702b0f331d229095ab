@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a6a9dd7_d7399cd9",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsontitan/operations/BaseOperation.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1107,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-07-29T06:46:00Z",
+      "side": 1,
+      "message": "onap styling requires spaces \nedges !\u003d null",
+      "revId": "24bd3c7fcce4c7ce3866ab702b0f331d229095ab",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a6a9dd7_f73620e7",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsontitan/operations/BaseOperation.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1123,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-07-29T06:46:00Z",
+      "side": 1,
+      "message": "onap styling requires spaces\nedgesToDelete !\u003d null",
+      "revId": "24bd3c7fcce4c7ce3866ab702b0f331d229095ab",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a6a9dd7_973324f6",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsontitan/operations/ToscaOperationFacade.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 363,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-07-29T06:46:00Z",
+      "side": 1,
+      "message": "onap styling\nhttps://wiki.onap.org/display/DW/Java+code+style",
+      "revId": "24bd3c7fcce4c7ce3866ab702b0f331d229095ab",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
