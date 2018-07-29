@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a6a9dd7_97f004cb",
+        "filename": "catalog-fe/src/main/java/org/openecomp/sdc/fe/servlets/WorkflowServlet.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-07-29T20:54:19Z",
+      "side": 1,
+      "message": "whay are you adding logic to the FE server.\nit is only used for proxying and serving static pages not logic is done from here.",
+      "revId": "cc9ee28c573c0f2e9a7562c095d4714349788956",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
