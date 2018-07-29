@@ -20,19 +20,9 @@
 
 package org.openecomp.sdc.ci.tests.api;
 
-import static org.junit.Assert.assertTrue;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.List;
-
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Rule;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import org.junit.*;
 import org.junit.rules.TestName;
 import org.junit.rules.TestWatcher;
 import org.openecomp.sdc.ci.tests.config.Config;
@@ -43,8 +33,13 @@ import org.openecomp.sdc.ci.tests.utils.general.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.List;
+
+import static org.junit.Assert.assertTrue;
 
 public abstract class AttSdcTest {
 

@@ -20,16 +20,14 @@
 
 package org.openecomp.sdc.common.util;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import fj.data.Either;
 
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
-import fj.data.Either;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
 public class HttpUtil {
 	public static Either<String, IOException> readJsonStringFromRequest(HttpServletRequest request) {

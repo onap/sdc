@@ -20,8 +20,6 @@
 
 package org.openecomp.sdc.ci.tests.utils.rest;
 
-import java.io.IOException;
-
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.model.CapReqDef;
 import org.openecomp.sdc.be.model.User;
@@ -33,6 +31,8 @@ import org.openecomp.sdc.ci.tests.datatypes.ResourceReqDetails;
 import org.openecomp.sdc.ci.tests.datatypes.ServiceReqDetails;
 import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
 import org.openecomp.sdc.ci.tests.utils.Utils;
+
+import java.io.IOException;
 
 public class ComponentRestUtils extends BaseRestUtils {
 	public static RestResponse getComponentRequirmentsCapabilities(User sdncModifierDetails,

@@ -20,20 +20,14 @@
 
 package org.openecomp.sdc.be.servlets;
 
-import java.util.List;
-
-import javax.inject.Singleton;
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.jcabi.aspects.Loggable;
+import fj.data.Either;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.apache.commons.lang3.tuple.Pair;
 import org.openecomp.sdc.be.components.health.HealthCheckBusinessLogic;
 import org.openecomp.sdc.be.components.impl.MonitoringBusinessLogic;
@@ -43,21 +37,20 @@ import org.openecomp.sdc.be.impl.WebAppContextWrapper;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.api.HealthCheckInfo;
 import org.openecomp.sdc.common.api.HealthCheckWrapper;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.common.monitoring.MonitoringEvent;
 import org.openecomp.sdc.exception.ResponseFormat;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.web.context.WebApplicationContext;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.jcabi.aspects.Loggable;
+import javax.inject.Singleton;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.util.List;
 
-import fj.data.Either;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
 @Loggable(prepend = true, value = Loggable.TRACE, trim = false)
 @Path("/")
 @Api(value = "BE Monitoring", description = "BE Monitoring")
@@ -66,7 +59,7 @@ public class BeMonitoringServlet extends BeGenericServlet {
 
     Gson prettyGson = new GsonBuilder().setPrettyPrinting().create();
 
-    private static final Logger log = LoggerFactory.getLogger(ConfigServlet.class);
+    private static final Logger log = Logger.getLogger(ConfigServlet.class);
 
     @GET
     @Path("/healthCheck")
@@ -157,8 +150,7 @@ public class BeMonitoringServlet extends BeGenericServlet {
 
     private String getVersionFromContext(HttpServletRequest request) {
         ServletContext servletContext = request.getSession().getServletContext();
-        String version = (String) servletContext.getAttribute(Constants.ASDC_RELEASE_VERSION_ATTR);
-        return version;
+        return (String) servletContext.getAttribute(Constants.ASDC_RELEASE_VERSION_ATTR);
     }
 
     protected MonitoringEvent convertContentToJson(String content, Class<MonitoringEvent> clazz) {
@@ -177,8 +169,7 @@ public class BeMonitoringServlet extends BeGenericServlet {
     private HealthCheckBusinessLogic getHealthCheckBL(ServletContext context) {
         WebAppContextWrapper webApplicationContextWrapper = (WebAppContextWrapper) context.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR);
         WebApplicationContext webApplicationContext = webApplicationContextWrapper.getWebAppContext(context);
-        HealthCheckBusinessLogic healthCheckBl = webApplicationContext.getBean(HealthCheckBusinessLogic.class);
-        return healthCheckBl;
+        return webApplicationContext.getBean(HealthCheckBusinessLogic.class);
     }
 
 }

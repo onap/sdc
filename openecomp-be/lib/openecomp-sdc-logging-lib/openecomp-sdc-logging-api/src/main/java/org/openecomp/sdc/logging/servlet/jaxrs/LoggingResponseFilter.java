@@ -16,8 +16,7 @@
 
 package org.openecomp.sdc.logging.servlet.jaxrs;
 
-import static org.openecomp.sdc.logging.api.StatusCode.COMPLETE;
-import static org.openecomp.sdc.logging.api.StatusCode.ERROR;
+import org.openecomp.sdc.logging.api.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.container.ContainerRequestContext;
@@ -27,11 +26,9 @@ import javax.ws.rs.container.ResourceInfo;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.Provider;
-import org.openecomp.sdc.logging.api.AuditData;
-import org.openecomp.sdc.logging.api.Logger;
-import org.openecomp.sdc.logging.api.LoggerFactory;
-import org.openecomp.sdc.logging.api.LoggingContext;
-import org.openecomp.sdc.logging.api.StatusCode;
+
+import static org.openecomp.sdc.logging.api.StatusCode.COMPLETE;
+import static org.openecomp.sdc.logging.api.StatusCode.ERROR;
 
 /**
  * <p>Takes care of logging when an HTTP request leaves the application. This includes writing to audit and clearing

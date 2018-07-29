@@ -1,24 +1,21 @@
 package org.openecomp.sdc.be.components.impl;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import fj.data.Either;
+import org.openecomp.sdc.be.components.validation.AccessValidations;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
-import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.dto.ExternalRefDTO;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.jsontitan.operations.ExternalReferencesOperation;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
-import org.openecomp.sdc.be.model.operations.impl.GraphLockOperation;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 
-import fj.data.Either;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by yavivi on 04/02/2018.
@@ -26,16 +23,18 @@ import fj.data.Either;
 @org.springframework.stereotype.Component
 public class ExternalRefsBusinessLogic {
 
-    private static final Logger log = LoggerFactory.getLogger(ExternalRefsBusinessLogic.class);
+    private static final Logger log = Logger.getLogger(ExternalRefsBusinessLogic.class);
 
-    private ExternalReferencesOperation externalReferencesOperation;
-    private ToscaOperationFacade toscaOperationFacade;
-    private GraphLockOperation graphLockOperation;
+    private final ExternalReferencesOperation externalReferencesOperation;
+    private final ToscaOperationFacade toscaOperationFacade;
+    private final AccessValidations accessValidations;
+    private final ComponentLocker componentLocker;
 
-    public ExternalRefsBusinessLogic(ExternalReferencesOperation externalReferencesOperation, ToscaOperationFacade toscaOperationFacade, GraphLockOperation graphLockOperation){
+    public ExternalRefsBusinessLogic(ExternalReferencesOperation externalReferencesOperation, ToscaOperationFacade toscaOperationFacade, AccessValidations accessValidations, ComponentLocker componentLocker) {
         this.externalReferencesOperation = externalReferencesOperation;
         this.toscaOperationFacade = toscaOperationFacade;
-        this.graphLockOperation = graphLockOperation;
+        this.accessValidations = accessValidations;
+        this.componentLocker = componentLocker;
     }
 
     public Either<List<String>, ActionStatus> getExternalReferences(String assetUuid, String version, String componentInstanceName, String objectType){
@@ -63,21 +62,20 @@ public class ExternalRefsBusinessLogic {
         }
     }
 
-    public Either<String, ActionStatus> addExternalReference(String uuid, String componentInstanceName, String objectType, ExternalRefDTO ref) {
-        return this.doAction("POST", uuid, componentInstanceName, objectType, ref.getReferenceUUID(), "");
+    public Either<String, ActionStatus> addExternalReference(ComponentTypeEnum componentType, String userId, String uuid, String componentInstanceName, String objectType, ExternalRefDTO ref) {
+        return this.doAction(componentType, userId, "POST", uuid, componentInstanceName, objectType, ref.getReferenceUUID(), "");
     }
 
-
-    public Either<String, ActionStatus> deleteExternalReference(String uuid, String componentInstanceName, String objectType, String reference) {
-        return this.doAction("DELETE", uuid, componentInstanceName, objectType, reference, "");
+    public Either<String, ActionStatus> deleteExternalReference(ComponentTypeEnum componentType, String userId, String uuid, String componentInstanceName, String objectType, String reference) {
+        return this.doAction(componentType, userId, "DELETE", uuid, componentInstanceName, objectType, reference, "");
     }
 
-    public Either<String, ActionStatus> updateExternalReference(String uuid, String componentInstanceName, String objectType, String oldRefValue, String newRefValue) {
-        return this.doAction("PUT", uuid, componentInstanceName, objectType, oldRefValue, newRefValue);
+    public Either<String, ActionStatus> updateExternalReference(ComponentTypeEnum componentType, String userId, String uuid, String componentInstanceName, String objectType, String oldRefValue, String newRefValue) {
+        return this.doAction(componentType, userId, "PUT", uuid, componentInstanceName, objectType, oldRefValue, newRefValue);
     }
 
-    private Either<String, ActionStatus> doAction(String action, String uuid, String componentInstanceName, String objectType, String ref1, String ref2){
-        Either<Component, StorageOperationStatus> latestServiceByUuid = toscaOperationFacade.getLatestComponentByUuid(uuid, createPropsToMatch());
+    private Either<String, ActionStatus> doAction(ComponentTypeEnum componentType, String userId, String action, String uuid, String componentInstanceName, String objectType, String ref1, String ref2){
+        Either<Component, StorageOperationStatus> latestServiceByUuid = toscaOperationFacade.getLatestComponentByUuid(uuid, createPropsToMatch(componentType));
         if (latestServiceByUuid == null || latestServiceByUuid.isRight()){
             return Either.right(ActionStatus.RESOURCE_NOT_FOUND);
         }
@@ -87,10 +85,8 @@ public class ExternalRefsBusinessLogic {
         String uniqueId = component.getUniqueId();
 
         //Lock Asset
-        StorageOperationStatus lockStatus = this.graphLockOperation.lockComponent(uniqueId, NodeTypeEnum.Service);
-        if (lockStatus != StorageOperationStatus.OK){
-            return Either.right(ActionStatus.GENERAL_ERROR);
-        }
+        this.componentLocker.lock(component);
+        this.accessValidations.validateUserCanWorkOnComponent(component, userId, action + " EXTERNAL REF");
 
         Either<String, ActionStatus> opResult = Either.right(ActionStatus.GENERAL_ERROR);
         try {
@@ -113,14 +109,14 @@ public class ExternalRefsBusinessLogic {
             log.error("Cause is:" , e);
         } finally {
             //Unlock Asset
-            this.graphLockOperation.unlockComponent(uniqueId, NodeTypeEnum.Service);
+            this.componentLocker.unlock(uniqueId, componentType);
         }
         return opResult;
     }
 
-    private Map<GraphPropertyEnum, Object> createPropsToMatch() {
+    private Map<GraphPropertyEnum, Object> createPropsToMatch(ComponentTypeEnum componentType) {
         Map<GraphPropertyEnum, Object> propertiesToMatch = new HashMap<>();
-        propertiesToMatch.put(GraphPropertyEnum.COMPONENT_TYPE, ComponentTypeEnum.SERVICE.name());
+        propertiesToMatch.put(GraphPropertyEnum.COMPONENT_TYPE, componentType.name());
         propertiesToMatch.put(GraphPropertyEnum.STATE, LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
         return propertiesToMatch;
     }

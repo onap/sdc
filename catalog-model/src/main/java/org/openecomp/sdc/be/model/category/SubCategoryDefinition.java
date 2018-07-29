@@ -20,41 +20,41 @@
 
 package org.openecomp.sdc.be.model.category;
 
+import org.openecomp.sdc.be.datatypes.category.SubCategoryDataDefinition;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import org.openecomp.sdc.be.datatypes.category.SubCategoryDataDefinition;
-
 public class SubCategoryDefinition extends SubCategoryDataDefinition {
 
-	private List<GroupingDefinition> groupings;
+    private List<GroupingDefinition> groupings;
 
-	public SubCategoryDefinition() {
-		super();
-	}
+    public SubCategoryDefinition() {
+        super();
+    }
 
-	public SubCategoryDefinition(SubCategoryDataDefinition subCategory) {
-		super(subCategory);
-	}
+    public SubCategoryDefinition(SubCategoryDataDefinition subCategory) {
+        super(subCategory);
+    }
 
-	public List<GroupingDefinition> getGroupings() {
-		return groupings;
-	}
+    public List<GroupingDefinition> getGroupings() {
+        return groupings;
+    }
 
-	public void setGroupings(List<GroupingDefinition> groupingDefinitions) {
-		this.groupings = groupingDefinitions;
-	}
+    public void setGroupings(List<GroupingDefinition> groupingDefinitions) {
+        this.groupings = groupingDefinitions;
+    }
 
-	public void addGrouping(GroupingDefinition groupingDefinition) {
-		if (groupings == null) {
-			groupings = new ArrayList<GroupingDefinition>();
-		}
-		groupings.add(groupingDefinition);
-	}
+    public void addGrouping(GroupingDefinition groupingDefinition) {
+        if (groupings == null) {
+            groupings = new ArrayList<>();
+        }
+        groupings.add(groupingDefinition);
+    }
 
-	@Override
-	public String toString() {
-		return super.toString() + " SubCategoryDefinition [groupings=" + groupings + "]";
-	}
+    @Override
+    public String toString() {
+        return super.toString() + " SubCategoryDefinition [groupings=" + groupings + "]";
+    }
 
 }

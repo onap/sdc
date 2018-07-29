@@ -1,12 +1,112 @@
 package org.openecomp.sdc.be.datatypes.elements;
 
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
+
 import java.util.List;
 
-import org.junit.Assert;
-import org.junit.Test;
+import static org.junit.Assert.*;
 
 
 public class PropertyDataDefinitionTest {
+
+	private PropertyDataDefinition propDef;
+
+	@Before
+	public void setUp() {
+		propDef = new PropertyDataDefinition();
+	}
+
+	@Test
+	public void setStringField() {
+		final String name = "name";
+		assertNull(propDef.getName());
+		assertNull(propDef.getToscaPresentationValue(JsonPresentationFields.NAME));
+		propDef.setToscaPresentationValue(JsonPresentationFields.NAME, name);
+		assertEquals(name, propDef.getName());
+		assertEquals(name, propDef.getToscaPresentationValue(JsonPresentationFields.NAME));
+	}
+
+	@Test
+	public void setDefaultValue() {
+		final String defaultValue = "text";
+		assertNull(propDef.getDefaultValue());
+		assertNull(propDef.getToscaPresentationValue(JsonPresentationFields.DEFAULT_VALUE));
+		propDef.setToscaPresentationValue(JsonPresentationFields.DEFAULT_VALUE, defaultValue);
+		assertEquals(defaultValue, propDef.getDefaultValue());
+		assertEquals(defaultValue, propDef.getToscaPresentationValue(JsonPresentationFields.DEFAULT_VALUE));
+	}
+
+	@Test
+	public void setValueNotDefinedInPropDataDefinition() {
+		final String defaultValue = "VF";
+		assertNull(propDef.getToscaPresentationValue(JsonPresentationFields.COMPONENT_TYPE));
+		propDef.setToscaPresentationValue(JsonPresentationFields.COMPONENT_TYPE, defaultValue);
+		assertEquals(defaultValue, propDef.getToscaPresentationValue(JsonPresentationFields.COMPONENT_TYPE));
+	}
+
+	@Test
+	public void setBooleanField() {
+		assertFalse((Boolean) propDef.getToscaPresentationValue(JsonPresentationFields.PASSWORD));
+		assertFalse(propDef.isPassword());
+		propDef.setToscaPresentationValue(JsonPresentationFields.PASSWORD, Boolean.TRUE);
+		assertTrue(propDef.isPassword());
+		assertTrue((Boolean) propDef.getToscaPresentationValue(JsonPresentationFields.PASSWORD));
+	}
+
+	@Test
+	public void mergeDefaultValueWhenItWasNullBeforeMerge() {
+		final String defaultValue = "12345";
+		final String type = "1";
+		PropertyDataDefinition propForMerge = new PropertyDataDefinition();
+		propForMerge.setType(type);
+
+		propDef.setType(type);
+		propDef.setDefaultValue(defaultValue);
+		assertNull(propForMerge.getDefaultValue());
+		assertNull(propForMerge.getToscaPresentationValue(JsonPresentationFields.DEFAULT_VALUE));
+		propDef.mergeFunction(propForMerge, true);
+		assertEquals(defaultValue, propForMerge.getDefaultValue());
+		assertEquals(defaultValue, propForMerge.getToscaPresentationValue(JsonPresentationFields.DEFAULT_VALUE));
+	}
+
+	@Test
+	public void mergeDefaultValueAndOverrideIt() {
+		final String defaultValue = "12345";
+		final String defaultValueForOther = "7890";
+		final String type = "1";
+		PropertyDataDefinition propForMerge = new PropertyDataDefinition();
+		propForMerge.setType(type);
+		propForMerge.setDefaultValue(defaultValueForOther);
+
+		propDef.setType(type);
+		propDef.setDefaultValue(defaultValue);
+		assertEquals(defaultValueForOther, propForMerge.getDefaultValue());
+		assertEquals(defaultValueForOther, propForMerge.getToscaPresentationValue(JsonPresentationFields.DEFAULT_VALUE));
+		propDef.mergeFunction(propForMerge, true);
+		assertEquals(defaultValue, propForMerge.getDefaultValue());
+		assertEquals(defaultValue, propForMerge.getToscaPresentationValue(JsonPresentationFields.DEFAULT_VALUE));
+	}
+
+	@Test
+	public void mergeDefaultValueWhenOverridingIsNotAllowed() {
+		final String defaultValue = "12345";
+		final String defaultValueForOther = "7890";
+		final String type = "1";
+		PropertyDataDefinition propForMerge = new PropertyDataDefinition();
+		propForMerge.setType(type);
+		propForMerge.setDefaultValue(defaultValueForOther);
+
+		propDef.setType(type);
+		propDef.setDefaultValue(defaultValue);
+		assertEquals(defaultValueForOther, propForMerge.getDefaultValue());
+		assertEquals(defaultValueForOther, propForMerge.getToscaPresentationValue(JsonPresentationFields.DEFAULT_VALUE));
+		propDef.mergeFunction(propForMerge, false);
+		assertEquals(defaultValueForOther, propForMerge.getDefaultValue());
+		assertEquals(defaultValueForOther, propForMerge.getToscaPresentationValue(JsonPresentationFields.DEFAULT_VALUE));
+	}
 
 	private PropertyDataDefinition createTestSubject() {
 		return new PropertyDataDefinition();
@@ -21,7 +121,7 @@ public class PropertyDataDefinitionTest {
 		testSubject = createTestSubject();
 		new PropertyDataDefinition(testSubject);
 	}
-	
+
 	@Test
 	public void testGetInputPath() throws Exception {
 		PropertyDataDefinition testSubject;
@@ -32,7 +132,7 @@ public class PropertyDataDefinitionTest {
 		result = testSubject.getInputPath();
 	}
 
-	
+
 	@Test
 	public void testSetInputPath() throws Exception {
 		PropertyDataDefinition testSubject;
@@ -43,7 +143,7 @@ public class PropertyDataDefinitionTest {
 		testSubject.setInputPath(inputPath);
 	}
 
-	
+
 	@Test
 	public void testGetName() throws Exception {
 		PropertyDataDefinition testSubject;
@@ -54,7 +154,7 @@ public class PropertyDataDefinitionTest {
 		result = testSubject.getName();
 	}
 
-	
+
 	@Test
 	public void testSetName() throws Exception {
 		PropertyDataDefinition testSubject;
@@ -65,7 +165,7 @@ public class PropertyDataDefinitionTest {
 		testSubject.setName(name);
 	}
 
-	
+
 	@Test
 	public void testGetValue() throws Exception {
 		PropertyDataDefinition testSubject;
@@ -76,7 +176,7 @@ public class PropertyDataDefinitionTest {
 		result = testSubject.getValue();
 	}
 
-	
+
 	@Test
 	public void testSetValue() throws Exception {
 		PropertyDataDefinition testSubject;
@@ -87,7 +187,7 @@ public class PropertyDataDefinitionTest {
 		testSubject.setValue(value);
 	}
 
-	
+
 	@Test
 	public void testIsDefinition() throws Exception {
 		PropertyDataDefinition testSubject;
@@ -98,7 +198,7 @@ public class PropertyDataDefinitionTest {
 		result = testSubject.isDefinition();
 	}
 
-	
+
 	@Test
 	public void testSetDefinition() throws Exception {
 		PropertyDataDefinition testSubject;
@@ -109,7 +209,7 @@ public class PropertyDataDefinitionTest {
 		testSubject.setDefinition(definition);
 	}
 
-	
+
 	@Test
 	public void testGetType() throws Exception {
 		PropertyDataDefinition testSubject;
@@ -120,7 +220,7 @@ public class PropertyDataDefinitionTest {
 		result = testSubject.getType();
 	}
 
-	
+
 	@Test
 	public void testGetDefaultValue() throws Exception {
 		PropertyDataDefinition testSubject;
@@ -131,7 +231,7 @@ public class PropertyDataDefinitionTest {
 		result = testSubject.getDefaultValue();
 	}
 
-	
+
 	@Test
 	public void testSetDefaultValue() throws Exception {
 		PropertyDataDefinition testSubject;
@@ -142,7 +242,7 @@ public class PropertyDataDefinitionTest {
 		testSubject.setDefaultValue(defaultValue);
 	}
 
-	
+
 	@Test
 	public void testSetType() throws Exception {
 		PropertyDataDefinition testSubject;
@@ -153,7 +253,7 @@ public class PropertyDataDefinitionTest {
 		testSubject.setType(type);
 	}
 
-	
+
 	@Test
 	public void testIsRequired() throws Exception {
 		PropertyDataDefinition testSubject;
@@ -164,7 +264,7 @@ public class PropertyDataDefinitionTest {
 		result = testSubject.isRequired();
 	}
 
-	
+
 	@Test
 	public void testSetRequired() throws Exception {
 		PropertyDataDefinition testSubject;
@@ -175,7 +275,7 @@ public class PropertyDataDefinitionTest {
 		testSubject.setRequired(required);
 	}
 
-	
+
 	@Test
 	public void testGetDescription() throws Exception {
 		PropertyDataDefinition testSubject;
@@ -186,7 +286,7 @@ public class PropertyDataDefinitionTest {
 		result = testSubject.getDescription();
 	}
 
-	
+
 	@Test
 	public void testSetDescription() throws Exception {
 		PropertyDataDefinition testSubject;
@@ -197,7 +297,7 @@ public class PropertyDataDefinitionTest {
 		testSubject.setDescription(description);
 	}
 
-	
+
 	@Test
 	public void testIsPassword() throws Exception {
 		PropertyDataDefinition testSubject;
@@ -208,7 +308,7 @@ public class PropertyDataDefinitionTest {
 		result = testSubject.isPassword();
 	}
 
-	
+
 	@Test
 	public void testSetPassword() throws Exception {
 		PropertyDataDefinition testSubject;
@@ -219,7 +319,7 @@ public class PropertyDataDefinitionTest {
 		testSubject.setPassword(password);
 	}
 
-	
+
 	@Test
 	public void testGetUniqueId() throws Exception {
 		PropertyDataDefinition testSubject;
@@ -230,7 +330,7 @@ public class PropertyDataDefinitionTest {
 		result = testSubject.getUniqueId();
 	}
 
-	
+
 	@Test
 	public void testSetUniqueId() throws Exception {
 		PropertyDataDefinition testSubject;
@@ -241,7 +341,7 @@ public class PropertyDataDefinitionTest {
 		testSubject.setUniqueId(uniqueId);
 	}
 
-	
+
 	@Test
 	public void testGetSchema() throws Exception {
 		PropertyDataDefinition testSubject;
@@ -252,7 +352,7 @@ public class PropertyDataDefinitionTest {
 		result = testSubject.getSchema();
 	}
 
-	
+
 	@Test
 	public void testSetSchema() throws Exception {
 		PropertyDataDefinition testSubject;
@@ -263,7 +363,7 @@ public class PropertyDataDefinitionTest {
 		testSubject.setSchema(entrySchema);
 	}
 
-	
+
 	@Test
 	public void testGetLabel() throws Exception {
 		PropertyDataDefinition testSubject;
@@ -274,7 +374,7 @@ public class PropertyDataDefinitionTest {
 		result = testSubject.getLabel();
 	}
 
-	
+
 	@Test
 	public void testSetLabel() throws Exception {
 		PropertyDataDefinition testSubject;
@@ -285,7 +385,7 @@ public class PropertyDataDefinitionTest {
 		testSubject.setLabel(label);
 	}
 
-	
+
 	@Test
 	public void testIsHidden() throws Exception {
 		PropertyDataDefinition testSubject;
@@ -296,7 +396,7 @@ public class PropertyDataDefinitionTest {
 		result = testSubject.isHidden();
 	}
 
-	
+
 	@Test
 	public void testSetHidden() throws Exception {
 		PropertyDataDefinition testSubject;
@@ -307,7 +407,7 @@ public class PropertyDataDefinitionTest {
 		testSubject.setHidden(hidden);
 	}
 
-	
+
 	@Test
 	public void testIsImmutable() throws Exception {
 		PropertyDataDefinition testSubject;
@@ -318,7 +418,7 @@ public class PropertyDataDefinitionTest {
 		result = testSubject.isImmutable();
 	}
 
-	
+
 	@Test
 	public void testSetImmutable() throws Exception {
 		PropertyDataDefinition testSubject;
@@ -329,7 +429,7 @@ public class PropertyDataDefinitionTest {
 		testSubject.setImmutable(immutable);
 	}
 
-	
+
 	@Test
 	public void testGetParentUniqueId() throws Exception {
 		PropertyDataDefinition testSubject;
@@ -340,7 +440,7 @@ public class PropertyDataDefinitionTest {
 		result = testSubject.getParentUniqueId();
 	}
 
-	
+
 	@Test
 	public void testSetParentUniqueId() throws Exception {
 		PropertyDataDefinition testSubject;
@@ -351,7 +451,7 @@ public class PropertyDataDefinitionTest {
 		testSubject.setParentUniqueId(parentUniqueId);
 	}
 
-	
+
 	@Test
 	public void testGetGetInputValues() throws Exception {
 		PropertyDataDefinition testSubject;
@@ -362,7 +462,7 @@ public class PropertyDataDefinitionTest {
 		result = testSubject.getGetInputValues();
 	}
 
-	
+
 	@Test
 	public void testSetGetInputValues() throws Exception {
 		PropertyDataDefinition testSubject;
@@ -373,7 +473,7 @@ public class PropertyDataDefinitionTest {
 		testSubject.setGetInputValues(getInputValues);
 	}
 
-	
+
 	@Test
 	public void testGetStatus() throws Exception {
 		PropertyDataDefinition testSubject;
@@ -384,7 +484,7 @@ public class PropertyDataDefinitionTest {
 		result = testSubject.getStatus();
 	}
 
-	
+
 	@Test
 	public void testSetStatus() throws Exception {
 		PropertyDataDefinition testSubject;
@@ -395,7 +495,7 @@ public class PropertyDataDefinitionTest {
 		testSubject.setStatus(status);
 	}
 
-	
+
 	@Test
 	public void testGetInputId() throws Exception {
 		PropertyDataDefinition testSubject;
@@ -406,7 +506,7 @@ public class PropertyDataDefinitionTest {
 		result = testSubject.getInputId();
 	}
 
-	
+
 	@Test
 	public void testSetInputId() throws Exception {
 		PropertyDataDefinition testSubject;
@@ -417,7 +517,7 @@ public class PropertyDataDefinitionTest {
 		testSubject.setInputId(inputId);
 	}
 
-	
+
 	@Test
 	public void testGetInstanceUniqueId() throws Exception {
 		PropertyDataDefinition testSubject;
@@ -428,7 +528,7 @@ public class PropertyDataDefinitionTest {
 		result = testSubject.getInstanceUniqueId();
 	}
 
-	
+
 	@Test
 	public void testSetInstanceUniqueId() throws Exception {
 		PropertyDataDefinition testSubject;
@@ -439,7 +539,7 @@ public class PropertyDataDefinitionTest {
 		testSubject.setInstanceUniqueId(instanceUniqueId);
 	}
 
-	
+
 	@Test
 	public void testGetPropertyId() throws Exception {
 		PropertyDataDefinition testSubject;
@@ -450,7 +550,7 @@ public class PropertyDataDefinitionTest {
 		result = testSubject.getPropertyId();
 	}
 
-	
+
 	@Test
 	public void testSetPropertyId() throws Exception {
 		PropertyDataDefinition testSubject;
@@ -461,7 +561,7 @@ public class PropertyDataDefinitionTest {
 		testSubject.setPropertyId(propertyId);
 	}
 
-	
+
 	@Test
 	public void testToString() throws Exception {
 		PropertyDataDefinition testSubject;
@@ -472,7 +572,7 @@ public class PropertyDataDefinitionTest {
 		result = testSubject.toString();
 	}
 
-	
+
 	@Test
 	public void testHashCode() throws Exception {
 		PropertyDataDefinition testSubject;
@@ -483,7 +583,7 @@ public class PropertyDataDefinitionTest {
 		result = testSubject.hashCode();
 	}
 
-	
+
 	@Test
 	public void testEquals() throws Exception {
 		PropertyDataDefinition testSubject;
@@ -500,7 +600,7 @@ public class PropertyDataDefinitionTest {
 		result = testSubject.equals(createTestSubject());
 		Assert.assertEquals(true, result);
 	}
-	
+
 	@Test
 	public void testConvertPropertyDataToInstancePropertyData() throws Exception {
 		PropertyDataDefinition testSubject;
@@ -509,7 +609,7 @@ public class PropertyDataDefinitionTest {
 		testSubject = createTestSubject();
 		testSubject.convertPropertyDataToInstancePropertyData();
 	}
-	
+
 	@Test
 	public void testTypeEquals() throws Exception {
 		PropertyDataDefinition testSubject;
@@ -520,7 +620,7 @@ public class PropertyDataDefinitionTest {
 		testSubject.typeEquals(null);
 		testSubject.typeEquals(createTestSubject());
 	}
-	
+
 	@Test
 	public void testMergeFunction() throws Exception {
 		PropertyDataDefinition testSubject;
@@ -528,5 +628,6 @@ public class PropertyDataDefinitionTest {
 		// default test
 		testSubject = createTestSubject();
 		testSubject.mergeFunction(createTestSubject(), false);
+
 	}
 }

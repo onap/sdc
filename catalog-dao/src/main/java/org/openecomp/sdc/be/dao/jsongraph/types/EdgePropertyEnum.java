@@ -22,7 +22,8 @@ package org.openecomp.sdc.be.dao.jsongraph.types;
 
 public enum EdgePropertyEnum {
 	
-	STATE ("state");
+	STATE ("state"),
+	INSTANCES("instances");
 
 	private String property;
 	

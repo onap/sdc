@@ -20,24 +20,24 @@
 
 package org.openecomp.sdc.be.model.tosca.converters;
 
-import java.util.Map;
-
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 
+import java.util.Map;
+
 public class ToscaValueDefaultConverter implements ToscaValueConverter {
-	private static ToscaValueDefaultConverter deafultConverter = new ToscaValueDefaultConverter();
+    private static ToscaValueDefaultConverter deafultConverter = new ToscaValueDefaultConverter();
 
-	public static ToscaValueDefaultConverter getInstance() {
-		return deafultConverter;
-	}
+    public static ToscaValueDefaultConverter getInstance() {
+        return deafultConverter;
+    }
 
-	private ToscaValueDefaultConverter() {
+    private ToscaValueDefaultConverter() {
 
-	}
+    }
 
-	@Override
-	public Object convertToToscaValue(String value, String innerType, Map<String, DataTypeDefinition> dataTypes) {
-		return value;
-	}
+    @Override
+    public Object convertToToscaValue(String value, String innerType, Map<String, DataTypeDefinition> dataTypes) {
+        return value;
+    }
 
 }

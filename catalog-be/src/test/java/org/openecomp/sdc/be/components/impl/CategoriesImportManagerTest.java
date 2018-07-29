@@ -20,16 +20,7 @@
 
 package org.openecomp.sdc.be.components.impl;
 
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.when;
-
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.List;
-import java.util.Map;
-
+import fj.data.Either;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -46,7 +37,15 @@ import org.openecomp.sdc.be.model.category.SubCategoryDefinition;
 import org.openecomp.sdc.be.model.operations.api.IElementOperation;
 import org.openecomp.sdc.exception.ResponseFormat;
 
-import fj.data.Either;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
+import java.util.Map;
+
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.when;
 
 public class CategoriesImportManagerTest {
     @InjectMocks
@@ -64,15 +63,13 @@ public class CategoriesImportManagerTest {
             Object[] args = invocation.getArguments();
             CategoryDefinition category = (CategoryDefinition) args[0];
             category.setUniqueId("123");
-            Either<CategoryDefinition, ActionStatus> ans = Either.left(category);
-            return ans;
+            return Either.left(category);
         });
         when(elementOperation.createSubCategory(Mockito.any(String.class), Mockito.any(SubCategoryDefinition.class), Mockito.any(NodeTypeEnum.class))).thenAnswer(new Answer<Either<SubCategoryDefinition, ActionStatus>>() {
             public Either<SubCategoryDefinition, ActionStatus> answer(InvocationOnMock invocation) {
                 Object[] args = invocation.getArguments();
                 // subcategory.setName(((SubCategoryDefinition)args[0]).getName());
-                Either<SubCategoryDefinition, ActionStatus> ans = Either.left(subcategory);
-                return ans;
+                return Either.left(subcategory);
             }
 
         });
@@ -96,7 +93,6 @@ public class CategoriesImportManagerTest {
     private String getYmlContent() throws IOException {
         Path filePath = Paths.get("src/test/resources/types/categoryTypes.yml");
         byte[] fileContent = Files.readAllBytes(filePath);
-        String ymlContent = new String(fileContent);
-        return ymlContent;
+        return new String(fileContent);
     }
 }

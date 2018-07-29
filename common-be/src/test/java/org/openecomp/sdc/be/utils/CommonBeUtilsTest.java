@@ -20,10 +20,11 @@
 
 package org.openecomp.sdc.be.utils;
 
+import static org.junit.Assert.assertEquals;
+import org.junit.Test;
+
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-
-import org.junit.Test;
 
 public class CommonBeUtilsTest {
 
@@ -43,7 +44,7 @@ public class CommonBeUtilsTest {
 	public void testConformanceLevelCompare() {
 
 		assertTrue(CommonBeUtils.conformanceLevelCompare("1.1", "0.15") > 0);
-		assertTrue(CommonBeUtils.conformanceLevelCompare("0.5", "0.5") == 0);
+        assertEquals(0, CommonBeUtils.conformanceLevelCompare("0.5", "0.5"));
 		assertTrue(CommonBeUtils.conformanceLevelCompare("0.5", "0.6") < 0);
 		assertTrue(CommonBeUtils.conformanceLevelCompare("1.5", "2.6") < 0);
 		assertTrue(CommonBeUtils.conformanceLevelCompare("1.5", "1.5.3") < 0);

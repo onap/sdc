@@ -1,10 +1,7 @@
 package org.openecomp.sdc.be.components.distribution.engine;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
+import fj.data.Either;
+import mockit.Deencapsulation;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -22,8 +19,10 @@ import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.impl.InterfaceLifecycleOperation;
 import org.openecomp.sdc.common.api.ArtifactTypeEnum;
 
-import fj.data.Either;
-import mockit.Deencapsulation;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 public class ServiceDistributionArtifactsBuilderTest extends BeConfDependentTest {
 

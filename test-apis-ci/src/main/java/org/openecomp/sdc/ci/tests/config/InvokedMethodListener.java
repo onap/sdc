@@ -20,14 +20,14 @@
 
 package org.openecomp.sdc.ci.tests.config;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.testng.IInvokedMethod;
 import org.testng.IInvokedMethodListener;
 import org.testng.ITestResult;
 import org.testng.SkipException;
 import org.testng.internal.TestResult;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class InvokedMethodListener implements IInvokedMethodListener {
 

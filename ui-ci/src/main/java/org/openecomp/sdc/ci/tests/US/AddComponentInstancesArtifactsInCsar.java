@@ -20,24 +20,11 @@
 
 package org.openecomp.sdc.ci.tests.US;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
-import org.openecomp.sdc.be.model.ArtifactDefinition;
-import org.openecomp.sdc.be.model.Component;
-import org.openecomp.sdc.be.model.ComponentInstance;
-import org.openecomp.sdc.be.model.Resource;
-import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.*;
 import org.openecomp.sdc.ci.tests.datatypes.*;
+import org.openecomp.sdc.ci.tests.datatypes.enums.ArtifactTypeEnum;
 import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
 import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
 import org.openecomp.sdc.ci.tests.execute.devCI.ArtifactFromCsar;
@@ -49,18 +36,21 @@ import org.openecomp.sdc.ci.tests.utilities.FileHandling;
 import org.openecomp.sdc.ci.tests.utilities.OnboardingUiUtils;
 import org.openecomp.sdc.ci.tests.utils.general.AtomicOperationUtils;
 import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
+import org.openecomp.sdc.ci.tests.utils.general.VendorLicenseModelRestUtils;
+import org.openecomp.sdc.ci.tests.utils.general.VendorSoftwareProductRestUtils;
 import org.openecomp.sdc.ci.tests.utils.rest.ArtifactRestUtils;
 import org.openecomp.sdc.ci.tests.utils.rest.ResponseParser;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import com.clearspring.analytics.util.Pair;
-import org.openecomp.sdc.ci.tests.utils.general.VendorLicenseModelRestUtils;
-import org.openecomp.sdc.ci.tests.utils.general.VendorSoftwareProductRestUtils;
+import java.io.File;
+import java.util.*;
 
 public class AddComponentInstancesArtifactsInCsar extends SetupCDTest {
-	
+
+	public static final String DEPLOYMENT = "Deployment";
+	public static final String INFORMATIONAL = "Informational";
 	private String filePath;
 	@BeforeClass
 	public void beforeClass(){
@@ -76,7 +66,7 @@ public class AddComponentInstancesArtifactsInCsar extends SetupCDTest {
 	// US847439 - Story [BE] - Add Component Instance's artifacts in CSAR
 	// TC1521795 - VF CSAR - The Flow
 	@Test
-	public void vfAndServicerCsarTheFlow() throws Exception{
+	public void vfAndServiceCsarTheFlow() throws Exception{
 		ResourceReqDetails resourceMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
 		
 		String vnfFile = "FDNT.zip";
@@ -84,19 +74,17 @@ public class AddComponentInstancesArtifactsInCsar extends SetupCDTest {
 		
 		AmdocsLicenseMembers amdocsLicenseMembers = VendorLicenseModelRestUtils.createVendorLicense(getUser());
 		ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource();//getResourceReqDetails(ComponentConfigurationTypeEnum.DEFAULT);
-		Pair<String, VendorSoftwareProductObject> createVSP = VendorSoftwareProductRestUtils.createVSP(resourceReqDetails, vnfFile, filePath, getUser(), amdocsLicenseMembers);
-		String vspName = createVSP.left;
+		VendorSoftwareProductObject createVSP = VendorSoftwareProductRestUtils.createVSP(resourceReqDetails, vnfFile, filePath, getUser(), amdocsLicenseMembers);
+		String vspName = createVSP.getName();
 		resourceMetaData.setName(vspName);
-		VendorSoftwareProductObject resourceMeta = createVSP.right;
-		VendorSoftwareProductRestUtils.addVFCArtifacts(filePath, snmpFile, null, resourceMeta, getUser());
-		VendorSoftwareProductRestUtils.prepareVspForUse(getUser(), resourceMeta, true);
+		VendorSoftwareProductRestUtils.addVFCArtifacts(filePath, snmpFile, null, createVSP, getUser());
+		VendorSoftwareProductRestUtils.prepareVspForUse(getUser(), createVSP, true);
 
 		HomePage.showVspRepository();
 		OnboardingUiUtils.importVSP(createVSP);
 		resourceMetaData.setVersion("0.1");
 		Resource vfResource = AtomicOperationUtils.getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, resourceMetaData.getName(), resourceMetaData.getVersion());
 
-		
 		Map<String, Object> artifacts = getArtifactsOfComponentAndComponentsInstance(vfResource);
 
 		List<ImmutablePair<ComponentInstance, ArtifactDefinition>> artifactsUploadedToComponentInstance = new LinkedList<>();
@@ -109,11 +97,10 @@ public class AddComponentInstancesArtifactsInCsar extends SetupCDTest {
 			}
 		}
 		
-		if(artifactsUploadedToComponentInstance.size() > 0) {
+		if(!artifactsUploadedToComponentInstance.isEmpty()) {
 			Map<String, Object> artifactsOfResourceInstance = getArtifactsOfResourceInstance(artifactsUploadedToComponentInstance);
 			artifacts.put("Resources", artifactsOfResourceInstance);
 		}
-		
 		
 		ResourceGeneralPage.getLeftMenu().moveToToscaArtifactsScreen();
 		ToscaArtifactsPage.downloadCsar();
@@ -121,72 +108,12 @@ public class AddComponentInstancesArtifactsInCsar extends SetupCDTest {
 		Map<String, Object> combineHeatArtifacstWithFolderArtifacsToMap = ArtifactFromCsar.getVFCArtifacts(latestFilefromDir.getAbsolutePath());
 		
 		compareArtifactFromFileStructureToArtifactsFromJavaObject(artifacts, combineHeatArtifacstWithFolderArtifacsToMap);
-		
-		
-//		////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//		////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//		////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//		
-//		// Submit for testing + certify
-//		DeploymentArtifactPage.clickSubmitForTestingButton(vspName);
-//
-//		reloginWithNewRole(UserRoleEnum.TESTER);
-//		GeneralUIUtils.findComponentAndClick(vspName);
-//		TesterOperationPage.certifyComponent(vspName);
-//
-//		reloginWithNewRole(UserRoleEnum.DESIGNER);
-//		// create service
-//		ServiceReqDetails serviceMetadata = ElementFactory.getDefaultService();
-//		ServiceUIUtils.createService(serviceMetadata, getUser());
-//		serviceMetadata.setVersion("0.1");
-//		
-//		
-//		// Upload informationl artifact to service
-//		ServiceGeneralPage.getLeftMenu().moveToCompositionScreen();
-//		
-//		String HEAT_FILE_YAML_NAME = "Heat-File.yaml";
-//		String DESCRIPTION = "kuku";
-//		String ARTIFACT_LABEL = "artifact3";
-//		
-//		ArtifactInfo artifact = new ArtifactInfo(filePath, HEAT_FILE_YAML_NAME, DESCRIPTION, ARTIFACT_LABEL,"OTHER");
-//		CompositionPage.showDeploymentArtifactTab();
-//		CompositionPage.clickAddArtifactButton();
-//		ArtifactUIUtils.fillAndAddNewArtifactParameters(artifact, CompositionPage.artifactPopup());
-//		
-//		ArtifactInfo informationArtifact = new ArtifactInfo(filePath, "asc_heat 0 2.yaml", "kuku", "artifact1", "GUIDE");
-//		CompositionPage.showInformationArtifactTab();
-//		CompositionPage.clickAddArtifactButton();
-//		ArtifactUIUtils.fillAndAddNewArtifactParameters(informationArtifact, CompositionPage.artifactPopup());
-//		
-//		
-//		
-//		// Add component instance to canvas of the service
-//		CompositionPage.searchForElement(vspName);
-//		CanvasManager serviceCanvasManager = CanvasManager.getCanvasManager();
-//		CanvasElement vfElement = serviceCanvasManager.createElementOnCanvas(vspName);
-//		
-//		Service service = AtomicOperationUtils.getServiceObjectByNameAndVersion(UserRoleEnum.DESIGNER, serviceMetadata.getName(), serviceMetadata.getVersion());
-//		
-////		ArtifactReqDetails artifactReqDetails = ElementFactory.getArtifactByType("ci", "OTHER", true, false);
-////		RestResponse restResponse = ArtifactRestUtils.externalAPIUploadArtifactOfTheAsset(service, getUser(), artifactReqDetails);
-////		Integer responseCode = restResponse.getErrorCode();
-////		Assert.assertEquals(responseCode, (Integer)200, "Response code is not correct.");
-////		
-////		service = AtomicOperationUtils.getServiceObjectByNameAndVersion(UserRoleEnum.DESIGNER, serviceMetadata.getName(), serviceMetadata.getVersion());
-//		
-//		Map<String, Object> artifactsService = getArtifactsOfComponentAndComponentsInstance(service);
-//		
-//		System.out.println("12354");
-//		
-//		artifactsService.put(vfResource.getToscaResourceName(), artifacts);
-//		
-//		System.out.println("1234");
 
 	}
 	
 	public void compareArtifactFromFileStructureToArtifactsFromJavaObject(Map<String, Object> artifactFromJavaObject, Map<String, Object> artifactsFromFileStructure) {
 		for(String key: artifactFromJavaObject.keySet()) {
-			if((!key.equals("Deployment")) && (!key.equals("Informational"))) {
+			if((!key.equals(DEPLOYMENT)) && (!key.equals(INFORMATIONAL))) {
 				Map<String, Object> newArtifactFromJavaObject = (Map<String, Object>) artifactFromJavaObject.get(key);
 				Map<String, Object> newArtifactsFromFileStructure = (Map<String, Object>) artifactsFromFileStructure.get(key);
 				compareArtifactFromFileStructureToArtifactsFromJavaObject(newArtifactFromJavaObject, newArtifactsFromFileStructure);
@@ -229,36 +156,30 @@ public class AddComponentInstancesArtifactsInCsar extends SetupCDTest {
 			ArtifactDefinition artifactDefinition = ri.getRight();
 			ComponentInstance componentInstance = ri.getLeft();
 			if(artifacts.containsKey(componentInstance.getNormalizedName())) {
-				if( ((Map<String, ArrayList<String>>)((Map<String, Object>)artifacts.get(componentInstance.getNormalizedName())).get("Deployment")).containsKey(artifactDefinition.getArtifactType()) ) {
+				if( ((Map<String, ArrayList<String>>)((Map<String, Object>)artifacts.get(componentInstance.getNormalizedName())).get(DEPLOYMENT)).containsKey(artifactDefinition.getArtifactType()) ) {
 
-					((Map<String, ArrayList<String>>)((Map<String, Object>) artifacts.get(componentInstance.getNormalizedName())).get("Deployment")).get(artifactDefinition.getArtifactType()).add(artifactDefinition.getArtifactName());
+					((Map<String, ArrayList<String>>)((Map<String, Object>) artifacts.get(componentInstance.getNormalizedName())).get(DEPLOYMENT)).get(artifactDefinition.getArtifactType()).add(artifactDefinition.getArtifactName());
 
 				} else {
-					ArrayList<String> list = new ArrayList<String>();
+					ArrayList<String> list = new ArrayList<>();
 					list.add(artifactDefinition.getArtifactName());				
-					((Map<String, ArrayList<String>>)((Map<String, Object>) artifacts.get(componentInstance.getNormalizedName())).get("Deployment")).put(artifactDefinition.getArtifactType(), list);
+					((Map<String, ArrayList<String>>)((Map<String, Object>) artifacts.get(componentInstance.getNormalizedName())).get(DEPLOYMENT)).put(artifactDefinition.getArtifactType(), list);
 				}	
 		
 			} else {
 				try {
 					
 					
-					ArrayList<String> list = new ArrayList<String>();
+					ArrayList<String> list = new ArrayList<>();
 					list.add(artifactDefinition.getArtifactName());
 					
 					Map<String, ArrayList<String>> map = new HashMap<>();
 					map.put(artifactDefinition.getArtifactType(), list);
 					
 					Map<String, Map<String, ArrayList<String>>> addMap = new HashMap<>();
-					addMap.put("Deployment", map);
+					addMap.put(DEPLOYMENT, map);
 					
 					artifacts.put(componentInstance.getNormalizedName(), addMap);
-					
-//					if(artifacts.size() == 0) {
-//						artifacts.put("Deployment", addMap);
-//					} else {
-//						((Map<String, Map<String, ArrayList<String>>>) artifacts.get("Deployment")).putAll(addMap);
-//					}
 				} catch (Exception e) {
 					Assert.fail("Artifact name is null for componentInstance: " + componentInstance.getNormalizedName());
 				}
@@ -268,52 +189,52 @@ public class AddComponentInstancesArtifactsInCsar extends SetupCDTest {
 	}
 	
 	public Map<String, Object> getArtifactsOfComponentAndComponentsInstance(Component component) {
-		Map<String, Object> artifacts = getArtifacstOfComponent(component);
+		Map<String, Object> artifacts = getArtifactsOfComponent(component);
 		
 		for(ComponentInstance componentInstance: component.getComponentInstances()) {
-			Map<String, Object> artifacstOfComponentInstance = getArtifacstOfComponentInstance(componentInstance);
-			if(artifacstOfComponentInstance.size() > 0) {
-				artifacts.put(componentInstance.getToscaComponentName() + "." + componentInstance.getComponentVersion(), artifacstOfComponentInstance);
+			Map<String, Object> artifactsOfComponentInstance = getArtifactsOfComponentInstance(componentInstance);
+			if(!artifactsOfComponentInstance.isEmpty()) {
+				artifacts.put(componentInstance.getToscaComponentName() + "." + componentInstance.getComponentVersion(), artifactsOfComponentInstance);
 			}
 		}
 		
 		return artifacts;
 	}
 	
-	public Map<String, Object> getArtifacstOfComponentInstance(ComponentInstance componentInstance) {
+	public Map<String, Object> getArtifactsOfComponentInstance(ComponentInstance componentInstance) {
 		Map<String, Object> map = new HashMap<>();
 		
 		if(componentInstance.getArtifacts() != null) {
 			Map<String, Object> informationalArtifacts = getArtifacts(componentInstance.getArtifacts());
-			if(informationalArtifacts.size() > 0) {
-				map.put("Informational", informationalArtifacts);
+			if(!informationalArtifacts.isEmpty()) {
+				map.put(INFORMATIONAL, informationalArtifacts);
 			}
 		}
 		
 		if(componentInstance.getDeploymentArtifacts() != null) {
 			Map<String, Object> deploymentArtifacts = getArtifacts(componentInstance.getDeploymentArtifacts());
-			if(deploymentArtifacts.size() > 0) {
-				map.put("Deployment", deploymentArtifacts);
+			if(!deploymentArtifacts.isEmpty()) {
+				map.put(DEPLOYMENT, deploymentArtifacts);
 			}
 		}
 		
 		return map;
 	}
 	
-	public Map<String, Object> getArtifacstOfComponent(Component component) {
+	public Map<String, Object> getArtifactsOfComponent(Component component) {
 		Map<String, Object> map = new HashMap<>();
 		
 		if(component.getArtifacts() != null) {
 			Map<String, Object> informationalArtifacts = getArtifacts(component.getArtifacts());
-			if(informationalArtifacts.size() > 0) {
-				map.put("Informational", informationalArtifacts);
+			if(!informationalArtifacts.isEmpty()) {
+				map.put(INFORMATIONAL, informationalArtifacts);
 			}
 		}
 		
 		if(component.getDeploymentArtifacts() != null) {
 			Map<String, Object> deploymentArtifacts = getArtifacts(component.getDeploymentArtifacts());
-			if(deploymentArtifacts.size() > 0) {
-				map.put("Deployment", deploymentArtifacts);
+			if(!deploymentArtifacts.isEmpty()) {
+				map.put(DEPLOYMENT, deploymentArtifacts);
 			}
 		}
 		
@@ -329,7 +250,7 @@ public class AddComponentInstancesArtifactsInCsar extends SetupCDTest {
 				if(map.containsKey(artifactDefinition.getArtifactType())) {
 					((List<String>) map.get(artifactDefinition.getArtifactType())).add(artifactDefinition.getArtifactName());
 				} else {
-					ArrayList<String> list = new ArrayList<String>();
+					ArrayList<String> list = new ArrayList<>();
 					list.add(artifactDefinition.getArtifactName());
 					map.put(artifactDefinition.getArtifactType(), list);
 				}
@@ -339,7 +260,7 @@ public class AddComponentInstancesArtifactsInCsar extends SetupCDTest {
 		return map;
 	}
 	
-	public ImmutablePair<ComponentInstance, ArtifactDefinition> uploadArtifactOnRandomRI(Component component) throws IOException, Exception {
+	public ImmutablePair<ComponentInstance, ArtifactDefinition> uploadArtifactOnRandomRI(Component component) throws Exception {
 		ArtifactReqDetails artifactReqDetails = getRandomArtifact();
 		Random random = new Random();
 		int randInt = random.nextInt(component.getComponentInstances().size());
@@ -357,7 +278,7 @@ public class AddComponentInstancesArtifactsInCsar extends SetupCDTest {
 		return pair;
 	}
 	
-	public ImmutablePair<ComponentInstance, ArtifactDefinition> uploadArtifactOnRandomRI(Resource resource) throws IOException, Exception {
+	public ImmutablePair<ComponentInstance, ArtifactDefinition> uploadArtifactOnRandomRI(Resource resource) throws Exception {
 		ArtifactReqDetails artifactReqDetails = getRandomVfcArtifact();
 		Random random = new Random();
 		int randInt = random.nextInt(resource.getComponentInstances().size());
@@ -365,40 +286,34 @@ public class AddComponentInstancesArtifactsInCsar extends SetupCDTest {
 		ComponentInstance componentInstance = resource.getComponentInstances().get(randInt);
 		
 		RestResponse uploadArtifactRestResponse = ArtifactRestUtils.externalAPIUploadArtifactOfComponentInstanceOnAsset(resource, defaultUser, artifactReqDetails, componentInstance);
-		
-		
-		
 		// Check response of external API
 		Integer responseCode = uploadArtifactRestResponse.getErrorCode();
-		
-//		if(responseCode.equals(404)) {
-//			getExtendTest().log(Status.SKIP, String.format("DE271521"));
-//			throw new SkipException("DE271521");			
-//		}
-		
 		Assert.assertEquals(responseCode, (Integer)200, "Response code is not correct.");
-		
 		ImmutablePair<ComponentInstance, ArtifactDefinition> pair = ImmutablePair.of(componentInstance, ResponseParser.convertArtifactDefinitionResponseToJavaObject(uploadArtifactRestResponse.getResponse()));
-	
 		return pair;
 	}
 	
-	public ArtifactReqDetails getRandomArtifact() throws IOException, Exception {
+	public ArtifactReqDetails getRandomArtifact() throws Exception {
 		List<String> artifactsTypeList = Arrays.asList("Other");
 		return getRandomArtifact(artifactsTypeList);
 	}
 	
-	public ArtifactReqDetails getRandomVfcArtifact() throws IOException, Exception {
-		List<String> vfcArtifactsTypeList = Arrays.asList("DCAE_INVENTORY_TOSCA", "DCAE_INVENTORY_JSON", "DCAE_INVENTORY_POLICY", "DCAE_INVENTORY_DOC",
-				"DCAE_INVENTORY_BLUEPRINT", "DCAE_INVENTORY_EVENT", "SNMP_POLL", "SNMP_TRAP");
+	public ArtifactReqDetails getRandomVfcArtifact() throws Exception {
+		List<String> vfcArtifactsTypeList = Arrays.asList(
+				ArtifactTypeEnum.DCAE_INVENTORY_TOSCA.getType(),
+				ArtifactTypeEnum.DCAE_INVENTORY_JSON.getType(),
+				ArtifactTypeEnum.DCAE_INVENTORY_POLICY.getType(),
+				ArtifactTypeEnum.DCAE_INVENTORY_DOC.getType(),
+				ArtifactTypeEnum.DCAE_INVENTORY_BLUEPRINT.getType(),
+				ArtifactTypeEnum.DCAE_INVENTORY_EVENT.getType(),
+				ArtifactTypeEnum.SNMP_POLL.getType(),
+				ArtifactTypeEnum.SNMP_TRAP.getType());
 		return getRandomArtifact(vfcArtifactsTypeList);
 	}
 	
-	public ArtifactReqDetails getRandomArtifact(List<String> artifactType) throws IOException, Exception {
+	public ArtifactReqDetails getRandomArtifact(List<String> artifactType) throws Exception {
 		Random random = new Random();
-		
-		ArtifactReqDetails artifactReqDetails = ElementFactory.getArtifactByType("ci", artifactType.get(random.nextInt(artifactType.size())), true, false);
-		return artifactReqDetails;
+		return ElementFactory.getArtifactByType("ci", artifactType.get(random.nextInt(artifactType.size())), true, false);
 	}
 
 	@Override

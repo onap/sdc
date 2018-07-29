@@ -16,7 +16,6 @@
 
 package org.openecomp.sdc.applicationconfig.impl;
 
-import java.util.Collection;
 import org.openecomp.core.utilities.applicationconfig.ApplicationConfig;
 import org.openecomp.core.utilities.applicationconfig.dao.type.ApplicationConfigEntity;
 import org.openecomp.core.utilities.applicationconfig.impl.ApplicationConfigImpl;
@@ -25,6 +24,8 @@ import org.openecomp.sdc.applicationconfig.ApplicationConfigManager;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.ErrorCategory;
 import org.openecomp.sdc.common.errors.ErrorCode;
+
+import java.util.Collection;
 
 /**
  * Created by Talio on 8/8/2016.

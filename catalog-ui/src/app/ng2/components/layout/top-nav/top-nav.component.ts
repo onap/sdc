@@ -41,6 +41,8 @@ export class TopNavComponent {
     @Input() public hideSearch:boolean;
     @Input() public searchTerm:string;
     @Input() public notificationIconCallback:Function;
+    @Input() public unsavedChanges: boolean;
+    @Input() public unsavedChangesCallback: (completeCallback:Function)=> Promise<any>;
     @Output() public searchTermChange:EventEmitter<string> = new EventEmitter<string>();
     emitSearchTerm(event:string) {
         this.searchTermChange.emit(event);
@@ -80,17 +82,21 @@ export class TopNavComponent {
             return true;
         });
 
-        //if it's a different state , checking previous state param
+        //if it's a different state
         if (result === -1) {
-            this.topLvlMenu.menuItems.forEach((item:MenuItem, index:number)=> {
-                if (item.state === this.$state.params['previousState']) {
-                    result = index;
-                }
-            });
-        }
+            //if in 'workspace' -  checking previous state param
+            if (this.$state.includes('workspace')) {
+                // if previous state is 'dashboard' or 'catalog', then select it - otherwise, use 'catalog' as default for 'workspace'
+                const selectedStateName = (['dashboard', 'catalog'].indexOf(this.$state.params['previousState']) !== -1)
+                    ? this.$state.params['previousState']
+                    : 'catalog';
+                result = this.topLvlMenu.menuItems.findIndex((item:MenuItem) => item.state === selectedStateName);
+            }
 
-        if (result === -1) {
-            result = 0;
+            //if yet, none is selected, then select the first as default
+            if (result === -1) {
+                result = 0;
+            }
         }
 
         return result;
@@ -151,8 +157,21 @@ export class TopNavComponent {
     }
 
     menuItemClick(itemGroup:MenuItemGroup, item:MenuItem) {
-        itemGroup.itemClick = false;
 
+        let onSuccessFunction = () => {
+            this.navigate(itemGroup, item);
+        }
+        if (this.unsavedChanges && this.unsavedChangesCallback){
+            this.unsavedChangesCallback(onSuccessFunction).then((onSuccess)=> {
+                this.navigate(itemGroup, item);
+            }, (onReject) => {});
+        } else {
+            this.navigate(itemGroup, item);
+        }
+    }
+
+    navigate(itemGroup:MenuItemGroup, item:MenuItem) {
+        itemGroup.itemClick = false;
         let onSuccess = ():void => {
             itemGroup.selectedIndex = itemGroup.menuItems.indexOf(item);
         };
@@ -165,4 +184,5 @@ export class TopNavComponent {
             this[item.action](item.state, item.params).then(onSuccess, onFailed);
         }
     }
+
 }

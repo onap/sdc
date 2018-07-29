@@ -23,37 +23,36 @@ package org.openecomp.sdc.be.model.cache.jobs;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.cache.DaoInfo;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 
 /**
  * Created by mlando on 9/11/2016.
  */
 public class StoreJob extends Job {
-	private static Logger log = LoggerFactory.getLogger(StoreJob.class.getName());
-	private Component component;
+    private static final Logger log = Logger.getLogger(StoreJob.class.getName());
+    private Component component;
 
-	public StoreJob(DaoInfo daoInfo, Component component, NodeTypeEnum nodeTypeEnum) {
-		super(daoInfo, component, nodeTypeEnum);
-		this.component = component;
-	}
+    public StoreJob(DaoInfo daoInfo, Component component, NodeTypeEnum nodeTypeEnum) {
+        super(daoInfo, component, nodeTypeEnum);
+        this.component = component;
+    }
 
-	@Override
-	public Object doWork() {
-		try {
-			log.trace("starting work on job.");
-			log.trace("store component in cache, componentId:{} of nodeTypeEnum:{} with timestamp:{}.", componentId, nodeTypeEnum, timestamp);
-			if (!this.daoInfo.getComponentCache().setComponent(component, nodeTypeEnum)) {
-				log.debug("failed to store componentId:{} nodeTypeEnum:", componentId, nodeTypeEnum);
-				return false;
-			}
-			log.debug("cache successfully updated for componentId:{} nodeTypeEnum:{} timestemp:{}.", componentId, nodeTypeEnum, timestamp);
-			return true;
+    @Override
+    public Object doWork() {
+        try {
+            log.trace("starting work on job.");
+            log.trace("store component in cache, componentId:{} of nodeTypeEnum:{} with timestamp:{}.", componentId, nodeTypeEnum, timestamp);
+            if (!this.daoInfo.getComponentCache().setComponent(component, nodeTypeEnum)) {
+                log.debug("failed to store componentId:{} nodeTypeEnum:", componentId, nodeTypeEnum);
+                return false;
+            }
+            log.debug("cache successfully updated for componentId:{} nodeTypeEnum:{} timestemp:{}.", componentId, nodeTypeEnum, timestamp);
+            return true;
 
-		} catch (Exception e) {
-			log.debug("an exception was encountered during StoreJob", e);
-		}
-		return false;
-	}
+        } catch (Exception e) {
+            log.debug("an exception was encountered during StoreJob", e);
+        }
+        return false;
+    }
 
 }

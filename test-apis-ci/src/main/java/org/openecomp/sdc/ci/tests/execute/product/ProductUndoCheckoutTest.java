@@ -20,11 +20,6 @@
 
 package org.openecomp.sdc.ci.tests.execute.product;
 
-import static org.testng.AssertJUnit.assertEquals;
-import static org.testng.AssertJUnit.assertNull;
-
-import java.io.FileNotFoundException;
-
 import org.junit.Rule;
 import org.junit.rules.TestName;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
@@ -43,6 +38,11 @@ import org.openecomp.sdc.ci.tests.utils.validation.ProductValidationUtils;
 import org.openecomp.sdc.common.api.Constants;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+
+import java.io.FileNotFoundException;
+
+import static org.testng.AssertJUnit.assertEquals;
+import static org.testng.AssertJUnit.assertNull;
 
 public class ProductUndoCheckoutTest extends ProductLifecycleTest {
 

@@ -1,11 +1,10 @@
 package org.openecomp.sdc.be.components.distribution.engine;
 
-import java.util.Properties;
-
+import mockit.Deencapsulation;
 import org.junit.Test;
 import org.openecomp.sdc.be.components.BeConfDependentTest;
 
-import mockit.Deencapsulation;
+import java.util.Properties;
 
 public class AaiRequestHandlerTest extends BeConfDependentTest {
 

@@ -20,9 +20,9 @@
 
 package org.openecomp.sdc.be.config;
 
-import java.util.Map;
-
 import org.openecomp.sdc.common.api.BasicConfiguration;
+
+import java.util.Map;
 
 public class Neo4jErrorsConfiguration extends BasicConfiguration {
 	private Map<String, String> errors;

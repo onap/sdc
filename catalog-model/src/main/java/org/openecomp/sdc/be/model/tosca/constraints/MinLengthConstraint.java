@@ -20,43 +20,36 @@
 
 package org.openecomp.sdc.be.model.tosca.constraints;
 
-import java.io.Serializable;
+import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintViolationException;
 
 import javax.validation.constraints.NotNull;
 
-import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintViolationException;
+public class MinLengthConstraint extends AbstractStringPropertyConstraint {
 
-public class MinLengthConstraint extends AbstractStringPropertyConstraint implements Serializable {
+    @NotNull
+    private Integer minLength;
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 32422424680811240L;
+    public MinLengthConstraint(Integer minLength) {
+        this.minLength = minLength;
+    }
 
-	@NotNull
-	private Integer minLength;
+    public MinLengthConstraint() {
+        super();
+    }
 
-	public MinLengthConstraint(Integer minLength) {
-		this.minLength = minLength;
-	}
+    @Override
+    protected void doValidate(String propertyValue) throws ConstraintViolationException {
+        if (propertyValue.length() < minLength) {
+            throw new ConstraintViolationException("The length of the value is less than [" + minLength + "]");
+        }
+    }
 
-	public MinLengthConstraint() {
-		super();
-	}
+    public Integer getMinLength() {
+        return minLength;
+    }
 
-	@Override
-	protected void doValidate(String propertyValue) throws ConstraintViolationException {
-		if (propertyValue.length() < minLength) {
-			throw new ConstraintViolationException("The length of the value is less than [" + minLength + "]");
-		}
-	}
-
-	public Integer getMinLength() {
-		return minLength;
-	}
-
-	public void setMinLength(Integer minLength) {
-		this.minLength = minLength;
-	}
+    public void setMinLength(Integer minLength) {
+        this.minLength = minLength;
+    }
 
 }

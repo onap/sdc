@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -107,7 +107,7 @@ export class ComponentService implements IComponentService {
     };
 
     public getComponent = (id:string):ng.IPromise<Component> => {
-        let deferred = this.$q.defer();
+        let deferred = this.$q.defer<Component>();
         this.restangular.one(id).get().then((response:Component) => {
             let component:Component = this.createComponentObject(response);
             //console.log("Component Loaded successfully : ", component);
@@ -141,7 +141,7 @@ export class ComponentService implements IComponentService {
     };
 
     private updateService = (component:Component):ng.IPromise<Component> => {
-        let deferred = this.$q.defer();
+        let deferred = this.$q.defer<Component>();
         this.restangular.one(component.uniqueId).one("metadata").customPUT(JSON.stringify(component)).then((response:Component) => {
             let component:Component = this.createComponentObject(response);
             deferred.resolve(component);
@@ -152,7 +152,7 @@ export class ComponentService implements IComponentService {
     };
 
     private updateResource = (component:Component):ng.IPromise<Component> => {
-        let deferred = this.$q.defer();
+        let deferred = this.$q.defer<Component>();
         this.restangular.one(component.uniqueId).customPUT(JSON.stringify(component)).then((response:Component) => {
             let component:Component = this.createComponentObject(response);
             deferred.resolve(component);
@@ -163,7 +163,7 @@ export class ComponentService implements IComponentService {
     };
 
     private updateResourceMetadata = (component:Component):ng.IPromise<Component> => {
-        let deferred = this.$q.defer();
+        let deferred = this.$q.defer<Component>();
         this.restangular.one(component.uniqueId).one('metadata').customPUT(JSON.stringify(component)).then((response:Component) => {
             let component:Component = this.createComponentObject(response);
             deferred.resolve(component);
@@ -179,7 +179,7 @@ export class ComponentService implements IComponentService {
      * @returns {IPromise<T>}
      */
     private updateResourceWithPayload = (resource:Resource):ng.IPromise<Component> => {
-        let deferred = this.$q.defer();
+        let deferred = this.$q.defer<Component>();
 
         resource.payloadData = resource.importedFile.base64;
         resource.payloadName = resource.importedFile.filename;
@@ -196,7 +196,7 @@ export class ComponentService implements IComponentService {
     };
 
     public createComponent = (component:Component):ng.IPromise<Component> => {
-        let deferred = this.$q.defer();
+        let deferred = this.$q.defer<Component>();
         let headerObj = this.getHeaderMd5(component);
         this.restangular.customPOST(JSON.stringify(component), '', {}, headerObj).then((response:Component) => {
             let component:Component = this.createComponentObject(response);
@@ -208,7 +208,7 @@ export class ComponentService implements IComponentService {
     };
 
     public validateName = (newName:string, subtype?:string):ng.IPromise<IValidate> => {
-        let deferred = this.$q.defer();
+        let deferred = this.$q.defer<IValidate>();
         this.restangular.one("validate-name").one(newName).get({'subtype': subtype}).then((response:any) => {
             deferred.resolve(response.plain());
         }, (err)=> {
@@ -218,7 +218,7 @@ export class ComponentService implements IComponentService {
     };
 
     public changeLifecycleState = (component:Component, state:string, userRemarks:any):ng.IPromise<ComponentMetadata> => {
-        let deferred = this.$q.defer();
+        let deferred = this.$q.defer<ComponentMetadata>();
         this.restangular.one(component.uniqueId).one(state).customPOST(userRemarks).then((response:ComponentMetadata) => {
             this.sharingService.addUuidValue(response.uniqueId, response.uuid);
             let component:ComponentMetadata = new ComponentMetadata().deserialize(response);
@@ -226,13 +226,12 @@ export class ComponentService implements IComponentService {
         }, (err)=> {
             deferred.reject(err);
         });
-
         return deferred.promise;
     };
 
     // ------------------------------------------------ Artifacts API --------------------------------------------------//
     public addOrUpdateArtifact = (componentId:string, artifact:ArtifactModel):ng.IPromise<ArtifactModel> => {
-        let deferred = this.$q.defer();
+        let deferred = this.$q.defer<ArtifactModel>();
         let headerObj = {};
         if (artifact.payloadData) {
             headerObj = this.getHeaderMd5(artifact);
@@ -246,7 +245,7 @@ export class ComponentService implements IComponentService {
     };
 
     public downloadArtifact = (componentId:string, artifactId:string):ng.IPromise<IFileDownload> => {
-        let deferred = this.$q.defer();
+        let deferred = this.$q.defer<IFileDownload>();
         this.restangular.one(componentId).one("artifacts").one(artifactId).get().then((response:any) => {
             deferred.resolve(response.plain());
         }, (err)=> {
@@ -256,7 +255,7 @@ export class ComponentService implements IComponentService {
     };
 
     public deleteArtifact = (componentId:string, artifactId:string, artifactLabel:string):ng.IPromise<ArtifactModel> => {
-        let deferred = this.$q.defer();
+        let deferred = this.$q.defer<ArtifactModel>();
         this.restangular.one(componentId).one("artifacts").one(artifactId).remove({'operation': artifactLabel}).then((response:ArtifactModel) => {
             deferred.resolve(response);
         }, (err)=> {
@@ -266,7 +265,7 @@ export class ComponentService implements IComponentService {
     };
 
     public getArtifactByGroupType = (componentId:string, artifactGroupType:string):ng.IPromise<ArtifactGroupModel> => {
-        let deferred = this.$q.defer();
+        let deferred = this.$q.defer<ArtifactGroupModel>();
         this.restangular.one(componentId).one("artifactsByType").one(artifactGroupType).get().then((response:any) => {
             var artifacts:ArtifactGroupModel = new ArtifactGroupModel(response.plain());
             deferred.resolve(artifacts);
@@ -277,7 +276,7 @@ export class ComponentService implements IComponentService {
     };
 
     public getComponentInstanceArtifactsByGroupType = (componentId:string, componentInstanceId:string, artifactGroupType:string):ng.IPromise<ArtifactGroupModel> => {
-        let deferred = this.$q.defer();
+        let deferred = this.$q.defer<ArtifactGroupModel>();
         this.restangular.one(componentId).one("resourceInstances").one(componentInstanceId).one("artifactsByType").one(artifactGroupType).get().then((response:any) => {
             var artifacts:ArtifactGroupModel = new ArtifactGroupModel(response.plain());
             deferred.resolve(artifacts);
@@ -290,7 +289,7 @@ export class ComponentService implements IComponentService {
 
     // ------------------------------------------------ Properties API --------------------------------------------------//
     public addProperty = (componentId:string, property:PropertyModel):ng.IPromise<PropertyModel> => {
-        let deferred = this.$q.defer();
+        let deferred = this.$q.defer<PropertyModel>();
         this.restangular.one(componentId).one("properties").customPOST(property.convertToServerObject()).then((response:any) => {
             let property:PropertyModel = new PropertyModel(response[Object.keys(response)[0]]);
             deferred.resolve(property);
@@ -301,7 +300,7 @@ export class ComponentService implements IComponentService {
     };
 
     public updateProperty = (componentId:string, property:PropertyModel):ng.IPromise<PropertyModel> => {
-        let deferred = this.$q.defer();
+        let deferred = this.$q.defer<PropertyModel>();
         this.restangular.one(componentId).one("properties").one(property.uniqueId).customPUT(property.convertToServerObject()).then((response:any) => {
             let property:PropertyModel = new PropertyModel(response[Object.keys(response)[0]]);
             deferred.resolve(property);
@@ -312,7 +311,7 @@ export class ComponentService implements IComponentService {
     };
 
     public deleteProperty = (componentId:string, propertyId:string):ng.IPromise<PropertyModel> => {
-        let deferred = this.$q.defer();
+        let deferred = this.$q.defer<PropertyModel>();
         this.restangular.one(componentId).one("properties").one(propertyId).remove().then((response:any) => {
             deferred.resolve(response);
         }, (err)=> {
@@ -323,7 +322,7 @@ export class ComponentService implements IComponentService {
 
     // ------------------------------------------------ Attributes API --------------------------------------------------//
     public addAttribute = (componentId:string, attribute:AttributeModel):ng.IPromise<AttributeModel> => {
-        let deferred = this.$q.defer();
+        let deferred = this.$q.defer<AttributeModel>();
         this.restangular.one(componentId).one("attributes").customPOST(attribute.convertToServerObject()).then((response:any) => {
             let attribute:AttributeModel = new AttributeModel(response);
             deferred.resolve(attribute);
@@ -334,7 +333,7 @@ export class ComponentService implements IComponentService {
     };
 
     public updateAttribute = (componentId:string, attribute:AttributeModel):ng.IPromise<AttributeModel> => {
-        let deferred = this.$q.defer();
+        let deferred = this.$q.defer<AttributeModel>();
         this.restangular.one(componentId).one("attributes").one(attribute.uniqueId).customPUT(attribute.convertToServerObject()).then((response:any) => {
             let attribute:AttributeModel = new AttributeModel(response);
             deferred.resolve(attribute);
@@ -345,7 +344,7 @@ export class ComponentService implements IComponentService {
     };
 
     public deleteAttribute = (componentId:string, attributeId:string):ng.IPromise<AttributeModel> => {
-        let deferred = this.$q.defer();
+        let deferred = this.$q.defer<AttributeModel>();
         this.restangular.one(componentId).one("attributes").one(attributeId).remove().then((response:any) => {
             deferred.resolve(response);
         }, (err)=> {
@@ -357,7 +356,7 @@ export class ComponentService implements IComponentService {
     // ------------------------------------------------ Component Instances API --------------------------------------------------//
 
     public createComponentInstance = (componentId:string, componentInstance:ComponentInstance):ng.IPromise<ComponentInstance> => {
-        let deferred = this.$q.defer();
+        let deferred = this.$q.defer<ComponentInstance>();
         this.restangular.one(componentId).one("resourceInstance").customPOST(JSON.stringify(componentInstance)).then((response:any) => {
             let componentInstance:ComponentInstance = ComponentInstanceFactory.createComponentInstance(response);
             console.log("Component Instance created", componentInstance);
@@ -370,7 +369,7 @@ export class ComponentService implements IComponentService {
     };
 
     public updateComponentInstance = (componentId:string, componentInstance:ComponentInstance):ng.IPromise<ComponentInstance> => {
-        let deferred = this.$q.defer();
+        let deferred = this.$q.defer<ComponentInstance>();
         this.restangular.one(componentId).one("resourceInstance").one(componentInstance.uniqueId).customPOST(JSON.stringify(componentInstance)).then((response:any) => {
             let componentInstance:ComponentInstance = ComponentInstanceFactory.createComponentInstance(response);
             console.log("Component Instance was updated", componentInstance);
@@ -383,7 +382,7 @@ export class ComponentService implements IComponentService {
     };
 
     public updateMultipleComponentInstances = (componentId:string, instances:Array<ComponentInstance>):ng.IPromise<Array<ComponentInstance>> => {
-        let deferred = this.$q.defer();
+        let deferred = this.$q.defer<Array<ComponentInstance>>();
         this.restangular.one(componentId).one("resourceInstance/multipleComponentInstance").customPOST(JSON.stringify(instances)).then((response:any) => {
             console.log("Multiple Component Instances was updated", response);
             let updateInstances:Array<ComponentInstance> = new Array<ComponentInstance>();
@@ -400,7 +399,7 @@ export class ComponentService implements IComponentService {
     };
 
     public deleteComponentInstance = (componentId:string, componentInstanceId:string):ng.IPromise<ComponentInstance> => {
-        let deferred = this.$q.defer();
+        let deferred = this.$q.defer<ComponentInstance>();
         this.restangular.one(componentId).one("resourceInstance").one(componentInstanceId).remove().then(() => {
             console.log("Component Instance was deleted");
             deferred.resolve();
@@ -412,7 +411,7 @@ export class ComponentService implements IComponentService {
     };
 
     public checkResourceInstanceVersionChange = (componentId:string, componentInstanceId:string, componentUid:string):ng.IPromise<ComponentInstance> => {
-        let deferred = this.$q.defer();
+        let deferred = this.$q.defer<ComponentInstance>();
         this.restangular.one(componentId).one("resourceInstance").one(componentInstanceId).one(componentUid).one("checkForwardingPathOnVersionChange").get().then((response:any) => {
             deferred.resolve(response);
         }, err => {
@@ -422,7 +421,7 @@ export class ComponentService implements IComponentService {
     };
 
     public changeResourceInstanceVersion = (componentId:string, componentInstanceId:string, componentUid:string):ng.IPromise<ComponentInstance> => {
-        let deferred = this.$q.defer();
+        let deferred = this.$q.defer<ComponentInstance>();
         this.restangular.one(componentId).one("resourceInstance").one(componentInstanceId).one("changeVersion").customPOST({'componentUid': componentUid}).then((response:any) => {
             let componentInstance:ComponentInstance = ComponentInstanceFactory.createComponentInstance(response);
             deferred.resolve(componentInstance);
@@ -433,7 +432,7 @@ export class ComponentService implements IComponentService {
     };
 
     public downloadInstanceArtifact = (componentId:string, instanceId:string, artifactId:string):ng.IPromise<IFileDownload> => {
-        let deferred = this.$q.defer();
+        let deferred = this.$q.defer<IFileDownload>();
         this.restangular.one(componentId).one("resourceInstances").one(instanceId).one("artifacts").one(artifactId).get().then((response:any) => {
             deferred.resolve(response.plain());
         }, (err)=> {
@@ -443,7 +442,7 @@ export class ComponentService implements IComponentService {
     };
 
     public updateInstanceArtifact = (componentId:string, instanceId:string, artifact:ArtifactModel):ng.IPromise<ArtifactModel> => {
-        let deferred = this.$q.defer();
+        let deferred = this.$q.defer<ArtifactModel>();
         let headerObj = {};
         if (artifact.payloadData) {
             headerObj = this.getHeaderMd5(artifact);
@@ -458,7 +457,7 @@ export class ComponentService implements IComponentService {
     };
 
     public addInstanceArtifact = (componentId:string, instanceId:string, artifact:ArtifactModel):ng.IPromise<ArtifactModel> => {
-        let deferred = this.$q.defer();
+        let deferred = this.$q.defer<ArtifactModel>();
         let headerObj = {};
         if (artifact.payloadData) {
             headerObj = this.getHeaderMd5(artifact);
@@ -473,7 +472,7 @@ export class ComponentService implements IComponentService {
     };
 
     public deleteInstanceArtifact = (componentId:string, instanceId:string, artifactId:string, artifactLabel:string):ng.IPromise<ArtifactModel> => {
-        let deferred = this.$q.defer();
+        let deferred = this.$q.defer<ArtifactModel>();
         this.restangular.one(componentId).one("resourceInstance").one(instanceId).one("artifacts").one(artifactId).remove({'operation': artifactLabel}).then((response:ArtifactModel) => {
             deferred.resolve(response);
         }, (err)=> {
@@ -483,7 +482,7 @@ export class ComponentService implements IComponentService {
     };
 
     public uploadInstanceEnvFile = (componentId:string, instanceId:string, artifact:ArtifactModel):ng.IPromise<ArtifactModel> => {
-        let deferred = this.$q.defer();
+        let deferred = this.$q.defer<ArtifactModel>();
         let headerObj = {};
         if (artifact.payloadData) {
             headerObj = this.getHeaderMd5(artifact);
@@ -514,7 +513,7 @@ export class ComponentService implements IComponentService {
     };
 
     public updateInstanceAttribute = (componentId:string, attribute:AttributeModel):ng.IPromise<AttributeModel> => {
-        let deferred = this.$q.defer();
+        let deferred = this.$q.defer<AttributeModel>();
         let instanceId = attribute.resourceInstanceUniqueId;
         this.restangular.one(componentId).one("resourceInstance").one(instanceId).one("attribute").customPOST(JSON.stringify(attribute)).then((response:any) => {
             let newAttribute = new AttributeModel(response);
@@ -528,7 +527,7 @@ export class ComponentService implements IComponentService {
     };
 
     public createRelation = (componentId:string, link:RelationshipModel):ng.IPromise<RelationshipModel> => {
-        let deferred = this.$q.defer();
+        let deferred = this.$q.defer<RelationshipModel>();
         const linkPayload:RelationshipModel = new RelationshipModel(link);
         linkPayload.relationships.forEach((rel) => {
             delete rel.capability;
@@ -546,7 +545,7 @@ export class ComponentService implements IComponentService {
     };
 
     public deleteRelation = (componentId:string, link:RelationshipModel):ng.IPromise<RelationshipModel> => {
-        let deferred = this.$q.defer();
+        let deferred = this.$q.defer<RelationshipModel>();
         const linkPayload:RelationshipModel = new RelationshipModel(link);
         linkPayload.relationships.forEach((rel) => {
             delete rel.capability;
@@ -589,7 +588,7 @@ export class ComponentService implements IComponentService {
     };
 
     public getModuleForDisplay = (componentId:string, moduleId:string):ng.IPromise<DisplayModule> => {
-        let deferred = this.$q.defer();
+        let deferred = this.$q.defer<DisplayModule>();
         this.restangular.one(componentId).one("groups").one(moduleId).get().then((response:any) => {
             console.log("module loaded successfully: ", response);
             let module:DisplayModule = new DisplayModule(response);
@@ -601,8 +600,8 @@ export class ComponentService implements IComponentService {
         return deferred.promise;
     };
 
-    public getComponentInstanceModule = (componentId:string, componentInstanceId:string, moduleId:string):ng.IPromise<Module> => {
-        let deferred = this.$q.defer();
+    public getComponentInstanceModule = (componentId:string, componentInstanceId:string, moduleId:string):ng.IPromise<DisplayModule> => {
+        let deferred = this.$q.defer<DisplayModule>();
         this.restangular.one(componentId).one("resourceInstance").one(componentInstanceId).one("groupInstance").one(moduleId).get().then((response:any) => {
             console.log("module loaded successfully: ", response);
             let module:DisplayModule = new DisplayModule(response);
@@ -615,7 +614,7 @@ export class ComponentService implements IComponentService {
     };
 
     public getComponentInstancesFilteredByInputsAndProperties = (componentId:string, searchText?:string):ng.IPromise<Array<ComponentInstance>> => {
-        let deferred = this.$q.defer();
+        let deferred = this.$q.defer<Array<ComponentInstance>>();
         this.restangular.one(componentId).one("componentInstances").get({'searchText': searchText}).then((response:any) => {
             console.log("component instances return successfully: ", response);
             let componentInstances:Array<ComponentInstance> = CommonUtils.initComponentInstances(response);
@@ -630,7 +629,7 @@ export class ComponentService implements IComponentService {
 
     public getComponentInstanceInputs = (componentId:string, instanceId:string, originComponentUid):ng.IPromise<Array<InputModel>> => {
 
-        let deferred = this.$q.defer();
+        let deferred = this.$q.defer<Array<InputModel>>();
         this.restangular.one(componentId).one("componentInstances").one(instanceId).one(originComponentUid).one("inputs").get().then((response:any) => {
             console.log("component instance input return successfully: ", response);
             let inputsArray:Array<InputModel> = new Array<InputModel>();
@@ -648,7 +647,7 @@ export class ComponentService implements IComponentService {
 
     public getComponentInputs = (componentId:string):ng.IPromise<Array<InputModel>> => {
 
-        let deferred = this.$q.defer();
+        let deferred = this.$q.defer<Array<InputModel>>();
         this.restangular.one(componentId).one("inputs").get().then((response:any) => {
             console.log("component inputs return successfully: ", response);
             let inputsArray:Array<InputModel> = new Array<InputModel>();
@@ -666,7 +665,7 @@ export class ComponentService implements IComponentService {
 
     public getComponentInstanceInputProperties = (componentId:string, instanceId:string, inputId:string):ng.IPromise<Array<PropertyModel>> => {
 
-        let deferred = this.$q.defer();
+        let deferred = this.$q.defer<Array<PropertyModel>>();
         this.restangular.one(componentId).one("componentInstances").one(instanceId).one(inputId).one("properties").get().then((response:any) => {
             console.log("component instance input properties return successfully: ", response);
             let propertiesArray:Array<PropertyModel> = new Array<PropertyModel>();
@@ -685,7 +684,7 @@ export class ComponentService implements IComponentService {
 
     public getComponentInstanceProperties = (componentId:string, instanceId:string):ng.IPromise<Array<PropertyModel>> => {
 
-        let deferred = this.$q.defer();
+        let deferred = this.$q.defer<Array<PropertyModel>>();
         this.restangular.one(componentId).one("componentInstances").one(instanceId).one("properties").get().then((response:any) => {
             console.log("component instance  properties return successfully: ", response);
             let propertiesArray:Array<PropertyModel> = new Array<PropertyModel>();
@@ -703,7 +702,7 @@ export class ComponentService implements IComponentService {
 
     public updateGroupMetadata = (componentId:string, group:Module):ng.IPromise<Module> => {
 
-        let deferred = this.$q.defer();
+        let deferred = this.$q.defer<Module>();
         this.restangular.one(componentId).one("groups").one(group.uniqueId).one("metadata").customPUT(JSON.stringify(group)).then((response:Module) => {
             console.log("group metadata updated successfully: ", response);
             let updatedGroup:Module = new Module(response);
@@ -718,7 +717,7 @@ export class ComponentService implements IComponentService {
     };
 
     public getComponentInputInputsAndProperties = (serviceId:string, inputId:string):ng.IPromise<InputsAndProperties> => {
-        let defer = this.$q.defer<any>();
+        let defer = this.$q.defer<InputsAndProperties>();
         this.restangular.one(serviceId).one("inputs").one(inputId).get().then((response:InputsAndProperties) => {
 
             let inputsArray:Array<InputModel> = new Array<InputModel>();
@@ -740,7 +739,7 @@ export class ComponentService implements IComponentService {
     };
 
     createInputsFromInstancesInputsProperties = (resourceId:string, instancePropertyMap:InstancesInputsPropertiesMap):ng.IPromise<Array<PropertyModel>> => {
-        let defer = this.$q.defer<any>();
+        let defer = this.$q.defer<Array<PropertyModel>>();
         this.restangular.one(resourceId).one("create/properties").customPOST(instancePropertyMap).then((response:any) => {
             let inputsArray:Array<PropertyModel> = new Array<PropertyModel>();
             _.forEach(response, (inputObj:PropertyModel) => {
@@ -755,7 +754,7 @@ export class ComponentService implements IComponentService {
     };
 
     createInputsFromInstancesInputs = (serviceId:string, instancesMap:InstancesInputsPropertiesMap):ng.IPromise<Array<InputModel>> => {
-        let defer = this.$q.defer<any>();
+        let defer = this.$q.defer<Array<InputModel>>();
         this.restangular.one(serviceId).one("create/inputs").customPOST(instancesMap).then((response:any) => {
             let inputsArray:Array<InputModel> = new Array<InputModel>();
             _.forEach(response, (inputObj:InputModel) => {
@@ -770,7 +769,7 @@ export class ComponentService implements IComponentService {
     };
 
     deleteComponentInput = (serviceId:string, inputId:string):ng.IPromise<InputModel> => {
-        let defer = this.$q.defer();
+        let defer = this.$q.defer<InputModel>();
         this.restangular.one(serviceId).one("delete").one(inputId).one("input").remove().then((response:any) => {
             let inputToDelete = new InputModel(response);
             defer.resolve(inputToDelete);

@@ -20,12 +20,6 @@
 
 package org.openecomp.sdc.ci.tests.preRequisites;
 
-import static org.testng.AssertJUnit.assertEquals;
-import static org.testng.AssertJUnit.assertNotNull;
-import static org.testng.AssertJUnit.assertTrue;
-
-import java.io.IOException;
-
 import org.junit.Rule;
 import org.junit.rules.TestName;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
@@ -42,13 +36,12 @@ import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
 import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
 import org.openecomp.sdc.ci.tests.execute.lifecycle.LCSbaseTest;
 import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
-import org.openecomp.sdc.ci.tests.utils.rest.ArtifactRestUtils;
-import org.openecomp.sdc.ci.tests.utils.rest.ComponentInstanceRestUtils;
-import org.openecomp.sdc.ci.tests.utils.rest.LifecycleRestUtils;
-import org.openecomp.sdc.ci.tests.utils.rest.ResourceRestUtils;
-import org.openecomp.sdc.ci.tests.utils.rest.ResponseParser;
-import org.openecomp.sdc.ci.tests.utils.rest.ServiceRestUtils;
+import org.openecomp.sdc.ci.tests.utils.rest.*;
 import org.testng.annotations.BeforeMethod;
+
+import java.io.IOException;
+
+import static org.testng.AssertJUnit.*;
 
 public class ComplexResourceBaseTest extends ComponentBaseTest {
 

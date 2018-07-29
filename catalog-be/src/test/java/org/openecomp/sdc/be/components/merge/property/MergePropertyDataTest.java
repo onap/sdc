@@ -1,10 +1,10 @@
 package org.openecomp.sdc.be.components.merge.property;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import org.junit.Test;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
+
+import java.util.LinkedList;
+import java.util.List;
 
 public class MergePropertyDataTest {
 

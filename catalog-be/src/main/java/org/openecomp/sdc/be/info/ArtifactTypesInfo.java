@@ -20,9 +20,9 @@
 
 package org.openecomp.sdc.be.info;
 
-import java.util.List;
-
 import org.openecomp.sdc.be.model.ArtifactType;
+
+import java.util.List;
 
 public class ArtifactTypesInfo {
 

@@ -41,18 +41,18 @@ import static org.testng.AssertJUnit.assertEquals;
 
 public class VendorSoftwareProductRestUtils {
 
-    public static Pair<String, VendorSoftwareProductObject> createVendorSoftwareProduct(ResourceReqDetails resourceReqDetails, String heatFileName, String filepath, User user, AmdocsLicenseMembers amdocsLicenseMembers, Map<CvfcTypeEnum, String> cvfcArtifacts)
+    public static VendorSoftwareProductObject createVendorSoftwareProduct(ResourceReqDetails resourceReqDetails, String heatFileName, String filepath, User user, AmdocsLicenseMembers amdocsLicenseMembers, Map<CvfcTypeEnum, String> cvfcArtifacts)
             throws Exception {
 
-        Pair<String, VendorSoftwareProductObject> pair = createVSP(resourceReqDetails, heatFileName, filepath, user, amdocsLicenseMembers);
+        VendorSoftwareProductObject vendorSoftwareProductObject = createVSP(resourceReqDetails, heatFileName, filepath, user, amdocsLicenseMembers);
         if(cvfcArtifacts != null && ! cvfcArtifacts.isEmpty()){
-            addCvfcArtifacts(cvfcArtifacts, user, pair.right);
+            addCvfcArtifacts(cvfcArtifacts, user, vendorSoftwareProductObject);
         }
-        prepareVspForUse(user, pair.right, true);
-        return pair;
+        prepareVspForUse(user, vendorSoftwareProductObject, true);
+        return vendorSoftwareProductObject;
     }
 
-    public static Pair<String, VendorSoftwareProductObject> createVendorSoftwareProduct(ResourceReqDetails resourceReqDetails, String heatFileName, String filepath, User user, AmdocsLicenseMembers amdocsLicenseMembers)
+    public static VendorSoftwareProductObject createVendorSoftwareProduct(ResourceReqDetails resourceReqDetails, String heatFileName, String filepath, User user, AmdocsLicenseMembers amdocsLicenseMembers)
             throws Exception {
 
         Map<CvfcTypeEnum, String> cvfcArtifacts = new HashMap<>();
@@ -83,14 +83,14 @@ public class VendorSoftwareProductRestUtils {
     public static VendorSoftwareProductObject createAndFillVendorSoftwareProduct(ResourceReqDetails resourceReqDetails, String heatFileName, String filePath, User user, AmdocsLicenseMembers amdocsLicenseMembers, Map<CvfcTypeEnum, String> cvfcArtifacts)
             throws Exception {
 
-        Pair<String, VendorSoftwareProductObject> createVendorSoftwareProduct = createVendorSoftwareProduct(resourceReqDetails, heatFileName, filePath, user, amdocsLicenseMembers, cvfcArtifacts);
+        VendorSoftwareProductObject createVendorSoftwareProduct = createVendorSoftwareProduct(resourceReqDetails, heatFileName, filePath, user, amdocsLicenseMembers, cvfcArtifacts);
         VendorSoftwareProductObject vendorSoftwareProductObject = fillVendorSoftwareProductObjectWithMetaData(heatFileName, createVendorSoftwareProduct);
         return vendorSoftwareProductObject;
 
     }
 
 
-    public static Pair<String, VendorSoftwareProductObject> createVSP(ResourceReqDetails resourceReqDetails, String heatFileName, String filepath, User user, AmdocsLicenseMembers amdocsLicenseMembers) throws Exception {
+    public static VendorSoftwareProductObject createVSP(ResourceReqDetails resourceReqDetails, String heatFileName, String filepath, User user, AmdocsLicenseMembers amdocsLicenseMembers) throws Exception {
         String vspName = handleFilename(heatFileName);
 
         if(ComponentBaseTest.getExtendTest() != null){
@@ -106,8 +106,7 @@ public class VendorSoftwareProductRestUtils {
         RestResponse validateUpload = validateUpload(createNewVspPair.right, user);
         assertEquals("did not succeed to validate upload process, reason: " + validateUpload.getResponse(), 200, validateUpload.getErrorCode().intValue());
 
-        Pair<String, VendorSoftwareProductObject> pair = new Pair<>(vspName, createNewVspPair.right);
-        return pair;
+        return createNewVspPair.right;
     }
 
     public static void updateVspWithVfcArtifacts(String filepath, String updatedSnmpPoll, String updatedSnmpTrap, String componentInstanceId, User user, VendorSoftwareProductObject vendorSoftwareProductObject) throws Exception{
@@ -288,6 +287,19 @@ public class VendorSoftwareProductRestUtils {
         return response;
     }
 
+//    TODO to check if for onboard API ACTION_ARCHIVE_RESTORE_COMPONENT format was added version parameter
+//    if yes remove this method and use general actionOnComponent method
+    private static RestResponse actionOnComponent(String vspid, String body, String onboardComponent, User user) throws Exception {
+        Config config = Utils.getConfig();
+        String url = String.format(Urls.ACTION_ARCHIVE_RESTORE_COMPONENT, config.getCatalogBeHost(), config.getCatalogBePort(), onboardComponent, vspid);
+        String userId = user.getUserId();
+        Map<String, String> headersMap = OnboardingUtils.prepareHeadersMap(userId);
+
+        HttpRequest http = new HttpRequest();
+        RestResponse response = http.httpSendPut(url, body, headersMap);
+        return response;
+    }
+
     public static Pair<RestResponse, VendorSoftwareProductObject> createNewVendorSoftwareProduct(ResourceReqDetails resourceReqDetails, String vspName, AmdocsLicenseMembers amdocsLicenseMembers, User user) throws Exception {
 
         Config config = Utils.getConfig();
@@ -317,6 +329,7 @@ public class VendorSoftwareProductRestUtils {
 
         vendorSoftwareProductObject.setVspId(ResponseParser.getValueFromJsonResponse(response.getResponse(), "itemId"));
         vendorSoftwareProductObject.setComponentId(ResponseParser.getValueFromJsonResponse(response.getResponse(), "version:id"));
+//		vendorSoftwareProductObject.setVersion(ResponseParser.getValueFromJsonResponse(response.getResponse(), "version:name"));
         vendorSoftwareProductObject.setAttContact(user.getUserId());
 
         return new Pair<>(response, vendorSoftwareProductObject);
@@ -659,17 +672,16 @@ public class VendorSoftwareProductRestUtils {
 //	}
 
 
-    public static VendorSoftwareProductObject fillVendorSoftwareProductObjectWithMetaData(String vnfFile, Pair<String, VendorSoftwareProductObject> createVendorSoftwareProduct) {
+    private static VendorSoftwareProductObject fillVendorSoftwareProductObjectWithMetaData(String vnfFile, VendorSoftwareProductObject createVendorSoftwareProduct) {
         VendorSoftwareProductObject vendorSoftwareProductObject = new VendorSoftwareProductObject();
-        VendorSoftwareProductObject map = createVendorSoftwareProduct.right;
-        vendorSoftwareProductObject.setAttContact(map.getAttContact());
-        vendorSoftwareProductObject.setCategory(map.getCategory());
-        vendorSoftwareProductObject.setComponentId(map.getComponentId());
-        vendorSoftwareProductObject.setDescription(map.getDescription());
-        vendorSoftwareProductObject.setSubCategory(map.getSubCategory());
-        vendorSoftwareProductObject.setVendorName(map.getVendorName());
-        vendorSoftwareProductObject.setVspId(map.getVspId());
-        vendorSoftwareProductObject.setName(createVendorSoftwareProduct.left);
+        vendorSoftwareProductObject.setAttContact(createVendorSoftwareProduct.getAttContact());
+        vendorSoftwareProductObject.setCategory(createVendorSoftwareProduct.getCategory());
+        vendorSoftwareProductObject.setComponentId(createVendorSoftwareProduct.getComponentId());
+        vendorSoftwareProductObject.setDescription(createVendorSoftwareProduct.getDescription());
+        vendorSoftwareProductObject.setSubCategory(createVendorSoftwareProduct.getSubCategory());
+        vendorSoftwareProductObject.setVendorName(createVendorSoftwareProduct.getVendorName());
+        vendorSoftwareProductObject.setVspId(createVendorSoftwareProduct.getVspId());
+        vendorSoftwareProductObject.setName(createVendorSoftwareProduct.getName());
         String[] arrFileNameAndExtension = vnfFile.split("\\.");
         vendorSoftwareProductObject.setOnboardingMethod("NetworkPackage");
         vendorSoftwareProductObject.setNetworkPackageName(arrFileNameAndExtension[0]);
@@ -692,5 +704,14 @@ public class VendorSoftwareProductRestUtils {
         prepareVspForUse(user,vendorSoftwareProductObject, true);
     }
 
+    public static RestResponse archiveVendorSoftwareProduct(VendorSoftwareProductObject vendorSoftwareProductObject, User user) throws Exception {
+        String messageBody = "{\"action\":\"ARCHIVE\"}";
+        return actionOnComponent(vendorSoftwareProductObject.getVspId(), messageBody, "items", user);
+    }
+
+    public static RestResponse restoreVendorSoftwareProduct(VendorSoftwareProductObject vendorSoftwareProductObject, User user) throws Exception {
+        String messageBody = "{\"action\":\"RESTORE\"}";
+        return actionOnComponent(vendorSoftwareProductObject.getVspId(), messageBody, "items", user);
+    }
 
 }

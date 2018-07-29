@@ -20,26 +20,25 @@
 
 package org.openecomp.sdc.be.model.operations.api;
 
-import org.openecomp.sdc.be.model.DataTypeDefinition;
-
 import fj.data.Either;
+import org.openecomp.sdc.be.model.DataTypeDefinition;
 
 public interface IDataTypeOperation {
 
-	/**
-	 * @param dataTypeDefinition
-	 * @return
-	 */
-	public Either<DataTypeDefinition, StorageOperationStatus> addDataType(DataTypeDefinition dataTypeDefinition);
+    /**
+     * @param dataTypeDefinition
+     * @return
+     */
+    public Either<DataTypeDefinition, StorageOperationStatus> addDataType(DataTypeDefinition dataTypeDefinition);
 
-	public Either<DataTypeDefinition, StorageOperationStatus> addDataType(DataTypeDefinition dataTypeDefinition, boolean inTransaction);
+    public Either<DataTypeDefinition, StorageOperationStatus> addDataType(DataTypeDefinition dataTypeDefinition, boolean inTransaction);
 
-	/**
-	 * @param name
-	 * @return
-	 */
-	public Either<DataTypeDefinition, StorageOperationStatus> getDataTypeByName(String name);
+    /**
+     * @param name
+     * @return
+     */
+    public Either<DataTypeDefinition, StorageOperationStatus> getDataTypeByName(String name);
 
-	public Either<DataTypeDefinition, StorageOperationStatus> getDataTypeByName(String name, boolean inTransaction);
+    public Either<DataTypeDefinition, StorageOperationStatus> getDataTypeByName(String name, boolean inTransaction);
 
 }

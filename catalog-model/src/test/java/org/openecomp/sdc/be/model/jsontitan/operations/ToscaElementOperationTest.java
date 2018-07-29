@@ -1,14 +1,6 @@
 package org.openecomp.sdc.be.model.jsontitan.operations;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import fj.data.Either;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -28,7 +20,10 @@ import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import fj.data.Either;
+import java.util.*;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by chaya on 6/12/2017.
@@ -42,10 +37,10 @@ public class ToscaElementOperationTest extends ModelTestBase{
     private boolean isInitialized = false;
 
     @javax.annotation.Resource
-    ToscaElementOperationTestImpl toscaElementOperation;
+    private ToscaElementOperationTestImpl toscaElementOperation;
 
     @javax.annotation.Resource
-    TitanDao titanDao;
+    private TitanDao titanDao;
 
     @BeforeClass
     public static void initTest(){
@@ -271,7 +266,7 @@ public class ToscaElementOperationTest extends ModelTestBase{
     }
 
     private void initGraphForTest() {
-		GraphTestUtils.createRootCatalogVertex(titanDao);
+        GraphTestUtils.createRootCatalogVertex(titanDao);
 
         Map<GraphPropertyEnum, Object> highstVerticesProps = new HashMap<GraphPropertyEnum, Object>() {
             {

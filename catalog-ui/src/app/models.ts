@@ -42,6 +42,8 @@ export * from './models/componentsInstances/componentInstance';
 export * from './models/componentsInstances/resourceInstance';
 export * from './models/componentsInstances/serviceInstance';
 export * from './models/componentsInstances/serviceProxyInstance';
+export * from './models/graph/zones/group-instance';
+export * from './models/graph/zones/policy-instance';
 export * from './models/csar-component';
 //export * from './models/data-type-properties';
 export * from './models/properties-inputs/property-be-model';

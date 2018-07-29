@@ -25,6 +25,13 @@
 export let DEFAULT_ICON = 'defaulticon';
 export let CP_END_POINT = 'CpEndPoint';
 export let CHANGE_COMPONENT_CSAR_VERSION_FLAG = 'changeComponentCsarVersion';
+export let PREVIOUS_CSAR_COMPONENT = 'previousCsarComponent'
+
+
+export class GeneralStatus {
+    static OK = 'OK';
+    static GENERAL_ERROR = 'GENERAL_ERROR';
+}
 
 export class ComponentType {
     static SERVICE = 'SERVICE';
@@ -144,6 +151,11 @@ export enum FormState{
     VIEW
 }
 
+export class instantiationType {
+    public static MACRO = 'Macro';
+    public static A_LA_CARTE = 'A-la-carte';
+}
+
 export class WorkspaceMode {
     public static CREATE = 'create';
     public static EDIT = 'edit';
@@ -159,11 +171,22 @@ export class ImagesUrl {
     public static SELECTED_CP_INSTANCE = '/assets/styles/images/resource-icons/selectedCPInstance.png';
     public static SELECTED_VL_INSTANCE = '/assets/styles/images/resource-icons/selectedVLInstance.png';
     public static CANVAS_PLUS_ICON = '/assets/styles/images/resource-icons/canvasPlusIcon.png';
+    public static CANVAS_TAG_ICON = '/assets/styles/images/canvas-tagging-icons/indication.svg';
+    public static CANVAS_POLICY_TAGGED_ICON = '/assets/styles/images/canvas-tagging-icons/policy_added.svg';
+    public static CANVAS_GROUP_TAGGED_ICON = '/assets/styles/images/canvas-tagging-icons/group_added.svg';
     public static MODULE_ICON = '/assets/styles/images/resource-icons/module.png';
     public static OPEN_MODULE_ICON = '/assets/styles/images/resource-icons/openModule.png';
     public static OPEN_MODULE_HOVER_ICON = '/assets/styles/images/resource-icons/openModuleHover.png';
     public static CLOSE_MODULE_ICON = '/assets/styles/images/resource-icons/closeModule.png';
     public static CLOSE_MODULE_HOVER_ICON = '/assets/styles/images/resource-icons/closeModuleHover.png';
+}
+
+
+export class CanvasHandleTypes {
+    public static ADD_EDGE = 'add-edge';
+    public static TAG_AVAILABLE = 'tag-available';
+    public static TAGGED_POLICY = 'tagged-policy';
+    public static TAGGED_GROUP = 'tagged-group';
 }
 
 export class ModalType {
@@ -247,22 +270,21 @@ export class States {
 }
 
 export class EVENTS {
-    // static RESOURCE_LEFT_PALETTE_UPDATE_EVENT = "resourceLeftPanelUpdateEvent";
-    // static RESOURCE_PNF_LEFT_PALETTE_UPDATE_EVENT = "resourcePNFLeftPanelUpdateEvent";
-    // static SERVICE_LEFT_PALETTE_UPDATE_EVENT = "serviceLeftPanelUpdateEvent";
-    //static VL_LEFT_PALETTE_UPDATE_EVENT = "vlLeftPanelUdateEvent";
     static LEFT_PALETTE_UPDATE_EVENT = "leftPanelUpdateEvent";
     static ON_CSAR_LOADING = "onCsarLoading";
     static DOWNLOAD_ARTIFACT_FINISH_EVENT = "downloadArtifactFinishEvent";
     static ON_WORKSPACE_SAVE_BUTTON_CLICK = "onWorkspaceSaveButtonClick";
     static ON_WORKSPACE_SAVE_BUTTON_SUCCESS = "onWorkspaceSaveButtonSuccess";
     static ON_WORKSPACE_SAVE_BUTTON_ERROR = "onWorkspaceSaveButtonError";
+    static ON_WORKSPACE_UNSAVED_CHANGES = "onWorkspaceUnsavedChanges";
     static ON_CHECKOUT = "onCheckout";
-    static ON_REVERT = "onRevert";
+    static ON_LIFECYCLE_CHANGE_WITH_SAVE = "onLifecycleChangeWithSave";
+    static ON_LIFECYCLE_CHANGE = "onCheckout";
 
     //Loader events
     static SHOW_LOADER_EVENT = "showLoaderEvent";
     static HIDE_LOADER_EVENT = "hideLoaderEvent";
+    static UPDATE_PANEL = 'updatePanel';
 }
 
 
@@ -282,6 +304,7 @@ export class GRAPH_EVENTS {
     static ON_COMPOSITION_GRAPH_DATA_LOADED = 'onCompositionGraphDataLoaded';
     static ON_DEPLOYMENT_GRAPH_DATA_LOADED = 'onDeploymentGraphDataLoaded';
     static ON_NODE_SELECTED = "onNodeSelected";
+    static ON_ZONE_INSTANCE_SELECTED = "onZoneInstanceSelected";
     static ON_GRAPH_BACKGROUND_CLICKED = "onGraphBackgroundClicked";
     static ON_PALETTE_COMPONENT_HOVER_IN = 'onPaletteComponentHoverIn';
     static ON_PALETTE_COMPONENT_HOVER_OUT = 'onPaletteComponentHoverOut';
@@ -290,16 +313,20 @@ export class GRAPH_EVENTS {
     static ON_PALETTE_COMPONENT_SHOW_POPUP_PANEL = 'onPaletteComponentShowPopupPanel';
     static ON_PALETTE_COMPONENT_HIDE_POPUP_PANEL = 'onPaletteComponentHidePopupPanel';
     static ON_COMPONENT_INSTANCE_NAME_CHANGED = 'onComponentInstanceNameChanged';
+    static ON_ZONE_INSTANCE_NAME_CHANGED = 'onZoneInstanceNameChanged';
     static ON_DELETE_COMPONENT_INSTANCE = 'onDeleteComponentInstance';
-    static ON_DELETE_MULTIPLE_COMPONENTS = 'onDeleteMultipleComponents';
+    static ON_DELETE_ZONE_INSTANCE = 'onDeleteZoneInstance';
+    static ON_DELETE_COMPONENT_INSTANCE_SUCCESS = 'onDeleteComponentInstanceSuccess';
     static ON_DELETE_EDGE = 'onDeleteEdge';
     static ON_INSERT_NODE_TO_UCPE = 'onInsertNodeToUCPE';
     static ON_REMOVE_NODE_FROM_UCPE = 'onRemoveNodeFromUCPE';
     static ON_VERSION_CHANGED = 'onVersionChanged';
     static ON_CREATE_COMPONENT_INSTANCE = 'onCreateComponentInstance';
-    static ON_ADD_COMPONENT_INSTANCE_ZONE_START = 'onCreateComponentInstanceZone';
-    static ON_FINISH_ANIMATION_ZONE = 'onFinishAnimationZone';
-    static ON_ZONE_SIZE_CHANGE = 'onZoneSizeChange';
+    static ON_ADD_ZONE_INSTANCE_FROM_PALETTE = 'onAddZoneInstanceFromPalette';
+    static ON_CANVAS_TAG_START = 'onCanvasTagStart';
+    static ON_CANVAS_TAG_END = 'onCanvasTagEnd';
+    static ON_POLICY_INSTANCE_UPDATE = 'onPolicyInstanceUpdate';
+    static ON_GROUP_INSTANCE_UPDATE = 'onGroupInstanceUpdate';
 }
 
 
@@ -320,6 +347,8 @@ export class COMPONENT_FIELDS {
     static COMPONENT_POLICIES = "policies";
     static COMPONENT_GROUPS = "groups";
     static COMPONENT_INTERFACE_OPERATIONS = "interfaces";
+    static COMPONENT_NON_EXCLUDED_GROUPS = "nonExcludedGroups";
+    static COMPONENT_NON_EXCLUDED_POLICIES = "nonExcludedPolicies";
 }
 
 export class SERVICE_FIELDS {
@@ -328,4 +357,16 @@ export class SERVICE_FIELDS {
 
 export class API_QUERY_PARAMS {
     static INCLUDE = "include";
+}
+
+export enum TargetOrMemberType {
+    COMPONENT_INSTANCES,
+    GROUPS
+}
+
+export class CANVAS_TAG_MODE {
+    static POLICY_TAGGING = "policy-tagging";
+    static POLICY_TAGGING_HOVER = "policy-tagging-hover";
+    static GROUP_TAGGING = "group-tagging";
+    static GROUP_TAGGING_HOVER= "group-tagging-hover";
 }

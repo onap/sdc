@@ -20,11 +20,10 @@
 
 package org.openecomp.sdc.fe.impl;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
 
 public class HttpRequestInfo {
 

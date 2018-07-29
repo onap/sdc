@@ -26,7 +26,7 @@ import * as _ from "lodash";
 import {IUserProperties, IAppMenu, Resource, Component, Plugin, PluginsConfiguration, PluginDisplayOptions} from "app/models";
 import {
     WorkspaceMode, ComponentFactory, ChangeLifecycleStateHandler, Role, ComponentState, MenuItemGroup, MenuHandler,
-    MenuItem, ModalsHandler, States, EVENTS, CHANGE_COMPONENT_CSAR_VERSION_FLAG, ResourceType
+    MenuItem, ModalsHandler, States, EVENTS, CHANGE_COMPONENT_CSAR_VERSION_FLAG, ResourceType, PREVIOUS_CSAR_COMPONENT
 } from "app/utils";
 import {
     EventListenerService,
@@ -36,8 +36,11 @@ import {
     LeftPaletteLoaderService
 } from "app/services";
 import {FileUploadModel} from "../../directives/file-upload/file-upload";
+import {AutomatedUpgradeService} from "../../ng2/pages/automated-upgrade/automated-upgrade.service";
+import {ComponentServiceNg2} from "../../ng2/services/component-services/component.service";
 import {EventBusService} from "../../ng2/services/event-bus.service";
 import {PluginsService} from "../../ng2/services/plugins.service";
+import {IDependenciesServerResponse} from "../../ng2/services/responses/dependencies-server-response";
 
 
 export interface IWorkspaceViewModelScope extends ng.IScope {
@@ -70,23 +73,35 @@ export interface IWorkspaceViewModelScope extends ng.IScope {
     menuComponentTitle:string;
     progressService:ProgressService;
     progressMessage:string;
+    ComponentServiceNg2: ComponentServiceNg2;
     // leftPanelComponents:Array<Models.Components.Component>; //this is in order to load the left panel once, and not wait long time when moving to composition
+    unsavedChanges:boolean;
+    unsavedChangesCallback:Function;
+    unsavedFile:boolean;
 
+
+    startProgress(message:string):void;
+    stopProgress():void;
+    updateBreadcrumbs(component:Component):void;
+    updateUnsavedFileFlag(isUnsaved:boolean):void;
     showChangeStateButton():boolean;
     getComponent():Component;
     setComponent(component:Component):void;
+    setOriginComponent(component:Component):void;
     onMenuItemPressed(state:string, params:any):ng.IPromise<boolean>;
-    save():ng.IPromise<boolean>;
+    create():void;
+    save():Promise<void>;
     setValidState(isValid:boolean):void;
-    revert():void;
     changeLifecycleState(state:string):void;
-    enabledTabs():void
+    handleChangeLifecycleState(state:string, newCsarVersion?:string):void;
+    disableMenuItems():void;
+    enableMenuItems():void;
     isDesigner():boolean;
     isViewMode():boolean;
     isEditMode():boolean;
     isCreateMode():boolean;
     isDisableMode():boolean;
-    showFullIcons():boolean;
+    isGeneralView():boolean;
     goToBreadcrumbHome():void;
     onVersionChanged(selectedId:string):void;
     getLatestVersion():void;
@@ -120,6 +135,8 @@ export class WorkspaceViewModel {
         'Notification',
         '$stateParams',
         'Sdc.Services.ProgressService',
+        'ComponentServiceNg2',
+        'AutomatedUpgradeService',
         'EventBusService',
         'PluginsService'
     ];
@@ -141,8 +158,12 @@ export class WorkspaceViewModel {
                 private Notification:any,
                 private $stateParams:any,
                 private progressService:ProgressService,
+                private ComponentServiceNg2:ComponentServiceNg2,
+                private AutomatedUpgradeService:AutomatedUpgradeService,
                 private eventBusService:EventBusService,
                 private pluginsService:PluginsService) {
+              
+
 
         this.initScope();
         this.initAfterScope();
@@ -170,22 +191,18 @@ export class WorkspaceViewModel {
 
     private initChangeLifecycleStateButtons = ():void => {
         let state = this.$scope.component.isService() && (Role.OPS == this.role || Role.GOVERNOR == this.role) ? this.$scope.component.distributionStatus : this.$scope.component.lifecycleState;
-        this.$scope.changeLifecycleStateButtons = this.sdcMenu.roles[this.role].changeLifecycleStateButtons[state];
-    };
+        this.$scope.changeLifecycleStateButtons = (this.sdcMenu.roles[this.role].changeLifecycleStateButtons[state] || [])[this.$scope.component.componentType.toUpperCase()];
 
-    private isNeedSave = ():boolean => {
-        return this.$scope.isEditMode() &&
-            this.$state.current.data && this.$state.current.data.unsavedChanges;
     };
 
     private initLeftPalette = ():void => {
-        this.LeftPaletteLoaderService.loadLeftPanel(this.$scope.component);
+        //this.LeftPaletteLoaderService.loadLeftPanel(this.$scope.component);
     };
 
     private initScope = ():void => {
 
         this.$scope.component = this.injectComponent;
-        this.initLeftPalette();
+        //this.initLeftPalette();
         this.$scope.menuComponentTitle = this.$scope.component.name;
         this.$scope.disabledButtons = false;
         this.$scope.originComponent = this.ComponentFactory.createComponent(this.$scope.component);
@@ -202,7 +219,10 @@ export class WorkspaceViewModel {
         this.$scope.isComposition = (this.$state.current.name.indexOf(States.WORKSPACE_COMPOSITION) > -1);
         this.$scope.isDeployment = this.$state.current.name == States.WORKSPACE_DEPLOYMENT;
         this.$scope.progressService = this.progressService;
-        this.$scope.isActiveTopBar = true;
+        this.$scope.unsavedChanges = false;
+
+        this.EventListenerService.registerObserverCallback(EVENTS.ON_WORKSPACE_UNSAVED_CHANGES, this.setWorkspaceButtonState);
+        //this.EventListenerService.registerObserverCallback(EVENTS.ON_UPDATE_VSP_FILE, this.updateVspFlag);
 
         this.$scope.getComponent = ():Component => {
             return this.$scope.component;
@@ -218,19 +238,82 @@ export class WorkspaceViewModel {
             this.$scope.component = component;
         };
 
+        this.$scope.setOriginComponent = (component:Component):void => {
+            this.$scope.originComponent = component;
+        }
+
         this.$scope.uploadFileChangedInGeneralTab = ():void => {
             // In case user select browse file, and in update mode, need to disable submit for testing and checkin buttons.
             if (this.$scope.isEditMode() && this.$scope.component.isResource() && (<Resource>this.$scope.component).resourceType == ResourceType.VF) {
-                this.$scope.disabledButtons = true;
+                // NOTE: Commented out the disabling of the workspace buttons on CSAR updating due fix of a bug [417534]
+                // this.$scope.disabledButtons = true;
             }
         };
+
+        this.$scope.archiveComponent = ():void => {
+            this.$scope.isLoading = true;
+            const typeComponent = this.$scope.component.componentType;
+            this.ComponentServiceNg2.archiveComponent(typeComponent, this.$scope.component.uniqueId).subscribe(()=>{
+                this.$scope.isLoading = false;
+                if(this.$state.params.previousState){
+                    switch(this.$state.params.previousState){
+                        case 'catalog':
+                        case 'dashboard':
+                            this.$state.go(this.$state.params.previousState);
+                            break;
+                        default:
+                            break;
+                    } 
+                }
+                this.$scope.component.archived = true;
+                this.deleteArchiveCache();
+
+                this.Notification.success({
+                    message: this.$scope.component.name + ' ' + this.$filter('translate')("ARCHIVE_SUCCESS_MESSAGE_TEXT"),
+                    title: this.$filter('translate')("ARCHIVE_SUCCESS_MESSAGE_TITLE")
+                });
+            }, (error) => { this.$scope.isLoading = false; });
+        } 
+
+        this.$scope.restoreComponent = ():void => {
+            this.$scope.isLoading = true;
+            const typeComponent = this.$scope.component.componentType;
+            this.ComponentServiceNg2.restoreComponent(typeComponent, this.$scope.component.uniqueId).subscribe(()=>{
+                this.$scope.isLoading = false;
+                this.Notification.success({
+                            message: this.$scope.component.name + ' ' + this.$filter('translate')("RESTORE_SUCCESS_MESSAGE_TEXT"),
+                            title: this.$filter('translate')("RESTORE_SUCCESS_MESSAGE_TITLE")
+                        });
+            });
+            this.$scope.component.archived = false;
+            this.deleteArchiveCache();
+        }
+
+        this.$scope.$on('$stateChangeStart', (event, toState, toParams, fromState, fromParams) => {
+            if(this.$scope.isEditMode()){
+                if (fromParams.id == toParams.id && this.$state.current.data && this.$state.current.data.unsavedChanges) {
+                    event.preventDefault();
+                    if(this.$scope.isValidForm){
+                        this.$scope.save().then(() => {
+                            this.$scope.onMenuItemPressed(toState.name, toParams);
+                        }, ()=> { 
+                            console.error("Save failed, unable to navigate to " + toState.name);
+                        })
+                    } else {
+                        console.error("Form is invalid, unable to navigate to " + toState.name);
+                    }
+                } 
+            }
+
+        });
 
         this.$scope.$on('$stateChangeSuccess', (event, toState) => {
             this.$scope.updateSelectedMenuItem(this.$state.current.name);
         });
 
         this.$scope.onMenuItemPressed = (state:string, params:any):ng.IPromise<boolean> => {
-            let deferred = this.$q.defer();
+
+            let deferred:ng.IDeferred<boolean> = this.$q.defer();
             let goToState = ():void => {
                 this.$state.go(state, Object.assign({
                     id: this.$scope.component.uniqueId,
@@ -239,14 +322,8 @@ export class WorkspaceViewModel {
                 }, params));
                 deferred.resolve(true);
             };
-            if (this.isNeedSave()) {
-                if (this.$scope.isValidForm) {
-                    this.$scope.save().then(goToState);
-                } else {
-                    console.log('form is not valid');
-                    deferred.reject(false);
-                }
-            } else if (this.$scope.isEditMode() && //this is a workaround for amdocs - we need to get the artifact in order to avoid saving the vf when moving from their tabs
+
+            if (this.$scope.isEditMode() && //this is a workaround for amdocs - we need to get the artifact in order to avoid saving the vf when moving from their tabs
                 (this.$state.current.name === States.WORKSPACE_MANAGEMENT_WORKFLOW || this.$state.current.name === States.WORKSPACE_NETWORK_CALL_FLOW)) {
                 let onGetSuccess = (component:Component) => {
                     this.$scope.isLoading = false;
@@ -271,7 +348,7 @@ export class WorkspaceViewModel {
         };
 
         this.$scope.onVersionChanged = (selectedId:string):void => {
-            if (this.$state.current.data && this.$state.current.data.unsavedChanges) {
+            if (this.$scope.isGeneralView() && this.$state.current.data.unsavedChanges) {
                 this.$scope.changeVersion.selectedVersion = _.find(this.$scope.versionsList, (versionObj)=> {
                     return versionObj.versionId === this.$scope.component.uniqueId;
                 });
@@ -298,37 +375,35 @@ export class WorkspaceViewModel {
             this.$scope.onVersionChanged(_.first(this.$scope.versionsList).versionId);
         };
 
-        this.$scope.save = (state?:string):ng.IPromise<boolean> => {
-            this.EventListenerService.notifyObservers(EVENTS.ON_WORKSPACE_SAVE_BUTTON_CLICK);
+        this.$scope.create = () => {
+            
+            this.$scope.startProgress("Creating Asset...");
+            _.first(this.$scope.leftBarTabs.menuItems).isDisabled = true;//disabled click on general tab (DE246274)
 
-            this.progressService.initCreateComponentProgress(this.$scope.component.uniqueId);
-
-            let deferred = this.$q.defer();
-            let modalInstance:ng.ui.bootstrap.IModalServiceInstance;
+             // In case we import CSAR. Notify user that import VF will take long time (the create is performed in the background).
+             if (this.$scope.component.isResource() && (<Resource>this.$scope.component).csarUUID) {
+                this.Notification.info({
+                    message: this.$filter('translate')("IMPORT_VF_MESSAGE_CREATE_TAKES_LONG_TIME_DESCRIPTION"),
+                    title: this.$filter('translate')("IMPORT_VF_MESSAGE_CREATE_TAKES_LONG_TIME_TITLE")
+                });
+            }
 
             let onFailed = () => {
+                this.$scope.stopProgress();
+                this.$scope.isLoading = false; // stop the progress.
                 _.first(this.$scope.leftBarTabs.menuItems).isDisabled = false;//enabled click on general tab (DE246274)
                 this.EventListenerService.notifyObservers(EVENTS.ON_WORKSPACE_SAVE_BUTTON_ERROR);
-                this.progressService.deleteProgressValue(this.$scope.component.uniqueId);
+                let modalInstance:ng.ui.bootstrap.IModalServiceInstance;
                 modalInstance && modalInstance.close();  // Close the modal in case it is opened.
                 this.$scope.component.tags = _.without(this.$scope.component.tags, this.$scope.component.name);// for fix DE246217
-                this.$scope.isCreateProgress = false;
-                this.$scope.isLoading = false; // stop the progress.
 
                 this.$scope.setValidState(true);  // Set the form valid (if sent form is valid, the error from server).
-                if (!this.$scope.isCreateMode()) {
-                    this.$scope.component = this.ComponentFactory.createComponent(this.$scope.originComponent); // Set the component back to the original.
-                    this.enableMenuItems();  // Enable the menu items (left tabs), so user can press on them.
-                    this.$scope.disabledButtons = false;  // Enable "submit for testing" & checking buttons.
-                }
-
-                deferred.reject(false);
             };
 
             let onSuccessCreate = (component:Component) => {
 
+                this.$scope.stopProgress();
                 this.showSuccessNotificationMessage();
-                this.progressService.deleteProgressValue(this.$scope.component.uniqueId);
 
                 // Update the components list for breadcrumbs
                 this.components.unshift(component);
@@ -337,99 +412,73 @@ export class WorkspaceViewModel {
                     id: component.uniqueId,
                     type: component.componentType.toLowerCase(),
                     components: this.components
-                }, { inherit: false });
-
-                deferred.resolve(true);
+                }, {inherit: false});
             };
 
-            let onSuccessUpdate = (component:Component) => {
-                this.$scope.isCreateProgress = false;
-                this.$scope.disabledButtons = false;
-                this.showSuccessNotificationMessage();
-                this.progressService.deleteProgressValue(this.$scope.component.uniqueId);
-
-                // Stop the circle loader.
-                this.$scope.isLoading = false;
-
-                component.tags = _.reject(component.tags, (item)=> {
-                    return item === component.name
-                });
-
-                // Update the components list for breadcrumbs
-                const bcIdx = this.MenuHandler.findBreadcrumbComponentIndex(this.components, component);
-                if (bcIdx !== -1) {
-                    this.components[bcIdx] = component;
-                    this.initBreadcrumbs();  // re-calculate breadcrumbs
-                }
-
-                // Update the component
-                this.$scope.component = component;
-                this.$scope.originComponent = this.ComponentFactory.createComponent(this.$scope.component);
-
-                // Enable left tags
-                this.$scope.enabledTabs();
-
-                if (this.$state.current.data) {
-                    this.$state.current.data.unsavedChanges = false;
-                }
-
-                deferred.resolve(true);
-            };
-
-            if (this.$scope.isCreateMode()) {
-                this.$scope.progressMessage = "Creating Asset...";
-                // CREATE MODE
-                this.$scope.isCreateProgress = true;
-
-                _.first(this.$scope.leftBarTabs.menuItems).isDisabled = true;//disabled click on general tab (DE246274)
-
-                // Start creating the component
-                this.ComponentFactory.createComponentOnServer(this.$scope.component).then(onSuccessCreate, onFailed);
-
-                // In case we import CSAR. Notify user that import VF will take long time (the create is performed in the background).
-                if (this.$scope.component.isResource() && (<Resource>this.$scope.component).csarUUID) {
-                    this.Notification.info({
-                        message: this.$filter('translate')("IMPORT_VF_MESSAGE_CREATE_TAKES_LONG_TIME_DESCRIPTION"),
-                        title: this.$filter('translate')("IMPORT_VF_MESSAGE_CREATE_TAKES_LONG_TIME_TITLE")
-                    });
-                }
-            } else {
-                // UPDATE MODE
-                this.$scope.isCreateProgress = true;
-                this.$scope.progressMessage = "Updating Asset...";
-                this.disableMenuItems();
+            this.ComponentFactory.createComponentOnServer(this.$scope.component).then(onSuccessCreate, onFailed);
 
 
-                // Work around to change the csar version
-                if (this.cacheService.get(CHANGE_COMPONENT_CSAR_VERSION_FLAG)) {
-                    (<Resource>this.$scope.component).csarVersion = this.cacheService.get(CHANGE_COMPONENT_CSAR_VERSION_FLAG);
-                    this.cacheService.remove(CHANGE_COMPONENT_CSAR_VERSION_FLAG);
-                }
-
-                this.$scope.component.updateComponent().then(onSuccessUpdate, onFailed);
-            }
-            return deferred.promise;
         };
 
-        this.$scope.revert = ():void => {
-            //in state of import file leave the file in place
-            if (this.$scope.component.isResource() && (<Resource>this.$scope.component).importedFile) {
-                let tempFile:FileUploadModel = (<Resource>this.$scope.component).importedFile;
-                this.$scope.component = this.ComponentFactory.createComponent(this.$scope.originComponent);
-                (<Resource>this.$scope.component).importedFile = tempFile;
-            } else {
-                this.$scope.component = this.ComponentFactory.createComponent(this.$scope.originComponent);
-            }
-            this.EventListenerService.notifyObservers(EVENTS.ON_REVERT);
+        this.$scope.save = ():Promise<void> => {
+            
+            this.EventListenerService.notifyObservers(EVENTS.ON_WORKSPACE_SAVE_BUTTON_CLICK);
+
+            this.$scope.startProgress("Updating Asset...");
+            this.$scope.disableMenuItems();
+
+            return new Promise<void>((resolve, reject) => {
+                let stopProgressAndEnableUI = () => {
+                    this.$scope.disabledButtons = false;
+                    this.$scope.isLoading = false;
+                    this.$scope.enableMenuItems();
+                    this.$scope.stopProgress();
+                }
+
+                let onFailed = () => {
+                    stopProgressAndEnableUI();
+                    this.EventListenerService.notifyObservers(EVENTS.ON_WORKSPACE_SAVE_BUTTON_ERROR);
+
+                    reject();
+                };
+
+                let onSuccessUpdate = (component:Component) => {
+                    stopProgressAndEnableUI();
+                    this.showSuccessNotificationMessage();
+
+                    component.tags = _.reject(component.tags, (item)=> {
+                        return item === component.name
+                    });
+
+                    this.$scope.updateBreadcrumbs(component);
+                    
+                    //update the component
+                    this.$scope.setComponent(component);
+                    this.$scope.originComponent = this.ComponentFactory.createComponent(this.$scope.component);
+
+                    if (this.cacheService.contains(CHANGE_COMPONENT_CSAR_VERSION_FLAG)) {
+                        this.cacheService.remove(CHANGE_COMPONENT_CSAR_VERSION_FLAG);
+                    }
+                    if (this.cacheService.contains(PREVIOUS_CSAR_COMPONENT)){
+                        this.cacheService.remove(PREVIOUS_CSAR_COMPONENT);
+                    }
+
+                    //clear edit flags
+                    this.$state.current.data.unsavedChanges = false;
+                    this.$scope.unsavedFile = false;
+                    resolve();
+                };
+
+                this.$scope.component.updateComponent().then(onSuccessUpdate, onFailed);
+            });
+
         };
 
         this.$scope.changeLifecycleState = (state:string):void => {
-            if (this.isNeedSave() && state !== 'deleteVersion') {
-                this.$scope.save().then(() => {
-                    changeLifecycleState(state);
-                })
+            if (this.$scope.isGeneralView() && state !== 'deleteVersion') {
+                this.EventListenerService.notifyObservers(EVENTS.ON_LIFECYCLE_CHANGE_WITH_SAVE, state);
             } else {
-                changeLifecycleState(state);
+                this.$scope.handleChangeLifecycleState(state);
             }
         };
 
@@ -440,7 +489,7 @@ export class WorkspaceViewModel {
             this.$state.go('dashboard');
         };
 
-        let changeLifecycleState = (state:string) => {
+        this.$scope.handleChangeLifecycleState = (state:string, newCsarVersion?:string) => {
             if ('monitor' === state) {
                 this.$state.go('workspace.distribution');
                 return;
@@ -466,9 +515,9 @@ export class WorkspaceViewModel {
                             // only checkOut get the full component from server
                             //   this.$scope.component = component;
                             // Work around to change the csar version
-                            if (this.cacheService.get(CHANGE_COMPONENT_CSAR_VERSION_FLAG)) {
-                                (<Resource>this.$scope.component).csarVersion = this.cacheService.get(CHANGE_COMPONENT_CSAR_VERSION_FLAG);
-                            }
+                            if(newCsarVersion) {
+                                this.cacheService.set(CHANGE_COMPONENT_CSAR_VERSION_FLAG, newCsarVersion);
+                            } 
 
                             //when checking out a minor version uuid remains
                             const bcIdx = _.findIndex(this.components, (item) => {
@@ -480,20 +529,17 @@ export class WorkspaceViewModel {
                                 //when checking out a major(certified) version
                                 this.components.unshift(component);
                             }
-                            // this.$state.go(this.$state.current.name, {
-                            //     id: component.uniqueId,
-                            //     type: component.componentType.toLowerCase(),
-                            //     components: this.components
-                            // });
                             this.$scope.mode = this.initViewMode();
                             this.initChangeLifecycleStateButtons();
                             this.initVersionObject();
                             this.$scope.isLoading = false;
                             this.EventListenerService.notifyObservers(EVENTS.ON_CHECKOUT, component);
+
                             this.Notification.success({
                                 message: this.$filter('translate')("CHECKOUT_SUCCESS_MESSAGE_TEXT"),
                                 title: this.$filter('translate')("CHECKOUT_SUCCESS_MESSAGE_TITLE")
                             });
+
                         });
                         break;
                     case 'lifecycleState/CHECKIN':
@@ -528,11 +574,9 @@ export class WorkspaceViewModel {
                         });
                         break;
                     case 'lifecycleState/certify':
-                        defaultActionAfterChangeLifecycleState();
-                        this.Notification.success({
-                            message: this.$filter('translate')("ACCEPT_TESTING_SUCCESS_MESSAGE_TEXT"),
-                            title: this.$filter('translate')("ACCEPT_TESTING_SUCCESS_MESSAGE_TITLE")
-                        });
+
+                        this.$scope.handleCertification(component);
+                        
                         break;
                     //DE203504 Bug Fix Start
                     case 'lifecycleState/startCertification':
@@ -588,11 +632,7 @@ export class WorkspaceViewModel {
             this.ChangeLifecycleStateHandler.changeLifecycleState(this.$scope.component, data, this.$scope, onSuccess);
         };
 
-        this.$scope.enabledTabs = ():void => {
-            this.$scope.leftBarTabs.menuItems.forEach((item:MenuItem) => {
-                item.isDisabled = false;
-            });
-        };
+
 
         this.$scope.isViewMode = ():boolean => {
             return this.$scope.mode === WorkspaceMode.VIEW;
@@ -606,7 +646,7 @@ export class WorkspaceViewModel {
             return this.$scope.mode === WorkspaceMode.VIEW && this.$scope.component.lifecycleState === ComponentState.NOT_CERTIFIED_CHECKIN;
         };
 
-        this.$scope.showFullIcons = ():boolean => {
+        this.$scope.isGeneralView = ():boolean => {
             //we show revert and save icons only in general view
             return this.$state.current.name === States.WORKSPACE_GENERAL;
         };
@@ -697,14 +737,95 @@ export class WorkspaceViewModel {
         };
 
         this.$scope.reload = (component:Component):void => {
-            this.$state.go(this.$state.current.name,{id:component.uniqueId},{reload:true});
+            this.$state.go(this.$state.current.name, {id: component.uniqueId}, {reload: true});
         };
 
-        this.$scope.$on('setWorkspaceTopBarActive', (event:ng.IAngularEvent, isActive:boolean) => {
-            this.$scope.isActiveTopBar = isActive;
+        this.$scope.$on('$destroy', () => {
+            this.EventListenerService.unRegisterObserver(EVENTS.ON_WORKSPACE_UNSAVED_CHANGES);
         });
+        
+        this.$scope.openAutomatedUpgradeModal = ():void => {
+            this.$scope.isLoading = true;
+            this.ComponentServiceNg2.getDependencies(this.$scope.component.componentType, this.$scope.component.uniqueId).subscribe((response:Array<IDependenciesServerResponse>)=> {
+                this.$scope.isLoading = false;
+                this.AutomatedUpgradeService.openAutomatedUpgradeModal(response, this.$scope.component, false);
+            });
+        }
+
+        this.$scope.handleCertification = (certifyComponent): void => {
+            if (this.$scope.component.getComponentSubType() === ResourceType.VF) {
+                this.ComponentServiceNg2.getDependencies(this.$scope.component.componentType, this.$scope.component.uniqueId).subscribe((response:Array<IDependenciesServerResponse>) => {
+                    this.$scope.isLoading = false;
+
+                    let isUpgradeNeeded = _.filter(response, (componentToUpgrade:IDependenciesServerResponse) => {
+                        return componentToUpgrade.dependencies && componentToUpgrade.dependencies.length > 0;
+                    });
+                    if(isUpgradeNeeded.length === 0) {
+                        this.onSuccessWithoutUpgradeNeeded();
+                        return;
+                    }
+                    this.refreshDataAfterChangeLifecycleState(certifyComponent);
+                    this.AutomatedUpgradeService.openAutomatedUpgradeModal(response, this.$scope.component, true);
+                });
+            } else {
+                this.onSuccessWithoutUpgradeNeeded();
+            }
+        }
+
+        this.$scope.disableMenuItems = () => {
+            this.$scope.leftBarTabs.menuItems.forEach((item:MenuItem) => {
+                item.isDisabled = (States.WORKSPACE_GENERAL != item.state);
+            });
+        }
+    
+        this.$scope.enableMenuItems = () => {
+            this.$scope.leftBarTabs.menuItems.forEach((item:MenuItem) => {
+                item.isDisabled = false;
+            });
+        }
+
+
+        this.$scope.startProgress = (message:string):void => {
+            this.progressService.initCreateComponentProgress(this.$scope.component.uniqueId);
+            this.$scope.isCreateProgress = true;
+            this.$scope.progressMessage = message;
+        };
+
+        this.$scope.stopProgress = ():void => {
+            this.$scope.isCreateProgress = false;
+            this.progressService.deleteProgressValue(this.$scope.component.uniqueId);
+        }
+
+        this.$scope.updateBreadcrumbs = (component:Component):void => {
+            // Update the components list for breadcrumbs
+            const bcIdx = this.MenuHandler.findBreadcrumbComponentIndex(this.components, component);
+            if (bcIdx !== -1) {
+                this.components[bcIdx] = component;
+                this.initBreadcrumbs();  // re-calculate breadcrumbs
+            }
+        }
+
+        this.$scope.updateUnsavedFileFlag = (isUnsaved:boolean) => {
+            this.$scope.unsavedFile = isUnsaved;
+        }
 
     };
+
+    private onSuccessWithoutUpgradeNeeded = ():void => {
+        this.$scope.isLoading = false;
+        this.Notification.success({
+            message: this.$filter('translate')("ACCEPT_TESTING_SUCCESS_MESSAGE_TEXT"),
+            title: this.$filter('translate')("ACCEPT_TESTING_SUCCESS_MESSAGE_TITLE")
+        });
+        this.$state.go('dashboard');
+    }
+    private refreshDataAfterChangeLifecycleState = (component:Component):void => {
+        this.$scope.isLoading = false;
+        this.$scope.mode = this.initViewMode();
+        this.initChangeLifecycleStateButtons();
+        this.initVersionObject();
+        this.EventListenerService.notifyObservers(EVENTS.ON_LIFECYCLE_CHANGE, component);
+    }
 
     private initAfterScope = ():void => {
         // In case user select csar from the onboarding modal, need to disable checkout and submit for testing.
@@ -741,6 +862,10 @@ export class WorkspaceViewModel {
             }
         });
         return tempMenuItems;
+    };
+
+    private deleteArchiveCache = () => {
+        this.cacheService.remove("archiveComponents"); //delete the cache to ensure the archive is reloaded from server
     };
 
     private initBreadcrumbs = () => {
@@ -787,32 +912,16 @@ export class WorkspaceViewModel {
             }
             menuItem.callback = () => this.$scope[menuItem.action](menuItem.state, menuItem.params);
             menuItem.isDisabled = (inCreateMode && States.WORKSPACE_GENERAL != menuItem.state) ||
-                (States.WORKSPACE_DEPLOYMENT === menuItem.state && this.$scope.component.groups && this.$scope.component.groups.length === 0 && this.$scope.component.isResource());
+                (States.WORKSPACE_DEPLOYMENT === menuItem.state && this.$scope.component.modules && this.$scope.component.modules.length === 0 && this.$scope.component.isResource());
             return menuItem;
         });
 
         if (this.cacheService.get('breadcrumbsComponents')) {
             this.initBreadcrumbs();
-        } else {
-            let onSuccess = (components:Array<Component>) => {
-                this.cacheService.set('breadcrumbsComponents', components);
-                this.initBreadcrumbs();
-            };
-            this.EntityService.getCatalog().then(onSuccess); //getAllComponents() doesnt return components from catalog
         }
     }
 
-    private disableMenuItems() {
-        this.$scope.leftBarTabs.menuItems.forEach((item:MenuItem) => {
-            item.isDisabled = (States.WORKSPACE_GENERAL != item.state);
-        });
-    }
 
-    private enableMenuItems() {
-        this.$scope.leftBarTabs.menuItems.forEach((item:MenuItem) => {
-            item.isDisabled = false;
-        });
-    }
 
     private showSuccessNotificationMessage = ():void => {
         this.Notification.success({
@@ -820,5 +929,10 @@ export class WorkspaceViewModel {
             title: this.$filter('translate')("IMPORT_VF_MESSAGE_CREATE_FINISHED_TITLE")
         });
     };
+
+    private setWorkspaceButtonState = (newState:boolean, callback?:Function) => {
+        this.$scope.unsavedChanges = newState;
+        this.$scope.unsavedChangesCallback = callback;
+    }
 
 }

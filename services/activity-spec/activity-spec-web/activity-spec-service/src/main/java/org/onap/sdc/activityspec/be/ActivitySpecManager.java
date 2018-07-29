@@ -16,11 +16,11 @@
 
 package org.onap.sdc.activityspec.be;
 
-import java.util.Collection;
-
 import org.onap.sdc.activityspec.api.rest.types.ActivitySpecAction;
 import org.onap.sdc.activityspec.be.dao.types.ActivitySpecEntity;
 import org.openecomp.sdc.versioning.types.Item;
+
+import java.util.Collection;
 
 public interface ActivitySpecManager {
 

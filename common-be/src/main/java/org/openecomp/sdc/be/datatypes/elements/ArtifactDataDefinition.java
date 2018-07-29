@@ -24,23 +24,15 @@ import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 //import com.google.gson.reflect.TypeToken;
 
-public class ArtifactDataDefinition extends ToscaDataDefinition implements Serializable {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -1691343090754083941L;
-
-	
+public class ArtifactDataDefinition extends ToscaDataDefinition {
 
 	public ArtifactDataDefinition() {
-		super();
 		setArtifactVersion("0");
 	}
 	
@@ -52,7 +44,6 @@ public class ArtifactDataDefinition extends ToscaDataDefinition implements Seria
 	
 
 	public ArtifactDataDefinition(ArtifactDataDefinition a ) {
-		super();
 		this.setUniqueId(a.getUniqueId());
 		this.setArtifactType(a.getArtifactType());
 		this.setArtifactRef( a.getArtifactRef());

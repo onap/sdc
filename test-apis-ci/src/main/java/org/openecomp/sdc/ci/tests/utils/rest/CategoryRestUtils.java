@@ -20,10 +20,8 @@
 
 package org.openecomp.sdc.ci.tests.utils.rest;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
@@ -35,8 +33,9 @@ import org.openecomp.sdc.ci.tests.datatypes.http.HttpRequest;
 import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
 import org.openecomp.sdc.ci.tests.utils.Utils;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 
 public class CategoryRestUtils extends BaseRestUtils {
 

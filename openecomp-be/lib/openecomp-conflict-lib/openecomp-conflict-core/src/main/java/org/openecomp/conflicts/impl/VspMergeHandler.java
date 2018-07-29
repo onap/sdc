@@ -2,11 +2,7 @@ package org.openecomp.conflicts.impl;
 
 import org.openecomp.conflicts.ItemMergeHandler;
 import org.openecomp.conflicts.dao.ConflictsDao;
-import org.openecomp.conflicts.types.Conflict;
-import org.openecomp.conflicts.types.ConflictInfo;
-import org.openecomp.conflicts.types.ConflictResolution;
-import org.openecomp.conflicts.types.ItemVersionConflict;
-import org.openecomp.conflicts.types.Resolution;
+import org.openecomp.conflicts.types.*;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.ErrorCategory;
 import org.openecomp.sdc.common.errors.ErrorCode;
@@ -18,12 +14,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static org.openecomp.sdc.datatypes.model.ElementType.NetworkPackage;
-import static org.openecomp.sdc.datatypes.model.ElementType.OrchestrationTemplate;
-import static org.openecomp.sdc.datatypes.model.ElementType.OrchestrationTemplateCandidate;
-import static org.openecomp.sdc.datatypes.model.ElementType.OrchestrationTemplateCandidateContent;
-import static org.openecomp.sdc.datatypes.model.ElementType.OrchestrationTemplateValidationData;
-import static org.openecomp.sdc.datatypes.model.ElementType.VspModel;
+import static org.openecomp.sdc.datatypes.model.ElementType.*;
 
 public class VspMergeHandler implements ItemMergeHandler {
 

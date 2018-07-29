@@ -1,4 +1,3 @@
-import * as _ from "lodash";
 import {Component, Input, KeyValueDiffer, IterableDiffers, KeyValueDiffers, DoCheck} from '@angular/core';
 import {Service} from "app/models/components/service";
 import {TranslateService} from "app/ng2/shared/translator/translate.service";

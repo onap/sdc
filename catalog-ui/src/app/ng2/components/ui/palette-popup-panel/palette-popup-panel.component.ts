@@ -35,7 +35,8 @@ export class PalettePopupPanelComponent implements OnInit {
 
     public addZoneInstance(): void {
         if(this.displayComponent) {
-            this.eventListenerService.notifyObservers(GRAPH_EVENTS.ON_ADD_COMPONENT_INSTANCE_ZONE_START, this.component, this.displayComponent, this.popupPanelPosition);
+            this.eventListenerService.notifyObservers(GRAPH_EVENTS.ON_ADD_ZONE_INSTANCE_FROM_PALETTE, this.component, this.displayComponent, this.popupPanelPosition);
+            this.hidePopupPanel();
         }
     }
 

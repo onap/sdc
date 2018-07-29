@@ -20,6 +20,13 @@
 
 package org.openecomp.sdc.ci.tests.run;
 
+import org.apache.log4j.PropertyConfigurator;
+import org.openecomp.sdc.ci.tests.config.Config;
+import org.openecomp.sdc.ci.tests.utils.Utils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.testng.TestNG;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -33,13 +40,6 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-
-import org.apache.log4j.PropertyConfigurator;
-import org.openecomp.sdc.ci.tests.config.Config;
-import org.openecomp.sdc.ci.tests.utils.Utils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.testng.TestNG;
 
 public class StartTest {
 

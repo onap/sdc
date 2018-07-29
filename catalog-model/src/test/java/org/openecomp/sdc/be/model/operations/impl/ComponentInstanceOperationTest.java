@@ -1,11 +1,10 @@
 package org.openecomp.sdc.be.model.operations.impl;
 
+import fj.data.Either;
 import org.junit.Test;
 import org.openecomp.sdc.be.dao.titan.TitanGenericDao;
 import org.openecomp.sdc.be.model.ComponentInstanceInput;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
-
-import fj.data.Either;
 
 public class ComponentInstanceOperationTest {
 

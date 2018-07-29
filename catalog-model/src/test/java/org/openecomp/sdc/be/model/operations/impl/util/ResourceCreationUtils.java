@@ -22,15 +22,15 @@ package org.openecomp.sdc.be.model.operations.impl.util;
 
 public class ResourceCreationUtils {
 
-	public static String ATT_UID = "jm007a";
-	public static String FIRST_NAME = "Julia";
-	public static String LAST_NAME = "Hendrix";
-	public static String DEFAULT_RESOURCE_NAME = "my-resource";
-	public static String DEFAULT_RESOURCE_VERSION = "1.0";
-	public static String DEFAULT_USER_ID = "jh0003";
+    public static String ATT_UID = "jm007a";
+    public static String FIRST_NAME = "Julia";
+    public static String LAST_NAME = "Hendrix";
+    public static String DEFAULT_RESOURCE_NAME = "my-resource";
+    public static String DEFAULT_RESOURCE_VERSION = "1.0";
+    public static String DEFAULT_USER_ID = "jh0003";
 
-	public static String MODIFIER_ATT_UID = "jk9990";
-	public static String MODIFIER_FIRST_NAME = "Roki";
-	public static String MODIFIER_LAST_NAME = "Balaboa";
+    public static String MODIFIER_ATT_UID = "jk9990";
+    public static String MODIFIER_FIRST_NAME = "Roki";
+    public static String MODIFIER_LAST_NAME = "Balaboa";
 
 }

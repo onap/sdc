@@ -1,13 +1,6 @@
 package org.openecomp.sdc.asdctool.impl.validator.tasks.moduleJson;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
+import fj.data.Either;
 import org.openecomp.sdc.asdctool.impl.validator.tasks.ServiceValidationTask;
 import org.openecomp.sdc.asdctool.impl.validator.utils.ReportManager;
 import org.openecomp.sdc.asdctool.impl.validator.utils.VertexResult;
@@ -24,7 +17,8 @@ import org.openecomp.sdc.be.model.jsontitan.operations.TopologyTemplateOperation
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import fj.data.Either;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Created by chaya on 7/18/2017.

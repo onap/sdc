@@ -20,12 +20,12 @@
 
 package org.openecomp.sdc.common.config;
 
+import org.openecomp.sdc.common.api.BasicConfiguration;
+
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
-
-import org.openecomp.sdc.common.api.BasicConfiguration;
 
 public class EcompErrorConfiguration extends BasicConfiguration {
 
@@ -136,7 +136,7 @@ public class EcompErrorConfiguration extends BasicConfiguration {
 	}
 
 	/*******************************
-	 * Enums
+	 * enums
 	 */
 
 	public enum EcompErrorType {

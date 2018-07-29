@@ -44,9 +44,12 @@ export class CompositionCiNodeCp extends CompositionCiNodeBase {
         } else {
             this.classes = 'cp-node';
         }
+        if(this.archived){
+            this.classes = this.classes + ' archived';
+            return;
+        }
         if (!this.certified) {
             this.classes = this.classes + ' not-certified';
         }
-
     }
 }

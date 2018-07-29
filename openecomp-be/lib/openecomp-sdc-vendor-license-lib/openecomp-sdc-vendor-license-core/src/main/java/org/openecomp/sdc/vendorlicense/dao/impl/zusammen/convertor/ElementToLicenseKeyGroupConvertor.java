@@ -5,18 +5,15 @@ import com.amdocs.zusammen.adaptor.inbound.api.types.item.ElementInfo;
 import com.amdocs.zusammen.datatypes.item.Info;
 import com.amdocs.zusammen.datatypes.item.Relation;
 import org.openecomp.convertor.ElementConvertor;
-import org.openecomp.sdc.vendorlicense.dao.types.LicenseKeyGroupEntity;
-import org.openecomp.sdc.vendorlicense.dao.types.LicenseKeyType;
-import org.openecomp.sdc.vendorlicense.dao.types.MultiChoiceOrOther;
-import org.openecomp.sdc.vendorlicense.dao.types.OperationalScope;
-import org.openecomp.sdc.vendorlicense.dao.types.ThresholdUnit;
+import org.openecomp.sdc.vendorlicense.dao.types.*;
 
+import java.util.stream.Collectors;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
+
 
 import static org.openecomp.sdc.vendorlicense.dao.impl.zusammen.VlmZusammenUtil.toInteger;
 

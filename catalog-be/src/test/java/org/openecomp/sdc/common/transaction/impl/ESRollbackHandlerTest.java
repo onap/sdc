@@ -1,5 +1,7 @@
 package org.openecomp.sdc.common.transaction.impl;
 
+import fj.data.Either;
+import mockit.Deencapsulation;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -13,9 +15,6 @@ import org.openecomp.sdc.common.transaction.api.TransactionUtils.DBActionCodeEnu
 import org.openecomp.sdc.common.transaction.api.TransactionUtils.DBTypeEnum;
 import org.openecomp.sdc.common.transaction.api.TransactionUtils.ESActionTypeEnum;
 import org.openecomp.sdc.common.util.MethodActivationStatusEnum;
-
-import fj.data.Either;
-import mockit.Deencapsulation;
 
 public class ESRollbackHandlerTest {
 

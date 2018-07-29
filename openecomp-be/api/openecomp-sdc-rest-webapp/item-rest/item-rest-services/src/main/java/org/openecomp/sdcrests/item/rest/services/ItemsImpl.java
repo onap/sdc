@@ -16,27 +16,6 @@
 
 package org.openecomp.sdcrests.item.rest.services;
 
-import static org.openecomp.sdc.itempermissions.notifications.NotificationConstants.PERMISSION_USER;
-import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.ITEM_ID;
-import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.ITEM_NAME;
-
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-import javax.annotation.PostConstruct;
-import javax.inject.Named;
-import javax.ws.rs.core.Response;
-import org.openecomp.sdc.activitylog.ActivityLogManager;
-import org.openecomp.sdc.activitylog.ActivityLogManagerFactory;
-import org.openecomp.sdc.activitylog.dao.type.ActivityLogEntity;
 import org.openecomp.sdc.activitylog.dao.type.ActivityType;
 import org.openecomp.sdc.datatypes.model.ItemType;
 import org.openecomp.sdc.itempermissions.PermissionsManager;
@@ -66,6 +45,16 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
+import javax.annotation.PostConstruct;
+import javax.inject.Named;
+import javax.ws.rs.core.Response;
+import java.util.*;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+
+import static org.openecomp.sdc.itempermissions.notifications.NotificationConstants.PERMISSION_USER;
+import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.ITEM_ID;
+import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.ITEM_NAME;
 
 @Named
 @Service("items")
@@ -75,7 +64,6 @@ public class ItemsImpl implements Items {
 
     private ItemManager itemManager = ItemManagerFactory.getInstance().createInterface();
 
-    private static ActivityLogManager activityLogManager = ActivityLogManagerFactory.getInstance().createInterface();
 
     private VersioningManager versioningManager = VersioningManagerFactory.getInstance().createInterface();
 
@@ -212,9 +200,6 @@ public class ItemsImpl implements Items {
 
         private void execute(Item item, String user) {
             notifyUsers(item.getId(), item.getName(), user, this.notificationType);
-            activityLogManager.logActivity(
-                    new ActivityLogEntity(item.getId(), getLatestVersion(item.getId()), this.activityType, user, true,
-                            "", ""));
         }
 
         private void notifyUsers(String itemId, String itemName, String userName, NotificationEventTypes eventType) {

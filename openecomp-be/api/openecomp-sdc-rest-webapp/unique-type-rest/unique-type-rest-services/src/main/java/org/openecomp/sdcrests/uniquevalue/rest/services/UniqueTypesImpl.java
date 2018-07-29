@@ -28,11 +28,8 @@ import org.springframework.stereotype.Service;
 
 import javax.inject.Named;
 import javax.ws.rs.core.Response;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.ServiceLoader;
+
+import java.util.*;
 
 import static javax.ws.rs.core.Response.Status.NOT_FOUND;
 

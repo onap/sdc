@@ -30,6 +30,7 @@ public class ComponentInstanceReqDetails {
 	String posY;
 	String name;
 	String uniqueId;
+	String originType;
 
 	public ComponentInstanceReqDetails() {
 		super();
@@ -43,9 +44,10 @@ public class ComponentInstanceReqDetails {
 		this.posY = componentInstance.getPosY();
 		// this.name = "myResourceInstance";
 		this.name = componentInstance.getName();
+		this.originType = componentInstance.getOriginType().name();
 	}
 
-	public ComponentInstanceReqDetails(String resourceUid, String description, String posX, String posY, String name) {
+	public ComponentInstanceReqDetails(String resourceUid, String description, String posX, String posY, String name, String originType) {
 		super();
 		this.componentUid = resourceUid;
 		this.description = description;
@@ -53,6 +55,7 @@ public class ComponentInstanceReqDetails {
 		this.posY = posY;
 		// this.name = "myResourceInstance";
 		this.name = name;
+		this.originType = originType;
 	}
 
 	public ComponentInstanceReqDetails(String resourceUid, String description, String posX, String posY) {
@@ -109,6 +112,14 @@ public class ComponentInstanceReqDetails {
 
 	public void setUniqueId(String uniqueId) {
 		this.uniqueId = uniqueId;
+	}
+
+	public String getOriginType() {
+		return originType;
+	}
+
+	public void setOriginType(String originType) {
+		this.originType = originType;
 	}
 
 	@Override

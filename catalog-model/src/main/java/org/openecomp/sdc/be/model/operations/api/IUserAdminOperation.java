@@ -20,29 +20,28 @@
 
 package org.openecomp.sdc.be.model.operations.api;
 
-import java.util.List;
-import java.util.Map;
-
+import fj.data.Either;
 import org.apache.tinkerpop.gremlin.structure.Edge;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.model.User;
 
-import fj.data.Either;
+import java.util.List;
+import java.util.Map;
 
 public interface IUserAdminOperation {
 
-	public Either<User, ActionStatus> getUserData(String id, boolean inTransaction);
+    public Either<User, ActionStatus> getUserData(String id, boolean inTransaction);
 
-	public Either<User, StorageOperationStatus> saveUserData(User user);
+    public Either<User, StorageOperationStatus> saveUserData(User user);
 
-	public Either<User, StorageOperationStatus> updateUserData(User user);
+    public Either<User, StorageOperationStatus> updateUserData(User user);
 
-	public Either<User, StorageOperationStatus> deActivateUser(User user);
+    public Either<User, StorageOperationStatus> deActivateUser(User user);
 
-	public Either<User, ActionStatus> deleteUserData(String id);
+    public Either<User, ActionStatus> deleteUserData(String id);
 
-	public Either<List<User>, ActionStatus> getAllUsersWithRole(String role, String status);
+    public Either<List<User>, ActionStatus> getAllUsersWithRole(String role, String status);
 
-	public Either<List<Edge>, StorageOperationStatus> getUserPendingTasksList(User user, Map<String, Object> properties);
+    public Either<List<Edge>, StorageOperationStatus> getUserPendingTasksList(User user, Map<String, Object> properties);
 
 }

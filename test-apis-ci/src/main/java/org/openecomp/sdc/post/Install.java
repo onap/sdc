@@ -20,11 +20,11 @@
 
 package org.openecomp.sdc.post;
 
-import java.io.File;
-
 import org.openecomp.sdc.be.dao.DAOTitanStrategy;
 import org.openecomp.sdc.be.dao.titan.TitanGraphClient;
 import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
+
+import java.io.File;
 
 public class Install {
 	public static void main(String[] args) {

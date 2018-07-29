@@ -1,12 +1,12 @@
 package org.openecomp.sdc.be.model.tosca.converters;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.junit.Assert.assertNull;
+import org.junit.Test;
 
 import java.util.Collections;
 
-import org.junit.Test;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.junit.Assert.assertNull;
 
 
 public class ToscaFloatConverterTest {

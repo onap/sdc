@@ -13,7 +13,7 @@ public class DBVersion implements Comparable<DBVersion>{
     /**
      * The current db version. should be tested against real db to verify it is compatible to the db version
      */
-    public static final DBVersion CURRENT_VERSION = new DBVersion(1802, 0);
+    public static final DBVersion CURRENT_VERSION = new DBVersion(1710, 0);
 
     private DBVersion(BigInteger major, BigInteger minor) {
         this.major = major;
@@ -62,12 +62,8 @@ public class DBVersion implements Comparable<DBVersion>{
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
 
         DBVersion dbVersion = (DBVersion) o;
 

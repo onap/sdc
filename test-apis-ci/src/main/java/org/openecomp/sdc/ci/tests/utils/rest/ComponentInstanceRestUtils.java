@@ -20,19 +20,9 @@
 
 package org.openecomp.sdc.ci.tests.utils.rest;
 
-import static org.testng.Assert.assertTrue;
-
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import com.google.gson.Gson;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
-import org.openecomp.sdc.be.model.Component;
-import org.openecomp.sdc.be.model.ComponentInstance;
-import org.openecomp.sdc.be.model.ComponentInstanceProperty;
-import org.openecomp.sdc.be.model.RequirementCapabilityRelDef;
-import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.*;
 import org.openecomp.sdc.ci.tests.api.Urls;
 import org.openecomp.sdc.ci.tests.config.Config;
 import org.openecomp.sdc.ci.tests.datatypes.ComponentInstanceReqDetails;
@@ -40,7 +30,12 @@ import org.openecomp.sdc.ci.tests.datatypes.http.HttpHeaderEnum;
 import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
 import org.openecomp.sdc.ci.tests.utils.Utils;
 
-import com.google.gson.Gson;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static org.testng.Assert.assertTrue;
 
 public class ComponentInstanceRestUtils extends BaseRestUtils {
 //	public static String acceptHeaderDate = "application/json";
@@ -271,6 +266,16 @@ public class ComponentInstanceRestUtils extends BaseRestUtils {
 				acceptHeaderData);
 		return changeResourceInstanceVersion;
 
+	}
+	public static CapReqDef getInstancesCapabilitiesRequirements(Component component, String userId) throws Exception {
+
+		String url = String.format(Urls.GET_INSTANCE_REQUIRMENTS_CAPABILITIES,
+				Utils.getConfig().getCatalogBeHost(), Utils.getConfig().getCatalogBePort(),
+				ComponentTypeEnum.findParamByType(component.getComponentType()), component.getUniqueId());
+
+		RestResponse getComponentReqCap = sendGet(url, userId);
+		assertTrue(getComponentReqCap.getErrorCode() == STATUS_CODE_GET_SUCCESS);
+		return ResponseParser.parseToObject(getComponentReqCap.getResponse(), CapReqDef.class);
 	}
 
 }

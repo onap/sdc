@@ -1,12 +1,11 @@
 package org.openecomp.sdc.be.components.path.beans;
 
+import fj.data.Either;
 import org.openecomp.sdc.be.impl.ForwardingPathUtils;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
-
-import fj.data.Either;
 
 @org.springframework.stereotype.Component("tosca-operation-facade")
 public class ForwardingPathToscaOperationFacade extends ToscaOperationFacade {

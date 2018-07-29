@@ -1,11 +1,11 @@
 package org.openecomp.sdc.be.info;
 
+import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic.ArtifactOperationEnum;
+import org.openecomp.sdc.be.model.ArtifactDefinition;
+
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
-
-import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic.ArtifactOperationEnum;
-import org.openecomp.sdc.be.model.ArtifactDefinition;
 
 public class NodeTypeInfoToUpdateArtifacts {
 

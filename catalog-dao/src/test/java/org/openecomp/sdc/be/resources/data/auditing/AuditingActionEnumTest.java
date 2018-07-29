@@ -34,6 +34,6 @@ public class AuditingActionEnumTest {
 		AuditingActionEnum result;
 
 		// default test
-		result = AuditingActionEnum.getActionByName(name);
+		result = AuditingActionEnum.fromName(name);
 	}
 }

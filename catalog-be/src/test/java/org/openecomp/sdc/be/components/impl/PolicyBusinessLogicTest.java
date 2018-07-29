@@ -1,21 +1,7 @@
 package org.openecomp.sdc.be.components.impl;
 
 
-import static org.assertj.core.api.Java6Assertions.assertThat;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyBoolean;
-import static org.mockito.ArgumentMatchers.anyMap;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.when;
-
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import fj.data.Either;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -23,6 +9,7 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.components.utils.ComponentInstanceBuilder;
 import org.openecomp.sdc.be.components.utils.GroupDefinitionBuilder;
 import org.openecomp.sdc.be.components.utils.ResourceBuilder;
@@ -37,16 +24,7 @@ import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
-import org.openecomp.sdc.be.model.Component;
-import org.openecomp.sdc.be.model.ComponentInstance;
-import org.openecomp.sdc.be.model.ComponentParametersView;
-import org.openecomp.sdc.be.model.GroupDefinition;
-import org.openecomp.sdc.be.model.LifecycleStateEnum;
-import org.openecomp.sdc.be.model.PolicyDefinition;
-import org.openecomp.sdc.be.model.PolicyTargetDTO;
-import org.openecomp.sdc.be.model.PolicyTypeDefinition;
-import org.openecomp.sdc.be.model.Resource;
-import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.*;
 import org.openecomp.sdc.be.model.cache.ApplicationDataTypeCache;
 import org.openecomp.sdc.be.model.jsontitan.datamodel.ToscaElementTypeEnum;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
@@ -58,7 +36,13 @@ import org.openecomp.sdc.common.impl.ExternalConfiguration;
 import org.openecomp.sdc.common.impl.FSConfigurationSource;
 import org.openecomp.sdc.exception.ResponseFormat;
 
-import fj.data.Either;
+import java.util.*;
+
+import static org.assertj.core.api.Java6Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PolicyBusinessLogicTest {
@@ -92,22 +76,13 @@ public class PolicyBusinessLogicTest {
     private final static String USER_ID = "jh0003";
     private final static String UNIQUE_ID_EXSISTS = "uniqueIdExists";
     private final static String UNIQUE_ID_DOESNT_EXSISTS = "uniqueIdDoesntExists";
-    private final static String FAKE_TYPE = "fakeType";
-    private final static String COMPONENT_INSTANCE_TYPE = "component_Instances";
-    private final static String GROUP_TYPE = "GROUPS";
-
-
-
-
-    private final String CREATE_POLICY = "create Policy";
-
+    private final static String CREATE_POLICY = "create Policy";
     private final static User user = buildUser();
     private final static PolicyDefinition policy = buildPolicy(POLICY_NAME);
     private final static PolicyDefinition otherPolicy = buildPolicy(OTHER_POLICY_NAME);
     private final static Resource resource = buildResource();
     private final static PolicyTypeDefinition policyType = buildPolicyType();
 
-    private static Either<User, ResponseFormat> userSuccessEither;
     private static Either<Component, StorageOperationStatus> componentSuccessEither;
     private static Either<PolicyTypeDefinition, StorageOperationStatus> getPolicyTypeSuccessEither;
     private static Either<PolicyDefinition, StorageOperationStatus> policySuccessEither;
@@ -124,7 +99,6 @@ public class PolicyBusinessLogicTest {
     }
 
     private static void createResponses() {
-        userSuccessEither = Either.left(user);
         componentSuccessEither = Either.left(resource);
         getPolicyTypeSuccessEither = Either.left(policyType);
         policySuccessEither = Either.left(policy);
@@ -148,11 +122,14 @@ public class PolicyBusinessLogicTest {
     
     @Test
     public void createPolicyUserFailureTest(){
-        Either<User, ResponseFormat> userNotFoundResponse = Either.right(new ResponseFormat(404));
-        when(userValidations.validateUserExists(eq(USER_ID), eq(CREATE_POLICY), eq(false))).thenReturn(userNotFoundResponse);
+        ComponentException userNotFoundException = new ComponentException(ActionStatus.USER_NOT_FOUND);
+        when(userValidations.validateUserExists(eq(USER_ID), eq(CREATE_POLICY), eq(false))).thenThrow(userNotFoundException);
         stubRollback();
-        Either<PolicyDefinition, ResponseFormat>  response = businessLogic.createPolicy(ComponentTypeEnum.RESOURCE, COMPONENT_ID, POLICY_TYPE_NAME, USER_ID, true);
-        assertNotFound(response);
+        try{
+            businessLogic.createPolicy(ComponentTypeEnum.RESOURCE, COMPONENT_ID, POLICY_TYPE_NAME, USER_ID, true);
+        } catch(ComponentException e){
+            assertEquals(e.getActionStatus(), userNotFoundException.getActionStatus());
+        }
     }
 
     private void assertNotFound(Either<PolicyDefinition, ResponseFormat> response) {
@@ -161,7 +138,7 @@ public class PolicyBusinessLogicTest {
     
     @Test
     public void createPolicyComponentFailureTest(){
-        when(userValidations.validateUserExists(eq(USER_ID), eq(CREATE_POLICY), eq(false))).thenReturn(userSuccessEither);
+        when(userValidations.validateUserExists(eq(USER_ID), eq(CREATE_POLICY), eq(false))).thenReturn(user);
         Either<Component, StorageOperationStatus> componentNotFoundResponse = Either.right(StorageOperationStatus.NOT_FOUND);
         when(componentsUtils.convertFromStorageResponse(eq(StorageOperationStatus.NOT_FOUND), eq(ComponentTypeEnum.RESOURCE))).thenReturn(ActionStatus.RESOURCE_NOT_FOUND);
         when(componentsUtils.getResponseFormat(eq(ActionStatus.RESOURCE_NOT_FOUND), anyString())).thenReturn(notFoundResponse);
@@ -190,6 +167,7 @@ public class PolicyBusinessLogicTest {
         when(toscaOperationFacade.associatePolicyToComponent(eq(COMPONENT_ID), any(PolicyDefinition.class), eq(0))).thenReturn(addPolicyRes);
         when(componentsUtils.convertFromStorageResponse(eq(addPolicyRes.right().value()))).thenReturn(ActionStatus.INVALID_CONTENT);
         when(componentsUtils.getResponseFormat(eq(ActionStatus.INVALID_CONTENT))).thenReturn(invalidContentResponse);
+
         stubUnlockAndRollback();
         Either<PolicyDefinition, ResponseFormat>  response = businessLogic.createPolicy(ComponentTypeEnum.RESOURCE, COMPONENT_ID, POLICY_TYPE_NAME, USER_ID, true);
         assertTrue(response.isRight() && response.right().value().getStatus().equals(400));
@@ -266,6 +244,8 @@ public class PolicyBusinessLogicTest {
         policy.setProperties(Arrays.asList(properties));
         Either<List<PropertyDataDefinition>, ResponseFormat>  response = businessLogic.updatePolicyProperties(ComponentTypeEnum.RESOURCE, COMPONENT_ID, POLICY_ID, properties , USER_ID, true);
         assertTrue(response.isLeft());
+        List<PropertyDataDefinition> updatedProperties = response.left().value();
+        assertThat(updatedProperties.size()).isEqualTo(2);
     }
 
     @Test
@@ -274,18 +254,12 @@ public class PolicyBusinessLogicTest {
         stubGetToscaFullElementSuccess();
         stubUpdatePolicyOfComponentSuccess();
         stubGetToscaElementSuccess();
-        stubGetTargetType();
-
         Either<PolicyDefinition, ResponseFormat> result = businessLogic.updatePolicyTargets(ComponentTypeEnum.RESOURCE, COMPONENT_ID, POLICY_ID, getTargets(), USER_ID);
-
         Assert.assertTrue(result.isLeft());
         PolicyDefinition policyResult = result.left().value();
         Map<PolicyTargetType, List<String>> targets = getTargets();
         assertThat(policyResult.getTargets().values()).usingFieldByFieldElementComparator().containsExactlyInAnyOrder(targets.get(PolicyTargetType.GROUPS), targets.get(PolicyTargetType.COMPONENT_INSTANCES));
 
-    }
-
-    private void stubGetTargetType() {
     }
 
     @Test
@@ -322,7 +296,7 @@ public class PolicyBusinessLogicTest {
 
         Assert.assertTrue(result.isRight());
         ResponseFormat responseResult = result.right().value();
-        Assert.assertTrue(responseResult.getStatus().equals(400));
+        Assert.assertEquals(400, (int) responseResult.getStatus());
 
     }
 
@@ -348,8 +322,7 @@ public class PolicyBusinessLogicTest {
         PropertyDataDefinition property2 = new PropertyDataDefinition();
         property2.setName(prop2);
         property2.setValue(prop2);
-        PropertyDataDefinition[] properties = {property1, property2};
-        return properties;
+        return new PropertyDataDefinition[]{property1, property2};
     }
     
     
@@ -374,10 +347,10 @@ public class PolicyBusinessLogicTest {
     private void stubValidateAndLockSuccess(String methodName) {
         stubValidationSuccess(methodName);
         when(graphLockOperation.lockComponent(eq(COMPONENT_ID), any(NodeTypeEnum.class))).thenReturn(StorageOperationStatus.OK);
-    }
+   }
 
     private void stubValidationSuccess(String methodName) {
-        when(userValidations.validateUserExists(eq(USER_ID), eq(methodName), eq(false))).thenReturn(userSuccessEither);
+        when(userValidations.validateUserExists(eq(USER_ID), eq(methodName), eq(false))).thenReturn(user);
         when(toscaOperationFacade.getToscaElement(eq(COMPONENT_ID), any(ComponentParametersView.class))).thenReturn(componentSuccessEither);
     }
 
@@ -394,7 +367,7 @@ public class PolicyBusinessLogicTest {
         GroupDefinition groupDefinition = GroupDefinitionBuilder.create().setUniqueId(UNIQUE_ID_EXSISTS).build();
         ComponentInstanceBuilder componentInstanceBuilder = new ComponentInstanceBuilder();
         ComponentInstance componentInstance = componentInstanceBuilder.setUniqueId(UNIQUE_ID_EXSISTS).build();
-        return Either.left(builder.addGroups(groupDefinition).addComponentInstance(componentInstance).build());
+        return Either.left(builder.addGroup(groupDefinition).addComponentInstance(componentInstance).build());
     }
 
     private Map<PolicyTargetType, List<String>> getTargets() {
@@ -430,7 +403,8 @@ public class PolicyBusinessLogicTest {
         resource.setState(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
         resource.setIsDeleted(false);
         resource.setResourceType(ResourceTypeEnum.VF);
-        resource.setToscaType(ToscaElementTypeEnum.TopologyTemplate.getValue());
+        resource.setToscaType(ToscaElementTypeEnum.TOPOLOGY_TEMPLATE.getValue());
+        resource.setComponentType(ComponentTypeEnum.RESOURCE);
         Map<String, PolicyDefinition> policies = new HashMap<>();
         policies.put(POLICY_ID, policy);
         resource.setPolicies(policies);
@@ -442,44 +416,9 @@ public class PolicyBusinessLogicTest {
         user.setUserId(USER_ID);
         return user;
     }
-    private List<PolicyTargetDTO> getTargetDTOList() {
-        PolicyTargetDTO target1 = new PolicyTargetDTO();
-        target1.setUniqueIds(Collections.singletonList(UNIQUE_ID_EXSISTS));
-        target1.setType("GROUPS");
-
-        PolicyTargetDTO target2 = new PolicyTargetDTO();
-        target2.setUniqueIds(Collections.singletonList(UNIQUE_ID_EXSISTS));
-        target2.setType("componentInstances");
-
-        return Arrays.asList(target1, target2);
-    }
-
-    private List<PolicyTargetDTO> getFakeIDTargetDTOList() {
-        PolicyTargetDTO target1 = new PolicyTargetDTO();
-        target1.setUniqueIds(Collections.singletonList(UNIQUE_ID_DOESNT_EXSISTS));
-        target1.setType(GROUP_TYPE);
-
-        PolicyTargetDTO target2 = new PolicyTargetDTO();
-        target2.setUniqueIds(Collections.singletonList(UNIQUE_ID_DOESNT_EXSISTS));
-        target2.setType(COMPONENT_INSTANCE_TYPE);
-
-        return Arrays.asList(target1, target2);
-    }
-    private List<PolicyTargetDTO> getFakeTypeTargetDTOList() {
-        PolicyTargetDTO target1 = new PolicyTargetDTO();
-        target1.setUniqueIds(Collections.singletonList(UNIQUE_ID_EXSISTS));
-        target1.setType(FAKE_TYPE);
-
-        PolicyTargetDTO target2 = new PolicyTargetDTO();
-        target2.setUniqueIds(Collections.singletonList(UNIQUE_ID_EXSISTS));
-        target2.setType(FAKE_TYPE);
-
-        return Arrays.asList(target1, target2);
-    }
 
     private Map<PolicyTargetType, List<String>> getTargetListFakeType() {
         Map<PolicyTargetType, List<String>> targets = new HashMap<>();
-        targets.put(PolicyTargetType.TYPE_DOES_NOT_EXIST, Collections.singletonList(UNIQUE_ID_EXSISTS));
         targets.put(PolicyTargetType.TYPE_DOES_NOT_EXIST, Collections.singletonList(UNIQUE_ID_EXSISTS));
         return targets;
     }

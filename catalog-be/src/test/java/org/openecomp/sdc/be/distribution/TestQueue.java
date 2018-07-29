@@ -20,26 +20,17 @@
 
 package org.openecomp.sdc.be.distribution;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.RejectedExecutionException;
-import java.util.concurrent.SynchronousQueue;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
-
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import org.openecomp.sdc.be.components.distribution.engine.CambriaHandler;
 import org.openecomp.sdc.be.components.distribution.engine.INotificationData;
 import org.openecomp.sdc.be.components.distribution.engine.NotificationDataImpl;
 
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class TestQueue {
 
@@ -49,7 +40,7 @@ public class TestQueue {
         ThreadFactory threadFactory = threadFactoryBuilder.build();
         // TODO: add the package of google to the pom
 
-        ExecutorService executorService = new ThreadPoolExecutor(0, 10, 60L, TimeUnit.SECONDS, new SynchronousQueue<Runnable>(), threadFactory);
+        ExecutorService executorService = new ThreadPoolExecutor(0, 10, 60L, TimeUnit.SECONDS, new SynchronousQueue<>(), threadFactory);
         // ExecutorService executorService = new ThreadPoolExecutor(0, 2, 60L,
         // TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(20));
 
@@ -122,7 +113,7 @@ public class TestQueue {
         @Override
         public void run() {
             System.out.println("In running of Timer task");
-            if (state.get() == false) {
+            if (!state.get()) {
                 System.out.println("In running of Timer task. Going to interrupt thread");
                 // thread.interrupt();
             } else {

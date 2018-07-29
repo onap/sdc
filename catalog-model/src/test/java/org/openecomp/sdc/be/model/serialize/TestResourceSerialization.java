@@ -20,125 +20,135 @@
 
 package org.openecomp.sdc.be.model.serialize;
 
+import fj.data.Either;
+import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.Resource;
+import org.openecomp.sdc.common.util.SerializationUtils;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
+import static org.junit.Assert.fail;
 
 public class TestResourceSerialization {
 
-	// @Test
-	public void findAllClassesUsedByResource() {
+    // @Test
+    public void findAllClassesUsedByResource() {
 
-		Set<Class> classesWithoutSerialzable = new HashSet<>();
-		Set<String> classestoIgnore = new HashSet<>();
-		classestoIgnore.add("java.util.List");
-		classestoIgnore.add("java.util.Map");
-		classestoIgnore.add("long");
+        Set<Class> classesWithoutSerialzable = new HashSet<>();
+        Set<String> classestoIgnore = new HashSet<>();
+        classestoIgnore.add("java.util.List");
+        classestoIgnore.add("java.util.Map");
+        classestoIgnore.add("long");
 
-		Set<Class> allClasses = new HashSet<>();
-		findAllClassesUsedByResource(Resource.class, allClasses);
-		ArrayList l;
-		for (Class clazz : allClasses) {
-			Class[] interfaces = clazz.getInterfaces();
-			if (interfaces != null) {
-				String collect = Arrays.stream(interfaces).map(p -> p.getName()).collect(Collectors.joining("\n"));
+        Set<Class> allClasses = new HashSet<>();
+        findAllClassesUsedByResource(Resource.class, allClasses);
+        ArrayList l;
+        for (Class clazz : allClasses) {
+            Class[] interfaces = clazz.getInterfaces();
+            if (interfaces != null) {
+                String collect = Arrays.stream(interfaces).map(Class::getName).collect(Collectors.joining("\n"));
 
-				Class orElse = Arrays.stream(interfaces).filter(p -> p.getName().equals("java.io.Serializable"))
-						.findAny().orElse(null);
-				if (orElse == null) {
-					classesWithoutSerialzable.add(clazz);
-				}
+                Class orElse = Arrays.stream(interfaces).filter(p -> p.getName().equals("java.io.Serializable"))
+                        .findAny().orElse(null);
+                if (orElse == null) {
+                    classesWithoutSerialzable.add(clazz);
+                }
 
-			}
-		}
+            }
+        }
 
-		List<Class> collect = classesWithoutSerialzable.stream()
-				.filter(p -> false == classestoIgnore.contains(p.getName())).collect(Collectors.toList());
+        List<Class> collect = classesWithoutSerialzable.stream()
+                                                       .filter(p -> !classestoIgnore.contains(p.getName())).collect(Collectors.toList());
 
-		if (collect != null) {
-			System.out.println(collect.stream().map(p -> p.getName()).collect(Collectors.joining("\n")));
-			assertEquals("check all classes implements Serializable", 0, collect.size());
-		}
+        if (collect != null) {
+            System.out.println(collect.stream().map(Class::getName).collect(Collectors.joining("\n")));
+            assertEquals("check all classes implements Serializable", 0, collect.size());
+        }
 
-	}
+    }
 
-	public void findAllClassesUsedByResource(Class clazz, Set<Class> allClasses) {
+    public void findAllClassesUsedByResource(Class clazz, Set<Class> allClasses) {
 
-		Class superclass = clazz.getSuperclass();
-		findAllClassesOfClass(clazz, allClasses);
+        Class superclass = clazz.getSuperclass();
+        findAllClassesOfClass(clazz, allClasses);
 
-		if (superclass != null) {
-			findAllClassesOfClass(superclass, allClasses);
-		}
+        if (superclass != null) {
+            findAllClassesOfClass(superclass, allClasses);
+        }
 
-	}
+    }
 
-	public void findAllClassesOfClass(Class clazz, Set<Class> allClasses) {
+    public void findAllClassesOfClass(Class clazz, Set<Class> allClasses) {
 
-		Field[] fields = clazz.getDeclaredFields();
-		if (fields != null) {
-			for (Field field : fields) {
-				String name = field.getName();
-				Class type = field.getType();
+        Field[] fields = clazz.getDeclaredFields();
+        if (fields != null) {
+            for (Field field : fields) {
+                String name = field.getName();
+                Class type = field.getType();
 
-				if (type.toString().contains(".List")) {
-					ParameterizedType stringListType = (ParameterizedType) field.getGenericType();
-					Class<?> stringListClass = (Class<?>) stringListType.getActualTypeArguments()[0];
-					allClasses.add(stringListClass);
-				}
+                if (type.toString().contains(".List")) {
+                    ParameterizedType stringListType = (ParameterizedType) field.getGenericType();
+                    Class<?> stringListClass = (Class<?>) stringListType.getActualTypeArguments()[0];
+                    allClasses.add(stringListClass);
+                }
 
-				if (type.toString().contains("java.util.Map")) {
-					ParameterizedType stringListType = (ParameterizedType) field.getGenericType();
+                if (type.toString().contains("java.util.Map")) {
+                    ParameterizedType stringListType = (ParameterizedType) field.getGenericType();
 
-					Type[] actualTypeArguments = stringListType.getActualTypeArguments();
-					if (actualTypeArguments != null) {
-						for (Type actualType : actualTypeArguments) {
+                    Type[] actualTypeArguments = stringListType.getActualTypeArguments();
+                    if (actualTypeArguments != null) {
+                        for (Type actualType : actualTypeArguments) {
 
-							String typeName = actualType.getTypeName();
-							// System.out.println("field " + name + "," +
-							// typeName);
+                            String typeName = actualType.getTypeName();
+                            // System.out.println("field " + name + "," +
+                            // typeName);
 
-							if (typeName.startsWith("java.util.List<")) {
-								String internalClass = typeName.replace("java.util.List<", "").replace(">", "");
-								// create class from string
-								Class myClass;
-								try {
-									myClass = Class.forName(internalClass);
-									allClasses.add(myClass);
-								} catch (ClassNotFoundException e) {
-									e.printStackTrace();
-									assertTrue("Failed to convert " + internalClass + " to class", false);
-								}
+                            if (typeName.startsWith("java.util.List<")) {
+                                String internalClass = typeName.replace("java.util.List<", "").replace(">", "");
+                                // create class from string
+                                Class myClass;
+                                try {
+                                    myClass = Class.forName(internalClass);
+                                    allClasses.add(myClass);
+                                } catch (ClassNotFoundException e) {
+                                    e.printStackTrace();
+                                    fail("Failed to convert " + internalClass + " to class");
+                                }
 
-							} else {
-								try {
-									Class myClass = Class.forName(typeName);
-									allClasses.add(myClass);
-								} catch (ClassNotFoundException e) {
-									e.printStackTrace();
-									assertTrue("Failed to convert " + typeName + " to class", false);
-								}
+                            } else {
+                                try {
+                                    Class myClass = Class.forName(typeName);
+                                    allClasses.add(myClass);
+                                } catch (ClassNotFoundException e) {
+                                    e.printStackTrace();
+                                    fail("Failed to convert " + typeName + " to class");
+                                }
 
-							}
-						}
-					}
+                            }
+                        }
+                    }
 
-				}
+                }
 
-				allClasses.add(type);
-			}
-		}
+                allClasses.add(type);
+            }
+        }
 
-	}
+    }
+    private boolean isClassImplementedSerialize(Class clazz) {
+        Type[] genericInterfaces = clazz.getGenericInterfaces();
+        if (genericInterfaces != null) {
+            Type orElse = Arrays.stream(genericInterfaces).filter(p -> p.getTypeName().equals("java.io.Serializable"))
+                    .findAny().orElse(null);
+            if (orElse != null) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

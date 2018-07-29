@@ -20,10 +20,7 @@
 
 package org.openecomp.sdc.ci.tests.execute.devCI;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-
+import fj.data.Either;
 import org.junit.Rule;
 import org.junit.rules.TestName;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
@@ -32,13 +29,7 @@ import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.ci.tests.api.ComponentBaseTest;
 import org.openecomp.sdc.ci.tests.config.Config;
-import org.openecomp.sdc.ci.tests.datatypes.enums.ArtifactTypeEnum;
-import org.openecomp.sdc.ci.tests.datatypes.enums.DistributionNotificationStatusEnum;
-import org.openecomp.sdc.ci.tests.datatypes.enums.LifeCycleStatesEnum;
-import org.openecomp.sdc.ci.tests.datatypes.enums.NormativeTypesEnum;
-import org.openecomp.sdc.ci.tests.datatypes.enums.ResourceCategoryEnum;
-import org.openecomp.sdc.ci.tests.datatypes.enums.ServiceCategoriesEnum;
-import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
+import org.openecomp.sdc.ci.tests.datatypes.enums.*;
 import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
 import org.openecomp.sdc.ci.tests.utils.Utils;
 import org.openecomp.sdc.ci.tests.utils.general.AtomicOperationUtils;
@@ -46,7 +37,9 @@ import org.openecomp.sdc.ci.tests.utils.validation.DistributionValidationUtils;
 import org.openecomp.sdc.externalApis.CRUDExternalAPI;
 import org.testng.annotations.Test;
 
-import fj.data.Either;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 public class test1 extends ComponentBaseTest{
 

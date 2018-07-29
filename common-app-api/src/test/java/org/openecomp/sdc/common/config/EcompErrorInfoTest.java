@@ -1,7 +1,5 @@
 package org.openecomp.sdc.common.config;
 
-import javax.annotation.Generated;
-
 import org.junit.Test;
 
 public class EcompErrorInfoTest {

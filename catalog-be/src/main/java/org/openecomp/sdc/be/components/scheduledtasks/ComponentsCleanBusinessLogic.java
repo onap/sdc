@@ -20,22 +20,23 @@
 
 package org.openecomp.sdc.be.components.scheduledtasks;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import com.google.common.annotations.VisibleForTesting;
+import fj.data.Either;
 import org.openecomp.sdc.be.components.impl.BaseBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ComponentBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ServiceBusinessLogic;
+import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
+import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import fj.data.Either;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Component("componentsCleanBusinessLogic")
 public class ComponentsCleanBusinessLogic extends BaseBusinessLogic {
@@ -46,24 +47,48 @@ public class ComponentsCleanBusinessLogic extends BaseBusinessLogic {
     @Autowired
     private ServiceBusinessLogic serviceBusinessLogic;
 
-    private static final Logger log = LoggerFactory.getLogger(ComponentsCleanBusinessLogic.class);
+    @VisibleForTesting
+    public static final String DELETE_LOCKER = "DELETE_LOCKER";
 
-    public Map<NodeTypeEnum, Either<List<String>, ResponseFormat>> cleanComponents(List<NodeTypeEnum> componentsToClean) {
+    private static final Logger log = Logger.getLogger(ComponentsCleanBusinessLogic.class.getName());
 
-        Map<NodeTypeEnum, Either<List<String>, ResponseFormat>> cleanedComponents = new HashMap<NodeTypeEnum, Either<List<String>, ResponseFormat>>();
+    public Map<NodeTypeEnum, Either<List<String>, ResponseFormat>> cleanComponents(List<NodeTypeEnum> componentsToClean){
+        return cleanComponents(componentsToClean, false);
+    }
 
+    public Map<NodeTypeEnum, Either<List<String>, ResponseFormat>> cleanComponents(List<NodeTypeEnum> componentsToClean, boolean isAlreadyLocked) {
+
+        Map<NodeTypeEnum, Either<List<String>, ResponseFormat>> cleanedComponents = new HashMap<>();
+
+        boolean isLockSucceeded = false;
         log.trace("start cleanComponents");
-        for (NodeTypeEnum type : componentsToClean) {
-            switch (type) {
-            case Resource:
-                processDeletionForType(cleanedComponents, NodeTypeEnum.Resource, resourceBusinessLogic);
-                break;
-            case Service:
-                processDeletionForType(cleanedComponents, NodeTypeEnum.Service, serviceBusinessLogic);
-                break;
-            default:
-                log.debug("{} component type does not have cleaning method defined", type);
-                break;
+        try {
+            if (!isAlreadyLocked) {
+                //lock if the delete node is not locked yet
+                isLockSucceeded = !isDeleteOperationLockFailed();
+            }
+            for (NodeTypeEnum type : componentsToClean) {
+                if (!isAlreadyLocked && !isLockSucceeded) {
+                    log.info("{}s won't be deleted as another process is locking the delete operation", type.getName());
+                    cleanedComponents.put(type, Either.right(componentsUtils.getResponseFormat(ActionStatus.NOT_ALLOWED)));
+                    break;
+                }
+                switch (type) {
+                    case Resource:
+                        processDeletionForType(cleanedComponents, NodeTypeEnum.Resource, resourceBusinessLogic);
+                        break;
+                    case Service:
+                        processDeletionForType(cleanedComponents, NodeTypeEnum.Service, serviceBusinessLogic);
+                        break;
+                    default:
+                        log.debug("{} component type does not have cleaning method defined", type);
+                        break;
+                }
+            }
+        }
+        finally {
+            if (!isAlreadyLocked && isLockSucceeded) {
+                unlockDeleteOperation();
             }
         }
 
@@ -76,14 +101,25 @@ public class ComponentsCleanBusinessLogic extends BaseBusinessLogic {
         if (deleteMarkedResources.isRight()) {
             log.debug("failed to clean deleted components of type {}. error: {}", type, deleteMarkedResources.right().value().getFormattedMessage());
         } else {
-            if (log.isDebugEnabled()) {
-                StringBuilder sb = new StringBuilder("list of deleted components - type " + type + ": ");
-                for (String id : deleteMarkedResources.left().value()) {
-                    sb.append(id).append(", ");
-                }
-                log.debug(sb.toString());
-            }
+            log.debug("list of deleted components - type {}: {}", type, deleteMarkedResources.left().value());
         }
         cleanedComponents.put(type, deleteMarkedResources);
     }
+
+    public StorageOperationStatus lockDeleteOperation() {
+        StorageOperationStatus result = graphLockOperation.lockComponentByName(DELETE_LOCKER, NodeTypeEnum.Component);
+        log.info("Lock cleanup operation is done with result = {}", result);
+        return result;
+    }
+
+    public StorageOperationStatus unlockDeleteOperation() {
+        StorageOperationStatus result = graphLockOperation.unlockComponentByName(DELETE_LOCKER, "", NodeTypeEnum.Component);
+        log.info("Unlock cleanup operation is done with result = {}", result);
+        return result;
+    }
+
+    public boolean isDeleteOperationLockFailed() {
+        return lockDeleteOperation() != StorageOperationStatus.OK;
+    }
+
 }

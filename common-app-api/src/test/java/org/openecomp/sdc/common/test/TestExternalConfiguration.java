@@ -20,18 +20,8 @@
 
 package org.openecomp.sdc.common.test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import org.junit.Before;
 import org.junit.Test;
 import org.openecomp.sdc.be.config.DistributionEngineConfiguration;
@@ -45,6 +35,13 @@ import org.openecomp.sdc.common.test.config.TestConfiguration;
 import org.openecomp.sdc.common.test.config.TestNotExistConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class TestExternalConfiguration {
 
@@ -80,7 +77,7 @@ public class TestExternalConfiguration {
 		TestConfiguration testConfiguration = configurationSource.getAndWatchConfiguration(TestConfiguration.class,
 				configurationListener);
 
-		assertTrue(testConfiguration != null);
+        assertNotNull(testConfiguration);
 		log.debug("{}", testConfiguration);
 		assertEquals(testConfiguration.getBeHost(), "172.20.37.245");
 		assertEquals(testConfiguration.getBeProtocol(), "http");
@@ -104,7 +101,7 @@ public class TestExternalConfiguration {
 		TestNotExistConfiguration testConfiguration = configurationSource
 				.getAndWatchConfiguration(TestNotExistConfiguration.class, configurationListener);
 
-		assertTrue(testConfiguration == null);
+        assertNull(testConfiguration);
 
 	}
 
@@ -129,7 +126,7 @@ public class TestExternalConfiguration {
 		TestConfiguration testConfiguration = configurationSource.getAndWatchConfiguration(TestConfiguration.class,
 				configurationListener);
 
-		assertTrue(testConfiguration != null);
+        assertNotNull(testConfiguration);
 		log.debug("{}", testConfiguration);
 		assertEquals(testConfiguration.getBeHost(), "172.20.37.245");
 		assertEquals(testConfiguration.getBeProtocol(), "http");
@@ -157,7 +154,7 @@ public class TestExternalConfiguration {
 		FileWriter fw = null;
 		BufferedWriter out = null;
 		try {
-			List<String> lines = new ArrayList<String>();
+			List<String> lines = new ArrayList<>();
 			String line = null;
 			fr = new FileReader(f1);
 			br = new BufferedReader(fr);
@@ -223,7 +220,7 @@ public class TestExternalConfiguration {
 		DistributionEngineConfiguration deConfiguration = configurationSource
 				.getAndWatchConfiguration(DistributionEngineConfiguration.class, configurationListener);
 
-		assertTrue(deConfiguration != null);
+        assertNotNull(deConfiguration);
 		log.debug("{}", deConfiguration);
 		assertEquals(deConfiguration.getDistributionNotifTopicName(), "ASDC-DISTR-NOTIF-TOPIC");
 		assertEquals(deConfiguration.getDistributionStatusTopicName(), "ASDC-DISTR-STATUS-TOPIC");
@@ -236,12 +233,12 @@ public class TestExternalConfiguration {
 		assertEquals(deConfiguration.getEnvironments().size(), 1);
 		assertEquals(deConfiguration.getEnvironments().iterator().next(), "PROD");
 
-		assertEquals(deConfiguration.getDistribNotifResourceArtifactTypes().getInfo(), null);
+        assertNull(deConfiguration.getDistribNotifResourceArtifactTypes().getInfo());
 		assertEquals(deConfiguration.getDistribNotifResourceArtifactTypes().getLifecycle().size(), 2);
 		assertTrue(deConfiguration.getDistribNotifResourceArtifactTypes().getLifecycle().contains("HEAT"));
 		assertTrue(deConfiguration.getDistribNotifResourceArtifactTypes().getLifecycle().contains("DG_XML"));
 
-		assertEquals(deConfiguration.getDistribNotifServiceArtifactTypes().getLifecycle(), null);
+        assertNull(deConfiguration.getDistribNotifServiceArtifactTypes().getLifecycle());
 		assertEquals(deConfiguration.getDistribNotifServiceArtifactTypes().getInfo().size(), 1);
 		assertTrue(deConfiguration.getDistribNotifServiceArtifactTypes().getInfo().contains("MURANO-PKG"));
 

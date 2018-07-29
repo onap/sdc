@@ -20,26 +20,24 @@
 
 package org.openecomp.sdc.be.monitoring;
 
-import java.net.URI;
-
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.eclipse.jetty.client.api.Request;
 import org.eclipse.jetty.client.api.Response;
 import org.eclipse.jetty.proxy.ProxyServlet;
 import org.openecomp.sdc.be.components.impl.MonitoringBusinessLogic;
 import org.openecomp.sdc.be.impl.WebAppContextWrapper;
 import org.openecomp.sdc.common.api.Constants;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.springframework.web.context.WebApplicationContext;
+
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.net.URI;
 
 public class EsGateway extends ProxyServlet {
 
     private static final long serialVersionUID = 1L;
-    private static final Logger log = LoggerFactory.getLogger(EsGateway.class);
+    private static final Logger log = Logger.getLogger(EsGateway.class);
 
     @Override
     public URI rewriteURI(HttpServletRequest request) {
@@ -93,8 +91,7 @@ public class EsGateway extends ProxyServlet {
             url.append("?").append(queryString);
         }
 
-        String redirectedUrl = url.toString().replace("/sdc2/esGateway/", "/");
-        return redirectedUrl;
+        return url.toString().replace("/sdc2/esGateway/", "/");
 
     }
 
@@ -102,9 +99,8 @@ public class EsGateway extends ProxyServlet {
 
         WebAppContextWrapper webApplicationContextWrapper = (WebAppContextWrapper) context.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR);
         WebApplicationContext webApplicationContext = webApplicationContextWrapper.getWebAppContext(context);
-        MonitoringBusinessLogic monitoringBusinessLogic = webApplicationContext.getBean(MonitoringBusinessLogic.class);
 
-        return monitoringBusinessLogic;
+        return webApplicationContext.getBean(MonitoringBusinessLogic.class);
     }
 
 }

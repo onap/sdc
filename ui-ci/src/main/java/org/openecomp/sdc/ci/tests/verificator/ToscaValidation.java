@@ -2,14 +2,14 @@ package org.openecomp.sdc.ci.tests.verificator;
 
 import com.aventstack.extentreports.Status;
 import fj.data.Either;
-import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
-import org.openecomp.sdc.ci.tests.execute.setup.SetupCDTest;
-import org.openecomp.sdc.ci.tests.tosca.datatypes.*;
 import org.onap.sdc.tosca.parser.api.ISdcCsarHelper;
 import org.onap.sdc.toscaparser.api.Group;
 import org.onap.sdc.toscaparser.api.Property;
 import org.onap.sdc.toscaparser.api.elements.Metadata;
 import org.onap.sdc.toscaparser.api.parameters.Input;
+import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
+import org.openecomp.sdc.ci.tests.execute.setup.SetupCDTest;
+import org.openecomp.sdc.ci.tests.tosca.datatypes.*;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
@@ -43,15 +43,26 @@ public class ToscaValidation {
 		boolean isTestFailed = true;
 		for(String nodeTemplateName : expectedMetadata.keySet()){
 			Either<Boolean,Map<String,Object>> serviceToscaMetadataValidator = componentToscaNodeTemplateMetadataValidator(expectedMetadata.get(nodeTemplateName), actualToscaDefinition, nodeTemplateName, ComponentTypeEnum.RESOURCE, nodeTemplateName);
-			if(serviceToscaMetadataValidator.left().value() == false){
+			if(!serviceToscaMetadataValidator.left().value()){
 				isTestFailed = false;
 			}
 		}
 		return isTestFailed;
 	}
 	
+	public static Either<Boolean, Map<String, Object>> vfModuleJsonFileValidator(Map<String, VfModuleDefinition> expectedVfModulesDefinitionObject, Map<String, VfModuleDefinition> actualVfModulesDefinitionObject){
+		SetupCDTest.getExtendTest().log(Status.INFO, "Going to validate vf module json file...");
+		Either<Boolean,Map<String,Object>> vfModuleFileValidator = compareObjectMapData(expectedVfModulesDefinitionObject, actualVfModulesDefinitionObject);
+		if(vfModuleFileValidator.isLeft()){
+			SetupCDTest.getExtendTest().log(Status.INFO, "Vf module json file verification success");
+		}else{
+			SetupCDTest.getExtendTest().log(Status.ERROR, "Vf module json file verification failed" + vfModuleFileValidator.right().value().toString());
+		}
+		return vfModuleFileValidator;
+	}
+
 	public static Either<Boolean, Map<String, Object>> serviceToscaMetadataValidator(Map<String, String> expectedMetadata, ToscaDefinition actualToscaDefinition){
-		
+
 		SetupCDTest.getExtendTest().log(Status.INFO, "Going to validate service TOSCA metadata...");
 		Map<String, String> actualMetadata = actualToscaDefinition.getMetadata();
 		Either<Boolean,Map<String,Object>> serviceToscaMetadataValidator = compareStringMapData(expectedMetadata, actualMetadata);
@@ -83,10 +94,10 @@ public class ToscaValidation {
             if (actualServiceGroups.get(groupName) == null ){
                 errorMap.put("group/module [" + groupName + "]", " does not exist in TOSCA main yaml");
             }else{
-                compareServiceGroupData(expectedServiceGroup.get(groupName).getMetadata(), actualServiceGroups.get(groupName).getMetadata(), groupName, errorMap);
+                compareServiceGroupData(expectedServiceGroup.get(groupName), actualServiceGroups.get(groupName), groupName, errorMap);
             }
         }
-        if(errorMap != null && !errorMap.isEmpty()){
+        if(!errorMap.isEmpty()){
             return Either.right(errorMap);
         }
         return Either.left(true);
@@ -94,28 +105,20 @@ public class ToscaValidation {
 
     public static Either<Boolean, Map<String, Object>> compareServiceGroupData(ToscaServiceGroupsMetadataDefinition expectedServiceGroupMetadata, ToscaServiceGroupsMetadataDefinition actualServiceGroupMetadata, String groupName, Map<String, Object> errorMap) {
 
-        Field[] declaredFields = expectedServiceGroupMetadata.getClass().getDeclaredFields();
+        Field[] declaredFields = expectedServiceGroupMetadata.getClass().getSuperclass().getFields();
         for (Field field : declaredFields){
-            try {
-                String expectedValue = field.get(expectedServiceGroupMetadata).toString();
-                String actualValue = field.get(actualServiceGroupMetadata).toString();
-                if(expectedValue != null && !expectedValue.toString().trim().equals("")) {
-                    if (actualValue != null) {
-                        Boolean result = compareValue(expectedValue, actualValue);
-                        if(! result ){
-                            errorMap.put("Data field [" + field.getName()+"] in group service metadata [" + groupName + "]",  "expected: " + expectedValue + ", actual: " + actualValue);
-                        }
-                    } else {
-                        errorMap.put("Data field [" + field.getName() + "] in group service metadata [" + groupName + "]", " does not exist in actual object");
-                        System.out.println("Data field [" + field.getName() + "] in group service metadata [" + groupName + "] does not exist in actual object");
-                    }
-                }
-            }catch (IllegalAccessException e) {
-                e.printStackTrace();
-            }
+        	if(!field.getName().equals("serialVersionUID")) {
+				try {
+					String expectedValue = (String) field.get(expectedServiceGroupMetadata);
+					String actualValue = (String) field.get(actualServiceGroupMetadata);
+					comparingServiceGroupMetadata(groupName, errorMap, field, expectedValue, actualValue);
+				} catch (IllegalAccessException e) {
+					e.printStackTrace();
+				}
+			}
         }
 
-        if(errorMap != null && !errorMap.isEmpty()){
+        if(!errorMap.isEmpty()){
             return Either.right(errorMap);
         }
         return Either.left(true);
@@ -143,10 +146,10 @@ public static Either<Boolean, Map<String, Object>> serviceToscaGroupMetadataVali
 			if (actualGroup == null ){
 				errorMap.put("group/module [" + groupName + "]", " does not exist in TOSCA main yaml");
 			}else{
-				compareServiceGroupDataUsingParser(expectedServiceGroup.get(groupName).getMetadata(), actualGroup.getMetadata(), groupName, errorMap);
+				compareServiceGroupDataUsingParser(expectedServiceGroup.get(groupName), actualGroup.getMetadata(), groupName, errorMap);
 			}
 		}
-		if(errorMap != null && !errorMap.isEmpty()){
+		if(!errorMap.isEmpty()){
 			return Either.right(errorMap);
 		}
 		return Either.left(true);
@@ -163,31 +166,37 @@ public static Either<Boolean, Map<String, Object>> serviceToscaGroupMetadataVali
 
 	public static Either<Boolean, Map<String, Object>> compareServiceGroupDataUsingParser(ToscaServiceGroupsMetadataDefinition expectedServiceGroupMetadata, Metadata actualServiceGroupMetadata, String groupName, Map<String, Object> errorMap) {
 
-		Field[] declaredFields = expectedServiceGroupMetadata.getClass().getDeclaredFields();
+		Field[] declaredFields = expectedServiceGroupMetadata.getClass().getSuperclass().getFields();
 		for (Field field : declaredFields){
-			try {
-				String expectedValue = field.get(expectedServiceGroupMetadata).toString();
-				String actualValue = actualServiceGroupMetadata.getValue(field.getName());
-				if(expectedValue != null && !expectedValue.toString().trim().equals("")) {
-					if (actualValue != null) {
-						Boolean result = compareValue(expectedValue, actualValue);
-						if(! result ){
-							errorMap.put("Data field [" + field.getName()+"] in group service metadata [" + groupName + "]",  "expected: " + expectedValue + ", actual: " + actualValue);
-						}
-					} else {
-						errorMap.put("Data field [" + field.getName() + "] in group service metadata [" + groupName + "]", " does not exist in actual object");
-						System.out.println("Data field [" + field.getName() + "] in group service metadata [" + groupName + "] does not exist in actual object");
-					}
+			if(!field.getName().equals("serialVersionUID")) {
+				try {
+					String expectedValue = (String) field.get(expectedServiceGroupMetadata);
+					String actualValue = actualServiceGroupMetadata.getValue(field.getName());
+					comparingServiceGroupMetadata(groupName, errorMap, field, expectedValue, actualValue);
+				} catch (IllegalAccessException e) {
+					e.printStackTrace();
 				}
-			}catch (IllegalAccessException e) {
-				e.printStackTrace();
 			}
 		}
 
-		if(errorMap != null && !errorMap.isEmpty()){
+		if(!errorMap.isEmpty()){
 			return Either.right(errorMap);
 		}
 		return Either.left(true);
+	}
+
+	private static void comparingServiceGroupMetadata(String groupName, Map<String, Object> errorMap, Field field, String expectedValue, String actualValue) {
+		if (expectedValue != null && !expectedValue.trim().equals("")) {
+            if (actualValue != null) {
+                Boolean result = compareStringValue(expectedValue, actualValue);
+                if (!result) {
+                    errorMap.put("Data field [" + field.getName() + "] in group service metadata [" + groupName + "]", "expected: " + expectedValue + ", actual: " + actualValue);
+                }
+            } else {
+                errorMap.put("Data field [" + field.getName() + "] in group service metadata [" + groupName + "]", " does not exist in actual object");
+                System.out.println("Data field [" + field.getName() + "] in group service metadata [" + groupName + "] does not exist in actual object");
+            }
+        }
 	}
 
 //	############################################################################################
@@ -218,7 +227,7 @@ public static Either<Boolean, Map<String, Object>> serviceToscaGroupMetadataVali
 				compareServiceGroupPropertyUsingParser(expectedServiceGroup.get(groupName).getProperties(), actualGroup.getProperties(), groupName, errorMap);
 			}
 		}
-		if(errorMap != null && !errorMap.isEmpty()){
+		if(!errorMap.isEmpty()){
 			return Either.right(errorMap);
 		}
 		return Either.left(true);
@@ -228,29 +237,24 @@ public static Either<Boolean, Map<String, Object>> serviceToscaGroupMetadataVali
 
 		Field[] declaredFields = expectedServiceGroupProperty.getClass().getDeclaredFields();
 		for (Field field : declaredFields){
-			try {
-				String expectedValue = (String) field.get(expectedServiceGroupProperty);
-				String actualValue = null;
-				if(actualServiceGroupProperty.get(field.getName()).getValue()!= null) {
-					actualValue = actualServiceGroupProperty.get(field.getName()).getValue().toString();
-				}
-				if(expectedValue != null && !expectedValue.toString().trim().equals("")) {
-					if (actualValue != null) {
-						Boolean result = compareValue(expectedValue, actualValue);
-						if(! result ){
-							errorMap.put("Data field [" + field.getName()+"] in group service property [" + groupName + "]",  "expected: " + expectedValue + ", actual: " + actualValue);
-						}
-					} else {
-						errorMap.put("Data field [" + field.getName() + "] in group service property [" + groupName + "]", " does not exist in actual object");
-						System.out.println("Data field [" + field.getName() + "] in group service property [" + groupName + "] does not exist in actual object");
+			if(!field.getName().equals("serialVersionUID")) {
+				try {
+					String expectedValue = null;
+					String actualValue = null;
+					if (field.get(expectedServiceGroupProperty) != null) {
+						expectedValue = field.get(expectedServiceGroupProperty).toString();
 					}
+					if (actualServiceGroupProperty.get(field.getName()) != null && actualServiceGroupProperty.get(field.getName()).getValue() != null) {
+						actualValue = actualServiceGroupProperty.get(field.getName()).getValue().toString();
+					}
+					comparingServiceGroupProperty(groupName, errorMap, field, expectedValue, actualValue);
+				} catch (IllegalAccessException e) {
+					e.printStackTrace();
 				}
-			}catch (IllegalAccessException e) {
-				e.printStackTrace();
 			}
 		}
 
-		if(errorMap != null && !errorMap.isEmpty()){
+		if(!errorMap.isEmpty()){
 			return Either.right(errorMap);
 		}
 		return Either.left(true);
@@ -298,7 +302,7 @@ public static Either<Boolean, Map<String, Object>> serviceToscaGroupMetadataVali
 				compareServiceGroupProperty(expectedServiceGroup.get(groupName).getProperties(), actualServiceGroups.get(groupName).getProperties(), groupName, errorMap);
 			}
 		}
-		if(errorMap != null && !errorMap.isEmpty()){
+		if(!errorMap.isEmpty()){
 			return Either.right(errorMap);
 		}
 		return Either.left(true);
@@ -308,33 +312,45 @@ public static Either<Boolean, Map<String, Object>> serviceToscaGroupMetadataVali
 
 		Field[] declaredFields = expectedServiceGroupProperty.getClass().getDeclaredFields();
 		for (Field field : declaredFields){
-			try {
-				String expectedValue = (String) field.get(expectedServiceGroupProperty);
-				String actualValue = (String) field.get(actualServiceGroupProperty);
-				if(expectedValue != null && !expectedValue.toString().trim().equals("")) {
-					if (actualValue != null) {
-						Boolean result = compareValue(expectedValue, actualValue);
-						if(! result ){
-							errorMap.put("Data field [" + field.getName()+"] in group service property [" + groupName + "]",  "expected: " + expectedValue + ", actual: " + actualValue);
-						}
-					} else {
-						errorMap.put("Data field [" + field.getName() + "] in group service property [" + groupName + "]", " does not exist in actual object");
-						System.out.println("Data field [" + field.getName() + "] in group service property [" + groupName + "] does not exist in actual object");
+			if(!field.getName().equals("serialVersionUID")) {
+				try {
+					String expectedValue = null;
+					String actualValue = null;
+					if(field.get(expectedServiceGroupProperty) != null) {
+						expectedValue = field.get(expectedServiceGroupProperty).toString();
 					}
+					if(field.get(actualServiceGroupProperty) != null) {
+						actualValue = field.get(actualServiceGroupProperty).toString();
+					}
+					comparingServiceGroupProperty(groupName, errorMap, field, expectedValue, actualValue);
+				} catch (IllegalAccessException e) {
+					e.printStackTrace();
 				}
-			}catch (IllegalAccessException e) {
-				e.printStackTrace();
 			}
 		}
 
-		if(errorMap != null && !errorMap.isEmpty()){
+		if(!errorMap.isEmpty()){
 			return Either.right(errorMap);
 		}
 		return Either.left(true);
 	}
 
+	private static void comparingServiceGroupProperty(String groupName, Map<String, Object> errorMap, Field field, String expectedValue, String actualValue) {
+		if (expectedValue != null && !expectedValue.trim().equals("")) {
+            if (actualValue != null) {
+                Boolean result = compareStringValue(expectedValue, actualValue);
+                if (!result) {
+                    errorMap.put("Data field [" + field.getName() + "] in group service property [" + groupName + "]", "expected: " + expectedValue + ", actual: " + actualValue);
+                }
+            } else {
+                errorMap.put("Data field [" + field.getName() + "] in group service property [" + groupName + "]", " does not exist in actual object");
+                System.out.println("Data field [" + field.getName() + "] in group service property [" + groupName + "] does not exist in actual object");
+            }
+        }
+	}
 
-//    ----------------------------------
+
+	//    ----------------------------------
 	public static Either<Boolean, Map<String, Object>> componentToscaNodeTemplateMetadataValidator(Map<String, String> expectedMetadata, ToscaDefinition actualToscaDefinition, String nodeTemplateName, ComponentTypeEnum componentType, String componentName){
 		
 		SetupCDTest.getExtendTest().log(Status.INFO, "Going to validate "+ componentName + " " + componentType.getValue() + " node template TOSCA metadata...");
@@ -366,7 +382,7 @@ public static Either<Boolean, Map<String, Object>> serviceToscaGroupMetadataVali
 		Either.left(false);
 		Map<String, Object> errorMap = new HashMap<>();
 		for(String key : expectedMetadata.keySet()){
-			boolean isError = compareValue(expectedMetadata.get(key), actualMetadata.get(key));
+			boolean isError = compareStringValue(expectedMetadata.get(key), actualMetadata.get(key));
 			if(!isError){
 				errorMap.put("Data key["+key+"]", "expected: " + expectedMetadata.get(key) + ", actual: " + actualMetadata.get(key));
 			}
@@ -376,11 +392,30 @@ public static Either<Boolean, Map<String, Object>> serviceToscaGroupMetadataVali
 		}
 		return Either.left(true);
 	}
-	
+
+
+	public static Either<Boolean, Map<String, Object>> compareObjectMapData(Map<String, VfModuleDefinition> expectedObject, Map<String, VfModuleDefinition> actualObject) {
+		Map<String, Object> errorMap = new HashMap<>();
+		for(String key : expectedObject.keySet()){
+			boolean isError = compareObjectValue(expectedObject.get(key), actualObject.get(key));
+			if(!isError){
+				errorMap.put("Data key["+key+"]", "expected: " + expectedObject.get(key) + ", actual: " + actualObject.get(key));
+			}
+		}
+		if(!errorMap.isEmpty()){
+			return Either.right(errorMap);
+		}
+		return Either.left(true);
+	}
+
+	private static boolean compareObjectValue(VfModuleDefinition expected, VfModuleDefinition actual) {
+		return expected.equals(actual);
+	}
+
 	public static Either<Boolean, Map<String, Object>> compareMetadataUsingToscaParser(Map<String, String> expectedMetadata, Metadata actualMetadata) {
 		Map<String, Object> errorMap = new HashMap<>();
 		for(String key : expectedMetadata.keySet()){
-			boolean isError = compareValue(expectedMetadata.get(key), actualMetadata.getValue(key));
+			boolean isError = compareStringValue(expectedMetadata.get(key), actualMetadata.getValue(key));
 			if(!isError){
 				errorMap.put("Data key["+key+"]", "expected: " + expectedMetadata.get(key) + ", actual: " + actualMetadata.getValue(key));
 			}
@@ -391,10 +426,8 @@ public static Either<Boolean, Map<String, Object>> serviceToscaGroupMetadataVali
 		return Either.left(true);
 	}
 	
-	private static boolean compareValue(String expected, String actual) {
-		
+	private static boolean compareStringValue(String expected, String actual) {
 		return expected.equals(actual);
-		
 	}
 	
 	public static Either<Boolean, Map<String, Object>> toscaInputsValidator(Map<String, ToscaInputsTopologyTemplateDefinition> expectedInputs, Map<String, ToscaInputsTopologyTemplateDefinition> actualInputs){
@@ -424,7 +457,7 @@ public static Either<Boolean, Map<String, Object>> serviceToscaGroupMetadataVali
 				compareInputData(expectedInputs.get(inputName), actualInputs.get(inputName), errorMap);
 			}
 		}
-		if(errorMap != null && !errorMap.isEmpty()){
+		if(!errorMap.isEmpty()){
 			return Either.right(errorMap);
 		}
 		return Either.left(true);
@@ -451,14 +484,14 @@ public static Either<Boolean, Map<String, Object>> serviceToscaGroupMetadataVali
 			}
 		}
 		
-		if(errorMap != null && !errorMap.isEmpty()){
+		if(!errorMap.isEmpty()){
  			return Either.right(errorMap);
 		}
 		return Either.left(true);
 	}
 
 	public static void compareInputValue(ToscaInputsTopologyTemplateDefinition expectedInputDefinition, Map<String, Object> errorMap, Field field, Object expectedValue, Object actualValue) {
-		if(field.getName() == "value" || field.getName() == "Default"){
+		if(field.getName().equals("value") || field.getName().equals("Default")){
 			switch (expectedInputDefinition.getType()) {
 			case "string":
 				if(! expectedValue.toString().replace("\n"," ").replaceAll("( +)", " ").equals(actualValue.toString().replace("\n"," ").replaceAll("( +)", " "))){
@@ -475,7 +508,7 @@ public static Either<Boolean, Map<String, Object>> serviceToscaGroupMetadataVali
 					}
 				break;
 			case "boolean":
-				if(! expectedValue.toString().toLowerCase().equals(actualValue.toString().toLowerCase())){
+				if(! expectedValue.toString().equalsIgnoreCase(actualValue.toString())){
 					errorMap.put("Data field [" + field.getName()+"] in input [" + expectedInputDefinition.getName() + "]",  "expected: " + expectedValue + ", actual: " + actualValue);
 					System.out.println("Data field [" + field.getName()+"] in input [" + expectedInputDefinition.getName() + "]: expected: " + expectedValue + ", actual: " + actualValue);
 				}
@@ -484,13 +517,13 @@ public static Either<Boolean, Map<String, Object>> serviceToscaGroupMetadataVali
 				expectedInputDefinition.getEntry_schema().get("type");
 				break;
 			case "map":
-				
-				break;			
+
+				break;
 			default:
 				break;
 			}
-			
-			
+
+
 		}else{
 			if(! expectedValue.equals(actualValue)){
 				errorMap.put("Data field [" + field.getName()+"] in input [" + expectedInputDefinition.getName() + "]",  "expected: " + expectedValue + ", actual: " + actualValue);
@@ -526,7 +559,7 @@ public static Either<Boolean, Map<String, Object>> serviceToscaGroupMetadataVali
 
 	public static Either<Boolean, Map<String, Object>> toscaInputsValidatorAgainstParser(Map<String, ToscaInputsTopologyTemplateDefinition> expectedInputsMap, ISdcCsarHelper fdntCsarHelper) {
 		SetupCDTest.getExtendTest().log(Status.INFO, "Going to convert tosca parser inputs output to ToscaInputsTopologyTemplateDefinition object...");
-		if(fdntCsarHelper.getServiceInputs().size() == 0){
+		if(!fdntCsarHelper.getServiceInputs().isEmpty()){
 			if(expectedInputsMap != null && ! expectedInputsMap.isEmpty()){
 				return Either.left(true);
 			}else{
@@ -542,7 +575,7 @@ public static Either<Boolean, Map<String, Object>> serviceToscaGroupMetadataVali
 
 	/**
 	 * @param fdntCsarHelper convert list of inputs return from tosca parser to map of ToscaInputsTopologyTemplateDefinition
-	 * @return 
+	 * @return field.get(actualServiceGroupProperty)
 	 */
 	public static Map<String, ToscaInputsTopologyTemplateDefinition> convertInputsParserOutputToMap(ISdcCsarHelper fdntCsarHelper) {
 		Map<String, ToscaInputsTopologyTemplateDefinition> actualInputsMap = new HashMap<>();

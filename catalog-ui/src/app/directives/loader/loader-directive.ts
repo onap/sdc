@@ -126,11 +126,13 @@ export class LoaderDirective implements ng.IDirective {
 
         scope.$watch("display", (newVal, oldVal) => {
             element.css('display', 'none');
+            let timeout;
             if (newVal === true) {
-                window.setTimeout(():void => {
+                timeout = window.setTimeout(():void => {
                     element.css('display', 'block');
                 }, 500);
             } else {
+                window.clearTimeout(timeout);
                 window.setTimeout(():void => {
                     element.css('display', 'none');
                 }, 0);

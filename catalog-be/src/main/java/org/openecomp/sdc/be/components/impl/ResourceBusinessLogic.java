@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,42 +21,24 @@
 package org.openecomp.sdc.be.components.impl;
 
 
-import static org.openecomp.sdc.be.tosca.CsarUtils.VF_NODE_TYPE_ARTIFACTS_PATH_PATTERN;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Optional;
-import java.util.Set;
-import java.util.function.Function;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-
-import javax.servlet.ServletContext;
-
+import fj.data.Either;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.components.csar.CsarArtifactsAndGroupsBusinessLogic;
+import org.openecomp.sdc.be.components.csar.CsarBusinessLogic;
+import org.openecomp.sdc.be.components.csar.CsarInfo;
 import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic.ArtifactOperationEnum;
 import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic.ArtifactOperationInfo;
 import org.openecomp.sdc.be.components.impl.ImportUtils.ResultStatusEnum;
-import org.openecomp.sdc.be.components.impl.ImportUtils.ToscaElementTypeEnum;
-import org.openecomp.sdc.be.components.impl.ImportUtils.ToscaTagNamesEnum;
+import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleBusinessLogic;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleChangeInfoWithAction;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleChangeInfoWithAction.LifecycleChanceActionEnum;
-import org.openecomp.sdc.be.components.merge.resource.MergeResourceBLFactory;
-import org.openecomp.sdc.be.components.merge.resource.MergeResourceBusinessLogic;
+import org.openecomp.sdc.be.components.merge.resource.ResourceDataMergeBusinessLogic;
+import org.openecomp.sdc.be.components.merge.utils.MergeInstanceUtils;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.config.BeEcompErrorManager.ErrorSeverity;
 import org.openecomp.sdc.be.config.ConfigurationManager;
@@ -65,110 +47,81 @@ import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
 import org.openecomp.sdc.be.datamodel.api.HighestFilterEnum;
 import org.openecomp.sdc.be.datamodel.utils.ArtifactUtils;
 import org.openecomp.sdc.be.datamodel.utils.UiComponentDataConverter;
+import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.CapabilityDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.GetInputValueDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.RequirementDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
+import org.openecomp.sdc.be.datatypes.enums.CreatedFrom;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.WebAppContextWrapper;
 import org.openecomp.sdc.be.info.NodeTypeInfoToUpdateArtifacts;
-import org.openecomp.sdc.be.model.ArtifactDefinition;
-import org.openecomp.sdc.be.model.CapabilityDefinition;
-import org.openecomp.sdc.be.model.CapabilityRequirementRelationship;
-import org.openecomp.sdc.be.model.CapabilityTypeDefinition;
-import org.openecomp.sdc.be.model.Component;
-import org.openecomp.sdc.be.model.ComponentInstance;
-import org.openecomp.sdc.be.model.ComponentInstanceInput;
-import org.openecomp.sdc.be.model.ComponentInstanceProperty;
-import org.openecomp.sdc.be.model.ComponentParametersView;
-import org.openecomp.sdc.be.model.CsarInfo;
-import org.openecomp.sdc.be.model.DataTypeDefinition;
-import org.openecomp.sdc.be.model.GroupDefinition;
-import org.openecomp.sdc.be.model.GroupProperty;
-import org.openecomp.sdc.be.model.GroupTypeDefinition;
-import org.openecomp.sdc.be.model.InputDefinition;
-import org.openecomp.sdc.be.model.InterfaceDefinition;
-import org.openecomp.sdc.be.model.LifeCycleTransitionEnum;
-import org.openecomp.sdc.be.model.LifecycleStateEnum;
-import org.openecomp.sdc.be.model.NodeTypeInfo;
-import org.openecomp.sdc.be.model.Operation;
-import org.openecomp.sdc.be.model.ParsedToscaYamlInfo;
-import org.openecomp.sdc.be.model.PropertyDefinition;
-import org.openecomp.sdc.be.model.RelationshipImpl;
-import org.openecomp.sdc.be.model.RelationshipInfo;
-import org.openecomp.sdc.be.model.RequirementCapabilityRelDef;
-import org.openecomp.sdc.be.model.RequirementDefinition;
-import org.openecomp.sdc.be.model.Resource;
-import org.openecomp.sdc.be.model.UploadCapInfo;
-import org.openecomp.sdc.be.model.UploadComponentInstanceInfo;
-import org.openecomp.sdc.be.model.UploadPropInfo;
-import org.openecomp.sdc.be.model.UploadReqInfo;
-import org.openecomp.sdc.be.model.UploadResourceInfo;
-import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.*;
 import org.openecomp.sdc.be.model.cache.ApplicationDataTypeCache;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
 import org.openecomp.sdc.be.model.category.SubCategoryDefinition;
-import org.openecomp.sdc.be.model.jsontitan.operations.InterfaceOperation;
-import org.openecomp.sdc.be.model.jsontitan.utils.InterfaceUtils;
 import org.openecomp.sdc.be.model.jsontitan.utils.ModelConverter;
-import org.openecomp.sdc.be.model.operations.api.ICacheMangerOperation;
-import org.openecomp.sdc.be.model.operations.api.ICapabilityTypeOperation;
-import org.openecomp.sdc.be.model.operations.api.IElementOperation;
-import org.openecomp.sdc.be.model.operations.api.IInterfaceLifecycleOperation;
-import org.openecomp.sdc.be.model.operations.api.IPropertyOperation;
-import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
-import org.openecomp.sdc.be.model.operations.impl.CsarOperation;
+import org.openecomp.sdc.be.model.operations.StorageException;
+import org.openecomp.sdc.be.model.operations.api.*;
 import org.openecomp.sdc.be.model.operations.impl.DaoStatusConverter;
 import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
 import org.openecomp.sdc.be.model.operations.utils.ComponentValidationUtils;
 import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
-import org.openecomp.sdc.be.resources.data.auditing.model.ResourceAuditData;
+import org.openecomp.sdc.be.resources.data.auditing.model.ResourceVersionInfo;
 import org.openecomp.sdc.be.tosca.CsarUtils;
 import org.openecomp.sdc.be.tosca.CsarUtils.NonMetaArtifactInfo;
 import org.openecomp.sdc.be.ui.model.UiComponentDataTransfer;
 import org.openecomp.sdc.be.user.IUserBusinessLogic;
-import org.openecomp.sdc.be.user.Role;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.be.utils.CommonBeUtils;
+import org.openecomp.sdc.be.utils.TypeUtils;
 import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
 import org.openecomp.sdc.common.api.ArtifactTypeEnum;
 import org.openecomp.sdc.common.api.Constants;
-import org.openecomp.sdc.common.datastructure.FunctionalInterfaces;
 import org.openecomp.sdc.common.datastructure.Wrapper;
 import org.openecomp.sdc.common.kpi.api.ASDCKpiApi;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.common.util.GeneralUtility;
 import org.openecomp.sdc.common.util.ValidationUtils;
 import org.openecomp.sdc.exception.ResponseFormat;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.context.WebApplicationContext;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
-import org.yaml.snakeyaml.parser.ParserException;
 
-import com.google.gson.Gson;
+import javax.servlet.ServletContext;
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.function.Function;
+import java.util.regex.Pattern;
 
-import fj.data.Either;
+import static java.util.stream.Collectors.*;
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+import static org.apache.commons.collections.MapUtils.isEmpty;
+import static org.apache.commons.collections.MapUtils.isNotEmpty;
+import static org.openecomp.sdc.be.components.impl.ImportUtils.findFirstToscaStringElement;
+import static org.openecomp.sdc.be.components.impl.ImportUtils.getPropertyJsonStringValue;
+import static org.openecomp.sdc.be.tosca.CsarUtils.VF_NODE_TYPE_ARTIFACTS_PATH_PATTERN;
 
 @org.springframework.stereotype.Component("resourceBusinessLogic")
 public class ResourceBusinessLogic extends ComponentBusinessLogic {
 
+    private static final String DELETE_RESOURCE = "Delete Resource";
+    private static final String IN_RESOURCE = "  in resource {} ";
     private static final String PLACE_HOLDER_RESOURCE_TYPES = "validForResourceTypes";
     public static final String INITIAL_VERSION = "0.1";
-
-    private Pattern STR_REPLACE_PATTERN = Pattern.compile("^[ ]*\\{[ ]*" + "str_replace" + "=");
-    private Pattern TOKEN_PATTERN = Pattern.compile("[ ]*\\{[ ]*" + "token" + "=");
-    private Pattern GET_PROPERTY_PATTERN = Pattern.compile("[ ]*\\{[ ]*" + "get_property" + "=");
-    private Pattern CONCAT_PATTERN = Pattern.compile("[ ]*\\{[ ]*" + "concat" + "=");
-    private Pattern GET_ATTRIBUTE_PATTERN = Pattern.compile("[ ]*\\{[ ]*" + "get_attribute" + "=");
-
-    private static final Logger log = LoggerFactory.getLogger(ResourceBusinessLogic.class);
-
-    private static Pattern pattern = Pattern.compile("\\..(.*?)\\..");
+    private static final Logger log = Logger.getLogger(ResourceBusinessLogic.class);
+    private static final String CERTIFICATION_ON_IMPORT = "certification on import";
+    private static final String CREATE_RESOURCE = "Create Resource";
+    private static final String VALIDATE_DERIVED_BEFORE_UPDATE = "validate derived before update";
+    private static final String CATEGORY_IS_EMPTY = "Resource category is empty";
+    private static final String CREATE_RESOURCE_VALIDATE_CAPABILITY_TYPES = "Create Resource - validateCapabilityTypesCreate";
+    private static final String COMPONENT_INSTANCE_WITH_NAME = "component instance with name ";
+    private static final String COMPONENT_INSTANCE_WITH_NAME_IN_RESOURCE = "component instance with name {}  in resource {} ";
 
     /**
      * Default constructor
@@ -187,17 +140,10 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
     private LifecycleBusinessLogic lifecycleBusinessLogic;
 
     @Autowired
-    private IPropertyOperation propertyOperation;
-
-    @Autowired
-    private CsarOperation csarOperation;
-
-    @Autowired
     private ComponentInstanceBusinessLogic componentInstanceBusinessLogic;
 
     @Autowired
     private ResourceImportManager resourceImportManager;
-
 
     @Autowired
     private InputsBusinessLogic inputsBusinessLogic;
@@ -209,30 +155,19 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
     private ICacheMangerOperation cacheManagerOperation;
 
     @Autowired
-    private ApplicationDataTypeCache dataTypeCache;
-
-    @Autowired
-    private MergeResourceBLFactory mergeResourceBLFactory;
+    private ResourceDataMergeBusinessLogic resourceDataMergeBusinessLogic;
 
     @Autowired
     private CsarArtifactsAndGroupsBusinessLogic csarArtifactsAndGroupsBusinessLogic;
 
     @Autowired
-    private InterfaceOperation interfaceOperation;
+    private MergeInstanceUtils mergeInstanceUtils;
 
-    private Gson gson = new Gson();
+    @Autowired
+    private UiComponentDataConverter uiComponentDataConverter;
 
-    public void setInterfaceOperation(InterfaceOperation interfaceOperation) {
-        this.interfaceOperation = interfaceOperation;
-    }
-
-    public CsarOperation getCsarOperation() {
-        return csarOperation;
-    }
-
-    public void setCsarOperation(CsarOperation csarOperation) {
-        this.csarOperation = csarOperation;
-    }
+    @Autowired
+    private CsarBusinessLogic csarBusinessLogic;
 
     public LifecycleBusinessLogic getLifecycleBusinessLogic() {
         return lifecycleBusinessLogic;
@@ -274,20 +209,12 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         this.artifactsBusinessLogic = artifactsManager;
     }
 
-    public void setPropertyOperation(IPropertyOperation propertyOperation) {
-        this.propertyOperation = propertyOperation;
-    }
-
     public ApplicationDataTypeCache getApplicationDataTypeCache() {
         return applicationDataTypeCache;
     }
 
     public void setApplicationDataTypeCache(ApplicationDataTypeCache applicationDataTypeCache) {
         this.applicationDataTypeCache = applicationDataTypeCache;
-    }
-
-    public void setInterfaceTypeOperation(IInterfaceLifecycleOperation interfaceTypeOperation) {
-        this.interfaceTypeOperation = interfaceTypeOperation;
     }
 
     /**
@@ -299,12 +226,9 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
      * @param userId      TODO
      * @return
      */
-    public Either<List<Resource>, ResponseFormat> getAllCertifiedResources(boolean getAbstract,
-                                                                           HighestFilterEnum highestFilter, String userId) {
-        Either<User, ResponseFormat> resp = validateUserExists(userId, "get All Certified Resources", false);
-        if (resp.isRight()) {
-            return Either.right(resp.right().value());
-        }
+    public List<Resource> getAllCertifiedResources(boolean getAbstract,
+                                                   HighestFilterEnum highestFilter, String userId) {
+        User user = validateUserExists(userId, "get All Certified Resources", false);
         Boolean isHighest = null;
         switch (highestFilter) {
             case ALL:
@@ -322,20 +246,16 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                 .getAllCertifiedResources(getAbstract, isHighest);
 
         if (getResponse.isRight()) {
-            return Either.right(componentsUtils
-                    .getResponseFormat(componentsUtils.convertFromStorageResponse(getResponse.right().value())));
+            throw new StorageException(getResponse.right().value());
         }
 
-        return Either.left(getResponse.left().value());
+        return getResponse.left().value();
     }
 
     public Either<Map<String, Boolean>, ResponseFormat> validateResourceNameExists(String resourceName,
                                                                                    ResourceTypeEnum resourceTypeEnum, String userId) {
 
-        Either<User, ResponseFormat> resp = validateUserExists(userId, "validate Resource Name Exists", false);
-        if (resp.isRight()) {
-            return Either.right(resp.right().value());
-        }
+        validateUserExists(userId, "validate Resource Name Exists", false);
 
         Either<Boolean, StorageOperationStatus> dataModelResponse = toscaOperationFacade
                 .validateComponentNameUniqueness(resourceName, resourceTypeEnum, ComponentTypeEnum.RESOURCE);
@@ -355,109 +275,60 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         return Either.right(responseFormat);
     }
 
-    public Either<Resource, ResponseFormat> createResource(Resource resource, AuditingActionEnum auditingAction,
-                                                           User user, Map<String, byte[]> csarUIPayload, String payloadName) {
-        Either<Resource, ResponseFormat> createResourceResponse = validateResourceBeforeCreate(resource, user, false);
-        if (createResourceResponse.isRight()) {
-            return createResourceResponse;
-        }
-
-        // Creating resource either by DAO or from CSAR
-        String csarUUID = null;
-        if (payloadName == null) {
-            csarUUID = resource.getCsarUUID();
-        } else {
-            csarUUID = payloadName;
-        }
-        if (csarUUID != null && !csarUUID.isEmpty()) {
-            // check if VF with the same Csar UUID or with he same name already
-            // exists
-            Either<Integer, StorageOperationStatus> validateCsarUuidUniquenessRes = toscaOperationFacade
-                    .validateCsarUuidUniqueness(csarUUID);
-            if (validateCsarUuidUniquenessRes.isRight()) {
-                log.debug("Failed to validate uniqueness of CsarUUID {} for resource", csarUUID,
-                        resource.getSystemName());
-                return Either.right(componentsUtils.getResponseFormat(
-                        componentsUtils.convertFromStorageResponse(validateCsarUuidUniquenessRes.right().value())));
-            }
-
-            Integer existingResourceRes = validateCsarUuidUniquenessRes.left().value();
-            if (existingResourceRes.intValue() > 0) {
-                log.debug("Failed to create resource {}, csarUUID {} already exist for a different VF ",
-                        resource.getSystemName(), csarUUID);
-                ResponseFormat errorResponse = componentsUtils.getResponseFormat(ActionStatus.VSP_ALREADY_EXISTS,
-                        csarUUID);
-                componentsUtils.auditResource(errorResponse, user, resource, auditingAction);
-                return Either.right(errorResponse);
-            }
-
+    public Resource createResource(Resource resource, AuditingActionEnum auditingAction,
+                                   User user, Map<String, byte[]> csarUIPayload, String payloadName) {
+        validateResourceBeforeCreate(resource, user, false);
+        String csarUUID = payloadName == null ? resource.getCsarUUID() : payloadName;
+        if (StringUtils.isNotEmpty(csarUUID)) {
+            csarBusinessLogic.validateCsarBeforeCreate(resource, auditingAction, user, csarUUID);
             log.debug("CsarUUID is {} - going to create resource from CSAR", csarUUID);
-            createResourceResponse = createResourceFromCsar(resource, user, Either.left(csarUIPayload), csarUUID);
-            return createResourceResponse;
+            return createResourceFromCsar(resource, user, csarUIPayload, csarUUID);
         }
 
         return createResourceByDao(resource, user, auditingAction, false, false);
     }
 
-    public Either<Resource, ResponseFormat> validateAndUpdateResourceFromCsar(Resource resource, User user,
-                                                                              Map<String, byte[]> csarUIPayload, String payloadName, String resourceUniqueId) {
-        Either<Resource, ResponseFormat> updateResourceResponse = null;
-        Either<Resource, ResponseFormat> validateResourceResponse = null;
-        Wrapper<ResponseFormat> responseWrapper = new Wrapper<ResponseFormat>();
-        String csarUUID = null;
+    public Resource validateAndUpdateResourceFromCsar(Resource resource, User user,
+                                                      Map<String, byte[]> csarUIPayload, String payloadName, String resourceUniqueId) {
+        String csarUUID = payloadName;
         String csarVersion = null;
+        Resource updatedResource = null;
         if (payloadName == null) {
             csarUUID = resource.getCsarUUID();
             csarVersion = resource.getCsarVersion();
-        } else {
-            csarUUID = payloadName;
         }
         if (csarUUID != null && !csarUUID.isEmpty()) {
-            Resource oldResource = getResourceByUniqueId(responseWrapper, resourceUniqueId);
-            if (responseWrapper.isEmpty()) {
-                validateCsarUuidMatching(responseWrapper, oldResource, resource, csarUUID, resourceUniqueId, user);
+            Resource oldResource = getResourceByUniqueId(resourceUniqueId);
+            validateCsarUuidMatching(oldResource, resource, csarUUID, resourceUniqueId, user);
+            validateCsarIsNotAlreadyUsed(oldResource, resource, csarUUID, user);
+            if (oldResource != null && ValidationUtils.hasBeenCertified(oldResource.getVersion())) {
+                overrideImmutableMetadata(oldResource, resource);
             }
-            if (responseWrapper.isEmpty()) {
-                validateCsarIsNotAlreadyUsed(responseWrapper, oldResource, resource, csarUUID, user);
-            }
-            if (responseWrapper.isEmpty()) {
-                if (oldResource != null && ValidationUtils.hasBeenCertified(oldResource.getVersion())) {
-                    overrideImmutableMetadata(oldResource, resource);
-                }
-                validateResourceResponse = validateResourceBeforeCreate(resource, user, false);
-                if (validateResourceResponse.isRight()) {
-                    responseWrapper.setInnerElement(validateResourceResponse.right().value());
-                }
-            }
-            if (responseWrapper.isEmpty()) {
-                String oldCsarVersion = oldResource.getCsarVersion();
-                log.debug("CsarUUID is {} - going to update resource with UniqueId {} from CSAR", csarUUID,
-                        resourceUniqueId);
-                // (on boarding flow): If the update includes same csarUUID and
-                // same csarVersion as already in the VF - no need to import the
-                // csar (do only metadata changes if there are).
-                if (csarVersion != null && oldCsarVersion != null && oldCsarVersion.equals(csarVersion)) {
-                    updateResourceResponse = updateResourceMetadata(resourceUniqueId, resource, oldResource, user,
-                            false);
-                } else {
-                    updateResourceResponse = updateResourceFromCsar(oldResource, resource, user,
-                            AuditingActionEnum.UPDATE_RESOURCE_METADATA, false, Either.left(csarUIPayload), csarUUID);
-                }
+            validateResourceBeforeCreate(resource, user, false);
+            String oldCsarVersion = oldResource.getCsarVersion();
+            log.debug("CsarUUID is {} - going to update resource with UniqueId {} from CSAR", csarUUID,
+                    resourceUniqueId);
+            // (on boarding flow): If the update includes same csarUUID and
+            // same csarVersion as already in the VF - no need to import the
+            // csar (do only metadata changes if there are).
+            if (csarVersion != null && oldCsarVersion != null && oldCsarVersion.equals(csarVersion)) {
+                updatedResource = updateResourceMetadata(resourceUniqueId, resource, oldResource, user,
+                        false);
+            } else {
+                updatedResource = updateResourceFromCsar(oldResource, resource, user,
+                        AuditingActionEnum.UPDATE_RESOURCE_METADATA, false, csarUIPayload, csarUUID);
             }
         } else {
             log.debug("Failed to update resource {}, csarUUID or payload name is missing", resource.getSystemName());
             ResponseFormat errorResponse = componentsUtils.getResponseFormat(ActionStatus.MISSING_CSAR_UUID,
                     resource.getName());
             componentsUtils.auditResource(errorResponse, user, resource, AuditingActionEnum.CREATE_RESOURCE);
-            responseWrapper.setInnerElement(errorResponse);
+            throw new ComponentException(ActionStatus.MISSING_CSAR_UUID, resource.getName());
         }
-        if (responseWrapper.isEmpty()) {
-            return updateResourceResponse;
-        }
-        return Either.right(responseWrapper.getInnerElement());
+        return updatedResource;
     }
 
-    private void validateCsarIsNotAlreadyUsed(Wrapper<ResponseFormat> responseWrapper, Resource oldResource,
+    private void validateCsarIsNotAlreadyUsed(Resource oldResource,
                                               Resource resource, String csarUUID, User user) {
         // (on boarding flow): If the update includes a csarUUID: verify this
         // csarUUID is not in use by another VF, If it is - use same error as
@@ -471,19 +342,19 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
             if (!StorageOperationStatus.NOT_FOUND.equals(resourceLinkedToCsarRes.right().value())) {
                 log.debug("Failed to find previous resource by CSAR {} and system name {}", csarUUID,
                         resource.getSystemName());
-                responseWrapper.setInnerElement(componentsUtils.getResponseFormat(
-                        componentsUtils.convertFromStorageResponse(resourceLinkedToCsarRes.right().value())));
+                throw new StorageException(resourceLinkedToCsarRes.right().value());
             }
         } else if (!resourceLinkedToCsarRes.left().value().getUniqueId().equals(oldResource.getUniqueId())
                 && !resourceLinkedToCsarRes.left().value().getName().equals(oldResource.getName())) {
             ResponseFormat errorResponse = componentsUtils.getResponseFormat(ActionStatus.VSP_ALREADY_EXISTS, csarUUID,
                     resourceLinkedToCsarRes.left().value().getName());
             componentsUtils.auditResource(errorResponse, user, resource, AuditingActionEnum.UPDATE_RESOURCE_METADATA);
-            responseWrapper.setInnerElement(errorResponse);
+            throw new ComponentException(ActionStatus.VSP_ALREADY_EXISTS, csarUUID,
+                    resourceLinkedToCsarRes.left().value().getName());
         }
     }
 
-    private void validateCsarUuidMatching(Wrapper<ResponseFormat> responseWrapper, Resource resource,
+    private void validateCsarUuidMatching(Resource resource,
                                           Resource oldResource, String csarUUID, String resourceUniqueId, User user) {
         // (on boarding flow): If the update includes csarUUID which is
         // different from the csarUUID of the VF - fail with
@@ -497,18 +368,16 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
             ResponseFormat errorResponse = componentsUtils.getResponseFormat(
                     ActionStatus.RESOURCE_LINKED_TO_DIFFERENT_VSP, resource.getName(), csarUUID, oldCsarUUID);
             componentsUtils.auditResource(errorResponse, user, resource, AuditingActionEnum.UPDATE_RESOURCE_METADATA);
-            responseWrapper.setInnerElement(errorResponse);
+            throw new ComponentException(ActionStatus.RESOURCE_LINKED_TO_DIFFERENT_VSP, resource.getName(), csarUUID, oldCsarUUID);
         }
     }
 
-    private Resource getResourceByUniqueId(Wrapper<ResponseFormat> responseWrapper, String resourceUniqueId) {
+    private Resource getResourceByUniqueId(String resourceUniqueId) {
         Either<Resource, StorageOperationStatus> oldResourceRes = toscaOperationFacade.getToscaFullElement(resourceUniqueId);
         if (oldResourceRes.isRight()) {
             log.debug("Failed to find previous resource by UniqueId {}, status: {}", resourceUniqueId,
                     oldResourceRes.right().value());
-            responseWrapper.setInnerElement(componentsUtils
-                    .getResponseFormat(componentsUtils.convertFromStorageResponse(oldResourceRes.right().value())));
-            return null;
+            throw new StorageException(oldResourceRes.right().value());
         }
         return oldResourceRes.left().value();
     }
@@ -517,216 +386,128 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         resource.setName(oldRresource.getName());
         resource.setIcon(oldRresource.getIcon());
         resource.setTags(oldRresource.getTags());
-        resource.setVendorName(oldRresource.getVendorName());
         resource.setCategories(oldRresource.getCategories());
         resource.setDerivedFrom(oldRresource.getDerivedFrom());
     }
 
-    private Either<Resource, ResponseFormat> updateResourceFromCsar(Resource oldRresource, Resource newRresource,
-                                                                    User user, AuditingActionEnum updateResource, boolean inTransaction,
-                                                                    Either<Map<String, byte[]>, StorageOperationStatus> csarUIPayload, String csarUUID) {
-
-        // check state
-        if (LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT.equals(oldRresource.getLifecycleState())) {
-            if (!oldRresource.getLastUpdaterUserId().equals(user.getUserId())) {
-                log.debug("Current user is not last updater, last updater userId: {}, current user userId: {}",
-                        oldRresource.getLastUpdaterUserId(), user.getUserId());
-                return Either.right(componentsUtils.getResponseFormat(ActionStatus.RESTRICTED_OPERATION));
-            }
-        }
-        String lockedResourceId = oldRresource.getUniqueId();
+    private Resource updateResourceFromCsar(Resource oldResource, Resource newResource,
+                                            User user, AuditingActionEnum updateResource, boolean inTransaction,
+                                            Map<String, byte[]> csarUIPayload, String csarUUID) {
+        Resource updatedResource = null;
+        validateLifecycleState(oldResource, user);
+        String lockedResourceId = oldResource.getUniqueId();
         List<ArtifactDefinition> createdArtifacts = new ArrayList<>();
-
-        Either<Map<String, byte[]>, StorageOperationStatus> csar = null;
-        if (csarUIPayload != null && csarUIPayload.left() != null && csarUIPayload.left().value() != null) {
-            csar = csarUIPayload;
-        } else {
-            csar = csarOperation.getCsar(csarUUID, user);
-        }
-        if (csar.isRight()) {
-            log.debug("Failed to get csar for casrUUID{} ", csarUUID);
-            return Either.right(componentsUtils
-                    .getResponseFormat(componentsUtils.convertFromStorageResponse(csar.right().value())));
-        }
-
-        Either<ImmutablePair<String, String>, ResponseFormat> toscaYamlCsarStatus = validateAndParseCsar(newRresource,
-                user, csarUUID, csar);
-        if (toscaYamlCsarStatus.isRight()) {
-            return Either.right(toscaYamlCsarStatus.right().value());
-        }
-        Either<String, ResponseFormat> checksum = CsarValidationUtils.getToscaYamlChecksum(csar.left().value(),
-                csarUUID, componentsUtils);
-        if (checksum.isRight()) {
-            log.debug("Failed to calculate checksum for casrUUID{} error {} ", csarUUID, checksum.right().value());
-            return Either.right(checksum.right().value());
-        }
-        if (!checksum.left().value().equals(
-                oldRresource.getComponentMetadataDefinition().getMetadataDataDefinition().getImportedToscaChecksum())) {
-            log.debug("The checksum of main template yaml of csar with csarUUID {} is not equal to the previous one, existing checksum is {}, new one is {}.", csarUUID,
-                    oldRresource.getComponentMetadataDefinition().getMetadataDataDefinition()
-                            .getImportedToscaChecksum(),
-                    checksum.left().value());
-            oldRresource.getComponentMetadataDefinition().getMetadataDataDefinition()
-            .setImportedToscaChecksum(checksum.left().value());
-        }
-
-        Either<Boolean, ResponseFormat> lockResult = lockComponent(lockedResourceId, oldRresource,
+        CsarInfo csarInfo = csarBusinessLogic.getCsarInfo(newResource, oldResource, user, csarUIPayload, csarUUID);
+        Either<Boolean, ResponseFormat> lockResult = lockComponent(lockedResourceId, oldResource,
                 "update Resource From Csar");
         if (lockResult.isRight()) {
-            return Either.right(lockResult.right().value());
+            throw new ComponentException(lockResult.right().value());
         }
 
-        String yamlFileName = toscaYamlCsarStatus.left().value().getKey();
-        String yamlFileContents = toscaYamlCsarStatus.left().value().getValue();
-        CsarInfo csarInfo = new CsarInfo(newRresource.getName(), user, csarUUID, csar.left().value(), yamlFileContents,
-                true);
-        Map<String, NodeTypeInfo> nodeTypesInfo = extractNodeTypesInfo(csarInfo);
-        Either<Resource, ResponseFormat> result = null;
+        Map<String, NodeTypeInfo> nodeTypesInfo = csarInfo.extractNodeTypesInfo();
 
         Either<Map<String, EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>>, ResponseFormat> findNodeTypesArtifactsToHandleRes = findNodeTypesArtifactsToHandle(
-                nodeTypesInfo, csarInfo, oldRresource);
+                nodeTypesInfo, csarInfo, oldResource);
         if (findNodeTypesArtifactsToHandleRes.isRight()) {
             log.debug("failed to find node types for update with artifacts during import csar {}. ",
                     csarInfo.getCsarUUID());
-            result = Either.right(findNodeTypesArtifactsToHandleRes.right().value());
-            return result;
+            throw new ComponentException(findNodeTypesArtifactsToHandleRes.right().value());
         }
         Map<String, EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>> nodeTypesArtifactsToHandle = findNodeTypesArtifactsToHandleRes
                 .left().value();
         try {
-            result = updateResourceFromYaml(oldRresource, newRresource, updateResource, createdArtifacts, yamlFileName,
-                    yamlFileContents, csarInfo, nodeTypesInfo, nodeTypesArtifactsToHandle, null, false);
+            updatedResource = updateResourceFromYaml(oldResource, newResource, updateResource, createdArtifacts, csarInfo.getMainTemplateName(),
+                    csarInfo.getMainTemplateContent(), csarInfo, nodeTypesInfo, nodeTypesArtifactsToHandle, null, false);
 
-        } finally {
-            if (result == null || result.isRight()) {
-                log.warn("operation failed. do rollback");
-                titanDao.rollback();
-            } else {
-                log.debug("operation success. do commit");
-                titanDao.commit();
-            }
+            connectUiRelations(oldResource, updatedResource);
+
+        } catch (ComponentException|StorageException e){
+            rollback(inTransaction, newResource, createdArtifacts, null);
+            throw e;
+        }
+        finally {
+            titanDao.commit();
             log.debug("unlock resource {}", lockedResourceId);
             graphLockOperation.unlockComponent(lockedResourceId, NodeTypeEnum.Resource);
         }
-        return result;
+        return updatedResource;
 
     }
 
-    private Either<Resource, ResponseFormat> updateResourceFromYaml(Resource oldRresource, Resource newRresource,
-            AuditingActionEnum updateResource, List<ArtifactDefinition> createdArtifacts,
-            String yamlFileName, String yamlFileContent, CsarInfo csarInfo, Map<String, NodeTypeInfo> nodeTypesInfo,
-            Map<String, EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>> nodeTypesArtifactsToHandle,
-            String nodeName, boolean isNested) {
-        Either<Resource, ResponseFormat> result;
-        Either<Map<String, Resource>, ResponseFormat> parseNodeTypeInfoYamlEither;
-        boolean inTransaction = true;
-        boolean shouldLock = false;
+    private void validateLifecycleState(Resource oldResource, User user) {
+        if (LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT.equals(oldResource.getLifecycleState()) &&
+                !oldResource.getLastUpdaterUserId().equals(user.getUserId())) {
+            log.debug("#validateLifecycleState - Current user is not last updater, last updater userId: {}, current user userId: {}",
+                    oldResource.getLastUpdaterUserId(), user.getUserId());
+            throw new ComponentException(ActionStatus.RESTRICTED_OPERATION);
+        }
+    }
 
-        Either<ImmutablePair<Resource, ActionStatus>, ResponseFormat> prepareForUpdate;
-        Resource preparedResource;
-        Either<ParsedToscaYamlInfo, ResponseFormat> uploadComponentInstanceInfoMap = parseResourceInfoFromYaml(
-                yamlFileName, newRresource, yamlFileContent, csarInfo.getCreatedNodesToscaResourceNames(),
-                nodeTypesInfo, nodeName);
-        if (uploadComponentInstanceInfoMap.isRight()) {
-            ResponseFormat responseFormat = uploadComponentInstanceInfoMap.right().value();
-            componentsUtils.auditResource(responseFormat, csarInfo.getModifier(), newRresource, updateResource);
-            result = Either.right(responseFormat);
-            return result;
+    private Either<Resource, ResponseFormat> connectUiRelations(Resource oldResource, Resource newResource) {
+        Either<Resource, ResponseFormat> result;
+
+        List<RequirementCapabilityRelDef> updatedUiRelations = mergeInstanceUtils.updateUiRelationsInResource(oldResource, newResource);
+
+        StorageOperationStatus status = toscaOperationFacade.associateResourceInstances(newResource.getUniqueId(), updatedUiRelations);
+        if (status == StorageOperationStatus.OK) {
+            newResource.getComponentInstancesRelations().addAll(updatedUiRelations);
+            result = Either.left(newResource);
+        } else {
+            result = Either.right(componentsUtils.getResponseFormatByResource(componentsUtils.convertFromStorageResponse(status), newResource));
         }
 
-        Map<String, UploadComponentInstanceInfo> instances = uploadComponentInstanceInfoMap.left().value()
-                .getInstances();
+        return result;
+    }
 
-            prepareForUpdate = updateExistingResourceByImport(newRresource, oldRresource, csarInfo.getModifier(),
-                    inTransaction, shouldLock, isNested);
-            if (prepareForUpdate.isRight()) {
-                log.debug("Failed to prepare resource for update : {}", prepareForUpdate.right().value());
-                result = Either.right(prepareForUpdate.right().value());
-                return result;
-            }
-            preparedResource = prepareForUpdate.left().value().left;
-
+    private Resource updateResourceFromYaml(Resource oldRresource, Resource newRresource,
+                                            AuditingActionEnum actionEnum, List<ArtifactDefinition> createdArtifacts,
+                                            String yamlFileName, String yamlFileContent, CsarInfo csarInfo, Map<String, NodeTypeInfo> nodeTypesInfo,
+                                            Map<String, EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>> nodeTypesArtifactsToHandle,
+                                            String nodeName, boolean isNested) {
+        boolean inTransaction = true;
+        boolean shouldLock = false;
+        Resource preparedResource = null;
+        ParsedToscaYamlInfo uploadComponentInstanceInfoMap = null;
+        try {
+            uploadComponentInstanceInfoMap = csarBusinessLogic.getParsedToscaYamlInfo(yamlFileContent, yamlFileName, nodeTypesInfo, csarInfo, nodeName);
+            Map<String, UploadComponentInstanceInfo> instances = uploadComponentInstanceInfoMap.getInstances();
+            preparedResource = updateExistingResourceByImport(newRresource, oldRresource, csarInfo.getModifier(),
+                    inTransaction, shouldLock, isNested).left;
             log.trace("YAML topology file found in CSAR, file name: {}, contents: {}", yamlFileName, yamlFileContent);
-
-            Either<Resource, ResponseFormat> genericResourceEither = handleResourceGenericType(preparedResource);
-            if (genericResourceEither.isRight()) {
-                log.debug("failed to get resource generic type. status is {}", genericResourceEither.right().value());
-                ResponseFormat responseFormat = genericResourceEither.right().value();
-                componentsUtils.auditResource(genericResourceEither.right().value(), csarInfo.getModifier(),
-                        preparedResource, updateResource);
-                return Either.right(responseFormat);
-            }
-
-            parseNodeTypeInfoYamlEither = this.handleNodeTypes(yamlFileName, preparedResource, yamlFileContent,
+            handleResourceGenericType(preparedResource);
+            handleNodeTypes(yamlFileName, preparedResource, yamlFileContent,
                     shouldLock, nodeTypesArtifactsToHandle, createdArtifacts, nodeTypesInfo, csarInfo, nodeName);
-            if (parseNodeTypeInfoYamlEither.isRight()) {
-                ResponseFormat responseFormat = parseNodeTypeInfoYamlEither.right().value();
-                componentsUtils.auditResource(responseFormat, csarInfo.getModifier(), preparedResource, updateResource);
-                result = Either.right(responseFormat);
-                return result;
-            }
+            preparedResource = createInputsOnResource(preparedResource,  uploadComponentInstanceInfoMap.getInputs());
+            preparedResource = createResourceInstances(yamlFileName, preparedResource, instances, csarInfo.getCreatedNodes());
+            preparedResource = createResourceInstancesRelations(csarInfo.getModifier(), yamlFileName, preparedResource, instances);
+        } catch (ComponentException e) {
+            ResponseFormat responseFormat = e.getResponseFormat() == null ? componentsUtils.getResponseFormat(e.getActionStatus(), e.getParams()) : e.getResponseFormat();
+            log.debug("#updateResourceFromYaml - failed to update resource from yaml {} .The error is {}", yamlFileName, responseFormat);
+            componentsUtils.auditResource(responseFormat, csarInfo.getModifier(), preparedResource == null ? oldRresource : preparedResource, actionEnum);
+            throw e;
+        } catch (StorageException e){
+            ResponseFormat responseFormat = componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(e.getStorageOperationStatus()));
+            log.debug("#updateResourceFromYaml - failed to update resource from yaml {} .The error is {}", yamlFileName, responseFormat);
+            componentsUtils.auditResource(responseFormat, csarInfo.getModifier(), preparedResource == null ? oldRresource : preparedResource, actionEnum);
+            throw e;
+        }
+        Either<Map<String, GroupDefinition>, ResponseFormat> validateUpdateVfGroupNamesRes = groupBusinessLogic
+                .validateUpdateVfGroupNames(uploadComponentInstanceInfoMap.getGroups(),
+                        preparedResource.getSystemName());
+        if (validateUpdateVfGroupNamesRes.isRight()) {
 
-            Map<String, InputDefinition> inputs = uploadComponentInstanceInfoMap.left().value().getInputs();
-            Either<Resource, ResponseFormat> createInputsOnResource = createInputsOnResource(preparedResource,
-                    csarInfo.getModifier(), inputs, inTransaction);
-            if (createInputsOnResource.isRight()) {
-                log.debug("failed to create resource inputs status is {}", createInputsOnResource.right().value());
-                ResponseFormat responseFormat = createInputsOnResource.right().value();
-                componentsUtils.auditResource(createInputsOnResource.right().value(), csarInfo.getModifier(),
-                        preparedResource, updateResource);
-                result = Either.right(responseFormat);
-                return result;
-            }
-            preparedResource = createInputsOnResource.left().value();
+            throw new ComponentException(validateUpdateVfGroupNamesRes.right().value());
+        }
+        // add groups to resource
+        Map<String, GroupDefinition> groups;
 
-            Either<Resource, ResponseFormat> createResourcesInstancesEither = createResourceInstances(
-                    csarInfo.getModifier(), yamlFileName, preparedResource, instances, inTransaction, shouldLock,
-                    csarInfo.getCreatedNodes());
-            if (createResourcesInstancesEither.isRight()) {
-                log.debug("failed to create resource instances status is {}",
-                        createResourcesInstancesEither.right().value());
-                ResponseFormat responseFormat = createResourcesInstancesEither.right().value();
-                componentsUtils.auditResource(createResourcesInstancesEither.right().value(), csarInfo.getModifier(),
-                        preparedResource, updateResource);
-                result = Either.right(responseFormat);
-                return result;
-            }
-            preparedResource = createResourcesInstancesEither.left().value();
-
-            createResourcesInstancesEither = createResourceInstancesRelations(csarInfo.getModifier(), yamlFileName,
-                    preparedResource, instances);
-            if (createResourcesInstancesEither.isRight()) {
-                log.debug("failed to create relation between resource instances status is {}",
-                        createResourcesInstancesEither.right().value());
-                result = Either.right(createResourcesInstancesEither.right().value());
-                return result;
-            }
-
-            preparedResource = createResourcesInstancesEither.left().value();
-
-            Either<Map<String, GroupDefinition>, ResponseFormat> validateUpdateVfGroupNamesRes = groupBusinessLogic
-                    .validateUpdateVfGroupNames(uploadComponentInstanceInfoMap.left().value().getGroups(),
-                            preparedResource.getSystemName());
-            if (validateUpdateVfGroupNamesRes.isRight()) {
-
-                return Either.right(validateUpdateVfGroupNamesRes.right().value());
-            }
-            // add groups to resource
-            Map<String, GroupDefinition> groups;
-
-            if (!validateUpdateVfGroupNamesRes.left().value().isEmpty()) {
-                groups = validateUpdateVfGroupNamesRes.left().value();
-            } else {
-                groups = uploadComponentInstanceInfoMap.left().value().getGroups();
-            }
-            Either<Resource, ResponseFormat> updatedGroupsOnResource = updateGroupsOnResource(preparedResource,
-                    csarInfo.getModifier(), groups);
-            if (updatedGroupsOnResource.isRight()) {
-
-                return updatedGroupsOnResource;
-            }
-            preparedResource = updatedGroupsOnResource.left().value();
-
+        if (!validateUpdateVfGroupNamesRes.left().value().isEmpty()) {
+            groups = validateUpdateVfGroupNamesRes.left().value();
+        } else {
+            groups = uploadComponentInstanceInfoMap.getGroups();
+        }
+        handleGroupsProperties(preparedResource, groups);
+        preparedResource =  updateGroupsOnResource(preparedResource, groups);
         NodeTypeInfoToUpdateArtifacts nodeTypeInfoToUpdateArtifacts = new NodeTypeInfoToUpdateArtifacts(nodeName,
                 nodeTypesArtifactsToHandle);
 
@@ -734,25 +515,18 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                 csarInfo, preparedResource, nodeTypeInfoToUpdateArtifacts, inTransaction, shouldLock);
         if (updateArtifactsEither.isRight()) {
             log.debug("failed to update artifacts {}", updateArtifactsEither.right().value());
-            result = Either.right(updateArtifactsEither.right().value());
-            return result;
+            throw new ComponentException(updateArtifactsEither.right().value());
         }
-        preparedResource = updateArtifactsEither.left().value();
+        preparedResource = getResourceWithGroups(updateArtifactsEither.left().value().getUniqueId());
 
-        ActionStatus mergingPropsAndInputsStatus = mergeResourceEntities(oldRresource, preparedResource);
+        ActionStatus mergingPropsAndInputsStatus = resourceDataMergeBusinessLogic.mergeResourceEntities(oldRresource, preparedResource);
         if (mergingPropsAndInputsStatus != ActionStatus.OK) {
             ResponseFormat responseFormat = componentsUtils.getResponseFormatByResource(mergingPropsAndInputsStatus,
                     preparedResource);
-            return Either.right(responseFormat);
+            throw new ComponentException(responseFormat);
         }
-
-        Either<List<ComponentInstance>, ResponseFormat> eitherSetPosition = compositionBusinessLogic
-                .setPositionsForComponentInstances(preparedResource, csarInfo.getModifier().getUserId());
-        result = eitherSetPosition.isRight() ? Either.right(eitherSetPosition.right().value())
-                : Either.left(preparedResource);
-
-        return result;
-
+        compositionBusinessLogic.setPositionsForComponentInstances(preparedResource, csarInfo.getModifier().getUserId());
+        return preparedResource;
     }
 
     private Either<Resource, ResponseFormat> createOrUpdateArtifacts(ArtifactOperationEnum operation, List<ArtifactDefinition> createdArtifacts,
@@ -785,100 +559,30 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         return Either.left(resource);
     }
 
-    private ActionStatus mergeResourceEntities(Resource oldResource, Resource newResource) {
-        Either<MergeResourceBusinessLogic, ActionStatus> mergeResourceBLEither = mergeResourceBLFactory
-                .getInstance(oldResource, newResource);
-        if (mergeResourceBLEither.isRight()) {
-            return mergeResourceBLEither.right().value();
-        }
-        MergeResourceBusinessLogic mergeResourceBusinessLogic = mergeResourceBLEither.left().value();
-        return mergeResourceBusinessLogic.mergeResourceEntities(oldResource, newResource);
-    }
-
-    private Either<Resource, ResponseFormat> handleResourceGenericType(Resource resource) {
-        Either<Resource, ResponseFormat> genericResourceEither = fetchAndSetDerivedFromGenericType(resource);
-        if (genericResourceEither.isRight()) {
-            return genericResourceEither;
-        }
+    private Resource handleResourceGenericType(Resource resource) {
+        Resource genericResource = fetchAndSetDerivedFromGenericType(resource);
         if (resource.shouldGenerateInputs()) {
-            generateAndAddInputsFromGenericTypeProperties(resource, genericResourceEither.left().value());
+            generateAndAddInputsFromGenericTypeProperties(resource, genericResource);
         }
-        return genericResourceEither;
+        return genericResource;
     }
 
     private Either<Map<String, EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>>, ResponseFormat> findNodeTypesArtifactsToHandle(
             Map<String, NodeTypeInfo> nodeTypesInfo, CsarInfo csarInfo, Resource oldResource) {
 
-        Map<String, List<ArtifactDefinition>> extractedVfcsArtifacts = CsarUtils
-                .extractVfcsArtifactsFromCsar(csarInfo.getCsar());
         Map<String, EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>> nodeTypesArtifactsToHandle = new HashMap<>();
-        Either<Map<String, EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>>, ResponseFormat> nodeTypesArtifactsToHandleRes;
+        Either<Map<String, EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>>, ResponseFormat> nodeTypesArtifactsToHandleRes
+                = Either.left(nodeTypesArtifactsToHandle);
 
         try {
-            nodeTypesArtifactsToHandleRes = Either.left(nodeTypesArtifactsToHandle);
-            Map<String, ImmutablePair<String, String>> extractedVfcToscaNames = extractVfcToscaNames(nodeTypesInfo,
-                    oldResource.getName(), csarInfo);
-            Either<EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>, ResponseFormat> curNodeTypeArtifactsToHandleRes;
-            EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>> curNodeTypeArtifactsToHandle = null;
+            Map<String, List<ArtifactDefinition>> extractedVfcsArtifacts = CsarUtils.extractVfcsArtifactsFromCsar(csarInfo.getCsar());
+            Map<String, ImmutablePair<String, String>> extractedVfcToscaNames =
+                    extractVfcToscaNames(nodeTypesInfo, oldResource.getName(), csarInfo);
             log.debug("Going to fetch node types for resource with name {} during import csar with UUID {}. ",
                     oldResource.getName(), csarInfo.getCsarUUID());
-
-            for (Entry<String, ImmutablePair<String, String>> currVfcToscaNameEntry : extractedVfcToscaNames
-                    .entrySet()) {
-                String currVfcToscaName = currVfcToscaNameEntry.getValue().getLeft();
-                String previousVfcToscaName = currVfcToscaNameEntry.getValue().getRight();
-                String currNamespace = currVfcToscaNameEntry.getKey();
-                log.debug("Going to fetch node type with tosca name {}. ", currVfcToscaName);
-
-                Either<Resource, StorageOperationStatus> curVfcRes = toscaOperationFacade
-                        .getLatestByToscaResourceName(currVfcToscaName);
-                Resource curNodeType = null;
-                if (curVfcRes.isRight() && curVfcRes.right().value() == StorageOperationStatus.NOT_FOUND) {
-                    curVfcRes = toscaOperationFacade.getLatestByToscaResourceName(previousVfcToscaName);
-                }
-                if (curVfcRes.isRight() && curVfcRes.right().value() != StorageOperationStatus.NOT_FOUND) {
-                    log.debug("Error occured during fetching node type with tosca name {}, error: {}", currVfcToscaName,
-                            curVfcRes.right().value());
-                    ResponseFormat responseFormat = componentsUtils.getResponseFormat(
-                            componentsUtils.convertFromStorageResponse(curVfcRes.right().value()),
-                            csarInfo.getCsarUUID());
-                    componentsUtils.auditResource(responseFormat, csarInfo.getModifier(), oldResource,    AuditingActionEnum.CREATE_RESOURCE);
-                    nodeTypesArtifactsToHandleRes = Either.right(responseFormat);
-                    break;
-                } else if (curVfcRes.isLeft()) {
-                    curNodeType = curVfcRes.left().value();
-                }
-                if (!MapUtils.isEmpty(extractedVfcsArtifacts)) {
-                    List<ArtifactDefinition> currArtifacts = new ArrayList<>();
-                    if (extractedVfcsArtifacts.containsKey(currNamespace)) {
-                        handleAndAddExtractedVfcsArtifacts(currArtifacts, extractedVfcsArtifacts.get(currNamespace));
-                    }
-                    curNodeTypeArtifactsToHandleRes = findNodeTypeArtifactsToHandle(curNodeType, currArtifacts);
-                    if (curNodeTypeArtifactsToHandleRes.isRight()) {
-                        nodeTypesArtifactsToHandleRes = Either.right(curNodeTypeArtifactsToHandleRes.right().value());
-                        break;
-                    }
-                    curNodeTypeArtifactsToHandle = curNodeTypeArtifactsToHandleRes.left().value();
-
-                } else if (curNodeType != null) {
-                    // delete all artifacts if have not received artifacts from
-                    // csar
-                    curNodeTypeArtifactsToHandle = new EnumMap<>(ArtifactOperationEnum.class);
-                    List<ArtifactDefinition> artifactsToDelete = new ArrayList<>();
-                    // delete all informational artifacts
-                    artifactsToDelete.addAll(curNodeType.getArtifacts().values().stream()
-                            .filter(a -> a.getArtifactGroupType() == ArtifactGroupTypeEnum.INFORMATIONAL)
-                            .collect(Collectors.toList()));
-                    // delete all deployment artifacts
-                    artifactsToDelete.addAll(curNodeType.getDeploymentArtifacts().values());
-                    if (!artifactsToDelete.isEmpty()) {
-                        curNodeTypeArtifactsToHandle.put(ArtifactOperationEnum.DELETE, artifactsToDelete);
-                    }
-                }
-                if (MapUtils.isNotEmpty(curNodeTypeArtifactsToHandle)) {
-                    nodeTypesArtifactsToHandle.put(currVfcToscaNameEntry.getKey(), curNodeTypeArtifactsToHandle);
-                }
-            }
+            extractedVfcToscaNames.forEach((namespace, vfcToscaNames) -> findAddNodeTypeArtifactsToHandle(csarInfo, nodeTypesArtifactsToHandle, oldResource,
+                    extractedVfcsArtifacts,
+                    namespace, vfcToscaNames));
         } catch (Exception e) {
             ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR);
             nodeTypesArtifactsToHandleRes = Either.right(responseFormat);
@@ -887,86 +591,142 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         return nodeTypesArtifactsToHandleRes;
     }
 
-    private Either<EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>, ResponseFormat> findNodeTypeArtifactsToHandle(
+    private void findAddNodeTypeArtifactsToHandle(CsarInfo csarInfo, Map<String, EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>> nodeTypesArtifactsToHandle,
+                                                  Resource resource, Map<String, List<ArtifactDefinition>> extractedVfcsArtifacts, String namespace, ImmutablePair<String, String> vfcToscaNames){
+
+        EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>> curNodeTypeArtifactsToHandle = null;
+        log.debug("Going to fetch node type with tosca name {}. ", vfcToscaNames.getLeft());
+        Resource curNodeType = findVfcResource(csarInfo, resource, vfcToscaNames.getLeft(), vfcToscaNames.getRight(), null);
+        if (!isEmpty(extractedVfcsArtifacts)) {
+            List<ArtifactDefinition> currArtifacts = new ArrayList<>();
+            if (extractedVfcsArtifacts.containsKey(namespace)) {
+                handleAndAddExtractedVfcsArtifacts(currArtifacts, extractedVfcsArtifacts.get(namespace));
+            }
+            curNodeTypeArtifactsToHandle = findNodeTypeArtifactsToHandle(curNodeType, currArtifacts);
+        } else if (curNodeType != null) {
+            // delete all artifacts if have not received artifacts from
+            // csar
+            curNodeTypeArtifactsToHandle = new EnumMap<>(ArtifactOperationEnum.class);
+            List<ArtifactDefinition> artifactsToDelete = new ArrayList<>();
+            // delete all informational artifacts
+            artifactsToDelete.addAll(curNodeType.getArtifacts().values().stream()
+                    .filter(a -> a.getArtifactGroupType() == ArtifactGroupTypeEnum.INFORMATIONAL)
+                    .collect(toList()));
+            // delete all deployment artifacts
+            artifactsToDelete.addAll(curNodeType.getDeploymentArtifacts().values());
+            if (!artifactsToDelete.isEmpty()) {
+                curNodeTypeArtifactsToHandle.put(ArtifactOperationEnum.DELETE, artifactsToDelete);
+            }
+        }
+        if (isNotEmpty(curNodeTypeArtifactsToHandle)) {
+            nodeTypesArtifactsToHandle.put(namespace, curNodeTypeArtifactsToHandle);
+        }
+    }
+
+    private Resource findVfcResource(CsarInfo csarInfo, Resource resource, String currVfcToscaName, String previousVfcToscaName, StorageOperationStatus status) {
+        if (status != null && status != StorageOperationStatus.NOT_FOUND) {
+            log.debug("Error occured during fetching node type with tosca name {}, error: {}", currVfcToscaName, status);
+            ResponseFormat responseFormat = componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(status), csarInfo.getCsarUUID());
+            componentsUtils.auditResource(responseFormat, csarInfo.getModifier(), resource, AuditingActionEnum.CREATE_RESOURCE);
+            throw new ComponentException(componentsUtils.convertFromStorageResponse(status), csarInfo.getCsarUUID());
+        } else if (StringUtils.isNotEmpty(currVfcToscaName)) {
+            return (Resource)toscaOperationFacade.getLatestByToscaResourceName(currVfcToscaName)
+                    .left()
+                    .on(st -> findVfcResource(csarInfo, resource, previousVfcToscaName, null, st));
+        }
+        return null;
+    }
+
+    private EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>> findNodeTypeArtifactsToHandle(
             Resource curNodeType, List<ArtifactDefinition> extractedArtifacts) {
 
-        Either<EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>, ResponseFormat> nodeTypeArtifactsToHandleRes = null;
         EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>> nodeTypeArtifactsToHandle = null;
-        Wrapper<ResponseFormat> responseWrapper = new Wrapper<>();
         try {
             List<ArtifactDefinition> artifactsToUpload = new ArrayList<>(extractedArtifacts);
             List<ArtifactDefinition> artifactsToUpdate = new ArrayList<>();
             List<ArtifactDefinition> artifactsToDelete = new ArrayList<>();
-            if (curNodeType != null) {
-                Map<String, ArtifactDefinition> existingArtifacts = new HashMap<>();
-                if (curNodeType.getDeploymentArtifacts() != null) {
-                    existingArtifacts.putAll(curNodeType.getDeploymentArtifacts());
-                }
-                if (curNodeType.getArtifacts() != null) {
-                    existingArtifacts
-                            .putAll(curNodeType.getArtifacts().entrySet().stream()
-                                    .filter(e -> e.getValue()
-                                            .getArtifactGroupType() == ArtifactGroupTypeEnum.INFORMATIONAL)
-                                    .collect(Collectors.toMap(e -> e.getKey(), e -> e.getValue())));
-                }
-                for (ArtifactDefinition currNewArtifact : extractedArtifacts) {
-                    ArtifactDefinition foundArtifact;
-
-                    if (!existingArtifacts.isEmpty()) {
-                        foundArtifact = existingArtifacts.values().stream()
-                                .filter(a -> a.getArtifactName().equals(currNewArtifact.getArtifactName())).findFirst()
-                                .orElse(null);
-                        if (foundArtifact != null) {
-                            if (foundArtifact.getArtifactType().equals(currNewArtifact.getArtifactType())) {
-                                if (!foundArtifact.getArtifactChecksum()
-                                        .equals(currNewArtifact.getArtifactChecksum())) {
-                                    foundArtifact.setPayload(currNewArtifact.getPayloadData());
-                                    foundArtifact.setPayloadData(
-                                            Base64.encodeBase64String(currNewArtifact.getPayloadData()));
-                                    foundArtifact.setArtifactChecksum(GeneralUtility
-                                            .calculateMD5Base64EncodedByByteArray(currNewArtifact.getPayloadData()));
-                                    artifactsToUpdate.add(foundArtifact);
-                                }
-                                existingArtifacts.remove(foundArtifact.getArtifactLabel());
-                                artifactsToUpload.remove(currNewArtifact);
-                            } else {
-                                log.debug("Can't upload two artifact with the same name {}.",
-                                        currNewArtifact.getArtifactName());
-                                ResponseFormat responseFormat = ResponseFormatManager.getInstance().getResponseFormat(
-                                        ActionStatus.ARTIFACT_ALRADY_EXIST_IN_DIFFERENT_TYPE_IN_CSAR,
-                                        currNewArtifact.getArtifactName(), currNewArtifact.getArtifactType(),
-                                        foundArtifact.getArtifactType());
-                                responseWrapper.setInnerElement(responseFormat);
-                                break;
-                            }
-                        }
-                    }
-                }
-                if (responseWrapper.isEmpty()) {
-                    artifactsToDelete.addAll(existingArtifacts.values());
-                }
-            }
-            if (responseWrapper.isEmpty()) {
-                if (!artifactsToUpload.isEmpty() || !artifactsToUpdate.isEmpty() || !artifactsToDelete.isEmpty()) {
-                    nodeTypeArtifactsToHandle = new EnumMap<>(ArtifactOperationEnum.class);
-                    if (!artifactsToUpload.isEmpty())
-                        nodeTypeArtifactsToHandle.put(ArtifactOperationEnum.CREATE, artifactsToUpload);
-                    if (!artifactsToUpdate.isEmpty())
-                        nodeTypeArtifactsToHandle.put(ArtifactOperationEnum.UPDATE, artifactsToUpdate);
-                    if (!artifactsToDelete.isEmpty())
-                        nodeTypeArtifactsToHandle.put(ArtifactOperationEnum.DELETE, artifactsToDelete);
-                }
-                nodeTypeArtifactsToHandleRes = Either.left(nodeTypeArtifactsToHandle);
-            }
-            if (!responseWrapper.isEmpty()) {
-                nodeTypeArtifactsToHandleRes = Either.right(responseWrapper.getInnerElement());
-            }
+            processExistingNodeTypeArtifacts(extractedArtifacts, artifactsToUpload, artifactsToUpdate, artifactsToDelete,
+                    collectExistingArtifacts(curNodeType));
+            nodeTypeArtifactsToHandle = putFoundArtifacts(artifactsToUpload, artifactsToUpdate, artifactsToDelete);
         } catch (Exception e) {
-            ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR);
-            responseWrapper.setInnerElement(responseFormat);
             log.debug("Exception occured when findNodeTypeArtifactsToHandle, error is:{}", e.getMessage(), e);
+            throw new ComponentException(ActionStatus.GENERAL_ERROR);
         }
-        return nodeTypeArtifactsToHandleRes;
+        return nodeTypeArtifactsToHandle;
+    }
+
+    private EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>> putFoundArtifacts(List<ArtifactDefinition> artifactsToUpload, List<ArtifactDefinition> artifactsToUpdate, List<ArtifactDefinition> artifactsToDelete) {
+        EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>> nodeTypeArtifactsToHandle = null;
+        if (!artifactsToUpload.isEmpty() || !artifactsToUpdate.isEmpty() || !artifactsToDelete.isEmpty()) {
+            nodeTypeArtifactsToHandle = new EnumMap<>(ArtifactOperationEnum.class);
+            if (!artifactsToUpload.isEmpty()) {
+                nodeTypeArtifactsToHandle.put(ArtifactOperationEnum.CREATE, artifactsToUpload);
+            }
+            if (!artifactsToUpdate.isEmpty()) {
+                nodeTypeArtifactsToHandle.put(ArtifactOperationEnum.UPDATE, artifactsToUpdate);
+            }
+            if (!artifactsToDelete.isEmpty()) {
+                nodeTypeArtifactsToHandle.put(ArtifactOperationEnum.DELETE, artifactsToDelete);
+            }
+        }
+        return nodeTypeArtifactsToHandle;
+    }
+
+    private void processExistingNodeTypeArtifacts(List<ArtifactDefinition> extractedArtifacts, List<ArtifactDefinition> artifactsToUpload,
+                                                  List<ArtifactDefinition> artifactsToUpdate, List<ArtifactDefinition> artifactsToDelete,
+                                                  Map<String, ArtifactDefinition> existingArtifacts) {
+        if (!existingArtifacts.isEmpty()) {
+            extractedArtifacts.stream().forEach(a -> processNodeTypeArtifact(artifactsToUpload, artifactsToUpdate, existingArtifacts, a));
+            artifactsToDelete.addAll(existingArtifacts.values());
+        }
+    }
+
+    private void processNodeTypeArtifact(List<ArtifactDefinition> artifactsToUpload, List<ArtifactDefinition> artifactsToUpdate, Map<String, ArtifactDefinition> existingArtifacts, ArtifactDefinition currNewArtifact) {
+        Optional<ArtifactDefinition> foundArtifact = existingArtifacts.values()
+                .stream()
+                .filter(a -> a.getArtifactName().equals(currNewArtifact.getArtifactName()))
+                .findFirst();
+        if (foundArtifact.isPresent()) {
+            if (foundArtifact.get().getArtifactType().equals(currNewArtifact.getArtifactType())) {
+                updateFoundArtifact(artifactsToUpdate, currNewArtifact, foundArtifact.get());
+                existingArtifacts.remove(foundArtifact.get().getArtifactLabel());
+                artifactsToUpload.remove(currNewArtifact);
+            } else {
+                log.debug("Can't upload two artifact with the same name {}.", currNewArtifact.getArtifactName());
+                throw new ComponentException(ActionStatus.ARTIFACT_ALRADY_EXIST_IN_DIFFERENT_TYPE_IN_CSAR,
+                        currNewArtifact.getArtifactName(), currNewArtifact.getArtifactType(),
+                        foundArtifact.get().getArtifactType());
+            }
+        }
+    }
+
+    private void updateFoundArtifact(List<ArtifactDefinition> artifactsToUpdate, ArtifactDefinition currNewArtifact, ArtifactDefinition foundArtifact) {
+        if (!foundArtifact.getArtifactChecksum().equals(currNewArtifact.getArtifactChecksum())) {
+            foundArtifact.setPayload(currNewArtifact.getPayloadData());
+            foundArtifact.setPayloadData(
+                    Base64.encodeBase64String(currNewArtifact.getPayloadData()));
+            foundArtifact.setArtifactChecksum(GeneralUtility
+                    .calculateMD5Base64EncodedByByteArray(currNewArtifact.getPayloadData()));
+            artifactsToUpdate.add(foundArtifact);
+        }
+    }
+
+    private Map<String, ArtifactDefinition> collectExistingArtifacts(Resource curNodeType) {
+        Map<String, ArtifactDefinition> existingArtifacts = new HashMap<>();
+        if (curNodeType == null) {
+            return existingArtifacts;
+        }
+        if (MapUtils.isNotEmpty(curNodeType.getDeploymentArtifacts())) {
+            existingArtifacts.putAll(curNodeType.getDeploymentArtifacts());
+        }
+        if (MapUtils.isNotEmpty(curNodeType.getArtifacts())) {
+            existingArtifacts
+                    .putAll(curNodeType.getArtifacts().entrySet()
+                            .stream()
+                            .filter(e -> e.getValue().getArtifactGroupType() == ArtifactGroupTypeEnum.INFORMATIONAL)
+                            .collect(toMap(Map.Entry::getKey, Map.Entry::getValue)));
+        }
+        return existingArtifacts;
     }
 
     /**
@@ -987,7 +747,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                         resource.getName());
                 Either<? extends Component, ResponseFormat> checkoutRes = lifecycleBusinessLogic.changeComponentState(
                         resource.getComponentType(), resource.getUniqueId(), user, LifeCycleTransitionEnum.CHECKOUT,
-                        new LifecycleChangeInfoWithAction("certification on import",
+                        new LifecycleChangeInfoWithAction(CERTIFICATION_ON_IMPORT,
                                 LifecycleChanceActionEnum.CREATE_FROM_CSAR),
                         inTransaction, true);
                 if (checkoutRes.isRight()) {
@@ -1099,216 +859,42 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 
     private void extractNodeTypes(Map<String, Object> nodes, Map<String, Object> mappedToscaTemplate) {
         Either<Map<String, Object>, ResultStatusEnum> eitherNodeTypes = ImportUtils
-                .findFirstToscaMapElement(mappedToscaTemplate, ToscaTagNamesEnum.NODE_TYPES);
+                .findFirstToscaMapElement(mappedToscaTemplate, TypeUtils.ToscaTagNamesEnum.NODE_TYPES);
         if (eitherNodeTypes.isLeft()) {
             nodes.putAll(eitherNodeTypes.left().value());
         }
     }
 
-    public Either<Resource, ResponseFormat> createResourceFromCsar(Resource resource, User user,
-                                                                   Either<Map<String, byte[]>, StorageOperationStatus> csarUIPayload, String csarUUID) {
+    public Resource createResourceFromCsar(Resource resource, User user,
+                                           Map<String, byte[]> csarUIPayload, String csarUUID) {
         log.trace("************* created successfully from YAML, resource TOSCA ");
 
-        Either<Map<String, byte[]>, StorageOperationStatus> csar = null;
-        if (csarUIPayload != null && csarUIPayload.left() != null && csarUIPayload.left().value() != null) {
-            csar = csarUIPayload;
-        } else {
-            csar = csarOperation.getCsar(csarUUID, user);
-        }
+        CsarInfo csarInfo = csarBusinessLogic.getCsarInfo(resource, null, user, csarUIPayload, csarUUID);
 
-        Either<ImmutablePair<String, String>, ResponseFormat> toscaYamlCsarStatus = validateAndParseCsar(resource, user,
-                csarUUID, csar);
-        if (toscaYamlCsarStatus.isRight()) {
-            return Either.right(toscaYamlCsarStatus.right().value());
-        }
-        Either<String, ResponseFormat> toscaYamlChecksum = CsarValidationUtils.getToscaYamlChecksum(csar.left().value(),
-                csarUUID, componentsUtils);
-        if (toscaYamlChecksum.isRight()) {
-            log.debug("Failed to calculate checksum for CSAR {}, error  {}", csarUUID,
-                    toscaYamlChecksum.right().value());
-            return Either.right(toscaYamlChecksum.right().value());
-        }
-        resource.getComponentMetadataDefinition().getMetadataDataDefinition()
-                .setImportedToscaChecksum(toscaYamlChecksum.left().value());
-
-        String yamlFileName = toscaYamlCsarStatus.left().value().getKey();
-        String yamlFileContents = toscaYamlCsarStatus.left().value().getValue();
-        log.trace("YAML topology file found in CSAR, file name: {}, contents: {}", yamlFileName, yamlFileContents);
-
-        CsarInfo csarInfo = new CsarInfo(resource.getName(), user, csarUUID, csar.left().value(), yamlFileContents,
-                false);
-        Map<String, NodeTypeInfo> nodeTypesInfo = extractNodeTypesInfo(csarInfo);
+        Map<String, NodeTypeInfo> nodeTypesInfo = csarInfo.extractNodeTypesInfo();
         Either<Map<String, EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>>, ResponseFormat> findNodeTypesArtifactsToHandleRes = findNodeTypesArtifactsToHandle(
                 nodeTypesInfo, csarInfo, resource);
         if (findNodeTypesArtifactsToHandleRes.isRight()) {
             log.debug("failed to find node types for update with artifacts during import csar {}. ",
                     csarInfo.getCsarUUID());
-            return Either.right(findNodeTypesArtifactsToHandleRes.right().value());
+            throw new ComponentException(findNodeTypesArtifactsToHandleRes.right().value());
         }
-        Either<Resource, ResponseFormat> createResourceFromYaml = createResourceFromYaml(resource, yamlFileContents,
-                yamlFileName, nodeTypesInfo, csarInfo, findNodeTypesArtifactsToHandleRes.left().value(), true, false,
+        Resource vfResource = createResourceFromYaml(resource, csarInfo.getMainTemplateContent(), csarInfo.getMainTemplateName(),
+                nodeTypesInfo, csarInfo, findNodeTypesArtifactsToHandleRes.left().value(), true, false,
                 null);
-        if (createResourceFromYaml.isRight()) {
-            log.debug("Couldn't create resource from YAML");
-            return Either.right(createResourceFromYaml.right().value());
-        }
-
-        Resource vfResource = createResourceFromYaml.left().value();
         log.trace("*************VF Resource created successfully from YAML, resource TOSCA name: {}",
                 vfResource.getToscaResourceName());
-        return Either.left(vfResource);
+        return vfResource;
     }
 
-    private Map<String, NodeTypeInfo> extractNodeTypesInfo(CsarInfo csarInfo) {
-        Map<String, NodeTypeInfo> nodeTypesInfo = new HashMap<>();
-        List<Entry<String, byte[]>> globalSubstitutes = new ArrayList<>();
-        for (Map.Entry<String, byte[]> entry : csarInfo.getCsar().entrySet()) {
-            extractNodeTypeInfo(nodeTypesInfo, globalSubstitutes, entry);
-        }
-        if (CollectionUtils.isNotEmpty(globalSubstitutes)) {
-            setDerivedFrom(nodeTypesInfo, globalSubstitutes);
-        }
-        markNestedVfc(csarInfo.getMappedToscaMainTemplate(), nodeTypesInfo);
-        return nodeTypesInfo;
-    }
-
-    @SuppressWarnings("unchecked")
-    private void setDerivedFrom(Map<String, NodeTypeInfo> nodeTypesInfo,
-                                List<Entry<String, byte[]>> globalSubstitutes) {
-        for (Map.Entry<String, byte[]> entry : globalSubstitutes) {
-            String yamlFileContents = new String(entry.getValue());
-            Map<String, Object> mappedToscaTemplate = (Map<String, Object>) new Yaml().load(yamlFileContents);
-            Either<Object, ResultStatusEnum> nodeTypesEither = ImportUtils.findToscaElement(mappedToscaTemplate,
-                    ToscaTagNamesEnum.NODE_TYPES, ToscaElementTypeEnum.MAP);
-            if (nodeTypesEither.isLeft()) {
-                Map<String, Object> nodeTypes = (Map<String, Object>) nodeTypesEither.left().value();
-                for (Entry<String, Object> nodeType : nodeTypes.entrySet()) {
-                    Map<String, Object> nodeTypeMap = (Map<String, Object>) nodeType.getValue();
-                    if (nodeTypeMap.containsKey(ToscaTagNamesEnum.DERIVED_FROM.getElementName())) {
-                        if (nodeTypesInfo.containsKey(nodeType.getKey())) {
-                            NodeTypeInfo nodeTypeInfo = nodeTypesInfo.get(nodeType.getKey());
-                            List<String> derivedFrom = new ArrayList<>();
-                            derivedFrom.add((String) nodeTypeMap.get(ToscaTagNamesEnum.DERIVED_FROM.getElementName()));
-                            nodeTypeInfo.setDerivedFrom(derivedFrom);
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    private void extractNodeTypeInfo(Map<String, NodeTypeInfo> nodeTypesInfo,
-                                     List<Entry<String, byte[]>> globalSubstitutes, Map.Entry<String, byte[]> entry) {
-        if (Pattern.compile(CsarUtils.SERVICE_TEMPLATE_PATH_PATTERN).matcher(entry.getKey()).matches()) {
-            if (!isGlobalSubstitute(entry.getKey())) {
-                String yamlFileContents = new String(entry.getValue());
-                Map<String, Object> mappedToscaTemplate = (Map<String, Object>) new Yaml().load(yamlFileContents);
-                Either<Object, ResultStatusEnum> substitutionMappingsEither = ImportUtils.findToscaElement(
-                        mappedToscaTemplate, ToscaTagNamesEnum.SUBSTITUTION_MAPPINGS, ToscaElementTypeEnum.MAP);
-                if (substitutionMappingsEither.isLeft()) {
-                    Map<String, Object> substitutionMappings = (Map<String, Object>) substitutionMappingsEither.left()
-                            .value();
-                    if (substitutionMappings.containsKey(ToscaTagNamesEnum.NODE_TYPE.getElementName())) {
-                        NodeTypeInfo nodeTypeInfo = new NodeTypeInfo();
-                        nodeTypeInfo.setType(
-                                (String) substitutionMappings.get(ToscaTagNamesEnum.NODE_TYPE.getElementName()));
-                        nodeTypeInfo.setTemplateFileName(entry.getKey());
-                        nodeTypeInfo.setMappedToscaTemplate(mappedToscaTemplate);
-                        nodeTypesInfo.put(nodeTypeInfo.getType(), nodeTypeInfo);
-                    }
-                }
-            } else {
-                globalSubstitutes.add(entry);
-            }
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    private void markNestedVfc(Map<String, Object> mappedToscaTemplate, Map<String, NodeTypeInfo> nodeTypesInfo) {
-        Either<Object, ResultStatusEnum> nodeTemplatesEither = ImportUtils.findToscaElement(mappedToscaTemplate,
-                ToscaTagNamesEnum.NODE_TEMPLATES, ToscaElementTypeEnum.MAP);
-        if (nodeTemplatesEither.isLeft()) {
-            Map<String, Object> nodeTemplates = (Map<String, Object>) nodeTemplatesEither.left().value();
-            for (Entry<String, Object> nodeTemplateEntry : nodeTemplates.entrySet()) {
-                Map<String, Object> nodeTemplate = (Map<String, Object>) nodeTemplateEntry.getValue();
-                if (nodeTemplate.containsKey(ToscaTagNamesEnum.TYPE.getElementName())) {
-                    String type = (String) nodeTemplate.get(ToscaTagNamesEnum.TYPE.getElementName());
-                    if (nodeTypesInfo.containsKey(type)) {
-                        NodeTypeInfo nodeTypeInfo = nodeTypesInfo.get(type);
-                        nodeTypeInfo.setNested(true);
-                    }
-                }
-            }
-        }
-    }
-
-    private boolean isGlobalSubstitute(String fileName) {
-        return fileName.equalsIgnoreCase(Constants.GLOBAL_SUBSTITUTION_TYPES_SERVICE_TEMPLATE)
-                || fileName.equalsIgnoreCase(Constants.ABSTRACT_SUBSTITUTE_GLOBAL_TYPES_SERVICE_TEMPLATE);
-    }
-
-    private Either<ImmutablePair<String, String>, ResponseFormat> validateAndParseCsar(Resource resource, User user,
-                                                                                       String csarUUID, Either<Map<String, byte[]>, StorageOperationStatus> csar) {
-        if (csar.isRight()) {
-            StorageOperationStatus value = csar.right().value();
-            log.debug("Error when fetching csar with ID {}, error: {}", csarUUID, value);
-            BeEcompErrorManager.getInstance()
-                    .logBeDaoSystemError("Creating resource from CSAR: fetching CSAR with id " + csarUUID + " failed");
-            ResponseFormat responseFormat = componentsUtils
-                    .getResponseFormat(componentsUtils.convertFromStorageResponse(value), csarUUID);
-            componentsUtils.auditResource(responseFormat, user, resource, AuditingActionEnum.CREATE_RESOURCE);
-            return Either.right(responseFormat);
-        }
-
-        Either<Boolean, ResponseFormat> validateCsarStatus = CsarValidationUtils.validateCsar(csar.left().value(),
-                csarUUID, componentsUtils);
-        if (validateCsarStatus.isRight()) {
-            ResponseFormat responseFormat = validateCsarStatus.right().value();
-            log.debug("Error when validate csar with ID {}, error: {}", csarUUID, responseFormat);
-            BeEcompErrorManager.getInstance()
-                    .logBeDaoSystemError("Creating resource from CSAR: fetching CSAR with id " + csarUUID + " failed");
-            componentsUtils.auditResource(responseFormat, user, resource, AuditingActionEnum.CREATE_RESOURCE);
-            return Either.right(responseFormat);
-        }
-
-        Either<ImmutablePair<String, String>, ResponseFormat> toscaYamlCsarStatus = CsarValidationUtils
-                .getToscaYaml(csar.left().value(), csarUUID, componentsUtils);
-
-        if (toscaYamlCsarStatus.isRight()) {
-            ResponseFormat responseFormat = toscaYamlCsarStatus.right().value();
-            log.debug("Error when try to get csar toscayamlFile with csar ID {}, error: {}", csarUUID, responseFormat);
-            BeEcompErrorManager.getInstance()
-                    .logBeDaoSystemError("Creating resource from CSAR: fetching CSAR with id " + csarUUID + " failed");
-            componentsUtils.auditResource(responseFormat, user, resource, AuditingActionEnum.CREATE_RESOURCE);
-            return Either.right(responseFormat);
-        }
-        return toscaYamlCsarStatus;
-    }
-
-    private Either<Resource, ResponseFormat> validateResourceBeforeCreate(Resource resource, User user,
-                                                                          boolean inTransaction) {
+    private Resource validateResourceBeforeCreate(Resource resource, User user, boolean inTransaction) {
         log.trace("validating resource before create");
-        Either<User, ResponseFormat> eitherCreator = validateUser(user, "Create Resource", resource,
-                AuditingActionEnum.CREATE_RESOURCE, false);
-        if (eitherCreator.isRight()) {
-            return Either.right(eitherCreator.right().value());
-        }
-        user.copyData(eitherCreator.left().value());
-
+        user.copyData(validateUser(user, CREATE_RESOURCE, resource, AuditingActionEnum.CREATE_RESOURCE, false));
         // validate user role
-        Either<Boolean, ResponseFormat> validateRes = validateUserRole(user, resource, new ArrayList<Role>(),
-                AuditingActionEnum.CREATE_RESOURCE, null);
-        if (validateRes.isRight()) {
-            return Either.right(validateRes.right().value());
-        }
+        validateUserRole(user, resource, new ArrayList<>(), AuditingActionEnum.CREATE_RESOURCE, null);
         // VF / PNF "derivedFrom" should be null (or ignored)
         if (ModelConverter.isAtomicComponent(resource)) {
-            Either<Boolean, ResponseFormat> validateDerivedFromNotEmpty = validateDerivedFromNotEmpty(user, resource,
-                    AuditingActionEnum.CREATE_RESOURCE);
-            if (validateDerivedFromNotEmpty.isRight()) {
-                return Either.right(validateDerivedFromNotEmpty.right().value());
-            }
+            validateDerivedFromNotEmpty(user, resource, AuditingActionEnum.CREATE_RESOURCE);
         }
         return validateResourceBeforeCreate(resource, user, AuditingActionEnum.CREATE_RESOURCE, inTransaction, null);
 
@@ -1316,239 +902,180 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 
     // resource, yamlFileContents, yamlFileName, nodeTypesInfo,csarInfo,
     // nodeTypesArtifactsToCreate, true, false, null
-    private Either<Resource, ResponseFormat> createResourceFromYaml(Resource resource, String topologyTemplateYaml,
-                                                                    String yamlName, Map<String, NodeTypeInfo> nodeTypesInfo, CsarInfo csarInfo,
-                                                                    Map<String, EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>> nodeTypesArtifactsToCreate,
-                                                                    boolean shouldLock, boolean inTransaction, String nodeName) {
+    private Resource createResourceFromYaml(Resource resource, String topologyTemplateYaml,
+                                            String yamlName, Map<String, NodeTypeInfo> nodeTypesInfo, CsarInfo csarInfo,
+                                            Map<String, EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>> nodeTypesArtifactsToCreate,
+                                            boolean shouldLock, boolean inTransaction, String nodeName) {
 
-        List<ArtifactDefinition> createdArtifacts = new ArrayList<ArtifactDefinition>();
-        log.trace("************* createResourceFromYaml before parse yaml ");
-        Either<ParsedToscaYamlInfo, ResponseFormat> parseResourceInfoFromYamlEither = parseResourceInfoFromYaml(
-                yamlName, resource, topologyTemplateYaml, csarInfo.getCreatedNodesToscaResourceNames(), nodeTypesInfo,
-                nodeName);
-        if (parseResourceInfoFromYamlEither.isRight()) {
-            ResponseFormat responseFormat = parseResourceInfoFromYamlEither.right().value();
+        List<ArtifactDefinition> createdArtifacts = new ArrayList<>();
+        Resource createdResource;
+        try{
+            ParsedToscaYamlInfo parsedToscaYamlInfo = csarBusinessLogic.getParsedToscaYamlInfo(topologyTemplateYaml, yamlName, nodeTypesInfo, csarInfo, nodeName);
+            log.debug("#createResourceFromYaml - Going to create resource {} and RIs ", resource.getName());
+            createdResource = createResourceAndRIsFromYaml(yamlName, resource,
+                    parsedToscaYamlInfo, AuditingActionEnum.IMPORT_RESOURCE, false, createdArtifacts, topologyTemplateYaml,
+                    nodeTypesInfo, csarInfo, nodeTypesArtifactsToCreate, shouldLock, inTransaction, nodeName);
+            log.debug("#createResourceFromYaml - The resource {} has been created ", resource.getName());
+        } catch (ComponentException e) {
+            ResponseFormat responseFormat = e.getResponseFormat() == null ? componentsUtils.getResponseFormat(e.getActionStatus(), e.getParams()) : e.getResponseFormat();
             componentsUtils.auditResource(responseFormat, csarInfo.getModifier(), resource, AuditingActionEnum.IMPORT_RESOURCE);
-            return Either.right(responseFormat);
-        }
-        log.trace("************* createResourceFromYaml after parse yaml ");
-        ParsedToscaYamlInfo parsedToscaYamlInfo = parseResourceInfoFromYamlEither.left().value();
-        log.debug("The parsed tosca yaml info is {}", parsedToscaYamlInfo);
-        log.trace("************* createResourceFromYaml before create ");
-        Either<Resource, ResponseFormat> createdResourceResponse = createResourceAndRIsFromYaml(yamlName, resource,
-                parsedToscaYamlInfo, AuditingActionEnum.IMPORT_RESOURCE, false, createdArtifacts, topologyTemplateYaml,
-                nodeTypesInfo, csarInfo, nodeTypesArtifactsToCreate, shouldLock, inTransaction, nodeName);
-        log.trace("************* createResourceFromYaml after create ");
-        if (createdResourceResponse.isRight()) {
-            ResponseFormat responseFormat = createdResourceResponse.right().value();
+            throw e;
+        } catch (StorageException e){
+            ResponseFormat responseFormat = componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(e.getStorageOperationStatus()));
             componentsUtils.auditResource(responseFormat, csarInfo.getModifier(), resource, AuditingActionEnum.IMPORT_RESOURCE);
-            return Either.right(responseFormat);
+            throw e;
         }
-
-        return createdResourceResponse;
+        return createdResource;
 
     }
 
-    public Either<Map<String, Resource>, ResponseFormat> createResourcesFromYamlNodeTypesList(String yamlName,
-                                                                                              Resource resource, Map<String, Object> mappedToscaTemplate, boolean needLock,
-                                                                                              Map<String, EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>> nodeTypesArtifactsToHandle,
-                                                                                              List<ArtifactDefinition> nodeTypesNewCreatedArtifacts, Map<String, NodeTypeInfo> nodeTypesInfo,
-                                                                                              CsarInfo csarInfo) {
+    public Map<String, Resource> createResourcesFromYamlNodeTypesList(String yamlName, Resource resource, Map<String, Object> mappedToscaTemplate, boolean needLock,
+                                                                      Map<String, EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>> nodeTypesArtifactsToHandle,
+                                                                      List<ArtifactDefinition> nodeTypesNewCreatedArtifacts, Map<String, NodeTypeInfo> nodeTypesInfo,
+                                                                      CsarInfo csarInfo) {
 
-        Either<String, ResultStatusEnum> tosca_version = ImportUtils.findFirstToscaStringElement(mappedToscaTemplate,
-                ToscaTagNamesEnum.TOSCA_VERSION);
-        if (tosca_version.isRight()) {
-            ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.INVALID_TOSCA_TEMPLATE);
-            return Either.right(responseFormat);
+        Either<String, ResultStatusEnum> toscaVersion = findFirstToscaStringElement(mappedToscaTemplate,
+                TypeUtils.ToscaTagNamesEnum.TOSCA_VERSION);
+        if (toscaVersion.isRight()) {
+            throw new ComponentException(ActionStatus.INVALID_TOSCA_TEMPLATE);
         }
-        Either<Map<String, Object>, ResultStatusEnum> eitherNodeTypes = ImportUtils
-                .findFirstToscaMapElement(mappedToscaTemplate, ToscaTagNamesEnum.NODE_TYPES);
-        Either<Map<String, Resource>, ResponseFormat> result = Either.left(csarInfo.getCreatedNodes());
-        Map<String, Object> mapToConvert = new HashMap<String, Object>();
-        mapToConvert.put(ToscaTagNamesEnum.TOSCA_VERSION.getElementName(), tosca_version.left().value());
+        Map<String, Object> mapToConvert = new HashMap<>();
+        mapToConvert.put(TypeUtils.ToscaTagNamesEnum.TOSCA_VERSION.getElementName(), toscaVersion.left().value());
+        Map<String, Object> nodeTypes = getNodeTypesFromTemplate(mappedToscaTemplate);
+        createNodeTypes(yamlName, resource, needLock, nodeTypesArtifactsToHandle, nodeTypesNewCreatedArtifacts, nodeTypesInfo, csarInfo, mapToConvert, nodeTypes);
+        return csarInfo.getCreatedNodes();
+    }
+
+    private Map<String,Object> getNodeTypesFromTemplate(Map<String, Object> mappedToscaTemplate) {
+        return ImportUtils.findFirstToscaMapElement(mappedToscaTemplate, TypeUtils.ToscaTagNamesEnum.NODE_TYPES)
+                .left().orValue(HashMap::new);
+    }
+
+    private void createNodeTypes(String yamlName, Resource resource, boolean needLock, Map<String, EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>> nodeTypesArtifactsToHandle, List<ArtifactDefinition> nodeTypesNewCreatedArtifacts, Map<String, NodeTypeInfo> nodeTypesInfo, CsarInfo csarInfo, Map<String, Object> mapToConvert, Map<String, Object> nodeTypes) {
+        Iterator<Entry<String, Object>> nodesNameValueIter = nodeTypes.entrySet().iterator();
         Resource vfcCreated = null;
-        if (eitherNodeTypes.isLeft()) {
-            Iterator<Entry<String, Object>> nodesNameValue = eitherNodeTypes.left().value().entrySet().iterator();
-            while (nodesNameValue.hasNext()) {
-                Entry<String, Object> nodeType = nodesNameValue.next();
-                Map<ArtifactOperationEnum, List<ArtifactDefinition>> nodeTypeArtifactsToHandle = nodeTypesArtifactsToHandle == null
-                        || nodeTypesArtifactsToHandle.isEmpty() ? null
-                        : nodeTypesArtifactsToHandle.get(nodeType.getKey());
+        while (nodesNameValueIter.hasNext()) {
+            Entry<String, Object> nodeType = nodesNameValueIter.next();
+            Map<ArtifactOperationEnum, List<ArtifactDefinition>> nodeTypeArtifactsToHandle = nodeTypesArtifactsToHandle == null
+                    || nodeTypesArtifactsToHandle.isEmpty() ? null
+                    : nodeTypesArtifactsToHandle.get(nodeType.getKey());
 
-                if (nodeTypesInfo.containsKey(nodeType.getKey())) {
-                    log.trace("************* Going to handle nested vfc {}", nodeType.getKey());
-                    Either<Resource, ResponseFormat> handleNeatedVfcYaml = handleNestedVfc(resource,
-                            nodeTypesArtifactsToHandle, nodeTypesNewCreatedArtifacts, nodeTypesInfo, csarInfo,
-                            nodeType.getKey());
-                    log.trace("************* Finished to handle nested vfc {}", nodeType.getKey());
-                    if (handleNeatedVfcYaml.isRight()) {
-                        return Either.right(handleNeatedVfcYaml.right().value());
-                    }
-                    vfcCreated = handleNeatedVfcYaml.left().value();
-                } else if (csarInfo.getCreatedNodesToscaResourceNames() != null
-                        && !csarInfo.getCreatedNodesToscaResourceNames().containsKey(nodeType.getKey())) {
-                    log.trace("************* Going to create node {}", nodeType.getKey());
-                    Either<ImmutablePair<Resource, ActionStatus>, ResponseFormat> resourceCreated = this
-                            .createNodeTypeResourceFromYaml(yamlName, nodeType, csarInfo.getModifier(), mapToConvert,
-                                    resource, needLock, nodeTypeArtifactsToHandle, nodeTypesNewCreatedArtifacts, true,
-                                    csarInfo, true);
-                    log.debug("************* Finished to create node {}", nodeType.getKey());
+            if (nodeTypesInfo.containsKey(nodeType.getKey())) {
+                log.trace("************* Going to handle nested vfc {}", nodeType.getKey());
+                vfcCreated = handleNestedVfc(resource,
+                        nodeTypesArtifactsToHandle, nodeTypesNewCreatedArtifacts, nodeTypesInfo, csarInfo,
+                        nodeType.getKey());
+                log.trace("************* Finished to handle nested vfc {}", nodeType.getKey());
+            } else if (csarInfo.getCreatedNodesToscaResourceNames() != null
+                    && !csarInfo.getCreatedNodesToscaResourceNames().containsKey(nodeType.getKey())) {
+                log.trace("************* Going to create node {}", nodeType.getKey());
+                ImmutablePair<Resource, ActionStatus> resourceCreated = createNodeTypeResourceFromYaml(yamlName, nodeType, csarInfo.getModifier(), mapToConvert,
+                        resource, needLock, nodeTypeArtifactsToHandle, nodeTypesNewCreatedArtifacts, true,
+                        csarInfo, true);
+                log.debug("************* Finished to create node {}", nodeType.getKey());
 
-                    if (resourceCreated.isRight()) {
-                        return Either.right(resourceCreated.right().value());
-                    }
-                    vfcCreated = resourceCreated.left().value().getLeft();
-                    csarInfo.getCreatedNodesToscaResourceNames().put(nodeType.getKey(),
-                            vfcCreated.getToscaResourceName());
-                }
-                if (vfcCreated != null) {
-                    csarInfo.getCreatedNodes().put(nodeType.getKey(), vfcCreated);
-                }
-                mapToConvert.remove(ToscaTagNamesEnum.NODE_TYPES.getElementName());
+                vfcCreated = resourceCreated.getLeft();
+                csarInfo.getCreatedNodesToscaResourceNames().put(nodeType.getKey(),
+                        vfcCreated.getToscaResourceName());
             }
+            if (vfcCreated != null) {
+                csarInfo.getCreatedNodes().put(nodeType.getKey(), vfcCreated);
+            }
+            mapToConvert.remove(TypeUtils.ToscaTagNamesEnum.NODE_TYPES.getElementName());
         }
-        return result;
     }
 
-    private Either<Resource, ResponseFormat> handleNestedVfc(Resource resource,
-                                                             Map<String, EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>> nodesArtifactsToHandle,
-                                                             List<ArtifactDefinition> createdArtifacts, Map<String, NodeTypeInfo> nodesInfo, CsarInfo csarInfo,
-                                                             String nodeName) {
+    private Resource handleNestedVfc(Resource resource, Map<String, EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>> nodesArtifactsToHandle,
+                                     List<ArtifactDefinition> createdArtifacts, Map<String, NodeTypeInfo> nodesInfo, CsarInfo csarInfo,
+                                     String nodeName) {
 
-        Either<Resource, ResponseFormat> handleNestedVfcRes = Either.left(resource);
         String yamlName = nodesInfo.get(nodeName).getTemplateFileName();
         Map<String, Object> nestedVfcJsonMap = nodesInfo.get(nodeName).getMappedToscaTemplate();
 
         log.debug("************* Going to create node types from yaml {}", yamlName);
-        Either<Map<String, Resource>, ResponseFormat> createNodeTypesRes = createResourcesFromYamlNodeTypesList(
-                yamlName, resource, nestedVfcJsonMap, false, nodesArtifactsToHandle, createdArtifacts, nodesInfo,
-                csarInfo);
-        if (createNodeTypesRes.isRight()) {
-            log.debug("Failed to create node types from yaml {}. Status is {}", yamlName,
-                    createNodeTypesRes.right().value());
-            return Either.right(createNodeTypesRes.right().value());
-        }
+        createResourcesFromYamlNodeTypesList(yamlName, resource, nestedVfcJsonMap, false,
+                nodesArtifactsToHandle, createdArtifacts, nodesInfo, csarInfo);
         log.debug("************* Finished to create node types from yaml {}", yamlName);
 
-        if (nestedVfcJsonMap.containsKey(ToscaTagNamesEnum.TOPOLOGY_TEMPLATE.getElementName())) {
+        if (nestedVfcJsonMap.containsKey(TypeUtils.ToscaTagNamesEnum.TOPOLOGY_TEMPLATE.getElementName())) {
             log.debug("************* Going to handle complex VFC from yaml {}", yamlName);
-            handleNestedVfcRes = handleComplexVfc(resource, nodesArtifactsToHandle, createdArtifacts, nodesInfo,
+            resource = handleComplexVfc(resource, nodesArtifactsToHandle, createdArtifacts, nodesInfo,
                     csarInfo, nodeName, yamlName);
         }
-        return handleNestedVfcRes;
+        return resource;
     }
 
-    private Either<Resource, ResponseFormat> handleComplexVfc(Resource resource,
-                                                              Map<String, EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>> nodesArtifactsToHandle,
-                                                              List<ArtifactDefinition> createdArtifacts, Map<String, NodeTypeInfo> nodesInfo, CsarInfo csarInfo,
-                                                              String nodeName, String yamlName) {
+    private Resource handleComplexVfc(Resource resource, Map<String, EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>> nodesArtifactsToHandle,
+                                      List<ArtifactDefinition> createdArtifacts, Map<String, NodeTypeInfo> nodesInfo, CsarInfo csarInfo,
+                                      String nodeName, String yamlName) {
 
-        Either<Resource, ResponseFormat> result = null;
         Resource oldComplexVfc = null;
-        Resource newComplexVfc = null;
-
-        Either<Resource, ResponseFormat> buildCvfcRes = buildValidComplexVfc(resource, csarInfo, nodeName, nodesInfo);
-        if (buildCvfcRes.isRight()) {
-            log.debug("Failed to validate complex VFC for node {}. ", nodeName);
-            result = buildCvfcRes;
+        Resource newComplexVfc = buildValidComplexVfc(resource, csarInfo, nodeName, nodesInfo);
+        Either<Resource, StorageOperationStatus> oldComplexVfcRes = toscaOperationFacade
+                .getFullLatestComponentByToscaResourceName(newComplexVfc.getToscaResourceName());
+        if (oldComplexVfcRes.isRight() && oldComplexVfcRes.right().value() == StorageOperationStatus.NOT_FOUND) {
+            oldComplexVfcRes = toscaOperationFacade.getFullLatestComponentByToscaResourceName(
+                    buildNestedToscaResourceName(ResourceTypeEnum.CVFC.name(), csarInfo.getVfResourceName(),
+                            nodeName).getRight());
         }
-        if (result == null) {
-            newComplexVfc = buildCvfcRes.left().value();
-            Either<Resource, StorageOperationStatus> oldComplexVfcRes = toscaOperationFacade
-                    .getFullLatestComponentByToscaResourceName(newComplexVfc.getToscaResourceName());
-            if (oldComplexVfcRes.isRight() && oldComplexVfcRes.right().value() == StorageOperationStatus.NOT_FOUND) {
-                oldComplexVfcRes = toscaOperationFacade.getFullLatestComponentByToscaResourceName(
-                        buildNestedToscaResourceName(ResourceTypeEnum.CVFC.name(), csarInfo.getVfResourceName(),
-                                nodeName).getRight());
-            }
-            if (oldComplexVfcRes.isRight() && oldComplexVfcRes.right().value() != StorageOperationStatus.NOT_FOUND) {
-                log.debug("Failed to fetch previous complex VFC by tosca resource name {}. Status is {}. ",
-                        newComplexVfc.getToscaResourceName(), oldComplexVfcRes.right().value());
-                result = Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
-            } else if (oldComplexVfcRes.isLeft()) {
-                log.debug("validate derived before update");
-                Either<Boolean, ResponseFormat> eitherValidation = validateNestedDerivedFromDuringUpdate(
-                        oldComplexVfcRes.left().value(), newComplexVfc,
-                        ValidationUtils.hasBeenCertified(oldComplexVfcRes.left().value().getVersion()));
-                if (eitherValidation.isLeft()) {
-                    oldComplexVfc = oldComplexVfcRes.left().value();
-                }
+        if (oldComplexVfcRes.isRight() && oldComplexVfcRes.right().value() != StorageOperationStatus.NOT_FOUND) {
+            log.debug("Failed to fetch previous complex VFC by tosca resource name {}. Status is {}. ",
+                    newComplexVfc.getToscaResourceName(), oldComplexVfcRes.right().value());
+            throw new ComponentException(ActionStatus.GENERAL_ERROR);
+        } else if (oldComplexVfcRes.isLeft()) {
+            log.debug(VALIDATE_DERIVED_BEFORE_UPDATE);
+            Either<Boolean, ResponseFormat> eitherValidation = validateNestedDerivedFromDuringUpdate(
+                    oldComplexVfcRes.left().value(), newComplexVfc,
+                    ValidationUtils.hasBeenCertified(oldComplexVfcRes.left().value().getVersion()));
+            if (eitherValidation.isLeft()) {
+                oldComplexVfc = oldComplexVfcRes.left().value();
             }
         }
-        if (result == null) {
-            result = handleComplexVfc(nodesArtifactsToHandle, createdArtifacts, nodesInfo, csarInfo, nodeName, yamlName,
-                    oldComplexVfc, newComplexVfc);
+        newComplexVfc = handleComplexVfc(nodesArtifactsToHandle, createdArtifacts, nodesInfo, csarInfo, nodeName, yamlName,
+                oldComplexVfc, newComplexVfc);
+        csarInfo.getCreatedNodesToscaResourceNames().put(nodeName, newComplexVfc.getToscaResourceName());
+        LifecycleChangeInfoWithAction lifecycleChangeInfo = new LifecycleChangeInfoWithAction(
+                CERTIFICATION_ON_IMPORT, LifecycleChanceActionEnum.CREATE_FROM_CSAR);
+        log.debug("Going to certify cvfc {}. ", newComplexVfc.getName());
+        Either<Resource, ResponseFormat> result = propagateStateToCertified(csarInfo.getModifier(), newComplexVfc, lifecycleChangeInfo, true, false,
+                true);
+        if (result.isRight()) {
+            log.debug("Failed to certify complex VFC resource {}. ", newComplexVfc.getName());
         }
-        if (result.isLeft()) {
-            newComplexVfc = result.left().value();
-            csarInfo.getCreatedNodesToscaResourceNames().put(nodeName, newComplexVfc.getToscaResourceName());
-            LifecycleChangeInfoWithAction lifecycleChangeInfo = new LifecycleChangeInfoWithAction(
-                    "certification on import", LifecycleChanceActionEnum.CREATE_FROM_CSAR);
-            log.debug("Going to certify cvfc {}. ", newComplexVfc.getName());
-            result = propagateStateToCertified(csarInfo.getModifier(), newComplexVfc, lifecycleChangeInfo, true, false,
-                    true);
-            if (result.isRight()) {
-                log.debug("Failed to certify complex VFC resource {}. ", newComplexVfc.getName());
-            }
-        }
-        if (result.isLeft()) {
-            csarInfo.getCreatedNodes().put(nodeName, result.left().value());
-            csarInfo.getCvfcToCreateQueue().remove();
-        }
-        return result;
+        csarInfo.getCreatedNodes().put(nodeName, result.left().value());
+        csarInfo.removeNodeFromQueue();
+        return result.left().value();
     }
 
-    private Either<Resource, ResponseFormat> handleComplexVfc(
-            Map<String, EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>> nodesArtifactsToHandle,
-            List<ArtifactDefinition> createdArtifacts, Map<String, NodeTypeInfo> nodesInfo, CsarInfo csarInfo,
-            String nodeName, String yamlName, Resource oldComplexVfc, Resource newComplexVfc) {
+    private Resource handleComplexVfc(Map<String, EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>> nodesArtifactsToHandle,
+                                      List<ArtifactDefinition> createdArtifacts, Map<String, NodeTypeInfo> nodesInfo, CsarInfo csarInfo,
+                                      String nodeName, String yamlName, Resource oldComplexVfc, Resource newComplexVfc) {
 
-        Either<Resource, ResponseFormat> handleComplexVfcRes;
+        Resource handleComplexVfcRes;
         Map<String, Object> mappedToscaTemplate = nodesInfo.get(nodeName).getMappedToscaTemplate();
         String yamlContent = new String(csarInfo.getCsar().get(yamlName));
         Map<String, NodeTypeInfo> newNodeTypesInfo = nodesInfo.entrySet().stream()
-                .collect(Collectors.toMap(e -> e.getKey(), e -> e.getValue().getUnmarkedCopy()));
-        markNestedVfc(mappedToscaTemplate, newNodeTypesInfo);
+                .collect(toMap(Entry::getKey, e -> e.getValue().getUnmarkedCopy()));
+        CsarInfo.markNestedVfc(mappedToscaTemplate, newNodeTypesInfo);
         if (oldComplexVfc == null) {
             handleComplexVfcRes = createResourceFromYaml(newComplexVfc, yamlContent, yamlName, newNodeTypesInfo,
                     csarInfo, nodesArtifactsToHandle, false, true, nodeName);
-            if (handleComplexVfcRes.isRight()) {
-                log.debug("Failed to create resource {} from YAML {}. ", newComplexVfc.getName(), yamlName);
-            }
         } else {
             handleComplexVfcRes = updateResourceFromYaml(oldComplexVfc, newComplexVfc,
                     AuditingActionEnum.UPDATE_RESOURCE_METADATA, createdArtifacts, yamlContent, yamlName, csarInfo,
                     newNodeTypesInfo, nodesArtifactsToHandle, nodeName, true);
-            if (handleComplexVfcRes.isRight()) {
-                log.debug("Failed to update resource {} from YAML {}. ", oldComplexVfc.getName(), yamlName);
-            }
         }
         return handleComplexVfcRes;
     }
 
-    private Either<Resource, ResponseFormat> buildValidComplexVfc(Resource resource, CsarInfo csarInfo, String nodeName,
-                                                                  Map<String, NodeTypeInfo> nodesInfo) {
+    private Resource buildValidComplexVfc(Resource resource, CsarInfo csarInfo, String nodeName,
+                                          Map<String, NodeTypeInfo> nodesInfo) {
 
-        Either<Resource, ResponseFormat> result = null;
         Resource complexVfc = buildComplexVfcMetadata(resource, csarInfo, nodeName, nodesInfo);
         log.debug("************* Going to validate complex VFC from yaml {}", complexVfc.getName());
-
-        if (!csarInfo.getCvfcToCreateQueue().contains(nodeName)) {
-            csarInfo.getCvfcToCreateQueue().add(nodeName);
-        } else {
-            log.debug("Failed to validate complex VFC {}. Loop detected, VSP {}. ", complexVfc.getName(),
-                    csarInfo.getVfResourceName());
-            result = Either.right(componentsUtils.getResponseFormat(ActionStatus.CFVC_LOOP_DETECTED,
-                    csarInfo.getVfResourceName(), complexVfc.getName()));
-        }
-        if (result == null) {
-            result = validateResourceBeforeCreate(complexVfc, csarInfo.getModifier(),
-                    AuditingActionEnum.IMPORT_RESOURCE, true, csarInfo);
-            if (result.isRight()) {
-                log.debug("Failed to validate complex VFC {}. ", complexVfc.getName());
-            }
-        }
-        return result;
+        csarInfo.addNodeToQueue(nodeName);
+        return validateResourceBeforeCreate(complexVfc, csarInfo.getModifier(),
+                AuditingActionEnum.IMPORT_RESOURCE, true, csarInfo);
     }
 
     private String getNodeTypeActualName(String fullName) {
@@ -1559,29 +1086,19 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         return nameWithouNamespacePrefix.substring(resourceType.length());
     }
 
-    private Either<ImmutablePair<Resource, ActionStatus>, ResponseFormat> createNodeTypeResourceFromYaml(
+    private ImmutablePair<Resource, ActionStatus> createNodeTypeResourceFromYaml(
             String yamlName, Entry<String, Object> nodeNameValue, User user, Map<String, Object> mapToConvert,
             Resource resourceVf, boolean needLock,
             Map<ArtifactOperationEnum, List<ArtifactDefinition>> nodeTypeArtifactsToHandle,
             List<ArtifactDefinition> nodeTypesNewCreatedArtifacts, boolean forceCertificationAllowed, CsarInfo csarInfo,
             boolean isNested) {
 
-        Either<UploadResourceInfo, ResponseFormat> resourceMetaData = fillResourceMetadata(yamlName, resourceVf,
-                nodeNameValue.getKey(), user);
-        if (resourceMetaData.isRight()) {
-            return Either.right(resourceMetaData.right().value());
-        }
+        UploadResourceInfo resourceMetaData = fillResourceMetadata(yamlName, resourceVf, nodeNameValue.getKey(), user);
+
         String singleVfcYaml = buildNodeTypeYaml(nodeNameValue, mapToConvert,
-                resourceMetaData.left().value().getResourceType(), csarInfo);
-
-        Either<User, ResponseFormat> eitherCreator = validateUser(user, "CheckIn Resource", resourceVf,
-                AuditingActionEnum.CHECKIN_RESOURCE, true);
-        if (eitherCreator.isRight()) {
-            return Either.right(eitherCreator.right().value());
-        }
-        user = eitherCreator.left().value();
-
-        return this.createResourceFromNodeType(singleVfcYaml, resourceMetaData.left().value(), user, true, needLock,
+                resourceMetaData.getResourceType(), csarInfo);
+        user = validateUser(user, "CheckIn Resource", resourceVf, AuditingActionEnum.CHECKIN_RESOURCE, true);
+        return createResourceFromNodeType(singleVfcYaml, resourceMetaData, user, true, needLock,
                 nodeTypeArtifactsToHandle, nodeTypesNewCreatedArtifacts, forceCertificationAllowed, csarInfo,
                 nodeNameValue.getKey(), isNested);
     }
@@ -1597,47 +1114,44 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         Map<String, Object> node = new HashMap<>();
         node.put(buildNestedToscaResourceName(nodeResourceType, csarInfo.getVfResourceName(), nodeNameValue.getKey())
                 .getLeft(), nodeNameValue.getValue());
-        mapToConvert.put(ToscaTagNamesEnum.NODE_TYPES.getElementName(), node);
+        mapToConvert.put(TypeUtils.ToscaTagNamesEnum.NODE_TYPES.getElementName(), node);
 
         return yaml.dumpAsMap(mapToConvert);
     }
 
     public Either<Boolean, ResponseFormat> validateResourceCreationFromNodeType(Resource resource, User creator) {
-
-        Either<Boolean, ResponseFormat> validateDerivedFromNotEmpty = this.validateDerivedFromNotEmpty(creator,
-                resource, AuditingActionEnum.CREATE_RESOURCE);
-        if (validateDerivedFromNotEmpty.isRight()) {
-            return Either.right(validateDerivedFromNotEmpty.right().value());
-        }
+        validateDerivedFromNotEmpty(creator, resource, AuditingActionEnum.CREATE_RESOURCE);
         return Either.left(true);
     }
 
-    public Either<ImmutablePair<Resource, ActionStatus>, ResponseFormat> createResourceFromNodeType(String nodeTypeYaml,
-                                                                                                    UploadResourceInfo resourceMetaData, User creator, boolean isInTransaction, boolean needLock,
-                                                                                                    Map<ArtifactOperationEnum, List<ArtifactDefinition>> nodeTypeArtifactsToHandle,
-                                                                                                    List<ArtifactDefinition> nodeTypesNewCreatedArtifacts, boolean forceCertificationAllowed, CsarInfo csarInfo,
-                                                                                                    String nodeName, boolean isNested) {
+    public ImmutablePair<Resource, ActionStatus> createResourceFromNodeType(String nodeTypeYaml, UploadResourceInfo resourceMetaData, User creator, boolean isInTransaction, boolean needLock,
+                                                                            Map<ArtifactOperationEnum, List<ArtifactDefinition>> nodeTypeArtifactsToHandle,
+                                                                            List<ArtifactDefinition> nodeTypesNewCreatedArtifacts, boolean forceCertificationAllowed, CsarInfo csarInfo,
+                                                                            String nodeName, boolean isNested) {
 
-        LifecycleChangeInfoWithAction lifecycleChangeInfo = new LifecycleChangeInfoWithAction("certification on import",
+        LifecycleChangeInfoWithAction lifecycleChangeInfo = new LifecycleChangeInfoWithAction(CERTIFICATION_ON_IMPORT,
                 LifecycleChanceActionEnum.CREATE_FROM_CSAR);
-        Function<Resource, Either<Boolean, ResponseFormat>> validator = (resource) -> this
-                .validateResourceCreationFromNodeType(resource, creator);
-        return this.resourceImportManager.importCertifiedResource(nodeTypeYaml, resourceMetaData, creator, validator,
+        Function<Resource, Either<Boolean, ResponseFormat>> validator = resource -> validateResourceCreationFromNodeType(resource, creator);
+        return resourceImportManager.importCertifiedResource(nodeTypeYaml, resourceMetaData, creator, validator,
                 lifecycleChangeInfo, isInTransaction, true, needLock, nodeTypeArtifactsToHandle,
-                nodeTypesNewCreatedArtifacts, forceCertificationAllowed, csarInfo, nodeName, isNested);
+                nodeTypesNewCreatedArtifacts, forceCertificationAllowed, csarInfo, nodeName, isNested)
+                .left().on(this::failOnCertification);
     }
 
-    private Either<UploadResourceInfo, ResponseFormat> fillResourceMetadata(String yamlName, Resource resourceVf,
-                                                                            String nodeName, User user) {
+    private ImmutablePair<Resource,ActionStatus> failOnCertification(ResponseFormat error) {
+        throw new ComponentException(error);
+    }
+
+    private UploadResourceInfo fillResourceMetadata(String yamlName, Resource resourceVf,
+                                                    String nodeName, User user) {
         UploadResourceInfo resourceMetaData = new UploadResourceInfo();
 
         // validate nodetype name prefix
         if (!nodeName.startsWith(Constants.USER_DEFINED_RESOURCE_NAMESPACE_PREFIX)) {
             log.debug("invalid nodeName:{} does not start with {}.", nodeName,
                     Constants.USER_DEFINED_RESOURCE_NAMESPACE_PREFIX);
-            ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.INVALID_NODE_TEMPLATE,
+            throw new ComponentException(ActionStatus.INVALID_NODE_TEMPLATE,
                     yamlName, resourceMetaData.getName(), nodeName);
-            return Either.right(responseFormat);
         }
 
         String actualName = this.getNodeTypeActualName(nodeName);
@@ -1654,9 +1168,8 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         if (!ResourceTypeEnum.containsName(resourceType.toUpperCase())) {
             log.debug("invalid resourceType:{} the type is not one of the valide types:{}.", resourceType.toUpperCase(),
                     ResourceTypeEnum.values());
-            ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.INVALID_NODE_TEMPLATE,
+            throw new ComponentException(ActionStatus.INVALID_NODE_TEMPLATE,
                     yamlName, resourceMetaData.getName(), nodeName);
-            return Either.right(responseFormat);
         }
 
         // Setting name
@@ -1687,7 +1200,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         categories.add(category);
         resourceMetaData.setCategories(categories);
 
-        return Either.left(resourceMetaData);
+        return resourceMetaData;
     }
 
     private Resource buildComplexVfcMetadata(Resource resourceVf, CsarInfo csarInfo, String nodeName,
@@ -1741,75 +1254,52 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         return addCvfcSuffixToResourceName(resourceName);
     }
 
-    private Either<Resource, ResponseFormat> createResourceAndRIsFromYaml(String yamlName, Resource resource,
-                                                                          ParsedToscaYamlInfo parsedToscaYamlInfo, AuditingActionEnum actionEnum, boolean isNormative,
-                                                                          List<ArtifactDefinition> createdArtifacts, String topologyTemplateYaml,
-                                                                          Map<String, NodeTypeInfo> nodeTypesInfo, CsarInfo csarInfo,
-                                                                          Map<String, EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>> nodeTypesArtifactsToCreate,
-                                                                          boolean shouldLock, boolean inTransaction, String nodeName) {
+    private Resource createResourceAndRIsFromYaml(String yamlName, Resource resource,
+                                                  ParsedToscaYamlInfo parsedToscaYamlInfo, AuditingActionEnum actionEnum, boolean isNormative,
+                                                  List<ArtifactDefinition> createdArtifacts, String topologyTemplateYaml,
+                                                  Map<String, NodeTypeInfo> nodeTypesInfo, CsarInfo csarInfo,
+                                                  Map<String, EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>> nodeTypesArtifactsToCreate,
+                                                  boolean shouldLock, boolean inTransaction, String nodeName) {
 
-        boolean result = true;
         List<ArtifactDefinition> nodeTypesNewCreatedArtifacts = new ArrayList<>();
 
         if (shouldLock) {
             Either<Boolean, ResponseFormat> lockResult = lockComponentByName(resource.getSystemName(), resource,
-                    "Create Resource");
+                    CREATE_RESOURCE);
             if (lockResult.isRight()) {
-                ResponseFormat responseFormat = lockResult.right().value();
-                return Either.right(responseFormat);
+                rollback(inTransaction, resource, createdArtifacts, nodeTypesNewCreatedArtifacts);
+                throw new ComponentException(lockResult.right().value());
             }
             log.debug("name is locked {} status = {}", resource.getSystemName(), lockResult);
         }
         try {
             log.trace("************* createResourceFromYaml before full create resource {}", yamlName);
-            Either<Resource, ResponseFormat> genericResourceEither = fetchAndSetDerivedFromGenericType(resource);
-            if (genericResourceEither.isRight()) {
-                result = false;
-                return genericResourceEither;
-            }
-            Either<Resource, ResponseFormat> createResourcesEither = createResourceTransaction(resource,
-                    csarInfo.getModifier(), isNormative, inTransaction);
+            Resource genericResource = fetchAndSetDerivedFromGenericType(resource);
+            resource = createResourceTransaction(resource,
+                    csarInfo.getModifier(), isNormative);
             log.trace("************* createResourceFromYaml after full create resource {}", yamlName);
-            if (createResourcesEither.isRight()) {
-                result = false;
-                return createResourcesEither;
-            }
-            resource = createResourcesEither.left().value();
-            // add groups to resource
             log.trace("************* Going to add inputs from yaml {}", yamlName);
             if (resource.shouldGenerateInputs())
-                generateAndAddInputsFromGenericTypeProperties(resource, genericResourceEither.left().value());
+                generateAndAddInputsFromGenericTypeProperties(resource, genericResource);
 
             Map<String, InputDefinition> inputs = parsedToscaYamlInfo.getInputs();
-            Either<Resource, ResponseFormat> createInputsOnResource = createInputsOnResource(resource,
-                    csarInfo.getModifier(), inputs, inTransaction);
-            if (createInputsOnResource.isRight()) {
-                result = false;
-                return createInputsOnResource;
-            }
-            resource = createInputsOnResource.left().value();
+            resource = createInputsOnResource(resource, inputs);
             log.trace("************* Finish to add inputs from yaml {}", yamlName);
 
             Map<String, UploadComponentInstanceInfo> uploadComponentInstanceInfoMap = parsedToscaYamlInfo
                     .getInstances();
             log.trace("************* Going to create nodes, RI's and Relations  from yaml {}", yamlName);
 
-            createResourcesEither = createRIAndRelationsFromYaml(yamlName, resource, uploadComponentInstanceInfoMap,
-                    actionEnum, topologyTemplateYaml, nodeTypesNewCreatedArtifacts, nodeTypesInfo, csarInfo,
+            resource = createRIAndRelationsFromYaml(yamlName, resource, uploadComponentInstanceInfoMap,
+                    topologyTemplateYaml, nodeTypesNewCreatedArtifacts, nodeTypesInfo, csarInfo,
                     nodeTypesArtifactsToCreate, nodeName);
             log.trace("************* Finished to create nodes, RI and Relation  from yaml {}", yamlName);
-            if (createResourcesEither.isRight()) {
-                result = false;
-                return createResourcesEither;
-            }
-
-            resource = createResourcesEither.left().value();
             // validate update vf module group names
             Either<Map<String, GroupDefinition>, ResponseFormat> validateUpdateVfGroupNamesRes = groupBusinessLogic
                     .validateUpdateVfGroupNames(parsedToscaYamlInfo.getGroups(), resource.getSystemName());
             if (validateUpdateVfGroupNamesRes.isRight()) {
-                result = false;
-                return Either.right(validateUpdateVfGroupNamesRes.right().value());
+                rollback(inTransaction, resource, createdArtifacts, nodeTypesNewCreatedArtifacts);
+                throw new ComponentException(validateUpdateVfGroupNamesRes.right().value());
             }
             // add groups to resource
             Map<String, GroupDefinition> groups;
@@ -1820,11 +1310,12 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
             } else {
                 groups = parsedToscaYamlInfo.getGroups();
             }
+
             Either<Resource, ResponseFormat> createGroupsOnResource = createGroupsOnResource(resource,
-                    csarInfo.getModifier(), groups);
+                    groups);
             if (createGroupsOnResource.isRight()) {
-                result = false;
-                return createGroupsOnResource;
+                rollback(inTransaction, resource, createdArtifacts, nodeTypesNewCreatedArtifacts);
+                throw new ComponentException(createGroupsOnResource.right().value());
             }
             resource = createGroupsOnResource.left().value();
             log.trace("************* Finished to add groups from yaml {}", yamlName);
@@ -1837,31 +1328,23 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
             Either<Resource, ResponseFormat> createArtifactsEither = createOrUpdateArtifacts(ArtifactOperationEnum.CREATE, createdArtifacts, yamlName,
                     csarInfo, resource, nodeTypeInfoToUpdateArtifacts, inTransaction, shouldLock);
             if (createArtifactsEither.isRight()) {
-                log.debug("failed to update artifacts {}", createArtifactsEither.right().value());
-                return createArtifactsEither;
-
+                rollback(inTransaction, resource, createdArtifacts, nodeTypesNewCreatedArtifacts);
+                throw new ComponentException(createArtifactsEither.right().value());
             }
-            resource = createArtifactsEither.left().value();
+
+            resource = getResourceWithGroups(createArtifactsEither.left().value().getUniqueId());
 
             ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.CREATED);
             componentsUtils.auditResource(responseFormat, csarInfo.getModifier(), resource, actionEnum);
             ASDCKpiApi.countCreatedResourcesKPI();
-            return Either.left(resource);
+            return resource;
 
+        } catch(ComponentException|StorageException e) {
+            rollback(inTransaction, resource, createdArtifacts, nodeTypesNewCreatedArtifacts);
+            throw e;
         } finally {
             if (!inTransaction) {
-                if (!result) {
-                    log.warn("operation failed. do rollback");
-                    titanDao.rollback();
-                    if (!createdArtifacts.isEmpty() || !nodeTypesNewCreatedArtifacts.isEmpty()) {
-                        createdArtifacts.addAll(nodeTypesNewCreatedArtifacts);
-                        log.debug("component and all its artifacts were deleted, id = {}", resource.getName());
-                    }
-
-                } else {
-                    log.debug("operation success. do commit");
-                    titanDao.commit();
-                }
+                titanDao.commit();
             }
             if (shouldLock) {
                 graphLockOperation.unlockComponentByName(resource.getSystemName(), resource.getUniqueId(),
@@ -1870,19 +1353,36 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         }
     }
 
-    private Either<Resource, ResponseFormat> createGroupsOnResource(Resource resource, User user,
+    private void rollback(boolean inTransaction, Resource resource, List<ArtifactDefinition> createdArtifacts, List<ArtifactDefinition> nodeTypesNewCreatedArtifacts) {
+        if(!inTransaction) {
+            titanDao.rollback();
+        }
+        if (isNotEmpty(createdArtifacts) && isNotEmpty(nodeTypesNewCreatedArtifacts)) {
+            createdArtifacts.addAll(nodeTypesNewCreatedArtifacts);
+            log.debug("Found {} newly created artifacts to deleted, the component name: {}",createdArtifacts.size(), resource.getName());
+        }
+    }
+
+    private Resource getResourceWithGroups(String resourceId) {
+
+        ComponentParametersView filter = new ComponentParametersView();
+        filter.setIgnoreGroups(false);
+        Either<Resource, StorageOperationStatus> updatedResource = toscaOperationFacade.getToscaElement(resourceId, filter);
+        if (updatedResource.isRight()) {
+            rollbackWithException(componentsUtils.convertFromStorageResponse(updatedResource.right().value()), resourceId);
+        }
+        return updatedResource.left().value();
+    }
+
+    private Either<Resource, ResponseFormat> createGroupsOnResource(Resource resource,
                                                                     Map<String, GroupDefinition> groups) {
         if (groups != null && !groups.isEmpty()) {
-            Either<List<GroupDefinition>, ResponseFormat> mergeGroupsUsingResource = updateGroupMembersUsingResource(
+            List<GroupDefinition> groupsAsList = updateGroupsMembersUsingResource(
                     groups, resource);
-
-            if (mergeGroupsUsingResource.isRight()) {
-                log.debug("Failed to prepare groups for creation");
-                return Either.right(mergeGroupsUsingResource.right().value());
-            }
-            List<GroupDefinition> groupsAsList = mergeGroupsUsingResource.left().value();
+            handleGroupsProperties(resource, groups);
+            fillGroupsFinalFields(groupsAsList);
             Either<List<GroupDefinition>, ResponseFormat> createGroups = groupBusinessLogic.createGroups(resource,
-                    groupsAsList);
+                    groupsAsList, true);
             if (createGroups.isRight()) {
                 return Either.right(createGroups.right().value());
             }
@@ -1899,178 +1399,218 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         return Either.left(updatedResource.left().value());
     }
 
-    private Either<Resource, ResponseFormat> updateGroupsOnResource(Resource resource, User user,
-                                                                    Map<String, GroupDefinition> groups) {
-        if (groups != null && false == groups.isEmpty()) {
-            List<GroupDefinition> groupsFromResource = resource.getGroups();
-            Either<List<GroupDefinition>, ResponseFormat> mergeGroupsUsingResource = updateGroupMembersUsingResource(
-                    groups, resource);
-
-            if (mergeGroupsUsingResource.isRight()) {
-                log.debug("Failed to prepare groups for creation");
-                return Either.right(mergeGroupsUsingResource.right().value());
-            }
-            List<GroupDefinition> groupsAsList = mergeGroupsUsingResource.left().value();
-            List<GroupDefinition> groupsToUpdate = new ArrayList<GroupDefinition>();
-            List<GroupDefinition> groupsToDelete = new ArrayList<GroupDefinition>();
-            List<GroupDefinition> groupsToCreate = new ArrayList<GroupDefinition>();
-            if (groupsFromResource != null && !groupsFromResource.isEmpty()) {
-                for (GroupDefinition group : groupsAsList) {
-                    Optional<GroupDefinition> op = groupsFromResource.stream()
-                            .filter(p -> p.getName().equalsIgnoreCase(group.getName())).findAny();
-                    if (op.isPresent()) {
-                        GroupDefinition groupToUpdate = op.get();
-                        groupToUpdate.setMembers(group.getMembers());
-                        groupsToUpdate.add(groupToUpdate);
-                    } else {
-                        groupsToCreate.add(group);
-                    }
-                }
-                for (GroupDefinition group : groupsFromResource) {
-                    Optional<GroupDefinition> op = groupsAsList.stream()
-                            .filter(p -> p.getName().equalsIgnoreCase(group.getName())).findAny();
-                    if (!op.isPresent() && (group.getArtifacts() == null || group.getArtifacts().isEmpty())) {
-
-                        groupsToDelete.add(group);
-                    }
-
-                }
-            } else
-                groupsToCreate.addAll(groupsAsList);
-            Either<List<GroupDefinition>, ResponseFormat> prepareGroups = null;
-            if (!groupsToCreate.isEmpty()) {
-
-                if (groupsFromResource != null && !groupsFromResource.isEmpty()) {
-                    prepareGroups = groupBusinessLogic.addGroups(resource,
-                            groupsToCreate);
-                } else {
-                    prepareGroups = groupBusinessLogic.createGroups(resource,
-                            groupsToCreate);
-                }
-
-                if (prepareGroups.isRight()) {
-                    return Either.right(prepareGroups.right().value());
-                }
-            }
-
-            if (!groupsToDelete.isEmpty()) {
-                prepareGroups = groupBusinessLogic.deleteGroups(resource,
-                        groupsToDelete);
-                if (prepareGroups.isRight()) {
-                    return Either.right(prepareGroups.right().value());
-                }
-            }
-
-            if (groupsToUpdate != null && !groupsToUpdate.isEmpty()) {
-                prepareGroups = groupBusinessLogic.updateGroups(resource, groupsToUpdate);
-                if (prepareGroups.isRight()) {
-                    return Either.right(prepareGroups.right().value());
-                }
-            }
-
-        } else {
-            return Either.left(resource);
+    private void handleGroupsProperties(Resource resource, Map<String, GroupDefinition> groups) {
+        List<InputDefinition> inputs = resource.getInputs();
+        if (MapUtils.isNotEmpty(groups)) {
+            groups.values()
+                    .stream()
+                    .filter(g -> isNotEmpty(g.getProperties()))
+                    .flatMap(g -> g.getProperties().stream())
+                    .forEach(p -> handleGetInputs(p, inputs));
         }
+    }
 
+    private void handleGetInputs(PropertyDataDefinition property, List<InputDefinition> inputs) {
+        if (isNotEmpty(property.getGetInputValues())) {
+            if (inputs == null || inputs.isEmpty()) {
+                log.debug("Failed to add property {} to group. Inputs list is empty ", property);
+                rollbackWithException(ActionStatus.INPUTS_NOT_FOUND, property.getGetInputValues()
+                        .stream()
+                        .map(GetInputValueDataDefinition::getInputName)
+                        .collect(toList()).toString());
+            }
+            ListIterator<GetInputValueDataDefinition> getInputValuesIter = property.getGetInputValues().listIterator();
+            while (getInputValuesIter.hasNext()) {
+                GetInputValueDataDefinition getInput = getInputValuesIter.next();
+                InputDefinition input = findInputByName(inputs, getInput);
+                getInput.setInputId(input.getUniqueId());
+                if (getInput.getGetInputIndex() != null) {
+                    GetInputValueDataDefinition getInputIndex = getInput.getGetInputIndex();
+                    input = findInputByName(inputs, getInputIndex);
+                    getInputIndex.setInputId(input.getUniqueId());
+                    getInputValuesIter.add(getInputIndex);
+                }
+            }
+        }
+    }
+
+    private InputDefinition findInputByName(List<InputDefinition> inputs, GetInputValueDataDefinition getInput) {
+        Optional<InputDefinition> inputOpt = inputs.stream()
+                .filter(p -> p.getName().equals(getInput.getInputName()))
+                .findFirst();
+        if (!inputOpt.isPresent()) {
+            log.debug("#findInputByName - Failed to find the input {} ", getInput.getInputName());
+            rollbackWithException(ActionStatus.INPUTS_NOT_FOUND, getInput.getInputName());
+        }
+        return inputOpt.get();
+    }
+
+    private void fillGroupsFinalFields(List<GroupDefinition> groupsAsList) {
+        groupsAsList.forEach(groupDefinition -> {
+            groupDefinition.setInvariantName(groupDefinition.getName());
+            groupDefinition.setCreatedFrom(CreatedFrom.CSAR);
+        });
+    }
+
+    private Resource updateGroupsOnResource(Resource resource, Map<String, GroupDefinition> groups) {
+        if (isEmpty(groups)) {
+            return resource;
+        } else {
+            updateOrCreateGroups(resource, groups);
+        }
         Either<Resource, StorageOperationStatus> updatedResource = toscaOperationFacade
                 .getToscaElement(resource.getUniqueId());
         if (updatedResource.isRight()) {
-            ResponseFormat responseFormat = componentsUtils.getResponseFormatByResource(
-                    componentsUtils.convertFromStorageResponse(updatedResource.right().value()), resource);
-            return Either.right(responseFormat);
+            throw new ComponentException(componentsUtils.getResponseFormatByResource(
+                    componentsUtils.convertFromStorageResponse(updatedResource.right().value()), resource));
         }
-        return Either.left(updatedResource.left().value());
+        return updatedResource.left().value();
     }
 
-    private Either<Resource, ResponseFormat> createInputsOnResource(Resource resource, User user,
-                                                                    Map<String, InputDefinition> inputs, boolean inTransaction) {
+    private void updateOrCreateGroups(Resource resource, Map<String, GroupDefinition> groups) {
+        List<GroupDefinition> groupsFromResource = resource.getGroups();
+        List<GroupDefinition> groupsAsList = updateGroupsMembersUsingResource(groups, resource);
+        List<GroupDefinition> groupsToUpdate = new ArrayList<>();
+        List<GroupDefinition> groupsToDelete = new ArrayList<>();
+        List<GroupDefinition> groupsToCreate = new ArrayList<>();
+        if (isNotEmpty(groupsFromResource)) {
+            addGroupsToCreateOrUpdate(groupsFromResource, groupsAsList, groupsToUpdate, groupsToCreate);
+            addGroupsToDelete(groupsFromResource, groupsAsList, groupsToDelete);
+        } else {
+            groupsToCreate.addAll(groupsAsList);
+        }
+        if (isNotEmpty(groupsToCreate)) {
+            fillGroupsFinalFields(groupsToCreate);
+            if (isNotEmpty(groupsFromResource)) {
+                groupBusinessLogic.addGroups(resource,
+                        groupsToCreate, true)
+                        .left()
+                        .on(this::throwComponentException);
+            } else {
+                groupBusinessLogic.createGroups(resource,
+                        groupsToCreate, true)
+                        .left()
+                        .on(this::throwComponentException);
+            }
+        }
+        if (isNotEmpty(groupsToDelete)) {
+            groupBusinessLogic.deleteGroups(resource, groupsToDelete)
+                    .left()
+                    .on(this::throwComponentException);
+        }
+        if (isNotEmpty(groupsToUpdate)) {
+            groupBusinessLogic.updateGroups(resource, groupsToUpdate, true)
+                    .left()
+                    .on(this::throwComponentException);
+        }
+    }
+
+    private void addGroupsToDelete(List<GroupDefinition> groupsFromResource, List<GroupDefinition> groupsAsList, List<GroupDefinition> groupsToDelete) {
+        for (GroupDefinition group : groupsFromResource) {
+            Optional<GroupDefinition> op = groupsAsList.stream()
+                    .filter(p -> p.getName().equalsIgnoreCase(group.getName())).findAny();
+            if (!op.isPresent() && (group.getArtifacts() == null || group.getArtifacts().isEmpty())) {
+                groupsToDelete.add(group);
+            }
+        }
+    }
+
+    private void addGroupsToCreateOrUpdate(List<GroupDefinition> groupsFromResource, List<GroupDefinition> groupsAsList, List<GroupDefinition> groupsToUpdate, List<GroupDefinition> groupsToCreate) {
+        for (GroupDefinition group : groupsAsList) {
+            Optional<GroupDefinition> op = groupsFromResource.stream()
+                    .filter(p -> p.getInvariantName().equalsIgnoreCase(group.getInvariantName())).findAny();
+            if (op.isPresent()) {
+                GroupDefinition groupToUpdate = op.get();
+                groupToUpdate.setMembers(group.getMembers());
+                groupToUpdate.setCapabilities(group.getCapabilities());
+                groupToUpdate.setProperties(group.getProperties());
+                groupsToUpdate.add(groupToUpdate);
+            } else {
+                groupsToCreate.add(group);
+            }
+        }
+    }
+
+    private Resource createInputsOnResource(Resource resource, Map<String, InputDefinition> inputs) {
         List<InputDefinition> resourceProperties = resource.getInputs();
-        if ((inputs != null && false == inputs.isEmpty())
-                || (resourceProperties != null && false == resourceProperties.isEmpty())) {
+        if (MapUtils.isNotEmpty(inputs)|| isNotEmpty(resourceProperties)) {
 
             Either<List<InputDefinition>, ResponseFormat> createInputs = inputsBusinessLogic.createInputsInGraph(inputs,
                     resource);
             if (createInputs.isRight()) {
-                return Either.right(createInputs.right().value());
+                throw new ComponentException(createInputs.right().value());
             }
         } else {
-            return Either.left(resource);
+            return resource;
         }
-
         Either<Resource, StorageOperationStatus> updatedResource = toscaOperationFacade
                 .getToscaElement(resource.getUniqueId());
         if (updatedResource.isRight()) {
-            ResponseFormat responseFormat = componentsUtils.getResponseFormatByResource(
-                    componentsUtils.convertFromStorageResponse(updatedResource.right().value()), resource);
-            return Either.right(responseFormat);
+            throw new ComponentException(componentsUtils.getResponseFormatByResource(
+                    componentsUtils.convertFromStorageResponse(updatedResource.right().value()), resource));
         }
-        return Either.left(updatedResource.left().value());
+        return updatedResource.left().value();
     }
 
-    private Either<List<GroupDefinition>, ResponseFormat> updateGroupMembersUsingResource(
-            Map<String, GroupDefinition> groups, Resource component) {
+    private List<GroupDefinition> updateGroupsMembersUsingResource(Map<String, GroupDefinition> groups, Resource component) {
 
         List<GroupDefinition> result = new ArrayList<>();
-
         List<ComponentInstance> componentInstances = component.getComponentInstances();
 
         if (groups != null) {
             Either<Boolean, ResponseFormat> validateCyclicGroupsDependencies = validateCyclicGroupsDependencies(groups);
             if (validateCyclicGroupsDependencies.isRight()) {
-                return FunctionalInterfaces.convertEitherRight(validateCyclicGroupsDependencies);
+                throw new ComponentException(validateCyclicGroupsDependencies.right().value());
             }
             for (Entry<String, GroupDefinition> entry : groups.entrySet()) {
                 String groupName = entry.getKey();
-
                 GroupDefinition groupDefinition = entry.getValue();
-
                 GroupDefinition updatedGroupDefinition = new GroupDefinition(groupDefinition);
                 updatedGroupDefinition.setMembers(null);
-
-                // get the members of the group
                 Map<String, String> members = groupDefinition.getMembers();
                 if (members != null) {
-                    Set<String> compInstancesNames = members.keySet();
-
-                    if (componentInstances == null || true == componentInstances.isEmpty()) {
-                        String membersAstString = compInstancesNames.stream().collect(Collectors.joining(","));
-                        log.debug(
-                                "The members: {}, in group: {}, cannot be found in component {}. There are no component instances.",
-                                membersAstString, groupName, component.getNormalizedName());
-                        return Either.right(componentsUtils.getResponseFormat(
-                                ActionStatus.GROUP_INVALID_COMPONENT_INSTANCE, membersAstString, groupName,
-                                component.getNormalizedName(), getComponentTypeForResponse(component)));
-                    }
-                    // Find all component instances with the member names
-                    Map<String, String> memberNames = componentInstances.stream()
-                            .collect(Collectors.toMap(ComponentInstance::getName, ComponentInstance::getUniqueId));
-                    memberNames.putAll(groups.keySet().stream().collect(Collectors.toMap(g -> g, g -> "")));
-                    Map<String, String> relevantInstances = memberNames.entrySet().stream()
-                            .filter(n -> compInstancesNames.contains(n.getKey()))
-                            .collect(Collectors.toMap(n -> n.getKey(), n -> n.getValue()));
-
-                    if (relevantInstances == null || relevantInstances.size() != compInstancesNames.size()) {
-
-                        List<String> foundMembers = new ArrayList<>();
-                        if (relevantInstances != null) {
-                            foundMembers = relevantInstances.keySet().stream().collect(Collectors.toList());
-                        }
-                        compInstancesNames.removeAll(foundMembers);
-                        String membersAstString = compInstancesNames.stream().collect(Collectors.joining(","));
-                        log.debug("The members: {}, in group: {}, cannot be found in component: {}", membersAstString,
-                                groupName, component.getNormalizedName());
-                        return Either.right(componentsUtils.getResponseFormat(
-                                ActionStatus.GROUP_INVALID_COMPONENT_INSTANCE, membersAstString, groupName,
-                                component.getNormalizedName(), getComponentTypeForResponse(component)));
-                    }
-
-                    updatedGroupDefinition.setMembers(relevantInstances);
+                    updateGroupMembers(groups, updatedGroupDefinition, component, componentInstances, groupName, members);
                 }
-
                 result.add(updatedGroupDefinition);
             }
         }
-        return Either.left(result);
+        return result;
+    }
+
+    private void updateGroupMembers(Map<String, GroupDefinition> groups, GroupDefinition updatedGroupDefinition, Resource component, List<ComponentInstance> componentInstances, String groupName, Map<String, String> members) {
+        Set<String> compInstancesNames = members.keySet();
+
+        if (CollectionUtils.isEmpty(componentInstances)) {
+            String membersAstString = compInstancesNames.stream().collect(joining(","));
+            log.debug("The members: {}, in group: {}, cannot be found in component {}. There are no component instances.",
+                    membersAstString, groupName, component.getNormalizedName());
+            throw new ComponentException(componentsUtils.getResponseFormat(
+                    ActionStatus.GROUP_INVALID_COMPONENT_INSTANCE, membersAstString, groupName,
+                    component.getNormalizedName(), getComponentTypeForResponse(component)));
+        }
+        // Find all component instances with the member names
+        Map<String, String> memberNames = componentInstances.stream()
+                .collect(toMap(ComponentInstance::getName, ComponentInstance::getUniqueId));
+        memberNames.putAll(groups.keySet().stream().collect(toMap(g -> g, g -> "")));
+        Map<String, String> relevantInstances = memberNames.entrySet().stream()
+                .filter(n -> compInstancesNames.contains(n.getKey()))
+                .collect(toMap(Entry::getKey, Entry::getValue));
+
+        if (relevantInstances == null || relevantInstances.size() != compInstancesNames.size()) {
+
+            List<String> foundMembers = new ArrayList<>();
+            if (relevantInstances != null) {
+                foundMembers = relevantInstances.keySet().stream().collect(toList());
+            }
+            compInstancesNames.removeAll(foundMembers);
+            String membersAstString = compInstancesNames.stream().collect(joining(","));
+            log.debug("The members: {}, in group: {}, cannot be found in component: {}", membersAstString,
+                    groupName, component.getNormalizedName());
+            throw new ComponentException(componentsUtils.getResponseFormat(
+                    ActionStatus.GROUP_INVALID_COMPONENT_INSTANCE, membersAstString, groupName,
+                    component.getNormalizedName(), getComponentTypeForResponse(component)));
+        }
+        updatedGroupDefinition.setMembers(relevantInstances);
     }
 
     /**
@@ -2130,11 +1670,11 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         // are groups
         List<String> currGroupFilteredMembers = currGroupMembers.stream().
                 // Keep Only Elements of type group and not Resource Instances
-                        filter(innerGroupName -> allGroups.containsKey(innerGroupName)).
+                        filter(allGroups::containsKey).
                 // Add Filtered Elements to main Set
-                        peek(innerGroupName -> allGroupMembers.add(innerGroupName)).
+                        peek(allGroupMembers::add).
                 // Collect results
-                        collect(Collectors.toList());
+                        collect(toList());
 
         // Recursively call the method for all the filtered group members
         for (String innerGroupName : currGroupFilteredMembers) {
@@ -2154,7 +1694,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         // In Case Group Has no members stop
         if (!stop) {
             GroupDefinition groupDefinition = allGroups.get(groupName);
-            stop = MapUtils.isEmpty(groupDefinition.getMembers());
+            stop = isEmpty(groupDefinition.getMembers());
 
         }
         // In Case all group members already contained stop
@@ -2162,130 +1702,91 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
             final Set<String> allMembers = allGroups.get(groupName).getMembers().keySet();
             Set<String> membersOfTypeGroup = allMembers.stream().
                     // Filter In Only Group members
-                            filter(innerGroupName -> allGroups.containsKey(innerGroupName)).
+                            filter(allGroups::containsKey).
                     // Collect
-                            collect(Collectors.toSet());
+                            collect(toSet());
             stop = allGroupMembers.containsAll(membersOfTypeGroup);
         }
         return stop;
     }
 
-    private Either<Resource, ResponseFormat> createRIAndRelationsFromYaml(String yamlName, Resource resource,
-                                                                          Map<String, UploadComponentInstanceInfo> uploadComponentInstanceInfoMap, AuditingActionEnum actionEnum,
-                                                                          String topologyTemplateYaml, List<ArtifactDefinition> nodeTypesNewCreatedArtifacts,
-                                                                          Map<String, NodeTypeInfo> nodeTypesInfo, CsarInfo csarInfo,
-                                                                          Map<String, EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>> nodeTypesArtifactsToCreate,
-                                                                          String nodeName) {
-
-        Either<Resource, ResponseFormat> result;
-        Either<Resource, ResponseFormat> createResourcesInstancesEither;
+    private Resource createRIAndRelationsFromYaml(String yamlName, Resource resource,
+                                                  Map<String, UploadComponentInstanceInfo> uploadComponentInstanceInfoMap,
+                                                  String topologyTemplateYaml, List<ArtifactDefinition> nodeTypesNewCreatedArtifacts,
+                                                  Map<String, NodeTypeInfo> nodeTypesInfo, CsarInfo csarInfo,
+                                                  Map<String, EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>> nodeTypesArtifactsToCreate,
+                                                  String nodeName) {
 
         log.debug("************* Going to create all nodes {}", yamlName);
-        Either<Map<String, Resource>, ResponseFormat> createdResourcesFromdNodeTypeMap = this.handleNodeTypes(yamlName,
-                resource, topologyTemplateYaml, false, nodeTypesArtifactsToCreate, nodeTypesNewCreatedArtifacts,
+        handleNodeTypes(yamlName, resource, topologyTemplateYaml, false, nodeTypesArtifactsToCreate, nodeTypesNewCreatedArtifacts,
                 nodeTypesInfo, csarInfo, nodeName);
         log.debug("************* Finished to create all nodes {}", yamlName);
-        if (createdResourcesFromdNodeTypeMap.isRight()) {
-            log.debug("failed to resources from node types status is {}",
-                    createdResourcesFromdNodeTypeMap.right().value());
-            return Either.right(createdResourcesFromdNodeTypeMap.right().value());
-        }
-
         log.debug("************* Going to create all resource instances {}", yamlName);
-        createResourcesInstancesEither = createResourceInstances(csarInfo.getModifier(), yamlName, resource,
-                uploadComponentInstanceInfoMap, true, false, csarInfo.getCreatedNodes());
-
+        resource = createResourceInstances(yamlName, resource,
+                uploadComponentInstanceInfoMap, csarInfo.getCreatedNodes());
         log.debug("************* Finished to create all resource instances {}", yamlName);
-        if (createResourcesInstancesEither.isRight()) {
-            log.debug("failed to create resource instances status is {}",
-                    createResourcesInstancesEither.right().value());
-            result = createResourcesInstancesEither;
-            return createResourcesInstancesEither;
-        }
-        resource = createResourcesInstancesEither.left().value();
         log.debug("************* Going to create all relations {}", yamlName);
-        createResourcesInstancesEither = createResourceInstancesRelations(csarInfo.getModifier(), yamlName, resource,
-                uploadComponentInstanceInfoMap);
-
+        resource = createResourceInstancesRelations(csarInfo.getModifier(), yamlName, resource, uploadComponentInstanceInfoMap);
         log.debug("************* Finished to create all relations {}", yamlName);
-
-        if (createResourcesInstancesEither.isRight()) {
-            log.debug("failed to create relation between resource instances status is {}",
-                    createResourcesInstancesEither.right().value());
-            result = createResourcesInstancesEither;
-            return result;
-        } else {
-            resource = createResourcesInstancesEither.left().value();
-        }
-
         log.debug("************* Going to create positions {}", yamlName);
-        Either<List<ComponentInstance>, ResponseFormat> eitherSetPosition = compositionBusinessLogic
-                .setPositionsForComponentInstances(resource, csarInfo.getModifier().getUserId());
+        compositionBusinessLogic.setPositionsForComponentInstances(resource, csarInfo.getModifier().getUserId());
         log.debug("************* Finished to set positions {}", yamlName);
-        result = eitherSetPosition.isRight() ? Either.right(eitherSetPosition.right().value()) : Either.left(resource);
-
-        return result;
+        return resource;
     }
 
     private void handleAndAddExtractedVfcsArtifacts(List<ArtifactDefinition> vfcArtifacts,
                                                     List<ArtifactDefinition> artifactsToAdd) {
-        List<String> vfcArtifactNames = vfcArtifacts.stream().map(a -> a.getArtifactName())
-                .collect(Collectors.toList());
+        List<String> vfcArtifactNames = vfcArtifacts.stream().map(ArtifactDataDefinition::getArtifactName)
+                .collect(toList());
         artifactsToAdd.stream().forEach(a -> {
             if (!vfcArtifactNames.contains(a.getArtifactName())) {
                 vfcArtifacts.add(a);
             } else {
-                log.error("Can't upload two artifact with the same name {}. ", a.getArtifactName());
+                log.debug("Can't upload two artifact with the same name {}. ", a.getArtifactName());
             }
         });
 
     }
 
     @SuppressWarnings("unchecked")
-    private Either<Map<String, Resource>, ResponseFormat> handleNodeTypes(String yamlName, Resource resource,
-                                                                          String topologyTemplateYaml, boolean needLock,
-                                                                          Map<String, EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>> nodeTypesArtifactsToHandle,
-                                                                          List<ArtifactDefinition> nodeTypesNewCreatedArtifacts, Map<String, NodeTypeInfo> nodeTypesInfo,
-                                                                          CsarInfo csarInfo, String nodeName) {
+    private void handleNodeTypes(String yamlName, Resource resource,
+                                 String topologyTemplateYaml, boolean needLock,
+                                 Map<String, EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>> nodeTypesArtifactsToHandle,
+                                 List<ArtifactDefinition> nodeTypesNewCreatedArtifacts, Map<String, NodeTypeInfo> nodeTypesInfo,
+                                 CsarInfo csarInfo, String nodeName) {
+        try{
+            for (Entry<String, NodeTypeInfo> nodeTypeEntry : nodeTypesInfo.entrySet()) {
+                if (nodeTypeEntry.getValue().isNested()) {
 
-        Either<Map<String, Resource>, ResponseFormat> result = Either.left(csarInfo.getCreatedNodes());
-        for (Entry<String, NodeTypeInfo> nodeTypeEntry : nodeTypesInfo.entrySet()) {
-            if (nodeTypeEntry.getValue().isNested()) {
-
-                Either<Resource, ResponseFormat> createResourceFromYaml = handleNestedVfc(resource,
-                        nodeTypesArtifactsToHandle, nodeTypesNewCreatedArtifacts, nodeTypesInfo, csarInfo,
-                        nodeTypeEntry.getKey());
-                log.trace("************* finished to create node {}", nodeTypeEntry.getKey());
-                if (createResourceFromYaml.isRight()) {
-                    return Either.right(createResourceFromYaml.right().value());
+                    handleNestedVfc(resource, nodeTypesArtifactsToHandle, nodeTypesNewCreatedArtifacts,
+                            nodeTypesInfo, csarInfo, nodeTypeEntry.getKey());
+                    log.trace("************* finished to create node {}", nodeTypeEntry.getKey());
                 }
             }
-        }
-
-        Map<String, Object> mappedToscaTemplate = null;
-        if (StringUtils.isNotEmpty(nodeName) && MapUtils.isNotEmpty(nodeTypesInfo)
-                && nodeTypesInfo.containsKey(nodeName)) {
-            mappedToscaTemplate = nodeTypesInfo.get(nodeName).getMappedToscaTemplate();
-        }
-        if (MapUtils.isEmpty(mappedToscaTemplate)) {
-            mappedToscaTemplate = (Map<String, Object>) new Yaml().load(topologyTemplateYaml);
-        }
-
-        Either<Map<String, Resource>, ResponseFormat> createdNodeTypeFromMainTemplateEither = createResourcesFromYamlNodeTypesList(
-                yamlName, resource, mappedToscaTemplate, needLock, nodeTypesArtifactsToHandle,
-                nodeTypesNewCreatedArtifacts, nodeTypesInfo, csarInfo);
-        if (createdNodeTypeFromMainTemplateEither.isRight()) {
-            ResponseFormat responseFormat = createdNodeTypeFromMainTemplateEither.right().value();
+            Map<String, Object> mappedToscaTemplate = null;
+            if (StringUtils.isNotEmpty(nodeName) && isNotEmpty(nodeTypesInfo)
+                    && nodeTypesInfo.containsKey(nodeName)) {
+                mappedToscaTemplate = nodeTypesInfo.get(nodeName).getMappedToscaTemplate();
+            }
+            if (isEmpty(mappedToscaTemplate)) {
+                mappedToscaTemplate = (Map<String, Object>) new Yaml().load(topologyTemplateYaml);
+            }
+            createResourcesFromYamlNodeTypesList(yamlName, resource, mappedToscaTemplate, needLock, nodeTypesArtifactsToHandle,
+                    nodeTypesNewCreatedArtifacts, nodeTypesInfo, csarInfo);
+        } catch(ComponentException e){
+            ResponseFormat responseFormat = e.getResponseFormat() != null ? e.getResponseFormat()
+                    : componentsUtils.getResponseFormat(e.getActionStatus(), e.getParams());
             componentsUtils.auditResource(responseFormat, csarInfo.getModifier(), resource, AuditingActionEnum.IMPORT_RESOURCE);
-            return Either.right(responseFormat);
+            throw e;
+        } catch (StorageException e){
+            ResponseFormat responseFormat = componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(e.getStorageOperationStatus()));
+            componentsUtils.auditResource(responseFormat, csarInfo.getModifier(), resource, AuditingActionEnum.IMPORT_RESOURCE);
+            throw e;
         }
-
         // add the created node types to the cache although they are not in the
         // graph.
         csarInfo.getCreatedNodes().values().stream()
                 .forEach(p -> cacheManagerOperation.storeComponentInCache(p, NodeTypeEnum.Resource));
-
-        return result;
     }
 
     private Either<Resource, ResponseFormat> handleVfCsarArtifacts(Resource resource, CsarInfo csarInfo,
@@ -2300,10 +1801,12 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                 Map<String, ArtifactDefinition> deploymentArtifactsMap = resource.getDeploymentArtifacts();
                 if (deploymentArtifactsMap != null && !deploymentArtifactsMap.isEmpty()) {
                     for (Entry<String, ArtifactDefinition> artifactEntry : deploymentArtifactsMap.entrySet()) {
-                        if (artifactEntry.getValue().getArtifactName().equalsIgnoreCase(Constants.VENDOR_LICENSE_MODEL))
+                        if (artifactEntry.getValue().getArtifactName().equalsIgnoreCase(Constants.VENDOR_LICENSE_MODEL)) {
                             vendorLicenseModelId = artifactEntry.getValue().getUniqueId();
-                        if (artifactEntry.getValue().getArtifactName().equalsIgnoreCase(Constants.VF_LICENSE_MODEL))
+                        }
+                        if (artifactEntry.getValue().getArtifactName().equalsIgnoreCase(Constants.VF_LICENSE_MODEL)) {
                             vfLicenseModelId = artifactEntry.getValue().getUniqueId();
+                        }
                     }
                 }
 
@@ -2313,13 +1816,13 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                     CsarUtils.ARTIFACTS_PATH + Constants.VENDOR_LICENSE_MODEL, Constants.VENDOR_LICENSE_MODEL,
                     ArtifactTypeEnum.VENDOR_LICENSE.getType(), ArtifactGroupTypeEnum.DEPLOYMENT,
                     Constants.VENDOR_LICENSE_LABEL, Constants.VENDOR_LICENSE_DISPLAY_NAME,
-                    Constants.VENDOR_LICENSE_DESCRIPTION, vendorLicenseModelId, artifactOperation, null, false, shouldLock,
+                    Constants.VENDOR_LICENSE_DESCRIPTION, vendorLicenseModelId, artifactOperation, null, true, shouldLock,
                     inTransaction);
             createOrUpdateSingleNonMetaArtifact(resource, csarInfo,
                     CsarUtils.ARTIFACTS_PATH + Constants.VF_LICENSE_MODEL, Constants.VF_LICENSE_MODEL,
                     ArtifactTypeEnum.VF_LICENSE.getType(), ArtifactGroupTypeEnum.DEPLOYMENT, Constants.VF_LICENSE_LABEL,
                     Constants.VF_LICENSE_DISPLAY_NAME, Constants.VF_LICENSE_DESCRIPTION, vfLicenseModelId,
-                    artifactOperation, null, false, shouldLock, inTransaction);
+                    artifactOperation, null, true, shouldLock, inTransaction);
 
             Either<Resource, ResponseFormat> eitherCreateResult = createOrUpdateNonMetaArtifacts(csarInfo, resource,
                     createdArtifacts, shouldLock, inTransaction, artifactOperation);
@@ -2343,10 +1846,11 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                 String artifactsFileName = artifacsMetaCsarStatus.left().value().getKey();
                 String artifactsContents = artifacsMetaCsarStatus.left().value().getValue();
                 Either<Resource, ResponseFormat> createArtifactsFromCsar;
-                if (ArtifactOperationEnum.isCreateOrLink(artifactOperation.getArtifactOperationEnum()))
+                if (ArtifactOperationEnum.isCreateOrLink(artifactOperation.getArtifactOperationEnum())) {
                     createArtifactsFromCsar = csarArtifactsAndGroupsBusinessLogic.createResourceArtifactsFromCsar(csarInfo, resource, artifactsContents, artifactsFileName, createdArtifacts, shouldLock, inTransaction);
-                else
+                } else {
                     createArtifactsFromCsar = csarArtifactsAndGroupsBusinessLogic.updateResourceArtifactsFromCsar(csarInfo, resource, artifactsContents, artifactsFileName, createdArtifacts, shouldLock, inTransaction);
+                }
 
                 if (createArtifactsFromCsar.isRight()) {
                     log.debug("Couldn't create artifacts from artifacts.meta");
@@ -2436,36 +1940,19 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         Map<String, Set<List<String>>> collectedWarningMessages = new HashMap<>();
 
         try {
-            List<NonMetaArtifactInfo> artifactPathAndNameList =
-                    // Stream of file paths contained in csar
-                    csarInfo.getCsar().entrySet().stream()
-                            // Filter in only VF artifact path location
-                            .filter(e -> Pattern.compile(VF_NODE_TYPE_ARTIFACTS_PATH_PATTERN).matcher(e.getKey())
-                                    .matches())
-                            // Validate and add warnings
-                            .map(e -> CsarUtils.validateNonMetaArtifact(e.getKey(), e.getValue(),
-                                    collectedWarningMessages))
-                            // Filter in Non Warnings
-                            .filter(e -> e.isLeft())
-                            // Convert from Either to NonMetaArtifactInfo
-                            .map(e -> e.left().value())
-                            // collect to List
-                            .collect(Collectors.toList());
-
-            Either<Boolean, String> responseFormatEither = validateArtifactNames(artifactPathAndNameList);
-            if (responseFormatEither.isRight()) {
+            Either<List<NonMetaArtifactInfo>, String> artifactPathAndNameList = getValidArtifactNames(csarInfo, collectedWarningMessages);
+            if (artifactPathAndNameList.isRight()) {
                 return Either.right(getComponentsUtils().getResponseFormatByArtifactId(
-                        ActionStatus.ARTIFACT_NAME_INVALID, responseFormatEither.right().value()));
+                        ActionStatus.ARTIFACT_NAME_INVALID, artifactPathAndNameList.right().value()));
             }
-
             EnumMap<ArtifactOperationEnum, List<NonMetaArtifactInfo>> vfCsarArtifactsToHandle = null;
 
             if (ArtifactOperationEnum.isCreateOrLink(artifactOperation.getArtifactOperationEnum())) {
                 vfCsarArtifactsToHandle = new EnumMap<>(ArtifactOperationEnum.class);
-                vfCsarArtifactsToHandle.put(artifactOperation.getArtifactOperationEnum(), artifactPathAndNameList);
+                vfCsarArtifactsToHandle.put(artifactOperation.getArtifactOperationEnum(), artifactPathAndNameList.left().value());
             } else {
                 Either<EnumMap<ArtifactOperationEnum, List<NonMetaArtifactInfo>>, ResponseFormat> findVfCsarArtifactsToHandleRes = findVfCsarArtifactsToHandle(
-                        resource, artifactPathAndNameList, csarInfo.getModifier());
+                        resource, artifactPathAndNameList.left().value(), csarInfo.getModifier());
 
                 if (findVfCsarArtifactsToHandleRes.isRight()) {
                     resStatus = Either.right(findVfCsarArtifactsToHandleRes.right().value());
@@ -2474,37 +1961,8 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                     vfCsarArtifactsToHandle = findVfCsarArtifactsToHandleRes.left().value();
                 }
             }
-
-
             if (resStatus == null && vfCsarArtifactsToHandle != null) {
-
-                for (Entry<ArtifactOperationEnum, List<NonMetaArtifactInfo>> currArtifactOperationPair : vfCsarArtifactsToHandle
-                        .entrySet()) {
-
-                    Optional<ResponseFormat> optionalCreateInDBError =
-                            // Stream of artifacts to be created
-                            currArtifactOperationPair.getValue().stream()
-                                    // create each artifact
-                                    .map(e -> createOrUpdateSingleNonMetaArtifact(resource, csarInfo, e.getPath(),
-                                            e.getArtifactName(), e.getArtifactType().getType(),
-                                            e.getArtifactGroupType(), e.getArtifactLabel(), e.getDisplayName(),
-                                            CsarUtils.ARTIFACT_CREATED_FROM_CSAR, e.getArtifactUniqueId(),
-                                            artifactsBusinessLogic.new ArtifactOperationInfo(false, false,
-                                                    currArtifactOperationPair.getKey()),
-                                            createdArtifacts, e.isFromCsar(), shouldLock, inTransaction))
-                                    // filter in only error
-                                    .filter(e -> e.isRight()).
-                                    // Convert the error from either to
-                                    // ResponseFormat
-                                            map(e -> e.right().value()).
-                                    // Check if an error occurred
-                                            findAny();
-                    // Error found on artifact Creation
-                    if (optionalCreateInDBError.isPresent()) {
-                        resStatus = Either.right(optionalCreateInDBError.get());
-                        break;
-                    }
-                }
+                resStatus = processCsarArtifacts(csarInfo, resource, createdArtifacts, shouldLock, inTransaction, resStatus, vfCsarArtifactsToHandle);
             }
             if (resStatus == null) {
                 resStatus = Either.left(resource);
@@ -2518,14 +1976,60 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         return resStatus;
     }
 
-    private Either<Boolean, String> validateArtifactNames(List<NonMetaArtifactInfo> artifactPathAndNameList) {
+    private Either<Resource, ResponseFormat> processCsarArtifacts(CsarInfo csarInfo, Resource resource, List<ArtifactDefinition> createdArtifacts, boolean shouldLock, boolean inTransaction, Either<Resource, ResponseFormat> resStatus, EnumMap<ArtifactOperationEnum, List<NonMetaArtifactInfo>> vfCsarArtifactsToHandle) {
+        for (Entry<ArtifactOperationEnum, List<NonMetaArtifactInfo>> currArtifactOperationPair : vfCsarArtifactsToHandle
+                .entrySet()) {
+
+            Optional<ResponseFormat> optionalCreateInDBError =
+                    // Stream of artifacts to be created
+                    currArtifactOperationPair.getValue().stream()
+                            // create each artifact
+                            .map(e -> createOrUpdateSingleNonMetaArtifact(resource, csarInfo, e.getPath(),
+                                    e.getArtifactName(), e.getArtifactType().getType(),
+                                    e.getArtifactGroupType(), e.getArtifactLabel(), e.getDisplayName(),
+                                    CsarUtils.ARTIFACT_CREATED_FROM_CSAR, e.getArtifactUniqueId(),
+                                    artifactsBusinessLogic.new ArtifactOperationInfo(false, false,
+                                            currArtifactOperationPair.getKey()),
+                                    createdArtifacts, e.isFromCsar(), shouldLock, inTransaction))
+                            // filter in only error
+                            .filter(Either::isRight).
+                            // Convert the error from either to
+                            // ResponseFormat
+                                    map(e -> e.right().value()).
+                            // Check if an error occurred
+                                    findAny();
+            // Error found on artifact Creation
+            if (optionalCreateInDBError.isPresent()) {
+                resStatus = Either.right(optionalCreateInDBError.get());
+                break;
+            }
+        }
+        return resStatus;
+    }
+
+    private Either<List<NonMetaArtifactInfo>, String> getValidArtifactNames(CsarInfo csarInfo, Map<String, Set<List<String>>> collectedWarningMessages) {
+        List<NonMetaArtifactInfo> artifactPathAndNameList =
+                // Stream of file paths contained in csar
+                csarInfo.getCsar().entrySet().stream()
+                        // Filter in only VF artifact path location
+                        .filter(e -> Pattern.compile(VF_NODE_TYPE_ARTIFACTS_PATH_PATTERN).matcher(e.getKey())
+                                .matches())
+                        // Validate and add warnings
+                        .map(e -> CsarUtils.validateNonMetaArtifact(e.getKey(), e.getValue(),
+                                collectedWarningMessages))
+                        // Filter in Non Warnings
+                        .filter(Either::isLeft)
+                        // Convert from Either to NonMetaArtifactInfo
+                        .map(e -> e.left().value())
+                        // collect to List
+                        .collect(toList());
         Pattern englishNumbersAndUnderScoresOnly = Pattern.compile(CsarUtils.VALID_ENGLISH_ARTIFACT_NAME);
         for (NonMetaArtifactInfo nonMetaArtifactInfo : artifactPathAndNameList) {
             if (!englishNumbersAndUnderScoresOnly.matcher(nonMetaArtifactInfo.getDisplayName()).matches()) {
                 return Either.right(nonMetaArtifactInfo.getArtifactName());
             }
         }
-        return Either.left(true);
+        return Either.left(artifactPathAndNameList);
     }
 
     private Either<EnumMap<ArtifactOperationEnum, List<NonMetaArtifactInfo>>, ResponseFormat> findVfCsarArtifactsToHandle(
@@ -2542,19 +2046,20 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         existingArtifacts = existingArtifacts.stream()
                 // filter MANDATORY artifacts, LICENSE artifacts and artifacts
                 // was created from HEAT.meta
-                .filter(this::isNonMetaArtifact).collect(Collectors.toList());
+                .filter(this::isNonMetaArtifact).collect(toList());
 
         List<String> artifactsToIgnore = new ArrayList<>();
         // collect IDs of Artifacts of VF which belongs to any group
         if (resource.getGroups() != null) {
             resource.getGroups().stream().forEach(g -> {
-                if (g.getArtifacts() != null && !g.getArtifacts().isEmpty())
+                if (g.getArtifacts() != null && !g.getArtifacts().isEmpty()) {
                     artifactsToIgnore.addAll(g.getArtifacts());
+                }
             });
         }
         existingArtifacts = existingArtifacts.stream()
                 // filter artifacts which belongs to any group
-                .filter(a -> !artifactsToIgnore.contains(a.getUniqueId())).collect(Collectors.toList());
+                .filter(a -> !artifactsToIgnore.contains(a.getUniqueId())).collect(toList());
         return organizeVfCsarArtifactsByArtifactOperation(artifactPathAndNameList, existingArtifacts, resource, user);
     }
 
@@ -2576,228 +2081,185 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         return result;
     }
 
-    private Either<Resource, ResponseFormat> createResourceInstancesRelations(User user, String yamlName,
-                                                                              Resource resource, Map<String, UploadComponentInstanceInfo> uploadResInstancesMap) {
-        log.debug("createResourceInstancesRelations try to create relations ");
+    private Resource createResourceInstancesRelations(User user, String yamlName, Resource resource,
+                                                      Map<String, UploadComponentInstanceInfo> uploadResInstancesMap) {
+        log.debug("#createResourceInstancesRelations - Going to create relations ");
         List<ComponentInstance> componentInstancesList = resource.getComponentInstances();
-        if (uploadResInstancesMap == null) {
-            log.debug("UploadComponentInstanceInfo is empty, fileName  {}", yamlName);
-            BeEcompErrorManager.getInstance().logInternalDataError("UploadComponentInstanceInfo is emty, fileName  {}",
-                    yamlName, ErrorSeverity.ERROR);
-
-            ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.NOT_TOPOLOGY_TOSCA_TEMPLATE,
-                    yamlName);
-            return Either.right(responseFormat);
+        if (isEmpty(uploadResInstancesMap) || CollectionUtils.isEmpty(componentInstancesList)) {
+            log.debug("#createResourceInstancesRelations - No instances found in the resource {} is empty, yaml template file name {}, ", resource.getUniqueId(), yamlName);
+            BeEcompErrorManager.getInstance().logInternalDataError("createResourceInstancesRelations","No instances found in a resource or nn yaml template. ", ErrorSeverity.ERROR);
+            throw new ComponentException(componentsUtils.getResponseFormat(ActionStatus.NOT_TOPOLOGY_TOSCA_TEMPLATE, yamlName));
         }
-
-        if (componentInstancesList == null || componentInstancesList.isEmpty()) {
-            log.debug("componentInstancesList is empty in resource {} ", resource.getUniqueId());
-            BeEcompErrorManager.getInstance().logInternalDataError("componentInstancesList is empty in resource {} ",
-                    resource.getUniqueId(), ErrorSeverity.ERROR);
-
-            ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.NOT_TOPOLOGY_TOSCA_TEMPLATE,
-                    yamlName);
-            return Either.right(responseFormat);
-        }
-
-        log.debug("Before validateAndUpdatePropertyValue");
-        Either<Map<String, DataTypeDefinition>, TitanOperationStatus> allDataTypes = dataTypeCache.getAll();
-        if (allDataTypes.isRight()) {
-            TitanOperationStatus status = allDataTypes.right().value();
-            BeEcompErrorManager.getInstance().logInternalFlowError("UpdatePropertyValueOnComponentInstance",
-                    "Failed to update property value on instance. Status is " + status, ErrorSeverity.ERROR);
-            return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(
-                    DaoStatusConverter.convertTitanStatusToStorageStatus(status)), yamlName));
-
-        }
-
         Map<String, List<ComponentInstanceProperty>> instProperties = new HashMap<>();
-        Map<ComponentInstance, Map<String, List<CapabilityDefinition>>> instCapabilties = new HashMap<>();
+        Map<ComponentInstance, Map<String, List<CapabilityDefinition>>> instCapabilities = new HashMap<>();
         Map<ComponentInstance, Map<String, List<RequirementDefinition>>> instRequirements = new HashMap<>();
         Map<String, Map<String, ArtifactDefinition>> instDeploymentArtifacts = new HashMap<>();
         Map<String, Map<String, ArtifactDefinition>> instArtifacts = new HashMap<>();
         Map<String, List<PropertyDefinition>> instAttributes = new HashMap<>();
         Map<String, Resource> originCompMap = new HashMap<>();
         List<RequirementCapabilityRelDef> relations = new ArrayList<>();
-
         Map<String, List<ComponentInstanceInput>> instInputs = new HashMap<>();
 
-        for (Entry<String, UploadComponentInstanceInfo> entry : uploadResInstancesMap.entrySet()) {
-            log.trace("Processing entry: {}", entry);
-            UploadComponentInstanceInfo uploadComponentInstanceInfo = entry.getValue();
-            ComponentInstance currentCompInstance = null;
-            for (ComponentInstance compInstance : componentInstancesList) {
-                log.trace("Processing component instance: {}", compInstance);
-                if (compInstance.getName().equals(uploadComponentInstanceInfo.getName())) {
-                    currentCompInstance = compInstance;
-                    break;
-                }
+        log.debug("#createResourceInstancesRelations - Before get all datatypes. ");
+        Either<Map<String, DataTypeDefinition>, TitanOperationStatus> allDataTypes = dataTypeCache.getAll();
+        if (allDataTypes.isRight()) {
+            TitanOperationStatus status = allDataTypes.right().value();
+            BeEcompErrorManager.getInstance().logInternalFlowError("UpdatePropertyValueOnComponentInstance",
+                    "Failed to update property value on instance. Status is " + status, ErrorSeverity.ERROR);
+            throw new ComponentException(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(
+                    DaoStatusConverter.convertTitanStatusToStorageStatus(status)), yamlName));
 
-            }
-            if (currentCompInstance == null) {
-                log.debug("component instance with name {}  in resource {} ", uploadComponentInstanceInfo.getName(),
-                        resource.getUniqueId());
-                BeEcompErrorManager.getInstance().logInternalDataError(
-                        "component instance with name " + uploadComponentInstanceInfo.getName() + "  in resource {} ",
-                        resource.getUniqueId(), ErrorSeverity.ERROR);
-                ResponseFormat responseFormat = componentsUtils
-                        .getResponseFormat(ActionStatus.NOT_TOPOLOGY_TOSCA_TEMPLATE, yamlName);
-                return Either.right(responseFormat);
-            }
-            String resourceInstanceId = currentCompInstance.getUniqueId();
-            Resource originResource;
-            if (!originCompMap.containsKey(currentCompInstance.getComponentUid())) {
-                Either<Resource, StorageOperationStatus> getOriginResourceRes = toscaOperationFacade
-                        .getToscaFullElement(currentCompInstance.getComponentUid());
-                if (getOriginResourceRes.isRight()) {
-                    log.debug("failed to fetch resource with uniqueId {} and tosca component name {} status is {}",
-                            currentCompInstance.getComponentUid(), currentCompInstance.getToscaComponentName(),
-                            getOriginResourceRes);
-                    ResponseFormat responseFormat = componentsUtils.getResponseFormat(
-                            componentsUtils.convertFromStorageResponse(getOriginResourceRes.right().value()), yamlName);
-                    return Either.right(responseFormat);
-                }
-                originResource = getOriginResourceRes.left().value();
-                originCompMap.put(originResource.getUniqueId(), originResource);
-            } else {
-                originResource = originCompMap.get(currentCompInstance.getComponentUid());
-            }
-            if (originResource.getRequirements() != null && !originResource.getRequirements().isEmpty())
-                instRequirements.put(currentCompInstance, originResource.getRequirements());
-            if (MapUtils.isNotEmpty(originResource.getCapabilities())) {
-                Map<String, List<CapabilityDefinition>> originCapabilities;
-                if (MapUtils.isNotEmpty(uploadComponentInstanceInfo.getCapabilities())) {
-                    originCapabilities = new HashMap<>();
-                    originResource.getCapabilities().entrySet().stream().forEach(e -> {
-                        List<CapabilityDefinition> list = e.getValue().stream().map(l -> new CapabilityDefinition(l))
-                                .collect(Collectors.toList());
-                        originCapabilities.put(e.getKey(), list);
-                    });
-                    Map<String, Map<String, UploadPropInfo>> newPropertiesMap = new HashMap<>();
-                    for (List<UploadCapInfo> capabilities : uploadComponentInstanceInfo.getCapabilities().values()) {
-                        for (UploadCapInfo capability : capabilities) {
-                            if (CollectionUtils.isNotEmpty(capability.getProperties())) {
-                                newPropertiesMap.put(capability.getName(), capability.getProperties().stream()
-                                        .collect(Collectors.toMap(p -> p.getName(), p -> p)));
-                            }
-                        }
-                    }
-                    for (List<CapabilityDefinition> capabilities : originCapabilities.values()) {
-                        List<CapabilityDefinition> filteredCapabilities = capabilities.stream()
-                                .filter(c -> newPropertiesMap.containsKey(c.getName())).collect(Collectors.toList());
-                        for (CapabilityDefinition cap : filteredCapabilities) {
-                            Either<Boolean, ResponseFormat> updateRes = updatePropertyValues(cap.getProperties(),
-                                    newPropertiesMap.get(cap.getName()), allDataTypes.left().value());
-                            if (updateRes.isRight()) {
-                                log.debug("Failed to update capability properties of capability {} . Status is {}. ",
-                                        cap.getName(), updateRes.right().value());
-                                return Either.right(updateRes.right().value());
-                            }
-                        }
-                    }
-                } else {
-                    originCapabilities = originResource.getCapabilities();
-                }
-                instCapabilties.put(currentCompInstance, originCapabilities);
-            }
-            if (originResource.getDeploymentArtifacts() != null && !originResource.getDeploymentArtifacts().isEmpty())
-                instDeploymentArtifacts.put(resourceInstanceId, originResource.getDeploymentArtifacts());
-            if (originResource.getArtifacts() != null && !originResource.getArtifacts().isEmpty())
-                instArtifacts.put(resourceInstanceId, originResource.getArtifacts());
-            if (originResource.getAttributes() != null && !originResource.getAttributes().isEmpty())
-                instAttributes.put(resourceInstanceId, originResource.getAttributes());
-            if (originResource.getResourceType() != ResourceTypeEnum.CVFC) {
-                ResponseFormat addPropertiesValueToRiRes = addPropertyValuesToRi(uploadComponentInstanceInfo, resource,
-                        originResource, currentCompInstance, yamlName, instProperties, allDataTypes.left().value());
-                if (addPropertiesValueToRiRes.getStatus() != 200) {
-                    return Either.right(addPropertiesValueToRiRes);
-                }
-            } else {
-                ResponseFormat addInputValueToRiRes = addInputsValuesToRi(uploadComponentInstanceInfo, resource,
-                        originResource, currentCompInstance, yamlName, instInputs, allDataTypes.left().value());
-                if (addInputValueToRiRes.getStatus() != 200) {
-                    return Either.right(addInputValueToRiRes);
-                }
-            }
         }
+        Resource finalResource = resource;
+        uploadResInstancesMap
+                .values()
+                .forEach(i ->processComponentInstance(yamlName, finalResource, componentInstancesList, allDataTypes,
+                        instProperties, instCapabilities, instRequirements, instDeploymentArtifacts,
+                        instArtifacts, instAttributes, originCompMap, instInputs, i));
 
-        Either<Map<String, List<ComponentInstanceProperty>>, StorageOperationStatus> addPropToInst = toscaOperationFacade
-                .associateComponentInstancePropertiesToComponent(instProperties, resource.getUniqueId());
-        if (addPropToInst.isRight()) {
-            log.debug("failed to associate properties of resource {} status is {}", resource.getUniqueId(),
-                    addPropToInst.right().value());
-            ResponseFormat responseFormat = componentsUtils.getResponseFormat(
-                    componentsUtils.convertFromStorageResponse(addPropToInst.right().value()), yamlName);
-            return Either.right(responseFormat);
+        associateComponentInstancePropertiesToComponent(yamlName, resource, instProperties);
+        associateComponentInstanceInputsToComponent(yamlName, resource, instInputs);
+        associateDeploymentArtifactsToInstances(user, yamlName, resource, instDeploymentArtifacts);
+        associateArtifactsToInstances(yamlName, resource, instArtifacts);
+        associateOrAddCalculatedCapReq(yamlName, resource, instCapabilities, instRequirements);
+        associateInstAttributeToComponentToInstances(yamlName, resource, instAttributes);
+
+        resource = getResourceAfterCreateRelations(resource);
+
+        addRelationsToRI(yamlName, resource, uploadResInstancesMap, componentInstancesList, relations);
+        associateResourceInstances(yamlName, resource, relations);
+        handleSubstitutionMappings(resource, uploadResInstancesMap);
+        log.debug("************* in create relations, getResource start");
+        Either<Resource, StorageOperationStatus> eitherGetResource = toscaOperationFacade.getToscaElement(resource.getUniqueId());
+        log.debug("************* in create relations, getResource end");
+        if (eitherGetResource.isRight()) {
+            throw new ComponentException(componentsUtils.getResponseFormatByResource(
+                    componentsUtils.convertFromStorageResponse(eitherGetResource.right().value()), resource));
         }
-        if (instInputs != null && !instInputs.isEmpty()) {
-            Either<Map<String, List<ComponentInstanceInput>>, StorageOperationStatus> addInputToInst = toscaOperationFacade
-                    .associateComponentInstanceInputsToComponent(instInputs, resource.getUniqueId());
-            if (addInputToInst.isRight()) {
-                log.debug("failed to associate inputs value of resource {} status is {}", resource.getUniqueId(),
-                        addInputToInst.right().value());
-                ResponseFormat responseFormat = componentsUtils.getResponseFormat(
-                        componentsUtils.convertFromStorageResponse(addInputToInst.right().value()), yamlName);
-                return Either.right(responseFormat);
-            }
+        return eitherGetResource.left().value();
+    }
+
+    private Resource getResourceAfterCreateRelations(Resource resource) {
+        ComponentParametersView parametersView = getComponentFilterAfterCreateRelations();
+        Either<Resource, StorageOperationStatus> eitherGetResource = toscaOperationFacade
+                .getToscaElement(resource.getUniqueId(), parametersView);
+
+        if (eitherGetResource.isRight()) {
+            throwComponentExceptionByResource(eitherGetResource.right().value(),resource);
         }
-        StorageOperationStatus addArtToInst = toscaOperationFacade
-                .associateDeploymentArtifactsToInstances(instDeploymentArtifacts, resource.getUniqueId(), user);
+        return eitherGetResource.left().value();
+    }
+
+    private void associateResourceInstances(String yamlName, Resource resource, List<RequirementCapabilityRelDef> relations) {
+        StorageOperationStatus addArtToInst;
+        addArtToInst = toscaOperationFacade.associateResourceInstances(resource.getUniqueId(), relations);
         if (addArtToInst != StorageOperationStatus.OK && addArtToInst != StorageOperationStatus.NOT_FOUND) {
-            log.debug("failed to associate artifact of resource {} status is {}", resource.getUniqueId(), addArtToInst);
-            ResponseFormat responseFormat = componentsUtils
-                    .getResponseFormat(componentsUtils.convertFromStorageResponse(addArtToInst), yamlName);
-            return Either.right(responseFormat);
-        }
-
-        addArtToInst = toscaOperationFacade.associateArtifactsToInstances(instArtifacts, resource.getUniqueId(), user);
-        if (addArtToInst != StorageOperationStatus.OK && addArtToInst != StorageOperationStatus.NOT_FOUND) {
-            log.debug("failed to associate artifact of resource {} status is {}", resource.getUniqueId(), addArtToInst);
-            ResponseFormat responseFormat = componentsUtils
-                    .getResponseFormat(componentsUtils.convertFromStorageResponse(addArtToInst), yamlName);
-            return Either.right(responseFormat);
-        }
-
-        addArtToInst = toscaOperationFacade.associateCalculatedCapReq(instCapabilties, instRequirements,
-                resource.getUniqueId());
-        if (addArtToInst != StorageOperationStatus.OK && addArtToInst != StorageOperationStatus.NOT_FOUND) {
-            log.debug("failed to associate cap and req of resource {} status is {}", resource.getUniqueId(),
+            log.debug("failed to associate instances of resource {} status is {}", resource.getUniqueId(),
                     addArtToInst);
-            ResponseFormat responseFormat = componentsUtils
-                    .getResponseFormat(componentsUtils.convertFromStorageResponse(addArtToInst), yamlName);
-            return Either.right(responseFormat);
+            throw new ComponentException(componentsUtils
+                    .getResponseFormat(componentsUtils.convertFromStorageResponse(addArtToInst), yamlName));
         }
+    }
 
-        addArtToInst = toscaOperationFacade.associateInstAttributeToComponentToInstances(instAttributes,
-                resource.getUniqueId());
-        if (addArtToInst != StorageOperationStatus.OK && addArtToInst != StorageOperationStatus.NOT_FOUND) {
-            log.debug("failed to associate attributes of resource {} status is {}", resource.getUniqueId(),
-                    addArtToInst);
-            ResponseFormat responseFormat = componentsUtils
-                    .getResponseFormat(componentsUtils.convertFromStorageResponse(addArtToInst), yamlName);
-            return Either.right(responseFormat);
-        }
-
+    private ComponentParametersView getComponentFilterAfterCreateRelations() {
         ComponentParametersView parametersView = new ComponentParametersView();
         parametersView.disableAll();
         parametersView.setIgnoreComponentInstances(false);
         parametersView.setIgnoreComponentInstancesProperties(false);
         parametersView.setIgnoreCapabilities(false);
         parametersView.setIgnoreRequirements(false);
+        parametersView.setIgnoreGroups(false);
+        return parametersView;
+    }
 
-        Either<Resource, StorageOperationStatus> eitherGetResource = toscaOperationFacade
-                .getToscaElement(resource.getUniqueId(), parametersView);
-
-        if (eitherGetResource.isRight()) {
-            ResponseFormat responseFormat = componentsUtils.getResponseFormatByResource(
-                    componentsUtils.convertFromStorageResponse(eitherGetResource.right().value()), resource);
-
-            return Either.right(responseFormat);
-
+    private void associateInstAttributeToComponentToInstances(String yamlName, Resource resource, Map<String, List<PropertyDefinition>> instAttributes) {
+        StorageOperationStatus addArtToInst;
+        addArtToInst = toscaOperationFacade.associateInstAttributeToComponentToInstances(instAttributes,
+                resource.getUniqueId());
+        if (addArtToInst != StorageOperationStatus.OK && addArtToInst != StorageOperationStatus.NOT_FOUND) {
+            log.debug("failed to associate attributes of resource {} status is {}", resource.getUniqueId(),
+                    addArtToInst);
+            throw new ComponentException(componentsUtils
+                    .getResponseFormat(componentsUtils.convertFromStorageResponse(addArtToInst), yamlName));
         }
+    }
 
-        resource = eitherGetResource.left().value();
+    private void associateOrAddCalculatedCapReq(String yamlName, Resource resource, Map<ComponentInstance, Map<String, List<CapabilityDefinition>>> instCapabilities, Map<ComponentInstance, Map<String, List<RequirementDefinition>>> instRequirements) {
+        StorageOperationStatus addArtToInst;
+        addArtToInst = toscaOperationFacade.associateOrAddCalculatedCapReq(instCapabilities, instRequirements,
+                resource.getUniqueId());
+        if (addArtToInst != StorageOperationStatus.OK && addArtToInst != StorageOperationStatus.NOT_FOUND) {
+            log.debug("failed to associate cap and req of resource {} status is {}", resource.getUniqueId(),
+                    addArtToInst);
+            throw new ComponentException(componentsUtils
+                    .getResponseFormat(componentsUtils.convertFromStorageResponse(addArtToInst), yamlName));
+        }
+    }
 
+    private void associateArtifactsToInstances(String yamlName, Resource resource, Map<String, Map<String, ArtifactDefinition>> instArtifacts) {
+        StorageOperationStatus addArtToInst;
+
+        addArtToInst = toscaOperationFacade.associateArtifactsToInstances(instArtifacts, resource.getUniqueId());
+        if (addArtToInst != StorageOperationStatus.OK && addArtToInst != StorageOperationStatus.NOT_FOUND) {
+            log.debug("failed to associate artifact of resource {} status is {}", resource.getUniqueId(), addArtToInst);
+            throw new ComponentException(componentsUtils
+                    .getResponseFormat(componentsUtils.convertFromStorageResponse(addArtToInst), yamlName));
+        }
+    }
+
+    private void associateDeploymentArtifactsToInstances(User user, String yamlName, Resource resource, Map<String, Map<String, ArtifactDefinition>> instDeploymentArtifacts) {
+        StorageOperationStatus addArtToInst = toscaOperationFacade
+                .associateDeploymentArtifactsToInstances(instDeploymentArtifacts, resource.getUniqueId(), user);
+        if (addArtToInst != StorageOperationStatus.OK && addArtToInst != StorageOperationStatus.NOT_FOUND) {
+            log.debug("failed to associate artifact of resource {} status is {}", resource.getUniqueId(), addArtToInst);
+            throw new ComponentException(componentsUtils
+                    .getResponseFormat(componentsUtils.convertFromStorageResponse(addArtToInst), yamlName));
+        }
+    }
+
+    private void associateComponentInstanceInputsToComponent(String yamlName, Resource resource, Map<String, List<ComponentInstanceInput>> instInputs) {
+        if (MapUtils.isNotEmpty(instInputs)) {
+            Either<Map<String, List<ComponentInstanceInput>>, StorageOperationStatus> addInputToInst = toscaOperationFacade
+                    .associateComponentInstanceInputsToComponent(instInputs, resource.getUniqueId());
+            if (addInputToInst.isRight()) {
+                log.debug("failed to associate inputs value of resource {} status is {}", resource.getUniqueId(),
+                        addInputToInst.right().value());
+                throw new ComponentException(componentsUtils.getResponseFormat(
+                        componentsUtils.convertFromStorageResponse(addInputToInst.right().value()), yamlName));
+            }
+        }
+    }
+
+    private void associateComponentInstancePropertiesToComponent(String yamlName, Resource resource, Map<String, List<ComponentInstanceProperty>> instProperties) {
+        Either<Map<String, List<ComponentInstanceProperty>>, StorageOperationStatus> addPropToInst = toscaOperationFacade
+                .associateComponentInstancePropertiesToComponent(instProperties, resource.getUniqueId());
+        if (addPropToInst.isRight()) {
+            log.debug("failed to associate properties of resource {} status is {}", resource.getUniqueId(),
+                    addPropToInst.right().value());
+            throw new ComponentException(componentsUtils.getResponseFormat(
+                    componentsUtils.convertFromStorageResponse(addPropToInst.right().value()), yamlName));
+        }
+    }
+
+    private void handleSubstitutionMappings(Resource resource, Map<String, UploadComponentInstanceInfo> uploadResInstancesMap) {
+        if (resource.getResourceType() == ResourceTypeEnum.CVFC) {
+            Either<Resource, StorageOperationStatus> getResourceRes = toscaOperationFacade.getToscaFullElement(resource.getUniqueId());
+            if (getResourceRes.isRight()) {
+                ResponseFormat responseFormat = componentsUtils.getResponseFormatByResource(
+                        componentsUtils.convertFromStorageResponse(getResourceRes.right().value()), resource);
+                throw new ComponentException(responseFormat);
+            }
+            getResourceRes = updateCalculatedCapReqWithSubstitutionMappings(getResourceRes.left().value(),
+                    uploadResInstancesMap);
+            if (getResourceRes.isRight()) {
+                ResponseFormat responseFormat = componentsUtils.getResponseFormatByResource(
+                        componentsUtils.convertFromStorageResponse(getResourceRes.right().value()), resource);
+                throw new ComponentException(responseFormat);
+            }
+        }
+    }
+
+    private void addRelationsToRI(String yamlName, Resource resource, Map<String, UploadComponentInstanceInfo> uploadResInstancesMap, List<ComponentInstance> componentInstancesList, List<RequirementCapabilityRelDef> relations) {
         for (Entry<String, UploadComponentInstanceInfo> entry : uploadResInstancesMap.entrySet()) {
             UploadComponentInstanceInfo uploadComponentInstanceInfo = entry.getValue();
             ComponentInstance currentCompInstance = null;
@@ -2810,75 +2272,132 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 
             }
             if (currentCompInstance == null) {
-                log.debug("component instance with name {}  in resource {} ", uploadComponentInstanceInfo.getName(),
+                log.debug(COMPONENT_INSTANCE_WITH_NAME_IN_RESOURCE, uploadComponentInstanceInfo.getName(),
                         resource.getUniqueId());
                 BeEcompErrorManager.getInstance().logInternalDataError(
-                        "component instance with name " + uploadComponentInstanceInfo.getName() + "  in resource {} ",
+                        COMPONENT_INSTANCE_WITH_NAME + uploadComponentInstanceInfo.getName() + IN_RESOURCE,
                         resource.getUniqueId(), ErrorSeverity.ERROR);
                 ResponseFormat responseFormat = componentsUtils
                         .getResponseFormat(ActionStatus.NOT_TOPOLOGY_TOSCA_TEMPLATE, yamlName);
-                return Either.right(responseFormat);
+                throw new ComponentException(responseFormat);
             }
 
             ResponseFormat addRelationToRiRes = addRelationToRI(yamlName, resource, entry.getValue(), relations);
             if (addRelationToRiRes.getStatus() != 200) {
-                return Either.right(addRelationToRiRes);
+                throw new ComponentException(addRelationToRiRes);
             }
         }
+    }
 
-        addArtToInst = toscaOperationFacade.associateResourceInstances(resource.getUniqueId(), relations);
-        if (addArtToInst != StorageOperationStatus.OK && addArtToInst != StorageOperationStatus.NOT_FOUND) {
-            log.debug("failed to associate instances of resource {} status is {}", resource.getUniqueId(),
-                    addArtToInst);
+    private void processComponentInstance(String yamlName, Resource resource, List<ComponentInstance> componentInstancesList, Either<Map<String, DataTypeDefinition>, TitanOperationStatus> allDataTypes, Map<String, List<ComponentInstanceProperty>> instProperties, Map<ComponentInstance, Map<String, List<CapabilityDefinition>>> instCapabilties, Map<ComponentInstance, Map<String, List<RequirementDefinition>>> instRequirements, Map<String, Map<String, ArtifactDefinition>> instDeploymentArtifacts, Map<String, Map<String, ArtifactDefinition>> instArtifacts, Map<String, List<PropertyDefinition>> instAttributes, Map<String, Resource> originCompMap, Map<String, List<ComponentInstanceInput>> instInputs, UploadComponentInstanceInfo uploadComponentInstanceInfo) {
+        Optional<ComponentInstance> currentCompInstanceOpt = componentInstancesList.stream()
+                .filter(i->i.getName().equals(uploadComponentInstanceInfo.getName()))
+                .findFirst();
+        if (!currentCompInstanceOpt.isPresent()) {
+            log.debug(COMPONENT_INSTANCE_WITH_NAME_IN_RESOURCE, uploadComponentInstanceInfo.getName(),
+                    resource.getUniqueId());
+            BeEcompErrorManager.getInstance().logInternalDataError(
+                    COMPONENT_INSTANCE_WITH_NAME + uploadComponentInstanceInfo.getName() + IN_RESOURCE,
+                    resource.getUniqueId(), ErrorSeverity.ERROR);
             ResponseFormat responseFormat = componentsUtils
-                    .getResponseFormat(componentsUtils.convertFromStorageResponse(addArtToInst), yamlName);
-            return Either.right(responseFormat);
+                    .getResponseFormat(ActionStatus.NOT_TOPOLOGY_TOSCA_TEMPLATE, yamlName);
+            throw new ComponentException(responseFormat);
         }
-
-        if (resource.getResourceType() == ResourceTypeEnum.CVFC) {
-            eitherGetResource = toscaOperationFacade.getToscaFullElement(resource.getUniqueId());
-            if (eitherGetResource.isRight()) {
-                ResponseFormat responseFormat = componentsUtils.getResponseFormatByResource(
-                        componentsUtils.convertFromStorageResponse(eitherGetResource.right().value()), resource);
-                return Either.right(responseFormat);
+        ComponentInstance currentCompInstance = currentCompInstanceOpt.get();
+        String resourceInstanceId = currentCompInstance.getUniqueId();
+        Resource originResource = getOriginResource(yamlName, originCompMap, currentCompInstance);
+        if (isNotEmpty(originResource.getRequirements())) {
+            instRequirements.put(currentCompInstance, originResource.getRequirements());
+        }
+        if (isNotEmpty(originResource.getCapabilities())) {
+            processComponentInstanceCapabilities(allDataTypes, instCapabilties, uploadComponentInstanceInfo,
+                    currentCompInstance, originResource);
+        }
+        if (originResource.getDeploymentArtifacts() != null && !originResource.getDeploymentArtifacts().isEmpty()) {
+            instDeploymentArtifacts.put(resourceInstanceId, originResource.getDeploymentArtifacts());
+        }
+        if (originResource.getArtifacts() != null && !originResource.getArtifacts().isEmpty()) {
+            instArtifacts.put(resourceInstanceId, originResource.getArtifacts());
+        }
+        if (originResource.getAttributes() != null && !originResource.getAttributes().isEmpty()) {
+            instAttributes.put(resourceInstanceId, originResource.getAttributes());
+        }
+        if (originResource.getResourceType() != ResourceTypeEnum.CVFC) {
+            ResponseFormat addPropertiesValueToRiRes = addPropertyValuesToRi(uploadComponentInstanceInfo, resource,
+                    originResource, currentCompInstance, instProperties, allDataTypes.left().value());
+            if (addPropertiesValueToRiRes.getStatus() != 200) {
+                throw new ComponentException(addPropertiesValueToRiRes);
             }
-            eitherGetResource = updateCalculatedCapReqWithSubstitutionMappings(eitherGetResource.left().value(),
-                    uploadResInstancesMap);
-            if (eitherGetResource.isRight()) {
-                ResponseFormat responseFormat = componentsUtils.getResponseFormatByResource(
-                        componentsUtils.convertFromStorageResponse(eitherGetResource.right().value()), resource);
-                return Either.right(responseFormat);
-            }
+        } else {
+            addInputsValuesToRi(uploadComponentInstanceInfo, resource,
+                    originResource, currentCompInstance, instInputs, allDataTypes.left().value());
         }
-
-        log.debug("************* in create relations, getResource start");
-        eitherGetResource = toscaOperationFacade.getToscaElement(resource.getUniqueId());
-        log.debug("************* in create relations, getResource end");
-        if (eitherGetResource.isRight()) {
-            ResponseFormat responseFormat = componentsUtils.getResponseFormatByResource(
-                    componentsUtils.convertFromStorageResponse(eitherGetResource.right().value()), resource);
-            return Either.right(responseFormat);
-        }
-        return Either.left(eitherGetResource.left().value());
     }
 
-    private Either<Boolean, ResponseFormat> updatePropertyValues(List<ComponentInstanceProperty> properties,
-                                                                 Map<String, UploadPropInfo> newProperties, Map<String, DataTypeDefinition> allDataTypes) {
-        for (ComponentInstanceProperty property : properties) {
-            Either<String, StorageOperationStatus> updateRes = updatePropertyValue(property,
-                    newProperties.get(property.getName()), allDataTypes);
-            if (updateRes.isRight()) {
-                log.debug("Failed to update capability property {} . Status is {}. ", property.getName(),
-                        updateRes.right().value());
-                return Either.right(componentsUtils
-                        .getResponseFormat(componentsUtils.convertFromStorageResponse(updateRes.right().value())));
+    private Resource getOriginResource(String yamlName, Map<String, Resource> originCompMap, ComponentInstance currentCompInstance) {
+        Resource originResource;
+        if (!originCompMap.containsKey(currentCompInstance.getComponentUid())) {
+            Either<Resource, StorageOperationStatus> getOriginResourceRes = toscaOperationFacade
+                    .getToscaFullElement(currentCompInstance.getComponentUid());
+            if (getOriginResourceRes.isRight()) {
+                log.debug("failed to fetch resource with uniqueId {} and tosca component name {} status is {}",
+                        currentCompInstance.getComponentUid(), currentCompInstance.getToscaComponentName(),
+                        getOriginResourceRes);
+                ResponseFormat responseFormat = componentsUtils.getResponseFormat(
+                        componentsUtils.convertFromStorageResponse(getOriginResourceRes.right().value()), yamlName);
+                throw new ComponentException(responseFormat);
             }
+            originResource = getOriginResourceRes.left().value();
+            originCompMap.put(originResource.getUniqueId(), originResource);
+        } else {
+            originResource = originCompMap.get(currentCompInstance.getComponentUid());
         }
-        return Either.left(true);
+        return originResource;
     }
 
-    private Either<String, StorageOperationStatus> updatePropertyValue(ComponentInstanceProperty property,
-                                                                       UploadPropInfo propertyInfo, Map<String, DataTypeDefinition> allDataTypes) {
+    private void processComponentInstanceCapabilities(Either<Map<String, DataTypeDefinition>, TitanOperationStatus> allDataTypes, Map<ComponentInstance, Map<String, List<CapabilityDefinition>>> instCapabilties, UploadComponentInstanceInfo uploadComponentInstanceInfo, ComponentInstance currentCompInstance, Resource originResource) {
+        Map<String, List<CapabilityDefinition>> originCapabilities;
+        if (isNotEmpty(uploadComponentInstanceInfo.getCapabilities())) {
+            originCapabilities = new HashMap<>();
+            Map<String, Map<String, UploadPropInfo>> newPropertiesMap = new HashMap<>();
+            originResource.getCapabilities().forEach((k,v) ->  addCapabilities(originCapabilities, k, v));
+            uploadComponentInstanceInfo.getCapabilities().values().forEach(l-> addCapabilitiesProperties(newPropertiesMap, l));
+            updateCapabilityPropertiesValues(allDataTypes, originCapabilities, newPropertiesMap);
+        } else {
+            originCapabilities = originResource.getCapabilities();
+        }
+        instCapabilties.put(currentCompInstance, originCapabilities);
+    }
+
+    private void updateCapabilityPropertiesValues(Either<Map<String, DataTypeDefinition>, TitanOperationStatus> allDataTypes, Map<String, List<CapabilityDefinition>> originCapabilities, Map<String, Map<String, UploadPropInfo>> newPropertiesMap) {
+        originCapabilities.values().stream()
+                .flatMap(Collection::stream)
+                .filter(c -> newPropertiesMap.containsKey(c.getName()))
+                .forEach(c -> updatePropertyValues(c.getProperties(), newPropertiesMap.get(c.getName()), allDataTypes.left().value()));
+    }
+
+    private void addCapabilitiesProperties(Map<String, Map<String, UploadPropInfo>> newPropertiesMap, List<UploadCapInfo> capabilities) {
+        for (UploadCapInfo capability : capabilities) {
+            if (isNotEmpty(capability.getProperties())) {
+                newPropertiesMap.put(capability.getName(), capability.getProperties().stream()
+                        .collect(toMap(UploadInfo::getName, p -> p)));
+            }
+        }
+    }
+
+    private void addCapabilities(Map<String, List<CapabilityDefinition>> originCapabilities, String type, List<CapabilityDefinition> capabilities) {
+        List<CapabilityDefinition> list = capabilities.stream().map(CapabilityDefinition::new)
+                .collect(toList());
+        originCapabilities.put(type, list);
+    }
+
+    private void updatePropertyValues(List<ComponentInstanceProperty> properties, Map<String, UploadPropInfo> newProperties,
+                                      Map<String, DataTypeDefinition> allDataTypes) {
+        properties.forEach(p->updatePropertyValue(p, newProperties.get(p.getName()), allDataTypes));
+    }
+
+    private String updatePropertyValue(ComponentInstanceProperty property, UploadPropInfo propertyInfo,
+                                       Map<String, DataTypeDefinition> allDataTypes) {
         String value = null;
         List<GetInputValueDataDefinition> getInputs = null;
         boolean isValidate = true;
@@ -2886,10 +2405,11 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
             getInputs = propertyInfo.getGet_input();
             isValidate = getInputs == null || getInputs.isEmpty();
             if (isValidate) {
-                value = ImportUtils.getPropertyJsonStringValue(propertyInfo.getValue(), property.getType());
-            } else
-                value = ImportUtils.getPropertyJsonStringValue(propertyInfo.getValue(),
-                        ToscaTagNamesEnum.GET_INPUT.getElementName());
+                value = getPropertyJsonStringValue(propertyInfo.getValue(), property.getType());
+            } else {
+                value = getPropertyJsonStringValue(propertyInfo.getValue(),
+                        TypeUtils.ToscaTagNamesEnum.GET_INPUT.getElementName());
+            }
         }
         property.setValue(value);
         return validatePropValueBeforeCreate(property, value, isValidate, null, allDataTypes);
@@ -2911,7 +2431,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         if (updateRes == null) {
             fillUpdatedInstCapabilitiesRequirements(resource.getComponentInstances(), uploadResInstancesMap,
                     updatedInstCapabilities, updatedInstRequirements);
-            status = toscaOperationFacade.associateCalculatedCapReq(updatedInstCapabilities, updatedInstRequirements,
+            status = toscaOperationFacade.associateOrAddCalculatedCapReq(updatedInstCapabilities, updatedInstRequirements,
                     resource.getUniqueId());
             if (status != StorageOperationStatus.OK && status != StorageOperationStatus.NOT_FOUND) {
                 log.debug(
@@ -2944,7 +2464,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
             ComponentInstance instance, Map<String, String> requirementsNamesToUpdate) {
         Map<String, List<RequirementDefinition>> updatedRequirements = new HashMap<>();
         Set<String> updatedReqNames = new HashSet<>();
-        if (MapUtils.isNotEmpty(requirementsNamesToUpdate)) {
+        if (isNotEmpty(requirementsNamesToUpdate)) {
             for (Map.Entry<String, List<RequirementDefinition>> requirements : instance.getRequirements().entrySet()) {
                 updatedRequirements.put(requirements.getKey(),
                         requirements.getValue().stream()
@@ -2955,10 +2475,10 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                                     r.setName(requirementsNamesToUpdate.get(r.getName()));
                                     updatedReqNames.add(r.getName());
                                     return r;
-                                }).collect(Collectors.toList()));
+                                }).collect(toList()));
             }
         }
-        if (MapUtils.isNotEmpty(updatedRequirements)) {
+        if (isNotEmpty(updatedRequirements)) {
             updatedInstRequirements.put(instance, updatedRequirements);
         }
     }
@@ -2968,7 +2488,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
             ComponentInstance instance, Map<String, String> capabilitiesNamesToUpdate) {
         Map<String, List<CapabilityDefinition>> updatedCapabilities = new HashMap<>();
         Set<String> updatedCapNames = new HashSet<>();
-        if (MapUtils.isNotEmpty(capabilitiesNamesToUpdate)) {
+        if (isNotEmpty(capabilitiesNamesToUpdate)) {
             for (Map.Entry<String, List<CapabilityDefinition>> requirements : instance.getCapabilities().entrySet()) {
                 updatedCapabilities.put(requirements.getKey(),
                         requirements.getValue().stream()
@@ -2979,10 +2499,10 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                                     c.setName(capabilitiesNamesToUpdate.get(c.getName()));
                                     updatedCapNames.add(c.getName());
                                     return c;
-                                }).collect(Collectors.toList()));
+                                }).collect(toList()));
             }
         }
-        if (MapUtils.isNotEmpty(updatedCapabilities)) {
+        if (isNotEmpty(updatedCapabilities)) {
             updatedInstCapabilties.put(instance, updatedCapabilities);
         }
     }
@@ -2991,13 +2511,11 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                                            UploadComponentInstanceInfo nodesInfoValue, List<RequirementCapabilityRelDef> relations) {
         List<ComponentInstance> componentInstancesList = resource.getComponentInstances();
 
-        UploadComponentInstanceInfo uploadComponentInstanceInfo = nodesInfoValue;
-
         ComponentInstance currentCompInstance = null;
 
         for (ComponentInstance compInstance : componentInstancesList) {
 
-            if (compInstance.getName().equals(uploadComponentInstanceInfo.getName())) {
+            if (compInstance.getName().equals(nodesInfoValue.getName())) {
                 currentCompInstance = compInstance;
                 break;
             }
@@ -3005,18 +2523,17 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         }
 
         if (currentCompInstance == null) {
-            log.debug("component instance with name {}  in resource {} ", uploadComponentInstanceInfo.getName(),
+            log.debug(COMPONENT_INSTANCE_WITH_NAME_IN_RESOURCE, nodesInfoValue.getName(),
                     resource.getUniqueId());
             BeEcompErrorManager.getInstance().logInternalDataError(
-                    "component instance with name " + uploadComponentInstanceInfo.getName() + "  in resource {} ",
+                    COMPONENT_INSTANCE_WITH_NAME + nodesInfoValue.getName() + IN_RESOURCE,
                     resource.getUniqueId(), ErrorSeverity.ERROR);
-            ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.NOT_TOPOLOGY_TOSCA_TEMPLATE,
+            return componentsUtils.getResponseFormat(ActionStatus.NOT_TOPOLOGY_TOSCA_TEMPLATE,
                     yamlName);
-            return responseFormat;
         }
         String resourceInstanceId = currentCompInstance.getUniqueId();
 
-        Map<String, List<UploadReqInfo>> regMap = uploadComponentInstanceInfo.getRequirements();
+        Map<String, List<UploadReqInfo>> regMap = nodesInfoValue.getRequirements();
 
         if (regMap != null) {
             Iterator<Entry<String, List<UploadReqInfo>>> nodesRegValue = regMap.entrySet().iterator();
@@ -3032,7 +2549,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                     regCapRelDef.setFromNode(resourceInstanceId);
                     log.debug("try to find available requirement {} ", regName);
                     Either<RequirementDefinition, ResponseFormat> eitherReqStatus = findAviableRequiremen(regName,
-                            yamlName, uploadComponentInstanceInfo, currentCompInstance,
+                            yamlName, nodesInfoValue, currentCompInstance,
                             uploadRegInfo.getCapabilityName());
                     if (eitherReqStatus.isRight()) {
                         log.debug("failed to find available requirement {} status is {}", regName,
@@ -3043,8 +2560,9 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                     RequirementDefinition validReq = eitherReqStatus.left().value();
                     List<CapabilityRequirementRelationship> reqAndRelationshipPairList = regCapRelDef
                             .getRelationships();
-                    if (reqAndRelationshipPairList == null)
+                    if (reqAndRelationshipPairList == null) {
                         reqAndRelationshipPairList = new ArrayList<>();
+                    }
                     RelationshipInfo reqAndRelationshipPair = new RelationshipInfo();
                     reqAndRelationshipPair.setRequirement(regName);
                     reqAndRelationshipPair.setRequirementOwnerId(validReq.getOwnerId());
@@ -3065,16 +2583,18 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                         log.debug("The component instance  with name {} not found on resource {} ",
                                 uploadRegInfo.getNode(), resource.getUniqueId());
                         BeEcompErrorManager.getInstance().logInternalDataError(
-                                "component instance with name " + uploadRegInfo.getNode() + "  in resource {} ",
+                                COMPONENT_INSTANCE_WITH_NAME + uploadRegInfo.getNode() + IN_RESOURCE,
                                 resource.getUniqueId(), ErrorSeverity.ERROR);
-                        ResponseFormat responseFormat = componentsUtils
+                        return componentsUtils
                                 .getResponseFormat(ActionStatus.NOT_TOPOLOGY_TOSCA_TEMPLATE, yamlName);
-                        return responseFormat;
                     }
                     regCapRelDef.setToNode(currentCapCompInstance.getUniqueId());
                     log.debug("try to find aviable Capability  req name is {} ", validReq.getName());
                     CapabilityDefinition aviableCapForRel = findAvailableCapabilityByTypeOrName(validReq,
                             currentCapCompInstance, uploadRegInfo);
+                    reqAndRelationshipPair.setCapability(aviableCapForRel.getName());
+                    reqAndRelationshipPair.setCapabilityUid(aviableCapForRel.getUniqueId());
+                    reqAndRelationshipPair.setCapabilityOwnerId(aviableCapForRel.getOwnerId());
                     if (aviableCapForRel == null) {
                         log.debug("aviable capability was not found. req name is {} component instance is {}",
                                 validReq.getName(), currentCapCompInstance.getUniqueId());
@@ -3082,13 +2602,9 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                                 "aviable capability was not found. req name is " + validReq.getName()
                                         + " component instance is " + currentCapCompInstance.getUniqueId(),
                                 resource.getUniqueId(), ErrorSeverity.ERROR);
-                        ResponseFormat responseFormat = componentsUtils
+                        return componentsUtils
                                 .getResponseFormat(ActionStatus.NOT_TOPOLOGY_TOSCA_TEMPLATE, yamlName);
-                        return responseFormat;
                     }
-                    reqAndRelationshipPair.setCapability(aviableCapForRel.getName());
-                    reqAndRelationshipPair.setCapabilityUid(aviableCapForRel.getUniqueId());
-                    reqAndRelationshipPair.setCapabilityOwnerId(aviableCapForRel.getOwnerId());
                     CapabilityRequirementRelationship capReqRel = new CapabilityRequirementRelationship();
                     capReqRel.setRelation(reqAndRelationshipPair);
                     reqAndRelationshipPairList.add(capReqRel);
@@ -3097,134 +2613,129 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                 }
             }
         } else if (resource.getResourceType() != ResourceTypeEnum.CVFC) {
-            ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.OK, yamlName);
-            return responseFormat;
+            return componentsUtils.getResponseFormat(ActionStatus.OK, yamlName);
         }
         return componentsUtils.getResponseFormat(ActionStatus.OK);
     }
 
-    private ResponseFormat addInputsValuesToRi(UploadComponentInstanceInfo uploadComponentInstanceInfo,
-                                               Resource resource, Resource originResource, ComponentInstance currentCompInstance, String yamlName,
-                                               Map<String, List<ComponentInstanceInput>> instInputs, Map<String, DataTypeDefinition> allDataTypes) {
+    private void addInputsValuesToRi(UploadComponentInstanceInfo uploadComponentInstanceInfo,
+                                     Resource resource, Resource originResource, ComponentInstance currentCompInstance,
+                                     Map<String, List<ComponentInstanceInput>> instInputs, Map<String, DataTypeDefinition> allDataTypes) {
         Map<String, List<UploadPropInfo>> propMap = uploadComponentInstanceInfo.getProperties();
-        if (propMap != null && propMap.size() > 0) {
-            Map<String, InputDefinition> currPropertiesMap = new HashMap<String, InputDefinition>();
-
-            List<InputDefinition> listFromMap = originResource.getInputs();
-            if (listFromMap == null || listFromMap.isEmpty()) {
-                log.debug("failed to find properties ");
-                ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.PROPERTY_NOT_FOUND);
-                return responseFormat;
-            }
-            for (InputDefinition prop : listFromMap) {
-                String propName = prop.getName();
-                if (!currPropertiesMap.containsKey(propName)) {
-                    currPropertiesMap.put(propName, prop);
-                }
-            }
+        if (MapUtils.isNotEmpty(propMap)) {
+            Map<String, InputDefinition> currPropertiesMap = new HashMap<>();
             List<ComponentInstanceInput> instPropList = new ArrayList<>();
+
+            if (CollectionUtils.isEmpty( originResource.getInputs())) {
+                log.debug("failed to find properties ");
+                throw new ComponentException(componentsUtils.getResponseFormat(ActionStatus.PROPERTY_NOT_FOUND));
+            }
+            originResource.getInputs().forEach(p->addInput(currPropertiesMap, p));
             for (List<UploadPropInfo> propertyList : propMap.values()) {
-
-                UploadPropInfo propertyInfo = propertyList.get(0);
-                String propName = propertyInfo.getName();
-                if (!currPropertiesMap.containsKey(propName)) {
-                    log.debug("failed to find property {} ", propName);
-                    ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.PROPERTY_NOT_FOUND,
-                            propName);
-                    return responseFormat;
-                }
-                InputDefinition curPropertyDef = currPropertiesMap.get(propName);
-                ComponentInstanceInput property = null;
-
-                String value = null;
-                List<GetInputValueDataDefinition> getInputs = null;
-                boolean isValidate = true;
-                if (propertyInfo.getValue() != null) {
-                    getInputs = propertyInfo.getGet_input();
-                    isValidate = getInputs == null || getInputs.isEmpty();
-                    if (isValidate) {
-                        value = ImportUtils.getPropertyJsonStringValue(propertyInfo.getValue(),
-                                curPropertyDef.getType());
-                    } else
-                        value = ImportUtils.getPropertyJsonStringValue(propertyInfo.getValue(),
-                                ToscaTagNamesEnum.GET_INPUT.getElementName());
-                }
-                String innerType = null;
-                property = new ComponentInstanceInput(curPropertyDef, value, null);
-
-                Either<String, StorageOperationStatus> validatevalueEiter = validatePropValueBeforeCreate(property,
-                        value, isValidate, innerType, allDataTypes);
-                if (validatevalueEiter.isRight()) {
-                    return componentsUtils.getResponseFormat(
-                            componentsUtils.convertFromStorageResponse(validatevalueEiter.right().value()));
-                }
-
-                property.setValue(validatevalueEiter.left().value());
-
-                if (getInputs != null && !getInputs.isEmpty()) {
-                    List<GetInputValueDataDefinition> getInputValues = new ArrayList<>();
-                    for (GetInputValueDataDefinition getInput : getInputs) {
-                        List<InputDefinition> inputs = resource.getInputs();
-                        if (inputs == null || inputs.isEmpty()) {
-                            log.debug("Failed to add property {} to resource instance {}. Inputs list is empty ",
-                                    property, currentCompInstance.getUniqueId());
-                            return componentsUtils.getResponseFormat(ActionStatus.INVALID_CONTENT);
-                        }
-
-                        Optional<InputDefinition> optional = inputs.stream()
-                                .filter(p -> p.getName().equals(getInput.getInputName())).findAny();
-                        if (!optional.isPresent()) {
-                            log.debug("Failed to find input {} ", getInput.getInputName());
-                            // @@TODO error message
-                            return componentsUtils.getResponseFormat(ActionStatus.INVALID_CONTENT);
-                        }
-                        InputDefinition input = optional.get();
-                        getInput.setInputId(input.getUniqueId());
-                        getInputValues.add(getInput);
-
-                        GetInputValueDataDefinition getInputIndex = getInput.getGetInputIndex();
-                        if (getInputIndex != null) {
-                            optional = inputs.stream().filter(p -> p.getName().equals(getInputIndex.getInputName()))
-                                    .findAny();
-                            if (!optional.isPresent()) {
-                                log.debug("Failed to find input {} ", getInputIndex.getInputName());
-                                // @@TODO error message
-                                return componentsUtils.getResponseFormat(ActionStatus.INVALID_CONTENT);
-                            }
-                            InputDefinition inputIndex = optional.get();
-                            getInputIndex.setInputId(inputIndex.getUniqueId());
-                            getInputValues.add(getInputIndex);
-                        }
-                    }
-                    property.setGetInputValues(getInputValues);
-                }
-                instPropList.add(property);
-                // delete overriden property
-                currPropertiesMap.remove(property.getName());
+                processProperty(resource, currentCompInstance, allDataTypes, currPropertiesMap, instPropList, propertyList);
             }
-            // add rest of properties
-            if (!currPropertiesMap.isEmpty()) {
-                for (InputDefinition value : currPropertiesMap.values()) {
-                    instPropList.add(new ComponentInstanceInput(value));
-                }
-            }
+            currPropertiesMap.values().forEach(p->instPropList.add(new ComponentInstanceInput(p)));
             instInputs.put(currentCompInstance.getUniqueId(), instPropList);
         }
-        return componentsUtils.getResponseFormat(ActionStatus.OK);
+    }
+
+    private void processProperty(Resource resource, ComponentInstance currentCompInstance, Map<String, DataTypeDefinition> allDataTypes, Map<String, InputDefinition> currPropertiesMap, List<ComponentInstanceInput> instPropList, List<UploadPropInfo> propertyList) {
+        UploadPropInfo propertyInfo = propertyList.get(0);
+        String propName = propertyInfo.getName();
+        if (!currPropertiesMap.containsKey(propName)) {
+            log.debug("failed to find property {} ", propName);
+            throw new ComponentException(componentsUtils.getResponseFormat(ActionStatus.PROPERTY_NOT_FOUND,
+                    propName));
+        }
+        InputDefinition curPropertyDef = currPropertiesMap.get(propName);
+        ComponentInstanceInput property = null;
+
+        String value = null;
+        List<GetInputValueDataDefinition> getInputs = null;
+        boolean isValidate = true;
+        if (propertyInfo.getValue() != null) {
+            getInputs = propertyInfo.getGet_input();
+            isValidate = getInputs == null || getInputs.isEmpty();
+            if (isValidate) {
+                value = getPropertyJsonStringValue(propertyInfo.getValue(),
+                        curPropertyDef.getType());
+            } else {
+                value = getPropertyJsonStringValue(propertyInfo.getValue(),
+                        TypeUtils.ToscaTagNamesEnum.GET_INPUT.getElementName());
+            }
+        }
+        String innerType = null;
+        property = new ComponentInstanceInput(curPropertyDef, value, null);
+
+        String validPropertyVAlue = validatePropValueBeforeCreate(property, value, isValidate, innerType, allDataTypes);
+
+        property.setValue(validPropertyVAlue);
+
+        if (isNotEmpty(getInputs)) {
+            List<GetInputValueDataDefinition> getInputValues = new ArrayList<>();
+            for (GetInputValueDataDefinition getInput : getInputs) {
+                List<InputDefinition> inputs = resource.getInputs();
+                if (CollectionUtils.isEmpty(inputs)) {
+                    log.debug("Failed to add property {} to resource instance {}. Inputs list is empty ",
+                            property, currentCompInstance.getUniqueId());
+                    throw new ComponentException(componentsUtils.getResponseFormat(ActionStatus.INVALID_CONTENT));
+                }
+
+                Optional<InputDefinition> optional = inputs.stream()
+                        .filter(p -> p.getName().equals(getInput.getInputName())).findAny();
+                if (!optional.isPresent()) {
+                    log.debug("Failed to find input {} ", getInput.getInputName());
+                    // @@TODO error message
+                    throw new ComponentException(componentsUtils.getResponseFormat(ActionStatus.INVALID_CONTENT));
+                }
+                InputDefinition input = optional.get();
+                getInput.setInputId(input.getUniqueId());
+                getInputValues.add(getInput);
+
+                GetInputValueDataDefinition getInputIndex = getInput.getGetInputIndex();
+                processGetInput(getInputValues, inputs, getInputIndex);
+            }
+            property.setGetInputValues(getInputValues);
+        }
+        instPropList.add(property);
+        // delete overriden property
+        currPropertiesMap.remove(property.getName());
+    }
+
+    private void processGetInput(List<GetInputValueDataDefinition> getInputValues, List<InputDefinition> inputs, GetInputValueDataDefinition getInputIndex) {
+        Optional<InputDefinition> optional;
+        if (getInputIndex != null) {
+            optional = inputs.stream().filter(p -> p.getName().equals(getInputIndex.getInputName()))
+                    .findAny();
+            if (!optional.isPresent()) {
+                log.debug("Failed to find input {} ", getInputIndex.getInputName());
+                // @@TODO error message
+                throw new ComponentException(componentsUtils.getResponseFormat(ActionStatus.INVALID_CONTENT));
+            }
+            InputDefinition inputIndex = optional.get();
+            getInputIndex.setInputId(inputIndex.getUniqueId());
+            getInputValues.add(getInputIndex);
+        }
+    }
+
+    private void addInput(Map<String, InputDefinition> currPropertiesMap, InputDefinition prop) {
+        String propName = prop.getName();
+        if (!currPropertiesMap.containsKey(propName)) {
+            currPropertiesMap.put(propName, prop);
+        }
     }
 
     private ResponseFormat addPropertyValuesToRi(UploadComponentInstanceInfo uploadComponentInstanceInfo,
-                                                 Resource resource, Resource originResource, ComponentInstance currentCompInstance, String yamlName,
+                                                 Resource resource, Resource originResource, ComponentInstance currentCompInstance,
                                                  Map<String, List<ComponentInstanceProperty>> instProperties, Map<String, DataTypeDefinition> allDataTypes) {
 
         Map<String, List<UploadPropInfo>> propMap = uploadComponentInstanceInfo.getProperties();
-        Map<String, PropertyDefinition> currPropertiesMap = new HashMap<String, PropertyDefinition>();
+        Map<String, PropertyDefinition> currPropertiesMap = new HashMap<>();
 
         List<PropertyDefinition> listFromMap = originResource.getProperties();
         if ((propMap != null && !propMap.isEmpty()) && (listFromMap == null || listFromMap.isEmpty())) {
             log.debug("failed to find properties ");
-            ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.PROPERTY_NOT_FOUND);
-            return responseFormat;
+            return componentsUtils.getResponseFormat(ActionStatus.PROPERTY_NOT_FOUND);
         }
         if (listFromMap == null || listFromMap.isEmpty()) {
             return componentsUtils.getResponseFormat(ActionStatus.OK);
@@ -3243,9 +2754,8 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                 String propName = propertyInfo.getName();
                 if (!currPropertiesMap.containsKey(propName)) {
                     log.debug("failed to find property {} ", propName);
-                    ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.PROPERTY_NOT_FOUND,
+                    return componentsUtils.getResponseFormat(ActionStatus.PROPERTY_NOT_FOUND,
                             propName);
-                    return responseFormat;
                 }
                 PropertyDefinition curPropertyDef = currPropertiesMap.get(propName);
                 ComponentInstanceProperty property = null;
@@ -3257,56 +2767,38 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                     getInputs = propertyInfo.getGet_input();
                     isValidate = getInputs == null || getInputs.isEmpty();
                     if (isValidate) {
-                        value = ImportUtils.getPropertyJsonStringValue(propertyInfo.getValue(),
+                        value = getPropertyJsonStringValue(propertyInfo.getValue(),
                                 curPropertyDef.getType());
-                    } else
-                        value = ImportUtils.getPropertyJsonStringValue(propertyInfo.getValue(),
-                                ToscaTagNamesEnum.GET_INPUT.getElementName());
+                    } else {
+                        value = getPropertyJsonStringValue(propertyInfo.getValue(),
+                                TypeUtils.ToscaTagNamesEnum.GET_INPUT.getElementName());
+                    }
                 }
                 String innerType = null;
                 property = new ComponentInstanceProperty(curPropertyDef, value, null);
 
-                Either<String, StorageOperationStatus> validatevalueEiter = validatePropValueBeforeCreate(property,
-                        value, isValidate, innerType, allDataTypes);
-                if (validatevalueEiter.isRight()) {
-                    return componentsUtils.getResponseFormat(
-                            componentsUtils.convertFromStorageResponse(validatevalueEiter.right().value()));
-                }
-
-                property.setValue(validatevalueEiter.left().value());
+                String validatePropValue = validatePropValueBeforeCreate(property, value, isValidate, innerType, allDataTypes);
+                property.setValue(validatePropValue);
 
                 if (getInputs != null && !getInputs.isEmpty()) {
                     List<GetInputValueDataDefinition> getInputValues = new ArrayList<>();
                     for (GetInputValueDataDefinition getInput : getInputs) {
                         List<InputDefinition> inputs = resource.getInputs();
                         if (inputs == null || inputs.isEmpty()) {
-                            log.debug("Failed to add property {} to resource instance {}. Inputs list is empty ",
-                                    property, currentCompInstance.getUniqueId());
-                            return componentsUtils.getResponseFormat(ActionStatus.INVALID_CONTENT);
+                            log.debug("Failed to add property {} to instance. Inputs list is empty ", property);
+                            rollbackWithException(ActionStatus.INPUTS_NOT_FOUND, property.getGetInputValues()
+                                    .stream()
+                                    .map(GetInputValueDataDefinition::getInputName)
+                                    .collect(toList()).toString());
                         }
-
-                        Optional<InputDefinition> optional = inputs.stream()
-                                .filter(p -> p.getName().equals(getInput.getInputName())).findAny();
-                        if (!optional.isPresent()) {
-                            log.debug("Failed to find input {} ", getInput.getInputName());
-                            // @@TODO error message
-                            return componentsUtils.getResponseFormat(ActionStatus.INVALID_CONTENT);
-                        }
-                        InputDefinition input = optional.get();
+                        InputDefinition input = findInputByName(inputs, getInput);
                         getInput.setInputId(input.getUniqueId());
                         getInputValues.add(getInput);
 
                         GetInputValueDataDefinition getInputIndex = getInput.getGetInputIndex();
                         if (getInputIndex != null) {
-                            optional = inputs.stream().filter(p -> p.getName().equals(getInputIndex.getInputName()))
-                                    .findAny();
-                            if (!optional.isPresent()) {
-                                log.debug("Failed to find input {} ", getInputIndex.getInputName());
-                                // @@TODO error message
-                                return componentsUtils.getResponseFormat(ActionStatus.INVALID_CONTENT);
-                            }
-                            InputDefinition inputIndex = optional.get();
-                            getInputIndex.setInputId(inputIndex.getUniqueId());
+                            input = findInputByName(inputs, getInputIndex);
+                            getInputIndex.setInputId(input.getUniqueId());
                             getInputValues.add(getInputIndex);
 
                         }
@@ -3337,7 +2829,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
             // by
             // capability
             // type
-            return findAviableCapability(validReq, currentCapCompInstance);
+            return findAvailableCapability(validReq, currentCapCompInstance);
         }
         return findAvailableCapability(validReq, currentCapCompInstance, uploadReqInfo);
     }
@@ -3356,8 +2848,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         }
         cap = capByName.get();
 
-        if (cap.getMaxOccurrences() != null
-                && !cap.getMaxOccurrences().equals(CapabilityDataDefinition.MAX_OCCURRENCES)) {
+        if (isBoundedByOccurrences(cap)) {
             String leftOccurrences = cap.getLeftOccurrences();
             int left = Integer.parseInt(leftOccurrences);
             if (left > 0) {
@@ -3370,36 +2861,31 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         return cap;
     }
 
-    private CapabilityDefinition findAviableCapability(RequirementDefinition validReq,
-                                                       ComponentInstance currentCapCompInstance) {
-        CapabilityDefinition aviableCapForRel = null;
-        Map<String, List<CapabilityDefinition>> capMap = currentCapCompInstance.getCapabilities();
+    private CapabilityDefinition findAvailableCapability(RequirementDefinition validReq, ComponentInstance instance) {
+        Map<String, List<CapabilityDefinition>> capMap = instance.getCapabilities();
         if (capMap.containsKey(validReq.getCapability())) {
             List<CapabilityDefinition> capList = capMap.get(validReq.getCapability());
 
             for (CapabilityDefinition cap : capList) {
-                if (cap.getMaxOccurrences() != null
-                        && !cap.getMaxOccurrences().equals(CapabilityDataDefinition.MAX_OCCURRENCES)) {
-                    String leftOccurrences = cap.getLeftOccurrences();
-                    if (leftOccurrences == null) {
-                        leftOccurrences = cap.getMaxOccurrences();
-                    }
+                if (isBoundedByOccurrences(cap)) {
+                    String leftOccurrences = cap.getLeftOccurrences() != null ?
+                            cap.getLeftOccurrences() : cap.getMaxOccurrences();
                     int left = Integer.parseInt(leftOccurrences);
                     if (left > 0) {
                         --left;
                         cap.setLeftOccurrences(String.valueOf(left));
-                        aviableCapForRel = cap;
-                        break;
-                    } else {
-                        continue;
+                        return cap;
                     }
                 } else {
-                    aviableCapForRel = cap;
-                    break;
+                    return cap;
                 }
             }
         }
-        return aviableCapForRel;
+        return null;
+    }
+
+    private boolean isBoundedByOccurrences(CapabilityDefinition cap) {
+        return cap.getMaxOccurrences() != null && !cap.getMaxOccurrences().equals(CapabilityDataDefinition.MAX_OCCURRENCES);
     }
 
     private Either<RequirementDefinition, ResponseFormat> findAviableRequiremen(String regName, String yamlName,
@@ -3471,140 +2957,26 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         return Either.left(validRegDef);
     }
 
-    @SuppressWarnings("unchecked")
-    public Either<ParsedToscaYamlInfo, ResponseFormat> parseResourceInfoFromYaml(String yamlFileName, Resource resource,
-                                                                                 String resourceYml, Map<String, String> createdNodesToscaResourceNames,
-                                                                                 Map<String, NodeTypeInfo> nodeTypesInfo, String nodeName) {
-
-        Map<String, Object> mappedToscaTemplate;
-        if (nodeTypesInfo != null && nodeName != null && nodeTypesInfo.containsKey(nodeName)) {
-            mappedToscaTemplate = nodeTypesInfo.get(nodeName).getMappedToscaTemplate();
-        } else {
-            try {
-                // DE154502 Fail if duplicate key found in file
-                mappedToscaTemplate = ImportUtils.loadYamlAsStrictMap(resourceYml);
-
-            } catch (ParserException e) {
-                log.error("Failed to load yaml file {}", yamlFileName, e);
-                ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.TOSCA_PARSE_ERROR,
-                        yamlFileName, e.getMessage());
-                return Either.right(responseFormat);
-            }
-        }
-        Either<Object, ResultStatusEnum> toscaElementEither = ImportUtils.findToscaElement(mappedToscaTemplate,
-                ToscaTagNamesEnum.TOPOLOGY_TEMPLATE, ToscaElementTypeEnum.ALL);
-        if (toscaElementEither.isRight()) {
-            ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.NOT_TOPOLOGY_TOSCA_TEMPLATE);
-            return Either.right(responseFormat);
-        }
-
-        Either<Map<String, InputDefinition>, ResponseFormat> createInputsEither = createInputsFromYaml(yamlFileName,
-                mappedToscaTemplate, resource);
-        if (createInputsEither.isRight()) {
-            ResponseFormat responseFormat = createInputsEither.right().value();
-            return Either.right(responseFormat);
-        }
-
-        Either<Map<String, UploadComponentInstanceInfo>, ResponseFormat> uploadResInstancesEither = createResourcesInstanceInfoFromYaml(
-                yamlFileName, mappedToscaTemplate, resource, createdNodesToscaResourceNames);
-        if (uploadResInstancesEither.isRight()) {
-            ResponseFormat responseFormat = uploadResInstancesEither.right().value();
-            return Either.right(responseFormat);
-        }
-
-        Either<Map<String, GroupDefinition>, ResponseFormat> createGroupsFromYaml = createGroupsFromYaml(yamlFileName,
-                mappedToscaTemplate, resource);
-        if (createGroupsFromYaml.isRight()) {
-            ResponseFormat responseFormat = createGroupsFromYaml.right().value();
-            return Either.right(responseFormat);
-        }
-
-        ParsedToscaYamlInfo parsedToscaYamlInfo = new ParsedToscaYamlInfo();
-        parsedToscaYamlInfo.setInputs(createInputsEither.left().value());
-        parsedToscaYamlInfo.setInstances(uploadResInstancesEither.left().value());
-        parsedToscaYamlInfo.setGroups(createGroupsFromYaml.left().value());
-
-        return Either.left(parsedToscaYamlInfo);
-    }
-
-    private Either<Resource, ResponseFormat> createResourceInstances(User user, String yamlName, Resource resource,
-                                                                     Map<String, UploadComponentInstanceInfo> uploadResInstancesMap, boolean inTransaction, boolean needLock,
-                                                                     Map<String, Resource> nodeNamespaceMap) {
+    private Resource createResourceInstances(String yamlName, Resource resource,
+                                             Map<String, UploadComponentInstanceInfo> uploadResInstancesMap,
+                                             Map<String, Resource> nodeNamespaceMap) {
 
         Either<Resource, ResponseFormat> eitherResource = null;
         log.debug("createResourceInstances is {} - going to create resource instanse from CSAR", yamlName);
-        if (uploadResInstancesMap == null || uploadResInstancesMap.isEmpty()) {
+        if (isEmpty(uploadResInstancesMap)) {
             ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.NOT_TOPOLOGY_TOSCA_TEMPLATE);
-
-            return Either.right(responseFormat);
-
+            throw new ComponentException(responseFormat);
         }
-        Map<String, Resource> existingnodeTypeMap = new HashMap<>();
-        if (nodeNamespaceMap != null && !nodeNamespaceMap.isEmpty()) {
-            nodeNamespaceMap.entrySet().stream()
-                    .forEach(x -> existingnodeTypeMap.put(x.getValue().getToscaResourceName(), x.getValue()));
+        Map<String, Resource> existingNodeTypeMap = new HashMap<>();
+        if (MapUtils.isNotEmpty(nodeNamespaceMap)) {
+            nodeNamespaceMap.forEach((k, v) -> existingNodeTypeMap.put(v.getToscaResourceName(), v));
         }
-
-        Iterator<Entry<String, UploadComponentInstanceInfo>> nodesInfoValue = uploadResInstancesMap.entrySet()
-                .iterator();
         Map<ComponentInstance, Resource> resourcesInstancesMap = new HashMap<>();
-        while (nodesInfoValue.hasNext()) {
-            log.debug("*************Going to create  resource instances {}", yamlName);
-            Entry<String, UploadComponentInstanceInfo> uploadComponentInstanceInfoEntry = nodesInfoValue.next();
-            UploadComponentInstanceInfo uploadComponentInstanceInfo = uploadComponentInstanceInfoEntry.getValue();
+        uploadResInstancesMap
+                .values()
+                .forEach(i->createAndAddResourceInstance(i, yamlName, resource, nodeNamespaceMap, existingNodeTypeMap, resourcesInstancesMap));
 
-            // updating type if the type is node type name - we need to take the
-            // updated name
-            log.debug("*************Going to create  resource instances {}", uploadComponentInstanceInfo.getName());
-            if (nodeNamespaceMap.containsKey(uploadComponentInstanceInfo.getType())) {
-                uploadComponentInstanceInfo
-                        .setType(nodeNamespaceMap.get(uploadComponentInstanceInfo.getType()).getToscaResourceName());
-            }
-
-            eitherResource = validateResourceInstanceBeforeCreate(yamlName, uploadComponentInstanceInfo,
-                    existingnodeTypeMap);
-            if (eitherResource.isRight()) {
-                return eitherResource;
-            }
-            Resource refResource = eitherResource.left().value();
-
-            ComponentInstance componentInstance = new ComponentInstance();
-
-            componentInstance.setComponentUid(refResource.getUniqueId());
-
-            ComponentTypeEnum containerComponentType = resource.getComponentType();
-            NodeTypeEnum containerNodeType = containerComponentType.getNodeType();
-
-            if (containerNodeType.equals(NodeTypeEnum.Resource)
-                    && MapUtils.isNotEmpty(uploadComponentInstanceInfo.getCapabilities())
-                    && MapUtils.isNotEmpty(refResource.getCapabilities())) {
-                setCapabilityNamesTypes(refResource.getCapabilities(), uploadComponentInstanceInfo.getCapabilities());
-                Either<Map<String, List<CapabilityDefinition>>, ResponseFormat> getValidComponentInstanceCapabilitiesRes = getValidComponentInstanceCapabilities(
-                        refResource.getUniqueId(), refResource.getCapabilities(),
-                        uploadComponentInstanceInfo.getCapabilities());
-                if (getValidComponentInstanceCapabilitiesRes.isRight()) {
-                    return Either.right(getValidComponentInstanceCapabilitiesRes.right().value());
-                } else {
-                    componentInstance.setCapabilities(getValidComponentInstanceCapabilitiesRes.left().value());
-                }
-            }
-            if (!existingnodeTypeMap.containsKey(uploadComponentInstanceInfo.getType())) {
-                log.debug(
-                        "createResourceInstances - not found lates version for resource instance with name {} and type ",
-                        uploadComponentInstanceInfo.getName(), uploadComponentInstanceInfo.getType());
-                ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.INVALID_NODE_TEMPLATE,
-                        yamlName, uploadComponentInstanceInfo.getName(), uploadComponentInstanceInfo.getType());
-                return Either.right(responseFormat);
-            }
-            Resource origResource = existingnodeTypeMap.get(uploadComponentInstanceInfo.getType());
-            componentInstance.setName(uploadComponentInstanceInfo.getName());
-            componentInstance.setIcon(origResource.getIcon());
-
-            resourcesInstancesMap.put(componentInstance, origResource);
-
-        }
-        if (MapUtils.isNotEmpty(resourcesInstancesMap)) {
-
+        if (isNotEmpty(resourcesInstancesMap)) {
             StorageOperationStatus status = toscaOperationFacade.associateComponentInstancesToComponent(resource,
                     resourcesInstancesMap, false);
             if (status != null && status != StorageOperationStatus.OK) {
@@ -3612,41 +2984,77 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                 ResponseFormat responseFormat = componentsUtils
                         .getResponseFormat(componentsUtils.convertFromStorageResponse(status));
                 eitherResource = Either.right(responseFormat);
-                return eitherResource;
+                throw new ComponentException(eitherResource.right().value());
             }
-
         }
-
         log.debug("*************Going to get resource {}", resource.getUniqueId());
+        Either<Resource, StorageOperationStatus> eitherGetResource = toscaOperationFacade
+                .getToscaElement(resource.getUniqueId(), getComponentWithInstancesFilter());
+        log.debug("*************finished to get resource {}", resource.getUniqueId());
+        if (eitherGetResource.isRight()) {
+            ResponseFormat responseFormat = componentsUtils.getResponseFormatByResource(
+                    componentsUtils.convertFromStorageResponse(eitherGetResource.right().value()), resource);
+            throw new ComponentException(responseFormat);
+        }
+        if (CollectionUtils.isEmpty(eitherGetResource.left().value().getComponentInstances())) {
+            log.debug("Error when create resource instance from csar. ComponentInstances list empty");
+            BeEcompErrorManager.getInstance().logBeDaoSystemError(
+                    "Error when create resource instance from csar. ComponentInstances list empty");
+            throw new ComponentException(componentsUtils.getResponseFormat(ActionStatus.NOT_TOPOLOGY_TOSCA_TEMPLATE));
+        }
+        return eitherGetResource.left().value();
+    }
+
+    private void createAndAddResourceInstance(UploadComponentInstanceInfo uploadComponentInstanceInfo, String yamlName,
+                                              Resource resource, Map<String, Resource> nodeNamespaceMap, Map<String, Resource> existingnodeTypeMap, Map<ComponentInstance, Resource> resourcesInstancesMap) {
+        Either<Resource, ResponseFormat> eitherResource;
+        log.debug("*************Going to create  resource instances {}", yamlName);
+        // updating type if the type is node type name - we need to take the
+        // updated name
+        log.debug("*************Going to create  resource instances {}", uploadComponentInstanceInfo.getName());
+        if (nodeNamespaceMap.containsKey(uploadComponentInstanceInfo.getType())) {
+            uploadComponentInstanceInfo
+                    .setType(nodeNamespaceMap.get(uploadComponentInstanceInfo.getType()).getToscaResourceName());
+        }
+        Resource refResource = validateResourceInstanceBeforeCreate(yamlName, uploadComponentInstanceInfo,
+                existingnodeTypeMap);
+
+        ComponentInstance componentInstance = new ComponentInstance();
+        componentInstance.setComponentUid(refResource.getUniqueId());
+        ComponentTypeEnum containerComponentType = resource.getComponentType();
+        NodeTypeEnum containerNodeType = containerComponentType.getNodeType();
+        if (containerNodeType.equals(NodeTypeEnum.Resource)
+                && isNotEmpty(uploadComponentInstanceInfo.getCapabilities())
+                && isNotEmpty(refResource.getCapabilities())) {
+            setCapabilityNamesTypes(refResource.getCapabilities(), uploadComponentInstanceInfo.getCapabilities());
+            Map<String, List<CapabilityDefinition>> validComponentInstanceCapabilities = getValidComponentInstanceCapabilities(
+                    refResource.getUniqueId(), refResource.getCapabilities(),
+                    uploadComponentInstanceInfo.getCapabilities());
+            componentInstance.setCapabilities(validComponentInstanceCapabilities);
+        }
+        if (!existingnodeTypeMap.containsKey(uploadComponentInstanceInfo.getType())) {
+            log.debug(
+                    "createResourceInstances - not found lates version for resource instance with name {} and type ",
+                    uploadComponentInstanceInfo.getName(), uploadComponentInstanceInfo.getType());
+            ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.INVALID_NODE_TEMPLATE,
+                    yamlName, uploadComponentInstanceInfo.getName(), uploadComponentInstanceInfo.getType());
+            throw new ComponentException(responseFormat);
+        }
+        Resource origResource = existingnodeTypeMap.get(uploadComponentInstanceInfo.getType());
+        componentInstance.setName(uploadComponentInstanceInfo.getName());
+        componentInstance.setIcon(origResource.getIcon());
+        resourcesInstancesMap.put(componentInstance, origResource);
+    }
+
+    private ComponentParametersView getComponentWithInstancesFilter() {
         ComponentParametersView parametersView = new ComponentParametersView();
         parametersView.disableAll();
         parametersView.setIgnoreComponentInstances(false);
-        parametersView.setIgnoreUsers(false);
-        parametersView.setIgnoreInputs(false); // inputs are read when creating
+        parametersView.setIgnoreInputs(false);
+        // inputs are read when creating
         // property values on instances
-        Either<Resource, StorageOperationStatus> eitherGerResource = toscaOperationFacade
-                .getToscaElement(resource.getUniqueId(), parametersView);
-        log.debug("*************finished to get resource {}", resource.getUniqueId());
-        if (eitherGerResource.isRight()) {
-            ResponseFormat responseFormat = componentsUtils.getResponseFormatByResource(
-                    componentsUtils.convertFromStorageResponse(eitherGerResource.right().value()), resource);
-
-            return Either.right(responseFormat);
-
-        }
-
-        if (eitherGerResource.left().value().getComponentInstances() == null
-                || eitherGerResource.left().value().getComponentInstances().isEmpty()) {
-
-            log.debug("Error when create resource inctanse from csar. ComponentInstances list empty");
-            BeEcompErrorManager.getInstance().logBeDaoSystemError(
-                    "Error when create resource inctanse from csar. ComponentInstances list empty");
-            ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.NOT_TOPOLOGY_TOSCA_TEMPLATE);
-            return Either.right(responseFormat);
-
-        }
-
-        return Either.left(eitherGerResource.left().value());
+        parametersView.setIgnoreUsers(false);
+        return parametersView;
     }
 
     private void setCapabilityNamesTypes(Map<String, List<CapabilityDefinition>> originCapabilities,
@@ -3664,18 +3072,17 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                         c.setType(cap.getType());
                     });
                 }
-                ;
             });
         }
 
     }
 
-    private Either<Resource, ResponseFormat> validateResourceInstanceBeforeCreate(String yamlName,
-                                                                                  UploadComponentInstanceInfo uploadComponentInstanceInfo, Map<String, Resource> nodeNamespaceMap) {
-        log.debug(
-                "validateResourceInstanceBeforeCreate - going to validate resource instance with name {} and type before create",
+    private Resource validateResourceInstanceBeforeCreate(String yamlName, UploadComponentInstanceInfo uploadComponentInstanceInfo,
+                                                          Map<String, Resource> nodeNamespaceMap) {
+
+        log.debug("validateResourceInstanceBeforeCreate - going to validate resource instance with name {} and type before create",
                 uploadComponentInstanceInfo.getName(), uploadComponentInstanceInfo.getType());
-        Resource refResource = null;
+        Resource refResource;
         if (nodeNamespaceMap.containsKey(uploadComponentInstanceInfo.getType())) {
             refResource = nodeNamespaceMap.get(uploadComponentInstanceInfo.getType());
         } else {
@@ -3687,7 +3094,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                         uploadComponentInstanceInfo.getName(), uploadComponentInstanceInfo.getType());
                 ResponseFormat responseFormat = componentsUtils.getResponseFormat(
                         componentsUtils.convertFromStorageResponse(findResourceEither.right().value()));
-                return Either.right(responseFormat);
+                throw new ComponentException(responseFormat);
             }
             refResource = findResourceEither.left().value();
             nodeNamespaceMap.put(refResource.getToscaResourceName(), refResource);
@@ -3699,542 +3106,18 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                     refResource.getName(), componentState);
             ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.ILLEGAL_COMPONENT_STATE,
                     refResource.getComponentType().getValue(), refResource.getName(), componentState);
-            return Either.right(responseFormat);
+            throw new ComponentException(responseFormat);
         }
 
         if (!ModelConverter.isAtomicComponent(refResource) && refResource.getResourceType() != ResourceTypeEnum.CVFC) {
             log.debug("validateResourceInstanceBeforeCreate -  ref resource type is  ", refResource.getResourceType());
             ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.INVALID_NODE_TEMPLATE,
                     yamlName, uploadComponentInstanceInfo.getName(), uploadComponentInstanceInfo.getType());
-            return Either.right(responseFormat);
+            throw new ComponentException(responseFormat);
         }
-        return Either.left(refResource);
+        return refResource;
     }
 
-    private Either<Map<String, UploadComponentInstanceInfo>, ResponseFormat> createResourcesInstanceInfoFromYaml(
-            String yamlFileName, Map<String, Object> toscaJson, Resource resource,
-            Map<String, String> createdNodesToscaResourceNames) {
-        Map<String, UploadComponentInstanceInfo> moduleComponentInstances = new HashMap<String, UploadComponentInstanceInfo>();
-        Map<String, Object> substitutionMappings = null;
-        Either<Map<String, UploadComponentInstanceInfo>, ResponseFormat> result = Either.left(moduleComponentInstances);
-        Either<Map<String, Object>, ResultStatusEnum> eitherNodesTemlates = ImportUtils
-                .findFirstToscaMapElement(toscaJson, ToscaTagNamesEnum.NODE_TEMPLATES);
-        Either<Map<String, Object>, ResultStatusEnum> eitherSubstitutionMappings = ImportUtils
-                .findFirstToscaMapElement(toscaJson, ToscaTagNamesEnum.SUBSTITUTION_MAPPINGS);
-        if (eitherSubstitutionMappings.isLeft()) {
-            substitutionMappings = eitherSubstitutionMappings.left().value();
-        }
-        if (eitherNodesTemlates.isLeft()) {
-            Map<String, Object> jsonNodeTemplates = eitherNodesTemlates.left().value();
-
-            Iterator<Entry<String, Object>> nodesNameValue = jsonNodeTemplates.entrySet().iterator();
-            while (nodesNameValue.hasNext()) {
-                Entry<String, Object> nodeNameValue = nodesNameValue.next();
-                Either<UploadComponentInstanceInfo, ResponseFormat> eitherNode = createModuleComponentInstanceInfo(
-                        nodeNameValue, substitutionMappings, createdNodesToscaResourceNames);
-                if (eitherNode.isRight()) {
-                    log.info("error when creating node template:{}, for resource:{}", nodeNameValue.getKey(),
-                            resource.getName());
-                    return Either.right(eitherNode.right().value());
-                } else {
-                    UploadComponentInstanceInfo uploadComponentInstanceInfo = eitherNode.left().value();
-                    moduleComponentInstances.put(nodeNameValue.getKey(), uploadComponentInstanceInfo);
-                }
-
-            }
-
-        }
-        if (moduleComponentInstances.isEmpty()) {
-            ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.NOT_TOPOLOGY_TOSCA_TEMPLATE,
-                    yamlFileName);
-            return Either.right(responseFormat);
-        }
-
-        return result;
-    }
-
-    @SuppressWarnings("unchecked")
-    private Either<UploadComponentInstanceInfo, ResponseFormat> createModuleComponentInstanceInfo(
-            Entry<String, Object> nodeTemplateJsonEntry, Map<String, Object> substitutionMappings,
-            Map<String, String> createdNodesToscaResourceNames) {
-
-        UploadComponentInstanceInfo nodeTemplateInfo = new UploadComponentInstanceInfo();
-        Either<UploadComponentInstanceInfo, ResponseFormat> result = Either.left(nodeTemplateInfo);
-        nodeTemplateInfo.setName(nodeTemplateJsonEntry.getKey());
-        try {
-            if (nodeTemplateJsonEntry.getValue() instanceof String) {
-                String nodeTemplateJsonString = (String) nodeTemplateJsonEntry.getValue();
-                nodeTemplateInfo.setType(nodeTemplateJsonString);
-            } else if (nodeTemplateJsonEntry.getValue() instanceof Map) {
-                Map<String, Object> nodeTemplateJsonMap = (Map<String, Object>) nodeTemplateJsonEntry.getValue();
-                // Type
-                if (nodeTemplateJsonMap.containsKey(ToscaTagNamesEnum.TYPE.getElementName())) {
-                    String toscaResourceType = (String) nodeTemplateJsonMap
-                            .get(ToscaTagNamesEnum.TYPE.getElementName());
-                    if (createdNodesToscaResourceNames.containsKey(toscaResourceType)) {
-                        toscaResourceType = createdNodesToscaResourceNames.get(toscaResourceType);
-                    }
-                    nodeTemplateInfo.setType(toscaResourceType);
-                }
-
-                if (nodeTemplateJsonMap.containsKey(ToscaTagNamesEnum.REQUIREMENTS.getElementName())) {
-                    Either<Map<String, List<UploadReqInfo>>, ResponseFormat> regResponse = createReqModuleFromYaml(
-                            nodeTemplateInfo, nodeTemplateJsonMap);
-                    if (regResponse.isRight())
-                        return Either.right(regResponse.right().value());
-                    if (regResponse.left().value().size() > 0) {
-                        nodeTemplateInfo.setRequirements(regResponse.left().value());
-                    }
-                }
-
-                if (nodeTemplateJsonMap.containsKey(ToscaTagNamesEnum.CAPABILITIES.getElementName())) {
-                    Either<Map<String, List<UploadCapInfo>>, ResponseFormat> eitherCapRes = createCapModuleFromYaml(
-                            nodeTemplateInfo, nodeTemplateJsonMap);
-                    if (eitherCapRes.isRight())
-                        return Either.right(eitherCapRes.right().value());
-                    if (eitherCapRes.left().value().size() > 0) {
-                        nodeTemplateInfo.setCapabilities(eitherCapRes.left().value());
-                    }
-                }
-                if (nodeTemplateJsonMap.containsKey(ToscaTagNamesEnum.PROPERTIES.getElementName())) {
-                    Either<Map<String, List<UploadPropInfo>>, ResponseFormat> regResponse = createPropModuleFromYaml(
-                            nodeTemplateJsonMap);
-                    if (regResponse.isRight())
-                        return Either.right(regResponse.right().value());
-                    if (regResponse.left().value().size() > 0) {
-                        nodeTemplateInfo.setProperties(regResponse.left().value());
-                    }
-                }
-                if (substitutionMappings != null) {
-                    if (substitutionMappings.containsKey(ToscaTagNamesEnum.CAPABILITIES.getElementName())) {
-                        Either<Map<String, String>, ResponseFormat> getCapNamesToUpdateRes = getNamesToUpdate(
-                                nodeTemplateInfo, (Map<String, List<String>>) substitutionMappings
-                                        .get(ToscaTagNamesEnum.CAPABILITIES.getElementName()));
-                        if (getCapNamesToUpdateRes.isRight())
-                            return Either.right(getCapNamesToUpdateRes.right().value());
-                        if (getCapNamesToUpdateRes.left().value().size() > 0) {
-                            nodeTemplateInfo.setCapabilitiesNamesToUpdate(getCapNamesToUpdateRes.left().value());
-                        }
-                    }
-                    if (substitutionMappings.containsKey(ToscaTagNamesEnum.REQUIREMENTS.getElementName())) {
-                        Either<Map<String, String>, ResponseFormat> getReqNamesToUpdateRes = getNamesToUpdate(
-                                nodeTemplateInfo, (Map<String, List<String>>) substitutionMappings
-                                        .get(ToscaTagNamesEnum.REQUIREMENTS.getElementName()));
-                        if (getReqNamesToUpdateRes.isRight())
-                            return Either.right(getReqNamesToUpdateRes.right().value());
-                        if (getReqNamesToUpdateRes.left().value().size() > 0) {
-                            nodeTemplateInfo.setRequirementsNamesToUpdate(getReqNamesToUpdateRes.left().value());
-                        }
-                    }
-                }
-            } else {
-
-                result = Either.right(componentsUtils.getResponseFormat(ActionStatus.NOT_TOPOLOGY_TOSCA_TEMPLATE));
-
-            }
-        } catch (Exception e) {
-            BeEcompErrorManager.getInstance().logBeSystemError("Import Resource - create capability");
-            log.debug("error when creating capability, message:{}", e.getMessage(), e);
-            result = Either.right(componentsUtils.getResponseFormat(ActionStatus.INVALID_YAML));
-        }
-
-        return result;
-    }
-
-    private Either<Map<String, String>, ResponseFormat> getNamesToUpdate(UploadComponentInstanceInfo nodeTemplateInfo,
-                                                                         Map<String, List<String>> elements) {
-        Either<Map<String, String>, ResponseFormat> response;
-        try {
-            Map<String, String> namesToUpdate = elements.entrySet().stream()
-                    .filter(e -> e.getValue().get(0).equalsIgnoreCase(nodeTemplateInfo.getName()))
-                    .collect(Collectors.toMap(e -> e.getValue().get(1), e -> e.getKey()));
-            response = Either.left(namesToUpdate);
-        } catch (Exception e) {
-            log.debug("The exception occurred upon adding names to update for instance {}: ", nodeTemplateInfo.getName(), e);
-            response = Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
-        }
-        return response;
-    }
-
-    @SuppressWarnings("unchecked")
-    private Either<Map<String, List<UploadPropInfo>>, ResponseFormat> createPropModuleFromYaml(
-            Map<String, Object> nodeTemplateJsonMap) {
-        Map<String, List<UploadPropInfo>> moduleProp = new HashMap<String, List<UploadPropInfo>>();
-        Either<Map<String, List<UploadPropInfo>>, ResponseFormat> response = Either.left(moduleProp);
-        Either<Map<String, Object>, ResultStatusEnum> toscaProperties = ImportUtils
-                .findFirstToscaMapElement(nodeTemplateJsonMap, ToscaTagNamesEnum.PROPERTIES);
-        if (toscaProperties.isLeft()) {
-            Map<String, Object> jsonProperties = toscaProperties.left().value();
-            for (Entry<String, Object> jsonPropObj : jsonProperties.entrySet()) {
-                // Property
-                String propName = jsonPropObj.getKey();
-                Object propValue = jsonPropObj.getValue();
-
-                if (valueContainsPattern(STR_REPLACE_PATTERN, propValue)) {
-                    log.trace("Ignore property value {}.", propName);
-                    continue;
-                }
-
-                if (valueContainsPattern(TOKEN_PATTERN, propValue)) {
-                    log.trace("Ignore property value {}.", propName);
-                    continue;
-                }
-                if (valueContainsPattern(GET_PROPERTY_PATTERN, propValue)) {
-                    log.trace("Ignore property value {}.", propName);
-                    continue;
-                }
-
-                if (valueContainsPattern(CONCAT_PATTERN, propValue)) {
-                    log.trace("Ignore property value {}.", propName);
-                    continue;
-                }
-
-                if (valueContainsPattern(GET_ATTRIBUTE_PATTERN, propValue)) {
-                    log.trace("Ignore property value {}.", propName);
-                    continue;
-                }
-
-                UploadPropInfo propertyDef = new UploadPropInfo();
-                propertyDef.setValue(propValue);
-                propertyDef.setName(propName);
-                if (propValue instanceof Map) {
-                    if (((Map<String, Object>) propValue).containsKey(ToscaTagNamesEnum.TYPE.getElementName())) {
-                        propertyDef.setType(((Map<String, Object>) propValue)
-                                .get(ToscaTagNamesEnum.TYPE.getElementName()).toString());
-                    }
-
-                    if (((Map<String, Object>) propValue).containsKey(ToscaTagNamesEnum.GET_INPUT.getElementName())
-                            || ImportUtils.getPropertyJsonStringValue(propValue, ToscaPropertyType.MAP.getType())
-                            .contains(ToscaTagNamesEnum.GET_INPUT.getElementName())) {
-                        createGetInputModuleFromMap(propName, (Map<String, Object>) propValue, propertyDef);
-                    }
-
-                    if (((Map<String, Object>) propValue).containsKey(ToscaTagNamesEnum.DESCRIPTION.getElementName())) {
-                        propertyDef.setDescription(((Map<String, Object>) propValue)
-                                .get(ToscaTagNamesEnum.DESCRIPTION.getElementName()).toString());
-                    }
-                    if (((Map<String, Object>) propValue)
-                            .containsKey(ToscaTagNamesEnum.DEFAULT_VALUE.getElementName())) {
-                        propertyDef.setValue(((Map<String, Object>) propValue)
-                                .get(ToscaTagNamesEnum.DEFAULT_VALUE.getElementName()));
-                    }
-                    if (((Map<String, Object>) propValue).containsKey(ToscaTagNamesEnum.IS_PASSWORD.getElementName())) {
-                        propertyDef.setPassword(Boolean.getBoolean(((Map<String, Object>) propValue)
-                                .get(ToscaTagNamesEnum.IS_PASSWORD.getElementName()).toString()));
-                    } else {
-                        propertyDef.setValue(propValue);
-                    }
-                } else if (propValue instanceof List) {
-                    List<Object> propValueList = (List<Object>) propValue;
-
-                    createInputPropList(propertyDef, propValueList);
-                    propertyDef.setValue(propValue);
-                }
-
-                if (moduleProp.containsKey(propName)) {
-                    moduleProp.get(propName).add(propertyDef);
-                } else {
-                    List<UploadPropInfo> list = new ArrayList<UploadPropInfo>();
-                    list.add(propertyDef);
-                    moduleProp.put(propName, list);
-                }
-            }
-        }
-        return response;
-    }
-
-    @SuppressWarnings("unchecked")
-    private void createInputPropList(UploadPropInfo propertyDef, List<Object> propValueList) {
-        for (Object objValue : propValueList) {
-
-            if (objValue instanceof Map) {
-                Map<String, Object> objMap = (Map<String, Object>) objValue;
-                if (objMap.containsKey(ToscaTagNamesEnum.GET_INPUT.getElementName()))
-                    createGetInputModuleFromMap(propertyDef.getName(), objMap, propertyDef);
-                else {
-                    Set<String> keys = objMap.keySet();
-                    for (String key : keys) {
-                        Object value = objMap.get(key);
-                        if (value instanceof Map) {
-                            createGetInputModuleFromMap(key, (Map<String, Object>) value, propertyDef);
-
-                        } else if (value instanceof List) {
-                            List<Object> propSubValueList = (List<Object>) value;
-
-                            createInputPropList(propertyDef, propSubValueList);
-                        }
-
-                    }
-                }
-
-            } else if (objValue instanceof List) {
-                List<Object> propSubValueList = (List<Object>) objValue;
-
-                createInputPropList(propertyDef, propSubValueList);
-
-            }
-
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    private void createGetInputModuleFromMap(String propName, Map<String, Object> propValue,
-                                             UploadPropInfo propertyDef) {
-
-        if (propValue.containsKey(ToscaTagNamesEnum.GET_INPUT.getElementName())) {
-            Object getInput = propValue.get(ToscaTagNamesEnum.GET_INPUT.getElementName());
-            GetInputValueDataDefinition getInputInfo = new GetInputValueDataDefinition();
-            List<GetInputValueDataDefinition> getInputs = propertyDef.getGet_input();
-            if (getInputs == null) {
-                getInputs = new ArrayList<GetInputValueDataDefinition>();
-            }
-            if (getInput instanceof String) {
-
-                getInputInfo.setInputName((String) getInput);
-                getInputInfo.setPropName(propName);
-
-            } else if (getInput instanceof List) {
-                List<Object> getInputList = (List<Object>) getInput;
-                getInputInfo.setPropName(propName);
-                getInputInfo.setInputName((String) getInputList.get(0));
-                if (getInputList.size() > 1) {
-                    Object indexObj = getInputList.get(1);
-                    if (indexObj instanceof Integer) {
-                        getInputInfo.setIndexValue((Integer) indexObj);
-                    } else if (indexObj instanceof Float) {
-                        int index = ((Float) indexObj).intValue();
-                        getInputInfo.setIndexValue(index);
-                    } else if (indexObj instanceof Map && ((Map<String, Object>) indexObj)
-                            .containsKey(ToscaTagNamesEnum.GET_INPUT.getElementName())) {
-                        Object index = ((Map<String, Object>) indexObj)
-                                .get(ToscaTagNamesEnum.GET_INPUT.getElementName());
-                        GetInputValueDataDefinition getInputInfoIndex = new GetInputValueDataDefinition();
-                        getInputInfoIndex.setInputName((String) index);
-                        getInputInfoIndex.setPropName(propName);
-                        getInputInfo.setGetInputIndex(getInputInfoIndex);
-                    }
-                    getInputInfo.setList(true);
-                }
-
-            }
-            getInputs.add(getInputInfo);
-            propertyDef.setGet_input(getInputs);
-            propertyDef.setValue(propValue);
-        } else {
-            Set<String> keys = propValue.keySet();
-            for (String key : keys) {
-                Object value = propValue.get(key);
-                if (value instanceof Map) {
-                    createGetInputModuleFromMap(key, (Map<String, Object>) value, propertyDef);
-
-                } else if (value instanceof List) {
-                    List<Object> valueList = (List<Object>) value;
-                    for (Object o : valueList) {
-                        if (o instanceof Map) {
-                            createGetInputModuleFromMap(key, (Map<String, Object>) o, propertyDef);
-
-                        }
-                    }
-
-                }
-
-            }
-
-        }
-    }
-
-
-    private boolean valueContainsPattern(Pattern pattern, Object propValue) {
-
-        log.debug("valueContainsToken value is {}", propValue);
-        boolean result = false;
-        if (propValue != null) {
-            log.trace("valueContainspattern value is {}", propValue.getClass());
-            Matcher matcher = pattern.matcher(propValue.toString());
-            result = matcher.find();
-        }
-
-        return result;
-
-    }
-
-    @SuppressWarnings("unchecked")
-    private Either<Map<String, List<UploadReqInfo>>, ResponseFormat> createReqModuleFromYaml(
-            UploadComponentInstanceInfo nodeTemplateInfo, Map<String, Object> nodeTemplateJsonMap) {
-        Map<String, List<UploadReqInfo>> moduleRequirements = new HashMap<String, List<UploadReqInfo>>();
-        Either<Map<String, List<UploadReqInfo>>, ResponseFormat> response = Either.left(moduleRequirements);
-        Either<List<Object>, ResultStatusEnum> requirementsListRes = ImportUtils
-                .findFirstToscaListElement(nodeTemplateJsonMap, ToscaTagNamesEnum.REQUIREMENTS);
-
-        if (requirementsListRes.isLeft()) {
-            for (Object jsonReqObj : requirementsListRes.left().value()) {
-                String reqName = ((Map<String, Object>) jsonReqObj).keySet().iterator().next();
-                Object reqJson = ((Map<String, Object>) jsonReqObj).get(reqName);
-                Either<UploadReqInfo, ResponseFormat> eitherCap = addModuleNodeTemplateReq(nodeTemplateInfo,
-                        moduleRequirements, reqJson, reqName);
-                if (eitherCap.isRight()) {
-                    return Either.right(eitherCap.right().value());
-                }
-            }
-        } else {
-            Either<Map<String, Object>, ResultStatusEnum> requirementsMapRes = ImportUtils
-                    .findFirstToscaMapElement(nodeTemplateJsonMap, ToscaTagNamesEnum.REQUIREMENTS);
-            if (requirementsMapRes.isLeft()) {
-                for (Map.Entry<String, Object> entry : requirementsMapRes.left().value().entrySet()) {
-                    String reqName = entry.getKey();
-                    Object reqJson = entry.getValue();
-                    Either<UploadReqInfo, ResponseFormat> eitherCap = addModuleNodeTemplateReq(nodeTemplateInfo,
-                            moduleRequirements, reqJson, reqName);
-                    if (eitherCap.isRight()) {
-                        return Either.right(eitherCap.right().value());
-                    }
-                }
-            }
-        }
-        return response;
-    }
-
-    private Either<UploadReqInfo, ResponseFormat> addModuleNodeTemplateReq(UploadComponentInstanceInfo nodeTemplateInfo,
-                                                                           Map<String, List<UploadReqInfo>> moduleRequirements, Object requirementJson, String requirementName) {
-
-        Either<UploadReqInfo, ResponseFormat> eitherRequirement = createModuleNodeTemplateReg(requirementJson);
-        if (eitherRequirement.isRight()) {
-            log.info("error when creating Requirement:{}, for node:{}", requirementName, nodeTemplateInfo);
-            return Either.right(eitherRequirement.right().value());
-        } else {
-            UploadReqInfo requirementDef = eitherRequirement.left().value();
-            requirementDef.setName(requirementName);
-            if (moduleRequirements.containsKey(requirementName)) {
-                moduleRequirements.get(requirementName).add(requirementDef);
-            } else {
-                List<UploadReqInfo> list = new ArrayList<UploadReqInfo>();
-                list.add(requirementDef);
-                moduleRequirements.put(requirementName, list);
-            }
-        }
-        return Either.left(eitherRequirement.left().value());
-    }
-
-    @SuppressWarnings("unchecked")
-    private Either<Map<String, List<UploadCapInfo>>, ResponseFormat> createCapModuleFromYaml(
-            UploadComponentInstanceInfo nodeTemplateInfo, Map<String, Object> nodeTemplateJsonMap) {
-        Map<String, List<UploadCapInfo>> moduleCap = new HashMap<>();
-        Either<Map<String, List<UploadCapInfo>>, ResponseFormat> response = Either.left(moduleCap);
-        Either<List<Object>, ResultStatusEnum> capabilitiesListRes = ImportUtils
-                .findFirstToscaListElement(nodeTemplateJsonMap, ToscaTagNamesEnum.CAPABILITIES);
-        if (capabilitiesListRes.isLeft()) {
-            for (Object jsonCapObj : capabilitiesListRes.left().value()) {
-                String key = ((Map<String, Object>) jsonCapObj).keySet().iterator().next();
-                Object capJson = ((Map<String, Object>) jsonCapObj).get(key);
-                Either<UploadCapInfo, ResponseFormat> eitherCap = addModuleNodeTemplateCap(nodeTemplateInfo, moduleCap,
-                        capJson, key);
-                if (eitherCap.isRight()) {
-                    return Either.right(eitherCap.right().value());
-                }
-            }
-        } else {
-            Either<Map<String, Object>, ResultStatusEnum> capabilitiesMapRes = ImportUtils
-                    .findFirstToscaMapElement(nodeTemplateJsonMap, ToscaTagNamesEnum.CAPABILITIES);
-            if (capabilitiesMapRes.isLeft()) {
-                for (Map.Entry<String, Object> entry : capabilitiesMapRes.left().value().entrySet()) {
-                    String capName = entry.getKey();
-                    Object capJson = entry.getValue();
-                    Either<UploadCapInfo, ResponseFormat> eitherCap = addModuleNodeTemplateCap(nodeTemplateInfo,
-                            moduleCap, capJson, capName);
-                    if (eitherCap.isRight()) {
-                        return Either.right(eitherCap.right().value());
-                    }
-                }
-            }
-        }
-        return response;
-    }
-
-    private Either<UploadCapInfo, ResponseFormat> addModuleNodeTemplateCap(UploadComponentInstanceInfo nodeTemplateInfo,
-                                                                           Map<String, List<UploadCapInfo>> moduleCap, Object capJson, String key) {
-
-        Either<UploadCapInfo, ResponseFormat> eitherCap = createModuleNodeTemplateCap(capJson);
-        if (eitherCap.isRight()) {
-            log.info("error when creating Capability:{}, for node:{}", key, nodeTemplateInfo);
-            return Either.right(eitherCap.right().value());
-        } else {
-            UploadCapInfo capabilityDef = eitherCap.left().value();
-            capabilityDef.setKey(key);
-            if (moduleCap.containsKey(key)) {
-                moduleCap.get(key).add(capabilityDef);
-            } else {
-                List<UploadCapInfo> list = new ArrayList<UploadCapInfo>();
-                list.add(capabilityDef);
-                moduleCap.put(key, list);
-            }
-        }
-        return Either.left(eitherCap.left().value());
-    }
-
-    @SuppressWarnings("unchecked")
-    private Either<UploadCapInfo, ResponseFormat> createModuleNodeTemplateCap(Object capObject) {
-        UploadCapInfo capTemplateInfo = new UploadCapInfo();
-        Either<UploadCapInfo, ResponseFormat> result = Either.left(capTemplateInfo);
-
-        if (capObject instanceof String) {
-            String nodeTemplateJsonString = (String) capObject;
-            capTemplateInfo.setNode(nodeTemplateJsonString);
-        } else if (capObject instanceof Map) {
-            Map<String, Object> nodeTemplateJsonMap = (Map<String, Object>) capObject;
-            // Type
-            if (nodeTemplateJsonMap.containsKey(ToscaTagNamesEnum.NODE.getElementName())) {
-                capTemplateInfo.setNode((String) nodeTemplateJsonMap.get(ToscaTagNamesEnum.NODE.getElementName()));
-            }
-            if (nodeTemplateJsonMap.containsKey(ToscaTagNamesEnum.TYPE.getElementName())) {
-                capTemplateInfo.setType((String) nodeTemplateJsonMap.get(ToscaTagNamesEnum.TYPE.getElementName()));
-            }
-            if (nodeTemplateJsonMap.containsKey(ToscaTagNamesEnum.VALID_SOURCE_TYPES.getElementName())) {
-                Either<List<Object>, ResultStatusEnum> validSourceTypesRes = ImportUtils
-                        .findFirstToscaListElement(nodeTemplateJsonMap, ToscaTagNamesEnum.VALID_SOURCE_TYPES);
-                if (validSourceTypesRes.isLeft()) {
-                    capTemplateInfo.setValidSourceTypes(validSourceTypesRes.left().value().stream()
-                            .map(o -> o.toString()).collect(Collectors.toList()));
-                }
-            }
-            if (nodeTemplateJsonMap.containsKey(ToscaTagNamesEnum.PROPERTIES.getElementName())) {
-                Either<Map<String, List<UploadPropInfo>>, ResponseFormat> regResponse = createPropModuleFromYaml(
-                        nodeTemplateJsonMap);
-                if (regResponse.isRight())
-                    return Either.right(regResponse.right().value());
-                if (!regResponse.left().value().isEmpty()) {
-                    List<UploadPropInfo> properties = new ArrayList<UploadPropInfo>();
-                    regResponse.left().value().values().forEach(list -> properties.addAll(list));
-                    if (!properties.isEmpty())
-                        capTemplateInfo.setProperties(properties);
-                }
-            }
-        }
-        return result;
-    }
-
-    @SuppressWarnings("unchecked")
-    private Either<UploadReqInfo, ResponseFormat> createModuleNodeTemplateReg(Object regObject) {
-
-        UploadReqInfo regTemplateInfo = new UploadReqInfo();
-        Either<UploadReqInfo, ResponseFormat> result = Either.left(regTemplateInfo);
-
-        if (regObject instanceof String) {
-            String nodeTemplateJsonString = (String) regObject;
-            regTemplateInfo.setNode(nodeTemplateJsonString);
-        } else if (regObject instanceof Map) {
-            Map<String, Object> nodeTemplateJsonMap = (Map<String, Object>) regObject;
-            // Type
-            if (nodeTemplateJsonMap.containsKey(ToscaTagNamesEnum.NODE.getElementName())) {
-                regTemplateInfo.setNode((String) nodeTemplateJsonMap.get(ToscaTagNamesEnum.NODE.getElementName()));
-            }
-            // US740820 Relate RIs according to capability name
-            if (nodeTemplateJsonMap.containsKey(ToscaTagNamesEnum.CAPABILITY.getElementName())) {
-                regTemplateInfo.setCapabilityName(
-                        (String) nodeTemplateJsonMap.get(ToscaTagNamesEnum.CAPABILITY.getElementName()));
-            }
-        }
-        return result;
-    }
 
     public Either<Resource, ResponseFormat> propagateStateToCertified(User user, Resource resource,
                                                                       LifecycleChangeInfoWithAction lifecycleChangeInfo, boolean inTransaction, boolean needLock,
@@ -4264,12 +3147,10 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         } finally {
             if (result == null || result.isRight()) {
                 BeEcompErrorManager.getInstance().logBeSystemError("Change LifecycleState - Certify");
-                if (inTransaction == false) {
-                    log.debug("operation failed. do rollback");
+                if (!inTransaction) {
                     titanDao.rollback();
                 }
-            } else if (inTransaction == false) {
-                log.debug("operation success. do commit");
+            } else if (!inTransaction) {
                 titanDao.commit();
             }
         }
@@ -4277,17 +3158,8 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 
     private Either<Resource, ResponseFormat> nodeFullCertification(String uniqueId, User user,
                                                                    LifecycleChangeInfoWithAction lifecycleChangeInfo, boolean inTransaction, boolean needLock) {
-        Either<Resource, ResponseFormat> result = lifecycleBusinessLogic.changeState(uniqueId, user,
-                LifeCycleTransitionEnum.CERTIFICATION_REQUEST, lifecycleChangeInfo, inTransaction, needLock);
-        if (result.isLeft()) {
-            result = lifecycleBusinessLogic.changeState(uniqueId, user, LifeCycleTransitionEnum.START_CERTIFICATION,
-                    lifecycleChangeInfo, inTransaction, needLock);
-        }
-        if (result.isLeft()) {
-            result = lifecycleBusinessLogic.changeState(uniqueId, user, LifeCycleTransitionEnum.CERTIFY,
-                    lifecycleChangeInfo, inTransaction, needLock);
-        }
-        return result;
+        return lifecycleBusinessLogic.changeState(uniqueId, user, LifeCycleTransitionEnum.CERTIFY,
+                lifecycleChangeInfo, inTransaction, needLock);
     }
 
     private Either<Resource, ResponseFormat> nodeForceCertification(Resource resource, User user,
@@ -4296,93 +3168,83 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                 needLock);
     }
 
-
-    public Either<ImmutablePair<Resource, ActionStatus>, ResponseFormat> createOrUpdateResourceByImport(
+    public ImmutablePair<Resource, ActionStatus> createOrUpdateResourceByImport(
             Resource resource, User user, boolean isNormative, boolean isInTransaction, boolean needLock,
             CsarInfo csarInfo, String nodeName, boolean isNested) {
 
-        // check if resource already exist
-        Either<Resource, StorageOperationStatus> latestByName = toscaOperationFacade
-                .getLatestByName(resource.getName());
-        Either<ImmutablePair<Resource, ActionStatus>, ResponseFormat> result = null;
+        ImmutablePair<Resource, ActionStatus> result = null;
+        // check if resource already exists (search by tosca name = type)
+        boolean isNestedResource = isNestedResourceUpdate(csarInfo, nodeName);
+        Either<Resource, StorageOperationStatus> latestByToscaName = toscaOperationFacade
+                .getLatestByToscaResourceName(resource.getToscaResourceName());
 
-        // create
-        if (latestByName.isRight() && latestByName.right().value().equals(StorageOperationStatus.NOT_FOUND)) {
-
-            Either<Resource, StorageOperationStatus> latestByToscaName = toscaOperationFacade
-                    .getLatestByToscaResourceName(resource.getToscaResourceName());
-            if (csarInfo != null && csarInfo.isUpdate() && nodeName != null && latestByToscaName.isRight()
-                    && latestByToscaName.right().value().equals(StorageOperationStatus.NOT_FOUND)) {
-                latestByToscaName = toscaOperationFacade
-                        .getLatestByToscaResourceName(buildNestedToscaResourceName(resource.getResourceType().name(),
-                                csarInfo.getVfResourceName(), nodeName).getRight());
-                // update
-                if (latestByToscaName.isLeft()) {
-                    log.debug("validate derived before update");
-                    Either<Boolean, ResponseFormat> eitherValidation = validateNestedDerivedFromDuringUpdate(
-                            latestByToscaName.left().value(), resource,
-                            ValidationUtils.hasBeenCertified(latestByToscaName.left().value().getVersion()));
-                    if (eitherValidation.isRight()) {
-                        result = createResourceByImport(resource, user, isNormative, isInTransaction, csarInfo);
-                    } else {
-                        result = updateExistingResourceByImport(resource, latestByToscaName.left().value(), user,
-                                isNormative, needLock, isNested);
-                    }
-                }
-            }
-            if (result == null && latestByToscaName.isRight()
-                    && latestByToscaName.right().value().equals(StorageOperationStatus.NOT_FOUND)) {
-                result = createResourceByImport(resource, user, isNormative, isInTransaction, csarInfo);
-            } else if (result == null) {
-                StorageOperationStatus status = latestByName.right().value();
+        if (latestByToscaName.isLeft()) {
+            Resource foundResource = latestByToscaName.left().value();
+            // we don't allow updating names of top level types
+            if (!isNestedResource &&
+                    !StringUtils.equals(resource.getName(), foundResource.getName())) {
                 BeEcompErrorManager.getInstance().logBeComponentMissingError("Create / Update resource by import",
                         ComponentTypeEnum.RESOURCE.getValue(), resource.getName());
-                log.debug("resource already exist {}. status={}", resource.getName(), status);
+                log.debug("resource already exist new name={} old name={} same type={}", resource.getName(),
+                        foundResource.getName(), resource.getToscaResourceName());
                 ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.RESOURCE_ALREADY_EXISTS);
                 componentsUtils.auditResource(responseFormat, user, resource, AuditingActionEnum.IMPORT_RESOURCE);
-                result = Either.right(responseFormat);
+                throwComponentException(responseFormat);
             }
-
-        }
-
-        // update
-        else if (latestByName.isLeft()) {
-            result = updateExistingResourceByImport(resource, latestByName.left().value(), user, isNormative, needLock,
-                    isNested);
-        }
-
-        // error
-        else {
-            StorageOperationStatus status = latestByName.right().value();
+            result = updateExistingResourceByImport(resource, foundResource, user, isNormative, needLock, isNested);
+        } else if (isNotFound(latestByToscaName)) {
+            if (isNestedResource) {
+                result = createOrUpdateNestedResource(resource, user, isNormative, isInTransaction, needLock, csarInfo, isNested, nodeName);
+            } else {
+                result = createResourceByImport(resource, user, isNormative, isInTransaction, csarInfo);
+            }
+        } else {
+            StorageOperationStatus status = latestByToscaName.right().value();
             log.debug("failed to get latest version of resource {}. status={}", resource.getName(), status);
             ResponseFormat responseFormat = componentsUtils.getResponseFormatByResource(
-                    componentsUtils.convertFromStorageResponse(latestByName.right().value()), resource);
+                    componentsUtils.convertFromStorageResponse(latestByToscaName.right().value()), resource);
             componentsUtils.auditResource(responseFormat, user, resource, AuditingActionEnum.IMPORT_RESOURCE);
-            result = Either.right(responseFormat);
+            throwComponentException(responseFormat);
         }
         return result;
-
     }
 
-    private Either<ImmutablePair<Resource, ActionStatus>, ResponseFormat> createResourceByImport(Resource resource,
-                                                                                                 User user, boolean isNormative, boolean isInTransaction, CsarInfo csarInfo) {
-        log.debug("resource with name {} does not exist. create new resource", resource.getName());
-        Either<Resource, ResponseFormat> response = validateResourceBeforeCreate(resource, user,
-                AuditingActionEnum.IMPORT_RESOURCE, isInTransaction, csarInfo);
-        if (response.isRight()) {
-            return Either.right(response.right().value());
-        }
-        Either<Resource, ResponseFormat> createResponse = createResourceByDao(resource, user,
-                AuditingActionEnum.IMPORT_RESOURCE, isNormative, isInTransaction);
-        if (createResponse.isRight()) {
-            return Either.right(createResponse.right().value());
-        } else {
-            ImmutablePair<Resource, ActionStatus> resourcePair = new ImmutablePair<>(createResponse.left().value(),
-                    ActionStatus.CREATED);
-            ASDCKpiApi.countImportResourcesKPI();
-            return Either.left(resourcePair);
+    private boolean isNestedResourceUpdate(CsarInfo csarInfo, String nodeName) {
+        return csarInfo != null && csarInfo.isUpdate() && nodeName != null;
+    }
 
+    private ImmutablePair<Resource, ActionStatus> createOrUpdateNestedResource(Resource resource, User user, boolean isNormative, boolean isInTransaction, boolean needLock, CsarInfo csarInfo, boolean isNested, String nodeName) {
+        Either<Component, StorageOperationStatus> latestByToscaName = toscaOperationFacade.getLatestByToscaResourceName(buildNestedToscaResourceName(
+                resource.getResourceType().name(), csarInfo.getVfResourceName(), nodeName).getRight());
+        if (latestByToscaName.isLeft()) {
+            Resource nestedResource = (Resource) latestByToscaName.left().value();
+            log.debug(VALIDATE_DERIVED_BEFORE_UPDATE);
+            Either<Boolean, ResponseFormat> eitherValidation = validateNestedDerivedFromDuringUpdate(nestedResource, resource,
+                    ValidationUtils.hasBeenCertified(nestedResource.getVersion()));
+            if (eitherValidation.isRight()) {
+                return createResourceByImport(resource, user, isNormative, isInTransaction, csarInfo);
+            }
+            return updateExistingResourceByImport(resource, nestedResource, user, isNormative, needLock, isNested);
+        } else {
+            return createResourceByImport(resource, user, isNormative, isInTransaction, csarInfo);
         }
+    }
+
+    private boolean isNotFound(Either<Resource, StorageOperationStatus> getResourceEither) {
+        return getResourceEither.isRight() && getResourceEither.right().value() == StorageOperationStatus.NOT_FOUND;
+    }
+
+    private ImmutablePair<Resource, ActionStatus> createResourceByImport(Resource resource,
+                                                                         User user, boolean isNormative, boolean isInTransaction, CsarInfo csarInfo) {
+        log.debug("resource with name {} does not exist. create new resource", resource.getName());
+        validateResourceBeforeCreate(resource, user,
+                AuditingActionEnum.IMPORT_RESOURCE, isInTransaction, csarInfo);
+        Resource createdResource = createResourceByDao(resource, user,
+                AuditingActionEnum.IMPORT_RESOURCE, isNormative, isInTransaction);
+        ImmutablePair<Resource, ActionStatus> resourcePair = new ImmutablePair<>(createdResource,
+                ActionStatus.CREATED);
+        ASDCKpiApi.countImportResourcesKPI();
+        return resourcePair;
     }
 
     public boolean isResourceExist(String resourceName) {
@@ -4390,53 +3252,20 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         return latestByName.isLeft();
     }
 
-    private Either<ImmutablePair<Resource, ActionStatus>, ResponseFormat> updateExistingResourceByImport(
+    private ImmutablePair<Resource, ActionStatus> updateExistingResourceByImport(
             Resource newResource, Resource oldResource, User user, boolean inTransaction, boolean needLock,
             boolean isNested) {
         String lockedResourceId = oldResource.getUniqueId();
         log.debug("found resource: name={}, id={}, version={}, state={}", oldResource.getName(), lockedResourceId,
                 oldResource.getVersion(), oldResource.getLifecycleState());
-        Either<ImmutablePair<Resource, ActionStatus>, ResponseFormat> result = null;
+        ImmutablePair<Resource, ActionStatus> resourcePair = null;
         try {
-            if (needLock) {
-                Either<Boolean, ResponseFormat> lockResult = lockComponent(lockedResourceId, oldResource,
-                        "Update Resource by Import");
-                if (lockResult.isRight()) {
-                    return Either.right(lockResult.right().value());
-                }
-            }
-
-            Either<Resource, ResponseFormat> prepareResourceForUpdate = prepareResourceForUpdate(oldResource, user,
-                    inTransaction, false);
-            if (prepareResourceForUpdate.isRight()) {
-                ResponseFormat responseFormat = prepareResourceForUpdate.right().value();
-                log.info("resource {} cannot be updated. reason={}", lockedResourceId,
-                        responseFormat.getFormattedMessage());
-                componentsUtils.auditResource(responseFormat, user, newResource, AuditingActionEnum.IMPORT_RESOURCE,
-                        ResourceAuditData.newBuilder()
-                                .state(oldResource.getLifecycleState().name())
-                                .version(oldResource.getVersion())
-                                .build());
-                result = Either.right(prepareResourceForUpdate.right().value());
-                return result;
-            }
-            oldResource = prepareResourceForUpdate.left().value();
-
+            lockComponent(lockedResourceId, oldResource, needLock, "Update Resource by Import");
+            oldResource = prepareResourceForUpdate(oldResource, newResource, user, inTransaction, false);
             mergeOldResourceMetadataWithNew(oldResource, newResource);
 
-            Either<Boolean, ResponseFormat> validateFieldsResponse = validateResourceFieldsBeforeUpdate(oldResource,
-                    newResource, inTransaction, isNested);
-            if (validateFieldsResponse.isRight()) {
-                result = Either.right(validateFieldsResponse.right().value());
-                return result;
-            }
-
-            validateFieldsResponse = validateCapabilityTypesCreate(user, getCapabilityTypeOperation(), newResource,
-                    AuditingActionEnum.IMPORT_RESOURCE, inTransaction);
-            if (validateFieldsResponse.isRight()) {
-                return Either.right(validateFieldsResponse.right().value());
-            }
-
+            validateResourceFieldsBeforeUpdate(oldResource, newResource, inTransaction, isNested);
+            validateCapabilityTypesCreate(user, getCapabilityTypeOperation(), newResource, AuditingActionEnum.IMPORT_RESOURCE, inTransaction);
             // contact info normalization
             newResource.setContactId(newResource.getContactId().toLowerCase());
             // non-updatable fields
@@ -4468,9 +3297,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
             if (newResource.getDerivedFromGenericVersion() == null || newResource.getDerivedFromGenericVersion().isEmpty()) {
                 newResource.setDerivedFromGenericVersion(oldResource.getDerivedFromGenericVersion());
             }
-            // TODO rhalili: handle artifacts here (delete from old resource and
             // add for new)
-            // TODO rbetzer: remove after migration - in case of resources
             // created without tosca artifacts - add the placeholders
             if (newResource.getToscaArtifacts() == null || newResource.getToscaArtifacts().isEmpty()) {
                 setToscaArtifactsPlaceHolders(newResource, user);
@@ -4483,31 +3310,29 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                         componentsUtils.convertFromStorageResponse(overrideResource.right().value()), newResource);
                 componentsUtils.auditResource(responseFormat, user, newResource, AuditingActionEnum.IMPORT_RESOURCE);
 
-                result = Either.right(responseFormat);
-                return result;
+                throwComponentException(responseFormat);
             }
 
             log.debug("Resource updated successfully!!!");
             ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.OK);
             componentsUtils.auditResource(responseFormat, user, newResource, AuditingActionEnum.IMPORT_RESOURCE,
-                    ResourceAuditData.newBuilder()
-                            .state(oldResource.getLifecycleState().name()).version(oldResource.getVersion()).build());
+                    ResourceVersionInfo.newBuilder()
+                            .state(oldResource.getLifecycleState()
+                                    .name())
+                            .version(oldResource.getVersion())
+                            .build());
 
-
-            ImmutablePair<Resource, ActionStatus> resourcePair = new ImmutablePair<>(overrideResource.left().value(),
+            resourcePair = new ImmutablePair<>(overrideResource.left().value(),
                     ActionStatus.OK);
-            result = Either.left(resourcePair);
-            return result;
+            return resourcePair;
         } finally {
-            if (result == null || result.isRight()) {
+            if (resourcePair == null) {
                 BeEcompErrorManager.getInstance().logBeSystemError("Change LifecycleState - Certify");
-                log.debug("operation failed. do rollback");
                 titanDao.rollback();
-            } else if (inTransaction == false) {
-                log.debug("operation success. do commit");
+            } else if (!inTransaction) {
                 titanDao.commit();
             }
-            if (needLock == true) {
+            if (needLock) {
                 log.debug("unlock resource {}", lockedResourceId);
                 graphLockOperation.unlockComponent(lockedResourceId, NodeTypeEnum.Resource);
             }
@@ -4552,45 +3377,37 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         }
     }
 
-    private Either<Resource, ResponseFormat> prepareResourceForUpdate(Resource latestResource, User user,
-                                                                      boolean inTransaction, boolean needLock) {
+    private Resource prepareResourceForUpdate(Resource oldResource, Resource newResource, User user,
+                                              boolean inTransaction, boolean needLock) {
 
-        Either<Resource, ResponseFormat> result = Either.left(latestResource);
-        // check if user can edit resource
-        if (!ComponentValidationUtils.canWorkOnResource(latestResource, user.getUserId())) {
+        if (!ComponentValidationUtils.canWorkOnResource(oldResource, user.getUserId())) {
             // checkout
-            Either<Resource, ResponseFormat> changeState = lifecycleBusinessLogic.changeState(
-                    latestResource.getUniqueId(), user, LifeCycleTransitionEnum.CHECKOUT,
-                    new LifecycleChangeInfoWithAction("update by import"), inTransaction, needLock);
-            result = changeState;
+            return lifecycleBusinessLogic.changeState(
+                    oldResource.getUniqueId(), user, LifeCycleTransitionEnum.CHECKOUT,
+                    new LifecycleChangeInfoWithAction("update by import"), inTransaction, needLock)
+                    .left()
+                    .on(response -> failOnChangeState(response, user, oldResource, newResource));
         }
-
-        return result;
+        return oldResource;
     }
 
-    public Either<Resource, ResponseFormat> validateResourceBeforeCreate(Resource resource, User user,
-                                                                         AuditingActionEnum actionEnum, boolean inTransaction, CsarInfo csarInfo) {
+    private Resource failOnChangeState(ResponseFormat response, User user, Resource oldResource, Resource newResource) {
+        log.info("resource {} cannot be updated. reason={}", oldResource.getUniqueId(),
+                response.getFormattedMessage());
+        componentsUtils.auditResource(response, user, newResource, AuditingActionEnum.IMPORT_RESOURCE,
+                ResourceVersionInfo.newBuilder()
+                        .state(oldResource.getLifecycleState().name())
+                        .version(oldResource.getVersion())
+                        .build());
+        throw new ComponentException(response);
+    }
 
-        Either<Boolean, ResponseFormat> eitherValidation = validateResourceFieldsBeforeCreate(user, resource,
-                actionEnum, inTransaction);
-        if (eitherValidation.isRight()) {
-            return Either.right(eitherValidation.right().value());
-        }
+    public Resource validateResourceBeforeCreate(Resource resource, User user, AuditingActionEnum actionEnum, boolean inTransaction, CsarInfo csarInfo) {
 
-        eitherValidation = validateCapabilityTypesCreate(user, getCapabilityTypeOperation(), resource, actionEnum,
-                inTransaction);
-        if (eitherValidation.isRight()) {
-            return Either.right(eitherValidation.right().value());
-        }
-        eitherValidation = validateLifecycleTypesCreate(user, resource, actionEnum);
-        if (eitherValidation.isRight()) {
-            return Either.right(eitherValidation.right().value());
-        }
-        eitherValidation = validateResourceType(user, resource, actionEnum);
-        if (eitherValidation.isRight()) {
-            return Either.right(eitherValidation.right().value());
-        }
-
+        validateResourceFieldsBeforeCreate(user, resource, actionEnum, inTransaction);
+        validateCapabilityTypesCreate(user, getCapabilityTypeOperation(), resource, actionEnum, inTransaction);
+        validateLifecycleTypesCreate(user, resource, actionEnum);
+        validateResourceType(user, resource, actionEnum);
         resource.setCreatorUserId(user.getUserId());
         resource.setCreatorFullName(user.getFirstName() + " " + user.getLastName());
         resource.setContactId(resource.getContactId().toLowerCase());
@@ -4611,7 +3428,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         String invariantUUID = UniqueIdBuilder.buildInvariantUUID();
         resource.setInvariantUUID(invariantUUID);
 
-        return Either.left(resource);
+        return resource;
     }
 
     private Either<Boolean, ResponseFormat> validateResourceType(User user, Resource resource,
@@ -4702,20 +3519,21 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         if (eitherCapTypeFound.isRight()) {
             if (eitherCapTypeFound.right().value() == StorageOperationStatus.NOT_FOUND) {
                 BeEcompErrorManager.getInstance().logBeGraphObjectMissingError(
-                        "Create Resource - validateCapabilityTypesCreate", "Capability Type", type);
+                        CREATE_RESOURCE_VALIDATE_CAPABILITY_TYPES, "Capability Type", type);
                 log.debug("Capability Type: {} is required by resource: {} but does not exist in the DB", type,
                         resource.getName());
                 BeEcompErrorManager.getInstance()
-                        .logBeDaoSystemError("Create Resource - validateCapabilityTypesCreate");
+                        .logBeDaoSystemError(CREATE_RESOURCE_VALIDATE_CAPABILITY_TYPES);
             }
             log.debug("Trying to get capability type {} failed with error: {}", type,
                     eitherCapTypeFound.right().value().name());
             ResponseFormat errorResponse = null;
-            if (type != null)
+            if (type != null) {
                 errorResponse = componentsUtils.getResponseFormat(ActionStatus.MISSING_CAPABILITY_TYPE, type);
-            else
+            } else {
                 errorResponse = componentsUtils.getResponseFormatByElement(ActionStatus.MISSING_CAPABILITY_TYPE,
                         validationObjects);
+            }
             eitherResult = Either.right(errorResponse);
             componentsUtils.auditResource(errorResponse, user, resource, actionEnum);
         }
@@ -4731,11 +3549,11 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         if (eitherCapTypeFound.isRight()) {
             if (eitherCapTypeFound.right().value() == StorageOperationStatus.NOT_FOUND) {
                 BeEcompErrorManager.getInstance().logBeGraphObjectMissingError(
-                        "Create Resource - validateCapabilityTypesCreate", "Capability Type", typeEntry.getKey());
+                        CREATE_RESOURCE_VALIDATE_CAPABILITY_TYPES, "Capability Type", typeEntry.getKey());
                 log.debug("Capability Type: {} is required by resource: {} but does not exist in the DB",
                         typeEntry.getKey(), resource.getName());
                 BeEcompErrorManager.getInstance()
-                        .logBeDaoSystemError("Create Resource - validateCapabilityTypesCreate");
+                        .logBeDaoSystemError(CREATE_RESOURCE_VALIDATE_CAPABILITY_TYPES);
             }
             log.debug("Trying to get capability type {} failed with error: {}", typeEntry.getKey(),
                     eitherCapTypeFound.right().value().name());
@@ -4749,7 +3567,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
             for (CapabilityDefinition capDef : typeEntry.getValue()) {
                 List<ComponentInstanceProperty> properties = capDef.getProperties();
                 if (properties == null || properties.isEmpty()) {
-                    properties = new ArrayList<ComponentInstanceProperty>();
+                    properties = new ArrayList<>();
                     for (Entry<String, PropertyDefinition> prop : capabilityTypeDefinition.getProperties().entrySet()) {
                         ComponentInstanceProperty newProp = new ComponentInstanceProperty(prop.getValue());
                         properties.add(newProp);
@@ -4775,50 +3593,53 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         return eitherResult;
     }
 
-    public Either<Resource, ResponseFormat> createResourceByDao(Resource resource, User user,
-            AuditingActionEnum actionEnum, boolean isNormative, boolean inTransaction) {
+    public Resource createResourceByDao(Resource resource, User user,
+                                        AuditingActionEnum actionEnum, boolean isNormative, boolean inTransaction) {
         // create resource
 
         // lock new resource name in order to avoid creation resource with same
         // name
-        if (inTransaction == false) {
+        Resource createdResource = null;
+        if (!inTransaction) {
             Either<Boolean, ResponseFormat> lockResult = lockComponentByName(resource.getSystemName(), resource,
-                    "Create Resource");
+                    CREATE_RESOURCE);
             if (lockResult.isRight()) {
                 ResponseFormat responseFormat = lockResult.right().value();
                 componentsUtils.auditResource(responseFormat, user, resource, actionEnum);
-                return Either.right(responseFormat);
+                throw new ComponentException(responseFormat);
             }
 
             log.debug("name is locked {} status = {}", resource.getSystemName(), lockResult);
         }
         try {
             if (resource.deriveFromGeneric()) {
-                Either<Resource, ResponseFormat> genericResourceEither = handleResourceGenericType(resource);
-                if (genericResourceEither.isRight())
-                    return genericResourceEither;
+                handleResourceGenericType(resource);
             }
-
-            Either<Resource, ResponseFormat> respStatus = createResourceTransaction(resource, user, isNormative,
-                    inTransaction);
-            if (respStatus.isLeft()) {
-                componentsUtils.auditResource(componentsUtils.getResponseFormat(ActionStatus.CREATED), user,
-                        respStatus.left().value(), actionEnum);
-                ASDCKpiApi.countCreatedResourcesKPI();
-            } else
-                componentsUtils.auditResource(respStatus.right().value(), user, resource, actionEnum);
-            return respStatus;
-
-        } finally {
-            if (inTransaction == false) {
+           createdResource = createResourceTransaction(resource, user, isNormative
+           );
+            componentsUtils.auditResource(componentsUtils.getResponseFormat(ActionStatus.CREATED), user,
+                    createdResource, actionEnum);
+            ASDCKpiApi.countCreatedResourcesKPI();
+        } catch(ComponentException e) {
+            ResponseFormat responseFormat = e.getResponseFormat() == null ? componentsUtils.getResponseFormat(e.getActionStatus(), e.getParams()) : e.getResponseFormat();
+            componentsUtils.auditResource(responseFormat, user, resource, actionEnum);
+            throw e;
+        } catch (StorageException e){
+            ResponseFormat responseFormat = componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(e.getStorageOperationStatus()));
+            componentsUtils.auditResource(responseFormat, user, resource, actionEnum);
+            throw e;
+        }
+        finally {
+            if (!inTransaction) {
                 graphLockOperation.unlockComponentByName(resource.getSystemName(), resource.getUniqueId(),
                         NodeTypeEnum.Resource);
             }
         }
+        return createdResource;
     }
 
-    private Either<Resource, ResponseFormat> createResourceTransaction(Resource resource, User user,
-                                                                       boolean isNormative, boolean inTransaction) {
+    private Resource createResourceTransaction(Resource resource, User user,
+                                               boolean isNormative) {
         // validate resource name uniqueness
         log.debug("validate resource name");
         Either<Boolean, StorageOperationStatus> eitherValidation = toscaOperationFacade.validateComponentNameExists(
@@ -4828,41 +3649,37 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                     eitherValidation.right().value());
             ResponseFormat errorResponse = componentsUtils
                     .getResponseFormat(componentsUtils.convertFromStorageResponse(eitherValidation.right().value()));
-            return Either.right(errorResponse);
+            throw new ComponentException(errorResponse);
         }
         if (eitherValidation.left().value()) {
             log.debug("resource with name: {}, already exists", resource.getName());
             ResponseFormat errorResponse = componentsUtils.getResponseFormat(ActionStatus.COMPONENT_NAME_ALREADY_EXIST,
                     ComponentTypeEnum.RESOURCE.getValue(), resource.getName());
-            return Either.right(errorResponse);
+            throw new ComponentException(errorResponse);
         }
 
         log.debug("send resource {} to dao for create", resource.getName());
 
         createArtifactsPlaceHolderData(resource, user);
-
-        //
-
         // enrich object
         if (!isNormative) {
             log.debug("enrich resource with creator, version and state");
             resource.setLifecycleState(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
             resource.setVersion(INITIAL_VERSION);
             resource.setHighestVersion(true);
-            if (resource.getResourceType() != null && resource.getResourceType() != ResourceTypeEnum.CVFC)
+            if (resource.getResourceType() != null && resource.getResourceType() != ResourceTypeEnum.CVFC) {
                 resource.setAbstract(false);
+            }
         }
+        return toscaOperationFacade.createToscaComponent(resource)
+                .left()
+                .on(r->throwComponentExceptionByResource(r, resource));
+    }
 
-        Either<Resource, StorageOperationStatus> createToscaElement = toscaOperationFacade
-                .createToscaComponent(resource);
-        if (createToscaElement.isLeft()) {
-            return Either.left(createToscaElement.left().value());
-        }
-
+    private Resource throwComponentExceptionByResource(StorageOperationStatus status, Resource resource) {
         ResponseFormat responseFormat = componentsUtils.getResponseFormatByResource(
-                componentsUtils.convertFromStorageResponse(createToscaElement.right().value()), resource);
-
-        return Either.right(responseFormat);
+                componentsUtils.convertFromStorageResponse(status), resource);
+        throw new ComponentException(responseFormat);
     }
 
     private void createArtifactsPlaceHolderData(Resource resource, User user) {
@@ -4882,47 +3699,49 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         Resource resource = (Resource) component;
         Map<String, ArtifactDefinition> artifactMap = resource.getDeploymentArtifacts();
         if (artifactMap == null) {
-            artifactMap = new HashMap<String, ArtifactDefinition>();
+            artifactMap = new HashMap<>();
         }
         Map<String, Object> deploymentResourceArtifacts = ConfigurationManager.getConfigurationManager()
                 .getConfiguration().getDeploymentResourceArtifacts();
         if (deploymentResourceArtifacts != null) {
-            Iterator<Entry<String, Object>> iterator = deploymentResourceArtifacts.entrySet().iterator();
-            while (iterator.hasNext()) {
-                Entry<String, Object> currEntry = iterator.next();
-                boolean shouldCreateArtifact = true;
-                Map<String, Object> artifactDetails = (Map<String, Object>) currEntry.getValue();
-                Object object = artifactDetails.get(PLACE_HOLDER_RESOURCE_TYPES);
-                if (object != null) {
-                    List<String> artifactTypes = (List<String>) object;
-                    if (!artifactTypes.contains(resource.getResourceType().name())) {
-                        shouldCreateArtifact = false;
-                        continue;
-                    }
-                } else {
-                    log.info("resource types for artifact placeholder {} were not defined. default is all resources",
-                            currEntry.getKey());
-                }
-                if (shouldCreateArtifact) {
-                    if (artifactsBusinessLogic != null) {
-                        ArtifactDefinition artifactDefinition = artifactsBusinessLogic.createArtifactPlaceHolderInfo(
-                                resource.getUniqueId(), currEntry.getKey(), (Map<String, Object>) currEntry.getValue(),
-                                user, ArtifactGroupTypeEnum.DEPLOYMENT);
-                        if (artifactDefinition != null
-                                && !artifactMap.containsKey(artifactDefinition.getArtifactLabel()))
-                            artifactMap.put(artifactDefinition.getArtifactLabel(), artifactDefinition);
-                    }
+            Map<String, ArtifactDefinition> finalArtifactMap = artifactMap;
+            deploymentResourceArtifacts.forEach((k, v)->processDeploymentResourceArtifacts(user, resource, finalArtifactMap, k,v));
+        }
+        resource.setDeploymentArtifacts(artifactMap);
+    }
+
+    private void processDeploymentResourceArtifacts(User user, Resource resource, Map<String, ArtifactDefinition> artifactMap, String k, Object v) {
+        boolean shouldCreateArtifact = true;
+        Map<String, Object> artifactDetails = (Map<String, Object>) v;
+        Object object = artifactDetails.get(PLACE_HOLDER_RESOURCE_TYPES);
+        if (object != null) {
+            List<String> artifactTypes = (List<String>) object;
+            if (!artifactTypes.contains(resource.getResourceType().name())) {
+                shouldCreateArtifact = false;
+                return;
+            }
+        } else {
+            log.info("resource types for artifact placeholder {} were not defined. default is all resources",
+                    k);
+        }
+        if (shouldCreateArtifact) {
+            if (artifactsBusinessLogic != null) {
+                ArtifactDefinition artifactDefinition = artifactsBusinessLogic.createArtifactPlaceHolderInfo(
+                        resource.getUniqueId(), k, (Map<String, Object>) v,
+                        user, ArtifactGroupTypeEnum.DEPLOYMENT);
+                if (artifactDefinition != null
+                        && !artifactMap.containsKey(artifactDefinition.getArtifactLabel())) {
+                    artifactMap.put(artifactDefinition.getArtifactLabel(), artifactDefinition);
                 }
             }
         }
-        resource.setDeploymentArtifacts(artifactMap);
     }
 
     @SuppressWarnings("unchecked")
     private void setInformationalArtifactsPlaceHolder(Resource resource, User user) {
         Map<String, ArtifactDefinition> artifactMap = resource.getArtifacts();
         if (artifactMap == null) {
-            artifactMap = new HashMap<String, ArtifactDefinition>();
+            artifactMap = new HashMap<>();
         }
         String resourceUniqueId = resource.getUniqueId();
         List<String> exludeResourceCategory = ConfigurationManager.getConfigurationManager().getConfiguration()
@@ -4935,25 +3754,12 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         boolean isCreateArtifact = true;
         if (exludeResourceCategory != null) {
             String category = categories.get(0).getName();
-            for (String exlude : exludeResourceCategory) {
-                if (exlude.equalsIgnoreCase(category)) {
-                    isCreateArtifact = false;
-                    break;
-                }
-            }
-
+            isCreateArtifact = exludeResourceCategory.stream().noneMatch(e->e.equalsIgnoreCase(category));
         }
         if (isCreateArtifact && exludeResourceType != null) {
             String resourceType = resource.getResourceType().name();
-            for (String type : exludeResourceType) {
-                if (type.equalsIgnoreCase(resourceType)) {
-                    isCreateArtifact = false;
-                    break;
-                }
-            }
-
+            isCreateArtifact = exludeResourceType.stream().noneMatch(e->e.equalsIgnoreCase(resourceType));
         }
-
         if (informationalResourceArtifacts != null && isCreateArtifact) {
             Set<String> keys = informationalResourceArtifacts.keySet();
             for (String informationalResourceArtifactName : keys) {
@@ -4978,10 +3784,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
      */
     public ResponseFormat deleteResource(String resourceId, User user) {
         ResponseFormat responseFormat;
-        Either<User, ResponseFormat> eitherCreator = validateUserExists(user, "Delete Resource", false);
-        if (eitherCreator.isRight()) {
-            return eitherCreator.right().value();
-        }
+        validateUserExists(user, DELETE_RESOURCE, false);
 
         Either<Resource, StorageOperationStatus> resourceStatus = toscaOperationFacade.getToscaElement(resourceId);
         if (resourceStatus.isRight()) {
@@ -4995,7 +3798,6 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         StorageOperationStatus result = StorageOperationStatus.OK;
         Either<Boolean, ResponseFormat> lockResult = lockComponent(resourceId, resource, "Mark resource to delete");
         if (lockResult.isRight()) {
-            result = StorageOperationStatus.GENERAL_ERROR;
             return componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR);
         }
 
@@ -5012,10 +3814,8 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 
         } finally {
             if (result == null || !result.equals(StorageOperationStatus.OK)) {
-                log.warn("operation failed. do rollback");
                 titanDao.rollback();
             } else {
-                log.debug("operation success. do commit");
                 titanDao.commit();
             }
             graphLockOperation.unlockComponent(resourceId, NodeTypeEnum.Resource);
@@ -5025,11 +3825,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 
     public ResponseFormat deleteResourceByNameAndVersion(String resourceName, String version, User user) {
         ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.NO_CONTENT);
-        Either<User, ResponseFormat> eitherCreator = validateUserExists(user, "Delete Resource", false);
-        if (eitherCreator.isRight()) {
-            return eitherCreator.right().value();
-        }
-
+        validateUserExists(user, DELETE_RESOURCE, false);
         Resource resource = null;
         StorageOperationStatus result = StorageOperationStatus.OK;
         try {
@@ -5046,18 +3842,16 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 
         } finally {
             if (result == null || !result.equals(StorageOperationStatus.OK)) {
-                log.warn("operation failed. do rollback");
                 titanDao.rollback();
                 ActionStatus actionStatus = componentsUtils.convertFromStorageResponse(result);
                 responseFormat = componentsUtils.getResponseFormatByResource(actionStatus, resourceName);
             } else {
-                log.debug("operation success. do commit");
                 titanDao.commit();
             }
         }
         if (resource != null) {
             Either<Boolean, ResponseFormat> lockResult = lockComponent(resource.getUniqueId(), resource,
-                    "Delete Resource");
+                    DELETE_RESOURCE);
             if (lockResult.isRight()) {
                 result = StorageOperationStatus.GENERAL_ERROR;
                 return componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR);
@@ -5072,10 +3866,8 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 
             } finally {
                 if (result == null || !result.equals(StorageOperationStatus.OK)) {
-                    log.warn("operation failed. do rollback");
                     titanDao.rollback();
                 } else {
-                    log.debug("operation success. do commit");
                     titanDao.commit();
                 }
                 graphLockOperation.unlockComponent(resource.getUniqueId(), NodeTypeEnum.Resource);
@@ -5087,10 +3879,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
     public Either<Resource, ResponseFormat> getResource(String resourceId, User user) {
 
         if (user != null) {
-            Either<User, ResponseFormat> eitherCreator = validateUserExists(user, "Create Resource", false);
-            if (eitherCreator.isRight()) {
-                return Either.right(eitherCreator.right().value());
-            }
+            validateUserExists(user, CREATE_RESOURCE, false);
         }
 
         Either<Resource, StorageOperationStatus> storageStatus = toscaOperationFacade.getToscaElement(resourceId);
@@ -5110,10 +3899,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
     public Either<Resource, ResponseFormat> getResourceByNameAndVersion(String resourceName, String resourceVersion,
                                                                         String userId) {
 
-        Either<User, ResponseFormat> resp = validateUserExists(userId, "get Resource By Name And Version", false);
-        if (resp.isRight()) {
-            return Either.right(resp.right().value());
-        }
+        validateUserExists(userId, "get Resource By Name And Version", false);
 
         Either<Resource, StorageOperationStatus> getResource = toscaOperationFacade
                 .getComponentByNameAndVersion(ComponentTypeEnum.RESOURCE, resourceName, resourceVersion);
@@ -5132,15 +3918,12 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
      * @param inTransaction      TODO
      * @param resourceIdToUpdate - the resource identifier
      * @param newResource
-     * @return Either<Resource, responseFormat>
+     * @return Either<Resource ,   responseFormat>
      */
-    public Either<Resource, ResponseFormat> updateResourceMetadata(String resourceIdToUpdate, Resource newResource,
-                                                                   Resource currentResource, User user, boolean inTransaction) {
+    public Resource updateResourceMetadata(String resourceIdToUpdate, Resource newResource,
+                                           Resource currentResource, User user, boolean inTransaction) {
 
-        Either<User, ResponseFormat> resp = validateUserExists(user.getUserId(), "update Resource Metadata", false);
-        if (resp.isRight()) {
-            return Either.right(resp.right().value());
-        }
+        validateUserExists(user.getUserId(), "update Resource Metadata", false);
 
         log.debug("Get resource with id {}", resourceIdToUpdate);
         boolean needToUnlock = false;
@@ -5151,7 +3934,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                 Either<Resource, StorageOperationStatus> storageStatus = toscaOperationFacade
                         .getToscaElement(resourceIdToUpdate);
                 if (storageStatus.isRight()) {
-                    return Either.right(componentsUtils.getResponseFormatByResource(
+                    throw new ComponentException(componentsUtils.getResponseFormatByResource(
                             componentsUtils.convertFromStorageResponse(storageStatus.right().value()), ""));
                 }
 
@@ -5160,7 +3943,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
             // verify that resource is checked-out and the user is the last
             // updater
             if (!ComponentValidationUtils.canWorkOnResource(currentResource, user.getUserId())) {
-                return Either.right(componentsUtils.getResponseFormat(ActionStatus.RESTRICTED_OPERATION));
+                throw new ComponentException(componentsUtils.getResponseFormat(ActionStatus.RESTRICTED_OPERATION));
             }
 
             // lock resource
@@ -5172,7 +3955,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                 log.debug("Failed to lock resource: {}, error - {}", resourceIdToUpdate, lockResult);
                 ResponseFormat responseFormat = componentsUtils
                         .getResponseFormat(componentsUtils.convertFromStorageResponse(lockResult));
-                return Either.right(responseFormat);
+                throw new ComponentException(responseFormat);
             }
 
             needToUnlock = true;
@@ -5185,27 +3968,10 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
             // This code is not called from import resources, because of root
             // VF "derivedFrom" should be null (or ignored)
             if (ModelConverter.isAtomicComponent(currentResource)) {
-                Either<Boolean, ResponseFormat> derivedFromNotEmptyEither = validateDerivedFromNotEmpty(null,
-                        newResource, null);
-                if (derivedFromNotEmptyEither.isRight()) {
-                    log.debug("for updated resource {}, derived from field is empty", newResource.getName());
-                    return Either.right(derivedFromNotEmptyEither.right().value());
-                }
-
-                derivedFromNotEmptyEither = validateDerivedFromNotEmpty(null, currentResource, null);
-                if (derivedFromNotEmptyEither.isRight()) {
-                    log.debug("for current resource {}, derived from field is empty", currentResource.getName());
-                    return Either.right(derivedFromNotEmptyEither.right().value());
-                }
+                validateDerivedFromNotEmpty(null, newResource, null);
+                validateDerivedFromNotEmpty(null, currentResource, null);
             } else {
                 newResource.setDerivedFrom(null);
-            }
-
-            Either<Boolean, ResponseFormat> validateAndUpdateInterfacesEither = validateAndUpdateInterfaces(resourceIdToUpdate, newResource);
-            if (validateAndUpdateInterfacesEither.isRight()) {
-                log.error("failed to validate and update Interfaces !!!");
-                rollbackNeeded = true;
-                return Either.right(validateAndUpdateInterfacesEither.right().value());
             }
 
             Either<Resource, ResponseFormat> dataModelResponse = updateResourceMetadata(resourceIdToUpdate, newResource,
@@ -5213,90 +3979,31 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
             if (dataModelResponse.isRight()) {
                 log.debug("failed to update resource metadata!!!");
                 rollbackNeeded = true;
-                return Either.right(dataModelResponse.right().value());
+                throw new ComponentException(dataModelResponse.right().value());
             }
 
             log.debug("Resource metadata updated successfully!!!");
             rollbackNeeded = false;
-            return Either.left(dataModelResponse.left().value());
+            return dataModelResponse.left().value();
 
-        } finally {
+        } catch (ComponentException|StorageException e){
+            rollback(inTransaction, newResource, null, null);
+            throw e;
+        }
+        finally {
             if (!inTransaction) {
-                if (rollbackNeeded) {
-                    titanDao.rollback();
-                } else {
-                    titanDao.commit();
-                }
+                titanDao.commit();
             }
-
             if (needToUnlock) {
                 graphLockOperation.unlockComponent(resourceIdToUpdate, NodeTypeEnum.Resource);
             }
         }
     }
 
-    private Either<List<GroupDefinition>, Boolean> updateComponentGroupName(String replacePattern, String with,
-                                                                            List<GroupDefinition> oldGroup) {
-        if (oldGroup == null || with == null || replacePattern == null || with.isEmpty() || replacePattern.isEmpty()) {
-            if (log.isInfoEnabled())
-                log.info("cannot update group name , invalid args -> replacePattern:{} , with:{} , oldGroup:{}",
-                        replacePattern, with, oldGroup == null ? null : " < size : " + oldGroup.size() + " >");
-            return Either.right(false);
-        }
-        List<GroupDefinition> list = oldGroup.stream().map(group -> new GroupDefinition(group))
-                .collect(Collectors.toList());
-        for (GroupDefinition group : list) {
-            if (group != null && group.isSamePrefix(replacePattern)) {
-                String prefix = group.getName().substring(0, replacePattern.length());
-                String newGroupName = group.getName().replaceFirst(prefix, with);
-                group.setName(newGroupName);
-            }
-        }
-        return Either.left(list);
-    }
-
-    private boolean isComponentNameChanged(Resource newResource, Resource oldResource) {
-        if (newResource != null && oldResource != null) { // TODO - must protect
-            // all chain against
-            // null , use
-            // optional
-            String futureName = newResource.getComponentMetadataDefinition().getMetadataDataDefinition().getName();
-            String oldName = oldResource.getComponentMetadataDefinition().getMetadataDataDefinition().getName();
-            return !oldName.equals(futureName);
-        }
-        return false;
-    }
-
     private Either<Resource, ResponseFormat> updateResourceMetadata(String resourceIdToUpdate, Resource newResource,
                                                                     User user, Resource currentResource, boolean shouldLock, boolean inTransaction) {
-        // region -> Update groups name for newResource
-        if (isComponentNameChanged(currentResource, newResource)) {
-            String replacePattern = Optional.ofNullable( // get currentResource
-                    // name from
-                    // metadata
-                    Optional.ofNullable(
-                            Optional.ofNullable(currentResource).orElse(null).getComponentMetadataDefinition())
-                            .orElse(null).getMetadataDataDefinition())
-                    .orElse(null).getName();
-            String with = Optional.ofNullable( // get newResource name from
-                    // metadata
-                    Optional.ofNullable(Optional.ofNullable(newResource).orElse(null).getComponentMetadataDefinition())
-                            .orElse(null).getMetadataDataDefinition())
-                    .orElse(null).getName();
-            if (with != null && replacePattern != null) {
-                Either<List<GroupDefinition>, Boolean> result = updateComponentGroupName(replacePattern, with,
-                        currentResource.getGroups());
-                if (result.isLeft())
-                    newResource.setGroups((List<GroupDefinition>) result.left().value());
-            }
-        }
-        // endregion
-
-        Either<Boolean, ResponseFormat> validateResourceFields = validateResourceFieldsBeforeUpdate(currentResource,
-                newResource, inTransaction, false);
-        if (validateResourceFields.isRight()) {
-            return Either.right(validateResourceFields.right().value());
-        }
+        updateVfModuleGroupsNames(currentResource, newResource);
+        validateResourceFieldsBeforeUpdate(currentResource, newResource, inTransaction, false);
         // Setting last updater and uniqueId
         newResource.setContactId(newResource.getContactId().toLowerCase());
         newResource.setLastUpdaterUserId(user.getUserId());
@@ -5306,7 +4013,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         newResource.setCreationDate(currentResource.getCreationDate());
 
         Either<Boolean, ResponseFormat> processUpdateOfDerivedFrom = processUpdateOfDerivedFrom(currentResource,
-                newResource, user.getUserId(), shouldLock, inTransaction);
+                newResource, user.getUserId(), inTransaction);
 
         if (processUpdateOfDerivedFrom.isRight()) {
             log.debug("Couldn't update derived from for resource {}", resourceIdToUpdate);
@@ -5314,13 +4021,13 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         }
 
         log.debug("send resource {} to dao for update", newResource.getUniqueId());
-        if (newResource != null && newResource.getGroups() != null) {
+        if (isNotEmpty(newResource.getGroups())) {
             for (GroupDefinition group : newResource.getGroups()) {
-                if (newResource.getComponentMetadataDefinition() != null
-                        && newResource.getComponentMetadataDefinition().getMetadataDataDefinition() != null)
+                if (group.getType().equals(Constants.DEFAULT_GROUP_VF_MODULE)) {
                     groupBusinessLogic.validateAndUpdateGroupMetadata(
                             newResource.getComponentMetadataDefinition().getMetadataDataDefinition().getUniqueId(),
-                            user, ComponentTypeEnum.RESOURCE_INSTANCE, group, true, false);
+                            user, newResource.getComponentType(), group, true, false);
+                }
             }
         }
         Either<Resource, StorageOperationStatus> dataModelResponse = toscaOperationFacade
@@ -5337,92 +4044,77 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         return Either.left(dataModelResponse.left().value());
     }
 
+
+    private void updateVfModuleGroupsNames(Resource currentResource, Resource newResource) {
+        if(currentResource.getGroups() != null && !currentResource.getName().equals(newResource.getName())){
+            List<GroupDefinition> updatedGroups = currentResource.getGroups()
+                    .stream()
+                    .map(group -> getUpdatedGroup(group, currentResource.getName(), newResource.getName()))
+                    .collect(toList());
+            newResource.setGroups(updatedGroups);
+        }
+    }
+
+    private GroupDefinition getUpdatedGroup(GroupDefinition currGroup, String replacePattern, String with) {
+        GroupDefinition updatedGroup = new GroupDefinition(currGroup);
+        if(updatedGroup.isSamePrefix(replacePattern) && updatedGroup.getType().equals(Constants.DEFAULT_GROUP_VF_MODULE)){
+            String prefix = updatedGroup.getName().substring(0, replacePattern.length());
+            String newGroupName = updatedGroup.getName().replaceFirst(prefix, with);
+            updatedGroup.setName(newGroupName);
+        }
+        return updatedGroup;
+    }
     /**
      * validateResourceFieldsBeforeCreate
      *
-     * @param user      - modifier data (userId)
-     * @return Either<Boolean, ErrorResponse>
+     * @param user - modifier data (userId)
+     * @return Either<Boolean   ,       ErrorResponse>
      */
     private Either<Boolean, ResponseFormat> validateResourceFieldsBeforeCreate(User user, Resource resource,
                                                                                AuditingActionEnum actionEnum, boolean inTransaction) {
-        Either<Boolean, ResponseFormat> componentsFieldsValidation = validateComponentFieldsBeforeCreate(user, resource,
-                actionEnum);
-        if (componentsFieldsValidation.isRight()) {
-            return componentsFieldsValidation;
-        }
-
-
+        validateComponentFieldsBeforeCreate(user, resource, actionEnum);
         // validate category
         log.debug("validate category");
-        Either<Boolean, ResponseFormat> eitherValidation = validateCategory(user, resource, actionEnum, inTransaction);
-        if (eitherValidation.isRight()) {
-            return eitherValidation;
-        }
-
+        validateCategory(user, resource, actionEnum, inTransaction);
         // validate vendor name & release & model number
         log.debug("validate vendor name");
-        eitherValidation = validateVendorName(user, resource, actionEnum);
-        if (eitherValidation.isRight()) {
-            return eitherValidation;
-        }
-
+        validateVendorName(user, resource, actionEnum);
         log.debug("validate vendor release");
-        eitherValidation = validateVendorReleaseName(user, resource, actionEnum);
-        if (eitherValidation.isRight()) {
-            return eitherValidation;
-        }
-
+        validateVendorReleaseName(user, resource, actionEnum);
         log.debug("validate resource vendor model number");
-        eitherValidation = validateResourceVendorModelNumber(user, resource, actionEnum);
-        if (eitherValidation.isRight()) {
-            return eitherValidation;
-        }
-
-
+        validateResourceVendorModelNumber(user, resource, actionEnum);
         // validate cost
         log.debug("validate cost");
-        eitherValidation = validateCost(user, resource, actionEnum);
-        if (eitherValidation.isRight()) {
-            return eitherValidation;
-        }
-
+        validateCost(resource);
         // validate licenseType
         log.debug("validate licenseType");
-        eitherValidation = validateLicenseType(user, resource, actionEnum);
-        if (eitherValidation.isRight()) {
-            return eitherValidation;
-        }
-
+        validateLicenseType(user, resource, actionEnum);
         // validate template (derived from)
         log.debug("validate derived from");
         if (!ModelConverter.isAtomicComponent(resource) && resource.getResourceType() != ResourceTypeEnum.CVFC) {
             resource.setDerivedFrom(null);
         }
-        eitherValidation = validateDerivedFromExist(user, resource, actionEnum);
-        if (eitherValidation.isRight()) {
-            return Either.right(eitherValidation.right().value());
-        }
-
+        validateDerivedFromExist(user, resource, actionEnum);
         // warn about non-updatable fields
         checkComponentFieldsForOverrideAttempt(resource);
         String currentCreatorFullName = resource.getCreatorFullName();
         if (currentCreatorFullName != null) {
-            log.warn("Resource Creator fullname is automatically set and cannot be updated");
+            log.debug("Resource Creator fullname is automatically set and cannot be updated");
         }
 
         String currentLastUpdaterFullName = resource.getLastUpdaterFullName();
         if (currentLastUpdaterFullName != null) {
-            log.warn("Resource LastUpdater fullname is automatically set and cannot be updated");
+            log.debug("Resource LastUpdater fullname is automatically set and cannot be updated");
         }
 
         Long currentLastUpdateDate = resource.getLastUpdateDate();
         if (currentLastUpdateDate != null) {
-            log.warn("Resource last update date is automatically set and cannot be updated");
+            log.debug("Resource last update date is automatically set and cannot be updated");
         }
 
         Boolean currentAbstract = resource.isAbstract();
         if (currentAbstract != null) {
-            log.warn("Resource abstract is automatically set and cannot be updated");
+            log.debug("Resource abstract is automatically set and cannot be updated");
         }
 
         return Either.left(true);
@@ -5433,159 +4125,96 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
      *
      * @param currentResource - Resource object to validate
      * @param isNested
-     * @return Either<Boolean, ErrorResponse>
      */
-    private Either<Boolean, ResponseFormat> validateResourceFieldsBeforeUpdate(Resource currentResource,
-                                                                               Resource updateInfoResource, boolean inTransaction, boolean isNested) {
+    private void validateResourceFieldsBeforeUpdate(Resource currentResource, Resource updateInfoResource,
+                                                    boolean inTransaction, boolean isNested) {
+        validateFields(currentResource, updateInfoResource, inTransaction, isNested);
+        warnNonEditableFields(currentResource, updateInfoResource);
+    }
 
-        boolean hasBeenCertified = ValidationUtils.hasBeenCertified(currentResource.getVersion());
-
-        // validate resource name
-        log.debug("validate resource name before update");
-        Either<Boolean, ResponseFormat> eitherValidation = validateResourceName(currentResource, updateInfoResource,
-                hasBeenCertified, isNested);
-        if (eitherValidation.isRight()) {
-            return eitherValidation;
-        }
-
-        // validate description
-        log.debug("validate description before update");
-        eitherValidation = validateDescriptionAndCleanup(null, updateInfoResource, null);
-        if (eitherValidation.isRight()) {
-            return eitherValidation;
-        }
-
-        log.debug("validate icon before update");
-        eitherValidation = validateIcon(currentResource, updateInfoResource, hasBeenCertified);
-        if (eitherValidation.isRight()) {
-            return eitherValidation;
-        }
-
-        log.debug("validate tags before update");
-        eitherValidation = validateTagsListAndRemoveDuplicates(null, updateInfoResource, null);
-        if (eitherValidation.isRight()) {
-            return eitherValidation;
-        }
-
-        log.debug("validate vendor name before update");
-        eitherValidation = validateVendorName(currentResource, updateInfoResource, hasBeenCertified);
-        if (eitherValidation.isRight()) {
-            return eitherValidation;
-        }
-
-        log.debug("validate resource vendor model number before update");
-        eitherValidation = validateResourceVendorModelNumber(currentResource, updateInfoResource);
-        if (eitherValidation.isRight()) {
-            return eitherValidation;
-        }
-
-        log.debug("validate vendor release before update");
-        eitherValidation = validateVendorReleaseName(null, updateInfoResource, null);
-        if (eitherValidation.isRight()) {
-            return eitherValidation;
-        }
-
-        log.debug("validate contact info before update");
-        eitherValidation = validateContactId(null, updateInfoResource, null);
-        if (eitherValidation.isRight()) {
-            return eitherValidation;
-        }
-
-        log.debug("validate derived before update");
-        eitherValidation = validateDerivedFromDuringUpdate(currentResource, updateInfoResource, hasBeenCertified);
-        if (eitherValidation.isRight()) {
-            return eitherValidation;
-        }
-
-        log.debug("validate category before update");
-        eitherValidation = validateCategory(currentResource, updateInfoResource, hasBeenCertified, inTransaction);
-        if (eitherValidation.isRight()) {
-            return eitherValidation;
-        }
-
-        // warn about non-updatable fields
+    private void warnNonEditableFields(Resource currentResource, Resource updateInfoResource) {
         String currentResourceVersion = currentResource.getVersion();
         String updatedResourceVersion = updateInfoResource.getVersion();
 
         if ((updatedResourceVersion != null) && (!updatedResourceVersion.equals(currentResourceVersion))) {
-            log.warn("Resource version is automatically set and cannot be updated");
+            log.debug("Resource version is automatically set and cannot be updated");
         }
 
         String currentCreatorUserId = currentResource.getCreatorUserId();
         String updatedCreatorUserId = updateInfoResource.getCreatorUserId();
 
         if ((updatedCreatorUserId != null) && (!updatedCreatorUserId.equals(currentCreatorUserId))) {
-            log.warn("Resource Creator UserId is automatically set and cannot be updated");
+            log.debug("Resource Creator UserId is automatically set and cannot be updated");
         }
 
         String currentCreatorFullName = currentResource.getCreatorFullName();
         String updatedCreatorFullName = updateInfoResource.getCreatorFullName();
 
         if ((updatedCreatorFullName != null) && (!updatedCreatorFullName.equals(currentCreatorFullName))) {
-            log.warn("Resource Creator fullname is automatically set and cannot be updated");
+            log.debug("Resource Creator fullname is automatically set and cannot be updated");
         }
 
         String currentLastUpdaterUserId = currentResource.getLastUpdaterUserId();
         String updatedLastUpdaterUserId = updateInfoResource.getLastUpdaterUserId();
 
         if ((updatedLastUpdaterUserId != null) && (!updatedLastUpdaterUserId.equals(currentLastUpdaterUserId))) {
-            log.warn("Resource LastUpdater userId is automatically set and cannot be updated");
+            log.debug("Resource LastUpdater userId is automatically set and cannot be updated");
         }
 
         String currentLastUpdaterFullName = currentResource.getLastUpdaterFullName();
         String updatedLastUpdaterFullName = updateInfoResource.getLastUpdaterFullName();
 
         if ((updatedLastUpdaterFullName != null) && (!updatedLastUpdaterFullName.equals(currentLastUpdaterFullName))) {
-            log.warn("Resource LastUpdater fullname is automatically set and cannot be updated");
+            log.debug("Resource LastUpdater fullname is automatically set and cannot be updated");
         }
 
         Long currentCreationDate = currentResource.getCreationDate();
         Long updatedCreationDate = updateInfoResource.getCreationDate();
 
         if ((updatedCreationDate != null) && (!updatedCreationDate.equals(currentCreationDate))) {
-            log.warn("Resource Creation date is automatically set and cannot be updated");
+            log.debug("Resource Creation date is automatically set and cannot be updated");
         }
 
         Long currentLastUpdateDate = currentResource.getLastUpdateDate();
         Long updatedLastUpdateDate = updateInfoResource.getLastUpdateDate();
 
         if ((updatedLastUpdateDate != null) && (!updatedLastUpdateDate.equals(currentLastUpdateDate))) {
-            log.warn("Resource last update date is automatically set and cannot be updated");
+            log.debug("Resource last update date is automatically set and cannot be updated");
         }
 
         LifecycleStateEnum currentLifecycleState = currentResource.getLifecycleState();
         LifecycleStateEnum updatedLifecycleState = updateInfoResource.getLifecycleState();
 
         if ((updatedLifecycleState != null) && (!updatedLifecycleState.equals(currentLifecycleState))) {
-            log.warn("Resource lifecycle state date is automatically set and cannot be updated");
+            log.debug("Resource lifecycle state date is automatically set and cannot be updated");
         }
 
         Boolean currentAbstract = currentResource.isAbstract();
         Boolean updatedAbstract = updateInfoResource.isAbstract();
 
         if ((updatedAbstract != null) && (!updatedAbstract.equals(currentAbstract))) {
-            log.warn("Resource abstract is automatically set and cannot be updated");
+            log.debug("Resource abstract is automatically set and cannot be updated");
         }
 
         Boolean currentHighestVersion = currentResource.isHighestVersion();
         Boolean updatedHighestVersion = updateInfoResource.isHighestVersion();
 
         if ((updatedHighestVersion != null) && (!updatedHighestVersion.equals(currentHighestVersion))) {
-            log.warn("Resource highest version is automatically set and cannot be updated");
+            log.debug("Resource highest version is automatically set and cannot be updated");
         }
 
         String currentUuid = currentResource.getUUID();
         String updatedUuid = updateInfoResource.getUUID();
 
         if ((updatedUuid != null) && (!updatedUuid.equals(currentUuid))) {
-            log.warn("Resource UUID is automatically set and cannot be updated");
+            log.debug("Resource UUID is automatically set and cannot be updated");
         }
 
         ResourceTypeEnum currentResourceType = currentResource.getResourceType();
         ResourceTypeEnum updatedResourceType = updateInfoResource.getResourceType();
 
         if ((updatedResourceType != null) && (!updatedResourceType.equals(currentResourceType))) {
-            log.warn("Resource Type  cannot be updated");
+            log.debug("Resource Type  cannot be updated");
 
         }
         updateInfoResource.setResourceType(currentResource.getResourceType());
@@ -5594,44 +4223,59 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         String updatedInvariantUuid = updateInfoResource.getInvariantUUID();
 
         if ((updatedInvariantUuid != null) && (!updatedInvariantUuid.equals(currentInvariantUuid))) {
-            log.warn("Resource invariant UUID is automatically set and cannot be updated");
+            log.debug("Resource invariant UUID is automatically set and cannot be updated");
             updateInfoResource.setInvariantUUID(currentInvariantUuid);
         }
-        return Either.left(true);
+    }
+
+    private void validateFields(Resource currentResource, Resource updateInfoResource, boolean inTransaction, boolean isNested) {
+        boolean hasBeenCertified = ValidationUtils.hasBeenCertified(currentResource.getVersion());
+        log.debug("validate resource name before update");
+        validateResourceName(currentResource, updateInfoResource, hasBeenCertified, isNested);
+        log.debug("validate description before update");
+        validateDescriptionAndCleanup(null, updateInfoResource, null);
+        log.debug("validate icon before update");
+        validateIcon(currentResource, updateInfoResource, hasBeenCertified);
+        log.debug("validate tags before update");
+        validateTagsListAndRemoveDuplicates(null, updateInfoResource, null);
+        log.debug("validate vendor name before update");
+        validateVendorName(null, updateInfoResource, null);
+        log.debug("validate resource vendor model number before update");
+        validateResourceVendorModelNumber(currentResource, updateInfoResource);
+        log.debug("validate vendor release before update");
+        validateVendorReleaseName(null, updateInfoResource, null);
+        log.debug("validate contact info before update");
+        validateContactId(null, updateInfoResource, null);
+        log.debug(VALIDATE_DERIVED_BEFORE_UPDATE);
+        validateDerivedFromDuringUpdate(currentResource, updateInfoResource, hasBeenCertified);
+        log.debug("validate category before update");
+        validateCategory(currentResource, updateInfoResource, hasBeenCertified, inTransaction);
     }
 
 
     private boolean isResourceNameEquals(Resource currentResource, Resource updateInfoResource) {
         String resourceNameUpdated = updateInfoResource.getName();
         String resourceNameCurrent = currentResource.getName();
-        if (resourceNameCurrent.equals(resourceNameUpdated))
+        if (resourceNameCurrent.equals(resourceNameUpdated)) {
             return true;
+        }
         // In case of CVFC type we should support the case of old VF with CVFC
         // instances that were created without the "Cvfc" suffix
         return currentResource.getResourceType().equals(ResourceTypeEnum.CVFC) &&
-               resourceNameUpdated.equals(addCvfcSuffixToResourceName(resourceNameCurrent));
+                resourceNameUpdated.equals(addCvfcSuffixToResourceName(resourceNameCurrent));
     }
 
     private String addCvfcSuffixToResourceName(String resourceName) {
         return resourceName + "Cvfc";
     }
 
-    private Either<Boolean, ResponseFormat> validateResourceName(Resource currentResource, Resource updateInfoResource,
-                                                                 boolean hasBeenCertified, boolean isNested) {
+    private void validateResourceName(Resource currentResource, Resource updateInfoResource,
+                                      boolean hasBeenCertified, boolean isNested) {
         String resourceNameUpdated = updateInfoResource.getName();
         if (!isResourceNameEquals(currentResource, updateInfoResource)) {
             if (isNested || !hasBeenCertified) {
-                Either<Boolean, ResponseFormat> validateResourceNameResponse = validateComponentName(null,
-                        updateInfoResource, null);
-                if (validateResourceNameResponse.isRight()) {
-                    ResponseFormat errorResponse = validateResourceNameResponse.right().value();
-                    return Either.right(errorResponse);
-                }
-                validateResourceNameResponse = validateResourceNameExists(updateInfoResource);
-                if (validateResourceNameResponse.isRight()) {
-                    ResponseFormat errorResponse = validateResourceNameResponse.right().value();
-                    return Either.right(errorResponse);
-                }
+                validateComponentName(null, updateInfoResource, null);
+                validateResourceNameUniqueness(updateInfoResource);
                 currentResource.setName(resourceNameUpdated);
                 currentResource.setNormalizedName(ValidationUtils.normaliseComponentName(resourceNameUpdated));
                 currentResource.setSystemName(ValidationUtils.convertToSystemName(resourceNameUpdated));
@@ -5639,82 +4283,35 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
             } else {
                 log.info("Resource name: {}, cannot be updated once the resource has been certified once.",
                         resourceNameUpdated);
-                ResponseFormat errorResponse = componentsUtils
-                        .getResponseFormat(ActionStatus.RESOURCE_NAME_CANNOT_BE_CHANGED);
-                return Either.right(errorResponse);
+                throw new ComponentException(ActionStatus.RESOURCE_NAME_CANNOT_BE_CHANGED);
             }
         }
-        return Either.left(true);
     }
 
-    private Either<Boolean, ResponseFormat> validateIcon(Resource currentResource, Resource updateInfoResource,
-                                                         boolean hasBeenCertified) {
+    private void validateIcon(Resource currentResource, Resource updateInfoResource, boolean hasBeenCertified) {
         String iconUpdated = updateInfoResource.getIcon();
         String iconCurrent = currentResource.getIcon();
         if (!iconCurrent.equals(iconUpdated)) {
             if (!hasBeenCertified) {
-                Either<Boolean, ResponseFormat> validateIcon = validateIcon(null, updateInfoResource, null);
-                if (validateIcon.isRight()) {
-                    ResponseFormat errorResponse = validateIcon.right().value();
-                    return Either.right(errorResponse);
-                }
+                validateIcon(null, updateInfoResource, null);
             } else {
                 log.info("Icon {} cannot be updated once the resource has been certified once.", iconUpdated);
-                ResponseFormat errorResponse = componentsUtils
-                        .getResponseFormat(ActionStatus.RESOURCE_ICON_CANNOT_BE_CHANGED);
-                return Either.right(errorResponse);
+                throw new ComponentException(ActionStatus.RESOURCE_ICON_CANNOT_BE_CHANGED);
             }
         }
-        return Either.left(true);
     }
 
-    private Either<Boolean, ResponseFormat> validateVendorName(Resource currentResource, Resource updateInfoResource,
-                                                               boolean hasBeenCertified) {
-        String vendorNameUpdated = updateInfoResource.getVendorName();
-        String vendorNameCurrent = currentResource.getVendorName();
-        if (!vendorNameCurrent.equals(vendorNameUpdated)) {
-            if(updateInfoResource.getResourceType().equals(ResourceTypeEnum.VF) && hasBeenCertified ){
-                 log.info("Vendor name {} cannot be updated once the resource has been certified once.",
-                         vendorNameUpdated);
-                 ResponseFormat errorResponse = componentsUtils
-                         .getResponseFormat(ActionStatus.RESOURCE_VENDOR_NAME_CANNOT_BE_CHANGED);
-                 return Either.right(errorResponse);
-
-            }
-            else {
-                Either<Boolean, ResponseFormat> validateVendorName = validateVendorName(null, updateInfoResource, null);
-                if (validateVendorName.isRight()) {
-                    ResponseFormat errorResponse = validateVendorName.right().value();
-                    return Either.right(errorResponse);
-                }
-            }
-        }
-        return Either.left(true);
-    }
-
-    private Either<Boolean, ResponseFormat> validateResourceVendorModelNumber(Resource currentResource,
-                                                                              Resource updateInfoResource) {
+    private void validateResourceVendorModelNumber(Resource currentResource, Resource updateInfoResource) {
         String updatedResourceVendorModelNumber = updateInfoResource.getResourceVendorModelNumber();
         String currentResourceVendorModelNumber = currentResource.getResourceVendorModelNumber();
         if (!currentResourceVendorModelNumber.equals(updatedResourceVendorModelNumber)) {
-            Either<Boolean, ResponseFormat> validateResourceVendorModelNumber = validateResourceVendorModelNumber(null,
-                    updateInfoResource, null);
-            if (validateResourceVendorModelNumber.isRight()) {
-                ResponseFormat errorResponse = validateResourceVendorModelNumber.right().value();
-                return Either.right(errorResponse);
-            }
+            validateResourceVendorModelNumber(null, updateInfoResource, null);
         }
-        return Either.left(true);
     }
 
     private Either<Boolean, ResponseFormat> validateCategory(Resource currentResource, Resource updateInfoResource,
                                                              boolean hasBeenCertified, boolean inTransaction) {
-        Either<Boolean, ResponseFormat> validateCategoryName = validateCategory(null, updateInfoResource, null,
-                inTransaction);
-        if (validateCategoryName.isRight()) {
-            ResponseFormat errorResponse = validateCategoryName.right().value();
-            return Either.right(errorResponse);
-        }
+        validateCategory(null, updateInfoResource, null, inTransaction);
         if (hasBeenCertified) {
             CategoryDefinition currentCategory = currentResource.getCategories().get(0);
             SubCategoryDefinition currentSubCategory = currentCategory.getSubcategories().get(0);
@@ -5748,11 +4345,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 
         if (!derivedFromCurrent.equals(derivedFromUpdated)) {
             if (!hasBeenCertified) {
-                Either<Boolean, ResponseFormat> validateDerivedFromExistsEither = validateDerivedFromExist(null,
-                        updateInfoResource, null);
-                if (validateDerivedFromExistsEither.isRight()) {
-                    return validateDerivedFromExistsEither;
-                }
+                validateDerivedFromExist(null, updateInfoResource, null);
             } else {
                 Either<Boolean, ResponseFormat> validateDerivedFromExtending = validateDerivedFromExtending(null,
                         currentResource, updateInfoResource, null);
@@ -5790,11 +4383,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 
         if (!derivedFromCurrent.equals(derivedFromUpdated)) {
             if (!hasBeenCertified) {
-                Either<Boolean, ResponseFormat> validateDerivedFromExistsEither = validateDerivedFromExist(null,
-                        updateInfoResource, null);
-                if (validateDerivedFromExistsEither.isRight()) {
-                    return validateDerivedFromExistsEither;
-                }
+                validateDerivedFromExist(null, updateInfoResource, null);
             } else {
                 Either<Boolean, ResponseFormat> validateDerivedFromExtending = validateDerivedFromExtending(null,
                         currentResource, updateInfoResource, null);
@@ -5808,16 +4397,11 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         return Either.left(true);
     }
 
-    private Either<Boolean, ResponseFormat> validateDerivedFromExist(User user, Resource resource,
-                                                                     AuditingActionEnum actionEnum) {
-
+    private void validateDerivedFromExist(User user, Resource resource,  AuditingActionEnum actionEnum) {
         if (resource.getDerivedFrom() == null || resource.getDerivedFrom().isEmpty()) {
-            return Either.left(true);
+            return;
         }
-
-
         String templateName = resource.getDerivedFrom().get(0);
-
         Either<Boolean, StorageOperationStatus> dataModelResponse = toscaOperationFacade
                 .validateToscaResourceNameExists(templateName);
         if (dataModelResponse.isRight()) {
@@ -5828,16 +4412,13 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                     .getResponseFormatByResource(componentsUtils.convertFromStorageResponse(storageStatus), resource);
             log.trace("audit before sending response");
             componentsUtils.auditResource(responseFormat, user, resource, actionEnum);
-            return Either.right(responseFormat);
+            throw new ComponentException(componentsUtils.convertFromStorageResponse(storageStatus));
         } else if (!dataModelResponse.left().value()) {
             log.info("resource template with name: {}, does not exists", templateName);
             ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.PARENT_RESOURCE_NOT_FOUND);
             componentsUtils.auditResource(responseFormat, user, resource, actionEnum);
-
-            return Either.right(responseFormat);
-
+            throw new ComponentException(ActionStatus.PARENT_RESOURCE_NOT_FOUND);
         }
-        return Either.left(true);
     }
 
     // Tal G for extending inheritance US815447
@@ -5872,8 +4453,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         return Either.left(true);
     }
 
-    public Either<Boolean, ResponseFormat> validateDerivedFromNotEmpty(User user, Resource resource,
-                                                                       AuditingActionEnum actionEnum) {
+    public void validateDerivedFromNotEmpty(User user, Resource resource, AuditingActionEnum actionEnum) {
         log.debug("validate resource derivedFrom field");
         if ((resource.getDerivedFrom() == null) || (resource.getDerivedFrom().isEmpty())
                 || (resource.getDerivedFrom().get(0)) == null || (resource.getDerivedFrom().get(0).trim().isEmpty())) {
@@ -5882,230 +4462,194 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                     .getResponseFormat(ActionStatus.MISSING_DERIVED_FROM_TEMPLATE);
             componentsUtils.auditResource(responseFormat, user, resource, actionEnum);
 
-            return Either.right(responseFormat);
+            throw new ComponentException(ActionStatus.MISSING_DERIVED_FROM_TEMPLATE);
         }
-        return Either.left(true);
     }
 
-    private Either<Boolean, ResponseFormat> validateResourceNameExists(Resource resource) {
+    private void validateResourceNameUniqueness(Resource resource) {
 
         Either<Boolean, StorageOperationStatus> resourceOperationResponse = toscaOperationFacade
                 .validateComponentNameExists(resource.getName(), resource.getResourceType(),
                         resource.getComponentType());
-        if (resourceOperationResponse.isLeft()) {
-            if (!resourceOperationResponse.left().value()) {
-                return Either.left(false);
-            } else {
-                log.debug("resource with name: {}, already exists", resource.getName());
-                ResponseFormat errorResponse = componentsUtils.getResponseFormat(
-                        ActionStatus.COMPONENT_NAME_ALREADY_EXIST, ComponentTypeEnum.RESOURCE.getValue(),
-                        resource.getName());
-                return Either.right(errorResponse);
-            }
+        if (resourceOperationResponse.isLeft() && resourceOperationResponse.left().value()) {
+            log.debug("resource with name: {}, already exists", resource.getName());
+            throw new ComponentException(ActionStatus.COMPONENT_NAME_ALREADY_EXIST, ComponentTypeEnum.RESOURCE.getValue(),
+                    resource.getName());
+        } else if(resourceOperationResponse.isRight()){
+            log.debug("error while validateResourceNameExists for resource: {}", resource.getName());
+            throw new StorageException(resourceOperationResponse.right().value());
         }
-        log.debug("error while validateResourceNameExists for resource: {}", resource.getName());
-        ResponseFormat errorResponse = componentsUtils.getResponseFormat(
-                componentsUtils.convertFromStorageResponse(resourceOperationResponse.right().value()));
-        return Either.right(errorResponse);
     }
 
 
-    private Either<Boolean, ResponseFormat> validateCategory(User user, Resource resource,
-                                                             AuditingActionEnum actionEnum, boolean inTransaction) {
+    private void validateCategory(User user, Resource resource,
+                                  AuditingActionEnum actionEnum, boolean inTransaction) {
 
         List<CategoryDefinition> categories = resource.getCategories();
-        if (categories == null || categories.size() == 0) {
-            log.debug("Resource category is empty");
+        if (CollectionUtils.isEmpty(categories)) {
+            log.debug(CATEGORY_IS_EMPTY);
             ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.COMPONENT_MISSING_CATEGORY,
                     ComponentTypeEnum.RESOURCE.getValue());
             componentsUtils.auditResource(responseFormat, user, resource, actionEnum);
-            return Either.right(responseFormat);
+            throw new ComponentException(ActionStatus.COMPONENT_MISSING_CATEGORY,
+                    ComponentTypeEnum.RESOURCE.getValue());
         }
         if (categories.size() > 1) {
             log.debug("Must be only one category for resource");
-            ResponseFormat responseFormat = componentsUtils.getResponseFormat(
-                    ActionStatus.COMPONENT_TOO_MUCH_CATEGORIES, ComponentTypeEnum.RESOURCE.getValue());
-            return Either.right(responseFormat);
+            throw new ComponentException(ActionStatus.COMPONENT_TOO_MUCH_CATEGORIES, ComponentTypeEnum.RESOURCE.getValue());
         }
         CategoryDefinition category = categories.get(0);
         List<SubCategoryDefinition> subcategories = category.getSubcategories();
-        if (subcategories == null || subcategories.size() == 0) {
+        if (CollectionUtils.isEmpty(subcategories)) {
             log.debug("Missinig subcategory for resource");
-            ResponseFormat responseFormat = componentsUtils
-                    .getResponseFormat(ActionStatus.COMPONENT_MISSING_SUBCATEGORY);
-            return Either.right(responseFormat);
+            throw new ComponentException(ActionStatus.COMPONENT_MISSING_SUBCATEGORY);
         }
         if (subcategories.size() > 1) {
             log.debug("Must be only one sub category for resource");
-            ResponseFormat responseFormat = componentsUtils
-                    .getResponseFormat(ActionStatus.RESOURCE_TOO_MUCH_SUBCATEGORIES);
-            return Either.right(responseFormat);
+            throw new ComponentException(ActionStatus.RESOURCE_TOO_MUCH_SUBCATEGORIES);
         }
 
         SubCategoryDefinition subcategory = subcategories.get(0);
 
         if (!ValidationUtils.validateStringNotEmpty(category.getName())) {
-            log.debug("Resource category is empty");
+            log.debug(CATEGORY_IS_EMPTY);
             ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.COMPONENT_MISSING_CATEGORY,
                     ComponentTypeEnum.RESOURCE.getValue());
             componentsUtils.auditResource(responseFormat, user, resource, actionEnum);
-            return Either.right(responseFormat);
+            throw new ComponentException(ActionStatus.COMPONENT_MISSING_CATEGORY,
+                    ComponentTypeEnum.RESOURCE.getValue());
         }
         if (!ValidationUtils.validateStringNotEmpty(subcategory.getName())) {
-            log.debug("Resource category is empty");
+            log.debug(CATEGORY_IS_EMPTY);
             ResponseFormat responseFormat = componentsUtils.getResponseFormat(
                     ActionStatus.COMPONENT_MISSING_SUBCATEGORY, ComponentTypeEnum.RESOURCE.getValue());
             componentsUtils.auditResource(responseFormat, user, resource, actionEnum);
-            return Either.right(responseFormat);
+            throw new ComponentException(ActionStatus.COMPONENT_MISSING_SUBCATEGORY, ComponentTypeEnum.RESOURCE.getValue());
         }
 
-        Either<Boolean, ResponseFormat> validateCategory = validateCategoryListed(category, subcategory, inTransaction);
-        if (validateCategory.isRight()) {
-            ResponseFormat responseFormat = validateCategory.right().value();
-            componentsUtils.auditResource(responseFormat, user, resource, actionEnum);
-            return Either.right(responseFormat);
-        }
-
-        return Either.left(true);
+        validateCategoryListed(category, subcategory, user, resource, actionEnum, inTransaction);
     }
 
-    private Either<Boolean, ResponseFormat> validateCategoryListed(CategoryDefinition category,
-                                                                   SubCategoryDefinition subcategory, boolean inTransaction) {
+    private void validateCategoryListed(CategoryDefinition category, SubCategoryDefinition subcategory,
+                                        User user, Resource resource, AuditingActionEnum actionEnum, boolean inTransaction) {
+        ResponseFormat responseFormat;
         if (category != null && subcategory != null) {
             log.debug("validating resource category {} against valid categories list", category);
             Either<List<CategoryDefinition>, ActionStatus> categories = elementDao
                     .getAllCategories(NodeTypeEnum.ResourceNewCategory, inTransaction);
             if (categories.isRight()) {
                 log.debug("failed to retrive resource categories from Titan");
-                ResponseFormat responseFormat = componentsUtils.getResponseFormat(categories.right().value());
-                return Either.right(responseFormat);
+                responseFormat = componentsUtils.getResponseFormat(categories.right().value());
+                componentsUtils.auditResource(responseFormat, user, resource, actionEnum);
+                throw new ComponentException(categories.right().value());
             }
             List<CategoryDefinition> categoryList = categories.left().value();
-            for (CategoryDefinition cat : categoryList) {
-                if (cat.getName().equals(category.getName())) {
-                    for (SubCategoryDefinition subcat : cat.getSubcategories()) {
-                        if (subcat.getName().equals(subcategory.getName())) {
-                            return Either.left(true);
-                        }
-                    }
-                    log.debug(
-                            "SubCategory {} is not part of resource category group. Resource subcategory valid values are {}",
-                            subcategory, cat.getSubcategories());
-                    return Either.right(componentsUtils.getResponseFormat(ActionStatus.COMPONENT_INVALID_CATEGORY,
-                            ComponentTypeEnum.RESOURCE.getValue()));
-                }
+            Optional<CategoryDefinition> foundCategory = categoryList.stream()
+                    .filter(cat -> cat.getName().equals(category.getName()))
+                    .findFirst();
+            if(!foundCategory.isPresent()){
+                log.debug("Category {} is not part of resource category group. Resource category valid values are {}",
+                        category, categoryList);
+                failOnInvalidCategory(user, resource, actionEnum);
             }
-            log.debug("Category {} is not part of resource category group. Resource category valid values are {}",
-                    category, categoryList);
-            return Either.right(componentsUtils.getResponseFormat(ActionStatus.COMPONENT_INVALID_CATEGORY,
-                    ComponentTypeEnum.RESOURCE.getValue()));
+            Optional<SubCategoryDefinition> foundSubcategory = foundCategory.get()
+                    .getSubcategories()
+                    .stream()
+                    .filter(subcat -> subcat.getName().equals(subcategory.getName()))
+                    .findFirst();
+            if(!foundSubcategory.isPresent()){
+                log.debug("SubCategory {} is not part of resource category group. Resource subcategory valid values are {}",
+                        subcategory, foundCategory.get().getSubcategories());
+                failOnInvalidCategory(user, resource, actionEnum);
+            }
         }
-        return Either.left(false);
     }
 
-    public Either<Boolean, ResponseFormat> validateVendorReleaseName(User user, Resource resource,
-                                                                     AuditingActionEnum actionEnum) {
-        String vendorRelease = resource.getVendorRelease();
+    private void failOnInvalidCategory(User user, Resource resource, AuditingActionEnum actionEnum) {
+        ResponseFormat responseFormat;
+        responseFormat = componentsUtils.getResponseFormat(ActionStatus.COMPONENT_INVALID_CATEGORY,
+                ComponentTypeEnum.RESOURCE.getValue());
+        componentsUtils.auditResource(responseFormat, user, resource, actionEnum);
+        throw new ComponentException(ActionStatus.COMPONENT_INVALID_CATEGORY,
+                ComponentTypeEnum.RESOURCE.getValue());
+    }
 
+    public void validateVendorReleaseName(User user, Resource resource, AuditingActionEnum actionEnum) {
+        String vendorRelease = resource.getVendorRelease();
         log.debug("validate vendor relese name");
         if (!ValidationUtils.validateStringNotEmpty(vendorRelease)) {
             log.info("vendor relese name is missing.");
             ResponseFormat errorResponse = componentsUtils.getResponseFormat(ActionStatus.MISSING_VENDOR_RELEASE);
             componentsUtils.auditResource(errorResponse, user, resource, actionEnum);
-            return Either.right(errorResponse);
+            throw new ComponentException(ActionStatus.MISSING_VENDOR_RELEASE);
         }
 
-        Either<Boolean, ResponseFormat> validateVendorReleaseResponse = validateVendorReleaseName(vendorRelease);
-        if (validateVendorReleaseResponse.isRight()) {
-            ResponseFormat responseFormat = validateVendorReleaseResponse.right().value();
-            componentsUtils.auditResource(responseFormat, user, resource, actionEnum);
-        }
-        return validateVendorReleaseResponse;
+        validateVendorReleaseName(vendorRelease, user, resource, actionEnum);
     }
 
-    public Either<Boolean, ResponseFormat> validateVendorReleaseName(String vendorRelease) {
+    public void validateVendorReleaseName(String vendorRelease, User user, Resource resource, AuditingActionEnum actionEnum) {
         if (vendorRelease != null) {
             if (!ValidationUtils.validateVendorReleaseLength(vendorRelease)) {
                 log.info("vendor release exceds limit.");
                 ResponseFormat errorResponse = componentsUtils.getResponseFormat(
                         ActionStatus.VENDOR_RELEASE_EXCEEDS_LIMIT, "" + ValidationUtils.VENDOR_RELEASE_MAX_LENGTH);
-                return Either.right(errorResponse);
+                componentsUtils.auditResource(errorResponse, user, resource, actionEnum);
+                throw new ComponentException(ActionStatus.VENDOR_RELEASE_EXCEEDS_LIMIT, "" + ValidationUtils.VENDOR_RELEASE_MAX_LENGTH);
             }
 
             if (!ValidationUtils.validateVendorRelease(vendorRelease)) {
                 log.info("vendor release  is not valid.");
                 ResponseFormat errorResponse = componentsUtils.getResponseFormat(ActionStatus.INVALID_VENDOR_RELEASE);
-                return Either.right(errorResponse);
+                componentsUtils.auditResource(errorResponse, user, resource, actionEnum);
+                throw new ComponentException(ActionStatus.INVALID_VENDOR_RELEASE);
             }
-            return Either.left(true);
         }
-        return Either.left(false);
-
     }
 
-    private Either<Boolean, ResponseFormat> validateVendorName(User user, Resource resource,
-                                                               AuditingActionEnum actionEnum) {
+    private void validateVendorName(User user, Resource resource,
+                                    AuditingActionEnum actionEnum) {
         String vendorName = resource.getVendorName();
         if (!ValidationUtils.validateStringNotEmpty(vendorName)) {
             log.info("vendor name is missing.");
             ResponseFormat errorResponse = componentsUtils.getResponseFormat(ActionStatus.MISSING_VENDOR_NAME);
             componentsUtils.auditResource(errorResponse, user, resource, actionEnum);
-            return Either.right(errorResponse);
+            throw new ComponentException(ActionStatus.MISSING_VENDOR_NAME);
         }
-
-        Either<Boolean, ResponseFormat> validateVendorNameResponse = validateVendorName(vendorName);
-        if (validateVendorNameResponse.isRight()) {
-            ResponseFormat responseFormat = validateVendorNameResponse.right().value();
-            componentsUtils.auditResource(responseFormat, user, resource, actionEnum);
-        }
-        return validateVendorNameResponse;
-
+        validateVendorName(vendorName, user, resource, actionEnum);
     }
 
-    private Either<Boolean, ResponseFormat> validateResourceVendorModelNumber(User user, Resource resource,
-                                                                              AuditingActionEnum actionEnum) {
-        String resourceVendorModelNumber = resource.getResourceVendorModelNumber();
-        Either<Boolean, ResponseFormat> validateResourceVendorModelNumber = validateResourceVendorModelNumber(
-                resourceVendorModelNumber);
-        if (validateResourceVendorModelNumber.isRight()) {
-            ResponseFormat responseFormat = validateResourceVendorModelNumber.right().value();
-            componentsUtils.auditResource(responseFormat, user, resource, actionEnum);
-        }
-        return validateResourceVendorModelNumber;
-
-    }
-
-    private Either<Boolean, ResponseFormat> validateVendorName(String vendorName) {
+    private void validateVendorName(String vendorName, User user, Resource resource,
+                                    AuditingActionEnum actionEnum) {
         if (vendorName != null) {
             if (!ValidationUtils.validateVendorNameLength(vendorName)) {
                 log.info("vendor name exceds limit.");
                 ResponseFormat errorResponse = componentsUtils.getResponseFormat(ActionStatus.VENDOR_NAME_EXCEEDS_LIMIT,
                         "" + ValidationUtils.VENDOR_NAME_MAX_LENGTH);
-                return Either.right(errorResponse);
+                componentsUtils.auditResource(errorResponse, user, resource, actionEnum);
+                throw new ComponentException(ActionStatus.VENDOR_NAME_EXCEEDS_LIMIT,
+                        "" + ValidationUtils.VENDOR_NAME_MAX_LENGTH);
             }
 
             if (!ValidationUtils.validateVendorName(vendorName)) {
                 log.info("vendor name  is not valid.");
                 ResponseFormat errorResponse = componentsUtils.getResponseFormat(ActionStatus.INVALID_VENDOR_NAME);
-                return Either.right(errorResponse);
+                componentsUtils.auditResource(errorResponse, user, resource, actionEnum);
+                throw new ComponentException(ActionStatus.INVALID_VENDOR_NAME);
             }
-            return Either.left(true);
-
         }
-        return Either.left(false);
-
     }
 
-    private Either<Boolean, ResponseFormat> validateResourceVendorModelNumber(String resourceVendorModelNumber) {
-        if (StringUtils.isEmpty(resourceVendorModelNumber)) {
-            return Either.left(true);
-        } else {
+    private void validateResourceVendorModelNumber(User user, Resource resource, AuditingActionEnum actionEnum) {
+        String resourceVendorModelNumber = resource.getResourceVendorModelNumber();
+        if (StringUtils.isNotEmpty(resourceVendorModelNumber)) {
             if (!ValidationUtils.validateResourceVendorModelNumberLength(resourceVendorModelNumber)) {
                 log.info("resource vendor model number exceeds limit.");
                 ResponseFormat errorResponse = componentsUtils.getResponseFormat(
                         ActionStatus.RESOURCE_VENDOR_MODEL_NUMBER_EXCEEDS_LIMIT,
                         "" + ValidationUtils.RESOURCE_VENDOR_MODEL_NUMBER_MAX_LENGTH);
-                return Either.right(errorResponse);
+                componentsUtils.auditResource(errorResponse, user, resource, actionEnum);
+                throw new ComponentException(ActionStatus.RESOURCE_VENDOR_MODEL_NUMBER_EXCEEDS_LIMIT,
+                        "" + ValidationUtils.RESOURCE_VENDOR_MODEL_NUMBER_MAX_LENGTH);
             }
             // resource vendor model number is currently validated as vendor
             // name
@@ -6113,49 +4657,45 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                 log.info("resource vendor model number  is not valid.");
                 ResponseFormat errorResponse = componentsUtils
                         .getResponseFormat(ActionStatus.INVALID_RESOURCE_VENDOR_MODEL_NUMBER);
-                return Either.right(errorResponse);
+                componentsUtils.auditResource(errorResponse, user, resource, actionEnum);
+                throw new ComponentException(ActionStatus.INVALID_RESOURCE_VENDOR_MODEL_NUMBER);
             }
-            return Either.left(true);
         }
     }
 
 
-    private Either<Boolean, ResponseFormat> validateCost(User user, Resource resource, AuditingActionEnum actionEnum) {
+    private void validateCost(Resource resource) {
         String cost = resource.getCost();
         if (cost != null) {
-
             if (!ValidationUtils.validateCost(cost)) {
                 log.debug("resource cost is invalid.");
-                ResponseFormat errorResponse = componentsUtils.getResponseFormat(ActionStatus.INVALID_CONTENT);
-                return Either.right(errorResponse);
+                throw new ComponentException(ActionStatus.INVALID_CONTENT);
             }
         }
-        return Either.left(true);
     }
 
-    private Either<Boolean, ResponseFormat> validateLicenseType(User user, Resource resource,
-                                                                AuditingActionEnum actionEnum) {
+    private void validateLicenseType(User user, Resource resource,
+                                     AuditingActionEnum actionEnum) {
         log.debug("validate licenseType");
         String licenseType = resource.getLicenseType();
         if (licenseType != null) {
             List<String> licenseTypes = ConfigurationManager.getConfigurationManager().getConfiguration()
                     .getLicenseTypes();
             if (!licenseTypes.contains(licenseType)) {
-                log.debug("License type {} isn't configured");
+                log.debug("License type {} isn't configured", licenseType);
                 ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.INVALID_CONTENT);
                 if (actionEnum != null) {
                     // In update case, no audit is required
                     componentsUtils.auditResource(responseFormat, user, resource, actionEnum);
                 }
-                return Either.right(responseFormat);
+                throw new ComponentException(ActionStatus.INVALID_CONTENT);
             }
         }
-        return Either.left(true);
     }
 
     private Either<Boolean, ResponseFormat> processUpdateOfDerivedFrom(Resource currentResource,
-                                                                       Resource updatedResource, String userId, boolean shouldLock, boolean inTransaction) {
-        Either<Operation, ResponseFormat> deleteArtifactByInterface = null;
+                                                                       Resource updatedResource, String userId, boolean inTransaction) {
+        Either<Operation, ResponseFormat> deleteArtifactByInterface;
         if (updatedResource.getDerivedFrom() != null) {
             log.debug("Starting derived from update for resource {}", updatedResource.getUniqueId());
             log.debug("1. Removing interface artifacts from graph");
@@ -6206,8 +4746,9 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
             if (findPropertiesOfNode.isRight()
                     && !findPropertiesOfNode.right().value().equals(StorageOperationStatus.OK)) {
                 log.debug("Failed to remove all properties of resource");
-                if (!inTransaction)
+                if (!inTransaction) {
                     titanDao.rollback();
+                }
                 return Either.right(componentsUtils.getResponseFormat(
                         componentsUtils.convertFromStorageResponse(findPropertiesOfNode.right().value())));
             }
@@ -6216,8 +4757,10 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
             log.debug("Derived from wasn't changed during update");
         }
 
-        if (!inTransaction)
-            titanDao.commit();
+        if (inTransaction) {
+            return Either.left(true);
+        }
+        titanDao.commit();
         return Either.left(true);
 
     }
@@ -6245,55 +4788,72 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         log.debug("validate resource properties default values");
         Either<Boolean, ResponseFormat> eitherResult = Either.left(true);
         List<PropertyDefinition> properties = resource.getProperties();
-        String type = null;
-        String innerType = null;
         if (properties != null) {
-            for (PropertyDefinition property : properties) {
-                if (!propertyOperation.isPropertyTypeValid(property)) {
-                    log.info("Invalid type for property");
-                    ResponseFormat responseFormat = componentsUtils.getResponseFormat(
-                            ActionStatus.INVALID_PROPERTY_TYPE, property.getType(), property.getName());
-                    eitherResult = Either.right(responseFormat);
-                    break;
-                }
-
-                Either<Map<String, DataTypeDefinition>, ResponseFormat> allDataTypes = getAllDataTypes(
-                        applicationDataTypeCache);
-                if (allDataTypes.isRight()) {
-                    return Either.right(allDataTypes.right().value());
-                }
-
-                type = property.getType();
-                if (type.equals(ToscaPropertyType.LIST.getType()) || type.equals(ToscaPropertyType.MAP.getType())) {
-                    ImmutablePair<String, Boolean> propertyInnerTypeValid = propertyOperation
-                            .isPropertyInnerTypeValid(property, allDataTypes.left().value());
-                    innerType = propertyInnerTypeValid.getLeft();
-                    if (!propertyInnerTypeValid.getRight().booleanValue()) {
-                        log.info("Invalid inner type for property");
-                        ResponseFormat responseFormat = componentsUtils.getResponseFormat(
-                                ActionStatus.INVALID_PROPERTY_INNER_TYPE, innerType, property.getName());
-                        eitherResult = Either.right(responseFormat);
-                        break;
-                    }
-                }
-
-                if (!propertyOperation.isPropertyDefaultValueValid(property, allDataTypes.left().value())) {
-                    log.info("Invalid default value for property");
-                    ResponseFormat responseFormat;
-                    if (type.equals(ToscaPropertyType.LIST.getType()) || type.equals(ToscaPropertyType.MAP.getType())) {
-                        responseFormat = componentsUtils.getResponseFormat(ActionStatus.INVALID_COMPLEX_DEFAULT_VALUE,
-                                property.getName(), type, innerType, property.getDefaultValue());
-                    } else {
-                        responseFormat = componentsUtils.getResponseFormat(ActionStatus.INVALID_DEFAULT_VALUE,
-                                property.getName(), type, property.getDefaultValue());
-                    }
-                    eitherResult = Either.right(responseFormat);
-                    break;
-
-                }
-            }
+            eitherResult = iterateOverProperties(properties);
         }
         return eitherResult;
+    }
+
+    public Either<Boolean, ResponseFormat> iterateOverProperties(List<PropertyDefinition> properties){
+        Either<Boolean, ResponseFormat> eitherResult = Either.left(true);
+        String type = null;
+        String innerType = null;
+        for (PropertyDefinition property : properties) {
+            if (!propertyOperation.isPropertyTypeValid(property)) {
+                log.info("Invalid type for property {}", property);
+                ResponseFormat responseFormat = componentsUtils.getResponseFormat(
+                        ActionStatus.INVALID_PROPERTY_TYPE, property.getType(), property.getName());
+                eitherResult = Either.right(responseFormat);
+                break;
+            }
+
+            Either<Map<String, DataTypeDefinition>, ResponseFormat> allDataTypes = getAllDataTypes(
+                    applicationDataTypeCache);
+            if (allDataTypes.isRight()) {
+                return Either.right(allDataTypes.right().value());
+            }
+
+            type = property.getType();
+
+            if (type.equals(ToscaPropertyType.LIST.getType()) || type.equals(ToscaPropertyType.MAP.getType())) {
+                ResponseFormat responseFormat = validateMapOrListPropertyType(property, innerType, allDataTypes.left().value());
+                if(responseFormat != null) {
+                    break;
+                }
+            }
+            eitherResult = validateDefaultPropertyValue(property, allDataTypes.left().value(), type, innerType);
+        }
+        return eitherResult;
+    }
+
+    private Either<Boolean,ResponseFormat> validateDefaultPropertyValue(PropertyDefinition property, Map<String, DataTypeDefinition> allDataTypes, String type, String innerType) {
+        if (!propertyOperation.isPropertyDefaultValueValid(property, allDataTypes)) {
+            log.info("Invalid default value for property {}", property);
+            ResponseFormat responseFormat;
+            if (type.equals(ToscaPropertyType.LIST.getType()) || type.equals(ToscaPropertyType.MAP.getType())) {
+                responseFormat = componentsUtils.getResponseFormat(ActionStatus.INVALID_COMPLEX_DEFAULT_VALUE,
+                        property.getName(), type, innerType, property.getDefaultValue());
+            } else {
+                responseFormat = componentsUtils.getResponseFormat(ActionStatus.INVALID_DEFAULT_VALUE,
+                        property.getName(), type, property.getDefaultValue());
+            }
+            return Either.right(responseFormat);
+
+        }
+        return Either.left(true);
+    }
+
+    private ResponseFormat validateMapOrListPropertyType(PropertyDefinition property, String innerType, Map<String, DataTypeDefinition> allDataTypes) {
+        ResponseFormat responseFormat = null;
+        ImmutablePair<String, Boolean> propertyInnerTypeValid = propertyOperation
+                .isPropertyInnerTypeValid(property, allDataTypes);
+        innerType = propertyInnerTypeValid.getLeft();
+        if (!propertyInnerTypeValid.getRight().booleanValue()) {
+            log.info("Invalid inner type for property {}", property);
+            responseFormat = componentsUtils.getResponseFormat(
+                    ActionStatus.INVALID_PROPERTY_INNER_TYPE, innerType, property.getName());
+        }
+        return responseFormat;
     }
 
     @Override
@@ -6314,205 +4874,12 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         return componentTypeForResponse;
     }
 
-    private Either<Map<String, GroupDefinition>, ResponseFormat> createGroupsFromYaml(String yamlFileName,
-                                                                                      Map<String, Object> toscaJson, Resource resource) {
-
-        Map<String, GroupDefinition> groups = new HashMap<String, GroupDefinition>();
-        Either<Map<String, GroupDefinition>, ResponseFormat> result = Either.left(groups);
-
-        Either<Map<String, Object>, ResultStatusEnum> eitherNodesTemlates = ImportUtils
-                .findFirstToscaMapElement(toscaJson, ToscaTagNamesEnum.GROUPS);
-        if (eitherNodesTemlates.isLeft()) {
-            Map<String, Object> jsonNodeTemplates = eitherNodesTemlates.left().value();
-
-            if (jsonNodeTemplates != null && false == jsonNodeTemplates.isEmpty()) {
-                Iterator<Entry<String, Object>> nodesNameValue = jsonNodeTemplates.entrySet().iterator();
-                while (nodesNameValue.hasNext()) {
-                    Entry<String, Object> groupNameValue = nodesNameValue.next();
-
-                    String groupName = groupNameValue.getKey();
-                    Either<GroupDefinition, ResponseFormat> eitherNode = createGroupInfo(groupName,
-                            groupNameValue.getValue());
-                    if (eitherNode.isRight()) {
-                        String message = "Failed when creating group: " + groupNameValue.getKey() + " for resource:"
-                                + resource.getName();
-                        BeEcompErrorManager.getInstance().logInternalFlowError("ImportResource", message,
-                                ErrorSeverity.INFO);
-                        return Either.right(eitherNode.right().value());
-                    } else {
-                        GroupDefinition groupDefinition = eitherNode.left().value();
-                        groups.put(groupName, groupDefinition);
-                    }
-                }
-            }
-        }
-
-        return result;
-    }
-
-    private Either<Map<String, InputDefinition>, ResponseFormat> createInputsFromYaml(String yamlFileName,
-                                                                                      Map<String, Object> toscaJson, Resource resource) {
-
-        Either<Map<String, InputDefinition>, ResultStatusEnum> inputs = ImportUtils.getInputs(toscaJson);
-        if (inputs.isRight()) {
-            String message = "Failed when creating inputs:  for resource:" + resource.getName();
-            BeEcompErrorManager.getInstance().logInternalFlowError("ImportResource", message, ErrorSeverity.INFO);
-            Map<String, InputDefinition> resultMap = new HashMap<>();
-            return Either.left(resultMap);
-
-        }
-
-        Either<Map<String, InputDefinition>, ResponseFormat> result = Either.left(inputs.left().value());
-
-        return result;
-    }
-
-    @SuppressWarnings("unchecked")
-    private Either<GroupDefinition, ResponseFormat> createGroupInfo(String groupName, Object groupTemplateJson) {
-
-        GroupDefinition groupInfo = new GroupDefinition();
-        groupInfo.setName(groupName);
-        Either<GroupDefinition, ResponseFormat> result = Either.left(groupInfo);
-
-        try {
-            if (groupTemplateJson != null && groupTemplateJson instanceof Map) {
-                Map<String, Object> groupTemplateJsonMap = (Map<String, Object>) groupTemplateJson;
-                String groupType = (String) groupTemplateJsonMap.get(ToscaTagNamesEnum.TYPE.getElementName());
-                if (!StringUtils.isEmpty(groupType)) {
-                    groupInfo.setType(groupType);
-                } else {
-                    log.debug("The 'type' member is not found under group {}", groupName);
-                    return Either
-                            .right(componentsUtils.getResponseFormat(ActionStatus.GROUP_MISSING_GROUP_TYPE, groupName));
-                }
-
-                if (groupTemplateJsonMap.containsKey(ToscaTagNamesEnum.DESCRIPTION.getElementName())) {
-                    groupInfo.setDescription(
-                            (String) groupTemplateJsonMap.get(ToscaTagNamesEnum.DESCRIPTION.getElementName()));
-                }
-
-                if (groupTemplateJsonMap.containsKey(ToscaTagNamesEnum.MEMBERS.getElementName())) {
-                    Object members = groupTemplateJsonMap.get(ToscaTagNamesEnum.MEMBERS.getElementName());
-                    if (members != null) {
-                        if (members instanceof List) {
-                            Map<String, String> membersLoaded = new HashMap<>();
-                            List<?> membersAsList = (List<?>) members;
-                            for (Object member : membersAsList) {
-                                membersLoaded.put(member.toString(), "");
-                            }
-                            groupInfo.setMembers(membersLoaded);
-                        } else {
-                            log.debug("The 'members' member is not of type list under group {}", groupName);
-                            return Either
-                                    .right(componentsUtils.getResponseFormat(ActionStatus.NOT_TOPOLOGY_TOSCA_TEMPLATE));
-                        }
-                    }
-                }
-
-                if (groupTemplateJsonMap.containsKey(ToscaTagNamesEnum.PROPERTIES.getElementName())) {
-                    Object properties = groupTemplateJsonMap.get(ToscaTagNamesEnum.PROPERTIES.getElementName());
-
-                    Either<List<GroupProperty>, ResponseFormat> regResponse = createPropertiesValueModuleFromYaml(
-                            properties, groupName, groupType);
-                    if (regResponse.isRight())
-                        return Either.right(regResponse.right().value());
-                    if (regResponse.left().value().size() > 0) {
-                        groupInfo.convertFromGroupProperties(regResponse.left().value());
-                    }
-                }
-
-            } else {
-                result = Either.right(componentsUtils.getResponseFormat(ActionStatus.NOT_TOPOLOGY_TOSCA_TEMPLATE));
-            }
-        } catch (Exception e) {
-            BeEcompErrorManager.getInstance().logBeSystemError("Import Resource - create group");
-            log.debug("error when creating group, message:{}", e.getMessage(), e);
-            result = Either.right(componentsUtils.getResponseFormat(ActionStatus.INVALID_YAML));
-        }
-
-        return result;
-    }
-
-    @SuppressWarnings("unchecked")
-    private Either<List<GroupProperty>, ResponseFormat> createPropertiesValueModuleFromYaml(Object properties,
-                                                                                            String groupName, String groupType) {
-
-        List<GroupProperty> result = new ArrayList<>();
-
-        if (properties == null) {
-            return Either.left(result);
-        }
-
-        Either<GroupTypeDefinition, StorageOperationStatus> groupTypeRes = groupTypeOperation
-                .getLatestGroupTypeByType(groupType, true);
-
-        if (groupTypeRes.isRight()) {
-            return Either.right(componentsUtils.getResponseFormat(ActionStatus.GROUP_TYPE_IS_INVALID, groupType));
-        }
-
-        Map<String, PropertyDefinition> gtProperties = new HashMap<>();
-        GroupTypeDefinition groupTypeDefinition = groupTypeRes.left().value();
-
-        List<PropertyDefinition> propertiesDef = groupTypeDefinition.getProperties();
-
-        if (propertiesDef != null) {
-            gtProperties = propertiesDef.stream().collect(Collectors.toMap(p -> p.getName(), p -> p));
-        }
-
-        if (properties != null) {
-
-            if (properties instanceof Map) {
-
-                Map<String, Object> props = (Map<String, Object>) properties;
-                for (Entry<String, Object> entry : props.entrySet()) {
-
-                    String propName = entry.getKey();
-                    Object value = entry.getValue();
-
-                    PropertyDefinition gtDefinition = gtProperties.get(propName);
-                    if (gtDefinition == null) {
-                        return Either.right(componentsUtils.getResponseFormat(ActionStatus.GROUP_PROPERTY_NOT_FOUND,
-                                propName, groupName, groupType));
-                    }
-
-                    ToscaPropertyType type = ToscaPropertyType.isValidType(gtDefinition.getType());
-
-                    String convertedValue = null;
-                    if (value != null) {
-                        if (type == null || value instanceof Map || value instanceof List) {
-                            convertedValue = gson.toJson(value);
-                        } else {
-                            convertedValue = value.toString();
-                        }
-                    }
-
-                    GroupProperty groupProperty = new GroupProperty();
-                    groupProperty.setValue(convertedValue);
-                    groupProperty.setName(propName);
-
-                    log.trace("After building group property {}", groupProperty);
-
-                    result.add(groupProperty);
-                }
-
-            }
-
-        }
-
-        return Either.left(result);
-    }
-
     public Either<Resource, ResponseFormat> getLatestResourceFromCsarUuid(String csarUuid, User user) {
-
         // validate user
         if (user != null) {
-            Either<User, ResponseFormat> userValidation = validateUserExists(user, "Get resource from csar UUID",
+            validateUserExists(user, "Get resource from csar UUID",
                     false);
-            if (userValidation.isRight()) {
-                return Either.right(userValidation.right().value());
-            }
         }
-
         // get resource from csar uuid
         Either<Resource, StorageOperationStatus> either = toscaOperationFacade
                 .getLatestComponentByCsarOrName(ComponentTypeEnum.RESOURCE, csarUuid, "");
@@ -6527,91 +4894,92 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 
     @Override
     public Either<List<ComponentInstance>, ResponseFormat> getComponentInstancesFilteredByPropertiesAndInputs(
-            String componentId, ComponentTypeEnum componentTypeEnum, String userId, String searchText) {
+            String componentId, String userId) {
         return null;
     }
 
-    private Either<Map<String, List<CapabilityDefinition>>, ResponseFormat> getValidComponentInstanceCapabilities(
+    private Map<String, List<CapabilityDefinition>> getValidComponentInstanceCapabilities(
             String resourceId, Map<String, List<CapabilityDefinition>> defaultCapabilities,
             Map<String, List<UploadCapInfo>> uploadedCapabilities) {
-        ResponseFormat responseFormat;
-        Map<String, List<CapabilityDefinition>> validCapabilitiesMap = new HashMap<>();
 
-        for (Entry<String, List<UploadCapInfo>> uploadedCapabilitiesEntry : uploadedCapabilities.entrySet()) {
-            String capabilityType = uploadedCapabilitiesEntry.getValue().get(0).getType();
-            if (!defaultCapabilities.containsKey(capabilityType)) {
-                responseFormat = componentsUtils.getResponseFormat(ActionStatus.MISSING_CAPABILITY_TYPE,
-                        capabilityType);
-                return Either.right(responseFormat);
-            } else {
-                CapabilityDefinition defaultCapability;
-                if (CollectionUtils.isNotEmpty(defaultCapabilities.get(capabilityType).get(0).getProperties())) {
-                    defaultCapability = defaultCapabilities.get(capabilityType).get(0);
-                } else {
-                    Either<Component, StorageOperationStatus> getFullComponentRes = toscaOperationFacade
-                            .getToscaFullElement(resourceId);
-                    if (getFullComponentRes.isRight()) {
-                        log.debug("Failed to get full component {}. Status is {}. ", resourceId,
-                                getFullComponentRes.right().value());
-                        responseFormat = componentsUtils.getResponseFormat(ActionStatus.COMPONENT_NOT_FOUND,
-                                resourceId);
-                        return Either.right(responseFormat);
-                    }
-                    defaultCapability = getFullComponentRes.left().value().getCapabilities().get(capabilityType).get(0);
-                }
-                if (CollectionUtils.isEmpty(defaultCapability.getProperties())
-                        && CollectionUtils.isNotEmpty(uploadedCapabilitiesEntry.getValue().get(0).getProperties())) {
-                    log.debug("Failed to validate capability {} of component {}. Property list is empty. ",
-                            defaultCapability.getName(), resourceId);
-                    log.debug(
-                            "Failed to update capability property values. Property list of fetched capability {} is empty. ",
-                            defaultCapability.getName());
-                    responseFormat = componentsUtils.getResponseFormat(ActionStatus.PROPERTY_NOT_FOUND, resourceId);
-                    return Either.right(responseFormat);
-                }
-                if (CollectionUtils.isNotEmpty(defaultCapability.getProperties())
-                        && CollectionUtils.isNotEmpty(uploadedCapabilitiesEntry.getValue().get(0).getProperties())) {
-                    Either<Boolean, String> validationRes = validateUniquenessUpdateUploadedComponentInstanceCapability(
-                            defaultCapability, uploadedCapabilitiesEntry.getValue().get(0));
-                    if (validationRes.isRight()) {
-                        responseFormat = componentsUtils.getResponseFormat(ActionStatus.PROPERTY_NAME_ALREADY_EXISTS,
-                                validationRes.right().value());
-                        return Either.right(responseFormat);
-                    }
-                }
-                List<CapabilityDefinition> validCapabilityList = new ArrayList<>();
-                validCapabilityList.add(defaultCapability);
-                validCapabilitiesMap.put(uploadedCapabilitiesEntry.getKey(), validCapabilityList);
-            }
-        }
-        return Either.left(validCapabilitiesMap);
+        Map<String, List<CapabilityDefinition>> validCapabilitiesMap = new HashMap<>();
+        uploadedCapabilities.forEach((k,v)->addValidComponentInstanceCapabilities(k,v,resourceId,defaultCapabilities,validCapabilitiesMap));
+        return validCapabilitiesMap;
     }
 
-    private Either<Boolean, String> validateUniquenessUpdateUploadedComponentInstanceCapability(
+    private void addValidComponentInstanceCapabilities(String key, List<UploadCapInfo> capabilities, String resourceId, Map<String, List<CapabilityDefinition>> defaultCapabilities, Map<String, List<CapabilityDefinition>> validCapabilitiesMap){
+        String capabilityType = capabilities.get(0).getType();
+        if (defaultCapabilities.containsKey(capabilityType)) {
+            CapabilityDefinition defaultCapability = getCapability(resourceId, defaultCapabilities, capabilityType);
+            validateCapabilityProperties(capabilities, resourceId, defaultCapability);
+            List<CapabilityDefinition> validCapabilityList = new ArrayList<>();
+            validCapabilityList.add(defaultCapability);
+            validCapabilitiesMap.put(key, validCapabilityList);
+        } else {
+            throw new ComponentException(componentsUtils.getResponseFormat(ActionStatus.MISSING_CAPABILITY_TYPE, capabilityType));
+        }
+    }
+
+    private void validateCapabilityProperties(List<UploadCapInfo> capabilities, String resourceId, CapabilityDefinition defaultCapability) {
+        if (CollectionUtils.isEmpty(defaultCapability.getProperties())
+                && isNotEmpty(capabilities.get(0).getProperties())) {
+            log.debug("Failed to validate capability {} of component {}. Property list is empty. ",
+                    defaultCapability.getName(), resourceId);
+            log.debug(
+                    "Failed to update capability property values. Property list of fetched capability {} is empty. ",
+                    defaultCapability.getName());
+            throw new ComponentException(componentsUtils.getResponseFormat(ActionStatus.PROPERTY_NOT_FOUND, resourceId));
+        } else if (isNotEmpty(capabilities.get(0).getProperties())) {
+            validateUniquenessUpdateUploadedComponentInstanceCapability(defaultCapability, capabilities.get(0));
+        }
+    }
+
+    private CapabilityDefinition getCapability(String resourceId, Map<String, List<CapabilityDefinition>> defaultCapabilities, String capabilityType) {
+        CapabilityDefinition defaultCapability;
+        if (isNotEmpty(defaultCapabilities.get(capabilityType).get(0).getProperties())) {
+            defaultCapability = defaultCapabilities.get(capabilityType).get(0);
+        } else {
+            Either<Component, StorageOperationStatus> getFullComponentRes = toscaOperationFacade
+                    .getToscaFullElement(resourceId);
+            if (getFullComponentRes.isRight()) {
+                log.debug("Failed to get full component {}. Status is {}. ", resourceId,
+                        getFullComponentRes.right().value());
+                throw new ComponentException(componentsUtils.getResponseFormat(ActionStatus.COMPONENT_NOT_FOUND,
+                        resourceId));
+            }
+            defaultCapability = getFullComponentRes.left().value().getCapabilities().get(capabilityType).get(0);
+        }
+        return defaultCapability;
+    }
+
+    private void validateUniquenessUpdateUploadedComponentInstanceCapability(
             CapabilityDefinition defaultCapability, UploadCapInfo uploadedCapability) {
         List<ComponentInstanceProperty> validProperties = new ArrayList<>();
         Map<String, PropertyDefinition> defaultProperties = defaultCapability.getProperties().stream()
-                .collect(Collectors.toMap(PropertyDefinition::getName, Function.identity()));
+                .collect(toMap(PropertyDefinition::getName, Function.identity()));
         List<UploadPropInfo> uploadedProperties = uploadedCapability.getProperties();
         for (UploadPropInfo property : uploadedProperties) {
             String propertyName = property.getName().toLowerCase();
             String propertyType = property.getType();
             ComponentInstanceProperty validProperty;
-            if (defaultProperties.containsKey(propertyName)) {
-                if (propertyType != null && !defaultProperties.get(propertyName).getType().equals(propertyType)) {
-                    return Either.right(propertyName);
-                }
+            if (defaultProperties.containsKey(propertyName) && propertTypeEqualsTo(defaultProperties, propertyName, propertyType)) {
+                throw new ComponentException(componentsUtils.getResponseFormat(ActionStatus.PROPERTY_NAME_ALREADY_EXISTS,
+                        propertyName));
             }
             validProperty = new ComponentInstanceProperty();
             validProperty.setName(propertyName);
-            if (property.getValue() != null)
+            if (property.getValue() != null) {
                 validProperty.setValue(property.getValue().toString());
+            }
             validProperty.setDescription(property.getDescription());
             validProperty.setPassword(property.isPassword());
             validProperties.add(validProperty);
         }
         defaultCapability.setProperties(validProperties);
-        return Either.left(true);
+    }
+
+    private boolean propertTypeEqualsTo(Map<String, PropertyDefinition> defaultProperties, String propertyName, String propertyType) {
+        return propertyType != null && !defaultProperties.get(propertyName).getType().equals(propertyType);
     }
 
     private Either<EnumMap<ArtifactOperationEnum, List<NonMetaArtifactInfo>>, ResponseFormat> organizeVfCsarArtifactsByArtifactOperation(
@@ -6623,7 +4991,6 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         Wrapper<ResponseFormat> responseWrapper = new Wrapper<>();
         Either<EnumMap<ArtifactOperationEnum, List<NonMetaArtifactInfo>>, ResponseFormat> nodeTypeArtifactsToHandleRes = Either
                 .left(nodeTypeArtifactsToHandle);
-        ;
         try {
             // add all found Csar artifacts to list to upload
             List<NonMetaArtifactInfo> artifactsToUpload = new ArrayList<>(artifactPathAndNameList);
@@ -6684,12 +5051,15 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                 }
             }
             if (responseWrapper.isEmpty()) {
-                if (!artifactsToUpload.isEmpty())
+                if (!artifactsToUpload.isEmpty()) {
                     nodeTypeArtifactsToHandle.put(ArtifactOperationEnum.CREATE, artifactsToUpload);
-                if (!artifactsToUpdate.isEmpty())
+                }
+                if (!artifactsToUpdate.isEmpty()) {
                     nodeTypeArtifactsToHandle.put(ArtifactOperationEnum.UPDATE, artifactsToUpdate);
-                if (!artifactsToDelete.isEmpty())
+                }
+                if (!artifactsToDelete.isEmpty()) {
                     nodeTypeArtifactsToHandle.put(ArtifactOperationEnum.DELETE, artifactsToDelete);
+                }
             }
             if (!responseWrapper.isEmpty()) {
                 nodeTypeArtifactsToHandleRes = Either.right(responseWrapper.getInnerElement());
@@ -6702,7 +5072,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         return nodeTypeArtifactsToHandleRes;
     }
 
-    private ImmutablePair<String, String> buildNestedToscaResourceName(String nodeResourceType, String vfResourceName,
+    ImmutablePair<String, String> buildNestedToscaResourceName(String nodeResourceType, String vfResourceName,
                                                                        String nodeTypeFullName) {
         String actualType;
         String actualVfName;
@@ -6743,11 +5113,8 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         this.cacheManagerOperation = cacheManagerOperation;
     }
 
-    ///////////////////////////////////////// DataModel
-    ///////////////////////////////////////// refactoring/////////////////////////////////////////////
     @Override
-    public Either<UiComponentDataTransfer, ResponseFormat> getUiComponentDataTransferByComponentId(String resourceId,
-                                                                                                   List<String> dataParamsToReturn) {
+    public Either<UiComponentDataTransfer, ResponseFormat> getUiComponentDataTransferByComponentId(String resourceId, List<String> dataParamsToReturn) {
 
         ComponentParametersView paramsToRetuen = new ComponentParametersView(dataParamsToReturn);
         Either<Resource, StorageOperationStatus> resourceResultEither = toscaOperationFacade.getToscaElement(resourceId,
@@ -6765,7 +5132,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         }
 
         Resource resource = resourceResultEither.left().value();
-        UiComponentDataTransfer dataTransfer = UiComponentDataConverter.getUiDataTransferFromResourceByParams(resource,
+        UiComponentDataTransfer dataTransfer = uiComponentDataConverter.getUiDataTransferFromResourceByParams(resource,
                 dataParamsToReturn);
         return Either.left(dataTransfer);
     }
@@ -6786,65 +5153,4 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         }
     }
 
-    private Either<Boolean, ResponseFormat> validateAndUpdateInterfaces(String resourceId, Resource resourceUpdate) {
-        Either<Resource, StorageOperationStatus> resourceStorageOperationStatusEither =
-                toscaOperationFacade.getToscaElement(resourceId);
-        if (resourceStorageOperationStatusEither.isRight()) {
-            StorageOperationStatus errorStatus = resourceStorageOperationStatusEither.right().value();
-            log.error("Failed to fetch resource information by resource id {}, error {}", resourceId, errorStatus);
-            return Either.right(componentsUtils
-                    .getResponseFormat(componentsUtils.convertFromStorageResponse(errorStatus)));
-        }
-
-        Resource storedResource = resourceStorageOperationStatusEither.left().value();
-        Map<String, InterfaceDefinition> storedResourceInterfaces = storedResource.getInterfaces();
-
-        if(!storedResource.getName().equals(resourceUpdate.getName()) ) {
-            Collection<InterfaceDefinition> interfaceDefinitionListFromToscaName = InterfaceUtils
-                    .getInterfaceDefinitionListFromToscaName(storedResource.getInterfaces().values(),
-                            storedResource.getName());
-
-            for (InterfaceDefinition interfaceDefinition : storedResourceInterfaces.values()) {
-                Either<InterfaceDefinition, ResponseFormat> updateInterfaceDefinitionEither = updateInterfaceDefinition(resourceUpdate,
-                        interfaceDefinition,
-                        interfaceDefinitionListFromToscaName);
-                if(updateInterfaceDefinitionEither.isRight()) {
-                    return Either.right(updateInterfaceDefinitionEither.right().value());
-                }
-            }
-        }
-
-        return  Either.left(Boolean.TRUE);
-    }
-
-    private Either<InterfaceDefinition, ResponseFormat > updateInterfaceDefinition(Resource resourceUpdate,
-                                                                                   InterfaceDefinition interfaceDefinition,
-                                                                                   Collection<InterfaceDefinition> interfaceDefinitionListFromToscaName) {
-        interfaceDefinitionListFromToscaName.forEach(interfaceDefinitionFromList -> {
-            if(interfaceDefinitionFromList.getToscaResourceName().equals(interfaceDefinition
-                    .getToscaResourceName())) {
-                log.info("Going to Update interface definition toscaResourceName {} to {}",
-                        interfaceDefinitionFromList.getToscaResourceName(),
-                        InterfaceUtils.createInterfaceToscaResourceName(resourceUpdate.getName()));
-                interfaceDefinition.setToscaResourceName(InterfaceUtils
-                        .createInterfaceToscaResourceName(resourceUpdate.getName()));
-            }
-        } );
-        try {
-            Either<InterfaceDefinition, StorageOperationStatus> interfaceUpdate = interfaceOperation
-                    .updateInterface(resourceUpdate.getUniqueId(), interfaceDefinition);
-            if (interfaceUpdate.isRight()) {
-                log.error("Failed to Update interface {}. Response is {}. ", resourceUpdate.getName(), interfaceUpdate.right().value());
-                titanDao.rollback();
-                return Either.right(componentsUtils
-                        .getResponseFormat(componentsUtils.convertFromStorageResponse(interfaceUpdate.right().value(), ComponentTypeEnum.RESOURCE)));
-            }
-        } catch (Exception e) {
-            log.error("Exception occurred during update interface toscaResourceName  : {}", e.getMessage(), e);
-            return Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
-        }
-
-        return Either.left( interfaceDefinition);
-
-    }
 }

@@ -23,9 +23,7 @@ package org.openecomp.core.enrichment.types;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.openecomp.core.enrichment.types.MonitoringUploadType.SNMP_POLL;
-import static org.openecomp.core.enrichment.types.MonitoringUploadType.SNMP_TRAP;
-import static org.openecomp.core.enrichment.types.MonitoringUploadType.VES_EVENTS;
+import static org.openecomp.core.enrichment.types.MonitoringUploadType.*;
 
 public class ComponentMonitoringUploadInfo {
 

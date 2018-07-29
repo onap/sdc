@@ -20,14 +20,7 @@
 
 package org.openecomp.sdc.ci.tests.execute.sanity;
 
-import java.awt.AWTException;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import com.aventstack.extentreports.Status;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
@@ -36,32 +29,16 @@ import org.openecomp.sdc.ci.tests.datatypes.*;
 import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum.InformationalArtifactsPlaceholders;
 import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum.LeftPanelCanvasItems;
 import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum.ResourceMetadataEnum;
-import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum.ToscaArtifactsScreenEnum;
 import org.openecomp.sdc.ci.tests.datatypes.enums.ArtifactTypeEnum;
 import org.openecomp.sdc.ci.tests.datatypes.enums.NormativeTypesEnum;
-import org.openecomp.sdc.ci.tests.datatypes.enums.PropertyTypeEnum;
 import org.openecomp.sdc.ci.tests.datatypes.enums.ResourceCategoryEnum;
 import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
-import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
-import org.openecomp.sdc.ci.tests.execute.setup.AttFtpClient;
 import org.openecomp.sdc.ci.tests.execute.setup.SetupCDTest;
-import org.openecomp.sdc.ci.tests.pages.CompositionPage;
-import org.openecomp.sdc.ci.tests.pages.DeploymentArtifactPage;
-import org.openecomp.sdc.ci.tests.pages.GeneralPageElements;
-import org.openecomp.sdc.ci.tests.pages.InformationalArtifactPage;
-import org.openecomp.sdc.ci.tests.pages.InputsPage;
-import org.openecomp.sdc.ci.tests.pages.PropertiesPage;
-import org.openecomp.sdc.ci.tests.pages.ResourceGeneralPage;
-import org.openecomp.sdc.ci.tests.pages.TesterOperationPage;
-import org.openecomp.sdc.ci.tests.pages.ToscaArtifactsPage;
-import org.openecomp.sdc.ci.tests.tosca.datatypes.ToscaDefinition;
+import org.openecomp.sdc.ci.tests.pages.*;
 import org.openecomp.sdc.ci.tests.utilities.*;
-import org.openecomp.sdc.ci.tests.utilities.OnboardingUiUtils;
-import org.openecomp.sdc.ci.tests.utils.ToscaParserUtils;
 import org.openecomp.sdc.ci.tests.utils.general.AtomicOperationUtils;
 import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
 import org.openecomp.sdc.ci.tests.utils.rest.ResourceRestUtils;
-import org.openecomp.sdc.ci.tests.utils.rest.ResponseParser;
 import org.openecomp.sdc.ci.tests.utils.validation.ErrorValidationUtils;
 import org.openecomp.sdc.ci.tests.verificator.ServiceVerificator;
 import org.openecomp.sdc.ci.tests.verificator.VfModuleVerificator;
@@ -69,13 +46,13 @@ import org.openecomp.sdc.ci.tests.verificator.VfVerificator;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.testng.AssertJUnit;
-import org.testng.SkipException;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import com.aventstack.extentreports.Status;
-import com.clearspring.analytics.util.Pair;
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class Vf extends SetupCDTest {
@@ -94,46 +71,14 @@ public class Vf extends SetupCDTest {
 	
 
 	@Test
-	public void updateVF() throws Exception {
-
-		// create Resource
-		ResourceReqDetails resourceMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
-		ResourceUIUtils.createVF(resourceMetaData, getUser());
-
-		// update Resource
-		ResourceReqDetails updatedResource = new ResourceReqDetails();
-		updatedResource.setName(ElementFactory.getResourcePrefix() + "UpdatedName" + resourceMetaData.getName());
-		updatedResource.setDescription("kuku");
-		updatedResource.setVendorName("updatedVendor");
-		updatedResource.setVendorRelease("updatedRelease");
-		updatedResource.setContactId("ab0001");
-		updatedResource.setCategories(resourceMetaData.getCategories());
-		updatedResource.setVersion("0.1");
-		updatedResource.setResourceType(ResourceTypeEnum.VF.getValue());
- 		List<String> newTags = resourceMetaData.getTags();
-		newTags.remove(resourceMetaData.getName());
-		newTags.add(updatedResource.getName());
-		updatedResource.setTags(newTags);
-		ResourceUIUtils.updateResource(updatedResource, getUser());
-
-		VfVerificator.verifyVFMetadataInUI(updatedResource);
-		VfVerificator.verifyVFUpdated(updatedResource, getUser());
-	}
-
-	@Test
 	public void vfcLinkedToComputeInVfFlow() throws Exception {
 		String fileName = "vFW_VFC2.yml";
 		ResourceReqDetails atomicResourceMetaData = ElementFactory.getDefaultResourceByTypeNormTypeAndCatregory(ResourceTypeEnum.VFC, NormativeTypesEnum.ROOT, ResourceCategoryEnum.NETWORK_L2_3_ROUTERS, getUser());
 		
 		try{
 			ResourceUIUtils.importVfc(atomicResourceMetaData, filePath, fileName, getUser());
-			ResourceGeneralPage.clickSubmitForTestingButton(atomicResourceMetaData.getName());
+			ResourceGeneralPage.clickCertifyButton(atomicResourceMetaData.getName());
 			
-			reloginWithNewRole(UserRoleEnum.TESTER);
-			GeneralUIUtils.findComponentAndClick(atomicResourceMetaData.getName());
-			TesterOperationPage.certifyComponent(atomicResourceMetaData.getName());
-	
-			reloginWithNewRole(UserRoleEnum.DESIGNER);
 			ResourceReqDetails vfMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
 			ResourceUIUtils.createVF(vfMetaData, getUser());
 	
@@ -145,7 +90,8 @@ public class Vf extends SetupCDTest {
 			CanvasElement cpElement = canvasManager.createElementOnCanvas(atomicResourceMetaData.getName());
 			AssertJUnit.assertNotNull(cpElement);
 			ServiceVerificator.verifyNumOfComponentInstances(vfMetaData, "0.1", 2, getUser());
-			canvasManager.linkElements(cpElement, computeElement);
+
+			canvasManager.linkElements(computeElement.getElementNameOnCanvas() , cpElement.getElementNameOnCanvas());
 	
 			vfMetaData.setVersion("0.1");
 			VfVerificator.verifyLinkCreated(vfMetaData, getUser(), 1);
@@ -163,7 +109,7 @@ public class Vf extends SetupCDTest {
 
 		ResourceGeneralPage.getLeftMenu().moveToDeploymentArtifactScreen();
 
-		List<ArtifactInfo> deploymentArtifactList = new ArrayList<ArtifactInfo>();
+		List<ArtifactInfo> deploymentArtifactList = new ArrayList<>();
 		deploymentArtifactList.add(new ArtifactInfo(filePath, "asc_heat 0 2.yaml", "kuku", "artifact1", "OTHER"));
 		deploymentArtifactList.add(new ArtifactInfo(filePath, "sample-xml-alldata-1-1.xml", "cuku", "artifact2", "YANG_XML"));
 		for (ArtifactInfo deploymentArtifact : deploymentArtifactList) {
@@ -217,7 +163,8 @@ public class Vf extends SetupCDTest {
 	public void addPropertiesToVfcInstanceInVfTest() throws Exception {
 		
 		if(true){
-			throw new SkipException("Open bug 373762, can't update properties on CP or VFC instance  on Composition screen");			
+//			throw new SkipException("Open bug 373762, can't update properties on CP or VFC instance  on Composition screen");
+			SetupCDTest.getExtendTest().log(Status.INFO, "Open bug 373762, can't update properties on CP or VFC instance  on Composition screen");
 		}
 		
 		String fileName = "vFW_VFC.yml";
@@ -266,7 +213,7 @@ public class Vf extends SetupCDTest {
 		try{
 			atomicResourceMetaData = ElementFactory.getDefaultResourceByTypeNormTypeAndCatregory(ResourceTypeEnum.VFC, NormativeTypesEnum.ROOT, ResourceCategoryEnum.NETWORK_L2_3_ROUTERS, getUser());
 			ResourceUIUtils.importVfc(atomicResourceMetaData, filePath, fileName, getUser());
-			ResourceGeneralPage.clickSubmitForTestingButton(atomicResourceMetaData.getName());
+			ResourceGeneralPage.clickCheckinButton(atomicResourceMetaData.getName());
 			
 			vfMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
 			ResourceUIUtils.createVF(vfMetaData, getUser());
@@ -274,9 +221,8 @@ public class Vf extends SetupCDTest {
 			vfCanvasManager = CanvasManager.getCanvasManager();
 			CompositionPage.searchForElement(atomicResourceMetaData.getName());
 			vfcElement = vfCanvasManager.createElementOnCanvas(atomicResourceMetaData.getName());
-			
-		
-			CompositionPage.clickSubmitForTestingButton(vfMetaData.getName());
+
+			CompositionPage.clickCertifyButton(vfMetaData.getName());
 			assert(false);
 		}
 		catch(Exception e){ 
@@ -285,11 +231,6 @@ public class Vf extends SetupCDTest {
 			AssertJUnit.assertTrue(errorMessage.contains(checkUIResponseOnError));
 			
 			
-			reloginWithNewRole(UserRoleEnum.TESTER);
-			GeneralUIUtils.findComponentAndClick(atomicResourceMetaData.getName());
-			TesterOperationPage.certifyComponent(atomicResourceMetaData.getName());
-			
-			reloginWithNewRole(UserRoleEnum.DESIGNER);
 			GeneralUIUtils.findComponentAndClick(vfMetaData.getName());
 			ResourceGeneralPage.getLeftMenu().moveToCompositionScreen();
 			vfCanvasManager = CanvasManager.getCanvasManager();
@@ -301,71 +242,6 @@ public class Vf extends SetupCDTest {
 			
 		finally{
 			ResourceRestUtils.deleteResourceByNameAndVersion(atomicResourceMetaData.getName(), "1.0");
-		}
-		
-	}
-
-    // future removed from ui
-	@Test(enabled = false)
-	public void addUpdateDeleteSimplePropertiesToVfTest() throws Exception{
-		ResourceReqDetails vfMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
-		ResourceUIUtils.createVF(vfMetaData, getUser());
-			
-		ResourceGeneralPage.getLeftMenu().moveToPropertiesScreen();
-		List<PropertyTypeEnum> propertyList = Arrays.asList(PropertyTypeEnum.STRING, PropertyTypeEnum.INTEGER);
-		int propertiesCount = PropertiesPage.getElemenetsFromTable().size();	
-		for (PropertyTypeEnum prop : propertyList){
-			PropertiesUIUtils.addNewProperty(prop);
-		}
-		AssertJUnit.assertTrue(GeneralUIUtils.checkElementsCountInTable(propertiesCount + propertyList.size(), () -> PropertiesPage.getElemenetsFromTable()));
-		VfVerificator.verifyPropertiesInUI(propertyList);
-		PropertiesPage.verifyTotalProperitesField(propertiesCount + propertyList.size());
-
-
-		PropertyTypeEnum prop = propertyList.get(0);
-		prop.setDescription("updatedDescription");
-		prop.setValue("value");
-		PropertiesUIUtils.updateProperty(prop);
-		
-		PropertiesPage.clickDeletePropertyArtifact(prop.getName());
-		AssertJUnit.assertTrue(GeneralUIUtils.checkElementsCountInTable(propertiesCount + propertyList.size() - 1, () -> PropertiesPage.getElemenetsFromTable()));
-	}
-	
-	// future removed from ui
-	@Test(enabled = false)
-	public void vfcInstancesInputScreenTest() throws Exception{
-		ResourceReqDetails vfMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
-		ResourceUIUtils.createVF(vfMetaData, getUser());
-		
-		ResourceGeneralPage.getLeftMenu().moveToCompositionScreen();
-		CanvasManager vfCanvasManager = CanvasManager.getCanvasManager();
-		
-		Map<String, String> elementsIntancesMap = new HashMap<String, String>();
-		for (LeftPanelCanvasItems element : Arrays.asList(LeftPanelCanvasItems.DATABASE, LeftPanelCanvasItems.BLOCK_STORAGE)){
-			CanvasElement elementOnCanvas = vfCanvasManager.createElementOnCanvas(element);
-			vfCanvasManager.clickOnCanvaElement(elementOnCanvas);
-			String selectedInstanceName = CompositionPage.getSelectedInstanceName();
-			elementsIntancesMap.put(selectedInstanceName, element.getValue());
-		}
-
-		CompositionPage.moveToInputsScreen();
-		int canvasElementsSize = vfCanvasManager.getCanvasElements().size();
-		AssertJUnit.assertTrue("Instances count is not as expected: " + canvasElementsSize, InputsPage.checkElementsCountInTable(canvasElementsSize));
-		
-		for (String element : elementsIntancesMap.keySet()){
-			String resourceName = elementsIntancesMap.get(element);
-			ResourceReqDetails resource = new ResourceReqDetails();
-			resource.setName(resourceName);
-			resource.setVersion("1.0");
-			resource.setResourceType(ResourceTypeEnum.VFC.toString());
-			RestResponse restResponse = RestCDUtils.getResource(resource, getUser());
-			Map<String, String> propertiesNameTypeJson = ResponseParser.getPropertiesNameType(restResponse);
-			
-			List<WebElement> propertyRowsFromTable = InputsPage.getInstancePropertiesList(element);
-			AssertJUnit.assertTrue("Some properties are missing in table. Instance name is : " + element, propertyRowsFromTable.size() == propertiesNameTypeJson.size());
-			VfVerificator.verifyVfInputs(element, propertiesNameTypeJson, propertyRowsFromTable);
-			
-			GeneralUIUtils.clickOnElementByText(element);
 		}
 		
 	}
@@ -399,26 +275,8 @@ public class Vf extends SetupCDTest {
 			String typeFromScreen = ToscaArtifactsPage.getArtifactType(i);
 			AssertJUnit.assertTrue(typeFromScreen.equals(ArtifactTypeEnum.TOSCA_CSAR.getType()) || typeFromScreen.equals(ArtifactTypeEnum.TOSCA_TEMPLATE.getType()));
 		}
-		
-		ToscaArtifactsPage.clickSubmitForTestingButton(vfMetaData.getName());
+		ToscaArtifactsPage.clickCertifyButton(vfMetaData.getName());
 		VfVerificator.verifyToscaArtifactsInfo(vfMetaData, getUser());
-	}
-	
-	@Test(enabled=false)
-	public void testDownload() throws Exception{
-//		ResourceReqDetails vfMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
-//		ResourceUIUtils.createResource(vfMetaData, getUser());
-//		
-//		final int numOfToscaArtifacts = 2;
-//		ResourceGeneralPage.getLeftMenu().moveToToscaArtifactsScreen();
-//		assertTrue(ToscaArtifactsPage.checkElementsCountInTable(numOfToscaArtifacts));
-//		GeneralUIUtils.clickOnElementByTestId("download-Tosca Model");
-//		System.out.println("download me");
-		
-		AttFtpClient attFtpClient = AttFtpClient.getInstance();
-		
-		File retrieveLastModifiedFileFromFTP = attFtpClient.retrieveLastModifiedFileFromFTP();
-		attFtpClient.deleteFilesFromFTPserver();
 	}
 	
 	@Test
@@ -430,16 +288,11 @@ public class Vf extends SetupCDTest {
 		
 		ResourceGeneralPage.clickCheckinButton(vfName);
 		GeneralUIUtils.findComponentAndClick(vfName);
-		ResourceGeneralPage.clickSubmitForTestingButton(vfName);
-		
-		reloginWithNewRole(UserRoleEnum.TESTER);
-		GeneralUIUtils.findComponentAndClick(vfName);
-		TesterOperationPage.certifyComponent(vfName);
+		ResourceGeneralPage.clickCertifyButton(vfName);
 		
 		vfMetaData.setVersion("1.0");
 		VfVerificator.verifyVFLifecycle(vfMetaData, getUser(), LifecycleStateEnum.CERTIFIED);
 		
-		reloginWithNewRole(UserRoleEnum.DESIGNER);
 		GeneralUIUtils.findComponentAndClick(vfName);
 		VfVerificator.verifyVfLifecycleInUI(LifeCycleStateEnum.CERTIFIED);
 	}
@@ -491,22 +344,7 @@ public class Vf extends SetupCDTest {
 	}
 	
 	// future removed from ui
-	@Test(enabled = false)
-	public void addPropertyInCompositionScreenTest() throws Exception{
-		ResourceReqDetails vfMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
-		ResourceUIUtils.createVF(vfMetaData, getUser());
-		
-		ResourceGeneralPage.getLeftMenu().moveToCompositionScreen();
-		
-		CompositionPage.showPropertiesAndAttributesTab();
-		List<PropertyTypeEnum> propertyList = Arrays.asList(PropertyTypeEnum.STRING, PropertyTypeEnum.INTEGER);
-		int propertiesCount = CompositionPage.getProperties().size();
-		for (PropertyTypeEnum prop : propertyList){
-			PropertiesUIUtils.addNewProperty(prop);
-		}
-		AssertJUnit.assertTrue(GeneralUIUtils.checkElementsCountInTable(propertiesCount + propertyList.size(), () -> CompositionPage.getProperties()));
-	}
-	
+
 	@Test
 	public void addDeploymentArtifactAndVerifyInCompositionScreen() throws Exception{		
 		ResourceReqDetails vfMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
@@ -541,14 +379,8 @@ public class Vf extends SetupCDTest {
 		vfMetaData.setVersion("0.2");
 		VfVerificator.verifyVFLifecycle(vfMetaData, getUser(), LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
 		VfVerificator.verifyVfLifecycleInUI(LifeCycleStateEnum.CHECKOUT);
-		
-		ResourceGeneralPage.clickSubmitForTestingButton(vfMetaData.getName());
-		
-		reloginWithNewRole(UserRoleEnum.TESTER);
-		GeneralUIUtils.findComponentAndClick(vfMetaData.getName());
-		TesterOperationPage.certifyComponent(vfMetaData.getName());
-		
-		reloginWithNewRole(UserRoleEnum.DESIGNER);
+
+		ResourceGeneralPage.clickCertifyButton(vfMetaData.getName());
 		GeneralUIUtils.findComponentAndClick(vfMetaData.getName());
 		ResourceGeneralPage.clickCheckoutButton();
 		
@@ -597,7 +429,7 @@ public class Vf extends SetupCDTest {
 
 		ResourceReqDetails atomicResourceMetaData = ElementFactory.getDefaultResourceByTypeNormTypeAndCatregory(ResourceTypeEnum.VFC, NormativeTypesEnum.ROOT, ResourceCategoryEnum.NETWORK_L2_3_ROUTERS, getUser());
 		ResourceUIUtils.importVfc(atomicResourceMetaData, filePath, fileName, getUser());
-		ResourceGeneralPage.clickSubmitForTestingButton(atomicResourceMetaData.getName());
+		ResourceGeneralPage.clickCheckinButton(atomicResourceMetaData.getName());
 		
 		ResourceReqDetails vfMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
 		ResourceUIUtils.createVF(vfMetaData, getUser());
@@ -607,7 +439,7 @@ public class Vf extends SetupCDTest {
 		canvasManager.createElementOnCanvas(atomicResourceMetaData.getName());
 		
 		try{
-			CompositionPage.clickSubmitForTestingButton(vfMetaData.getName());
+			CompositionPage.clickCertifyButton(vfMetaData.getName());
 			assert(false);
 		}
 		catch(Exception e){ 
@@ -643,25 +475,26 @@ public class Vf extends SetupCDTest {
 	public void exportToscaWithModulePropertiesVFTest() throws AWTException, Exception {
 		String vnfFile = "1-Vf-zrdm5bpxmc02-092017-(MOBILITY)_v2.0.zip";
 		ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource();//getResourceReqDetails(ComponentConfigurationTypeEnum.DEFAULT);
-		Pair<String, VendorSoftwareProductObject> vsp= OnboardingUiUtils.onboardAndValidate(resourceReqDetails, FileHandling.getVnfRepositoryPath(), vnfFile, getUser());
-		String vspName = vsp.left;
-		ResourceGeneralPage.clickSubmitForTestingButton(vsp.left);
+		VendorSoftwareProductObject vendorSoftwareProductObject= OnboardingUiUtils.onboardAndValidate(resourceReqDetails, FileHandling.getVnfRepositoryPath(), vnfFile, getUser());
+		String vspName = vendorSoftwareProductObject.getName();
+		ResourceGeneralPage.clickSubmitForTestingButton(vspName);
 		Resource resource = AtomicOperationUtils.getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, vspName, "0.1");
 		VfModuleVerificator.validateSpecificModulePropertiesFromRequest(resource);
 	}
 	
 	@Test
-	public void exportToscaWithModulePropertiesTemplateCheckVFTest() throws AWTException, Exception {
-		String vnfFile = "1-Vf-zrdm5bpxmc02-092017-(MOBILITY)_v2.0.zip";
-		ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource();//getResourceReqDetails(ComponentConfigurationTypeEnum.DEFAULT);
-		OnboardingUiUtils.onboardAndValidate(resourceReqDetails, FileHandling.getVnfRepositoryPath(), vnfFile, getUser());
-		ResourceGeneralPage.getLeftMenu().moveToToscaArtifactsScreen();
-		GeneralUIUtils.clickOnElementByTestId(ToscaArtifactsScreenEnum.TOSCA_MODEL.getValue());
-		File latestFilefromDir = FileHandling.getLastModifiedFileNameFromDir();
-		ToscaDefinition toscaDefinition = ToscaParserUtils.parseToscaMainYamlToJavaObjectByCsarLocation(latestFilefromDir);
-		VfModuleVerificator.validateSpecificModulePropertiesFromFile(toscaDefinition);
+	public void canvasTestJS() throws Exception{
+		ResourceReqDetails vfMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
+		ResourceUIUtils.createVF(vfMetaData, getUser());
+		
+		ResourceGeneralPage.getLeftMenu().moveToCompositionScreen();
+		CanvasManager canvasManager = CanvasManager.getCanvasManager();
+		CanvasElement computeElement = canvasManager.createElementOnCanvas(LeftPanelCanvasItems.COMPUTE);
+		CanvasElement portElement = canvasManager.createElementOnCanvas(LeftPanelCanvasItems.PORT);
+				
+		canvasManager.linkElements(computeElement.getElementNameOnCanvas(), portElement.getElementNameOnCanvas());
+				
 	}
-	
 
 
 	@Override

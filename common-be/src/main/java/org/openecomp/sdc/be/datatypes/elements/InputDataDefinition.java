@@ -22,12 +22,8 @@ package org.openecomp.sdc.be.datatypes.elements;
 
 import java.util.Map;
 
-public class InputDataDefinition extends PropertyDataDefinition{
+public class InputDataDefinition extends PropertyDataDefinition {
 	
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 8913646848974511031L;
 	String label;
 	Boolean hidden;
 	Boolean immutable;
@@ -38,21 +34,16 @@ public class InputDataDefinition extends PropertyDataDefinition{
 
 	public InputDataDefinition(Map<String, Object> pr) {
 		super(pr);
-		
 	}
 
 	public InputDataDefinition(InputDataDefinition p) {		
-		
 		super(p);
 		this.setLabel(p.getLabel());
 		this.setHidden( p.isHidden());
 		this.setImmutable( p.isImmutable());
-			
-		
 	}
 	
 	public InputDataDefinition(PropertyDataDefinition p) {		
-		
 		super(p);
 	}
 	
@@ -79,5 +70,4 @@ public class InputDataDefinition extends PropertyDataDefinition{
 	public void setLabel(String label) {
 		this.label = label;
 	}
-
 }

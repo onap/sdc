@@ -20,12 +20,8 @@
 
 package org.onap.sdc.generator;
 
-import org.onap.sdc.generator.data.GenerationData;
+import org.onap.sdc.generator.data.*;
 import org.onap.sdc.generator.intf.ArtifactGenerator;
-import org.onap.sdc.generator.data.Artifact;
-import org.onap.sdc.generator.data.ArtifactType;
-import org.onap.sdc.generator.data.GeneratorUtil;
-import org.onap.sdc.generator.data.GroupType;
 import org.onap.sdc.generator.intf.Generator;
 
 import java.util.Date;

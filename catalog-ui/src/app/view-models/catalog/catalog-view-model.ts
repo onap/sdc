@@ -20,11 +20,13 @@
 
 'use strict';
 import * as _ from "lodash";
-import {Component, IMainCategory, IGroup, IConfigStatuses, IAppMenu, IAppConfigurtaion, IUserProperties, ISubCategory} from "app/models";
+import {Component, IMainCategory, IGroup, IConfigStatuses, IAppMenu, IAppConfigurtaion, IUserProperties, ISubCategory, ICategoryBase} from "app/models";
 import {EntityService, CacheService} from "app/services";
 import {ComponentFactory, ResourceType, MenuHandler, ChangeLifecycleStateHandler} from "app/utils";
 import {UserService} from "../../ng2/services/user.service";
-
+import {ArchiveService} from "../../ng2/services/archive.service";
+import { ICatalogSelector, CatalogSelectorTypes } from "../../models/catalogSelector";
+import {IConfigStatus} from "../../models/app-config";
 
 interface Checkboxes {
     componentTypes:Array<string>;
@@ -38,16 +40,32 @@ interface CheckboxesFilter {
     // Categories
     selectedCategoriesModel:Array<string>;
     // Statuses
-    selectedStatuses:Array<string>;
+    selectedStatuses:Array<Array<string>>;
 }
 
 interface Gui {
     isLoading:boolean;
-    onResourceSubTypesClick:Function;
+    onComponentSubTypesClick:Function;
     onComponentTypeClick:Function;
     onCategoryClick:Function;
-    onSubcategoryClick:Function;
-    onGroupClick:Function;
+    onStatusClick:Function;
+    changeFilterTerm:Function;
+}
+
+interface IFilterParams {
+    components: string[];
+    categories: string[];
+    statuses: (string)[];
+    order: [string, boolean];
+    term: string;
+    active: boolean;
+}
+
+interface ICategoriesMap {
+    [key: string]: {
+        category: ICategoryBase,
+        parent: ICategoryBase
+    }
 }
 
 export interface ICatalogViewModelScope extends ng.IScope {
@@ -71,13 +89,22 @@ export interface ICatalogViewModelScope extends ng.IScope {
     //this is for UI paging
     numberOfItemToDisplay:number;
     isAllItemDisplay:boolean;
-
+    catalogFilteredItemsNum:number;
     changeLifecycleState(entity:any, state:string):void;
     sectionClick (section:string):void;
     order(sortBy:string):void;
-    getNumOfElements(num:number):string;
+    getElementFoundTitle(num:number):string;
     goToComponent(component:Component):void;
     raiseNumberOfElementToDisplay():void;
+
+    selectedCatalogItem: ICatalogSelector;
+    catalogSelectorItems: Array<ICatalogSelector>;
+    showCatalogSelector: boolean;
+    catalogAllItems:Array<Component>; /* fake data */
+    elementFoundTitle: string;
+    elementTypeTitle: string;
+
+    selectLeftSwitchItem (item: ICatalogSelector): void;
 }
 
 export class CatalogViewModel {
@@ -93,8 +120,19 @@ export class CatalogViewModel {
         'Sdc.Services.CacheService',
         'ComponentFactory',
         'ChangeLifecycleStateHandler',
-        'MenuHandler'
+        'MenuHandler',
+        'ArchiveServiceNg2'
     ];
+
+    private defaultFilterParams:IFilterParams = {
+        components: [],
+        categories: [],
+        statuses: [],
+        order: ['lastUpdateDate', true],
+        term: '',
+        active: true
+    };
+    private categoriesMap:ICategoriesMap;
 
     constructor(private $scope:ICatalogViewModelScope,
                 private $filter:ng.IFilterService,
@@ -107,64 +145,112 @@ export class CatalogViewModel {
                 private cacheService:CacheService,
                 private ComponentFactory:ComponentFactory,
                 private ChangeLifecycleStateHandler:ChangeLifecycleStateHandler,
-                private MenuHandler:MenuHandler) {
+                private MenuHandler:MenuHandler,
+                private ArchiveService:ArchiveService
+            ) {
 
 
+        this.initLeftSwitch();
         this.initScopeMembers();
+        this.loadFilterParams(); 
         this.initCatalogData(); // Async task to get catalog from server.
         this.initScopeMethods();
     }
 
-    private initCatalogData = ():void => {
-        let onSuccess = (followedResponse:Array<Component>):void => {
-            this.$scope.catalogFilterdItems = followedResponse;
-            this.$scope.isAllItemDisplay = this.$scope.numberOfItemToDisplay >= this.$scope.catalogFilterdItems.length;
-            this.$scope.categories = this.cacheService.get('serviceCategories').concat(this.cacheService.get('resourceCategories'));
-            this.$scope.gui.isLoading = false;
-        };
 
-        let onError = ():void => {
-            console.info('Failed to load catalog CatalogViewModel::initCatalog');
-            this.$scope.gui.isLoading = false;
-        };
-        this.EntityService.getCatalog().then(onSuccess, onError);
+    private initLeftSwitch = ():void => {
+        this.$scope.showCatalogSelector = false;
+
+        this.$scope.catalogSelectorItems = [
+            {value: CatalogSelectorTypes.Active, title: "Active Items", header: "Active"},
+            {value: CatalogSelectorTypes.Archive, title: "Archive", header: "Archived"}
+        ];
+        // set active items is default
+        this.$scope.selectedCatalogItem = this.$scope.catalogSelectorItems[0];
     };
 
+    private initCatalogData = ():void => {
+        if(this.$scope.selectedCatalogItem.value === CatalogSelectorTypes.Archive){
+            this.getArchiveCatalogItems();
+        } else {
+            this.getActiveCatalogItems();
+        }
+    };
 
     private initScopeMembers = ():void => {
         // Gui init
         this.$scope.gui = <Gui>{};
-        this.$scope.gui.isLoading = true;
         this.$scope.numberOfItemToDisplay = 0;
-        //this.$scope.categories = this.cacheService.get('categoriesMap');
+        this.$scope.categories = this.cacheService.get('serviceCategories').concat(this.cacheService.get('resourceCategories')).map((cat) => <IMainCategory>cat);
         this.$scope.sdcMenu = this.sdcMenu;
         this.$scope.confStatus = this.sdcMenu.statuses;
         this.$scope.expandedSection = ["type", "category", "status"];
         this.$scope.user = this.userService.getLoggedinUser();
         this.$scope.catalogMenuItem = this.sdcMenu.catalogMenuItem;
-        this.$scope.version = this.cacheService.get('version');
-        this.$scope.sortBy = 'lastUpdateDate';
-        this.$scope.reverse = true;
-
 
         // Checklist init
         this.$scope.checkboxes = <Checkboxes>{};
         this.$scope.checkboxes.componentTypes = ['Resource', 'Service'];
         this.$scope.checkboxes.resourceSubTypes = ['VF', 'VFC', 'CR', 'PNF', 'CP', 'VL'];
+        this.categoriesMap = this.initCategoriesMap();
 
+        this.initCheckboxesFilter();
+        this.$scope.version = this.cacheService.get('version');
+        this.$scope.sortBy = 'lastUpdateDate';
+        this.$scope.reverse = true;
+
+    };
+
+    private initCheckboxesFilter() {
         // Checkboxes filter init
         this.$scope.checkboxesFilter = <CheckboxesFilter>{};
         this.$scope.checkboxesFilter.selectedComponentTypes = [];
         this.$scope.checkboxesFilter.selectedResourceSubTypes = [];
         this.$scope.checkboxesFilter.selectedCategoriesModel = [];
         this.$scope.checkboxesFilter.selectedStatuses = [];
+    }
 
-        //      this.$scope.isAllItemDisplay = this.$scope.numberOfItemToDisplay >= this.$scope.catalogFilterdItems.length;
-    };
+    private initCategoriesMap(categoriesList?:(ICategoryBase)[], parentCategory:ICategoryBase=null): ICategoriesMap {
+        categoriesList = (categoriesList) ? categoriesList : this.$scope.categories;
+
+        // Init categories map
+        return categoriesList.reduce((acc, cat) => {
+            acc[cat.uniqueId] = {
+                category: cat,
+                parent: parentCategory
+            };
+            const catChildren = ((<IMainCategory>cat).subcategories)
+                ? (<IMainCategory>cat).subcategories
+                : (((<ISubCategory>cat).groupings)
+                    ? (<ISubCategory>cat).groupings
+                    : null);
+            if (catChildren) {
+                Object.assign(acc, this.initCategoriesMap(catChildren, cat));
+            }
+            return acc;
+        }, <ICategoriesMap>{});
+    }
 
     private initScopeMethods = ():void => {
-        this.$scope.sectionClick = (section:string):void => {
-            let index:number = this.$scope.expandedSection.indexOf(section);
+        this.$scope.selectLeftSwitchItem = (item: ICatalogSelector): void => {
+
+            if (this.$scope.selectedCatalogItem.value !== item.value) {
+                this.$scope.selectedCatalogItem = item;
+                switch (item.value) {
+                    case CatalogSelectorTypes.Active:
+                        this.getActiveCatalogItems(true);
+                        break;
+
+                    case CatalogSelectorTypes.Archive:
+                        this.getArchiveCatalogItems(true);
+                        break;
+                }
+                this.changeFilterParams({active: (item.value === CatalogSelectorTypes.Active)})
+            }
+        };
+
+        this.$scope.sectionClick = (section: string): void => {
+            let index: number = this.$scope.expandedSection.indexOf(section);
             if (index !== -1) {
                 this.$scope.expandedSection.splice(index, 1);
             } else {
@@ -173,13 +259,16 @@ export class CatalogViewModel {
         };
 
 
-        this.$scope.order = (sortBy:string):void => {//default sort by descending last update. default for alphabetical = ascending
-            this.$scope.reverse = (this.$scope.sortBy === sortBy) ? !this.$scope.reverse : (sortBy === 'lastUpdateDate') ? true : false;
-            this.$scope.sortBy = sortBy;
+        this.$scope.order = (sortBy: string): void => {//default sort by descending last update. default for alphabetical = ascending
+            this.changeFilterParams({
+                order: (this.$scope.filterParams.order[0] === sortBy)
+                    ? [sortBy, !this.$scope.filterParams.order[1]]
+                    : [sortBy, sortBy === 'lastUpdateDate']
+            });
         };
 
 
-        this.$scope.goToComponent = (component:Component):void => {
+        this.$scope.goToComponent = (component: Component): void => {
             this.$scope.gui.isLoading = true;
             this.$state.go('workspace.general', {id: component.uniqueId, type: component.componentType.toLowerCase()});
         };
@@ -188,11 +277,11 @@ export class CatalogViewModel {
         // Will print the number of elements found in catalog
         this.$scope.getNumOfElements = (num:number):string => {
             if (!num || num === 0) {
-                return "No Elements found";
+                return `No <b>${this.$scope.selectedCatalogItem.header}</b> Elements found`;
             } else if (num === 1) {
-                return "1 Element found";
+                return `1 <b>${this.$scope.selectedCatalogItem.header}</b> Element found`;
             } else {
-                return num + " Elements found";
+                return num + ` <b>${this.$scope.selectedCatalogItem.header}</b> Elements found`;
             }
         };
 
@@ -200,124 +289,392 @@ export class CatalogViewModel {
          * Select | unselect sub resource when resource is clicked | unclicked.
          * @param type
          */
-        this.$scope.gui.onComponentTypeClick = (type:string):void => {
-            if (type === 'Resource') {
-                if (this.$scope.checkboxesFilter.selectedComponentTypes.indexOf('Resource') === -1) {
-                    // If the resource was not selected, unselect all childs.
-                    this.$scope.checkboxesFilter.selectedResourceSubTypes = [];
-                } else {
-                    // If the resource was selected, select all childs
-                    this.$scope.checkboxesFilter.selectedResourceSubTypes = angular.copy(this.$scope.checkboxes.resourceSubTypes);
-                }
+        this.$scope.gui.onComponentTypeClick = (compType: string, checked?: boolean): void => {
+            let components = angular.copy(this.$scope.filterParams.components);
+            const compIdx = components.indexOf(compType);
+            checked = (checked !== undefined) ? checked : compIdx === -1;
+            if (checked && compIdx === -1) {
+                components.push(compType);
+                components = this.cleanSubsFromList(components);
+            } else if (!checked && compIdx !== -1) {
+                components.splice(compIdx, 1);
             }
+            this.changeFilterParams({
+                components: components
+            });
         };
 
         /**
          * Selecting | unselect resources when sub resource is clicked | unclicked.
          */
-        this.$scope.gui.onResourceSubTypesClick = ():void => {
-            if (this.$scope.checkboxesFilter.selectedResourceSubTypes && this.$scope.checkboxesFilter.selectedResourceSubTypes.length === this.$scope.checkboxes.resourceSubTypes.length) {
-                this.$scope.checkboxesFilter.selectedComponentTypes.push('Resource');
-            } else {
-                this.$scope.checkboxesFilter.selectedComponentTypes = _.without(this.$scope.checkboxesFilter.selectedComponentTypes, 'Resource');
-            }
-        };
+        this.$scope.gui.onComponentSubTypesClick = (compSubType: string, compType: string, checked?: boolean): void => {
+            const componentSubTypesCheckboxes = this.$scope.checkboxes[compType.toLowerCase() + 'SubTypes'];
+            if (componentSubTypesCheckboxes) {
+                let components = angular.copy(this.$scope.filterParams.components);
+                let componentSubTypes = components.filter((st) => st.startsWith(compType + '.'));
 
-        this.$scope.gui.onCategoryClick = (category:IMainCategory):void => {
-            // Select | Unselect all childs
-            if (this.isCategorySelected(category.uniqueId)) {
-                this.$scope.checkboxesFilter.selectedCategoriesModel = this.$scope.checkboxesFilter.selectedCategoriesModel.concat(angular.copy(_.map(category.subcategories, (item) => {
-                    return item.uniqueId;
-                })));
-                if (category.subcategories) {
-                    category.subcategories.forEach((sub:ISubCategory)=> { // Loop on all selected subcategories and mark the childrens
-                        this.$scope.checkboxesFilter.selectedCategoriesModel = this.$scope.checkboxesFilter.selectedCategoriesModel.concat(angular.copy(_.map(sub.groupings, (item) => {
-                            return item.uniqueId;
-                        })));
-                    });
+                const compSubTypeValue = compType + '.' + compSubType;
+                const compSubTypeValueIdx = components.indexOf(compSubTypeValue);
+                checked = (checked !== undefined) ? checked : compSubTypeValueIdx === -1;
+                if (checked && compSubTypeValueIdx === -1) {
+                    components.push(compSubTypeValue);
+                    componentSubTypes.push(compSubTypeValue);
+
+                    // if all sub types are checked, then check the main component type
+                    if (componentSubTypes.length === componentSubTypesCheckboxes.length) {
+                        this.$scope.gui.onComponentTypeClick(compType, true);
+                        return;
+                    }
+                } else if (!checked) {
+                    const compIdx = components.indexOf(compType);
+                    // if sub type exists, then remove it
+                    if (compSubTypeValueIdx !== -1) {
+                        components.splice(compSubTypeValueIdx, 1);
+                    }
+                    // else, if sub type doesn't exists, but its parent main component type exists,
+                    // then remove the main type and push all sub types except the current
+                    else if (compIdx !== -1) {
+                        components.splice(compIdx, 1);
+                        componentSubTypesCheckboxes.forEach((st) => {
+                            if (st !== compSubType) {
+                                components.push(compType + '.' + st);
+                            }
+                        });
+                    }
                 }
-            } else {
-                this.$scope.checkboxesFilter.selectedCategoriesModel = _.difference(this.$scope.checkboxesFilter.selectedCategoriesModel, _.map(category.subcategories, (item) => {
-                    return item.uniqueId;
-                }));
-                if (category.subcategories) {
-                    category.subcategories.forEach((sub:ISubCategory)=> { // Loop on all selected subcategories and un mark the childrens
-                        this.$scope.checkboxesFilter.selectedCategoriesModel = _.difference(this.$scope.checkboxesFilter.selectedCategoriesModel, _.map(sub.groupings, (item) => {
-                            return item.uniqueId;
-                        }));
-                    });
+
+                this.changeFilterParams({
+                    components
+                });
+            }
+        };
+
+        this.$scope.gui.onCategoryClick = (category: ICategoryBase, checked?: boolean): void => {
+            let categories: string[] = angular.copy(this.$scope.filterParams.categories);
+            let parentCategory: ICategoryBase = this.categoriesMap[category.uniqueId].parent;
+
+            // add the category to selected categories list
+            const categoryIdx = categories.indexOf(category.uniqueId);
+            checked = (checked !== undefined) ? checked : categoryIdx === -1;
+            if (checked && categoryIdx === -1) {
+                categories.push(category.uniqueId);
+
+                // check if all parent category children are checked, then check the parent category
+                if (parentCategory) {
+                    if (this.getParentCategoryChildren(parentCategory).every((ch) => categories.indexOf(ch.uniqueId) !== -1)) {
+                        this.$scope.gui.onCategoryClick(parentCategory, true);
+                        return;
+                    }
+                }
+
+                categories = this.cleanSubsFromList(categories);
+            } else if (!checked) {
+                // if category exists, then remove it
+                if (categoryIdx !== -1) {
+                    categories.splice(categoryIdx, 1);
+                }
+                // else, if category doesn't exists, but one of its parent categories exists,
+                // then remove that parent category and push all its children categories except the current
+                else {
+                    let prevParentCategory: ICategoryBase = category;
+                    let additionalCategories: string[] = [];
+                    while (parentCategory) {
+                        // add parent category children to list for replacing the parent category (if will be found later)
+                        additionalCategories = additionalCategories.concat(
+                            this.getParentCategoryChildren(parentCategory)
+                                .filter((ch) => ch.uniqueId !== prevParentCategory.uniqueId)
+                                .map((ch) => ch.uniqueId));
+
+                        const parentCategoryIdx = categories.indexOf(parentCategory.uniqueId);
+                        if (parentCategoryIdx !== -1) {
+                            categories.splice(parentCategoryIdx, 1);
+                            categories = categories.concat(additionalCategories);
+                            break;
+                        } else {
+                            prevParentCategory = parentCategory;
+                            parentCategory = this.categoriesMap[parentCategory.uniqueId].parent;
+                        }
+                    }
                 }
             }
+
+            this.changeFilterParams({
+                categories
+            });
         };
 
-        this.$scope.gui.onSubcategoryClick = (category:IMainCategory, subCategory:ISubCategory):void => {
-            // Select | Unselect all childs
-            if (this.isCategorySelected(subCategory.uniqueId)) {
-                this.$scope.checkboxesFilter.selectedCategoriesModel = this.$scope.checkboxesFilter.selectedCategoriesModel.concat(angular.copy(_.map(subCategory.groupings, (item) => {
-                    return item.uniqueId;
-                })));
-            } else {
-                this.$scope.checkboxesFilter.selectedCategoriesModel = _.difference(this.$scope.checkboxesFilter.selectedCategoriesModel, _.map(subCategory.groupings, (item) => {
-                    return item.uniqueId;
-                }));
+        this.$scope.gui.onStatusClick = (statusKey: string, status: IConfigStatus, checked?: boolean) => {
+            const statuses = angular.copy(this.$scope.filterParams.statuses);
+
+            // add the status key to selected statuses list
+            const statusIdx = statuses.indexOf(statusKey);
+            checked = (checked !== undefined) ? checked : statusIdx === -1;
+            if (checked && statusIdx === -1) {
+                statuses.push(statusKey);
+            } else if (!checked && statusIdx !== -1) {
+                statuses.splice(statusIdx, 1);
             }
 
-            // Mark | Un mark the parent when all childs selected.
-            if (this.areAllCategoryChildsSelected(category)) {
-                // Add the category to checkboxesFilter.selectedCategoriesModel
-                this.$scope.checkboxesFilter.selectedCategoriesModel.push(category.uniqueId);
-            } else {
-                this.$scope.checkboxesFilter.selectedCategoriesModel = _.without(this.$scope.checkboxesFilter.selectedCategoriesModel, category.uniqueId);
-            }
-
+            this.changeFilterParams({
+                statuses
+            });
         };
 
-        this.$scope.raiseNumberOfElementToDisplay = ():void => {
+        this.$scope.gui.changeFilterTerm = (filterTerm: string) => {
+            this.changeFilterParams({
+                term: filterTerm
+            });
+        };
+
+        this.$scope.raiseNumberOfElementToDisplay = (): void => {
             this.$scope.numberOfItemToDisplay = this.$scope.numberOfItemToDisplay + 35;
             if (this.$scope.catalogFilterdItems) {
                 this.$scope.isAllItemDisplay = this.$scope.numberOfItemToDisplay >= this.$scope.catalogFilterdItems.length;
             }
         };
 
-        this.$scope.gui.onGroupClick = (subCategory:ISubCategory):void => {
-            // Mark | Un mark the parent when all childs selected.
-            if (this.areAllSubCategoryChildsSelected(subCategory)) {
-                // Add the category to checkboxesFilter.selectedCategoriesModel
-                this.$scope.checkboxesFilter.selectedCategoriesModel.push(subCategory.uniqueId);
-            } else {
-                this.$scope.checkboxesFilter.selectedCategoriesModel = _.without(this.$scope.checkboxesFilter.selectedCategoriesModel, subCategory.uniqueId);
+    }
+
+    private getAllCategoryChildrenIdsFlat(category:ICategoryBase) {
+        let catChildrenIds = [];
+        if ((<IMainCategory>category).subcategories) {
+            catChildrenIds = (<IMainCategory>category).subcategories.reduce((acc, scat) => {
+                    return acc.concat(this.getAllCategoryChildrenIdsFlat(scat));
+                }, (<IMainCategory>category).subcategories.map((scat) => scat.uniqueId));
+        }
+        else if ((<ISubCategory>category).groupings) {
+            catChildrenIds = (<ISubCategory>category).groupings.map((g) => g.uniqueId);
+        }
+        return catChildrenIds;
+    }
+
+    private getParentCategoryChildren(parentCategory:ICategoryBase): ICategoryBase[] {
+        if ((<IMainCategory>parentCategory).subcategories) {
+            return (<IMainCategory>parentCategory).subcategories;
+        } else if ((<ISubCategory>parentCategory).groupings) {
+            return (<ISubCategory>parentCategory).groupings;
+        }
+        return [];
+    }
+
+    private cleanSubsFromList(list:Array<string>, delimiter:string='.', removeSubsList?:Array<string>) {
+        let curRemoveSubsList = (removeSubsList || list).slice().sort();  // by default remove any children of any item in list
+        while (curRemoveSubsList.length) {
+            const curRemoveSubItem = curRemoveSubsList.shift();
+            const removeSubListFilter = (x) => !x.startsWith(curRemoveSubItem + delimiter);
+            list = list.filter(removeSubListFilter);
+            curRemoveSubsList = curRemoveSubsList.filter(removeSubListFilter);
+        }
+        return list;
+    }
+
+    private applyFilterParamsToView(filterParams:IFilterParams) {
+        // reset checkboxes filter
+        this.initCheckboxesFilter();
+
+        this.applyFilterParamsComponents(filterParams);
+        this.applyFilterParamsCategories(filterParams);
+        this.applyFilterParamsStatuses(filterParams);
+        this.applyFilterParamsOrder(filterParams);
+        this.applyFilterParamsTerm(filterParams);
+    }
+
+    private applyFilterParamsComponents(filterParams:IFilterParams) {
+        const componentList = [];
+        const componentSubTypesLists = {};
+        filterParams.components.forEach((compStr) => {
+            const compWithSub = compStr.split('.', 2);
+            const mainComp = compWithSub[0];
+            const subComp = compWithSub[1];
+            if (!subComp) {  // main component type
+                componentList.push(mainComp);
+
+                // if component type has sub types list, then add all component sub types
+                const checkboxesSubTypeKey = mainComp.toLowerCase() + 'SubTypes';
+                if (this.$scope.checkboxes.hasOwnProperty(checkboxesSubTypeKey)) {
+                    componentSubTypesLists[mainComp] = angular.copy(this.$scope.checkboxes[checkboxesSubTypeKey]);
+                }
+            } else {  // sub component type
+                // init component sub types list
+                if (!componentSubTypesLists.hasOwnProperty(mainComp)) {
+                    componentSubTypesLists[mainComp] = [];
+                }
+                // add sub type to list if not exist
+                if (componentSubTypesLists[mainComp].indexOf(subComp) === -1) {
+                    componentSubTypesLists[mainComp].push(subComp);
+                }
             }
+        });
+        this.$scope.checkboxesFilter.selectedComponentTypes = componentList;
+        Object.keys(componentSubTypesLists).forEach((tKey) => {
+            const compSelectedSubTypeKey = 'selected' + tKey + 'SubTypes';
+            if (this.$scope.checkboxesFilter.hasOwnProperty(compSelectedSubTypeKey)) {
+                this.$scope.checkboxesFilter[compSelectedSubTypeKey] = componentSubTypesLists[tKey];
+            }
+        });
+
+        let selectedCatalogIndex = filterParams.active ? CatalogSelectorTypes.Active : CatalogSelectorTypes.Archive;
+        this.$scope.selectedCatalogItem = this.$scope.catalogSelectorItems[selectedCatalogIndex];
+        
+    }
+
+    private applyFilterParamsCategories(filterParams:IFilterParams) {
+        this.$scope.checkboxesFilter.selectedCategoriesModel = filterParams.categories.reduce((acc, c) => {
+            acc.push(c);
+            const cat = this.categoriesMap[c].category;
+            if (cat) {
+                acc = acc.concat(this.getAllCategoryChildrenIdsFlat(cat));
+            }
+            return acc;
+        }, []);
+    }
+
+    private getActiveCatalogItems(forceReload?: boolean): void {
+
+        if (forceReload || this.componentShouldReload()) {
+            this.$scope.gui.isLoading = true;
+            let onSuccess = (followedResponse:Array<Component>):void => {
+                this.updateCatalogItems(followedResponse);
+                this.$scope.gui.isLoading = false;
+                this.cacheService.set('breadcrumbsComponentsState', this.$state.current.name);  //catalog
+                this.cacheService.set('breadcrumbsComponents', followedResponse);
+            };
+
+            let onError = ():void => {
+                console.info('Failed to load catalog CatalogViewModel::getActiveCatalogItems');
+                this.$scope.gui.isLoading = false;
+            };
+            this.EntityService.getCatalog().then(onSuccess, onError);
+        } else {
+            let cachedComponents = this.cacheService.get('breadcrumbsComponents');
+            this.updateCatalogItems(cachedComponents);
+        }
+    }
+
+    private getArchiveCatalogItems(forceReload?: boolean): void {
+        if(forceReload || !this.cacheService.contains("archiveComponents")) {
+            this.$scope.gui.isLoading = true;
+            let onSuccess = (followedResponse:Array<Component>):void => {
+                this.cacheService.set("archiveComponents", followedResponse);
+                this.updateCatalogItems(followedResponse);
+                this.$scope.gui.isLoading = false;
+            };
+    
+            let onError = ():void => {
+                console.info('Failed to load catalog CatalogViewModel::getArchiveCatalogItems');
+                this.$scope.gui.isLoading = false;
+            };
+    
+            this.ArchiveService.getArchiveCatalog().subscribe(onSuccess, onError);
+        } else {
+            let archiveCache = this.cacheService.get("archiveComponents");
+            this.updateCatalogItems(archiveCache);
+        }
+
+    }
+
+    private updateCatalogItems = (items:Array<Component>):void => {
+        this.$scope.catalogFilterdItems = items;
+        this.$scope.isAllItemDisplay = this.$scope.numberOfItemToDisplay >= this.$scope.catalogFilterdItems.length;
+        this.$scope.categories = this.cacheService.get('serviceCategories').concat(this.cacheService.get('resourceCategories'));
+    }
+
+    private componentShouldReload = ():boolean => {
+        let breadcrumbsValid: boolean = (this.$state.current.name === this.cacheService.get('breadcrumbsComponentsState') && this.cacheService.contains('breadcrumbsComponents'));
+        return !breadcrumbsValid || this.isDefaultFilter();
+    }
+
+    private isDefaultFilter = (): boolean => {
+        return angular.equals(this.defaultFilterParams, this.$scope.filterParams);
+    }
+
+    private applyFilterParamsStatuses(filterParams: IFilterParams) {
+        this.$scope.checkboxesFilter.selectedStatuses = filterParams.statuses.reduce((acc, stKey:string) => {
+            const status = this.$scope.confStatus[stKey];
+            if (status) {
+                acc.push(status.values);
+            }
+            return acc;
+        }, []);
+    }
+
+    private applyFilterParamsOrder(filterParams: IFilterParams) {
+        this.$scope.sortBy = filterParams.order[0];
+        this.$scope.reverse = filterParams.order[1];
+    }
+
+    private applyFilterParamsTerm(filterParams: IFilterParams) {
+        this.$scope.search = {
+            filterTerm: filterParams.term
         };
+    }
 
-
-    };
-
-    private areAllCategoryChildsSelected = (category:IMainCategory):boolean => {
-        if (!category.subcategories) {
-            return false;
-        }
-        let allIds = _.map(category.subcategories, (sub:ISubCategory)=> {
-            return sub.uniqueId;
+    private loadFilterParams() {
+        const params = this.$state.params;
+        this.$scope.filterParams = angular.copy(this.defaultFilterParams);
+        Object.keys(params).forEach((k) => {
+            if (!angular.isUndefined(params[k])) {
+                let newVal;
+                let filterKey = k.substr('filter.'.length);
+                switch (k) {
+                    case 'filter.components':
+                    case 'filter.categories':
+                        newVal = _.uniq(params[k].split(','));
+                        newVal = this.cleanSubsFromList(newVal);
+                        break;
+                    case 'filter.statuses':
+                        newVal = _.uniq(params[k].split(','));
+                        break;
+                    case 'filter.order':
+                        newVal = params[k].startsWith('-') ? [params[k].substr(1), true] : [params[k], false];
+                        break;
+                    case 'filter.term':
+                        newVal = params[k];
+                        break;
+                    case 'filter.active':
+                        newVal = (params[k] === "true" || params[k] === true);
+                        break;
+                    default:
+                        // unknown filter key
+                        filterKey = null;
+                }
+                if (filterKey) {
+                    this.$scope.filterParams[filterKey] = newVal;
+                }
+            }
         });
-        let total = _.intersection(this.$scope.checkboxesFilter.selectedCategoriesModel, allIds);
-        return total.length === category.subcategories.length ? true : false;
-    };
+        // re-set filter params with valid values
+        this.applyFilterParamsToView(this.$scope.filterParams);
 
-    private areAllSubCategoryChildsSelected = (subCategory:ISubCategory):boolean => {
-        if (!subCategory.groupings) {
-            return false;
-        }
-        let allIds = _.map(subCategory.groupings, (group:IGroup)=> {
-            return group.uniqueId;
+    }
+
+    private changeFilterParams(changedFilterParams) {
+        const newParams = {};
+        Object.keys(changedFilterParams).forEach((k) => {
+            let newVal;
+            switch (k) {
+                case 'components':
+                case 'categories':
+                case 'statuses':
+                    newVal = changedFilterParams[k] && changedFilterParams[k].length ? changedFilterParams[k].join(',') : null;
+                    break;
+                case 'order':
+                    newVal = (changedFilterParams[k][1] ? '-' : '') + changedFilterParams[k][0];
+                    break;
+                case 'term':
+                    newVal = changedFilterParams[k] ? changedFilterParams[k] : null;
+                    break;
+                case 'active':
+                    newVal = changedFilterParams[k];
+                    break;
+                default:
+                    return;
+            }
+            this.$scope.filterParams[k] = changedFilterParams[k];
+            newParams['filter.' + k] = newVal;
         });
-        let total = _.intersection(this.$scope.checkboxesFilter.selectedCategoriesModel, allIds);
-        return total.length === subCategory.groupings.length ? true : false;
-    };
-
-    private isCategorySelected = (uniqueId:string):boolean => {
-        if (this.$scope.checkboxesFilter.selectedCategoriesModel.indexOf(uniqueId) !== -1) {
-            return true;
-        }
-        return false;
-    };
+        this.$state.go('.', newParams, {location: 'replace', notify: false}).then(() => {
+            this.applyFilterParamsToView(this.$scope.filterParams);
+        });
+    }
 }

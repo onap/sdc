@@ -20,12 +20,8 @@
 
 package org.openecomp.sdc.ci.tests.execute.attribute;
 
-import static org.junit.Assert.assertEquals;
-import static org.openecomp.sdc.common.datastructure.FunctionalInterfaces.swallowException;
-
-import java.io.File;
-import java.util.function.Function;
-
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import org.junit.Rule;
 import org.junit.rules.TestName;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
@@ -41,8 +37,11 @@ import org.openecomp.sdc.ci.tests.utils.general.AtomicOperationUtils;
 import org.openecomp.sdc.ci.tests.utils.rest.BaseRestUtils;
 import org.testng.annotations.Test;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import java.io.File;
+import java.util.function.Function;
+
+import static org.junit.Assert.assertEquals;
+import static org.openecomp.sdc.common.datastructure.FunctionalInterfaces.swallowException;
 
 public class ComponentInstanceAttributeTest extends ComponentBaseTest {
 

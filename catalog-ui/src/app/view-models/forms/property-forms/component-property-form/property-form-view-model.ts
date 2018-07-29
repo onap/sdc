@@ -23,8 +23,9 @@ import * as _ from "lodash";
 import {
     PROPERTY_TYPES, ModalsHandler, ValidationUtils, PROPERTY_VALUE_CONSTRAINTS, FormState, PROPERTY_DATA} from "app/utils";
 import {DataTypesService} from "app/services";
-import {PropertyModel, DataTypesMap, Component} from "app/models";
+import {PropertyModel, DataTypesMap, Component, GroupInstance, PolicyInstance, PropertyBEModel} from "app/models";
 import {ComponentInstance} from "../../../../models/componentsInstances/componentInstance";
+import { ComponentInstanceServiceNg2 } from "app/ng2/services/component-instance-services/component-instance.service";
 
 export interface IEditPropertyModel {
     property:PropertyModel;
@@ -86,7 +87,10 @@ export class PropertyFormViewModel {
         'ModalsHandler',
         'filteredProperties',
         '$timeout',
-        'isPropertyValueOwner'
+        'isPropertyValueOwner',
+        'propertyOwnerType',
+        'propertyOwnerId',
+        'ComponentInstanceServiceNg2'
     ];
 
     private formState:FormState;
@@ -104,7 +108,10 @@ export class PropertyFormViewModel {
                 private ModalsHandler:ModalsHandler,
                 private filteredProperties:Array<PropertyModel>,
                 private $timeout:ng.ITimeoutService,
-                private isPropertyValueOwner:boolean) {
+                private isPropertyValueOwner:boolean,
+                private propertyOwnerType:string,
+                private propertyOwnerId:string,
+                private ComponentInstanceServiceNg2: ComponentInstanceServiceNg2) {
 
         this.formState = angular.isDefined(property.name) ? FormState.UPDATE : FormState.CREATE;
         this.initScope();
@@ -194,15 +201,17 @@ export class PropertyFormViewModel {
         this.$scope.isLastProperty = this.$scope.currentPropertyIndex == (this.filteredProperties.length - 1);
         this.$scope.dataTypes = this.DataTypesService.getAllDataTypes();
         this.$scope.isPropertyValueOwner = this.isPropertyValueOwner;
+        this.$scope.propertyOwnerType = this.propertyOwnerType;
         this.initEditPropertyModel();
 
         //check if property of VnfConfiguration
         this.$scope.isVnfConfiguration = false;
-        if(angular.isArray(this.component.componentInstances)) {
+        if(this.propertyOwnerType == "component" && angular.isArray(this.component.componentInstances)) {
+
             var componentPropertyOwner:ComponentInstance = this.component.componentInstances.find((ci:ComponentInstance) => {
                 return ci.uniqueId === this.property.resourceInstanceUniqueId;
             });
-            if (componentPropertyOwner.componentName === 'vnfConfiguration') {
+            if (componentPropertyOwner && componentPropertyOwner.componentName === 'vnfConfiguration') {
                 this.$scope.isVnfConfiguration = true;
             }
         }
@@ -252,21 +261,30 @@ export class PropertyFormViewModel {
                 }
             };
 
-            //in case we have uniqueId we call update method
-            if (this.$scope.isPropertyValueOwner) {
-                if (!this.$scope.editPropertyModel.property.simpleType && !this.$scope.isSimpleType(property.type)) {
-                    let myValueString:string = JSON.stringify(this.$scope.myValue);
-                    property.value = myValueString;
-                }
-                this.component.updateInstanceProperties(property.resourceInstanceUniqueId, [property]).then((propertiesFromBE) => onPropertySuccess(propertiesFromBE[0]), onPropertyFaild);
+            //Not clean, but doing this as a temporary fix until we update the property right panel modals
+            if(this.propertyOwnerType == "group"){
+                this.ComponentInstanceServiceNg2.updateComponentGroupInstanceProperties(this.component, this.propertyOwnerId, [property])
+                    .subscribe((propertiesFromBE) => { onPropertySuccess(<PropertyModel>propertiesFromBE[0])}, error => onPropertyFaild);
+            } else if(this.propertyOwnerType == "policy"){
+                this.ComponentInstanceServiceNg2.updateComponentPolicyInstanceProperties(this.component, this.propertyOwnerId, [property])
+                    .subscribe((propertiesFromBE) => { onPropertySuccess(<PropertyModel>propertiesFromBE[0])}, error => onPropertyFaild);
             } else {
-                if (!this.$scope.editPropertyModel.property.simpleType && !this.$scope.isSimpleType(property.type)) {
-                    let myValueString:string = JSON.stringify(this.$scope.myValue);
-                    property.defaultValue = myValueString;
+                //in case we have uniqueId we call update method
+                if (this.$scope.isPropertyValueOwner) {
+                    if (!this.$scope.editPropertyModel.property.simpleType && !this.$scope.isSimpleType(property.type)) {
+                        let myValueString:string = JSON.stringify(this.$scope.myValue);
+                        property.value = myValueString;
+                    }
+                    this.component.updateInstanceProperties(property.resourceInstanceUniqueId, [property]).then((propertiesFromBE) => onPropertySuccess(propertiesFromBE[0]), onPropertyFaild);
                 } else {
-                    this.$scope.editPropertyModel.property.defaultValue = this.$scope.editPropertyModel.property.value;
+                    if (!this.$scope.editPropertyModel.property.simpleType && !this.$scope.isSimpleType(property.type)) {
+                        let myValueString:string = JSON.stringify(this.$scope.myValue);
+                        property.defaultValue = myValueString;
+                    } else {
+                        this.$scope.editPropertyModel.property.defaultValue = this.$scope.editPropertyModel.property.value;
+                    }
+                    this.component.addOrUpdateProperty(property).then(onPropertySuccess, onPropertyFaild);
                 }
-                this.component.addOrUpdateProperty(property).then(onPropertySuccess, onPropertyFaild);
             }
         };
 

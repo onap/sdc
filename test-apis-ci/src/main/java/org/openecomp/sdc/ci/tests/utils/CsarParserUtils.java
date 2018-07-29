@@ -20,30 +20,51 @@
 
 package org.openecomp.sdc.ci.tests.utils;
 
-import static org.testng.AssertJUnit.assertTrue;
+import org.apache.commons.codec.binary.Base64;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+import org.junit.Assert;
+import org.openecomp.sdc.be.model.ArtifactUiDownloadData;
+import org.openecomp.sdc.be.model.Component;
+import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.ci.tests.datatypes.GroupHeatMetaDefinition;
+import org.openecomp.sdc.ci.tests.datatypes.HeatMetaFirstLevelDefinition;
+import org.openecomp.sdc.ci.tests.datatypes.PropertyHeatMetaDefinition;
+import org.openecomp.sdc.ci.tests.datatypes.TypeHeatMetaDefinition;
+import org.openecomp.sdc.ci.tests.datatypes.enums.ArtifactTypeEnum;
+import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
+import org.openecomp.sdc.ci.tests.tosca.datatypes.ToscaParameterConstants;
+import org.openecomp.sdc.ci.tests.utils.rest.ArtifactRestUtils;
+import org.openecomp.sdc.ci.tests.utils.rest.BaseRestUtils;
+import org.openecomp.sdc.ci.tests.utils.rest.ResponseParser;
+import org.openecomp.sdc.ci.tests.utils.validation.CsarValidationUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
-import org.openecomp.sdc.ci.tests.datatypes.GroupHeatMetaDefinition;
-import org.openecomp.sdc.ci.tests.datatypes.HeatMetaFirstLevelDefinition;
-import org.openecomp.sdc.ci.tests.datatypes.PropertyHeatMetaDefinition;
-import org.openecomp.sdc.ci.tests.datatypes.TypeHeatMetaDefinition;
-import org.openecomp.sdc.ci.tests.datatypes.enums.ArtifactTypeEnum;
-import org.openecomp.sdc.ci.tests.tosca.datatypes.ToscaParameterConstants;
-import org.openecomp.sdc.ci.tests.utils.validation.CsarValidationUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static org.testng.AssertJUnit.assertTrue;
 
 public class CsarParserUtils {
+	public static final String CSAR_ARTIFACT = "assettoscacsar";
 	private static Logger log = LoggerFactory.getLogger(CsarValidationUtils.class.getName());
 
+	public static byte[] downloadComponentCsar(Component csarOwner, User user) throws Exception {
+		String artifactUniqeId = csarOwner.getToscaArtifacts().get(CSAR_ARTIFACT).getUniqueId();
+		RestResponse csarResponse = ArtifactRestUtils.downloadResourceArtifactInternalApi(csarOwner.getUniqueId(), user, artifactUniqeId);
+		Assert.assertNotNull(csarResponse);
+		BaseRestUtils.checkSuccess(csarResponse);
+		ArtifactUiDownloadData artifactUiDownloadData = ResponseParser.parseToObject(csarResponse.getResponse(),
+				ArtifactUiDownloadData.class);
+		byte[] fromUiDownload = artifactUiDownloadData.getBase64Contents().getBytes();
+		return Base64.decodeBase64(fromUiDownload);
+	}
+	
 	public static List<TypeHeatMetaDefinition> getListTypeHeatMetaDefinition(File csarFileLocation) throws Exception {
 
 		String artifactHeatMetaLocation = ToscaParameterConstants.HEAT_META_PATH;

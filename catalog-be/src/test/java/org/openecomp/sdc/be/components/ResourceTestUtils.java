@@ -20,13 +20,13 @@
 
 package org.openecomp.sdc.be.components;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ResourceTestUtils {
 
@@ -38,10 +38,10 @@ public class ResourceTestUtils {
         r.setVendorRelease("vendor release");
         r.setContactId("as123y");
         r.addCategory("Generic", "Infrastructure");
-        List<String> arr = new ArrayList<String>();
+        List<String> arr = new ArrayList<>();
         arr.add("tosca.nodes.Root");
         r.setDerivedFrom(arr);
-        List<String> arr1 = new ArrayList<String>();
+        List<String> arr1 = new ArrayList<>();
         arr1.add(r.getName());
         r.setTags(arr1);
         r.setIcon("borderElement");
@@ -58,10 +58,10 @@ public class ResourceTestUtils {
         r.setContactId("as123y");
         r.setResourceType(resourceType);
         r.addCategory("Generic", "Infrastructure");
-        List<String> arr = new ArrayList<String>();
+        List<String> arr = new ArrayList<>();
         arr.add("tosca.nodes.Root");
         r.setDerivedFrom(arr);
-        List<String> arr1 = new ArrayList<String>();
+        List<String> arr1 = new ArrayList<>();
         arr1.add(r.getName());
         r.setTags(arr1);
         r.setIcon("borderElement");
@@ -73,7 +73,7 @@ public class ResourceTestUtils {
         service.setName("service_" + serviceIndex);
         service.setDescription("desc");
         service.setIcon("icon-service-red1");
-        List<String> tags = new ArrayList<String>();
+        List<String> tags = new ArrayList<>();
         tags.add(service.getName());
         service.setTags(tags);
         CategoryDefinition category = new CategoryDefinition();

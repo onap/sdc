@@ -20,16 +20,16 @@
 
 package org.openecomp.sdc.ci.tests.utils.rest;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.openecomp.sdc.ci.tests.api.Urls;
 import org.openecomp.sdc.ci.tests.config.Config;
 import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
 import org.openecomp.sdc.ci.tests.datatypes.http.HttpHeaderEnum;
 import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
 import org.openecomp.sdc.ci.tests.utils.Utils;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class CatalogRestUtils extends BaseRestUtils {
 

@@ -38,7 +38,7 @@ public enum FilterKeyEnum {
 	}
 
 	public static List<String> getAllFilters() {
-		return Arrays.stream(FilterKeyEnum.values()).map(f -> f.getName()).collect(Collectors.toList());
+		return Arrays.stream(FilterKeyEnum.values()).map(FilterKeyEnum::getName).collect(Collectors.toList());
 	}
 
 	public static List<String> getValidFiltersByAssetType(ComponentTypeEnum assetType) {

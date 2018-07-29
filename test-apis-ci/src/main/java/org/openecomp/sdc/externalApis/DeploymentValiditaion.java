@@ -52,8 +52,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
+
 import static org.testng.AssertJUnit.assertTrue;
-import static org.testng.AssertJUnit.assertTrue;
+
 public class DeploymentValiditaion extends ComponentBaseTest{
 
 	@Rule

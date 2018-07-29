@@ -20,6 +20,14 @@
 
 package org.openecomp.sdc.fe.servlets;
 
+import org.openecomp.sdc.common.api.Constants;
+import org.openecomp.sdc.common.rest.api.RestConfigurationInfo;
+import org.openecomp.sdc.common.servlets.BasicServlet;
+import org.openecomp.sdc.fe.config.Configuration;
+import org.openecomp.sdc.fe.config.ConfigurationManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
@@ -28,14 +36,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
-
-import org.openecomp.sdc.common.api.Constants;
-import org.openecomp.sdc.common.rest.api.RestConfigurationInfo;
-import org.openecomp.sdc.common.servlets.BasicServlet;
-import org.openecomp.sdc.fe.config.Configuration;
-import org.openecomp.sdc.fe.config.ConfigurationManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Root resource (exposed at "/" path)

@@ -20,9 +20,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static org.mockito.Matchers.anyObject;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 /**
  * Created by ayalaben on 7/9/2017

@@ -21,13 +21,15 @@
 'use strict';
 import {IConfigRoles, IAppConfigurtaion, IAppMenu, IUserProperties, Component} from "app/models";
 import {EntityService, SharingService, CacheService} from "app/services";
-import {ComponentType, ResourceType, MenuHandler, ModalsHandler, ChangeLifecycleStateHandler, SEVERITY, ComponentFactory} from "app/utils";
+import {ComponentType, ResourceType, MenuHandler, ModalsHandler, ChangeLifecycleStateHandler, SEVERITY, ComponentFactory, CHANGE_COMPONENT_CSAR_VERSION_FLAG} from "app/utils";
 import {IClientMessageModalModel} from "../modals/message-modal/message-client-modal/client-message-modal-view-model";
 import {UserService} from "../../ng2/services/user.service";
+
 
 export interface IDashboardViewModelScope extends ng.IScope {
 
     isLoading:boolean;
+    numberOfItemToDisplay:number;
     components:Array<Component>;
     folders:FoldersMenu;
     roles:IConfigRoles;
@@ -38,10 +40,11 @@ export interface IDashboardViewModelScope extends ng.IScope {
     showTutorial:boolean;
     isFirstTime:boolean;
     version:string;
-    checkboxesFilter:CheckboxesFilter;
+    filterParams:DashboardFilter;
     vfcmtType:string;
 
-
+    changeFilterParams():void;
+    updateSearchTerm(newTerm:string):void;
     onImportVfc(file:any):void;
     onImportVf(file:any):void;
     openCreateModal(componentType:ComponentType, importedFile:any):void;
@@ -52,11 +55,12 @@ export interface IDashboardViewModelScope extends ng.IScope {
     getCurrentFolderDistributed():Array<Component>;
     changeLifecycleState(entity:any, data:any):void;
     goToComponent(component:Component):void;
+    raiseNumberOfElementToDisplay():void;
     wizardDebugEdit:Function;
     notificationIconCallback:Function;
 }
 
-interface CheckboxesFilter {
+interface ICheckboxesFilter {
     // Statuses
     selectedStatuses:Array<string>;
     // distributed
@@ -74,6 +78,35 @@ export interface IMenuItemProperties {
     dist:string;
     groupname:string;
     states:Array<any>;
+}
+
+export interface IQueryFilterParams {
+    'filter.term': string;
+    'filter.distributed': string;
+    'filter.status': string
+}
+
+
+export class DashboardFilter {
+    searchTerm: string;
+    checkboxes: ICheckboxesFilter;
+
+    constructor(params = {}) {
+        this.searchTerm = params['filter.term'] || "";
+        this.checkboxes = {
+            selectedStatuses : params['filter.status']? params['filter.status'].split(',') : [],
+            distributed : params['filter.distributed']? params['filter.distributed'].split(',') : []
+        };
+    }
+
+    public toParam = ():IQueryFilterParams => {
+        return {
+            'filter.term': this.searchTerm,
+            'filter.distributed': this.checkboxes && this.checkboxes.distributed.join(',') || null,
+            'filter.status': this.checkboxes && this.checkboxes.selectedStatuses.join(',') || null
+        };
+    }
+
 }
 
 export class FoldersMenu {
@@ -190,7 +223,7 @@ export class DashboardViewModel {
                 private $http:ng.IHttpService,
                 private sdcConfig:IAppConfigurtaion,
                 private sdcMenu:IAppMenu,
-                private $state:any,
+                private $state:ng.ui.IStateService,
                 private $stateParams:any,
                 private userService:UserService,
                 private sharingService:SharingService,
@@ -202,7 +235,7 @@ export class DashboardViewModel {
                 private MenuHandler:MenuHandler) {
         this.initScope();
         this.initFolders();
-        this.initEntities(true);
+        this.initEntities();
 
         if (this.$stateParams) {
 
@@ -237,6 +270,7 @@ export class DashboardViewModel {
 
         this.$scope.version = this.cacheService.get('version');
         this.$scope.sharingService = this.sharingService;
+        this.$scope.numberOfItemToDisplay = 0;
         this.$scope.isLoading = false;
         this.$scope.sdcConfig = this.sdcConfig;
         this.$scope.sdcMenu = this.sdcMenu;
@@ -245,20 +279,25 @@ export class DashboardViewModel {
         this.$scope.showTutorial = false;
         this.$scope.isFirstTime = false;
         this.$scope.vfcmtType = ResourceType.VFCMT;
+        this.$scope.filterParams = new DashboardFilter(this.$state.params);
 
         // Open onboarding modal
         this.$scope.notificationIconCallback = ():void => {
-            this.ModalsHandler.openOnboadrdingModal('Import').then(()=> {
-                // OK
+            this.ModalsHandler.openOnboadrdingModal('Import').then((result)=> {
+                //OK
+                if(!result.previousComponent || result.previousComponent.csarVersion != result.componentCsar.csarVersion) {
+                    this.cacheService.set(CHANGE_COMPONENT_CSAR_VERSION_FLAG, result.componentCsar.csarVersion);
+                }
+
+                this.$state.go('workspace.general', {
+                    id: result.previousComponent && result.previousComponent.uniqueId,
+                    componentCsar: result.componentCsar,
+                    type: result.type
+                });
             }, ()=> {
                 // ERROR
             });
         };
-
-        // Checkboxes filter init
-        this.$scope.checkboxesFilter = <CheckboxesFilter>{};
-        this.$scope.checkboxesFilter.selectedStatuses = [];
-        this.$scope.checkboxesFilter.distributed = [];
 
         this.$scope.onImportVf = (file:any):void => {
             if (file && file.filename) {
@@ -367,6 +406,20 @@ export class DashboardViewModel {
             this.$state.go('workspace.general', {id: component.uniqueId, type: component.componentType.toLowerCase()});
         };
 
+        this.$scope.raiseNumberOfElementToDisplay = ():void => {
+            this.$scope.numberOfItemToDisplay = this.$scope.numberOfItemToDisplay + 35;
+            if (this.$scope.components) {
+                this.$scope.isAllItemDisplay = this.$scope.numberOfItemToDisplay >= this.$scope.components.length;
+            }
+        };
+
+        this.$scope.updateSearchTerm = (newTerm: string):void => {
+            this.$scope.filterParams.searchTerm = newTerm;
+        };
+
+        this.$scope.changeFilterParams = ():void => {
+            this.$state.go('.', this.$scope.filterParams.toParam(), {location: 'replace', notify: false});
+        };
     };
 
     private _getTotalCounts(tmpFolder, self):number {
@@ -393,15 +446,37 @@ export class DashboardViewModel {
         }
     }
 
-    private initEntities = (reload:boolean):void => {
-        this.$scope.isLoading = reload;
-        this.entityService.getAllComponents().then(
-            (components:Array<Component>) => {
-                this.components = components;
-                this.$scope.components = components;
-                this.$scope.isLoading = false;
-            });
+    private initEntities = (forceReload?:boolean):void => {
+
+        if(forceReload || this.componentShouldReload()){
+            this.$scope.isLoading = true;
+            this.entityService.getAllComponents(true).then(
+                (components:Array<Component>) => {
+                    this.cacheService.set('breadcrumbsComponentsState', this.$state.current.name);  //dashboard
+                    this.cacheService.set('breadcrumbsComponents', components);
+                    this.components = components;
+                    this.$scope.components = components;
+                    this.$scope.isAllItemDisplay = this.$scope.numberOfItemToDisplay >= this.$scope.components.length;
+                    this.$scope.isLoading = false;
+                });
+        } else {
+            this.components = this.cacheService.get('breadcrumbsComponents');
+            this.$scope.components = this.components;
+            this.$scope.isAllItemDisplay = this.$scope.numberOfItemToDisplay >= this.$scope.components.length;
+            
+        }
+    
     };
+
+    private isDefaultFilter = (): boolean => {
+        let defaultFilter = new DashboardFilter();
+        return angular.equals(defaultFilter, this.$scope.filterParams);
+    }
+
+    private componentShouldReload = ():boolean => {
+        let breadcrumbsValid: boolean = (this.$state.current.name === this.cacheService.get('breadcrumbsComponentsState') && this.cacheService.contains('breadcrumbsComponents'));
+        return !breadcrumbsValid || this.isDefaultFilter();
+    }
 
     private getEntitiesByStateDist = (state:string, dist:string):Array<Component> => {
         let gObj:Array<Component>;

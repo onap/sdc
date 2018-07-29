@@ -1,12 +1,12 @@
 <loader display="isLoading" loader-type="composition-graph"></loader>
-<div class="sdc-composition-graph-wrapper {{zoneTagMode}}" ng-class="{'view-only':isViewOnly}"
-     data-drop="true"
+<div class="sdc-composition-graph-wrapper {{zoneTagMode}}" ng-class="{'with-sidebar': withSidebar, 'view-only':isViewOnly}"
+     data-drop="!zoneTagMode"
      data-jqyoui-options="{accept: verifyDrop}"
      data-jqyoui-droppable="{onDrop:'dropCallback', beforeDrop: 'beforeDropCallback'}">
 </div>
 
-<relation-menu relation-menu-directive-obj="relationMenuDirectiveObj" is-link-menu-open="isLinkMenuOpen"
-               create-relation="createLinkFromMenu" cancel="cancelRelationMenu()"></relation-menu>
+<!-- <relation-menu relation-menu-directive-obj="relationMenuDirectiveObj" is-link-menu-open="isLinkMenuOpen"
+               create-relation="createLinkFromMenu" cancel="cancelRelationMenu()"></relation-menu> -->
 
 <menu-list-ng2 [props]="canvasMenuProps"></menu-list-ng2>
 
@@ -19,10 +19,11 @@
         [delete-paths]="deletePathsOnCy"
         [selected-path-id]="selectedPathId">
     </ng2-service-path-selector>
-    <ng2-service-path
+    <ng2-service-path 
         ng-if="component.isService()"
         [service]="component"
-        [on-create]="createOrUpdateServicePath">
+        [on-create]="createOrUpdateServicePath"
+        [is-view-only]="isViewOnly">
     </ng2-service-path>
     <ng2-search-with-autocomplete
         [search-placeholder]="'Type to search'"
@@ -31,17 +32,19 @@
         (search-button-clicked)="highlightSearchMatches($event)"
         [search-bar-class]="'composition-search'">
     </ng2-search-with-autocomplete>
-        <div class="zoom-icons sprite-new canvas-fit-all" data-ng-click="zoomAll()"></div>
+        <div class="zoom-icons sprite-new canvas-fit-all" data-ng-click="zoomAllWithoutSidebar()"></div>
         <div class="zoom-icons sprite-new zoom-plus" data-ng-click="zoom(true)"></div>
         <div class="zoom-icons sprite-new zoom-minus" data-ng-click="zoom(false)"></div>
     </div>
 <!--<asset-popover ng-if="assetPopoverOpen" asset-popover-obj="assetPopoverObj" delete-asset="deleteNode(assetPopoverObj.nodeId)"></asset-popover>-->
 <div class="sdc-canvas-zones__wrapper {{zoneTagMode}}" data-ng-class="{'with-sidebar': withSidebar}">
-    <ng2-zone-container data-ng-repeat="zoneConfig in zones" [title]="zoneConfig.title" [class]="zoneConfig.type" [count]="zoneConfig.instances.length" [show-zone] = "zoneConfig.showZone" [minify-zone] = "minifyZone">
+    <ng2-zone-container data-ng-repeat="zone in zones" [title]="zone.title" [type]="zone.type" [count]="zone.instances.length"
+                        [visible]="zone.visible" [minimized]="zone.minimized" (minimize)="zoneMinimizeToggle(zone.type)" (background-click)="zoneBackgroundClicked()">
         <ng2-zone-instance
-            data-ng-repeat="instance in zoneConfig.instances" clicked-outside="{onClickedOutside: 'clickOutsideZoneInstance()', clickedOutsideEnable: 'activeZoneInstance == instance'}"
-            [config]="instance" [default-icon-text]="zoneConfig.defaultIconText" [is-active]="activeZoneInstance == instance" [active-instance-mode]="activeZoneInstance && activeZoneInstance.mode"
-            (mode-change)="zoneInstanceModeChanged($event.newMode, $event.instance, zoneConfig.type)">
+            data-ng-repeat="instance in zone.instances" [hidden]="instance.hidden"
+            [zone-instance]="instance" [default-icon-text]="zone.defaultIconText" [is-active]="activeZoneInstance == instance" [active-instance-mode]="activeZoneInstance && activeZoneInstance.mode"
+            [is-view-only]="isViewOnly" [force-save]="instance.forceSave" (mode-change)="zoneInstanceModeChanged($event.newMode, $event.instance, zone.type)" (tag-handle-click)="zoneInstanceTagged($event)"
+            (assignment-save-start)="zoneAssignmentSaveStart()" (assignment-save-complete)="zoneAssignmentSaveComplete($event)">
         </ng2-zone-instance>
     </ng2-zone-container>
 </div>

@@ -1,9 +1,8 @@
 package org.openecomp.sdc.be.impl;
 
+import com.google.gson.Gson;
 import org.junit.Test;
 import org.openecomp.sdc.be.user.IUserBusinessLogic;
-
-import com.google.gson.Gson;
 
 public class ServletUtilsTest {
 

@@ -16,21 +16,6 @@
 
 package org.openecomp.sdc.logging.servlet;
 
-import static org.easymock.EasyMock.anyObject;
-import static org.openecomp.sdc.logging.LoggingConstants.DEFAULT_PARTNER_NAME_HEADER;
-import static org.openecomp.sdc.logging.LoggingConstants.DEFAULT_REQUEST_ID_HEADER;
-import static org.openecomp.sdc.logging.servlet.LoggingFilter.PARTNER_NAME_HEADERS_PARAM;
-import static org.openecomp.sdc.logging.servlet.LoggingFilter.REQUEST_ID_HEADERS_PARAM;
-
-import java.io.IOException;
-import java.util.UUID;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import org.easymock.EasyMock;
 import org.junit.After;
 import org.junit.Rule;
@@ -42,6 +27,22 @@ import org.openecomp.sdc.logging.api.LoggingContext;
 import org.powermock.api.easymock.PowerMock;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.UUID;
+
+import static org.easymock.EasyMock.anyObject;
+import static org.openecomp.sdc.logging.LoggingConstants.DEFAULT_PARTNER_NAME_HEADER;
+import static org.openecomp.sdc.logging.LoggingConstants.DEFAULT_REQUEST_ID_HEADER;
+import static org.openecomp.sdc.logging.servlet.LoggingFilter.PARTNER_NAME_HEADERS_PARAM;
+import static org.openecomp.sdc.logging.servlet.LoggingFilter.REQUEST_ID_HEADERS_PARAM;
 
 /**
  * Unit-tests logging filter for initialization and data retrieval.

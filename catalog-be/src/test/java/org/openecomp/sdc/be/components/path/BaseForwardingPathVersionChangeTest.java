@@ -1,23 +1,18 @@
 package org.openecomp.sdc.be.components.path;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import com.google.common.collect.Lists;
 import org.junit.Before;
 import org.openecomp.sdc.be.components.merge.instance.DataForMergeHolder;
 import org.openecomp.sdc.be.datatypes.elements.ForwardingPathDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ForwardingPathElementDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
 import org.openecomp.sdc.be.impl.ForwardingPathUtils;
-import org.openecomp.sdc.be.model.CapabilityDefinition;
-import org.openecomp.sdc.be.model.Component;
-import org.openecomp.sdc.be.model.ComponentInstance;
-import org.openecomp.sdc.be.model.Resource;
-import org.openecomp.sdc.be.model.Service;
+import org.openecomp.sdc.be.model.*;
 
-import com.google.common.collect.Lists;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public abstract class BaseForwardingPathVersionChangeTest {
     protected Service service;
@@ -83,6 +78,7 @@ public abstract class BaseForwardingPathVersionChangeTest {
         CapabilityDefinition forwarder = new CapabilityDefinition();
         forwarder.setType(ForwardingPathUtils.FORWARDER_CAPABILITY);
         forwarder.setUniqueId(NODE_A_FORWARDER_CAPABILITY);
+        forwarder.setName(NODE_A_FORWARDER_CAPABILITY);
         capabilities.put("bla bla", Arrays.asList(forwarder));
         return capabilities;
     }
@@ -92,12 +88,14 @@ public abstract class BaseForwardingPathVersionChangeTest {
         CapabilityDefinition capabilityDefinition = new CapabilityDefinition();
         capabilityDefinition.setType("tosca.capabilities.Node");
         capabilityDefinition.setUniqueId("tosca capability");
+        capabilityDefinition.setName("tosca capability");
         capabilities.put("bla bla", Arrays.asList(capabilityDefinition));
         return capabilities;
     }
 
     private void initComponentInstance(ComponentInstance component, String uniqueId) {
         component.setUniqueId(uniqueId);
+        component.setName(uniqueId);
         HashMap<String, List<CapabilityDefinition>> capabilities = initCapabilites();
         component.setCapabilities(capabilities);
     }

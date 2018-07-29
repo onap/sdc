@@ -20,16 +20,11 @@
 
 package org.openecomp.sdc.ci.tests.tosca.datatypes;
 
+import org.yaml.snakeyaml.TypeDescription;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.yaml.snakeyaml.TypeDescription;
-
-import com.clearspring.analytics.util.Pair;
-
-import io.netty.util.collection.IntObjectMap.Entry;
 
 //	spec page 104	
 public class ToscaTopologyTemplateDefinition {

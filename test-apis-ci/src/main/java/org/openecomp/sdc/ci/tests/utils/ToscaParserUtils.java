@@ -20,26 +20,8 @@
 
 package org.openecomp.sdc.ci.tests.utils;
 
-import static org.testng.AssertJUnit.assertNotNull;
-import static org.testng.AssertJUnit.assertTrue;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Map;
-
 import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
-import org.openecomp.sdc.ci.tests.tosca.datatypes.ToscaDefinition;
-import org.openecomp.sdc.ci.tests.tosca.datatypes.ToscaGroupsTopologyTemplateDefinition;
-import org.openecomp.sdc.ci.tests.tosca.datatypes.ToscaImportsDefinition;
-import org.openecomp.sdc.ci.tests.tosca.datatypes.ToscaInputsTopologyTemplateDefinition;
-import org.openecomp.sdc.ci.tests.tosca.datatypes.ToscaMetadataDefinition;
-import org.openecomp.sdc.ci.tests.tosca.datatypes.ToscaNodeTemplatesTopologyTemplateDefinition;
-import org.openecomp.sdc.ci.tests.tosca.datatypes.ToscaParameterConstants;
-import org.openecomp.sdc.ci.tests.tosca.datatypes.ToscaSubstitutionMappingsDefinition;
-import org.openecomp.sdc.ci.tests.tosca.datatypes.ToscaTopologyTemplateDefinition;
+import org.openecomp.sdc.ci.tests.tosca.datatypes.*;
 import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
 import org.openecomp.sdc.ci.tests.utils.rest.BaseRestUtils;
 import org.openecomp.sdc.ci.tests.utils.rest.ImportRestUtils;
@@ -50,6 +32,16 @@ import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 import org.yaml.snakeyaml.introspector.PropertyUtils;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Map;
+
+import static org.testng.AssertJUnit.assertNotNull;
+import static org.testng.AssertJUnit.assertTrue;
 
 public class ToscaParserUtils {
 
@@ -112,7 +104,8 @@ public class ToscaParserUtils {
 //        File path = new File("C:/Data/D2.0/TOSCA_Ex/Definitions/tosca_definition_version.yaml");
         FileInputStream fis = null;
         try {
-        	fis = new FileInputStream(path);
+			try (FileInputStream fileInputStream = fis = new FileInputStream(path)) {
+			}
 			
 		} catch (Exception e) {
 			System.out.println("Exception: " + e);

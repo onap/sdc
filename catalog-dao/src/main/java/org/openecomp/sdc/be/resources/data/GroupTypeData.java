@@ -20,17 +20,16 @@
 
 package org.openecomp.sdc.be.resources.data;
 
-import java.lang.reflect.Type;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import com.google.gson.reflect.TypeToken;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphNode;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
 import org.openecomp.sdc.be.datatypes.elements.GroupTypeDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 
-import com.google.gson.reflect.TypeToken;
+import java.lang.reflect.Type;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class GroupTypeData extends GraphNode {
 
@@ -39,9 +38,9 @@ public class GroupTypeData extends GraphNode {
 	private static Type mapType = new TypeToken<HashMap<String, String>>() {
 	}.getType();
 
-	GroupTypeDataDefinition groupTypeDataDefinition;
+	private GroupTypeDataDefinition groupTypeDataDefinition;
 
-	public GroupTypeData() {
+	private GroupTypeData() {
 		super(NodeTypeEnum.GroupType);
 		groupTypeDataDefinition = new GroupTypeDataDefinition();
 	}
@@ -54,7 +53,8 @@ public class GroupTypeData extends GraphNode {
 	public GroupTypeData(Map<String, Object> properties) {
 
 		this();
-
+		groupTypeDataDefinition.setName((String) properties.get(GraphPropertiesDictionary.NAME.getProperty()));
+		groupTypeDataDefinition.setIcon((String) properties.get(GraphPropertiesDictionary.ICON.getProperty()));
 		groupTypeDataDefinition.setUniqueId((String) properties.get(GraphPropertiesDictionary.UNIQUE_ID.getProperty()));
 
 		groupTypeDataDefinition.setType((String) properties.get(GraphPropertiesDictionary.TYPE.getProperty()));
@@ -88,11 +88,15 @@ public class GroupTypeData extends GraphNode {
 	@Override
 	public Map<String, Object> toGraphMap() {
 
-		Map<String, Object> map = new HashMap<String, Object>();
+		Map<String, Object> map = new HashMap<>();
 
 		addIfExists(map, GraphPropertiesDictionary.UNIQUE_ID, groupTypeDataDefinition.getUniqueId());
 
 		addIfExists(map, GraphPropertiesDictionary.TYPE, groupTypeDataDefinition.getType());
+
+		addIfExists(map, GraphPropertiesDictionary.NAME, groupTypeDataDefinition.getName());
+
+		addIfExists(map, GraphPropertiesDictionary.ICON, groupTypeDataDefinition.getIcon());
 
 		addIfExists(map, GraphPropertiesDictionary.VERSION, groupTypeDataDefinition.getVersion());
 

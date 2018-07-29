@@ -20,26 +20,27 @@
 
 package org.openecomp.sdc.ci.tests.execute.setup;
 
-import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.UUID;
-
+import net.lightbody.bmp.BrowserMobProxyServer;
+import net.lightbody.bmp.client.ClientUtil;
+import net.lightbody.bmp.proxy.CaptureType;
 import org.openecomp.sdc.ci.tests.config.Config;
 import org.openecomp.sdc.ci.tests.utilities.FileHandling;
 import org.openqa.selenium.Platform;
+import org.openqa.selenium.UnexpectedAlertBehaviour;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
-//import org.openqa.selenium.firefox.FirefoxOptions; // Selenium 3.4.0 change
 import org.openqa.selenium.firefox.FirefoxProfile;
 import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.LocalFileDetector;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
-import net.lightbody.bmp.BrowserMobProxyServer;
-import net.lightbody.bmp.client.ClientUtil;
-import net.lightbody.bmp.proxy.CaptureType;
+import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.UUID;
+
+//import org.openqa.selenium.firefox.FirefoxOptions; // Selenium 3.4.0 change
 
 public class WebDriverThread {
 
@@ -86,11 +87,13 @@ public class WebDriverThread {
 					cap = DesiredCapabilities.firefox();
 					cap.setBrowserName("firefox");
 					cap.setCapability(FirefoxDriver.PROFILE, initFirefoxProfile());
-					
+					//unexpected model dialog fix.
+					cap.setCapability(CapabilityType.UNEXPECTED_ALERT_BEHAVIOUR, UnexpectedAlertBehaviour.ACCEPT);
 //					cap.setCapability("moz:firefoxOptions", options); //Add options to Capabilities, Selenium 3.4.0 change
 					
-			        firefoxProfile.setPreference("network.proxy.type", 2);
-					firefoxProfile.setPreference("network.proxy.autoconfig_url", "http://emea-auto.proxy.att.com:8001/");
+					firefoxProfile.setPreference("network.proxy.type", 2);
+//					firefoxProfile.setPreference("network.proxy.autoconfig_url", "http://emea-auto.proxy.att.com:8001/");
+					firefoxProfile.setPreference("network.proxy.autoconfig_url", "http://autoproxy.sbc.com/autoproxy.cgi");
 					firefoxProfile.setPreference("network.proxy.no_proxies_on", "localhost");
 					
 					webdriver = new FirefoxDriver(cap);

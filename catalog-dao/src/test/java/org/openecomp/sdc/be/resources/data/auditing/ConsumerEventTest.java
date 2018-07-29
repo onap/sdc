@@ -1,11 +1,10 @@
 package org.openecomp.sdc.be.resources.data.auditing;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.UUID;
-
 import org.junit.Test;
 import org.openecomp.sdc.be.resources.data.auditing.model.CommonAuditData;
+
+import java.util.Date;
+import java.util.UUID;
 
 
 public class ConsumerEventTest {
@@ -16,7 +15,7 @@ public class ConsumerEventTest {
 
 	@Test
 	public void testCtor() throws Exception {
-		new ConsumerEvent(new HashMap<>());
+		new ConsumerEvent();
 		new ConsumerEvent("mock", CommonAuditData.newBuilder().build(), "mock", "mock");
 	}
 	

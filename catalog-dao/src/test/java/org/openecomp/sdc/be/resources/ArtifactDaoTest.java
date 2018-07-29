@@ -20,15 +20,10 @@
 
 package org.openecomp.sdc.be.resources;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
-import javax.annotation.Resource;
-
+import fj.data.Either;
+import static org.junit.Assert.fail;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexResponse;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openecomp.sdc.be.config.ConfigurationManager;
@@ -45,7 +40,9 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 
-import fj.data.Either;
+import javax.annotation.Resource;
+
+import static org.junit.Assert.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:application-context-test.xml")
@@ -73,7 +70,7 @@ public class ArtifactDaoTest extends DAOConfDependentTest {
 	public void testSaveNewArtifact() {
 		// daoUploader = new ArtifactUploader(artifactDAO);
 		if (daoUploader == null) {
-			assertTrue(false);
+            fail();
 		}
 		String strData = "qweqwqweqw34e4wrwer";
 
@@ -266,7 +263,7 @@ public class ArtifactDaoTest extends DAOConfDependentTest {
 	public void testUpdateArtifact() {
 		// daoUploader = new ArtifactUploader(artifactDAO);
 		if (daoUploader == null) {
-			assertTrue(false);
+            fail();
 		}
 		ResourceUploadStatus status = ResourceUploadStatus.OK;
 
@@ -292,9 +289,8 @@ public class ArtifactDaoTest extends DAOConfDependentTest {
 
 	private ESArtifactData getArtifactData(String componentName, String componentVersion) {
 		String strData = "qweqwqweqw34e4wrwer";
-		ESArtifactData arData = new ESArtifactData("updatedArtifact", strData.getBytes());
 
-		return arData;
+        return new ESArtifactData("updatedArtifact", strData.getBytes());
 	}
 
 	/*

@@ -22,27 +22,27 @@ package org.openecomp.sdc.be.model;
 
 public class ResourceInstanceHeatParameter extends HeatParameterDefinition {
 
-	private String valueUniqueId;
+    private String valueUniqueId;
 
-	public ResourceInstanceHeatParameter() {
-		super();
-	}
+    public ResourceInstanceHeatParameter() {
+        super();
+    }
 
-	public ResourceInstanceHeatParameter(HeatParameterDefinition heatParameterDefinition, String valueId) {
-		super(heatParameterDefinition);
-		valueUniqueId = valueId;
-	}
+    public ResourceInstanceHeatParameter(HeatParameterDefinition heatParameterDefinition, String valueId) {
+        super(heatParameterDefinition);
+        valueUniqueId = valueId;
+    }
 
-	public String getValueUniqueId() {
-		return valueUniqueId;
-	}
+    public String getValueUniqueId() {
+        return valueUniqueId;
+    }
 
-	public void setValueUniqueId(String valueUniqueId) {
-		this.valueUniqueId = valueUniqueId;
-	}
+    public void setValueUniqueId(String valueUniqueId) {
+        this.valueUniqueId = valueUniqueId;
+    }
 
-	@Override
-	public String toString() {
-		return "ResourceInstanceHeatParameter [ " + super.toString() + " , valueUniqueId = " + valueUniqueId + " ]";
-	}
+    @Override
+    public String toString() {
+        return "ResourceInstanceHeatParameter [ " + super.toString() + " , valueUniqueId = " + valueUniqueId + " ]";
+    }
 }

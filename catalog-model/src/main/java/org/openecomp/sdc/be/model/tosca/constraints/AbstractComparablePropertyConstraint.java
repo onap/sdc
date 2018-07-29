@@ -20,53 +20,46 @@
 
 package org.openecomp.sdc.be.model.tosca.constraints;
 
-import java.io.Serializable;
-
 import org.openecomp.sdc.be.model.tosca.ToscaType;
 import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintValueDoNotMatchPropertyTypeException;
 import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintViolationException;
 
 @SuppressWarnings("rawtypes")
-public abstract class AbstractComparablePropertyConstraint extends AbstractPropertyConstraint implements Serializable {
+public abstract class AbstractComparablePropertyConstraint extends AbstractPropertyConstraint {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 2002627754053326321L;
+    private Comparable comparable;
 
-	private Comparable comparable;
+    protected Comparable getComparable() {
+        return comparable;
+    }
 
-	protected Comparable getComparable() {
-		return comparable;
-	}
+    protected void initialize(String rawTextValue, ToscaType propertyType)
+            throws ConstraintValueDoNotMatchPropertyTypeException {
+        // Perform verification that the property type is supported for
+        // comparison
+        ConstraintUtil.checkComparableType(propertyType);
+        // Check if the text value is valid for the property type
+        if (propertyType.isValidValue(rawTextValue)) {
+            // Convert the raw text value to a comparable value
+            comparable = ConstraintUtil.convertToComparable(propertyType, rawTextValue);
+        } else {
+            // Invalid value throw exception
+            throw new ConstraintValueDoNotMatchPropertyTypeException(
+                    "The value [" + rawTextValue + "] is not valid for the type [" + propertyType + "]");
+        }
+    }
 
-	protected void initialize(String rawTextValue, ToscaType propertyType)
-			throws ConstraintValueDoNotMatchPropertyTypeException {
-		// Perform verification that the property type is supported for
-		// comparison
-		ConstraintUtil.checkComparableType(propertyType);
-		// Check if the text value is valid for the property type
-		if (propertyType.isValidValue(rawTextValue)) {
-			// Convert the raw text value to a comparable value
-			comparable = ConstraintUtil.convertToComparable(propertyType, rawTextValue);
-		} else {
-			// Invalid value throw exception
-			throw new ConstraintValueDoNotMatchPropertyTypeException(
-					"The value [" + rawTextValue + "] is not valid for the type [" + propertyType + "]");
-		}
-	}
+    protected abstract void doValidate(Object propertyValue) throws ConstraintViolationException;
 
-	protected abstract void doValidate(Object propertyValue) throws ConstraintViolationException;
-
-	@Override
-	public void validate(Object propertyValue) throws ConstraintViolationException {
-		if (propertyValue == null) {
-			throw new ConstraintViolationException("Value to check is null");
-		}
-		if (!(comparable.getClass().isAssignableFrom(propertyValue.getClass()))) {
-			throw new ConstraintViolationException("Value to check is not comparable to reference type, value type ["
-					+ propertyValue.getClass() + "], reference type [" + comparable.getClass() + "]");
-		}
-		doValidate(propertyValue);
-	}
+    @Override
+    public void validate(Object propertyValue) throws ConstraintViolationException {
+        if (propertyValue == null) {
+            throw new ConstraintViolationException("Value to check is null");
+        }
+        if (!(comparable.getClass().isAssignableFrom(propertyValue.getClass()))) {
+            throw new ConstraintViolationException("Value to check is not comparable to reference type, value type ["
+                    + propertyValue.getClass() + "], reference type [" + comparable.getClass() + "]");
+        }
+        doValidate(propertyValue);
+    }
 }

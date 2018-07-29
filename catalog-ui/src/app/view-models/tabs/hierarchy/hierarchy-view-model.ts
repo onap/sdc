@@ -23,6 +23,10 @@ import {ModalsHandler} from "app/utils";
 import {PropertyModel, DisplayModule, Component, ComponentInstance, Tab, Module} from "app/models";
 import {ExpandCollapseListData} from "app/directives/utils/expand-collapse-list-header/expand-collapse-list-header";
 
+interface IComponentInstancesMap {
+    [key:string]: ComponentInstance
+}
+
 export interface IHierarchyScope extends ng.IScope {
     component:Component;
     selectedIndex:number;
@@ -32,8 +36,9 @@ export interface IHierarchyScope extends ng.IScope {
     expandCollapseArtifactsList:ExpandCollapseListData;
     expandCollapsePropertiesList:ExpandCollapseListData;
     selectedInstanceId:string;
+    componentInstancesMap:IComponentInstancesMap;
 
-    onModuleSelected(moduleId:string, selectedIndex:number):void;
+    onModuleSelected(module:Module, selectedIndex:number, componentInstanceId?:string):void;
     onModuleNameChanged(module:DisplayModule):void;
     updateHeatName():void;
     loadInstanceModules(instance:ComponentInstance):ng.IPromise<boolean>;
@@ -53,6 +58,7 @@ export class HierarchyViewModel {
         this.$scope.isLoading = false;
         this.$scope.expandCollapseArtifactsList = new ExpandCollapseListData();
         this.$scope.expandCollapsePropertiesList = new ExpandCollapseListData();
+        this.$scope.componentInstancesMap = <IComponentInstancesMap>{};
         this.initScopeMethods();
     }
 
@@ -65,7 +71,7 @@ export class HierarchyViewModel {
             this.$scope.expandCollapsePropertiesList.orderByField = "name";
         };
 
-        this.$scope.onModuleSelected = (moduleId:string, selectedIndex:number, componentInstanceId?:string):void => {
+        this.$scope.onModuleSelected = (module:Module, selectedIndex:number, componentInstanceId?:string):void => {
 
             let onSuccess = (module:DisplayModule) => {
                 console.log("Module Loaded: ", module);
@@ -79,15 +85,25 @@ export class HierarchyViewModel {
             };
 
             this.$scope.selectedIndex = selectedIndex;
-            if (!this.$scope.selectedModule || (this.$scope.selectedModule && this.$scope.selectedModule.uniqueId != moduleId)) {
+            if (!this.$scope.selectedModule || (this.$scope.selectedModule && this.$scope.selectedModule.uniqueId != module.uniqueId)) {
                 this.$scope.isLoading = true;
                 if (this.$scope.component.isService()) {
                     this.$scope.selectedInstanceId = componentInstanceId;
-                    this.$scope.component.getModuleInstanceForDisplay(componentInstanceId, moduleId).then(onSuccess, onFailed);
+                    this.$scope.component.getModuleInstanceForDisplay(componentInstanceId, module.uniqueId).then(onSuccess, onFailed);
                 } else {
-                    this.$scope.component.getModuleForDisplay(moduleId).then(onSuccess, onFailed);
+                    this.$scope.component.getModuleForDisplay(module.uniqueId).then(onSuccess, onFailed);
                 }
             }
+
+            const componentInstances: Array<ComponentInstance> = this.$scope.component.componentInstances || [];
+            (<string[]>_.values(module.members)).forEach((memberId) => {
+                if (!(memberId in this.$scope.componentInstancesMap)) {
+                    const compInstance = componentInstances.find((c) => c.uniqueId === memberId);
+                    if (compInstance) {
+                        this.$scope.componentInstancesMap[compInstance.uniqueId] = compInstance;
+                    }
+                }
+            });
         };
 
         this.$scope.updateHeatName = () => {

@@ -77,20 +77,20 @@
 					<groupId>org.onap.sdc.common</groupId>
 					<artifactId>onap-common-lib</artifactId>
 				</exclusion>
-				
+
 				<exclusion>
 					<groupId>com.att.nsa</groupId>
 					<artifactId>cambriaClient</artifactId>
 				</exclusion>
 				<exclusion>
-			       <groupId>com.att.nsa</groupId>
-			       <artifactId>dmaapClient</artifactId>
-			 	</exclusion>
+					<groupId>com.att.nsa</groupId>
+					<artifactId>dmaapClient</artifactId>
+				</exclusion>
 				<exclusion>
 					<artifactId>slf4j-log4j12</artifactId>
 					<groupId>org.slf4j</groupId>
 				</exclusion>
-				
+
 			</exclusions>
 
 			<scope>compile</scope>
@@ -107,9 +107,9 @@
 					<artifactId>cambriaClient</artifactId>
 				</exclusion>
 				<exclusion>
-			       <groupId>com.att.nsa</groupId>
-			       <artifactId>dmaapClient</artifactId>
-			 	</exclusion>
+					<groupId>com.att.nsa</groupId>
+					<artifactId>dmaapClient</artifactId>
+				</exclusion>
 				<exclusion>
 					<artifactId>slf4j-log4j12</artifactId>
 					<groupId>org.slf4j</groupId>
@@ -117,46 +117,6 @@
 			</exclusions>
 		</dependency>
 
-
-		<!--Artifact Generator-->
-		<dependency>
-			<groupId>org.onap.sdc.common</groupId>
-			<artifactId>onap-sdc-artifact-generator-api</artifactId>
-			<version>${artifact-generator-api.version}</version>
-			<scope>compile</scope>
-			<exclusions>
-				<exclusion>
-					<groupId>junit</groupId>
-					<artifactId>junit</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-
-		<dependency>
-			<groupId>org.onap.sdc.common</groupId>
-			<artifactId>onap-sdc-artifact-generator-core</artifactId>
-			<version>${artifact-generator-core.version}</version>
-			<scope>compile</scope>
-			<exclusions>
-				<exclusion>
-					<groupId>junit</groupId>
-					<artifactId>junit</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-
-		<dependency>
-			<groupId>org.onap.sdc.common</groupId>
-			<artifactId>onap-common-lib</artifactId>
-			<version>${dox-common-lib.version}</version>
-			<type>pom</type>
-			<exclusions>
-				<exclusion>
-					<groupId>junit</groupId>
-					<artifactId>junit</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
 
 
 		<!-- ASDC dependencies end -->
@@ -354,12 +314,6 @@
 			<version>${commons-codec}</version>
 			<scope>compile</scope>
 		</dependency>
-		<dependency>
-			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-core</artifactId>
-			<version>${jackson.version}</version>
-			<scope>compile</scope>
-		</dependency>
 
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
@@ -368,11 +322,11 @@
 			<scope>compile</scope>
 		</dependency>
 
+		<!-- Explicitly specified in order to override older version included by epsdk-fw -->
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-annotations</artifactId>
-			<version>${jackson.annotations.version}</version>
-			<scope>compile</scope>
+			<version>${jackson-annotations.version}</version>
 		</dependency>
 
 		<dependency>
@@ -493,15 +447,15 @@
 		</dependency>
 
 		<!-- CASSANDRA END -->
-		
+
 		<!-- OPEN CSV -->
-		 <dependency>
-     		<groupId>com.opencsv</groupId>
-     		<artifactId>opencsv</artifactId>
-     		<version>4.0</version>
-     		<scope>compile</scope>
-  		</dependency>
-		
+		<dependency>
+			<groupId>com.opencsv</groupId>
+			<artifactId>opencsv</artifactId>
+			<version>4.0</version>
+			<scope>compile</scope>
+		</dependency>
+
 		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>com.springsource.org.apache.poi</artifactId>
@@ -516,7 +470,7 @@
 			<scope>compile</scope>
 		</dependency>
 
-		<!-- Temporary, till building the populate task which adding all components 
+		<!-- Temporary, till building the populate task which adding all components
 			to cache. We will use Serialization Utils. -->
 		<dependency>
 			<groupId>de.ruedigermoeller</groupId>
@@ -545,7 +499,12 @@
 			<artifactId>mockito-core</artifactId>
 			<scope>test</scope>
 		</dependency>
-		<!-- testing end -->
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <!-- testing end -->
 
 	</dependencies>
 
@@ -627,7 +586,7 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-shade-plugin</artifactId>
 				<version>3.1.0</version>
-    			<executions>
+				<executions>
 					<execution>
 						<phase>package</phase>
 						<goals>

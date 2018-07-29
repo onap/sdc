@@ -16,11 +16,6 @@
 
 package org.openecomp.sdc.translator.services.heattotosca.impl.functiontranslation;
 
-import static org.openecomp.sdc.translator.services.heattotosca.impl.functiontranslation.FunctionTranslator.getFunctionTranslateTo;
-
-import java.util.HashMap;
-import java.util.List;
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.onap.sdc.tosca.datatypes.model.NodeTemplate;
@@ -31,6 +26,11 @@ import org.openecomp.sdc.tosca.services.ToscaFileOutputService;
 import org.openecomp.sdc.tosca.services.impl.ToscaFileOutputServiceCsarImpl;
 import org.openecomp.sdc.translator.datatypes.heattotosca.TranslationContext;
 import org.openecomp.sdc.translator.services.heattotosca.FunctionTranslationFactory;
+
+import java.util.HashMap;
+import java.util.List;
+
+import static org.openecomp.sdc.translator.services.heattotosca.impl.functiontranslation.FunctionTranslator.getFunctionTranslateTo;
 
 public class FunctionTranslationGetFileImplTest {
   @Test

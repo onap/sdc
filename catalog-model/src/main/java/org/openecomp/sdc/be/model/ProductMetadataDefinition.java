@@ -24,12 +24,12 @@ import org.openecomp.sdc.be.datatypes.elements.ProductMetadataDataDefinition;
 
 public class ProductMetadataDefinition extends ComponentMetadataDefinition {
 
-	public ProductMetadataDefinition() {
-		super();
-		this.componentMetadataDataDefinition = new ProductMetadataDataDefinition();
-	}
+    public ProductMetadataDefinition() {
+        super();
+        this.componentMetadataDataDefinition = new ProductMetadataDataDefinition();
+    }
 
-	public ProductMetadataDefinition(ProductMetadataDataDefinition component) {
-		super(component);
-	}
+    public ProductMetadataDefinition(ProductMetadataDataDefinition component) {
+        super(component);
+    }
 }

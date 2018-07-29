@@ -21,29 +21,6 @@
 package org.openecomp.sdc.ci.tests.utils.general;
 
 import com.aventstack.extentreports.Status;
-import static org.testng.AssertJUnit.assertTrue;
-
-import java.io.BufferedOutputStream;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.FilenameFilter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipException;
-import java.util.zip.ZipFile;
-import java.util.zip.ZipInputStream;
-
 import org.apache.commons.io.FileUtils;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.ci.tests.api.ComponentBaseTest;
@@ -51,7 +28,6 @@ import org.openecomp.sdc.ci.tests.config.Config;
 import org.openecomp.sdc.common.util.GeneralUtility;
 import org.yaml.snakeyaml.Yaml;
 
-import com.aventstack.extentreports.Status;
 import java.io.*;
 import java.nio.file.Paths;
 import java.util.*;
@@ -342,9 +318,10 @@ public class FileHandling {
 		File dir = new File(directoryPath);
 		try {
 			FileUtils.cleanDirectory(dir);
+		} catch (IllegalArgumentException e) {
+			System.out.println("Failed to clean " + dir);
 		} catch (IOException e) {
-			System.out.println("Failed to delete " + dir);
-			ComponentBaseTest.getExtendTest().log(Status.INFO, "Failed to delete " + dir);
+			System.out.println("Failed to clean " + dir);
 		}
 	}
 	

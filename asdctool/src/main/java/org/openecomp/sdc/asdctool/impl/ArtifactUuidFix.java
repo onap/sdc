@@ -1,20 +1,9 @@
 package org.openecomp.sdc.asdctool.impl;
 
-import java.io.BufferedWriter;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
-
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import fj.data.Either;
 import org.openecomp.sdc.asdctool.impl.validator.utils.VfModuleArtifactPayloadEx;
 import org.openecomp.sdc.be.components.distribution.engine.VfModuleArtifactPayload;
 import org.openecomp.sdc.be.dao.cassandra.ArtifactCassandraDao;
@@ -35,16 +24,7 @@ import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
-import org.openecomp.sdc.be.model.ArtifactDefinition;
-import org.openecomp.sdc.be.model.Component;
-import org.openecomp.sdc.be.model.ComponentInstance;
-import org.openecomp.sdc.be.model.ComponentParametersView;
-import org.openecomp.sdc.be.model.DistributionStatusEnum;
-import org.openecomp.sdc.be.model.GroupDefinition;
-import org.openecomp.sdc.be.model.GroupInstance;
-import org.openecomp.sdc.be.model.LifecycleStateEnum;
-import org.openecomp.sdc.be.model.Resource;
-import org.openecomp.sdc.be.model.Service;
+import org.openecomp.sdc.be.model.*;
 import org.openecomp.sdc.be.model.jsontitan.datamodel.TopologyTemplate;
 import org.openecomp.sdc.be.model.jsontitan.datamodel.ToscaElement;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
@@ -60,17 +40,14 @@ import org.openecomp.sdc.be.tosca.ToscaRepresentation;
 import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
 import org.openecomp.sdc.common.api.ArtifactTypeEnum;
 import org.openecomp.sdc.common.api.Constants;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.common.util.GeneralUtility;
 import org.openecomp.sdc.exception.ResponseFormat;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
-
-import fj.data.Either;
+import java.io.*;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @org.springframework.stereotype.Component("artifactUuidFix")
 public class ArtifactUuidFix {
@@ -89,7 +66,7 @@ public class ArtifactUuidFix {
 	@Autowired
 	private CsarUtils csarUtils;
 
-	private static Logger log = LoggerFactory.getLogger(ArtifactUuidFix.class.getName());
+	private static Logger log = Logger.getLogger(ArtifactUuidFix.class.getName());
 
 	public boolean doFix(String fixComponent, String runMode) {
 		List<Resource> vfLst = new ArrayList<>();

@@ -20,16 +20,15 @@
 
 package org.openecomp.sdc.be.model.cache;
 
-import java.util.Map;
-
+import fj.data.Either;
 import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
 
-import fj.data.Either;
+import java.util.Map;
 
 public interface ApplicationCache<T> {
 
-	public abstract Either<Map<String, T>, TitanOperationStatus> getAll();
+    public abstract Either<Map<String, T>, TitanOperationStatus> getAll();
 
-	public abstract Either<T, TitanOperationStatus> get(String uniqueId);
+    public abstract Either<T, TitanOperationStatus> get(String uniqueId);
 
 }

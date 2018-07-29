@@ -1,10 +1,6 @@
 package org.openecomp.sdc.asdctool.migration.tasks.mig1802;
 
-import java.math.BigInteger;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
-
+import fj.data.Either;
 import org.apache.commons.collections.ListUtils;
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.openecomp.sdc.asdctool.migration.core.DBVersion;
@@ -21,15 +17,18 @@ import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.model.jsontitan.operations.TopologyTemplateOperation;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaElementOperation;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.springframework.stereotype.Component;
 
-import fj.data.Either;
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class SdcCatalogMigration implements Migration {
-    private static final Logger LOGGER = LoggerFactory.getLogger(SdcCatalogMigration.class);
+    private static final Logger LOGGER = Logger.getLogger(SdcCatalogMigration.class);
     private static final List<ResourceTypeEnum> EXCLUDE_TYPES = Arrays.asList(ResourceTypeEnum.VFCMT, ResourceTypeEnum.Configuration);
 
     private ToscaElementOperation toscaElementOperation;
@@ -93,8 +92,14 @@ public class SdcCatalogMigration implements Migration {
     private Either<List<GraphVertex>, TitanOperationStatus> getAllCatalogVertices() {
         LOGGER.info("fetching all catalog resources");
         return toscaElementOperation.getListOfHighestComponents(ComponentTypeEnum.RESOURCE, EXCLUDE_TYPES, JsonParseFlagEnum.ParseMetadata)
+                .right()
+                .bind(this::errOrEmptyListIfNotFound)
                 .left()
                 .bind(this::getAllCatalogVertices);
+    }
+
+    private Either<List<GraphVertex>, TitanOperationStatus> errOrEmptyListIfNotFound(TitanOperationStatus err) {
+        return TitanOperationStatus.NOT_FOUND.equals(err) ? Either.left(new ArrayList<>()) : Either.right(err);
     }
 
     @SuppressWarnings("unchecked")
@@ -102,6 +107,8 @@ public class SdcCatalogMigration implements Migration {
         LOGGER.info("number of resources: {}", allResourceCatalogVertices.size());
         LOGGER.info("fetching all catalog services");
         return toscaElementOperation.getListOfHighestComponents(ComponentTypeEnum.SERVICE, EXCLUDE_TYPES, JsonParseFlagEnum.ParseMetadata)
+                .right()
+                .bind(this::errOrEmptyListIfNotFound)
                 .left()
                 .map(allServiceVertices -> ListUtils.union(allServiceVertices, allResourceCatalogVertices));
     }

@@ -1,16 +1,15 @@
 package org.openecomp.sdc.be.model.jsontitan.utils;
 
-import java.util.Map;
-import java.util.Optional;
-
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 import org.openecomp.sdc.be.datatypes.elements.ComponentInstanceDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.CompositionDataDefinition;
 import org.openecomp.sdc.be.model.jsontitan.enums.JsonConstantKeysEnum;
 import org.openecomp.sdc.be.model.jsontitan.operations.ExternalReferencesOperation;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.springframework.stereotype.Component;
+
+import java.util.Map;
+import java.util.Optional;
 
 /**
  * Created by yavivi on 12/02/2018.
@@ -18,7 +17,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class IdMapper {
 
-    private static final Logger log = LoggerFactory.getLogger(ExternalReferencesOperation.class);
+    private static final Logger log = Logger.getLogger(ExternalReferencesOperation.class.getName());
 
     public String mapComponentNameToUniqueId(String componentInstanceName, GraphVertex serviceVertex) {
         return map(componentInstanceName, serviceVertex, true);

@@ -16,8 +16,9 @@
 
 package org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation;
 
-import java.util.Optional;
 import org.openecomp.sdc.translator.services.heattotosca.ConsolidationEntityType;
+
+import java.util.Optional;
 
 public class ConsolidationData {
 

@@ -20,15 +20,13 @@
 
 package org.openecomp.sdc.asdctool.servlets;
 
-import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.Map.Entry;
-import java.util.Properties;
+import com.thinkaurelius.titan.core.TitanGraph;
+import org.apache.commons.configuration.BaseConfiguration;
+import org.apache.commons.configuration.Configuration;
+import org.apache.tinkerpop.gremlin.structure.io.graphml.GraphMLWriter;
+import org.glassfish.jersey.media.multipart.FormDataParam;
+import org.openecomp.sdc.asdctool.Utils;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -36,22 +34,15 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-
-import org.apache.commons.configuration.BaseConfiguration;
-import org.apache.commons.configuration.Configuration;
-import org.apache.tinkerpop.gremlin.structure.io.graphml.GraphMLWriter;
-import org.glassfish.jersey.media.multipart.FormDataParam;
-import org.openecomp.sdc.asdctool.Utils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.thinkaurelius.titan.core.TitanGraph;
+import java.io.*;
+import java.util.Map.Entry;
+import java.util.Properties;
 //import com.tinkerpop.blueprints.util.io.graphml.GraphMLWriter;
 
 @Path("/titan")
 public class ExportImportTitanServlet {
 
-	private static Logger log = LoggerFactory.getLogger(ExportImportTitanServlet.class.getName());
+	private static Logger log = Logger.getLogger(ExportImportTitanServlet.class.getName());
 
 	@GET
 	@Path("export")

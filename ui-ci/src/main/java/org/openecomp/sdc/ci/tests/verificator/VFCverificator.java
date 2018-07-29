@@ -20,10 +20,10 @@
 
 package org.openecomp.sdc.ci.tests.verificator;
 
-import static org.testng.AssertJUnit.assertFalse;
-
 import org.openecomp.sdc.ci.tests.datatypes.ResourceReqDetails;
 import org.openecomp.sdc.ci.tests.pages.ResourceGeneralPage;
+
+import static org.testng.AssertJUnit.assertFalse;
 
 
 public class VFCverificator {

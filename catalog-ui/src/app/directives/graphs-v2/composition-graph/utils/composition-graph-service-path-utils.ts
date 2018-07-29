@@ -47,8 +47,14 @@ export class ServicePathGraphUtils {
 
         _.forEach(pathElements, (link: ForwardingPathLink) => {
             let data:CompositionCiServicePathLink = new CompositionCiServicePathLink(link);
-            data.source = data.forwardingPathLink.fromNode;
-            data.target = data.forwardingPathLink.toNode;
+            data.source = _.find(
+                service.componentInstances,
+                instance => instance.name === data.forwardingPathLink.fromNode
+            ).uniqueId;
+            data.target = _.find(
+                service.componentInstances,
+                instance => instance.name === data.forwardingPathLink.toNode
+            ).uniqueId;
             data.pathId = forwardingPath.uniqueId;
             data.pathName = forwardingPath.name;
             this.commonGraphUtils.insertServicePathLinkToGraph(cy, data);

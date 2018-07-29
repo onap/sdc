@@ -1,28 +1,27 @@
 package org.openecomp.sdc.be.dao.cassandra.schema.tables;
 
+import com.datastax.driver.core.DataType;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.openecomp.sdc.be.dao.cassandra.schema.ITableDescription;
+import org.openecomp.sdc.be.resources.data.auditing.AuditingTypesConstants;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.openecomp.sdc.be.dao.cassandra.schema.ITableDescription;
-import org.openecomp.sdc.be.resources.data.auditing.AuditingTypesConstants;
-
-import com.datastax.driver.core.DataType;
-
 public abstract class DistribBaseEventTableDesc implements ITableDescription {
     @Override
     public List<ImmutablePair<String, DataType>> primaryKeys() {
         List<ImmutablePair<String, DataType>> keys = new ArrayList<>();
-        keys.add(new ImmutablePair<String, DataType>(TIMEBASED_UUID_FIELD, DataType.timeuuid()));
+        keys.add(new ImmutablePair<>(TIMEBASED_UUID_FIELD, DataType.timeuuid()));
         return keys;
     }
 
     @Override
     public List<ImmutablePair<String, DataType>> clusteringKeys() {
         List<ImmutablePair<String, DataType>> keys = new ArrayList<>();
-        keys.add(new ImmutablePair<String, DataType>(TIMESTAMP_FIELD, DataType.timestamp()));
+        keys.add(new ImmutablePair<>(TIMESTAMP_FIELD, DataType.timestamp()));
         return keys;
     }
 
@@ -36,7 +35,7 @@ public abstract class DistribBaseEventTableDesc implements ITableDescription {
         Map<String, ImmutablePair<DataType, Boolean>> columns = new HashMap<>();
 
         for (DistFieldsDescription field : DistFieldsDescription.values()) {
-            columns.put(field.getName(), new ImmutablePair<DataType, Boolean>(field.type, field.indexed));
+            columns.put(field.getName(), new ImmutablePair<>(field.type, field.indexed));
         }
         updateColumnDistribDescription(columns);
         return columns;

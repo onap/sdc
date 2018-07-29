@@ -20,20 +20,18 @@
 
 package org.openecomp.sdc.be.resources.data.auditing;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Map;
-import java.util.TimeZone;
-import java.util.UUID;
-
-import org.openecomp.sdc.be.resources.data.auditing.model.CommonAuditData;
-import org.openecomp.sdc.common.datastructure.AuditingFieldsKeysEnum;
-
 import com.datastax.driver.core.utils.UUIDs;
 import com.datastax.driver.mapping.annotations.ClusteringColumn;
 import com.datastax.driver.mapping.annotations.Column;
 import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
+import org.openecomp.sdc.be.resources.data.auditing.model.CommonAuditData;
+import org.openecomp.sdc.common.datastructure.AuditingFieldsKey;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.TimeZone;
+import java.util.UUID;
 
 @Table(keyspace = AuditingTypesConstants.AUDIT_KEYSPACE, name = AuditingTypesConstants.GET_USERS_LIST_EVENT_TYPE)
 public class GetUsersListEvent extends AuditingGenericEvent {
@@ -59,44 +57,10 @@ public class GetUsersListEvent extends AuditingGenericEvent {
     @Column
     private String details;
 
+    //Required to be public as it is used by Cassandra driver on get operation
     public GetUsersListEvent() {
-        super();
         timestamp1 = new Date();
         timebaseduuid = UUIDs.timeBased();
-    }
-
-    public GetUsersListEvent(Map<AuditingFieldsKeysEnum, Object> auditingFields) {
-        this();
-        Object value;
-        value = auditingFields.get(AuditingFieldsKeysEnum.AUDIT_REQUEST_ID);
-        if (value != null) {
-            setRequestId((String) value);
-        }
-        value = auditingFields.get(AuditingFieldsKeysEnum.AUDIT_ACTION);
-        if (value != null) {
-            setAction((String) value);
-        }
-        value = auditingFields.get(AuditingFieldsKeysEnum.AUDIT_STATUS);
-        if (value != null) {
-            setStatus((String) value);
-        }
-        value = auditingFields.get(AuditingFieldsKeysEnum.AUDIT_DESC);
-        if (value != null) {
-            setDesc((String) value);
-        }
-        value = auditingFields.get(AuditingFieldsKeysEnum.AUDIT_MODIFIER_UID);
-        if (value != null) {
-            setModifier((String) value);
-        }
-        value = auditingFields.get(AuditingFieldsKeysEnum.AUDIT_USER_DETAILS);
-        if (value != null) {
-            setDetails((String) value);
-        } else {
-            value = auditingFields.get(AuditingFieldsKeysEnum.AUDIT_DETAILS);
-            if (value != null) {
-                setDetails((String) value);
-            }
-        }
     }
 
     public GetUsersListEvent(String action, CommonAuditData commonAuditData, String modifier, String userDetails) {
@@ -109,19 +73,22 @@ public class GetUsersListEvent extends AuditingGenericEvent {
         this.details = userDetails;
     }
 
+    public void setTimestamp1(String timestamp) {
+        this.timestamp1 = parseDateFromString(timestamp);
+    }
 
     @Override
     public void fillFields() {
-        fields.put(AuditingFieldsKeysEnum.AUDIT_REQUEST_ID.getDisplayName(), getRequestId());
+        fields.put(AuditingFieldsKey.AUDIT_REQUEST_ID.getDisplayName(), getRequestId());
 
-        fields.put(AuditingFieldsKeysEnum.AUDIT_ACTION.getDisplayName(), getAction());
-        fields.put(AuditingFieldsKeysEnum.AUDIT_STATUS.getDisplayName(), getStatus());
-        fields.put(AuditingFieldsKeysEnum.AUDIT_DESC.getDisplayName(), getDesc());
-        fields.put(AuditingFieldsKeysEnum.AUDIT_USER_DETAILS.getDisplayName(), getDetails());
-        fields.put(AuditingFieldsKeysEnum.AUDIT_MODIFIER_UID.getDisplayName(), getModifier());
+        fields.put(AuditingFieldsKey.AUDIT_ACTION.getDisplayName(), getAction());
+        fields.put(AuditingFieldsKey.AUDIT_STATUS.getDisplayName(), getStatus());
+        fields.put(AuditingFieldsKey.AUDIT_DESC.getDisplayName(), getDesc());
+        fields.put(AuditingFieldsKey.AUDIT_USER_DETAILS.getDisplayName(), getDetails());
+        fields.put(AuditingFieldsKey.AUDIT_MODIFIER_UID.getDisplayName(), getModifier());
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(dateFormatPattern);
         simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
-        fields.put(AuditingFieldsKeysEnum.AUDIT_TIMESTAMP.getDisplayName(), simpleDateFormat.format(timestamp1));
+        fields.put(AuditingFieldsKey.AUDIT_TIMESTAMP.getDisplayName(), simpleDateFormat.format(timestamp1));
     }
 
     public UUID getTimebaseduuid() {

@@ -1,14 +1,5 @@
 package org.openecomp.sdc.be.components.distribution.engine;
 
-import java.net.ConnectException;
-import java.net.SocketTimeoutException;
-import java.util.Properties;
-import java.util.UUID;
-
-import javax.annotation.PostConstruct;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
-
 import org.apache.http.conn.ConnectTimeoutException;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.common.api.Constants;
@@ -19,14 +10,21 @@ import org.openecomp.sdc.common.http.client.api.HttpRequest;
 import org.openecomp.sdc.common.http.client.api.HttpResponse;
 import org.openecomp.sdc.common.http.client.api.Responses;
 import org.openecomp.sdc.common.http.config.ExternalServiceConfig;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.springframework.stereotype.Component;
+
+import javax.annotation.PostConstruct;
+import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.MediaType;
+import java.net.ConnectException;
+import java.net.SocketTimeoutException;
+import java.util.Properties;
+import java.util.UUID;
 
 @Component
 public class AaiRequestHandler {
 
-    private static final Logger logger = LoggerFactory.getLogger(AaiRequestHandler.class);
+    private static final Logger logger = Logger.getLogger(AaiRequestHandler.class);
     private ExternalServiceConfig aaiConfig;
     
     protected static final String OPERATIONAL_ENV_RESOURCE_CONFIG_PARAM = "operationalEnvironments";

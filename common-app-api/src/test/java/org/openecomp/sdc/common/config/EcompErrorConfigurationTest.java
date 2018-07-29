@@ -1,11 +1,8 @@
 package org.openecomp.sdc.common.config;
 
-import java.util.Map;
-
-import javax.annotation.Generated;
-
-import org.junit.Assert;
 import org.junit.Test;
+
+import java.util.Map;
 
 
 public class EcompErrorConfigurationTest {

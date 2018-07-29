@@ -1,9 +1,9 @@
 package org.openecomp.sdc.be.components.utils;
 
-import java.util.Set;
-
 import org.openecomp.sdc.be.datatypes.enums.EnvironmentStatusEnum;
 import org.openecomp.sdc.be.resources.data.OperationalEnvironmentEntry;
+
+import java.util.Set;
 
 public class OperationalEnvironmentBuilder {
 

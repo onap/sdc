@@ -51,7 +51,7 @@ public final class StreamUtils {
 	 */
 	public static <T> Stream<T> takeWhilePlusOneNoEval(Stream<T> stream, Predicate<T> predicate) {
 		List<T> results = new ArrayList<>();
-		Consumer<T> listAdder = e -> results.add(e);
+		Consumer<T> listAdder = results::add;
 		stream.map(e -> {
 			listAdder.accept(e);
 			return e;
@@ -64,11 +64,11 @@ public final class StreamUtils {
 	}
 
 	public static <T> Stream<T> takeWhilePlusOne(Stream<T> stream, Predicate<T> predicate) {
-		return StreamSupport.stream(takeWhile(stream.spliterator(), new StopAfterFailPredicate<T>(predicate)), false);
+		return StreamSupport.stream(takeWhile(stream.spliterator(), new StopAfterFailPredicate<>(predicate)), false);
 	}
 
 	private static <T> Spliterator<T> takeWhile(Spliterator<T> splitr, Predicate<T> predicate) {
-		return new MySplitIterator<T>(splitr, predicate);
+		return new MySplitIterator<>(splitr, predicate);
 	}
 
 	public static class MySplitIterator<T> extends AbstractSpliterator<T> implements Spliterator<T> {
@@ -94,18 +94,17 @@ public final class StreamUtils {
 		}
 
 		private Consumer<? super T> createConsumerWrapper(Consumer<? super T> action) {
-			Consumer<? super T> cons = new Consumer<T>() {
-				@Override
-				public void accept(T t) {
-					stillGoing = innerPred.test(t);
-					if (stillGoing) {
-						action.accept(t);
-					}
 
-				}
-			};
+            return new Consumer<T>() {
+                @Override
+                public void accept(T t) {
+                    stillGoing = innerPred.test(t);
+                    if (stillGoing) {
+                        action.accept(t);
+                    }
 
-			return cons;
+                }
+            };
 		}
 
 	}

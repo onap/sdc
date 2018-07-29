@@ -1,12 +1,12 @@
 package org.openecomp.sdc.be.model;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
 import org.openecomp.sdc.common.api.UploadArtifactInfo;
+
+import java.util.LinkedList;
+import java.util.List;
 
 public class UploadResourceInfoTest {
 

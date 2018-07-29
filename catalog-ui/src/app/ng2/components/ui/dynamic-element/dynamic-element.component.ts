@@ -53,6 +53,7 @@ export class DynamicElementComponent {
     @ViewChild('target', { read: ViewContainerRef }) target: any;
     @Input() type: any;
     @Input() name: string;
+    @Input() testId: string;
     @Input() readonly:boolean;
     @Input() path:string;//optional param. used only for for subnetpoolid type
 
@@ -111,6 +112,7 @@ export class DynamicElementComponent {
         if (this.cmpRef) {
             this.cmpRef.instance.name = this.name;
             this.cmpRef.instance.type = this.type;
+            this.cmpRef.instance.testId = this.testId;
             this.cmpRef.instance.value = this.value;
             this.cmpRef.instance.readonly = this.readonly;
         }
@@ -133,7 +135,7 @@ export class DynamicElementComponent {
 
             case DynamicElementComponentCreatorIdentifier.FLOAT:
                 this.createComponent(UiElementIntegerInputComponent);
-                this.cmpRef.instance.pattern = /^[-+]?[0-9]+(\.[0-9]+)?([eE][-+]?[0-9]+)?$/;
+                this.cmpRef.instance.pattern = /^[-+]?[0-9]+(\.[0-9]+)?([eE][-+]?[0-9]+)?$/.source;
                 break;
 
             case DynamicElementComponentCreatorIdentifier.STRING:
@@ -156,10 +158,10 @@ export class DynamicElementComponent {
             case DynamicElementComponentCreatorIdentifier.DEFAULT:
             default:
                 this.createComponent(UiElementInputComponent);
-                console.log("ERROR: No ui component to handle type: " + this.type);
+                console.log("ERROR: No ui-models component to handle type: " + this.type);
         }
 
-        // Subscribe to change event of of ui-element-basic and fire event to change the value
+        // Subscribe to change event of of ui-models-element-basic and fire event to change the value
         this.cmpRef.instance.baseEmitter.subscribe((event) => { this.emitter.emit(event); });
         this.cmpRef.instance.valueChange.subscribe((event) => { this.valueChange.emit(event); });
     }

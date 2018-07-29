@@ -1,10 +1,10 @@
 package org.openecomp.sdc.be.resources.data;
 
-import java.util.Map;
-
 import org.apache.commons.collections.map.HashedMap;
 import org.junit.Test;
 import org.openecomp.sdc.be.datatypes.elements.CapabilityTypeDataDefinition;
+
+import java.util.Map;
 
 
 public class CapabilityTypeDataTest {

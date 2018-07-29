@@ -20,8 +20,24 @@
 
 package org.openecomp.sdc.be.components.impl;
 
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.when;
+import fj.data.Either;
+import static org.junit.Assert.assertEquals;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
+import org.openecomp.sdc.be.dao.titan.TitanGenericDao;
+import org.openecomp.sdc.be.impl.ComponentsUtils;
+import org.openecomp.sdc.be.model.CapabilityTypeDefinition;
+import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
+import org.openecomp.sdc.be.model.operations.impl.CapabilityTypeOperation;
+import org.openecomp.sdc.be.model.operations.impl.PropertyOperation;
+import org.openecomp.sdc.common.util.CapabilityTypeNameEnum;
+import org.openecomp.sdc.exception.ResponseFormat;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -31,42 +47,30 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
-import org.openecomp.sdc.be.impl.ComponentsUtils;
-import org.openecomp.sdc.be.model.CapabilityTypeDefinition;
-import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
-import org.openecomp.sdc.be.model.operations.impl.CapabilityTypeOperation;
-import org.openecomp.sdc.common.util.CapabilityTypeNameEnum;
-import org.openecomp.sdc.exception.ResponseFormat;
-
-import fj.data.Either;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class CapabilityTypeImportManagerTest {
-    @InjectMocks
-    private CapabilityTypeImportManager manager = new CapabilityTypeImportManager();
-    public static final CommonImportManager commonImportManager = Mockito.mock(CommonImportManager.class);
-    public static final CapabilityTypeOperation capabilityTypeOperation = Mockito.mock(CapabilityTypeOperation.class);
-    public static final ComponentsUtils componentsUtils = Mockito.mock(ComponentsUtils.class);
+    private static final CapabilityTypeOperation capabilityTypeOperation = mock(CapabilityTypeOperation.class);
+    private static final ComponentsUtils componentsUtils = mock(ComponentsUtils.class);
+    private static final TitanGenericDao titanGenericDao = mock(TitanGenericDao.class);
+    private static final PropertyOperation propertyOperation = mock(PropertyOperation.class);
+    private CommonImportManager commonImportManager = new CommonImportManager(componentsUtils, propertyOperation);
+    private CapabilityTypeImportManager manager = new CapabilityTypeImportManager(capabilityTypeOperation, commonImportManager);
 
     @BeforeClass
     public static void beforeClass() {
         when(capabilityTypeOperation.addCapabilityType(Mockito.any(CapabilityTypeDefinition.class))).thenAnswer(new Answer<Either<CapabilityTypeDefinition, StorageOperationStatus>>() {
             public Either<CapabilityTypeDefinition, StorageOperationStatus> answer(InvocationOnMock invocation) {
                 Object[] args = invocation.getArguments();
-                Either<CapabilityTypeDefinition, StorageOperationStatus> ans = Either.left((CapabilityTypeDefinition) args[0]);
-                return ans;
+                return Either.left((CapabilityTypeDefinition) args[0]);
             }
 
         });
-        when(commonImportManager.createElementTypesFromYml(Mockito.anyString(), Mockito.any())).thenCallRealMethod();
-        when(commonImportManager.createElementTypesFromToscaJsonMap(Mockito.any(), Mockito.any())).thenCallRealMethod();
+
+        when(propertyOperation.getTitanGenericDao()).thenReturn(titanGenericDao);
+        when(capabilityTypeOperation.getCapabilityType(Mockito.anyString())).thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
     }
 
     @Before
@@ -77,16 +81,16 @@ public class CapabilityTypeImportManagerTest {
     @Test
     public void testCreateCapabilityTypes() throws IOException {
         String ymlContent = getCapabilityTypesYml();
-        Either<List<CapabilityTypeDefinition>, ResponseFormat> createCapabilityTypes = manager.createCapabilityTypes(ymlContent);
+        Either<List<ImmutablePair<CapabilityTypeDefinition, Boolean>>, ResponseFormat> createCapabilityTypes = manager.createCapabilityTypes(ymlContent);
         assertTrue(createCapabilityTypes.isLeft());
 
-        List<CapabilityTypeDefinition> capabilityTypesList = createCapabilityTypes.left().value();
-        assertTrue(capabilityTypesList.size() == 14);
+        List<ImmutablePair<CapabilityTypeDefinition, Boolean>> capabilityTypesList = createCapabilityTypes.left().value();
+        assertEquals(14, capabilityTypesList.size());
         Map<String, CapabilityTypeDefinition> capibilityTypeMap = new HashMap<>();
-        for (CapabilityTypeDefinition capType : capabilityTypesList) {
-            capibilityTypeMap.put(capType.getType(), capType);
+        for (ImmutablePair<CapabilityTypeDefinition, Boolean> capTypePair : capabilityTypesList) {
+            capibilityTypeMap.put(capTypePair.left.getType(), capTypePair.left);
         }
-        assertTrue(capabilityTypesList.size() == 14);
+        assertEquals(14, capabilityTypesList.size());
 
         for (CapabilityTypeNameEnum curr : CapabilityTypeNameEnum.values()) {
             assertTrue(capibilityTypeMap.containsKey(curr.getCapabilityName()));
@@ -97,8 +101,7 @@ public class CapabilityTypeImportManagerTest {
     private String getCapabilityTypesYml() throws IOException {
         Path filePath = Paths.get("src/test/resources/types/capabilityTypes.yml");
         byte[] fileContent = Files.readAllBytes(filePath);
-        String ymlContent = new String(fileContent);
-        return ymlContent;
+        return new String(fileContent);
     }
 
 }

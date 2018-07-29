@@ -1,5 +1,6 @@
 package org.openecomp.sdc.be.auditing.impl;
 
+import mockit.Deencapsulation;
 import org.junit.Assert;
 import org.junit.Test;
 import org.openecomp.sdc.be.model.ConsumerDefinition;
@@ -8,8 +9,6 @@ import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingGenericEvent;
 import org.openecomp.sdc.be.resources.data.auditing.model.CommonAuditData;
 import org.openecomp.sdc.be.resources.data.auditing.model.CommonAuditData.Builder;
-
-import mockit.Deencapsulation;
 
 public class AuditConsumerEventFactoryTest {
 

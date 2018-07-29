@@ -16,19 +16,6 @@
 
 package org.openecomp.sdc.translator.services.heattotosca.impl.resourcetranslation;
 
-import static org.openecomp.sdc.tosca.services.DataModelUtil.createAttachmentRequirementAssignment;
-import static org.openecomp.sdc.translator.services.heattotosca.HeatToToscaLogConstants.LOG_INVALID_NETWORK_POLICY_REFS_RESOURCE;
-import static org.openecomp.sdc.translator.services.heattotosca.HeatToToscaLogConstants.LOG_INVALID_PROPERTY_FORMAT_GET_ATTR_FQ_NAME;
-import static org.openecomp.sdc.translator.services.heattotosca.HeatToToscaLogConstants.LOG_INVALID_PROPERTY_FORMAT_GET_RESOURCE;
-import static org.openecomp.sdc.translator.services.heattotosca.HeatToToscaLogConstants.LOG_INVALID_PROPERTY_VALUE_FORMAT;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.onap.sdc.tosca.datatypes.model.NodeTemplate;
 import org.openecomp.sdc.heat.datatypes.model.HeatResourcesTypes;
@@ -45,6 +32,11 @@ import org.openecomp.sdc.translator.datatypes.heattotosca.to.TranslateTo;
 import org.openecomp.sdc.translator.services.heattotosca.HeatToToscaUtil;
 import org.openecomp.sdc.translator.services.heattotosca.ResourceTranslationFactory;
 import org.openecomp.sdc.translator.services.heattotosca.mapping.TranslatorHeatToToscaPropertyConverter;
+
+import java.util.*;
+
+import static org.openecomp.sdc.tosca.services.DataModelUtil.createAttachmentRequirementAssignment;
+import static org.openecomp.sdc.translator.services.heattotosca.HeatToToscaLogConstants.*;
 
 public class ResourceTranslationContrailV2VirtualNetworkImpl extends ResourceTranslationBase {
 

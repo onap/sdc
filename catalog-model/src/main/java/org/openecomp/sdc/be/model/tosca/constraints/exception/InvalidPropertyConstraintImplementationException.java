@@ -28,13 +28,11 @@ package org.openecomp.sdc.be.model.tosca.constraints.exception;
  */
 public class InvalidPropertyConstraintImplementationException extends ConstraintTechnicalException {
 
-	private static final long serialVersionUID = 2797550944328544706L;
+    public InvalidPropertyConstraintImplementationException(String message, Throwable cause) {
+        super(message, cause);
+    }
 
-	public InvalidPropertyConstraintImplementationException(String message, Throwable cause) {
-		super(message, cause);
-	}
-
-	public InvalidPropertyConstraintImplementationException(String message) {
-		super(message);
-	}
+    public InvalidPropertyConstraintImplementationException(String message) {
+        super(message);
+    }
 }

@@ -21,6 +21,7 @@
 import { Component, Input, Output, EventEmitter} from "@angular/core";
 import {PropertyFEModel, DerivedFEProperty, InstanceFePropertiesMap} from "app/models";
 import {PropertiesService} from "../../../services/properties.service";
+import { InstanceFeDetails } from "../../../../models/instance-fe-details";
 
 @Component({
     selector: 'properties-table',
@@ -30,7 +31,7 @@ import {PropertiesService} from "../../../services/properties.service";
 export class PropertiesTableComponent {
 
     @Input() fePropertiesMap: InstanceFePropertiesMap;
-    @Input() feInstanceNamesMap: Map<string, string>;
+    @Input() feInstanceNamesMap: Map<string, InstanceFeDetails>;
     @Input() selectedPropertyId: string;
     @Input() propertyNameSearchText:string;
     @Input() searchTerm:string;

@@ -3,12 +3,7 @@ package org.openecomp.sdc.vendorlicense.impl;
 import org.openecomp.core.dao.UniqueValueDaoFactory;
 import org.openecomp.sdc.vendorlicense.VendorLicenseManager;
 import org.openecomp.sdc.vendorlicense.VendorLicenseManagerFactory;
-import org.openecomp.sdc.vendorlicense.dao.EntitlementPoolDaoFactory;
-import org.openecomp.sdc.vendorlicense.dao.FeatureGroupDaoFactory;
-import org.openecomp.sdc.vendorlicense.dao.LicenseAgreementDaoFactory;
-import org.openecomp.sdc.vendorlicense.dao.LicenseKeyGroupDaoFactory;
-import org.openecomp.sdc.vendorlicense.dao.LimitDaoFactory;
-import org.openecomp.sdc.vendorlicense.dao.VendorLicenseModelDaoFactory;
+import org.openecomp.sdc.vendorlicense.dao.*;
 import org.openecomp.sdc.vendorlicense.facade.VendorLicenseFacadeFactory;
 
 /**

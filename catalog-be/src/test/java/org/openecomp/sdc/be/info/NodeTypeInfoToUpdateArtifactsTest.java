@@ -1,12 +1,12 @@
 package org.openecomp.sdc.be.info;
 
-import java.util.EnumMap;
-import java.util.List;
-import java.util.Map;
-
 import org.junit.Test;
 import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic.ArtifactOperationEnum;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
+
+import java.util.EnumMap;
+import java.util.List;
+import java.util.Map;
 
 public class NodeTypeInfoToUpdateArtifactsTest {
 

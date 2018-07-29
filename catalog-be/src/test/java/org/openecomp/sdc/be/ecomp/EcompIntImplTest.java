@@ -1,5 +1,15 @@
 package org.openecomp.sdc.be.ecomp;
 
+import org.junit.Test;
+import org.openecomp.portalsdk.core.onboarding.exception.PortalAPIException;
+import org.openecomp.portalsdk.core.restful.domain.EcompRole;
+import org.openecomp.portalsdk.core.restful.domain.EcompUser;
+
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletInputStream;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.io.BufferedReader;
 import java.security.Principal;
 import java.util.Collection;

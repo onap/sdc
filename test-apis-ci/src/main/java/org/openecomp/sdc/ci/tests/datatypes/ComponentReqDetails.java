@@ -20,12 +20,12 @@
 
 package org.openecomp.sdc.ci.tests.datatypes;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
 import org.openecomp.sdc.be.model.category.SubCategoryDefinition;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class ComponentReqDetails {
 

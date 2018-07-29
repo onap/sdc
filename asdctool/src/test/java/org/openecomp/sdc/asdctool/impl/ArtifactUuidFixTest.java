@@ -1,13 +1,13 @@
 package org.openecomp.sdc.asdctool.impl;
 
-import java.util.List;
-import java.util.Map;
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
 import org.openecomp.sdc.be.model.Component;
+
+import java.util.List;
+import java.util.Map;
 
 public class ArtifactUuidFixTest {
 

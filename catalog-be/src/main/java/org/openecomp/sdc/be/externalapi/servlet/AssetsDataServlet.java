@@ -20,26 +20,9 @@
 
 package org.openecomp.sdc.be.externalapi.servlet;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.inject.Singleton;
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.GET;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
+import com.jcabi.aspects.Loggable;
+import fj.data.Either;
+import io.swagger.annotations.*;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.components.impl.ComponentBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ElementBusinessLogic;
@@ -52,23 +35,28 @@ import org.openecomp.sdc.be.ecomp.converters.AssetMetadataConverter;
 import org.openecomp.sdc.be.externalapi.servlet.representation.AssetMetadata;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
+import org.openecomp.sdc.be.resources.data.auditing.model.DistributionData;
+import org.openecomp.sdc.be.resources.data.auditing.model.ResourceCommonInfo;
 import org.openecomp.sdc.be.servlets.AbstractValidationsServlet;
 import org.openecomp.sdc.be.servlets.RepresentationUtils;
 import org.openecomp.sdc.common.api.Constants;
-import org.openecomp.sdc.common.datastructure.AuditingFieldsKeysEnum;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.common.util.GeneralUtility;
 import org.openecomp.sdc.exception.ResponseFormat;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import com.jcabi.aspects.Loggable;
-
-import fj.data.Either;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import javax.inject.Singleton;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * This Servlet serves external users for retrieving component metadata.
@@ -86,7 +74,7 @@ public class AssetsDataServlet extends AbstractValidationsServlet {
     @Context
     private HttpServletRequest request;
 
-    private static final Logger log = LoggerFactory.getLogger(AssetsDataServlet.class);
+    private static final Logger log = Logger.getLogger(AssetsDataServlet.class);
 
     /**
      *
@@ -133,15 +121,14 @@ public class AssetsDataServlet extends AbstractValidationsServlet {
 
         AuditingActionEnum auditingActionEnum = query == null ? AuditingActionEnum.GET_ASSET_LIST : AuditingActionEnum.GET_FILTERED_ASSET_LIST;
 
-        EnumMap<AuditingFieldsKeysEnum, Object> additionalParam = new EnumMap<AuditingFieldsKeysEnum, Object>(AuditingFieldsKeysEnum.class);
-        additionalParam.put(AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_CONSUMER_ID, instanceIdHeader);
-        additionalParam.put(AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_RESOURCE_URL, query == null ? requestURI : requestURI + "?" + query);
+        String resourceUrl = query == null ? requestURI : requestURI + "?" + query;
+        DistributionData distributionData = new DistributionData(instanceIdHeader, resourceUrl);
 
         // Mandatory
         if (instanceIdHeader == null || instanceIdHeader.isEmpty()) {
             log.debug("getAssetList: Missing X-ECOMP-InstanceID header");
             responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.MISSING_X_ECOMP_INSTANCE_ID);
-            getComponentsUtils().auditExternalGetAsset(responseFormat, auditingActionEnum, additionalParam);
+            getComponentsUtils().auditExternalGetAssetList(responseFormat, auditingActionEnum, distributionData, requestId);
             return buildErrorResponse(responseFormat);
         }
 
@@ -166,7 +153,7 @@ public class AssetsDataServlet extends AbstractValidationsServlet {
                 if (resourceTypeEnum == null) {
                     log.debug("getAssetList: Asset Fetching Failed. Invalid resource type was received");
                     responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.INVALID_CONTENT);
-                    getComponentsUtils().auditExternalGetAsset(responseFormat, auditingActionEnum, additionalParam);
+                    getComponentsUtils().auditExternalGetAssetList(responseFormat, auditingActionEnum, distributionData, requestId);
                     return buildErrorResponse(responseFormat);
                 }
                 filters.put(FilterKeyEnum.RESOURCE_TYPE, resourceTypeEnum.name());
@@ -177,7 +164,7 @@ public class AssetsDataServlet extends AbstractValidationsServlet {
             if (assetTypeData.isRight()) {
                 log.debug("getAssetList: Asset Fetching Failed");
                 responseFormat = assetTypeData.right().value();
-                getComponentsUtils().auditExternalGetAsset(responseFormat, auditingActionEnum, additionalParam);
+                getComponentsUtils().auditExternalGetAssetList(responseFormat, auditingActionEnum, distributionData, requestId);
                 return buildErrorResponse(responseFormat);
             } else {
                 log.debug("getAssetList: Asset Fetching Success");
@@ -185,12 +172,12 @@ public class AssetsDataServlet extends AbstractValidationsServlet {
                 if (resMetadata.isRight()) {
                     log.debug("getAssetList: Asset conversion Failed");
                     responseFormat = resMetadata.right().value();
-                    getComponentsUtils().auditExternalGetAsset(responseFormat, auditingActionEnum, additionalParam);
+                    getComponentsUtils().auditExternalGetAssetList(responseFormat, auditingActionEnum, distributionData, requestId);
                     return buildErrorResponse(responseFormat);
                 }
                 Object result = RepresentationUtils.toRepresentation(resMetadata.left().value());
                 responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.OK);
-                getComponentsUtils().auditExternalGetAsset(responseFormat, auditingActionEnum, additionalParam);
+                getComponentsUtils().auditExternalGetAssetList(responseFormat, auditingActionEnum, distributionData, requestId);
 
                 response = buildOkResponse(responseFormat, result);
                 return response;
@@ -239,18 +226,15 @@ public class AssetsDataServlet extends AbstractValidationsServlet {
         String url = request.getMethod() + " " + requestURI;
         log.debug("Start handle request of {}", url);
 
-        EnumMap<AuditingFieldsKeysEnum, Object> additionalParam = new EnumMap<>(AuditingFieldsKeysEnum.class);
         ComponentTypeEnum componentType = ComponentTypeEnum.findByParamName(assetType);
-        additionalParam.put(AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_CONSUMER_ID, instanceIdHeader);
-        additionalParam.put(AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_RESOURCE_URL, requestURI);
-        additionalParam.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_TYPE, componentType.getValue());
-        additionalParam.put(AuditingFieldsKeysEnum.AUDIT_SERVICE_INSTANCE_ID, uuid);
-
+        ResourceCommonInfo resourceCommonInfo = new ResourceCommonInfo(componentType.getValue());
+        DistributionData distributionData = new DistributionData(instanceIdHeader, requestURI);
         // Mandatory
         if (instanceIdHeader == null || instanceIdHeader.isEmpty()) {
             log.debug("getAssetList: Missing X-ECOMP-InstanceID header");
             responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.MISSING_X_ECOMP_INSTANCE_ID);
-            getComponentsUtils().auditExternalGetAsset(responseFormat, auditingActionEnum, additionalParam);
+            getComponentsUtils().auditExternalGetAsset(responseFormat, auditingActionEnum, distributionData,
+                    resourceCommonInfo, requestId, uuid);
             return buildErrorResponse(responseFormat);
         }
 
@@ -264,26 +248,30 @@ public class AssetsDataServlet extends AbstractValidationsServlet {
             if (assetTypeData.isRight()) {
                 log.debug("getAssetList: Asset Fetching Failed");
                 responseFormat = assetTypeData.right().value();
-                getComponentsUtils().auditExternalGetAsset(responseFormat, auditingActionEnum, additionalParam);
+                getComponentsUtils().auditExternalGetAsset(responseFormat, auditingActionEnum, distributionData,
+                        resourceCommonInfo, requestId, uuid);
 
                 return buildErrorResponse(responseFormat);
-            } else {
-                log.debug("getAssetList: Asset Fetching Success");
-                additionalParam.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_NAME, assetTypeData.left().value().iterator().next().getName());
-                Either<List<? extends AssetMetadata>, ResponseFormat> resMetadata = assetMetadataUtils.convertToAssetMetadata(assetTypeData.left().value(), requestURI, true);
-                if (resMetadata.isRight()) {
-                    log.debug("getAssetList: Asset conversion Failed");
-                    responseFormat = resMetadata.right().value();
-                    getComponentsUtils().auditExternalGetAsset(responseFormat, auditingActionEnum, additionalParam);
-                    return buildErrorResponse(responseFormat);
-                }
-                Object result = RepresentationUtils.toRepresentation(resMetadata.left().value().iterator().next());
-                responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.OK);
-                getComponentsUtils().auditExternalGetAsset(responseFormat, auditingActionEnum, additionalParam);
-
-                response = buildOkResponse(responseFormat, result);
-                return response;
             }
+            resourceCommonInfo.setResourceName(assetTypeData.left().value().iterator().next().getName());
+            log.debug("getAssetList: Asset Fetching Success");
+            Either<List<? extends AssetMetadata>, ResponseFormat> resMetadata = assetMetadataUtils.convertToAssetMetadata(assetTypeData.left().value(), requestURI, true);
+            if (resMetadata.isRight()) {
+                log.debug("getAssetList: Asset conversion Failed");
+                responseFormat = resMetadata.right().value();
+
+                getComponentsUtils().auditExternalGetAsset(responseFormat, auditingActionEnum, distributionData,
+                        resourceCommonInfo, requestId, uuid);
+                return buildErrorResponse(responseFormat);
+            }
+            Object result = RepresentationUtils.toRepresentation(resMetadata.left().value().iterator().next());
+            responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.OK);
+            getComponentsUtils().auditExternalGetAsset(responseFormat, auditingActionEnum, distributionData,
+                    resourceCommonInfo, requestId, uuid);
+
+            response = buildOkResponse(responseFormat, result);
+            return response;
+
         } catch (Exception e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Fetch filtered list of assets");
             log.debug("getAssetList: Fetch list of assets failed with exception", e);
@@ -328,26 +316,27 @@ public class AssetsDataServlet extends AbstractValidationsServlet {
         ServletContext context = request.getSession().getServletContext();
         ComponentTypeEnum componentType = ComponentTypeEnum.findByParamName(assetType);
         AuditingActionEnum auditingActionEnum = AuditingActionEnum.GET_TOSCA_MODEL;
-        EnumMap<AuditingFieldsKeysEnum, Object> additionalParam = new EnumMap<AuditingFieldsKeysEnum, Object>(AuditingFieldsKeysEnum.class);
-        additionalParam.put(AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_CONSUMER_ID, instanceIdHeader);
-        additionalParam.put(AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_RESOURCE_URL, url);
-        additionalParam.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_TYPE, componentType.getValue());
-        additionalParam.put(AuditingFieldsKeysEnum.AUDIT_SERVICE_INSTANCE_ID, uuid);
+
+        ResourceCommonInfo resourceCommonInfo = new ResourceCommonInfo(componentType.getValue());
+        DistributionData distributionData = new DistributionData(instanceIdHeader, url);
 
         if (instanceIdHeader == null || instanceIdHeader.isEmpty()) {
             log.debug("getToscaModel: Missing X-ECOMP-InstanceID header");
             responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.MISSING_X_ECOMP_INSTANCE_ID);
-            getComponentsUtils().auditExternalGetAsset(responseFormat, auditingActionEnum, additionalParam);
+            getComponentsUtils().auditExternalGetAsset(responseFormat, auditingActionEnum, distributionData,
+                    resourceCommonInfo, requestId, uuid);
             return buildErrorResponse(responseFormat);
         }
 
         try {
             ComponentBusinessLogic componentBL = getComponentBL(componentType, context);
 
-            Either<ImmutablePair<String, byte[]>, ResponseFormat> csarArtifact = componentBL.getToscaModelByComponentUuid(componentType, uuid, additionalParam);
+
+            Either<ImmutablePair<String, byte[]>, ResponseFormat> csarArtifact = componentBL.getToscaModelByComponentUuid(componentType, uuid, resourceCommonInfo);
             if (csarArtifact.isRight()) {
                 responseFormat = csarArtifact.right().value();
-                getComponentsUtils().auditExternalGetAsset(responseFormat, auditingActionEnum, additionalParam);
+                getComponentsUtils().auditExternalGetAsset(responseFormat, auditingActionEnum, distributionData,
+                        resourceCommonInfo, requestId, uuid);
                 response = buildErrorResponse(responseFormat);
             } else {
                 byte[] value = csarArtifact.left().value().getRight();
@@ -357,7 +346,8 @@ public class AssetsDataServlet extends AbstractValidationsServlet {
                 headers.put(Constants.CONTENT_DISPOSITION_HEADER, getContentDispositionValue(csarArtifact.left().value().getLeft()));
                 headers.put(Constants.MD5_HEADER, contenetMD5);
                 responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.OK);
-                getComponentsUtils().auditExternalGetAsset(responseFormat, auditingActionEnum, additionalParam);
+                getComponentsUtils().auditExternalGetAsset(responseFormat, auditingActionEnum, distributionData,
+                        resourceCommonInfo, requestId, uuid);
                 response = buildOkResponse(responseFormat, is, headers);
             }
             return response;
@@ -367,7 +357,8 @@ public class AssetsDataServlet extends AbstractValidationsServlet {
             log.debug("falied to get asset tosca model", e);
             responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR);
             response = buildErrorResponse(responseFormat);
-            getComponentsUtils().auditExternalGetAsset(responseFormat, auditingActionEnum, additionalParam);
+            getComponentsUtils().auditExternalGetAsset(responseFormat, auditingActionEnum, distributionData,
+                    resourceCommonInfo, requestId, uuid);
             return response;
         }
     }

@@ -1,29 +1,23 @@
 package org.openecomp.core.converter.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.openecomp.core.converter.datatypes.Constants.ONAP_INDEX;
-import static org.openecomp.core.impl.GlobalSubstitutionServiceTemplate.DEFININTION_VERSION;
-import static org.openecomp.core.impl.GlobalSubstitutionServiceTemplate.GLOBAL_SUBSTITUTION_SERVICE_FILE_NAME;
-import static org.openecomp.core.impl.GlobalSubstitutionServiceTemplate.HEAT_INDEX;
-import static org.openecomp.core.impl.GlobalSubstitutionServiceTemplate.TEMPLATE_NAME_PROPERTY;
-import static org.openecomp.sdc.common.utils.CommonUtil.validateAndUploadFileContent;
-
 import org.apache.commons.io.IOUtils;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
 import org.openecomp.core.impl.GlobalSubstitutionServiceTemplate;
 import org.openecomp.core.impl.ToscaConverterImpl;
 import org.openecomp.core.utilities.file.FileContentHandler;
 import org.openecomp.core.utilities.orchestration.OnboardingTypesEnum;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
-import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
 
 import java.net.URL;
 import java.util.Map;
 import java.util.Set;
+
+import static org.junit.Assert.*;
+import static org.openecomp.core.converter.datatypes.Constants.ONAP_INDEX;
+import static org.openecomp.core.impl.GlobalSubstitutionServiceTemplate.*;
+import static org.openecomp.sdc.common.utils.CommonUtil.validateAndUploadFileContent;
 public class ToscaConvertorDefinitionsTest {
 
 

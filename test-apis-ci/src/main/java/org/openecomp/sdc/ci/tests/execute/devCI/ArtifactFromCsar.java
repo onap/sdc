@@ -20,6 +20,14 @@
 
 package org.openecomp.sdc.ci.tests.execute.devCI;
 
+import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
+import org.openecomp.sdc.ci.tests.datatypes.GroupHeatMetaDefinition;
+import org.openecomp.sdc.ci.tests.datatypes.HeatMetaFirstLevelDefinition;
+import org.openecomp.sdc.ci.tests.datatypes.TypeHeatMetaDefinition;
+import org.openecomp.sdc.ci.tests.utils.CsarParserUtils;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -28,24 +36,10 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
-
-import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
-import org.openecomp.sdc.ci.tests.datatypes.GroupHeatMetaDefinition;
-import org.openecomp.sdc.ci.tests.datatypes.HeatMetaFirstLevelDefinition;
-import org.openecomp.sdc.ci.tests.datatypes.TypeHeatMetaDefinition;
-import org.openecomp.sdc.ci.tests.utils.CsarParserUtils;
 
 public class ArtifactFromCsar {
 	

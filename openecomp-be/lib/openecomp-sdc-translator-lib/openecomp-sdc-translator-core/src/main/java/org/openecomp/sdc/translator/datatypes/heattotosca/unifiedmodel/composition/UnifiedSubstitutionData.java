@@ -1,8 +1,5 @@
 package org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.composition;
 
-import org.apache.commons.collections4.MapUtils;
-import org.onap.sdc.tosca.datatypes.model.NodeTemplate;
-
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -10,6 +7,9 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+
+import org.apache.commons.collections4.MapUtils;
+import org.onap.sdc.tosca.datatypes.model.NodeTemplate;
 
 public class UnifiedSubstitutionData {
 

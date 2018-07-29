@@ -20,18 +20,9 @@
 
 package org.openecomp.sdc.ci.tests.execute.property;
 
-import static org.testng.AssertJUnit.assertEquals;
-import static org.testng.AssertJUnit.assertFalse;
-import static org.testng.AssertJUnit.assertNotNull;
-import static org.testng.AssertJUnit.assertTrue;
-
-import java.io.IOException;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import org.json.simple.parser.JSONParser;
 import org.junit.Rule;
 import org.junit.rules.TestName;
@@ -49,29 +40,25 @@ import org.openecomp.sdc.ci.tests.datatypes.ArtifactReqDetails;
 import org.openecomp.sdc.ci.tests.datatypes.ComponentInstanceReqDetails;
 import org.openecomp.sdc.ci.tests.datatypes.ResourceReqDetails;
 import org.openecomp.sdc.ci.tests.datatypes.ServiceReqDetails;
-import org.openecomp.sdc.ci.tests.datatypes.enums.ArtifactTypeEnum;
-import org.openecomp.sdc.ci.tests.datatypes.enums.LifeCycleStatesEnum;
-import org.openecomp.sdc.ci.tests.datatypes.enums.ResourceCategoryEnum;
-import org.openecomp.sdc.ci.tests.datatypes.enums.ServiceCategoriesEnum;
-import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
+import org.openecomp.sdc.ci.tests.datatypes.enums.*;
 import org.openecomp.sdc.ci.tests.datatypes.http.HttpHeaderEnum;
 import org.openecomp.sdc.ci.tests.datatypes.http.HttpRequest;
 import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
 import org.openecomp.sdc.ci.tests.execute.resource.ResourceApiTest;
 import org.openecomp.sdc.ci.tests.utils.Utils;
 import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
-import org.openecomp.sdc.ci.tests.utils.rest.ArtifactRestUtils;
-import org.openecomp.sdc.ci.tests.utils.rest.ComponentInstanceRestUtils;
-import org.openecomp.sdc.ci.tests.utils.rest.LifecycleRestUtils;
-import org.openecomp.sdc.ci.tests.utils.rest.ResourceRestUtils;
-import org.openecomp.sdc.ci.tests.utils.rest.ResponseParser;
-import org.openecomp.sdc.ci.tests.utils.rest.ServiceRestUtils;
+import org.openecomp.sdc.ci.tests.utils.rest.*;
 import org.testng.AssertJUnit;
 import org.testng.annotations.Test;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
+import java.io.IOException;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static org.testng.AssertJUnit.*;
 
 public class AdditionalInformationServletTest extends ComponentBaseTest {
 
@@ -534,8 +521,9 @@ public class AdditionalInformationServletTest extends ComponentBaseTest {
 		String vendorRelease = "0.1";
 		String contactId = "al1976";
 		String icon = "myIcon";
+		String instantiationType = ServiceInstantiationType.A_LA_CARTE.getValue();
 
-		return new ServiceReqDetails(serviceName, category, tags, description, contactId, icon);
+		return new ServiceReqDetails(serviceName, category, tags, description, contactId, icon, instantiationType);
 	}
 
 	// TODO Tal: Since Cashing change partial resource returned that causes null
@@ -549,14 +537,14 @@ public class AdditionalInformationServletTest extends ComponentBaseTest {
 		AssertJUnit.assertEquals("Check response code after create user", 200, checkInResponse.getErrorCode().intValue());
 
 		Resource resourceAfterOperation = gson.fromJson(checkInResponse.getResponse(), Resource.class);
-		// TODO Tal: Since Cashing change partial resource returned that causes
+		/*// TODO Tal: Since Cashing change partial resource returned that causes
 		// null pointer exception
-		/*
+		*//*
 		 * AssertJUnit.assertEquals("check size of additional information", 1, resourceAfterOperation.getAdditionalInformation().size());
-		 */
-		/*
+		 *//*
+		*//*
 		 * AssertJUnit.assertEquals("check size of additional information", numberOfAI, resourceAfterOperation.getAdditionalInformation().get(0). getParameters().size());
-		 */
+		 *//*
 
 		RestResponse req4certResponse = LifecycleRestUtils.changeResourceState(resource, user, resourceVersion, LifeCycleStatesEnum.CERTIFICATIONREQUEST);
 
@@ -566,12 +554,12 @@ public class AdditionalInformationServletTest extends ComponentBaseTest {
 		resourceAfterOperation = gson.fromJson(req4certResponse.getResponse(), Resource.class);
 		// TODO Tal: Since Cashing change partial resource returned that causes
 		// null pointer exception
-		/*
+		*//*
 		 * AssertJUnit.assertEquals("check size of additional information", 1, resourceAfterOperation.getAdditionalInformation().size());
-		 */
-		/*
+		 *//*
+		*//*
 		 * AssertJUnit.assertEquals("check size of additional information", numberOfAI, resourceAfterOperation.getAdditionalInformation().get(0). getParameters().size());
-		 */
+		 *//*
 
 		// change modifier
 		user.setUserId(UserRoleEnum.TESTER.getUserId());
@@ -584,10 +572,10 @@ public class AdditionalInformationServletTest extends ComponentBaseTest {
 		resourceAfterOperation = gson.fromJson(startCertResourceResponse3.getResponse(), Resource.class);
 		// TODO Tal: Since Cashing change partial resource returned that causes
 		// null pointer exception
-		/*
+		*//*
 		 * AssertJUnit.assertEquals("check size of additional information", 1, resourceAfterOperation.getAdditionalInformation().size());
-		 */
-		/*
+		 *//*
+		*//*
 		 * AssertJUnit.assertEquals("check size of additional information", numberOfAI, resourceAfterOperation.getAdditionalInformation().get(0). getParameters().size());
 		 */
 
@@ -1253,9 +1241,9 @@ public class AdditionalInformationServletTest extends ComponentBaseTest {
 		assertNotNull("check error code exists in response after create property", checkInResponse.getErrorCode());
 		assertEquals("Check response code after create property", 200, checkInResponse.getErrorCode().intValue());
 
-		RestResponse changeStateResponse = LifecycleRestUtils.changeResourceState(resource, user, resourceVersion, LifeCycleStatesEnum.CERTIFICATIONREQUEST, null);
-		changeStateResponse = LifecycleRestUtils.changeResourceState(resource, user, resourceVersion, LifeCycleStatesEnum.STARTCERTIFICATION, null);
-		changeStateResponse = LifecycleRestUtils.changeResourceState(resource, user, resourceVersion, LifeCycleStatesEnum.CERTIFY, null);
+		/*RestResponse changeStateResponse = LifecycleRestUtils.changeResourceState(resource, user, resourceVersion, LifeCycleStatesEnum.CERTIFICATIONREQUEST, null);
+		changeStateResponse = LifecycleRestUtils.changeResourceState(resource, user, resourceVersion, LifeCycleStatesEnum.STARTCERTIFICATION, null);*/
+		RestResponse changeStateResponse = LifecycleRestUtils.changeResourceState(resource, user, resourceVersion, LifeCycleStatesEnum.CERTIFY, null);
 
 		assertNotNull("check response object is not null after create property", checkInResponse);
 		assertNotNull("check error code exists in response after create property", checkInResponse.getErrorCode());
@@ -1960,11 +1948,11 @@ public class AdditionalInformationServletTest extends ComponentBaseTest {
 		// response = LCSbaseTest.certifyResource(resourceDetails);
 		RestResponse restResponseResource = LifecycleRestUtils.changeResourceState(resourceDetails, user, LifeCycleStatesEnum.CHECKIN);
 		assertTrue("certify resource request returned status:" + restResponseResource.getErrorCode(), response.getErrorCode() == 200);
-		restResponseResource = LifecycleRestUtils.changeResourceState(resourceDetails, user, LifeCycleStatesEnum.CERTIFICATIONREQUEST);
+		/*restResponseResource = LifecycleRestUtils.changeResourceState(resourceDetails, user, LifeCycleStatesEnum.CERTIFICATIONREQUEST);
 		assertTrue("certify resource request returned status:" + restResponseResource.getErrorCode(), response.getErrorCode() == 200);
 		restResponseResource = LifecycleRestUtils.changeResourceState(resourceDetails, sdncTesterUser, LifeCycleStatesEnum.STARTCERTIFICATION);
-		assertTrue("certify resource request returned status:" + restResponseResource.getErrorCode(), response.getErrorCode() == 200);
-		restResponseResource = LifecycleRestUtils.changeResourceState(resourceDetails, sdncTesterUser, LifeCycleStatesEnum.CERTIFY);
+		assertTrue("certify resource request returned status:" + restResponseResource.getErrorCode(), response.getErrorCode() == 200);*/
+		restResponseResource = LifecycleRestUtils.changeResourceState(resourceDetails, user, LifeCycleStatesEnum.CERTIFY);
 		assertTrue("certify resource request returned status:" + restResponseResource.getErrorCode(), response.getErrorCode() == 200);
 
 		// add resource instance with HEAT deployment artifact to the service

@@ -18,7 +18,7 @@
  * ============LICENSE_END=========================================================
  */
 
-import {Component, ViewChild, ElementRef, Input} from '@angular/core';
+import {Component, ViewChild, ElementRef} from '@angular/core';
 import {ButtonsModelMap, ButtonModel} from "app/models";
 import {PopoverContentComponent} from "../../popover/popover-content.component";
 import {UiElementBase, UiElementBaseInterface} from "../ui-element-base.component";
@@ -32,13 +32,14 @@ export class UiElementPopoverInputComponent extends UiElementBase implements UiE
     @ViewChild('textArea') textArea: ElementRef;
     @ViewChild('popoverForm') popoverContentComponent: PopoverContentComponent;
 
+    editValue: any;
     saveButton: ButtonModel;
     buttonsArray: ButtonsModelMap;
 
     constructor() {
         super();
         // Create Save button and insert to buttons map
-        this.saveButton = new ButtonModel('save', 'blue', this.onChange);
+        this.saveButton = new ButtonModel('Set', 'blue', this.onChange.bind(this));
         this.buttonsArray = { 'test': this.saveButton };
 
         // Define the regex pattern for this controller
@@ -46,5 +47,16 @@ export class UiElementPopoverInputComponent extends UiElementBase implements UiE
 
         // Disable / Enable button according to validation
         //this.control.valueChanges.subscribe(data => this.saveButton.disabled = this.control.invalid);
+    }
+
+    public setEditValue() {
+        // copy value to edit
+        this.editValue = angular.copy(this.value);
+    }
+
+    public onChange() {
+        this.popoverContentComponent.hide();
+        this.value = this.editValue;
+        super.onChange();
     }
 }

@@ -22,15 +22,9 @@ package org.openecomp.sdc.be.datatypes.elements;
 
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 
-import java.io.Serializable;
 import java.util.List;
 
-public class AdditionalInfoParameterDataDefinition extends ToscaDataDefinition implements Serializable {
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -565365728516901670L;
+public class AdditionalInfoParameterDataDefinition extends ToscaDataDefinition {
 
 	private String uniqueId;
 

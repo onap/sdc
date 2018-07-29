@@ -32,10 +32,10 @@ import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
-import java.util.Collection;
 import javax.inject.Named;
 import javax.ws.rs.core.Response;
+import java.util.Arrays;
+import java.util.Collection;
 
 @Named
 @Service("healthCheck")

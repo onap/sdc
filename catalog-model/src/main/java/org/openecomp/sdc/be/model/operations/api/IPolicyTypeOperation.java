@@ -20,12 +20,11 @@
 
 package org.openecomp.sdc.be.model.operations.api;
 
-import java.util.List;
-import java.util.Set;
-
+import fj.data.Either;
 import org.openecomp.sdc.be.model.PolicyTypeDefinition;
 
-import fj.data.Either;
+import java.util.List;
+import java.util.Set;
 
 public interface IPolicyTypeOperation {
 
@@ -35,6 +34,6 @@ public interface IPolicyTypeOperation {
 
     Either<PolicyTypeDefinition, StorageOperationStatus> updatePolicyType(PolicyTypeDefinition updatedPolicyType, PolicyTypeDefinition currPolicyType);
 
-    Either<List<PolicyTypeDefinition>, StorageOperationStatus> getAllPolicyTypes(Set<String> excludedPolicyTypes);
+    List<PolicyTypeDefinition> getAllPolicyTypes(Set<String> excludedPolicyTypes);
 
 }

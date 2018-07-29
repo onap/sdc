@@ -20,158 +20,147 @@
 
 package org.openecomp.sdc.be.model.tosca.converters;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-
+import com.google.gson.*;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
+import java.util.*;
+import java.util.Map.Entry;
 
 public class ToscaValueBaseConverter {
-	protected Gson gson = new Gson();
-	private static Logger log = LoggerFactory.getLogger(ToscaValueBaseConverter.class.getName());
+    protected Gson gson = new Gson();
+    private static final Logger log = Logger.getLogger(ToscaValueBaseConverter.class.getName());
 
-	protected Map<String, PropertyDefinition> getAllProperties(DataTypeDefinition dataTypeDefinition) {
+    protected Map<String, PropertyDefinition> getAllProperties(DataTypeDefinition dataTypeDefinition) {
 
-		Map<String, PropertyDefinition> allParentsProps = new HashMap<>();
+        Map<String, PropertyDefinition> allParentsProps = new HashMap<>();
 
-		while (dataTypeDefinition != null) {
+        while (dataTypeDefinition != null) {
 
-			List<PropertyDefinition> currentParentsProps = dataTypeDefinition.getProperties();
-			if (currentParentsProps != null) {
-				currentParentsProps.stream().forEach(p -> allParentsProps.put(p.getName(), p));
-			}
+            List<PropertyDefinition> currentParentsProps = dataTypeDefinition.getProperties();
+            if (currentParentsProps != null) {
+                currentParentsProps.stream().forEach(p -> allParentsProps.put(p.getName(), p));
+            }
 
-			dataTypeDefinition = dataTypeDefinition.getDerivedFrom();
-		}
+            dataTypeDefinition = dataTypeDefinition.getDerivedFrom();
+        }
 
-		return allParentsProps;
-	}
+        return allParentsProps;
+    }
 
-	public ToscaPropertyType isScalarType(DataTypeDefinition dataTypeDef) {
+    public ToscaPropertyType isScalarType(DataTypeDefinition dataTypeDef) {
 
-		ToscaPropertyType result = null;
+        ToscaPropertyType result = null;
 
-		DataTypeDefinition dataType = dataTypeDef;
+        DataTypeDefinition dataType = dataTypeDef;
 
-		while (dataType != null) {
+        while (dataType != null) {
 
-			String name = dataType.getName();
-			ToscaPropertyType typeIfScalar = ToscaPropertyType.getTypeIfScalar(name);
-			if (typeIfScalar != null) {
-				result = typeIfScalar;
-				break;
-			}
+            String name = dataType.getName();
+            ToscaPropertyType typeIfScalar = ToscaPropertyType.getTypeIfScalar(name);
+            if (typeIfScalar != null) {
+                result = typeIfScalar;
+                break;
+            }
 
-			dataType = dataType.getDerivedFrom();
-		}
+            dataType = dataType.getDerivedFrom();
+        }
 
-		return result;
-	}
+        return result;
+    }
 
-	public Object handleComplexJsonValue(JsonElement elementValue) {
-		Object jsonValue = null;
+    public Object handleComplexJsonValue(JsonElement elementValue) {
+        Object jsonValue = null;
 
-		Map<String, Object> value = new HashMap<String, Object>();
-		if (elementValue.isJsonObject()) {
-			JsonObject jsonOb = elementValue.getAsJsonObject();
-			Set<Entry<String, JsonElement>> entrySet = jsonOb.entrySet();
-			Iterator<Entry<String, JsonElement>> iteratorEntry = entrySet.iterator();
-			while (iteratorEntry.hasNext()) {
-				Entry<String, JsonElement> entry = iteratorEntry.next();
-				if (entry.getValue().isJsonArray()) {
-					List<Object> array = handleJsonArray(entry.getValue());
-					value.put(entry.getKey(), array);
-				} else {
-					Object object;
-					if (entry.getValue().isJsonPrimitive()) {
-						object = json2JavaPrimitive(entry.getValue().getAsJsonPrimitive());
-					} else {
-						object = handleComplexJsonValue(entry.getValue());
-					}
-					value.put(entry.getKey(), object);
-				}
-			}
-			jsonValue = value;
-		} else {
-			if (elementValue.isJsonArray()) {
-				jsonValue = handleJsonArray(elementValue);
-			} else {
-				if (elementValue.isJsonPrimitive()) {
-					jsonValue = json2JavaPrimitive(elementValue.getAsJsonPrimitive());
-				} else {
-					log.debug("not supported json type {} ", elementValue);
-				}
-			}
-		}
+        Map<String, Object> value = new HashMap<>();
+        if (elementValue.isJsonObject()) {
+            JsonObject jsonOb = elementValue.getAsJsonObject();
+            Set<Entry<String, JsonElement>> entrySet = jsonOb.entrySet();
+            Iterator<Entry<String, JsonElement>> iteratorEntry = entrySet.iterator();
+            while (iteratorEntry.hasNext()) {
+                Entry<String, JsonElement> entry = iteratorEntry.next();
+                if (entry.getValue().isJsonArray()) {
+                    List<Object> array = handleJsonArray(entry.getValue());
+                    value.put(entry.getKey(), array);
+                } else {
+                    Object object;
+                    if (entry.getValue().isJsonPrimitive()) {
+                        object = json2JavaPrimitive(entry.getValue().getAsJsonPrimitive());
+                    } else {
+                        object = handleComplexJsonValue(entry.getValue());
+                    }
+                    value.put(entry.getKey(), object);
+                }
+            }
+            jsonValue = value;
+        } else {
+            if (elementValue.isJsonArray()) {
+                jsonValue = handleJsonArray(elementValue);
+            } else {
+                if (elementValue.isJsonPrimitive()) {
+                    jsonValue = json2JavaPrimitive(elementValue.getAsJsonPrimitive());
+                } else {
+                    log.debug("not supported json type {} ", elementValue);
+                }
+            }
+        }
 
-		return jsonValue;
-	}
+        return jsonValue;
+    }
 
-	private List<Object> handleJsonArray(JsonElement entry) {
-		List<Object> array = new ArrayList<>();
-		JsonArray jsonArray = entry.getAsJsonArray();
-		Iterator<JsonElement> iterator = jsonArray.iterator();
-		while (iterator.hasNext()) {
-			Object object;
-			JsonElement element = iterator.next();
-			if (element.isJsonPrimitive()) {
-				object = json2JavaPrimitive(element.getAsJsonPrimitive());
-			} else {
-				object = handleComplexJsonValue(element);
-			}
-			array.add(object);
-		}
-		return array;
-	}
+    private List<Object> handleJsonArray(JsonElement entry) {
+        List<Object> array = new ArrayList<>();
+        JsonArray jsonArray = entry.getAsJsonArray();
+        Iterator<JsonElement> iterator = jsonArray.iterator();
+        while (iterator.hasNext()) {
+            Object object;
+            JsonElement element = iterator.next();
+            if (element.isJsonPrimitive()) {
+                object = json2JavaPrimitive(element.getAsJsonPrimitive());
+            } else {
+                object = handleComplexJsonValue(element);
+            }
+            array.add(object);
+        }
+        return array;
+    }
 
-	public Object json2JavaPrimitive(JsonPrimitive prim) {
-		if (prim.isBoolean()) {
-			return prim.getAsBoolean();
-		} else if (prim.isString()) {
-			return prim.getAsString();
-		} else if (prim.isNumber()) {
-			String strRepesentation = prim.getAsString();
-			if (strRepesentation.contains(".")) {
-				return prim.getAsDouble();
-			} else {
-				return prim.getAsInt();
-			}
-		} else {
-			throw new IllegalStateException();
-		}
-	}
+    public Object json2JavaPrimitive(JsonPrimitive prim) {
+        if (prim.isBoolean()) {
+            return prim.getAsBoolean();
+        } else if (prim.isString()) {
+            return prim.getAsString();
+        } else if (prim.isNumber()) {
+            String strRepesentation = prim.getAsString();
+            if (strRepesentation.contains(".")) {
+                return prim.getAsDouble();
+            } else {
+                return prim.getAsInt();
+            }
+        } else {
+            throw new IllegalStateException();
+        }
+    }
 
-	/**
-	 * checks is received Object empty or equals null or not It is relevant only
-	 * if received Object is instance of String, Map or List class.
-	 * 
-	 * @param convertedValue
-	 * @return
-	 */
-	static public boolean isEmptyObjectValue(Object convertedValue) {
-		if (convertedValue == null) {
-			return true;
-		} else if (convertedValue instanceof String && ((String) convertedValue).isEmpty()) {
-			return true;
-		} else if (convertedValue instanceof Map && ((Map) convertedValue).isEmpty()) {
-			return true;
-		} else if (convertedValue instanceof List && ((List) convertedValue).isEmpty()) {
-			return true;
-		}
-		return false;
-	}
+    /**
+     * checks is received Object empty or equals null or not It is relevant only
+     * if received Object is instance of String, Map or List class.
+     *
+     * @param convertedValue
+     * @return
+     */
+    static public boolean isEmptyObjectValue(Object convertedValue) {
+        if (convertedValue == null) {
+            return true;
+        } else if (convertedValue instanceof String && ((String) convertedValue).isEmpty()) {
+            return true;
+        } else if (convertedValue instanceof Map && ((Map) convertedValue).isEmpty()) {
+            return true;
+        } else if (convertedValue instanceof List && ((List) convertedValue).isEmpty()) {
+            return true;
+        }
+        return false;
+    }
 }

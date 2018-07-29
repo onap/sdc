@@ -1,10 +1,10 @@
 package org.openecomp.sdc.be.model;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.junit.Test;
 import org.openecomp.sdc.be.datatypes.elements.InterfaceDataDefinition;
+
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class InterfaceDefinitionTest {

@@ -20,23 +20,8 @@
 
 package org.openecomp.sdc.ci.tests.utils.general;
 
-import static org.testng.AssertJUnit.assertTrue;
-
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import com.aventstack.extentreports.Status;
-import com.clearspring.analytics.util.Pair;
 import com.google.gson.Gson;
 import fj.data.Either;
-
 import org.apache.commons.codec.binary.Base64;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.Resource;
@@ -55,61 +40,22 @@ import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
 import org.openecomp.sdc.ci.tests.utils.Utils;
 import org.openecomp.sdc.ci.tests.utils.rest.BaseRestUtils;
 
-import com.clearspring.analytics.util.Pair;
-import com.google.gson.Gson;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
-import fj.data.Either;
+import static org.testng.AssertJUnit.assertTrue;
 
 public class OnboardingUtillViaApis {
 
-//	protected static Map<String, String> prepareHeadersMap(String userId) {
-//		Map<String, String> headersMap = new HashMap<String, String>();
-//		headersMap.put(HttpHeaderEnum.CONTENT_TYPE.getValue(), "application/json");
-//		headersMap.put(HttpHeaderEnum.ACCEPT.getValue(), "application/json");
-//		headersMap.put(HttpHeaderEnum.USER_ID.getValue(), userId);
-//		return headersMap;
-//	}
-
-	public static Pair<String, VendorSoftwareProductObject> createVspViaApis(ResourceReqDetails resourceReqDetails, String filepath, String vnfFile, User user) throws Exception {
-
-		VendorSoftwareProductObject vendorSoftwareProductObject = new VendorSoftwareProductObject();
+	public static VendorSoftwareProductObject createVspViaApis(ResourceReqDetails resourceReqDetails, String filepath, String vnfFile, User user) throws Exception {
 
 		AmdocsLicenseMembers amdocsLicenseMembers = VendorLicenseModelRestUtils.createVendorLicense(user);
-		Pair<String, VendorSoftwareProductObject> createVendorSoftwareProduct = VendorSoftwareProductRestUtils.createVendorSoftwareProduct(resourceReqDetails, vnfFile, filepath, user, amdocsLicenseMembers);
-		VendorSoftwareProductObject map = createVendorSoftwareProduct.right;
-		vendorSoftwareProductObject.setAttContact(map.getAttContact());
-		vendorSoftwareProductObject.setCategory(map.getCategory());
-		vendorSoftwareProductObject.setComponentId(map.getComponentId());
-		vendorSoftwareProductObject.setDescription(map.getDescription());
-		vendorSoftwareProductObject.setSubCategory(map.getSubCategory());
-		vendorSoftwareProductObject.setVendorName(map.getVendorName());
-		vendorSoftwareProductObject.setVspId(map.getVspId());
-		Pair<String, VendorSoftwareProductObject> pair = new Pair<String, VendorSoftwareProductObject>(createVendorSoftwareProduct.left, vendorSoftwareProductObject);
-		return pair;
+		return VendorSoftwareProductRestUtils.createVendorSoftwareProduct(resourceReqDetails, vnfFile, filepath, user, amdocsLicenseMembers);
 	}
 	
-/*	public static Resource createResourceFromVSP(Pair<String, Map<String, String>> createVendorSoftwareProduct, String vspName) throws Exception {
-		List<String> tags = new ArrayList<>();
-		tags.add(vspName);
-		Map<String, String> map = createVendorSoftwareProduct.right;
-		ResourceReqDetails resourceDetails = new ResourceReqDetails();
-		resourceDetails.setCsarUUID(map.get("vspId"));
-		resourceDetails.setCsarVersion("1.0");
-		resourceDetails.setName(vspName);
-		resourceDetails.setTags(tags);
-		resourceDetails.setDescription(map.get("description"));
-		resourceDetails.setResourceType(map.get("componentType"));
-		resourceDetails.addCategoryChain(ResourceCategoryEnum.GENERIC_DATABASE.getCategory(), ResourceCategoryEnum.GENERIC_DATABASE.getSubCategory());
-		resourceDetails.setVendorName(map.get("vendorName"));
-		resourceDetails.setVendorRelease("1.0");
-		resourceDetails.setResourceType("VF");
-		resourceDetails.setResourceVendorModelNumber("666");
-		resourceDetails.setContactId(map.get("attContact"));
-		resourceDetails.setIcon("defaulticon");
-		Resource resource = AtomicOperationUtils.createResourceByResourceDetails(resourceDetails, UserRoleEnum.DESIGNER, true).left().value();
-		
-		return resource; 
-	}*/
 	public static Resource createResourceFromVSP(ResourceReqDetails resourceDetails) throws Exception {
 		Resource resource = AtomicOperationUtils.createResourceByResourceDetails(resourceDetails, UserRoleEnum.DESIGNER, true).left().value();
 		return resource;
@@ -133,28 +79,6 @@ public class OnboardingUtillViaApis {
 		}
 	}
 	
-//	public static void convertPayloadToFile(String payload, File file, boolean isBased64, boolean isSdcFormat) throws IOException{
-//		
-//		Gson gson = new Gson();
-//		byte[] byteArray = null;
-//		Map<String, String> fromJson;
-//		@SuppressWarnings("unchecked")
-//		String string = null;// = fromJson.get("base64Contents").toString();
-//		if(isSdcFormat){
-//			fromJson = gson.fromJson(payload, Map.class);
-//			string = fromJson.get("base64Contents").toString();
-//		}else if (isBased64) {
-//			byteArray = Base64.decode(string.getBytes(StandardCharsets.UTF_8));
-//		}else{
-//			byteArray = payload.getBytes(StandardCharsets.UTF_8);
-//		}
-//		File downloadedFile = new File(file.getAbsolutePath());
-//		FileOutputStream fos = new FileOutputStream(downloadedFile);
-//		fos.write(byteArray);
-//		fos.flush();
-//		fos.close();
-//		
-//	}
 
 	public static void convertPayloadToFile(String payload, File file) throws IOException{
 		
@@ -180,48 +104,7 @@ public class OnboardingUtillViaApis {
 		fos.flush();
 		fos.close();
 		
-		
-//		ZipOutputStream fos = null;
-//		
-//		
-//		for (Charset charset : Charset.availableCharsets().values()) {
-//			try{
-//		//		System.out.println("How to do it???");
-//				File downloadedFile = new File(file.getAbsolutePath() + "_" + charset +".csar");
-//				fos = new ZipOutputStream(new FileOutputStream(downloadedFile));
-//				byte[] byteArray = payload.getBytes(charset);
-//				fos.write(byteArray);
-//				fos.flush();
-//				
-//			}
-//			catch(Exception e){
-//				fos.close();
-//			}
-//		}
 		System.out.println("");
-		
-//		ZipInputStream zipStream = new ZipInputStream(new ByteArrayInputStream(byteArray));
-//		ZipEntry entry = null;
-//		while ((entry = zipStream.getNextEntry()) != null) {
-//
-//		    String entryName = entry.getName();
-//
-//		    FileOutputStream out = new FileOutputStream(file+"/"+entryName);
-//
-//		    byte[] byteBuff = new byte[4096];
-//		    int bytesRead = 0;
-//		    while ((bytesRead = zipStream.read(byteBuff)) != -1)
-//		    {
-//		        out.write(byteBuff, 0, bytesRead);
-//		    }
-//
-//		    out.close();
-//		    zipStream.closeEntry();
-//		}
-//		zipStream.close();
-//		
-		
-		
 		
 		BufferedInputStream bis = new BufferedInputStream(new ByteArrayInputStream(payload.getBytes(StandardCharsets.ISO_8859_1)));
 		String filePath = file.toString();
@@ -232,7 +115,7 @@ public class OnboardingUtillViaApis {
 		bos.close();
 	}
 	
-	public static Either<String, RestResponse> getVendorSoftwareProduct(String vspId, User user, Boolean validateState) throws Exception {
+	public static Either<String, RestResponse> getVendorSoftwareProduct(String vspId, User user, Boolean validateState) throws IOException {
 
 		Config config = Utils.getConfig();
 		String url = String.format(Urls.GET_VENDOR_SOFTWARE_PRODUCT, config.getOnboardingBeHost(), config.getOnboardingBePort(), vspId);
@@ -257,19 +140,15 @@ public class OnboardingUtillViaApis {
 
 		List<String> tags = new ArrayList<>();
 		tags.add(vendorSoftwareProductObject.getName());
-//		ResourceReqDetails resourceDetails = new ResourceReqDetails();
 		resourceDetails.setCsarUUID(vendorSoftwareProductObject.getVspId());
 		resourceDetails.setCsarVersion(vendorSoftwareProductObject.getVersion());
 		resourceDetails.setName(vendorSoftwareProductObject.getName());
 		resourceDetails.setTags(tags);
 		resourceDetails.setDescription(vendorSoftwareProductObject.getDescription());
-//		resourceDetails.addCategoryChain(ResourceCategoryEnum.GENERIC_DATABASE.getCategory(), ResourceCategoryEnum.GENERIC_DATABASE.getSubCategory());
 		resourceDetails.setVendorName(vendorSoftwareProductObject.getVendorName());
-//		resourceDetails.setVendorRelease("1.0");
 		resourceDetails.setResourceType("VF");
 		resourceDetails.setResourceVendorModelNumber("666");
 		resourceDetails.setContactId(vendorSoftwareProductObject.getAttContact());
-//		resourceDetails.setIcon("defaulticon");
 
 		return resourceDetails;
 	}

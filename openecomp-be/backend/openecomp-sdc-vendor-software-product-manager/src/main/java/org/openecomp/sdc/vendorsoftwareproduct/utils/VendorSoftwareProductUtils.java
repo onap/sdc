@@ -31,11 +31,7 @@ import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComponentMonitoringUploa
 import org.openecomp.sdc.vendorsoftwareproduct.types.OrchestrationTemplateActionResponse;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.EnumMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class VendorSoftwareProductUtils {
 

@@ -16,6 +16,19 @@
 
 package org.openecomp.sdc.validation.impl.validators.namingconvention;
 
+import static java.util.Objects.nonNull;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.TreeMap;
+
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -35,19 +48,6 @@ import org.openecomp.sdc.validation.ResourceValidator;
 import org.openecomp.sdc.validation.ValidationContext;
 import org.openecomp.sdc.validation.type.NamingConventionValidationContext;
 import org.openecomp.sdc.validation.util.ValidationUtil;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.TreeMap;
-
-import static java.util.Objects.nonNull;
 
 public class NovaServerNamingConventionGuideLineValidator implements ResourceValidator {
   private static final String AVAILABILITY_ZONE = "availability_zone";

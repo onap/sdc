@@ -20,36 +20,44 @@
 
 package org.openecomp.sdc.ci.tests.tosca.datatypes;
 
+import org.yaml.snakeyaml.TypeDescription;
+
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
-import org.yaml.snakeyaml.TypeDescription;
-
 //	spec page 102
 
-public class ToscaGroupsTopologyTemplateDefinition {
+public class ToscaGroupsTopologyTemplateDefinition extends ToscaServiceGroupsMetadataDefinition implements Serializable {
 
-	private String type; // required
-	private String description;
+	public static final long serialVersionUID = -6373752349967949120L;
+	public String type; // required
+	public String description;
 	//	private Map<String, String> properties;
-	private ToscaGroupPropertyDefinition properties;
-	private Map<String, String> targets; // required
-	private Map<String, Object> interfaces;
-	private List<String> members;
+	public ToscaGroupPropertyDefinition properties;
+	public Map<String, String> targets; // required
+	public Map<String, Object> interfaces;
+	public List<String> members;
 	//	private Map<String, String> metadata;
-	private ToscaServiceGroupsMetadataDefinition metadata;
+//	private ToscaServiceGroupsMetadataDefinition metadata;
 
 	public ToscaGroupsTopologyTemplateDefinition() {
 		super();
 	}
 
-	public ToscaServiceGroupsMetadataDefinition getMetadata() {
-		return metadata;
+//	public ToscaServiceGroupsMetadataDefinition getMetadata() {
+//		return metadata;
+//	}
+//
+	public void setMetadata(ToscaServiceGroupsMetadataDefinition metadata) {
+		this.vfModuleModelCustomizationUUID = metadata.vfModuleModelCustomizationUUID;
+		this.vfModuleModelInvariantUUID = metadata.vfModuleModelInvariantUUID;
+		this.vfModuleModelName = metadata.vfModuleModelName;
+		this.vfModuleModelUUID = metadata.vfModuleModelUUID;
+		this.vfModuleModelVersion = metadata.vfModuleModelVersion;
 	}
 
-	public void setMetadata(ToscaServiceGroupsMetadataDefinition metadata) {
-		this.metadata = metadata;
-	}
+
 
 	public String getType() {
 		return type;
@@ -115,10 +123,42 @@ public class ToscaGroupsTopologyTemplateDefinition {
 //		this.metadata = metadata;
 //	}
 
+//	@Override
+//	public String toString() {
+//		return "ToscaGroupsTopologyTemplateDefinition [type=" + type + ", description=" + description + ", properties=" + properties + ", targets=" + targets + ", interfaces=" + interfaces + ", members=" + members + ", metadata=" + metadata
+//				+ "]";
+//	}
+
+
 	@Override
 	public String toString() {
-		return "ToscaGroupsTopologyTemplateDefinition [type=" + type + ", description=" + description + ", properties=" + properties + ", targets=" + targets + ", interfaces=" + interfaces + ", members=" + members + ", metadata=" + metadata
-				+ "]";
+		return "ToscaGroupsTopologyTemplateDefinition{" +
+				"type='" + type + '\'' +
+				", description='" + description + '\'' +
+				", properties=" + properties +
+				", targets=" + targets +
+				", interfaces=" + interfaces +
+				", members=" + members +
+				'}';
+	}
+
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (!(o instanceof ToscaGroupsTopologyTemplateDefinition)) return false;
+		if (!super.equals(o)) return false;
+
+		ToscaGroupsTopologyTemplateDefinition that = (ToscaGroupsTopologyTemplateDefinition) o;
+
+//		if (type != null ? !type.equals(that.type) : that.type != null) return false;
+//		if (description != null ? !description.equals(that.description) : that.description != null) return false;
+//		if (properties != null ? !properties.equals(that.properties) : that.properties != null) return false;
+//		if (targets != null ? !targets.equals(that.targets) : that.targets != null) return false;
+//		if (interfaces != null ? !interfaces.equals(that.interfaces) : that.interfaces != null) return false;
+//		return members != null ? members.equals(that.members) : that.members == null;
+
+		return (properties != null ? properties.equals(that.properties) : false);
 	}
 
 	//gets Type description for Yaml snake

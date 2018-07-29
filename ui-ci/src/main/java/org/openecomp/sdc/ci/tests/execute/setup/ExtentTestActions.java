@@ -20,19 +20,18 @@
 
 package org.openecomp.sdc.ci.tests.execute.setup;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.UUID;
-
-import org.openecomp.sdc.ci.tests.api.SomeInterface;
-import org.openecomp.sdc.ci.tests.utilities.GeneralUIUtils;
-
 import com.aventstack.extentreports.ExtentTest;
 import com.aventstack.extentreports.MediaEntityBuilder;
 import com.aventstack.extentreports.Status;
 import com.aventstack.extentreports.markuputils.ExtentColor;
 import com.aventstack.extentreports.markuputils.Markup;
 import com.aventstack.extentreports.markuputils.MarkupHelper;
+import org.openecomp.sdc.ci.tests.api.SomeInterface;
+import org.openecomp.sdc.ci.tests.utilities.GeneralUIUtils;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.UUID;
 
 public class ExtentTestActions {
 	

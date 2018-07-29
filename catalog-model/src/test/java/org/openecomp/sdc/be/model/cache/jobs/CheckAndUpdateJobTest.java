@@ -1,7 +1,7 @@
 package org.openecomp.sdc.be.model.cache.jobs;
 
-import java.util.function.Function;
-
+import fj.data.Either;
+import mockit.Deencapsulation;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.junit.Before;
 import org.junit.Test;
@@ -19,8 +19,7 @@ import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.resources.data.ComponentMetadataData;
 import org.openecomp.sdc.be.resources.data.ResourceMetadataData;
 
-import fj.data.Either;
-import mockit.Deencapsulation;
+import java.util.function.Function;
 
 public class CheckAndUpdateJobTest {
 

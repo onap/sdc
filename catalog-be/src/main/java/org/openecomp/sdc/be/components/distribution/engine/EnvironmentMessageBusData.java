@@ -1,9 +1,9 @@
 package org.openecomp.sdc.be.components.distribution.engine;
 
+import org.openecomp.sdc.be.resources.data.OperationalEnvironmentEntry;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import org.openecomp.sdc.be.resources.data.OperationalEnvironmentEntry;
 
 /**
  * a pojo which holds all the necessary data to communicate with the message bus

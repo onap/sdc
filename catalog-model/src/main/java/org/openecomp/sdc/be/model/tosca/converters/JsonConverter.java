@@ -20,42 +20,41 @@
 
 package org.openecomp.sdc.be.model.tosca.converters;
 
-import java.io.StringReader;
-import java.util.Map;
-
-import org.openecomp.sdc.be.model.DataTypeDefinition;
-import org.openecomp.sdc.common.util.GsonFactory;
-
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonReader;
+import org.openecomp.sdc.be.model.DataTypeDefinition;
+import org.openecomp.sdc.common.util.GsonFactory;
+
+import java.io.StringReader;
+import java.util.Map;
 
 public class JsonConverter implements PropertyValueConverter {
 
-	private static JsonConverter jsonConverter = new JsonConverter();
+    private static JsonConverter jsonConverter = new JsonConverter();
 
-	private static JsonParser jsonParser = new JsonParser();
+    private static JsonParser jsonParser = new JsonParser();
 
-	private static Gson gson = GsonFactory.getGson();
+    private static Gson gson = GsonFactory.getGson();
 
-	public static JsonConverter getInstance() {
-		return jsonConverter;
-	}
+    public static JsonConverter getInstance() {
+        return jsonConverter;
+    }
 
-	private JsonConverter() {
+    private JsonConverter() {
 
-	}
+    }
 
-	@Override
-	public String convert(String value, String innerType, Map<String, DataTypeDefinition> dataTypes) {
-		StringReader reader = new StringReader(value);
-		JsonReader jsonReader = new JsonReader(reader);
-		jsonReader.setLenient(true);
-		JsonElement jsonElement = jsonParser.parse(jsonReader);
-		if (jsonElement.isJsonPrimitive()) {
-			return value;
-		}
-		return gson.toJson(jsonElement);
-	}
+    @Override
+    public String convert(String value, String innerType, Map<String, DataTypeDefinition> dataTypes) {
+        StringReader reader = new StringReader(value);
+        JsonReader jsonReader = new JsonReader(reader);
+        jsonReader.setLenient(true);
+        JsonElement jsonElement = jsonParser.parse(jsonReader);
+        if (jsonElement.isJsonPrimitive()) {
+            return value;
+        }
+        return gson.toJson(jsonElement);
+    }
 }

@@ -20,42 +20,42 @@
 
 package org.openecomp.sdc.be.model.tosca.validators;
 
-import java.util.Map;
-
 import org.openecomp.sdc.be.model.DataTypeDefinition;
+
+import java.util.Map;
 
 public class HeatNumberValidator implements PropertyTypeValidator {
 
-	private static HeatNumberValidator numberValidator = new HeatNumberValidator();
+    private static HeatNumberValidator numberValidator = new HeatNumberValidator();
 
-	private static FloatValidator floatValidator = FloatValidator.getInstance();
-	private static IntegerValidator integerValidator = IntegerValidator.getInstance();
+    private static FloatValidator floatValidator = FloatValidator.getInstance();
+    private static IntegerValidator integerValidator = IntegerValidator.getInstance();
 
-	public static HeatNumberValidator getInstance() {
-		return numberValidator;
-	}
+    public static HeatNumberValidator getInstance() {
+        return numberValidator;
+    }
 
-	private HeatNumberValidator() {
+    private HeatNumberValidator() {
 
-	}
+    }
 
-	@Override
-	public boolean isValid(String value, String innerType, Map<String, DataTypeDefinition> allDataTypes) {
+    @Override
+    public boolean isValid(String value, String innerType, Map<String, DataTypeDefinition> allDataTypes) {
 
-		if (value == null || true == value.isEmpty()) {
-			return true;
-		}
-		boolean valid = integerValidator.isValid(value, null, allDataTypes);
+        if (value == null || value.isEmpty()) {
+            return true;
+        }
+        boolean valid = integerValidator.isValid(value, null, allDataTypes);
 
-		if (!valid) {
-			valid = floatValidator.isValid(value, null, allDataTypes);
-		}
+        if (!valid) {
+            valid = floatValidator.isValid(value, null, allDataTypes);
+        }
 
-		return valid;
-	}
+        return valid;
+    }
 
-	@Override
-	public boolean isValid(String value, String innerType) {
-		return isValid(value, innerType, null);
-	}
+    @Override
+    public boolean isValid(String value, String innerType) {
+        return isValid(value, innerType, null);
+    }
 }

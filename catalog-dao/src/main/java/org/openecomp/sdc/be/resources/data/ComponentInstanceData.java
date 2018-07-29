@@ -20,14 +20,14 @@
 
 package org.openecomp.sdc.be.resources.data;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.openecomp.sdc.be.dao.graph.datatype.GraphNode;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
 import org.openecomp.sdc.be.datatypes.elements.ComponentInstanceDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class ComponentInstanceData extends GraphNode {
 
@@ -75,7 +75,7 @@ public class ComponentInstanceData extends GraphNode {
 	@Override
 	public Map<String, Object> toGraphMap() {
 
-		Map<String, Object> map = new HashMap<String, Object>();
+		Map<String, Object> map = new HashMap<>();
 
 		addIfExists(map, GraphPropertiesDictionary.TYPE, componentInstDataDefinition.getComponentUid());
 		addIfExists(map, GraphPropertiesDictionary.CREATION_DATE, componentInstDataDefinition.getCreationTime());

@@ -19,6 +19,7 @@
  */
 
 'use strict';
+import * as _ from "lodash";
 import { Service, IApi, IAppConfigurtaion, Resource, Component} from "../models";
 import {SharingService} from "./sharing-service";
 import {ComponentFactory} from "../utils/component-factory";
@@ -26,7 +27,7 @@ import {CacheService} from "./cache-service";
 import {ResourceType} from "app/utils";
 
 interface IEntityService {
-    getAllComponents():ng.IPromise<Array<Component>>;
+    getAllComponents(smallObjects?:boolean):ng.IPromise<Array<Component>>;
 }
 
 interface IComponentsArray {
@@ -36,6 +37,7 @@ interface IComponentsArray {
 
 export class EntityService implements IEntityService {
     static '$inject' = ['$http', '$q', 'sdcConfig', 'Sdc.Services.SharingService', 'ComponentFactory', 'Sdc.Services.CacheService'];
+    private _smallObjectAttributes = ['uniqueId', 'name', 'componentType', 'resourceType', 'lastUpdateDate', 'lifecycleState', 'distributionStatus', 'icon', 'version'];
     private api:IApi;
 
     constructor(private $http:ng.IHttpService,
@@ -66,7 +68,6 @@ export class EntityService implements IEntityService {
                     this.sharingService.addUuidValue(component.uniqueId, component.uuid);
                 });
 
-                this.cacheService.set('breadcrumbsComponents', componentsList);
                 defer.resolve(componentsList);
             },(responce) => {
                 defer.reject(responce);
@@ -74,7 +75,7 @@ export class EntityService implements IEntityService {
         return defer.promise;
     };
 
-    getAllComponents = ():ng.IPromise<Array<Component>> => {
+    getAllComponents = (smallObjects?:boolean):ng.IPromise<Array<Component>> => {
         let defer = this.$q.defer<Array<Component>>();
         this.$http.get(this.api.root + this.api.GET_element)
             .then((response:any) => {
@@ -82,18 +83,19 @@ export class EntityService implements IEntityService {
                 let componentsList:Array<Component> = [];
 
                 componentResponse.services && componentResponse.services.forEach((serviceResponse:Service) => {
+                    serviceResponse = (smallObjects) ? _.pick(serviceResponse, this._smallObjectAttributes) : serviceResponse;
                     let component:Service = this.ComponentFactory.createService(serviceResponse);
                     componentsList.push(component);
                     this.sharingService.addUuidValue(component.uniqueId, component.uuid);
                 });
 
                 componentResponse.resources && componentResponse.resources.forEach((resourceResponse:Resource) => {
+                    resourceResponse = (smallObjects) ? _.pick(resourceResponse, this._smallObjectAttributes) : resourceResponse;
                     let component:Resource = this.ComponentFactory.createResource(resourceResponse);
                     componentsList.push(component);
                     this.sharingService.addUuidValue(component.uniqueId, component.uuid);
                 });
                 
-                this.cacheService.set('breadcrumbsComponents', componentsList);
                 defer.resolve(componentsList);
             });
 

@@ -20,9 +20,9 @@
 
 package org.openecomp.sdc.be.components.distribution.engine;
 
-import java.util.List;
-
 import org.openecomp.sdc.be.model.ComponentInstance;
+
+import java.util.List;
 
 public class JsonContainerResourceInstance {
     private String resourceInstanceName;

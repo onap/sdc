@@ -33,10 +33,13 @@ export class CompositionCiNodeService extends CompositionCiNodeBase {
         this.imagesPath = this.imagesPath + ImagesUrl.SERVICE_ICONS;
         this.img = this.imagesPath + ImagesUrl.SERVICE_ICONS + this.componentInstance.icon + '.png';
         this.imgWidth = GraphUIObjects.DEFAULT_RESOURCE_WIDTH;
-        this.classes = 'service-node'
+        this.classes = 'service-node';
+        if(this.archived){
+            this.classes = this.classes + ' archived';
+            return;
+        }
         if (!this.certified) {
             this.classes = this.classes + ' not-certified';
         }
-
     }
 }

@@ -5,12 +5,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.mockito.Spy;
+import org.mockito.*;
 import org.openecomp.sdc.destinationprovider.DestinationProvider;
 import org.openecomp.sdc.notification.dao.NotificationsDao;
 import org.openecomp.sdc.notification.dtos.Event;
@@ -21,9 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import static org.mockito.Matchers.anyList;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 /**
  * @author avrahamg

@@ -1,22 +1,20 @@
 package org.openecomp.sdc.be.info;
 
-import java.io.IOException;
-
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.lang3.StringUtils;
+import org.openecomp.sdc.common.log.wrappers.Logger;
+
+import java.io.IOException;
 
 public final class OperationalEnvInfo {
     @JsonIgnore
     private static ObjectMapper objectMapper = new ObjectMapper();
     
     @JsonIgnore
-    private static final Logger logger = LoggerFactory.getLogger(OperationalEnvInfo.class);
+    private static final Logger logger = Logger.getLogger(OperationalEnvInfo.class);
     
     @JsonProperty("operational-environment-id")
     private String operationalEnvId;

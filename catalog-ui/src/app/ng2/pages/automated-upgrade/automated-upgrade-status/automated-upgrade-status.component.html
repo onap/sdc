@@ -1,0 +1,10 @@
+<div class="automated-upgrade-component">
+    <span innerHTML="{{statusText}}"> </span>
+    <div class="components-to-upgrade-list">
+        <ul>
+            <li class="components-to-upgrade-list-item " *ngFor="let component of upgradedComponentsList">
+                <upgrade-list-status-item [upgradedComponent]="component" [upgradeComponentStatus]="upgradeStatusMap[component.name]"></upgrade-list-status-item>
+            </li>
+        </ul>
+    </div>
+</div>

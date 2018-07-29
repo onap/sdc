@@ -145,29 +145,29 @@
             color: #000;
             width: 300px;
         }
-
-       // .magnification {
-      //      .sprite;
-      //      .sprite.magnification-glass;
-      //      .hand;
-      //      position: absolute;
-      //      top: 40px;
-     //       right: 42px;
-      //  }
     }
 
     .w-sdc-catalog-main {
         padding: 10px 12px;
     }
-    .w-sdc-dashboard-catalog-header {
+    .w-sdc-dashboard-catalog-items-header {
         .b_3;
+        color: @main_color_m;
+        font-family: OpenSans-Regular, sans-serif;
+        font-size: 14px;
         display: inline-block;
-        font-style: italic;
-        font-weight: bold;
-        padding-left: 10px;
+        font-style: normal;
+        margin-left: 11px;
+        b {
+            font-family: OpenSans-Bold, sans-serif;
+            color: @main_color_l;
+            font-weight: bold;
+        }
+        font-weight: normal;
+        /* padding-left: 10px; */
     }
 
-    .w-sdc-dashboard-catalog-header-order {
+    .w-sdc-dashboard-catalog-header-order1 {
         .b_3;
         font-weight: 800;
     }
@@ -205,8 +205,6 @@
             border-top: 5px solid;
         }
     }
-
-
 
 
     .w-sdc-dashboard-catalog-header-right{
@@ -247,6 +245,39 @@
     .i-sdc-designer-leftbar-section-title-text {
         margin-left: 20px;
     }
+
+    /* added Michael */
+    .i-sdc-designer-left-sidebar {
+        margin-top: 43px;
+    }
+    .i-sdc-designer-leftbar-section-left-switch-header {
+        text-transform: uppercase;
+        .l_14_m;
+        line-height: 40px;
+        width: 243px;
+
+        font-family: OpenSans-Bold, sans-serif;
+        font-size: 14px;
+
+        color: @main_color_a;
+        background-color: @tlv_color_t;
+        border: solid 1px fade(@main_color_t, 40%);
+        cursor: pointer;
+        opacity: 1;
+        z-index: 9999;
+        position: relative;
+        //box-shadow: 1px 0 2px #00000036;
+    }
+    .i-sdc-designer-leftbar-section-left-switch-header-text {
+        display: inline-block;
+        width: 180px;
+        margin-left: 20px;
+    }
+    .i-sdc-designer-leftbar-section-left-switch-header-icon {
+        display: inline-block;
+        vertical-align: middle;
+    }
+
 
     .seperator-left,
     .seperator-right {
@@ -299,3 +330,33 @@
         .hand;
     }
 }
+
+/* added Michael */
+.sdc-catalog-selector-wrapper {
+    position: absolute;
+    left: 0px;
+    top: 42px;
+    width: 241px;
+    height: auto;
+    cursor: pointer;
+    opacity: 1;
+    z-index: 1000;
+    box-shadow: 1px 2px 3px #b1b1b1;
+}
+
+.sdc-catalog-selector-item {
+    text-transform: none;
+    line-height: 40px;
+    font-family: OpenSans-Bold, sans-serif;
+    font-size: 14px;
+    color: @main_color_l;
+    background-color: @main_color_p;
+    padding-left: 20px;
+}
+
+.sdc-catalog-selector-item:hover {
+    color: @main_color_a;
+    background-color: @tlv_color_v;
+}
+
+

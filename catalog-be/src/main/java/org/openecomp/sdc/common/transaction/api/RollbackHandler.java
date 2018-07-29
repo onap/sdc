@@ -20,18 +20,18 @@
 
 package org.openecomp.sdc.common.transaction.api;
 
-import java.util.Stack;
-
 import org.openecomp.sdc.common.transaction.api.TransactionUtils.DBActionCodeEnum;
 import org.openecomp.sdc.common.transaction.api.TransactionUtils.LogMessages;
 import org.openecomp.sdc.common.util.MethodActivationStatusEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Stack;
+
 public abstract class RollbackHandler implements IDBType {
 
     // TODO test using slf4j-test and make this final
-    private static Logger log = LoggerFactory.getLogger(RollbackHandler.class);
+    private static Logger log = LoggerFactory.getLogger(RollbackHandler.class.getName());
     private Stack<IDBAction> dbActionRollbacks;
 
     private Integer transactionId;
@@ -89,7 +89,7 @@ public abstract class RollbackHandler implements IDBType {
             log.debug(TransactionUtils.TRANSACTION_MARKER, LogMessages.ROLLBACK_PERSISTENT_ACTION, getDBType().name(), transactionId, userId, actionType);
             IDBAction rollbackAction = dbActionRollbacks.pop();
             T rollbackResult = rollbackAction.doAction();
-            if (!isRollbackResultValid(rollbackResult)) {
+            if (!isRollbackResultValid()) {
                 result = DBActionCodeEnum.FAIL_GENERAL;
             }
         }
@@ -101,7 +101,7 @@ public abstract class RollbackHandler implements IDBType {
      *
      * @param <T>
      */
-    public <T> boolean isRollbackResultValid(T rollbackResult) {
+    public <T> boolean isRollbackResultValid() {
         return true;
     }
 

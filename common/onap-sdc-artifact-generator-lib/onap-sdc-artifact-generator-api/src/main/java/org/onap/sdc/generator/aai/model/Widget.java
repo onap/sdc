@@ -20,18 +20,18 @@
 
 package org.onap.sdc.generator.aai.model;
 
-import org.onap.sdc.generator.aai.types.ModelType;
-import org.onap.sdc.generator.data.ArtifactType;
-import org.onap.sdc.generator.data.GeneratorConstants;
-import org.onap.sdc.generator.aai.types.ModelWidget;
-import org.onap.sdc.generator.data.WidgetConfigurationUtil;
-import org.onap.sdc.generator.error.IllegalAccessException;
-
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
+
+import org.onap.sdc.generator.aai.types.ModelType;
+import org.onap.sdc.generator.aai.types.ModelWidget;
+import org.onap.sdc.generator.data.ArtifactType;
+import org.onap.sdc.generator.data.GeneratorConstants;
+import org.onap.sdc.generator.data.WidgetConfigurationUtil;
+import org.onap.sdc.generator.error.IllegalAccessException;
 
 public abstract class Widget extends Model {
 

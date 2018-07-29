@@ -20,12 +20,11 @@
 
 package org.openecomp.sdc.be.impl;
 
-import javax.annotation.Resource;
-
+import com.google.gson.Gson;
 import org.openecomp.sdc.be.user.IUserBusinessLogic;
 import org.springframework.stereotype.Component;
 
-import com.google.gson.Gson;
+import javax.annotation.Resource;
 
 @Component("servletUtils")
 public class ServletUtils {

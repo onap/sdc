@@ -6,20 +6,36 @@ import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingGenericEvent;
 import org.openecomp.sdc.be.resources.data.auditing.ResourceAdminEvent;
 import org.openecomp.sdc.be.resources.data.auditing.model.CommonAuditData;
-import org.openecomp.sdc.be.resources.data.auditing.model.ResourceAuditData;
+import org.openecomp.sdc.be.resources.data.auditing.model.ResourceCommonInfo;
+import org.openecomp.sdc.be.resources.data.auditing.model.ResourceVersionInfo;
 
 public abstract class AuditResourceAdminEventFactory extends AuditBaseEventFactory {
 
     protected final ResourceAdminEvent event;
 
-    public AuditResourceAdminEventFactory(AuditingActionEnum action, CommonAuditData commonFields, ResourceAuditData prevParams,
-                                          ResourceAuditData currParams, String resourceType, String resourceName, String invariantUuid,
+    AuditResourceAdminEventFactory(AuditingActionEnum action, CommonAuditData commonFields, ResourceCommonInfo resourceCommonInfo, ResourceVersionInfo prevParams,
+                                          ResourceVersionInfo currParams, String invariantUuid,
                                           User modifier, String artifactData, String comment, String did, String toscaNodeType) {
-        super(action);
-
-        this.event = new ResourceAdminEvent(action.getName(), commonFields, prevParams, currParams, resourceType,
-                resourceName, invariantUuid, AuditBaseEventFactory.buildUserName(modifier),
+        this(action, commonFields, resourceCommonInfo, prevParams, currParams, invariantUuid, AuditBaseEventFactory.buildUserName(modifier),
                 artifactData, AuditBaseEventFactory.replaceNullNameWithEmpty(comment), did, toscaNodeType);
+    }
+
+    AuditResourceAdminEventFactory(AuditingActionEnum action, CommonAuditData commonFields, ResourceCommonInfo resourceCommonInfo,
+                                          ResourceVersionInfo prevParams, ResourceVersionInfo currParams, String invariantUuid,
+                                          String modifier, String artifactData, String comment, String did,
+                                          String toscaNodeType, String timestamp) {
+        this(action, commonFields, resourceCommonInfo, prevParams, currParams, invariantUuid, modifier,
+                artifactData, comment, did, toscaNodeType);
+        this.event.setTimestamp1(timestamp);
+    }
+
+    private AuditResourceAdminEventFactory(AuditingActionEnum action, CommonAuditData commonFields, ResourceCommonInfo resourceCommonInfo,
+                                          ResourceVersionInfo prevParams, ResourceVersionInfo currParams, String invariantUuid,
+                                          String modifier, String artifactData, String comment, String did,
+                                          String toscaNodeType) {
+        super(action);
+        this.event = new ResourceAdminEvent(getAction().getName(), commonFields, resourceCommonInfo, prevParams, currParams, invariantUuid, modifier,
+                artifactData, comment, did, toscaNodeType);
     }
 
     @Override

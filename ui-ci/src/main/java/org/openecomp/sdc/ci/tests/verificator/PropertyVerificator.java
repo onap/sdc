@@ -1,10 +1,10 @@
 package org.openecomp.sdc.ci.tests.verificator;
 
-import static org.testng.Assert.assertTrue;
-
 import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum;
 import org.openecomp.sdc.ci.tests.datatypes.enums.PropertyTypeEnum;
 import org.openecomp.sdc.ci.tests.utilities.GeneralUIUtils;
+
+import static org.testng.Assert.assertTrue;
 
 public class PropertyVerificator {
 

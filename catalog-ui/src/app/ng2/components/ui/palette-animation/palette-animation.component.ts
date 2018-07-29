@@ -24,6 +24,7 @@ import { setTimeout } from 'core-js/library/web/timers';
 import { EventListenerService } from 'app/services';
 import { GRAPH_EVENTS } from 'app/utils';
 import { Point } from 'app/models';
+import { ZoneInstanceType, ZoneInstance } from '../../../../models/graph/zones/zone-instance';
  
 
 
@@ -37,8 +38,9 @@ export class PaletteAnimationComponent  {
   
   @Input() from : Point;
   @Input() to : Point;
+  @Input() type: ZoneInstanceType;
   @Input() iconName : string;
-  @Input() data : any;
+  @Input() zoneInstance : ZoneInstance;
 
   public  animation;
   private visible:boolean = false;
@@ -47,6 +49,11 @@ export class PaletteAnimationComponent  {
 
   constructor(private eventListenerService:EventListenerService) {}
   
+
+  ngOnDestroy(){
+    this.zoneInstance.hidden = false; //if animation component is destroyed before animation is complete
+  }
+
   public runAnimation() {
     this.visible = true;
     let positionDiff:Point = new Point(this.to.x - this.from.x, this.to.y - this.from.y);
@@ -57,7 +64,7 @@ export class PaletteAnimationComponent  {
 
   public animationComplete = (e) => {
     this.visible = false;
-    this.eventListenerService.notifyObservers(GRAPH_EVENTS.ON_FINISH_ANIMATION_ZONE);
+    this.zoneInstance.hidden = false;
   };
 
 

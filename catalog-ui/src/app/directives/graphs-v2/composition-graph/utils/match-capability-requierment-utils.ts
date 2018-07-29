@@ -74,19 +74,25 @@ export class MatchCapabilitiesRequirementsUtils {
     }
 
     private static isRequirementFulfilled(fromNodeId:string, requirement:any, links:Array<CompositionCiLinkBase>):boolean {
-        return _.some(links, {
+        if(requirement.maxOccurrences === 'UNBOUNDED'){
+            return false;
+        }
+        let linksWithThisReq:Array<CompositionCiLinkBase> = _.filter(links, {
             'relation': {
                 'fromNode': fromNodeId,
                 'relationships': [{
-                    'requirementOwnerId': requirement.ownerId,
-                    'requirement': requirement.name,
-                    'relationship': {
-                        'type': requirement.relationship
+                    'relation':{
+                        'requirementOwnerId': requirement.ownerId,
+                        'requirement': requirement.name,
+                        'relationship': {
+                            'type': requirement.capability
+                        }
+
                     }
-                }
-                ]
+                }]
             }
         });
+        return linksWithThisReq.length == requirement.maxOccurrences;
     };
 
     private static isMatch(requirement:Requirement, capability:Capability):boolean {

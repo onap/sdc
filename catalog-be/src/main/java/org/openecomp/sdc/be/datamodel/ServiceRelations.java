@@ -1,17 +1,13 @@
 package org.openecomp.sdc.be.datamodel;
 
-import java.io.Serializable;
 import java.util.Set;
 
-public class ServiceRelations extends java.util.HashSet<NameIdPairWrapper> implements Serializable {
-
-
+public class ServiceRelations extends java.util.HashSet<NameIdPairWrapper> {
 
     public ServiceRelations() {
     }
 
     public ServiceRelations(Set<NameIdPairWrapper> relations) {
-        super();
         addAll(relations);
     }
 
@@ -23,7 +19,4 @@ public class ServiceRelations extends java.util.HashSet<NameIdPairWrapper> imple
         clear();
         this.addAll(relations);
     }
-
-
-
 }

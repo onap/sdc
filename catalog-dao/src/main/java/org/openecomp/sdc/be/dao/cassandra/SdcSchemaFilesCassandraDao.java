@@ -20,27 +20,23 @@
 
 package org.openecomp.sdc.be.dao.cassandra;
 
-import java.util.List;
-
-import javax.annotation.PostConstruct;
-
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.openecomp.sdc.be.resources.data.SdcSchemaFilesData;
-import org.openecomp.sdc.be.resources.data.auditing.AuditingTypesConstants;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
-
 import com.datastax.driver.core.Session;
 import com.datastax.driver.mapping.MappingManager;
 import com.datastax.driver.mapping.Result;
-
 import fj.data.Either;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.openecomp.sdc.be.resources.data.SdcSchemaFilesData;
+import org.openecomp.sdc.be.resources.data.auditing.AuditingTypesConstants;
+import org.openecomp.sdc.common.log.wrappers.Logger;
+import org.springframework.stereotype.Component;
+
+import javax.annotation.PostConstruct;
+import java.util.List;
 
 @Component("sdc-schema-files-cassandra-dao")
 public class SdcSchemaFilesCassandraDao extends CassandraDao {
 	
-	private static Logger logger = LoggerFactory.getLogger(SdcSchemaFilesCassandraDao.class.getName());
+	private static Logger logger = Logger.getLogger(SdcSchemaFilesCassandraDao.class.getName());
 	private SdcSchemaFilesAccessor sdcSchemaFilesAccessor;
 	
 	public SdcSchemaFilesCassandraDao() {

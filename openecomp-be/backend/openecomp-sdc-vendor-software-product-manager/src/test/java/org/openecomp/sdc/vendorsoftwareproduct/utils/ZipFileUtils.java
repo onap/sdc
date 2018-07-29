@@ -20,11 +20,7 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.utils;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.URL;
 import java.util.zip.ZipOutputStream;
 

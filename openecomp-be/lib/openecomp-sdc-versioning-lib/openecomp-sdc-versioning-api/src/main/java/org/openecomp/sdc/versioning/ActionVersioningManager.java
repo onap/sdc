@@ -16,14 +16,15 @@
 
 package org.openecomp.sdc.versioning;
 
-import java.util.List;
-import java.util.Map;
 import org.openecomp.sdc.versioning.dao.types.Revision;
 import org.openecomp.sdc.versioning.dao.types.Version;
 import org.openecomp.sdc.versioning.types.VersionCreationMethod;
 import org.openecomp.sdc.versioning.types.VersionInfo;
 import org.openecomp.sdc.versioning.types.VersionableEntityAction;
 import org.openecomp.sdc.versioning.types.VersionableEntityMetadata;
+
+import java.util.List;
+import java.util.Map;
 
 public interface ActionVersioningManager {
 

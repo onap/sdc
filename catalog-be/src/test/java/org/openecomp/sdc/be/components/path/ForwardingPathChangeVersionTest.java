@@ -1,16 +1,16 @@
 package org.openecomp.sdc.be.components.path;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import org.javatuples.Pair;
+import org.junit.Test;
+import org.openecomp.sdc.be.datatypes.elements.ForwardingPathDataDefinition;
+import org.openecomp.sdc.be.impl.ForwardingPathUtils;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import org.javatuples.Pair;
-import org.junit.Test;
-import org.openecomp.sdc.be.datatypes.elements.ForwardingPathDataDefinition;
-import org.openecomp.sdc.be.impl.ForwardingPathUtils;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 public class ForwardingPathChangeVersionTest extends BaseForwardingPathVersionChangeTest {
 
 

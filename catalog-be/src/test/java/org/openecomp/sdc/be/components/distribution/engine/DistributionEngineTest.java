@@ -1,20 +1,7 @@
 package org.openecomp.sdc.be.components.distribution.engine;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.verifyZeroInteractions;
-import static org.mockito.Mockito.when;
-
-import java.util.HashSet;
+import mockit.Deencapsulation;
 import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -30,10 +17,23 @@ import org.openecomp.sdc.be.config.DistributionEngineConfiguration.CreateTopicCo
 import org.openecomp.sdc.be.config.DistributionEngineConfiguration.DistributionStatusTopicConfig;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.model.Service;
+import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.resources.data.OperationalEnvironmentEntry;
 
-import mockit.Deencapsulation;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.when;
 
 public class DistributionEngineTest extends BeConfDependentTest{
 
@@ -61,51 +61,51 @@ public class DistributionEngineTest extends BeConfDependentTest{
 
 	private Map<String, OperationalEnvironmentEntry> envs;
 
+    private User modifier = new User();
+
 	@Before
 	public void setUpMock() throws Exception {
 		MockitoAnnotations.initMocks(this);
 		distributionEngineConfigurationMock = new DummyDistributionConfigurationManager();
 		envs = getEnvs(ENV_ID);
+        modifier.setUserId(USER_ID);
+        modifier.setFirstName(MODIFIER);
+        modifier.setLastName(MODIFIER);
 	}
 
-	@Test
-	public void notifyService() throws Exception {
-		NotificationDataImpl notificationData = new NotificationDataImpl();
-		Service service = new Service();
-		when(environmentsEngine.getEnvironmentById(ENV_ID)).thenReturn(envs.get(ENV_ID));
-		when(distributionEngineConfigurationMock.getConfigurationMock().getDistributionNotifTopicName())
-				.thenReturn("topic");
-		when(distributionNotificationSender.sendNotification(eq("topic-ENVID"), eq(DISTRIBUTION_ID),
-				any(EnvironmentMessageBusData.class), any(NotificationDataImpl.class), any(Service.class), eq(USER_ID),
-				eq(MODIFIER))).thenReturn(ActionStatus.OK);
-		ActionStatus actionStatus = testInstance.notifyService(DISTRIBUTION_ID, service, notificationData, ENV_ID,
-				USER_ID, MODIFIER);
-		assertEquals(ActionStatus.OK, actionStatus);
-	}
+    @Test
+    public void notifyService() throws Exception {
+        NotificationDataImpl notificationData = new NotificationDataImpl();
+        Service service = new Service();
+        when(environmentsEngine.getEnvironmentById(ENV_ID)).thenReturn(envs.get(ENV_ID));
+        when(distributionEngineConfigurationMock.getConfigurationMock().getDistributionNotifTopicName()).thenReturn("topic");
+        when(distributionNotificationSender.sendNotification(eq("topic-ENVID"), eq(DISTRIBUTION_ID), any(EnvironmentMessageBusData.class),
+                any(NotificationDataImpl.class), any(Service.class), any(User.class)))
+        .thenReturn(ActionStatus.OK);
+        ActionStatus actionStatus = testInstance.notifyService(DISTRIBUTION_ID, service, notificationData, ENV_ID, modifier);
+        assertEquals(ActionStatus.OK, actionStatus);
+    }
 
-	@Test
-	public void notifyService_couldNotResolveEnvironment() throws Exception {
-		when(environmentsEngine.getEnvironments()).thenReturn(envs);
-		ActionStatus actionStatus = testInstance.notifyService(DISTRIBUTION_ID, new Service(),
-				new NotificationDataImpl(), "someNonExisitngEnv", USER_ID, MODIFIER);
-		assertEquals(ActionStatus.DISTRIBUTION_ENVIRONMENT_NOT_AVAILABLE, actionStatus);
-		verifyZeroInteractions(distributionNotificationSender);
-	}
+    @Test
+    public void notifyService_couldNotResolveEnvironment() throws Exception {
+        when(environmentsEngine.getEnvironments()).thenReturn(envs);
+        ActionStatus actionStatus = testInstance.notifyService(DISTRIBUTION_ID, new Service(), new NotificationDataImpl(), "someNonExisitngEnv", modifier);
+        assertEquals(ActionStatus.DISTRIBUTION_ENVIRONMENT_NOT_AVAILABLE, actionStatus);
+        verifyZeroInteractions(distributionNotificationSender);
+    }
 
-	@Test
-	public void notifyService_failedWhileSendingNotification() throws Exception {
-		NotificationDataImpl notificationData = new NotificationDataImpl();
-		Service service = new Service();
-		when(environmentsEngine.getEnvironmentById(ENV_ID)).thenReturn(envs.get(ENV_ID));
-		when(distributionEngineConfigurationMock.getConfigurationMock().getDistributionNotifTopicName())
-				.thenReturn("topic");
-		when(distributionNotificationSender.sendNotification(eq("topic-ENVID"), eq(DISTRIBUTION_ID),
-				any(EnvironmentMessageBusData.class), any(NotificationDataImpl.class), any(Service.class), eq(USER_ID),
-				eq(MODIFIER))).thenReturn(ActionStatus.GENERAL_ERROR);
-		ActionStatus actionStatus = testInstance.notifyService(DISTRIBUTION_ID, service, notificationData, ENV_ID,
-				USER_ID, MODIFIER);
-		assertEquals(ActionStatus.GENERAL_ERROR, actionStatus);
-	}
+    @Test
+    public void notifyService_failedWhileSendingNotification() throws Exception {
+        NotificationDataImpl notificationData = new NotificationDataImpl();
+        Service service = new Service();
+        when(environmentsEngine.getEnvironmentById(ENV_ID)).thenReturn(envs.get(ENV_ID));
+        when(distributionEngineConfigurationMock.getConfigurationMock().getDistributionNotifTopicName()).thenReturn("topic");
+        when(distributionNotificationSender.sendNotification(eq("topic-ENVID"), eq(DISTRIBUTION_ID), any(EnvironmentMessageBusData.class),
+                any(NotificationDataImpl.class), any(Service.class), any(User.class)))
+                .thenReturn(ActionStatus.GENERAL_ERROR);
+        ActionStatus actionStatus = testInstance.notifyService(DISTRIBUTION_ID, service, notificationData, ENV_ID, modifier);
+        assertEquals(ActionStatus.GENERAL_ERROR, actionStatus);
+    }
 
 	private Map<String, OperationalEnvironmentEntry> getEnvs(String... environmentIds) {
 		Set<String> uebAddress = new HashSet<>();
@@ -301,37 +301,7 @@ public class DistributionEngineTest extends BeConfDependentTest{
 		result = Deencapsulation.invoke(testInstance, "buildTopicName", new Object[] { envName });
 	}
 
-	@Test
-	public void testIsReadyForDistribution() throws Exception {
-		Service service = null;
-		String envName = "";
-		StorageOperationStatus result;
 
-		// default test
-		result = testInstance.isReadyForDistribution(service, envName);
-	}
-
-	@Test
-	public void testVerifyServiceHasDeploymentArtifactsTrue() throws Exception {
-		Service service = new Service();
-		StorageOperationStatus result;
-
-		// default test
-		when(serviceDistributionArtifactsBuilder
-				.verifyServiceContainsDeploymentArtifacts(ArgumentMatchers.any(Service.class))).thenReturn(true);
-		result = testInstance.verifyServiceHasDeploymentArtifacts(service);
-	}
-
-	@Test
-	public void testVerifyServiceHasDeploymentArtifactsFalse() throws Exception {
-		Service service = new Service();
-		StorageOperationStatus result;
-
-		// default test
-		when(serviceDistributionArtifactsBuilder
-				.verifyServiceContainsDeploymentArtifacts(ArgumentMatchers.any(Service.class))).thenReturn(false);
-		result = testInstance.verifyServiceHasDeploymentArtifacts(service);
-	}
 
 	@Test
 	public void testGetEnvironmentById() throws Exception {

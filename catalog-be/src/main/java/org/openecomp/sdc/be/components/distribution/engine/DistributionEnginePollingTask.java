@@ -20,11 +20,10 @@
 
 package org.openecomp.sdc.be.components.distribution.engine;
 
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
-
+import com.att.nsa.cambria.client.CambriaConsumer;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import fj.data.Either;
 import org.apache.commons.lang3.concurrent.BasicThreadFactory;
 import org.openecomp.sdc.be.components.distribution.engine.report.DistributionCompleteReporter;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
@@ -32,15 +31,12 @@ import org.openecomp.sdc.be.config.DistributionEngineConfiguration;
 import org.openecomp.sdc.be.config.DistributionEngineConfiguration.DistributionStatusTopicConfig;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.resources.data.OperationalEnvironmentEntry;
-import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 
-import com.att.nsa.cambria.client.CambriaConsumer;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
-import fj.data.Either;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 public class DistributionEnginePollingTask implements Runnable {
 
@@ -59,7 +55,7 @@ public class DistributionEnginePollingTask implements Runnable {
 
     private ScheduledExecutorService scheduledPollingService = Executors.newScheduledThreadPool(1, new BasicThreadFactory.Builder().namingPattern("TopicPollingThread-%d").build());
 
-    private static final Logger logger = LoggerFactory.getLogger(DistributionEnginePollingTask.class);
+    private static final Logger logger = Logger.getLogger(DistributionEnginePollingTask.class.getName());
 
     ScheduledFuture<?> scheduledFuture = null;
     private CambriaConsumer cambriaConsumer = null;
@@ -111,7 +107,7 @@ public class DistributionEnginePollingTask implements Runnable {
         if (scheduledFuture != null) {
             boolean result = scheduledFuture.cancel(true);
             logger.debug("Stop polling task. result = {}", result);
-            if (false == result) {
+            if (!result) {
                 BeEcompErrorManager.getInstance().logBeUebSystemError(DISTRIBUTION_STATUS_POLLING, "try to stop the polling task");
             }
             scheduledFuture = null;
@@ -177,7 +173,7 @@ public class DistributionEnginePollingTask implements Runnable {
     }
 
     private void handleDistributionNotificationMsg(DistributionStatusNotification notification) {
-        componentUtils.auditDistributionStatusNotification(AuditingActionEnum.DISTRIBUTION_STATUS, notification.getDistributionID(), notification.getConsumerID(), topicName, notification.getArtifactURL(),
+        componentUtils.auditDistributionStatusNotification(notification.getDistributionID(), notification.getConsumerID(), topicName, notification.getArtifactURL(),
                 String.valueOf(notification.getTimestamp()), notification.getStatus().name(), notification.getErrorReason());
         if (notification.isDistributionCompleteNotification()) {
             distributionCompleteReporter.reportDistributionComplete(notification);

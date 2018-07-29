@@ -1,9 +1,8 @@
 package org.openecomp.sdc.common.http.config;
 
+import fj.data.Either;
 import org.apache.commons.lang3.StringUtils;
 import org.openecomp.sdc.security.SecurityUtil;
-
-import fj.data.Either;
 
 public class ClientCertificate {
     private String keyStore;

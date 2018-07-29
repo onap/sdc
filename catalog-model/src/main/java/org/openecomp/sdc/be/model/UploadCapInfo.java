@@ -23,36 +23,36 @@ package org.openecomp.sdc.be.model;
 import java.util.List;
 
 public class UploadCapInfo extends UploadInfo {
-	/**
-	 * specify the node type(Optional by tosca)
-	 */
-	private List<String> validSourceTypes;
+    /**
+     * specify the node type(Optional by tosca)
+     */
+    private List<String> validSourceTypes;
 
-	private List<UploadPropInfo> properties;
+    private List<UploadPropInfo> properties;
 
-	private String node;
+    private String node;
 
-	public String getNode() {
-		return node;
-	}
+    public String getNode() {
+        return node;
+    }
 
-	public void setNode(String node) {
-		this.node = node;
-	}
+    public void setNode(String node) {
+        this.node = node;
+    }
 
-	public List<String> getValidSourceTypes() {
-		return validSourceTypes;
-	}
+    public List<String> getValidSourceTypes() {
+        return validSourceTypes;
+    }
 
-	public void setValidSourceTypes(List<String> validSourceTypes) {
-		this.validSourceTypes = validSourceTypes;
-	}
+    public void setValidSourceTypes(List<String> validSourceTypes) {
+        this.validSourceTypes = validSourceTypes;
+    }
 
-	public List<UploadPropInfo> getProperties() {
-		return properties;
-	}
+    public List<UploadPropInfo> getProperties() {
+        return properties;
+    }
 
-	public void setProperties(List<UploadPropInfo> properties) {
-		this.properties = properties;
-	}
+    public void setProperties(List<UploadPropInfo> properties) {
+        this.properties = properties;
+    }
 }

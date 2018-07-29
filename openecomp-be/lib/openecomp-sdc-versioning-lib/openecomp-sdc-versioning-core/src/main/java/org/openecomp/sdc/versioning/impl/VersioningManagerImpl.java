@@ -16,13 +16,6 @@
 
 package org.openecomp.sdc.versioning.impl;
 
-import static org.openecomp.sdc.versioning.dao.types.VersionStatus.Certified;
-import static org.openecomp.sdc.versioning.dao.types.VersionStatus.Draft;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.ErrorCategory;
 import org.openecomp.sdc.common.errors.ErrorCode;
@@ -36,6 +29,14 @@ import org.openecomp.sdc.versioning.dao.types.Revision;
 import org.openecomp.sdc.versioning.dao.types.SynchronizationState;
 import org.openecomp.sdc.versioning.dao.types.Version;
 import org.openecomp.sdc.versioning.types.VersionCreationMethod;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import static org.openecomp.sdc.versioning.dao.types.VersionStatus.Certified;
+import static org.openecomp.sdc.versioning.dao.types.VersionStatus.Draft;
 
 public class VersioningManagerImpl implements VersioningManager {
   private static final Logger LOGGER = LoggerFactory.getLogger(VersioningManagerImpl.class);

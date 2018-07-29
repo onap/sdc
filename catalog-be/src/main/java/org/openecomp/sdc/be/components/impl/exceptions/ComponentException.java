@@ -10,12 +10,11 @@ public class ComponentException extends RuntimeException {
      */
 
     private final transient ResponseFormat responseFormat;
-
     private final ActionStatus actionStatus;
     private final String[] params;
 
     public ComponentException(ResponseFormat responseFormat) {
-        this(responseFormat, ActionStatus.OK, null);
+        this(responseFormat, ActionStatus.OK);
     }
 
     public ComponentException(ActionStatus actionStatus, String... params) {
@@ -24,7 +23,7 @@ public class ComponentException extends RuntimeException {
 
     private ComponentException(ResponseFormat responseFormat, ActionStatus actionStatus, String... params) {
         this.actionStatus = actionStatus;
-        this.params = params;
+        this.params = params.clone();
         this.responseFormat = responseFormat;
     }
 
@@ -37,7 +36,7 @@ public class ComponentException extends RuntimeException {
     }
 
     public String[] getParams() {
-        return params;
+        return params.clone();
     }
 
 

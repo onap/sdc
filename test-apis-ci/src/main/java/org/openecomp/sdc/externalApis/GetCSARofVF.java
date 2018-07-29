@@ -197,6 +197,7 @@ public class GetCSARofVF extends ComponentBaseTest {
 		expectedDefinitionFolderFileList.add("Definitions/data.yml");
 		expectedDefinitionFolderFileList.add("Definitions/capabilities.yml");
 		expectedDefinitionFolderFileList.add("Definitions/artifacts.yml");
+		expectedDefinitionFolderFileList.add("Definitions/annotations.yml");
 		
 		Enumeration<? extends ZipEntry> entries = zipFile.entries();
 		while(entries.hasMoreElements()){
@@ -225,8 +226,8 @@ public class GetCSARofVF extends ComponentBaseTest {
 		expectedAudit.setRESOURCE_TYPE(resource.getComponentType().getValue());
 //		AuditValidationUtils.validateExternalAudit(expectedAudit, AuditingActionEnum.GET_TOSCA_MODEL.getName(),	null);
 
-		Map <AuditingFieldsKeysEnum, String> body = new HashMap<>();
-        body.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_NAME, expectedAudit.getRESOURCE_NAME());
+		Map <AuditingFieldsKey, String> body = new HashMap<>();
+        body.put(AuditingFieldsKey.AUDIT_RESOURCE_NAME, expectedAudit.getRESOURCE_NAME());
         AuditValidationUtils.validateExternalAudit(expectedAudit, AuditingActionEnum.GET_TOSCA_MODEL.getName(), body);
 
 	}*/

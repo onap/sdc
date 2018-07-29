@@ -1,20 +1,18 @@
 package org.onap.config.test;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.onap.config.util.ConfigTestConstant;
-
-import org.onap.config.util.TestUtil;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
 import org.onap.config.api.Configuration;
 import org.onap.config.api.ConfigurationChangeListener;
 import org.onap.config.api.ConfigurationManager;
+import org.onap.config.util.ConfigTestConstant;
+import org.onap.config.util.TestUtil;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Scenario 7

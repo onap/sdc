@@ -20,33 +20,18 @@
 
 package org.openecomp.sdc.be.externalapi.servlet;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.EnumMap;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import javax.inject.Singleton;
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jcabi.aspects.Loggable;
+import fj.data.Either;
+import io.swagger.annotations.*;
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.common.Strings;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.openecomp.sdc.be.components.impl.ElementBusinessLogic;
-import org.openecomp.sdc.be.components.impl.ImportUtils;
 import org.openecomp.sdc.be.components.impl.ResourceBusinessLogic;
+import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleBusinessLogic;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleChangeInfoBase;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleChangeInfoWithAction;
@@ -61,34 +46,34 @@ import org.openecomp.sdc.be.ecomp.converters.AssetMetadataConverter;
 import org.openecomp.sdc.be.externalapi.servlet.representation.AssetMetadata;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.LifeCycleTransitionEnum;
-import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
 import org.openecomp.sdc.be.model.category.SubCategoryDefinition;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
+import org.openecomp.sdc.be.resources.data.auditing.model.DistributionData;
+import org.openecomp.sdc.be.resources.data.auditing.model.ResourceCommonInfo;
 import org.openecomp.sdc.be.servlets.AbstractValidationsServlet;
 import org.openecomp.sdc.be.servlets.RepresentationUtils;
 import org.openecomp.sdc.be.utils.CommonBeUtils;
 import org.openecomp.sdc.common.api.Constants;
-import org.openecomp.sdc.common.datastructure.AuditingFieldsKeysEnum;
 import org.openecomp.sdc.common.datastructure.Wrapper;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.common.util.ValidationUtils;
 import org.openecomp.sdc.exception.ResponseFormat;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jcabi.aspects.Loggable;
-
-import fj.data.Either;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import javax.inject.Singleton;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/v1/catalog")
@@ -99,7 +84,7 @@ public class CrudExternalServlet extends AbstractValidationsServlet {
     @Context
     private HttpServletRequest request;
 
-    private static final Logger log = LoggerFactory.getLogger(CrudExternalServlet.class);
+    private static final Logger log = Logger.getLogger(CrudExternalServlet.class);
 
     /**
      * Creates a new Resource
@@ -148,7 +133,7 @@ public class CrudExternalServlet extends AbstractValidationsServlet {
             @ApiParam(value = "The requested asset type", required = true, allowableValues = "resources, services")@PathParam("assetType") final String assetType,
             @ApiParam( hidden = true) String data) {
 
-        init(log);
+        init();
 
         Wrapper<ResponseFormat> responseWrapper = new Wrapper<>();
         String requestURI = request.getRequestURI();
@@ -156,7 +141,8 @@ public class CrudExternalServlet extends AbstractValidationsServlet {
         log.debug("Start handle request of {}", url);
         Resource resource = null;
         User modifier = null;
-        EnumMap<AuditingFieldsKeysEnum, Object> additionalParams = new EnumMap<>(AuditingFieldsKeysEnum.class);
+        ResourceCommonInfo resourceCommonInfo = new ResourceCommonInfo(ComponentTypeEnum.RESOURCE.getValue());
+
         ServletContext context = request.getSession().getServletContext();
         ResourceBusinessLogic resourceBL = getResourceBL(context);
         try {
@@ -180,7 +166,7 @@ public class CrudExternalServlet extends AbstractValidationsServlet {
                 JSONObject jsonObj = (JSONObject) parser.parse(data);
                 String resourceType = (String) jsonObj.get(FilterKeyEnum.RESOURCE_TYPE.getName());
                 if( StringUtils.isEmpty(resourceType) || !ResourceTypeEnum.containsName(resourceType) ){
-                    additionalParams.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_NAME, (String) jsonObj.get("name"));
+                    resourceCommonInfo.setResourceName((String) jsonObj.get("name"));
                     responseWrapper.setInnerElement(getComponentsUtils().getResponseFormat(ActionStatus.INVALID_CONTENT));
                 }
             }
@@ -217,36 +203,25 @@ public class CrudExternalServlet extends AbstractValidationsServlet {
             }
             // Create the resource in the dataModel
             if (responseWrapper.isEmpty()) {
-                Either<Resource, ResponseFormat> eitherCreateResponse = resourceBL.createResource(resource, null,
+                resource = resourceBL.createResource(resource, null,
                         modifier, null, null);
-                if (eitherCreateResponse.isRight()) {
-                    responseWrapper.setInnerElement(eitherCreateResponse.right().value());
-                } else {
-                    resource = eitherCreateResponse.left().value();
-                }
+                return buildCreatedResourceResponse(resource, context, responseWrapper);
+            } else {
+                return buildErrorResponse(responseWrapper.getInnerElement());
             }
-            Response response;
-            //Build Response and store it in the response Wrapper
-            if (responseWrapper.isEmpty()) {
-                response = buildCreatedResourceResponse(resource, context, responseWrapper);
-            }
-            else{
-                response = buildErrorResponse(responseWrapper.getInnerElement());
-            }
-            return response;
-
-        } catch (Exception e) {
+        } catch (IOException|ParseException e) {
             final String message = "failed to create vfc monitoring template resource";
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError(message);
             log.debug(message, e);
-            return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
+            responseWrapper.setInnerElement(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
+            return buildErrorResponse(responseWrapper.getInnerElement());
+        } catch (ComponentException e){
+            ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(e);
+            responseWrapper.setInnerElement(responseFormat);
+            return buildErrorResponse(responseFormat);
         }
         finally{
-            prepareAdditionalAudit(resource, additionalParams);
-
-            getComponentsUtils().auditExternalCrudApi(responseWrapper.getInnerElement(),
-                    ComponentTypeEnum.RESOURCE.getValue(), AuditingActionEnum.CREATE_RESOURCE_BY_API.getName(), request,
-                    additionalParams);
+            getComponentsUtils().auditCreateResourceExternalApi(responseWrapper.getInnerElement(), resourceCommonInfo, request, resource);
         }
     }
 
@@ -288,9 +263,8 @@ public class CrudExternalServlet extends AbstractValidationsServlet {
             @ApiParam( hidden = true) String jsonChangeInfo) {
 
         Response response = null;
-        EnumMap<AuditingFieldsKeysEnum, Object> additionalParams = new EnumMap<>(AuditingFieldsKeysEnum.class);
 
-        init(log);
+        init();
 
         String requestURI = request.getRequestURI();
         String url = request.getMethod() + " " + requestURI;
@@ -349,7 +323,7 @@ public class CrudExternalServlet extends AbstractValidationsServlet {
                         changeInfo = new LifecycleChangeInfoWithAction(mapper.readValue(jsonChangeInfo, LifecycleChangeInfoBase.class).getUserRemarks());
                     }
                 }
-                catch (Exception e) {
+                catch (IOException e) {
                     BeEcompErrorManager.getInstance().logBeInvalidJsonInput("convertJsonToObject");
                     log.debug("failed to convert from json {}", jsonChangeInfo, e);
                     ResponseFormat responseFormat = getComponentsUtils().getInvalidContentErrorAndAudit(modifier, componentId, AuditingActionEnum.CHECKOUT_RESOURCE);
@@ -374,32 +348,20 @@ public class CrudExternalServlet extends AbstractValidationsServlet {
             }
 
             return response;
-        } catch (Exception e) {
+        } catch (IOException e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Change Lifecycle State");
             log.debug("change lifecycle state failed with exception", e);
             ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR);
             responseWrapper.setInnerElement(responseFormat);
             return buildErrorResponse(responseFormat);
-        } finally{
-            auditChnageLifecycleAction(additionalParams, responseWrapper, componentType, component, responseObject, modifier, userId);
+        } catch (ComponentException e){
+            ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(e);
+            responseWrapper.setInnerElement(responseFormat);
+            return buildErrorResponse(responseFormat);
         }
-    }
-
-    private void prepareAdditionalAudit(Resource resource, EnumMap<AuditingFieldsKeysEnum, Object> additionalParams) {
-        additionalParams.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_PREV_VERSION, StringUtils.EMPTY);
-        additionalParams.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_PREV_STATE, StringUtils.EMPTY);
-
-        if( resource != null ){
-            additionalParams.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_CURR_VERSION, ImportUtils.Constants.FIRST_NON_CERTIFIED_VERSION);
-            additionalParams.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_CURR_STATE, LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT.name());
-            additionalParams.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_NAME, resource.getName());
-            additionalParams.put(AuditingFieldsKeysEnum.AUDIT_SERVICE_INSTANCE_ID, resource.getUUID());
-            additionalParams.put(AuditingFieldsKeysEnum.AUDIT_INVARIANT_UUID, resource.getInvariantUUID());
-        } else {
-            additionalParams.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_CURR_VERSION, StringUtils.EMPTY);
-            additionalParams.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_CURR_STATE, StringUtils.EMPTY);
-            additionalParams.put(AuditingFieldsKeysEnum.AUDIT_SERVICE_INSTANCE_ID, StringUtils.EMPTY);
-            additionalParams.put(AuditingFieldsKeysEnum.AUDIT_INVARIANT_UUID, StringUtils.EMPTY);
+        finally{
+            getComponentsUtils().auditChangeLifecycleAction(responseWrapper.getInnerElement(), componentType, requestId,
+                    component, responseObject, new DistributionData(instanceIdHeader, requestURI), modifier);
         }
     }
 
@@ -455,7 +417,7 @@ public class CrudExternalServlet extends AbstractValidationsServlet {
                     addCategories(resource, category, subcategory, allResourceCategories, responseWrapper);
                 }
             }
-        } catch (Exception e) {
+        } catch (ParseException e) {
             log.debug("Exception occured in addCategories: {}", e.getMessage(), e);
             responseWrapper.setInnerElement(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
         }
@@ -502,50 +464,7 @@ public class CrudExternalServlet extends AbstractValidationsServlet {
 
 
 
-    private void auditChnageLifecycleAction(EnumMap<AuditingFieldsKeysEnum, Object> additionalParams,
-            Wrapper<ResponseFormat> responseWrapper, ComponentTypeEnum componentType, Component component,
-            Component responseObject, User modifier, String userId) {
-        if (modifier!=null){
-            additionalParams.put(AuditingFieldsKeysEnum.AUDIT_MODIFIER_NAME, modifier.getFullName());
-            additionalParams.put(AuditingFieldsKeysEnum.AUDIT_MODIFIER_UID, modifier.getUserId());
-        } else {
-            additionalParams.put(AuditingFieldsKeysEnum.AUDIT_MODIFIER_NAME, "");
-            additionalParams.put(AuditingFieldsKeysEnum.AUDIT_MODIFIER_UID, userId);
-        }
 
-        if (component!=null){
-            additionalParams.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_NAME, component.getName());
-            additionalParams.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_PREV_VERSION, component.getVersion());
-            additionalParams.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_PREV_STATE, component.getLifecycleState().name());
-        } else {
-            additionalParams.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_NAME, "");
-            additionalParams.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_PREV_VERSION, "");
-            additionalParams.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_PREV_STATE, "");
-        }
-
-        if (responseObject!=null){
-            additionalParams.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_CURR_VERSION, responseObject.getVersion());
-            additionalParams.put(AuditingFieldsKeysEnum.AUDIT_SERVICE_INSTANCE_ID, responseObject.getUUID());
-            additionalParams.put(AuditingFieldsKeysEnum.AUDIT_INVARIANT_UUID, responseObject.getInvariantUUID());
-            additionalParams.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_CURR_STATE,responseObject.getLifecycleState().name());
-        } else {
-            if (component!=null){
-                additionalParams.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_CURR_VERSION, component.getVersion());
-                additionalParams.put(AuditingFieldsKeysEnum.AUDIT_SERVICE_INSTANCE_ID, component.getUUID());
-                additionalParams.put(AuditingFieldsKeysEnum.AUDIT_INVARIANT_UUID, component.getInvariantUUID());
-                additionalParams.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_CURR_STATE,component.getLifecycleState().name());
-            } else {
-                additionalParams.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_CURR_VERSION, "");
-                additionalParams.put(AuditingFieldsKeysEnum.AUDIT_SERVICE_INSTANCE_ID, "");
-                additionalParams.put(AuditingFieldsKeysEnum.AUDIT_INVARIANT_UUID, "");
-                additionalParams.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_CURR_STATE,"");
-            }
-        }
-
-        getComponentsUtils().auditExternalCrudApi(responseWrapper.getInnerElement(),
-                componentType.getValue(), AuditingActionEnum.CHANGE_LIFECYCLE_BY_API.getName(), request,
-                additionalParams);
-    }
 
     private Wrapper<ResponseFormat> runValidations(final String assetType) {
         Wrapper<ResponseFormat> responseWrapper = new Wrapper<>();

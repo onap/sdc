@@ -20,17 +20,17 @@
 
 package org.openecomp.sdc.ci.tests.utils.validation;
 
-import static org.testng.AssertJUnit.assertEquals;
-
-import java.io.FileNotFoundException;
-import java.util.Arrays;
-
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.ci.tests.datatypes.enums.ErrorInfo;
 import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
 import org.openecomp.sdc.ci.tests.utils.rest.ResponseParser;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.testng.Assert;
+
+import java.io.FileNotFoundException;
+import java.util.Arrays;
+
+import static org.testng.AssertJUnit.assertEquals;
 
 public class BaseValidationUtils {
 

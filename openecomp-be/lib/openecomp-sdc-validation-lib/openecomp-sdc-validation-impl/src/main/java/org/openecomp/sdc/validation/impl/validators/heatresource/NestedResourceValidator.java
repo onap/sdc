@@ -16,6 +16,13 @@
 
 package org.openecomp.sdc.validation.impl.validators.heatresource;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+
 import org.apache.commons.collections4.CollectionUtils;
 import org.openecomp.core.validation.ErrorMessageCode;
 import org.openecomp.core.validation.errors.ErrorMessagesFormatBuilder;
@@ -26,13 +33,6 @@ import org.openecomp.sdc.heat.datatypes.model.Resource;
 import org.openecomp.sdc.validation.ResourceValidator;
 import org.openecomp.sdc.validation.ValidationContext;
 import org.openecomp.sdc.validation.impl.util.HeatValidationService;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
 
 /**
  * Created by TALIO on 2/22/2017.

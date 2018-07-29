@@ -1,7 +1,5 @@
 package org.openecomp.sdc.common.http.config;
 
-import javax.annotation.Generated;
-
 import org.junit.Assert;
 import org.junit.Test;
 

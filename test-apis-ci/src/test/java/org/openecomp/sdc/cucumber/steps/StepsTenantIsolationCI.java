@@ -1,30 +1,16 @@
 package org.openecomp.sdc.cucumber.steps;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.mockserver.model.HttpCallback.callback;
-import static org.mockserver.model.HttpRequest.request;
-import static org.mockserver.model.HttpResponse.response;
-import static org.openecomp.sdc.common.datastructure.FunctionalInterfaces.retryMethodOnResult;
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
+import com.google.common.base.Strings;
+import com.google.common.net.HttpHeaders;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
+import cucumber.api.java.After;
+import cucumber.api.java.Before;
+import cucumber.api.java.en.Given;
+import cucumber.api.java.en.Then;
+import cucumber.api.java.en.When;
+import fj.data.Either;
 import org.apache.commons.collections.CollectionUtils;
-//import org.openecomp.sdc.dmaap.DmaapPublisher;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
 import org.apache.http.entity.ContentType;
@@ -56,17 +42,20 @@ import org.openecomp.sdc.utils.DistributionActionResultEnum;
 import org.openecomp.sdc.utils.DistributionStatusEnum;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
-import com.google.common.base.Strings;
-import com.google.common.net.HttpHeaders;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
-import cucumber.api.java.After;
-import cucumber.api.java.Before;
-import cucumber.api.java.en.Given;
-import cucumber.api.java.en.Then;
-import cucumber.api.java.en.When;
-import fj.data.Either;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.mockserver.model.HttpCallback.callback;
+import static org.mockserver.model.HttpRequest.request;
+import static org.mockserver.model.HttpResponse.response;
+import static org.openecomp.sdc.common.datastructure.FunctionalInterfaces.retryMethodOnResult;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
+
+//import org.openecomp.sdc.dmaap.DmaapPublisher;
 
 public class StepsTenantIsolationCI {
 

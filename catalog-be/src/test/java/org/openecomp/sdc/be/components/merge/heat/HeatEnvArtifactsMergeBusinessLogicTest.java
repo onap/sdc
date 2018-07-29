@@ -1,12 +1,5 @@
 package org.openecomp.sdc.be.components.merge.heat;
 
-import static org.junit.Assert.assertEquals;
-
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Stream;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.openecomp.sdc.be.components.utils.ArtifactBuilder;
@@ -14,6 +7,13 @@ import org.openecomp.sdc.be.components.utils.HeatParameterBuilder;
 import org.openecomp.sdc.be.datatypes.elements.HeatParameterDataDefinition;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.HeatParameterDefinition;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Stream;
+
+import static org.junit.Assert.assertEquals;
 
 public class HeatEnvArtifactsMergeBusinessLogicTest {
 

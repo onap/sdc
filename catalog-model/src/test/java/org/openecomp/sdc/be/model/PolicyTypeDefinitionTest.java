@@ -1,9 +1,9 @@
 package org.openecomp.sdc.be.model;
 
-import java.util.List;
-
 import org.junit.Test;
 import org.openecomp.sdc.be.datatypes.elements.PolicyTypeDataDefinition;
+
+import java.util.List;
 
 
 public class PolicyTypeDefinitionTest {

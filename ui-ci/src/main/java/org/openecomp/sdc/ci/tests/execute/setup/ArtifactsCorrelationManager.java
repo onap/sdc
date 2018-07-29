@@ -20,12 +20,12 @@
 
 package org.openecomp.sdc.ci.tests.execute.setup;
 
+import org.openecomp.sdc.ci.tests.datatypes.HeatMetaFirstLevelDefinition;
+
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map.Entry;
 import java.util.Set;
-
-import org.openecomp.sdc.ci.tests.datatypes.HeatMetaFirstLevelDefinition;
 
 public class ArtifactsCorrelationManager {
 

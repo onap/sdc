@@ -24,14 +24,14 @@
                 <span tooltips tooltip-content="{{input.type}}" data-tests-id="inputType_{{input.name}}">{{input.type}} </span>
             </div>
         </div>
-        <sdc-checkbox ng-if="instanceInputsMap"
+        <ng1-checkbox ng-if="instanceInputsMap"
                       class="input-check-box"
                       disabled="input.isAlreadySelected || isViewOnly"
                       sdc-checklist-model="instanceInputsMap[instanceId]"
                       sdc-checklist-value="input"
                       sdc-checklist-change="onCheckboxClicked()"
                       data-tests-id="inputsCheckbox_{{input.name}}"
-                      data-ng-click=" $event.stopPropagation()"></sdc-checkbox>
+                      data-ng-click=" $event.stopPropagation()"></ng1-checkbox>
 
         <div class="delete" ng-if="showDeleteIcon">
             <span class="sprite-new delete-icon remove-input-icon"

@@ -1,9 +1,9 @@
 package org.openecomp.sdc.be.auditing.api;
 
-import java.util.List;
-
 import org.javatuples.Pair;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingGenericEvent;
+
+import java.util.List;
 
 public interface AuditEventFactory {
 

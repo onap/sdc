@@ -20,18 +20,7 @@
 
 package org.openecomp.sdc.be.components.distribution.engine;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.when;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicBoolean;
-
+import fj.data.Either;
 import org.apache.commons.collections.CollectionUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -47,7 +36,16 @@ import org.openecomp.sdc.common.api.ConfigurationSource;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;
 import org.openecomp.sdc.common.impl.FSConfigurationSource;
 
-import fj.data.Either;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
+
+import static org.junit.Assert.*;
+import static org.junit.Assert.fail;
+import static org.mockito.Mockito.when;
 
 public class DistributionEngineInitTaskTest {
 
@@ -258,7 +256,7 @@ public class DistributionEngineInitTaskTest {
         String realNotifTopic = notifTopic + "-" + envName.toUpperCase();
         String realStatusTopic = statusTopic + "-" + envName.toUpperCase();
 
-        Set<String> topics = new HashSet<String>();
+        Set<String> topics = new HashSet<>();
         topics.add(realNotifTopic);
         topics.add(realStatusTopic);
 
@@ -292,7 +290,7 @@ public class DistributionEngineInitTaskTest {
             boolean initFlow = initTask.initFlow();
             assertTrue("check init flow succeed", initFlow);
         } catch (Exception e) {
-            assertTrue("Should not throw exception", false);
+            fail("Should not throw exception");
         }
 
     }

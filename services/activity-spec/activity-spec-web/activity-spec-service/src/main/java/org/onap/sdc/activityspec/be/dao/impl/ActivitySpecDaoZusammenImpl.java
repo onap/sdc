@@ -22,7 +22,6 @@ import com.amdocs.zusammen.datatypes.SessionContext;
 import com.amdocs.zusammen.datatypes.item.Action;
 import com.amdocs.zusammen.datatypes.item.ElementContext;
 import com.amdocs.zusammen.datatypes.item.Info;
-
 import org.onap.sdc.activityspec.be.dao.ActivitySpecDao;
 import org.onap.sdc.activityspec.be.dao.types.ActivitySpecEntity;
 import org.onap.sdc.activityspec.be.datatypes.ActivitySpecData;

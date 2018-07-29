@@ -16,11 +16,7 @@
 
 package org.openecomp.sdc.onboarding.pmd;
 
-import java.io.File;
 import java.io.Serializable;
-import java.util.jar.JarFile;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class Violation implements Serializable {
 

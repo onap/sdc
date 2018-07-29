@@ -46,8 +46,11 @@ export class UiElementBase {
 
     @Input() name: string;
     @Input() type: string;
+    @Input() path: string;
     @Input() pattern: any;
     @Input() readonly:boolean;
+
+    @Input() testId:string;
 
     constructor() {
         //this.control = new FormControl('', [Validators.required]);

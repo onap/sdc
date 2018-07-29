@@ -17,6 +17,7 @@
 package org.openecomp.sdc.validation.impl.validators;
 
 import org.apache.commons.collections4.MapUtils;
+import org.onap.sdc.tosca.services.YamlUtil;
 import org.openecomp.core.validation.ErrorMessageCode;
 import org.openecomp.core.validation.errors.ErrorMessagesFormatBuilder;
 import org.openecomp.core.validation.types.GlobalValidationContext;
@@ -30,7 +31,6 @@ import org.openecomp.sdc.heat.services.HeatConstants;
 import org.openecomp.sdc.heat.services.manifest.ManifestUtil;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
-import org.onap.sdc.tosca.services.YamlUtil;
 import org.openecomp.sdc.validation.Validator;
 import org.openecomp.sdc.validation.tos.ContrailResourcesMappingTo;
 import org.openecomp.sdc.validation.util.ValidationUtil;

@@ -16,9 +16,9 @@
 
 package org.onap.sdc.activityspec.api.rest.mapping;
 
+import org.onap.sdc.activityspec.api.rest.types.ActivitySpecGetResponse;
 import org.onap.sdc.activityspec.api.rest.types.ActivitySpecParameterDto;
 import org.onap.sdc.activityspec.be.dao.types.ActivitySpecEntity;
-import org.onap.sdc.activityspec.api.rest.types.ActivitySpecGetResponse;
 import org.openecomp.sdcrests.mapping.MappingBase;
 
 import java.util.Objects;

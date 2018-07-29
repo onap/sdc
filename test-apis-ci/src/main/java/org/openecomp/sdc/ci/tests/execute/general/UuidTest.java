@@ -20,13 +20,6 @@
 
 package org.openecomp.sdc.ci.tests.execute.general;
 
-import static org.testng.AssertJUnit.assertEquals;
-import static org.testng.AssertJUnit.assertTrue;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.UUID;
-
 import org.junit.Rule;
 import org.junit.rules.TestName;
 import org.openecomp.sdc.ci.tests.api.ComponentBaseTest;
@@ -37,6 +30,13 @@ import org.openecomp.sdc.ci.tests.utils.rest.ResourceRestUtils;
 import org.openecomp.sdc.common.api.Constants;
 import org.testng.AssertJUnit;
 import org.testng.annotations.Test;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.UUID;
+
+import static org.testng.AssertJUnit.assertEquals;
+import static org.testng.AssertJUnit.assertTrue;
 
 public class UuidTest extends ComponentBaseTest {
 

@@ -20,6 +20,9 @@
 
 package org.openecomp.sdc;
 
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.io.output.ByteArrayOutputStream;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -29,9 +32,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
-
-import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.io.output.ByteArrayOutputStream;
 
 public class ZipUtil {
 
@@ -66,7 +66,7 @@ public class ZipUtil {
 
     private static Map<String, byte[]> readZip(byte[] zipAsBytes) {
 
-        Map<String, byte[]> fileNameToByteArray = new HashMap<String, byte[]>();
+        Map<String, byte[]> fileNameToByteArray = new HashMap<>();
 
         byte[] buffer = new byte[1024];
         ZipInputStream zis = null;
@@ -80,7 +80,7 @@ public class ZipUtil {
 
                 String fileName = ze.getName();
 
-                if (false == ze.isDirectory()) {
+                if (!ze.isDirectory()) {
 
                     ByteArrayOutputStream os = new ByteArrayOutputStream();
                     try {

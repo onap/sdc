@@ -20,8 +20,6 @@
 
 package org.openecomp.sdc.ci.tests.US;
 
-import static org.testng.AssertJUnit.assertTrue;
-
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.ci.tests.datatypes.ArtifactInfo;
 import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum;
@@ -39,6 +37,8 @@ import org.openecomp.sdc.ci.tests.utilities.ResourceUIUtils;
 import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import static org.testng.AssertJUnit.assertTrue;
 
 
 public class NewArtifactTypeGuide extends SetupCDTest {

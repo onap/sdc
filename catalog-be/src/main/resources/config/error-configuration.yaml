@@ -350,7 +350,7 @@ errors:
 # %2  - resource/service
     COMPONENT_IN_USE: {
         code: 403,
-        message: "Error: Requested '%1' %2 is in use by another user.",
+        message: "Error: '%1' %2 is still held by previous action. Please try again later.",
         messageId: "SVC4086"
     }
 #-----------SVC4087---------------------------
@@ -574,13 +574,6 @@ errors:
         code: 400,
         message: "Error: Invalid distribution environment.",
         messageId: "SVC4138"
-    }
-#---------SVC4139------------------------------
-# %1 - service name
-    DISTRIBUTION_ARTIFACT_NOT_FOUND: {
-        code: 409,
-        message: "Error: Service '%1' cannot be distributed due to missing deployment artifacts.",
-        messageId: "SVC4139"
     }
 #---------SVC4200------------------------------
 # %1 - Service/Resource
@@ -2078,23 +2071,66 @@ errors:
       message: "Error: Interface operations not found in the resource %1",
       messageId: "SVC4701"
     }
-#---------SVC46702-----------------------------
+#---------SVC4702-----------------------------
     INTERFACE_OPERATION_NOT_DELETED: {
       code: 404,
       message: "Error: Failed to delete interface operation.",
       messageId: "SVC4702"
     }
-#---------SVC4703-----------------------------
+#-----------SVC4692---------------------------
+    RESOURCE_LIFECYCLE_STATE_NOT_VALID: {
+        code: 400,
+        message: "Error: Lifecycle state %1 is not valid for resource",
+        messageId: "SVC4692"
+    }
+#-----------SVC4693---------------------------
+#%1 - component name
+    COMPONENT_IS_ARCHIVED: {
+        code: 400,
+        message: "Error: Component %1 is arhived",
+        messageId: "SVC4693"
+    }
+#-----------SVC4703---------------------------
+#%1 - component name
+    COMPONENT_IS_NOT_HIHGEST_CERTIFIED: {
+        code: 400,
+        message: "Error: Component %1 is not highest certified",
+        messageId: "SVC4703"
+    }
+#---------SVC4704------------------------------
+# %1 - "service"/"VF"
+# %2 - "Resource name"
+    ARCHIVED_ORIGINS_FOUND: {
+        code: 403,
+        message: "Error: Action is not permitted as your '%1' '%2' includes archived resources",
+        messageId: "SVC4704"
+    }
+#---------SVC4705------------------------------
+# %1-artifact name
+    ARTIFACT_PAYLOAD_EMPTY: {
+        code: 400,
+        message: "Error: Invalid content. Uploaded file %1 is empty. Please retry with the correct file.",
+        messageId: "SVC4705"
+    }
+#---------SVC4706------------------------------
+# %1-input(s) name(s) string
+    INPUTS_NOT_FOUND: {
+        code: 400,
+        message: "Error: missing input value(s) %1.",
+        messageId: "SVC4706"
+    }
+    #---------SVC4707-----------------------------
 # %1 – asset type [service / resource ]
 # %2 – main asset uuid
     ERROR_DURING_CSAR_CREATION: {
       code: 404,
       message: "Error: CSAR packaging failed for %1 %2.",
-      messageId: "SVC4702"
+      messageId: "SVC4706"
     }
-#---------SVC46703-----------------------------
+#---------SVC46708-----------------------------
     INTERFACE_OPERATION_INPUT_NAME_MANDATORY: {
       code: 404,
       message: "Error: Interface operation input  parameter name should not be empty",
-      messageId: "SVC46703"
-    }
+      messageId: "SVC46707"
+      }
+

@@ -16,12 +16,6 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.process;
 
-import java.io.ByteArrayInputStream;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.openecomp.core.translator.datatypes.TranslatorOutput;
@@ -38,11 +32,7 @@ import org.openecomp.sdc.heat.datatypes.structure.ValidationStructureList;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
 import org.openecomp.sdc.translator.services.heattotosca.HeatToToscaUtil;
 import org.openecomp.sdc.validation.util.ValidationManagerUtil;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComponentDependencyModelEntity;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComponentMonitoringUploadEntity;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.type.OrchestrationTemplateCandidateData;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ProcessEntity;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.type.*;
 import org.openecomp.sdc.vendorsoftwareproduct.factory.CandidateServiceFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.OrchestrationUtil;
 import org.openecomp.sdc.vendorsoftwareproduct.services.filedatastructuremodule.CandidateService;
@@ -51,6 +41,9 @@ import org.openecomp.sdc.vendorsoftwareproduct.types.UploadFileResponse;
 import org.openecomp.sdc.vendorsoftwareproduct.types.candidateheat.FilesDataStructure;
 import org.openecomp.sdc.vendorsoftwareproduct.utils.VendorSoftwareProductUtils;
 import org.openecomp.sdc.versioning.dao.types.Version;
+
+import java.io.ByteArrayInputStream;
+import java.util.*;
 
 public class OrchestrationTemplateProcessZipHandler implements OrchestrationTemplateProcessHandler {
 

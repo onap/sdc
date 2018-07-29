@@ -1,11 +1,5 @@
 package org.openecomp.sdc.ci.tests.utils;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-
 import org.onap.sdc.tosca.parser.api.ISdcCsarHelper;
 import org.onap.sdc.tosca.parser.exceptions.SdcToscaParserException;
 import org.onap.sdc.tosca.parser.impl.SdcToscaParserFactory;
@@ -14,6 +8,12 @@ import org.onap.sdc.toscaparser.api.Group;
 import org.onap.sdc.toscaparser.api.NodeTemplate;
 import org.onap.sdc.toscaparser.api.elements.Metadata;
 import org.onap.sdc.toscaparser.api.parameters.Input;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 
 public class CsarToscaTester {
 
@@ -78,7 +78,8 @@ public class CsarToscaTester {
 	private static void generateReport(String time, String name, String currentCsarDir, List<String> criticalsReport, String type)
 			throws IOException {
 		FileWriter fw;
-		fw = new FileWriter(new File(currentCsarDir + "/" + criticalsReport.size() + "-"+type+"-" + name +"-"+time + ".txt"));
+		try (FileWriter fileWriter = fw = new FileWriter(new File(currentCsarDir + "/" + criticalsReport.size() + "-" + type + "-" + name + "-" + time + ".txt"))) {
+		}
 		for (String exception : criticalsReport) {
 			fw.write(exception);
 			fw.write("\r\n");

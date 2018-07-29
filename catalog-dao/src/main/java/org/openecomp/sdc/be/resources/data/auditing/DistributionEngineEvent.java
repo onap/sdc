@@ -20,26 +20,22 @@
 
 package org.openecomp.sdc.be.resources.data.auditing;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Map;
-import java.util.TimeZone;
-import java.util.UUID;
-
-import org.openecomp.sdc.be.resources.data.auditing.model.CommonAuditData;
-import org.openecomp.sdc.common.datastructure.AuditingFieldsKeysEnum;
-
 import com.datastax.driver.core.utils.UUIDs;
 import com.datastax.driver.mapping.annotations.ClusteringColumn;
 import com.datastax.driver.mapping.annotations.Column;
 import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
+import org.openecomp.sdc.be.resources.data.auditing.model.CommonAuditData;
+import org.openecomp.sdc.be.resources.data.auditing.model.DistributionTopicData;
+import org.openecomp.sdc.common.datastructure.AuditingFieldsKey;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.TimeZone;
+import java.util.UUID;
 
 @Table(keyspace = AuditingTypesConstants.AUDIT_KEYSPACE, name = AuditingTypesConstants.DISTRIBUTION_ENGINE_EVENT_TYPE)
 public class DistributionEngineEvent extends AuditingGenericEvent {
-
-    private static String DISTRIBUTION_ENGINE_EVENT_TEMPLATE = "action=\"%s\" timestamp=\"%s\" "
-            + "environmentName=\"%s\" topicName=\"%s\" role=\"%s\" apiKey=\"%s\" " + "status=\"%s\" ";
 
     @PartitionKey
     protected UUID timebaseduuid;
@@ -79,68 +75,14 @@ public class DistributionEngineEvent extends AuditingGenericEvent {
     @Column(name = "api_key")
     private String apiKey;
 
+    //Required to be public as it is used by Cassandra driver on get operation
     public DistributionEngineEvent() {
-        super();
         timestamp1 = new Date();
         timebaseduuid = UUIDs.timeBased();
     }
 
-    public DistributionEngineEvent(Map<AuditingFieldsKeysEnum, Object> auditingFields) {
-        this();
-        Object value;
-        value = auditingFields.get(AuditingFieldsKeysEnum.AUDIT_REQUEST_ID);
-        if (value != null) {
-            setRequestId((String) value);
-        }
-        value = auditingFields.get(AuditingFieldsKeysEnum.AUDIT_SERVICE_INSTANCE_ID);
-        if (value != null) {
-            setServiceInstanceId((String) value);
-        }
-        value = auditingFields.get(AuditingFieldsKeysEnum.AUDIT_ACTION);
-        if (value != null) {
-            setAction((String) value);
-        }
-        value = auditingFields.get(AuditingFieldsKeysEnum.AUDIT_STATUS);
-        if (value != null) {
-            setStatus((String) value);
-        }
-        value = auditingFields.get(AuditingFieldsKeysEnum.AUDIT_DESC);
-        if (value != null) {
-            setDesc((String) value);
-        } else {
-            value = auditingFields.get(AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_STATUS_DESC);
-            if (value != null) {
-                setDesc((String) value);
-            }
-        }
-        value = auditingFields.get(AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_CONSUMER_ID);
-        if (value != null) {
-            setConsumerId((String) value);
-        }
-        value = auditingFields.get(AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_STATUS_TOPIC_NAME);
-        if (value != null) {
-            setDstatusTopic((String) value);
-        }
-        value = auditingFields.get(AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_NOTIFICATION_TOPIC_NAME);
-        if (value != null) {
-            setDnotifTopic((String) value);
-        }
-        value = auditingFields.get(AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_API_KEY);
-        if (value != null) {
-            setApiKey((String) value);
-        }
-        value = auditingFields.get(AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_ENVRIONMENT_NAME);
-        if (value != null) {
-            setEnvironmentName((String) value);
-        }
-        value = auditingFields.get(AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_ROLE);
-        if (value != null) {
-            setRole((String) value);
-        }
-    }
-
-    public DistributionEngineEvent(String action, CommonAuditData commonAuditData, String consumerId, String distStatusTopic, String distNotifTopic,
-                                   String apiKey, String envName, String role) {
+    public DistributionEngineEvent(String action, CommonAuditData commonAuditData, String consumerId, DistributionTopicData distributionTopicData,
+                                    String apiKey, String envName, String role) {
         this();
         this.action = action;
         this.requestId = commonAuditData.getRequestId();
@@ -149,33 +91,37 @@ public class DistributionEngineEvent extends AuditingGenericEvent {
         //if no desc, keep distr desc
         this.desc = commonAuditData.getDescription();
         this.consumerId = consumerId;
-        this.dstatusTopic = distStatusTopic;
-        this.dnotifTopic = distNotifTopic;
+        this.dstatusTopic = distributionTopicData.getStatusTopic();
+        this.dnotifTopic = distributionTopicData.getNotificationTopic();
         this.apiKey = apiKey;
         this.environmentName = envName;
         this.role = role;
     }
 
+    public void setTimestamp1(String timestamp) {
+        this.timestamp1 = parseDateFromString(timestamp);
+    }
+
     @Override
     public void fillFields() {
-        fields.put(AuditingFieldsKeysEnum.AUDIT_REQUEST_ID.getDisplayName(), getRequestId());
+        fields.put(AuditingFieldsKey.AUDIT_REQUEST_ID.getDisplayName(), getRequestId());
 
-		fields.put(AuditingFieldsKeysEnum.AUDIT_SERVICE_INSTANCE_ID.getDisplayName(), getServiceInstanceId());
-		fields.put(AuditingFieldsKeysEnum.AUDIT_ACTION.getDisplayName(), getAction());
-		fields.put(AuditingFieldsKeysEnum.AUDIT_STATUS.getDisplayName(), getStatus());
-		fields.put(AuditingFieldsKeysEnum.AUDIT_DESC.getDisplayName(), getDesc());
+        fields.put(AuditingFieldsKey.AUDIT_SERVICE_INSTANCE_ID.getDisplayName(), getServiceInstanceId());
+        fields.put(AuditingFieldsKey.AUDIT_ACTION.getDisplayName(), getAction());
+        fields.put(AuditingFieldsKey.AUDIT_STATUS.getDisplayName(), getStatus());
+        fields.put(AuditingFieldsKey.AUDIT_DESC.getDisplayName(), getDesc());
 
-		fields.put(AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_CONSUMER_ID.getDisplayName(), getConsumerId());
-		fields.put(AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_API_KEY.getDisplayName(), getApiKey());
-		fields.put(AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_ENVRIONMENT_NAME.getDisplayName(), getEnvironmentName());
-		fields.put(AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_ROLE.getDisplayName(), getRole());
-		fields.put(AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_STATUS_TOPIC_NAME.getDisplayName(), getDstatusTopic());
-		fields.put(AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_NOTIFICATION_TOPIC_NAME.getDisplayName(),
-				getDnotifTopic());
-		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(dateFormatPattern);
-		simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
-		fields.put(AuditingFieldsKeysEnum.AUDIT_TIMESTAMP.getDisplayName(), simpleDateFormat.format(timestamp1));
-	}
+        fields.put(AuditingFieldsKey.AUDIT_DISTRIBUTION_CONSUMER_ID.getDisplayName(), getConsumerId());
+        fields.put(AuditingFieldsKey.AUDIT_DISTRIBUTION_API_KEY.getDisplayName(), getApiKey());
+        fields.put(AuditingFieldsKey.AUDIT_DISTRIBUTION_ENVRIONMENT_NAME.getDisplayName(), getEnvironmentName());
+        fields.put(AuditingFieldsKey.AUDIT_DISTRIBUTION_ROLE.getDisplayName(), getRole());
+        fields.put(AuditingFieldsKey.AUDIT_DISTRIBUTION_STATUS_TOPIC_NAME.getDisplayName(), getDstatusTopic());
+        fields.put(AuditingFieldsKey.AUDIT_DISTRIBUTION_NOTIFICATION_TOPIC_NAME.getDisplayName(),
+                getDnotifTopic());
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(dateFormatPattern);
+        simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+        fields.put(AuditingFieldsKey.AUDIT_TIMESTAMP.getDisplayName(), simpleDateFormat.format(timestamp1));
+    }
 
     public String getDstatusTopic() {
         return dstatusTopic;

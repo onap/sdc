@@ -21,12 +21,14 @@
 /**
  * Created by rc2122 on 4/6/2017.
  */
-import {DataTypesService} from "../../services/data-types-service";
+import { DataTypesService } from "../../services/data-types-service";
 import ICacheObject = angular.ICacheObject;
-import {SharingService} from "../../services/sharing-service";
-import {CookieService} from "../../services/cookie-service";
-import {CacheService} from "../../services/cache-service";
-import {EventListenerService} from "app/services/event-listener-service";
+import { SharingService } from "../../services/sharing-service";
+import { CookieService } from "../../services/cookie-service";
+import { CacheService } from "../../services/cache-service";
+import {ComponentFactory} from "../../utils/component-factory"
+import { EventListenerService } from "app/services/event-listener-service";
+import { ModalsHandler } from "app/utils";
 import IScope = angular.IScope;
 
 /** Services we need to upgrade from angular1 to angular2 - in the future we need to rewrite them all to angular2 **/
@@ -39,6 +41,10 @@ export function sharingServiceFactory(cacheObj: ICacheObject) {
     return cacheObj.get('Sdc.Services.SharingService');
 }
 
+export function componentServiceFactory(cacheObj: ICacheObject) {
+    return cacheObj.get('Sdc.Services.ComponentFactory');
+}
+
 export function cookieServiceFactory(cacheObj: ICacheObject) {
     return cacheObj.get('Sdc.Services.CookieService');
 }
@@ -47,12 +53,12 @@ export function stateServiceFactory(cacheObj: ICacheObject) {
     return cacheObj.get('$state');
 }
 
-export function scopeServiceFactory(cacheObj: ICacheObject) {
-    return cacheObj.get('$scope');
-}
-
 export function stateParamsServiceFactory(cacheObj: ICacheObject) {
     return cacheObj.get('$stateParams');
+}
+
+export function scopeServiceFactory(cacheObj: ICacheObject) {
+    return cacheObj.get('$scope');
 }
 
 export function cacheServiceFactory(cacheObj: ICacheObject) {
@@ -65,6 +71,18 @@ export function eventListenerServiceServiceFactory(cacheObj: ICacheObject) {
 
 export function notificationServiceFactory(cacheObj: ICacheObject) {
     return cacheObj.get('Notification');
+}
+
+
+export const ComponentFactoryProvider = {
+    provide: ComponentFactory,
+    useFactory: componentServiceFactory,
+    deps: ['$injector']
+};
+
+
+export function ModalsHandlerFactory(cacheObj: ICacheObject) {
+    return cacheObj.get('ModalsHandler');
 }
 
 export const DataTypesServiceProvider = {
@@ -93,7 +111,7 @@ export const StateServiceFactory = {
     deps: ['$injector']
 };
 
-export const ScopeServiceFactory= {
+export const ScopeServiceFactory = {
     provide: '$scope',
     useFactory: scopeServiceFactory,
     deps: ['$injector']
@@ -104,7 +122,6 @@ export const StateParamsServiceFactory = {
     useFactory: stateParamsServiceFactory,
     deps: ['$injector']
 };
-
 export const CacheServiceProvider = {
     provide: CacheService,
     useFactory: cacheServiceFactory,
@@ -122,3 +139,9 @@ export const NotificationServiceProvider = {
     useFactory: notificationServiceFactory,
     deps: ['$injector']
 };
+
+export const ModalsHandlerProvider = {
+    provide: ModalsHandler,
+    useFactory: ModalsHandlerFactory,
+    deps: ['$injector']
+}

@@ -20,39 +20,27 @@
 
 package org.openecomp.sdc.common.transaction.mngr;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import fj.data.Either;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.impl.ESCatalogDAO;
 import org.openecomp.sdc.be.dao.titan.TitanGenericDao;
 import org.openecomp.sdc.be.resources.data.ESArtifactData;
-import org.openecomp.sdc.common.transaction.api.ICommitHandler;
-import org.openecomp.sdc.common.transaction.api.IDBAction;
-import org.openecomp.sdc.common.transaction.api.ITransactionSdnc;
-import org.openecomp.sdc.common.transaction.api.RollbackHandler;
-import org.openecomp.sdc.common.transaction.api.TransactionUtils;
-import org.openecomp.sdc.common.transaction.api.TransactionUtils.ActionTypeEnum;
-import org.openecomp.sdc.common.transaction.api.TransactionUtils.DBActionCodeEnum;
-import org.openecomp.sdc.common.transaction.api.TransactionUtils.DBTypeEnum;
-import org.openecomp.sdc.common.transaction.api.TransactionUtils.ESActionTypeEnum;
-import org.openecomp.sdc.common.transaction.api.TransactionUtils.LogMessages;
-import org.openecomp.sdc.common.transaction.api.TransactionUtils.TransactionCodeEnum;
-import org.openecomp.sdc.common.transaction.api.TransactionUtils.TransactionStatusEnum;
+import org.openecomp.sdc.common.log.wrappers.Logger;
+import org.openecomp.sdc.common.transaction.api.*;
+import org.openecomp.sdc.common.transaction.api.TransactionUtils.*;
 import org.openecomp.sdc.common.transaction.impl.ESAction;
 import org.openecomp.sdc.common.transaction.impl.ESRollbackHandler;
 import org.openecomp.sdc.common.transaction.impl.TitanCommitHandler;
 import org.openecomp.sdc.common.transaction.impl.TitanRollbackHandler;
 import org.openecomp.sdc.common.util.MethodActivationStatusEnum;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import fj.data.Either;
+import java.util.ArrayList;
+import java.util.List;
 
 public class TransactionSdncImpl implements ITransactionSdnc {
 
     // TODO test using slf4j-test and make this final
-    private static Logger log = LoggerFactory.getLogger(TransactionSdncImpl.class);
+    private static Logger log = Logger.getLogger(TransactionSdncImpl.class);
     private boolean lastActionAlreadyCalled;
     private RollbackManager rollbackManager;
     private CommitManager commitManager;

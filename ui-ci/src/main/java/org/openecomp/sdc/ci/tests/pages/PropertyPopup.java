@@ -20,6 +20,7 @@
 
 package org.openecomp.sdc.ci.tests.pages;
 
+import com.aventstack.extentreports.Status;
 import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum;
 import org.openecomp.sdc.ci.tests.execute.setup.SetupCDTest;
 import org.openecomp.sdc.ci.tests.utilities.GeneralUIUtils;
@@ -27,8 +28,6 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Select;
-
-import com.aventstack.extentreports.Status;
 
 public class PropertyPopup {
 	
@@ -86,7 +85,7 @@ public class PropertyPopup {
 
 	public void clickAdd() {
 		GeneralUIUtils.clickOnElementByTestId(DataTestIdEnum.PropertiesPopupEnum.ADD.getValue());
-		GeneralUIUtils.ultimateWait();
+//		GeneralUIUtils.ultimateWait();
 	}
 
 	public void clickSave() {
@@ -96,12 +95,12 @@ public class PropertyPopup {
 
 	public void clickCancel() {
 		GeneralUIUtils.clickOnElementByTestId(DataTestIdEnum.PropertiesPopupEnum.CANCEL.getValue());
-		GeneralUIUtils.ultimateWait();
+//		GeneralUIUtils.ultimateWait();
 	}
 
 	public void clickDone() {
 		GeneralUIUtils.clickOnElementByTestId(DataTestIdEnum.PropertiesPopupEnum.DONE.getValue());
-		GeneralUIUtils.ultimateWait();
+//		GeneralUIUtils.ultimateWait();
 	}
 	
 	public void selectPropertyRadioButton(String propertyName) {

@@ -21,9 +21,10 @@
 package org.openecomp.sdc.be.datatypes.elements;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import java.io.Serializable;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
+
+import java.io.Serializable;
 
 public class OperationDataDefinition extends ToscaDataDefinition implements Serializable {
 
@@ -91,7 +92,7 @@ public class OperationDataDefinition extends ToscaDataDefinition implements Seri
 
 	public ListDataDefinition<OperationInputDefinition> getInputs() {
 		return (ListDataDefinition<OperationInputDefinition>)
-			getToscaPresentationValue(JsonPresentationFields.OPERATION_INPUT);
+				getToscaPresentationValue(JsonPresentationFields.OPERATION_INPUT);
 	}
 
 	public void setInputs(ListDataDefinition<OperationInputDefinition> inputs) {

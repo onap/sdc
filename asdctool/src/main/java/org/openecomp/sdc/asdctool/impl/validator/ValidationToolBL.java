@@ -1,13 +1,11 @@
 package org.openecomp.sdc.asdctool.impl.validator;
 
-import java.util.List;
-
 import org.openecomp.sdc.asdctool.impl.validator.executers.ValidatorExecuter;
-import org.openecomp.sdc.asdctool.impl.validator.utils.ReportManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 /**
  * Created by chaya on 7/3/2017.
@@ -15,7 +13,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class ValidationToolBL {
 
-    private static Logger log = LoggerFactory.getLogger(ValidationToolBL.class.getName());
+    private static Logger log = Logger.getLogger(ValidationToolBL.class.getName());
 
     @Autowired
     protected List<ValidatorExecuter> validators;
@@ -24,13 +22,13 @@ public class ValidationToolBL {
 
     public boolean validateAll() {
         for (ValidatorExecuter validatorExec: validators) {
-            System.out.println("ValidatorExecuter "+validatorExec.getName()+" started");
+            log.debug("ValidatorExecuter "+validatorExec.getName()+" started");
             if (!validatorExec.executeValidations()) {
                 allValid = false;
-                System.out.println("ValidatorExecuter "+validatorExec.getName()+" finished with warnings");
+                log.debug("ValidatorExecuter "+validatorExec.getName()+" finished with warnings");
             }
             else {
-                System.out.println("ValidatorExecuter "+validatorExec.getName()+" finished successfully");
+                log.debug("ValidatorExecuter "+validatorExec.getName()+" finished successfully");
             }
         }
         return allValid;

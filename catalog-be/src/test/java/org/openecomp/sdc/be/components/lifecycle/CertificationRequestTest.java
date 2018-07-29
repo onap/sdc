@@ -32,14 +32,7 @@ import org.openecomp.sdc.be.components.distribution.engine.ServiceDistributionAr
 import org.openecomp.sdc.be.components.impl.ServiceBusinessLogic;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
-import org.openecomp.sdc.be.model.ArtifactDefinition;
-import org.openecomp.sdc.be.model.Component;
-import org.openecomp.sdc.be.model.ComponentInstance;
-import org.openecomp.sdc.be.model.LifecycleStateEnum;
-import org.openecomp.sdc.be.model.Operation;
-import org.openecomp.sdc.be.model.Resource;
-import org.openecomp.sdc.be.model.Service;
-import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.*;
 import org.openecomp.sdc.be.model.jsontitan.datamodel.ToscaElement;
 import org.openecomp.sdc.be.model.jsontitan.utils.ModelConverter;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
@@ -73,7 +66,7 @@ public class CertificationRequestTest extends LifecycleTestBase {
     @Before
     public void setup() {
         super.setup();
-        rfcObj = new CertificationRequestTransition(componentsUtils, toscaElementLifecycleOperation, serviceDistributionArtifactsBuilder, serviceBusinessLogic, capabilityOperation, toscaExportUtils,  toscaOperationFacade,  titanDao);
+        rfcObj = new CertificationRequestTransition(componentsUtils, toscaElementLifecycleOperation, serviceBusinessLogic, toscaOperationFacade,  titanDao);
         rfcObj.setConfigurationManager(configurationManager);
     }
 
@@ -94,7 +87,7 @@ public class CertificationRequestTest extends LifecycleTestBase {
         user.setRole(Role.TESTER.name());
 
         changeStateResult = rfcObj.changeState(ComponentTypeEnum.RESOURCE, resource, serviceBusinessLogic, user, owner, false, false);
-        assertEquals(changeStateResult.isLeft(), true);
+        assertTrue(changeStateResult.isLeft());
     }
 
     @Test
@@ -107,11 +100,11 @@ public class CertificationRequestTest extends LifecycleTestBase {
         assertTrue(ownerResponse.isLeft());
         User owner = ownerResponse.left().value();
         changeStateResult = rfcObj.changeState(ComponentTypeEnum.RESOURCE, resource, serviceBusinessLogic, user, owner, false, false);
-        assertEquals(changeStateResult.isLeft(), true);
+        assertTrue(changeStateResult.isLeft());
 
         resource.setLifecycleState(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
         changeStateResult = rfcObj.changeState(ComponentTypeEnum.RESOURCE, resource, serviceBusinessLogic, user, owner, false, false);
-        assertEquals(changeStateResult.isLeft(), true);
+        assertTrue(changeStateResult.isLeft());
     }
 
     @Test
@@ -124,7 +117,7 @@ public class CertificationRequestTest extends LifecycleTestBase {
         assertTrue(ownerResponse.isLeft());
         User owner = ownerResponse.left().value();
         Either<Boolean, ResponseFormat> validateBeforeTransition = rfcObj.validateBeforeTransition(resource, ComponentTypeEnum.RESOURCE, user, owner, LifecycleStateEnum.READY_FOR_CERTIFICATION);
-        assertEquals(validateBeforeTransition.isRight(), true);
+        assertTrue(validateBeforeTransition.isRight());
         changeStateResult = Either.right(validateBeforeTransition.right().value());
         assertResponse(changeStateResult, ActionStatus.COMPONENT_SENT_FOR_CERTIFICATION, resource.getName(), ComponentTypeEnum.RESOURCE.name().toLowerCase(), user.getFirstName(), user.getLastName(), user.getUserId());
 
@@ -140,7 +133,7 @@ public class CertificationRequestTest extends LifecycleTestBase {
         assertTrue(ownerResponse.isLeft());
         User owner = ownerResponse.left().value();
         Either<Boolean, ResponseFormat> validateBeforeTransition = rfcObj.validateBeforeTransition(resource, ComponentTypeEnum.RESOURCE, user, owner, LifecycleStateEnum.CERTIFICATION_IN_PROGRESS);
-        assertEquals(validateBeforeTransition.isRight(), true);
+        assertTrue(validateBeforeTransition.isRight());
         changeStateResult = Either.right(validateBeforeTransition.right().value());
         assertResponse(changeStateResult, ActionStatus.COMPONENT_IN_CERT_IN_PROGRESS_STATE, resource.getName(), ComponentTypeEnum.RESOURCE.name().toLowerCase(), user.getFirstName(), user.getLastName(), user.getUserId());
 
@@ -156,11 +149,34 @@ public class CertificationRequestTest extends LifecycleTestBase {
         assertTrue(ownerResponse.isLeft());
         User owner = ownerResponse.left().value();
         Either<Boolean, ResponseFormat> validateBeforeTransition = rfcObj.validateBeforeTransition(resource, ComponentTypeEnum.RESOURCE, user, owner, LifecycleStateEnum.CERTIFIED);
-        assertEquals(validateBeforeTransition.isRight(), true);
+        assertTrue(validateBeforeTransition.isRight());
         changeStateResult = Either.right(validateBeforeTransition.right().value());
         assertResponse(changeStateResult, ActionStatus.COMPONENT_ALREADY_CERTIFIED, resource.getName(), ComponentTypeEnum.RESOURCE.name().toLowerCase(), user.getFirstName(), user.getLastName(), user.getUserId());
-
     }
+
+    @Test
+    public void testVSPIsArchivedValidation(){
+        Either<? extends Component, ResponseFormat> changeStateResult;
+        Resource resource = createResourceObject();
+        resource.setVspArchived(true);
+
+        resource.setLifecycleState(LifecycleStateEnum.NOT_CERTIFIED_CHECKIN);
+        Either<User, ResponseFormat> ownerResponse = rfcObj.getComponentOwner(resource, ComponentTypeEnum.RESOURCE);
+        assertTrue(ownerResponse.isLeft());
+        User owner = ownerResponse.left().value();
+
+        User user = new User();
+        user.setUserId("cs0008");
+        user.setFirstName("Carlos");
+        user.setLastName("Santana");
+        user.setRole(Role.TESTER.name());
+
+        changeStateResult = rfcObj.changeState(ComponentTypeEnum.RESOURCE, resource, serviceBusinessLogic, user, owner, false, false);
+        assertTrue(changeStateResult.isRight());
+        changeStateResult = Either.right(changeStateResult.right().value());
+        assertResponse(changeStateResult, ActionStatus.ARCHIVED_ORIGINS_FOUND, resource.getName(), ComponentTypeEnum.RESOURCE.name().toLowerCase(), user.getFirstName(), user.getLastName(), user.getUserId());
+    }
+
 
     @Test
     public void testValidateAllResourceInstanceCertified_SuccessWithoutRI() {
@@ -172,7 +188,7 @@ public class CertificationRequestTest extends LifecycleTestBase {
     @Test
     public void testValidateAllResourceInstanceCertified_SuccessWithCertifiedResources() {
         Resource resource = new Resource();
-        List<ComponentInstance> riList = new ArrayList<ComponentInstance>();
+        List<ComponentInstance> riList = new ArrayList<>();
         ComponentInstance ri = new ComponentInstance();
         ri.setComponentVersion("2.0");
         riList.add(ri);
@@ -192,8 +208,8 @@ public class CertificationRequestTest extends LifecycleTestBase {
 
         assertTrue(validateAllResourceInstanceCertified.isRight());
         ResponseFormat responseFormat = validateAllResourceInstanceCertified.right().value();
-        assertTrue(responseFormat.getStatus() == HttpStatus.SC_FORBIDDEN);
-        assertTrue(responseFormat.getMessageId().equals("SVC4559"));
+        assertEquals((int) responseFormat.getStatus(), HttpStatus.SC_FORBIDDEN);
+        assertEquals("SVC4559", responseFormat.getMessageId());
 
     }
 
@@ -207,8 +223,8 @@ public class CertificationRequestTest extends LifecycleTestBase {
 
         assertTrue(validateAllResourceInstanceCertified.isRight());
         ResponseFormat responseFormat = validateAllResourceInstanceCertified.right().value();
-        assertTrue(responseFormat.getStatus() == HttpStatus.SC_FORBIDDEN);
-        assertTrue(responseFormat.getMessageId().equals("SVC4559"));
+        assertEquals((int) responseFormat.getStatus(), HttpStatus.SC_FORBIDDEN);
+        assertEquals("SVC4559", responseFormat.getMessageId());
 
     }
 
@@ -230,7 +246,7 @@ public class CertificationRequestTest extends LifecycleTestBase {
         when(serviceBusinessLogic.populateToscaArtifacts(service, owner, true, false, false)).thenReturn(resultArtifacts);
         when(toscaElementLifecycleOperation.requestCertificationToscaElement(Mockito.anyString(), Mockito.anyString(), Mockito.anyString())).thenReturn(reqCertRes);
         changeStateResult = rfcObj.changeState(ComponentTypeEnum.SERVICE, service, serviceBusinessLogic, user, owner, false, true);
-        assertEquals(changeStateResult.isLeft(), true);
+        assertTrue(changeStateResult.isLeft());
     }
 
     private void simulateCertifiedVersionExistForRI() {
@@ -242,7 +258,7 @@ public class CertificationRequestTest extends LifecycleTestBase {
 
     private Resource createVFWithRI(String riVersion) {
         Resource resource = new Resource();
-        List<ComponentInstance> riList = new ArrayList<ComponentInstance>();
+        List<ComponentInstance> riList = new ArrayList<>();
         ComponentInstance ri = new ComponentInstance();
 
         ri.setComponentVersion(riVersion);

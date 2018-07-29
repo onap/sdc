@@ -1,13 +1,15 @@
 package org.openecomp.sdc.be.components.impl.utils;
 
+import org.openecomp.sdc.be.dao.utils.MapUtil;
+import org.openecomp.sdc.be.model.PolicyTypeDefinition;
+import org.openecomp.sdc.be.model.PropertyDefinition;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.openecomp.sdc.be.dao.utils.MapUtil;
-import org.openecomp.sdc.be.model.PolicyTypeDefinition;
-import org.openecomp.sdc.be.model.PropertyDefinition;
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+import static org.springframework.util.CollectionUtils.isEmpty;
 
 public class PolicyTypeImportUtils {
 
@@ -22,6 +24,8 @@ public class PolicyTypeImportUtils {
             return false;
         }
         return Objects.equals(pt1.getType(), pt2.getType()) &&
+                Objects.equals(pt1.getName(), pt2.getName()) &&
+                Objects.equals(pt1.getIcon(), pt2.getIcon()) &&
                 Objects.equals(pt1.getVersion(), pt2.getVersion()) &&
                 Objects.equals(pt1.getDerivedFrom(), pt2.getDerivedFrom()) &&
                 Objects.equals(pt1.getTargets(), pt2.getTargets()) &&
@@ -34,8 +38,8 @@ public class PolicyTypeImportUtils {
         if (pt1Props == pt2Props) {
             return true;
         }
-        if (pt1Props == null || pt2Props == null) {
-            return false;
+        if (pt1Props == null && isEmpty(pt2Props) || pt2Props == null && isEmpty(pt1Props)) {
+            return true;
         }
         if (isPropertiesListSizesNotEquals(pt1Props, pt2Props)) {
             return false;
@@ -62,9 +66,9 @@ public class PolicyTypeImportUtils {
     }
 
     private static boolean isPropertiesListSizesNotEquals(List<PropertyDefinition> pt1Props, List<PropertyDefinition> pt2Props) {
-        return CollectionUtils.isEmpty(pt1Props) && CollectionUtils.isNotEmpty(pt2Props) ||
-                CollectionUtils.isEmpty(pt2Props) && CollectionUtils.isNotEmpty(pt1Props) ||
-                pt1Props.size() != pt2Props.size();
+        return isEmpty(pt1Props) && isNotEmpty(pt2Props) ||
+               isEmpty(pt2Props) && isNotEmpty(pt1Props) ||
+               pt1Props.size() != pt2Props.size();
     }
 
 }

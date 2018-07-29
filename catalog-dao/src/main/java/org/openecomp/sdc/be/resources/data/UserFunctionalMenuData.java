@@ -20,13 +20,13 @@
 
 package org.openecomp.sdc.be.resources.data;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.openecomp.sdc.be.dao.graph.datatype.GraphNode;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
 import org.openecomp.sdc.be.dao.utils.DaoUtils;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class UserFunctionalMenuData extends GraphNode {
 
@@ -74,7 +74,7 @@ public class UserFunctionalMenuData extends GraphNode {
 
 	@Override
 	public Map<String, Object> toGraphMap() {
-		Map<String, Object> map = new HashMap<String, Object>();
+		Map<String, Object> map = new HashMap<>();
 
 		addIfExists(map, GraphPropertiesDictionary.UNIQUE_ID, uniqueId);
 		addIfExists(map, GraphPropertiesDictionary.FUNCTIONAL_MENU, functionalMenu);

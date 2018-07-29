@@ -30,11 +30,7 @@ import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
-import org.openecomp.sdc.be.model.Component;
-import org.openecomp.sdc.be.model.InputDefinition;
-import org.openecomp.sdc.be.model.LifeCycleTransitionEnum;
-import org.openecomp.sdc.be.model.LifecycleStateEnum;
-import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.*;
 import org.openecomp.sdc.be.model.jsontitan.datamodel.ToscaElement;
 import org.openecomp.sdc.be.model.jsontitan.datamodel.ToscaElementTypeEnum;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaElementLifecycleOperation;
@@ -42,19 +38,19 @@ import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.jsontitan.utils.ModelConverter;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
+import org.openecomp.sdc.be.tosca.ToscaUtils;
 import org.openecomp.sdc.be.user.Role;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 import java.util.List;
 
 public class CheckoutTransition extends LifeCycleTransition {
 
-    private static final Logger log = LoggerFactory.getLogger(CheckoutTransition.class);
+    private static final Logger log = Logger.getLogger(CheckoutTransition.class);
 
-    public CheckoutTransition(ComponentsUtils componentUtils, ToscaElementLifecycleOperation lifecycleOperation, ToscaOperationFacade toscaOperationFacade, TitanDao titanDao) {
+    CheckoutTransition(ComponentsUtils componentUtils, ToscaElementLifecycleOperation lifecycleOperation, ToscaOperationFacade toscaOperationFacade, TitanDao titanDao) {
         super(componentUtils, lifecycleOperation, toscaOperationFacade, titanDao);
 
         // authorized roles
@@ -99,7 +95,11 @@ public class CheckoutTransition extends LifeCycleTransition {
             } else {
 
                 Component clonedComponent = ModelConverter.convertFromToscaElement(checkoutResourceResult.left().value());
-                if ( checkoutResourceResult.left().value().getToscaType() == ToscaElementTypeEnum.NodeType ){
+                if(componentType == ComponentTypeEnum.SERVICE) {
+                    Service service = (Service)clonedComponent;
+                    service.validateAndSetInstantiationType();
+                }
+                if ( checkoutResourceResult.left().value().getToscaType() == ToscaElementTypeEnum.NODE_TYPE ){
                     Either<Component, ActionStatus> upgradeToLatestDerived = componentBl.shouldUpgradeToLatestDerived(clonedComponent);
                     if (upgradeToLatestDerived.isRight() && ActionStatus.OK != upgradeToLatestDerived.right().value()){
                         result = Either.right(componentUtils.getResponseFormat(upgradeToLatestDerived.right().value()));
@@ -112,9 +112,9 @@ public class CheckoutTransition extends LifeCycleTransition {
                 }
                 result = Either.left(clonedComponent);
                 Either<Boolean, ResponseFormat> upgradeToLatestGeneric = componentBl.shouldUpgradeToLatestGeneric(clonedComponent);
-                if (upgradeToLatestGeneric.isRight())
+                if (upgradeToLatestGeneric.isRight()) {
                     result = Either.right(upgradeToLatestGeneric.right().value());
-                else if (upgradeToLatestGeneric.left().value()  ) {
+                } else if (upgradeToLatestGeneric.left().value()  ) {
                     StorageOperationStatus response = upgradeToLatestGenericData(clonedComponent);
                     if (StorageOperationStatus.OK != response) {
                         ActionStatus actionStatus = componentUtils.convertFromStorageResponse(response);
@@ -122,18 +122,18 @@ public class CheckoutTransition extends LifeCycleTransition {
                         result = Either.right(responseFormat);
                     }
                 }
-
+                handleCalculatedCapabilitiesRequirements(clonedComponent);
             }
 
         } finally {
             if (result == null || result.isRight()) {
                 BeEcompErrorManager.getInstance().logBeDaoSystemError("Change LifecycleState");
-                if (inTransaction == false) {
+                if (!inTransaction) {
                     log.debug("operation failed. do rollback");
                     titanDao.rollback();
                 }
             } else {
-                if (inTransaction == false) {
+                if (!inTransaction) {
                     log.debug("operation success. do commit");
                     titanDao.commit();
                 }
@@ -142,13 +142,19 @@ public class CheckoutTransition extends LifeCycleTransition {
         return result;
     }
 
+    private void handleCalculatedCapabilitiesRequirements(Component clonedComponent) {
+        if(clonedComponent.isTopologyTemplate() && ToscaUtils.isNotComplexVfc(clonedComponent)){
+            toscaOperationFacade.revertNamesOfCalculatedCapabilitiesRequirements(clonedComponent.getUniqueId());
+        }
+    }
+
     private StorageOperationStatus upgradeToLatestGenericData(Component clonedComponent) {
 
         StorageOperationStatus updateStatus = StorageOperationStatus.OK;
         Either<Component, StorageOperationStatus> updateEither = toscaOperationFacade.updateToscaElement(clonedComponent);
-        if (updateEither.isRight())
+        if (updateEither.isRight()) {
             updateStatus = updateEither.right().value();
-        else if (clonedComponent.shouldGenerateInputs()) {
+        } else if (clonedComponent.shouldGenerateInputs()) {
             List<InputDefinition> newInputs = clonedComponent.getInputs();
             updateStatus = lifeCycleOperation.updateToscaDataOfToscaElement(clonedComponent.getUniqueId(), EdgeLabelEnum.INPUTS, VertexTypeEnum.INPUTS, newInputs, JsonPresentationFields.NAME);
         }

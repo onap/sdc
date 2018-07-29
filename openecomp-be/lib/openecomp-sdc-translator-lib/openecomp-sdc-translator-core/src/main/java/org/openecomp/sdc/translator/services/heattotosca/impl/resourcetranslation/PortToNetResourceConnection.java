@@ -18,8 +18,6 @@ package org.openecomp.sdc.translator.services.heattotosca.impl.resourcetranslati
 
 import static org.openecomp.sdc.translator.services.heattotosca.HeatToToscaLogConstants.LOG_UNSUPPORTED_PORT_NETWORK_REQUIREMENT_CONNECTION;
 
-import com.google.common.collect.ImmutableList;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -41,6 +39,8 @@ import org.openecomp.sdc.tosca.datatypes.ToscaRelationshipType;
 import org.openecomp.sdc.translator.datatypes.heattotosca.AttachedResourceId;
 import org.openecomp.sdc.translator.datatypes.heattotosca.to.TranslateTo;
 import org.openecomp.sdc.translator.services.heattotosca.HeatToToscaUtil;
+
+import com.google.common.collect.ImmutableList;
 
 public class PortToNetResourceConnection extends ResourceConnectionUsingRequirementHelper {
 

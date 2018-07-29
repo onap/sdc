@@ -1,37 +1,34 @@
 package org.openecomp.sdc.be.components.merge.input;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
-import org.openecomp.sdc.be.components.merge.instance.ComponentsMergeCommand;
+import org.openecomp.sdc.be.components.merge.VspComponentsMergeCommand;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
-import org.openecomp.sdc.be.dao.utils.MapUtil;
+import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
-import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
+import org.springframework.core.annotation.Order;
 
-import fj.data.Either;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.stream.Stream;
+
+import static java.util.stream.Collectors.toMap;
+import static org.openecomp.sdc.be.components.merge.resource.ResourceDataMergeBusinessLogic.LAST_COMMAND;
+import static org.openecomp.sdc.be.utils.PropertyDefinitionUtils.convertListOfProperties;
 
 @org.springframework.stereotype.Component
-public class ComponentInputsMergeBL implements ComponentsMergeCommand {
+@Order(LAST_COMMAND)//must run after all properties values were merged
+public class ComponentInputsMergeBL extends InputsMergeCommand implements VspComponentsMergeCommand {
 
-    @javax.annotation.Resource
-    private InputsValuesMergingBusinessLogic inputsValuesMergingBusinessLogic;
-
-    @javax.annotation.Resource
-    private ToscaOperationFacade toscaOperationFacade;
-
-    @javax.annotation.Resource
-    private ComponentsUtils componentsUtils;
+    public ComponentInputsMergeBL(InputsValuesMergingBusinessLogic inputsValuesMergingBusinessLogic, DeclaredInputsResolver declaredInputsResolver, ToscaOperationFacade toscaOperationFacade, ComponentsUtils componentsUtils) {
+        super(inputsValuesMergingBusinessLogic, declaredInputsResolver, toscaOperationFacade, componentsUtils);
+    }
 
     @Override
     public ActionStatus mergeComponents(Component prevComponent, Component currentComponent) {
-        List<InputDefinition> inputsToMerge = currentComponent.getInputs() != null ? currentComponent.getInputs() : new ArrayList<>();
-        return this.mergeAndRedeclareComponentInputs(prevComponent, currentComponent, inputsToMerge);
+        return super.redeclareAndMergeInputsValues(prevComponent, currentComponent);
     }
 
     @Override
@@ -39,35 +36,19 @@ public class ComponentInputsMergeBL implements ComponentsMergeCommand {
         return "merge component inputs";
     }
 
-    public ActionStatus mergeAndRedeclareComponentInputs(Component prevComponent, Component newComponent, List<InputDefinition> inputsToMerge) {
-        mergeInputs(prevComponent, inputsToMerge);
-        List<InputDefinition> previouslyDeclaredInputs = inputsValuesMergingBusinessLogic.getPreviouslyDeclaredInputsToMerge(prevComponent, newComponent);
-        inputsToMerge.addAll(previouslyDeclaredInputs);
-        return updateInputs(newComponent.getUniqueId(), inputsToMerge);
+    @Override
+    List<InputDefinition> getInputsToMerge(Component component) {
+        return component.safeGetInputs();
     }
 
-    public ActionStatus mergeComponentInputs(Component prevComponent, Component newComponent, List<InputDefinition> inputsToMerge) {
-        mergeInputs(prevComponent, inputsToMerge);
-        return updateInputs(newComponent.getUniqueId(), inputsToMerge);
-    }
-
-    public ActionStatus redeclareComponentInputsForInstance(List<InputDefinition> oldInputs, Component newComponent, String instanceId) {
-        List<InputDefinition> previouslyDeclaredInputs = inputsValuesMergingBusinessLogic.getPreviouslyDeclaredInputsToMerge(oldInputs, newComponent, instanceId);
-        return updateInputs(newComponent.getUniqueId(), previouslyDeclaredInputs);
-    }
-
-    private void mergeInputs(Component prevComponent, List<InputDefinition> inputsToMerge) {
-        Map<String, InputDefinition> oldInputsByName = prevComponent.getInputs() == null ? Collections.emptyMap() : MapUtil.toMap(prevComponent.getInputs(), InputDefinition::getName);
-        Map<String, InputDefinition> inputsToMergeByName = MapUtil.toMap(inputsToMerge, InputDefinition::getName);
-        inputsValuesMergingBusinessLogic.mergeComponentInputs(oldInputsByName, inputsToMergeByName);
-    }
-
-    private ActionStatus updateInputs(String containerId, List<InputDefinition> inputsToUpdate) {
-        Either<List<InputDefinition>, StorageOperationStatus> updateInputsEither = toscaOperationFacade.updateInputsToComponent(inputsToUpdate, containerId);
-        if (updateInputsEither.isRight()) {
-            return componentsUtils.convertFromStorageResponse(updateInputsEither.right().value());
-        }
-        return ActionStatus.OK;
+    @Override
+    Map<String, List<PropertyDataDefinition>> getProperties(Component component) {
+        return Stream.of(component.safeGetComponentInstancesProperties(),
+                         component.safeGetComponentInstancesInputs(),
+                         component.safeGetGroupsProperties(),
+                         component.safeGetPolicyProperties())
+                .flatMap(map -> map.entrySet().stream())
+                .collect(toMap(Entry::getKey, entry -> convertListOfProperties(entry.getValue())));
     }
 
 }

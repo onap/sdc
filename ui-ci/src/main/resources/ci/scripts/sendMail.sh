@@ -6,9 +6,9 @@ REPORT_NAME=$1
 VERSION=$2
 ENV=$3
 
-RECIPIENTS1="dl-sdcqa@att.com,ml636r@att.com,bl5783@att.com,ak314p@att.com,el489u@att.com,hk096q@att.com,bs5719@att.com"
+RECIPIENTS1="md9897@att.com,NETCOM_ASDC_DEV@att.com,IL-D2-QA-Alex@att.com,bs5719@att.com,yg356h@att.com,yr9970@att.com,sl615n@att.com,yn813h@att.com,as221v@att.com,ms172g@att.com,ma2244@att.com,el489u@att.com,gg980r@att.com,ak991p@att.com,bv095y@att.com,ms656r@att.com,df502y@att.com,bt750h@att.com,ln699k@att.com,hm104p@att.com"
 #RECIPIENTS2="dl-asdcqa@att.com"
-RECIPIENTS2="md9897@att.com,ms656r@att.com,al714h@att.com,ak991p@att.com,ya107f@att.com,bv095y@att.com,st198j@att.com,th0695@att.com,vk195d@att.com,gg980r@att.com,il0695@att.com,el489u@att.com"
+RECIPIENTS2="md9897@att.com,NETCOM_ASDC_DEV@att.com,IL-D2-QA-Alex@att.com,bs5719@att.com,yg356h@att.com,yr9970@att.com,sl615n@att.com,yn813h@att.com,as221v@att.com,ms172g@att.com,ma2244@att.com,el489u@att.com,gg980r@att.com,ak991p@att.com,bv095y@att.com,ms656r@att.com,df502y@att.com,bt750h@att.com,ln699k@att.com,hm104p@att.com"
 
 source ExtentReport/versions.info
 if [ -z "$REPORT_NAME" ]

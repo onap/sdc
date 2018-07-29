@@ -1,9 +1,16 @@
 package org.openecomp.sdc.be.components.distribution.engine;
 
-import static org.apache.commons.lang3.StringUtils.countMatches;
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
-import static org.openecomp.sdc.common.api.Constants.HC_COMPONENT_DMAAP_ENGINE;
+import org.apache.commons.validator.routines.UrlValidator;
+import org.apache.http.client.utils.URIUtils;
+import org.openecomp.sdc.be.config.BeEcompErrorManager;
+import org.openecomp.sdc.be.config.ConfigurationManager;
+import org.openecomp.sdc.be.config.DmaapConsumerConfiguration;
+import org.openecomp.sdc.common.api.HealthCheckInfo;
+import org.openecomp.sdc.common.log.wrappers.Logger;
+import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.URI;
@@ -14,27 +21,18 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-
-import org.apache.commons.validator.routines.UrlValidator;
-import org.apache.http.client.utils.URIUtils;
-import org.openecomp.sdc.be.config.BeEcompErrorManager;
-import org.openecomp.sdc.be.config.ConfigurationManager;
-import org.openecomp.sdc.be.config.DmaapConsumerConfiguration;
-import org.openecomp.sdc.common.api.HealthCheckInfo;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
+import static org.apache.commons.lang3.StringUtils.countMatches;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.openecomp.sdc.common.api.Constants.HC_COMPONENT_DMAAP_ENGINE;
 
 @Component("dmaapHealth")
 public class DmaapHealth {
 
 
-    protected static final String DMAAP_HEALTH_LOG_CONTEXT = "dmaap.healthcheck";
+    private static final String DMAAP_HEALTH_LOG_CONTEXT = "dmaap.healthcheck";
     private static final String DMAAP_HEALTH_CHECK_STR = "dmaapHealthCheck";
-    private static final Logger log = LoggerFactory.getLogger(DmaapHealth.class);
-    private static final Logger logHealth = LoggerFactory.getLogger(DMAAP_HEALTH_LOG_CONTEXT);
+    private static final Logger log = Logger.getLogger(DmaapHealth.class.getName());
+    private static final Logger logHealth = Logger.getLogger(DMAAP_HEALTH_LOG_CONTEXT);
     private HealthCheckInfo healthCheckInfo = DmaapHealth.HealthCheckInfoResult.UNAVAILABLE.getHealthCheckInfo();
     private long healthCheckReadTimeout = 20;
     private long reconnectInterval = 5;
@@ -110,7 +108,7 @@ public class DmaapHealth {
      *
      * @param startTask
      */
-    public void startHealthCheckTask( boolean startTask ) {
+    private void startHealthCheckTask(boolean startTask) {
         synchronized (DmaapHealth.class){
             if (startTask && this.scheduledFuture == null) {
                 this.scheduledFuture = this.scheduler.scheduleAtFixedRate(this.healthCheckScheduledTask , 0, reconnectInterval, TimeUnit.SECONDS);
@@ -118,27 +116,12 @@ public class DmaapHealth {
         }
     }
 
-    public void report(Boolean isUp){
+    void report(Boolean isUp){
         if (reportedHealthState == null)
             reportedHealthState = new AtomicBoolean(isUp);
         reportedHealthState.set(isUp);
     }
 
-    public void logAlarm(boolean lastHealthState) {
-        try{
-            if ( lastHealthState ) {
-                BeEcompErrorManager.getInstance().logDmaapHealthCheckRecovery( DMAAP_HEALTH_CHECK_STR );
-            } else {
-                BeEcompErrorManager.getInstance().logDmaapHealthCheckError( DMAAP_HEALTH_CHECK_STR );
-            }
-        }catch( Exception e ){
-            log.debug("cannot logAlarm -> {}" ,e );
-        }
-    }
-
-    public DmaapConsumerConfiguration getConfiguration() {
-        return configuration;
-    }
 
     public HealthCheckInfo getHealthCheckInfo() {
         return healthCheckInfo;
@@ -149,16 +132,16 @@ public class DmaapHealth {
      */
     public class HealthCheckScheduledTask implements Runnable {
         private final DmaapConsumerConfiguration config;
-        private static final int timeout = 8192;
+        private static final int TIMEOUT = 8192;
 
-        public HealthCheckScheduledTask(final DmaapConsumerConfiguration config){
+        HealthCheckScheduledTask(final DmaapConsumerConfiguration config){
             this.config = config;
         }
         @Override
         public void run() {
             logHealth.trace("Executing Dmaap Health Check Task - Start");
-            boolean prevIsReachable = false;
-            boolean reachable = false;
+            boolean prevIsReachable;
+            boolean reachable;
             //first try simple ping
             try{
                 if ( reportedHealthState != null ){
@@ -187,12 +170,25 @@ public class DmaapHealth {
         public boolean isICMPReachable( ) throws IOException{
             try{
                 String hostname = getUrlHost(config.getHosts());
-                return InetAddress.getByName( hostname ).isReachable(timeout);
+                return InetAddress.getByName( hostname ).isReachable(TIMEOUT);
             }catch( URISyntaxException e ){
                 log.debug("{} | malformed host configuration -> ",DMAAP_HEALTH_CHECK_STR , e);
             }
             return false;
         }
+
+        private void logAlarm(boolean lastHealthState) {
+            try{
+                if ( lastHealthState ) {
+                    BeEcompErrorManager.getInstance().logDmaapHealthCheckRecovery( DMAAP_HEALTH_CHECK_STR );
+                } else {
+                    BeEcompErrorManager.getInstance().logDmaapHealthCheckError( DMAAP_HEALTH_CHECK_STR );
+                }
+            }catch( Exception e ){
+                log.debug("cannot logAlarm -> {}" ,e );
+            }
+        }
+
     }
 
     public static String getUrlHost(String qualifiedHost) throws URISyntaxException{

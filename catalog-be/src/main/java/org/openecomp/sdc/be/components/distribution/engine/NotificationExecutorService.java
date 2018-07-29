@@ -20,21 +20,15 @@
 
 package org.openecomp.sdc.be.components.distribution.engine;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.SynchronousQueue;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
-
-import org.openecomp.sdc.be.config.DistributionEngineConfiguration.DistributionNotificationTopicConfig;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import org.openecomp.sdc.be.config.DistributionEngineConfiguration.DistributionNotificationTopicConfig;
+import org.openecomp.sdc.common.log.wrappers.Logger;
+
+import java.util.concurrent.*;
 
 public class NotificationExecutorService {
 
-    private static final Logger logger = LoggerFactory.getLogger(NotificationExecutorService.class);
+    private static final Logger logger = Logger.getLogger(NotificationExecutorService.class.getName());
 
     public ExecutorService createExcecutorService(DistributionNotificationTopicConfig distributionNotificationTopic) {
 
@@ -52,9 +46,7 @@ public class NotificationExecutorService {
         threadFactoryBuilder.setNameFormat("distribution-notification-thread-%d");
         ThreadFactory threadFactory = threadFactoryBuilder.build();
 
-        ExecutorService executorService = new ThreadPoolExecutor(minThreadPoolSize, maxThreadPoolSize, 60L, TimeUnit.SECONDS, new SynchronousQueue<Runnable>(), threadFactory);
-
-        return executorService;
+        return new ThreadPoolExecutor(minThreadPoolSize, maxThreadPoolSize, 60L, TimeUnit.SECONDS, new SynchronousQueue<>(), threadFactory);
     }
 
     public void shutdownAndAwaitTermination(ExecutorService pool, long maxTimeToWait) {

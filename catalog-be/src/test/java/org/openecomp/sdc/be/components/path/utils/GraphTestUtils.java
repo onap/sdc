@@ -20,6 +20,20 @@
 
 package org.openecomp.sdc.be.components.path.utils;
 
+import com.thinkaurelius.titan.core.TitanGraph;
+import com.thinkaurelius.titan.core.TitanVertex;
+import fj.data.Either;
+import org.apache.tinkerpop.gremlin.structure.io.IoCore;
+import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
+import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
+import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
+import org.openecomp.sdc.be.dao.jsongraph.utils.IdBuilderUtils;
+import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
+import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
+import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
+import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
+import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
+
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -28,21 +42,21 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.UUID;
 
-import org.apache.tinkerpop.gremlin.structure.io.IoCore;
-import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
-import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
-import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
-import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
-import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
-import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
-import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
-
-import com.thinkaurelius.titan.core.TitanGraph;
-import com.thinkaurelius.titan.core.TitanVertex;
-
-import fj.data.Either;
-
 public final class GraphTestUtils {
+
+    public static GraphVertex createRootCatalogVertex(TitanDao titanDao) {
+        GraphVertex catalogRootVertex = new GraphVertex(VertexTypeEnum.CATALOG_ROOT);
+        catalogRootVertex.setUniqueId(IdBuilderUtils.generateUniqueId());
+        return titanDao.createVertex(catalogRootVertex)
+                .either(v -> v, s -> null);
+    }
+
+    public static GraphVertex createRootArchiveVertex(TitanDao titanDao) {
+        GraphVertex archiveRootVertex = new GraphVertex(VertexTypeEnum.ARCHIVE_ROOT);
+        archiveRootVertex.setUniqueId(IdBuilderUtils.generateUniqueId());
+        return titanDao.createVertex(archiveRootVertex)
+                .either(v -> v, s -> null);
+    }
 
     public static GraphVertex createResourceVertex(TitanDao titanDao, Map<GraphPropertyEnum,Object> metadataProps, ResourceTypeEnum type) {
         GraphVertex vertex = new GraphVertex();
@@ -76,6 +90,8 @@ public final class GraphTestUtils {
         vertex.addMetadataProperty(GraphPropertyEnum.LABEL, VertexTypeEnum.TOPOLOGY_TEMPLATE);
         vertex.addMetadataProperty(GraphPropertyEnum.UNIQUE_ID, uuid);
         vertex.addMetadataProperty(GraphPropertyEnum.COMPONENT_TYPE, ComponentTypeEnum.SERVICE.name());
+        vertex.setJsonMetadataField(JsonPresentationFields.COMPONENT_TYPE, ComponentTypeEnum.SERVICE.name());
+        vertex.setJsonMetadataField(JsonPresentationFields.LAST_UPDATE_DATE, System.currentTimeMillis());
         for (Map.Entry<GraphPropertyEnum, Object> prop : metadataProps.entrySet()) {
             vertex.addMetadataProperty(prop.getKey(), prop.getValue());
         }

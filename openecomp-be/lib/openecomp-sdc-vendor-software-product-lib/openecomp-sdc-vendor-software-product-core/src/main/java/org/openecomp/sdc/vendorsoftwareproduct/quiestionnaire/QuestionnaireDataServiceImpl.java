@@ -18,17 +18,8 @@ package org.openecomp.sdc.vendorsoftwareproduct.quiestionnaire;
 
 
 import org.openecomp.core.utilities.json.JsonUtil;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.ComponentDao;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.ComponentDaoFactory;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.NicDao;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.NicDaoFactory;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductInfoDao;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductInfoDaoFactory;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComponentEntity;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.type.CompositionEntity;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.type.NicEntity;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspQuestionnaireEntity;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.*;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.type.*;
 import org.openecomp.sdc.vendorsoftwareproduct.informationArtifact.InformationArtifactData;
 import org.openecomp.sdc.vendorsoftwareproduct.questionnaire.QuestionnaireDataService;
 import org.openecomp.sdc.vendorsoftwareproduct.types.questionnaire.component.ComponentQuestionnaire;

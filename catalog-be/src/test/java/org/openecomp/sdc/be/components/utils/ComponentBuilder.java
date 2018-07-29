@@ -1,20 +1,12 @@
 package org.openecomp.sdc.be.components.utils;
 
+import org.openecomp.sdc.be.dao.utils.MapUtil;
+import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
+import org.openecomp.sdc.be.model.*;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
-import org.openecomp.sdc.be.dao.utils.MapUtil;
-import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
-import org.openecomp.sdc.be.model.Component;
-import org.openecomp.sdc.be.model.ComponentInstance;
-import org.openecomp.sdc.be.model.ComponentInstanceInput;
-import org.openecomp.sdc.be.model.ComponentInstanceProperty;
-import org.openecomp.sdc.be.model.GroupDefinition;
-import org.openecomp.sdc.be.model.InputDefinition;
-import org.openecomp.sdc.be.model.LifecycleStateEnum;
-import org.openecomp.sdc.be.model.PolicyDefinition;
-import org.openecomp.sdc.be.model.RequirementCapabilityRelDef;
 
 public abstract class ComponentBuilder<T extends Component, B extends ComponentBuilder<T, B>> {
 
@@ -67,12 +59,32 @@ public abstract class ComponentBuilder<T extends Component, B extends ComponentB
         return self();
     }
 
+    public ComponentBuilder<T, B> addComponentInstance(String instanceName) {
+        ComponentInstance instance = new ComponentInstanceBuilder()
+                .setUniqueId(instanceName)
+                .setName(instanceName)
+                .build();
+        return addComponentInstance(instance);
+    }
+    
+    public ComponentBuilder<T, B> addComponentInstance(String instanceName, String uniqueId) {
+        ComponentInstance instance = new ComponentInstanceBuilder()
+                .setUniqueId(uniqueId)
+                .setName(instanceName)
+                .build();
+        return addComponentInstance(instance);
+    }
+
     public ComponentBuilder<T, B> addComponentInstance(ComponentInstance componentInstance) {
+        initInstances();
+        component.getComponentInstances().add(componentInstance);
+        return self();
+    }
+
+    private void initInstances() {
         if (component.getComponentInstances() == null) {
             component.setComponentInstances(new ArrayList<>());
         }
-        component.getComponentInstances().add(componentInstance);
-        return self();
     }
 
     public ComponentBuilder<T, B> addInput(InputDefinition input) {
@@ -102,6 +114,7 @@ public abstract class ComponentBuilder<T extends Component, B extends ComponentB
     public ComponentBuilder<T, B> addInstanceProperty(String instanceId, String propName) {
         ComponentInstanceProperty componentInstanceProperty = new ComponentInstanceProperty();
         componentInstanceProperty.setName(propName);
+        componentInstanceProperty.setUniqueId(propName);
         this.addInstanceProperty(instanceId, componentInstanceProperty);
         return self();
     }
@@ -117,6 +130,7 @@ public abstract class ComponentBuilder<T extends Component, B extends ComponentB
     public ComponentBuilder<T, B> addInstanceInput(String instanceId, String propName) {
         ComponentInstanceInput componentInstanceInput = new ComponentInstanceInput();
         componentInstanceInput.setName(propName);
+        componentInstanceInput.setUniqueId(propName);
         this.addInstanceInput(instanceId, componentInstanceInput);
         return self();
     }
@@ -136,16 +150,42 @@ public abstract class ComponentBuilder<T extends Component, B extends ComponentB
         component.getPolicies().put(policyDefinition.getUniqueId(), policyDefinition);
         return self();
     }
-    public ComponentBuilder<T, B> addGroups(GroupDefinition groupDefinition){
-        if(component.getGroups() == null){
-            component.setGroups(new ArrayList<>());
-        }
+
+    public ComponentBuilder<T, B> addPolicyProperty(String policyId, String propName){
+        PolicyDefinition policyWithProp = PolicyDefinitionBuilder.create()
+                .addProperty(propName)
+                .setUniqueId(policyId)
+                .build();
+        return addPolicy(policyWithProp);
+    }
+
+    public ComponentBuilder<T, B> addGroup(GroupDefinition groupDefinition){
+        initGroups();
         component.getGroups().add(groupDefinition);
         return self();
     }
 
+    public ComponentBuilder<T, B> addGroupProperty(String groupId, String propName){
+        GroupDefinition groupWithProp = GroupDefinitionBuilder.create()
+                .addProperty(propName)
+                .setUniqueId(groupId)
+                .build();
+        return addGroup(groupWithProp);
+    }
+
+    private void initGroups() {
+        if(component.getGroups() == null){
+            component.setGroups(new ArrayList<>());
+        }
+    }
+
     public ComponentBuilder<T, B> setPolicies(List<PolicyDefinition> policies) {
         component.setPolicies(MapUtil.toMap(policies, PolicyDefinition::getUniqueId));
+        return self();
+    }
+
+    public ComponentBuilder<T, B> setGroups(List<GroupDefinition> groups) {
+        component.setGroups(groups);
         return self();
     }
 

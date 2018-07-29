@@ -20,11 +20,10 @@
 
 package org.openecomp.sdc.ci.tests.pages;
 
+import com.aventstack.extentreports.Status;
 import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum;
 import org.openecomp.sdc.ci.tests.execute.setup.ExtentTestActions;
 import org.openecomp.sdc.ci.tests.utilities.GeneralUIUtils;
-
-import com.aventstack.extentreports.Status;
 
 public class TesterOperationPage {
 
@@ -34,15 +33,15 @@ public class TesterOperationPage {
 
 	public static void certifyComponent(String componentName) throws Exception{
 		clickStartTestingButton();
-		clickAccpetCertificationButton(componentName);
+		clickAcceptCertificationButton(componentName);
 	}
 
-	public static void clickAccpetCertificationButton(String componentName) throws Exception {
+	public static void clickAcceptCertificationButton(String componentName) throws Exception {
 		ExtentTestActions.log(Status.INFO, "Accepting certifiction of " + componentName);
 		String actionDuration = GeneralUIUtils.getActionDuration(() ->
 		{
 			try {
-				clickAccpetCertificationButtonWithoutDuration(componentName);
+				clickAcceptCertificationButtonWithoutDuration(componentName);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -64,24 +63,23 @@ public class TesterOperationPage {
 	}
 	
 	
-	private static void certifyComponentWithoutDuration(String componentName) throws Exception {
+/*	private static void certifyComponentWithoutDuration(String componentName) throws Exception {
 		clickStartTestingButtonWithoutDuration();
-		clickAccpetCertificationButtonWithoutDuration(componentName);
-	}
+		clickAcceptCertificationButtonWithoutDuration(componentName);
+	}*/
 	
 	
-	private static void clickAccpetCertificationButtonWithoutDuration(String componentName) throws Exception {
+	private static void clickAcceptCertificationButtonWithoutDuration(String componentName) throws Exception {
 		try{
 			GeneralUIUtils.clickOnElementByTestId(DataTestIdEnum.LifeCyleChangeButtons.ACCEPT.getValue());
-			GeneralUIUtils.ultimateWait();
-			GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.ModalItems.ACCEP_TESTING_MESSAGE.getValue()).sendKeys(componentName + " tested successfuly");
-			GeneralUIUtils.clickOnElementByTestId(DataTestIdEnum.ModalItems.OK.getValue());
-			GeneralUIUtils.ultimateWait();
-			GeneralUIUtils.sleep(2000);
+//			GeneralUIUtils.ultimateWait();
+			GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.ModalItems.ACCEPT_TESTING_MESSAGE.getValue()).sendKeys(componentName + " tested successfuly");
+			GeneralPageElements.clickOKButton();
+//			GeneralUIUtils.sleep(2000);
 			GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.MainMenuButtons.SEARCH_BOX.getValue());
 		}
 		catch (Exception e){
-			throw new Exception("Accepting certification of " + componentName + " falied");
+			throw new Exception("Accepting certification of " + componentName + " failed");
 		}
 	}
 	
@@ -94,7 +92,7 @@ public class TesterOperationPage {
 //			GeneralUIUtils.sleep(1000);
 		}
 		catch (Exception e){
-			throw new Exception("Start testing falied");
+			throw new Exception("Start testing failed");
 		}
 	}
 

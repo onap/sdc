@@ -1,21 +1,11 @@
 package org.openecomp.sdc.be.unittests.utils;
 
-import java.util.List;
-
 import org.junit.Test;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphEdge;
-import org.openecomp.sdc.be.model.CapabilityDefinition;
-import org.openecomp.sdc.be.model.ComponentInstance;
-import org.openecomp.sdc.be.model.ComponentInstanceProperty;
-import org.openecomp.sdc.be.model.PropertyDefinition;
-import org.openecomp.sdc.be.model.RequirementDefinition;
-import org.openecomp.sdc.be.model.Resource;
-import org.openecomp.sdc.be.resources.data.CapabilityData;
-import org.openecomp.sdc.be.resources.data.CapabilityInstData;
-import org.openecomp.sdc.be.resources.data.PropertyData;
-import org.openecomp.sdc.be.resources.data.PropertyValueData;
-import org.openecomp.sdc.be.resources.data.RequirementData;
-import org.openecomp.sdc.be.resources.data.ResourceMetadataData;
+import org.openecomp.sdc.be.model.*;
+import org.openecomp.sdc.be.resources.data.*;
+
+import java.util.List;
 
 public class FactoryUtilsTest {
 

@@ -22,23 +22,23 @@ package org.openecomp.sdc.be.model;
 
 public enum LifecycleStateEnum {
 
-	READY_FOR_CERTIFICATION,
+    READY_FOR_CERTIFICATION,
 
-	CERTIFICATION_IN_PROGRESS,
+    CERTIFICATION_IN_PROGRESS,
 
-	CERTIFIED,
+    CERTIFIED,
 
-	NOT_CERTIFIED_CHECKIN,
+    NOT_CERTIFIED_CHECKIN,
 
-	NOT_CERTIFIED_CHECKOUT;
+    NOT_CERTIFIED_CHECKOUT;
 
-	public static LifecycleStateEnum findState(String state) {
+    public static LifecycleStateEnum findState(String state) {
 
-		for (LifecycleStateEnum lifecycleStateEnum : LifecycleStateEnum.values()) {
-			if (lifecycleStateEnum.name().equals(state)) {
-				return lifecycleStateEnum;
-			}
-		}
-		return null;
-	}
+        for (LifecycleStateEnum lifecycleStateEnum : LifecycleStateEnum.values()) {
+            if (lifecycleStateEnum.name().equals(state)) {
+                return lifecycleStateEnum;
+            }
+        }
+        return null;
+    }
 }

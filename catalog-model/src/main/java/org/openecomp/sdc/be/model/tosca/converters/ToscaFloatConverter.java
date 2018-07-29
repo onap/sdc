@@ -20,11 +20,11 @@
 
 package org.openecomp.sdc.be.model.tosca.converters;
 
-import java.math.BigDecimal;
-import java.util.Map;
-
 import org.apache.commons.lang.StringUtils;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
+
+import java.math.BigDecimal;
+import java.util.Map;
 
 public class ToscaFloatConverter implements PropertyValueConverter {
 

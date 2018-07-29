@@ -20,8 +20,7 @@
 
 package org.openecomp.sdc.be.config;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 
 public class ErrorInfo {
 
@@ -33,7 +32,7 @@ public class ErrorInfo {
 	private static final String SVC_PREFIX = "SVC";
 	private static final String POL_PREFIX = "POL";
 
-	private static Logger log = LoggerFactory.getLogger(ErrorInfo.class.getName());
+	private static Logger log = Logger.getLogger(ErrorInfo.class.getName());
 
 	public ErrorInfo() {
 		this.errorInfoType = ErrorInfoType.OK;

@@ -20,14 +20,7 @@
 
 package org.openecomp.sdc.ci.tests.execute.imports;
 
-import static org.testng.AssertJUnit.assertTrue;
-
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.List;
-import java.util.regex.Pattern;
-
+import com.google.gson.Gson;
 import org.apache.commons.codec.binary.Base64;
 import org.junit.Rule;
 import org.junit.rules.TestName;
@@ -48,7 +41,13 @@ import org.openecomp.sdc.ci.tests.utils.rest.ResponseParser;
 import org.openecomp.sdc.common.api.Constants;
 import org.testng.annotations.Test;
 
-import com.google.gson.Gson;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
+import java.util.regex.Pattern;
+
+import static org.testng.AssertJUnit.assertTrue;
 
 public class ImportUpdateResourseCsarTest extends ComponentBaseTest {
 	@Rule

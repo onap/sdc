@@ -20,18 +20,7 @@
 
 package org.openecomp.sdc.be.model.operations.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyMap;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.ArgumentMatchers.isNull;
-import static org.mockito.Mockito.when;
-
-import java.util.ArrayList;
-import java.util.List;
-
+import fj.data.Either;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -48,199 +37,204 @@ import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.resources.data.HeatParameterData;
 import org.openecomp.sdc.be.resources.data.HeatParameterValueData;
 
-import fj.data.Either;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.when;
 
 public class HeatParametersOperationTest extends ModelTestBase {
 
-	HeatParametersOperation heatParametersOperation = new HeatParametersOperation();
+    HeatParametersOperation heatParametersOperation = new HeatParametersOperation();
 
-	TitanGenericDao titanGenericDao = Mockito.mock(TitanGenericDao.class);
+    TitanGenericDao titanGenericDao = Mockito.mock(TitanGenericDao.class);
 
-	@Before
-	public void setup() {
-		heatParametersOperation.setTitanGenericDao(titanGenericDao);
+    @Before
+    public void setup() {
+        heatParametersOperation.setTitanGenericDao(titanGenericDao);
 
-	}
+    }
 
-	@Test
-	public void addPropertyToResourceTest() {
+    @Test
+    public void addPropertyToResourceTest() {
 
-		String propName = "myProp";
-		HeatParameterDefinition property = buildHeatPropertyDefinition();
+        String propName = "myProp";
+        HeatParameterDefinition property = buildHeatPropertyDefinition();
 
-		HeatParameterData propertyData = new HeatParameterData(property);
+        HeatParameterData propertyData = new HeatParameterData(property);
 
-		Either<HeatParameterData, TitanOperationStatus> either = Either.left(propertyData);
+        Either<HeatParameterData, TitanOperationStatus> either = Either.left(propertyData);
 
-		GraphRelation graphRelation = new GraphRelation();
-		Either<GraphRelation, TitanOperationStatus> relationResult = Either.left(graphRelation);
+        GraphRelation graphRelation = new GraphRelation();
+        Either<GraphRelation, TitanOperationStatus> relationResult = Either.left(graphRelation);
 
-		when(titanGenericDao.createNode(any(HeatParameterData.class), eq(HeatParameterData.class))).thenReturn(either);
-		when(titanGenericDao.createRelation(any(GraphNode.class), (GraphNode) any(GraphNode.class), eq(GraphEdgeLabels.HEAT_PARAMETER), anyMap())).thenReturn(relationResult);
+        when(titanGenericDao.createNode(any(HeatParameterData.class), eq(HeatParameterData.class))).thenReturn(either);
+        when(titanGenericDao.createRelation(any(GraphNode.class), any(GraphNode.class), eq(GraphEdgeLabels.HEAT_PARAMETER), anyMap())).thenReturn(relationResult);
 
-		Either<HeatParameterData, TitanOperationStatus> result = heatParametersOperation.addPropertyToGraph(propName, property, "resourceId.artifactId", NodeTypeEnum.ArtifactRef);
+        Either<HeatParameterData, TitanOperationStatus> result = heatParametersOperation.addPropertyToGraph(propName, property, "resourceId.artifactId", NodeTypeEnum.ArtifactRef);
 
-		assertTrue(result.isLeft());
+        assertTrue(result.isLeft());
 
-	}
+    }
 
-	@Test
-	public void addPropertyListToResourceTest() {
+    @Test
+    public void addPropertyListToResourceTest() {
 
-		HeatParameterDefinition property = buildHeatPropertyDefinition();
-		HeatParameterDefinition property2 = buildHeatPropertyDefinition();
-		property2.setName("p2");
+        HeatParameterDefinition property = buildHeatPropertyDefinition();
+        HeatParameterDefinition property2 = buildHeatPropertyDefinition();
+        property2.setName("p2");
 
-		List<HeatParameterDefinition> parameters = new ArrayList<HeatParameterDefinition>();
-		parameters.add(property);
-		parameters.add(property2);
+        List<HeatParameterDefinition> parameters = new ArrayList<>();
+        parameters.add(property);
+        parameters.add(property2);
 
-		HeatParameterData propertyData = new HeatParameterData(property);
+        HeatParameterData propertyData = new HeatParameterData(property);
 
-		Either<HeatParameterData, TitanOperationStatus> either = Either.left(propertyData);
+        Either<HeatParameterData, TitanOperationStatus> either = Either.left(propertyData);
 
-		GraphRelation graphRelation = new GraphRelation();
-		Either<GraphRelation, TitanOperationStatus> relationResult = Either.left(graphRelation);
+        GraphRelation graphRelation = new GraphRelation();
+        Either<GraphRelation, TitanOperationStatus> relationResult = Either.left(graphRelation);
 
-		when(titanGenericDao.createNode(any(HeatParameterData.class), eq(HeatParameterData.class))).thenReturn(either);
-		when(titanGenericDao.createRelation(any(GraphNode.class), (GraphNode) any(GraphNode.class), eq(GraphEdgeLabels.HEAT_PARAMETER), anyMap())).thenReturn(relationResult);
+        when(titanGenericDao.createNode(any(HeatParameterData.class), eq(HeatParameterData.class))).thenReturn(either);
+        when(titanGenericDao.createRelation(any(GraphNode.class), any(GraphNode.class), eq(GraphEdgeLabels.HEAT_PARAMETER), anyMap())).thenReturn(relationResult);
 
-		StorageOperationStatus result = heatParametersOperation.addPropertiesToGraph(parameters, "resourceId.artifactId", NodeTypeEnum.ArtifactRef);
+        StorageOperationStatus result = heatParametersOperation.addPropertiesToGraph(parameters, "resourceId.artifactId", NodeTypeEnum.ArtifactRef);
 
-		assertEquals(StorageOperationStatus.OK, result);
+        assertEquals(StorageOperationStatus.OK, result);
 
-	}
+    }
 
-	@Test
-	public void testStringValues() {
-		assertTrue(heatParametersOperation.isValidValue(HeatParameterType.STRING, "50aaa"));
-	}
+    @Test
+    public void testStringValues() {
+        assertTrue(heatParametersOperation.isValidValue(HeatParameterType.STRING, "50aaa"));
+    }
 
-	@Test
-	public void testNumberValues() {
-		assertTrue(heatParametersOperation.isValidValue(HeatParameterType.NUMBER, "50"));
-		assertTrue(heatParametersOperation.isValidValue(HeatParameterType.NUMBER, "50.5"));
-		assertTrue(heatParametersOperation.isValidValue(HeatParameterType.NUMBER, "0x11"));
+    @Test
+    public void testNumberValues() {
+        assertTrue(heatParametersOperation.isValidValue(HeatParameterType.NUMBER, "50"));
+        assertTrue(heatParametersOperation.isValidValue(HeatParameterType.NUMBER, "50.5"));
+        assertTrue(heatParametersOperation.isValidValue(HeatParameterType.NUMBER, "0x11"));
 
-		assertFalse(heatParametersOperation.isValidValue(HeatParameterType.NUMBER, "aaa"));
-		assertFalse(heatParametersOperation.isValidValue(HeatParameterType.NUMBER, "?>!"));
-	}
+        assertFalse(heatParametersOperation.isValidValue(HeatParameterType.NUMBER, "aaa"));
+        assertFalse(heatParametersOperation.isValidValue(HeatParameterType.NUMBER, "?>!"));
+    }
 
-	@Test
-	public void testJsonValues() {
-		assertTrue(heatParametersOperation.isValidValue(HeatParameterType.JSON, "{ \"member\" : \"50\"}"));
-		HeatParameterDefinition propertyDefinition = buildHeatBooleanPropertyDefinition(HeatParameterType.JSON.getType(), "{ \"member\" : \"50\"}");
-		StorageOperationStatus operationStatus = heatParametersOperation.validateAndUpdateProperty(propertyDefinition);
-		assertEquals(StorageOperationStatus.OK, operationStatus);
-		assertEquals(HeatParameterType.JSON.getType(), propertyDefinition.getType());
+    @Test
+    public void testJsonValues() {
+        assertTrue(heatParametersOperation.isValidValue(HeatParameterType.JSON, "{ \"member\" : \"50\"}"));
+        HeatParameterDefinition propertyDefinition = buildHeatBooleanPropertyDefinition(HeatParameterType.JSON.getType(), "{ \"member\" : \"50\"}");
+        StorageOperationStatus operationStatus = heatParametersOperation.validateAndUpdateProperty(propertyDefinition);
+        assertEquals(StorageOperationStatus.OK, operationStatus);
+        assertEquals(HeatParameterType.JSON.getType(), propertyDefinition.getType());
 
-	}
+    }
 
-	@Test
-	public void testListValues() {
-		assertTrue(heatParametersOperation.isValidValue(HeatParameterType.COMMA_DELIMITED_LIST, "one, two"));
-		HeatParameterDefinition propertyDefinition = buildHeatBooleanPropertyDefinition(HeatParameterType.COMMA_DELIMITED_LIST.getType(), "one, two");
-		StorageOperationStatus operationStatus = heatParametersOperation.validateAndUpdateProperty(propertyDefinition);
-		assertEquals(StorageOperationStatus.OK, operationStatus);
-		assertEquals(HeatParameterType.COMMA_DELIMITED_LIST.getType(), propertyDefinition.getType());
-		assertEquals("one, two", propertyDefinition.getDefaultValue());
-	}
+    @Test
+    public void testListValues() {
+        assertTrue(heatParametersOperation.isValidValue(HeatParameterType.COMMA_DELIMITED_LIST, "one, two"));
+        HeatParameterDefinition propertyDefinition = buildHeatBooleanPropertyDefinition(HeatParameterType.COMMA_DELIMITED_LIST.getType(), "one, two");
+        StorageOperationStatus operationStatus = heatParametersOperation.validateAndUpdateProperty(propertyDefinition);
+        assertEquals(StorageOperationStatus.OK, operationStatus);
+        assertEquals(HeatParameterType.COMMA_DELIMITED_LIST.getType(), propertyDefinition.getType());
+        assertEquals("one, two", propertyDefinition.getDefaultValue());
+    }
 
-	@Test
-	public void testBooleanValues() {
+    @Test
+    public void testBooleanValues() {
 
-		String[] trueArray = { "true", "t", "1", "on", "y", "yes" };
-		String[] falseArray = { "false", "f", "0", "off", "n", "no" };
+        String[] trueArray = { "true", "t", "1", "on", "y", "yes" };
+        String[] falseArray = { "false", "f", "0", "off", "n", "no" };
 
-		for (int i = 0; i < trueArray.length; i++) {
-			assertTrue(heatParametersOperation.isValidValue(HeatParameterType.BOOLEAN, trueArray[i]));
-			HeatParameterDefinition propertyDefinition = buildHeatBooleanPropertyDefinition(HeatParameterType.BOOLEAN.getType(), trueArray[i]);
-			StorageOperationStatus operationStatus = heatParametersOperation.validateAndUpdateProperty(propertyDefinition);
-			assertEquals(StorageOperationStatus.OK, operationStatus);
-			assertEquals("true", propertyDefinition.getDefaultValue());
+        for (int i = 0; i < trueArray.length; i++) {
+            assertTrue(heatParametersOperation.isValidValue(HeatParameterType.BOOLEAN, trueArray[i]));
+            HeatParameterDefinition propertyDefinition = buildHeatBooleanPropertyDefinition(HeatParameterType.BOOLEAN.getType(), trueArray[i]);
+            StorageOperationStatus operationStatus = heatParametersOperation.validateAndUpdateProperty(propertyDefinition);
+            assertEquals(StorageOperationStatus.OK, operationStatus);
+            assertEquals("true", propertyDefinition.getDefaultValue());
 
-			assertTrue(heatParametersOperation.isValidValue(HeatParameterType.BOOLEAN, trueArray[i]));
-			propertyDefinition = buildHeatBooleanPropertyDefinition(HeatParameterType.BOOLEAN.getType(), trueArray[i].toUpperCase());
-			operationStatus = heatParametersOperation.validateAndUpdateProperty(propertyDefinition);
-			assertEquals(StorageOperationStatus.OK, operationStatus);
-			assertEquals("true", propertyDefinition.getDefaultValue());
+            assertTrue(heatParametersOperation.isValidValue(HeatParameterType.BOOLEAN, trueArray[i]));
+            propertyDefinition = buildHeatBooleanPropertyDefinition(HeatParameterType.BOOLEAN.getType(), trueArray[i].toUpperCase());
+            operationStatus = heatParametersOperation.validateAndUpdateProperty(propertyDefinition);
+            assertEquals(StorageOperationStatus.OK, operationStatus);
+            assertEquals("true", propertyDefinition.getDefaultValue());
 
-			assertTrue(heatParametersOperation.isValidValue(HeatParameterType.BOOLEAN, trueArray[i]));
-			propertyDefinition = buildHeatBooleanPropertyDefinition(HeatParameterType.BOOLEAN.getType(), trueArray[i].toLowerCase());
-			operationStatus = heatParametersOperation.validateAndUpdateProperty(propertyDefinition);
-			assertEquals(StorageOperationStatus.OK, operationStatus);
-			assertEquals("true", propertyDefinition.getDefaultValue());
-		}
+            assertTrue(heatParametersOperation.isValidValue(HeatParameterType.BOOLEAN, trueArray[i]));
+            propertyDefinition = buildHeatBooleanPropertyDefinition(HeatParameterType.BOOLEAN.getType(), trueArray[i].toLowerCase());
+            operationStatus = heatParametersOperation.validateAndUpdateProperty(propertyDefinition);
+            assertEquals(StorageOperationStatus.OK, operationStatus);
+            assertEquals("true", propertyDefinition.getDefaultValue());
+        }
 
-		for (int i = 0; i < falseArray.length; i++) {
-			assertTrue(heatParametersOperation.isValidValue(HeatParameterType.BOOLEAN, falseArray[i]));
-			HeatParameterDefinition propertyDefinition = buildHeatBooleanPropertyDefinition(HeatParameterType.BOOLEAN.getType(), falseArray[i]);
-			StorageOperationStatus operationStatus = heatParametersOperation.validateAndUpdateProperty(propertyDefinition);
-			assertEquals(StorageOperationStatus.OK, operationStatus);
-			assertEquals("false", propertyDefinition.getDefaultValue());
+        for (int i = 0; i < falseArray.length; i++) {
+            assertTrue(heatParametersOperation.isValidValue(HeatParameterType.BOOLEAN, falseArray[i]));
+            HeatParameterDefinition propertyDefinition = buildHeatBooleanPropertyDefinition(HeatParameterType.BOOLEAN.getType(), falseArray[i]);
+            StorageOperationStatus operationStatus = heatParametersOperation.validateAndUpdateProperty(propertyDefinition);
+            assertEquals(StorageOperationStatus.OK, operationStatus);
+            assertEquals("false", propertyDefinition.getDefaultValue());
 
-			assertTrue(heatParametersOperation.isValidValue(HeatParameterType.BOOLEAN, falseArray[i]));
-			propertyDefinition = buildHeatBooleanPropertyDefinition(HeatParameterType.BOOLEAN.getType(), falseArray[i].toUpperCase());
-			operationStatus = heatParametersOperation.validateAndUpdateProperty(propertyDefinition);
-			assertEquals(StorageOperationStatus.OK, operationStatus);
-			assertEquals("false", propertyDefinition.getDefaultValue());
+            assertTrue(heatParametersOperation.isValidValue(HeatParameterType.BOOLEAN, falseArray[i]));
+            propertyDefinition = buildHeatBooleanPropertyDefinition(HeatParameterType.BOOLEAN.getType(), falseArray[i].toUpperCase());
+            operationStatus = heatParametersOperation.validateAndUpdateProperty(propertyDefinition);
+            assertEquals(StorageOperationStatus.OK, operationStatus);
+            assertEquals("false", propertyDefinition.getDefaultValue());
 
-			assertTrue(heatParametersOperation.isValidValue(HeatParameterType.BOOLEAN, falseArray[i]));
-			propertyDefinition = buildHeatBooleanPropertyDefinition(HeatParameterType.BOOLEAN.getType(), falseArray[i].toLowerCase());
-			operationStatus = heatParametersOperation.validateAndUpdateProperty(propertyDefinition);
-			assertEquals(StorageOperationStatus.OK, operationStatus);
-			assertEquals("false", propertyDefinition.getDefaultValue());
-		}
+            assertTrue(heatParametersOperation.isValidValue(HeatParameterType.BOOLEAN, falseArray[i]));
+            propertyDefinition = buildHeatBooleanPropertyDefinition(HeatParameterType.BOOLEAN.getType(), falseArray[i].toLowerCase());
+            operationStatus = heatParametersOperation.validateAndUpdateProperty(propertyDefinition);
+            assertEquals(StorageOperationStatus.OK, operationStatus);
+            assertEquals("false", propertyDefinition.getDefaultValue());
+        }
 
-		assertFalse(heatParametersOperation.isValidValue(HeatParameterType.BOOLEAN, "blabla"));
-		assertFalse(heatParametersOperation.isValidValue(HeatParameterType.BOOLEAN, "2"));
-	}
+        assertFalse(heatParametersOperation.isValidValue(HeatParameterType.BOOLEAN, "blabla"));
+        assertFalse(heatParametersOperation.isValidValue(HeatParameterType.BOOLEAN, "2"));
+    }
 
-	private HeatParameterDefinition buildHeatPropertyDefinition() {
-		HeatParameterDefinition parameter = new HeatParameterDefinition();
+    private HeatParameterDefinition buildHeatPropertyDefinition() {
+        HeatParameterDefinition parameter = new HeatParameterDefinition();
 
-		parameter.setName("p1");
-		parameter.setType("string");
-		parameter.setDefaultValue("def");
-		parameter.setCurrentValue("current");
-		parameter.setDescription("description");
+        parameter.setName("p1");
+        parameter.setType("string");
+        parameter.setDefaultValue("def");
+        parameter.setCurrentValue("current");
+        parameter.setDescription("description");
 
-		return parameter;
-	}
+        return parameter;
+    }
 
-	private HeatParameterDefinition buildHeatBooleanPropertyDefinition(String type, String boolValue) {
-		HeatParameterDefinition parameter = new HeatParameterDefinition();
+    private HeatParameterDefinition buildHeatBooleanPropertyDefinition(String type, String boolValue) {
+        HeatParameterDefinition parameter = new HeatParameterDefinition();
 
-		parameter.setName("parameter1");
-		parameter.setType(type);
-		parameter.setDefaultValue(boolValue);
-		parameter.setDescription("description");
+        parameter.setName("parameter1");
+        parameter.setType(type);
+        parameter.setDefaultValue(boolValue);
+        parameter.setDescription("description");
 
-		return parameter;
-	}
+        return parameter;
+    }
 
-	@Test
-	public void addPropertyToResourceInstanceTest() {
+    @Test
+    public void addPropertyToResourceInstanceTest() {
 
-		HeatParameterDefinition property = buildHeatPropertyDefinition();
+        HeatParameterDefinition property = buildHeatPropertyDefinition();
 
-		HeatParameterValueData propertyData = new HeatParameterValueData();
-		propertyData.setUniqueId("bla");
-		propertyData.setValue("value1");
+        HeatParameterValueData propertyData = new HeatParameterValueData();
+        propertyData.setUniqueId("bla");
+        propertyData.setValue("value1");
 
-		Either<HeatParameterValueData, TitanOperationStatus> either = Either.left(propertyData);
+        Either<HeatParameterValueData, TitanOperationStatus> either = Either.left(propertyData);
 
-		GraphRelation graphRelation = new GraphRelation();
-		Either<GraphRelation, TitanOperationStatus> relationResult = Either.left(graphRelation);
+        GraphRelation graphRelation = new GraphRelation();
+        Either<GraphRelation, TitanOperationStatus> relationResult = Either.left(graphRelation);
 
-		when(titanGenericDao.createNode(any(HeatParameterValueData.class), eq(HeatParameterValueData.class))).thenReturn(either);
-		when(titanGenericDao.createRelation(any(GraphNode.class), any(GraphNode.class), eq(GraphEdgeLabels.PARAMETER_VALUE), anyMap())).thenReturn(relationResult);
-		when(titanGenericDao.createRelation(any(GraphNode.class), any(GraphNode.class), eq(GraphEdgeLabels.PARAMETER_IMPL), isNull())).thenReturn(relationResult);
+        when(titanGenericDao.createNode(any(HeatParameterValueData.class), eq(HeatParameterValueData.class))).thenReturn(either);
+        when(titanGenericDao.createRelation(any(GraphNode.class), any(GraphNode.class), eq(GraphEdgeLabels.PARAMETER_VALUE), anyMap())).thenReturn(relationResult);
+        when(titanGenericDao.createRelation(any(GraphNode.class), any(GraphNode.class), eq(GraphEdgeLabels.PARAMETER_IMPL), isNull())).thenReturn(relationResult);
 
-		Either<HeatParameterValueData, TitanOperationStatus> result = heatParametersOperation.addHeatValueToGraph(property, "artifactLabel", "resourceInstanceId.artifactId", "resourceInstanceId");
+        Either<HeatParameterValueData, TitanOperationStatus> result = heatParametersOperation.addHeatValueToGraph(property, "artifactLabel", "resourceInstanceId.artifactId", "resourceInstanceId");
 
-		assertTrue(result.isLeft());
+        assertTrue(result.isLeft());
 
-	}
+    }
 
 }

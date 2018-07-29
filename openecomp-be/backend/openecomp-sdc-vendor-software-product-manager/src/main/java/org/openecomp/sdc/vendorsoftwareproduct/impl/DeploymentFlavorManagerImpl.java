@@ -49,6 +49,8 @@ import org.openecomp.sdc.vendorsoftwareproduct.types.schemagenerator.SchemaTempl
 import org.openecomp.sdc.versioning.VersioningUtil;
 import org.openecomp.sdc.versioning.dao.types.Version;
 
+import java.util.*;
+
 public class DeploymentFlavorManagerImpl implements DeploymentFlavorManager {
   private final VendorSoftwareProductInfoDao vspInfoDao;
   private final DeploymentFlavorDao deploymentFlavorDao;

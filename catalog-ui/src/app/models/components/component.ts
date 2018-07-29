@@ -34,6 +34,7 @@ import {Capability} from "../capability";
 import {Requirement} from "../requirement";
 import {Relationship} from "../graph/relationship";
 import { PolicyInstance } from "app/models/graph/zones/policy-instance";
+import { GroupInstance } from "../graph/zones/group-instance";
 
 
 // import {}
@@ -96,7 +97,11 @@ export interface IComponent {
     getModuleForDisplay(moduleId:string):ng.IPromise<DisplayModule>;
     getModuleInstanceForDisplay(componentInstanceId:string, moduleId:string):ng.IPromise<DisplayModule>;
     updateGroupMetadata(group:Module):ng.IPromise<Module>;
+    
+
     //---------------------------------------------- HELP FUNCTIONS ----------------------------------------------------//
+
+
 
     getComponentSubType():string;
     isAlreadyCertified():boolean;
@@ -158,7 +163,8 @@ export abstract class Component implements IComponent {
     public systemName:string;
     public projectCode:string;
     public policies:Array<PolicyInstance>;
-    public groups:Array<Module>;
+    public groupInstances:Array<GroupInstance>
+    public modules:Array<Module>;
     //custom properties
     public componentService:IComponentService;
     public filterTerm:string;
@@ -168,7 +174,8 @@ export abstract class Component implements IComponent {
     public subCategory:string;
     public selectedCategory:string;
     public showMenu:boolean;
-
+    public archived:boolean;
+    public vspArchived: boolean;
 
     constructor(componentService:IComponentService, protected $q:ng.IQService, component?:Component) {
         if (component) {
@@ -221,7 +228,11 @@ export abstract class Component implements IComponent {
             this.selectedInstance = component.selectedInstance;
             this.iconSprite = component.iconSprite;
             this.showMenu = true;
-            this.groups = CommonUtils.initModules(component.groups);
+            this.modules = component.modules;
+            this.groupInstances = component.groupInstances;
+            this.policies = component.policies;
+            this.archived = component.archived;
+            this.vspArchived = component.vspArchived;
         }
 
         //custom properties
@@ -239,7 +250,7 @@ export abstract class Component implements IComponent {
 
     //------------------------------------------ API Calls ----------------------------------------------------------------//
     public changeLifecycleState = (state:string, commentObj:AsdcComment):ng.IPromise<Component> => {
-        let deferred = this.$q.defer();
+        let deferred = this.$q.defer<Component>();
         let onSuccess = (componentMetadata:ComponentMetadata):void => {
             this.setComponentMetadata(componentMetadata);
             // this.version = componentMetadata.version;
@@ -277,7 +288,7 @@ export abstract class Component implements IComponent {
     };
 
     public addOrUpdateArtifact = (artifact:ArtifactModel):ng.IPromise<ArtifactModel> => {
-        let deferred = this.$q.defer();
+        let deferred = this.$q.defer<ArtifactModel>();
         let onSuccess = (artifactObj:ArtifactModel):void => {
             let newArtifact = new ArtifactModel(artifactObj);
             let artifacts = this.getArtifactsByType(artifactObj.artifactGroupType);
@@ -309,7 +320,7 @@ export abstract class Component implements IComponent {
 
 
     public deleteArtifact = (artifactId:string, artifactLabel:string):ng.IPromise<ArtifactModel> => {
-        let deferred = this.$q.defer();
+        let deferred = this.$q.defer<ArtifactModel>();
         let onSuccess = (artifactObj:ArtifactModel):void => {
             let newArtifact = new ArtifactModel(artifactObj);
             let artifacts = this.getArtifactsByType(artifactObj.artifactGroupType);
@@ -327,7 +338,7 @@ export abstract class Component implements IComponent {
 
     public getArtifactByGroupType = (artifactGroupType:string):ng.IPromise<ArtifactGroupModel> => {
 
-        let deferred = this.$q.defer();
+        let deferred = this.$q.defer<ArtifactGroupModel>();
         let onSuccess = (response:ArtifactGroupModel):void => {
             deferred.resolve(response);
         };
@@ -340,7 +351,7 @@ export abstract class Component implements IComponent {
 
     public getComponentInstanceArtifactsByGroupType = (componentInstanceId:string, artifactGroupType:string):ng.IPromise<ArtifactGroupModel> => {
 
-        let deferred = this.$q.defer();
+        let deferred = this.$q.defer<ArtifactGroupModel>();
         let onSuccess = (response:ArtifactGroupModel):void => {
             deferred.resolve(response);
         };
@@ -352,7 +363,7 @@ export abstract class Component implements IComponent {
     };
 
     public addOrUpdateProperty = (property:PropertyModel):ng.IPromise<PropertyModel> => {
-        let deferred = this.$q.defer();
+        let deferred = this.$q.defer<PropertyModel>();
 
         let onError = (error:any):void => {
             deferred.reject(error);
@@ -380,7 +391,7 @@ export abstract class Component implements IComponent {
     };
 
     public addOrUpdateAttribute = (attribute:AttributeModel):ng.IPromise<AttributeModel> => {
-        let deferred = this.$q.defer();
+        let deferred = this.$q.defer<AttributeModel>();
 
         let onError = (error:any):void => {
             deferred.reject(error);
@@ -408,7 +419,7 @@ export abstract class Component implements IComponent {
     };
 
     public deleteProperty = (propertyId:string):ng.IPromise<PropertyModel> => {
-        let deferred = this.$q.defer();
+        let deferred = this.$q.defer<PropertyModel>();
         let onSuccess = ():void => {
             console.log("Property deleted");
             delete _.remove(this.properties, {uniqueId: propertyId})[0];
@@ -423,7 +434,7 @@ export abstract class Component implements IComponent {
     };
 
     public deleteAttribute = (attributeId:string):ng.IPromise<AttributeModel> => {
-        let deferred = this.$q.defer();
+        let deferred = this.$q.defer<AttributeModel>();
         let onSuccess = ():void => {
             console.log("Attribute deleted");
             delete _.remove(this.attributes, {uniqueId: attributeId})[0];
@@ -435,18 +446,23 @@ export abstract class Component implements IComponent {
         return deferred.promise;
     };
 
+
+    public updateInstancePropertiesSuccess = (newProperties:PropertyModel[]):void => {
+        newProperties.forEach((newProperty) => {
+            // find exist instance property in parent component for update the new value ( find bu uniqueId & path)
+            let existProperty: PropertyModel = <PropertyModel>_.find(this.componentInstancesProperties[newProperty.resourceInstanceUniqueId], {
+                uniqueId: newProperty.uniqueId,
+                path: newProperty.path
+            });
+            let index = this.componentInstancesProperties[newProperty.resourceInstanceUniqueId].indexOf(existProperty);
+            this.componentInstancesProperties[newProperty.resourceInstanceUniqueId][index] = newProperty;
+        });
+    }
+
     public updateInstanceProperties = (componentInstanceId:string, properties:PropertyModel[]):ng.IPromise<PropertyModel[]> => {
         let deferred = this.$q.defer<PropertyModel[]>();
         let onSuccess = (newProperties:PropertyModel[]):void => {
-            newProperties.forEach((newProperty) => {
-                // find exist instance property in parent component for update the new value ( find bu uniqueId & path)
-                let existProperty: PropertyModel = <PropertyModel>_.find(this.componentInstancesProperties[newProperty.resourceInstanceUniqueId], {
-                    uniqueId: newProperty.uniqueId,
-                    path: newProperty.path
-                });
-                let index = this.componentInstancesProperties[newProperty.resourceInstanceUniqueId].indexOf(existProperty);
-                this.componentInstancesProperties[newProperty.resourceInstanceUniqueId][index] = newProperty;
-            });
+            this.updateInstancePropertiesSuccess(newProperties);
             deferred.resolve(newProperties);
         };
         let onFailed = (error:any):void => {
@@ -458,7 +474,7 @@ export abstract class Component implements IComponent {
     };
 
     public updateInstanceAttribute = (attribute:AttributeModel):ng.IPromise<AttributeModel> => {
-        let deferred = this.$q.defer();
+        let deferred = this.$q.defer<AttributeModel>();
         let onSuccess = (newAttribute:AttributeModel):void => {
             let existAttribute:AttributeModel = <AttributeModel>_.find(this.componentInstancesAttributes[newAttribute.resourceInstanceUniqueId], {uniqueId: newAttribute.uniqueId});
             let index = this.componentInstancesAttributes[newAttribute.resourceInstanceUniqueId].indexOf(existAttribute);
@@ -478,7 +494,7 @@ export abstract class Component implements IComponent {
     };
 
     public deleteInstanceArtifact = (artifactId:string, artifactLabel:string):ng.IPromise<ArtifactModel> => {
-        let deferred = this.$q.defer();
+        let deferred = this.$q.defer<ArtifactModel>();
         let onSuccess = (artifactObj:ArtifactModel):void => {
             let newArtifact = new ArtifactModel(artifactObj);
             let artifacts = this.selectedInstance.deploymentArtifacts;
@@ -495,7 +511,7 @@ export abstract class Component implements IComponent {
     };
 
     public addOrUpdateInstanceArtifact = (artifact:ArtifactModel):ng.IPromise<ArtifactModel> => {
-        let deferred = this.$q.defer();
+        let deferred = this.$q.defer<ArtifactModel>();
         let onSuccess = (artifactObj:ArtifactModel):void => {
             switch (artifactObj.artifactGroupType) {
                 case ArtifactGroupType.DEPLOYMENT:
@@ -519,7 +535,7 @@ export abstract class Component implements IComponent {
     };
 
     public uploadInstanceEnvFile = (artifact:ArtifactModel):ng.IPromise<ArtifactModel> => {
-        let deferred = this.$q.defer();
+        let deferred = this.$q.defer<ArtifactModel>();
         let onSuccess = (artifactObj:ArtifactModel):void => {
             this.selectedInstance.deploymentArtifacts[artifactObj.artifactLabel] = artifactObj;
             deferred.resolve(artifactObj);
@@ -533,7 +549,7 @@ export abstract class Component implements IComponent {
 
     //this function will update the instance version than the function call getComponent to update the current component and return the new instance version
     public changeComponentInstanceVersion = (componentUid:string):ng.IPromise<Component> => {
-        let deferred = this.$q.defer();
+        let deferred = this.$q.defer<Component>();
         let onFailed = (error:any):void => {
             deferred.reject(error);
         };
@@ -553,7 +569,7 @@ export abstract class Component implements IComponent {
     };
 
     public createComponentInstance = (componentInstance:ComponentInstance):ng.IPromise<ComponentInstance> => {
-        let deferred = this.$q.defer();
+        let deferred = this.$q.defer<ComponentInstance>();
         let onSuccess = (instance:ComponentInstance):void => {
             this.componentInstances.push(instance);
             deferred.resolve(instance);
@@ -566,7 +582,7 @@ export abstract class Component implements IComponent {
     };
 
     public updateComponentInstance = (componentInstance:ComponentInstance):ng.IPromise<ComponentInstance> => {
-        let deferred = this.$q.defer();
+        let deferred = this.$q.defer<ComponentInstance>();
         let onSuccess = (updatedInstance:ComponentInstance):void => {
             let componentInstance:ComponentInstance = _.find(this.componentInstances, (instance:ComponentInstance) => {
                 return instance.uniqueId === updatedInstance.uniqueId;
@@ -585,7 +601,7 @@ export abstract class Component implements IComponent {
     };
 
     public updateMultipleComponentInstances = (instances:Array<ComponentInstance>):ng.IPromise<Array<ComponentInstance>> => {
-        let deferred = this.$q.defer();
+        let deferred = this.$q.defer<Array<ComponentInstance>>();
         let onSuccess = (updatedInstances:Array<ComponentInstance>):void => {
             _.forEach(updatedInstances, (updatedComponentInstance) => {
                 let componentInstance:ComponentInstance = _.find(this.componentInstances, (instance:ComponentInstance) => {
@@ -607,13 +623,13 @@ export abstract class Component implements IComponent {
     };
 
     public deleteComponentInstance = (componentInstanceId:string):ng.IPromise<ComponentInstance> => {
-        let deferred = this.$q.defer();
+        let deferred = this.$q.defer<ComponentInstance>();
         let onSuccess = ():void => {
             let onSuccess = (component:Component):void => {
                 this.componentInstances = CommonUtils.initComponentInstances(component.componentInstances);
                 this.componentInstancesProperties = new PropertiesGroup(component.componentInstancesProperties);
                 this.componentInstancesAttributes = new AttributesGroup(component.componentInstancesAttributes);
-                this.groups = component.groups;
+                this.modules = component.modules;
                 this.componentInstancesRelations = CommonUtils.initComponentInstanceRelations(component.componentInstancesRelations);
                 deferred.resolve();
             };
@@ -680,7 +696,7 @@ export abstract class Component implements IComponent {
     };
 
     public createRelation = (relation:RelationshipModel):ng.IPromise<RelationshipModel> => {
-        let deferred = this.$q.defer();
+        let deferred = this.$q.defer<RelationshipModel>();
         let onSuccess = (relation:RelationshipModel):void => {
             console.info('Link created successfully', relation);
             if (!this.componentInstancesRelations) {
@@ -699,7 +715,7 @@ export abstract class Component implements IComponent {
     };
 
     public deleteRelation = (relation:RelationshipModel):ng.IPromise<RelationshipModel> => {
-        let deferred = this.$q.defer();
+        let deferred = this.$q.defer<RelationshipModel>();
         let onSuccess = (relation:RelationshipModel):void => {
             console.log("Link Deleted In Server");
             let relationToDelete = _.find(this.componentInstancesRelations, (item) => {
@@ -774,7 +790,7 @@ export abstract class Component implements IComponent {
 
     public getModuleForDisplay = (moduleId:string):ng.IPromise<DisplayModule> => {
 
-        let deferred = this.$q.defer();
+        let deferred = this.$q.defer<DisplayModule>();
         let onSuccess = (response:DisplayModule):void => {
             deferred.resolve(response);
         };
@@ -787,7 +803,7 @@ export abstract class Component implements IComponent {
 
     public getModuleInstanceForDisplay = (componentInstanceId:string, moduleId:string):ng.IPromise<DisplayModule> => {
 
-        let deferred = this.$q.defer();
+        let deferred = this.$q.defer<DisplayModule>();
         let onSuccess = (response:DisplayModule):void => {
             deferred.resolve(response);
         };
@@ -803,7 +819,7 @@ export abstract class Component implements IComponent {
     // get all the instances of the component (in service only VF instances)
     public getComponentInstancesFilteredByInputsAndProperties = (searchText?:string):ng.IPromise<Array<ComponentInstance>> => {
 
-        let deferred = this.$q.defer();
+        let deferred = this.$q.defer<Array<ComponentInstance>>();
         let onSuccess = (response:Array<ComponentInstance>):void => {
             deferred.resolve(response);
         };
@@ -818,7 +834,7 @@ export abstract class Component implements IComponent {
     // get inputs for instance - Pagination function
     public getComponentInputs = ():ng.IPromise<Array<InputModel>> => {
 
-        let deferred = this.$q.defer();
+        let deferred = this.$q.defer<Array<InputModel>>();
         let onSuccess = (inputsRes:Array<InputModel>):void => {
             this.inputs = inputsRes;
             deferred.resolve(inputsRes);
@@ -834,7 +850,7 @@ export abstract class Component implements IComponent {
     // get inputs instance - Pagination function
     public getComponentInstanceInputs = (componentInstanceId:string, originComponentUid:string):ng.IPromise<Array<InputModel>> => {
 
-        let deferred = this.$q.defer();
+        let deferred = this.$q.defer<Array<InputModel>>();
         let onSuccess = (response:Array<InputModel>):void => {
             deferred.resolve(response);
         };
@@ -848,7 +864,7 @@ export abstract class Component implements IComponent {
     // get inputs inatnce - Pagination function
     public getComponentInstanceInputProperties = (componentInstanceId:string, inputId:string):ng.IPromise<Array<PropertyModel>> => {
 
-        let deferred = this.$q.defer();
+        let deferred = this.$q.defer<Array<PropertyModel>>();
         let onSuccess = (response:Array<PropertyModel>):void => {
             deferred.resolve(response);
         };
@@ -862,7 +878,7 @@ export abstract class Component implements IComponent {
     // get inputs inatnce - Pagination function
     public getComponentInstanceProperties = (componentInstanceId:string):ng.IPromise<Array<PropertyModel>> => {
 
-        let deferred = this.$q.defer();
+        let deferred = this.$q.defer<Array<PropertyModel>>();
         let onSuccess = (response:Array<PropertyModel>):void => {
             deferred.resolve(response);
         };
@@ -876,15 +892,15 @@ export abstract class Component implements IComponent {
 
     public updateGroupMetadata = (module:Module):ng.IPromise<Module> => {
 
-        let deferred = this.$q.defer();
+        let deferred = this.$q.defer<Module>();
 
         let onSuccess = (updatedModule:Module):void => {
-            let groupIndex:number = _.indexOf(this.groups, _.find(this.groups, (module:Module) => {
+            let groupIndex:number = _.indexOf(this.modules, _.find(this.modules, (module:Module) => {
                 return module.uniqueId === updatedModule.uniqueId;
             }));
 
             if (groupIndex !== -1) {
-                this.groups[groupIndex] = updatedModule;
+                this.modules[groupIndex] = updatedModule;
             }
             deferred.resolve(updatedModule);
         };
@@ -1022,7 +1038,8 @@ export abstract class Component implements IComponent {
         this.systemName = componentMetadata.systemName;
         this.projectCode = componentMetadata.projectCode;
         this.categories = componentMetadata.categories;
-
+        this.archived = componentMetadata.archived || false;
+        this.vspArchived = componentMetadata.vspArchived;
     }
 
     public toJSON = ():any => {
@@ -1036,6 +1053,9 @@ export abstract class Component implements IComponent {
         temp.showMenu = undefined;
         temp.$q = undefined;
         temp.selectedCategory = undefined;
+        temp.modules = undefined
+        temp.groupInstances = undefined;
+        temp.policies = undefined;
         return temp;
     };
 }

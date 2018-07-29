@@ -1,26 +1,18 @@
 package org.openecomp.sdc.be.components.merge.instance;
 
+import fj.data.Either;
+import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.impl.ComponentsUtils;
+import org.openecomp.sdc.be.model.*;
+import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
+import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
+import org.openecomp.sdc.common.log.wrappers.Logger;
+import org.openecomp.sdc.exception.ResponseFormat;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import org.openecomp.sdc.be.components.merge.input.ComponentInputsMergeBL;
-import org.openecomp.sdc.be.dao.api.ActionStatus;
-import org.openecomp.sdc.be.impl.ComponentsUtils;
-import org.openecomp.sdc.be.model.Component;
-import org.openecomp.sdc.be.model.ComponentInstance;
-import org.openecomp.sdc.be.model.ComponentInstanceInput;
-import org.openecomp.sdc.be.model.ComponentInstanceProperty;
-import org.openecomp.sdc.be.model.ComponentParametersView;
-import org.openecomp.sdc.be.model.InputDefinition;
-import org.openecomp.sdc.be.model.User;
-import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
-import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
-import org.openecomp.sdc.exception.ResponseFormat;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import fj.data.Either;
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 
 /**
  * Created by chaya on 9/20/2017.
@@ -28,22 +20,21 @@ import fj.data.Either;
 @org.springframework.stereotype.Component("ComponentInstancePropsAndInputsMerge")
 public class ComponentInstancePropsAndInputsMerge implements ComponentInstanceMergeInterface {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ComponentInstancePropsAndInputsMerge.class);
+    private static final Logger log = Logger.getLogger(ComponentInstancePropsAndInputsMerge.class);
 
-    @Autowired
-    private ToscaOperationFacade toscaOperationFacade;
+    private final ToscaOperationFacade toscaOperationFacade;
+    private final ComponentsUtils componentsUtils;
+    private final ComponentInstancePropertiesMergeBL componentInstancePropertiesMergeBL;
+    private final ComponentInstanceInputsMergeBL resourceInstanceInputsMergeBL;
+    private final ComponentInstanceInputsRedeclareHandler instanceInputsRedeclareHandler;
 
-    @Autowired
-    private ComponentsUtils componentsUtils;
-
-    @Autowired
-    private ComponentInstancePropertiesMergeBL componentInstancePropertiesMergeBL;
-
-    @Autowired
-    private ComponentInstanceInputsMergeBL resourceInstanceInputsMergeBL;
-
-    @Autowired
-    private ComponentInputsMergeBL resourceInputsMergeBL;
+    public ComponentInstancePropsAndInputsMerge(ToscaOperationFacade toscaOperationFacade, ComponentsUtils componentsUtils, ComponentInstancePropertiesMergeBL componentInstancePropertiesMergeBL, ComponentInstanceInputsMergeBL resourceInstanceInputsMergeBL, ComponentInstanceInputsRedeclareHandler instanceInputsRedeclareHandler) {
+        this.toscaOperationFacade = toscaOperationFacade;
+        this.componentsUtils = componentsUtils;
+        this.componentInstancePropertiesMergeBL = componentInstancePropertiesMergeBL;
+        this.resourceInstanceInputsMergeBL = resourceInstanceInputsMergeBL;
+        this.instanceInputsRedeclareHandler = instanceInputsRedeclareHandler;
+    }
 
     @Override
     public void saveDataBeforeMerge(DataForMergeHolder dataHolder, Component containerComponent, ComponentInstance currentResourceInstance, Component originComponent) {
@@ -79,7 +70,7 @@ public class ComponentInstancePropsAndInputsMerge implements ComponentInstanceMe
         ActionStatus actionStatus = componentInstancePropertiesMergeBL.mergeComponentInstanceProperties(originComponentInstanceProps, originComponentsInputs, updatedComponent, instanceId);
 
         if (actionStatus != ActionStatus.OK) {
-            LOGGER.error("Failed to update component {} with merged instance properties", updatedComponent.getUniqueId(), newComponentInstancesProps);
+            log.error("Failed to update component {} with merged instance properties", updatedComponent.getUniqueId(), newComponentInstancesProps);
             return Either.right(actionStatus);
         }
         return Either.left(newComponentInstancesProps);
@@ -91,7 +82,7 @@ public class ComponentInstancePropsAndInputsMerge implements ComponentInstanceMe
         List<ComponentInstanceInput> newComponentInstancesInputs = updatedComponent.safeGetComponentInstanceInput(instanceId);
         ActionStatus actionStatus = resourceInstanceInputsMergeBL.mergeComponentInstanceInputs(originComponentInstanceInputs, originComponentsInputs, updatedComponent, instanceId);
         if (actionStatus != ActionStatus.OK) {
-            LOGGER.error("Failed to update component {} with merged instance properties", updatedComponent.getUniqueId(), newComponentInstancesInputs);
+            log.error("Failed to update component {} with merged instance properties", updatedComponent.getUniqueId(), newComponentInstancesInputs);
             return Either.right(actionStatus);
         }
         return Either.left(newComponentInstancesInputs);
@@ -100,19 +91,19 @@ public class ComponentInstancePropsAndInputsMerge implements ComponentInstanceMe
     private Either<List<InputDefinition>, ActionStatus> mergeComponentInputsIntoContainer(DataForMergeHolder dataHolder, String newContainerComponentId, String newInstanceId) {
         List<InputDefinition> origComponentInputs = dataHolder.getOrigComponentInputs();
         List<InputDefinition> inputsToAddToContainer = new ArrayList<>();
-        if (origComponentInputs != null && !origComponentInputs.isEmpty()) {
+        if (isNotEmpty(origComponentInputs)) {
             // get  instance inputs and properties after merge
             Either<Component, StorageOperationStatus> componentWithInstancesInputsAndProperties = getComponentWithInstancesInputsAndProperties(newContainerComponentId);
             if (componentWithInstancesInputsAndProperties.isRight()) {
-                LOGGER.error("Component %s was not found", newContainerComponentId);
+                log.error("Component %s was not found", newContainerComponentId);
                 return Either.right(componentsUtils.convertFromStorageResponse(componentWithInstancesInputsAndProperties.right().value()));
             }
             Component updatedContainerComponent = componentWithInstancesInputsAndProperties.left().value();
-
-            ActionStatus redeclareStatus = resourceInputsMergeBL.redeclareComponentInputsForInstance(origComponentInputs, updatedContainerComponent, newInstanceId);
+            Component currInstanceOriginType = dataHolder.getCurrInstanceNode();
+            ActionStatus redeclareStatus = instanceInputsRedeclareHandler.redeclareComponentInputsForInstance(updatedContainerComponent, newInstanceId, currInstanceOriginType, origComponentInputs);
             if (redeclareStatus != ActionStatus.OK) {
-                LOGGER.error("Failed to update component {} with merged inputs {}", newContainerComponentId, inputsToAddToContainer);
-                Either.right(redeclareStatus);
+                log.error("Failed to update component {} with merged inputs {}", newContainerComponentId, inputsToAddToContainer);
+                return Either.right(redeclareStatus);
             }
         }
         return Either.left(inputsToAddToContainer);

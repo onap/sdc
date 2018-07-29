@@ -24,5 +24,5 @@ package org.openecomp.sdc.be.model.cache.workers;
  * Created by mlando on 9/6/2016.
  */
 public interface IWorker {
-	void shutDown();
+    void shutDown();
 }

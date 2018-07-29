@@ -20,15 +20,6 @@
 
 package org.openecomp.sdc.be.listen;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.jar.Attributes;
-import java.util.jar.Manifest;
-
-import javax.servlet.ServletContext;
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
-
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.impl.DownloadArtifactLogic;
 import org.openecomp.sdc.be.impl.WebAppContextWrapper;
@@ -36,13 +27,20 @@ import org.openecomp.sdc.be.monitoring.BeMonitoringService;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;
 import org.openecomp.sdc.common.listener.AppContextListener;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.openecomp.sdc.common.log.wrappers.Logger;
+
+import javax.servlet.ServletContext;
+import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.jar.Attributes;
+import java.util.jar.Manifest;
 
 public class BEAppContextListener extends AppContextListener implements ServletContextListener {
 
     private static final String MANIFEST_FILE_NAME = "/META-INF/MANIFEST.MF";
-    private static final Logger log = LoggerFactory.getLogger(BEAppContextListener.class);
+    private static final Logger log = Logger.getLogger(BEAppContextListener.class);
 
     public void contextInitialized(ServletContextEvent context) {
 

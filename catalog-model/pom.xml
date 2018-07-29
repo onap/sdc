@@ -1,5 +1,5 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
 
@@ -20,7 +20,7 @@
 			<version>${project.version}</version>
 			<scope>provided</scope>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.openecomp.sdc.be</groupId>
 			<artifactId>common-be</artifactId>
@@ -31,14 +31,14 @@
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
-            <version>${logback.version}</version>
+			<version>${logback.version}</version>
 			<scope>provided</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-core</artifactId>
-            <version>${logback.version}</version>
+			<version>${logback.version}</version>
 			<scope>provided</scope>
 		</dependency>
 
@@ -119,7 +119,7 @@
 
 		<dependency>
 			<groupId>org.onap.sdc.sdc-titan-cassandra</groupId>
-  			<artifactId>sdc-titan-cassandra</artifactId>
+			<artifactId>sdc-titan-cassandra</artifactId>
 			<version>${sdc.titan.version}</version>
 			<scope>provided</scope>
 			<exclusions>
@@ -142,14 +142,14 @@
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
 			<artifactId>httpclient</artifactId>
-            <version>${httpclient.version}</version>
+			<version>${httpclient.version}</version>
 			<scope>provided</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
 			<artifactId>httpcore</artifactId>
-            <version>${httpcore.version}</version>
+			<version>${httpcore.version}</version>
 			<scope>provided</scope>
 		</dependency>
 
@@ -234,19 +234,19 @@
 			<version>${commons-jci-core.version}</version>
 			<scope>test</scope>
 		</dependency>
-        <dependency>
-            <groupId>org.powermock</groupId>
-            <artifactId>powermock-module-junit4</artifactId>
-            <version>1.7.0RC4</version>
-            <scope>test</scope>
-        </dependency>
+		<dependency>
+			<groupId>org.powermock</groupId>
+			<artifactId>powermock-module-junit4</artifactId>
+			<version>1.7.0RC4</version>
+			<scope>test</scope>
+		</dependency>
 		<dependency>
 			<groupId>org.powermock</groupId>
 			<artifactId>powermock-api-mockito-common</artifactId>
 			<version>1.6.5</version>
 			<scope>test</scope>
 		</dependency>
-    </dependencies>
+	</dependencies>
 	<build>
 		<plugins>
 			<plugin>

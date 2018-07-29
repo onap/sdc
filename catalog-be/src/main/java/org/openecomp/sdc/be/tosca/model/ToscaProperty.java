@@ -28,6 +28,16 @@ public class ToscaProperty {
     private String description;
     private Boolean required;
     private EntrySchema entry_schema;
+
+    public ToscaProperty(ToscaProperty toscaProperty) {
+        this.type = toscaProperty.type;
+        this._defaultp_ = toscaProperty._defaultp_;
+        this.description = toscaProperty.description;
+        this.required = toscaProperty.required;
+        this.entry_schema = toscaProperty.entry_schema;
+        this.status = toscaProperty.status;
+    }
+
     private String status;
 
     public EntrySchema getEntry_schema() {

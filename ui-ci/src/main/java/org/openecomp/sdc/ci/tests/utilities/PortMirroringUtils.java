@@ -1,12 +1,10 @@
 package org.openecomp.sdc.ci.tests.utilities;
 
 import com.aventstack.extentreports.Status;
-import com.clearspring.analytics.util.Pair;
 import fj.data.Either;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.model.*;
 import org.openecomp.sdc.ci.tests.datatypes.*;
-import org.openecomp.sdc.ci.tests.datatypes.enums.CircleSize;
 import org.openecomp.sdc.ci.tests.datatypes.enums.LifeCycleStatesEnum;
 import org.openecomp.sdc.ci.tests.datatypes.enums.ResourceCategoryEnum;
 import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
@@ -16,10 +14,10 @@ import org.openecomp.sdc.ci.tests.pages.CompositionPage;
 import org.openecomp.sdc.ci.tests.pages.ServiceGeneralPage;
 import org.openecomp.sdc.ci.tests.utils.general.*;
 import org.openecomp.sdc.ci.tests.utils.general.FileHandling;
-import org.openecomp.sdc.ci.tests.utils.general.OnboardingUtillViaApis;
 import org.openecomp.sdc.ci.tests.utils.rest.PropertyRestUtils;
 
 import java.util.List;
+import java.util.Map;
 
 public class PortMirroringUtils {
 
@@ -31,9 +29,8 @@ public class PortMirroringUtils {
         SetupCDTest.getExtendTest().log(Status.INFO, String.format("Creating Vendor Software License (VLM): %s v1.0", amdocsLicenseMembers.getVendorLicenseName()));
         ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource();
         SetupCDTest.getExtendTest().log(Status.INFO, String.format("Creating Vendor Software Product (VSP): %s v1.0 from heat file: %s ", resourceReqDetails.getName(), vnfFile));
-        Pair<String, VendorSoftwareProductObject> createVendorSoftwareProduct = VendorSoftwareProductRestUtils.createVendorSoftwareProduct(resourceReqDetails, vnfFile, filePath, sdncDesignerDetails1, amdocsLicenseMembers);
+        VendorSoftwareProductObject vendorSoftwareProductObject = VendorSoftwareProductRestUtils.createVendorSoftwareProduct(resourceReqDetails, vnfFile, filePath, sdncDesignerDetails1, amdocsLicenseMembers);
 //        VendorSoftwareProductObject vendorSoftwareProductObject = OnboardViaApis.fillVendorSoftwareProductObjectWithMetaData(vnfFile, createVendorSoftwareProduct);
-        VendorSoftwareProductObject vendorSoftwareProductObject = createVendorSoftwareProduct.right;
 //		2. Create VF, certify - v1.0 is created
         resourceReqDetails = org.openecomp.sdc.ci.tests.utils.general.OnboardingUtillViaApis.prepareOnboardedResourceDetailsBeforeCreate(resourceReqDetails, vendorSoftwareProductObject);
         Resource resource = OnboardingUtillViaApis.createResourceFromVSP(resourceReqDetails);
@@ -79,15 +76,12 @@ public class PortMirroringUtils {
         return serviceProxyInstanceName;
     }
 
-    public static PortMirrioringConfigurationObject createPortMirriongConfigurationStructure() throws Throwable {
+    public static PortMirrioringConfigurationObject createPortMirriongConfigurationStructure(boolean isCapPropAssign) throws Throwable {
 
         //Using API onboard and certify 2 zip files Source: vmmme and Collector: Vprobe
         String filePath = FileHandling.getPortMirroringRepositoryPath();
         ServiceContainer serviceContainerVmme_Source = PortMirroringUtils.createServiceFromHeatFile(filePath, PortMirroringEnum.VMME_ZIP.getValue());
         ServiceContainer serviceContainerVprobe_Collector = PortMirroringUtils.createServiceFromHeatFile(filePath, PortMirroringEnum.VPROBE_ZIP.getValue());
-
-//        String vmmeSourceName = "ciServiceb560327d162f";
-//        String vprobeSourceName = "ciService3d9933d31791";
 
         // create service
         ServiceReqDetails serviceReqDetails = ElementFactory.getDefaultService();
@@ -105,10 +99,8 @@ public class PortMirroringUtils {
         ServiceGeneralPage.getLeftMenu().moveToCompositionScreen();
         CanvasManager canvasManager = CanvasManager.getCanvasManager();
 
-        CompositionPage.searchForElement(vmmeSourceName);
         CanvasElement serviceElementVmmeSourceName = canvasManager.createElementOnCanvas(vmmeSourceName);
 
-        CompositionPage.searchForElement(vprobeSourceName);
         CanvasElement serviceElementVprobeCollector = canvasManager.createElementOnCanvas(vprobeSourceName);
 
         CompositionPage.searchForElement(PortMirroringEnum.PMC_ELEMENT_IN_PALLETE.getValue());
@@ -118,13 +110,24 @@ public class PortMirroringUtils {
                 PortMirroringEnum.PM_REQ_TYPE.getValue(), PortMirroringEnum.PMC_SOURCE_CAP.getValue());
         ConnectionWizardPopUpObject connectionWizardPopUpObjectVProbe = new ConnectionWizardPopUpObject("", "",
                 PortMirroringEnum.PM_REQ_TYPE.getValue(), PortMirroringEnum.PMC_COLLECTOR_CAP.getValue());
+        Map<String, String> capPropValues1 = null;
 
-        canvasManager.linkElementsAndSelectCapReqTypeAndCapReqName(serviceElementVmmeSourceName, CircleSize.SERVICE, portMirroringConfigurationElement, CircleSize.NORMATIVE, connectionWizardPopUpObjectVMME);
-        canvasManager.linkElementsAndSelectCapReqTypeAndCapReqName(serviceElementVprobeCollector, CircleSize.SERVICE, portMirroringConfigurationElement, CircleSize.NORMATIVE, connectionWizardPopUpObjectVProbe);
+        if(isCapPropAssign){
+           capPropValues1 = canvasManager.linkElementsWithCapPropAssignment(serviceElementVmmeSourceName, portMirroringConfigurationElement, connectionWizardPopUpObjectVMME);
+           GeneralUIUtils.waitForLoader(2000);
+           canvasManager.linkElementsWithCapPropAssignment(serviceElementVprobeCollector, portMirroringConfigurationElement, connectionWizardPopUpObjectVProbe);}
+           else {
+               canvasManager.linkElementsAndSelectCapReqTypeAndCapReqName(serviceElementVmmeSourceName, portMirroringConfigurationElement, connectionWizardPopUpObjectVMME);
+               canvasManager.linkElementsAndSelectCapReqTypeAndCapReqName(serviceElementVprobeCollector, portMirroringConfigurationElement, connectionWizardPopUpObjectVProbe);
+        }
+
 
         PortMirrioringConfigurationObject portMirrioringConfigurationObject = new PortMirrioringConfigurationObject(serviceReqDetails, vmmeSourceName,
                 vprobeSourceName, canvasManager, serviceElementVmmeSourceName, serviceElementVprobeCollector, service,
                 portMirroringConfigurationElement, serviceContainerVmme_Source.getService(), serviceContainerVprobe_Collector.getService());
+
+        if(capPropValues1!=null)
+          portMirrioringConfigurationObject.setCapPropValues(capPropValues1);
 
         return portMirrioringConfigurationObject;
     }

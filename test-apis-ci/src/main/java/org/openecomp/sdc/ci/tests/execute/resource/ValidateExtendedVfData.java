@@ -20,11 +20,7 @@
 
 package org.openecomp.sdc.ci.tests.execute.resource;
 
-import static org.testng.AssertJUnit.assertNotNull;
-import static org.testng.AssertJUnit.assertTrue;
-
-import java.util.List;
-
+import fj.data.Either;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
@@ -36,12 +32,7 @@ import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.ci.tests.api.ComponentBaseTest;
 import org.openecomp.sdc.ci.tests.datatypes.ResourceReqDetails;
-import org.openecomp.sdc.ci.tests.datatypes.enums.ArtifactTypeEnum;
-import org.openecomp.sdc.ci.tests.datatypes.enums.AssocType;
-import org.openecomp.sdc.ci.tests.datatypes.enums.LifeCycleStatesEnum;
-import org.openecomp.sdc.ci.tests.datatypes.enums.NormativeTypesEnum;
-import org.openecomp.sdc.ci.tests.datatypes.enums.ResourceCategoryEnum;
-import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
+import org.openecomp.sdc.ci.tests.datatypes.enums.*;
 import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
 import org.openecomp.sdc.ci.tests.utils.general.AtomicOperationUtils;
 import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
@@ -51,7 +42,10 @@ import org.openecomp.sdc.ci.tests.utils.rest.ResponseParser;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import fj.data.Either;
+import java.util.List;
+
+import static org.testng.AssertJUnit.assertNotNull;
+import static org.testng.AssertJUnit.assertTrue;
 
 public class ValidateExtendedVfData extends ComponentBaseTest {
 
@@ -217,7 +211,7 @@ public class ValidateExtendedVfData extends ComponentBaseTest {
 		callAllCheckMethods(resource);
 	}
 
-	@Test
+	/*@Test
 	public void lifeCycleRequestForCertification() throws Exception {
 
 		RestResponse response = LifecycleRestUtils.changeComponentState(resourceDetailsVF, sdncUserDetails,
@@ -232,7 +226,7 @@ public class ValidateExtendedVfData extends ComponentBaseTest {
 
 		Resource resource = ResponseParser.convertResourceResponseToJavaObject(response.getResponse());
 		callAllCheckMethods(resource);
-	}
+	}*/
 
 	@Test
 	public void lifeCycleCertificationRequest() throws Exception {

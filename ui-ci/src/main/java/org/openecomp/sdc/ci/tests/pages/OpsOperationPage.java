@@ -20,8 +20,7 @@
 
 package org.openecomp.sdc.ci.tests.pages;
 
-import java.util.List;
-
+import com.aventstack.extentreports.Status;
 import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum;
 import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum.StepsEnum;
 import org.openecomp.sdc.ci.tests.execute.setup.SetupCDTest;
@@ -31,7 +30,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import com.aventstack.extentreports.Status;
+import java.util.List;
 
 public class OpsOperationPage {
 

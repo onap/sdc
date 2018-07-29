@@ -47,8 +47,9 @@ import org.testng.SkipException;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-public class AssetLifeCycle extends ComponentBaseTest {
+import java.io.FileNotFoundException;
 
+public class AssetLifeCycle extends ComponentBaseTest {
 	private static Logger log = LoggerFactory.getLogger(CRUDExternalAPI.class.getName());
 	protected static final String UPLOAD_ARTIFACT_PAYLOAD = "UHVUVFktVXNlci1LZXktRmlsZS0yOiBzc2gtcnNhDQpFbmNyeXB0aW9uOiBhZXMyNTYtY2JjDQpDb21tZW5wOA0K";
 	protected static final String UPLOAD_ARTIFACT_NAME = "TLV_prv.ppk";
@@ -67,34 +68,33 @@ public class AssetLifeCycle extends ComponentBaseTest {
 	protected User sdncUserDetails;
 	protected ServiceReqDetails serviceDetails;
 	
-	public static final int STATUS_CODE_SUCCESS = 200;
-	public static final int STATUS_CODE_CREATED = 201;
-	public static final int STATUS_CODE_DELETE = 204;
-	public static final int STATUS_CODE_NOT_FOUND = 404;
-	public static final int STATUS_CODE_SUCCESS_NO_CONTENT = 204;
-	public static final int STATUS_CODE_SUCCESS_DELETE = 204;
-	public static final int STATUS_CODE_INVALID_CONTENT = 400;
-	public static final int STATUS_CODE_MISSING_DATA = 400;
-	public static final int STATUS_CODE_MISSING_INFORMATION = 403;
-	public static final int STATUS_CODE_RESTRICTED_ACCESS = 403;
-	public static final int STATUS_CODE_ALREADY_EXISTS = 409;
-	public static final int STATUS_CODE_RESTRICTED_OPERATION = 409;
-	public static final int STATUS_CODE_COMPONENT_NAME_EXCEEDS_LIMIT = 400;
-	public static final int STATUS_CODE_MISSING_COMPONENT_NAME = 400;
-	public static final int STATUS_CODE_UNSUPPORTED_ERROR = 400;
-	public static final int STATUS_CODE_IMPORT_SUCCESS = 201;
-	public static final int STATUS_CODE_UPDATE_SUCCESS = 200;
-	public static final int RESTRICTED_OPERATION = 409;
-	public static final int STATUS_CODE_GET_SUCCESS = 200;
-	public static final int COMPONENT_IN_CHECKOUT_STATE = 403;
-	public static final int COMPONENT_ALREADY_CHECKED_IN = 409;
-	public static final int COMPONENT_NOT_READY_FOR_CERTIFICATION = 403;
-	public static final int COMPONENT_SENT_FOR_CERTIFICATION = 403;
-	public static final int COMPONENT_IN_CERT_IN_PROGRESS_STATE = 403;
-	public static final int COMPONENT_ALREADY_CERTIFIED = 403; 
+	public static final int STATUS_CODE_SUCCESS = getResponseCodeByAction(ActionStatus.OK);
+	public static final int STATUS_CODE_CREATED = getResponseCodeByAction(ActionStatus.CREATED);
+	public static final int STATUS_CODE_NOT_FOUND = getResponseCodeByAction(ActionStatus.RESOURCE_NOT_FOUND);
+	public static final int STATUS_CODE_INVALID_CONTENT = getResponseCodeByAction(ActionStatus.INVALID_CONTENT);
+	public static final int STATUS_CODE_MISSING_INFORMATION = getResponseCodeByAction(ActionStatus.MISSING_INFORMATION);
+	public static final int STATUS_CODE_ALREADY_EXISTS = getResponseCodeByAction(ActionStatus.RESOURCE_ALREADY_EXISTS);
+	public static final Integer RESTRICTED_OPERATION = getResponseCodeByAction(ActionStatus.RESTRICTED_OPERATION);
+	public static final int COMPONENT_IN_CHECKOUT_STATE = getResponseCodeByAction(ActionStatus.COMPONENT_IN_CHECKOUT_STATE);
+	public static final int COMPONENT_ALREADY_CHECKED_IN = getResponseCodeByAction(ActionStatus.COMPONENT_ALREADY_CHECKED_IN);
+	public static final int COMPONENT_NOT_READY_FOR_CERTIFICATION = getResponseCodeByAction(ActionStatus.COMPONENT_NOT_READY_FOR_CERTIFICATION);
+	public static final int COMPONENT_SENT_FOR_CERTIFICATION = getResponseCodeByAction(ActionStatus.COMPONENT_SENT_FOR_CERTIFICATION);
+	public static final int COMPONENT_IN_CERT_IN_PROGRESS_STATE = getResponseCodeByAction(ActionStatus.COMPONENT_IN_CERT_IN_PROGRESS_STATE);
+	public static final int COMPONENT_ALREADY_CERTIFIED = getResponseCodeByAction(ActionStatus.COMPONENT_ALREADY_CERTIFIED);
 	
 	
-	
+
+	public static int getResponseCodeByAction(ActionStatus actionStatus ){
+		ErrorInfo errorInfo;
+		try {
+			errorInfo = ErrorValidationUtils.parseErrorConfigYaml(actionStatus.name());
+			return errorInfo.getCode();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		return 100500;
+	}
+
 	@Rule 
 	public static TestName name = new TestName();
 
@@ -196,10 +196,10 @@ public class AssetLifeCycle extends ComponentBaseTest {
 			{AssetTypeEnum.RESOURCES, LifeCycleStatesEnum.CHECKOUT},
 			
 			{AssetTypeEnum.SERVICES, LifeCycleStatesEnum.CERTIFICATIONREQUEST},
-			{AssetTypeEnum.RESOURCES, LifeCycleStatesEnum.CERTIFICATIONREQUEST},
+			/*{AssetTypeEnum.RESOURCES, LifeCycleStatesEnum.CERTIFICATIONREQUEST},*/
 			
 			{AssetTypeEnum.SERVICES, LifeCycleStatesEnum.STARTCERTIFICATION},
-			{AssetTypeEnum.RESOURCES, LifeCycleStatesEnum.STARTCERTIFICATION},
+			/*{AssetTypeEnum.RESOURCES, LifeCycleStatesEnum.STARTCERTIFICATION},*/
 			};
 	}
 	
@@ -230,10 +230,10 @@ public class AssetLifeCycle extends ComponentBaseTest {
 				restResponse = LifecycleRestUtils.checkInResource(assetUUID, defaultUser);
 			} else if(lifeCycleStatesEnum.equals(LifeCycleStatesEnum.CHECKOUT)) {
 				restResponse = LifecycleRestUtils.checkOutResource(assetUUID, defaultUser);
-			} else if(lifeCycleStatesEnum.equals(LifeCycleStatesEnum.CERTIFICATIONREQUEST)) {
+			/*} else if(lifeCycleStatesEnum.equals(LifeCycleStatesEnum.CERTIFICATIONREQUEST)) {
 				restResponse = LifecycleRestUtils.certificationRequestResource(assetUUID, defaultUser);
 			} else if(lifeCycleStatesEnum.equals(LifeCycleStatesEnum.STARTCERTIFICATION)) {
-				restResponse = LifecycleRestUtils.startTestingResource(assetUUID, defaultUser);
+				restResponse = LifecycleRestUtils.startTestingResource(assetUUID, defaultUser);*/
 			}
 			
 			errorInfo = ErrorValidationUtils.parseErrorConfigYaml(ActionStatus.RESOURCE_NOT_FOUND.name());
@@ -241,16 +241,6 @@ public class AssetLifeCycle extends ComponentBaseTest {
 		}
 		Assert.assertEquals(restResponse.getErrorCode(), (Integer)STATUS_CODE_NOT_FOUND, "Asset found.");
 		
-	/*	// auditing verification
-		AuditingActionEnum action = AuditingActionEnum.CHANGE_LIFECYCLE_BY_API;
-		Map <AuditingFieldsKeysEnum, String> body = new HashMap<>();
-		body.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_URL, String.format("/sdc/v1/catalog/%s/%s/lifecycleState/%s", assetTypeEnum.getValue().toLowerCase(), assetUUID, lifeCycleStatesEnum.getState()));
-		ExpectedResourceAuditJavaObject expectedResourceAuditJavaObject = ElementFactory.getDefaultInvalidChangeAssetLifeCycleExternalAPI(assetUUID, defaultUser, lifeCycleStatesEnum, assetTypeEnum);	
-		
-		List<String> variables = asList(assetUUID);
-		expectedResourceAuditJavaObject.setDesc(AuditValidationUtils.buildAuditDescription(errorInfo, variables));
-		
-		AuditValidationUtils.validateAuditExternalChangeAssetLifeCycle(expectedResourceAuditJavaObject, action.getName(), body);*/
 	}
 	
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -272,21 +262,9 @@ public class AssetLifeCycle extends ComponentBaseTest {
 	@Test(dataProvider="invalidUserCheckinForCheckedOutService")
 	public void invalidUserCheckinForCheckedOutService(User defaultUser) throws Exception {
 		Component resourceDetails = AtomicOperationUtils.createDefaultService(UserRoleEnum.DESIGNER, true).left().value();
-
 		RestResponse restResponse = LifecycleRestUtils.checkInService(resourceDetails.getUUID(), defaultUser);
-		Assert.assertEquals(restResponse.getErrorCode(), (Integer)RESTRICTED_OPERATION, "Expected for restricted operation.");
+		Assert.assertEquals(restResponse.getErrorCode(), RESTRICTED_OPERATION, "Expected for restricted operation.");
 		
-		/*// auditing verification
-		AuditingActionEnum action = AuditingActionEnum.CHANGE_LIFECYCLE_BY_API;
-		Map <AuditingFieldsKeysEnum, String> body = new HashMap<>();
-		body.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_NAME, resourceDetails.getName());
-		ExpectedResourceAuditJavaObject expectedResourceAuditJavaObject = ElementFactory.getDefaultChangeAssetLifeCycleExternalAPI(resourceDetails, defaultUser, LifeCycleStatesEnum.CHECKIN, AssetTypeEnum.SERVICES);	
-		expectedResourceAuditJavaObject.setCurrState(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT.toString());
-		expectedResourceAuditJavaObject.setStatus("409");
-		ErrorInfo errorInfo = ErrorValidationUtils.parseErrorConfigYaml(ActionStatus.RESTRICTED_OPERATION.name());
-		List<String> variables = asList("");
-		expectedResourceAuditJavaObject.setDesc(AuditValidationUtils.buildAuditDescription(errorInfo, variables));
-		AuditValidationUtils.validateAuditExternalChangeAssetLifeCycle(expectedResourceAuditJavaObject, action.getName(), body);*/
 	}
 	
 	@DataProvider(name="invalidUserCheckinForCheckedInService") 
@@ -309,22 +287,9 @@ public class AssetLifeCycle extends ComponentBaseTest {
 		Either<Service, RestResponse> createdComponent = AtomicOperationUtils.createDefaultService(UserRoleEnum.DESIGNER, true);
 		resourceDetails = createdComponent.left().value();
 		resourceDetails = AtomicOperationUtils.changeComponentState(resourceDetails, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
-		
 		RestResponse restResponse = LifecycleRestUtils.checkInService(resourceDetails.getUUID(), defaultUser);
-		Assert.assertEquals(restResponse.getErrorCode(), (Integer)RESTRICTED_OPERATION, "Expected for restricted operation.");
+		Assert.assertEquals(restResponse.getErrorCode(), RESTRICTED_OPERATION, "Expected for restricted operation.");
 		
-		/*// auditing verification
-		AuditingActionEnum action = AuditingActionEnum.CHANGE_LIFECYCLE_BY_API;
-		Map <AuditingFieldsKeysEnum, String> body = new HashMap<>();
-		body.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_NAME, resourceDetails.getName());
-		ExpectedResourceAuditJavaObject expectedResourceAuditJavaObject = ElementFactory.getDefaultChangeAssetLifeCycleExternalAPI(resourceDetails, defaultUser, LifeCycleStatesEnum.CHECKIN, AssetTypeEnum.SERVICES);	
-		expectedResourceAuditJavaObject.setCurrState(LifecycleStateEnum.NOT_CERTIFIED_CHECKIN.toString());
-		expectedResourceAuditJavaObject.setPrevState(LifecycleStateEnum.NOT_CERTIFIED_CHECKIN.toString());
-		expectedResourceAuditJavaObject.setStatus("409");
-		ErrorInfo errorInfo = ErrorValidationUtils.parseErrorConfigYaml(ActionStatus.RESTRICTED_OPERATION.name());
-		List<String> variables = asList("");
-		expectedResourceAuditJavaObject.setDesc(AuditValidationUtils.buildAuditDescription(errorInfo, variables));
-		AuditValidationUtils.validateAuditExternalChangeAssetLifeCycle(expectedResourceAuditJavaObject, action.getName(), body);*/
 	}
 	
 	@DataProvider(name="invalidUserCheckoutForCheckedOutService") 
@@ -346,19 +311,8 @@ public class AssetLifeCycle extends ComponentBaseTest {
 
 		Component resourceDetails = AtomicOperationUtils.createDefaultService(UserRoleEnum.DESIGNER, true).left().value();
 		RestResponse restResponse = LifecycleRestUtils.checkOutService(resourceDetails.getUUID(), defaultUser);
-		Assert.assertEquals(restResponse.getErrorCode(), (Integer)RESTRICTED_OPERATION, "Expected for restricted operation.");
+		Assert.assertEquals(restResponse.getErrorCode(), RESTRICTED_OPERATION, "Expected for restricted operation.");
 		
-	/*	// auditing verification
-		AuditingActionEnum action = AuditingActionEnum.CHANGE_LIFECYCLE_BY_API;
-		Map <AuditingFieldsKeysEnum, String> body = new HashMap<>();
-		body.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_NAME, resourceDetails.getName());
-		ExpectedResourceAuditJavaObject expectedResourceAuditJavaObject = ElementFactory.getDefaultChangeAssetLifeCycleExternalAPI(resourceDetails, defaultUser, LifeCycleStatesEnum.CHECKOUT, AssetTypeEnum.SERVICES);	
-		expectedResourceAuditJavaObject.setCurrState(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT.toString());
-		expectedResourceAuditJavaObject.setStatus("409");
-		ErrorInfo errorInfo = ErrorValidationUtils.parseErrorConfigYaml(ActionStatus.RESTRICTED_OPERATION.name());
-		List<String> variables = asList("");
-		expectedResourceAuditJavaObject.setDesc(AuditValidationUtils.buildAuditDescription(errorInfo, variables));
-		AuditValidationUtils.validateAuditExternalChangeAssetLifeCycle(expectedResourceAuditJavaObject, action.getName(), body);*/
 	}
 	
 	@DataProvider(name="invalidUserCheckoutForCheckedInService") 
@@ -379,22 +333,9 @@ public class AssetLifeCycle extends ComponentBaseTest {
 	public void invalidUserCheckoutForCheckedInService(User defaultUser) throws Exception {
 		Component resourceDetails = AtomicOperationUtils.createDefaultService(UserRoleEnum.DESIGNER, true).left().value();
 		resourceDetails = AtomicOperationUtils.changeComponentState(resourceDetails, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
-		
 		RestResponse restResponse = LifecycleRestUtils.checkOutService(resourceDetails.getUUID(), defaultUser);
-		Assert.assertEquals(restResponse.getErrorCode(), (Integer)RESTRICTED_OPERATION, "Expected for restricted operation.");
+		Assert.assertEquals(restResponse.getErrorCode(), RESTRICTED_OPERATION, "Expected for restricted operation.");
 		
-	/*	// auditing verification
-		AuditingActionEnum action = AuditingActionEnum.CHANGE_LIFECYCLE_BY_API;
-		Map <AuditingFieldsKeysEnum, String> body = new HashMap<>();
-		body.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_NAME, resourceDetails.getName());
-		ExpectedResourceAuditJavaObject expectedResourceAuditJavaObject = ElementFactory.getDefaultChangeAssetLifeCycleExternalAPI(resourceDetails, defaultUser, LifeCycleStatesEnum.CHECKOUT, AssetTypeEnum.SERVICES);	
-		expectedResourceAuditJavaObject.setCurrState(LifecycleStateEnum.NOT_CERTIFIED_CHECKIN.toString());
-		expectedResourceAuditJavaObject.setPrevState(LifecycleStateEnum.NOT_CERTIFIED_CHECKIN.toString());
-		expectedResourceAuditJavaObject.setStatus("409");
-		ErrorInfo errorInfo = ErrorValidationUtils.parseErrorConfigYaml(ActionStatus.RESTRICTED_OPERATION.name());
-		List<String> variables = asList("");
-		expectedResourceAuditJavaObject.setDesc(AuditValidationUtils.buildAuditDescription(errorInfo, variables));
-		AuditValidationUtils.validateAuditExternalChangeAssetLifeCycle(expectedResourceAuditJavaObject, action.getName(), body);*/
 	}
 	
 	@DataProvider(name="invalidUserCheckinForCheckedOutResource") 
@@ -416,19 +357,8 @@ public class AssetLifeCycle extends ComponentBaseTest {
 
 		Component resourceDetails = AtomicOperationUtils.createResourcesByTypeNormTypeAndCatregory(ResourceTypeEnum.VF, NormativeTypesEnum.ROOT, ResourceCategoryEnum.GENERIC_INFRASTRUCTURE, UserRoleEnum.DESIGNER, true).left().value();
 		RestResponse restResponse = LifecycleRestUtils.checkInResource(resourceDetails.getUUID(), defaultUser);
-		Assert.assertEquals(restResponse.getErrorCode(), (Integer)RESTRICTED_OPERATION, "Expected for restricted operation.");
+		Assert.assertEquals(restResponse.getErrorCode(), RESTRICTED_OPERATION, "Expected for restricted operation.");
 		
-		/*// auditing verification
-		AuditingActionEnum action = AuditingActionEnum.CHANGE_LIFECYCLE_BY_API;
-		Map <AuditingFieldsKeysEnum, String> body = new HashMap<>();
-		body.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_NAME, resourceDetails.getName());
-		ExpectedResourceAuditJavaObject expectedResourceAuditJavaObject = ElementFactory.getDefaultChangeAssetLifeCycleExternalAPI(resourceDetails, defaultUser, LifeCycleStatesEnum.CHECKIN, AssetTypeEnum.RESOURCES);	
-		expectedResourceAuditJavaObject.setCurrState(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT.toString());
-		expectedResourceAuditJavaObject.setStatus("409");
-		ErrorInfo errorInfo = ErrorValidationUtils.parseErrorConfigYaml(ActionStatus.RESTRICTED_OPERATION.name());
-		List<String> variables = asList("");
-		expectedResourceAuditJavaObject.setDesc(AuditValidationUtils.buildAuditDescription(errorInfo, variables));
-		AuditValidationUtils.validateAuditExternalChangeAssetLifeCycle(expectedResourceAuditJavaObject, action.getName(), body);*/
 	}
 	
 	@DataProvider(name="invalidUserCheckinForCheckedInResource") 
@@ -453,20 +383,7 @@ public class AssetLifeCycle extends ComponentBaseTest {
 		resourceDetails = AtomicOperationUtils.changeComponentState(resourceDetails, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
 		
 		RestResponse restResponse = LifecycleRestUtils.checkInResource(resourceDetails.getUUID(), defaultUser);
-		Assert.assertEquals(restResponse.getErrorCode(), (Integer)RESTRICTED_OPERATION, "Expected for restricted operation.");
-		
-		/*// auditing verification
-		AuditingActionEnum action = AuditingActionEnum.CHANGE_LIFECYCLE_BY_API;
-		Map <AuditingFieldsKeysEnum, String> body = new HashMap<>();
-		body.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_NAME, resourceDetails.getName());
-		ExpectedResourceAuditJavaObject expectedResourceAuditJavaObject = ElementFactory.getDefaultChangeAssetLifeCycleExternalAPI(resourceDetails, defaultUser, LifeCycleStatesEnum.CHECKIN, AssetTypeEnum.RESOURCES);	
-		expectedResourceAuditJavaObject.setCurrState(LifecycleStateEnum.NOT_CERTIFIED_CHECKIN.toString());
-		expectedResourceAuditJavaObject.setPrevState(LifecycleStateEnum.NOT_CERTIFIED_CHECKIN.toString());
-		expectedResourceAuditJavaObject.setStatus("409");
-		ErrorInfo errorInfo = ErrorValidationUtils.parseErrorConfigYaml(ActionStatus.RESTRICTED_OPERATION.name());
-		List<String> variables = asList("");
-		expectedResourceAuditJavaObject.setDesc(AuditValidationUtils.buildAuditDescription(errorInfo, variables));
-		AuditValidationUtils.validateAuditExternalChangeAssetLifeCycle(expectedResourceAuditJavaObject, action.getName(), body);*/
+		Assert.assertEquals(restResponse.getErrorCode(), RESTRICTED_OPERATION, "Expected for restricted operation.");
 	}
 	
 	@DataProvider(name="invalidUserCheckoutForCheckedOutResource") 
@@ -488,19 +405,8 @@ public class AssetLifeCycle extends ComponentBaseTest {
 
 		Component resourceDetails = AtomicOperationUtils.createResourcesByTypeNormTypeAndCatregory(ResourceTypeEnum.VF, NormativeTypesEnum.ROOT, ResourceCategoryEnum.GENERIC_INFRASTRUCTURE, UserRoleEnum.DESIGNER, true).left().value();
 		RestResponse restResponse = LifecycleRestUtils.checkOutResource(resourceDetails.getUUID(), defaultUser);
-		Assert.assertEquals(restResponse.getErrorCode(), (Integer)RESTRICTED_OPERATION, "Expected for restricted operation.");
+		Assert.assertEquals(restResponse.getErrorCode(), RESTRICTED_OPERATION, "Expected for restricted operation.");
 		
-		/*// auditing verification
-		AuditingActionEnum action = AuditingActionEnum.CHANGE_LIFECYCLE_BY_API;
-		Map <AuditingFieldsKeysEnum, String> body = new HashMap<>();
-		body.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_NAME, resourceDetails.getName());
-		ExpectedResourceAuditJavaObject expectedResourceAuditJavaObject = ElementFactory.getDefaultChangeAssetLifeCycleExternalAPI(resourceDetails, defaultUser, LifeCycleStatesEnum.CHECKOUT, AssetTypeEnum.RESOURCES);	
-		expectedResourceAuditJavaObject.setCurrState(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT.toString());
-		expectedResourceAuditJavaObject.setStatus("409");
-		ErrorInfo errorInfo = ErrorValidationUtils.parseErrorConfigYaml(ActionStatus.RESTRICTED_OPERATION.name());
-		List<String> variables = asList("");
-		expectedResourceAuditJavaObject.setDesc(AuditValidationUtils.buildAuditDescription(errorInfo, variables));
-		AuditValidationUtils.validateAuditExternalChangeAssetLifeCycle(expectedResourceAuditJavaObject, action.getName(), body);*/
 	}
 	
 	@DataProvider(name="invalidUserCheckoutForCheckedInResource") 
@@ -524,20 +430,8 @@ public class AssetLifeCycle extends ComponentBaseTest {
 		resourceDetails = AtomicOperationUtils.changeComponentState(resourceDetails, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
 		
 		RestResponse restResponse = LifecycleRestUtils.checkOutResource(resourceDetails.getUUID(), defaultUser);
-		Assert.assertEquals(restResponse.getErrorCode(), (Integer)RESTRICTED_OPERATION, "Expected for restricted operation.");
+		Assert.assertEquals(restResponse.getErrorCode(), RESTRICTED_OPERATION, "Expected for restricted operation.");
 		
-		/*// auditing verification
-		AuditingActionEnum action = AuditingActionEnum.CHANGE_LIFECYCLE_BY_API;
-		Map <AuditingFieldsKeysEnum, String> body = new HashMap<>();
-		body.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_NAME, resourceDetails.getName());
-		ExpectedResourceAuditJavaObject expectedResourceAuditJavaObject = ElementFactory.getDefaultChangeAssetLifeCycleExternalAPI(resourceDetails, defaultUser, LifeCycleStatesEnum.CHECKOUT, AssetTypeEnum.RESOURCES);	
-		expectedResourceAuditJavaObject.setCurrState(LifecycleStateEnum.NOT_CERTIFIED_CHECKIN.toString());
-		expectedResourceAuditJavaObject.setPrevState(LifecycleStateEnum.NOT_CERTIFIED_CHECKIN.toString());
-		expectedResourceAuditJavaObject.setStatus("409");
-		ErrorInfo errorInfo = ErrorValidationUtils.parseErrorConfigYaml(ActionStatus.RESTRICTED_OPERATION.name());
-		List<String> variables = asList("");
-		expectedResourceAuditJavaObject.setDesc(AuditValidationUtils.buildAuditDescription(errorInfo, variables));
-		AuditValidationUtils.validateAuditExternalChangeAssetLifeCycle(expectedResourceAuditJavaObject, action.getName(), body);*/
 	}
 	
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -589,91 +483,50 @@ public class AssetLifeCycle extends ComponentBaseTest {
 		
 		
 		Either<Service, RestResponse> createdComponent = AtomicOperationUtils.createDefaultService(UserRoleEnum.DESIGNER, true);
-		Component resourceDetails = createdComponent.left().value();
+		Component service = createdComponent.left().value();
 		
-		resourceDetails = AtomicOperationUtils.changeComponentState(resourceDetails, UserRoleEnum.DESIGNER, initState, true).getLeft();
+		service = AtomicOperationUtils.changeComponentState(service, UserRoleEnum.DESIGNER, initState, true).getLeft();
 		
 		RestResponse restResponse = null;
 		
 		if(targetState.equals(LifeCycleStatesEnum.CHECKOUT)) {
-			restResponse = LifecycleRestUtils.checkOutService(resourceDetails.getUUID(), user);
+			restResponse = LifecycleRestUtils.checkOutService(service.getUUID(), user);
 		} else if(targetState.equals(LifeCycleStatesEnum.CHECKIN)) {
-			restResponse = LifecycleRestUtils.checkInService(resourceDetails.getUUID(), user);
+			restResponse = LifecycleRestUtils.checkInService(service.getUUID(), user);
 		} else if(targetState.equals(LifeCycleStatesEnum.CERTIFICATIONREQUEST)) {
-			restResponse = LifecycleRestUtils.certificationRequestService(resourceDetails.getUUID(), user);
+			restResponse = LifecycleRestUtils.certificationRequestService(service.getUUID(), user);
 		} else if(targetState.equals(LifeCycleStatesEnum.STARTCERTIFICATION)) {
-			restResponse = LifecycleRestUtils.startTestingService(resourceDetails.getUUID(), user);
+			restResponse = LifecycleRestUtils.startTestingService(service.getUUID(), user);
 		} else if(targetState.equals(LifeCycleStatesEnum.CERTIFY)) {
-			restResponse = LifecycleRestUtils.certifyService(resourceDetails.getUUID(), user);
+			restResponse = LifecycleRestUtils.certifyService(service.getUUID(), user);
 		}
 		
 		Assert.assertEquals(restResponse.getErrorCode(), (Integer)errorCode, "Expected that response code will be equal.");
 		
-		/*// auditing verification
-		AuditingActionEnum action = AuditingActionEnum.CHANGE_LIFECYCLE_BY_API;
-		Map <AuditingFieldsKeysEnum, String> body = new HashMap<>();
-		body.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_NAME, resourceDetails.getName());
-		ExpectedResourceAuditJavaObject expectedResourceAuditJavaObject = ElementFactory.getDefaultChangeAssetLifeCycleExternalAPI(resourceDetails, user, targetState, AssetTypeEnum.SERVICES);	
-		if(initState.equals(LifeCycleStatesEnum.CERTIFY)) {
-			expectedResourceAuditJavaObject.setCurrVersion("1.0");
-			expectedResourceAuditJavaObject.setPrevVersion("1.0");
-		}
-		expectedResourceAuditJavaObject.setPrevState(preState.toString());
-		expectedResourceAuditJavaObject.setCurrState(currState.toString());
-		expectedResourceAuditJavaObject.setStatus(status);
-		ErrorInfo errorInfo = ErrorValidationUtils.parseErrorConfigYaml(actionStatus.name());
-		List<String> variables = null;
-		if(ActionStatus.RESTRICTED_OPERATION.equals(actionStatus)) {
-			variables = asList("");
-		} else if(ActionStatus.COMPONENT_NOT_READY_FOR_CERTIFICATION.equals(actionStatus)) {
-			variables = asList(resourceDetails.getName(), AssetTypeEnum.SERVICES.getCorrespondingComponent().toLowerCase());
-		} else {
-			if(operationUser == null) {
-				variables = asList(resourceDetails.getName(), AssetTypeEnum.SERVICES.getCorrespondingComponent().toLowerCase(), user.getFirstName(), user.getLastName(), user.getUserId());
-			} else {
-				variables = asList(resourceDetails.getName(), AssetTypeEnum.SERVICES.getCorrespondingComponent().toLowerCase(), operationUser.getFirstName(), operationUser.getLastName(), operationUser.getUserId());
-			}
-			
-		}
-		expectedResourceAuditJavaObject.setDesc(AuditValidationUtils.buildAuditDescription(errorInfo, variables));
-		AuditValidationUtils.validateAuditExternalChangeAssetLifeCycle(expectedResourceAuditJavaObject, action.getName(), body);*/
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
 	@DataProvider(name="invalidStatesForResource") 
 	public static Object[][] dataProviderInvalidStatesForResource() {
 		return new Object[][] {
 			{LifeCycleStatesEnum.CHECKIN, LifeCycleStatesEnum.CHECKIN, COMPONENT_ALREADY_CHECKED_IN, LifecycleStateEnum.NOT_CERTIFIED_CHECKIN, LifecycleStateEnum.NOT_CERTIFIED_CHECKIN, "409", ActionStatus.COMPONENT_ALREADY_CHECKED_IN, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), null},
-			{LifeCycleStatesEnum.CHECKIN, LifeCycleStatesEnum.STARTCERTIFICATION, COMPONENT_NOT_READY_FOR_CERTIFICATION, LifecycleStateEnum.NOT_CERTIFIED_CHECKIN, LifecycleStateEnum.NOT_CERTIFIED_CHECKIN, "403", ActionStatus.COMPONENT_NOT_READY_FOR_CERTIFICATION, ElementFactory.getDefaultUser(UserRoleEnum.TESTER), null},
+		/*	{LifeCycleStatesEnum.CHECKIN, LifeCycleStatesEnum.STARTCERTIFICATION, COMPONENT_NOT_READY_FOR_CERTIFICATION, LifecycleStateEnum.NOT_CERTIFIED_CHECKIN, LifecycleStateEnum.NOT_CERTIFIED_CHECKIN, "403", ActionStatus.COMPONENT_NOT_READY_FOR_CERTIFICATION, ElementFactory.getDefaultUser(UserRoleEnum.TESTER), null},*/
 			{LifeCycleStatesEnum.CHECKIN, LifeCycleStatesEnum.CERTIFY, COMPONENT_NOT_READY_FOR_CERTIFICATION, LifecycleStateEnum.NOT_CERTIFIED_CHECKIN, LifecycleStateEnum.NOT_CERTIFIED_CHECKIN, "403", ActionStatus.COMPONENT_NOT_READY_FOR_CERTIFICATION, ElementFactory.getDefaultUser(UserRoleEnum.TESTER), null},
 			
 			{LifeCycleStatesEnum.CHECKOUT, LifeCycleStatesEnum.CHECKOUT, COMPONENT_IN_CHECKOUT_STATE, LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT, LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT, "403", ActionStatus.COMPONENT_IN_CHECKOUT_STATE, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), null},
-			{LifeCycleStatesEnum.CHECKOUT, LifeCycleStatesEnum.STARTCERTIFICATION, COMPONENT_NOT_READY_FOR_CERTIFICATION, LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT, LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT, "403", ActionStatus.COMPONENT_NOT_READY_FOR_CERTIFICATION, ElementFactory.getDefaultUser(UserRoleEnum.TESTER), null},
+		/*	{LifeCycleStatesEnum.CHECKOUT, LifeCycleStatesEnum.STARTCERTIFICATION, COMPONENT_NOT_READY_FOR_CERTIFICATION, LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT, LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT, "403", ActionStatus.COMPONENT_NOT_READY_FOR_CERTIFICATION, ElementFactory.getDefaultUser(UserRoleEnum.TESTER), null},*/
 			{LifeCycleStatesEnum.CHECKOUT, LifeCycleStatesEnum.CERTIFY, COMPONENT_NOT_READY_FOR_CERTIFICATION, LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT, LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT, "403", ActionStatus.COMPONENT_NOT_READY_FOR_CERTIFICATION, ElementFactory.getDefaultUser(UserRoleEnum.TESTER), null},
 			
-			{LifeCycleStatesEnum.CERTIFICATIONREQUEST, LifeCycleStatesEnum.CERTIFICATIONREQUEST, COMPONENT_SENT_FOR_CERTIFICATION, LifecycleStateEnum.READY_FOR_CERTIFICATION, LifecycleStateEnum.READY_FOR_CERTIFICATION, "403", ActionStatus.COMPONENT_SENT_FOR_CERTIFICATION, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), null},
+			/*{LifeCycleStatesEnum.CERTIFICATIONREQUEST, LifeCycleStatesEnum.CERTIFICATIONREQUEST, COMPONENT_SENT_FOR_CERTIFICATION, LifecycleStateEnum.READY_FOR_CERTIFICATION, LifecycleStateEnum.READY_FOR_CERTIFICATION, "403", ActionStatus.COMPONENT_SENT_FOR_CERTIFICATION, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), null},
 			{LifeCycleStatesEnum.CERTIFICATIONREQUEST, LifeCycleStatesEnum.CERTIFY, RESTRICTED_OPERATION, LifecycleStateEnum.READY_FOR_CERTIFICATION, LifecycleStateEnum.READY_FOR_CERTIFICATION, "409", ActionStatus.RESTRICTED_OPERATION, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), null},
 			
 			{LifeCycleStatesEnum.STARTCERTIFICATION, LifeCycleStatesEnum.CHECKIN, COMPONENT_IN_CERT_IN_PROGRESS_STATE, LifecycleStateEnum.CERTIFICATION_IN_PROGRESS, LifecycleStateEnum.CERTIFICATION_IN_PROGRESS, "403", ActionStatus.COMPONENT_IN_CERT_IN_PROGRESS_STATE, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), ElementFactory.getDefaultUser(UserRoleEnum.TESTER)},
 			{LifeCycleStatesEnum.STARTCERTIFICATION, LifeCycleStatesEnum.CHECKOUT, COMPONENT_IN_CERT_IN_PROGRESS_STATE, LifecycleStateEnum.CERTIFICATION_IN_PROGRESS, LifecycleStateEnum.CERTIFICATION_IN_PROGRESS, "403", ActionStatus.COMPONENT_IN_CERT_IN_PROGRESS_STATE, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), ElementFactory.getDefaultUser(UserRoleEnum.TESTER)},
 			{LifeCycleStatesEnum.STARTCERTIFICATION, LifeCycleStatesEnum.CERTIFICATIONREQUEST, COMPONENT_IN_CERT_IN_PROGRESS_STATE, LifecycleStateEnum.CERTIFICATION_IN_PROGRESS, LifecycleStateEnum.CERTIFICATION_IN_PROGRESS, "403", ActionStatus.COMPONENT_IN_CERT_IN_PROGRESS_STATE, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), ElementFactory.getDefaultUser(UserRoleEnum.TESTER)},
-			{LifeCycleStatesEnum.STARTCERTIFICATION, LifeCycleStatesEnum.STARTCERTIFICATION, COMPONENT_IN_CERT_IN_PROGRESS_STATE, LifecycleStateEnum.CERTIFICATION_IN_PROGRESS, LifecycleStateEnum.CERTIFICATION_IN_PROGRESS, "403", ActionStatus.COMPONENT_IN_CERT_IN_PROGRESS_STATE, ElementFactory.getDefaultUser(UserRoleEnum.TESTER), null},
+			{LifeCycleStatesEnum.STARTCERTIFICATION, LifeCycleStatesEnum.STARTCERTIFICATION, COMPONENT_IN_CERT_IN_PROGRESS_STATE, LifecycleStateEnum.CERTIFICATION_IN_PROGRESS, LifecycleStateEnum.CERTIFICATION_IN_PROGRESS, "403", ActionStatus.COMPONENT_IN_CERT_IN_PROGRESS_STATE, ElementFactory.getDefaultUser(UserRoleEnum.TESTER), null},*/
 
 			{LifeCycleStatesEnum.CERTIFY, LifeCycleStatesEnum.CHECKIN, COMPONENT_ALREADY_CERTIFIED, LifecycleStateEnum.CERTIFIED, LifecycleStateEnum.CERTIFIED, "403", ActionStatus.COMPONENT_ALREADY_CERTIFIED, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), ElementFactory.getDefaultUser(UserRoleEnum.TESTER)},
-			{LifeCycleStatesEnum.CERTIFY, LifeCycleStatesEnum.CERTIFICATIONREQUEST, COMPONENT_ALREADY_CERTIFIED, LifecycleStateEnum.CERTIFIED, LifecycleStateEnum.CERTIFIED, "403", ActionStatus.COMPONENT_ALREADY_CERTIFIED, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), ElementFactory.getDefaultUser(UserRoleEnum.TESTER)},
-			{LifeCycleStatesEnum.CERTIFY, LifeCycleStatesEnum.STARTCERTIFICATION, COMPONENT_ALREADY_CERTIFIED, LifecycleStateEnum.CERTIFIED, LifecycleStateEnum.CERTIFIED, "403", ActionStatus.COMPONENT_ALREADY_CERTIFIED, ElementFactory.getDefaultUser(UserRoleEnum.TESTER), null},
+			/*{LifeCycleStatesEnum.CERTIFY, LifeCycleStatesEnum.CERTIFICATIONREQUEST, COMPONENT_ALREADY_CERTIFIED, LifecycleStateEnum.CERTIFIED, LifecycleStateEnum.CERTIFIED, "403", ActionStatus.COMPONENT_ALREADY_CERTIFIED, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), ElementFactory.getDefaultUser(UserRoleEnum.TESTER)},
+			{LifeCycleStatesEnum.CERTIFY, LifeCycleStatesEnum.STARTCERTIFICATION, COMPONENT_ALREADY_CERTIFIED, LifecycleStateEnum.CERTIFIED, LifecycleStateEnum.CERTIFIED, "403", ActionStatus.COMPONENT_ALREADY_CERTIFIED, ElementFactory.getDefaultUser(UserRoleEnum.TESTER), null},*/
 			{LifeCycleStatesEnum.CERTIFY, LifeCycleStatesEnum.CERTIFY, COMPONENT_NOT_READY_FOR_CERTIFICATION, LifecycleStateEnum.CERTIFIED, LifecycleStateEnum.CERTIFIED, "403", ActionStatus.COMPONENT_NOT_READY_FOR_CERTIFICATION, ElementFactory.getDefaultUser(UserRoleEnum.TESTER), null},
 		};
 	}
@@ -683,6 +536,7 @@ public class AssetLifeCycle extends ComponentBaseTest {
 	public void invalidStatesForResource(LifeCycleStatesEnum initState, LifeCycleStatesEnum targetState, int errorCode,
 			LifecycleStateEnum preState, LifecycleStateEnum currState, String status,
 			ActionStatus actionStatus, User user, User operationUser) throws Exception {
+
 		getExtendTest().log(Status.INFO, String.format("initState: %s, targetState: %s, errorCode: %s,"
 				+ " preState: %s, currState: %s, status: %s, actionStatus: %s, user: %s, operationUser: %s", initState, targetState, errorCode, preState,
 				currState, status, actionStatus, user, operationUser));
@@ -702,44 +556,16 @@ public class AssetLifeCycle extends ComponentBaseTest {
 			restResponse = LifecycleRestUtils.checkOutResource(resourceDetails.getUUID(), user);
 		} else if(targetState.equals(LifeCycleStatesEnum.CHECKIN)) {
 			restResponse = LifecycleRestUtils.checkInResource(resourceDetails.getUUID(), user);
-		} else if(targetState.equals(LifeCycleStatesEnum.CERTIFICATIONREQUEST)) {
+		/*} else if(targetState.equals(LifeCycleStatesEnum.CERTIFICATIONREQUEST)) {
 			restResponse = LifecycleRestUtils.certificationRequestResource(resourceDetails.getUUID(), user);
 		} else if(targetState.equals(LifeCycleStatesEnum.STARTCERTIFICATION)) {
-			restResponse = LifecycleRestUtils.startTestingResource(resourceDetails.getUUID(), user);
+			restResponse = LifecycleRestUtils.startTestingResource(resourceDetails.getUUID(), user);*/
 		} else if(targetState.equals(LifeCycleStatesEnum.CERTIFY)) {
 			restResponse = LifecycleRestUtils.certifyResource(resourceDetails.getUUID(), user);
 		}
 		
 		Assert.assertEquals(restResponse.getErrorCode(), (Integer)errorCode, "Expected that response code will be equal.");
 		
-		/*// auditing verification
-		AuditingActionEnum action = AuditingActionEnum.CHANGE_LIFECYCLE_BY_API;
-		Map <AuditingFieldsKeysEnum, String> body = new HashMap<>();
-		body.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_NAME, resourceDetails.getName());
-		ExpectedResourceAuditJavaObject expectedResourceAuditJavaObject = ElementFactory.getDefaultChangeAssetLifeCycleExternalAPI(resourceDetails, user, targetState, AssetTypeEnum.RESOURCES);	
-		if(initState.equals(LifeCycleStatesEnum.CERTIFY)) {
-			expectedResourceAuditJavaObject.setCurrVersion("1.0");
-			expectedResourceAuditJavaObject.setPrevVersion("1.0");
-		}
-		expectedResourceAuditJavaObject.setPrevState(preState.toString());
-		expectedResourceAuditJavaObject.setCurrState(currState.toString());
-		expectedResourceAuditJavaObject.setStatus(status);
-		ErrorInfo errorInfo = ErrorValidationUtils.parseErrorConfigYaml(actionStatus.name());
-		List<String> variables = null;
-		if(ActionStatus.RESTRICTED_OPERATION.equals(actionStatus)) {
-			variables = asList("");
-		} else if(ActionStatus.COMPONENT_NOT_READY_FOR_CERTIFICATION.equals(actionStatus)) {
-			variables = asList(resourceDetails.getName(), AssetTypeEnum.RESOURCES.getCorrespondingComponent().toLowerCase());
-		} else {
-			if(operationUser == null) {
-				variables = asList(resourceDetails.getName(), AssetTypeEnum.RESOURCES.getCorrespondingComponent().toLowerCase(), user.getFirstName(), user.getLastName(), user.getUserId());
-			} else {
-				variables = asList(resourceDetails.getName(), AssetTypeEnum.RESOURCES.getCorrespondingComponent().toLowerCase(), operationUser.getFirstName(), operationUser.getLastName(), operationUser.getUserId());
-			}
-			
-		}
-		expectedResourceAuditJavaObject.setDesc(AuditValidationUtils.buildAuditDescription(errorInfo, variables));
-		AuditValidationUtils.validateAuditExternalChangeAssetLifeCycle(expectedResourceAuditJavaObject, action.getName(), body);*/
 	}
 	
 	
@@ -749,7 +575,7 @@ public class AssetLifeCycle extends ComponentBaseTest {
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
-	// US824692 - Story [BE]: External API for asset lifecycle - submit for test / start testing
+/*	// US824692 - Story [BE]: External API for asset lifecycle - submit for test / start testing
 	@Test
 	public void BasicFlowForResourceSubmitForTestingStartTesting() throws Exception {
 		Either<Resource, RestResponse> createdComponent = AtomicOperationUtils.createResourcesByTypeNormTypeAndCatregory(ResourceTypeEnum.VF, NormativeTypesEnum.ROOT, ResourceCategoryEnum.GENERIC_INFRASTRUCTURE, UserRoleEnum.DESIGNER, true);
@@ -758,29 +584,7 @@ public class AssetLifeCycle extends ComponentBaseTest {
 		
 		// Certification request
 		restResponse = LifecycleRestUtils.certificationRequestResource(resourceDetails.getUUID(), ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER));
-		
-		/*// Auditing verification
-		AuditingActionEnum action = AuditingActionEnum.CHANGE_LIFECYCLE_BY_API;
-		Map <AuditingFieldsKeysEnum, String> body = new HashMap<>();
-		body.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_NAME, resourceDetails.getName());
-		body.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_URL, String.format("/sdc/v1/catalog/%s/%s/lifecycleState/%s", AssetTypeEnum.RESOURCES.getValue().toLowerCase(), resourceDetails.getUUID(), LifeCycleStatesEnum.CERTIFICATIONREQUEST.getState()));
-		ExpectedResourceAuditJavaObject expectedResourceAuditJavaObject = ElementFactory.getDefaultChangeAssetLifeCycleExternalAPI(resourceDetails, defaultUser, LifeCycleStatesEnum.CERTIFICATIONREQUEST, AssetTypeEnum.RESOURCES);	
-		expectedResourceAuditJavaObject.setPrevState(LifecycleStateEnum.NOT_CERTIFIED_CHECKIN.toString());
-		expectedResourceAuditJavaObject.setCurrState(LifecycleStateEnum.READY_FOR_CERTIFICATION.toString());
-		AuditValidationUtils.validateAuditExternalChangeAssetLifeCycle(expectedResourceAuditJavaObject, action.getName(), body);*/
-		
-		// Start testing
-		restResponse = LifecycleRestUtils.startTestingResource(resourceDetails.getUUID(), ElementFactory.getDefaultUser(UserRoleEnum.TESTER));
-		
-	/*	// Auditing verification
-		body = new HashMap<>();
-		body.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_NAME, resourceDetails.getName());
-		body.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_URL, String.format("/sdc/v1/catalog/%s/%s/lifecycleState/%s", AssetTypeEnum.RESOURCES.getValue().toLowerCase(), resourceDetails.getUUID(), LifeCycleStatesEnum.STARTCERTIFICATION.getState()));
-		expectedResourceAuditJavaObject = ElementFactory.getDefaultChangeAssetLifeCycleExternalAPI(resourceDetails, ElementFactory.getDefaultUser(UserRoleEnum.TESTER), LifeCycleStatesEnum.STARTCERTIFICATION, AssetTypeEnum.RESOURCES);	
-		expectedResourceAuditJavaObject.setPrevState(LifecycleStateEnum.READY_FOR_CERTIFICATION.toString());
-		expectedResourceAuditJavaObject.setCurrState(LifecycleStateEnum.CERTIFICATION_IN_PROGRESS.toString());
-		AuditValidationUtils.validateAuditExternalChangeAssetLifeCycle(expectedResourceAuditJavaObject, action.getName(), body);*/
-	}
+	}*/
 	
 	// US824692 - Story [BE]: External API for asset lifecycle - submit for test / start testing
 	@Test
@@ -792,30 +596,12 @@ public class AssetLifeCycle extends ComponentBaseTest {
 		// Certification request
 		restResponse = LifecycleRestUtils.certificationRequestService(resourceDetails.getUUID(), ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER));
 		
-		/*// Auditing verification
-		AuditingActionEnum action = AuditingActionEnum.CHANGE_LIFECYCLE_BY_API;
-		Map <AuditingFieldsKeysEnum, String> body = new HashMap<>();
-		body.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_NAME, resourceDetails.getName());
-		body.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_URL, String.format("/sdc/v1/catalog/%s/%s/lifecycleState/%s", AssetTypeEnum.SERVICES.getValue().toLowerCase(), resourceDetails.getUUID(), LifeCycleStatesEnum.CERTIFICATIONREQUEST.getState()));
-		ExpectedResourceAuditJavaObject expectedResourceAuditJavaObject = ElementFactory.getDefaultChangeAssetLifeCycleExternalAPI(resourceDetails, defaultUser, LifeCycleStatesEnum.CERTIFICATIONREQUEST, AssetTypeEnum.SERVICES);	
-		expectedResourceAuditJavaObject.setPrevState(LifecycleStateEnum.NOT_CERTIFIED_CHECKIN.toString());
-		expectedResourceAuditJavaObject.setCurrState(LifecycleStateEnum.READY_FOR_CERTIFICATION.toString());
-		AuditValidationUtils.validateAuditExternalChangeAssetLifeCycle(expectedResourceAuditJavaObject, action.getName(), body);*/
-		
 		// Start testing
 		restResponse = LifecycleRestUtils.startTestingService(resourceDetails.getUUID(), ElementFactory.getDefaultUser(UserRoleEnum.TESTER));
 		
-	/*	// Auditing verification
-		body = new HashMap<>();
-		body.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_NAME, resourceDetails.getName());
-		body.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_URL, String.format("/sdc/v1/catalog/%s/%s/lifecycleState/%s", AssetTypeEnum.SERVICES.getValue().toLowerCase(), resourceDetails.getUUID(), LifeCycleStatesEnum.STARTCERTIFICATION.getState()));
-		expectedResourceAuditJavaObject = ElementFactory.getDefaultChangeAssetLifeCycleExternalAPI(resourceDetails, ElementFactory.getDefaultUser(UserRoleEnum.TESTER), LifeCycleStatesEnum.STARTCERTIFICATION, AssetTypeEnum.SERVICES);	
-		expectedResourceAuditJavaObject.setPrevState(LifecycleStateEnum.READY_FOR_CERTIFICATION.toString());
-		expectedResourceAuditJavaObject.setCurrState(LifecycleStateEnum.CERTIFICATION_IN_PROGRESS.toString());
-		AuditValidationUtils.validateAuditExternalChangeAssetLifeCycle(expectedResourceAuditJavaObject, action.getName(), body);*/
 	}
 	
-	// US824692 - Story [BE]: External API for asset lifecycle - submit for test / start testing
+	/*// US824692 - Story [BE]: External API for asset lifecycle - submit for test / start testing
 	@Test
 	public void specialCaseInvalidFlowForVfcmtSubmitForTesting() throws Exception {
 		Either<Resource, RestResponse> createdComponent = AtomicOperationUtils.createResourcesByTypeNormTypeAndCatregory(ResourceTypeEnum.VFCMT, NormativeTypesEnum.ROOT, ResourceCategoryEnum.GENERIC_INFRASTRUCTURE, UserRoleEnum.DESIGNER, true);
@@ -824,23 +610,7 @@ public class AssetLifeCycle extends ComponentBaseTest {
 		
 		// Certification request
 		restResponse = LifecycleRestUtils.certificationRequestResource(resourceDetails.getUUID(), ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER));
-		
-		/*// Auditing verification
-		AuditingActionEnum action = AuditingActionEnum.CHANGE_LIFECYCLE_BY_API;
-		Map <AuditingFieldsKeysEnum, String> body = new HashMap<>();
-		body.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_NAME, resourceDetails.getName());
-		body.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_URL, String.format("/sdc/v1/catalog/%s/%s/lifecycleState/%s", AssetTypeEnum.RESOURCES.getValue().toLowerCase(), resourceDetails.getUUID(), LifeCycleStatesEnum.CERTIFICATIONREQUEST.getState()));
-		ExpectedResourceAuditJavaObject expectedResourceAuditJavaObject = ElementFactory.getDefaultChangeAssetLifeCycleExternalAPI(resourceDetails, defaultUser, LifeCycleStatesEnum.CERTIFICATIONREQUEST, AssetTypeEnum.RESOURCES);	
-		expectedResourceAuditJavaObject.setPrevState(LifecycleStateEnum.NOT_CERTIFIED_CHECKIN.toString());
-		expectedResourceAuditJavaObject.setCurrState(LifecycleStateEnum.NOT_CERTIFIED_CHECKIN.toString());
-		expectedResourceAuditJavaObject.setStatus("400");
-		
-		ErrorInfo errorInfo = ErrorValidationUtils.parseErrorConfigYaml(ActionStatus.RESOURCE_VFCMT_LIFECYCLE_STATE_NOT_VALID.name());
-		List<String> variables = asList(LifeCycleStatesEnum.CERTIFICATIONREQUEST.getState());
-		expectedResourceAuditJavaObject.setDesc(AuditValidationUtils.buildAuditDescription(errorInfo, variables));
-		
-		AuditValidationUtils.validateAuditExternalChangeAssetLifeCycle(expectedResourceAuditJavaObject, action.getName(), body);*/
-	}
+	}*/
 	
 	// US824692 - Story [BE]: External API for asset lifecycle - submit for test / start testing
 	@Test
@@ -852,21 +622,6 @@ public class AssetLifeCycle extends ComponentBaseTest {
 		// Certification request
 		restResponse = LifecycleRestUtils.startTestingResource(resourceDetails.getUUID(), ElementFactory.getDefaultUser(UserRoleEnum.TESTER));
 		
-		/*// Auditing verification
-		AuditingActionEnum action = AuditingActionEnum.CHANGE_LIFECYCLE_BY_API;
-		Map <AuditingFieldsKeysEnum, String> body = new HashMap<>();
-		body.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_NAME, resourceDetails.getName());
-		body.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_URL, String.format("/sdc/v1/catalog/%s/%s/lifecycleState/%s", AssetTypeEnum.RESOURCES.getValue().toLowerCase(), resourceDetails.getUUID(), LifeCycleStatesEnum.STARTCERTIFICATION.getState()));
-		ExpectedResourceAuditJavaObject expectedResourceAuditJavaObject = ElementFactory.getDefaultChangeAssetLifeCycleExternalAPI(resourceDetails, ElementFactory.getDefaultUser(UserRoleEnum.TESTER), LifeCycleStatesEnum.STARTCERTIFICATION, AssetTypeEnum.RESOURCES);	
-		expectedResourceAuditJavaObject.setPrevState(LifecycleStateEnum.NOT_CERTIFIED_CHECKIN.toString());
-		expectedResourceAuditJavaObject.setCurrState(LifecycleStateEnum.NOT_CERTIFIED_CHECKIN.toString());
-		expectedResourceAuditJavaObject.setStatus("400");
-		
-		ErrorInfo errorInfo = ErrorValidationUtils.parseErrorConfigYaml(ActionStatus.RESOURCE_VFCMT_LIFECYCLE_STATE_NOT_VALID.name());
-		List<String> variables = asList(LifeCycleStatesEnum.STARTCERTIFICATION.getState());
-		expectedResourceAuditJavaObject.setDesc(AuditValidationUtils.buildAuditDescription(errorInfo, variables));
-		
-		AuditValidationUtils.validateAuditExternalChangeAssetLifeCycle(expectedResourceAuditJavaObject, action.getName(), body);*/
 	}
 	
 	
@@ -885,26 +640,14 @@ public class AssetLifeCycle extends ComponentBaseTest {
 		Component resourceDetails = createdComponent.left().value();
 		RestResponse restResponse = LifecycleRestUtils.checkInResource(resourceDetails.getUUID(), ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER));
 		
-		// Certification request
+		/*// Certification request
 		restResponse = LifecycleRestUtils.certificationRequestResource(resourceDetails.getUUID(), ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER));
 		
 		// Start testing
-		restResponse = LifecycleRestUtils.startTestingResource(resourceDetails.getUUID(), ElementFactory.getDefaultUser(UserRoleEnum.TESTER));
+		restResponse = LifecycleRestUtils.startTestingResource(resourceDetails.getUUID(), ElementFactory.getDefaultUser(UserRoleEnum.TESTER));*/
 		
 		// Certify
-		restResponse = LifecycleRestUtils.certifyResource(resourceDetails.getUUID(), ElementFactory.getDefaultUser(UserRoleEnum.TESTER));
-		
-		/*// Auditing verification
-		AuditingActionEnum action = AuditingActionEnum.CHANGE_LIFECYCLE_BY_API;
-		Map <AuditingFieldsKeysEnum, String> body = new HashMap<>();
-		body.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_NAME, resourceDetails.getName());
-		body.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_URL, String.format("/sdc/v1/catalog/%s/%s/lifecycleState/%s", AssetTypeEnum.RESOURCES.getValue().toLowerCase(), resourceDetails.getUUID(), LifeCycleStatesEnum.CERTIFY.getState()));
-		ExpectedResourceAuditJavaObject expectedResourceAuditJavaObject = ElementFactory.getDefaultChangeAssetLifeCycleExternalAPI(resourceDetails, ElementFactory.getDefaultUser(UserRoleEnum.TESTER), LifeCycleStatesEnum.CERTIFY, AssetTypeEnum.RESOURCES);	
-		expectedResourceAuditJavaObject.setPrevState(LifecycleStateEnum.CERTIFICATION_IN_PROGRESS.toString());
-		expectedResourceAuditJavaObject.setCurrState(LifecycleStateEnum.CERTIFIED.toString());
-		expectedResourceAuditJavaObject.setCurrVersion("1.0");
-		AuditValidationUtils.validateAuditExternalChangeAssetLifeCycle(expectedResourceAuditJavaObject, action.getName(), body);*/
-		
+		restResponse = LifecycleRestUtils.certifyResource(resourceDetails.getUUID(), ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER));
 	}
 		
 	// US824692 - Story [BE]: External API for asset lifecycle - submit for test / start testing
@@ -923,16 +666,6 @@ public class AssetLifeCycle extends ComponentBaseTest {
 		// Certify
 		restResponse = LifecycleRestUtils.certifyService(resourceDetails.getUUID(), ElementFactory.getDefaultUser(UserRoleEnum.TESTER));
 		
-		/*// Auditing verification
-		AuditingActionEnum action = AuditingActionEnum.CHANGE_LIFECYCLE_BY_API;
-		Map <AuditingFieldsKeysEnum, String> body = new HashMap<>();
-		body.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_NAME, resourceDetails.getName());
-		body.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_URL, String.format("/sdc/v1/catalog/%s/%s/lifecycleState/%s", AssetTypeEnum.SERVICES.getValue().toLowerCase(), resourceDetails.getUUID(), LifeCycleStatesEnum.CERTIFY.getState()));
-		ExpectedResourceAuditJavaObject expectedResourceAuditJavaObject = ElementFactory.getDefaultChangeAssetLifeCycleExternalAPI(resourceDetails, ElementFactory.getDefaultUser(UserRoleEnum.TESTER), LifeCycleStatesEnum.CERTIFY, AssetTypeEnum.SERVICES);	
-		expectedResourceAuditJavaObject.setPrevState(LifecycleStateEnum.CERTIFICATION_IN_PROGRESS.toString());
-		expectedResourceAuditJavaObject.setCurrState(LifecycleStateEnum.CERTIFIED.toString());
-		expectedResourceAuditJavaObject.setCurrVersion("1.0");
-		AuditValidationUtils.validateAuditExternalChangeAssetLifeCycle(expectedResourceAuditJavaObject, action.getName(), body);*/
 	}
 	
 	
@@ -991,14 +724,6 @@ public class AssetLifeCycle extends ComponentBaseTest {
 		Assert.assertEquals(parsedCreatedResponse.getUuid(), initComponentVersion.getUUID(), "Expect that UUID will not change.");
 		Assert.assertEquals(parsedCreatedResponse.getInvariantUUID(), initComponentVersion.getInvariantUUID(), "Expected that invariantUUID will not change.");
 		
-	/*	// Auditing verification
-		AuditingActionEnum action = AuditingActionEnum.CHANGE_LIFECYCLE_BY_API;
-		Map <AuditingFieldsKeysEnum, String> body = new HashMap<>();
-		body.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_NAME, initComponentVersion.getName());
-		body.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_URL, String.format("/sdc/v1/catalog/%s/%s/lifecycleState/%s", AssetTypeEnum.RESOURCES.getValue().toLowerCase(), initComponentVersion.getUUID(), LifeCycleStatesEnum.CHECKIN.getState()));
-		ExpectedResourceAuditJavaObject expectedResourceAuditJavaObject = ElementFactory.getDefaultChangeAssetLifeCycleExternalAPI(initComponentVersion, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), LifeCycleStatesEnum.CHECKIN, AssetTypeEnum.RESOURCES);	
-		AuditValidationUtils.validateAuditExternalChangeAssetLifeCycle(expectedResourceAuditJavaObject, action.getName(), body);*/
-		
 		// 7. Then checkout the VFCMT via external API.
 		RestResponse checkOutRestResponse = LifecycleRestUtils.checkOutResource(initComponentVersion.getUUID(), ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER));
 		BaseRestUtils.checkCreateResponse(checkOutRestResponse);
@@ -1006,16 +731,6 @@ public class AssetLifeCycle extends ComponentBaseTest {
 		Assert.assertEquals(parsedCreatedResponse.getVersion(), "0.2", "Expect that version will change to 0.2.");
 		Assert.assertEquals(parsedCreatedResponse.getUuid(), initComponentVersion.getUUID(), "Expect that UUID will not change.");
 		Assert.assertEquals(parsedCreatedResponse.getInvariantUUID(), initComponentVersion.getInvariantUUID(), "Expected that invariantUUID will not change.");
-		
-		/*// Auditing verification
-		body = new HashMap<>();
-		body.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_NAME, initComponentVersion.getName());
-		body.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_URL, String.format("/sdc/v1/catalog/%s/%s/lifecycleState/%s", AssetTypeEnum.RESOURCES.getValue().toLowerCase(), initComponentVersion.getUUID(), LifeCycleStatesEnum.CHECKOUT.getState()));
-		expectedResourceAuditJavaObject = ElementFactory.getDefaultChangeAssetLifeCycleExternalAPI(initComponentVersion, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), LifeCycleStatesEnum.CHECKOUT, AssetTypeEnum.RESOURCES);	
-		expectedResourceAuditJavaObject.setPrevState(LifecycleStateEnum.NOT_CERTIFIED_CHECKIN.toString());
-		expectedResourceAuditJavaObject.setCurrState(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT.toString());
-		expectedResourceAuditJavaObject.setCurrVersion("0.2");
-		AuditValidationUtils.validateAuditExternalChangeAssetLifeCycle(expectedResourceAuditJavaObject, action.getName(), body);*/
 		
 		// 8. The minor version must be incremented, the invariantUUID, and UUID must stay the same, the uniqueId should be changed, the artifacts from first version exists on the new version.
 		Component newComponentVersion = AtomicOperationUtils.getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, parsedCreatedResponse.getName(), String.format("%.1f", Double.parseDouble(parsedCreatedResponse.getVersion())));
@@ -1036,17 +751,6 @@ public class AssetLifeCycle extends ComponentBaseTest {
 		Assert.assertEquals(parsedCreatedResponse.getUuid(), initComponentVersion.getUUID(), "Expect that UUID will not change.");
 		Assert.assertEquals(parsedCreatedResponse.getInvariantUUID(), initComponentVersion.getInvariantUUID(), "Expected that invariantUUID will not change.");
 		
-		/*// Auditing verification
-		body = new HashMap<>();
-		body.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_NAME, initComponentVersion.getName());
-		body.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_URL, String.format("/sdc/v1/catalog/%s/%s/lifecycleState/%s", AssetTypeEnum.RESOURCES.getValue().toLowerCase(), initComponentVersion.getUUID(), LifeCycleStatesEnum.CHECKIN.getState()));
-		expectedResourceAuditJavaObject = ElementFactory.getDefaultChangeAssetLifeCycleExternalAPI(initComponentVersion, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), LifeCycleStatesEnum.CHECKIN, AssetTypeEnum.RESOURCES);	
-		expectedResourceAuditJavaObject.setPrevState(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT.toString());
-		expectedResourceAuditJavaObject.setCurrState(LifecycleStateEnum.NOT_CERTIFIED_CHECKIN.toString());
-		expectedResourceAuditJavaObject.setCurrVersion("0.2");
-		expectedResourceAuditJavaObject.setPrevVersion("0.2");
-		AuditValidationUtils.validateAuditExternalChangeAssetLifeCycle(expectedResourceAuditJavaObject, action.getName(), body);*/
-
 		// 11. Certify via external API.
 		RestResponse certifyRestResponse = LifecycleRestUtils.certifyResource(initComponentVersion.getUUID(), ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER));
 		BaseRestUtils.checkCreateResponse(certifyRestResponse);
@@ -1054,17 +758,6 @@ public class AssetLifeCycle extends ComponentBaseTest {
 		Assert.assertEquals(parsedCreatedResponse.getVersion(), "1.0", "Expect that version will change to 1.0");
 		Assert.assertEquals(parsedCreatedResponse.getUuid(), initComponentVersion.getUUID(), "Expect that UUID will not change.");
 		Assert.assertEquals(parsedCreatedResponse.getInvariantUUID(), initComponentVersion.getInvariantUUID(), "Expected that invariantUUID will not change.");
-		
-		/*// Auditing verification
-		body = new HashMap<>();
-		body.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_NAME, initComponentVersion.getName());
-		body.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_URL, String.format("/sdc/v1/catalog/%s/%s/lifecycleState/%s", AssetTypeEnum.RESOURCES.getValue().toLowerCase(), initComponentVersion.getUUID(), LifeCycleStatesEnum.CERTIFY.getState()));
-		expectedResourceAuditJavaObject = ElementFactory.getDefaultChangeAssetLifeCycleExternalAPI(initComponentVersion, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), LifeCycleStatesEnum.CERTIFY, AssetTypeEnum.RESOURCES);	
-		expectedResourceAuditJavaObject.setPrevState(LifecycleStateEnum.NOT_CERTIFIED_CHECKIN.toString());
-		expectedResourceAuditJavaObject.setCurrState(LifecycleStateEnum.CERTIFIED.toString());
-		expectedResourceAuditJavaObject.setCurrVersion("1.0");
-		expectedResourceAuditJavaObject.setPrevVersion("0.2");
-		AuditValidationUtils.validateAuditExternalChangeAssetLifeCycle(expectedResourceAuditJavaObject, action.getName(), body);*/
 		
 		// 12. Check out via external API.
 		checkOutRestResponse = LifecycleRestUtils.checkOutResource(initComponentVersion.getUUID(), ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER));
@@ -1074,31 +767,6 @@ public class AssetLifeCycle extends ComponentBaseTest {
 		Assert.assertNotEquals(parsedCreatedResponse.getUuid(), initComponentVersion.getUUID(), "Expect that UUID will change.");
 		Assert.assertEquals(parsedCreatedResponse.getInvariantUUID(), initComponentVersion.getInvariantUUID(), "Expected that invariantUUID will not change.");
 		
-		/*// Auditing verification
-		body = new HashMap<>();
-		body.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_NAME, initComponentVersion.getName());
-		body.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_URL, String.format("/sdc/v1/catalog/%s/%s/lifecycleState/%s", AssetTypeEnum.RESOURCES.getValue().toLowerCase(), initComponentVersion.getUUID(), LifeCycleStatesEnum.CHECKOUT.getState()));
-		expectedResourceAuditJavaObject = ElementFactory.getDefaultChangeAssetLifeCycleExternalAPI(initComponentVersion, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), LifeCycleStatesEnum.CHECKOUT, AssetTypeEnum.RESOURCES);	
-		expectedResourceAuditJavaObject.setPrevState(LifecycleStateEnum.CERTIFIED.toString());
-		expectedResourceAuditJavaObject.setCurrState(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT.toString());
-		expectedResourceAuditJavaObject.setCurrVersion("1.1");
-		expectedResourceAuditJavaObject.setPrevVersion("1.0");
-		AuditValidationUtils.validateAuditExternalChangeAssetLifeCycle(expectedResourceAuditJavaObject, action.getName(), body);*/
-		
-		
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	
 }

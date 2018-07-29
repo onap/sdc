@@ -20,8 +20,6 @@
 
 package org.openecomp.sdc.be.model.operations.impl;
 
-import static org.junit.Assert.assertTrue;
-
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -35,56 +33,59 @@ import org.openecomp.sdc.be.resources.data.UserData;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:application-context-test.xml")
 public class AdditionalInformationOperationTest extends ModelTestBase {
 
-	private static String USER_ID = "muUserId";
-	private static String CATEGORY_NAME = "category/mycategory";
+    private static String USER_ID = "muUserId";
+    private static String CATEGORY_NAME = "category/mycategory";
 
-	@javax.annotation.Resource(name = "titan-generic-dao")
-	private TitanGenericDao titanDao;
+    @javax.annotation.Resource(name = "titan-generic-dao")
+    private TitanGenericDao titanDao;
 
-	@javax.annotation.Resource(name = "additional-information-operation")
-	private IAdditionalInformationOperation additionalInformationOperation;
+    @javax.annotation.Resource(name = "additional-information-operation")
+    private IAdditionalInformationOperation additionalInformationOperation;
 
-	@Before
-	public void createUserAndCategory() {
-		deleteAndCreateCategory(CATEGORY_NAME);
-		deleteAndCreateUser(USER_ID, "first_" + USER_ID, "last_" + USER_ID);
+    @Before
+    public void createUserAndCategory() {
+        deleteAndCreateCategory(CATEGORY_NAME);
+        deleteAndCreateUser(USER_ID, "first_" + USER_ID, "last_" + USER_ID);
 
-	}
+    }
 
-	@BeforeClass
-	public static void setupBeforeClass() {
+    @BeforeClass
+    public static void setupBeforeClass() {
 
-		ModelTestBase.init();
+        ModelTestBase.init();
 
-	}
+    }
 
-	@Test
-	public void testDummy() {
+    @Test
+    public void testDummy() {
 
-		assertTrue(additionalInformationOperation != null);
+        assertNotNull(additionalInformationOperation);
 
-	}
+    }
 
-	private UserData deleteAndCreateUser(String userId, String firstName, String lastName) {
-		UserData userData = new UserData();
-		userData.setUserId(userId);
-		userData.setFirstName(firstName);
-		userData.setLastName(lastName);
+    private UserData deleteAndCreateUser(String userId, String firstName, String lastName) {
+        UserData userData = new UserData();
+        userData.setUserId(userId);
+        userData.setFirstName(firstName);
+        userData.setLastName(lastName);
 
-		titanDao.deleteNode(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.User), userId, UserData.class);
-		titanDao.createNode(userData, UserData.class);
-		titanDao.commit();
+        titanDao.deleteNode(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.User), userId, UserData.class);
+        titanDao.createNode(userData, UserData.class);
+        titanDao.commit();
 
-		return userData;
-	}
+        return userData;
+    }
 
-	private void deleteAndCreateCategory(String category) {
-		String[] names = category.split("/");
-		OperationTestsUtil.deleteAndCreateResourceCategory(names[0], names[1], titanDao);
-	}
+    private void deleteAndCreateCategory(String category) {
+        String[] names = category.split("/");
+        OperationTestsUtil.deleteAndCreateResourceCategory(names[0], names[1], titanDao);
+    }
 
 }

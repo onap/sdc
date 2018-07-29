@@ -20,33 +20,33 @@
 
 package org.openecomp.sdc.be.model.tosca.converters;
 
-import java.util.Map;
-
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.common.util.ValidationUtils;
 
+import java.util.Map;
+
 public class HeatStringConverter implements PropertyValueConverter {
 
-	private static HeatStringConverter stringConverter = new HeatStringConverter();
+    private static HeatStringConverter stringConverter = new HeatStringConverter();
 
-	public static HeatStringConverter getInstance() {
-		return stringConverter;
-	}
+    public static HeatStringConverter getInstance() {
+        return stringConverter;
+    }
 
-	private HeatStringConverter() {
+    private HeatStringConverter() {
 
-	}
+    }
 
-	@Override
-	public String convert(String original, String innerType, Map<String, DataTypeDefinition> dataTypes) {
-		String coverted = null;
-		if(original != null){
-			coverted = ValidationUtils.removeNoneUtf8Chars(original);
-			coverted = ValidationUtils.normaliseWhitespace(coverted);
-			coverted = ValidationUtils.stripOctets(coverted);
-			coverted = ValidationUtils.removeHtmlTagsOnly(coverted);
-		}
-		return coverted;
-	}
+    @Override
+    public String convert(String original, String innerType, Map<String, DataTypeDefinition> dataTypes) {
+        String coverted = null;
+        if(original != null){
+            coverted = ValidationUtils.removeNoneUtf8Chars(original);
+            coverted = ValidationUtils.normaliseWhitespace(coverted);
+            coverted = ValidationUtils.stripOctets(coverted);
+            coverted = ValidationUtils.removeHtmlTagsOnly(coverted);
+        }
+        return coverted;
+    }
 
 }

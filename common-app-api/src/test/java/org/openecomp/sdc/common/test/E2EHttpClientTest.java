@@ -1,10 +1,5 @@
 package org.openecomp.sdc.common.test;
 
-import java.net.MalformedURLException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-
 import org.junit.Ignore;
 import org.junit.Test;
 import org.openecomp.sdc.common.http.client.api.HttpExecuteException;
@@ -12,6 +7,11 @@ import org.openecomp.sdc.common.http.client.api.HttpRequest;
 import org.openecomp.sdc.common.http.client.api.HttpResponse;
 import org.openecomp.sdc.common.http.config.HttpClientConfig;
 import org.openecomp.sdc.common.http.config.Timeouts;
+
+import java.net.MalformedURLException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 public class E2EHttpClientTest {
 

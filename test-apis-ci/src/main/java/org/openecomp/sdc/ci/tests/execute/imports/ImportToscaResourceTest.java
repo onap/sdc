@@ -20,24 +20,6 @@
 
 package org.openecomp.sdc.ci.tests.execute.imports;
 
-import static org.openecomp.sdc.ci.tests.utils.rest.BaseRestUtils.STATUS_CODE_CREATED;
-import static org.openecomp.sdc.ci.tests.utils.rest.BaseRestUtils.STATUS_CODE_INVALID_CONTENT;
-import static org.openecomp.sdc.ci.tests.utils.rest.BaseRestUtils.STATUS_CODE_SUCCESS;
-import static org.testng.AssertJUnit.assertEquals;
-import static org.testng.AssertJUnit.assertFalse;
-import static org.testng.AssertJUnit.assertNotNull;
-import static org.testng.AssertJUnit.assertTrue;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.http.client.ClientProtocolException;
 import org.junit.Rule;
 import org.junit.rules.TestName;
@@ -46,18 +28,7 @@ import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
-import org.openecomp.sdc.be.model.CapReqDef;
-import org.openecomp.sdc.be.model.CapabilityDefinition;
-import org.openecomp.sdc.be.model.CapabilityRequirementRelationship;
-import org.openecomp.sdc.be.model.ComponentInstance;
-import org.openecomp.sdc.be.model.LifecycleStateEnum;
-import org.openecomp.sdc.be.model.PropertyDefinition;
-import org.openecomp.sdc.be.model.RelationshipImpl;
-import org.openecomp.sdc.be.model.RelationshipInfo;
-import org.openecomp.sdc.be.model.RequirementCapabilityRelDef;
-import org.openecomp.sdc.be.model.RequirementDefinition;
-import org.openecomp.sdc.be.model.Resource;
-import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.*;
 import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.ci.tests.api.ComponentBaseTest;
@@ -65,11 +36,7 @@ import org.openecomp.sdc.ci.tests.datatypes.ArtifactReqDetails;
 import org.openecomp.sdc.ci.tests.datatypes.ComponentInstanceReqDetails;
 import org.openecomp.sdc.ci.tests.datatypes.ImportReqDetails;
 import org.openecomp.sdc.ci.tests.datatypes.ResourceReqDetails;
-import org.openecomp.sdc.ci.tests.datatypes.enums.ErrorInfo;
-import org.openecomp.sdc.ci.tests.datatypes.enums.LifeCycleStatesEnum;
-import org.openecomp.sdc.ci.tests.datatypes.enums.NormativeTypesEnum;
-import org.openecomp.sdc.ci.tests.datatypes.enums.ResourceCategoryEnum;
-import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
+import org.openecomp.sdc.ci.tests.datatypes.enums.*;
 import org.openecomp.sdc.ci.tests.datatypes.expected.ExpectedResourceAuditJavaObject;
 import org.openecomp.sdc.ci.tests.datatypes.http.HttpHeaderEnum;
 import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
@@ -78,13 +45,7 @@ import org.openecomp.sdc.ci.tests.utils.Decoder;
 import org.openecomp.sdc.ci.tests.utils.Utils;
 import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
 import org.openecomp.sdc.ci.tests.utils.general.ImportUtils;
-import org.openecomp.sdc.ci.tests.utils.rest.ArtifactRestUtils;
-import org.openecomp.sdc.ci.tests.utils.rest.BaseRestUtils;
-import org.openecomp.sdc.ci.tests.utils.rest.ComponentInstanceRestUtils;
-import org.openecomp.sdc.ci.tests.utils.rest.ComponentRestUtils;
-import org.openecomp.sdc.ci.tests.utils.rest.LifecycleRestUtils;
-import org.openecomp.sdc.ci.tests.utils.rest.ResourceRestUtils;
-import org.openecomp.sdc.ci.tests.utils.rest.ResponseParser;
+import org.openecomp.sdc.ci.tests.utils.rest.*;
 import org.openecomp.sdc.ci.tests.utils.validation.AuditValidationUtils;
 import org.openecomp.sdc.ci.tests.utils.validation.ErrorValidationUtils;
 import org.openecomp.sdc.common.api.ToscaNodeTypeInfo;
@@ -94,6 +55,13 @@ import org.testng.AssertJUnit;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
+
+import static org.openecomp.sdc.ci.tests.utils.rest.BaseRestUtils.*;
+import static org.testng.AssertJUnit.*;
 
 /**
  * 
@@ -1269,12 +1237,12 @@ public class ImportToscaResourceTest extends ComponentBaseTest {
 		assertEquals(requirements.keySet().size(), requirementsFromResponse.keySet().size());
 		importReqDetails.compareRequirementsOrCapabilities(requirements, requirementsFromResponse);
 
-		RestResponse changeResourceState1 = LifecycleRestUtils.changeResourceState(importReqDetails, sdncUserDetails,
+/*		RestResponse changeResourceState1 = LifecycleRestUtils.changeResourceState(importReqDetails, sdncUserDetails,
 				LifeCycleStatesEnum.CERTIFICATIONREQUEST);
 		assertEquals(STATUS_CODE_SUCCESS, changeResourceState1.getErrorCode().intValue());
 		RestResponse changeResourceState2 = LifecycleRestUtils.changeResourceState(importReqDetails,
 				ElementFactory.getDefaultUser(UserRoleEnum.TESTER), LifeCycleStatesEnum.STARTCERTIFICATION);
-		assertEquals(STATUS_CODE_SUCCESS, changeResourceState2.getErrorCode().intValue());
+		assertEquals(STATUS_CODE_SUCCESS, changeResourceState2.getErrorCode().intValue())*/;
 		RestResponse changeResourceState3 = LifecycleRestUtils.changeResourceState(importReqDetails,
 				ElementFactory.getDefaultUser(UserRoleEnum.TESTER), LifeCycleStatesEnum.CERTIFY);
 		assertEquals(STATUS_CODE_SUCCESS, changeResourceState3.getErrorCode().intValue());
@@ -1313,10 +1281,15 @@ public class ImportToscaResourceTest extends ComponentBaseTest {
 		RestResponse createResourceResponse = ResourceRestUtils.createResource(vf, sdncUserDetails);
 		ResourceRestUtils.checkCreateResponse(createResourceResponse);
 
-		LifecycleRestUtils.changeResourceState(importDetails, sdncUserDetails,
+//TODO Andrey should click on certify button
+		/*LifecycleRestUtils.changeResourceState(importDetails, sdncUserDetails,
 				LifeCycleStatesEnum.CERTIFICATIONREQUEST);
 		LifecycleRestUtils.changeResourceState(importReqDetails2, sdncUserDetails,
-				LifeCycleStatesEnum.CERTIFICATIONREQUEST);
+				LifeCycleStatesEnum.CERTIFICATIONREQUEST);*/
+		LifecycleRestUtils.changeResourceState(importDetails, sdncUserDetails,
+				LifeCycleStatesEnum.CERTIFY);
+		LifecycleRestUtils.changeResourceState(importReqDetails2, sdncUserDetails,
+				LifeCycleStatesEnum.CERTIFY);
 
 		RestResponse response = ResourceRestUtils.createResourceInstance(importDetails, sdncUserDetails,
 				vf.getUniqueId());
@@ -1378,14 +1351,15 @@ public class ImportToscaResourceTest extends ComponentBaseTest {
 		assertEquals(capabilities.keySet().size(), capabilitiesFromResponse.keySet().size());
 		importReqDetails.compareRequirementsOrCapabilities(capabilities, capabilitiesFromResponse);
 
-		RestResponse changeResourceState1 = LifecycleRestUtils.changeResourceState(importReqDetails, sdncUserDetails,
+		//TODO Andrey should click on certify button
+		/*RestResponse changeResourceState1 = LifecycleRestUtils.changeResourceState(importReqDetails, sdncUserDetails,
 				LifeCycleStatesEnum.CERTIFICATIONREQUEST);
 		assertEquals(STATUS_CODE_SUCCESS, changeResourceState1.getErrorCode().intValue());
 		RestResponse changeResourceState2 = LifecycleRestUtils.changeResourceState(importReqDetails,
 				ElementFactory.getDefaultUser(UserRoleEnum.TESTER), LifeCycleStatesEnum.STARTCERTIFICATION);
-		assertEquals(STATUS_CODE_SUCCESS, changeResourceState2.getErrorCode().intValue());
+		assertEquals(STATUS_CODE_SUCCESS, changeResourceState2.getErrorCode().intValue());*/
 		RestResponse changeResourceState3 = LifecycleRestUtils.changeResourceState(importReqDetails,
-				ElementFactory.getDefaultUser(UserRoleEnum.TESTER), LifeCycleStatesEnum.CERTIFY);
+				ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), LifeCycleStatesEnum.CERTIFY);
 		assertEquals(STATUS_CODE_SUCCESS, changeResourceState3.getErrorCode().intValue());
 
 		String fileName2 = "CaseInsensitiveCapTest_2.yml";
@@ -1439,15 +1413,15 @@ public class ImportToscaResourceTest extends ComponentBaseTest {
 		RestResponse importResourceResponse = ResourceRestUtils.createImportResource(importReqDetails, sdncUserDetails,
 				null);
 		assertEquals(STATUS_CODE_CREATED, importResourceResponse.getErrorCode().intValue());
-
-		RestResponse changeResourceState1 = LifecycleRestUtils.changeResourceState(importReqDetails, sdncUserDetails,
+//TODO Andrey should click on certify button
+/*		RestResponse changeResourceState1 = LifecycleRestUtils.changeResourceState(importReqDetails, sdncUserDetails,
 				LifeCycleStatesEnum.CERTIFICATIONREQUEST);
 		assertEquals(STATUS_CODE_SUCCESS, changeResourceState1.getErrorCode().intValue());
 		RestResponse changeResourceState2 = LifecycleRestUtils.changeResourceState(importReqDetails,
 				ElementFactory.getDefaultUser(UserRoleEnum.TESTER), LifeCycleStatesEnum.STARTCERTIFICATION);
-		assertEquals(STATUS_CODE_SUCCESS, changeResourceState2.getErrorCode().intValue());
+		assertEquals(STATUS_CODE_SUCCESS, changeResourceState2.getErrorCode().intValue());*/
 		RestResponse changeResourceState3 = LifecycleRestUtils.changeResourceState(importReqDetails,
-				ElementFactory.getDefaultUser(UserRoleEnum.TESTER), LifeCycleStatesEnum.CERTIFY);
+				ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), LifeCycleStatesEnum.CERTIFY);
 		assertEquals(STATUS_CODE_SUCCESS, changeResourceState3.getErrorCode().intValue());
 
 		String derivedFromResourceName = importReqDetails.getName();
@@ -1524,15 +1498,15 @@ public class ImportToscaResourceTest extends ComponentBaseTest {
 		RestResponse importResourceResponse = ResourceRestUtils.createImportResource(importReqDetails, sdncUserDetails,
 				null);
 		assertEquals(STATUS_CODE_CREATED, importResourceResponse.getErrorCode().intValue());
-
-		RestResponse changeResourceState1 = LifecycleRestUtils.changeResourceState(importReqDetails, sdncUserDetails,
+//TODO Andrey should click on certify button
+		/*RestResponse changeResourceState1 = LifecycleRestUtils.changeResourceState(importReqDetails, sdncUserDetails,
 				LifeCycleStatesEnum.CERTIFICATIONREQUEST);
 		assertEquals(STATUS_CODE_SUCCESS, changeResourceState1.getErrorCode().intValue());
 		RestResponse changeResourceState2 = LifecycleRestUtils.changeResourceState(importReqDetails,
 				ElementFactory.getDefaultUser(UserRoleEnum.TESTER), LifeCycleStatesEnum.STARTCERTIFICATION);
-		assertEquals(STATUS_CODE_SUCCESS, changeResourceState2.getErrorCode().intValue());
+		assertEquals(STATUS_CODE_SUCCESS, changeResourceState2.getErrorCode().intValue());*/
 		RestResponse changeResourceState3 = LifecycleRestUtils.changeResourceState(importReqDetails,
-				ElementFactory.getDefaultUser(UserRoleEnum.TESTER), LifeCycleStatesEnum.CERTIFY);
+				ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), LifeCycleStatesEnum.CERTIFY);
 		assertEquals(STATUS_CODE_SUCCESS, changeResourceState3.getErrorCode().intValue());
 
 		String derivedFromName = importReqDetails.getName();
@@ -1568,14 +1542,14 @@ public class ImportToscaResourceTest extends ComponentBaseTest {
 				null);
 		assertEquals(STATUS_CODE_CREATED, importResourceResponse.getErrorCode().intValue());
 
-		RestResponse changeResourceState1 = LifecycleRestUtils.changeResourceState(importReqDetails, sdncUserDetails,
+		/*RestResponse changeResourceState1 = LifecycleRestUtils.changeResourceState(importReqDetails, sdncUserDetails,
 				LifeCycleStatesEnum.CERTIFICATIONREQUEST);
 		assertEquals(STATUS_CODE_SUCCESS, changeResourceState1.getErrorCode().intValue());
 		RestResponse changeResourceState2 = LifecycleRestUtils.changeResourceState(importReqDetails,
 				ElementFactory.getDefaultUser(UserRoleEnum.TESTER), LifeCycleStatesEnum.STARTCERTIFICATION);
-		assertEquals(STATUS_CODE_SUCCESS, changeResourceState2.getErrorCode().intValue());
+		assertEquals(STATUS_CODE_SUCCESS, changeResourceState2.getErrorCode().intValue());*/
 		RestResponse changeResourceState3 = LifecycleRestUtils.changeResourceState(importReqDetails,
-				ElementFactory.getDefaultUser(UserRoleEnum.TESTER), LifeCycleStatesEnum.CERTIFY);
+				ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), LifeCycleStatesEnum.CERTIFY);
 		assertEquals(STATUS_CODE_SUCCESS, changeResourceState3.getErrorCode().intValue());
 
 		String derivedFromName = importReqDetails.getName();
@@ -1611,15 +1585,15 @@ public class ImportToscaResourceTest extends ComponentBaseTest {
 		RestResponse importResourceResponse = ResourceRestUtils.createImportResource(importReqDetails, sdncUserDetails,
 				null);
 		assertEquals(STATUS_CODE_CREATED, importResourceResponse.getErrorCode().intValue());
-
-		RestResponse changeResourceState1 = LifecycleRestUtils.changeResourceState(importReqDetails, sdncUserDetails,
+//TODO Andrey should click on certify button
+/*		RestResponse changeResourceState1 = LifecycleRestUtils.changeResourceState(importReqDetails, sdncUserDetails,
 				LifeCycleStatesEnum.CERTIFICATIONREQUEST);
 		assertEquals(STATUS_CODE_SUCCESS, changeResourceState1.getErrorCode().intValue());
 		RestResponse changeResourceState2 = LifecycleRestUtils.changeResourceState(importReqDetails,
 				ElementFactory.getDefaultUser(UserRoleEnum.TESTER), LifeCycleStatesEnum.STARTCERTIFICATION);
-		assertEquals(STATUS_CODE_SUCCESS, changeResourceState2.getErrorCode().intValue());
+		assertEquals(STATUS_CODE_SUCCESS, changeResourceState2.getErrorCode().intValue())*/;
 		RestResponse changeResourceState3 = LifecycleRestUtils.changeResourceState(importReqDetails,
-				ElementFactory.getDefaultUser(UserRoleEnum.TESTER), LifeCycleStatesEnum.CERTIFY);
+				ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), LifeCycleStatesEnum.CERTIFY);
 		assertEquals(STATUS_CODE_SUCCESS, changeResourceState3.getErrorCode().intValue());
 
 		String fatherUniqueId = importReqDetails.getUniqueId();
@@ -1670,15 +1644,15 @@ public class ImportToscaResourceTest extends ComponentBaseTest {
 		RestResponse importResourceResponse = ResourceRestUtils.createImportResource(importReqDetails, sdncUserDetails,
 				null);
 		assertEquals(STATUS_CODE_CREATED, importResourceResponse.getErrorCode().intValue());
-
-		RestResponse changeResourceState1 = LifecycleRestUtils.changeResourceState(importReqDetails, sdncUserDetails,
+//TODO Andrey should click on certify button
+/*		RestResponse changeResourceState1 = LifecycleRestUtils.changeResourceState(importReqDetails, sdncUserDetails,
 				LifeCycleStatesEnum.CERTIFICATIONREQUEST);
 		assertEquals(STATUS_CODE_SUCCESS, changeResourceState1.getErrorCode().intValue());
 		RestResponse changeResourceState2 = LifecycleRestUtils.changeResourceState(importReqDetails,
 				ElementFactory.getDefaultUser(UserRoleEnum.TESTER), LifeCycleStatesEnum.STARTCERTIFICATION);
-		assertEquals(STATUS_CODE_SUCCESS, changeResourceState2.getErrorCode().intValue());
+		assertEquals(STATUS_CODE_SUCCESS, changeResourceState2.getErrorCode().intValue());*/
 		RestResponse changeResourceState3 = LifecycleRestUtils.changeResourceState(importReqDetails,
-				ElementFactory.getDefaultUser(UserRoleEnum.TESTER), LifeCycleStatesEnum.CERTIFY);
+				ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), LifeCycleStatesEnum.CERTIFY);
 		assertEquals(STATUS_CODE_SUCCESS, changeResourceState3.getErrorCode().intValue());
 
 		String derivedFromName = importReqDetails.getName();
@@ -1721,15 +1695,15 @@ public class ImportToscaResourceTest extends ComponentBaseTest {
 		RestResponse importResourceResponse = ResourceRestUtils.createImportResource(importReqDetails, sdncUserDetails,
 				null);
 		assertEquals(STATUS_CODE_CREATED, importResourceResponse.getErrorCode().intValue());
-
-		RestResponse changeResourceState1 = LifecycleRestUtils.changeResourceState(importReqDetails, sdncUserDetails,
+//TODO Andrey should click on certify button
+/*		RestResponse changeResourceState1 = LifecycleRestUtils.changeResourceState(importReqDetails, sdncUserDetails,
 				LifeCycleStatesEnum.CERTIFICATIONREQUEST);
 		assertEquals(STATUS_CODE_SUCCESS, changeResourceState1.getErrorCode().intValue());
 		RestResponse changeResourceState2 = LifecycleRestUtils.changeResourceState(importReqDetails,
 				ElementFactory.getDefaultUser(UserRoleEnum.TESTER), LifeCycleStatesEnum.STARTCERTIFICATION);
-		assertEquals(STATUS_CODE_SUCCESS, changeResourceState2.getErrorCode().intValue());
+		assertEquals(STATUS_CODE_SUCCESS, changeResourceState2.getErrorCode().intValue());*/
 		RestResponse changeResourceState3 = LifecycleRestUtils.changeResourceState(importReqDetails,
-				ElementFactory.getDefaultUser(UserRoleEnum.TESTER), LifeCycleStatesEnum.CERTIFY);
+				ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), LifeCycleStatesEnum.CERTIFY);
 		assertEquals(STATUS_CODE_SUCCESS, changeResourceState3.getErrorCode().intValue());
 
 		String derivedFromName = importReqDetails.getName();
@@ -1773,15 +1747,15 @@ public class ImportToscaResourceTest extends ComponentBaseTest {
 		RestResponse importResourceResponse = ResourceRestUtils.createImportResource(importReqDetails, sdncUserDetails,
 				null);
 		assertEquals(STATUS_CODE_CREATED, importResourceResponse.getErrorCode().intValue());
-
-		RestResponse changeResourceState1 = LifecycleRestUtils.changeResourceState(importReqDetails, sdncUserDetails,
+//TODO Andrey should click on certify button
+/*		RestResponse changeResourceState1 = LifecycleRestUtils.changeResourceState(importReqDetails, sdncUserDetails,
 				LifeCycleStatesEnum.CERTIFICATIONREQUEST);
 		assertEquals(STATUS_CODE_SUCCESS, changeResourceState1.getErrorCode().intValue());
 		RestResponse changeResourceState2 = LifecycleRestUtils.changeResourceState(importReqDetails,
 				ElementFactory.getDefaultUser(UserRoleEnum.TESTER), LifeCycleStatesEnum.STARTCERTIFICATION);
-		assertEquals(STATUS_CODE_SUCCESS, changeResourceState2.getErrorCode().intValue());
+		assertEquals(STATUS_CODE_SUCCESS, changeResourceState2.getErrorCode().intValue());*/
 		RestResponse changeResourceState3 = LifecycleRestUtils.changeResourceState(importReqDetails,
-				ElementFactory.getDefaultUser(UserRoleEnum.TESTER), LifeCycleStatesEnum.CERTIFY);
+				ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), LifeCycleStatesEnum.CERTIFY);
 		assertEquals(STATUS_CODE_SUCCESS, changeResourceState3.getErrorCode().intValue());
 
 		String fatherUniqueId = importReqDetails.getUniqueId();
@@ -1850,15 +1824,15 @@ public class ImportToscaResourceTest extends ComponentBaseTest {
 		RestResponse importResourceResponse = ResourceRestUtils.createImportResource(importReqDetails, sdncUserDetails,
 				null);
 		assertEquals(STATUS_CODE_CREATED, importResourceResponse.getErrorCode().intValue());
-
-		RestResponse changeResourceState1 = LifecycleRestUtils.changeResourceState(importReqDetails, sdncUserDetails,
+//TODO Andrey should click on certify button
+/*		RestResponse changeResourceState1 = LifecycleRestUtils.changeResourceState(importReqDetails, sdncUserDetails,
 				LifeCycleStatesEnum.CERTIFICATIONREQUEST);
 		assertEquals(STATUS_CODE_SUCCESS, changeResourceState1.getErrorCode().intValue());
 		RestResponse changeResourceState2 = LifecycleRestUtils.changeResourceState(importReqDetails,
 				ElementFactory.getDefaultUser(UserRoleEnum.TESTER), LifeCycleStatesEnum.STARTCERTIFICATION);
-		assertEquals(STATUS_CODE_SUCCESS, changeResourceState2.getErrorCode().intValue());
+		assertEquals(STATUS_CODE_SUCCESS, changeResourceState2.getErrorCode().intValue());*/
 		RestResponse changeResourceState3 = LifecycleRestUtils.changeResourceState(importReqDetails,
-				ElementFactory.getDefaultUser(UserRoleEnum.TESTER), LifeCycleStatesEnum.CERTIFY);
+				ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), LifeCycleStatesEnum.CERTIFY);
 		assertEquals(STATUS_CODE_SUCCESS, changeResourceState3.getErrorCode().intValue());
 
 		String childFileName = "DifferentReqCapFromCompute1.yml";
@@ -1950,8 +1924,8 @@ public class ImportToscaResourceTest extends ComponentBaseTest {
 				LifeCycleStatesEnum.CHECKIN);
 		assertEquals(STATUS_CODE_SUCCESS, changeResourceState.getErrorCode().intValue());
 		assertTrue(checkInvariantUuidEqual(invariantUUIDcreation, changeResourceState));
-
-		// certification request
+//TODO Andrey should click on certify button
+		/*// certification request
 		changeResourceState = LifecycleRestUtils.changeResourceState(importReqDetails, sdncUserDetails,
 				LifeCycleStatesEnum.CERTIFICATIONREQUEST);
 		assertEquals(STATUS_CODE_SUCCESS, changeResourceState.getErrorCode().intValue());
@@ -1961,10 +1935,10 @@ public class ImportToscaResourceTest extends ComponentBaseTest {
 		changeResourceState = LifecycleRestUtils.changeResourceState(importReqDetails, testerUser,
 				LifeCycleStatesEnum.STARTCERTIFICATION);
 		assertEquals(STATUS_CODE_SUCCESS, changeResourceState.getErrorCode().intValue());
-		assertTrue(checkInvariantUuidEqual(invariantUUIDcreation, changeResourceState));
+		assertTrue(checkInvariantUuidEqual(invariantUUIDcreation, changeResourceState));*/
 
 		// certify
-		changeResourceState = LifecycleRestUtils.changeResourceState(importReqDetails, testerUser,
+		changeResourceState = LifecycleRestUtils.changeResourceState(importReqDetails, sdncUserDetails,
 				LifeCycleStatesEnum.CERTIFY);
 		assertEquals(STATUS_CODE_SUCCESS, changeResourceState.getErrorCode().intValue());
 		assertTrue(checkInvariantUuidEqual(invariantUUIDcreation, changeResourceState));
@@ -1982,19 +1956,19 @@ public class ImportToscaResourceTest extends ComponentBaseTest {
 		assertEquals(STATUS_CODE_SUCCESS, updateResponse.getErrorCode().intValue());
 		assertTrue(checkInvariantUuidEqual(invariantUUIDcreation, updateResponse));
 
-		// certification request
+	/*	// certification request
 		changeResourceState = LifecycleRestUtils.changeResourceState(importReqDetails, sdncUserDetails,
 				LifeCycleStatesEnum.CERTIFICATIONREQUEST);
 		assertEquals(STATUS_CODE_SUCCESS, changeResourceState.getErrorCode().intValue());
 		assertTrue(checkInvariantUuidEqual(invariantUUIDcreation, changeResourceState));
-
+*/
 		// checkout resource
 		changeResourceState = LifecycleRestUtils.changeResourceState(importReqDetails, sdncUserDetails,
 				LifeCycleStatesEnum.CHECKOUT);
 		assertEquals(STATUS_CODE_SUCCESS, changeResourceState.getErrorCode().intValue());
 		assertTrue(checkInvariantUuidEqual(invariantUUIDcreation, changeResourceState));
-
-		// certification request
+//TODO Andrey should click on certify button
+/*		// certification request
 		changeResourceState = LifecycleRestUtils.changeResourceState(importReqDetails, sdncUserDetails,
 				LifeCycleStatesEnum.CERTIFICATIONREQUEST);
 		assertEquals(STATUS_CODE_SUCCESS, changeResourceState.getErrorCode().intValue());
@@ -2004,16 +1978,16 @@ public class ImportToscaResourceTest extends ComponentBaseTest {
 		changeResourceState = LifecycleRestUtils.changeResourceState(importReqDetails, testerUser,
 				LifeCycleStatesEnum.STARTCERTIFICATION);
 		assertEquals(STATUS_CODE_SUCCESS, changeResourceState.getErrorCode().intValue());
-		assertTrue(checkInvariantUuidEqual(invariantUUIDcreation, changeResourceState));
+		assertTrue(checkInvariantUuidEqual(invariantUUIDcreation, changeResourceState));*/
 
-		// cancel certification
+		/*// cancel certification
 		changeResourceState = LifecycleRestUtils.changeResourceState(importReqDetails, testerUser,
 				LifeCycleStatesEnum.CANCELCERTIFICATION);
 		assertEquals(STATUS_CODE_SUCCESS, changeResourceState.getErrorCode().intValue());
-		assertTrue(checkInvariantUuidEqual(invariantUUIDcreation, changeResourceState));
+		assertTrue(checkInvariantUuidEqual(invariantUUIDcreation, changeResourceState));*/
 
-		// start certification
-		changeResourceState = LifecycleRestUtils.changeResourceState(importReqDetails, testerUser,
+		/*// start certification
+		changeResourceState = LifecycleRestUtils.changeResourceState(importReqDetails, sdncUserDetails,
 				LifeCycleStatesEnum.STARTCERTIFICATION);
 		assertEquals(STATUS_CODE_SUCCESS, changeResourceState.getErrorCode().intValue());
 		assertTrue(checkInvariantUuidEqual(invariantUUIDcreation, changeResourceState));
@@ -2022,7 +1996,7 @@ public class ImportToscaResourceTest extends ComponentBaseTest {
 		changeResourceState = LifecycleRestUtils.changeResourceState(importReqDetails, testerUser,
 				LifeCycleStatesEnum.FAILCERTIFICATION);
 		assertEquals(STATUS_CODE_SUCCESS, changeResourceState.getErrorCode().intValue());
-		assertTrue(checkInvariantUuidEqual(invariantUUIDcreation, changeResourceState));
+		assertTrue(checkInvariantUuidEqual(invariantUUIDcreation, changeResourceState));*/
 
 		// upload artifact
 		changeResourceState = LifecycleRestUtils.changeResourceState(importReqDetails, sdncUserDetails,

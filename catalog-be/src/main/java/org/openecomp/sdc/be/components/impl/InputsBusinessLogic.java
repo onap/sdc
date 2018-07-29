@@ -20,16 +20,8 @@
 
 package org.openecomp.sdc.be.components.impl;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import javax.inject.Inject;
-
-import org.openecomp.sdc.be.components.property.PropertyDecelerationOrchestrator;
+import fj.data.Either;
+import org.openecomp.sdc.be.components.property.PropertyDeclarationOrchestrator;
 import org.openecomp.sdc.be.components.validation.ComponentValidations;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
@@ -38,24 +30,18 @@ import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
-import org.openecomp.sdc.be.model.ComponentInstInputsMap;
-import org.openecomp.sdc.be.model.ComponentInstance;
-import org.openecomp.sdc.be.model.ComponentInstanceInput;
-import org.openecomp.sdc.be.model.ComponentInstanceProperty;
-import org.openecomp.sdc.be.model.ComponentParametersView;
-import org.openecomp.sdc.be.model.DataTypeDefinition;
-import org.openecomp.sdc.be.model.InputDefinition;
-import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.*;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.DaoStatusConverter;
 import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
 import org.openecomp.sdc.be.model.tosca.converters.PropertyValueConverter;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import fj.data.Either;
+import javax.inject.Inject;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Component("inputsBusinessLogic")
 public class InputsBusinessLogic extends BaseBusinessLogic {
@@ -63,10 +49,15 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
     private static final String CREATE_INPUT = "CreateInput";
     private static final String UPDATE_INPUT = "UpdateInput";
 
-    private static final Logger log = LoggerFactory.getLogger(InputsBusinessLogic.class);
+    private static final Logger log = Logger.getLogger(InputsBusinessLogic.class);
+    private static final String FAILED_TO_FOUND_COMPONENT_ERROR = "Failed to found component {}, error: {}";
+    private static final String GET_PROPERTIES_BY_INPUT = "get Properties by input";
+    private static final String FAILED_TO_FOUND_INPUT_UNDER_COMPONENT_ERROR = "Failed to found input {} under component {}, error: {}";
+    private static final String GOING_TO_EXECUTE_ROLLBACK_ON_CREATE_GROUP = "Going to execute rollback on create group.";
+    private static final String GOING_TO_EXECUTE_COMMIT_ON_CREATE_GROUP = "Going to execute commit on create group.";
 
     @Inject
-    private PropertyDecelerationOrchestrator propertyDecelerationOrchestrator;
+    private PropertyDeclarationOrchestrator propertyDeclarationOrchestrator;
     @Inject
     private ComponentInstanceBusinessLogic componentInstanceBusinessLogic;
 
@@ -79,12 +70,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
      */
     public Either<List<InputDefinition>, ResponseFormat> getInputs(String userId, String componentId) {
 
-        Either<User, ResponseFormat> resp = validateUserExists(userId, "get Inputs", false);
-
-        if (resp.isRight()) {
-            return Either.right(resp.right().value());
-        }
-
+        validateUserExists(userId, "get Inputs", false);
 
         ComponentParametersView filters = new ComponentParametersView();
         filters.disableAll();
@@ -93,7 +79,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
         Either<org.openecomp.sdc.be.model.Component, StorageOperationStatus> getComponentEither = toscaOperationFacade.getToscaElement(componentId, filters);
         if(getComponentEither.isRight()){
             ActionStatus actionStatus = componentsUtils.convertFromStorageResponse(getComponentEither.right().value());
-            log.debug("Failed to found component {}, error: {}", componentId, actionStatus);
+            log.debug(FAILED_TO_FOUND_COMPONENT_ERROR, componentId, actionStatus);
             return Either.right(componentsUtils.getResponseFormat(actionStatus));
 
         }
@@ -106,13 +92,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
 
     public Either<List<ComponentInstanceInput>, ResponseFormat> getComponentInstanceInputs(String userId, String componentId, String componentInstanceId) {
 
-        Either<User, ResponseFormat> resp = validateUserExists(userId, "get Inputs", false);
-
-        if (resp.isRight()) {
-            return Either.right(resp.right().value());
-        }
-
-
+        validateUserExists(userId, "get Inputs", false);
         ComponentParametersView filters = new ComponentParametersView();
         filters.disableAll();
         filters.setIgnoreInputs(false);
@@ -122,7 +102,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
         Either<org.openecomp.sdc.be.model.Component, StorageOperationStatus> getComponentEither = toscaOperationFacade.getToscaElement(componentId, filters);
         if(getComponentEither.isRight()){
             ActionStatus actionStatus = componentsUtils.convertFromStorageResponse(getComponentEither.right().value());
-            log.debug("Failed to found component {}, error: {}", componentId, actionStatus);
+            log.debug(FAILED_TO_FOUND_COMPONENT_ERROR, componentId, actionStatus);
             return Either.right(componentsUtils.getResponseFormat(actionStatus));
 
         }
@@ -147,10 +127,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
      */
 
     public Either<List<ComponentInstanceProperty>, ResponseFormat> getComponentInstancePropertiesByInputId(String userId, String componentId, String instanceId, String inputId) {
-        Either<User, ResponseFormat> resp = validateUserExists(userId, "get Properties by input", false);
-        if (resp.isRight()) {
-            return Either.right(resp.right().value());
-        }
+        validateUserExists(userId, GET_PROPERTIES_BY_INPUT, false);
         String parentId = componentId;
         org.openecomp.sdc.be.model.Component component = null;
         ComponentParametersView filters = new ComponentParametersView();
@@ -164,7 +141,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
 
             if(getComponentEither.isRight()){
                 ActionStatus actionStatus = componentsUtils.convertFromStorageResponse(getComponentEither.right().value());
-                log.debug("Failed to found component {}, error: {}", parentId, actionStatus);
+                log.debug(FAILED_TO_FOUND_COMPONENT_ERROR, parentId, actionStatus);
                 return Either.right(componentsUtils.getResponseFormat(actionStatus));
 
             }
@@ -186,7 +163,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
 
         if(getComponentEither.isRight()){
             ActionStatus actionStatus = componentsUtils.convertFromStorageResponse(getComponentEither.right().value());
-            log.debug("Failed to found component {}, error: {}", parentId, actionStatus);
+            log.debug(FAILED_TO_FOUND_COMPONENT_ERROR, parentId, actionStatus);
             return Either.right(componentsUtils.getResponseFormat(actionStatus));
 
         }
@@ -195,7 +172,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
         Optional<InputDefinition> op = component.getInputs().stream().filter(in -> in.getUniqueId().equals(inputId)).findFirst();
         if(!op.isPresent()){
             ActionStatus actionStatus = componentsUtils.convertFromStorageResponse(getComponentEither.right().value());
-            log.debug("Failed to found input {} under component {}, error: {}", inputId, parentId, actionStatus);
+            log.debug(FAILED_TO_FOUND_INPUT_UNDER_COMPONENT_ERROR, inputId, parentId, actionStatus);
             return Either.right(componentsUtils.getResponseFormat(actionStatus));
         }
 
@@ -242,8 +219,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
     }
 
     private InputDefinition getInputFromInputsListById(List<InputDefinition> componentsOldInputs, InputDefinition input) {
-        Optional<InputDefinition> foundInput = componentsOldInputs.stream().filter(in -> in.getUniqueId().equals(input.getUniqueId())).findFirst();
-        return foundInput.isPresent() ? foundInput.get() : null;
+        return componentsOldInputs.stream().filter(in -> in.getUniqueId().equals(input.getUniqueId())).findFirst().orElse(null);
     }
 
     public Either<List<InputDefinition>, ResponseFormat> updateInputsValue(ComponentTypeEnum componentType, String componentId, List<InputDefinition> inputs, String userId, boolean shouldLockComp, boolean inTransaction) {
@@ -253,12 +229,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
         org.openecomp.sdc.be.model.Component component = null;
 
         try {
-            Either<User, ResponseFormat> resp = validateUserExists(userId, "get input", false);
-
-            if (resp.isRight()) {
-                result = Either.right(resp.right().value());
-                return result;
-            }
+            validateUserExists(userId, "get input", false);
 
             ComponentParametersView componentParametersView = new ComponentParametersView();
             componentParametersView.disableAll();
@@ -299,7 +270,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
                 InputDefinition currInput = getInputFromInputsListById(componentsOldInputs, newInput);
                 if (currInput == null) {
                     ActionStatus actionStatus = ActionStatus.COMPONENT_NOT_FOUND;
-                    log.debug("Failed to found newInput {} under component {}, error: {}", newInput.getUniqueId(), componentId, actionStatus.name());
+                    log.debug("Failed to found newInput {} under component {}, error: {}", newInput.getUniqueId(), componentId, actionStatus);
                     result = Either.right(componentsUtils.getResponseFormat(actionStatus));
                     return result;
                 }
@@ -322,12 +293,12 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
             result = Either.left(returnInputs);
             return result;
         } finally {
-                if (false == inTransaction) {
+                if (!inTransaction) {
                     if (result == null || result.isRight()) {
-                        log.debug("Going to execute rollback on create group.");
+                        log.debug(GOING_TO_EXECUTE_ROLLBACK_ON_CREATE_GROUP);
                         titanDao.rollback();
                     } else {
-                        log.debug("Going to execute commit on create group.");
+                        log.debug(GOING_TO_EXECUTE_COMMIT_ON_CREATE_GROUP);
                         titanDao.commit();
                     }
                 }
@@ -339,11 +310,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
     }
 
     public Either<List<ComponentInstanceInput>, ResponseFormat> getInputsForComponentInput(String userId, String componentId, String inputId) {
-        Either<User, ResponseFormat> resp = validateUserExists(userId, "get Properties by input", false);
-        if (resp.isRight()) {
-            return Either.right(resp.right().value());
-        }
-        String parentId = componentId;
+        validateUserExists(userId, GET_PROPERTIES_BY_INPUT, false);
         org.openecomp.sdc.be.model.Component component = null;
         ComponentParametersView filters = new ComponentParametersView();
         filters.disableAll();
@@ -352,11 +319,11 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
         filters.setIgnoreComponentInstancesInputs(false);
         filters.setIgnoreProperties(false);
 
-        Either<org.openecomp.sdc.be.model.Component, StorageOperationStatus> getComponentEither = toscaOperationFacade.getToscaElement(parentId, filters);
+        Either<org.openecomp.sdc.be.model.Component, StorageOperationStatus> getComponentEither = toscaOperationFacade.getToscaElement(componentId, filters);
 
         if(getComponentEither.isRight()){
             ActionStatus actionStatus = componentsUtils.convertFromStorageResponse(getComponentEither.right().value());
-            log.debug("Failed to found component {}, error: {}", parentId, actionStatus);
+            log.debug(FAILED_TO_FOUND_COMPONENT_ERROR, componentId, actionStatus);
             return Either.right(componentsUtils.getResponseFormat(actionStatus));
 
         }
@@ -365,7 +332,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
         Optional<InputDefinition> op = component.getInputs().stream().filter(in -> in.getUniqueId().equals(inputId)).findFirst();
         if(!op.isPresent()){
             ActionStatus actionStatus = componentsUtils.convertFromStorageResponse(getComponentEither.right().value());
-            log.debug("Failed to found input {} under component {}, error: {}", inputId, parentId, actionStatus);
+            log.debug(FAILED_TO_FOUND_INPUT_UNDER_COMPONENT_ERROR, inputId, componentId, actionStatus);
             return Either.right(componentsUtils.getResponseFormat(actionStatus));
         }
 
@@ -379,12 +346,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
         org.openecomp.sdc.be.model.Component component = null;
 
         try {
-            Either<User, ResponseFormat> resp = validateUserExists(userId, "get Properties by input", false);
-
-            if (resp.isRight()) {
-                result = Either.right(resp.right().value());
-                return result;
-            }
+            validateUserExists(userId, GET_PROPERTIES_BY_INPUT, false);
 
             ComponentParametersView componentParametersView = new ComponentParametersView();
             componentParametersView.disableAll();
@@ -392,6 +354,8 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
             componentParametersView.setIgnoreComponentInstancesInputs(false);
             componentParametersView.setIgnoreComponentInstances(false);
             componentParametersView.setIgnoreComponentInstancesProperties(false);
+            componentParametersView.setIgnorePolicies(false);
+            componentParametersView.setIgnoreGroups(false);
             componentParametersView.setIgnoreUsers(false);
 
             Either<? extends org.openecomp.sdc.be.model.Component, ResponseFormat> validateComponent = validateComponentExists(componentId, componentType, componentParametersView);
@@ -416,7 +380,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
                 return result;
             }
 
-            result =  propertyDecelerationOrchestrator.declarePropertiesToInputs(component, componentInstInputsMapUi)
+            result =  propertyDeclarationOrchestrator.declarePropertiesToInputs(component, componentInstInputsMapUi)
                     .left()
                     .bind(inputsToCreate -> prepareInputsForCreation(userId, componentId, inputsToCreate))
                     .right()
@@ -428,10 +392,10 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
 
             if (!inTransaction) {
                 if (result == null || result.isRight()) {
-                    log.debug("Going to execute rollback on create group.");
+                    log.debug(GOING_TO_EXECUTE_ROLLBACK_ON_CREATE_GROUP);
                     titanDao.rollback();
                 } else {
-                    log.debug("Going to execute commit on create group.");
+                    log.debug(GOING_TO_EXECUTE_COMMIT_ON_CREATE_GROUP);
                     titanDao.commit();
                 }
             }
@@ -457,10 +421,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
 
     public Either<List<InputDefinition>, ResponseFormat> createInputsInGraph(Map<String, InputDefinition> inputs, org.openecomp.sdc.be.model.Component component) {
 
-        List<InputDefinition> resList = inputs.values().stream().collect(Collectors.toList());
-        Either<List<InputDefinition>, ResponseFormat> result = Either.left(resList);
         List<InputDefinition> resourceProperties = component.getInputs();
-
         Either<Map<String, DataTypeDefinition>, ResponseFormat> allDataTypes = getAllDataTypes(applicationDataTypeCache);
         if (allDataTypes.isRight()) {
             return Either.right(allDataTypes.right().value());
@@ -479,7 +440,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
 
         }
         if (resourceProperties != null) {
-            Map<String, InputDefinition> generatedInputs = resourceProperties.stream().collect(Collectors.toMap(i -> i.getName(), i -> i));
+            Map<String, InputDefinition> generatedInputs = resourceProperties.stream().collect(Collectors.toMap(PropertyDataDefinition::getName, i -> i));
             Either<Map<String, InputDefinition>, String> mergeEither = ToscaDataDefinition.mergeDataMaps(generatedInputs, inputs);
             if(mergeEither.isRight()){
                 return Either.right(componentsUtils.getResponseFormat(ActionStatus.PROPERTY_ALREADY_EXIST, mergeEither.right().value()));
@@ -487,14 +448,12 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
             inputs = mergeEither.left().value();
         }
 
-        Either<List<InputDefinition>, StorageOperationStatus> assotiateInputsEither = toscaOperationFacade.createAndAssociateInputs(inputs, component.getUniqueId());
-        if(assotiateInputsEither.isRight()){
-            log.debug("Failed to create inputs under component {}. Status is {}", component.getUniqueId(), assotiateInputsEither.right().value());
-            return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(assotiateInputsEither.right().value())));
+        Either<List<InputDefinition>, StorageOperationStatus> associateInputsEither = toscaOperationFacade.createAndAssociateInputs(inputs, component.getUniqueId());
+        if(associateInputsEither.isRight()){
+            log.debug("Failed to create inputs under component {}. Status is {}", component.getUniqueId(), associateInputsEither.right().value());
+            return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(associateInputsEither.right().value())));
         }
-        result  = Either.left(assotiateInputsEither.left().value());
-
-        return result;
+        return Either.left(associateInputsEither.left().value());
     }
 
     /**
@@ -502,24 +461,17 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
      *
      * @param componentId
      * @param userId
-     *
      * @param inputId
      * @return
      */
     public Either<InputDefinition, ResponseFormat> deleteInput(String componentId, String userId, String inputId) {
 
         Either<InputDefinition, ResponseFormat> deleteEither = null;
-        if (log.isDebugEnabled())
+        if (log.isDebugEnabled()) {
             log.debug("Going to delete input id: {}", inputId);
-
-        // Validate user (exists)
-        Either<User, ResponseFormat> userEither = validateUserExists(userId, "Delete input", true);
-        if (userEither.isRight()) {
-            deleteEither = Either.right(userEither.right().value());
-            return deleteEither;
         }
 
-        // Get component using componentType, componentId
+        validateUserExists(userId, "Delete input", true);
 
         ComponentParametersView componentParametersView = new ComponentParametersView();
         componentParametersView.disableAll();
@@ -528,6 +480,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
         componentParametersView.setIgnoreComponentInstancesInputs(false);
         componentParametersView.setIgnoreComponentInstancesProperties(false);
         componentParametersView.setIgnorePolicies(false);
+        componentParametersView.setIgnoreGroups(false);
         componentParametersView.setIgnoreUsers(false);
 
         Either<org.openecomp.sdc.be.model.Component, StorageOperationStatus> componentEither = toscaOperationFacade.getToscaElement(componentId, componentParametersView);
@@ -565,7 +518,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
                 deleteEither = Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(status), component.getName()));
                 return deleteEither;
             }
-            StorageOperationStatus storageOperationStatus = propertyDecelerationOrchestrator.unDeclarePropertiesAsInputs(component, inputForDelete);
+            StorageOperationStatus storageOperationStatus = propertyDeclarationOrchestrator.unDeclarePropertiesAsInputs(component, inputForDelete);
             if (storageOperationStatus != StorageOperationStatus.OK) {
                 log.debug("Component id: {} update properties declared as input for input id: {} failed", componentId, inputId);
                 deleteEither = Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(status), component.getName()));
@@ -599,19 +552,17 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
             PropertyValueConverter converter = type.getConverter();
             // get inner type
             String innerType = null;
-            if (newInputDefinition != null) {
-                SchemaDefinition schema = newInputDefinition.getSchema();
-                if (schema != null) {
-                    PropertyDataDefinition prop = schema.getProperty();
-                    if (prop != null) {
-                        innerType = prop.getType();
-                    }
+            SchemaDefinition schema = newInputDefinition.getSchema();
+            if (schema != null) {
+                PropertyDataDefinition prop = schema.getProperty();
+                if (prop != null) {
+                    innerType = prop.getType();
                 }
-                String convertedValue = null;
-                if (newInputDefinition.getDefaultValue() != null) {
-                    convertedValue = converter.convert(newInputDefinition.getDefaultValue(), innerType, dataTypes);
-                    newInputDefinition.setDefaultValue(convertedValue);
-                }
+            }
+            String convertedValue;
+            if (newInputDefinition.getDefaultValue() != null) {
+                convertedValue = converter.convert(newInputDefinition.getDefaultValue(), innerType, dataTypes);
+                newInputDefinition.setDefaultValue(convertedValue);
             }
         }
         return Either.left(newInputDefinition);
@@ -621,10 +572,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
         Either<InputDefinition, ResponseFormat> result = null;
         try {
 
-            Either<User, ResponseFormat> resp = validateUserExists(userId, "get Properties by input", false);
-            if (resp.isRight()) {
-                return Either.right(resp.right().value());
-            }
+            validateUserExists(userId, GET_PROPERTIES_BY_INPUT, false);
             ComponentParametersView filters = new ComponentParametersView();
             filters.disableAll();
             filters.setIgnoreComponentInstances(false);
@@ -635,7 +583,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
             Either<org.openecomp.sdc.be.model.Component, StorageOperationStatus> getComponentEither = toscaOperationFacade.getToscaElement(componentId, filters);
             if(getComponentEither.isRight()){
                 ActionStatus actionStatus = componentsUtils.convertFromStorageResponse(getComponentEither.right().value());
-                log.debug("Failed to found component {}, error: {}", componentId, actionStatus);
+                log.debug(FAILED_TO_FOUND_COMPONENT_ERROR, componentId, actionStatus);
                 return Either.right(componentsUtils.getResponseFormat(actionStatus));
 
             }
@@ -643,7 +591,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
             Optional<InputDefinition> op = component.getInputs().stream().filter(in -> in.getUniqueId().equals(inputId)).findFirst();
             if(!op.isPresent()){
                 ActionStatus actionStatus = componentsUtils.convertFromStorageResponse(getComponentEither.right().value());
-                log.debug("Failed to found input {} under component {}, error: {}", inputId, componentId, actionStatus);
+                log.debug(FAILED_TO_FOUND_INPUT_UNDER_COMPONENT_ERROR, inputId, componentId, actionStatus);
                 return Either.right(componentsUtils.getResponseFormat(actionStatus));
             }
 
@@ -665,13 +613,13 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
 
         } finally {
 
-            if (false == inTransaction) {
+            if (!inTransaction) {
 
                 if (result == null || result.isRight()) {
-                    log.debug("Going to execute rollback on create group.");
+                    log.debug(GOING_TO_EXECUTE_ROLLBACK_ON_CREATE_GROUP);
                     titanDao.rollback();
                 } else {
-                    log.debug("Going to execute commit on create group.");
+                    log.debug(GOING_TO_EXECUTE_COMMIT_ON_CREATE_GROUP);
                     titanDao.commit();
                 }
 

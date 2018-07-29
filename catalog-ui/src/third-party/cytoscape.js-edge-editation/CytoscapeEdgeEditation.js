@@ -123,21 +123,47 @@
 
     exports.CytoscapeEdgeEditation = Class({
 
-        init: function (cy, handleSize) {
+        init: function (cy) {
             this.DOUBLE_CLICK_INTERVAL = 300;
-            this.HANDLE_SIZE = handleSize ? handleSize : 5;
+            this.HANDLE_SIZE = 18;
             this.ARROW_END_ID = "ARROW_END_ID";
 
             this._handles = {};
             this._dragging = false;
             this._hover = null;
-
+            this._tagMode = false;
 
             this._cy = cy;
             this._$container = $(cy.container());
 
-            this._cy.on('mouseover tap', 'node', this._mouseOver.bind(this));
-            this._cy.on('mouseout', 'node', this._mouseOut.bind(this));
+            this._$canvas = $('<canvas></canvas>');
+            this._$canvas.css("top", 0);
+
+            this._ctx = this._$canvas[0].getContext('2d');
+            this._$container.children("div").append(this._$canvas);
+
+            this._resizeCanvas();
+
+            this.initContainerEvents();
+
+        },
+        initContainerEvents: function () {
+            this._cy.on("resize", this._resizeCanvas.bind(this));
+            /*$(window).bind('resize', this._resizeCanvas.bind(this));
+             $(window).bind('resize', this._resizeCanvas.bind(this));*/
+
+             this._$container.bind('resize', function () {
+                this._resizeCanvas();
+            }.bind(this));
+
+            this._cy.bind('zoom pan', this._redraw.bind(this));
+
+            this._cy.on('showhandle', function (cy, target, customHandle) {
+                this.permanentHandle = true;
+                this._showHandles(target, customHandle);
+            }.bind(this));
+
+            this._cy.on('hidehandles', this._hideHandles.bind(this));
 
             this._$container.on('mouseout', function (e) {
                 if (this.permanentHandle) {
@@ -147,16 +173,25 @@
                 this._clear();
             }.bind(this));
 
-            this._$container.on('mouseover', function (e) {
-                if (this._hover) {
-                    this._mouseOver({cyTarget: this._hover});
-                }
-            }.bind(this));
 
-            this._cy.on("select", "node", this._redraw.bind(this))
+        },
+        initNodeEvents: function (){
+
+            this._$canvas.on("mousedown", this._mouseDown.bind(this));
+            this._$canvas.on("mousemove", this._mouseMove.bind(this));
+            this._$canvas.on('mouseup', this._mouseUp.bind(this));
+
+            this._cy.on('tapdragover', 'node', this._mouseOver.bind(this));
+            this._cy.on('tapdragout', 'node', this._mouseOut.bind(this));
+
+            
+
+            //this._cy.on("select", "node", this._redraw.bind(this))
 
             this._cy.on("mousedown", "node", function () {
-                this._nodeClicked = true;
+                if(!this._tagMode) {
+                    this._nodeClicked = true;
+                }
             }.bind(this));
 
             this._cy.on("mouseup", "node", function () {
@@ -168,65 +203,43 @@
                 this._clear();
             }.bind(this));
 
-            this._cy.on('showhandle', function (cy, target) {
-                this.permanentHandle = true;
-                this._showHandles(target);
+            // this._$container.on('mouseover', function (e) {
+            //     if (this._hover) {
+            //         this._mouseOver({cyTarget: this._hover});
+            //     }
+            // }.bind(this));
+
+            this._cy.on('tagstart', function(){
+                this._tagMode = true;
             }.bind(this));
 
-            this._cy.on('hidehandles', this._hideHandles.bind(this));
-
-            this._cy.bind('zoom pan', this._redraw.bind(this));
-
-
-            this._$canvas = $('<canvas></canvas>');
-            this._$canvas.css("top", 0);
-            this._$canvas.on("mousedown", this._mouseDown.bind(this));
-            this._$canvas.on("mousemove", this._mouseMove.bind(this));
-
-            this._ctx = this._$canvas[0].getContext('2d');
-            this._$container.children("div").append(this._$canvas);
-
-            $(window).bind('mouseup', this._mouseUp.bind(this));
-
-            /*$(window).bind('resize', this._resizeCanvas.bind(this));
-             $(window).bind('resize', this._resizeCanvas.bind(this));*/
-
-            this._cy.on("resize", this._resizeCanvas.bind(this));
-
-            this._$container.bind('resize', function () {
-                this._resizeCanvas();
-            }.bind(this));
-
-            this._resizeCanvas();
-
-
+            this._cy.on('tagend', function(){
+                this._tagMode = false;
+            }.bind(this))
 
         },
         registerHandle: function (handle) {
-            if (handle.nodeTypeNames) {
-                for (var i in handle.nodeTypeNames) {
-                    var nodeTypeName = handle.nodeTypeNames[i];
-                    this._handles[nodeTypeName] = this._handles[nodeTypeName] || [];
-                    this._handles[nodeTypeName].push(handle);
-                }
-            } else {
-                this._handles["*"] = this._handles["*"] || [];
-                this._handles["*"].push(handle);
+            
+            if (handle.imageUrl) {
+
+                var base_image = new Image();
+                base_image.src = handle.imageUrl;
+                base_image.onload = function() {
+                    handle.image = base_image;
+                  };
             }
+            
+            this._handles[handle.type] = this._handles[handle.type] || [];
+            this._handles[handle.type] = handle;
+
 
         },
-        _showHandles: function (target) {
-            var nodeTypeName = target.data().type;
-            if (nodeTypeName) {
+        _showHandles: function (target, handleType) {
 
-                var handles = this._handles[nodeTypeName] ? this._handles[nodeTypeName] : this._handles["*"];
-
-                for (var i in handles) {
-                    if (handles[i].type != null) {
-                        this._drawHandle(handles[i], target);
-                    }
-                }
+            if(!handleType){
+                handleType = 'add-edge'; //ie, CanvasHandleTypes.ADD_EDGE, which is the default
             }
+            this._drawHandle(this._handles[handleType], target);
 
         },
         _clear: function () {
@@ -237,24 +250,14 @@
         },
         _drawHandle: function (handle, target) {
 
-            var position = this._getHandlePosition(handle, target);
+            target.data().handleType = handle.type;
+            var position = this._getHandlePosition(target);
             var handleSize = this.HANDLE_SIZE * this._cy.zoom();
+            this._ctx.clearRect(position.x, position.y, handleSize, handleSize);
             
-            this._ctx.beginPath();
-
-            if (handle.imageUrl) {
-                var base_image = new Image();
-                base_image.src = handle.imageUrl;
-                this._ctx.drawImage(base_image, position.x, position.y, handleSize, handleSize);
-            } else {
-                this._ctx.arc(position.x, position.y, this.HANDLE_SIZE, 0, 2 * Math.PI, false);
-                this._ctx.fillStyle = handle.color;
-                this._ctx.strokeStyle = "white";
-                this._ctx.lineWidth = 0;
-                this._ctx.fill();
-                this._ctx.stroke();
+            if (handle.image) {
+                this._ctx.drawImage(handle.image, position.x, position.y, handleSize, handleSize);
             }
-
         },
         _drawArrow: function (fromNode, toPosition, handle) {
             var toNode;
@@ -322,7 +325,10 @@
                 });
         },
         _mouseDown: function (e) {
-            this._hit = this._hitTestHandles(e);
+            if(this._tagMode){
+                return;
+            }
+            //this._hit = this._hitTestHandles(e);
 
             if (this._hit) {
                 this._lastClick = Date.now();
@@ -330,18 +336,22 @@
                 this._hover = null;
                 e.stopImmediatePropagation();
             }
+
         },
         _hideHandles: function () {
             this.permanentHandle = false;
             this._clear();
 
-            if(this._hover){
-                this._showHandles(this._hover);
-            }
         },
-        _mouseUp: function () {
+        _mouseUp: function (e) {
             if (this._hover) {
-                if (this._hit) {
+                if(this._tagMode){
+                    if(this._hitTestHandles(e))
+                    this._cy.trigger('handletagclick', {
+                        nodeId: this._hover.data().id
+                    });
+                    //this._hover = null;
+                } else if (this._hit && this._dragging) {
                     //check if custom listener was passed, if so trigger it and do not add edge
                     var listeners = this._cy._private.listeners;
                     for (var i = 0; i < listeners.length; i++) {
@@ -371,7 +381,7 @@
                         data: {
                             source: this._dragging.id(),
                             target: this._hover.id(),
-                            type: this._hit.handle.type
+                            type: "default"
                         }
                     });
                     this._initEdgeEvents(edge);
@@ -387,22 +397,22 @@
         _mouseMove: function (e) {
             if (this._hover) {
                 if (!this._dragging) {
-                    var hit = this._hitTestHandles(e);
-                    if (hit) {
+                    this._hit = this._hitTestHandles(e);
+                    if (this._hit) {
                         this._cy.trigger('handlemouseover', {
                             node: this._hover
                         });
                         $("body").css("cursor", "pointer");
-
                     } else {
                         this._cy.trigger('handlemouseout', {
                             node: this._hover
                         });
+                        if(!this._tagMode){
+                            this._showHandles(this._hover);
+                        }
                         $("body").css("cursor", "inherit");
                     }
                 }
-            } else {
-                $("body").css("cursor", "inherit");
             }
 
             if (this._dragging && this._hit.handle) {
@@ -416,21 +426,24 @@
         _mouseOver: function (e) {
 
             if (this._dragging) {
-                if ( (e.cyTarget.id() != this._dragging.id()) && e.cyTarget.data().allowConnection || this._hit.handle.allowLoop) {
+                if ( (e.cyTarget.id() != this._dragging.id()) && e.cyTarget.data().allowConnection) {
                     this._hover = e.cyTarget;
                 }
             } else {
                 this._hover = e.cyTarget;
-                this._showHandles(this._hover);
+                if (!this._tagMode) {
+                    this._showHandles(this._hover);
+                }
             }
         },
         _mouseOut: function (e) {
             if(!this._dragging) {
-                if (this.permanentHandle) {
-                    return;
+                if (!this.permanentHandle) {
+                    this._clear();
                 }
-
-                this._clear();
+                this._cy.trigger('handlemouseout', {
+                    node: this._hover
+                });
             }
             this._hover = null;
         },
@@ -450,63 +463,26 @@
         _hitTestHandles: function (e) {
             var mousePoisition = this._getRelativePosition(e);
 
-            if (this._hover) {
-                var nodeTypeName = this._hover.data().type;
-                if (nodeTypeName) {
-                    var handles = this._handles[nodeTypeName] ? this._handles[nodeTypeName] : this._handles["*"];
-
-                    for (var i in handles) {
-                        var handle = handles[i];
-
-                        var position = this._getHandlePosition(handle, this._hover);
-                        var renderedHandleSize = this.HANDLE_SIZE * this._cy.zoom(); //actual number of pixels that handle uses.
-                        if (VectorMath.distance(position, mousePoisition) < renderedHandleSize) {
-                            return {
-                                handle: handle,
-                                position: position
-                            };
-                        }
-                    }
+            //if (this._hover) {
+                var position = this._getHandlePosition(this._hover);
+                var renderedHandleSize = this.HANDLE_SIZE * this._cy.zoom(); //actual number of pixels that handle uses.
+                if (VectorMath.distance(position, mousePoisition) < renderedHandleSize) {
+                    var handleType = this._hover.data().handleType;
+                    return {
+                        handle: this._handles[handleType]
+                    };
                 }
-            }
+            //}
         },
-        _getHandlePosition: function (handle, target) { //returns the upper left point at which to begin drawing the handle
+        _getHandlePosition: function (target) { //returns the upper left point at which to begin drawing the handle
             var position = target.renderedPosition();
             var width = target.renderedWidth();
             var height = target.renderedHeight();
             var renderedHandleSize = this.HANDLE_SIZE * this._cy.zoom(); //actual number of pixels that handle will use.
-            var xpos = null;
-            var ypos = null;
+            var xpos = position.x + width / 2 - renderedHandleSize;
+            var ypos = position.y - height / 2;
 
-            switch (handle.positionX) {
-                case "left":
-                    xpos = position.x - width / 2;
-                    break;
-                case "right": //position.x is the exact center of the node. Need to add half the width to get to the right edge. Then, subtract renderedHandleSize to get handle position
-                    xpos = position.x + width / 2 - renderedHandleSize;
-                    break;
-                case "center":
-                    xpos = position.x;
-                    break;
-            }
-
-            switch (handle.positionY) {
-                case "top":
-                    ypos = position.y - height / 2;
-                    break;
-                case "center":
-                    ypos = position.y;
-                    break;
-                case "bottom":
-                    ypos = position.y + height / 2;
-                    break;
-            }
-
-            //Determine if handle will be too big and require offset to prevent it from covering too much of the node icon (in which case, move it over by 1/2 the renderedHandleSize, so half the handle overlaps).
-            //Need to use target.width(), which is the size of the node, unrelated to rendered size/zoom
-            var offsetX = (target.width() < 30) ? renderedHandleSize / 2 : 0; 
-            var offsetY = (target.height() < 30) ? renderedHandleSize /2 : 0;
-            return {x: xpos + offsetX, y: ypos - offsetY};
+            return {x: xpos, y: ypos};
         },
         _getEdgeCSSByHandle: function (handle) {
             var color = handle.lineColor ? handle.lineColor : handle.color;
@@ -516,17 +492,6 @@
                 "line-style": handle.lineStyle? handle.lineStyle: 'solid',
                 "width": handle.width? handle.width : 3
             };
-        },
-        _getHandleByType: function (type) {
-            for (var i in this._handles) {
-                var byNodeType = this._handles[i];
-                for (var i2 in byNodeType) {
-                    var handle = byNodeType[i2];
-                    if (handle.type == type) {
-                        return handle;
-                    }
-                }
-            }
         },
         _getRelativePosition: function (e) {
             var containerPosition = this._$container.offset();
@@ -559,8 +524,8 @@
         },
         _redraw: function () {
             this._clear();
-            if (this._hover) {
-                this._showHandles(this._hover);
+            if(this._tagMode) {
+                this._cy.trigger('canvasredraw');
             }
         }
     });

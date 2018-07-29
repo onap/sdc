@@ -1,10 +1,10 @@
 package org.openecomp.sdc.be.datatypes.elements;
 
+import org.junit.Test;
+
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-
-import org.junit.Test;
 
 
 public class GroupInstanceDataDefinitionTest {
@@ -491,12 +491,4 @@ public class GroupInstanceDataDefinitionTest {
 		testSubject.setProperties(properties);
 	}
 
-	
-	@Test
-	public void testGetSerialversionuid() throws Exception {
-		long result;
-
-		// default test
-		result = GroupInstanceDataDefinition.getSerialversionuid();
-	}
 }

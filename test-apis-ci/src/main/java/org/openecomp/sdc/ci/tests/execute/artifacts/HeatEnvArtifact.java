@@ -20,41 +20,31 @@
 
 package org.openecomp.sdc.ci.tests.execute.artifacts;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import org.apache.commons.codec.binary.Base64;
+import org.junit.Rule;
+import org.junit.rules.TestName;
+import org.openecomp.sdc.be.datatypes.elements.HeatParameterDataDefinition;
+import org.openecomp.sdc.be.model.*;
+import org.openecomp.sdc.ci.tests.api.ComponentBaseTest;
+import org.openecomp.sdc.ci.tests.datatypes.ComponentInstanceReqDetails;
+import org.openecomp.sdc.ci.tests.datatypes.ServiceReqDetails;
+import org.openecomp.sdc.ci.tests.datatypes.enums.LifeCycleStatesEnum;
+import org.openecomp.sdc.ci.tests.datatypes.enums.ServiceCategoriesEnum;
+import org.openecomp.sdc.ci.tests.datatypes.enums.ServiceInstantiationType;
+import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
+import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
+import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
+import org.openecomp.sdc.ci.tests.utils.rest.*;
+import org.testng.annotations.Test;
+import org.yaml.snakeyaml.Yaml;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.codec.binary.Base64;
-import org.junit.Rule;
-import org.junit.rules.TestName;
-import org.openecomp.sdc.be.datatypes.elements.HeatParameterDataDefinition;
-import org.openecomp.sdc.be.model.ArtifactDefinition;
-import org.openecomp.sdc.be.model.ArtifactUiDownloadData;
-import org.openecomp.sdc.be.model.ComponentInstance;
-import org.openecomp.sdc.be.model.Resource;
-import org.openecomp.sdc.be.model.Service;
-import org.openecomp.sdc.be.model.User;
-import org.openecomp.sdc.ci.tests.api.ComponentBaseTest;
-import org.openecomp.sdc.ci.tests.datatypes.ComponentInstanceReqDetails;
-import org.openecomp.sdc.ci.tests.datatypes.ServiceReqDetails;
-import org.openecomp.sdc.ci.tests.datatypes.enums.LifeCycleStatesEnum;
-import org.openecomp.sdc.ci.tests.datatypes.enums.ServiceCategoriesEnum;
-import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
-import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
-import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
-import org.openecomp.sdc.ci.tests.utils.rest.ArtifactRestUtils;
-import org.openecomp.sdc.ci.tests.utils.rest.BaseRestUtils;
-import org.openecomp.sdc.ci.tests.utils.rest.ComponentInstanceRestUtils;
-import org.openecomp.sdc.ci.tests.utils.rest.LifecycleRestUtils;
-import org.openecomp.sdc.ci.tests.utils.rest.ResourceRestUtils;
-import org.openecomp.sdc.ci.tests.utils.rest.ResponseParser;
-import org.openecomp.sdc.ci.tests.utils.rest.ServiceRestUtils;
-import org.testng.annotations.Test;
-import org.yaml.snakeyaml.Yaml;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 public class HeatEnvArtifact extends ComponentBaseTest {
 
@@ -78,7 +68,9 @@ public class HeatEnvArtifact extends ComponentBaseTest {
 
 		Resource certifiedResource = ResponseParser.parseToObjectUsingMapper(certifyState.getResponse(), Resource.class);
 
-		ServiceReqDetails serviceDetails = ElementFactory.getDefaultService("ciNewtestservice1", ServiceCategoriesEnum.MOBILITY, sdncModifierDetails.getUserId());
+		ServiceReqDetails serviceDetails = ElementFactory.getDefaultService(
+				"ciNewtestservice1", ServiceCategoriesEnum.MOBILITY, sdncModifierDetails.getUserId(), 
+				ServiceInstantiationType.A_LA_CARTE.getValue());
 
 		// 2 create service
 		RestResponse createServiceResponse = ServiceRestUtils.createService(serviceDetails, sdncModifierDetails);
@@ -128,7 +120,9 @@ public class HeatEnvArtifact extends ComponentBaseTest {
 
 		Resource certifiedResource = ResponseParser.parseToObjectUsingMapper(certifyState.getResponse(), Resource.class);
 
-		ServiceReqDetails serviceDetails = ElementFactory.getDefaultService("ciNewtestservice1", ServiceCategoriesEnum.MOBILITY, sdncModifierDetails.getUserId());
+		ServiceReqDetails serviceDetails = ElementFactory.getDefaultService(
+				"ciNewtestservice1", ServiceCategoriesEnum.MOBILITY, sdncModifierDetails.getUserId(), 
+				ServiceInstantiationType.A_LA_CARTE.getValue());
 
 		// 2 create service
 		RestResponse createServiceResponse = ServiceRestUtils.createService(serviceDetails, sdncModifierDetails);

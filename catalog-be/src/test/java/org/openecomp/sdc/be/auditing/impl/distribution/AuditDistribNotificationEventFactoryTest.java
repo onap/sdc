@@ -6,19 +6,21 @@ import org.openecomp.sdc.be.resources.data.auditing.AuditingGenericEvent;
 import org.openecomp.sdc.be.resources.data.auditing.model.CommonAuditData;
 import org.openecomp.sdc.be.resources.data.auditing.model.CommonAuditData.Builder;
 import org.openecomp.sdc.be.resources.data.auditing.model.OperationalEnvAuditData;
+import org.openecomp.sdc.be.resources.data.auditing.model.ResourceCommonInfo;
+import org.openecomp.sdc.be.resources.data.auditing.model.ResourceVersionInfo;
 
 public class AuditDistribNotificationEventFactoryTest {
 
-	private AuditDistribNotificationEventFactory createTestSubject() {
+	private AuditDistributionNotificationEventFactory createTestSubject() {
 		Builder newBuilder = CommonAuditData.newBuilder();
 		CommonAuditData build = newBuilder.build();
-		return new AuditDistribNotificationEventFactory(build, "", "", "", new User(), "", "", "",
+		return new AuditDistributionNotificationEventFactory(build,new ResourceCommonInfo(), ResourceVersionInfo.newBuilder().build(), "",new User(),"",
 				new OperationalEnvAuditData("", "", ""));
 	}
 
 	@Test
 	public void testGetLogMessage() throws Exception {
-		AuditDistribNotificationEventFactory testSubject;
+		AuditDistributionNotificationEventFactory testSubject;
 		String result;
 
 		// default test
@@ -28,7 +30,7 @@ public class AuditDistribNotificationEventFactoryTest {
 
 	@Test
 	public void testGetDbEvent() throws Exception {
-		AuditDistribNotificationEventFactory testSubject;
+		AuditDistributionNotificationEventFactory testSubject;
 		AuditingGenericEvent result;
 
 		// default test

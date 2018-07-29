@@ -16,12 +16,7 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.impl;
 
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.mockito.Spy;
+import org.mockito.*;
 import org.openecomp.core.enrichment.factory.EnrichmentManagerFactory;
 import org.openecomp.core.factory.impl.AbstractFactoryBase;
 import org.openecomp.core.model.dao.EnrichedServiceModelDao;
@@ -38,21 +33,9 @@ import org.openecomp.sdc.healing.api.HealingManager;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
 import org.openecomp.sdc.vendorlicense.facade.VendorLicenseFacade;
 import org.openecomp.sdc.vendorlicense.licenseartifacts.VendorLicenseArtifactsService;
-import org.openecomp.sdc.vendorsoftwareproduct.CompositionEntityDataManager;
-import org.openecomp.sdc.vendorsoftwareproduct.ManualVspToscaManager;
-import org.openecomp.sdc.vendorsoftwareproduct.MonitoringUploadsManager;
-import org.openecomp.sdc.vendorsoftwareproduct.OrchestrationTemplateCandidateManager;
-import org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductConstants;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.ComponentDependencyModelDao;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.DeploymentFlavorDao;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.OrchestrationTemplateDao;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.PackageInfoDao;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductInfoDao;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.type.DeploymentFlavorEntity;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.type.OrchestrationTemplateCandidateData;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.type.OrchestrationTemplateEntity;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.type.PackageInfo;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
+import org.openecomp.sdc.vendorsoftwareproduct.*;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.*;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.type.*;
 import org.openecomp.sdc.vendorsoftwareproduct.impl.mock.EnrichmentManagerFactoryImpl;
 import org.openecomp.sdc.vendorsoftwareproduct.informationArtifact.InformationArtifactGenerator;
 import org.openecomp.sdc.vendorsoftwareproduct.types.UploadFileResponse;
@@ -74,22 +57,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyObject;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 
 public class VendorSoftwareProductManagerImplTest {

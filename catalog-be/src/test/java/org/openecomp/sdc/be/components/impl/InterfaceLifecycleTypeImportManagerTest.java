@@ -20,15 +20,7 @@
 
 package org.openecomp.sdc.be.components.impl;
 
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.when;
-
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.List;
-
+import fj.data.Either;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -43,7 +35,14 @@ import org.openecomp.sdc.be.model.operations.api.IInterfaceLifecycleOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.exception.ResponseFormat;
 
-import fj.data.Either;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
+
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.when;
 
 public class InterfaceLifecycleTypeImportManagerTest {
 
@@ -58,8 +57,7 @@ public class InterfaceLifecycleTypeImportManagerTest {
         when(interfaceLifecycleOperation.createInterfaceType(Mockito.any(InterfaceDefinition.class))).thenAnswer(new Answer<Either<InterfaceDefinition, StorageOperationStatus>>() {
             public Either<InterfaceDefinition, StorageOperationStatus> answer(InvocationOnMock invocation) {
                 Object[] args = invocation.getArguments();
-                Either<InterfaceDefinition, StorageOperationStatus> ans = Either.left((InterfaceDefinition) args[0]);
-                return ans;
+                return Either.left((InterfaceDefinition) args[0]);
             }
 
         });
@@ -82,7 +80,6 @@ public class InterfaceLifecycleTypeImportManagerTest {
     private String getYmlContent() throws IOException {
         Path filePath = Paths.get("src/test/resources/types/interfaceLifecycleTypes.yml");
         byte[] fileContent = Files.readAllBytes(filePath);
-        String ymlContent = new String(fileContent);
-        return ymlContent;
+        return new String(fileContent);
     }
 }

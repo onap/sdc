@@ -24,13 +24,13 @@ import org.openecomp.sdc.be.datatypes.components.ServiceMetadataDataDefinition;
 
 public class ServiceMetadataDefinition extends ComponentMetadataDefinition {
 
-	public ServiceMetadataDefinition() {
-		super();
-		this.componentMetadataDataDefinition = new ServiceMetadataDataDefinition();
-	}
+    public ServiceMetadataDefinition() {
+        super();
+        this.componentMetadataDataDefinition = new ServiceMetadataDataDefinition();
+    }
 
-	public ServiceMetadataDefinition(ServiceMetadataDataDefinition component) {
-		super(component);
-	}
+    public ServiceMetadataDefinition(ServiceMetadataDataDefinition component) {
+        super(component);
+    }
 
 }

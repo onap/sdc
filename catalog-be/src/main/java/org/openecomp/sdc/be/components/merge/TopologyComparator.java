@@ -1,8 +1,6 @@
 package org.openecomp.sdc.be.components.merge;
 
-import java.util.List;
-import java.util.Map;
-
+import fj.data.Either;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.utils.MapUtil;
 import org.openecomp.sdc.be.exception.SdcActionException;
@@ -12,15 +10,15 @@ import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 
-import fj.data.Either;
+import java.util.List;
+import java.util.Map;
 
 @org.springframework.stereotype.Component
 public class TopologyComparator {
 
-    public static final Logger LOGGER = LoggerFactory.getLogger(TopologyComparator.class);
+    public static final Logger log = Logger.getLogger(TopologyComparator.class);
 
     @javax.annotation.Resource
     private RelationsComparator relationsComparator;
@@ -59,7 +57,7 @@ public class TopologyComparator {
                                         relationsComparator.isRelationsChanged(oldResource, newResource);
             return Either.left(isTopologyChanged);
         } catch (SdcActionException e) {
-            LOGGER.error("failed to merge entities of previous resource %s to current resource %s. reason: %s", oldResource.getUniqueId(), newResource.getUniqueId(), e.getActionStatus(), e);
+            log.error("failed to merge entities of previous resource %s to current resource %s. reason: %s", oldResource.getUniqueId(), newResource.getUniqueId(), e.getActionStatus(), e);
             return Either.right(e.getActionStatus());
         }
     }
@@ -97,7 +95,7 @@ public class TopologyComparator {
     }
 
     private Component throwSdcActionException(StorageOperationStatus storageOperationStatus, ComponentInstance cmptInstance) {
-        LOGGER.error("failed to fetch origin node type %s for instance %s", cmptInstance.getUniqueId(), cmptInstance.getComponentUid());
+        log.error("failed to fetch origin node type %s for instance %s", cmptInstance.getUniqueId(), cmptInstance.getComponentUid());
         throw new SdcActionException(componentsUtils.convertFromStorageResponse(storageOperationStatus));
     }
 

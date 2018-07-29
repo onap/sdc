@@ -20,15 +20,8 @@
 
 package org.openecomp.sdc.ci.tests.utils;
 
-import java.io.IOException;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
+import com.clearspring.analytics.util.Pair;
+import com.google.gson.Gson;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -40,19 +33,19 @@ import org.openecomp.sdc.ci.tests.api.Urls;
 import org.openecomp.sdc.ci.tests.config.Config;
 import org.openecomp.sdc.ci.tests.datatypes.DistributionMonitorObject;
 import org.openecomp.sdc.ci.tests.datatypes.ServiceDistributionStatus;
-import org.openecomp.sdc.ci.tests.datatypes.enums.DistributionNotificationStatusEnum;
 import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
 import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
 import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
 import org.openecomp.sdc.ci.tests.utils.rest.BaseRestUtils;
 import org.openecomp.sdc.ci.tests.utils.rest.ResponseParser;
 import org.openecomp.sdc.ci.tests.utils.rest.ServiceRestUtils;
+
+import java.io.IOException;
+import java.text.ParseException;
+import java.util.*;
+import java.util.Map.Entry;
+
 //import org.openecomp.sdc.be.components.distribution.engine.DistributionStatusNotificationEnum;
-
-import com.clearspring.analytics.util.Pair;
-import com.google.gson.Gson;
-
-import fj.data.Either;
 
  public class DistributionUtils extends BaseRestUtils{
 	 

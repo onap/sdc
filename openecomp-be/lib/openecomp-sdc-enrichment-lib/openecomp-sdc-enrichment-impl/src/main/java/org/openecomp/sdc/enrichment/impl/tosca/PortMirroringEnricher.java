@@ -16,23 +16,8 @@
 
 package org.openecomp.sdc.enrichment.impl.tosca;
 
-import static org.openecomp.sdc.tosca.services.DataModelUtil.getClonedObject;
-import static org.openecomp.sdc.tosca.services.ToscaConstants.PORT_MIRRORING_CAPABILITY_CP_PROPERTY_NAME;
-import static org.openecomp.sdc.tosca.services.ToscaConstants.PORT_MIRRORING_CAPABILITY_ID;
-
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.onap.sdc.tosca.datatypes.model.Import;
@@ -49,6 +34,13 @@ import org.openecomp.sdc.tosca.services.ToscaConstants;
 import org.openecomp.sdc.tosca.services.ToscaUtil;
 import org.openecomp.sdc.translator.services.heattotosca.HeatToToscaUtil;
 import org.openecomp.sdc.translator.services.heattotosca.globaltypes.GlobalTypesGenerator;
+
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static org.openecomp.sdc.tosca.services.DataModelUtil.getClonedObject;
+import static org.openecomp.sdc.tosca.services.ToscaConstants.PORT_MIRRORING_CAPABILITY_CP_PROPERTY_NAME;
+import static org.openecomp.sdc.tosca.services.ToscaConstants.PORT_MIRRORING_CAPABILITY_ID;
 
 public class PortMirroringEnricher {
     private static final String ABSTRACT_LINK_REQUIREMENT_ID_PREFIX = ToscaConstants.LINK_REQUIREMENT_ID + "_";

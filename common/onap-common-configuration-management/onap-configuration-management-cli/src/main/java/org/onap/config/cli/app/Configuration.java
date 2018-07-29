@@ -1,10 +1,6 @@
 package org.onap.config.cli.app;
 
-import org.onap.config.api.ConfigurationChangeListener;
 import org.onap.config.api.ConfigurationManager;
-
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.management.JMX;
 import javax.management.MBeanServerConnection;
@@ -12,6 +8,8 @@ import javax.management.ObjectName;
 import javax.management.remote.JMXConnector;
 import javax.management.remote.JMXConnectorFactory;
 import javax.management.remote.JMXServiceURL;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * The type Configuration.

@@ -1,9 +1,9 @@
 package org.openecomp.sdc.be.model;
 
-import java.util.Map;
-
 import org.junit.Test;
 import org.openecomp.sdc.be.datatypes.elements.ForwardingPathDataDefinition;
+
+import java.util.Map;
 
 public class ServiceTest {
 

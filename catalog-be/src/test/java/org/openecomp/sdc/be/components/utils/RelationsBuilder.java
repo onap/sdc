@@ -1,11 +1,11 @@
 package org.openecomp.sdc.be.components.utils;
 
-import java.util.Collections;
-
 import org.openecomp.sdc.be.model.CapabilityRequirementRelationship;
 import org.openecomp.sdc.be.model.RelationshipImpl;
 import org.openecomp.sdc.be.model.RelationshipInfo;
 import org.openecomp.sdc.be.model.RequirementCapabilityRelDef;
+
+import java.util.Collections;
 
 public class RelationsBuilder {
 

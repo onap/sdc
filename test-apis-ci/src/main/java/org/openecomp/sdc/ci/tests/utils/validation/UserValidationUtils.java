@@ -20,11 +20,7 @@
 
 package org.openecomp.sdc.ci.tests.utils.validation;
 
-import static org.testng.AssertJUnit.assertEquals;
-import static org.testng.AssertJUnit.assertTrue;
-
-import java.util.List;
-
+import com.google.gson.*;
 import org.apache.commons.lang.StringUtils;
 import org.openecomp.sdc.be.dao.utils.UserStatusEnum;
 import org.openecomp.sdc.be.model.User;
@@ -36,11 +32,10 @@ import org.openecomp.sdc.ci.tests.users.UserAuditJavaObject;
 import org.openecomp.sdc.ci.tests.utils.DbUtils;
 import org.openecomp.sdc.ci.tests.utils.Utils;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import java.util.List;
+
+import static org.testng.AssertJUnit.assertEquals;
+import static org.testng.AssertJUnit.assertTrue;
 
 public class UserValidationUtils {
 	public static void compareExpectedAndActualUsers(User expected, User actual) {

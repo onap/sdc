@@ -20,12 +20,6 @@
 
 package org.openecomp.sdc.ci.tests.US;
 
-import java.io.File;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.Set;
-
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.ci.tests.datatypes.CanvasElement;
@@ -38,19 +32,19 @@ import org.openecomp.sdc.ci.tests.execute.setup.SetupCDTest;
 import org.openecomp.sdc.ci.tests.pages.CompositionPage;
 import org.openecomp.sdc.ci.tests.pages.GeneralPageElements;
 import org.openecomp.sdc.ci.tests.pages.ResourceGeneralPage;
-import org.openecomp.sdc.ci.tests.pages.TesterOperationPage;
 import org.openecomp.sdc.ci.tests.tosca.datatypes.ToscaDefinition;
-import org.openecomp.sdc.ci.tests.utilities.FileHandling;
-import org.openecomp.sdc.ci.tests.utilities.GeneralUIUtils;
-import org.openecomp.sdc.ci.tests.utilities.PropertiesUIUtils;
-import org.openecomp.sdc.ci.tests.utilities.ResourceUIUtils;
-import org.openecomp.sdc.ci.tests.utilities.RestCDUtils;
-import org.openecomp.sdc.ci.tests.utilities.ServiceUIUtils;
+import org.openecomp.sdc.ci.tests.utilities.*;
 import org.openecomp.sdc.ci.tests.utils.ToscaParserUtils;
 import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+
+import java.io.File;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.Set;
 
 
 public class extendNode_TemplatePropertiesWithDefaultValues extends SetupCDTest {
@@ -222,11 +216,12 @@ public class extendNode_TemplatePropertiesWithDefaultValues extends SetupCDTest 
 		ResourceReqDetails resourceMetaDataVl1 = ElementFactory.getDefaultResourceByType(resourceTypeEnum, getUser());
 		assetsNames.add(resourceMetaDataVl1.getName());
 		ResourceUIUtils.importVfc(resourceMetaDataVl1, filePath, fileName_vl1, getUser());
-		GeneralPageElements.clickSubmitForTestingButton(resourceMetaDataVl1.getName());
-		reloginWithNewRole(UserRoleEnum.TESTER);
+		//TODO Andrey should click on certify button
+		GeneralPageElements.clickCertifyButton(resourceMetaDataVl1.getName());
+		/*reloginWithNewRole(UserRoleEnum.TESTER);
 		GeneralUIUtils.findComponentAndClick(resourceMetaDataVl1.getName());
 		TesterOperationPage.certifyComponent(resourceMetaDataVl1.getName());
-		reloginWithNewRole(UserRoleEnum.DESIGNER);
+		reloginWithNewRole(UserRoleEnum.DESIGNER);*/
 		
 		ResourceReqDetails resourceMetaDataVl2 = ElementFactory.getDefaultResourceByType(resourceTypeEnum, getUser());
 		assetsNames.add(resourceMetaDataVl2.getName());

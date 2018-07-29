@@ -20,19 +20,10 @@
 
 package org.openecomp.sdc.ci.tests.utils.rest;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.json.simple.JSONObject;
 import org.openecomp.sdc.be.datatypes.enums.AssetTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
-import org.openecomp.sdc.be.model.Component;
-import org.openecomp.sdc.be.model.DistributionStatusEnum;
-import org.openecomp.sdc.be.model.LifecycleStateEnum;
-import org.openecomp.sdc.be.model.Product;
-import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.*;
 import org.openecomp.sdc.ci.tests.api.Urls;
 import org.openecomp.sdc.ci.tests.config.Config;
 import org.openecomp.sdc.ci.tests.datatypes.ProductReqDetails;
@@ -47,6 +38,11 @@ import org.openecomp.sdc.ci.tests.utils.Utils;
 import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class LifecycleRestUtils extends BaseRestUtils {
 	private static Logger logger = LoggerFactory.getLogger(LifecycleRestUtils.class.getName());
@@ -78,10 +74,10 @@ public class LifecycleRestUtils extends BaseRestUtils {
 		return changeLifeCycleOfAsset(serviceUUID, AssetTypeEnum.SERVICES, LifeCycleStatesEnum.CERTIFICATIONREQUEST, sdncModifierDetails, comment);
 	}
 	
-	public static RestResponse certificationRequestResource(String resourceUUID, User sdncModifierDetails) throws IOException {
+	/*public static RestResponse certificationRequestResource(String resourceUUID, User sdncModifierDetails) throws IOException {
 		String comment = "Certification request resource: " + resourceUUID;
 		return changeLifeCycleOfAsset(resourceUUID, AssetTypeEnum.RESOURCES, LifeCycleStatesEnum.CERTIFICATIONREQUEST, sdncModifierDetails, comment);
-	}
+	}*/
 	
 	public static RestResponse startTestingService(String serviceUUID, User sdncModifierDetails) throws IOException {
 		String comment = "Start testing request service: " + serviceUUID;
@@ -277,10 +273,12 @@ public class LifecycleRestUtils extends BaseRestUtils {
 	}
 
 	public static RestResponse certifyResource(ResourceReqDetails resourceDetails) throws Exception {
+
+		User designer = ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER);
 		RestResponse restResponseResource = LifecycleRestUtils.changeResourceState(resourceDetails,
 				ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), LifeCycleStatesEnum.CHECKIN);
 		// if (restResponseResource.getErrorCode() == 200){
-		restResponseResource = LifecycleRestUtils.changeResourceState(resourceDetails,
+/*		restResponseResource = LifecycleRestUtils.changeResourceState(resourceDetails,
 				ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), LifeCycleStatesEnum.CERTIFICATIONREQUEST);
 		// }else
 		// return restResponseResource;
@@ -289,16 +287,16 @@ public class LifecycleRestUtils extends BaseRestUtils {
 			restResponseResource = LifecycleRestUtils.changeResourceState(resourceDetails, testerDetails,
 					LifeCycleStatesEnum.STARTCERTIFICATION);
 		} else
-			return restResponseResource;
+			return restResponseResource;*/
 		if (restResponseResource.getErrorCode() == 200) {
-			restResponseResource = LifecycleRestUtils.changeResourceState(resourceDetails, testerDetails,
+			restResponseResource = LifecycleRestUtils.changeResourceState(resourceDetails, designer,
 					LifeCycleStatesEnum.CERTIFY);
 			if (restResponseResource.getErrorCode() == 200) {
 				String newVersion = ResponseParser.getVersionFromResponse(restResponseResource);
 				resourceDetails.setVersion(newVersion);
 				resourceDetails.setLifecycleState(LifecycleStateEnum.CERTIFIED);
-				resourceDetails.setLastUpdaterUserId(testerDetails.getUserId());
-				resourceDetails.setLastUpdaterFullName(testerDetails.getFullName());
+				resourceDetails.setLastUpdaterUserId(designer.getUserId());
+				resourceDetails.setLastUpdaterFullName(designer.getFullName());
 				String uniqueIdFromRresponse = ResponseParser.getUniqueIdFromResponse(restResponseResource);
 				resourceDetails.setUniqueId(uniqueIdFromRresponse);
 			}

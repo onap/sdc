@@ -20,18 +20,17 @@
 
 package org.openecomp.sdc.asdctool.servlets;
 
+import org.openecomp.sdc.common.log.wrappers.Logger;
+
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 @Path("/entrypoint")
 public class EntryPoint {
 
-	private static Logger log = LoggerFactory.getLogger(EntryPoint.class.getName());
+	private static Logger log = Logger.getLogger(EntryPoint.class.getName());
 
 	@GET
 	@Path("test")

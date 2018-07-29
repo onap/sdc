@@ -23,15 +23,12 @@ package org.openecomp.sdc.be.datatypes.elements;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class GroupInstanceDataDefinition extends ToscaDataDefinition implements Serializable {
-	
-	private static final long serialVersionUID = -4231181556686542208L;
-	
+public class GroupInstanceDataDefinition extends ToscaDataDefinition {
+
 	public GroupInstanceDataDefinition() {
 		super();
 	}
@@ -238,9 +235,5 @@ public class GroupInstanceDataDefinition extends ToscaDataDefinition implements 
 
 	public void setProperties(List<PropertyDataDefinition> properties) {
 		setToscaPresentationValue(JsonPresentationFields.GROUP_INSTANCE_PROPERTIES, properties);
-	}
-
-	public static long getSerialversionuid() {
-		return serialVersionUID;
 	}
 }

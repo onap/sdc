@@ -20,13 +20,13 @@
 
 package org.openecomp.sdc.common.test;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 import org.apache.commons.codec.binary.Base64;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openecomp.sdc.common.util.YamlToObjectConverter;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class YamlTest {
 

@@ -20,7 +20,7 @@
 
 import {ComponentInstance} from "../../../componentsInstances/componentInstance";
 import {CommonCINodeBase} from "../common-ci-node-base";
-import {ImageCreatorService} from "app/directives/graphs-v2/image-creator/image-creator.service";
+import {ICanvasImage, ImageCreatorService} from "app/directives/graphs-v2/image-creator/image-creator.service";
 import {ImagesUrl, GraphUIObjects} from "app/utils";
 import {AngularJSBridge} from "app/services";
 
@@ -42,47 +42,72 @@ export abstract class CompositionCiNodeBase extends CommonCINodeBase implements 
     }
 
     private init() {
-
         this.displayName = this.getDisplayName();
         this.isUcpe = false;
         this.isGroup = false;
         this.isUcpePart = false;
         this.isInsideGroup = false;
     }
+    
+    
+    public setUncertifiedImageBgStyle(node:Cy.Collection, nodeMinSize:number):string {
 
-    public initUncertifiedImage(node:Cy.Collection, nodeMinSize:number):string {
-        
         let uncertifiedIconWidth:number = GraphUIObjects.HANDLE_SIZE;
         let nodeWidth:number = node.data('imgWidth') || node.width();
         let uncertifiedCanvasWidth: number = nodeWidth;
-        
+
         if (nodeWidth < nodeMinSize) { //uncertified icon will overlap too much of the node, need to expand canvas.
             uncertifiedCanvasWidth = nodeWidth + uncertifiedIconWidth/2; //expand canvas so that only half of the icon overlaps with the node
         }
-        
+
+        const x = uncertifiedCanvasWidth - nodeWidth, y = x, width = nodeWidth, height = width;
+
+        const canvasImages:ICanvasImage[] = [
+            { src: this.imagesPath + this.componentInstance.icon + '.png', x, y, width, height},
+            { src: this.imagesPath + 'uncertified.png', x: 0, y: 0, width: uncertifiedIconWidth, height: uncertifiedIconWidth}
+        ];
 
 
-        this.imageCreator.getImageBase64(this.imagesPath + this.componentInstance.icon + '.png',
-            this.imagesPath + 'uncertified.png', nodeWidth, uncertifiedCanvasWidth, uncertifiedIconWidth) 
-            .then(imageBase64 => {
-                this.img = imageBase64;
-                node.style({
-                    'background-image': this.img,
-                    'background-width': uncertifiedCanvasWidth,
-                    'background-height': uncertifiedCanvasWidth,
-                    'width': uncertifiedCanvasWidth,
-                    'height': uncertifiedCanvasWidth
-                });
-            });
+       //Create the image and update the node background styles
+        this.imageCreator.getMultiLayerBase64Image(canvasImages, uncertifiedCanvasWidth, uncertifiedCanvasWidth).then(img => this.updateNodeStyles(node,uncertifiedCanvasWidth,img));
+        return this.img; // Return the referance to the image (in Base64 format)
+    }
 
-        return this.img;
+    
+    public setArchivedImageBgStyle(node:Cy.Collection, nodeMinSize:number):string {        
+        let archivedIconWidth:number = GraphUIObjects.HANDLE_SIZE;
+        let nodeWidth:number = node.data('imgWidth') || node.width();
+        let archivedCanvasWidth: number = nodeWidth;
+
+        const x = archivedCanvasWidth - nodeWidth, y = x, width = nodeWidth, height = width;
+        const archiveImage = nodeWidth < 50? 'archive_small.png':'archive_big.png';
+
+        const canvasImages = [
+            { src: this.imagesPath + this.componentInstance.icon + '.png', x, y, width, height},
+            { src: AngularJSBridge.getAngularConfig().imagesPath + ImagesUrl.RESOURCE_ICONS + archiveImage, x, y, width, height}
+        ];
+
+        //Create the image and update the node background styles
+        this.imageCreator.getMultiLayerBase64Image(canvasImages, archivedCanvasWidth, archivedCanvasWidth).then(img => this.updateNodeStyles(node, archivedCanvasWidth, img));
+        return this.img; // Return the default img
     }
 
     protected getDisplayName():string {
-
         let graphResourceName = AngularJSBridge.getFilter('graphResourceName');
         let resourceName = AngularJSBridge.getFilter('resourceName');
         return graphResourceName(resourceName(this.componentInstance.name));
+    }
+
+    //TODO:: move to Base class ???
+    private updateNodeStyles(node,canvasWidth,imageBase64){     
+        this.img = imageBase64;
+        node.style({
+            'background-image': this.img,
+            'background-width': canvasWidth,
+            'background-height': canvasWidth,
+            'background-position-x':0,
+            'background-position-y':0
+        });        
     }
 
 }

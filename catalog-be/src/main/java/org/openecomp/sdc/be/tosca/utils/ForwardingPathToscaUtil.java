@@ -1,13 +1,6 @@
 package org.openecomp.sdc.be.tosca.utils;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-
+import fj.data.Either;
 import org.apache.commons.collections.MapUtils;
 import org.openecomp.sdc.be.datatypes.elements.ForwardingPathDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ForwardingPathElementDataDefinition;
@@ -16,11 +9,12 @@ import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
-import org.openecomp.sdc.be.tosca.CapabiltyRequirementConvertor;
+import org.openecomp.sdc.be.tosca.CapabilityRequirementConverter;
 import org.openecomp.sdc.be.tosca.model.ToscaNodeTemplate;
 import org.openecomp.sdc.be.tosca.model.ToscaTemplateRequirement;
 
-import fj.data.Either;
+import java.util.*;
+import java.util.Collection;
 
 /**
  * @author KATYR
@@ -35,7 +29,7 @@ public class ForwardingPathToscaUtil {
     public static final String FORWARDER = "forwarder";
 
     public static void addForwardingPaths(Service service, Map<String, ToscaNodeTemplate>
-            nodeTemplates, CapabiltyRequirementConvertor capabiltyRequirementConvertor, Map<String, Component> originComponents, ToscaOperationFacade toscaOperationFacade) {
+            nodeTemplates, CapabilityRequirementConverter capabiltyRequirementConvertor, Map<String, Component> originComponents, ToscaOperationFacade toscaOperationFacade) {
         for (String forwardingPathName : service.getForwardingPaths().keySet()) {
             ToscaNodeTemplate forwardingPathNodeTemplate =
                     new ToscaNodeTemplate();
@@ -70,7 +64,7 @@ public class ForwardingPathToscaUtil {
     }
 
     private static List<Map<String, ToscaTemplateRequirement>> convertPathElementsToRequirements(
-        List<ForwardingPathElementDataDefinition> pathElements, Service service, CapabiltyRequirementConvertor capabiltyRequirementConvertor, Map<String, Component> originComponents,ToscaOperationFacade toscaOperationFacade) {
+            List<ForwardingPathElementDataDefinition> pathElements, Service service, CapabilityRequirementConverter capabiltyRequirementConvertor, Map<String, Component> originComponents, ToscaOperationFacade toscaOperationFacade) {
         List<Map<String, ToscaTemplateRequirement>> toscaRequirements = new ArrayList<>();
         for (int i = 0; i <= pathElements.size() -1 ; i++) {
                 final ForwardingPathElementDataDefinition element = pathElements.get(i);
@@ -85,8 +79,8 @@ public class ForwardingPathToscaUtil {
     }
 
     private static String fetchNodeName(Service service, String nodeId) {
-        if (service.getComponentInstanceById(nodeId).isPresent()) {
-            return service.getComponentInstanceById(nodeId).get().getName();
+        if (service.getComponentInstanceByName(nodeId).isPresent()) {
+            return service.getComponentInstanceByName(nodeId).get().getName();
         } else {
             return "";
         }
@@ -108,8 +102,8 @@ public class ForwardingPathToscaUtil {
     /**
      * @todo handle errors.
      */
-    private static String fetchCPName(Service service, String nodeID, String cpName, CapabiltyRequirementConvertor capabiltyRequirementConvertor, Map<String, Component> originComponents,  ToscaOperationFacade toscaOperationFacade) {
-        Optional<ComponentInstance> componentInstance = service.getComponentInstanceById(nodeID);
+    private static String fetchCPName(Service service, String nodeID, String cpName, CapabilityRequirementConverter capabiltyRequirementConvertor, Map<String, Component> originComponents, ToscaOperationFacade toscaOperationFacade) {
+        Optional<ComponentInstance> componentInstance = service.getComponentInstanceByName(nodeID);
         ComponentInstance componentInstanceVal = componentInstance.get();
         String name = componentInstanceVal.getNormalizedName();
         Component component = originComponents.get(componentInstanceVal.getComponentUid());
@@ -120,12 +114,12 @@ public class ForwardingPathToscaUtil {
             }
 
         }
-        CapabilityDefinition capability = componentInstanceVal.getCapabilities().values().stream().flatMap(capabilityDefinitions -> capabilityDefinitions.stream())
-                .filter(capabilityDefinition -> capabilityDefinition.getUniqueId().equals(cpName)).findAny().get();
+        CapabilityDefinition capability = componentInstanceVal.getCapabilities().values().stream().flatMap(Collection::stream)
+                .filter(capabilityDefinition -> capabilityDefinition.getName().equals(cpName)).findAny().get();
         List<String> path = capability.getPath();
         List<String> reducedPath = new ArrayList<>(path);
         reducedPath.remove(reducedPath.size() - 1);
-        Either<String, Boolean> stringBooleanEither = capabiltyRequirementConvertor.buildSubstitutedName(originComponents, component, reducedPath, capability.getName());
+        Either<String, Boolean> stringBooleanEither = capabiltyRequirementConvertor.buildSubstitutedName(originComponents, component, reducedPath, capability.getName(), null);
         return name + "." + stringBooleanEither.left().value();
     }
 }

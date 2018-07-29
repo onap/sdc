@@ -14,7 +14,7 @@ export class LinkRowComponent {
     @Input() data:Array<ServicePathMapItem>;
     @Input() link:Link;
     @Input() removeRow:Function;
-    source:Array<DropdownValue> = [];
+    source: Array<DropdownValue> = [];
     target: Array<DropdownValue> = [];
     srcCP: Array<DropdownValue> = [];
     targetCP: Array<DropdownValue> = [];
@@ -32,11 +32,9 @@ export class LinkRowComponent {
             if (!srcCPOptions) { return; }
             this.srcCP = this.convertValuesToDropDownOptions(srcCPOptions);
             if (this.link.fromCP) {
-                let targetOptions = this.findOptions(srcCPOptions, this.link.fromCP);
-                if (!targetOptions) { return; }
-                this.target = this.convertValuesToDropDownOptions(targetOptions);
+                this.target = this.convertValuesToDropDownOptions(data);
                 if (this.link.toNode) {
-                    let targetCPOptions = this.findOptions(targetOptions, this.link.toNode);
+                    let targetCPOptions = this.findOptions(data, this.link.toNode);
                     if (!targetCPOptions) { return; }
                     this.targetCP = this.convertValuesToDropDownOptions(targetCPOptions);
                 }
@@ -45,7 +43,7 @@ export class LinkRowComponent {
     }
 
     private findOptions(items: Array<ServicePathMapItem>, nodeOrCPId: string) {
-        let item = items.find((dataItem)=> nodeOrCPId === dataItem.id);
+        let item = _.find(items, (dataItem) => nodeOrCPId === dataItem.id);
         if (item && item.data && item.data.options) {
             return item.data.options;
         }
@@ -53,12 +51,12 @@ export class LinkRowComponent {
         return null;
     }
 
-    private convertValuesToDropDownOptions(values: Array<ServicePathMapItem>) : Array<DropdownValue> {
-        let result = [];
+    private convertValuesToDropDownOptions(values: Array<ServicePathMapItem>): Array<DropdownValue> {
+        let result:Array<DropdownValue> = [];
         for (let i = 0; i < values.length ; i++) {
             result[result.length] =  new DropdownValue(values[i].id, values[i].data.name);
         }
-        return result;
+        return result.sort((a, b) => a.label.localeCompare(b.label));
     }
 
     onSourceSelected(id) {
@@ -75,10 +73,9 @@ export class LinkRowComponent {
 
     onSrcCPSelected (id) {
         if (id) {
-            let srcCPData = this.data.find((dataItem)=> this.link.fromNode === dataItem.id).data;
-            let srcCPOptions = srcCPData.options;
-            let targetOptions = this.findOptions(srcCPOptions, id);
-            this.target = this.convertValuesToDropDownOptions(targetOptions);
+            let srcCPOptions = this.findOptions(this.data, this.link.fromNode);
+            let srcCPData = srcCPOptions.find(option => id === option.id).data;
+            this.target = this.convertValuesToDropDownOptions(this.data);
             this.link.fromCPOriginId = srcCPData.ownerId;
             this.link.toNode = '';
             this.link.toCP = '';
@@ -89,9 +86,7 @@ export class LinkRowComponent {
 
     onTargetSelected(id) {
         if (id) {
-            let srcCPOptions = this.findOptions(this.data, this.link.fromNode);
-            let targetOptions = this.findOptions(srcCPOptions, this.link.fromCP);
-            let targetCPOptions = this.findOptions(targetOptions, id);
+            let targetCPOptions = this.findOptions(this.data, id);
             this.targetCP = this.convertValuesToDropDownOptions(targetCPOptions);
             this.link.toCP = '';
         }
@@ -100,10 +95,8 @@ export class LinkRowComponent {
 
     onTargetCPSelected(id) {
         if (id) {
-            let srcCPOptions = this.findOptions(this.data, this.link.fromNode);
-            let targetOptions = this.findOptions(srcCPOptions, this.link.fromCP);
-            let targetCPOptions = this.findOptions(targetOptions, this.link.toNode);
-            let targetCPDataObj = targetCPOptions.find((dataItem)=> id === dataItem.id).data;
+            let targetCPOptions = this.findOptions(this.data, this.link.toNode);
+            let targetCPDataObj = targetCPOptions.find(option => id === option.id).data;
             this.link.toCPOriginId = targetCPDataObj.ownerId;
         }
     }

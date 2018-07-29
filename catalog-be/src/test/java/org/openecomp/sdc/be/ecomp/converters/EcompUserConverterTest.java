@@ -1,16 +1,16 @@
 package org.openecomp.sdc.be.ecomp.converters;
 
-
+import fj.data.Either;
 import fj.data.Either;
 import org.junit.Test;
 import org.openecomp.portalsdk.core.restful.domain.EcompRole;
 import org.openecomp.portalsdk.core.restful.domain.EcompUser;
 import org.openecomp.sdc.be.model.User;
 
+
 import java.util.Collections;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-
 public class EcompUserConverterTest {
     private static final String FIRST_NAME = "firstname";
     private static final String LAST_NAME = "lastname";

@@ -20,17 +20,16 @@
 
 package org.openecomp.sdc.be.resources.data;
 
-import java.lang.reflect.Type;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import com.google.gson.reflect.TypeToken;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphNode;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
 import org.openecomp.sdc.be.datatypes.elements.CapabilityTypeDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 
-import com.google.gson.reflect.TypeToken;
+import java.lang.reflect.Type;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class CapabilityTypeData extends GraphNode {
 
@@ -60,6 +59,9 @@ public class CapabilityTypeData extends GraphNode {
 
 		capabilityTypeDataDefinition
 				.setDescription((String) properties.get(GraphPropertiesDictionary.DESCRIPTION.getProperty()));
+		
+		capabilityTypeDataDefinition
+		        .setVersion((String) properties.get(GraphPropertiesDictionary.VERSION.getProperty()));
 
 		Type listType = new TypeToken<List<String>>() {
 		}.getType();
@@ -85,13 +87,15 @@ public class CapabilityTypeData extends GraphNode {
 	@Override
 	public Map<String, Object> toGraphMap() {
 
-		Map<String, Object> map = new HashMap<String, Object>();
+		Map<String, Object> map = new HashMap<>();
 
 		addIfExists(map, GraphPropertiesDictionary.UNIQUE_ID, capabilityTypeDataDefinition.getUniqueId());
 
 		addIfExists(map, GraphPropertiesDictionary.TYPE, capabilityTypeDataDefinition.getType());
 
 		addIfExists(map, GraphPropertiesDictionary.DESCRIPTION, capabilityTypeDataDefinition.getDescription());
+		
+		addIfExists(map, GraphPropertiesDictionary.VERSION, capabilityTypeDataDefinition.getVersion());
 
 		// String validSourceTypesToJson =
 		// getGson().toJson(capabilityTypeDataDefinition.getValidSourceTypes());

@@ -20,15 +20,6 @@
 
 package org.openecomp.sdc.common.test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.junit.Test;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.util.GeneralUtility;
@@ -39,6 +30,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static org.junit.Assert.*;
 
 public class CommonUtilsTest {
 	private static Logger log = LoggerFactory.getLogger(CommonUtilsTest.class.getName());
@@ -138,35 +136,35 @@ public class CommonUtilsTest {
 	@Test
 	public void testRemoveHtml() {
 
-		assertTrue("gooboo".equals(ValidationUtils.removeHtmlTags("<b>goo<b></b></b><b>boo</b>")));
-		assertTrue("goo&lt;boo".equals(ValidationUtils.removeHtmlTags("<b>goo<b></b><</b><b>boo</b>")));
-		assertTrue("goo boo".equals(ValidationUtils.removeHtmlTags("goo boo")));
-		assertTrue("goo# . boo12".equals(ValidationUtils.removeHtmlTags("goo# . boo12")));
+        assertEquals("gooboo", ValidationUtils.removeHtmlTags("<b>goo<b></b></b><b>boo</b>"));
+        assertEquals("goo&lt;boo", ValidationUtils.removeHtmlTags("<b>goo<b></b><</b><b>boo</b>"));
+        assertEquals("goo boo", ValidationUtils.removeHtmlTags("goo boo"));
+        assertEquals("goo# . boo12", ValidationUtils.removeHtmlTags("goo# . boo12"));
 	}
 
 	@Test
 	public void testnormaliseWhitespace() {
 
-		assertTrue("goo boo".equals(ValidationUtils.normaliseWhitespace("goo boo")));
-		assertTrue("goo boo ".equals(ValidationUtils.normaliseWhitespace("goo boo	")));
-		assertTrue("goo boo".equals(ValidationUtils.normaliseWhitespace("goo    boo")));
+        assertEquals("goo boo", ValidationUtils.normaliseWhitespace("goo boo"));
+        assertEquals("goo boo ", ValidationUtils.normaliseWhitespace("goo boo	"));
+        assertEquals("goo boo", ValidationUtils.normaliseWhitespace("goo    boo"));
 	}
 
 	@Test
 	public void teststripOctets() {
-		assertTrue("goo boo".equals(ValidationUtils.stripOctets("goo%1F boo")));
-		assertTrue("goo boo ".equals(ValidationUtils.stripOctets("goo boo %1F")));
-		assertTrue("goo boo".equals(ValidationUtils.stripOctets("%1Fgoo boo")));
+        assertEquals("goo boo", ValidationUtils.stripOctets("goo%1F boo"));
+        assertEquals("goo boo ", ValidationUtils.stripOctets("goo boo %1F"));
+        assertEquals("goo boo", ValidationUtils.stripOctets("%1Fgoo boo"));
 	}
 
 	@Test
 	public void testRemoveNoneUtf8Chars() {
-		assertTrue("goo boo".equals(ValidationUtils.removeNoneUtf8Chars("goo boo")));
-		assertTrue("goo boo!!._".equals(ValidationUtils.removeNoneUtf8Chars("goo boo!!._")));
-		assertTrue("goo 	boo".equals(ValidationUtils.removeNoneUtf8Chars("goo 	boo")));
-		assertTrue("goo  bo123o".equals(ValidationUtils.removeNoneUtf8Chars("goo  bo123o")));
-		assertTrue("goo  bo123o".equals(ValidationUtils.removeNoneUtf8Chars("goo  קקbo123oגכקק")));
-		assertTrue("goo  bo123o".equals(ValidationUtils.removeNoneUtf8Chars("goo  bo1������23o")));
+        assertEquals("goo boo", ValidationUtils.removeNoneUtf8Chars("goo boo"));
+        assertEquals("goo boo!!._", ValidationUtils.removeNoneUtf8Chars("goo boo!!._"));
+        assertEquals("goo 	boo", ValidationUtils.removeNoneUtf8Chars("goo 	boo"));
+        assertEquals("goo  bo123o", ValidationUtils.removeNoneUtf8Chars("goo  bo123o"));
+        assertEquals("goo  bo123o", ValidationUtils.removeNoneUtf8Chars("goo  קקbo123oגכקק"));
+        assertEquals("goo  bo123o", ValidationUtils.removeNoneUtf8Chars("goo  bo1������23o"));
 	}
 
 	@Test
@@ -334,15 +332,15 @@ public class CommonUtilsTest {
 
 	@Test
 	public void normalizeFileNameTest() {
-		assertTrue("too.jpeg".equals(ValidationUtils.normalizeFileName("too.jpeg")));
-		assertTrue("too..jpeg".equals(ValidationUtils.normalizeFileName("too..jpeg")));
-		assertTrue("too..jpeg".equals(ValidationUtils.normalizeFileName("t*o:o..jpe<>g")));
-		assertTrue("goo.too..jpeg".equals(ValidationUtils.normalizeFileName("goo.t*o:o..jpe<>g")));
-		assertTrue("goo.too..jpeg".equals(ValidationUtils.normalizeFileName("   goo.t*o:o..jpe<>g  ")));
-		assertTrue("goo-too-mo.jpeg".equals(ValidationUtils.normalizeFileName("goo   too----mo.jpeg")));
-		assertTrue("goo-too-mo.jpeg".equals(ValidationUtils.normalizeFileName(".\\..\\goo   too----mo.jpeg")));
-		assertTrue("goo-too-mo.jpeg".equals(ValidationUtils.normalizeFileName("__--goo   too----mo.jpeg--__")));
-		assertTrue("goo-too-mo.jpeg".equals(ValidationUtils.normalizeFileName("_ -goo   too----mo.jpeg _--  _-")));
+        assertEquals("too.jpeg", ValidationUtils.normalizeFileName("too.jpeg"));
+        assertEquals("too..jpeg", ValidationUtils.normalizeFileName("too..jpeg"));
+        assertEquals("too..jpeg", ValidationUtils.normalizeFileName("t*o:o..jpe<>g"));
+        assertEquals("goo.too..jpeg", ValidationUtils.normalizeFileName("goo.t*o:o..jpe<>g"));
+        assertEquals("goo.too..jpeg", ValidationUtils.normalizeFileName("   goo.t*o:o..jpe<>g  "));
+        assertEquals("goo-too-mo.jpeg", ValidationUtils.normalizeFileName("goo   too----mo.jpeg"));
+        assertEquals("goo-too-mo.jpeg", ValidationUtils.normalizeFileName(".\\..\\goo   too----mo.jpeg"));
+        assertEquals("goo-too-mo.jpeg", ValidationUtils.normalizeFileName("__--goo   too----mo.jpeg--__"));
+        assertEquals("goo-too-mo.jpeg", ValidationUtils.normalizeFileName("_ -goo   too----mo.jpeg _--  _-"));
 
 	}
 
@@ -466,7 +464,7 @@ public class CommonUtilsTest {
 		options.setDefaultScalarStyle(DumperOptions.ScalarStyle.FOLDED);
 		Yaml yaml = new Yaml(options);
 
-		Map<String, Object> parameters = new HashMap<String, Object>();
+		Map<String, Object> parameters = new HashMap<>();
 		parameters.put("k1", "val");
 		parameters.put("k2", "\"val\"");
 

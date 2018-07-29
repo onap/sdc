@@ -21,8 +21,6 @@
 package org.openecomp.sdc.healing.api;
 
 import org.openecomp.sdc.datatypes.model.ItemType;
-import org.openecomp.sdc.healing.types.HealCode;
-import org.openecomp.sdc.healing.types.HealerType;
 import org.openecomp.sdc.versioning.dao.types.Version;
 
 import java.util.Optional;

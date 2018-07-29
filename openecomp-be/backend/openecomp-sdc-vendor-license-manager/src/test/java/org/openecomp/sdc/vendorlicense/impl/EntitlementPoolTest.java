@@ -17,10 +17,21 @@
 
 package org.openecomp.sdc.vendorlicense.impl;
 
-import static org.mockito.Matchers.anyObject;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.verify;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.mockito.Spy;
+import org.openecomp.sdc.common.errors.CoreException;
+import org.openecomp.sdc.vendorlicense.dao.EntitlementPoolDao;
+import org.openecomp.sdc.vendorlicense.dao.LimitDao;
+import org.openecomp.sdc.vendorlicense.dao.types.*;
+import org.openecomp.sdc.vendorlicense.errors.VendorLicenseErrorCodes;
+import org.openecomp.sdc.vendorlicense.facade.VendorLicenseFacade;
+import org.openecomp.sdc.versioning.dao.types.Version;
+import org.testng.Assert;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -29,27 +40,9 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.mockito.Spy;
-import org.openecomp.sdc.common.errors.CoreException;
-import org.openecomp.sdc.vendorlicense.dao.EntitlementPoolDao;
-import org.openecomp.sdc.vendorlicense.dao.LimitDao;
-import org.openecomp.sdc.vendorlicense.dao.types.AggregationFunction;
-import org.openecomp.sdc.vendorlicense.dao.types.EntitlementMetric;
-import org.openecomp.sdc.vendorlicense.dao.types.EntitlementPoolEntity;
-import org.openecomp.sdc.vendorlicense.dao.types.EntitlementTime;
-import org.openecomp.sdc.vendorlicense.dao.types.MultiChoiceOrOther;
-import org.openecomp.sdc.vendorlicense.dao.types.OperationalScope;
-import org.openecomp.sdc.vendorlicense.dao.types.ThresholdUnit;
-import org.openecomp.sdc.vendorlicense.errors.VendorLicenseErrorCodes;
-import org.openecomp.sdc.vendorlicense.facade.VendorLicenseFacade;
-import org.openecomp.sdc.versioning.dao.types.Version;
-import org.testng.Assert;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
+
+import static org.mockito.Matchers.anyObject;
+import static org.mockito.Mockito.*;
 
 public class EntitlementPoolTest {
 

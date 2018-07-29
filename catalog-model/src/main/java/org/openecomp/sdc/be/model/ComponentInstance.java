@@ -20,21 +20,15 @@
 
 package org.openecomp.sdc.be.model;
 
-import java.io.Serializable;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
 import org.openecomp.sdc.be.datatypes.elements.ComponentInstanceDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertiesOwner;
 import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
 
-public class ComponentInstance extends ComponentInstanceDataDefinition implements Serializable, PropertiesOwner {
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = 6721465693884621223L;
+public class ComponentInstance extends ComponentInstanceDataDefinition implements PropertiesOwner {
 
     private Map<String, List<CapabilityDefinition>> capabilities;
     private Map<String, List<RequirementDefinition>> requirements;

@@ -1,8 +1,8 @@
 package org.openecomp.sdc.common.api;
 
-import java.util.List;
-
 import org.junit.Test;
+
+import java.util.List;
 
 
 public class ArtifactGroupTypeEnumTest {

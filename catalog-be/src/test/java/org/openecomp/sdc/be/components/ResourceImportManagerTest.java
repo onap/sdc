@@ -20,16 +20,7 @@
 
 package org.openecomp.sdc.be.components;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.when;
-
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import fj.data.Either;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -38,33 +29,33 @@ import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.openecomp.sdc.be.auditing.impl.AuditingManager;
-import org.openecomp.sdc.be.components.impl.ImportUtils;
-import org.openecomp.sdc.be.components.impl.ImportUtilsTest;
-import org.openecomp.sdc.be.components.impl.ResourceBusinessLogic;
-import org.openecomp.sdc.be.components.impl.ResourceImportManager;
-import org.openecomp.sdc.be.components.impl.ResponseFormatManager;
+import org.openecomp.sdc.be.components.impl.*;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleChangeInfoWithAction;
 import org.openecomp.sdc.be.config.Configuration;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
-import org.openecomp.sdc.be.model.CapabilityDefinition;
-import org.openecomp.sdc.be.model.PropertyConstraint;
-import org.openecomp.sdc.be.model.PropertyDefinition;
-import org.openecomp.sdc.be.model.RequirementDefinition;
-import org.openecomp.sdc.be.model.Resource;
-import org.openecomp.sdc.be.model.UploadResourceInfo;
-import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.*;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.tosca.constraints.GreaterOrEqualConstraint;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
+import org.openecomp.sdc.be.utils.TypeUtils;
 import org.openecomp.sdc.common.api.ConfigurationSource;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;
 import org.openecomp.sdc.common.impl.FSConfigurationSource;
 import org.openecomp.sdc.exception.PolicyException;
 import org.openecomp.sdc.exception.ResponseFormat;
 
-import fj.data.Either;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.when;
 
 public class ResourceImportManagerTest {
 
@@ -146,9 +137,9 @@ public class ResourceImportManagerTest {
         Either<ImmutablePair<Resource, ActionStatus>, ResponseFormat> createResource = importManager.importNormativeResource(jsonContent, resourceMD, user, true, true);
         assertTrue(createResource.isRight());
         ResponseFormat errorInfoFromTest = createResource.right().value();
-        assertTrue(errorInfoFromTest.getStatus().equals(dummyResponseFormat.getStatus()));
-        assertTrue(errorInfoFromTest.getMessageId().equals(dummyResponseFormat.getMessageId()));
-        assertTrue(errorInfoFromTest.getFormattedMessage().equals(dummyResponseFormat.getFormattedMessage()));
+        assertEquals(errorInfoFromTest.getStatus(), dummyResponseFormat.getStatus());
+        assertEquals(errorInfoFromTest.getMessageId(), dummyResponseFormat.getMessageId());
+        assertEquals(errorInfoFromTest.getFormattedMessage(), dummyResponseFormat.getFormattedMessage());
 
         Mockito.verify(resourceBusinessLogic, Mockito.times(0)).createOrUpdateResourceByImport(Mockito.any(Resource.class), Mockito.eq(user), Mockito.eq(true), Mockito.eq(false), Mockito.eq(true), Mockito.eq(null), Mockito.eq(null), Mockito.eq(false));
 
@@ -201,10 +192,10 @@ public class ResourceImportManagerTest {
     private void setResourceBusinessLogicMock() {
         when(resourceBusinessLogic.getUserAdmin()).thenReturn(userAdmin);
         when(resourceBusinessLogic.createOrUpdateResourceByImport(Mockito.any(Resource.class), Mockito.any(User.class), Mockito.anyBoolean(), Mockito.anyBoolean(), Mockito.anyBoolean(), Mockito.eq(null), Mockito.eq(null), Mockito.eq(false)))
-                .thenAnswer(new Answer<Either<ImmutablePair<Resource, ActionStatus>, ResponseFormat>>() {
-                    public Either<ImmutablePair<Resource, ActionStatus>, ResponseFormat> answer(InvocationOnMock invocation) throws Throwable {
+                .thenAnswer(new Answer<ImmutablePair<Resource, ActionStatus>>() {
+                    public ImmutablePair<Resource, ActionStatus> answer(InvocationOnMock invocation) throws Throwable {
                         Object[] args = invocation.getArguments();
-                        return Either.left(new ImmutablePair<Resource, ActionStatus>((Resource) args[0], ActionStatus.CREATED));
+                        return new ImmutablePair<>((Resource) args[0], ActionStatus.CREATED);
 
                     }
                 });
@@ -257,81 +248,81 @@ public class ResourceImportManagerTest {
     private void testSetProperties(Resource resource) {
         List<PropertyDefinition> propertiesList = resource.getProperties();
 
-        Map<String, PropertyDefinition> properties = new HashMap<String, PropertyDefinition>();
+        Map<String, PropertyDefinition> properties = new HashMap<>();
         for (PropertyDefinition propertyDefinition : propertiesList) {
             properties.put(propertyDefinition.getName(), propertyDefinition);
         }
 
-        assertTrue(properties.size() == 3);
+        assertEquals(3, properties.size());
         assertTrue(properties.containsKey("size"));
         PropertyDefinition propertyDefinition = properties.get("size");
-        assertTrue(propertyDefinition.getType().equals("scalar-unit.size"));
-        assertTrue(propertyDefinition.getConstraints().size() == 1);
+        assertEquals("scalar-unit.size", propertyDefinition.getType());
+        assertEquals(1, propertyDefinition.getConstraints().size());
         PropertyConstraint propertyConstraint = propertyDefinition.getConstraints().get(0);
         assertTrue(propertyConstraint instanceof GreaterOrEqualConstraint);
 
         assertTrue(properties.containsKey("volume_id"));
         propertyDefinition = properties.get("volume_id");
-        assertTrue(propertyDefinition.getType().equals("string"));
-        assertTrue(propertyDefinition.isRequired() == false);
+        assertEquals("string", propertyDefinition.getType());
+        assertTrue(!propertyDefinition.isRequired());
 
         assertTrue(properties.containsKey("snapshot_id"));
         propertyDefinition = properties.get("snapshot_id");
-        assertTrue(propertyDefinition.getType().equals("string"));
-        assertTrue(propertyDefinition.isRequired() == false);
+        assertEquals("string", propertyDefinition.getType());
+        assertTrue(!propertyDefinition.isRequired());
 
     }
 
     private void testSetCapabilities(Resource resource) {
         Map<String, List<CapabilityDefinition>> capabilities = resource.getCapabilities();
-        assertTrue(capabilities.size() == 3);
+        assertEquals(3, capabilities.size());
         assertTrue(capabilities.containsKey("tosca.capabilities.Endpoint"));
         List<CapabilityDefinition> capabilityList = capabilities.get("tosca.capabilities.Endpoint");
         CapabilityDefinition capability = capabilityList.get(0);
-        assertTrue(capability.getType().equals("tosca.capabilities.Endpoint"));
-        assertTrue(capability.getName().equals("data_endpoint"));
+        assertEquals("tosca.capabilities.Endpoint", capability.getType());
+        assertEquals("data_endpoint", capability.getName());
 
         assertTrue(capabilities.containsKey("tosca.capabilities.Endpoint.Admin"));
         capabilityList = capabilities.get("tosca.capabilities.Endpoint.Admin");
         capability = capabilityList.get(0);
-        assertTrue(capability.getType().equals("tosca.capabilities.Endpoint.Admin"));
-        assertTrue(capability.getName().equals("admin_endpoint"));
+        assertEquals("tosca.capabilities.Endpoint.Admin", capability.getType());
+        assertEquals("admin_endpoint", capability.getName());
 
         assertTrue(capabilities.containsKey("tosca.capabilities.Container"));
         capabilityList = capabilities.get("tosca.capabilities.Container");
         capability = capabilityList.get(0);
-        assertTrue(capability.getType().equals("tosca.capabilities.Container"));
-        assertTrue(capability.getName().equals("host"));
+        assertEquals("tosca.capabilities.Container", capability.getType());
+        assertEquals("host", capability.getName());
 
         List<String> validSourceTypes = capability.getValidSourceTypes();
-        assertTrue(validSourceTypes.size() == 1);
-        assertTrue(validSourceTypes.get(0).equals("tosca.nodes.WebApplication"));
+        assertEquals(1, validSourceTypes.size());
+        assertEquals("tosca.nodes.WebApplication", validSourceTypes.get(0));
 
     }
 
     private void testSetRequirments(Resource resource) {
         Map<String, List<RequirementDefinition>> requirements = resource.getRequirements();
-        assertTrue(requirements.size() == 2);
+        assertEquals(2, requirements.size());
 
         assertTrue(requirements.containsKey("tosca.capabilities.network.Linkable"));
         List<RequirementDefinition> requirementList = requirements.get("tosca.capabilities.network.Linkable");
         RequirementDefinition requirement = requirementList.get(0);
-        assertTrue(requirement.getCapability().equals("tosca.capabilities.network.Linkable"));
-        assertTrue(requirement.getRelationship().equals("tosca.relationships.network.LinksTo"));
-        assertTrue(requirement.getName().equals("link"));
+        assertEquals("tosca.capabilities.network.Linkable", requirement.getCapability());
+        assertEquals("tosca.relationships.network.LinksTo", requirement.getRelationship());
+        assertEquals("link", requirement.getName());
 
         assertTrue(requirements.containsKey("tosca.capabilities.network.Bindable"));
         requirementList = requirements.get("tosca.capabilities.network.Bindable");
         requirement = requirementList.get(0);
-        assertTrue(requirement.getCapability().equals("tosca.capabilities.network.Bindable"));
-        assertTrue(requirement.getRelationship().equals("tosca.relationships.network.BindsTo"));
-        assertTrue(requirement.getName().equals("binding"));
+        assertEquals("tosca.capabilities.network.Bindable", requirement.getCapability());
+        assertEquals("tosca.relationships.network.BindsTo", requirement.getRelationship());
+        assertEquals("binding", requirement.getName());
 
     }
 
     private void testSetDerivedFrom(Resource resource) {
-        assertTrue(resource.getDerivedFrom().size() == 1);
-        assertTrue(resource.getDerivedFrom().get(0).equals("tosca.nodes.Root"));
+        assertEquals(1, resource.getDerivedFrom().size());
+        assertEquals("tosca.nodes.Root", resource.getDerivedFrom().get(0));
 
     }
 
@@ -339,17 +330,17 @@ public class ResourceImportManagerTest {
 
         // assertTrue( resource.getCategory().equals(resourceMD.getCategory())
         // );
-        assertTrue(resource.getDescription().equals(resourceMD.getDescription()));
-        assertTrue(resource.getIcon().equals(resourceMD.getResourceIconPath()));
-        assertTrue(resource.getName().equals(resourceMD.getName()));
+        assertEquals(resource.getDescription(), resourceMD.getDescription());
+        assertEquals(resource.getIcon(), resourceMD.getResourceIconPath());
+        assertEquals(resource.getName(), resourceMD.getName());
         assertEquals(resource.getResourceVendorModelNumber(), resourceMD.getResourceVendorModelNumber());
-        assertTrue(resource.getContactId().equals(resourceMD.getContactId()));
-        assertTrue(resource.getCreatorUserId().equals(resourceMD.getContactId()));
+        assertEquals(resource.getContactId(), resourceMD.getContactId());
+        assertEquals(resource.getCreatorUserId(), resourceMD.getContactId());
 
         // assertTrue( resource.isAbstract() ==
         // Constants.ABSTRACT_CATEGORY.equals(resourceMD.getCategory()));
 
-        assertTrue(resourceMD.getTags().size() == resource.getTags().size());
+        assertEquals(resourceMD.getTags().size(), resource.getTags().size());
         for (String tag : resource.getTags()) {
             assertTrue(resourceMD.getTags().contains(tag));
         }
@@ -357,11 +348,11 @@ public class ResourceImportManagerTest {
     }
 
     private void testSetConstantMetaData(Resource resource) {
-        assertTrue(resource.getVersion().equals(ImportUtils.Constants.FIRST_CERTIFIED_VERSION_VERSION));
-        assertTrue(resource.getLifecycleState() == ImportUtils.Constants.NORMATIVE_TYPE_LIFE_CYCLE);
-        assertTrue(resource.isHighestVersion() == ImportUtils.Constants.NORMATIVE_TYPE_HIGHEST_VERSION);
-        assertTrue(resource.getVendorName().equals(ImportUtils.Constants.VENDOR_NAME));
-        assertTrue(resource.getVendorRelease().equals(ImportUtils.Constants.VENDOR_RELEASE));
+        assertEquals(resource.getVersion(), TypeUtils.FIRST_CERTIFIED_VERSION_VERSION);
+        assertSame(resource.getLifecycleState(), ImportUtils.Constants.NORMATIVE_TYPE_LIFE_CYCLE);
+        assertEquals((boolean) resource.isHighestVersion(), ImportUtils.Constants.NORMATIVE_TYPE_HIGHEST_VERSION);
+        assertEquals(resource.getVendorName(), ImportUtils.Constants.VENDOR_NAME);
+        assertEquals(resource.getVendorRelease(), ImportUtils.Constants.VENDOR_RELEASE);
     }
 
 }

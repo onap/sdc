@@ -16,18 +16,6 @@
 
 package org.openecomp.sdc.itempermissions.dao.impl;
 
-import static org.openecomp.sdc.itempermissions.notifications.NotificationConstants.ITEM_ID_PROP;
-import static org.openecomp.sdc.itempermissions.notifications.NotificationConstants.ITEM_NAME_PROP;
-import static org.openecomp.sdc.itempermissions.notifications.NotificationConstants.PERMISSION_CHANGED;
-import static org.openecomp.sdc.itempermissions.notifications.NotificationConstants.PERMISSION_GRANTED;
-import static org.openecomp.sdc.itempermissions.notifications.NotificationConstants.PERMISSION_ITEM;
-import static org.openecomp.sdc.itempermissions.notifications.NotificationConstants.PERMISSION_USER;
-
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.ErrorCategory;
 import org.openecomp.sdc.common.errors.ErrorCode;
@@ -44,6 +32,10 @@ import org.openecomp.sdc.notification.services.NotificationPropagationManager;
 import org.openecomp.sdc.notification.services.SubscriptionService;
 import org.openecomp.sdc.versioning.AsdcItemManager;
 import org.openecomp.sdc.versioning.types.Item;
+
+import java.util.*;
+
+import static org.openecomp.sdc.itempermissions.notifications.NotificationConstants.*;
 
 /**
  * Created by ayalaben on 6/18/2017.

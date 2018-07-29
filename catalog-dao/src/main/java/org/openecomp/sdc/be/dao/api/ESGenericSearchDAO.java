@@ -20,17 +20,16 @@
 
 package org.openecomp.sdc.be.dao.api;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.annotation.Resource;
-
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.sort.SortBuilder;
 import org.openecomp.sdc.be.dao.es.ElasticSearchClient;
+
+import javax.annotation.Resource;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Elastic search dao that manages search operations.
@@ -92,7 +91,7 @@ public class ESGenericSearchDAO extends ESGenericIdDAO implements IGenericSearch
 	public <T> List<T> doCustomFind(Class<T> clazz, String indexName, String typeName, QueryBuilder query,
 			SortBuilder sortBuilder) {
 
-		List<T> result = new ArrayList<T>();
+		List<T> result = new ArrayList<>();
 		SearchRequestBuilder searchRequestBuilder = getClient().prepareSearch(indexName).setTypes(typeName)
 				.setSize(MAX_SEARCH_SIZE);
 		if (query != null) {

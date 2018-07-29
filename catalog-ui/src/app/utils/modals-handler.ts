@@ -36,7 +36,7 @@ export interface IModalsHandler {
     openServerMessageModal(data:IServerMessageModalModel):ng.IPromise<any>;
     openClientMessageModal(data:IClientMessageModalModel):ng.IPromise<ng.ui.bootstrap.IModalServiceInstance>;
     openArtifactModal(artifact:ArtifactModel, component:Component):ng.IPromise<any>;
-    openEditPropertyModal(property:PropertyModel, component:Component, filteredProperties:Array<PropertyModel>, isPropertyOwnValue:boolean):ng.IPromise<any>;
+    openEditPropertyModal(property:PropertyModel, component:Component, filteredProperties:Array<PropertyModel>, isPropertyOwnValue:boolean, propertyOwnerType:string, propertyOwnerId:string):ng.IPromise<any>;
 }
 
 export class ModalsHandler implements IModalsHandler {
@@ -166,7 +166,7 @@ export class ModalsHandler implements IModalsHandler {
         return deferred.promise;
     };
 
-    openOnboadrdingModal = (okButtonText:string, currentCsarUUID?:string):ng.IPromise<any> => {
+    openOnboadrdingModal = (okButtonText:string, currentCsarUUID?:string, currentCsarVersion?:string):ng.IPromise<any> => {
         let deferred = this.$q.defer();
         let modalOptions:ng.ui.bootstrap.IModalSettings = {
             templateUrl: '../view-models/modals/onboarding-modal/onboarding-modal-view.html',
@@ -179,6 +179,9 @@ export class ModalsHandler implements IModalsHandler {
                 },
                 currentCsarUUID: ():string=> {
                     return currentCsarUUID || null;
+                },
+                currentCsarVersion: ():string=> {
+                    return currentCsarVersion || null;
                 }
             }
         };
@@ -279,7 +282,7 @@ export class ModalsHandler implements IModalsHandler {
      * @param isPropertyValueOwner - boolean telling if the component is eligible of editing the property
      * @returns {IPromise<T>} - Promise telling if the modal has opened or not
      */
-    openEditPropertyModal = (property:PropertyModel, component:Component, filteredProperties:Array<PropertyModel>, isPropertyValueOwner:boolean):ng.IPromise<any> => {
+    openEditPropertyModal = (property:PropertyModel, component:Component, filteredProperties:Array<PropertyModel>, isPropertyValueOwner:boolean, propertyOwnerType:string, propertyOwnerId:string):ng.IPromise<any> => {
         let deferred = this.$q.defer();
 
         let modalOptions:ng.ui.bootstrap.IModalSettings = {
@@ -300,6 +303,12 @@ export class ModalsHandler implements IModalsHandler {
                 },
                 isPropertyValueOwner: ():boolean => {
                     return isPropertyValueOwner;
+                },
+                propertyOwnerType: ():string => {
+                    return propertyOwnerType;
+                },
+                propertyOwnerId: ():string => {
+                    return propertyOwnerId;
                 }
             }
         };

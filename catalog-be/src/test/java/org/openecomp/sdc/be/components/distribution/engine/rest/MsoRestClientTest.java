@@ -1,16 +1,10 @@
 package org.openecomp.sdc.be.components.distribution.engine.rest;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
-import static com.github.tomakehurst.wiremock.client.WireMock.containing;
-import static com.github.tomakehurst.wiremock.client.WireMock.matchingJsonPath;
-import static com.github.tomakehurst.wiremock.client.WireMock.patch;
-import static com.github.tomakehurst.wiremock.client.WireMock.patchRequestedFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
-import static com.github.tomakehurst.wiremock.client.WireMock.verify;
-import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.when;
-
+import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
+import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import com.github.tomakehurst.wiremock.matching.AnythingPattern;
+import com.github.tomakehurst.wiremock.matching.UrlPattern;
+import fj.data.Either;
 import org.apache.http.HttpHeaders;
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -18,20 +12,17 @@ import org.junit.Test;
 import org.openecomp.sdc.be.components.distribution.engine.DistributionStatusNotificationEnum;
 import org.openecomp.sdc.be.components.distribution.engine.DummyDistributionConfigurationManager;
 import org.openecomp.sdc.be.config.ConfigurationManager;
+import org.openecomp.sdc.common.api.ConfigurationSource;
 import org.openecomp.sdc.common.http.client.api.HttpResponse;
-import org.openecomp.sdc.common.http.config.BasicAuthorization;
-import org.openecomp.sdc.common.http.config.ExternalServiceConfig;
-import org.openecomp.sdc.common.http.config.HttpClientConfig;
-import org.openecomp.sdc.common.http.config.HttpRequestConfig;
-import org.openecomp.sdc.common.http.config.Timeouts;
+import org.openecomp.sdc.common.http.config.*;
+import org.openecomp.sdc.common.impl.ExternalConfiguration;
+import org.openecomp.sdc.common.impl.FSConfigurationSource;
 import org.openecomp.sdc.security.SecurityUtil;
 
-import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
-import com.github.tomakehurst.wiremock.matching.AnythingPattern;
-import com.github.tomakehurst.wiremock.matching.UrlPattern;
-
-import fj.data.Either;
+import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.when;
 
 public class MsoRestClientTest {
 
@@ -40,6 +31,9 @@ public class MsoRestClientTest {
     private static final String DISTRIBUTION_ID = "1000";
 
     private MSORestClient msoRestClient;
+    static ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(), "src/test/resources/config/catalog-be");
+    static ConfigurationManager configurationManager = new ConfigurationManager(configurationSource);
+
 
     @ClassRule
     public static WireMockRule msoRestServer = new WireMockRule(options()

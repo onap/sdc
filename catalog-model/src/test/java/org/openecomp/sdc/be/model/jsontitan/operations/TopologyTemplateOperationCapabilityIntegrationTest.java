@@ -1,14 +1,5 @@
 package org.openecomp.sdc.be.model.jsontitan.operations;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -19,7 +10,7 @@ import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
 import org.openecomp.sdc.be.dao.jsongraph.types.EdgeLabelEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
-import org.openecomp.sdc.be.datatypes.elements.MapCapabiltyProperty;
+import org.openecomp.sdc.be.datatypes.elements.MapCapabilityProperty;
 import org.openecomp.sdc.be.datatypes.elements.MapPropertiesDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
 import org.openecomp.sdc.be.model.Component;
@@ -32,12 +23,20 @@ import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import javax.annotation.Resource;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {TitanSpringConfig.class, ModelOperationsSpringConfig.class})
 public class TopologyTemplateOperationCapabilityIntegrationTest extends ModelTestBase {
 
     private static final String CONTAINER_ID = "id";
-    private Map<String, MapCapabiltyProperty> capabilitiesPropsMap;
+    private Map<String, MapCapabilityProperty> capabilitiesPropsMap;
     private List<CapabilityPropertyDataObject> capabilitiesProperties;
 
     @Resource
@@ -67,7 +66,7 @@ public class TopologyTemplateOperationCapabilityIntegrationTest extends ModelTes
 
         //capablities props == Map<instance id, Map<capability id, Map<prop id, property>>>
         capabilitiesProperties.forEach(capabilitiesProperty -> {
-            capabilitiesPropsMap.computeIfAbsent(capabilitiesProperty.getInstanceId(), k -> new MapCapabiltyProperty(new HashMap<>()))
+            capabilitiesPropsMap.computeIfAbsent(capabilitiesProperty.getInstanceId(), k -> new MapCapabilityProperty(new HashMap<>()))
                              .getMapToscaDataDefinition().computeIfAbsent(capabilitiesProperty.getCapabilityId(), k -> new MapPropertiesDataDefinition(new HashMap<>()))
                              .getMapToscaDataDefinition().computeIfAbsent(capabilitiesProperty.getPropName(), k -> new PropertyDefinition(createPropWithValue(capabilitiesProperty.getPropValue())));
         });
@@ -76,19 +75,17 @@ public class TopologyTemplateOperationCapabilityIntegrationTest extends ModelTes
         resource.addMetadataProperty(GraphPropertyEnum.UNIQUE_ID, CONTAINER_ID);
         titanDao.createVertex(resource);
         GraphVertex loadedResource = titanDao.getVertexById(CONTAINER_ID).left().value();
-        topologyTemplateOperation.assosiateElementToData(loadedResource, VertexTypeEnum.CALCULATED_CAP_PROPERTIES, EdgeLabelEnum.CALCULATED_CAP_PROPERTIES, capabilitiesPropsMap).left().value();
-        titanDao.commit();
-
+        topologyTemplateOperation.associateElementToData(loadedResource, VertexTypeEnum.CALCULATED_CAP_PROPERTIES, EdgeLabelEnum.CALCULATED_CAP_PROPERTIES, capabilitiesPropsMap).left().value();
     }
 
     @After
-    public void tearDown() throws Exception {
+    public void tearDown() {
         titanDao.rollback();
     }
 
     @Test
     public void overrideCalculatedCapabilityProperties() {
-        Map<String, MapCapabiltyProperty> loadedCapPropsMap = fetchCapabilitiesProps(CONTAINER_ID);
+        Map<String, MapCapabilityProperty> loadedCapPropsMap = fetchCapabilitiesProps(CONTAINER_ID);
         compareCapabilitiesProperties(capabilitiesProperties, loadedCapPropsMap);
         capabilityProperty1.setPropValue("newVal1");
         capabilityProperty3.setPropValue("newVal3");
@@ -96,7 +93,7 @@ public class TopologyTemplateOperationCapabilityIntegrationTest extends ModelTes
         setPropertyValue(capabilitiesPropsMap, capabilityProperty3);
         StorageOperationStatus storageOperationStatus = topologyTemplateOperation.overrideToscaDataOfToscaElement(CONTAINER_ID, EdgeLabelEnum.CALCULATED_CAP_PROPERTIES, capabilitiesPropsMap);
         assertThat(storageOperationStatus).isEqualTo(StorageOperationStatus.OK);
-        Map<String, MapCapabiltyProperty> updatedCapPropsMap = fetchCapabilitiesProps(CONTAINER_ID);
+        Map<String, MapCapabilityProperty> updatedCapPropsMap = fetchCapabilitiesProps(CONTAINER_ID);
         compareCapabilitiesProperties(capabilitiesProperties, updatedCapPropsMap);
     }
 
@@ -106,7 +103,7 @@ public class TopologyTemplateOperationCapabilityIntegrationTest extends ModelTes
         assertCapabilityPropValue(capabilityProperty2, "val2");
         assertCapabilityPropValue(capabilityProperty3, "val3");
 
-        MapCapabiltyProperty instance1Props = capabilitiesPropsMap.get("instance1");
+        MapCapabilityProperty instance1Props = capabilitiesPropsMap.get("instance1");
         capabilityProperty1.setPropValue("newVal1");
         setPropertyValue(capabilitiesPropsMap, capabilityProperty1);
 
@@ -123,36 +120,36 @@ public class TopologyTemplateOperationCapabilityIntegrationTest extends ModelTes
         assertCapabilityPropValue(capabilityProperty3, "val3");//only instance1 props should be updated
     }
 
-    private Map<String, MapCapabiltyProperty> fetchCapabilitiesProps(String containerId) {
+    private Map<String, MapCapabilityProperty> fetchCapabilitiesProps(String containerId) {
         ComponentParametersView capabilityPropsFilter = new ComponentParametersView(true);
         capabilityPropsFilter.setIgnoreCapabiltyProperties(false);
         return ((TopologyTemplate) topologyTemplateOperation.getToscaElement(containerId, capabilityPropsFilter).left().value()).getCalculatedCapabilitiesProperties();
     }
 
-    private void compareCapabilitiesProperties(List<CapabilityPropertyDataObject> expected, Map<String, MapCapabiltyProperty> actual) {
+    private void compareCapabilitiesProperties(List<CapabilityPropertyDataObject> expected, Map<String, MapCapabilityProperty> actual) {
         expected.forEach(expectedCapabilityProp -> {
             assertThat(getPropertyValue(actual, expectedCapabilityProp.instanceId, expectedCapabilityProp.capabilityId, expectedCapabilityProp.propName))
                     .isEqualTo(expectedCapabilityProp.propValue);
         });
     }
 
-    private String getPropertyValue(Map<String, MapCapabiltyProperty> capabilityPropertyMap, String instance, String capability, String prop) {
+    private String getPropertyValue(Map<String, MapCapabilityProperty> capabilityPropertyMap, String instance, String capability, String prop) {
         return capabilityPropertyMap.get(instance).getMapToscaDataDefinition().get(capability).getMapToscaDataDefinition().get(prop).getValue();
     }
 
-    private void setPropertyValue(Map<String, MapCapabiltyProperty> capabilityPropertyMap, CapabilityPropertyDataObject capabilityProperty) {
+    private void setPropertyValue(Map<String, MapCapabilityProperty> capabilityPropertyMap, CapabilityPropertyDataObject capabilityProperty) {
         setPropertyValue(capabilityPropertyMap.get(capabilityProperty.getInstanceId()), capabilityProperty);
 
     }
 
-    private void setPropertyValue(MapCapabiltyProperty capabilitiesInstanceProperties, CapabilityPropertyDataObject capabilityProperty) {
+    private void setPropertyValue(MapCapabilityProperty capabilitiesInstanceProperties, CapabilityPropertyDataObject capabilityProperty) {
         capabilitiesInstanceProperties.getMapToscaDataDefinition().get(capabilityProperty.getCapabilityId())
                                       .getMapToscaDataDefinition().get(capabilityProperty.getPropName())
                                       .setValue(capabilityProperty.getPropValue());
     }
 
     private void assertCapabilityPropValue(CapabilityPropertyDataObject prop, String expectedValue) {
-        Map<String, MapCapabiltyProperty> loadedCapPropsMap = fetchCapabilitiesProps(CONTAINER_ID);
+        Map<String, MapCapabilityProperty> loadedCapPropsMap = fetchCapabilitiesProps(CONTAINER_ID);
         String propertyValue = getPropertyValue(loadedCapPropsMap, prop.getInstanceId(), prop.getCapabilityId(), prop.getPropName());
         assertThat(propertyValue).isEqualTo(expectedValue);
     }

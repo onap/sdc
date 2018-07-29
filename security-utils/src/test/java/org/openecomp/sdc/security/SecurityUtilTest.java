@@ -1,8 +1,11 @@
 package org.openecomp.sdc.security;
 
 import org.junit.Test;
+
 import java.util.Base64;
-import static org.junit.Assert.*;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 public class SecurityUtilTest {
 

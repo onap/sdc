@@ -20,10 +20,10 @@
 
 package org.openecomp.sdc.ci.tests.tosca.datatypes;
 
+import org.yaml.snakeyaml.TypeDescription;
+
 import java.util.HashMap;
 import java.util.Map;
-
-import org.yaml.snakeyaml.TypeDescription;
 
 public class ToscaSubstitutionMappingsDefinition {
 

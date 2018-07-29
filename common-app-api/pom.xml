@@ -1,5 +1,5 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
 
@@ -10,7 +10,7 @@
 		<artifactId>sdc-main</artifactId>
 		<version>1.3.0-SNAPSHOT</version>
 	</parent>
-	
+
 	<dependencies>
 		<dependency>
 			<groupId>org.openecomp.sdc</groupId>
@@ -29,7 +29,7 @@
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>javax.servlet-api</artifactId>
-            <version>${servlet-api.version}</version>
+			<version>${servlet-api.version}</version>
 			<scope>provided</scope>
 		</dependency>
 
@@ -68,28 +68,28 @@
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
 			<artifactId>httpclient</artifactId>
-            <version>${httpclient.version}</version>
+			<version>${httpclient.version}</version>
 			<scope>provided</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
 			<artifactId>httpcore</artifactId>
-            <version>${httpcore.version}</version>
+			<version>${httpcore.version}</version>
 			<scope>provided</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>commons-logging</groupId>
 			<artifactId>commons-logging</artifactId>
-            <version>${commons-logging}</version>
+			<version>${commons-logging}</version>
 			<scope>provided</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>commons-codec</groupId>
 			<artifactId>commons-codec</artifactId>
-            <version>${commons-codec}</version>
+			<version>${commons-codec}</version>
 			<scope>provided</scope>
 		</dependency>
 
@@ -107,6 +107,7 @@
 			<version>${jcabi.version}</version>
 			<scope>provided</scope>
 		</dependency>
+
 		<dependency>
 			<groupId>org.aspectj</groupId>
 			<artifactId>aspectjrt</artifactId>
@@ -117,7 +118,7 @@
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
-            <version>${lang3.version}</version>
+			<version>${lang3.version}</version>
 			<scope>provided</scope>
 		</dependency>
 
@@ -142,7 +143,7 @@
 			<scope>provided</scope>
 		</dependency>
 		<!-- logging end -->
-		
+
 		<dependency>
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>

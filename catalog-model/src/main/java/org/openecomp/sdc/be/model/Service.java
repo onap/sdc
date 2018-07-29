@@ -20,24 +20,24 @@
 
 package org.openecomp.sdc.be.model;
 
-import java.util.HashMap;
-import java.util.Map;
-
+import org.apache.commons.lang.StringUtils;
 import org.openecomp.sdc.be.datatypes.components.ComponentMetadataDataDefinition;
 import org.openecomp.sdc.be.datatypes.components.ServiceMetadataDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ForwardingPathDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
+import org.openecomp.sdc.be.datatypes.enums.InstantiationTypes;
 import org.openecomp.sdc.be.model.jsontitan.datamodel.ToscaElementTypeEnum;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class Service extends Component {
 
-	private static final long serialVersionUID = -8819935942700578059L;
-
-	public Service() {
-		super(new ServiceMetadataDefinition());
-		this.getComponentMetadataDefinition().getMetadataDataDefinition().setComponentType(ComponentTypeEnum.SERVICE);
-		this.setToscaType(ToscaElementTypeEnum.TopologyTemplate.getValue());
-	}
+    public Service() {
+        super(new ServiceMetadataDefinition());
+        this.getComponentMetadataDefinition().getMetadataDataDefinition().setComponentType(ComponentTypeEnum.SERVICE);
+        this.setToscaType(ToscaElementTypeEnum.TOPOLOGY_TEMPLATE.getValue());
+    }
 
 	public Service(ComponentMetadataDefinition serviceMetadataDefinition) {
 		super(serviceMetadataDefinition);
@@ -45,7 +45,7 @@ public class Service extends Component {
 		if(metadataDataDefinition != null) {
 			metadataDataDefinition.setComponentType(ComponentTypeEnum.SERVICE);
 		}
-		this.setToscaType(ToscaElementTypeEnum.TopologyTemplate.getValue());
+		this.setToscaType(ToscaElementTypeEnum.TOPOLOGY_TEMPLATE.getValue());
 	}
 
 	private Map<String, ArtifactDefinition> serviceApiArtifacts;
@@ -113,7 +113,7 @@ public class Service extends Component {
 		return getServiceMetadataDefinition().getNamingPolicy();
 	}
 
-	public String getEnvironmentContext() { return getServiceMetadataDefinition().getEnvironmentContext();  }
+    public String getEnvironmentContext() { return getServiceMetadataDefinition().getEnvironmentContext();  }
 
 	public void setEnvironmentContext(String environmentContext) {
 		getServiceMetadataDefinition().setEnvironmentContext(environmentContext);
@@ -135,8 +135,23 @@ public class Service extends Component {
 		return getServiceMetadataDefinition().getServiceRole();
 	}
 
+	public void setInstantiationType(String instantiationType){
+		getServiceMetadataDefinition().setInstantiationType(instantiationType);
+	}
+
+	public String getInstantiationType(){
+		return getServiceMetadataDefinition().getInstantiationType();
+	}
+
 	private ServiceMetadataDataDefinition getServiceMetadataDefinition() {
 		return (ServiceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition();
+	}
+
+
+	public void validateAndSetInstantiationType() { 
+		if (this.getInstantiationType() == StringUtils.EMPTY) {
+			this.setInstantiationType(InstantiationTypes.A_LA_CARTE.getValue());
+		}
 	}
 
 

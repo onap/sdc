@@ -32,10 +32,14 @@ export class InstanceFePropertiesMap {
 export class InstancePropertiesAPIMap {
     componentInstanceProperties: InstanceBePropertiesMap;
     componentInstanceInputsMap: InstanceBePropertiesMap;
+    groupProperties: InstanceBePropertiesMap;
+    policyProperties: InstanceBePropertiesMap;
 
-    constructor(inputsMapData: InstanceBePropertiesMap, propertiesMapData: InstanceBePropertiesMap) {
+    constructor(inputsMapData: InstanceBePropertiesMap, propertiesMapData: InstanceBePropertiesMap, groupPropertiesMapData: InstanceBePropertiesMap, policyPropertiesMapData: InstanceBePropertiesMap) {
         this.componentInstanceInputsMap = inputsMapData ? inputsMapData: new InstanceBePropertiesMap();
         this.componentInstanceProperties = propertiesMapData ? propertiesMapData: new InstanceBePropertiesMap();
+        this.groupProperties = groupPropertiesMapData ? groupPropertiesMapData : new InstanceBePropertiesMap();
+        this.policyProperties = policyPropertiesMapData ? policyPropertiesMapData : new InstanceBePropertiesMap();
     }
 
 }

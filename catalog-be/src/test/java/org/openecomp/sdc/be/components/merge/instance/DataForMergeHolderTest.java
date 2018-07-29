@@ -1,16 +1,11 @@
 package org.openecomp.sdc.be.components.merge.instance;
 
+import org.junit.Test;
+import org.openecomp.sdc.be.model.*;
+
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-
-import org.junit.Test;
-import org.openecomp.sdc.be.model.ArtifactDefinition;
-import org.openecomp.sdc.be.model.CapabilityDefinition;
-import org.openecomp.sdc.be.model.Component;
-import org.openecomp.sdc.be.model.ComponentInstanceInput;
-import org.openecomp.sdc.be.model.ComponentInstanceProperty;
-import org.openecomp.sdc.be.model.InputDefinition;
 
 public class DataForMergeHolderTest {
 
@@ -144,7 +139,7 @@ public class DataForMergeHolderTest {
 	@Test
 	public void testSetVfRelationsInfo() throws Exception {
 		DataForMergeHolder testSubject;
-		VfRelationsMergeInfo vfRelationsMergeInfo = null;
+		ContainerRelationsMergeInfo vfRelationsMergeInfo = null;
 
 		// default test
 		testSubject = createTestSubject();
@@ -154,11 +149,11 @@ public class DataForMergeHolderTest {
 	@Test
 	public void testGetVfRelationsMergeInfo() throws Exception {
 		DataForMergeHolder testSubject;
-		VfRelationsMergeInfo result;
+		ContainerRelationsMergeInfo result;
 
 		// default test
 		testSubject = createTestSubject();
-		result = testSubject.getVfRelationsMergeInfo();
+		result = testSubject.getContainerRelationsMergeInfo();
 	}
 
 	@Test

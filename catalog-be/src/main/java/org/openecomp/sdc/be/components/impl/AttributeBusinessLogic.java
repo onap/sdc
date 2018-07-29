@@ -20,26 +20,23 @@
 
 package org.openecomp.sdc.be.components.impl;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-
+import fj.data.Either;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.Resource;
-import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.utils.ComponentValidationUtils;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import fj.data.Either;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 
 /**
  * This class holds the business logic relevant for attributes manipulation.
@@ -54,7 +51,8 @@ public class AttributeBusinessLogic extends BaseBusinessLogic {
     private static final String UPDATE_ATTRIBUTE = "UpdateAttribute";
     private static final String DELETE_ATTRIBUTE = "DeleteAttribute";
 
-    private static final Logger log = LoggerFactory.getLogger(AttributeBusinessLogic.class);
+    private static final Logger log = Logger.getLogger(AttributeBusinessLogic.class.getName());
+    private static final String FAILED_TO_LOCK_COMPONENT_ERROR = "Failed to lock component {}. Error - {}";
 
     /**
      * Created attribute on the resource with resourceId
@@ -66,15 +64,12 @@ public class AttributeBusinessLogic extends BaseBusinessLogic {
      */
     public Either<PropertyDefinition, ResponseFormat> createAttribute(String resourceId, PropertyDefinition newAttributeDef, String userId) {
         Either<PropertyDefinition, ResponseFormat> result = null;
-        Either<User, ResponseFormat> resp = validateUserExists(userId, "create Attribute", false);
-        if (resp.isRight()) {
-            return Either.right(resp.right().value());
-        }
+        validateUserExists(userId, "create Attribute", false);
 
         StorageOperationStatus lockResult = graphLockOperation.lockComponent(resourceId, NodeTypeEnum.Resource);
         if (lockResult != StorageOperationStatus.OK) {
             BeEcompErrorManager.getInstance().logBeFailedLockObjectError(CREATE_ATTRIBUTE, NodeTypeEnum.Resource.name().toLowerCase(), resourceId);
-            log.info("Failed to lock component {}. Error - {}", resourceId, lockResult);
+            log.info(FAILED_TO_LOCK_COMPONENT_ERROR, resourceId, lockResult);
             return Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
         }
 
@@ -128,7 +123,7 @@ public class AttributeBusinessLogic extends BaseBusinessLogic {
     private boolean isAttributeExist(List<PropertyDefinition> attributes, String resourceUid, String propertyName) {
         boolean isExist = false;
         if (attributes != null) {
-            isExist = attributes.stream().filter(p -> Objects.equals(p.getName(), propertyName) && Objects.equals(p.getParentUniqueId(), resourceUid)).findAny().isPresent();
+            isExist = attributes.stream().anyMatch(p -> Objects.equals(p.getName(), propertyName) && Objects.equals(p.getParentUniqueId(), resourceUid));
         }
         return isExist;
 
@@ -142,10 +137,7 @@ public class AttributeBusinessLogic extends BaseBusinessLogic {
      */
     public Either<PropertyDefinition, ResponseFormat> getAttribute(String resourceId, String attributeId, String userId) {
 
-        Either<User, ResponseFormat> resp = validateUserExists(userId, "get Attribute", false);
-        if (resp.isRight()) {
-            return Either.right(resp.right().value());
-        }
+        validateUserExists(userId, "get Attribute", false);
 
         // Get the resource from DB
         Either<Resource, StorageOperationStatus> status = toscaOperationFacade.getToscaElement(resourceId);
@@ -158,16 +150,9 @@ public class AttributeBusinessLogic extends BaseBusinessLogic {
         if (attributes == null) {
             return Either.right(componentsUtils.getResponseFormat(ActionStatus.ATTRIBUTE_NOT_FOUND, ""));
         } else {
-            Either<PropertyDefinition, ResponseFormat> result;
             // verify attribute exist in resource
             Optional<PropertyDefinition> optionalAtt = attributes.stream().filter(att -> att.getUniqueId().equals(attributeId) && att.getParentUniqueId().equals(resourceId)).findAny();
-
-            if (optionalAtt.isPresent()) {
-                result = Either.left(optionalAtt.get());
-            } else {
-                result = Either.right(componentsUtils.getResponseFormat(ActionStatus.ATTRIBUTE_NOT_FOUND, ""));
-            }
-            return result;
+            return optionalAtt.<Either<PropertyDefinition, ResponseFormat>>map(Either::left).orElseGet(() -> Either.right(componentsUtils.getResponseFormat(ActionStatus.ATTRIBUTE_NOT_FOUND, "")));
         }
 
     }
@@ -187,7 +172,7 @@ public class AttributeBusinessLogic extends BaseBusinessLogic {
         StorageOperationStatus lockResult = graphLockOperation.lockComponent(resourceId, NodeTypeEnum.Resource);
         if (lockResult != StorageOperationStatus.OK) {
             BeEcompErrorManager.getInstance().logBeFailedLockObjectError(UPDATE_ATTRIBUTE, NodeTypeEnum.Resource.name().toLowerCase(), resourceId);
-            log.info("Failed to lock component {}. Error - {}", resourceId, lockResult);
+            log.info(FAILED_TO_LOCK_COMPONENT_ERROR, resourceId, lockResult);
             return Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
         }
         try {
@@ -256,15 +241,12 @@ public class AttributeBusinessLogic extends BaseBusinessLogic {
 
         Either<PropertyDefinition, ResponseFormat> result = null;
 
-        Either<User, ResponseFormat> resp = validateUserExists(userId, "delete Attribute", false);
-        if (resp.isRight()) {
-            return Either.right(resp.right().value());
-        }
+        validateUserExists(userId, "delete Attribute", false);
 
         StorageOperationStatus lockResult = graphLockOperation.lockComponent(resourceId, NodeTypeEnum.Resource);
         if (lockResult != StorageOperationStatus.OK) {
             BeEcompErrorManager.getInstance().logBeFailedLockObjectError(DELETE_ATTRIBUTE, NodeTypeEnum.Resource.name().toLowerCase(), resourceId);
-            log.info("Failed to lock component {}. Error - {}", resourceId, lockResult);
+            log.info(FAILED_TO_LOCK_COMPONENT_ERROR, resourceId, lockResult);
             return Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
         }
 

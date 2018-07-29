@@ -20,35 +20,34 @@
 
 package org.openecomp.sdc.be.model;
 
-import java.io.Serializable;
+import org.apache.commons.lang3.tuple.Pair;
+
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.collections.MapUtils;
-import org.apache.commons.lang3.tuple.Pair;
+import static org.apache.commons.collections.MapUtils.isNotEmpty;
 
-public class ComponentInstInputsMap implements Serializable {
-
-    /**
-     *
-     */
-    private static final long serialVersionUID = 1136631343963488131L;
+public class ComponentInstInputsMap {
 
     private Map<String, List<ComponentInstancePropInput>> componentInstanceInputsMap;
     private Map<String, List<ComponentInstancePropInput>> componentInstanceProperties;
     private Map<String, List<ComponentInstancePropInput>> policyProperties;
+    private Map<String, List<ComponentInstancePropInput>> groupProperties;
 
     public Pair<String, List<ComponentInstancePropInput>> resolvePropertiesToDeclare() {
-        if (!MapUtils.isEmpty(componentInstanceInputsMap)) {
+        if (isNotEmpty(componentInstanceInputsMap)) {
             return singleMapEntry(componentInstanceInputsMap);
         }
-        if (!MapUtils.isEmpty(componentInstanceProperties)) {
+        if (isNotEmpty(componentInstanceProperties)) {
             return singleMapEntry(componentInstanceProperties);
         }
-        if (!MapUtils.isEmpty(policyProperties)) {
+        if (isNotEmpty(policyProperties)) {
             return singleMapEntry(policyProperties);
         }
-        throw new IllegalStateException("there are no properties selected for deceleration");
+        if (isNotEmpty(groupProperties)) {
+            return singleMapEntry(groupProperties);
+        }
+        throw new IllegalStateException("there are no properties selected for declaration");
     }
 
     private Pair<String, List<ComponentInstancePropInput>> singleMapEntry(Map<String, List<ComponentInstancePropInput>> propertiesMap) {
@@ -79,4 +78,15 @@ public class ComponentInstInputsMap implements Serializable {
     public void setPolicyProperties(Map<String, List<ComponentInstancePropInput>> policyProperties) {
         this.policyProperties = policyProperties;
     }
+
+    public Map<String, List<ComponentInstancePropInput>> getGroupProperties() {
+        return groupProperties;
+    }
+
+    public void setGroupProperties(Map<String, List<ComponentInstancePropInput>> groupProperties) {
+        this.groupProperties = groupProperties;
+    }
+
+
+
 }

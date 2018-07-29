@@ -1,12 +1,13 @@
 package org.openecomp.sdc.be.resources.data.auditing;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.UUID;
-
 import org.junit.Test;
 import org.openecomp.sdc.be.resources.data.auditing.model.CommonAuditData;
-import org.openecomp.sdc.be.resources.data.auditing.model.ResourceAuditData;
+import org.openecomp.sdc.be.resources.data.auditing.model.DistributionData;
+import org.openecomp.sdc.be.resources.data.auditing.model.ResourceCommonInfo;
+import org.openecomp.sdc.be.resources.data.auditing.model.ResourceVersionInfo;
+
+import java.util.Date;
+import java.util.UUID;
 
 
 public class ExternalApiEventTest {
@@ -17,8 +18,8 @@ public class ExternalApiEventTest {
 
 	@Test
 	public void testCtor() throws Exception {
-		new ExternalApiEvent(new HashMap<>());
-		new ExternalApiEvent("mock", CommonAuditData.newBuilder().build(), "mock", "mock", "mock", "mock", ResourceAuditData.newBuilder().build(), ResourceAuditData.newBuilder().build(), "mock", "mock", "mock");
+		new ExternalApiEvent();
+		new ExternalApiEvent("mock", CommonAuditData.newBuilder().build(), new ResourceCommonInfo() ,new DistributionData("","") ,ResourceVersionInfo.newBuilder().build(),ResourceVersionInfo.newBuilder().build(), "mock" , "mock", "mock");
 	}
 	
 	@Test

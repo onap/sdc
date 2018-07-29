@@ -1,13 +1,12 @@
 package org.openecomp.sdc.asdctool.impl;
 
-import java.util.List;
-import java.util.Map;
-
+import com.thinkaurelius.titan.core.TitanGraph;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.tinkerpop.gremlin.structure.Element;
 import org.junit.Test;
 
-import com.thinkaurelius.titan.core.TitanGraph;
+import java.util.List;
+import java.util.Map;
 
 public class GraphMLConverterTest {
 	

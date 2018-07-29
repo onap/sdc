@@ -20,8 +20,6 @@
 
 package org.onap.sdc.generator;
 
-import static org.onap.sdc.generator.util.ArtifactGeneratorUtil.logError;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.onap.sdc.generator.data.ArtifactType;
 import org.onap.sdc.generator.data.GeneratorConfiguration;
@@ -32,6 +30,8 @@ import org.onap.sdc.generator.util.ArtifactGeneratorUtil;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.reflections.Reflections;
+
+import static org.onap.sdc.generator.util.ArtifactGeneratorUtil.logError;
 
 import java.util.ArrayList;
 import java.util.HashMap;

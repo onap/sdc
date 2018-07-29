@@ -20,37 +20,36 @@
 
 package org.openecomp.sdc.be.model.tosca.converters;
 
-import java.io.StringReader;
-import java.util.Map;
-
-import org.openecomp.sdc.be.model.DataTypeDefinition;
-
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonReader;
+import org.openecomp.sdc.be.model.DataTypeDefinition;
+
+import java.io.StringReader;
+import java.util.Map;
 
 public class ToscaJsonValueConverter extends ToscaValueBaseConverter implements ToscaValueConverter {
-	private static ToscaJsonValueConverter toscaJsonConverter = new ToscaJsonValueConverter();
+    private static ToscaJsonValueConverter toscaJsonConverter = new ToscaJsonValueConverter();
 
-	public static ToscaJsonValueConverter getInstance() {
-		return toscaJsonConverter;
-	}
+    public static ToscaJsonValueConverter getInstance() {
+        return toscaJsonConverter;
+    }
 
-	private ToscaJsonValueConverter() {
+    private ToscaJsonValueConverter() {
 
-	}
+    }
 
-	JsonParser jsonParser = new JsonParser();
+    JsonParser jsonParser = new JsonParser();
 
-	@Override
-	public Object convertToToscaValue(String value, String innerType, Map<String, DataTypeDefinition> dataTypes) {
-		StringReader reader = new StringReader(value);
-		JsonReader jsonReader = new JsonReader(reader);
-		jsonReader.setLenient(true);
-		JsonElement jsonElement = jsonParser.parse(jsonReader);
-		if (jsonElement.isJsonPrimitive()) {
-			return value;
-		}
-		return handleComplexJsonValue(jsonElement);
-	}
+    @Override
+    public Object convertToToscaValue(String value, String innerType, Map<String, DataTypeDefinition> dataTypes) {
+        StringReader reader = new StringReader(value);
+        JsonReader jsonReader = new JsonReader(reader);
+        jsonReader.setLenient(true);
+        JsonElement jsonElement = jsonParser.parse(jsonReader);
+        if (jsonElement.isJsonPrimitive()) {
+            return value;
+        }
+        return handleComplexJsonValue(jsonElement);
+    }
 }

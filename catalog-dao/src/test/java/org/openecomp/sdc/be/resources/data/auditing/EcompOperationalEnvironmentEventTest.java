@@ -1,9 +1,8 @@
 package org.openecomp.sdc.be.resources.data.auditing;
 
-import java.util.Date;
-import java.util.HashMap;
-
 import org.junit.Test;
+
+import java.util.Date;
 
 public class EcompOperationalEnvironmentEventTest {
 
@@ -13,7 +12,7 @@ public class EcompOperationalEnvironmentEventTest {
 
 	@Test
 	public void testCtor() throws Exception {
-		new EcompOperationalEnvironmentEvent(new HashMap<>());
+		new EcompOperationalEnvironmentEvent();
 		new EcompOperationalEnvironmentEvent("mock", "mock", "mock", "mock", "mock", "mock");
 	}
 	

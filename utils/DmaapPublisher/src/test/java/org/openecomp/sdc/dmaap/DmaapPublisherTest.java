@@ -3,8 +3,6 @@ package org.openecomp.sdc.dmaap;
 import org.junit.Test;
 
 import java.io.File;
-import java.net.URL;
-import java.nio.file.Paths;
 
 import static org.junit.Assert.*;
 

@@ -1,7 +1,5 @@
 package org.onap.config.impl;
 
-import static org.onap.config.ConfigurationUtils.getConfigurationRepositoryKey;
-
 import org.apache.commons.configuration2.Configuration;
 import org.apache.commons.configuration2.DatabaseConfiguration;
 import org.onap.config.ConfigurationUtils;
@@ -25,6 +23,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Predicate;
+
+import static org.onap.config.ConfigurationUtils.getConfigurationRepositoryKey;
 
 /**
  * The type Configuration.

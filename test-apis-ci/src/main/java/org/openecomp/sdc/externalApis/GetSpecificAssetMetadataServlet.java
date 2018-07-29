@@ -20,14 +20,11 @@
 
 package org.openecomp.sdc.externalApis;
 
-import java.util.ArrayList;
-
 import org.junit.Rule;
 import org.junit.rules.TestName;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.AssetTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
-import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.ci.tests.api.ComponentBaseTest;
@@ -39,13 +36,11 @@ import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
 import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
 import org.openecomp.sdc.ci.tests.utils.general.AtomicOperationUtils;
 import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
-import org.openecomp.sdc.ci.tests.utils.rest.AssetRestUtils;
-import org.openecomp.sdc.ci.tests.utils.rest.BaseRestUtils;
-import org.openecomp.sdc.ci.tests.utils.rest.ResourceRestUtils;
-import org.openecomp.sdc.ci.tests.utils.rest.ResponseParser;
-import org.openecomp.sdc.ci.tests.utils.rest.ServiceRestUtils;
+import org.openecomp.sdc.ci.tests.utils.rest.*;
 import org.openecomp.sdc.ci.tests.utils.validation.ErrorValidationUtils;
 import org.testng.annotations.Test;
+
+import java.util.ArrayList;
 
 public class GetSpecificAssetMetadataServlet extends ComponentBaseTest {
 
@@ -106,7 +101,7 @@ public class GetSpecificAssetMetadataServlet extends ComponentBaseTest {
 		Resource resource2 = AtomicOperationUtils.createResourceByType(ResourceTypeEnum.VFC, UserRoleEnum.DESIGNER, true).left().value();
 		resource2 = (Resource) AtomicOperationUtils.changeComponentState(resource2, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
 		Resource resource3 = AtomicOperationUtils.createResourceByType(ResourceTypeEnum.VFC, UserRoleEnum.DESIGNER, true).left().value();
-		resource3 = (Resource) AtomicOperationUtils.changeComponentState(resource3, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFICATIONREQUEST, true).getLeft();
+		resource3 = (Resource) AtomicOperationUtils.changeComponentState(resource3, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
 
 		AtomicOperationUtils.addComponentInstanceToComponentContainer(resource2, resourceVF, UserRoleEnum.DESIGNER, true);
 		AtomicOperationUtils.addComponentInstanceToComponentContainer(resource3, resourceVF, UserRoleEnum.DESIGNER, true);
@@ -129,7 +124,7 @@ public class GetSpecificAssetMetadataServlet extends ComponentBaseTest {
 		validateAudit(resourceVF, AssetTypeEnum.RESOURCES);*/
 	}
 
-	@Test // (enabled = false)
+	/*@Test // (enabled = false)
 	public void getResourceAssetMetadataWithResourceInstancesVfInSubmitForTestingSuccess() throws Exception {
 
 		Resource resourceVF = AtomicOperationUtils.createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true).left().value();
@@ -155,9 +150,9 @@ public class GetSpecificAssetMetadataServlet extends ComponentBaseTest {
 		ResourceDetailedAssetStructure resourceAssetMetadata = AssetRestUtils.getResourceAssetMetadata(assetResponse);
 		AssetRestUtils.resourceMetadataValidatior(resourceAssetMetadata, resourceVF, AssetTypeEnum.RESOURCES);
 
-	/*	// Validate audit message
-		validateAudit(resourceVF, AssetTypeEnum.RESOURCES);*/
-	}
+	*//*	// Validate audit message
+		validateAudit(resourceVF, AssetTypeEnum.RESOURCES);*//*
+	}*/
 
 	@Test // (enabled = false)
 	public void getResourceAssetMetadataWithResourceInstancesVfInStartCertificationSuccess() throws Exception {
@@ -219,7 +214,7 @@ public class GetSpecificAssetMetadataServlet extends ComponentBaseTest {
 		validateAudit(resourceVF, AssetTypeEnum.RESOURCES);*/
 	}
 
-	@Test // (enabled = false)
+	/*@Test // (enabled = false)
 	public void getResourceAssetMetadataWithNonCertifiedResourceInstancesAndArtifactsSuccess() throws Exception {
 
 		Resource resourceVF = AtomicOperationUtils.createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true).left().value();
@@ -241,9 +236,7 @@ public class GetSpecificAssetMetadataServlet extends ComponentBaseTest {
 		ResourceDetailedAssetStructure resourceAssetMetadata = AssetRestUtils.getResourceAssetMetadata(assetResponse);
 		AssetRestUtils.resourceMetadataValidatior(resourceAssetMetadata, resourceVF, AssetTypeEnum.RESOURCES);
 
-		/*// Validate audit message
-		validateAudit(resourceVF, AssetTypeEnum.RESOURCES);*/
-	}
+	}*/
 
 
 	// Import CSAR
@@ -404,8 +397,8 @@ public class GetSpecificAssetMetadataServlet extends ComponentBaseTest {
 
 	/*private void validateAudit(Component component, AssetTypeEnum assetType) throws Exception {
 		ExpectedExternalAudit expectedAssetListAudit = ElementFactory.getDefaultAssetMetadataAudit(assetType, component);
-		Map<AuditingFieldsKeysEnum, String> body = new HashMap<>();
-		body.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_URL, expectedAssetListAudit.getRESOURCE_URL());
+		Map<AuditingFieldsKey, String> body = new HashMap<>();
+		body.put(AuditingFieldsKey.AUDIT_RESOURCE_URL, expectedAssetListAudit.getRESOURCE_URL());
 		AuditValidationUtils.validateExternalAudit(expectedAssetListAudit, AuditingActionEnum.GET_ASSET_METADATA.getName(), body);
 	}*/
 

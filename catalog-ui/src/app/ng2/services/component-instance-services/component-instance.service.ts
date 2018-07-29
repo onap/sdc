@@ -92,4 +92,32 @@ export class ComponentInstanceServiceNg2 {
                 return res.json().map((resInput) => new PropertyBEModel(resInput));
             });
     }
+
+    getComponentGroupInstanceProperties(component: Component, groupInstanceId: string): Observable<Array<PropertyBEModel>> {
+        return this.http.get(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/groups/' + groupInstanceId + '/properties')
+            .map((res: Response) => {
+                return CommonUtils.initBeProperties(res.json());
+            });
+    }
+
+    updateComponentGroupInstanceProperties(component: Component, groupInstanceId: string, properties: PropertyBEModel[]): Observable<Array<PropertyBEModel>> {
+        return this.http.put(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/groups/' + groupInstanceId + '/properties', properties)
+            .map((res: Response) => {
+                return res.json().map((resProperty) => new PropertyBEModel(resProperty));
+            });
+    }
+
+    getComponentPolicyInstanceProperties(component: Component, policyInstanceId: string): Observable<Array<PropertyBEModel>> {
+        return this.http.get(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/policies/' + policyInstanceId + '/properties')
+            .map((res: Response) => {
+                return CommonUtils.initBeProperties(res.json());
+            });
+    }
+
+    updateComponentPolicyInstanceProperties(component: Component, policyInstanceId: string, properties: PropertyBEModel[]): Observable<Array<PropertyBEModel>> {
+        return this.http.put(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/policies/' + policyInstanceId + '/properties', properties)
+            .map((res: Response) => {
+                return res.json().map((resProperty) => new PropertyBEModel(resProperty));
+            });
+    }
 }

@@ -1,13 +1,6 @@
 package org.openecomp.sdc.be.components.impl;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.when;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
+import fj.data.Either;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.junit.Before;
 import org.junit.Test;
@@ -37,7 +30,13 @@ import org.openecomp.sdc.be.resources.data.ServiceMetadataData;
 import org.openecomp.sdc.be.resources.data.category.CategoryData;
 import org.openecomp.sdc.common.util.ValidationUtils;
 
-import fj.data.Either;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.when;
 
 /**
  * Created by chaya on 12/7/2017.
@@ -132,7 +131,7 @@ public class ElementBLTest {
                 .thenReturn(Either.left(notDeletedService));
 
         Either<List<Object>, StorageOperationStatus> elementsByCategoryEither =
-                elementBusinessLogic.fetchByCategoryOrSubCategoryName(CATAGORY_NAME, NodeTypeEnum.ServiceNewCategory, GraphEdgeLabels.CATEGORY.getProperty(),
+                elementBusinessLogic.fetchByCategoryOrSubCategoryName(CATAGORY_NAME, NodeTypeEnum.ServiceNewCategory,
                         NodeTypeEnum.Service, false, ServiceMetadataData.class, null);
 
         List<Object> elementsByCategory = elementsByCategoryEither.left().value();
@@ -158,7 +157,7 @@ public class ElementBLTest {
                 .thenReturn(Either.left(notDeletedResource));
 
         Either<List<Object>, StorageOperationStatus> resourcesBySubCategoryUidEither = elementBusinessLogic.fetchByCategoryOrSubCategoryUid(CATEGORY_UNIQUE_ID, NodeTypeEnum.ResourceSubcategory,
-                GraphEdgeLabels.SUB_CATEGORY.getProperty(), NodeTypeEnum.Resource, false, ResourceMetadataData.class, null);
+                NodeTypeEnum.Resource, false, ResourceMetadataData.class, null);
         List<Object> resourcesBySubCategoryUid = resourcesBySubCategoryUidEither.left().value();
         assertThat(resourcesBySubCategoryUid.size()).isEqualTo(1);
         assertThat(resourcesBySubCategoryUid.get(0)).isSameAs(notDeletedResource);

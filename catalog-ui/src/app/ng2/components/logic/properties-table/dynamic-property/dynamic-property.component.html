@@ -19,6 +19,7 @@
                 [name]="property.name"
                 (elementChanged)="mapKeyChanged.emit($event.value)"
                 [readonly]="readonly"
+                [testId]="'prop-key-' + propertyTestsId"
             ></dynamic-element>
         </div>
     </ng-container>
@@ -27,12 +28,13 @@
         <div class="table-cell">
             <dynamic-element class="value-input"
                 pattern="validationUtils.getValidationPattern(property.type)"
-                [value]="property.valueObj"
+                [value]="property.isDeclared ? property.value : property.valueObj"
                 [type]="property.isDeclared ? 'string' : property.type"
                 [name]="property.name"
                 [path]="property.propertiesName"
                 (elementChanged)="onElementChanged($event)"
                 [readonly]="readonly || property.isDeclared || property.isDisabled"
+                [testId]="'prop-' + propertyTestsId"
             ></dynamic-element>
         </div>
     </ng-container>
@@ -45,9 +47,9 @@
     </ng-container>
     <!-- ICONS: add, delete, and expand -->
     <ng-container *ngIf="!property.isDeclared">
-            <a *ngIf="(propType == derivedPropertyTypes.LIST || propType == derivedPropertyTypes.MAP) && !property.isChildOfListOrMap" class="property-icon add-item" (click)="createNewChildProperty();" [ngClass]="{'disabled':readonly || preventInsertItem(property)}">Add value to list</a>
-            <span *ngIf="property.isChildOfListOrMap" (click)="deleteItem.emit(property);" class="property-icon sprite-new delete-item-icon" [ngClass]="{'disabled':readonly}"></span>
-            <span *ngIf="!isPropertyFEModel && (propType == derivedPropertyTypes.COMPLEX || ((propType == derivedPropertyTypes.LIST || propType == derivedPropertyTypes.MAP) && hasChildren))" (click)="expandChildById(propPath)" class="property-icon sprite-new round-expand-icon" [class.open]="expandedChildId.indexOf(propPath) == 0"></span>
+            <a *ngIf="(propType == derivedPropertyTypes.LIST || propType == derivedPropertyTypes.MAP) && !property.isChildOfListOrMap" class="property-icon add-item" (click)="createNewChildProperty();" [ngClass]="{'disabled':readonly || preventInsertItem(property)}" [attr.data-tests-id]="'add-to-list-' + propertyTestsId">Add value to list</a>
+            <span *ngIf="property.isChildOfListOrMap" (click)="deleteItem.emit(property);" class="property-icon sprite-new delete-item-icon" [ngClass]="{'disabled':readonly}" [attr.data-tests-id]="'delete-from-list-' + propertyTestsId"></span>
+            <span *ngIf="!isPropertyFEModel && (propType == derivedPropertyTypes.COMPLEX || ((propType == derivedPropertyTypes.LIST || propType == derivedPropertyTypes.MAP) && hasChildren))" (click)="expandChildById(propPath)" class="property-icon sprite-new round-expand-icon" [class.open]="expandedChildId.indexOf(propPath) == 0" [attr.data-tests-id]="'expand-' + propertyTestsId"></span>
     </ng-container>
 
 </div>
@@ -59,6 +61,7 @@
             [hasDeclareOption]="hasDeclareOption"
             [canBeDeclared]="hasDeclareOption && prop.canBeDeclared"
             [property]="prop"
+            [rootProperty]="rootProperty || property"
             [expandedChildId]="expandedChildId"
             [propertyNameSearchText]="propertyNameSearchText"
             [readonly]="readonly"

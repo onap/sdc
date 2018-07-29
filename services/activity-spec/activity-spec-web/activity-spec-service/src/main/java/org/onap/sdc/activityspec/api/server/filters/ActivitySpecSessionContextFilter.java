@@ -16,23 +16,18 @@
 
 package org.onap.sdc.activityspec.api.server.filters;
 
-import java.io.IOException;
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
+import org.apache.commons.lang.StringUtils;
+import org.onap.sdc.activityspec.utils.ActivitySpecConstant;
+import org.openecomp.sdc.common.session.SessionContextProvider;
+import org.openecomp.sdc.common.session.SessionContextProviderFactory;
+
+import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response.Status;
-
-import org.apache.commons.lang.StringUtils;
-import org.onap.sdc.activityspec.utils.ActivitySpecConstant;
-import org.openecomp.sdc.common.session.SessionContextProvider;
-import org.openecomp.sdc.common.session.SessionContextProviderFactory;
+import java.io.IOException;
 
 public class ActivitySpecSessionContextFilter implements Filter {
 

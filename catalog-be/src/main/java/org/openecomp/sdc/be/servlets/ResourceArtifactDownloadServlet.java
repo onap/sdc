@@ -20,15 +20,8 @@
 
 package org.openecomp.sdc.be.servlets;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
+import com.jcabi.aspects.Loggable;
+import fj.data.Either;
 import org.apache.http.HttpStatus;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
@@ -38,22 +31,23 @@ import org.openecomp.sdc.be.info.ArtifactAccessInfo;
 import org.openecomp.sdc.be.resources.api.IResourceUploader;
 import org.openecomp.sdc.be.resources.data.ESArtifactData;
 import org.openecomp.sdc.common.api.Constants;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.jcabi.aspects.Loggable;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
-import fj.data.Either;
 
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/v1/catalog/resources/available")
 public class ResourceArtifactDownloadServlet extends ToscaDaoServlet {
 
-    private static final Logger log = LoggerFactory.getLogger(ResourceArtifactDownloadServlet.class);
-
-    private Gson gson = new GsonBuilder().setPrettyPrinting().create();
+    private static final Logger log = Logger.getLogger(ResourceArtifactDownloadServlet.class);
 
     @GET
     @Path("/{resourceName}/{resourceVersion}/artifacts/{artifactName}")

@@ -23,6 +23,8 @@ template "plugins-fe-config" do
    variables({
       :dcae_discovery_url     => node['Plugins']['DCAE']['dcae_discovery_url'],
       :dcae_source_url        => node['Plugins']['DCAE']['dcae_source_url'],
+      :dcae_dt_discovery_url  => node['Plugins']['DCAE-TAB']['dcae_dt_discovery_url'],
+      :dcae_dt_source_url     => node['Plugins']['DCAE-TAB']['dcae_dt_source_url'],
       :workflow_discovery_url => node['Plugins']['WORKFLOW']['workflow_discovery_url'],
       :workflow_source_url    => node['Plugins']['WORKFLOW']['workflow_source_url']
    })

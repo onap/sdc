@@ -20,17 +20,16 @@
 
 package org.openecomp.sdc.be.resources.data;
 
-import java.lang.reflect.Type;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import com.google.gson.reflect.TypeToken;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphNode;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
 import org.openecomp.sdc.be.datatypes.components.ComponentMetadataDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 
-import com.google.gson.reflect.TypeToken;
+import java.lang.reflect.Type;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public abstract class ComponentMetadataData extends GraphNode {
 
@@ -75,12 +74,20 @@ public abstract class ComponentMetadataData extends GraphNode {
 		metadataDataDefinition.setImportedToscaChecksum((String) properties.get(GraphPropertiesDictionary.IMPORTED_TOSCA_CHECKSUM.getProperty()));
 		metadataDataDefinition.setInvariantUUID((String) properties.get(GraphPropertiesDictionary.INVARIANT_UUID.getProperty()));
 //		metadataDataDefinition.setComponentType(ComponentTypeEnum.valueOf((String) properties.get(GraphPropertyEnum.COMPONENT_TYPE.getProperty())));
+		metadataDataDefinition.setArchived((Boolean) properties.get(GraphPropertiesDictionary.IS_ARCHIVED.getProperty()));
+		metadataDataDefinition.setVspArchived((Boolean) properties.get(GraphPropertiesDictionary.IS_VSP_ARCHIVED.getProperty()));
+		Object archiveTime = properties.get(GraphPropertiesDictionary.ARCHIVE_TIME.getProperty());
+		if (archiveTime instanceof Integer){
+			metadataDataDefinition.setArchiveTime(new Long((Integer) archiveTime));
+		} else if (archiveTime instanceof Long) {
+			metadataDataDefinition.setArchiveTime((Long)archiveTime);
+		}
 		componentInstanceCounter = (Integer) properties.get(GraphPropertiesDictionary.INSTANCE_COUNTER.getProperty());
 	}
 
 	@Override
 	public Map<String, Object> toGraphMap() {
-		Map<String, Object> map = new HashMap<String, Object>();
+		Map<String, Object> map = new HashMap<>();
 
 		addIfExists(map, GraphPropertiesDictionary.UNIQUE_ID, metadataDataDefinition.getUniqueId());
 		addIfExists(map, GraphPropertiesDictionary.VERSION, metadataDataDefinition.getVersion());

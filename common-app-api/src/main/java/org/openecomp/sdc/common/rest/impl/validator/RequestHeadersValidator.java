@@ -20,19 +20,17 @@
 
 package org.openecomp.sdc.common.rest.impl.validator;
 
-import java.util.List;
-import java.util.Map;
+import org.apache.commons.codec.binary.Base64;
+import org.openecomp.sdc.common.api.Constants;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.MediaType;
-
-import org.apache.commons.codec.binary.Base64;
-import org.openecomp.sdc.common.api.Constants;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.List;
+import java.util.Map;
 
 public class RequestHeadersValidator {
-	private static Logger log = LoggerFactory.getLogger(RequestHeadersValidator.class.getName());
+	private static Logger log = Logger.getLogger(RequestHeadersValidator.class.getName());
 
 	public static void validateContentType(HttpServletRequest request, MediaType expectedContentType,
 			Map<String, String> headersMap) throws RestRequestValidationException {

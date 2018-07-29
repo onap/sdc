@@ -15,22 +15,11 @@
  */
 package org.openecomp.core.zusammen.impl;
 
-import com.amdocs.zusammen.adaptor.inbound.api.types.item.Element;
-import com.amdocs.zusammen.adaptor.inbound.api.types.item.ElementConflict;
-import com.amdocs.zusammen.adaptor.inbound.api.types.item.ElementInfo;
-import com.amdocs.zusammen.adaptor.inbound.api.types.item.ItemVersionConflict;
-import com.amdocs.zusammen.adaptor.inbound.api.types.item.ZusammenElement;
+import com.amdocs.zusammen.adaptor.inbound.api.types.item.*;
 import com.amdocs.zusammen.commons.health.data.HealthInfo;
 import com.amdocs.zusammen.datatypes.Id;
 import com.amdocs.zusammen.datatypes.SessionContext;
-import com.amdocs.zusammen.datatypes.item.Action;
-import com.amdocs.zusammen.datatypes.item.ElementContext;
-import com.amdocs.zusammen.datatypes.item.Info;
-import com.amdocs.zusammen.datatypes.item.Item;
-import com.amdocs.zusammen.datatypes.item.ItemVersion;
-import com.amdocs.zusammen.datatypes.item.ItemVersionData;
-import com.amdocs.zusammen.datatypes.item.ItemVersionStatus;
-import com.amdocs.zusammen.datatypes.item.Resolution;
+import com.amdocs.zusammen.datatypes.item.*;
 import com.amdocs.zusammen.datatypes.itemversion.ItemVersionRevisions;
 import com.amdocs.zusammen.datatypes.itemversion.Tag;
 import org.openecomp.core.zusammen.api.ZusammenAdaptor;

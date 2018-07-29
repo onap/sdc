@@ -1,10 +1,10 @@
 package org.openecomp.sdc.be.components.distribution.engine;
 
-import java.lang.Thread.UncaughtExceptionHandler;
-import java.util.function.Consumer;
-
 import org.junit.Test;
 import org.openecomp.sdc.be.components.BeConfDependentTest;
+
+import java.lang.Thread.UncaughtExceptionHandler;
+import java.util.function.Consumer;
 
 public class DmaapConsumerTest  extends BeConfDependentTest{
 

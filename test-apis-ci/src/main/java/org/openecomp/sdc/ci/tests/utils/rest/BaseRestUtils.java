@@ -20,13 +20,6 @@
 
 package org.openecomp.sdc.ci.tests.utils.rest;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.commons.codec.binary.Base64;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -39,6 +32,13 @@ import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
 import org.openecomp.sdc.ci.tests.utils.validation.BaseValidationUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class BaseRestUtils extends BaseValidationUtils {
 	public static final String contentTypeHeaderData = "application/json";
@@ -84,7 +84,7 @@ public class BaseRestUtils extends BaseValidationUtils {
 
 	// ************* PRIVATE METHODS ************************
 
-	protected static Map<String, String> prepareHeadersMap(String userId) {
+	public static Map<String, String> prepareHeadersMap(String userId) {
 		return prepareHeadersMap(userId, acceptHeaderData);
 	}
 

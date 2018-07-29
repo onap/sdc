@@ -20,8 +20,6 @@
 
 package org.openecomp.sdc.ci.tests.execute.product;
 
-import static org.testng.AssertJUnit.assertEquals;
-
 import org.junit.rules.TestName;
 import org.openecomp.sdc.be.model.Product;
 import org.openecomp.sdc.ci.tests.datatypes.ProductReqDetails;
@@ -31,6 +29,8 @@ import org.openecomp.sdc.ci.tests.utils.rest.BaseRestUtils;
 import org.openecomp.sdc.ci.tests.utils.rest.ProductRestUtils;
 import org.openecomp.sdc.ci.tests.utils.rest.ResponseParser;
 import org.testng.annotations.BeforeMethod;
+
+import static org.testng.AssertJUnit.assertEquals;
 
 public abstract class ProductLifecycleTest extends ProductBaseTest {
 

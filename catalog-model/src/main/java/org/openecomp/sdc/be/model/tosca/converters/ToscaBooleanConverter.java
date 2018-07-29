@@ -20,35 +20,35 @@
 
 package org.openecomp.sdc.be.model.tosca.converters;
 
-import java.util.Map;
-
 import org.openecomp.sdc.be.model.DataTypeDefinition;
+
+import java.util.Map;
 
 public class ToscaBooleanConverter implements PropertyValueConverter {
 
-	private static ToscaBooleanConverter booleanConverter = new ToscaBooleanConverter();
+    private static ToscaBooleanConverter booleanConverter = new ToscaBooleanConverter();
 
-	public static ToscaBooleanConverter getInstance() {
-		return booleanConverter;
-	}
+    public static ToscaBooleanConverter getInstance() {
+        return booleanConverter;
+    }
 
-	private ToscaBooleanConverter() {
+    private ToscaBooleanConverter() {
 
-	}
+    }
 
-	@Override
-	public String convert(String value, String innerType, Map<String, DataTypeDefinition> dataTypes) {
+    @Override
+    public String convert(String value, String innerType, Map<String, DataTypeDefinition> dataTypes) {
 
-		if (value == null) {
-			return null;
-		}
+        if (value == null) {
+            return null;
+        }
 
-		if (value.equalsIgnoreCase("true") || value.equalsIgnoreCase("on") || value.equalsIgnoreCase("yes")
-				|| value.equalsIgnoreCase("y")) {
-			return "true";
-		} else {
-			return "false";
-		}
-	}
+        if (value.equalsIgnoreCase("true") || value.equalsIgnoreCase("on") || value.equalsIgnoreCase("yes")
+                || value.equalsIgnoreCase("y")) {
+            return "true";
+        } else {
+            return "false";
+        }
+    }
 
 }

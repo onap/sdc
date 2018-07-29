@@ -42,6 +42,7 @@
     "GENERAL_LABEL_SYSTEM_NAME": "System Name:",
     "GENERAL_LABEL_SOURCE_SERVICE_NAME": "Source Service Name:",
     "GENERAL_LABEL_RESOURCE_CUSTOMIZATION_UUID": "Resource Customization UUID:",
+    
 
     "=========== GENERAL_TAB ===========": "",
     "GENERAL_TAB_LABEL_RESOURCE_MODEL_NUMBER":"Vendor Model Number",
@@ -49,8 +50,8 @@
     "GENERAL_TAB_LABEL_SERVICE_ROLE": "Service Role",
 
     "=========== GENERAL ERROR PAGES ===========": "",
-    "GENERAL_ERROR_403_TITLE": "SDC",
-    "GENERAL_ERROR_403_DESCRIPTION": "Sorry, You are not authorized to view this page, Please contact the <a data-ng-href='mailto:{{mailto}}'> Service Design and Creation administrator</a> for access permission.",
+    "GENERAL_ERROR_403_TITLE": "SDC Access Denied",
+    "GENERAL_ERROR_403_DESCRIPTION": "Sorry, you are not authorized to view this page. Please visit the Portal Application to provision a user account for SDC.",
 
     "=========== ERROR VIEW MODEL ===========": "",
     "ADMIN_EMAIL": "",
@@ -425,6 +426,10 @@
     "APPROVE_SUCCESS_MESSAGE_TITLE": "Approve",
     "DISTRIBUTE_SUCCESS_MESSAGE_TEXT": "Distributed successfully",
     "DISTRIBUTE_SUCCESS_MESSAGE_TITLE": "Distribute",
+    "RESTORE_SUCCESS_MESSAGE_TITLE":"Restore",
+    "RESTORE_SUCCESS_MESSAGE_TEXT":"successfully restored",
+    "ARCHIVE_SUCCESS_MESSAGE_TITLE":"Archive",
+    "ARCHIVE_SUCCESS_MESSAGE_TEXT":"successfully archived",
 
     "=========== ON BOARDING MODAL INFO MESSAGES ===========": "",
     "ON_BOARDING_GENERAL_INFO": "Displays a table of VSPs created using Onboarding.<br/> Each row displays details for a single VSP.<br/> When expanded you can either import CSAR files that are yet to  be imported or update CSAR files that were previously imported.",
@@ -448,7 +453,28 @@
 
     "=========== PLUGIN NOT CONNECTED ===========": "",
     "PLUGIN_NOT_CONNECTED_ERROR_MAIN": "The \"{{pluginName}}\" plugin is currently unavailable.",
-    "PLUGIN_NOT_CONNECTED_ERROR_SUB": "Please try again later."
+    "PLUGIN_NOT_CONNECTED_ERROR_SUB": "Please try again later.",
 
-
+    "=========== POLICY AND GROUPS ===========": "",
+    "ADD_TARGETS" : "Add Targets",
+    "ADD_MEMBERS" : "Add Members",
+    "=========== AUTOMATED UPGRADE ===========": "",
+    "RESOURCE_UPGRADE_TITLE" : "Upgrade Services",
+    "SERVICE_UPGRADE_TITLE" : "Update Service References",
+    "RESOURCE_UPGRADE_STATUS_TITLE" : "Upgrade Services - Status",
+    "SERVICE_UPGRADE_STATUS_TITLE" : "Update Service References - Status",
+    "RESOURCE_NOTHING_TO_UPGRADE" : "There are no services which include instance of <b>\"{{vspName}}\"</b> VF.<br/>Please close this popup window to continue your work.",
+    "SERVICE_NOTHING_TO_UPGRADE" : "There aren’t any services which include a reference to {{vspName}}.",
+    "RESOURCE_AUTOMATED_UPGRADE_WITH_COMPONENTS_TO_UPGRADE":  "The following services include instance of <b>\"{{vspName}}\"</b> VF.<br/>Services eligible for upgrade are auto selected with the latest version of <b>\"{{vspName}}\" {{vspVersion}}</b>.<br/>Please de-select them if you do not want them to be upgraded",
+    "RESOURCE_AUTOMATED_UPGRADE_ALL_COMPONENTS_LOCKED": "The following services include instance of <b>\"{{vspName}}\"</b> VF, however they are locked and can not be automatically upgraded with <b>\"{{vspName}}\" {{vspVersion}}</b>.<br/>Please close this popup window to continue your work.",
+    "RESOURCE_AUTOMATED_UPGRADE_ALL_COMPONENTS_UPGRADED": "The listed services each include the <b>\"{{vspName}}\"</b> VF and have already been upgraded with the most recently certified version of the <b>{{vspName}} {{vspVersion}}</b>.<br/>Please close this popup window to continue your work.",
+    "RESOURCE_CERTIFICATION_STATUS_TEXT": "The \"{{resourceName}}\" VF was successfully updated and certified.",
+    "RESOURCE_UPGRADE_STATUS_SUCCESS": "Automated service upgrade was completed and successful.<br/>The services which are successfully upgraded are in checked-in state with version displayed below. Please close this popup window and proceed with design completion on the services",
+    "RESOURCE_UPGRADE_STATUS_FAIL": "Automated service upgrade failed.",
+    "SERVICE_UPGRADE_STATUS_SUCCESS": "Automated service upgrade was completed and successful.<br/>The services which are successfully upgraded are in checked-in state with version displayed below. Please close this popup window and proceed with design completion on the services",
+    "SERVICE_UPGRADE_STATUS_FAIL": "Automated service upgrade failed.",
+    "SERVICE_CERTIFICATION_STATUS_TEXT": "Service {{serviceName}} was successfully certified",
+    "SERVICE_AUTOMATED_UPGRADE_WITH_COMPONENTS_TO_UPGRADE":  "The following services reference <b>{{vspName}}</b>.<br/> One or more of the services were not yet upgraded with the most recently certified version of <b>{{vspName}}</b>.</br>Select services from the list to upgrade them with <b>{{vspName}} {{vspVersion}}</b>.",
+    "SERVICE_AUTOMATED_UPGRADE_ALL_COMPONENTS_LOCKED": "The listed services reference <b>{{vspName}}</b>.<br/> These services were not upgraded with the most recently certified version of <b>{{vspName}}</b>. Currently they are locked from being upgraded with <b>{{vspName}} {{vspVersion}}</b>",
+    "SERVICE_AUTOMATED_UPGRADE_ALL_COMPONENTS_UPGRADED": "The listed services each reference <b>{{vspName}}</b> and have already been updated with the most recently certified version of  the <b>{{vspName}} {{vspVersion}}</b>"
 }

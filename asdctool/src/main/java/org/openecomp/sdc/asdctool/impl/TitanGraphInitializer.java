@@ -20,10 +20,10 @@
 
 package org.openecomp.sdc.asdctool.impl;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-
+import com.thinkaurelius.titan.core.*;
+import com.thinkaurelius.titan.core.schema.ConsistencyModifier;
+import com.thinkaurelius.titan.core.schema.TitanGraphIndex;
+import com.thinkaurelius.titan.core.schema.TitanManagement;
 import org.apache.tinkerpop.gremlin.structure.Edge;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.openecomp.sdc.be.dao.graph.datatype.ActionEnum;
@@ -39,14 +39,9 @@ import org.openecomp.sdc.be.resources.data.UserData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.thinkaurelius.titan.core.PropertyKey;
-import com.thinkaurelius.titan.core.TitanException;
-import com.thinkaurelius.titan.core.TitanFactory;
-import com.thinkaurelius.titan.core.TitanGraph;
-import com.thinkaurelius.titan.core.TitanGraphQuery;
-import com.thinkaurelius.titan.core.schema.ConsistencyModifier;
-import com.thinkaurelius.titan.core.schema.TitanGraphIndex;
-import com.thinkaurelius.titan.core.schema.TitanManagement;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class TitanGraphInitializer {
 
@@ -88,6 +83,10 @@ public class TitanGraphInitializer {
 			return true;
 		}
 		return false;
+	}
+
+	private static boolean isVertexNotExist(Map<String, Object> properties) {
+		return !isVertexExist(properties);
 	}
 
 	private static void createDefaultAdminUser() {
@@ -187,13 +186,19 @@ public class TitanGraphInitializer {
 		createVertexIndixes();
 		createEdgeIndixes();
 		createDefaultAdminUser();
-		createRootCatalogVertex();
+		createRootVertex(VertexTypeEnum.CATALOG_ROOT);
+		createRootVertex(VertexTypeEnum.ARCHIVE_ROOT);
 	}
 
-	private static void createRootCatalogVertex() {
-		Vertex vertex = graph.addVertex();
-		vertex.property(GraphPropertyEnum.UNIQUE_ID.getProperty(), IdBuilderUtils.generateUniqueId());
-		vertex.property(GraphPropertyEnum.LABEL.getProperty(), VertexTypeEnum.CATALOG_ROOT.getName());
-		graph.tx().commit();
+	private static void createRootVertex(VertexTypeEnum vertexTypeEnum) {
+		Map<String, Object> checkedProperties = new HashMap<>();
+		checkedProperties.put(GraphPropertiesDictionary.LABEL.getProperty(), vertexTypeEnum.getName());
+		if (isVertexNotExist(checkedProperties)) {
+			Vertex vertex = graph.addVertex();
+			vertex.property(GraphPropertyEnum.UNIQUE_ID.getProperty(), IdBuilderUtils.generateUniqueId());
+			vertex.property(GraphPropertyEnum.LABEL.getProperty(), vertexTypeEnum.getName());
+			graph.tx().commit();
+		}
 	}
+
 }

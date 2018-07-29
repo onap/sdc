@@ -1,15 +1,8 @@
 package org.openecomp.sdc.tosca.datatypes.model;
 
+import org.onap.sdc.tosca.datatypes.model.*;
+
 import java.util.Map;
-import org.onap.sdc.tosca.datatypes.model.ArtifactType;
-import org.onap.sdc.tosca.datatypes.model.CapabilityType;
-import org.onap.sdc.tosca.datatypes.model.DataType;
-import org.onap.sdc.tosca.datatypes.model.GroupType;
-import org.onap.sdc.tosca.datatypes.model.Import;
-import org.onap.sdc.tosca.datatypes.model.NodeType;
-import org.onap.sdc.tosca.datatypes.model.PolicyType;
-import org.onap.sdc.tosca.datatypes.model.RelationshipType;
-import org.onap.sdc.tosca.datatypes.model.TopologyTemplate;
 
 /**
  * Created by Talio on 3/30/2017.

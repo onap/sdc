@@ -3,13 +3,12 @@ package org.openecomp.sdc.asdctool.main;
 import org.openecomp.sdc.asdctool.configuration.ArtifactUUIDFixConfiguration;
 import org.openecomp.sdc.asdctool.configuration.ConfigurationUploader;
 import org.openecomp.sdc.asdctool.impl.ArtifactUuidFix;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 public class ArtifactUUIDFixMenu {
 
-    private static Logger log = LoggerFactory.getLogger(ArtifactUUIDFixMenu.class);
+    private static Logger log = Logger.getLogger(ArtifactUUIDFixMenu.class.getName());
 
     public static void main(String[] args) {
         if (args == null || args.length < 3) {

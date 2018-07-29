@@ -24,18 +24,13 @@
         <guava.version>18.0</guava.version>
         <titan.version>1.0.0</titan.version>
         <sdc.titan.version>1.2.0</sdc.titan.version>
-        <spring-boot.version>1.1.6.RELEASE</spring-boot.version>
-        <spring.version>4.3.15.RELEASE</spring.version>
+        <spring.version>4.3.17.RELEASE</spring.version>
         <spring.security.version>3.2.3.RELEASE</spring.security.version>
         <spring.ldap.version>2.0.1.RELEASE</spring.ldap.version>
-        <jersey-bom.version>2.26</jersey-bom.version>
-        <servlet-api.version>3.0.1</servlet-api.version>
-        <wire-mock.version>2.11.0</wire-mock.version>
-
-        <artifact-generator-api.version>${project.version}</artifact-generator-api.version>
-        <artifact-generator-core.version>${project.version}</artifact-generator-core.version>
+        <jersey-bom.version>2.27</jersey-bom.version>
+        <servlet-api.version>3.1.0</servlet-api.version>
+        <wire-mock.version>2.18.0</wire-mock.version>
         <ecomp.version>1.1.0</ecomp.version>
-        <dox-common-lib.version>${project.version}</dox-common-lib.version>
 
         <!-- Elastic Search mapper (reference the elastic search version actually). -->
         <elastic-search.version>2.4.0</elastic-search.version>
@@ -44,13 +39,12 @@
         <jetty.version>9.2.22.v20170606</jetty.version>
 
         <!-- JSON and YAML Parsing -->
-        <jackson.version>2.9.4</jackson.version>
-        <jackson.yaml.version>2.9.4</jackson.yaml.version>
-        <jackson.annotations.version>2.9.4</jackson.annotations.version>
+        <jackson.version>2.8.10</jackson.version>
+        <jackson-annotations.version>2.8.0</jackson-annotations.version>
 
         <!-- Yaml for properties -->
         <snakeyaml.version>1.14</snakeyaml.version>
-        <functionaljava.version>4.4</functionaljava.version>
+        <functionaljava.version>4.7</functionaljava.version>
         <httpclient.version>4.5.3</httpclient.version>
         <httpcore.version>4.4.1</httpcore.version>
         <json-simple.version>1.1</json-simple.version>
@@ -58,7 +52,7 @@
         <!-- Logging start -->
         <!-- logback -->
         <logback.version>1.2.3</logback.version>
-        <slf4j-api.version>1.7.10</slf4j-api.version>
+        <slf4j-api.version>1.7.25</slf4j-api.version>
         <commons-codec>1.10</commons-codec>
         <commons-logging>1.2</commons-logging>
         <groovy.version>2.4.13</groovy.version>
@@ -83,25 +77,20 @@
         <commons-jci-core.version>1.1</commons-jci-core.version>
 
         <!--TESTING-->
-        <mockito.version>2.12.0</mockito.version>
-		<jmockit.version>1.33</jmockit.version>
+        <mockito.version>2.18.3</mockito.version>
+	    <jmockit.version>1.33</jmockit.version>
         <junit.version>4.12</junit.version>
-        <assertj.version>3.8.0</assertj.version>
+        <assertj.version>3.10.0</assertj.version>
         <testng.version>6.9.10</testng.version>
         <extentreports.version>3.0.3</extentreports.version>
-        <cucumber.version>2.3.1</cucumber.version>
+        <cucumber.version>2.4.0</cucumber.version>
         <bean-matchers.version>0.11</bean-matchers.version>
 
         <!-- parser-->
-        <sdc-tosca-parser.version>1.2.3-SNAPSHOT</sdc-tosca-parser.version>
+        <sdc-tosca-parser.version>1.3.5</sdc-tosca-parser.version>
 
-        <!--JaCoCO -->
-        <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
+        <!-- sonar -->
         <sonar.language>java</sonar.language>
-        <!-- Sonar properties -->
-        <sonar.sourceEncoding>${project.build.sourceEncoding}</sonar.sourceEncoding>
-        <sonar.projectBaseDir>${project.basedir}</sonar.projectBaseDir>
-        <sonar.branch>${project.version}</sonar.branch>
 
         <!--cassandra -->
         <cassandra.driver.version>3.0.0</cassandra.driver.version>
@@ -158,7 +147,7 @@
 
             <dependency>
                 <groupId>com.github.tomakehurst</groupId>
-                <artifactId>wiremock</artifactId>
+                <artifactId>wiremock-standalone</artifactId>
                 <version>${wire-mock.version}</version>
             </dependency>
 
@@ -173,6 +162,12 @@
                 <artifactId>cucumber-junit</artifactId>
                 <version>${cucumber.version}</version>
             </dependency>
+
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>${lang3.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -181,7 +176,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.0.0-M1</version>
+                <version>3.0.0</version>
                 <configuration>
                     <failOnError>false</failOnError>
                     <doclet>org.umlgraph.doclet.UmlGraphDoc</doclet>
@@ -249,15 +244,6 @@
                 </configuration>
             </plugin>
 
-            <plugin>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.19.1</version>
-                <configuration>
-                    <systemPropertyVariables>
-                        <logback.configurationFile>src/test/resources/logback-test.xml</logback.configurationFile>
-                    </systemPropertyVariables>
-                </configuration>
-            </plugin>
             <!-- plugin for parsing the project version -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
@@ -277,7 +263,7 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.7.9</version>
+                <version>0.8.1</version>
                 <executions>
                     <execution>
                         <id>default-prepare-agent</id>
@@ -321,12 +307,12 @@
                         <configuration>
                             <source>
                                 pom.properties['deploy.url'] =
-                                        pom.version.contains('-SNAPSHOT') ?
-                                                project.distributionManagement.snapshotRepository.url :
-                                                project.distributionManagement.repository.url;
+                                pom.version.contains('-SNAPSHOT') ?
+                                project.distributionManagement.snapshotRepository.url :
+                                project.distributionManagement.repository.url;
                                 pom.properties['repo.id'] = pom.version.contains('-SNAPSHOT') ?
-                                        project.distributionManagement.snapshotRepository.id :
-                                        project.distributionManagement.repository.id;
+                                project.distributionManagement.snapshotRepository.id :
+                                project.distributionManagement.repository.id;
                             </source>
                         </configuration>
                     </execution>
@@ -342,6 +328,7 @@
                     <addJavaLicenseAfterPackage>false</addJavaLicenseAfterPackage>
                     <processStartTag>============LICENSE_START=======================================================</processStartTag>
                     <processEndTag>============LICENSE_END=========================================================</processEndTag>
+                    <sectionDelimiter>================================================================================</sectionDelimiter>
                     <sectionDelimiter>================================================================================</sectionDelimiter>
                     <licenseName>apache_v2</licenseName>
                     <inceptionYear>2017</inceptionYear>
@@ -432,9 +419,6 @@
 
             <properties>
                 <ecomp.version>1.2.7</ecomp.version>
-                <artifact-generator-api.version>1802.0.1.167</artifact-generator-api.version>
-                <artifact-generator-core.version>1802.0.1.167</artifact-generator-core.version>
-                <dox-common-lib.version>1802.0.1.167</dox-common-lib.version>
                 <sdc-tosca-parser.version>1.1.32</sdc-tosca-parser.version>
             </properties>
         </profile>

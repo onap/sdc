@@ -20,9 +20,20 @@
 
 package org.openecomp.sdc.ci.tests.utils;
 
-import static org.testng.AssertJUnit.assertEquals;
-import static org.testng.AssertJUnit.assertNotNull;
-import static org.testng.AssertJUnit.assertTrue;
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
+import org.openecomp.sdc.be.model.Component;
+import org.openecomp.sdc.ci.tests.config.Config;
+import org.openecomp.sdc.ci.tests.datatypes.ServiceReqDetails;
+import org.openecomp.sdc.ci.tests.datatypes.enums.ArtifactTypeEnum;
+import org.openecomp.sdc.ci.tests.tosca.model.ToscaMetadataFieldsPresentationEnum;
+import org.openecomp.sdc.common.api.ToscaNodeTypeInfo;
+import org.openecomp.sdc.common.api.YamlConstants;
+import org.yaml.snakeyaml.Yaml;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -31,23 +42,13 @@ import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
-import org.openecomp.sdc.ci.tests.config.Config;
-import org.openecomp.sdc.ci.tests.datatypes.enums.ArtifactTypeEnum;
-import org.openecomp.sdc.common.api.ToscaNodeTypeInfo;
-import org.openecomp.sdc.common.api.YamlConstants;
-import org.yaml.snakeyaml.Yaml;
-
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import static org.testng.AssertJUnit.*;
 
 public final class Utils {
 
@@ -701,7 +702,49 @@ public final class Utils {
 		long startTime = System.nanoTime();
 		func.run();
 		long estimateTime = System.nanoTime();
-		long duration = TimeUnit.NANOSECONDS.toSeconds(estimateTime - startTime);
+        Long duration = TimeUnit.NANOSECONDS.toSeconds(estimateTime - startTime);
 		return duration;
 	}
+
+    public static Long getAndValidateActionDuration (Runnable action, int regularTestRunTime){
+        Long actualTestRunTime = null;
+        try {
+            actualTestRunTime = Utils.getActionDuration(() -> {
+                try {
+                    action.run();
+                } catch (Throwable throwable) {
+                    throwable.printStackTrace();
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        double factor = 1.5;
+
+        assertTrue("Expected test run time should be less than " + regularTestRunTime*factor + ", " +
+                "actual time is " + actualTestRunTime , regularTestRunTime*factor>actualTestRunTime);
+//        SetupCDTest.getExtendTest().log(Status.INFO, "Actual catalog loading time is  " + actualTestRunTime + " seconds");
+        return actualTestRunTime;
+    }
+
+
+	public static Map<String, String> generateServiceMetadataToExpectedObject(ServiceReqDetails serviceReqDetails, Component component) {
+			
+			Map<String, String> metadata = new HashMap<>();
+			
+			metadata.put(ToscaMetadataFieldsPresentationEnum.ToscaMetadataFieldsEnum.CATEGORY.value, serviceReqDetails.getCategories().get(0).getName());
+			metadata.put(ToscaMetadataFieldsPresentationEnum.ToscaMetadataFieldsEnum.DESCRIPTION.value, serviceReqDetails.getDescription());
+			metadata.put(ToscaMetadataFieldsPresentationEnum.ToscaMetadataFieldsEnum.INVARIANT_UUID.value, component.getInvariantUUID());
+			metadata.put(ToscaMetadataFieldsPresentationEnum.ToscaMetadataFieldsEnum.TYPE.value, "Service");
+			metadata.put(ToscaMetadataFieldsPresentationEnum.ToscaMetadataFieldsEnum.UUID.value, component.getUUID());
+			metadata.put(ToscaMetadataFieldsPresentationEnum.ToscaMetadataFieldsEnum.NAME.value, component.getName());
+			metadata.put(ToscaMetadataFieldsPresentationEnum.ToscaMetadataFieldsEnum.INSTANTIATION_TYPE.value, serviceReqDetails.getInstantiationType());
+			metadata.put(ToscaMetadataFieldsPresentationEnum.ToscaMetadataFieldsEnum.SERVICE_TYPE.value, serviceReqDetails.getServiceType());
+			metadata.put(ToscaMetadataFieldsPresentationEnum.ToscaMetadataFieldsEnum.SERVICE_ROLE.value, serviceReqDetails.getServiceRole());
+			metadata.put(ToscaMetadataFieldsPresentationEnum.ToscaMetadataFieldsEnum.NAMING_POLICY.value, serviceReqDetails.getNamingPolicy());
+			metadata.put(ToscaMetadataFieldsPresentationEnum.ToscaMetadataFieldsEnum.ECOMP_GENERATED_NAMING.value, serviceReqDetails.getEcompGeneratedNaming().toString());
+			metadata.put(ToscaMetadataFieldsPresentationEnum.ToscaMetadataFieldsEnum.SERVICE_ECOMP_NAMING.value, serviceReqDetails.getEcompGeneratedNaming().toString());//equals to ECOMP_GENERATED_NAMING
+			
+			return metadata;
+		}
 }

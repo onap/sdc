@@ -20,9 +20,7 @@
 
 package org.openecomp.sdc.be.datamodel.api;
 
-import java.io.Serializable;
-
-public enum CategoryTypeEnum implements Serializable {
+public enum CategoryTypeEnum {
 
     CATEGORY("category"), SUBCATEGORY("subcategory"), GROUPING("grouping");
 

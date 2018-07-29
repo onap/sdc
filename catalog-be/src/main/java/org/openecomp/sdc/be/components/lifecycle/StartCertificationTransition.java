@@ -20,14 +20,12 @@
 
 package org.openecomp.sdc.be.components.lifecycle;
 
-import java.util.Arrays;
-
+import fj.data.Either;
 import org.openecomp.sdc.be.components.impl.ComponentBusinessLogic;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
-import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.LifeCycleTransitionEnum;
@@ -40,28 +38,27 @@ import org.openecomp.sdc.be.model.jsontitan.utils.ModelConverter;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.user.Role;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import fj.data.Either;
+import java.util.Arrays;
 
 public class StartCertificationTransition extends LifeCycleTransition {
 
-    private static final Logger log = LoggerFactory.getLogger(StartCertificationTransition.class);
+    private static final Logger log = Logger.getLogger(StartCertificationTransition.class);
 
     public StartCertificationTransition(ComponentsUtils componentUtils, ToscaElementLifecycleOperation lifecycleOperation, ToscaOperationFacade toscaOperationFacade, TitanDao titanDao) {
         super(componentUtils, lifecycleOperation, toscaOperationFacade,  titanDao);
 
         // authorized roles
         Role[] rsrcServiceStartCertificationRoles = { Role.ADMIN, Role.TESTER };
-        addAuthorizedRoles(ComponentTypeEnum.RESOURCE, Arrays.asList(rsrcServiceStartCertificationRoles));
+        Role[] resourceRoles = { Role.ADMIN, Role.TESTER, Role.DESIGNER};
+        addAuthorizedRoles(ComponentTypeEnum.RESOURCE, Arrays.asList(resourceRoles));
         addAuthorizedRoles(ComponentTypeEnum.SERVICE, Arrays.asList(rsrcServiceStartCertificationRoles));
         // TODO to be later defined for product
 
         //additional authorized roles for resource type
-        Role[] resourceRoles = { Role.DESIGNER};
-        addResouceAuthorizedRoles(ResourceTypeEnum.VFCMT, Arrays.asList(resourceRoles));
+//        addResouceAuthorizedRoles(ResourceTypeEnum.VFCMT, Arrays.asList(resourceRoles));
     }
 
     @Override
@@ -98,12 +95,12 @@ public class StartCertificationTransition extends LifeCycleTransition {
         } finally {
             if (result == null || result.isRight()) {
                 BeEcompErrorManager.getInstance().logBeDaoSystemError("Change LifecycleState");
-                if (inTransaction == false) {
+                if (!inTransaction) {
                     log.debug("operation failed. do rollback");
                     titanDao.rollback();
                 }
             } else {
-                if (inTransaction == false) {
+                if (!inTransaction) {
                     log.debug("operation success. do commit");
                     titanDao.commit();
                 }

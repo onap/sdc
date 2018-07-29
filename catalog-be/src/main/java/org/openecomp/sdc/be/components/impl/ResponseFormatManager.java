@@ -25,18 +25,17 @@ import org.openecomp.sdc.be.config.ErrorConfiguration;
 import org.openecomp.sdc.be.config.ErrorInfo;
 import org.openecomp.sdc.be.config.ErrorInfo.ErrorInfoType;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.OkResponseInfo;
 import org.openecomp.sdc.exception.PolicyException;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.openecomp.sdc.exception.ServiceException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class ResponseFormatManager {
 
     private volatile static ResponseFormatManager instance;
     private static ConfigurationManager configurationManager;
-    private static final Logger log = LoggerFactory.getLogger(ResponseFormatManager.class);
+    private static final Logger log = Logger.getLogger(ResponseFormatManager.class);
 
     public static ResponseFormatManager getInstance() {
         if (instance == null) {

@@ -18,8 +18,8 @@ package org.openecomp.sdc.heat.datatypes.model;
 
 import org.junit.Assert;
 import org.junit.Test;
-
 import org.onap.sdc.tosca.services.YamlUtil;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;

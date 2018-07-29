@@ -1,18 +1,9 @@
 package org.openecomp.sdc.be.components.merge.instance;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
-import org.openecomp.sdc.be.model.ArtifactDefinition;
-import org.openecomp.sdc.be.model.CapabilityDefinition;
-import org.openecomp.sdc.be.model.Component;
-import org.openecomp.sdc.be.model.ComponentInstanceInput;
-import org.openecomp.sdc.be.model.ComponentInstanceProperty;
-import org.openecomp.sdc.be.model.InputDefinition;
+import org.openecomp.sdc.be.model.*;
+
+import java.util.*;
 
 /**
  * Created by chaya on 9/7/2017.
@@ -24,10 +15,12 @@ public class DataForMergeHolder {
     private List<InputDefinition> origComponentInputs;
     private Map<String, ArtifactDefinition> origCompInstDeploymentArtifactsCreatedOnTheInstance;
     private Map<String, ArtifactDefinition> origCompInstInformationalArtifactsCreatedOnTheInstance;
+    private Map<String, List<String>> origComponentInstanceExternalRefs;
     private List<ArtifactDefinition> origComponentInstanceHeatEnvArtifacts;
-    private VfRelationsMergeInfo vfRelationsMergeInfo;
+    private ContainerRelationsMergeInfo containerRelationsMergeInfo;
     private List<CapabilityDefinition> origInstanceCapabilities;
     private Component origInstanceNode;
+    private Component currInstanceNode;
     private String origComponentInstId;
 
     public DataForMergeHolder() {
@@ -39,19 +32,19 @@ public class DataForMergeHolder {
         origInstanceCapabilities = new ArrayList<>();
     }
 
-    public List<ArtifactDefinition> getOrigComponentInstanceHeatEnvArtifacts() {
+    List<ArtifactDefinition> getOrigComponentInstanceHeatEnvArtifacts() {
         return origComponentInstanceHeatEnvArtifacts;
     }
 
-    public void setOrigComponentInstanceHeatEnvArtifacts(List<ArtifactDefinition> origComponentInstanceHeatEnvArtifacts) {
+    void setOrigComponentInstanceHeatEnvArtifacts(List<ArtifactDefinition> origComponentInstanceHeatEnvArtifacts) {
         this.origComponentInstanceHeatEnvArtifacts = origComponentInstanceHeatEnvArtifacts;
     }
 
-    public List<ComponentInstanceInput> getOrigComponentInstanceInputs() {
+    List<ComponentInstanceInput> getOrigComponentInstanceInputs() {
         return origComponentInstanceInputs;
     }
 
-    public void setOrigComponentInstanceInputs(List<ComponentInstanceInput> origComponentInstanceInputs) {
+    void setOrigComponentInstanceInputs(List<ComponentInstanceInput> origComponentInstanceInputs) {
         Optional.ofNullable(origComponentInstanceInputs).orElse(Collections.emptyList()).stream().forEach(input -> {
             ComponentInstanceInput copyInput = new ComponentInstanceInput();
             copyInput.setType(input.getType());
@@ -77,11 +70,11 @@ public class DataForMergeHolder {
         });
     }
 
-    public List<ComponentInstanceProperty> getOrigComponentInstanceProperties() {
+    List<ComponentInstanceProperty> getOrigComponentInstanceProperties() {
         return origComponentInstanceProperties;
     }
 
-    public void setOrigComponentInstanceProperties(List<ComponentInstanceProperty> origComponentInstanceProperties) {
+    void setOrigComponentInstanceProperties(List<ComponentInstanceProperty> origComponentInstanceProperties) {
         Optional.ofNullable(origComponentInstanceProperties).orElse(Collections.emptyList()).stream().forEach(property -> {
             ComponentInstanceProperty propertyCopy = new ComponentInstanceProperty();
             propertyCopy.setType(property.getType());
@@ -95,48 +88,64 @@ public class DataForMergeHolder {
         });
     }
 
-    public List<InputDefinition> getOrigComponentInputs() {
+    List<InputDefinition> getOrigComponentInputs() {
         return origComponentInputs;
     }
 
-    public void setOrigComponentInputs(List<InputDefinition> origComponentInputs) {
+    void setOrigComponentInputs(List<InputDefinition> origComponentInputs) {
         this.origComponentInputs = origComponentInputs;
     }
 
-    public Map<String, ArtifactDefinition> getOrigComponentDeploymentArtifactsCreatedOnTheInstance(){ return this.origCompInstDeploymentArtifactsCreatedOnTheInstance;}
+    Map<String, ArtifactDefinition> getOrigComponentDeploymentArtifactsCreatedOnTheInstance(){ return this.origCompInstDeploymentArtifactsCreatedOnTheInstance;}
 
-    public Map<String, ArtifactDefinition> getOrigComponentInformationalArtifactsCreatedOnTheInstance(){ return origCompInstInformationalArtifactsCreatedOnTheInstance;}
+    Map<String, ArtifactDefinition> getOrigComponentInformationalArtifactsCreatedOnTheInstance(){ return origCompInstInformationalArtifactsCreatedOnTheInstance;}
 
-    public void setOrigComponentDeploymentArtifactsCreatedOnTheInstance(Map<String, ArtifactDefinition> origDeploymentArtifacts){
+    void setOrigComponentDeploymentArtifactsCreatedOnTheInstance(Map<String, ArtifactDefinition> origDeploymentArtifacts){
         origCompInstDeploymentArtifactsCreatedOnTheInstance = origDeploymentArtifacts;
     }
 
-    public void setOrigComponentInformationalArtifactsCreatedOnTheInstance(Map<String, ArtifactDefinition> origInformationalArtifacts){
+    void setOrigComponentInformationalArtifactsCreatedOnTheInstance(Map<String, ArtifactDefinition> origInformationalArtifacts){
         origCompInstInformationalArtifactsCreatedOnTheInstance = origInformationalArtifacts;
     }
 
-    public void setVfRelationsInfo(VfRelationsMergeInfo vfRelationsMergeInfo) {
-        this.vfRelationsMergeInfo = vfRelationsMergeInfo;
+    Map<String, List<String>> getOrigCompInstExternalRefs() {
+        return origComponentInstanceExternalRefs;
     }
 
-    public VfRelationsMergeInfo getVfRelationsMergeInfo() {
-        return vfRelationsMergeInfo;
+    void setOrigComponentInstanceExternalRefs(Map<String, List<String>> origComponentInstanceExternalRefs) {
+        this.origComponentInstanceExternalRefs = origComponentInstanceExternalRefs;
     }
 
-    public List<CapabilityDefinition> getOrigInstanceCapabilities() {
+    void setVfRelationsInfo(ContainerRelationsMergeInfo containerRelationsMergeInfo) {
+        this.containerRelationsMergeInfo = containerRelationsMergeInfo;
+    }
+
+    ContainerRelationsMergeInfo getContainerRelationsMergeInfo() {
+        return containerRelationsMergeInfo;
+    }
+
+    List<CapabilityDefinition> getOrigInstanceCapabilities() {
         return origInstanceCapabilities;
     }
 
-    public void setOrigInstanceCapabilities(List<CapabilityDefinition> origInstanceCapabilities) {
+    void setOrigInstanceCapabilities(List<CapabilityDefinition> origInstanceCapabilities) {
         this.origInstanceCapabilities = origInstanceCapabilities;
     }
 
-    public Component getOrigInstanceNode() {
+    Component getOrigInstanceNode() {
         return origInstanceNode;
     }
 
-    public void setOrigInstanceNode(Component origInstanceNode) {
+    void setOrigInstanceNode(Component origInstanceNode) {
         this.origInstanceNode = origInstanceNode;
+    }
+
+    Component getCurrInstanceNode() {
+        return currInstanceNode;
+    }
+
+    public void setCurrInstanceNode(Component currInstanceNode) {
+        this.currInstanceNode = currInstanceNode;
     }
 
     public String getOrigComponentInstId() {

@@ -20,26 +20,19 @@
 
 package org.openecomp.sdc.be.components.impl;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-
+import fj.data.Either;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.Operation;
 import org.openecomp.sdc.be.model.operations.api.IInterfaceLifecycleOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import fj.data.Either;
+import javax.annotation.Resource;
+import java.util.*;
 
 @Component("interfaceLifecycleTypeImportManager")
 public class InterfaceLifecycleTypeImportManager {
@@ -52,7 +45,7 @@ public class InterfaceLifecycleTypeImportManager {
     @Resource
     private CommonImportManager commonImportManager;
 
-    private static final Logger log = LoggerFactory.getLogger(InterfaceLifecycleTypeImportManager.class);
+    private static final Logger log = Logger.getLogger(InterfaceLifecycleTypeImportManager.class);
 
     public Either<List<InterfaceDefinition>, ResponseFormat> createLifecycleTypes(String interfaceLifecycleTypesYml) {
 
@@ -67,7 +60,7 @@ public class InterfaceLifecycleTypeImportManager {
     }
 
     private Either<List<InterfaceDefinition>, ActionStatus> createLifecyclyTypeFromYml(String interfaceLifecycleTypesYml) {
-        return commonImportManager.createElementTypesFromYml(interfaceLifecycleTypesYml, (lifecycleTypeName, lifecycleTypeJsonData) -> createLifecycleType(lifecycleTypeName, lifecycleTypeJsonData));
+        return commonImportManager.createElementTypesFromYml(interfaceLifecycleTypesYml, this::createLifecycleType);
 
     }
 
@@ -104,7 +97,7 @@ public class InterfaceLifecycleTypeImportManager {
         InterfaceDefinition interfaceDef = new InterfaceDefinition();
         interfaceDef.setType(interfaceDefinition);
 
-        Map<String, Operation> operations = new HashMap<String, Operation>();
+        Map<String, Operation> operations = new HashMap<>();
 
         for (Map.Entry<String, Object> entry : toscaJson.entrySet()) {
             Operation operation = new Operation();

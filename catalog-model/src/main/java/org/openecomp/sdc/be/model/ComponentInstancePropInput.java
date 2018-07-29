@@ -20,45 +20,38 @@
 
 package org.openecomp.sdc.be.model;
 
-import java.io.Serializable;
+public class ComponentInstancePropInput extends ComponentInstanceProperty {
 
-public class ComponentInstancePropInput extends ComponentInstanceProperty implements Serializable{
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -7991205190252140617L;
-	
-	
-	private String propertiesName; 
-	private PropertyDefinition input;
-	
-	public ComponentInstancePropInput() {
-		super();
-	}
-	
-	public ComponentInstancePropInput(ComponentInstanceProperty p) {
-		super(p);
-	}
-	
-	public String getPropertiesName() {
-		return propertiesName;
-	}
-	public void setPropertiesName(String propertiesName) {
-		this.propertiesName = propertiesName;
-	}
-	public PropertyDefinition getInput() {
-		return input;
-	}
-	public void setInput(PropertyDefinition input) {
-		this.input = input;
-	} 
-	
-	public String[] getParsedPropNames(){
-		String[] tokens = null;
-		if(propertiesName != null && !propertiesName.isEmpty()){
-			tokens = propertiesName.split("#");
-		}
-		return tokens;
-	}
+    private String propertiesName;
+    private PropertyDefinition input;
+
+    public ComponentInstancePropInput() {
+        super();
+    }
+
+    public ComponentInstancePropInput(ComponentInstanceProperty p) {
+        super(p);
+    }
+
+    public String getPropertiesName() {
+        return propertiesName;
+    }
+    public void setPropertiesName(String propertiesName) {
+        this.propertiesName = propertiesName;
+    }
+    public PropertyDefinition getInput() {
+        return input;
+    }
+    public void setInput(PropertyDefinition input) {
+        this.input = input;
+    }
+
+    public String[] getParsedPropNames(){
+        String[] tokens = null;
+        if(propertiesName != null && !propertiesName.isEmpty()){
+            tokens = propertiesName.split("#");
+        }
+        return tokens;
+    }
 
 }

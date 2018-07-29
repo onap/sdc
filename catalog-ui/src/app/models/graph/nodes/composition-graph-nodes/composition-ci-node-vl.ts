@@ -52,6 +52,10 @@ export class CompositionCiNodeVl extends CompositionCiNodeBase {
         this.imagesPath = this.imagesPath + ImagesUrl.RESOURCE_ICONS;
 
         this.classes = 'vl-node';
+        if(this.archived){
+            this.classes = this.classes + ' archived';
+            return;
+        }
         if (!this.certified) {
             this.classes = this.classes + ' not-certified';
         }

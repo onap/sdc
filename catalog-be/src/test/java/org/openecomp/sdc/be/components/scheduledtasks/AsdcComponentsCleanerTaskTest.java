@@ -1,11 +1,10 @@
 package org.openecomp.sdc.be.components.scheduledtasks;
 
-import java.util.concurrent.ExecutorService;
-
+import mockit.Deencapsulation;
 import org.junit.Test;
 import org.openecomp.sdc.be.components.BeConfDependentTest;
 
-import mockit.Deencapsulation;
+import java.util.concurrent.ExecutorService;
 
 public class AsdcComponentsCleanerTaskTest extends BeConfDependentTest{
 

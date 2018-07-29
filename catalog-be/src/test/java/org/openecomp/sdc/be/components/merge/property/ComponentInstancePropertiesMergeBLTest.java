@@ -1,13 +1,6 @@
 package org.openecomp.sdc.be.components.merge.property;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
-
-import java.util.Collections;
-import java.util.List;
-
+import fj.data.Either;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -22,12 +15,20 @@ import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 
-import fj.data.Either;
+import java.util.Collections;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.*;
 
 public class ComponentInstancePropertiesMergeBLTest {
 
     private static final String INSTANCE1 = "instance1";
     private static final String INSTANCE2 = "instance2";
+    private static final String OLD_INSTANCE1 = "old.instance1";
+    private static final String OLD_INSTANCE2 = "old.instance2";
+    private static final String NEW_INSTANCE1 = "new.instance1";
+    private static final String NEW_INSTANCE2 = "new.instance2";
 
     @InjectMocks
     private ComponentInstancePropertiesMergeBL testInstance;
@@ -48,16 +49,20 @@ public class ComponentInstancePropertiesMergeBLTest {
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
         oldResource = new ResourceBuilder()
-                .addInstanceProperty(INSTANCE1, "property1")
-                .addInstanceProperty(INSTANCE1, "property2")
-                .addInstanceProperty(INSTANCE2, "property3")
+                .addComponentInstance(INSTANCE1, OLD_INSTANCE1)
+                .addComponentInstance(INSTANCE2, OLD_INSTANCE2)
+                .addInstanceProperty(OLD_INSTANCE1, "property1")
+                .addInstanceProperty(OLD_INSTANCE1, "property2")
+                .addInstanceProperty(OLD_INSTANCE2, "property3")
                 .addInput("input1")
                 .addInput("input2").build();
 
         newResource = new ResourceBuilder()
-                .addInstanceProperty(INSTANCE1, "property11")
-                .addInstanceProperty(INSTANCE1, "property12")
-                .addInstanceProperty(INSTANCE2, "property13")
+                .addComponentInstance(INSTANCE1, NEW_INSTANCE1)
+                .addComponentInstance(INSTANCE2, NEW_INSTANCE2)
+                .addInstanceProperty(NEW_INSTANCE1, "property11")
+                .addInstanceProperty(NEW_INSTANCE1, "property12")
+                .addInstanceProperty(NEW_INSTANCE2, "property13")
                 .addInput("input11")
                 .addInput("input12").build();
     }
@@ -67,7 +72,7 @@ public class ComponentInstancePropertiesMergeBLTest {
         when(toscaOperationFacade.updateComponentInstancePropsToComponent(newResource.getComponentInstancesProperties(), newResource.getUniqueId()))
                                  .thenReturn(Either.left(Collections.emptyMap()));
         ActionStatus actionStatus = testInstance.mergeComponents(oldResource, newResource);
-        assertEquals(actionStatus, ActionStatus.OK);
+        assertEquals(ActionStatus.OK, actionStatus);
         verifyMergeBLCalled(oldResource, newResource);
     }
 
@@ -83,32 +88,32 @@ public class ComponentInstancePropertiesMergeBLTest {
 
     @Test
     public void mergeInstanceProps() throws Exception {
-        List<ComponentInstanceProperty> newInstanceProps = newResource.safeGetComponentInstanceProperties(INSTANCE1);
-        List<ComponentInstanceProperty> oldInstProps = oldResource.safeGetComponentInstanceProperties(INSTANCE1);
-        when(toscaOperationFacade.updateComponentInstanceProperties(newResource, INSTANCE1, newInstanceProps))
+        List<ComponentInstanceProperty> newInstanceProps = newResource.safeGetComponentInstanceProperties(NEW_INSTANCE1);
+        List<ComponentInstanceProperty> oldInstProps = oldResource.safeGetComponentInstanceProperties(OLD_INSTANCE1);
+        when(toscaOperationFacade.updateComponentInstanceProperties(newResource, NEW_INSTANCE1, newInstanceProps))
                                  .thenReturn(StorageOperationStatus.OK);
-        ActionStatus actionStatus = testInstance.mergeComponentInstanceProperties(oldInstProps, oldResource.getInputs(), newResource, INSTANCE1);
-        assertEquals(actionStatus, ActionStatus.OK);
+        ActionStatus actionStatus = testInstance.mergeComponentInstanceProperties(oldInstProps, oldResource.getInputs(), newResource, NEW_INSTANCE1);
+        assertEquals(ActionStatus.OK, actionStatus);
         verify(propertyValuesMergingBusinessLogic).mergeInstanceDataDefinitions(oldInstProps, oldResource.getInputs(), newInstanceProps, newResource.getInputs());
     }
 
     @Test
     public void mergeInstanceProps_failure() throws Exception {
-        List<ComponentInstanceProperty> newInstanceProps = newResource.safeGetComponentInstanceProperties(INSTANCE1);
-        List<ComponentInstanceProperty> oldInstProps = oldResource.safeGetComponentInstanceProperties(INSTANCE1);
-        when(toscaOperationFacade.updateComponentInstanceProperties(newResource, INSTANCE1, newInstanceProps))
+        List<ComponentInstanceProperty> newInstanceProps = newResource.safeGetComponentInstanceProperties(NEW_INSTANCE1);
+        List<ComponentInstanceProperty> oldInstProps = oldResource.safeGetComponentInstanceProperties(OLD_INSTANCE1);
+        when(toscaOperationFacade.updateComponentInstanceProperties(newResource, NEW_INSTANCE1, newInstanceProps))
                 .thenReturn(StorageOperationStatus.GENERAL_ERROR);
         when(componentsUtils.convertFromStorageResponse(StorageOperationStatus.GENERAL_ERROR)).thenReturn(ActionStatus.GENERAL_ERROR);
-        ActionStatus actionStatus = testInstance.mergeComponentInstanceProperties(oldInstProps, oldResource.getInputs(), newResource, INSTANCE1);
-        assertEquals(actionStatus, ActionStatus.GENERAL_ERROR);
+        ActionStatus actionStatus = testInstance.mergeComponentInstanceProperties(oldInstProps, oldResource.getInputs(), newResource, NEW_INSTANCE1);
+        assertEquals(ActionStatus.GENERAL_ERROR, actionStatus);
         verify(propertyValuesMergingBusinessLogic).mergeInstanceDataDefinitions(oldInstProps, oldResource.getInputs(), newInstanceProps, newResource.getInputs());
     }
 
     private void verifyMergeBLCalled(Resource oldResource, Resource newResource) {
-        List<ComponentInstanceProperty> instance1oldProps = oldResource.getComponentInstancesProperties().get(INSTANCE1);
-        List<ComponentInstanceProperty> instance1newProps = newResource.getComponentInstancesProperties().get(INSTANCE1);
-        List<ComponentInstanceProperty> instance2oldProps = oldResource.getComponentInstancesProperties().get(INSTANCE2);
-        List<ComponentInstanceProperty> instance2newProps = newResource.getComponentInstancesProperties().get(INSTANCE2);
+        List<ComponentInstanceProperty> instance1oldProps = oldResource.getComponentInstancesProperties().get(OLD_INSTANCE1);
+        List<ComponentInstanceProperty> instance1newProps = newResource.getComponentInstancesProperties().get(NEW_INSTANCE1);
+        List<ComponentInstanceProperty> instance2oldProps = oldResource.getComponentInstancesProperties().get(OLD_INSTANCE2);
+        List<ComponentInstanceProperty> instance2newProps = newResource.getComponentInstancesProperties().get(NEW_INSTANCE2);
         verify(propertyValuesMergingBusinessLogic).mergeInstanceDataDefinitions(instance1oldProps, oldResource.getInputs(), instance1newProps, newResource.getInputs());
         verify(propertyValuesMergingBusinessLogic).mergeInstanceDataDefinitions(instance2oldProps, oldResource.getInputs(), instance2newProps, newResource.getInputs());
     }

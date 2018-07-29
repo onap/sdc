@@ -1,9 +1,6 @@
 package org.openecomp.sdc.be.components.impl.generic;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-
+import fj.data.Either;
 import org.apache.commons.collections.CollectionUtils;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
@@ -15,17 +12,18 @@ import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import fj.data.Either;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @org.springframework.stereotype.Component
 public class GenericTypeBusinessLogic {
 
-    private final static Logger log = LoggerFactory.getLogger(GenericTypeBusinessLogic.class);
+    private final static Logger log = Logger.getLogger(GenericTypeBusinessLogic.class);
 
     @Autowired
     private ComponentsUtils componentsUtils;

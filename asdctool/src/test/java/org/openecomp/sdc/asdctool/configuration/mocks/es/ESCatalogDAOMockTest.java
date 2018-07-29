@@ -1,12 +1,11 @@
 package org.openecomp.sdc.asdctool.configuration.mocks.es;
 
-import java.util.List;
-
+import fj.data.Either;
 import org.junit.Test;
 import org.openecomp.sdc.be.dao.api.ResourceUploadStatus;
 import org.openecomp.sdc.be.resources.data.ESArtifactData;
 
-import fj.data.Either;
+import java.util.List;
 
 public class ESCatalogDAOMockTest {
 

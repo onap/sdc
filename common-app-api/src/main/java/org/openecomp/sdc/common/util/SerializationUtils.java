@@ -20,24 +20,17 @@
 
 package org.openecomp.sdc.common.util;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.ObjectInput;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutput;
-import java.io.ObjectOutputStream;
-
+import fj.data.Either;
 import org.nustaq.serialization.FSTConfiguration;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.config.BeEcompErrorManager.ErrorSeverity;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 
-import fj.data.Either;
+import java.io.*;
 
 public class SerializationUtils {
 
-	private static Logger log = LoggerFactory.getLogger(SerializationUtils.class.getName());
+	private static Logger log = Logger.getLogger(SerializationUtils.class.getName());
 
 	private static FSTConfiguration conf = FSTConfiguration.createDefaultConfiguration();
 

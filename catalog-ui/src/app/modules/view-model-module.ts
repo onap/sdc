@@ -67,8 +67,8 @@ import {ManagementWorkflowViewModel} from "../view-models/workspace/tabs/managem
 import {InterfaceOperationViewModel} from "../view-models/workspace/tabs/interface-operation/interface-operation-view-model";
 import {NetworkCallFlowViewModel} from "../view-models/workspace/tabs/network-call-flow/network-call-flow-view-model";
 import {DeploymentViewModel} from "../view-models/workspace/tabs/deployment/deployment-view-model";
-import {ResourceInputsViewModel} from "../view-models/workspace/tabs/inputs/resource-input/resource-inputs-view-model";
-import {ServiceInputsViewModel} from "../view-models/workspace/tabs/inputs/service-input/service-inputs-view-model";
+// import {ResourceInputsViewModel} from "../view-models/workspace/tabs/inputs/resource-input/resource-inputs-view-model";
+// import {ServiceInputsViewModel} from "../view-models/workspace/tabs/inputs/service-input/service-inputs-view-model";
 import {ReqAndCapabilitiesViewModel} from "../view-models/workspace/tabs/req-and-capabilities/req-and-capabilities-view-model";
 import {InputFormViewModel} from "../view-models/forms/input-form/input-form-view-modal";
 import {HierarchyViewModel} from "../view-models/tabs/hierarchy/hierarchy-view-model";
@@ -135,8 +135,8 @@ viewModelModule
   .controller(moduleName + '.InterfaceOperationViewModel', InterfaceOperationViewModel)
   .controller(moduleName + '.NetworkCallFlowViewModel', NetworkCallFlowViewModel)
   .controller(moduleName + '.DeploymentViewModel', DeploymentViewModel)
-  .controller(moduleName + '.ResourceInputsViewModel', ResourceInputsViewModel)
-  .controller(moduleName + '.ServiceInputsViewModel', ServiceInputsViewModel)
+  // .controller(moduleName + '.ResourceInputsViewModel', ResourceInputsViewModel)
+  // .controller(moduleName + '.ServiceInputsViewModel', ServiceInputsViewModel)
   .controller(moduleName + '.ReqAndCapabilitiesViewModel', ReqAndCapabilitiesViewModel)
   .controller(moduleName + '.InputFormViewModel', InputFormViewModel)
   .controller(moduleName + '.PluginsTabViewModel', PluginsTabViewModel)

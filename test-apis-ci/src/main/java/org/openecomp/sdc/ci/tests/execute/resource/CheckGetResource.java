@@ -20,13 +20,12 @@
 
 package org.openecomp.sdc.ci.tests.execute.resource;
 
+import fj.data.Either;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
 import org.openecomp.sdc.ci.tests.utils.rest.ResourceRestUtils;
 import org.openecomp.sdc.ci.tests.utils.rest.ResponseParser;
 import org.openecomp.sdc.common.util.SerializationUtils;
-
-import fj.data.Either;
 
 public class CheckGetResource {
 

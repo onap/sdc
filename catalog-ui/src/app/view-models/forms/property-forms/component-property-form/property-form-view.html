@@ -1,8 +1,8 @@
-<sdc-modal modal="modalInstanceProperty" type="classic" class="sdc-edit-property-container" buttons="footerButtons" header="{{isNew ? 'Add' : 'Update' }} Property" show-close-button="true" data-tests-id="sdc-edit-property-container">
+<ng1-modal modal="modalInstanceProperty" type="classic" class="sdc-edit-property-container" buttons="footerButtons" header="{{isNew ? 'Add' : 'Update' }} Property" show-close-button="true" data-tests-id="sdc-edit-property-container">
     <loader data-display="isLoading" relative="false" size="medium"></loader>
     <div class="sdc-modal-top-bar" data-ng-if="!isNew">
         <div class="sdc-modal-top-bar-buttons">
-            <span ng-click="delete(editPropertyModel.property)" data-ng-class="{'disabled' : isPropertyValueOwner || editPropertyModel.property.readonly}" class="sprite-new delete-btn" data-tests-id="delete_property"  sdc-smart-tooltip="">Delete</span>
+            <span ng-click="delete(editPropertyModel.property)" data-ng-class="{'disabled' : isPropertyValueOwner || editPropertyModel.property.readonly || propertyOwnerType == 'group' || propertyOwnerType == 'policy'}" class="sprite-new delete-btn" data-tests-id="delete_property"  sdc-smart-tooltip="">Delete</span>
             <span class="delimiter"></span>
             <span data-ng-click="getPrev()" data-ng-class="{'disabled' : !currentPropertyIndex }" class="sprite-new left-arrow" data-tests-id="get-prev" sdc-smart-tooltip="">Previous</span>
             <span data-ng-click="getNext()" data-ng-class="{'disabled' : isLastProperty }" class="sprite-new right-arrow" data-tests-id="get-next" sdc-smart-tooltip="">Next</span>
@@ -198,4 +198,4 @@
         </perfect-scrollbar>
     </div>
 
-</sdc-modal>
+</ng1-modal>

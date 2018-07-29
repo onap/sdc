@@ -1,10 +1,8 @@
 package org.openecomp.sdc.ci.tests.dataProvider;
 
-import org.openecomp.sdc.ci.tests.execute.sanity.ToscaValidationTest;
 import org.openecomp.sdc.ci.tests.utilities.FileHandling;
 import org.openecomp.sdc.ci.tests.utils.general.OnboardingUtils;
 import org.testng.annotations.DataProvider;
-import org.testng.annotations.Factory;
 
 import java.util.ArrayList;
 import java.util.Collections;

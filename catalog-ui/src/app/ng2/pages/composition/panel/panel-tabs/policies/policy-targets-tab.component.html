@@ -1,0 +1,32 @@
+<div class="w-sdc-designer-sidebar-section-title" titleTooltip="Targets">Targets
+    <svg-icon-label *ngIf="!isViewOnly"
+                    class="add-policy-button"
+                    name="plus-circle-o"
+                    mode="primary"
+                    size="medium"
+                    label="ADD"
+                    labelPlacement="right"
+                    (click)="openAddTargetModal()">
+    </svg-icon-label>
+</div>
+<div class="expand-collapse-content">
+    <ul>
+        <li *ngFor="let target of targets; let i = index" class="component-details-panel-large-item"
+            tooltip="{{target.name}}">
+            <span>{{target.name}}</span>
+            <svg-icon-label *ngIf="!isViewOnly"
+                            name="trash-o" 
+                            clickable="true" 
+                            size="small"
+                            class="component-details-panel-item-delete"
+                            data-tests-id="delete_target" 
+                            (click)="deleteTarget(target)"></svg-icon-label>
+        </li>
+    </ul>
+
+    <div *ngIf="targets.length===0" class="component-details-panel-tab-no-data">
+        <div class="component-details-panel-tab-no-data-title">No data to display yet</div>
+        <div class="component-details-panel-tab-no-data-content">Add targets to policy to see targets</div>
+    </div>
+</div>
+

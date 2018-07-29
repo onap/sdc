@@ -20,15 +20,14 @@
 
 package org.openecomp.sdc.ci.tests.pages;
 
-import java.util.List;
-
+import com.aventstack.extentreports.Status;
 import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum;
 import org.openecomp.sdc.ci.tests.execute.setup.SetupCDTest;
 import org.openecomp.sdc.ci.tests.utilities.GeneralUIUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
-import com.aventstack.extentreports.Status;
+import java.util.List;
 
 public class PropertiesPage extends GeneralPageElements {
 
@@ -53,8 +52,15 @@ public class PropertiesPage extends GeneralPageElements {
 		SetupCDTest.getExtendTest().log(Status.INFO, String.format("Delete property %s", propertyName));
 		GeneralUIUtils.hoverOnAreaByTestId(DataTestIdEnum.PropertiesPageEnum.PROPERTY_NAME.getValue() + propertyName);
 		GeneralUIUtils.clickOnElementByTestId(DataTestIdEnum.PropertiesPageEnum.DELETE_PROPERTY.getValue() + propertyName);
-		GeneralUIUtils.clickOnElementByTestId(DataTestIdEnum.ModalItems.OK.getValue());
+		GeneralPageElements.clickOKButton();
 		GeneralUIUtils.waitForElementInVisibilityBy(By.className("w-sdc-modal-confirmation"), 10);
+	}
+
+	public static void clickDeletePropertyFromPopup(String propertyName) {
+		SetupCDTest.getExtendTest().log(Status.INFO, String.format("Delete property %s", propertyName));
+		GeneralUIUtils.clickOnElementByTestId(DataTestIdEnum.PropertiesPageEnum.PROPERTY_NAME.getValue() + propertyName);
+		GeneralUIUtils.clickOnAreaJS(DataTestIdEnum.PropertiesPageEnum.DELETE_PROPERTY_POPUP.getValue());
+		GeneralUIUtils.clickOnElementByTestId(DataTestIdEnum.ModalItems.OK.getValue());
 	}
 
 	public static void clickOnProperty(String propertyName) {

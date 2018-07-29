@@ -7,7 +7,7 @@
         [value]="value!=undefined?value:''"
         disabled
         />
-    <button [popover]="popoverForm"  [ngClass]="{'disabled':readonly}">Edit</button>
+    <button [popover]="popoverForm" (onShown)="setEditValue()"  [ngClass]="{'disabled':readonly}" [attr.data-tests-id] ="'edit-button-' + testId">Edit</button>
 </div>
 
 <popover-content #popoverForm [title]="name" [buttons]="buttonsArray" [placement]="'top'" [closeOnClickOutside]="true">
@@ -16,11 +16,12 @@
                     #textArea
                     class="subnet-value"
                     [ngClass]="{'error': control.invalid}"
-                    [(ngModel)]="value"
+                    [(ngModel)]="editValue"
                     [attr.maxlength]="validation.propertyValue.max"
                     [attr.minlength]="validation.propertyValue.min"
                     [pattern]="pattern"
                     [formControl]="control"
+                    [attr.data-tests-id]="'value-' + testId"
                   ></textarea>
     </div>
 </popover-content>

@@ -20,10 +20,10 @@
 
 package org.openecomp.sdc.ci.tests.datatypes.enums;
 
+import org.openecomp.sdc.be.dao.api.ActionStatus;
+
 import java.util.Arrays;
 import java.util.List;
-
-import org.openecomp.sdc.be.dao.api.ActionStatus;
 
 public enum ImportTestTypesEnum {
 

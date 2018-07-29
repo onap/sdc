@@ -5,7 +5,11 @@ import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.ci.tests.datatypes.*;
-import org.openecomp.sdc.ci.tests.datatypes.enums.*;
+import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum.LeftPanelCanvasItems;
+import org.openecomp.sdc.ci.tests.datatypes.enums.ArtifactTypeEnum;
+import org.openecomp.sdc.ci.tests.datatypes.enums.NormativeTypesEnum;
+import org.openecomp.sdc.ci.tests.datatypes.enums.ResourceCategoryEnum;
+import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
 import org.openecomp.sdc.ci.tests.execute.setup.SetupCDTest;
 import org.openecomp.sdc.ci.tests.pages.*;
 import org.openecomp.sdc.ci.tests.utilities.*;
@@ -16,7 +20,6 @@ import org.openecomp.sdc.ci.tests.verificator.VfVerificator;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.testng.AssertJUnit;
-import org.testng.SkipException;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -92,7 +95,8 @@ public class PNF extends SetupCDTest {
 	public void addPropertiesToVfcInstanceInPNFTest() throws Exception {
 		
 		if(true){
-			throw new SkipException("Open bug 373762, can't update properties on CP or VFC instance  on Composition screen");			
+//			throw new SkipException("Open bug 373762, can't update properties on CP or VFC instance  on Composition screen");
+			SetupCDTest.getExtendTest().log(Status.INFO, "Open bug 373762, can't update properties on CP or VFC instance  on Composition screen");
 		}
 		
 		String fileName = "CP02.yml";
@@ -140,7 +144,8 @@ public class PNF extends SetupCDTest {
 		try{
 			atomicResourceMetaData = ElementFactory.getDefaultResourceByTypeNormTypeAndCatregory(ResourceTypeEnum.CP, NormativeTypesEnum.ROOT, ResourceCategoryEnum.NETWORK_L2_3_ROUTERS, getUser());
 			ResourceUIUtils.importVfc(atomicResourceMetaData, filePath, fileName, getUser());
-			ResourceGeneralPage.clickSubmitForTestingButton(atomicResourceMetaData.getName());
+			//TODO Andrey should click on certify button
+			ResourceGeneralPage.clickCertifyButton(atomicResourceMetaData.getName());
 			
 			pnfMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.PNF, getUser());
 			ResourceUIUtils.createPNF(pnfMetaData, getUser());
@@ -148,22 +153,21 @@ public class PNF extends SetupCDTest {
 			vfCanvasManager = CanvasManager.getCanvasManager();
 			CompositionPage.searchForElement(atomicResourceMetaData.getName());
 			cpElement = vfCanvasManager.createElementOnCanvas(atomicResourceMetaData.getName());
-			
-		
-			CompositionPage.clickSubmitForTestingButton(pnfMetaData.getName());
+
+			//TODO Andrey should click on certify button
+			CompositionPage.clickCertifyButton(pnfMetaData.getName());
 			assert(false);
 		}
 		catch(Exception e){ 
 			String errorMessage = GeneralUIUtils.getWebElementByClassName("w-sdc-modal-caption").getText();
 			String checkUIResponseOnError = ErrorValidationUtils.checkUIResponseOnError(ActionStatus.VALIDATED_RESOURCE_NOT_FOUND.name());
 			AssertJUnit.assertTrue(errorMessage.contains(checkUIResponseOnError));
-			
-			
-			reloginWithNewRole(UserRoleEnum.TESTER);
+
+			/*reloginWithNewRole(UserRoleEnum.TESTER);
 			GeneralUIUtils.findComponentAndClick(atomicResourceMetaData.getName());
 			TesterOperationPage.certifyComponent(atomicResourceMetaData.getName());
 			
-			reloginWithNewRole(UserRoleEnum.DESIGNER);
+			reloginWithNewRole(UserRoleEnum.DESIGNER);*/
 			GeneralUIUtils.findComponentAndClick(pnfMetaData.getName());
 			ResourceGeneralPage.getLeftMenu().moveToCompositionScreen();
 			vfCanvasManager = CanvasManager.getCanvasManager();
@@ -191,8 +195,9 @@ public class PNF extends SetupCDTest {
 			String typeFromScreen = ToscaArtifactsPage.getArtifactType(i);
 			AssertJUnit.assertTrue(typeFromScreen.equals(ArtifactTypeEnum.TOSCA_CSAR.getType()) || typeFromScreen.equals(ArtifactTypeEnum.TOSCA_TEMPLATE.getType()));
 		}
-		
-		ToscaArtifactsPage.clickSubmitForTestingButton(pnfMetaData.getName());
+		//TODO Andrey should click on certify button
+		ToscaArtifactsPage.clickCertifyButton(pnfMetaData.getName());
+		pnfMetaData.setVersion("1.0");
 		VfVerificator.verifyToscaArtifactsInfo(pnfMetaData, getUser());
 	}	
 	
@@ -204,16 +209,17 @@ public class PNF extends SetupCDTest {
 		
 		ResourceGeneralPage.clickCheckinButton(vfName);
 		GeneralUIUtils.findComponentAndClick(vfName);
-		ResourceGeneralPage.clickSubmitForTestingButton(vfName);
+		//TODO Andrey should click on certify button
+		ResourceGeneralPage.clickCertifyButton(vfName);
 		
-		reloginWithNewRole(UserRoleEnum.TESTER);
+		/*reloginWithNewRole(UserRoleEnum.TESTER);
 		GeneralUIUtils.findComponentAndClick(vfName);
-		TesterOperationPage.certifyComponent(vfName);
+		TesterOperationPage.certifyComponent(vfName);*/
 		
 		pnfMetaData.setVersion("1.0");
 		VfVerificator.verifyVFLifecycle(pnfMetaData, getUser(), LifecycleStateEnum.CERTIFIED);
 		
-		reloginWithNewRole(UserRoleEnum.DESIGNER);
+		/*reloginWithNewRole(UserRoleEnum.DESIGNER);*/
 		GeneralUIUtils.findComponentAndClick(vfName);
 		VfVerificator.verifyVfLifecycleInUI(LifeCycleStateEnum.CERTIFIED);
 	}
@@ -256,14 +262,14 @@ public class PNF extends SetupCDTest {
 		pnfMetaData.setVersion("0.2");
 		VfVerificator.verifyVFLifecycle(pnfMetaData, getUser(), LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
 		VfVerificator.verifyVfLifecycleInUI(LifeCycleStateEnum.CHECKOUT);
+		//TODO Andrey should click on certify button
+		ResourceGeneralPage.clickCertifyButton(pnfMetaData.getName());
 		
-		ResourceGeneralPage.clickSubmitForTestingButton(pnfMetaData.getName());
-		
-		reloginWithNewRole(UserRoleEnum.TESTER);
+		/*reloginWithNewRole(UserRoleEnum.TESTER);
 		GeneralUIUtils.findComponentAndClick(pnfMetaData.getName());
 		TesterOperationPage.certifyComponent(pnfMetaData.getName());
 		
-		reloginWithNewRole(UserRoleEnum.DESIGNER);
+		reloginWithNewRole(UserRoleEnum.DESIGNER);*/
 		GeneralUIUtils.findComponentAndClick(pnfMetaData.getName());
 		ResourceGeneralPage.clickCheckoutButton();
 		
@@ -294,15 +300,16 @@ public class PNF extends SetupCDTest {
 		ResourceReqDetails pnfMetaData = createPNFWithGenerateName();
 
 		String pnfName = pnfMetaData.getName();
-		ResourceGeneralPage.clickSubmitForTestingButton(pnfName);
-		reloginWithNewRole(UserRoleEnum.TESTER);
+		//TODO Andrey should click on certify button
+		ResourceGeneralPage.clickCertifyButton(pnfName);
+		/*reloginWithNewRole(UserRoleEnum.TESTER);
 		GeneralUIUtils.findComponentAndClick(pnfName);
-		TesterOperationPage.certifyComponent(pnfName);
+		TesterOperationPage.certifyComponent(pnfName);*/
 
 		pnfMetaData.setVersion("1.0");
 		VfVerificator.verifyVFLifecycle(pnfMetaData, getUser(), LifecycleStateEnum.CERTIFIED);
 
-		reloginWithNewRole(UserRoleEnum.DESIGNER);
+		/*reloginWithNewRole(UserRoleEnum.DESIGNER);*/
 		CatalogUIUtilitis.clickTopMenuButton(TopMenuButtonsEnum.CATALOG);
 		CatalogUIUtilitis.catalogFilterTypeChecBox(TypesEnum.valueOf("PNF"));
 		SetupCDTest.getExtendTest().log(Status.INFO, String.format("Validating resource %s found", pnfName));
@@ -319,26 +326,26 @@ public class PNF extends SetupCDTest {
 		vfCanvasManager.createElementOnCanvas("ContrailPort");
 
 		String pnfName = pnfMetaData.getName();
-		ResourceGeneralPage.clickSubmitForTestingButton(pnfName);
+		//TODO Andrey should click on certify button
+		ResourceGeneralPage.clickCertifyButton(pnfName);
 
-		reloginWithNewRole(UserRoleEnum.TESTER);
+		/*reloginWithNewRole(UserRoleEnum.TESTER);
 		GeneralUIUtils.findComponentAndClick(pnfName);
-		TesterOperationPage.certifyComponent(pnfName);
+		TesterOperationPage.certifyComponent(pnfName);*/
 
 		pnfMetaData.setVersion("1.0");
 		VfVerificator.verifyVFLifecycle(pnfMetaData, getUser(), LifecycleStateEnum.CERTIFIED);
 
-		reloginWithNewRole(UserRoleEnum.DESIGNER);
+		/*reloginWithNewRole(UserRoleEnum.DESIGNER);*/
 		ServiceReqDetails serviceMetadata = ElementFactory.getDefaultService();
 		ServiceUIUtils.createService(serviceMetadata, getUser());
 		DeploymentArtifactPage.getLeftMenu().moveToCompositionScreen();
 		CanvasManager canvasManager = CanvasManager.getCanvasManager();
 		CompositionPage.searchForElement(pnfName);
 		CanvasElement pnfElement = canvasManager.createElementOnCanvas(pnfName);
-		CompositionPage.searchForElement("Network");
-		CanvasElement networkElement = canvasManager.createElementOnCanvas("Network");
+		CanvasElement networkElement = canvasManager.createElementOnCanvas(LeftPanelCanvasItems.CONTRAIL_VIRTUAL_NETWORK);
 
-		canvasManager.linkElements(pnfElement, CircleSize.VF, networkElement, CircleSize.NORMATIVE);
+		canvasManager.linkElements(pnfElement, networkElement);
 		String serviceName = serviceMetadata.getName();
 		ServiceGeneralPage.clickSubmitForTestingButton(serviceName);
 		reloginWithNewRole(UserRoleEnum.TESTER);
@@ -358,7 +365,7 @@ public class PNF extends SetupCDTest {
 	public void checkInfomationArtifactUploadLimitation() throws Exception {
 		ResourceReqDetails pnfMetaData = createPNFWithGenerateName();
 		ResourceGeneralPage.getLeftMenu().moveToInformationalArtifactScreen();
-		List<WebElement> webElements = GeneralUIUtils.getWebElementsListBy(By.xpath("//button[@class='add-button ng-scope']"));
+		List<WebElement> webElements = GeneralUIUtils.getWebElementsListBy(By.xpath(DataTestIdEnum.ArtifactPageEnum.ADD_OTHER_ARTIFACT_BUTTON.getValue()));
 		int numberOfElements = webElements.size();
 		String buttonText = webElements.get(0).getText();
 		SetupCDTest.getExtendTest().log(Status.INFO, "Verifying only one button exist: Add Other Artifact");

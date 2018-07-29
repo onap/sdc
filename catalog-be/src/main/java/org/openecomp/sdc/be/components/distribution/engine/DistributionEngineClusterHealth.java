@@ -20,38 +20,30 @@
 
 package org.openecomp.sdc.be.components.distribution.engine;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
-
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.config.DistributionEngineConfiguration;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.api.HealthCheckInfo;
 import org.openecomp.sdc.common.api.HealthCheckInfo.HealthCheckStatus;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 @Component("distribution-engine-cluster-health")
 public class DistributionEngineClusterHealth {
 
     protected static String UEB_HEALTH_LOG_CONTEXT = "ueb.healthcheck";
 
-    private static final Logger healthLogger = LoggerFactory.getLogger(UEB_HEALTH_LOG_CONTEXT);
+    //TODO use LoggerMetric instead
+    private static final Logger healthLogger = Logger.getLogger(UEB_HEALTH_LOG_CONTEXT);
 
     private static final String UEB_HEALTH_CHECK_STR = "uebHealthCheck";
 
@@ -63,7 +55,7 @@ public class DistributionEngineClusterHealth {
 
     private long healthCheckReadTimeout = 20;
 
-    private static final Logger logger = LoggerFactory.getLogger(DistributionEngineClusterHealth.class);
+    private static final Logger logger = Logger.getLogger(DistributionEngineClusterHealth.class.getName());
 
     private List<String> uebServers = null;
 
@@ -149,7 +141,7 @@ public class DistributionEngineClusterHealth {
 
             boolean healthStatus = verifyAtLeastOneEnvIsUp();
 
-            if (true == healthStatus) {
+            if (healthStatus) {
                 boolean queryUebStatus = queryUeb();
                 if (queryUebStatus == lastHealthState) {
                     return;
@@ -160,7 +152,7 @@ public class DistributionEngineClusterHealth {
                         logger.trace("UEB Health State Changed to {}. Issuing alarm / recovery alarm...", healthStatus);
                         lastHealthState = queryUebStatus;
                         logAlarm(lastHealthState);
-                        if (true == queryUebStatus) {
+                        if (queryUebStatus) {
                             healthCheckInfo = HealthCheckInfoResult.OK.getHealthCheckInfo();
                         } else {
                             healthCheckInfo = HealthCheckInfoResult.UNAVAILABLE.getHealthCheckInfo();
@@ -185,7 +177,7 @@ public class DistributionEngineClusterHealth {
                 Collection<AtomicBoolean> values = envNamePerStatus.values();
                 if (values != null) {
                     for (AtomicBoolean status : values) {
-                        if (true == status.get()) {
+                        if (status.get()) {
                             healthStatus = true;
                             break;
                         }
@@ -226,7 +218,7 @@ public class DistributionEngineClusterHealth {
 
                     healthLogger.debug("After running Health Check retry query number {} towards UEB server {}. Result is {}", retryNumber, healthCheckCall.getServer(), result);
 
-                    if (result != null && true == result.booleanValue()) {
+                    if (result != null && result.booleanValue()) {
                         break;
                     }
 
@@ -300,7 +292,7 @@ public class DistributionEngineClusterHealth {
     public void startHealthCheckTask(Map<String, AtomicBoolean> envNamePerStatus, boolean startTask) {
         this.envNamePerStatus = envNamePerStatus;
 
-        if (startTask == true && this.scheduledFuture == null) {
+        if (startTask && this.scheduledFuture == null) {
             this.scheduledFuture = this.healthCheckScheduler.scheduleAtFixedRate(healthCheckScheduledTask, 0, reconnectInterval, TimeUnit.SECONDS);
         }
     }
@@ -310,7 +302,7 @@ public class DistributionEngineClusterHealth {
     }
 
     private void logAlarm(boolean lastHealthState) {
-        if (lastHealthState == true) {
+        if (lastHealthState) {
             BeEcompErrorManager.getInstance().logBeHealthCheckUebClusterRecovery(UEB_HEALTH_CHECK_STR);
         } else {
             BeEcompErrorManager.getInstance().logBeHealthCheckUebClusterError(UEB_HEALTH_CHECK_STR);
@@ -337,11 +329,11 @@ public class DistributionEngineClusterHealth {
 
     public void setHealthCheckOkAndReportInCaseLastStateIsDown() {
 
-        if (lastHealthState == true) {
+        if (lastHealthState) {
             return;
         }
         synchronized (lockOject) {
-            if (lastHealthState == false) {
+            if (!lastHealthState) {
                 logger.debug("Going to update health check state to available");
                 lastHealthState = true;
                 healthCheckInfo = HealthCheckInfoResult.OK.getHealthCheckInfo();

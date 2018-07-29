@@ -16,13 +16,13 @@
 
 package org.openecomp.sdc.translator.services.heattotosca;
 
-import java.util.Map;
-import java.util.Optional;
-
 import org.onap.config.api.Configuration;
 import org.onap.config.api.ConfigurationManager;
 import org.openecomp.core.utilities.CommonMethods;
 import org.openecomp.sdc.datatypes.configuration.ImplementationConfiguration;
+
+import java.util.Map;
+import java.util.Optional;
 
 public class FunctionTranslationFactory {
     private static final Map<String, ImplementationConfiguration> functionTranslationImplMap;

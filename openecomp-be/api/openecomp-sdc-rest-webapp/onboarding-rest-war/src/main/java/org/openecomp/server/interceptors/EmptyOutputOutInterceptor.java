@@ -16,7 +16,6 @@
 package org.openecomp.server.interceptors;
 
 import org.apache.cxf.interceptor.AbstractOutDatabindingInterceptor;
-import org.apache.cxf.interceptor.Fault;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.message.MessageContentsList;
 import org.apache.cxf.phase.Phase;

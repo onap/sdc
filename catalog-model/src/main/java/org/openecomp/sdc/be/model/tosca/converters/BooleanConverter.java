@@ -20,23 +20,23 @@
 
 package org.openecomp.sdc.be.model.tosca.converters;
 
-import java.util.Map;
-
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 
+import java.util.Map;
+
 public class BooleanConverter implements ToscaValueConverter {
-	private static BooleanConverter booleanConverter = new BooleanConverter();
+    private static BooleanConverter booleanConverter = new BooleanConverter();
 
-	public static BooleanConverter getInstance() {
-		return booleanConverter;
-	}
+    public static BooleanConverter getInstance() {
+        return booleanConverter;
+    }
 
-	private BooleanConverter() {
+    private BooleanConverter() {
 
-	}
+    }
 
-	@Override
-	public Object convertToToscaValue(String value, String innerType, Map<String, DataTypeDefinition> dataTypes) {
-		return Boolean.valueOf(value);
-	}
+    @Override
+    public Object convertToToscaValue(String value, String innerType, Map<String, DataTypeDefinition> dataTypes) {
+        return Boolean.valueOf(value);
+    }
 }

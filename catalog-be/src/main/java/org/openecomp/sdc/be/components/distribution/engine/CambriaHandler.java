@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,6 +20,26 @@
 
 package org.openecomp.sdc.be.components.distribution.engine;
 
+import com.att.nsa.apiClient.credentials.ApiCredential;
+import com.att.nsa.apiClient.http.HttpException;
+import com.att.nsa.apiClient.http.HttpObjectNotFoundException;
+import com.att.nsa.cambria.client.*;
+import com.att.nsa.cambria.client.CambriaClient.CambriaApiException;
+import com.att.nsa.cambria.client.CambriaClientBuilders.ConsumerBuilder;
+import com.att.nsa.cambria.client.CambriaClientBuilders.IdentityManagerBuilder;
+import com.att.nsa.cambria.client.CambriaClientBuilders.PublisherBuilder;
+import com.att.nsa.cambria.client.CambriaClientBuilders.TopicManagerBuilder;
+import com.att.nsa.cambria.client.CambriaPublisher.message;
+import com.google.common.annotations.VisibleForTesting;
+import com.google.gson.Gson;
+import fj.data.Either;
+import org.apache.http.HttpStatus;
+import org.openecomp.sdc.be.config.BeEcompErrorManager;
+import org.openecomp.sdc.be.config.ConfigurationManager;
+import org.openecomp.sdc.be.distribution.api.client.CambriaOperationStatus;
+import org.openecomp.sdc.common.log.wrappers.Logger;
+import org.springframework.stereotype.Component;
+
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.security.GeneralSecurityException;
@@ -27,51 +47,22 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.http.HttpStatus;
-import org.openecomp.sdc.be.config.BeEcompErrorManager;
-import org.openecomp.sdc.be.config.ConfigurationManager;
-import org.openecomp.sdc.be.distribution.api.client.CambriaOperationStatus;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
-
-import com.att.nsa.apiClient.credentials.ApiCredential;
-import com.att.nsa.apiClient.http.HttpException;
-import com.att.nsa.apiClient.http.HttpObjectNotFoundException;
-import com.att.nsa.cambria.client.CambriaBatchingPublisher;
-import com.att.nsa.cambria.client.CambriaClient;
-import com.att.nsa.cambria.client.CambriaClient.CambriaApiException;
-import com.att.nsa.cambria.client.CambriaClientBuilders;
-import com.att.nsa.cambria.client.CambriaClientBuilders.ConsumerBuilder;
-import com.att.nsa.cambria.client.CambriaClientBuilders.IdentityManagerBuilder;
-import com.att.nsa.cambria.client.CambriaClientBuilders.PublisherBuilder;
-import com.att.nsa.cambria.client.CambriaClientBuilders.TopicManagerBuilder;
-import com.att.nsa.cambria.client.CambriaConsumer;
-import com.att.nsa.cambria.client.CambriaIdentityManager;
-import com.att.nsa.cambria.client.CambriaPublisher.message;
-import com.att.nsa.cambria.client.CambriaTopicManager;
-import com.google.common.annotations.VisibleForTesting;
-import com.google.gson.Gson;
-
-import fj.data.Either;
+import static java.util.concurrent.TimeUnit.SECONDS;
 
 @Component("cambriaHandler")
 public class CambriaHandler {
 
-    private static final Logger logger = LoggerFactory.getLogger(CambriaHandler.class);
-
+    private static final Logger log = Logger.getLogger(CambriaHandler.class.getName());
     private static final String PARTITION_KEY = "asdc" + "aa";
-
-    private final String SEND_NOTIFICATION = "send notification";
-
-    private Gson gson = new Gson();
-
-    private static final String CONSUMER_ID = ConfigurationManager.getConfigurationManager().getDistributionEngineConfiguration().getDistributionStatusTopic().getConsumerId();
-
+    private static final String SEND_NOTIFICATION = "send notification";
+    private static final String CONSUMER_ID = ConfigurationManager.getConfigurationManager()
+                                                                  .getDistributionEngineConfiguration()
+                                                                  .getDistributionStatusTopic()
+                                                                  .getConsumerId();
+    private final Gson gson = new Gson();
 
 
     /**
@@ -82,7 +73,7 @@ public class CambriaHandler {
      */
     private Integer processMessageException(String message) {
 
-        String[] patterns = { "(HTTP Status )(\\d\\d\\d)", "(HTTP/\\d.\\d )(\\d\\d\\d)" };
+        String[] patterns = {"(HTTP Status )(\\d\\d\\d)", "(HTTP/\\d.\\d )(\\d\\d\\d)"};
 
         Integer result = checkPattern(patterns[0], message, 2);
         if (result != null) {
@@ -113,8 +104,9 @@ public class CambriaHandler {
             if (httpCode != null) {
                 try {
                     result = Integer.valueOf(httpCode);
-                } catch (NumberFormatException e) {
-                    logger.debug("Failed to parse http code {}", httpCode);
+                }
+                catch (NumberFormatException e) {
+                    log.debug("Failed to parse http code {}", httpCode);
                 }
             }
         }
@@ -136,21 +128,20 @@ public class CambriaHandler {
 
             Set<String> topics = createTopicManager.getTopics();
 
-            if (topics == null || true == topics.isEmpty()) {
+            if (topics == null || topics.isEmpty()) {
                 CambriaErrorResponse cambriaErrorResponse = new CambriaErrorResponse(CambriaOperationStatus.NOT_FOUND, null);
                 return Either.right(cambriaErrorResponse);
             }
 
             return Either.left(topics);
 
-        } catch (IOException | GeneralSecurityException e) {
-            String methodName = new Object() {
-            }.getClass().getEnclosingMethod().getName();
+        }
+        catch (IOException | GeneralSecurityException e) {
 
             CambriaErrorResponse cambriaErrorResponse = processError(e);
 
-            logger.debug("Failed to fetch topics from U-EB server", e);
-            writeErrorToLog(cambriaErrorResponse, e.getMessage(), methodName, "get topics");
+            log.debug("Failed to fetch topics from U-EB server", e);
+            writeErrorToLog(cambriaErrorResponse, "getTopics", "get topics");
 
             return Either.right(cambriaErrorResponse);
         } finally {
@@ -163,7 +154,7 @@ public class CambriaHandler {
 
     /**
      * process the error message from Cambria client.
-     *
+     * <p>
      * set Cambria status and http code in case we succeed to fetch it
      *
      * @return
@@ -178,19 +169,20 @@ public class CambriaHandler {
             cambriaErrorResponse.setHttpCode(httpCode);
             switch (httpCode.intValue()) {
 
-            case 401:
-                cambriaErrorResponse.setOperationStatus(CambriaOperationStatus.AUTHENTICATION_ERROR);
-                break;
-            case 409:
-                cambriaErrorResponse.setOperationStatus(CambriaOperationStatus.TOPIC_ALREADY_EXIST);
-                break;
-            case 500:
-                cambriaErrorResponse.setOperationStatus(CambriaOperationStatus.INTERNAL_SERVER_ERROR);
-                break;
-            default:
-                cambriaErrorResponse.setOperationStatus(CambriaOperationStatus.CONNNECTION_ERROR);
+                case 401:
+                    cambriaErrorResponse.setOperationStatus(CambriaOperationStatus.AUTHENTICATION_ERROR);
+                    break;
+                case 409:
+                    cambriaErrorResponse.setOperationStatus(CambriaOperationStatus.TOPIC_ALREADY_EXIST);
+                    break;
+                case 500:
+                    cambriaErrorResponse.setOperationStatus(CambriaOperationStatus.INTERNAL_SERVER_ERROR);
+                    break;
+                default:
+                    cambriaErrorResponse.setOperationStatus(CambriaOperationStatus.CONNNECTION_ERROR);
             }
-        } else {
+        }
+        else {
 
             boolean found = false;
             Throwable throwable = e.getCause();
@@ -210,7 +202,7 @@ public class CambriaHandler {
                 }
             }
 
-            if (false == found) {
+            if (!found) {
                 cambriaErrorResponse.setOperationStatus(CambriaOperationStatus.CONNNECTION_ERROR);
                 cambriaErrorResponse.setHttpCode(HttpStatus.SC_INTERNAL_SERVER_ERROR);
             }
@@ -221,33 +213,29 @@ public class CambriaHandler {
 
     /**
      * write the error to the log
-     *
-     * @param cambriaErrorResponse
-     * @param errorMessage
+     *  @param cambriaErrorResponse
      * @param methodName
      * @param operationDesc
      */
-    private void writeErrorToLog(CambriaErrorResponse cambriaErrorResponse, String errorMessage, String methodName, String operationDesc) {
+    private void writeErrorToLog(CambriaErrorResponse cambriaErrorResponse, String methodName, String operationDesc) {
 
         String httpCode = cambriaErrorResponse.getHttpCode() == null ? "" : String.valueOf(cambriaErrorResponse.getHttpCode());
 
         switch (cambriaErrorResponse.getOperationStatus()) {
-        case UNKNOWN_HOST_ERROR:
-            String hostname = cambriaErrorResponse.getVariables().get(0);
-            BeEcompErrorManager.getInstance().logBeUebUnkownHostError(methodName, httpCode);
-            break;
-        case AUTHENTICATION_ERROR:
-            BeEcompErrorManager.getInstance().logBeUebAuthenticationError(methodName, httpCode);
-            break;
-        case CONNNECTION_ERROR:
-            BeEcompErrorManager.getInstance().logBeUebConnectionError(methodName, httpCode);
-            break;
-
-        case INTERNAL_SERVER_ERROR:
-            BeEcompErrorManager.getInstance().logBeUebSystemError(methodName, operationDesc);
-            break;
-        default:
-            break;
+            case UNKNOWN_HOST_ERROR:
+                BeEcompErrorManager.getInstance().logBeUebUnkownHostError(methodName, httpCode);
+                break;
+            case AUTHENTICATION_ERROR:
+                BeEcompErrorManager.getInstance().logBeUebAuthenticationError(methodName, httpCode);
+                break;
+            case CONNNECTION_ERROR:
+                BeEcompErrorManager.getInstance().logBeUebConnectionError(methodName, httpCode);
+                break;
+            case INTERNAL_SERVER_ERROR:
+                BeEcompErrorManager.getInstance().logBeUebSystemError(methodName, operationDesc);
+                break;
+            default:
+                break;
         }
 
     }
@@ -255,12 +243,10 @@ public class CambriaHandler {
     /**
      * create a topic if it does not exists in the topicsList
      *
-     * @param hostSet
-     *            - list of U-EB servers
+     * @param hostSet          - list of U-EB servers
      * @param apiKey
      * @param secretKey
-     * @param topicName
-     *            - topic to create
+     * @param topicName        - topic to create
      * @param partitionCount
      * @param replicationCount
      * @return
@@ -270,20 +256,20 @@ public class CambriaHandler {
         CambriaTopicManager createTopicManager = null;
         try {
 
-            createTopicManager = buildCambriaClient(new TopicManagerBuilder().usingHosts(hostSet).authenticatedBy(apiKey, secretKey));
+            createTopicManager = buildCambriaClient(new TopicManagerBuilder().usingHosts(hostSet)
+                                                                             .authenticatedBy(apiKey, secretKey));
 
             createTopicManager.createTopic(topicName, "ASDC distribution notification topic", partitionCount, replicationCount);
 
-        } catch (HttpException | IOException | GeneralSecurityException e) {
+        }
+        catch (HttpException | IOException | GeneralSecurityException e) {
 
-            logger.debug("Failed to create topic {}", topicName, e);
-            String methodName = new Object() {
-            }.getClass().getEnclosingMethod().getName();
+            log.debug("Failed to create topic {}", topicName, e);
 
             CambriaErrorResponse cambriaErrorResponse = processError(e);
 
             if (cambriaErrorResponse.getOperationStatus() != CambriaOperationStatus.TOPIC_ALREADY_EXIST) {
-                writeErrorToLog(cambriaErrorResponse, e.getMessage(), methodName, "create topic");
+                writeErrorToLog(cambriaErrorResponse, "createTopic", "create topic");
             }
 
             return cambriaErrorResponse;
@@ -298,34 +284,35 @@ public class CambriaHandler {
     }
 
     public CambriaErrorResponse unRegisterFromTopic(Collection<String> hostSet, String managerApiKey, String managerSecretKey, String subscriberApiKey, SubscriberTypeEnum subscriberTypeEnum, String topicName) {
+        String methodName = "unRegisterFromTopic";
         CambriaTopicManager createTopicManager = null;
         try {
-            createTopicManager = buildCambriaClient(new TopicManagerBuilder().usingHosts(hostSet).authenticatedBy(managerApiKey, managerSecretKey));
+            createTopicManager = buildCambriaClient(new TopicManagerBuilder().usingHosts(hostSet)
+                                                                             .authenticatedBy(managerApiKey, managerSecretKey));
 
             if (subscriberTypeEnum == SubscriberTypeEnum.PRODUCER) {
                 createTopicManager.revokeProducer(topicName, subscriberApiKey);
-            } else {
+            }
+            else {
                 createTopicManager.revokeConsumer(topicName, subscriberApiKey);
             }
 
-        } catch (HttpObjectNotFoundException | GeneralSecurityException e) {
-            logger.debug("Failed to unregister {} from topic {} as {}", managerApiKey, topicName, subscriberTypeEnum.toString().toLowerCase(), e);
-            String methodName = new Object() {
-            }.getClass().getEnclosingMethod().getName();
-
+        }
+        catch (HttpObjectNotFoundException e) {
+            log.debug("Failed to unregister {} from topic {} as {}", managerApiKey, topicName, subscriberTypeEnum.toString()
+                                                                                                                 .toLowerCase(), e);
             BeEcompErrorManager.getInstance().logBeUebObjectNotFoundError(methodName, e.getMessage());
 
-            CambriaErrorResponse cambriaErrorResponse = new CambriaErrorResponse(CambriaOperationStatus.OBJECT_NOT_FOUND, HttpStatus.SC_NOT_FOUND);
-            return cambriaErrorResponse;
+            return new CambriaErrorResponse(CambriaOperationStatus.OBJECT_NOT_FOUND, HttpStatus.SC_NOT_FOUND);
 
-        } catch (HttpException | IOException e) {
-            logger.debug("Failed to unregister {} from topic {} as producer", managerApiKey, topicName, e);
-            String methodName = new Object() {
-            }.getClass().getEnclosingMethod().getName();
-
+        }
+        catch (HttpException | IOException | GeneralSecurityException e) {
+            log.debug("Failed to unregister {} from topic {} as producer", managerApiKey, topicName, e);
             CambriaErrorResponse cambriaErrorResponse = processError(e);
 
-            writeErrorToLog(cambriaErrorResponse, e.getMessage(), methodName, "unregister from topic as " + subscriberTypeEnum.toString().toLowerCase());
+            writeErrorToLog(cambriaErrorResponse, methodName, "unregister from topic as " + subscriberTypeEnum
+                    .toString()
+                    .toLowerCase());
 
             return cambriaErrorResponse;
         } finally {
@@ -334,12 +321,10 @@ public class CambriaHandler {
             }
         }
 
-        CambriaErrorResponse cambriaErrorResponse = new CambriaErrorResponse(CambriaOperationStatus.OK, HttpStatus.SC_OK);
-        return cambriaErrorResponse;
+        return new CambriaErrorResponse(CambriaOperationStatus.OK, HttpStatus.SC_OK);
     }
 
     /**
-     *
      * register a public key (subscriberId) to a given topic as a CONSUMER or PRODUCER
      *
      * @param hostSet
@@ -352,34 +337,37 @@ public class CambriaHandler {
      */
     public CambriaErrorResponse registerToTopic(Collection<String> hostSet, String managerApiKey, String managerSecretKey, String subscriberApiKey, SubscriberTypeEnum subscriberTypeEnum, String topicName) {
 
+        String methodName = "registerToTopic";
         CambriaTopicManager createTopicManager = null;
         try {
-            createTopicManager = buildCambriaClient(new TopicManagerBuilder().usingHosts(hostSet).authenticatedBy(managerApiKey, managerSecretKey));
+            createTopicManager = buildCambriaClient(new TopicManagerBuilder().usingHosts(hostSet)
+                                                                             .authenticatedBy(managerApiKey, managerSecretKey));
 
             if (subscriberTypeEnum == SubscriberTypeEnum.PRODUCER) {
                 createTopicManager.allowProducer(topicName, subscriberApiKey);
-            } else {
+            }
+            else {
                 createTopicManager.allowConsumer(topicName, subscriberApiKey);
             }
 
-        } catch (HttpObjectNotFoundException | GeneralSecurityException e) {
-            logger.debug("Failed to register {} to topic {} as {}", managerApiKey, topicName, subscriberTypeEnum.toString().toLowerCase(), e);
-            String methodName = new Object() {
-            }.getClass().getEnclosingMethod().getName();
+        }
+        catch (HttpObjectNotFoundException e) {
+            log.debug("Failed to register {} to topic {} as {}", managerApiKey, topicName, subscriberTypeEnum.toString()
+                                                                                                             .toLowerCase(), e);
 
             BeEcompErrorManager.getInstance().logBeUebObjectNotFoundError(methodName, e.getMessage());
 
-            CambriaErrorResponse cambriaErrorResponse = new CambriaErrorResponse(CambriaOperationStatus.OBJECT_NOT_FOUND, HttpStatus.SC_NOT_FOUND);
-            return cambriaErrorResponse;
+            return new CambriaErrorResponse(CambriaOperationStatus.OBJECT_NOT_FOUND, HttpStatus.SC_NOT_FOUND);
 
-        } catch (HttpException | IOException e) {
-            logger.debug("Failed to register {} to topic {} as {}", managerApiKey, topicName, subscriberTypeEnum.toString().toLowerCase(), e);
-            String methodName = new Object() {
-            }.getClass().getEnclosingMethod().getName();
-
+        }
+        catch (HttpException | IOException | GeneralSecurityException e) {
+            log.debug("Failed to register {} to topic {} as {}", managerApiKey, topicName, subscriberTypeEnum.toString()
+                                                                                                             .toLowerCase(), e);
             CambriaErrorResponse cambriaErrorResponse = processError(e);
 
-            writeErrorToLog(cambriaErrorResponse, e.getMessage(), methodName, "register to topic as " + subscriberTypeEnum.toString().toLowerCase());
+            writeErrorToLog(cambriaErrorResponse, methodName, "register to topic as " + subscriberTypeEnum
+                    .toString()
+                    .toLowerCase());
 
             return cambriaErrorResponse;
         } finally {
@@ -388,8 +376,7 @@ public class CambriaHandler {
             }
         }
 
-        CambriaErrorResponse cambriaErrorResponse = new CambriaErrorResponse(CambriaOperationStatus.OK, HttpStatus.SC_OK);
-        return cambriaErrorResponse;
+        return new CambriaErrorResponse(CambriaOperationStatus.OK, HttpStatus.SC_OK);
     }
 
     /**
@@ -407,7 +394,12 @@ public class CambriaHandler {
      */
     public CambriaConsumer createConsumer(Collection<String> hostSet, String topicName, String apiKey, String secretKey, String consumerId, String consumerGroup, int timeoutMS) throws Exception {
 
-        CambriaConsumer consumer = new ConsumerBuilder().authenticatedBy(apiKey, secretKey).knownAs(consumerGroup, consumerId).onTopic(topicName).usingHosts(hostSet).waitAtServer(timeoutMS).build();
+        CambriaConsumer consumer = new ConsumerBuilder().authenticatedBy(apiKey, secretKey)
+                                                        .knownAs(consumerGroup, consumerId)
+                                                        .onTopic(topicName)
+                                                        .usingHosts(hostSet)
+                                                        .waitAtServer(timeoutMS)
+                                                        .build();
         consumer.setApiCredentials(apiKey, secretKey);
         return consumer;
     }
@@ -428,31 +420,25 @@ public class CambriaHandler {
      */
     public Either<Iterable<String>, CambriaErrorResponse> fetchFromTopic(CambriaConsumer topicConsumer) {
 
+        String methodName = "fetchFromTopic";
         try {
             Iterable<String> messages = topicConsumer.fetch();
             if (messages == null) {
-                messages = new ArrayList<String>();
+                messages = new ArrayList<>();
             }
             return Either.left(messages);
 
-        } catch (IOException e) {
-            String methodName = new Object() {
-            }.getClass().getEnclosingMethod().getName();
-
+        }
+        catch (IOException e) {
             CambriaErrorResponse cambriaErrorResponse = processError(e);
-
-            logger.debug("Failed to fetch from U-EB topic. error={}", e.getMessage());
-            writeErrorToLog(cambriaErrorResponse, e.getMessage(), methodName, "get messages from topic");
-
+            log.debug("Failed to fetch from U-EB topic. error={}", e.getMessage());
+            writeErrorToLog(cambriaErrorResponse, methodName, "get messages from topic");
             return Either.right(cambriaErrorResponse);
 
-        } catch (Exception e) {
-            logger.debug("Failed to fetch from U-EB topic", e);
-            String methodName = new Object() {
-            }.getClass().getEnclosingMethod().getName();
-
+        }
+        catch (Exception e) {
+            log.debug("Failed to fetch from U-EB topic", e);
             BeEcompErrorManager.getInstance().logBeDistributionEngineSystemError(methodName, e.getMessage());
-
             CambriaErrorResponse cambriaErrorResponse = new CambriaErrorResponse(CambriaOperationStatus.INTERNAL_SERVER_ERROR, HttpStatus.SC_INTERNAL_SERVER_ERROR);
             return Either.right(cambriaErrorResponse);
         }
@@ -475,7 +461,7 @@ public class CambriaHandler {
         try {
 
             String json = gson.toJson(data);
-            logger.trace("Before sending notification data {} to topic {}", json, topicName);
+            log.trace("Before sending notification data {} to topic {}", json, topicName);
 
             createSimplePublisher = new PublisherBuilder().onTopic(topicName).usingHosts(uebServers).build();
             createSimplePublisher.setApiCredentials(uebPublicKey, uebSecretKey);
@@ -483,46 +469,42 @@ public class CambriaHandler {
             int result = createSimplePublisher.send(PARTITION_KEY, json);
 
             try {
-                Thread.sleep(1 * 1000);
-            } catch (InterruptedException e) {
-                logger.debug("Failed during sleep after sending the message.", e);
+                SECONDS.sleep(1L);
+            }
+            catch (InterruptedException e) {
+                log.debug("Failed during sleep after sending the message.", e);
             }
 
-            logger.debug("After sending notification data to topic {}. result is {}", topicName, result);
+            log.debug("After sending notification data to topic {}. result is {}", topicName, result);
 
-            CambriaErrorResponse response = new CambriaErrorResponse(CambriaOperationStatus.OK, 200);
-
-            return response;
+            return new CambriaErrorResponse(CambriaOperationStatus.OK, 200);
 
         } catch (IOException | GeneralSecurityException e) {
-            logger.debug("Failed to send notification {} to topic {} ", data, topicName, e);
-
-            String methodName = new Object() {
-            }.getClass().getEnclosingMethod().getName();
+            log.debug("Failed to send notification {} to topic {} ", data, topicName, e);
 
             CambriaErrorResponse cambriaErrorResponse = processError(e);
 
-            writeErrorToLog(cambriaErrorResponse, e.getMessage(), methodName, SEND_NOTIFICATION);
+            writeErrorToLog(cambriaErrorResponse, "sendNotification", SEND_NOTIFICATION);
 
             return cambriaErrorResponse;
-        } finally {
+        }
+        finally {
             if (createSimplePublisher != null) {
-                logger.debug("Before closing publisher");
+                log.debug("Before closing publisher");
                 createSimplePublisher.close();
-                logger.debug("After closing publisher");
+                log.debug("After closing publisher");
             }
         }
     }
 
     public CambriaErrorResponse sendNotificationAndClose(String topicName, String uebPublicKey, String uebSecretKey, List<String> uebServers, INotificationData data, long waitBeforeCloseTimeout) {
-
-        CambriaBatchingPublisher createSimplePublisher = null;
-
-        CambriaErrorResponse response = null;
+        String methodName = "sendNotificationAndClose";
+        CambriaBatchingPublisher createSimplePublisher;
+        CambriaErrorResponse response;
         try {
 
             String json = gson.toJson(data);
-            logger.debug("Before sending notification data {} to topic {}", json, topicName);
+            log.debug("Before sending notification data {} to topic {}", json, topicName);
 
             createSimplePublisher = new PublisherBuilder().onTopic(topicName).usingHosts(uebServers).build();
             createSimplePublisher.setApiCredentials(uebPublicKey, uebSecretKey);
@@ -531,47 +513,45 @@ public class CambriaHandler {
 
             try {
                 Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                logger.debug("Failed during sleep after sending the message.", e);
+            }
+            catch (InterruptedException e) {
+                log.debug("Failed during sleep after sending the message.", e);
             }
 
-            logger.debug("After sending notification data to topic {}. result is {}", topicName, result);
+            log.debug("After sending notification data to topic {}. result is {}", topicName, result);
 
-        } catch (IOException | GeneralSecurityException  e) {
-            logger.debug("Failed to send notification {} to topic {} ", data, topicName, e);
+        }
+        catch (IOException | GeneralSecurityException  e) {
+            log.debug("Failed to send notification {} to topic {} ", data, topicName, e);
 
-            String methodName = new Object() {
-            }.getClass().getEnclosingMethod().getName();
 
             response = processError(e);
 
-            writeErrorToLog(response, e.getMessage(), methodName, SEND_NOTIFICATION);
+            writeErrorToLog(response, methodName, SEND_NOTIFICATION);
 
             return response;
 
         }
 
-        logger.debug("Before closing publisher. Maximum timeout is {} seconds", waitBeforeCloseTimeout);
+        log.debug("Before closing publisher. Maximum timeout is {} seconds", waitBeforeCloseTimeout);
         try {
-            List<message> messagesInQ = createSimplePublisher.close(waitBeforeCloseTimeout, TimeUnit.SECONDS);
-            if (messagesInQ != null && false == messagesInQ.isEmpty()) {
-                logger.debug("Cambria client returned {} non sent messages.", messagesInQ.size());
+            List<message> messagesInQ = createSimplePublisher.close(waitBeforeCloseTimeout, SECONDS);
+            if (messagesInQ != null && !messagesInQ.isEmpty()) {
+                log.debug("Cambria client returned {} non sent messages.", messagesInQ.size());
                 response = new CambriaErrorResponse(CambriaOperationStatus.INTERNAL_SERVER_ERROR, 500);
-                String methodName = new Object() {
-                }.getClass().getEnclosingMethod().getName();
-                writeErrorToLog(response, "closing publisher returned non sent messages", methodName, SEND_NOTIFICATION);
-            } else {
-                logger.debug("No message left in the queue after closing cambria publisher");
+                writeErrorToLog(response, methodName, SEND_NOTIFICATION);
+            }
+            else {
+                log.debug("No message left in the queue after closing cambria publisher");
                 response = new CambriaErrorResponse(CambriaOperationStatus.OK, 200);
             }
-        } catch (IOException | InterruptedException e) {
-            logger.debug("Failed to close cambria publisher", e);
-            response = new CambriaErrorResponse(CambriaOperationStatus.INTERNAL_SERVER_ERROR, 500);
-            String methodName = new Object() {
-            }.getClass().getEnclosingMethod().getName();
-            writeErrorToLog(response, "closing publisher returned non sent messages", methodName, SEND_NOTIFICATION);
         }
-        logger.debug("After closing publisher");
+        catch (IOException | InterruptedException e) {
+            log.debug("Failed to close cambria publisher", e);
+            response = new CambriaErrorResponse(CambriaOperationStatus.INTERNAL_SERVER_ERROR, 500);
+            writeErrorToLog(response, methodName, SEND_NOTIFICATION);
+        }
+        log.debug("After closing publisher");
 
         return response;
 
@@ -579,8 +559,7 @@ public class CambriaHandler {
 
     public CambriaErrorResponse getApiKey(String server, String apiKey) {
 
-        CambriaErrorResponse response = null;
-
+        CambriaErrorResponse response;
         List<String> hostSet = new ArrayList<>();
         hostSet.add(server);
         try {
@@ -589,8 +568,9 @@ public class CambriaHandler {
 
             response = new CambriaErrorResponse(CambriaOperationStatus.OK, 200);
 
-        } catch (HttpException | IOException | CambriaApiException | GeneralSecurityException e) {
-            logger.debug("Failed to fetch api key {} from server {}", apiKey, server, e);
+        }
+        catch (HttpException | IOException | CambriaApiException | GeneralSecurityException e) {
+            log.debug("Failed to fetch api key {} from server {}", apiKey, server, e);
 
             response = processError(e);
 
@@ -610,8 +590,9 @@ public class CambriaHandler {
             createIdentityManager.setApiCredentials(credential.getApiKey(), credential.getApiSecret());
             result = Either.left(credential);
 
-        } catch (Exception e) {
-            logger.debug("Failed to create ueb keys for servers {}",hostSet, e);
+        }
+        catch (Exception e) {
+            log.debug("Failed to create ueb keys for servers {}", hostSet, e);
 
             result = Either.right(processError(e));
 
@@ -622,6 +603,6 @@ public class CambriaHandler {
 
     @VisibleForTesting
     <T extends CambriaClient> T buildCambriaClient(CambriaClientBuilders.AbstractAuthenticatedManagerBuilder<? extends CambriaClient> client) throws MalformedURLException, GeneralSecurityException {
-        return (T)client.build();
+        return (T) client.build();
     }
 }

@@ -20,17 +20,8 @@
 
 package org.openecomp.sdc.be.distribution.servlet;
 
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.when;
-
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.core.Application;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import org.apache.http.HttpStatus;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.server.ResourceConfig;
@@ -57,8 +48,17 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.web.context.WebApplicationContext;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.Application;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.when;
 
 public class DistributionServletTest extends JerseyTest {
 
@@ -130,7 +130,7 @@ public class DistributionServletTest extends JerseyTest {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         RegistrationRequest registrationRequest = new RegistrationRequest("myPublicKey", ENV_NAME, false);
         Response response = target().path("/v1/registerForDistribution").request(MediaType.APPLICATION_JSON).post(Entity.json(gson.toJson(registrationRequest)), Response.class);
-        assertTrue(response.getStatus() == HttpStatus.SC_OK);
+        assertEquals(response.getStatus(), HttpStatus.SC_OK);
 
     }
 
@@ -139,7 +139,7 @@ public class DistributionServletTest extends JerseyTest {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         RegistrationRequest registrationRequest = new RegistrationRequest("myPublicKey", ENV_NAME, false);
         Response response = target().path("/v1/unRegisterForDistribution").request(MediaType.APPLICATION_JSON).post(Entity.json(gson.toJson(registrationRequest)), Response.class);
-        assertTrue(response.getStatus() == HttpStatus.SC_OK);
+        assertEquals(response.getStatus(), HttpStatus.SC_OK);
 
     }
 

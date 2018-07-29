@@ -20,8 +20,24 @@
 
 package org.openecomp.sdc.be.filters;
 
-import java.io.IOException;
-import java.util.UUID;
+import com.google.gson.GsonBuilder;
+import org.openecomp.sdc.be.config.BeEcompErrorManager;
+import org.openecomp.sdc.be.config.Configuration;
+import org.openecomp.sdc.be.config.ConfigurationManager;
+import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
+import org.openecomp.sdc.be.impl.ComponentsUtils;
+import org.openecomp.sdc.be.impl.WebAppContextWrapper;
+import org.openecomp.sdc.common.api.Constants;
+import org.openecomp.sdc.common.log.elements.LogFieldsMdcHandler;
+import org.openecomp.sdc.common.log.enums.LogLevel;
+import org.openecomp.sdc.common.log.enums.Severity;
+import org.openecomp.sdc.common.log.wrappers.Logger;
+import org.openecomp.sdc.common.log.wrappers.LoggerSdcAudit;
+import org.openecomp.sdc.common.util.ThreadLocalsHolder;
+import org.openecomp.sdc.exception.ResponseFormat;
+import org.slf4j.MDC;
+import org.springframework.web.context.WebApplicationContext;
 
 import javax.annotation.Priority;
 import javax.servlet.ServletContext;
@@ -33,23 +49,8 @@ import javax.ws.rs.container.ContainerResponseFilter;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.Provider;
-
-import org.openecomp.sdc.be.config.BeEcompErrorManager;
-import org.openecomp.sdc.be.config.Configuration;
-import org.openecomp.sdc.be.config.ConfigurationManager;
-import org.openecomp.sdc.be.dao.api.ActionStatus;
-import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
-import org.openecomp.sdc.be.impl.ComponentsUtils;
-import org.openecomp.sdc.be.impl.WebAppContextWrapper;
-import org.openecomp.sdc.common.api.Constants;
-import org.openecomp.sdc.common.util.ThreadLocalsHolder;
-import org.openecomp.sdc.exception.ResponseFormat;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.slf4j.MDC;
-import org.springframework.web.context.WebApplicationContext;
-
-import com.google.gson.GsonBuilder;
+import java.io.IOException;
+import java.util.UUID;
 
 @Provider
 @Priority(1)
@@ -57,14 +58,16 @@ public class BeServletFilter implements ContainerRequestFilter, ContainerRespons
 
     @Context
     private HttpServletRequest sr;
-
-    private static final Logger log = LoggerFactory.getLogger(BeServletFilter.class);
+    private static final Logger log = Logger.getLogger(BeServletFilter.class);
+    private static LoggerSdcAudit audit = new LoggerSdcAudit(BeServletFilter.class);
 
     @Override
     public void filter(ContainerRequestContext requestContext) throws IOException {
         try {
 
             MDC.clear();
+
+            audit.startLog(requestContext);
 
             // In case of 405 response code, this function is not entered, then
             // we'll process
@@ -109,28 +112,50 @@ public class BeServletFilter implements ContainerRequestFilter, ContainerRespons
                 // we have no MDC fields since filter() wasn't executed during
                 // request
                 String uuid = processMdcFields(requestContext);
+
                 responseContext.getHeaders().add(Constants.X_ECOMP_REQUEST_ID_HEADER, uuid);
+                // call to start-log method to fill mandatory fields
+                audit.startLog(requestContext);
+            }
+
+            writeToTitan(responseContext);
+
+            //write to Audit log in case it's valuable action
+            // (e.g. ignoring healthCheck and any other unlogged urls as in yaml
+            if (isInfoLog()) {
+                audit.log(sr.getRemoteAddr(),
+                        requestContext,
+                        responseContext.getStatusInfo(),
+                        LogLevel.INFO,
+                        Severity.OK,
+                        LogFieldsMdcHandler.getInstance()
+                                .getAuditMessage());
             }
 
             outHttpResponse(responseContext);
 
-            log.debug("Close transaction from filter");
-            TitanDao titanDao = getTitanDao();
-            if ( titanDao != null ){
-                if (responseContext.getStatus() == Response.Status.OK.getStatusCode() || responseContext.getStatus() == Response.Status.CREATED.getStatusCode() ){
-                    titanDao.commit();
-                    log.debug("Doing commit from filter");
-                }else{
-                    titanDao.rollback();
-                    log.debug("Doing rollback from filter");
-                }
-            }
-            // Cleaning up
-            MDC.clear();
-            ThreadLocalsHolder.cleanup();
         } catch (Exception e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Error during request filter");
             log.debug("Error during response filter: {} ", e);
+        } finally {
+            // Cleaning up
+            MDC.clear();
+            ThreadLocalsHolder.cleanup();
+        }
+    }
+
+    private void writeToTitan(ContainerResponseContext responseContext) {
+        log.debug("Close transaction from filter");
+        TitanDao titanDao = getTitanDao();
+        if (titanDao != null) {
+            if (responseContext.getStatus() == Response.Status.OK.getStatusCode() ||
+                    responseContext.getStatus() == Response.Status.CREATED.getStatusCode()) {
+                titanDao.commit();
+                log.debug("Doing commit from filter");
+            } else {
+                titanDao.rollback();
+                log.debug("Doing rollback from filter");
+            }
         }
     }
 
@@ -174,6 +199,7 @@ public class BeServletFilter implements ContainerRequestFilter, ContainerRespons
         WebApplicationContext webApplicationContext = webApplicationContextWrapper.getWebAppContext(context);
         return webApplicationContext.getBean(ComponentsUtils.class);
     }
+
     private TitanDao getTitanDao() {
         ServletContext context = this.sr.getSession().getServletContext();
 
@@ -181,6 +207,7 @@ public class BeServletFilter implements ContainerRequestFilter, ContainerRespons
         WebApplicationContext webApplicationContext = webApplicationContextWrapper.getWebAppContext(context);
         return webApplicationContext.getBean(TitanDao.class);
     }
+
     // Extracted for purpose of clear method name, for logback %M parameter
     private void inHttpRequest() {
         if (isInfoLog()) {
@@ -206,7 +233,6 @@ public class BeServletFilter implements ContainerRequestFilter, ContainerRespons
         if (requestURI != null && configuration.getUnLoggedUrls() != null) {
             logRequest = !configuration.getUnLoggedUrls().contains(requestURI);
         }
-
         return logRequest;
     }
 

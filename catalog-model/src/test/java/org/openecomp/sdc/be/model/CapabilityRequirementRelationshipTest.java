@@ -70,11 +70,4 @@ public class CapabilityRequirementRelationshipTest {
 		testSubject.setRequirement(requirement);
 	}
 
-	@Test
-	public void testGetSerialversionuid() throws Exception {
-		long result;
-
-		// default test
-		result = CapabilityRequirementRelationship.getSerialversionuid();
-	}
 }

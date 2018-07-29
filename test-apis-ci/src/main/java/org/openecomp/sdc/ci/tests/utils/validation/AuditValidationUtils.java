@@ -20,18 +20,8 @@
 
 package org.openecomp.sdc.ci.tests.utils.validation;
 
-import static org.testng.AssertJUnit.assertEquals;
-import static org.testng.AssertJUnit.assertTrue;
-
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
+import com.datastax.driver.core.ColumnDefinitions;
+import com.datastax.driver.core.Row;
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
@@ -53,15 +43,7 @@ import org.openecomp.sdc.ci.tests.datatypes.enums.AuditEnum;
 import org.openecomp.sdc.ci.tests.datatypes.enums.AuditJsonKeysEnum;
 import org.openecomp.sdc.ci.tests.datatypes.enums.ComponentType;
 import org.openecomp.sdc.ci.tests.datatypes.enums.ErrorInfo;
-import org.openecomp.sdc.ci.tests.datatypes.expected.ExpectedAuthenticationAudit;
-import org.openecomp.sdc.ci.tests.datatypes.expected.ExpectedCategoryAudit;
-import org.openecomp.sdc.ci.tests.datatypes.expected.ExpectedDistDownloadAudit;
-import org.openecomp.sdc.ci.tests.datatypes.expected.ExpectedEcomConsumerAudit;
-import org.openecomp.sdc.ci.tests.datatypes.expected.ExpectedExternalAudit;
-import org.openecomp.sdc.ci.tests.datatypes.expected.ExpectedGetUserListAudit;
-import org.openecomp.sdc.ci.tests.datatypes.expected.ExpectedProductAudit;
-import org.openecomp.sdc.ci.tests.datatypes.expected.ExpectedResourceAuditJavaObject;
-import org.openecomp.sdc.ci.tests.datatypes.expected.ExpectedUserCRUDAudit;
+import org.openecomp.sdc.ci.tests.datatypes.expected.*;
 import org.openecomp.sdc.ci.tests.datatypes.http.HttpRequest;
 import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
 import org.openecomp.sdc.ci.tests.run.StartTest;
@@ -72,10 +54,14 @@ import org.openecomp.sdc.ci.tests.utils.rest.CategoryRestUtils.CategoryAuditJson
 import org.openecomp.sdc.ci.tests.utils.rest.ConsumerRestUtils.EcompConsumerAuditJsonKeysEnum;
 import org.openecomp.sdc.ci.tests.utils.rest.ResponseParser;
 import org.openecomp.sdc.common.api.Constants;
-import org.openecomp.sdc.common.datastructure.AuditingFieldsKeysEnum;
+import org.openecomp.sdc.common.datastructure.AuditingFieldsKey;
 
-import com.datastax.driver.core.ColumnDefinitions;
-import com.datastax.driver.core.Row;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.*;
+
+import static org.testng.AssertJUnit.assertEquals;
+import static org.testng.AssertJUnit.assertTrue;
 
 public class AuditValidationUtils {
 	protected static Logger logger = Logger.getLogger(AuditValidationUtils.class.getName());
@@ -164,7 +150,7 @@ public class AuditValidationUtils {
 		validateAtifactDataField(actualAuditRecords, AuditJsonKeysEnum.ARTIFACT_DATA.getAuditJsonKeyName(), resourceAuditJavaObject.getArtifactData(), checkAllFields);
 	}
 
-	public static void validateExternalAudit(ExpectedExternalAudit externalAuditObject, String action, Map<AuditingFieldsKeysEnum, String> body) throws Exception {
+	public static void validateExternalAudit(ExpectedExternalAudit externalAuditObject, String action, Map<AuditingFieldsKey, String> body) throws Exception {
 
 		Map<String, Object> actualAuditRecord = parseAuditResourceByAction(action, body);
 
@@ -415,7 +401,7 @@ public class AuditValidationUtils {
 		validateField(map2, AuditJsonKeysEnum.RESOURCE_URL.getAuditJsonKeyName(), expectedDistDownloadAudit.getResourceUrl());
 	}
 	
-	public static void validateAuditExternalSearchAPI(ExpectedExternalAudit expectedDistDownloadAudit, String action, Map<AuditingFieldsKeysEnum, String> body)
+	public static void validateAuditExternalSearchAPI(ExpectedExternalAudit expectedDistDownloadAudit, String action, Map<AuditingFieldsKey, String> body)
 			throws Exception {
 
 		Map<String, Object> map2 = parseAuditResourceByAction(action, body);
@@ -427,7 +413,7 @@ public class AuditValidationUtils {
 		validateField(map2, AuditJsonKeysEnum.RESOURCE_URL.getAuditJsonKeyName(), expectedDistDownloadAudit.getRESOURCE_URL());
 	}
 	
-	public static void validateAuditExternalCreateResource(ExpectedResourceAuditJavaObject expectedExternalAudit, String action, Map<AuditingFieldsKeysEnum, String> body) throws Exception {
+	public static void validateAuditExternalCreateResource(ExpectedResourceAuditJavaObject expectedExternalAudit, String action, Map<AuditingFieldsKey, String> body) throws Exception {
 	Map<String, Object>	map2 = parseAuditResourceByAction(action, body);
 
 		validateField(map2, AuditJsonKeysEnum.ACTION.getAuditJsonKeyName(), action);
@@ -446,7 +432,7 @@ public class AuditValidationUtils {
 		validateField(map2, AuditJsonKeysEnum.DESCRIPTION.getAuditJsonKeyName(), expectedExternalAudit.getDesc());
 	}
 	
-	public static void validateAuditExternalChangeAssetLifeCycle(ExpectedResourceAuditJavaObject expectedExternalAudit, String action, Map<AuditingFieldsKeysEnum, String> body) throws Exception {
+	public static void validateAuditExternalChangeAssetLifeCycle(ExpectedResourceAuditJavaObject expectedExternalAudit, String action, Map<AuditingFieldsKey, String> body) throws Exception {
 		Map<String, Object> map2 = parseAuditResourceByAction(action, body);
 
 		validateField(map2, AuditJsonKeysEnum.ACTION.getAuditJsonKeyName(), action);
@@ -605,7 +591,7 @@ public class AuditValidationUtils {
 	//
 	// }
 
-	public static Map<String, Object> parseAuditResourceByAction(String action, Map<AuditingFieldsKeysEnum, String> body) throws Exception {
+	public static Map<String, Object> parseAuditResourceByAction(String action, Map<AuditingFieldsKey, String> body) throws Exception {
 
 		Map auditingMessage = null;
 		auditingMessage = retrieveAuditMessagesByPattern(action, body, false);
@@ -614,7 +600,7 @@ public class AuditValidationUtils {
 	}
 
 	public static List<Map<String, Object>> parseAuditResourceByActionToList(String action,
-			Map<AuditingFieldsKeysEnum, String> body) throws Exception {
+			Map<AuditingFieldsKey, String> body) throws Exception {
 
 		Map auditingMessage = null;
 
@@ -673,20 +659,20 @@ public class AuditValidationUtils {
 		return restResponse.getResponse();
 	}
 
-	public static Map<String, String> retrieveAuditMessagesByPattern(String action, Map<AuditingFieldsKeysEnum, String> body, Boolean retryFlag)
+	public static Map<String, String> retrieveAuditMessagesByPattern(String action, Map<AuditingFieldsKey, String> body, Boolean retryFlag)
 			throws IOException {
 
 		// get cassandra table name by action
-		String esType = AuditingActionEnum.getActionByName(action).getAuditingEsType();
+		String esType = AuditingActionEnum.fromName(action).getAuditingEsType();
 		Map<String, String> resultsMap = new HashMap<String, String>();
 
-		List<Pair<AuditingFieldsKeysEnum, String>> myFields = new ArrayList<Pair<AuditingFieldsKeysEnum, String>>();
-		Pair<AuditingFieldsKeysEnum, String> myPair = new Pair<AuditingFieldsKeysEnum, String>(
-				AuditingFieldsKeysEnum.AUDIT_ACTION, action);
+		List<Pair<AuditingFieldsKey, String>> myFields = new ArrayList<Pair<AuditingFieldsKey, String>>();
+		Pair<AuditingFieldsKey, String> myPair = new Pair<AuditingFieldsKey, String>(
+				AuditingFieldsKey.AUDIT_ACTION, action);
 		myFields.add(0, myPair);
 		if (body != null && !body.isEmpty()) {
-			for (Map.Entry<AuditingFieldsKeysEnum, String> mapElement : body.entrySet()) {
-				myFields.add(new Pair<AuditingFieldsKeysEnum, String>(mapElement.getKey(), mapElement.getValue()));
+			for (Map.Entry<AuditingFieldsKey, String> mapElement : body.entrySet()) {
+				myFields.add(new Pair<AuditingFieldsKey, String>(mapElement.getKey(), mapElement.getValue()));
 			}
 		}
 

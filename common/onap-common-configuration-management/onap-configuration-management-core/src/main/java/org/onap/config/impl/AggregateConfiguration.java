@@ -5,7 +5,6 @@ import org.apache.commons.configuration2.Configuration;
 import org.apache.commons.configuration2.tree.MergeCombiner;
 import org.apache.commons.configuration2.tree.OverrideCombiner;
 import org.apache.commons.configuration2.tree.UnionCombiner;
-import static org.onap.config.Constants.LOAD_ORDER_KEY;
 import org.onap.config.ConfigurationUtils;
 import org.onap.config.type.ConfigurationMode;
 
@@ -13,6 +12,8 @@ import java.io.File;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.*;
+
+import static org.onap.config.Constants.LOAD_ORDER_KEY;
 
 /**
  * The type Aggregate configuration.

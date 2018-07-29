@@ -20,15 +20,12 @@
 
 package org.openecomp.sdc.be.user;
 
-import java.util.List;
-
-import javax.servlet.ServletContext;
-
+import fj.data.Either;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.exception.ResponseFormat;
 
-import fj.data.Either;
+import java.util.List;
 
 /**
  * 
@@ -41,8 +38,6 @@ public interface IUserBusinessLogic {
     public Either<User, ResponseFormat> createUser(User modifier, User newUser);
 
     public Either<User, ResponseFormat> updateUserRole(User modifier, String userIdToUpdate, String userRole);
-
-    public Either<List<User>, ResponseFormat> getAllAdminUsers(ServletContext context);
 
     public Either<List<User>, ResponseFormat> getUsersList(String userId, List<String> roles, String rolesStr);
 

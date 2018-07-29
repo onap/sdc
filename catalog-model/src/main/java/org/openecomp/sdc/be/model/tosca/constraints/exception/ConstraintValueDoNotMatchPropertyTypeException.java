@@ -30,19 +30,15 @@ import org.openecomp.sdc.be.model.tosca.constraints.ConstraintUtil.ConstraintInf
  */
 public class ConstraintValueDoNotMatchPropertyTypeException extends ConstraintFunctionalException {
 
-	private static final long serialVersionUID = 4342613849660957651L;
+    public ConstraintValueDoNotMatchPropertyTypeException(String message) {
+        super(message);
+    }
 
-	public ConstraintValueDoNotMatchPropertyTypeException(String message) {
-		super(message);
-	}
+    public ConstraintValueDoNotMatchPropertyTypeException(String message, Throwable cause) {
+        super(message, cause);
+    }
 
-	public ConstraintValueDoNotMatchPropertyTypeException(String message, Throwable cause) {
-		super(message, cause);
-	}
-
-	public ConstraintValueDoNotMatchPropertyTypeException(String message, Throwable cause,
-			ConstraintInformation constraintInformation) {
-		super(message, cause);
-		this.constraintInformation = constraintInformation;
-	}
+    public ConstraintValueDoNotMatchPropertyTypeException(String message, Throwable cause, ConstraintInformation constraintInformation) {
+        super(message, cause, constraintInformation);
+    }
 }

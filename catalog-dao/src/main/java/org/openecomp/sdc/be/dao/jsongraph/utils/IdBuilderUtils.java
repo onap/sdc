@@ -20,9 +20,9 @@
 
 package org.openecomp.sdc.be.dao.jsongraph.utils;
 
-import java.util.UUID;
-
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
+
+import java.util.UUID;
 
 public class IdBuilderUtils {
 	private static String DOT = ".";

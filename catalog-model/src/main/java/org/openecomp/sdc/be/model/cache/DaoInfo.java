@@ -23,19 +23,19 @@ package org.openecomp.sdc.be.model.cache;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
 
 public class DaoInfo {
-	private ToscaOperationFacade toscaOperationFacade;
-	private ComponentCache ComponentCache;
+    private ToscaOperationFacade toscaOperationFacade;
+    private ComponentCache ComponentCache;
 
-	public DaoInfo(ToscaOperationFacade toscaOperationFacade, org.openecomp.sdc.be.model.cache.ComponentCache componentCache) {
-		this.toscaOperationFacade = toscaOperationFacade;
-		ComponentCache = componentCache;
-	}
+    public DaoInfo(ToscaOperationFacade toscaOperationFacade, org.openecomp.sdc.be.model.cache.ComponentCache componentCache) {
+        this.toscaOperationFacade = toscaOperationFacade;
+        ComponentCache = componentCache;
+    }
 
-	public ToscaOperationFacade getToscaOperationFacade() {
-		return toscaOperationFacade;
-	}
+    public ToscaOperationFacade getToscaOperationFacade() {
+        return toscaOperationFacade;
+    }
 
-	public org.openecomp.sdc.be.model.cache.ComponentCache getComponentCache() {
-		return ComponentCache;
-	}
+    public org.openecomp.sdc.be.model.cache.ComponentCache getComponentCache() {
+        return ComponentCache;
+    }
 }

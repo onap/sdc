@@ -1,47 +1,32 @@
 package org.openecomp.sdc.be.externalapi.servlet;
 
-import java.io.IOException;
-import java.util.EnumMap;
-
-import javax.inject.Singleton;
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jcabi.aspects.Loggable;
+import fj.data.Either;
+import io.swagger.annotations.*;
 import org.apache.commons.lang3.StringUtils;
 import org.openecomp.sdc.be.components.impl.ServiceBusinessLogic;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
-import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.externalapi.servlet.representation.ServiceDistributionReqInfo;
 import org.openecomp.sdc.be.externalapi.servlet.representation.ServiceDistributionRespInfo;
 import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.resources.data.auditing.model.DistributionData;
 import org.openecomp.sdc.be.servlets.AbstractValidationsServlet;
 import org.openecomp.sdc.be.servlets.RepresentationUtils;
 import org.openecomp.sdc.common.api.Constants;
-import org.openecomp.sdc.common.datastructure.AuditingFieldsKeysEnum;
 import org.openecomp.sdc.common.datastructure.Wrapper;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jcabi.aspects.Loggable;
-
-import fj.data.Either;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import javax.inject.Singleton;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.io.IOException;
 
 /**
  * Created by chaya on 10/17/2017.
@@ -55,7 +40,7 @@ public class ServiceActivationServlet extends AbstractValidationsServlet {
     @Context
     private HttpServletRequest request;
 
-    private static final Logger log = LoggerFactory.getLogger(ServiceActivationServlet.class);
+    private static final Logger log = Logger.getLogger(ServiceActivationServlet.class);
 
     /**
      * Activates a service on a specific environment
@@ -95,23 +80,21 @@ public class ServiceActivationServlet extends AbstractValidationsServlet {
             @ApiParam(value = "The operational environment on which to activate the service on", required = true) @PathParam("opEnvId") final String opEnvId,
             String data) {
 
-        init(log);
+        init();
 
         ResponseFormat responseFormat = null;
         String requestURI = request.getRequestURI();
         String url = request.getMethod() + " " + requestURI;
-        EnumMap<AuditingFieldsKeysEnum, Object> additionalParams = new EnumMap<>(AuditingFieldsKeysEnum.class);
-        additionalParams.put(AuditingFieldsKeysEnum.AUDIT_SERVICE_INSTANCE_ID, serviceUUID);
-        additionalParams.put(AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_CONSUMER_ID, instanceIdHeader);
         log.debug("Start handle request of {}", url);
 
         ServletContext context = request.getSession().getServletContext();
+        User modifier = new User();
+
         try {
 
             Wrapper<ResponseFormat> responseWrapper = validateRequestHeaders(instanceIdHeader, userId);
 
             if (responseWrapper.isEmpty()) {
-                User modifier = new User();
                 modifier.setUserId(userId);
                 log.debug("modifier id is {}", userId);
 
@@ -139,7 +122,8 @@ public class ServiceActivationServlet extends AbstractValidationsServlet {
             responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR);
             return buildErrorResponse(responseFormat);
         } finally {
-            getComponentsUtils().auditExternalActivateService(responseFormat, ComponentTypeEnum.SERVICE.name(), request, additionalParams);
+            getComponentsUtils().auditExternalActivateService(responseFormat,
+                    new DistributionData(instanceIdHeader, requestURI), requestId, serviceUUID, modifier);
         }
     }
 

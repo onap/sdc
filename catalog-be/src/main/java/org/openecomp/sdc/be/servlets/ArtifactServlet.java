@@ -20,23 +20,9 @@
 
 package org.openecomp.sdc.be.servlets;
 
-import java.util.Map;
-
-import javax.inject.Singleton;
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
+import com.jcabi.aspects.Loggable;
+import fj.data.Either;
+import io.swagger.annotations.*;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic;
@@ -48,18 +34,17 @@ import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.ArtifactUiDownloadData;
 import org.openecomp.sdc.be.model.Operation;
 import org.openecomp.sdc.common.api.Constants;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import com.jcabi.aspects.Loggable;
-
-import fj.data.Either;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import javax.inject.Singleton;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.util.Map;
 /**
  * Root resource (exposed at "/" path)
  */
@@ -69,7 +54,7 @@ import io.swagger.annotations.ApiResponses;
 @Singleton
 public class ArtifactServlet extends BeGenericServlet {
 
-    private static final Logger log = LoggerFactory.getLogger(ArtifactServlet.class);
+    private static final Logger log = Logger.getLogger(ArtifactServlet.class);
 
     // *************** Resources
     @POST
@@ -496,11 +481,11 @@ public class ArtifactServlet extends BeGenericServlet {
     // ************ private *********************
 
     private Response handleUploadRequest(String data, HttpServletRequest request, String componentId, ComponentTypeEnum componentType) {
-        return handleArtifactRequest(data, request, componentId, null, componentType, ArtifactOperationEnum.CREATE);
+        return handleArtifactRequest(data, componentId, null, componentType, ArtifactOperationEnum.CREATE);
     }
 
     private Response handleUpdateRequest(String data, HttpServletRequest request, String componentId, String artifactId, ComponentTypeEnum componentType) {
-        return handleArtifactRequest(data, request, componentId, artifactId, componentType, ArtifactOperationEnum.UPDATE);
+        return handleArtifactRequest(data, componentId, artifactId, componentType, ArtifactOperationEnum.UPDATE);
     }
 
     private Response handleDownloadRequest(HttpServletRequest request, String componentId, String artifactId, String parentId, ComponentTypeEnum componentType, String containerComponentType) {
@@ -596,7 +581,7 @@ public class ArtifactServlet extends BeGenericServlet {
 
     }
 
-    private Response handleArtifactRequest(String data, HttpServletRequest request, String componentId, String artifactId, ComponentTypeEnum componentType, ArtifactOperationEnum operation) {
+    private Response handleArtifactRequest(String data, String componentId, String artifactId, ComponentTypeEnum componentType, ArtifactOperationEnum operation) {
         return handleArtifactRequest(data, servletRequest, componentId, null, null, artifactId, componentType, operation, null, null);
     }
 

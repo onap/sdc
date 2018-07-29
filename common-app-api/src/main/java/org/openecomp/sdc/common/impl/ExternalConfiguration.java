@@ -20,10 +20,10 @@
 
 package org.openecomp.sdc.common.impl;
 
-import java.io.File;
-
 import org.apache.commons.jci.monitor.FilesystemAlterationMonitor;
 import org.openecomp.sdc.common.api.ConfigurationSource;
+
+import java.io.File;
 
 /**
  * 

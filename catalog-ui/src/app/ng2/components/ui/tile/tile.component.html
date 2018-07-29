@@ -1,0 +1,28 @@
+<div class="sdc-tile sdc-tile-fix-width">
+
+    <div class='sdc-tile-header' [ngClass]="{'purple': component.isResource(), 'blue': !component.isResource()}">
+        <div *ngIf="component.isResource()" data-tests-id="asset-type">{{component.getComponentSubType()}}</div>
+        <div *ngIf="component.isService()">S</div>
+    </div>
+
+    <div class='sdc-tile-content' data-tests-id="dashboard-Elements" (click)="tileClicked()">
+        <div class='sdc-tile-content-icon'>
+            <div [ngClass]="[component.iconSprite, component.icon]" [ngClass]="{'sprite-resource-icons': component.isResource(), 'sprite-services-icons': component.isService()}"
+                 [attr.data-tests-id]="component.name"></div>
+        </div>
+
+        <div class='sdc-tile-content-info'>
+            <div class="sdc-tile-info-line title" [attr.data-tests-id]="component.name | resourceName" [tooltip]="component.name | resourceName" [tooltipDisabled]="!hasEllipsis">
+                <multiline-ellipsis className="w-sdc-tile-multiline-ellipsis" [lines]="3" (hasEllipsisChanged)="hasEllipsis = $event">{{component.name | resourceName}}</multiline-ellipsis>
+            </div>
+            <div class="sdc-tile-info-line subtitle" [attr.data-tests-id]="component.name+'Version'">V {{component.version}}</div>
+        </div>
+    </div>
+
+    <div class='sdc-tile-footer'>
+        <div class="sdc-tile-footer-content">
+            <div class='sdc-tile-footer-text'>{{component.getStatus(sdcMenu)}}</div>
+        </div>
+    </div>
+
+</div>

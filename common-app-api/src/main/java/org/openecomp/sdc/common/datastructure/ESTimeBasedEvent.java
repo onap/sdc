@@ -20,17 +20,11 @@
 
 package org.openecomp.sdc.common.datastructure;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Formatter;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Locale;
-import java.util.Map;
-import java.util.TimeZone;
-
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * Extending this class enforces the objects of implementing classes to have a
@@ -42,15 +36,16 @@ import org.codehaus.jettison.json.JSONObject;
  */
 public class ESTimeBasedEvent {
 
+	protected SimpleDateFormat simpleDateFormat;
 	protected static String dateFormatPattern = "yyyy-MM-dd HH:mm:ss.SSS z";
 	protected String timestamp;
-	protected Map<String, Object> fields = new HashMap<String, Object>();
+	protected Map<String, Object> fields = new HashMap<>();
 
 	public ESTimeBasedEvent() {
-		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(dateFormatPattern);
+		simpleDateFormat = new SimpleDateFormat(dateFormatPattern);
 		simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
 		this.timestamp = simpleDateFormat.format(new Date());
-		fields.put(AuditingFieldsKeysEnum.AUDIT_TIMESTAMP.getDisplayName(), this.timestamp);
+		fields.put(AuditingFieldsKey.AUDIT_TIMESTAMP.getDisplayName(), this.timestamp);
 
 	}
 
@@ -64,7 +59,7 @@ public class ESTimeBasedEvent {
 		while (keys.hasNext()) {
 			String key = (String) keys.next();
 			event.fields.put(key, gsonObj.get(key));
-			if (key.equals(AuditingFieldsKeysEnum.AUDIT_TIMESTAMP.getDisplayName())) {
+			if (key.equals(AuditingFieldsKey.AUDIT_TIMESTAMP.getDisplayName())) {
 				event.timestamp = (String) gsonObj.get(key);
 			}
 		}

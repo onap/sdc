@@ -1,10 +1,10 @@
 package org.openecomp.sdc.be.model;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import org.junit.Test;
 import org.openecomp.sdc.be.datatypes.elements.GroupTypeDataDefinition;
+
+import java.util.HashMap;
+import java.util.List;
 
 
 public class GroupTypeDefinitionTest {
@@ -46,7 +46,7 @@ public class GroupTypeDefinitionTest {
 
 		// default test
 		testSubject = createTestSubject();
-		testSubject.getCapabilityTypes();
+		testSubject.getCapabilities();
 	}
 	
 	@Test
@@ -55,7 +55,7 @@ public class GroupTypeDefinitionTest {
 
 		// default test
 		testSubject = createTestSubject();
-		testSubject.setCapabilityTypes(new LinkedList<>());
+		testSubject.setCapabilities(new HashMap<>());
 	}
 	
 	@Test

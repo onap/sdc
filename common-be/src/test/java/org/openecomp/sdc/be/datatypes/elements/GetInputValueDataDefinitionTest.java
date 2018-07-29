@@ -1,9 +1,9 @@
 package org.openecomp.sdc.be.datatypes.elements;
 
-import java.util.HashMap;
-
 import org.junit.Assert;
 import org.junit.Test;
+
+import java.util.HashMap;
 
 
 public class GetInputValueDataDefinitionTest {

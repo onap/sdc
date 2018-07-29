@@ -16,11 +16,7 @@
 
 package org.openecomp.core.model.types;
 
-import com.datastax.driver.mapping.annotations.ClusteringColumn;
-import com.datastax.driver.mapping.annotations.Column;
-import com.datastax.driver.mapping.annotations.Frozen;
-import com.datastax.driver.mapping.annotations.PartitionKey;
-import com.datastax.driver.mapping.annotations.Table;
+import com.datastax.driver.mapping.annotations.*;
 import com.google.common.io.ByteStreams;
 import org.openecomp.sdc.common.errors.SdcRuntimeException;
 import org.openecomp.sdc.versioning.dao.types.Version;

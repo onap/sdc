@@ -16,10 +16,6 @@
 
 package org.openecomp.sdc.translator.services.heattotosca.impl.resourcetranslation;
 
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.onap.sdc.tosca.datatypes.model.NodeTemplate;
@@ -45,6 +41,10 @@ import org.openecomp.sdc.translator.services.heattotosca.ConsolidationDataUtil;
 import org.openecomp.sdc.translator.services.heattotosca.Constants;
 import org.openecomp.sdc.translator.services.heattotosca.HeatToToscaUtil;
 import org.openecomp.sdc.translator.services.heattotosca.TranslationService;
+
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 
 public class ResourceTranslationNestedImpl extends ResourceTranslationBase {
 

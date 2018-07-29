@@ -8,8 +8,7 @@ import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.common.api.ConfigurationSource;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;
 import org.openecomp.sdc.common.impl.FSConfigurationSource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 /**
@@ -17,7 +16,7 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
  */
 public class ValidationTool {
 
-    private static Logger log = LoggerFactory.getLogger(ValidationTool.class.getName());
+    private static Logger log = Logger.getLogger(ValidationTool.class.getName());
 
     public static void main(String[] args) {
 
@@ -29,14 +28,14 @@ public class ValidationTool {
         AnnotationConfigApplicationContext context = initContext(appConfigDir);
         ValidationToolBL validationToolBL = context.getBean(ValidationToolBL.class);
 
-        System.out.println("Start Validation Tool");
+        log.info("Start Validation Tool");
         Boolean result = validationToolBL.validateAll();
         ReportManager.reportEndOfToolRun();
         if (result) {
-            System.out.println("Validation finished successfully");
+            log.info("Validation finished successfully");
             System.exit(0);
         } else {
-            System.out.println("Validation finished with warnings");
+            log.info("Validation finished with warnings");
             System.exit(2);
         }
     }

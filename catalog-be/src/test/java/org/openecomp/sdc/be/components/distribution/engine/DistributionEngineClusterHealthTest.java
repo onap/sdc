@@ -1,16 +1,15 @@
 package org.openecomp.sdc.be.components.distribution.engine;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
-
+import mockit.Deencapsulation;
 import org.junit.Test;
 import org.openecomp.sdc.be.components.BeConfDependentTest;
 import org.openecomp.sdc.be.components.distribution.engine.DistributionEngineClusterHealth.HealthCheckScheduledTask;
 import org.openecomp.sdc.common.api.HealthCheckInfo;
 
-import mockit.Deencapsulation;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class DistributionEngineClusterHealthTest extends BeConfDependentTest{
 

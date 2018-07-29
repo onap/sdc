@@ -16,10 +16,6 @@
 
 package org.openecomp.sdc.translator.services.heattotosca.impl.resourcetranslation;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-
 import org.onap.sdc.tosca.datatypes.model.NodeTemplate;
 import org.onap.sdc.tosca.datatypes.model.ParameterDefinition;
 import org.onap.sdc.tosca.datatypes.model.PropertyType;
@@ -38,6 +34,10 @@ import org.openecomp.sdc.translator.services.heattotosca.HeatToToscaUtil;
 import org.openecomp.sdc.translator.services.heattotosca.ResourceTranslationFactory;
 import org.openecomp.sdc.translator.services.heattotosca.errors.MissingMandatoryPropertyErrorBuilder;
 import org.openecomp.sdc.translator.services.heattotosca.mapping.TranslatorHeatToToscaPropertyConverter;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
 public class ResourceTranslationNeutronSubnetImpl extends ResourceTranslationBase {
 

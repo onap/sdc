@@ -20,11 +20,11 @@
 
 package org.openecomp.sdc.ci.tests.verificator;
 
-import static org.testng.AssertJUnit.assertTrue;
-
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import static org.testng.AssertJUnit.assertTrue;
 
 public class CustomizationUUIDVerificator {
 

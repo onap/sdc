@@ -20,34 +20,26 @@
 
 package org.openecomp.sdc.be.servlets;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
-import org.openecomp.sdc.be.dao.api.ActionStatus;
-import org.openecomp.sdc.common.api.Constants;
-import org.openecomp.sdc.exception.ResponseFormat;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.jcabi.aspects.Loggable;
-
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.common.api.Constants;
+import org.openecomp.sdc.common.log.wrappers.Logger;
+import org.openecomp.sdc.exception.ResponseFormat;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 public class RequirementsServlet extends BeGenericServlet {
 
-    private static final Logger log = LoggerFactory.getLogger(RequirementsServlet.class);
+    private static final Logger log = Logger.getLogger(RequirementsServlet.class);
 
     @PUT
     @Path("resources/{resourceId}/requirements/{requirementId}")
@@ -56,8 +48,8 @@ public class RequirementsServlet extends BeGenericServlet {
     @ApiOperation(value = "Update Resource Requirement", httpMethod = "PUT", notes = "Returns updated requirement", response = Response.class)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "Resource requirement updated"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 400, message = "Invalid content / Missing content") })
     public Response updateRequirement(@ApiParam(value = "resource id to update with new requirement", required = true) @PathParam("resourceId") final String resourceId,
-            @ApiParam(value = "requirement id to update", required = true) @PathParam("requirementId") final String requirementId, @ApiParam(value = "Resource property to update", required = true) String requirementData,
-            @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+                                      @ApiParam(value = "requirement id to update", required = true) @PathParam("requirementId") final String requirementId, @ApiParam(value = "Resource property to update", required = true) String requirementData,
+                                      @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 
         // Convert RequirementDefinition from JSON
         // TODO: it's going to be another object, probably. This is placeholder

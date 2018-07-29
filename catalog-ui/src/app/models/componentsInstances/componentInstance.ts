@@ -60,6 +60,7 @@ export class ComponentInstance {
     public properties:Array<PropertyModel>;
     public groupInstances:Array<Module>;
     public invariantName:string;
+    public originArchived:boolean;
 
     constructor(componentInstance?:ComponentInstance) {
 
@@ -90,6 +91,7 @@ export class ComponentInstance {
             this.sourceModelName = componentInstance.sourceModelName;
             this.sourceModelUid = componentInstance.sourceModelUid;
             this.sourceModelUuid = componentInstance.sourceModelUuid;
+            this.originArchived = componentInstance.originArchived;
         }
     }
 
@@ -171,4 +173,8 @@ export class ComponentInstance {
         temp.capabilities = undefined;
         return temp;
     };
+
+    public get iconClass() {
+        return this.iconSprite + ' ' + this.icon;
+    }
 }

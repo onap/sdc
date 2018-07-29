@@ -1,20 +1,13 @@
 package org.openecomp.core.impl.services;
 
-import org.openecomp.core.converter.ServiceTemplateReaderService;
 import org.onap.sdc.tosca.services.YamlUtil;
+import org.openecomp.core.converter.ServiceTemplateReaderService;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-import static org.openecomp.core.converter.datatypes.Constants.definitionVersion;
-import static org.openecomp.core.converter.datatypes.Constants.inputs;
-import static org.openecomp.core.converter.datatypes.Constants.metadata;
-import static org.openecomp.core.converter.datatypes.Constants.nodeTemplates;
-import static org.openecomp.core.converter.datatypes.Constants.nodeTypes;
-import static org.openecomp.core.converter.datatypes.Constants.outputs;
-import static org.openecomp.core.converter.datatypes.Constants.substitutionMappings;
-import static org.openecomp.core.converter.datatypes.Constants.topologyTemplate;
+import static org.openecomp.core.converter.datatypes.Constants.*;
 
 public class ServiceTemplateReaderServiceImpl implements ServiceTemplateReaderService {
 

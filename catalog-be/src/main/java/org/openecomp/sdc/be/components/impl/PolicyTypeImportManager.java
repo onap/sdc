@@ -20,15 +20,10 @@
 
 package org.openecomp.sdc.be.components.impl;
 
-import java.util.List;
-import java.util.Map;
-import java.util.function.Consumer;
-
-import javax.annotation.Resource;
-
+import fj.data.Either;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.components.impl.CommonImportManager.ElementTypeEnum;
-import org.openecomp.sdc.be.components.impl.ImportUtils.ToscaTagNamesEnum;
+import org.openecomp.sdc.be.components.impl.model.ToscaTypeImportData;
 import org.openecomp.sdc.be.components.impl.utils.PolicyTypeImportUtils;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
@@ -37,39 +32,42 @@ import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.IGroupOperation;
 import org.openecomp.sdc.be.model.operations.api.IPolicyTypeOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
+import org.openecomp.sdc.be.utils.TypeUtils;
 import org.openecomp.sdc.exception.ResponseFormat;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import fj.data.Either;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Consumer;
 
 @Component("policyTypeImportManager")
 public class PolicyTypeImportManager {
 
-    @Resource
-    private IPolicyTypeOperation policyTypeOperation;
-    @Resource
-    private ComponentsUtils componentsUtils;
-    @Autowired
-    protected IGroupOperation groupOperation;
-    @Autowired
-    private ToscaOperationFacade toscaOperationFacade;
+    private final IPolicyTypeOperation policyTypeOperation;
+    private final ComponentsUtils componentsUtils;
+    private final IGroupOperation groupOperation;
+    private final ToscaOperationFacade toscaOperationFacade;
+    private final CommonImportManager commonImportManager;
 
-    @Resource
-    private CommonImportManager commonImportManager;
+    public PolicyTypeImportManager(IPolicyTypeOperation policyTypeOperation, ComponentsUtils componentsUtils, IGroupOperation groupOperation, ToscaOperationFacade toscaOperationFacade, CommonImportManager commonImportManager) {
+        this.policyTypeOperation = policyTypeOperation;
+        this.componentsUtils = componentsUtils;
+        this.groupOperation = groupOperation;
+        this.toscaOperationFacade = toscaOperationFacade;
+        this.commonImportManager = commonImportManager;
+    }
 
-    public Either<List<ImmutablePair<PolicyTypeDefinition, Boolean>>, ResponseFormat> createPolicyTypes(String policyTypesYml) {
-        return commonImportManager.createElementTypes(policyTypesYml, this::createPolicyTypesFromYml, this::upsertPolicyTypesByDao, ElementTypeEnum.PolicyType);
+    public Either<List<ImmutablePair<PolicyTypeDefinition, Boolean>>, ResponseFormat> createPolicyTypes(ToscaTypeImportData toscaTypeImportData) {
+        return commonImportManager.createElementTypes(toscaTypeImportData, this::createPolicyTypesFromYml, this::upsertPolicyTypesByDao);
     }
 
     private Either<List<PolicyTypeDefinition>, ActionStatus> createPolicyTypesFromYml(String policyTypesYml) {
-
         return commonImportManager.createElementTypesFromYml(policyTypesYml, this::createPolicyType);
     }
 
     private Either<List<ImmutablePair<PolicyTypeDefinition, Boolean>>, ResponseFormat> upsertPolicyTypesByDao(List<PolicyTypeDefinition> policyTypesToCreate) {
-        return commonImportManager.createElementTypesByDao(policyTypesToCreate, this::validatePolicyType, policyType -> new ImmutablePair<>(ElementTypeEnum.PolicyType, policyType.getType()),
-                policyTypeName -> policyTypeOperation.getLatestPolicyTypeByType(policyTypeName), policyType -> policyTypeOperation.addPolicyType(policyType), this::updatePolicyType);
+        return commonImportManager.createElementTypesByDao(policyTypesToCreate, this::validatePolicyType, policyType -> new ImmutablePair<>(ElementTypeEnum.POLICY_TYPE, policyType.getType()),
+                policyTypeOperation::getLatestPolicyTypeByType, policyTypeOperation::addPolicyType, this::updatePolicyType);
     }
 
     private Either<PolicyTypeDefinition, StorageOperationStatus> updatePolicyType(PolicyTypeDefinition newPolicyType, PolicyTypeDefinition oldPolicyType) {
@@ -115,25 +113,25 @@ public class PolicyTypeImportManager {
 
         if (toscaJson != null) {
             // Description
-            final Consumer<String> descriptionSetter = description -> policyType.setDescription(description);
-            commonImportManager.setField(toscaJson, ToscaTagNamesEnum.DESCRIPTION.getElementName(), descriptionSetter);
+            final Consumer<String> descriptionSetter = policyType::setDescription;
+            commonImportManager.setField(toscaJson, TypeUtils.ToscaTagNamesEnum.DESCRIPTION.getElementName(), descriptionSetter);
             // Derived From
-            final Consumer<String> derivedFromSetter = derivedFrom -> policyType.setDerivedFrom(derivedFrom);
-            commonImportManager.setField(toscaJson, ToscaTagNamesEnum.DERIVED_FROM.getElementName(), derivedFromSetter);
+            final Consumer<String> derivedFromSetter = policyType::setDerivedFrom;
+            commonImportManager.setField(toscaJson, TypeUtils.ToscaTagNamesEnum.DERIVED_FROM.getElementName(), derivedFromSetter);
             // Properties
-            commonImportManager.setProperties(toscaJson, (values) -> policyType.setProperties(values));
+            CommonImportManager.setProperties(toscaJson, policyType::setProperties);
             // Metadata
-            final Consumer<Map<String, String>> metadataSetter = metadata -> policyType.setMetadata(metadata);
-            commonImportManager.setField(toscaJson, ToscaTagNamesEnum.METADATA.getElementName(), metadataSetter);
+            final Consumer<Map<String, String>> metadataSetter = policyType::setMetadata;
+            commonImportManager.setField(toscaJson, TypeUtils.ToscaTagNamesEnum.METADATA.getElementName(), metadataSetter);
             // Targets
-            final Consumer <List<String>> targetsSetter = targets -> policyType.setTargets(targets);
-            commonImportManager.setField(toscaJson, ToscaTagNamesEnum.TARGETS.getElementName(), targetsSetter);
+            final Consumer <List<String>> targetsSetter = policyType::setTargets;
+            commonImportManager.setField(toscaJson, TypeUtils.ToscaTagNamesEnum.TARGETS.getElementName(), targetsSetter);
 
             policyType.setType(groupTypeName);
 
             policyType.setHighestVersion(true);
 
-            policyType.setVersion(ImportUtils.Constants.FIRST_CERTIFIED_VERSION_VERSION);
+            policyType.setVersion(TypeUtils.FIRST_CERTIFIED_VERSION_VERSION);
         }
         return policyType;
     }

@@ -20,55 +20,30 @@
 
 package org.openecomp.sdc.ci.tests.execute.resource;
 
-import static org.junit.Assert.assertTrue;
-import static org.openecomp.sdc.ci.tests.utils.rest.BaseRestUtils.STATUS_CODE_ALREADY_EXISTS;
-import static org.openecomp.sdc.ci.tests.utils.rest.BaseRestUtils.STATUS_CODE_COMPONENT_NAME_EXCEEDS_LIMIT;
-import static org.openecomp.sdc.ci.tests.utils.rest.BaseRestUtils.STATUS_CODE_DELETE;
-import static org.openecomp.sdc.ci.tests.utils.rest.BaseRestUtils.STATUS_CODE_INVALID_CONTENT;
-import static org.openecomp.sdc.ci.tests.utils.rest.BaseRestUtils.STATUS_CODE_NOT_FOUND;
-import static org.openecomp.sdc.ci.tests.utils.rest.BaseRestUtils.STATUS_CODE_RESTRICTED_OPERATION;
-import static org.openecomp.sdc.ci.tests.utils.rest.BaseRestUtils.STATUS_CODE_SUCCESS;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.junit.Rule;
 import org.junit.rules.TestName;
-import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
-import org.openecomp.sdc.be.model.CapReqDef;
-import org.openecomp.sdc.be.model.CapabilityDefinition;
-import org.openecomp.sdc.be.model.CapabilityRequirementRelationship;
-import org.openecomp.sdc.be.model.ComponentInstance;
-import org.openecomp.sdc.be.model.LifecycleStateEnum;
-import org.openecomp.sdc.be.model.RelationshipImpl;
-import org.openecomp.sdc.be.model.RelationshipInfo;
-import org.openecomp.sdc.be.model.RequirementCapabilityRelDef;
-import org.openecomp.sdc.be.model.RequirementDefinition;
-import org.openecomp.sdc.be.model.Resource;
-import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.*;
 import org.openecomp.sdc.ci.tests.api.ComponentInstanceBaseTest;
-import org.openecomp.sdc.ci.tests.datatypes.ArtifactReqDetails;
 import org.openecomp.sdc.ci.tests.datatypes.ComponentInstanceReqDetails;
 import org.openecomp.sdc.ci.tests.datatypes.ResourceReqDetails;
-import org.openecomp.sdc.ci.tests.datatypes.enums.ArtifactTypeEnum;
 import org.openecomp.sdc.ci.tests.datatypes.enums.LifeCycleStatesEnum;
 import org.openecomp.sdc.ci.tests.datatypes.enums.NormativeTypesEnum;
 import org.openecomp.sdc.ci.tests.datatypes.enums.ResourceCategoryEnum;
 import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
 import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
-import org.openecomp.sdc.ci.tests.utils.rest.ArtifactRestUtils;
-import org.openecomp.sdc.ci.tests.utils.rest.ComponentInstanceRestUtils;
-import org.openecomp.sdc.ci.tests.utils.rest.ComponentRestUtils;
-import org.openecomp.sdc.ci.tests.utils.rest.LifecycleRestUtils;
-import org.openecomp.sdc.ci.tests.utils.rest.ResourceRestUtils;
-import org.openecomp.sdc.ci.tests.utils.rest.ResponseParser;
-import org.openecomp.sdc.ci.tests.utils.validation.BaseValidationUtils;
+import org.openecomp.sdc.ci.tests.utils.rest.*;
 import org.testng.AssertJUnit;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.Assert.assertTrue;
+import static org.openecomp.sdc.ci.tests.utils.rest.BaseRestUtils.*;
 
 public class VfComponentInstanceCRUDTest extends ComponentInstanceBaseTest {
 
@@ -1728,7 +1703,7 @@ public class VfComponentInstanceCRUDTest extends ComponentInstanceBaseTest {
 
 	}
 
-	@Test
+	/*@Test
 	public void testUnsatisfiedCpReqInVF() throws Exception {
 
 		// Certify all the needed atomic resources
@@ -1766,7 +1741,7 @@ public class VfComponentInstanceCRUDTest extends ComponentInstanceBaseTest {
 		submitForTesting = LifecycleRestUtils.changeResourceState(resourceDetailsVF_02, sdncDesignerDetails,
 				LifeCycleStatesEnum.CERTIFICATIONREQUEST);
 		BaseValidationUtils.checkSuccess(submitForTesting);
-	}
+	}*/
 
 	private void getVfResourceReqCapUsingAPI(int numberOfRIs, int numberOfRelations, User user)
 			throws IOException, Exception {

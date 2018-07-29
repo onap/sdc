@@ -20,25 +20,23 @@
 
 package org.openecomp.sdc.asdctool.impl;
 
+import com.thinkaurelius.titan.core.TitanFactory;
+import com.thinkaurelius.titan.core.TitanGraph;
+import com.thinkaurelius.titan.core.TitanGraphQuery;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
+import org.openecomp.sdc.asdctool.Utils;
+import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
+import org.openecomp.sdc.be.model.LifecycleStateEnum;
+import org.openecomp.sdc.common.log.wrappers.Logger;
+
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.apache.tinkerpop.gremlin.structure.Vertex;
-import org.openecomp.sdc.asdctool.Utils;
-import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
-import org.openecomp.sdc.be.model.LifecycleStateEnum;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.thinkaurelius.titan.core.TitanFactory;
-import com.thinkaurelius.titan.core.TitanGraph;
-import com.thinkaurelius.titan.core.TitanGraphQuery;
-
 public class UpdatePropertyOnVertex {
 
-	private static Logger log = LoggerFactory.getLogger(UpdatePropertyOnVertex.class.getName());
+	private static Logger log = Logger.getLogger(UpdatePropertyOnVertex.class.getName());
 
 	public Integer updatePropertyOnServiceAtLeastCertified(String titanFile, Map<String, Object> keyValueToSet,
 			List<Map<String, Object>> orCriteria) {

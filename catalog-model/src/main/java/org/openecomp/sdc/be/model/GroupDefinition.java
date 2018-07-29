@@ -20,72 +20,110 @@
 
 package org.openecomp.sdc.be.model;
 
-import java.io.Serializable;
-import java.util.List;
-import java.util.stream.Collectors;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
+import org.openecomp.sdc.be.datatypes.elements.CapabilityDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.GroupDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.PropertiesOwner;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 
-public class GroupDefinition extends GroupDataDefinition implements Serializable {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -852613634651112247L;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
-	// properties (properties should be defined in the group type, the
-	// properties here are actually the value for the properties)
+import static java.util.stream.Collectors.*;
+
+public class GroupDefinition extends GroupDataDefinition implements PropertiesOwner{
+
+	private Map<String, List<CapabilityDefinition>> capabilities;
 	
+    public GroupDefinition() {
+        super();
+    }
 
+    public GroupDefinition(GroupDataDefinition other) {
+        super(other);
+    }
 
-
-	// The unique id of the type of this group
-
-
-	public GroupDefinition() {
-		super();
-	}
-
-	public GroupDefinition(GroupDataDefinition other) {
-		super(other);
-	}
-
-	public GroupDefinition(GroupDefinition other) {
-		this.setName(other.getName());
-		this.setUniqueId(other.getUniqueId());
-		this.setType(other.getType());
-		this.setVersion(other.getVersion());
-		this.setInvariantUUID(other.getInvariantUUID());
-		this.setGroupUUID(other.getGroupUUID());
-		this.setDescription(other.getDescription());
-		this.setTypeUid(other.getTypeUid());
-		this.setProperties(other.getProperties());
-		
-	}
-
-	public List<GroupProperty> convertToGroupProperties() {
-		List<GroupProperty> properties = null;
-		List<PropertyDataDefinition> propList = super.getProperties();
-		if(propList != null && !propList .isEmpty()){
-			 properties = propList.stream().map(pr -> new GroupProperty(pr)).collect(Collectors.toList());
+    public GroupDefinition(GroupDefinition other) {
+    	super(other);
+		if(MapUtils.isNotEmpty(other.getCapabilities())) {
+			this.setCapabilities(other.getCapabilities().entrySet()
+					.stream()
+					.collect(toMap(Map.Entry::getKey, e -> getCapabilitiesCopyList(e.getValue()))));
 		}
-		return properties;
 	}
 
-	public void convertFromGroupProperties(List<GroupProperty> properties) {
-		if(properties != null && !properties .isEmpty()){
-			List<PropertyDataDefinition> propList = properties.stream().map(pr -> new PropertyDataDefinition(pr)).collect(Collectors.toList());
-			super.setProperties(propList);
+	public Map<String, List<CapabilityDefinition>> getCapabilities() {
+		if(MapUtils.isEmpty(capabilities)) {
+			capabilities = Maps.newHashMap();
 		}
-		
+		return capabilities;
 	}
 
-	//returns true iff groupName has the same prefix has the resource
-	public boolean isSamePrefix(String resourceName){
-		String name = this.getName();
-		if ( name != null  && name.toLowerCase().trim().startsWith(resourceName.toLowerCase()))
-			return true;
-		return false;
+	public void setCapabilities(Map<String, List<CapabilityDefinition>> capabilities) {
+		this.capabilities = capabilities;
+    }
+
+    public List<GroupProperty> convertToGroupProperties() {
+        List<GroupProperty> properties = null;
+        List<PropertyDataDefinition> propList = super.getProperties();
+        if(propList != null && !propList .isEmpty()){
+			 properties = propList.stream().map(GroupProperty::new).collect(toList());
+        }
+        return properties;
+    }
+
+    public <T extends PropertyDataDefinition> void convertFromGroupProperties(List<T> properties) {
+        if(properties != null && !properties .isEmpty()){
+			List<PropertyDataDefinition> propList = properties.stream().map(PropertyDataDefinition::new).collect(toList());
+            super.setProperties(propList);
+        }
+	}
+	
+    //returns true iff groupName has the same prefix has the resource
+    public boolean isSamePrefix(String resourceName){
+        return getName() != null  && getName().toLowerCase().trim().startsWith(resourceName.toLowerCase());
+    }
+
+    public void convertCapabilityDefinitions(Map<String, CapabilityDefinition> capabilities) {
+        if(MapUtils.isNotEmpty(capabilities)){
+            this.capabilities = capabilities.values().stream()
+                                                      .collect(groupingBy(CapabilityDefinition::getType));
+        }
+    }
+
+	@Override
+	public String getNormalizedName() {
+		return getName();
+	}
+
+	@JsonIgnore
+	private List<CapabilityDefinition> getCapabilitiesCopyList(List<CapabilityDefinition> capabilities) {
+		return Lists.newArrayList(capabilities.stream().map(CapabilityDefinition::new).collect(toList()));
+	}
+
+	public void updateCapabilitiesProperties(Map<String, Map<String, CapabilityDefinition>> capabilitiesInfo) {
+		if(MapUtils.isNotEmpty(capabilities) && MapUtils.isNotEmpty(capabilitiesInfo)){
+			capabilities.entrySet().forEach(e->updateCapabilitiesProperies(e.getValue(), capabilitiesInfo.get(e.getKey())));
+		}
+	}
+
+	private void updateCapabilitiesProperies(List<CapabilityDefinition> capabilities, Map<String, CapabilityDefinition> capabilitiesInfo) {
+		if(CollectionUtils.isNotEmpty(capabilities) && MapUtils.isNotEmpty(capabilitiesInfo)){
+			capabilities.forEach(c->c.updateCapabilityProperties(capabilitiesInfo.get(c.getName())));
+		}
+	}
+
+	public void updateEmptyCapabilitiesOwnerFields(){
+    	if(MapUtils.isNotEmpty(this.capabilities)){
+    		this.capabilities.values().stream()
+					.flatMap(Collection::stream)
+					.forEach(c -> c.updateEmptyCapabilityOwnerFields(getUniqueId(), getName(), CapabilityDataDefinition.OwnerType.GROUP));
+		}
 	}
 
 }

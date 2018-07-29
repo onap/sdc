@@ -20,20 +20,8 @@
 
 package org.openecomp.sdc.be.servlets;
 
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.when;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
+import fj.data.Either;
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.eclipse.jetty.http.HttpStatus;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.client.ClientConfig;
@@ -66,7 +54,19 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.web.context.WebApplicationContext;
 
-import fj.data.Either;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.io.File;
+import java.util.List;
+
+import static java.util.Collections.emptyList;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.when;
 
 public class TypesUploadServletTest extends JerseyTest {
 
@@ -104,8 +104,7 @@ public class TypesUploadServletTest extends JerseyTest {
 
     @Test
     public void creatingCapabilityTypeSuccessTest() {
-        List<CapabilityTypeDefinition> emptyList = new ArrayList<CapabilityTypeDefinition>();
-        Either<List<CapabilityTypeDefinition>, ResponseFormat> either = Either.left(emptyList);
+        Either<List<ImmutablePair<CapabilityTypeDefinition, Boolean>>, ResponseFormat> either = Either.left(emptyList());
         when(importManager.createCapabilityTypes(Mockito.anyString())).thenReturn(either);
         FileDataBodyPart filePart = new FileDataBodyPart("capabilityTypeZip", new File("src/test/resources/types/capabilityTypes.zip"));
         MultiPart multipartEntity = new FormDataMultiPart();
@@ -113,7 +112,7 @@ public class TypesUploadServletTest extends JerseyTest {
 
         Response response = target().path("/v1/catalog/uploadType/capability").request(MediaType.APPLICATION_JSON).post(Entity.entity(multipartEntity, MediaType.MULTIPART_FORM_DATA), Response.class);
 
-        assertTrue(response.getStatus() == HttpStatus.CREATED_201);
+        assertEquals(response.getStatus(), HttpStatus.CREATED_201);
 
     }
 
@@ -131,25 +130,25 @@ public class TypesUploadServletTest extends JerseyTest {
         resourceConfig.register(MultiPartFeature.class);
         resourceConfig.register(new AbstractBinder() {
 
-            @Override
-            protected void configure() {
-                // The below code was cut-pasted to here from setup() because
-                // due to it now has
-                // to be executed during servlet initialization
-                bind(request).to(HttpServletRequest.class);
-                when(request.getSession()).thenReturn(session);
-                when(session.getServletContext()).thenReturn(servletContext);
-                String appConfigDir = "src/test/resources/config/catalog-be";
-                ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(), appConfigDir);
-                ConfigurationManager configurationManager = new ConfigurationManager(configurationSource);
-                for (String mandatoryHeader : configurationManager.getConfiguration().getIdentificationHeaderFields()) {
+                    @Override
+                    protected void configure() {
+                        // The below code was cut-pasted to here from setup() because
+                        // due to it now has
+                        // to be executed during servlet initialization
+                        bind(request).to(HttpServletRequest.class);
+                        when(request.getSession()).thenReturn(session);
+                        when(session.getServletContext()).thenReturn(servletContext);
+                        String appConfigDir = "src/test/resources/config/catalog-be";
+                        ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(), appConfigDir);
+                        ConfigurationManager configurationManager = new ConfigurationManager(configurationSource);
+                        for (String mandatoryHeader : configurationManager.getConfiguration().getIdentificationHeaderFields()) {
 
-                    when(request.getHeader(mandatoryHeader)).thenReturn(mandatoryHeader);
+                            when(request.getHeader(mandatoryHeader)).thenReturn(mandatoryHeader);
 
-                }
+                        }
 
-                when(servletContext.getAttribute(Constants.CONFIGURATION_MANAGER_ATTR)).thenReturn(configurationManager);
-            }
+                        when(servletContext.getAttribute(Constants.CONFIGURATION_MANAGER_ATTR)).thenReturn(configurationManager);
+                    }
         });
         ApplicationContext context = new AnnotationConfigApplicationContext(SpringConfig.class);
         resourceConfig.property("contextConfig", context);

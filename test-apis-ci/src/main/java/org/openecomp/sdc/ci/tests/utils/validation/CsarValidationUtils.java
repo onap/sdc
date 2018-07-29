@@ -20,16 +20,16 @@
 
 package org.openecomp.sdc.ci.tests.utils.validation;
 
-import static org.testng.AssertJUnit.assertTrue;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.ci.tests.datatypes.GroupHeatMetaDefinition;
 import org.openecomp.sdc.ci.tests.datatypes.HeatMetaFirstLevelDefinition;
 import org.openecomp.sdc.ci.tests.datatypes.TypeHeatMetaDefinition;
 import org.openecomp.sdc.ci.tests.utils.CsarParserUtils;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.testng.AssertJUnit.assertTrue;
 
 public class CsarValidationUtils {
 

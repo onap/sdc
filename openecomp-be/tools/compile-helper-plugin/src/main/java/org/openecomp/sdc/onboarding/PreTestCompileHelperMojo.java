@@ -16,13 +16,6 @@
 
 package org.openecomp.sdc.onboarding;
 
-import static org.openecomp.sdc.onboarding.Constants.JACOCO_SKIP;
-import static org.openecomp.sdc.onboarding.Constants.RESOURCES_CHANGED;
-import static org.openecomp.sdc.onboarding.Constants.SKIP_TESTS;
-import static org.openecomp.sdc.onboarding.Constants.SKIP_TEST_RUN;
-import static org.openecomp.sdc.onboarding.Constants.UNICORN;
-
-import java.util.List;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -33,6 +26,10 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
+
+import java.util.List;
+
+import static org.openecomp.sdc.onboarding.Constants.*;
 
 @Mojo(name = "pre-test-compile-helper", threadSafe = true, defaultPhase = LifecyclePhase.PROCESS_TEST_CLASSES,
         requiresDependencyResolution = ResolutionScope.TEST)

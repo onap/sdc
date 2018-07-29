@@ -20,22 +20,9 @@
 
 package org.openecomp.sdc.be.servlets;
 
-import javax.inject.Singleton;
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
+import com.jcabi.aspects.Loggable;
+import fj.data.Either;
+import io.swagger.annotations.*;
 import org.openecomp.sdc.be.components.impl.AdditionalInformationBusinessLogic;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
@@ -44,26 +31,25 @@ import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.impl.WebAppContextWrapper;
 import org.openecomp.sdc.be.model.AdditionalInformationDefinition;
 import org.openecomp.sdc.common.api.Constants;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.web.context.WebApplicationContext;
 
-import com.jcabi.aspects.Loggable;
+import javax.inject.Singleton;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
-import fj.data.Either;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/v1/catalog")
 @Api(value = "Additional Information Servlet", description = "Additional Information Servlet")
 @Singleton
 public class AdditionalInformationServlet extends BeGenericServlet {
 
-    private static final Logger log = LoggerFactory.getLogger(AdditionalInformationServlet.class);
+    private static final Logger log = Logger.getLogger(AdditionalInformationServlet.class);
 
     /**
      *
@@ -314,7 +300,7 @@ public class AdditionalInformationServlet extends BeGenericServlet {
             // create the new property
             AdditionalInformationBusinessLogic businessLogic = getBL(context);
 
-            Either<AdditionalInfoParameterInfo, ResponseFormat> either = businessLogic.createAdditionalInformation(nodeType, uniqueId, additionalInfoParameterInfo, null, userId);
+            Either<AdditionalInfoParameterInfo, ResponseFormat> either = businessLogic.createAdditionalInformation(nodeType, uniqueId, additionalInfoParameterInfo, userId);
 
             if (either.isRight()) {
                 ResponseFormat responseFormat = either.right().value();
@@ -366,7 +352,7 @@ public class AdditionalInformationServlet extends BeGenericServlet {
 
             additionalInfoParameterInfo.setUniqueId(labelId);
 
-            Either<AdditionalInfoParameterInfo, ResponseFormat> either = businessLogic.updateAdditionalInformation(nodeType, uniqueId, additionalInfoParameterInfo, null, userId);
+            Either<AdditionalInfoParameterInfo, ResponseFormat> either = businessLogic.updateAdditionalInformation(nodeType, uniqueId, additionalInfoParameterInfo, userId);
 
             if (either.isRight()) {
                 ResponseFormat responseFormat = either.right().value();
@@ -416,7 +402,7 @@ public class AdditionalInformationServlet extends BeGenericServlet {
             AdditionalInfoParameterInfo additionalInfoParameterInfo = new AdditionalInfoParameterInfo();
             additionalInfoParameterInfo.setUniqueId(labelId);
 
-            Either<AdditionalInfoParameterInfo, ResponseFormat> either = businessLogic.deleteAdditionalInformation(nodeType, uniqueId, additionalInfoParameterInfo, null, userId);
+            Either<AdditionalInfoParameterInfo, ResponseFormat> either = businessLogic.deleteAdditionalInformation(nodeType, uniqueId, additionalInfoParameterInfo, userId);
 
             if (either.isRight()) {
                 ResponseFormat responseFormat = either.right().value();
@@ -466,7 +452,7 @@ public class AdditionalInformationServlet extends BeGenericServlet {
             AdditionalInfoParameterInfo additionalInfoParameterInfo = new AdditionalInfoParameterInfo();
             additionalInfoParameterInfo.setUniqueId(labelId);
 
-            Either<AdditionalInfoParameterInfo, ResponseFormat> either = businessLogic.getAdditionalInformation(nodeType, uniqueId, additionalInfoParameterInfo, null, userId);
+            Either<AdditionalInfoParameterInfo, ResponseFormat> either = businessLogic.getAdditionalInformation(nodeType, uniqueId, additionalInfoParameterInfo, userId);
 
             if (either.isRight()) {
                 ResponseFormat responseFormat = either.right().value();
@@ -512,7 +498,7 @@ public class AdditionalInformationServlet extends BeGenericServlet {
 
             AdditionalInformationBusinessLogic businessLogic = getBL(context);
 
-            Either<AdditionalInformationDefinition, ResponseFormat> either = businessLogic.getAllAdditionalInformation(nodeType, uniqueId, null, userId);
+            Either<AdditionalInformationDefinition, ResponseFormat> either = businessLogic.getAllAdditionalInformation(nodeType, uniqueId, userId);
             if (either.isRight()) {
                 ResponseFormat responseFormat = either.right().value();
                 log.info("Failed to update additional information property. Reason - {}", responseFormat);
@@ -538,8 +524,7 @@ public class AdditionalInformationServlet extends BeGenericServlet {
     private AdditionalInformationBusinessLogic getBL(ServletContext context) {
         WebAppContextWrapper webApplicationContextWrapper = (WebAppContextWrapper) context.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR);
         WebApplicationContext webApplicationContext = webApplicationContextWrapper.getWebAppContext(context);
-        AdditionalInformationBusinessLogic bl = webApplicationContext.getBean(AdditionalInformationBusinessLogic.class);
-        return bl;
+        return webApplicationContext.getBean(AdditionalInformationBusinessLogic.class);
     }
 
 }

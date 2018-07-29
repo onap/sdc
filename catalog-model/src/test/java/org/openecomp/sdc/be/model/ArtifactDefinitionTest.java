@@ -1,11 +1,11 @@
 package org.openecomp.sdc.be.model;
 
+import org.junit.Test;
+import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
+
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-
-import org.junit.Test;
-import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
 
 
 public class ArtifactDefinitionTest {

@@ -16,10 +16,6 @@
 
 package org.openecomp.sdc.validation.base;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-
 import org.apache.commons.collections4.MapUtils;
 import org.openecomp.core.utilities.CommonMethods;
 import org.openecomp.core.validation.ErrorMessageCode;
@@ -41,6 +37,10 @@ import org.openecomp.sdc.validation.ValidationContext;
 import org.openecomp.sdc.validation.Validator;
 import org.openecomp.sdc.validation.type.ConfigConstants;
 import org.openecomp.sdc.validation.util.ValidationUtil;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * Created by TALIO on 2/16/2017.

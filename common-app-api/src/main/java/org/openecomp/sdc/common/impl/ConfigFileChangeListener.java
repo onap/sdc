@@ -20,24 +20,23 @@
 
 package org.openecomp.sdc.common.impl;
 
+import org.apache.commons.jci.listeners.FileChangeListener;
+import org.openecomp.sdc.common.api.BasicConfiguration;
+import org.openecomp.sdc.common.api.ConfigurationListener;
+import org.openecomp.sdc.common.log.wrappers.Logger;
+import org.openecomp.sdc.common.util.YamlToObjectConverter;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.jci.listeners.FileChangeListener;
-import org.openecomp.sdc.common.api.BasicConfiguration;
-import org.openecomp.sdc.common.api.ConfigurationListener;
-import org.openecomp.sdc.common.util.YamlToObjectConverter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 public class ConfigFileChangeListener extends FileChangeListener {
 
-	private static Logger log = LoggerFactory.getLogger(ConfigFileChangeListener.class.getName());
+	private static Logger log = Logger.getLogger(ConfigFileChangeListener.class.getName());
 
-	private Map<String, List<ConfigurationListener>> fileChangeToCallBack = new HashMap<String, List<ConfigurationListener>>();
+	private Map<String, List<ConfigurationListener>> fileChangeToCallBack = new HashMap<>();
 
 	private Object lock = new Object();
 
@@ -116,7 +115,7 @@ public class ConfigFileChangeListener extends FileChangeListener {
 
 				List<ConfigurationListener> callbacks = fileChangeToCallBack.get(id);
 				if (callbacks == null) {
-					callbacks = new ArrayList<ConfigurationListener>();
+					callbacks = new ArrayList<>();
 					fileChangeToCallBack.put(id, callbacks);
 				}
 				callbacks.add(configurationListener);

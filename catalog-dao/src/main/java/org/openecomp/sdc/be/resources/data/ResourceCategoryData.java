@@ -20,10 +20,10 @@
 
 package org.openecomp.sdc.be.resources.data;
 
-import java.util.Map;
-
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
+
+import java.util.Map;
 
 public class ResourceCategoryData extends CategoryData {
 

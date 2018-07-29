@@ -16,9 +16,9 @@
                 org.glassfish.jersey.media.multipart.MultiPartFeature,
                 org.openecomp.sdc.be.filters.BeServletFilter,
                 org.openecomp.sdc.be.filters.ComponentsAvailabilityFilter,
-				org.openecomp.sdc.be.servlets.DefaultExceptionMapper,
-                org.openecomp.sdc.be.servlets.ComponentExceptionMapper,
-				org.openecomp.sdc.be.servlets.StorageExceptionMapper,
+				org.openecomp.sdc.be.servlets.exception.DefaultExceptionMapper,
+                org.openecomp.sdc.be.servlets.exception.ComponentExceptionMapper,
+				org.openecomp.sdc.be.servlets.exception.StorageExceptionMapper,
                 org.openecomp.sdc.be.view.MixinModelWriter
             </param-value>
 
@@ -62,7 +62,10 @@
 			<param-name>jersey.config.server.provider.classnames</param-name>
 			<param-value>io.swagger.jersey.listing.ApiListingResourceJSON, 
 			org.glassfish.jersey.media.multipart.MultiPartFeature, 
-			org.openecomp.sdc.be.filters.BeServletFilter, 
+			org.openecomp.sdc.be.filters.BeServletFilter,
+			org.openecomp.sdc.be.servlets.exception.DefaultExceptionMapper,
+			org.openecomp.sdc.be.servlets.exception.ComponentExceptionMapper,
+			org.openecomp.sdc.be.servlets.exception.StorageExceptionMapper,
 			org.openecomp.sdc.be.filters.BasicAuthenticationFilter</param-value>
 		</init-param>
 		
@@ -199,5 +202,4 @@
 	<welcome-file-list>
 		<welcome-file>index.html</welcome-file>
 	</welcome-file-list>
-	
 </web-app>

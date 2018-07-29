@@ -24,15 +24,14 @@ import org.openecomp.sdc.be.dao.impl.ESCatalogDAO;
 import org.openecomp.sdc.be.resources.data.ESArtifactData;
 import org.openecomp.sdc.be.resources.exception.ResourceDAOException;
 import org.openecomp.sdc.be.tosca.CsarUtils;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.common.transaction.api.IDBAction;
 import org.openecomp.sdc.common.transaction.api.TransactionUtils.DBActionCodeEnum;
 import org.openecomp.sdc.common.transaction.api.TransactionUtils.ESActionTypeEnum;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class ESAction implements IDBAction {
 
-    private static final Logger log = LoggerFactory.getLogger(CsarUtils.class);
+    private static final Logger log = Logger.getLogger(CsarUtils.class.getName());
 
     private ESCatalogDAO esCatalogDao;
     private ESArtifactData artifactData;

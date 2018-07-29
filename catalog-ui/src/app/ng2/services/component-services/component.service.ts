@@ -25,6 +25,7 @@ import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/toPromise';
 import {Response, URLSearchParams} from '@angular/http';
 import { Component, InputBEModel, InstancePropertiesAPIMap, FilterPropertiesAssignmentData, OperationModel, CreateOperationResponse} from "app/models";
+import {downgradeInjectable} from '@angular/upgrade/static';
 import {COMPONENT_FIELDS} from "app/utils";
 import {ComponentGenericResponse} from "../responses/component-generic-response";
 import {InstanceBePropertiesMap} from "../../../models/properties-inputs/property-fe-map";
@@ -32,6 +33,9 @@ import {API_QUERY_PARAMS} from "app/utils";
 import { ComponentType, ServerTypeUrl } from "../../../utils/constants";
 import { HttpService } from '../http.service';
 import {SdcConfigToken, ISdcConfig} from "../../config/sdc-config.config";
+import {IDependenciesServerResponse} from "../responses/dependencies-server-response";
+import {AutomatedUpgradeGenericResponse} from "../responses/automated-upgrade-response";
+import {IAutomatedUpgradeRequestObj} from "../../pages/automated-upgrade/automated-upgrade.service";
 
 declare var angular:angular.IAngularStatic;
 
@@ -83,7 +87,11 @@ export class ComponentServiceNg2 {
     }
 
     getComponentCompositionData(component:Component):Observable<ComponentGenericResponse> {
-        return this.getComponentDataByFieldsName(component.componentType, component.uniqueId, [COMPONENT_FIELDS.COMPONENT_INSTANCES_RELATION, COMPONENT_FIELDS.COMPONENT_INSTANCES, COMPONENT_FIELDS.COMPONENT_POLICIES, COMPONENT_FIELDS.COMPONENT_GROUPS]);
+        return this.getComponentDataByFieldsName(component.componentType, component.uniqueId, [COMPONENT_FIELDS.COMPONENT_INSTANCES_RELATION, COMPONENT_FIELDS.COMPONENT_INSTANCES, COMPONENT_FIELDS.COMPONENT_NON_EXCLUDED_POLICIES, COMPONENT_FIELDS.COMPONENT_NON_EXCLUDED_GROUPS]);
+    }
+
+    getComponentResourcePropertiesData(component:Component):Observable<ComponentGenericResponse> {
+        return this.getComponentDataByFieldsName(component.componentType, component.uniqueId, [COMPONENT_FIELDS.COMPONENT_INSTANCES, COMPONENT_FIELDS.COMPONENT_POLICIES, COMPONENT_FIELDS.COMPONENT_NON_EXCLUDED_GROUPS]);
     }
 
     getComponentResourceInstances(component:Component):Observable<ComponentGenericResponse> {
@@ -171,6 +179,15 @@ export class ComponentServiceNg2 {
             })
     }
 
+    restoreComponent(componentType:string, componentId:string){ 
+        return this.http.post(this.baseUrl + this.getServerTypeUrl(componentType) + componentId + '/restore', {})
+    }
+
+    archiveComponent(componentType:string, componentId:string){
+        return this.http.post(this.baseUrl + this.getServerTypeUrl(componentType) + componentId + '/archive', {})
+    }
+
+
     deleteInput(component:Component, input:InputBEModel):Observable<InputBEModel> {
 
         return this.http.delete(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/delete/' + input.uniqueId + '/input')
@@ -195,6 +212,20 @@ export class ComponentServiceNg2 {
 
         return this.http.get(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/filteredproperties/' + filterData.propertyName, {search: params})
             .map((res: Response) => {
+                return res.json();
+            });
+    }
+
+    getDependencies(componentType:string, componentId: string):Observable<Array<IDependenciesServerResponse>> {
+        return this.http.get(this.baseUrl + this.getServerTypeUrl(componentType) + componentId + '/dependencies')
+            .map((res:Response) => {
+                return res.json();
+            });
+    }
+
+    automatedUpgrade(componentType:string, componentId: string, componentsIdsToUpgrade:Array<IAutomatedUpgradeRequestObj>):Observable<AutomatedUpgradeGenericResponse> {
+        return this.http.post(this.baseUrl + this.getServerTypeUrl(componentType) + componentId + '/automatedupgrade', componentsIdsToUpgrade)
+            .map((res:Response) => {
                 return res.json();
             });
     }

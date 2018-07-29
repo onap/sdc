@@ -17,15 +17,8 @@
 
 package org.openecomp.sdc.be.components.impl;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
-
+import com.google.common.collect.Sets;
+import fj.data.Either;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
@@ -37,13 +30,7 @@ import org.openecomp.sdc.be.dao.cassandra.CassandraOperationStatus;
 import org.openecomp.sdc.be.datamodel.utils.UiComponentDataConverter;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
-import org.openecomp.sdc.be.model.ArtifactDefinition;
-import org.openecomp.sdc.be.model.ComponentInstance;
-import org.openecomp.sdc.be.model.ComponentParametersView;
-import org.openecomp.sdc.be.model.InterfaceDefinition;
-import org.openecomp.sdc.be.model.Operation;
-import org.openecomp.sdc.be.model.Resource;
-import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.*;
 import org.openecomp.sdc.be.model.jsontitan.operations.InterfaceOperation;
 import org.openecomp.sdc.be.model.jsontitan.utils.InterfaceUtils;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
@@ -56,9 +43,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.google.common.collect.Sets;
-
-import fj.data.Either;
+import java.util.*;
 
 @Component("interfaceOperationBusinessLogic")
 public class InterfaceOperationBusinessLogic extends ComponentBusinessLogic{
@@ -74,6 +59,9 @@ public class InterfaceOperationBusinessLogic extends ComponentBusinessLogic{
 
     @Autowired
     private ArtifactCassandraDao artifactCassandraDao;
+
+    @Autowired
+    private UiComponentDataConverter uiComponentDataConverter;
 
     public void setInterfaceOperation(InterfaceOperation interfaceOperation) {
         this.interfaceOperation = interfaceOperation;
@@ -95,9 +83,7 @@ public class InterfaceOperationBusinessLogic extends ComponentBusinessLogic{
 
     public Either<Resource, ResponseFormat> deleteInterfaceOperation(String resourceId, Set<String> interfaceOperationToDelete, User user, boolean lock) {
         Resource resourceToDelete = initResourceToDeleteWFOp(resourceId, interfaceOperationToDelete);
-        Either<Resource, ResponseFormat> eitherDelete = validateUserAndRole(resourceToDelete, user, "deleteInterfaceOperation");
-        if (eitherDelete != null)
-            return eitherDelete;
+        validateUserAndRole(resourceToDelete, user, "deleteInterfaceOperation");
         if (CollectionUtils.isEmpty(interfaceOperationToDelete)){
             LOGGER.debug("Invalid parameter interfaceOperationToDelete was empty");
             return Either.right(componentsUtils.getResponseFormat(ActionStatus.INVALID_PROPERTY));
@@ -253,10 +239,8 @@ public class InterfaceOperationBusinessLogic extends ComponentBusinessLogic{
     }
 
     private Either<Resource, ResponseFormat> createOrUpdateInterfaceOperation(String resourceId, Resource resourceUpdate, User user, boolean isUpdate, String errorContext, boolean lock) {
-        Either<Resource, ResponseFormat> eitherCreator = validateUserAndRole(resourceUpdate, user, errorContext);
-        if (eitherCreator != null)
-            return eitherCreator;
-
+        validateUserAndRole(resourceUpdate, user, errorContext);
+        
         Either<Resource, ResponseFormat> resourceEither = getResourceDetails(resourceId);
         if (resourceEither.isRight()){
             return resourceEither;
@@ -370,18 +354,9 @@ public class InterfaceOperationBusinessLogic extends ComponentBusinessLogic{
         return resourceToDelete;
     }
 
-    private Either<Resource, ResponseFormat> validateUserAndRole(Resource resourceUpdate, User user, String errorContext) {
-        Either<User, ResponseFormat> userEither = validateUser(user, errorContext, resourceUpdate, null, false);
-        if (userEither.isRight()) {
-            return Either.right(userEither.right().value());
-        }
-        user = userEither.left().value();
-
-        Either<Boolean, ResponseFormat> userRoleEither = validateUserRole(user, resourceUpdate, new ArrayList<>(), null, null);
-        if (userRoleEither.isRight()) {
-            return Either.right(userRoleEither.right().value());
-        }
-        return null;
+    private void validateUserAndRole(Resource resourceUpdate, User user, String errorContext) {
+    	user = validateUser(user, errorContext, resourceUpdate, null, false);
+        validateUserRole(user, resourceUpdate, new ArrayList<>(), null, null);
     }
 
 
@@ -417,12 +392,6 @@ public class InterfaceOperationBusinessLogic extends ComponentBusinessLogic{
     }
 
     @Override
-    public Either<List<ComponentInstance>, ResponseFormat> getComponentInstancesFilteredByPropertiesAndInputs(String componentId,
-                                                                                                              ComponentTypeEnum componentTypeEnum, String userId, String searchText) {
-        return null;
-    }
-
-    @Override
     public Either<UiComponentDataTransfer, ResponseFormat> getUiComponentDataTransferByComponentId(String resourceId,
                                                                                                    List<String> dataParamsToReturn) {
         ComponentParametersView paramsToRetuen = new ComponentParametersView(dataParamsToReturn);
@@ -441,8 +410,16 @@ public class InterfaceOperationBusinessLogic extends ComponentBusinessLogic{
         }
 
         Resource resource = resourceResultEither.left().value();
-        UiComponentDataTransfer dataTransfer = UiComponentDataConverter.getUiDataTransferFromResourceByParams(resource,
+        UiComponentDataTransfer dataTransfer = uiComponentDataConverter.getUiDataTransferFromResourceByParams(resource,
                 dataParamsToReturn);
         return Either.left(dataTransfer);
     }
+
+	@Override
+	public Either<List<ComponentInstance>, ResponseFormat> getComponentInstancesFilteredByPropertiesAndInputs(
+			String componentId, String userId) {
+		return null;
+	}
+
+
 }

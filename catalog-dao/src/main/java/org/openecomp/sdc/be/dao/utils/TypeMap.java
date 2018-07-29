@@ -24,12 +24,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class TypeMap {
-	private Map<Class<? extends Object>, Map<String, Object>> cacheMap = new HashMap<Class<? extends Object>, Map<String, Object>>();
+	private Map<Class<? extends Object>, Map<String, Object>> cacheMap = new HashMap<>();
 
 	private Map<String, Object> getMap(Class<? extends Object> clazz) {
 		Map<String, Object> map = cacheMap.get(clazz);
 		if (map == null) {
-			cacheMap.put(clazz, new HashMap<String, Object>());
+			cacheMap.put(clazz, new HashMap<>());
 		}
 		return cacheMap.get(clazz);
 	}

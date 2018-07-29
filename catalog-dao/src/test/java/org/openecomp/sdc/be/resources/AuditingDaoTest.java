@@ -20,18 +20,7 @@
 
 package org.openecomp.sdc.be.resources;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import javax.annotation.Resource;
-
+import fj.data.Either;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexResponse;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.index.query.MatchAllQueryBuilder;
@@ -46,15 +35,10 @@ import org.openecomp.sdc.be.config.Configuration.ElasticSearchConfig.IndicesTime
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.es.ElasticSearchClient;
 import org.openecomp.sdc.be.dao.impl.AuditingDao;
-import org.openecomp.sdc.be.resources.data.auditing.AuditingGenericEvent;
-import org.openecomp.sdc.be.resources.data.auditing.DistributionNotificationEvent;
-import org.openecomp.sdc.be.resources.data.auditing.DistributionStatusEvent;
-import org.openecomp.sdc.be.resources.data.auditing.ResourceAdminEvent;
-import org.openecomp.sdc.be.resources.data.auditing.UserAccessEvent;
-import org.openecomp.sdc.be.resources.data.auditing.UserAdminEvent;
+import org.openecomp.sdc.be.resources.data.auditing.*;
 import org.openecomp.sdc.be.utils.DAOConfDependentTest;
 import org.openecomp.sdc.common.api.Constants;
-import org.openecomp.sdc.common.datastructure.AuditingFieldsKeysEnum;
+import org.openecomp.sdc.common.datastructure.AuditingFieldsKey;
 import org.openecomp.sdc.common.datastructure.ESTimeBasedEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,7 +49,14 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 
-import fj.data.Either;
+import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import static org.junit.Assert.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:application-context-test.xml")
@@ -95,7 +86,7 @@ public class AuditingDaoTest extends DAOConfDependentTest{
 				.prepareDelete(auditingDao.getIndexPrefix() + "*").execute().actionGet();
 		if (!deleteResponse.isAcknowledged()) {
 			log.debug("Couldn't delete old auditing indexes!");
-			assertTrue(false);
+            fail();
 		}
 	}
 
@@ -108,7 +99,7 @@ public class AuditingDaoTest extends DAOConfDependentTest{
 		String expectedIndexName = auditingDao.getIndexPrefix() + "-2015-06-23-13-34";
 		assertTrue(!esclient.getClient().admin().indices().prepareExists(expectedIndexName).execute().actionGet()
 				.isExists());
-		Map<AuditingFieldsKeysEnum, Object> params = getUserAdminEventParams(timestamp);
+		Map<AuditingFieldsKey, Object> params = getUserAdminEventParams(timestamp);
 		testCreationPeriodScenario(params, creationPeriod, expectedIndexName, UserAdminEvent.class);
 		params = getUserAccessEventParams(timestamp);
 		testCreationPeriodScenario(params, creationPeriod, expectedIndexName, UserAccessEvent.class);
@@ -124,7 +115,7 @@ public class AuditingDaoTest extends DAOConfDependentTest{
 		String expectedIndexName = auditingDao.getIndexPrefix() + "-2016";
 		assertTrue(!esclient.getClient().admin().indices().prepareExists(expectedIndexName).execute().actionGet()
 				.isExists());
-		Map<AuditingFieldsKeysEnum, Object> params = getUserAdminEventParams(timestamp);
+		Map<AuditingFieldsKey, Object> params = getUserAdminEventParams(timestamp);
 		testCreationPeriodScenario(params, creationPeriod, expectedIndexName, UserAdminEvent.class);
 		params = getUserAccessEventParams(timestamp);
 		testCreationPeriodScenario(params, creationPeriod, expectedIndexName, UserAccessEvent.class);
@@ -140,14 +131,14 @@ public class AuditingDaoTest extends DAOConfDependentTest{
 		String expectedIndexName1 = auditingDao.getIndexPrefix() + "-2016-06";
 		assertTrue(!esclient.getClient().admin().indices().prepareExists(expectedIndexName1).execute().actionGet()
 				.isExists());
-		Map<AuditingFieldsKeysEnum, Object> params = getDistributionStatusEventParams(timestamp1);
+		Map<AuditingFieldsKey, Object> params = getDistributionStatusEventParams(timestamp1);
 		testCreationPeriodScenario(params, creationPeriod, expectedIndexName1, DistributionStatusEvent.class);
 		String timestamp2 = "2015-06-23 13:34:53.123";
 
 		String expectedIndexName2 = auditingDao.getIndexPrefix() + "-2015-06";
 		assertTrue(!esclient.getClient().admin().indices().prepareExists(expectedIndexName2).execute().actionGet()
 				.isExists());
-		Map<AuditingFieldsKeysEnum, Object> params2 = getDistributionStatusEventParams(timestamp2);
+		Map<AuditingFieldsKey, Object> params2 = getDistributionStatusEventParams(timestamp2);
 		testCreationPeriodScenario(params2, creationPeriod, expectedIndexName2, DistributionStatusEvent.class);
 		Either<List<ESTimeBasedEvent>, ActionStatus> status = auditingDao.getListOfDistributionStatuses("123-456");
 		assertEquals(2, status.left().value().size());
@@ -166,9 +157,9 @@ public class AuditingDaoTest extends DAOConfDependentTest{
 		assertTrue(!esclient.getClient().admin().indices().prepareExists(expectedIndexName2).execute().actionGet()
 				.isExists());
 
-		Map<AuditingFieldsKeysEnum, Object> params1 = getUserAdminEventParams(timestamp1);
+		Map<AuditingFieldsKey, Object> params1 = getUserAdminEventParams(timestamp1);
 		testCreationPeriodScenario(params1, creationPeriod, expectedIndexName1, UserAdminEvent.class);
-		Map<AuditingFieldsKeysEnum, Object> params2 = getUserAdminEventParams(timestamp2);
+		Map<AuditingFieldsKey, Object> params2 = getUserAdminEventParams(timestamp2);
 		testCreationPeriodScenario(params2, creationPeriod, expectedIndexName2, UserAdminEvent.class);
 
 		long count = auditingDao.count(UserAdminEvent.class, new MatchAllQueryBuilder());
@@ -184,7 +175,7 @@ public class AuditingDaoTest extends DAOConfDependentTest{
 		String expectedIndexName = auditingDao.getIndexPrefix() + "-2016-06";
 		assertTrue(!esclient.getClient().admin().indices().prepareExists(expectedIndexName).execute().actionGet()
 				.isExists());
-		Map<AuditingFieldsKeysEnum, Object> params = getUserAdminEventParams(timestamp);
+		Map<AuditingFieldsKey, Object> params = getUserAdminEventParams(timestamp);
 		testCreationPeriodScenario(params, creationPeriod, expectedIndexName, UserAdminEvent.class);
 		params = getUserAccessEventParams(timestamp);
 		testCreationPeriodScenario(params, creationPeriod, expectedIndexName, UserAccessEvent.class);
@@ -205,7 +196,7 @@ public class AuditingDaoTest extends DAOConfDependentTest{
 		String expectedIndexName = auditingDao.getIndexPrefix() + "-2016-06";
 		assertTrue(!esclient.getClient().admin().indices().prepareExists(expectedIndexName).execute().actionGet()
 				.isExists());
-		Map<AuditingFieldsKeysEnum, Object> params = getUserAdminEventParams(timestamp);
+		Map<AuditingFieldsKey, Object> params = getUserAdminEventParams(timestamp);
 		testCreationPeriodScenario(params, creationPeriod, expectedIndexName, UserAdminEvent.class);
 		params = getUserAccessEventParams(timestamp);
 		testCreationPeriodScenario(params, creationPeriod, expectedIndexName, UserAccessEvent.class);
@@ -215,8 +206,8 @@ public class AuditingDaoTest extends DAOConfDependentTest{
 
 	@Test
 	public void testGetFilteredResourceAdminAuditingEvents() {
-		Map<AuditingFieldsKeysEnum, Object> filterMap = new HashMap<>();
-		filterMap.put(AuditingFieldsKeysEnum.AUDIT_ACTION, new Object());
+		Map<AuditingFieldsKey, Object> filterMap = new HashMap<>();
+		filterMap.put(AuditingFieldsKey.AUDIT_ACTION, new Object());
 		Either<List<ESTimeBasedEvent>, ActionStatus> filteredResourceAdminAuditingEvents = auditingDao
 				.getFilteredResourceAdminAuditingEvents(filterMap);
 	}
@@ -229,8 +220,8 @@ public class AuditingDaoTest extends DAOConfDependentTest{
 				.getListOfDistributionByAction("mock", "mock", null, AuditingGenericEvent.class);
 	}
 	
-	private SearchResponse testCreationPeriodScenario(Map<AuditingFieldsKeysEnum, Object> params, String creationPeriod,
-			String expectedIndexName, Class<? extends AuditingGenericEvent> clazz) {
+	private SearchResponse testCreationPeriodScenario(Map<AuditingFieldsKey, Object> params, String creationPeriod,
+                                                      String expectedIndexName, Class<? extends AuditingGenericEvent> clazz) {
 
 		String typeName = clazz.getSimpleName().toLowerCase();
 		log.debug("Testing auditing type {}", typeName);
@@ -252,11 +243,11 @@ public class AuditingDaoTest extends DAOConfDependentTest{
 		return searchResponse;
 	}
 
-	private void validateHitValues(Map<AuditingFieldsKeysEnum, Object> params, SearchHit searchHit) {
+	private void validateHitValues(Map<AuditingFieldsKey, Object> params, SearchHit searchHit) {
 		Map<String, Object> source = searchHit.getSource();
 		log.debug("Hit source is {}", searchHit.sourceAsString());
-		for (Entry<AuditingFieldsKeysEnum, Object> paramsEntry : params.entrySet()) {
-			AuditingFieldsKeysEnum key = paramsEntry.getKey();
+		for (Entry<AuditingFieldsKey, Object> paramsEntry : params.entrySet()) {
+			AuditingFieldsKey key = paramsEntry.getKey();
 			log.debug("Testing auditing field {}", key.name());
 			Object value = paramsEntry.getValue();
 			// assertEquals(value, source.get(auditField2esField.get(key)));
@@ -273,9 +264,9 @@ public class AuditingDaoTest extends DAOConfDependentTest{
 		configuration.getElasticSearch().setIndicesTimeFrequency(indicesTimeFrequencyEntries);
 	}
 
-	private Map<AuditingFieldsKeysEnum, Object> getUserAdminEventParams(String timestamp) {
+	private Map<AuditingFieldsKey, Object> getUserAdminEventParams(String timestamp) {
 
-		Map<AuditingFieldsKeysEnum, Object> params = new HashMap<AuditingFieldsKeysEnum, Object>();
+		Map<AuditingFieldsKey, Object> params = new HashMap<>();
 		String action = "updateUser";
 		String modifierName = "moshe moshe";
 		String modifierUid = "mosheUid";
@@ -289,41 +280,41 @@ public class AuditingDaoTest extends DAOConfDependentTest{
 		String userStatus = "200";
 		String userDesc = "OK";
 
-		params.put(AuditingFieldsKeysEnum.AUDIT_ACTION, action);
-		params.put(AuditingFieldsKeysEnum.AUDIT_MODIFIER_UID, modifierName + '(' + modifierUid + ')');
-		params.put(AuditingFieldsKeysEnum.AUDIT_USER_UID, userUid);
-		params.put(AuditingFieldsKeysEnum.AUDIT_USER_BEFORE,
+		params.put(AuditingFieldsKey.AUDIT_ACTION, action);
+		params.put(AuditingFieldsKey.AUDIT_MODIFIER_UID, modifierName + '(' + modifierUid + ')');
+		params.put(AuditingFieldsKey.AUDIT_USER_UID, userUid);
+		params.put(AuditingFieldsKey.AUDIT_USER_BEFORE,
 				userUid + ", " + userBeforeName + ", " + userBeforeEmail + ", " + userBeforeRole);
-		params.put(AuditingFieldsKeysEnum.AUDIT_USER_AFTER,
+		params.put(AuditingFieldsKey.AUDIT_USER_AFTER,
 				userUid + ", " + userAfterName + ", " + userAfterEmail + ", " + userAfterRole);
-		params.put(AuditingFieldsKeysEnum.AUDIT_STATUS, userStatus);
-		params.put(AuditingFieldsKeysEnum.AUDIT_DESC, userDesc);
-		params.put(AuditingFieldsKeysEnum.AUDIT_TIMESTAMP, timestamp);
+		params.put(AuditingFieldsKey.AUDIT_STATUS, userStatus);
+		params.put(AuditingFieldsKey.AUDIT_DESC, userDesc);
+		params.put(AuditingFieldsKey.AUDIT_TIMESTAMP, timestamp);
 
 		return params;
 	}
 
-	private Map<AuditingFieldsKeysEnum, Object> getUserAccessEventParams(String timestamp) {
+	private Map<AuditingFieldsKey, Object> getUserAccessEventParams(String timestamp) {
 
-		Map<AuditingFieldsKeysEnum, Object> params = new HashMap<AuditingFieldsKeysEnum, Object>();
+		Map<AuditingFieldsKey, Object> params = new HashMap<>();
 		String action = "userAccess";
 		String userUid = "mosheUid";
 		String userName = "moshe moshe";
 		String userStatus = "200";
 		String userDesc = "OK";
 
-		params.put(AuditingFieldsKeysEnum.AUDIT_ACTION, action);
-		params.put(AuditingFieldsKeysEnum.AUDIT_USER_UID, userName + '(' + userUid + ')');
-		params.put(AuditingFieldsKeysEnum.AUDIT_STATUS, userStatus);
-		params.put(AuditingFieldsKeysEnum.AUDIT_DESC, userDesc);
-		params.put(AuditingFieldsKeysEnum.AUDIT_TIMESTAMP, timestamp);
+		params.put(AuditingFieldsKey.AUDIT_ACTION, action);
+		params.put(AuditingFieldsKey.AUDIT_USER_UID, userName + '(' + userUid + ')');
+		params.put(AuditingFieldsKey.AUDIT_STATUS, userStatus);
+		params.put(AuditingFieldsKey.AUDIT_DESC, userDesc);
+		params.put(AuditingFieldsKey.AUDIT_TIMESTAMP, timestamp);
 
 		return params;
 	}
 
-	private Map<AuditingFieldsKeysEnum, Object> getResourceAdminEventParams(String timestamp, String action) {
+	private Map<AuditingFieldsKey, Object> getResourceAdminEventParams(String timestamp, String action) {
 
-		Map<AuditingFieldsKeysEnum, Object> params = new HashMap<AuditingFieldsKeysEnum, Object>();
+		Map<AuditingFieldsKey, Object> params = new HashMap<>();
 
 		String modifierName = "moshe moshe";
 		String modifierUid = "mosheUid";
@@ -338,27 +329,27 @@ public class AuditingDaoTest extends DAOConfDependentTest{
 		String distributionId = "123-456";
 		String serviceId = "SeviceId";
 
-		params.put(AuditingFieldsKeysEnum.AUDIT_ACTION, action);
-		params.put(AuditingFieldsKeysEnum.AUDIT_MODIFIER_NAME, modifierName);
-		params.put(AuditingFieldsKeysEnum.AUDIT_MODIFIER_UID, modifierUid);
-		params.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_NAME, resourceName);
-		params.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_TYPE, resourceType);
-		params.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_CURR_STATE, currState);
-		params.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_PREV_STATE, prevState);
-		params.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_CURR_VERSION, currVersion);
-		params.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_PREV_VERSION, prevVersion);
-		params.put(AuditingFieldsKeysEnum.AUDIT_STATUS, status);
-		params.put(AuditingFieldsKeysEnum.AUDIT_DESC, desc);
-		params.put(AuditingFieldsKeysEnum.AUDIT_TIMESTAMP, timestamp);
-		params.put(AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_ID, distributionId);
-		params.put(AuditingFieldsKeysEnum.AUDIT_SERVICE_INSTANCE_ID, serviceId);
+		params.put(AuditingFieldsKey.AUDIT_ACTION, action);
+		params.put(AuditingFieldsKey.AUDIT_MODIFIER_NAME, modifierName);
+		params.put(AuditingFieldsKey.AUDIT_MODIFIER_UID, modifierUid);
+		params.put(AuditingFieldsKey.AUDIT_RESOURCE_NAME, resourceName);
+		params.put(AuditingFieldsKey.AUDIT_RESOURCE_TYPE, resourceType);
+		params.put(AuditingFieldsKey.AUDIT_RESOURCE_CURR_STATE, currState);
+		params.put(AuditingFieldsKey.AUDIT_RESOURCE_PREV_STATE, prevState);
+		params.put(AuditingFieldsKey.AUDIT_RESOURCE_CURR_VERSION, currVersion);
+		params.put(AuditingFieldsKey.AUDIT_RESOURCE_PREV_VERSION, prevVersion);
+		params.put(AuditingFieldsKey.AUDIT_STATUS, status);
+		params.put(AuditingFieldsKey.AUDIT_DESC, desc);
+		params.put(AuditingFieldsKey.AUDIT_TIMESTAMP, timestamp);
+		params.put(AuditingFieldsKey.AUDIT_DISTRIBUTION_ID, distributionId);
+		params.put(AuditingFieldsKey.AUDIT_SERVICE_INSTANCE_ID, serviceId);
 
 		return params;
 	}
 
-	private Map<AuditingFieldsKeysEnum, Object> getDistributionStatusEventParams(String timestamp) {
+	private Map<AuditingFieldsKey, Object> getDistributionStatusEventParams(String timestamp) {
 
-		Map<AuditingFieldsKeysEnum, Object> params = new HashMap<AuditingFieldsKeysEnum, Object>();
+		Map<AuditingFieldsKey, Object> params = new HashMap<>();
 		String action = "DStatus";
 		String modifierName = "moshe moshe";
 		String modifierUid = "mosheUid";
@@ -370,16 +361,16 @@ public class AuditingDaoTest extends DAOConfDependentTest{
 		String status = "200";
 		String desc = "OK";
 
-		params.put(AuditingFieldsKeysEnum.AUDIT_DESC, desc);
-		params.put(AuditingFieldsKeysEnum.AUDIT_TIMESTAMP, timestamp);
-		params.put(AuditingFieldsKeysEnum.AUDIT_STATUS, status);
-		params.put(AuditingFieldsKeysEnum.AUDIT_ACTION, action);
-		params.put(AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_ID, distributionId);
-		params.put(AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_CONSUMER_ID, modifierUid);
-		params.put(AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_TOPIC_NAME, topicName);
-		params.put(AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_RESOURCE_URL, resourceUrl);
-		params.put(AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_STATUS_TIME, timestamp);
-		params.put(AuditingFieldsKeysEnum.AUDIT_SERVICE_INSTANCE_ID, serviceId);
+		params.put(AuditingFieldsKey.AUDIT_DESC, desc);
+		params.put(AuditingFieldsKey.AUDIT_TIMESTAMP, timestamp);
+		params.put(AuditingFieldsKey.AUDIT_STATUS, status);
+		params.put(AuditingFieldsKey.AUDIT_ACTION, action);
+		params.put(AuditingFieldsKey.AUDIT_DISTRIBUTION_ID, distributionId);
+		params.put(AuditingFieldsKey.AUDIT_DISTRIBUTION_CONSUMER_ID, modifierUid);
+		params.put(AuditingFieldsKey.AUDIT_DISTRIBUTION_TOPIC_NAME, topicName);
+		params.put(AuditingFieldsKey.AUDIT_DISTRIBUTION_RESOURCE_URL, resourceUrl);
+		params.put(AuditingFieldsKey.AUDIT_DISTRIBUTION_STATUS_TIME, timestamp);
+		params.put(AuditingFieldsKey.AUDIT_SERVICE_INSTANCE_ID, serviceId);
 
 		return params;
 	}
@@ -411,11 +402,11 @@ public class AuditingDaoTest extends DAOConfDependentTest{
 		//
 		//
 
-		Map<AuditingFieldsKeysEnum, Object> params = getResourceAdminEventParams(timestamp, "DRequest");
-		params.put(AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_ID, distributionId);
+		Map<AuditingFieldsKey, Object> params = getResourceAdminEventParams(timestamp, "DRequest");
+		params.put(AuditingFieldsKey.AUDIT_DISTRIBUTION_ID, distributionId);
 		testCreationPeriodScenario(params, creationPeriod, expectedIndexName, ResourceAdminEvent.class);
 		params = getDistributionNotificationEventParams(timestamp);
-		params.put(AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_ID, distributionId);
+		params.put(AuditingFieldsKey.AUDIT_DISTRIBUTION_ID, distributionId);
 
 		testCreationPeriodScenario(params, creationPeriod, expectedIndexName, DistributionNotificationEvent.class);
 
@@ -431,9 +422,9 @@ public class AuditingDaoTest extends DAOConfDependentTest{
 
 	}
 
-	private Map<AuditingFieldsKeysEnum, Object> getDistributionNotificationEventParams(String timestamp) {
+	private Map<AuditingFieldsKey, Object> getDistributionNotificationEventParams(String timestamp) {
 
-		Map<AuditingFieldsKeysEnum, Object> params = new HashMap<AuditingFieldsKeysEnum, Object>();
+		Map<AuditingFieldsKey, Object> params = new HashMap<>();
 
 		String action = "DNotify";
 		String modifierName = "moshe moshe";
@@ -450,20 +441,20 @@ public class AuditingDaoTest extends DAOConfDependentTest{
 		String serviceId = "SeviceId";
 		String requestId = "12364";
 
-		params.put(AuditingFieldsKeysEnum.AUDIT_ACTION, action);
-		params.put(AuditingFieldsKeysEnum.AUDIT_MODIFIER_NAME, requestId);
-		params.put(AuditingFieldsKeysEnum.AUDIT_MODIFIER_UID, modifierUid);
-		params.put(AuditingFieldsKeysEnum.AUDIT_MODIFIER_NAME, modifierName);
-		params.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_NAME, resourceName);
-		params.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_TYPE, resourceType);
-		params.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_CURR_STATE, currState);
-		params.put(AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_TOPIC_NAME, topicName);
-		params.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_CURR_VERSION, currVersion);
-		params.put(AuditingFieldsKeysEnum.AUDIT_STATUS, status);
-		params.put(AuditingFieldsKeysEnum.AUDIT_DESC, desc);
-		params.put(AuditingFieldsKeysEnum.AUDIT_TIMESTAMP, timestamp);
-		params.put(AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_ID, did);
-		params.put(AuditingFieldsKeysEnum.AUDIT_SERVICE_INSTANCE_ID, serviceId);
+		params.put(AuditingFieldsKey.AUDIT_ACTION, action);
+		params.put(AuditingFieldsKey.AUDIT_MODIFIER_NAME, requestId);
+		params.put(AuditingFieldsKey.AUDIT_MODIFIER_UID, modifierUid);
+		params.put(AuditingFieldsKey.AUDIT_MODIFIER_NAME, modifierName);
+		params.put(AuditingFieldsKey.AUDIT_RESOURCE_NAME, resourceName);
+		params.put(AuditingFieldsKey.AUDIT_RESOURCE_TYPE, resourceType);
+		params.put(AuditingFieldsKey.AUDIT_RESOURCE_CURR_STATE, currState);
+		params.put(AuditingFieldsKey.AUDIT_DISTRIBUTION_TOPIC_NAME, topicName);
+		params.put(AuditingFieldsKey.AUDIT_RESOURCE_CURR_VERSION, currVersion);
+		params.put(AuditingFieldsKey.AUDIT_STATUS, status);
+		params.put(AuditingFieldsKey.AUDIT_DESC, desc);
+		params.put(AuditingFieldsKey.AUDIT_TIMESTAMP, timestamp);
+		params.put(AuditingFieldsKey.AUDIT_DISTRIBUTION_ID, did);
+		params.put(AuditingFieldsKey.AUDIT_SERVICE_INSTANCE_ID, serviceId);
 		return params;
 	}
 

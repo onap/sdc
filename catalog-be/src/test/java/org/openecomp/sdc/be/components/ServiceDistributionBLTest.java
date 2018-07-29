@@ -1,10 +1,6 @@
 package org.openecomp.sdc.be.components;
 
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
-
+import fj.data.Either;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -28,14 +24,17 @@ import org.openecomp.sdc.be.model.DistributionStatusEnum;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
-import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.common.api.ConfigurationSource;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;
 import org.openecomp.sdc.common.impl.FSConfigurationSource;
 import org.openecomp.sdc.common.util.ThreadLocalsHolder;
 import org.openecomp.sdc.exception.ResponseFormat;
 
-import fj.data.Either;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
 
 /**
  * Created by chaya on 10/26/2017.
@@ -101,91 +100,77 @@ public class ServiceDistributionBLTest {
                 .thenReturn(Either.right(new ResponseFormat(VALIDATION_FAIL_STATUS)));
         Either<String, ResponseFormat> stringResponseFormatEither = callActivateServiceOnTenantWIthDefaults();
         assertTrue(stringResponseFormatEither.isRight());
-        assertTrue(stringResponseFormatEither.right().value().getStatus() == VALIDATION_FAIL_STATUS);
-    }
-
-    @Test
-    public void testNoDeploymentArtifacts() {
-        when(serviceDistributionValidation.validateActivateServiceRequest
-                (anyString(), anyString(),any(User.class), any(ServiceDistributionReqInfo.class)))
-                .thenReturn(Either.left(activationRequestInformation));
-        when(healthCheckBusinessLogic.isDistributionEngineUp()).thenReturn(true);
-        when(distributionEngine.verifyServiceHasDeploymentArtifacts(any(Service.class)))
-                .thenReturn(StorageOperationStatus.DISTR_ARTIFACT_NOT_FOUND);
-        Either<String, ResponseFormat> stringResponseFormatEither = callActivateServiceOnTenantWIthDefaults();
-        assertTrue(stringResponseFormatEither.isRight());
-        assertTrue(stringResponseFormatEither.right().value().getStatus() == 409);
-        assertTrue(stringResponseFormatEither.right().value().getMessageId().equals("SVC4139"));
+        assertEquals((int) stringResponseFormatEither.right().value().getStatus(), VALIDATION_FAIL_STATUS);
     }
 
     //TODO see if we want to add ActionStatus.AUTHENTICATION_ERROR to error-configuration.yaml
     @Test
     public void testDistributionAuthenticationFails() {
         mockAllMethodsUntilDENotification();
-        when(distributionEngine.notifyService(anyString(),any(Service.class), any(INotificationData.class), anyString(),anyString(), anyString(), anyString()))
+        when(distributionEngine.notifyService(anyString(),any(Service.class), any(INotificationData.class), anyString(),any(User.class)))
                 .thenReturn(ActionStatus.AUTHENTICATION_ERROR);
         Either<String, ResponseFormat> stringResponseFormatEither = callActivateServiceOnTenantWIthDefaults();
         assertTrue(stringResponseFormatEither.isRight());
-        assertTrue(stringResponseFormatEither.right().value().getStatus() == 502);
-        assertTrue(stringResponseFormatEither.right().value().getMessageId().equals("SVC4676"));
+        assertEquals(502, (int) stringResponseFormatEither.right().value().getStatus());
+        assertEquals("SVC4676", stringResponseFormatEither.right().value().getMessageId());
     }
 
     //TODO see if we want to add ActionStatus.AUTHENTICATION_ERROR to error-configuration.yaml
     @Test
     public void testDistributionUnknownHostFails() {
         mockAllMethodsUntilDENotification();
-        when(distributionEngine.notifyService(anyString(),any(Service.class), any(INotificationData.class), anyString(),anyString(), anyString()))
+        when(distributionEngine.notifyService(anyString(),any(Service.class), any(INotificationData.class), anyString(), any(User.class)))
                 .thenReturn(ActionStatus.UNKNOWN_HOST);
         Either<String, ResponseFormat> stringResponseFormatEither = callActivateServiceOnTenantWIthDefaults();
         assertTrue(stringResponseFormatEither.isRight());
-        assertTrue(stringResponseFormatEither.right().value().getStatus() == 502);
-        assertTrue(stringResponseFormatEither.right().value().getMessageId().equals("SVC4676"));
+        assertEquals(502, (int) stringResponseFormatEither.right().value().getStatus());
+        assertEquals("SVC4676", stringResponseFormatEither.right().value().getMessageId());
     }
 
     //TODO see if we want to add ActionStatus.AUTHENTICATION_ERROR to error-configuration.yaml
     @Test
     public void testDistributionConnectionErrorFails() {
         mockAllMethodsUntilDENotification();
-        when(distributionEngine.notifyService(anyString(),any(Service.class), any(INotificationData.class), anyString(),anyString(), anyString()))
+        when(distributionEngine.notifyService(anyString(),any(Service.class), any(INotificationData.class), anyString(), any(User.class)))
                 .thenReturn(ActionStatus.CONNNECTION_ERROR);
         Either<String, ResponseFormat> stringResponseFormatEither = callActivateServiceOnTenantWIthDefaults();
         assertTrue(stringResponseFormatEither.isRight());
-        assertTrue(stringResponseFormatEither.right().value().getStatus() == 502);
-        assertTrue(stringResponseFormatEither.right().value().getMessageId().equals("SVC4676"));
+        assertEquals(502, (int) stringResponseFormatEither.right().value().getStatus());
+        assertEquals("SVC4676", stringResponseFormatEither.right().value().getMessageId());
     }
 
     //TODO see if we want to add ActionStatus.AUTHENTICATION_ERROR to error-configuration.yaml
     @Test
     public void testDistributionObjectNotFoundFails() {
         mockAllMethodsUntilDENotification();
-        when(distributionEngine.notifyService(anyString(),any(Service.class), any(INotificationData.class), anyString(),anyString(), anyString()))
+        when(distributionEngine.notifyService(anyString(),any(Service.class), any(INotificationData.class), anyString(), any(User.class)))
                 .thenReturn(ActionStatus.OBJECT_NOT_FOUND);
         Either<String, ResponseFormat> stringResponseFormatEither = callActivateServiceOnTenantWIthDefaults();
         assertTrue(stringResponseFormatEither.isRight());
-        assertTrue(stringResponseFormatEither.right().value().getStatus() == 502);
-        assertTrue(stringResponseFormatEither.right().value().getMessageId().equals("SVC4676"));
+        assertEquals(502, (int) stringResponseFormatEither.right().value().getStatus());
+        assertEquals("SVC4676", stringResponseFormatEither.right().value().getMessageId());
     }
 
     @Test
     public void testDistributionGeneralFails() {
         mockAllMethodsUntilDENotification();
-        when(distributionEngine.notifyService(anyString(),any(Service.class), any(INotificationData.class), anyString(),anyString(), anyString()))
+        when(distributionEngine.notifyService(anyString(),any(Service.class), any(INotificationData.class), anyString(), any(User.class)))
                 .thenReturn(ActionStatus.GENERAL_ERROR);
         Either<String, ResponseFormat> stringResponseFormatEither = callActivateServiceOnTenantWIthDefaults();
         assertTrue(stringResponseFormatEither.isRight());
-        assertTrue(stringResponseFormatEither.right().value().getStatus() == 502);
-        assertTrue(stringResponseFormatEither.right().value().getMessageId().equals("SVC4676"));
+        assertEquals(502, (int) stringResponseFormatEither.right().value().getStatus());
+        assertEquals("SVC4676", stringResponseFormatEither.right().value().getMessageId());
     }
 
     @Test
     public void testDistributionOk() {
         mockAllMethodsUntilDENotification();
         ThreadLocalsHolder.setUuid(DID);
-        when(distributionEngine.notifyService(anyString(),any(Service.class), any(INotificationData.class), anyString(),anyString(), anyString(), anyString()))
+        when(distributionEngine.notifyService(anyString(),any(Service.class), any(INotificationData.class), anyString(), anyString(), any(User.class)))
                 .thenReturn(ActionStatus.OK);
         Either<String, ResponseFormat> stringResponseFormatEither = callActivateServiceOnTenantWIthDefaults();
         assertTrue(stringResponseFormatEither.isLeft());
-        assertTrue(stringResponseFormatEither.left().value().equals(DID));
+        assertEquals(stringResponseFormatEither.left().value(), DID);
     }
 
     private void mockAllMethodsUntilDENotification() {
@@ -193,8 +178,6 @@ public class ServiceDistributionBLTest {
                 (anyString(), anyString(),any(User.class), any(ServiceDistributionReqInfo.class)))
                 .thenReturn(Either.left(activationRequestInformation));
         when(healthCheckBusinessLogic.isDistributionEngineUp()).thenReturn(true);
-        when(distributionEngine.verifyServiceHasDeploymentArtifacts(any(Service.class)))
-                .thenReturn(StorageOperationStatus.OK);
     }
 
     private Either<String, ResponseFormat> callActivateServiceOnTenantWIthDefaults() {

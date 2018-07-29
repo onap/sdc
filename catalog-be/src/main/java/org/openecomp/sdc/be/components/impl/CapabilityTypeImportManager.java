@@ -20,85 +20,65 @@
 
 package org.openecomp.sdc.be.components.impl;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Consumer;
-
-import javax.annotation.Resource;
-
-import org.openecomp.sdc.be.components.impl.ImportUtils.ToscaTagNamesEnum;
-import org.openecomp.sdc.be.config.BeEcompErrorManager;
+import fj.data.Either;
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
-import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.CapabilityTypeDefinition;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.CapabilityTypeOperation;
+import org.openecomp.sdc.be.model.utils.TypeCompareUtils;
+import org.openecomp.sdc.be.utils.TypeUtils;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import fj.data.Either;
+import java.util.List;
+import java.util.Map;
 
 @Component("capabilityTypeImportManager")
 public class CapabilityTypeImportManager {
 
-    private static final Logger log = LoggerFactory.getLogger(CapabilityTypeImportManager.class);
-    @Resource
-    private CapabilityTypeOperation capabilityTypeOperation;
-    @Resource
-    private ComponentsUtils componentsUtils;
-    @Resource
-    private CommonImportManager commonImportManager;
+    private static final Logger log = Logger.getLogger(CapabilityTypeImportManager.class.getName());
+    private final CapabilityTypeOperation capabilityTypeOperation;
+    private final CommonImportManager commonImportManager;
 
-    public Either<List<CapabilityTypeDefinition>, ResponseFormat> createCapabilityTypes(String capabilityYml) {
-        Either<List<CapabilityTypeDefinition>, ActionStatus> capabilityTypes = createCapabilityTypesFromYml(capabilityYml);
-        if (capabilityTypes.isRight()) {
-            ActionStatus status = capabilityTypes.right().value();
-            ResponseFormat responseFormat = componentsUtils.getResponseFormatByCapabilityType(status, null);
-            return Either.right(responseFormat);
-        }
-        return createCapabilityTypesByDao(capabilityTypes.left().value());
+    public CapabilityTypeImportManager(CapabilityTypeOperation capabilityTypeOperation, CommonImportManager commonImportManager) {
+        this.capabilityTypeOperation = capabilityTypeOperation;
+        this.commonImportManager = commonImportManager;
 
     }
 
-    private Either<List<CapabilityTypeDefinition>, ActionStatus> createCapabilityTypesFromYml(String capabilityYml) {
-        return commonImportManager.createElementTypesFromYml(capabilityYml, (capTypeName, capTypeJsonData) -> createCapabilityType(capTypeName, capTypeJsonData));
+    public Either<List<ImmutablePair<CapabilityTypeDefinition, Boolean>>, ResponseFormat> createCapabilityTypes(String capabilityTypesYml) {
+        return  commonImportManager.createElementTypes(capabilityTypesYml, this::createCapabilityTypesFromYml, this::upsertCapabilityTypesByDao, CommonImportManager.ElementTypeEnum.CAPABILITY_TYPE);
 
     }
 
-    private Either<List<CapabilityTypeDefinition>, ResponseFormat> createCapabilityTypesByDao(List<CapabilityTypeDefinition> capabilityTypesToCreate) {
-        List<CapabilityTypeDefinition> createdCapabilities = new ArrayList<>();
-        Either<List<CapabilityTypeDefinition>, ResponseFormat> eitherResult = Either.left(createdCapabilities);
-        Iterator<CapabilityTypeDefinition> capTypeItr = capabilityTypesToCreate.iterator();
-        boolean stopDao = false;
-        while (capTypeItr.hasNext() && !stopDao) {
-            CapabilityTypeDefinition capabilityType = capTypeItr.next();
+    private Either<List<CapabilityTypeDefinition>, ActionStatus> createCapabilityTypesFromYml(String capabilityTypesYml) {
+        return commonImportManager.createElementTypesFromYml(capabilityTypesYml, this::createCapabilityType);
 
-            log.info("send capabilityType {} to dao for create", capabilityType.getType());
-            Either<CapabilityTypeDefinition, StorageOperationStatus> dataModelResponse = capabilityTypeOperation.addCapabilityType(capabilityType);
-            if (dataModelResponse.isRight()) {
-                BeEcompErrorManager.getInstance().logBeFailedAddingNodeTypeError("Create CapabilityTypes", "capability type");
-                log.debug("failed to create capabilityType: {}", capabilityType.getType());
-                if (dataModelResponse.right().value() != StorageOperationStatus.SCHEMA_VIOLATION) {
-                    ResponseFormat responseFormat = componentsUtils.getResponseFormatByCapabilityType(componentsUtils.convertFromStorageResponseForCapabilityType(dataModelResponse.right().value()), capabilityType);
-                    eitherResult = Either.right(responseFormat);
-                    stopDao = true;
-                }
+    }
 
-            } else {
-                createdCapabilities.add(capabilityType);
-            }
-            if (!capTypeItr.hasNext()) {
-                log.info("capabilityTypes were created successfully!!!");
-            }
-
+    private Either<List<ImmutablePair<CapabilityTypeDefinition, Boolean>>, ResponseFormat> upsertCapabilityTypesByDao(List<CapabilityTypeDefinition> capabilityTypesToCreate) {
+        return commonImportManager.createElementTypesByDao(capabilityTypesToCreate,
+                capabilityType -> Either.left(ActionStatus.OK),
+                capabilityType -> new ImmutablePair<>(CommonImportManager.ElementTypeEnum.CAPABILITY_TYPE, capabilityType.getType()),
+                capabilityTypeOperation::getCapabilityType,
+                capabilityTypeOperation::addCapabilityType,
+                this::updateCapabilityType);
+    }
+    
+    private Either<CapabilityTypeDefinition, StorageOperationStatus> updateCapabilityType(CapabilityTypeDefinition newCapabilityType, CapabilityTypeDefinition oldCapabilityType) {
+        Either<CapabilityTypeDefinition, StorageOperationStatus> validationRes = capabilityTypeOperation.validateUpdateProperties(newCapabilityType);
+        if (validationRes.isRight()) {
+            log.error("#updateCapabilityType - One or all properties of capability type {} not valid. status is {}", newCapabilityType, validationRes.right().value());
+            return validationRes;
         }
-
-        return eitherResult;
-
+        
+        if (TypeCompareUtils.isCapabilityTypesEquals(newCapabilityType, oldCapabilityType)) {
+            return TypeCompareUtils.typeAlreadyExists();
+        }
+        
+        return capabilityTypeOperation.updateCapabilityType(newCapabilityType, oldCapabilityType);
     }
 
     private CapabilityTypeDefinition createCapabilityType(String capabilityTypeName, Map<String, Object> toscaJson) {
@@ -107,13 +87,11 @@ public class CapabilityTypeImportManager {
         capabilityType.setType(capabilityTypeName);
 
         // Description
-        final Consumer<String> descriptionSetter = description -> capabilityType.setDescription(description);
-        commonImportManager.setField(toscaJson, ToscaTagNamesEnum.DESCRIPTION.getElementName(), descriptionSetter);
+        commonImportManager.setField(toscaJson, TypeUtils.ToscaTagNamesEnum.DESCRIPTION.getElementName(), capabilityType::setDescription);
         // Derived From
-        final Consumer<String> derivedFromSetter = derivedFrom -> capabilityType.setDerivedFrom(derivedFrom);
-        commonImportManager.setField(toscaJson, ToscaTagNamesEnum.DERIVED_FROM.getElementName(), derivedFromSetter);
+        commonImportManager.setField(toscaJson, TypeUtils.ToscaTagNamesEnum.DERIVED_FROM.getElementName(), capabilityType::setDerivedFrom);
         // Properties
-        commonImportManager.setPropertiesMap(toscaJson, (values) -> capabilityType.setProperties(values));
+        commonImportManager.setPropertiesMap(toscaJson, capabilityType::setProperties);
 
         return capabilityType;
     }

@@ -27,15 +27,15 @@ import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
  */
 public interface ICacheMangerOperation {
 
-	/**
-	 * 
-	 * 
-	 * @param componentId
-	 * @param timestamp
-	 * @param nodeTypeEnum
-	 */
-	void updateComponentInCache(String componentId, long timestamp, NodeTypeEnum nodeTypeEnum);
+    /**
+     *
+     *
+     * @param componentId
+     * @param timestamp
+     * @param nodeTypeEnum
+     */
+    void updateComponentInCache(String componentId, long timestamp, NodeTypeEnum nodeTypeEnum);
 
-	void storeComponentInCache(org.openecomp.sdc.be.model.Component component, NodeTypeEnum nodeTypeEnum);
+    void storeComponentInCache(org.openecomp.sdc.be.model.Component component, NodeTypeEnum nodeTypeEnum);
 
 }

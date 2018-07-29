@@ -21,10 +21,6 @@
 package org.openecomp.sdcrests.vsp.rest.services;
 
 import org.apache.cxf.jaxrs.ext.multipart.Attachment;
-import org.openecomp.sdc.activitylog.ActivityLogManager;
-import org.openecomp.sdc.activitylog.ActivityLogManagerFactory;
-import org.openecomp.sdc.activitylog.dao.type.ActivityLogEntity;
-import org.openecomp.sdc.activitylog.dao.type.ActivityType;
 import org.openecomp.sdc.vendorsoftwareproduct.ComponentManager;
 import org.openecomp.sdc.vendorsoftwareproduct.ComponentManagerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.ProcessManager;
@@ -55,8 +51,6 @@ public class ComponentProcessesImpl implements ComponentProcesses {
   private ProcessManager processManager = ProcessManagerFactory.getInstance().createInterface();
   private ComponentManager componentManager =
       ComponentManagerFactory.getInstance().createInterface();
-  private ActivityLogManager activityLogManager =
-      ActivityLogManagerFactory.getInstance().createInterface();
 
   @Override
   public Response list(String vspId, String versionId, String componentId, String user) {
@@ -177,10 +171,6 @@ public class ComponentProcessesImpl implements ComponentProcesses {
     processManager.uploadProcessArtifact(attachment.getObject(InputStream.class),
         attachment.getContentDisposition().getParameter("filename"), vspId, version, componentId,
         processId);
-
-
-    activityLogManager.logActivity(new ActivityLogEntity(vspId, version,
-        ActivityType.Upload_Artifact, user, true, "", ""));
 
     return Response.ok().build();
   }

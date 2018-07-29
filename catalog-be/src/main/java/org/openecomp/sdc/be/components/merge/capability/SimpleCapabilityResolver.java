@@ -1,20 +1,15 @@
 package org.openecomp.sdc.be.components.merge.capability;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-
-import org.apache.commons.collections.CollectionUtils;
 import org.openecomp.sdc.be.components.merge.utils.MergeInstanceUtils;
 import org.openecomp.sdc.be.dao.utils.MapUtil;
 import org.openecomp.sdc.be.model.CapabilityDefinition;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstance;
 
+import java.util.*;
+
+import static java.util.stream.Collectors.toList;
+import static org.openecomp.sdc.be.dao.utils.MapUtil.flattenMapValues;
 @org.springframework.stereotype.Component
 public class SimpleCapabilityResolver implements CapabilityResolver {
 
@@ -26,35 +21,47 @@ public class SimpleCapabilityResolver implements CapabilityResolver {
 
     @Override
     public Map<CapabilityDefinition, CapabilityDefinition> resolvePrevCapToNewCapability(Component container, Component prevInstanceOrigNode, String cmptInstanceId, List<CapabilityDefinition> prevCapabilities) {
-        Map<String, List<CapabilityDefinition>> newCapabilitiesByType = resolveInstanceCapabilities(container, cmptInstanceId).getCapabilities();
+        List<CapabilityDefinition> newCapabilities = resolveInstanceCapabilities(container, cmptInstanceId);
         Map<String, String> oldCapOwnerToNewOwner = mapOldToNewCapabilitiesOwnerIds(container, prevInstanceOrigNode, cmptInstanceId, prevCapabilities);
-        return mapOldToNewCapabilities(prevCapabilities, newCapabilitiesByType, oldCapOwnerToNewOwner);
+        return mapOldToNewCapabilities(prevCapabilities, newCapabilities, oldCapOwnerToNewOwner);
     }
 
     @Override
     public Map<CapabilityDefinition, CapabilityDefinition> resolvePrevCapIdToNewCapability(ComponentInstance oldInstance, ComponentInstance currInstance) {
-        Map<String, List<CapabilityDefinition>> newCapabilitiesByType = currInstance.getCapabilities();
+        List<CapabilityDefinition> newCapabilities = flattenMapValues(currInstance.getCapabilities());
+        List<CapabilityDefinition> prevCapabilities = flattenMapValues(oldInstance.getCapabilities());
         Map<String, String> oldCapOwnerToNewOwner = mergeInstanceUtils.mapOldToNewCapabilitiesOwnerIds(oldInstance, currInstance);
-        List<CapabilityDefinition> prevCapabilities = oldInstance.getCapabilities().values().stream().flatMap(Collection::stream).collect(Collectors.toList());
-        return mapOldToNewCapabilities(prevCapabilities, newCapabilitiesByType, oldCapOwnerToNewOwner);
+        return mapOldToNewCapabilities(prevCapabilities, newCapabilities, oldCapOwnerToNewOwner);
     }
 
-    private Map<CapabilityDefinition, CapabilityDefinition> mapOldToNewCapabilities(List<CapabilityDefinition> prevCapabilities, Map<String, List<CapabilityDefinition>> newCapabilitiesByType, Map<String, String> oldCapOwnerToNewOwner) {
-        Map<CapabilityDefinition, CapabilityDefinition> oldToNewCapability = prevCapabilities
-                .stream()
-                .collect(HashMap::new,
-                        (resultMap, prevCap) -> mapOldToNewCapability(newCapabilitiesByType, oldCapOwnerToNewOwner, resultMap, prevCap),
-                        HashMap::putAll);
+    private Map<CapabilityDefinition, CapabilityDefinition> mapOldToNewCapabilities(List<CapabilityDefinition> prevCapabilities, List<CapabilityDefinition> newCapabilities, Map<String, String> oldCapOwnerToNewOwner) {
+        Map<CapabilityDefinition, CapabilityDefinition> oldToNewCapability = findNewCapByPrevCapabilityNameTypeAndOwner(prevCapabilities, newCapabilities, oldCapOwnerToNewOwner);
         removeNotFoundNewCapabilities(oldToNewCapability);
         return oldToNewCapability;
     }
 
-    private CapabilityDefinition mapOldToNewCapability(Map<String, List<CapabilityDefinition>> newCapabilitiesByType, Map<String, String> oldCapOwnerToNewOwner, Map<CapabilityDefinition, CapabilityDefinition> resultMap, CapabilityDefinition prevCap) {
-        return resultMap.put(prevCap, findCurrCapability(newCapabilitiesByType, prevCap, oldCapOwnerToNewOwner.get(prevCap.getOwnerId())));
+    private Map<CapabilityDefinition, CapabilityDefinition> findNewCapByPrevCapabilityNameTypeAndOwner(List<CapabilityDefinition> prevCapabilities, List<CapabilityDefinition> newCapabilities, Map<String, String> oldCapOwnerToNewOwner) {
+        Map<CapabilityDefinition, CapabilityDefinition> prevToNewCapabilityMapping = new HashMap<>();
+        prevCapabilities.forEach(prevCap -> {
+            CapabilityDefinition newCapability = mapOldToNewCapability(prevCap, newCapabilities, oldCapOwnerToNewOwner);
+            prevToNewCapabilityMapping.put(prevCap, newCapability);
+        });
+        return prevToNewCapabilityMapping;
     }
 
+    private CapabilityDefinition mapOldToNewCapability(CapabilityDefinition prevCap, List<CapabilityDefinition> newCapabilities, Map<String, String> oldCapOwnerToNewOwner) {
+        String newOwnerId = oldCapOwnerToNewOwner.get(prevCap.getOwnerId());
+        return newCapabilities.stream()
+                       .filter(newCap -> newCap.getName().equals(prevCap.getName()))
+                       .filter(newCap -> newCap.getType().equals(prevCap.getType()))
+                       .filter(newCap -> newCap.getOwnerId().equals(newOwnerId))
+                       .findFirst()
+                       .orElse(null);
+    }
+
+
     private Map<String, String> mapOldToNewCapabilitiesOwnerIds(Component container, Component origInstanceNode, String cmptInstanceId, List<CapabilityDefinition> prevCapabilities) {
-        List<String> prevCapOwnerIds = prevCapabilities.stream().map(CapabilityDefinition::getOwnerId).distinct().collect(Collectors.toList());
+        List<String> prevCapOwnerIds = prevCapabilities.stream().map(CapabilityDefinition::getOwnerId).distinct().collect(toList());
         return mergeInstanceUtils.mapOldToNewCapabilitiesOwnerIds(container, origInstanceNode, cmptInstanceId, prevCapOwnerIds);
     }
 
@@ -62,24 +69,14 @@ public class SimpleCapabilityResolver implements CapabilityResolver {
         oldToNewCapMap.values().removeIf(Objects::isNull);
     }
 
-    private ComponentInstance resolveInstanceCapabilities(Component capabilityOwnerContainer, String cmptInstanceId) {
-        return MapUtil.toMap(capabilityOwnerContainer.getComponentInstances(), ComponentInstance::getUniqueId).get(cmptInstanceId);
+    private List<CapabilityDefinition> resolveInstanceCapabilities(Component capabilityOwnerContainer, String cmptInstanceId) {
+        return capabilityOwnerContainer.getComponentInstanceById(cmptInstanceId)
+                .map(ComponentInstance::getCapabilities)
+                .map(MapUtil::flattenMapValues)
+                .orElse(new ArrayList<>());
     }
 
 
-    private CapabilityDefinition findCurrCapability(Map<String, List<CapabilityDefinition>> capabilitiesByType, CapabilityDefinition oldCap, String newCapOwnerId) {
-        List<CapabilityDefinition> newCapOfType = capabilitiesByType.get(oldCap.getType());
-        if (newCapOwnerId == null || CollectionUtils.isEmpty(newCapOfType)) {
-            return null;
-        }
-        return newCapOfType.stream().filter(sameNameAndOwner(oldCap.getName(), newCapOwnerId))
-                                             .findFirst().orElse(null);
-
-    }
-
-    private Predicate<CapabilityDefinition> sameNameAndOwner(String capName, String newCapOwnerId) {
-        return newCap -> newCap.getName().equals(capName) && newCap.getOwnerId().equals(newCapOwnerId);
-    }
 
 
 

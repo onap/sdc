@@ -20,14 +20,9 @@
 
 package org.openecomp.sdc.ci.tests.execute.service;
 
-import static org.testng.AssertJUnit.assertTrue;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import fj.data.Either;
 import org.apache.http.HttpStatus;
 import org.junit.Rule;
 import org.junit.rules.TestName;
@@ -50,23 +45,21 @@ import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
 import org.openecomp.sdc.ci.tests.utils.general.AtomicOperationUtils;
 import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
 import org.openecomp.sdc.ci.tests.utils.general.FileUtils;
-import org.openecomp.sdc.ci.tests.utils.rest.ArtifactRestUtils;
-import org.openecomp.sdc.ci.tests.utils.rest.ComponentInstanceRestUtils;
-import org.openecomp.sdc.ci.tests.utils.rest.LifecycleRestUtils;
-import org.openecomp.sdc.ci.tests.utils.rest.ResourceRestUtils;
-import org.openecomp.sdc.ci.tests.utils.rest.ResponseParser;
-import org.openecomp.sdc.ci.tests.utils.rest.ServiceRestUtils;
+import org.openecomp.sdc.ci.tests.utils.rest.*;
 import org.openecomp.sdc.common.api.Constants;
-import org.openecomp.sdc.common.datastructure.AuditingFieldsKeysEnum;
+import org.openecomp.sdc.common.datastructure.AuditingFieldsKey;
 import org.openecomp.sdc.common.datastructure.Wrapper;
 import org.testng.AssertJUnit;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import fj.data.Either;
+import static org.testng.AssertJUnit.assertTrue;
 
 public class GetComponentAuditApiTest extends ComponentBaseTest {
 
@@ -140,7 +133,7 @@ public class GetComponentAuditApiTest extends ComponentBaseTest {
 		List<String> actions = new ArrayList<>();
 		JsonArray jsonArray = element.getAsJsonArray();
 		for( int i =0 ; i < jsonArray.size(); i++){
-			actions.add(jsonArray.get(i).getAsJsonObject().get(AuditingFieldsKeysEnum.AUDIT_ACTION.getDisplayName()).getAsString());
+			actions.add(jsonArray.get(i).getAsJsonObject().get(AuditingFieldsKey.AUDIT_ACTION.getDisplayName()).getAsString());
 		}
 		long checkinCount = actions.stream().filter( e -> e.equals(AuditingActionEnum.CHECKIN_RESOURCE.getName())).count();
 		assertTrue(checkinCount == 5);
@@ -161,13 +154,13 @@ public class GetComponentAuditApiTest extends ComponentBaseTest {
 	}
 
 	protected void certifyResource(ResourceReqDetails defaultResource) throws IOException {
-		RestResponse response = LifecycleRestUtils.changeResourceState(defaultResource, sdncDesignerUser,
+/*		RestResponse response = LifecycleRestUtils.changeResourceState(defaultResource, sdncDesignerUser,
 				LifeCycleStatesEnum.CERTIFICATIONREQUEST);
 		AssertJUnit.assertTrue(response.getErrorCode() == HttpStatus.SC_OK);
 		response = LifecycleRestUtils.changeResourceState(defaultResource, sdncTesterUser,
 				LifeCycleStatesEnum.STARTCERTIFICATION);
-		AssertJUnit.assertTrue(response.getErrorCode() == HttpStatus.SC_OK);
-		response = LifecycleRestUtils.changeResourceState(defaultResource, sdncTesterUser, LifeCycleStatesEnum.CERTIFY);
+		AssertJUnit.assertTrue(response.getErrorCode() == HttpStatus.SC_OK);*/
+		RestResponse response = LifecycleRestUtils.changeResourceState(defaultResource, sdncTesterUser, LifeCycleStatesEnum.CERTIFY);
 		AssertJUnit.assertTrue(response.getErrorCode() == HttpStatus.SC_OK);
 	}
 

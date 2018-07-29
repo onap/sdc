@@ -22,23 +22,23 @@ package org.openecomp.sdc.be.model;
 
 public class FunctionalMenuInfo {
 
-	private String functionalMenu;
+    private String functionalMenu;
 
-	public FunctionalMenuInfo() {
-		super();
-	}
+    public FunctionalMenuInfo() {
+        super();
+    }
 
-	public String getFunctionalMenu() {
-		return functionalMenu;
-	}
+    public String getFunctionalMenu() {
+        return functionalMenu;
+    }
 
-	public void setFunctionalMenu(String functionalMenu) {
-		this.functionalMenu = functionalMenu;
-	}
+    public void setFunctionalMenu(String functionalMenu) {
+        this.functionalMenu = functionalMenu;
+    }
 
-	@Override
-	public String toString() {
-		return "FunctionalMenuInfo [functionalMenu=" + functionalMenu + "]";
-	}
+    @Override
+    public String toString() {
+        return "FunctionalMenuInfo [functionalMenu=" + functionalMenu + "]";
+    }
 
 }

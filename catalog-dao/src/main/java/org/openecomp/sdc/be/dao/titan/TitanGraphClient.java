@@ -20,18 +20,15 @@
 
 package org.openecomp.sdc.be.dao.titan;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.TimeUnit;
-
-import javax.annotation.PostConstruct;
-
+import com.thinkaurelius.titan.core.*;
+import com.thinkaurelius.titan.core.schema.ConsistencyModifier;
+import com.thinkaurelius.titan.core.schema.TitanGraphIndex;
+import com.thinkaurelius.titan.core.schema.TitanManagement;
+import com.thinkaurelius.titan.core.util.TitanCleanup;
+import com.thinkaurelius.titan.diskstorage.ResourceUnavailableException;
+import com.thinkaurelius.titan.diskstorage.locking.PermanentLockingException;
+import com.thinkaurelius.titan.graphdb.database.idassigner.IDPoolExhaustedException;
+import fj.data.Either;
 import org.apache.commons.configuration.BaseConfiguration;
 import org.apache.tinkerpop.gremlin.structure.T;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
@@ -40,36 +37,20 @@ import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.DAOTitanStrategy;
 import org.openecomp.sdc.be.dao.TitanClientStrategy;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.springframework.stereotype.Component;
 
-import com.thinkaurelius.titan.core.InvalidElementException;
-import com.thinkaurelius.titan.core.InvalidIDException;
-import com.thinkaurelius.titan.core.PropertyKey;
-import com.thinkaurelius.titan.core.QueryException;
-import com.thinkaurelius.titan.core.SchemaViolationException;
-import com.thinkaurelius.titan.core.TitanConfigurationException;
-import com.thinkaurelius.titan.core.TitanFactory;
-import com.thinkaurelius.titan.core.TitanGraph;
-import com.thinkaurelius.titan.core.TitanVertex;
-import com.thinkaurelius.titan.core.TitanVertexProperty;
-import com.thinkaurelius.titan.core.schema.ConsistencyModifier;
-import com.thinkaurelius.titan.core.schema.TitanGraphIndex;
-import com.thinkaurelius.titan.core.schema.TitanManagement;
-import com.thinkaurelius.titan.core.util.TitanCleanup;
-import com.thinkaurelius.titan.diskstorage.ResourceUnavailableException;
-import com.thinkaurelius.titan.diskstorage.locking.PermanentLockingException;
-import com.thinkaurelius.titan.graphdb.database.idassigner.IDPoolExhaustedException;
-
-import fj.data.Either;
+import javax.annotation.PostConstruct;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.concurrent.*;
 
 
 @Component("titan-client")
 public class TitanGraphClient {
 
-	private static Logger logger = LoggerFactory.getLogger(TitanGraphClient.class.getName());
-	private static Logger healthLogger = LoggerFactory.getLogger("titan.healthcheck");
+	private static Logger logger = Logger.getLogger(TitanGraphClient.class.getName());
+	private static Logger healthLogger = Logger.getLogger("titan.healthcheck");
 
 	private static final String HEALTH_CHECK = GraphPropertiesDictionary.HEALTH_CHECK.getProperty();
 	private static final String OK = "GOOD";
@@ -245,7 +226,8 @@ public class TitanGraphClient {
 
 		} catch (Exception e) {
 			this.graph = null;
-			logger.info("createGraph : failed to open Titan graph with configuration file: {}", titanCfgFile, e);
+			logger.info("createGraph : failed to open Titan graph with configuration file: {}", titanCfgFile);
+			logger.debug("createGraph : failed with exception.", e);
 			return TitanOperationStatus.NOT_CONNECTED;
 		}
 
@@ -390,7 +372,7 @@ public class TitanGraphClient {
 	private static final String TITAN_HEALTH_CHECK_STR = "titanHealthCheck";
 
 	private void logAlarm() {
-		if (lastHealthState == true) {
+		if (lastHealthState) {
 			BeEcompErrorManager.getInstance().logBeHealthCheckTitanRecovery(TITAN_HEALTH_CHECK_STR);
 		} else {
 			BeEcompErrorManager.getInstance().logBeHealthCheckTitanError(TITAN_HEALTH_CHECK_STR);

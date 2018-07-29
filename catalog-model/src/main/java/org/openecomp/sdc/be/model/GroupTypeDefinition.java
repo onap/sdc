@@ -20,51 +20,46 @@
 
 package org.openecomp.sdc.be.model;
 
-import java.io.Serializable;
-import java.util.List;
-
 import org.openecomp.sdc.be.datatypes.elements.GroupTypeDataDefinition;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * Specifies the group type that the Node Type exposes.
  */
-public class GroupTypeDefinition extends GroupTypeDataDefinition implements Serializable {
+public class GroupTypeDefinition extends GroupTypeDataDefinition {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -1597773317924162703L;
+    private List<PropertyDefinition> properties;
+	private Map<String, CapabilityDefinition> capabilities;
 
-	private List<PropertyDefinition> properties;
-	private List<CapabilityTypeDefinition> capabilityTypes;
+    public List<PropertyDefinition> getProperties() {
+        return properties;
+    }
 
-	public List<PropertyDefinition> getProperties() {
-		return properties;
-	}
+    public void setProperties(List<PropertyDefinition> properties) {
+        this.properties = properties;
+    }
 
-	public void setProperties(List<PropertyDefinition> properties) {
-		this.properties = properties;
-	}
+    public GroupTypeDefinition() {
+        super();
+    }
 
-	public GroupTypeDefinition() {
-		super();
-	}
+    public GroupTypeDefinition(GroupTypeDataDefinition p) {
+        super(p);
+    }
 
-	public GroupTypeDefinition(GroupTypeDataDefinition p) {
-		super(p);
-	}
+	public Map<String, CapabilityDefinition> getCapabilities() {
+        return capabilities;
+    }
 
-	public List<CapabilityTypeDefinition> getCapabilityTypes() {
-		return capabilityTypes;
-	}
-	
-	public void setCapabilityTypes(List<CapabilityTypeDefinition> capabilityTypes) {
-		this.capabilityTypes = capabilityTypes;
-	}
+	public void setCapabilities(Map<String, CapabilityDefinition> capabilies) {
+        this.capabilities = capabilies;
+    }
 
-	@Override
-	public String toString() {
-		return super.toString() + " [properties=" + properties + ", capabilityTypes=" + capabilityTypes + "]";
-	}
+    @Override
+    public String toString() {
+        return super.toString() + " [properties=" + properties + ", capabilities=" + capabilities + "]";
+    }
 
 }

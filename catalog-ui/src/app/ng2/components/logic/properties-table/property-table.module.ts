@@ -8,6 +8,7 @@ import {HttpModule} from "@angular/http";
 import {FilterChildPropertiesPipe} from "./pipes/filterChildProperties.pipe";
 import {GlobalPipesModule} from "../../../pipes/global-pipes.module";
 import {PropertiesService} from "../../../services/properties.service";
+import {MultilineEllipsisModule} from "../../../shared/multiline-ellipsis/multiline-ellipsis.module";
 
 @NgModule({
     imports: [
@@ -15,7 +16,8 @@ import {PropertiesService} from "../../../services/properties.service";
         HttpModule,
         CommonModule,
         GlobalPipesModule,
-        UiElementsModule
+        UiElementsModule,
+        MultilineEllipsisModule
         ],
     declarations: [
         FilterChildPropertiesPipe,

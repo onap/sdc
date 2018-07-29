@@ -1,9 +1,9 @@
 package org.openecomp.sdc.be.components.utils;
 
-import java.util.ArrayList;
-
 import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.HeatParameterDefinition;
+
+import java.util.ArrayList;
 
 public class ArtifactBuilder {
 

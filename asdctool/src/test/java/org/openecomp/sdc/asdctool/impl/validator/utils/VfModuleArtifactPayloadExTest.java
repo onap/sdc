@@ -1,9 +1,9 @@
 package org.openecomp.sdc.asdctool.impl.validator.utils;
 
+import org.junit.Test;
+
 import java.util.List;
 import java.util.Map;
-
-import org.junit.Test;
 
 public class VfModuleArtifactPayloadExTest {
 

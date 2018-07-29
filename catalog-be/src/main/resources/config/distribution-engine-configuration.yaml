@@ -25,7 +25,7 @@ distribNotifResourceArtifactTypes:
       - DG-XML
 
 environments:
-   - PROD
+   - PROD_TEST
 
 distributionStatusTopic:
    pollingIntervalSec: 60
@@ -45,8 +45,8 @@ createTopic:
 
 startDistributionEngine: true
 
-
-useHttpsWithDmaap: false
+useHttpsWithDmaap: true
+   
 opEnvRecoveryIntervalSec: 180
 allowedTimeBeforeStaleSec: 300
 

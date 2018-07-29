@@ -1,15 +1,13 @@
 package org.openecomp.sdc.be.servlets;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
-import java.util.HashMap;
-
 import org.apache.tinkerpop.gremlin.structure.T;
 import org.junit.Test;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.Operation;
+
+import java.util.HashMap;
+
+import static org.junit.Assert.*;
 
 public class RepresentationUtilsTest  {
 

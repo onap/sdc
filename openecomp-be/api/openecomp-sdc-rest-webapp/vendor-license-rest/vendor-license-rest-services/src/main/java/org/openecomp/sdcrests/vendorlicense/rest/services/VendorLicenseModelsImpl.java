@@ -17,26 +17,8 @@
 
 package org.openecomp.sdcrests.vendorlicense.rest.services;
 
-import static org.openecomp.sdc.itempermissions.notifications.NotificationConstants.PERMISSION_USER;
-import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.ITEM_ID;
-import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.ITEM_NAME;
-import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.SUBMIT_DESCRIPTION;
-import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.VERSION_ID;
-import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.VERSION_NAME;
-import static org.openecomp.sdcrests.vendorlicense.types.VendorLicenseModelActionRequestDto.VendorLicenseModelAction.Submit;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.function.Predicate;
-import javax.inject.Named;
-import javax.ws.rs.core.Response;
 import org.openecomp.core.dao.UniqueValueDaoFactory;
 import org.openecomp.core.util.UniqueValueUtil;
-import org.openecomp.sdc.activitylog.ActivityLogManager;
-import org.openecomp.sdc.activitylog.ActivityLogManagerFactory;
-import org.openecomp.sdc.activitylog.dao.type.ActivityLogEntity;
-import org.openecomp.sdc.activitylog.dao.type.ActivityType;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.ErrorCode;
 import org.openecomp.sdc.common.errors.Messages;
@@ -79,6 +61,17 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
+import javax.inject.Named;
+import javax.ws.rs.core.Response;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.function.Predicate;
+
+import static org.openecomp.sdc.itempermissions.notifications.NotificationConstants.PERMISSION_USER;
+import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.*;
+import static org.openecomp.sdcrests.vendorlicense.types.VendorLicenseModelActionRequestDto.VendorLicenseModelAction.Submit;
+
 @Named
 @Service("vendorLicenseModels")
 @Scope(value = "prototype")
@@ -96,7 +89,6 @@ public class VendorLicenseModelsImpl implements VendorLicenseModels {
     private AsdcItemManager asdcItemManager = AsdcItemManagerFactory.getInstance().createInterface();
     private VersioningManager versioningManager = VersioningManagerFactory.getInstance().createInterface();
     private VendorLicenseManager vendorLicenseManager = VendorLicenseManagerFactory.getInstance().createInterface();
-    private ActivityLogManager activityLogManager = ActivityLogManagerFactory.getInstance().createInterface();
     private UniqueValueUtil uniqueValueUtil =
             new UniqueValueUtil(UniqueValueDaoFactory.getInstance().createInterface());
 
@@ -141,8 +133,6 @@ public class VendorLicenseModelsImpl implements VendorLicenseModels {
         itemCreationDto.setItemId(item.getId());
         itemCreationDto.setVersion(new MapVersionToDto().applyMapping(version, VersionDto.class));
 
-        activityLogManager
-                .logActivity(new ActivityLogEntity(vlm.getId(), version, ActivityType.Create, user, true, "", ""));
         return Response.ok(itemCreationDto).build();
     }
 
@@ -228,9 +218,6 @@ public class VendorLicenseModelsImpl implements VendorLicenseModels {
 
         vendorLicenseManager.validate(vlmId, version);
         versioningManager.submit(vlmId, version, message);
-
-        activityLogManager
-                .logActivity(new ActivityLogEntity(vlmId, version, ActivityType.Submit, user, true, "", message));
     }
 
     private void submitHealedVersion(String vlmId, Version healedVersion, String baseVersionId, String user) {

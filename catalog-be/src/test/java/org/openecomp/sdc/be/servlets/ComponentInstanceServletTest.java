@@ -1,15 +1,6 @@
 package org.openecomp.sdc.be.servlets;
 
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.when;
-
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
+import fj.data.Either;
 import org.eclipse.jetty.http.HttpStatus;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.server.ResourceConfig;
@@ -32,7 +23,16 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.web.context.WebApplicationContext;
 
-import fj.data.Either;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.when;
 
 /**
  * The test suite designed for test functionality of ComponentInstanceServlet class
@@ -73,7 +73,7 @@ public class ComponentInstanceServletTest extends JerseyTest {
                 .header("USER_ID", USER_ID)
                 .get( Response.class);
 
-        assertTrue(response.getStatus() == HttpStatus.OK_200);
+        assertEquals(response.getStatus(), HttpStatus.OK_200);
     }
 
     @Test
@@ -91,7 +91,7 @@ public class ComponentInstanceServletTest extends JerseyTest {
                 .header("USER_ID", USER_ID)
                 .get( Response.class);
 
-        assertTrue(response.getStatus() == HttpStatus.BAD_REQUEST_400);
+        assertEquals(response.getStatus(), HttpStatus.BAD_REQUEST_400);
     }
 
     @Override

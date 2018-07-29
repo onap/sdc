@@ -1,8 +1,7 @@
 package org.openecomp.sdc.asdctool.simulator.tenant;
 
-import org.openecomp.sdc.be.datatypes.enums.EnvironmentStatusEnum;
-
 import com.opencsv.bean.CsvBindByPosition;
+import org.openecomp.sdc.be.datatypes.enums.EnvironmentStatusEnum;
 
 /**
  * Represents line in CSV file should be imported into "operationalenvironment" table.

@@ -1,8 +1,8 @@
 {
-  "artifact": {
-    "name": {
-      "minlength": "6"
-    },
-    "extension": "pdf,tgz,xls"
-  }
+	"artifact": {
+		"name": {
+			"minlength": "6"
+		},
+		"extension": "pdf,tgz,xls"
+	}
 }

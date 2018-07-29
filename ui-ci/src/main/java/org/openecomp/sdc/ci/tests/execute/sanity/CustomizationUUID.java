@@ -20,33 +20,16 @@
 
 package org.openecomp.sdc.ci.tests.execute.sanity;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import com.aventstack.extentreports.Status;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
-import org.openecomp.sdc.ci.tests.datatypes.ArtifactInfo;
-import org.openecomp.sdc.ci.tests.datatypes.CanvasElement;
-import org.openecomp.sdc.ci.tests.datatypes.CanvasManager;
-import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum;
+import org.openecomp.sdc.ci.tests.datatypes.*;
 import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum.LeftPanelCanvasItems;
-import org.openecomp.sdc.ci.tests.datatypes.ResourceReqDetails;
-import org.openecomp.sdc.ci.tests.datatypes.ServiceReqDetails;
 import org.openecomp.sdc.ci.tests.datatypes.enums.ArtifactTypeEnum;
 import org.openecomp.sdc.ci.tests.datatypes.enums.NormativeTypesEnum;
 import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
 import org.openecomp.sdc.ci.tests.execute.setup.SetupCDTest;
-import org.openecomp.sdc.ci.tests.pages.CompositionPage;
-import org.openecomp.sdc.ci.tests.pages.DeploymentArtifactPage;
-import org.openecomp.sdc.ci.tests.pages.GeneralPageElements;
-import org.openecomp.sdc.ci.tests.pages.HomePage;
-import org.openecomp.sdc.ci.tests.pages.ResourceGeneralPage;
-import org.openecomp.sdc.ci.tests.pages.ServiceGeneralPage;
-import org.openecomp.sdc.ci.tests.pages.TesterOperationPage;
-import org.openecomp.sdc.ci.tests.utilities.ArtifactUIUtils;
-import org.openecomp.sdc.ci.tests.utilities.FileHandling;
-import org.openecomp.sdc.ci.tests.utilities.GeneralUIUtils;
-import org.openecomp.sdc.ci.tests.utilities.ResourceUIUtils;
-import org.openecomp.sdc.ci.tests.utilities.ServiceUIUtils;
+import org.openecomp.sdc.ci.tests.pages.*;
+import org.openecomp.sdc.ci.tests.utilities.*;
 import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
 import org.openecomp.sdc.ci.tests.verificator.CustomizationUUIDVerificator;
 import org.openecomp.sdc.ci.tests.verificator.ServiceVerificator;
@@ -56,7 +39,8 @@ import org.testng.AssertJUnit;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import com.aventstack.extentreports.Status;
+import java.util.ArrayList;
+import java.util.List;
 
 public class CustomizationUUID extends SetupCDTest {
 	
@@ -77,13 +61,13 @@ public class CustomizationUUID extends SetupCDTest {
 	public void uniqueCustomizationUUIDforeachVFi() throws Exception {
 		
 		
-		ResourceReqDetails vfMetaData = createNewResourceWithArtifactSubmitForTesting();
+		ResourceReqDetails vfMetaData = createNewResourceWithArtifactCertifyState();
 		
-		reloginWithNewRole(UserRoleEnum.TESTER);
+	/*	reloginWithNewRole(UserRoleEnum.TESTER);
 		GeneralUIUtils.findComponentAndClick(vfMetaData.getName());
 		TesterOperationPage.certifyComponent(vfMetaData.getName());
 
-		reloginWithNewRole(UserRoleEnum.DESIGNER);
+		reloginWithNewRole(UserRoleEnum.DESIGNER);*/
 		
 		List customizationUUIDs = new ArrayList<String>();
 		ServiceReqDetails serviceMetadata = ElementFactory.getDefaultService();
@@ -126,13 +110,13 @@ public class CustomizationUUID extends SetupCDTest {
 	public void uniqueCustomizationUUIDafterArtifactCRUDofVFi() throws Exception {
 		
 		
-		ResourceReqDetails vfMetaData = createNewResourceWithArtifactSubmitForTesting();
+		ResourceReqDetails vfMetaData = createNewResourceWithArtifactCertifyState();
 		
-		reloginWithNewRole(UserRoleEnum.TESTER);
+		/*reloginWithNewRole(UserRoleEnum.TESTER);
 		GeneralUIUtils.findComponentAndClick(vfMetaData.getName());
 		TesterOperationPage.certifyComponent(vfMetaData.getName());
 
-		reloginWithNewRole(UserRoleEnum.DESIGNER);
+		reloginWithNewRole(UserRoleEnum.DESIGNER);*/
 		
 		List customizationUUIDs = new ArrayList<>();
 		ServiceReqDetails serviceMetadata = ElementFactory.getDefaultService();
@@ -175,7 +159,7 @@ public class CustomizationUUID extends SetupCDTest {
 		GeneralUIUtils.hoverOnAreaByTestId(DataTestIdEnum.DeploymentArtifactCompositionRightMenu.ARTIFACT_ITEM.getValue() + ARTIFACT_LABEL);
 		SetupCDTest.getExtendTest().log(Status.INFO, "Going to delete "  +  HEAT_FILE_YAML_NAME + " artifact" + " and check if deleted");
 		GeneralUIUtils.clickOnElementByTestId(DataTestIdEnum.DeploymentArtifactCompositionRightMenu.DELETE.getValue() + ARTIFACT_LABEL);
-		GeneralUIUtils.clickOnElementByTestId(DataTestIdEnum.ModalItems.OK.getValue());
+		GeneralPageElements.clickOKButton();
 		
 		
 		ServiceGeneralPage.clickCheckinButton(serviceMetadata.getName());
@@ -192,13 +176,13 @@ public class CustomizationUUID extends SetupCDTest {
 	public void uniqueCustomizationUUIDchangeVFiVersion() throws Exception {
 		
 		
-		ResourceReqDetails vfMetaData = createNewResourceWithArtifactSubmitForTesting();
+		ResourceReqDetails vfMetaData = createNewResourceWithArtifactCertifyState();
 		
-		reloginWithNewRole(UserRoleEnum.TESTER);
+		/*reloginWithNewRole(UserRoleEnum.TESTER);
 		GeneralUIUtils.findComponentAndClick(vfMetaData.getName());
 		TesterOperationPage.certifyComponent(vfMetaData.getName());
 
-		reloginWithNewRole(UserRoleEnum.DESIGNER);
+		reloginWithNewRole(UserRoleEnum.DESIGNER);*/
 		
 		List customizationUUIDs = new ArrayList<>();
 		ServiceReqDetails serviceMetadata = ElementFactory.getDefaultService();
@@ -217,11 +201,12 @@ public class CustomizationUUID extends SetupCDTest {
 		HomePage.navigateToHomePage();
 		GeneralUIUtils.findComponentAndClick(vfMetaData.getName());
 		ResourceGeneralPage.clickCheckoutButton();
-		ResourceGeneralPage.clickSubmitForTestingButton(vfMetaData.getName());
-		reloginWithNewRole(UserRoleEnum.TESTER);
+		//TODO Andrey should click on certify button
+		ResourceGeneralPage.clickCertifyButton(vfMetaData.getName());
+		/*reloginWithNewRole(UserRoleEnum.TESTER);
 		GeneralUIUtils.findComponentAndClick(vfMetaData.getName());
 		TesterOperationPage.certifyComponent(vfMetaData.getName());
-		reloginWithNewRole(UserRoleEnum.DESIGNER);
+		reloginWithNewRole(UserRoleEnum.DESIGNER);*/
 		
 		//update VFI version
 		
@@ -244,13 +229,13 @@ public class CustomizationUUID extends SetupCDTest {
 	public void uniqueCustomizationUUIDaddRelation() throws Exception {
 		
 		
-		ResourceReqDetails vfMetaData = createNewResourceWithArtifactSubmitForTesting();
+		ResourceReqDetails vfMetaData = createNewResourceWithArtifactCertifyState();
 		
-		reloginWithNewRole(UserRoleEnum.TESTER);
+		/*reloginWithNewRole(UserRoleEnum.TESTER);
 		GeneralUIUtils.findComponentAndClick(vfMetaData.getName());
 		TesterOperationPage.certifyComponent(vfMetaData.getName());
 
-		reloginWithNewRole(UserRoleEnum.DESIGNER);
+		reloginWithNewRole(UserRoleEnum.DESIGNER);*/
 		
 		List customizationUUIDs = new ArrayList<>();
 		ServiceReqDetails serviceMetadata = ElementFactory.getDefaultService();
@@ -269,20 +254,21 @@ public class CustomizationUUID extends SetupCDTest {
 		HomePage.navigateToHomePage();
 		GeneralUIUtils.findComponentAndClick(vfMetaData.getName());
 		ResourceGeneralPage.clickCheckoutButton();
-		ResourceGeneralPage.clickSubmitForTestingButton(vfMetaData.getName());
-		reloginWithNewRole(UserRoleEnum.TESTER);
+		//TODO Andrey should click on certify button
+		ResourceGeneralPage.clickCertifyButton(vfMetaData.getName());
+		/*reloginWithNewRole(UserRoleEnum.TESTER);
 		GeneralUIUtils.findComponentAndClick(vfMetaData.getName());
 		TesterOperationPage.certifyComponent(vfMetaData.getName());
-		reloginWithNewRole(UserRoleEnum.DESIGNER);
+		reloginWithNewRole(UserRoleEnum.DESIGNER);*/
 		
 		//update VFI version
 		
 		canvasManager = findServiceAndNavigateToCanvas(serviceMetadata);
 		ServiceGeneralPage.clickCheckoutButton();
 		canvasManager = CanvasManager.getCanvasManager();
-		CompositionPage.searchForElement(NormativeTypesEnum.PORT.getFolderName());
-		CanvasElement portElement = canvasManager.createElementOnCanvas(LeftPanelCanvasItems.PORT);
-		canvasManager.linkElements(portElement, VFiElement1);
+//		CompositionPage.searchForElement(NormativeTypesEnum.PORT.getFolderName());
+		CanvasElement contrailPortElement = canvasManager.createElementOnCanvas(LeftPanelCanvasItems.CONTRAIL_PORT);
+		canvasManager.linkElements(contrailPortElement, VFiElement1);
 		
 		canvasManager.clickOnCanvaElement(VFiElement1);
 		
@@ -305,13 +291,13 @@ public class CustomizationUUID extends SetupCDTest {
 		return canvasManager;
 	}
 
-	public ResourceReqDetails createNewResourceWithArtifactSubmitForTesting() throws Exception {
+	public ResourceReqDetails createNewResourceWithArtifactCertifyState() throws Exception {
 		ResourceReqDetails vfMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
 		ResourceUIUtils.createVF(vfMetaData, getUser());
 
 		ResourceGeneralPage.getLeftMenu().moveToDeploymentArtifactScreen();
 
-		List<ArtifactInfo> deploymentArtifactList = new ArrayList<ArtifactInfo>();
+		List<ArtifactInfo> deploymentArtifactList = new ArrayList<>();
 		deploymentArtifactList.add(new ArtifactInfo(filePath, "asc_heat 0 2.yaml", "kuku", "artifact1", "OTHER"));
 		deploymentArtifactList.add(new ArtifactInfo(filePath, "sample-xml-alldata-1-1.xml", "cuku", "artifact2", "YANG_XML"));
 		for (ArtifactInfo deploymentArtifact : deploymentArtifactList) {
@@ -336,9 +322,9 @@ public class CustomizationUUID extends SetupCDTest {
 		CompositionPage.searchForElement(NormativeTypesEnum.COMPUTE.name());
 		CanvasManager canvasManagerVF = CanvasManager.getCanvasManager();
 		CanvasElement VFiElement1 = canvasManagerVF.createElementOnCanvas(LeftPanelCanvasItems.COMPUTE);
-		
-		
-		ResourceGeneralPage.clickSubmitForTestingButton(vfMetaData.getName());
+
+		//TODO Andrey should click on certify button
+		ResourceGeneralPage.clickCertifyButton(vfMetaData.getName());
 		return vfMetaData;
 	}
 

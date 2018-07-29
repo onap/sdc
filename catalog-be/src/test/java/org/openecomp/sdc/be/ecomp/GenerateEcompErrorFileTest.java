@@ -20,18 +20,19 @@
 
 package org.openecomp.sdc.be.ecomp;
 
-import static org.junit.Assert.assertTrue;
+import org.junit.Test;
+import org.openecomp.sdc.common.config.EcompClassification;
+import org.openecomp.sdc.common.config.EcompErrorCode;
+import org.openecomp.sdc.common.config.EcompErrorEnum;
+import org.openecomp.sdc.common.config.generation.GenerateEcompErrorsCsv;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Test;
-import org.openecomp.sdc.common.config.EcompClassification;
-import org.openecomp.sdc.common.config.EcompErrorCode;
-import org.openecomp.sdc.common.config.EcompErrorEnum;
-import org.openecomp.sdc.common.config.generation.GenerateEcompErrorsCsv;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class GenerateEcompErrorFileTest {
 
@@ -40,7 +41,7 @@ public class GenerateEcompErrorFileTest {
 
         EcompErrorEnum[] ecompErrorEnums = EcompErrorEnum.values();
 
-        Map<EcompErrorCode, List<EcompClassification>> map = new HashMap<EcompErrorCode, List<EcompClassification>>();
+        Map<EcompErrorCode, List<EcompClassification>> map = new HashMap<>();
         for (EcompErrorEnum ecompErrorEnum : ecompErrorEnums) {
 
             List<EcompClassification> list = map.get(ecompErrorEnum.getEcompErrorCode());
@@ -52,7 +53,8 @@ public class GenerateEcompErrorFileTest {
                 map.put(ecompErrorEnum.getEcompErrorCode(), list);
             } else {
                 if (list.contains(ecompErrorEnum.getClassification())) {
-                    assertTrue(ecompErrorEnum.getEcompErrorCode() + " already defined with ecomp classification " + ecompErrorEnum.getClassification(), false);
+                    fail(ecompErrorEnum.getEcompErrorCode() + " already defined with ecomp classification " + ecompErrorEnum
+                            .getClassification());
                 } else {
                     list.add(ecompErrorEnum.getClassification());
                 }

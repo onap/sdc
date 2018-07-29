@@ -20,14 +20,9 @@
 
 package org.openecomp.sdc.be.model.jsontitan.utils;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.OutputStream;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.UUID;
-
+import com.thinkaurelius.titan.core.TitanGraph;
+import com.thinkaurelius.titan.core.TitanVertex;
+import fj.data.Either;
 import org.apache.tinkerpop.gremlin.structure.io.IoCore;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
@@ -38,18 +33,29 @@ import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 
-import com.thinkaurelius.titan.core.TitanGraph;
-import com.thinkaurelius.titan.core.TitanVertex;
-
-import fj.data.Either;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.UUID;
 
 public final class GraphTestUtils {
 
-	public static void createRootCatalogVertex(TitanDao titanDao) {
-		GraphVertex catalogRootVertex = new GraphVertex(VertexTypeEnum.CATALOG_ROOT);
-		catalogRootVertex.setUniqueId(IdBuilderUtils.generateUniqueId());
-		titanDao.createVertex(catalogRootVertex);
-	}
+    public static GraphVertex createRootCatalogVertex(TitanDao titanDao) {
+        GraphVertex catalogRootVertex = new GraphVertex(VertexTypeEnum.CATALOG_ROOT);
+        catalogRootVertex.setUniqueId(IdBuilderUtils.generateUniqueId());
+        return titanDao.createVertex(catalogRootVertex)
+                .either(v -> v, s -> null);
+    }
+
+    public static GraphVertex createRootArchiveVertex(TitanDao titanDao) {
+        GraphVertex archiveRootVertex = new GraphVertex(VertexTypeEnum.ARCHIVE_ROOT);
+        archiveRootVertex.setUniqueId(IdBuilderUtils.generateUniqueId());
+        return titanDao.createVertex(archiveRootVertex)
+                .either(v -> v, s -> null);
+    }
 
     public static GraphVertex createResourceVertex(TitanDao titanDao, Map<GraphPropertyEnum,Object> metadataProps, ResourceTypeEnum type) {
         GraphVertex vertex = new GraphVertex();

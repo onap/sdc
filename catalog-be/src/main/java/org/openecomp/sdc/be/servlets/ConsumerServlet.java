@@ -20,21 +20,10 @@
 
 package org.openecomp.sdc.be.servlets;
 
-import javax.inject.Singleton;
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
+import com.google.gson.Gson;
+import com.jcabi.aspects.Loggable;
+import fj.data.Either;
+import io.swagger.annotations.*;
 import org.openecomp.sdc.be.components.impl.ConsumerBusinessLogic;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
@@ -43,27 +32,27 @@ import org.openecomp.sdc.be.model.ConsumerDefinition;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.common.api.Constants;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.web.context.WebApplicationContext;
 
-import com.google.gson.Gson;
-import com.jcabi.aspects.Loggable;
+import javax.inject.Singleton;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
-import fj.data.Either;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/v1/consumers")
 @Api(value = "Consumer Servlet", description = "Consumer Servlet")
 @Singleton
 public class ConsumerServlet extends BeGenericServlet {
 
-    private static final Logger log = LoggerFactory.getLogger(ConsumerServlet.class);
+    private static final String MODIFIER_ID_IS = "modifier id is {}";
+	private static final String START_HANDLE_REQUEST_OF = "Start handle request of {}";
+	private static final Logger log = Logger.getLogger(ConsumerServlet.class);
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
@@ -75,11 +64,11 @@ public class ConsumerServlet extends BeGenericServlet {
         ServletContext context = request.getSession().getServletContext();
 
         String url = request.getMethod() + " " + request.getRequestURI();
-        log.debug("Start handle request of {}", url);
+        log.debug(START_HANDLE_REQUEST_OF, url);
 
         User modifier = new User();
         modifier.setUserId(userId);
-        log.debug("modifier id is {}", userId);
+        log.debug(MODIFIER_ID_IS, userId);
 
         try {
             ConsumerBusinessLogic businessLogic = getConsumerBL(context);
@@ -122,11 +111,11 @@ public class ConsumerServlet extends BeGenericServlet {
         ServletContext context = request.getSession().getServletContext();
 
         String url = request.getMethod() + " " + request.getRequestURI();
-        log.debug("Start handle request of {}", url);
+        log.debug(START_HANDLE_REQUEST_OF, url);
 
         User modifier = new User();
         modifier.setUserId(userId);
-        log.debug("modifier id is {}", userId);
+        log.debug(MODIFIER_ID_IS, userId);
 
         Response response = null;
         try {
@@ -160,11 +149,11 @@ public class ConsumerServlet extends BeGenericServlet {
         ServletContext context = request.getSession().getServletContext();
 
         String url = request.getMethod() + " " + request.getRequestURI();
-        log.debug("Start handle request of {}", url);
+        log.debug(START_HANDLE_REQUEST_OF, url);
 
         User modifier = new User();
         modifier.setUserId(userId);
-        log.debug("modifier id is {}", userId);
+        log.debug(MODIFIER_ID_IS, userId);
 
         Response response = null;
         try {
@@ -190,13 +179,11 @@ public class ConsumerServlet extends BeGenericServlet {
     private ConsumerBusinessLogic getConsumerBL(ServletContext context) {
         WebAppContextWrapper webApplicationContextWrapper = (WebAppContextWrapper) context.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR);
         WebApplicationContext webApplicationContext = webApplicationContextWrapper.getWebAppContext(context);
-        ConsumerBusinessLogic consumerBL = webApplicationContext.getBean(ConsumerBusinessLogic.class);
-
-        return consumerBL;
+        return webApplicationContext.getBean(ConsumerBusinessLogic.class);
     }
 
     public Either<ConsumerDefinition, ResponseFormat> convertJsonToObject(String data, User user, AuditingActionEnum actionEnum) {
-        ConsumerDefinition consumer = null;
+        ConsumerDefinition consumer;
         Gson gson = new Gson();
         try {
             log.trace("convert json to object. json=\n {}", data);
@@ -204,16 +191,14 @@ public class ConsumerServlet extends BeGenericServlet {
             if (consumer == null) {
                 BeEcompErrorManager.getInstance().logBeInvalidJsonInput("convertJsonToObject");
                 log.debug("object is null after converting from json");
-                //TODO call correct audit event method!!! - consumer!!!
-                ResponseFormat responseFormat = getComponentsUtils().getInvalidContentErrorAndAudit(user, "", actionEnum);
+                ResponseFormat responseFormat = getComponentsUtils().getInvalidContentErrorForConsumerAndAudit(user, null, actionEnum);
                 return Either.right(responseFormat);
             }
         } catch (Exception e) {
             // INVALID JSON
             BeEcompErrorManager.getInstance().logBeInvalidJsonInput("convertJsonToObject");
             log.debug("failed to convert from json {}", data, e);
-            //TODO call correct audit event method!!! - consumer!!!
-            ResponseFormat responseFormat = getComponentsUtils().getInvalidContentErrorAndAudit(user, "", actionEnum);
+            ResponseFormat responseFormat = getComponentsUtils().getInvalidContentErrorForConsumerAndAudit(user, null, actionEnum);
             return Either.right(responseFormat);
         }
         return Either.left(consumer);

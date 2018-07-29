@@ -20,19 +20,7 @@
 
 package org.openecomp.sdc.translator.services.heattotosca.helper;
 
-import org.apache.commons.collections4.CollectionUtils;
-import org.openecomp.sdc.heat.datatypes.manifest.FileData;
-import org.openecomp.sdc.heat.datatypes.model.HeatOrchestrationTemplate;
-import org.openecomp.sdc.heat.datatypes.model.Output;
-import org.openecomp.sdc.heat.datatypes.model.Resource;
-import org.openecomp.sdc.logging.api.Logger;
-import org.onap.sdc.tosca.services.YamlUtil;
-import org.openecomp.sdc.translator.datatypes.heattotosca.AttachedResourceId;
-import org.openecomp.sdc.translator.datatypes.heattotosca.TranslationContext;
-import org.openecomp.sdc.translator.datatypes.heattotosca.to.ResourceFileDataAndIDs;
-import org.openecomp.sdc.translator.datatypes.heattotosca.to.TranslateTo;
-import org.openecomp.sdc.translator.services.heattotosca.HeatToToscaUtil;
-import org.openecomp.sdc.translator.services.heattotosca.impl.resourcetranslation.ResourceTranslationBase;
+import static org.openecomp.sdc.heat.datatypes.model.HeatResourcesTypes.CINDER_VOLUME_RESOURCE_TYPE;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,7 +30,19 @@ import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import static org.openecomp.sdc.heat.datatypes.model.HeatResourcesTypes.CINDER_VOLUME_RESOURCE_TYPE;
+import org.apache.commons.collections4.CollectionUtils;
+import org.onap.sdc.tosca.services.YamlUtil;
+import org.openecomp.sdc.heat.datatypes.manifest.FileData;
+import org.openecomp.sdc.heat.datatypes.model.HeatOrchestrationTemplate;
+import org.openecomp.sdc.heat.datatypes.model.Output;
+import org.openecomp.sdc.heat.datatypes.model.Resource;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.translator.datatypes.heattotosca.AttachedResourceId;
+import org.openecomp.sdc.translator.datatypes.heattotosca.TranslationContext;
+import org.openecomp.sdc.translator.datatypes.heattotosca.to.ResourceFileDataAndIDs;
+import org.openecomp.sdc.translator.datatypes.heattotosca.to.TranslateTo;
+import org.openecomp.sdc.translator.services.heattotosca.HeatToToscaUtil;
+import org.openecomp.sdc.translator.services.heattotosca.impl.resourcetranslation.ResourceTranslationBase;
 
 public class VolumeTranslationHelper {
   private final Logger logger;

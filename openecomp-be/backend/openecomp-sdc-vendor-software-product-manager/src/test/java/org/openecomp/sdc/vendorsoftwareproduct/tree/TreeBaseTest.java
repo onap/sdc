@@ -16,14 +16,15 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.tree;
 
+import org.openecomp.core.utilities.file.FileUtils;
+import org.openecomp.sdc.heat.services.tree.HeatTreeManager;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
-import org.openecomp.core.utilities.file.FileUtils;
-import org.openecomp.sdc.heat.services.tree.HeatTreeManager;
 
 /**
  * Created by SHALOMB on 6/8/2016.

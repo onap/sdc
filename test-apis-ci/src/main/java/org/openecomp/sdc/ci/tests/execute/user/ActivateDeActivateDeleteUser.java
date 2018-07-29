@@ -20,18 +20,8 @@
 
 package org.openecomp.sdc.ci.tests.execute.user;
 
-import static org.testng.AssertJUnit.assertEquals;
-import static org.testng.AssertJUnit.assertFalse;
-import static org.testng.AssertJUnit.assertNotNull;
-import static org.testng.AssertJUnit.assertTrue;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
+import com.google.gson.*;
+import com.google.gson.reflect.TypeToken;
 import org.apache.http.HttpStatus;
 import org.junit.Rule;
 import org.junit.rules.TestName;
@@ -54,11 +44,7 @@ import org.openecomp.sdc.ci.tests.users.UserResponseMessageEnum;
 import org.openecomp.sdc.ci.tests.utils.DbUtils;
 import org.openecomp.sdc.ci.tests.utils.general.Convertor;
 import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
-import org.openecomp.sdc.ci.tests.utils.rest.CatalogRestUtils;
-import org.openecomp.sdc.ci.tests.utils.rest.ImportRestUtils;
-import org.openecomp.sdc.ci.tests.utils.rest.ResourceRestUtils;
-import org.openecomp.sdc.ci.tests.utils.rest.ResponseParser;
-import org.openecomp.sdc.ci.tests.utils.rest.UserRestUtils;
+import org.openecomp.sdc.ci.tests.utils.rest.*;
 import org.openecomp.sdc.ci.tests.utils.validation.AuditValidationUtils;
 import org.openecomp.sdc.ci.tests.utils.validation.ErrorValidationUtils;
 import org.openecomp.sdc.ci.tests.utils.validation.ResourceValidationUtils;
@@ -69,12 +55,10 @@ import org.testng.AssertJUnit;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import com.google.gson.reflect.TypeToken;
+import java.util.*;
+import java.util.Map.Entry;
+
+import static org.testng.AssertJUnit.*;
 
 /**
  * @author alitvinsky

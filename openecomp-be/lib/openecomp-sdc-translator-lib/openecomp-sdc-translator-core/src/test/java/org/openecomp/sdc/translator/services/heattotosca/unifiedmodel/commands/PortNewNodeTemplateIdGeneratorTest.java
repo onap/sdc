@@ -16,30 +16,26 @@
 
 package org.openecomp.sdc.translator.services.heattotosca.unifiedmodel.commands;
 
-import static org.openecomp.sdc.translator.TestUtils.createInitServiceTemplate;
-
-import org.openecomp.sdc.tosca.datatypes.ToscaCapabilityType;
-import org.openecomp.sdc.tosca.datatypes.ToscaNodeType;
-import org.openecomp.sdc.tosca.datatypes.ToscaRelationshipType;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
 import org.onap.sdc.tosca.datatypes.model.NodeTemplate;
 import org.onap.sdc.tosca.datatypes.model.RequirementAssignment;
 import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
 import org.onap.sdc.tosca.datatypes.model.TopologyTemplate;
+import org.openecomp.sdc.tosca.datatypes.ToscaCapabilityType;
+import org.openecomp.sdc.tosca.datatypes.ToscaNodeType;
+import org.openecomp.sdc.tosca.datatypes.ToscaRelationshipType;
 import org.openecomp.sdc.tosca.services.ToscaConstants;
 import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.composition.UnifiedCompositionData;
 import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.composition.commands.UnifiedSubstitutionNodeTemplateIdGenerator;
 import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.composition.commands.impl.PortNewNodeTemplateIdGenerator;
 import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.composition.to.UnifiedCompositionTo;
 import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.ComputeTemplateConsolidationData;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+
+import static org.openecomp.sdc.translator.TestUtils.createInitServiceTemplate;
 
 public class PortNewNodeTemplateIdGeneratorTest {
 

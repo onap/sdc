@@ -20,28 +20,42 @@
 
 package org.openecomp.sdc.be.model;
 
-import java.io.Serializable;
+public class RequirementCapabilityRelDef extends TargetCapabilityRelDef {
 
-public class RequirementCapabilityRelDef extends TargetCapabilityRelDef implements Serializable {
+    private String fromNode;
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -6396265049494824741L;
+    private boolean originUI;
 
-	private String fromNode;
+    public RequirementCapabilityRelDef() {
+    }
 
-	public String getFromNode() {
-		return fromNode;
-	}
+    public RequirementCapabilityRelDef(RequirementCapabilityRelDef another) {
+        super(another.getToNode(), another.getRelationships());
 
-	public void setFromNode(String fromNode) {
-		this.fromNode = fromNode;
-	}
+        fromNode = another.getFromNode();
+        originUI = another.isOriginUI();
+    }
 
-	@Override
-	public String toString() {
-		return "RequirementCapabilityRelDef [fromNode=" + fromNode + ", toString()=" + super.toString() + "]";
-	}
+
+    public String getFromNode() {
+        return fromNode;
+    }
+
+    public void setFromNode(String fromNode) {
+        this.fromNode = fromNode;
+    }
+
+    public boolean isOriginUI() {
+        return originUI;
+    }
+
+    public void setOriginUI(boolean originUI) {
+        this.originUI = originUI;
+    }
+
+    @Override
+    public String toString() {
+        return "RequirementCapabilityRelDef [fromNode=" + fromNode + ", originUI=" + originUI + ", " + super.toString() + "]";
+    }
 
 }

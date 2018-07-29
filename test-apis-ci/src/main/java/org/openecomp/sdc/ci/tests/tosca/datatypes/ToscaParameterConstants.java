@@ -2,10 +2,11 @@ package org.openecomp.sdc.ci.tests.tosca.datatypes;
 
 public interface ToscaParameterConstants {
 
-	public static final String ENTRY_DEFINITION = "Entry-Definitions";
-	public static final String TOSCA_META_PATH = "TOSCA-Metadata/TOSCA.meta";
-	public static final String HEAT_META_PATH = "Artifacts/HEAT.meta";
-	public static final String IMPORT_STRUCTURE = "importStructure";
-	public static final String NODE_TYPES = "node_types";
-	public static final String PROPERTIES = "properties";
+	String TOSCA_DEFINITION_PATH = "Definitions";
+	String ENTRY_DEFINITION = "Entry-Definitions";
+	String TOSCA_META_PATH = "TOSCA-Metadata/TOSCA.meta";
+	String HEAT_META_PATH = "Artifacts/HEAT.meta";
+	String IMPORT_STRUCTURE = "importStructure";
+	String NODE_TYPES = "node_types";
+	String PROPERTIES = "properties";
 }

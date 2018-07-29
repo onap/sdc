@@ -46,22 +46,28 @@ import {LoaderService} from "../services/loader-service";
 import {CategoryResourceService} from "../services/category-resource-service";
 import {downgradeInjectable} from "@angular/upgrade/static";
 import {ModalService} from "../ng2/services/modal.service";
+import {SdcUiComponents} from "sdc-ui/lib/angular";
 import {ComponentServiceNg2} from "../ng2/services/component-services/component.service";
 import {ServiceServiceNg2} from "../ng2/services/component-services/service.service";
 import {ComponentServiceFactoryNg2} from "../ng2/services/component-services/component.service.factory";
 import {ConnectionWizardService} from "../ng2/pages/connection-wizard/connection-wizard.service";
 import {ComponentInstanceServiceNg2} from "../ng2/services/component-instance-services/component-instance.service";
 import {UserService as UserServiceNg2} from "../ng2/services/user.service";
+import {PoliciesService as PoliciesServiceNg2} from "../ng2/services/policies.service";
+import {GroupsService as GroupsServiceNg2} from "../ng2/services/groups.service";
 import {PluginsService} from "../ng2/services/plugins.service";
 import {EventBusService} from "../ng2/services/event-bus.service";
-import {PoliciesService as PoliciesServiceNg2} from "../ng2/services/policies.service";
 import {DynamicComponentService} from "app/ng2/services/dynamic-component.service";
+import {AutomatedUpgradeService} from "../ng2/pages/automated-upgrade/automated-upgrade.service";
+import {ArchiveService as ArchiveServiceNg2} from "app/ng2/services/archive.service";
+import {ComponentFactory} from "app/utils/component-factory";
 
 let moduleName:string = 'Sdc.Services';
 let serviceModule:ng.IModule = angular.module(moduleName, []);
 
 serviceModule.service('Sdc.Services.ConfigurationUiService', ConfigurationUiService);
 serviceModule.service('Sdc.Services.CookieService', CookieService);
+serviceModule.service('Sdc.Services.ComponentFactory', ComponentFactory); // Why you need to declare it again, already done in utils.ts
 serviceModule.service('Sdc.Services.EntityService', EntityService);
 serviceModule.service('Sdc.Services.AvailableIconsService', AvailableIconsService);
 serviceModule.service('Sdc.Services.UrlToBase64Service', UrlToBase64Service);
@@ -98,10 +104,14 @@ serviceModule.factory('ComponentServiceNg2', downgradeInjectable(ComponentServic
 serviceModule.factory('ComponentServiceFactoryNg2', downgradeInjectable(ComponentServiceFactoryNg2));
 serviceModule.factory('ServiceServiceNg2', downgradeInjectable(ServiceServiceNg2));
 serviceModule.factory('ModalServiceNg2', downgradeInjectable(ModalService));
+serviceModule.factory('ModalServiceSdcUI', downgradeInjectable(SdcUiComponents.ModalService));
 serviceModule.factory('ConnectionWizardServiceNg2', downgradeInjectable(ConnectionWizardService));
 serviceModule.factory('ComponentInstanceServiceNg2', downgradeInjectable(ComponentInstanceServiceNg2));
 serviceModule.factory('UserServiceNg2', downgradeInjectable(UserServiceNg2));
+serviceModule.factory('PoliciesServiceNg2', downgradeInjectable(PoliciesServiceNg2));
+serviceModule.factory('GroupsServiceNg2', downgradeInjectable(GroupsServiceNg2));
 serviceModule.factory('PluginsService', downgradeInjectable(PluginsService));
 serviceModule.factory('EventBusService', downgradeInjectable(EventBusService));
-serviceModule.factory('PoliciesServiceNg2', downgradeInjectable(PoliciesServiceNg2));
 serviceModule.factory('DynamicComponentService', downgradeInjectable(DynamicComponentService));
+serviceModule.factory('ArchiveServiceNg2', downgradeInjectable(ArchiveServiceNg2));
+serviceModule.factory('AutomatedUpgradeService', downgradeInjectable(AutomatedUpgradeService));

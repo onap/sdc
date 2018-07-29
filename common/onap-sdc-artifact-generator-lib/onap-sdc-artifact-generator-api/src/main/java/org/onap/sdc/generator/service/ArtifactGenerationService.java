@@ -20,12 +20,12 @@
 
 package org.onap.sdc.generator.service;
 
+import org.onap.sdc.generator.data.Artifact;
 import org.onap.sdc.generator.data.GenerationData;
 import org.onap.sdc.generator.data.GeneratorConstants;
+import org.onap.sdc.generator.logging.CategoryLogLevel;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
-import org.onap.sdc.generator.data.Artifact;
-import org.onap.sdc.generator.logging.CategoryLogLevel;
 import org.slf4j.MDC;
 
 import java.util.List;

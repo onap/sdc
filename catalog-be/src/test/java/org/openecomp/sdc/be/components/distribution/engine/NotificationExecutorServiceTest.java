@@ -1,16 +1,11 @@
 package org.openecomp.sdc.be.components.distribution.engine;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-
 import org.junit.Test;
 import org.openecomp.sdc.be.config.DistributionEngineConfiguration.DistributionNotificationTopicConfig;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.concurrent.*;
 
 public class NotificationExecutorServiceTest {
 

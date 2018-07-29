@@ -20,9 +20,7 @@
 
 package org.openecomp.sdc.be.resources.impl;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
-
+import fj.data.Either;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ICatalogDAO;
@@ -30,11 +28,11 @@ import org.openecomp.sdc.be.dao.api.ResourceUploadStatus;
 import org.openecomp.sdc.be.resources.api.IResourceUploader;
 import org.openecomp.sdc.be.resources.data.ESArtifactData;
 import org.openecomp.sdc.be.resources.exception.ResourceDAOException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.springframework.stereotype.Component;
 
-import fj.data.Either;
+import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 
 @Component("resource-upload")
 public class ResourceUploader implements IResourceUploader {
@@ -43,7 +41,7 @@ public class ResourceUploader implements IResourceUploader {
 
 	@Resource
 	private ICatalogDAO resourceDAO;
-	private static Logger log = LoggerFactory.getLogger(ResourceUploader.class.getName());
+	private static Logger log = Logger.getLogger(ResourceUploader.class.getName());
 
 	@PostConstruct
 	public void init() {

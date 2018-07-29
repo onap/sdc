@@ -20,12 +20,7 @@
 
 package org.openecomp.sdc.ci.tests.execute.sanity;
 
-import static org.testng.AssertJUnit.assertTrue;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
+import static org.assertj.core.api.Assertions.assertThat;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
@@ -39,34 +34,29 @@ import org.openecomp.sdc.ci.tests.datatypes.enums.PropertyTypeEnum;
 import org.openecomp.sdc.ci.tests.datatypes.enums.ResourceCategoryEnum;
 import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
 import org.openecomp.sdc.ci.tests.execute.setup.SetupCDTest;
-import org.openecomp.sdc.ci.tests.pages.DeploymentArtifactPage;
-import org.openecomp.sdc.ci.tests.pages.GeneralPageElements;
-import org.openecomp.sdc.ci.tests.pages.InformationalArtifactPage;
-import org.openecomp.sdc.ci.tests.pages.PropertiesPage;
-import org.openecomp.sdc.ci.tests.pages.ResourceGeneralPage;
-import org.openecomp.sdc.ci.tests.pages.TesterOperationPage;
-import org.openecomp.sdc.ci.tests.pages.UploadArtifactPopup;
-import org.openecomp.sdc.ci.tests.utilities.ArtifactUIUtils;
-import org.openecomp.sdc.ci.tests.utilities.FileHandling;
-import org.openecomp.sdc.ci.tests.utilities.GeneralUIUtils;
-import org.openecomp.sdc.ci.tests.utilities.PropertiesUIUtils;
-import org.openecomp.sdc.ci.tests.utilities.ResourceUIUtils;
+import org.openecomp.sdc.ci.tests.pages.*;
+import org.openecomp.sdc.ci.tests.utilities.*;
 import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
 import org.openecomp.sdc.ci.tests.utils.validation.ErrorValidationUtils;
 import org.openecomp.sdc.ci.tests.verificator.PropertyVerificator;
-import org.openecomp.sdc.ci.tests.verificator.VFCverificator;
 import org.openecomp.sdc.ci.tests.verificator.VfVerificator;
 import org.testng.Assert;
-import org.testng.SkipException;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import static org.testng.AssertJUnit.assertTrue;
+
+@Test(singleThreaded=true)
 public class ImportVFCAsset extends SetupCDTest {
 	
 	private ResourceReqDetails atomicResourceMetaData;
-	
 	private String filePath;
+
 	@BeforeClass
 	public void beforeClass(){
 		filePath = FileHandling.getFilePath("");
@@ -177,7 +167,7 @@ public class ImportVFCAsset extends SetupCDTest {
 	}
 	
 	@Test
-	public void addUpdateDeletePlaceholdersInformationalArtefactVFCTest() throws Exception{
+	public void addUpdateDeletePlaceholdersInformationalArtifactVFCTest() throws Exception{
 		String fileName = "importVFC_VFC7.yml";
 		atomicResourceMetaData = ElementFactory.getDefaultResourceByTypeNormTypeAndCatregory(ResourceTypeEnum.VFC, NormativeTypesEnum.ROOT, 
 				ResourceCategoryEnum.NETWORK_L2_3_ROUTERS, getUser());
@@ -193,7 +183,8 @@ public class ImportVFCAsset extends SetupCDTest {
         	InformationalArtifactPage.clickAddNewArtifact();
 			ArtifactUIUtils.fillAndAddNewArtifactParameters(informationalArtifact);
 		}		
-		assertTrue("artifact table does not contain artifacts uploaded", InformationalArtifactPage.checkElementsCountInTable(informationalArtifactList.size()));
+		assertThat(InformationalArtifactPage.checkElementsCountInTable(informationalArtifactList.size())).
+                as("Check that artifact table contains artifacts uploaded").isTrue();
 		
 		// update artifact description
 		String newDescription = "new description";
@@ -201,7 +192,7 @@ public class ImportVFCAsset extends SetupCDTest {
 		InformationalArtifactPage.artifactPopup().insertDescription(newDescription);
 		InformationalArtifactPage.artifactPopup().clickDoneButton();
 		String actualArtifactDescription = InformationalArtifactPage.getArtifactDescription(informationalArtifactList.get(0).getArtifactLabel());
-		assertTrue("artifact description is not updated", newDescription.equals(actualArtifactDescription));
+		assertThat(actualArtifactDescription).as("Check artifact description update").isEqualTo(newDescription);
 		
 		// delete artifacts 
 		for (ArtifactInfo informationalArtifact : informationalArtifactList) {
@@ -209,13 +200,18 @@ public class ImportVFCAsset extends SetupCDTest {
 			InformationalArtifactPage.clickOK();
 		}
 		
-		assertTrue("not all artifacts is deleted", InformationalArtifactPage.checkElementsCountInTable(0));
-		
+		assertThat(InformationalArtifactPage.checkElementsCountInTable(0)).
+                as("Check that all artifacts were deleted").isTrue();
+
 		// fill placeholders
+        int fileNameCounter = 0;
 		for(InformationalArtifactsPlaceholders informArtifact : InformationalArtifactsPlaceholders.values()){
-			ArtifactUIUtils.fillPlaceHolderInformationalArtifact(informArtifact, filePath,"asc_heat 0 2.yaml", informArtifact.getValue());
+            fileName = HEAT_FILE_YAML_NAME_PREFIX + fileNameCounter + HEAT_FILE_YAML_NAME_SUFFIX;
+            ArtifactUIUtils.fillPlaceHolderInformationalArtifact(informArtifact, FileHandling.getFilePath("uniqueFileNames"),
+                    fileName, informArtifact.getValue());
+            fileNameCounter++;
 		}		
-		InformationalArtifactPage.checkElementsCountInTable(InformationalArtifactsPlaceholders.values().length);
+		assertThat(InformationalArtifactPage.checkElementsCountInTable(InformationalArtifactsPlaceholders.values().length)).isTrue();
 	}
 	
 	@Test
@@ -302,16 +298,17 @@ public class ImportVFCAsset extends SetupCDTest {
 		
 		ResourceGeneralPage.clickCheckinButton(vfName);
 		GeneralUIUtils.findComponentAndClick(vfName);
-		ResourceGeneralPage.clickSubmitForTestingButton(vfName);
+		//TODO Andrey should click on certify button
+		ResourceGeneralPage.clickCertifyButton(vfName);
 		
-		reloginWithNewRole(UserRoleEnum.TESTER);
+		/*reloginWithNewRole(UserRoleEnum.TESTER);
 		GeneralUIUtils.findComponentAndClick(vfName);
-		TesterOperationPage.certifyComponent(vfName);
+		TesterOperationPage.certifyComponent(vfName);*/
 		
 		atomicResourceMetaData.setVersion("1.0");
 		VfVerificator.verifyVFLifecycle(atomicResourceMetaData, getUser(), LifecycleStateEnum.CERTIFIED);
 		
-		reloginWithNewRole(UserRoleEnum.DESIGNER);
+		/*reloginWithNewRole(UserRoleEnum.DESIGNER);*/
 		GeneralUIUtils.findComponentAndClick(vfName);
 		VfVerificator.verifyVfLifecycleInUI(LifeCycleStateEnum.CERTIFIED);
 	}

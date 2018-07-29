@@ -1,15 +1,6 @@
 package org.openecomp.sdc.be.components.impl;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.util.List;
-
-import javax.ws.rs.core.Response;
-
+import fj.data.Either;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -18,6 +9,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.components.utils.PolicyDefinitionBuilder;
 import org.openecomp.sdc.be.components.utils.PropertyDataDefinitionBuilder;
 import org.openecomp.sdc.be.components.utils.ResourceBuilder;
@@ -27,17 +19,19 @@ import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
-import org.openecomp.sdc.be.model.ComponentParametersView;
-import org.openecomp.sdc.be.model.LifecycleStateEnum;
-import org.openecomp.sdc.be.model.PolicyDefinition;
-import org.openecomp.sdc.be.model.PropertyDefinition;
-import org.openecomp.sdc.be.model.Resource;
-import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.*;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.exception.ResponseFormat;
 
-import fj.data.Either;
+import javax.ws.rs.core.Response;
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PolicyPropertiesBusinessLogicTest {
@@ -60,6 +54,8 @@ public class PolicyPropertiesBusinessLogicTest {
 
     @Mock
     private ComponentsUtils componentsUtils;
+
+    private final ComponentTypeEnum COMPONENT_TYPE = ComponentTypeEnum.RESOURCE;
 
     private ComponentParametersView componentFilter;
     private Resource resource;
@@ -84,6 +80,7 @@ public class PolicyPropertiesBusinessLogicTest {
                 .build();
         resource = new ResourceBuilder()
                 .setUniqueId(RESOURCE_ID)
+                .setComponentType(COMPONENT_TYPE)
                 .setLifeCycleState(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT)
                 .setLastUpdaterUserId(USER_ID)
                 .addPolicy(policy1)
@@ -99,15 +96,18 @@ public class PolicyPropertiesBusinessLogicTest {
     @Test
     public void getPolicyProperties_userIdIsNull() {
         String userId = null;
-        ResponseFormat forbiddenResponse = new ResponseFormat(Response.Status.FORBIDDEN.getStatusCode());
-        when(userValidations.validateUserExists(eq(userId), anyString(), eq(false))).thenReturn(Either.right(forbiddenResponse));
-        Either<List<PropertyDataDefinition>, ResponseFormat> policyProperties = testInstance.getPolicyProperties(ComponentTypeEnum.RESOURCE, RESOURCE_ID, POLICY_ID, null);
-        assertThat(policyProperties.right().value()).isSameAs(forbiddenResponse);
+        ComponentException forbiddenException = new ComponentException(ActionStatus.AUTH_FAILED);
+        when(userValidations.validateUserExists(eq(userId), anyString(), eq(false))).thenThrow(forbiddenException);
+        try{
+            testInstance.getPolicyProperties(ComponentTypeEnum.RESOURCE, RESOURCE_ID, POLICY_ID, null);
+        } catch(ComponentException e){
+            assertThat(e.getActionStatus()).isEqualTo(ActionStatus.AUTH_FAILED);
+        }
     }
 
     @Test
     public void getPolicyProperties_componentNotFound() {
-        when(userValidations.validateUserExists(eq(USER_ID), anyString(), eq(false))).thenReturn(Either.left(new User()));
+        when(userValidations.validateUserExists(eq(USER_ID), anyString(), eq(false))).thenReturn(new User());
         ArgumentCaptor<ComponentParametersView> filterCaptor = ArgumentCaptor.forClass(ComponentParametersView.class);
         when(toscaOperationFacade.getToscaElement(eq(RESOURCE_ID), filterCaptor.capture())).thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
         when(componentsUtils.convertFromStorageResponse(StorageOperationStatus.NOT_FOUND, ComponentTypeEnum.RESOURCE)).thenCallRealMethod();
@@ -143,7 +143,7 @@ public class PolicyPropertiesBusinessLogicTest {
     }
 
     private void doPolicyValidations() {
-        when(userValidations.validateUserExists(eq(USER_ID), anyString(), eq(false))).thenReturn(Either.left(new User()));
+        when(userValidations.validateUserExists(eq(USER_ID), anyString(), eq(false))).thenReturn(new User());
         ArgumentCaptor<ComponentParametersView> filterCaptor = ArgumentCaptor.forClass(ComponentParametersView.class);
         when(toscaOperationFacade.getToscaElement(eq(RESOURCE_ID), filterCaptor.capture())).thenReturn(Either.left(resource));
     }

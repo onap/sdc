@@ -1,19 +1,17 @@
 package org.openecomp.sdc.be.dao.cassandra.schema;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
+import com.datastax.driver.core.Session;
+import mockit.Deencapsulation;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.openecomp.sdc.be.config.Configuration.CassandrConfig.KeyspaceConfig;
 import org.openecomp.sdc.be.dao.cassandra.schema.SdcSchemaBuilder.ReplicationStrategy;
 import org.openecomp.sdc.be.utils.DAOConfDependentTest;
 
-import com.datastax.driver.core.Session;
-
-import mockit.Deencapsulation;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 public class SdcSchemaBuilderTest extends DAOConfDependentTest{
 

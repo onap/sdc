@@ -17,6 +17,7 @@
 package org.openecomp.sdc.validation.impl.util;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.onap.sdc.tosca.services.YamlUtil;
 import org.openecomp.core.validation.errors.ErrorMessagesFormatBuilder;
 import org.openecomp.core.validation.types.GlobalValidationContext;
 import org.openecomp.sdc.common.errors.Messages;
@@ -29,7 +30,6 @@ import org.openecomp.sdc.heat.datatypes.model.Resource;
 import org.openecomp.sdc.heat.services.HeatStructureUtil;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
-import org.onap.sdc.tosca.services.YamlUtil;
 import org.openecomp.sdc.validation.impl.validators.HeatValidator;
 import org.openecomp.sdc.validation.type.HeatResourceValidationContext;
 

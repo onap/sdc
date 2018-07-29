@@ -8,12 +8,11 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.http.config.ClientCertificate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 
 public class HttpClientFactory {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(HttpClientFactory.class);
+    private static final Logger logger = Logger.getLogger(HttpClientFactory.class.getName());
     private static final UserTokenHandler userTokenHandler = context -> null;
     private final HttpConnectionMngFactory connectionMngFactory;
     
@@ -22,7 +21,7 @@ public class HttpClientFactory {
     }
 
     HttpClient createClient(String protocol, HttpClientConfigImmutable config) {
-        LOGGER.debug("Create {} client based on {}", protocol, config);
+        logger.debug("Create {} client based on {}", protocol, config);
 
         ClientCertificate clientCertificate = Constants.HTTPS.equals(protocol) ? config.getClientCertificate() : null; 
         HttpClientConnectionManager connectionManager = connectionMngFactory.getOrCreate(clientCertificate);

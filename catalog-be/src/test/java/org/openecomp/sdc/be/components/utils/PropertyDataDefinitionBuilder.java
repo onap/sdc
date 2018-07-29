@@ -1,9 +1,9 @@
 package org.openecomp.sdc.be.components.utils;
 
-import java.util.List;
-
 import org.openecomp.sdc.be.model.PropertyConstraint;
 import org.openecomp.sdc.be.model.PropertyDefinition;
+
+import java.util.List;
 
 public class PropertyDataDefinitionBuilder extends PropertyDataDefinitionAbstractBuilder<PropertyDefinition, PropertyDataDefinitionBuilder> {
 

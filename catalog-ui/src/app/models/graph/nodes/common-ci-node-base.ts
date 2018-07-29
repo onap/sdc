@@ -22,6 +22,7 @@ import {ComponentInstance} from "../../componentsInstances/componentInstance";
 export abstract class CommonCINodeBase extends CommonNodeBase {
 
     public certified:boolean;
+    public archived:boolean;
     public template:string;
     public componentInstance:ComponentInstance;
     public group:string;
@@ -34,6 +35,7 @@ export abstract class CommonCINodeBase extends CommonNodeBase {
         this.img = '';
         this.certified = this.isCertified(this.componentInstance.componentVersion);
         this.displayName = instance.name;
+        this.archived = instance.originArchived;
     }
 
     private isCertified(version:string):boolean {

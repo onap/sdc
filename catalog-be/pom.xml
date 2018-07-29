@@ -19,7 +19,7 @@
         <dependency>
             <groupId>com.fasterxml.jackson.dataformat</groupId>
             <artifactId>jackson-dataformat-yaml</artifactId>
-            <version>${jackson.yaml.version}</version>
+            <version>${jackson.version}</version>
             <scope>compile</scope>
         </dependency>
 
@@ -27,27 +27,6 @@
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
             <version>${jackson.version}</version>
-            <scope>compile</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-core</artifactId>
-            <version>${jackson.version}</version>
-            <scope>compile</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-annotations</artifactId>
-            <version>${jackson.annotations.version}</version>
-            <scope>compile</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.glassfish.jersey.media</groupId>
-            <artifactId>jersey-media-multipart</artifactId>
-            <version>${jersey-bom.version}</version>
             <scope>compile</scope>
         </dependency>
 
@@ -117,7 +96,7 @@
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-			<version>${logback.version}</version>
+            <version>${logback.version}</version>
             <scope>compile</scope>
         </dependency>
 
@@ -125,7 +104,7 @@
         <dependency>
             <groupId>org.yaml</groupId>
             <artifactId>snakeyaml</artifactId>
-			<version>${snakeyaml.version}</version>
+            <version>${snakeyaml.version}</version>
             <scope>compile</scope>
         </dependency>
 
@@ -160,60 +139,67 @@
             <scope>compile</scope>
         </dependency>
 
-		<dependency>
-			<groupId>org.glassfish.jersey.ext</groupId>
-			<artifactId>jersey-spring4</artifactId>
-			<version>${jersey-bom.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>org.springframework</groupId>
-					<artifactId>spring-web</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.springframework</groupId>
-					<artifactId>spring-beans</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.springframework</groupId>
-					<artifactId>spring-core</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.springframework</groupId>
-					<artifactId>spring-aop</artifactId>
-				</exclusion>
-				<!-- Transitive dependency of spring-bridge -->
-				<exclusion>
-					<groupId>org.springframework</groupId>
-					<artifactId>spring-context</artifactId>
-				</exclusion>
-			</exclusions>
+        <dependency>
+            <groupId>org.glassfish.jersey.media</groupId>
+            <artifactId>jersey-media-multipart</artifactId>
+            <version>${jersey-bom.version}</version>
+            <scope>compile</scope>
+        </dependency>
 
-		</dependency>
+        <dependency>
+            <groupId>org.glassfish.jersey.ext</groupId>
+            <artifactId>jersey-spring4</artifactId>
+            <version>${jersey-bom.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-web</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-beans</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-aop</artifactId>
+                </exclusion>
+                <!-- Transitive dependency of spring-bridge -->
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-context</artifactId>
+                </exclusion>
+            </exclusions>
 
-		<!--asm-all-repackaged is a jersey dependency. in current version jersey depends on a version that was compiled using java 9 compiler
-			currently our jetty (v9.3.6) does not support java 9. as soon as jetty gets upgraded we will remove this dependency-->
-		<dependency>
-			<groupId>org.glassfish.hk2.external</groupId>
-			<artifactId>asm-all-repackaged</artifactId>
-		</dependency>
+        </dependency>
 
-		<dependency>
-			<groupId>org.glassfish.jersey.ext</groupId>
-			<artifactId>jersey-bean-validation</artifactId>
-		</dependency>
+        <!--asm-all-repackaged is a jersey dependency. in current version jersey depends on a version that was compiled using java 9 compiler
+            currently our jetty (v9.3.6) does not support java 9. as soon as jetty gets upgraded we will remove this dependency-->
+        <dependency>
+            <groupId>org.glassfish.hk2.external</groupId>
+            <artifactId>asm-all-repackaged</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.glassfish.jersey.ext</groupId>
+            <artifactId>jersey-bean-validation</artifactId>
+        </dependency>
 
         <!-- http client -->
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
-			<version>${httpclient.version}</version>
+            <version>${httpclient.version}</version>
             <scope>compile</scope>
         </dependency>
 
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpcore</artifactId>
-			<version>${httpcore.version}</version>
+            <version>${httpcore.version}</version>
             <scope>compile</scope>
         </dependency>
 
@@ -227,7 +213,7 @@
         <dependency>
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>
-			<version>${commons-codec}</version>
+            <version>${commons-codec}</version>
             <scope>compile</scope>
         </dependency>
         <!-- http client END -->
@@ -235,7 +221,7 @@
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
-			<version>${servlet-api.version}</version>
+            <version>${servlet-api.version}</version>
             <scope>provided</scope>
         </dependency>
 
@@ -377,7 +363,7 @@
         <dependency>
             <groupId>org.elasticsearch</groupId>
             <artifactId>elasticsearch</artifactId>
-			<version>${elastic-search.version}</version>
+            <version>${elastic-search.version}</version>
             <scope>compile</scope>
         </dependency>
 
@@ -420,8 +406,8 @@
             <scope>compile</scope>
             <exclusions>
                 <exclusion>
-		    <groupId>com.att.nsa</groupId>
-		    <artifactId>saClientLibrary</artifactId>
+                    <groupId>com.att.nsa</groupId>
+                    <artifactId>saClientLibrary</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -479,46 +465,6 @@
             </exclusions>
         </dependency>
 
-        <!--Artifact Generator-->
-        <dependency>
-            <groupId>org.onap.sdc.common</groupId>
-            <artifactId>onap-sdc-artifact-generator-api</artifactId>
-            <version>${artifact-generator-api.version}</version>
-            <scope>compile</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>junit</groupId>
-                    <artifactId>junit</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-        <dependency>
-            <groupId>org.onap.sdc.common</groupId>
-            <artifactId>onap-sdc-artifact-generator-core</artifactId>
-            <version>${artifact-generator-core.version}</version>
-            <scope>compile</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>junit</groupId>
-                    <artifactId>junit</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-        <dependency>
-            <groupId>org.onap.sdc.common</groupId>
-            <artifactId>onap-common-lib</artifactId>
-            <version>${dox-common-lib.version}</version>
-            <type>pom</type>
-            <exclusions>
-                <exclusion>
-                    <groupId>junit</groupId>
-                    <artifactId>junit</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
         <!--Jetty Proxy-->
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
@@ -540,47 +486,42 @@
             <version>${sigar.version}</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>org.onap.dmaap.messagerouter.dmaapclient</groupId>
+            <artifactId>dmaapClient</artifactId>
+            <version>1.1.3</version>
+            <scope>compile</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.att.aft</groupId>
+                    <artifactId>dme2</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
 
-		<dependency>
-			<groupId>org.onap.dmaap.messagerouter.dmaapclient</groupId>
-			<artifactId>dmaapClient</artifactId>
-			<version>1.1.3</version>
-			<scope>compile</scope>
-			<exclusions>
-				<exclusion>
-					<groupId>com.att.aft</groupId>
-					<artifactId>dme2</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
+
+
+        <dependency>
             <groupId>com.att.aft</groupId>
             <artifactId>dme2</artifactId>
             <version>3.1.200-oss</version>
         </dependency>
-		
-		<dependency>
-			<groupId>javax.jms</groupId>
-			<artifactId>jms</artifactId>
-			<version>1.1</version>
-			<scope>provided</scope>
-		</dependency>
 
-		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>javax.servlet-api</artifactId>
-			<version>3.1.0</version>
-			<scope>provided</scope>
-		</dependency>
+        <dependency>
+            <groupId>javax.jms</groupId>
+            <artifactId>jms</artifactId>
+            <version>1.1</version>
+            <scope>provided</scope>
+        </dependency>
 
         <!-- TEST -->
         <dependency>
-			<groupId>org.assertj</groupId>
-			<artifactId>assertj-core</artifactId>
-			<scope>test</scope>
-		</dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <scope>test</scope>
+        </dependency>
 
-		<dependency>
+        <dependency>
             <groupId>org.glassfish.jersey.test-framework.providers</groupId>
             <artifactId>jersey-test-framework-provider-bundle</artifactId>
             <version>${jersey-bom.version}</version>
@@ -588,37 +529,31 @@
             <scope>test</scope>
         </dependency>
 
-		<!--<dependency>-->
-			<!--<groupId>org.glassfish.jersey.test-framework.providers</groupId>-->
-			<!--<artifactId>jersey-test-framework-provider-inmemory</artifactId>-->
-			<!--<version>${jersey-bom.version}</version>-->
-			<!--<scope>test</scope>-->
-		<!--</dependency>-->
 
-		<dependency>
-			<groupId>org.glassfish.jersey.core</groupId>
-			<artifactId>jersey-client</artifactId>
-			<version>${jersey-bom.version}</version>
-			<!--<scope>test</scope>-->
-		</dependency>
+        <dependency>
+            <groupId>org.glassfish.jersey.core</groupId>
+            <artifactId>jersey-client</artifactId>
+            <version>${jersey-bom.version}</version>
 
-		<dependency>
-			<groupId>com.github.tomakehurst</groupId>
-			<artifactId>wiremock</artifactId>
-			<scope>test</scope>
-		</dependency>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.tomakehurst</groupId>
+            <artifactId>wiremock-standalone</artifactId>
+            <scope>test</scope>
+        </dependency>
 
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-servlet</artifactId>
-			<version>${jetty.version}</version>
+            <version>${jetty.version}</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-webapp</artifactId>
-			<version>${jetty.version}</version>
+            <version>${jetty.version}</version>
             <scope>test</scope>
         </dependency>
 
@@ -646,20 +581,19 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-tx</artifactId>
             <version>${spring.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-java</artifactId>
             <scope>test</scope>
         </dependency>
 
-		<dependency>
-			<groupId>io.cucumber</groupId>
-			<artifactId>cucumber-java</artifactId>
-			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>io.cucumber</groupId>
-			<artifactId>cucumber-junit</artifactId>
-			<scope>test</scope>
-		</dependency>
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-junit</artifactId>
+            <scope>test</scope>
+        </dependency>
     	
     	<dependency>
     		<groupId>org.jmockit</groupId>
@@ -712,23 +646,41 @@
             </plugin>
 
             <plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-dependency-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>copy-dependencies</id>
-						<phase>package</phase>
-						<goals>
-							<goal>copy-dependencies</goal>
-						</goals>
-						<configuration>
-							<includeScope>compile</includeScope>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-dependencies</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <includeScope>compile</includeScope>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>copy-installed</id>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>copy</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>${project.groupId}</groupId>
+                                    <artifactId>${project.artifactId}</artifactId>
+                                    <version>${project.version}</version>
+                                    <type>${project.packaging}</type>
+                                </artifactItem>
+                            </artifactItems>
+                            <outputDirectory>${project.parent.basedir}/sdc-os-chef/sdc-backend/</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
 
-			<plugin>
+            <plugin>
                 <groupId>com.jcabi</groupId>
                 <artifactId>jcabi-maven-plugin</artifactId>
                 <version>${jcabi.plugin.version}</version>
@@ -742,30 +694,6 @@
             </plugin>
 
             <plugin>
-				<artifactId>maven-resources-plugin</artifactId>
-				<version>2.6</version>
-				<executions>
-					<execution>
-						<id>copy-tosca-folder</id>
-						<!-- here the phase you need -->
-						<phase>install</phase>
-						<goals>
-							<goal>copy-resources</goal>
-						</goals>
-						<configuration>
-							<outputDirectory>${project.parent.basedir}/asdctool/tosca</outputDirectory>
-							<resources>
-								<resource>
-									<directory>${project.parent.basedir}/catalog-be/src/main/resources/import/tosca</directory>
-									<filtering>true</filtering>
-								</resource>
-							</resources>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-
-			<plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <executions>
@@ -832,26 +760,71 @@
                             </filesets>
                         </configuration>
                     </execution>
-                    
+
                     <execution>
-						<id>clean-static-files</id>
-						<phase>clean</phase>
-						<goals>
-							<goal>clean</goal>
-						</goals>
-						<configuration>
-							<filesets>
-								<!-- tosca files -->
-								<fileset>
-									<directory>${project.parent.basedir}/asdctool/tosca</directory>
-									<followSymlinks>false</followSymlinks>
-								</fileset>
-							</filesets>
-						</configuration>
-					</execution>
+                        <id>clean-static-files</id>
+                        <phase>clean</phase>
+                        <goals>
+                            <goal>clean</goal>
+                        </goals>
+                        <configuration>
+                            <filesets>
+                                <!-- tosca files -->
+                                <fileset>
+                                    <directory>${project.parent.basedir}/asdctool/tosca</directory>
+                                    <followSymlinks>false</followSymlinks>
+                                </fileset>
+                            </filesets>
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
 
+
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>3.0.2</version>
+                <executions>
+                    <execution>
+                        <id>copy-static-configuration-files</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.parent.basedir}/catalog-be/sdc-backend/chef-repo/cookbooks/sdc-catalog-be/files/default</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${project.parent.basedir}/catalog-be/src/main/resources/config</directory>
+                                    <includes>
+                                        <include>Artifact-Generator.properties</include>
+                                        <include>error-configuration.yaml</include>
+                                        <include>ecomp-error-configuration.yaml</include>
+                                        <include>logback.xml</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>copy-tosca-folder</id>
+                        <!-- here the phase you need -->
+                        <phase>install</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.parent.basedir}/asdctool/tosca</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${project.parent.basedir}/catalog-be/src/main/resources/import/tosca</directory>
+                                    <filtering>true</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
 
         <pluginManagement>
@@ -945,28 +918,6 @@
                                             </directory>
                                             <includes>
                                                 <include>api-docs.war</include>
-                                            </includes>
-                                        </resource>
-                                    </resources>
-                                </configuration>
-                            </execution>
-
-                            <execution>
-                                <id>copy-static-configuration-files</id>
-                                <phase>verify</phase>
-                                <goals>
-                                    <goal>copy-resources</goal>
-                                </goals>
-                                <configuration>
-                                    <outputDirectory>${project.parent.basedir}/catalog-be/sdc-backend/chef-repo/cookbooks/sdc-catalog-be/files/default</outputDirectory>
-                                    <resources>
-                                        <resource>
-                                            <directory>${project.parent.basedir}/catalog-be/src/main/resources/config</directory>
-                                            <includes>
-                                                <include>Artifact-Generator.properties</include>
-                                                <include>error-configuration.yaml</include>
-                                                <include>ecomp-error-configuration.yaml</include>
-                                                <include>logback.xml</include>
                                             </includes>
                                         </resource>
                                     </resources>

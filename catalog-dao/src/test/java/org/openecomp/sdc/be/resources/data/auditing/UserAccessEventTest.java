@@ -1,11 +1,10 @@
 package org.openecomp.sdc.be.resources.data.auditing;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.UUID;
-
 import org.junit.Test;
 import org.openecomp.sdc.be.resources.data.auditing.model.CommonAuditData;
+
+import java.util.Date;
+import java.util.UUID;
 
 
 public class UserAccessEventTest {
@@ -16,7 +15,7 @@ public class UserAccessEventTest {
 
 	@Test
 	public void testCtor() throws Exception {
-		new UserAccessEvent(new HashMap<>());
+		new UserAccessEvent();
 		new UserAccessEvent("mock", CommonAuditData.newBuilder().build(), "mock");
 	}
 	

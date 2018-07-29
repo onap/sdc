@@ -21,14 +21,7 @@
 package org.openecomp.sdc.vendorlicense.facade;
 
 import org.openecomp.sdc.common.errors.ErrorCode;
-import org.openecomp.sdc.vendorlicense.dao.types.EntitlementPoolEntity;
-import org.openecomp.sdc.vendorlicense.dao.types.FeatureGroupEntity;
-import org.openecomp.sdc.vendorlicense.dao.types.FeatureGroupModel;
-import org.openecomp.sdc.vendorlicense.dao.types.LicenseAgreementEntity;
-import org.openecomp.sdc.vendorlicense.dao.types.LicenseAgreementModel;
-import org.openecomp.sdc.vendorlicense.dao.types.LicenseKeyGroupEntity;
-import org.openecomp.sdc.vendorlicense.dao.types.LimitEntity;
-import org.openecomp.sdc.vendorlicense.dao.types.VendorLicenseModelEntity;
+import org.openecomp.sdc.vendorlicense.dao.types.*;
 import org.openecomp.sdc.versioning.dao.types.Version;
 
 import java.util.Collection;

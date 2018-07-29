@@ -16,15 +16,12 @@
 
 package org.onap.sdc.activityspec.be.impl;
 
-import java.util.Arrays;
-import java.util.Collection;
-
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
-import org.onap.sdc.activityspec.be.dao.ActivitySpecDao;
 import org.onap.sdc.activityspec.api.rest.types.ActivitySpecAction;
+import org.onap.sdc.activityspec.be.dao.ActivitySpecDao;
 import org.onap.sdc.activityspec.be.dao.types.ActivitySpecEntity;
 import org.onap.sdc.activityspec.be.datatypes.ActivitySpecParameter;
 import org.onap.sdc.activityspec.errors.ActivitySpecNotFoundException;
@@ -43,15 +40,13 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import static org.mockito.Matchers.anyObject;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.verify;
-import static org.onap.sdc.activityspec.utils.ActivitySpecConstant.ACTIVITY_SPEC_NOT_FOUND;
-import static org.onap.sdc.activityspec.utils.ActivitySpecConstant.INVALID_STATE;
-import static org.onap.sdc.activityspec.utils.ActivitySpecConstant.VERSION_ID_DEFAULT_VALUE;
+import static org.mockito.Mockito.*;
+import static org.onap.sdc.activityspec.utils.ActivitySpecConstant.*;
 
 public class ActivitySpecManagerImplTest {
 

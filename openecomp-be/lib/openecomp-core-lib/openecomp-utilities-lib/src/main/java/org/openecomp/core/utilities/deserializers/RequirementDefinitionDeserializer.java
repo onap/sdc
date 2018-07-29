@@ -1,5 +1,7 @@
 package org.openecomp.core.utilities.deserializers;
 
+import org.onap.sdc.tosca.datatypes.model.RequirementDefinition;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;

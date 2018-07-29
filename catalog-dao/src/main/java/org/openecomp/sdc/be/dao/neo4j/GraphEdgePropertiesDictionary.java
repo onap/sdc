@@ -62,7 +62,7 @@ public enum GraphEdgePropertiesDictionary {
 
 	public static List<String> getAllProperties() {
 
-		List<String> arrayList = new ArrayList<String>();
+		List<String> arrayList = new ArrayList<>();
 
 		for (GraphEdgePropertiesDictionary graphProperty : GraphEdgePropertiesDictionary.values()) {
 			arrayList.add(graphProperty.getProperty());

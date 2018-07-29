@@ -20,23 +20,22 @@
 
 package org.openecomp.sdc.be.dao.cassandra.schema.tables;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import com.datastax.driver.core.DataType;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.dao.cassandra.schema.ITableDescription;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingTypesConstants;
 
-import com.datastax.driver.core.DataType;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class ArtifactTableDescription implements ITableDescription {
 
 	@Override
 	public List<ImmutablePair<String, DataType>> primaryKeys() {
 		List<ImmutablePair<String, DataType>> keys = new ArrayList<>();
-		keys.add(new ImmutablePair<String, DataType>(ID_FIELD, DataType.varchar()));
+		keys.add(new ImmutablePair<>(ID_FIELD, DataType.varchar()));
 		return keys;
 	}
 
@@ -45,7 +44,7 @@ public class ArtifactTableDescription implements ITableDescription {
 		Map<String, ImmutablePair<DataType, Boolean>> columns = new HashMap<>();
 
 		for (ArtifactFieldsDescription field : ArtifactFieldsDescription.values()) {
-			columns.put(field.getName(), new ImmutablePair<DataType, Boolean>(field.type, field.indexed));
+			columns.put(field.getName(), new ImmutablePair<>(field.type, field.indexed));
 		}
 
 		return columns;

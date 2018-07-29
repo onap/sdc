@@ -20,11 +20,10 @@
 
 package org.openecomp.sdc.ci.tests.pages;
 
+import com.aventstack.extentreports.Status;
 import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum;
 import org.openecomp.sdc.ci.tests.execute.setup.SetupCDTest;
 import org.openecomp.sdc.ci.tests.utilities.GeneralUIUtils;
-
-import com.aventstack.extentreports.Status;
 
 public class GovernorOperationPage {
 
@@ -37,9 +36,8 @@ public class GovernorOperationPage {
 		GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.DistributionChangeButtons.APPROVE.getValue()).click();
 		GeneralUIUtils.waitForLoader();
 		GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.DistributionChangeButtons.APPROVE_MESSAGE.getValue())
-				.sendKeys("service " + serviceName + " tested successfuly");
-		GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.ModalItems.OK.getValue()).click();
-		GeneralUIUtils.waitForLoader();
+				.sendKeys("service " + serviceName + " tested successfully");
+		GeneralPageElements.clickOKButton();
 		GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.MainMenuButtons.SEARCH_BOX.getValue());
 	}
 

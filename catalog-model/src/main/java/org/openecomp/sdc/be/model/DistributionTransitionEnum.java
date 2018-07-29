@@ -21,34 +21,34 @@
 package org.openecomp.sdc.be.model;
 
 public enum DistributionTransitionEnum {
-	APPROVE("approve"), REJECT("reject");
+    APPROVE("approve"), REJECT("reject");
 
-	String displayName;
+    String displayName;
 
-	private DistributionTransitionEnum(String displayName) {
-		this.displayName = displayName;
-	}
+    private DistributionTransitionEnum(String displayName) {
+        this.displayName = displayName;
+    }
 
-	public String getDisplayName() {
-		return displayName;
-	}
+    public String getDisplayName() {
+        return displayName;
+    }
 
-	public static DistributionTransitionEnum getFromDisplayName(String name) {
+    public static DistributionTransitionEnum getFromDisplayName(String name) {
 
-		for (DistributionTransitionEnum val : DistributionTransitionEnum.values()) {
-			if (name.equalsIgnoreCase(val.getDisplayName())) {
-				return val;
-			}
-		}
-		return null;
-	}
+        for (DistributionTransitionEnum val : DistributionTransitionEnum.values()) {
+            if (name.equalsIgnoreCase(val.getDisplayName())) {
+                return val;
+            }
+        }
+        return null;
+    }
 
-	public static String valuesAsString() {
-		StringBuilder sb = new StringBuilder();
-		for (DistributionTransitionEnum op : DistributionTransitionEnum.values()) {
-			sb.append(op.getDisplayName()).append(" ");
-		}
-		return sb.toString();
-	}
+    public static String valuesAsString() {
+        StringBuilder sb = new StringBuilder();
+        for (DistributionTransitionEnum op : DistributionTransitionEnum.values()) {
+            sb.append(op.getDisplayName()).append(" ");
+        }
+        return sb.toString();
+    }
 
 }

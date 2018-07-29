@@ -20,17 +20,16 @@
 
 package org.openecomp.sdc.be.resources.data;
 
-import java.lang.reflect.Type;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import com.google.gson.reflect.TypeToken;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphNode;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
 import org.openecomp.sdc.be.datatypes.elements.PolicyTypeDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 
-import com.google.gson.reflect.TypeToken;
+import java.lang.reflect.Type;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class PolicyTypeData extends GraphNode {
 
@@ -65,7 +64,8 @@ public class PolicyTypeData extends GraphNode {
                 .fromJson((String) properties.get(GraphPropertiesDictionary.TARGETS.getProperty()), listType);
         policyTypeDataDefinition.setTargets(members);
         policyTypeDataDefinition.setType((String) properties.get(GraphPropertiesDictionary.TYPE.getProperty()));
-
+        policyTypeDataDefinition.setName((String) properties.get(GraphPropertiesDictionary.NAME.getProperty()));
+        policyTypeDataDefinition.setIcon((String) properties.get(GraphPropertiesDictionary.ICON.getProperty()));
         policyTypeDataDefinition
                 .setDescription((String) properties.get(GraphPropertiesDictionary.DESCRIPTION.getProperty()));
 
@@ -87,11 +87,15 @@ public class PolicyTypeData extends GraphNode {
     @Override
     public Map<String, Object> toGraphMap() {
 
-        Map<String, Object> map = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<>();
 
         addIfExists(map, GraphPropertiesDictionary.UNIQUE_ID, policyTypeDataDefinition.getUniqueId());
 
         addIfExists(map, GraphPropertiesDictionary.TYPE, policyTypeDataDefinition.getType());
+
+        addIfExists(map, GraphPropertiesDictionary.NAME, policyTypeDataDefinition.getName());
+
+        addIfExists(map, GraphPropertiesDictionary.ICON, policyTypeDataDefinition.getIcon());
 
         addIfExists(map, GraphPropertiesDictionary.VERSION, policyTypeDataDefinition.getVersion());
 

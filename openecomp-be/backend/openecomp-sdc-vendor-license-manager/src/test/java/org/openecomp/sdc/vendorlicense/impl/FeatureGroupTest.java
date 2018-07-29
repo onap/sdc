@@ -16,27 +16,12 @@
 
 package org.openecomp.sdc.vendorlicense.impl;
 
-import static org.mockito.Matchers.anyObject;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
 import org.openecomp.sdc.vendorlicense.VendorLicenseConstants;
-import org.openecomp.sdc.vendorlicense.dao.EntitlementPoolDao;
-import org.openecomp.sdc.vendorlicense.dao.FeatureGroupDao;
-import org.openecomp.sdc.vendorlicense.dao.LicenseAgreementDao;
-import org.openecomp.sdc.vendorlicense.dao.LicenseKeyGroupDao;
-import org.openecomp.sdc.vendorlicense.dao.LimitDao;
-import org.openecomp.sdc.vendorlicense.dao.VendorLicenseModelDao;
+import org.openecomp.sdc.vendorlicense.dao.*;
 import org.openecomp.sdc.vendorlicense.dao.types.EntitlementPoolEntity;
 import org.openecomp.sdc.vendorlicense.dao.types.FeatureGroupEntity;
 import org.openecomp.sdc.vendorlicense.dao.types.LicenseKeyGroupEntity;
@@ -47,6 +32,14 @@ import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+
+import static org.mockito.Matchers.anyObject;
+import static org.mockito.Mockito.*;
 
 public class FeatureGroupTest {
   //JUnit Test Cases using Mockito

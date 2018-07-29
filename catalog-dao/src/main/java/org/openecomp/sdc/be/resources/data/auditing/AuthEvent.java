@@ -20,203 +20,164 @@
 
 package org.openecomp.sdc.be.resources.data.auditing;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Map;
-import java.util.TimeZone;
-import java.util.UUID;
-
-import org.openecomp.sdc.be.resources.data.auditing.model.CommonAuditData;
-import org.openecomp.sdc.common.datastructure.AuditingFieldsKeysEnum;
-
 import com.datastax.driver.core.utils.UUIDs;
 import com.datastax.driver.mapping.annotations.ClusteringColumn;
 import com.datastax.driver.mapping.annotations.Column;
 import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
+import org.openecomp.sdc.be.resources.data.auditing.model.CommonAuditData;
+import org.openecomp.sdc.common.datastructure.AuditingFieldsKey;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.TimeZone;
+import java.util.UUID;
 
 @Table(keyspace = "sdcaudit", name = AuditingTypesConstants.AUTH_EVENT_TYPE)
 public class AuthEvent extends AuditingGenericEvent {
 
-	private static String AUTH_EVENT_TEMPLATE = "action=\"%s\" timestamp=\"%s\" "
-			+ "URL=\"%s\" USER=\"%s\" AUTH_STATUS=\"%s\" " + "REALM=\"%s\" status=\"%s\" desc=\"%s\"";
+    @PartitionKey
+    protected UUID timebaseduuid;
 
-	@PartitionKey
-	protected UUID timebaseduuid;
+    @ClusteringColumn
+    protected Date timestamp1;
 
-	@ClusteringColumn
-	protected Date timestamp1;
+    @Column
+    private String url;
+    @Column
+    private String user;
 
-	@Column
-	private String url;
-	@Column
-	private String user;
+    @Column(name = "auth_status")
+    private String authStatus;
 
-	@Column(name = "auth_status")
-	private String authStatus;
+    @Column
+    private String realm;
+    @Column
+    protected String action;
+    @Column
+    protected String status;
 
-	@Column
-	private String realm;
-	@Column
-	protected String action;
-	@Column
-	protected String status;
+    @Column(name = "description")
+    protected String desc;
 
-	@Column(name = "description")
-	protected String desc;
+    @Column(name = "request_id")
+    protected String requestId;
 
-	@Column(name = "request_id")
-	protected String requestId;
-
-	public AuthEvent() {
-		super();
-		timestamp1 = new Date();
-		timebaseduuid = UUIDs.timeBased();
-	}
-
-	public String getUrl() {
-		return url;
-	}
-
-	public void setUrl(String url) {
-		this.url = url;
-	}
-
-	public String getUser() {
-		return user;
-	}
-
-	public void setUser(String user) {
-		this.user = user;
-	}
-
-	public String getAuthStatus() {
-		return authStatus;
-	}
-
-	public void setAuthStatus(String authStatus) {
-		this.authStatus = authStatus;
-	}
-
-	public String getRealm() {
-		return realm;
-	}
-
-	public void setRealm(String realm) {
-		this.realm = realm;
-	}
-
-	public UUID getTimebaseduuid() {
-		return timebaseduuid;
-	}
-
-	public void setTimebaseduuid(UUID timebaseduuid) {
-		this.timebaseduuid = timebaseduuid;
-	}
-
-	public Date getTimestamp1() {
-		return timestamp1;
-	}
-
-	public void setTimestamp1(Date timestamp1) {
-		this.timestamp1 = timestamp1;
-	}
-
-	public String getAction() {
-		return action;
-	}
-
-	public void setAction(String action) {
-		this.action = action;
-	}
-
-	public String getStatus() {
-		return status;
-	}
-
-	public void setStatus(String status) {
-		this.status = status;
-	}
-
-	public String getDesc() {
-		return desc;
-	}
-
-	public void setDesc(String desc) {
-		this.desc = desc;
-	}
-
-	public String getRequestId() {
-		return requestId;
-	}
-
-	public void setRequestId(String requestId) {
-		this.requestId = requestId;
-	}
-
-	public AuthEvent(Map<AuditingFieldsKeysEnum, Object> auditingFields) {
-		this();
-		Object value;
-		value = auditingFields.get(AuditingFieldsKeysEnum.AUDIT_AUTH_URL);
-		if (value != null) {
-			setUrl((String) value);
-		}
-		value = auditingFields.get(AuditingFieldsKeysEnum.AUDIT_AUTH_USER);
-		if (value != null) {
-			setUser((String) value);
-		}
-		value = auditingFields.get(AuditingFieldsKeysEnum.AUDIT_AUTH_STATUS);
-		if (value != null) {
-			setAuthStatus((String) value);
-		}
-		value = auditingFields.get(AuditingFieldsKeysEnum.AUDIT_AUTH_REALM);
-		if (value != null) {
-			setRealm((String) value);
-		}
-		value = auditingFields.get(AuditingFieldsKeysEnum.AUDIT_ACTION);
-		if (value != null) {
-			setAction((String) value);
-		}
-		value = auditingFields.get(AuditingFieldsKeysEnum.AUDIT_DESC);
-		if (value != null) {
-			setDesc((String) value);
-		}
-		value = auditingFields.get(AuditingFieldsKeysEnum.AUDIT_REQUEST_ID);
-		if (value != null) {
-			setRequestId((String) value);
-		}
-		value = auditingFields.get(AuditingFieldsKeysEnum.AUDIT_STATUS);
-		if (value != null) {
-			setStatus((String) value);
-		}
-
-	}
-
-	public AuthEvent(String action, CommonAuditData commonAuditData, String user, String authUrl, String realm, String authStatus) {
-		this();
+    public AuthEvent(String action, CommonAuditData commonAuditData, String user, String authUrl, String realm, String authStatus) {
+        this();
         this.action = action;
         this.requestId = commonAuditData.getRequestId();
-		this.desc = commonAuditData.getDescription();
-		this.status = commonAuditData.getStatus();
-		this.authStatus = authStatus;
-		this.url = authUrl;
-		this.realm = realm;
-		this.user = user;
-	}
+        this.desc = commonAuditData.getDescription();
+        this.status = commonAuditData.getStatus();
+        this.authStatus = authStatus;
+        this.url = authUrl;
+        this.realm = realm;
+        this.user = user;
+    }
 
-	@Override
-	public void fillFields() {
-		fields.put(AuditingFieldsKeysEnum.AUDIT_AUTH_URL.getDisplayName(), getUrl());
+    //Required to be public as it is used by Cassandra driver on get operation
+    public AuthEvent() {
+        timestamp1 = new Date();
+        timebaseduuid = UUIDs.timeBased();
+    }
 
-		fields.put(AuditingFieldsKeysEnum.AUDIT_AUTH_USER.getDisplayName(), getUser());
-		fields.put(AuditingFieldsKeysEnum.AUDIT_AUTH_STATUS.getDisplayName(), getAuthStatus());
-		fields.put(AuditingFieldsKeysEnum.AUDIT_AUTH_REALM.getDisplayName(), getRealm());
-		fields.put(AuditingFieldsKeysEnum.AUDIT_ACTION.getDisplayName(), getAction());
-		fields.put(AuditingFieldsKeysEnum.AUDIT_STATUS.getDisplayName(), getStatus());
-		fields.put(AuditingFieldsKeysEnum.AUDIT_REQUEST_ID.getDisplayName(), getRequestId());
-		fields.put(AuditingFieldsKeysEnum.AUDIT_DESC.getDisplayName(), getDesc());
-		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(dateFormatPattern);
-		simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
-		fields.put(AuditingFieldsKeysEnum.AUDIT_TIMESTAMP.getDisplayName(), simpleDateFormat.format(timestamp1));
-	}
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public String getUser() {
+        return user;
+    }
+
+    public void setUser(String user) {
+        this.user = user;
+    }
+
+    public String getAuthStatus() {
+        return authStatus;
+    }
+
+    public void setAuthStatus(String authStatus) {
+        this.authStatus = authStatus;
+    }
+
+    public String getRealm() {
+        return realm;
+    }
+
+    public void setRealm(String realm) {
+        this.realm = realm;
+    }
+
+    public UUID getTimebaseduuid() {
+        return timebaseduuid;
+    }
+
+    public void setTimebaseduuid(UUID timebaseduuid) {
+        this.timebaseduuid = timebaseduuid;
+    }
+
+    public Date getTimestamp1() {
+        return timestamp1;
+    }
+
+    public void setTimestamp1(Date timestamp1) {
+        this.timestamp1 = timestamp1;
+    }
+
+    public String getAction() {
+        return action;
+    }
+
+    public void setAction(String action) {
+        this.action = action;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getDesc() {
+        return desc;
+    }
+
+    public void setDesc(String desc) {
+        this.desc = desc;
+    }
+
+    public String getRequestId() {
+        return requestId;
+    }
+
+    public void setRequestId(String requestId) {
+        this.requestId = requestId;
+    }
+
+    public void setTimestamp1(String timestamp) {
+        this.timestamp1 = parseDateFromString(timestamp);
+    }
+
+    @Override
+    public void fillFields() {
+        fields.put(AuditingFieldsKey.AUDIT_AUTH_URL.getDisplayName(), getUrl());
+
+        fields.put(AuditingFieldsKey.AUDIT_AUTH_USER.getDisplayName(), getUser());
+        fields.put(AuditingFieldsKey.AUDIT_AUTH_STATUS.getDisplayName(), getAuthStatus());
+        fields.put(AuditingFieldsKey.AUDIT_AUTH_REALM.getDisplayName(), getRealm());
+        fields.put(AuditingFieldsKey.AUDIT_ACTION.getDisplayName(), getAction());
+        fields.put(AuditingFieldsKey.AUDIT_STATUS.getDisplayName(), getStatus());
+        fields.put(AuditingFieldsKey.AUDIT_REQUEST_ID.getDisplayName(), getRequestId());
+        fields.put(AuditingFieldsKey.AUDIT_DESC.getDisplayName(), getDesc());
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(dateFormatPattern);
+        simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+        fields.put(AuditingFieldsKey.AUDIT_TIMESTAMP.getDisplayName(), simpleDateFormat.format(timestamp1));
+    }
 }

@@ -20,10 +20,7 @@
 
 package org.openecomp.sdc.ci.tests.execute.general;
 
-import static org.testng.AssertJUnit.assertEquals;
-
-import java.util.HashMap;
-
+import com.google.gson.Gson;
 import org.junit.Rule;
 import org.junit.rules.TestName;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
@@ -43,7 +40,9 @@ import org.testng.AssertJUnit;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import com.google.gson.Gson;
+import java.util.HashMap;
+
+import static org.testng.AssertJUnit.assertEquals;
 
 public class ManageEcompConsumerCredentials extends ComponentBaseTest {
 

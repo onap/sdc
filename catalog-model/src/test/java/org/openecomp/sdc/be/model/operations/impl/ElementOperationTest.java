@@ -20,13 +20,7 @@
 
 package org.openecomp.sdc.be.model.operations.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
+import fj.data.Either;
 import org.apache.tinkerpop.gremlin.structure.T;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -48,53 +42,58 @@ import org.openecomp.sdc.be.resources.data.category.CategoryData;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import fj.data.Either;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:application-context-test.xml")
 public class ElementOperationTest extends ModelTestBase {
 
-	@javax.annotation.Resource(name = "element-operation")
-	private ElementOperation elementOperation;
+    @javax.annotation.Resource(name = "element-operation")
+    private ElementOperation elementOperation;
 
-	@javax.annotation.Resource(name = "titan-generic-dao")
-	private TitanGenericDao titanDao;
+    @javax.annotation.Resource(name = "titan-generic-dao")
+    private TitanGenericDao titanDao;
 
-	private static String CATEGORY = "category";
-	private static String SUBCATEGORY = "subcategory";
+    private static String CATEGORY = "category";
+    private static String SUBCATEGORY = "subcategory";
 
-	@BeforeClass
-	public static void setupBeforeClass() {
-		// ExternalConfiguration.setAppName("catalog-model");
-		// String appConfigDir = "src/test/resources/config/catalog-model";
-		// ConfigurationSource configurationSource = new
-		// FSConfigurationSource(ExternalConfiguration.getChangeListener(),
-		// appConfigDir);
+    @BeforeClass
+    public static void setupBeforeClass() {
+        // ExternalConfiguration.setAppName("catalog-model");
+        // String appConfigDir = "src/test/resources/config/catalog-model";
+        // ConfigurationSource configurationSource = new
+        // FSConfigurationSource(ExternalConfiguration.getChangeListener(),
+        // appConfigDir);
 
-		ModelTestBase.init();
+        ModelTestBase.init();
 
-	}
+    }
 
-	@Test
-	public void testGetArtifactsTypes() {
+    @Test
+    public void testGetArtifactsTypes() {
 
-		List<String> artifactTypesCfg = new ArrayList<String>();
-		artifactTypesCfg.add("type1");
-		artifactTypesCfg.add("type2");
-		artifactTypesCfg.add("type3");
-		artifactTypesCfg.add("type4");
-		configurationManager.getConfiguration().setArtifactTypes(artifactTypesCfg);
-		Either<List<ArtifactType>, ActionStatus> allArtifactTypes = elementOperation.getAllArtifactTypes();
-		assertTrue(allArtifactTypes.isLeft());
-		assertEquals(artifactTypesCfg.size(), allArtifactTypes.left().value().size());
+        List<String> artifactTypesCfg = new ArrayList<>();
+        artifactTypesCfg.add("type1");
+        artifactTypesCfg.add("type2");
+        artifactTypesCfg.add("type3");
+        artifactTypesCfg.add("type4");
+        configurationManager.getConfiguration().setArtifactTypes(artifactTypesCfg);
+        Either<List<ArtifactType>, ActionStatus> allArtifactTypes = elementOperation.getAllArtifactTypes();
+        assertTrue(allArtifactTypes.isLeft());
+        assertEquals(artifactTypesCfg.size(), allArtifactTypes.left().value().size());
 
-		artifactTypesCfg.remove(0);
-		allArtifactTypes = elementOperation.getAllArtifactTypes();
-		assertTrue(allArtifactTypes.isLeft());
-		assertEquals(artifactTypesCfg.size(), allArtifactTypes.left().value().size());
+        artifactTypesCfg.remove(0);
+        allArtifactTypes = elementOperation.getAllArtifactTypes();
+        assertTrue(allArtifactTypes.isLeft());
+        assertEquals(artifactTypesCfg.size(), allArtifactTypes.left().value().size());
 
-		artifactTypesCfg.add("type5");
-	}
+        artifactTypesCfg.add("type5");
+    }
 
 	@Test
 	public void testAllDeploymentArtifactTypes() {
@@ -111,23 +110,22 @@ public class ElementOperationTest extends ModelTestBase {
 
 	}
 
-	// @Test
-	public void testGetResourceAndServiceCategoty() {
-		String id = OperationTestsUtil.deleteAndCreateResourceCategory(CATEGORY, SUBCATEGORY, titanDao);
+    // @Test
+    public void testGetResourceAndServiceCategoty() {
+        String id = OperationTestsUtil.deleteAndCreateResourceCategory(CATEGORY, SUBCATEGORY, titanDao);
 
-		Either<CategoryDefinition, ActionStatus> res = elementOperation.getCategory(NodeTypeEnum.ResourceNewCategory,
-				id);
-		assertTrue(res.isLeft());
-		CategoryDefinition categoryDefinition = (CategoryDefinition) res.left().value();
-		assertEquals(CATEGORY, categoryDefinition.getName());
-		assertEquals(SUBCATEGORY, categoryDefinition.getSubcategories().get(0).getName());
+        Either<CategoryDefinition, ActionStatus> res = elementOperation.getCategory(NodeTypeEnum.ResourceNewCategory, id);
+        assertTrue(res.isLeft());
+        CategoryDefinition categoryDefinition = (CategoryDefinition) res.left().value();
+        assertEquals(CATEGORY, categoryDefinition.getName());
+        assertEquals(SUBCATEGORY, categoryDefinition.getSubcategories().get(0).getName());
 
-		id = OperationTestsUtil.deleteAndCreateServiceCategory(CATEGORY, titanDao);
+        id = OperationTestsUtil.deleteAndCreateServiceCategory(CATEGORY, titanDao);
 
-		res = elementOperation.getCategory(NodeTypeEnum.ServiceNewCategory, id);
-		assertTrue(res.isLeft());
-		categoryDefinition = (CategoryDefinition) res.left().value();
-		assertEquals(CATEGORY, categoryDefinition.getName());
+        res = elementOperation.getCategory(NodeTypeEnum.ServiceNewCategory, id);
+        assertTrue(res.isLeft());
+        categoryDefinition = (CategoryDefinition) res.left().value();
+        assertEquals(CATEGORY, categoryDefinition.getName());
 	}
 
 	private ElementOperation createTestSubject() {
@@ -496,5 +494,5 @@ public class ElementOperationTest extends ModelTestBase {
 		testSubject = createTestSubject();
 		name = "";
 		result = testSubject.getNewCategoryData(name, type, null);
-	}
+    }
 }

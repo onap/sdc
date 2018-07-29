@@ -20,41 +20,41 @@
 
 package org.openecomp.sdc.be.model.tosca.validators;
 
-import java.util.Map;
-
 import org.openecomp.sdc.be.model.DataTypeDefinition;
+
+import java.util.Map;
 
 public class FloatValidator implements PropertyTypeValidator {
 
-	private static FloatValidator FloatValidator = new FloatValidator();
+    private static FloatValidator FloatValidator = new FloatValidator();
 
-	public static FloatValidator getInstance() {
-		return FloatValidator;
-	}
+    public static FloatValidator getInstance() {
+        return FloatValidator;
+    }
 
-	private FloatValidator() {
+    private FloatValidator() {
 
-	}
+    }
 
-	@Override
-	public boolean isValid(String value, String innerType, Map<String, DataTypeDefinition> allDataTypes) {
+    @Override
+    public boolean isValid(String value, String innerType, Map<String, DataTypeDefinition> allDataTypes) {
 
-		if (value == null || true == value.isEmpty()) {
-			return true;
-		}
+        if (value == null || value.isEmpty()) {
+            return true;
+        }
 
-		try {
-			Float.parseFloat(value);
-		} catch (IllegalArgumentException e) {
-			return false;
-		}
+        try {
+            Float.parseFloat(value);
+        } catch (IllegalArgumentException e) {
+            return false;
+        }
 
-		return true;
-	}
+        return true;
+    }
 
-	@Override
-	public boolean isValid(String value, String innerType) {
-		return isValid(value, innerType, null);
-	}
+    @Override
+    public boolean isValid(String value, String innerType) {
+        return isValid(value, innerType, null);
+    }
 
 }

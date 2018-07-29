@@ -20,72 +20,56 @@
 
 package org.openecomp.sdc.be.model;
 
-import java.io.Serializable;
 import java.util.List;
 
-public class TargetCapabilityRelDef implements Serializable {
+public class TargetCapabilityRelDef {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -7571489368200736413L;
+    private String uid;
+    private String toNode;
 
-	private String uid;
-	private String toNode;
+    private List<CapabilityRequirementRelationship> relationships;
 
-	private List<CapabilityRequirementRelationship> relationships;
+    public TargetCapabilityRelDef() {
+        super();
+    }
 
-	public TargetCapabilityRelDef() {
-		super();
-	}
+    public TargetCapabilityRelDef(String toNode, List<CapabilityRequirementRelationship> relationships) {
+        this.toNode = toNode;
+        this.relationships = relationships;
+    }
 
-	public TargetCapabilityRelDef(String toNode, List<CapabilityRequirementRelationship> relationships) {
-		super();
-		this.toNode = toNode;
-		this.relationships = relationships;
-	}
+    public String getToNode() {
+        return toNode;
+    }
 
-	public String getToNode() {
-		return toNode;
-	}
+    public void setToNode(String toNode) {
+        this.toNode = toNode;
+    }
 
-	public void setToNode(String toNode) {
-		this.toNode = toNode;
-	}
+    public List<CapabilityRequirementRelationship> getRelationships() {
+        return relationships;
+    }
 
-	// public String getCapabilityOwnerId() {
-	// return capabilityOwnerId;
-	// }
-	//
-	// public void setCapabilityOwnerId(String capabilityOwnerId) {
-	// this.capabilityOwnerId = capabilityOwnerId;
-	// }
+    public CapabilityRequirementRelationship resolveSingleRelationship() {//currently only single relationship is supported
+        return relationships == null || relationships.isEmpty() ? null : relationships.get(0);
+    }
 
-	public List<CapabilityRequirementRelationship> getRelationships() {
-		return relationships;
-	}
+    public String getUid() {
+        return uid;
+    }
 
-	public CapabilityRequirementRelationship resolveSingleRelationship() {//currently only single relationship is supported
-		return relationships == null || relationships.isEmpty() ? null : relationships.get(0);
-	}
+    public void setUid(String uid) {
+        this.uid = uid;
+    }
 
-	public String getUid() {
-		return uid;
-	}
+    public void setRelationships(List<CapabilityRequirementRelationship> relationships) {
+        this.relationships = relationships;
+    }
 
-	public void setUid(String uid) {
-		this.uid = uid;
-	}
-
-	public void setRelationships(List<CapabilityRequirementRelationship> relationships) {
-		this.relationships = relationships;
-	}
-
-	@Override
-	public String toString() {
-		return "TargetCapabilityRelDef [ toNode=" + toNode
-		// + ", capabilityOwnerId=" + capabilityOwnerId
-				+ ", relationships=" + relationships + "]";
-	}
+    @Override
+    public String toString() {
+        return "TargetCapabilityRelDef [ toNode=" + toNode
+                + ", relationships=" + relationships + "]";
+    }
 
 }

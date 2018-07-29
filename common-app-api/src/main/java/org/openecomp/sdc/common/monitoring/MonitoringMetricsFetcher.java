@@ -20,21 +20,20 @@
 
 package org.openecomp.sdc.common.monitoring;
 
+import org.hyperic.sigar.FileSystem;
+import org.hyperic.sigar.Sigar;
+import org.openecomp.sdc.common.impl.ExternalConfiguration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;
 import java.lang.management.RuntimeMXBean;
 import java.lang.management.ThreadMXBean;
 import java.util.HashMap;
 import java.util.Map;
-
-import javax.management.MBeanServer;
-import javax.management.ObjectName;
-
-import org.hyperic.sigar.FileSystem;
-import org.hyperic.sigar.Sigar;
-import org.openecomp.sdc.common.impl.ExternalConfiguration;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class MonitoringMetricsFetcher {
 

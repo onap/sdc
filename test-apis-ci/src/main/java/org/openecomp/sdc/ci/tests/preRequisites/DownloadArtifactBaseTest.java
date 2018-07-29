@@ -20,8 +20,6 @@
 
 package org.openecomp.sdc.ci.tests.preRequisites;
 
-import java.io.IOException;
-
 import org.apache.log4j.lf5.util.ResourceUtils;
 import org.junit.rules.TestName;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
@@ -39,13 +37,11 @@ import org.openecomp.sdc.ci.tests.execute.lifecycle.LCSbaseTest;
 import org.openecomp.sdc.ci.tests.utils.ArtifactUtils;
 import org.openecomp.sdc.ci.tests.utils.DbUtils;
 import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
-import org.openecomp.sdc.ci.tests.utils.rest.ArtifactRestUtils;
-import org.openecomp.sdc.ci.tests.utils.rest.ComponentInstanceRestUtils;
-import org.openecomp.sdc.ci.tests.utils.rest.ResourceRestUtils;
-import org.openecomp.sdc.ci.tests.utils.rest.ResponseParser;
-import org.openecomp.sdc.ci.tests.utils.rest.ServiceRestUtils;
+import org.openecomp.sdc.ci.tests.utils.rest.*;
 import org.testng.AssertJUnit;
 import org.testng.annotations.BeforeMethod;
+
+import java.io.IOException;
 
 public class DownloadArtifactBaseTest extends ComponentBaseTest {
 

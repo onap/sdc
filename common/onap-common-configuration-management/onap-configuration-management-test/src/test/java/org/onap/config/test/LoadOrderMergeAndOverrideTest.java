@@ -1,7 +1,5 @@
 package org.onap.config.test;
 
-import static org.onap.config.util.TestUtil.writeFile;
-
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -12,6 +10,8 @@ import org.onap.config.util.ConfigTestConstant;
 import org.onap.config.util.TestUtil;
 
 import java.io.IOException;
+
+import static org.onap.config.util.TestUtil.writeFile;
 
 /**
  * Scenario

@@ -20,93 +20,99 @@
 
 package org.openecomp.sdc.be.resources.data;
 
-import java.lang.reflect.Type;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import com.google.gson.reflect.TypeToken;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphNode;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
 import org.openecomp.sdc.be.datatypes.elements.CapabilityDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 
-import com.google.gson.reflect.TypeToken;
+import java.lang.reflect.Type;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class CapabilityData extends GraphNode {
+    private CapabilityDataDefinition capabilityDataDefiniton;
 
 	public CapabilityData() {
-		super(NodeTypeEnum.Capability);
-
+		this(new CapabilityDataDefinition());
+	}
+	
+	public CapabilityData(CapabilityDataDefinition capabilityDataDefiniton) { 
+	    super(NodeTypeEnum.Capability);
+        this.capabilityDataDefiniton = capabilityDataDefiniton;
 	}
 
 	public CapabilityData(Map<String, Object> properties) {
 		this();
 
-		this.setUniqueId((String) properties.get(GraphPropertiesDictionary.UNIQUE_ID.getProperty()));
+		capabilityDataDefiniton.setUniqueId((String) properties.get(GraphPropertiesDictionary.UNIQUE_ID.getProperty()));
+		capabilityDataDefiniton.setType((String) properties.get(GraphPropertiesDictionary.TYPE.getProperty()));
 
 		Type listType = new TypeToken<List<String>>() {
 		}.getType();
 		List<String> validSourceTypesfromJson = getGson().fromJson(
 				(String) properties.get(GraphPropertiesDictionary.VALID_SOURCE_TYPES.getProperty()), listType);
 
-		this.setValidSourceTypes(validSourceTypesfromJson);
+		capabilityDataDefiniton.setValidSourceTypes(validSourceTypesfromJson);
 
 		this.setCreationTime((Long) properties.get(GraphPropertiesDictionary.CREATION_DATE.getProperty()));
 
 		this.setModificationTime((Long) properties.get(GraphPropertiesDictionary.LAST_UPDATE_DATE.getProperty()));
 
-		this.setDescription((String) properties.get(GraphPropertiesDictionary.DESCRIPTION.getProperty()));
-		this.setMinOccurrences((String) properties.get(GraphPropertiesDictionary.MIN_OCCURRENCES.getProperty()));
-		this.setMaxOccurrences((String) properties.get(GraphPropertiesDictionary.MAX_OCCURRENCES.getProperty()));
+		capabilityDataDefiniton.setDescription((String) properties.get(GraphPropertiesDictionary.DESCRIPTION.getProperty()));
+		capabilityDataDefiniton.setMinOccurrences((String) properties.get(GraphPropertiesDictionary.MIN_OCCURRENCES.getProperty()));
+		capabilityDataDefiniton.setMaxOccurrences((String) properties.get(GraphPropertiesDictionary.MAX_OCCURRENCES.getProperty()));
 	}
-
-	private String uniqueId;
-
-	private String description;
-
-	/** Identifies the type of the capability. */
-	private String type;
-
-	private List<String> validSourceTypes;
 
 	private Long creationTime;
 
 	private Long modificationTime;
 
-	private String minOccurrences = CapabilityDataDefinition.MIN_OCCURRENCES;
-	private String maxOccurrences = CapabilityDataDefinition.MAX_OCCURRENCES;
-
 	@Override
 	public String getUniqueId() {
-		return uniqueId;
+		return capabilityDataDefiniton.getUniqueId();
+	}
+	
+	
+	public CapabilityDataDefinition getCapabilityDataDefinition() {
+	    return capabilityDataDefiniton;
 	}
 
 	public void setUniqueId(String uniqueId) {
-		this.uniqueId = uniqueId;
+	    capabilityDataDefiniton.setUniqueId(uniqueId);
 	}
 
 	public String getDescription() {
-		return description;
+		return capabilityDataDefiniton.getDescription();
 	}
 
 	public void setDescription(String description) {
-		this.description = description;
+	    capabilityDataDefiniton.setDescription(description);
 	}
 
+	/**
+	 * Get the type of the capability
+	 * @return
+	 */
 	public String getType() {
-		return type;
+		return capabilityDataDefiniton.getType();
 	}
 
+	/**
+     * Set the type of the capability
+     * @return
+     */
 	public void setType(String type) {
-		this.type = type;
+	    capabilityDataDefiniton.setType(type);
 	}
 
 	public List<String> getValidSourceTypes() {
-		return validSourceTypes;
+		return capabilityDataDefiniton.getValidSourceTypes();
 	}
 
 	public void setValidSourceTypes(List<String> validSourceTypes) {
-		this.validSourceTypes = validSourceTypes;
+	    capabilityDataDefiniton.setValidSourceTypes(validSourceTypes);
 	}
 
 	public Long getCreationTime() {
@@ -126,57 +132,51 @@ public class CapabilityData extends GraphNode {
 	}
 
 	public String getMinOccurrences() {
-		return minOccurrences;
+		return capabilityDataDefiniton.getMinOccurrences();
 	}
 
 	public void setMinOccurrences(String minOccurrences) {
 		if (minOccurrences != null) {
-			this.minOccurrences = minOccurrences;
+		    capabilityDataDefiniton.setMinOccurrences(minOccurrences);
 		}
 	}
 
 	public String getMaxOccurrences() {
-		return maxOccurrences;
+		return capabilityDataDefiniton.getMaxOccurrences();
 	}
 
 	public void setMaxOccurrences(String maxOccurrences) {
 		if (maxOccurrences != null) {
-			this.maxOccurrences = maxOccurrences;
+		    capabilityDataDefiniton.setMaxOccurrences(maxOccurrences);
 		}
 	}
 
 	@Override
 	public Map<String, Object> toGraphMap() {
 
-		Map<String, Object> map = new HashMap<String, Object>();
+		Map<String, Object> map = new HashMap<>();
 
-		addIfExists(map, GraphPropertiesDictionary.UNIQUE_ID, uniqueId);
+		addIfExists(map, GraphPropertiesDictionary.UNIQUE_ID, capabilityDataDefiniton.getUniqueId());
 
-		// String validSourceTypesToJson = getGson().toJson(validSourceTypes);
-
-		// addIfExists(map, GraphPropertiesDictionary.VALID_SOURCE_TYPES,
-		// validSourceTypesToJson);
-		// addIfExists(map, GraphPropertiesDictionary.VALID_SOURCE_TYPES,
-		// validSourceTypes);
-
-		addIfExists(map, GraphPropertiesDictionary.VALID_SOURCE_TYPES, validSourceTypes);
+		addIfExists(map, GraphPropertiesDictionary.VALID_SOURCE_TYPES, capabilityDataDefiniton.getValidSourceTypes());
+		
+		addIfExists(map, GraphPropertiesDictionary.TYPE, capabilityDataDefiniton.getType());
 
 		addIfExists(map, GraphPropertiesDictionary.CREATION_DATE, creationTime);
 
 		addIfExists(map, GraphPropertiesDictionary.LAST_UPDATE_DATE, modificationTime);
 
-		addIfExists(map, GraphPropertiesDictionary.DESCRIPTION, description);
-		addIfExists(map, GraphPropertiesDictionary.MIN_OCCURRENCES, minOccurrences);
-		addIfExists(map, GraphPropertiesDictionary.MAX_OCCURRENCES, maxOccurrences);
+		addIfExists(map, GraphPropertiesDictionary.DESCRIPTION, capabilityDataDefiniton.getDescription());
+		addIfExists(map, GraphPropertiesDictionary.MIN_OCCURRENCES, capabilityDataDefiniton.getMinOccurrences());
+		addIfExists(map, GraphPropertiesDictionary.MAX_OCCURRENCES, capabilityDataDefiniton.getMaxOccurrences());
 
 		return map;
 	}
 
 	@Override
 	public String toString() {
-		return "CapabilityData [uniqueId=" + uniqueId + ", description=" + description + ", type=" + type
-				+ ", validSourceTypes=" + validSourceTypes + ", creationTime=" + creationTime + ", modificationTime="
-				+ modificationTime + ", minOccurrences=" + minOccurrences + ", maxOccurrences=" + maxOccurrences + "]";
+		return "CapabilityData [capabilityDataDefiniton=" + capabilityDataDefiniton
+				+ ", creationTime=" + creationTime + ", modificationTime=" + modificationTime + "]";
 	}
 
 }

@@ -1,5 +1,7 @@
 package org.openecomp.sdc.be.resources.impl;
 
+import fj.data.Either;
+import mockit.Deencapsulation;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -11,9 +13,6 @@ import org.openecomp.sdc.be.dao.api.ResourceUploadStatus;
 import org.openecomp.sdc.be.resources.data.ESArtifactData;
 import org.openecomp.sdc.be.resources.exception.ResourceDAOException;
 import org.openecomp.sdc.be.utils.DAOConfDependentTest;
-
-import fj.data.Either;
-import mockit.Deencapsulation;
 
 public class ResourceUploaderTest extends DAOConfDependentTest{
 

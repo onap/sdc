@@ -1,8 +1,8 @@
 package org.openecomp.sdc.asdctool.impl;
 
-import java.nio.file.NoSuchFileException;
-
 import org.junit.Test;
+
+import java.nio.file.NoSuchFileException;
 
 public class GraphJsonValidatorTest {
 

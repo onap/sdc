@@ -26,13 +26,12 @@ import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.common.api.ConfigurationSource;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;
 import org.openecomp.sdc.common.impl.FSConfigurationSource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 public class EsToCassandraDataMigrationMenu {
 
-	private static Logger log = LoggerFactory.getLogger(EsToCassandraDataMigrationMenu.class.getName());
+	private static Logger log = Logger.getLogger(EsToCassandraDataMigrationMenu.class.getName());
 
 	public static void main(String[] args) {
 
@@ -55,7 +54,7 @@ public class EsToCassandraDataMigrationMenu {
 			case "es-to-cassndra-migration":
 				dataMigration = (DataMigration) context.getBean("DataMigrationBean");
 				log.debug("Start migration from ES to C* ");
-				if (dataMigration.migrateDataEsToCassandra(appConfigDir, true, true)) {
+				if (dataMigration.migrateDataESToCassndra(appConfigDir, true, true)) {
 					log.debug("migration from ES to C* was finished successfull");
 					System.exit(0);
 				} else {
@@ -66,7 +65,7 @@ public class EsToCassandraDataMigrationMenu {
 			case "es-to-cassndra-migration-export-only":
 				dataMigration = (DataMigration) context.getBean("DataMigrationBean");
 				log.debug("Start migration export only from ES to C* ");
-				if (dataMigration.migrateDataEsToCassandra(appConfigDir, true, false)) {
+				if (dataMigration.migrateDataESToCassndra(appConfigDir, true, false)) {
 					log.debug("migration export only from ES to C* was finished successfull");
 					System.exit(0);
 				} else {
@@ -77,7 +76,7 @@ public class EsToCassandraDataMigrationMenu {
 			case "es-to-cassndra-migration-import-only":
 				dataMigration = (DataMigration) context.getBean("DataMigrationBean");
 				log.debug("Start migration import only from ES to C* ");
-				if (dataMigration.migrateDataEsToCassandra(appConfigDir, false, true)) {
+				if (dataMigration.migrateDataESToCassndra(appConfigDir, false, true)) {
 					log.debug("migration import only from ES to C* was finished successfull");
 					System.exit(0);
 				} else {

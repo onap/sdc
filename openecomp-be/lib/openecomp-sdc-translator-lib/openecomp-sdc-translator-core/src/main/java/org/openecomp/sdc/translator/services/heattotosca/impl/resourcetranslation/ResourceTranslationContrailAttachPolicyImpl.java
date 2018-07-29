@@ -16,14 +16,6 @@
 
 package org.openecomp.sdc.translator.services.heattotosca.impl.resourcetranslation;
 
-import static org.openecomp.sdc.heat.services.HeatConstants.NETWORK_PROPERTY_NAME;
-import static org.openecomp.sdc.tosca.services.DataModelUtil.createAttachmentRequirementAssignment;
-import static org.openecomp.sdc.translator.services.heattotosca.HeatToToscaLogConstants.LOG_UNSUPPORTED_POLICY_NETWORK_PROPERTY;
-import static org.openecomp.sdc.translator.services.heattotosca.HeatToToscaLogConstants.LOG_UNSUPPORTED_POLICY_PROPERTY_GET_ATTR;
-import static org.openecomp.sdc.translator.services.heattotosca.HeatToToscaLogConstants.LOG_UNSUPPORTED_POLICY_RESOURCE;
-
-import java.util.Optional;
-
 import org.onap.sdc.tosca.datatypes.model.NodeTemplate;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.heat.datatypes.model.Resource;
@@ -37,6 +29,12 @@ import org.openecomp.sdc.translator.datatypes.heattotosca.to.TranslateTo;
 import org.openecomp.sdc.translator.services.heattotosca.HeatToToscaUtil;
 import org.openecomp.sdc.translator.services.heattotosca.ResourceTranslationFactory;
 import org.openecomp.sdc.translator.services.heattotosca.errors.MissingMandatoryPropertyErrorBuilder;
+
+import java.util.Optional;
+
+import static org.openecomp.sdc.heat.services.HeatConstants.NETWORK_PROPERTY_NAME;
+import static org.openecomp.sdc.tosca.services.DataModelUtil.createAttachmentRequirementAssignment;
+import static org.openecomp.sdc.translator.services.heattotosca.HeatToToscaLogConstants.*;
 
 public class ResourceTranslationContrailAttachPolicyImpl extends ResourceTranslationBase {
 

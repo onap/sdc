@@ -57,9 +57,13 @@ public enum EdgeLabelEnum {
 	CALCULATED_CAP_PROPERTIES,
 	POLICIES,
 	EXTERNAL_REFS,
-	CATALOG_ELEMENT;
-
-	/**
+	CATALOG_ELEMENT,
+    ARCHIVE_ELEMENT,
+	INSTANCE_OF,
+	PROXY_OF,
+	ALLOTTED_OF;
+    
+    /**
 	 * Returns EdgeLabelEnum according received name
 	 * @param name
 	 * @return

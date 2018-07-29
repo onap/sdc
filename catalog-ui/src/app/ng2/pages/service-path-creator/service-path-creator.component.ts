@@ -73,12 +73,11 @@ export class ServicePathCreatorComponent {
             this.forwardingPath.uniqueId = forwardingPath.uniqueId;
             this.links = [];
             _.forEach(forwardingPath.pathElements.listToscaDataDefinition, (link:ForwardingPathLink) => {
-                this.links[this.links.length] = new Link( link, false, false, false);
+                this.links[this.links.length] = new Link(link, false, false, false);
             });
-            this.links[this.links.length -1].canEdit = true;
-            this.links[this.links.length -1].canRemove = true;
+            this.links[this.links.length - 1].canEdit = true;
+            this.links[this.links.length - 1].canRemove = true;
             this.links[0].isFirst = true;
-
         }
     }
 
@@ -98,7 +97,18 @@ export class ServicePathCreatorComponent {
 
     addRow() {
         this.disableRows();
-        this.links[this.links.length] = new Link( new ForwardingPathLink(this.links[this.links.length-1].toNode,this.links[this.links.length-1].toCP,'','',this.links[this.links.length-1].toCPOriginId,''),true, true, false);
+        this.links[this.links.length] = new Link(
+            new ForwardingPathLink(this.links[this.links.length-1].toNode,
+                this.links[this.links.length-1].toCP,
+                '',
+                '',
+                this.links[this.links.length-1].toCPOriginId,
+                ''
+            ),
+            true,
+            true,
+            false
+        );
     }
 
     disableRows() {

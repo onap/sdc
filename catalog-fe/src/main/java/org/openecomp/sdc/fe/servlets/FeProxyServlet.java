@@ -20,30 +20,28 @@
 
 package org.openecomp.sdc.fe.servlets;
 
-import java.util.concurrent.TimeUnit;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import org.eclipse.jetty.client.api.Response;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.fe.config.Configuration;
 import org.openecomp.sdc.fe.config.ConfigurationManager;
 import org.openecomp.sdc.fe.config.FeEcompErrorManager;
-import org.openecomp.sdc.fe.mdc.MdcData;
+import org.openecomp.sdc.fe.impl.MdcData;
 import org.openecomp.sdc.fe.utils.BeProtocol;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.concurrent.TimeUnit;
 
 public class FeProxyServlet extends SSLProxyServlet {
 	private static final long serialVersionUID = 1L;
 	private static final String URL = "%s://%s%s%s";
-    private static final String ONBOARDING_CONTEXT = "/onboarding-api";
-    private static final String DCAED_CONTEXT = "/dcae-api";
+	private static final String ONBOARDING_CONTEXT = "/onboarding-api";
+	private static final String DCAED_CONTEXT = "/dcae-api";
 	private static final Logger log = LoggerFactory.getLogger(FeProxyServlet.class.getName());
 	private static Cache<String, MdcData> mdcDataCache = CacheBuilder.newBuilder().expireAfterWrite(10, TimeUnit.SECONDS).build();
 
@@ -108,7 +106,7 @@ public class FeProxyServlet extends SSLProxyServlet {
 			if (mdcData != null) {
 				Long transactionStartTime = mdcData.getTransactionStartTime();
 				if (transactionStartTime != null) {// should'n ever be null, but
-													// just to be defensive
+					// just to be defensive
 					transactionRoundTime = Long.toString(System.currentTimeMillis() - transactionStartTime);
 				}
 				updateMdc(uuid, mdcData.getServiceInstanceID(), mdcData.getUserId(), mdcData.getRemoteAddr(), mdcData.getLocalAddr(), transactionRoundTime);
@@ -138,79 +136,78 @@ public class FeProxyServlet extends SSLProxyServlet {
 		MDC.put("timer", transactionStartTime);
 	}
 
-    private String getModifiedUrl(HttpServletRequest request) {
+	
+	
+	private String getModifiedUrl(HttpServletRequest request) {
 		Configuration config = getConfiguration(request);
 		if (config == null) {
 			log.error("failed to retrive configuration.");
 			throw new RuntimeException("failed to read FE configuration");
 		}
 		String uri = request.getRequestURI();
-        String protocol;
-        String host;
-        String port;
+		String protocol;
+		String host;
+		String port;
 		if (uri.contains(ONBOARDING_CONTEXT)){
-            uri = uri.replace("/sdc1/feProxy"+ONBOARDING_CONTEXT,ONBOARDING_CONTEXT);
-            protocol = config.getOnboarding().getProtocolBe();
-            host = config.getOnboarding().getHostBe();
-            port = config.getOnboarding().getPortBe().toString();
-		}
-		else if(uri.contains(DCAED_CONTEXT)){
-            uri = uri.replace("/sdc1/feProxy"+DCAED_CONTEXT,DCAED_CONTEXT);
-            protocol = config.getBeProtocol();
-            host = config.getBeHost();
-            if (config.getBeProtocol().equals(BeProtocol.HTTP.getProtocolName())) {
-                port = config.getBeHttpPort().toString();
-            } else {
-                port = config.getBeSslPort().toString();
-            }
+			uri = uri.replace("/sdc1/feProxy"+ONBOARDING_CONTEXT,ONBOARDING_CONTEXT);
+			protocol = config.getOnboarding().getProtocolBe();
+			host = config.getOnboarding().getHostBe();
+			port = config.getOnboarding().getPortBe().toString();		
+		}else if(uri.contains(DCAED_CONTEXT)){
+			uri = uri.replace("/sdc1/feProxy"+DCAED_CONTEXT,DCAED_CONTEXT);
+			protocol = config.getBeProtocol();
+			host = config.getBeHost();
+			if (config.getBeProtocol().equals(BeProtocol.HTTP.getProtocolName())) {
+				port = config.getBeHttpPort().toString();
+			} else {
+				port = config.getBeSslPort().toString();
+			}
 		}
 		else{
-		    uri = uri.replace("/sdc1/feProxy","/sdc2");
-            protocol = config.getBeProtocol();
-            host = config.getBeHost();
-            if (config.getBeProtocol().equals(BeProtocol.HTTP.getProtocolName())) {
-                port = config.getBeHttpPort().toString();
-            } else {
-                port = config.getBeSslPort().toString();
-            }
+			uri = uri.replace("/sdc1/feProxy","/sdc2");
+			protocol = config.getBeProtocol();
+			host = config.getBeHost();
+			if (config.getBeProtocol().equals(BeProtocol.HTTP.getProtocolName())) {
+				port = config.getBeHttpPort().toString();
+			} else {
+				port = config.getBeSslPort().toString();
+			}
+		}	
 
-		}
-
-        String authority = getAuthority(host, port);
-        String queryString = getQueryString(request);
-        return  String.format(URL,protocol,authority,uri,queryString);
-
-
-
-
+		String authority = getAuthority(host, port);
+		String queryString = getQueryString(request);
+		return  String.format(URL,protocol,authority,uri,queryString);
 
 	}
 
 
 
-    private Configuration getConfiguration(HttpServletRequest request) {
+
+
+
+	private Configuration getConfiguration(HttpServletRequest request) {
 		return ((ConfigurationManager) request.getSession().getServletContext().getAttribute(Constants.CONFIGURATION_MANAGER_ATTR)).getConfiguration();
 	}
 
-    private String getAuthority(String host, String port) {
-        String authority;
-        if (port==null){
-            authority=host;
-        }
-        else{
-            authority=host+":"+port;
-        }
-        return authority;
-    }
+	private String getAuthority(String host, String port) {
+		String authority;
+		if (port==null){
+			authority=host;
+		}
+		else{
+			authority=host+":"+port;
+		}
+		return authority;
+	}
 
-    private String getQueryString(HttpServletRequest request) {
-        String queryString = request.getQueryString();
-        if (queryString != null) {
-            queryString="?"+queryString;
-        }
-        else{
-            queryString="";
-        }
-        return queryString;
-    }
+	private String getQueryString(HttpServletRequest request) {
+		String queryString = request.getQueryString();
+		if (queryString != null) {
+			queryString="?"+queryString;
+		}
+		else{
+			queryString="";
+		}
+		return queryString;
+	}
 }

@@ -1,12 +1,6 @@
 package org.openecomp.sdc.asdctool.impl.validator.executers;
 
-import java.util.ArrayList;
-import java.util.EnumMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
+import fj.data.Either;
 import org.openecomp.sdc.asdctool.impl.validator.tasks.TopologyTemplateValidationTask;
 import org.openecomp.sdc.asdctool.impl.validator.utils.ReportManager;
 import org.openecomp.sdc.asdctool.impl.validator.utils.VertexResult;
@@ -17,19 +11,17 @@ import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
-import org.openecomp.sdc.be.model.jsontitan.operations.TopologyTemplateOperation;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import fj.data.Either;
+import java.util.*;
 
 /**
  * Created by chaya on 7/3/2017.
  */
 public class TopologyTemplateValidatorExecuter {
 
-    private static Logger log = LoggerFactory.getLogger(VfValidatorExecuter.class.getName());
+    private static Logger log = Logger.getLogger(VfValidatorExecuter.class.getName());
 
     @Autowired
     protected TitanDao titanDao;
@@ -53,10 +45,10 @@ public class TopologyTemplateValidatorExecuter {
 
         Either<List<GraphVertex>, TitanOperationStatus> results = titanDao.getByCriteria(VertexTypeEnum.TOPOLOGY_TEMPLATE, props);
         if (results.isRight()) {
-            System.out.println("getVerticesToValidate failed "+ results.right().value());
+            log.error("getVerticesToValidate failed "+ results.right().value());
             return new ArrayList<>();
         }
-        System.out.println("getVerticesToValidate: "+results.left().value().size()+" vertices to scan");
+        log.info("getVerticesToValidate: "+results.left().value().size()+" vertices to scan");
         return results.left().value();
     }
 
@@ -85,7 +77,7 @@ public class TopologyTemplateValidatorExecuter {
                 ReportManager.reportTaskEnd(vertex.getUniqueId(), task.getTaskName(), result);
             }
             String componentScanStatus = successAllTasks? "success" : "failed";
-            System.out.println("Topology Template "+vertex.getUniqueId()+" Validation finished with "+componentScanStatus);
+            log.info("Topology Template "+vertex.getUniqueId()+" Validation finished with "+componentScanStatus);
         }
         ReportManager.reportValidatorTypeSummary(getName(), failedTasks, successTasks);
         return successAllVertices;

@@ -22,9 +22,9 @@ package org.openecomp.sdc.tosca.services.impl;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
 import org.openecomp.core.utilities.file.FileContentHandler;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
-import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
 import org.openecomp.sdc.tosca.services.ToscaConstants;
 import org.openecomp.sdc.tosca.services.ToscaUtil;
 

@@ -20,112 +20,106 @@
 
 package org.openecomp.sdc.be.model;
 
-import java.io.Serializable;
-import java.util.List;
-
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyRule;
 
-public class ComponentInstanceProperty extends PropertyDefinition implements IComponentInstanceConnectedElement, IPropertyInputCommon, Serializable {
+import java.util.List;
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -6559573536869242691L;
+public class ComponentInstanceProperty extends PropertyDefinition implements IComponentInstanceConnectedElement, IPropertyInputCommon {
 
-	/**
-	 * Value of property
-	 */
+    /**
+     * The unique id of the property value on graph
+     */
+    private String valueUniqueUid;
+
+    private List<String> path;
+
+    private List<PropertyRule> rules ;
+
+
+    private String componentInstanceName;
+
+    private String componentInstanceId;
+
+    public String getComponentInstanceName() {
+        return componentInstanceName;
+    }
+
+    public void setComponentInstanceName(String componentInstanceName) {
+        this.componentInstanceName = componentInstanceName;
+    }
+
+    public String getComponentInstanceId() {
+        return componentInstanceId;
+    }
+
+    public void setComponentInstanceId(String componentInstanceId) {
+        this.componentInstanceId = componentInstanceId;
+    }
+
+    public ComponentInstanceProperty() {
+        super();
+    }
+    public ComponentInstanceProperty(PropertyDataDefinition pd) {
+        super(pd);
+    }
+
+    public ComponentInstanceProperty(PropertyDefinition pd) {
+        super(pd);
+    }
+
+    public ComponentInstanceProperty(PropertyDefinition pd, String value, String valueUniqueUid) {
+        super(pd);
+
+        this.setValue(value);
+        this.valueUniqueUid = valueUniqueUid;
+    }
+
+    public ComponentInstanceProperty(Boolean hidden, PropertyDefinition pd, String valueUniqueUid) {
+        super(pd);
+
+        this.hidden = hidden;
+        this.valueUniqueUid = valueUniqueUid;
+        setParentUniqueId(pd.getParentUniqueId());
+    }
+
+
+
+    public String getValueUniqueUid() {
+        return valueUniqueUid;
+    }
+
+    public void setValueUniqueUid(String valueUniqueUid) {
+        this.valueUniqueUid = valueUniqueUid;
+    }
+
+
+    public List<String> getPath() {
+        return path;
+    }
+
+    public void setPath(List<String> path) {
+        this.path = path;
+    }
+
+    public List<PropertyRule> getRules() {
+        return rules;
+    }
+
+    public void setRules(List<PropertyRule> rules) {
+        this.rules = rules;
+    }
+
+
+    @Override
+    public String toString() {
+        return "ComponentInstanceProperty [ " + super.toString() + " , value=" + getValue() + ", valueUniqueUid = " + valueUniqueUid + " , rules=" + rules + " , path=" + path + " ]";
+    }
 	
-
-	/**
-	 * The unique id of the property value on graph
-	 */
-	private String valueUniqueUid;
-
-	private List<String> path = null;
-
-	private List<PropertyRule> rules = null;
-
-	
-	
-	private String componentInstanceName;
-	
-	private String componentInstanceId;
-	
-	public String getComponentInstanceName() {
-		return componentInstanceName;
-	}
-
-	public void setComponentInstanceName(String componentInstanceName) {
-		this.componentInstanceName = componentInstanceName;
-	}
-
-	public String getComponentInstanceId() {
-		return componentInstanceId;
-	}
-
-	public void setComponentInstanceId(String componentInstanceId) {
-		this.componentInstanceId = componentInstanceId;
-	}
-
-	public ComponentInstanceProperty() {
-		super();
-	}
-	public ComponentInstanceProperty(PropertyDataDefinition pd) {
-		super(pd);
-	}
-	
-	public ComponentInstanceProperty(PropertyDefinition pd) {
-		super(pd);
-	}
-
-	public ComponentInstanceProperty(PropertyDefinition pd, String value, String valueUniqueUid) {
-		super(pd);
-
-		this.setValue(value);
-		this.valueUniqueUid = valueUniqueUid;
-	}
-	
-	public ComponentInstanceProperty(Boolean hidden, PropertyDefinition pd, String valueUniqueUid) {
-		super(pd);
-
-		this.hidden = hidden;
-		this.valueUniqueUid = valueUniqueUid;
-		setParentUniqueId(pd.getParentUniqueId());
-	}
-
-	
-
-	public String getValueUniqueUid() {
-		return valueUniqueUid;
-	}
-
-	public void setValueUniqueUid(String valueUniqueUid) {
-		this.valueUniqueUid = valueUniqueUid;
-	}
-
-
-	public List<String> getPath() {
-		return path;
-	}
-
-	public void setPath(List<String> path) {
-		this.path = path;
-	}
-
-	public List<PropertyRule> getRules() {
-		return rules;
-	}
-
-	public void setRules(List<PropertyRule> rules) {
-		this.rules = rules;
-	}
-
-	
-	@Override
-	public String toString() {
-		return "ComponentInstanceProperty [ " + super.toString() + " , value=" + getValue() + ", valueUniqueUid = " + valueUniqueUid + " , rules=" + rules + " , path=" + path + " ]";
+	public void updateCapabilityProperty(ComponentInstanceProperty property) {
+		if(property != null && property.getValue() != null){
+			setValue(property.getValue());
+		}
 	}
 
 }

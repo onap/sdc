@@ -20,9 +20,9 @@
 
 package org.openecomp.sdc.be.dao.graph.datatype;
 
-import java.util.Map;
-
 import org.openecomp.sdc.be.dao.neo4j.GraphEdgeLabels;
+
+import java.util.Map;
 
 public class GraphEdge {
 

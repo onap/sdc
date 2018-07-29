@@ -1,15 +1,15 @@
 package org.onap.config.util;
 
-import org.onap.config.ConfigurationUtils;
-import org.onap.config.api.Configuration;
-import org.onap.config.api.ConfigurationManager;
-import org.junit.Assert;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.junit.Assert;
+import org.onap.config.ConfigurationUtils;
+import org.onap.config.api.Configuration;
+import org.onap.config.api.ConfigurationManager;
 
 /**
  * Created by sheetalm on 10/13/2016.

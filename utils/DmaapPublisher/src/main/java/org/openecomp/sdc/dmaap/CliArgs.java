@@ -1,7 +1,7 @@
 package org.openecomp.sdc.dmaap;
 
-import org.kohsuke.args4j.Option;
 import com.google.common.base.MoreObjects;
+import org.kohsuke.args4j.Option;
 
 public class CliArgs {
 

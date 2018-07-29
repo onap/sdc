@@ -20,15 +20,15 @@
 
 package org.openecomp.sdc.be.config;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.openecomp.sdc.common.api.BasicConfiguration;
 import org.openecomp.sdc.common.api.ConfigurationListener;
 import org.openecomp.sdc.common.api.ConfigurationSource;
 import org.openecomp.sdc.common.api.FileChangeCallback;
 import org.openecomp.sdc.common.config.EcompErrorConfiguration;
 import org.openecomp.sdc.common.config.IEcompConfigurationManager;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class ConfigurationManager implements FileChangeCallback, IEcompConfigurationManager {
 
@@ -42,7 +42,7 @@ public class ConfigurationManager implements FileChangeCallback, IEcompConfigura
 		instance = this;
 	}
 
-	Map<String, Object> configurations = new HashMap<String, Object>();
+	Map<String, Object> configurations = new HashMap<>();
 
 	private void loadConfigurationFiles() {
 

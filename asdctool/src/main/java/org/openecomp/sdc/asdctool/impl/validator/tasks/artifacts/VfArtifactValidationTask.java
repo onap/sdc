@@ -3,7 +3,6 @@ package org.openecomp.sdc.asdctool.impl.validator.tasks.artifacts;
 import org.openecomp.sdc.asdctool.impl.validator.tasks.VfValidationTask;
 import org.openecomp.sdc.asdctool.impl.validator.utils.VertexResult;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
-import org.openecomp.sdc.be.model.jsontitan.operations.TopologyTemplateOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 
 

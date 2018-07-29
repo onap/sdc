@@ -22,6 +22,7 @@ import org.openecomp.core.utilities.CommonMethods;
 import org.openecomp.core.utilities.orchestration.OnboardingTypesEnum;
 import org.openecomp.sdc.datatypes.configuration.ImplementationConfiguration;
 import org.openecomp.sdc.vendorsoftwareproduct.types.ConfigConstants;
+
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;

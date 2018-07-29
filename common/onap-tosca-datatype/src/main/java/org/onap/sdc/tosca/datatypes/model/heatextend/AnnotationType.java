@@ -16,9 +16,9 @@
 
     package org.onap.sdc.tosca.datatypes.model.heatextend;
 
-    import org.onap.sdc.tosca.datatypes.model.PropertyDefinition;
+import org.onap.sdc.tosca.datatypes.model.PropertyDefinition;
 
-    import java.util.Map;
+import java.util.Map;
 
     public class AnnotationType {
 

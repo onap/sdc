@@ -42,6 +42,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
+
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.project.MavenProject;
 

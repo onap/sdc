@@ -20,9 +20,6 @@
 
 package org.openecomp.sdc.ci.tests.execute.artifacts;
 
-import java.util.Arrays;
-import java.util.List;
-
 import org.junit.Rule;
 import org.junit.rules.TestName;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
@@ -45,6 +42,9 @@ import org.openecomp.sdc.ci.tests.utils.validation.ArtifactValidationUtils;
 import org.openecomp.sdc.ci.tests.utils.validation.ErrorValidationUtils;
 import org.testng.AssertJUnit;
 import org.testng.annotations.Test;
+
+import java.util.Arrays;
+import java.util.List;
 
 public class ValidateHeatArtFieldsTypes extends ComponentBaseTest {
 

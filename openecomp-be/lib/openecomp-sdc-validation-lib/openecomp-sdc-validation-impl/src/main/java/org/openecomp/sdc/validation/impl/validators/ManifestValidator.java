@@ -16,11 +16,6 @@
 
 package org.openecomp.sdc.validation.impl.validators;
 
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
 import org.openecomp.core.utilities.json.JsonUtil;
 import org.openecomp.core.validation.ErrorMessageCode;
 import org.openecomp.core.validation.errors.ErrorMessagesFormatBuilder;
@@ -33,6 +28,11 @@ import org.openecomp.sdc.heat.datatypes.manifest.ManifestContent;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.validation.Validator;
+
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 public class ManifestValidator implements Validator {
   private static final Logger LOGGER = LoggerFactory.getLogger(YamlValidator.class);

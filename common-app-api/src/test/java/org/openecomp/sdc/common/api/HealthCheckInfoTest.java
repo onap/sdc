@@ -1,9 +1,9 @@
 package org.openecomp.sdc.common.api;
 
-import java.util.List;
-
 import org.junit.Test;
 import org.openecomp.sdc.common.api.HealthCheckInfo.HealthCheckStatus;
+
+import java.util.List;
 
 public class HealthCheckInfoTest {
 

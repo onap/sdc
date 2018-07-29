@@ -16,10 +16,10 @@
 
 package org.openecomp.sdc.translator.services.heattotosca.impl.resourcetranslation;
 
-import java.util.Optional;
-
 import org.openecomp.sdc.tosca.datatypes.ToscaTopologyTemplateElements;
 import org.openecomp.sdc.translator.datatypes.heattotosca.to.TranslateTo;
+
+import java.util.Optional;
 
 public class ResourceTranslationDefaultImpl extends ResourceTranslationBase {
 

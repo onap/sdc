@@ -20,37 +20,27 @@
 
 package org.openecomp.sdc.be.model.tosca.constraints;
 
-import java.io.Serializable;
-import java.util.regex.Pattern;
-
-import javax.validation.constraints.NotNull;
-
 import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintViolationException;
 
-//import com.fasterxml.jackson.annotation.JsonIgnore;
+import javax.validation.constraints.NotNull;
+import java.util.regex.Pattern;
 
-public class PatternConstraint extends AbstractStringPropertyConstraint implements Serializable {
+public class PatternConstraint extends AbstractStringPropertyConstraint {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 8708185294968697107L;
+    @NotNull
+    private String pattern;
 
-	@NotNull
-	private String pattern;
+    private Pattern compiledPattern;
 
-	// @JsonIgnore
-	private Pattern compiledPattern;
+    public void setPattern(String pattern) {
+        this.pattern = pattern;
+        this.compiledPattern = Pattern.compile(this.pattern);
+    }
 
-	public void setPattern(String pattern) {
-		this.pattern = pattern;
-		this.compiledPattern = Pattern.compile(this.pattern);
-	}
-
-	@Override
-	protected void doValidate(String propertyValue) throws ConstraintViolationException {
-		if (!compiledPattern.matcher(propertyValue).matches()) {
-			throw new ConstraintViolationException("The value do not match pattern " + pattern);
-		}
-	}
+    @Override
+    protected void doValidate(String propertyValue) throws ConstraintViolationException {
+        if (!compiledPattern.matcher(propertyValue).matches()) {
+            throw new ConstraintViolationException("The value do not match pattern " + pattern);
+        }
+    }
 }

@@ -20,7 +20,10 @@
 
 package org.openecomp.sdc.ci.tests.utils.validation;
 
-import static org.testng.AssertJUnit.assertNotNull;
+import org.openecomp.sdc.be.model.Service;
+import org.openecomp.sdc.ci.tests.utils.DistributionUtils;
+import org.openecomp.sdc.ci.tests.utils.general.AtomicOperationUtils;
+import org.openecomp.sdc.common.datastructure.AuditingFieldsKey;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -29,10 +32,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.openecomp.sdc.be.model.Service;
-import org.openecomp.sdc.ci.tests.utils.DistributionUtils;
-import org.openecomp.sdc.ci.tests.utils.general.AtomicOperationUtils;
-import org.openecomp.sdc.common.datastructure.AuditingFieldsKeysEnum;
+import static org.testng.AssertJUnit.assertNotNull;
 
 public class DistributionValidationUtils {
 
@@ -46,10 +46,10 @@ public class DistributionValidationUtils {
 		}
 		for (String distributionStatusList : distributionStatusEnumList){
 			for (Entry<String, String> url : expectedArtifactsMapOfDistributedService.entrySet()){
-				Map <AuditingFieldsKeysEnum, String> body = new HashMap<>();
-		        body.put(AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_ID, distributionID);
-		        body.put(AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_RESOURCE_URL, url.getValue());
-		        body.put(AuditingFieldsKeysEnum.AUDIT_STATUS, distributionStatusList);
+				Map <AuditingFieldsKey, String> body = new HashMap<>();
+		        body.put(AuditingFieldsKey.AUDIT_DISTRIBUTION_ID, distributionID);
+		        body.put(AuditingFieldsKey.AUDIT_DISTRIBUTION_RESOURCE_URL, url.getValue());
+		        body.put(AuditingFieldsKey.AUDIT_STATUS, distributionStatusList);
 		        Map<String, String> actualAuditRecord = new HashMap<String, String>();
 				actualAuditRecord = AuditValidationUtils.retrieveAuditMessagesByPattern(action, body, true);
 				while (timer != 0) {

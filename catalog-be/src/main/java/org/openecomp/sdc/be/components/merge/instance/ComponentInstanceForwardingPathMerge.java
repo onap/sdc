@@ -1,36 +1,26 @@
 package org.openecomp.sdc.be.components.merge.instance;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-
+import fj.data.Either;
 import org.javatuples.Pair;
 import org.openecomp.sdc.be.components.impl.ServiceBusinessLogic;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.elements.ForwardingPathDataDefinition;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.ForwardingPathUtils;
-import org.openecomp.sdc.be.model.CapabilityDefinition;
-import org.openecomp.sdc.be.model.Component;
-import org.openecomp.sdc.be.model.ComponentInstance;
-import org.openecomp.sdc.be.model.Service;
-import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.*;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import fj.data.Either;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @org.springframework.stereotype.Component
 public class ComponentInstanceForwardingPathMerge implements ComponentInstanceMergeInterface {
 
-    private static Logger log = LoggerFactory.getLogger(ComponentInstanceForwardingPathMerge.class);
+    private static Logger log = Logger.getLogger(ComponentInstanceForwardingPathMerge.class);
 
     @Autowired
     private ServiceBusinessLogic serviceBusinessLogic;
@@ -46,7 +36,7 @@ public class ComponentInstanceForwardingPathMerge implements ComponentInstanceMe
         ComponentInstance currentResourceInstance, Component originComponent) {
         dataHolder.setOrigInstanceCapabilities(getAllInstanceCapabilities(currentResourceInstance));
         dataHolder.setOrigInstanceNode(originComponent);
-        dataHolder.setOrigComponentInstId(currentResourceInstance.getUniqueId());
+        dataHolder.setOrigComponentInstId(currentResourceInstance.getName());
     }
 
     @Override
@@ -108,6 +98,9 @@ public class ComponentInstanceForwardingPathMerge implements ComponentInstanceMe
 
 
     private List<CapabilityDefinition> getAllInstanceCapabilities(ComponentInstance currentResourceInstance) {
+        if(currentResourceInstance.getCapabilities() == null || currentResourceInstance.getCapabilities().isEmpty()){
+            return Collections.EMPTY_LIST;
+        }
         return currentResourceInstance.getCapabilities().values().stream().flatMap(Collection::stream)
             .collect(Collectors.toList());
     }

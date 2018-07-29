@@ -6,13 +6,12 @@ import org.openecomp.sdc.asdctool.cli.CLIToolData;
 import org.openecomp.sdc.asdctool.cli.SpringCLITool;
 import org.openecomp.sdc.asdctool.migration.config.MigrationSpringConfig;
 import org.openecomp.sdc.asdctool.migration.core.SdcMigrationTool;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.springframework.context.support.AbstractApplicationContext;
 
 public class MigrationMenu extends SpringCLITool {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(MigrationMenu.class);
+    private static final Logger LOGGER = Logger.getLogger(MigrationMenu.class);
 
     public static void main(String[] args) {
         MigrationMenu migrationMenu = new MigrationMenu();

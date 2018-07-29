@@ -23,22 +23,11 @@ package org.openecomp.sdc.be.datatypes.elements;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 
-import java.io.Serializable;
 import java.util.List;
 
-public class CapabilityTypeDataDefinition extends ToscaDataDefinition implements Serializable {
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 3242123405337612089L;
-
-
-
-	// private String derivedFrom;
+public class CapabilityTypeDataDefinition extends ToscaDataDefinition {
 
 	public CapabilityTypeDataDefinition(CapabilityTypeDataDefinition cdt) {
-		super();
 		this.setUniqueId(cdt.getUniqueId());
 		this.setDescription ( cdt.getDescription());
 		this.setType(cdt.getType());
@@ -46,7 +35,6 @@ public class CapabilityTypeDataDefinition extends ToscaDataDefinition implements
 		this.setVersion( cdt.getVersion());
 		this.setCreationTime (cdt.getCreationTime());
 		this.setModificationTime (cdt.getModificationTime());		
-		
 	}
 
 	public CapabilityTypeDataDefinition() {

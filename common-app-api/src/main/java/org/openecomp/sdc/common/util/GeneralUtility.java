@@ -20,14 +20,14 @@
 
 package org.openecomp.sdc.common.util;
 
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.io.FileUtils;
+import org.openecomp.sdc.common.api.Constants;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.regex.Pattern;
-
-import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.io.FileUtils;
-import org.openecomp.sdc.common.api.Constants;
 
 public class GeneralUtility {
 
@@ -163,4 +163,5 @@ public class GeneralUtility {
 	public static boolean isEmptyString(String str) {
         return str == null || str.trim().isEmpty();
     }
+
 }

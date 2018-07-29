@@ -1,10 +1,6 @@
 package org.openecomp.sdc.be.components.validation;
 
-import java.util.Arrays;
-import java.util.List;
-
-import javax.annotation.Resource;
-
+import fj.data.Either;
 import org.apache.commons.lang.StringUtils;
 import org.openecomp.sdc.be.components.distribution.engine.IDistributionEngine;
 import org.openecomp.sdc.be.components.impl.ActivationRequestInformation;
@@ -19,18 +15,19 @@ import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.resources.data.OperationalEnvironmentEntry;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import fj.data.Either;
+import javax.annotation.Resource;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Created by chaya on 10/18/2017.
  */
 @org.springframework.stereotype.Component("serviceDistributionValidation")
 public class ServiceDistributionValidation {
-    private static final Logger log = LoggerFactory.getLogger(ServiceDistributionValidation.class);
+    private static final Logger log = Logger.getLogger(ServiceDistributionValidation.class);
     @Resource
     private ComponentsUtils componentsUtils;
     @Resource
@@ -109,8 +106,7 @@ public class ServiceDistributionValidation {
         }
     }
     private void validateUserExists(String userId) {
-        userValidations.validateUserExists(userId, "activate Distribution", false)
-                .left().on(responseFormat ->  ValidationUtils.throwValidationException(responseFormat, "user {} not exist", userId));
+        userValidations.validateUserExists(userId, "activate Distribution", false);
     }
 
     private void validateDistributionServiceLifeCycleState(Service serviceToActivate) {

@@ -16,16 +16,7 @@
 
 package org.openecomp.sdc.validation.util;
 
-import static java.util.Objects.nonNull;
-
-import java.io.InputStream;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.regex.Pattern;
 import org.apache.commons.collections4.CollectionUtils;
-
 import org.onap.sdc.tosca.services.YamlUtil;
 import org.openecomp.core.utilities.json.JsonUtil;
 import org.openecomp.core.validation.errors.ErrorMessagesFormatBuilder;
@@ -35,14 +26,19 @@ import org.openecomp.sdc.common.errors.SdcRuntimeException;
 import org.openecomp.sdc.common.utils.SdcCommon;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.heat.datatypes.manifest.ManifestContent;
-import org.openecomp.sdc.heat.datatypes.model.Environment;
-import org.openecomp.sdc.heat.datatypes.model.HeatOrchestrationTemplate;
-import org.openecomp.sdc.heat.datatypes.model.HeatResourcesTypes;
-import org.openecomp.sdc.heat.datatypes.model.Resource;
-import org.openecomp.sdc.heat.datatypes.model.ResourceReferenceFunctions;
+import org.openecomp.sdc.heat.datatypes.model.*;
 import org.openecomp.sdc.heat.services.HeatStructureUtil;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
+
+import java.io.InputStream;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.regex.Pattern;
+
+import static java.util.Objects.nonNull;
 
 public class ValidationUtil {
   private static final Logger LOG = LoggerFactory.getLogger(ValidationUtil.class.getName());

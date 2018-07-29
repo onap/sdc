@@ -30,14 +30,16 @@ public final class DataTestIdEnum {
 	public enum Dashboard {
 		IMPORT_AREA("importButtonsArea"),
 		ADD_AREA("AddButtonsArea"),
-		BUTTON_ADD_VF("createResourceButton"), 
+		BUTTON_ADD_VF("createResourceButton"),
 		BUTTON_ADD_SERVICE("createServiceButton"), 
 		IMPORT_VFC("importVFCbutton"), 
 		IMPORT_VF("importVFbutton"), 
 		IMPORT_VFC_FILE("file-importVFCbutton"), 
 		IMPORT_VF_FILE("file-importVFbutton"),
 		BUTTON_ADD_PRODUCT("createProductButton"),
-		BUTTON_ADD_PNF("createPNFButton"), ;
+		BUTTON_ADD_PNF("createPNFButton"),
+		BUTTON_ADD_CR("createCRButton"),
+		;
 
 		private String value;
 
@@ -56,6 +58,7 @@ public final class DataTestIdEnum {
 		SUBMIT_FOR_TESTING("submit_for_testing"), 
 		START_TESTING("start_testing"), 
 		ACCEPT("accept"),
+		CERTIFY("certify"),
 		CHECKOUT("check_out");
 
 		private String value;
@@ -114,8 +117,16 @@ public final class DataTestIdEnum {
 		DESCRIPTION("description"), 
 		SUMBIT_FOR_TESTING_MESSAGE("changeLifeCycleMessage"), 
 		OK("OK"), 
-		CANCEL("Cancel"), 
-		ACCEP_TESTING_MESSAGE("checkindialog");
+		CANCEL("Cancel"),
+		DELETE_INSTANCE_OK("deleteInstanceModal-button-ok"),
+		DELETE_INSTANCE_CANCEL("deleteInstanceModal-button-cancel"),
+		RENAME_INSTANCE_OK("renameInstanceModal-button-ok"),
+		RENAME_INSTANCE_CANCEL("renameInstanceModal-button-cancel"),
+		UPGRADE_SERVICES_CANCEL("upgradeVspModal-close"),
+		UPGRADE_SERVICES_OK("upgradeVspModal-button-upgrade"),
+		UPDATE_SERVICES_OK("upgradeVspModal-button-update"),
+		UPGRADE_SERVICES_CLOSE("upgradeVspModal-button-close"),
+		ACCEPT_TESTING_MESSAGE("checkindialog");
 
 		private String value;
 
@@ -137,7 +148,9 @@ public final class DataTestIdEnum {
 		OBJECT_STORAGE("ObjectStorage"), 
 		NEUTRON_PORT("NeutronPort"), 
 		PORT("Port"), DATABASE("Database"), 
-		NETWORK("Network");
+		NETWORK("Network"),
+		CONTRAIL_PORT("ContrailPort"),
+		CONTRAIL_VIRTUAL_NETWORK("ContrailVirtualNetwork");
 
 		private String value;
 
@@ -157,7 +170,8 @@ public final class DataTestIdEnum {
 //		LINK_ITEM_REQ("link-item-requirements"), 
 //		LINK_MENU("link-menu-open");
 		LINK_ITEM_CAP_Or_REQ("req-or-cap-item"),
-		REQ_CAP_SELECT_DATA_TESTS_ID("SelectType");
+//		REQ_CAP_SELECT_DATA_TESTS_ID("SelectType");
+		REQ_CAP_SELECT_DATA_TESTS_ID("value-select");
 
 		private String value;
 
@@ -176,7 +190,7 @@ public final class DataTestIdEnum {
 	public enum GeneralCanvasItems {
 		CANVAS("canvas"), 
 		CANVAS_RIGHT_PANEL("w-sdc-designer-sidebar-head"), 
-		DELETE_INSTANCE_BUTTON("e-sdc-small-icon-delete"), 
+		DELETE_INSTANCE_BUTTON("deleteInstance"),
 		UPDATE_INSTANCE_NAME("e-sdc-small-icon-update"), 
 		INSTANCE_NAME_FIELD("instanceName");
 
@@ -200,7 +214,8 @@ public final class DataTestIdEnum {
 		TAGS("i-sdc-tag-input"), 
 		CONTACT_ID("contactId"), 
 		ICON(" iconBox"),
-		TAGS_TABLE("i-sdc-tag-text");	
+		TAGS_TABLE("i-sdc-tag-text"),
+		SELECT_VSP("filename");
 		private String value;
 
 		public String getValue() {
@@ -221,9 +236,13 @@ public final class DataTestIdEnum {
 		REVERT_BUTTON("revert"), 
 		LIFECYCLE_STATE("formlifecyclestate"), 
 		VERSION_HEADER("versionHeader"),
-		OK("OK"), 
-		UPLOAD_FILE_INPUT("browseButton");
-
+		OK("OK"),
+		UPDATE_SERVICES_BUTTON("open-upgrade-vsp-popup"),
+		UPLOAD_FILE_INPUT("browseButton"),
+//		RESTORE_BUTTON("restore"),
+		RESTORE_BUTTON("restore-component-button"),
+//		ARCHIVE_BUTTON("archive");
+		ARCHIVE_BUTTON("archive-component-button");
 		private String value;
 
 		public String getValue() {
@@ -251,9 +270,11 @@ public final class DataTestIdEnum {
 		VERSION("artifactVersion_"), 
 		UUID("artifactUUID_"), 
 		EDIT_PARAMETERS_OF_ARTIFACT("edit-parameters-of-"),
+		DELETE_PARAMETER_OF_ARTIFACT("delete-"),
 		ARTIFACT_NAME("artifactDisplayName_"),
 		UPLOAD_HEAT_ENV_PARAMETERS("uplaodEnv_"),
-		VERSION_ENV("artifactEnvVersion_");
+		VERSION_ENV("artifactEnvVersion_"),
+		ADD_OTHER_ARTIFACT_BUTTON("//button[@class='add-button ng-scope']");
 		private String value;
 
 		public String getValue() {
@@ -269,7 +290,8 @@ public final class DataTestIdEnum {
 
 		ADD_NEW_PROPERTY("addGrey"), 
 		EDIT_PROPERTY("edit_"), 
-		DELETE_PROPERTY("delete_"), 
+		DELETE_PROPERTY("delete_"),
+		DELETE_PROPERTY_POPUP("delete_property"),
 		PROPERTY_NAME("propertyName_"), 
 		PROPERTY_DESCRIPTION("propertyDescription_"), 
 		PROPERTY_TYPE("propertyType_"), 
@@ -388,8 +410,8 @@ public final class DataTestIdEnum {
 
 	public enum MainMenuButtons {
 		HOME_BUTTON("main-menu-button-home"), 
-		CATALOG_BUTTON("main-menu-button-catalog"), 
-		ONBOARD_BUTTON("main-menu-button-onboard"), 
+		CATALOG_BUTTON("main-menu-button-catalog"),
+		ONBOARD_BUTTON("main-menu-button-onboard"),
 		SEARCH_BOX("main-menu-input-search"),
 		REPOSITORY_ICON("repository-icon");
 		private String value;
@@ -402,7 +424,21 @@ public final class DataTestIdEnum {
 			this.value = value;
 		}
 	}
-	
+
+	public enum CatalogSwitchButtons {
+		CATALOG_SWITCH_BUTTON("catalog-selector-button"), // get possible catalog types(active/archive)
+		CATALOG_ACTIVE_ITEMS("catalog-selector-0"), // select active catalog
+		CATALOG_ARCHIVE("catalog-selector-1"); // select archive catalog
+		private String value;
+
+		public String getValue() {
+			return value;
+		}
+		private CatalogSwitchButtons(String value) {
+			this.value = value;
+		}
+	}
+
 	public enum MainMenuButtonsFromInsideFrame {
 		HOME_BUTTON("breadcrumbs-button-0");
 		private String value;
@@ -448,7 +484,7 @@ public final class DataTestIdEnum {
 		ACTIVITY_LOG("Activity LogLeftSideMenu"), 
 		DEPLOYMENT_VIEW("DeploymentLeftSideMenu"), 
 		TOSCA_ARTIFACTS("TOSCA ArtifactsLeftSideMenu"), 
-		MONITOR("Monitor LeftSideMenu"),
+		MONITOR("DistributionLeftSideMenu"),
 		MANAGEMENT_WORKFLOW("Management WorkflowLeftSideMenu"), 
 		INPUTS("Inputs"), 
 		HIERARCHY("Hierarchy"),
@@ -490,7 +526,14 @@ public final class DataTestIdEnum {
 	}
 
 	public enum ServiceMetadataEnum {
-		SERVICE_NAME("name"), DESCRIPTION("description"), CATEGORY("selectGeneralCategory"), PROJECT_CODE("projectCode"), TAGS("i-sdc-tag-input"), CONTACT_ID("contactId"), ICON(" iconBox");
+		SERVICE_NAME("name"), 
+		DESCRIPTION("description"), 
+		CATEGORY("selectGeneralCategory"), 
+		PROJECT_CODE("projectCode"), 
+		TAGS("i-sdc-tag-input"), 
+		CONTACT_ID("contactId"), 
+		ICON(" iconBox"), 
+		INSTANTIATION_TYPE("selectInstantiationType");
 
 		private String value;
 
@@ -626,6 +669,9 @@ public final class DataTestIdEnum {
 		SEARCH_ASSET("searchAsset", Arrays.asList()),
 		PROPERTIES_AND_ATTRIBUTES_TAB("properties-and-attributes-tab",Arrays.asList()),
 		MENU_INPUTS("sub-menu-button-inputs",Arrays.asList()),
+		MENU_ONBOARD("sub-menu-button-onboard",Arrays.asList()),
+		MENU_HOME("sub-menu-button-home",Arrays.asList()),
+		MENU_PROPERTIES_ASSIGNMENT("sub-menu-button-properties assignment",Arrays.asList()),
 		MENU_TRIANGLE_DROPDOWN("triangle-dropdown", Arrays.asList()),
 		ARTIFACTS_LIST("artifactName", Arrays.asList()),
 		INFORMATION_ARTIFACTS("button[tooltip-content='Information Artifacts']", Arrays.asList("Informational Artifacts")),
@@ -812,21 +858,34 @@ public final class DataTestIdEnum {
 		INPUTS_TAB("Inputs"),
 		COMPOSITION_TAB("Composition"),
 		PROPERTY_STRUCTURE_TAB("Property Structure"),
-		DECLARE_BUTTON("declare-button"),
 		SEARCH_BOX("search-box"),
+		FILTER_BOX("filter-box"),
+		SAVE_BUTTON("properties-save-button"),
+		DISCARD_BUTTON("properties-reverse-button"),
+		DECLARE_BUTTON("declare-button"),
 		SEARCH_BUTTON("search-button"),
 		FILTER_BUTTON("filter-button"),
-		FILTER_BOX("filter-box"),
+		EXPAND_BUTTON ("expand-"),
 		CLEAR_FILTER_BUTTON("clear-filter-button"),
 		INPUT_DELETE_BUTTON("delete-input-button"),
 		INPUT_DELETE_DIALOG_DELETE("Delete"),
 		INPUT_DELETE_DIALOG_CLOSE("Close"),
+		SAVE_DIALOG_CANCEL("id-button-cancel"),
+        SAVE_DIALOG_DISCARD("id-button-discard"),
+        SAVE_DIALOG_SAVE("id-button-save"),
+		PROPERTY_KEY_FIELD_PREFIX("value-prop-key-"),
+		PROPERTY_VALUE_FIELD_PREFIX("value-prop-"),
+        INPUT_VALUE_FIELD_PREFIX("value-input-"),
+        POPUP_VALUE_FIELD_PREFIX("edit-button-prop-"),
+		ADD_TO_LIST_BUTTON("add-to-list-"),
+		DELETE_FROM_LIST_BUTTON("delete-from-list-"),
 		FILTER_CHECKBOX_ALL("filter-checkbox-all"),
 		FILTER_CHECKBOX_CP("filter-checkbox-cp"),
 		FILTER_CHECKBOX_VFC("filter-checkbox-vfc"),
 		FILTER_CHECKBOX_VL("filter-checkbox-vl"),
 		FILTER_APPLY_BUTTON("filter-apply-button"),
 		FILTER_CLOSE_BUTTON("filter-close-button"),
+		FILTER_SET_BUTTON("filter-set-button"),
 		PROPERTY_NAME_COLUMN("property-name");
 		
 		
@@ -860,8 +919,8 @@ public final class DataTestIdEnum {
 	}
 	
 	public enum EnvParameterView {
-		SEARCH_ENV_PARAM_NAME("search-env-param-name"), 
-		ENV_CURRENT_VALUE("value-field-of-"),//value-field-of-oam_volume_name_0 - parameter name 
+		SEARCH_ENV_PARAM_NAME("search-env-param-name"),
+		ENV_CURRENT_VALUE("value-field-of-"),//value-field-of-oam_volume_name_0 - parameter name
 		ENV_DEFAULT_VALUE("default-value-of-");// default-value-of-vnf_name
 
 		private String value;
@@ -877,12 +936,33 @@ public final class DataTestIdEnum {
 
 	public enum ComplexServiceAmdocs {
 		CREATE_BUTTON("Create"),
+		DELETE_COMPONENT("deleteInstance"),
 		PATH_LIST_BUTTON("pathsListMenuItem"),
+		UPDATE_VF("create/save"),
+		PATH_LIST_NAME("path-name"),
+		PATH_LIST_EDIT("update-service-path-btn"),
+		PATH_LIST_DELETE("delete-service-path-btn"),
 		CREATE_PATH_MENU_BUTTON("createPathMenuItem"),
 		PATH_NAME("pathName"),
 		PATH_PROTOCOL("pathProtocol"),
 		PATH_PORT_NUMBER("pathPortNumbers"),
+		PATH_MENU_BUTTON("pathsMenuBtn"),
 		SAVE("Save"),
+		SEARCH("expandable-input-closed"),
+		LINK_SOURCE("linkSrc"),
+		LINK_SOURCE_CP("linkSrcCP"),
+		LINK_TARGET("linkTarget"),
+		LINK_TARGET_CP("linkTargetCP"),
+		SERVICE_PATH_SELECTOR("service-path-selector"),
+		SUBMIT_FOR_TESTING("submit_for_testing"),
+		CHANGE_LIFE_CYCLE_MESSAGE("changeLifeCycleMessage"),
+		REMOVE_LINK("removeLnk"),
+		OK("OK"),
+		ONBOARD_CATALOG("onboard-onboard-tab"),
+		CLOSE("Close"),
+		HOME_FROM_COMPOSITION("breadcrumbs-button-0"),
+		NEW_VSP_VERSION_DESCRIPTION("new-version-description"),
+		SUBMIT_NEW_VSP_VERSION_DESCRIPTION("form-submit-button"),
 		EXTEND_BUTTON("extendPathlnk");
 
 		private String value;
@@ -895,6 +975,7 @@ public final class DataTestIdEnum {
 			this.value = value;
 		}
 	}
+
 
 	public enum PortMirroring {
 		COLLECTOR_NODE("collector_node"),
@@ -938,7 +1019,7 @@ public final class DataTestIdEnum {
 		REQS_AND_CAPS_TAB("requirements-and-capabilities"),
 		EDIT_PENCIL("editPencil"),
 		INSTANCE_NAME_TEXTBOX("instanceName"),
-		DELETE_ITEM("e-sdc-small-icon-delete"),
+		DELETE_ITEM("deleteInstance"),
 		REQS_AND_CAPS_TAB_XPATH("//button[@tooltip-content='Requirements and Capabilities']");
 
 		private String value;

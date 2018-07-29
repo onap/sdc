@@ -20,9 +20,9 @@
 
 package org.openecomp.sdc.ci.tests.datatypes;
 
-import java.util.List;
-
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
+
+import java.util.List;
 
 public class ResourceRespJavaObject {
 	String uniqueId;

@@ -1,10 +1,8 @@
 package org.openecomp.sdc.be.datamodel;
 
-import java.util.Set;
-
-import javax.annotation.Generated;
-
 import org.junit.Test;
+
+import java.util.Set;
 
 public class NameIdPairTest {
 

@@ -18,26 +18,28 @@ package org.openecomp.sdc.translator.services.heattotosca.mapping;
 
 import static org.openecomp.sdc.translator.services.heattotosca.impl.functiontranslation.FunctionTranslator.getFunctionTranslateTo;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
 import org.apache.commons.collections4.MapUtils;
-import org.onap.sdc.tosca.datatypes.model.Constraint;
-import org.onap.sdc.tosca.datatypes.model.EntrySchema;
-import org.onap.sdc.tosca.datatypes.model.ParameterDefinition;
-import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
+import org.onap.sdc.tosca.datatypes.model.*;
+import org.onap.sdc.tosca.datatypes.model.heatextend.AnnotationDefinition;
+import org.onap.sdc.tosca.datatypes.model.heatextend.ParameterDefinitionExt;
 import org.openecomp.core.utilities.file.FileUtils;
+
 import org.openecomp.sdc.heat.datatypes.model.HeatOrchestrationTemplate;
 import org.openecomp.sdc.heat.datatypes.model.Output;
 import org.openecomp.sdc.heat.datatypes.model.Parameter;
 import org.openecomp.sdc.tosca.datatypes.extend.ToscaAnnotationType;
-import org.onap.sdc.tosca.datatypes.model.*;
-import org.onap.sdc.tosca.datatypes.model.heatextend.AnnotationDefinition;
-import org.onap.sdc.tosca.datatypes.model.heatextend.ParameterDefinitionExt;
 import org.openecomp.sdc.tosca.services.ToscaConstants;
 import org.openecomp.sdc.translator.datatypes.heattotosca.TranslationContext;
 import org.openecomp.sdc.translator.services.heattotosca.FunctionTranslationFactory;
 import org.openecomp.sdc.translator.services.heattotosca.HeatToToscaUtil;
 import org.openecomp.sdc.translator.services.heattotosca.impl.functiontranslation.FunctionTranslator;
-
-import java.util.*;
 
 public class TranslatorHeatToToscaParameterConverter {
 

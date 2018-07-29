@@ -1,7 +1,9 @@
 package org.openecomp.sdc.security;
 
+import fj.data.Either;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
@@ -13,7 +15,6 @@ import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
-import fj.data.*;
 
 public class SecurityUtil {
 

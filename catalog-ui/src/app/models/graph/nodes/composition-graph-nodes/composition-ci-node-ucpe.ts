@@ -38,7 +38,10 @@ export class NodeUcpe extends CompositionCiNodeBase {
         this.type = 'ucpe-node';
         this.allowConnection = false;
         this.imagesPath = this.imagesPath + ImagesUrl.RESOURCE_ICONS;
-
+        if(this.archived){
+            this.classes = this.classes + ' archived';
+            return;
+        }
         if (!this.certified) {
             this.classes = this.classes + ' not-certified-ucpe';
         }

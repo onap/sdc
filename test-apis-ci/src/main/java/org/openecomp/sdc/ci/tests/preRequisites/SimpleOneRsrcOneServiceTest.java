@@ -20,10 +20,6 @@
 
 package org.openecomp.sdc.ci.tests.preRequisites;
 
-import static org.testng.AssertJUnit.assertTrue;
-
-import java.io.IOException;
-
 import org.apache.log4j.lf5.util.ResourceUtils;
 import org.junit.rules.TestName;
 import org.openecomp.sdc.be.model.User;
@@ -41,6 +37,10 @@ import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
 import org.openecomp.sdc.ci.tests.utils.rest.ResourceRestUtils;
 import org.openecomp.sdc.ci.tests.utils.rest.ServiceRestUtils;
 import org.testng.annotations.BeforeMethod;
+
+import java.io.IOException;
+
+import static org.testng.AssertJUnit.assertTrue;
 
 public abstract class SimpleOneRsrcOneServiceTest extends ComponentBaseTest {
 

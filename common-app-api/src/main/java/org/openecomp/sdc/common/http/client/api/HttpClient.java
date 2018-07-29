@@ -1,9 +1,5 @@
 package org.openecomp.sdc.common.http.client.api;
 
-import java.io.IOException;
-import java.net.URI;
-import java.util.Properties;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHeaders;
@@ -13,13 +9,7 @@ import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.AuthCache;
 import org.apache.http.client.CredentialsProvider;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpDelete;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPatch;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpPut;
-import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.client.methods.*;
 import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.impl.auth.BasicScheme;
 import org.apache.http.impl.client.BasicAuthCache;
@@ -29,11 +19,14 @@ import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.config.BeEcompErrorManager.ErrorSeverity;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.datastructure.FunctionalInterfaces.FunctionThrows;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.openecomp.sdc.common.log.wrappers.Logger;
+
+import java.io.IOException;
+import java.net.URI;
+import java.util.Properties;
 
 public class HttpClient {
-    private static final Logger logger = LoggerFactory.getLogger(HttpClient.class);
+    private static final Logger logger = Logger.getLogger(HttpClient.class.getName());
     
     private final CloseableHttpClient client;
     private final HttpClientConfigImmutable configImmutable;
@@ -82,7 +75,7 @@ public class HttpClient {
     
     private <T> HttpResponse<T> execute(HttpRequestBase request, Properties headers, FunctionThrows<CloseableHttpResponse, HttpResponse<T>, Exception> responseBuilder) throws HttpExecuteException {
         if(configImmutable.getHeaders() != null) {
-            configImmutable.getHeaders().forEach((k, v) -> request.addHeader(k, v));
+            configImmutable.getHeaders().forEach(request::addHeader);
         }
 
         if (headers != null) {

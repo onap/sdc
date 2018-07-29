@@ -20,35 +20,35 @@
 
 package org.openecomp.sdc.be.model.tosca.converters;
 
-import java.util.Map;
-
 import org.openecomp.sdc.be.model.DataTypeDefinition;
+
+import java.util.Map;
 
 public class HeatBooleanConverter implements PropertyValueConverter {
 
-	private static HeatBooleanConverter booleanConverter = new HeatBooleanConverter();
+    private static HeatBooleanConverter booleanConverter = new HeatBooleanConverter();
 
-	public static HeatBooleanConverter getInstance() {
-		return booleanConverter;
-	}
+    public static HeatBooleanConverter getInstance() {
+        return booleanConverter;
+    }
 
-	private HeatBooleanConverter() {
+    private HeatBooleanConverter() {
 
-	}
+    }
 
-	@Override
-	public String convert(String value, String innerType, Map<String, DataTypeDefinition> dataTypes) {
+    @Override
+    public String convert(String value, String innerType, Map<String, DataTypeDefinition> dataTypes) {
 
-		if (value == null || value.isEmpty()) {
-			return null;
-		}
+        if (value == null || value.isEmpty()) {
+            return null;
+        }
 
-		if (value.equalsIgnoreCase("true") || value.equalsIgnoreCase("t") || value.equalsIgnoreCase("on")
-				|| value.equalsIgnoreCase("yes") || value.equalsIgnoreCase("y") || value.equalsIgnoreCase("1")) {
-			return "true";
-		} else {
-			return "false";
-		}
-	}
+        if (value.equalsIgnoreCase("true") || value.equalsIgnoreCase("t") || value.equalsIgnoreCase("on")
+                || value.equalsIgnoreCase("yes") || value.equalsIgnoreCase("y") || value.equalsIgnoreCase("1")) {
+            return "true";
+        } else {
+            return "false";
+        }
+    }
 
 }

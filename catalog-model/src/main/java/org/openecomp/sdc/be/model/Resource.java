@@ -20,11 +20,6 @@
 
 package org.openecomp.sdc.be.model;
 
-import java.io.Serializable;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.utils.MapUtil;
 import org.openecomp.sdc.be.datatypes.components.ResourceMetadataDataDefinition;
@@ -32,300 +27,286 @@ import org.openecomp.sdc.be.datatypes.elements.InterfaceOperationDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 
-public class Resource extends Component implements Serializable {
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
-	private static final long serialVersionUID = -6811540567661368482L;
-	public static final String ROOT_RESOURCE = "tosca.nodes.Root";
+public class Resource extends Component {
 
-	public Resource() {
-		super(new ResourceMetadataDefinition());
-		this.getComponentMetadataDefinition().getMetadataDataDefinition().setComponentType(ComponentTypeEnum.RESOURCE);
-	}
+		
+			
+    private List<String> derivedFrom;
 
-	public Resource(ComponentMetadataDefinition componentMetadataDefinition) {
-		super(componentMetadataDefinition);
-		if(this.getComponentMetadataDefinition().getMetadataDataDefinition() == null) {
-			this.getComponentMetadataDefinition().componentMetadataDataDefinition = new ResourceMetadataDataDefinition();
-		}
-		this.getComponentMetadataDefinition().getMetadataDataDefinition().setComponentType(ComponentTypeEnum.RESOURCE);
-	}
+    private List<String> derivedList;
 
-	private List<String> derivedFrom;
+    private List<PropertyDefinition> properties;
 
-	private List<String> derivedList;
+    private List<PropertyDefinition> attributes;
 
-	private List<PropertyDefinition> properties;
+    private Map<String, InterfaceDefinition> interfaces;
 
-	private List<PropertyDefinition> attributes;
+    private List<String> defaultCapabilities;
+    
+    private Map<String, InterfaceOperationDataDefinition> interfaceOperations;
 
-	// Later
-	private Map<String, InterfaceDefinition> interfaces;
+    public Resource() {
+        super(new ResourceMetadataDefinition());
+        this.getComponentMetadataDefinition().getMetadataDataDefinition().setComponentType(ComponentTypeEnum.RESOURCE);
+    }
 
-	private List<String> defaultCapabilities;
+    public Resource(ComponentMetadataDefinition componentMetadataDefinition) {
+        super(componentMetadataDefinition);
+        if(this.getComponentMetadataDefinition().getMetadataDataDefinition() == null) {
+            this.getComponentMetadataDefinition().componentMetadataDataDefinition = new ResourceMetadataDataDefinition();
+        }
+        this.getComponentMetadataDefinition().getMetadataDataDefinition().setComponentType(ComponentTypeEnum.RESOURCE);
+    }
+    /**
+     * Please note that more than one "derivedFrom" resource is not currently
+     * supported by the app. The first list element is always addressed.
+     *
+     * @return
+     */
+    public List<String> getDerivedFrom() {
+        return derivedFrom;
+    }
 
-	private Map<String, InterfaceOperationDataDefinition> interfaceOperations;
+    public void setDerivedFrom(List<String> derivedFrom) {
+        this.derivedFrom = derivedFrom;
+    }
 
-//	private List<AdditionalInformationDefinition> additionalInformation;
+    /**
+     * The derivedList is a chain of derivedFrom. e.g. if resource C is derived
+     * from resource B that is derived from resource A - then A, B is the
+     * "DerivedList" of resource C
+     *
+     * @return
+     */
+    public List<String> getDerivedList() {
+        return derivedList;
+    }
 
-	/**
-	 * Please note that more than one "derivedFrom" resource is not currently
-	 * supported by the app. The first list element is always addressed.
-	 * 
-	 * @return
-	 */
-	public List<String> getDerivedFrom() {
-		return derivedFrom;
-	}
+    public void setDerivedList(List<String> derivedList) {
+        this.derivedList = derivedList;
+    }
 
-	public void setDerivedFrom(List<String> derivedFrom) {
-		this.derivedFrom = derivedFrom;
-	}
+    public List<PropertyDefinition> getProperties() {
+        return properties;
+    }
 
-	/**
-	 * The derivedList is a chain of derivedFrom. e.g. if resource C is derived
-	 * from resource B that is derived from resource A - then A, B is the
-	 * "DerivedList" of resource C
-	 * 
-	 * @return
-	 */
-	public List<String> getDerivedList() {
-		return derivedList;
-	}
+    public void setProperties(List<PropertyDefinition> properties) {
+        this.properties = properties;
+    }
 
-	public void setDerivedList(List<String> derivedList) {
-		this.derivedList = derivedList;
-	}
+    public List<PropertyDefinition> getAttributes() {
+        return attributes;
+    }
 
-	public List<PropertyDefinition> getProperties() {
-		return properties;
-	}
+    public void setAttributes(List<PropertyDefinition> attributes) {
+        this.attributes = attributes;
+    }
 
-	public void setProperties(List<PropertyDefinition> properties) {
-		this.properties = properties;
-	}
+    public Map<String, InterfaceDefinition> getInterfaces() {
+        return interfaces;
+    }
 
-	public List<PropertyDefinition> getAttributes() {
-		return attributes;
-	}
+    public void setInterfaces(Map<String, InterfaceDefinition> interfaces) {
+        this.interfaces = interfaces;
+    }
 
-	public void setAttributes(List<PropertyDefinition> attributes) {
-		this.attributes = attributes;
-	}
+    public Boolean isAbstract() {
+        return ((ResourceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition())
+                .isAbstract();
+    }
 
-	public Map<String, InterfaceDefinition> getInterfaces() {
-		return interfaces;
-	}
+    public void setAbstract(Boolean isAbstract) {
+        ((ResourceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition())
+                .setAbstract(isAbstract);
+    }
 
-	public void setInterfaces(Map<String, InterfaceDefinition> interfaces) {
-		this.interfaces = interfaces;
-	}
+    public List<String> getDefaultCapabilities() {
+        return defaultCapabilities;
+    }
 
-	public Boolean isAbstract() {
-		return ((ResourceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition())
-				.isAbstract();
-	}
+    public void setDefaultCapabilities(List<String> defaultCapabilities) {
+        this.defaultCapabilities = defaultCapabilities;
+    }
 
-	public void setAbstract(Boolean isAbstract) {
-		((ResourceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition())
-				.setAbstract(isAbstract);
-	}
+    public String getCost() {
+        return ((ResourceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition())
+                .getCost();
+    }
 
-	public List<String> getDefaultCapabilities() {
-		return defaultCapabilities;
-	}
+    public void setCost(String cost) {
+        ((ResourceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition()).setCost(cost);
+        ;
+    }
 
-	public void setDefaultCapabilities(List<String> defaultCapabilities) {
-		this.defaultCapabilities = defaultCapabilities;
-	}
+    public String getLicenseType() {
+        return ((ResourceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition())
+                .getLicenseType();
+    }
 
-	public String getCost() {
-		return ((ResourceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition())
-				.getCost();
-	}
+    public void setLicenseType(String licenseType) {
+        ((ResourceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition())
+                .setLicenseType(licenseType);
+    }
 
-	public void setCost(String cost) {
-		((ResourceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition()).setCost(cost);
-		;
-	}
+    public Map<String, InterfaceOperationDataDefinition> getInterfaceOperations() {
+        return interfaceOperations;
+    }
 
-	public String getLicenseType() {
-		return ((ResourceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition())
-				.getLicenseType();
-	}
+    public void setInterfaceOperations(Map<String, InterfaceOperationDataDefinition> interfaceOperations) {
+        this.interfaceOperations = interfaceOperations;
+    }
 
-	public void setLicenseType(String licenseType) {
-		((ResourceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition())
-				.setLicenseType(licenseType);
-	}
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + super.hashCode();
+        result = prime * result + ((attributes == null) ? 0 : attributes.hashCode());
+        result = prime * result + ((defaultCapabilities == null) ? 0 : defaultCapabilities.hashCode());
+        result = prime * result + ((derivedFrom == null) ? 0 : derivedFrom.hashCode());
+        result = prime * result + ((interfaces == null) ? 0 : interfaces.hashCode());
+        result = prime * result + ((properties == null) ? 0 : properties.hashCode());
+        result = prime * result + ((derivedList == null) ? 0 : derivedList.hashCode());
+        return result;
+    }
 
-	public Map<String, InterfaceOperationDataDefinition> getInterfaceOperations() {
-		return interfaceOperations;
-	}
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
 
-	public void setInterfaceOperations(Map<String, InterfaceOperationDataDefinition> interfaceOperations) {
-		this.interfaceOperations = interfaceOperations;
-	}
+        Resource other = (Resource) obj;
+        if (attributes == null) {
+            if (other.attributes != null)
+                return false;
+        } else if (!attributes.equals(other.attributes))
+            return false;
+        if (defaultCapabilities == null) {
+            if (other.defaultCapabilities != null)
+                return false;
+        } else if (!defaultCapabilities.equals(other.defaultCapabilities))
+            return false;
+        if (derivedFrom == null) {
+            if (other.derivedFrom != null)
+                return false;
+        } else if (!derivedFrom.equals(other.derivedFrom))
+            return false;
+        if (derivedList == null) {
+            if (other.derivedList != null)
+                return false;
+        } else if (!derivedList.equals(other.derivedList))
+            return false;
+        if (interfaces == null) {
+            if (other.interfaces != null)
+                return false;
+        } else if (!interfaces.equals(other.interfaces))
+            return false;
+        if (properties == null) {
+            if (other.properties != null)
+                return false;
+        } else if (!properties.equals(other.properties))
+            return false;
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + super.hashCode();
+        return super.equals(obj);
+    }
 
-		result = prime * result + ((attributes == null) ? 0 : attributes.hashCode());
-		// result = prime * result + ((capabilities == null) ? 0 :
-		// capabilities.hashCode());
-		result = prime * result + ((defaultCapabilities == null) ? 0 : defaultCapabilities.hashCode());
-		result = prime * result + ((derivedFrom == null) ? 0 : derivedFrom.hashCode());
-		result = prime * result + ((interfaces == null) ? 0 : interfaces.hashCode());
-		result = prime * result + ((properties == null) ? 0 : properties.hashCode());
-		result = prime * result + ((derivedList == null) ? 0 : derivedList.hashCode());
-		result = prime * result + ((interfaceOperations == null) ? 0 : interfaceOperations.hashCode());
-		// result = prime * result + ((requirements == null) ? 0 :
-		// requirements.hashCode());
-		return result;
-	}
+    @Override
+    public String toString() {
+        return "Resource [derivedFrom=" + derivedFrom + ", properties=" + properties + ", attributes=" + attributes
+                + ", interfaces=" + interfaces
+                + ", defaultCapabilities=" + defaultCapabilities + ", additionalInformation=" + additionalInformation
+                + "Metadata [" + getComponentMetadataDefinition().getMetadataDataDefinition().toString() + "]";
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
+    public String getToscaResourceName() {
+        return ((ResourceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition())
+                .getToscaResourceName();
+    }
 
-		Resource other = (Resource) obj;
-		if (attributes == null) {
-			if (other.attributes != null)
-				return false;
-		} else if (!attributes.equals(other.attributes))
-			return false;
-		if (defaultCapabilities == null) {
-			if (other.defaultCapabilities != null)
-				return false;
-		} else if (!defaultCapabilities.equals(other.defaultCapabilities))
-			return false;
-		if (derivedFrom == null) {
-			if (other.derivedFrom != null)
-				return false;
-		} else if (!derivedFrom.equals(other.derivedFrom))
-			return false;
-		if (derivedList == null) {
-			if (other.derivedList != null)
-				return false;
-		} else if (!derivedList.equals(other.derivedList))
-			return false;
-		if (interfaces == null) {
-			if (other.interfaces != null)
-				return false;
-		} else if (!interfaces.equals(other.interfaces))
-			return false;
-		if (properties == null) {
-			if (other.properties != null)
-				return false;
-		} else if (!properties.equals(other.properties))
-			return false;
-		if (interfaceOperations == null) {
-			if (other.interfaceOperations != null)
-				return false;
-		} else if (!interfaceOperations.equals(other.interfaceOperations))
-			return false;
-		return super.equals(obj);
-	}
+    public void setToscaResourceName(String toscaResourceName) {
+        ((ResourceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition())
+                .setToscaResourceName(toscaResourceName);
+    }
 
-	@Override
-	public String toString() {
-		return "Resource [derivedFrom=" + derivedFrom + ", properties=" + properties + ", attributes=" + attributes
-				+ ", interfaces=" + interfaces
-				// + ", capabilities=" + capabilities + ", requirements=" +
-				// requirements
-				+ ", defaultCapabilities=" + defaultCapabilities + ", additionalInformation=" + additionalInformation
-			+ ", interfaceOperations=" + interfaceOperations
-				+ "Metadata [" + getComponentMetadataDefinition().getMetadataDataDefinition().toString() + "]";
-	}
+    public ResourceTypeEnum getResourceType() {
+        return ((ResourceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition())
+                .getResourceType();
+    }
 
-	public String getToscaResourceName() {
-		return ((ResourceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition())
-				.getToscaResourceName();
-	}
+    public void setResourceType(ResourceTypeEnum resourceType) {
+        ((ResourceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition())
+                .setResourceType(resourceType);
+    }
 
-	public void setToscaResourceName(String toscaResourceName) {
-		((ResourceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition())
-				.setToscaResourceName(toscaResourceName);
-	}
+    public void setVendorName(String vendorName) {
+        ((ResourceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition())
+                .setVendorName(vendorName);
+    }
 
-	public ResourceTypeEnum getResourceType() {
-		return ((ResourceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition())
-				.getResourceType();
-	}
+    public void setVendorRelease(String vendorRelease) {
+        ((ResourceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition())
+                .setVendorRelease(vendorRelease);
+    }
 
-	public void setResourceType(ResourceTypeEnum resourceType) {
-		((ResourceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition())
-				.setResourceType(resourceType);
-	}
+    public void setResourceVendorModelNumber(String resourceVendorModelNumber){
+        ((ResourceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition()).
+        setResourceVendorModelNumber(resourceVendorModelNumber);
+    }
 
-	public void setVendorName(String vendorName) {
-		((ResourceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition())
-				.setVendorName(vendorName);
-	}
+    public String getVendorName() {
+        return ((ResourceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition())
+                .getVendorName();
+    }
 
-	public void setVendorRelease(String vendorRelease) {
-		((ResourceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition())
-				.setVendorRelease(vendorRelease);
-	}
-	
-	public void setResourceVendorModelNumber(String resourceVendorModelNumber){
-		((ResourceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition()).
-		setResourceVendorModelNumber(resourceVendorModelNumber);
-	}
+    public String getVendorRelease() {
+        return ((ResourceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition())
+                .getVendorRelease();
+    }
 
-	public String getVendorName() {
-		return ((ResourceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition())
-				.getVendorName();
-	}
+    public String getResourceVendorModelNumber(){
+        return ((ResourceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition())
+                .getResourceVendorModelNumber();
+    }
 
-	public String getVendorRelease() {
-		return ((ResourceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition())
-				.getVendorRelease();
-	}
-	
-	public String getResourceVendorModelNumber(){
-		return ((ResourceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition())
-				.getResourceVendorModelNumber();
-	}
-	
-	@Override
-	public String fetchGenericTypeToscaNameFromConfig(){
-		String result = super.fetchGenericTypeToscaNameFromConfig();
-		if(null == result)
-			result = ConfigurationManager.getConfigurationManager().getConfiguration().getGenericAssetNodeTypes().get(ResourceTypeEnum.VFC.getValue());
-		return result;
-	}
-	
-	@Override
-	public String assetType(){
-		return this.getResourceType().name();
-	}
-	
-	@Override
-	public boolean shouldGenerateInputs(){
-		//TODO add complex VFC condition when supported
-		return !(this.getResourceType().isAtomicType());
-	}
-	
-	@Override
-	public boolean deriveFromGeneric(){	
-		return this.shouldGenerateInputs() || (derivedFrom != null && derivedFrom.contains(fetchGenericTypeToscaNameFromConfig()));
-	}
+    @Override
+    public String fetchGenericTypeToscaNameFromConfig(){
+        String result = super.fetchGenericTypeToscaNameFromConfig();
+        if(null == result)
+            result = ConfigurationManager.getConfigurationManager().getConfiguration().getGenericAssetNodeTypes().get(ResourceTypeEnum.VFC.getValue());
+        return result;
+    }
 
-	public Map<String, List<RequirementCapabilityRelDef>> groupRelationsByInstanceName(Resource resource) {
-		Map<String, List<RequirementCapabilityRelDef>> relationsByInstanceId = MapUtil.groupListBy(resource.getComponentInstancesRelations(), RequirementCapabilityRelDef::getFromNode);
-		return MapUtil.convertMapKeys(relationsByInstanceId, (instId) -> getInstanceNameFromInstanceId(resource, instId));
-	}
+    @Override
+    public String assetType(){
+        return this.getResourceType().name();
+    }
 
-	private String getInstanceNameFromInstanceId(Resource resource, String instId) {
+    @Override
+    public boolean shouldGenerateInputs(){
+        //TODO add complex VFC condition when supported
+        return !(this.getResourceType().isAtomicType());
+    }
+
+    @Override
+    public boolean deriveFromGeneric(){
+        return this.shouldGenerateInputs() || (derivedFrom != null && derivedFrom.contains(fetchGenericTypeToscaNameFromConfig()));
+    }
+
+    public Map<String, List<RequirementCapabilityRelDef>> groupRelationsByInstanceName(Resource resource) {
+        Map<String, List<RequirementCapabilityRelDef>> relationsByInstanceId = MapUtil.groupListBy(resource.getComponentInstancesRelations(), RequirementCapabilityRelDef::getFromNode);
+        return MapUtil.convertMapKeys(relationsByInstanceId, (instId) -> getInstanceNameFromInstanceId(resource, instId));
+    }
+
+    private String getInstanceNameFromInstanceId(Resource resource, String instId) {
 		Optional<ComponentInstance> componentInstanceById = resource.getComponentInstanceById(instId);
 		return componentInstanceById.isPresent() ? componentInstanceById.get().getName() : null;
-	}
+    }
 }

@@ -1,11 +1,11 @@
 package org.openecomp.sdc.be.components.utils;
 
 
-import java.util.List;
-import java.util.Map;
-
 import org.openecomp.sdc.be.model.PolicyTypeDefinition;
 import org.openecomp.sdc.be.model.PropertyDefinition;
+
+import java.util.List;
+import java.util.Map;
 
 public class PolicyTypeBuilder {
 
@@ -62,6 +62,16 @@ public class PolicyTypeBuilder {
 
     public PolicyTypeBuilder setOwner(String owner) {
         policyTypeDataDefinition.setOwnerId(owner);
+        return this;
+    }
+
+    public PolicyTypeBuilder setName(String name) {
+        policyTypeDataDefinition.setName(name);
+        return this;
+    }
+
+    public PolicyTypeBuilder setIcon(String icon) {
+        policyTypeDataDefinition.setIcon(icon);
         return this;
     }
 

@@ -16,12 +16,14 @@
 
 package org.openecomp.core.nosqldb.impl.cassandra;
 
+import com.datastax.driver.mapping.MappingManager;
 import com.datastax.driver.core.BoundStatement;
 import com.datastax.driver.core.Host;
 import com.datastax.driver.core.PreparedStatement;
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Session;
-import com.datastax.driver.mapping.MappingManager;
+
+
 import org.openecomp.core.nosqldb.api.NoSqlDb;
 import org.openecomp.core.nosqldb.util.CassandraUtils;
 import org.openecomp.core.utilities.CommonMethods;

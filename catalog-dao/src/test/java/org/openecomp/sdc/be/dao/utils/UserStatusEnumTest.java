@@ -1,9 +1,8 @@
 package org.openecomp.sdc.be.dao.utils;
 
+import fj.data.Either;
 import org.junit.Test;
 import org.openecomp.sdc.common.util.MethodActivationStatusEnum;
-
-import fj.data.Either;
 
 public class UserStatusEnumTest {
 

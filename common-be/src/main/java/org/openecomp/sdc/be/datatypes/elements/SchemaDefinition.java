@@ -22,21 +22,14 @@ package org.openecomp.sdc.be.datatypes.elements;
 
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 
-import java.io.Serializable;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 /**
  * Schema allows to create new types that can be used along TOSCA definitions.
  */
-public class SchemaDefinition extends ToscaDataDefinition implements Serializable {
+public class SchemaDefinition extends ToscaDataDefinition {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 7117891081909380577L;
-	
 	private String derivedFrom;
 	private List<String> constraints;
 	private Map<String, PropertyDataDefinition> properties;
@@ -46,14 +39,10 @@ public class SchemaDefinition extends ToscaDataDefinition implements Serializabl
 	
 
 	public SchemaDefinition() {
-		super();
-		properties = new HashMap<>();
 	}
 
 	public SchemaDefinition(String derivedFrom, List<String> constraints,
 			Map<String, PropertyDataDefinition> properties) {
-		super();
-		
 		this.setDerivedFrom(derivedFrom);
 		this.setConstraints( constraints);
 		this.setProperties( properties);

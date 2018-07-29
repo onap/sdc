@@ -1,10 +1,10 @@
 package org.openecomp.sdc.fe.config;
 
+import org.openecomp.sdc.common.api.BasicConfiguration;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
-import org.openecomp.sdc.common.api.BasicConfiguration;
 
 public class PluginsConfiguration extends BasicConfiguration {
 

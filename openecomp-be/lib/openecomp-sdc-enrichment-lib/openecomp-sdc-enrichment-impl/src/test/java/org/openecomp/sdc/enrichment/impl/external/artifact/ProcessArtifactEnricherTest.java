@@ -1,11 +1,6 @@
 package org.openecomp.sdc.enrichment.impl.external.artifact;
 
-import java.util.Collection;
-import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
+import org.mockito.*;
 import org.openecomp.core.enrichment.types.ArtifactCategory;
 import org.openecomp.core.model.dao.EnrichedServiceModelDao;
 import org.openecomp.core.model.types.ServiceArtifact;
@@ -24,11 +19,10 @@ import org.testng.annotations.Test;
 import java.io.File;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Collection;
 
 import static org.mockito.Matchers.anyObject;
-import static org.mockito.Mockito.atLeastOnce;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class ProcessArtifactEnricherTest {
   @Mock

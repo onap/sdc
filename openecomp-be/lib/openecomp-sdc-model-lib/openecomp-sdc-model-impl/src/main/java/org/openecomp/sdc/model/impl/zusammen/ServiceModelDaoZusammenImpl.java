@@ -1,8 +1,5 @@
 package org.openecomp.sdc.model.impl.zusammen;
 
-import static org.openecomp.core.zusammen.api.ZusammenUtil.buildElement;
-import static org.openecomp.core.zusammen.api.ZusammenUtil.buildStructuralElement;
-
 import com.amdocs.zusammen.adaptor.inbound.api.types.item.Element;
 import com.amdocs.zusammen.adaptor.inbound.api.types.item.ElementInfo;
 import com.amdocs.zusammen.adaptor.inbound.api.types.item.ZusammenElement;
@@ -12,6 +9,8 @@ import com.amdocs.zusammen.datatypes.item.Action;
 import com.amdocs.zusammen.datatypes.item.ElementContext;
 import com.amdocs.zusammen.datatypes.item.Info;
 import org.apache.commons.io.IOUtils;
+import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
+import org.onap.sdc.tosca.services.ToscaExtensionYamlUtil;
 import org.openecomp.core.model.dao.ServiceModelDao;
 import org.openecomp.core.model.errors.RetrieveServiceTemplateFromDbErrorBuilder;
 import org.openecomp.core.model.types.ServiceElement;
@@ -23,8 +22,6 @@ import org.openecomp.sdc.datatypes.model.ElementType;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
-import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
-import org.onap.sdc.tosca.services.ToscaExtensionYamlUtil;
 import org.openecomp.sdc.versioning.dao.types.Version;
 import org.openecomp.types.ElementPropertyName;
 
@@ -34,6 +31,9 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static org.openecomp.core.zusammen.api.ZusammenUtil.buildElement;
+import static org.openecomp.core.zusammen.api.ZusammenUtil.buildStructuralElement;
 
 public class ServiceModelDaoZusammenImpl
     implements ServiceModelDao<ToscaServiceModel, ServiceElement> {

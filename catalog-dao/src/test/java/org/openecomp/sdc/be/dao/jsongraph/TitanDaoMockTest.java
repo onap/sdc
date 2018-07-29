@@ -1,10 +1,9 @@
 package org.openecomp.sdc.be.dao.jsongraph;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
+import com.thinkaurelius.titan.core.TitanGraph;
+import com.thinkaurelius.titan.core.TitanVertex;
+import fj.data.Either;
+import mockit.Deencapsulation;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.apache.tinkerpop.gremlin.structure.Edge;
@@ -24,11 +23,10 @@ import org.openecomp.sdc.be.dao.titan.TitanGraphClient;
 import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
 import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
 
-import com.thinkaurelius.titan.core.TitanGraph;
-import com.thinkaurelius.titan.core.TitanVertex;
-
-import fj.data.Either;
-import mockit.Deencapsulation;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 public class TitanDaoMockTest {
 
@@ -223,6 +221,7 @@ public class TitanDaoMockTest {
 		testSubject.parseVertexProperties(graphVertex, JsonParseFlagEnum.NoParse);
 	}
 
+
 	@Test
 	public void testCreateEdge() throws Exception {
 
@@ -294,7 +293,7 @@ public class TitanDaoMockTest {
 		Mockito.when(titanClient.getGraph()).thenReturn(value);
 		
 		// default test
-		result = testSubject.getCatalogVerticies();
+		result = testSubject.getCatalogOrArchiveVerticies(true);
 	}
 
 	@Test
@@ -328,6 +327,7 @@ public class TitanDaoMockTest {
 		// default test
 		result = testSubject.getChildVertex(parentVertex, edgeLabel, parseFlag);
 	}
+
 
 	@Test
 	public void testGetParentVertex_1() throws Exception {
@@ -384,6 +384,7 @@ public class TitanDaoMockTest {
 
 		result = testSubject.getChildrenVertecies(parentVertex, edgeLabel, parseFlag);
 	}
+
 
 	@Test
 	public void testDeleteBelongingEdgeByCriteria() throws Exception {
@@ -480,6 +481,7 @@ public class TitanDaoMockTest {
 
 		result = testSubject.createEdge(from, to, label, edgeToCopy);
 	}
+
 
 	@Test
 	public void testReplaceEdgeLabel() throws Exception {

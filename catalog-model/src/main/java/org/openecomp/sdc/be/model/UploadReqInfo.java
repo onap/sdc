@@ -21,28 +21,28 @@
 package org.openecomp.sdc.be.model;
 
 public class UploadReqInfo extends UploadInfo {
-	/**
-	 * specify the node type(Optional by tosca)
-	 */
+    /**
+     * specify the node type(Optional by tosca)
+     */
 
-	private String capabilityName;
+    private String capabilityName;
 
-	private String node;
+    private String node;
 
-	public String getCapabilityName() {
-		return capabilityName;
-	}
+    public String getCapabilityName() {
+        return capabilityName;
+    }
 
-	public void setCapabilityName(String capabilityName) {
-		this.capabilityName = capabilityName;
-	}
+    public void setCapabilityName(String capabilityName) {
+        this.capabilityName = capabilityName;
+    }
 
-	public String getNode() {
-		return node;
-	}
+    public String getNode() {
+        return node;
+    }
 
-	public void setNode(String node) {
-		this.node = node;
-	}
+    public void setNode(String node) {
+        this.node = node;
+    }
 
 }

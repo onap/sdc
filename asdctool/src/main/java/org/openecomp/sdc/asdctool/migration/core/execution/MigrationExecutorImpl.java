@@ -3,14 +3,13 @@ package org.openecomp.sdc.asdctool.migration.core.execution;
 import org.openecomp.sdc.asdctool.migration.core.MigrationException;
 import org.openecomp.sdc.asdctool.migration.core.task.IMigrationStage;
 import org.openecomp.sdc.asdctool.migration.core.task.MigrationResult;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.springframework.util.StopWatch;
 
 
 public class MigrationExecutorImpl implements MigrationExecutor {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(MigrationExecutorImpl.class);
+    private static final Logger LOGGER = Logger.getLogger(MigrationExecutorImpl.class);
 
     @Override
     public MigrationExecutionResult execute(IMigrationStage migration) throws MigrationException {

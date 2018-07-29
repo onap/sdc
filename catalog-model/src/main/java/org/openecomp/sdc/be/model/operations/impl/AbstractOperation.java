@@ -20,13 +20,12 @@
 
 package org.openecomp.sdc.be.model.operations.impl;
 
-import java.lang.reflect.Type;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
-
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.reflect.TypeToken;
+import com.thinkaurelius.titan.core.TitanVertex;
+import fj.data.Either;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.config.BeEcompErrorManager.ErrorSeverity;
@@ -51,331 +50,303 @@ import org.openecomp.sdc.be.model.tosca.validators.DataTypeValidatorConverter;
 import org.openecomp.sdc.be.model.tosca.validators.PropertyTypeValidator;
 import org.openecomp.sdc.be.resources.data.ResourceMetadataData;
 import org.openecomp.sdc.be.resources.data.UniqueIdData;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.openecomp.sdc.common.log.wrappers.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonElement;
-import com.google.gson.reflect.TypeToken;
-import com.thinkaurelius.titan.core.TitanVertex;
-
-import fj.data.Either;
+import java.lang.reflect.Type;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 public abstract class AbstractOperation {
-	private static Logger log = LoggerFactory.getLogger(AbstractOperation.class.getName());
-	@javax.annotation.Resource
-	protected TitanGenericDao titanGenericDao;
-	public static final String EMPTY_VALUE = null;
-
-	protected Gson gson = new Gson();
-
-	@javax.annotation.Resource
-	protected ApplicationDataTypeCache applicationDataTypeCache;
-
-	protected DataTypeValidatorConverter dataTypeValidatorConverter = DataTypeValidatorConverter.getInstance();
-
-	protected <SomeData extends GraphNode, SomeDefenition> Either<SomeData, TitanOperationStatus> addDefinitionToNodeType(SomeDefenition someDefinition, NodeTypeEnum nodeType, String nodeUniqueId, final GraphEdgeLabels edgeType,
-			Supplier<SomeData> dataBuilder, Supplier<String> defNameGenerator) {
-		String defName = defNameGenerator.get();
-		log.debug("Got {} {}", defName, someDefinition);
-
-		SomeData someData = dataBuilder.get();
-
-		log.debug("Before adding {} to graph. data = {}", defName, someData);
-
-		@SuppressWarnings("unchecked")
-		Either<SomeData, TitanOperationStatus> eitherSomeData = titanGenericDao.createNode(someData, (Class<SomeData>) someData.getClass());
-
-		log.debug("After adding {} to graph. status is = {}", defName, eitherSomeData);
-
-		if (eitherSomeData.isRight()) {
-			TitanOperationStatus operationStatus = eitherSomeData.right().value();
-			log.error("Failed to add {}  to graph. status is {}", defName, operationStatus);
-			return Either.right(operationStatus);
-		}
-		UniqueIdData uniqueIdData = new UniqueIdData(nodeType, nodeUniqueId);
-		log.debug("Before associating {} to {}.", uniqueIdData, defName);
-
-		Either<GraphRelation, TitanOperationStatus> eitherRelations = titanGenericDao.createRelation(uniqueIdData, eitherSomeData.left().value(), edgeType, null);
-		if (eitherRelations.isRight()) {
-			TitanOperationStatus operationStatus = eitherRelations.right().value();
-			BeEcompErrorManager.getInstance().logInternalFlowError("AddDefinitionToNodeType", "Failed to associate" + nodeType.getName() + " " + nodeUniqueId + "to " + defName + "in graph. status is " + operationStatus, ErrorSeverity.ERROR);
-			return Either.right(operationStatus);
-		}
-		return Either.left(eitherSomeData.left().value());
-	}
-
-	protected <SomeData extends GraphNode, SomeDefenition> TitanOperationStatus addDefinitionToNodeType(TitanVertex vertex, SomeDefenition someDefinition, NodeTypeEnum nodeType, String nodeUniqueId, final GraphEdgeLabels edgeType,
-			Supplier<SomeData> dataBuilder, Supplier<String> defNameGenerator) {
-		String defName = defNameGenerator.get();
-		log.debug("Got {} {}", defName, someDefinition);
-
-		SomeData someData = dataBuilder.get();
-
-		log.debug("Before adding {} to graph. data = {}", defName, someData);
-
-		@SuppressWarnings("unchecked")
-		Either<TitanVertex, TitanOperationStatus> eitherSomeData = titanGenericDao.createNode(someData);
-
-		log.debug("After adding {} to graph. status is = {}", defName, eitherSomeData);
-
-		if (eitherSomeData.isRight()) {
-			TitanOperationStatus operationStatus = eitherSomeData.right().value();
-			log.error("Failed to add {}  to graph. status is {}", defName, operationStatus);
-			return operationStatus;
-		}
-
-		TitanOperationStatus relations = titanGenericDao.createEdge(vertex, eitherSomeData.left().value(), edgeType, null);
-		if (!relations.equals(TitanOperationStatus.OK)) {
-			TitanOperationStatus operationStatus = relations;
-			BeEcompErrorManager.getInstance().logInternalFlowError("AddDefinitionToNodeType", "Failed to associate" + nodeType.getName() + " " + nodeUniqueId + "to " + defName + "in graph. status is " + operationStatus, ErrorSeverity.ERROR);
-			return operationStatus;
-		}
-		return relations;
-	}
-
-	interface NodeElementFetcher<ElementDefinition> {
-		TitanOperationStatus findAllNodeElements(String nodeId, List<ElementDefinition> listTofill);
-	}
 
-	public <ElementDefinition> TitanOperationStatus findAllResourceElementsDefinitionRecursively(String resourceId, List<ElementDefinition> elements, NodeElementFetcher<ElementDefinition> singleNodeFetcher) {
+    private static final Logger log = Logger.getLogger(AbstractOperation.class.getName());
 
-		if (log.isTraceEnabled())
-			log.trace("Going to fetch elements under resource {}", resourceId);
-		TitanOperationStatus resourceAttributesStatus = singleNodeFetcher.findAllNodeElements(resourceId, elements);
-
-		if (resourceAttributesStatus != TitanOperationStatus.OK) {
-			return resourceAttributesStatus;
-		}
+    @Autowired
+    protected TitanGenericDao titanGenericDao;
 
-		Either<ImmutablePair<ResourceMetadataData, GraphEdge>, TitanOperationStatus> parentNodes = titanGenericDao.getChild(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.Resource), resourceId, GraphEdgeLabels.DERIVED_FROM, NodeTypeEnum.Resource,
-				ResourceMetadataData.class);
+    public static final String EMPTY_VALUE = null;
 
-		if (parentNodes.isRight()) {
-			TitanOperationStatus parentNodesStatus = parentNodes.right().value();
-			if (parentNodesStatus != TitanOperationStatus.NOT_FOUND) {
-				BeEcompErrorManager.getInstance().logInternalFlowError("findAllResourceElementsDefinitionRecursively", "Failed to find parent elements of resource " + resourceId + ". status is " + parentNodesStatus, ErrorSeverity.ERROR);
-				return parentNodesStatus;
-			}
-		}
+    protected Gson gson = new Gson();
 
-		if (parentNodes.isLeft()) {
-			ImmutablePair<ResourceMetadataData, GraphEdge> parnetNodePair = parentNodes.left().value();
-			String parentUniqueId = parnetNodePair.getKey().getMetadataDataDefinition().getUniqueId();
-			TitanOperationStatus addParentIntStatus = findAllResourceElementsDefinitionRecursively(parentUniqueId, elements, singleNodeFetcher);
-
-			if (addParentIntStatus != TitanOperationStatus.OK) {
-				BeEcompErrorManager.getInstance().logInternalFlowError("findAllResourceElementsDefinitionRecursively", "Failed to find all resource elements of resource " + parentUniqueId, ErrorSeverity.ERROR);
+    @Autowired
+    protected ApplicationDataTypeCache applicationDataTypeCache;
 
-				return addParentIntStatus;
-			}
-		}
-		return TitanOperationStatus.OK;
-	}
+    protected DataTypeValidatorConverter dataTypeValidatorConverter = DataTypeValidatorConverter.getInstance();
 
-	protected <T, TStatus> void handleTransactionCommitRollback(boolean inTransaction, Either<T, TStatus> result) {
-		if (!inTransaction) {
-			if (result == null || result.isRight()) {
-				log.error("Going to execute rollback on graph.");
-				titanGenericDao.rollback();
-			} else {
-				log.debug("Going to execute commit on graph.");
-				titanGenericDao.commit();
-			}
-		}
-	}
+    protected <SomeData extends GraphNode, SomeDefenition> Either<SomeData, TitanOperationStatus> addDefinitionToNodeType(SomeDefenition someDefinition, NodeTypeEnum nodeType, String nodeUniqueId, final GraphEdgeLabels edgeType,
+            Supplier<SomeData> dataBuilder, Supplier<String> defNameGenerator) {
+        String defName = defNameGenerator.get();
+        log.debug("Got {} {}", defName, someDefinition);
 
-	public <ElementTypeDefinition> Either<ElementTypeDefinition, StorageOperationStatus> getElementType(Function<String, Either<ElementTypeDefinition, TitanOperationStatus>> elementGetter, String uniqueId, boolean inTransaction) {
-		Either<ElementTypeDefinition, StorageOperationStatus> result = null;
-		try {
+        SomeData someData = dataBuilder.get();
+
+        log.debug("Before adding {} to graph. data = {}", defName, someData);
+
+        @SuppressWarnings("unchecked")
+        Either<SomeData, TitanOperationStatus> eitherSomeData = titanGenericDao.createNode(someData, (Class<SomeData>) someData.getClass());
 
-			Either<ElementTypeDefinition, TitanOperationStatus> ctResult = elementGetter.apply(uniqueId);
+        log.debug("After adding {} to graph. status is = {}", defName, eitherSomeData);
 
-			if (ctResult.isRight()) {
-				TitanOperationStatus status = ctResult.right().value();
-				if (status != TitanOperationStatus.NOT_FOUND) {
-					log.error("Failed to retrieve information on element uniqueId: {}. status is {}", uniqueId, status);
-				}
-				result = Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(ctResult.right().value()));
-				return result;
-			}
+        if (eitherSomeData.isRight()) {
+            TitanOperationStatus operationStatus = eitherSomeData.right().value();
+            log.error("Failed to add {}  to graph. status is {}", defName, operationStatus);
+            return Either.right(operationStatus);
+        }
+        UniqueIdData uniqueIdData = new UniqueIdData(nodeType, nodeUniqueId);
+        log.debug("Before associating {} to {}.", uniqueIdData, defName);
 
-			result = Either.left(ctResult.left().value());
+        Either<GraphRelation, TitanOperationStatus> eitherRelations = titanGenericDao.createRelation(uniqueIdData, eitherSomeData.left().value(), edgeType, null);
+        if (eitherRelations.isRight()) {
+            TitanOperationStatus operationStatus = eitherRelations.right().value();
+            BeEcompErrorManager.getInstance().logInternalFlowError("AddDefinitionToNodeType", "Failed to associate" + nodeType.getName() + " " + nodeUniqueId + "to " + defName + "in graph. status is " + operationStatus, ErrorSeverity.ERROR);
+            return Either.right(operationStatus);
+        }
+        return Either.left(eitherSomeData.left().value());
+    }
 
-			return result;
-		} finally {
-			handleTransactionCommitRollback(inTransaction, result);
+    protected <SomeData extends GraphNode, SomeDefenition> TitanOperationStatus addDefinitionToNodeType(TitanVertex vertex, SomeDefenition someDefinition, NodeTypeEnum nodeType, String nodeUniqueId, final GraphEdgeLabels edgeType,
+            Supplier<SomeData> dataBuilder, Supplier<String> defNameGenerator) {
+        String defName = defNameGenerator.get();
+        log.debug("Got {} {}", defName, someDefinition);
 
-		}
+        SomeData someData = dataBuilder.get();
 
-	}
+        log.debug("Before adding {} to graph. data = {}", defName, someData);
 
-	/**
-	 * @param propertyDefinition
-	 * @return
-	 */
+        @SuppressWarnings("unchecked")
+        Either<TitanVertex, TitanOperationStatus> eitherSomeData = titanGenericDao.createNode(someData);
 
-	protected StorageOperationStatus validateAndUpdateProperty(IComplexDefaultValue propertyDefinition, Map<String, DataTypeDefinition> dataTypes) {
+        log.debug("After adding {} to graph. status is = {}", defName, eitherSomeData);
 
-		log.trace("Going to validate property type and value. {}", propertyDefinition);
+        if (eitherSomeData.isRight()) {
+            TitanOperationStatus operationStatus = eitherSomeData.right().value();
+            log.error("Failed to add {}  to graph. status is {}", defName, operationStatus);
+            return operationStatus;
+        }
 
-		String propertyType = propertyDefinition.getType();
-		String value = propertyDefinition.getDefaultValue();
+        TitanOperationStatus relations = titanGenericDao.createEdge(vertex, eitherSomeData.left().value(), edgeType, null);
+        if (!relations.equals(TitanOperationStatus.OK)) {
+            BeEcompErrorManager.getInstance().logInternalFlowError("AddDefinitionToNodeType", "Failed to associate" + nodeType.getName() + " " + nodeUniqueId + "to " + defName + "in graph. status is " + relations, ErrorSeverity.ERROR);
+            return relations;
+        }
+        return relations;
+    }
 
-		ToscaPropertyType type = getType(propertyType);
+    interface NodeElementFetcher<ElementDefinition> {
+        TitanOperationStatus findAllNodeElements(String nodeId, List<ElementDefinition> listTofill);
+    }
 
-		if (type == null) {
+    public <ElementDefinition> TitanOperationStatus findAllResourceElementsDefinitionRecursively(String resourceId, List<ElementDefinition> elements, NodeElementFetcher<ElementDefinition> singleNodeFetcher) {
 
-			DataTypeDefinition dataTypeDefinition = dataTypes.get(propertyType);
-			if (dataTypeDefinition == null) {
-				log.debug("The type {}  of property cannot be found.", propertyType);
-				return StorageOperationStatus.INVALID_TYPE;
-			}
+        if (log.isTraceEnabled())
+            log.trace("Going to fetch elements under resource {}", resourceId);
+        TitanOperationStatus resourceAttributesStatus = singleNodeFetcher.findAllNodeElements(resourceId, elements);
 
-			StorageOperationStatus status = validateAndUpdateComplexValue(propertyDefinition, propertyType, value, dataTypeDefinition, dataTypes);
+        if (resourceAttributesStatus != TitanOperationStatus.OK) {
+            return resourceAttributesStatus;
+        }
 
-			return status;
+        Either<ImmutablePair<ResourceMetadataData, GraphEdge>, TitanOperationStatus> parentNodes = titanGenericDao.getChild(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.Resource), resourceId, GraphEdgeLabels.DERIVED_FROM, NodeTypeEnum.Resource,
+                ResourceMetadataData.class);
 
-		}
-		String innerType = null;
+        if (parentNodes.isRight()) {
+            TitanOperationStatus parentNodesStatus = parentNodes.right().value();
+            if (parentNodesStatus != TitanOperationStatus.NOT_FOUND) {
+                BeEcompErrorManager.getInstance().logInternalFlowError("findAllResourceElementsDefinitionRecursively", "Failed to find parent elements of resource " + resourceId + ". status is " + parentNodesStatus, ErrorSeverity.ERROR);
+                return parentNodesStatus;
+            }
+        }
 
-		Either<String, TitanOperationStatus> checkInnerType = getInnerType(type, () -> propertyDefinition.getSchema());
-		if (checkInnerType.isRight()) {
-			return StorageOperationStatus.INVALID_TYPE;
-		}
-		innerType = checkInnerType.left().value();
+        if (parentNodes.isLeft()) {
+            ImmutablePair<ResourceMetadataData, GraphEdge> parnetNodePair = parentNodes.left().value();
+            String parentUniqueId = parnetNodePair.getKey().getMetadataDataDefinition().getUniqueId();
+            TitanOperationStatus addParentIntStatus = findAllResourceElementsDefinitionRecursively(parentUniqueId, elements, singleNodeFetcher);
 
-		log.trace("After validating property type {}", propertyType);
+            if (addParentIntStatus != TitanOperationStatus.OK) {
+                BeEcompErrorManager.getInstance().logInternalFlowError("findAllResourceElementsDefinitionRecursively", "Failed to find all resource elements of resource " + parentUniqueId, ErrorSeverity.ERROR);
 
-		boolean isValidProperty = isValidValue(type, value, innerType, dataTypes);
-		if (false == isValidProperty) {
-			log.info("The value {} of property from type {} is invalid", value, type);
-			return StorageOperationStatus.INVALID_VALUE;
-		}
+                return addParentIntStatus;
+            }
+        }
+        return TitanOperationStatus.OK;
+    }
 
-		PropertyValueConverter converter = type.getConverter();
+    protected <T, TStatus> void handleTransactionCommitRollback(boolean inTransaction, Either<T, TStatus> result) {
+        if (!inTransaction) {
+            if (result == null || result.isRight()) {
+                log.error("Going to execute rollback on graph.");
+                titanGenericDao.rollback();
+            } else {
+                log.debug("Going to execute commit on graph.");
+                titanGenericDao.commit();
+            }
+        }
+    }
 
-		if (isEmptyValue(value)) {
-			log.debug("Default value was not sent for property {}. Set default value to {}", propertyDefinition.getName(), EMPTY_VALUE);
-			propertyDefinition.setDefaultValue(EMPTY_VALUE);
-		} else if (false == isEmptyValue(value)) {
-			String convertedValue = converter.convert(value, innerType, dataTypes);
-			propertyDefinition.setDefaultValue(convertedValue);
-		}
-		return StorageOperationStatus.OK;
-	}
 
-	protected ToscaPropertyType getType(String propertyType) {
+    /**
+     * @param propertyDefinition
+     * @return
+     */
 
-		ToscaPropertyType type = ToscaPropertyType.isValidType(propertyType);
+    protected StorageOperationStatus validateAndUpdateProperty(IComplexDefaultValue propertyDefinition, Map<String, DataTypeDefinition> dataTypes) {
 
-		return type;
+        log.trace("Going to validate property type and value. {}", propertyDefinition);
 
-	}
+        String propertyType = propertyDefinition.getType();
+        String value = propertyDefinition.getDefaultValue();
 
-	protected boolean isValidValue(ToscaPropertyType type, String value, String innerType, Map<String, DataTypeDefinition> dataTypes) {
-		if (isEmptyValue(value)) {
-			return true;
-		}
+        ToscaPropertyType type = getType(propertyType);
 
-		PropertyTypeValidator validator = type.getValidator();
+        if (type == null) {
 
-		return validator.isValid(value, innerType, dataTypes);
-	}
+            DataTypeDefinition dataTypeDefinition = dataTypes.get(propertyType);
+            if (dataTypeDefinition == null) {
+                log.debug("The type {}  of property cannot be found.", propertyType);
+                return StorageOperationStatus.INVALID_TYPE;
+            }
 
-	public boolean isEmptyValue(String value) {
-		return value == null;
-	}
+            return validateAndUpdateComplexValue(propertyDefinition, propertyType, value, dataTypeDefinition, dataTypes);
 
-	public boolean isNullParam(String value) {
-		return value == null;
-	}
+        }
+        String innerType = null;
 
-	protected StorageOperationStatus validateAndUpdateComplexValue(IComplexDefaultValue propertyDefinition, String propertyType,
+        Either<String, TitanOperationStatus> checkInnerType = getInnerType(type, propertyDefinition::getSchema);
+        if (checkInnerType.isRight()) {
+            return StorageOperationStatus.INVALID_TYPE;
+        }
+        innerType = checkInnerType.left().value();
 
-			String value, DataTypeDefinition dataTypeDefinition, Map<String, DataTypeDefinition> dataTypes) {
+        log.trace("After validating property type {}", propertyType);
 
-		ImmutablePair<JsonElement, Boolean> validateResult = dataTypeValidatorConverter.validateAndUpdate(value, dataTypeDefinition, dataTypes);
+        boolean isValidProperty = isValidValue(type, value, innerType, dataTypes);
+        if (!isValidProperty) {
+            log.info("The value {} of property from type {} is invalid", value, type);
+            return StorageOperationStatus.INVALID_VALUE;
+        }
 
-		if (validateResult.right.booleanValue() == false) {
-			log.debug("The value {} of property from type {} is invalid", propertyType, propertyType);
-			return StorageOperationStatus.INVALID_VALUE;
-		}
+        PropertyValueConverter converter = type.getConverter();
 
-		JsonElement jsonElement = validateResult.left;
+        if (isEmptyValue(value)) {
+            log.debug("Default value was not sent for property {}. Set default value to {}", propertyDefinition.getName(), EMPTY_VALUE);
+            propertyDefinition.setDefaultValue(EMPTY_VALUE);
+        } else if (!isEmptyValue(value)) {
+            String convertedValue = converter.convert(value, innerType, dataTypes);
+            propertyDefinition.setDefaultValue(convertedValue);
+        }
+        return StorageOperationStatus.OK;
+    }
 
-		log.trace("Going to update value in property definition {} {}" , propertyDefinition.getName() , (jsonElement != null ? jsonElement.toString() : null));
+    protected ToscaPropertyType getType(String propertyType) {
 
-		updateValue(propertyDefinition, jsonElement);
+        return ToscaPropertyType.isValidType(propertyType);
 
-		return StorageOperationStatus.OK;
-	}
+    }
 
-	protected void updateValue(IComplexDefaultValue propertyDefinition, JsonElement jsonElement) {
+    protected boolean isValidValue(ToscaPropertyType type, String value, String innerType, Map<String, DataTypeDefinition> dataTypes) {
+        if (isEmptyValue(value)) {
+            return true;
+        }
 
-		propertyDefinition.setDefaultValue(getValueFromJsonElement(jsonElement));
+        PropertyTypeValidator validator = type.getValidator();
 
-	}
+        return validator.isValid(value, innerType, dataTypes);
+    }
 
-	protected String getValueFromJsonElement(JsonElement jsonElement) {
-		String value = null;
+    public boolean isEmptyValue(String value) {
+        return value == null;
+    }
 
-		if (jsonElement == null || jsonElement.isJsonNull()) {
-			value = EMPTY_VALUE;
-		} else {
-			value = jsonElement.toString();
-		}
+    public boolean isNullParam(String value) {
+        return value == null;
+    }
 
-		return value; 
-	}
+    protected StorageOperationStatus validateAndUpdateComplexValue(IComplexDefaultValue propertyDefinition, String propertyType,
 
-	protected Either<String, TitanOperationStatus> getInnerType(ToscaPropertyType type, Supplier<SchemaDefinition> schemeGen) {
-		String innerType = null;
-		if (type == ToscaPropertyType.LIST || type == ToscaPropertyType.MAP) {
+            String value, DataTypeDefinition dataTypeDefinition, Map<String, DataTypeDefinition> dataTypes) {
 
-			SchemaDefinition def = schemeGen.get();// propDataDef.getSchema();
-			if (def == null) {
-				log.debug("Schema doesn't exists for property of type {}", type);
-				return Either.right(TitanOperationStatus.ILLEGAL_ARGUMENT);
-			}
-			PropertyDataDefinition propDef = def.getProperty();
-			if (propDef == null) {
-				log.debug("Property in Schema Definition inside property of type {} doesn't exist", type);
-				return Either.right(TitanOperationStatus.ILLEGAL_ARGUMENT);
-			}
-			innerType = propDef.getType();
-		}
-		return Either.left(innerType);
-	}
+        ImmutablePair<JsonElement, Boolean> validateResult = dataTypeValidatorConverter.validateAndUpdate(value, dataTypeDefinition, dataTypes);
 
-	/**
-	 * Convert Constarint object to json in order to add it to the Graph
-	 * 
-	 * @param constraints
-	 * @return
-	 */
-	public List<String> convertConstraintsToString(List<PropertyConstraint> constraints) {
+        if (!validateResult.right.booleanValue()) {
+            log.debug("The value {} of property from type {} is invalid", propertyType, propertyType);
+            return StorageOperationStatus.INVALID_VALUE;
+        }
 
-		if (constraints == null || constraints.isEmpty()) {
-			return null;
-		}
+        JsonElement jsonElement = validateResult.left;
 
-		return constraints.stream().map(gson::toJson).collect(Collectors.toList());
-	}
+        log.trace("Going to update value in property definition {} {}" , propertyDefinition.getName() , (jsonElement != null ? jsonElement.toString() : null));
 
-	public List<PropertyConstraint> convertConstraints(List<String> constraints) {
+        updateValue(propertyDefinition, jsonElement);
 
-		if (constraints == null || constraints.isEmpty()) {
-			return null;
-		}
+        return StorageOperationStatus.OK;
+    }
 
-		Type constraintType = new TypeToken<PropertyConstraint>() {
-		}.getType();
+    protected void updateValue(IComplexDefaultValue propertyDefinition, JsonElement jsonElement) {
 
-		Gson gson = new GsonBuilder().registerTypeAdapter(constraintType, new PropertyConstraintDeserialiser()).create();
+        propertyDefinition.setDefaultValue(getValueFromJsonElement(jsonElement));
 
-		return constraints.stream().map(c -> gson.fromJson(c, PropertyConstraint.class)).collect(Collectors.toList());
-	}
+    }
+
+    protected String getValueFromJsonElement(JsonElement jsonElement) {
+        String value = null;
+
+        if (jsonElement == null || jsonElement.isJsonNull()) {
+            value = EMPTY_VALUE;
+        } else {
+            value = jsonElement.toString();
+        }
+
+        return value;
+    }
+
+    protected Either<String, TitanOperationStatus> getInnerType(ToscaPropertyType type, Supplier<SchemaDefinition> schemeGen) {
+        String innerType = null;
+        if (type == ToscaPropertyType.LIST || type == ToscaPropertyType.MAP) {
+
+            SchemaDefinition def = schemeGen.get();
+            if (def == null) {
+                log.debug("Schema doesn't exists for property of type {}", type);
+                return Either.right(TitanOperationStatus.ILLEGAL_ARGUMENT);
+            }
+            PropertyDataDefinition propDef = def.getProperty();
+            if (propDef == null) {
+                log.debug("Property in Schema Definition inside property of type {} doesn't exist", type);
+                return Either.right(TitanOperationStatus.ILLEGAL_ARGUMENT);
+            }
+            innerType = propDef.getType();
+        }
+        return Either.left(innerType);
+    }
+
+    /**
+     * Convert Constarint object to json in order to add it to the Graph
+     *
+     * @param constraints
+     * @return
+     */
+    public List<String> convertConstraintsToString(List<PropertyConstraint> constraints) {
+
+        if (constraints == null || constraints.isEmpty()) {
+            return null;
+        }
+
+        return constraints.stream().map(gson::toJson).collect(Collectors.toList());
+    }
+
+    public List<PropertyConstraint> convertConstraints(List<String> constraints) {
+
+        if (constraints == null || constraints.isEmpty()) {
+            return null;
+        }
+
+        Type constraintType = new TypeToken<PropertyConstraint>() {
+        }.getType();
+
+        Gson gson = new GsonBuilder().registerTypeAdapter(constraintType, new PropertyConstraintDeserialiser()).create();
+
+        return constraints.stream().map(c -> gson.fromJson(c, PropertyConstraint.class)).collect(Collectors.toList());
+    }
 
 }

@@ -25,6 +25,7 @@ import org.openecomp.sdc.be.components.distribution.engine.SubscriberTypeEnum;
 import org.openecomp.sdc.be.distribution.api.client.RegistrationRequest;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
+import org.openecomp.sdc.be.resources.data.auditing.model.DistributionTopicData;
 
 public class AuditHandler {
     ComponentsUtils componentsUtils;
@@ -39,12 +40,12 @@ public class AuditHandler {
     }
 
 
-    public void auditRegisterACL(CambriaErrorResponse registerResponse, SubscriberTypeEnum subscriberRole , String topicName) {
-        componentsUtils.auditTopicACLKeys(AuditingActionEnum.ADD_KEY_TO_TOPIC_ACL, registrationRequest.getDistrEnvName(), topicName, subscriberRole.name(), registrationRequest.getApiPublicKey(), String.valueOf(registerResponse.getHttpCode()));
+    public void auditRegisterACL(CambriaErrorResponse registerResponse, SubscriberTypeEnum subscriberRole , DistributionTopicData distributionTopicData) {
+        componentsUtils.auditDistributionEngine(AuditingActionEnum.ADD_KEY_TO_TOPIC_ACL, registrationRequest.getDistrEnvName(), distributionTopicData, subscriberRole.name(), registrationRequest.getApiPublicKey(), String.valueOf(registerResponse.getHttpCode()));
     }
 
-    public void auditUnRegisterACL(CambriaErrorResponse registerResponse, SubscriberTypeEnum subscriberRole, String topicName) {
-        componentsUtils.auditTopicACLKeys(AuditingActionEnum.REMOVE_KEY_FROM_TOPIC_ACL, registrationRequest.getDistrEnvName(), topicName, subscriberRole.name(), registrationRequest.getApiPublicKey(), String.valueOf(registerResponse.getHttpCode()));
+    public void auditUnRegisterACL(CambriaErrorResponse registerResponse, SubscriberTypeEnum subscriberRole, DistributionTopicData distributionTopicData) {
+        componentsUtils.auditDistributionEngine(AuditingActionEnum.REMOVE_KEY_FROM_TOPIC_ACL, registrationRequest.getDistrEnvName(), distributionTopicData, subscriberRole.name(), registrationRequest.getApiPublicKey(), String.valueOf(registerResponse.getHttpCode()));
     }
 
     public void auditRegisterRequest(CambriaErrorResponse registerResponse) {

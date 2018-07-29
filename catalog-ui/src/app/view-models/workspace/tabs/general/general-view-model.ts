@@ -21,11 +21,13 @@
 'use strict';
 import * as _ from "lodash";
 import {ModalsHandler, ValidationUtils, EVENTS, CHANGE_COMPONENT_CSAR_VERSION_FLAG, ComponentType, DEFAULT_ICON,
-    ResourceType, ComponentState} from "app/utils";
+    ResourceType, ComponentState, instantiationType, ComponentFactory} from "app/utils";
 import {CacheService, EventListenerService, ProgressService, OnboardingService} from "app/services";
-import {IAppConfigurtaion, IValidate, IMainCategory, Resource, ISubCategory,Service, ICsarComponent} from "app/models";
+import {IAppConfigurtaion, IValidate, IMainCategory, Resource, ISubCategory,Service, ICsarComponent, Component} from "app/models";
 import {IWorkspaceViewModelScope} from "app/view-models/workspace/workspace-view-model";
 import {Dictionary} from "lodash";
+import { PREVIOUS_CSAR_COMPONENT } from "../../../../utils/constants";
+
 
 export class Validation {
     componentNameValidationPattern:RegExp;
@@ -62,8 +64,11 @@ export interface IGeneralScope extends IWorkspaceViewModelScope {
     importCsarProgressKey:string;
     browseFileLabel:string;
     componentCategories:componentCategories;
+    instantiationTypes:Array<instantiationType>;
 
-    onToscaFileChange():void;
+    save():Promise<any>;
+    revert():void;
+    onImportFileChange():void;
     validateField(field:any):boolean;
     validateName(isInit:boolean):void;
     calculateUnique(mainCategory:string, subCategory:string):string; // Build unique string from main and sub category
@@ -74,6 +79,8 @@ export interface IGeneralScope extends IWorkspaceViewModelScope {
     openOnBoardingModal():void;
     initCategoreis():void;
     initEnvironmentContext():void;
+    initInstantiationTypes():void;
+    onInstantiationTypeChange():void;
     updateIcon():void;
     possibleToUpdateIcon():boolean;
 }
@@ -101,7 +108,8 @@ export class GeneralViewModel {
         '$interval',
         '$filter',
         '$timeout',
-        'Sdc.Services.OnboardingService'
+        'Sdc.Services.OnboardingService',
+        'ComponentFactory'
     ];
 
     constructor(private $scope:IGeneralScope,
@@ -124,7 +132,8 @@ export class GeneralViewModel {
                 protected $interval:any,
                 private $filter:ng.IFilterService,
                 private $timeout:ng.ITimeoutService,
-                private onBoardingService:OnboardingService) {
+                private onBoardingService:OnboardingService,
+                private ComponentFactory:ComponentFactory) {
 
         this.initScopeValidation();
         this.initScopeMethods();
@@ -146,51 +155,64 @@ export class GeneralViewModel {
         this.$scope.validation.projectCodeValidationPattern = this.ProjectCodeValidationPattern;
     };
 
-    private initImportedToscaBrowseFile = ():void =>{
-        // Init the decision if to show onboarding
-        this.$scope.isShowOnboardingSelectionBrowse = false;
-        if (this.$scope.component.isResource() &&
-            this.$scope.isEditMode() &&
-            (<Resource>this.$scope.component).resourceType == ResourceType.VF &&
-            (<Resource>this.$scope.component).csarUUID) {
-            this.$scope.isShowOnboardingSelectionBrowse = true;
-            let onboardCsarFilesMap:Dictionary<Dictionary<string>> = this.cacheService.get('onboardCsarFilesMap');
-            // The onboardCsarFilesMap in cache contains map of [packageId]:[vsp display name for brows]
-            // if the map is empty - Do request to BE
-            if(onboardCsarFilesMap) {
-                if (onboardCsarFilesMap[(<Resource>this.$scope.component).csarUUID]){
-                    this.$scope.importedToscaBrowseFileText = onboardCsarFilesMap[(<Resource>this.$scope.component).csarUUID][(<Resource>this.$scope.component).csarVersion];
-                }
-            }
-            if(!onboardCsarFilesMap || !this.$scope.importedToscaBrowseFileText){
+    private loadOnboardingFileCache = ():ng.IPromise<Dictionary<any>> =>{
 
-                let onSuccess = (vsps:Array<ICsarComponent>): void =>{
-                    onboardCsarFilesMap = {};
-                    _.each(vsps, (vsp:ICsarComponent)=>{
-                        onboardCsarFilesMap[vsp.packageId] = onboardCsarFilesMap[vsp.packageId] || {};
-                        onboardCsarFilesMap[vsp.packageId][vsp.version] = vsp.vspName + " (" + vsp.version + ")";
-                    });
-                    this.cacheService.set('onboardCsarFilesMap', onboardCsarFilesMap);
-                    this.$scope.importedToscaBrowseFileText = onboardCsarFilesMap[(<Resource>this.$scope.component).csarUUID][(<Resource>this.$scope.component).csarVersion];
-                };
+        let onboardCsarFilesMap:Dictionary<Dictionary<string>>;
+        let onSuccess = (vsps:Array<ICsarComponent>) =>{
+            onboardCsarFilesMap = {};
+            _.each(vsps, (vsp:ICsarComponent)=>{
+                onboardCsarFilesMap[vsp.packageId] = onboardCsarFilesMap[vsp.packageId] || {};
+                onboardCsarFilesMap[vsp.packageId][vsp.version] = vsp.vspName + " (" + vsp.version + ")";
+            });
+            this.cacheService.set('onboardCsarFilesMap', onboardCsarFilesMap);
+            return onboardCsarFilesMap;
+        };
+        let onError = (): void =>{
+            console.log("Error getting onboarding list");
+        };               
+        return this.onBoardingService.getOnboardingVSPs().then(onSuccess, onError);
+    };
 
-                let onError = (): void =>{
-                    console.log("Error getting onboarding list");
-                };
+    private setImportedFileText = ():void => {
 
-                this.onBoardingService.getOnboardingVSPs().then(onSuccess, onError);
+        if(!this.$scope.isShowOnboardingSelectionBrowse) return;
+
+        //these variables makes it easier to read this logic
+        let csarUUID:string = (<Resource>this.$scope.component).csarUUID; 
+        let csarVersion:string = (<Resource>this.$scope.component).csarVersion;
+
+        let onboardCsarFilesMap:Dictionary<Dictionary<string>> = this.cacheService.get('onboardCsarFilesMap');
+        let assignFileName = ():void => {
+            if(this.$scope.component.vspArchived){
+                this.$scope.importedToscaBrowseFileText = 'VSP is archived';
+            } else {
+                this.$scope.importedToscaBrowseFileText = onboardCsarFilesMap[csarUUID][csarVersion];
             }
         }
-    };
+
+        
+        if(this.$scope.component.vspArchived || (onboardCsarFilesMap && onboardCsarFilesMap[csarUUID] && onboardCsarFilesMap[csarUUID][csarVersion])){ //check that the file name is already in cache
+            assignFileName();
+        } else {
+            this.loadOnboardingFileCache().then((onboardingFiles) => {
+                onboardCsarFilesMap = onboardingFiles;
+                this.cacheService.set('onboardCsarFilesMap', onboardingFiles);
+                assignFileName();
+            }, ()=> {});
+        }
+        
+    }
+
+    isCreateModeAvailable(verifyObj:string): boolean {
+        var isCheckout:boolean = ComponentState.NOT_CERTIFIED_CHECKOUT === this.$scope.component.lifecycleState;
+        return this.$scope.isCreateMode() || (isCheckout && !verifyObj)
+    }
 
     private initScope = ():void => {
 
-        // Work around to change the csar version
-        if (this.cacheService.get(CHANGE_COMPONENT_CSAR_VERSION_FLAG)) {
-            (<Resource>this.$scope.component).csarVersion = this.cacheService.get(CHANGE_COMPONENT_CSAR_VERSION_FLAG);
-        }
-
+       
         this.$scope.importCsarProgressKey = "importCsarProgressKey";
+
         this.$scope.browseFileLabel = this.$scope.component.isResource() && (<Resource>this.$scope.component).resourceType === ResourceType.VF ? "Upload file" : "Upload VFC";
         this.$scope.progressService = this.progressService;
         this.$scope.componentCategories = new componentCategories();
@@ -216,9 +238,33 @@ export class GeneralViewModel {
             if (this.$scope.isEditMode() && resource.resourceType == ResourceType.VF && !resource.csarUUID) {
                 this.$scope.isShowFileBrowse = true;
             }
+        } else if(this.$scope.component.isService()){
+            // Init Instantiation types
+            this.$scope.initInstantiationTypes();
         }
 
-        this.initImportedToscaBrowseFile();
+        // Work around to change the csar version
+        if (this.cacheService.get(CHANGE_COMPONENT_CSAR_VERSION_FLAG)) {
+            //(<Resource>this.$scope.component).csarVersion = this.cacheService.get(CHANGE_COMPONENT_CSAR_VERSION_FLAG);
+            this.cacheService.remove(CHANGE_COMPONENT_CSAR_VERSION_FLAG);
+            this.$scope.updateUnsavedFileFlag(true);
+
+            if (!this.$scope.isViewMode() && this.cacheService.get(PREVIOUS_CSAR_COMPONENT)) { //keep the old component in the cache until checkout, so we dont need to pass it around
+                this.$scope.setOriginComponent(this.cacheService.get(PREVIOUS_CSAR_COMPONENT));
+                this.cacheService.remove(PREVIOUS_CSAR_COMPONENT);
+            }
+        }
+
+
+        // Init the decision if to show onboarding
+        if (this.$scope.component.isResource() && this.$scope.isEditMode() &&
+            (<Resource>this.$scope.component).resourceType == ResourceType.VF && (<Resource>this.$scope.component).csarUUID) {
+            this.$scope.isShowOnboardingSelectionBrowse = true;
+            this.setImportedFileText();
+        } else {
+            this.$scope.isShowOnboardingSelectionBrowse = false;
+        }
+        
 
         //init file extensions based on the file that was imported.
         if (this.$scope.component.isResource() && (<Resource>this.$scope.component).importedFile) {
@@ -231,10 +277,13 @@ export class GeneralViewModel {
                 (<Resource>this.$scope.component).importedFile.filetype = "yaml";
                 this.$scope.importedFileExtension = this.sdcConfig.toscaFileExtension;
             }
+            this.$scope.restoreFile = angular.copy((<Resource>this.$scope.originComponent).importedFile); //create backup
         } else if (this.$scope.isEditMode() && (<Resource>this.$scope.component).resourceType === ResourceType.VF) {
             this.$scope.importedFileExtension = this.sdcConfig.csarFileExtension;
             //(<Resource>this.$scope.component).importedFile.filetype="csar";
         }
+
+
 
         this.$scope.setValidState(true);
 
@@ -251,6 +300,12 @@ export class GeneralViewModel {
             this.$scope.component.contactId = this.cacheService.get("user").userId;
             this.$scope.originComponent.contactId = this.$scope.component.contactId;
         }
+
+        
+        this.$scope.$on('$destroy', () => {
+            this.EventListenerService.unRegisterObserver(EVENTS.ON_LIFECYCLE_CHANGE_WITH_SAVE);
+            this.EventListenerService.unRegisterObserver(EVENTS.ON_LIFECYCLE_CHANGE);
+        });
 
     };
 
@@ -299,14 +354,28 @@ export class GeneralViewModel {
             }
         };
 
+        this.$scope.initInstantiationTypes = ():void => {
+            if (this.$scope.componentType === ComponentType.SERVICE) {
+                this.$scope.instantiationTypes = new Array();
+                this.$scope.instantiationTypes.push(instantiationType.A_LA_CARTE);
+                this.$scope.instantiationTypes.push(instantiationType.MACRO);
+                var instantiationTypeField:string =(<Service>this.$scope.component).instantiationType;
+                if (instantiationTypeField === ""){
+                    this.$scope.instantiationTypes.push("");
+                }
+                else if (this.isCreateModeAvailable(instantiationTypeField)) {
+                    (<Service>this.$scope.component).instantiationType = instantiationType.A_LA_CARTE;
+
+                }
+            }
+        };
 
         this.$scope.initEnvironmentContext = ():void => {
             if (this.$scope.componentType === ComponentType.SERVICE) {
                 this.$scope.environmentContextObj = this.cacheService.get('UIConfiguration').environmentContext;
                 var environmentContext:string =(<Service>this.$scope.component).environmentContext;
-                var isCheckout:boolean = ComponentState.NOT_CERTIFIED_CHECKOUT === this.$scope.component.lifecycleState;
                 // In creation new service OR check outing old service without environmentContext parameter - set default value
-                if(this.$scope.isCreateMode() || (isCheckout && !environmentContext)){
+                if(this.isCreateModeAvailable(environmentContext)){
                     (<Service>this.$scope.component).environmentContext = this.$scope.environmentContextObj.defaultValue;
                 }
             }
@@ -320,19 +389,33 @@ export class GeneralViewModel {
         };
 
         this.$scope.openOnBoardingModal = ():void => {
+            if(this.$scope.component.vspArchived) return;
             let csarUUID = (<Resource>this.$scope.component).csarUUID;
-            this.ModalsHandler.openOnboadrdingModal('Update', csarUUID).then(()=> {
-                // OK
-                this.$scope.uploadFileChangedInGeneralTab();
-            }, ()=> {
-                // ERROR
-            });
+            let csarVersion = (<Resource>this.$scope.component).csarVersion;
+            this.ModalsHandler.openOnboadrdingModal('Update', csarUUID, csarVersion).then((result)=> {
+
+                if(result){
+                    this.ComponentFactory.getComponentWithMetadataFromServer(result.type.toUpperCase(), result.previousComponent.uniqueId).then(
+                        (component:Component)=> {
+                        if (result.componentCsar && component.isResource()){
+                            this.cacheService.set(PREVIOUS_CSAR_COMPONENT, angular.copy(component));
+                            component = this.ComponentFactory.updateComponentFromCsar(result.componentCsar, <Resource>component);
+                        }
+                            
+                        this.$scope.setComponent(component);
+                        this.$scope.updateUnsavedFileFlag(true);
+                        this.setImportedFileText();
+                    }, ()=> {
+                        // ERROR
+                    });
+                }
+            }, () => {});
         };
 
         this.$scope.updateIcon = ():void => {
             this.ModalsHandler.openUpdateIconModal(this.$scope.component).then((isDirty:boolean)=> {
-                if(!this.$scope.isCreateMode()){
-                    this.$state.current.data.unsavedChanges = this.$state.current.data.unsavedChanges || isDirty;
+                if(isDirty && !this.$scope.isCreateMode()){
+                    this.setUnsavedChanges(true);
                 }
             }, ()=> {
                 // ERROR
@@ -340,7 +423,7 @@ export class GeneralViewModel {
         };
 
         this.$scope.possibleToUpdateIcon = ():boolean => {
-            if(this.$scope.componentCategories.selectedCategory && (!this.$scope.component.isResource() || this.$scope.component.vendorName)){
+            if(this.$scope.componentCategories.selectedCategory && (!this.$scope.component.isResource() || this.$scope.component.vendorName) && !this.$scope.component.isAlreadyCertified()){
                 return true;
             }else{
                 return false;
@@ -364,7 +447,6 @@ export class GeneralViewModel {
 
                 return;
             }
-            //?????????????????????????
             let subtype:string = ComponentType.RESOURCE == this.$scope.componentType ? this.$scope.component.getComponentSubType() : undefined;
 
             let onFailed = (response) => {
@@ -407,6 +489,55 @@ export class GeneralViewModel {
             }
         };
 
+
+        this.EventListenerService.registerObserverCallback(EVENTS.ON_LIFECYCLE_CHANGE_WITH_SAVE, (nextState) => {
+            if (this.$state.current.data.unsavedChanges && this.$scope.isValidForm){
+                this.$scope.save().then(() => {
+                    this.$scope.handleChangeLifecycleState(nextState);
+                }, () => {
+                    console.error("Save failed, unable to change lifecycle state to " + nextState);
+                });
+            } else if(!this.$scope.isValidForm){
+                console.error("Form is not valid");
+            } else {
+                let newCsarVersion:string;
+                if(this.$scope.unsavedFile){
+                    newCsarVersion = (<Resource>this.$scope.component).csarVersion;
+                }
+                this.$scope.handleChangeLifecycleState(nextState, newCsarVersion);
+            }
+        });
+
+
+        this.$scope.revert = ():void => {
+            //in state of import file leave the file in place
+
+            this.$scope.setComponent(this.ComponentFactory.createComponent(this.$scope.originComponent));
+
+            if (this.$scope.component.isResource() && this.$scope.restoreFile) {
+                (<Resource>this.$scope.component).importedFile = angular.copy(this.$scope.restoreFile);
+            } 
+    
+            this.setImportedFileText(); 
+            this.$scope.updateBreadcrumbs(this.$scope.component); //update on workspace
+
+            this.$scope.componentCategories.selectedCategory = this.$scope.originComponent.selectedCategory;
+            this.setUnsavedChanges(false);
+            this.$scope.updateUnsavedFileFlag(false);
+            this.$scope.editForm.$setPristine();
+        };
+
+        this.$scope.onImportFileChange = () => {
+
+            if( !this.$scope.restoreFile && this.$scope.editForm.fileElement.value && this.$scope.editForm.fileElement.value.filename || //if file started empty but we have added a new one
+                this.$scope.restoreFile && !angular.equals(this.$scope.restoreFile, this.$scope.editForm.fileElement.value)){ //or file was swapped for a new one
+                this.$scope.updateUnsavedFileFlag(true);
+            } else {
+                this.$scope.updateUnsavedFileFlag(false);
+                this.$scope.editForm.fileElement.$setPristine();
+            }
+        };
+
         this.$scope.$watchCollection('component.name', (newData:any):void => {
             this.$scope.validateName(false);
         });
@@ -417,9 +548,10 @@ export class GeneralViewModel {
         });
 
         this.$scope.$watch("editForm.$dirty", (newVal, oldVal) => {
-            if (newVal !== oldVal) {
-                this.$state.current.data.unsavedChanges = newVal && !this.$scope.isCreateMode();
+            if (newVal && !this.$scope.isCreateMode()) {
+                this.setUnsavedChanges(true);
             }
+
         });
 
         this.$scope.onCategoryChange = ():void => {
@@ -439,9 +571,12 @@ export class GeneralViewModel {
                 this.$scope.component.icon = DEFAULT_ICON;
             }
         };
-        this.EventListenerService.registerObserverCallback(EVENTS.ON_CHECKOUT, this.$scope.reload);
-        this.EventListenerService.registerObserverCallback(EVENTS.ON_REVERT, ()=>{
-            this.$scope.componentCategories.selectedCategory = this.$scope.originComponent.selectedCategory;
-        });
+        this.EventListenerService.registerObserverCallback(EVENTS.ON_LIFECYCLE_CHANGE, this.$scope.reload);
+
     };
+
+    private setUnsavedChanges = (hasChanges:boolean):void => {
+        this.$state.current.data.unsavedChanges = hasChanges;
+    };
+
 }

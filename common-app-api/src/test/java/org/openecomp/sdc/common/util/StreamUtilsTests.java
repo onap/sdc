@@ -20,7 +20,9 @@
 
 package org.openecomp.sdc.common.util;
 
-import static org.junit.Assert.assertTrue;
+import fj.data.Either;
+import static org.junit.Assert.assertEquals;
+import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,16 +31,14 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.junit.Test;
-
-import fj.data.Either;
+import static org.junit.Assert.assertTrue;
 
 public class StreamUtilsTests {
 	@Test
 	public void testTakeWhilePredicateNotMet() {
 		List<Either<Integer, Boolean>> list = buildListWith10Integers();
 
-		assertTrue(StreamUtils.takeWhile(list.stream(), p -> p.isLeft()).count() == 10);
+        assertEquals(10, StreamUtils.takeWhile(list.stream(), Either::isLeft).count());
 	}
 
 	@Test
@@ -46,8 +46,8 @@ public class StreamUtilsTests {
 		List<Either<Integer, Boolean>> list = buildListWith10Integers();
 		addToBooleansToList(list);
 
-		final Stream<Either<Integer, Boolean>> takeWhileStream = StreamUtils.takeWhile(list.stream(), p -> p.isLeft());
-		assertTrue(takeWhileStream.filter(p -> p.isRight()).count() == 0);
+		final Stream<Either<Integer, Boolean>> takeWhileStream = StreamUtils.takeWhile(list.stream(), Either::isLeft);
+        assertEquals(0, takeWhileStream.filter(Either::isRight).count());
 	}
 
 	@Test
@@ -67,12 +67,12 @@ public class StreamUtilsTests {
 		};
 
 		List<Integer> num1to10 = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
-		Stream<Either<Integer, Boolean>> streamEithers = num1to10.stream().map(e -> cons.apply(e));
-		List<Either<Integer, Boolean>> collect = StreamUtils.takeWhilePlusOneNoEval(streamEithers, e -> e.isLeft())
+		Stream<Either<Integer, Boolean>> streamEithers = num1to10.stream().map(cons::apply);
+		List<Either<Integer, Boolean>> collect = StreamUtils.takeWhilePlusOneNoEval(streamEithers, Either::isLeft)
 				.collect(Collectors.toList());
 		assertTrue(bucket.size() <= 6);
 		assertTrue(collect.size() <= 6);
-		assertTrue(collect.stream().filter(e -> e.isRight()).count() == 1);
+        assertEquals(1, collect.stream().filter(Either::isRight).count());
 
 	}
 
@@ -80,7 +80,7 @@ public class StreamUtilsTests {
 	public void testTakeWhilePlusOnePredicateNotMet() {
 		List<Either<Integer, Boolean>> list = buildListWith10Integers();
 
-		assertTrue(StreamUtils.takeWhilePlusOne(list.stream(), p -> p.isLeft()).count() == 10);
+        assertEquals(10, StreamUtils.takeWhilePlusOne(list.stream(), Either::isLeft).count());
 	}
 
 	@Test
@@ -89,8 +89,8 @@ public class StreamUtilsTests {
 		addToBooleansToList(list);
 
 		final Stream<Either<Integer, Boolean>> takeWhilePlusOneStream = StreamUtils.takeWhilePlusOne(list.stream(),
-				p -> p.isLeft());
-		assertTrue(takeWhilePlusOneStream.filter(p -> p.isRight()).count() == 1);
+                Either::isLeft);
+        assertEquals(1, takeWhilePlusOneStream.filter(Either::isRight).count());
 	}
 
 	private void addToBooleansToList(List<Either<Integer, Boolean>> list) {
@@ -108,15 +108,15 @@ public class StreamUtilsTests {
 
 	@Test
 	public void myTest() {
-		List<Integer> list = new ArrayList<Integer>();
+		List<Integer> list = new ArrayList<>();
 		for (int i = 0; i < 10; i++) {
 			list.add(i);
 		}
 
-		List<Either<Integer, Boolean>> container = new ArrayList<Either<Integer, Boolean>>();
-		list.stream().map(e -> myBusinessLogic(e, container)).filter(p -> p.isRight()).findAny();
+		List<Either<Integer, Boolean>> container = new ArrayList<>();
+		list.stream().map(e -> myBusinessLogic(e, container)).filter(Either::isRight).findAny();
 		// Actual Results are in container
-		assertTrue(container.size() == 6);
+        assertEquals(6, container.size());
 
 	}
 

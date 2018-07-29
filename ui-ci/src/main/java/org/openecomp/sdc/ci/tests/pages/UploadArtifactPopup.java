@@ -20,8 +20,7 @@
 
 package org.openecomp.sdc.ci.tests.pages;
 
-import java.io.File;
-
+import com.aventstack.extentreports.Status;
 import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum;
 import org.openecomp.sdc.ci.tests.execute.setup.SetupCDTest;
 import org.openecomp.sdc.ci.tests.utilities.GeneralUIUtils;
@@ -29,7 +28,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Select;
 
-import com.aventstack.extentreports.Status;
+import java.io.File;
 
 public class UploadArtifactPopup {
 

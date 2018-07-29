@@ -1,0 +1,61 @@
+@import "./../../../../../../assets/styles/variables-old";
+
+.component-add-element {
+
+  .add-element-selection-container {
+
+    display: flex;
+    flex-direction: row;
+    .add-element-selection {
+      flex: 2;
+    }
+
+    .add-element-button {
+      padding: 0px 0px 0px 15px;
+      &:not(.disabled) {
+        cursor:pointer;
+      }
+    }
+
+  }
+
+  .elements-list {
+    border: 1px solid #d2d2d2;
+    margin-top: 10px;
+    height: 300px;
+    overflow: auto;
+
+    .elements-list-item {
+      padding: 10px 20px 10px 20px;
+
+      &:first-child {
+        padding-top: 15px;
+      }
+
+      &:hover {
+        background-color: #f8f8f8;
+        .elements-list-item-delete {
+          visibility: visible;
+        }
+      }
+    }
+  }
+
+  .elements-list-item-delete {
+    float:right;
+    cursor: pointer;
+    visibility: hidden;
+  }
+
+
+  .add-element-no-data {
+    margin: 0 auto;
+    padding-top: 30px;
+    text-align: center;
+
+    .add-element-no-data-title {
+      font-family: @font-opensans-bold;
+    }
+
+  }
+}

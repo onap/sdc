@@ -20,12 +20,11 @@
 
 package org.openecomp.sdc.common.kpi.api;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 
 public class ASDCKpiApi {
 
-	private static Logger log = LoggerFactory.getLogger(ASDCKpiApi.class.getName());
+	private static Logger log = Logger.getLogger(ASDCKpiApi.class.getName());
 
 	/* Number of activated resource imports. */
 	public static void countImportResourcesKPI() {

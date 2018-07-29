@@ -27,16 +27,16 @@ import java.util.Map;
  * Schema allows to create new types that can be used along TOSCA definitions.
  */
 public class Schema {
-	private String derivedFrom;
-	private List<PropertyConstraint> constraints;
-	private Map<String, PropertyDefinition> properties;
-	private PropertyDefinition property;
+    private String derivedFrom;
+    private List<PropertyConstraint> constraints;
+    private Map<String, PropertyDefinition> properties;
+    private PropertyDefinition property;
 
-	public PropertyDefinition getProperty() {
-		return property;
-	}
+    public PropertyDefinition getProperty() {
+        return property;
+    }
 
-	public void setProperty(PropertyDefinition property) {
-		this.property = property;
-	}
+    public void setProperty(PropertyDefinition property) {
+        this.property = property;
+    }
 }

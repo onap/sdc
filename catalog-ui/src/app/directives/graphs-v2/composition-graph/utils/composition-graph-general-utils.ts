@@ -34,7 +34,8 @@ export class CompositionGraphGeneralUtils {
     constructor(private $q:ng.IQService,
                 private LoaderService:LoaderService,
                 private commonGraphUtils:CommonGraphUtils,
-                private matchCapabilitiesRequirementsUtils:MatchCapabilitiesRequirementsUtils) {
+                private matchCapabilitiesRequirementsUtils:MatchCapabilitiesRequirementsUtils, 
+                private Notification:any) {
         CompositionGraphGeneralUtils.graphUtilsUpdateQueue = new QueueUtils(this.$q);
     }
 
@@ -73,6 +74,34 @@ export class CompositionGraphGeneralUtils {
             renderedPosition: { x: zx, y: zy }
         });
     }
+
+
+    //saves the current zoom, and then sets a temporary maximum zoom for zoomAll, and then reverts to old value
+    public zoomAllWithMax = (cy:Cy.Instance, maxZoom:number):void => {
+
+        let oldMaxZoom:number = cy.maxZoom();
+        
+        cy.maxZoom(maxZoom);
+        this.zoomAll(cy);
+        cy.maxZoom(oldMaxZoom);
+
+    };
+
+
+    //Zooms to fit all of the nodes in the collection passed in. If no nodes are passed in, will zoom to fit all nodes on graph
+    public zoomAll = (cy:Cy.Instance, nodes?:Cy.CollectionNodes):void => {
+
+        if (!nodes || !nodes.length) {
+            nodes = cy.nodes();
+        }
+
+        cy.resize();
+        cy.animate({
+            fit: { eles: nodes, padding: 20 },
+            center: { eles: nodes }
+        }, { duration: 400 });
+    };
+
     /**
      * will return true/false if two nodes overlapping
      *
@@ -223,6 +252,27 @@ export class CompositionGraphGeneralUtils {
     };
 
 
+    public showPolicyUpdateSuccess = () => {
+        this.Notification.success({
+            message: "Policy Updated",
+            title: "Success"
+        });
+    }
+    
+    public showGroupUpdateSuccess = () => {
+        this.Notification.success({
+            message: "Group Updated",
+            title: "Success"
+        });
+    }
+
+    public showUpdateFailure = () => {
+        this.Notification.error({
+            message: "Update Failed",
+            title: "Error"
+        });
+    };
+
     /**
      * Get Graph Utils server queue
      * @returns {QueueUtils}
@@ -270,4 +320,4 @@ export class CompositionGraphGeneralUtils {
     };
 }
 
-CompositionGraphGeneralUtils.$inject = ['$q', 'LoaderService', 'CommonGraphUtils', 'MatchCapabilitiesRequirementsUtils'];
+CompositionGraphGeneralUtils.$inject = ['$q', 'LoaderService', 'CommonGraphUtils', 'MatchCapabilitiesRequirementsUtils', 'Notification'];

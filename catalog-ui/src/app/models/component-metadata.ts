@@ -47,6 +47,8 @@ export class ComponentMetadata {
     public highestVersion:boolean;
     public normalizedName:string;
     public systemName:string;
+    public archived:boolean;
+    public vspArchived: boolean;
 
     //Resource only
     public resourceType: string;
@@ -66,9 +68,11 @@ export class ComponentMetadata {
     public serviceType:string;
     public serviceRole:string;
     public environmentContext:string;
+    public instantiationType:string;
 
 
-    //backend lifecycleState
+
+        //backend lifecycleState
     public state:string;
 
     deserialize (response): ComponentMetadata {
@@ -111,6 +115,9 @@ export class ComponentMetadata {
         this.serviceType = response.serviceType;
         this.serviceRole = response.serviceRole;
         this.environmentContext = response.environmentContext;
+        this.archived = response.archived;
+        this.instantiationType = response.instantiationType;
+        this.vspArchived = response.vspArchived;
         return this;
     }
 

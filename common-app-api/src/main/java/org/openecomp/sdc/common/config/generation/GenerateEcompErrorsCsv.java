@@ -20,6 +20,11 @@
 
 package org.openecomp.sdc.common.config.generation;
 
+import org.openecomp.sdc.common.config.EcompErrorEnum;
+import org.openecomp.sdc.common.config.EcompErrorEnum.AlarmSeverity;
+import org.openecomp.sdc.common.config.EcompErrorEnum.ErrorType;
+import org.openecomp.sdc.common.config.EcompErrorLogUtil;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -30,11 +35,6 @@ import java.util.Date;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import org.openecomp.sdc.common.config.EcompErrorEnum;
-import org.openecomp.sdc.common.config.EcompErrorEnum.AlarmSeverity;
-import org.openecomp.sdc.common.config.EcompErrorEnum.ErrorType;
-import org.openecomp.sdc.common.config.EcompErrorLogUtil;
 
 public class GenerateEcompErrorsCsv {
 
@@ -136,7 +136,7 @@ public class GenerateEcompErrorsCsv {
 		boolean result = false;
 		String dateFormatted = "";
 
-		if (addTimeToFileName == true) {
+		if (addTimeToFileName) {
 			DateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
 
 			Date date = new Date();

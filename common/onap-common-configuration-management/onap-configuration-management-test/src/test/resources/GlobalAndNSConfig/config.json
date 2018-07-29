@@ -1,10 +1,13 @@
 {
-  
-    "artifact": {
-      "name": { "minlength": "6" },
-      "maxsize": "1048",
-      "extension": "pdf,tgz,xls"
-    },
-    "_config": { "mergeStrategy": "union","namespace":"GlobalAndNSConfig" }
-  
+	"artifact": {
+		"name": {
+			"minlength": "6"
+		},
+		"maxsize": "1048",
+		"extension": "pdf,tgz,xls"
+	},
+	"_config": {
+		"mergeStrategy": "union",
+		"namespace": "GlobalAndNSConfig"
+	}
 }

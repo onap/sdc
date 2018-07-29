@@ -1,27 +1,24 @@
 package org.openecomp.sdc.be.dao.cassandra;
 
-import java.util.List;
-
-import javax.annotation.PostConstruct;
-
+import com.datastax.driver.core.Session;
+import com.datastax.driver.mapping.MappingManager;
+import com.datastax.driver.mapping.Result;
+import fj.data.Either;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.datatypes.enums.EnvironmentStatusEnum;
 import org.openecomp.sdc.be.resources.data.OperationalEnvironmentEntry;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingTypesConstants;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.openecomp.sdc.common.log.enums.EcompLoggerErrorCode;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.springframework.stereotype.Component;
 
-import com.datastax.driver.core.Session;
-import com.datastax.driver.mapping.MappingManager;
-import com.datastax.driver.mapping.Result;
-
-import fj.data.Either;
+import javax.annotation.PostConstruct;
+import java.util.List;
 
 @Component("operational-environment-dao")
 public class OperationalEnvironmentDao extends CassandraDao {
 
-    private static Logger logger = LoggerFactory.getLogger(OperationalEnvironmentDao.class.getName());
+    private static Logger logger = Logger.getLogger(OperationalEnvironmentDao.class.getName());
     private OperationalEnvironmentsAccessor operationalEnvironmentsAccessor;
 
     public OperationalEnvironmentDao() {
@@ -37,15 +34,15 @@ public class OperationalEnvironmentDao extends CassandraDao {
                 session = result.left().value().left;
                 manager = result.left().value().right;
                 operationalEnvironmentsAccessor = manager.createAccessor(OperationalEnvironmentsAccessor.class);
-                logger.info("** OperationalEnvironmentDao created");
+                logger.debug("** OperationalEnvironmentDao created");
             } else {
-                logger.info("** OperationalEnvironmentDao failed");
+                logger.error(EcompLoggerErrorCode.DATA_ERROR, "OperationalEnvironmentDao", "OperationalEnvironmentDao", "** OperationalEnvironmentDao failed");
                 throw new RuntimeException("OperationalEnvironment keyspace [" + keyspace + "] failed to connect with error : "
                         + result.right().value());
             }
         } else {
-            logger.info("** Cassandra client isn't connected");
-            logger.info("** OperationalEnvironmentDao created, but not connected");
+            logger.error(EcompLoggerErrorCode.DATA_ERROR, "OperationalEnvironmentDao", "OperationalEnvironmentDao", "** Cassandra client isn't connected");
+            logger.error(EcompLoggerErrorCode.DATA_ERROR, "OperationalEnvironmentDao", "OperationalEnvironmentDao", "** OperationalEnvironmentDao created, but not connected");
         }
     }
     public CassandraOperationStatus save(OperationalEnvironmentEntry operationalEnvironmentEntry) {

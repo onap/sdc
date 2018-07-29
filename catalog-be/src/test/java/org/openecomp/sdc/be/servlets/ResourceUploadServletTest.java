@@ -20,22 +20,7 @@
 
 package org.openecomp.sdc.be.servlets;
 
-import static org.mockito.ArgumentMatchers.anyObject;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.when;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.core.Application;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
+import com.google.gson.Gson;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
@@ -66,7 +51,20 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.web.context.WebApplicationContext;
 
-import com.google.gson.Gson;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.Application;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.when;
 
 public class ResourceUploadServletTest extends JerseyTest {
     private static final Logger log = LoggerFactory.getLogger(ResourceUploadServletTest.class);
@@ -92,7 +90,7 @@ public class ResourceUploadServletTest extends JerseyTest {
         // when(servletContext.getAttribute(Constants.AUDITING_MANAGER)).thenReturn(iAuditingManager);
         when(webAppContextWrapper.getWebAppContext(servletContext)).thenReturn(webApplicationContext);
         when(webApplicationContext.getBean(IResourceUploader.class)).thenReturn(iResourceUploader);
-        when(iResourceUploader.saveArtifact((ESArtifactData) anyObject(), eq(true))).thenReturn(ResourceUploadStatus.OK);
+        when(iResourceUploader.saveArtifact((ESArtifactData) any(), eq(true))).thenReturn(ResourceUploadStatus.OK);
         when(webApplicationContext.getBean(AuditingManager.class)).thenReturn(iAuditingManager);
     }
 
@@ -136,7 +134,7 @@ public class ResourceUploadServletTest extends JerseyTest {
     @Test
     public void testMultipart() {
         FileDataBodyPart filePart = new FileDataBodyPart("resourceZip", new File("src/test/resources/config/normative-types-root.zip"));
-        List<String> tags = new ArrayList<String>();
+        List<String> tags = new ArrayList<>();
         tags.add("tag1");
         tags.add("tag2");
         UploadResourceInfo resourceInfo = new UploadResourceInfo("payload", "normative-types-root.yml", "my_description", "category/mycategory", tags, null);

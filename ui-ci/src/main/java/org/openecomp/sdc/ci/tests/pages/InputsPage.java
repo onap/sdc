@@ -20,9 +20,7 @@
 
 package org.openecomp.sdc.ci.tests.pages;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
+import com.aventstack.extentreports.Status;
 import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum;
 import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum.InputsScreenService;
 import org.openecomp.sdc.ci.tests.execute.setup.SetupCDTest;
@@ -31,7 +29,8 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.testng.TestException;
 
-import com.aventstack.extentreports.Status;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class InputsPage extends GeneralPageElements {
 
@@ -93,7 +92,7 @@ public class InputsPage extends GeneralPageElements {
 	public static void clickOnAddInputButton(){
 		SetupCDTest.getExtendTest().log(Status.INFO, String.format("Clicking on Add Input aka Greater than symbol button"));
 		GeneralUIUtils.clickOnElementByTestId(InputsScreenService.ADD_SELECTED_INPUTS_BTN.getValue());
-		GeneralUIUtils.ultimateWait();		
+//		GeneralUIUtils.ultimateWait();
 	}
 	
 	public static boolean clickOnVFInputCheckbox(WebElement instancInput){
@@ -122,7 +121,7 @@ public class InputsPage extends GeneralPageElements {
 		GeneralUIUtils.ultimateWait();
 		SetupCDTest.getExtendTest().log(Status.INFO, String.format("Clicking on OK button "));
 		GeneralUIUtils.clickOnElementByTestId(DataTestIdEnum.GeneralElementsEnum.OK.getValue());
-		GeneralUIUtils.ultimateWait();		
+//		GeneralUIUtils.ultimateWait();
 	}
 	
 	public static List<String> getVFCInstancesNamesFromTable() throws Exception{
@@ -146,7 +145,7 @@ public class InputsPage extends GeneralPageElements {
 	public static void clickOnProperty(String propertyName) {
 		SetupCDTest.getExtendTest().log(Status.INFO, String.format("Clicking on property %s ", propertyName));
 		GeneralUIUtils.clickOnElementByTestId(DataTestIdEnum.InputsScreenService.RESOURCE_INSTANCE_PROPERTY_NAME.getValue() + propertyName);
-		GeneralUIUtils.ultimateWait();
+//		GeneralUIUtils.ultimateWait();
 	}
 	
 	

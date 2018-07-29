@@ -1,14 +1,11 @@
 package org.openecomp.sdc.be.components.utils;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.openecomp.sdc.be.datatypes.elements.PolicyTargetType;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.model.PolicyDefinition;
+import org.openecomp.sdc.be.model.PropertyDefinition;
+
+import java.util.*;
 
 public class PolicyDefinitionBuilder {
 
@@ -55,6 +52,15 @@ public class PolicyDefinitionBuilder {
         return this;
     }
 
+     public PolicyDefinitionBuilder addProperty(String propName) {
+        initPolicyProperties();
+        PropertyDefinition prop = new PropertyDataDefinitionBuilder()
+                .setName(propName)
+                .build();
+        policyDefinition.getProperties().add(prop);
+        return this;
+    }
+
     public PolicyDefinition build() {
         return policyDefinition;
     }
@@ -66,5 +72,16 @@ public class PolicyDefinitionBuilder {
             policyDefinition.setTargets(targets);
         }
         return targets;
+    }
+
+    private void initPolicyProperties() {
+        if (policyDefinition.getProperties() == null) {
+            policyDefinition.setProperties(new ArrayList<>());
+        }
+    }
+
+    public PolicyDefinitionBuilder setType(String type) {
+        policyDefinition.setPolicyTypeName(type);
+        return this;
     }
 }

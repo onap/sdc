@@ -66,11 +66,11 @@ public class CheckoutTest extends LifecycleTestBase {
         assertTrue(ownerResponse.isLeft());
         User owner = ownerResponse.left().value();
         changeStateResult = checkoutObj.changeState(ComponentTypeEnum.RESOURCE, resource, bl, user, owner, false, false);
-        assertEquals(changeStateResult.isLeft(), true);
+        assertTrue(changeStateResult.isLeft());
 
         resource.setLifecycleState(LifecycleStateEnum.CERTIFIED);
         changeStateResult = checkoutObj.changeState(ComponentTypeEnum.RESOURCE, resource, bl, user, owner, false, false);
-        assertEquals(changeStateResult.isLeft(), true);
+        assertTrue(changeStateResult.isLeft());
 
     }
 
@@ -84,10 +84,10 @@ public class CheckoutTest extends LifecycleTestBase {
         assertTrue(ownerResponse.isLeft());
         User owner = ownerResponse.left().value();
         Either<Boolean, ResponseFormat> validateBeforeTransition = checkoutObj.validateBeforeTransition(resource, ComponentTypeEnum.RESOURCE, user, owner, LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
-        assertEquals(validateBeforeTransition.isRight(), true);
+        assertTrue(validateBeforeTransition.isRight());
         changeStateResult = Either.right(validateBeforeTransition.right().value());
 
-        assertEquals(changeStateResult.isRight(), true);
+        assertTrue(changeStateResult.isRight());
         assertResponse(changeStateResult, ActionStatus.COMPONENT_IN_CHECKOUT_STATE, resource.getName(), ComponentTypeEnum.RESOURCE.name().toLowerCase(), user.getFirstName(), user.getLastName(), user.getUserId());
 
     }
@@ -104,9 +104,9 @@ public class CheckoutTest extends LifecycleTestBase {
         changeStateResult = checkoutObj.changeState(ComponentTypeEnum.RESOURCE, resource, bl, user, owner, false, false);
 
         Either<Boolean, ResponseFormat> validateBeforeTransition = checkoutObj.validateBeforeTransition(resource, ComponentTypeEnum.RESOURCE, user, owner, LifecycleStateEnum.CERTIFICATION_IN_PROGRESS);
-        assertEquals(validateBeforeTransition.isRight(), true);
+        assertTrue(validateBeforeTransition.isRight());
         changeStateResult = Either.right(validateBeforeTransition.right().value());
-        assertEquals(changeStateResult.isRight(), true);
+        assertTrue(changeStateResult.isRight());
 
         assertResponse(changeStateResult, ActionStatus.COMPONENT_IN_CERT_IN_PROGRESS_STATE, resource.getName(), ComponentTypeEnum.RESOURCE.name().toLowerCase(), user.getFirstName(), user.getLastName(), user.getUserId());
 
@@ -124,7 +124,7 @@ public class CheckoutTest extends LifecycleTestBase {
         assertTrue(ownerResponse.isLeft());
         User owner = ownerResponse.left().value();
         Either<Boolean, ResponseFormat> validateBeforeTransition = checkoutObj.validateBeforeTransition(resource, ComponentTypeEnum.RESOURCE, user, owner, LifecycleStateEnum.READY_FOR_CERTIFICATION);
-        assertEquals(validateBeforeTransition.isLeft(), true);
+        assertTrue(validateBeforeTransition.isLeft());
 
         // else
         User modifier = new User();
@@ -135,15 +135,15 @@ public class CheckoutTest extends LifecycleTestBase {
         // admin
         modifier.setRole(Role.ADMIN.name());
         validateBeforeTransition = checkoutObj.validateBeforeTransition(resource, ComponentTypeEnum.RESOURCE, modifier, owner, LifecycleStateEnum.READY_FOR_CERTIFICATION);
-        assertEquals(validateBeforeTransition.isLeft(), true);
+        assertTrue(validateBeforeTransition.isLeft());
 
         // designer
         modifier.setRole(Role.TESTER.name());
         validateBeforeTransition = checkoutObj.validateBeforeTransition(resource, ComponentTypeEnum.RESOURCE, modifier, owner, LifecycleStateEnum.READY_FOR_CERTIFICATION);
-        assertEquals(validateBeforeTransition.isRight(), true);
+        assertTrue(validateBeforeTransition.isRight());
         changeStateResult = Either.right(validateBeforeTransition.right().value());
 
-        assertEquals(changeStateResult.isRight(), true);
+        assertTrue(changeStateResult.isRight());
         assertResponse(changeStateResult, ActionStatus.RESTRICTED_OPERATION, resource.getName(), ComponentTypeEnum.RESOURCE.name().toLowerCase(), user.getFirstName(), user.getLastName(), user.getUserId());
 
     }
@@ -164,11 +164,11 @@ public class CheckoutTest extends LifecycleTestBase {
         assertTrue(ownerResponse.isLeft());
         User owner = ownerResponse.left().value();
         Either<Boolean, ResponseFormat> validateBeforeTransition = checkoutObj.validateBeforeTransition(resource, ComponentTypeEnum.RESOURCE, modifier, owner, LifecycleStateEnum.NOT_CERTIFIED_CHECKIN);
-        assertEquals(validateBeforeTransition.isLeft(), true);
+        assertTrue(validateBeforeTransition.isLeft());
 
         modifier.setRole(Role.TESTER.name());
         validateBeforeTransition = checkoutObj.validateBeforeTransition(resource, ComponentTypeEnum.RESOURCE, modifier, owner, LifecycleStateEnum.NOT_CERTIFIED_CHECKIN);
-        assertEquals(validateBeforeTransition.isRight(), true);
+        assertTrue(validateBeforeTransition.isRight());
         changeStateResult = Either.right(validateBeforeTransition.right().value());
         assertResponse(changeStateResult, ActionStatus.RESTRICTED_OPERATION);
 

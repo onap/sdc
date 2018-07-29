@@ -20,46 +20,63 @@
 
 package org.openecomp.sdc.be.model;
 
-import java.util.Map;
-
 import org.openecomp.sdc.be.datatypes.elements.CapabilityTypeDataDefinition;
+import org.openecomp.sdc.be.resources.data.CapabilityTypeData;
+
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Specifies the capabilities that the Node Type exposes.
  */
+@SuppressWarnings("serial")
 public class CapabilityTypeDefinition extends CapabilityTypeDataDefinition {
 
-	private String derivedFrom;
+    private String derivedFrom;
 
-	private Map<String, PropertyDefinition> properties;
+    private Map<String, PropertyDefinition> properties;
 
-	public String getDerivedFrom() {
-		return derivedFrom;
+    public String getDerivedFrom() {
+        return derivedFrom;
+    }
+
+    public void setDerivedFrom(String derivedFrom) {
+        this.derivedFrom = derivedFrom;
+    }
+
+    public Map<String, PropertyDefinition> getProperties() {
+        return properties;
+    }
+
+    public void setProperties(Map<String, PropertyDefinition> properties) {
+        this.properties = properties;
+    }
+
+    public CapabilityTypeDefinition() {
+        super();
+    }
+
+    public CapabilityTypeDefinition(CapabilityTypeDataDefinition p) {
+        super(p);
+    }
+	
+	public CapabilityTypeDefinition(CapabilityDefinition cp) {
+		this.setUniqueId(cp.getUniqueId());
+		this.setDescription ( cp.getDescription());
+		this.setType(cp.getType());
+		this.setValidSourceTypes( cp.getValidSourceTypes()); 
+		this.setProperties(cp.getProperties().stream().collect(Collectors.toMap(ComponentInstanceProperty::getName, PropertyDefinition::new)));
 	}
 
-	public void setDerivedFrom(String derivedFrom) {
-		this.derivedFrom = derivedFrom;
+	public CapabilityTypeDefinition(CapabilityTypeData ctd) {
+		this.setUniqueId(ctd.getUniqueId());
+		this.setType(ctd.getCapabilityTypeDataDefinition().getType());
+		this.setDescription ( ctd.getCapabilityTypeDataDefinition().getDescription());
+		this.setValidSourceTypes( ctd.getCapabilityTypeDataDefinition().getValidSourceTypes()); 
 	}
 
-	public Map<String, PropertyDefinition> getProperties() {
-		return properties;
-	}
-
-	public void setProperties(Map<String, PropertyDefinition> properties) {
-		this.properties = properties;
-	}
-
-	public CapabilityTypeDefinition() {
-		super();
-	}
-
-	public CapabilityTypeDefinition(CapabilityTypeDataDefinition p) {
-		super(p);
-	}
-
-	@Override
-	public String toString() {
-		return super.toString() + " [ derivedFrom=" + derivedFrom + ", properties=" + properties + " ]";
-	}
-
+    @Override
+    public String toString() {
+        return super.toString() + " [ derivedFrom=" + derivedFrom + ", properties=" + properties + " ]";
+    }
 }

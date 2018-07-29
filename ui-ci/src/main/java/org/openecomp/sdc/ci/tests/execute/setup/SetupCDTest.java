@@ -20,24 +20,15 @@
 
 package org.openecomp.sdc.ci.tests.execute.setup;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Map;
-import java.util.UUID;
-import java.util.logging.FileHandler;
-import java.util.logging.Handler;
-import java.util.logging.LogManager;
-import java.util.logging.Logger;
-
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.LoggerContext;
+import com.aventstack.extentreports.ExtentTest;
+import com.aventstack.extentreports.Status;
+import net.lightbody.bmp.core.har.Har;
 import org.json.simple.JSONObject;
-import org.littleshoot.proxy.impl.ClientToProxyConnection;
-import org.littleshoot.proxy.impl.ProxyToServerConnection;
 import org.openecomp.sdc.be.model.User;
-import org.openecomp.sdc.ci.tests.config.UserCredentialsFromFile;
-import org.openecomp.sdc.ci.tests.execute.setup.ExtentTestManager;
 import org.openecomp.sdc.ci.tests.api.SomeInterface;
+import org.openecomp.sdc.ci.tests.config.UserCredentialsFromFile;
 import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum;
 import org.openecomp.sdc.ci.tests.datatypes.UserCredentials;
 import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
@@ -59,33 +50,25 @@ import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.ITestContext;
 import org.testng.ITestResult;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.AfterSuite;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.BeforeSuite;
-import org.testng.annotations.Optional;
-import org.testng.annotations.Parameters;
-import org.testng.annotations.Test;
+import org.testng.annotations.*;
 
-import com.aventstack.extentreports.ExtentReports;
-import com.aventstack.extentreports.ExtentTest;
-import com.aventstack.extentreports.Status;
-
-import ch.qos.logback.classic.Level;
-import ch.qos.logback.classic.LoggerContext;
-import groovyjarjarantlr.Utils;
-import net.lightbody.bmp.BrowserMobProxyServer;
-import net.lightbody.bmp.core.har.Har;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.UUID;
 
 public abstract class SetupCDTest extends DriverFactory {
-	
-//	private static final String RE_RUN = "ReRun - ";
+
+	//	private static final String RE_RUN = "ReRun - ";
 	private static final String RE_RUN = "<html><font color=\"red\">ReRun - </font></html>";
 	private static final String WEB_SEAL_PASSWORD = "123123a";
+	protected static final String HEAT_FILE_YAML_NAME_PREFIX = "Heat-File";
+	protected static final String HEAT_FILE_YAML_NAME_SUFFIX = ".yaml";
 
 	public SetupCDTest() {
 		LoggerContext lc = (LoggerContext) LoggerFactory. getILoggerFactory();
-		lc.getLogger("org.apache").setLevel(Level.INFO);	    
+		lc.getLogger("org.apache").setLevel(Level.INFO);
 	}
 
 	/**************** CONSTANTS ****************/
@@ -95,11 +78,11 @@ public abstract class SetupCDTest extends DriverFactory {
 	protected static final String SCREENSHOT_FOLDER = REPORT_FOLDER + "screenshots" + File.separator;
 	protected static final String HAR_FILES_FOLDER_NAME = "har_files";
 	protected static final String HAR_FILES_FOLDER = REPORT_FOLDER + HAR_FILES_FOLDER_NAME + File.separator;
-	
+
 
 	private static final String SHORT_CSV_REPORT_FILE_NAME = "ShortReport.csv";
 	private static final int NUM_OF_ATTEMPTS_TO_REFTRESH = 2;
-	
+
 
 	/**************** PRIVATES ****************/
 	private static String url;
@@ -107,10 +90,10 @@ public abstract class SetupCDTest extends DriverFactory {
 	private static boolean localEnv = true;
 	private static OnboardCSVReport csvReport;
 	private final UserCredentialsFromFile credentialsIns = UserCredentialsFromFile.getInstance();
-	
-    protected static ITestContext myContext;
-	
-	
+
+	protected static ITestContext myContext;
+
+
 	/**************** METHODS ****************/
 	public static ExtentTest getExtendTest() {
 		SomeInterface testManager = new ExtentTestManager(); 
@@ -119,26 +102,26 @@ public abstract class SetupCDTest extends DriverFactory {
 	public static WindowTest getWindowTest(){
 		return WindowTestManager.getWindowMap();
 	}
-	
+
 	public OnboardCSVReport getCsvReport() {
 		return csvReport;
 	}
-	
+
 	public static String getReportFolder() {
 		return REPORT_FOLDER;
 	}
-	
+
 	public static String getScreenshotFolder() {
 		return SCREENSHOT_FOLDER;
 	}
-	
+
 	public static String getHarFilesFolder() {
 		return HAR_FILES_FOLDER;
 	}
-	
-	
+
+
 	protected abstract UserRoleEnum getRole();
-	
+
 	/**************** BEFORE ****************/
 
 	@BeforeSuite(alwaysRun = true)
@@ -147,10 +130,10 @@ public abstract class SetupCDTest extends DriverFactory {
 		myContext=context;
 		setErrorConfigurationFile();
 		setUrl();
-		ExtentManager.initReporter(getReportFolder(), REPORT_FILE_NAME, context);		
+		ExtentManager.initReporter(getReportFolder(), REPORT_FILE_NAME, context);
 		csvReport = new OnboardCSVReport(getReportFolder(), SHORT_CSV_REPORT_FILE_NAME);
 	}
-	
+
 	private static void setErrorConfigurationFile() {
 		if (!System.getProperty("os.name").contains("Windows")){
 			String errorConfigurationFilename = getConfig().getErrorConfigurationFile();
@@ -161,10 +144,10 @@ public abstract class SetupCDTest extends DriverFactory {
 			}
 		}
 	}
-	
+
 	@BeforeMethod(alwaysRun = true )
 	public void setBrowserBeforeTest(java.lang.reflect.Method method, ITestContext context) throws Exception {
-		
+
 		boolean emptyDataProvider = method.getAnnotation(Test.class).dataProvider().isEmpty();
 		String className = method.getDeclaringClass().getName();
 		if (emptyDataProvider && !className.contains("ToscaValidationTest") ) {
@@ -175,28 +158,28 @@ public abstract class SetupCDTest extends DriverFactory {
 			}else{
 				ExtentTestManager.startTest(method.getName());
 			}
-		
+
 			ExtentTestManager.assignCategory(this.getClass());
 			setBrowserBeforeTest(getRole());
 		} else {
 			System.out.println("ExtentReport instance started from Test...");
 		}
-		
+
 		getConfig().setWindowsDownloadDirectory(getWindowTest().getDownloadDirectory());
-		
+
 		if (getConfig().getCaptureTraffic()){
 			try{
-			    MobProxy.getPoxyServer().newHar(method.getName() + ".har");
+				MobProxy.getPoxyServer().newHar(method.getName() + ".har");
 			} catch (Throwable e) {
 				e.printStackTrace();
 			}
-		}		
+		}
 	}
-	
+
 	/**************** AFTER ****************/
 	@AfterMethod(alwaysRun = true)
 	public void quitAfterTest(ITestResult result, ITestContext context) throws Exception {
-		
+
 		try{
 			ReportAfterTestManager.report(result, context);
 			GeneralUIUtils.closeErrorMessage();
@@ -204,9 +187,9 @@ public abstract class SetupCDTest extends DriverFactory {
 		finally{
 			try {
 				if (getConfig().getCaptureTraffic()){
-					addTrafficFileToReport(result);				
+					addTrafficFileToReport(result);
 				}
-				
+
 				if (result.getInstanceName().equals(OnboardingFlowsUI.class.getName())  && result.getStatus() == ITestResult.FAILURE){
 					System.out.println("Onboarding test failed, closign browser....");
 					getExtendTest().log(Status.INFO, "Onboarding test failed, closing browser....");
@@ -220,15 +203,15 @@ public abstract class SetupCDTest extends DriverFactory {
 						quitDriver();
 					}
 				}
-				
+
 			} catch (Exception e) {
 				e.printStackTrace();
-						getExtendTest().log(Status.ERROR, "Exception:"+ e.toString());
-			} 
-			
-			
-			
-	    	ExtentTestManager.endTest();
+				getExtendTest().log(Status.ERROR, "Exception:"+ e.toString());
+			}
+
+
+
+			ExtentTestManager.endTest();
 			String suiteName = ExtentManager.getSuiteName(context);
 //			write result to csv file
 			if((!suiteName.equals(suiteNameXml.TESTNG_FAILED_XML_NAME.getValue())) && (result.getStatus() == ITestResult.SKIP)) {
@@ -238,8 +221,8 @@ public abstract class SetupCDTest extends DriverFactory {
 				addResultToCSV(result, context);
 			}
 //	    	ExtentManager.closeReporter();
-	    	FileHandling.cleanCurrentDownloadDir();
-    	}
+			FileHandling.cleanCurrentDownloadDir();
+		}
 
 	}
 	public void addResultToCSV(ITestResult result, ITestContext context) {
@@ -249,44 +232,44 @@ public abstract class SetupCDTest extends DriverFactory {
 		String name = model.getName();
 		String status = model.getStatus().toString();
 //		if (suiteName.equals(suiteNameXml.TESTNG_FAILED_XML_NAME.getValue()) && !(result.getStatus() == ITestResult.SUCCESS)) {
-			getCsvReport().writeRow(result.getInstanceName(), name.replace(RE_RUN,""), status);
+		getCsvReport().writeRow(result.getInstanceName(), name.replace(RE_RUN,""), status);
 //		}
 	}
-	
+
 	public void generateReport4Jenkins(ITestContext context) {
-		String suiteName = ExtentManager.getSuiteName(context);	
+		String suiteName = ExtentManager.getSuiteName(context);
 //		String outputDirectory = context.getOutputDirectory();
-	    JSONObject obj = new JSONObject();
-	    String success = Integer.toString(context.getPassedTests().size());
-	    String failed = Integer.toString(context.getFailedTests().size());
-	    String total = Integer.toString(context.getFailedTests().size()+context.getPassedTests().size());
-        obj.put("projectName", "SDC-ONAP-UI-Automation-"+suiteName);
-        obj.put("projectVersion",  AutomationUtils.getOSVersion());
-        obj.put("platform", "Linux");
-        obj.put("total", total);
-        obj.put("success", success);
-        obj.put("failed", failed);
-        
-        try (FileWriter file = new FileWriter(getReportFolder() + "jenkinsResults.json")) {
+		JSONObject obj = new JSONObject();
+		String success = Integer.toString(context.getPassedTests().size());
+		String failed = Integer.toString(context.getFailedTests().size());
+		String total = Integer.toString(context.getFailedTests().size()+context.getPassedTests().size());
+		obj.put("projectName", "SDC-ONAP-UI-Automation-"+suiteName);
+		obj.put("projectVersion",  AutomationUtils.getOSVersion());
+		obj.put("platform", "Linux");
+		obj.put("total", total);
+		obj.put("success", success);
+		obj.put("failed", failed);
 
-            file.write(obj.toJSONString());
-            file.flush();
+		try (FileWriter file = new FileWriter(getReportFolder() + "jenkinsResults.json")) {
 
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+			file.write(obj.toJSONString());
+			file.flush();
 
-        System.out.print(obj);
-		
-		
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		System.out.print(obj);
+
+
 	}
-	
-	
+
+
 	@Parameters({ "eraseAfterTests" })
 	@AfterSuite(alwaysRun = true)	
 	public void afterSuite2(@Optional("true") String eraseAfterTestsReadValue) throws Exception  {
 //		public void afterSuite() throws Exception  {
-		
+
 		csvReport.closeFile();
 		generateReport4Jenkins(myContext);
 		
@@ -295,12 +278,12 @@ public abstract class SetupCDTest extends DriverFactory {
 		} else {
 			System.out.println("Resources will not be deleted according to suite configuration ...");
 		}
-		
+
 		if (getConfig().getUseBrowserMobProxy()){
 			MobProxy.getPoxyServer().stop();
 		}
 	}
-	
+
 	protected static String setUrl() {
 		url = getConfig().getUrl();
 		uiSimulator = getConfig().isUiSimulator();
@@ -324,11 +307,11 @@ public abstract class SetupCDTest extends DriverFactory {
 			System.out.println("Navigating to URL : " + url);
 			getDriver().navigate().to(url);
 			GeneralUIUtils.waitForLoader();
-			
+
 			System.out.println("Zooming out...");
 			GeneralUIUtils.windowZoomOutUltimate();
-			
-		} 
+
+		}
 		catch (Exception e) {
 			String msg = "Browser is unreachable";
 			System.out.println(msg);
@@ -339,16 +322,16 @@ public abstract class SetupCDTest extends DriverFactory {
 	private static void deleteCookies() throws Exception {
 		getDriver().manage().deleteAllCookies();
 		Thread.sleep(1000);
-		
+
 		int attempts = 0;
 		final int max_attempts = 3;
-		
+
 		while (!getDriver().manage().getCookies().isEmpty() && attempts < max_attempts){
 			getExtendTest().log(Status.INFO, "Trying to delete cookies one more time - " + (attempts + 1) + "/" + max_attempts + "attempts");
 			String deleteCookiesJS = "document.cookie.split(';').forEach(function(c) { document.cookie = c.replace(/^ +/, '').replace(/=.*/, '=;expires=' + new Date().toUTCString() + ';path=/'); });";
 			((JavascriptExecutor) getDriver()).executeScript(deleteCookiesJS);
 			attempts++;
-			
+
 			if (attempts == max_attempts){
 				String msg = "Did not delete cookies, can't login as user " + WindowTestManager.getWindowMap().getUser().getRole();
 				System.out.println(msg);
@@ -357,7 +340,7 @@ public abstract class SetupCDTest extends DriverFactory {
 			}
 		}
 	}
-	
+
 	protected void loginToSystem(UserRoleEnum role) throws Exception {
 		UserCredentials credentials = new UserCredentials(role.getUserId(), role.getPassword(), role.getFirstName(), role.getLastName(), role.name());
 		if (localEnv){
@@ -371,7 +354,7 @@ public abstract class SetupCDTest extends DriverFactory {
 			Assert.assertTrue(buttonOK.isDisplayed(), "OK button is not displayed.");
 			buttonOK.click();
 		}
-		GeneralUIUtils.ultimateWait();                   
+		GeneralUIUtils.ultimateWait();
 		getWindowTest().setUser(credentials);
 	}
 
@@ -379,12 +362,12 @@ public abstract class SetupCDTest extends DriverFactory {
 		try {
 			getWindowTest().setRefreshAttempts(getWindowTest().getRefreshAttempts() == 0 ? NUM_OF_ATTEMPTS_TO_REFTRESH : getWindowTest().getRefreshAttempts());
 			if (!role.equals(UserRoleEnum.ADMIN)) {
-				
+
 				WebElement closeButton = GeneralUIUtils.getClickableButtonBy(By.className("sdc-welcome-close"), 10);
 				if (closeButton != null){
 					closeButton.click();
 				}
-				
+
 				if (!GeneralUIUtils.isElementVisibleByTestId(DataTestIdEnum.MainMenuButtons.HOME_BUTTON.getValue()))
 				{
 					restartBrowser(role);
@@ -408,18 +391,18 @@ public abstract class SetupCDTest extends DriverFactory {
 
 		reloginWithNewRole(role);
 	}
-	
+
 	public void loginToSimulator(UserRoleEnum role){
 		WebDriver driver = GeneralUIUtils.getDriver();
 		WebDriverWait wait = new WebDriverWait(driver, 30);
-		
+
 		wait.until(ExpectedConditions.visibilityOf(driver.findElement(By.xpath("//*[@method='" + "post" + "']"))));
-		
+
 		WebElement userIdTextbox = GeneralUIUtils.getWebElementBy(By.name("userId"));
 		userIdTextbox.sendKeys(role.getUserId());
 		WebElement passwordTextbox = GeneralUIUtils.getWebElementBy(By.name("password"));
 		passwordTextbox.sendKeys(WEB_SEAL_PASSWORD);
-		
+
 		wait.until(ExpectedConditions.elementToBeClickable(driver.findElement(By.xpath("//*[@value='" + "Login" + "']")))).click();
 	}
 
@@ -450,7 +433,7 @@ public abstract class SetupCDTest extends DriverFactory {
 		user.setFirstName(role.getFirstName());
 		user.setRole(role.name());
 		user.setLastName(role.getLastName());
-		
+
 		getWindowTest().setUser(user);
 	}
 
@@ -536,9 +519,9 @@ public abstract class SetupCDTest extends DriverFactory {
 			}
 		}
 	}*/
-	
+
 	public void addTrafficFileToReport(ITestResult result) {
-		try {				
+		try {
 			// Get the HAR data
 			Har har = MobProxy.getPoxyServer().getHar();
 			String shortUUID = UUID.randomUUID().toString().split("-")[0];
@@ -546,36 +529,36 @@ public abstract class SetupCDTest extends DriverFactory {
 			new File(getHarFilesFolder()).mkdirs();
 
 			har.writeTo(harFile);
-			
+
 			String pathToFileFromReportDirectory = HAR_FILES_FOLDER_NAME + File.separator + harFile.getName();
 			ExtentTestActions.addFileToReportAsLink(harFile, pathToFileFromReportDirectory, "File with captured traffic");
 		} catch (IOException ioe) {
 			ioe.printStackTrace();
 		}
 	}
-	
+
 	/*
 	 * * Start section of test in ExtentReport with DataProvider parameters,
 	 * should be started from test method, see example in onboardVNFTest
 	 */
 	public void setLog(String fromDataProvider) {
-		
+
 		String suiteName = ExtentManager.getSuiteName(myContext);
 		if (suiteName.equals(suiteNameXml.TESTNG_FAILED_XML_NAME.getValue())) {
 			ExtentTestManager.startTest(RE_RUN +Thread.currentThread().getStackTrace()[2].getMethodName() + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + fromDataProvider);
 		}else{
 			ExtentTestManager.startTest(Thread.currentThread().getStackTrace()[2].getMethodName() + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + fromDataProvider);
 		}
-		
-		
-		
+
+
+
 		getWindowTest().setAddedValueFromDataProvider(fromDataProvider);
 		ExtentTestManager.assignCategory(this.getClass());
 		setBrowserBeforeTest(getRole());
 	}
-	
-	
-	
+
+
+
 	/**************** MAIN ****************/
 	public static void main(String[] args) {
 		System.out.println("---------------------");
@@ -585,11 +568,11 @@ public abstract class SetupCDTest extends DriverFactory {
 		String attsdcFilePath = FileHandling.getBasePath() + File.separator + "conf" + File.separator + "attsdc.yaml";
 		System.setProperty("config.resource", attsdcFilePath);
 		System.out.println("attsdc.yaml file path is : " + attsdcFilePath);
-		
+
 		String filepath = FileHandling.getBasePath() + File.separator + "Files" + File.separator;
 		System.setProperty("filePath", filepath);
 		System.out.println("filePath is : " + System.getProperty("filePath"));
-		
+
 		Object[] testSuitsList = FileHandling.filterFileNamesFromFolder(FileHandling.getBasePath() + File.separator + "testSuites", ".xml");
 		if (testSuitsList != null) {
 			System.out.println(String.format("Found %s testSuite(s)", testSuitsList.length));

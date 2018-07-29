@@ -22,7 +22,12 @@ package org.openecomp.sdc.ci.tests.datatypes.enums;
 
 public enum ToscaKeysEnum {
 
-	TOSCA_DEFINITION_VERSION("tosca_definitions_version"), METADATA("metadata"), IMPORTS("imports"), NODE_TYPES("node_types"), TOPOLOGY_TEMPLATE("topology_template");
+	TOSCA_DEFINITION_VERSION("tosca_definitions_version"),
+	METADATA("metadata"),
+	IMPORTS("imports"),
+	NODE_TYPES("node_types"),
+	TOPOLOGY_TEMPLATE("topology_template"),
+	ANNOTATION_TYPES("annotation_types");
 
 	private String toscaKey;
 

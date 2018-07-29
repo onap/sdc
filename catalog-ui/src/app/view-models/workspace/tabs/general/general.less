@@ -1,5 +1,12 @@
 .sdc-workspace-general-step {
     display: flex;
+    flex-direction: column;
+    .w-sdc-main-container-body-content-action-buttons{
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        margin-bottom: 10px;
+    }
     .w-sdc-form {
         padding: 0;
         flex-grow: 10;
@@ -26,9 +33,14 @@
                 width: 100px;
                 height: 28px;
                 text-align: center;
+                border-left: solid 1px #cfcfcf;
 
                 &.disabled {
                     cursor: default;
+                }
+
+                &:hover:not(.disabled) {
+                    background-color: #dbdee2;
                 }
             }
         }
@@ -80,8 +92,7 @@
         padding: 8px 0 2px 20px;
         text-align: left;
         background-color: @tlv_color_t;
-        position: absolute;
-        bottom: 0;
+        position: relative;
         width: 100%;
         .meta-data-item-value{
             padding-bottom: 6px;
@@ -97,19 +108,19 @@
         display: flex;
         align-items: center;
         .selected-icon-inner-container{
-            height: 64px;
-            width: 64px;
+            height: 60px;
+            width: 60px;
             margin: 0 auto;
         }
         .update-component-icon{
             position: relative;
             float: right;
             cursor: pointer;
+            z-index: 1;
         }
         .selected-icon{
             position: relative;
             top: -20px;
-            z-index: -1;
             &.disable{
                 position: inherit;
             }
@@ -137,7 +148,22 @@
     }
 
 
+    .unsaved-file-warning {
+        border: solid 1px #ffb81c;
+        padding: 5px 8px;
+        display: flex;
+        align-items: center;
+        color: #ffb81c;
+        margin-right: 10px;
+        border-radius: 2px;
+        .sdc-warning {
+            margin-right:4px;
+        }
+    }
 
+    .revert-btn {
+        margin-left: 10px;
+    }
 
 }
 

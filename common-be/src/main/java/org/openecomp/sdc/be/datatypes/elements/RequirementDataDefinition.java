@@ -24,26 +24,21 @@ import com.google.common.collect.Lists;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 /**
  * Represents the requirement of the component or component instance
  */
-public class RequirementDataDefinition extends ToscaDataDefinition implements Serializable {
-	/**
-	 * 
-	 */
+public class RequirementDataDefinition extends ToscaDataDefinition {
+
 	public static final String MIN_OCCURRENCES = "1";
 	public static final String MAX_OCCURRENCES = "UNBOUNDED";
 	public static final String MAX_DEFAULT_OCCURRENCES = "1";
 
-	private static final long serialVersionUID = -8840549489409274532L;
 	/**
 	 * The default constructor initializing limits of the occurrences
 	 */
 	public RequirementDataDefinition() {
-		super();
 		this.setMinOccurrences(  MIN_OCCURRENCES );
 		this.setMaxOccurrences(  MAX_OCCURRENCES);
 		this.setLeftOccurrences(  MAX_OCCURRENCES);
@@ -56,6 +51,7 @@ public class RequirementDataDefinition extends ToscaDataDefinition implements Se
 		this.setUniqueId(other.getUniqueId());
 		this.setName(other.getName());
 		this.setParentName(other.getParentName());
+		this.setPreviousName(other.getPreviousName());
 		this.setCapability(other.getCapability());
 		this.setNode(other.getNode());
 		this.setRelationship(other.getRelationship());
@@ -96,6 +92,14 @@ public class RequirementDataDefinition extends ToscaDataDefinition implements Se
 	
 	public void setParentName(String parentName) {
 		setToscaPresentationValue(JsonPresentationFields.PARENT_NAME, parentName);
+	}
+
+	public String getPreviousName() {
+		return (String) getToscaPresentationValue(JsonPresentationFields.PREVIOUS_NAME);
+	}
+
+	public void setPreviousName(String previousName) {
+		setToscaPresentationValue(JsonPresentationFields.PREVIOUS_NAME, previousName);
 	}
 
 	/**

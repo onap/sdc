@@ -27,8 +27,8 @@ import org.openecomp.sdc.be.resources.data.InputValueData;
 
 public interface IInputsOperation {
 
-	ImmutablePair<TitanOperationStatus, String> findInputValue(String resourceInstanceId, String propertyId);
+    ImmutablePair<TitanOperationStatus, String> findInputValue(String resourceInstanceId, String propertyId);
 
-	ComponentInstanceInput buildResourceInstanceInput(InputValueData propertyValueData, ComponentInstanceInput resourceInstanceInput);
+    ComponentInstanceInput buildResourceInstanceInput(InputValueData propertyValueData, ComponentInstanceInput resourceInstanceInput);
 
 }

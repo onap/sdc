@@ -20,26 +20,20 @@
 
 package org.openecomp.sdc.ci.tests.utils.cassandra;
 
-import java.io.FileNotFoundException;
-import java.util.Collection;
-import java.util.List;
-
-import org.javatuples.Pair;
-import org.openecomp.sdc.be.resources.data.auditing.AuditingTypesConstants;
-import org.openecomp.sdc.ci.tests.utils.Utils;
-import org.openecomp.sdc.common.datastructure.AuditingFieldsKeysEnum;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.datastax.driver.core.Cluster;
-import com.datastax.driver.core.KeyspaceMetadata;
-import com.datastax.driver.core.Metadata;
-import com.datastax.driver.core.Row;
-import com.datastax.driver.core.Session;
-import com.datastax.driver.core.TableMetadata;
+import com.datastax.driver.core.*;
 import com.datastax.driver.core.querybuilder.QueryBuilder;
 import com.datastax.driver.core.querybuilder.Select;
 import com.datastax.driver.core.querybuilder.Select.Where;
+import org.javatuples.Pair;
+import org.openecomp.sdc.be.resources.data.auditing.AuditingTypesConstants;
+import org.openecomp.sdc.ci.tests.utils.Utils;
+import org.openecomp.sdc.common.datastructure.AuditingFieldsKey;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.FileNotFoundException;
+import java.util.Collection;
+import java.util.List;
 
 public final class CassandraUtils2 {
 	private static Logger logger = LoggerFactory.getLogger(CassandraUtils2.class.getName());
@@ -110,10 +104,10 @@ public final class CassandraUtils2 {
 	}
 
 	public static List<Row> fetchFromTable(String keyspace, String tableName,
-			List<Pair<AuditingFieldsKeysEnum, String>> fields) throws FileNotFoundException {
+			List<Pair<AuditingFieldsKey, String>> fields) throws FileNotFoundException {
 
-		// List<Pair<AuditingFieldsKeysEnum, String>>
-		// Map<AuditingFieldsKeysEnum, String>
+		// List<Pair<AuditingFieldsKey, String>>
+		// Map<AuditingFieldsKey, String>
 
 		Cluster cluster = null;
 		Session session;
@@ -125,14 +119,14 @@ public final class CassandraUtils2 {
 			if (session != null) {
 				Select select = QueryBuilder.select().all().from(keyspace, tableName);
 				if (fields != null) {
-					// Set<Entry<AuditingFieldsKeysEnum, String>> entrySet =
+					// Set<Entry<AuditingFieldsKey, String>> entrySet =
 					// fields.entrySet();
 					// fields.
 					boolean multiple = (fields.size() > 1) ? true : false;
 					Where where = null;
 					int size = 0;
 
-					for (Pair<AuditingFieldsKeysEnum, String> pair : fields) {
+					for (Pair<AuditingFieldsKey, String> pair : fields) {
 						++size;
 						if (size == 1) {
 							where = select.where(QueryBuilder.eq(pair.getValue0().getDisplayName(), pair.getValue1()));
@@ -161,9 +155,9 @@ public final class CassandraUtils2 {
 	}
 	//
 	// public static void main(String[] args) throws FileNotFoundException {
-	// Map<AuditingFieldsKeysEnum, String> map = new HashMap<>();
-	// map.put(AuditingFieldsKeysEnum.AUDIT_ACTION, "Access");
-	// map.put(AuditingFieldsKeysEnum.AUDIT_STATUS, "200");
+	// Map<AuditingFieldsKey, String> map = new HashMap<>();
+	// map.put(AuditingFieldsKey.AUDIT_ACTION, "Access");
+	// map.put(AuditingFieldsKey.AUDIT_STATUS, "200");
 	// // CassandraUtils.truncateTable("sdcartifact", "resources");
 	//// CassandraUtils.truncateAllTables("sdcaudit");
 	// CassandraUtils.fetchFromTable("sdcaudit", "useraccessevent", map );

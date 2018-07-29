@@ -1,5 +1,6 @@
 package org.openecomp.sdc.be.components.distribution.engine;
 
+import mockit.Deencapsulation;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -8,9 +9,6 @@ import org.openecomp.sdc.be.components.distribution.engine.report.DistributionCo
 import org.openecomp.sdc.be.config.DistributionEngineConfiguration;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.resources.data.OperationalEnvironmentEntry;
-import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
-
-import mockit.Deencapsulation;
 
 public class DistributionEnginePollingTaskTest extends BeConfDependentTest {
 
@@ -79,9 +77,9 @@ public class DistributionEnginePollingTaskTest extends BeConfDependentTest {
 		
 		// default test
 		testSubject = createTestSubject();
-		Mockito.doNothing().when(componentsUtils).auditDistributionStatusNotification(Mockito.any(AuditingActionEnum.class), 
+		Mockito.doNothing().when(componentsUtils).auditDistributionStatusNotification( Mockito.anyString(),
 				Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), 
-				Mockito.anyString(), Mockito.anyString(), Mockito.anyString());
+				Mockito.anyString(), Mockito.anyString());
 		Deencapsulation.invoke(testSubject, "handleDistributionNotificationMsg",
 				notification);
 	}

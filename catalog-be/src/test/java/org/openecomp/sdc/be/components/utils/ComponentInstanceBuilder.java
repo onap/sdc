@@ -1,12 +1,12 @@
 package org.openecomp.sdc.be.components.utils;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.stream.Stream;
-
 import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.CapabilityDefinition;
 import org.openecomp.sdc.be.model.ComponentInstance;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.stream.Stream;
 
 public class ComponentInstanceBuilder {
 

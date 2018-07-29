@@ -48,7 +48,12 @@ public class ToscaArtifactsPage extends DeploymentArtifactPage {
 
 	public static void downloadCsar() {
 		GeneralUIUtils.clickOnElementByTestId(DataTestIdEnum.ToscaArtifactsScreenEnum.DOWNLOAD_CSAR.getValue());
-		GeneralUIUtils.ultimateWait();
+//		GeneralUIUtils.ultimateWait();
+	}
+	
+	public static void downloadTemplate() {
+		GeneralUIUtils.clickOnElementByTestId(DataTestIdEnum.ToscaArtifactsScreenEnum.TOSCA_TEMPLATE.getValue());
+//		GeneralUIUtils.ultimateWait();
 	}
 
 }

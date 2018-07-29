@@ -26,9 +26,8 @@ import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.distribution.api.client.CambriaOperationStatus;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.Service;
-import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.springframework.stereotype.Component;
 
 @Component("distributionNotificationSender")
@@ -36,32 +35,33 @@ public class DistributionNotificationSender {
 
     protected static final String DISTRIBUTION_NOTIFICATION_SENDING = "distributionNotificationSending";
 
-    private static final Logger logger = LoggerFactory.getLogger(DistributionNotificationSender.class);
+    private static final Logger logger = Logger.getLogger(DistributionNotificationSender.class.getName());
 
     @javax.annotation.Resource
     protected ComponentsUtils componentUtils;
     private CambriaHandler cambriaHandler = new CambriaHandler();
     private DistributionEngineConfiguration deConfiguration = ConfigurationManager.getConfigurationManager().getDistributionEngineConfiguration();
 
-    public ActionStatus sendNotification(String topicName, String distributionId, EnvironmentMessageBusData messageBusData, INotificationData notificationData, Service service, String userId, String modifierName) {
+    public ActionStatus sendNotification(String topicName, String distributionId, EnvironmentMessageBusData messageBusData, INotificationData notificationData, Service service, User modifier) {
         long startTime = System.currentTimeMillis();
         CambriaErrorResponse status = cambriaHandler.sendNotificationAndClose(topicName, messageBusData.getUebPublicKey(), messageBusData.getUebPrivateKey(), messageBusData.getDmaaPuebEndpoints(), notificationData,
                 deConfiguration.getDistributionNotificationTopic().getMaxWaitingAfterSendingSeconds());
         logger.info("After publishing service {} of version {}. Status is {}", service.getName(), service.getVersion(), status.getHttpCode());
-        auditDistributionNotification(topicName, distributionId, status, service, messageBusData.getEnvId(), userId, modifierName, notificationData.getWorkloadContext(), messageBusData.getTenant());
+        auditDistributionNotification(topicName, distributionId, status, service, messageBusData.getEnvId(), modifier, notificationData.getWorkloadContext(), messageBusData.getTenant());
         long endTime = System.currentTimeMillis();
         logger.debug("After building and publishing artifacts object. Total took {} milliseconds", (endTime - startTime));
         return convertCambriaResponse(status);
     }
 
-    private void auditDistributionNotification(String topicName, String distributionId, CambriaErrorResponse status, Service service, String envId, String userId, String modifierName, String workloadContext, String tenant) {
+    private void auditDistributionNotification(String topicName, String distributionId, CambriaErrorResponse status, Service service, String envId, User modifier
+            , String workloadContext, String tenant) {
         if (this.componentUtils != null) {
             Integer httpCode = status.getHttpCode();
             String httpCodeStr = String.valueOf(httpCode);
 
             String desc = getDescriptionFromErrorResponse(status);
 
-            this.componentUtils.auditDistributionNotification(AuditingActionEnum.DISTRIBUTION_NOTIFY, service.getUUID(), service.getName(), "Service", service.getVersion(), userId, modifierName, envId, service.getLifecycleState().name(), topicName,
+            this.componentUtils.auditDistributionNotification(service.getUUID(), service.getName(), "Service", service.getVersion(), modifier, envId, service.getLifecycleState().name(), topicName,
                     distributionId, desc, httpCodeStr, workloadContext, tenant);
         }
     }

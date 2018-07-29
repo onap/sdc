@@ -28,6 +28,7 @@ import {CommonUtils} from "app/utils";
 import {Serializable} from "../utils/serializable";
 import {PropertyBEModel} from "../../../models/properties-inputs/property-be-model";
 import { PolicyInstance } from "app/models/graph/zones/policy-instance";
+import { GroupInstance } from "../../../models/graph/zones/group-instance";
 
 export class ComponentGenericResponse  implements Serializable<ComponentGenericResponse> {
 
@@ -45,7 +46,8 @@ export class ComponentGenericResponse  implements Serializable<ComponentGenericR
     public properties:Array<PropertyModel>;
     public attributes:Array<AttributeModel>;
     public policies:Array<PolicyInstance>;
-    public groups:Array<Module>;
+    public groupInstances: Array<GroupInstance>;
+    public modules:Array<Module>;
     public interfaces:any;
     public interfaceOperations:Array<OperationModel>;
     public additionalInformation:any;
@@ -96,7 +98,8 @@ export class ComponentGenericResponse  implements Serializable<ComponentGenericR
             this.metadata = new ComponentMetadata().deserialize(response.metadata);
         }
         if(response.groups) {
-            this.groups = CommonUtils.initModules(response.groups);
+            this.modules = CommonUtils.initModules(response.groups);
+            this.groupInstances = CommonUtils.initGroups(response.groups)
         }
         if(response.policies) {
             this.policies = CommonUtils.initPolicies(response.policies);

@@ -16,11 +16,11 @@
 
 package org.openecomp.sdcrests.vendorlicense.rest.mapping;
 
-import static org.testng.Assert.assertEquals;
-
 import org.junit.Test;
 import org.openecomp.sdc.vendorlicense.dao.types.ChoiceOrOther;
 import org.openecomp.sdcrests.vendorlicense.types.ChoiceOrOtherDto;
+
+import static org.testng.Assert.assertEquals;
 
 public class MapChoiceOrOtherDtoToChoiceOrOtherTest {
 

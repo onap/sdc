@@ -1,22 +1,23 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
 
-    <name>onap-common-configuration-management</name>
-    <artifactId>onap-common-configuration-management</artifactId>
-    <packaging>pom</packaging>
+	<name>onap-common-configuration-management</name>
+	<artifactId>onap-common-configuration-management</artifactId>
+	<packaging>pom</packaging>
 
-    <parent>
-        <groupId>org.onap.sdc.common</groupId>
-        <artifactId>onap-common-lib</artifactId>
-        <version>1.3.0-SNAPSHOT</version>
-        <relativePath>..</relativePath>
-    </parent>
+	<parent>
+		<groupId>org.onap.sdc.common</groupId>
+		<artifactId>onap-common-lib</artifactId>
+		<version>1.3.0-SNAPSHOT</version>
+		<relativePath>..</relativePath>
+	</parent>
 
-    <modules>
-        <module>onap-configuration-management-api</module>
-        <module>onap-configuration-management-core</module>
-        <module>onap-configuration-management-test</module>
-    </modules>
+	<modules>
+		<module>onap-configuration-management-api</module>
+		<module>onap-configuration-management-core</module>
+		<module>onap-configuration-management-test</module>
+	</modules>
 
 </project>

@@ -20,14 +20,14 @@
 
 package org.openecomp.sdc.ci.tests.pages;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.openecomp.sdc.ci.tests.datatypes.ComponentReqDetails;
 import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum;
 import org.openecomp.sdc.ci.tests.utilities.GeneralUIUtils;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class ResourceGeneralPage extends GeneralPageElements {
@@ -169,9 +169,18 @@ public class ResourceGeneralPage extends GeneralPageElements {
 	}
 	
 	public static void defineTextBoxWithPaste(WebElement textBox) {
-		textBox.clear();
+		textBox.clear();	
 		textBox.sendKeys(Keys.CONTROL + "v");
 		GeneralUIUtils.ultimateWait();
 	}
 	
+	public static void moveToToscaArtifactsSectionAndDownloadTosca() {
+		getLeftMenu().moveToToscaArtifactsScreen();
+		ToscaArtifactsPage.downloadCsar();
+	}
+	
+	public static String getVersionUI(){
+		String actualVersion = GeneralUIUtils.getSelectedElementFromDropDown(DataTestIdEnum.GeneralElementsEnum.VERSION_HEADER.getValue()).getText().replace("V", "");
+		return actualVersion;
+	}
 }

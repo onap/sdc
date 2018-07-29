@@ -1,8 +1,5 @@
 package org.openecomp.sdc.asdctool.migration.config;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.openecomp.sdc.asdctool.migration.core.SdcMigrationTool;
 import org.openecomp.sdc.asdctool.migration.core.task.Migration;
 import org.openecomp.sdc.asdctool.migration.core.task.PostMigration;
@@ -11,6 +8,7 @@ import org.openecomp.sdc.asdctool.migration.resolver.MigrationResolver;
 import org.openecomp.sdc.asdctool.migration.resolver.SpringBeansMigrationResolver;
 import org.openecomp.sdc.asdctool.migration.service.SdcRepoService;
 import org.openecomp.sdc.be.components.distribution.engine.ServiceDistributionArtifactsBuilder;
+import org.openecomp.sdc.be.components.scheduledtasks.ComponentsCleanBusinessLogic;
 import org.openecomp.sdc.be.config.CatalogModelSpringConfig;
 import org.openecomp.sdc.be.dao.config.DAOSpringConfig;
 import org.openecomp.sdc.config.CatalogBESpringConfig;
@@ -21,6 +19,9 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.io.FileSystemResource;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Configuration
 @Import({DAOSpringConfig.class, CatalogBESpringConfig.class, CatalogModelSpringConfig.class})
@@ -67,5 +68,8 @@ public class MigrationSpringConfig {
         bean.setLocation(new FileSystemResource(configHome + "/elasticsearch.yml"));
         return bean;
     }
+
+    @Bean(name = "componentsCleanBusinessLogic")
+    public ComponentsCleanBusinessLogic componentsCleanBusinessLogic() {return  new ComponentsCleanBusinessLogic(); }
 
 }

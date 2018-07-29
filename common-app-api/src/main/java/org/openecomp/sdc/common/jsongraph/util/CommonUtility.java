@@ -20,7 +20,7 @@
 
 package org.openecomp.sdc.common.jsongraph.util;
 
-import org.slf4j.Logger;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 
 /**
  * Provides common utility: functionality, common fields and enumerations

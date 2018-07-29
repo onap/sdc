@@ -21,14 +21,14 @@
 package org.openecomp.sdc.be.model;
 
 public interface IComponentInstanceConnectedElement {
-	String getUniqueId();
+    String getUniqueId();
 
-	String getValueUniqueUid();
+    String getValueUniqueUid();
 
-	void setValueUniqueUid(String value);
-	
-	String getComponentInstanceName();
-	void setComponentInstanceName(String componentInstanceName);
-	String getComponentInstanceId();
-	void setComponentInstanceId(String componentInstanceId);
+    void setValueUniqueUid(String value);
+
+    String getComponentInstanceName();
+    void setComponentInstanceName(String componentInstanceName);
+    String getComponentInstanceId();
+    void setComponentInstanceId(String componentInstanceId);
 }

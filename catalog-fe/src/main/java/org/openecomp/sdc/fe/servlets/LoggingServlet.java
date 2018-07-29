@@ -4,11 +4,10 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.servlets.BasicServlet;
-import org.openecomp.sdc.fe.mdc.MdcData;
+import org.openecomp.sdc.fe.impl.MdcData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
-
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Response;

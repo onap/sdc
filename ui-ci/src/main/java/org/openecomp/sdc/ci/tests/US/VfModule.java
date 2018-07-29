@@ -21,7 +21,6 @@
 package org.openecomp.sdc.ci.tests.US;
 
 import com.aventstack.extentreports.Status;
-import com.clearspring.analytics.util.Pair;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.ci.tests.dataProviders.OnbordingDataProviders;
 import org.openecomp.sdc.ci.tests.datatypes.*;
@@ -72,10 +71,10 @@ public class VfModule extends SetupCDTest {
 
 		AmdocsLicenseMembers amdocsLicenseMembers = VendorLicenseModelRestUtils.createVendorLicense(getUser());
 		ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource();//getResourceReqDetails(ComponentConfigurationTypeEnum.DEFAULT);
-		Pair<String, VendorSoftwareProductObject> createVendorSoftwareProduct = VendorSoftwareProductRestUtils.createVendorSoftwareProduct(resourceReqDetails, vnfFile, filepath, getUser(), amdocsLicenseMembers);
-		String vspName = createVendorSoftwareProduct.left;
+		VendorSoftwareProductObject createVendorSoftwareProduct = VendorSoftwareProductRestUtils.createVendorSoftwareProduct(resourceReqDetails, vnfFile, filepath, getUser(), amdocsLicenseMembers);
+		String vspName = createVendorSoftwareProduct.getName();
 		//
-		DownloadManager.downloadCsarByNameFromVSPRepository(vspName, createVendorSoftwareProduct.right.getVspId());
+		DownloadManager.downloadCsarByNameFromVSPRepository(vspName, createVendorSoftwareProduct.getVspId());
 		File latestFilefromDir = FileHandling.getLastModifiedFileNameFromDir();
 		List<TypeHeatMetaDefinition> listTypeHeatMetaDefinition = CsarParserUtils.getListTypeHeatMetaDefinition(latestFilefromDir);
 		//
@@ -107,8 +106,8 @@ public class VfModule extends SetupCDTest {
 		}
 		
 		DeploymentArtifactPage.verifyArtifactsExistInTable(filepath, vnfFile);
-
-		DeploymentArtifactPage.clickSubmitForTestingButton(vspName);
+//TODO Andrey should click on certify button
+		DeploymentArtifactPage.clickCertifyButton(vspName);
 
 		// create service
 		ServiceReqDetails serviceMetadata = ElementFactory.getDefaultService();

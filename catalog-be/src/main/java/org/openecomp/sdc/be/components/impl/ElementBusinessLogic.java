@@ -20,23 +20,11 @@
 
 package org.openecomp.sdc.be.components.impl;
 
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-
+import fj.data.Either;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
+import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphEdge;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphNode;
@@ -48,25 +36,8 @@ import org.openecomp.sdc.be.datamodel.api.CategoryTypeEnum;
 import org.openecomp.sdc.be.datamodel.utils.NodeTypeConvertUtils;
 import org.openecomp.sdc.be.datatypes.components.ComponentMetadataDataDefinition;
 import org.openecomp.sdc.be.datatypes.components.ResourceMetadataDataDefinition;
-import org.openecomp.sdc.be.datatypes.enums.AssetTypeEnum;
-import org.openecomp.sdc.be.datatypes.enums.ComponentFieldsEnum;
-import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
-import org.openecomp.sdc.be.datatypes.enums.FilterKeyEnum;
-import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
-import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
-import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
-import org.openecomp.sdc.be.impl.ComponentsUtils;
-import org.openecomp.sdc.be.model.ArtifactType;
-import org.openecomp.sdc.be.model.Component;
-import org.openecomp.sdc.be.model.ComponentParametersView;
-import org.openecomp.sdc.be.model.DistributionStatusEnum;
-import org.openecomp.sdc.be.model.LifecycleStateEnum;
-import org.openecomp.sdc.be.model.Product;
-import org.openecomp.sdc.be.model.PropertyScope;
-import org.openecomp.sdc.be.model.Resource;
-import org.openecomp.sdc.be.model.Service;
-import org.openecomp.sdc.be.model.Tag;
-import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.datatypes.enums.*;
+import org.openecomp.sdc.be.model.*;
 import org.openecomp.sdc.be.model.catalog.CatalogComponent;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
 import org.openecomp.sdc.be.model.category.GroupingDefinition;
@@ -85,23 +56,29 @@ import org.openecomp.sdc.be.ui.model.UiCategories;
 import org.openecomp.sdc.be.user.Role;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.datastructure.Wrapper;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.common.util.ValidationUtils;
 import org.openecomp.sdc.exception.ResponseFormat;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import fj.data.Either;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+
+import static org.apache.commons.lang.BooleanUtils.isTrue;
 
 @org.springframework.stereotype.Component("elementsBusinessLogic")
 public class ElementBusinessLogic extends BaseBusinessLogic {
 
-    private static final Logger log = LoggerFactory.getLogger(ElementBusinessLogic.class);
+    private static final Logger log = Logger.getLogger(ElementBusinessLogic.class);
+    private static final String SERVICES = "services";
+    private static final String RESOURCES = "resources";
+    private static final String VALIDATION_OF_USER_FAILED_USER_ID = "Validation of user failed, userId {}";
+    private static final String COMPONENT_TYPE_IS_INVALID = "Component type {} is invalid";
+    private static final String VALIDATION_OF_USER_ROLE_FAILED_USER_ID = "Validation of user role failed, userId {}";
 
     @javax.annotation.Resource
     private IElementOperation elementOperation;
-
-    @javax.annotation.Resource
-    private ComponentsUtils componentsUtils;
 
     @javax.annotation.Resource
     private UserBusinessLogic userAdminManager;
@@ -127,22 +104,22 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
 
         case TESTER:
             userId = user.getUserId();
-            response = handleTester(userId);
+            response = handleTester();
             break;
 
         case GOVERNOR:
             userId = user.getUserId();
-            response = handleGovernor(userId);
+            response = handleGovernor();
             break;
 
         case OPS:
             userId = user.getUserId();
-            response = handleOps(userId);
+            response = handleOps();
             break;
 
         case PRODUCT_STRATEGIST:
             userId = user.getUserId();
-            response = handleProductStrategist(userId);
+            response = handleProductStrategist();
             break;
 
         case PRODUCT_MANAGER:
@@ -178,16 +155,16 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
     private Either<Map<String, Set<? extends Component>>, ResponseFormat> handleAdmin() {
         Either<Map<String, Set<? extends Component>>, ResponseFormat> response;
         // userId should stay null
-        Set<LifecycleStateEnum> lifecycleStates = new HashSet<LifecycleStateEnum>();
-        Set<LifecycleStateEnum> lastStateStates = new HashSet<LifecycleStateEnum>();
+        Set<LifecycleStateEnum> lifecycleStates = new HashSet<>();
+        Set<LifecycleStateEnum> lastStateStates = new HashSet<>();
         lifecycleStates.add(LifecycleStateEnum.CERTIFIED);
         response = getFollowedResourcesAndServices(null, lifecycleStates, lastStateStates);
         return response;
     }
 
     private Either<Map<String, Set<? extends Component>>, ResponseFormat> handleDesigner(String userId) {
-        Set<LifecycleStateEnum> lifecycleStates = new HashSet<LifecycleStateEnum>();
-        Set<LifecycleStateEnum> lastStateStates = new HashSet<LifecycleStateEnum>();
+        Set<LifecycleStateEnum> lifecycleStates = new HashSet<>();
+        Set<LifecycleStateEnum> lastStateStates = new HashSet<>();
         Either<Map<String, Set<? extends Component>>, ResponseFormat> response;
         lifecycleStates.add(LifecycleStateEnum.NOT_CERTIFIED_CHECKIN);
         lifecycleStates.add(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
@@ -200,21 +177,20 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
         return response;
     }
 
-    private Either<Map<String, Set<? extends Component>>, ResponseFormat> handleGovernor(String userId) {
-        Either<Map<String, Set<? extends Component>>, ResponseFormat> result = handleFollowedCertifiedServices(null);
-        return result;
+    private Either<Map<String, Set<? extends Component>>, ResponseFormat> handleGovernor() {
+        return handleFollowedCertifiedServices(null);
     }
 
-    private Either<Map<String, Set<? extends Component>>, ResponseFormat> handleProductStrategist(String userId) {
+    private Either<Map<String, Set<? extends Component>>, ResponseFormat> handleProductStrategist() {
         // Should be empty list according to Ella, 13/03/16
-        Map<String, Set<? extends Component>> result = new HashMap<String, Set<? extends Component>>();
+        Map<String, Set<? extends Component>> result = new HashMap<>();
         result.put("products", new HashSet<>());
         return Either.left(result);
     }
 
     private Either<Map<String, Set<? extends Component>>, ResponseFormat> handleProductManager(String userId) {
-        Set<LifecycleStateEnum> lifecycleStates = new HashSet<LifecycleStateEnum>();
-        Set<LifecycleStateEnum> lastStateStates = new HashSet<LifecycleStateEnum>();
+        Set<LifecycleStateEnum> lifecycleStates = new HashSet<>();
+        Set<LifecycleStateEnum> lastStateStates = new HashSet<>();
         Either<Map<String, Set<? extends Component>>, ResponseFormat> response;
         lifecycleStates.add(LifecycleStateEnum.NOT_CERTIFIED_CHECKIN);
         lifecycleStates.add(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
@@ -227,13 +203,12 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
         return response;
     }
 
-    private Either<Map<String, Set<? extends Component>>, ResponseFormat> handleOps(String userId) {
-        Set<DistributionStatusEnum> distStatus = new HashSet<DistributionStatusEnum>();
+    private Either<Map<String, Set<? extends Component>>, ResponseFormat> handleOps() {
+        Set<DistributionStatusEnum> distStatus = new HashSet<>();
         distStatus.add(DistributionStatusEnum.DISTRIBUTION_APPROVED);
         distStatus.add(DistributionStatusEnum.DISTRIBUTED);
 
-        Either<Map<String, Set<? extends Component>>, ResponseFormat> result = handleFollowedCertifiedServices(distStatus);
-        return result;
+        return handleFollowedCertifiedServices(distStatus);
     }
 
     private Either<Map<String, Set<? extends Component>>, ResponseFormat> handleFollowedCertifiedServices(Set<DistributionStatusEnum> distStatus) {
@@ -243,20 +218,19 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
             Map<String, Set<? extends Component>> result = new HashMap<>();
             Set<Service> set = new HashSet<>();
             set.addAll(services.left().value());
-            result.put("services", set);
+            result.put(SERVICES, set);
             return Either.left(result);
         } else {
             return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(services.right().value())));
         }
     }
 
-    private Either<Map<String, Set<? extends Component>>, ResponseFormat> handleTester(String userId) {
-        Set<LifecycleStateEnum> lifecycleStates = new HashSet<LifecycleStateEnum>();
+    private Either<Map<String, Set<? extends Component>>, ResponseFormat> handleTester() {
+        Set<LifecycleStateEnum> lifecycleStates = new HashSet<>();
         lifecycleStates.add(LifecycleStateEnum.CERTIFICATION_IN_PROGRESS);
         lifecycleStates.add(LifecycleStateEnum.READY_FOR_CERTIFICATION);
-        Either<Map<String, Set<? extends Component>>, ResponseFormat> result = getFollowedResourcesAndServices(null, lifecycleStates, null);
 
-        return result;
+        return getFollowedResourcesAndServices(null, lifecycleStates, null);
     }
 
     private Either<Map<String, Set<? extends Component>>, ResponseFormat> getFollowedResourcesAndServices(String userId, Set<LifecycleStateEnum> lifecycleStates, Set<LifecycleStateEnum> lastStateStates) {
@@ -267,9 +241,9 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
             if (resources.isLeft()) {
                 Either<Set<Service>, StorageOperationStatus> services = toscaOperationFacade.getFollowed(userId, lifecycleStates, lastStateStates, ComponentTypeEnum.SERVICE);
                 if (services.isLeft()) {
-                    Map<String, Set<? extends Component>> result = new HashMap<String, Set<? extends Component>>();
-                    result.put("services", services.left().value());
-                    result.put("resources", resources.left().value());
+                    Map<String, Set<? extends Component>> result = new HashMap<>();
+                    result.put(SERVICES, services.left().value());
+                    result.put(RESOURCES, resources.left().value());
                     return Either.left(result);
                 } else {
                     return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(services.right().value())));
@@ -311,10 +285,10 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
         String componentType = componentTypeEnum == null ? componentTypeParamName : componentTypeEnum.getValue();
         CategoryTypeEnum categoryType = CategoryTypeEnum.CATEGORY;
 
-        User user = new User();
+        User user;
         Either<User, ResponseFormat> validateUser = validateUser(userId);
         if (validateUser.isRight()) {
-            log.debug("Validation of user failed, userId {}", userId);
+            log.debug(VALIDATION_OF_USER_FAILED_USER_ID, userId);
             ResponseFormat responseFormat = validateUser.right().value();
             user = new User();
             user.setUserId(userId);
@@ -336,7 +310,7 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
         // For auditing of failures we need the original non-normalized name
         String origCategoryName = categoryName;
         if (componentTypeEnum == null) {
-            log.debug("Component type {} is invalid", componentTypeParamName);
+            log.debug(COMPONENT_TYPE_IS_INVALID, componentTypeParamName);
             ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.INVALID_CONTENT);
             handleCategoryAuditing(responseFormat, user, origCategoryName, auditingAction, componentType);
             return Either.right(responseFormat);
@@ -344,7 +318,7 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
 
         Either<Boolean, ResponseFormat> validateUserRole = validateUserRole(user, componentTypeEnum);
         if (validateUserRole.isRight()) {
-            log.debug("Validation of user role failed, userId {}", userId);
+            log.debug(VALIDATION_OF_USER_ROLE_FAILED_USER_ID, userId);
             ResponseFormat responseFormat = validateUserRole.right().value();
             handleCategoryAuditing(responseFormat, user, origCategoryName, auditingAction, componentType);
             return Either.right(responseFormat);
@@ -422,22 +396,20 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
         String subCategoryName = subCategory.getName();
         // For auditing of failures we need the original non-normalized name
         String origSubCategoryName = subCategoryName;
-
-        User user = new User();
-        Either<User, ResponseFormat> validateUser = validateUserExists(userId, "createSubCategory", false);
-        if (validateUser.isRight()) {
-            log.debug("Validation of user failed, userId {}", userId);
-            ResponseFormat responseFormat = validateUser.right().value();
+        User user;
+        try{
+            user =  validateUserExists(userId, "createSubCategory", false);
+        } catch(ComponentException e){
+            log.debug(VALIDATION_OF_USER_FAILED_USER_ID, userId);
+            ResponseFormat responseFormat = e.getResponseFormat() != null ? e.getResponseFormat() :
+                    componentsUtils.getResponseFormat(e.getActionStatus(), e.getParams());
             user = new User();
             user.setUserId(userId);
             handleCategoryAuditing(responseFormat, user, parentCategoryName, origSubCategoryName, auditingAction, componentType);
-            return Either.right(responseFormat);
+            throw e;
         }
-
-        user = validateUser.left().value();
-
         if (componentTypeEnum == null) {
-            log.debug("Component type {} is invalid", componentTypeParamName);
+            log.debug(COMPONENT_TYPE_IS_INVALID, componentTypeParamName);
             ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.INVALID_CONTENT);
             handleCategoryAuditing(responseFormat, user, parentCategoryName, origSubCategoryName, auditingAction, componentType);
             return Either.right(responseFormat);
@@ -453,7 +425,7 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
 
         Either<Boolean, ResponseFormat> validateUserRole = validateUserRole(user, componentTypeEnum);
         if (validateUserRole.isRight()) {
-            log.debug("Validation of user role failed, userId {}", userId);
+            log.debug(VALIDATION_OF_USER_ROLE_FAILED_USER_ID, userId);
             ResponseFormat responseFormat = validateUserRole.right().value();
             handleCategoryAuditing(responseFormat, user, parentCategoryName, origSubCategoryName, auditingAction, componentType);
             return Either.right(responseFormat);
@@ -557,18 +529,18 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
         String parentSubCategoryName = parentSubCategoryId;
 
         User user;
-        Either<User, ResponseFormat> validateUser = validateUserExists(userId, "create Grouping", false);
-        if (validateUser.isRight()) {
-            log.debug("Validation of user failed, userId {}", userId);
-            ResponseFormat responseFormat = validateUser.right().value();
+        try{
+            user = validateUserExists(userId, "create Grouping", false);
+        } catch(ComponentException e){
+            log.debug(VALIDATION_OF_USER_FAILED_USER_ID, userId);
+            ResponseFormat responseFormat = e.getResponseFormat() != null ? e.getResponseFormat() :
+                    componentsUtils.getResponseFormat(e.getActionStatus(), e.getParams());
             user = new User();
             user.setUserId(userId);
             String groupingNameForAudit = grouping == null ? null : grouping.getName();
             handleCategoryAuditing(responseFormat, user, parentCategoryName, parentSubCategoryName, groupingNameForAudit, auditingAction, componentType);
-            return Either.right(responseFormat);
+            throw e;
         }
-
-        user = validateUser.left().value();
 
         if (grouping == null) {
             log.debug("Grouping json is invalid");
@@ -582,7 +554,7 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
         String origGroupingName = groupingName;
 
         if (componentTypeEnum == null) {
-            log.debug("Component type {} is invalid", componentTypeParamName);
+            log.debug(COMPONENT_TYPE_IS_INVALID, componentTypeParamName);
             ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.INVALID_CONTENT);
             handleCategoryAuditing(responseFormat, user, parentCategoryName, parentSubCategoryName, origGroupingName, auditingAction, componentType);
             return Either.right(responseFormat);
@@ -598,7 +570,7 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
 
         Either<Boolean, ResponseFormat> validateUserRole = validateUserRole(user, componentTypeEnum);
         if (validateUserRole.isRight()) {
-            log.debug("Validation of user role failed, userId {}", userId);
+            log.debug(VALIDATION_OF_USER_ROLE_FAILED_USER_ID, userId);
             ResponseFormat responseFormat = validateUserRole.right().value();
             handleCategoryAuditing(responseFormat, user, parentCategoryName, parentSubCategoryName, origGroupingName, auditingAction, componentType);
             return Either.right(responseFormat);
@@ -707,31 +679,30 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
     }
 
     public Either<List<CategoryDefinition>, ResponseFormat> getAllCategories(String componentType, String userId) {
-        AuditingActionEnum auditingAction = AuditingActionEnum.GET_CATEGORY_HIERARCHY;
         ResponseFormat responseFormat;
         User user = new User();
         if (userId == null) {
             user.setUserId("UNKNOWN");
             responseFormat = componentsUtils.getResponseFormat(ActionStatus.MISSING_INFORMATION);
-            componentsUtils.auditGetCategoryHierarchy(auditingAction, user, componentType, responseFormat);
+            componentsUtils.auditGetCategoryHierarchy(user, componentType, responseFormat);
             return Either.right(responseFormat);
         }
-
-        Either<User, ResponseFormat> validateUser = validateUserExists(userId, "get All Categories", false);
-        if (validateUser.isRight()) {
+        try {
+            user = validateUserExists(userId, "get All Categories", false);
+        } catch (ComponentException e){
+            user = new User();
             user.setUserId(userId);
-            log.debug("Validation of user failed, userId {}", userId);
-            responseFormat = validateUser.right().value();
-            componentsUtils.auditGetCategoryHierarchy(auditingAction, user, componentType, responseFormat);
-            return Either.right(responseFormat);
+            log.debug(VALIDATION_OF_USER_FAILED_USER_ID, userId);
+            responseFormat = e.getResponseFormat() != null ? e.getResponseFormat():
+                    componentsUtils.getResponseFormat(e.getActionStatus(), e.getParams());
+            componentsUtils.auditGetCategoryHierarchy(user, componentType, responseFormat);
+            throw e;
         }
-        user = validateUser.left().value();
-
         ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(componentType);
         if (componentTypeEnum == null) {
             log.debug("Cannot create category for component type {}", componentType);
             responseFormat = componentsUtils.getResponseFormat(ActionStatus.UNSUPPORTED_ERROR, "component type");
-            componentsUtils.auditGetCategoryHierarchy(auditingAction, user, componentType, responseFormat);
+            componentsUtils.auditGetCategoryHierarchy(user, componentType, responseFormat);
             return Either.right(responseFormat);
         }
 
@@ -739,32 +710,26 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
         Either<List<CategoryDefinition>, ActionStatus> getAllCategoriesByType = elementOperation.getAllCategories(nodeTypeEnum, false);
         if (getAllCategoriesByType.isRight()) {
             responseFormat = componentsUtils.getResponseFormat(getAllCategoriesByType.right().value());
-            componentsUtils.auditGetCategoryHierarchy(auditingAction, user, componentType, responseFormat);
+            componentsUtils.auditGetCategoryHierarchy(user, componentType, responseFormat);
             return Either.right(responseFormat);
         }
         List<CategoryDefinition> categories = getAllCategoriesByType.left().value();
         responseFormat = componentsUtils.getResponseFormat(ActionStatus.OK);
-        componentsUtils.auditGetCategoryHierarchy(auditingAction, user, componentType, responseFormat);
+        componentsUtils.auditGetCategoryHierarchy(user, componentType, responseFormat);
         return Either.left(categories);
     }
 
     public Either<UiCategories, ResponseFormat> getAllCategories(String userId) {
-        AuditingActionEnum auditingAction = AuditingActionEnum.GET_CATEGORY_HIERARCHY;
         ResponseFormat responseFormat;
         UiCategories categories = new UiCategories();
 
-        Either<User, ResponseFormat> userResponse = validateUserExists(userId, "get all categories", false);
-
-        if (userResponse.isRight()) {
-            return Either.right(userResponse.right().value());
-        }
-        User user = userResponse.left().value();
+        User user = validateUserExists(userId, "get all categories", false);
 
         // GET resource categories
         Either<List<CategoryDefinition>, ActionStatus> getResourceCategoriesByType = elementOperation.getAllCategories(NodeTypeEnum.ResourceNewCategory, false);
         if (getResourceCategoriesByType.isRight()) {
             responseFormat = componentsUtils.getResponseFormat(getResourceCategoriesByType.right().value());
-            componentsUtils.auditGetCategoryHierarchy(auditingAction, user, ComponentTypeEnum.RESOURCE.getValue(), responseFormat);
+            componentsUtils.auditGetCategoryHierarchy(user, ComponentTypeEnum.RESOURCE.getValue(), responseFormat);
             return Either.right(responseFormat);
         }
         categories.setResourceCategories(getResourceCategoriesByType.left().value());
@@ -773,7 +738,7 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
         Either<List<CategoryDefinition>, ActionStatus> getServiceCategoriesByType = elementOperation.getAllCategories(NodeTypeEnum.ServiceNewCategory, false);
         if (getServiceCategoriesByType.isRight()) {
             responseFormat = componentsUtils.getResponseFormat(getServiceCategoriesByType.right().value());
-            componentsUtils.auditGetCategoryHierarchy(auditingAction, user, ComponentTypeEnum.SERVICE.getValue(), responseFormat);
+            componentsUtils.auditGetCategoryHierarchy(user, ComponentTypeEnum.SERVICE.getValue(), responseFormat);
             return Either.right(responseFormat);
         }
         categories.setServiceCategories(getServiceCategoriesByType.left().value());
@@ -782,7 +747,7 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
         Either<List<CategoryDefinition>, ActionStatus> getProductCategoriesByType = elementOperation.getAllCategories(NodeTypeEnum.ProductCategory, false);
         if (getProductCategoriesByType.isRight()) {
             responseFormat = componentsUtils.getResponseFormat(getProductCategoriesByType.right().value());
-            componentsUtils.auditGetCategoryHierarchy(auditingAction, user, ComponentTypeEnum.PRODUCT.getValue(), responseFormat);
+            componentsUtils.auditGetCategoryHierarchy(user, ComponentTypeEnum.PRODUCT.getValue(), responseFormat);
             return Either.right(responseFormat);
         }
 
@@ -793,10 +758,7 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
 
     public Either<CategoryDefinition, ResponseFormat> deleteCategory(String categoryId, String componentTypeParamName, String userId) {
 
-        Either<User, ResponseFormat> resp = validateUserExists(userId, "delete Category", false);
-        if (resp.isRight()) {
-            return Either.right(resp.right().value());
-        }
+        validateUserExists(userId, "delete Category", false);
 
         ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(componentTypeParamName);
         if (componentTypeEnum == null) {
@@ -816,12 +778,9 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
         return Either.left(category);
     }
 
-    public Either<SubCategoryDefinition, ResponseFormat> deleteSubCategory(String grandParentCategoryId, String parentSubCategoryId, String componentTypeParamName, String userId) {
+    public Either<SubCategoryDefinition, ResponseFormat> deleteSubCategory(String parentSubCategoryId, String componentTypeParamName, String userId) {
 
-        Either<User, ResponseFormat> resp = validateUserExists(userId, "delete Sub Category", false);
-        if (resp.isRight()) {
-            return Either.right(resp.right().value());
-        }
+        validateUserExists(userId, "delete Sub Category", false);
 
         ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(componentTypeParamName);
         if (componentTypeEnum == null) {
@@ -841,12 +800,9 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
         return Either.left(subCategory);
     }
 
-    public Either<GroupingDefinition, ResponseFormat> deleteGrouping(String grandParentCategoryId, String parentSubCategoryId, String groupingId, String componentTypeParamName, String userId) {
+    public Either<GroupingDefinition, ResponseFormat> deleteGrouping(String groupingId, String componentTypeParamName, String userId) {
 
-        Either<User, ResponseFormat> resp = validateUserExists(userId, "delete Grouping", false);
-        if (resp.isRight()) {
-            return Either.right(resp.right().value());
-        }
+        validateUserExists(userId, "delete Grouping", false);
 
         ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(componentTypeParamName);
         if (componentTypeEnum == null) {
@@ -1001,13 +957,12 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
         return elementOperation.getDefaultHeatTimeout();
     }
 
-    public Either<Map<String, List<CatalogComponent>>, ResponseFormat> getCatalogComponents(String userId) {
+	public Either<Map<String, List<CatalogComponent>>, ResponseFormat> getCatalogComponents(String userId, List<OriginTypeEnum> excludeTypes) {
         try {
-            Either<User, ResponseFormat> resp = validateUserExists(userId, "get Catalog Components", true);
-            if (resp.isRight()) {
-                return Either.right(resp.right().value());
-            }
-            return toscaOperationFacade.getCatalogComponents().bimap(this::groupByComponentType, err -> componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(err)));
+            validateUserExists(userId, "get Catalog Components", true);
+            return toscaOperationFacade.getCatalogOrArchiveComponents(true, excludeTypes)
+                    .bimap(this::groupByComponentType,
+                            err -> componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(err)));
         } finally {
             titanDao.commit();
         }
@@ -1020,11 +975,11 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
         if (map == null) {
             map = new HashMap<>();
         }
-        if (map.get("resources") == null) {
-            map.put("resources", new ArrayList());
+        if (map.get(RESOURCES) == null) {
+            map.put(RESOURCES, new ArrayList());
         }
-        if (map.get("services") == null) {
-            map.put("services", new ArrayList());
+        if (map.get(SERVICES) == null) {
+            map.put(SERVICES, new ArrayList());
         }
         return map;
     }
@@ -1032,9 +987,9 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
     private String cmptTypeToString(ComponentTypeEnum componentTypeEnum) {
         switch (componentTypeEnum) {
         case RESOURCE:
-            return "resources";
+            return RESOURCES;
         case SERVICE:
-            return "services";
+            return SERVICES;
         default:
             throw new IllegalStateException("resources or services only");
         }
@@ -1099,7 +1054,7 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
         }
 
         if (categoryName != null) { // primary filter
-            components = fetchByCategoryOrSubCategoryName(categoryName, NodeTypeEnum.ServiceNewCategory, GraphEdgeLabels.CATEGORY.getProperty(), NodeTypeEnum.Service, inTransaction, ServiceMetadataData.class, null);
+            components = fetchByCategoryOrSubCategoryName(categoryName, NodeTypeEnum.ServiceNewCategory, NodeTypeEnum.Service, inTransaction, ServiceMetadataData.class, null);
             if (components.isLeft() && distEnum != null) {// secondary filter
                 Predicate<T> statusFilter = p -> ((Service) p).getDistributionStatus().equals(distEnum);
                 return Either.left(components.left().value().stream().filter(statusFilter).collect(Collectors.toList()));
@@ -1186,7 +1141,7 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
     }
 
     private List<String> getErrorResponseParams(Map<FilterKeyEnum, String> filters, ComponentTypeEnum assetType) {
-        List<String> params = new ArrayList<String>();
+        List<String> params = new ArrayList<>();
         if (1 == filters.size()) {
             params.add(assetType.getValue().toLowerCase());
             params.add(filters.keySet().iterator().next().getName());
@@ -1220,11 +1175,11 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
                 if (!subCategoryData.isPresent()) {
                     return Either.right(StorageOperationStatus.MATCH_NOT_FOUND);
                 }
-                return fetchByCategoryOrSubCategoryUid((String) subCategoryData.get().getLeft().getUniqueId(), NodeTypeEnum.ResourceSubcategory, GraphEdgeLabels.SUB_CATEGORY.getProperty(), NodeTypeEnum.Resource, inTransaction,
+                return fetchByCategoryOrSubCategoryUid((String) subCategoryData.get().getLeft().getUniqueId(), NodeTypeEnum.ResourceSubcategory, NodeTypeEnum.Resource, inTransaction,
                         ResourceMetadataData.class, resourceType);
             }
 
-            return fetchByCategoryOrSubCategoryName(subCategoryName, NodeTypeEnum.ResourceSubcategory, GraphEdgeLabels.SUB_CATEGORY.getProperty(), NodeTypeEnum.Resource, inTransaction, ResourceMetadataData.class, resourceType);
+            return fetchByCategoryOrSubCategoryName(subCategoryName, NodeTypeEnum.ResourceSubcategory, NodeTypeEnum.Resource, inTransaction, ResourceMetadataData.class, resourceType);
         }
         if (subcategories != null) {
             return fetchByMainCategory(subcategories.left().value(), inTransaction, resourceType);
@@ -1252,23 +1207,23 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
         return childNodes.stream().filter(matchName).findAny();
     }
 
-    protected <T, S extends ComponentMetadataData> Either<List<T>, StorageOperationStatus> fetchByCategoryOrSubCategoryUid(String categoryUid, NodeTypeEnum categoryType, String categoryLabel, NodeTypeEnum neededType, boolean inTransaction,
-            Class<S> clazz, ResourceTypeEnum resourceType) {
+    protected <T, S extends ComponentMetadataData> Either<List<T>, StorageOperationStatus> fetchByCategoryOrSubCategoryUid(String categoryUid, NodeTypeEnum categoryType, NodeTypeEnum neededType, boolean inTransaction,
+                                                                                                                           Class<S> clazz, ResourceTypeEnum resourceType) {
         try {
             return collectComponents(neededType, categoryUid, categoryType, clazz, resourceType);
         } finally {
-            if (false == inTransaction) {
+            if (!inTransaction) {
                 titanDao.commit();
             }
         }
     }
 
-    protected <T, S extends ComponentMetadataData> Either<List<T>, StorageOperationStatus> fetchByCategoryOrSubCategoryName(String categoryName, NodeTypeEnum categoryType, String categoryLabel, NodeTypeEnum neededType, boolean inTransaction,
-            Class<S> clazz, ResourceTypeEnum resourceType) {
+    protected <T, S extends ComponentMetadataData> Either<List<T>, StorageOperationStatus> fetchByCategoryOrSubCategoryName(String categoryName, NodeTypeEnum categoryType, NodeTypeEnum neededType, boolean inTransaction,
+                                                                                                                            Class<S> clazz, ResourceTypeEnum resourceType) {
         List<T> components = new ArrayList<>();
         try {
             Class categoryClazz = categoryType == NodeTypeEnum.ServiceNewCategory ? CategoryData.class : SubCategoryData.class;
-            Map<String, Object> props = new HashMap<String, Object>();
+            Map<String, Object> props = new HashMap<>();
             props.put(GraphPropertiesDictionary.NORMALIZED_NAME.getProperty(), ValidationUtils.normalizeCategoryName4Uniqueness(categoryName));
             Either<List<GraphNode>, TitanOperationStatus> getCategory = titanGenericDao.getByCriteria(categoryType, props, categoryClazz);
             if (getCategory.isRight()) {
@@ -1284,11 +1239,12 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
 
             return Either.left(components);
         } finally {
-            if (false == inTransaction) {
+            if (!inTransaction) {
                 titanDao.commit();
             }
         }
     }
+
 
     private <T, S extends ComponentMetadataData> Either<List<T>, StorageOperationStatus> collectComponents(NodeTypeEnum neededType, String categoryUid, NodeTypeEnum categoryType, Class<S> clazz, ResourceTypeEnum resourceType) {
         List<T> components = new ArrayList<>();
@@ -1298,9 +1254,10 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
                 ComponentMetadataDataDefinition componentData = component.getLeft().getMetadataDataDefinition();
                 Boolean isHighest = componentData.isHighestVersion();
                 boolean isMatchingResourceType = isMatchingByResourceType(neededType, resourceType, componentData);
-                boolean isDeleted = componentData.isDeleted() != null && componentData.isDeleted();
+                boolean isDeleted = isTrue(componentData.isDeleted());
+                boolean isArchived = isTrue(componentData.isArchived());
 
-                if (isHighest && isMatchingResourceType && !isDeleted) {
+                if (isHighest && isMatchingResourceType && !isDeleted && !isArchived) {
                     Either<T, StorageOperationStatus> result = (Either<T, StorageOperationStatus>) toscaOperationFacade.getToscaElement(componentData.getUniqueId(), JsonParseFlagEnum.ParseMetadata);
                     if (result.isRight()) {
                         return Either.right(result.right().value());
@@ -1331,7 +1288,7 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
         List<T> components = new ArrayList<>();
 
         for (ImmutablePair<SubCategoryData, GraphEdge> subCategory : subcategories) {
-            Either<List<T>, StorageOperationStatus> fetched = fetchByCategoryOrSubCategoryUid((String) subCategory.getLeft().getUniqueId(), NodeTypeEnum.ResourceSubcategory, GraphEdgeLabels.SUB_CATEGORY.getProperty(), NodeTypeEnum.Resource,
+            Either<List<T>, StorageOperationStatus> fetched = fetchByCategoryOrSubCategoryUid((String) subCategory.getLeft().getUniqueId(), NodeTypeEnum.ResourceSubcategory, NodeTypeEnum.Resource,
                     inTransaction, ResourceMetadataData.class, resourceType);
             if (fetched.isRight()) {
                 continue;

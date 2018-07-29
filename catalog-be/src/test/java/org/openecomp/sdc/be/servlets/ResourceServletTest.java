@@ -20,19 +20,9 @@
 
 package org.openecomp.sdc.be.servlets;
 
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.when;
-
-import java.util.Arrays;
-
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.core.Application;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import fj.data.Either;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
@@ -65,10 +55,18 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import org.springframework.http.HttpStatus;
 import org.springframework.web.context.WebApplicationContext;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.Application;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.util.Arrays;
 
-import fj.data.Either;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.when;
 
 public class ResourceServletTest extends JerseyTest {
     public static final HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
@@ -101,7 +99,7 @@ public class ResourceServletTest extends JerseyTest {
         when(userAdmin.getUser(userId, false)).thenReturn(eitherUser);
         when(request.getHeader(Constants.USER_ID_HEADER)).thenReturn(userId);
 
-        ImmutablePair<Resource, ActionStatus> pair = new ImmutablePair<Resource, ActionStatus>(new Resource(), ActionStatus.OK);
+        ImmutablePair<Resource, ActionStatus> pair = new ImmutablePair<>(new Resource(), ActionStatus.OK);
         Either<ImmutablePair<Resource, ActionStatus>, ResponseFormat> ret = Either.left(pair);
         when(resourceImportManager.importUserDefinedResource(Mockito.anyString(), Mockito.any(UploadResourceInfo.class), Mockito.any(User.class), Mockito.anyBoolean())).thenReturn(ret);
 
@@ -115,8 +113,7 @@ public class ResourceServletTest extends JerseyTest {
             public ResponseFormat answer(InvocationOnMock invocation) {
                 Object[] args = invocation.getArguments();
                 ActionStatus action = (ActionStatus) args[0];
-                ResponseFormat resp = (action == ActionStatus.OK) ? new ResponseFormat(HttpStatus.CREATED.value()) : new ResponseFormat(HttpStatus.INTERNAL_SERVER_ERROR.value());
-                return resp;
+                return (action == ActionStatus.OK) ? new ResponseFormat(HttpStatus.CREATED.value()) : new ResponseFormat(HttpStatus.INTERNAL_SERVER_ERROR.value());
             }
         }).when(componentUtils).getResponseFormat(Mockito.any(ActionStatus.class));
 
@@ -129,7 +126,7 @@ public class ResourceServletTest extends JerseyTest {
         Response response = target().path("/v1/catalog/resources").request(MediaType.APPLICATION_JSON).post(Entity.json(gson.toJson(validJson)), Response.class);
         Mockito.verify(componentUtils, Mockito.times(1)).getResponseFormat(Mockito.any(ActionStatus.class));
         Mockito.verify(componentUtils, Mockito.times(1)).getResponseFormat(ActionStatus.OK);
-        assertTrue(response.getStatus() == HttpStatus.CREATED.value());
+        assertEquals(response.getStatus(), HttpStatus.CREATED.value());
 
     }
 
@@ -142,7 +139,7 @@ public class ResourceServletTest extends JerseyTest {
         Response response = target().path("/v1/catalog/resources").request(MediaType.APPLICATION_JSON).post(Entity.json(gson.toJson(validJson)), Response.class);
         Mockito.verify(componentUtils, Mockito.times(1)).getResponseFormat(Mockito.any(ActionStatus.class));
         Mockito.verify(componentUtils, Mockito.times(1)).getResponseFormat(ActionStatus.INVALID_RESOURCE_CHECKSUM);
-        assertTrue(response.getStatus() == HttpStatus.INTERNAL_SERVER_ERROR.value());
+        assertEquals(response.getStatus(), HttpStatus.INTERNAL_SERVER_ERROR.value());
 
     }
 
@@ -227,7 +224,7 @@ public class ResourceServletTest extends JerseyTest {
         Response response = target().path("/v1/catalog/resources").request(MediaType.APPLICATION_JSON).post(Entity.json(gson.toJson(mdJson)), Response.class);
         Mockito.verify(componentUtils, Mockito.times(1)).getResponseFormat(Mockito.any(ActionStatus.class));
         Mockito.verify(componentUtils, Mockito.times(1)).getResponseFormat(invalidResourcePayload);
-        assertTrue(response.getStatus() == HttpStatus.INTERNAL_SERVER_ERROR.value());
+        assertEquals(response.getStatus(), HttpStatus.INTERNAL_SERVER_ERROR.value());
     }
 
     private void setMD5OnRequest(boolean isValid, UploadResourceInfo json) {

@@ -1,12 +1,7 @@
 package org.openecomp.sdc.fe.servlets;
 
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.when;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import org.apache.http.StatusLine;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -21,8 +16,12 @@ import org.openecomp.sdc.fe.config.PluginsConfiguration;
 import org.openecomp.sdc.fe.config.PluginsConfiguration.Plugin;
 import org.openecomp.sdc.fe.impl.PluginStatusBL;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.when;
 
 public class PluginStatusBLTest {
 

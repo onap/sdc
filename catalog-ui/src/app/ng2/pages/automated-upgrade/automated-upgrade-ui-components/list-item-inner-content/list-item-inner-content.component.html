@@ -1,0 +1,25 @@
+<ul class="list-item-inner-content">
+    <li *ngFor="let vspInstance of vspInstances" class="first-line">
+        <div [ngSwitch]="vspInstance.instanceType">
+
+            <div *ngSwitchCase="automatedUpgradeType.VF">
+                <upgrade-line-item arrowName="arrow2-right-child" text="{{vspInstance.vspName}} ({{vspInstance.vspVersion}})"></upgrade-line-item>
+            </div>
+
+            <div *ngSwitchCase="automatedUpgradeType.SERVICE_PROXY">
+                <upgrade-line-item arrowName="arrow2-right-child" prefix="Service Proxy: " text="{{vspInstance.instanceName}}"></upgrade-line-item>
+                <div class="second-line">
+                    <upgrade-line-item arrowName="arrow2-right-child" icon="{{vspInstance.icon}}" text="{{ vspInstance.vspName }} ({{vspInstance.vspVersion}})"></upgrade-line-item>
+                </div>
+            </div>
+
+            <div *ngSwitchCase="automatedUpgradeType.ALLOTTED_RESOURCE">
+                <upgrade-line-item class="allotted-resource-line" arrowName="arrow2-right-child" prefix=" VNF: " text="{{vspInstance.originVfName}}"></upgrade-line-item>
+                <upgrade-line-item arrowName="arrow2-right" prefix=" VFC: " text="{{vspInstance.instanceName}}"></upgrade-line-item>
+                <div class="second-line">
+                    <upgrade-line-item arrowName="arrow2-right-child" icon="vspInstance.icon" prefix=" VFC: " text="{{ vspInstance.vspName }} ({{vspInstance.vspVersion}})"></upgrade-line-item>
+                </div>
+            </div>
+        </div>
+    </li>
+</ul>

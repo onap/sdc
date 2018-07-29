@@ -20,14 +20,14 @@
 
 package org.openecomp.sdc.ci.tests.datatypes;
 
-import java.util.List;
-
+import com.aventstack.extentreports.Status;
 import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
 import org.openecomp.sdc.ci.tests.execute.setup.ExtentTestActions;
+import org.openecomp.sdc.ci.tests.pages.GeneralPageElements;
 import org.openecomp.sdc.ci.tests.utilities.GeneralUIUtils;
 import org.openqa.selenium.WebElement;
 
-import com.aventstack.extentreports.Status;
+import java.util.List;
 
 public class UserManagementTab {
 
@@ -102,8 +102,8 @@ public class UserManagementTab {
 		ExtentTestActions.log(Status.INFO, "Deleting the user in row " + (index + 1));
 		GeneralUIUtils.ultimateWait();
 		GeneralUIUtils.clickOnElementByTestId(DataTestIdEnum.UserManagementEnum.DELETE_USER.getValue() + index);
-		GeneralUIUtils.ultimateWait();
-		GeneralUIUtils.clickOnElementByTestId(DataTestIdEnum.ModalItems.OK.getValue());
+//		GeneralUIUtils.ultimateWait();
+		GeneralPageElements.clickOKButton();
 	}
 	
 	public void saveAfterUpdateUser(int index){

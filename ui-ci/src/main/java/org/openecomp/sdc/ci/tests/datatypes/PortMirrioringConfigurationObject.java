@@ -2,6 +2,9 @@ package org.openecomp.sdc.ci.tests.datatypes;
 
 import org.openecomp.sdc.be.model.Service;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class PortMirrioringConfigurationObject {
 
     private ServiceReqDetails serviceReqDetails;
@@ -14,6 +17,17 @@ public class PortMirrioringConfigurationObject {
     private Service service;
     private Service serviceContainerVmme_Source;
     private Service serviceContainerVprobe_Collector;
+    private Map<String, String> capPropValues = new HashMap<>();
+
+    public Map<String, String> getCapPropValues() {
+        return capPropValues;
+    }
+
+    public void setCapPropValues(Map<String, String> capPropValues) {
+        this.capPropValues = capPropValues;
+    }
+
+
 
     public PortMirrioringConfigurationObject(ServiceReqDetails serviceReqDetails, String vmmeSourceName, String vprobeSourceName,
                                              CanvasManager canvasManager, CanvasElement serviceElementVmmeSourceName,

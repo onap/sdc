@@ -20,20 +20,12 @@
 
 package org.openecomp.sdc.be.servlets;
 
-import java.util.Map;
-
-import javax.inject.Singleton;
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
+import com.jcabi.aspects.Loggable;
+import fj.data.Either;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.openecomp.sdc.be.components.impl.PropertyBusinessLogic;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
@@ -42,25 +34,26 @@ import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.datastructure.Wrapper;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.web.context.WebApplicationContext;
 
-import com.jcabi.aspects.Loggable;
+import javax.inject.Singleton;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.util.Map;
 
-import fj.data.Either;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/v1/catalog")
 @Api(value = "Types Fetch Servlet", description = "Types Fetch Servlet")
 @Singleton
 public class TypesFetchServlet extends AbstractValidationsServlet {
 
-    private static final Logger log = LoggerFactory.getLogger(TypesFetchServlet.class);
+    private static final Logger log = Logger.getLogger(TypesFetchServlet.class);
 
     @GET
     @Path("dataTypes")
@@ -71,12 +64,12 @@ public class TypesFetchServlet extends AbstractValidationsServlet {
             @ApiResponse(code = 404, message = "Data types not found") })
     public Response getAllDataTypesServlet(@Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 
-        Wrapper<Response> responseWrapper = new Wrapper<Response>();
-        Wrapper<User> userWrapper = new Wrapper<User>();
+        Wrapper<Response> responseWrapper = new Wrapper<>();
+        Wrapper<User> userWrapper = new Wrapper<>();
         ServletContext context = request.getSession().getServletContext();
 
         try {
-            init(log);
+            init();
             validateUserExist(responseWrapper, userWrapper, userId);
 
             if (responseWrapper.isEmpty()) {
@@ -113,8 +106,7 @@ public class TypesFetchServlet extends AbstractValidationsServlet {
     private PropertyBusinessLogic getPropertyBL(ServletContext context) {
         WebAppContextWrapper webApplicationContextWrapper = (WebAppContextWrapper) context.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR);
         WebApplicationContext webApplicationContext = webApplicationContextWrapper.getWebAppContext(context);
-        PropertyBusinessLogic propertytBl = webApplicationContext.getBean(PropertyBusinessLogic.class);
-        return propertytBl;
+        return webApplicationContext.getBean(PropertyBusinessLogic.class);
     }
 
 }

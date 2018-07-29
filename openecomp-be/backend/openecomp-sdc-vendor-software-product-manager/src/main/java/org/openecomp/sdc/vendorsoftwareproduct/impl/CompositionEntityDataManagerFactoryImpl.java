@@ -22,13 +22,7 @@ package org.openecomp.sdc.vendorsoftwareproduct.impl;
 
 import org.openecomp.sdc.vendorsoftwareproduct.CompositionEntityDataManager;
 import org.openecomp.sdc.vendorsoftwareproduct.CompositionEntityDataManagerFactory;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.ComponentDaoFactory;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.ComputeDaoFactory;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.DeploymentFlavorDaoFactory;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.ImageDaoFactory;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.NetworkDaoFactory;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.NicDaoFactory;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductInfoDaoFactory;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.*;
 
 public class CompositionEntityDataManagerFactoryImpl extends CompositionEntityDataManagerFactory {
 

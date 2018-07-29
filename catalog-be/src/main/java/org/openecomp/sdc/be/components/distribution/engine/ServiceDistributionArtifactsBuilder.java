@@ -20,42 +20,35 @@
 
 package org.openecomp.sdc.be.components.distribution.engine;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
+import fj.data.Either;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.openecomp.sdc.be.config.ConfigurationManager;
-import org.openecomp.sdc.be.model.ArtifactDefinition;
-import org.openecomp.sdc.be.model.ComponentInstance;
-import org.openecomp.sdc.be.model.ComponentParametersView;
-import org.openecomp.sdc.be.model.Resource;
-import org.openecomp.sdc.be.model.Service;
+import org.openecomp.sdc.be.model.*;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
 import org.openecomp.sdc.be.model.category.SubCategoryDefinition;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.IArtifactOperation;
 import org.openecomp.sdc.be.model.operations.impl.InterfaceLifecycleOperation;
 import org.openecomp.sdc.common.api.ArtifactTypeEnum;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import fj.data.Either;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Component("serviceDistributionArtifactsBuilder")
 public class ServiceDistributionArtifactsBuilder {
 
-    private static final Logger logger = LoggerFactory.getLogger(ServiceDistributionArtifactsBuilder.class);
+    private static final Logger logger = Logger.getLogger(ServiceDistributionArtifactsBuilder.class.getName());
 
-    static final String BASE_ARTIFACT_URL = "/sdc/v1/catalog/services/%s/%s/";
-    static final String RESOURCE_ARTIFACT_URL = BASE_ARTIFACT_URL + "resources/%s/%s/artifacts/%s";
-    static final String SERVICE_ARTIFACT_URL = BASE_ARTIFACT_URL + "artifacts/%s";
-    static final String RESOURCE_INSTANCE_ARTIFACT_URL = BASE_ARTIFACT_URL + "resourceInstances/%s/artifacts/%s";
+    private static final String BASE_ARTIFACT_URL = "/sdc/v1/catalog/services/%s/%s/";
+    private static final String SERVICE_ARTIFACT_URL = BASE_ARTIFACT_URL + "artifacts/%s";
+    private static final String RESOURCE_INSTANCE_ARTIFACT_URL = BASE_ARTIFACT_URL + "resourceInstances/%s/artifacts/%s";
 
     @javax.annotation.Resource
     InterfaceLifecycleOperation interfaceLifecycleOperation;

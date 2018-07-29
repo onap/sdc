@@ -20,18 +20,7 @@
 
 package org.openecomp.sdc.ci.tests.businesslogic;
 
-import static org.junit.Assert.assertTrue;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import ch.qos.logback.classic.util.ContextInitializer;
+import com.clearspring.analytics.util.Pair;
 import com.google.gson.Gson;
 import org.openecomp.sdc.be.datatypes.elements.HeatParameterDataDefinition;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
@@ -43,8 +32,12 @@ import org.openecomp.sdc.ci.tests.execute.devCI.ArtifactFromCsar;
 import org.openecomp.sdc.ci.tests.pages.HomePage;
 import org.openecomp.sdc.ci.tests.utilities.FileHandling;
 
-import com.clearspring.analytics.util.Pair;
-import com.google.gson.Gson;
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
+import java.util.Map.Entry;
+
+import static org.junit.Assert.assertTrue;
 
 public class ArtifactBusinessLogic {
 

@@ -20,46 +20,55 @@
 
 package org.openecomp.sdc.be.model;
 
-import java.util.List;
-
+import org.openecomp.sdc.be.datatypes.elements.Annotation;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 public class InputDefinition extends PropertyDefinition {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -6920076037265309468L;
 
-	List<ComponentInstanceInput> inputs;
-	List<ComponentInstanceProperty> properties;
+    private List<ComponentInstanceInput> inputs;
+    private List<ComponentInstanceProperty> properties;
 
-	public InputDefinition() {
-		super();
-	}
 
-	public InputDefinition(PropertyDataDefinition p) {
-		super(p);
-	}
+    public InputDefinition(PropertyDataDefinition p) {
+        super(p);
+    }
 
-	public InputDefinition(PropertyDefinition pd) {
-		super(pd);
-	}
+    public InputDefinition() {
+        super();
+    }
 
-	
-	public List<ComponentInstanceInput> getInputs() {
-		return inputs;
-	}
+    public InputDefinition(PropertyDefinition pd) {
+        super(pd);
+    }
 
-	public void setInputs(List<ComponentInstanceInput> inputs) {
-		this.inputs = inputs;
-	}
+    public InputDefinition(InputDefinition other) {
+        super(other);
+    }
 
-	public List<ComponentInstanceProperty> getProperties() {
-		return properties;
-	}
+    public List<ComponentInstanceInput> getInputs() {
+        return inputs;
+    }
 
-	public void setProperties(List<ComponentInstanceProperty> properties) {
-		this.properties = properties;
-	}
+    public void setInputs(List<ComponentInstanceInput> inputs) {
+        this.inputs = inputs;
+    }
+
+    public List<ComponentInstanceProperty> getProperties() {
+        return properties;
+    }
+
+    public void setProperties(List<ComponentInstanceProperty> properties) {
+        this.properties = properties;
+    }
+
+    public void setAnnotationsToInput(Collection<Annotation> annotations){
+        this.setAnnotations(new ArrayList<>(annotations));
+    }
+
+
 
 }

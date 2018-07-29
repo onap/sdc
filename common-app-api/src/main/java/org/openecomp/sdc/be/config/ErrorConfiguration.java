@@ -20,9 +20,9 @@
 
 package org.openecomp.sdc.be.config;
 
-import java.util.Map;
-
 import org.openecomp.sdc.common.api.BasicConfiguration;
+
+import java.util.Map;
 
 public class ErrorConfiguration extends BasicConfiguration {
 

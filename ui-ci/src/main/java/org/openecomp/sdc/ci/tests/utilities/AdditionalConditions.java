@@ -20,11 +20,10 @@
 
 package org.openecomp.sdc.ci.tests.utilities;
 
+import com.paulhammant.ngwebdriver.NgWebDriver;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.ExpectedCondition;
-
-import com.paulhammant.ngwebdriver.NgWebDriver;
 
 public class AdditionalConditions {
 		

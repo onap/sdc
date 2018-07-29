@@ -20,13 +20,13 @@
 
 package org.openecomp.sdc.ci.tests.execute.resource;
 
-import java.io.IOException;
-
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
 import org.openecomp.sdc.ci.tests.utils.general.AtomicOperationUtils;
 import org.testng.ITestContext;
 import org.testng.annotations.DataProvider;
+
+import java.io.IOException;
 
 public class SampleDataProvider {
 

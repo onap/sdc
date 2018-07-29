@@ -20,48 +20,20 @@
 
 package org.openecomp.sdc.ci.tests.execute.sanity;
 
-import static org.testng.AssertJUnit.assertTrue;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import com.aventstack.extentreports.Status;
+import static org.assertj.core.api.Assertions.assertThat;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
-import org.openecomp.sdc.ci.tests.datatypes.ArtifactInfo;
-import org.openecomp.sdc.ci.tests.datatypes.CanvasElement;
-import org.openecomp.sdc.ci.tests.datatypes.CanvasManager;
-import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum;
+import org.openecomp.sdc.ci.tests.datatypes.*;
 import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum.InformationalArtifactsPlaceholders;
 import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum.LeftPanelCanvasItems;
 import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum.ResourceMetadataEnum;
-import org.openecomp.sdc.ci.tests.datatypes.LifeCycleStateEnum;
-import org.openecomp.sdc.ci.tests.datatypes.ResourceReqDetails;
-import org.openecomp.sdc.ci.tests.datatypes.enums.ArtifactTypeEnum;
-import org.openecomp.sdc.ci.tests.datatypes.enums.NormativeTypesEnum;
-import org.openecomp.sdc.ci.tests.datatypes.enums.PropertyTypeEnum;
-import org.openecomp.sdc.ci.tests.datatypes.enums.ResourceCategoryEnum;
-import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
+import org.openecomp.sdc.ci.tests.datatypes.enums.*;
 import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
 import org.openecomp.sdc.ci.tests.execute.setup.SetupCDTest;
-import org.openecomp.sdc.ci.tests.pages.CompositionPage;
-import org.openecomp.sdc.ci.tests.pages.DeploymentArtifactPage;
-import org.openecomp.sdc.ci.tests.pages.GeneralPageElements;
-import org.openecomp.sdc.ci.tests.pages.InformationalArtifactPage;
-import org.openecomp.sdc.ci.tests.pages.InputsPage;
-import org.openecomp.sdc.ci.tests.pages.PropertiesPage;
-import org.openecomp.sdc.ci.tests.pages.ResourceGeneralPage;
-import org.openecomp.sdc.ci.tests.pages.TesterOperationPage;
-import org.openecomp.sdc.ci.tests.pages.ToscaArtifactsPage;
-import org.openecomp.sdc.ci.tests.utilities.ArtifactUIUtils;
-import org.openecomp.sdc.ci.tests.utilities.FileHandling;
-import org.openecomp.sdc.ci.tests.utilities.GeneralUIUtils;
-import org.openecomp.sdc.ci.tests.utilities.PropertiesUIUtils;
-import org.openecomp.sdc.ci.tests.utilities.ResourceUIUtils;
-import org.openecomp.sdc.ci.tests.utilities.RestCDUtils;
+import org.openecomp.sdc.ci.tests.pages.*;
+import org.openecomp.sdc.ci.tests.utilities.*;
 import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
 import org.openecomp.sdc.ci.tests.utils.rest.ResourceRestUtils;
 import org.openecomp.sdc.ci.tests.utils.rest.ResponseParser;
@@ -71,11 +43,12 @@ import org.openecomp.sdc.ci.tests.verificator.VfVerificator;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.testng.Assert;
-import org.testng.SkipException;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import com.aventstack.extentreports.Status;
+import java.util.*;
+
+import static org.testng.AssertJUnit.assertTrue;
 
 public class ImportDCAE extends SetupCDTest {
 
@@ -117,13 +90,14 @@ public class ImportDCAE extends SetupCDTest {
 		
 		try{
 			ResourceUIUtils.importVfc(atomicResourceMetaData, filePath, fileName, getUser());
-			ResourceGeneralPage.clickSubmitForTestingButton(atomicResourceMetaData.getName());
+			//TODO Andrey should click on certify button
+			ResourceGeneralPage.clickCertifyButton(atomicResourceMetaData.getName());
 			
-			reloginWithNewRole(UserRoleEnum.TESTER);
+			/*reloginWithNewRole(UserRoleEnum.TESTER);
 			GeneralUIUtils.findComponentAndClick(atomicResourceMetaData.getName());
 			TesterOperationPage.certifyComponent(atomicResourceMetaData.getName());
 	
-			reloginWithNewRole(UserRoleEnum.DESIGNER);
+			reloginWithNewRole(UserRoleEnum.DESIGNER);*/
 			ResourceReqDetails resourceMetaData = createDCAEAsset();
 	
 			DeploymentArtifactPage.getLeftMenu().moveToCompositionScreen();
@@ -150,7 +124,7 @@ public class ImportDCAE extends SetupCDTest {
 		createDCAEAsset();
 		ResourceGeneralPage.getLeftMenu().moveToDeploymentArtifactScreen();
 
-		List<ArtifactInfo> deploymentArtifactList = new ArrayList<ArtifactInfo>();
+		List<ArtifactInfo> deploymentArtifactList = new ArrayList<>();
 		deploymentArtifactList.add(new ArtifactInfo(filePath, "asc_heat 0 2.yaml", "kuku", "artifact1", ArtifactTypeEnum.OTHER.getType()));
 		deploymentArtifactList.add(new ArtifactInfo(filePath, "sample-xml-alldata-1-1.xml", "cuku", "artifact2", ArtifactTypeEnum.YANG_XML.getType()));
 		for (ArtifactInfo deploymentArtifact : deploymentArtifactList) {
@@ -200,7 +174,8 @@ public class ImportDCAE extends SetupCDTest {
 	public void addPropertiesToVfcInstanceInDCAEAssetTest() throws Exception {
 		
 		if(true){
-			throw new SkipException("Open bug 373762, can't update properties on CP or VFC instance  on Composition screen");			
+//			throw new SkipException("Open bug 373762, can't update properties on CP or VFC instance  on Composition screen");
+			SetupCDTest.getExtendTest().log(Status.INFO, "Open bug 373762, can't update properties on CP or VFC instance  on Composition screen");
 		}
 		
 		String fileName = "importVFC_VFC15.yml";
@@ -246,30 +221,32 @@ public class ImportDCAE extends SetupCDTest {
 		try{
 			atomicResourceMetaData = ElementFactory.getDefaultResourceByTypeNormTypeAndCatregory(ResourceTypeEnum.VFC, NormativeTypesEnum.ROOT, ResourceCategoryEnum.NETWORK_L2_3_ROUTERS, getUser());
 			ResourceUIUtils.importVfc(atomicResourceMetaData, filePath, fileName, getUser());
-			ResourceGeneralPage.clickSubmitForTestingButton(atomicResourceMetaData.getName());
+			//TODO Andrey changed to click on checkIn button
+			ResourceGeneralPage.clickCheckinButton(atomicResourceMetaData.getName());
 			
 			vfMetaData = createDCAEAsset();
 			ResourceGeneralPage.getLeftMenu().moveToCompositionScreen();
 			vfCanvasManager = CanvasManager.getCanvasManager();
 			CompositionPage.searchForElement(atomicResourceMetaData.getName());
-			vfcElement = vfCanvasManager.createElementOnCanvas(atomicResourceMetaData.getName());			
-		
-			CompositionPage.clickSubmitForTestingButton(vfMetaData.getName());
+			vfcElement = vfCanvasManager.createElementOnCanvas(atomicResourceMetaData.getName());
+			//TODO Andrey should click on certify button
+			CompositionPage.clickCertifyButton(vfMetaData.getName());
 			assert(false);
 		}
 		catch(Exception e){ 
 			String errorMessage = GeneralUIUtils.getWebElementByClassName("w-sdc-modal-caption").getText();
 			String checkUIResponseOnError = ErrorValidationUtils.checkUIResponseOnError(ActionStatus.VALIDATED_RESOURCE_NOT_FOUND.name());
 			Assert.assertTrue(errorMessage.contains(checkUIResponseOnError));
+			GeneralUIUtils.closeErrorMessage();
+			GeneralPageElements.clickOnHomeButton();
 			
-			
-			reloginWithNewRole(UserRoleEnum.TESTER);
 			GeneralUIUtils.findComponentAndClick(atomicResourceMetaData.getName());
-			TesterOperationPage.certifyComponent(atomicResourceMetaData.getName());
+			ResourceGeneralPage.clickCertifyButton(atomicResourceMetaData.getName());
 			
-			reloginWithNewRole(UserRoleEnum.DESIGNER);
 			GeneralUIUtils.findComponentAndClick(vfMetaData.getName());
+			ResourceGeneralPage.clickCheckoutButton();
 			ResourceGeneralPage.getLeftMenu().moveToCompositionScreen();
+			vfMetaData.setVersion("0.2");
 			vfCanvasManager = CanvasManager.getCanvasManager();
 			CompositionPage.changeComponentVersion(vfCanvasManager, vfcElement, "1.0");
 			
@@ -282,7 +259,7 @@ public class ImportDCAE extends SetupCDTest {
 		}
 		
 	}
-	
+
 	// future removed from ui
 	@Test(enabled = false)
 	public void addUpdateDeleteSimplePropertiesToDCAEAssetTest() throws Exception{
@@ -353,12 +330,16 @@ public class ImportDCAE extends SetupCDTest {
 	public void addAllInformationalArtifactPlaceholdersInDCAEAssetTest() throws Exception{		
 		createDCAEAsset();
 		ResourceGeneralPage.getLeftMenu().moveToInformationalArtifactScreen();
-		
+		int fileNameCounter = 0;
+		String fileName;
 		for(InformationalArtifactsPlaceholders informArtifact : InformationalArtifactsPlaceholders.values()){
-			ArtifactUIUtils.fillPlaceHolderInformationalArtifact(informArtifact, filePath,"asc_heat 0 2.yaml", informArtifact.getValue());
+			fileName = HEAT_FILE_YAML_NAME_PREFIX + fileNameCounter + HEAT_FILE_YAML_NAME_SUFFIX;
+			ArtifactUIUtils.fillPlaceHolderInformationalArtifact(informArtifact,
+					FileHandling.getFilePath("uniqueFileNames"),fileName, informArtifact.getValue());
+			fileNameCounter++;
 		}
 		
-		assertTrue(InformationalArtifactPage.checkElementsCountInTable(InformationalArtifactsPlaceholders.values().length));
+		assertThat(InformationalArtifactPage.checkElementsCountInTable(InformationalArtifactsPlaceholders.values().length)).isTrue();
 	}
 	
 	@Test
@@ -373,8 +354,9 @@ public class ImportDCAE extends SetupCDTest {
 			String typeFromScreen = ToscaArtifactsPage.getArtifactType(i);
 			assertTrue(typeFromScreen.equals(ArtifactTypeEnum.TOSCA_CSAR.getType()) || typeFromScreen.equals(ArtifactTypeEnum.TOSCA_TEMPLATE.getType()));
 		}
-		
-		ToscaArtifactsPage.clickSubmitForTestingButton(vfMetaData.getName());
+		//TODO Andrey should click on certify button
+		ToscaArtifactsPage.clickCertifyButton(vfMetaData.getName());
+		vfMetaData.setVersion("1.0");
 		VfVerificator.verifyToscaArtifactsInfo(vfMetaData, getUser());
 	}
 	
@@ -386,16 +368,17 @@ public class ImportDCAE extends SetupCDTest {
 		
 		ResourceGeneralPage.clickCheckinButton(vfName);
 		GeneralUIUtils.findComponentAndClick(vfName);
-		ResourceGeneralPage.clickSubmitForTestingButton(vfName);
+		//TODO Andrey should click on certify button
+		ResourceGeneralPage.clickCertifyButton(vfName);
 		
-		reloginWithNewRole(UserRoleEnum.TESTER);
+		/*reloginWithNewRole(UserRoleEnum.TESTER);
 		GeneralUIUtils.findComponentAndClick(vfName);
-		TesterOperationPage.certifyComponent(vfName);
+		TesterOperationPage.certifyComponent(vfName);*/
 		
 		vfMetaData.setVersion("1.0");
 		VfVerificator.verifyVFLifecycle(vfMetaData, getUser(), LifecycleStateEnum.CERTIFIED);
 		
-		reloginWithNewRole(UserRoleEnum.DESIGNER);
+		/*reloginWithNewRole(UserRoleEnum.DESIGNER);*/
 		GeneralUIUtils.findComponentAndClick(vfName);
 		VfVerificator.verifyVfLifecycleInUI(LifeCycleStateEnum.CERTIFIED);
 	}
@@ -490,14 +473,14 @@ public class ImportDCAE extends SetupCDTest {
 		vfMetaData.setVersion("0.2");
 		VfVerificator.verifyVFLifecycle(vfMetaData, getUser(), LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
 		VfVerificator.verifyVfLifecycleInUI(LifeCycleStateEnum.CHECKOUT);
+		//TODO Andrey should click on certify button
+		ResourceGeneralPage.clickCertifyButton(vfMetaData.getName());
 		
-		ResourceGeneralPage.clickSubmitForTestingButton(vfMetaData.getName());
-		
-		reloginWithNewRole(UserRoleEnum.TESTER);
+		/*reloginWithNewRole(UserRoleEnum.TESTER);
 		GeneralUIUtils.findComponentAndClick(vfMetaData.getName());
 		TesterOperationPage.certifyComponent(vfMetaData.getName());
 		
-		reloginWithNewRole(UserRoleEnum.DESIGNER);
+		reloginWithNewRole(UserRoleEnum.DESIGNER);*/
 		GeneralUIUtils.findComponentAndClick(vfMetaData.getName());
 		ResourceGeneralPage.clickCheckoutButton();
 		
@@ -542,7 +525,8 @@ public class ImportDCAE extends SetupCDTest {
 
 		ResourceReqDetails atomicResourceMetaData = ElementFactory.getDefaultResourceByTypeNormTypeAndCatregory(ResourceTypeEnum.VFC, NormativeTypesEnum.ROOT, ResourceCategoryEnum.NETWORK_L2_3_ROUTERS, getUser());
 		ResourceUIUtils.importVfc(atomicResourceMetaData, filePath, fileName, getUser());
-		ResourceGeneralPage.clickSubmitForTestingButton(atomicResourceMetaData.getName());
+		//TODO Andrey changed to click on checkIn button
+		ResourceGeneralPage.clickCheckinButton(atomicResourceMetaData.getName());
 		
 		ResourceReqDetails vfMetaData = createDCAEAsset();
 		DeploymentArtifactPage.getLeftMenu().moveToCompositionScreen();
@@ -550,7 +534,8 @@ public class ImportDCAE extends SetupCDTest {
 		CompositionPage.addElementToCanvasScreen(atomicResourceMetaData.getName(), canvasManager);
 		
 		try{
-			CompositionPage.clickSubmitForTestingButton(vfMetaData.getName());
+			//TODO Andrey should click on certify button
+			CompositionPage.clickCertifyButton(vfMetaData.getName());
 			assert(false);
 		}
 		catch(Exception e){ 
@@ -658,7 +643,7 @@ public class ImportDCAE extends SetupCDTest {
 	}			
 	
 	public ResourceReqDetails createDCAEAsset() throws Exception{
-		String fileName2 = SERVICE_INPUT_TEST_VF2_CSAR;		
+		String fileName2 = SERVICE_INPUT_TEST_VF2_CSAR;
 		ResourceReqDetails resourceMetaData = ElementFactory.getDefaultResourceByType("ciRes", NormativeTypesEnum.ROOT, ResourceCategoryEnum.APPLICATION_L4_DATABASE, getUser().getUserId(), ResourceTypeEnum.VF.toString());
 		ResourceUIUtils.importVfFromCsar(resourceMetaData, filePath, fileName2, getUser());
 		resourceMetaData.setVersion("0.1");

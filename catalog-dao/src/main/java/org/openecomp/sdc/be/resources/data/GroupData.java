@@ -20,13 +20,13 @@
 
 package org.openecomp.sdc.be.resources.data;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.openecomp.sdc.be.dao.graph.datatype.GraphNode;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
 import org.openecomp.sdc.be.datatypes.elements.GroupDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class GroupData extends GraphNode {
 
@@ -69,7 +69,7 @@ public class GroupData extends GraphNode {
 
 	@Override
 	public Map<String, Object> toGraphMap() {
-		Map<String, Object> map = new HashMap<String, Object>();
+		Map<String, Object> map = new HashMap<>();
 		addIfExists(map, GraphPropertiesDictionary.NAME, groupDataDefinition.getName());
 		addIfExists(map, GraphPropertiesDictionary.UNIQUE_ID, groupDataDefinition.getUniqueId());
 		addIfExists(map, GraphPropertiesDictionary.TYPE, groupDataDefinition.getType());

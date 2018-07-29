@@ -1,15 +1,15 @@
 package org.openecomp.sdc.be.dao.titan;
 
-import static com.thinkaurelius.titan.core.attribute.Contain.NOT_IN;
-import static java.util.Collections.emptyMap;
-import static org.apache.commons.collections.CollectionUtils.isEmpty;
+import com.thinkaurelius.titan.graphdb.query.TitanPredicate;
 
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import com.thinkaurelius.titan.graphdb.query.TitanPredicate;
+import static com.thinkaurelius.titan.core.attribute.Contain.NOT_IN;
+import static java.util.Collections.emptyMap;
+import static org.apache.commons.collections.CollectionUtils.isEmpty;
 
 public class TitanUtils {
 

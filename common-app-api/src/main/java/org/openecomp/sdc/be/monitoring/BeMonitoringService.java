@@ -20,13 +20,8 @@
 
 package org.openecomp.sdc.be.monitoring;
 
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.TimeUnit;
-
-import javax.servlet.ServletContext;
-
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
 import org.apache.http.entity.ContentType;
@@ -38,19 +33,21 @@ import org.openecomp.sdc.common.http.client.api.HttpRequest;
 import org.openecomp.sdc.common.http.client.api.HttpResponse;
 import org.openecomp.sdc.common.http.config.HttpClientConfig;
 import org.openecomp.sdc.common.http.config.Timeouts;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.common.monitoring.MonitoringEvent;
 import org.openecomp.sdc.common.monitoring.MonitoringMetricsFetcher;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import javax.servlet.ServletContext;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.TimeUnit;
 
 public class BeMonitoringService {
 
 	private static final String URL = "%s://%s:%s/sdc2/rest/monitoring";
-	private static Logger monitoringLogger = LoggerFactory.getLogger("asdc.be.monitoring.service");
-	private static Logger log = LoggerFactory.getLogger(BeMonitoringService.class.getName());
+	private static Logger monitoringLogger = Logger.getLogger("asdc.be.monitoring.service");
+	private static Logger log = Logger.getLogger(BeMonitoringService.class.getName());
 	private static Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
 	private class MonitoringScheduledTask implements Runnable {

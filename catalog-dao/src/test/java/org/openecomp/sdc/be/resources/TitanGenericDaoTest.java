@@ -20,16 +20,11 @@
 
 package org.openecomp.sdc.be.resources;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-
+import com.google.gson.Gson;
+import com.thinkaurelius.titan.core.*;
+import com.thinkaurelius.titan.core.attribute.Text;
+import com.thinkaurelius.titan.core.schema.TitanManagement;
+import fj.data.Either;
 import org.apache.commons.configuration.BaseConfiguration;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.tinkerpop.gremlin.structure.Direction;
@@ -46,12 +41,7 @@ import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
 import org.openecomp.sdc.be.dao.utils.UserStatusEnum;
 import org.openecomp.sdc.be.datatypes.components.ResourceMetadataDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
-import org.openecomp.sdc.be.resources.data.AdditionalInfoParameterData;
-import org.openecomp.sdc.be.resources.data.ArtifactData;
-import org.openecomp.sdc.be.resources.data.ComponentInstanceData;
-import org.openecomp.sdc.be.resources.data.GraphNodeLock;
-import org.openecomp.sdc.be.resources.data.ResourceMetadataData;
-import org.openecomp.sdc.be.resources.data.UserData;
+import org.openecomp.sdc.be.resources.data.*;
 import org.openecomp.sdc.common.api.ConfigurationSource;
 import org.openecomp.sdc.common.api.UserRoleEnum;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;
@@ -65,16 +55,14 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 
-import com.google.gson.Gson;
-import com.thinkaurelius.titan.core.PropertyKey;
-import com.thinkaurelius.titan.core.TitanEdge;
-import com.thinkaurelius.titan.core.TitanFactory;
-import com.thinkaurelius.titan.core.TitanGraph;
-import com.thinkaurelius.titan.core.TitanVertex;
-import com.thinkaurelius.titan.core.attribute.Text;
-import com.thinkaurelius.titan.core.schema.TitanManagement;
+import javax.annotation.Resource;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
-import fj.data.Either;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:application-context-test.xml")
@@ -195,7 +183,7 @@ public class TitanGenericDaoTest {
 
 		log.debug("{}", all.left().value());
 
-		Map<String, Object> props = new HashMap<String, Object>();
+		Map<String, Object> props = new HashMap<>();
 
 		props.put(keyValueId1.getKey(), keyValueId1.getValue());
 
@@ -233,27 +221,27 @@ public class TitanGenericDaoTest {
 
 		Either<List<Edge>, TitanOperationStatus> eitherEdges = titanDao.getEdgesForNode(userData, Direction.OUT);
 		assertTrue(eitherEdges.isLeft());
-		assertTrue(eitherEdges.left().value().size() == 1);
+        assertEquals(1, eitherEdges.left().value().size());
 
 		eitherEdges = titanDao.getEdgesForNode(userData, Direction.IN);
 		assertTrue(eitherEdges.isLeft());
-		assertTrue(eitherEdges.left().value().size() == 0);
+        assertEquals(0, eitherEdges.left().value().size());
 
 		eitherEdges = titanDao.getEdgesForNode(resourceData, Direction.OUT);
 		assertTrue(eitherEdges.isLeft());
-		assertTrue(eitherEdges.left().value().size() == 0);
+        assertEquals(0, eitherEdges.left().value().size());
 
 		eitherEdges = titanDao.getEdgesForNode(resourceData, Direction.IN);
 		assertTrue(eitherEdges.isLeft());
-		assertTrue(eitherEdges.left().value().size() == 1);
+        assertEquals(1, eitherEdges.left().value().size());
 
 		eitherEdges = titanDao.getEdgesForNode(resourceData, Direction.BOTH);
 		assertTrue(eitherEdges.isLeft());
-		assertTrue(eitherEdges.left().value().size() == 1);
+        assertEquals(1, eitherEdges.left().value().size());
 
 		eitherEdges = titanDao.getEdgesForNode(userData, Direction.BOTH);
 		assertTrue(eitherEdges.isLeft());
-		assertTrue(eitherEdges.left().value().size() == 1);
+        assertEquals(1, eitherEdges.left().value().size());
 
 		titanDao.deleteNode(userData, UserData.class);
 		titanDao.deleteNode(resourceData, ResourceMetadataData.class);
@@ -394,7 +382,7 @@ public class TitanGenericDaoTest {
 				ResourceMetadataData.class);
 		titanDao.commit();
 
-		Map<String, Object> props = new HashMap<String, Object>();
+		Map<String, Object> props = new HashMap<>();
 
 		props.put(GraphPropertiesDictionary.STATE.getProperty(), "NOT_CERTIFIED_CHECKOUT");
 		props.put("name", "resourceForLock");

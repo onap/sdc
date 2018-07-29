@@ -27,10 +27,15 @@ healthCheckSocketTimeoutInMs: 5000
 healthCheckIntervalInSeconds: 5
 
 onboarding:
-  protocol: http
-  host: localhost
-  port: 8181
-  healthCheckUri: "/onboarding/v1.0/healthcheck"
+  hostFe: localhost
+  protocolFe: http
+  portFe: 8181
+
+  hostBe: localhost
+  protocolBe: http
+  portBe: 8080
+
+  healthCheckUriFe: "/onboarding/v1.0/healthcheck"
 
 dcae:
   protocol: http
@@ -92,6 +97,4 @@ kibanaProtocol: http
 healthStatusExclude:
    - DE
    - ES
-   - DMAPP
-
-   
+   - DMAAP

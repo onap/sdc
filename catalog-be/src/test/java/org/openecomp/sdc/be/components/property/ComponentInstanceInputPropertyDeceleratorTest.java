@@ -1,10 +1,7 @@
 package org.openecomp.sdc.be.components.property;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
+import fj.data.Either;
+import mockit.Deencapsulation;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -13,21 +10,19 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
-import org.openecomp.sdc.be.model.Component;
-import org.openecomp.sdc.be.model.ComponentInstance;
-import org.openecomp.sdc.be.model.ComponentInstanceInput;
-import org.openecomp.sdc.be.model.InputDefinition;
-import org.openecomp.sdc.be.model.Resource;
+import org.openecomp.sdc.be.model.*;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 
-import fj.data.Either;
-import mockit.Deencapsulation;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 public class ComponentInstanceInputPropertyDeceleratorTest {
 
 	@InjectMocks
-	ComponentInstanceInputPropertyDecelerator testSubject;
+	ComponentInstanceInputPropertyDeclarator testSubject;
 
 	@Mock
 	private ComponentInstanceBusinessLogic componentInstanceBusinessLogicMock;
@@ -84,7 +79,7 @@ public class ComponentInstanceInputPropertyDeceleratorTest {
 
 		// default test
 		Deencapsulation.invoke(testSubject, "addPropertiesListToInput", new ComponentInstanceInput(),
-				new PropertyDataDefinition(), new InputDefinition());
+				new InputDefinition());
 	}
 
 	@Test

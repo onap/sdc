@@ -1,0 +1,34 @@
+<ng2-expand-collapse state="0">
+    <header tooltip="General Information">General Info</header>
+    <content>
+        <!-- TYPE -->
+        <div class="component-details-panel-item">
+            <span class="name" [innerHTML]="'GENERAL_LABEL_TYPE' | translate"></span>
+            <span class="value" data-tests-id="rightTab_componentType" tooltip="{{policy.policyTypeUid}}">{{policy.policyTypeUid}}</span>
+        </div>
+
+        <!-- CATEGORY -->
+        <div class="component-details-panel-item">
+            <span class="name" [innerHTML]="'GENERAL_LABEL_CATEGORY' | translate"></span>
+            <span class="value" data-tests-id="rightTab_category" tooltip="Policy">Policy</span>
+        </div>
+
+        <!-- SUB CATEGORY -->
+        <div class="component-details-panel-item">
+            <span class="name" [innerHTML]="'GENERAL_LABEL_SUB_CATEGORY' | translate"></span>
+            <span class="value" data-tests-id="rightTab_subCategory" tooltip="Policy">Policy</span>
+        </div>
+
+        <!-- VERSION -->
+        <div class="component-details-panel-item">
+            <span class="name" [innerHTML]="'GENERAL_LABEL_VERSION' | translate"></span>
+            <span class="value" data-tests-id="rightTab_version" tooltip="{{policy.version}}">{{policy.version}}</span>
+        </div>
+
+        <!-- DESCRIPTION -->
+        <div class="component-details-panel-item description">
+            <span class="name" [innerHTML]="'GENERAL_LABEL_DESCRIPTION' | translate"></span>
+            <span class="value" ellipsis="policy.description" max-chars="55" data-tests-id="rightTab_description">{{policy.description}}</span>
+        </div>
+    </content>
+</ng2-expand-collapse>

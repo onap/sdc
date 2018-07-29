@@ -105,6 +105,8 @@ export class CompositionGraphNodesUtils {
                 (<Service>component).forwardingPaths = response.forwardingPaths;
             });
 
+            this.eventListenerService.notifyObservers(GRAPH_EVENTS.ON_DELETE_COMPONENT_INSTANCE_SUCCESS, nodeId);
+
             //update UI
             cy.remove(nodeToDelete);
         };

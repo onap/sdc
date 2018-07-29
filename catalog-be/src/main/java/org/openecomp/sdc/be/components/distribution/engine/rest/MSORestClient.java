@@ -1,32 +1,25 @@
 package org.openecomp.sdc.be.components.distribution.engine.rest;
 
-import java.util.Properties;
-
+import com.google.common.annotations.VisibleForTesting;
+import com.google.gson.Gson;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.eclipse.jetty.util.URIUtil;
 import org.openecomp.sdc.be.components.distribution.engine.DistributionStatusNotificationEnum;
 import org.openecomp.sdc.be.config.ConfigurationManager;
-import org.openecomp.sdc.common.http.client.api.HttpExecuteException;
-import org.openecomp.sdc.common.http.client.api.HttpRequest;
-import org.openecomp.sdc.common.http.client.api.HttpResponse;
-import org.openecomp.sdc.common.http.client.api.Responses;
-import org.openecomp.sdc.common.http.client.api.RestUtils;
-import org.openecomp.sdc.common.http.client.api.RetryHandlers;
+import org.openecomp.sdc.common.http.client.api.*;
 import org.openecomp.sdc.common.http.config.BasicAuthorization;
 import org.openecomp.sdc.common.http.config.ExternalServiceConfig;
 import org.openecomp.sdc.common.http.config.HttpClientConfig;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.springframework.stereotype.Component;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.gson.Gson;
+import java.util.Properties;
 
 @Component
 public class MSORestClient {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(MSORestClient.class);
+    private static final Logger logger = Logger.getLogger(MSORestClient.class.getName());
     private static final Gson gson = new Gson();
     @VisibleForTesting
     static final String DISTRIBUTIONS_RESOURCE_CONFIG_PARAM = "distributions";
@@ -46,7 +39,7 @@ public class MSORestClient {
             return doNotifyDistributionComplete(distributionId, distributionStatusEnum, errReason);
         }
         catch(HttpExecuteException e) {
-            LOGGER.debug("The request to mso failed with exception ", e);
+            logger.debug("The request to mso failed with exception ", e);
             return Responses.INTERNAL_SERVER_ERROR;
         }
     }
@@ -54,7 +47,7 @@ public class MSORestClient {
     private HttpResponse<String> doNotifyDistributionComplete(String distributionId, DistributionStatusNotificationEnum distributionStatusEnum, String errReason) throws HttpExecuteException {
         StringEntity entity = new StringEntity(gson.toJson(new DistributionStatusRequest(distributionStatusEnum.name(), errReason)), ContentType.APPLICATION_JSON);
         HttpResponse<String> response = HttpRequest.patch(buildMsoDistributionUrl(distributionId), buildReqHeader(), entity, serviceConfig.getHttpClientConfig());
-        LOGGER.info("response from mso - status code: {}, status description: {}, response: {}, ", response.getStatusCode(), response.getDescription(), response.getResponse());
+        logger.info("response from mso - status code: {}, status description: {}, response: {}, ", response.getStatusCode(), response.getDescription(), response.getResponse());
         return response;
     }
 

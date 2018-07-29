@@ -1,8 +1,6 @@
 package org.openecomp.sdc.be.components.health;
 
-import java.util.LinkedList;
-import java.util.List;
-
+import mockit.Deencapsulation;
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.Assert;
 import org.junit.Test;
@@ -13,7 +11,8 @@ import org.openecomp.sdc.be.switchover.detector.SwitchoverDetector;
 import org.openecomp.sdc.common.api.HealthCheckInfo;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import mockit.Deencapsulation;
+import java.util.LinkedList;
+import java.util.List;
 
 public class HealthCheckBusinessLogicTest extends BeConfDependentTest{
 

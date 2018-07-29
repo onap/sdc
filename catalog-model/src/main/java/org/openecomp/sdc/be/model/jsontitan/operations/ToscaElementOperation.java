@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,6 +23,7 @@ package org.openecomp.sdc.be.model.jsontitan.operations;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import fj.data.Either;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.apache.tinkerpop.gremlin.structure.Edge;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
@@ -58,16 +59,15 @@ import org.openecomp.sdc.be.model.operations.impl.DaoStatusConverter;
 import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
 import org.openecomp.sdc.common.jsongraph.util.CommonUtility;
 import org.openecomp.sdc.common.jsongraph.util.CommonUtility.LogLevelEnum;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.common.util.ValidationUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StopWatch;
 
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.stream.Collectors;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -75,7 +75,13 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 public abstract class ToscaElementOperation extends BaseOperation {
-    private static Logger log = LoggerFactory.getLogger(ToscaElementOperation.class.getName());
+    private static final String FAILED_TO_FETCH_FOR_TOSCA_ELEMENT_WITH_ID_ERROR = "failed to fetch {} for tosca element with id {}, error {}";
+
+    private static final String CANNOT_FIND_USER_IN_THE_GRAPH_STATUS_IS = "Cannot find user {} in the graph. status is {}";
+
+    private static final String FAILED_TO_CREATE_EDGE_WITH_LABEL_FROM_USER_VERTEX_TO_TOSCA_ELEMENT_VERTEX_ON_GRAPH_STATUS_IS = "Failed to create edge with label {} from user vertex {} to tosca element vertex {} on graph. Status is {}. ";
+
+    private static Logger log = Logger.getLogger(ToscaElementOperation.class.getName());
 
     private static final Gson gson = new Gson();
 
@@ -88,7 +94,7 @@ public abstract class ToscaElementOperation extends BaseOperation {
 
     protected Either<GraphVertex, StorageOperationStatus> getComponentByLabelAndId(String uniqueId, ToscaElementTypeEnum nodeType, JsonParseFlagEnum parseFlag) {
 
-        Map<GraphPropertyEnum, Object> propertiesToMatch = new HashMap<GraphPropertyEnum, Object>();
+        Map<GraphPropertyEnum, Object> propertiesToMatch = new HashMap<>();
         propertiesToMatch.put(GraphPropertyEnum.UNIQUE_ID, uniqueId);
 
         VertexTypeEnum vertexType = ToscaElementTypeEnum.getVertexTypeByToscaType(nodeType);
@@ -141,7 +147,7 @@ public abstract class ToscaElementOperation extends BaseOperation {
 
     /**
      * Performs a shadow clone of previousToscaElement
-     * 
+     *
      * @param previousToscaElement
      * @param nextToscaElement
      * @param user
@@ -162,11 +168,11 @@ public abstract class ToscaElementOperation extends BaseOperation {
         }
         if (result == null) {
             createdToscaElementVertex = createNextVersionRes.left().value();
-            Map<EdgePropertyEnum, Object> properties = new HashMap<EdgePropertyEnum, Object>();
+            Map<EdgePropertyEnum, Object> properties = new HashMap<>();
             properties.put(EdgePropertyEnum.STATE, createdToscaElementVertex.getMetadataProperty(GraphPropertyEnum.STATE));
             status = titanDao.createEdge(user.getVertex(), createdToscaElementVertex.getVertex(), EdgeLabelEnum.STATE, properties);
             if (status != TitanOperationStatus.OK) {
-                CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to create edge with label {} from user vertex {} to tosca element vertex {} on graph. Status is {}. ", EdgeLabelEnum.STATE, user.getUniqueId(),
+                CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, FAILED_TO_CREATE_EDGE_WITH_LABEL_FROM_USER_VERTEX_TO_TOSCA_ELEMENT_VERTEX_ON_GRAPH_STATUS_IS, EdgeLabelEnum.STATE, user.getUniqueId(),
                         previousToscaElement.getMetadataProperty(GraphPropertyEnum.NORMALIZED_NAME), status);
                 result = Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
             }
@@ -174,7 +180,7 @@ public abstract class ToscaElementOperation extends BaseOperation {
         if (result == null) {
             status = titanDao.createEdge(user.getVertex(), createdToscaElementVertex.getVertex(), EdgeLabelEnum.LAST_MODIFIER, new HashMap<>());
             if (status != TitanOperationStatus.OK) {
-                CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to create edge with label {} from user vertex {} to tosca element vertex {} on graph. Status is {}. ", EdgeLabelEnum.LAST_MODIFIER, user.getUniqueId(),
+                CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, FAILED_TO_CREATE_EDGE_WITH_LABEL_FROM_USER_VERTEX_TO_TOSCA_ELEMENT_VERTEX_ON_GRAPH_STATUS_IS, EdgeLabelEnum.LAST_MODIFIER, user.getUniqueId(),
                         nextToscaElement.getMetadataProperty(GraphPropertyEnum.NORMALIZED_NAME), status);
                 result = Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
             }
@@ -182,7 +188,7 @@ public abstract class ToscaElementOperation extends BaseOperation {
         if (result == null) {
             status = titanDao.createEdge(user.getVertex(), createdToscaElementVertex.getVertex(), EdgeLabelEnum.CREATOR, new HashMap<>());
             if (status != TitanOperationStatus.OK) {
-                CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to create edge with label {} from user vertex {} to tosca element vertex {} on graph. Status is {}. ", EdgeLabelEnum.CREATOR, user.getUniqueId(),
+                CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, FAILED_TO_CREATE_EDGE_WITH_LABEL_FROM_USER_VERTEX_TO_TOSCA_ELEMENT_VERTEX_ON_GRAPH_STATUS_IS, EdgeLabelEnum.CREATOR, user.getUniqueId(),
                         nextToscaElement.getMetadataProperty(GraphPropertyEnum.NORMALIZED_NAME), status);
                 result = Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
             }
@@ -290,6 +296,9 @@ public abstract class ToscaElementOperation extends BaseOperation {
         nodeTypeVertex.addMetadataProperty(GraphPropertyEnum.INVARIANT_UUID, toscaElement.getMetadataValue(JsonPresentationFields.INVARIANT_UUID));
         nodeTypeVertex.addMetadataProperty(GraphPropertyEnum.NAME, toscaElement.getMetadataValue(JsonPresentationFields.NAME));
         nodeTypeVertex.addMetadataProperty(GraphPropertyEnum.SYSTEM_NAME, toscaElement.getMetadataValue(JsonPresentationFields.SYSTEM_NAME));
+        nodeTypeVertex.addMetadataProperty(GraphPropertyEnum.IS_ARCHIVED, toscaElement.getMetadataValue(JsonPresentationFields.IS_ARCHIVED));
+        nodeTypeVertex.addMetadataProperty(GraphPropertyEnum.ARCHIVE_TIME, toscaElement.getMetadataValue(JsonPresentationFields.ARCHIVE_TIME));
+        nodeTypeVertex.addMetadataProperty(GraphPropertyEnum.IS_VSP_ARCHIVED, toscaElement.getMetadataValue(JsonPresentationFields.IS_VSP_ARCHIVED));
         toscaElement.getMetadata().entrySet().stream().filter(e -> e.getValue() != null).forEach(e -> nodeTypeVertex.setJsonMetadataField(JsonPresentationFields.getByPresentation(e.getKey()), e.getValue()));
 
         nodeTypeVertex.setUniqueId(toscaElement.getUniqueId());
@@ -305,7 +314,7 @@ public abstract class ToscaElementOperation extends BaseOperation {
 
         if (findUser.isRight()) {
             TitanOperationStatus status = findUser.right().value();
-            log.error("Cannot find user {} in the graph. status is {}", userId, status);
+            log.error(CANNOT_FIND_USER_IN_THE_GRAPH_STATUS_IS, userId, status);
             return DaoStatusConverter.convertTitanStatusToStorageStatus(status);
 
         }
@@ -316,13 +325,13 @@ public abstract class ToscaElementOperation extends BaseOperation {
             findUser = findUserVertex(updaterId);
             if (findUser.isRight()) {
                 TitanOperationStatus status = findUser.right().value();
-                log.error("Cannot find user {} in the graph. status is {}", userId, status);
+                log.error(CANNOT_FIND_USER_IN_THE_GRAPH_STATUS_IS, userId, status);
                 return DaoStatusConverter.convertTitanStatusToStorageStatus(status);
             } else {
                 updaterVertex = findUser.left().value();
             }
         }
-        Map<EdgePropertyEnum, Object> props = new HashMap<EdgePropertyEnum, Object>();
+        Map<EdgePropertyEnum, Object> props = new HashMap<>();
         props.put(EdgePropertyEnum.STATE, (String) toscaElement.getMetadataValue(JsonPresentationFields.LIFECYCLE_STATE));
 
         TitanOperationStatus result = titanDao.createEdge(updaterVertex, nodeTypeVertex, EdgeLabelEnum.STATE, props);
@@ -397,7 +406,7 @@ public abstract class ToscaElementOperation extends BaseOperation {
                 String uniqueId = UniqueIdBuilder.buildPropertyUniqueId(nodeTypeVertex.getUniqueId().toLowerCase(), a.getArtifactLabel().toLowerCase());
                 a.setUniqueId(uniqueId);
             });
-            status = assosiateElementToData(nodeTypeVertex, VertexTypeEnum.ARTIFACTS, EdgeLabelEnum.ARTIFACTS, artifacts);
+            status = associateElementToData(nodeTypeVertex, VertexTypeEnum.ARTIFACTS, EdgeLabelEnum.ARTIFACTS, artifacts);
             if (status.isRight()) {
                 return status.right().value();
             }
@@ -408,7 +417,7 @@ public abstract class ToscaElementOperation extends BaseOperation {
                 String uniqueId = UniqueIdBuilder.buildPropertyUniqueId(nodeTypeVertex.getUniqueId().toLowerCase(), a.getArtifactLabel().toLowerCase());
                 a.setUniqueId(uniqueId);
             });
-            status = assosiateElementToData(nodeTypeVertex, VertexTypeEnum.TOSCA_ARTIFACTS, EdgeLabelEnum.TOSCA_ARTIFACTS, toscaArtifacts);
+            status = associateElementToData(nodeTypeVertex, VertexTypeEnum.TOSCA_ARTIFACTS, EdgeLabelEnum.TOSCA_ARTIFACTS, toscaArtifacts);
             if (status.isRight()) {
                 return status.right().value();
             }
@@ -419,7 +428,7 @@ public abstract class ToscaElementOperation extends BaseOperation {
                 String uniqueId = UniqueIdBuilder.buildPropertyUniqueId(nodeTypeVertex.getUniqueId().toLowerCase(), a.getArtifactLabel().toLowerCase());
                 a.setUniqueId(uniqueId);
             });
-            status = assosiateElementToData(nodeTypeVertex, VertexTypeEnum.DEPLOYMENT_ARTIFACTS, EdgeLabelEnum.DEPLOYMENT_ARTIFACTS, deploymentArtifacts);
+            status = associateElementToData(nodeTypeVertex, VertexTypeEnum.DEPLOYMENT_ARTIFACTS, EdgeLabelEnum.DEPLOYMENT_ARTIFACTS, deploymentArtifacts);
             if (status.isRight()) {
                 return status.right().value();
             }
@@ -546,7 +555,7 @@ public abstract class ToscaElementOperation extends BaseOperation {
             }
         }
         if (!propertiesAll.isEmpty()) {
-            Either<GraphVertex, StorageOperationStatus> assosiateElementToData = assosiateElementToData(nodeTypeVertex, VertexTypeEnum.PROPERTIES, EdgeLabelEnum.PROPERTIES, propertiesAll);
+            Either<GraphVertex, StorageOperationStatus> assosiateElementToData = associateElementToData(nodeTypeVertex, VertexTypeEnum.PROPERTIES, EdgeLabelEnum.PROPERTIES, propertiesAll);
             if (assosiateElementToData.isRight()) {
                 return assosiateElementToData.right().value();
             }
@@ -557,7 +566,7 @@ public abstract class ToscaElementOperation extends BaseOperation {
     private StorageOperationStatus associateAdditionalInfoToResource(GraphVertex nodeTypeVertex, ToscaElement nodeType) {
         Map<String, AdditionalInfoParameterDataDefinition> additionalInformation = nodeType.getAdditionalInformation();
         if (additionalInformation != null) {
-            Either<GraphVertex, StorageOperationStatus> assosiateElementToData = assosiateElementToData(nodeTypeVertex, VertexTypeEnum.ADDITIONAL_INFORMATION, EdgeLabelEnum.ADDITIONAL_INFORMATION, additionalInformation);
+            Either<GraphVertex, StorageOperationStatus> assosiateElementToData = associateElementToData(nodeTypeVertex, VertexTypeEnum.ADDITIONAL_INFORMATION, EdgeLabelEnum.ADDITIONAL_INFORMATION, additionalInformation);
             if (assosiateElementToData.isRight()) {
                 return assosiateElementToData.right().value();
             }
@@ -624,7 +633,7 @@ public abstract class ToscaElementOperation extends BaseOperation {
         Map<String, String> allVersion = new HashMap<>();
 
         allVersion.put((String) componentV.getMetadataProperty(GraphPropertyEnum.VERSION), componentV.getUniqueId());
-        ArrayList<GraphVertex> allChildrenAndParants = new ArrayList<GraphVertex>();
+        ArrayList<GraphVertex> allChildrenAndParants = new ArrayList<>();
         Either<GraphVertex, TitanOperationStatus> childResourceRes = titanDao.getChildVertex(componentV, EdgeLabelEnum.VERSION, JsonParseFlagEnum.NoParse);
         while (childResourceRes.isLeft()) {
             GraphVertex child = childResourceRes.left().value();
@@ -648,7 +657,7 @@ public abstract class ToscaElementOperation extends BaseOperation {
             } else {
                 allChildrenAndParants.stream().filter(vertex -> {
                     Boolean isDeleted = (Boolean) vertex.getMetadataProperty(GraphPropertyEnum.IS_DELETED);
-                    return (isDeleted == null || isDeleted == false);
+                    return (isDeleted == null || !isDeleted);
                 }).forEach(vertex -> allVersion.put((String) vertex.getMetadataProperty(GraphPropertyEnum.VERSION), vertex.getUniqueId()));
 
                 toscaElement.setAllVersions(allVersion);
@@ -681,7 +690,7 @@ public abstract class ToscaElementOperation extends BaseOperation {
         List<T> componentsPerUser;
         for (GraphVertex userV : users) {
 
-            HashSet<String> ids = new HashSet<String>();
+            HashSet<String> ids = new HashSet<>();
             Either<List<GraphVertex>, TitanOperationStatus> childrenVertecies = titanDao.getChildrenVertecies(userV, EdgeLabelEnum.STATE, JsonParseFlagEnum.NoParse);
             if (childrenVertecies.isRight() && childrenVertecies.right().value() != TitanOperationStatus.NOT_FOUND) {
                 log.debug("Failed to fetch children vertices for user {} by edge {} error {}", userV.getMetadataProperty(GraphPropertyEnum.USERID), EdgeLabelEnum.STATE, childrenVertecies.right().value());
@@ -716,7 +725,7 @@ public abstract class ToscaElementOperation extends BaseOperation {
                             if (ids.contains(comp.getUniqueId())) {
                                 isFirst = false;
                             }
-                            if (isFirst == true) {
+                            if (isFirst) {
                                 components.add(comp);
                             }
 
@@ -749,8 +758,9 @@ public abstract class ToscaElementOperation extends BaseOperation {
                 if (lifecycleStates != null && lifecycleStates.contains(nodeState)) {
 
                     Boolean isDeleted = (Boolean) node.getMetadataProperty(GraphPropertyEnum.IS_DELETED);
-                    if (isDeleted != null && isDeleted) {
-                        log.trace("Deleted element  {}, discard", node.getUniqueId());
+                    Boolean isArchived = (Boolean) node.getMetadataProperty(GraphPropertyEnum.IS_ARCHIVED);
+                    if (isDeleted != null && isDeleted || isArchived != null && isArchived) {
+                        log.trace("Deleted/Archived element  {}, discard", node.getUniqueId());
                         continue;
                     }
 
@@ -766,19 +776,19 @@ public abstract class ToscaElementOperation extends BaseOperation {
                         }
                         if (neededType == componentType) {
                             switch (componentType) {
-                            case SERVICE:
-                            case PRODUCT:
-                                handleNode(components, node, componentType);
-                                break;
-                            case RESOURCE:
-                                Boolean isAbtract = (Boolean) node.getMetadataProperty(GraphPropertyEnum.IS_ABSTRACT);
-                                if (isAbtract == null || false == isAbtract) {
+                                case SERVICE:
+                                case PRODUCT:
                                     handleNode(components, node, componentType);
-                                } // if not abstract
-                                break;
-                            default:
-                                log.debug("not supported node type {}", componentType);
-                                break;
+                                    break;
+                                case RESOURCE:
+                                    Boolean isAbtract = (Boolean) node.getMetadataProperty(GraphPropertyEnum.IS_ABSTRACT);
+                                    if (isAbtract == null || !isAbtract) {
+                                        handleNode(components, node, componentType);
+                                    } // if not abstract
+                                    break;
+                                default:
+                                    log.debug("not supported node type {}", componentType);
+                                    break;
                             }// case
                         } // needed type
                     }
@@ -854,15 +864,15 @@ public abstract class ToscaElementOperation extends BaseOperation {
         ToscaElement toscaElement = null;
         VertexTypeEnum label = componentV.getLabel();
         switch (label) {
-        case NODE_TYPE:
-            toscaElement = new NodeType();
-            break;
-        case TOPOLOGY_TEMPLATE:
-            toscaElement = new TopologyTemplate();
-            break;
-        default:
-            log.debug("Not supported tosca type {}", label);
-            break;
+            case NODE_TYPE:
+                toscaElement = new NodeType();
+                break;
+            case TOPOLOGY_TEMPLATE:
+                toscaElement = new TopologyTemplate();
+                break;
+            default:
+                log.debug("Not supported tosca type {}", label);
+                break;
         }
 
         Map<String, Object> jsonMetada = componentV.getMetadataJson();
@@ -872,23 +882,11 @@ public abstract class ToscaElementOperation extends BaseOperation {
         return (T) toscaElement;
     }
 
-    protected TitanOperationStatus setServiceCategoryFromGraphV(Vertex vertex, CatalogComponent catalogComponent) {
-        Either<Vertex, TitanOperationStatus> childVertex = titanDao.getChildVertex(vertex, EdgeLabelEnum.CATEGORY, JsonParseFlagEnum.NoParse);
-        if (childVertex.isRight()) {
-            log.debug("failed to fetch {} for tosca element with id {}, error {}", EdgeLabelEnum.CATEGORY, catalogComponent.getUniqueId(), childVertex.right().value());
-            return childVertex.right().value();
-        }
-        Vertex categoryV = childVertex.left().value();
-        catalogComponent.setCategoryNormalizedName((String) categoryV.property(JsonPresentationFields.NORMALIZED_NAME.getPresentation()).value());
-
-        return TitanOperationStatus.OK;
-    }
-
     protected TitanOperationStatus setResourceCategoryFromGraphV(Vertex vertex, CatalogComponent catalogComponent) {
 
         Either<Vertex, TitanOperationStatus> childVertex = titanDao.getChildVertex(vertex, EdgeLabelEnum.CATEGORY, JsonParseFlagEnum.NoParse);
         if (childVertex.isRight()) {
-            log.debug("failed to fetch {} for tosca element with id {}, error {}", EdgeLabelEnum.CATEGORY, catalogComponent.getUniqueId(), childVertex.right().value());
+            log.debug(FAILED_TO_FETCH_FOR_TOSCA_ELEMENT_WITH_ID_ERROR, EdgeLabelEnum.CATEGORY, catalogComponent.getUniqueId(), childVertex.right().value());
             return childVertex.right().value();
         }
         Vertex subCategoryV = childVertex.left().value();
@@ -900,13 +898,25 @@ public abstract class ToscaElementOperation extends BaseOperation {
         return TitanOperationStatus.OK;
     }
 
+    protected TitanOperationStatus setServiceCategoryFromGraphV(Vertex vertex, CatalogComponent catalogComponent) {
+        Either<Vertex, TitanOperationStatus> childVertex = titanDao.getChildVertex(vertex, EdgeLabelEnum.CATEGORY, JsonParseFlagEnum.NoParse);
+        if (childVertex.isRight()) {
+            log.debug(FAILED_TO_FETCH_FOR_TOSCA_ELEMENT_WITH_ID_ERROR, EdgeLabelEnum.CATEGORY, catalogComponent.getUniqueId(), childVertex.right().value());
+            return childVertex.right().value();
+        }
+        Vertex categoryV = childVertex.left().value();
+        catalogComponent.setCategoryNormalizedName((String) categoryV.property(JsonPresentationFields.NORMALIZED_NAME.getPresentation()).value());
+
+        return TitanOperationStatus.OK;
+    }
+
     protected TitanOperationStatus setResourceCategoryFromGraph(GraphVertex componentV, ToscaElement toscaElement) {
         List<CategoryDefinition> categories = new ArrayList<>();
         SubCategoryDefinition subcategory;
 
         Either<GraphVertex, TitanOperationStatus> childVertex = titanDao.getChildVertex(componentV, EdgeLabelEnum.CATEGORY, JsonParseFlagEnum.NoParse);
         if (childVertex.isRight()) {
-            log.debug("failed to fetch {} for tosca element with id {}, error {}", EdgeLabelEnum.CATEGORY, componentV.getUniqueId(), childVertex.right().value());
+            log.debug(FAILED_TO_FETCH_FOR_TOSCA_ELEMENT_WITH_ID_ERROR, EdgeLabelEnum.CATEGORY, componentV.getUniqueId(), childVertex.right().value());
             return childVertex.right().value();
         }
         GraphVertex subCategoryV = childVertex.left().value();
@@ -966,12 +976,11 @@ public abstract class ToscaElementOperation extends BaseOperation {
 
         if (findUser.isRight()) {
             TitanOperationStatus status = findUser.right().value();
-            log.error("Cannot find user {} in the graph. status is {}", modifierUserId, status);
+            log.error(CANNOT_FIND_USER_IN_THE_GRAPH_STATUS_IS, modifierUserId, status);
             return result;
         }
 
         GraphVertex modifierV = findUser.left().value();
-        // UserData modifierUserData = findUser.left().value();
         String toscaElementId = toscaElementToUpdate.getUniqueId();
 
         Either<GraphVertex, TitanOperationStatus> parentVertex = titanDao.getParentVertex(elementV, EdgeLabelEnum.LAST_MODIFIER, JsonParseFlagEnum.NoParse);
@@ -1036,12 +1045,6 @@ public abstract class ToscaElementOperation extends BaseOperation {
                 // TODO call to new Artifact operation in order to update list of artifacts
 
             }
-            // US833308 VLI in service - specific network_role property value logic
-            if (ComponentTypeEnum.SERVICE == toscaElementToUpdate.getComponentType()) {
-                // update method logs success/error and returns boolean (true if nothing fails)
-                // TODO!!!!
-                // updateServiceNameInVLIsNetworkRolePropertyValues(component, prevSystemName, newSystemName);
-            }
         }
 
         if (toscaElementToUpdate.getComponentType() == ComponentTypeEnum.RESOURCE) {
@@ -1086,7 +1089,7 @@ public abstract class ToscaElementOperation extends BaseOperation {
 
         Either<GraphVertex, TitanOperationStatus> childVertex = titanDao.getChildVertex(elementV, EdgeLabelEnum.CATEGORY, JsonParseFlagEnum.NoParse);
         if (childVertex.isRight()) {
-            log.debug("failed to fetch {} for tosca element with id {}, error {}", EdgeLabelEnum.CATEGORY, elementV.getUniqueId(), childVertex.right().value());
+            log.debug(FAILED_TO_FETCH_FOR_TOSCA_ELEMENT_WITH_ID_ERROR, EdgeLabelEnum.CATEGORY, elementV.getUniqueId(), childVertex.right().value());
             return DaoStatusConverter.convertTitanStatusToStorageStatus(childVertex.right().value());
         }
         GraphVertex subCategoryV = childVertex.left().value();
@@ -1107,12 +1110,12 @@ public abstract class ToscaElementOperation extends BaseOperation {
         String newCategoryName = newCategory.getName();
         SubCategoryDefinition newSubcategory = newCategory.getSubcategories().get(0);
         String newSubCategoryName = newSubcategory.getName();
-        if (newCategoryName != null && false == newCategoryName.equals(categoryNameCurrent)) {
+        if (newCategoryName != null && !newCategoryName.equals(categoryNameCurrent)) {
             // the category was changed
             categoryWasChanged = true;
         } else {
             // the sub-category was changed
-            if (newSubCategoryName != null && false == newSubCategoryName.equals(subCategoryNameCurrent)) {
+            if (newSubCategoryName != null && !newSubCategoryName.equals(subCategoryNameCurrent)) {
                 log.debug("Going to update the category of the resource from {} to {}", categoryNameCurrent, newCategory);
                 categoryWasChanged = true;
             }
@@ -1144,7 +1147,7 @@ public abstract class ToscaElementOperation extends BaseOperation {
         List<T> result = new ArrayList<>();
         if (listOfComponents.isLeft()) {
             List<GraphVertex> highestAndAllCertified = listOfComponents.left().value();
-            if (highestAndAllCertified != null && false == highestAndAllCertified.isEmpty()) {
+            if (highestAndAllCertified != null && !highestAndAllCertified.isEmpty()) {
                 for (GraphVertex vertexComponent : highestAndAllCertified) {
                     Either<T, StorageOperationStatus> component = getLightComponent(vertexComponent, componentType, new ComponentParametersView(true));
                     if (component.isRight()) {
@@ -1159,29 +1162,42 @@ public abstract class ToscaElementOperation extends BaseOperation {
         return Either.left(result);
     }
 
-    public Either<List<CatalogComponent>, StorageOperationStatus> getElementCatalogData() {
-        List<CatalogComponent> results = new ArrayList<>();
+    public Either<List<CatalogComponent>, StorageOperationStatus> getElementCatalogData(boolean isCatalog, List<ResourceTypeEnum> excludeTypes) {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
 
-        Either<Iterator<Vertex>, TitanOperationStatus> verticesEither = titanDao.getCatalogVerticies();
+        Map<String, CatalogComponent> existInCatalog = new HashMap<>();
+        Either<Iterator<Vertex>, TitanOperationStatus> verticesEither = titanDao.getCatalogOrArchiveVerticies(isCatalog);
         if (verticesEither.isRight()) {
             return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(verticesEither.right().value()));
         }
         Iterator<Vertex> vertices = verticesEither.left().value();
         while (vertices.hasNext()) {
-            Vertex vertex = vertices.next();
-            VertexProperty<Object> property = vertex.property(GraphPropertiesDictionary.METADATA.getProperty());
-            String json = (String) property.value();
+            handleCatalogComponent(existInCatalog, vertices.next(), excludeTypes);
+        }
+        stopWatch.stop();
+        String timeToFetchElements = stopWatch.prettyPrint();
+        log.info("time to fetch all catalog elements: {}", timeToFetchElements);
+        return Either.left(existInCatalog.values().stream().collect(Collectors.toList()));
+    }
 
+    private void handleCatalogComponent(Map<String, CatalogComponent> existInCatalog, Vertex vertex, List<ResourceTypeEnum> excludeTypes) {
+        VertexProperty<Object> property = vertex.property(GraphPropertiesDictionary.METADATA.getProperty());
+        String json = (String) property.value();
+        Map<String, Object> metadatObj = JsonParserUtils.toMap(json);
+
+        String uniqueId = (String) metadatObj.get(JsonPresentationFields.UNIQUE_ID.getPresentation());
+        Boolean isDeleted = (Boolean) metadatObj.get(JsonPresentationFields.IS_DELETED.getPresentation());
+
+
+        if (isAddToCatalog(excludeTypes, metadatObj) && (existInCatalog.get(uniqueId) == null && (isDeleted == null || !isDeleted.booleanValue()))) {
             CatalogComponent catalogComponent = new CatalogComponent();
-            Map<String, Object> metadatObj = JsonParserUtils.toMap(json);
+            catalogComponent.setUniqueId(uniqueId);
 
             catalogComponent.setComponentType(ComponentTypeEnum.valueOf((String) metadatObj.get(JsonPresentationFields.COMPONENT_TYPE.getPresentation())));
             catalogComponent.setVersion((String) metadatObj.get(JsonPresentationFields.VERSION.getPresentation()));
             catalogComponent.setName((String) metadatObj.get(JsonPresentationFields.NAME.getPresentation()));
             catalogComponent.setIcon((String) metadatObj.get(JsonPresentationFields.ICON.getPresentation()));
-            catalogComponent.setUniqueId((String) metadatObj.get(JsonPresentationFields.UNIQUE_ID.getPresentation()));
             catalogComponent.setLifecycleState((String) metadatObj.get(JsonPresentationFields.LIFECYCLE_STATE.getPresentation()));
             catalogComponent.setLastUpdateDate((Long) metadatObj.get(JsonPresentationFields.LAST_UPDATE_DATE.getPresentation()));
             catalogComponent.setDistributionStatus((String) metadatObj.get(JsonPresentationFields.DISTRIBUTION_STATUS.getPresentation()));
@@ -1196,16 +1212,30 @@ public abstract class ToscaElementOperation extends BaseOperation {
             } else {
                 setResourceCategoryFromGraphV(vertex, catalogComponent);
             }
-            results.add(catalogComponent);
-
+            List<String> tags = (List<String>) metadatObj.get(JsonPresentationFields.TAGS.getPresentation());
+            if (tags != null) {
+                catalogComponent.setTags(tags);
+            }
+            existInCatalog.put(uniqueId, catalogComponent);
         }
-        stopWatch.stop();
-        String timeToFetchElements = stopWatch.prettyPrint();
-        log.info("time to fetch all catalog elements: {}", timeToFetchElements);
-        return Either.left(results);
     }
 
-    public Either<List<GraphVertex>, TitanOperationStatus> getListOfHighestComponents(ComponentTypeEnum componentType, List<ResourceTypeEnum> excludeTypes, JsonParseFlagEnum parseFlag) {
+    private boolean isAddToCatalog(List<ResourceTypeEnum> excludeTypes, Map<String, Object> metadatObj) {
+        boolean isAddToCatalog = true;
+        Object resourceTypeStr = metadatObj.get(JsonPresentationFields.RESOURCE_TYPE.getPresentation());
+        if (resourceTypeStr != null) {
+            ResourceTypeEnum resourceType = ResourceTypeEnum.getType((String) resourceTypeStr);
+            if (!CollectionUtils.isEmpty(excludeTypes)) {
+                Optional<ResourceTypeEnum> op = excludeTypes.stream().filter(rt -> rt == resourceType).findAny();
+                if (op.isPresent())
+                    isAddToCatalog = false;
+            }
+        }
+        return isAddToCatalog;
+    }
+
+    public Either<List<GraphVertex>, TitanOperationStatus> getListOfHighestComponents(ComponentTypeEnum
+                                                                                              componentType, List<ResourceTypeEnum> excludeTypes, JsonParseFlagEnum parseFlag) {
         Map<GraphPropertyEnum, Object> propertiesToMatch = new HashMap<>();
         Map<GraphPropertyEnum, Object> propertiesHasNotToMatch = new HashMap<>();
         propertiesToMatch.put(GraphPropertyEnum.COMPONENT_TYPE, componentType.name());
@@ -1216,12 +1246,14 @@ public abstract class ToscaElementOperation extends BaseOperation {
             propertiesHasNotToMatch.put(GraphPropertyEnum.RESOURCE_TYPE, excludeTypes);
         }
         propertiesHasNotToMatch.put(GraphPropertyEnum.IS_DELETED, true);
+        propertiesHasNotToMatch.put(GraphPropertyEnum.IS_ARCHIVED, true); //US382674, US382683
 
         return titanDao.getByCriteria(null, propertiesToMatch, propertiesHasNotToMatch, parseFlag);
     }
 
     // highest + (certified && !highest)
-    public Either<List<GraphVertex>, TitanOperationStatus> getListOfHighestAndAllCertifiedComponents(ComponentTypeEnum componentType, List<ResourceTypeEnum> excludeTypes) {
+    public Either<List<GraphVertex>, TitanOperationStatus> getListOfHighestAndAllCertifiedComponents
+    (ComponentTypeEnum componentType, List<ResourceTypeEnum> excludeTypes) {
         long startFetchAllStates = System.currentTimeMillis();
         Either<List<GraphVertex>, TitanOperationStatus> highestNodes = getListOfHighestComponents(componentType, excludeTypes, JsonParseFlagEnum.ParseMetadata);
 
@@ -1235,6 +1267,7 @@ public abstract class ToscaElementOperation extends BaseOperation {
         }
 
         propertiesHasNotToMatchCertified.put(GraphPropertyEnum.IS_DELETED, true);
+        propertiesHasNotToMatchCertified.put(GraphPropertyEnum.IS_ARCHIVED, true);  //US382674, US382683
         propertiesHasNotToMatchCertified.put(GraphPropertyEnum.IS_HIGHEST_VERSION, true);
 
         Either<List<GraphVertex>, TitanOperationStatus> certifiedNotHighestNodes = titanDao.getByCriteria(null, propertiesToMatchCertified, propertiesHasNotToMatchCertified, JsonParseFlagEnum.ParseMetadata);
@@ -1257,10 +1290,11 @@ public abstract class ToscaElementOperation extends BaseOperation {
         return Either.left(allNodes);
     }
 
-    protected Either<List<GraphVertex>, StorageOperationStatus> getAllComponentsMarkedForDeletion(ComponentTypeEnum componentType) {
+    protected Either<List<GraphVertex>, StorageOperationStatus> getAllComponentsMarkedForDeletion(ComponentTypeEnum
+                                                                                                          componentType) {
 
         // get all components marked for delete
-        Map<GraphPropertyEnum, Object> props = new HashMap<GraphPropertyEnum, Object>();
+        Map<GraphPropertyEnum, Object> props = new HashMap<>();
         props.put(GraphPropertyEnum.IS_DELETED, true);
         props.put(GraphPropertyEnum.COMPONENT_TYPE, componentType.name());
 
@@ -1279,7 +1313,8 @@ public abstract class ToscaElementOperation extends BaseOperation {
         return Either.left(componentsToDelete.left().value());
     }
 
-    protected TitanOperationStatus setAdditionalInformationFromGraph(GraphVertex componentV, ToscaElement toscaElement) {
+    protected TitanOperationStatus setAdditionalInformationFromGraph(GraphVertex componentV, ToscaElement
+            toscaElement) {
         Either<Map<String, AdditionalInfoParameterDataDefinition>, TitanOperationStatus> result = getDataFromGraph(componentV, EdgeLabelEnum.ADDITIONAL_INFORMATION);
         if (result.isLeft()) {
             toscaElement.setAdditionalInformation(result.left().value());
@@ -1292,24 +1327,34 @@ public abstract class ToscaElementOperation extends BaseOperation {
     }
 
     // --------------------------------------------
-    public abstract <T extends ToscaElement> Either<T, StorageOperationStatus> getToscaElement(String uniqueId, ComponentParametersView componentParametersView);
+    public abstract <T extends
+            ToscaElement> Either<T, StorageOperationStatus> getToscaElement(String uniqueId, ComponentParametersView componentParametersView);
 
-    public abstract <T extends ToscaElement> Either<T, StorageOperationStatus> getToscaElement(GraphVertex toscaElementVertex, ComponentParametersView componentParametersView);
+    public abstract <T extends
+            ToscaElement> Either<T, StorageOperationStatus> getToscaElement(GraphVertex toscaElementVertex, ComponentParametersView componentParametersView);
 
-    public abstract <T extends ToscaElement> Either<T, StorageOperationStatus> deleteToscaElement(GraphVertex toscaElementVertex);
+    public abstract <T extends
+            ToscaElement> Either<T, StorageOperationStatus> deleteToscaElement(GraphVertex toscaElementVertex);
 
-    public abstract <T extends ToscaElement> Either<T, StorageOperationStatus> createToscaElement(ToscaElement toscaElement);
+    public abstract <T extends
+            ToscaElement> Either<T, StorageOperationStatus> createToscaElement(ToscaElement toscaElement);
 
-    protected abstract <T extends ToscaElement> TitanOperationStatus setCategoriesFromGraph(GraphVertex vertexComponent, T toscaElement);
+    protected abstract <T extends ToscaElement> TitanOperationStatus
+    setCategoriesFromGraph(GraphVertex vertexComponent, T toscaElement);
 
-    protected abstract <T extends ToscaElement> TitanOperationStatus setCapabilitiesFromGraph(GraphVertex componentV, T toscaElement);
+    protected abstract <T extends ToscaElement> TitanOperationStatus
+    setCapabilitiesFromGraph(GraphVertex componentV, T toscaElement);
 
-    protected abstract <T extends ToscaElement> TitanOperationStatus setRequirementsFromGraph(GraphVertex componentV, T toscaElement);
+    protected abstract <T extends ToscaElement> TitanOperationStatus
+    setRequirementsFromGraph(GraphVertex componentV, T toscaElement);
 
-    protected abstract <T extends ToscaElement> StorageOperationStatus validateCategories(T toscaElementToUpdate, GraphVertex elementV);
+    protected abstract <T extends ToscaElement> StorageOperationStatus
+    validateCategories(T toscaElementToUpdate, GraphVertex elementV);
 
-    protected abstract <T extends ToscaElement> StorageOperationStatus updateDerived(T toscaElementToUpdate, GraphVertex updateElementV);
+    protected abstract <T extends ToscaElement> StorageOperationStatus
+    updateDerived(T toscaElementToUpdate, GraphVertex updateElementV);
 
-    public abstract <T extends ToscaElement> void fillToscaElementVertexData(GraphVertex elementV, T toscaElementToUpdate, JsonParseFlagEnum flag);
+    public abstract <T extends ToscaElement> void fillToscaElementVertexData(GraphVertex elementV, T
+            toscaElementToUpdate, JsonParseFlagEnum flag);
 
 }

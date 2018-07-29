@@ -16,54 +16,24 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.services;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.openecomp.core.utilities.json.JsonUtil;
-import org.openecomp.sdc.generator.datatypes.tosca.ComputeFlavor;
-import org.openecomp.sdc.generator.datatypes.tosca.DeploymentFlavorModel;
-import org.openecomp.sdc.generator.datatypes.tosca.LicenseFlavor;
-import org.openecomp.sdc.generator.datatypes.tosca.MultiFlavorVfcImage;
-import org.openecomp.sdc.generator.datatypes.tosca.VendorInfo;
+import org.openecomp.sdc.generator.datatypes.tosca.*;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.vendorlicense.dao.types.FeatureGroupEntity;
 import org.openecomp.sdc.vendorlicense.dao.types.FeatureGroupModel;
 import org.openecomp.sdc.vendorlicense.facade.VendorLicenseFacade;
 import org.openecomp.sdc.vendorlicense.facade.VendorLicenseFacadeFactory;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.ComponentDao;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.ComponentDaoFactory;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.ComputeDao;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.ComputeDaoFactory;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.DeploymentFlavorDao;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.DeploymentFlavorDaoFactory;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.ImageDao;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.ImageDaoFactory;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.NicDao;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.NicDaoFactory;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductInfoDao;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductInfoDaoFactory;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComponentEntity;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComputeEntity;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.type.DeploymentFlavorEntity;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ImageEntity;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.type.NicEntity;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
-import org.openecomp.sdc.vendorsoftwareproduct.types.composition.ComponentComputeAssociation;
-import org.openecomp.sdc.vendorsoftwareproduct.types.composition.ComponentData;
-import org.openecomp.sdc.vendorsoftwareproduct.types.composition.DeploymentFlavor;
-import org.openecomp.sdc.vendorsoftwareproduct.types.composition.Image;
-import org.openecomp.sdc.vendorsoftwareproduct.types.composition.Nic;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.*;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.type.*;
+import org.openecomp.sdc.vendorsoftwareproduct.types.composition.*;
 import org.openecomp.sdc.vendorsoftwareproduct.types.questionnaire.component.compute.Compute;
 import org.openecomp.sdc.vendorsoftwareproduct.types.questionnaire.component.image.ImageDetails;
 import org.openecomp.sdc.versioning.dao.types.Version;
+
+import java.util.*;
 
 
 public class ManualVspDataCollectionService {

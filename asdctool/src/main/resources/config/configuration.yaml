@@ -6,7 +6,7 @@ identificationHeaderFields:
    - HTTP_CSP_WSTYPE
 
 # catalog backend hostname
-beFqdn: localhost
+beFqdn: 192.168.33.10
 # sdccatalog.att.com
 
 # catalog backend http port
@@ -23,18 +23,25 @@ beSslPort: 8443
 
 version: 1.0
 released: 2012-11-30
-toscaConformanceLevel: 5.0
+toscaConformanceLevel: 8.0
 minToscaConformanceLevel: 3.0
 
 # These values are necessary for running upgrade migration 1710.0 process
+enableAutoHealing: false
 appVersion: 1.1.0
 artifactGeneratorConfig: Artifact-Generator.properties
 resourcesForUpgrade:
- 5.0:
-  - tosca.nodes.Root
+ 8.0:
+  - org.openecomp.resource.cp.extCP
+  - tosca.nodes.network.Network
+  - tosca.nodes.network.Port
+  - org.openecomp.resource.cp.nodes.network.SubInterface
 skipUpgradeFailedVfs: true
 skipUpgradeVSPs: true
 autoHealingOwner: jh0003
+supportAllottedResourcesAndProxy: false
+deleteLockTimeoutInSeconds: 60
+maxDeleteComponents: 10
 
 titanCfgFile: src\main\resources\config\titan.properties
 titanMigrationKeySpaceCfgFile: src\main\resources\config\titan-migration.properties
@@ -84,20 +91,22 @@ neo4j:
     password: "12345"
 
 cassandraConfig:
-    cassandraHosts: ['localhost']
-    localDataCenter: datacenter1
+    cassandraHosts: [192.168.33.10]
+    localDataCenter: DC-AIO-Ubuntu1
     reconnectTimeout : 30000
-    authenticate: false
-    username: koko
-    password: bobo
-    ssl: false
-    truststorePath : /path/path
-    truststorePassword : 123123
+    authenticate: true
+    username: asdc_user
+    password: Aa1234%^!
+    ssl: true
+    truststorePath : C:/Users/im453s/git/vagrant-sdc-all-in-one/tmp.trust
+    truststorePassword : Aa123456
     keySpaces:
-        - { name: sdcaudit, replicationStrategy: SimpleStrategy, replicationInfo: ['1']}
-        - { name: sdcartifact, replicationStrategy: SimpleStrategy, replicationInfo: ['1']}
-        - { name: sdccomponent, replicationStrategy: SimpleStrategy, replicationInfo: ['1']}
-        - { name: sdcrepository, replicationStrategy: SimpleStrategy, replicationInfo: ['1']}
+        - { name: dox, replicationStrategy: NetworkTopologyStrategy, replicationInfo: ['DC-AIO-Ubuntu1', '1']}
+        - { name: sdcaudit, replicationStrategy: NetworkTopologyStrategy, replicationInfo: ['DC-AIO-Ubuntu1', '1']}
+        - { name: sdcartifact, replicationStrategy: NetworkTopologyStrategy, replicationInfo: ['DC-AIO-Ubuntu1', '1']}
+        - { name: sdccomponent, replicationStrategy: NetworkTopologyStrategy, replicationInfo: ['DC-AIO-Ubuntu1', '1']}       
+        - { name: sdcrepository, replicationStrategy: NetworkTopologyStrategy, replicationInfo: ['DC-AIO-Ubuntu1', '1']}
+
 
 #Application-specific settings of ES
 elasticSearch:
@@ -202,6 +211,7 @@ toscaArtifacts:
       displayName: Tosca Model
       type: TOSCA_CSAR
       description: TOSCA definition package of the asset
+
 
 #Informational artifacts placeHolder
 excludeResourceCategory:
@@ -329,7 +339,7 @@ serviceDeploymentArtifacts:
             - xml
     AAI_VF_INSTANCE_MODEL:
         acceptedTypes:
-            - xml
+            - xml 
     OTHER:
         acceptedTypes:
 

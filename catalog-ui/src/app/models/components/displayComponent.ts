@@ -22,7 +22,6 @@
  */
 
 'use strict';
-import * as _ from "lodash";
 import {ComponentType} from "../../utils/constants";
 import {ComponentMetadata} from "../component-metadata";
 import {PolicyMetadata} from "../policy-metadata";
@@ -48,6 +47,7 @@ export class LeftPaletteComponent {
     searchFilterTerms:string;
     certifiedIconClass:string;
     icon:string;
+    isDraggable:boolean;
     isRequirmentAndCapabilitiesLoaded:boolean;
 
     uuid:string;
@@ -64,7 +64,7 @@ export class LeftPaletteComponent {
 
     categoryType:LeftPaletteMetadataTypes;
 
-    constructor(metadataType: LeftPaletteMetadataTypes, item: ComponentMetadata | PolicyMetadata) {
+    constructor(metadataType: LeftPaletteMetadataTypes, item: ComponentMetadata | PolicyMetadata | GroupMetadata) {
         if (metadataType === LeftPaletteMetadataTypes.Policy) {
             this.initPolicy(item as PolicyMetadata);
             return;
@@ -94,6 +94,7 @@ export class LeftPaletteComponent {
         this.componentType = component.componentType;
         this.systemName = component.systemName;
         this.invariantUUID = component.invariantUUID;
+        this.isDraggable = true;
 
         if (component.categories && component.categories[0] && component.categories[0].subcategories && component.categories[0].subcategories[0]) {
             this.mainCategory = component.categories[0].name;
@@ -118,7 +119,7 @@ export class LeftPaletteComponent {
         this.categoryType = LeftPaletteMetadataTypes.Group;
 
         this.uniqueId = group.uniqueId;
-        this.displayName = group.type;
+        this.displayName = group.name;
         this.mainCategory = "Groups";
         this.subCategory = "Groups";
         this.iconClass = "sprite-group-icons group";
@@ -127,14 +128,15 @@ export class LeftPaletteComponent {
         this.type = group.type;
         this.componentSubType = 'GROUP';
 
-        this.searchFilterTerms = this.displayName + ' ' + group.description + ' ' + group.version;
+        this.searchFilterTerms = this.type + ' ' + group.name + ' ' + group.version;
+        this.isDraggable = false;
     }
 
     private initPolicy(policy:PolicyMetadata): void {
         this.categoryType = LeftPaletteMetadataTypes.Policy;
 
         this.uniqueId = policy.uniqueId;
-        this.displayName = policy.type;
+        this.displayName = policy.name;
         this.mainCategory = "Policies";
         this.subCategory = "Policies";
         this.iconClass = "sprite-policy-icons policy";
@@ -143,7 +145,8 @@ export class LeftPaletteComponent {
         this.type = policy.type;
         this.componentSubType = 'POLICY';
 
-        this.searchFilterTerms = this.displayName + ' ' + policy.description + ' ' + policy.version;
+        this.searchFilterTerms = this.type + ' ' + policy.name + ' ' + policy.version;
+        this.isDraggable = false;
     }
 
     public initDisplayName = (name:string):void => {

@@ -23,6 +23,7 @@ public class ToscaMetadataFieldsPresentationEnum {
 		SERVICE_ECOMP_NAMING                   ("serviceEcompNaming",               ComponentTypeEnum.SERVICE.value),
 		ECOMP_GENERATED_NAMING                 ("ecompGeneratedNaming",             ComponentTypeEnum.SERVICE.value),
 		NAMING_POLICY                          ("namingPolicy",                     ComponentTypeEnum.SERVICE.value),
+		INSTANTIATION_TYPE                     ("instantiationType",                ComponentTypeEnum.SERVICE.value),
 		
 //		node_template
 		CUSTOMIZATION_UUID                     ("customizationUUID",                ComponentTypeEnum.NODE_TEMPLATE.value), 

@@ -1,15 +1,13 @@
 package org.openecomp.sdc.be.dao.cassandra.schema.tables;
 
-import java.util.HashMap;
-import java.util.Map;
-
+import com.datastax.driver.core.DataType;
+import mockit.Deencapsulation;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.junit.Test;
 import org.openecomp.sdc.be.dao.cassandra.schema.tables.DistribStatusEventTableDesc.DSEFieldsDescription;
 
-import com.datastax.driver.core.DataType;
-
-import mockit.Deencapsulation;
+import java.util.HashMap;
+import java.util.Map;
 
 public class DistribStatusEventTableDescTest {
 

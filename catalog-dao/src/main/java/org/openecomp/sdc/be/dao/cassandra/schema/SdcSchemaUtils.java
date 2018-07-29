@@ -20,19 +20,17 @@
 
 package org.openecomp.sdc.be.dao.cassandra.schema;
 
-import java.util.List;
-
-import com.datastax.driver.core.SocketOptions;
-import org.openecomp.sdc.be.config.ConfigurationManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.Session;
+import com.datastax.driver.core.SocketOptions;
+import org.openecomp.sdc.be.config.ConfigurationManager;
+import org.openecomp.sdc.common.log.wrappers.Logger;
+
+import java.util.List;
 
 public class SdcSchemaUtils {
 
-    private static Logger log = LoggerFactory.getLogger(SdcSchemaUtils.class.getName());
+    private static Logger log = Logger.getLogger(SdcSchemaUtils.class.getName());
 
     /**
      * the method creates the cluster object using the supplied cassandra nodes
@@ -48,7 +46,7 @@ public class SdcSchemaUtils {
         }
         log.info("connecting to node:{}.", nodes);
         Cluster.Builder clusterBuilder = Cluster.builder();
-        nodes.forEach(host -> clusterBuilder.addContactPoint(host));
+        nodes.forEach(clusterBuilder::addContactPoint);
 
         clusterBuilder.withMaxSchemaAgreementWaitSeconds(60);
 

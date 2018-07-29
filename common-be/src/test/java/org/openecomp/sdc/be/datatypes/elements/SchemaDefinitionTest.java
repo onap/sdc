@@ -1,12 +1,13 @@
 package org.openecomp.sdc.be.datatypes.elements;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.commons.collections.map.HashedMap;
 import org.junit.Assert;
 import org.junit.Test;
+
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 public class SchemaDefinitionTest {
 
@@ -112,6 +113,7 @@ public class SchemaDefinitionTest {
 
 		// default test
 		testSubject = createTestSubject();
+		testSubject.setProperties(new HashMap<>() );
 		testSubject.addProperty("mock", property);
 	}
 

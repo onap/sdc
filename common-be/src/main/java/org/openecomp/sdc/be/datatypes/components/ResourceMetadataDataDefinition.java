@@ -22,14 +22,7 @@ package org.openecomp.sdc.be.datatypes.components;
 
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 
-import java.io.Serializable;
-
-public class ResourceMetadataDataDefinition extends ComponentMetadataDataDefinition implements Serializable {
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1142973528643758481L;
+public class ResourceMetadataDataDefinition extends ComponentMetadataDataDefinition {
 
 	private String vendorName;
 	private String vendorRelease;

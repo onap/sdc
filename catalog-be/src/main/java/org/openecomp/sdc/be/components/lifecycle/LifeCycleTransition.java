@@ -20,10 +20,7 @@
 
 package org.openecomp.sdc.be.components.lifecycle;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import fj.data.Either;
 import org.openecomp.sdc.be.components.impl.ComponentBusinessLogic;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleChangeInfoWithAction.LifecycleChanceActionEnum;
 import org.openecomp.sdc.be.config.ConfigurationManager;
@@ -45,7 +42,9 @@ import org.openecomp.sdc.be.user.Role;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import fj.data.Either;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public abstract class LifeCycleTransition {
 
@@ -117,18 +116,7 @@ public abstract class LifeCycleTransition {
         return this.validateBeforeTransition(component, componentType, modifier, owner, oldState, null);
     }
 
-    /**
-     * getComponentOwner
-     *
-     * @param resource
-     * @return
-     */
     protected Either<User, ResponseFormat> getComponentOwner(Component component, ComponentTypeEnum componentType) {
-
-        return getComponentOwner(component, componentType, false);
-    }
-
-    protected Either<User, ResponseFormat> getComponentOwner(Component component, ComponentTypeEnum componentType, boolean inTransaction) {
 
         Either<User, StorageOperationStatus> resourceOwnerResult = getLifeCycleOperation().getToscaElementOwner(component.getUniqueId());
         if (resourceOwnerResult.isRight()) {

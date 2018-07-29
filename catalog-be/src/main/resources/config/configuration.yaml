@@ -23,8 +23,25 @@ beSslPort: 8443
 
 version: 1.1.0
 released: 2012-11-30
-toscaConformanceLevel: 10.0
+toscaConformanceLevel: 8.0
 minToscaConformanceLevel: 3.0
+
+# These values are necessary for running upgrade migration 1710.0 process
+enableAutoHealing: false
+appVersion: 1.1.0
+artifactGeneratorConfig: Artifact-Generator.properties
+resourcesForUpgrade:
+ 8.0:
+  - org.openecomp.resource.cp.extCP
+  - tosca.nodes.network.Network
+  - tosca.nodes.network.Port
+  - org.openecomp.resource.cp.nodes.network.SubInterface
+skipUpgradeFailedVfs: true
+skipUpgradeVSPs: true
+autoHealingOwner: jh0003
+supportAllottedResourcesAndProxy: true
+deleteLockTimeoutInSeconds: 60
+maxDeleteComponents: 10
 
 titanCfgFile: /home/vagrant/catalog-be/config/catalog-be/titan.properties
 titanInMemoryGraph: false
@@ -60,6 +77,8 @@ defaultImports:
         file: groups.yml
    - policies:
         file: policies.yml
+   - annotations:
+        file: annotations.yml
 
 # Users
 users:
@@ -73,20 +92,22 @@ neo4j:
     password: "12345"
 
 cassandraConfig:
-    cassandraHosts: ['localhost']
-    localDataCenter: datacenter1
+    cassandraHosts: [192.168.33.10]
+    localDataCenter: DC-sdc-iltlv650
     reconnectTimeout : 30000
-    authenticate: false
-    username: koko
-    password: bobo
-    ssl: false
-    truststorePath : /path/path
-    truststorePassword : 123123
+    authenticate: true
+    username: asdc_user
+    password: Aa1234%^!
+    ssl: true
+    truststorePath : /opt/app/jetty/base/be/config/.truststore
+    truststorePassword : Aa123456
     keySpaces:
-        - { name: sdcaudit, replicationStrategy: SimpleStrategy, replicationInfo: ['1']}
-        - { name: sdcartifact, replicationStrategy: SimpleStrategy, replicationInfo: ['1']}
-        - { name: sdccomponent, replicationStrategy: SimpleStrategy, replicationInfo: ['1']}
-        - { name: sdcrepository, replicationStrategy: SimpleStrategy, replicationInfo: ['1']}
+        - { name: dox, replicationStrategy: NetworkTopologyStrategy, replicationInfo: ['DC-sdc-iltlv650', '1']}
+        - { name: sdcaudit, replicationStrategy: NetworkTopologyStrategy, replicationInfo: ['DC-sdc-iltlv650', '1']}
+        - { name: sdcartifact, replicationStrategy: NetworkTopologyStrategy, replicationInfo: ['DC-sdc-iltlv650', '1']}
+        - { name: sdccomponent, replicationStrategy: NetworkTopologyStrategy, replicationInfo: ['DC-sdc-iltlv650', '1']}       
+        - { name: sdcrepository, replicationStrategy: NetworkTopologyStrategy, replicationInfo: ['DC-sdc-iltlv650', '1']}
+
 
 #Application-specific settings of ES
 elasticSearch:
@@ -133,7 +154,6 @@ artifactTypes:
    - SNMP_POLL
    - SNMP_TRAP
    - GUIDE
-   - PLAN
 
 licenseTypes:
    - User
@@ -325,14 +345,6 @@ serviceDeploymentArtifacts:
             - xml 
     OTHER:
         acceptedTypes:
-        
-#PLAN
-    PLAN:
-        acceptedTypes:
-            - xml
-        validForResourceTypes:
-            - VF
-            - VFC
 
 resourceDeploymentArtifacts:
     HEAT:
@@ -450,11 +462,6 @@ resourceDeploymentArtifacts:
     SNMP_TRAP:
         acceptedTypes:
         validForResourceTypes: *allResourceTypes
-        
-#PLAN
-    PLAN:
-        acceptedTypes:
-            - xml
 
 resourceInstanceDeploymentArtifacts:
     HEAT_ENV:
@@ -492,11 +499,6 @@ resourceInstanceDeploymentArtifacts:
     SNMP_TRAP:
         acceptedTypes:
         validForResourceTypes: *allResourceTypes
-        
-#PLAN
-    PLAN:
-        acceptedTypes:
-            - xml
 
 resourceInformationalArtifacts:
     CHEF:
@@ -714,6 +716,10 @@ excludedGroupTypesMapping:
        - org.openecomp.groups.VfModule
        - org.openecomp.groups.heat.HeatStack
        - tosca.groups.Root
+    PNF:
+       - org.openecomp.groups.VfModule
+       - org.openecomp.groups.heat.HeatStack
+       - tosca.groups.Root
     VF:
        - org.openecomp.groups.VfModule
        - org.openecomp.groups.heat.HeatStack
@@ -727,4 +733,3 @@ healthStatusExclude:
    - DE
    - ES
    - DMAAP
-

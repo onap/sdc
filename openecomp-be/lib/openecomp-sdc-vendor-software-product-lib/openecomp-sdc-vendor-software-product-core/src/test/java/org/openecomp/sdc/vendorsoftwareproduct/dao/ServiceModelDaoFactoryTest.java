@@ -20,23 +20,15 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.dao;
 
-import com.amdocs.zusammen.adaptor.inbound.api.types.item.Element;
-import com.amdocs.zusammen.adaptor.inbound.api.types.item.ElementConflict;
-import com.amdocs.zusammen.adaptor.inbound.api.types.item.ElementInfo;
-import com.amdocs.zusammen.adaptor.inbound.api.types.item.ItemVersionConflict;
-import com.amdocs.zusammen.adaptor.inbound.api.types.item.ZusammenElement;
+import com.amdocs.zusammen.adaptor.inbound.api.types.item.*;
 import com.amdocs.zusammen.commons.health.data.HealthInfo;
 import com.amdocs.zusammen.datatypes.Id;
 import com.amdocs.zusammen.datatypes.SessionContext;
-import com.amdocs.zusammen.datatypes.item.ElementContext;
-import com.amdocs.zusammen.datatypes.item.Info;
-import com.amdocs.zusammen.datatypes.item.Item;
-import com.amdocs.zusammen.datatypes.item.ItemVersion;
-import com.amdocs.zusammen.datatypes.item.ItemVersionData;
-import com.amdocs.zusammen.datatypes.item.ItemVersionStatus;
-import com.amdocs.zusammen.datatypes.item.Resolution;
+import com.amdocs.zusammen.datatypes.item.*;
 import com.amdocs.zusammen.datatypes.itemversion.ItemVersionRevisions;
 import com.amdocs.zusammen.datatypes.itemversion.Tag;
+import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
+import org.onap.sdc.tosca.services.YamlUtil;
 import org.openecomp.core.utilities.CommonMethods;
 import org.openecomp.core.utilities.file.FileContentHandler;
 import org.openecomp.core.zusammen.api.ZusammenAdaptor;
@@ -44,8 +36,6 @@ import org.openecomp.sdc.common.session.SessionContextProviderFactory;
 import org.openecomp.sdc.datatypes.model.ElementType;
 import org.openecomp.sdc.model.impl.zusammen.ServiceModelDaoZusammenImpl;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
-import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
-import org.onap.sdc.tosca.services.YamlUtil;
 import org.openecomp.sdc.versioning.dao.types.Version;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
@@ -53,11 +43,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.io.ByteArrayInputStream;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 public class ServiceModelDaoFactoryTest {
 

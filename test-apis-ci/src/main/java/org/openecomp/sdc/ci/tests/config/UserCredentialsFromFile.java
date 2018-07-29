@@ -5,7 +5,6 @@ import org.openecomp.sdc.ci.tests.utils.general.FileHandling;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.File;
-import java.util.HashMap;
 import java.util.Map;
 
 public class UserCredentialsFromFile {

@@ -1,31 +1,39 @@
 package org.openecomp.sdc.be.components.merge.instance;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
+import fj.data.Either;
+import org.openecomp.sdc.be.components.merge.VspComponentsMergeCommand;
 import org.openecomp.sdc.be.components.merge.property.DataDefinitionsValuesMergingBusinessLogic;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.Component;
+import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.ComponentInstanceProperty;
 import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
+import org.springframework.core.annotation.Order;
 
-import fj.data.Either;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
+import static org.openecomp.sdc.be.components.merge.resource.ResourceDataMergeBusinessLogic.ANY_ORDER_COMMAND;
 
 @org.springframework.stereotype.Component
-public class ComponentInstancePropertiesMergeBL implements ComponentsMergeCommand {
+@Order(ANY_ORDER_COMMAND)
+public class ComponentInstancePropertiesMergeBL implements VspComponentsMergeCommand {
 
-    @javax.annotation.Resource
-    private ToscaOperationFacade toscaOperationFacade;
+    private final ToscaOperationFacade toscaOperationFacade;
+    private final ComponentsUtils componentsUtils;
+    private final DataDefinitionsValuesMergingBusinessLogic propertyValuesMergingBusinessLogic;
 
-    @javax.annotation.Resource(name = "componentUtils")
-    private ComponentsUtils componentsUtils;
-
-    @javax.annotation.Resource
-    private DataDefinitionsValuesMergingBusinessLogic propertyValuesMergingBusinessLogic;
+    public ComponentInstancePropertiesMergeBL(ToscaOperationFacade toscaOperationFacade, ComponentsUtils componentsUtils, DataDefinitionsValuesMergingBusinessLogic propertyValuesMergingBusinessLogic) {
+        this.toscaOperationFacade = toscaOperationFacade;
+        this.componentsUtils = componentsUtils;
+        this.propertyValuesMergingBusinessLogic = propertyValuesMergingBusinessLogic;
+    }
 
     @Override
     public ActionStatus mergeComponents(Component prevComponent, Component currentComponent) {
@@ -33,7 +41,15 @@ public class ComponentInstancePropertiesMergeBL implements ComponentsMergeComman
         if (newInstProps == null) {
             return ActionStatus.OK;
         }
-        newInstProps.forEach((instanceId, newProps) -> mergeOldInstancePropertiesValues(prevComponent, currentComponent, instanceId, newProps) );
+        Map<String, String> currComponentNames = getComponentNameByUniqueId(currentComponent);
+        Map<String, String> prevComponentUniqueIds = getComponentUniqueIdByName(prevComponent);
+        
+        newInstProps.forEach((instanceId, newProps) -> {
+            String instanceName = currComponentNames.get(instanceId);
+            String oldInstanceId = prevComponentUniqueIds.get(instanceName);
+            
+            mergeOldInstancePropertiesValues(prevComponent, currentComponent, oldInstanceId, newProps);
+        });
         return updateComponentInstancesProperties(currentComponent, newInstProps);
     }
 
@@ -50,6 +66,19 @@ public class ComponentInstancePropertiesMergeBL implements ComponentsMergeComman
         }
         propertyValuesMergingBusinessLogic.mergeInstanceDataDefinitions(oldInstProps, oldInputs, newInstProps, newComponent.getInputs());
         return updateComponentInstanceProperties(newComponent, instanceId, newInstProps);
+    }
+    
+    private static Map<String, String> getComponentNameByUniqueId(Component component) {
+        return asMap(component, ComponentInstance::getUniqueId, ComponentInstance::getName);
+    }
+    
+    private static Map<String, String> getComponentUniqueIdByName(Component component) {
+        return asMap(component, ComponentInstance::getName, ComponentInstance::getUniqueId);
+    }
+    
+    private static Map<String, String> asMap(Component component, Function<? super ComponentInstance, ? extends String> keyMapper, Function<? super ComponentInstance, ? extends String> valueMapper) {
+        return component.safeGetComponentInstances().stream().
+            collect(Collectors.toMap(keyMapper, valueMapper));
     }
 
     private void mergeOldInstancePropertiesValues(Component oldComponent, Component newComponent, String instanceId, List<ComponentInstanceProperty> newProps) {

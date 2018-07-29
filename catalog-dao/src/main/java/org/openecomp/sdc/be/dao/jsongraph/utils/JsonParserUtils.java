@@ -20,13 +20,6 @@
 
 package org.openecomp.sdc.be.dao.jsongraph.utils;
 
-import java.io.IOException;
-import java.util.Map;
-
-import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -34,9 +27,15 @@ import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.google.common.base.Strings;
+import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
+import org.openecomp.sdc.common.log.wrappers.Logger;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 
 public class JsonParserUtils {
-    private static final Logger log = LoggerFactory.getLogger(JsonParserUtils.class.getName());
+    private static Logger log = Logger.getLogger(JsonParserUtils.class.getName());
     private static final ObjectMapper mapper = buildObjectMapper();
 
     private JsonParserUtils() {
@@ -86,7 +85,24 @@ public class JsonParserUtils {
                            .readValue(json);
         }
         catch (Exception e) {
-            log.debug("Failed to parse json {}", json, e);
+            log.debug("Failed to parse json {} to map", json, e);
+        }
+        return object;
+    }
+    public static <T> List<T> toList(String json, Class<T> clazz) {
+        if (Strings.isNullOrEmpty(json)) {
+            return null;
+        }
+        List<T> object = null;
+        try {
+            JavaType type = mapper.getTypeFactory()
+                                  .constructCollectionType(List.class, clazz);
+
+            object = mapper.readerFor(type)
+                    .readValue(json);
+        }
+        catch (Exception e) {
+            log.debug("Failed to parse json {} to list", json, e);
         }
         return object;
     }

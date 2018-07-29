@@ -16,9 +16,12 @@
 
 package org.openecomp.sdc.translator.datatypes.heattotosca;
 
+
+
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 import org.apache.commons.collections.MapUtils;
+
 import org.onap.config.api.Configuration;
 import org.onap.config.api.ConfigurationManager;
 import org.openecomp.core.utilities.CommonMethods;
@@ -56,7 +59,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-
 
 public class TranslationContext {
 

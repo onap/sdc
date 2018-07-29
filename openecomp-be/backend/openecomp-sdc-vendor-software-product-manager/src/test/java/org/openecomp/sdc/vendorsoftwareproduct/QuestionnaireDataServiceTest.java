@@ -22,11 +22,7 @@ package org.openecomp.sdc.vendorsoftwareproduct;
 
 
 import org.apache.commons.collections4.MapUtils;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.*;
 import org.openecomp.core.model.dao.ServiceModelDao;
 import org.openecomp.core.model.types.ServiceElement;
 import org.openecomp.core.validation.util.MessageContainerUtil;

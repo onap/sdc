@@ -20,59 +20,52 @@
 
 package org.openecomp.sdc.be.model;
 
-import java.io.Serializable;
-import java.util.List;
-
 import org.openecomp.sdc.be.datatypes.elements.AdditionalInfoParameterDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.AdditionalInfoParameterInfo;
 
-public class AdditionalInformationDefinition extends AdditionalInfoParameterDataDefinition implements Serializable {
+import java.util.List;
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 5266684455492488001L;
+public class AdditionalInformationDefinition extends AdditionalInfoParameterDataDefinition {
 
-	private String parentUniqueId;
+    private String parentUniqueId;
+
+    public AdditionalInformationDefinition() {
+        super();
+    }
+
+    public AdditionalInformationDefinition(AdditionalInfoParameterDataDefinition p, String parentUniqueId,
+            List<AdditionalInfoParameterInfo> parameters) {
+        super(p);
+        this.parentUniqueId = parentUniqueId;
+        setParameters(parameters);
+    }
+    public AdditionalInformationDefinition(AdditionalInfoParameterDataDefinition p){
+        this.setUniqueId(p.getUniqueId());
+        this.setCreationTime(p.getCreationTime());
+        this.setModificationTime(p.getModificationTime());
+        setParameters(p.getParameters());
+    }
+    public AdditionalInformationDefinition(AdditionalInformationDefinition pd) {
+        this.setUniqueId(pd.getUniqueId());
+        this.setCreationTime(pd.getCreationTime());
+        this.setModificationTime(pd.getModificationTime());
+        this.parentUniqueId = pd.parentUniqueId;
+    }
+
+    public String getParentUniqueId() {
+        return parentUniqueId;
+    }
+
+    public void setParentUniqueId(String parentUniqueId) {
+        this.parentUniqueId = parentUniqueId;
+    }
 
 
-	public AdditionalInformationDefinition() {
-		super();
-	}
 
-	public AdditionalInformationDefinition(AdditionalInfoParameterDataDefinition p, String parentUniqueId,
-			List<AdditionalInfoParameterInfo> parameters) {
-		super(p);
-		this.parentUniqueId = parentUniqueId;
-		setParameters(parameters);
-	}
-	public AdditionalInformationDefinition(AdditionalInfoParameterDataDefinition p){
-		this.setUniqueId(p.getUniqueId());
-		this.setCreationTime(p.getCreationTime());
-		this.setModificationTime(p.getModificationTime());
-		setParameters(p.getParameters());
-	}
-	public AdditionalInformationDefinition(AdditionalInformationDefinition pd) {
-		this.setUniqueId(pd.getUniqueId());
-		this.setCreationTime(pd.getCreationTime());
-		this.setModificationTime(pd.getModificationTime());
-		this.parentUniqueId = pd.parentUniqueId;
-	}
-
-	public String getParentUniqueId() {
-		return parentUniqueId;
-	}
-
-	public void setParentUniqueId(String parentUniqueId) {
-		this.parentUniqueId = parentUniqueId;
-	}
-
-	
-
-	@Override
-	public String toString() {
-		return "AdditionalInformationDefinition [ parentUniqueId=" + parentUniqueId + " "
-				+ super.toString() + "]";
-	}
+    @Override
+    public String toString() {
+        return "AdditionalInformationDefinition [ parentUniqueId=" + parentUniqueId + " "
+                + super.toString() + "]";
+    }
 
 }

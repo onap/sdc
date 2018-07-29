@@ -20,22 +20,16 @@
 
 package org.openecomp.sdc.be.workers;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.TimeUnit;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import org.openecomp.sdc.common.log.wrappers.Logger;
+
+import java.util.concurrent.*;
 
 /**
  * Created by michael on 6/24/2016.
  */
 public class Manager<T extends Job, E> {
-	private static Logger log = LoggerFactory.getLogger(Manager.class.getName());
+	private static Logger log = Logger.getLogger(Manager.class.getName());
 	private ExecutorService executor;
 	private LinkedBlockingQueue<T> inputQueue;
 	private LinkedBlockingQueue<E> outputQueue;
@@ -46,8 +40,8 @@ public class Manager<T extends Job, E> {
 		this.numberOfWorkers = numberOfWorkers;
 		final ThreadFactory threadFactory = new ThreadFactoryBuilder().setNameFormat("Worker-%d").build();
 		this.executor = Executors.newFixedThreadPool(numberOfWorkers, threadFactory);
-		this.inputQueue = new LinkedBlockingQueue<T>();
-		this.outputQueue = new LinkedBlockingQueue<E>();
+		this.inputQueue = new LinkedBlockingQueue<>();
+		this.outputQueue = new LinkedBlockingQueue<>();
 	}
 
 	public void addJob(T job) {

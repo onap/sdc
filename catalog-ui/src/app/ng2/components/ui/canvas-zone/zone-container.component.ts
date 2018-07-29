@@ -1,6 +1,5 @@
-import { Component, Input, Output, ViewEncapsulation, EventEmitter } from '@angular/core';
-import { EventListenerService } from 'app/services';
-import { GRAPH_EVENTS } from 'app/utils';
+import { Component, Input, Output, ViewEncapsulation, EventEmitter, OnInit } from '@angular/core';
+import { ZoneInstanceType } from '../../../../models/graph/zones/zone-instance';
 
 @Component({
     selector: 'zone-container',
@@ -9,17 +8,28 @@ import { GRAPH_EVENTS } from 'app/utils';
     encapsulation: ViewEncapsulation.None
 })
 
-export class ZoneContainerComponent {
+export class ZoneContainerComponent implements OnInit {
     @Input() title:string;
-    @Input() class:string;
-    @Input() count:number;
-    @Input() showZone:boolean;
-    @Input() minifyZone:boolean;
-    constructor(private eventListenerService:EventListenerService) {}
+    @Input() type:ZoneInstanceType;
+    @Input() count:number;   
+    @Input() visible:boolean;
+    @Input() minimized:boolean;
+    @Output() minimize: EventEmitter<any> = new EventEmitter<any>();
+    @Output() backgroundClick: EventEmitter<void> = new EventEmitter<void>();
+    private class:string;
+
+    constructor() {}
+
+    ngOnInit() {
+        this.class = ZoneInstanceType[this.type].toLowerCase();
+    }
 
     private unminifyZone = () => {
-        this.minifyZone = !this.minifyZone;
-        this.eventListenerService.notifyObservers(GRAPH_EVENTS.ON_ZONE_SIZE_CHANGE);
+        this.minimize.emit();
+    }
+
+    private backgroundClicked = () => {
+        this.backgroundClick.emit();
     }
 
 }

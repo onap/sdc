@@ -20,32 +20,22 @@
 
 package org.openecomp.sdc.ci.tests.utils.cassandra;
 
-import java.io.FileNotFoundException;
+import com.datastax.driver.core.*;
 import com.datastax.driver.core.policies.*;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import org.javatuples.Pair;
-import org.openecomp.sdc.be.resources.data.auditing.AuditingTypesConstants;
-import org.openecomp.sdc.ci.tests.utils.Utils;
-import org.openecomp.sdc.common.datastructure.AuditingFieldsKeysEnum;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.datastax.driver.core.Cluster;
-import com.datastax.driver.core.KeyspaceMetadata;
-import com.datastax.driver.core.Metadata;
-import com.datastax.driver.core.Row;
-import com.datastax.driver.core.Session;
-import com.datastax.driver.core.TableMetadata;
-import com.datastax.driver.core.policies.ConstantReconnectionPolicy;
-import com.datastax.driver.core.policies.DCAwareRoundRobinPolicy;
-import com.datastax.driver.core.policies.DefaultRetryPolicy;
-import com.datastax.driver.core.policies.LoadBalancingPolicy;
-import com.datastax.driver.core.policies.TokenAwarePolicy;
 import com.datastax.driver.core.querybuilder.QueryBuilder;
 import com.datastax.driver.core.querybuilder.Select;
 import com.datastax.driver.core.querybuilder.Select.Where;
+import org.javatuples.Pair;
+import org.openecomp.sdc.be.resources.data.auditing.AuditingTypesConstants;
+import org.openecomp.sdc.ci.tests.utils.Utils;
+import org.openecomp.sdc.common.datastructure.AuditingFieldsKey;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 public final class CassandraUtils {
     private static Logger logger = LoggerFactory.getLogger(CassandraUtils.class.getName());
@@ -173,7 +163,7 @@ public final class CassandraUtils {
         }
     }
 
-    public static List<Row> fetchFromTable(String keyspace, String tableName, List<Pair<AuditingFieldsKeysEnum, String>> fields) throws FileNotFoundException {
+    public static List<Row> fetchFromTable(String keyspace, String tableName, List<Pair<AuditingFieldsKey, String>> fields) throws FileNotFoundException {
 
         List<Pair<String, String>> fieldsConverted = new ArrayList<>();
 
@@ -184,7 +174,7 @@ public final class CassandraUtils {
 
         fields.forEach(pair -> {
             Pair<String, String> newPair;
-            if (pair.getValue0() == AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_RESOURCE_URL) {
+            if (pair.getValue0() == AuditingFieldsKey.AUDIT_DISTRIBUTION_RESOURCE_URL) {
                 newPair = new Pair<String, String>("RESOURE_URL", pair.getValue1());
 
             } else {
@@ -208,7 +198,7 @@ public final class CassandraUtils {
             if (session != null) {
                 Select select = QueryBuilder.select().all().from(keyspace, tableName);
                 if (fields != null) {
-                    // Set<Entry<AuditingFieldsKeysEnum, String>> entrySet =
+                    // Set<Entry<AuditingFieldsKey, String>> entrySet =
                     // fields.entrySet();
                     // fields.
                     boolean multiple = (fields.size() > 1) ? true : false;

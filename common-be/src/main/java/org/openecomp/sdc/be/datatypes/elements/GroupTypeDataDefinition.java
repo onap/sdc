@@ -20,32 +20,18 @@
 
 package org.openecomp.sdc.be.datatypes.elements;
 
-import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
-
-import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
-public class GroupTypeDataDefinition extends ToscaDataDefinition implements Serializable {
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -7001817818907172496L;
+public class GroupTypeDataDefinition extends ToscaTypeDataDefinition {
 
 	private String uniqueId;
-
-	private String type;
-
 	private String version;
-
 	private String derivedFrom;
-
 	private List<String> members;
-
 	private Map<String, String> metadata;
-
 	private String description;
+	private boolean highestVersion;
 
 	/**
 	 * Timestamp of data type creation
@@ -57,30 +43,20 @@ public class GroupTypeDataDefinition extends ToscaDataDefinition implements Seri
 	 */
 	private Long modificationTime;
 
-	private boolean highestVersion;
-
 	public GroupTypeDataDefinition() {
-
 	}
 
-	public GroupTypeDataDefinition(GroupTypeDataDefinition p) {
-		this.uniqueId = p.uniqueId;
-		this.type = p.type;
-		this.version = p.version;
-		this.members = p.members;
-		this.metadata = p.metadata;
-		// this.derivedFromName = p.derivedFromName;
-		this.description = p.description;
-		this.creationTime = p.creationTime;
-		this.modificationTime = p.modificationTime;
-	}
-
-	public String getType() {
-		return type;
-	}
-
-	public void setType(String type) {
-		this.type = type;
+	public GroupTypeDataDefinition(GroupTypeDataDefinition other) {
+		super(other);
+		this.uniqueId = other.uniqueId;
+		this.version = other.version;
+		this.members = other.members;
+		this.metadata = other.metadata;
+		this.description = other.description;
+		this.creationTime = other.creationTime;
+		this.modificationTime = other.modificationTime;
+		this.highestVersion = other.highestVersion;
+		this.derivedFrom = other.derivedFrom;
 	}
 
 	public String getVersion() {
@@ -141,7 +117,7 @@ public class GroupTypeDataDefinition extends ToscaDataDefinition implements Seri
 
 	@Override
 	public String toString() {
-		return "GroupTypeDataDefinition [uniqueId=" + uniqueId + ", type=" + type + ", version=" + version
+		return "GroupTypeDataDefinition [uniqueId=" + uniqueId + ", type=" + getType() + ", name=" + getName() + ", icon=" + getIcon() + ", version=" + version
 				+ ", members=" + members + ", metadata=" + metadata + ", description=" + description + ", creationTime="
 				+ creationTime + ", modificationTime=" + modificationTime + "]";
 	}

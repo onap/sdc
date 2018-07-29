@@ -10,22 +10,15 @@ import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.openecomp.sdc.be.components.utils.PropertyDataDefinitionBuilder;
-import org.openecomp.sdc.be.components.utils.ResourceBuilder;
 import org.openecomp.sdc.be.dao.utils.MapUtil;
-import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
-import org.openecomp.sdc.be.model.ComponentInstanceInput;
-import org.openecomp.sdc.be.model.ComponentInstanceProperty;
 import org.openecomp.sdc.be.model.InputDefinition;
-import org.openecomp.sdc.be.model.Resource;
-
 public class InputsValuesMergingBusinessLogicTest {
 
-    public static final String INPUT_DEFUALT_TYPE = "string";
-    public static final String INPUT1_ID = "input1";
-    public static final String INPUT2_ID = "input2";
-    public static final String INPUT3_ID = "input3";
-    public static final String INPUT4_ID = "input4";
+    private static final String INPUT_DEFUALT_TYPE = "string";
+    private static final String INPUT1_ID = "input1";
+    private static final String INPUT2_ID = "input2";
+    private static final String INPUT3_ID = "input3";
+    private static final String INPUT4_ID = "input4";
     private InputsValuesMergingBusinessLogic testInstance;
 
     @Before
@@ -34,7 +27,7 @@ public class InputsValuesMergingBusinessLogicTest {
     }
 
     @Test
-    public void testMergeInputs_inputsOfDifferentType_dontCopyOldValue() throws Exception {
+    public void testMergeInputs_inputsOfDifferentType_dontCopyOldValue() {
         InputDefinition oldInput = createUserDefinedInputDefinition(INPUT1_ID, "oldVal1");
 
         InputDefinition newInput = createInputDefinition(INPUT1_ID, null);
@@ -49,7 +42,7 @@ public class InputsValuesMergingBusinessLogicTest {
     }
 
     @Test
-    public void testMergeInputs_newInputsHaveNoValue_copyOldValues() throws Exception {
+    public void testMergeInputs_newInputsHaveNoValue_copyOldValues() {
         InputDefinition oldInputWithCsarDefaultValue = createInputDefinition(INPUT1_ID, "oldVal1");
         InputDefinition oldInputWithUserDefinedValue = createUserDefinedInputDefinition(INPUT2_ID, "oldVal2");
         InputDefinition oldInputNotExistOnNew = createUserDefinedInputDefinition(INPUT3_ID, null);
@@ -67,7 +60,7 @@ public class InputsValuesMergingBusinessLogicTest {
     }
 
     @Test
-    public void testMergeInputs_newInputsHaveValue_dontOverrideNewValue() throws Exception {
+    public void testMergeInputs_newInputsHaveValue_dontOverrideNewValue() {
         InputDefinition oldInputWithCsarDefaultValue = createInputDefinition(INPUT1_ID, "oldVal1");
         InputDefinition oldInputWithUserDefinedValue = createUserDefinedInputDefinition(INPUT2_ID, "oldVal2");
         InputDefinition oldInputWithNoValue = createUserDefinedInputDefinition(INPUT3_ID, null);
@@ -87,32 +80,6 @@ public class InputsValuesMergingBusinessLogicTest {
         assertEquals(updatedInputs.get(INPUT4_ID).getDefaultValue(), newInput4.getDefaultValue());
     }
 
-    @Test
-    public void getPrevoislyDeclaredInputsToMerge() throws Exception {
-        PropertyDataDefinition declaredInputProp1 = new PropertyDataDefinitionBuilder().addGetInputValue(INPUT1_ID).addGetInputValue(INPUT3_ID).setUniqueId("prevDeclaredPropId").build();
-        PropertyDataDefinition declaredInputProp2 = new PropertyDataDefinitionBuilder().addGetInputValue(INPUT4_ID).setUniqueId("prevDeclaredPropId2").build();
-
-        Resource prevResource = new ResourceBuilder().addInput(INPUT1_ID).addInput(INPUT2_ID).addInput(INPUT3_ID).addInput(INPUT4_ID).build();
-
-        Resource currentResource = new ResourceBuilder()
-                .addInput(INPUT2_ID)
-                .addInstanceProperty("inst1", new ComponentInstanceProperty(declaredInputProp1))
-                .addInstanceInput("inst2", new ComponentInstanceInput(declaredInputProp2))
-                .build();
-
-        List<InputDefinition> previouslyDeclaredInputs = testInstance.getPreviouslyDeclaredInputsToMerge(prevResource, currentResource);
-        assertEquals(3, previouslyDeclaredInputs.size());
-
-        assertInput(previouslyDeclaredInputs.get(0), INPUT1_ID, declaredInputProp1.getUniqueId(), "inst1");
-        assertInput(previouslyDeclaredInputs.get(1), INPUT3_ID, declaredInputProp1.getUniqueId(), "inst1");
-        assertInput(previouslyDeclaredInputs.get(2), INPUT4_ID, declaredInputProp2.getUniqueId(), "inst2");
-    }
-
-    private void assertInput(InputDefinition inputDefinition, String expectedInputId, String expectedPropertyId, String expectedInstanceUniqueId) {
-        assertEquals(expectedInputId, inputDefinition.getUniqueId());
-        assertEquals(expectedPropertyId, inputDefinition.getPropertyId());
-        assertEquals(inputDefinition.getInstanceUniqueId(), expectedInstanceUniqueId);
-    }
 
     private Map<String, InputDefinition> mapInputsByName(List<InputDefinition> inputs) {
         return MapUtil.toMap(inputs, InputDefinition::getName);

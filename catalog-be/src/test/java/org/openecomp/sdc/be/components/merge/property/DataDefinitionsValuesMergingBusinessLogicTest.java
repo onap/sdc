@@ -1,11 +1,5 @@
 package org.openecomp.sdc.be.components.merge.property;
 
-import static org.mockito.Mockito.verify;
-
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -16,6 +10,12 @@ import org.openecomp.sdc.be.components.utils.PropertyDataDefinitionAbstractBuild
 import org.openecomp.sdc.be.components.utils.PropertyDataDefinitionBuilder;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.model.InputDefinition;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+import static org.mockito.Mockito.verify;
 
 public class DataDefinitionsValuesMergingBusinessLogicTest {
 

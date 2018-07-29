@@ -1,11 +1,11 @@
 package org.openecomp.sdc.be.components.merge.capability;
 
-import java.util.List;
-import java.util.Map;
-
 import org.openecomp.sdc.be.model.CapabilityDefinition;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstance;
+
+import java.util.List;
+import java.util.Map;
 
 public interface CapabilityResolver {
 

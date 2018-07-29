@@ -1,12 +1,11 @@
 package org.openecomp.sdc.be.dao.cassandra.schema.tables;
 
-import java.util.List;
-import java.util.Map;
-
+import com.datastax.driver.core.DataType;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.junit.Test;
 
-import com.datastax.driver.core.DataType;
+import java.util.List;
+import java.util.Map;
 
 
 public class UserAdminEventTableDescriptionTest {

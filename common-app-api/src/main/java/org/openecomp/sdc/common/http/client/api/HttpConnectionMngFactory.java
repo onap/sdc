@@ -1,13 +1,5 @@
 package org.openecomp.sdc.common.http.client.api;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.security.GeneralSecurityException;
-import java.security.KeyStore;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.config.Registry;
 import org.apache.http.config.RegistryBuilder;
@@ -21,8 +13,15 @@ import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.ssl.SSLContextBuilder;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.http.config.ClientCertificate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.openecomp.sdc.common.log.wrappers.Logger;
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.security.GeneralSecurityException;
+import java.security.KeyStore;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class HttpConnectionMngFactory {
 
@@ -33,7 +32,7 @@ public class HttpConnectionMngFactory {
     private static final String P12_KEYSTORE_TYPE = "pkcs12";
     private static final String JKS_KEYSTORE_TYPE = "jks";
     
-    private static final Logger logger = LoggerFactory.getLogger(HttpConnectionMngFactory.class);
+    private static final Logger logger = Logger.getLogger(HttpConnectionMngFactory.class.getName());
     private static final int DEFAULT_CONNECTION_POOL_SIZE = 30;
     private static final int DEFAULT_MAX_CONNECTION_PER_ROUTE = 5;
     private static final int VALIDATE_CONNECTION_AFTER_INACTIVITY_MS = 10000;

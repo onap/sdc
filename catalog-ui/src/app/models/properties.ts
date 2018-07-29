@@ -147,9 +147,10 @@ export class PropertyModel extends PropertyBEModel implements IPropertyModel {
         temp.simpleType = undefined;
         temp.value = temp.value === "{}" || temp.value === "[]" ? undefined : temp.value;
         temp.defaultValue = temp.defaultValue === "{}" || temp.defaultValue === "[]" ? undefined : temp.defaultValue;
-        temp.rules = null; //don't send rules to server until feature is fully supported
+        temp.rules = undefined; //don't send rules to server until feature is fully supported
         temp.isAlreadySelected = undefined;
         temp.addOn = undefined;
+        temp.filterTerm = undefined;
         return temp;
     };
 }

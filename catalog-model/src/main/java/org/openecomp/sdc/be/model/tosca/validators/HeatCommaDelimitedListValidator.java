@@ -20,36 +20,36 @@
 
 package org.openecomp.sdc.be.model.tosca.validators;
 
-import java.util.Map;
-
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.common.util.ValidationUtils;
 
+import java.util.Map;
+
 public class HeatCommaDelimitedListValidator implements PropertyTypeValidator {
 
-	private static HeatCommaDelimitedListValidator stringValidator = new HeatCommaDelimitedListValidator();
+    private static HeatCommaDelimitedListValidator stringValidator = new HeatCommaDelimitedListValidator();
 
-	public static HeatCommaDelimitedListValidator getInstance() {
-		return stringValidator;
-	}
+    public static HeatCommaDelimitedListValidator getInstance() {
+        return stringValidator;
+    }
 
-	private HeatCommaDelimitedListValidator() {
+    private HeatCommaDelimitedListValidator() {
 
-	}
+    }
 
-	@Override
-	public boolean isValid(String value, String innerType, Map<String, DataTypeDefinition> allDataTypes) {
+    @Override
+    public boolean isValid(String value, String innerType, Map<String, DataTypeDefinition> allDataTypes) {
 
-		if (value == null || true == value.isEmpty()) {
-			return true;
-		}
+        if (value == null || value.isEmpty()) {
+            return true;
+        }
 
-		String coverted = ValidationUtils.removeNoneUtf8Chars(value);
-		return ValidationUtils.validateIsEnglish(coverted);
-	}
+        String coverted = ValidationUtils.removeNoneUtf8Chars(value);
+        return ValidationUtils.validateIsEnglish(coverted);
+    }
 
-	@Override
-	public boolean isValid(String value, String innerType) {
-		return isValid(value, innerType, null);
-	}
+    @Override
+    public boolean isValid(String value, String innerType) {
+        return isValid(value, innerType, null);
+    }
 }

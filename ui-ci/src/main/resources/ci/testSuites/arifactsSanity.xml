@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="uitests" configfailurepolicy="continue" parallel="methods" thread-count="4" data-provider-thread-count="2">
+ <parameter name="makeDistribution"  value="true"/>
+
+  <test name="uiSanity">
+    <classes>
+    	
+		<class name="org.openecomp.sdc.ci.tests.execute.sanity.VFCArtifacts"/>
+		<class name="org.openecomp.sdc.ci.tests.execute.sanity.VfArtifacts"/>
+		<class name="org.openecomp.sdc.ci.tests.execute.sanity.VfDeploymentInformationalArtifacts"/>
+		<class name="org.openecomp.sdc.ci.tests.US.ImportUpdateInformationalDeploymentArtifacts"/>
+        <class name="org.openecomp.sdc.ci.tests.US.MIBsArtifactsOnResourceInstance"/>
+        <class name="org.openecomp.sdc.ci.tests.US.NewArtifactTypeGuide"/>
+        <class name="org.openecomp.sdc.ci.tests.US.RemoveRestrictionOfDeploymentArtifacts"/>
+		
+    </classes>
+  </test> <!-- uitests -->
+</suite> <!-- uisuite -->

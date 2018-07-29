@@ -20,58 +20,50 @@
 
 package org.openecomp.sdc.be.model.tosca.constraints;
 
-import java.io.Serializable;
-
-import javax.validation.constraints.NotNull;
-
 import org.openecomp.sdc.be.model.tosca.ToscaType;
 import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintValueDoNotMatchPropertyTypeException;
 import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintViolationException;
 
-//import com.fasterxml.jackson.annotation.JsonIgnore;
+import javax.validation.constraints.NotNull;
 
-public class EqualConstraint extends AbstractPropertyConstraint implements Serializable {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -1596093341744641483L;
+public class EqualConstraint extends AbstractPropertyConstraint {
 
-	@NotNull
-	private String equal;
+    @NotNull
+    private String equal;
 
-	// @JsonIgnore
-	private Object typed;
+    // @JsonIgnore
+    private Object typed;
 
-	public EqualConstraint(String equal) {
-		super();
-		this.equal = equal;
-	}
+    public EqualConstraint(String equal) {
+        super();
+        this.equal = equal;
+    }
 
-	@Override
-	public void initialize(ToscaType propertyType) throws ConstraintValueDoNotMatchPropertyTypeException {
-		if (propertyType.isValidValue(equal)) {
-			typed = propertyType.convert(equal);
-		} else {
-			throw new ConstraintValueDoNotMatchPropertyTypeException("equal constraint has invalid value <" + equal
-					+ "> property type is <" + propertyType.toString() + ">");
-		}
-	}
+    @Override
+    public void initialize(ToscaType propertyType) throws ConstraintValueDoNotMatchPropertyTypeException {
+        if (propertyType.isValidValue(equal)) {
+            typed = propertyType.convert(equal);
+        } else {
+            throw new ConstraintValueDoNotMatchPropertyTypeException("equal constraint has invalid value <" + equal
+                    + "> property type is <" + propertyType.toString() + ">");
+        }
+    }
 
-	@Override
-	public void validate(Object propertyValue) throws ConstraintViolationException {
-		if (propertyValue == null) {
-			if (typed != null) {
-				fail(null);
-			}
-		} else if (typed == null) {
-			fail(propertyValue);
-		} else if (!typed.equals(propertyValue)) {
-			fail(propertyValue);
-		}
-	}
+    @Override
+    public void validate(Object propertyValue) throws ConstraintViolationException {
+        if (propertyValue == null) {
+            if (typed != null) {
+                fail(null);
+            }
+        } else if (typed == null) {
+            fail(propertyValue);
+        } else if (!typed.equals(propertyValue)) {
+            fail(propertyValue);
+        }
+    }
 
-	private void fail(Object propertyValue) throws ConstraintViolationException {
-		throw new ConstraintViolationException("Equal constraint violation, the reference is <" + equal
-				+ "> but the value to compare is <" + propertyValue + ">");
-	}
+    private void fail(Object propertyValue) throws ConstraintViolationException {
+        throw new ConstraintViolationException("Equal constraint violation, the reference is <" + equal
+                + "> but the value to compare is <" + propertyValue + ">");
+    }
 }

@@ -20,28 +20,10 @@
 
 package org.openecomp.sdc.be.components.impl;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Optional;
-import java.util.Set;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.xml.XMLConstants;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParserFactory;
-
+import com.google.common.annotations.VisibleForTesting;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import fj.data.Either;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
@@ -50,7 +32,7 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.elasticsearch.common.Strings;
 import org.openecomp.sdc.be.components.ArtifactsResolver;
 import org.openecomp.sdc.be.components.impl.ImportUtils.ResultStatusEnum;
-import org.openecomp.sdc.be.components.impl.ImportUtils.ToscaTagNamesEnum;
+import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleBusinessLogic;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleChangeInfoWithAction;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleChangeInfoWithAction.LifecycleChanceActionEnum;
@@ -65,41 +47,24 @@ import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.GroupDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.GroupInstanceDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.OperationDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.info.ArtifactTemplateInfo;
-import org.openecomp.sdc.be.model.ArtifactDefinition;
-import org.openecomp.sdc.be.model.ArtifactType;
-import org.openecomp.sdc.be.model.Component;
-import org.openecomp.sdc.be.model.ComponentInstance;
-import org.openecomp.sdc.be.model.ComponentParametersView;
-import org.openecomp.sdc.be.model.GroupDefinition;
-import org.openecomp.sdc.be.model.GroupInstance;
-import org.openecomp.sdc.be.model.HeatParameterDefinition;
-import org.openecomp.sdc.be.model.InterfaceDefinition;
-import org.openecomp.sdc.be.model.LifeCycleTransitionEnum;
-import org.openecomp.sdc.be.model.LifecycleStateEnum;
-import org.openecomp.sdc.be.model.Operation;
-import org.openecomp.sdc.be.model.Resource;
-import org.openecomp.sdc.be.model.Service;
-import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.*;
 import org.openecomp.sdc.be.model.heat.HeatParameterType;
 import org.openecomp.sdc.be.model.jsontitan.operations.InterfaceOperation;
 import org.openecomp.sdc.be.model.jsontitan.operations.NodeTemplateOperation;
 import org.openecomp.sdc.be.model.jsontitan.utils.InterfaceUtils;
-import org.openecomp.sdc.be.model.operations.api.IElementOperation;
-import org.openecomp.sdc.be.model.operations.api.IHeatParametersOperation;
-import org.openecomp.sdc.be.model.operations.api.IInterfaceLifecycleOperation;
-import org.openecomp.sdc.be.model.operations.api.IUserAdminOperation;
-import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
+import org.openecomp.sdc.be.model.operations.api.*;
 import org.openecomp.sdc.be.model.operations.impl.DaoStatusConverter;
 import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
 import org.openecomp.sdc.be.resources.data.ComponentMetadataData;
 import org.openecomp.sdc.be.resources.data.ESArtifactData;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
-import org.openecomp.sdc.be.resources.data.auditing.AuditingTypesConstants;
-import org.openecomp.sdc.be.resources.data.auditing.model.ResourceAuditData;
+import org.openecomp.sdc.be.resources.data.auditing.model.ResourceCommonInfo;
+import org.openecomp.sdc.be.resources.data.auditing.model.ResourceVersionInfo;
 import org.openecomp.sdc.be.servlets.RepresentationUtils;
 import org.openecomp.sdc.be.tosca.CsarUtils;
 import org.openecomp.sdc.be.tosca.ToscaError;
@@ -108,10 +73,10 @@ import org.openecomp.sdc.be.tosca.ToscaRepresentation;
 import org.openecomp.sdc.be.user.IUserBusinessLogic;
 import org.openecomp.sdc.be.user.Role;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
+import org.openecomp.sdc.be.utils.TypeUtils;
 import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
 import org.openecomp.sdc.common.api.ArtifactTypeEnum;
 import org.openecomp.sdc.common.api.Constants;
-import org.openecomp.sdc.common.datastructure.AuditingFieldsKeysEnum;
 import org.openecomp.sdc.common.datastructure.Wrapper;
 import org.openecomp.sdc.common.util.GeneralUtility;
 import org.openecomp.sdc.common.util.ValidationUtils;
@@ -120,18 +85,21 @@ import org.openecomp.sdc.exception.ResponseFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.SAXNotRecognizedException;
-import org.xml.sax.SAXNotSupportedException;
-import org.xml.sax.XMLReader;
+import org.xml.sax.*;
 import org.yaml.snakeyaml.Yaml;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
-import fj.data.Either;
+import javax.servlet.http.HttpServletRequest;
+import javax.xml.XMLConstants;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParserFactory;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 @org.springframework.stereotype.Component("artifactBusinessLogic")
 public class ArtifactsBusinessLogic extends BaseBusinessLogic {
@@ -152,6 +120,21 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
     private static final String ARTIFACT_PLACEHOLDER_FILE_EXTENSION = "fileExtension";
 
     private static final Logger log = LoggerFactory.getLogger(ArtifactsBusinessLogic.class);
+    public static final String FAILED_UPDATE_GROUPS = "Failed to update groups of the component {}. ";
+    public static final String FAILED_UPDATE_ARTIFACT = "Failed to delete or update the artifact {}. Parent uniqueId is {}";
+    public static final String FAILED_SAVE_ARTIFACT = "Failed to save the artifact.";
+    public static final String UPDATE_ARTIFACT_LOCK = "Update Artifact - lock ";
+    public static final String FAILED_DOWNLOAD_ARTIFACT = "Download artifact {} failed";
+    public static final String FAILED_UPLOAD_ARTIFACT_TO_COMPONENT = "Failed to upload artifact to component with type {} and uuid {}. Status is {}. ";
+    public static final String FAILED_UPLOAD_ARTIFACT_TO_INSTANCE = "Failed to upload artifact to component instance {} of component with type {} and uuid {}. Status is {}. ";
+    public static final String FAILED_FETCH_COMPONENT = "Could not fetch component with type {} and uuid {}. Status is {}. ";
+    public static final String NULL_PARAMETER = "One of the function parameteres is null";
+    public static final String COMPONENT_INSTANCE_NOT_FOUND = "Component instance {} was not found for component {}";
+    public static final String ROLLBACK = "all changes rollback";
+    public static final String COMMIT = "all changes committed";
+    public static final String ARTIFACT_SAVED = "Artifact saved into ES - {}";
+    public static final String UPDATE_ARTIFACT = "Update Artifact";
+    public static final String FOUND_DEPLOYMENT_ARTIFACT = "Found deployment artifact {}";
     private Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
     @javax.annotation.Resource
@@ -555,7 +538,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
                 }
             }
         }
-        Either<List<GroupInstance>, StorageOperationStatus> status = toscaOperationFacade.updateGroupInstancesOnComponent(parent, componentType, parentId, updatedGroupInstances);
+        Either<List<GroupInstance>, StorageOperationStatus> status = toscaOperationFacade.updateGroupInstancesOnComponent(parent, parentId, updatedGroupInstances);
         if (status.isRight()) {
             log.debug("Failed to update groups of the component {}. ", parent.getUniqueId());
             return componentsUtils.convertFromStorageResponse(status.right().value());
@@ -713,15 +696,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         // step 4
         // check user's role
 
-        Either<User, ResponseFormat> userResult = validateUserExists(userId, "get artifacts", false);
-        if (userResult.isRight()) {
-
-            resultOp = Either.right(userResult.right().value());
-            return resultOp;
-        }
-
-        userResult.left().value();
-
+        validateUserExists(userId, "get artifacts", false);
         // steps 5 - 6 - 7
         // 5. check service/resource existence
         // 6. check service/resource check out
@@ -1002,16 +977,18 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
     public void handleAuditing(AuditingActionEnum auditingActionEnum, Component component, String componentId, User user, ArtifactDefinition artifactDefinition, String prevArtifactUuid, String currentArtifactUuid, ResponseFormat responseFormat,
                                ComponentTypeEnum componentTypeEnum, String resourceInstanceName) {
 
-        if (auditingActionEnum != null && auditingActionEnum.getAuditingEsType()
-                                                            .equals(AuditingTypesConstants.EXTERNAL_API_EVENT_TYPE)) {
+        if (componentsUtils.isExternalApiEvent(auditingActionEnum)) {
             return;
         }
-        String artifactData = buildAuditingArtifactData(artifactDefinition);
 
         if (user == null) {
             user = new User();
             user.setUserId("UNKNOWN");
         }
+        handleInternalAuditEvent(auditingActionEnum, component, componentId, user, artifactDefinition, prevArtifactUuid, currentArtifactUuid, responseFormat, componentTypeEnum, resourceInstanceName);
+    }
+
+    private void handleInternalAuditEvent(AuditingActionEnum auditingActionEnum, Component component, String componentId, User user, ArtifactDefinition artifactDefinition, String prevArtifactUuid, String currentArtifactUuid, ResponseFormat responseFormat, ComponentTypeEnum componentTypeEnum, String resourceInstanceName) {
         switch (componentTypeEnum) {
             case RESOURCE:
                 Resource resource = (Resource) component;
@@ -1021,9 +998,9 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
                     resource.setName(componentId);
                 }
                 componentsUtils.auditResource(responseFormat, user, resource, resource.getName(), auditingActionEnum,
-                        ResourceAuditData.newBuilder()
-                                         .artifactUuid(prevArtifactUuid)
-                                         .build(), currentArtifactUuid, artifactData);
+                        ResourceVersionInfo.newBuilder()
+                                .artifactUuid(prevArtifactUuid)
+                                .build(), currentArtifactUuid, artifactDefinition);
                 break;
 
             case SERVICE:
@@ -1033,20 +1010,29 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
                     service = new Service();
                     service.setName(componentId);
                 }
-                componentsUtils.auditComponent(responseFormat, user, service, auditingActionEnum, ComponentTypeEnum.SERVICE,
-                        ResourceAuditData.newBuilder().artifactUuid(prevArtifactUuid).build(),
-                        ResourceAuditData.newBuilder().artifactUuid(currentArtifactUuid).build(),
-                        null, null, artifactData, null);
+                componentsUtils.auditComponent(responseFormat, user, service, auditingActionEnum, new ResourceCommonInfo(ComponentTypeEnum.SERVICE.getValue()),
+                        ResourceVersionInfo.newBuilder()
+                                .artifactUuid(prevArtifactUuid)
+                                .build(),
+                        ResourceVersionInfo.newBuilder()
+                                .artifactUuid(currentArtifactUuid)
+                                .build(),
+                        null, artifactDefinition, null);
                 break;
 
             case RESOURCE_INSTANCE:
                 if (resourceInstanceName == null) {
                     resourceInstanceName = getResourceInstanceNameFromComponent(component, componentId);
                 }
-                componentsUtils.auditComponent(responseFormat, user, component, auditingActionEnum, ComponentTypeEnum.RESOURCE_INSTANCE,
-                        ResourceAuditData.newBuilder().artifactUuid(prevArtifactUuid).build(),
-                        ResourceAuditData.newBuilder().artifactUuid(currentArtifactUuid).build(),
-                        resourceInstanceName, null, artifactData, null);
+                componentsUtils.auditComponent(responseFormat, user, component, auditingActionEnum,
+                        new ResourceCommonInfo(resourceInstanceName, ComponentTypeEnum.RESOURCE_INSTANCE.getValue()),
+                        ResourceVersionInfo.newBuilder()
+                                .artifactUuid(prevArtifactUuid)
+                                .build(),
+                        ResourceVersionInfo.newBuilder()
+                                .artifactUuid(currentArtifactUuid)
+                                .build(),
+                        null, artifactDefinition, null);
                 break;
             default:
                 break;
@@ -1065,18 +1051,6 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         }
         return resourceInstanceName;
     }
-
-    public Map<AuditingFieldsKeysEnum, Object> createArtifactAuditingFields(ArtifactDefinition artifactDefinition, String prevArtifactUuid, String currentArtifactUuid) {
-        Map<AuditingFieldsKeysEnum, Object> auditingFields = new EnumMap<AuditingFieldsKeysEnum, Object>(AuditingFieldsKeysEnum.class);
-        // Putting together artifact info
-        String artifactData = buildAuditingArtifactData(artifactDefinition);
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_ARTIFACT_DATA, artifactData);
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_PREV_ARTIFACT_UUID, prevArtifactUuid);
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_CURR_ARTIFACT_UUID, currentArtifactUuid);
-        return auditingFields;
-    }
-
-    // -----
 
     private String buildAuditingArtifactData(ArtifactDefinition artifactDefinition) {
         StringBuilder sb = new StringBuilder();
@@ -1444,7 +1418,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
                         .getRight()
                         .getGroupInstances());
                 if (CollectionUtils.isNotEmpty(updatedGroupInstances)) {
-                    Either<List<GroupInstance>, StorageOperationStatus> status = toscaOperationFacade.updateGroupInstancesOnComponent(fetchedContainerComponent, componentType, parentId, updatedGroupInstances);
+                    Either<List<GroupInstance>, StorageOperationStatus> status = toscaOperationFacade.updateGroupInstancesOnComponent(fetchedContainerComponent, parentId, updatedGroupInstances);
                     if (status.isRight()) {
                         log.debug("Failed to update groups of the component {}. ", fetchedContainerComponent.getUniqueId());
                         responseFormat = componentsUtils.getResponseFormatByArtifactId(componentsUtils.convertFromStorageResponse(status
@@ -1598,7 +1572,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         }
         else if (cloneIsNeeded) {
             log.debug("Going to clone artifacts and to delete the artifact {} from the component {}", artifactId, parentId);
-            result = artifactToscaOperation.deleteArtifactWithClonnigOnGraph(componentId, foundArtifact, parentType, instanceId, false);
+            result = artifactToscaOperation.deleteArtifactWithCloningOnGraph(componentId, foundArtifact, parentType, instanceId, false);
         }
         else {
             log.debug("Going to delete the artifact {} from the component {}", artifactId, parentId);
@@ -1834,6 +1808,84 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
             }
         }
         return isUnique;
+    }
+
+    boolean validateArtifactNameUniqueness(String componentId, Component parentComponent, ArtifactDefinition artifactInfo,
+                                           ComponentTypeEnum componentType) {
+        Either<Map<String, ArtifactDefinition>, StorageOperationStatus> artifacts = getArtifacts(componentType,
+                parentComponent, componentId, artifactInfo.getArtifactGroupType());
+        String artifactName = artifactInfo.getArtifactName();
+        if (artifacts.isLeft() && Objects.nonNull(artifacts.left().value())){
+            if (artifacts.left().value().values().stream()
+                    .anyMatch(ad -> artifactName.equals(ad.getArtifactName())
+                            //check whether it is the same artifact we hold (by label)
+                            && !artifactInfo.getArtifactLabel().equals(ad.getArtifactLabel()))){
+                return false;
+            }
+        }
+        if (ComponentTypeEnum.RESOURCE.equals(componentType)) {
+            return isUniqueArtifactNameInResourceInterfaces(componentId, artifactName, artifactInfo.getArtifactLabel());
+        }
+        return true;
+    }
+
+    private boolean isUniqueArtifactNameInResourceInterfaces(String componentId, String artifactName, String artifactLabel) {
+        Either<Map<String, InterfaceDefinition>, StorageOperationStatus> allInterfacesOfResource = interfaceLifecycleOperation
+                .getAllInterfacesOfResource(componentId, true, true);
+
+        if (allInterfacesOfResource.isLeft() && Objects.nonNull(allInterfacesOfResource)){
+            return !allInterfacesOfResource.left().value()
+                    .values()
+                    .stream().map(InterfaceDefinition :: getOperationsMap)
+                    .flatMap(map -> map.values().stream())
+                    .map(OperationDataDefinition::getImplementation)
+                    .filter(Objects::nonNull)
+                    .anyMatch(add -> artifactName.equals(add.getArtifactName())
+                            && !artifactLabel.equals(add.getArtifactLabel()));
+        }
+        return true;
+    }
+
+    private boolean isUniqueLabelInResourceInterfaces(String componentId, String artifactLabel) {
+        Either<Map<String, InterfaceDefinition>, StorageOperationStatus> allInterfacesOfResource = interfaceLifecycleOperation
+                .getAllInterfacesOfResource(componentId, true, true);
+
+        if (allInterfacesOfResource.isLeft()){
+            return !allInterfacesOfResource.left().value()
+                    .values()
+                    .stream().map(InterfaceDefinition :: getOperationsMap)
+                    .flatMap(map -> map.values().stream())
+                    .map(OperationDataDefinition::getImplementation)
+                    .filter(Objects::nonNull)
+                    .anyMatch(add -> artifactLabel.equals(add.getArtifactLabel()));
+        }
+        return true;
+    }
+
+    private Either<Map<String, ArtifactDefinition>, StorageOperationStatus> getArtifacts(ComponentTypeEnum componentType, Component parentComponent,
+                                                                                         String componentId, ArtifactGroupTypeEnum artifactGroupType) {
+        Either<Map<String, ArtifactDefinition>, StorageOperationStatus> artifactsResponse;
+        if (componentType.equals(ComponentTypeEnum.RESOURCE_INSTANCE)) {
+            artifactsResponse = artifactToscaOperation.getAllInstanceArtifacts(parentComponent.getUniqueId(), componentId);
+        }
+        else {
+            artifactsResponse = artifactToscaOperation.getArtifacts(componentId);
+        }
+        if (artifactsResponse.isRight() && artifactsResponse.right().value().equals(StorageOperationStatus.NOT_FOUND)) {
+            log.debug("failed to retrieve artifacts for {} ", componentId);
+            return Either.right(artifactsResponse.right().value());
+        }
+        return Either.left(artifactsResponse.left().value().entrySet()
+                .stream()
+                .filter(x -> artifactGroupType.equals(x.getValue().getArtifactGroupType()))
+                .collect(Collectors.toMap(Entry::getKey, Entry::getValue)));
+    }
+
+    private List<String> getListOfArtifactName(Map<String, ArtifactDefinition> artifacts) {
+        return artifacts.entrySet()
+                .stream()
+                .map(x -> x.getValue().getArtifactName())
+                .collect(Collectors.toList());
     }
 
     // ***************************************************************
@@ -2292,8 +2344,8 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         String heatDecodedPayload = new String(Base64.decodeBase64(heatPayloadData));
         Map<String, Object> heatToscaJson = (Map<String, Object>) new Yaml().load(heatDecodedPayload);
 
-        Either<Map<String, Object>, ResultStatusEnum> eitherHeatEnvProperties = ImportUtils.findFirstToscaMapElement(heatEnvToscaJson, ToscaTagNamesEnum.PARAMETERS);
-        Either<Map<String, Object>, ResultStatusEnum> eitherHeatProperties = ImportUtils.findFirstToscaMapElement(heatToscaJson, ToscaTagNamesEnum.PARAMETERS);
+        Either<Map<String, Object>, ResultStatusEnum> eitherHeatEnvProperties = ImportUtils.findFirstToscaMapElement(heatEnvToscaJson, TypeUtils.ToscaTagNamesEnum.PARAMETERS);
+        Either<Map<String, Object>, ResultStatusEnum> eitherHeatProperties = ImportUtils.findFirstToscaMapElement(heatToscaJson, TypeUtils.ToscaTagNamesEnum.PARAMETERS);
         if (eitherHeatEnvProperties.isRight()) {
             ResponseFormat responseFormat = ResponseFormatManager.getInstance()
                                                                  .getResponseFormat(ActionStatus.CORRUPTED_FORMAT, "Heat Env");
@@ -3703,16 +3755,18 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
     }
 
     private Either<User, ResponseFormat> validateUserExists(String userId, AuditingActionEnum auditingAction, String componentId, String artifactId, ComponentTypeEnum componentType, boolean inTransaction) {
-        Either<User, ResponseFormat> validateUserExists = validateUserExists(userId, auditingAction.getName(), inTransaction);
-
-        if (validateUserExists.isRight()) {
-            User user = new User();
+        User user;
+        try{
+            user = validateUserExists(userId, auditingAction.getName(), inTransaction);
+        } catch(ComponentException e){
+            user = new User();
             user.setUserId(userId);
-            handleAuditing(auditingAction, null, componentId, user, null, null, artifactId, validateUserExists.right()
-                                                                                                              .value(), componentType, null);
-            return Either.right(validateUserExists.right().value());
+            ResponseFormat responseFormat = e.getResponseFormat() != null ? e.getResponseFormat() :
+                    componentsUtils.getResponseFormat(e.getActionStatus(), e.getParams());
+            handleAuditing(auditingAction, null, componentId, user, null, null, artifactId, responseFormat, componentType, null);
+            throw e;
         }
-        return Either.left(validateUserExists.left().value());
+        return Either.left(user);
     }
 
     protected AuditingActionEnum detectAuditingType(ArtifactOperationInfo operation, String origMd5) {
@@ -3907,7 +3961,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
                             gi.getGroupInstanceArtifacts().add(updatedArtDef.getUniqueId());
                             gi.getGroupInstanceArtifactsUuid().add(updatedArtDef.getArtifactUUID());
                         });
-                        Either<List<GroupInstance>, StorageOperationStatus> status = toscaOperationFacade.updateGroupInstancesOnComponent(component, componentType, instanceId, updatedGroupInstances);
+                        Either<List<GroupInstance>, StorageOperationStatus> status = toscaOperationFacade.updateGroupInstancesOnComponent(component, instanceId, updatedGroupInstances);
                         if (status.isRight()) {
                             log.debug("Failed to update groups of the component {}. ", component.getUniqueId());
                             ResponseFormat responseFormat = componentsUtils.getResponseFormatByArtifactId(componentsUtils
@@ -4638,16 +4692,16 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
      * @param componentType
      * @param componentUuid
      * @param artifactUUID
-     * @param auditAdditionalParam
+     * @param resourceCommonInfo
      * @return
      */
-    public Either<byte[], ResponseFormat> downloadComponentArtifactByUUIDs(ComponentTypeEnum componentType, String componentUuid, String artifactUUID, Map<AuditingFieldsKeysEnum, Object> auditAdditionalParam) {
+    public Either<byte[], ResponseFormat> downloadComponentArtifactByUUIDs(ComponentTypeEnum componentType, String componentUuid, String artifactUUID, ResourceCommonInfo resourceCommonInfo) {
         Wrapper<ResponseFormat> errorWrapper = new Wrapper<>();
         Either<byte[], ResponseFormat> result;
         byte[] downloadedArtifact = null;
         Component component = getComponentByUuid(componentType, componentUuid, errorWrapper);
-        if (errorWrapper.isEmpty()) {
-            auditAdditionalParam.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_NAME, component.getName());
+        if (errorWrapper.isEmpty() && component != null) {
+            resourceCommonInfo.setResourceName(component.getName());
             downloadedArtifact = downloadArtifact(component.getAllArtifacts(), artifactUUID, errorWrapper, component.getName());
         }
         if (errorWrapper.isEmpty()) {
@@ -4666,10 +4720,9 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
      * @param componentUuid
      * @param resourceInstanceName
      * @param artifactUUID
-     * @param auditAdditionalParam
      * @return
      */
-    public Either<byte[], ResponseFormat> downloadResourceInstanceArtifactByUUIDs(ComponentTypeEnum componentType, String componentUuid, String resourceInstanceName, String artifactUUID, Map<AuditingFieldsKeysEnum, Object> auditAdditionalParam) {
+    public Either<byte[], ResponseFormat> downloadResourceInstanceArtifactByUUIDs(ComponentTypeEnum componentType, String componentUuid, String resourceInstanceName, String artifactUUID) {
         Wrapper<ResponseFormat> errorWrapper = new Wrapper<>();
         Either<byte[], ResponseFormat> result;
         byte[] downloadedArtifact = null;
@@ -4694,12 +4747,11 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
      * @param request
      * @param componentType
      * @param componentUuid
-     * @param additionalParams
+     * @param resourceCommonInfo
      * @param operation
      * @return
      */
-    public Either<ArtifactDefinition, ResponseFormat> uploadArtifactToComponentByUUID(String data, HttpServletRequest request, ComponentTypeEnum componentType, String componentUuid, Map<AuditingFieldsKeysEnum, Object> additionalParams,
-                                                                                      ArtifactOperationInfo operation) {
+    public Either<ArtifactDefinition, ResponseFormat> uploadArtifactToComponentByUUID(String data, HttpServletRequest request, ComponentTypeEnum componentType, String componentUuid, ResourceCommonInfo resourceCommonInfo,ArtifactOperationInfo operation) {
         Wrapper<ResponseFormat> errorWrapper = new Wrapper<>();
         Either<Either<ArtifactDefinition, Operation>, ResponseFormat> actionResult = null;
         Either<ArtifactDefinition, ResponseFormat> uploadArtifactResult;
@@ -4713,7 +4765,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         Either<ComponentMetadataData, StorageOperationStatus> getComponentRes = toscaOperationFacade.getLatestComponentMetadataByUuid(componentUuid, JsonParseFlagEnum.ParseMetadata, true);
         if (getComponentRes.isRight()) {
             StorageOperationStatus status = getComponentRes.right().value();
-            log.debug("Could not fetch component with type {} and uuid {}. Status is {}. ", componentType, componentUuid, status);
+            log.debug(FAILED_FETCH_COMPONENT, componentType, componentUuid, status);
             errorWrapper.setInnerElement(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(status, componentType), componentUuid));
         }
         if (errorWrapper.isEmpty()) {
@@ -4721,22 +4773,22 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
             String componentName = getComponentRes.left().value().getMetadataDataDefinition().getName();
 
             if (!getComponentRes.left()
-                                .value()
-                                .getMetadataDataDefinition()
-                                .getState()
-                                .equals(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT.name())) {
+                    .value()
+                    .getMetadataDataDefinition()
+                    .getState()
+                    .equals(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT.name())) {
                 component = checkoutParentComponent(componentType, componentId, userId, errorWrapper);
                 if (component != null) {
                     componentId = component.getUniqueId();
                     componentName = component.getName();
                 }
             }
-            additionalParams.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_NAME, componentName);
+            resourceCommonInfo.setResourceName(componentName);
         }
         if (errorWrapper.isEmpty()) {
             actionResult = handleArtifactRequest(componentId, userId, componentType, operation, null, artifactInfo, origMd5, data, null, null, null, null);
             if (actionResult.isRight()) {
-                log.debug("Failed to upload artifact to component with type {} and uuid {}. Status is {}. ", componentType, componentUuid, actionResult
+                log.debug(FAILED_UPLOAD_ARTIFACT_TO_COMPONENT, componentType, componentUuid, actionResult
                         .right()
                         .value());
                 errorWrapper.setInnerElement(actionResult.right().value());
@@ -4749,10 +4801,8 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         else {
             uploadArtifactResult = Either.right(errorWrapper.getInnerElement());
         }
-        updateAuditParametersWithArtifactDefinition(additionalParams, uploadArtifact);
         return uploadArtifactResult;
     }
-
     /**
      * upload an artifact to a resource instance by UUID
      *
@@ -4761,12 +4811,11 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
      * @param componentType
      * @param componentUuid
      * @param resourceInstanceName
-     * @param additionalParams
      * @param operation
      * @return
      */
     public Either<ArtifactDefinition, ResponseFormat> uploadArtifactToRiByUUID(String data, HttpServletRequest request, ComponentTypeEnum componentType, String componentUuid, String resourceInstanceName,
-                                                                               Map<AuditingFieldsKeysEnum, Object> additionalParams, ArtifactOperationInfo operation) {
+                                                                                ArtifactOperationInfo operation) {
         Wrapper<ResponseFormat> errorWrapper = new Wrapper<>();
         Either<ArtifactDefinition, ResponseFormat> uploadArtifactResult;
         Either<Either<ArtifactDefinition, Operation>, ResponseFormat> actionResult = null;
@@ -4823,7 +4872,6 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         else {
             uploadArtifactResult = Either.right(errorWrapper.getInnerElement());
         }
-        updateAuditParametersWithArtifactDefinition(additionalParams, uploadArtifact);
         return uploadArtifactResult;
     }
 
@@ -4835,12 +4883,11 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
      * @param componentType
      * @param componentUuid
      * @param artifactUUID
-     * @param additionalParams
-     * @param operation        TODO
+     * @param operation
      * @return
      */
     public Either<ArtifactDefinition, ResponseFormat> updateArtifactOnComponentByUUID(String data, HttpServletRequest request, ComponentTypeEnum componentType, String componentUuid, String artifactUUID,
-                                                                                      Map<AuditingFieldsKeysEnum, Object> additionalParams, ArtifactOperationInfo operation) {
+                                                                                      ResourceCommonInfo resourceCommonInfo, ArtifactOperationInfo operation) {
         Wrapper<ResponseFormat> errorWrapper = new Wrapper<>();
         Either<ArtifactDefinition, ResponseFormat> updateArtifactResult;
         Either<Either<ArtifactDefinition, Operation>, ResponseFormat> actionResult = null;
@@ -4873,7 +4920,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
                     componentName = component.getName();
                 }
             }
-            additionalParams.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_NAME, componentName);
+            resourceCommonInfo.setResourceName(componentName);
         }
         if (errorWrapper.isEmpty()) {
             artifactId = getLatestParentArtifactDataIdByArtifactUUID(artifactUUID, errorWrapper, componentId, componentType);
@@ -4895,7 +4942,6 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         else {
             updateArtifactResult = Either.right(errorWrapper.getInnerElement());
         }
-        updateAuditParametersWithArtifactDefinition(additionalParams, updateArtifact);
         return updateArtifactResult;
     }
 
@@ -4908,12 +4954,11 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
      * @param componentUuid
      * @param resourceInstanceName
      * @param artifactUUID
-     * @param additionalParams
      * @param operation            TODO
      * @return
      */
     public Either<ArtifactDefinition, ResponseFormat> updateArtifactOnRiByUUID(String data, HttpServletRequest request, ComponentTypeEnum componentType, String componentUuid, String resourceInstanceName, String artifactUUID,
-                                                                               Map<AuditingFieldsKeysEnum, Object> additionalParams, ArtifactOperationInfo operation) {
+                                                                                ArtifactOperationInfo operation) {
 
         Wrapper<ResponseFormat> errorWrapper = new Wrapper<>();
         Either<ArtifactDefinition, ResponseFormat> updateArtifactResult;
@@ -4975,7 +5020,6 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         else {
             updateArtifactResult = Either.right(errorWrapper.getInnerElement());
         }
-        updateAuditParametersWithArtifactDefinition(additionalParams, updateArtifact);
         return updateArtifactResult;
     }
 
@@ -4987,14 +5031,13 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
      * @param componentType
      * @param componentUuid
      * @param artifactUUID
-     * @param additionalParams
      * @param operation        TODO
      * @return
      */
     public Either<ArtifactDefinition, ResponseFormat> updateArtifactOnInterfaceOperationByResourceUUID(
             String data, HttpServletRequest request, ComponentTypeEnum componentType,
             String componentUuid, String artifactUUID, String operationUUID,
-            Map<AuditingFieldsKeysEnum, Object> additionalParams, ArtifactOperationInfo operation) {
+            ResourceCommonInfo resourceCommonInfo,ArtifactOperationInfo operation) {
         Wrapper<ResponseFormat> errorWrapper = new Wrapper<>();
         Either<ArtifactDefinition, ResponseFormat> updateArtifactResult;
         Either<Either<ArtifactDefinition, Operation>, ResponseFormat> actionResult = null;
@@ -5023,8 +5066,9 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
                     componentId = component.getUniqueId();
                     componentName = component.getName();
                 }
-                additionalParams.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_NAME, componentName);
+
             }
+            resourceCommonInfo.setResourceName(componentName);
         }
         if (errorWrapper.isEmpty()) {
             Either<String, ResponseFormat> interfaceName = fetchInterfaceName(componentId);
@@ -5051,7 +5095,6 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         else {
             updateArtifactResult = Either.right(errorWrapper.getInnerElement());
         }
-        updateAuditParametersWithArtifactDefinition(additionalParams, updateArtifact);
         return updateArtifactResult;
     }
 
@@ -5078,11 +5121,11 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
      * @param componentType
      * @param componentUuid
      * @param artifactUUID
-     * @param additionalParams
+     * @param resourceCommonInfo
      * @param operation        TODO
      * @return
      */
-    public Either<ArtifactDefinition, ResponseFormat> deleteArtifactOnComponentByUUID(HttpServletRequest request, ComponentTypeEnum componentType, String componentUuid, String artifactUUID, Map<AuditingFieldsKeysEnum, Object> additionalParams,
+    public Either<ArtifactDefinition, ResponseFormat> deleteArtifactOnComponentByUUID(HttpServletRequest request, ComponentTypeEnum componentType, String componentUuid, String artifactUUID, ResourceCommonInfo resourceCommonInfo,
                                                                                       ArtifactOperationInfo operation) {
 
         Wrapper<ResponseFormat> errorWrapper = new Wrapper<>();
@@ -5115,7 +5158,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
                     componentName = component.getName();
                 }
             }
-            additionalParams.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_NAME, componentName);
+            resourceCommonInfo.setResourceName(componentName);
         }
         if (errorWrapper.isEmpty()) {
             artifactId = getLatestParentArtifactDataIdByArtifactUUID(artifactUUID, errorWrapper, componentId, componentType);
@@ -5136,7 +5179,6 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         else {
             deleteArtifactResult = Either.right(errorWrapper.getInnerElement());
         }
-        updateAuditParametersWithArtifactDefinition(additionalParams, deleteArtifact);
         return deleteArtifactResult;
     }
 
@@ -5148,12 +5190,11 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
      * @param componentUuid
      * @param resourceInstanceName
      * @param artifactUUID
-     * @param additionalParams
      * @param operation            TODO
      * @return
      */
     public Either<ArtifactDefinition, ResponseFormat> deleteArtifactOnRiByUUID(HttpServletRequest request, ComponentTypeEnum componentType, String componentUuid, String resourceInstanceName, String artifactUUID,
-                                                                               Map<AuditingFieldsKeysEnum, Object> additionalParams, ArtifactOperationInfo operation) {
+                                                                               ArtifactOperationInfo operation) {
 
         Wrapper<ResponseFormat> errorWrapper = new Wrapper<>();
         Either<ArtifactDefinition, ResponseFormat> deleteArtifactResult;
@@ -5214,7 +5255,6 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         else {
             deleteArtifactResult = Either.right(errorWrapper.getInnerElement());
         }
-        updateAuditParametersWithArtifactDefinition(additionalParams, deleteArtifact);
         return deleteArtifactResult;
     }
 
@@ -5296,15 +5336,16 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
             artifactToscaOperation.generateUUID(heatEnvPlaceholder, heatEnvPlaceholder.getArtifactVersion());
             setHeatCurrentValuesOnHeatEnvDefaultValues(heatArtifact, heatEnvPlaceholder);
         }
-        String artifactData = buildAuditingArtifactData(heatEnvPlaceholder);
+
         ComponentTypeEnum componentType = component.getComponentType();
         if (parentType == NodeTypeEnum.ResourceInstance) {
             componentType = ComponentTypeEnum.RESOURCE_INSTANCE;
         }
-        componentsUtils.auditComponent(componentsUtils.getResponseFormat(ActionStatus.OK), user, component, AuditingActionEnum.ARTIFACT_UPLOAD, componentType,
-                ResourceAuditData.newBuilder().build(),
-                ResourceAuditData.newBuilder().artifactUuid(heatEnvPlaceholder.getUniqueId()).build(),
-                parentName, null, artifactData, null);
+        componentsUtils.auditComponent(componentsUtils.getResponseFormat(ActionStatus.OK), user, component, AuditingActionEnum.ARTIFACT_UPLOAD,
+                new ResourceCommonInfo(parentName, componentType.getValue()),
+                ResourceVersionInfo.newBuilder().build(),
+                ResourceVersionInfo.newBuilder().artifactUuid(heatEnvPlaceholder.getUniqueId()).build(),
+                null, heatEnvPlaceholder, null);
         return Either.left(heatEnvPlaceholder);
     }
 
@@ -5606,21 +5647,6 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
             }
         }
         return component;
-    }
-
-    private void updateAuditParametersWithArtifactDefinition(Map<AuditingFieldsKeysEnum, Object> additionalParams, ArtifactDefinition artifact) {
-        if (artifact == null) {
-            additionalParams.put(AuditingFieldsKeysEnum.AUDIT_ARTIFACT_DATA, "");
-            additionalParams.put(AuditingFieldsKeysEnum.AUDIT_MODIFIER_NAME, "");
-            if (!additionalParams.containsKey(AuditingFieldsKeysEnum.AUDIT_CURR_ARTIFACT_UUID)) {
-                additionalParams.put(AuditingFieldsKeysEnum.AUDIT_CURR_ARTIFACT_UUID, "");
-            }
-        }
-        else {
-            additionalParams.put(AuditingFieldsKeysEnum.AUDIT_CURR_ARTIFACT_UUID, artifact.getArtifactUUID());
-            additionalParams.put(AuditingFieldsKeysEnum.AUDIT_ARTIFACT_DATA, buildAuditingArtifactData(artifact));
-            additionalParams.put(AuditingFieldsKeysEnum.AUDIT_MODIFIER_NAME, artifact.getUpdaterFullName());
-        }
     }
 
     private String buildJsonStringForCsarVfcArtifact(ArtifactDefinition artifact) {

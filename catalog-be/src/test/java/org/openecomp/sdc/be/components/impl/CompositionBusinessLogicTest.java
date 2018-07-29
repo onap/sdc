@@ -20,15 +20,6 @@
 
 package org.openecomp.sdc.be.components.impl;
 
-import static org.junit.Assert.assertTrue;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.junit.Test;
 import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
@@ -36,6 +27,13 @@ import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.RequirementCapabilityRelDef;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.unittests.utils.FactoryUtils;
+
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 
 public class CompositionBusinessLogicTest {
     CompositionBusinessLogic compBl = new CompositionBusinessLogic();
@@ -48,7 +46,7 @@ public class CompositionBusinessLogicTest {
             FactoryUtils.addComponentInstanceToVF(createVF, FactoryUtils.createResourceInstance());
         }
         Map<ImmutablePair<Double, Double>, ComponentInstance> componentInstances = compBl.buildSpiralPatternPositioningForComponentInstances(createVF);
-        assertTrue(componentInstances.size() == instancesNum);
+        assertEquals(componentInstances.size(), instancesNum);
         // Verify Spiral Pattern
         ImmutablePair<Double, Double> key;
         key = new ImmutablePair<>(0D, 0D);
@@ -80,11 +78,11 @@ public class CompositionBusinessLogicTest {
         ComponentInstance vfc = populateVfWithVfcAndCps(allComponentInstances, createVF);
 
         Map<ComponentInstance, List<ComponentInstance>> cpsConnectedToVFC = compBl.getCpsConnectedToVFC(allComponentInstances, createVF);
-        assertTrue(cpsConnectedToVFC.size() == 1);
+        assertEquals(1, cpsConnectedToVFC.size());
         assertTrue(cpsConnectedToVFC.containsKey(vfc));
         Set<ComponentInstance> cps = cpsConnectedToVFC.get(vfc).stream().collect(Collectors.toSet());
-        assertTrue(cps.size() == 3);
-        cps.stream().forEach(e -> assertTrue(e.getOriginType() == OriginTypeEnum.CP));
+        assertEquals(3, cps.size());
+        cps.stream().forEach(e -> assertSame(e.getOriginType(), OriginTypeEnum.CP));
 
     }
 
@@ -96,16 +94,16 @@ public class CompositionBusinessLogicTest {
         Map<ComponentInstance, List<ComponentInstance>> cpsConnectedToVFC = compBl.getCpsConnectedToVFC(allComponentInstances, createVF);
 
         Map<ImmutablePair<Double, Double>, ComponentInstance> componentInstLocations = new HashMap<>();
-        componentInstLocations.put(new ImmutablePair<Double, Double>(0D, 0D), vfcInstance);
+        componentInstLocations.put(new ImmutablePair<>(0D, 0D), vfcInstance);
         compBl.buildCirclePatternForCps(componentInstLocations, cpsConnectedToVFC);
-        assertTrue(componentInstLocations.size() == 4);
+        assertEquals(4, componentInstLocations.size());
 
-        Set<ImmutablePair<Double, Double>> cpsLocations = componentInstLocations.entrySet().stream().filter(entry -> entry.getValue().getOriginType() == OriginTypeEnum.CP).map(e -> e.getKey()).collect(Collectors.toSet());
+        Set<ImmutablePair<Double, Double>> cpsLocations = componentInstLocations.entrySet().stream().filter(entry -> entry.getValue().getOriginType() == OriginTypeEnum.CP).map(Map.Entry::getKey).collect(Collectors.toSet());
         // Verify that all cps are located at different positions
-        assertTrue(cpsLocations.size() == 3);
+        assertEquals(3, cpsLocations.size());
         Set<Double> distances = cpsLocations.stream().map(cpLocation -> Math.sqrt(Math.pow(cpLocation.left, 2) + Math.pow(cpLocation.right, 2))).collect(Collectors.toSet());
         // Verify that all cps are at the same distance from center
-        assertTrue(distances.size() == 1);
+        assertEquals(1, distances.size());
 
     }
 

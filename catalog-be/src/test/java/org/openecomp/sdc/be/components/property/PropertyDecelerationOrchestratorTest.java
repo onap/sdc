@@ -1,50 +1,37 @@
 package org.openecomp.sdc.be.components.property;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
+import fj.data.Either;
+import mockit.Deencapsulation;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.openecomp.sdc.be.model.Component;
-import org.openecomp.sdc.be.model.ComponentInstInputsMap;
-import org.openecomp.sdc.be.model.ComponentInstancePropInput;
-import org.openecomp.sdc.be.model.InputDefinition;
-import org.openecomp.sdc.be.model.Resource;
+import org.openecomp.sdc.be.model.*;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
-import org.openecomp.sdc.test.utils.TestUtilsSdc;
-import org.slf4j.LoggerFactory;
 
-import fj.data.Either;
-import mockit.Deencapsulation;
+import java.util.*;
 
 public class PropertyDecelerationOrchestratorTest {
 
 	@InjectMocks
-	PropertyDecelerationOrchestrator testSubject;
+	PropertyDeclarationOrchestrator testSubject;
 
 	@Mock
-	List<PropertyDecelerator> propertyDeceleratorsMock;
+	List<PropertyDeclarator> propertyDeceleratorsMock;
 	
 	@Mock
-	private ComponentInstanceInputPropertyDecelerator componentInstanceInputPropertyDecelerator;
+	private ComponentInstanceInputPropertyDeclarator componentInstanceInputPropertyDecelerator;
 	@Mock
-	private ComponentInstancePropertyDecelerator componentInstancePropertyDecelerator;
+	private ComponentInstancePropertyDeclarator componentInstancePropertyDecelerator;
 	@Mock
-	private PolicyPropertyDecelerator policyPropertyDecelerator;
+	private PolicyPropertyDeclarator policyPropertyDecelerator;
 
 	@Before
 	public void setUp() throws Exception {
 
 		MockitoAnnotations.initMocks(this);
-		
-		TestUtilsSdc.setFinalStatic(testSubject.getClass(), "log", LoggerFactory.getLogger(testSubject.getClass()));
 	}
 
 	@Test(expected = IllegalStateException.class)
@@ -63,7 +50,7 @@ public class PropertyDecelerationOrchestratorTest {
 		InputDefinition inputToDelete = new InputDefinition();
 		StorageOperationStatus result;
 
-		Iterator<PropertyDecelerator> mockIter = Mockito.mock(Iterator.class);
+		Iterator<PropertyDeclarator> mockIter = Mockito.mock(Iterator.class);
 		Mockito.when(propertyDeceleratorsMock.iterator()).thenReturn(mockIter);
 		Mockito.when(mockIter.hasNext()).thenReturn(false);
 		
@@ -74,10 +61,10 @@ public class PropertyDecelerationOrchestratorTest {
 	@Test(expected = IllegalStateException.class)
 	public void testGetPropertyDecelerator() throws Exception {
 		ComponentInstInputsMap componentInstInputsMap = new ComponentInstInputsMap();
-		PropertyDecelerator result;
+		PropertyDeclarator result;
 
 		// default test
-		result = Deencapsulation.invoke(testSubject, "getPropertyDecelerator", componentInstInputsMap);
+		result = Deencapsulation.invoke(testSubject, "getPropertyDeclarator", componentInstInputsMap);
 	}
 
 	@Test
@@ -87,10 +74,10 @@ public class PropertyDecelerationOrchestratorTest {
 		List<ComponentInstancePropInput> value = new LinkedList<>();
 		componentInstanceInputsMap.put("mock", value);
 		componentInstInputsMap.setComponentInstanceInputsMap(componentInstanceInputsMap);
-		PropertyDecelerator result;
+		PropertyDeclarator result;
 
 		// default test
-		result = Deencapsulation.invoke(testSubject, "getPropertyDecelerator", componentInstInputsMap);
+		result = Deencapsulation.invoke(testSubject, "getPropertyDeclarator", componentInstInputsMap);
 	}
 
 	@Test
@@ -100,10 +87,10 @@ public class PropertyDecelerationOrchestratorTest {
 		List<ComponentInstancePropInput> value = new LinkedList<>();
 		componentInstanceProperties.put("mock", value);
 		componentInstInputsMap.setComponentInstancePropInput(componentInstanceProperties);
-		PropertyDecelerator result;
+		PropertyDeclarator result;
 
 		// default test
-		result = Deencapsulation.invoke(testSubject, "getPropertyDecelerator", componentInstInputsMap);
+		result = Deencapsulation.invoke(testSubject, "getPropertyDeclarator", componentInstInputsMap);
 	}
 
 	@Test
@@ -113,9 +100,9 @@ public class PropertyDecelerationOrchestratorTest {
 		List<ComponentInstancePropInput> value = new LinkedList<>();
 		policyProperties.put("mock", value);
 		componentInstInputsMap.setPolicyProperties(policyProperties);
-		PropertyDecelerator result;
+		PropertyDeclarator result;
 
 		// default test
-		result = Deencapsulation.invoke(testSubject, "getPropertyDecelerator", componentInstInputsMap);
+		result = Deencapsulation.invoke(testSubject, "getPropertyDeclarator", componentInstInputsMap);
 	}
 }

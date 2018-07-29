@@ -92,7 +92,7 @@ export class HttpErrorInterceptor {
             // Format the message %1 %2
             text = text.format(variables);
 
-            // Need to inject the MessageService manually to prevent circular dependencies (because MessageService use $templateCache that use $http).
+            // Need to inject the MessageService manually to prevent circular componentsToUpgrade (because MessageService use $templateCache that use $http).
             data = {
                 title: 'Error',
                 message: text,
@@ -101,7 +101,7 @@ export class HttpErrorInterceptor {
                 severity: SEVERITY.ERROR
             };
         } else {
-            // Need to inject the MessageService manually to prevent circular dependencies (because MessageService use $templateCache that use $http).
+            // Need to inject the MessageService manually to prevent circular componentsToUpgrade (because MessageService use $templateCache that use $http).
             data = {
                 title: 'Error',
                 message: rejection.status !== -1 ? rejection.statusText : "Error getting response from server",

@@ -1,11 +1,10 @@
 package org.openecomp.sdc.asdctool.impl;
 
-import java.util.List;
-import java.util.Map;
-
+import com.thinkaurelius.titan.core.TitanGraph;
 import org.junit.Test;
 
-import com.thinkaurelius.titan.core.TitanGraph;
+import java.util.List;
+import java.util.Map;
 
 public class UpdatePropertyOnVertexTest {
 

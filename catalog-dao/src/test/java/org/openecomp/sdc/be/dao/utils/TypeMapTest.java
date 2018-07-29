@@ -1,10 +1,6 @@
 package org.openecomp.sdc.be.dao.utils;
 
-import java.util.Map;
-
 import org.junit.Test;
-
-import mockit.Deencapsulation;
 
 public class TypeMapTest {
 

@@ -20,9 +20,15 @@
 
 package org.openecomp.sdc.be.servlets;
 
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
+import fj.data.Either;
+import org.apache.commons.codec.binary.Base64;
+import org.junit.Test;
+import org.openecomp.sdc.be.model.UploadResourceInfo;
+import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.common.datastructure.Wrapper;
+import org.openecomp.sdc.exception.ResponseFormat;
 
+import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -32,32 +38,17 @@ import java.nio.file.Paths;
 import java.util.Map;
 import java.util.stream.Stream;
 
-import javax.ws.rs.core.Response;
-
-import org.apache.commons.codec.binary.Base64;
-import org.junit.Before;
-import org.junit.Test;
-import org.openecomp.sdc.be.model.UploadResourceInfo;
-import org.openecomp.sdc.be.model.User;
-import org.openecomp.sdc.common.datastructure.Wrapper;
-import org.openecomp.sdc.exception.ResponseFormat;
-import org.slf4j.Logger;
-
-import fj.data.Either;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 public class AbstractValidationsServletTest {
     private static AbstractValidationsServlet servlet = new AbstractValidationsServlet() {};
 
     private static final String BASIC_TOSCA_TEMPLATE = "tosca_definitions_version: tosca_simple_yaml_%s";
 
-    @Before
-    public void setUp() throws Exception {
-        servlet.initLog(mock(Logger.class));
-    }
-
     @SuppressWarnings("unchecked")
     @Test
-    public void testGetScarFromPayload() {
+    public void testGetCsarFromPayload() {
 
         String payloadName = "valid_vf.csar";
         String rootPath = System.getProperty("user.dir");
@@ -73,7 +64,7 @@ public class AbstractValidationsServletTest {
             resourceInfo.setPayloadName(payloadName);
             resourceInfo.setPayloadData(payloadData);
             Method privateMethod = null;
-            privateMethod = AbstractValidationsServlet.class.getDeclaredMethod("getScarFromPayload", UploadResourceInfo.class);
+            privateMethod = AbstractValidationsServlet.class.getDeclaredMethod("getCsarFromPayload", UploadResourceInfo.class);
             privateMethod.setAccessible(true);
             returnValue = (Either<Map<String, byte[]>, ResponseFormat>) privateMethod.invoke(servlet, resourceInfo);
         } catch (IOException | NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
@@ -81,7 +72,7 @@ public class AbstractValidationsServletTest {
         }
         assertTrue(returnValue.isLeft());
         Map<String, byte[]> csar = returnValue.left().value();
-        assertTrue(csar != null);
+        assertNotNull(csar);
     }
 
     @Test

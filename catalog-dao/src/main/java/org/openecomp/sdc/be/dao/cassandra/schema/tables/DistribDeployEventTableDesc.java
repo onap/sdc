@@ -20,12 +20,11 @@
 
 package org.openecomp.sdc.be.dao.cassandra.schema.tables;
 
-import java.util.Map;
-
+import com.datastax.driver.core.DataType;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingTypesConstants;
 
-import com.datastax.driver.core.DataType;
+import java.util.Map;
 
 public class DistribDeployEventTableDesc extends DistribBaseEventTableDesc {
 
@@ -38,13 +37,13 @@ public class DistribDeployEventTableDesc extends DistribBaseEventTableDesc {
 	@Override
 	protected void updateColumnDistribDescription(Map<String, ImmutablePair<DataType, Boolean>> columns) {
 		for (DSEFieldsDescription field : DSEFieldsDescription.values()) {
-			columns.put(field.getName(), new ImmutablePair<DataType, Boolean>(field.type, field.indexed));
+			columns.put(field.getName(), new ImmutablePair<>(field.type, field.indexed));
 		}
 		//replace the base indexed flag value with the correct one for a given table:
 		columns.put(DistFieldsDescription.STATUS.getName(),
-				new ImmutablePair<DataType, Boolean>(DistFieldsDescription.STATUS.getType(), true));
+                new ImmutablePair<>(DistFieldsDescription.STATUS.getType(), true));
         columns.put(DistFieldsDescription.SERVICE_INST_ID.getName(),
-                new ImmutablePair<DataType, Boolean>(DistFieldsDescription.SERVICE_INST_ID.getType(), true));
+                new ImmutablePair<>(DistFieldsDescription.SERVICE_INST_ID.getType(), true));
 
     }
 

@@ -1,11 +1,6 @@
 package org.openecomp.sdc.be.components.distribution.engine;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
+import mockit.Deencapsulation;
 import org.junit.Assert;
 import org.junit.Test;
 import org.openecomp.sdc.be.components.BeConfDependentTest;
@@ -14,7 +9,7 @@ import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.common.api.ArtifactTypeEnum;
 
-import mockit.Deencapsulation;
+import java.util.*;
 
 public class ArtifactInfoImplTest extends BeConfDependentTest {
 

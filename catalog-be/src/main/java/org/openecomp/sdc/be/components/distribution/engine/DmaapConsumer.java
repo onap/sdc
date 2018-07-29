@@ -1,19 +1,17 @@
 package org.openecomp.sdc.be.components.distribution.engine;
 
+import com.att.nsa.mr.client.MRConsumer;
+import org.openecomp.sdc.be.config.ConfigurationManager;
+import org.openecomp.sdc.be.config.DmaapConsumerConfiguration;
+import org.openecomp.sdc.common.log.wrappers.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
-
-import org.openecomp.sdc.be.config.ConfigurationManager;
-import org.openecomp.sdc.be.config.DmaapConsumerConfiguration;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import com.att.nsa.mr.client.MRConsumer;
 
 /**
  * Allows consuming DMAAP topic according to received consumer parameters
@@ -23,7 +21,7 @@ import com.att.nsa.mr.client.MRConsumer;
 public class DmaapConsumer {
     private final ExecutorFactory executorFactory;
     private final DmaapClientFactory dmaapClientFactory;
-    private static final Logger logger = LoggerFactory.getLogger(DmaapClientFactory.class);
+    private static final Logger logger = Logger.getLogger(DmaapClientFactory.class.getName());
 
     @Autowired
     private DmaapHealth dmaapHealth;
@@ -68,7 +66,7 @@ public class DmaapConsumer {
                 //successfully fetched
             }
             catch (Exception e) {
-                logger.error("The exception {} occured upon fetching DMAAP message", e);
+                logger.error("The exception occured upon fetching DMAAP message", e);
             }
             dmaapHealth.report( isTopicAvailable );
         }, 0L, dmaapConsumerParams.getPollingInterval(), TimeUnit.SECONDS);

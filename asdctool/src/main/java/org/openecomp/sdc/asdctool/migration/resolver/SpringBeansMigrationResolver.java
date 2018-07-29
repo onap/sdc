@@ -1,16 +1,16 @@
 package org.openecomp.sdc.asdctool.migration.resolver;
 
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import org.openecomp.sdc.asdctool.migration.core.DBVersion;
 import org.openecomp.sdc.asdctool.migration.core.task.IMigrationStage;
 import org.openecomp.sdc.asdctool.migration.core.task.Migration;
 import org.openecomp.sdc.asdctool.migration.core.task.PostMigration;
 import org.openecomp.sdc.asdctool.migration.service.SdcRepoService;
+
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class SpringBeansMigrationResolver implements MigrationResolver {
 

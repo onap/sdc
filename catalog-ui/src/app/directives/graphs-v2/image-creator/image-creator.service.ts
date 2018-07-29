@@ -18,6 +18,14 @@
  * ============LICENSE_END=========================================================
  */
 
+export interface ICanvasImage {
+    src: string;
+    width: number
+    height: number;
+    x: number;
+    y: number;
+}
+
 'use strict';
 export class ImageCreatorService {
     static '$inject' = ['$q'];
@@ -31,36 +39,48 @@ export class ImageCreatorService {
         body.appendChild(this._canvas);
     }
 
-    getImageBase64(imageBaseUri:string, imageLayerUri:string, nodeWidth:number, canvasWidth:number, handleSize:number):ng.IPromise<string> {
-        let deferred = this.$q.defer();
-        let imageBase = new Image();
-        let imageLayer = new Image();
-        let imagesLoaded = 0;
-        let onImageLoaded = () => {
-            imagesLoaded++;
+    /**
+     * Create an image composed of different image layers
+     * @param canvasImages
+     * @param canvasWidth 
+     * @param canvasHeight 
+     * returns a PROMISE
+     */
+    getMultiLayerBase64Image(canvasImages: ICanvasImage[], canvasWidth?:number, canvasHeight?:number):ng.IPromise<string> {
+        const deferred = this.$q.defer<string>();
 
-            if (imagesLoaded < 2) {
+        if(canvasImages && canvasImages.length === 0){
+            return null;
+        }
+
+        //If only width was set, use it for height, otherwise use first canvasImage height
+        canvasHeight = canvasHeight || canvasImages[0].height;
+        canvasWidth = canvasWidth || canvasImages[0].width;
+
+        const images = [];
+        let imagesLoaded = 0;
+        const onImageLoaded = () => {
+            imagesLoaded++;
+            if(imagesLoaded < canvasImages.length){
                 return;
             }
             this._canvas.setAttribute('width', canvasWidth.toString());
-            this._canvas.setAttribute('height', canvasWidth.toString());
-
-            let canvasCtx = this._canvas.getContext('2d');
+            this._canvas.setAttribute('height', canvasHeight.toString());
+            const canvasCtx = this._canvas.getContext('2d');
             canvasCtx.clearRect(0, 0, this._canvas.width, this._canvas.height);
-
-            //Note: params below are: image, x to start drawing at, y to start drawing at, num of x pixels to draw, num of y pixels to draw
-            canvasCtx.drawImage(imageBase, 0, canvasWidth - nodeWidth, nodeWidth, nodeWidth); //Draw the node: When nodeWidth == canvasWidth, we'll start at point 0,0. Otherwise, x starts at 0 (but will end before end of canvas) and y starts low enough that node img ends at bottom of canvas.
-            canvasCtx.drawImage(imageLayer, canvasWidth - handleSize, 0, handleSize, handleSize); //Draw the icon: icon should be drawn in top right corner
-
+            images.forEach((image, index) => {
+                const canvasImage = canvasImages[index];
+                canvasCtx.drawImage(image, canvasImage.x, canvasImage.y, canvasImage.width, canvasImage.height);
+            });
             let base64Image = this._canvas.toDataURL();
             deferred.resolve(base64Image);
         };
-
-        imageBase.onload = onImageLoaded;
-        imageLayer.onload = onImageLoaded;
-        imageBase.src = imageBaseUri;
-        imageLayer.src = imageLayerUri;
-
+        canvasImages.forEach(canvasImage => {
+            let image = new Image();
+            image.onload = onImageLoaded;
+            image.src = canvasImage.src;
+            images.push(image);
+        });
         return deferred.promise;
     }
 }

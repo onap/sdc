@@ -20,29 +20,17 @@
 
 package org.openecomp.sdc.be.components.lifecycle;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-import java.util.List;
-
+import fj.data.Either;
 import org.junit.Before;
 import org.junit.Test;
-import org.openecomp.sdc.be.components.impl.ComponentBusinessLogic;
-import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
-import org.openecomp.sdc.be.components.impl.ResourceBusinessLogic;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
-import org.openecomp.sdc.be.model.Component;
-import org.openecomp.sdc.be.model.ComponentInstance;
-import org.openecomp.sdc.be.model.LifeCycleTransitionEnum;
-import org.openecomp.sdc.be.model.LifecycleStateEnum;
-import org.openecomp.sdc.be.model.Resource;
-import org.openecomp.sdc.be.model.User;
-import org.openecomp.sdc.be.ui.model.UiComponentDataTransfer;
+import org.openecomp.sdc.be.model.*;
 import org.openecomp.sdc.be.user.Role;
 import org.openecomp.sdc.exception.ResponseFormat;
 
-import fj.data.Either;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class CertificationChangeTransitionTest extends LifecycleTestBase {
 
@@ -53,6 +41,7 @@ public class CertificationChangeTransitionTest extends LifecycleTestBase {
     private User owner = null;
 
     Resource resource;
+    Service service; 
 
     @SuppressWarnings("unchecked")
     @Before
@@ -75,6 +64,7 @@ public class CertificationChangeTransitionTest extends LifecycleTestBase {
         owner = new User("cs0008", "Carlos", "Santana", "cs@sdc.com", "DESIGNER", null);
 
         resource = createResourceObject();
+        service = createServiceObject();
     }
     
     @Test
@@ -96,14 +86,14 @@ public class CertificationChangeTransitionTest extends LifecycleTestBase {
         User user = new User("cs0008", "Carlos", "Santana", "cs@sdc.com", "DESIGNER", null);
 
         Either<Boolean, ResponseFormat> validateBeforeTransition = certifyTransitionObj.validateBeforeTransition(resource, ComponentTypeEnum.RESOURCE, user, owner, LifecycleStateEnum.CERTIFICATION_IN_PROGRESS);
-        assertEquals(validateBeforeTransition.isLeft(), true);
+        assertTrue(validateBeforeTransition.isLeft());
     }
 
     @Test
     public void testStateValidationSuccess() {
 
         Either<Boolean, ResponseFormat> changeStateResult = certifyTransitionObj.validateBeforeTransition(resource, ComponentTypeEnum.RESOURCE, user, owner, LifecycleStateEnum.CERTIFICATION_IN_PROGRESS);
-        assertEquals(changeStateResult.isLeft(), true);
+        assertTrue(changeStateResult.isLeft());
 
     }
     
@@ -111,20 +101,20 @@ public class CertificationChangeTransitionTest extends LifecycleTestBase {
     public void testStateValidationFail() {
 
         // checkout
-        Either<Boolean, ResponseFormat> validateBeforeTransition = certifyTransitionObj.validateBeforeTransition(resource, ComponentTypeEnum.RESOURCE, user, owner, LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
+        Either<Boolean, ResponseFormat> validateBeforeTransition = certifyTransitionObj.validateBeforeTransition(service, ComponentTypeEnum.SERVICE, user, owner, LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
 
         assertValidationStateErrorResponse(validateBeforeTransition);
 
         // checkin
-        validateBeforeTransition = certifyTransitionObj.validateBeforeTransition(resource, ComponentTypeEnum.RESOURCE, user, owner, LifecycleStateEnum.NOT_CERTIFIED_CHECKIN);
+        validateBeforeTransition = certifyTransitionObj.validateBeforeTransition(service, ComponentTypeEnum.SERVICE, user, owner, LifecycleStateEnum.NOT_CERTIFIED_CHECKIN);
         assertValidationStateErrorResponse(validateBeforeTransition);
 
         // rfc
-        validateBeforeTransition = certifyTransitionObj.validateBeforeTransition(resource, ComponentTypeEnum.RESOURCE, user, owner, LifecycleStateEnum.READY_FOR_CERTIFICATION);
+        validateBeforeTransition = certifyTransitionObj.validateBeforeTransition(service, ComponentTypeEnum.SERVICE, user, owner, LifecycleStateEnum.READY_FOR_CERTIFICATION);
         assertValidationStateErrorResponse(validateBeforeTransition);
 
         // certified
-        validateBeforeTransition = certifyTransitionObj.validateBeforeTransition(resource, ComponentTypeEnum.RESOURCE, user, owner, LifecycleStateEnum.CERTIFIED);
+        validateBeforeTransition = certifyTransitionObj.validateBeforeTransition(service, ComponentTypeEnum.SERVICE, user, owner, LifecycleStateEnum.CERTIFIED);
         assertValidationStateErrorResponse(validateBeforeTransition);
 
     }
@@ -143,17 +133,13 @@ public class CertificationChangeTransitionTest extends LifecycleTestBase {
         Either<User, ResponseFormat> ownerResponse = certifyTransitionObj.getComponentOwner(resource, ComponentTypeEnum.RESOURCE);
         assertTrue(ownerResponse.isLeft());
         User owner = ownerResponse.left().value();
-
+//the lifecycle was changed for resource!!
         Either<Boolean, ResponseFormat> validateBeforeTransition = certifyTransitionObj.validateBeforeTransition(resource, ComponentTypeEnum.RESOURCE, modifier, owner, LifecycleStateEnum.CERTIFICATION_IN_PROGRESS);
-        assertEquals(validateBeforeTransition.isRight(), true);
-        changeStateResult = Either.right(validateBeforeTransition.right().value());
-        assertResponse(changeStateResult, ActionStatus.RESTRICTED_OPERATION);
+        assertTrue(validateBeforeTransition.isLeft());
 
         modifier.setRole(Role.TESTER.name());
         validateBeforeTransition = certifyTransitionObj.validateBeforeTransition(resource, ComponentTypeEnum.RESOURCE, modifier, owner, LifecycleStateEnum.CERTIFICATION_IN_PROGRESS);
-        assertEquals(validateBeforeTransition.isRight(), true);
-        changeStateResult = Either.right(validateBeforeTransition.right().value());
-        assertResponse(changeStateResult, ActionStatus.COMPONENT_IN_CERT_IN_PROGRESS_STATE, resource.getName(), ComponentTypeEnum.RESOURCE.name().toLowerCase(), user.getFirstName(), user.getLastName(), user.getUserId());
+        assertTrue(validateBeforeTransition.isLeft());
 
     }
 
@@ -166,7 +152,7 @@ public class CertificationChangeTransitionTest extends LifecycleTestBase {
         User owner = ownerResponse.left().value();
 
         Either<Boolean, ResponseFormat> validateBeforeTransition = certifyTransitionObj.validateBeforeTransition(resource, ComponentTypeEnum.RESOURCE, owner, owner, LifecycleStateEnum.CERTIFICATION_IN_PROGRESS);
-        assertEquals(true, validateBeforeTransition.isLeft());
+        assertTrue(validateBeforeTransition.isLeft());
 
         User modifier = new User();
         modifier.setUserId("modifier");
@@ -174,15 +160,15 @@ public class CertificationChangeTransitionTest extends LifecycleTestBase {
         modifier.setLastName("Einstein");
         modifier.setRole(Role.ADMIN.name());
         validateBeforeTransition = certifyTransitionObj.validateBeforeTransition(resource, ComponentTypeEnum.RESOURCE, modifier, owner, LifecycleStateEnum.CERTIFICATION_IN_PROGRESS);
-        assertEquals(true, validateBeforeTransition.isLeft());
+        assertTrue(validateBeforeTransition.isLeft());
 
     }
 
     private void assertValidationStateErrorResponse(Either<Boolean, ResponseFormat> validateBeforeTransition) {
-        assertEquals(validateBeforeTransition.isRight(), true);
+        assertTrue(validateBeforeTransition.isRight());
         ResponseFormat error = validateBeforeTransition.right().value();
         Either<Resource, ResponseFormat> changeStateResult = Either.right(error);
-        assertEquals(changeStateResult.isRight(), true);
+        assertTrue(changeStateResult.isRight());
 
         assertResponse(changeStateResult, ActionStatus.COMPONENT_NOT_READY_FOR_CERTIFICATION, resource.getName(), ComponentTypeEnum.RESOURCE.name().toLowerCase(), user.getFirstName(), user.getLastName(), user.getUserId());
     }

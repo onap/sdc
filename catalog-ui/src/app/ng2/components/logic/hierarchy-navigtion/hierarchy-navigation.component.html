@@ -1,7 +1,12 @@
 <div class="navigation-wrapper">
     <div class="node-item" *ngFor="let item of displayData" (click)="onClick($event, item)">
         <div class="node-data-wrapper" [ngClass]="{'selected': selectedItem && selectedItem === item[displayOptions.idProperty]}">
-            <span class="node-data" [ngClass]="{'mark':item[displayOptions.valueProperty] === displayOptions.searchText}" [attr.data-tests-id]="item[displayOptions.valueProperty]">{{item[displayOptions.valueProperty]}}</span>
+            <span class="node-data" [ngClass]="{'mark':item[displayOptions.valueProperty] === displayOptions.searchText}" [attr.data-tests-id]="item[displayOptions.valueProperty]">
+
+                <span *ngIf="displayOptions.iconProperty" [ngClass]="['node-data-icon', item[displayOptions.iconProperty], 'small']"></span>
+                {{item[displayOptions.valueProperty]}}
+                <span class="sprite-new archive-label" *ngIf="item.originArchived"></span>
+            </span>
         </div>
         <div class="children-node" *ngIf="item[displayOptions.childrenProperty]">
             <hierarchy-navigation class="children-hierarchy" [displayData]="item[displayOptions.childrenProperty]"

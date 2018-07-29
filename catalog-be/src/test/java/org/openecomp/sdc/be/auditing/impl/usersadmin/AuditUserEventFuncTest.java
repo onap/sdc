@@ -1,39 +1,5 @@
 package org.openecomp.sdc.be.auditing.impl.usersadmin;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyMap;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.AUTH_STATUS;
-import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.AUTH_URL;
-import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.DESCRIPTION;
-import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.DESIGNER_USER_ROLE;
-import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.EXPECTED_ADD_USER_LOG_STR;
-import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.EXPECTED_AUTH_REQUEST_LOG_STR;
-import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.EXPECTED_DELETE_USER_LOG_STR;
-import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.EXPECTED_GET_USER_LIST_LOG_STR;
-import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.EXPECTED_UPDATE_USER_LOG_STR;
-import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.EXPECTED_USER_ACCESS_LOG_STR;
-import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.MODIFIER_UID;
-import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.REALM;
-import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.REQUEST_ID;
-import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.STATUS_CREATED;
-import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.STATUS_OK;
-import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.TESTER_USER_ROLE;
-import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.UPDATED_USER_EXTENDED_NAME;
-import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.USER_DETAILS;
-import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.USER_EMAIL;
-import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.USER_EXTENDED_NAME;
-import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.USER_ID;
-import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.USER_UID;
-import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.init;
-import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.modifier;
-import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.user;
-
-import java.util.EnumMap;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -50,14 +16,16 @@ import org.openecomp.sdc.be.dao.cassandra.AuditCassandraDao;
 import org.openecomp.sdc.be.dao.cassandra.CassandraOperationStatus;
 import org.openecomp.sdc.be.dao.impl.AuditingDao;
 import org.openecomp.sdc.be.model.User;
-import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
-import org.openecomp.sdc.be.resources.data.auditing.AuditingGenericEvent;
-import org.openecomp.sdc.be.resources.data.auditing.AuthEvent;
-import org.openecomp.sdc.be.resources.data.auditing.GetUsersListEvent;
-import org.openecomp.sdc.be.resources.data.auditing.UserAccessEvent;
-import org.openecomp.sdc.be.resources.data.auditing.UserAdminEvent;
+import org.openecomp.sdc.be.resources.data.auditing.*;
 import org.openecomp.sdc.be.resources.data.auditing.model.CommonAuditData;
-import org.openecomp.sdc.common.datastructure.AuditingFieldsKeysEnum;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.*;
+
 
 @RunWith(MockitoJUnitRunner.class)
 public class AuditUserEventFuncTest {
@@ -79,7 +47,7 @@ public class AuditUserEventFuncTest {
     }
 
     @Test
-    public void testNewUserAccessEvent() {
+    public void testUserAccessEvent() {
         AuditEventFactory factory = new AuditUserAccessEventFactory(
                 CommonAuditData.newBuilder()
                         .description(DESCRIPTION)
@@ -96,24 +64,7 @@ public class AuditUserEventFuncTest {
     }
 
     @Test
-    public void testOldUserAccessEvent() {
-        EnumMap<AuditingFieldsKeysEnum, Object> auditingFields = new EnumMap<>(AuditingFieldsKeysEnum.class);
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_ACTION, AuditingActionEnum.USER_ACCESS.getName());
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_USER_UID, user.getFirstName() + " " + user.getLastName() + '(' + user.getUserId() + ')');
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_STATUS, STATUS_OK);
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_DESC, DESCRIPTION);
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_REQUEST_ID, REQUEST_ID);
-
-        when(auditingDao.addRecord(anyMap(), eq(AuditingActionEnum.USER_ACCESS.getAuditingEsType())))
-                .thenReturn(ActionStatus.OK);
-        when(cassandraDao.saveRecord(any(AuditingGenericEvent.class))).thenReturn(CassandraOperationStatus.OK);
-
-        assertThat(auditingManager.auditEvent(auditingFields)).isEqualTo(EXPECTED_USER_ACCESS_LOG_STR);
-        verifyUserAccessEvent();
-    }
-
-    @Test
-    public void testNewUserAdminEventForAddUser() {
+    public void testUserAdminEventForAddUser() {
 
         user.setRole(DESIGNER_USER_ROLE);
         user.setEmail(USER_EMAIL);
@@ -135,30 +86,7 @@ public class AuditUserEventFuncTest {
     }
 
     @Test
-    public void testOldUserAdminEventForAddUser() {
-        user.setRole(TESTER_USER_ROLE);
-        user.setEmail(USER_EMAIL);
-
-        EnumMap<AuditingFieldsKeysEnum, Object> auditingFields = new EnumMap<>(AuditingFieldsKeysEnum.class);
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_ACTION, AuditingActionEnum.ADD_USER.getName());
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_MODIFIER_NAME, modifier.getFirstName() + " " + modifier.getLastName());
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_MODIFIER_UID, modifier.getUserId());
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_STATUS, STATUS_CREATED);
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_DESC, DESCRIPTION);
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_REQUEST_ID, REQUEST_ID);
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_USER_BEFORE, null);
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_USER_AFTER, USER_EXTENDED_NAME);
-
-        when(auditingDao.addRecord(anyMap(), eq(AuditingActionEnum.ADD_USER.getAuditingEsType())))
-                .thenReturn(ActionStatus.OK);
-        when(cassandraDao.saveRecord(any(AuditingGenericEvent.class))).thenReturn(CassandraOperationStatus.OK);
-
-        assertThat(auditingManager.auditEvent(auditingFields)).isEqualTo(EXPECTED_ADD_USER_LOG_STR);
-        verifyUserEvent(AuditingActionEnum.ADD_USER.getName());
-    }
-
-    @Test
-    public void testNewUserAdminEventForUpdateUser() {
+    public void testUserAdminEventForUpdateUser() {
 
         user.setRole(DESIGNER_USER_ROLE);
         user.setEmail(USER_EMAIL);
@@ -183,33 +111,7 @@ public class AuditUserEventFuncTest {
     }
 
     @Test
-    public void testOldUserAdminEventForUpdateUser() {
-        user.setRole(DESIGNER_USER_ROLE);
-        user.setEmail(USER_EMAIL);
-
-        User updated = new User(user);
-        updated.setRole(TESTER_USER_ROLE);
-
-        EnumMap<AuditingFieldsKeysEnum, Object> auditingFields = new EnumMap<>(AuditingFieldsKeysEnum.class);
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_ACTION, AuditingActionEnum.UPDATE_USER.getName());
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_MODIFIER_NAME, modifier.getFirstName() + " " + modifier.getLastName());
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_MODIFIER_UID, modifier.getUserId());
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_STATUS, STATUS_OK);
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_DESC, DESCRIPTION);
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_REQUEST_ID, REQUEST_ID);
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_USER_BEFORE, USER_EXTENDED_NAME);
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_USER_AFTER, UPDATED_USER_EXTENDED_NAME);
-
-        when(auditingDao.addRecord(anyMap(), eq(AuditingActionEnum.UPDATE_USER.getAuditingEsType())))
-                .thenReturn(ActionStatus.OK);
-        when(cassandraDao.saveRecord(any(AuditingGenericEvent.class))).thenReturn(CassandraOperationStatus.OK);
-
-        assertThat(auditingManager.auditEvent(auditingFields)).isEqualTo(EXPECTED_UPDATE_USER_LOG_STR);
-        verifyUserEvent(AuditingActionEnum.UPDATE_USER.getName());
-    }
-
-    @Test
-    public void testNewUserAdminEventForDeleteUser() {
+    public void testUserAdminEventForDeleteUser() {
 
         user.setRole(DESIGNER_USER_ROLE);
         user.setEmail(USER_EMAIL);
@@ -231,30 +133,7 @@ public class AuditUserEventFuncTest {
     }
 
     @Test
-    public void testOldUserAdminEventForDeleteUser() {
-        user.setRole(TESTER_USER_ROLE);
-        user.setEmail(USER_EMAIL);
-
-        EnumMap<AuditingFieldsKeysEnum, Object> auditingFields = new EnumMap<>(AuditingFieldsKeysEnum.class);
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_ACTION, AuditingActionEnum.DELETE_USER.getName());
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_MODIFIER_NAME, modifier.getFirstName() + " " + modifier.getLastName());
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_MODIFIER_UID, modifier.getUserId());
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_STATUS, STATUS_OK);
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_DESC, DESCRIPTION);
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_REQUEST_ID, REQUEST_ID);
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_USER_BEFORE, USER_EXTENDED_NAME);
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_USER_AFTER, null);
-
-        when(auditingDao.addRecord(anyMap(), eq(AuditingActionEnum.DELETE_USER.getAuditingEsType())))
-                .thenReturn(ActionStatus.OK);
-        when(cassandraDao.saveRecord(any(AuditingGenericEvent.class))).thenReturn(CassandraOperationStatus.OK);
-
-        assertThat(auditingManager.auditEvent(auditingFields)).isEqualTo(EXPECTED_DELETE_USER_LOG_STR);
-        verifyUserEvent(AuditingActionEnum.DELETE_USER.getName());
-    }
-
-    @Test
-    public void testNewGetUserListEvent() {
+    public void testGetUserListEvent() {
 
         AuditEventFactory factory = new AuditGetUsersListEventFactory(
                 CommonAuditData.newBuilder()
@@ -273,26 +152,7 @@ public class AuditUserEventFuncTest {
     }
 
     @Test
-    public void testOldGetUserListEvent() {
-        EnumMap<AuditingFieldsKeysEnum, Object> auditingFields = new EnumMap<>(AuditingFieldsKeysEnum.class);
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_ACTION, AuditingActionEnum.GET_USERS_LIST.getName());
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_MODIFIER_NAME, user.getFirstName() + " " + user.getLastName());
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_MODIFIER_UID, user.getUserId());
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_STATUS, STATUS_OK);
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_DESC, DESCRIPTION);
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_REQUEST_ID, REQUEST_ID);
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_USER_DETAILS, USER_DETAILS);
-
-        when(auditingDao.addRecord(anyMap(), eq(AuditingActionEnum.GET_USERS_LIST.getAuditingEsType())))
-                .thenReturn(ActionStatus.OK);
-        when(cassandraDao.saveRecord(any(AuditingGenericEvent.class))).thenReturn(CassandraOperationStatus.OK);
-
-        assertThat(auditingManager.auditEvent(auditingFields)).isEqualTo(EXPECTED_GET_USER_LIST_LOG_STR);
-        verifyGetUserListEvent();
-    }
-
-    @Test
-    public void testNewAuthRequestEvent() {
+    public void testAuthRequestEvent() {
 
         AuditEventFactory factory = new AuditAuthRequestEventFactory(
                 CommonAuditData.newBuilder()
@@ -309,27 +169,6 @@ public class AuditUserEventFuncTest {
         assertThat(auditingManager.auditEvent(factory)).isEqualTo(EXPECTED_AUTH_REQUEST_LOG_STR);
         verifyAuthRequestEvent();
     }
-
-    @Test
-    public void testOldAuthRequestEvent() {
-        EnumMap<AuditingFieldsKeysEnum, Object> auditingFields = new EnumMap<>(AuditingFieldsKeysEnum.class);
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_ACTION, AuditingActionEnum.AUTH_REQUEST.getName());
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_AUTH_USER, USER_ID);
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_STATUS, STATUS_OK);
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_DESC, DESCRIPTION);
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_REQUEST_ID, REQUEST_ID);
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_AUTH_REALM, REALM);
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_AUTH_URL, AUTH_URL);
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_AUTH_STATUS, AUTH_STATUS);
-
-        when(auditingDao.addRecord(anyMap(), eq(AuditingActionEnum.AUTH_REQUEST.getAuditingEsType())))
-                .thenReturn(ActionStatus.OK);
-        when(cassandraDao.saveRecord(any(AuditingGenericEvent.class))).thenReturn(CassandraOperationStatus.OK);
-
-        assertThat(auditingManager.auditEvent(auditingFields)).isEqualTo(EXPECTED_AUTH_REQUEST_LOG_STR);
-        verifyAuthRequestEvent();
-    }
-
 
     private void verifyUserEvent(String action) {
         verify(cassandraDao).saveRecord(eventCaptor.capture());

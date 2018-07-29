@@ -20,9 +20,9 @@
 
 package org.openecomp.sdc.ci.tests.execute.setup;
 
-import java.io.File;
-
 import org.openecomp.sdc.be.model.User;
+
+import java.io.File;
 
 public class WindowTest {
 	

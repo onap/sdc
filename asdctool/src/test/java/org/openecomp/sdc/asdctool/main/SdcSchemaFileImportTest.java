@@ -1,9 +1,9 @@
 package org.openecomp.sdc.asdctool.main;
 
-import java.nio.file.NoSuchFileException;
-
 import org.junit.Test;
 import org.openecomp.sdc.asdctool.enums.SchemaZipFileEnum;
+
+import java.nio.file.NoSuchFileException;
 
 public class SdcSchemaFileImportTest {
 

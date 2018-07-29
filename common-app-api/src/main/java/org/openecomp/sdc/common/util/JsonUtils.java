@@ -31,8 +31,8 @@ public class JsonUtils {
 			return null;
 		}
 
-		if (false == jsonElement.isJsonNull()) {
-			if (false == jsonElement.isJsonObject()) {
+		if (!jsonElement.isJsonNull()) {
+			if (!jsonElement.isJsonObject()) {
 				return jsonElement.getAsString();
 			} else {
 				return jsonElement.toString();

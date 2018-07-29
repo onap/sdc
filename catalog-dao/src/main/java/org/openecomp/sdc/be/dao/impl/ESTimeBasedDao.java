@@ -20,13 +20,8 @@
 
 package org.openecomp.sdc.be.dao.impl;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.elasticsearch.action.index.IndexResponse;
@@ -41,16 +36,18 @@ import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.es.ElasticSearchClient;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.datastructure.ESTimeBasedEvent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public abstract class ESTimeBasedDao {
 	private static final String SCORE_SCRIPT = "_score * ((doc.containsKey('alienScore') && !doc['alienScore'].empty) ? doc['alienScore'].value : 1)";
 	private static final int MAX_SEARCH_SIZE = 1000;
-	private static Logger log = LoggerFactory.getLogger(ESTimeBasedDao.class.getName());
+	private static Logger log = Logger.getLogger(ESTimeBasedDao.class.getName());
 
 	private Gson gson;
 
@@ -71,7 +68,7 @@ public abstract class ESTimeBasedDao {
 	@Resource(name = "elasticsearch-client")
 	private ElasticSearchClient esClient;
 
-	protected final Map<String, Class<?>> typesToClasses = new HashMap<String, Class<?>>();
+	protected final Map<String, Class<?>> typesToClasses = new HashMap<>();
 
 	public abstract String getIndexPrefix();
 
@@ -99,7 +96,7 @@ public abstract class ESTimeBasedDao {
 				res = ActionStatus.GENERAL_ERROR;
 			}
 		} catch (Exception e) {
-			log.error("Couldn't serialize object of type {} | error:", typeName, e);
+			log.error("Couldn't serialize object of type {}", typeName, e.getMessage());
 			res = ActionStatus.GENERAL_ERROR;
 		}
 		return res;
@@ -137,7 +134,7 @@ public abstract class ESTimeBasedDao {
 	}
 
 	private void setIndexPrefix2CreationPeriod() {
-		indexPrefix2CreationPeriod = new HashMap<String, String>();
+		indexPrefix2CreationPeriod = new HashMap<>();
 		List<IndicesTimeFrequencyEntry> indicesTimeFrequencyEntries = configurationManager.getConfiguration()
 				.getElasticSearch().getIndicesTimeFrequency();
 		for (IndicesTimeFrequencyEntry entry : indicesTimeFrequencyEntries) {
@@ -199,7 +196,7 @@ public abstract class ESTimeBasedDao {
 		if (!somethingFound(response)) {
 			return null;
 		} else {
-			List<T> hits = new ArrayList<T>();
+			List<T> hits = new ArrayList<>();
 			for (int i = 0; i < response.getHits().getHits().length; i++) {
 				String hit = response.getHits().getAt(i).sourceAsString();
 
@@ -226,7 +223,7 @@ public abstract class ESTimeBasedDao {
 		if (!somethingFound(response)) {
 			return null;
 		} else {
-			List<ESTimeBasedEvent> hits = new ArrayList<ESTimeBasedEvent>();
+			List<ESTimeBasedEvent> hits = new ArrayList<>();
 			for (int i = 0; i < response.getHits().getHits().length; i++) {
 				String hit = response.getHits().getAt(i).sourceAsString();
 
@@ -247,7 +244,7 @@ public abstract class ESTimeBasedDao {
 			throws JSONException {
 		List<ESTimeBasedEvent> results = doCustomFindForEvent(typeName, query, sortBuilder, MAX_SEARCH_SIZE);
 		if (results == null) {
-			results = new ArrayList<ESTimeBasedEvent>();
+			results = new ArrayList<>();
 		}
 		return results;
 	}

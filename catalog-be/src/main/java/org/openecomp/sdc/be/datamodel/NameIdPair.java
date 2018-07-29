@@ -5,7 +5,8 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-public class NameIdPair extends HashMap<String, Object> implements java.io.Serializable {
+public class NameIdPair extends HashMap<String, Object> {
+
     public static final String OPTIONS = "options";
     public static final String NAME = "name";
     public static final String ID = "id";

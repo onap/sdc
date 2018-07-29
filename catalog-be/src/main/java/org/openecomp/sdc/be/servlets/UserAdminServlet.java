@@ -20,53 +20,39 @@
 
 package org.openecomp.sdc.be.servlets;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.inject.Singleton;
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
+import com.jcabi.aspects.Loggable;
+import fj.data.Either;
+import io.swagger.annotations.*;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import com.jcabi.aspects.Loggable;
-
-import fj.data.Either;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import javax.inject.Singleton;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.util.ArrayList;
+import java.util.List;
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/v1/user")
 @Api(value = "User Administration", description = "User admininstarator operations")
 @Singleton
 public class UserAdminServlet extends BeGenericServlet {
 
-    private static final String ROLE_DELIMITER = ",";
-    private static final Logger log = LoggerFactory.getLogger(UserAdminServlet.class);
+    private static final String UTF_8 = "UTF-8";
+	private static final String START_HANDLE_REQUEST_OF = "Start handle request of {}";
+	private static final String ROLE_DELIMITER = ",";
+    private static final Logger log = Logger.getLogger(UserAdminServlet.class);
 
     /***************************************
      * API start
@@ -157,7 +143,7 @@ public class UserAdminServlet extends BeGenericServlet {
         ServletContext context = request.getSession().getServletContext();
 
         String url = request.getMethod() + " " + request.getRequestURI();
-        log.debug("Start handle request of {}", url);
+        log.debug(START_HANDLE_REQUEST_OF, url);
 
         // get modifier id
         User modifier = new User();
@@ -202,7 +188,7 @@ public class UserAdminServlet extends BeGenericServlet {
         ServletContext context = request.getSession().getServletContext();
 
         String url = request.getMethod() + " " + request.getRequestURI();
-        log.debug("Start handle request of {}", url);
+        log.debug(START_HANDLE_REQUEST_OF, url);
 
         // get modifier id
         User modifier = new User();
@@ -250,10 +236,10 @@ public class UserAdminServlet extends BeGenericServlet {
             @HeaderParam("HTTP_CSP_EMAIL") String email) {
 
         try {
-            userId = userId != null ? URLDecoder.decode(userId, "UTF-8") : null;
-            firstName = firstName != null ? URLDecoder.decode(firstName, "UTF-8") : null;
-            lastName = lastName != null ? URLDecoder.decode(lastName, "UTF-8") : null;
-            email = email != null ? URLDecoder.decode(email, "UTF-8") : null;
+            userId = userId != null ? URLDecoder.decode(userId, UTF_8) : null;
+            firstName = firstName != null ? URLDecoder.decode(firstName, UTF_8) : null;
+            lastName = lastName != null ? URLDecoder.decode(lastName, UTF_8) : null;
+            email = email != null ? URLDecoder.decode(email, UTF_8) : null;
         } catch (UnsupportedEncodingException e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Authorize User - decode headers");
             ResponseFormat errorResponseWrapper = getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR);
@@ -263,7 +249,7 @@ public class UserAdminServlet extends BeGenericServlet {
 
         ServletContext context = request.getSession().getServletContext();
         String url = request.getMethod() + " " + request.getRequestURI();
-        log.debug("Start handle request of {}", url);
+        log.debug(START_HANDLE_REQUEST_OF, url);
 
         User authUser = new User();
         authUser.setUserId(userId);
@@ -307,7 +293,7 @@ public class UserAdminServlet extends BeGenericServlet {
         UserBusinessLogic userAdminManager = getUserAdminManager(request.getSession().getServletContext());
 
         try {
-            Either<List<User>, ResponseFormat> either = userAdminManager.getAllAdminUsers(request.getSession().getServletContext());
+            Either<List<User>, ResponseFormat> either = userAdminManager.getAllAdminUsers();
 
             if (either.isRight()) {
                 log.debug("Failed to get all admin users");

@@ -1,40 +1,65 @@
 package org.openecomp.sdc.asdctool.migration.tasks.handlers;
 
+import org.apache.poi.ss.usermodel.Workbook;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.Spy;
+import org.mockito.junit.MockitoJUnitRunner;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+
+@RunWith(MockitoJUnitRunner.class)
 public class XlsOutputHandlerTest {
 
-	private XlsOutputHandler createTestSubject() {
-		return new XlsOutputHandler(new Object());
-	}
+    @Spy
+    private XlsOutputHandler handler = new XlsOutputHandler(null, "mock");
 
-	@Test
-	public void testInitiate() throws Exception {
-		XlsOutputHandler testSubject;
-		Object[] title = new Object[] { null };
+    @Mock
+    private Workbook workbook;
+    @Mock
+    private FileOutputStream xlsFile;
 
-		// default test
-		testSubject = createTestSubject();
-		testSubject.initiate(title);
-	}
+    @Test
+    public void verifyThatFileIsNotCreatedIfNoRecordsAdded() throws IOException {
+        assertFalse(handler.writeOutputAndCloseFile());
+        verify(workbook, times(0)).write(any());
+    }
 
-	@Test
-	public void testAddRecord() throws Exception {
-		XlsOutputHandler testSubject;
-		Object[] record = new Object[] { null };
+    @Test
+    public void verifyThatFileIsCreatedIfSomeRecordsAdded() throws IOException {
+        handler.addRecord("mock");
+        doReturn(xlsFile).when(handler).getXlsFile();
+        assertTrue(handler.writeOutputAndCloseFile());
+    }
+    
+    
+    private XlsOutputHandler createTestSubject() {
+	return new XlsOutputHandler("mock", "mockPath", new Object());
+    }
 
-		// default test
-		testSubject = createTestSubject();
-		testSubject.addRecord(record);
-	}
+    @Test
+    public void testInitiate() throws Exception {
+	XlsOutputHandler testSubject;
+	Object[] title = new Object[] { null };
+	// default test
+	testSubject = createTestSubject();
+	testSubject.initiate("mock", title);
+    }
 
-	@Test
-	public void testWriteOutput() throws Exception {
-		XlsOutputHandler testSubject;
-		boolean result;
+    @Test
+    public void testAddRecord() throws Exception {
+	XlsOutputHandler testSubject;
+	Object[] record = new Object[] { null };
 
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.writeOutput();
-	}
+	// default test
+	testSubject = createTestSubject();
+	testSubject.addRecord(record);
+    }
 }

@@ -20,45 +20,15 @@
 
 package org.openecomp.sdc.be.tosca;
 
-import java.io.BufferedOutputStream;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Objects;
-import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
-import java.util.zip.ZipOutputStream;
 
+import fj.data.Either;
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.commons.lang.WordUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Triple;
-import org.onap.sdc.generator.data.AdditionalParams;
-import org.onap.sdc.generator.data.Artifact;
-import org.onap.sdc.generator.data.ArtifactType;
-import org.onap.sdc.generator.data.GenerationData;
-import org.onap.sdc.generator.impl.ArtifactGenerationServiceImpl;
-import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic;
-import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic.ArtifactOperationEnum;
-import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic.ArtifactOperationInfo;
 import org.openecomp.sdc.be.components.impl.ImportUtils;
-import org.openecomp.sdc.be.components.impl.ServiceBusinessLogic;
 import org.openecomp.sdc.be.config.Configuration.ArtifactTypeConfig;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
@@ -68,16 +38,7 @@ import org.openecomp.sdc.be.dao.cassandra.SdcSchemaFilesCassandraDao;
 import org.openecomp.sdc.be.datatypes.elements.OperationDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
-import org.openecomp.sdc.be.model.ArtifactDefinition;
-import org.openecomp.sdc.be.model.Component;
-import org.openecomp.sdc.be.model.ComponentInstance;
-import org.openecomp.sdc.be.model.InterfaceDefinition;
-import org.openecomp.sdc.be.model.LifecycleStateEnum;
-import org.openecomp.sdc.be.model.Operation;
-import org.openecomp.sdc.be.model.Resource;
-import org.openecomp.sdc.be.model.Service;
-import org.openecomp.sdc.be.model.User;
-import org.openecomp.sdc.be.model.jsontitan.operations.ToscaElementLifecycleOperation;
+import org.openecomp.sdc.be.model.*;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.jsontitan.utils.ModelConverter;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
@@ -90,25 +51,30 @@ import org.openecomp.sdc.be.utils.CommonBeUtils;
 import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
 import org.openecomp.sdc.common.api.ArtifactTypeEnum;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.common.util.GeneralUtility;
 import org.openecomp.sdc.common.util.ValidationUtils;
 import org.openecomp.sdc.exception.ResponseFormat;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.google.gson.Gson;
-
-import fj.data.Either;
-
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
+import java.util.zip.ZipOutputStream;
 /**
  * @author tg851x
  *
  */
 @org.springframework.stereotype.Component("csar-utils")
 public class CsarUtils {
-
-	private static final Logger log = LoggerFactory.getLogger(CsarUtils.class);
+    private static final Logger log = Logger.getLogger(CsarUtils.class);
 
 	@Autowired
 	private SdcSchemaFilesCassandraDao sdcSchemaFilesCassandraDao;
@@ -119,18 +85,10 @@ public class CsarUtils {
 	@Autowired
 	private ToscaExportHandler toscaExportUtils;
 	@Autowired
-	private ArtifactsBusinessLogic artifactsBusinessLogic;
-	@Autowired
 	protected ToscaOperationFacade toscaOperationFacade;
 
-	@javax.annotation.Resource
-	private ServiceBusinessLogic serviceBusinessLogic;
-
-	private Gson gson = new Gson();
-
-	private String CONFORMANCE_LEVEL;
-	private String SDC_VERSION;
-
+    private String CONFORMANCE_LEVEL;
+    private String SDC_VERSION;
 	public static final Pattern UUID_NORMATIVE_NEW_VERSION = Pattern.compile("^\\d{1,}.0");
 	public static final String ARTIFACTS_PATH = "Artifacts/";
 	public static final String RESOURCES_PATH = "Resources/";
@@ -146,8 +104,8 @@ public class CsarUtils {
 	private static final String TOSCA_META_VERSION = "1.0";
 	private static final String CSAR_VERSION = "1.1";
 	public static final String ARTIFACTS = "Artifacts";
-	public static final String DEFINITION = "Definitions";
-	public static final String DEL_PATTERN = "([/\\\\]+)";
+    private static final String DEFINITION = "Definitions";
+    private static final String DEL_PATTERN = "([/\\\\]+)";
 	private static String versionFirstThreeOctates;
 
 	public static final String VFC_NODE_TYPE_ARTIFACTS_PATH_PATTERN = ARTIFACTS + DEL_PATTERN
@@ -168,6 +126,7 @@ public class CsarUtils {
 			"([\\w\\_\\-\\.\\s]+)";
 
 	public static final String ARTIFACT_CREATED_FROM_CSAR = "Artifact created from csar";
+    private static final String BLOCK_0_TEMPLATE = "SDC-TOSCA-Meta-File-Version: %s\nSDC-TOSCA-Definitions-Version: %s\n";
 
 	public CsarUtils() {
 		this.CONFORMANCE_LEVEL = ConfigurationManager.getConfigurationManager().getConfiguration()
@@ -211,8 +170,7 @@ public class CsarUtils {
 		final String toscaBlock0 = createToscaBlock0(TOSCA_META_VERSION, CSAR_VERSION, createdBy, fileName);
 		byte[] toscaBlock0Byte = toscaBlock0.getBytes();
 
-		Either<byte[], ResponseFormat> generateCsarZipResponse = generateCsarZip(csarBlock0Byte, toscaBlock0Byte,
-				component, getFromCS, isInCertificationRequest, mockGenerator);
+        Either<byte[], ResponseFormat> generateCsarZipResponse = generateCsarZip(csarBlock0Byte, toscaBlock0Byte, component, getFromCS, isInCertificationRequest);
 
 		if (generateCsarZipResponse.isRight()) {
 			return Either.right(generateCsarZipResponse.right().value());
@@ -221,19 +179,18 @@ public class CsarUtils {
 		return Either.left(generateCsarZipResponse.left().value());
 	}
 
-	private Either<byte[], ResponseFormat> generateCsarZip(byte[] csarBlock0Byte, byte[] toscaBlock0Byte,
-			Component component, boolean getFromCS, boolean isInCertificationRequest, boolean mockGenerator) {
-		try (ByteArrayOutputStream out = new ByteArrayOutputStream(); ZipOutputStream zip = new ZipOutputStream(out);) {
+    private Either<byte[], ResponseFormat> generateCsarZip(byte[] csarBlock0Byte, byte[] toscaBlock0Byte, Component component, boolean getFromCS, boolean isInCertificationRequest) {
+        try (ByteArrayOutputStream out = new ByteArrayOutputStream();
+             ZipOutputStream zip = new ZipOutputStream(out)) {
 			zip.putNextEntry(new ZipEntry(CSAR_META_PATH_FILE_NAME));
 			zip.write(csarBlock0Byte);
 			zip.putNextEntry(new ZipEntry(TOSCA_META_PATH_FILE_NAME));
 			zip.write(toscaBlock0Byte);
-			Either<ZipOutputStream, ResponseFormat> populateZip = populateZip(component, getFromCS, zip,
-					isInCertificationRequest, mockGenerator);
-			if (populateZip.isRight()) {
-				log.debug("Failed to populate CSAR zip file {}", populateZip.right().value());
-				return Either.right(populateZip.right().value());
-			}
+            Either<ZipOutputStream, ResponseFormat> populateZip = populateZip(component, getFromCS, zip, isInCertificationRequest);
+            if (populateZip.isRight()) {
+                log.debug("Failed to populate CSAR zip file {}", populateZip.right().value());
+                return Either.right(populateZip.right().value());
+            }
 
 			zip.finish();
 			byte[] byteArray = out.toByteArray();
@@ -247,8 +204,7 @@ public class CsarUtils {
 		}
 	}
 
-	private Either<ZipOutputStream, ResponseFormat> populateZip(Component component, boolean getFromCS,
-			ZipOutputStream zip, boolean isInCertificationRequest, boolean mockGenerator) throws IOException {
+    private Either<ZipOutputStream, ResponseFormat> populateZip(Component component, boolean getFromCS, ZipOutputStream zip, boolean isInCertificationRequest) throws IOException {
 
 		LifecycleStateEnum lifecycleState = component.getLifecycleState();
 		String componentYaml;
@@ -256,7 +212,6 @@ public class CsarUtils {
 		byte[] mainYaml;
 		// <file name, cassandraId, component>
 		List<Triple<String, String, Component>> dependencies = null;
-		List<ImmutablePair<Component, byte[]>> generatorInputs = new LinkedList<>();
 
 		Map<String, ArtifactDefinition> toscaArtifacts = component.getToscaArtifacts();
 		ArtifactDefinition artifactDefinition = toscaArtifacts.get(ToscaExportHandler.ASSET_TOSCA_TEMPLATE);
@@ -297,8 +252,6 @@ public class CsarUtils {
 			writeComponentInterface(component, zip, fileName);
 		}
 
-		generatorInputs.add(new ImmutablePair<Component, byte[]>(component, mainYaml));
-
 		if (dependencies == null) {
 			Either<ToscaTemplate, ToscaError> dependenciesRes = toscaExportUtils.getDependencies(component);
 			if (dependenciesRes.isRight()) {
@@ -330,9 +283,6 @@ public class CsarUtils {
 				fileName = d.getLeft();
 				addComponentToCache(innerComponentsCache, cassandraId, fileName, childComponent);
 				addInnerComponentsToCache(innerComponentsCache, childComponent);
-
-				byte[] content = entryData.left().value();
-				generatorInputs.add(new ImmutablePair<Component, byte[]>(childComponent, content));
 			}
 
 			// add inner components to CSAR
@@ -379,33 +329,6 @@ public class CsarUtils {
 			return addSchemaFilesFromCassandra;
 		}
 
-		// Artifact Generation
-		if (component.getComponentType() == ComponentTypeEnum.SERVICE && isInCertificationRequest) {
-
-			List<ArtifactDefinition> aiiArtifactList;
-
-			Either<List<ArtifactDefinition>, ResponseFormat> handleAAIArtifacts = handleAAIArtifacts(component,
-					mockGenerator, generatorInputs);
-
-			if (handleAAIArtifacts.isLeft()) {
-				aiiArtifactList = handleAAIArtifacts.left().value();
-			} else {
-				log.debug("AAI Artifacts handling failed");
-				return Either.right(handleAAIArtifacts.right().value());
-			}
-
-			if (isInCertificationRequest) {
-				Either<ActionStatus, ResponseFormat> handleAllAAIArtifactsInDataModel = handleAllAAIArtifactsInDataModel(
-						component, aiiArtifactList, false, true);
-
-				if (handleAllAAIArtifactsInDataModel.isRight()) {
-					log.debug("AAI Artifacts handling (create, update, delete) failed");
-					return Either.right(handleAllAAIArtifactsInDataModel.right().value());
-				}
-			}
-
-		}
-
 		Either<CsarDefinition, ResponseFormat> collectedComponentCsarDefinition = collectComponentCsarDefinition(
 				component);
 
@@ -426,10 +349,9 @@ public class CsarUtils {
 
 		try (ZipInputStream zipStream = new ZipInputStream(new ByteArrayInputStream(schemaFileZip));
 				ByteArrayOutputStream out = new ByteArrayOutputStream();
-				BufferedOutputStream bos = new BufferedOutputStream(out, initSize);) {
+             BufferedOutputStream bos = new BufferedOutputStream(out, initSize)) {
 
-			ZipEntry entry = null;
-
+            ZipEntry entry;
 			while ((entry = zipStream.getNextEntry()) != null) {
 
 				String entryName = entry.getName();
@@ -470,7 +392,7 @@ public class CsarUtils {
 					Either<Resource, StorageOperationStatus> resource = toscaOperationFacade
 							.getToscaElement(ci.getComponentUid());
 					if (resource == null || resource.isRight()) {
-						log.debug("Failed to fetch resource with id {} for instance {}");
+                                             log.debug("Failed to fetch resource with id {} for instance {}", ci.getComponentUid(), ci.getName());
 					} else {
 						Component componentRI = resource.left().value();
 
@@ -500,7 +422,7 @@ public class CsarUtils {
 		if (cachedComponent == null || CommonBeUtils.compareAsdcComponentVersions(component.getVersion(),
 				cachedComponent.getRight().getVersion())) {
 			componentCache.put(component.getInvariantUUID(),
-					new ImmutableTriple<String, String, Component>(id, fileName, component));
+                    new ImmutableTriple<>(id, fileName, component));
 
 			if (cachedComponent != null) {
 				// overwriting component with newer version
@@ -528,262 +450,6 @@ public class CsarUtils {
 		}
 
 		return Either.left(zip);
-	}
-
-	private Either<List<ArtifactDefinition>, ResponseFormat> handleAAIArtifacts(Component component,
-			boolean mockGenerator, List<ImmutablePair<Component, byte[]>> generatorInputs) {
-
-		ComponentTypeEnum componentType = component.getComponentType();
-		List<Artifact> generatedArtifacts;
-		List<ArtifactDefinition> aaiArtifacts = new LinkedList<>();
-
-		if (componentType == ComponentTypeEnum.SERVICE && !generatorInputs.isEmpty()) {
-			List<Artifact> convertedGeneratorInputs = convertToGeneratorArtifactsInput(generatorInputs);
-
-			Either<List<Artifact>, String> generatorResponse;
-
-			if (mockGenerator) {
-				generatorResponse = artifactGenerator(convertedGeneratorInputs, ArtifactType.OTHER, component);
-			} else {
-				generatorResponse = artifactGenerator(convertedGeneratorInputs, ArtifactType.AAI, component);
-			}
-
-			if (generatorResponse.isRight()) {
-				ResponseFormat responseFormat = componentsUtils.getResponseFormat(
-						ActionStatus.AAI_ARTIFACT_GENERATION_FAILED, component.getComponentType().getValue(),
-						component.getName(), generatorResponse.right().value());
-				return Either.right(responseFormat);
-			}
-
-			generatedArtifacts = generatorResponse.left().value();
-
-			aaiArtifacts = convertToArtifactDefinitionFromArtifactGeneratedData(generatedArtifacts);
-
-		}
-
-		return Either.left(aaiArtifacts);
-	}
-
-	private Either<ActionStatus, ResponseFormat> handleAllAAIArtifactsInDataModel(Component component,
-			List<ArtifactDefinition> artifactsFromAAI, boolean shouldLock, boolean inTransaction) {
-
-		Either<ActionStatus, ResponseFormat> handleAAIArtifactsResponse;
-		User lastComponentUpdater;
-
-		List<ArtifactDefinition> aaiArtifatcsToCreate = getAAIArtifatcsForCreate(artifactsFromAAI, component);
-		List<ArtifactDefinition> aaiArtifatcsToDelete = getAAIArtifatcsForDelete(artifactsFromAAI, component);
-		List<ArtifactDefinition> aaiArtifatcsToUpdate = getAAIArtifatcsForUpdate(artifactsFromAAI, component);
-
-		String lastUpdaterUserId = component.getLastUpdaterUserId();
-		Either<User, ResponseFormat> validateUserExists = artifactsBusinessLogic.validateUserExists(lastUpdaterUserId,
-				"CSAR creation util", true);
-
-		if (validateUserExists.isRight()) {
-			ResponseFormat responseFormat = componentsUtils.getResponseFormat(
-					ActionStatus.AAI_ARTIFACT_GENERATION_FAILED, component.getComponentType().getValue(),
-					component.getName(), "User not found");
-			return Either.right(responseFormat);
-		}
-
-		lastComponentUpdater = validateUserExists.left().value();
-
-		handleAAIArtifactsResponse = handleAAIArtifactsInDataModelByOperationType(component, aaiArtifatcsToDelete,
-				artifactsBusinessLogic.new ArtifactOperationInfo(false, false, ArtifactOperationEnum.DELETE),
-				lastComponentUpdater, shouldLock, inTransaction);
-
-		if (handleAAIArtifactsResponse.isRight()) {
-			return handleAAIArtifactsResponse;
-		}
-
-		handleAAIArtifactsResponse = handleAAIArtifactsInDataModelByOperationType(component, aaiArtifatcsToCreate,
-				artifactsBusinessLogic.new ArtifactOperationInfo(false, false, ArtifactOperationEnum.CREATE),
-				lastComponentUpdater, shouldLock, inTransaction);
-
-		if (handleAAIArtifactsResponse.isRight()) {
-			return handleAAIArtifactsResponse;
-		}
-
-		return handleAAIArtifactsInDataModelByOperationType(component, aaiArtifatcsToUpdate,
-				artifactsBusinessLogic.new ArtifactOperationInfo(false, false, ArtifactOperationEnum.UPDATE),
-				lastComponentUpdater, shouldLock, inTransaction);
-	}
-
-	private List<ArtifactDefinition> getAAIArtifatcsForUpdate(List<ArtifactDefinition> artifactsFromAAI,
-			Component component) {
-
-		Set<String> componetDeploymentArtifactLables = component.getDeploymentArtifacts().keySet();
-		Set<String> componetInformationalArtifactLables = component.getArtifacts().keySet();
-
-		return artifactsFromAAI.stream()
-				.filter(e -> componetDeploymentArtifactLables.contains(e.getArtifactLabel())
-						|| componetInformationalArtifactLables.contains(e.getArtifactLabel()))
-				.filter(e -> checkAaiForUpdate(component, e)).collect(Collectors.toList());
-	}
-
-	private boolean checkAaiForUpdate(Component component, ArtifactDefinition artifactDefinition) {
-		ArtifactDefinition artifactDefinitionComp = component.getDeploymentArtifacts()
-				.get(artifactDefinition.getArtifactLabel());
-
-		if (artifactDefinitionComp == null) {
-			log.warn("Failed to get {} artifact", artifactDefinition.getArtifactLabel());
-			return false;
-		}
-
-		// Old Artifacts before the generated flag introduction if contains "aai" ignore
-		// case prefix updated
-		if (artifactDefinitionComp.getGenerated() == null) {
-			if (artifactDefinitionComp.getArtifactLabel().toLowerCase().startsWith("aai")) {
-				return true;
-			} else {
-				log.warn("The artifact {} flag is null but AAI prefix is abssent Not updated",
-						artifactDefinition.getArtifactLabel());
-			}
-		} else {
-			if (artifactDefinition.getGenerated()) {
-				return true;
-			} else {
-				log.warn("Generated artifact {} was already uploaded manually", artifactDefinition.getArtifactLabel());
-			}
-		}
-		return false;
-	}
-
-	private List<ArtifactDefinition> getAAIArtifatcsForDelete(List<ArtifactDefinition> artifactsFromAAI,
-			Component component) {
-
-		Set<String> aaiLabels = artifactsFromAAI.stream().map(ArtifactDefinition::getArtifactLabel)
-				.collect(Collectors.toSet());
-
-		List<ArtifactDefinition> artifactsForDeleteDeployment = component.getDeploymentArtifacts().values().stream()
-				// Filter Out Artifacts that are not contained in artifacts returned
-				// from AAI API
-				.filter(e -> !aaiLabels.contains(e.getArtifactLabel())).collect(Collectors.toList());
-
-		List<ArtifactDefinition> artifactsForDeleteInformational = component.getArtifacts().values().stream()
-				// Filter Out Artifacts that are not contained in artifacts returned
-				// from AAI API
-				.filter(e -> !aaiLabels.contains(e.getArtifactLabel())).collect(Collectors.toList());
-
-		artifactsForDeleteDeployment.addAll(artifactsForDeleteInformational);
-
-		return artifactsForDeleteDeployment.stream()
-				.filter(e -> (e.getGenerated() != null && e.getGenerated().equals(Boolean.TRUE))
-						|| (e.getGenerated() == null && e.getArtifactLabel().toLowerCase().startsWith("aai")))
-				.collect(Collectors.toList());
-	}
-
-	private List<ArtifactDefinition> getAAIArtifatcsForCreate(List<ArtifactDefinition> artifactsFromAAI,
-			Component component) {
-
-		Set<String> componentDeploymentLabels = component.getDeploymentArtifacts().keySet();
-		Set<String> componentInfoLabels = component.getArtifacts().keySet();
-
-		// If the artifact label does not exist in the service -
-		// store the artifact (generate uuid and version, "generated" flag is TRUE)
-		return artifactsFromAAI.stream().filter(e -> !componentDeploymentLabels.contains(e.getArtifactLabel())
-				&& !componentInfoLabels.contains(e.getArtifactLabel())).collect(Collectors.toList());
-	}
-
-	private Either<ActionStatus, ResponseFormat> handleAAIArtifactsInDataModelByOperationType(Component component,
-			List<ArtifactDefinition> generatedArtifactsDefinitions, ArtifactOperationInfo operationType, User user,
-			boolean shouldLock, boolean inTransaction) {
-
-		String componentUniqueId = component.getUniqueId();
-		ComponentTypeEnum componentType = component.getComponentType();
-		Either<ActionStatus, ResponseFormat> result = Either.left(ActionStatus.OK);
-
-		for (ArtifactDefinition artDef : generatedArtifactsDefinitions) {
-			String data = gson.toJson(artDef);
-			String dataMD5 = GeneralUtility.calculateMD5Base64EncodedByString(data);
-			String artifactUniqueId = null;
-
-			if ((operationType.getArtifactOperationEnum() == ArtifactOperationEnum.UPDATE)
-					|| (operationType.getArtifactOperationEnum() == ArtifactOperationEnum.DELETE)) {
-				String artifactLabel = artDef.getArtifactLabel();
-				ArtifactDefinition artifactDefinition = component.getDeploymentArtifacts().get(artifactLabel);
-				if (artifactDefinition != null) {
-					artifactUniqueId = artifactDefinition.getUniqueId();
-				}
-			}
-
-			Either<Either<ArtifactDefinition, Operation>, ResponseFormat> validateAndHandleArtifact = artifactsBusinessLogic
-					.validateAndHandleArtifact(componentUniqueId, componentType, operationType, artifactUniqueId,
-							artDef, dataMD5, data, null, null, user, component, shouldLock, inTransaction, false);
-
-			if (validateAndHandleArtifact.isRight()) {
-				if (ArtifactOperationEnum.isCreateOrLink(operationType.getArtifactOperationEnum())
-						|| ArtifactOperationEnum.UPDATE == operationType.getArtifactOperationEnum()) {
-					ResponseFormat responseFormat = componentsUtils.getResponseFormat(
-							ActionStatus.AAI_ARTIFACT_GENERATION_FAILED, componentType.getValue(), component.getName(),
-							validateAndHandleArtifact.right().value().toString());
-
-					result = Either.right(responseFormat);
-				} else {
-					log.warn("Generated artifact {} could not be deleted", artDef.getArtifactLabel());
-				}
-			}
-		}
-
-		return result;
-	}
-
-	private List<ArtifactDefinition> convertToArtifactDefinitionFromArtifactGeneratedData(
-			List<Artifact> generatorOutput) {
-		List<ArtifactDefinition> artifactDefList = new LinkedList<>();
-
-		for (Artifact artifact : generatorOutput) {
-			ArtifactDefinition newEntry = new ArtifactDefinition();
-			newEntry.setArtifactName(artifact.getName());
-			newEntry.setArtifactType(artifact.getType());
-			newEntry.setArtifactGroupType(ArtifactGroupTypeEnum.findType(artifact.getGroupType()));
-			newEntry.setDescription(artifact.getDescription());
-
-			// Normalizing the artifact label to match those stored in DB
-			String normalizeArtifactLabel = ValidationUtils.normalizeArtifactLabel(artifact.getLabel());
-			newEntry.setArtifactLabel(normalizeArtifactLabel);
-			newEntry.setPayload(Base64.decodeBase64(artifact.getPayload()));
-			newEntry.setArtifactChecksum(artifact.getChecksum());
-			// Flag that set to true in case that the artifact is generated by AI&I
-			// generator
-			newEntry.setGenerated(Boolean.TRUE);
-
-			artifactDefList.add(newEntry);
-		}
-
-		return artifactDefList;
-	}
-
-	// List<ImmutablePair<Component, byte[] artifactBytes>>
-	// artifact stored by label
-	private List<Artifact> convertToGeneratorArtifactsInput(List<ImmutablePair<Component, byte[]>> inputs) {
-		List<Artifact> listOfArtifactsInput = new LinkedList<>();
-		for (ImmutablePair<Component, byte[]> triple : inputs) {
-			Component component = triple.getLeft();
-
-			Map<String, ArtifactDefinition> toscaArtifacts = component.getToscaArtifacts();
-			ArtifactDefinition artifactDefinition = toscaArtifacts.get(ToscaExportHandler.ASSET_TOSCA_TEMPLATE);
-
-			String artifactName = artifactDefinition.getArtifactName();
-			String artifactType = artifactDefinition.getArtifactType();
-			String artifactGroupType = artifactDefinition.getArtifactGroupType().getType();
-			String artifactDescription = artifactDefinition.getDescription();
-			String artifactLabel = artifactDefinition.getArtifactLabel();
-			byte[] right = triple.getRight();
-			// The md5 calculated on the uncoded data
-			String md5Hex = DigestUtils.md5Hex(right);
-			byte[] payload = Base64.encodeBase64(right);
-			String artifactVersion = artifactDefinition.getArtifactVersion();
-
-			Artifact convertedArtifact = new Artifact(artifactType, artifactGroupType, md5Hex, payload);
-			convertedArtifact.setName(artifactName);
-			convertedArtifact.setDescription(artifactDescription);
-			convertedArtifact.setLabel(artifactLabel);
-			convertedArtifact.setVersion(artifactVersion);
-
-			listOfArtifactsInput.add(convertedArtifact);
-		}
-
-		return listOfArtifactsInput;
 	}
 
 	private Either<byte[], ActionStatus> getEntryData(String cassandraId, Component childComponent) {
@@ -852,67 +518,12 @@ public class CsarUtils {
 	}
 
 	private String createCsarBlock0(String metaFileVersion, String toscaConformanceLevel) {
-		final String BLOCK_0_TEMPLATE = "SDC-TOSCA-Meta-File-Version: %s\nSDC-TOSCA-Definitions-Version: %s\n";
-		String readyBlock = String.format(BLOCK_0_TEMPLATE, metaFileVersion, toscaConformanceLevel);
-		return readyBlock;
+        return String.format(BLOCK_0_TEMPLATE, metaFileVersion, toscaConformanceLevel);
 	}
 
 	private String createToscaBlock0(String metaFileVersion, String csarVersion, String createdBy, String entryDef) {
 		final String block0template = "TOSCA-Meta-File-Version: %s\nCSAR-Version: %s\nCreated-By: %s\nEntry-Definitions: Definitions/%s\n\nName: csar.meta\nContent-Type: text/plain\n";
 		return String.format(block0template, metaFileVersion, csarVersion, createdBy, entryDef);
-	}
-
-	private Either<List<Artifact>, String> artifactGenerator(List<Artifact> artifactList, ArtifactType type,
-			Component component) {
-
-		ArtifactGenerationServiceImpl artifactGenerationServiceImpl = new ArtifactGenerationServiceImpl();
-		ArtifactTypes artifactTypes = new ArtifactTypes();
-		List<ArtifactType> artifactTypesList = new LinkedList<>();
-		ArtifactType otherType;
-
-		if (type == null) {
-			otherType = ArtifactType.OTHER;
-		} else {
-			otherType = type;
-		}
-
-		artifactTypesList.add(otherType);
-		artifactTypes.setArtifactTypes(artifactTypesList);
-
-		String configJson = gson.toJson(artifactTypes);
-		Map<String, String> additionalParams = new HashMap<>();
-		String version;
-
-		if (UUID_NORMATIVE_NEW_VERSION.matcher(component.getVersion()).matches()) {
-			version = component.getVersion();
-		} else {
-			String[] versionParts = component.getVersion()
-					.split(ToscaElementLifecycleOperation.VERSION_DELIMETER_REGEXP);
-			Integer majorVersion = Integer.parseInt(versionParts[0]);
-
-			version = (majorVersion + 1) + ToscaElementLifecycleOperation.VERSION_DELIMETER + "0";
-		}
-
-		additionalParams.put(AdditionalParams.ServiceVersion.getName(), version);
-		GenerationData generatedArtifacts = artifactGenerationServiceImpl.generateArtifact(artifactList, configJson,
-				additionalParams);
-
-		Map<String, List<String>> errorData = generatedArtifacts.getErrorData();
-
-		if (!errorData.isEmpty()) {
-			Set<String> keySet = errorData.keySet();
-			StringBuilder error = new StringBuilder();
-
-			for (String key : keySet) {
-				List<String> errorList = errorData.get(key);
-				log.debug("The Artifact Generator Failed - {} with following: {}", key, errorList);
-				error.append(key + errorList);
-			}
-
-			return Either.right(error.toString());
-		}
-
-		return Either.left(generatedArtifacts.getResultData());
 	}
 
 	/**

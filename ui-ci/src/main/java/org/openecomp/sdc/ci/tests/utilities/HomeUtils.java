@@ -21,7 +21,6 @@
 package org.openecomp.sdc.ci.tests.utilities;
 
 import com.aventstack.extentreports.Status;
-import org.openecomp.sdc.ci.tests.datatypes.CheckBoxStatusEnum;
 import org.openecomp.sdc.ci.tests.datatypes.CreateAndImportButtonsEnum;
 import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum;
 import org.openecomp.sdc.ci.tests.execute.setup.SetupCDTest;
@@ -34,105 +33,70 @@ import java.util.List;
 
 public final class HomeUtils {
 
-	public static WebElement createAndImportButtons(CreateAndImportButtonsEnum type, WebDriver driver)
-			throws InterruptedException {
-		switch (type) {
-		case IMPORT_CP:
-		case IMPORT_VFC:
-		case IMPORT_VL:
-			GeneralUIUtils.hoverOnAreaByTestId(DataTestIdEnum.Dashboard.IMPORT_AREA.getValue());
-			return GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.Dashboard.IMPORT_VFC.getValue());
+    public static WebElement createAndImportButtons(CreateAndImportButtonsEnum type, WebDriver driver)
+            throws InterruptedException {
+        switch (type) {
+            case IMPORT_CP:
+            case IMPORT_VFC:
+            case IMPORT_VL:
+            case IMPORT_VF:
+                GeneralUIUtils.hoverOnAreaByTestId(DataTestIdEnum.Dashboard.IMPORT_AREA.getValue());
+                return GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.Dashboard.IMPORT_VFC.getValue());
+            case CREATE_SERVICE:
+                GeneralUIUtils.hoverOnAreaByTestId(DataTestIdEnum.Dashboard.ADD_AREA.getValue());
+                GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.Dashboard.BUTTON_ADD_SERVICE.getValue()).click();
+                break;
 
-		case IMPORT_VF:
-			GeneralUIUtils.hoverOnAreaByTestId(DataTestIdEnum.Dashboard.IMPORT_AREA.getValue());
-			return GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.Dashboard.IMPORT_VFC.getValue());
-		case CREATE_SERVICE:
-			GeneralUIUtils.hoverOnAreaByTestId(DataTestIdEnum.Dashboard.ADD_AREA.getValue());
-			GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.Dashboard.BUTTON_ADD_SERVICE.getValue()).click();
-			;
-			break;
+            case CREATE_PRODUCT:
+                GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.Dashboard.BUTTON_ADD_SERVICE.getValue()).click();
+                GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.Dashboard.BUTTON_ADD_SERVICE.getValue()).click();
+                break;
 
-		case CREATE_PRODUCT:
-			GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.Dashboard.BUTTON_ADD_SERVICE.getValue()).click();
-			GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.Dashboard.BUTTON_ADD_SERVICE.getValue()).click();
-			break;
+            default:
+                GeneralUIUtils.hoverOnAreaByTestId(DataTestIdEnum.Dashboard.ADD_AREA.getValue());
+                driver.findElement(By.xpath("//*[@data-tests-id='createResourceButton']")).click();
+                break;
+        }
+        return null;
 
-		default:
-			GeneralUIUtils.hoverOnAreaByTestId(DataTestIdEnum.Dashboard.ADD_AREA.getValue());
-			driver.findElement(By.xpath("//*[@data-tests-id='createResourceButton']")).click();
-			break;
-		}
-		return null;
+    }
 
-	}
+    public static void findComponentAndClick(String componentName) throws Exception {
+        SetupCDTest.getExtendTest().log(Status.INFO, "finding component " + componentName);
+        GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.MainMenuButtons.SEARCH_BOX.getValue()).sendKeys(componentName);
+        WebElement foundComp = null;
+        try {
+            foundComp = GeneralUIUtils.getWebElementByTestID(componentName);
+            foundComp.click();
+            GeneralUIUtils.waitForLoader();
+            GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.GeneralElementsEnum.LIFECYCLE_STATE.getValue());
+        } catch (Exception e) {
+            String msg = String.format("DID NOT FIND A COMPONENT NAMED %s", componentName);
+            SetupCDTest.getExtendTest().log(Status.FAIL, msg);
+            System.out.println(msg);
+            Assert.fail(msg);
+        }
+    }
 
-	public static String checkBoxLifeCyclestate(CheckBoxStatusEnum lifeCycle) {
-		String Status = "IN DESIGN CHECK OUT";
-		switch (lifeCycle) {
-		case CHECKIN:
-			Status = "IN DESIGN CHECK IN";
-			if (GeneralUIUtils.getWebElementByTestID(lifeCycle.getValue()).isDisplayed()) {
-				GeneralUIUtils.getWebElementByTestID(lifeCycle.getValue()).click();
-			}
-			break;
-		case CHECKOUT:
-			GeneralUIUtils.getWebElementByTestID(lifeCycle.getValue()).click();
-			Status = "IN DESIGN CHECK OUT";
-			break;
-		case IN_TESTING:
-			GeneralUIUtils.getWebElementByTestID(lifeCycle.getValue()).click();
-			Status = "IN TESTING";
-			break;
-		case READY_FOR_TESTING:
-			GeneralUIUtils.getWebElementByTestID(lifeCycle.getValue()).click();
-			Status = "READY FOR TESTING";
-			break;
-		case CERTIFIED:
-			GeneralUIUtils.getWebElementByTestID(lifeCycle.getValue()).click();
-			Status = "CERTIFIED";
-			break;
-		}
-		return Status;
-	}
-	
-	public static void findComponentAndClick(String componentName) throws Exception {
-		SetupCDTest.getExtendTest().log(Status.INFO, "finding component " + componentName);
-		GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.MainMenuButtons.SEARCH_BOX.getValue()).sendKeys(componentName);
-		WebElement foundComp = null;
-		try {
-			foundComp = GeneralUIUtils.getWebElementByTestID(componentName);
-			foundComp.click();
-			GeneralUIUtils.waitForLoader();
-			GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.GeneralElementsEnum.LIFECYCLE_STATE.getValue());
-		} catch (Exception e) {
-			String msg = String.format("DID NOT FIND A COMPONENT NAMED %s", componentName);
-			SetupCDTest.getExtendTest().log(Status.FAIL, msg);
-			System.out.println(msg);
-			Assert.fail(msg);
-		}
-	}
+    public static void findComponentAndClickByVersion(String componentName, String version) throws Exception {
+        SetupCDTest.getExtendTest().log(Status.INFO, String.format("finding component %s v%s", componentName, version));
+        GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.MainMenuButtons.SEARCH_BOX.getValue()).sendKeys(componentName);
+        List<WebElement> foundComp = null;
+        try {
+            foundComp = GeneralUIUtils.getWebElementsListByTestID(componentName + "Version");
 
-	public static void findComponentAndClickByVersion(String componentName, String version) throws Exception {
-		SetupCDTest.getExtendTest().log(Status.INFO, String.format("finding component %s v%s", componentName, version));
-		GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.MainMenuButtons.SEARCH_BOX.getValue()).sendKeys(componentName);
-		List<WebElement> foundComp = null;
-		try {
-			foundComp = GeneralUIUtils.getWebElementsListByTestID(componentName + "Version");
-
-			for (WebElement webElement : foundComp)
-			{
-				if(webElement.getText().contains(version))
-				{
-					webElement.click();
-					GeneralUIUtils.ultimateWait();
-					break;
-				}
-			}
-		} catch (Exception e) {
-			String msg = String.format("DID NOT FIND A COMPONENT NAMED %s", componentName);
-			SetupCDTest.getExtendTest().log(Status.FAIL, msg);
-			System.out.println(msg);
-			Assert.fail(msg);
-		}
-	}
+            for (WebElement webElement : foundComp) {
+                if (webElement.getText().contains(version)) {
+                    webElement.click();
+                    GeneralUIUtils.ultimateWait();
+                    break;
+                }
+            }
+        } catch (Exception e) {
+            String msg = String.format("DID NOT FIND A COMPONENT NAMED %s", componentName);
+            SetupCDTest.getExtendTest().log(Status.FAIL, msg);
+            System.out.println(msg);
+            Assert.fail(msg);
+        }
+    }
 }

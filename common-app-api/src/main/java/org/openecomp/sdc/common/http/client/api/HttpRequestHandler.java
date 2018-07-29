@@ -1,10 +1,6 @@
 package org.openecomp.sdc.common.http.client.api;
 
-import java.io.InputStream;
-import java.util.Map;
-import java.util.Properties;
-import java.util.concurrent.ConcurrentHashMap;
-
+import com.google.common.annotations.VisibleForTesting;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -13,8 +9,13 @@ import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.datastructure.FunctionalInterfaces.FunctionThrows;
 import org.openecomp.sdc.common.http.config.HttpClientConfig;
 
-public enum HttpRequestHandler {
-    HANDLER;
+import java.io.InputStream;
+import java.util.Map;
+import java.util.Properties;
+import java.util.concurrent.ConcurrentHashMap;
+
+public class HttpRequestHandler {
+    private static HttpRequestHandler handlerInstance = new HttpRequestHandler();
     private static final String HTTPS_PREFIX = "https://";
     private static final String HTTP_PREFIX = "http://";
     
@@ -46,13 +47,13 @@ public enum HttpRequestHandler {
                 httpResponse.getStatusLine().getReasonPhrase());
     };
 
-    HttpRequestHandler() {
+    private HttpRequestHandler() {
         HttpConnectionMngFactory connectionMngFactory = new HttpConnectionMngFactory();
         clientFactory = new HttpClientFactory(connectionMngFactory);
     }
     
-    static HttpRequestHandler get() {
-        return HANDLER;
+    public static HttpRequestHandler get() {
+        return handlerInstance;
     }
 
     public HttpResponse<String> get(String url, Properties headers, HttpClientConfig config) throws HttpExecuteException {
@@ -100,7 +101,12 @@ public enum HttpRequestHandler {
         return clientFactory.createClient(protocol, config);
     }
 
-    private String getProtocol(String url) throws HttpExecuteException { 
+    @VisibleForTesting
+    public static void setTestInstance(HttpRequestHandler handlerInstance) {
+        HttpRequestHandler.handlerInstance = handlerInstance;
+    }
+
+    private String getProtocol(String url) throws HttpExecuteException {
         if (url.startsWith(HTTPS_PREFIX)) {
             return Constants.HTTPS;
         }

@@ -1,10 +1,12 @@
 package org.openecomp.sdc.be.model.operations.api;
 
+
+import fj.data.Either;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphNode;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphRelation;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 
-import fj.data.Either;
+import java.util.function.Function;
 
 public interface DerivedFromOperation {
 
@@ -16,7 +18,7 @@ public interface DerivedFromOperation {
      * @return the status of the operation
      */
     Either<GraphRelation, StorageOperationStatus> addDerivedFromRelation(String parentUniqueId, String derivedFromUniqueId, NodeTypeEnum nodeType);
-
+    
     /**
      *
      * @param uniqueId the id of the entity of which to fetch its derived from object
@@ -34,4 +36,19 @@ public interface DerivedFromOperation {
      * @return the status of the remove operation. if no derived from relation exists the operation is successful.
      */
     StorageOperationStatus removeDerivedFromRelation(String uniqueId, String derivedFromUniqueId, NodeTypeEnum nodeType);
+    
+    
+    /**
+     * Checks whether childCandidateType is derived from parentCandidateType
+     */
+    public <T extends GraphNode> Either<Boolean, StorageOperationStatus> isTypeDerivedFrom(String childCandidateType, String parentCandidateType, String currentChildType,
+                                                                                           NodeTypeEnum capabilitytype, Class<T> clazz,
+                                                                                           Function<T, String> typeProvider);
+
+    /**
+     * Checks whether replacement of oldTypeParent hold in DERIVED FROM with newTypeParent is legal
+     */
+    public <T extends GraphNode> StorageOperationStatus isUpdateParentAllowed(String oldTypeParent, String newTypeParent, String childType,
+                                                                               NodeTypeEnum capabilitytype, Class<T> clazz,
+                                                                               Function<T, String> typeProvider);        
 }

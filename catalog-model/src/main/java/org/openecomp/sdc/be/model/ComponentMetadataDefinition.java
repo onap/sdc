@@ -20,55 +20,48 @@
 
 package org.openecomp.sdc.be.model;
 
-import java.io.Serializable;
-
 import org.openecomp.sdc.be.datatypes.components.ComponentMetadataDataDefinition;
 
-public class ComponentMetadataDefinition implements Serializable {
+public class ComponentMetadataDefinition {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 3570763790267255590L;
+    protected ComponentMetadataDataDefinition componentMetadataDataDefinition;
 
-	protected ComponentMetadataDataDefinition componentMetadataDataDefinition;
+    public ComponentMetadataDefinition() {
 
-	public ComponentMetadataDefinition() {
+    }
 
-	}
+    public ComponentMetadataDefinition(ComponentMetadataDataDefinition component) {
+        this.componentMetadataDataDefinition = component;
+    }
 
-	public ComponentMetadataDefinition(ComponentMetadataDataDefinition component) {
-		this.componentMetadataDataDefinition = component;
-	}
+    public ComponentMetadataDataDefinition getMetadataDataDefinition() {
+        return this.componentMetadataDataDefinition;
+    }
 
-	public ComponentMetadataDataDefinition getMetadataDataDefinition() {
-		return this.componentMetadataDataDefinition;
-	}
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result
+                + ((componentMetadataDataDefinition == null) ? 0 : componentMetadataDataDefinition.hashCode());
+        return result;
+    }
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result
-				+ ((componentMetadataDataDefinition == null) ? 0 : componentMetadataDataDefinition.hashCode());
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		ComponentMetadataDefinition other = (ComponentMetadataDefinition) obj;
-		if (componentMetadataDataDefinition == null) {
-			if (other.componentMetadataDataDefinition != null)
-				return false;
-		} else if (!componentMetadataDataDefinition.equals(other.componentMetadataDataDefinition))
-			return false;
-		return true;
-	}
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        ComponentMetadataDefinition other = (ComponentMetadataDefinition) obj;
+        if (componentMetadataDataDefinition == null) {
+            if (other.componentMetadataDataDefinition != null)
+                return false;
+        } else if (!componentMetadataDataDefinition.equals(other.componentMetadataDataDefinition))
+            return false;
+        return true;
+    }
 
 }

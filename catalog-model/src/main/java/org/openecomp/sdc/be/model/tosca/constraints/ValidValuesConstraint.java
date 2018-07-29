@@ -20,73 +20,61 @@
 
 package org.openecomp.sdc.be.model.tosca.constraints;
 
-import java.io.Serializable;
-import java.util.List;
-import java.util.Set;
-
-import javax.validation.constraints.NotNull;
-
+import com.google.common.collect.Sets;
 import org.openecomp.sdc.be.model.tosca.ToscaType;
 import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintValueDoNotMatchPropertyTypeException;
 import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintViolationException;
 
-//import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.google.common.collect.Sets;
+import javax.validation.constraints.NotNull;
+import java.util.List;
+import java.util.Set;
 
-public class ValidValuesConstraint extends AbstractPropertyConstraint implements Serializable {
+public class ValidValuesConstraint extends AbstractPropertyConstraint {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 5906087180079892853L;
+    @NotNull
+    private List<String> validValues;
+    private Set<Object> validValuesTyped;
 
-	@NotNull
-	private List<String> validValues;
-	// @JsonIgnore
-	private Set<Object> validValuesTyped;
+    public ValidValuesConstraint(List<String> validValues) {
+        this.validValues = validValues;
+    }
 
-	public ValidValuesConstraint(List<String> validValues) {
-		super();
-		this.validValues = validValues;
-	}
+    public ValidValuesConstraint() {
+    }
 
-	public ValidValuesConstraint() {
-		super();
-	}
+    @Override
+    public void initialize(ToscaType propertyType) throws ConstraintValueDoNotMatchPropertyTypeException {
+        validValuesTyped = Sets.newHashSet();
+        if (validValues == null) {
+            throw new ConstraintValueDoNotMatchPropertyTypeException(
+                    "validValues constraint has invalid value <> property type is <" + propertyType.toString() + ">");
+        }
+        for (String value : validValues) {
+            if (!propertyType.isValidValue(value)) {
+                throw new ConstraintValueDoNotMatchPropertyTypeException("validValues constraint has invalid value <"
+                        + value + "> property type is <" + propertyType.toString() + ">");
+            } else {
+                validValuesTyped.add(propertyType.convert(value));
+            }
+        }
+    }
 
-	@Override
-	public void initialize(ToscaType propertyType) throws ConstraintValueDoNotMatchPropertyTypeException {
-		validValuesTyped = Sets.newHashSet();
-		if (validValues == null) {
-			throw new ConstraintValueDoNotMatchPropertyTypeException(
-					"validValues constraint has invalid value <> property type is <" + propertyType.toString() + ">");
-		}
-		for (String value : validValues) {
-			if (!propertyType.isValidValue(value)) {
-				throw new ConstraintValueDoNotMatchPropertyTypeException("validValues constraint has invalid value <"
-						+ value + "> property type is <" + propertyType.toString() + ">");
-			} else {
-				validValuesTyped.add(propertyType.convert(value));
-			}
-		}
-	}
+    @Override
+    public void validate(Object propertyValue) throws ConstraintViolationException {
+        if (propertyValue == null) {
+            throw new ConstraintViolationException("Value to validate is null");
+        }
+        if (!validValuesTyped.contains(propertyValue)) {
+            throw new ConstraintViolationException("The value is not in the list of valid values");
+        }
+    }
 
-	@Override
-	public void validate(Object propertyValue) throws ConstraintViolationException {
-		if (propertyValue == null) {
-			throw new ConstraintViolationException("Value to validate is null");
-		}
-		if (!validValuesTyped.contains(propertyValue)) {
-			throw new ConstraintViolationException("The value is not in the list of valid values");
-		}
-	}
+    public List<String> getValidValues() {
+        return validValues;
+    }
 
-	public List<String> getValidValues() {
-		return validValues;
-	}
-
-	public void setValidValues(List<String> validValues) {
-		this.validValues = validValues;
-	}
+    public void setValidValues(List<String> validValues) {
+        this.validValues = validValues;
+    }
 
 }

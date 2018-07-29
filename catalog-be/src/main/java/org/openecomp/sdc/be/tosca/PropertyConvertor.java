@@ -20,12 +20,13 @@
 
 package org.openecomp.sdc.be.tosca;
 
-import java.io.StringReader;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
+import com.google.gson.stream.JsonReader;
+import fj.data.Either;
 import org.apache.commons.lang3.StringUtils;
+import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
@@ -34,24 +35,23 @@ import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
 import org.openecomp.sdc.be.model.tosca.converters.DataTypePropertyConverter;
 import org.openecomp.sdc.be.model.tosca.converters.ToscaMapValueConverter;
+import org.openecomp.sdc.be.model.tosca.converters.ToscaValueBaseConverter;
 import org.openecomp.sdc.be.model.tosca.converters.ToscaValueConverter;
 import org.openecomp.sdc.be.tosca.model.EntrySchema;
 import org.openecomp.sdc.be.tosca.model.ToscaNodeType;
 import org.openecomp.sdc.be.tosca.model.ToscaProperty;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
-import com.google.gson.stream.JsonReader;
-
-import fj.data.Either;
+import java.io.StringReader;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Supplier;
 
 public class PropertyConvertor {
     private static PropertyConvertor instance;
     private JsonParser jsonParser = new JsonParser();
-    private static final Logger log = LoggerFactory.getLogger(PropertyConvertor.class);
+    private static final Logger log = Logger.getLogger(PropertyConvertor.class);
     Gson gson = new Gson();
     protected PropertyConvertor() {
 
@@ -84,7 +84,7 @@ public class PropertyConvertor {
         return Either.left(toscaNodeType);
     }
 
-    public ToscaProperty convertProperty(Map<String, DataTypeDefinition> dataTypes, PropertyDefinition property, boolean isCapabiltyProperty) {
+    public ToscaProperty convertProperty(Map<String, DataTypeDefinition> dataTypes, PropertyDataDefinition property, boolean isCapabiltyProperty) {
         ToscaProperty prop = new ToscaProperty();
 
         String innerType = null;
@@ -96,8 +96,13 @@ public class PropertyConvertor {
             eschema.setDescription(schema.getProperty().getDescription());
             prop.setEntry_schema(eschema);
         }
+        return getToscaProperty(dataTypes, property, isCapabiltyProperty, prop, innerType);
+
+    }
+
+    private ToscaProperty getToscaProperty(Map<String, DataTypeDefinition> dataTypes, PropertyDataDefinition property, boolean isCapabiltyProperty, ToscaProperty prop, String innerType) {
         log.trace("try to convert property {} from type {} with default value [{}]", property.getName(), property.getType(), property.getDefaultValue());
-        Object convertedObj = convertToToscaObject(property.getType(), property.getDefaultValue(), innerType, dataTypes);
+        Object convertedObj = convertToToscaObject(property.getType(), property.getDefaultValue(), innerType, dataTypes, false);
         if (convertedObj != null) {
             prop.setDefaultp(convertedObj);
         }
@@ -108,10 +113,10 @@ public class PropertyConvertor {
             prop.setRequired(property.isRequired());
         }
         return prop;
-
     }
+    
 
-    public Object convertToToscaObject(String propertyType, String value, String innerType, Map<String, DataTypeDefinition> dataTypes) {
+    public Object convertToToscaObject(String propertyType, String value, String innerType, Map<String, DataTypeDefinition> dataTypes, boolean preserveEmptyValue) {
         log.trace("try to convert propertyType {} , value [{}], innerType {}", propertyType, value, innerType);
         if (StringUtils.isEmpty(value)) {
             value = DataTypePropertyConverter.getInstance().getDataTypePropertiesDefaultValuesRec(propertyType, dataTypes);
@@ -178,7 +183,7 @@ public class PropertyConvertor {
                         if (innerConverter != null) {
                             convertedValue = innerConverter.convertToToscaValue(value, innerType, dataTypes);
                         } else {
-                            convertedValue = mapConverterInst.convertDataTypeToToscaObject(innerType, dataTypes, innerConverter, isScalar, jsonElement);
+                            convertedValue = mapConverterInst.convertDataTypeToToscaObject(innerType, dataTypes, innerConverter, isScalar, jsonElement, preserveEmptyValue);
                         }
                     }
                 }
@@ -194,6 +199,24 @@ public class PropertyConvertor {
 
     private boolean valueStartsWithNonJsonChar(String value) {
         return value.startsWith("/") || value.startsWith(":");
+    }
+    
+    public void convertAndAddValue(Map<String, DataTypeDefinition> dataTypes,
+            Map<String, Object> props, PropertyDataDefinition prop, Supplier<String> supplier) {
+        Object convertedValue = convertValue(dataTypes, prop, supplier);
+        if (!ToscaValueBaseConverter.isEmptyObjectValue(convertedValue)) {
+            props.put(prop.getName(), convertedValue);
+        }
+    }
+
+    private <T extends PropertyDataDefinition> Object convertValue(Map<String, DataTypeDefinition> dataTypes,
+             T input, Supplier<String> supplier) {
+        String propertyType = input.getType();
+        String innerType = null;
+        if (input.getSchema() != null && input.getSchema().getProperty() != null) {
+            innerType = input.getSchema().getProperty().getType();
+        }
+        return convertToToscaObject(propertyType, supplier.get(), innerType, dataTypes, false);
     }
 
 }

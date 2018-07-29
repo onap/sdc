@@ -1,10 +1,7 @@
 package org.openecomp.sdc.common.util;
 
-import javax.annotation.Generated;
-
-import org.junit.Test;
-
 import fj.data.Either;
+import org.junit.Test;
 
 public class SerializationUtilsTest {
 

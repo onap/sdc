@@ -4,27 +4,34 @@
 	<property scope="system" name="ECOMP-component-name" value="SDC" />
 	<property scope="system" name="ECOMP-subcomponent-name" value="SDC-BE" />
 	<property file="${config.home}/catalog-be/configuration.yaml" />
-	<property scope="context" name="enable-all-log" value="false" />
+	<property scope="context" name="enable-all-log" value="true" />
 
 	<!-- value used by pattern field list (| - is inter-field separator, || - unavailable or not applicable field value) (m - mandatory, o- optional)-->
 	<!--timestamp(m)| requestID(m)| serviceInstanceID(o)| threadID(m)| physicalServerName(o)| serviceName(m)| userID(m)| logLevel(m)| severity(o)| serverIpAddress(m)| serverName(m)| clientIpAddress(o)| className(m)| timer(o)| detailedMessage(o)-->
 	<property name="default-log-pattern"
-			  value="%d{yyyy-MM-dd'T'HH:mm:ss.SSSXXX}|%X{BeginTimestamp}|%X{EndTimestamp}|%X{uuid}|%X{serviceInstanceID}|%thread|%X{ServerName}|%X{ServiceName}|${ECOMP-subcomponent-name}|%X{userId}|%X{TargetEntity}|%X{TargetServiceName}|%X{StatusCode}|%X{ResponseCode}|%X{ResponseDescription}|%X{InstanceUUID}|%level|%X{alarmSeverity}|%X{localAddr}|%X{ElapsedTime}|${beFqdn}|%X{remoteAddr}|%logger{35}|%X{timer}|ActivityType=&lt;%M&gt;, Desc=&lt;%msg&gt;%n" />
+			  value="%date{yyyy-MM-dd'T'HH:mm:ss.SSSXXX}|%X{BeginTimestamp}|%X{EndTimestamp}|%X{uuid}|%X{serviceInstanceID}|%thread|%X{ServerName}|%X{ServiceName}|${ECOMP-subcomponent-name}|%X{userId}|%X{TargetEntity}|%X{TargetServiceName}|%X{StatusCode}|%X{ResponseCode}|%X{ResponseDescription}|%X{InstanceUUID}|%level|%X{alarmSeverity}|%X{localAddr}|%X{ElapsedTime}|${beFqdn}|%X{remoteAddr}|%logger{35}|%X{timer}|ActivityType=&lt;%M&gt;, Desc=&lt;%msg&gt;%n" />
 
-	<property name="auditLoggerPattern" value="%X{BeginTimestamp}|%X{EndTimestamp}|%X{RequestId}|%X{ServiceInstanceId}|%thread|%X{VirtualServerName}|%X{ServiceName}|%X{PartnerName}|%X{StatusCode}|%X{ResponseCode}|%X{ResponseDescription}|%X{InstanceUUID}|%.-5level|%X{AlertSeverity}|%X{ServerIPAddress}|%X{ElapsedTime}|%X{ServerFQDN}|%X{RemoteHost}|%X{ClassName}|%X{Unused}|%X{ProcessKey}|%X{CustomField1}|%X{CustomField2}|%X{CustomField3}|%X{CustomField4}| ActivityType=&lt;%M&gt;, Desc=&lt;%msg&gt;%n" />
+	<property name="error-log-pattern"
+			  value="%date{yyyy-MM-dd'T'HH:mm:ss.SSSXXX}|%X{RequestId}|%thread|%X{ServiceName}|%X{PartnerName}|%X{TargetEntity}|%X{TargetServiceName}|%X{ErrorCategory}|%X{ErrorCode}|%msg|%n" />
 
-	<property name="asdc-debug-log-pattern" value="%d{yyyy-MM-dd'T'HH:mm:ss.SSSXXX}|%X{RequestId}|%msg %n"/>
+	<property name="audit-log-pattern" value="%X{AuditBeginTimestamp}|%X{EndTimestamp}|%X{RequestId}|%X{ServiceInstanceId}|%thread|%X{VirtualServerName}|%X{ServiceName}|%X{PartnerName}|%X{StatusCode}|%X{ResponseCode}|%X{ResponseDescription}|%X{InstanceUUID}|%.-5level|%X{AlertSeverity}|%X{ServerIPAddress}|%X{ElapsedTime}|%X{ServerFQDN}|%X{RemoteHost}|%X{ClassName}|%X{Unused}|%X{ProcessKey}|%X{CustomField1}|%X{CustomField2}|%X{CustomField3}|%X{CustomField4}|ActivityType=&lt;%M&gt;, Desc=&lt;%msg&gt;%n" />
+
+	<property name="metric-log-pattern" value="%X{MetricBeginTimestamp}|%X{EndTimestamp}|%X{RequestId}|%X{ServiceInstanceId}|%thread|%X{VirtualServerName}|%X{ServiceName}|%X{PartnerName}|%X{TargetEntity}|%X{TargetServiceName}|%X{StatusCode}|%X{ResponseCode}|%X{ResponseDescription}|%X{InstanceUUID}|%.-5level|%X{AlertSeverity}|%X{ServerIPAddress}|%X{ElapsedTime}|%X{ServerFQDN}|%X{RemoteHost}|%X{ClassName}|%X{Unused}|%X{ProcessKey}|%X{CustomField1}|%X{CustomField2}|%X{CustomField3}|%X{CustomField4}|ActivityType=&lt;%M&gt;, Desc=&lt;%msg&gt;%n" />
+
+	<property name="debug-log-pattern" value="%date{yyyy-MM-dd'T'HH:mm:ss.SSSXXX}|%X{RequestId}|%msg|^\n%n"/>
 
 	<!-- All log -->
 	<if condition='property("enable-all-log").equalsIgnoreCase("true")'>
 		<then>
 			<appender name="ALL_ROLLING"
 				class="ch.qos.logback.core.rolling.RollingFileAppender">
-				<file>${log.home}/${ECOMP-component-name}/${ECOMP-subcomponent-name}/all.log</file>
+				<file>${log.home}/${ECOMP-component-name}/${ECOMP-subcomponent-name}/all.log
+				</file>
 
 				<rollingPolicy
 					class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
-					<fileNamePattern>${log.home}/${ECOMP-component-name}/${ECOMP-subcomponent-name}/all.log.%i</fileNamePattern>
+					<fileNamePattern>${log.home}/${ECOMP-component-name}/${ECOMP-subcomponent-name}/all.log.%i
+					</fileNamePattern>
 					<minIndex>1</minIndex>
 					<maxIndex>10</maxIndex>
 				</rollingPolicy>
@@ -37,7 +44,7 @@
 					<pattern>${default-log-pattern}</pattern>
 				</encoder>
 			</appender>
-			
+
 			<appender name="ASYNC_ALL" class="ch.qos.logback.classic.AsyncAppender">
 				<appender-ref ref="ALL_ROLLING" />
 			</appender>
@@ -85,7 +92,7 @@
 			<maxFileSize>20MB</maxFileSize>
 		</triggeringPolicy>
 		<encoder>
-			<pattern>${default-log-pattern}</pattern>
+			<pattern>${error-log-pattern}</pattern>
 		</encoder>
 	</appender>
 
@@ -95,9 +102,9 @@
 		<file>${log.home}/${ECOMP-component-name}/${ECOMP-subcomponent-name}/debug.log
 		</file>
 
-		<!-- No need to deny audit messages - they are INFO only, will be denied 
+		<!-- No need to deny audit messages - they are INFO only, will be denied
 			anyway -->
-		<!-- Transaction messages filter - deny Transaction messages, there are 
+		<!-- Transaction messages filter - deny Transaction messages, there are
 			some DEBUG level messages among them -->
 		<filter class="ch.qos.logback.core.filter.EvaluatorFilter">
 			<evaluator class="ch.qos.logback.classic.boolex.OnMarkerEvaluator">
@@ -131,7 +138,7 @@
 			<maxFileSize>20MB</maxFileSize>
 		</triggeringPolicy>
 		<encoder>
-			<pattern>${default-log-pattern}</pattern>
+			<pattern>${debug-log-pattern}</pattern>
 		</encoder>
 	</appender>
 
@@ -177,7 +184,7 @@
 			<maxFileSize>20MB</maxFileSize>
 		</triggeringPolicy>
 		<encoder>
-			<pattern>${asdc-debug-log-pattern}</pattern>
+			<pattern>${debug-log-pattern}</pattern>
 		</encoder>
 	</appender>
 
@@ -210,7 +217,7 @@
 			<maxFileSize>20MB</maxFileSize>
 		</triggeringPolicy>
 		<encoder>
-			<pattern>${auditLoggerPattern}</pattern>
+			<pattern>${audit-log-pattern}</pattern>
 		</encoder>
 	</appender>
 	
@@ -242,7 +249,7 @@
 			<maxFileSize>20MB</maxFileSize>
 		</triggeringPolicy>
 		<encoder>
-			<pattern>${default-log-pattern}</pattern>
+			<pattern>${metric-log-pattern}</pattern>
 		</encoder>
 	</appender>
 
@@ -324,5 +331,5 @@
 		</if>
 	</root>
 
-	<logger name="org.openecomp.sdc" level="INFO" />
+	<logger name="org.openecomp.sdc" level="DEBUG" />
 </configuration>

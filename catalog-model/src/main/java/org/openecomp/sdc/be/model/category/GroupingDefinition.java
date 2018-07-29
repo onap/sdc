@@ -24,12 +24,12 @@ import org.openecomp.sdc.be.datatypes.category.GroupingDataDefinition;
 
 public class GroupingDefinition extends GroupingDataDefinition {
 
-	public GroupingDefinition() {
-		super();
-	}
+    public GroupingDefinition() {
+        super();
+    }
 
-	public GroupingDefinition(GroupingDataDefinition g) {
-		super(g);
-	}
+    public GroupingDefinition(GroupingDataDefinition g) {
+        super(g);
+    }
 
 }

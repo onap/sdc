@@ -94,12 +94,12 @@ export class FileUploadDirective implements ng.IDirective {
         };
 
         scope.onFileChange = ():void => {
+            if (scope.myFileModel || scope.fileModel) {
+                scope.fileModel = scope.myFileModel;
+                scope.formElement[scope.elementName].value = scope.myFileModel;
+            }
             if (scope.onFileChangedInDirective) {
                 scope.onFileChangedInDirective();
-            }
-            if (scope.myFileModel) {
-                scope.fileModel = scope.myFileModel;
-                scope.formElement[scope.elementName].$setValidity('required', true);
             }
         };
 
@@ -136,9 +136,10 @@ export class FileUploadDirective implements ng.IDirective {
         };
 
         scope.cancel = ():void => {
-            scope.fileModel.filename = '';
+            scope.myFileModel = new FileUploadModel();
             scope.formElement[scope.elementName].$pristine;
             scope.formElement[scope.elementName].$setValidity('required', false);
+            scope.onFileChange();
         }
     };
 

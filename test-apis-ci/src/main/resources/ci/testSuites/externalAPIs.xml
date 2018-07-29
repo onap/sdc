@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
-<suite name="externalApis" configfailurepolicy="continue" verbose="2" parallel="methods" thread-count="1" data-provider-thread-count="10">
+<suite name="externalApis" configfailurepolicy="continue" verbose="2" parallel="methods" thread-count="1" data-provider-thread-count="8">
 	<test name="ExternalApis"> 
 		<classes>	
 			
@@ -13,7 +13,9 @@
 			<class name="org.openecomp.sdc.externalApis.GetSpecificAssetMetadataServlet"/>
 			<class name="org.openecomp.sdc.externalApis.SearchFilterCategoryExternalAPI"/>
 			<class name="org.openecomp.sdc.externalApis.AssetLifeCycle"/>
-			<class name="org.openecomp.sdc.externalApis.UserAPIs"/>  
+			<class name="org.openecomp.sdc.externalApis.UserAPIs"/>
+
+			<class name="org.openecomp.sdc.internalApis.annotations.AnnotationsTest"/>
 
 			
 <!-- 	      <class name="org.openecomp.sdc.ci.tests.execute.product.ChangeServiceInstanceVersionTest"/>

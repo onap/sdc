@@ -20,29 +20,23 @@
 
 package org.openecomp.sdc.ci.tests.US;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
-import org.openecomp.sdc.ci.tests.datatypes.ArtifactInfo;
-import org.openecomp.sdc.ci.tests.datatypes.CanvasElement;
-import org.openecomp.sdc.ci.tests.datatypes.CanvasManager;
+import org.openecomp.sdc.ci.tests.datatypes.*;
 import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum.LeftPanelCanvasItems;
-import org.openecomp.sdc.ci.tests.datatypes.ResourceReqDetails;
-import org.openecomp.sdc.ci.tests.datatypes.ServiceReqDetails;
 import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
 import org.openecomp.sdc.ci.tests.execute.setup.SetupCDTest;
 import org.openecomp.sdc.ci.tests.pages.InformationalArtifactPage;
 import org.openecomp.sdc.ci.tests.pages.ResourceGeneralPage;
-import org.openecomp.sdc.ci.tests.pages.TesterOperationPage;
 import org.openecomp.sdc.ci.tests.pages.UploadArtifactPopup;
 import org.openecomp.sdc.ci.tests.utilities.ArtifactUIUtils;
 import org.openecomp.sdc.ci.tests.utilities.FileHandling;
-import org.openecomp.sdc.ci.tests.utilities.GeneralUIUtils;
 import org.openecomp.sdc.ci.tests.utilities.ResourceUIUtils;
 import org.openecomp.sdc.ci.tests.utilities.ServiceUIUtils;
 import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
 import org.testng.annotations.Test;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class RemoveRestrictionOfDeploymentArtifacts extends SetupCDTest {
@@ -55,6 +49,7 @@ public class RemoveRestrictionOfDeploymentArtifacts extends SetupCDTest {
 	public void createServiceWithoutRIAndArtifacts() throws Exception {
 		ServiceReqDetails serviceMetadata = ElementFactory.getDefaultService();
 		ServiceUIUtils.createService(serviceMetadata, getUser());
+		//TODO Andrey should click on certify button
 		ResourceGeneralPage.clickSubmitForTestingButton(serviceMetadata.getName());
 	}
 	
@@ -71,7 +66,7 @@ public class RemoveRestrictionOfDeploymentArtifacts extends SetupCDTest {
 		canvasManager.createElementOnCanvas(LeftPanelCanvasItems.NETWORK);
 		canvasManager.createElementOnCanvas(LeftPanelCanvasItems.NETWORK);
 		canvasManager.createElementOnCanvas(LeftPanelCanvasItems.NETWORK);
-		
+
 		ResourceGeneralPage.clickSubmitForTestingButton(serviceMetadata.getName());
 	}
 	
@@ -92,19 +87,20 @@ public class RemoveRestrictionOfDeploymentArtifacts extends SetupCDTest {
 			InformationalArtifactPage.clickAddNewArtifact();
 			ArtifactUIUtils.fillAndAddNewArtifactParameters(informationalArtifact, new UploadArtifactPopup(true));
 		}
-		ResourceGeneralPage.clickSubmitForTestingButton(resourceMetaData.getName());
+		//TODO Andrey should click on certify button
+		ResourceGeneralPage.clickCertifyButton(resourceMetaData.getName());
 		
-		reloginWithNewRole(UserRoleEnum.TESTER);
+		/*reloginWithNewRole(UserRoleEnum.TESTER);
 		GeneralUIUtils.findComponentAndClick(resourceMetaData.getName());
 		TesterOperationPage.certifyComponent(resourceMetaData.getName());
-		reloginWithNewRole(UserRoleEnum.DESIGNER);
+		reloginWithNewRole(UserRoleEnum.DESIGNER);*/
 		
 		ServiceReqDetails serviceMetadata = ElementFactory.getDefaultService();
 		ServiceUIUtils.createService(serviceMetadata, getUser());
 		ResourceGeneralPage.getLeftMenu().moveToCompositionScreen();
 		CanvasManager canvasManager = CanvasManager.getCanvasManager();
 		CanvasElement resourceInstance = canvasManager.createElementOnCanvas(resourceMetaData.getName());
-		
+
 		ResourceGeneralPage.clickSubmitForTestingButton(serviceMetadata.getName());
 	}
 	

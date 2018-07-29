@@ -32,340 +32,339 @@ import org.openecomp.sdc.be.dao.neo4j.GraphEdgeLabels;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
+import java.util.*;
+import java.util.Map.Entry;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
 public class PrintGraph {
 
-	public void printGraphVertices(TitanGraph graph) {
+    public void printGraphVertices(TitanGraph graph) {
 
-		Iterable<TitanVertex> vertices = graph.query().vertices();
+        Iterable<TitanVertex> vertices = graph.query().vertices();
 
-		if (vertices != null) {
-			Iterator<TitanVertex> iterator = vertices.iterator();
-			while (iterator.hasNext()) {
-				Vertex vertex = iterator.next();
-			}
+        if (vertices != null) {
+            Iterator<TitanVertex> iterator = vertices.iterator();
+            while (iterator.hasNext()) {
+                Vertex vertex = iterator.next();
+            }
 
-		}
-		// graph.commit();
-		graph.tx().commit();
-	}
+        }
+        // graph.commit();
+        graph.tx().commit();
+    }
 
-	public void printGraphEdges(TitanGraph graph) {
-		Iterable<TitanEdge> vertices = graph.query().edges();
+    public void printGraphEdges(TitanGraph graph) {
+        Iterable<TitanEdge> vertices = graph.query().edges();
 
-		if (vertices != null) {
-			Iterator<TitanEdge> iterator = vertices.iterator();
-			while (iterator.hasNext()) {
-				Edge edge = iterator.next();
+        if (vertices != null) {
+            Iterator<TitanEdge> iterator = vertices.iterator();
+            while (iterator.hasNext()) {
+                Edge edge = iterator.next();
 
-			}
+            }
 
-		}
-		graph.tx().commit();
-	}
+        }
+        graph.tx().commit();
+    }
 
-	public String buildGraphForWebgraphWiz(TitanGraph graph) {
+    public String buildGraphForWebgraphWiz(TitanGraph graph) {
 
-		StringBuilder builder = new StringBuilder();
-		builder.append("digraph finite_state_machine {\n");
-		builder.append("rankdir=LR;\n");
-		builder.append("size=\"15,10\" \n");
-		Iterable<TitanVertex> vertices = graph.query().vertices();
+        StringBuilder builder = new StringBuilder();
+        builder.append("digraph finite_state_machine {\n");
+        builder.append("rankdir=LR;\n");
+        builder.append("size=\"15,10\" \n");
+        Iterable<TitanVertex> vertices = graph.query().vertices();
 
-		if (vertices != null) {
-			Iterator<TitanVertex> iterator = vertices.iterator();
-			while (iterator.hasNext()) {
-				Vertex vertex = iterator.next();
+        if (vertices != null) {
+            Iterator<TitanVertex> iterator = vertices.iterator();
+            while (iterator.hasNext()) {
+                Vertex vertex = iterator.next();
 
-				Map<String, Object> properties = getProperties(vertex);
+                Map<String, Object> properties = getProperties(vertex);
 
-				String nodeLabel = (String) properties.get(GraphPropertiesDictionary.LABEL.getProperty());
+                String nodeLabel = (String) properties.get(GraphPropertiesDictionary.LABEL.getProperty());
 
-				String color = getColorByNodeType(nodeLabel);
+                String color = getColorByNodeType(nodeLabel);
 
-				String uid = getNodeIdByLabel(nodeLabel, properties);
+                String uid = getNodeIdByLabel(nodeLabel, properties);
 
-				String nodeRecord = buildNodeRecord(uid, color, properties);
+                String nodeRecord = buildNodeRecord(uid, color, properties);
 
-				builder.append(nodeRecord);
+                builder.append(nodeRecord);
 
-			}
+            }
 
-		}
+        }
 
-		Iterable<TitanEdge> edges = graph.query().edges();
+        Iterable<TitanEdge> edges = graph.query().edges();
 
-		if (edges != null) {
-			Iterator<TitanEdge> iterator = edges.iterator();
-			while (iterator.hasNext()) {
-				Edge edge = iterator.next();
+        if (edges != null) {
+            Iterator<TitanEdge> iterator = edges.iterator();
+            while (iterator.hasNext()) {
+                Edge edge = iterator.next();
 
-				Vertex vertexFrom = edge.outVertex();
-				Vertex vertexTo = edge.inVertex();
-				String fromUid = getNodeIdByLabel(vertexFrom.value(GraphPropertiesDictionary.LABEL.getProperty()),
-						getProperties(vertexFrom));
-				String toUid = getNodeIdByLabel(vertexTo.value(GraphPropertiesDictionary.LABEL.getProperty()),
-						getProperties(vertexTo));
+                Vertex vertexFrom = edge.outVertex();
+                Vertex vertexTo = edge.inVertex();
+                String fromUid = getNodeIdByLabel(vertexFrom.value(GraphPropertiesDictionary.LABEL.getProperty()),
+                        getProperties(vertexFrom));
+                String toUid = getNodeIdByLabel(vertexTo.value(GraphPropertiesDictionary.LABEL.getProperty()),
+                        getProperties(vertexTo));
 
-				String edgeLabel = edge.label();
+                String edgeLabel = edge.label();
 
-				String edgeRecord = buildEdgeRecord(fromUid, toUid, edgeLabel, getProperties(edge));
+                String edgeRecord = buildEdgeRecord(fromUid, toUid, edgeLabel, getProperties(edge));
 
-				builder.append(edgeRecord);
-			}
+                builder.append(edgeRecord);
+            }
 
-		}
+        }
 
-		builder.append(" } ");
+        builder.append(" } ");
 
-		return builder.toString();
+        return builder.toString();
 
-	}
+    }
 
 
-	private String buildEdgeRecord(String fromUid, String toUid, String edgeLabel, Map<String, Object> properties) {
+    private String buildEdgeRecord(String fromUid, String toUid, String edgeLabel, Map<String, Object> properties) {
 
-		StringBuilder builder = new StringBuilder();
-		// LR_0 -> LR_2 [ label = "SS(B)" ];
+        StringBuilder builder = new StringBuilder();
+        // LR_0 -> LR_2 [ label = "SS(B)" ];
 
-		String generatedProps = generateStringFromProperties(properties);
+        String generatedProps = generateStringFromProperties(properties);
 
-		String color = getEdgeColorByLabel(edgeLabel);
+        String color = getEdgeColorByLabel(edgeLabel);
 
-		builder.append("\"" + fromUid + "\"" + " -> " + "\"" + toUid + "\"" + " [ color = " + color + " label = \""
-				+ edgeLabel + "(" + generatedProps + ")\"" + " ] " + "\n");
+        builder.append("\"" + fromUid + "\"" + " -> " + "\"" + toUid + "\"" + " [ color = " + color + " label = \""
+                + edgeLabel + "(" + generatedProps + ")\"" + " ] " + "\n");
 
-		return builder.toString();
-	}
-
-	private String getEdgeColorByLabel(String edgeLabel) {
-
-		GraphEdgeLabels edgeLabelEnum = GraphEdgeLabels.getByName(edgeLabel);
-
-		String color = "black";
-
-		switch (edgeLabelEnum) {
-		case PROPERTY:
-			color = "orange";
-			break;
-		case CAPABILITY:
-			break;
-		case DERIVED_FROM:
-			color = "red";
-		default:
-			break;
-		}
-
-		return color;
-	}
-
-	private String generateStringFromProperties(Map<String, Object> properties) {
-
-		StringBuilder builder = new StringBuilder();
-
-		if (properties != null) {
-			for (Entry<String, Object> entry : properties.entrySet()) {
-				String key = entry.getKey();
-				String value = entry.getValue().toString();
-				builder.append(key + "=" + value + "__");
-			}
-		}
-		return builder.toString();
-
-	}
-
-	private String buildNodeRecord(String uid, String color, Map<String, Object> properties) {
-
-		StringBuilder builder = new StringBuilder();
-
-		builder.append("\"" + uid + "\"" + " [ ");
-		builder.append("style = \"bold\" ");
-		builder.append(" color = \"" + color + "\"");
-		builder.append("shape = \"Mrecord\" ");
-
-		String label = "";
-		int maxKeyLength = 0;
-		for (Entry<String, Object> entry1 : properties.entrySet()) {
-			String key = entry1.getKey();
-			int keyLength = key.length();
-			if (keyLength > maxKeyLength) {
-				maxKeyLength = keyLength;
-			}
-		}
-
-		boolean first = true;
-		for (Entry<String, Object> entry : properties.entrySet()) {
-
-			String key = entry.getKey();
-			String value = entry.getValue().toString();
-
-			if (key.equals(GraphPropertiesDictionary.CONSTRAINTS.getProperty())) {
-				value = value.replaceAll("[^\\w\\s]", "_");
-			}
-
-			key = padKey(key, maxKeyLength);
-
-			if (first) {
-				first = false;
-			} else {
-				label += " | ";
-			}
-			label += " { " + key + " | " + value + " } ";
-		}
-
-		builder.append("label = \"" + label + "\" ");
-		builder.append(" ] ");
-		builder.append(" \n ");
-		return builder.toString();
-	}
-
-	private String getNodeIdByLabel(String nodeLabel, Map<String, Object> properties) {
-
-		NodeTypeEnum typeEnum = NodeTypeEnum.getByName(nodeLabel);
-
-		String uid = null;
-		switch (typeEnum) {
-
-		case User:
-			uid = (String) properties.get(GraphPropertiesDictionary.USERID.getProperty());
-			break;
-		case ServiceCategory:
-		case ResourceCategory:
-		case Tag:
-			uid = (String) properties.get(GraphPropertiesDictionary.NAME.getProperty());
-			break;
-
-		default:
-			uid = (String) properties.get(GraphPropertiesDictionary.UNIQUE_ID.getProperty());
-			break;
-		}
-
-		return uid;
-	}
-
-	private String getColorByNodeType(String nodeLabel) {
-
-		NodeTypeEnum typeEnum = NodeTypeEnum.getByName(nodeLabel);
-
-		String color = "red";
-		switch (typeEnum) {
-		case ServiceCategory:
-			color = "blue";
-			break;
-		case ResourceCategory:
-			color = "blue";
-			break;
-		case Resource:
-			color = "forestgreen";
-			break;
-		case User:
-			color = "green";
-			break;
-		case Capability:
-			color = "lightgreen";
-			break;
-		case CapabilityType:
-			color = "gray";
-			break;
-		case Property:
-			color = "cyan";
-			break;
-		case RelationshipType:
-			color = "darkorchid";
-			break;
-		case Requirement:
-			color = "gold";
-			break;
-		case RequirementImpl:
-			// color = "forestgreen";
-			color = "gold";
-			break;
-		case Service:
-			color = "cyan4";
-			break;
-		case Tag:
-			color = "dimgrey";
-			break;
-		default:
-			break;
-
-		}
-
-		return color;
-	}
-
-	private String padKey(String key, int maxKeyLength) {
-
-		int len = key.length();
-		for (int i = len; i < maxKeyLength; i++) {
-			key += " ";
-		}
-
-		return key;
-	}
-
-	public int getNumberOfVertices(TitanGraph graph) {
-		int counter = 0;
-		Iterable<TitanVertex> vertices = graph.query().vertices();
-
-		if (vertices != null) {
-			Iterator<TitanVertex> iterator = vertices.iterator();
-			while (iterator.hasNext()) {
-				Vertex vertex = iterator.next();
-				counter++;
-			}
-		}
-		return counter;
-	}
-
-	public Set<String> getVerticesSet(TitanGraph titanGraph) {
-
-		Set<String> set = new HashSet<String>();
-
-		Iterable<TitanVertex> vertices = titanGraph.query().vertices();
-
-		if (vertices != null) {
-			Iterator<TitanVertex> iterator = vertices.iterator();
-			while (iterator.hasNext()) {
-				Vertex vertex = iterator.next();
-
-				Map<String, Object> properties = getProperties(vertex);
-
-				String nodeLabel = (String) properties.get(GraphPropertiesDictionary.LABEL.getProperty());
-
-				String uid = getNodeIdByLabel(nodeLabel, properties);
-
-				set.add(uid);
-			}
-		}
-
-		return set;
-
-	}
-
-	public Map<String, Object> getProperties(Element element) {
-
-		Map<String, Object> result = null;
-
-		if (element.keys() != null && element.keys().size() > 0) {
-			Map<String, Property> propertyMap = ElementHelper.propertyMap(element,
-					element.keys().toArray(new String[element.keys().size()]));
-			result = new HashMap<String, Object>();
-
-			for (Entry<String, Property> entry : propertyMap.entrySet()) {
-				String key = entry.getKey();
-				Object value = entry.getValue().value();
-
-				result.put(key, value);
-			}
-		}
-		return result;
-	}
+        return builder.toString();
+    }
+
+    private String getEdgeColorByLabel(String edgeLabel) {
+
+        GraphEdgeLabels edgeLabelEnum = GraphEdgeLabels.getByName(edgeLabel);
+
+        String color = "black";
+
+        switch (edgeLabelEnum) {
+        case PROPERTY:
+            color = "orange";
+            break;
+        case CAPABILITY:
+            break;
+        case DERIVED_FROM:
+            color = "red";
+        default:
+            break;
+        }
+
+        return color;
+    }
+
+    private String generateStringFromProperties(Map<String, Object> properties) {
+
+        StringBuilder builder = new StringBuilder();
+
+        if (properties != null) {
+            for (Entry<String, Object> entry : properties.entrySet()) {
+                String key = entry.getKey();
+                String value = entry.getValue().toString();
+                builder.append(key + "=" + value + "__");
+            }
+        }
+        return builder.toString();
+
+    }
+
+    private String buildNodeRecord(String uid, String color, Map<String, Object> properties) {
+
+        StringBuilder builder = new StringBuilder();
+
+        builder.append("\"" + uid + "\"" + " [ ");
+        builder.append("style = \"bold\" ");
+        builder.append(" color = \"" + color + "\"");
+        builder.append("shape = \"Mrecord\" ");
+
+        String label = "";
+        int maxKeyLength = 0;
+        for (Entry<String, Object> entry1 : properties.entrySet()) {
+            String key = entry1.getKey();
+            int keyLength = key.length();
+            if (keyLength > maxKeyLength) {
+                maxKeyLength = keyLength;
+            }
+        }
+
+        boolean first = true;
+        for (Entry<String, Object> entry : properties.entrySet()) {
+
+            String key = entry.getKey();
+            String value = entry.getValue().toString();
+
+            if (key.equals(GraphPropertiesDictionary.CONSTRAINTS.getProperty())) {
+                value = value.replaceAll("[^\\w\\s]", "_");
+            }
+
+            key = padKey(key, maxKeyLength);
+
+            if (first) {
+                first = false;
+            } else {
+                label += " | ";
+            }
+            label += " { " + key + " | " + value + " } ";
+        }
+
+        builder.append("label = \"" + label + "\" ");
+        builder.append(" ] ");
+        builder.append(" \n ");
+        return builder.toString();
+    }
+
+    private String getNodeIdByLabel(String nodeLabel, Map<String, Object> properties) {
+
+        NodeTypeEnum typeEnum = NodeTypeEnum.getByName(nodeLabel);
+
+        String uid = null;
+        switch (typeEnum) {
+
+        case User:
+            uid = (String) properties.get(GraphPropertiesDictionary.USERID.getProperty());
+            break;
+        case ServiceCategory:
+        case ResourceCategory:
+        case Tag:
+            uid = (String) properties.get(GraphPropertiesDictionary.NAME.getProperty());
+            break;
+
+        default:
+            uid = (String) properties.get(GraphPropertiesDictionary.UNIQUE_ID.getProperty());
+            break;
+        }
+
+        return uid;
+    }
+
+    private String getColorByNodeType(String nodeLabel) {
+
+        NodeTypeEnum typeEnum = NodeTypeEnum.getByName(nodeLabel);
+
+        String color = "red";
+        switch (typeEnum) {
+        case ServiceCategory:
+            color = "blue";
+            break;
+        case ResourceCategory:
+            color = "blue";
+            break;
+        case Resource:
+            color = "forestgreen";
+            break;
+        case User:
+            color = "green";
+            break;
+        case Capability:
+            color = "lightgreen";
+            break;
+        case CapabilityType:
+            color = "gray";
+            break;
+        case Property:
+            color = "cyan";
+            break;
+        case RelationshipType:
+            color = "darkorchid";
+            break;
+        case Requirement:
+            color = "gold";
+            break;
+        case RequirementImpl:
+            // color = "forestgreen";
+            color = "gold";
+            break;
+        case Service:
+            color = "cyan4";
+            break;
+        case Tag:
+            color = "dimgrey";
+            break;
+        default:
+            break;
+
+        }
+
+        return color;
+    }
+
+    private String padKey(String key, int maxKeyLength) {
+
+        int len = key.length();
+        for (int i = len; i < maxKeyLength; i++) {
+            key += " ";
+        }
+
+        return key;
+    }
+
+    public int getNumberOfVertices(TitanGraph graph) {
+        int counter = 0;
+        Iterable<TitanVertex> vertices = graph.query().vertices();
+
+        if (vertices != null) {
+            Iterator<TitanVertex> iterator = vertices.iterator();
+            while (iterator.hasNext()) {
+                Vertex vertex = iterator.next();
+                counter++;
+            }
+        }
+        return counter;
+    }
+
+    public Set<String> getVerticesSet(TitanGraph titanGraph) {
+
+        Set<String> set = new HashSet<>();
+
+        Iterable<TitanVertex> vertices = titanGraph.query().vertices();
+
+        if (vertices != null) {
+            Iterator<TitanVertex> iterator = vertices.iterator();
+            while (iterator.hasNext()) {
+                Vertex vertex = iterator.next();
+
+                Map<String, Object> properties = getProperties(vertex);
+
+                String nodeLabel = (String) properties.get(GraphPropertiesDictionary.LABEL.getProperty());
+
+                String uid = getNodeIdByLabel(nodeLabel, properties);
+
+                set.add(uid);
+            }
+        }
+
+        return set;
+
+    }
+
+    public Map<String, Object> getProperties(Element element) {
+
+        Map<String, Object> result = null;
+
+        if (element.keys() != null && element.keys().size() > 0) {
+            Map<String, Property> propertyMap = ElementHelper.propertyMap(element,
+                    element.keys().toArray(new String[element.keys().size()]));
+            result = new HashMap<>();
+
+            for (Entry<String, Property> entry : propertyMap.entrySet()) {
+                String key = entry.getKey();
+                Object value = entry.getValue().value();
+
+                result.put(key, value);
+            }
+        }
+        return result;
+    }
 
 }

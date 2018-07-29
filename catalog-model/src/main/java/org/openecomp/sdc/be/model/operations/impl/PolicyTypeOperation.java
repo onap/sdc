@@ -20,15 +20,8 @@
 
 package org.openecomp.sdc.be.model.operations.impl;
 
-import static org.openecomp.sdc.be.dao.titan.TitanUtils.buildNotInPredicate;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-
+import com.thinkaurelius.titan.graphdb.query.TitanPredicate;
+import fj.data.Either;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphRelation;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
@@ -42,19 +35,19 @@ import org.openecomp.sdc.be.model.operations.api.IPolicyTypeOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.resources.data.PolicyTypeData;
 import org.openecomp.sdc.be.resources.data.PropertyData;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.thinkaurelius.titan.graphdb.query.TitanPredicate;
+import java.util.*;
+import java.util.stream.Collectors;
 
-import fj.data.Either;
+import static org.openecomp.sdc.be.dao.titan.TitanUtils.buildNotInPredicate;
 
 @Component("policy-type-operation")
 public class PolicyTypeOperation extends AbstractOperation implements IPolicyTypeOperation {
 
-    private static final Logger log = LoggerFactory.getLogger(PolicyTypeOperation.class.getName());
+    private static final Logger log = Logger.getLogger(PolicyTypeOperation.class.getName());
     private static final String CREATE_FLOW_CONTEXT = "CreatePolicyType";
     private static final String GET_FLOW_CONTEXT = "GetPolicyType";
 
@@ -62,6 +55,8 @@ public class PolicyTypeOperation extends AbstractOperation implements IPolicyTyp
     private PropertyOperation propertyOperation;
     @Autowired
     private DerivedFromOperation derivedFromOperation;
+    @Autowired
+    private OperationUtils operationUtils;
 
     @Override
     public Either<PolicyTypeDefinition, StorageOperationStatus> getLatestPolicyTypeByType(String type) {
@@ -94,18 +89,17 @@ public class PolicyTypeOperation extends AbstractOperation implements IPolicyTyp
     @Override
     public Either<PolicyTypeDefinition, StorageOperationStatus> updatePolicyType(PolicyTypeDefinition updatedPolicyType, PolicyTypeDefinition currPolicyType) {
         log.debug("updating policy type {}", updatedPolicyType.getType());
-        updatePolicyTypeData(updatedPolicyType, currPolicyType);
         return updatePolicyTypeOnGraph(updatedPolicyType, currPolicyType);
     }
 
     @Override
-    public Either<List<PolicyTypeDefinition>, StorageOperationStatus> getAllPolicyTypes(Set<String> excludedPolicyTypes) {
+    public List<PolicyTypeDefinition> getAllPolicyTypes(Set<String> excludedPolicyTypes) {
         Map<String, Map.Entry<TitanPredicate, Object>> predicateCriteria = buildNotInPredicate(GraphPropertiesDictionary.TYPE.getProperty(), excludedPolicyTypes);
         return titanGenericDao.getByCriteriaWithPredicate(NodeTypeEnum.PolicyType, predicateCriteria, PolicyTypeData.class)
                 .left()
                 .map(this::convertPolicyTypesToDefinition)
-                .right()
-                .map(DaoStatusConverter::convertTitanStatusToStorageStatus);
+                .left()
+                .on(operationUtils::onTitanOperationFailure);
     }
 
     private List<PolicyTypeDefinition> convertPolicyTypesToDefinition(List<PolicyTypeData> policiesTypes) {
@@ -116,7 +110,7 @@ public class PolicyTypeOperation extends AbstractOperation implements IPolicyTyp
     private Either<PolicyTypeData, StorageOperationStatus> addPolicyTypeToGraph(PolicyTypeDefinition policyTypeDef) {
         log.debug("Got policy type {}", policyTypeDef);
 
-        String ptUniqueId = UniqueIdBuilder.buildPolicyTypeUid(policyTypeDef.getType(), policyTypeDef.getVersion());
+        String ptUniqueId = UniqueIdBuilder.buildPolicyTypeUid(policyTypeDef.getType(), policyTypeDef.getVersion(), "policytype");
         PolicyTypeData policyTypeData = buildPolicyTypeData(policyTypeDef, ptUniqueId);
         log.debug("Before adding policy type to graph. policyTypeData = {}", policyTypeData);
         Either<PolicyTypeData, TitanOperationStatus> eitherPolicyTypeData = titanGenericDao.createNode(policyTypeData, PolicyTypeData.class);

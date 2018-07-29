@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,7 +20,38 @@
 
 package org.openecomp.sdc.ci.tests.utils.general;
 
-import static org.testng.AssertJUnit.assertTrue;
+import com.aventstack.extentreports.Status;
+import com.google.gson.Gson;
+import fj.data.Either;
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang3.tuple.Pair;
+import org.json.JSONException;
+import org.onap.sdc.tosca.parser.api.ISdcCsarHelper;
+import org.onap.sdc.tosca.parser.impl.SdcToscaParserFactory;
+import org.openecomp.sdc.be.datatypes.elements.ConsumerDataDefinition;
+import org.openecomp.sdc.be.datatypes.enums.AssetTypeEnum;
+import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
+import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
+import org.openecomp.sdc.be.model.*;
+import org.openecomp.sdc.ci.tests.api.ComponentBaseTest;
+import org.openecomp.sdc.ci.tests.api.ExtentTestActions;
+import org.openecomp.sdc.ci.tests.api.Urls;
+import org.openecomp.sdc.ci.tests.config.Config;
+import org.openecomp.sdc.ci.tests.datatypes.*;
+import org.openecomp.sdc.ci.tests.datatypes.enums.*;
+import org.openecomp.sdc.ci.tests.datatypes.http.HttpHeaderEnum;
+import org.openecomp.sdc.ci.tests.datatypes.http.HttpRequest;
+import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
+import org.openecomp.sdc.ci.tests.execute.lifecycle.LCSbaseTest;
+import org.openecomp.sdc.ci.tests.tosca.datatypes.ToscaDefinition;
+import org.openecomp.sdc.ci.tests.utils.CsarToscaTester;
+import org.openecomp.sdc.ci.tests.utils.DistributionUtils;
+import org.openecomp.sdc.ci.tests.utils.ToscaParserUtils;
+import org.openecomp.sdc.ci.tests.utils.Utils;
+import org.openecomp.sdc.ci.tests.utils.rest.*;
+import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
+import org.openecomp.sdc.common.util.GeneralUtility;
+import org.testng.SkipException;
 
 import java.io.File;
 import java.io.IOException;
@@ -34,78 +65,13 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.lang3.tuple.Pair;
-import org.json.JSONException;
-import org.openecomp.sdc.be.datatypes.elements.ConsumerDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
-import org.openecomp.sdc.be.datatypes.enums.AssetTypeEnum;
-import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
-import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
-import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
-import org.openecomp.sdc.be.model.ArtifactDefinition;
-import org.openecomp.sdc.be.model.Component;
-import org.openecomp.sdc.be.model.ComponentInstance;
-import org.openecomp.sdc.be.model.ComponentInstanceProperty;
-import org.openecomp.sdc.be.model.DistributionStatusEnum;
-import org.openecomp.sdc.be.model.GroupDefinition;
-import org.openecomp.sdc.be.model.Product;
-import org.openecomp.sdc.be.model.Resource;
-import org.openecomp.sdc.be.model.Service;
-import org.openecomp.sdc.be.model.User;
-import org.openecomp.sdc.be.model.GroupDefinition;
-import org.openecomp.sdc.ci.tests.api.ComponentBaseTest;
-import org.openecomp.sdc.ci.tests.api.ExtentTestActions;
-import org.openecomp.sdc.ci.tests.api.Urls;
-import org.openecomp.sdc.ci.tests.config.Config;
-import org.openecomp.sdc.ci.tests.datatypes.ArtifactReqDetails;
-import org.openecomp.sdc.ci.tests.datatypes.ComponentInstanceReqDetails;
-import org.openecomp.sdc.ci.tests.datatypes.DistributionMonitorObject;
-import org.openecomp.sdc.ci.tests.datatypes.ImportReqDetails;
-import org.openecomp.sdc.ci.tests.datatypes.ProductReqDetails;
-import org.openecomp.sdc.ci.tests.datatypes.PropertyReqDetails;
-import org.openecomp.sdc.ci.tests.datatypes.ResourceReqDetails;
-import org.openecomp.sdc.ci.tests.datatypes.ServiceDistributionStatus;
-import org.openecomp.sdc.ci.tests.datatypes.ServiceReqDetails;
-import org.openecomp.sdc.ci.tests.datatypes.enums.ArtifactTypeEnum;
-import org.openecomp.sdc.ci.tests.datatypes.enums.LifeCycleStatesEnum;
-import org.openecomp.sdc.ci.tests.datatypes.enums.NormativeTypesEnum;
-import org.openecomp.sdc.ci.tests.datatypes.enums.PropertyTypeEnum;
-import org.openecomp.sdc.ci.tests.datatypes.enums.ResourceCategoryEnum;
-import org.openecomp.sdc.ci.tests.datatypes.enums.ServiceCategoriesEnum;
-import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
-import org.openecomp.sdc.ci.tests.datatypes.http.HttpHeaderEnum;
-import org.openecomp.sdc.ci.tests.datatypes.http.HttpRequest;
-import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
-import org.openecomp.sdc.ci.tests.utils.CsarToscaTester;
-import org.openecomp.sdc.ci.tests.utils.DistributionUtils;
-import org.openecomp.sdc.ci.tests.utils.Utils;
-import org.openecomp.sdc.ci.tests.utils.Utils;
-import org.openecomp.sdc.ci.tests.utils.rest.ArtifactRestUtils;
-import org.openecomp.sdc.ci.tests.utils.rest.AssetRestUtils;
-import org.openecomp.sdc.ci.tests.utils.rest.BaseRestUtils;
-import org.openecomp.sdc.ci.tests.utils.rest.ComponentInstanceRestUtils;
-import org.openecomp.sdc.ci.tests.utils.rest.ConsumerRestUtils;
-import org.openecomp.sdc.ci.tests.utils.rest.LifecycleRestUtils;
-import org.openecomp.sdc.ci.tests.utils.rest.ProductRestUtils;
-import org.openecomp.sdc.ci.tests.utils.rest.PropertyRestUtils;
-import org.openecomp.sdc.ci.tests.utils.rest.ResourceRestUtils;
-import org.openecomp.sdc.ci.tests.utils.rest.ResponseParser;
-import org.openecomp.sdc.ci.tests.utils.rest.ServiceRestUtils;
-import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
-import org.onap.sdc.tosca.parser.api.ISdcCsarHelper;
-import org.onap.sdc.tosca.parser.impl.SdcToscaParserFactory;
-import org.testng.SkipException;
-
-import com.aventstack.extentreports.Status;
-import com.google.gson.Gson;
-
-import fj.data.Either;
+import static org.testng.AssertJUnit.assertEquals;
+import static org.testng.AssertJUnit.assertTrue;
 
 public final class AtomicOperationUtils {
 
 	static final String basicAuthentication = "Basic Y2k6MTIzNDU2";
-	
+
 	private AtomicOperationUtils() {
 		throw new UnsupportedOperationException();
 	}
@@ -113,7 +79,7 @@ public final class AtomicOperationUtils {
 	// *********** RESOURCE ****************
 	/**
 	 * Import a vfc From tosca file
-	 * 
+	 *
 	 * @param filePath
 	 * @param fileName
 	 * @return
@@ -190,7 +156,7 @@ public final class AtomicOperationUtils {
 			throw new AtomicOperationException(e);
 		}
 	}
-	
+
 	public static Either<Resource, RestResponse> createResourcesByTypeNormTypeAndCatregory(ResourceTypeEnum resourceType, NormativeTypesEnum normativeTypes, ResourceCategoryEnum resourceCategory, UserRoleEnum userRole, Boolean validateState)
 			throws Exception {
 		User defaultUser = ElementFactory.getDefaultUser(userRole);
@@ -247,7 +213,7 @@ public final class AtomicOperationUtils {
 			throw new AtomicOperationException(e);
 		}
 	}
-	
+
 	// *********** SERVICE ****************
 
 	public static Either<Service, RestResponse> createDefaultService(UserRoleEnum userRole, Boolean validateState) throws Exception {
@@ -346,56 +312,61 @@ public final class AtomicOperationUtils {
 
 		Boolean isValidationFailed = false;
 		RestResponse lifeCycleStatesResponse = null;
-		User defaultUser = ElementFactory.getDefaultUser(userRole);
+		User defaultUser;
 
-		LifeCycleStatesEnum curentCompState = LifeCycleStatesEnum.findByCompState(component.getLifecycleState().toString());
+		LifeCycleStatesEnum currentCompState = LifeCycleStatesEnum.findByCompState(component.getLifecycleState().toString());
 
-		if (curentCompState == targetState) {
+		if (currentCompState == targetState) {
 			component = getComponentObject(component, userRole);
 			return Pair.of(component, null);
 		}
-
+		String componentType = component.getComponentType().getValue();
 		ArrayList<String> lifeCycleStatesEnumList = new ArrayList<>();
-		if (curentCompState.equals(LifeCycleStatesEnum.CHECKIN) && targetState.equals(LifeCycleStatesEnum.CHECKOUT)) {
+		if (currentCompState.equals(LifeCycleStatesEnum.CHECKIN) && targetState.equals(LifeCycleStatesEnum.CHECKOUT)) {
 			lifeCycleStatesEnumList.add(LifeCycleStatesEnum.CHECKIN.toString());
 			lifeCycleStatesEnumList.add(LifeCycleStatesEnum.CHECKOUT.toString());
+//            TODO Andrey added component type condition
 		} else {
-			lifeCycleStatesEnumList.add(LifeCycleStatesEnum.CHECKOUT.toString());
-			lifeCycleStatesEnumList.add(LifeCycleStatesEnum.CHECKIN.toString());
-			lifeCycleStatesEnumList.add(LifeCycleStatesEnum.CERTIFICATIONREQUEST.toString());
-			lifeCycleStatesEnumList.add(LifeCycleStatesEnum.STARTCERTIFICATION.toString());
-			lifeCycleStatesEnumList.add(LifeCycleStatesEnum.CERTIFY.toString());
+			if (componentType.equals("Resource")) {
+				lifeCycleStatesEnumList.add(LifeCycleStatesEnum.CHECKOUT.toString());
+				lifeCycleStatesEnumList.add(LifeCycleStatesEnum.CHECKIN.toString());
+				lifeCycleStatesEnumList.add(LifeCycleStatesEnum.CERTIFY.toString());
+			} else {
+				lifeCycleStatesEnumList.add(LifeCycleStatesEnum.CHECKOUT.toString());
+				lifeCycleStatesEnumList.add(LifeCycleStatesEnum.CHECKIN.toString());
+				lifeCycleStatesEnumList.add(LifeCycleStatesEnum.CERTIFICATIONREQUEST.toString());
+				lifeCycleStatesEnumList.add(LifeCycleStatesEnum.STARTCERTIFICATION.toString());
+				lifeCycleStatesEnumList.add(LifeCycleStatesEnum.CERTIFY.toString());
+			}
 		}
 		for (int i = 0; i < lifeCycleStatesEnumList.size(); i++) {
-			if (lifeCycleStatesEnumList.get(i).equals(curentCompState.name())) {
+			if (lifeCycleStatesEnumList.get(i).equals(currentCompState.name())) {
 				int a;
 				a = (i == lifeCycleStatesEnumList.size() - 1) ? 0 : i + 1;
-
 				for (int n = a; n < lifeCycleStatesEnumList.size(); n++) {
-					if (lifeCycleStatesEnumList.get(n).equals(LifeCycleStatesEnum.STARTCERTIFICATION.name()) || lifeCycleStatesEnumList.get(n).equals(LifeCycleStatesEnum.CERTIFY.name())) {
+					if ((lifeCycleStatesEnumList.get(n).equals(LifeCycleStatesEnum.STARTCERTIFICATION.name()) || lifeCycleStatesEnumList.get(n).equals(LifeCycleStatesEnum.CERTIFY.name())) && !componentType.equals("Resource")) {
 						defaultUser = ElementFactory.getDefaultUser(UserRoleEnum.TESTER);
-					} else
+					} else {
 						defaultUser = ElementFactory.getDefaultUser(userRole);
-
+					}
 					lifeCycleStatesResponse = LifecycleRestUtils.changeComponentState(component, defaultUser, LifeCycleStatesEnum.findByState(lifeCycleStatesEnumList.get(n)));
 					if (lifeCycleStatesResponse.getErrorCode() != LifecycleRestUtils.STATUS_CODE_SUCCESS)
 						isValidationFailed = true;
-					if (lifeCycleStatesEnumList.get(n).equals(targetState.toString()) || isValidationFailed == true) {
+					if (lifeCycleStatesEnumList.get(n).equals(targetState.toString()) || isValidationFailed) {
 						break;
 					}
 				}
 			}
-
 		}
 		Component componentJavaObject = getComponentObject(component, userRole);
 
-		if (validateState == true && isValidationFailed == true) {
-			assertTrue("change state failed" + lifeCycleStatesResponse.getResponse(), false);
+		if (validateState && isValidationFailed) {
+			assertTrue("change state to [" + targetState.getState() + "] failed" + lifeCycleStatesResponse.getResponse(), false);
 
 			return Pair.of(componentJavaObject, lifeCycleStatesResponse);
 		}
 
-		if (isValidationFailed == true) {
+		if (isValidationFailed) {
 			return Pair.of(componentJavaObject, lifeCycleStatesResponse);
 		}
 
@@ -425,7 +396,7 @@ public final class AtomicOperationUtils {
 
 		return distributionService;
 	}
-	
+
 	public static void toscaValidation(Component component, String vnfFile) throws Exception {
 
 		ISdcCsarHelper fdntCsarHelper;
@@ -444,7 +415,7 @@ public final class AtomicOperationUtils {
 
 		User defaultUser = ElementFactory.getDefaultUser(userRole);
 		ArtifactReqDetails artifactDetails = ElementFactory.getArtifactByType(null, artifactType, deploymentTrue);
-		if (deploymentTrue == false)
+		if (!deploymentTrue)
 			artifactDetails.setArtifactGroupType(ArtifactGroupTypeEnum.INFORMATIONAL.getType());
 		RestResponse uploadArtifactResp = ArtifactRestUtils.uploadArtifact(artifactDetails, component, defaultUser);
 
@@ -462,7 +433,7 @@ public final class AtomicOperationUtils {
 	// *********** CONTAINERS *****************
 	/**
 	 * Adds Component instance to Component
-	 * 
+	 *
 	 * @param compInstParent
 	 * @param compContainer
 	 * @return
@@ -483,7 +454,7 @@ public final class AtomicOperationUtils {
 					throw new SkipException("Open bug DE262001");
 				}
 				else{
-				assertTrue("error - " + createComponentInstance.getErrorCode() + "instead - " + ServiceRestUtils.STATUS_CODE_CREATED, createComponentInstance.getErrorCode() == ServiceRestUtils.STATUS_CODE_CREATED);
+					assertTrue("error - " + createComponentInstance.getErrorCode() + "instead - " + ServiceRestUtils.STATUS_CODE_CREATED, createComponentInstance.getErrorCode() == ServiceRestUtils.STATUS_CODE_CREATED);
 				}
 			}
 
@@ -528,86 +499,79 @@ public final class AtomicOperationUtils {
 	public static Resource getResourceObject(Component containerDetails, UserRoleEnum userRole) throws Exception {
 		// User defaultUser = ElementFactory.getDefaultUser(userRole);
 		RestResponse restResponse = ResourceRestUtils.getResource(containerDetails.getUniqueId());
-		Resource container = ResponseParser.convertResourceResponseToJavaObject(restResponse.getResponse());
-		return container;
+		return ResponseParser.convertResourceResponseToJavaObject(restResponse.getResponse());
 	}
-	
+
 	public static Resource getResourceObject(String uniqueId) throws Exception {
 		RestResponse restResponse = ResourceRestUtils.getResource(uniqueId);
-		Resource resource = ResponseParser.convertResourceResponseToJavaObject(restResponse.getResponse());
-		return resource;
+		return ResponseParser.convertResourceResponseToJavaObject(restResponse.getResponse());
 	}
-	
+
 	public static Resource getResourceObjectByNameAndVersion(UserRoleEnum sdncModifierDetails, String resourceName, String resourceVersion) throws Exception {
 		User defaultUser = ElementFactory.getDefaultUser(sdncModifierDetails);
 		RestResponse resourceResponse = ResourceRestUtils.getResourceByNameAndVersion(defaultUser.getUserId(), resourceName, resourceVersion);
-		Resource container = ResponseParser.convertResourceResponseToJavaObject(resourceResponse.getResponse());
-		return container;
+		return ResponseParser.convertResourceResponseToJavaObject(resourceResponse.getResponse());
 	}
 
 	public static Service getServiceObject(Component containerDetails, UserRoleEnum userRole) throws Exception {
 		User defaultUser = ElementFactory.getDefaultUser(userRole);
 		RestResponse serviceResponse = ServiceRestUtils.getService(containerDetails.getUniqueId(), defaultUser);
-		Service container = ResponseParser.convertServiceResponseToJavaObject(serviceResponse.getResponse());
-		return container;
+		return ResponseParser.convertServiceResponseToJavaObject(serviceResponse.getResponse());
 	}
-	
+
 	public static Service getServiceObjectByNameAndVersion(UserRoleEnum sdncModifierDetails, String serviceName, String serviceVersion) throws Exception {
 		User defaultUser = ElementFactory.getDefaultUser(sdncModifierDetails);
 		RestResponse serviceResponse = ServiceRestUtils.getServiceByNameAndVersion(defaultUser, serviceName, serviceVersion);
-		Service container = ResponseParser.convertServiceResponseToJavaObject(serviceResponse.getResponse());
-		return container;
+		return ResponseParser.convertServiceResponseToJavaObject(serviceResponse.getResponse());
 	}
-	
+
 	public static Service getServiceObject(String uniqueId) throws Exception {
 		RestResponse serviceResponse = ServiceRestUtils.getService(uniqueId);
-		Service container = ResponseParser.convertServiceResponseToJavaObject(serviceResponse.getResponse());
-		return container;
+		return ResponseParser.convertServiceResponseToJavaObject(serviceResponse.getResponse());
 	}
 
 	public static Product getProductObject(Component containerDetails, UserRoleEnum userRole) throws Exception {
 		User defaultUser = ElementFactory.getDefaultUser(userRole);
 		RestResponse productRest = ProductRestUtils.getProduct(containerDetails.getUniqueId(), defaultUser.getUserId());
-		Product container = ResponseParser.convertProductResponseToJavaObject(productRest.getResponse());
-		return container;
+		return ResponseParser.convertProductResponseToJavaObject(productRest.getResponse());
 	}
 
 	public static Component getComponentObject(Component containerDetails, UserRoleEnum userRole) throws Exception {
 		User defaultUser = ElementFactory.getDefaultUser(userRole);
 
 		switch (containerDetails.getComponentType()) {
-		case RESOURCE:
-			RestResponse restResponse = ResourceRestUtils.getResource(containerDetails.getUniqueId());
-			containerDetails = ResponseParser.convertResourceResponseToJavaObject(restResponse.getResponse());
-			break;
-		case SERVICE:
-			RestResponse serviceResponse = ServiceRestUtils.getService(containerDetails.getUniqueId(), defaultUser);
-			containerDetails = ResponseParser.convertServiceResponseToJavaObject(serviceResponse.getResponse());
-			break;
-		case PRODUCT:
-			RestResponse productRest = ProductRestUtils.getProduct(containerDetails.getUniqueId(), defaultUser.getUserId());
-			containerDetails = ResponseParser.convertProductResponseToJavaObject(productRest.getResponse());
-			break;
-		default:
-			break;
+			case RESOURCE:
+				RestResponse restResponse = ResourceRestUtils.getResource(containerDetails.getUniqueId());
+				containerDetails = ResponseParser.convertResourceResponseToJavaObject(restResponse.getResponse());
+				break;
+			case SERVICE:
+				RestResponse serviceResponse = ServiceRestUtils.getService(containerDetails.getUniqueId(), defaultUser);
+				containerDetails = ResponseParser.convertServiceResponseToJavaObject(serviceResponse.getResponse());
+				break;
+			case PRODUCT:
+				RestResponse productRest = ProductRestUtils.getProduct(containerDetails.getUniqueId(), defaultUser.getUserId());
+				containerDetails = ResponseParser.convertProductResponseToJavaObject(productRest.getResponse());
+				break;
+			default:
+				break;
 		}
 		return containerDetails;
 	}
 
-	public static Component convertReposnseToComponentObject(Component containerDetails, RestResponse restresponse) throws Exception {
+	public static Component convertReposnseToComponentObject(Component containerDetails, RestResponse restresponse) {
 
 		switch (containerDetails.getComponentType()) {
-		case RESOURCE:
-			containerDetails = ResponseParser.convertResourceResponseToJavaObject(restresponse.getResponse());
-			break;
-		case SERVICE:
-			containerDetails = ResponseParser.convertServiceResponseToJavaObject(restresponse.getResponse());
-			break;
-		case PRODUCT:
-			containerDetails = ResponseParser.convertProductResponseToJavaObject(restresponse.getResponse());
-			break;
-		default:
-			break;
+			case RESOURCE:
+				containerDetails = ResponseParser.convertResourceResponseToJavaObject(restresponse.getResponse());
+				break;
+			case SERVICE:
+				containerDetails = ResponseParser.convertServiceResponseToJavaObject(restresponse.getResponse());
+				break;
+			case PRODUCT:
+				containerDetails = ResponseParser.convertProductResponseToJavaObject(restresponse.getResponse());
+				break;
+			default:
+				break;
 		}
 		return containerDetails;
 	}
@@ -624,17 +588,17 @@ public final class AtomicOperationUtils {
 		if (associate2ResourceInstancesResponse.getErrorCode() == ResourceRestUtils.STATUS_CODE_SUCCESS) {
 
 			switch (containerDetails.getComponentType()) {
-			case RESOURCE:
-				containerDetails = ResponseParser.convertResourceResponseToJavaObject(associate2ResourceInstancesResponse.getResponse());
-				break;
-			case SERVICE:
-				containerDetails = ResponseParser.convertServiceResponseToJavaObject(associate2ResourceInstancesResponse.getResponse());
-				break;
-			case PRODUCT:
-				containerDetails = ResponseParser.convertProductResponseToJavaObject(associate2ResourceInstancesResponse.getResponse());
-				break;
-			default:
-				break;
+				case RESOURCE:
+					containerDetails = ResponseParser.convertResourceResponseToJavaObject(associate2ResourceInstancesResponse.getResponse());
+					break;
+				case SERVICE:
+					containerDetails = ResponseParser.convertServiceResponseToJavaObject(associate2ResourceInstancesResponse.getResponse());
+					break;
+				case PRODUCT:
+					containerDetails = ResponseParser.convertProductResponseToJavaObject(associate2ResourceInstancesResponse.getResponse());
+					break;
+				default:
+					break;
 			}
 
 			return Either.left(containerDetails);
@@ -736,10 +700,13 @@ public final class AtomicOperationUtils {
 		return Either.right(addPropertyResponse);
 	}
 
-	public static Either<GroupDefinition, RestResponse> updateGroupPropertyOnResource(List<PropertyDataDefinition> propertyObject, Resource resource, String groupId, User user, Boolean validateState) throws Exception {
+	public static Either<GroupDefinition, RestResponse> updateGroupPropertyOnResource(String maxVFModuleInstacesValue, Resource resource, String groupId, User user, Boolean validateState) throws Exception {
 
-		Gson gson = new Gson();
-		RestResponse updateGroupPropertyResponse = PropertyRestUtils.updateGroupProperty(resource, groupId, gson.toJson(propertyObject), user);
+//		Gson gson = new Gson();
+        // Json group property object
+        String propertyObjectJson = "[{\"defaultValue\":null,\"description\":\"The maximum instances of this VF-Module\",\"name\":\"max_vf_module_instances\",\"parentUniqueId\":\"org.openecomp.groups.VfModule.1.0.grouptype.max_vf_module_instances\",\"password\":false,\"required\":false,\"schema\":{\"property\":{}},\"type\":\"integer\",\"uniqueId\":\"org.openecomp.groups.VfModule.1.0.grouptype.max_vf_module_instances.property.3\",\"value\":\"" + maxVFModuleInstacesValue + "\",\"definition\":false,\"getInputValues\":null,\"constraints\":null,\"valueUniqueUid\":null,\"ownerId\":\"org.openecomp.groups.VfModule.1.0.grouptype.max_vf_module_instances\"}]";
+//        GroupProperty property = gson.fromJson(propertyObjectJson, GroupProperty.class);
+		RestResponse updateGroupPropertyResponse = PropertyRestUtils.updateGroupProperty(resource, groupId, propertyObjectJson, user);
 
 		if (validateState) {
 			assertTrue("update group property to resource failed: " + updateGroupPropertyResponse.getResponseMessage(), updateGroupPropertyResponse.getErrorCode() == BaseRestUtils.STATUS_CODE_SUCCESS);
@@ -770,7 +737,7 @@ public final class AtomicOperationUtils {
 
 	/**
 	 * Builds Resource From rest response
-	 * 
+	 *
 	 * @param resourceResp
 	 * @return
 	 */
@@ -792,10 +759,10 @@ public final class AtomicOperationUtils {
 
 		private static final long serialVersionUID = 1L;
 	}
-	
+
 	/**
 	 * Import resource from CSAR
-	 * 
+	 *
 	 * @param resourceType
 	 * @param userRole
 	 * @param fileName
@@ -803,32 +770,94 @@ public final class AtomicOperationUtils {
 	 * @return Resource
 	 * @throws Exception
 	 */
-	public static Resource importResourceFromCSAR(ResourceTypeEnum resourceType, UserRoleEnum userRole, String fileName, String... filePath) throws Exception {
+	public static Resource importResourceFromCsar(ResourceTypeEnum resourceType, UserRoleEnum userRole, String fileName, String... filePath) throws Exception {
 		// Get the CSARs path
 		String realFilePath = System.getProperty("user.dir") + File.separator + "src" + File.separator + "test" + File.separator + "resources" + File.separator + "CI" + File.separator + "csars" ;
 		if (filePath != null && filePath.length > 0) {
-			realFilePath = filePath.toString();
+			StringBuffer result = new StringBuffer();
+			for(String currStr: filePath){
+				result.append(currStr);
+			}
+//			realFilePath = Arrays.toString(filePath);
+			realFilePath = result.toString();
 		}
-		
+
 		// Create default import resource & user
-		ImportReqDetails resourceDetails = ElementFactory.getDefaultImportResource();
+		return importResourceFromCsarFile(resourceType, userRole, fileName, realFilePath);
+	}
+
+	public static Resource importResourceFromCsarFile(ResourceTypeEnum resourceType, UserRoleEnum userRole, String csarFileName, String csarFilePath) throws Exception{
+		RestResponse createResource = getCreateResourceRestResponse(resourceType, userRole, csarFileName, csarFilePath);
+		BaseRestUtils.checkCreateResponse(createResource);
+		return ResponseParser.parseToObjectUsingMapper(createResource.getResponse(), Resource.class);
+	}
+
+	public static Resource importCertifiedResourceFromCsar(ResourceTypeEnum resourceType, UserRoleEnum userRole,	String csarFileName, String csarFilePath) throws Exception{
+		RestResponse createResource = getCreateCertifiedResourceRestResponse(resourceType, userRole, csarFileName, csarFilePath);
+		BaseRestUtils.checkSuccess(createResource);
+		return ResponseParser.parseToObjectUsingMapper(createResource.getResponse(), Resource.class);
+	}
+	public static RestResponse getCreateResourceRestResponse(ResourceTypeEnum resourceType, UserRoleEnum userRole,
+															 String csarFileName, String csarFilePath) throws IOException, Exception {
+
+		ImportReqDetails resourceDetails = buildImportReqDetails(resourceType, csarFileName, csarFilePath);
 		User sdncModifierDetails = ElementFactory.getDefaultUser(userRole);
-		
-		byte[] data = null;
-		Path path = Paths.get(realFilePath + File.separator + fileName);
-		data = Files.readAllBytes(path);
-		String payloadName = fileName;
+		RestResponse createResource = ResourceRestUtils.createResource(resourceDetails, sdncModifierDetails);
+		return createResource;
+	}
+
+	public static RestResponse getCreateCertifiedResourceRestResponse(ResourceTypeEnum resourceType, UserRoleEnum userRole,
+																		   String csarFileName, String csarFilePath) throws IOException, Exception {
+
+		ImportReqDetails resourceDetails = buildImportReqDetails(resourceType, csarFileName, csarFilePath);
+		User sdncModifierDetails = ElementFactory.getDefaultUser(userRole);
+		RestResponse response = ResourceRestUtils.createResource(resourceDetails, sdncModifierDetails);
+		BaseRestUtils.checkCreateResponse(response);
+		return LCSbaseTest.certifyResource(resourceDetails, sdncModifierDetails);
+	}
+
+	private static ImportReqDetails buildImportReqDetails(ResourceTypeEnum resourceType, String csarFileName, String csarFilePath) throws IOException {
+		ImportReqDetails resourceDetails = ElementFactory.getDefaultImportResource();
+		Path path = Paths.get(csarFilePath + File.separator + csarFileName);
+		byte[] data = Files.readAllBytes(path);
+		String payloadName = csarFileName;
 		String payloadData = Base64.encodeBase64String(data);
 		resourceDetails.setPayloadData(payloadData);
 		resourceDetails.setCsarUUID(payloadName);
 		resourceDetails.setPayloadName(payloadName);
 		resourceDetails.setResourceType(resourceType.name());
-		
-		RestResponse createResource = ResourceRestUtils.createResource(resourceDetails, sdncModifierDetails);
-		BaseRestUtils.checkCreateResponse(createResource);
-		return ResponseParser.parseToObjectUsingMapper(createResource.getResponse(), Resource.class);		
-	};
-	
+		return resourceDetails;
+	}
+
+	public static Resource updateResourceFromCsar(Resource resource, UserRoleEnum userRole,	String csarFileName, String csarFilePath) throws Exception{
+		User sdncModifierDetails = ElementFactory.getDefaultUser(userRole);
+
+		byte[] data = null;
+		Path path = Paths.get(csarFilePath + File.separator + csarFileName);
+		data = Files.readAllBytes(path);
+		String payloadName = csarFileName;
+		String payloadData = Base64.encodeBase64String(data);
+		ImportReqDetails resourceDetails = new ImportReqDetails(resource, payloadName, payloadData);
+		resourceDetails.setPayloadData(payloadData);
+		resourceDetails.setCsarUUID(payloadName);
+		resourceDetails.setPayloadName(payloadName);
+
+		String userId = sdncModifierDetails.getUserId();
+		Config config = Utils.getConfig();
+		String url = String.format(Urls.UPDATE_RESOURCE, config.getCatalogBeHost(), config.getCatalogBePort(), resource.getUniqueId());
+
+		Map<String, String> headersMap = ResourceRestUtils.prepareHeadersMap(userId);
+
+		Gson gson = new Gson();
+		String userBodyJson = gson.toJson(resourceDetails);
+		String calculateMD5 = GeneralUtility.calculateMD5Base64EncodedByString(userBodyJson);
+		headersMap.put(HttpHeaderEnum.Content_MD5.getValue(), calculateMD5);
+		HttpRequest http = new HttpRequest();
+		RestResponse updateResourceResponse = http.httpSendPut(url, userBodyJson, headersMap);
+		BaseRestUtils.checkSuccess(updateResourceResponse);
+		return ResponseParser.parseToObjectUsingMapper(updateResourceResponse.getResponse(), Resource.class);
+	}
+
 	public static Either<Resource, RestResponse> importResourceByFileName(ResourceTypeEnum resourceType, UserRoleEnum userRole, String fileName, Boolean validateState, String... filePath) throws IOException {
 
 		String realFilePath = System.getProperty("user.dir") + File.separator + "src" + File.separator + "test" + File.separator + "resources" + File.separator + "CI" + File.separator + "csars" ;
@@ -838,7 +867,7 @@ public final class AtomicOperationUtils {
 
 		try {
 			User defaultUser = ElementFactory.getDefaultUser(userRole);
-			ResourceReqDetails defaultResource = ElementFactory.getDefaultResource(defaultUser);			
+			ResourceReqDetails defaultResource = ElementFactory.getDefaultResource(defaultUser);
 			ImportReqDetails defaultImportResource = ElementFactory.getDefaultImportResource(defaultResource);
 			ImportUtils.getImportResourceDetailsByPathAndName(defaultImportResource, realFilePath, fileName);
 			RestResponse resourceResp = ResourceRestUtils.createResource(defaultImportResource, defaultUser);
@@ -856,7 +885,7 @@ public final class AtomicOperationUtils {
 			throw new AtomicOperationException(e);
 		}
 	}
-	
+
 	public static Either<String, RestResponse> getComponenetArtifactPayload(Component component, String artifactType) throws Exception {
 
 		String url;
@@ -894,14 +923,14 @@ public final class AtomicOperationUtils {
 				assertTrue(response.getErrorCode() == ResourceRestUtils.STATUS_CODE_SUCCESS);
 			}
 			return response;
-		
+
 		} catch (Exception e) {
 			throw new AtomicOperationException(e);
 		}
 	}
-	
+
 	public static Either <RestResponse, Map<String, List<DistributionMonitorObject>>> getSortedDistributionStatusMap(Service service, Boolean validateState) {
-		
+
 		try {
 			ServiceDistributionStatus serviceDistributionObject = DistributionUtils.getLatestServiceDistributionObject(service);
 			RestResponse response = getDistributionStatusByDistributionId(serviceDistributionObject.getDistributionID(), true);
@@ -916,10 +945,10 @@ public final class AtomicOperationUtils {
 		} catch (Exception e) {
 			throw new AtomicOperationException(e);
 		}
-		
+
 	}
-	
-	
+
+
 	/**
 	 * @param service
 	 * @param pollingCount
@@ -928,13 +957,13 @@ public final class AtomicOperationUtils {
 	 * @throws Exception
 	 */
 	public static Boolean distributeAndValidateService(Service service, int pollingCount, int pollingInterval) throws Exception {
-        int firstPollingInterval = 30000; //this value define first be polling topic time, should change if DC configuration changed  
+		int firstPollingInterval = 30000; //this value define first be polling topic time, should change if DC configuration changed
 		Boolean statusFlag = true;
 		AtomicOperationUtils.distributeService(service,  true);
 		TimeUnit.MILLISECONDS.sleep(firstPollingInterval);
 		int timeOut = pollingCount * pollingInterval;
 		com.clearspring.analytics.util.Pair<Boolean,Map<String,List<String>>> verifyDistributionStatus = null;
-		
+
 		while (timeOut > 0) {
 			Map<String,List<DistributionMonitorObject>> sortedDistributionStatusMap = AtomicOperationUtils.getSortedDistributionStatusMap(service, true).right().value();
 			verifyDistributionStatus = DistributionUtils.verifyDistributionStatus(sortedDistributionStatusMap);
@@ -945,7 +974,7 @@ public final class AtomicOperationUtils {
 				timeOut = 0;
 			}
 		}
-		
+
 		if((verifyDistributionStatus.right != null && ! verifyDistributionStatus.right.isEmpty())){
 			for(Entry<String, List<String>> entry : verifyDistributionStatus.right.entrySet()){
 				if(ComponentBaseTest.getExtendTest() != null){
@@ -958,9 +987,33 @@ public final class AtomicOperationUtils {
 		}
 		return statusFlag;
 	}
-	
+
 	public static Boolean distributeAndValidateService(Service service) throws Exception {
 		return distributeAndValidateService(service, 10, 10000);
 	}
+	
+	  /**
+     * @param resource to download csar file via API
+     * @return Tosca definition object from main yaml file
+     */
+    public static ToscaDefinition downloadAndGetToscaMainYamlObjectApi(Resource resource, File filesFolder) throws Exception {
+        File vfCsarFileName = new File(File.separator + "VfCsar_" + ElementFactory.generateUUIDforSufix() + ".csar");
+        OnboardingUtillViaApis.downloadToscaCsarToDirectory(resource, new File(filesFolder.getPath() + vfCsarFileName));
+        return ToscaParserUtils.parseToscaMainYamlToJavaObjectByCsarLocation(new File(filesFolder.getPath() + vfCsarFileName));
+    }
+
+
+    public static ComponentInstance getServiceComponentInstanceByName(Service service, String name, Boolean validateState){
+        List<ComponentInstance> compInstances = service.getComponentInstances();
+        for (ComponentInstance instance: compInstances){
+            String compName = instance.getName();
+            if (compName.equals(name))
+                return instance;
+        }
+        if (validateState) {
+            assertEquals("Component instance name " + name + " not found", name, null);
+        }
+        return null;
+    }
 
 }

@@ -65,7 +65,10 @@ export class MenuItemGroup {
     }
 
     public updateSelectedMenuItemText(newText:string) {
-        this.menuItems[this.selectedIndex].text = newText;
+        const selectedMenuItem = this.menuItems[this.selectedIndex];
+        if (selectedMenuItem) {
+            this.menuItems[this.selectedIndex].text = newText;
+        }
     }
 }
 
@@ -112,7 +115,7 @@ export class MenuHandler {
         // If not found search by name (name is unique).
         if (selectedItemIdx === -1) {
             selectedItemIdx = _.findIndex(components, (item:Component) => {
-                return item.name === selected.name;
+                return item.name === selected.name && item.componentType === selected.componentType;
             });
         }
 
@@ -144,6 +147,22 @@ export class MenuHandler {
                 //  menuItem.text = component.name;
                 result.menuItems.push(menuItem);
             });
+
+            result.selectedIndex = this.findBreadcrumbComponentIndex(components, selected);
+
+            // if component does not exist, then add a temporary menu item for the current component
+            if (result.selectedIndex === -1) {
+                let menuItem = new MenuItem(
+                    //  component.name,
+                    selected.getComponentSubType() + ': ' + this.$filter('resourceName')(selected.name),
+                    clickItemCallback,
+                    null,
+                    null,
+                    [selected]
+                );
+                result.menuItems.unshift(menuItem);
+                result.selectedIndex = 0;
+            }
         }
         return result;
     };

@@ -43,10 +43,7 @@ import java.util.Collection;
 import java.util.List;
 
 import static org.openecomp.sdc.action.ActionConstants.TARGET_ENTITY_DB;
-import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_ENTITY_INTERNAL_SERVER_ERROR_MSG;
-import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_INTERNAL_SERVER_ERR_CODE;
-import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_QUERY_FAILURE_CODE;
-import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_QUERY_FAILURE_MSG;
+import static org.openecomp.sdc.action.errors.ActionErrorConstants.*;
 
 
 public class ActionArtifactDaoImpl extends CassandraBaseDao<ActionArtifactEntity>

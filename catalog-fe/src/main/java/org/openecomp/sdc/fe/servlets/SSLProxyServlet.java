@@ -20,11 +20,6 @@
 
 package org.openecomp.sdc.fe.servlets;
 
-import java.util.Enumeration;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.client.api.Request;
 import org.eclipse.jetty.http.HttpHeader;
@@ -36,6 +31,10 @@ import org.openecomp.sdc.fe.config.ConfigurationManager;
 import org.openecomp.sdc.fe.utils.BeProtocol;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import java.util.Enumeration;
 
 public abstract class SSLProxyServlet extends ProxyServlet {
 

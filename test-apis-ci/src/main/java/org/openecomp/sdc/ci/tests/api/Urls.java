@@ -23,8 +23,6 @@ package org.openecomp.sdc.ci.tests.api;
 
 import org.openecomp.sdc.ci.tests.utils.Utils;
 
-import java.io.FileNotFoundException;
-
 public interface Urls {
 
 
@@ -269,6 +267,7 @@ public interface Urls {
 	final String GET_SERVICE_BY_NAME_AND_VERSION = SDC_HTTP_METHOD + "://%s:%s/sdc2/rest/v1/catalog/services/serviceName/%s/serviceVersion/%s";
 
 	final String GET_SERVICES_REQUIRMENTS_CAPABILITIES = SDC_HTTP_METHOD + "://%s:%s/sdc2/rest/v1/catalog/requirmentsCapabilities/services/%s";
+	final String GET_INSTANCE_REQUIRMENTS_CAPABILITIES  = SDC_HTTP_METHOD + "://%s:%s/sdc2/rest/v1/catalog/%s/%s/filteredDataByParams?include=requirements&include=capabilities";
 
 	final String CREATE_COMPONENT_INSTANCE = SDC_HTTP_METHOD + "://%s:%s/sdc2/rest/v1/catalog/%s/%s/resourceInstance";
 	final String DELETE_COMPONENT_INSTANCE = SDC_HTTP_METHOD + "://%s:%s/sdc2/rest/v1/catalog/%s/%s/resourceInstance/%s";
@@ -392,4 +391,5 @@ public interface Urls {
 	final String UPDATE_VSP = SDC_HTTP_METHOD + "://%s:%s/onboarding-api/v1.0/vendor-software-products/%s/versions/%s";
 	final String GET_VSP_COMPONENT_BY_VERSION = SDC_HTTP_METHOD + "://%s:%s/onboarding-api/v1.0/vendor-software-products/%s/versions/%s";
 	final String GET_VLM_COMPONENT_BY_VERSION = SDC_HTTP_METHOD + "://%s:%s/onboarding-api/v1.0/vendor-license-models/%s/versions/%s";
+	final String ACTION_ARCHIVE_RESTORE_COMPONENT = SDC_HTTP_METHOD + "://%s:%s/onboarding-api/v1.0/%s/%s/actions";
 }

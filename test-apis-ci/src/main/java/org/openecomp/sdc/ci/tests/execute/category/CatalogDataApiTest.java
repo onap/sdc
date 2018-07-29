@@ -20,10 +20,7 @@
 
 package org.openecomp.sdc.ci.tests.execute.category;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-
+import com.google.gson.Gson;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
@@ -35,10 +32,7 @@ import org.openecomp.sdc.ci.tests.api.Urls;
 import org.openecomp.sdc.ci.tests.config.Config;
 import org.openecomp.sdc.ci.tests.datatypes.ResourceReqDetails;
 import org.openecomp.sdc.ci.tests.datatypes.ServiceReqDetails;
-import org.openecomp.sdc.ci.tests.datatypes.enums.LifeCycleStatesEnum;
-import org.openecomp.sdc.ci.tests.datatypes.enums.ResourceCategoryEnum;
-import org.openecomp.sdc.ci.tests.datatypes.enums.ServiceCategoriesEnum;
-import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
+import org.openecomp.sdc.ci.tests.datatypes.enums.*;
 import org.openecomp.sdc.ci.tests.datatypes.http.HttpHeaderEnum;
 import org.openecomp.sdc.ci.tests.datatypes.http.HttpRequest;
 import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
@@ -53,7 +47,9 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import com.google.gson.Gson;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class CatalogDataApiTest extends ComponentBaseTest {
 
@@ -201,9 +197,10 @@ public class CatalogDataApiTest extends ComponentBaseTest {
 		String vendorRelease = "0.1";
 		String contactId = "al1976";
 		String icon = "myIcon";
+		String instantiationType = ServiceInstantiationType.A_LA_CARTE.getValue();
 
 		ServiceReqDetails svcdetails = new ServiceReqDetails(serviceName, category, serviceTags, description,
-				contactId, icon);
+				contactId, icon, instantiationType);
 		return svcdetails;
 	}
 

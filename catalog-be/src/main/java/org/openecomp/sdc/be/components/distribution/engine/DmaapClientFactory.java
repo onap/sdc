@@ -1,27 +1,24 @@
 package org.openecomp.sdc.be.components.distribution.engine;
 
+import com.att.nsa.mr.client.MRClientFactory;
+import com.att.nsa.mr.client.MRConsumer;
+import fj.data.Either;
+import org.openecomp.sdc.be.config.DmaapConsumerConfiguration;
+import org.openecomp.sdc.common.log.wrappers.Logger;
+import org.openecomp.sdc.security.SecurityUtil;
+import org.springframework.stereotype.Component;
+
 import java.io.File;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.Properties;
-
-import org.openecomp.sdc.be.config.DmaapConsumerConfiguration;
-import org.openecomp.sdc.security.SecurityUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
-
-import com.att.nsa.mr.client.MRClientFactory;
-import com.att.nsa.mr.client.MRConsumer;
-
-import fj.data.Either;
 
 /**
  * Allows to create DMAAP client of type MRConsumer according received configuration parameters
  */
 @Component("dmaapClientFactory")
 public class DmaapClientFactory {
-    private static final Logger logger = LoggerFactory.getLogger(DmaapClientFactory.class);
+    private static final Logger logger = Logger.getLogger(DmaapClientFactory.class.getName());
 
     /**
      * Creates DMAAP consumer according to received parameters
@@ -35,7 +32,7 @@ public class DmaapClientFactory {
         return consumer;
     }
 
-    private Properties buildProperties(DmaapConsumerConfiguration parameters) throws Exception{
+    private Properties buildProperties(DmaapConsumerConfiguration parameters) throws GeneralSecurityException, IOException {
         Properties props = new Properties();
         Either<String,String> passkey = SecurityUtil.INSTANCE.decrypt(parameters.getCredential().getPassword() );
         if (passkey.isRight()){

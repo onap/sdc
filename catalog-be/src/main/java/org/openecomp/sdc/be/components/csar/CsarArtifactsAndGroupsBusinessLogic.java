@@ -1,21 +1,9 @@
 package org.openecomp.sdc.be.components.csar;
 
-import static org.openecomp.sdc.be.tosca.CsarUtils.ARTIFACTS_PATH;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Optional;
-import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import fj.data.Either;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -32,22 +20,13 @@ import org.openecomp.sdc.be.config.Configuration.VfModuleProperty;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datamodel.utils.ArtifactUtils;
+import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.info.ArtifactTemplateInfo;
 import org.openecomp.sdc.be.info.MergedArtifactInfo;
-import org.openecomp.sdc.be.model.ArtifactDefinition;
-import org.openecomp.sdc.be.model.ComponentParametersView;
-import org.openecomp.sdc.be.model.CsarInfo;
-import org.openecomp.sdc.be.model.GroupDefinition;
-import org.openecomp.sdc.be.model.GroupProperty;
-import org.openecomp.sdc.be.model.GroupTypeDefinition;
-import org.openecomp.sdc.be.model.HeatParameterDefinition;
-import org.openecomp.sdc.be.model.Operation;
-import org.openecomp.sdc.be.model.PropertyDefinition;
-import org.openecomp.sdc.be.model.Resource;
-import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.*;
 import org.openecomp.sdc.be.model.heat.HeatParameterType;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
@@ -56,23 +35,30 @@ import org.openecomp.sdc.be.tosca.CsarUtils;
 import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
 import org.openecomp.sdc.common.api.ArtifactTypeEnum;
 import org.openecomp.sdc.common.api.Constants;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.common.util.GeneralUtility;
 import org.openecomp.sdc.exception.ResponseFormat;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
-import fj.data.Either;
+import static org.openecomp.sdc.be.tosca.CsarUtils.ARTIFACTS_PATH;
 
 
 @org.springframework.stereotype.Component("csarArtifactsAndGroupsBusinessLogic")
 public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
 
-    private static final Logger log = LoggerFactory.getLogger(CsarArtifactsAndGroupsBusinessLogic.class);
+    private static final Logger log = Logger.getLogger(CsarArtifactsAndGroupsBusinessLogic.class.getName());
+    public static final String ARTIFACT_FILE_IS_NOT_IN_EXPECTED_FORMATR_FILE_NAME = "Artifact  file is not in expected formatr, fileName  {}";
+    public static final String ARTIFACT_FILE_IS_NOT_IN_EXPECTED_FORMAT_FILE_NAME = "Artifact  file is not in expected format, fileName  {}";
+    public static final String ARTIFACT_FILE_IS_NOT_IN_EXPECTED_FORMATR_FILE_NAME1 = "Artifact  file is not in expected formatr, fileName ";
+    public static final String ARTIFACT_FILE_IS_NOT_IN_EXPECTED_FORMAT_FILE_NAME1 = "Artifact  file is not in expected format, fileName ";
+    public static final String ARTIFACT_INTERNALS_ARE_INVALID = "Artifact internals are invalid";
+    public static final String ARTIFACT_WITH_NAME_AND_TYPE_ALREADY_EXIST_WITH_TYPE = "Artifact with name {} and type {} already exist with type  {}";
     private final Gson gson = new Gson();
     private static final Pattern pattern = Pattern.compile("\\..(.*?)\\..");
     @Autowired
@@ -83,13 +69,13 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
             boolean shouldLock, boolean inTransaction) {
 
         log.debug("parseResourceArtifactsInfoFromFile start");
-        return  parseResourceArtifactsInfoFromFile(resource, artifactsMetaFile, artifactsMetaFileName, csarInfo.getModifier())
+        return  parseResourceArtifactsInfoFromFile(resource, artifactsMetaFile, artifactsMetaFileName)
                 .left()
                 .bind( p-> createResourceArtifacts(csarInfo, resource, p, createdArtifacts,shouldLock, inTransaction))
                 .right()
                 .map(rf -> { componentsUtils.auditResource(rf, csarInfo.getModifier(), resource, AuditingActionEnum.IMPORT_RESOURCE); return rf;})
                 .left()
-                .bind( c -> getResourcetFromGraph(c));
+                .bind(this::getResourcetFromGraph);
     }
 
 
@@ -100,7 +86,7 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
         Resource updatedResource = resource;
 
         Either<Map<String, List<ArtifactTemplateInfo>>, ResponseFormat> parseResourceInfoFromYamlEither = parseResourceArtifactsInfoFromFile(
-                updatedResource, artifactsMetaFile, artifactsMetaFileName, csarInfo.getModifier());
+                updatedResource, artifactsMetaFile, artifactsMetaFileName);
         if (parseResourceInfoFromYamlEither.isRight()) {
             ResponseFormat responseFormat = parseResourceInfoFromYamlEither.right().value();
             componentsUtils.auditResource(responseFormat, csarInfo.getModifier(), resource, AuditingActionEnum.IMPORT_RESOURCE);
@@ -190,7 +176,7 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
         ////////////// dissociate, associate or create
         ////////////// artifacts////////////////////////////
         Either<Resource, ResponseFormat> assDissotiateEither = associateAndDissociateArtifactsToGroup(csarInfo,
-                updatedResource, createdNewArtifacts, labelCounter, shouldLock, inTransaction,
+                updatedResource, createdNewArtifacts, labelCounter, inTransaction,
                 createdDeplymentArtifactsAfterDelete, mergedgroup, deletedArtifacts);
         groups = updatedResource.getGroups();
         if (assDissotiateEither.isRight()) {
@@ -212,7 +198,7 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
         Set<GroupDefinition> groupForAssociateWithMembers = mergedgroup.keySet();
         if (groups != null && !groups.isEmpty()) {
             Either<List<GroupDefinition>, ResponseFormat> validateUpdateVfGroupNamesRes = groupBusinessLogic
-                    .validateUpdateVfGroupNamesOnGraph(groups, updatedResource, inTransaction);
+                    .validateUpdateVfGroupNamesOnGraph(groups, updatedResource);
             if (validateUpdateVfGroupNamesRes.isRight()) {
                 return Either.right(validateUpdateVfGroupNamesRes.right().value());
             }
@@ -263,7 +249,7 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
 
         }
         if (!newArtifactsGroup.isEmpty()) {
-            Collections.sort(newArtifactsGroup, (art1, art2) -> ArtifactTemplateInfo.compareByGroupName(art1, art2));
+            Collections.sort(newArtifactsGroup, ArtifactTemplateInfo::compareByGroupName);
             int startGroupCounter = groupBusinessLogic.getNextVfModuleNameCounter(groups);
             Either<Boolean, ResponseFormat> validateGroupNamesRes = groupBusinessLogic
                     .validateGenerateVfModuleGroupNames(newArtifactsGroup, updatedResource.getSystemName(), startGroupCounter);
@@ -285,7 +271,7 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
                     .collect(Collectors.toList());
 
             Either<List<GroupDefinition>, ResponseFormat> updateVersionEither = groupBusinessLogic
-                    .updateGroups(updatedResource, groupsId);
+                    .updateGroups(updatedResource, groupsId, true);
             if (updateVersionEither.isRight()) {
                 log.debug("Failed to update groups version. Status is {} ", updateVersionEither.right().value());
 
@@ -295,7 +281,7 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
         }
         if (artifactsWithoutGroups != null && !artifactsWithoutGroups.isEmpty()) {
             for (ArtifactTemplateInfo t : artifactsWithoutGroups) {
-                List<ArtifactTemplateInfo> arrtifacts = new ArrayList<ArtifactTemplateInfo>();
+                List<ArtifactTemplateInfo> arrtifacts = new ArrayList<>();
                 arrtifacts.add(t);
                 Either<Resource, ResponseFormat> resStatus = createGroupDeploymentArtifactsFromCsar(csarInfo, updatedResource,
                         arrtifacts, createdNewArtifacts, createdDeplymentArtifactsAfterDelete, labelCounter, shouldLock,
@@ -337,7 +323,7 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
                 } 
             }
         }
-        
+	        
         return artifactsToDelete;
     }
 
@@ -403,7 +389,7 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
 
     @SuppressWarnings({ "unchecked", "static-access" })
     public Either<Map<String, List<ArtifactTemplateInfo>>, ResponseFormat> parseResourceArtifactsInfoFromFile(
-            Resource resource, String artifactsMetaFile, String artifactFileName, User user) {
+            Resource resource, String artifactsMetaFile, String artifactFileName) {
 
         try {
             JsonObject jsonElement = new JsonObject();
@@ -411,10 +397,10 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
 
             JsonElement importStructureElement = jsonElement.get(Constants.IMPORT_STRUCTURE);
             if (importStructureElement == null || importStructureElement.isJsonNull()) {
-                log.debug("Artifact  file is not in expected formatr, fileName  {}", artifactFileName);
+                log.debug(ARTIFACT_FILE_IS_NOT_IN_EXPECTED_FORMATR_FILE_NAME, artifactFileName);
                 BeEcompErrorManager.getInstance().logInternalDataError(
-                        "Artifact  file is not in expected formatr, fileName " + artifactFileName,
-                        "Artifact internals are invalid", ErrorSeverity.ERROR);
+                        ARTIFACT_FILE_IS_NOT_IN_EXPECTED_FORMATR_FILE_NAME1 + artifactFileName,
+                        ARTIFACT_INTERNALS_ARE_INVALID, ErrorSeverity.ERROR);
                 return Either
                         .right(componentsUtils.getResponseFormat(ActionStatus.CSAR_INVALID_FORMAT, artifactFileName));
             }
@@ -422,10 +408,10 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
             Map<String, List<Map<String, Object>>> artifactTemplateMap = new HashMap<>();
             artifactTemplateMap = ComponentsUtils.parseJsonToObject(importStructureElement.toString(), HashMap.class);
             if (artifactTemplateMap.isEmpty()) {
-                log.debug("Artifact  file is not in expected formatr, fileName  {}", artifactFileName);
+                log.debug(ARTIFACT_FILE_IS_NOT_IN_EXPECTED_FORMATR_FILE_NAME, artifactFileName);
                 BeEcompErrorManager.getInstance().logInternalDataError(
-                        "Artifact  file is not in expected formatr, fileName " + artifactFileName,
-                        "Artifact internals are invalid", ErrorSeverity.ERROR);
+                        ARTIFACT_FILE_IS_NOT_IN_EXPECTED_FORMATR_FILE_NAME1 + artifactFileName,
+                        ARTIFACT_INTERNALS_ARE_INVALID, ErrorSeverity.ERROR);
                 return Either
                         .right(componentsUtils.getResponseFormat(ActionStatus.CSAR_INVALID_FORMAT, artifactFileName));
             }
@@ -450,11 +436,11 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
             }
             return Either.left(artifactsMap);
         } catch (Exception e) {
-            log.debug("Artifact  file is not in expected format, fileName  {}", artifactFileName);
+            log.debug(ARTIFACT_FILE_IS_NOT_IN_EXPECTED_FORMAT_FILE_NAME, artifactFileName);
             log.debug("failed with exception.", e);
             BeEcompErrorManager.getInstance().logInternalDataError(
-                    "Artifact  file is not in expected format, fileName " + artifactFileName,
-                    "Artifact internals are invalid", ErrorSeverity.ERROR);
+                    ARTIFACT_FILE_IS_NOT_IN_EXPECTED_FORMAT_FILE_NAME1 + artifactFileName,
+                    ARTIFACT_INTERNALS_ARE_INVALID, ErrorSeverity.ERROR);
             return Either.right(componentsUtils.getResponseFormat(ActionStatus.CSAR_INVALID_FORMAT, artifactFileName));
         }
 
@@ -467,18 +453,18 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
         Either<List<ArtifactTemplateInfo>, ResponseFormat> artifactTemplateInfoListPairStatus = createArtifactTemplateInfoModule(
                 artifactsTypeKey, o);
         if (artifactTemplateInfoListPairStatus.isRight()) {
-            log.debug("Artifact  file is not in expected formatr, fileName  {}", artifactFileName);
+            log.debug(ARTIFACT_FILE_IS_NOT_IN_EXPECTED_FORMATR_FILE_NAME, artifactFileName);
             BeEcompErrorManager.getInstance().logInternalDataError(
-                    "Artifact  file is not in expected format, fileName " + artifactFileName,
-                    "Artifact internals are invalid", ErrorSeverity.ERROR);
+                    ARTIFACT_FILE_IS_NOT_IN_EXPECTED_FORMAT_FILE_NAME1 + artifactFileName,
+                    ARTIFACT_INTERNALS_ARE_INVALID, ErrorSeverity.ERROR);
             return Either.right(artifactTemplateInfoListPairStatus.right().value());
         }
         List<ArtifactTemplateInfo> artifactTemplateInfoList = artifactTemplateInfoListPairStatus.left().value();
         if (artifactTemplateInfoList == null) {
-            log.debug("Artifact  file is not in expected formatr, fileName  {}", artifactFileName);
+            log.debug(ARTIFACT_FILE_IS_NOT_IN_EXPECTED_FORMATR_FILE_NAME, artifactFileName);
             BeEcompErrorManager.getInstance().logInternalDataError(
-                    "Artifact  file is not in expected format, fileName " + artifactFileName,
-                    "Artifact internals are invalid", ErrorSeverity.ERROR);
+                    ARTIFACT_FILE_IS_NOT_IN_EXPECTED_FORMAT_FILE_NAME1 + artifactFileName,
+                    ARTIFACT_INTERNALS_ARE_INVALID, ErrorSeverity.ERROR);
             return Either.right(
                     componentsUtils.getResponseFormat(ActionStatus.CSAR_INVALID_FORMAT, artifactFileName));
 
@@ -562,7 +548,7 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
         }
 
         Either<List<GroupDefinition>, ResponseFormat> createGroups = groupBusinessLogic
-                .addGroups(component.left().value(), needToCreate);
+                .addGroups(component.left().value(), needToCreate, false);
         if (createGroups.isRight()) {
             return Either.right(createGroups.right().value());
         }
@@ -628,7 +614,7 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
         if(createdArtifact == null){
 
             Either<ArtifactDefinition, ResponseFormat> newArtifactEither = createDeploymentArtifact(csarInfo, resource,
-                    artifactPath, artifactTemplateInfo, createdArtifacts, labelCounter,  inTransaction);
+                    artifactPath, artifactTemplateInfo, createdArtifacts, labelCounter);
             if (newArtifactEither.isRight()) {
                 resStatus = Either.right(newArtifactEither.right().value());
                 return resStatus;
@@ -692,11 +678,11 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
         if(op.isPresent()){
             res = op.get();
             if (!res.getArtifactType().equalsIgnoreCase(artifactTemplateInfo.getType())) {
-                log.debug("Artifact with name {} and type {} already exist with type  {}", artifactFileName,
+                log.debug(ARTIFACT_WITH_NAME_AND_TYPE_ALREADY_EXIST_WITH_TYPE, artifactFileName,
                         artifactTemplateInfo.getType(), res.getArtifactType());
                 BeEcompErrorManager.getInstance().logInternalDataError(
-                        "Artifact  file is not in expected formatr, fileName " + artifactFileName,
-                        "Artifact internals are invalid", ErrorSeverity.ERROR);
+                        ARTIFACT_FILE_IS_NOT_IN_EXPECTED_FORMATR_FILE_NAME1 + artifactFileName,
+                        ARTIFACT_INTERNALS_ARE_INVALID, ErrorSeverity.ERROR);
                 return Either.right(componentsUtils.getResponseFormat(
                         ActionStatus.ARTIFACT_ALRADY_EXIST_IN_DIFFERENT_TYPE_IN_CSAR, artifactFileName,
                         artifactTemplateInfo.getType(), res.getArtifactType()));
@@ -708,8 +694,8 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
     }
 
     private Either<ArtifactDefinition, ResponseFormat> createDeploymentArtifact(CsarInfo csarInfo, Resource resource,
-            String artifactPath, ArtifactTemplateInfo artifactTemplateInfo, List<ArtifactDefinition> createdArtifacts,
-            int label, boolean inTransaction) {
+                                                                                String artifactPath, ArtifactTemplateInfo artifactTemplateInfo, List<ArtifactDefinition> createdArtifacts,
+                                                                                int label) {
         int updatedlabel = label;
         final String artifactFileName = artifactTemplateInfo.getFileName();
         Either<ImmutablePair<String, byte[]>, ResponseFormat> artifactContententStatus = CsarValidationUtils
@@ -721,7 +707,7 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
         updatedlabel += createdArtifacts.size();
 
         Map<String, Object> json = ArtifactUtils.buildJsonForArtifact(artifactTemplateInfo,
-                artifactContententStatus.left().value().getValue(), updatedlabel);
+                artifactContententStatus.left().value().getValue(), updatedlabel, true);
 
         Either<Either<ArtifactDefinition, Operation>, ResponseFormat> uploadArtifactToService = createOrUpdateCsarArtifactFromJson(
                 resource, csarInfo.getModifier(), json,
@@ -905,6 +891,7 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
         String origMd5 = GeneralUtility.calculateMD5Base64EncodedByString(jsonStr);
         ArtifactDefinition artifactDefinitionFromJson = RepresentationUtils.convertJsonToArtifactDefinition(jsonStr,
                 ArtifactDefinition.class);
+		
         String artifactUniqueId = artifactDefinitionFromJson == null ? null : artifactDefinitionFromJson.getUniqueId();
         Either<Either<ArtifactDefinition, Operation>, ResponseFormat> uploadArtifactToService = artifactsBusinessLogic
                 .validateAndHandleArtifact(resource.getUniqueId(), ComponentTypeEnum.RESOURCE, operation,
@@ -1018,7 +1005,7 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
             List<PropertyDefinition> groupTypeProperties) {
 
         Map<String, GroupProperty> propertiesMap = properties.stream()
-                .collect(Collectors.toMap(p -> p.getName(), p -> p));
+                .collect(Collectors.toMap(PropertyDataDefinition::getName, p -> p));
         for (PropertyDefinition groupTypeProperty : groupTypeProperties) {
             if (!propertiesMap.containsKey(groupTypeProperty.getName())) {
                 properties.add(new GroupProperty(groupTypeProperty));
@@ -1292,7 +1279,7 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
         }
         updatedResource = component.left().value();
 
-         Either<List<GroupDefinition>, ResponseFormat> addGroups = groupBusinessLogic.addGroups(updatedResource, needToAdd);
+         Either<List<GroupDefinition>, ResponseFormat> addGroups = groupBusinessLogic.addGroups(updatedResource, needToAdd, false);
         if (addGroups.isRight()) {
             return Either.right(addGroups.right().value());
         }
@@ -1318,11 +1305,11 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
                     artifactUid = artifactFromResource.getUniqueId();
                     artifactUUID = artifactFromResource.getArtifactUUID();
                     if (!artifactFromResource.getArtifactType().equalsIgnoreCase(artifactTemplateInfo.getType())) {
-                        log.debug("Artifact with name {} and type {} already exist with type  {}", artifactFileName,
+                        log.debug(ARTIFACT_WITH_NAME_AND_TYPE_ALREADY_EXIST_WITH_TYPE, artifactFileName,
                                 artifactTemplateInfo.getType(), artifactFromResource.getArtifactType());
                         BeEcompErrorManager.getInstance().logInternalDataError(
-                                "Artifact  file is not in expected formatr, fileName " + artifactFileName,
-                                "Artifact internals are invalid", ErrorSeverity.ERROR);
+                                ARTIFACT_FILE_IS_NOT_IN_EXPECTED_FORMATR_FILE_NAME1 + artifactFileName,
+                                ARTIFACT_INTERNALS_ARE_INVALID, ErrorSeverity.ERROR);
                         return Either.right(componentsUtils.getResponseFormat(
                                 ActionStatus.ARTIFACT_ALRADY_EXIST_IN_DIFFERENT_TYPE_IN_CSAR, artifactFileName,
                                 artifactTemplateInfo.getType(), artifactFromResource.getArtifactType()));
@@ -1342,11 +1329,11 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
                     artifactUUID = createdArtifact.getArtifactUUID();
 
                     if (!createdArtifact.getArtifactType().equalsIgnoreCase(artifactTemplateInfo.getType())) {
-                        log.debug("Artifact with name {} and type {} already exist with type  {}", artifactFileName,
+                        log.debug(ARTIFACT_WITH_NAME_AND_TYPE_ALREADY_EXIST_WITH_TYPE, artifactFileName,
                                 artifactTemplateInfo.getType(), createdArtifact.getArtifactType());
                         BeEcompErrorManager.getInstance().logInternalDataError(
-                                "Artifact  file is not in expected formatr, fileName " + artifactFileName,
-                                "Artifact internals are invalid", ErrorSeverity.ERROR);
+                                ARTIFACT_FILE_IS_NOT_IN_EXPECTED_FORMATR_FILE_NAME1 + artifactFileName,
+                                ARTIFACT_INTERNALS_ARE_INVALID, ErrorSeverity.ERROR);
                         return Either.right(componentsUtils.getResponseFormat(
                                 ActionStatus.ARTIFACT_ALRADY_EXIST_IN_DIFFERENT_TYPE_IN_CSAR, artifactFileName,
                                 artifactTemplateInfo.getType(), createdArtifact.getArtifactType()));
@@ -1362,7 +1349,7 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
         if (!alreadyExist) {
 
             Either<ArtifactDefinition, ResponseFormat> newArtifactEither = createDeploymentArtifact(csarInfo, resource,
-                    ARTIFACTS_PATH, artifactTemplateInfo, createdArtifacts, labelCounter, inTransaction);
+                    ARTIFACTS_PATH, artifactTemplateInfo, createdArtifacts, labelCounter);
             if (newArtifactEither.isRight()) {
                 resStatus = Either.right(newArtifactEither.right().value());
                 return resStatus;
@@ -1405,9 +1392,9 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
     }
 
     private Either<Resource, ResponseFormat> associateAndDissociateArtifactsToGroup(CsarInfo csarInfo,
-            Resource resource, List<ArtifactDefinition> createdNewArtifacts, int labelCounter, boolean shouldLock,
-            boolean inTransaction, List<ArtifactDefinition> createdDeplymentArtifactsAfterDelete,
-            Map<GroupDefinition, MergedArtifactInfo> mergedgroup, List<ArtifactDefinition> deletedArtifacts) {
+                                                                                    Resource resource, List<ArtifactDefinition> createdNewArtifacts, int labelCounter,
+                                                                                    boolean inTransaction, List<ArtifactDefinition> createdDeplymentArtifactsAfterDelete,
+                                                                                    Map<GroupDefinition, MergedArtifactInfo> mergedgroup, List<ArtifactDefinition> deletedArtifacts) {
         Map<GroupDefinition, List<ArtifactTemplateInfo>> artifactsToAssotiate = new HashMap<>();
         Map<GroupDefinition, List<ImmutablePair<ArtifactDefinition, ArtifactTemplateInfo>>> artifactsToUpdateMap = new HashMap<>();
         Either<Resource, ResponseFormat> resEither = Either.left(resource);
@@ -1525,7 +1512,7 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
 
                 if (isCreate) {
                     Either<ArtifactDefinition, ResponseFormat> createArtifactEither = createDeploymentArtifact(csarInfo,
-                            resource, ARTIFACTS_PATH, artifactTemplate, createdNewArtifacts, labelCounter, inTransaction);
+                            resource, ARTIFACTS_PATH, artifactTemplate, createdNewArtifacts, labelCounter);
                     if (createArtifactEither.isRight()) {
                         resEither = Either.right(createArtifactEither.right().value());
                         return resEither;
@@ -1594,8 +1581,8 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
                     log.debug("Artifact with name {} and type {} already updated with type  {}", artifactFileName,
                             artifactTemplateInfo.getType(), updatedArtifact.getArtifactType());
                     BeEcompErrorManager.getInstance().logInternalDataError(
-                            "Artifact  file is not in expected formatr, fileName " + artifactFileName,
-                            "Artifact internals are invalid", ErrorSeverity.ERROR);
+                            ARTIFACT_FILE_IS_NOT_IN_EXPECTED_FORMATR_FILE_NAME1 + artifactFileName,
+                            ARTIFACT_INTERNALS_ARE_INVALID, ErrorSeverity.ERROR);
                     resStatus = Either.right(componentsUtils.getResponseFormat(
                             ActionStatus.ARTIFACT_ALRADY_EXIST_IN_DIFFERENT_TYPE_IN_CSAR, artifactFileName,
                             artifactTemplateInfo.getType(), updatedArtifact.getArtifactType()));

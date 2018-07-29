@@ -20,42 +20,42 @@
 
 package org.openecomp.sdc.be.model.tosca.validators;
 
-import java.util.Map;
-
 import org.openecomp.sdc.be.model.DataTypeDefinition;
+
+import java.util.Map;
 
 public class HeatBooleanValidator implements PropertyTypeValidator {
 
-	private static HeatBooleanValidator booleanValidator = new HeatBooleanValidator();
+    private static HeatBooleanValidator booleanValidator = new HeatBooleanValidator();
 
-	public static HeatBooleanValidator getInstance() {
-		return booleanValidator;
-	}
+    public static HeatBooleanValidator getInstance() {
+        return booleanValidator;
+    }
 
-	private HeatBooleanValidator() {
+    private HeatBooleanValidator() {
 
-	}
+    }
 
-	@Override
-	public boolean isValid(String value, String innerType, Map<String, DataTypeDefinition> allDataTypes) {
+    @Override
+    public boolean isValid(String value, String innerType, Map<String, DataTypeDefinition> allDataTypes) {
 
-		if (value == null || true == value.isEmpty()) {
-			return true;
-		}
+        if (value == null || value.isEmpty()) {
+            return true;
+        }
 
-		if (value.equalsIgnoreCase("true") || value.equalsIgnoreCase("false") || value.equalsIgnoreCase("t")
-				|| value.equalsIgnoreCase("f") || value.equalsIgnoreCase("on") || value.equalsIgnoreCase("off")
-				|| value.equalsIgnoreCase("yes") || value.equalsIgnoreCase("no") || value.equalsIgnoreCase("y")
-				|| value.equalsIgnoreCase("n") || value.equalsIgnoreCase("1") || value.equalsIgnoreCase("0")) {
-			return true;
-		}
+        if (value.equalsIgnoreCase("true") || value.equalsIgnoreCase("false") || value.equalsIgnoreCase("t")
+                || value.equalsIgnoreCase("f") || value.equalsIgnoreCase("on") || value.equalsIgnoreCase("off")
+                || value.equalsIgnoreCase("yes") || value.equalsIgnoreCase("no") || value.equalsIgnoreCase("y")
+                || value.equalsIgnoreCase("n") || value.equalsIgnoreCase("1") || value.equalsIgnoreCase("0")) {
+            return true;
+        }
 
-		return false;
-	}
+        return false;
+    }
 
-	@Override
-	public boolean isValid(String value, String innerType) {
-		return isValid(value, innerType, null);
-	}
+    @Override
+    public boolean isValid(String value, String innerType) {
+        return isValid(value, innerType, null);
+    }
 
 }

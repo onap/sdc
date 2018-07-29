@@ -20,32 +20,24 @@
 
 package org.openecomp.sdc.be.dao.cassandra;
 
-import java.util.List;
-
-import javax.annotation.PreDestroy;
-
-import com.datastax.driver.core.SocketOptions;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.openecomp.sdc.be.config.ConfigurationManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
-
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.Session;
-import com.datastax.driver.core.policies.ConstantReconnectionPolicy;
-import com.datastax.driver.core.policies.DCAwareRoundRobinPolicy;
-import com.datastax.driver.core.policies.DefaultRetryPolicy;
-import com.datastax.driver.core.policies.LoadBalancingPolicy;
-import com.datastax.driver.core.policies.TokenAwarePolicy;
+import com.datastax.driver.core.SocketOptions;
+import com.datastax.driver.core.policies.*;
 import com.datastax.driver.mapping.Mapper;
 import com.datastax.driver.mapping.MappingManager;
-
 import fj.data.Either;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.openecomp.sdc.be.config.ConfigurationManager;
+import org.openecomp.sdc.common.log.wrappers.Logger;
+import org.springframework.stereotype.Component;
+
+import javax.annotation.PreDestroy;
+import java.util.List;
 
 @Component("cassandra-client")
 public class CassandraClient {
-	private static Logger logger = LoggerFactory.getLogger(CassandraClient.class.getName());
+	private static Logger logger = Logger.getLogger(CassandraClient.class.getName());
 
 	private Cluster cluster;
 	private boolean isConnected;
@@ -65,7 +57,7 @@ public class CassandraClient {
 					.withReconnectionPolicy(new ConstantReconnectionPolicy(reconnectTimeout))
 					.withRetryPolicy(DefaultRetryPolicy.INSTANCE);
 
-			cassandraHosts.forEach(host -> clusterBuilder.addContactPoint(host));
+			cassandraHosts.forEach(clusterBuilder::addContactPoint);
 			setSocketOptions(clusterBuilder);
 			enableAuthentication(clusterBuilder);
 			enableSsl(clusterBuilder);
@@ -157,12 +149,13 @@ public class CassandraClient {
 				Session session = cluster.connect(keyspace);
 				if (session != null) {
 					MappingManager manager = new MappingManager(session);
-					return Either.left(new ImmutablePair<Session, MappingManager>(session, manager));
+					return Either.left(new ImmutablePair<>(session, manager));
 				} else {
 					return Either.right(CassandraOperationStatus.KEYSPACE_NOT_CONNECTED);
 				}
 			} catch (Throwable e) {
-				logger.debug("Failed to connect to keyspace [{}], error :", keyspace, e);
+				logger.debug("Failed to connect to keyspace [{}], error ,", keyspace);
+				logger.debug("Exception :",  e);
 				return Either.right(CassandraOperationStatus.KEYSPACE_NOT_CONNECTED);
 			}
 		}

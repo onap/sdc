@@ -20,12 +20,8 @@
 
 package org.openecomp.sdc.ci.tests.execute.product;
 
-import static org.openecomp.sdc.ci.tests.utils.rest.BaseRestUtils.PRODUCT_COMPONENT_TYPE;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import org.junit.rules.TestName;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
@@ -40,8 +36,11 @@ import org.openecomp.sdc.ci.tests.utils.rest.CategoryRestUtils;
 import org.openecomp.sdc.ci.tests.utils.rest.ResponseParser;
 import org.testng.annotations.BeforeMethod;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.openecomp.sdc.ci.tests.utils.rest.BaseRestUtils.PRODUCT_COMPONENT_TYPE;
 
 public abstract class ProductBaseTest extends ComponentBaseTest {
 	User productStrategistUser1;

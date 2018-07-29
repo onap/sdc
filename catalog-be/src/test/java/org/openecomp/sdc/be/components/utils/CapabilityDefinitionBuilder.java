@@ -1,9 +1,9 @@
 package org.openecomp.sdc.be.components.utils;
 
-import java.util.ArrayList;
-
 import org.openecomp.sdc.be.model.CapabilityDefinition;
 import org.openecomp.sdc.be.model.ComponentInstanceProperty;
+
+import java.util.ArrayList;
 
 public class CapabilityDefinitionBuilder {
 

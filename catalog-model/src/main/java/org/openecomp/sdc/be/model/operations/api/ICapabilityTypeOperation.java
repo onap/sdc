@@ -20,25 +20,27 @@
 
 package org.openecomp.sdc.be.model.operations.api;
 
-import org.openecomp.sdc.be.model.CapabilityTypeDefinition;
-
 import fj.data.Either;
+import org.openecomp.sdc.be.model.CapabilityTypeDefinition;
 
 public interface ICapabilityTypeOperation {
 
-	/**
-	 * @param capabilityTypeDefinition
-	 * @return
-	 */
-	public Either<CapabilityTypeDefinition, StorageOperationStatus> addCapabilityType(CapabilityTypeDefinition capabilityTypeDefinition);
+    /**
+     * @param capabilityTypeDefinition
+     * @return
+     */
+    public Either<CapabilityTypeDefinition, StorageOperationStatus> addCapabilityType(CapabilityTypeDefinition capabilityTypeDefinition);
 
-	public Either<CapabilityTypeDefinition, StorageOperationStatus> addCapabilityType(CapabilityTypeDefinition capabilityTypeDefinition, boolean inTransaction);
+    public Either<CapabilityTypeDefinition, StorageOperationStatus> addCapabilityType(CapabilityTypeDefinition capabilityTypeDefinition, boolean inTransaction);
+    
+    
+    public Either<CapabilityTypeDefinition, StorageOperationStatus> updateCapabilityType(CapabilityTypeDefinition capabilityTypeDefNew, CapabilityTypeDefinition capabilityTypeDefOld);
 
-	/**
-	 * @param uniqueId
-	 * @return
-	 */
-	public Either<CapabilityTypeDefinition, StorageOperationStatus> getCapabilityType(String uniqueId);
+    /**
+     * @param uniqueId
+     * @return
+     */
+    public Either<CapabilityTypeDefinition, StorageOperationStatus> getCapabilityType(String uniqueId);
 
-	public Either<CapabilityTypeDefinition, StorageOperationStatus> getCapabilityType(String uniqueId, boolean inTransaction);
+    public Either<CapabilityTypeDefinition, StorageOperationStatus> getCapabilityType(String uniqueId, boolean inTransaction);
 }

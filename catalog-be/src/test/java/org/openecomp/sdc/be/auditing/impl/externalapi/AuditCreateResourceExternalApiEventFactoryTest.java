@@ -3,17 +3,18 @@ package org.openecomp.sdc.be.auditing.impl.externalapi;
 import org.junit.Test;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.resources.data.auditing.model.CommonAuditData;
-import org.openecomp.sdc.be.resources.data.auditing.model.ResourceAuditData;
+import org.openecomp.sdc.be.resources.data.auditing.model.DistributionData;
+import org.openecomp.sdc.be.resources.data.auditing.model.ResourceCommonInfo;
+import org.openecomp.sdc.be.resources.data.auditing.model.ResourceVersionInfo;
 
 public class AuditCreateResourceExternalApiEventFactoryTest {
 
 	private AuditCreateResourceExternalApiEventFactory createTestSubject() {
-		org.openecomp.sdc.be.resources.data.auditing.model.CommonAuditData.Builder newBuilder = CommonAuditData.newBuilder();
+		CommonAuditData.Builder newBuilder = CommonAuditData.newBuilder();
 		CommonAuditData commonAuData = newBuilder.build();
-		org.openecomp.sdc.be.resources.data.auditing.model.ResourceAuditData.Builder newBuilder2 = ResourceAuditData.newBuilder();
-		ResourceAuditData resAuData = newBuilder2.build();
-		return new AuditCreateResourceExternalApiEventFactory(commonAuData, "", "", "", "",
-				resAuData, resAuData, "", new User(), "");
+		ResourceVersionInfo.Builder newBuilder2 = ResourceVersionInfo.newBuilder();
+		ResourceVersionInfo resAuData = newBuilder2.build();
+		return new AuditCreateResourceExternalApiEventFactory(commonAuData,new ResourceCommonInfo(),new DistributionData("",""),resAuData,"", new User());
 	}
 
 	@Test

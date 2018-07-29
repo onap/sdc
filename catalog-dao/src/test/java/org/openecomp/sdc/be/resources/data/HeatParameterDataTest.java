@@ -1,10 +1,10 @@
 package org.openecomp.sdc.be.resources.data;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.junit.Test;
 import org.openecomp.sdc.be.datatypes.elements.HeatParameterDataDefinition;
+
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class HeatParameterDataTest {

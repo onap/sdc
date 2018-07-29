@@ -20,14 +20,12 @@
 
 package org.openecomp.sdc.be.model;
 
-import java.io.Serializable;
-import java.util.Map;
-import java.util.stream.Collectors;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.openecomp.sdc.be.datatypes.elements.InterfaceDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationDataDefinition;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Definition of the operations that can be performed on (instances of) a Node
@@ -35,13 +33,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  *
  * @author esofer
  */
-public class InterfaceDefinition extends InterfaceDataDefinition implements IOperationParameter, Serializable {
-
-    /**
-     *
-     */
-    private static final long serialVersionUID = 8220887972866354746L;
-
+public class InterfaceDefinition extends InterfaceDataDefinition implements IOperationParameter {
 
     private boolean definition;
 
@@ -69,19 +61,18 @@ public class InterfaceDefinition extends InterfaceDataDefinition implements IOpe
 
     @JsonIgnore
     public Map<String, Operation> getOperationsMap() {
-        Map<String, Operation> convertedOperation = getOperations().entrySet()
-            .stream()
-            .collect(Collectors.toMap(e -> e.getKey(), e -> new Operation(e
-                .getValue())));
-        return convertedOperation;
+        return getOperations().entrySet()
+                              .stream()
+                              .collect(Collectors.toMap(Map.Entry::getKey, e -> new Operation(e
+                                                                           .getValue())));
     }
 
     @JsonIgnore
     public void setOperationsMap(Map<String, Operation> operations) {
         Map<String, OperationDataDefinition> convertedOperation = operations.entrySet()
-            .stream()
-            .collect(Collectors.toMap(e -> e.getKey(), e -> new OperationDataDefinition(e
-                .getValue())));
+                                                                            .stream()
+                                                                            .collect(Collectors.toMap(Map.Entry::getKey, e -> new OperationDataDefinition(e
+                                                                                    .getValue())));
         setOperations(convertedOperation);
     }
 

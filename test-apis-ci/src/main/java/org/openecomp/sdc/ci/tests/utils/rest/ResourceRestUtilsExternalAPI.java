@@ -20,8 +20,7 @@
 
 package org.openecomp.sdc.ci.tests.utils.rest;
 
-import java.util.Map;
-
+import com.google.gson.Gson;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.ci.tests.api.Urls;
 import org.openecomp.sdc.ci.tests.config.Config;
@@ -32,7 +31,7 @@ import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
 import org.openecomp.sdc.ci.tests.utils.Utils;
 import org.openecomp.sdc.common.util.GeneralUtility;
 
-import com.google.gson.Gson;
+import java.util.Map;
 
 public class ResourceRestUtilsExternalAPI extends BaseRestUtils {
 	

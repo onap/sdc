@@ -16,21 +16,6 @@
 
 package org.openecomp.sdc.enrichment.impl.external.artifact;
 
-import static org.openecomp.sdc.tosca.services.ToscaConstants.SERVICE_TEMPLATE_FILTER_PROPERTY_NAME;
-import static org.openecomp.sdc.tosca.services.ToscaConstants.SUBSTITUTE_SERVICE_TEMPLATE_PROPERTY_NAME;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-
 import org.onap.sdc.tosca.datatypes.model.Directive;
 import org.onap.sdc.tosca.datatypes.model.NodeTemplate;
 import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
@@ -59,6 +44,13 @@ import org.openecomp.sdc.vendorsoftwareproduct.dao.MonitoringUploadDaoFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComponentEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComponentMonitoringUploadEntity;
 import org.openecomp.sdc.versioning.dao.types.Version;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
+
+import static org.openecomp.sdc.tosca.services.ToscaConstants.SERVICE_TEMPLATE_FILTER_PROPERTY_NAME;
+import static org.openecomp.sdc.tosca.services.ToscaConstants.SUBSTITUTE_SERVICE_TEMPLATE_PROPERTY_NAME;
 
 public class MonitoringMibEnricher implements ExternalArtifactEnricherInterface {
 

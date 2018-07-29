@@ -1,23 +1,17 @@
 package org.openecomp.sdc.be.components.merge.instance;
 
-import java.util.List;
-import java.util.Map;
-
+import fj.data.Either;
 import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic;
 import org.openecomp.sdc.be.components.merge.heat.HeatEnvArtifactsMergeBusinessLogic;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
-import org.openecomp.sdc.be.model.ArtifactDefinition;
-import org.openecomp.sdc.be.model.Component;
-import org.openecomp.sdc.be.model.ComponentInstance;
-import org.openecomp.sdc.be.model.Operation;
-import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.*;
 import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import fj.data.Either;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by chaya on 9/20/2017.
@@ -25,7 +19,7 @@ import fj.data.Either;
 @org.springframework.stereotype.Component("ComponentInstanceHeatEnvMerge")
 public class ComponentInstanceHeatEnvMerge implements ComponentInstanceMergeInterface {
 
-    private static final Logger log = LoggerFactory.getLogger(ComponentInstanceHeatEnvMerge.class);
+    private static final Logger log = Logger.getLogger(ComponentInstanceHeatEnvMerge.class);
 
     @Autowired
     private ArtifactsBusinessLogic artifactsBusinessLogic;

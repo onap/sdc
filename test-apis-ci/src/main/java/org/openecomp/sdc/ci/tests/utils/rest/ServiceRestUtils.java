@@ -20,10 +20,7 @@
 
 package org.openecomp.sdc.ci.tests.utils.rest;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
+import com.google.gson.Gson;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
@@ -41,7 +38,9 @@ import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.gson.Gson;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ServiceRestUtils extends BaseRestUtils {
 	private static Logger logger = LoggerFactory.getLogger(ServiceRestUtils.class.getName());

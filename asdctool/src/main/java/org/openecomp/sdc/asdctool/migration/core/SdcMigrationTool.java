@@ -1,7 +1,5 @@
 package org.openecomp.sdc.asdctool.migration.core;
 
-import java.util.List;
-
 import org.openecomp.sdc.asdctool.migration.core.execution.MigrationExecutionResult;
 import org.openecomp.sdc.asdctool.migration.core.execution.MigrationExecutorImpl;
 import org.openecomp.sdc.asdctool.migration.core.task.IMigrationStage;
@@ -9,12 +7,13 @@ import org.openecomp.sdc.asdctool.migration.core.task.IMigrationStage.AspectMigr
 import org.openecomp.sdc.asdctool.migration.core.task.MigrationResult;
 import org.openecomp.sdc.asdctool.migration.resolver.MigrationResolver;
 import org.openecomp.sdc.asdctool.migration.service.SdcRepoService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.openecomp.sdc.common.log.wrappers.Logger;
+
+import java.util.List;
 
 public class SdcMigrationTool {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(SdcMigrationTool.class);
+    private static final Logger LOGGER = Logger.getLogger(SdcMigrationTool.class);
 
     private MigrationResolver migrationsResolver;
 

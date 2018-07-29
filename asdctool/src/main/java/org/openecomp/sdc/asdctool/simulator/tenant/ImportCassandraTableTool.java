@@ -1,15 +1,15 @@
 package org.openecomp.sdc.asdctool.simulator.tenant;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.function.Consumer;
-
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.common.api.ConfigurationSource;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;
 import org.openecomp.sdc.common.impl.FSConfigurationSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Consumer;
 
 /**
  * Main class of utility imports CSV file into the specified table

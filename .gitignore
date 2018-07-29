@@ -72,6 +72,7 @@ settings.gradle
 # catalog-ui
 #------------------------------------------------------------
 #------------------------------------------------------------
+#------------------------------------------------------------
 catalog-ui/app/dist/*
 catalog-ui/package-lock.json
 catalog-ui/dist
@@ -119,6 +120,10 @@ catalog-ui/app/scripts/tsconfig.json
 catalog-ui/app/tsconfig.json
 catalog-ui/package-lock.json
 catalog-ui/dist
+catalog-ui/*.tmp.txt
+catalog-ui/tests/Coverage/*
+catalog-ui/Chrome*
+catalog-ui/PhantomJS_1.9.8_(Windows_7_0.0.0)/*
 catalog-ui/*.tmp.txt
 catalog-ui/tests/Coverage/*
 catalog-ui/Chrome*
@@ -175,7 +180,7 @@ log.home_IS_UNDEFINED/ASDC/ASDC-BE/audit.log
 log.home_IS_UNDEFINED/ASDC/ASDC-BE/debug.log
 log.home_IS_UNDEFINED/ASDC/ASDC-BE/debug_by_package.log
 log.home_IS_UNDEFINED/ASDC/ASDC-BE/transaction.log
-log/
+
 node/*
 openecomp-be/tools/swagger-ui/api-docs/api.html
 openecomp-be/tools/swagger-ui/api-docs/api.json
@@ -229,10 +234,14 @@ vagrant-asdc-all-in-one/
 
 
 
+ExtentReport/
+automationDownloadDir*/
+
 /asdctool/*.xls
 
 /sdc-cassandra/chef-repo/cookbooks/cassandra-actions/files/default/tools/build/scripts/*
 
+*.xls
 
 
 /sdc-os-chef/sdc-cassandra/chef-repo/cookbooks/cassandra-actions/attributes/default.rb

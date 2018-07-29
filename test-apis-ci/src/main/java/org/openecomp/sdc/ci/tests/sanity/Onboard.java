@@ -21,9 +21,8 @@
 package org.openecomp.sdc.ci.tests.sanity;
 
 
-
-
-
+import com.aventstack.extentreports.Status;
+import fj.data.Either;
 import org.junit.Rule;
 import org.junit.rules.TestName;
 import org.openecomp.sdc.be.model.ComponentInstance;
@@ -42,16 +41,7 @@ import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
 import org.openecomp.sdc.ci.tests.utils.general.AtomicOperationUtils;
 import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
 import org.openecomp.sdc.ci.tests.utils.general.OnboardingUtillViaApis;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Optional;
-import org.testng.annotations.Parameters;
-import org.testng.annotations.Test;
-
-import com.aventstack.extentreports.Status;
-import com.clearspring.analytics.util.Pair;
-
-import fj.data.Either;
+import org.testng.annotations.*;
 
 
 
@@ -108,9 +98,8 @@ public class Onboard extends ComponentBaseTest {
 		ExtentTestActions.log(Status.INFO, String.format("Going to onboard the VNF %s", vnfFile));
 		User user = ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER);
      	ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource();
-		Pair<String, VendorSoftwareProductObject> createVendorSoftwareProduct = OnboardingUtillViaApis.createVspViaApis(resourceReqDetails, filePath, vnfFile, user);
-		VendorSoftwareProductObject vendorSoftwareProductObject = createVendorSoftwareProduct.right;
-		vendorSoftwareProductObject.setName(createVendorSoftwareProduct.left);
+		VendorSoftwareProductObject vendorSoftwareProductObject = OnboardingUtillViaApis.createVspViaApis(resourceReqDetails, filePath, vnfFile, user);
+//		vendorSoftwareProductObject.setName(vendorSoftwareProductObject.getName());
 
 		//		create VF base on VNF imported from previous step - have, resourceReqDetails object include part of resource metadata
 //		ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource();

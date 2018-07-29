@@ -20,14 +20,14 @@
 
 package org.openecomp.sdc.be.resources.data;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-
 import org.openecomp.sdc.be.dao.graph.datatype.GraphNode;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
 import org.openecomp.sdc.be.dao.utils.Constants;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
 public class AttributeValueData extends GraphNode {
 	private String uniqueId;
@@ -95,7 +95,7 @@ public class AttributeValueData extends GraphNode {
 	@Override
 	public Map<String, Object> toGraphMap() {
 
-		Map<String, Object> map = new HashMap<String, Object>();
+		Map<String, Object> map = new HashMap<>();
 
 		addIfExists(map, GraphPropertiesDictionary.UNIQUE_ID, uniqueId);
 

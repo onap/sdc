@@ -10,9 +10,11 @@
     .w-sdc-deployment-canvas {
         .noselect;
         .bg_c;
+        position: relative;
         bottom: 0;
         width: 100%;
         height: 100%;
+        z-index: 0;
 
         .view-mode{
             background-color: #f8f8f8;
@@ -27,7 +29,6 @@
         position: absolute;
         right: 0px;
         transition: right 0.2s;
-        z-index: 10000;
         top:  @action_nav_height;
     }
 }

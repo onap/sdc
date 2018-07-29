@@ -1,10 +1,7 @@
 package org.openecomp.sdc.be.model.cache;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
+import fj.data.Either;
+import mockit.Deencapsulation;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.junit.Before;
 import org.junit.Test;
@@ -18,8 +15,10 @@ import org.openecomp.sdc.be.model.operations.impl.PropertyOperation;
 import org.openecomp.sdc.be.resources.data.DataTypeData;
 import org.openecomp.sdc.be.unittests.utils.ModelConfDependentTest;
 
-import fj.data.Either;
-import mockit.Deencapsulation;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 public class ApplicationDataTypeCacheTest extends ModelConfDependentTest{
 

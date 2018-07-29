@@ -20,42 +20,29 @@
 
 package org.openecomp.sdc.be.distribution.servlet;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.inject.Singleton;
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
+import com.jcabi.aspects.Loggable;
+import fj.data.Either;
+import io.swagger.annotations.*;
 import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.resources.data.auditing.model.DistributionData;
 import org.openecomp.sdc.be.servlets.BeGenericServlet;
 import org.openecomp.sdc.common.api.Constants;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import com.jcabi.aspects.Loggable;
-
-import fj.data.Either;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import javax.inject.Singleton;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * This Servlet serves external users to download artifacts.
@@ -70,7 +57,9 @@ import io.swagger.annotations.ApiResponses;
 @Singleton
 public class DistributionCatalogServlet extends BeGenericServlet {
 
-    private static final Logger log = LoggerFactory.getLogger(DistributionCatalogServlet.class);
+    private static final String DOWNLOAD_ARTIFACT_FAILED_WITH_EXCEPTION = "download artifact failed with exception";
+	private static final String MISSING_X_ECOMP_INSTANCE_ID_HEADER = "Missing X-ECOMP-InstanceID header";
+	private static final Logger log = Logger.getLogger(DistributionCatalogServlet.class);
     @Context
     private HttpServletRequest request;
 
@@ -115,7 +104,7 @@ public class DistributionCatalogServlet extends BeGenericServlet {
         Response response = null;
         String requestURI = request.getRequestURI();
         if (instanceIdHeader == null || instanceIdHeader.isEmpty()) {
-            log.debug("Missing X-ECOMP-InstanceID header");
+            log.debug(MISSING_X_ECOMP_INSTANCE_ID_HEADER);
             ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.MISSING_X_ECOMP_INSTANCE_ID);
             getComponentsUtils().auditDistributionDownload(responseFormat, new DistributionData(instanceIdHeader, requestURI));
             return buildErrorResponse(responseFormat);
@@ -143,7 +132,7 @@ public class DistributionCatalogServlet extends BeGenericServlet {
 
         } catch (Exception e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("download Murano package artifact for service - external API");
-            log.debug("download artifact failed with exception", e);
+            log.debug(DOWNLOAD_ARTIFACT_FAILED_WITH_EXCEPTION, e);
             return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
         }
     }
@@ -192,7 +181,7 @@ public class DistributionCatalogServlet extends BeGenericServlet {
         String requestURI = request.getRequestURI();
 
         if (instanceIdHeader == null || instanceIdHeader.isEmpty()) {
-            log.debug("Missing X-ECOMP-InstanceID header");
+            log.debug(MISSING_X_ECOMP_INSTANCE_ID_HEADER);
             ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.MISSING_X_ECOMP_INSTANCE_ID);
             getComponentsUtils().auditDistributionDownload(responseFormat, new DistributionData(instanceIdHeader, requestURI));
             return buildErrorResponse(responseFormat);
@@ -220,7 +209,7 @@ public class DistributionCatalogServlet extends BeGenericServlet {
 
         } catch (Exception e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("download interface artifact for resource - external API");
-            log.debug("download artifact failed with exception", e);
+            log.debug(DOWNLOAD_ARTIFACT_FAILED_WITH_EXCEPTION, e);
             return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
         }
     }
@@ -267,7 +256,7 @@ public class DistributionCatalogServlet extends BeGenericServlet {
         String requestURI = request.getRequestURI();
 
         if (instanceIdHeader == null || instanceIdHeader.isEmpty()) {
-            log.debug("Missing X-ECOMP-InstanceID header");
+            log.debug(MISSING_X_ECOMP_INSTANCE_ID_HEADER);
             ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.MISSING_X_ECOMP_INSTANCE_ID);
             getComponentsUtils().auditDistributionDownload(responseFormat, new DistributionData(instanceIdHeader, requestURI));
             return buildErrorResponse(responseFormat);
@@ -295,7 +284,7 @@ public class DistributionCatalogServlet extends BeGenericServlet {
 
         } catch (Exception e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("download interface artifact for resource - external API");
-            log.debug("download artifact failed with exception", e);
+            log.debug(DOWNLOAD_ARTIFACT_FAILED_WITH_EXCEPTION, e);
             return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
         }
     }

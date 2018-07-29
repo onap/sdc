@@ -79,15 +79,33 @@ public class CompositionPage extends GeneralPageElements {
 	}
 
 	public static void moveToInputsScreen() throws Exception {
-		OpenPagesMenu();
+		OpenPagesMenu(2);
 		GeneralUIUtils.clickOnElementByTestId(DataTestIdEnum.CompositionScreenEnum.MENU_INPUTS.getValue());
-		GeneralUIUtils.ultimateWait();
+//		GeneralUIUtils.ultimateWait();
 	}
 
-	private static void OpenPagesMenu() {
+	public static void moveToPropertiesScreen() throws Exception {
+		OpenPagesMenu(2);
+		GeneralUIUtils.clickOnElementByTestId(DataTestIdEnum.CompositionScreenEnum.MENU_PROPERTIES_ASSIGNMENT.getValue());
+//		GeneralUIUtils.ultimateWait();
+	}
+
+	public static void moveToOnboardScreen() throws Exception {
+		OpenPagesMenu(0);
+		GeneralUIUtils.clickOnElementByTestId(DataTestIdEnum.CompositionScreenEnum.MENU_ONBOARD.getValue());
+//		GeneralUIUtils.ultimateWait();
+	}
+
+	public static void moveToHomeScreen() throws Exception {
+		OpenPagesMenu(0);
+		GeneralUIUtils.clickOnElementByTestId(DataTestIdEnum.CompositionScreenEnum.MENU_HOME.getValue());
+//		GeneralUIUtils.ultimateWait();
+	}
+
+	private static void OpenPagesMenu(int counter) {
 		Actions actions = new Actions(GeneralUIUtils.getDriver());
 		List<WebElement> triangleList = GeneralUIUtils.getWebElementsListByClassName(DataTestIdEnum.CompositionScreenEnum.MENU_TRIANGLE_DROPDOWN.getValue());
-		WebElement pagesMenu = triangleList.get(2);
+		WebElement pagesMenu = triangleList.get(counter);
 		actions.moveToElement(pagesMenu).perform();
 	}
 
@@ -100,7 +118,7 @@ public class CompositionPage extends GeneralPageElements {
 			SetupCDTest.getExtendTest().log(Status.INFO, String.format("Changing component version to  %s", version));
 			canvasManager.clickOnCanvaElement(element);
 			GeneralUIUtils.clickOnElementByTestId(DataTestIdEnum.CompositionScreenEnum.CHANGE_VERSION.getValue());
-			GeneralUIUtils.ultimateWait();
+//			GeneralUIUtils.ultimateWait();
 			Select selectlist = new Select(GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.CompositionScreenEnum.CHANGE_VERSION.getValue()));
 			while (selectlist.getOptions().size() == 0) {
 				selectlist = new Select(GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.CompositionScreenEnum.CHANGE_VERSION.getValue()));

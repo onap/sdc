@@ -16,13 +16,6 @@
 
 package org.openecomp.sdc.translator.services.heattotosca.impl.resourcetranslation;
 
-import static org.openecomp.sdc.translator.services.heattotosca.HeatToToscaLogConstants.LOG_INVALID_INSTANCE_UUID;
-import static org.openecomp.sdc.translator.services.heattotosca.HeatToToscaLogConstants.LOG_UNSUPPORTED_VOLUME_ATTACHMENT_MSG;
-import static org.openecomp.sdc.translator.services.heattotosca.HeatToToscaUtil.getResource;
-
-import java.util.List;
-import java.util.Optional;
-
 import org.apache.commons.lang3.StringUtils;
 import org.onap.sdc.tosca.datatypes.model.NodeTemplate;
 import org.onap.sdc.tosca.datatypes.model.RelationshipTemplate;
@@ -48,6 +41,13 @@ import org.openecomp.sdc.translator.services.heattotosca.ResourceTranslationFact
 import org.openecomp.sdc.translator.services.heattotosca.errors.MissingMandatoryPropertyErrorBuilder;
 import org.openecomp.sdc.translator.services.heattotosca.helper.VolumeTranslationHelper;
 import org.openecomp.sdc.translator.services.heattotosca.mapping.TranslatorHeatToToscaPropertyConverter;
+
+import java.util.List;
+import java.util.Optional;
+
+import static org.openecomp.sdc.translator.services.heattotosca.HeatToToscaLogConstants.LOG_INVALID_INSTANCE_UUID;
+import static org.openecomp.sdc.translator.services.heattotosca.HeatToToscaLogConstants.LOG_UNSUPPORTED_VOLUME_ATTACHMENT_MSG;
+import static org.openecomp.sdc.translator.services.heattotosca.HeatToToscaUtil.getResource;
 
 public class ResourceTranslationCinderVolumeAttachmentImpl extends ResourceTranslationBase {
 

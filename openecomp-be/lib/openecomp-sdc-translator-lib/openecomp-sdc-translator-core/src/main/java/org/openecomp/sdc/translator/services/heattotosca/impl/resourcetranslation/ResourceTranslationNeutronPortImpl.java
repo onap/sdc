@@ -16,17 +16,7 @@
 
 package org.openecomp.sdc.translator.services.heattotosca.impl.resourcetranslation;
 
-import static org.openecomp.sdc.translator.services.heattotosca.Constants.SECURITY_GROUPS_PROPERTY_NAME;
-import static org.openecomp.sdc.translator.services.heattotosca.HeatToToscaLogConstants.LOG_UNSUPPORTED_RESOURCE_REQUIREMENT_CONNECTION;
-
 import com.google.common.collect.ImmutableList;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-
 import org.onap.sdc.tosca.datatypes.model.NodeTemplate;
 import org.onap.sdc.tosca.datatypes.model.RequirementAssignment;
 import org.openecomp.sdc.heat.datatypes.model.HeatResourcesTypes;
@@ -46,6 +36,11 @@ import org.openecomp.sdc.translator.services.heattotosca.HeatToToscaUtil;
 import org.openecomp.sdc.translator.services.heattotosca.ResourceTranslationFactory;
 import org.openecomp.sdc.translator.services.heattotosca.helper.ResourceTranslationNeutronPortHelper;
 import org.openecomp.sdc.translator.services.heattotosca.mapping.TranslatorHeatToToscaPropertyConverter;
+
+import java.util.*;
+
+import static org.openecomp.sdc.translator.services.heattotosca.Constants.SECURITY_GROUPS_PROPERTY_NAME;
+import static org.openecomp.sdc.translator.services.heattotosca.HeatToToscaLogConstants.LOG_UNSUPPORTED_RESOURCE_REQUIREMENT_CONNECTION;
 
 
 public class ResourceTranslationNeutronPortImpl extends ResourceTranslationBase {

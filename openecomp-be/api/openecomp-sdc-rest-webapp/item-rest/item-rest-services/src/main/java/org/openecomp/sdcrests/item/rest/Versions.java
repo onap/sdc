@@ -3,22 +3,11 @@ package org.openecomp.sdcrests.item.rest;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import org.openecomp.sdcrests.item.types.ActivityLogDto;
-import org.openecomp.sdcrests.item.types.RevisionDto;
-import org.openecomp.sdcrests.item.types.VersionActionRequestDto;
-import org.openecomp.sdcrests.item.types.VersionDto;
-import org.openecomp.sdcrests.item.types.VersionRequestDto;
+import org.openecomp.sdcrests.item.types.*;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.NotNull;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 

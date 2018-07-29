@@ -20,9 +20,7 @@
 
 package org.openecomp.sdc.ci.tests.verificator;
 
-import java.util.Arrays;
-import java.util.List;
-
+import com.aventstack.extentreports.Status;
 import org.apache.commons.lang3.text.WordUtils;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.model.User;
@@ -35,7 +33,8 @@ import org.openecomp.sdc.ci.tests.utils.validation.ErrorValidationUtils;
 import org.openqa.selenium.WebElement;
 import org.testng.Assert;
 
-import com.aventstack.extentreports.Status;
+import java.util.Arrays;
+import java.util.List;
 
 public class UserManagementVerificator {
 

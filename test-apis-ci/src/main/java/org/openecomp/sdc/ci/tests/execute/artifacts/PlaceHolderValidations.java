@@ -21,11 +21,28 @@
 package org.openecomp.sdc.ci.tests.execute.artifacts;
 
 //import static org.junit.Assert.assertTrue;
-import static org.testng.AssertJUnit.assertEquals;
-import static org.testng.AssertJUnit.assertFalse;
-import static org.testng.AssertJUnit.assertNotNull;
-import static org.testng.AssertJUnit.assertNull;
-import static org.testng.AssertJUnit.assertTrue;
+
+import fj.data.Either;
+import org.junit.Rule;
+import org.junit.rules.TestName;
+import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
+import org.openecomp.sdc.be.model.*;
+import org.openecomp.sdc.ci.tests.api.ComponentBaseTest;
+import org.openecomp.sdc.ci.tests.datatypes.ArtifactReqDetails;
+import org.openecomp.sdc.ci.tests.datatypes.ResourceReqDetails;
+import org.openecomp.sdc.ci.tests.datatypes.enums.*;
+import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
+import org.openecomp.sdc.ci.tests.utils.Utils;
+import org.openecomp.sdc.ci.tests.utils.general.AtomicOperationUtils;
+import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
+import org.openecomp.sdc.ci.tests.utils.general.FileUtils;
+import org.openecomp.sdc.ci.tests.utils.rest.*;
+import org.openecomp.sdc.ci.tests.utils.validation.ErrorValidationUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -35,47 +52,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import org.javatuples.Pair;
-import org.junit.Rule;
-import org.junit.rules.TestName;
-import org.openecomp.sdc.be.dao.api.ActionStatus;
-import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
-import org.openecomp.sdc.be.model.ArtifactDefinition;
-import org.openecomp.sdc.be.model.Component;
-import org.openecomp.sdc.be.model.Resource;
-import org.openecomp.sdc.be.model.Service;
-import org.openecomp.sdc.be.model.User;
-import org.openecomp.sdc.ci.tests.api.ComponentBaseTest;
-import org.openecomp.sdc.ci.tests.datatypes.ArtifactReqDetails;
-import org.openecomp.sdc.ci.tests.datatypes.ResourceReqDetails;
-import org.openecomp.sdc.ci.tests.datatypes.enums.ArtifactTypeEnum;
-import org.openecomp.sdc.ci.tests.datatypes.enums.ErrorInfo;
-import org.openecomp.sdc.ci.tests.datatypes.enums.LifeCycleStatesEnum;
-import org.openecomp.sdc.ci.tests.datatypes.enums.NormativeTypesEnum;
-import org.openecomp.sdc.ci.tests.datatypes.enums.ResourceCategoryEnum;
-import org.openecomp.sdc.ci.tests.datatypes.enums.ServiceCategoriesEnum;
-import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
-import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
-import org.openecomp.sdc.ci.tests.utils.Utils;
-import org.openecomp.sdc.ci.tests.utils.cassandra.CassandraUtils;
-import org.openecomp.sdc.ci.tests.utils.general.AtomicOperationUtils;
-import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
-import org.openecomp.sdc.ci.tests.utils.general.FileUtils;
-import org.openecomp.sdc.ci.tests.utils.rest.ArtifactRestUtils;
-import org.openecomp.sdc.ci.tests.utils.rest.BaseRestUtils;
-import org.openecomp.sdc.ci.tests.utils.rest.LifecycleRestUtils;
-import org.openecomp.sdc.ci.tests.utils.rest.ResourceRestUtils;
-import org.openecomp.sdc.ci.tests.utils.rest.ResponseParser;
-import org.openecomp.sdc.ci.tests.utils.rest.ServiceRestUtils;
-import org.openecomp.sdc.ci.tests.utils.validation.ErrorValidationUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
-
-import com.datastax.driver.core.Row;
-
-import fj.data.Either;
+import static org.testng.AssertJUnit.*;
 
 public class PlaceHolderValidations extends ComponentBaseTest {
 	private static Logger logger = LoggerFactory.getLogger(PlaceHolderValidations.class.getName());
@@ -140,7 +117,7 @@ public class PlaceHolderValidations extends ComponentBaseTest {
 		}
 	}
 
-	private void validateToscaArtifactsBeforeAndAfterSFT(ResourceReqDetails resourceDetails)
+	/*private void validateToscaArtifactsBeforeAndAfterSFT(ResourceReqDetails resourceDetails)
 			throws IOException, Exception {
 		RestResponse componentResponse = ResourceRestUtils.getResource(resourceDetails, sdncDesignerDetails1);
 		Component component = ResponseParser.convertResourceResponseToJavaObject(componentResponse.getResponse());
@@ -161,15 +138,15 @@ public class PlaceHolderValidations extends ComponentBaseTest {
 			List<Row> fetchFromTable = CassandraUtils.fetchFromTableQuery("sdcartifact", "resources", fields);
 			assertTrue(1 == fetchFromTable.size());
 		}
-	}
+	}*/
 
-	@Test
+	/*@Test
 	public void validateToscaArtifactsBeforeAndAfterSFT() throws IOException, Exception {
 		// TODO ADD VF and Service
 		validateToscaArtifactsBeforeAndAfterSFT(resourceDetails1);
 		validateToscaArtifactsBeforeAndAfterSFT(resourceCP);
 		validateToscaArtifactsBeforeAndAfterSFT(resourceVL);
-	}
+	}*/
 
 	@Test
 	public void validateToscaPlaceHoldersByConfig() throws IOException, Exception {

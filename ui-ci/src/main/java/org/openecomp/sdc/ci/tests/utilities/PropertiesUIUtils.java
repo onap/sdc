@@ -20,28 +20,17 @@
 
 package org.openecomp.sdc.ci.tests.utilities;
 
-import java.util.HashMap;
-import java.util.Map;
-
+import com.aventstack.extentreports.Status;
 import org.openecomp.sdc.ci.tests.datatypes.enums.PropertyTypeEnum;
 import org.openecomp.sdc.ci.tests.execute.setup.SetupCDTest;
 import org.openecomp.sdc.ci.tests.pages.PropertiesPage;
 import org.openqa.selenium.WebElement;
 
-import com.aventstack.extentreports.Status;
+import java.util.HashMap;
+import java.util.Map;
 
 public class PropertiesUIUtils {
 
-	// public static void addPropertByType(String type,String name,String
-	// defaultValue,String description) throws Exception{
-	//
-	// ResourceUIUtils.defineNewSelectList(type);
-	// ResourceUIUtils.definePropertyName(name);
-	// ResourceUIUtils.defineDefaultValueByType(defaultValue);
-	// ResourceUIUtils.defineDescription(description);
-	// Thread.sleep(2000);
-	// ResourceUIUtils.clickButton("Add");
-	// }
 	public static Map<String, String> addProperties(String name, String itemType, String defaultValue,
 			String description, String schemaType) throws Exception {
 		Map<String, String> propertyvalues = new HashMap<String, String>();
@@ -52,7 +41,6 @@ public class PropertiesUIUtils {
 			GeneralUIUtils.setWebElementByTestId("description","description");
 			Thread.sleep(2000);
 			GeneralUIUtils.getWebElementByTestID("Add").click();
-			;
 		} else if (itemType == "list" || itemType == "map") {
 			GeneralUIUtils.getSelectList(schemaType, "schemaType");
 		}
@@ -60,7 +48,6 @@ public class PropertiesUIUtils {
 			ResourceUIUtils.defineDefaultValueByType(defaultValue);
 			GeneralUIUtils.setWebElementByTestId("description", "des");
 			GeneralUIUtils.getWebElementByTestID("Add").click();
-			;
 			Thread.sleep(2000);
 		}
 		propertyvalues.put("type", itemType);

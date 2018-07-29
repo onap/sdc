@@ -20,11 +20,11 @@
 
 package org.openecomp.sdc.fe.listen;
 
-import javax.ws.rs.ext.ContextResolver;
-import javax.ws.rs.ext.Provider;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+
+import javax.ws.rs.ext.ContextResolver;
+import javax.ws.rs.ext.Provider;
 
 @Provider
 public class MyObjectMapperProvider implements ContextResolver<ObjectMapper> {

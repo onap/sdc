@@ -1,10 +1,10 @@
 package org.openecomp.sdc.be.components.distribution.engine.report;
 
-import javax.annotation.Resource;
-
 import org.openecomp.sdc.be.components.distribution.engine.DistributionStatusNotification;
 import org.openecomp.sdc.be.components.distribution.engine.rest.MSORestClient;
 import org.springframework.stereotype.Component;
+
+import javax.annotation.Resource;
 
 @Component
 public class MsoDistributionCompleteReporter implements DistributionCompleteReporter {

@@ -24,53 +24,53 @@ import java.util.Map;
 
 public class RequirementImplDef {
 
-	private String uniqueId;
+    private String uniqueId;
 
-	/**
-	 * node type(mandatory). Unique id of the node we choose.
-	 */
-	private String nodeId;
+    /**
+     * node type(mandatory). Unique id of the node we choose.
+     */
+    private String nodeId;
 
-	private Map<String, CapabiltyInstance> requirementProperties;
+    private Map<String, CapabiltyInstance> requirementProperties;
 
-	private Point point;
+    private Point point;
 
-	public String getNodeId() {
-		return nodeId;
-	}
+    public String getNodeId() {
+        return nodeId;
+    }
 
-	public void setNodeId(String nodeId) {
-		this.nodeId = nodeId;
-	}
+    public void setNodeId(String nodeId) {
+        this.nodeId = nodeId;
+    }
 
-	public String getUniqueId() {
-		return uniqueId;
-	}
+    public String getUniqueId() {
+        return uniqueId;
+    }
 
-	public void setUniqueId(String uniqueId) {
-		this.uniqueId = uniqueId;
-	}
+    public void setUniqueId(String uniqueId) {
+        this.uniqueId = uniqueId;
+    }
 
-	public Map<String, CapabiltyInstance> getRequirementProperties() {
-		return requirementProperties;
-	}
+    public Map<String, CapabiltyInstance> getRequirementProperties() {
+        return requirementProperties;
+    }
 
-	public void setRequirementProperties(Map<String, CapabiltyInstance> requirementProperties) {
-		this.requirementProperties = requirementProperties;
-	}
+    public void setRequirementProperties(Map<String, CapabiltyInstance> requirementProperties) {
+        this.requirementProperties = requirementProperties;
+    }
 
-	public Point getPoint() {
-		return point;
-	}
+    public Point getPoint() {
+        return point;
+    }
 
-	public void setPoint(Point point) {
-		this.point = point;
-	}
+    public void setPoint(Point point) {
+        this.point = point;
+    }
 
-	@Override
-	public String toString() {
-		return "RequirementImplDef [uniqueId=" + uniqueId + ", nodeId=" + nodeId + ", requirementProperties="
-				+ requirementProperties + ", point=" + point + "]";
-	}
+    @Override
+    public String toString() {
+        return "RequirementImplDef [uniqueId=" + uniqueId + ", nodeId=" + nodeId + ", requirementProperties="
+                + requirementProperties + ", point=" + point + "]";
+    }
 
 }

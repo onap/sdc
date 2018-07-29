@@ -25,8 +25,6 @@ import static org.openecomp.sdc.translator.services.heattotosca.HeatToToscaLogCo
 import static org.openecomp.sdc.translator.services.heattotosca.HeatToToscaLogConstants.LOG_SERVICE_TEMPLATE_PROPERTY_UNSUPPORTED_RESOURCE;
 import static org.openecomp.sdc.translator.services.heattotosca.HeatToToscaLogConstants.LOG_UNSUPPORTED_NETWORK_RESOURCE_CONNECTION;
 
-import com.google.common.collect.ImmutableList;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -34,18 +32,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
-import org.onap.sdc.tosca.datatypes.model.AttributeDefinition;
-import org.onap.sdc.tosca.datatypes.model.GroupDefinition;
-import org.onap.sdc.tosca.datatypes.model.Import;
-import org.onap.sdc.tosca.datatypes.model.NodeTemplate;
-import org.onap.sdc.tosca.datatypes.model.NodeType;
-import org.onap.sdc.tosca.datatypes.model.ParameterDefinition;
-import org.onap.sdc.tosca.datatypes.model.PropertyDefinition;
-import org.onap.sdc.tosca.datatypes.model.RequirementAssignment;
-import org.onap.sdc.tosca.datatypes.model.RequirementDefinition;
-import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
-import org.onap.sdc.tosca.datatypes.model.SubstitutionMapping;
-import org.onap.sdc.tosca.datatypes.model.TopologyTemplate;
+import org.onap.sdc.tosca.datatypes.model.*;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.heat.datatypes.HeatBoolean;
 import org.openecomp.sdc.heat.datatypes.model.HeatResourcesTypes;
@@ -75,6 +62,8 @@ import org.openecomp.sdc.translator.services.heattotosca.errors.MissingMandatory
 import org.openecomp.sdc.translator.services.heattotosca.globaltypes.GlobalTypesGenerator;
 import org.openecomp.sdc.translator.services.heattotosca.helper.ContrailTranslationHelper;
 import org.openecomp.sdc.translator.services.heattotosca.mapping.TranslatorHeatToToscaPropertyConverter;
+
+import com.google.common.collect.ImmutableList;
 
 public class ResourceTranslationContrailServiceInstanceImpl extends ResourceTranslationBase {
 

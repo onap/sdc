@@ -20,14 +20,8 @@
 
 package org.openecomp.sdc.be.dao.impl;
 
-import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.TimeUnit;
-
-import javax.annotation.PostConstruct;
-
+import com.fasterxml.jackson.core.JsonProcessingException;
+import fj.data.Either;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthRequest;
 import org.elasticsearch.cluster.health.ClusterHealthStatus;
 import org.elasticsearch.common.unit.TimeValue;
@@ -39,19 +33,23 @@ import org.openecomp.sdc.be.dao.api.ResourceUploadStatus;
 import org.openecomp.sdc.be.resources.data.ESArtifactData;
 import org.openecomp.sdc.be.resources.exception.ResourceDAOException;
 import org.openecomp.sdc.common.api.HealthCheckInfo.HealthCheckStatus;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.springframework.stereotype.Component;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-
-import fj.data.Either;
+import javax.annotation.PostConstruct;
+import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.TimeUnit;
 
 @Component("resource-dao")
 public class ESCatalogDAO extends ESGenericSearchDAO implements ICatalogDAO {
 
-	private static Logger log = LoggerFactory.getLogger(ESCatalogDAO.class.getName());
-	private static Logger healthCheckLogger = LoggerFactory.getLogger("elasticsearch.healthcheck");
+	private static Logger log = Logger.getLogger(ESCatalogDAO.class.getName());
+
+	//TODO use LoggerMetric instead
+	private static Logger healthCheckLogger = Logger.getLogger("elasticsearch.healthcheck");
 
 	///// HealthCheck/////////
 	private static final String ES_HEALTH_CHECK_STR = "elasticsearchHealthCheck";
@@ -67,7 +65,7 @@ public class ESCatalogDAO extends ESGenericSearchDAO implements ICatalogDAO {
 	private class HealthCheckScheduledTask implements Runnable {
 		@Override
 		public void run() {
-			healthCheckLogger.trace("Executing ELASTICSEARCH Health Check Task - Start");
+			log.trace("Executing ELASTICSEARCH Health Check Task - Start");
 
 			HealthCheckStatus healthStatus = null;
 			try {
@@ -77,7 +75,7 @@ public class ESCatalogDAO extends ESGenericSearchDAO implements ICatalogDAO {
 						getEsClient().getServerHost(), getEsClient().getServerPort(), e.getMessage(), e);
 				healthStatus = HealthCheckStatus.DOWN;
 			}
-			healthCheckLogger.trace("Executed ELASTICSEARCH Health Check Task - Status = {}", healthStatus);
+			log.trace("Executed ELASTICSEARCH Health Check Task - Status = {}", healthStatus);
 			if (healthStatus != lastHealthState) {
 				log.trace("ELASTICSEARCH Health State Changed to {}. Issuing alarm / recovery alarm...", healthStatus);
 				lastHealthState = healthStatus;

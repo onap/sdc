@@ -25,18 +25,9 @@ import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 import org.openecomp.sdc.common.util.ValidationUtils;
 
-import java.io.Serializable;
-
-public class ComponentInstanceDataDefinition extends ToscaDataDefinition implements Serializable {
-
-	/**
-	 * 
-	 */
-
-	private static final long serialVersionUID = 7215033872921497743L;
+public class ComponentInstanceDataDefinition extends ToscaDataDefinition {
 
 	public ComponentInstanceDataDefinition() {
-		super();
 		setPropertyValueCounter(1);
 		setAttributeValueCounter(1);
 		setInputValueCounter(1);
@@ -66,6 +57,7 @@ public class ComponentInstanceDataDefinition extends ToscaDataDefinition impleme
 		setSourceModelUuid(dataDefinition.getSourceModelUuid());
 		setSourceModelUid(dataDefinition.getSourceModelUid());
 		setIsProxy(dataDefinition.getIsProxy());
+		setOriginArchived(dataDefinition.isOriginArchived());
 	}
 
 	public String getIcon() {
@@ -271,6 +263,19 @@ public class ComponentInstanceDataDefinition extends ToscaDataDefinition impleme
 	public Boolean getIsProxy() {
 		Boolean isProxy = (Boolean) getToscaPresentationValue(JsonPresentationFields.CI_IS_PROXY);
 		return ( isProxy != null ) ? isProxy : false;
+	}
+
+	public void setOriginArchived(Boolean originArchived) {
+		if (originArchived == null) {
+			setToscaPresentationValue(JsonPresentationFields.CI_IS_ORIGIN_ARCHIVED, false);
+		} else {
+			setToscaPresentationValue(JsonPresentationFields.CI_IS_ORIGIN_ARCHIVED, originArchived);
+		}
+	}
+
+	public Boolean isOriginArchived() {
+		Boolean originArchived = (Boolean) getToscaPresentationValue(JsonPresentationFields.CI_IS_ORIGIN_ARCHIVED);
+		return ( originArchived != null ) ? originArchived : false;
 	}
 
 	@Override

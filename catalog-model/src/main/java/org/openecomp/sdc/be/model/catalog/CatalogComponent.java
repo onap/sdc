@@ -1,6 +1,13 @@
 package org.openecomp.sdc.be.model.catalog;
 
+import com.google.common.collect.ImmutableList;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import static java.util.Objects.requireNonNull;
 
 public class CatalogComponent {
 
@@ -15,6 +22,7 @@ public class CatalogComponent {
     private String categoryNormalizedName;
     private String subCategoryNormalizedName;
     private String distributionStatus;
+    private List<String> tags;
 
     public String getCategoryNormalizedName() {
         return categoryNormalizedName;
@@ -96,12 +104,20 @@ public class CatalogComponent {
         this.lifecycleState = lifecycleState;
     }
 
-	public String getDistributionStatus() {
-		return distributionStatus;
-	}
+    public String getDistributionStatus() {
+        return distributionStatus;
+    }
 
-	public void setDistributionStatus(String distributionStatus) {
-		this.distributionStatus = distributionStatus;
-	}
-    
+    public void setDistributionStatus(String distributionStatus) {
+        this.distributionStatus = distributionStatus;
+    }
+
+    public List<String> getTags() {
+        return tags == null ? Collections.emptyList() : ImmutableList.copyOf(tags);
+    }
+
+    public void setTags(List<String> tags) {
+        requireNonNull(tags);
+        this.tags = new ArrayList<>(tags);
+    }
 }

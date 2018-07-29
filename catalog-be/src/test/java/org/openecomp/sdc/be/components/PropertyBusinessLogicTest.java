@@ -50,9 +50,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.context.WebApplicationContext;
 
 import javax.servlet.ServletContext;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -104,7 +107,7 @@ public class PropertyBusinessLogicTest {
 
         Either<User, ActionStatus> eitherGetUser = Either.left(user);
         when(mockUserAdmin.getUser("jh003", false)).thenReturn(eitherGetUser);
-        when(userValidations.validateUserExists(eq("jh003"), anyString(), eq(false))).thenReturn(Either.left(user));
+        when(userValidations.validateUserExists(eq("jh003"), anyString(), eq(false))).thenReturn(user);
 
         // Servlet Context attributes
         when(servletContext.getAttribute(Constants.CONFIGURATION_MANAGER_ATTR)).thenReturn(configurationManager);

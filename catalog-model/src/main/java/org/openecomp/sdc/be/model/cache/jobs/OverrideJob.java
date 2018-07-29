@@ -20,54 +20,52 @@
 
 package org.openecomp.sdc.be.model.cache.jobs;
 
+import fj.data.Either;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.cache.DaoInfo;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import fj.data.Either;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 
 /**
  * Created by mlando on 9/20/2016.
  */
 public class OverrideJob extends Job {
-	private static Logger log = LoggerFactory.getLogger(OverrideJob.class.getName());
+    private static final Logger log = Logger.getLogger(OverrideJob.class.getName());
 
-	public OverrideJob(DaoInfo daoInfo, String componentId, NodeTypeEnum nodeTypeEnum, long timestamp) {
-		super(daoInfo, componentId, nodeTypeEnum, timestamp);
+    public OverrideJob(DaoInfo daoInfo, String componentId, NodeTypeEnum nodeTypeEnum, long timestamp) {
+        super(daoInfo, componentId, nodeTypeEnum, timestamp);
 
-	}
+    }
 
-	@Override
-	public Object doWork() {
-		try {
-			log.trace("starting work on job.");
-			log.trace("override component in cache, componentId:{} of nodeTypeEnum:{} with timestamp:{}.", componentId,
-					nodeTypeEnum, timestamp);
-			// get component from grath
-			Either<Component, StorageOperationStatus> componentRes = daoInfo.getToscaOperationFacade().getToscaElement(componentId);
-			if (componentRes.isRight()) {
-				log.debug("failed to get full component:{} from graph status:{}", componentId,
-						componentRes.right().value());
-				return false;
-			}
-			Component component = componentRes.left().value();
-			// store in cache
-			if (!this.daoInfo.getComponentCache().setComponent(component, nodeTypeEnum)) {
-				log.debug("failed to store componentId:{} nodeTypeEnum:", componentId, nodeTypeEnum);
-				return false;
-			}
-			log.debug("cache successfully overrided  componentId:{} nodeTypeEnum:{} timestemp:{}.", componentId,
-					nodeTypeEnum, timestamp);
-			return true;
-		} catch (Exception e) {
-			log.debug("an exception was encountered during OverrideJob", e);
-		} finally {
-			this.daoInfo.getToscaOperationFacade().commit();
-		}
-		return false;
+    @Override
+    public Object doWork() {
+        try {
+            log.trace("starting work on job.");
+            log.trace("override component in cache, componentId:{} of nodeTypeEnum:{} with timestamp:{}.", componentId,
+                    nodeTypeEnum, timestamp);
+            // get component from grath
+            Either<Component, StorageOperationStatus> componentRes = daoInfo.getToscaOperationFacade().getToscaElement(componentId);
+            if (componentRes.isRight()) {
+                log.debug("failed to get full component:{} from graph status:{}", componentId,
+                        componentRes.right().value());
+                return false;
+            }
+            Component component = componentRes.left().value();
+            // store in cache
+            if (!this.daoInfo.getComponentCache().setComponent(component, nodeTypeEnum)) {
+                log.debug("failed to store componentId:{} nodeTypeEnum:", componentId, nodeTypeEnum);
+                return false;
+            }
+            log.debug("cache successfully overrided  componentId:{} nodeTypeEnum:{} timestemp:{}.", componentId,
+                    nodeTypeEnum, timestamp);
+            return true;
+        } catch (Exception e) {
+            log.debug("an exception was encountered during OverrideJob", e);
+        } finally {
+            this.daoInfo.getToscaOperationFacade().commit();
+        }
+        return false;
 
-	}
+    }
 }

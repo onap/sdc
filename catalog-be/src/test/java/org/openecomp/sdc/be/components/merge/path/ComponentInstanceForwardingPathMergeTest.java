@@ -1,15 +1,6 @@
 package org.openecomp.sdc.be.components.merge.path;
 
-import static groovy.util.GroovyTestCase.assertEquals;
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.TestCase.assertEquals;
-import static junit.framework.TestCase.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyBoolean;
-import static org.mockito.Mockito.when;
-
-import java.util.Set;
-
+import fj.data.Either;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -26,7 +17,14 @@ import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
 import org.openecomp.sdc.common.api.UserRoleEnum;
 import org.openecomp.sdc.exception.ResponseFormat;
 
-import fj.data.Either;
+import java.util.Set;
+
+import static groovy.util.GroovyTestCase.assertEquals;
+import static junit.framework.Assert.assertNotNull;
+import static junit.framework.TestCase.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.Mockito.when;
 
 public class ComponentInstanceForwardingPathMergeTest extends BaseForwardingPathVersionChangeTest {
 
@@ -52,7 +50,7 @@ public class ComponentInstanceForwardingPathMergeTest extends BaseForwardingPath
     public void testIgnoreMergeSinceItIsNotService() {
 
         testInstance.saveDataBeforeMerge(dataHolder, service, nodeACI, newNodeAC);
-        assertEquals(nodeACI.getUniqueId(), dataHolder.getOrigComponentInstId());
+        assertEquals(nodeACI.getName(), dataHolder.getOrigComponentInstId());
         Either<Component, ResponseFormat> componentResponseFormatEither = testInstance
             .mergeDataAfterCreate(user, dataHolder, newNodeAC, "3344");
         assertNotNull(componentResponseFormatEither);
@@ -66,8 +64,9 @@ public class ComponentInstanceForwardingPathMergeTest extends BaseForwardingPath
             .findForwardingPathNamesToDeleteOnComponentInstanceDeletion(service, nodeACI.getUniqueId());
         nodeACI.getCapabilities().clear();
         newNodeAC.getCapabilities().clear();
+        Either<Set<String>, ResponseFormat> returnValue = Either.left(forwardingPathNamesToDeleteOnComponentInstanceDeletion);
         when(serviceBusinessLogic.deleteForwardingPaths(any(), any(), any(), anyBoolean()))
-            .thenReturn(Either.left(forwardingPathNamesToDeleteOnComponentInstanceDeletion));
+            .thenReturn(returnValue);
         when(toscaOperationFacade.getToscaFullElement(any())).thenReturn(Either.left(newNodeAC));
 
         // Change internal ci, just like change version do
@@ -75,7 +74,7 @@ public class ComponentInstanceForwardingPathMergeTest extends BaseForwardingPath
         service.getComponentInstances().add(newNodeACI);
 
         testInstance.saveDataBeforeMerge(dataHolder, service, nodeACI, newNodeAC);
-        assertEquals(nodeACI.getUniqueId(), dataHolder.getOrigComponentInstId());
+        assertEquals(nodeACI.getName(), dataHolder.getOrigComponentInstId());
         Either<Component, ResponseFormat> componentResponseFormatEither = testInstance
             .mergeDataAfterCreate(user, dataHolder, service, newNodeA);
         assertNotNull(componentResponseFormatEither);
@@ -85,19 +84,25 @@ public class ComponentInstanceForwardingPathMergeTest extends BaseForwardingPath
 
     @Test
     public void mergeShouldUpdate() {
-        when(serviceBusinessLogic.updateForwardingPath(any(), any(), any(), anyBoolean()))
-            .thenReturn(Either.left(service));
-        when(toscaOperationFacade.getToscaFullElement(any())).thenReturn(Either.left(newNodeAC));
+          when(serviceBusinessLogic.updateForwardingPath(any(), any(), any(), anyBoolean()))
+              .then(invocationOnMock -> Either.left(service));
+           when(toscaOperationFacade.getToscaFullElement(any())).thenReturn(Either.left(newNodeAC));
+          testInstance.saveDataBeforeMerge(dataHolder, service, nodeACI, newNodeAC);
+          assertEquals(nodeACI.getName(), dataHolder.getOrigComponentInstId());
+
+          // Change internal ci, just like change version do
+          service.getComponentInstances().remove(nodeACI);
+          service.getComponentInstances().add(newNodeACI);
+
+          Either<Component, ResponseFormat> componentResponseFormatEither = testInstance
+              .mergeDataAfterCreate(user, dataHolder, service, newNodeA);
+          assertNotNull(componentResponseFormatEither);
+          assertTrue(componentResponseFormatEither.isLeft());
+    }
+
+    @Test
+    public void handleNullCapailities() {
+        nodeACI.setCapabilities(null);
         testInstance.saveDataBeforeMerge(dataHolder, service, nodeACI, newNodeAC);
-        assertEquals(nodeACI.getUniqueId(), dataHolder.getOrigComponentInstId());
-
-        // Change internal ci, just like change version do
-        service.getComponentInstances().remove(nodeACI);
-        service.getComponentInstances().add(newNodeACI);
-
-        Either<Component, ResponseFormat> componentResponseFormatEither = testInstance
-            .mergeDataAfterCreate(user, dataHolder, service, newNodeA);
-        assertNotNull(componentResponseFormatEither);
-        assertTrue(componentResponseFormatEither.isLeft());
     }
 }

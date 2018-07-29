@@ -27,14 +27,34 @@
         .sdc-tile {
             margin: 10px;
             .sdc-tile-content {
+                overflow: visible;
+
+                .sdc-tile-content-icon {
+                    width: 100%;
+                    margin-top: -1em;
+                    text-align: right;
+                }
+
                 .sdc-tile-content-info {
                     .sdc-tile-info-line {
                         display: inline-block;
+
+                        &.title {
+                            line-height: 1.4em;
+                            height: auto;
+                        }
                     }
                 }
             }
         }
 
+    }
+}
+
+.w-sdc-tile-multiline-ellipsis {
+    .multiline-ellipsis-dots {
+        background: linear-gradient(to right, transparent 0%, #ffffff 80%);
+        padding-left: 1em;
     }
 }
 

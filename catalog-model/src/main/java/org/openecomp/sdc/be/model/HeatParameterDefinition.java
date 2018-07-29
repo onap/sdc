@@ -20,23 +20,15 @@
 
 package org.openecomp.sdc.be.model;
 
-import java.io.Serializable;
-
 import org.openecomp.sdc.be.datatypes.elements.HeatParameterDataDefinition;
 
-public class HeatParameterDefinition extends HeatParameterDataDefinition implements Serializable {
+public class HeatParameterDefinition extends HeatParameterDataDefinition {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 3400360721469962105L;
+    public HeatParameterDefinition(HeatParameterDataDefinition hpdd) {
+        super(hpdd);
+    }
 
-	public HeatParameterDefinition(HeatParameterDataDefinition hpdd) {
-		super(hpdd);
-	}
-
-	public HeatParameterDefinition() {
-		super();
-	}
-
+    public HeatParameterDefinition() {
+        super();
+    }
 }

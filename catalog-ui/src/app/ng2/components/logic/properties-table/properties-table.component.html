@@ -9,8 +9,14 @@
     <div class="table-body" [ngClass]="{'view-mode': readonly}">
         <div class="no-data" *ngIf="!fePropertiesMap || !(fePropertiesMap | keys).length">No data to display</div>
 
-        <ng-container *ngFor="let instanceId of fePropertiesMap | keys; trackBy:instanceId">
-            <div class="table-rows-header white-sub-header" *ngIf="feInstanceNamesMap">{{feInstanceNamesMap[instanceId]}}</div>
+        <ng-container *ngFor="let instanceId of fePropertiesMap | keys; trackBy:vspId">
+            <div class="table-rows-header white-sub-header" *ngIf="feInstanceNamesMap">
+             
+                    
+                <span [ngClass]="['prop-instance-icon', feInstanceNamesMap[instanceId].iconClass, 'small']"></span>
+                {{feInstanceNamesMap[instanceId].name}}
+                <div class="sprite-new archive-label" *ngIf="feInstanceNamesMap[instanceId].originArchived == true" ></div>
+            </div>
 
             <div class="table-row"
                 *ngFor="let property of fePropertiesMap[instanceId] | searchFilter:'name':searchTerm; trackBy:property?.name"
@@ -22,8 +28,8 @@
                     <checkbox *ngIf="hasDeclareOption" [(checked)]="property.isSelected"
                           [disabled]="property.isDisabled || property.isDeclared || readonly"
                           (checkedChange)="propertyChecked(property)" [attr.data-tests-id]="property.name"></checkbox>
-                    <div class="inner-cell-div" tooltip="{{property.name}}">
-                        <span>{{property.name}}</span>
+                    <div class="inner-cell-div-multiline" tooltip="{{property.name}}">
+                        <multiline-ellipsis className="table-cell-multiline-ellipsis" [lines]="2">{{property.name}}</multiline-ellipsis>
                     </div>
                 </div>
                 <span *ngIf="property.description" class="property-description-icon sprite-new show-desc" tooltip="{{property.description}}" tooltipDelay="0"></span>

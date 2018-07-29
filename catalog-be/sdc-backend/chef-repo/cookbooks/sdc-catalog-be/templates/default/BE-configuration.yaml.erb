@@ -25,7 +25,7 @@ beProtocol: http
 beSslPort: <%= @ssl_port %>
 version: 1.1.0
 released: 2012-11-30
-toscaConformanceLevel: 10.0
+toscaConformanceLevel: 8.0
 minToscaConformanceLevel: 3.0
 
 titanCfgFile: /var/lib/jetty/config/catalog-be/titan.properties
@@ -62,6 +62,9 @@ defaultImports:
         file: groups.yml
    - policies:
         file: policies.yml
+   - annotations:
+        file: annotations.yml
+
 # Users
 users:
     tom: passwd
@@ -78,14 +81,14 @@ cassandraConfig:
     username: <%= @cassandra_usr %>
     password: <%= @cassandra_pwd %>
     ssl: <%= @cassandra_ssl_enabled %>
-    truststorePath : /config/truststore
-    truststorePassword : <%= @cassandra_traststore_password %>
+    truststorePath : /var/lib/jetty/etc/truststore
+    truststorePassword : <%= @cassandra_truststore_password %>
     keySpaces:
-        - { name: dox, replicationStrategy: NetworkTopologyStrategy, replicationInfo: ['<%= @DC_NAME %>','<%= @rep_factor %>']}
-        - { name: sdcaudit, replicationStrategy: NetworkTopologyStrategy, replicationInfo: ['<%= @DC_NAME %>','<%= @rep_factor %>']}
-        - { name: sdcartifact, replicationStrategy: NetworkTopologyStrategy, replicationInfo: ['<%= @DC_NAME %>','<%= @rep_factor %>']}
-        - { name: sdccomponent, replicationStrategy: NetworkTopologyStrategy, replicationInfo: ['<%= @DC_NAME %>','<%= @rep_factor %>']}
-        - { name: sdcrepository, replicationStrategy: NetworkTopologyStrategy, replicationInfo: ['<%= @DC_NAME %>','<%= @rep_factor %>']}
+        - { name: dox,           replicationStrategy: NetworkTopologyStrategy, replicationInfo: ['<%= @REP_STRING %>']}
+        - { name: sdcaudit,      replicationStrategy: NetworkTopologyStrategy, replicationInfo: ['<%= @REP_STRING %>']}
+        - { name: sdcartifact,   replicationStrategy: NetworkTopologyStrategy, replicationInfo: ['<%= @REP_STRING %>']}
+        - { name: sdccomponent,  replicationStrategy: NetworkTopologyStrategy, replicationInfo: ['<%= @REP_STRING %>']}
+        - { name: sdcrepository, replicationStrategy: NetworkTopologyStrategy, replicationInfo: ['<%= @REP_STRING %>']}
 
 #Application-specific settings of ES
 elasticSearch:
@@ -144,6 +147,7 @@ resourceTypes: &allResourceTypes
   - CP
   - VL
   - VF
+  - CR
   - VFCMT
   - Abstract
   - CVFC
@@ -182,6 +186,7 @@ excludeResourceCategory:
   - Generic
 excludeResourceType:
   - PNF
+  - CR
 informationalResourceArtifacts:
   features:
       displayName: Features
@@ -288,6 +293,9 @@ serviceDeploymentArtifacts:
         acceptedTypes:
             - xml
     MODEL_QUERY_SPEC:
+        acceptedTypes:
+            - xml
+    UCPE_LAYER_2_CONFIGURATION:
         acceptedTypes:
             - xml
 
@@ -402,8 +410,8 @@ resourceDeploymentArtifacts:
     DCAE_DOC:
         acceptedTypes:
         validForResourceTypes:
-            - VF 
-            - VFCMT       
+            - VF
+            - VFCMT
     DCAE_EVENT:
         acceptedTypes:
         validForResourceTypes:
@@ -509,12 +517,13 @@ resourceInformationalArtifacts:
         validForResourceTypes: *allResourceTypes
     OTHER:
         acceptedTypes:
-        validForResourceTypes: 
+        validForResourceTypes:
             - VFC
             - CVFC
             - CP
             - VL
             - VF
+            - CR
             - VFCMT
             - Abstract
             - PNF
@@ -634,6 +643,7 @@ genericAssetNodeTypes:
   VFC: org.openecomp.resource.abstract.nodes.VFC
   CVFC: org.openecomp.resource.abstract.nodes.VFC
   VF : org.openecomp.resource.abstract.nodes.VF
+  CR : org.openecomp.resource.abstract.nodes.CR
   PNF: org.openecomp.resource.abstract.nodes.PNF
   Service: org.openecomp.resource.abstract.nodes.service
 
@@ -680,11 +690,11 @@ dmaapConsumerConfiguration:
     aftDme2RoundtripTimeoutMs: 240000
     aftDme2ReadTimeoutMs: 50000
     dme2preferredRouterFilePath: DME2preferredRouter.txt
-    timeLimitForNotificationHandleMs: 120000 
+    timeLimitForNotificationHandleMs: 120000
     credential:
         username: user
         password:
-        
+
 dmeConfiguration:
     dme2Search: DME2SEARCH
     dme2Resolve: DME2RESOLVE
@@ -695,9 +705,13 @@ excludedPolicyTypesMapping:
     #  - c.d.e
     #CR:
     #  - x.y.z
- 
+
 excludedGroupTypesMapping:
     CR:
+       - org.openecomp.groups.VfModule
+       - org.openecomp.groups.heat.HeatStack
+       - tosca.groups.Root
+    PNF:
        - org.openecomp.groups.VfModule
        - org.openecomp.groups.heat.HeatStack
        - tosca.groups.Root
@@ -712,5 +726,5 @@ excludedGroupTypesMapping:
 
 healthStatusExclude:
    - DE
-   - DMAPP
+   - DMAAP
    - DCAE

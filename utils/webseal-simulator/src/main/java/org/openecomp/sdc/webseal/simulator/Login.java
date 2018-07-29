@@ -1,9 +1,6 @@
 package org.openecomp.sdc.webseal.simulator;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.Collection;
-import java.util.Iterator;
+import org.openecomp.sdc.webseal.simulator.conf.Conf;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -11,8 +8,10 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.openecomp.sdc.webseal.simulator.conf.Conf;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Collection;
+import java.util.Iterator;
 
 public class Login extends HttpServlet {
 

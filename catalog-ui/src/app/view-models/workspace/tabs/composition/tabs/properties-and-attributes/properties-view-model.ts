@@ -139,9 +139,11 @@ export class ResourcePropertiesViewModel {
             (this.$scope.isPropertyOwner() ?
                 this.$scope.properties[property.parentUniqueId] :
                 this.$scope.properties[property.resourceInstanceUniqueId]) || [],
-            this.isPropertyValueOwner()).then((updatedProperty:PropertyModel) => {
-               let oldProp = _.find(this.$scope.properties[updatedProperty.resourceInstanceUniqueId], (prop:PropertyModel) => {return prop.uniqueId == updatedProperty.uniqueId;});
-            oldProp.value = updatedProperty.value;
+            this.isPropertyValueOwner(), "component", property.resourceInstanceUniqueId).then((updatedProperty:PropertyModel) => {
+                if(updatedProperty){
+                    let oldProp = _.find(this.$scope.properties[updatedProperty.resourceInstanceUniqueId], (prop:PropertyModel) => {return prop.uniqueId == updatedProperty.uniqueId;});
+                    oldProp.value = updatedProperty.value;
+                }
         });
     };
 
@@ -224,7 +226,9 @@ export class ResourcePropertiesViewModel {
                     return this.$filter("resourceName")(this.$scope.currentComponent.name);
 
                 default:
-                    return this.$filter("resourceName")((_.find(this.$scope.currentComponent.componentInstances, {uniqueId: key})).name);
+                    let componentInstance = _.find(this.$scope.currentComponent.componentInstances, {uniqueId: key});
+                    if(componentInstance)
+                        return this.$filter("resourceName")(componentInstance.name);
             }
         };
 

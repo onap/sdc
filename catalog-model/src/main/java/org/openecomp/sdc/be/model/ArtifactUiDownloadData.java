@@ -22,24 +22,24 @@ package org.openecomp.sdc.be.model;
 
 public class ArtifactUiDownloadData {
 
-	// POJO for UI artifact download, holding artifact filename and base64
-	// content
-	String artifactName;
-	String base64Contents;
+    // POJO for UI artifact download, holding artifact filename and base64
+    // content
+    String artifactName;
+    String base64Contents;
 
-	public void setArtifactName(String artifactName) {
-		this.artifactName = artifactName;
-	}
+    public void setArtifactName(String artifactName) {
+        this.artifactName = artifactName;
+    }
 
-	public void setBase64Contents(String base64Contents) {
-		this.base64Contents = base64Contents;
-	}
+    public void setBase64Contents(String base64Contents) {
+        this.base64Contents = base64Contents;
+    }
 
-	public String getArtifactName() {
-		return artifactName;
-	}
+    public String getArtifactName() {
+        return artifactName;
+    }
 
-	public String getBase64Contents() {
-		return base64Contents;
-	}
+    public String getBase64Contents() {
+        return base64Contents;
+    }
 }

@@ -20,19 +20,13 @@
 
 package org.openecomp.sdc.be.datatypes.components;
 
-import java.io.Serializable;
-
-public class ServiceMetadataDataDefinition extends ComponentMetadataDataDefinition implements Serializable {
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -7661001892509435120L;
+public class ServiceMetadataDataDefinition extends ComponentMetadataDataDefinition {
 	public static final String EMPTY_STR = "";
 
 	private String distributionStatus;
 	private String serviceType;
 	private String serviceRole;
+	private String instantiationType = EMPTY_STR;
 
 	private Boolean ecompGeneratedNaming = true;
 
@@ -72,6 +66,14 @@ public class ServiceMetadataDataDefinition extends ComponentMetadataDataDefiniti
 		return serviceRole;
 	}
 
+	public String getInstantiationType() {
+		return instantiationType;
+	}
+
+	public void setInstantiationType(String instantiationType){
+		this.instantiationType = instantiationType;
+	}
+
 	public void setServiceRole(String serviceRole){
 		this.serviceRole = serviceRole;
 	}
@@ -105,6 +107,7 @@ public class ServiceMetadataDataDefinition extends ComponentMetadataDataDefiniti
 				", ecompGeneratedNaming=" + ecompGeneratedNaming +
 				", namingPolicy='" + namingPolicy + '\'' +
 				", environmentContext='" + environmentContext + '\'' +
+				", instantiationType='" + instantiationType + '\'' +
 				'}';
 	}
 
@@ -118,6 +121,7 @@ public class ServiceMetadataDataDefinition extends ComponentMetadataDataDefiniti
 		result = prime * result + ((serviceType == null) ? 0 : serviceType.hashCode());
 		result = prime * result + ((serviceRole == null) ? 0 : serviceRole.hashCode());
 		result = prime * result + ((environmentContext == null) ? 0 : environmentContext.hashCode());
+		result = prime * result + ((instantiationType == null) ? 0 : instantiationType.hashCode());
 		return result;
 	}
 
@@ -165,6 +169,11 @@ public class ServiceMetadataDataDefinition extends ComponentMetadataDataDefiniti
 			if (other.environmentContext != null)
 				return false;
 		} else if (!environmentContext.equals(other.environmentContext))
+			return false;
+		if (instantiationType == null) {
+			if (other.instantiationType != null)
+				return false;
+		} else if (!instantiationType.equals(other.instantiationType))
 			return false;
 		return super.equals(obj);
 	}

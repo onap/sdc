@@ -16,30 +16,10 @@
 
 package org.openecomp.sdc.vendorlicense.impl;
 
-import static org.mockito.Matchers.anyObject;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.verify;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.mockito.Spy;
+import org.mockito.*;
 import org.openecomp.sdc.activitylog.dao.type.ActivityLogEntity;
 import org.openecomp.sdc.vendorlicense.VendorLicenseConstants;
-import org.openecomp.sdc.vendorlicense.dao.EntitlementPoolDao;
-import org.openecomp.sdc.vendorlicense.dao.FeatureGroupDao;
-import org.openecomp.sdc.vendorlicense.dao.LicenseAgreementDao;
-import org.openecomp.sdc.vendorlicense.dao.LicenseKeyGroupDao;
-import org.openecomp.sdc.vendorlicense.dao.LimitDao;
-import org.openecomp.sdc.vendorlicense.dao.VendorLicenseModelDao;
+import org.openecomp.sdc.vendorlicense.dao.*;
 import org.openecomp.sdc.vendorlicense.dao.types.ChoiceOrOther;
 import org.openecomp.sdc.vendorlicense.dao.types.FeatureGroupEntity;
 import org.openecomp.sdc.vendorlicense.dao.types.LicenseAgreementEntity;
@@ -51,6 +31,11 @@ import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+
+import java.util.*;
+
+import static org.mockito.Matchers.anyObject;
+import static org.mockito.Mockito.*;
 
 public class LicenseAgreementTest {
 
@@ -166,7 +151,7 @@ public class LicenseAgreementTest {
     LicenseAgreementEntity la =
         new LicenseAgreementEntity(vlm1_id, VERSION01, null); // TODO: 8/13/2017
 
-    doReturn(new ArrayList<LicenseAgreementEntity>())
+    doReturn(new ArrayList<>())
         .when(licenseAgreementDaoMcok).list(la);
 
     Collection<LicenseAgreementEntity> LAs =
@@ -195,7 +180,7 @@ public class LicenseAgreementTest {
   public void testUpdateLicenseAgreement() {
     LicenseAgreementEntity existingLA = new LicenseAgreementEntity(vlm1_id, VERSION01, la1_id);
 
-    existingLA.setFeatureGroupIds(new HashSet<String>());
+    existingLA.setFeatureGroupIds(new HashSet<>());
 
     doReturn(existingLA).when(licenseAgreementDaoMcok).get(existingLA);
 

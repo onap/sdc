@@ -20,6 +20,8 @@
 
 package org.openecomp.sdc.be.components.distribution.engine;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;

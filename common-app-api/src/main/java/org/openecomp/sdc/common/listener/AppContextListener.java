@@ -20,6 +20,15 @@
 
 package org.openecomp.sdc.common.listener;
 
+import org.openecomp.sdc.common.api.ConfigurationSource;
+import org.openecomp.sdc.common.api.Constants;
+import org.openecomp.sdc.common.impl.ExternalConfiguration;
+import org.openecomp.sdc.common.impl.FSConfigurationSource;
+import org.openecomp.sdc.common.log.wrappers.Logger;
+
+import javax.servlet.ServletContext;
+import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -28,20 +37,9 @@ import java.util.Map;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
-import javax.servlet.ServletContext;
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
-
-import org.openecomp.sdc.common.api.ConfigurationSource;
-import org.openecomp.sdc.common.api.Constants;
-import org.openecomp.sdc.common.impl.ExternalConfiguration;
-import org.openecomp.sdc.common.impl.FSConfigurationSource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 public class AppContextListener implements ServletContextListener {
 
-	private static Logger log = LoggerFactory.getLogger(AppContextListener.class.getName());
+	private static Logger log = Logger.getLogger(AppContextListener.class.getName());
 
 	public void contextInitialized(ServletContextEvent context) {
 
@@ -91,7 +89,7 @@ public class AppContextListener implements ServletContextListener {
 
 	public static Map<String, String> getManifestInfo(ServletContext application) {
 
-		Map<String, String> result = new HashMap<String, String>();
+		Map<String, String> result = new HashMap<>();
 		InputStream inputStream = null;
 		try {
 

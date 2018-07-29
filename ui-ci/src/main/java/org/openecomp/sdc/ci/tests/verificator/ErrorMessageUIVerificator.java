@@ -20,6 +20,7 @@
 
 package org.openecomp.sdc.ci.tests.verificator;
 
+import com.aventstack.extentreports.Status;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.ci.tests.datatypes.ErrorMessageProperties;
 import org.openecomp.sdc.ci.tests.datatypes.enums.ErrorInfo;
@@ -27,8 +28,6 @@ import org.openecomp.sdc.ci.tests.execute.setup.ExtentTestActions;
 import org.openecomp.sdc.ci.tests.utilities.GeneralUIUtils;
 import org.openecomp.sdc.ci.tests.utils.validation.ErrorValidationUtils;
 import org.testng.Assert;
-
-import com.aventstack.extentreports.Status;
 
 public class ErrorMessageUIVerificator {
 

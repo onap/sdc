@@ -23,10 +23,16 @@ export class HierarchyDisplayOptions {
     valueProperty: string;
     childrenProperty: string;
     searchText:string;
-    constructor(idProperty:string, valueProperty:string, childrenProperty?:string, searchText?:string) {
+    archived:boolean;
+
+    iconProperty: string;
+    constructor(idProperty:string, valueProperty:string, childrenProperty?:string, searchText?:string, iconProperty?:string, archived?:boolean) {
+    
         this.idProperty = idProperty;
         this.valueProperty = valueProperty;
         this.childrenProperty = childrenProperty;
         this.searchText = searchText;
+        this.archived = archived;
+        this.iconProperty = iconProperty;
     }
 }

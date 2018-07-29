@@ -16,14 +16,9 @@
 
 package org.openecomp.sdcrests.vsp.rest.services;
 
-import java.util.Date;
 import org.apache.commons.collections4.MapUtils;
 import org.openecomp.core.dao.UniqueValueDaoFactory;
 import org.openecomp.core.util.UniqueValueUtil;
-import org.openecomp.sdc.activitylog.ActivityLogManager;
-import org.openecomp.sdc.activitylog.ActivityLogManagerFactory;
-import org.openecomp.sdc.activitylog.dao.type.ActivityLogEntity;
-import org.openecomp.sdc.activitylog.dao.type.ActivityType;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.ErrorCode;
 import org.openecomp.sdc.common.errors.Messages;
@@ -41,12 +36,7 @@ import org.openecomp.sdc.notification.services.NotificationPropagationManager;
 import org.openecomp.sdc.vendorsoftwareproduct.OrchestrationTemplateCandidateManagerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductManager;
 import org.openecomp.sdc.vendorsoftwareproduct.VspManagerFactory;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComputeEntity;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.type.OnboardingMethod;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.type.OrchestrationTemplateCandidateData;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.type.OrchestrationTemplateEntity;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.type.PackageInfo;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.type.*;
 import org.openecomp.sdc.vendorsoftwareproduct.errors.CreatePackageForNonFinalVendorSoftwareProductErrorBuilder;
 import org.openecomp.sdc.vendorsoftwareproduct.errors.OnboardingMethodErrorBuilder;
 import org.openecomp.sdc.vendorsoftwareproduct.errors.PackageNotFoundErrorBuilder;
@@ -65,24 +55,9 @@ import org.openecomp.sdc.versioning.types.NotificationEventTypes;
 import org.openecomp.sdcrests.item.rest.mapping.MapVersionToDto;
 import org.openecomp.sdcrests.item.types.ItemCreationDto;
 import org.openecomp.sdcrests.item.types.VersionDto;
-import org.openecomp.sdcrests.vendorsoftwareproducts.types.PackageInfoDto;
-import org.openecomp.sdcrests.vendorsoftwareproducts.types.QuestionnaireResponseDto;
-import org.openecomp.sdcrests.vendorsoftwareproducts.types.ValidationResponseDto;
-import org.openecomp.sdcrests.vendorsoftwareproducts.types.VendorSoftwareProductAction;
-import org.openecomp.sdcrests.vendorsoftwareproducts.types.VersionSoftwareProductActionRequestDto;
-import org.openecomp.sdcrests.vendorsoftwareproducts.types.VspComputeDto;
-import org.openecomp.sdcrests.vendorsoftwareproducts.types.VspDescriptionDto;
-import org.openecomp.sdcrests.vendorsoftwareproducts.types.VspDetailsDto;
-import org.openecomp.sdcrests.vendorsoftwareproducts.types.VspRequestDto;
+import org.openecomp.sdcrests.vendorsoftwareproducts.types.*;
 import org.openecomp.sdcrests.vsp.rest.VendorSoftwareProducts;
-import org.openecomp.sdcrests.vsp.rest.mapping.MapComputeEntityToVspComputeDto;
-import org.openecomp.sdcrests.vsp.rest.mapping.MapItemToVspDetailsDto;
-import org.openecomp.sdcrests.vsp.rest.mapping.MapPackageInfoToPackageInfoDto;
-import org.openecomp.sdcrests.vsp.rest.mapping.MapQuestionnaireResponseToQuestionnaireResponseDto;
-import org.openecomp.sdcrests.vsp.rest.mapping.MapValidationResponseToDto;
-import org.openecomp.sdcrests.vsp.rest.mapping.MapVspDescriptionDtoToItem;
-import org.openecomp.sdcrests.vsp.rest.mapping.MapVspDescriptionDtoToVspDetails;
-import org.openecomp.sdcrests.vsp.rest.mapping.MapVspDetailsToDto;
+import org.openecomp.sdcrests.vsp.rest.mapping.*;
 import org.openecomp.sdcrests.wrappers.GenericCollectionWrapper;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
@@ -91,13 +66,7 @@ import javax.inject.Named;
 import javax.ws.rs.core.Response;
 import java.io.File;
 import java.io.IOException;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -105,11 +74,7 @@ import static javax.ws.rs.core.HttpHeaders.CONTENT_DISPOSITION;
 import static org.openecomp.sdc.itempermissions.notifications.NotificationConstants.PERMISSION_USER;
 import static org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductConstants.UniqueValues.VENDOR_SOFTWARE_PRODUCT_NAME;
 import static org.openecomp.sdc.vendorsoftwareproduct.dao.type.OnboardingMethod.NetworkPackage;
-import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.ITEM_ID;
-import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.ITEM_NAME;
-import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.SUBMIT_DESCRIPTION;
-import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.VERSION_ID;
-import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.VERSION_NAME;
+import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.*;
 
 @Named
 @Service("vendorSoftwareProducts")
@@ -135,8 +100,6 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
             VersioningManagerFactory.getInstance().createInterface();
     private final VendorSoftwareProductManager vendorSoftwareProductManager =
             VspManagerFactory.getInstance().createInterface();
-    private final ActivityLogManager activityLogManager =
-            ActivityLogManagerFactory.getInstance().createInterface();
     private final NotificationPropagationManager notifier =
             NotificationPropagationManagerFactory.getInstance().createInterface();
     private final UniqueValueUtil uniqueValueUtil = new UniqueValueUtil(UniqueValueDaoFactory
@@ -199,8 +162,6 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
         itemCreationDto.setItemId(item.getId());
         itemCreationDto.setVersion(new MapVersionToDto().applyMapping(version, VersionDto.class));
 
-        activityLogManager.logActivity(new ActivityLogEntity(vspDetails.getId(), version,
-                ActivityType.Create, user, true, "", ""));
         return itemCreationDto;
     }
 
@@ -533,16 +494,11 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
                 vendorSoftwareProductManager.compile(vspId, version);
         if (!validationResponse.isValid() || MapUtils.isNotEmpty(compilationErrors)) {
 
-            activityLogManager.logActivity(
-                    new ActivityLogEntity(vspId, version, ActivityType.Submit, user, false,
-                            "Failed on validation before submit", ""));
             return Optional.of(validationResponse);
         }
 
         versioningManager.submit(vspId, version, message);
 
-        activityLogManager.logActivity(
-                new ActivityLogEntity(vspId, version, ActivityType.Submit, user, true, "", message));
         return Optional.empty();
     }
 

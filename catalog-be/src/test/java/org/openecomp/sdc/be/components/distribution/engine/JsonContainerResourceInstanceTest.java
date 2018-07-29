@@ -1,11 +1,11 @@
 package org.openecomp.sdc.be.components.distribution.engine;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import org.junit.Test;
 import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
 import org.openecomp.sdc.be.model.ComponentInstance;
+
+import java.util.LinkedList;
+import java.util.List;
 
 public class JsonContainerResourceInstanceTest {
 

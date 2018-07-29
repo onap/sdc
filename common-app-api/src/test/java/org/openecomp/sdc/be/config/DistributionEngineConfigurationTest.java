@@ -1,7 +1,5 @@
 package org.openecomp.sdc.be.config;
 
-import java.util.List;
-
 import org.junit.Test;
 import org.openecomp.sdc.be.config.DistributionEngineConfiguration.ComponentArtifactTypesConfig;
 import org.openecomp.sdc.be.config.DistributionEngineConfiguration.CreateTopicConfig;
@@ -9,8 +7,7 @@ import org.openecomp.sdc.be.config.DistributionEngineConfiguration.DistributionN
 import org.openecomp.sdc.be.config.DistributionEngineConfiguration.DistributionStatusTopicConfig;
 import org.openecomp.sdc.common.http.config.ExternalServiceConfig;
 
-import java.util.*;
-import org.junit.Assert;
+import java.util.List;
 
 
 public class DistributionEngineConfigurationTest {

@@ -1,10 +1,10 @@
 package org.openecomp.sdc.be.model.tosca.validators;
 
-import static org.junit.Assert.assertFalse;
+import org.junit.Test;
 
 import java.util.Collections;
 
-import org.junit.Test;
+import static org.junit.Assert.assertFalse;
 
 public class MapValidatorTest {
 

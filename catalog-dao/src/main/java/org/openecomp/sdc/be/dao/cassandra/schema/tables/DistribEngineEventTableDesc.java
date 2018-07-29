@@ -20,23 +20,22 @@
 
 package org.openecomp.sdc.be.dao.cassandra.schema.tables;
 
-import java.util.Map;
-
+import com.datastax.driver.core.DataType;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingTypesConstants;
 
-import com.datastax.driver.core.DataType;
+import java.util.Map;
 
 public class DistribEngineEventTableDesc extends DistribBaseEventTableDesc {
 
     @Override
     protected void updateColumnDistribDescription(Map<String, ImmutablePair<DataType, Boolean>> columns) {
         for (DEEFieldsDescription field : DEEFieldsDescription.values()) {
-            columns.put(field.getName(), new ImmutablePair<DataType, Boolean>(field.type, field.indexed));
+            columns.put(field.getName(), new ImmutablePair<>(field.type, field.indexed));
         }
         //replace the base indexed flag value with the correct one for a given table:
         columns.put(DistFieldsDescription.REQUEST_ID.getName(),
-                new ImmutablePair<DataType, Boolean>(DistFieldsDescription.REQUEST_ID.getType(), true));
+                new ImmutablePair<>(DistFieldsDescription.REQUEST_ID.getType(), true));
     }
 
 

@@ -38,9 +38,10 @@ export default class ServicePathsListComponent {
     input:any;
     onAddServicePath: Function;
     onEditServicePath: Function;
+    isViewOnly: boolean;
 
     constructor(private serviceService:ServiceServiceNg2) {
-        this.headers = ['Path Name','Actions'];
+        this.headers = ['Flow Name','Actions'];
     }
 
     ngOnInit() {
@@ -52,6 +53,7 @@ export default class ServicePathsListComponent {
         });
         this.onAddServicePath = this.input.onCreateServicePath;
         this.onEditServicePath = this.input.onEditServicePath;
+        this.isViewOnly =  this.input.isViewOnly;
     }
 
     deletePath = (id:string):void =>   {

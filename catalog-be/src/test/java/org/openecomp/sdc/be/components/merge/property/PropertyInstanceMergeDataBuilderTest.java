@@ -1,31 +1,20 @@
 package org.openecomp.sdc.be.components.merge.property;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
+import mockit.Deencapsulation;
 import org.apache.tinkerpop.gremlin.structure.T;
 import org.junit.Test;
 import org.openecomp.sdc.be.datatypes.elements.GetInputValueDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.model.InputDefinition;
 
-import mockit.Deencapsulation;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 public class PropertyInstanceMergeDataBuilderTest {
 
-	private PropertyInstanceMergeDataBuilder createTestSubject() {
-		return PropertyInstanceMergeDataBuilder.getInstance();
-	}
 
-	@Test
-	public void testGetInstance() throws Exception {
-		PropertyInstanceMergeDataBuilder result;
-
-		// default test
-		result = PropertyInstanceMergeDataBuilder.getInstance();
-	}
 
 	@Test
 	public void testBuildDataForMerging() throws Exception {
@@ -37,8 +26,8 @@ public class PropertyInstanceMergeDataBuilderTest {
 		List<MergePropertyData> result;
 
 		// default test
-		testSubject = createTestSubject();
-		result = testSubject.buildDataForMerging(oldProps, oldInputs, newProps, newInputs);
+
+		result = PropertyInstanceMergeDataBuilder.buildDataForMerging(oldProps, oldInputs, newProps, newInputs);
 	}
 
 	@Test
@@ -51,8 +40,8 @@ public class PropertyInstanceMergeDataBuilderTest {
 		List<MergePropertyData> result;
 
 		// default test
-		testSubject = createTestSubject();
-		result = Deencapsulation.invoke(testSubject, "buildMergeData", new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>());
+
+		result = Deencapsulation.invoke(PropertyInstanceMergeDataBuilder.class, "buildMergeData", new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>());
 	}
 
 	@Test
@@ -65,8 +54,7 @@ public class PropertyInstanceMergeDataBuilderTest {
 		MergePropertyData result;
 
 		// default test
-		testSubject = createTestSubject();
-		result = Deencapsulation.invoke(testSubject, "buildMergePropertyData", new PropertyDataDefinition(), new HashMap<>(),
+		result = Deencapsulation.invoke(PropertyInstanceMergeDataBuilder.class, "buildMergePropertyData", new PropertyDataDefinition(), new HashMap<>(),
 				new PropertyDataDefinition(), new HashMap<>());
 	}
 
@@ -78,8 +66,7 @@ public class PropertyInstanceMergeDataBuilderTest {
 		List<String> result;
 
 		// default test
-		testSubject = createTestSubject();
-		result = Deencapsulation.invoke(testSubject, "getOldGetInputNamesWhichExistInNewVersion", new LinkedList<>(), new HashMap<>());
+		result = Deencapsulation.invoke(PropertyInstanceMergeDataBuilder.class, "getOldGetInputNamesWhichExistInNewVersion", new LinkedList<>(), new HashMap<>());
 	}
 
 	@Test
@@ -90,7 +77,6 @@ public class PropertyInstanceMergeDataBuilderTest {
 		List<String> result;
 
 		// default test
-		testSubject = createTestSubject();
-		result = Deencapsulation.invoke(testSubject, "getOldDeclaredInputsByUser", new LinkedList<>(), new HashMap<>());
+		result = Deencapsulation.invoke(PropertyInstanceMergeDataBuilder.class, "getOldDeclaredInputsByUser", new LinkedList<>(), new HashMap<>());
 	}
 }

@@ -1,16 +1,14 @@
 package org.openecomp.sdc.be.components.distribution.engine;
 
-import java.io.File;
-import java.security.GeneralSecurityException;
-import java.util.Properties;
-
+import com.att.nsa.mr.client.MRConsumer;
+import mockit.Deencapsulation;
 import org.junit.Test;
 import org.openecomp.sdc.be.config.DmaapConsumerConfiguration;
 import org.openecomp.sdc.be.config.DmaapConsumerConfiguration.Credential;
 
-import com.att.nsa.mr.client.MRConsumer;
-
-import mockit.Deencapsulation;
+import java.io.File;
+import java.security.GeneralSecurityException;
+import java.util.Properties;
 
 public class DmaapClientFactoryTest {
 

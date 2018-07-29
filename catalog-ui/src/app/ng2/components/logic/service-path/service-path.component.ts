@@ -39,6 +39,7 @@ export class ServicePathComponent {
 	@Input() service: Service;
 	@Input() onCreate: Function;
 	@Input() onSave: Function;
+	@Input() isViewOnly:boolean;
 
 	constructor(private ModalServiceNg2: ModalService) {}
 
@@ -46,7 +47,7 @@ export class ServicePathComponent {
 		this.showServicePathMenu = false;
 		let cancelButton: ButtonModel = new ButtonModel('Cancel', 'outline white', this.ModalServiceNg2.closeCurrentModal);
 		let saveButton: ButtonModel = new ButtonModel('Create', 'blue', this.createPath, this.getDisabled );
-		let modalModel: ModalModel = new ModalModel('l', 'Create Service Path', '', [saveButton, cancelButton], 'standard', true);
+		let modalModel: ModalModel = new ModalModel('l', 'Create Service Flow', '', [saveButton, cancelButton], 'standard', true);
 		this.modalInstance = this.ModalServiceNg2.createCustomModal(modalModel);
 		this.ModalServiceNg2.addDynamicContentToModal(this.modalInstance, ServicePathCreatorComponent, {service: this.service});
 		this.modalInstance.instance.open();
@@ -55,10 +56,10 @@ export class ServicePathComponent {
 	onListServicePath = ():void => {
 		this.showServicePathMenu = false;
 		let cancelButton: ButtonModel = new ButtonModel('Close', 'outline white', this.ModalServiceNg2.closeCurrentModal);
-		let modalModel: ModalModel = new ModalModel('md', 'Service Paths List','', [cancelButton], 'standard', true);
+		let modalModel: ModalModel = new ModalModel('md', 'Service Flows List','', [cancelButton], 'standard', true);
 		this.modalInstance = this.ModalServiceNg2.createCustomModal(modalModel);
 		this.ModalServiceNg2.addDynamicContentToModal(this.modalInstance, ServicePathsListComponent, {service: this.service,
-			onCreateServicePath: this.onCreateServicePath, onEditServicePath: this.onEditServicePath});
+			onCreateServicePath: this.onCreateServicePath, onEditServicePath: this.onEditServicePath, isViewOnly: this.isViewOnly});
 		this.modalInstance.instance.open();
 	};
 
@@ -70,14 +71,14 @@ export class ServicePathComponent {
 	onEditServicePath = (id:string):void =>   {
 		let cancelButton: ButtonModel = new ButtonModel('Cancel', 'outline white', this.ModalServiceNg2.closeCurrentModal);
 		let saveButton: ButtonModel = new ButtonModel('Save', 'blue', this.createPath, this.getDisabled );
-		let modalModel: ModalModel = new ModalModel('l', 'Edit Path', '', [saveButton, cancelButton]);
+		let modalModel: ModalModel = new ModalModel('l', 'Edit Path', '', [saveButton, cancelButton], 'standard', true);
 		this.modalInstance = this.ModalServiceNg2.createCustomModal(modalModel);
 		this.ModalServiceNg2.addDynamicContentToModal(this.modalInstance, ServicePathCreatorComponent, {service: this.service, pathId: id});
 		this.modalInstance.instance.open();
 	};
 
 	getDisabled = ():boolean =>  {
-		return !this.modalInstance.instance.dynamicContent.instance.checkFormValidForSubmit();
+		return this.isViewOnly || !this.modalInstance.instance.dynamicContent.instance.checkFormValidForSubmit();
 	};
 }
 

@@ -33,11 +33,7 @@ import org.openecomp.sdcrests.vendorsoftwareproducts.types.CompositionEntityVali
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.NetworkDto;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.NetworkRequestDto;
 import org.openecomp.sdcrests.vsp.rest.Networks;
-import org.openecomp.sdcrests.vsp.rest.mapping.MapCompositionEntityResponseToDto;
-import org.openecomp.sdcrests.vsp.rest.mapping.MapCompositionEntityValidationDataToDto;
-import org.openecomp.sdcrests.vsp.rest.mapping.MapNetworkEntityToNetworkDto;
-import org.openecomp.sdcrests.vsp.rest.mapping.MapNetworkRequestDtoToNetworkEntity;
-import org.openecomp.sdcrests.vsp.rest.mapping.MapNetworkToNetworkDto;
+import org.openecomp.sdcrests.vsp.rest.mapping.*;
 import org.openecomp.sdcrests.wrappers.GenericCollectionWrapper;
 import org.openecomp.sdcrests.wrappers.StringWrapperResponse;
 import org.springframework.context.annotation.Scope;

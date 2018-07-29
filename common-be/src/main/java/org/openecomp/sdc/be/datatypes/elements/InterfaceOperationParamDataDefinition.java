@@ -16,10 +16,10 @@
 
 package org.openecomp.sdc.be.datatypes.elements;
 
-import java.io.Serializable;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
+
+import java.io.Serializable;
 
 import static org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields.IO_PARAM_ID;
 import static org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields.IO_PARAM_NAME;

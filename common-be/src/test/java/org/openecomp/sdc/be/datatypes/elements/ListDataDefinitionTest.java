@@ -1,10 +1,10 @@
 package org.openecomp.sdc.be.datatypes.elements;
 
-import java.util.List;
-import java.util.Set;
-
 import org.junit.Test;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
+
+import java.util.List;
+import java.util.Set;
 
 public class ListDataDefinitionTest {
 

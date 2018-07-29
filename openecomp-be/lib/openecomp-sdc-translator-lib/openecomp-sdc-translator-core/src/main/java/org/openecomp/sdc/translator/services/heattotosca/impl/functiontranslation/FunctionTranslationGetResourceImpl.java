@@ -16,10 +16,10 @@
 
 package org.openecomp.sdc.translator.services.heattotosca.impl.functiontranslation;
 
-import java.util.Optional;
-
 import org.openecomp.sdc.translator.services.heattotosca.FunctionTranslation;
 import org.openecomp.sdc.translator.services.heattotosca.impl.resourcetranslation.ResourceTranslationBase;
+
+import java.util.Optional;
 
 public class FunctionTranslationGetResourceImpl implements FunctionTranslation {
     @Override

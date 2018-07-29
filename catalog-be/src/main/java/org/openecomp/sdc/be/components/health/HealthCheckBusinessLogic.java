@@ -20,39 +20,12 @@
 
 package org.openecomp.sdc.be.components.health;
 
-import static java.lang.String.format;
-import static java.util.concurrent.TimeUnit.SECONDS;
-import static org.apache.http.HttpStatus.SC_INTERNAL_SERVER_ERROR;
-import static org.apache.http.HttpStatus.SC_OK;
-import static org.openecomp.sdc.common.api.Constants.HC_COMPONENT_BE;
-import static org.openecomp.sdc.common.api.Constants.HC_COMPONENT_CASSANDRA;
-import static org.openecomp.sdc.common.api.Constants.HC_COMPONENT_DCAE;
-import static org.openecomp.sdc.common.api.Constants.HC_COMPONENT_ES;
-import static org.openecomp.sdc.common.api.Constants.HC_COMPONENT_ON_BOARDING;
-import static org.openecomp.sdc.common.api.Constants.HC_COMPONENT_TITAN;
-import static org.openecomp.sdc.common.api.HealthCheckInfo.HealthCheckStatus.DOWN;
-import static org.openecomp.sdc.common.api.HealthCheckInfo.HealthCheckStatus.UP;
-import static org.openecomp.sdc.common.impl.ExternalConfiguration.getAppVersion;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.stream.Collectors;
-
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import javax.annotation.Resource;
-
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.openecomp.sdc.be.components.distribution.engine.DistributionEngineClusterHealth;
 import org.openecomp.sdc.be.components.distribution.engine.DmaapHealth;
-import org.openecomp.sdc.be.components.distribution.engine.UebHealthCheckCall;
 import org.openecomp.sdc.be.components.impl.CassandraHealthCheck;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.config.Configuration;
@@ -66,14 +39,32 @@ import org.openecomp.sdc.common.http.client.api.HttpRequest;
 import org.openecomp.sdc.common.http.client.api.HttpResponse;
 import org.openecomp.sdc.common.http.config.HttpClientConfig;
 import org.openecomp.sdc.common.http.config.Timeouts;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.common.util.HealthCheckUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+
+import static java.lang.String.format;
+import static java.util.concurrent.Executors.newSingleThreadScheduledExecutor;
+import static org.apache.http.HttpStatus.SC_INTERNAL_SERVER_ERROR;
+import static org.apache.http.HttpStatus.SC_OK;
+import static org.openecomp.sdc.common.api.Constants.*;
+import static org.openecomp.sdc.common.api.HealthCheckInfo.HealthCheckStatus.DOWN;
+import static org.openecomp.sdc.common.api.HealthCheckInfo.HealthCheckStatus.UP;
+import static org.openecomp.sdc.common.impl.ExternalConfiguration.getAppVersion;
 
 
 @Component("healthCheckBusinessLogic")
@@ -82,11 +73,10 @@ public class HealthCheckBusinessLogic {
     protected static final String BE_HEALTH_LOG_CONTEXT = "be.healthcheck";
     private static final String BE_HEALTH_CHECK_STR = "beHealthCheck";
     private static final String COMPONENT_CHANGED_MESSAGE = "BE Component %s state changed from %s to %s";
-    private static final Logger healthLogger = LoggerFactory.getLogger(BE_HEALTH_LOG_CONTEXT);
-    private static final Logger log = LoggerFactory.getLogger(HealthCheckBusinessLogic.class.getName());
+    private static final Logger log = Logger.getLogger(HealthCheckBusinessLogic.class.getName());
     private static final HealthCheckUtil healthCheckUtil = new HealthCheckUtil();
-    ScheduledExecutorService healthCheckScheduler = Executors.newSingleThreadScheduledExecutor((Runnable r) -> new Thread(r, "BE-Health-Check-Task"));
-    HealthCheckScheduledTask healthCheckScheduledTask = null;
+    private final ScheduledExecutorService healthCheckScheduler = newSingleThreadScheduledExecutor((Runnable r) -> new Thread(r, "BE-Health-Check-Task"));
+    private HealthCheckScheduledTask healthCheckScheduledTask = null;
     @Resource
     private TitanGenericDao titanGenericDao;
     @Resource
@@ -112,7 +102,7 @@ public class HealthCheckBusinessLogic {
         healthCheckScheduledTask = new HealthCheckScheduledTask();
 
         if (this.scheduledFuture == null) {
-            this.scheduledFuture = this.healthCheckScheduler.scheduleAtFixedRate(healthCheckScheduledTask, 0, 3, SECONDS);
+            this.scheduledFuture = this.healthCheckScheduler.scheduleAtFixedRate(healthCheckScheduledTask, 0, 3, TimeUnit.SECONDS);
         }
 
     }
@@ -172,6 +162,7 @@ public class HealthCheckBusinessLogic {
             healthCheckStatus = DOWN;
             description = "ES cluster error: " + e.getMessage();
             healthCheckInfos.add(new HealthCheckInfo(HC_COMPONENT_ES, healthCheckStatus, appVersion, description));
+            log.error(description, e);
             return healthCheckInfos;
         }
         if (healthCheckStatus.equals(DOWN)) {
@@ -206,8 +197,9 @@ public class HealthCheckBusinessLogic {
         try {
             isTitanUp = titanGenericDao.isGraphOpen();
         } catch (Exception e) {
-            description = "Titan error: " + e.getMessage();
+            description = "Titan error: ";
             healthCheckInfos.add(new HealthCheckInfo(HC_COMPONENT_TITAN, DOWN, null, description));
+            log.error(description, e);
             return healthCheckInfos;
         }
         if (isTitanUp) {
@@ -223,13 +215,13 @@ public class HealthCheckBusinessLogic {
     private List<HealthCheckInfo> getCassandraHealthCheck(List<HealthCheckInfo> healthCheckInfos) {
 
         String description;
-        boolean isCassandraUp;
+        boolean isCassandraUp = false;
 
         try {
             isCassandraUp = cassandraHealthCheck.getCassandraStatus();
         } catch (Exception e) {
-            isCassandraUp = false;
-            log.debug("Cassandra error: " + e.getMessage());
+            description = "Cassandra error: " + e.getMessage();
+            log.error(description, e);
         }
         if (isCassandraUp) {
             description = "OK";
@@ -446,13 +438,10 @@ public class HealthCheckBusinessLogic {
     }
 
     public class HealthCheckScheduledTask implements Runnable {
-
-        List<UebHealthCheckCall> healthCheckCalls = new ArrayList<>();
-
         @Override
         public void run() {
             Configuration config = ConfigurationManager.getConfigurationManager().getConfiguration();
-            healthLogger.trace("Executing BE Health Check Task");
+            log.trace("Executing BE Health Check Task");
 
             List<HealthCheckInfo> currentBeHealthCheckInfos = getBeHealthCheckInfos();
             boolean healthStatus = healthCheckUtil.getAggregateStatus(currentBeHealthCheckInfos, config.getHealthStatusExclude());
@@ -467,7 +456,6 @@ public class HealthCheckBusinessLogic {
                 prevBeHealthCheckInfos = currentBeHealthCheckInfos;
                 logAlarm(healthStatus);
             }
-
         }
 
         private void logAlarm(boolean prevHealthState) {

@@ -9,6 +9,7 @@ import org.openecomp.sdc.be.auditing.impl.AuditingManager;
 import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResponseFormatManager;
 import org.openecomp.sdc.be.components.impl.ServiceBusinessLogic;
+import org.openecomp.sdc.be.components.impl.ServiceBusinessLogicTest;
 import org.openecomp.sdc.be.components.impl.generic.GenericTypeBusinessLogic;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
@@ -20,13 +21,7 @@ import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.WebAppContextWrapper;
-import org.openecomp.sdc.be.model.ArtifactDefinition;
-import org.openecomp.sdc.be.model.Component;
-import org.openecomp.sdc.be.model.ComponentInstance;
-import org.openecomp.sdc.be.model.GroupInstance;
-import org.openecomp.sdc.be.model.Resource;
-import org.openecomp.sdc.be.model.Service;
-import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.*;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
 import org.openecomp.sdc.be.model.jsontitan.operations.ForwardingPathOperation;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
@@ -40,7 +35,7 @@ import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
 import org.openecomp.sdc.common.api.ConfigurationSource;
 import org.openecomp.sdc.common.api.Constants;
-import org.openecomp.sdc.common.datastructure.AuditingFieldsKeysEnum;
+import org.openecomp.sdc.common.datastructure.AuditingFieldsKey;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;
 import org.openecomp.sdc.common.impl.FSConfigurationSource;
 import org.springframework.web.context.WebApplicationContext;
@@ -53,7 +48,7 @@ import java.util.Map;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
-public class BaseServiceBusinessLogicTest {
+public abstract class BaseServiceBusinessLogicTest {
     private static final String SERVICE_CATEGORY = "Mobility";
     final ServletContext servletContext = Mockito.mock(ServletContext.class);
     UserBusinessLogic mockUserAdmin = Mockito.mock(UserBusinessLogic.class);
@@ -80,9 +75,9 @@ public class BaseServiceBusinessLogicTest {
     protected static final String UNCERTIFIED_VERSION = "0.2";
     protected static final String COMPONNET_ID = "myUniqueId";
     protected static final String GENERIC_SERVICE_NAME = "org.openecomp.resource.abstract.nodes.service";
-    protected static Map<AuditingFieldsKeysEnum, Object> FILTER_MAP_CERTIFIED_VERSION = new HashMap<>();
-    protected static Map<AuditingFieldsKeysEnum, Object> FILTER_MAP_UNCERTIFIED_VERSION_CURR = new HashMap<>();
-    protected static Map<AuditingFieldsKeysEnum, Object> FILTER_MAP_UNCERTIFIED_VERSION_PREV = new HashMap<>();
+    protected static Map<AuditingFieldsKey, Object> FILTER_MAP_CERTIFIED_VERSION = new HashMap<>();
+    protected static Map<AuditingFieldsKey, Object> FILTER_MAP_UNCERTIFIED_VERSION_CURR = new HashMap<>();
+    protected static Map<AuditingFieldsKey, Object> FILTER_MAP_UNCERTIFIED_VERSION_PREV = new HashMap<>();
     @Before
     public void setup() {
 
@@ -184,12 +179,12 @@ public class BaseServiceBusinessLogicTest {
     }
 
     private void mockAuditingDaoLogic() {
-        FILTER_MAP_CERTIFIED_VERSION.put(AuditingFieldsKeysEnum.AUDIT_SERVICE_INSTANCE_ID, COMPONNET_ID);
-        FILTER_MAP_UNCERTIFIED_VERSION_CURR.put(AuditingFieldsKeysEnum.AUDIT_SERVICE_INSTANCE_ID, COMPONNET_ID);
-        FILTER_MAP_UNCERTIFIED_VERSION_PREV.put(AuditingFieldsKeysEnum.AUDIT_SERVICE_INSTANCE_ID, COMPONNET_ID);
+        FILTER_MAP_CERTIFIED_VERSION.put(AuditingFieldsKey.AUDIT_SERVICE_INSTANCE_ID, COMPONNET_ID);
+        FILTER_MAP_UNCERTIFIED_VERSION_CURR.put(AuditingFieldsKey.AUDIT_SERVICE_INSTANCE_ID, COMPONNET_ID);
+        FILTER_MAP_UNCERTIFIED_VERSION_PREV.put(AuditingFieldsKey.AUDIT_SERVICE_INSTANCE_ID, COMPONNET_ID);
 
-        FILTER_MAP_UNCERTIFIED_VERSION_CURR.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_CURR_VERSION, UNCERTIFIED_VERSION);
-        FILTER_MAP_UNCERTIFIED_VERSION_PREV.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_PREV_VERSION, UNCERTIFIED_VERSION);
+        FILTER_MAP_UNCERTIFIED_VERSION_CURR.put(AuditingFieldsKey.AUDIT_RESOURCE_CURR_VERSION, UNCERTIFIED_VERSION);
+        FILTER_MAP_UNCERTIFIED_VERSION_PREV.put(AuditingFieldsKey.AUDIT_RESOURCE_PREV_VERSION, UNCERTIFIED_VERSION);
 
         final ResourceAdminEvent createResourceAudit = new ResourceAdminEvent();
         createResourceAudit.setModifier("Carlos Santana(cs0008)");
@@ -244,7 +239,7 @@ public class BaseServiceBusinessLogicTest {
         Either<List<ResourceAdminEvent>, ActionStatus> result = Either.left(list);
         Mockito.when(auditingDao.getByServiceInstanceId(Mockito.anyString())).thenReturn(result);
 
-        List<ResourceAdminEvent> listPrev = new ArrayList<ResourceAdminEvent>();
+        List<ResourceAdminEvent> listPrev = new ArrayList<>();
         Either<List<ResourceAdminEvent>, ActionStatus> resultPrev = Either.left(listPrev);
         Mockito.when(auditingDao.getAuditByServiceIdAndPrevVersion(Mockito.anyString(), Mockito.anyString())).thenReturn(resultPrev);
 
@@ -267,7 +262,7 @@ public class BaseServiceBusinessLogicTest {
         service.setCategories(categories);
 
         service.setDescription("description");
-        List<String> tgs = new ArrayList<String>();
+        List<String> tgs = new ArrayList<>();
         tgs.add(service.getName());
         service.setTags(tgs);
         service.setIcon("MyIcon");

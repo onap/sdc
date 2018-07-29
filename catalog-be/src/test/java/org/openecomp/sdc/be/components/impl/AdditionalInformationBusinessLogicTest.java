@@ -1,12 +1,11 @@
 package org.openecomp.sdc.be.components.impl;
 
+import fj.data.Either;
 import org.junit.Test;
 import org.openecomp.sdc.be.datatypes.elements.AdditionalInfoParameterInfo;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.model.AdditionalInformationDefinition;
 import org.openecomp.sdc.exception.ResponseFormat;
-
-import fj.data.Either;
 
 
 public class AdditionalInformationBusinessLogicTest {

@@ -20,27 +20,22 @@
 
 package org.openecomp.sdc.be.resources.data.auditing;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Map;
-import java.util.TimeZone;
-import java.util.UUID;
-
-import org.openecomp.sdc.be.resources.data.auditing.model.CommonAuditData;
-import org.openecomp.sdc.common.datastructure.AuditingFieldsKeysEnum;
-
 import com.datastax.driver.core.utils.UUIDs;
 import com.datastax.driver.mapping.annotations.ClusteringColumn;
 import com.datastax.driver.mapping.annotations.Column;
 import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
+import org.openecomp.sdc.be.resources.data.auditing.model.CommonAuditData;
+import org.openecomp.sdc.be.resources.data.auditing.model.ResourceCommonInfo;
+import org.openecomp.sdc.common.datastructure.AuditingFieldsKey;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.TimeZone;
+import java.util.UUID;
 
 @Table(keyspace = AuditingTypesConstants.AUDIT_KEYSPACE, name = AuditingTypesConstants.DISTRIBUTION_DEPLOY_EVENT_TYPE)
 public class DistributionDeployEvent extends AuditingGenericEvent {
-
-    private static String DISTRIBUTION_DEPLOY_EVENT_TEMPLATE = "action=\"%s\" timestamp=\"%s\" "
-            + "resourceName=\"%s\" resourceType=\"%s\" currVersion=\"%s\" "
-            + "modifierName=\"%s\" modifierUid=\"%s\" did=\"%s\" " + "status=\"%s\" desc=\"%s\"";
 
     @PartitionKey
     protected UUID timebaseduuid;
@@ -76,60 +71,13 @@ public class DistributionDeployEvent extends AuditingGenericEvent {
     @Column
     private String did;
 
-   	public DistributionDeployEvent() {
-		super();
-		timestamp1 = new Date();
-		timebaseduuid = UUIDs.timeBased();
-	}
-
-	public DistributionDeployEvent(Map<AuditingFieldsKeysEnum, Object> auditingFields) {
-		this();
-		Object value;
-		value = auditingFields.get(AuditingFieldsKeysEnum.AUDIT_REQUEST_ID);
-		if (value != null) {
-			setRequestId((String) value);
-		}
-		value = auditingFields.get(AuditingFieldsKeysEnum.AUDIT_SERVICE_INSTANCE_ID);
-		if (value != null) {
-			setServiceInstanceId((String) value);
-		}
-		value = auditingFields.get(AuditingFieldsKeysEnum.AUDIT_ACTION);
-		if (value != null) {
-			setAction((String) value);
-		}
-		value = auditingFields.get(AuditingFieldsKeysEnum.AUDIT_STATUS);
-		if (value != null) {
-			setStatus((String) value);
-		}
-		value = auditingFields.get(AuditingFieldsKeysEnum.AUDIT_DESC);
-		if (value != null) {
-			setDesc((String) value);
-		}
-		value = auditingFields.get(AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_ID);
-		if (value != null) {
-			setDid((String) value);
-		}
-		value = auditingFields.get(AuditingFieldsKeysEnum.AUDIT_MODIFIER_UID);
-		if (value != null) {
-			setModifier((String) value);
-		}
-		value = auditingFields.get(AuditingFieldsKeysEnum.AUDIT_RESOURCE_CURR_VERSION);
-		if (value != null) {
-			setCurrVersion((String) value);
-		}
-		value = auditingFields.get(AuditingFieldsKeysEnum.AUDIT_RESOURCE_NAME);
-		if (value != null) {
-			setResourceName((String) value);
-		}
-		value = auditingFields.get(AuditingFieldsKeysEnum.AUDIT_RESOURCE_TYPE);
-		if (value != null) {
-			setResourceType((String) value);
-		}
+    public DistributionDeployEvent() {
+        timestamp1 = new Date();
+        timebaseduuid = UUIDs.timeBased();
     }
 
-
-    public DistributionDeployEvent(String action, CommonAuditData commonAuditData, String did, String modifier,
-                                   String currVersion, String resourceName, String resourceType) {
+    public DistributionDeployEvent(String action, CommonAuditData commonAuditData, ResourceCommonInfo resourceCommonInfo, String did, String modifier,
+                                   String currVersion) {
         this();
         this.action = action;
         this.requestId = commonAuditData.getRequestId();
@@ -139,27 +87,31 @@ public class DistributionDeployEvent extends AuditingGenericEvent {
         this.did = did;
         this.modifier = modifier;
         this.currVersion = currVersion;
-        this.resourceName = resourceName;
-        this.resourceType = resourceType;
+        this.resourceName = resourceCommonInfo.getResourceName();
+        this.resourceType = resourceCommonInfo.getResourceType();
+    }
+
+    public void setTimestamp1(String timestamp) {
+        this.timestamp1 = parseDateFromString(timestamp);
     }
 
     @Override
-	public void fillFields() {
-		fields.put(AuditingFieldsKeysEnum.AUDIT_REQUEST_ID.getDisplayName(), getRequestId());
-		fields.put(AuditingFieldsKeysEnum.AUDIT_SERVICE_INSTANCE_ID.getDisplayName(), getServiceInstanceId());
-		fields.put(AuditingFieldsKeysEnum.AUDIT_ACTION.getDisplayName(), getAction());
-		fields.put(AuditingFieldsKeysEnum.AUDIT_STATUS.getDisplayName(), getStatus());
-		fields.put(AuditingFieldsKeysEnum.AUDIT_DESC.getDisplayName(), getDesc());
+    public void fillFields() {
+        fields.put(AuditingFieldsKey.AUDIT_REQUEST_ID.getDisplayName(), getRequestId());
+        fields.put(AuditingFieldsKey.AUDIT_SERVICE_INSTANCE_ID.getDisplayName(), getServiceInstanceId());
+        fields.put(AuditingFieldsKey.AUDIT_ACTION.getDisplayName(), getAction());
+        fields.put(AuditingFieldsKey.AUDIT_STATUS.getDisplayName(), getStatus());
+        fields.put(AuditingFieldsKey.AUDIT_DESC.getDisplayName(), getDesc());
 
-        fields.put(AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_ID.getDisplayName(), getDid());
-		fields.put(AuditingFieldsKeysEnum.AUDIT_MODIFIER_UID.getDisplayName(), getModifier());
-		fields.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_CURR_VERSION.getDisplayName(), getCurrVersion());
-		fields.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_NAME.getDisplayName(), getResourceName());
-		fields.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_TYPE.getDisplayName(), getResourceType());
-		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(dateFormatPattern);
-		simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
-		fields.put(AuditingFieldsKeysEnum.AUDIT_TIMESTAMP.getDisplayName(), simpleDateFormat.format(timestamp1));
-	}
+        fields.put(AuditingFieldsKey.AUDIT_DISTRIBUTION_ID.getDisplayName(), getDid());
+        fields.put(AuditingFieldsKey.AUDIT_MODIFIER_UID.getDisplayName(), getModifier());
+        fields.put(AuditingFieldsKey.AUDIT_RESOURCE_CURR_VERSION.getDisplayName(), getCurrVersion());
+        fields.put(AuditingFieldsKey.AUDIT_RESOURCE_NAME.getDisplayName(), getResourceName());
+        fields.put(AuditingFieldsKey.AUDIT_RESOURCE_TYPE.getDisplayName(), getResourceType());
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(dateFormatPattern);
+        simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+        fields.put(AuditingFieldsKey.AUDIT_TIMESTAMP.getDisplayName(), simpleDateFormat.format(timestamp1));
+    }
 
     public String getResourceName() {
         return resourceName;
@@ -258,11 +210,11 @@ public class DistributionDeployEvent extends AuditingGenericEvent {
     }
 
     @Override
-	public String toString() {
-		return "DistributionDeployEvent [timebaseduuid=" + timebaseduuid + ", timestamp1=" + timestamp1 + ", requestId="
-				+ requestId + ", serviceInstanceId=" + serviceInstanceId + ", action=" + action + ", status=" + status
-				+ ", desc=" + desc + ", resourceName=" + resourceName + ", resourceType=" + resourceType
-				+ ", currVersion=" + currVersion + ", modifier=" + modifier + ", did=" + did + "]";
-	}
+    public String toString() {
+        return "DistributionDeployEvent [timebaseduuid=" + timebaseduuid + ", timestamp1=" + timestamp1 + ", requestId="
+                + requestId + ", serviceInstanceId=" + serviceInstanceId + ", action=" + action + ", status=" + status
+                + ", desc=" + desc + ", resourceName=" + resourceName + ", resourceType=" + resourceType
+                + ", currVersion=" + currVersion + ", modifier=" + modifier + ", did=" + did + "]";
+    }
 
 }

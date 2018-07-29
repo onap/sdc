@@ -21,19 +21,7 @@
 package org.openecomp.sdc.be.externalapi.servlet;
 
 
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.when;
-
-import java.util.Arrays;
-
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.core.Application;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
+import fj.data.Either;
 import org.apache.http.HttpStatus;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.server.ResourceConfig;
@@ -67,7 +55,18 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.web.context.WebApplicationContext;
 
-import fj.data.Either;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.Application;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.util.Arrays;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.when;
 
 public class AssetsDataServletTest extends JerseyTest {
 
@@ -122,7 +121,7 @@ public class AssetsDataServletTest extends JerseyTest {
         when(subCategoryDefinition.getName()).thenReturn("Monitoring Template");
         when(categoryDefinition.getSubcategories()).thenReturn(Arrays.asList(subCategoryDefinition));
         when(elementBusinessLogic.getAllResourceCategories()).thenReturn(Either.left(Arrays.asList(categoryDefinition)));
-        when(resourceBusinessLogic.createResource(Mockito.eq(resource), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(Either.left(resource));
+        when(resourceBusinessLogic.createResource(Mockito.eq(resource), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(resource);
         when(webApplicationContext.getBean(AssetMetadataConverter.class)).thenReturn(assetMetadataConverter);
 
         Mockito.doReturn(Either.left(resourceAssetMetadata)).when(assetMetadataConverter).convertToSingleAssetMetadata(Mockito.eq(resource), Mockito.anyString(),
@@ -158,7 +157,7 @@ public class AssetsDataServletTest extends JerseyTest {
         final JSONObject createRequest = buildCreateJsonRequest();
         Response response = target().path("/v1/catalog/resources").request(MediaType.APPLICATION_JSON).header(Constants.X_ECOMP_INSTANCE_ID_HEADER, "mockXEcompInstanceId").header(Constants.USER_ID_HEADER, "mockAttID")
                 .post(Entity.json(createRequest.toJSONString()), Response.class);
-        assertTrue(response.getStatus() == HttpStatus.SC_CREATED);
+        assertEquals(response.getStatus(), HttpStatus.SC_CREATED);
 
     }
     private static final String BASIC_CREATE_REQUEST = "{\r\n" +
@@ -178,8 +177,7 @@ public class AssetsDataServletTest extends JerseyTest {
     private JSONObject buildCreateJsonRequest() {
 
         JSONParser parser = new JSONParser();
-        JSONObject jsonObj = (JSONObject) FunctionalInterfaces.swallowException( () -> parser.parse(BASIC_CREATE_REQUEST));
-        return jsonObj;
+        return (JSONObject) FunctionalInterfaces.swallowException( () -> parser.parse(BASIC_CREATE_REQUEST));
 
     }
 

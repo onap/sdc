@@ -37,7 +37,6 @@ import org.openecomp.sdc.ci.tests.utils.general.AtomicOperationUtils;
 import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
 import org.openecomp.sdc.ci.tests.utils.rest.*;
 import org.openecomp.sdc.ci.tests.utils.validation.ErrorValidationUtils;
-import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.Test;
@@ -388,8 +387,8 @@ public class GetFilteredAssetServlet extends ComponentBaseTest {
 
 		/*// Validate audit message
 		ExpectedExternalAudit expectedAssetListAudit = ElementFactory.getFilteredAssetListAuditCategoryNotFound(AssetTypeEnum.RESOURCES, "?" + query, "Application L3+");
-		Map <AuditingFieldsKeysEnum, String> body = new HashMap<>();
-        body.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_URL, expectedAssetListAudit.getRESOURCE_URL());
+		Map <AuditingFieldsKey, String> body = new HashMap<>();
+        body.put(AuditingFieldsKey.AUDIT_RESOURCE_URL, expectedAssetListAudit.getRESOURCE_URL());
         AuditValidationUtils.validateExternalAudit(expectedAssetListAudit, AuditingActionEnum.GET_FILTERED_ASSET_LIST.getName(), body);*/
 
 	}
@@ -444,7 +443,7 @@ public class GetFilteredAssetServlet extends ComponentBaseTest {
 
 	}
 
-	@Test
+	/*@Test
 	public void getFilteredServiceAssetInformationalSuccess() throws Exception {
 
 		List<String> expectedAssetNamesList = new ArrayList<>();
@@ -500,10 +499,7 @@ public class GetFilteredAssetServlet extends ComponentBaseTest {
 		List<String> getActualAssetNamesList = AssetRestUtils.getServiceNamesList(resourceAssetList);
 		Utils.compareArrayLists(getActualAssetNamesList, expectedAssetNamesList, "Element");
 
-		/*// Validate audit message
-		validateFilteredAudit(query, AssetTypeEnum.SERVICES);*/
-
-	}
+	}*/
 
 	@Test
 	public void getFilteredServiceAssetDeploymentSuccess() throws Exception {
@@ -567,15 +563,15 @@ public class GetFilteredAssetServlet extends ComponentBaseTest {
 	/*private void validateSuccessAudit(String[] filter, AssetTypeEnum assetType) throws Exception {
 		ExpectedExternalAudit expectedAssetListAudit = ElementFactory.getDefaultAssetListAudit(assetType, AuditingActionEnum.GET_FILTERED_ASSET_LIST);
 		expectedAssetListAudit.setRESOURCE_URL(AssetRestUtils.buildUrlWithFilter(expectedAssetListAudit.getRESOURCE_URL(), filter));
-		Map<AuditingFieldsKeysEnum, String> body = new HashMap<>();
-		body.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_URL, expectedAssetListAudit.getRESOURCE_URL());
+		Map<AuditingFieldsKey, String> body = new HashMap<>();
+		body.put(AuditingFieldsKey.AUDIT_RESOURCE_URL, expectedAssetListAudit.getRESOURCE_URL());
 		AuditValidationUtils.validateExternalAudit(expectedAssetListAudit, AuditingActionEnum.GET_FILTERED_ASSET_LIST.getName(), body);
 	}
 
 	private void validateFilteredAudit(String query, AssetTypeEnum assetType) throws Exception {
 		ExpectedExternalAudit expectedAssetListAudit = ElementFactory.getDefaultFilteredAssetListAudit(assetType, "?" + query);
-		Map<AuditingFieldsKeysEnum, String> body = new HashMap<>();
-		body.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_URL, expectedAssetListAudit.getRESOURCE_URL());
+		Map<AuditingFieldsKey, String> body = new HashMap<>();
+		body.put(AuditingFieldsKey.AUDIT_RESOURCE_URL, expectedAssetListAudit.getRESOURCE_URL());
 		AuditValidationUtils.validateExternalAudit(expectedAssetListAudit, AuditingActionEnum.GET_FILTERED_ASSET_LIST.getName(), body);
 	}
 
@@ -584,8 +580,8 @@ public class GetFilteredAssetServlet extends ComponentBaseTest {
 		expectedAssetListAudit.setRESOURCE_URL(AssetRestUtils.buildUrlWithFilter(expectedAssetListAudit.getRESOURCE_URL(), filter));
 		expectedAssetListAudit.setSTATUS(errorInfo.getCode().toString());
 		expectedAssetListAudit.setDESC(AuditValidationUtils.buildAuditDescription(errorInfo, variables));
-		Map<AuditingFieldsKeysEnum, String> body = new HashMap<>();
-		body.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_URL, expectedAssetListAudit.getRESOURCE_URL());
+		Map<AuditingFieldsKey, String> body = new HashMap<>();
+		body.put(AuditingFieldsKey.AUDIT_RESOURCE_URL, expectedAssetListAudit.getRESOURCE_URL());
 		AuditValidationUtils.validateExternalAudit(expectedAssetListAudit, AuditingActionEnum.GET_FILTERED_ASSET_LIST.getName(), body);
 	}*/
 }

@@ -16,9 +16,6 @@
 
 package org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.composition.commands.impl;
 
-import static org.openecomp.sdc.translator.services.heattotosca.UnifiedCompositionUtil.getConnectedComputeConsolidationData;
-import static org.openecomp.sdc.translator.services.heattotosca.UnifiedCompositionUtil.getNewPortNodeTemplateId;
-
 import org.onap.sdc.tosca.datatypes.model.NodeTemplate;
 import org.openecomp.sdc.tosca.services.DataModelUtil;
 import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.composition.commands.UnifiedSubstitutionNodeTemplateIdGenerator;
@@ -27,6 +24,9 @@ import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolida
 
 import java.util.Objects;
 import java.util.Optional;
+
+import static org.openecomp.sdc.translator.services.heattotosca.UnifiedCompositionUtil.getConnectedComputeConsolidationData;
+import static org.openecomp.sdc.translator.services.heattotosca.UnifiedCompositionUtil.getNewPortNodeTemplateId;
 
 public class PortNewNodeTemplateIdGenerator implements UnifiedSubstitutionNodeTemplateIdGenerator {
 

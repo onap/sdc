@@ -20,48 +20,66 @@
 
 package org.openecomp.sdc.ci.tests.utils.rest;
 
+//import com.fasterxml.jackson.databind.DeserializationFeature;
+//import com.fasterxml.jackson.databind.ObjectMapper;
+//import com.fasterxml.jackson.databind.module.SimpleModule;
+//import com.google.gson.*;
+//import org.apache.commons.codec.binary.Base64;
+//import org.apache.log4j.Logger;
+//import org.codehaus.jackson.JsonNode;
+//
+//import org.json.JSONArray;
+//import org.json.JSONException;
+//import org.json.simple.JSONObject;
+//import org.json.simple.JSONValue;
+//import org.openecomp.sdc.be.model.*;
+//import org.openecomp.sdc.be.model.category.CategoryDefinition;
+//import org.openecomp.sdc.be.model.operations.impl.PropertyOperation.PropertyConstraintJacksonDeserializer;;
+//import org.openecomp.sdc.ci.tests.datatypes.ArtifactReqDetails;
+//import org.openecomp.sdc.ci.tests.datatypes.ResourceAssetStructure;
+//import org.openecomp.sdc.ci.tests.datatypes.ResourceRespJavaObject;
+//import org.openecomp.sdc.ci.tests.datatypes.ServiceDistributionStatus;
+//import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
+//import org.openecomp.sdc.ci.tests.tosca.datatypes.VfModuleDefinition;
+//import org.openecomp.sdc.ci.tests.utils.Utils;
+//import org.yaml.snakeyaml.Yaml;
+//
+//import java.io.ByteArrayInputStream;
+//import java.io.IOException;
+//import java.io.InputStream;
+//import java.text.ParseException;
+//import java.util.*;
+
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.google.gson.*;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
-import org.openecomp.sdc.be.model.ArtifactDefinition;
-import org.openecomp.sdc.be.model.Component;
-import org.openecomp.sdc.be.model.ComponentInstance;
-import org.openecomp.sdc.be.model.ComponentInstanceProperty;
-import org.openecomp.sdc.be.model.GroupDefinition;
-import org.openecomp.sdc.be.model.Product;
-import org.openecomp.sdc.be.model.PropertyConstraint;
-import org.openecomp.sdc.be.model.Resource;
-import org.openecomp.sdc.be.model.Service;
+import org.openecomp.sdc.be.model.*;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
-import org.openecomp.sdc.be.model.operations.impl.PropertyOperation.PropertyConstraintJacksonDeserializer;
+import org.openecomp.sdc.be.model.operations.impl.PropertyOperation;
 import org.openecomp.sdc.ci.tests.datatypes.ArtifactReqDetails;
 import org.openecomp.sdc.ci.tests.datatypes.ResourceAssetStructure;
 import org.openecomp.sdc.ci.tests.datatypes.ResourceRespJavaObject;
 import org.openecomp.sdc.ci.tests.datatypes.ServiceDistributionStatus;
 import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
+import org.openecomp.sdc.ci.tests.tosca.datatypes.VfModuleDefinition;
 import org.openecomp.sdc.ci.tests.utils.Utils;
+import org.yaml.snakeyaml.Yaml;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+
+//import org.codehaus.jackson.JsonNode;
 
 public class ResponseParser {
 
@@ -180,7 +198,7 @@ public class ResponseParser {
 
 	private static ObjectMapper newObjectMapper() {
 		SimpleModule module = new SimpleModule("customDeserializationModule");
-		module.addDeserializer(PropertyConstraint.class, new PropertyConstraintJacksonDeserializer());
+		module.addDeserializer(PropertyConstraint.class, new PropertyOperation.PropertyConstraintJacksonDeserializer());
 		return new ObjectMapper()
 			.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
 			.registerModule(module);
@@ -294,7 +312,7 @@ public class ResponseParser {
 		return artifactReqDetails;
 	}
 
-	public static Service convertServiceResponseToJavaObject(String response) {
+	/*public static Service convertServiceResponseToJavaObject(String response) {
 
 		ObjectMapper mapper = newObjectMapper();
 		Service service = null;
@@ -306,7 +324,26 @@ public class ResponseParser {
 		}
 
 		return service;
+	}*/
+	public static Service convertServiceResponseToJavaObject(String response) {
+
+		ObjectMapper mapper = newObjectMapper();
+		Service service = null;
+		try {
+			service = mapper.readValue(response, Service.class);
+			logger.debug(service.toString());
+			//Temporary catch until bug with distribution status fixed
+		} catch (InvalidFormatException e) {
+			System.out.println("broken service with invalid distribution status : " + response);
+			logger.debug("broken service with invalid distribution status : " + response);
+			return service;
+	} catch(IOException e){
+
+		e.printStackTrace();
 	}
+
+		return service;
+}
 
 	public static Product convertProductResponseToJavaObject(String response) {
 
@@ -446,6 +483,68 @@ public class ResponseParser {
 		}
 	}
 
+//	/*public static Map<String, List<Component>> convertCatalogResponseToJavaObject(String response) {
+//
+//		// Map<String, ArrayList<Component>> map = new HashMap<String,
+//		// ArrayList<Component>>();
+//		Map<String, List<Component>> map = new HashMap<>();
+//
+//		JsonElement jElement = new JsonParser().parse(response);
+//		JsonObject jObject = jElement.getAsJsonObject();
+//		JsonArray jArrReousrces = jObject.getAsJsonArray("resources");
+//		JsonArray jArrServices = jObject.getAsJsonArray("services");
+//		//Product removed
+////		JsonArray jArrProducts = jObject.getAsJsonArray("products");
+//		//Product removed
+//		if (jArrReousrces != null && jArrServices != null /*&& jArrProducts != null*/){
+//
+//
+//		//////// RESOURCE/////////////////////////////
+//		ArrayList<Component> restResponseArray = new ArrayList<>();
+//		Component component = null;
+//		for (int i = 0; i < jArrReousrces.size(); i++) {
+//			String resourceString = (String) jArrReousrces.get(i).toString();
+//			component = ResponseParser.convertResourceResponseToJavaObject(resourceString);
+//			restResponseArray.add(component);
+//		}
+//
+//		map.put("resources", restResponseArray);
+//
+//		///////// SERVICE/////////////////////////////
+//
+//		restResponseArray = new ArrayList<>();
+//		component = null;
+//		for (int i = 0; i < jArrServices.size(); i++) {
+//			String resourceString = (String) jArrServices.get(i).toString();
+//			component = ResponseParser.convertServiceResponseToJavaObject(resourceString);
+//			restResponseArray.add(component);
+//		}
+//
+//		map.put("services", restResponseArray);
+////Product removed
+//		///////// PRODUCT/////////////////////////////
+////		restResponseArray = new ArrayList<>();
+////		component = null;
+////		for (int i = 0; i < jArrProducts.size(); i++) {
+////			String resourceString = (String) jArrProducts.get(i).toString();
+////			component = ResponseParser.convertProductResponseToJavaObject(resourceString);
+////			restResponseArray.add(component);
+////		}
+////
+////		map.put("products", restResponseArray);
+////
+//    	}
+//		else {
+//			map.put("resources", new ArrayList<>());
+//			map.put("services", new ArrayList<>());
+//			//Product removed
+////			map.put("products", new ArrayList<>());
+//		}
+//
+//		return map;
+//
+//	}*/
+
 	public static Map<String, List<Component>> convertCatalogResponseToJavaObject(String response) {
 
 		// Map<String, ArrayList<Component>> map = new HashMap<String,
@@ -456,56 +555,62 @@ public class ResponseParser {
 		JsonObject jObject = jElement.getAsJsonObject();
 		JsonArray jArrReousrces = jObject.getAsJsonArray("resources");
 		JsonArray jArrServices = jObject.getAsJsonArray("services");
-		JsonArray jArrProducts = jObject.getAsJsonArray("products");
-		
+		//Product removed
+//		JsonArray jArrProducts = jObject.getAsJsonArray("products");
+		//Product removed
+
+		if (jArrReousrces != null && jArrServices != null /*&& jArrProducts != null*/){
 
 
-
-		//////// RESOURCE/////////////////////////////
-		ArrayList<Component> restResponseArray = new ArrayList<>();
-		Component component = null;
-			if (jArrReousrces != null) {
-				for (int i = 0; i < jArrReousrces.size(); i++) {
+			//////// RESOURCE/////////////////////////////
+			ArrayList<Component> restResponseArray = new ArrayList<>();
+			Component component = null;
+			for (int i = 0; i < jArrReousrces.size(); i++) {
 				String resourceString = (String) jArrReousrces.get(i).toString();
 				component = ResponseParser.convertResourceResponseToJavaObject(resourceString);
 				restResponseArray.add(component);
-				}
+			}
 
+			map.put("resources", restResponseArray);
 
-	 		} map.put("resources", restResponseArray);
+			///////// SERVICE/////////////////////////////
 
-
-   		///////// SERVICE/////////////////////////////
-		restResponseArray = new ArrayList<>();
-		component = null;
-			if (jArrServices != null ) {
-				for (int i = 0; i < jArrServices.size(); i++) {
+			restResponseArray = new ArrayList<>();
+			component = null;
+			for (int i = 0; i < jArrServices.size(); i++) {
 				String resourceString = (String) jArrServices.get(i).toString();
 				component = ResponseParser.convertServiceResponseToJavaObject(resourceString);
 				restResponseArray.add(component);
-				}
+			}
+
+			map.put("services", restResponseArray);
+//Product removed
+
+			///////// PRODUCT/////////////////////////////
+//		restResponseArray = new ArrayList<>();
+//		component = null;
+//		for (int i = 0; i < jArrProducts.size(); i++) {
+//			String resourceString = (String) jArrProducts.get(i).toString();
+//			component = ResponseParser.convertProductResponseToJavaObject(resourceString);
+//			restResponseArray.add(component);
+//		}
+//
 
 
-			} map.put("services", restResponseArray);
+//		map.put("products", restResponseArray);
+//
 
-
-		///////// PRODUCT/////////////////////////////
-		restResponseArray = new ArrayList<>();
-		component = null;
-			if ( jArrProducts != null){
-				for (int i = 0; i < jArrProducts.size(); i++) {
-				String resourceString = (String) jArrProducts.get(i).toString();
-				component = ResponseParser.convertProductResponseToJavaObject(resourceString);
-				restResponseArray.add(component);
-				}
-
-			} map.put("products", restResponseArray);
-
+		}
+		else {
+			map.put("resources", new ArrayList<>());
+			map.put("services", new ArrayList<>());
+			//Product removed
+//			map.put("products", new ArrayList<>());
+		}
 
 		return map;
 
 	}
-	
 	
 	public static Map<Long, ServiceDistributionStatus> convertServiceDistributionStatusToObject(String response) throws ParseException {
 
@@ -555,5 +660,24 @@ public class ResponseParser {
 		
 		return null;
 	}
-	
+
+	public static Map<String, VfModuleDefinition> convertVfModuleJsonResponseToJavaObject(String response) {
+
+		Yaml yaml = new Yaml();
+		InputStream inputStream = null;
+		inputStream = new ByteArrayInputStream(response.getBytes());
+		List<?> list = (List<?> )yaml.load(inputStream);
+		ObjectMapper mapper = new ObjectMapper();
+
+		VfModuleDefinition moduleDefinition;
+		Map<String, VfModuleDefinition> vfModulesMap = new HashMap<>();
+		for (Object obj : list) {
+//			TODO Andrey L. uncomment line below in case to ignore on unknown properties, not recommended
+			mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+			moduleDefinition = mapper.convertValue(obj, VfModuleDefinition.class);
+			vfModulesMap.put(moduleDefinition.vfModuleModelName, moduleDefinition);
+		}
+		return  vfModulesMap;
+	}
+
 }

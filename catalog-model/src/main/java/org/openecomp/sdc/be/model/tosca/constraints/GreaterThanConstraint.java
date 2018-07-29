@@ -20,47 +20,39 @@
 
 package org.openecomp.sdc.be.model.tosca.constraints;
 
-import java.io.Serializable;
-
-import javax.validation.constraints.NotNull;
-
 import org.openecomp.sdc.be.model.tosca.ToscaType;
 import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintValueDoNotMatchPropertyTypeException;
 import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintViolationException;
 
-public class GreaterThanConstraint extends AbstractComparablePropertyConstraint implements Serializable {
+import javax.validation.constraints.NotNull;
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 405723215512121896L;
+public class GreaterThanConstraint extends AbstractComparablePropertyConstraint {
 
-	public GreaterThanConstraint(String greaterThan) {
-		super();
-		this.greaterThan = greaterThan;
-	}
+    public GreaterThanConstraint(String greaterThan) {
+        this.greaterThan = greaterThan;
+    }
 
-	@NotNull
-	private String greaterThan;
+    @NotNull
+    private String greaterThan;
 
-	@Override
-	public void initialize(ToscaType propertyType) throws ConstraintValueDoNotMatchPropertyTypeException {
-		initialize(greaterThan, propertyType);
-	}
+    @Override
+    public void initialize(ToscaType propertyType) throws ConstraintValueDoNotMatchPropertyTypeException {
+        initialize(greaterThan, propertyType);
+    }
 
-	@Override
-	protected void doValidate(Object propertyValue) throws ConstraintViolationException {
-		if (getComparable().compareTo(propertyValue) >= 0) {
-			throw new ConstraintViolationException(propertyValue + " < " + greaterThan);
-		}
-	}
+    @Override
+    protected void doValidate(Object propertyValue) throws ConstraintViolationException {
+        if (getComparable().compareTo(propertyValue) >= 0) {
+            throw new ConstraintViolationException(propertyValue + " < " + greaterThan);
+        }
+    }
 
-	public String getGreaterThan() {
-		return greaterThan;
-	}
+    public String getGreaterThan() {
+        return greaterThan;
+    }
 
-	public void setGreaterThan(String greaterThan) {
-		this.greaterThan = greaterThan;
-	}
+    public void setGreaterThan(String greaterThan) {
+        this.greaterThan = greaterThan;
+    }
 
 }

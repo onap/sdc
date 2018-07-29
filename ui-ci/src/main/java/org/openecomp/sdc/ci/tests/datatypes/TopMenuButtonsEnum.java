@@ -22,7 +22,9 @@ package org.openecomp.sdc.ci.tests.datatypes;
 
 public enum TopMenuButtonsEnum {
 
-	HOME("main-menu-button-home"), CATALOG("main-menu-button-catalog"), ON_BOARDING("main-menu-button-onboard");
+	HOME("main-menu-button-home"),
+	CATALOG("main-menu-button-catalog"),
+	ON_BOARDING("main-menu-button-onboard");
 
 	private String value;
 	private String value2;

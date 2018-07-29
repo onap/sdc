@@ -20,9 +20,8 @@
 
 package org.openecomp.sdc.be.dao.api;
 
-import org.openecomp.sdc.be.resources.data.UserData;
-
 import fj.data.Either;
+import org.openecomp.sdc.be.resources.data.UserData;
 
 public interface IUsersDAO {
 

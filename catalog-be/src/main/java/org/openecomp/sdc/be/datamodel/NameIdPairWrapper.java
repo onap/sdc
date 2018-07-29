@@ -1,9 +1,8 @@
 package org.openecomp.sdc.be.datamodel;
 
-import java.io.Serializable;
 import java.util.HashMap;
 
-public class NameIdPairWrapper extends HashMap<String, Object> implements Serializable {
+public class NameIdPairWrapper extends HashMap<String, Object> {
     public static final String ID = "id";
     public static final String DATA = "data";
 

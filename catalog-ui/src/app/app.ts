@@ -30,6 +30,7 @@ import './modules/utils.ts';
 import './modules/directive-module.ts';
 import './modules/service-module';
 import './modules/view-model-module.ts';
+import {SdcUiComponentsNg1Module} from 'sdc-ui/lib/angular';
 
 import {
     DataTypesService,
@@ -45,14 +46,13 @@ import {
 import { UserService } from "./ng2/services/user.service";
 import {forwardRef} from '@angular/core';
 import {UpgradeAdapter} from '@angular/upgrade';
-import {CHANGE_COMPONENT_CSAR_VERSION_FLAG, States} from "./utils";
+import {CHANGE_COMPONENT_CSAR_VERSION_FLAG, States, PREVIOUS_CSAR_COMPONENT} from "./utils";
 import {IAppConfigurtaion, IAppMenu, IMainCategory, Resource, IHostedApplication} from "./models";
 import {ComponentFactory} from "./utils/component-factory";
 import {ModalsHandler} from "./utils/modals-handler";
 import {downgradeComponent} from "@angular/upgrade/static";
 
 import {AppModule} from './ng2/app.module';
-import {PropertiesAssignmentComponent} from "./ng2/pages/properties-assignment/properties-assignment.page.component";
 import {Component} from "./models/components/component";
 import {ComponentServiceNg2} from "./ng2/services/component-services/component.service";
 import {ComponentMetadata} from "./models/component-metadata";
@@ -100,6 +100,7 @@ let dependentModules:Array<string> = [
     'angular-clipboard',
     'angularResizable',
     'infinite-scroll',
+    SdcUiComponentsNg1Module.name,
     viewModelsModuleName,
     directivesModuleName,
     servicesModuleName,
@@ -185,7 +186,7 @@ ng1appModule.config([
 
         $stateProvider.state(
             'dashboard', {
-                url: '/dashboard?show&folder',
+                url: '/dashboard?show&folder&filter.term&filter.status&filter.distributed',
                 templateUrl: "./view-models/dashboard/dashboard-view.html",
                 controller: viewModelsModuleName + '.DashboardViewModel',
             }
@@ -200,25 +201,60 @@ ng1appModule.config([
         );
 
         let componentsParam:Array<any> = ['$stateParams', 'Sdc.Services.EntityService', 'Sdc.Services.CacheService', ($stateParams:any, EntityService:EntityService, cacheService:CacheService) => {
-            if (cacheService.get('breadcrumbsComponents')) {
-                return cacheService.get('breadcrumbsComponents');
+            if (cacheService.get('breadcrumbsComponentsState') === $stateParams.previousState) {
+                const breadcrumbsComponents = cacheService.get('breadcrumbsComponents');
+                if (breadcrumbsComponents) {
+                    return breadcrumbsComponents;
+                }
             } else {
-                return EntityService.getCatalog();
+                let breadcrumbsComponentsPromise;
+                if ($stateParams.previousState === 'dashboard') {
+                    breadcrumbsComponentsPromise = EntityService.getAllComponents(true);
+                } else if ($stateParams.previousState === 'catalog') {
+                    breadcrumbsComponentsPromise = EntityService.getCatalog();
+                } else {
+                    cacheService.remove('breadcrumbsComponentsState');
+                    cacheService.remove('breadcrumbsComponents');
+                    return [];
+                }
+                breadcrumbsComponentsPromise.then((components) => {
+                    cacheService.set('breadcrumbsComponentsState', $stateParams.previousState);
+                    cacheService.set('breadcrumbsComponents', components);
+                });
+                return breadcrumbsComponentsPromise;
             }
         }];
 
+        const oldWorkspaceController:Array<any> = ['$location', ($location:ng.ILocationService) => {
+            // redirect old /workspace/* urls to /catalog/workspace/* url
+            const newUrl = '/catalog' + $location.url();
+            console.log('old workspace path - redirecting to:', newUrl);
+            $location.url(newUrl);
+        }];
+
+        $stateProvider.state(
+            'workspace-old', {
+                url: '/workspace/:id/:type/*workspaceInnerPath',
+                controller: oldWorkspaceController
+            }
+        );
+
         $stateProvider.state(
             'workspace', {
-                url: '/workspace/:id/:type/',
+                url: '/:previousState/workspace/:id/:type/',
                 params: {'importedFile': null, 'componentCsar': null, 'resourceType': null, 'disableButtons': null},
                 templateUrl: './view-models/workspace/workspace-view.html',
                 controller: viewModelsModuleName + '.WorkspaceViewModel',
                 resolve: {
-                    injectComponent: ['$stateParams', 'ComponentFactory', 'ComponentServiceNg2', function ($stateParams, ComponentFactory:ComponentFactory, ComponentServiceNg2:ComponentServiceNg2) {
-                        if ($stateParams.id) {
+                    injectComponent: ['$stateParams', 'ComponentFactory', 'Sdc.Services.CacheService', 'ComponentServiceNg2', function ($stateParams, ComponentFactory:ComponentFactory, cacheService:CacheService, ComponentServiceNg2:ComponentServiceNg2) {
+
+                        if ($stateParams.id && $stateParams.id.length) { //need to check length in case ID is an empty string
                             return ComponentFactory.getComponentWithMetadataFromServer($stateParams.type.toUpperCase(), $stateParams.id).then(
                                 (component:Component)=> {
-                                if ($stateParams.componentCsar){
+                                if ($stateParams.componentCsar && component.isResource()){
+                                    if((<Resource>component).csarVersion != $stateParams.componentCsar.csarVersion) {
+                                        cacheService.set(PREVIOUS_CSAR_COMPONENT, angular.copy(component));
+                                    }
                                     component = ComponentFactory.updateComponentFromCsar($stateParams.componentCsar, <Resource>component);
                                 }
                                 return component;
@@ -258,7 +294,6 @@ ng1appModule.config([
                 parent: 'workspace',
                 controller: viewModelsModuleName + '.ActivityLogViewModel',
                 templateUrl: './view-models/workspace/tabs/activity-log/activity-log.html',
-                data: {unsavedChanges: false}
             }
         );
 
@@ -569,7 +604,7 @@ ng1appModule.config([
 
         $stateProvider.state(
             'catalog', {
-                url: '/catalog',
+                url: '/catalog?filter.components&filter.resourceSubTypes&filter.categories&filter.statuses&filter.order&filter.term&filter.active',
                 templateUrl: './view-models/catalog/catalog-view.html',
                 controller: viewModelsModuleName + '.CatalogViewModel',
                 resolve: {
@@ -619,6 +654,7 @@ ng1appModule.value('TagValidationPattern', /^[\s\w_.-]{1,50}$/);
 ng1appModule.value('VendorReleaseValidationPattern', /^[\x20-\x21\x23-\x29\x2B-\x2E\x30-\x39\x3B\x3D\x40-\x5B\x5D-\x7B\x7D-\xFF]{1,25}$/);
 ng1appModule.value('VendorNameValidationPattern', /^[\x20-\x21\x23-\x29\x2B-\x2E\x30-\x39\x3B\x3D\x40-\x5B\x5D-\x7B\x7D-\xFF]{1,60}$/);
 ng1appModule.value('VendorModelNumberValidationPattern', /^[\x20-\x21\x23-\x29\x2B-\x2E\x30-\x39\x3B\x3D\x40-\x5B\x5D-\x7B\x7D-\xFF]{1,65}$/);
+ng1appModule.value('ServiceTypeAndRoleValidationPattern', /^[\x20-\x21\x23-\x29\x2B-\x2E\x30-\x39\x3B\x3D\x40-\x5B\x5D-\x7B\x7D-\xFF]{1,256}$/);
 ng1appModule.value('ContactIdValidationPattern', /^[\s\w-]{1,50}$/);
 ng1appModule.value('UserIdValidationPattern', /^[\s\w-]{1,50}$/);
 ng1appModule.value('ProjectCodeValidationPattern', /^[\s\w-]{5,50}$/);
@@ -671,6 +707,7 @@ ng1appModule.run([
      DataTypesService:DataTypesService,
      AngularJSBridge,
      $templateCache:ng.ITemplateCacheService):void => {
+        $templateCache.put('notification-custom-template.html', require('./view-models/shared/notification-custom-template.html'));
         $templateCache.put('notification-custom-template.html', require('./view-models/shared/notification-custom-template.html'));
         //handle cache data - version
         let initAsdcVersion:Function = ():void => {
@@ -845,6 +882,9 @@ ng1appModule.run([
             if (toState.name.indexOf('workspace') === -1) {
                 if (cacheService.contains(CHANGE_COMPONENT_CSAR_VERSION_FLAG)) {
                     cacheService.remove(CHANGE_COMPONENT_CSAR_VERSION_FLAG);
+                }
+                if (cacheService.contains(PREVIOUS_CSAR_COMPONENT)){
+                    cacheService.remove(PREVIOUS_CSAR_COMPONENT);
                 }
             }
 

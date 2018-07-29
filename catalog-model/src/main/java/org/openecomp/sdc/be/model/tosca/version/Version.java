@@ -48,145 +48,145 @@ import java.util.regex.Pattern;
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
 public class Version implements Comparable<Version> {
-	private Integer majorVersion;
+    private Integer majorVersion;
 
-	private Integer minorVersion;
+    private Integer minorVersion;
 
-	private Integer incrementalVersion;
+    private Integer incrementalVersion;
 
-	private Integer buildNumber;
+    private Integer buildNumber;
 
-	private String qualifier;
+    private String qualifier;
 
-	private ComparableVersion comparable;
+    private ComparableVersion comparable;
 
-	public Version(String version) {
-		parseVersion(version);
-	}
+    public Version(String version) {
+        parseVersion(version);
+    }
 
-	@Override
-	public int hashCode() {
-		return 11 + comparable.hashCode();
-	}
+    @Override
+    public int hashCode() {
+        return 11 + comparable.hashCode();
+    }
 
-	@Override
-	public boolean equals(Object other) {
-		if (this == other) {
-			return true;
-		}
+    @Override
+    public boolean equals(Object other) {
+        if (this == other) {
+            return true;
+        }
 
-		if (!(other instanceof Version)) {
-			return false;
-		}
+        if (!(other instanceof Version)) {
+            return false;
+        }
 
-		return compareTo((Version) other) == 0;
-	}
+        return compareTo((Version) other) == 0;
+    }
 
-	public int compareTo(Version otherVersion) {
-		return this.comparable.compareTo(otherVersion.comparable);
-	}
+    public int compareTo(Version otherVersion) {
+        return this.comparable.compareTo(otherVersion.comparable);
+    }
 
-	public int getMajorVersion() {
-		return majorVersion != null ? majorVersion : 0;
-	}
+    public int getMajorVersion() {
+        return majorVersion != null ? majorVersion : 0;
+    }
 
-	public int getMinorVersion() {
-		return minorVersion != null ? minorVersion : 0;
-	}
+    public int getMinorVersion() {
+        return minorVersion != null ? minorVersion : 0;
+    }
 
-	public int getIncrementalVersion() {
-		return incrementalVersion != null ? incrementalVersion : 0;
-	}
+    public int getIncrementalVersion() {
+        return incrementalVersion != null ? incrementalVersion : 0;
+    }
 
-	public int getBuildNumber() {
-		return buildNumber != null ? buildNumber : 0;
-	}
+    public int getBuildNumber() {
+        return buildNumber != null ? buildNumber : 0;
+    }
 
-	public String getQualifier() {
-		return qualifier;
-	}
+    public String getQualifier() {
+        return qualifier;
+    }
 
-	public final void parseVersion(String version) {
-		comparable = new ComparableVersion(version);
+    public final void parseVersion(String version) {
+        comparable = new ComparableVersion(version);
 
-		int index = version.indexOf("-");
+        int index = version.indexOf("-");
 
-		String part1;
-		String part2 = null;
+        String part1;
+        String part2 = null;
 
-		if (index < 0) {
-			part1 = version;
-		} else {
-			part1 = version.substring(0, index);
-			part2 = version.substring(index + 1);
-		}
+        if (index < 0) {
+            part1 = version;
+        } else {
+            part1 = version.substring(0, index);
+            part2 = version.substring(index + 1);
+        }
 
-		if (part2 != null) {
-			try {
-				if ((part2.length() == 1) || !part2.startsWith("0")) {
-					buildNumber = Integer.valueOf(part2);
-				} else {
-					qualifier = part2;
-				}
-			} catch (NumberFormatException e) {
-				qualifier = part2;
-			}
-		}
+        if (part2 != null) {
+            try {
+                if ((part2.length() == 1) || !part2.startsWith("0")) {
+                    buildNumber = Integer.valueOf(part2);
+                } else {
+                    qualifier = part2;
+                }
+            } catch (NumberFormatException e) {
+                qualifier = part2;
+            }
+        }
 
-		if ((!part1.contains(".")) && !part1.startsWith("0")) {
-			try {
-				majorVersion = Integer.valueOf(part1);
-			} catch (NumberFormatException e) {
-				// qualifier is the whole version, including "-"
-				qualifier = version;
-				buildNumber = null;
-			}
-		} else {
-			boolean fallback = false;
+        if ((!part1.contains(".")) && !part1.startsWith("0")) {
+            try {
+                majorVersion = Integer.valueOf(part1);
+            } catch (NumberFormatException e) {
+                // qualifier is the whole version, including "-"
+                qualifier = version;
+                buildNumber = null;
+            }
+        } else {
+            boolean fallback = false;
 
-			StringTokenizer tok = new StringTokenizer(part1, ".");
-			try {
-				majorVersion = getNextIntegerToken(tok);
-				if (tok.hasMoreTokens()) {
-					minorVersion = getNextIntegerToken(tok);
-				}
-				if (tok.hasMoreTokens()) {
-					incrementalVersion = getNextIntegerToken(tok);
-				}
-				if (tok.hasMoreTokens()) {
-					qualifier = tok.nextToken();
-					fallback = Pattern.compile("\\d+").matcher(qualifier).matches();
-				}
+            StringTokenizer tok = new StringTokenizer(part1, ".");
+            try {
+                majorVersion = getNextIntegerToken(tok);
+                if (tok.hasMoreTokens()) {
+                    minorVersion = getNextIntegerToken(tok);
+                }
+                if (tok.hasMoreTokens()) {
+                    incrementalVersion = getNextIntegerToken(tok);
+                }
+                if (tok.hasMoreTokens()) {
+                    qualifier = tok.nextToken();
+                    fallback = Pattern.compile("\\d+").matcher(qualifier).matches();
+                }
 
-				// string tokenzier won't detect these and ignores them
-				if (part1.contains("..") || part1.startsWith(".") || part1.endsWith(".")) {
-					fallback = true;
-				}
-			} catch (NumberFormatException e) {
-				fallback = true;
-			}
+                // string tokenzier won't detect these and ignores them
+                if (part1.contains("..") || part1.startsWith(".") || part1.endsWith(".")) {
+                    fallback = true;
+                }
+            } catch (NumberFormatException e) {
+                fallback = true;
+            }
 
-			if (fallback) {
-				// qualifier is the whole version, including "-"
-				qualifier = version;
-				majorVersion = null;
-				minorVersion = null;
-				incrementalVersion = null;
-				buildNumber = null;
-			}
-		}
-	}
+            if (fallback) {
+                // qualifier is the whole version, including "-"
+                qualifier = version;
+                majorVersion = null;
+                minorVersion = null;
+                incrementalVersion = null;
+                buildNumber = null;
+            }
+        }
+    }
 
-	private static Integer getNextIntegerToken(StringTokenizer tok) {
-		String s = tok.nextToken();
-		if ((s.length() > 1) && s.startsWith("0")) {
-			throw new NumberFormatException("Number part has a leading 0: '" + s + "'");
-		}
-		return Integer.valueOf(s);
-	}
+    private static Integer getNextIntegerToken(StringTokenizer tok) {
+        String s = tok.nextToken();
+        if ((s.length() > 1) && s.startsWith("0")) {
+            throw new NumberFormatException("Number part has a leading 0: '" + s + "'");
+        }
+        return Integer.valueOf(s);
+    }
 
-	@Override
-	public String toString() {
-		return comparable.toString();
-	}
+    @Override
+    public String toString() {
+        return comparable.toString();
+    }
 }

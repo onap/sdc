@@ -20,13 +20,8 @@
 
 package org.openecomp.sdc.translator.services.heattotosca.impl.resourcetranslation;
 
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
-import org.openecomp.sdc.common.togglz.ToggleableFeature;
-import org.togglz.testing.TestFeatureManagerProvider;
 
 import java.io.IOException;
 

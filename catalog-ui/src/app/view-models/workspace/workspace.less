@@ -128,12 +128,22 @@
                 .delimiter {
                     height: 32px;
                     width: 1px;
-                    background-color: #959595;
+                    background-color: @main_color_o;
                     display: inline-block;
                     vertical-align: middle;
                     margin-right: 20px;
                 }
 
+            }
+
+            .archive-state-label {
+                padding: 7px 0 0 10px;
+                margin: 2px 0 7px 10px;
+                border-left: 1px solid @main_color_o;
+                line-height: 15px;
+                font-family: @font-opensans-bold;
+                color: @main_color_m;
+                font-size:12px;
             }
 
             .lifecycle-state {
@@ -191,7 +201,26 @@
         }
         .w-sdc-main-container-body-content-wrapper {
             overflow: auto;
-            height: calc(~'100% - @{action_nav_height}')
+            height: calc(~'100% - @{action_nav_height}');
+            .w-sdc-main-container-body-content-header {
+                display: flex;
+                .tab-title {
+                    flex-grow: 1;
+                }
+                .w-sdc-main-container-body-content-action-buttons {
+                    margin:72px 100px 0 0;
+                    > * {
+                        display: inline-block;
+                        vertical-align: middle;
+                    }
+                    .revert-btn {
+                        text-indent: 100%;
+                    }
+                    .save-btn {
+                        text-indent: 100%;
+                    }
+                }
+            }
         }
     }
 }

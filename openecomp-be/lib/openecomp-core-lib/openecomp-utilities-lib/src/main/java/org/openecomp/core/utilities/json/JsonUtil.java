@@ -22,6 +22,19 @@ import com.google.gson.JsonIOException;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
 
+import org.apache.commons.collections4.CollectionUtils;
+import org.everit.json.schema.EnumSchema;
+import org.everit.json.schema.Schema;
+import org.everit.json.schema.StringSchema;
+import org.everit.json.schema.ValidationException;
+import org.everit.json.schema.loader.SchemaLoader;
+import org.json.JSONObject;
+import org.onap.sdc.tosca.datatypes.model.RequirementDefinition;
+import org.openecomp.core.utilities.CommonMethods;
+import org.openecomp.core.utilities.deserializers.RequirementDefinitionDeserializer;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -32,19 +45,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import org.apache.commons.collections4.CollectionUtils;
-import org.everit.json.schema.EnumSchema;
-import org.everit.json.schema.Schema;
-import org.everit.json.schema.StringSchema;
-import org.everit.json.schema.ValidationException;
-import org.everit.json.schema.loader.SchemaLoader;
-import org.json.JSONObject;
-import org.openecomp.core.utilities.CommonMethods;
-import org.openecomp.core.utilities.deserializers.RequirementDefinitionDeserializer;
-import org.openecomp.sdc.logging.api.Logger;
-import org.openecomp.sdc.logging.api.LoggerFactory;
-import org.onap.sdc.tosca.datatypes.model.RequirementDefinition;
 
 
 /**

@@ -20,48 +20,17 @@
 
 package org.openecomp.sdc.ci.tests.utilities;
 
-import java.io.File;
-import java.util.List;
-
+import com.aventstack.extentreports.Status;
 import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum;
-import org.openecomp.sdc.ci.tests.execute.setup.AttFtpClient;
-import org.openecomp.sdc.ci.tests.execute.setup.DriverFactory;
 import org.openecomp.sdc.ci.tests.execute.setup.ExtentTestActions;
 import org.openecomp.sdc.ci.tests.execute.setup.SetupCDTest;
 import org.openecomp.sdc.ci.tests.pages.HomePage;
 import org.openqa.selenium.WebElement;
 
-import com.aventstack.extentreports.Status;
+import java.util.List;
 
 public class DownloadManager {
 	
-	
-	public File fetchDownloadedFile(){
-		
-		File retrieveLastModifiedFileFromFTP = null;
-				
-		if (DriverFactory.getConfig().isRemoteTesting()){
-			
-				
-			try {
-				
-				AttFtpClient instance = AttFtpClient.getInstance();			   	  
-				AttFtpClient.getInstance().retrieveListOfFile();
-			   	retrieveLastModifiedFileFromFTP = instance.retrieveLastModifiedFileFromFTP();
-								
-			} catch (Exception e) {
-				System.out.println("could not retriev file");
-			}
-			
-			return retrieveLastModifiedFileFromFTP;
-			
-		}
-		
-		
-		return retrieveLastModifiedFileFromFTP;
-		
-	}
-
 	
 	/**
 	 * this method download csar file from VSP repository to default browser download directory  
@@ -88,55 +57,8 @@ public class DownloadManager {
 	}
 
 
-
-	/*public static void downloadCsarByNameFromVSPRepository(String vspName, String vspId, Boolean isDelete) throws Exception{
-
-		if(isDelete){
-			FileHandling.cleanCurrentDownloadDir();
-		}
-		HomePage.showVspRepository();
-		boolean vspFound = HomePage.searchForVSP(vspName);
-		if (vspFound){
-			ExtentTestActions.log(Status.INFO, String.format("Going to downloading VSP %s", vspName));
-			List<WebElement> elemenetsFromTable = HomePage.getElemenetsFromTable();
-//			GeneralUIUtils.ultimateWait();
-//			WebDriverWait wait = new WebDriverWait(GeneralUIUtils.getDriver(), 5);
-//			WebElement findElement = wait.until(ExpectedConditions.visibilityOf(elemenetsFromTable.get(1)));
-			elemenetsFromTable.get(1).click();
-//			findElement.click();
-			GeneralUIUtils.waitForLoader();
-			GeneralUIUtils.clickOnElementByTestId(DataTestIdEnum.ImportVfRepository.DOWNLOAD_CSAR.getValue());
-    		ExtentTestActions.log(Status.INFO, "Succeeded to downloaded CSAR file named " + vspId + " into folder " + SetupCDTest.getWindowTest().getDownloadDirectory());
-			GeneralUIUtils.getElementsByCSS("div[class^='w-sdc-modal-close']").forEach(e -> e.click());
-			GeneralUIUtils.ultimateWait();
-		}
-	}*/
-
-
 	public static void downloadCsarByNameFromVSPRepository(String vspName, String vspId) throws Exception{
 		downloadCsarByNameFromVSPRepository(vspName, true);
 	}
 	
-//	AttFtpClient instance = AttFtpClient.getInstance();
-//	
-//	 String server = "localhost";
-//     int port = 2121;
-//     String user = "admin";
-//     String pass = "admin";
-//     AttFtpClient.getInstance().init(server, port, user, pass);
-//     
-//     try {
-//   	  AttFtpClient.getInstance().retrieveListOfFile();
-//   	  
-//   	  File retrieveLastModifiedFileFromFTP = instance.retrieveLastModifiedFileFromFTP();
-//   	  String content = new String(Files.readAllBytes(Paths.get(retrieveLastModifiedFileFromFTP.getPath())), StandardCharsets.UTF_8);
-////   	  instance.deleteFilesFromFTPserver();
-//   	  System.out.println(content);
-//   	  readFile(retrieveLastModifiedFileFromFTP);
-//		
-//	} finally {
-//		instance.terminateClient();
-//	}
-	
-
 }

@@ -1,4 +1,4 @@
-<sdc-modal modal="envParametersModal" type="classic" class="sdc-env-form-container" buttons="buttons" header="{{artifactResource.artifactDisplayName}}" show-close-button="true">
+<ng1-modal modal="envParametersModal" type="classic" class="sdc-env-form-container" buttons="buttons" header="{{artifactResource.artifactDisplayName}}" show-close-button="true">
     <div class="w-sdc-env-form-container">
         <div class="w-sdc-env-search pull-left">
             <input type="text" class="w-sdc-env-search-input" placeholder="Search" data-ng-model="searchText" data-tests-id="search-env-param-name"/>
@@ -46,8 +46,7 @@
                                         <div class="i-sdc-form-item" data-ng-class="{error:(forms.editForm[parameter.name].$dirty && forms.editForm[parameter.name].$invalid), required: (parameter.defaultValue)}">
                                             <span class="required-symbol">*</span>
                                             <div class="input-parameter">
-                                                <input class="i-sdc-form-input" data-ng-class="{error: (forms.editForm[parameter.name].$invalid),
-                                                                                                'default-value':(parameter.defaultValue && parameter.currentValue === parameter.defaultValue)}"
+                                                <input class="i-sdc-form-input" data-ng-class="{error: (forms.editForm[parameter.name].$invalid)}"
                                                        data-ng-model-options="{ debounce: 200 }"
                                                        data-ng-model="parameter.currentValue"
                                                        value="{{parameter.currentValue}}"
@@ -90,4 +89,4 @@
         </div>
         </div>
     </div>
-</sdc-modal>
+</ng1-modal>

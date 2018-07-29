@@ -20,24 +20,24 @@
 
 package org.openecomp.sdc.be.model.tosca.converters;
 
-import java.util.Map;
-
 import org.openecomp.sdc.be.model.DataTypeDefinition;
+
+import java.util.Map;
 
 public class DefaultConverter implements PropertyValueConverter {
 
-	private static DefaultConverter defaultConverter = new DefaultConverter();
+    private static DefaultConverter defaultConverter = new DefaultConverter();
 
-	public static DefaultConverter getInstance() {
-		return defaultConverter;
-	}
+    public static DefaultConverter getInstance() {
+        return defaultConverter;
+    }
 
-	private DefaultConverter() {
+    private DefaultConverter() {
 
-	}
+    }
 
-	@Override
-	public String convert(String value, String innerType, Map<String, DataTypeDefinition> dataTypes) {
-		return value;
-	}
+    @Override
+    public String convert(String value, String innerType, Map<String, DataTypeDefinition> dataTypes) {
+        return value;
+    }
 }

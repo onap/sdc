@@ -1,8 +1,7 @@
 package org.openecomp.sdc.be.components.validation;
 
-import java.util.Map;
-import java.util.Set;
-
+import fj.data.Either;
+import mockit.Deencapsulation;
 import org.junit.Test;
 import org.openecomp.sdc.be.components.BeConfDependentTest;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
@@ -12,8 +11,8 @@ import org.openecomp.sdc.be.model.PolicyDefinition;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
 
-import fj.data.Either;
-import mockit.Deencapsulation;
+import java.util.Map;
+import java.util.Set;
 
 public class PolicyUtilsTest extends BeConfDependentTest{
 

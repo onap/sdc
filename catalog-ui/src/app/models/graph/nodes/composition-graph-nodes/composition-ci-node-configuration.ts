@@ -35,5 +35,8 @@ export class CompositionCiNodeConfiguration extends CompositionCiNodeBase {
         this.imgWidth = GraphUIObjects.SMALL_RESOURCE_WIDTH;
         this.type = "basic-small-node";
         this.classes = 'configuration-node';
+        if(this.archived){
+            this.classes = this.classes + ' archived';
+        }
     }
 }

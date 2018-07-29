@@ -20,25 +20,19 @@
 
 package org.openecomp.sdc.ci.tests.execute.setup;
 
-import java.net.InetSocketAddress;
-import java.net.Proxy;
-import java.net.ProxySelector;
-import java.net.SocketAddress;
-import java.net.URI;
-import java.util.HashMap;
-import java.util.List;
-
-import org.slf4j.LoggerFactory;
-
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
+import ch.qos.logback.classic.LoggerContext;
 import com.github.markusbernhardt.proxy.ProxySearch;
 import com.github.markusbernhardt.proxy.ProxySearch.Strategy;
 import com.github.markusbernhardt.proxy.util.PlatformUtil;
 import com.github.markusbernhardt.proxy.util.PlatformUtil.Platform;
-
-import ch.qos.logback.classic.Level;
-import ch.qos.logback.classic.Logger;
-import ch.qos.logback.classic.LoggerContext;
 import net.lightbody.bmp.BrowserMobProxyServer;
+import org.slf4j.LoggerFactory;
+
+import java.net.*;
+import java.util.HashMap;
+import java.util.List;
 
 public class MobProxy {
 	

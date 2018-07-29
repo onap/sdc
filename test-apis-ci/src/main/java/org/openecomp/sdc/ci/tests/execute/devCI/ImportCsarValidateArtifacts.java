@@ -20,8 +20,6 @@
 
 package org.openecomp.sdc.ci.tests.execute.devCI;
 
-import static org.testng.AssertJUnit.assertTrue;
-
 import org.junit.Rule;
 import org.junit.rules.TestName;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
@@ -37,6 +35,8 @@ import org.openecomp.sdc.ci.tests.utils.rest.ResponseParser;
 import org.openecomp.sdc.ci.tests.utils.validation.CsarValidationUtils;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+
+import static org.testng.AssertJUnit.assertTrue;
 
 public class ImportCsarValidateArtifacts extends ComponentBaseTest {
 

@@ -81,6 +81,10 @@ public class DeploymentArtifactPage extends GeneralPageElements {
 		GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.ArtifactPageEnum.EDIT_PARAMETERS_OF_ARTIFACT.getValue() + artifactLabel).click();
 	}
 
+	public static void hoverArtifact(String artifactLabel) {
+		GeneralUIUtils.hoverOnAreaByTestId(DataTestIdEnum.DeploymentArtifactCompositionRightMenu.ARTIFACT_NAME.getValue() + artifactLabel);
+	}
+
 	public static void clickDeleteArtifact(String artifactLabel) {
 		SetupCDTest.getExtendTest().log(Status.INFO, String.format("Deleting %s Artefact ",artifactLabel));
 		GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.ArtifactPageEnum.DELETE_ARTIFACT.getValue() + artifactLabel).click();
@@ -102,6 +106,11 @@ public class DeploymentArtifactPage extends GeneralPageElements {
 		 GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.ArtifactPopup.SAVE.getValue()).click();
 		 GeneralUIUtils.ultimateWait();
 	}
+
+    public static  void clickCloseEnvParameters() {
+        GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.ArtifactPopup.CANCEL_BUTTON.getValue()).click();
+        GeneralUIUtils.ultimateWait();
+    }
 	
 	public static WebElement getAddOtherArtifactButton(){
 		return GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.ArtifactPageEnum.ADD_ANOTHER_ARTIFACT.getValue());
@@ -273,5 +282,36 @@ public class DeploymentArtifactPage extends GeneralPageElements {
 	public static void clearSearchBoxEnv() {
 		GeneralUIUtils.getWebElementByContainsClassName("w-sdc-env-search-input").clear();
 	}
+
+    public static void editHeatParamValue(String paramName, String value) throws Exception {
+        SetupCDTest.getExtendTest().log(Status.INFO, "Searching for " + paramName + " parameter on Heat Params modal screen");
+        WebElement valueTextbox = GeneralUIUtils.getWebElementByTestID(paramName);
+
+        clickOnHeatParam(paramName);
+        valueTextbox.clear();
+        SetupCDTest.getExtendTest().log(Status.INFO, "Editing " + paramName + " value on Heat Params modal screen");
+        valueTextbox.sendKeys(value);
+        GeneralUIUtils.ultimateWait();
+
+    }
+
+    public static void clickOnDeleteHeatParamValue(String paramName) throws Exception {
+        SetupCDTest.getExtendTest().log(Status.INFO, "Searching for " + paramName + " parameter on Properties screen");
+        String value = GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.EnvParameterView.ENV_CURRENT_VALUE.getValue() + paramName).getAttribute("value");
+        if (value!=null) {
+            GeneralUIUtils.clickOnElementByTestId(DataTestIdEnum.ArtifactPageEnum.DELETE_PARAMETER_OF_ARTIFACT.getValue() + paramName);
+            GeneralUIUtils.ultimateWait();
+            SetupCDTest.getExtendTest().log(Status.INFO, "Value of " + paramName + " is deleted");
+        }
+        SetupCDTest.getExtendTest().log(Status.INFO, "Value of " + paramName + " is empty and cannot be deleted");
+    }
+
+    public static void clickOnHeatParam(String paramName)throws Exception {
+
+        SetupCDTest.getExtendTest().log(Status.INFO, String.format("Clicking on the %s component in Properties", paramName));
+        GeneralUIUtils.clickOnElementByTestId(paramName);
+        GeneralUIUtils.ultimateWait();
+        GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.GeneralElementsEnum.LIFECYCLE_STATE.getValue());
+    }
 
 }

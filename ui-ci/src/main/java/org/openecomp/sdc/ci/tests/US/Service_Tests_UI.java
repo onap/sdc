@@ -20,10 +20,6 @@
 
 package org.openecomp.sdc.ci.tests.US;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 import org.openecomp.sdc.ci.tests.datatypes.*;
 import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum.StepsEnum;
 import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
@@ -38,7 +34,8 @@ import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
 import org.openecomp.sdc.ci.tests.utils.rest.ServiceRestUtils;
 import org.testng.annotations.Test;
 
-import com.clearspring.analytics.util.Pair;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Service_Tests_UI extends SetupCDTest{
 
@@ -50,14 +47,14 @@ public class Service_Tests_UI extends SetupCDTest{
 	public void declareVL_CP_InputsInServiceLevel() throws Exception {
 		String vnfFile = "FDNT.zip";
 		ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource();//getResourceReqDetails(ComponentConfigurationTypeEnum.DEFAULT);
-		Pair<String, VendorSoftwareProductObject> VspName = OnboardingUiUtils.onboardAndValidate(resourceReqDetails, FileHandling.getVnfRepositoryPath(), vnfFile, getUser());
+		VendorSoftwareProductObject vendorSoftwareProductObject = OnboardingUiUtils.onboardAndValidate(resourceReqDetails, FileHandling.getVnfRepositoryPath(), vnfFile, getUser());
 		ServiceReqDetails servicemetadata = ElementFactory.getDefaultService(getUser());
 		ServiceUIUtils.createService(servicemetadata, getUser());
 		GeneralUIUtils.moveToStep(StepsEnum.COMPOSITION);
 		CanvasManager service_CanvasManager = CanvasManager.getCanvasManager();
-		CompositionPage.searchForElement(VspName.left);
+		CompositionPage.searchForElement(vendorSoftwareProductObject.getName());
 		GeneralUIUtils.waitForLoader();
-		CanvasElement vfi_Element = service_CanvasManager.createElementOnCanvas(VspName.left);
+		CanvasElement vfi_Element = service_CanvasManager.createElementOnCanvas(vendorSoftwareProductObject.getName());
 		GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.MainMenuButtonsFromInsideFrame.HOME_BUTTON.getValue())
 				.click();
 		GeneralUIUtils.findComponentAndClick(servicemetadata.getName());
@@ -69,14 +66,14 @@ public class Service_Tests_UI extends SetupCDTest{
 	public void CreateServiceWithCpInstance() throws Exception {
 		String vnfFile = "FDNT.zip";
 		ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource();//getResourceReqDetails(ComponentConfigurationTypeEnum.DEFAULT);
-		Pair<String, VendorSoftwareProductObject> VspName = OnboardingUiUtils.onboardAndValidate(resourceReqDetails, FileHandling.getVnfRepositoryPath(), vnfFile, getUser());
+		VendorSoftwareProductObject vendorSoftwareProductObject = OnboardingUiUtils.onboardAndValidate(resourceReqDetails, FileHandling.getVnfRepositoryPath(), vnfFile, getUser());
 		ServiceReqDetails servicemetadata = ElementFactory.getDefaultService(getUser());
 		ServiceUIUtils.createService(servicemetadata, getUser());
 		GeneralUIUtils.moveToStep(StepsEnum.COMPOSITION);
 		CanvasManager service_CanvasManager = CanvasManager.getCanvasManager();
-		CompositionPage.searchForElement(VspName.left);
+		CompositionPage.searchForElement(vendorSoftwareProductObject.getName());
 		GeneralUIUtils.waitForLoader();
-		CanvasElement vfi_Element = service_CanvasManager.createElementOnCanvas(VspName.left);
+		CanvasElement vfi_Element = service_CanvasManager.createElementOnCanvas(vendorSoftwareProductObject.getName());
 		GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.MainMenuButtonsFromInsideFrame.HOME_BUTTON.getValue())
 				.click();
 		GeneralUIUtils.findComponentAndClick(servicemetadata.getName());
@@ -84,7 +81,7 @@ public class Service_Tests_UI extends SetupCDTest{
 		String version = GeneralUIUtils.getWebElementByTestID("versionHeader").getText();
 		RestResponse service = ServiceRestUtils.getServiceByNameAndVersion(getUser(), servicemetadata.getName(),
 				version.substring(1));
-		List<String> serviceResponseArray = new ArrayList<String>();
+		List<String> serviceResponseArray = new ArrayList<>();
 		serviceResponseArray =LocalGeneralUtilities.getValuesFromJsonArray(service);
 		servicemetadata.setUniqueId(serviceResponseArray.get(0));
 		RestResponse serviceResponse = ServiceRestUtils.getService(servicemetadata, getUser());

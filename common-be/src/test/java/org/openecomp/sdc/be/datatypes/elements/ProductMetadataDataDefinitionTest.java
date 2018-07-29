@@ -1,8 +1,8 @@
 package org.openecomp.sdc.be.datatypes.elements;
 
-import java.util.List;
-
 import org.junit.Test;
+
+import java.util.List;
 
 
 public class ProductMetadataDataDefinitionTest {

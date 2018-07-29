@@ -16,9 +16,6 @@
 
 package org.openecomp.sdc.translator.services.heattotosca.impl.resourcetranslation;
 
-import static org.junit.Assert.assertEquals;
-import static org.openecomp.sdc.translator.TestUtils.getErrorAsString;
-
 import org.apache.commons.collections4.MapUtils;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -37,17 +34,16 @@ import org.openecomp.sdc.translator.TestUtils;
 import org.togglz.testing.TestFeatureManager;
 import org.togglz.testing.TestFeatureManagerProvider;
 
-import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.zip.ZipInputStream;
+
+import static org.junit.Assert.assertEquals;
+import static org.openecomp.sdc.translator.TestUtils.getErrorAsString;
 
 
 public class BaseFullTranslationTest {

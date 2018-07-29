@@ -21,26 +21,25 @@
 package org.openecomp.sdc.be.model.operations.api;
 
 
-import java.util.List;
-
+import fj.data.Either;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.model.ComponentInstanceProperty;
 import org.openecomp.sdc.be.model.GroupInstance;
 import org.openecomp.sdc.be.resources.data.ArtifactData;
 
-import fj.data.Either;
+import java.util.List;
 
 public interface IGroupInstanceOperation {
-	
 
-	public Either<List<GroupInstance>, StorageOperationStatus> getAllGroupInstances(String componentInstId, NodeTypeEnum compInstNodeType);
 
-	public Either<Integer, StorageOperationStatus> increaseAndGetGroupInstancePropertyCounter(String groupInstanceId);
+    public Either<List<GroupInstance>, StorageOperationStatus> getAllGroupInstances(String componentInstId, NodeTypeEnum compInstNodeType);
 
-	public Either<ComponentInstanceProperty, StorageOperationStatus> addPropertyValueToGroupInstance(ComponentInstanceProperty resourceInstanceProperty, String resourceInstanceId, Integer index, boolean inTransaction);
+    public Either<Integer, StorageOperationStatus> increaseAndGetGroupInstancePropertyCounter(String groupInstanceId);
 
-	public Either<ComponentInstanceProperty, StorageOperationStatus> updatePropertyValueInGroupInstance(ComponentInstanceProperty gropuInstanceProperty, String groupInstanceId, boolean inTransaction);
+    public Either<ComponentInstanceProperty, StorageOperationStatus> addPropertyValueToGroupInstance(ComponentInstanceProperty resourceInstanceProperty, String resourceInstanceId, Integer index, boolean inTransaction);
 
-	StorageOperationStatus dissociateAndAssociateGroupsInstanceFromArtifact(String componentId, NodeTypeEnum componentTypeEnum, String oldArtifactId, ArtifactData newArtifact);
+    public Either<ComponentInstanceProperty, StorageOperationStatus> updatePropertyValueInGroupInstance(ComponentInstanceProperty gropuInstanceProperty, String groupInstanceId, boolean inTransaction);
+
+    StorageOperationStatus dissociateAndAssociateGroupsInstanceFromArtifact(String componentId, NodeTypeEnum componentTypeEnum, String oldArtifactId, ArtifactData newArtifact);
 
 }

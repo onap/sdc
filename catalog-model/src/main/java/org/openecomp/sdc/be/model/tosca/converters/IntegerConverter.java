@@ -20,28 +20,28 @@
 
 package org.openecomp.sdc.be.model.tosca.converters;
 
-import java.util.Map;
-
 import org.openecomp.sdc.be.model.DataTypeDefinition;
+
+import java.util.Map;
 
 public class IntegerConverter implements ToscaValueConverter {
 
-	private static IntegerConverter integerConverter = new IntegerConverter();
+    private static IntegerConverter integerConverter = new IntegerConverter();
 
-	public static IntegerConverter getInstance() {
-		return integerConverter;
-	}
+    public static IntegerConverter getInstance() {
+        return integerConverter;
+    }
 
-	private IntegerConverter() {
+    private IntegerConverter() {
 
-	}
+    }
 
-	@Override
-	public Object convertToToscaValue(String value, String innerType, Map<String, DataTypeDefinition> dataTypes) {
-		if ( value == null || value.isEmpty() ){
-			return null;
-		}
-		return Integer.parseInt(value);
-	}
+    @Override
+    public Object convertToToscaValue(String value, String innerType, Map<String, DataTypeDefinition> dataTypes) {
+        if ( value == null || value.isEmpty() ){
+            return null;
+        }
+        return Integer.parseInt(value);
+    }
 
 }

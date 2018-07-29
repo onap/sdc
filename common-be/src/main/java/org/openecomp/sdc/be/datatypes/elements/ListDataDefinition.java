@@ -24,32 +24,24 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
-public class ListDataDefinition<T extends ToscaDataDefinition> extends ToscaDataDefinition  implements Serializable {
+public class ListDataDefinition<T extends ToscaDataDefinition> extends ToscaDataDefinition {
 
 	protected List<T> listToscaDataDefinition;
 
 	public ListDataDefinition(ListDataDefinition<T> cdt) {
-		super();
 		listToscaDataDefinition = cdt.listToscaDataDefinition;
 
 	}
 
 	public ListDataDefinition(List<T> listToscaDataDefinition) {
-		super();
 		this.listToscaDataDefinition = listToscaDataDefinition;
 	}
 
 	@JsonCreator
 	public ListDataDefinition() {
-		super();
 		this.listToscaDataDefinition = new ArrayList<>();
 	}
 
@@ -59,7 +51,7 @@ public class ListDataDefinition<T extends ToscaDataDefinition> extends ToscaData
 
 	public void add(T value) {
 		if (listToscaDataDefinition == null) {
-			listToscaDataDefinition = new ArrayList<T>();
+			listToscaDataDefinition = new ArrayList<>();
 		}
 		listToscaDataDefinition.add(value);
 	}

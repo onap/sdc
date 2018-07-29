@@ -28,38 +28,30 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
-import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
-import org.openecomp.sdc.be.model.ArtifactDefinition;
-import org.openecomp.sdc.be.model.Component;
-import org.openecomp.sdc.be.model.ComponentInstance;
-import org.openecomp.sdc.be.model.GroupInstance;
-import org.openecomp.sdc.be.model.HeatParameterDefinition;
-import org.openecomp.sdc.be.model.Resource;
-import org.openecomp.sdc.be.model.Service;
-import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.*;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.IGroupInstanceOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
-import org.openecomp.sdc.be.resources.data.auditing.model.ResourceAuditData;
+import org.openecomp.sdc.be.resources.data.auditing.model.ResourceCommonInfo;
+import org.openecomp.sdc.be.resources.data.auditing.model.ResourceVersionInfo;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
 import org.openecomp.sdc.common.api.ConfigurationSource;
-import org.openecomp.sdc.common.datastructure.AuditingFieldsKeysEnum;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;
 import org.openecomp.sdc.common.impl.FSConfigurationSource;
 import org.openecomp.sdc.exception.ResponseFormat;
 
 import java.util.ArrayList;
-import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
@@ -97,19 +89,19 @@ public class ResourceInstanceBusinessLogicTest {
         Map<String, Object> placeHolderData = (Map<String, Object>) deploymentResourceArtifacts.get(ArtifactsBusinessLogic.HEAT_ENV_NAME);
 
         ArtifactDefinition heatArtifact = getHeatArtifactDefinition(USER_ID, RESOURCE_ID_WITH_HEAT_PARAMS, HEAT_LABEL, ARTIFACT_CREATION_TIME, false, true);
-        Map<String, ArtifactDefinition> artifacts = new HashMap<String, ArtifactDefinition>();
+        Map<String, ArtifactDefinition> artifacts = new HashMap<>();
         artifacts.put(HEAT_LABEL.toLowerCase(), heatArtifact);
         Either<Map<String, ArtifactDefinition>, StorageOperationStatus> eitherGetResourceArtifact = Either.left(artifacts);
         Mockito.when(artifactBusinessLogic.getArtifacts(RESOURCE_ID_WITH_HEAT_PARAMS, NodeTypeEnum.Resource, ArtifactGroupTypeEnum.DEPLOYMENT, null)).thenReturn(eitherGetResourceArtifact);
 
         ArtifactDefinition heatArtifactNoPayload = getHeatArtifactDefinition(USER_ID, RESOURCE_ID_NO_PAYLOAD, HEAT_LABEL, ARTIFACT_CREATION_TIME, true, false);
-        Map<String, ArtifactDefinition> artifactsNoPayload = new HashMap<String, ArtifactDefinition>();
+        Map<String, ArtifactDefinition> artifactsNoPayload = new HashMap<>();
         artifactsNoPayload.put(HEAT_LABEL.toLowerCase(), heatArtifactNoPayload);
         Either<Map<String, ArtifactDefinition>, StorageOperationStatus> eitherGetResourceArtifactNoPayload = Either.left(artifactsNoPayload);
         Mockito.when(artifactBusinessLogic.getArtifacts(RESOURCE_ID_NO_PAYLOAD, NodeTypeEnum.Resource, ArtifactGroupTypeEnum.DEPLOYMENT, null)).thenReturn(eitherGetResourceArtifactNoPayload);
 
         ArtifactDefinition heatArtifactNoParams = getHeatArtifactDefinition(USER_ID, RESOURCE_ID_NO_HEAT_PARAMS, HEAT_LABEL, ARTIFACT_CREATION_TIME, false, false);
-        Map<String, ArtifactDefinition> artifactsNoParams = new HashMap<String, ArtifactDefinition>();
+        Map<String, ArtifactDefinition> artifactsNoParams = new HashMap<>();
         artifactsNoParams.put(HEAT_LABEL.toLowerCase(), heatArtifactNoParams);
         Either<Map<String, ArtifactDefinition>, StorageOperationStatus> eitherGetResourceArtifactNoParams = Either.left(artifactsNoParams);
         Mockito.when(artifactBusinessLogic.getArtifacts(RESOURCE_ID_NO_HEAT_PARAMS, NodeTypeEnum.Resource, ArtifactGroupTypeEnum.DEPLOYMENT, null)).thenReturn(eitherGetResourceArtifactNoParams);
@@ -117,7 +109,7 @@ public class ResourceInstanceBusinessLogicTest {
         Either<ArtifactDefinition, ResponseFormat> eitherPlaceHolder = Either.left(getArtifactPlaceHolder(RESOURCE_INSTANCE_ID, HEAT_ENV_LABEL));
         Mockito.when(artifactBusinessLogic.createArtifactPlaceHolderInfo(RESOURCE_INSTANCE_ID, HEAT_ENV_LABEL.toLowerCase(), placeHolderData, USER_ID, ArtifactGroupTypeEnum.DEPLOYMENT, false)).thenReturn(eitherPlaceHolder);
 
-        Mockito.when(artifactBusinessLogic.createArtifactAuditingFields(Mockito.any(ArtifactDefinition.class), Mockito.anyString(), Mockito.anyString())).thenReturn(new EnumMap<AuditingFieldsKeysEnum, Object>(AuditingFieldsKeysEnum.class));
+     //   Mockito.when(artifactBusinessLogic.createArtifactAuditingFields(Mockito.any(ArtifactDefinition.class), Mockito.anyString(), Mockito.anyString())).thenReturn(new EnumMap<AuditingFieldsKey, Object>(AuditingFieldsKey.class));
 
         Either<ArtifactDefinition, StorageOperationStatus> eitherArtifact = Either.left(getHeatArtifactDefinition(USER_ID, RESOURCE_INSTANCE_ID, HEAT_ENV_LABEL, ARTIFACT_CREATION_TIME, true, false));
         Mockito.when(artifactBusinessLogic.addHeatEnvArtifact(Mockito.any(ArtifactDefinition.class), Mockito.any(ArtifactDefinition.class), Mockito.anyString(), Mockito.any(NodeTypeEnum.class), Mockito.anyString())).thenReturn(eitherArtifact);
@@ -129,14 +121,14 @@ public class ResourceInstanceBusinessLogicTest {
         Either<Object, StorageOperationStatus> eitherLightService = Either.left(lightService);
 
         Mockito.doNothing().when(componentsUtils).auditComponent(Mockito.any(ResponseFormat.class), Mockito.any(User.class), Mockito.any(Component.class), Mockito.any(AuditingActionEnum.class),
-                Mockito.any(ComponentTypeEnum.class), Mockito.any(ResourceAuditData.class));
+                Mockito.any(ResourceCommonInfo.class), Mockito.any(ResourceVersionInfo.class));
 
         Either<ArtifactDefinition, ResponseFormat> heatEnvEither = Either.left(getHeatArtifactDefinition(USER_ID, RESOURCE_INSTANCE_ID, HEAT_ENV_LABEL, ARTIFACT_CREATION_TIME, true, false));
 
         Mockito.when(artifactBusinessLogic.createHeatEnvPlaceHolder(Mockito.any(ArtifactDefinition.class), Mockito.anyString(), Mockito.anyString(), Mockito.any(NodeTypeEnum.class), Mockito.anyString(), Mockito.any(User.class),
-                Mockito.any(Component.class), Mockito.anyObject())).thenReturn(heatEnvEither);
+                Mockito.any(Component.class), Mockito.any())).thenReturn(heatEnvEither);
 
-        Either<List<GroupInstance>, StorageOperationStatus>  groupInstanceEitherLeft = Either.left(new ArrayList<GroupInstance>());
+        Either<List<GroupInstance>, StorageOperationStatus>  groupInstanceEitherLeft = Either.left(new ArrayList<>());
         Mockito.when(groupInstanceOperation.getAllGroupInstances(Mockito.anyString(),  Mockito.any(NodeTypeEnum.class))).thenReturn(groupInstanceEitherLeft);
 
         bl.setToscaOperationFacade(toscaOperationFacade);
@@ -219,7 +211,7 @@ public class ResourceInstanceBusinessLogicTest {
 
         Map<String, ArtifactDefinition> deploymentArtifacts = resourceInstance.getDeploymentArtifacts();
         assertNotNull(deploymentArtifacts);
-        assertTrue(deploymentArtifacts.size() == 0);
+        assertEquals(0, deploymentArtifacts.size());
 
         Mockito.verify(artifactBusinessLogic, Mockito.times(0)).addHeatEnvArtifact(Mockito.any(ArtifactDefinition.class), Mockito.any(ArtifactDefinition.class), Mockito.anyString(), Mockito.any(NodeTypeEnum.class), Mockito.anyString());
     }
@@ -247,7 +239,7 @@ public class ResourceInstanceBusinessLogicTest {
             artifactInfo.setArtifactChecksum("UEsDBAoAAAAIAAeLb0bDQz");
 
             if (withHeatParams) {
-                List<HeatParameterDefinition> heatParams = new ArrayList<HeatParameterDefinition>();
+                List<HeatParameterDefinition> heatParams = new ArrayList<>();
                 HeatParameterDefinition heatParam = new HeatParameterDefinition();
                 heatParam.setCurrentValue("11");
                 heatParam.setDefaultValue("22");

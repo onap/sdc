@@ -20,16 +20,8 @@
 
 package org.openecomp.sdc.be.components.impl;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
 import org.openecomp.sdc.be.model.ComponentInstance;
@@ -39,7 +31,10 @@ import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import fj.data.Either;
+import java.util.*;
+import java.util.Collection;
+import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 /**
  * This class holds the logic of arranging resource instance on the canvas for imported VF
@@ -63,25 +58,24 @@ public class CompositionBusinessLogic {
         LEFT, RIGHT, UP, DOWN
     };
 
-    protected Either<List<ComponentInstance>, ResponseFormat> setPositionsForComponentInstances(Resource resource, String userId) {
-        Either<List<ComponentInstance>, ResponseFormat> result = Either.left(resource.getComponentInstances());
-
+    protected void setPositionsForComponentInstances(Resource resource, String userId) {
         boolean isNotAllPositionsCalculated = resource.getComponentInstances() == null
-                || resource.getComponentInstances().stream().filter(p -> (p.getPosX() == null || p.getPosX().isEmpty()) || (p.getPosY() == null || p.getPosY().isEmpty())).findAny().isPresent();
-
+                || resource.getComponentInstances().stream().anyMatch(p -> (p.getPosX() == null || p.getPosX().isEmpty()) || (p.getPosY() == null || p.getPosY().isEmpty()));
         if (isNotAllPositionsCalculated &&  resource.getComponentInstances() != null) {
             // Arrange Icons In Spiral Pattern
             Map<ImmutablePair<Double, Double>, ComponentInstance> componentInstanceLocations = buildSpiralPatternPositioningForComponentInstances(resource);
-
             // Set Relative Locations According to Canvas Size
-            componentInstanceLocations.entrySet().stream().forEach(e -> setRelativePosition(e));
-
+            componentInstanceLocations.entrySet().forEach(this::setRelativePosition);
             // Update in DB
-            result = componentInstanceBusinessLogic.updateComponentInstance(ComponentTypeEnum.RESOURCE_PARAM_NAME, resource.getUniqueId(), userId, resource.getComponentInstances(), false, false);
-
+            componentInstanceBusinessLogic.updateComponentInstance(ComponentTypeEnum.RESOURCE_PARAM_NAME,resource.getUniqueId(),
+                    userId, resource.getComponentInstances(), false)
+                    .left()
+                    .on(this::throwComponentException);
         }
-        return result;
+    }
 
+    private List<ComponentInstance> throwComponentException(ResponseFormat responseFormat) {
+        throw new ComponentException(responseFormat);
     }
 
     private void setRelativePosition(Entry<ImmutablePair<Double, Double>, ComponentInstance> entry) {
@@ -128,7 +122,7 @@ public class CompositionBusinessLogic {
         componentInstances.addAll(resource.getComponentInstances());
         Map<ComponentInstance, List<ComponentInstance>> connectededCps = getCpsConnectedToVFC(componentInstances, resource);
         // Remove all cp that are connected from the list
-        componentInstances.removeAll(connectededCps.values().stream().flatMap(e -> e.stream()).collect(Collectors.toList()));
+        componentInstances.removeAll(connectededCps.values().stream().flatMap(Collection::stream).collect(Collectors.toList()));
 
         buildSpiralPatternForMajorComponents(componentInstanceLocations, componentInstances);
         buildCirclePatternForCps(componentInstanceLocations, connectededCps);
@@ -154,7 +148,7 @@ public class CompositionBusinessLogic {
         for (ComponentInstance currCp : cpsGroup) {
             double cpXposition = xCenter + CompositionBusinessLogic.CP_RADIUS_FACTOR * Math.cos(currentAngle);
             double cpYposition = yCenter + CompositionBusinessLogic.CP_RADIUS_FACTOR * Math.sin(currentAngle);
-            componentInstLocations.put(new ImmutablePair<Double, Double>(cpXposition, cpYposition), currCp);
+            componentInstLocations.put(new ImmutablePair<>(cpXposition, cpYposition), currCp);
             currentAngle += angleBetweenCps;
         }
 
@@ -168,9 +162,9 @@ public class CompositionBusinessLogic {
         for (ComponentInstance curr : componentInstances) {
             elementsCounter++;
             if (elementsCounter == 1) {
-                currPlacement = new ImmutablePair<Double, Double>(0D, 0D);
+                currPlacement = new ImmutablePair<>(0D, 0D);
             } else if (elementsCounter == 2) {
-                currPlacement = new ImmutablePair<Double, Double>(-1D, 0D);
+                currPlacement = new ImmutablePair<>(-1D, 0D);
                 relationToPrevElement = RelativePosition.LEFT;
             } else {
                 relationToPrevElement = getRelativePositionForCurrentElement(componentInstanceLocations, relationToPrevElement, prevPlacement);
@@ -263,19 +257,19 @@ public class CompositionBusinessLogic {
         switch (relativeLocation) {
 
         case LEFT: {
-            relativeElementPosition = new ImmutablePair<Double, Double>(currElement.getLeft() - 1, currElement.getRight());
+            relativeElementPosition = new ImmutablePair<>(currElement.getLeft() - 1, currElement.getRight());
             break;
         }
         case RIGHT: {
-            relativeElementPosition = new ImmutablePair<Double, Double>(currElement.getLeft() + 1, currElement.getRight());
+            relativeElementPosition = new ImmutablePair<>(currElement.getLeft() + 1, currElement.getRight());
             break;
         }
         case UP: {
-            relativeElementPosition = new ImmutablePair<Double, Double>(currElement.getLeft(), currElement.getRight() + 1);
+            relativeElementPosition = new ImmutablePair<>(currElement.getLeft(), currElement.getRight() + 1);
             break;
         }
         case DOWN: {
-            relativeElementPosition = new ImmutablePair<Double, Double>(currElement.getLeft(), currElement.getRight() - 1);
+            relativeElementPosition = new ImmutablePair<>(currElement.getLeft(), currElement.getRight() - 1);
             break;
         }
         default: {

@@ -1,11 +1,11 @@
 package org.openecomp.sdc.be.model;
 
-import java.util.List;
-import java.util.Map;
-
 import org.junit.Test;
 import org.openecomp.sdc.be.datatypes.elements.ComponentInstanceDataDefinition;
 import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
+
+import java.util.List;
+import java.util.Map;
 
 public class ComponentInstanceTest {
 

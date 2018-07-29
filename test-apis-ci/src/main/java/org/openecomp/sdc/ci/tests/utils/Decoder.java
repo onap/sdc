@@ -20,11 +20,11 @@
 
 package org.openecomp.sdc.ci.tests.utils;
 
+import org.apache.commons.codec.binary.Base64;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-
-import org.apache.commons.codec.binary.Base64;
 
 public class Decoder {
 

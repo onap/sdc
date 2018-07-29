@@ -1,94 +1,102 @@
 package org.openecomp.sdc.be.components.merge.input;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
-import org.apache.commons.collections.ListUtils;
+import fj.data.Either;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.Mockito;
+import org.openecomp.sdc.be.auditing.impl.AuditingManager;
 import org.openecomp.sdc.be.components.utils.ObjectGenerator;
 import org.openecomp.sdc.be.components.utils.ResourceBuilder;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
+import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.Resource;
-import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
+import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 
-import fj.data.Either;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
-public class ComponentInputsMergeBLTest {
+import static java.util.Collections.emptyList;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doCallRealMethod;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.when;
+import static org.openecomp.sdc.be.components.utils.Conditions.hasPropertiesWithNames;
+import static org.openecomp.sdc.be.dao.utils.CollectionUtils.union;
 
-    @InjectMocks
+public class ComponentInputsMergeBLTest extends BaseComponentInputsMerge {
+
     private ComponentInputsMergeBL testInstance;
 
-    @Mock
-    private InputsValuesMergingBusinessLogic inputsValuesMergingBusinessLogicMock;
-
-    @Mock
-    private ToscaOperationFacade toscaOperationFacade;
-
     @Before
+    @Override
     public void setUp() throws Exception {
-        MockitoAnnotations.initMocks(this);
+        super.setUp();
+        testInstance = new ComponentInputsMergeBL(inputsValuesMergingBusinessLogic, declaredInputsResolver, toscaOperationFacade, new ComponentsUtils(mock(AuditingManager.class)));
     }
 
     @Test
-    public void mergeComponentInputs() {
-        Resource oldResource = new ResourceBuilder()
-                .addInput("input1")
-                .addInput("input2")
-                .build();
-
-        Resource newResource = new Resource();
-
-        List<InputDefinition> inputsToMerge = ObjectGenerator.buildInputs("input1", "input2", "input3");
-
-        when(toscaOperationFacade.updateInputsToComponent(inputsToMerge, newResource.getUniqueId())).thenReturn(Either.left(inputsToMerge));
-        ActionStatus actionStatus = testInstance.mergeComponentInputs(oldResource, newResource, inputsToMerge);
-        assertEquals(ActionStatus.OK, actionStatus);
-        verifyCallToMergeComponentInputs(oldResource, inputsToMerge);
-    }
-
-    @SuppressWarnings("unchecked")
-    @Test
-    public void mergeAndRedeclareComponentInputs() throws Exception {
-        Resource oldResource = new ResourceBuilder()
-                .addInput("input1")
-                .addInput("input2")
-                .build();
-
-        Resource newResource = ObjectGenerator.buildBasicResource();
-        List<InputDefinition> inputsToMerge = ObjectGenerator.buildInputs("input1", "input2", "input3");
-        List<InputDefinition> inputsToRedeclare = ObjectGenerator.buildInputs("input4");
-        List<InputDefinition> expectedInputsToUpdate = ListUtils.union(inputsToMerge, inputsToRedeclare);
-        when(inputsValuesMergingBusinessLogicMock.getPreviouslyDeclaredInputsToMerge(oldResource, newResource)).thenReturn(inputsToRedeclare);
-        when(toscaOperationFacade.updateInputsToComponent(expectedInputsToUpdate, newResource.getUniqueId())).thenReturn(Either.left(inputsToMerge));
-        ActionStatus actionStatus = testInstance.mergeAndRedeclareComponentInputs(oldResource, newResource, inputsToMerge);
-        assertEquals(ActionStatus.OK, actionStatus);
+    public void whenOldComponentHasNoInputs_returnOk() {
+        ActionStatus actionStatus = testInstance.mergeComponents(new Resource(), new Resource());
+        assertThat(actionStatus).isEqualTo(ActionStatus.OK);
+        verifyZeroInteractions(toscaOperationFacade, inputsValuesMergingBusinessLogic, declaredInputsResolver);
     }
 
     @Test
-    public void redeclareResourceInputsForInstance() throws Exception {
-        List<InputDefinition> oldInputs = ObjectGenerator.buildInputs("input1", "input2");
-        Resource newResource = ObjectGenerator.buildBasicResource();
-        List<InputDefinition> inputsToRedeclare = ObjectGenerator.buildInputs("input1");
-        when(inputsValuesMergingBusinessLogicMock.getPreviouslyDeclaredInputsToMerge(oldInputs, newResource, "inst1")).thenReturn(inputsToRedeclare);
-        when(toscaOperationFacade.updateInputsToComponent(inputsToRedeclare, newResource.getUniqueId())).thenReturn(Either.left(inputsToRedeclare));
-        ActionStatus actionStatus = testInstance.redeclareComponentInputsForInstance(oldInputs, newResource, "inst1");
+    public void whenCurrResourceHasNoProperties_noRedeclarationOFInputsRequired() {
+        Resource newResource = new ResourceBuilder().setUniqueId(RESOURCE_ID).build();
+        when(toscaOperationFacade.updateInputsToComponent(emptyList(), RESOURCE_ID)).thenReturn(Either.left(null));
+        doCallRealMethod().when(inputsValuesMergingBusinessLogic).mergeComponentInputs(Mockito.anyList(), Mockito.anyList());
+        ActionStatus actionStatus = testInstance.mergeComponents(prevResource, newResource);
+        assertThat(actionStatus).isEqualTo(ActionStatus.OK);
+        verifyCallToMergeComponentInputs(prevResource, emptyList());
     }
 
-    private void verifyCallToMergeComponentInputs(Resource oldResource, List<InputDefinition> inputsToMerge) {
-        Map<String, InputDefinition> oldInputsByName = oldResource.getInputs().stream().collect(Collectors.toMap(InputDefinition::getName, Function.identity()));
-        Map<String, InputDefinition> inputsToMergeByName = inputsToMerge.stream().collect(Collectors.toMap(InputDefinition::getName, Function.identity()));
-        verify(inputsValuesMergingBusinessLogicMock).mergeComponentInputs(oldInputsByName, inputsToMergeByName);
+    @Test
+    public void whenCurrResourceHasNoInputs_noMergeRequired_updateResourceWithInputsDeclaredInPrevVersion() {
+        List<InputDefinition> prevDeclaredInputs = ObjectGenerator.buildInputs("declared1", "declared2");
+        currResource.setInputs(null);
+        when(declaredInputsResolver.getPreviouslyDeclaredInputsToMerge(eq(prevResource), eq(currResource), getInputPropertiesCaptor.capture())).thenReturn(prevDeclaredInputs);
+        when(toscaOperationFacade.updateInputsToComponent(prevDeclaredInputs, RESOURCE_ID)).thenReturn(Either.left(null));
+        doCallRealMethod().when(inputsValuesMergingBusinessLogic).mergeComponentInputs(Mockito.anyList(), Mockito.anyList());
+        ActionStatus actionStatus = testInstance.mergeComponents(prevResource, currResource);
+        assertThat(actionStatus).isEqualTo(ActionStatus.OK);
+        verifyCallToMergeComponentInputs(prevResource, emptyList());
+        verifyPropertiesPassedToDeclaredInputsResolver();
     }
 
+    @Test
+    public void findInputsDeclaredFromPropertiesAndMergeThemIntoNewComponent() {
+        List<InputDefinition> prevDeclaredInputs = ObjectGenerator.buildInputs("declared1", "declared2");
+        List<InputDefinition> currInputsPreMerge = new ArrayList<>(currResource.getInputs());
+        when(declaredInputsResolver.getPreviouslyDeclaredInputsToMerge(eq(prevResource), eq(currResource), getInputPropertiesCaptor.capture())).thenReturn(prevDeclaredInputs);
+        List<InputDefinition> expectedInputsToUpdate = union(currInputsPreMerge, prevDeclaredInputs);
+        when(toscaOperationFacade.updateInputsToComponent(expectedInputsToUpdate, RESOURCE_ID)).thenReturn(Either.left(null));
+        doCallRealMethod().when(inputsValuesMergingBusinessLogic).mergeComponentInputs(Mockito.anyList(), Mockito.anyList());
+        ActionStatus actionStatus = testInstance.mergeComponents(prevResource, currResource);
+        assertThat(actionStatus).isEqualTo(ActionStatus.OK);
+        verifyCallToMergeComponentInputs(prevResource, currInputsPreMerge);
+        verifyPropertiesPassedToDeclaredInputsResolver();
+    }
+
+    @Test
+    public void whenFailingToUpdateInputs_propagateTheError() {
+        Resource newResource = new ResourceBuilder().setUniqueId(RESOURCE_ID).build();
+        when(toscaOperationFacade.updateInputsToComponent(emptyList(), RESOURCE_ID)).thenReturn(Either.right(StorageOperationStatus.GENERAL_ERROR));
+        ActionStatus actionStatus = testInstance.mergeComponents(prevResource, newResource);
+        assertThat(actionStatus).isEqualTo(ActionStatus.GENERAL_ERROR);
+    }
+
+    private void verifyPropertiesPassedToDeclaredInputsResolver() {
+        Map<String, List<PropertyDataDefinition>> allResourceProps = getInputPropertiesCaptor.getValue();
+        assertThat(allResourceProps)
+                .hasEntrySatisfying("inst1", hasPropertiesWithNames("prop1", "prop2"))
+                .hasEntrySatisfying("inst2", hasPropertiesWithNames("prop3"))
+                .hasEntrySatisfying("group1", hasPropertiesWithNames("prop1"))
+                .hasEntrySatisfying("policy1", hasPropertiesWithNames("prop2"));
+    }
 }

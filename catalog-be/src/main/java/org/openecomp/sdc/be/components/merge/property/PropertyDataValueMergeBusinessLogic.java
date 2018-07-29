@@ -7,18 +7,14 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import javax.annotation.Resource;
-
 import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
 import org.openecomp.sdc.be.datatypes.elements.GetInputValueDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.cache.ApplicationDataTypeCache;
 import org.openecomp.sdc.be.model.tosca.ToscaFunctions;
-import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
 import org.openecomp.sdc.be.tosca.PropertyConvertor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.springframework.stereotype.Component;
 
 import com.google.gson.Gson;
@@ -28,72 +24,62 @@ import fj.data.Either;
 @Component
 public class PropertyDataValueMergeBusinessLogic {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(PropertyDataValueMergeBusinessLogic.class);
+    private static final Logger LOGGER = Logger.getLogger(PropertyDataValueMergeBusinessLogic.class);
 
+    private final PropertyValueMerger propertyValueMerger;
+    private final ApplicationDataTypeCache dataTypeCache;
+    
     private final PropertyConvertor propertyConvertor = PropertyConvertor.getInstance();
-
-    private PropertyValueMerger complexPropertyValueMerger = ComplexPropertyValueMerger.getInstance();
-
-    private PropertyValueMerger scalarPropertyValueMerger = ScalarPropertyValueMerger.getInstance();
-
-    @Resource
-    private ApplicationDataTypeCache dataTypeCache;
-
     private final Gson gson = new Gson();
+
+    
+    public PropertyDataValueMergeBusinessLogic(PropertyValueMerger propertyValueMerger, ApplicationDataTypeCache dataTypeCache) {
+        this.propertyValueMerger = propertyValueMerger;
+        this.dataTypeCache = dataTypeCache;
+    }
 
     /**
      *
      * @param oldProp the old property to merge value from
      * @param newProp the new property to merge value into
-     * @param getInputNamesToMerge inputs names which their corresponding get_input values are allowed to be merged
      */
     public void mergePropertyValue(PropertyDataDefinition oldProp, PropertyDataDefinition newProp, List<String> getInputNamesToMerge) {
         Either<Map<String, DataTypeDefinition>, TitanOperationStatus> dataTypesEither = dataTypeCache.getAll();
         if (dataTypesEither.isRight()) {
             LOGGER.debug("failed to fetch data types, skip merging of previous property values. status: {}", dataTypesEither.right().value());
         }
-        mergePropertyValue(oldProp, newProp, dataTypesEither.left().value(), getInputNamesToMerge);
-        mergeComplexPropertyGetInputsValues(oldProp, newProp);
+        else {
+            mergePropertyValue(oldProp, newProp, dataTypesEither.left().value(), getInputNamesToMerge);
+        }
     }
-
+    
     private void mergePropertyValue(PropertyDataDefinition oldProp, PropertyDataDefinition newProp, Map<String, DataTypeDefinition> dataTypes, List<String> getInputNamesToMerge) {
         Object oldValAsObject = convertPropertyStrValueToObject(oldProp, dataTypes);
         Object newValAsObject = convertPropertyStrValueToObject(newProp, dataTypes);
-        PropertyValueMerger propertyValueMerger = getPropertyValueMerger(newProp);
         if(oldValAsObject != null){
-            Object mergedValue = propertyValueMerger.mergeValues(oldValAsObject, newValAsObject, getInputNamesToMerge);
+            Object mergedValue =  propertyValueMerger.merge(oldValAsObject, newValAsObject, getInputNamesToMerge, newProp.getType(), newProp.getSchemaType(), dataTypes);
             newProp.setValue(convertPropertyValueObjectToString(mergedValue));
+            
+            mergePropertyGetInputsValues(oldProp, newProp);
         }
+        
     }
-
-    private PropertyValueMerger getPropertyValueMerger(PropertyDataDefinition newProp) {
-        if (ToscaPropertyType.isPrimitiveType(newProp.getType()) || ToscaPropertyType.isPrimitiveType(newProp.getSchemaType())) {
-            return scalarPropertyValueMerger;
-        }
-        return complexPropertyValueMerger;
-    }
-
+    
     private String convertPropertyValueObjectToString(Object mergedValue) {
-        if (isEmptyValue(mergedValue)) {
+        if (PropertyValueMerger.isEmptyValue(mergedValue)) {
             return null;
         }
         return mergedValue instanceof String? mergedValue.toString() : gson.toJson(mergedValue);
     }
 
     private Object convertPropertyStrValueToObject(PropertyDataDefinition propertyDataDefinition, Map<String, DataTypeDefinition> dataTypes) {
-            String propValue = propertyDataDefinition.getValue() == null ? "": propertyDataDefinition.getValue();
-            String propertyType = propertyDataDefinition.getType();
-            String innerType = propertyDataDefinition.getSchemaType();
-            return propertyConvertor.convertToToscaObject(propertyType, propValue, innerType, dataTypes);
+        String propValue = propertyDataDefinition.getValue() == null ? "": propertyDataDefinition.getValue();
+        String propertyType = propertyDataDefinition.getType();
+        String innerType = propertyDataDefinition.getSchemaType();
+        return propertyConvertor.convertToToscaObject(propertyType, propValue, innerType, dataTypes, true);
     }
 
-    private boolean isEmptyValue(Object val) {
-        return val == null ||
-               val instanceof Map && ((Map) val).isEmpty() ||
-               val instanceof List && ((List) val).isEmpty();
-    }
-
-    private void mergeComplexPropertyGetInputsValues(PropertyDataDefinition oldProp, PropertyDataDefinition newProp) {
+    protected void mergePropertyGetInputsValues(PropertyDataDefinition oldProp, PropertyDataDefinition newProp) {
         if (!oldProp.isGetInputProperty()) {
             return;
         }
@@ -117,14 +103,4 @@ public class PropertyDataValueMergeBusinessLogic {
         String getInputEntry = "\"%s\":\"%s\"";
         return value != null && value.contains(String.format(getInputEntry, ToscaFunctions.GET_INPUT.getFunctionName(), inputName));
     }
-
-
-
-
-
-
-
-
-
-
 }

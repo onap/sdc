@@ -107,7 +107,7 @@
         position: fixed;
         right: -302px;
         width: 302px;
-        top: 102px;
+        top: 103px;
         transition: right 0.2s;
         z-index: 9;
         .box-shadow(-7px -3px 6px -8px @main_color_n);
@@ -163,6 +163,13 @@
         top: 10px;
     }
 
+    .w-sdc-designer-restore-button {
+        .hand;
+        position:absolute;
+        right: 20px;
+        top:10px;
+        width:65px;
+    }
     .w-sdc-designer-sidebar-tabs {
         .bg_c;
     }
@@ -237,7 +244,7 @@
         height: 32px;
         line-height: 32px;
         margin-top: 1px;
-        padding: 0 40px 0 20px;
+        padding: 0 10px 0 20px;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
@@ -266,7 +273,7 @@
         .sprite-new;
         .arrow-up;
         right: 16px;
-        top: 10px;
+        top: 13px;
         transition: .3s all;
         position: absolute;
     }
@@ -664,8 +671,8 @@
         align-items: center;
         .non-certified {
             position: relative;
-            left: 27px;
-            bottom: 6px;
+            left: -4px;
+            top: -4px;
             .sprite;
             .s-sdc-state-non-certified;
             display: block;
@@ -682,8 +689,8 @@
 
     .non-certified {
         position: relative;
-        left: 43px;
-        bottom: 3px;
+        left: 0px;
+        top: 0px;
         .sprite;
         .s-sdc-state-non-certified;
         display: block;
@@ -841,6 +848,11 @@
         flex-direction: column;
         align-items: flex-end;
         margin-right:10px;
+        pointer-events: none;
+
+        & > * {
+            pointer-events: all;
+        }
 
         &.with-sidebar {
             right:320px;

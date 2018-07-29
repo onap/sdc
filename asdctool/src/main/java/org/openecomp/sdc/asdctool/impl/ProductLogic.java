@@ -20,26 +20,24 @@
 
 package org.openecomp.sdc.asdctool.impl;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
-import org.apache.tinkerpop.gremlin.structure.Vertex;
-import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
-import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.thinkaurelius.titan.core.TitanFactory;
 import com.thinkaurelius.titan.core.TitanGraph;
 import com.thinkaurelius.titan.core.TitanVertex;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
+import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
+import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
+import org.openecomp.sdc.common.log.wrappers.Logger;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Created by mlando on 2/23/2016.
  */
 public class ProductLogic {
 
-	private static Logger log = LoggerFactory.getLogger(ProductLogic.class.getName());
+	private static Logger log = Logger.getLogger(ProductLogic.class.getName());
 
 	public boolean deleteAllProducts(String titanFile, String beHost, String bePort, String adminUser) {
 		log.debug("retrieving all products from graph");

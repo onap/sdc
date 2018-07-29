@@ -21,8 +21,6 @@ import com.amdocs.zusammen.datatypes.SessionContext;
 import com.amdocs.zusammen.datatypes.item.Action;
 import com.amdocs.zusammen.datatypes.item.ElementContext;
 import com.amdocs.zusammen.datatypes.item.Info;
-import java.util.Collection;
-import java.util.stream.Collectors;
 import org.openecomp.core.zusammen.api.ZusammenAdaptor;
 import org.openecomp.core.zusammen.api.ZusammenUtil;
 import org.openecomp.sdc.datatypes.model.ElementType;
@@ -32,6 +30,9 @@ import org.openecomp.sdc.vendorlicense.dao.types.VendorLicenseModelEntity;
 import org.openecomp.sdc.versioning.ActionVersioningManagerFactory;
 import org.openecomp.sdc.versioning.types.VersionableEntityMetadata;
 import org.openecomp.sdc.versioning.types.VersionableEntityStoreType;
+
+import java.util.Collection;
+import java.util.stream.Collectors;
 
 public class VendorLicenseModelDaoZusammenImpl implements VendorLicenseModelDao {
 

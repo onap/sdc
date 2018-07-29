@@ -1,16 +1,14 @@
 package org.openecomp.sdc.asdctool;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.ws.rs.core.Response;
-
+import com.thinkaurelius.titan.core.TitanGraph;
 import org.apache.commons.configuration.Configuration;
 import org.apache.tinkerpop.gremlin.structure.Element;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.thinkaurelius.titan.core.TitanGraph;
+import javax.ws.rs.core.Response;
+import java.util.HashMap;
+import java.util.Map;
 
 public class UtilsTest {
 

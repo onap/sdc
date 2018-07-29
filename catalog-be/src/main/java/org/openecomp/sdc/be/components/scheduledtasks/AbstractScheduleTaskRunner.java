@@ -1,13 +1,13 @@
 package org.openecomp.sdc.be.components.scheduledtasks;
 
+import org.openecomp.sdc.common.log.wrappers.Logger;
+
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public abstract class AbstractScheduleTaskRunner {
-    private static final Logger log = LoggerFactory.getLogger(AbstractScheduleTaskRunner.class);
+    private static final Logger log = Logger.getLogger(AbstractScheduleTaskRunner.class);
     public abstract ExecutorService getExecutorService();
 
     protected void shutdownExecutor() {

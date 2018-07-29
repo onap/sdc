@@ -7,13 +7,13 @@ storage.connection-timeout=<%= @titan_connection_timeout %>
 storage.cassandra.keyspace=sdctitan
 
 storage.cassandra.ssl.enabled=<%= @cassandra_ssl_enabled %>
-storage.cassandra.ssl.truststore.location=/var/lib/jetty/config/truststore
+storage.cassandra.ssl.truststore.location=/var/lib/jetty/etc/truststore
 storage.cassandra.ssl.truststore.password=<%= @cassandra_truststore_password %>
 
 storage.cassandra.read-consistency-level=LOCAL_QUORUM
 storage.cassandra.write-consistency-level=LOCAL_QUORUM
 storage.cassandra.replication-strategy-class=org.apache.cassandra.locator.NetworkTopologyStrategy
-storage.cassandra.replication-strategy-options=<%= @DC_NAME %>,<%= @rep_factor %>
+storage.cassandra.replication-strategy-options=<%= @DC_NAME_WITH_REP %>
 storage.cassandra.astyanax.local-datacenter=<%= @DC_NAME %>
 
 

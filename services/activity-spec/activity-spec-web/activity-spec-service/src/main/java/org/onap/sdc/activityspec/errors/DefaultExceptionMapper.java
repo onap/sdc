@@ -16,19 +16,19 @@
 
 package org.onap.sdc.activityspec.errors;
 
-import java.util.Set;
+import org.codehaus.jackson.map.JsonMappingException;
+import org.hibernate.validator.internal.engine.path.PathImpl;
+import org.openecomp.sdc.common.errors.CoreException;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
+
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.ext.ExceptionMapper;
-
-import org.codehaus.jackson.map.JsonMappingException;
-import org.hibernate.validator.internal.engine.path.PathImpl;
-import org.openecomp.sdc.common.errors.CoreException;
-import org.openecomp.sdc.logging.api.Logger;
-import org.openecomp.sdc.logging.api.LoggerFactory;
+import java.util.Set;
 
 public class DefaultExceptionMapper implements ExceptionMapper<Exception> {
 

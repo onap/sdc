@@ -23,16 +23,11 @@ package org.openecomp.sdc.be.datatypes.elements;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 
-import java.io.Serializable;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-public class PropertyDataDefinition extends ToscaDataDefinition implements Serializable {
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 5798685557528432389L;
+public class PropertyDataDefinition extends ToscaDataDefinition {
 
 	private String uniqueId;
 
@@ -64,6 +59,8 @@ public class PropertyDataDefinition extends ToscaDataDefinition implements Seria
 	private String inputId;
 	private String instanceUniqueId;
 	private String propertyId;
+
+	private List<Annotation> annotations;
 	/**
 	 * The resource id which this property belongs to
 	 */
@@ -97,12 +94,15 @@ public class PropertyDataDefinition extends ToscaDataDefinition implements Seria
 		this.setImmutable(p.isImmutable());
 		this.setParentUniqueId(p.getParentUniqueId());
 		this.setOwnerId(p.getOwnerId());
-		this.setGetInputValues(p.getInputValues);
+		this.setGetInputValues(p.getGetInputValues());
 		this.setInputPath(p.getInputPath());
 		this.setStatus(p.getStatus());
 		this.setInputId(p.getInputId());
 		this.setInstanceUniqueId(p.getInstanceUniqueId());
 		this.setPropertyId(p.getPropertyId());
+		if(isNotEmpty(p.annotations)){
+		    this.setAnnotations(p.annotations);
+        }
 	}
 
 	public String getInputPath() {
@@ -199,6 +199,14 @@ public class PropertyDataDefinition extends ToscaDataDefinition implements Seria
 			return schema.getProperty().getType();
 		}
 		return null;
+	}
+	
+	public PropertyDataDefinition getSchemaProperty() {
+	    if (schema != null) {
+	        return schema.getProperty();
+	    }
+	    
+	    return null;
 	}
 
 	public String getLabel() {
@@ -298,15 +306,19 @@ public class PropertyDataDefinition extends ToscaDataDefinition implements Seria
 	}
 
 	public boolean typeEquals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
+		if (this == obj) {
+            return true;
+        }
+		if (obj == null) {
+            return false;
+        }
+		if (getClass() != obj.getClass()) {
+            return false;
+        }
 		PropertyDataDefinition other = (PropertyDataDefinition) obj;
-		if (this.getType() == null)
-			return other.getType() == null;
+		if (this.getType() == null) {
+            return other.getType() == null;
+        }
 		if (!this.type.equals(other.type)) {
 			return false;
 		}
@@ -320,57 +332,78 @@ public class PropertyDataDefinition extends ToscaDataDefinition implements Seria
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
+		if (this == obj) {
+            return true;
+        }
+		if (obj == null) {
+            return false;
+        }
+		if (getClass() != obj.getClass()) {
+            return false;
+        }
 		PropertyDataDefinition other = (PropertyDataDefinition) obj;
 		if (defaultValue == null) {
-			if (other.defaultValue != null)
-				return false;
-		} else if (!defaultValue.equals(other.defaultValue))
-			return false;
-		if (definition != other.definition)
-			return false;
+			if (other.defaultValue != null) {
+                return false;
+            }
+		} else if (!defaultValue.equals(other.defaultValue)) {
+            return false;
+        }
+		if (definition != other.definition) {
+            return false;
+        }
 		if (description == null) {
-			if (other.description != null)
-				return false;
-		} else if (!description.equals(other.description))
-			return false;
-		if (password != other.password)
-			return false;
+			if (other.description != null) {
+                return false;
+            }
+		} else if (!description.equals(other.description)) {
+            return false;
+        }
+		if (password != other.password) {
+            return false;
+        }
 		if (required == null) {
-			if (other.required != null)
-				return false;
-		} else if (!required.equals(other.required))
-			return false;
+			if (other.required != null) {
+                return false;
+            }
+		} else if (!required.equals(other.required)) {
+            return false;
+        }
 		if (schema == null) {
-			if (other.schema != null)
-				return false;
-		} else if (!schema.equals(other.schema))
-			return false;
+			if (other.schema != null) {
+                return false;
+            }
+		} else if (!schema.equals(other.schema)) {
+            return false;
+        }
 		if (type == null) {
-			if (other.type != null)
-				return false;
-		} else if (!type.equals(other.type))
-			return false;
+			if (other.type != null) {
+                return false;
+            }
+		} else if (!type.equals(other.type)) {
+            return false;
+        }
 		if (parentUniqueId == null) {
-			if (other.parentUniqueId != null)
-				return false;
-		} else if (!parentUniqueId.equals(other.parentUniqueId))
-			return false;
+			if (other.parentUniqueId != null) {
+                return false;
+            }
+		} else if (!parentUniqueId.equals(other.parentUniqueId)) {
+            return false;
+        }
 		if (uniqueId == null) {
-			if (other.uniqueId != null)
-				return false;
-		} else if (!uniqueId.equals(other.uniqueId))
-			return false;
+			if (other.uniqueId != null) {
+                return false;
+            }
+		} else if (!uniqueId.equals(other.uniqueId)) {
+            return false;
+        }
 		if (status == null) {
-			if (other.status != null)
-				return false;
-		} else if (!status.equals(other.status))
-			return false;
+			if (other.status != null) {
+                return false;
+            }
+		} else if (!status.equals(other.status)) {
+            return false;
+        }
 		return true;
 	}
 
@@ -396,6 +429,36 @@ public class PropertyDataDefinition extends ToscaDataDefinition implements Seria
 		}
 	}
 
+	@Override
+	public void setToscaPresentationValue(JsonPresentationFields name, Object value) {
+        switch (name) {
+            case NAME:
+                setName((String)value);
+                break;
+            case UNIQUE_ID:
+                setUniqueId((String)value);
+                break;
+            case PASSWORD:
+                setPassword((Boolean)value);
+                break;
+            case TYPE:
+                setType((String)value);
+                break;
+            case DEFINITION:
+                setDefinition((Boolean)value);
+                break;
+            case VALUE:
+                setValue((String)value);
+                break;
+            case DEFAULT_VALUE:
+                setDefaultValue((String)value);
+                break;
+            default:
+                super.setToscaPresentationValue(name, value);
+                break;
+        }
+    }
+
 	private <T extends ToscaDataDefinition> boolean compareSchemaType(T other) {
 		return !"list".equals(type) && !"map".equals(type) || this.getSchema().getProperty().getType().equals(((PropertyDataDefinition) other).getSchema().getProperty().getType());
 	}
@@ -406,10 +469,8 @@ public class PropertyDataDefinition extends ToscaDataDefinition implements Seria
 				this.getType().equals(other.getToscaPresentationValue(JsonPresentationFields.TYPE)) && 
 				compareSchemaType(other)) {
 			other.setOwnerId(getOwnerId());
-			if (allowDefaultValueOverride) {
-				if (getDefaultValue() != null && !getDefaultValue().isEmpty()) {
-					other.setToscaPresentationValue(JsonPresentationFields.DEFAULT_VALUE, getDefaultValue());
-				}
+			if (allowDefaultValueOverride && getDefaultValue() != null && !getDefaultValue().isEmpty()) {
+                other.setToscaPresentationValue(JsonPresentationFields.DEFAULT_VALUE, getDefaultValue());
 			}
 			return other;
 		}
@@ -417,12 +478,29 @@ public class PropertyDataDefinition extends ToscaDataDefinition implements Seria
 	}
 
 	public void convertPropertyDataToInstancePropertyData() {
-		if (null != value)
-			defaultValue = value;
+		if (null != value) {
+            defaultValue = value;
+        }
 	}
 
 	public boolean isGetInputProperty() {
 		return this.getGetInputValues() != null && !this.getGetInputValues().isEmpty();
+	}
+
+	public void setAnnotations(List<Annotation> newAnnotations) {
+		Set<Annotation> annotationSet = isNotEmpty(newAnnotations) ? new HashSet<>(newAnnotations) : new HashSet<>();
+		//We would to prioritize the new valid annotations over the old ones if the same one existed.
+		if(this.annotations != null){
+			for(Annotation oldInputAnnotation : this.annotations)
+				annotationSet.add(oldInputAnnotation);
+		}
+
+		this.annotations = new ArrayList<>(annotationSet);
+		setToscaPresentationValue(JsonPresentationFields.ANNOTATIONS, this.annotations);
+	}
+	
+	public List<Annotation> getAnnotations() {
+		return (List<Annotation>) getToscaPresentationValue(JsonPresentationFields.ANNOTATIONS);
 	}
 
 }

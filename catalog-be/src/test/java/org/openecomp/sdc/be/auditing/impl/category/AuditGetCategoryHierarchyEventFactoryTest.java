@@ -2,7 +2,6 @@ package org.openecomp.sdc.be.auditing.impl.category;
 
 import org.junit.Test;
 import org.openecomp.sdc.be.model.User;
-import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingGenericEvent;
 import org.openecomp.sdc.be.resources.data.auditing.model.CommonAuditData;
 import org.openecomp.sdc.be.resources.data.auditing.model.CommonAuditData.Builder;
@@ -12,7 +11,7 @@ public class AuditGetCategoryHierarchyEventFactoryTest {
 	private AuditGetCategoryHierarchyEventFactory createTestSubject() {
 		Builder newBuilder = CommonAuditData.newBuilder();
 		CommonAuditData build = newBuilder.build();
-		return new AuditGetCategoryHierarchyEventFactory(AuditingActionEnum.ACTIVATE_SERVICE_BY_API, build,
+		return new AuditGetCategoryHierarchyEventFactory( build,
 				new User(), "");
 	}
 

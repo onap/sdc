@@ -20,53 +20,30 @@
 
 package org.openecomp.sdc.be.components.impl;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.function.Consumer;
-import java.util.stream.Collectors;
-
-import javax.annotation.Resource;
-
+import fj.data.Either;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.components.impl.CommonImportManager.ElementTypeEnum;
-import org.openecomp.sdc.be.components.impl.ImportUtils.ToscaTagNamesEnum;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.PropertyOperation;
 import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
+import org.openecomp.sdc.be.utils.TypeUtils;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import fj.data.Either;
+import javax.annotation.Resource;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Component("dataTypeImportManager")
 public class DataTypeImportManager {
 
-    public static void main(String[] args) {
-
-        List<PropertyDefinition> properties = new ArrayList<>();
-        PropertyDefinition propertyDefintion = new PropertyDefinition();
-        propertyDefintion.setName("aaa");
-        properties.add(propertyDefintion);
-
-        List<String> allParentsProps = new ArrayList<>();
-        allParentsProps.add("aaa");
-        allParentsProps.add("bbb");
-
-        Set<String> alreadyExistPropsCollection = properties.stream().filter(p -> allParentsProps.contains(p.getName())).map(p -> p.getName()).collect(Collectors.toSet());
-        System.out.println(alreadyExistPropsCollection);
-
-    }
-
-    private static final Logger log = LoggerFactory.getLogger(DataTypeImportManager.class);
+    private static final Logger log = Logger.getLogger(DataTypeImportManager.class.getName());
     @Resource
     private PropertyOperation propertyOperation;
     @Resource
@@ -75,18 +52,16 @@ public class DataTypeImportManager {
     private CommonImportManager commonImportManager;
 
     public Either<List<ImmutablePair<DataTypeDefinition, Boolean>>, ResponseFormat> createDataTypes(String dataTypeYml) {
-        return commonImportManager.createElementTypes(dataTypeYml, elementTypeYml -> createDataTypesFromYml(elementTypeYml), elementTypesList -> createDataTypesByDao(elementTypesList), ElementTypeEnum.DataType);
+        return commonImportManager.createElementTypes(dataTypeYml, this::createDataTypesFromYml, this::createDataTypesByDao, ElementTypeEnum.DATA_TYPE);
     }
 
     private Either<List<DataTypeDefinition>, ActionStatus> createDataTypesFromYml(String dataTypesYml) {
-
-        return commonImportManager.createElementTypesFromYml(dataTypesYml, (dataTypeName, dataTypeJsonData) -> createDataType(dataTypeName, dataTypeJsonData));
-
+        return commonImportManager.createElementTypesFromYml(dataTypesYml, this::createDataType);
     }
 
     private Either<List<ImmutablePair<DataTypeDefinition, Boolean>>, ResponseFormat> createDataTypesByDao(List<DataTypeDefinition> dataTypesToCreate) {
 
-        return commonImportManager.createElementTypesByDao(dataTypesToCreate, dataType -> validateDataType(dataType), dataType -> new ImmutablePair<>(ElementTypeEnum.DataType, dataType.getName()),
+        return commonImportManager.createElementTypesByDao(dataTypesToCreate, this::validateDataType, dataType -> new ImmutablePair<>(ElementTypeEnum.DATA_TYPE, dataType.getName()),
                 dataTypeName -> propertyOperation.getDataTypeByNameWithoutDerived(dataTypeName), dataType -> propertyOperation.addDataType(dataType), (newDataType, oldDataType) -> propertyOperation.updateDataType(newDataType, oldDataType));
     }
 
@@ -124,17 +99,15 @@ public class DataTypeImportManager {
             }
 
             // check no duplicates
-            Set<String> collect = properties.stream().map(p -> p.getName()).collect(Collectors.toSet());
-            if (collect != null) {
-                if (properties.size() != collect.size()) {
-                    ResponseFormat responseFormat = componentsUtils.getResponseFormatByDataType(ActionStatus.DATA_TYPE_DUPLICATE_PROPERTY, dataType, null);
+            Set<String> collect = properties.stream().map(PropertyDataDefinition::getName).collect(Collectors.toSet());
+            if (collect != null && properties.size() != collect.size()) {
+                ResponseFormat responseFormat = componentsUtils.getResponseFormatByDataType(ActionStatus.DATA_TYPE_DUPLICATE_PROPERTY, dataType, null);
 
-                    return Either.right(responseFormat);
-                }
+                return Either.right(responseFormat);
             }
 
-            List<String> propertiesWithSameTypeAsDataType = properties.stream().filter(p -> p.getType().equals(dataType.getName())).map(p -> p.getName()).collect(Collectors.toList());
-            if (propertiesWithSameTypeAsDataType != null && propertiesWithSameTypeAsDataType.isEmpty() == false) {
+            List<String> propertiesWithSameTypeAsDataType = properties.stream().filter(p -> p.getType().equals(dataType.getName())).map(PropertyDataDefinition::getName).collect(Collectors.toList());
+            if (propertiesWithSameTypeAsDataType != null && !propertiesWithSameTypeAsDataType.isEmpty()) {
                 log.debug("The data type {} contains properties with the type {}", dataType.getName(), dataType.getName());
                 ResponseFormat responseFormat = componentsUtils.getResponseFormatByDataType(ActionStatus.DATA_TYPE_PROEPRTY_CANNOT_HAVE_SAME_TYPE_OF_DATA_TYPE, dataType, propertiesWithSameTypeAsDataType);
 
@@ -160,9 +133,9 @@ public class DataTypeImportManager {
             } else {
 
                 DataTypeDefinition derivedDataTypeDef = derivedDataTypeByName.left().value();
-                if (properties != null && properties.isEmpty() == false) {
+                if (properties != null && !properties.isEmpty() && derivedDataTypeDef!=null) {
 
-                    if (true == isScalarType(derivedDataTypeDef)) {
+                    if (isScalarType(derivedDataTypeDef)) {
                         ResponseFormat responseFormat = componentsUtils.getResponseFormatByDataType(ActionStatus.DATA_TYPE_CANNOT_HAVE_PROPERTIES, dataType, null);
 
                         return Either.right(responseFormat);
@@ -181,8 +154,8 @@ public class DataTypeImportManager {
 
                     // Check that no property is already defined in one of the
                     // ancestors
-                    Set<String> alreadyExistPropsCollection = properties.stream().filter(p -> allParentsProps.contains(p.getName())).map(p -> p.getName()).collect(Collectors.toSet());
-                    if (alreadyExistPropsCollection != null && alreadyExistPropsCollection.isEmpty() == false) {
+                    Set<String> alreadyExistPropsCollection = properties.stream().filter(p -> allParentsProps.contains(p.getName())).map(PropertyDataDefinition::getName).collect(Collectors.toSet());
+                    if (alreadyExistPropsCollection != null && !alreadyExistPropsCollection.isEmpty()) {
                         List<String> duplicateProps = new ArrayList<>();
                         duplicateProps.addAll(alreadyExistPropsCollection);
                         ResponseFormat responseFormat = componentsUtils.getResponseFormatByDataType(ActionStatus.DATA_TYPE_PROPERTY_ALREADY_DEFINED_IN_ANCESTOR, dataType, duplicateProps);
@@ -200,7 +173,7 @@ public class DataTypeImportManager {
 
         ToscaPropertyType isPrimitiveToscaType = ToscaPropertyType.isValidType(dataTypeName);
 
-        return isPrimitiveToscaType != null && isPrimitiveToscaType.isAbstract() == true;
+        return isPrimitiveToscaType != null && isPrimitiveToscaType.isAbstract();
 
     }
 
@@ -230,22 +203,13 @@ public class DataTypeImportManager {
 
         if (toscaJson != null) {
             // Description
-            final Consumer<String> descriptionSetter = description -> dataType.setDescription(description);
-            commonImportManager.setField(toscaJson, ToscaTagNamesEnum.DESCRIPTION.getElementName(), descriptionSetter);
+            commonImportManager.setField(toscaJson, TypeUtils.ToscaTagNamesEnum.DESCRIPTION.getElementName(), dataType::setDescription);
             // Derived From
-            final Consumer<String> derivedFromSetter = derivedFrom -> dataType.setDerivedFromName(derivedFrom);
-            commonImportManager.setField(toscaJson, ToscaTagNamesEnum.DERIVED_FROM.getElementName(), derivedFromSetter);
+            commonImportManager.setField(toscaJson, TypeUtils.ToscaTagNamesEnum.DERIVED_FROM.getElementName(), dataType::setDerivedFromName);
             // Properties
-            commonImportManager.setProperties(toscaJson, (values) -> dataType.setProperties(values));
-
-            setConstraints(toscaJson, dataType);
+            CommonImportManager.setProperties(toscaJson, dataType::setProperties);
         }
         return dataType;
-    }
-
-    private void setConstraints(Map<String, Object> toscaJson, DataTypeDefinition dataType) {
-        // TODO Auto-generated method stub
-
     }
 
 }

@@ -226,7 +226,7 @@ public class ImportCsarUpdate extends ComponentBaseTest {
 
 	}
 
-	@Test
+	/*@Test
 	public void updateVFsearchByCsarStartCertifaicationState() throws Exception {
 
 		ResourceReqDetails resourceDetails = ElementFactory.getDefaultResource();
@@ -256,7 +256,7 @@ public class ImportCsarUpdate extends ComponentBaseTest {
 
 		resourceFirstImport.getGroups().equals(resourceSecondImport.getGroups());
 
-	}
+	}*/
 
 	@Test
 	public void updateVFsearchBySystemNameCheckInState() throws Exception {

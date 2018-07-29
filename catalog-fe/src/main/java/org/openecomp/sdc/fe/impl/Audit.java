@@ -20,12 +20,11 @@
 
 package org.openecomp.sdc.fe.impl;
 
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
 import org.openecomp.sdc.common.api.Constants;
 import org.slf4j.Logger;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.Map;
 
 public class Audit {
 

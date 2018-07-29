@@ -20,33 +20,33 @@
 
 package org.openecomp.sdc.be.model.tosca.converters;
 
-import java.util.Map;
-
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.common.util.ValidationUtils;
 
+import java.util.Map;
+
 public class HeatCommaDelimitedListConverter implements PropertyValueConverter {
 
-	private static HeatCommaDelimitedListConverter stringConverter = new HeatCommaDelimitedListConverter();
+    private static HeatCommaDelimitedListConverter stringConverter = new HeatCommaDelimitedListConverter();
 
-	public static HeatCommaDelimitedListConverter getInstance() {
-		return stringConverter;
-	}
+    public static HeatCommaDelimitedListConverter getInstance() {
+        return stringConverter;
+    }
 
-	private HeatCommaDelimitedListConverter() {
+    private HeatCommaDelimitedListConverter() {
 
-	}
+    }
 
-	@Override
-	public String convert(String original, String innerType, Map<String, DataTypeDefinition> dataTypes) {
-		String coverted = null;
-		if(original != null){
-			coverted = ValidationUtils.removeNoneUtf8Chars(original);
-			coverted = ValidationUtils.removeHtmlTagsOnly(coverted);
-			coverted = ValidationUtils.normaliseWhitespace(coverted);
-			coverted = ValidationUtils.stripOctets(coverted);
-		}
-		return coverted;
-	}
+    @Override
+    public String convert(String original, String innerType, Map<String, DataTypeDefinition> dataTypes) {
+        String coverted = null;
+        if(original != null){
+            coverted = ValidationUtils.removeNoneUtf8Chars(original);
+            coverted = ValidationUtils.removeHtmlTagsOnly(coverted);
+            coverted = ValidationUtils.normaliseWhitespace(coverted);
+            coverted = ValidationUtils.stripOctets(coverted);
+        }
+        return coverted;
+    }
 
 }

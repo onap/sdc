@@ -1,19 +1,14 @@
 package org.openecomp.sdc.be.dao.cassandra.schema.tables;
 
-import static org.openecomp.sdc.be.dao.cassandra.schema.tables.MigrationTasksTableDescription.SdcRepoFieldsDescription.MAJOR_VERSION;
-import static org.openecomp.sdc.be.dao.cassandra.schema.tables.MigrationTasksTableDescription.SdcRepoFieldsDescription.MINOR_VERSION;
-
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import com.datastax.driver.core.DataType;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.dao.cassandra.schema.ITableDescription;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingTypesConstants;
 
-import com.datastax.driver.core.DataType;
+import java.util.*;
+
+import static org.openecomp.sdc.be.dao.cassandra.schema.tables.MigrationTasksTableDescription.SdcRepoFieldsDescription.MAJOR_VERSION;
+import static org.openecomp.sdc.be.dao.cassandra.schema.tables.MigrationTasksTableDescription.SdcRepoFieldsDescription.MINOR_VERSION;
 
 public class MigrationTasksTableDescription implements ITableDescription {
 

@@ -20,28 +20,21 @@
 
 package org.onap.sdc.generator.aai;
 
-import org.openecomp.sdc.logging.api.Logger;
-import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.onap.sdc.generator.aai.model.Resource;
 import org.onap.sdc.generator.aai.model.Service;
 import org.onap.sdc.generator.aai.model.Widget;
-import org.onap.sdc.generator.aai.xml.Model;
-import org.onap.sdc.generator.aai.xml.ModelElement;
-import org.onap.sdc.generator.aai.xml.ModelElements;
-import org.onap.sdc.generator.aai.xml.ModelVer;
-import org.onap.sdc.generator.aai.xml.ModelVers;
-import org.onap.sdc.generator.aai.xml.Relationship;
-import org.onap.sdc.generator.aai.xml.RelationshipData;
-import org.onap.sdc.generator.aai.xml.RelationshipList;
+import org.onap.sdc.generator.aai.xml.*;
 import org.onap.sdc.generator.logging.annotations.Metrics;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.w3c.dom.DOMException;
 
-import java.io.StringWriter;
-import java.util.List;
-import java.util.Set;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
+import java.io.StringWriter;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Implementation of the {@link AaiModelGenerator} which generates the XML models from the

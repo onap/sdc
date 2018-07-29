@@ -20,72 +20,49 @@
 
 package org.openecomp.sdc.be.components.lifecycle;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-
-import org.openecomp.sdc.be.components.distribution.engine.ServiceDistributionArtifactsBuilder;
+import fj.data.Either;
 import org.openecomp.sdc.be.components.impl.ComponentBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ServiceBusinessLogic;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
+import org.openecomp.sdc.be.datatypes.elements.ComponentInstanceDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
-import org.openecomp.sdc.be.model.ArtifactDefinition;
-import org.openecomp.sdc.be.model.Component;
-import org.openecomp.sdc.be.model.ComponentInstance;
-import org.openecomp.sdc.be.model.LifeCycleTransitionEnum;
-import org.openecomp.sdc.be.model.LifecycleStateEnum;
-import org.openecomp.sdc.be.model.Operation;
-import org.openecomp.sdc.be.model.Resource;
-import org.openecomp.sdc.be.model.Service;
-import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.*;
 import org.openecomp.sdc.be.model.jsontitan.datamodel.ToscaElement;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaElementLifecycleOperation;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.jsontitan.utils.ModelConverter;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
-import org.openecomp.sdc.be.model.operations.impl.CapabilityOperation;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
-import org.openecomp.sdc.be.tosca.ToscaExportHandler;
 import org.openecomp.sdc.be.user.Role;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.common.util.ValidationUtils;
 import org.openecomp.sdc.exception.ResponseFormat;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import fj.data.Either;
+import java.util.*;
 
 public class CertificationRequestTransition extends LifeCycleTransition {
 
-    private static final Logger log = LoggerFactory.getLogger(CertificationRequestTransition.class);
+    private static final Logger log = Logger.getLogger(CertificationRequestTransition.class);
 
-    private CapabilityOperation capabilityOperation;
     private ServiceBusinessLogic serviceBusinessLogic;
-    public CertificationRequestTransition(ComponentsUtils componentUtils, ToscaElementLifecycleOperation lifecycleOperation, ServiceDistributionArtifactsBuilder serviceDistributionArtifactsBuilder, ServiceBusinessLogic serviceBusinessLogic,
-            CapabilityOperation capabilityOperation, ToscaExportHandler toscaExportUtils, ToscaOperationFacade toscaOperationFacade, TitanDao titanDao) {
+
+    public CertificationRequestTransition(ComponentsUtils componentUtils, ToscaElementLifecycleOperation lifecycleOperation, ServiceBusinessLogic serviceBusinessLogic,
+                                          ToscaOperationFacade toscaOperationFacade, TitanDao titanDao) {
         super(componentUtils, lifecycleOperation, toscaOperationFacade, titanDao);
 
         // authorized roles
         Role[] resourceServiceCheckoutRoles = { Role.ADMIN, Role.DESIGNER };
         addAuthorizedRoles(ComponentTypeEnum.RESOURCE, Arrays.asList(resourceServiceCheckoutRoles));
         addAuthorizedRoles(ComponentTypeEnum.SERVICE, Arrays.asList(resourceServiceCheckoutRoles));
-        // TODO to be later defined for product
-        // addAuthorizedRoles(ComponentTypeEnum.PRODUCT,
-        // Arrays.asList(productCheckoutRoles));
-
-        //additional authorized roles for resource type
         Role[] resourceRoles = { Role.TESTER};
         addResouceAuthorizedRoles(ResourceTypeEnum.VFCMT, Arrays.asList(resourceRoles));
 
         this.serviceBusinessLogic = serviceBusinessLogic;
-        this.capabilityOperation = capabilityOperation;
     }
 
     @Override
@@ -98,11 +75,25 @@ public class CertificationRequestTransition extends LifeCycleTransition {
         return AuditingActionEnum.CERTIFICATION_REQUEST_RESOURCE;
     }
 
-    protected Either<Boolean, ResponseFormat> validateAllResourceInstanceCertified(Component component) {
+    Either<Boolean, ResponseFormat> validateAllResourceInstanceCertified(Component component) {
         Either<Boolean, ResponseFormat> eitherResult = Either.left(true);
+
+        if (component.isVspArchived()){
+            return Either.right(componentUtils.getResponseFormat(ActionStatus.ARCHIVED_ORIGINS_FOUND, component.getComponentType().name(), component.getName()));
+        }
 
         List<ComponentInstance> resourceInstance = component.getComponentInstances();
         if (resourceInstance != null) {
+
+            //Filter components instances with archived origins
+            Optional<ComponentInstance> archivedRIOptional = resourceInstance.stream().filter(ComponentInstanceDataDefinition::isOriginArchived).findAny();
+
+            //RIs with archived origins found, return relevant error
+            if (archivedRIOptional.isPresent()){
+                return Either.right(componentUtils.getResponseFormat(ActionStatus.ARCHIVED_ORIGINS_FOUND, component.getComponentType().name(), component.getName()));
+            }
+
+            //Continue with searching for non certified RIs
             Optional<ComponentInstance> nonCertifiedRIOptional = resourceInstance.stream().filter(p -> !ValidationUtils.validateCertifiedVersion(p.getComponentVersion())).findAny();
             // Uncertified Resource Found
             if (nonCertifiedRIOptional.isPresent()) {
@@ -110,41 +101,35 @@ public class CertificationRequestTransition extends LifeCycleTransition {
                 ResponseFormat resFormat = getRelevantResponseFormatUncertifiedRI(nonCertifiedRI, component.getComponentType());
                 eitherResult = Either.right(resFormat);
             }
+
         }
         return eitherResult;
     }
 
     private ResponseFormat getRelevantResponseFormatUncertifiedRI(ComponentInstance nonCertifiedRI, ComponentTypeEnum componentType) {
 
-        ResponseFormat responseFormat;
         Either<Resource, StorageOperationStatus> eitherResource = toscaOperationFacade.getToscaElement(nonCertifiedRI.getComponentUid());
         if (eitherResource.isRight()) {
-
-            responseFormat = componentUtils.getResponseFormat(ActionStatus.GENERAL_ERROR);
-
-        } else {
-            ActionStatus actionStatus;
-            Resource resource = eitherResource.left().value();
-            Either<Resource, StorageOperationStatus> status = toscaOperationFacade.findLastCertifiedToscaElementByUUID(resource);
-
-            if (ValidationUtils.validateMinorVersion(nonCertifiedRI.getComponentVersion())) {
-                if (status.isRight() || status.left().value() == null) {
-                    actionStatus = ActionStatus.VALIDATED_RESOURCE_NOT_FOUND;
-                } else {
-                    actionStatus = ActionStatus.FOUND_ALREADY_VALIDATED_RESOURCE;
-                }
-            } else {
-                if (status.isRight() || status.left().value() == null)
-                    actionStatus = ActionStatus.FOUND_LIST_VALIDATED_RESOURCES;
-                else {
-                    actionStatus = ActionStatus.FOUND_ALREADY_VALIDATED_RESOURCE;
-                }
-
-            }
-            String compType = (componentType == ComponentTypeEnum.RESOURCE) ? "VF" : "service";
-            responseFormat = componentUtils.getResponseFormat(actionStatus, compType, resource.getName());
+            return componentUtils.getResponseFormat(ActionStatus.GENERAL_ERROR);
         }
-        return responseFormat;
+        ActionStatus actionStatus;
+        Resource resource = eitherResource.left().value();
+        Either<Resource, StorageOperationStatus> status = toscaOperationFacade.findLastCertifiedToscaElementByUUID(resource);
+
+        if (ValidationUtils.validateMinorVersion(nonCertifiedRI.getComponentVersion())) {
+            if (status.isRight() || status.left().value() == null) {
+                actionStatus = ActionStatus.VALIDATED_RESOURCE_NOT_FOUND;
+            } else {
+                actionStatus = ActionStatus.FOUND_ALREADY_VALIDATED_RESOURCE;
+            }
+        } else {
+            if (status.isRight() || status.left().value() == null) {
+                actionStatus = ActionStatus.FOUND_LIST_VALIDATED_RESOURCES;
+            } else {
+                actionStatus = ActionStatus.FOUND_ALREADY_VALIDATED_RESOURCE;
+            }
+        }
+        return componentUtils.getResponseFormat(actionStatus, componentType == ComponentTypeEnum.RESOURCE ? "VF" : "service", resource.getName());
     }
 
     @Override
@@ -235,7 +220,7 @@ public class CertificationRequestTransition extends LifeCycleTransition {
                 String compInstId = compInst.getUniqueId();
                 OriginTypeEnum originType = compInst.getOriginType();
                 if (originType == null) {
-                    log.error("Origin type is not set for component instance {} - it shouldn't happen. Skipping this component instance...", compInst.getUniqueId());
+                    log.debug("Origin type is not set for component instance {} - it shouldn't happen. Skipping this component instance...", compInst.getUniqueId());
                     continue;
                 }
                 String compInstType = originType.getValue();

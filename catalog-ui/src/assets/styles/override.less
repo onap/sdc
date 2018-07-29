@@ -1,0 +1,72 @@
+@sdcui_color_white: #ffffff;
+@sdcui_color_dark-blue: #0568ae;
+@sdcui_color_blue: #009fdb;
+@sdcui_color_light-blue: #1eb9f3;
+@sdcui_color_blue-disabled: #9dd9ef;
+@sdcui_color_lighter-blue: #e6f6fb;
+@sdcui_color_black: #000000;
+@sdcui_color_text-black: #191919;
+@sdcui_color_rich-black: #323943;
+@sdcui_color_dark-gray: #5a5a5a;
+@sdcui_color_gray: #959595;
+@sdcui_color_light-gray: #d2d2d2;
+@sdcui_color_silver: #eaeaea;
+@sdcui_color_light-silver: #f2f2f2;
+@sdcui_color_lighter-silver: #f8f8f8;
+@sdcui_color_green: #4ca90c;
+@sdcui_color_red: #cf2a2a;
+@sdcui_color_light-red: #ed4141;
+@sdcui_color_disabled-red: #f4adad;
+@sdcui_color_yellow: #ffb81c;
+@sdcui_color_dark-purple: #702f8a;
+@sdcui_color_purple: #9063cd;
+@sdcui_color_light-purple: #caa2dd;
+
+/* override sdc-ui library tabs */
+body.composition {
+
+    .sdc-tabs {
+        .sdc-tab {
+            background-color: @sdcui_color_white;
+            border: 1px solid @sdcui_color_silver;
+            border-left: none;
+            display: inline-block;
+            height: 36px;
+            text-align: center;
+            cursor: pointer;
+            padding: 2px 10px 0 10px;
+            margin: 0;
+    
+    
+            &:first-child {
+                border-left: 1px solid @sdcui_color_silver;
+            }
+            &.sdc-tab-active {
+                background-color: @sdcui_color_silver;
+            }
+            &[disabled] {
+                opacity: 0.3;
+                cursor: default;
+            }
+        }
+        &.sdc-tabs-header {
+            .sdc-tab {
+                font-size: 24px;
+            }
+        }
+        &.sdc-tabs-menu {
+            .sdc-tab {
+                font-size: 14px;
+                padding: 0px 10px 4px 10px;
+            }
+        }
+        .sdc-tab-content {
+            margin-top: 0;
+        }
+    }
+    
+}
+//override sdc-ui version 53 css, used by onboarding. This can be removed after we update past version 42
+sdc-modal {
+    position: static !important;
+}

@@ -16,10 +16,6 @@
 
 package org.openecomp.sdc.translator.services.heattotosca;
 
-import static org.openecomp.sdc.translator.services.heattotosca.ConsolidationDataUtil.isComputeResource;
-import static org.openecomp.sdc.translator.services.heattotosca.ConsolidationDataUtil.isPortResource;
-import static org.openecomp.sdc.translator.services.heattotosca.ConsolidationDataUtil.isVolumeResource;
-
 import org.openecomp.sdc.heat.datatypes.model.Resource;
 import org.openecomp.sdc.translator.datatypes.heattotosca.TranslationContext;
 
@@ -27,6 +23,8 @@ import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import static org.openecomp.sdc.translator.services.heattotosca.ConsolidationDataUtil.*;
 
 /**
  * The enum Entity type.

@@ -21,73 +21,75 @@
 package org.openecomp.sdc.be.datatypes.enums;
 
 public enum NodeTypeEnum {
-	User("user"), 
-	Service("service"), 
-	Resource("resource"), 
-	Product("product"), 
-	ResourceCategory("resourceCategory"), 
-	ServiceCategory("serviceCategory"), 
-	ServiceNewCategory("serviceNewCategory"), 
-	ResourceNewCategory("resourceNewCategory"), 
-	ProductCategory("productCategory"), 
-	ResourceSubcategory("resourceSubcategory"), 
-	ProductSubcategory("productSubcategory"), 
-	ProductGrouping("productGrouping"), 
-	Tag("tag"), 
-	Property("property"), 
-	Attribute("attribute"), 
-	CapabilityType("capabilityType"), 
-	Requirement("requirement"), 
-	RelationshipType("relationshipType"), 
-	Capability("capability"), 
-	RequirementImpl("requirementImpl"), 
-	CapabilityInst("capabilityInst"), 
-	AttributeValue("attributeValue"), 
-	InputValue("inputValue"), 
-	PropertyValue("propertyValue"), 
-	LockNode("lockNode"), 
-	ArtifactRef("artifactRef"), 
-	Interface("interface"), 
-	InterfaceOperation("interfaceOperation"), 
-	ResourceInstance("resourceInstance"), 
-	RelationshipInst("relationshipInst"), 
-	AdditionalInfoParameters("additionalInfoParameters"), 
-	ConsumerCredentials("consumerCredentials"), 
-	HeatParameter("heatParameter"), 
-	HeatParameterValue("heatParameterValue"), 
-	DataType("dataType"), 
-	GroupType("groupType"), 
-	PolicyType("policyType"), 
-	Group("group"), 
-	UserFunctionalMenu("userFunctionalMenu"), 
-	Input("input"),
-	GroupInstance("groupInstance"), ;
+    User("user"), 
+    Service("service"), 
+    Resource("resource"), 
+    Product("product"), 
+    ResourceCategory("resourceCategory"), 
+    ServiceCategory("serviceCategory"), 
+    ServiceNewCategory("serviceNewCategory"), 
+    ResourceNewCategory("resourceNewCategory"), 
+    ProductCategory("productCategory"), 
+    ResourceSubcategory("resourceSubcategory"), 
+    ProductSubcategory("productSubcategory"), 
+    ProductGrouping("productGrouping"), 
+    Tag("tag"), 
+    Property("property"), 
+    Attribute("attribute"), 
+    CapabilityType("capabilityType"), 
+    Requirement("requirement"), 
+    RelationshipType("relationshipType"), 
+    Capability("capability"), 
+    RequirementImpl("requirementImpl"), 
+    CapabilityInst("capabilityInst"), 
+    AttributeValue("attributeValue"), 
+    InputValue("inputValue"), 
+    PropertyValue("propertyValue"), 
+    LockNode("lockNode"), 
+    ArtifactRef("artifactRef"), 
+    Interface("interface"), 
+    InterfaceOperation("interfaceOperation"), 
+    ResourceInstance("resourceInstance"), 
+    RelationshipInst("relationshipInst"), 
+    AdditionalInfoParameters("additionalInfoParameters"), 
+    ConsumerCredentials("consumerCredentials"), 
+    HeatParameter("heatParameter"), 
+    HeatParameterValue("heatParameterValue"), 
+    DataType("dataType"), 
+    GroupType("groupType"), 
+    PolicyType("policyType"), 
+    Group("group"), 
+    UserFunctionalMenu("userFunctionalMenu"), 
+    Input("input"),
+    GroupInstance("groupInstance"),
+    AnnotationType("annotationType"),
+    Component("component");
 
-	private String name;
+    private String name;
 
-	NodeTypeEnum(String name) {
-		this.name = name;
-	}
+    NodeTypeEnum(String name) {
+        this.name = name;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public static NodeTypeEnum getByName(String name) {
-		for (NodeTypeEnum inst : NodeTypeEnum.values()) {
-			if (inst.getName().equals(name)) {
-				return inst;
-			}
-		}
-		return null;
-	}
+    public static NodeTypeEnum getByName(String name) {
+        for (NodeTypeEnum inst : NodeTypeEnum.values()) {
+            if (inst.getName().equals(name)) {
+                return inst;
+            }
+        }
+        return null;
+    }
 
-	public static NodeTypeEnum getByNameIgnoreCase(String name) {
-		for (NodeTypeEnum inst : NodeTypeEnum.values()) {
-			if (inst.getName().equalsIgnoreCase(name)) {
-				return inst;
-			}
-		}
-		return null;
-	}
+    public static NodeTypeEnum getByNameIgnoreCase(String name) {
+        for (NodeTypeEnum inst : NodeTypeEnum.values()) {
+            if (inst.getName().equalsIgnoreCase(name)) {
+                return inst;
+            }
+        }
+        return null;
+    }
 }

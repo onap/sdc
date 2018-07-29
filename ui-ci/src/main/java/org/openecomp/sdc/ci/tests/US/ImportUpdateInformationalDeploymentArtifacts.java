@@ -20,16 +20,6 @@
 
 package org.openecomp.sdc.ci.tests.US;
 
-import static org.testng.AssertJUnit.assertTrue;
-
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.ComponentInstance;
@@ -45,6 +35,12 @@ import org.openecomp.sdc.ci.tests.utils.general.AtomicOperationUtils;
 import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
 import org.openecomp.sdc.common.api.ArtifactTypeEnum;
 import org.testng.annotations.Test;
+
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static org.testng.AssertJUnit.assertTrue;
 
 public class ImportUpdateInformationalDeploymentArtifacts extends SetupCDTest {
 	

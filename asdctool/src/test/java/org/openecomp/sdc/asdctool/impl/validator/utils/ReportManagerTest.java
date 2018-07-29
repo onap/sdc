@@ -1,9 +1,9 @@
 package org.openecomp.sdc.asdctool.impl.validator.utils;
 
-import java.util.Set;
-
 import org.junit.Test;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
+
+import java.util.Set;
 
 public class ReportManagerTest {
 

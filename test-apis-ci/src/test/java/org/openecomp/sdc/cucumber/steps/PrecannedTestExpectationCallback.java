@@ -1,14 +1,13 @@
 package org.openecomp.sdc.cucumber.steps;
 
-import static org.mockserver.model.HttpResponse.response;
-
+import com.google.common.net.HttpHeaders;
 import org.apache.http.entity.ContentType;
 import org.mockserver.mock.action.ExpectationCallback;
 import org.mockserver.model.Header;
 import org.mockserver.model.HttpRequest;
 import org.mockserver.model.HttpResponse;
 
-import com.google.common.net.HttpHeaders;
+import static org.mockserver.model.HttpResponse.response;
 
 public class PrecannedTestExpectationCallback implements ExpectationCallback  {
 	private static volatile int countRequests;

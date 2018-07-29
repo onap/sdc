@@ -20,7 +20,7 @@
             <li [ngClass]="{'selected': $last }">
                 <a (click)="menuItemClick(groupItem, groupItem.menuItems[groupItem.selectedIndex])"
                    [attr.data-tests-id]="'breadcrumbs-button-' + $index">
-                    {{groupItem.menuItems[groupItem.selectedIndex].text}}
+                    {{groupItem.menuItems[groupItem.selectedIndex]?.text}}
                 </a>
             </li>
             <li class="triangle-dropdown"

@@ -20,14 +20,7 @@
 
 package org.openecomp.sdc.ci.tests.verificator;
 
-import static org.testng.Assert.assertTrue;
-
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
+import com.aventstack.extentreports.Status;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
@@ -40,7 +33,13 @@ import org.openecomp.sdc.ci.tests.execute.setup.ExtentTestActions;
 import org.openecomp.sdc.ci.tests.utilities.RestCDUtils;
 import org.testng.Assert;
 
-import com.aventstack.extentreports.Status;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import static org.testng.Assert.assertTrue;
 
 public class VFCArtifactVerificator {
 	

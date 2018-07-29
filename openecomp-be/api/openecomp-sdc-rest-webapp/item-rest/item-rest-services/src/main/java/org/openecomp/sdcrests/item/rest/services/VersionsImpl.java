@@ -16,22 +16,6 @@
 
 package org.openecomp.sdcrests.item.rest.services;
 
-import static org.openecomp.sdc.itempermissions.notifications.NotificationConstants.PERMISSION_USER;
-import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.ITEM_ID;
-import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.ITEM_NAME;
-import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.SUBMIT_DESCRIPTION;
-import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.VERSION_ID;
-import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.VERSION_NAME;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import javax.inject.Named;
-import javax.ws.rs.core.Response;
-import org.openecomp.sdc.activitylog.ActivityLogManager;
-import org.openecomp.sdc.activitylog.ActivityLogManagerFactory;
-import org.openecomp.sdc.activitylog.dao.type.ActivityLogEntity;
-import org.openecomp.sdc.activitylog.dao.type.ActivityType;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.Messages;
 import org.openecomp.sdc.conflicts.ConflictsManager;
@@ -57,16 +41,19 @@ import org.openecomp.sdcrests.item.rest.Versions;
 import org.openecomp.sdcrests.item.rest.mapping.MapActivityLogEntityToDto;
 import org.openecomp.sdcrests.item.rest.mapping.MapRevisionToDto;
 import org.openecomp.sdcrests.item.rest.mapping.MapVersionToDto;
-import org.openecomp.sdcrests.item.types.ActivityLogDto;
-import org.openecomp.sdcrests.item.types.CommitRequestDto;
-import org.openecomp.sdcrests.item.types.RevisionDto;
-import org.openecomp.sdcrests.item.types.RevisionRequestDto;
-import org.openecomp.sdcrests.item.types.VersionActionRequestDto;
-import org.openecomp.sdcrests.item.types.VersionDto;
-import org.openecomp.sdcrests.item.types.VersionRequestDto;
+import org.openecomp.sdcrests.item.types.*;
 import org.openecomp.sdcrests.wrappers.GenericCollectionWrapper;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
+
+import javax.inject.Named;
+import javax.ws.rs.core.Response;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static org.openecomp.sdc.itempermissions.notifications.NotificationConstants.PERMISSION_USER;
+import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.*;
 
 @Named
 @Service("versions")
@@ -84,8 +71,6 @@ public class VersionsImpl implements Versions {
       VersioningManagerFactory.getInstance().createInterface();
   private ConflictsManager conflictsManager =
       ConflictsManagerFactory.getInstance().createInterface();
-  private ActivityLogManager activityLogManager =
-      ActivityLogManagerFactory.getInstance().createInterface();
   private NotificationPropagationManager notifier =
       NotificationPropagationManagerFactory.getInstance().createInterface();
 
@@ -111,9 +96,6 @@ public class VersionsImpl implements Versions {
 
     VersionDto versionDto = new MapVersionToDto().applyMapping(version, VersionDto.class);
 
-    activityLogManager.logActivity(new ActivityLogEntity(itemId, version,
-        ActivityType.Create_Version, user, true, "", ""));
-
     return Response.ok(versionDto).build();
   }
 
@@ -128,11 +110,6 @@ public class VersionsImpl implements Versions {
   public Response getActivityLog(String itemId, String versionId, String user) {
     GenericCollectionWrapper<ActivityLogDto> results = new GenericCollectionWrapper<>();
     MapActivityLogEntityToDto mapper = new MapActivityLogEntityToDto();
-
-    activityLogManager.listLoggedActivities(itemId, new Version(versionId))
-        .forEach(loggedActivity -> results
-            .add(mapper.applyMapping(loggedActivity, ActivityLogDto.class)));
-
     return Response.ok(results).build();
   }
 
@@ -196,9 +173,6 @@ public class VersionsImpl implements Versions {
 
     versioningManager.publish(itemId, version, message);
     notifyUsers(itemId, version, message, user, NotificationEventTypes.COMMIT);
-
-    activityLogManager.logActivity(new ActivityLogEntity(itemId, version,
-        ActivityType.Commit, user, true, "", message));
   }
 
   private void revert(RevisionRequestDto request, String itemId, String versionId) {

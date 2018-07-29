@@ -17,18 +17,12 @@
 package org.openecomp.sdc.be.datatypes.elements;
 
 
-import java.io.Serializable;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 
-import static org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields.ARTIFACT_UUID;
-import static org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields.DESCRIPTION;
-import static org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields.TOSCA_RESOURCE_NAME;
-import static org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields.UNIQUE_ID;
-import static org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields.IO_INPUT_PARAMETERS;
-import static org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields.IO_OPERATION_TYPE;
-import static org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields.IO_OUTPUT_PARAMETERS;
+import java.io.Serializable;
+
+import static org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields.*;
 
 public class InterfaceOperationDataDefinition extends ToscaDataDefinition implements Serializable {
 

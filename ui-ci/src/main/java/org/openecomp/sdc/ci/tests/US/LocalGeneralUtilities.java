@@ -20,7 +20,6 @@
 
 package org.openecomp.sdc.ci.tests.US;
 
-import com.clearspring.analytics.util.Pair;
 import org.json.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
@@ -78,8 +77,8 @@ public static List<String> getValuesFromJsonArray(RestResponse message) throws E
 
 public static String simpleOnBoarding(ResourceReqDetails resourceReqDetails, String fileName, String filePath,User user) throws Exception {
 	AmdocsLicenseMembers amdocsLicenseMembers = VendorLicenseModelRestUtils.createVendorLicense(user);
-	Pair<String, VendorSoftwareProductObject> createVendorSoftwareProduct = VendorSoftwareProductRestUtils.createVendorSoftwareProduct(resourceReqDetails, fileName, filePath, user, amdocsLicenseMembers);
-	String vspName = createVendorSoftwareProduct.left;
+	VendorSoftwareProductObject createVendorSoftwareProduct = VendorSoftwareProductRestUtils.createVendorSoftwareProduct(resourceReqDetails, fileName, filePath, user, amdocsLicenseMembers);
+	String vspName = createVendorSoftwareProduct.getName();
 	HomePage.showVspRepository();
 	OnboardingUiUtils.importVSP(createVendorSoftwareProduct);
 	GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.GeneralElementsEnum.CHECKIN_BUTTON.getValue()).click();

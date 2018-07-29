@@ -20,9 +20,6 @@
 
 package org.openecomp.sdc.ci.tests.execute.sanity;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
@@ -41,6 +38,9 @@ import org.openqa.selenium.WebElement;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 public class Categories extends SetupCDTest {
 
 	
@@ -50,7 +50,7 @@ public class Categories extends SetupCDTest {
 		AdminGeneralPage.selectCategoryManagmetTab();
 		String newResourceCategory = ElementFactory.getDefaultCategory().getName();
 		AdminGeneralPage.createNewResourceCategory(newResourceCategory);
-		GeneralUIUtils.clickSomewhereOnPage();
+//		GeneralUIUtils.clickSomewhereOnPage();
 		List<WebElement> resourceCategoriesList = AdminGeneralPage.getResourceCategoriesList();
 		List<String> collect = resourceCategoriesList.stream().map(f -> f.getText()).collect(Collectors.toList());
 		collect.contains(newResourceCategory);
@@ -64,7 +64,7 @@ public class Categories extends SetupCDTest {
 		AdminGeneralPage.selectCategoryManagmetTab();
 		String newserviceCategory = ElementFactory.getDefaultCategory().getName();
 		AdminGeneralPage.createNewServiceCategory(newserviceCategory);
-		GeneralUIUtils.clickSomewhereOnPage();
+//		GeneralUIUtils.clickSomewhereOnPage();
 		List<WebElement> serviceCategoriesList = AdminGeneralPage.getServiceCategoriesList();
 		List<String> collect = serviceCategoriesList.stream().map(f -> f.getText()).collect(Collectors.toList());
 		collect.contains(newserviceCategory);
@@ -85,9 +85,7 @@ public class Categories extends SetupCDTest {
 		List<WebElement> resourceCategoriesList = AdminGeneralPage.getResourceCategoriesList();
 		AdminGeneralPage.addSubCategoryToResource(resourceCategoriesList, newResourceCategory , newSubCategory);
 		GeneralUIUtils.waitForLoader();
-		GeneralUIUtils.clickSomewhereOnPage();
-		
-		
+//		GeneralUIUtils.clickSomewhereOnPage();
 	}
 	
 	
@@ -113,7 +111,7 @@ public class Categories extends SetupCDTest {
 		String newserviceCategory = ElementFactory.getDefaultCategory().getName();
 		AdminGeneralPage.createNewServiceCategory(newserviceCategory);
 		AdminGeneralPage.createNewServiceCategory(newserviceCategory);
-		AdminGeneralPage.selectUserManagmetTab();
+//		AdminGeneralPage.selectUserManagmetTab();
 		
 		String errorMessage = GeneralUIUtils.getWebElementByClassName("w-sdc-modal-caption").getText();
 		String checkUIResponseOnError = ErrorValidationUtils.checkUIResponseOnError(ActionStatus.COMPONENT_CATEGORY_ALREADY_EXISTS.name());

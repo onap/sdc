@@ -20,12 +20,7 @@
 
 package org.openecomp.sdc.be.model.jsontitan.operations;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
-
+import fj.data.Either;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 import org.openecomp.sdc.be.dao.jsongraph.types.EdgeLabelEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
@@ -37,14 +32,13 @@ import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.DaoStatusConverter;
 import org.openecomp.sdc.common.jsongraph.util.CommonUtility;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 
-import fj.data.Either;
+import java.util.*;
 
 @org.springframework.stereotype.Component("forwarding-paths-operations")
 public class ForwardingPathOperation extends BaseOperation {
-    private static Logger logger = LoggerFactory.getLogger(ForwardingPathOperation.class.getName());
+    private static final Logger log = Logger.getLogger(ForwardingPathOperation.class.getName());
 
 
     public Either<Set<String>, StorageOperationStatus> deleteForwardingPath(Service service, Set<String> forwardingPathsToDelete) {
@@ -89,7 +83,7 @@ public class ForwardingPathOperation extends BaseOperation {
         getToscaElementRes = titanDao.getVertexById(serviceId, JsonParseFlagEnum.NoParse);
         if (getToscaElementRes.isRight()) {
             TitanOperationStatus status = getToscaElementRes.right().value();
-            CommonUtility.addRecordToLog(logger, CommonUtility.LogLevelEnum.DEBUG, "Failed to get tosca element {} upon adding the properties. Status is {}. ", serviceId, status);
+            CommonUtility.addRecordToLog(log, CommonUtility.LogLevelEnum.DEBUG, "Failed to get tosca element {} upon adding the properties. Status is {}. ", serviceId, status);
             statusRes = DaoStatusConverter.convertTitanStatusToStorageStatus(status);
             return Either.right(statusRes);
         }
@@ -100,7 +94,7 @@ public class ForwardingPathOperation extends BaseOperation {
         statusRes = performUpdateToscaAction(isUpdateAction, serviceVertex, Arrays.asList(currentPath), JsonPresentationFields.FORWARDING_PATH);
         {
             if (!statusRes.equals(StorageOperationStatus.OK)) {
-                logger.error("Failed to find the parent capability of capability type {}. status is {}", serviceId, statusRes);
+                log.error("Failed to find the parent capability of capability type {}. status is {}", serviceId, statusRes);
                 return Either.right(statusRes);
             }
             return Either.left(currentPath);

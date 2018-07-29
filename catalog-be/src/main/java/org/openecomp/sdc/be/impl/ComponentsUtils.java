@@ -20,26 +20,28 @@
 
 package org.openecomp.sdc.be.impl;
 
-import java.lang.reflect.Type;
-import java.util.Collections;
-import java.util.EnumMap;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
+import fj.data.Either;
 import org.apache.commons.lang3.StringUtils;
 import org.openecomp.sdc.be.auditing.api.AuditEventFactory;
-import org.openecomp.sdc.be.auditing.impl.AuditAuthRequestEventFactory;
-import org.openecomp.sdc.be.auditing.impl.AuditBaseEventFactory;
-import org.openecomp.sdc.be.auditing.impl.AuditConsumerEventFactory;
-import org.openecomp.sdc.be.auditing.impl.AuditEcompOpEnvEventFactory;
-import org.openecomp.sdc.be.auditing.impl.AuditResourceEventFactoryMananger;
-import org.openecomp.sdc.be.auditing.impl.AuditingManager;
-import org.openecomp.sdc.be.auditing.impl.distribution.AuditDistribDownloadEventFactory;
+import org.openecomp.sdc.be.auditing.impl.*;
+import org.openecomp.sdc.be.auditing.impl.category.AuditCategoryEventFactory;
+import org.openecomp.sdc.be.auditing.impl.category.AuditGetCategoryHierarchyEventFactory;
+import org.openecomp.sdc.be.auditing.impl.distribution.*;
+import org.openecomp.sdc.be.auditing.impl.externalapi.*;
+import org.openecomp.sdc.be.auditing.impl.resourceadmin.AuditResourceEventFactoryManager;
+import org.openecomp.sdc.be.auditing.impl.usersadmin.AuditGetUsersListEventFactory;
 import org.openecomp.sdc.be.auditing.impl.usersadmin.AuditUserAccessEventFactory;
 import org.openecomp.sdc.be.auditing.impl.usersadmin.AuditUserAdminEventFactory;
+import org.openecomp.sdc.be.components.impl.ImportUtils;
 import org.openecomp.sdc.be.components.impl.ImportUtils.ResultStatusEnum;
 import org.openecomp.sdc.be.components.impl.ResponseFormatManager;
+import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.cassandra.CassandraOperationStatus;
@@ -48,45 +50,33 @@ import org.openecomp.sdc.be.datatypes.elements.AdditionalInfoParameterInfo;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
-import org.openecomp.sdc.be.model.CapabilityTypeDefinition;
-import org.openecomp.sdc.be.model.Component;
-import org.openecomp.sdc.be.model.ConsumerDefinition;
-import org.openecomp.sdc.be.model.DataTypeDefinition;
-import org.openecomp.sdc.be.model.GroupTypeDefinition;
-import org.openecomp.sdc.be.model.PolicyTypeDefinition;
-import org.openecomp.sdc.be.model.PropertyConstraint;
-import org.openecomp.sdc.be.model.RequirementDefinition;
-import org.openecomp.sdc.be.model.Resource;
-import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.*;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.PropertyOperation.PropertyConstraintDeserialiser;
 import org.openecomp.sdc.be.model.operations.impl.PropertyOperation.PropertyConstraintJacksonDeserializer;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
-import org.openecomp.sdc.be.resources.data.auditing.model.CommonAuditData;
-import org.openecomp.sdc.be.resources.data.auditing.model.DistributionData;
-import org.openecomp.sdc.be.resources.data.auditing.model.ResourceAuditData;
+import org.openecomp.sdc.be.resources.data.auditing.AuditingTypesConstants;
+import org.openecomp.sdc.be.resources.data.auditing.model.*;
 import org.openecomp.sdc.be.tosca.ToscaError;
 import org.openecomp.sdc.common.api.Constants;
-import org.openecomp.sdc.common.datastructure.AuditingFieldsKeysEnum;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.common.util.ThreadLocalsHolder;
 import org.openecomp.sdc.common.util.ValidationUtils;
 import org.openecomp.sdc.exception.ResponseFormat;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
-
-import fj.data.Either;
+import javax.servlet.http.HttpServletRequest;
+import java.lang.reflect.Type;
+import java.util.Collections;
+import java.util.List;
 
 @org.springframework.stereotype.Component("componentUtils")
 public class ComponentsUtils {
 
-    private static final Logger log = LoggerFactory.getLogger(ComponentsUtils.class);
+    private static final String CONVERT_STORAGE_RESPONSE_TO_ACTION_RESPONSE = "convert storage response {} to action response {}";
+	private static final String INSIDE_AUDITING_FOR_AUDIT_ACTION = "Inside auditing for audit action {}";
+	private static final String AUDIT_BEFORE_SENDING_RESPONSE = "audit before sending response";
+	private static final String CONVERT_JSON_TO_OBJECT = "convertJsonToObject";
+	private static final Logger log = Logger.getLogger(ComponentsUtils.class);
     private final AuditingManager auditingManager;
     private final ResponseFormatManager responseFormatManager;
 
@@ -101,7 +91,7 @@ public class ComponentsUtils {
 
     public <T> Either<T, ResponseFormat> convertJsonToObject(String data, User user, Class<T> clazz, AuditingActionEnum actionEnum) {
         if (data == null) {
-            BeEcompErrorManager.getInstance().logBeInvalidJsonInput("convertJsonToObject");
+            BeEcompErrorManager.getInstance().logBeInvalidJsonInput(CONVERT_JSON_TO_OBJECT);
             log.debug("object is null after converting from json");
             ResponseFormat responseFormat = getInvalidContentErrorAndAudit(user, actionEnum);
             return Either.right(responseFormat);
@@ -111,7 +101,7 @@ public class ComponentsUtils {
             return Either.left(obj);
         } catch (Exception e) {
             // INVALID JSON
-            BeEcompErrorManager.getInstance().logBeInvalidJsonInput("convertJsonToObject");
+            BeEcompErrorManager.getInstance().logBeInvalidJsonInput(CONVERT_JSON_TO_OBJECT);
             log.debug("failed to convert from json {}", data, e);
             ResponseFormat responseFormat = getInvalidContentErrorAndAudit(user, actionEnum);
             return Either.right(responseFormat);
@@ -138,13 +128,13 @@ public class ComponentsUtils {
 
             component = mapper.readValue(data, clazz);
             if (component == null) {
-                BeEcompErrorManager.getInstance().logBeInvalidJsonInput("convertJsonToObject");
+                BeEcompErrorManager.getInstance().logBeInvalidJsonInput(CONVERT_JSON_TO_OBJECT);
                 log.debug("object is null after converting from json");
                 ResponseFormat responseFormat = getInvalidContentErrorAndAuditComponent(user, actionEnum, typeEnum);
                 return Either.right(responseFormat);
             }
         } catch (Exception e) {
-            BeEcompErrorManager.getInstance().logBeInvalidJsonInput("convertJsonToObject");
+            BeEcompErrorManager.getInstance().logBeInvalidJsonInput(CONVERT_JSON_TO_OBJECT);
             log.debug("failed to convert from json {}", data, e);
             ResponseFormat responseFormat = getInvalidContentErrorAndAuditComponent(user, actionEnum, typeEnum);
             return Either.right(responseFormat);
@@ -155,7 +145,7 @@ public class ComponentsUtils {
     public ResponseFormat getResponseFormat(ActionStatus actionStatus, String... params) {
         return responseFormatManager.getResponseFormat(actionStatus, params);
     }
-
+   
     public ResponseFormat getResponseFormat(StorageOperationStatus storageStatus, String... params) {
         return responseFormatManager.getResponseFormat(this.convertFromStorageResponse(storageStatus), params);
     }
@@ -205,15 +195,13 @@ public class ComponentsUtils {
         if (resourceName == null) {
             return getResponseFormat(actionStatus);
         }
-        ResponseFormat responseFormat;
 
-        switch (actionStatus) {
-            case RESOURCE_NOT_FOUND:
-                responseFormat = getResponseFormat(ActionStatus.RESOURCE_NOT_FOUND, resourceName);
-                break;
-            default:
-                responseFormat = getResponseFormat(actionStatus);
-                break;
+        ResponseFormat responseFormat;
+        if (actionStatus == ActionStatus.RESOURCE_NOT_FOUND) {
+            responseFormat = getResponseFormat(ActionStatus.RESOURCE_NOT_FOUND, resourceName);
+        }
+        else {
+            responseFormat = getResponseFormat(actionStatus);
         }
         return responseFormat;
     }
@@ -222,15 +210,13 @@ public class ComponentsUtils {
         if (capabilityType == null) {
             return getResponseFormat(actionStatus);
         }
-        ResponseFormat responseFormat;
 
-        switch (actionStatus) {
-            case CAPABILITY_TYPE_ALREADY_EXIST:
-                responseFormat = getResponseFormat(ActionStatus.CAPABILITY_TYPE_ALREADY_EXIST, capabilityType.getType());
-                break;
-            default:
-                responseFormat = getResponseFormat(actionStatus);
-                break;
+        ResponseFormat responseFormat;
+        if (actionStatus == ActionStatus.CAPABILITY_TYPE_ALREADY_EXIST) {
+            responseFormat = getResponseFormat(ActionStatus.CAPABILITY_TYPE_ALREADY_EXIST, capabilityType.getType());
+        }
+        else {
+            responseFormat = getResponseFormat(actionStatus);
         }
         return responseFormat;
     }
@@ -239,22 +225,21 @@ public class ComponentsUtils {
         if (obj == null) {
             return getResponseFormat(actionStatus);
         }
-        ResponseFormat responseFormat = null;
 
-        switch (actionStatus) {
-            case MISSING_CAPABILITY_TYPE:
-                if (obj instanceof List && org.apache.commons.collections.CollectionUtils.isNotEmpty((List) obj)) {
-                    List list = (List) obj;
-                    if (list.get(0) instanceof RequirementDefinition) {
-                        responseFormat = getResponseFormat(ActionStatus.MISSING_CAPABILITY_TYPE, ((RequirementDefinition) list.get(0)).getName());    //Arbitray index, all we need is single object
-                        return responseFormat;
-                    }
+        ResponseFormat responseFormat = null;
+        if (actionStatus == ActionStatus.MISSING_CAPABILITY_TYPE) {
+            if (obj instanceof List && org.apache.commons.collections.CollectionUtils.isNotEmpty((List) obj)) {
+                List list = (List) obj;
+                if (list.get(0) instanceof RequirementDefinition) {
+                    responseFormat = getResponseFormat(ActionStatus.MISSING_CAPABILITY_TYPE, ((RequirementDefinition) list
+                            .get(0)).getName());    //Arbitray index, all we need is single object
+                    return responseFormat;
                 }
-                log.debug("UNKNOWN TYPE : expecting obj as a non empty List<RequirmentsDefinitions>");
-                break;
-            default:
-                responseFormat = getResponseFormat(actionStatus);
-                break;
+            }
+            log.debug("UNKNOWN TYPE : expecting obj as a non empty List<RequirmentsDefinitions>");
+        }
+        else {
+            responseFormat = getResponseFormat(actionStatus);
         }
         return responseFormat;
     }
@@ -301,7 +286,7 @@ public class ComponentsUtils {
         return getResponseFormatByUser(actionStatus, user);
     }
 
-    public ResponseFormat getResponseFormatByDE(ActionStatus actionStatus, String serviceId, String envName) {
+    public ResponseFormat getResponseFormatByDE(ActionStatus actionStatus, String envName) {
         ResponseFormat responseFormat;
 
         switch (actionStatus) {
@@ -310,9 +295,6 @@ public class ComponentsUtils {
                 break;
             case DISTRIBUTION_ENVIRONMENT_NOT_FOUND:
                 responseFormat = getResponseFormat(ActionStatus.DISTRIBUTION_ENVIRONMENT_NOT_FOUND, envName);
-                break;
-            case DISTRIBUTION_ARTIFACT_NOT_FOUND:
-                responseFormat = getResponseFormat(ActionStatus.DISTRIBUTION_ARTIFACT_NOT_FOUND, serviceId);
                 break;
             default:
                 responseFormat = getResponseFormat(actionStatus);
@@ -338,26 +320,33 @@ public class ComponentsUtils {
 
     public ResponseFormat getInvalidContentErrorAndAudit(User user, String resourceName, AuditingActionEnum actionEnum) {
         ResponseFormat responseFormat = responseFormatManager.getResponseFormat(ActionStatus.INVALID_CONTENT);
-        log.debug("audit before sending response");
+        log.debug(AUDIT_BEFORE_SENDING_RESPONSE);
         auditResource(responseFormat, user, resourceName, actionEnum);
+        return responseFormat;
+    }
+
+    public ResponseFormat getInvalidContentErrorForConsumerAndAudit(User user, ConsumerDefinition consumer, AuditingActionEnum actionEnum) {
+        ResponseFormat responseFormat = responseFormatManager.getResponseFormat(ActionStatus.INVALID_CONTENT);
+        log.debug(AUDIT_BEFORE_SENDING_RESPONSE);
+        auditConsumerCredentialsEvent(actionEnum, consumer, responseFormat, user);
         return responseFormat;
     }
 
     public ResponseFormat getInvalidContentErrorAndAudit(User user, AuditingActionEnum actionEnum) {
         ResponseFormat responseFormat = responseFormatManager.getResponseFormat(ActionStatus.INVALID_CONTENT);
-        log.debug("audit before sending response");
+        log.debug(AUDIT_BEFORE_SENDING_RESPONSE);
         auditAdminUserAction(actionEnum, user, null, null, responseFormat);
         return responseFormat;
     }
 
     public ResponseFormat getInvalidContentErrorAndAuditComponent(User user, AuditingActionEnum actionEnum, ComponentTypeEnum typeEnum) {
         ResponseFormat responseFormat = responseFormatManager.getResponseFormat(ActionStatus.INVALID_CONTENT);
-        log.debug("audit before sending response");
+        log.debug(AUDIT_BEFORE_SENDING_RESPONSE);
         auditComponentAdmin(responseFormat, user, null,  actionEnum, typeEnum);
         return responseFormat;
     }
 
-    public void auditResource(ResponseFormat responseFormat, User modifier, Resource resource, AuditingActionEnum actionEnum, ResourceAuditData prevResFields) {
+    public void auditResource(ResponseFormat responseFormat, User modifier, Resource resource, AuditingActionEnum actionEnum, ResourceVersionInfo prevResFields) {
         auditResource(responseFormat, modifier, resource, resource.getName(), actionEnum, prevResFields, null, null);
     }
 
@@ -370,14 +359,14 @@ public class ComponentsUtils {
     }
 
     public void auditResource(ResponseFormat responseFormat, User modifier, Resource resource, String resourceName, AuditingActionEnum actionEnum) {
-        auditResource(responseFormat, modifier, resource, resourceName, actionEnum, ResourceAuditData.newBuilder().build(), null, null);
+        auditResource(responseFormat, modifier, resource, resourceName, actionEnum, ResourceVersionInfo.newBuilder().build(), null, null);
     }
 
     public void auditResource(ResponseFormat responseFormat, User modifier, Resource resource, String resourceName, AuditingActionEnum actionEnum,
-                              ResourceAuditData prevResFields, String currentArtifactUuid, String artifactData) {
+                              ResourceVersionInfo prevResFields, String currentArtifactUuid, ArtifactDefinition artifactDefinition) {
         if (actionEnum != null) {
             int status = responseFormat.getStatus();
-            String message = "";
+
             String uuid = null;
             String resourceCurrVersion = null;
             String resourceCurrState = null;
@@ -385,12 +374,11 @@ public class ComponentsUtils {
             String resourceType = ComponentTypeEnum.RESOURCE.getValue();
             String toscaNodeType = null;
 
-            log.trace("Inside auditing for audit action {}", actionEnum);
+            log.trace(INSIDE_AUDITING_FOR_AUDIT_ACTION, actionEnum);
 
-            if (responseFormat.getMessageId() != null) {
-                message = responseFormat.getMessageId() + ": ";
-            }
-            message += responseFormat.getFormattedMessage();
+            String message = getMessageString(responseFormat);
+
+            String artifactData = buildAuditingArtifactData(artifactDefinition);
 
             if (resource != null) {
                 resourceName = resource.getName();
@@ -406,7 +394,7 @@ public class ComponentsUtils {
                 toscaNodeType = resource.getToscaResourceName();
             }
 
-            AuditBaseEventFactory factory = AuditResourceEventFactoryMananger.createResourceEventFactory(
+            AuditEventFactory factory = AuditResourceEventFactoryManager.createResourceEventFactory(
                     actionEnum,
                     CommonAuditData.newBuilder()
                             .status(status)
@@ -414,149 +402,279 @@ public class ComponentsUtils {
                             .requestId(ThreadLocalsHolder.getUuid())
                             .serviceInstanceId(uuid)
                             .build(),
+                    new ResourceCommonInfo(resourceName, resourceType),
                     prevResFields,
-                    ResourceAuditData.newBuilder()
+                    ResourceVersionInfo.newBuilder()
                             .artifactUuid(currentArtifactUuid)
                             .state(resourceCurrState)
                             .version(resourceCurrVersion)
                             .build(),
-                    resourceType, resourceName, invariantUUID,
-                    modifier, artifactData, null, null, toscaNodeType);
+                    invariantUUID,
+                    modifier,
+                    artifactData, null, null, toscaNodeType);
 
             getAuditingManager().auditEvent(factory);
         }
     }
 
-    private void updateUserFields(User modifier, EnumMap<AuditingFieldsKeysEnum, Object> auditingFields) {
-        if (modifier != null) {
-            String firstName = modifier.getFirstName();
-            String lastName = modifier.getLastName();
-            if (firstName != null || lastName != null) {// to prevent "null
-                // null" names
-                auditingFields.put(AuditingFieldsKeysEnum.AUDIT_MODIFIER_NAME, firstName + " " + lastName);
-            }
-            auditingFields.put(AuditingFieldsKeysEnum.AUDIT_MODIFIER_UID, modifier.getUserId());
+    private String getMessageString(ResponseFormat responseFormat) {
+        String message = "";
+        if (responseFormat.getMessageId() != null) {
+            message = responseFormat.getMessageId() + ": ";
         }
+        message += responseFormat.getFormattedMessage();
+        return message;
     }
 
     public void auditDistributionDownload(ResponseFormat responseFormat, DistributionData distributionData) {
         log.trace("Inside auditing");
         int status = responseFormat.getStatus();
-        String message = "";
-        EnumMap<AuditingFieldsKeysEnum, Object> auditingFields = new EnumMap<AuditingFieldsKeysEnum, Object>(AuditingFieldsKeysEnum.class);
-        if (responseFormat.getMessageId() != null) {
-            message = responseFormat.getMessageId() + ": ";
-        }
-        message += responseFormat.getFormattedMessage();
 
-        getAuditingManager().auditEvent(auditingFields);
-        AuditDistribDownloadEventFactory factory = new AuditDistribDownloadEventFactory(
+        String message = getMessageString(responseFormat);
+
+        AuditDistributionDownloadEventFactory factory = new AuditDistributionDownloadEventFactory(
                 CommonAuditData.newBuilder()
                         .status(status)
                         .description(message)
                         .requestId(ThreadLocalsHolder.getUuid())
                         .build(),
                         distributionData);
+                getAuditingManager().auditEvent(factory);
+    }
+
+    public void auditExternalGetAsset(ResponseFormat responseFormat, AuditingActionEnum actionEnum, DistributionData distributionData,
+                                      ResourceCommonInfo resourceCommonInfo, String requestId, String serviceInstanceId) {
+        log.trace(INSIDE_AUDITING_FOR_AUDIT_ACTION, actionEnum);
+
+        AuditEventFactory factory = new AuditAssetExternalApiEventFactory(actionEnum,
+                CommonAuditData.newBuilder()
+                        .status(responseFormat.getStatus())
+                        .description(getMessageString(responseFormat))
+                        .requestId(requestId)
+                        .serviceInstanceId(serviceInstanceId)
+                        .build(),
+                resourceCommonInfo, distributionData);
+
         getAuditingManager().auditEvent(factory);
     }
 
-    public void auditExternalGetAsset(ResponseFormat responseFormat, AuditingActionEnum actionEnum, EnumMap<AuditingFieldsKeysEnum, Object> additionalParams) {
-        log.trace("Inside auditing for audit action {}", actionEnum);
-        int status = responseFormat.getStatus();
-        String message = "";
-        EnumMap<AuditingFieldsKeysEnum, Object> auditingFields = new EnumMap<AuditingFieldsKeysEnum, Object>(AuditingFieldsKeysEnum.class);
-        if (responseFormat.getMessageId() != null) {
-            message = responseFormat.getMessageId() + ": ";
-        }
-        message += responseFormat.getFormattedMessage();
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_ACTION, actionEnum.getName());
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_STATUS, status);
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_DESC, message);
+    public void auditExternalGetAssetList(ResponseFormat responseFormat, AuditingActionEnum actionEnum, DistributionData distributionData, String requestId) {
+        log.trace(INSIDE_AUDITING_FOR_AUDIT_ACTION, actionEnum);
 
-        if (additionalParams != null) {
-            auditingFields.putAll(additionalParams);
-        }
+        AuditEventFactory factory = new AuditAssetListExternalApiEventFactory(actionEnum,
+                CommonAuditData.newBuilder()
+                        .status(responseFormat.getStatus())
+                        .description(getMessageString(responseFormat))
+                        .requestId(requestId)
+                         .build(),
+                distributionData);
 
-        getAuditingManager().auditEvent(auditingFields);
+        getAuditingManager().auditEvent(factory);
     }
 
-    public void auditExternalCrudApi(ResponseFormat responseFormat, String componentType, String actionEnum, HttpServletRequest request, EnumMap<AuditingFieldsKeysEnum, Object> additionalParams) {
-        log.trace("Inside auditing for audit action {}", actionEnum);
-        String instanceIdHeader = request.getHeader(Constants.X_ECOMP_INSTANCE_ID_HEADER);
-        String requestURI = request.getRequestURI();
-        EnumMap<AuditingFieldsKeysEnum, Object> auditingFields = new EnumMap<AuditingFieldsKeysEnum, Object>(AuditingFieldsKeysEnum.class);
-        int status = 0;
-        String message = "";
-        if (responseFormat != null) {
-            status = responseFormat.getStatus();
-            if (responseFormat.getMessageId() != null) {
-                message = responseFormat.getMessageId() + ": ";
-            }
-            message += responseFormat.getFormattedMessage();
-        }
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_ACTION, actionEnum);
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_CONSUMER_ID, instanceIdHeader);
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_RESOURCE_URL, requestURI);
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_TYPE, componentType);
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_STATUS, status);
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_DESC, message);
+    public void auditChangeLifecycleAction(ResponseFormat responseFormat, ComponentTypeEnum componentType, String requestId,
+                                           Component component, Component responseObject, DistributionData distributionData, User modifier) {
 
-        if (additionalParams != null) {
-            auditingFields.putAll(additionalParams);
-            if (!additionalParams.containsKey(AuditingFieldsKeysEnum.AUDIT_RESOURCE_NAME)) {
-                auditingFields.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_NAME, "");
-            }
+        String invariantUuid = "";
+        String serviceInstanceId = "";
+        ResourceVersionInfo currResourceVersionInfo = null;
+        ResourceVersionInfo prevResourceVersionInfo = null;
+        ResourceCommonInfo resourceCommonInfo = new ResourceCommonInfo(componentType.getValue());
+
+        if (component != null) {
+            prevResourceVersionInfo = buildResourceVersionInfoFromComponent(component);
+            resourceCommonInfo.setResourceName(component.getName());
         }
 
-        getAuditingManager().auditEvent(auditingFields);
+        if (responseObject != null){
+            currResourceVersionInfo = buildResourceVersionInfoFromComponent(responseObject);
+            invariantUuid = responseObject.getInvariantUUID();
+            serviceInstanceId = responseObject.getUUID();
+        }
+        else if (component != null){
+            currResourceVersionInfo = buildResourceVersionInfoFromComponent(component);
+            invariantUuid = component.getInvariantUUID();
+            serviceInstanceId = component.getUUID();
+        }
+
+        if (prevResourceVersionInfo == null) {
+            prevResourceVersionInfo = ResourceVersionInfo.newBuilder()
+                    .build();
+        }
+        if (currResourceVersionInfo == null) {
+            currResourceVersionInfo = ResourceVersionInfo.newBuilder()
+                    .build();
+        }
+        AuditEventFactory factory = new AuditChangeLifecycleExternalApiEventFactory(
+                CommonAuditData.newBuilder()
+                    .serviceInstanceId(serviceInstanceId)
+                    .requestId(requestId)
+                    .description(getMessageString(responseFormat))
+                    .status(responseFormat.getStatus())
+                    .build(),
+                resourceCommonInfo, distributionData,
+                prevResourceVersionInfo, currResourceVersionInfo,
+                invariantUuid, modifier);
+
+        getAuditingManager().auditEvent(factory);
     }
 
-    public void auditExternalActivateService(ResponseFormat responseFormat, String componentType, HttpServletRequest request, EnumMap<AuditingFieldsKeysEnum, Object> additionalParams) {
-        auditExternalCrudApi(responseFormat, componentType, AuditingActionEnum.ACTIVATE_SERVICE_BY_API.getName(), request, additionalParams);
-    }public void auditExternalDownloadArtifact(ResponseFormat responseFormat, String componentType, HttpServletRequest request, EnumMap<AuditingFieldsKeysEnum, Object> additionalParams) {
-        auditExternalCrudApi(responseFormat, componentType, AuditingActionEnum.DOWNLOAD_ARTIFACT.getName(), request, additionalParams);
+    private ResourceVersionInfo buildResourceVersionInfoFromComponent(Component component) {
+        return ResourceVersionInfo.newBuilder()
+                .version(component.getVersion())
+                .state(component.getLifecycleState().name())
+                .build();
     }
 
-    public void auditExternalUploadArtifact(ResponseFormat responseFormat, String componentType, HttpServletRequest request, EnumMap<AuditingFieldsKeysEnum, Object> additionalParams) {
-        additionalParams.put(AuditingFieldsKeysEnum.AUDIT_MODIFIER_UID, request.getHeader(Constants.USER_ID_HEADER));
-        additionalParams.put(AuditingFieldsKeysEnum.AUDIT_PREV_ARTIFACT_UUID, "");
-        auditExternalCrudApi(responseFormat, componentType, AuditingActionEnum.ARTIFACT_UPLOAD_BY_API.getName(), request, additionalParams);
+    public void auditExternalCrudApi(ResponseFormat responseFormat, AuditingActionEnum actionEnum, ResourceCommonInfo resourceCommonInfo, HttpServletRequest request,
+                                     ArtifactDefinition artifactDefinition, String artifactUuid) {
+        log.trace(INSIDE_AUDITING_FOR_AUDIT_ACTION, actionEnum);
+
+        ResourceVersionInfo currResourceVersionInfo;
+        User modifier = new User();
+        modifier.setUserId(request.getHeader(Constants.USER_ID_HEADER));
+        String artifactData = "";
+        DistributionData distributionData = new DistributionData(request.getHeader(Constants.X_ECOMP_INSTANCE_ID_HEADER), request.getRequestURI());
+        String requestId = request.getHeader(Constants.X_ECOMP_REQUEST_ID_HEADER);
+
+
+        if (artifactDefinition == null) {
+            currResourceVersionInfo = ResourceVersionInfo.newBuilder()
+                    .artifactUuid(artifactUuid)
+                    .build();
+        }
+        else {
+            currResourceVersionInfo = ResourceVersionInfo.newBuilder()
+                    .artifactUuid(artifactDefinition.getArtifactUUID())
+                    .version(artifactDefinition.getArtifactVersion())
+                    .build();
+            artifactData = buildAuditingArtifactData(artifactDefinition);
+            modifier.setUserId(artifactDefinition.getUserIdLastUpdater());
+        }
+        AuditEventFactory factory = new AuditCrudExternalApiArtifactEventFactory(actionEnum,
+                CommonAuditData.newBuilder()
+                    .status(responseFormat.getStatus())
+                    .description(getMessageString(responseFormat))
+                    .requestId(requestId)
+                    .build(),
+                resourceCommonInfo, distributionData, ResourceVersionInfo.newBuilder().build(), currResourceVersionInfo,
+                null, modifier, artifactData);
+
+        getAuditingManager().auditEvent(factory);
     }
 
-    public void auditExternalUpdateArtifact(ResponseFormat responseFormat, String componentType, HttpServletRequest request, EnumMap<AuditingFieldsKeysEnum, Object> additionalParams) {
-        additionalParams.put(AuditingFieldsKeysEnum.AUDIT_MODIFIER_UID, request.getHeader(Constants.USER_ID_HEADER));
-        additionalParams.put(AuditingFieldsKeysEnum.AUDIT_PREV_ARTIFACT_UUID, "");
-        auditExternalCrudApi(responseFormat, componentType, AuditingActionEnum.ARTIFACT_UPDATE_BY_API.getName(), request, additionalParams);
+    public boolean isExternalApiEvent(AuditingActionEnum auditingActionEnum){
+        return auditingActionEnum != null && auditingActionEnum.getAuditingEsType().equals(AuditingTypesConstants.EXTERNAL_API_EVENT_TYPE);
     }
 
-    public void auditExternalDeleteArtifact(ResponseFormat responseFormat, String componentType, HttpServletRequest request, EnumMap<AuditingFieldsKeysEnum, Object> additionalParams) {
-        additionalParams.put(AuditingFieldsKeysEnum.AUDIT_MODIFIER_UID, request.getHeader(Constants.USER_ID_HEADER));
-        additionalParams.put(AuditingFieldsKeysEnum.AUDIT_PREV_ARTIFACT_UUID, "");
-        auditExternalCrudApi(responseFormat, componentType, AuditingActionEnum.ARTIFACT_DELETE_BY_API.getName(), request, additionalParams);
+    public void auditCreateResourceExternalApi(ResponseFormat responseFormat, ResourceCommonInfo resourceCommonInfo, HttpServletRequest request,
+                                               Resource resource) {
+
+        String invariantUuid = null;
+        String serviceInstanceId = null;
+
+        User modifier = new User();
+        modifier.setUserId(request.getHeader(Constants.USER_ID_HEADER));
+        DistributionData distributionData = new DistributionData(request.getHeader(Constants.X_ECOMP_INSTANCE_ID_HEADER), request.getRequestURI());
+        String requestId = request.getHeader(Constants.X_ECOMP_REQUEST_ID_HEADER);
+
+        ResourceVersionInfo currResourceVersionInfo;
+
+        if( resource != null ){
+            currResourceVersionInfo = ResourceVersionInfo.newBuilder()
+                    .state(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT.name())
+                    .version(ImportUtils.Constants.FIRST_NON_CERTIFIED_VERSION)
+                    .build();
+            resourceCommonInfo.setResourceName(resource.getName());
+            invariantUuid = resource.getInvariantUUID();
+            serviceInstanceId = resource.getUUID();
+        }
+        else {
+            currResourceVersionInfo = ResourceVersionInfo.newBuilder()
+                    .build();
+        }
+
+        AuditEventFactory factory = new AuditCreateResourceExternalApiEventFactory(
+                CommonAuditData.newBuilder()
+                        .status(responseFormat.getStatus())
+                        .description(getMessageString(responseFormat))
+                        .requestId(requestId)
+                        .serviceInstanceId(serviceInstanceId)
+                        .build(),
+                resourceCommonInfo, distributionData,
+                currResourceVersionInfo, invariantUuid, modifier);
+
+        getAuditingManager().auditEvent(factory);
+    }
+
+    public void auditExternalActivateService(ResponseFormat responseFormat, DistributionData distributionData, String requestId, String serviceInstanceUuid, User modifier) {
+        AuditEventFactory factory = new AuditActivateServiceExternalApiEventFactory(
+                CommonAuditData.newBuilder()
+                    .serviceInstanceId(serviceInstanceUuid)
+                    .description(getMessageString(responseFormat))
+                    .status(responseFormat.getStatus())
+                    .requestId(requestId)
+                    .build(),
+                new ResourceCommonInfo(ComponentTypeEnum.SERVICE.name()), distributionData, "", modifier);
+        getAuditingManager().auditEvent(factory);
+    }
+
+    public void auditExternalDownloadArtifact(ResponseFormat responseFormat, ResourceCommonInfo resourceCommonInfo,
+                                              DistributionData distributionData, String requestId, String currArtifactUuid, String userId) {
+        User modifier = new User();
+        modifier.setUserId(userId);
+
+        AuditEventFactory factory = new AuditDownloadArtifactExternalApiEventFactory(
+                CommonAuditData.newBuilder()
+                        .description(getMessageString(responseFormat))
+                        .status(responseFormat.getStatus())
+                        .requestId(requestId)
+                        .build(),
+                resourceCommonInfo, distributionData,
+                ResourceVersionInfo.newBuilder()
+                        .artifactUuid(currArtifactUuid)
+                        .build(),
+                modifier);
+        getAuditingManager().auditEvent(factory);
+    }
+
+    private String buildAuditingArtifactData(ArtifactDefinition artifactDefinition) {
+        StringBuilder sb = new StringBuilder();
+        if (artifactDefinition != null) {
+            sb.append(artifactDefinition.getArtifactGroupType().getType())
+                    .append(",")
+                    .append("'")
+                    .append(artifactDefinition.getArtifactLabel())
+                    .append("'")
+                    .append(",")
+                    .append(artifactDefinition.getArtifactType())
+                    .append(",")
+                    .append(artifactDefinition.getArtifactName())
+                    .append(",")
+                    .append(artifactDefinition.getTimeout())
+                    .append(",")
+                    .append(artifactDefinition.getEsId());
+
+            sb.append(",");
+            sb.append(artifactDefinition.getArtifactVersion() != null ? artifactDefinition.getArtifactVersion() : " ");
+            sb.append(",");
+            sb.append(artifactDefinition.getArtifactUUID() != null ? artifactDefinition.getArtifactUUID() : " ");
+        }
+        return sb.toString();
     }
 
     public void auditCategory(ResponseFormat responseFormat, User modifier, String categoryName, String subCategoryName, String groupingName, AuditingActionEnum actionEnum, String componentType) {
-        log.trace("Inside auditing for audit action {}", actionEnum);
-        int status = responseFormat.getStatus();
-        String message = "";
+        log.trace(INSIDE_AUDITING_FOR_AUDIT_ACTION, actionEnum);
 
-        if (responseFormat.getMessageId() != null) {
-            message = responseFormat.getMessageId() + ": ";
-        }
-        message += responseFormat.getFormattedMessage();
+        AuditEventFactory factory = new AuditCategoryEventFactory(actionEnum,
+                CommonAuditData.newBuilder()
+                        .description(getMessageString(responseFormat))
+                        .status(responseFormat.getStatus())
+                        .requestId(ThreadLocalsHolder.getUuid())
+                        .build(),
+                modifier, categoryName, subCategoryName, groupingName, componentType);
 
-        EnumMap<AuditingFieldsKeysEnum, Object> auditingFields = new EnumMap<AuditingFieldsKeysEnum, Object>(AuditingFieldsKeysEnum.class);
-        updateUserFields(modifier, auditingFields);
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_TYPE, componentType);
-
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_ACTION, actionEnum.getName());
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_STATUS, status);
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_DESC, message);
-
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_CATEGORY_NAME, categoryName);
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_SUB_CATEGORY_NAME, subCategoryName);
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_GROUPING_NAME, groupingName);
-        getAuditingManager().auditEvent(auditingFields);
+        getAuditingManager().auditEvent(factory);
     }
 
     public ActionStatus convertFromStorageResponse(StorageOperationStatus storageResponse) {
@@ -614,9 +732,6 @@ public class ComponentsUtils {
         case DISTR_ENVIRONMENT_SENT_IS_INVALID:
             responseEnum = ActionStatus.DISTRIBUTION_ENVIRONMENT_INVALID;
             break;
-        case DISTR_ARTIFACT_NOT_FOUND:
-            responseEnum = ActionStatus.DISTRIBUTION_ARTIFACT_NOT_FOUND;
-            break;
         case INVALID_TYPE:
             responseEnum = ActionStatus.INVALID_CONTENT;
             break;
@@ -638,11 +753,14 @@ public class ComponentsUtils {
         case INVALID_PROPERTY:
             responseEnum = ActionStatus.INVALID_PROPERTY;
             break;
-        default:
+        case COMPONENT_IS_ARCHIVED:
+            responseEnum = ActionStatus.COMPONENT_IS_ARCHIVED;
+            break;
+       default:
             responseEnum = ActionStatus.GENERAL_ERROR;
             break;
         }
-        log.debug("convert storage response {} to action response {}", storageResponse, responseEnum);
+        log.debug(CONVERT_STORAGE_RESPONSE_TO_ACTION_RESPONSE, storageResponse, responseEnum);
         return responseEnum;
     }
 
@@ -688,7 +806,7 @@ public class ComponentsUtils {
             responseEnum = ActionStatus.GENERAL_ERROR;
             break;
         }
-        log.debug("convert storage response {} to action response {}", storageResponse, responseEnum);
+        log.debug(CONVERT_STORAGE_RESPONSE_TO_ACTION_RESPONSE, storageResponse, responseEnum);
         return responseEnum;
     }
 
@@ -716,7 +834,7 @@ public class ComponentsUtils {
             responseEnum = ActionStatus.GENERAL_ERROR;
             break;
         }
-        log.debug("convert storage response {} to action response {}", storageResponse, responseEnum);
+        log.debug(CONVERT_STORAGE_RESPONSE_TO_ACTION_RESPONSE, storageResponse, responseEnum);
         return responseEnum;
     }
 
@@ -756,7 +874,7 @@ public class ComponentsUtils {
             responseEnum = ActionStatus.GENERAL_ERROR;
             break;
         }
-        log.debug("convert storage response {} to action response {}", storageResponse, responseEnum);
+        log.debug(CONVERT_STORAGE_RESPONSE_TO_ACTION_RESPONSE, storageResponse, responseEnum);
         return responseEnum;
     }
 
@@ -812,36 +930,41 @@ public class ComponentsUtils {
             responseEnum = ActionStatus.GENERAL_ERROR;
             break;
         }
-        log.debug("convert storage response {} to action response {}", storageResponse, responseEnum);
+        log.debug(CONVERT_STORAGE_RESPONSE_TO_ACTION_RESPONSE, storageResponse, responseEnum);
         return responseEnum;
     }
 
-    public void auditComponent(ResponseFormat responseFormat, User modifier, Component component, AuditingActionEnum actionEnum, ComponentTypeEnum type, ResourceAuditData prevComponent, String comment) {
-        auditComponent(responseFormat, modifier, component, actionEnum, type, prevComponent, null, null, comment, null, null);
+    public void auditComponent(ResponseFormat responseFormat, User modifier, Component component, AuditingActionEnum actionEnum, ResourceCommonInfo resourceCommonInfo, ResourceVersionInfo prevComponent, String comment) {
+        auditComponent(responseFormat, modifier, component, actionEnum, resourceCommonInfo, prevComponent, null, comment, null, null);
     }
 
-    public void auditComponentAdmin(ResponseFormat responseFormat, User modifier, Component component, AuditingActionEnum actionEnum, ComponentTypeEnum type) {
-        auditComponent(responseFormat, modifier, component, actionEnum, type, ResourceAuditData.newBuilder().build());
+    public void auditComponentAdmin(ResponseFormat responseFormat, User modifier, Component component, AuditingActionEnum actionEnum, ComponentTypeEnum typeEnum) {
+        auditComponent(responseFormat, modifier, component, actionEnum, new ResourceCommonInfo(typeEnum.getValue()), ResourceVersionInfo.newBuilder().build());
     }
 
-    public void auditComponentAdmin(ResponseFormat responseFormat, User modifier, Component component, AuditingActionEnum actionEnum, ComponentTypeEnum type, ResourceAuditData prevComponent) {
-        auditComponent(responseFormat, modifier, component, actionEnum, type, prevComponent);
+    public void auditComponentAdmin(ResponseFormat responseFormat, User modifier, Component component, AuditingActionEnum actionEnum, ComponentTypeEnum typeEnum, String comment) {
+        auditComponent(responseFormat, modifier, component, actionEnum, new ResourceCommonInfo(typeEnum.getValue()), ResourceVersionInfo.newBuilder().build(), null,
+                comment, null, null);
     }
 
-    public void auditComponent(ResponseFormat responseFormat, User modifier, Component component, AuditingActionEnum actionEnum, ComponentTypeEnum type, ResourceAuditData prevComponent) {
-        auditComponent(responseFormat, modifier, component, actionEnum, type, prevComponent, null, null, null, null, null);
+    public void auditComponentAdmin(ResponseFormat responseFormat, User modifier, Component component, AuditingActionEnum actionEnum, ComponentTypeEnum typeEnum, ResourceVersionInfo prevComponent) {
+        auditComponent(responseFormat, modifier, component, actionEnum, new ResourceCommonInfo(typeEnum.getValue()), prevComponent);
     }
 
-
-    public void auditComponent(ResponseFormat responseFormat, User modifier, AuditingActionEnum actionEnum, String compName, ComponentTypeEnum type, String comment) {
-        auditComponent(responseFormat, modifier, null, actionEnum, type, ResourceAuditData.newBuilder().build(), null, compName, comment, null, null);
+    public void auditComponent(ResponseFormat responseFormat, User modifier, Component component, AuditingActionEnum actionEnum, ResourceCommonInfo resourceCommonInfo, ResourceVersionInfo prevComponent) {
+        auditComponent(responseFormat, modifier, component, actionEnum, resourceCommonInfo, prevComponent, null, null, null, null);
     }
 
-    public void auditComponent(ResponseFormat responseFormat, User modifier, Component component, AuditingActionEnum actionEnum, ComponentTypeEnum type, ResourceAuditData prevComponent, ResourceAuditData currComponent) {
-        auditComponent(responseFormat, modifier, component, actionEnum, type, prevComponent, currComponent, null, null, null, null);
+    public void auditComponent(ResponseFormat responseFormat, User modifier, AuditingActionEnum actionEnum, ResourceCommonInfo resourceCommonInfo, String comment) {
+        auditComponent(responseFormat, modifier, null, actionEnum, resourceCommonInfo, ResourceVersionInfo.newBuilder().build(), null, comment, null, null);
     }
 
-    public void auditComponent(ResponseFormat responseFormat, User modifier, Component component, AuditingActionEnum actionEnum, ComponentTypeEnum type, ResourceAuditData prevComponent, ResourceAuditData currComponent, String compName, String comment, String artifactData, String did) {
+    public void auditComponent(ResponseFormat responseFormat, User modifier, Component component, AuditingActionEnum actionEnum, ResourceCommonInfo resourceCommonInfo, ResourceVersionInfo prevComponent, ResourceVersionInfo currComponent) {
+        auditComponent(responseFormat, modifier, component, actionEnum, resourceCommonInfo, prevComponent, currComponent, null, null, null);
+    }
+
+    public void auditComponent(ResponseFormat responseFormat, User modifier, Component component, AuditingActionEnum actionEnum, ResourceCommonInfo resourceCommonInfo, ResourceVersionInfo prevComponent, ResourceVersionInfo currComponent,
+                               String comment, ArtifactDefinition artifactDefinition, String did) {
         if (actionEnum != null) {
             String uuid = null;
             String currState = null;
@@ -849,17 +972,12 @@ public class ComponentsUtils {
             String currArtifactUid = null;
             String currVersion = null;
             String dcurrStatus = null;
-            String message = "";
 
+            log.trace(INSIDE_AUDITING_FOR_AUDIT_ACTION, actionEnum);
+
+            String message = getMessageString(responseFormat);
             int status = responseFormat.getStatus();
-
-            log.trace("Inside auditing for audit action {}", actionEnum);
-
-            if (responseFormat.getMessageId() != null) {
-                message = responseFormat.getMessageId() + ": ";
-            }
-            message += responseFormat.getFormattedMessage();
-
+            String artifactData = buildAuditingArtifactData(artifactDefinition);
 
             if (component != null) {
                 // fields that are filled during creation and might still be empty
@@ -869,8 +987,8 @@ public class ComponentsUtils {
                 uuid = component.getUUID();
                 invariantUUID = component.getInvariantUUID();
                 currVersion = component.getVersion();
-                if (StringUtils.isEmpty(compName)) {
-                    compName = component.getComponentMetadataDefinition().getMetadataDataDefinition().getName();
+                if (StringUtils.isEmpty(resourceCommonInfo.getResourceName())) {
+                    resourceCommonInfo.setResourceName(component.getComponentMetadataDefinition().getMetadataDataDefinition().getName());
                 }
             }
             if (currComponent != null) {
@@ -883,7 +1001,7 @@ public class ComponentsUtils {
                     currVersion = currComponent.getVersion();
                 }
             }
-            AuditBaseEventFactory factory = AuditResourceEventFactoryMananger.createResourceEventFactory(
+            AuditEventFactory factory = AuditResourceEventFactoryManager.createResourceEventFactory(
                     actionEnum,
                     CommonAuditData.newBuilder()
                             .status(status)
@@ -891,174 +1009,145 @@ public class ComponentsUtils {
                             .requestId(ThreadLocalsHolder.getUuid())
                             .serviceInstanceId(uuid)
                             .build(),
-                    prevComponent,
-                    ResourceAuditData.newBuilder()
+                    resourceCommonInfo, prevComponent,
+                    ResourceVersionInfo.newBuilder()
                             .artifactUuid(currArtifactUid)
                             .state(currState)
                             .version(currVersion)
                             .distributionStatus(dcurrStatus)
                             .build(),
-                    type.getValue().replace(" ", ""), compName, invariantUUID,
+                    invariantUUID,
                     modifier, artifactData, comment, did, null);
 
             getAuditingManager().auditEvent(factory);
         }
     }
 
-    public void auditDistributionEngine(AuditingActionEnum actionEnum, String environmentName, String topicName, String role, String apiKey, String status) {
+    public void auditDistributionEngine(AuditingActionEnum action, String environmentName, DistributionTopicData distributionTopicData, String status) {
+        auditDistributionEngine(action, environmentName, distributionTopicData, null, null, status);
+    }
 
-        EnumMap<AuditingFieldsKeysEnum, Object> auditingFields = new EnumMap<>(AuditingFieldsKeysEnum.class);
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_ACTION, actionEnum.getName());
 
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_ENVRIONMENT_NAME, environmentName);
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_TOPIC_NAME, topicName);
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_ROLE, role);
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_API_KEY, apiKey);
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_STATUS, status);
-
-        getAuditingManager().auditEvent(auditingFields);
+     public void auditDistributionEngine(AuditingActionEnum action, String environmentName, DistributionTopicData distributionTopicData, String role, String apiKey, String status) {
+        AuditEventFactory factory = AuditDistributionEngineEventFactoryManager.createDistributionEngineEventFactory(action,
+                environmentName, distributionTopicData, role, apiKey, status);
+        getAuditingManager().auditEvent(factory);
     }
 
 
     public void auditEnvironmentEngine(AuditingActionEnum actionEnum, String environmentID,
                                        String environmentType, String action, String environmentName, String tenantContext) {
-        getAuditingManager().auditEvent(new AuditEcompOpEnvEventFactory(actionEnum, environmentID, environmentName,
-                environmentType, action, tenantContext));
+        AuditEventFactory factory = new AuditEcompOpEnvEventFactory(actionEnum, environmentID, environmentName,
+                environmentType, action, tenantContext);
+        getAuditingManager().auditEvent(factory);
     }
 
-    public void auditDistributionNotification(AuditingActionEnum actionEnum, String serviceUUID, String resourceName, String resourceType, String currVersion, String modifierUid, String modifierName, String environmentName, String currState,
-            String topicName, String distributionId, String description, String status, String workloadContext, String tenant) {
+    public void auditDistributionNotification(String serviceUUID, String resourceName, String resourceType, String currVersion, User modifier, String environmentName, String currState,
+                                              String topicName, String distributionId, String description, String status, String workloadContext, String tenant) {
 
-        EnumMap<AuditingFieldsKeysEnum, Object> auditingFields = new EnumMap<AuditingFieldsKeysEnum, Object>(AuditingFieldsKeysEnum.class);
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_ACTION, actionEnum.getName());
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_SERVICE_INSTANCE_ID, serviceUUID);
+        AuditEventFactory factory = new AuditDistributionNotificationEventFactory(
+                CommonAuditData.newBuilder()
+                    .serviceInstanceId(serviceUUID)
+                    .status(status)
+                    .description(description)
+                    .requestId(ThreadLocalsHolder.getUuid())
+                    .build(),
+                new ResourceCommonInfo(resourceName, resourceType),
+                ResourceVersionInfo.newBuilder()
+                    .state(currState)
+                    .version(currVersion)
+                    .build(),
+                distributionId, modifier, topicName,
+                new OperationalEnvAuditData(environmentName, workloadContext, tenant));
 
-
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_TOPIC_NAME, topicName);
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_ID, distributionId);
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_STATUS, status);
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_CURR_VERSION, currVersion);
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_CURR_STATE, currState);
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_TYPE, resourceType);
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_DESC, description);
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_MODIFIER_UID, modifierUid);
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_MODIFIER_NAME, modifierName);
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_NAME, resourceName);
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_TENANT, tenant);
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_VNF_WORKLOAD_CONTEXT, workloadContext);
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_ENVIRONMENT_ID, environmentName);
-
-        getAuditingManager().auditEvent(auditingFields);
+        getAuditingManager().auditEvent(factory);
     }
 
     public void auditAuthEvent(String url, String user, String authStatus, String realm) {
-        getAuditingManager().auditEvent(new AuditAuthRequestEventFactory(
+        AuditEventFactory factory = new AuditAuthRequestEventFactory(
                 CommonAuditData.newBuilder()
                 .requestId(ThreadLocalsHolder.getUuid())
                 .build(),
-                user, url, realm, authStatus));
+                user, url, realm, authStatus);
+        getAuditingManager().auditEvent(factory);
     }
 
-    public void auditDistributionStatusNotification(AuditingActionEnum actionEnum, String distributionId, String consumerId, String topicName, String resourceUrl, String statusTime, String status, String errorReason) {
-
-        EnumMap<AuditingFieldsKeysEnum, Object> auditingFields = new EnumMap<AuditingFieldsKeysEnum, Object>(AuditingFieldsKeysEnum.class);
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_ACTION, actionEnum.getName());
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_REQUEST_ID, distributionId);
+    public void auditDistributionStatusNotification(String distributionId, String consumerId, String topicName, String resourceUrl, String statusTime, String status, String errorReason) {
         ThreadLocalsHolder.setUuid(distributionId);
 
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_ID, distributionId);
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_CONSUMER_ID, consumerId);
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_TOPIC_NAME, topicName);
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_RESOURCE_URL, resourceUrl);
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_STATUS_TIME, statusTime);
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_STATUS, status);
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_DESC, errorReason);
+        AuditEventFactory factory =  new AuditDistributionStatusEventFactory(
+                CommonAuditData.newBuilder()
+                .description(errorReason)
+                .status(status)
+                .requestId(distributionId)
+                .build(),
+                new DistributionData(consumerId, resourceUrl),
+                distributionId, topicName, statusTime);
 
-        getAuditingManager().auditEvent(auditingFields);
+        getAuditingManager().auditEvent(factory);
     }
 
-    public void auditGetUebCluster(AuditingActionEnum actionEnum, String consumerId, String statusTime, String status, String description) {
+    public void auditGetUebCluster(String consumerId, String status, String description) {
+        AuditEventFactory factory = new AuditGetUebClusterEventFactory(
+                CommonAuditData.newBuilder()
+                        .description(description)
+                        .status(status)
+                        .requestId(ThreadLocalsHolder.getUuid())
+                        .build(),
+                consumerId);
 
-        EnumMap<AuditingFieldsKeysEnum, Object> auditingFields = new EnumMap<AuditingFieldsKeysEnum, Object>(AuditingFieldsKeysEnum.class);
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_ACTION, actionEnum.getName());
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_CONSUMER_ID, consumerId);
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_STATUS_TIME, statusTime);
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_STATUS, status);
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_STATUS_DESC, description);
-
-        getAuditingManager().auditEvent(auditingFields);
+        getAuditingManager().auditEvent(factory);
     }
 
-    public void auditMissingInstanceId(AuditingActionEnum actionEnum, String status, String description) {
-
-        EnumMap<AuditingFieldsKeysEnum, Object> auditingFields = new EnumMap<AuditingFieldsKeysEnum, Object>(AuditingFieldsKeysEnum.class);
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_ACTION, actionEnum.getName());
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_CONSUMER_ID, null);
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_TIMESTAMP, null);
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_STATUS, status);
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_DESC, description);
-
-        getAuditingManager().auditEvent(auditingFields);
+    public void auditMissingInstanceIdAsDistributionEngineEvent(AuditingActionEnum actionEnum, String status) {
+        AuditEventFactory factory = AuditDistributionEngineEventFactoryManager.createDistributionEngineEventFactory(
+                actionEnum, "",
+                DistributionTopicData.newBuilder()
+                        .build(), null, null, status);
+        getAuditingManager().auditEvent(factory);
     }
 
-    public void auditTopicACLKeys(AuditingActionEnum actionEnum, String envName, String topicName, String role, String apiPublicKey, String status) {
 
-        EnumMap<AuditingFieldsKeysEnum, Object> auditingFields = new EnumMap<AuditingFieldsKeysEnum, Object>(AuditingFieldsKeysEnum.class);
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_ACTION, actionEnum.getName());
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_ENVRIONMENT_NAME, envName);
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_TOPIC_NAME, topicName);
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_ROLE, role);
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_API_KEY, apiPublicKey);
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_STATUS, status);
+    public void auditRegisterOrUnRegisterEvent(AuditingActionEnum action, String consumerId, String apiPublicKey, String envName, String status, String distributionStatus, String notifTopicName, String statusTopicName) {
+        String appliedStatus = !StringUtils.isEmpty(status) ? status : distributionStatus;
 
-        getAuditingManager().auditEvent(auditingFields);
+        AuditEventFactory factory = new AuditRegUnregDistributionEngineEventFactory(action,
+                CommonAuditData.newBuilder()
+                    .requestId(ThreadLocalsHolder.getUuid())
+                    .status(appliedStatus)
+                    .build(),
+                DistributionTopicData.newBuilder()
+                    .statusTopic(statusTopicName)
+                    .notificationTopic(notifTopicName)
+                    .build(),
+                consumerId, apiPublicKey, envName);
+
+        getAuditingManager().auditEvent(factory);
     }
 
-    public void auditRegisterOrUnRegisterEvent(AuditingActionEnum actionEnum, String consumerId, String apiPublicKey, String envName, String status, String statusDesc, String notifTopicName, String statusTopicName) {
-        EnumMap<AuditingFieldsKeysEnum, Object> auditingFields = new EnumMap<AuditingFieldsKeysEnum, Object>(AuditingFieldsKeysEnum.class);
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_ACTION, actionEnum.getName());
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_CONSUMER_ID, consumerId);
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_API_KEY, apiPublicKey);
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_ENVRIONMENT_NAME, envName);
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_STATUS, status);
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_STATUS_DESC, statusDesc);
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_NOTIFICATION_TOPIC_NAME, notifTopicName);
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_STATUS_TOPIC_NAME, statusTopicName);
-        getAuditingManager().auditEvent(auditingFields);
-    }
+    public void auditServiceDistributionDeployed(String serviceName, String serviceVersion, String serviceUUID, String distributionId, String status, String desc, User modifier) {
 
-    public void auditServiceDistributionDeployed(AuditingActionEnum actionEnum, String serviceName, String serviceVersion, String serviceUUID, String distributionId, String status, String desc, User modifier) {
+        AuditEventFactory factory = new AuditDistributionDeployEventFactory(
+                CommonAuditData.newBuilder()
+                    .requestId(ThreadLocalsHolder.getUuid())
+                    .serviceInstanceId(serviceUUID)
+                    .status(status)
+                    .description(desc)
+                    .build(),
+                new ResourceCommonInfo(serviceName, "Service"),
+                distributionId,
+                modifier,
+                serviceVersion);
 
-        EnumMap<AuditingFieldsKeysEnum, Object> auditingFields = new EnumMap<AuditingFieldsKeysEnum, Object>(AuditingFieldsKeysEnum.class);
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_ACTION, actionEnum.getName());
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_SERVICE_INSTANCE_ID, serviceUUID);
+        getAuditingManager().auditEvent(factory);
 
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_MODIFIER_NAME, modifier.getFirstName() + " " + modifier.getLastName());
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_MODIFIER_UID, modifier.getUserId());
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_TYPE, "Service");
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_NAME, serviceName);
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_CURR_VERSION, serviceVersion);
-
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_ID, distributionId);
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_STATUS, status);
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_DESC, desc);
-
-        getAuditingManager().auditEvent(auditingFields);
     }
 
     public void auditConsumerCredentialsEvent(AuditingActionEnum actionEnum, ConsumerDefinition consumer, ResponseFormat responseFormat, User modifier) {
-        int status = responseFormat.getStatus();
-        String message = "";
-
-        if (responseFormat.getMessageId() != null) {
-            message = responseFormat.getMessageId() + ": ";
-        }
-        message += responseFormat.getFormattedMessage();
-
         AuditEventFactory factory = new AuditConsumerEventFactory(actionEnum,
                 CommonAuditData.newBuilder()
-                .description(message)
-                .status(status)
+                .description(getMessageString(responseFormat))
+                .status(responseFormat.getStatus())
                 .requestId(ThreadLocalsHolder.getUuid())
                 .build(),
                 modifier, consumer);
@@ -1066,41 +1155,24 @@ public class ComponentsUtils {
         getAuditingManager().auditEvent(factory);
     }
 
-    public void auditGetUsersList(AuditingActionEnum actionEnum, User modifier, String details, ResponseFormat responseFormat) {
+    public void auditGetUsersList(User user, String details, ResponseFormat responseFormat) {
 
-        EnumMap<AuditingFieldsKeysEnum, Object> auditingFields = new EnumMap<AuditingFieldsKeysEnum, Object>(AuditingFieldsKeysEnum.class);
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_ACTION, actionEnum.getName());
-        if (modifier != null) {
-            auditingFields.put(AuditingFieldsKeysEnum.AUDIT_MODIFIER_NAME, modifier.getFirstName() + " " + modifier.getLastName());
-            auditingFields.put(AuditingFieldsKeysEnum.AUDIT_MODIFIER_UID, modifier.getUserId());
-        }
-
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_USER_DETAILS, details);
-        int status = responseFormat.getStatus();
-        String message = "";
-
-        if (responseFormat.getMessageId() != null) {
-            message = responseFormat.getMessageId() + ": ";
-        }
-        message += responseFormat.getFormattedMessage();
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_STATUS, status);
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_DESC, message);
-        getAuditingManager().auditEvent(auditingFields);
+        AuditEventFactory factory = new AuditGetUsersListEventFactory(
+                CommonAuditData.newBuilder()
+                        .description(getMessageString(responseFormat))
+                        .status(responseFormat.getStatus())
+                        .requestId(ThreadLocalsHolder.getUuid())
+                        .build(),
+                user, details);
+        getAuditingManager().auditEvent(factory);
     }
 
     public void auditAdminUserAction(AuditingActionEnum actionEnum, User modifier, User userBefore, User userAfter, ResponseFormat responseFormat) {
-        int status = responseFormat.getStatus();
-        String message = "";
-
-        if (responseFormat.getMessageId() != null) {
-            message = responseFormat.getMessageId() + ": ";
-        }
-        message += responseFormat.getFormattedMessage();
 
         AuditEventFactory factory = new AuditUserAdminEventFactory(actionEnum,
                 CommonAuditData.newBuilder()
-                        .description(message)
-                        .status(status)
+                        .description(getMessageString(responseFormat))
+                        .status(responseFormat.getStatus())
                         .requestId(ThreadLocalsHolder.getUuid())
                         .build(),
                 modifier, userBefore, userAfter);
@@ -1108,19 +1180,11 @@ public class ComponentsUtils {
         getAuditingManager().auditEvent(factory);
     }
 
-    public void auditUserAccess(AuditingActionEnum actionEnum, User user, ResponseFormat responseFormat) {
-
-        int status = responseFormat.getStatus();
-        String message = "";
-
-        if (responseFormat.getMessageId() != null) {
-            message = responseFormat.getMessageId() + ": ";
-        }
-        message += responseFormat.getFormattedMessage();
+    public void auditUserAccess(User user, ResponseFormat responseFormat) {
 
         AuditEventFactory factory = new AuditUserAccessEventFactory(CommonAuditData.newBuilder()
-                .description(message)
-                .status(status)
+                .description(getMessageString(responseFormat))
+                .status(responseFormat.getStatus())
                 .requestId(ThreadLocalsHolder.getUuid())
                 .build(),
                 user);
@@ -1128,25 +1192,16 @@ public class ComponentsUtils {
         getAuditingManager().auditEvent(factory);
     }
 
-    public void auditGetCategoryHierarchy(AuditingActionEnum actionEnum, User modifier, String details, ResponseFormat responseFormat) {
+    public void auditGetCategoryHierarchy(User user, String details, ResponseFormat responseFormat) {
 
-        EnumMap<AuditingFieldsKeysEnum, Object> auditingFields = new EnumMap<AuditingFieldsKeysEnum, Object>(AuditingFieldsKeysEnum.class);
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_ACTION, actionEnum.getName());
-        if (modifier != null) {
-            auditingFields.put(AuditingFieldsKeysEnum.AUDIT_MODIFIER_NAME, modifier.getFirstName() + " " + modifier.getLastName());
-            auditingFields.put(AuditingFieldsKeysEnum.AUDIT_MODIFIER_UID, modifier.getUserId());
-        }
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_DETAILS, details);
-        int status = responseFormat.getStatus();
-        String message = "";
+        AuditEventFactory factory = new AuditGetCategoryHierarchyEventFactory(CommonAuditData.newBuilder()
+                        .description(getMessageString(responseFormat))
+                        .status(responseFormat.getStatus())
+                        .requestId(ThreadLocalsHolder.getUuid())
+                        .build(),
+                user, details);
 
-        if (responseFormat.getMessageId() != null) {
-            message = responseFormat.getMessageId() + ": ";
-        }
-        message += responseFormat.getFormattedMessage();
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_STATUS, status);
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_DESC, message);
-        getAuditingManager().auditEvent(auditingFields);
+        getAuditingManager().auditEvent(factory);
     }
 
     public ResponseFormat getResponseFormatByComponent(ActionStatus actionStatus, Component component, ComponentTypeEnum type) {
@@ -1199,7 +1254,7 @@ public class ComponentsUtils {
             responseEnum = ActionStatus.GENERAL_ERROR;
             break;
         }
-        log.debug("convert storage response {} to action response {}", storageResponse, responseEnum);
+        log.debug(CONVERT_STORAGE_RESPONSE_TO_ACTION_RESPONSE, storageResponse, responseEnum);
         return responseEnum;
     }
 
@@ -1299,7 +1354,7 @@ public class ComponentsUtils {
             responseEnum = ActionStatus.GENERAL_ERROR;
             break;
         }
-        log.debug("convert storage response {} to action response {}", storageResponse, responseEnum);
+        log.debug(CONVERT_STORAGE_RESPONSE_TO_ACTION_RESPONSE, storageResponse, responseEnum);
         return responseEnum;
     }
 
@@ -1327,7 +1382,7 @@ public class ComponentsUtils {
             responseEnum = ActionStatus.GENERAL_ERROR;
             break;
         }
-        log.debug("convert storage response {} to action response {}", storageResponse, responseEnum);
+        log.debug(CONVERT_STORAGE_RESPONSE_TO_ACTION_RESPONSE, storageResponse, responseEnum);
         return responseEnum;
     }
 
@@ -1358,7 +1413,7 @@ public class ComponentsUtils {
             responseEnum = ActionStatus.GENERAL_ERROR;
             break;
         }
-        log.debug("convert storage response {} to action response {}", storageResponse, responseEnum);
+        log.debug(CONVERT_STORAGE_RESPONSE_TO_ACTION_RESPONSE, storageResponse, responseEnum);
         return responseEnum;
     }
 
@@ -1458,6 +1513,14 @@ public class ComponentsUtils {
         }
         return result;
     }
-
+    
+    
+    public ResponseFormat getResponseFormat(ComponentException exception) {
+        ResponseFormat responseFormat = exception.getResponseFormat();
+        if (responseFormat != null) {
+            return responseFormat;
+        }
+        return getResponseFormat(exception.getActionStatus(), exception.getParams());
+    }
 
 }

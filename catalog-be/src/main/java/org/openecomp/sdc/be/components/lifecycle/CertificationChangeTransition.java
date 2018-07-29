@@ -20,41 +20,47 @@
 
 package org.openecomp.sdc.be.components.lifecycle;
 
-import java.util.Arrays;
-
+import fj.data.Either;
 import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ComponentBusinessLogic;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
-import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
-import org.openecomp.sdc.be.model.Component;
-import org.openecomp.sdc.be.model.LifeCycleTransitionEnum;
-import org.openecomp.sdc.be.model.LifecycleStateEnum;
-import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.*;
+import org.openecomp.sdc.be.model.category.CategoryDefinition;
 import org.openecomp.sdc.be.model.jsontitan.datamodel.ToscaElement;
+import org.openecomp.sdc.be.model.jsontitan.operations.NodeTemplateOperation;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaElementLifecycleOperation;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.jsontitan.utils.ModelConverter;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
+import org.openecomp.sdc.be.tosca.ToscaUtils;
 import org.openecomp.sdc.be.user.Role;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import fj.data.Either;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 public class CertificationChangeTransition extends LifeCycleTransition {
+    private static final  String ALLOTTED_CATEGORY = "Allotted Resource";
+    private static final  String DEPENDING_SRV_NAME = "depending_service_name";
+    private static final  String PROVIDING_SRV_NAME = "providing_service_name";
+    private static final  String PROVIDING_SRV_UUID = "providing_service_uuid";
+    private static final  String DEPENDING_SRV_UUID = "depending_service_uuid";
 
-    private static final Logger log = LoggerFactory.getLogger(CertificationChangeTransition.class);
+    private static final Logger log = Logger.getLogger(CertificationChangeTransition.class);
 
     private LifecycleStateEnum nextState;
     private LifeCycleTransitionEnum name;
     private AuditingActionEnum auditingAction;
     private ArtifactsBusinessLogic artifactsManager;
+    private NodeTemplateOperation nodeTemplateOperation;
 
     public CertificationChangeTransition(LifeCycleTransitionEnum name, ComponentsUtils componentUtils, ToscaElementLifecycleOperation lifecycleOperation, ToscaOperationFacade toscaOperationFacade, TitanDao titanDao) {
         super(componentUtils, lifecycleOperation, toscaOperationFacade, titanDao);
@@ -63,14 +69,11 @@ public class CertificationChangeTransition extends LifeCycleTransition {
 
         // authorized roles
         Role[] certificationChangeRoles = { Role.ADMIN, Role.TESTER };
-        addAuthorizedRoles(ComponentTypeEnum.RESOURCE, Arrays.asList(certificationChangeRoles));
+        Role[] resourceRoles = { Role.ADMIN, Role.TESTER, Role.DESIGNER};
+        addAuthorizedRoles(ComponentTypeEnum.RESOURCE, Arrays.asList(resourceRoles));
         addAuthorizedRoles(ComponentTypeEnum.SERVICE, Arrays.asList(certificationChangeRoles));
-        // TODO to be later defined for product
 
         //additional authorized roles for resource type
-        Role[] resourceRoles = { Role.DESIGNER};
-        addResouceAuthorizedRoles(ResourceTypeEnum.VFCMT, Arrays.asList(resourceRoles));
-
         switch (this.name) {
         case CERTIFY:
             this.auditingAction = AuditingActionEnum.CERTIFICATION_SUCCESS_RESOURCE;
@@ -108,13 +111,19 @@ public class CertificationChangeTransition extends LifeCycleTransition {
         this.artifactsManager = artifactsManager;
     }
 
+    public NodeTemplateOperation getNodeTemplateOperation() {
+        return nodeTemplateOperation;
+    }
+
+    public void setNodeTemplateOperation(NodeTemplateOperation nodeTemplateOperation) {
+        this.nodeTemplateOperation = nodeTemplateOperation;
+    }
+
     private ResponseFormat formatCertificationError(Component component, StorageOperationStatus response, ComponentTypeEnum componentType) {
         BeEcompErrorManager.getInstance().logBeDaoSystemError("Change LifecycleState - Certify failed on graph");
         log.debug("certification change failed on graph");
 
-        ActionStatus actionStatus = componentUtils.convertFromStorageResponse(response);
-        ResponseFormat responseFormat = componentUtils.getResponseFormatByComponent(actionStatus, component, componentType);
-        return responseFormat;
+        return componentUtils.getResponseFormatByComponent(componentUtils.convertFromStorageResponse(response), component, componentType);
     }
 
     @Override
@@ -125,23 +134,24 @@ public class CertificationChangeTransition extends LifeCycleTransition {
         // validate user
         Either<Boolean, ResponseFormat> userValidationResponse = userRoleValidation(modifier,component, componentType, lifecycleChangeInfo);
         if (userValidationResponse.isRight()) {
-            log.error("userRoleValidation failed");
+            log.debug("userRoleValidation failed");
             return userValidationResponse;
         }
 
-        if (!oldState.equals(LifecycleStateEnum.CERTIFICATION_IN_PROGRESS)) {
-            log.error("oldState={} should be={}",oldState,ActionStatus.COMPONENT_NOT_READY_FOR_CERTIFICATION);
-            ResponseFormat error = componentUtils.getResponseFormat(ActionStatus.COMPONENT_NOT_READY_FOR_CERTIFICATION, componentName, componentType.name().toLowerCase());
-            return Either.right(error);
+        if ( componentType != ComponentTypeEnum.RESOURCE ){
+            if (!oldState.equals(LifecycleStateEnum.CERTIFICATION_IN_PROGRESS)  ) {
+                log.debug("oldState={} should be={}",oldState,ActionStatus.COMPONENT_NOT_READY_FOR_CERTIFICATION);
+                ResponseFormat error = componentUtils.getResponseFormat(ActionStatus.COMPONENT_NOT_READY_FOR_CERTIFICATION, componentName, componentType.name().toLowerCase());
+                return Either.right(error);
+            }
+    
+            if (oldState.equals(LifecycleStateEnum.CERTIFICATION_IN_PROGRESS) && !modifier.getUserId().equals(owner.getUserId()) && !modifier.getRole().equals(Role.ADMIN.name())) {
+                log.debug("oldState={} should not be={}",oldState,ActionStatus.COMPONENT_IN_CERT_IN_PROGRESS_STATE);
+                log.debug("&& modifier({})!={}  && modifier.role({})!={}", modifier, owner, modifier.getRole(), owner.getRole());
+                ResponseFormat error = componentUtils.getResponseFormat(ActionStatus.COMPONENT_IN_CERT_IN_PROGRESS_STATE, componentName, componentType.name().toLowerCase(), owner.getFirstName(), owner.getLastName(), owner.getUserId());
+                return Either.right(error);
+            }
         }
-
-        if (oldState.equals(LifecycleStateEnum.CERTIFICATION_IN_PROGRESS) && !modifier.equals(owner) && !modifier.getRole().equals(Role.ADMIN.name())) {
-            log.error("oldState={} should not be={}",oldState,ActionStatus.COMPONENT_IN_CERT_IN_PROGRESS_STATE);
-            log.error("&& modifier({})!={}  && modifier.role({})!={}",modifier,owner);
-            ResponseFormat error = componentUtils.getResponseFormat(ActionStatus.COMPONENT_IN_CERT_IN_PROGRESS_STATE, componentName, componentType.name().toLowerCase(), owner.getFirstName(), owner.getLastName(), owner.getUserId());
-            return Either.right(error);
-        }
-
         return Either.left(true);
     }
 
@@ -173,23 +183,82 @@ public class CertificationChangeTransition extends LifeCycleTransition {
                     result = Either.right(responseFormat);
                 }
             }
-
-            result = Either.left(ModelConverter.convertFromToscaElement(certificationChangeResult.left().value()));
+            ToscaElement certificationResult = certificationChangeResult.left().value();
+            Component componentAfterCertification = ModelConverter.convertFromToscaElement(certificationResult);
+            if ( result == null || result.isLeft() ){
+                //update edges for allotted resource 
+                StorageOperationStatus status = handleConnectionsForAllotted(componentAfterCertification);
+                if ( status != StorageOperationStatus.OK){
+                    ResponseFormat responseFormat = formatCertificationError(componentAfterCertification, status, componentType);
+                    result = Either.right(responseFormat);
+                }
+            }
+            updateCalculatedCapabilitiesRequirements(componentAfterCertification);
+            result = Either.left(componentAfterCertification);
             return result;
         } finally {
             if (result == null || result.isRight()) {
                 BeEcompErrorManager.getInstance().logBeDaoSystemError("Change LifecycleState");
-                if (inTransaction == false) {
+                if ( !inTransaction ) {
                     log.debug("operation failed. do rollback");
                     titanDao.rollback();
                 }
             } else {
-                if (inTransaction == false) {
+                if ( !inTransaction ) {
                     log.debug("operation success. do commit");
                     titanDao.commit();
                 }
             }
         }
 
+    }
+
+    private void updateCalculatedCapabilitiesRequirements(Component certifiedComponent) {
+        if(certifiedComponent.getComponentType() == ComponentTypeEnum.SERVICE){
+            toscaOperationFacade.updateNamesOfCalculatedCapabilitiesRequirements(certifiedComponent.getUniqueId());
+        }
+    }
+
+    private StorageOperationStatus handleConnectionsForAllotted(Component component){
+        StorageOperationStatus status = StorageOperationStatus.OK;
+        if (component.getComponentType() == ComponentTypeEnum.RESOURCE && component.isTopologyTemplate()  ){
+            List<CategoryDefinition> categories = component.getCategories();
+            Optional<CategoryDefinition> findFirst = categories.stream().filter(c->c.getName().equals(ALLOTTED_CATEGORY)).findFirst();
+            if ( findFirst.isPresent() ){
+                findInstanceByAllottedProperties(component);
+            }else{
+                log.debug("Component isn't from allotted category.");
+            }
+        }
+        return status;
+    }
+
+    private void findInstanceByAllottedProperties(Component component) {
+        log.debug("Component is from alloted category. Remove all previous ALLOTTED_OF connections for all instances");
+        nodeTemplateOperation.removeAllAllotedEdges(component.getUniqueId());
+        Map<String, List<ComponentInstanceProperty>> componentInstancesProperties = component.getComponentInstancesProperties();
+        if ( componentInstancesProperties != null ){
+            componentInstancesProperties.entrySet().forEach(e->{
+                List<ComponentInstanceProperty> props = e.getValue();
+                Optional<ComponentInstanceProperty> findProp = props.stream().filter(p -> p.getName().equals(DEPENDING_SRV_NAME) ||  p.getName().equals(PROVIDING_SRV_NAME)).findFirst();
+                if ( findProp.isPresent() ){
+                    log.debug("Find specific properties [{} or {}]on instance {} ", DEPENDING_SRV_NAME,PROVIDING_SRV_NAME, e.getKey()  );
+                    handleAllotedInstance(component.getUniqueId(), e.getKey(), e.getValue() );
+                }else{
+                    log.debug("Not defined specific properties [{} or {}]on instance {} ", DEPENDING_SRV_NAME,PROVIDING_SRV_NAME, e.getKey()  );
+                }
+            });
+        }
+    }
+
+    private StorageOperationStatus handleAllotedInstance(String componentId, String instanceId, List<ComponentInstanceProperty> props) {
+        ComponentInstanceProperty serviceUUIDProp = props.stream().filter(p -> p.getName().equals(PROVIDING_SRV_UUID) ||  p.getName().equals(DEPENDING_SRV_UUID)).findFirst().get();
+        if ( serviceUUIDProp.getValue() != null && !serviceUUIDProp.getValue().contains("get_input")){
+            log.debug("Handle Allotted edge on instance {} for service UUID {} ", instanceId,  serviceUUIDProp.getValue() );
+            return  nodeTemplateOperation.createAllottedOfEdge(componentId, instanceId, serviceUUIDProp.getValue());
+        }else{
+            log.debug("An incorrectly defined service UUID for Allotted instance {} . Skip instance", instanceId,  serviceUUIDProp.getValue() );
+            return StorageOperationStatus.OK;
+        }
     }
 }

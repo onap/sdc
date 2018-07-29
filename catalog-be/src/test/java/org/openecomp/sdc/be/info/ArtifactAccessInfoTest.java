@@ -18,6 +18,6 @@ public class ArtifactAccessInfoTest {
     @Test
     public void testCtor() throws Exception {
         new ArtifactAccessInfo(new ESArtifactData());
-        new ArtifactAccessInfo(new ESArtifactData(), "mock");
+
     }
 }

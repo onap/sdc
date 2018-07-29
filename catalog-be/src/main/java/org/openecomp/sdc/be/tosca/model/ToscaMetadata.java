@@ -35,6 +35,7 @@ public class ToscaMetadata implements IToscaMetadata {
     private String resourceVendorModelNumber;
     private String serviceType;
     private String serviceRole;
+    private String instantiationType;
     private Boolean serviceEcompNaming;
     private Boolean ecompGeneratedNaming;
     private String namingPolicy;
@@ -138,6 +139,14 @@ public class ToscaMetadata implements IToscaMetadata {
     public String getServiceRole() {
         return serviceRole;
     }
+    
+    public void setInstantiationType(String instantiationType) {
+        this.instantiationType = instantiationType;
+    }
+
+    public String getInstantiationType() {
+        return instantiationType;
+    }
 
     public void setServiceRole(String serviceRole) {
         this.serviceRole = serviceRole;
@@ -207,8 +216,6 @@ public class ToscaMetadata implements IToscaMetadata {
     public void setSourceModelUuid(String sourceModelUuid) {
         this.sourceModelUuid = sourceModelUuid;
     }
-
-
 
     public String getEnvironmentContext() {
         return environmentContext;

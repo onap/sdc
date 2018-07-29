@@ -1,16 +1,11 @@
 package org.openecomp.sdc.be.dao.cassandra.schema.tables;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import com.datastax.driver.core.DataType;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.dao.cassandra.schema.ITableDescription;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingTypesConstants;
 
-import com.datastax.driver.core.DataType;
+import java.util.*;
 
 public class EcompOperationalEnvironmentEventTableDesc implements ITableDescription {
 
@@ -19,14 +14,14 @@ public class EcompOperationalEnvironmentEventTableDesc implements ITableDescript
     @Override
     public List<ImmutablePair<String, DataType>> primaryKeys() {
         List<ImmutablePair<String, DataType>> keys = new ArrayList<>();
-        keys.add(new ImmutablePair<String, DataType>(OPERATIONAL_ENVIRONMENT_ID, DataType.varchar()));
+        keys.add(new ImmutablePair<>(OPERATIONAL_ENVIRONMENT_ID, DataType.varchar()));
         return keys;
     }
 
     @Override
     public List<ImmutablePair<String, DataType>> clusteringKeys() {
         List<ImmutablePair<String, DataType>> keys = new ArrayList<>();
-        keys.add(new ImmutablePair<String, DataType>(TIMESTAMP_FIELD, DataType.timestamp()));
+        keys.add(new ImmutablePair<>(TIMESTAMP_FIELD, DataType.timestamp()));
         return keys;
     }
 

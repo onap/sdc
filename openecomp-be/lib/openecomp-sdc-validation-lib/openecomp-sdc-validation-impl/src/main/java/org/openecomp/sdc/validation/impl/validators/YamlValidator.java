@@ -16,12 +16,12 @@
 
 package org.openecomp.sdc.validation.impl.validators;
 
+import org.onap.sdc.tosca.services.YamlUtil;
 import org.openecomp.core.validation.ErrorMessageCode;
 import org.openecomp.core.validation.errors.ErrorMessagesFormatBuilder;
 import org.openecomp.core.validation.types.GlobalValidationContext;
 import org.openecomp.sdc.common.errors.Messages;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
-import org.onap.sdc.tosca.services.YamlUtil;
 import org.openecomp.sdc.validation.Validator;
 import org.openecomp.sdc.validation.impl.util.YamlValidatorUtil;
 

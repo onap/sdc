@@ -1,35 +1,39 @@
+/*
+ * Copyright © 2016-2018 European Support Limited
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.openecomp.sdc.be.components.path;
 
-import static org.junit.Assert.assertEquals;
-import static org.openecomp.sdc.be.tosca.utils.ForwardingPathToscaUtil.FORWARDER;
-import static org.openecomp.sdc.be.tosca.utils.ForwardingPathToscaUtil.FORWARDS_TO_TOSCA_NAME;
-import static org.openecomp.sdc.be.tosca.utils.ForwardingPathToscaUtil.PORTS_RANGE;
-import static org.openecomp.sdc.be.tosca.utils.ForwardingPathToscaUtil.PROTOCOL;
-import static org.openecomp.sdc.be.tosca.utils.ForwardingPathToscaUtil.addForwardingPaths;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openecomp.sdc.be.datatypes.elements.ForwardingPathDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ForwardingPathElementDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
-import org.openecomp.sdc.be.model.CapabilityDefinition;
-import org.openecomp.sdc.be.model.Component;
-import org.openecomp.sdc.be.model.ComponentInstance;
-import org.openecomp.sdc.be.model.Resource;
-import org.openecomp.sdc.be.model.Service;
+import org.openecomp.sdc.be.model.*;
 import org.openecomp.sdc.be.tosca.model.ToscaNodeTemplate;
 import org.openecomp.sdc.be.tosca.model.ToscaTemplateRequirement;
 import org.openecomp.sdc.be.tosca.utils.ForwardingPathToscaUtil;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import java.util.*;
+
+import static org.junit.Assert.assertEquals;
+import static org.openecomp.sdc.be.tosca.utils.ForwardingPathToscaUtil.*;
 
 /**
  * @author KATYR, ORENK
@@ -86,45 +90,50 @@ public class ForwardingPathToscaUtilTest extends BaseForwardingPathTest {
 
   @Test
   public void singleElementPath() {
-    createPathSingleElement();
-    Map<String, ToscaNodeTemplate> nodeTemplatesRes = new HashMap<>();
+    try {
+      createPathSingleElement();
+      Map<String, ToscaNodeTemplate> nodeTemplatesRes = new HashMap<>();
 
-    Map<String, ToscaNodeTemplate> expectedNodeTemplatesRes = new HashMap<>();
-    ToscaNodeTemplate pathEntry = new ToscaNodeTemplate();
-    pathEntry.setType(FORWARDING_PATH_TOSCA_TYPE);
-    Map<String, Object> expectedProps = new HashMap<>();
-    expectedProps.put(PORTS_RANGE, Collections.singletonList(PATH_1_PORTS));
-    expectedProps.put(PROTOCOL, PATH_1_PROTOCOL);
-    pathEntry.setProperties(expectedProps);
-    List<Map<String, ToscaTemplateRequirement>> requirements = new ArrayList<>();
-    ToscaTemplateRequirement firstEntryReq = new ToscaTemplateRequirement();
-    ToscaTemplateRequirement secondEntryReq = new ToscaTemplateRequirement();
+      Map<String, ToscaNodeTemplate> expectedNodeTemplatesRes = new HashMap<>();
+      ToscaNodeTemplate pathEntry = new ToscaNodeTemplate();
+      pathEntry.setType(FORWARDING_PATH_TOSCA_TYPE);
+      Map<String, Object> expectedProps = new HashMap<>();
+      expectedProps.put(PORTS_RANGE, Collections.singletonList(PATH_1_PORTS));
+      expectedProps.put(PROTOCOL, PATH_1_PROTOCOL);
+      pathEntry.setProperties(expectedProps);
+      List<Map<String, ToscaTemplateRequirement>> requirements = new ArrayList<>();
+      ToscaTemplateRequirement firstEntryReq = new ToscaTemplateRequirement();
+      ToscaTemplateRequirement secondEntryReq = new ToscaTemplateRequirement();
 
-    firstEntryReq.setCapability("null." + NODE_NAME_1);
-    secondEntryReq.setCapability("null." + NODE_NAME_2);
+      firstEntryReq.setCapability("null." + NODE_NAME_1);
+      secondEntryReq.setCapability("null." + NODE_NAME_2);
 
-    firstEntryReq.setNode(NODE_NAME_1);
-    secondEntryReq.setNode(NODE_NAME_2);
+      firstEntryReq.setNode(NODE_NAME_1);
+      secondEntryReq.setNode(NODE_NAME_2);
 
-    firstEntryReq.setRelationship(FORWARDS_TO_TOSCA_NAME);
-    secondEntryReq.setRelationship(FORWARDS_TO_TOSCA_NAME);
+      firstEntryReq.setRelationship(FORWARDS_TO_TOSCA_NAME);
+      secondEntryReq.setRelationship(FORWARDS_TO_TOSCA_NAME);
 
-    Map<String, ToscaTemplateRequirement> entryMap1 = new HashMap<>();
-    Map<String, ToscaTemplateRequirement> entryMap2 = new HashMap<>();
+      Map<String, ToscaTemplateRequirement> entryMap1 = new HashMap<>();
+      Map<String, ToscaTemplateRequirement> entryMap2 = new HashMap<>();
 
-    entryMap1.put(FORWARDER, firstEntryReq);
-    entryMap2.put(FORWARDER, secondEntryReq);
+      entryMap1.put(FORWARDER, firstEntryReq);
+      entryMap2.put(FORWARDER, secondEntryReq);
 
-    requirements.add(entryMap1);
-    requirements.add(entryMap2);
+      requirements.add(entryMap1);
+      requirements.add(entryMap2);
 
-    pathEntry.setRequirements(requirements);
-    expectedNodeTemplatesRes.put(PATH_1_NAME, pathEntry);
-    addForwardingPaths(service, nodeTemplatesRes, capabiltyRequirementConvertor, originComponents,
-        toscaOperationFacade);
+      pathEntry.setRequirements(requirements);
+      expectedNodeTemplatesRes.put(PATH_1_NAME, pathEntry);
+      addForwardingPaths(service, nodeTemplatesRes, capabiltyRequirementConvertor, originComponents,
+          toscaOperationFacade);
 
-    assertEquals(2, nodeTemplatesRes.get(PATH_1_NAME).getRequirements().size());
-    compareToscaPathEntry(expectedNodeTemplatesRes, nodeTemplatesRes);
+      assertEquals(2, nodeTemplatesRes.get(PATH_1_NAME).getRequirements().size());
+      compareToscaPathEntry(expectedNodeTemplatesRes, nodeTemplatesRes);
+    } catch (Exception e){
+      e.printStackTrace();
+      Assert.fail(e.getMessage());
+    }
   }
 
   private void compareToscaPathEntry(Map<String, ToscaNodeTemplate> expectedNodeTemplatesRes,
@@ -153,7 +162,7 @@ public class ForwardingPathToscaUtilTest extends BaseForwardingPathTest {
   }
 
   private void createPathSingleElement() {
-    ForwardingPathElementDataDefinition element1 = initElement(NODE_ID_1, NODE_ID_2, NODE_NAME_1,
+    ForwardingPathElementDataDefinition element1 = initElement(NODE_NAME_1, NODE_NAME_2, NODE_NAME_1,
         NODE_NAME_2);
 
     ListDataDefinition<ForwardingPathElementDataDefinition> list = new ListDataDefinition<>();

@@ -3,7 +3,6 @@ package org.openecomp.sdc.be.datatypes.elements;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 
-import java.io.Serializable;
 import java.util.*;
 
 /**
@@ -13,13 +12,14 @@ import java.util.*;
  * "workflows"  -> { "ref1",  "ref2" }
  *
  */
-public class MapComponentInstanceExternalRefs extends ToscaDataDefinition implements Serializable {
+public class MapComponentInstanceExternalRefs extends ToscaDataDefinition {
 
-    private static final long serialVersionUID = 7788408255736272985L;
-
-    //Constructor
     public MapComponentInstanceExternalRefs() {
-        this.setComponentInstanceExternalRefs(new HashMap<String, List<String>>());
+        setComponentInstanceExternalRefs(new HashMap<>());
+    }
+
+    public MapComponentInstanceExternalRefs(Map<String, List<String>> instanceExternalReferences) {
+        setComponentInstanceExternalRefs(instanceExternalReferences);
     }
 
     public Map<String, List<String>> getComponentInstanceExternalRefs() {
@@ -27,8 +27,7 @@ public class MapComponentInstanceExternalRefs extends ToscaDataDefinition implem
     }
 
     public List<String> getExternalRefsByObjectType(String objectType) {
-        List<String> externalRefsByObjectType = ((Map<String, List<String>>) getToscaPresentationValue(JsonPresentationFields.EXTERNAL_REF)).get(objectType);
-        return externalRefsByObjectType;
+        return ((Map<String, List<String>>) getToscaPresentationValue(JsonPresentationFields.EXTERNAL_REF)).get(objectType);
     }
 
     public void setComponentInstanceExternalRefs(Map<String, List<String>> componentInstanceExternalRefs) {
@@ -47,7 +46,7 @@ public class MapComponentInstanceExternalRefs extends ToscaDataDefinition implem
 
         if (refList == null) {
             //Create list if does not exist and add it to map
-            refList = new ArrayList<String>();
+            refList = new ArrayList<>();
             this.getComponentInstanceExternalRefs().put(objectType, refList);
         }
 

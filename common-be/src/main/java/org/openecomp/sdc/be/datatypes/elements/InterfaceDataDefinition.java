@@ -20,14 +20,15 @@
 
 package org.openecomp.sdc.be.datatypes.elements;
 
-import static org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields.TOSCA_RESOURCE_NAME;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
+import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
+import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
-import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
-import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
+
+import static org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields.TOSCA_RESOURCE_NAME;
 
 public class InterfaceDataDefinition extends ToscaDataDefinition implements Serializable {
 
@@ -94,7 +95,7 @@ public class InterfaceDataDefinition extends ToscaDataDefinition implements Seri
 
 	public  Map<String, OperationDataDefinition>  getOperations() {
 		return (Map<String, OperationDataDefinition>)
-			getToscaPresentationValue(JsonPresentationFields.INTERFACE_OPERATION);
+				getToscaPresentationValue(JsonPresentationFields.INTERFACE_OPERATION);
 	}
 
 	public void setOperations(Map<String, OperationDataDefinition> operations) {

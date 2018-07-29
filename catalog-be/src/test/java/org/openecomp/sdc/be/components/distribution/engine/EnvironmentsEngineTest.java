@@ -1,11 +1,8 @@
 package org.openecomp.sdc.be.components.distribution.engine;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicBoolean;
-
+import com.att.nsa.apiClient.credentials.ApiCredential;
+import fj.data.Either;
+import mockit.Deencapsulation;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -25,11 +22,11 @@ import org.openecomp.sdc.common.datastructure.Wrapper;
 import org.openecomp.sdc.common.http.client.api.HttpResponse;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import com.att.nsa.apiClient.credentials.ApiCredential;
-
-import fj.data.Either;
-import groovyjarjarantlr.collections.List;
-import mockit.Deencapsulation;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class EnvironmentsEngineTest extends BeConfDependentTest {
 

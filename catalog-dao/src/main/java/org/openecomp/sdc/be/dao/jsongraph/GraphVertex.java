@@ -20,19 +20,19 @@
 
 package org.openecomp.sdc.be.dao.jsongraph;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
-
+import com.thinkaurelius.titan.core.TitanVertex;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
+import org.openecomp.sdc.be.datatypes.enums.InstantiationTypes;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 
-import com.thinkaurelius.titan.core.TitanVertex;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
 public class GraphVertex {
 	private String uniqueId;
@@ -59,6 +59,7 @@ public class GraphVertex {
 
 	public void setUniqueId(String uniqueId) {
 		this.uniqueId = uniqueId;
+		addMetadataProperty(GraphPropertyEnum.UNIQUE_ID, uniqueId);
 	}
 
 	public Map<String, ? extends ToscaDataDefinition> getJson() {
@@ -86,8 +87,7 @@ public class GraphVertex {
 	}
 
 	public ComponentTypeEnum getType() {
-		ComponentTypeEnum type = ComponentTypeEnum.valueOf((String) getMetadataProperty(GraphPropertyEnum.COMPONENT_TYPE));
-		return type;
+        return ComponentTypeEnum.valueOf((String) getMetadataProperty(GraphPropertyEnum.COMPONENT_TYPE));
 	}
 
 	public void setType(ComponentTypeEnum type) {
@@ -117,6 +117,14 @@ public class GraphVertex {
 	public void setMetadataProperties(Map<GraphPropertyEnum, Object> metadataProperties) {
 		this.metadataProperties = metadataProperties;
 	}
+
+	public void getOrSetDefaultInstantiationTypeForToscaElementJson(){
+		String toscaVertexJsonInstantiationType;
+		toscaVertexJsonInstantiationType = (String)(this.getJsonMetadataField(JsonPresentationFields.INSTANTIATION_TYPE));
+		if (toscaVertexJsonInstantiationType == StringUtils.EMPTY || toscaVertexJsonInstantiationType == null){
+			this.setJsonMetadataField(JsonPresentationFields.INSTANTIATION_TYPE, InstantiationTypes.A_LA_CARTE.getValue());
+		};
+	};
 
 	public Map<String, Object> getMetadataJson() {
 		return metadataJson;

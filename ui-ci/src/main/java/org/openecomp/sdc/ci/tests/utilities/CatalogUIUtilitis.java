@@ -20,11 +20,7 @@
 
 package org.openecomp.sdc.ci.tests.utilities;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
+import com.aventstack.extentreports.Status;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.openecomp.sdc.ci.tests.datatypes.CheckBoxStatusEnum;
@@ -35,59 +31,15 @@ import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
 import org.openecomp.sdc.ci.tests.execute.setup.SetupCDTest;
 import org.openecomp.sdc.ci.tests.utils.rest.CatalogRestUtils;
 import org.openqa.selenium.WebElement;
-import org.testng.annotations.Test;
 
-import com.aventstack.extentreports.Status;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class CatalogUIUtilitis {
 	
-	
-	
-	
 
-	// Get all Categories , Subcategories and Icons.
-	public void getAllCategoriesAndSubcategories() throws IOException, JSONException {
-		RestResponse allcategoriesJson = CatalogRestUtils.getAllCategoriesTowardsCatalogBe();
-		JSONArray categories = new JSONArray(allcategoriesJson.getResponse());
-		for (int i = 0; i < categories.length(); i++) {
-			String categoryname = (String) categories.getJSONObject(i).get("name");
-			JSONArray subcategories = (JSONArray) categories.getJSONObject(i).get("subcategories");
-			for (int j = 0; j < subcategories.length(); j++) {
-				String subcategoryname = (String) subcategories.getJSONObject(j).get("name");
-				System.out.println(subcategoryname);
-			}
-			for (int j = 0; j < subcategories.length(); j++) {
-				JSONArray icons = (JSONArray) subcategories.getJSONObject(j).get("icons");
-				for (int k = 0; k < icons.length(); k++) {
-					System.out.println(icons.get(k));
-				}
-			}
-			System.out.println("-------------------------------");
-		}
-	}
-
-	@Test
-	// FOr testing---delete.
-	public static List<String> abcd() throws IOException, JSONException {
-		RestResponse allcategoriesJson = CatalogRestUtils.getAllCategoriesTowardsCatalogBe();
-		JSONArray categories = new JSONArray(allcategoriesJson.getResponse());
-		List<String> allcat = new ArrayList<>();
-		String uniqueId = null;
-		for (int i = 0; i < categories.length(); i++) {
-			String categoryname = (String) categories.getJSONObject(i).get("name");
-			uniqueId = (String) categories.getJSONObject(i).get("uniqueId");
-			allcat.add(uniqueId);
-			JSONArray subcategories = (JSONArray) categories.getJSONObject(i).get("subcategories");
-			for (int j = 0; j < subcategories.length(); j++) {
-				String subcategoryname = (String) subcategories.getJSONObject(j).get("name");
-				uniqueId = (String) subcategories.getJSONObject(j).get("uniqueId");
-				allcat.add(uniqueId);
-			}
-		}
-		return allcat;
-
-	}
-	
 	public static void clickTopMenuButton(TopMenuButtonsEnum button) {
 		SetupCDTest.getExtendTest().log(Status.INFO, String.format("Clicking on %s button ...", button.name()));
 		switch (button) {
@@ -113,29 +65,26 @@ public class CatalogUIUtilitis {
 		return Type;
 	}
 	
-	public static List<String> catalogFilterStatusChecBox(CheckBoxStatusEnum statusEnum) throws Exception {
+	public static List<String> catalogFilterStatusChecBox(CheckBoxStatusEnum statusEnum){
 		List<String> status = null;
 		SetupCDTest.getExtendTest().log(Status.INFO, String.format("Clicking on %s status", statusEnum.name()));
 		switch (statusEnum) {
 		case IN_DESIGN:
 			status = Arrays.asList("NOT_CERTIFIED_CHECKIN", "NOT_CERTIFIED_CHECKOUT");
-			GeneralUIUtils.getWebElementByTestID(statusEnum.getCatalogValue()).click();
+			GeneralUIUtils.getWebElementByTestID(statusEnum.getValue()).click();
 			break;
 		case READY_FOR_TESTING:
 			status = Arrays.asList("READY_FOR_CERTIFICATION");
-			GeneralUIUtils.getWebElementByTestID(statusEnum.getCatalogValue()).click();
+			GeneralUIUtils.getWebElementByTestID(statusEnum.getValue()).click();
 			break;
 		case IN_TESTING:
 			status = Arrays.asList("CERTIFICATION_IN_PROGRESS");
-			GeneralUIUtils.getWebElementByTestID(statusEnum.getCatalogValue()).click();
+			GeneralUIUtils.getWebElementByTestID(statusEnum.getValue()).click();
 			break;
 		case CERTIFIED:
-			status = Arrays.asList("CERTIFIED");
-			GeneralUIUtils.getWebElementByTestID(statusEnum.getCatalogValue()).click();
-			break;
 		case DISTRIBUTED:
 			status = Arrays.asList("CERTIFIED");
-			GeneralUIUtils.getWebElementByTestID(statusEnum.getCatalogValue()).click();
+			GeneralUIUtils.getWebElementByTestID(statusEnum.getValue()).click();
 			break;
 		}
 		return status;
@@ -148,72 +97,22 @@ public class CatalogUIUtilitis {
 		JSONArray categories = new JSONArray(allcategoriesJson.getResponse());
 		for (int i = 0; i < categories.length(); i++) {
 			String categoryname = (String) categories.getJSONObject(i).get("name");
-			System.out.println(categoryname);
 			allCategoriesList.add(categoryname);
 		}
 		return allCategoriesList;
 	}
 
-	@Test
-	// Get Subcategories by Category name
-	public static List<String> getAllSubcategoriesByUniqueId(String uniqueId) throws IOException, JSONException {
-
-		RestResponse allcategoriesJson = CatalogRestUtils.getAllCategoriesTowardsCatalogBe();
-		JSONArray categories = new JSONArray(allcategoriesJson.getResponse());
-		List<String> subCategories = new ArrayList<>();// subCategories to
-														// return.
-		JSONArray subcategories = null;
-
-		for (int i = 0; i < categories.length(); i++) {
-
-			String categoryuniqueId = (String) categories.getJSONObject(i).get("uniqueId");
-
-			if (categoryuniqueId.contentEquals(uniqueId)) {
-				subcategories = (JSONArray) categories.getJSONObject(i).get("subcategories");
-
-				for (int j = 0; j < subcategories.length(); j++) {
-
-					subCategories.add((String) subcategories.getJSONObject(j).get("uniqueId"));
-				}
-
-				break;
-			}
-		}
-		if (subcategories == null) {
-			subCategories.add(uniqueId);
-		}
-		return subCategories;
-	}
-
-	@Test
-	// Get icons by category name
-	public void getSubCategoryIcons() throws IOException, JSONException {
-		RestResponse allcategoriesJson = CatalogRestUtils.getAllCategoriesTowardsCatalogBe();
-
-		JSONArray categories = new JSONArray(allcategoriesJson.getResponse());
-		for (int i = 0; i < categories.length(); i++) {
-			String subcategoryname = (String) categories.getJSONObject(i).get("name");
-			if (subcategoryname.contentEquals("Generic")) {
-				JSONArray subcategories = (JSONArray) categories.getJSONObject(i).get("subcategories");
-				for (int j = 0; j < subcategories.length(); j++) {
-					JSONArray icons = (JSONArray) subcategories.getJSONObject(j).get("icons");
-					for (int k = 0; k < icons.length(); k++) {
-						System.out.println(icons.get(k));
-					}
-				}
-				break;
-			}
-		}
-	}
-	
-	
-	public static WebElement clickOnUpperCategoryCheckbox() throws InterruptedException {
-		List<WebElement> categorieCheckboxes = GeneralUIUtils.getElementsByCSS("span[data-tests-id*='category']"); // get all categories and subcategories
-		WebElement categorieCheckbox = categorieCheckboxes.get(0);
-		SetupCDTest.getExtendTest().log(Status.INFO, String.format("Clicking on %s category ...", categorieCheckbox.getText()));
-		categorieCheckbox.click();
+	public static WebElement clickOnUpperCategoryCheckbox() /*throws InterruptedException*/ {
+		WebElement categoryCheckbox = getCategoryCheckbox();
+		SetupCDTest.getExtendTest().log(Status.INFO, String.format("Clicking on %s category ...", categoryCheckbox.getText()));
+		categoryCheckbox.click();
 		GeneralUIUtils.ultimateWait();
-		return categorieCheckbox;
+		return categoryCheckbox;
+	}
+
+	public static WebElement getCategoryCheckbox() {
+		List<WebElement> categoryCheckboxes = GeneralUIUtils.getElementsByCSS("span[data-tests-id*='category']"); // get all categories and subcategories
+		return categoryCheckboxes.get(0);
 	}
 
 	public static void clickOnLeftPanelElement(DataTestIdEnum.CatalogPageLeftPanelFilterTitle leftPanelElement) throws InterruptedException {

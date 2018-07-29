@@ -1,11 +1,8 @@
 package org.openecomp.sdc.common.util;
 
-import java.util.Map;
-import java.util.zip.ZipInputStream;
-
-import javax.annotation.Generated;
-
 import org.junit.Test;
+
+import java.util.Map;
 
 public class ZipUtilTest {
 

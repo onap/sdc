@@ -20,7 +20,11 @@
 
 package org.openecomp.sdc.ci.tests.tosca.datatypes;
 
-public class ToscaServiceGroupsMetadataDefinition {
+import java.io.Serializable;
+
+public class ToscaServiceGroupsMetadataDefinition implements Serializable {
+
+	public static final long serialVersionUID = -6373756459974949120L;
 
 	public String vfModuleModelName;
 	public String vfModuleModelInvariantUUID;
@@ -77,7 +81,26 @@ public class ToscaServiceGroupsMetadataDefinition {
 		return "ToscaGroupsMetadataDefinition [vfModuleModelName=" + vfModuleModelName + ", vfModuleModelInvariantUUID=" + vfModuleModelInvariantUUID + ", vfModuleModelCustomizationUUID=" + vfModuleModelCustomizationUUID
 				+ ", vfModuleModelUUID=" + vfModuleModelUUID + ", vfModuleModelVersion=" + vfModuleModelVersion + "]";
 	}
-	
-	
-	
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (!(o instanceof ToscaServiceGroupsMetadataDefinition)) return false;
+
+		ToscaServiceGroupsMetadataDefinition that = (ToscaServiceGroupsMetadataDefinition) o;
+
+		if (vfModuleModelName != null ? !vfModuleModelName.equals(that.vfModuleModelName) : that.vfModuleModelName != null)
+			return false;
+		if (!vfModuleModelInvariantUUID.equals(that.vfModuleModelInvariantUUID)) return false;
+		if (vfModuleModelCustomizationUUID != null ? !vfModuleModelCustomizationUUID.equals(that.vfModuleModelCustomizationUUID) : that.vfModuleModelCustomizationUUID != null)
+			return false;
+		if (vfModuleModelUUID != null ? !vfModuleModelUUID.equals(that.vfModuleModelUUID) : that.vfModuleModelUUID != null)
+			return false;
+		return vfModuleModelVersion != null ? vfModuleModelVersion.equals(that.vfModuleModelVersion) : that.vfModuleModelVersion == null;
+	}
+
+	@Override
+	public int hashCode() {
+		return vfModuleModelInvariantUUID.hashCode();
+	}
 }

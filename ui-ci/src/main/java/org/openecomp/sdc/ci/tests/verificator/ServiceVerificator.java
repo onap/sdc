@@ -20,37 +20,17 @@
 
 package org.openecomp.sdc.ci.tests.verificator;
 
-import static org.testng.Assert.assertTrue;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Random;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-
+import com.aventstack.extentreports.Status;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
-import org.openecomp.sdc.be.model.GroupInstance;
-import org.openecomp.sdc.be.model.GroupInstanceProperty;
-import org.openecomp.sdc.be.model.LifecycleStateEnum;
-import org.openecomp.sdc.be.model.Service;
-import org.openecomp.sdc.be.model.User;
-import org.openecomp.sdc.ci.tests.datatypes.ComponentReqDetails;
-import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum;
+import org.openecomp.sdc.be.model.*;
+import org.openecomp.sdc.ci.tests.datatypes.*;
 import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum.PropertiesPopupEnum;
-import org.openecomp.sdc.ci.tests.datatypes.ResourceReqDetails;
-import org.openecomp.sdc.ci.tests.datatypes.ServiceReqDetails;
 import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
 import org.openecomp.sdc.ci.tests.execute.setup.ExtentTestActions;
 import org.openecomp.sdc.ci.tests.execute.setup.SetupCDTest;
-import org.openecomp.sdc.ci.tests.pages.CompositionPage;
-import org.openecomp.sdc.ci.tests.pages.DeploymentPage;
-import org.openecomp.sdc.ci.tests.pages.PropertyPopup;
-import org.openecomp.sdc.ci.tests.pages.ResourceGeneralPage;
-import org.openecomp.sdc.ci.tests.pages.ServiceGeneralPage;
+import org.openecomp.sdc.ci.tests.pages.*;
 import org.openecomp.sdc.ci.tests.utilities.GeneralUIUtils;
 import org.openecomp.sdc.ci.tests.utilities.RestCDUtils;
 import org.openecomp.sdc.ci.tests.utils.general.AtomicOperationUtils;
@@ -58,7 +38,11 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Select;
 
-import com.aventstack.extentreports.Status;
+import java.util.*;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+
+import static org.testng.Assert.assertTrue;
 
 public class ServiceVerificator {
 
@@ -123,6 +107,12 @@ public class ServiceVerificator {
 		String actualLifecycleState = jsonResource.get("lifecycleState").toString();
 		assertTrue(expectedLifecycleState.name().equals(actualLifecycleState), "actual: " + actualLifecycleState + "-- expected: " + expectedLifecycleState);
 	}
+
+	public static void verifyServiceLifecycleInUI(LifeCycleStateEnum lifecycleState){
+		SetupCDTest.getExtendTest().log(Status.INFO, String.format("Verfiying that service state is %s", lifecycleState.getValue()));
+		GeneralUIUtils.ultimateWait();
+		assertTrue(ResourceGeneralPage.getLifeCycleState().equals(lifecycleState.getValue()));
+	}
 	
 	public static void verifyLinkCreated(ServiceReqDetails createServiceInUI, User user, int expectedRelationsSize) {
 		String responseAfterDrag = RestCDUtils.getService(createServiceInUI, user).getResponse();
@@ -139,9 +129,19 @@ public class ServiceVerificator {
 	}
 	
 	public static void verifyVersionUI(String expected){
-		String actualVersion = GeneralUIUtils.getSelectedElementFromDropDown(DataTestIdEnum.GeneralElementsEnum.VERSION_HEADER.getValue()).getText().replace("V", "");
+		SetupCDTest.getExtendTest().log(Status.INFO, String.format("Verifying that version is %s", expected));
+		String actualVersion = GeneralUIUtils.getSelectedElementFromDropDown
+				(DataTestIdEnum.GeneralElementsEnum.VERSION_HEADER.getValue()).getText().replace("V", "");
 		assertTrue(actualVersion.equals(expected), String.format( "Expected version: %s, Actual version: %s", expected, actualVersion));
 	}
+
+	public static void verifyResourceInstanceVersionUI(String expected){
+		SetupCDTest.getExtendTest().log(Status.INFO, String.format("Verifying that instance version is %s", expected));
+        List<WebElement> selectedVersion = GeneralUIUtils.findElementsByXpath
+                ("//option[contains(@class,\"select-instance-version\") and contains (@selected, \"selected\")]");
+        String actual = selectedVersion.get(0).getText();
+        assertTrue(expected.equals(actual), String.format( "Expected version: %s, Actual version: %s", expected, actual));
+    }
 	
 	public static void verifyOpenTabTitle(DataTestIdEnum.CompositionScreenEnum currentTab) throws Exception{
 		List<String> expectedTitles  = new ArrayList<String>();
@@ -324,8 +324,8 @@ public class ServiceVerificator {
 		}
 
 	public static void verifyErrorPresentAndSaveDisabled() throws Exception{
-		assertTrue(DeploymentPage.isPropertySaveButtonDisabled());
-		assertTrue(DeploymentPage.getPropertyErrorValidationMessdge().size() == 1);
+		assertTrue(DeploymentPage.isPropertySaveButtonDisabled(), "Property Save button enabled, should be disabled");
+		assertTrue(DeploymentPage.getPropertyErrorValidationMessdge().size() == 1, "Error msg missing for input");
 	}
 
 	public static void moveMetadataPropertiesArtifactSection(int offset) throws InterruptedException {

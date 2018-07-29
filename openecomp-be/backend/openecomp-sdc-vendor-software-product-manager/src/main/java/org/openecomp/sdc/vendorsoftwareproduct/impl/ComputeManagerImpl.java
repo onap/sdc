@@ -38,22 +38,14 @@ import org.openecomp.sdc.vendorsoftwareproduct.services.schemagenerator.SchemaGe
 import org.openecomp.sdc.vendorsoftwareproduct.types.CompositionEntityResponse;
 import org.openecomp.sdc.vendorsoftwareproduct.types.ListComputeResponse;
 import org.openecomp.sdc.vendorsoftwareproduct.types.QuestionnaireResponse;
-import org.openecomp.sdc.vendorsoftwareproduct.types.composition.ComponentComputeAssociation;
-import org.openecomp.sdc.vendorsoftwareproduct.types.composition.CompositionEntityType;
-import org.openecomp.sdc.vendorsoftwareproduct.types.composition.CompositionEntityValidationData;
-import org.openecomp.sdc.vendorsoftwareproduct.types.composition.ComputeData;
-import org.openecomp.sdc.vendorsoftwareproduct.types.composition.DeploymentFlavor;
+import org.openecomp.sdc.vendorsoftwareproduct.types.composition.*;
 import org.openecomp.sdc.vendorsoftwareproduct.types.schemagenerator.ComputeCompositionSchemaInput;
 import org.openecomp.sdc.vendorsoftwareproduct.types.schemagenerator.SchemaTemplateContext;
 import org.openecomp.sdc.vendorsoftwareproduct.types.schemagenerator.SchemaTemplateInput;
 import org.openecomp.sdc.versioning.VersioningUtil;
 import org.openecomp.sdc.versioning.dao.types.Version;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class ComputeManagerImpl implements ComputeManager {
   private final ComputeDao computeDao;
@@ -100,7 +92,7 @@ public class ComputeManagerImpl implements ComputeManager {
   }
 
   private Collection<ListComputeResponse> getListComputeResponse(String vspId, Version version,
-                                         Collection<ComputeEntity> computes) {
+                                                                 Collection<ComputeEntity> computes) {
     Set<String> vspComputes = getComputeAssociatedWithDepFlavors(vspId, version);
     Collection<ListComputeResponse> computeResponse = new ArrayList<>();
     for (ComputeEntity computeEntity : computes) {

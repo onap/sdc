@@ -20,26 +20,20 @@
 
 package org.openecomp.sdc.ci.tests.execute.sanity;
 
-import java.io.IOException;
-import java.util.List;
-
+import com.aventstack.extentreports.Status;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
-import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum;
 import org.openecomp.sdc.ci.tests.datatypes.ResourceReqDetails;
-import org.openecomp.sdc.ci.tests.datatypes.enums.LifeCycleStatesEnum;
 import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
 import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
 import org.openecomp.sdc.ci.tests.execute.setup.ExtentTestActions;
 import org.openecomp.sdc.ci.tests.execute.setup.SetupCDTest;
 import org.openecomp.sdc.ci.tests.pages.AdminGeneralPage;
-import org.openecomp.sdc.ci.tests.pages.ResourceGeneralPage;
 import org.openecomp.sdc.ci.tests.utilities.AdminWorkspaceUIUtilies;
 import org.openecomp.sdc.ci.tests.utilities.GeneralUIUtils;
 import org.openecomp.sdc.ci.tests.utilities.ResourceUIUtils;
-import org.openecomp.sdc.ci.tests.utils.general.AtomicOperationUtils;
 import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
 import org.openecomp.sdc.ci.tests.utils.rest.ResourceRestUtils;
 import org.openecomp.sdc.ci.tests.utils.rest.UserRestUtils;
@@ -48,11 +42,11 @@ import org.openecomp.sdc.ci.tests.verificator.UserManagementVerificator;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.testng.Assert;
-import org.testng.SkipException;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-import com.aventstack.extentreports.Status;
+import java.io.IOException;
+import java.util.List;
 
 public class AdminUserManagment extends SetupCDTest {
 	
@@ -105,12 +99,15 @@ public class AdminUserManagment extends SetupCDTest {
 		ErrorMessageUIVerificator.validateErrorMessage(ActionStatus.USER_ALREADY_EXIST);
 	}
 
+	
+	// design changed and now one letter user should exist  
 	//TC922253
-	@Test
+	@Test(enabled=false)
 	public void createInvalidMacIdTest(){
 		
 		if(true){
-			throw new SkipException("Open bug 324032");
+//			throw new SkipException("Open bug 324032");
+			ExtentTestActions.log(Status.INFO, "Open bug 324032");			
 		}
 		
 		String macId = generateValidMacId();
@@ -221,8 +218,9 @@ public class AdminUserManagment extends SetupCDTest {
 		
 		ErrorMessageUIVerificator.validateErrorMessage(ActionStatus.CANNOT_UPDATE_USER_WITH_ACTIVE_ELEMENTS);
 	}
-	
-	@Test
+
+	//obsolete test since no more start certification request
+	/*@Test
 	public void modifyUserRoleWithTaskInHand_InTesting() throws Exception{
 		User newTesterUser = new User();
 		newTesterUser.setUserId(generateValidUserId());
@@ -234,6 +232,7 @@ public class AdminUserManagment extends SetupCDTest {
 		ResourceReqDetails resourceMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
 		ExtentTestActions.log(Status.INFO, "Creating a new VF named " + resourceMetaData.getName());
 		ResourceUIUtils.createVF(resourceMetaData, getUser());
+		//TODO Andrey should click on certify button
 		ResourceGeneralPage.clickSubmitForTestingButton(resourceMetaData.getName());
 		Resource resourceObjectByNameAndVersion = AtomicOperationUtils.getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, resourceMetaData.getName(), "0.1");
 		ExtentTestActions.log(Status.INFO, "Getting the VF to 'In Testing' state.");
@@ -246,7 +245,7 @@ public class AdminUserManagment extends SetupCDTest {
 		AdminWorkspaceUIUtilies.updateUserRole(0, updatedUserRole);
 		
 		ErrorMessageUIVerificator.validateErrorMessage(ActionStatus.CANNOT_UPDATE_USER_WITH_ACTIVE_ELEMENTS);
-	}
+	}*/
 	
 	
 	private static String generateValidUserId() {

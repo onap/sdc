@@ -4,11 +4,7 @@ import static org.openecomp.core.zusammen.api.ZusammenUtil.createSessionContext;
 
 import com.amdocs.zusammen.datatypes.Id;
 import com.amdocs.zusammen.datatypes.SessionContext;
-import com.amdocs.zusammen.datatypes.item.Info;
-import com.amdocs.zusammen.datatypes.item.ItemVersion;
-import com.amdocs.zusammen.datatypes.item.ItemVersionData;
-import com.amdocs.zusammen.datatypes.item.ItemVersionStatus;
-import com.amdocs.zusammen.datatypes.item.SynchronizationStatus;
+import com.amdocs.zusammen.datatypes.item.*;
 import com.amdocs.zusammen.datatypes.itemversion.ItemVersionRevisions;
 import java.util.ArrayList;
 import java.util.List;

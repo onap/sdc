@@ -24,6 +24,8 @@ import org.apache.commons.lang.StringUtils;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.elements.ConsumerDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.AssetTypeEnum;
+import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
+import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.model.*;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
@@ -287,26 +289,26 @@ public class ElementFactory {
 
 	// *** SERVICE ***
 	public static ServiceReqDetails getDefaultService() {
-		return getDefaultService(CI_SERVICE, ServiceCategoriesEnum.MOBILITY, "al1976");
+		return getDefaultService(CI_SERVICE, ServiceCategoriesEnum.MOBILITY, "al1976", ServiceInstantiationType.A_LA_CARTE.getValue());
 	}
 
 	public static ServiceReqDetails getDefaultService(String contactId) {
-		return getDefaultService(CI_SERVICE, ServiceCategoriesEnum.MOBILITY, contactId);
+		return getDefaultService(CI_SERVICE, ServiceCategoriesEnum.MOBILITY, contactId, ServiceInstantiationType.A_LA_CARTE.getValue());
 	}
 
 	public static ServiceReqDetails getDefaultService(User user) {
-		return getDefaultService(CI_SERVICE, ServiceCategoriesEnum.MOBILITY, user.getUserId());
+		return getDefaultService(CI_SERVICE, ServiceCategoriesEnum.MOBILITY, user.getUserId(), ServiceInstantiationType.A_LA_CARTE.getValue());
 	}
-
-	public static ServiceReqDetails getServiceByCategory(ServiceCategoriesEnum category) {
-		return getDefaultService(CI_SERVICE, category, "al1976");
-	}
-
+	
 	public static ServiceReqDetails getDefaultService(ServiceCategoriesEnum category, User user) {
-		return getDefaultService(CI_SERVICE, category, user.getUserId());
+		return getDefaultService(CI_SERVICE, category, user.getUserId(), ServiceInstantiationType.A_LA_CARTE.getValue());
+	}
+	
+	public static ServiceReqDetails getServiceByCategory(ServiceCategoriesEnum category) {
+		return getDefaultService(CI_SERVICE, category, "al1976", ServiceInstantiationType.A_LA_CARTE.getValue());
 	}
 
-	public static ServiceReqDetails getDefaultService(String serviceName, ServiceCategoriesEnum category, String contactId) {
+	public static ServiceReqDetails getDefaultService(String serviceName, ServiceCategoriesEnum category, String contactId, String instantiationType) {
 		serviceName = (serviceName + generateUUIDforSufix());
 		ArrayList<String> tags = new ArrayList<>();
 		tags.add("serviceTag");
@@ -315,7 +317,7 @@ public class ElementFactory {
 		String description = "service Description";
 		String icon = "defaulticon";
 
-		ServiceReqDetails serviceDetails = new ServiceReqDetails(serviceName, category.getValue(), tags, description, contactId, icon);
+		ServiceReqDetails serviceDetails = new ServiceReqDetails(serviceName, category.getValue(), tags, description, contactId, icon, instantiationType);
 
 		return serviceDetails;
 	}
@@ -375,7 +377,7 @@ public class ElementFactory {
 
 	public static ComponentInstanceReqDetails getDefaultComponentInstance(String name) {
 		String resourceUid = "resourceId";
-		ComponentInstanceReqDetails resourceInstanceDetails = new ComponentInstanceReqDetails(resourceUid, RESOURCE_INSTANCE_DESCRIPTION, RESOURCE_INSTANCE_POS_X, RESOURCE_INSTANCE_POS_Y, name);
+		ComponentInstanceReqDetails resourceInstanceDetails = new ComponentInstanceReqDetails(resourceUid, RESOURCE_INSTANCE_DESCRIPTION, RESOURCE_INSTANCE_POS_X, RESOURCE_INSTANCE_POS_Y, name, null);
 
 		return resourceInstanceDetails;
 
@@ -383,7 +385,7 @@ public class ElementFactory {
 
 	public static ComponentInstanceReqDetails getDefaultComponentInstance(String name, ComponentReqDetails componentReqDetails) {
 		String resourceUid = componentReqDetails.getUniqueId();
-		ComponentInstanceReqDetails resourceInstanceDetails = new ComponentInstanceReqDetails(resourceUid, RESOURCE_INSTANCE_DESCRIPTION, RESOURCE_INSTANCE_POS_X, RESOURCE_INSTANCE_POS_Y, name);
+		ComponentInstanceReqDetails resourceInstanceDetails = new ComponentInstanceReqDetails(resourceUid, RESOURCE_INSTANCE_DESCRIPTION, RESOURCE_INSTANCE_POS_X, RESOURCE_INSTANCE_POS_Y, name, null);
 
 		return resourceInstanceDetails;
 
@@ -392,7 +394,7 @@ public class ElementFactory {
 	public static ComponentInstanceReqDetails getComponentResourceInstance(ComponentReqDetails compInstOriginDetails) {
 		String compInstName = (compInstOriginDetails.getName() != null ? compInstOriginDetails.getName() : "resourceInstanceName");
 		String resourceUid = compInstOriginDetails.getUniqueId();
-		ComponentInstanceReqDetails resourceInstanceDetails = new ComponentInstanceReqDetails(resourceUid, RESOURCE_INSTANCE_DESCRIPTION, RESOURCE_INSTANCE_POS_X, RESOURCE_INSTANCE_POS_Y, compInstName);
+		ComponentInstanceReqDetails resourceInstanceDetails = new ComponentInstanceReqDetails(resourceUid, RESOURCE_INSTANCE_DESCRIPTION, RESOURCE_INSTANCE_POS_X, RESOURCE_INSTANCE_POS_Y, compInstName, null);
 		return resourceInstanceDetails;
 
 	}
@@ -400,7 +402,7 @@ public class ElementFactory {
 	public static ComponentInstanceReqDetails getComponentInstance(Component compInstOriginDetails) {
 		String compInstName = (compInstOriginDetails.getName() != null ? compInstOriginDetails.getName() : "componentInstanceName");
 		String compInsUid = compInstOriginDetails.getUniqueId();
-		ComponentInstanceReqDetails componentInstanceDetails = new ComponentInstanceReqDetails(compInsUid, RESOURCE_INSTANCE_DESCRIPTION, RESOURCE_INSTANCE_POS_X, RESOURCE_INSTANCE_POS_Y, compInstName);
+		ComponentInstanceReqDetails componentInstanceDetails = new ComponentInstanceReqDetails(compInsUid, RESOURCE_INSTANCE_DESCRIPTION, RESOURCE_INSTANCE_POS_X, RESOURCE_INSTANCE_POS_Y, compInstName, compInstOriginDetails.getComponentType() == ComponentTypeEnum.SERVICE ? OriginTypeEnum.ServiceProxy.name() : null);
 		return componentInstanceDetails;
 
 	}

@@ -126,7 +126,7 @@ export class ServiceServiceNg2 extends ComponentServiceNg2 {
     }
 
     getComponentCompositionData(component:Component):Observable<ComponentGenericResponse> {
-        return this.getComponentDataByFieldsName(component.componentType, component.uniqueId, [COMPONENT_FIELDS.COMPONENT_INSTANCES_RELATION, COMPONENT_FIELDS.COMPONENT_INSTANCES, SERVICE_FIELDS.FORWARDING_PATHS]);
+        return this.getComponentDataByFieldsName(component.componentType, component.uniqueId, [COMPONENT_FIELDS.COMPONENT_INSTANCES_RELATION, COMPONENT_FIELDS.COMPONENT_INSTANCES, SERVICE_FIELDS.FORWARDING_PATHS, COMPONENT_FIELDS.COMPONENT_NON_EXCLUDED_POLICIES, COMPONENT_FIELDS.COMPONENT_NON_EXCLUDED_GROUPS]);
     }
 
     protected analyzeComponentDataResponse(res: Response):ComponentGenericResponse {

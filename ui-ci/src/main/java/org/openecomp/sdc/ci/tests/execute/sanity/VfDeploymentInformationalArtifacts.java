@@ -20,9 +20,6 @@
 
 package org.openecomp.sdc.ci.tests.execute.sanity;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.model.User;
@@ -42,9 +39,12 @@ import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
 import org.openecomp.sdc.ci.tests.utils.validation.ErrorValidationUtils;
 import org.openecomp.sdc.common.api.ArtifactTypeEnum;
 import org.openqa.selenium.WebElement;
-import org.testng.Assert;
-import org.testng.SkipException;
 import org.testng.annotations.Test;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 
 public class VfDeploymentInformationalArtifacts extends SetupCDTest {
@@ -197,7 +197,7 @@ public class VfDeploymentInformationalArtifacts extends SetupCDTest {
 		
 		String errorMessage = GeneralUIUtils.getWebElementByClassName("w-sdc-modal-caption").getText();
         String checkUIResponseOnError = ErrorValidationUtils.checkUIResponseOnError(ActionStatus.EXCEEDS_LIMIT.name());
-        Assert.assertTrue(errorMessage.contains(checkUIResponseOnError));
+        assertThat(errorMessage).contains(checkUIResponseOnError);
 	}
 	
 	// US824719 - Import VSP - VF informational artifacts
@@ -215,7 +215,7 @@ public class VfDeploymentInformationalArtifacts extends SetupCDTest {
 		
 		String errorMessage = GeneralUIUtils.getWebElementByClassName("w-sdc-modal-caption").getText();
 	    String checkUIResponseOnError = ErrorValidationUtils.checkUIResponseOnError(ActionStatus.EXCEEDS_LIMIT.name());
-	    Assert.assertTrue(errorMessage.contains(checkUIResponseOnError));
+		assertThat(errorMessage).contains(checkUIResponseOnError);
 	}
 	
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -229,225 +229,7 @@ public class VfDeploymentInformationalArtifacts extends SetupCDTest {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// START US825779
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	
-	
-	// US825779 - Story: [BE] Import VSP - VF informational artifacts  - Update
-	// TC1443736 - Update With One New Deployment Artifact
-	@Test
-	public void updateWithOneNewDeploymentArtifact() throws Exception {
-		
-		if(true){
-			throw new SkipException("Open bug 310971 and 369139");			
-		}
-		
-		String fileName =  "ImportTC1443736.csar";
-		String folder ="US825779";
-		
-		List<ArtifactInfo> deploymentArtifacts = new ArrayList<ArtifactInfo>();
-		
-		deploymentArtifacts.add(new ArtifactInfo(null, "base_ldsa.yaml", null, "base_ldsa", ArtifactTypeEnum.HEAT.getType(), "2"));
-		deploymentArtifacts.add(new ArtifactInfo(null, "module_1_ldsa.yaml", null, "module_1_ldsa", ArtifactTypeEnum.HEAT.getType(), "4"));
-		
-		importVfAndValidateInformationalDeploymentArtifactPagesOnPagesAndComposition(fileName, folder,  deploymentArtifacts, null);
-		
-		GeneralUIUtils.clickOnElementByTestId("breadcrumbs-button-1");
-		
-		fileName = "UpdateTC1443736.csar";
-		deploymentArtifacts.add(new ArtifactInfo(null, "artifactname1.yaml", null, "artifactname1", ArtifactTypeEnum.HEAT.getType(), "1"));
-		
-		updateVfAndValidateInformationalDeploymentArtifactPagesOnPagesAndComposition(folder, fileName, deploymentArtifacts, null, null, null);
-	}
-	
-	
-	// US825779 - Story: [BE] Import VSP - VF informational artifacts  - Update
-	// TC1443737 - Update With One Removed Deployment Artifact
-	@Test
-	public void updateWithOneRemovedDeploymentArtifact() throws Exception {
-		
-		if(true){
-			throw new SkipException("Open bug 310971 and 369139");			
-		}
-		
-		String fileName =  "ImportTC1443737.csar";
-		String folder ="US825779";
-		
-		List<ArtifactInfo> deploymentArtifacts = new ArrayList<ArtifactInfo>();
-		
-		deploymentArtifacts.add(new ArtifactInfo(null, "base_ldsa.yaml", null, "base_ldsa", ArtifactTypeEnum.HEAT.getType(), "2"));
-		deploymentArtifacts.add(new ArtifactInfo(null, "module_1_ldsa.yaml", null, "module_1_ldsa", ArtifactTypeEnum.HEAT.getType(), "4"));
-		ArtifactInfo artifactInfo = new ArtifactInfo(null, "artifactname1.yaml", null, "artifactname1", ArtifactTypeEnum.HEAT.getType(), "1");
-		deploymentArtifacts.add(artifactInfo);
-		
-		importVfAndValidateInformationalDeploymentArtifactPagesOnPagesAndComposition(fileName, folder, deploymentArtifacts, null);
-		
-		GeneralUIUtils.clickOnElementByTestId("breadcrumbs-button-1");
-		
-		fileName = "UpdateTC1443737.csar";
-		deploymentArtifacts.remove(artifactInfo);
-		
-		List<ArtifactInfo> deploymentArtifactsNotExist = new ArrayList<ArtifactInfo>();
-		deploymentArtifactsNotExist.add(artifactInfo);
-		
-		updateVfAndValidateInformationalDeploymentArtifactPagesOnPagesAndComposition(folder, fileName, deploymentArtifacts, null, deploymentArtifactsNotExist, null);
-	}
-	
-	// US825779 - Story: [BE] Import VSP - VF informational artifacts  - Update
-	// TC1443738 - Update With One New Version Deployment Artifact
-	@Test
-	public void updateWithOneNewVersionDeploymentArtifact() throws Exception {
-		
-		if(true){
-			throw new SkipException("Open bug 310971 and 369139");			
-		}
-		
-		String fileName =  "ImportTC1443738.csar";
-		String folder ="US825779";
-			
-		List<ArtifactInfo> deploymentArtifacts = new ArrayList<ArtifactInfo>();
-			
-		deploymentArtifacts.add(new ArtifactInfo(null, "base_ldsa.yaml", null, "base_ldsa", ArtifactTypeEnum.HEAT.getType(), "2"));
-		deploymentArtifacts.add(new ArtifactInfo(null, "module_1_ldsa.yaml", null, "module_1_ldsa", ArtifactTypeEnum.HEAT.getType(), "4"));
-		ArtifactInfo artifactInfo = new ArtifactInfo(null, "artifactname1.yaml", null, "artifactname1", ArtifactTypeEnum.HEAT.getType(), "1");
-		deploymentArtifacts.add(artifactInfo);
-			
-			
-		importVfAndValidateInformationalDeploymentArtifactPagesOnPagesAndComposition(fileName, folder, deploymentArtifacts, null);
-			
-		GeneralUIUtils.clickOnElementByTestId("breadcrumbs-button-1");
-			
-		fileName = "UpdateTC1443738.csar";
-		artifactInfo.setArtifactVersion("2");
-			
-		updateVfAndValidateInformationalDeploymentArtifactPagesOnPagesAndComposition(folder, fileName, deploymentArtifacts, null, null, null);
-	}
-	
-	// US825779 - Story: [BE] Import VSP - VF informational artifacts  - Update
-	// TC1443887 - Update With One New Informational Artifact
-	@Test
-	public void updateWithOneNewInformationalArtifact() throws Exception {
-		
-		if(true){
-			throw new SkipException("Open bug 310971 and 369139");			
-		}
-		
-		String fileName =  "ImportTC1443887.csar";
-		String folder ="US825779";
-			
-		List<ArtifactInfo> deploymentArtifacts = new ArrayList<ArtifactInfo>();
-		deploymentArtifacts.add(new ArtifactInfo(null, "base_ldsa.yaml", null, "base_ldsa", ArtifactTypeEnum.HEAT.getType(), "1"));
-		deploymentArtifacts.add(new ArtifactInfo(null, "module_1_ldsa.yaml", null, "module_1_ldsa", ArtifactTypeEnum.HEAT.getType(), "2"));			
-			
-		importVfAndValidateInformationalDeploymentArtifactPagesOnPagesAndComposition(fileName, folder,  deploymentArtifacts, null);
-			
-		GeneralUIUtils.clickOnElementByTestId("breadcrumbs-button-1");
-			
-		fileName = "UpdateTC1443887.csar";
-		
-		List<ArtifactInfo> informationalArtifacts = new ArrayList<ArtifactInfo>();
-		informationalArtifacts.add(new ArtifactInfo(null, "artifactname1.xml", null, "artifactname1", ArtifactTypeEnum.OTHER.getType(), "1"));
-			
-		updateVfAndValidateInformationalDeploymentArtifactPagesOnPagesAndComposition(folder, fileName, deploymentArtifacts, informationalArtifacts, null, null);
-	}
-	
-	// US825779 - Story: [BE] Import VSP - VF informational artifacts  - Update
-	// TC1443888 - Update With One Removed Informational Artifact
-	@Test
-	public void updateWithOneRemovedInformationalArtifact() throws Exception {
-		
-		if(true){
-			throw new SkipException("Open bug 310971 and 369139");			
-		}
-		
-		String folder ="US825779";
-		String fileName =  "ImportTC1443888.csar";
-			
-		List<ArtifactInfo> deploymentArtifacts = new ArrayList<ArtifactInfo>();
-		deploymentArtifacts.add(new ArtifactInfo(null, "base_ldsa.yaml", null, "base_ldsa", ArtifactTypeEnum.HEAT.getType(), "1"));
-		deploymentArtifacts.add(new ArtifactInfo(null, "module_1_ldsa.yaml", null, "module_1_ldsa", ArtifactTypeEnum.HEAT.getType(), "2"));			
-		
-		List<ArtifactInfo> informationalArtifacts = new ArrayList<ArtifactInfo>();
-		ArtifactInfo artifactInfo = new ArtifactInfo(null, "artifactname1.xml", null, "artifactname1", ArtifactTypeEnum.OTHER.getType(), "1");
-		informationalArtifacts.add(artifactInfo);
-			
-		importVfAndValidateInformationalDeploymentArtifactPagesOnPagesAndComposition(fileName, folder,  deploymentArtifacts, informationalArtifacts);
-		
-		GeneralUIUtils.clickOnElementByTestId("breadcrumbs-button-1");
-			
-		fileName = "UpdateTC1443888.csar";
-		
-		informationalArtifacts.remove(artifactInfo);
-		
-		List<ArtifactInfo> informationalArtifactNotExist = new ArrayList<ArtifactInfo>();
-		informationalArtifactNotExist.add(artifactInfo);
-			
-		updateVfAndValidateInformationalDeploymentArtifactPagesOnPagesAndComposition(folder, fileName, deploymentArtifacts, informationalArtifacts, null, informationalArtifactNotExist);
-	}
-	
-	// US825779 - Story: [BE] Import VSP - VF informational artifacts  - Update
-	// TC1443890 - Update With One New Artifact Version Informational Artifact
-	@Test
-	public void updateWithOneNewArtifactVersionInformationalArtifact() throws Exception {
-		
-		if(true){
-			throw new SkipException("Open bug 310971 and 369139");			
-		}
-		
-		String folder ="US825779";
-		String fileName =  "ImportTC1443890.csar";
-			
-		List<ArtifactInfo> deploymentArtifacts = new ArrayList<ArtifactInfo>();
-		deploymentArtifacts.add(new ArtifactInfo(null, "base_ldsa.yaml", null, "base_ldsa", ArtifactTypeEnum.HEAT.getType(), "1"));
-		deploymentArtifacts.add(new ArtifactInfo(null, "module_1_ldsa.yaml", null, "module_1_ldsa", ArtifactTypeEnum.HEAT.getType(), "2"));			
-		
-		List<ArtifactInfo> informationalArtifacts = new ArrayList<ArtifactInfo>();
-		ArtifactInfo artifactInfo = new ArtifactInfo(null, "artifactname1.xml", null, "artifactname1", ArtifactTypeEnum.OTHER.getType(), "1");
-		informationalArtifacts.add(artifactInfo);
-			
-		importVfAndValidateInformationalDeploymentArtifactPagesOnPagesAndComposition(fileName, folder,  deploymentArtifacts, informationalArtifacts);
-		
-		GeneralUIUtils.clickOnElementByTestId("breadcrumbs-button-1");
-			
-		fileName = "UpdateTC1443890.csar";
-		artifactInfo.setArtifactVersion("2");
-			
-		updateVfAndValidateInformationalDeploymentArtifactPagesOnPagesAndComposition(folder, fileName, deploymentArtifacts, informationalArtifacts, null, null);
-	}
-	
-	// US825779 - Story: [BE] Import VSP - VF informational artifacts  - Update
-	// TC1443893 - Update CSAR With Same Artifacts As Imported
-	@Test
-	public void updateCSARWithSameArtifactsAsImported() throws Exception {
-		
-		if(true){
-			throw new SkipException("Open bug 310971 and 369139");			
-		}
-		
-		String folder ="US825779";
-		String fileName =  "ImportUpdateTC1443893.csar";
-			
-		List<ArtifactInfo> deploymentArtifacts = new ArrayList<ArtifactInfo>();
-		deploymentArtifacts.add(new ArtifactInfo(null, "base_ldsa.yaml", null, "base_ldsa", ArtifactTypeEnum.HEAT.getType(), "1"));
-		deploymentArtifacts.add(new ArtifactInfo(null, "module_1_ldsa.yaml", null, "module_1_ldsa", ArtifactTypeEnum.HEAT.getType(), "2"));			
-		deploymentArtifacts.add(new ArtifactInfo(null, "heatartifactname1.yaml", null, "heatartifactname1", ArtifactTypeEnum.HEAT.getType(), "1"));
-		deploymentArtifacts.add(new ArtifactInfo(null, "heatartifactname2.yaml", null, "heatartifactname2", ArtifactTypeEnum.HEAT.getType(), "1"));	
-		deploymentArtifacts.add(new ArtifactInfo(null, "HeatVolArtifactName1.yaml", null, "HeatVolArtifactName1", ArtifactTypeEnum.HEAT_VOL.getType(), "1"));
-		deploymentArtifacts.add(new ArtifactInfo(null, "HeatVolArtifactName2.yaml", null, "HeatVolArtifactName2", ArtifactTypeEnum.HEAT_VOL.getType(), "1"));
-		deploymentArtifacts.add(new ArtifactInfo(null, "HeatVolArtifactName3.yaml", null, "HeatVolArtifactName3", ArtifactTypeEnum.HEAT_VOL.getType(), "1"));
-		
-		List<ArtifactInfo> informationalArtifacts = new ArrayList<ArtifactInfo>();
-		informationalArtifacts.add(new ArtifactInfo(null, "artifactname1.xml", null, "artifactname1", ArtifactTypeEnum.OTHER.getType(), "1"));
-		informationalArtifacts.add(new ArtifactInfo(null, "GuideInfoArtifact1.yml", null, "GuideInfoArtifact1", ArtifactTypeEnum.GUIDE.getType(), "1"));
-		informationalArtifacts.add(new ArtifactInfo(null, "GuideInfoArtifact2.yml", null, "GuideInfoArtifact2", ArtifactTypeEnum.GUIDE.getType(), "1"));
-			
-		importVfAndValidateInformationalDeploymentArtifactPagesOnPagesAndComposition(fileName, folder,  deploymentArtifacts, informationalArtifacts);
-		
-		GeneralUIUtils.clickOnElementByTestId("breadcrumbs-button-1");
-			
-		fileName = "ImportUpdateTC1443893.csar";
-			
-		updateVfAndValidateInformationalDeploymentArtifactPagesOnPagesAndComposition(folder, fileName, deploymentArtifacts, informationalArtifacts, null, null);
-	}
-	
+
 	// US825779 - Story: [BE] Import VSP - VF informational artifacts  - Update
 	// TC1443954 - Update With Multiple Changes In Deployment And Informational Artifacts
 	@Test
@@ -537,8 +319,8 @@ public class VfDeploymentInformationalArtifacts extends SetupCDTest {
 		ResourceUIUtils.updateVfWithCsar(filePath, fileName);
 		
 		String errorMessage = GeneralUIUtils.getWebElementByClassName("w-sdc-modal-caption").getText();
-	    String checkUIResponseOnError = ErrorValidationUtils.checkUIResponseOnError(ActionStatus.ARTIFACT_ALRADY_EXIST_IN_DIFFERENT_TYPE_IN_CSAR.name());
-	    Assert.assertTrue(errorMessage.contains(checkUIResponseOnError));
+	    String checkUIResponseOnError = ErrorValidationUtils.checkUIResponseOnError(ActionStatus.ARTIFACT_EXIST.name());
+		assertThat(errorMessage).contains(checkUIResponseOnError);
 	}
 	
 	// US825779 - Story: [BE] Import VSP - VF informational artifacts  - Update
@@ -560,13 +342,13 @@ public class VfDeploymentInformationalArtifacts extends SetupCDTest {
 		GeneralUIUtils.clickOnElementByTestId("breadcrumbs-button-1");
 		
 		fileName = "UpdateTC1444207.csar";
-		String filePath = FileHandling.getFilePath(folder); ;
+		String filePath = FileHandling.getFilePath(folder);
 			
 		ResourceUIUtils.updateVfWithCsar(filePath, fileName);
 		
 		String errorMessage = GeneralUIUtils.getWebElementByClassName("w-sdc-modal-caption").getText();
-	    String checkUIResponseOnError = ErrorValidationUtils.checkUIResponseOnError(ActionStatus.ARTIFACT_ALRADY_EXIST_IN_DIFFERENT_TYPE_IN_CSAR.name());
-	    Assert.assertTrue(errorMessage.contains(checkUIResponseOnError));
+	    String checkUIResponseOnError = ErrorValidationUtils.checkUIResponseOnError(ActionStatus.ARTIFACT_EXIST.name());
+		assertThat(errorMessage).contains(checkUIResponseOnError);
 	}
 	
 	
@@ -592,8 +374,8 @@ public class VfDeploymentInformationalArtifacts extends SetupCDTest {
 		ResourceUIUtils.updateVfWithCsar(filePath, fileName);
 		
 		String errorMessage = GeneralUIUtils.getWebElementByClassName("w-sdc-modal-caption").getText();
-	    String checkUIResponseOnError = ErrorValidationUtils.checkUIResponseOnError(ActionStatus.ARTIFACT_ALRADY_EXIST_IN_DIFFERENT_TYPE_IN_CSAR.name());
-	    Assert.assertTrue(errorMessage.contains(checkUIResponseOnError));
+	    String checkUIResponseOnError = ErrorValidationUtils.checkUIResponseOnError(ActionStatus.ARTIFACT_EXIST.name());
+	    assertThat(errorMessage).contains(checkUIResponseOnError);
 	}
 	
 	// US825779 - Story: [BE] Import VSP - VF informational artifacts  - Update
@@ -615,7 +397,7 @@ public class VfDeploymentInformationalArtifacts extends SetupCDTest {
 		
 		String errorMessage = GeneralUIUtils.getWebElementByClassName("w-sdc-modal-caption").getText();
 	    String checkUIResponseOnError = ErrorValidationUtils.checkUIResponseOnError(ActionStatus.EXCEEDS_LIMIT.name());
-	    Assert.assertTrue(errorMessage.contains(checkUIResponseOnError));
+	    assertThat(errorMessage).contains(checkUIResponseOnError);
 	}
 	
 	// US825779 - Story: [BE] Import VSP - VF informational artifacts  - Update
@@ -637,40 +419,9 @@ public class VfDeploymentInformationalArtifacts extends SetupCDTest {
 		
 		String errorMessage = GeneralUIUtils.getWebElementByClassName("w-sdc-modal-caption").getText();
 	    String checkUIResponseOnError = ErrorValidationUtils.checkUIResponseOnError(ActionStatus.EXCEEDS_LIMIT.name());
-	    Assert.assertTrue(errorMessage.contains(checkUIResponseOnError));
+	    assertThat(errorMessage).contains(checkUIResponseOnError);
 	}
-	
-	// TODO: only after below TODO's it complete test
-	// TODO: verify that if delete/edit button need to be disabled then check that there is no such buttons
-	// TODO: in composition & artifact pages
-	// US825779 - Story: [BE] Import VSP - VF informational artifacts  - Update
-	// TC1444530 - Update Deployment Artifact With Invalid Type
-	@Test
-	public void updateDeploymentArtifactWithInvalidType() throws Exception {
-		
-		if(true){
-			throw new SkipException("Open bug 310971 and 369139");			
-		}
 
-		String folder ="US825779";
-		String fileName =  "ImportTC1444530.csar";
-		
-		List<ArtifactInfo> deploymentArtifacts = new ArrayList<ArtifactInfo>();
-		
-		deploymentArtifacts.add(new ArtifactInfo(null, "base_ldsa.yaml", null, "base_ldsa", ArtifactTypeEnum.HEAT.getType(), "1"));
-		deploymentArtifacts.add(new ArtifactInfo(null, "module_1_ldsa.yaml", null, "module_1_ldsa", ArtifactTypeEnum.HEAT.getType(), "2"));
-		
-		importVfAndValidateInformationalDeploymentArtifactPagesOnPagesAndComposition(fileName, folder,  deploymentArtifacts, null);
-		
-		GeneralUIUtils.clickOnElementByTestId("breadcrumbs-button-1");
-		
-		fileName = "UpdateTC1444530.csar";
-		deploymentArtifacts.add(new ArtifactInfo(null, "artifactname1.yaml", null, "artifactname1", ArtifactTypeEnum.OTHER.getType(), "1"));
-		
-		updateVfAndValidateInformationalDeploymentArtifactPagesOnPagesAndComposition(folder, fileName, deploymentArtifacts, null, null, null);
-	}
-	
-	
 	// US825779 - Story: [BE] Import VSP - VF informational artifacts  - Update
 	// TC1444531 - Update Informational Artifact With Invalid Type
 	@Test

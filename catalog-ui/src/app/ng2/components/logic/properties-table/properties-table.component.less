@@ -1,4 +1,4 @@
-@import './../../../../../assets/styles/variables.less';
+@import './../../../../../assets/styles/mixins.less';
 @import '../../../../../assets/styles/sprite';
 @smaller-screen: ~"only screen and (max-width: 1580px)";
 
@@ -12,11 +12,14 @@
     text-align:left;
 
 
-    .inner-cell-div{
-        max-width: 100%;
+    .inner-cell-div {
         text-overflow: ellipsis;
         overflow: hidden;
         height: 20px;
+    }
+
+    .inner-cell-div-multiline {
+        max-width: 100%;
     }
 
     .table-header {
@@ -36,6 +39,11 @@
     .table-rows-header {
         border: #d2d2d2 solid 1px;
         border-top:none;
+        display: flex;
+        align-items: center;
+        .archive-label{
+            margin-left: 10px;
+        }
     }
 
     .table-body {
@@ -120,7 +128,7 @@
             .property-description-icon {
                 float: right;
                 margin-top: 4px;
-                margin-left: 5px;
+                margin-left: 15px;
                 flex: 0 0 auto;
             }
         }
@@ -177,4 +185,53 @@
         }
     }
 
+    .table-row {
+        /deep/ .table-cell-multiline-ellipsis .multiline-ellipsis-dots {
+            background: linear-gradient(to right, transparent 0%, #ffffff 80%);
+            padding-left: 1em;
+        }
+
+        &.selected /deep/ .table-cell-multiline-ellipsis .multiline-ellipsis-dots {
+            background: linear-gradient(to right, transparent 0%, #e6f6fb 80%);
+            padding-left: 1em;
+        }
+
+        &.readonly /deep/ .table-cell-multiline-ellipsis .multiline-ellipsis-dots {
+            background: linear-gradient(to right, transparent 0%, #f8f8f8 80%);
+            padding-left: 1em;
+        }
+
+        &:hover:not(.selected) /deep/ .table-cell-multiline-ellipsis .multiline-ellipsis-dots {
+            background: linear-gradient(to right, transparent 0%, #f8f8f8 80%);
+            padding-left: 1em;
+        }
+    }
+
+    .prop-instance-icon {
+        vertical-align: middle;
+        margin-right: 7px;
+        &.defaulticon.small {
+            background-color: @main_color_q;
+            border-radius:14px;           
+        }
+        // square icons
+ 
+        &.icon-group {
+            .square-icon();
+            background-color: @main_color_a;
+
+            &::before {
+                content: "G";
+            }
+        }
+        &.icon-policy {
+            .square-icon();
+            background-color: @main_color_r;
+
+            &::before {
+                content: "P";
+            }
+        }
+
+    }
 }

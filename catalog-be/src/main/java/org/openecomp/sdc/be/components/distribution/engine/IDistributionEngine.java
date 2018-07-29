@@ -22,6 +22,7 @@ package org.openecomp.sdc.be.components.distribution.engine;
 
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.model.Service;
+import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.resources.data.OperationalEnvironmentEntry;
 
@@ -29,9 +30,9 @@ public interface IDistributionEngine {
 
     boolean isActive();
 
-    ActionStatus notifyService(String distributionId, Service service, INotificationData notificationData, String envName, String userId, String modifierName);
+    ActionStatus notifyService(String distributionId, Service service, INotificationData notificationData, String envName, User modifier);
 
-    ActionStatus notifyService(String distributionId, Service service, INotificationData notificationData, String envId, String envName, String userId, String modifierName);
+    ActionStatus notifyService(String distributionId, Service service, INotificationData notificationData, String envId, String envName, User modifier);
 
     StorageOperationStatus isEnvironmentAvailable(String envName);
 
@@ -44,11 +45,9 @@ public interface IDistributionEngine {
      */
     void disableEnvironment(String envName);
 
-    StorageOperationStatus isReadyForDistribution(Service service, String envName);
+    StorageOperationStatus isReadyForDistribution(String envName);
 
     INotificationData buildServiceForDistribution(Service service, String distributionId, String workloadContext);
-
-    StorageOperationStatus verifyServiceHasDeploymentArtifacts(Service service);
 
     OperationalEnvironmentEntry getEnvironmentById(String opEnvId);
 }

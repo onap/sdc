@@ -19,7 +19,6 @@ package org.openecomp.core.factory.api;
 import org.apache.commons.lang3.StringUtils;
 import org.openecomp.core.factory.FactoryConfig;
 import org.openecomp.core.factory.impl.AbstractFactoryBase;
-import org.openecomp.core.utilities.CommonMethods;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.ErrorCategory;
 import org.openecomp.sdc.common.errors.ErrorCode;

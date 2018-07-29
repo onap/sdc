@@ -11,8 +11,8 @@
                 <expand-collapse expanded-selector=".hierarchy-module-member-list.{{$index}}"
                                  class="general-tab-expand-collapse" is-close-on-init="true"
                                  data-tests-id="hierarchy-module-{{$index}}"
-                                 data-ng-repeat-start="module in component.groups">
-                    <div class="expand-collapse-title first-level" data-tests-id="hierarchy-module-{{$index}}-title" ng-class="{'selected': selectedIndex === $index}" data-ng-click="onModuleSelected(module.uniqueId, $index)">
+                                 data-ng-repeat-start="module in component.modules">
+                    <div class="expand-collapse-title first-level" data-tests-id="hierarchy-module-{{$index}}-title" ng-class="{'selected': selectedIndex === $index}" data-ng-click="onModuleSelected(module, $index)">
                         <div class="expand-collapse-title-icon"></div>
                         <span class="expand-collapse-title-text" data-ng-bind="module.name" tooltips
                               tooltip-content="{{module.name}}"></span>
@@ -21,8 +21,8 @@
                 </expand-collapse>
 
                 <div data-ng-repeat-end="" class="hierarchy-module-member-list {{$index}}">
-                    <div ng-repeat="(memberName, value) in ::module.members track by $index">
-                        <div class="expand-collapse-sub-title"  tooltips tooltip-content="{{memberName}}">{{memberName}}</div>
+                    <div ng-repeat="memberId in ::module.members track by $index">
+                        <div class="expand-collapse-sub-title"  tooltips tooltip-content="{{componentInstancesMap[memberId].name}}">{{componentInstancesMap[memberId].name}}</div>
                     </div>
                 </div>
             </perfect-scrollbar>
@@ -48,7 +48,7 @@
                                      class="general-tab-expand-collapse" is-close-on-init="true"
                                      data-tests-id="hierarchy-module-{{$index}}"
                                      data-ng-repeat-start="module in instance.groupInstances">
-                        <div class="expand-collapse-title second-level" data-tests-id="hierarchy-module-{{$index}}-title" ng-class="{'selected': selectedIndex === $index && selectedInstanceId === instance.uniqueId}" data-ng-click="onModuleSelected(module.uniqueId, $index, instance.uniqueId)">
+                        <div class="expand-collapse-title second-level" data-tests-id="hierarchy-module-{{$index}}-title" ng-class="{'selected': selectedIndex === $index && selectedInstanceId === instance.uniqueId}" data-ng-click="onModuleSelected(module, $index, instance.uniqueId)">
                             <div class="expand-collapse-title-icon"></div>
                         <span class="expand-collapse-title-text" data-ng-bind="module.name" tooltips tooltip-content="{{module.name}}"></span>
 
@@ -56,8 +56,8 @@
                     </expand-collapse>
 
                     <div data-ng-repeat-end="" class="outer-index-{{$parent.$index}} hierarchy-module-member-list {{$index}}">
-                        <div ng-repeat="(memberName, value) in ::module.members track by $index">
-                            <div class="expand-collapse-sub-title"  tooltips tooltip-content="{{memberName}}">{{memberName}}</div>
+                        <div ng-repeat="memberId in ::module.members track by $index">
+                            <div class="expand-collapse-sub-title"  tooltips tooltip-content="{{componentInstancesMap[memberId].name}}">{{componentInstancesMap[memberId].name}}</div>
                         </div>
                     </div>
                 </div>

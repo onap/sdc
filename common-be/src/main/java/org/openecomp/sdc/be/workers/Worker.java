@@ -20,12 +20,11 @@
 
 package org.openecomp.sdc.be.workers;
 
+import org.openecomp.sdc.be.config.BeEcompErrorManager;
+import org.openecomp.sdc.common.log.wrappers.Logger;
+
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
-
-import org.openecomp.sdc.be.config.BeEcompErrorManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Created by michael on 6/24/2016.
@@ -37,7 +36,7 @@ public class Worker<T extends Job<E>, E> implements Runnable {
 
 	private LinkedBlockingQueue<E> outputQueue;
 
-	private static Logger log = LoggerFactory.getLogger(Worker.class.getName());
+	private static Logger log = Logger.getLogger(Worker.class.getName());
 
 	public Worker(String workerName, LinkedBlockingQueue<T> inputQueue, LinkedBlockingQueue<E> outputQueue) {
 		this.workerName = workerName;

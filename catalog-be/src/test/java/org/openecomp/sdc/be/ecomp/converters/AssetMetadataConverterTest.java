@@ -1,33 +1,20 @@
 package org.openecomp.sdc.be.ecomp.converters;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
+import fj.data.Either;
+import mockit.Deencapsulation;
 import org.junit.Assert;
 import org.junit.Test;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
-import org.openecomp.sdc.be.externalapi.servlet.representation.ArtifactMetadata;
-import org.openecomp.sdc.be.externalapi.servlet.representation.AssetMetadata;
-import org.openecomp.sdc.be.externalapi.servlet.representation.ResourceAssetDetailedMetadata;
-import org.openecomp.sdc.be.externalapi.servlet.representation.ResourceAssetMetadata;
-import org.openecomp.sdc.be.externalapi.servlet.representation.ResourceInstanceMetadata;
-import org.openecomp.sdc.be.externalapi.servlet.representation.ServiceAssetDetailedMetadata;
-import org.openecomp.sdc.be.externalapi.servlet.representation.ServiceAssetMetadata;
-import org.openecomp.sdc.be.model.ArtifactDefinition;
-import org.openecomp.sdc.be.model.Component;
-import org.openecomp.sdc.be.model.ComponentInstance;
-import org.openecomp.sdc.be.model.DistributionStatusEnum;
-import org.openecomp.sdc.be.model.LifecycleStateEnum;
-import org.openecomp.sdc.be.model.Resource;
-import org.openecomp.sdc.be.model.Service;
+import org.openecomp.sdc.be.externalapi.servlet.representation.*;
+import org.openecomp.sdc.be.model.*;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
 import org.openecomp.sdc.exception.ResponseFormat;
 
-import fj.data.Either;
-import mockit.Deencapsulation;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 public class AssetMetadataConverterTest {
 
@@ -57,7 +44,7 @@ public class AssetMetadataConverterTest {
 		boolean detailed = false;
 		Either<? extends AssetMetadata, ResponseFormat> result;
 		component.setLifecycleState(LifecycleStateEnum.CERTIFICATION_IN_PROGRESS);
-
+		component.setComponentType(ComponentTypeEnum.RESOURCE);
 		// default test
 		testSubject = createTestSubject();
 		result = testSubject.convertToSingleAssetMetadata(component, serverBaseURL, detailed);
@@ -71,6 +58,7 @@ public class AssetMetadataConverterTest {
 		Resource curr = new Resource();
 		Either<? extends AssetMetadata, ResponseFormat> result;
 		curr.setLifecycleState(LifecycleStateEnum.CERTIFICATION_IN_PROGRESS);
+		curr.setComponentType(ComponentTypeEnum.RESOURCE);
 		// default test
 		testSubject = createTestSubject();
 		result = Deencapsulation.invoke(testSubject, "convertToMetadata", ComponentTypeEnum.RESOURCE, serverBaseURL,
@@ -84,6 +72,7 @@ public class AssetMetadataConverterTest {
 		Resource curr = new Resource();
 		Either<? extends AssetMetadata, ResponseFormat> result;
 		curr.setLifecycleState(LifecycleStateEnum.CERTIFICATION_IN_PROGRESS);
+		curr.setComponentType(ComponentTypeEnum.RESOURCE);
 		// default test
 		testSubject = createTestSubject();
 		result = Deencapsulation.invoke(testSubject, "generateResourceMeatdata", serverBaseURL, true, curr);
@@ -107,6 +96,7 @@ public class AssetMetadataConverterTest {
 		Service curr = new Service();
 		curr.setLifecycleState(LifecycleStateEnum.CERTIFICATION_IN_PROGRESS);
 		curr.setDistributionStatus(DistributionStatusEnum.DISTRIBUTED);
+
 		Either<? extends AssetMetadata, ResponseFormat> result;
 
 		// default test
@@ -179,13 +169,11 @@ public class AssetMetadataConverterTest {
 		AssetMetadataConverter testSubject;
 		ServiceAssetDetailedMetadata assetToPopulate = new ServiceAssetDetailedMetadata();
 		Service service = new Service();
-		String serverBaseURL = "";
 		Either<ServiceAssetDetailedMetadata, StorageOperationStatus> result;
 
 		// default test
 		testSubject = createTestSubject();
-		result = Deencapsulation.invoke(testSubject, "convertToServiceDetailedMetadata", assetToPopulate, service,
-				serverBaseURL);
+		result = Deencapsulation.invoke(testSubject, "convertToServiceDetailedMetadata", assetToPopulate, service);
 	}
 
 	@Test
@@ -193,14 +181,12 @@ public class AssetMetadataConverterTest {
 		AssetMetadataConverter testSubject;
 		ResourceAssetDetailedMetadata asset = new ResourceAssetDetailedMetadata();
 		Resource resource = new Resource();
-		String serverBaseURL = "";
 		Map<String, ArtifactDefinition> artifacts = new HashMap<>();
 		ResourceAssetDetailedMetadata result;
 
 		// default test
 		testSubject = createTestSubject();
-		result = Deencapsulation.invoke(testSubject, "populateResourceWithArtifacts", asset, resource, serverBaseURL,
-				artifacts);
+		result = Deencapsulation.invoke(testSubject, "populateResourceWithArtifacts", asset, resource, artifacts); 
 	}
 
 	@Test

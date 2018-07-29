@@ -20,10 +20,7 @@
 
 package org.openecomp.sdc.ci.tests.utils.rest;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
+import com.google.gson.Gson;
 import org.apache.commons.lang.StringUtils;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.ci.tests.api.Urls;
@@ -36,7 +33,9 @@ import org.openecomp.sdc.ci.tests.utils.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.gson.Gson;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class UserRestUtils extends BaseRestUtils {
 

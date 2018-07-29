@@ -20,34 +20,26 @@
 
 package org.openecomp.sdc.be.dao.cassandra;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import javax.annotation.PostConstruct;
-
+import com.datastax.driver.core.Session;
+import com.datastax.driver.mapping.MappingManager;
+import com.datastax.driver.mapping.Result;
+import fj.data.Either;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.resources.data.ComponentCacheData;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingTypesConstants;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.springframework.stereotype.Component;
 
-import com.datastax.driver.core.Session;
-import com.datastax.driver.mapping.MappingManager;
-import com.datastax.driver.mapping.Result;
-
-import fj.data.Either;
+import javax.annotation.PostConstruct;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Component("component-cassandra-dao")
 public class ComponentCassandraDao extends CassandraDao {
 
-	private static Logger logger = LoggerFactory.getLogger(ComponentCassandraDao.class.getName());
+	private static Logger logger = Logger.getLogger(ComponentCassandraDao.class.getName());
 
 	public final static Integer DEFAULT_FETCH_SIZE = 500;
 
@@ -87,8 +79,8 @@ public class ComponentCassandraDao extends CassandraDao {
 	 */
 	public Either<List<ComponentCacheData>, ActionStatus> getComponents(List<String> ids) {
 
-		List<ComponentCacheData> components = new ArrayList<ComponentCacheData>();
-		if (ids == null || true == ids.isEmpty()) {
+		List<ComponentCacheData> components = new ArrayList<>();
+		if (ids == null || ids.isEmpty()) {
 			return Either.left(components);
 		}
 
@@ -118,7 +110,7 @@ public class ComponentCassandraDao extends CassandraDao {
 
 	public Either<List<ComponentCacheData>, ActionStatus> getAllComponentIdTimeAndType() {
 		try {
-			List<ComponentCacheData> components = new ArrayList<ComponentCacheData>();
+			List<ComponentCacheData> components = new ArrayList<>();
 			Result<ComponentCacheData> events = componentCacheAccessor.getAllComponentIdTimeAndType();
 			if (events == null) {
 				logger.trace("no component found ");
@@ -201,12 +193,12 @@ public class ComponentCassandraDao extends CassandraDao {
 	public Either<ImmutablePair<List<ComponentCacheData>, Set<String>>, ActionStatus> getComponents(
 			Map<String, Long> idToTimestampMap) {
 
-		List<ComponentCacheData> components = new ArrayList<ComponentCacheData>();
+		List<ComponentCacheData> components = new ArrayList<>();
 		Set<String> notFetchedFromCache = new HashSet<>();
-		ImmutablePair<List<ComponentCacheData>, Set<String>> result = new ImmutablePair<List<ComponentCacheData>, Set<String>>(
-				components, notFetchedFromCache);
+		ImmutablePair<List<ComponentCacheData>, Set<String>> result = new ImmutablePair<>(
+                components, notFetchedFromCache);
 
-		if (idToTimestampMap == null || true == idToTimestampMap.isEmpty()) {
+		if (idToTimestampMap == null || idToTimestampMap.isEmpty()) {
 			return Either.left(result);
 		}
 
@@ -236,11 +228,11 @@ public class ComponentCassandraDao extends CassandraDao {
 
 			logger.debug("Number of components to fetch was {}. Actually, {} components fetched", ids.size(),
 					components.size());
-			List<String> foundComponents = components.stream().map(p -> p.getId()).collect(Collectors.toList());
+			List<String> foundComponents = components.stream().map(ComponentCacheData::getId).collect(Collectors.toList());
 			// fetch all ids which was not found in cache/found in cache and not
 			// updated.
 			Set<String> notFoundComponents = idToTimestampMap.keySet().stream()
-					.filter(p -> false == foundComponents.contains(p)).collect(Collectors.toSet());
+                                                             .filter(p -> !foundComponents.contains(p)).collect(Collectors.toSet());
 
 			notFetchedFromCache.addAll(notFoundComponents);
 

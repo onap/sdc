@@ -21,9 +21,9 @@
 package org.onap.sdc.generator.aai.model;
 
 import org.onap.sdc.generator.aai.types.Cardinality;
+import org.onap.sdc.generator.aai.types.Model;
 import org.onap.sdc.generator.aai.types.ModelType;
 import org.onap.sdc.generator.aai.types.ModelWidget;
-import org.onap.sdc.generator.aai.types.Model;
 
 @Model(widget = Widget.Type.L3_NET, cardinality = Cardinality.UNBOUNDED, dataDeleteFlag = true)
 @ModelWidget(type = ModelType.WIDGET, name = "oam-network")

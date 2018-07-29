@@ -20,10 +20,9 @@
 
 package org.openecomp.sdc.be.components.distribution.engine;
 
-import java.util.concurrent.Callable;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.concurrent.Callable;
 
 public class UebHealthCheckCall implements Callable<Boolean> {
 
@@ -32,9 +31,9 @@ public class UebHealthCheckCall implements Callable<Boolean> {
     String server;
     String publicApiKey;
 
-    private static final Logger healthLogger = LoggerFactory.getLogger(DistributionEngineClusterHealth.UEB_HEALTH_LOG_CONTEXT);
+    private static final Logger healthLogger = Logger.getLogger(DistributionEngineClusterHealth.UEB_HEALTH_LOG_CONTEXT);
 
-    private static final Logger logger = LoggerFactory.getLogger(UebHealthCheckCall.class);
+    private static final Logger logger = Logger.getLogger(UebHealthCheckCall.class.getName());
 
     public UebHealthCheckCall(String server, String publicApiKey) {
         super();

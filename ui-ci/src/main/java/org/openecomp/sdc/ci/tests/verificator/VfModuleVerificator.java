@@ -20,17 +20,7 @@
 
 package org.openecomp.sdc.ci.tests.verificator;
 
-import static org.testng.AssertJUnit.assertEquals;
-import static org.testng.AssertJUnit.assertNotNull;
-import static org.testng.AssertJUnit.assertTrue;
-
-import java.io.File;
-import java.lang.reflect.Field;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
+import com.aventstack.extentreports.Status;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.GroupInstance;
@@ -42,7 +32,13 @@ import org.openecomp.sdc.ci.tests.tosca.datatypes.ToscaDefinition;
 import org.openecomp.sdc.ci.tests.tosca.datatypes.ToscaGroupsTopologyTemplateDefinition;
 import org.openecomp.sdc.ci.tests.tosca.datatypes.ToscaServiceGroupsMetadataDefinition;
 
-import com.aventstack.extentreports.Status;
+import java.io.File;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import static org.testng.AssertJUnit.*;
 
 public class VfModuleVerificator {
 
@@ -78,7 +74,7 @@ public class VfModuleVerificator {
 		for (Map.Entry<String, ToscaGroupsTopologyTemplateDefinition> groupTopologyTemplateDefinition : groups.entrySet()) {
 			String key = groupTopologyTemplateDefinition.getKey();
 			GroupInstance groupInstanceObject = getGroupInstanceByKey(key, service);
-			ToscaServiceGroupsMetadataDefinition metadata = groupTopologyTemplateDefinition.getValue().getMetadata();
+			ToscaServiceGroupsMetadataDefinition metadata = groupTopologyTemplateDefinition.getValue();
 			assertNotNull("groupInstanceObject is null", groupInstanceObject);
 			assertTrue("expected vfModuleModelName " + groupInstanceObject.getGroupName() + ", actual " + metadata.getVfModuleModelName(), groupInstanceObject.getGroupName().equals(metadata.getVfModuleModelName()));
 			assertTrue("expected vfModuleModelInvariantUUID " + groupInstanceObject.getInvariantUUID() + ", actual " + metadata.getVfModuleModelInvariantUUID(), groupInstanceObject.getInvariantUUID().equals(metadata.getVfModuleModelInvariantUUID()));
@@ -125,10 +121,10 @@ public class VfModuleVerificator {
 	}
 	
 	public static void validateSpecificModulePropertiesFromFile(ToscaDefinition toscaDefinition){
-		List<ToscaGroupsTopologyTemplateDefinition> vfModules = toscaDefinition.getTopology_template().getGroups().values().stream().
-											                                                            filter(e -> e.getType().equals(VF_MODULE_TYPE)).
-											                                                            collect(Collectors.toList());
-		
+		List<ToscaGroupsTopologyTemplateDefinition> vfModules = toscaDefinition.
+				getTopology_template().getGroups().values().stream().
+				filter(e -> e.getType().equals(VF_MODULE_TYPE)).
+				collect(Collectors.toList());
 		for(String propertyType : PROPERTY_TYPES){
 			int numberOfTypes = (int) vfModules.stream().
 					                            // Get all declared fields from class ToscaGroupPropertyDefinition, collect them to List and check that current property exist and declared class 

@@ -41,8 +41,8 @@ public class HealthCheckBusinessLogicTest {
         boolean statusChanged = healthCheckBusinessLogic.anyStatusChanged(null, null);
         assertFalse("check false", statusChanged);
 
-        List<HealthCheckInfo> checkInfosLeft = new ArrayList<HealthCheckInfo>();
-        List<HealthCheckInfo> checkInfosRight = new ArrayList<HealthCheckInfo>();
+        List<HealthCheckInfo> checkInfosLeft = new ArrayList<>();
+        List<HealthCheckInfo> checkInfosRight = new ArrayList<>();
 
         statusChanged = healthCheckBusinessLogic.anyStatusChanged(checkInfosLeft, checkInfosRight);
         assertFalse("check false", statusChanged);

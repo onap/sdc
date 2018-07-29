@@ -93,7 +93,7 @@ export class ReqAndCapabilitiesViewModel {
         _.forEach(this.$scope.filteredProperties[indexInFilteredProperties], (prop:PropertyModel)=> {
             prop.readonly = true;
         });
-        this.ModalsHandler.openEditPropertyModal(property, this.$scope.component, this.$scope.filteredProperties[indexInFilteredProperties], false).then(() => {
+        this.ModalsHandler.openEditPropertyModal(property, this.$scope.component, this.$scope.filteredProperties[indexInFilteredProperties], false, "component", this.$scope.component.uniqueId).then(() => {
 
         });
     };

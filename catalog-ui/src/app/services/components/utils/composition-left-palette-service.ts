@@ -33,17 +33,6 @@ import {GroupMetadata, GroupTpes} from "app/models/group-metadata";
 import {PolicyMetadata, PolicyTpes} from "app/models/policy-metadata";
 import {Resource} from "app/models/components/resource";
 
-// export class LeftPaletteDataObject {
-//     displayLeftPanelComponents:Array<LeftPaletteComponent>;
-//     onFinishLoadingEvent:string;
-
-//     constructor(onFinishEventListener:string) {
-
-//         this.displayLeftPanelComponents = new Array<LeftPaletteComponent>();
-//         this.onFinishLoadingEvent = onFinishEventListener;
-//     }
-// }
-
 export class LeftPaletteLoaderService {
 
     static '$inject' = [
@@ -65,56 +54,39 @@ export class LeftPaletteLoaderService {
 
     }
 
-    // private serviceLeftPaletteData:LeftPaletteDataObject;
-    // private resourceLeftPaletteData:LeftPaletteDataObject;
-    // private resourcePNFLeftPaletteData:LeftPaletteDataObject;
-    // private vlData:LeftPaletteDataObject;
     leftPanelComponents:Array<LeftPaletteComponent>;
 
     public loadLeftPanel = (component:Component):void => {
-        // this.serviceLeftPaletteData = new LeftPaletteDataObject(EVENTS.SERVICE_LEFT_PALETTE_UPDATE_EVENT);
-        // this.resourceLeftPaletteData = new LeftPaletteDataObject(EVENTS.RESOURCE_LEFT_PALETTE_UPDATE_EVENT);
-        // this.resourcePNFLeftPaletteData = new LeftPaletteDataObject(EVENTS.RESOURCE_PNF_LEFT_PALETTE_UPDATE_EVENT);
         this.leftPanelComponents = [];
         this.updateLeftPaletteForTopologyTemplate(component);
     }
 
-    // private getResourceLeftPaletteDataByResourceType = (resourceType:string):LeftPaletteDataObject => {
-    //     if(resourceType == ResourceType.PNF) {
-    //         return this.resourcePNFLeftPaletteData;
-    //     }
-    //     return this.resourceLeftPaletteData;
-    // }
-
     private updateLeftPalette = (componentInternalType:string):void => {
 
         /* add components */
-        this.restangular.one("resources").one('/latestversion/notabstract/metadata').get({'internalComponentType': componentInternalType}).then((leftPaletteComponentMetadata:Array<ComponentMetadata>) => {
+        this.restangular.one("resources").one('/latestversion/notabstract/metadata').get({'internalComponentType': componentInternalType}).then((leftPaletteComponentMetadata:Array<ComponentMetadata>) => {    
             _.forEach(leftPaletteComponentMetadata, (componentMetadata:ComponentMetadata) => {
                 this.leftPanelComponents.push(new LeftPaletteComponent(LeftPaletteMetadataTypes.Component, componentMetadata));
             });
-            this.EventListenerService.notifyObservers(EVENTS.LEFT_PALETTE_UPDATE_EVENT);
+            
+            /* add groups */
+            this.restangular.one('/groupTypes').get({'internalComponentType': componentInternalType}).then((leftPaletteGroupTypes:GroupTpes) => {
+                _.forEach(leftPaletteGroupTypes, (groupMetadata: GroupMetadata) => {
+                    this.leftPanelComponents.push(new LeftPaletteComponent(LeftPaletteMetadataTypes.Group, groupMetadata));
+                }); 
+                this.EventListenerService.notifyObservers(EVENTS.LEFT_PALETTE_UPDATE_EVENT);
+            });
+
+            /* add policies */
+            this.restangular.one('/policyTypes').get({'internalComponentType': componentInternalType}).then((leftPalettePolicyTypes:PolicyTpes) => {
+                _.forEach(leftPalettePolicyTypes, (policyMetadata: PolicyMetadata) => {
+                    this.leftPanelComponents.push(new LeftPaletteComponent(LeftPaletteMetadataTypes.Policy, policyMetadata));
+                }); 
+                this.EventListenerService.notifyObservers(EVENTS.LEFT_PALETTE_UPDATE_EVENT);
+            });
         });
 
-        /* add groups */
-        //TODO: In backend implement like this:
-        //this.restangular.one("groups").one('/latestversion/notabstract/metadata').get({'internalComponentType': componentInternalType}).then((leftPaletteComponentMetadata:Array<ComponentMetadata>) => {
-        this.restangular.one('/groupTypes').get().then((leftPaletteGroupTypes:GroupTpes) => {
-            _.forEach(leftPaletteGroupTypes.groupTypes, (groupMetadata: GroupMetadata) => {
-                this.leftPanelComponents.push(new LeftPaletteComponent(LeftPaletteMetadataTypes.Group, groupMetadata));
-            });
-            this.EventListenerService.notifyObservers(EVENTS.LEFT_PALETTE_UPDATE_EVENT);
-        });
 
-        /* add policies */
-        //TODO: In backend implement like this:
-        //this.restangular.one("policies").one('/latestversion/notabstract/metadata').get({'internalComponentType': componentInternalType}).then((leftPaletteComponentMetadata:Array<ComponentMetadata>) => {
-         this.restangular.one('/policyTypes').get().then((leftPalettePolicyTypes:PolicyTpes) => {
-            _.forEach(leftPalettePolicyTypes.policyTypes, (policyMetadata: PolicyMetadata) => {
-                this.leftPanelComponents.push(new LeftPaletteComponent(LeftPaletteMetadataTypes.Policy, policyMetadata));
-            });
-            this.EventListenerService.notifyObservers(EVENTS.LEFT_PALETTE_UPDATE_EVENT);
-        });
     }
 
     public getLeftPanelComponentsForDisplay = (component:Component):Array<LeftPaletteComponent> => {

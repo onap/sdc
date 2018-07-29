@@ -20,6 +20,20 @@
 
 package org.openecomp.sdc.be.dao.es;
 
+import org.apache.commons.lang.SystemUtils;
+import org.elasticsearch.client.Client;
+import org.elasticsearch.client.transport.TransportClient;
+import org.elasticsearch.common.settings.Settings;
+import org.elasticsearch.common.transport.InetSocketTransportAddress;
+import org.elasticsearch.node.Node;
+import org.elasticsearch.node.NodeBuilder;
+import org.elasticsearch.shield.ShieldPlugin;
+import org.openecomp.sdc.common.log.wrappers.Logger;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import java.net.InetSocketAddress;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
@@ -29,22 +43,6 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-
-import org.apache.commons.lang.SystemUtils;
-import org.elasticsearch.client.Client;
-import org.elasticsearch.client.transport.TransportClient;
-import org.elasticsearch.common.settings.Settings;
-import org.elasticsearch.common.transport.InetSocketTransportAddress;
-import org.elasticsearch.node.Node;
-import org.elasticsearch.node.NodeBuilder;
-import org.elasticsearch.shield.ShieldPlugin;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
-
 /**
  * Prepare the node to work with elastic search.
  * 
@@ -53,7 +51,7 @@ import org.springframework.stereotype.Component;
 @Component("elasticsearch-client")
 public class ElasticSearchClient {
 
-	private static Logger log = LoggerFactory.getLogger(ElasticSearchClient.class.getName());
+	private static Logger log = Logger.getLogger(ElasticSearchClient.class.getName());
 
 	private Node node;
 	private boolean isLocal;
@@ -63,7 +61,7 @@ public class ElasticSearchClient {
 	String serverHost;
 	String serverPort;
 
-	ArrayList<String> nodes = new ArrayList<String>();
+	ArrayList<String> nodes = new ArrayList<>();
 
 	private boolean isTransportClient;
 
@@ -80,7 +78,7 @@ public class ElasticSearchClient {
 			settings = Settings.settingsBuilder().loadFromPath(classpathConfig).build();
 		}
 		String configHome = System.getProperty("config.home");
-		if (configHome != null && false == configHome.isEmpty()) {
+		if (configHome != null && !configHome.isEmpty()) {
 			try {
 				if (SystemUtils.IS_OS_WINDOWS) {
 					url = new URL("file:///" + configHome + "/elasticsearch.yml");

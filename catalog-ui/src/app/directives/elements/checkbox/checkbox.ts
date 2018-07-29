@@ -25,6 +25,8 @@ export interface ICheckboxElementScope extends ng.IScope {
     text:string;
     sdcChecklistModel:any;
     sdcChecklistValue:string;
+    sdcChecklistChange:Function;
+    sdcCheckedChange:Function;
     disabled:boolean;
 }
 
@@ -41,9 +43,10 @@ export class CheckboxElementDirective implements ng.IDirective {
         elemId: '@',
         text: '@',
         disabled: '=',
-        sdcChecklistModel: '=',
-        sdcChecklistValue: '=',
-        sdcChecklistChange: '&'
+        sdcChecklistModel: '=?',
+        sdcChecklistValue: '=?',
+        sdcChecklistChange: '&?',
+        sdcCheckedChange: '&?'
     };
 
     template = ():string => {

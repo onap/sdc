@@ -20,48 +20,37 @@
 
 package org.openecomp.sdc.be.distribution;
 
-import static org.apache.commons.lang.BooleanUtils.isTrue;
-import static org.openecomp.sdc.be.components.distribution.engine.DistributionEngineInitTask.buildTopicName;
-import static org.openecomp.sdc.be.config.ConfigurationManager.getConfigurationManager;
-
-import java.util.List;
-
-import javax.annotation.Resource;
-import javax.ws.rs.core.Response;
-
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import fj.data.Either;
 import org.apache.http.HttpStatus;
-import org.openecomp.sdc.be.components.distribution.engine.CambriaErrorResponse;
-import org.openecomp.sdc.be.components.distribution.engine.CambriaHandler;
-import org.openecomp.sdc.be.components.distribution.engine.DistributionEngineInitTask;
-import org.openecomp.sdc.be.components.distribution.engine.IDistributionEngine;
-import org.openecomp.sdc.be.components.distribution.engine.SubscriberTypeEnum;
+import org.openecomp.sdc.be.components.distribution.engine.*;
 import org.openecomp.sdc.be.components.impl.ResponseFormatManager;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.config.DistributionEngineConfiguration;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
-import org.openecomp.sdc.be.distribution.api.client.CambriaOperationStatus;
-import org.openecomp.sdc.be.distribution.api.client.RegistrationRequest;
-import org.openecomp.sdc.be.distribution.api.client.ServerListResponse;
-import org.openecomp.sdc.be.distribution.api.client.TopicRegistrationResponse;
-import org.openecomp.sdc.be.distribution.api.client.TopicUnregistrationResponse;
+import org.openecomp.sdc.be.distribution.api.client.*;
+import org.openecomp.sdc.be.resources.data.auditing.model.DistributionTopicData;
 import org.openecomp.sdc.common.datastructure.Wrapper;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import javax.annotation.Resource;
+import javax.ws.rs.core.Response;
+import java.util.List;
 
-import fj.data.Either;
+import static org.apache.commons.lang.BooleanUtils.isTrue;
+import static org.openecomp.sdc.be.components.distribution.engine.DistributionEngineInitTask.buildTopicName;
+import static org.openecomp.sdc.be.config.ConfigurationManager.getConfigurationManager;
 
 @Component("distributionBusinessLogic")
 public class DistributionBusinessLogic {
     public static final String REGISTER_IN_DISTRIBUTION_ENGINE = "registerInDistributionEngine";
     public static final String UN_REGISTER_IN_DISTRIBUTION_ENGINE = "unregisterInDistributionEngine";
     private Gson gson = new GsonBuilder().setPrettyPrinting().create();
-    private static final Logger LOGGER = LoggerFactory.getLogger(DistributionBusinessLogic.class);
+    private static final Logger log = Logger.getLogger(DistributionBusinessLogic.class);
     @Resource
     private IDistributionEngine distributionEngine;
 
@@ -105,7 +94,10 @@ public class DistributionBusinessLogic {
             registerResponse = registerDistributionClientToTopic(responseWrapper, registrationRequest,
                     SubscriberTypeEnum.PRODUCER, statusTopicName);
 
-            auditHandler.auditRegisterACL(registerResponse, SubscriberTypeEnum.PRODUCER, statusTopicName);
+            auditHandler.auditRegisterACL(registerResponse, SubscriberTypeEnum.PRODUCER,
+                    DistributionTopicData.newBuilder()
+                        .statusTopic(statusTopicName)
+                        .build());
             boolean isRegisteredAsProducerOnStatusSuccess = responseWrapper.isEmpty();
 
             // Story [347698] Distribution Client Get Indication from
@@ -115,7 +107,10 @@ public class DistributionBusinessLogic {
             if (isRegisteredAsProducerOnStatusSuccess && isTrue(registrationRequest.getIsConsumerToSdcDistrStatusTopic())) {
                 registerResponse = registerDistributionClientToTopic(responseWrapper, registrationRequest,
                         SubscriberTypeEnum.CONSUMER, statusTopicName);
-                auditHandler.auditRegisterACL(registerResponse, SubscriberTypeEnum.CONSUMER, statusTopicName);
+                auditHandler.auditRegisterACL(registerResponse, SubscriberTypeEnum.CONSUMER,
+                        DistributionTopicData.newBuilder()
+                                .statusTopic(statusTopicName)
+                                .build());
                 registeredAsConsumerOnStatus = responseWrapper.isEmpty();
 
             }
@@ -125,19 +120,28 @@ public class DistributionBusinessLogic {
                         registrationRequest.getDistrEnvName());
                 registerResponse = registerDistributionClientToTopic(responseWrapper, registrationRequest,
                         SubscriberTypeEnum.CONSUMER, notificationTopicName);
-                auditHandler.auditRegisterACL(registerResponse, SubscriberTypeEnum.CONSUMER, notificationTopicName);
+                auditHandler.auditRegisterACL(registerResponse, SubscriberTypeEnum.CONSUMER,
+                        DistributionTopicData.newBuilder()
+                            .notificationTopic(notificationTopicName)
+                            .build());
             }
             // Unregister Rollback
             if (!responseWrapper.isEmpty()) {
                 if (isRegisteredAsProducerOnStatusSuccess) {
                     CambriaErrorResponse unRegisterResponse = unRegisterDistributionClientFromTopic(registrationRequest,
                             SubscriberTypeEnum.PRODUCER, statusTopicName);
-                    auditHandler.auditUnRegisterACL(unRegisterResponse, SubscriberTypeEnum.PRODUCER, statusTopicName);
+                    auditHandler.auditUnRegisterACL(unRegisterResponse, SubscriberTypeEnum.PRODUCER,
+                            DistributionTopicData.newBuilder()
+                                    .statusTopic(statusTopicName)
+                                    .build());
                 }
                 if (registeredAsConsumerOnStatus) {
                     CambriaErrorResponse unRegisterResponse = unRegisterDistributionClientFromTopic(registrationRequest,
                             SubscriberTypeEnum.CONSUMER, statusTopicName);
-                    auditHandler.auditUnRegisterACL(unRegisterResponse, SubscriberTypeEnum.CONSUMER, statusTopicName);
+                    auditHandler.auditUnRegisterACL(unRegisterResponse, SubscriberTypeEnum.CONSUMER,
+                            DistributionTopicData.newBuilder()
+                            .statusTopic(statusTopicName)
+                            .build());
                 }
             }
 
@@ -147,7 +151,7 @@ public class DistributionBusinessLogic {
             }
 
         } catch (Exception e) {
-            LOGGER.error("registration to topic failed", e);
+            log.error("registration to topic failed", e);
             BeEcompErrorManager.getInstance().logBeDistributionEngineSystemError(REGISTER_IN_DISTRIBUTION_ENGINE,
                     "registration of subscriber to topic");
             Response errorResponse = buildErrorResponse(
@@ -166,14 +170,18 @@ public class DistributionBusinessLogic {
             CambriaErrorResponse unregisterClientProducerTopicResponse = unRegisterDistributionClientFromTopic(
                     unRegistrationRequest, SubscriberTypeEnum.PRODUCER, statusTopicName);
             auditHandler.auditUnRegisterACL(unregisterClientProducerTopicResponse, SubscriberTypeEnum.PRODUCER,
-                    statusTopicName);
+                    DistributionTopicData.newBuilder()
+                            .statusTopic(statusTopicName)
+                            .build());
             updateResponseWrapper(cambriaResponseWrapper, unregisterClientProducerTopicResponse);
 
             String notificationTopicName = getNotificationTopicName(unRegistrationRequest.getDistrEnvName());
             CambriaErrorResponse unregisterClientConsumerTopicResponse = unRegisterDistributionClientFromTopic(
                     unRegistrationRequest, SubscriberTypeEnum.CONSUMER, notificationTopicName);
             auditHandler.auditUnRegisterACL(unregisterClientConsumerTopicResponse, SubscriberTypeEnum.CONSUMER,
-                    notificationTopicName);
+                    DistributionTopicData.newBuilder()
+                            .notificationTopic(notificationTopicName)
+                            .build());
             updateResponseWrapper(cambriaResponseWrapper, unregisterClientConsumerTopicResponse);
 
             // Success unregister both topics
@@ -192,7 +200,7 @@ public class DistributionBusinessLogic {
                         Response.status(HttpStatus.SC_INTERNAL_SERVER_ERROR).entity(unregisterResponse).build());
             }
         } catch (Exception e) {
-            LOGGER.error("unregistered to topic failed", e);
+            log.error("unregistered to topic failed", e);
             Response errorResponse = buildErrorResponse(
                     getResponseFormatManager().getResponseFormat(ActionStatus.GENERAL_ERROR));
             responseWrapper.setInnerElement(errorResponse);
@@ -233,7 +241,7 @@ public class DistributionBusinessLogic {
                 .getDistributionEngineConfiguration();
         initRequestEnvEndPoints(unRegistrationRequest, config);
 
-        LOGGER.debug("unregistering client as {} , from topic: {}, using DistEnvPoints: {}", subscriberType, topicName, unRegistrationRequest.getDistEnvEndPoints());
+        log.debug("unregistering client as {} , from topic: {}, using DistEnvPoints: {}", subscriberType, topicName, unRegistrationRequest.getDistEnvEndPoints());
         return getCambriaHandler().unRegisterFromTopic(unRegistrationRequest.getDistEnvEndPoints(), config.getUebPublicKey(),
                 config.getUebSecretKey(), unRegistrationRequest.getApiPublicKey(), subscriberType, topicName);
     }
@@ -267,7 +275,7 @@ public class DistributionBusinessLogic {
         else {
             errorMsg = "registration of subscriber to topic:" + topicName + " as producer failed";
         }
-        LOGGER.debug("registering client as {} , from topic: {}, using DistEnvPoints: {}", subscriberType, topicName, registrationRequest.getDistEnvEndPoints());
+        log.debug("registering client as {} , from topic: {}, using DistEnvPoints: {}", subscriberType, topicName, registrationRequest.getDistEnvEndPoints());
         CambriaErrorResponse registerToTopic = getCambriaHandler().registerToTopic(registrationRequest.getDistEnvEndPoints(),
                 config.getUebPublicKey(), config.getUebSecretKey(), registrationRequest.getApiPublicKey(),
                 subscriberType, topicName);

@@ -24,6 +24,7 @@
 import {Component, Input, Output, EventEmitter} from "@angular/core";
 import {InputFEModel} from "app/models";
 import {ModalService} from "../../../services/modal.service";
+import { InstanceFeDetails } from "app/models/instance-fe-details";
 
 @Component({
     selector: 'inputs-table',
@@ -33,7 +34,7 @@ import {ModalService} from "../../../services/modal.service";
 export class InputsTableComponent {
 
     @Input() inputs: Array<InputFEModel>;
-    @Input() instanceNamesMap: Map<string, string>;
+    @Input() instanceNamesMap: Map<string, InstanceFeDetails>;
     @Input() readonly:boolean;
     @Input() isLoading:boolean;
     @Output() inputChanged: EventEmitter<any> = new EventEmitter<any>();

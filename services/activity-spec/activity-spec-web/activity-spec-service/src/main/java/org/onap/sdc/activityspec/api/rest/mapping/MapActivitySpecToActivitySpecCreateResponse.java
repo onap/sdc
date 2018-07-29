@@ -16,11 +16,11 @@
 
 package org.onap.sdc.activityspec.api.rest.mapping;
 
-import java.util.Objects;
-
-import org.onap.sdc.activityspec.be.dao.types.ActivitySpecEntity;
 import org.onap.sdc.activityspec.api.rest.types.ActivitySpecCreateResponse;
+import org.onap.sdc.activityspec.be.dao.types.ActivitySpecEntity;
 import org.openecomp.sdcrests.mapping.MappingBase;
+
+import java.util.Objects;
 
 public class MapActivitySpecToActivitySpecCreateResponse
         extends MappingBase<ActivitySpecEntity, ActivitySpecCreateResponse> {

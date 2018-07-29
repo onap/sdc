@@ -1,16 +1,6 @@
 package org.openecomp.sdc.be.model.jsontitan.operations;
 
-import static java.util.Arrays.asList;
-import static java.util.Collections.singletonList;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertTrue;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
+import fj.data.Either;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -19,12 +9,8 @@ import org.junit.runner.RunWith;
 import org.openecomp.sdc.be.dao.config.TitanSpringConfig;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
-import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
 import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
 import org.openecomp.sdc.be.datatypes.elements.PolicyTargetType;
-import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
-import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
-import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentParametersView;
 import org.openecomp.sdc.be.model.ModelTestBase;
@@ -35,14 +21,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import fj.data.Either;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {TitanSpringConfig.class, ModelOperationsSpringConfig.class})
 public class ToscaOperationFacadePoliciesTest extends ModelTestBase {
 
-    private static final String CONTAINER_ID = "containerId";
-    private static final String CONTAINER_NAME = "containerName";
     @Autowired
     private ToscaOperationFacade toscaOperationFacade;
     @Autowired
@@ -126,11 +119,7 @@ public class ToscaOperationFacadePoliciesTest extends ModelTestBase {
     }
 
     private void createContainerVertexInDB() {
-        GraphVertex resource = new GraphVertex(VertexTypeEnum.TOPOLOGY_TEMPLATE);
-        resource.addMetadataProperty(GraphPropertyEnum.UNIQUE_ID, CONTAINER_ID);
-        resource.addMetadataProperty(GraphPropertyEnum.NAME, CONTAINER_NAME);
-        resource.setJsonMetadataField(JsonPresentationFields.NAME, CONTAINER_NAME);
-        resource.setJsonMetadataField(JsonPresentationFields.COMPONENT_TYPE, ComponentTypeEnum.RESOURCE.name());
+        GraphVertex resource = createBasicContainerGraphVertex();
         Either<GraphVertex, TitanOperationStatus> container = titanDao.createVertex(resource);
         assertTrue(container.isLeft());
     }

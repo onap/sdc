@@ -20,14 +20,7 @@
 
 package org.openecomp.sdc.be.user;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-import javax.servlet.ServletContext;
-
+import fj.data.Either;
 import org.apache.tinkerpop.gremlin.structure.Edge;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
@@ -41,19 +34,22 @@ import org.openecomp.sdc.be.model.operations.api.IUserAdminOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.common.api.UserRoleEnum;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.common.kpi.api.ASDCKpiApi;
 import org.openecomp.sdc.exception.ResponseFormat;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import fj.data.Either;
+import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Component("userBusinessLogic")
 public class UserBusinessLogic implements IUserBusinessLogic {
 
-    private static final Logger log = LoggerFactory.getLogger(UserBusinessLogic.class);
+    private static final Logger log = Logger.getLogger(UserBusinessLogic.class);
     private static UserAdminValidator userAdminValidator = UserAdminValidator.getInstance();
 
     @Resource
@@ -147,8 +143,15 @@ public class UserBusinessLogic implements IUserBusinessLogic {
 
         Either<User, StorageOperationStatus> addOrUpdateUserReq;
 
-        if (eitherUserInDB.isRight() && ActionStatus.USER_INACTIVE.equals(eitherUserInDB.right().value())) { 
-        	// user exist with inactive state - update user data
+        if (ActionStatus.USER_INACTIVE.equals(eitherUserInDB.right().value())) { // user
+                                                                                    // exist
+                                                                                    // with
+                                                                                    // inactive
+                                                                                    // state
+                                                                                    // -
+                                                                                    // update
+                                                                                    // user
+                                                                                    // data
             newUser.setLastLoginTime(0L);
             addOrUpdateUserReq = userAdminOperation.updateUserData(newUser);
 
@@ -165,7 +168,7 @@ public class UserBusinessLogic implements IUserBusinessLogic {
 
         if (addOrUpdateUserReq.isRight() || addOrUpdateUserReq.left().value() == null) {
             log.debug("createUser method - failed to create user");
-            return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(addOrUpdateUserReq.right().value())));
+            Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(addOrUpdateUserReq.right().value())));
         }
         log.debug("createUser method - user created");
         User createdUser = addOrUpdateUserReq.left().value();
@@ -264,8 +267,7 @@ public class UserBusinessLogic implements IUserBusinessLogic {
         return Either.left(updatedUser);
     }
 
-    @Override
-    public Either<List<User>, ResponseFormat> getAllAdminUsers(ServletContext context) {
+    public Either<List<User>, ResponseFormat> getAllAdminUsers() {
         Either<List<User>, ActionStatus> response = userAdminOperation.getAllUsersWithRole(Role.ADMIN.name(), null);
 
         if (response.isRight()) {
@@ -314,9 +316,6 @@ public class UserBusinessLogic implements IUserBusinessLogic {
         } else {
             rolesStr = "All";
             getResponse = getUsersPerRole(null, user, rolesStr);
-            if(getResponse.isRight()) {
-            	return getResponse;
-            }
             resultList.addAll(getResponse.left().value());
         }
         responseFormat = componentsUtils.getResponseFormat(ActionStatus.OK);
@@ -336,15 +335,15 @@ public class UserBusinessLogic implements IUserBusinessLogic {
     }
 
     private void handleGetUsersListAuditing(User user, ResponseFormat responseFormat, String details) {
-        componentsUtils.auditGetUsersList(AuditingActionEnum.GET_USERS_LIST, user, details, responseFormat);
+        componentsUtils.auditGetUsersList(user, details, responseFormat);
     }
 
     private void handleAuditing(User modifier, User userBefor, User userAfter, ResponseFormat responseFormat, AuditingActionEnum actionName) {
         componentsUtils.auditAdminUserAction(actionName, modifier, userBefor, userAfter, responseFormat);
     }
 
-    private void handleUserAccessAuditing(User user, ResponseFormat responseFormat, AuditingActionEnum actionName) {
-        componentsUtils.auditUserAccess(actionName, user, responseFormat);
+    private void handleUserAccessAuditing(User user, ResponseFormat responseFormat) {
+        componentsUtils.auditUserAccess(user, responseFormat);
     }
 
     @Override
@@ -440,7 +439,7 @@ public class UserBusinessLogic implements IUserBusinessLogic {
             authUser.setUserId("UNKNOWN");
             log.debug("deActivateUser method -  user header is missing");
             responseFormat = componentsUtils.getResponseFormat(ActionStatus.MISSING_INFORMATION);
-            handleUserAccessAuditing(authUser, responseFormat, AuditingActionEnum.USER_ACCESS);
+            handleUserAccessAuditing(authUser, responseFormat);
             return Either.right(responseFormat);
         }
 
@@ -448,7 +447,7 @@ public class UserBusinessLogic implements IUserBusinessLogic {
         if (eitherCreator.isRight()) {
             if (eitherCreator.right().value() == ActionStatus.USER_NOT_FOUND || eitherCreator.right().value() == ActionStatus.USER_INACTIVE) {
                 responseFormat = componentsUtils.getResponseFormat(ActionStatus.RESTRICTED_ACCESS);
-                handleUserAccessAuditing(authUser, responseFormat, AuditingActionEnum.USER_ACCESS);
+                handleUserAccessAuditing(authUser, responseFormat);
                 return Either.right(responseFormat);
             } else {
                 return Either.right(componentsUtils.getResponseFormatByUser(eitherCreator.right().value(), authUser));
@@ -463,17 +462,17 @@ public class UserBusinessLogic implements IUserBusinessLogic {
         User user = eitherCreator.left().value();
 
         String firstName = authUser.getFirstName();
-        if (firstName != null && firstName.isEmpty() == false && !firstName.equals(user.getFirstName())) {
+        if (firstName != null && !firstName.isEmpty() && !firstName.equals(user.getFirstName())) {
             user.setFirstName(firstName);
         }
 
         String lastName = authUser.getLastName();
-        if (lastName != null && lastName.isEmpty() == false && !lastName.equals(user.getLastName())) {
+        if (lastName != null && !lastName.isEmpty() && !lastName.equals(user.getLastName())) {
             user.setLastName(lastName);
         }
 
         String email = authUser.getEmail();
-        if (email != null && false == email.isEmpty() && !email.equals(user.getEmail())) {
+        if (email != null && !email.isEmpty() && !email.equals(user.getEmail())) {
             user.setEmail(email);
         }
 
@@ -483,10 +482,9 @@ public class UserBusinessLogic implements IUserBusinessLogic {
         Either<User, StorageOperationStatus> updateUserReq = userAdminOperation.updateUserData(user);
 
         if (updateUserReq.isRight()) {
-        	ActionStatus convertFromStorageResponse = componentsUtils.convertFromStorageResponse(updateUserReq.right().value());
-            responseFormat = componentsUtils.getResponseFormatByUser(convertFromStorageResponse, user);
-            handleUserAccessAuditing(user, responseFormat, AuditingActionEnum.USER_ACCESS);
-            return Either.right(responseFormat);
+            responseFormat = componentsUtils.getResponseFormatByUser(eitherCreator.right().value(), user);
+            handleUserAccessAuditing(user, responseFormat);
+            return Either.right(componentsUtils.getResponseFormatByUser(eitherCreator.right().value(), user));
         }
 
         User updatedUser = updateUserReq.left().value();
@@ -499,7 +497,7 @@ public class UserBusinessLogic implements IUserBusinessLogic {
         }
 
         responseFormat = componentsUtils.getResponseFormat(ActionStatus.OK);
-        handleUserAccessAuditing(updatedUser, responseFormat, AuditingActionEnum.USER_ACCESS);
+        handleUserAccessAuditing(updatedUser, responseFormat);
         ASDCKpiApi.countUsersAuthorizations();
         return Either.left(updatedUser);
     }
@@ -517,7 +515,7 @@ public class UserBusinessLogic implements IUserBusinessLogic {
             updatedUserCred.setUserId("UNKNOWN");
             log.debug("updateUserCredentials method - user header is missing");
             responseFormat = componentsUtils.getResponseFormat(ActionStatus.MISSING_INFORMATION);
-            handleUserAccessAuditing(updatedUserCred, responseFormat, AuditingActionEnum.USER_ACCESS);
+            handleUserAccessAuditing(updatedUserCred, responseFormat);
             return Either.right(responseFormat);
         }
 
@@ -526,7 +524,7 @@ public class UserBusinessLogic implements IUserBusinessLogic {
             ActionStatus status = eitherCreator.right().value();
             if (status == ActionStatus.USER_NOT_FOUND || status == ActionStatus.USER_INACTIVE) {
                 responseFormat = componentsUtils.getResponseFormat(ActionStatus.RESTRICTED_ACCESS);
-                handleUserAccessAuditing(updatedUserCred, responseFormat, AuditingActionEnum.USER_ACCESS);
+                handleUserAccessAuditing(updatedUserCred, responseFormat);
                 return Either.right(responseFormat);
             } else {
                 return Either.right(componentsUtils.getResponseFormatByUser(status, updatedUserCred));
@@ -541,17 +539,17 @@ public class UserBusinessLogic implements IUserBusinessLogic {
         User user = eitherCreator.left().value();
 
         String firstName = updatedUserCred.getFirstName();
-        if (firstName != null && firstName.isEmpty() == false && !firstName.equals(user.getFirstName())) {
+        if (firstName != null && !firstName.isEmpty() && !firstName.equals(user.getFirstName())) {
             user.setFirstName(firstName);
         }
 
         String lastName = updatedUserCred.getLastName();
-        if (lastName != null && lastName.isEmpty() == false && !lastName.equals(user.getLastName())) {
+        if (lastName != null && !lastName.isEmpty() && !lastName.equals(user.getLastName())) {
             user.setLastName(lastName);
         }
 
         String email = updatedUserCred.getEmail();
-        if (email != null && false == email.isEmpty() && !email.equals(user.getEmail())) {
+        if (email != null && !email.isEmpty() && !email.equals(user.getEmail())) {
             user.setEmail(email);
         }
 
@@ -566,16 +564,15 @@ public class UserBusinessLogic implements IUserBusinessLogic {
         Either<User, StorageOperationStatus> updateUserReq = userAdminOperation.updateUserData(user);
 
         if (updateUserReq.isRight()) {
-        	ActionStatus convertFromStorageResponse = componentsUtils.convertFromStorageResponse(updateUserReq.right().value());
-            responseFormat = componentsUtils.getResponseFormatByUser(convertFromStorageResponse, user);
-            handleUserAccessAuditing(user, responseFormat, AuditingActionEnum.USER_ACCESS);
-            return Either.right(responseFormat);
+            responseFormat = componentsUtils.getResponseFormatByUser(eitherCreator.right().value(), user);
+            handleUserAccessAuditing(user, responseFormat);
+            return Either.right(componentsUtils.getResponseFormatByUser(eitherCreator.right().value(), user));
         }
 
         User updatedUser = updateUserReq.left().value();
 
         responseFormat = componentsUtils.getResponseFormat(ActionStatus.OK);
-        handleUserAccessAuditing(updatedUser, responseFormat, AuditingActionEnum.USER_ACCESS);
+        handleUserAccessAuditing(updatedUser, responseFormat);
         return Either.left(updatedUser);
     }
 
@@ -585,7 +582,7 @@ public class UserBusinessLogic implements IUserBusinessLogic {
 
         try {
             UserRoleEnum userRole = UserRoleEnum.valueOf(user.getRole());
-            Map<String, Object> properties = new HashMap<String, Object>();
+            Map<String, Object> properties = new HashMap<>();
             switch (userRole) {
             case DESIGNER:
             case PRODUCT_STRATEGIST:

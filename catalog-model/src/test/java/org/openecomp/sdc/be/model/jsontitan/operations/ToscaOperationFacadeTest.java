@@ -1,19 +1,6 @@
 package org.openecomp.sdc.be.model.jsontitan.operations;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyMap;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.when;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-
+import fj.data.Either;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,7 +8,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
@@ -37,7 +24,17 @@ import org.openecomp.sdc.be.model.jsontitan.datamodel.TopologyTemplate;
 import org.openecomp.sdc.be.model.jsontitan.datamodel.ToscaElement;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 
-import fj.data.Either;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ToscaOperationFacadeTest {
@@ -106,73 +103,73 @@ public class ToscaOperationFacadeTest {
     
     @Test
     public void associatePolicyToComponentSuccessTest(){
-    	Either<PolicyDefinition, StorageOperationStatus> result = associatePolicyToComponentWithStatus(StorageOperationStatus.OK);
-    	assertTrue(result.isLeft());
+        Either<PolicyDefinition, StorageOperationStatus> result = associatePolicyToComponentWithStatus(StorageOperationStatus.OK);
+        assertTrue(result.isLeft());
     }
 
-	@Test
+    @Test
     public void associatePolicyToComponentFailureTest(){
-		Either<PolicyDefinition, StorageOperationStatus> result = associatePolicyToComponentWithStatus(StorageOperationStatus.BAD_REQUEST);
-    	assertTrue(result.isRight() && result.right().value() == StorageOperationStatus.BAD_REQUEST);
+        Either<PolicyDefinition, StorageOperationStatus> result = associatePolicyToComponentWithStatus(StorageOperationStatus.BAD_REQUEST);
+        assertTrue(result.isRight() && result.right().value() == StorageOperationStatus.BAD_REQUEST);
     }
 
     @Test
     public void updatePolicyOfComponentSuccessTest(){
-    	Either<PolicyDefinition, StorageOperationStatus> result = updatePolicyOfComponentWithStatus(StorageOperationStatus.OK);
-    	assertTrue(result.isLeft());
+        Either<PolicyDefinition, StorageOperationStatus> result = updatePolicyOfComponentWithStatus(StorageOperationStatus.OK);
+        assertTrue(result.isLeft());
     }
 
-	@Test
+    @Test
     public void updatePolicyOfComponentFailureTest(){
-		Either<PolicyDefinition, StorageOperationStatus> result = updatePolicyOfComponentWithStatus(StorageOperationStatus.NOT_FOUND);
-    	assertTrue(result.isRight() && result.right().value() == StorageOperationStatus.NOT_FOUND);
+        Either<PolicyDefinition, StorageOperationStatus> result = updatePolicyOfComponentWithStatus(StorageOperationStatus.NOT_FOUND);
+        assertTrue(result.isRight() && result.right().value() == StorageOperationStatus.NOT_FOUND);
     }
     
     @Test
     public void removePolicyFromComponentSuccessTest(){
-    	removePolicyFromComponentWithStatus(StorageOperationStatus.OK);
+        removePolicyFromComponentWithStatus(StorageOperationStatus.OK);
     }
     
     @Test
     public void removePolicyFromComponentFailureTest(){
-    	removePolicyFromComponentWithStatus(StorageOperationStatus.NOT_FOUND);
+        removePolicyFromComponentWithStatus(StorageOperationStatus.NOT_FOUND);
     }
     
     private Either<PolicyDefinition, StorageOperationStatus> associatePolicyToComponentWithStatus(StorageOperationStatus status) {
-    	PolicyDefinition policy = new PolicyDefinition();
-    	String componentId = "componentId";
-    	int counter = 0;
-    	GraphVertex vertex;
-    	if(status == StorageOperationStatus.OK){
-    		vertex = getTopologyTemplateVertex();
-    	} else {
-    		vertex = getNodeTypeVertex();
-    	}
-    	Either<GraphVertex, TitanOperationStatus> getVertexEither = Either.left(vertex);
-    	when(titanDaoMock.getVertexById(eq(componentId), eq(JsonParseFlagEnum.ParseMetadata))).thenReturn(getVertexEither);
-    	when(topologyTemplateOperationMock.addPolicyToToscaElement(eq(vertex), any(PolicyDefinition.class), anyInt())).thenReturn(status);
-    	return testInstance.associatePolicyToComponent(componentId, policy, counter);
+        PolicyDefinition policy = new PolicyDefinition();
+        String componentId = "componentId";
+        int counter = 0;
+        GraphVertex vertex;
+        if(status == StorageOperationStatus.OK){
+            vertex = getTopologyTemplateVertex();
+        } else {
+            vertex = getNodeTypeVertex();
+        }
+        Either<GraphVertex, TitanOperationStatus> getVertexEither = Either.left(vertex);
+        when(titanDaoMock.getVertexById(eq(componentId), eq(JsonParseFlagEnum.ParseMetadata))).thenReturn(getVertexEither);
+        when(topologyTemplateOperationMock.addPolicyToToscaElement(eq(vertex), any(PolicyDefinition.class), anyInt())).thenReturn(status);
+        return testInstance.associatePolicyToComponent(componentId, policy, counter);
     }
     
     private Either<PolicyDefinition, StorageOperationStatus> updatePolicyOfComponentWithStatus(StorageOperationStatus status) {
-    	PolicyDefinition policy = new PolicyDefinition();
-    	String componentId = "componentId";
-    	GraphVertex vertex = getTopologyTemplateVertex();
-    	when(titanDaoMock.getVertexById(eq(componentId), eq(JsonParseFlagEnum.NoParse))).thenReturn(Either.left(vertex));
-    	when(topologyTemplateOperationMock.updatePolicyOfToscaElement(eq(vertex), any(PolicyDefinition.class))).thenReturn(status);
-    	return testInstance.updatePolicyOfComponent(componentId, policy);
+        PolicyDefinition policy = new PolicyDefinition();
+        String componentId = "componentId";
+        GraphVertex vertex = getTopologyTemplateVertex();
+        when(titanDaoMock.getVertexById(eq(componentId), eq(JsonParseFlagEnum.NoParse))).thenReturn(Either.left(vertex));
+        when(topologyTemplateOperationMock.updatePolicyOfToscaElement(eq(vertex), any(PolicyDefinition.class))).thenReturn(status);
+        return testInstance.updatePolicyOfComponent(componentId, policy);
     }
 
-	private void removePolicyFromComponentWithStatus(StorageOperationStatus status) {
-		String componentId = "componentId";
-    	String policyId = "policyId";
-    	GraphVertex vertex = getTopologyTemplateVertex();
-    	Either<GraphVertex, TitanOperationStatus> getVertexEither = Either.left(vertex);
-    	when(titanDaoMock.getVertexById(eq(componentId), eq(JsonParseFlagEnum.NoParse))).thenReturn(getVertexEither);
-    	when(topologyTemplateOperationMock.removePolicyFromToscaElement(eq(vertex), eq(policyId))).thenReturn(status);
-    	StorageOperationStatus result = testInstance.removePolicyFromComponent(componentId, policyId);
-    	assertTrue(result == status);
-	}
+    private void removePolicyFromComponentWithStatus(StorageOperationStatus status) {
+        String componentId = "componentId";
+        String policyId = "policyId";
+        GraphVertex vertex = getTopologyTemplateVertex();
+        Either<GraphVertex, TitanOperationStatus> getVertexEither = Either.left(vertex);
+        when(titanDaoMock.getVertexById(eq(componentId), eq(JsonParseFlagEnum.NoParse))).thenReturn(getVertexEither);
+        when(topologyTemplateOperationMock.removePolicyFromToscaElement(eq(vertex), eq(policyId))).thenReturn(status);
+        StorageOperationStatus result = testInstance.removePolicyFromComponent(componentId, policyId);
+        assertSame(result, status);
+    }
     
     private List<GraphVertex> getMockVertices(int numOfVertices) {
         return IntStream.range(0, numOfVertices).mapToObj(i -> getTopologyTemplateVertex()).collect(Collectors.toList());

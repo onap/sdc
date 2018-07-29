@@ -21,10 +21,10 @@
 package org.openecomp.core.nosqldb.util;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.onap.sdc.tosca.services.YamlUtil;
 import org.openecomp.core.utilities.file.FileUtils;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
-import org.onap.sdc.tosca.services.YamlUtil;
 
 import java.io.FileInputStream;
 import java.io.IOException;

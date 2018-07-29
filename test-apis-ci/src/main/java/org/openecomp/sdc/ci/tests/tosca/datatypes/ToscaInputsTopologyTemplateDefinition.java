@@ -20,13 +20,12 @@
 
 package org.openecomp.sdc.ci.tests.tosca.datatypes;
 
+import com.google.gson.annotations.SerializedName;
+import org.yaml.snakeyaml.TypeDescription;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
-import org.yaml.snakeyaml.TypeDescription;
-
-import com.google.gson.annotations.SerializedName;
 
 public class ToscaInputsTopologyTemplateDefinition {
 	
@@ -40,11 +39,12 @@ public class ToscaInputsTopologyTemplateDefinition {
 	public Object Default;
 
 	public String status;
-	public List<Object> constraints = new ArrayList<Object>();
+	public List<Object> constraints = new ArrayList<>();
 	public Map<String, Object> entry_schema;
 	public Object value;
+	public Map<String, ToscaInputsAnnotation> annotations;
 
-	public ToscaInputsTopologyTemplateDefinition(String name, String type, String description, Boolean required, Object default1, String status, List<Object> constraints, Map<String, Object> entry_schema, Object value, Boolean immutable, Boolean hidden) {
+	public ToscaInputsTopologyTemplateDefinition(String name, String type, String description, Boolean required, Object default1, String status, List<Object> constraints, Map<String, Object> entry_schema, Object value, Boolean immutable, Boolean hidden, Map<String, ToscaInputsAnnotation> annotations) {
 		super();
 		this.name = name;
 		this.type = type;
@@ -57,6 +57,7 @@ public class ToscaInputsTopologyTemplateDefinition {
 		this.value = value;
 		this.immutable = immutable;
 		this.hidden = hidden;
+		this.annotations = annotations;
 	}
 
 	public ToscaInputsTopologyTemplateDefinition() {
@@ -164,11 +165,20 @@ public class ToscaInputsTopologyTemplateDefinition {
 		this.value = value;
 	}
 
+	public Map<String, ToscaInputsAnnotation> getAnnotations() {
+		return annotations;
+	}
+
+	public void setAnnotations(Map<String, ToscaInputsAnnotation> annotations) {
+		this.annotations = annotations;
+	}
+
 	//gets Type description for Yaml snake
 	public static TypeDescription getTypeDescription(){
         TypeDescription typeDescription = new TypeDescription(ToscaInputsTopologyTemplateDefinition.class);
         typeDescription.putListPropertyType("constraints", Object.class);
         typeDescription.putMapPropertyType("entry_schema", String.class, Object.class);
+        typeDescription.putMapPropertyType("annotations", String.class, ToscaInputsAnnotation.class); 
     	return typeDescription;
 	}
 

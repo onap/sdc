@@ -20,17 +20,8 @@
 
 package org.openecomp.sdc.externalApis;
 
-import static org.testng.AssertJUnit.assertFalse;
-import static org.testng.AssertJUnit.assertTrue;
-
-import java.io.IOException;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Random;
-import java.util.Set;
-
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import org.junit.Rule;
 import org.junit.rules.TestName;
 import org.openecomp.portalsdk.core.restful.domain.EcompRole;
@@ -51,8 +42,12 @@ import org.openecomp.sdc.ci.tests.utils.rest.UserRestUtils;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
+import java.io.IOException;
+import java.lang.reflect.Type;
+import java.util.*;
+
+import static org.testng.AssertJUnit.assertFalse;
+import static org.testng.AssertJUnit.assertTrue;
 
 public class UserAPIs extends ComponentBaseTest {
 	
@@ -311,7 +306,7 @@ public class UserAPIs extends ComponentBaseTest {
 		}
 	}
 	
-	@Test
+	/*@Test
 	public void deactivateUserRoleWithStartTestingResource() throws Exception {
 		
 		EcompUser ecompUser = new EcompUser();
@@ -364,7 +359,7 @@ public class UserAPIs extends ComponentBaseTest {
 			ResourceRestUtils.deleteResource(resource.getUniqueId(), adminUser.getUserId());
 			deleteUser(ecompUser.getLoginId());
 		}
-	}
+	}*/
 	
 	@Test
 	public void changeUserRoleWithStartTestingResource() throws Exception {

@@ -20,26 +20,28 @@
 
 import { NgModule } from '@angular/core';
 import { NavbarModule } from "./navbar/navbar.module";
-import {DynamicElementModule} from "./dynamic-element/dynamic-element.module";
-import {FormElementsModule} from "./form-components/form-elements.module";
-import {LoaderComponent} from "./loader/loader.component";
-import {ModalModule} from "./modal/modal.module";
-import {PopoverModule} from "./popover/popover.module";
-import {SearchBarComponent} from "./search-bar/search-bar.component";
-import {SearchWithAutoCompleteComponent} from "./search-with-autocomplete/search-with-autocomplete.component";
-import {PalettePopupPanelComponent} from "./palette-popup-panel/palette-popup-panel.component";
-import {ZoneContainerComponent} from "./canvas-zone/zone-container.component";
-import {ZoneInstanceComponent } from "./canvas-zone/zone-instance/zone-instance.component";
-import {PaletteAnimationComponent} from "./palette-animation/palette-animation.component"
-import {TabModule} from "./tabs/tabs.module";
-import {TooltipModule} from "./tooltip/tooltip.module";
-import {CommonModule} from "@angular/common";
-import {FormsModule} from "@angular/forms";
-import {BrowserModule} from "@angular/platform-browser";
-import {MultiStepsWizardModule} from "./multi-steps-wizard/multi-steps-wizard.module";
-import {MenuListModule} from "./menu/menu-list.module";
-import {MenuListNg2Module} from "../downgrade-wrappers/menu-list-ng2/menu-list-ng2.module";
-//import {SdcUiComponentsModule} from "sdc-ui/lib/angular";
+import { DynamicElementModule } from "./dynamic-element/dynamic-element.module";
+import { FormElementsModule } from "./form-components/form-elements.module";
+import { LoaderComponent } from "./loader/loader.component";
+import { ModalModule } from "./modal/modal.module";
+import { PopoverModule } from "./popover/popover.module";
+import { SearchBarComponent } from "./search-bar/search-bar.component";
+import { SearchWithAutoCompleteComponent } from "./search-with-autocomplete/search-with-autocomplete.component";
+import { PalettePopupPanelComponent } from "./palette-popup-panel/palette-popup-panel.component";
+import { ZoneContainerComponent } from "./canvas-zone/zone-container.component";
+import { ZoneInstanceComponent } from "./canvas-zone/zone-instance/zone-instance.component";
+import { PaletteAnimationComponent } from "./palette-animation/palette-animation.component"
+import { TabModule } from "./tabs/tabs.module";
+import { TooltipModule } from "./tooltip/tooltip.module";
+import { CommonModule } from "@angular/common";
+import { FormsModule } from "@angular/forms";
+import { BrowserModule } from "@angular/platform-browser";
+import { MultiStepsWizardModule } from "./multi-steps-wizard/multi-steps-wizard.module";
+import { MenuListModule } from "./menu/menu-list.module";
+import { MenuListNg2Module } from "../downgrade-wrappers/menu-list-ng2/menu-list-ng2.module";
+import { ExpandCollapseComponent } from './expand-collapse/expand-collapse.component';
+import { SdcUiComponentsModule } from "sdc-ui/lib/angular";
+import { TileModule } from "./tile/tile.module";
 
 @NgModule({
   declarations: [
@@ -49,11 +51,12 @@ import {MenuListNg2Module} from "../downgrade-wrappers/menu-list-ng2/menu-list-n
     PalettePopupPanelComponent,
     ZoneContainerComponent,
     ZoneInstanceComponent,
-    PaletteAnimationComponent
+    PaletteAnimationComponent,
+    ExpandCollapseComponent
 ],
-
+  
   imports: [
-    //SdcUiComponentsModule,
+    SdcUiComponentsModule,
     BrowserModule,
     FormsModule,
     CommonModule,
@@ -66,7 +69,8 @@ import {MenuListNg2Module} from "../downgrade-wrappers/menu-list-ng2/menu-list-n
     TooltipModule,
     MultiStepsWizardModule,
     MenuListModule,
-    MenuListNg2Module
+    MenuListNg2Module,
+    TileModule
   ],
   exports: [
     LoaderComponent,
@@ -85,7 +89,9 @@ import {MenuListNg2Module} from "../downgrade-wrappers/menu-list-ng2/menu-list-n
     TooltipModule,
     MenuListModule,
     MenuListNg2Module,
-    PaletteAnimationComponent
+    PaletteAnimationComponent,
+    ExpandCollapseComponent,
+    TileModule
   ],
   entryComponents: [SearchWithAutoCompleteComponent, PalettePopupPanelComponent, ZoneContainerComponent, ZoneInstanceComponent, PaletteAnimationComponent]
 })

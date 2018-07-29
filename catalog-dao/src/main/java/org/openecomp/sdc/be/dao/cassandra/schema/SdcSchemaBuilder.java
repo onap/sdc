@@ -32,11 +32,13 @@ package org.openecomp.sdc.be.dao.cassandra.schema;
 		import org.openecomp.sdc.be.config.ConfigurationManager;
 		import org.openecomp.sdc.be.dao.cassandra.schema.tables.OldExternalApiEventTableDesc;
 		import org.openecomp.sdc.be.resources.data.auditing.AuditingTypesConstants;
-		import org.slf4j.Logger;
-		import org.slf4j.LoggerFactory;
+import org.openecomp.sdc.common.log.enums.EcompLoggerErrorCode;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 
+import com.datastax.driver.core.AbstractTableMetadata;
 		import com.datastax.driver.core.Cluster;
 		import com.datastax.driver.core.DataType;
+import com.datastax.driver.core.IndexMetadata;
 		import com.datastax.driver.core.KeyspaceMetadata;
 		import com.datastax.driver.core.Session;
 		import com.datastax.driver.core.schemabuilder.Alter;
@@ -55,7 +57,7 @@ public class SdcSchemaBuilder {
 	 */
 	final static String CREATE_KEYSPACE_NETWORK_TOPOLOGY_STRATEGY = "CREATE KEYSPACE IF NOT EXISTS %s WITH replication = {'class':'NetworkTopologyStrategy', %s};";
 
-	private static Logger log = LoggerFactory.getLogger(SdcSchemaBuilder.class.getName());
+	private static Logger log = Logger.getLogger(SdcSchemaBuilder.class.getName());
 
 	//TODO remove after 1707_OS migration
 	private static void handle1707OSMigration(Map<String, Map<String, List<String>>> cassndraMetadata, Map<String, List<ITableDescription>> schemeData){
@@ -103,7 +105,7 @@ public class SdcSchemaBuilder {
 			}
 			return true;
 		} catch (Exception e) {
-			log.info("createSchema failed with exception.", e);
+			log.error(EcompLoggerErrorCode.SCHEMA_ERROR, "creating Schema for Cassandra", "Cassandra", e.getLocalizedMessage());
 		} finally {
 			if (session != null) {
 				session.close();
@@ -147,7 +149,7 @@ public class SdcSchemaBuilder {
 			System.out.println(cassndraMetadata);
 			return true;
 		} catch (Exception e) {
-			log.info("deleteSchema failed with exception.", e);
+			log.error(EcompLoggerErrorCode.SCHEMA_ERROR, "deleting Schema for Cassandra", "Cassandra", e.getLocalizedMessage());
 		} finally {
 			if (session != null) {
 				session.close();
@@ -174,25 +176,24 @@ public class SdcSchemaBuilder {
 	 * @return a map of maps of lists holding parsed info
 	 */
 	private static Map<String, Map<String, List<String>>> parseKeyspaceMetadata(List<KeyspaceMetadata> keyspacesMetadata) {
-		Map<String, Map<String, List<String>>> cassndraMetadata = keyspacesMetadata.stream()
-				.collect(Collectors.toMap(keyspaceMetadata -> keyspaceMetadata.getName(),
-						keyspaceMetadata -> keyspaceMetadata.getTables().stream()
-								.collect(Collectors.toMap(tableMetadata -> tableMetadata.getName(),
-										tableMetadata -> tableMetadata.getIndexes().stream()
-												.map(indexMetadata -> indexMetadata.getName())
-												.collect(Collectors.toList())))));
-		return cassndraMetadata;
+        return keyspacesMetadata.stream()
+.collect(Collectors.toMap(KeyspaceMetadata::getName,
+                        keyspaceMetadata -> keyspaceMetadata.getTables().stream()
+                                .collect(Collectors.toMap(AbstractTableMetadata::getName,
+                                        tableMetadata -> tableMetadata.getIndexes().stream()
+                                                .map(IndexMetadata::getName)
+                                                .collect(Collectors.toList())))));
 	}
 
 	private static Map<String, Map<String, List<String>>> getMetadataTablesStructure(
 			List<KeyspaceMetadata> keyspacesMetadata) {
 		return keyspacesMetadata.stream().collect(
-				Collectors.toMap(keyspaceMetadata -> keyspaceMetadata.getName(),
-						keyspaceMetadata -> keyspaceMetadata.getTables().stream().collect(
-								Collectors.toMap(tableMetadata -> tableMetadata.getName(),
-										tableMetadata -> tableMetadata.getColumns().stream().map(
-												columnMetadata -> columnMetadata.getName().toLowerCase()).collect(
-												Collectors.toList())))));
+				Collectors.toMap(KeyspaceMetadata::getName,
+								 keyspaceMetadata -> keyspaceMetadata.getTables().stream().collect(
+										 Collectors.toMap(AbstractTableMetadata::getName,
+												 		  tableMetadata -> tableMetadata.getColumns().stream().map(
+												 				  columnMetadata -> columnMetadata.getName().toLowerCase()).collect(
+												 						  Collectors.toList())))));		
 	}
 
 	/**
@@ -311,19 +312,19 @@ public class SdcSchemaBuilder {
 				if (createKeyspaceQuery != null) {
 					log.trace("exacuting: {}", createKeyspaceQuery);
 					session.execute(createKeyspaceQuery);
-					log.info("keyspace:{} created.", keyspace);
+					log.debug("keyspace:{} created.", keyspace);
 					return true;
 				} else {
 					return false;
 				}
 			} else {
-				log.info(
+				log.error(
 						"keyspace:{} not present in configuration, no info on replications is available. operation failed.",
 						keyspace);
 				return false;
 			}
 		} else {
-			log.info("keyspace:{} already exists skipping.", keyspace);
+			log.debug("keyspace:{} already exists skipping.", keyspace);
 			return true;
 		}
 	}
@@ -334,7 +335,7 @@ public class SdcSchemaBuilder {
 	 * @return a map of keyspaces to there table info
 	 */
 	private static Map<String, List<ITableDescription>> getSchemeData() {
-		Map<String, List<ITableDescription>> tablesByKeyspace = new HashMap<String, List<ITableDescription>>();
+		Map<String, List<ITableDescription>> tablesByKeyspace = new HashMap<>();
 		Table[] tables = Table.values();
 		for (Table table : tables) {
 			String keyspace = table.getTableDescription().getKeyspace().toLowerCase();

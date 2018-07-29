@@ -20,10 +20,10 @@
 
 package org.openecomp.sdc.be.components.impl;
 
-import java.util.Arrays;
-
 import org.junit.Assert;
 import org.junit.Test;
+
+import java.util.Arrays;
 
 public class CsarValidationUtilsTest {
     private String[] invalidExtensions = { null, ".bla", ".yaml", ".yml", ".txt", ".zip" };

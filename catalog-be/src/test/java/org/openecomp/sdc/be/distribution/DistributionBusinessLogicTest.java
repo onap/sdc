@@ -20,14 +20,6 @@
 
 package org.openecomp.sdc.be.distribution;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.openecomp.sdc.be.components.distribution.engine.DistributionEngineInitTask.buildTopicName;
-
-import javax.ws.rs.core.Response;
-
 import org.apache.http.HttpStatus;
 import org.junit.Before;
 import org.junit.Test;
@@ -45,6 +37,14 @@ import org.openecomp.sdc.be.distribution.api.client.RegistrationRequest;
 import org.openecomp.sdc.be.distribution.api.client.TopicRegistrationResponse;
 import org.openecomp.sdc.be.distribution.api.client.TopicUnregistrationResponse;
 import org.openecomp.sdc.common.datastructure.Wrapper;
+
+import javax.ws.rs.core.Response;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.openecomp.sdc.be.components.distribution.engine.DistributionEngineInitTask.buildTopicName;
 
 public class DistributionBusinessLogicTest extends BeConfDependentTest {
 
@@ -281,7 +281,7 @@ public class DistributionBusinessLogicTest extends BeConfDependentTest {
 
         assertTrue(!responseWrapper.isEmpty());
         Response response = responseWrapper.getInnerElement();
-        assertTrue(response.getStatus() == HttpStatus.SC_OK);
+        assertEquals(response.getStatus(), HttpStatus.SC_OK);
 
         TopicUnregistrationResponse okTopicUnregisterResponse = (TopicUnregistrationResponse) response.getEntity();
 
@@ -337,7 +337,7 @@ public class DistributionBusinessLogicTest extends BeConfDependentTest {
 
         assertTrue(!responseWrapper.isEmpty());
         Response response = responseWrapper.getInnerElement();
-        assertTrue(response.getStatus() == HttpStatus.SC_INTERNAL_SERVER_ERROR);
+        assertEquals(response.getStatus(), HttpStatus.SC_INTERNAL_SERVER_ERROR);
 
         TopicUnregistrationResponse okTopicUnregisterResponse = (TopicUnregistrationResponse) response.getEntity();
 
@@ -380,7 +380,7 @@ public class DistributionBusinessLogicTest extends BeConfDependentTest {
 
         assertTrue(!responseWrapper.isEmpty());
         Response response = responseWrapper.getInnerElement();
-        assertTrue(response.getStatus() == HttpStatus.SC_OK);
+        assertEquals(response.getStatus(), HttpStatus.SC_OK);
 
         TopicRegistrationResponse okTopicResponse = (TopicRegistrationResponse) response.getEntity();
 
@@ -413,7 +413,7 @@ public class DistributionBusinessLogicTest extends BeConfDependentTest {
 
         assertTrue(!responseWrapper.isEmpty());
         Response response = responseWrapper.getInnerElement();
-        assertTrue(response.getStatus() == HttpStatus.SC_INTERNAL_SERVER_ERROR);
+        assertEquals(response.getStatus(), HttpStatus.SC_INTERNAL_SERVER_ERROR);
 
 
 

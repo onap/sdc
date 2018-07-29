@@ -1,0 +1,19 @@
+<div class="components-to-upgrade-list-item ">
+    <div class="component-to-upgrade-data">
+        <sdc-checkbox class="component-to-upgrade-checkbox"
+                      *ngIf="!componentToUpgrade.isAlreadyUpgrade && !componentToUpgrade.isLock"
+                      [checked]="true"
+                      [disabled]="disabled"
+                      (checkedChange)="onComponentChecked(componentToUpgrade.uniqueId)">
+        </sdc-checkbox>
+        <svg-icon *ngIf="componentToUpgrade.isAlreadyUpgrade" name="success-circle-o" mode="success"
+                  size="medium"></svg-icon>
+        <svg-icon *ngIf="!componentToUpgrade.isAlreadyUpgrade && componentToUpgrade.isLock" name="locked" mode="info"
+                  size="small"></svg-icon>
+        <div class="component-to-upgrade-icon small sprite-services-icons {{componentToUpgrade.icon}}"></div>
+        <span class="component-to-upgrade-name">{{componentToUpgrade.name}} ({{componentToUpgrade.version}})</span>
+    </div>
+
+    <upgrade-list-item-inner-content [vspInstances]="componentToUpgrade.vspInstances"></upgrade-list-item-inner-content>
+
+</div>

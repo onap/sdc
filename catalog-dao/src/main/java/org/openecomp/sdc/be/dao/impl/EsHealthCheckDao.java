@@ -20,19 +20,18 @@
 
 package org.openecomp.sdc.be.dao.impl;
 
-import javax.annotation.Resource;
-
 import org.openecomp.sdc.be.dao.api.IEsHealthCheckDao;
 import org.openecomp.sdc.be.dao.es.ElasticSearchClient;
 import org.openecomp.sdc.common.api.HealthCheckInfo.HealthCheckStatus;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.springframework.stereotype.Component;
+
+import javax.annotation.Resource;
 
 @Component("esHealthCheckDao")
 public class EsHealthCheckDao implements IEsHealthCheckDao {
 
-	private static Logger logger = LoggerFactory.getLogger(EsHealthCheckDao.class.getName());
+	private static Logger logger = Logger.getLogger(EsHealthCheckDao.class.getName());
 
 	@Resource(name = "elasticsearch-client")
 	private ElasticSearchClient esClient;

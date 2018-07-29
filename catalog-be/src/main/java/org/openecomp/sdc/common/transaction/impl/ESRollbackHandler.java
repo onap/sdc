@@ -20,23 +20,21 @@
 
 package org.openecomp.sdc.common.transaction.impl;
 
+import fj.data.Either;
 import org.openecomp.sdc.be.dao.api.ResourceUploadStatus;
 import org.openecomp.sdc.be.dao.impl.ESCatalogDAO;
 import org.openecomp.sdc.be.resources.data.ESArtifactData;
 import org.openecomp.sdc.be.tosca.CsarUtils;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.common.transaction.api.RollbackHandler;
 import org.openecomp.sdc.common.transaction.api.TransactionUtils.DBActionCodeEnum;
 import org.openecomp.sdc.common.transaction.api.TransactionUtils.DBTypeEnum;
 import org.openecomp.sdc.common.transaction.api.TransactionUtils.ESActionTypeEnum;
 import org.openecomp.sdc.common.util.MethodActivationStatusEnum;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import fj.data.Either;
 
 public class ESRollbackHandler extends RollbackHandler {
 
-    private static final Logger log = LoggerFactory.getLogger(CsarUtils.class);
+    private static final Logger log = Logger.getLogger(CsarUtils.class.getName());
 
     public ESRollbackHandler(Integer transactionId, String userId, String actionType) {
         super(transactionId, userId, actionType);

@@ -42,11 +42,7 @@ import org.openecomp.sdc.versioning.dao.types.Version;
 import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * Created by Talio on 11/24/2016

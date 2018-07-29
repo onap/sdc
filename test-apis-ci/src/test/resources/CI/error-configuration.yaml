@@ -1494,7 +1494,7 @@ errors:
 # %2 - VF name
 # %3 - component type [VF ]
     GROUP_IS_MISSING: {
-        code: 400,
+        code: 404,
         message: "Error: Invalid Content. The groups '%1' cannot be found under %2 %3.",
         messageId: "SVC4624"
     }

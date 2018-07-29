@@ -23,7 +23,7 @@ package org.openecomp.sdc.ci.tests.datatypes;
 public enum GeneralCanvasItemsEnum {
 	CANVAS("canvas"), 
 	CANVAS_RIGHT_PANEL("w-sdc-designer-sidebar-head"), 
-	DELETE_INSTANCE_BUTTON("e-sdc-small-icon-delete");
+	DELETE_INSTANCE_BUTTON("deleteInstance");
 
 	private String value;
 

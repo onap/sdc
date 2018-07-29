@@ -1,0 +1,34 @@
+<ng2-composition-panel-header 
+    [name]="selectedZoneInstanceName" 
+    [topologyTemplate]="topologyTemplate"
+    [selectedZoneInstanceType]="selectedZoneInstanceType"
+    [selectedZoneInstanceId]="selectedZoneInstanceId"
+    [nonCertified]="nonCertified"
+    [isViewOnly]="isViewOnly" 
+    [isLoading]="isLoading"
+></ng2-composition-panel-header>
+
+<div class="component-details-panel-tabs">
+    <loader [display]="isLoading" [size]="'large'" [relative]="true" [loaderDelay]="500"></loader>
+
+    <div *ngIf="selectedZoneInstanceType === zoneInstanceType.POLICY">
+        <policy-tabs 
+           [topologyTemplate]="topologyTemplate"
+           [selectedZoneInstanceType]="selectedZoneInstanceType"
+           [selectedZoneInstanceId]="selectedZoneInstanceId"
+           [isViewOnly]="isViewOnly"
+           (isLoading)="setIsLoading($event)"
+        ></policy-tabs>
+    </div>
+    
+    <div *ngIf="selectedZoneInstanceType === zoneInstanceType.GROUP">
+        <group-tabs 
+            [topologyTemplate]="topologyTemplate"
+            [selectedZoneInstanceType]="selectedZoneInstanceType"
+            [selectedZoneInstanceId]="selectedZoneInstanceId"
+            [isViewOnly]="isViewOnly"
+            (isLoading)="setIsLoading($event)"
+         ></group-tabs>
+    </div>
+
+</div>

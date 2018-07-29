@@ -23,14 +23,14 @@ package org.openecomp.sdc.ci.tests.datatypes;
 public enum CheckBoxStatusEnum {
 	CHECKOUT("", "checkbox-checkout"), 
 	CHECKIN("", "checkbox-checkin"), 
-	READY_FOR_TESTING("checkbox-readyfortesting","checkbox-1"), 
-	IN_TESTING("checkbox-intesting", "checkbox-2"), 
+	READY_FOR_TESTING("checkbox-readyforcertification","checkbox-1"),
+	IN_TESTING("checkbox-incertification", "checkbox-2"),
 	WAITING_FOR_DISTRIBUTION("", "checkbox-waitingforapproval"), 
 	DISTRIBUTION_REJECTED("", "checkbox-distributionrejected"), 
 	DISTRIBUTION_APPROVED("", "checkbox-distributionapproved"), 
 	CERTIFIED("checkbox-certified", "checkbox-3"), 
-	DISTRIBUTED("", "checkbox-4"), 
-	IN_DESIGN("", "checkbox-0");
+	DISTRIBUTED("checkbox-distributed", "checkbox-4"),
+	IN_DESIGN("checkbox-indesign", "checkbox-0");
 
 	private String value;
 	private String value2;

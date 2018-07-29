@@ -20,6 +20,10 @@
 
 package org.openecomp.sdc.be.servlets;
 
+import com.jcabi.aspects.Loggable;
+import org.openecomp.sdc.be.resources.data.ESArtifactData;
+import org.openecomp.sdc.common.log.wrappers.Logger;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -27,17 +31,11 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
-import org.openecomp.sdc.be.resources.data.ESArtifactData;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.jcabi.aspects.Loggable;
-
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/services")
 public class CsarBuildServlet extends ToscaDaoServlet {
 
-    private static final Logger log = LoggerFactory.getLogger(CsarBuildServlet.class);
+    private static final Logger log = Logger.getLogger(CsarBuildServlet.class);
 
     @GET
     @Path("/{serviceName}/{serviceVersion}")

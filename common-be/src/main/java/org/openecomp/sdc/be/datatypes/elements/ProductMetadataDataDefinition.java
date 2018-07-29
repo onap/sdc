@@ -22,16 +22,10 @@ package org.openecomp.sdc.be.datatypes.elements;
 
 import org.openecomp.sdc.be.datatypes.components.ComponentMetadataDataDefinition;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ProductMetadataDataDefinition extends ComponentMetadataDataDefinition implements Serializable {
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -1877577227290771160L;
+public class ProductMetadataDataDefinition extends ComponentMetadataDataDefinition {
 
 	private String fullName;
 

@@ -16,12 +16,12 @@
 
 package org.openecomp.sdc.translator.services.heattotosca.impl.functiontranslation;
 
-import java.io.IOException;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.openecomp.sdc.translator.services.heattotosca.buildconsolidationdata.TestConstants;
 import org.openecomp.sdc.translator.services.heattotosca.impl.resourcetranslation.BaseResourceTranslationTest;
+
+import java.io.IOException;
 
 public class FunctionTranslationGetAttrImplTest extends BaseResourceTranslationTest {
 

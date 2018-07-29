@@ -1,11 +1,10 @@
 package org.openecomp.sdc.be.datatypes.elements;
 
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
 import org.junit.Test;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
+
+import java.util.HashSet;
+import java.util.Map;
 
 public class MapDataDefinitionTest {
 

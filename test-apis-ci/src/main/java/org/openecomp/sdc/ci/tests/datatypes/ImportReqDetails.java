@@ -20,35 +20,24 @@
 
 package org.openecomp.sdc.ci.tests.datatypes;
 
-import static org.testng.AssertJUnit.assertEquals;
-import static org.testng.AssertJUnit.assertNotNull;
-import static org.testng.AssertJUnit.assertTrue;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
+import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
 import org.openecomp.sdc.ci.tests.utils.rest.ResourceRestUtils;
 import org.openecomp.sdc.ci.tests.utils.rest.ResponseParser;
 import org.yaml.snakeyaml.Yaml;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.*;
+import java.util.*;
+
+import static org.testng.AssertJUnit.*;
 
 public class ImportReqDetails extends ResourceReqDetails {
 
+	private static final String CAPS = "capabilities";
 	private String payloadName;
 	private String payloadData;
 
@@ -61,6 +50,12 @@ public class ImportReqDetails extends ResourceReqDetails {
 	public ImportReqDetails(String resourceName, String description, List<String> tags, List<String> derivedFrom,
 			String vendorName, String vendorRelease, String contactId, String icon) {
 		super(resourceName, description, tags, null, derivedFrom, vendorName, vendorRelease, contactId, icon);
+	}
+	
+	public ImportReqDetails(Resource resource, String payloadName, String payloadData){
+		super(resource);
+		this.payloadData = payloadData;
+		this.payloadName = payloadName;
 	}
 
 	public String getPayloadName() {
@@ -84,8 +79,7 @@ public class ImportReqDetails extends ResourceReqDetails {
 		return "ImportReqDetails [payloadName=" + payloadName + ", payloadData=" + payloadData + "]";
 	}
 
-	public void setReqirementsAndCapabilities(String path, String fileName, User user, String derivedFromSource)
-			throws Exception {
+	public void setReqirementsAndCapabilities(String path, String fileName, User user, String derivedFromSource) throws IOException, JSONException{
 		setRequirements(path, fileName, user, derivedFromSource);
 		setCapabilities(path, fileName, user, derivedFromSource);
 	}
@@ -110,14 +104,15 @@ public class ImportReqDetails extends ResourceReqDetails {
 		return requirements;
 	}
 
-	public void setRequirements(String path, String fileName, User user, String derivedFromSource) throws Exception {
+	public void setRequirements(String path, String fileName, User user, String derivedFromSource) throws IOException, JSONException {
 		Map<String, Object> requirementsFromFile = getRequirementsMapFromFile(path + File.separator + fileName,
 				toscaResourceName, "requirements");
-		Map<String, Object> requirements = organizeRequirementsMap(requirementsFromFile);
-		getDerivedReqCap(user, requirements, "requirements", derivedFromSource);
-		this.requirements = requirements;
+		Map<String, Object> reqs = organizeRequirementsMap(requirementsFromFile);
+		getDerivedReqCap(user, reqs, "requirements", derivedFromSource);
+		this.requirements = reqs;
 	}
 
+	@SuppressWarnings("unchecked")
 	private void getDerivedReqCap(User user, Map<String, Object> reqCapMap, String field, String derivedFromResource)
 			throws IOException, JSONException {
 
@@ -134,17 +129,16 @@ public class ImportReqDetails extends ResourceReqDetails {
 			List<Object> lst = (List<Object>) parsedFieldFromResponseAsMap.get(type);
 			convertListToMap = convertListToMap(lst);
 
-			if (field.equals("capabilities")) {
+			if (field.equals(CAPS)) {
 				convertListToMap.replace("capabilitySources", derivedList);
-				lst = new ArrayList<Object>(Arrays.asList(convertListToMap));
+				lst = new ArrayList<>(Arrays.asList(convertListToMap));
 			}
 
 			Object existingValue = reqCapMap.get(type);
 			if (existingValue != null) {
 				Map<String, Object> convertedExistingValue = convertListToMap((List<Object>) existingValue);
-				if (convertedExistingValue.get("name").toString().toLowerCase()
-						.equals(convertListToMap.get("name").toString().toLowerCase())) {
-					lst = new ArrayList<Object>(Arrays.asList(convertedExistingValue));
+				if (convertedExistingValue.get("name").toString().equalsIgnoreCase(convertListToMap.get("name").toString())) {
+					lst = new ArrayList<>(Arrays.asList(convertedExistingValue));
 				} else {
 					lst.add(convertedExistingValue);
 				}
@@ -174,19 +168,20 @@ public class ImportReqDetails extends ResourceReqDetails {
 		return capabilities;
 	}
 
-	public void setCapabilities(String path, String fileName, User user, String derivedFromSource) throws Exception {
+	public void setCapabilities(String path, String fileName, User user, String derivedFromSource) throws IOException, JSONException {
 		Map<String, Object> capabilitiesFromFile = getCapabilitiesMapFromFile(path + File.separator + fileName,
-				toscaResourceName, "capabilities");
-		Map<String, Object> capabilities = organizeCapabilitiesMap(capabilitiesFromFile);
-		getDerivedReqCap(user, capabilities, "capabilities", derivedFromSource);
-		this.capabilities = capabilities;
+				toscaResourceName, CAPS);
+		Map<String, Object> caps = organizeCapabilitiesMap(capabilitiesFromFile);
+		getDerivedReqCap(user, caps, CAPS, derivedFromSource);
+		this.capabilities = caps;
 	}
 
+	@SuppressWarnings("unchecked")
 	private Map<String, Object> organizeCapabilitiesMap(Map<String, Object> capabilitiesFromFile) {
 		Iterator<String> iterator = capabilitiesFromFile.keySet().iterator();
-		Map<String, Object> capMap = new HashMap<String, Object>();
+		Map<String, Object> capMap = new HashMap<>();
 		while (iterator.hasNext()) {
-			List<Object> valueList = new ArrayList<Object>();
+			List<Object> valueList = new ArrayList<>();
 			String next = iterator.next();
 			Map<String, Object> valuesMap = (Map<String, Object>) capabilitiesFromFile.get(next);
 			String key = valuesMap.remove("type").toString();
@@ -204,26 +199,28 @@ public class ImportReqDetails extends ResourceReqDetails {
 				valueList.add(valuesMap);
 			} else {
 				Map<String, Object> convertValue = convertListToMap((List<Object>) tempValue);
-				valueList = new ArrayList<Object>(Arrays.asList(convertValue, valuesMap));
+				valueList = new ArrayList<>(Arrays.asList(convertValue, valuesMap));
 			}
 			capMap.put(key, valueList);
 		}
 		return capMap;
 	}
 
+	@SuppressWarnings("unchecked")
 	private Map<String, Object> getCapabilitiesMapFromFile(String fileName, String toscaResourceName,
-			String fieldToTest) throws Exception {
+			String fieldToTest) throws FileNotFoundException {
 		Map<String, Object> resourceToscaMap = getToscaResourceFromFile(fileName, toscaResourceName);
 		Object capMap = resourceToscaMap.get(fieldToTest);
 		if (capMap == null) {
-			return new HashMap<String, Object>();
+			return new HashMap<>();
 		}
 		return (Map<String, Object>) capMap;
 	}
 
+	@SuppressWarnings("unchecked")
 	private Map<String, Object> organizeRequirementsMap(Map<String, Object> requirementsFromFile) {
-		Map<String, Object> reqMap = new HashMap<String, Object>();
-		List<Object> valueList = new ArrayList<Object>();
+		Map<String, Object> reqMap = new HashMap<>();
+		List<Object> valueList = new ArrayList<>();
 		Iterator<String> iterator = requirementsFromFile.keySet().iterator();
 		while (iterator.hasNext()) {
 			String key = iterator.next();
@@ -244,19 +241,19 @@ public class ImportReqDetails extends ResourceReqDetails {
 		return reqMap;
 	}
 
+	@SuppressWarnings("unchecked")
 	private Map<String, Object> getRequirementsMapFromFile(String fileName, String toscaResourceName,
-			String fieldToTest) throws Exception {
+			String fieldToTest) throws FileNotFoundException {
 		Map<String, Object> resourceToscaMap = getToscaResourceFromFile(fileName, toscaResourceName);
 		List<Object> reqListFromFile = (List<Object>) resourceToscaMap.get(fieldToTest);
 		if (reqListFromFile == null) {
-			return new HashMap<String, Object>();
+			return new HashMap<>();
 		}
-		Map<String, Object> testedMapFromFile = convertListToMap(reqListFromFile);
-		return testedMapFromFile;
+		return convertListToMap(reqListFromFile);
 	}
 
-	private Map<String, Object> getToscaResourceFromFile(String fullFileName, String toscaResourceName)
-			throws Exception {
+	@SuppressWarnings("unchecked")
+	private Map<String, Object> getToscaResourceFromFile(String fullFileName, String toscaResourceName) throws FileNotFoundException{
 		Map<String, Object> nodesTypesMap = getNodesTypesMapFromFile(fullFileName);
 		Map<String, Object> resourceToscaMap = (Map<String, Object>) nodesTypesMap.get(toscaResourceName);
 
@@ -265,17 +262,18 @@ public class ImportReqDetails extends ResourceReqDetails {
 		return resourceToscaMap;
 	}
 
+	@SuppressWarnings("unchecked")
 	private Map<String, Object> getNodesTypesMapFromFile(String fullFileName) throws FileNotFoundException {
 		Yaml yaml = new Yaml();
 		File file = new File(fullFileName);
 		InputStream inputStream = new FileInputStream(file);
 		Map<?, ?> mapFromFile = (Map<?, ?>) yaml.load(inputStream);
-		Map<String, Object> nodesTypesMap = (Map<String, Object>) mapFromFile.get("node_types");
-		return nodesTypesMap;
+		return (Map<String, Object>) mapFromFile.get("node_types");
 	}
 
+	@SuppressWarnings("unchecked")
 	private Map<String, Object> convertListToMap(List<Object> testedListFromFile) {
-		Map<String, Object> testedMapFromFile = new HashMap<String, Object>();
+		Map<String, Object> testedMapFromFile = new HashMap<>();
 		for (int i = 0; i < testedListFromFile.size(); i++) {
 			Object req = testedListFromFile.get(i);
 			ObjectMapper m = new ObjectMapper();
@@ -285,6 +283,7 @@ public class ImportReqDetails extends ResourceReqDetails {
 		return testedMapFromFile;
 	}
 
+	@SuppressWarnings("unchecked")
 	public void compareRequirementsOrCapabilities(Map<String, Object> exepectedReq, Map<String, Object> actualReq) {
 		Iterator<String> iterator = exepectedReq.keySet().iterator();
 		while (iterator.hasNext()) {
@@ -317,14 +316,15 @@ public class ImportReqDetails extends ResourceReqDetails {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	private List<Map<String, Object>> convertListToMapList(List<Object> testedListFromFile) {
-		List<Map<String, Object>> listOfMaps = new ArrayList<Map<String, Object>>();
+		List<Map<String, Object>> listOfMaps = new ArrayList<>();
 		for (int i = 0; i < testedListFromFile.size(); i++) {
 			Object req = testedListFromFile.get(i);
 			ObjectMapper m = new ObjectMapper();
 			Map<? extends String, ? extends String> mappedObject = m.convertValue(req, Map.class);
 			mappedObject.remove("uniqueId");
-			Map<String, Object> testedMapFromFile = new HashMap<String, Object>();
+			Map<String, Object> testedMapFromFile = new HashMap<>();
 			testedMapFromFile.putAll(mappedObject);
 			listOfMaps.add(testedMapFromFile);
 		}

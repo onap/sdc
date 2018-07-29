@@ -1,12 +1,6 @@
 package org.openecomp.sdc.asdctool.simulator.tenant;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.List;
-import java.util.stream.Collectors;
-
+import com.opencsv.bean.CsvToBeanBuilder;
 import org.openecomp.sdc.be.dao.cassandra.OperationalEnvironmentDao;
 import org.openecomp.sdc.be.dao.cassandra.schema.Table;
 import org.openecomp.sdc.be.resources.data.OperationalEnvironmentEntry;
@@ -14,7 +8,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
-import com.opencsv.bean.CsvToBeanBuilder;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Imports CSV file into 

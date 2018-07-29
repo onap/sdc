@@ -20,8 +20,7 @@
 
 package org.openecomp.sdc.ci.tests.pages;
 
-import java.util.ArrayList;
-
+import com.aventstack.extentreports.Status;
 import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum;
 import org.openecomp.sdc.ci.tests.datatypes.ProductReqDetails;
 import org.openecomp.sdc.ci.tests.execute.setup.SetupCDTest;
@@ -29,7 +28,7 @@ import org.openecomp.sdc.ci.tests.utilities.GeneralUIUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
-import com.aventstack.extentreports.Status;
+import java.util.ArrayList;
 
 /**
  * @author al714h

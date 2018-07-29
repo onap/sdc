@@ -1,11 +1,11 @@
 package org.openecomp.sdc.be.resources.data.category;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.junit.Test;
 import org.openecomp.sdc.be.datatypes.category.SubCategoryDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class SubCategoryDataTest {
 

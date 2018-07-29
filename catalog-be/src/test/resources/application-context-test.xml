@@ -13,5 +13,6 @@
     <bean class="org.openecomp.sdc.be.components.distribution.engine.DmaapClientFactory" />
     <bean class="org.openecomp.sdc.be.components.distribution.engine.ExecutorFactory" />
     <bean class="org.openecomp.sdc.be.components.distribution.engine.DmaapHealth" />
+    <bean class="org.openecomp.sdc.be.impl.ComponentsUtils" />
 
 </beans>

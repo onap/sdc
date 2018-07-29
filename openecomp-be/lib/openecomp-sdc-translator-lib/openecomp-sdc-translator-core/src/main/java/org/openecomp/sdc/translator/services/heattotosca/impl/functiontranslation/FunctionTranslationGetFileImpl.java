@@ -16,11 +16,6 @@
 
 package org.openecomp.sdc.translator.services.heattotosca.impl.functiontranslation;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.onap.sdc.tosca.datatypes.model.ArtifactDefinition;
 import org.onap.sdc.tosca.datatypes.model.NodeTemplate;
 import org.openecomp.sdc.tosca.datatypes.ToscaArtifactType;
@@ -29,6 +24,11 @@ import org.openecomp.sdc.tosca.services.ToscaConstants;
 import org.openecomp.sdc.tosca.services.ToscaFileOutputService;
 import org.openecomp.sdc.tosca.services.impl.ToscaFileOutputServiceCsarImpl;
 import org.openecomp.sdc.translator.services.heattotosca.FunctionTranslation;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class FunctionTranslationGetFileImpl implements FunctionTranslation {
     private static ArtifactDefinition createArtifactDefinition(Object function,

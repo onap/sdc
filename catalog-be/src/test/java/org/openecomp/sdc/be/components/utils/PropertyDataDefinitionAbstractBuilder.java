@@ -1,10 +1,10 @@
 package org.openecomp.sdc.be.components.utils;
 
-import java.util.ArrayList;
-
 import org.openecomp.sdc.be.datatypes.elements.GetInputValueDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
+
+import java.util.ArrayList;
 
 public abstract class PropertyDataDefinitionAbstractBuilder<B extends PropertyDataDefinition, T extends PropertyDataDefinitionAbstractBuilder<B, T>> {
 

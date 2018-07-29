@@ -26,9 +26,9 @@ import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintViolatio
 
 public interface PropertyConstraint {
 
-	void initialize(ToscaType propertyType) throws ConstraintValueDoNotMatchPropertyTypeException;
+    void initialize(ToscaType propertyType) throws ConstraintValueDoNotMatchPropertyTypeException;
 
-	void validate(Object propertyValue) throws ConstraintViolationException;
+    void validate(Object propertyValue) throws ConstraintViolationException;
 
-	void validate(ToscaType toscaType, String propertyTextValue) throws ConstraintViolationException;
+    void validate(ToscaType toscaType, String propertyTextValue) throws ConstraintViolationException;
 }

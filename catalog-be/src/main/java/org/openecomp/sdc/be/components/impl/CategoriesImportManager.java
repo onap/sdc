@@ -20,13 +20,7 @@
 
 package org.openecomp.sdc.be.components.impl;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
+import fj.data.Either;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datamodel.api.CategoryTypeEnum;
 import org.openecomp.sdc.be.datamodel.utils.NodeTypeConvertUtils;
@@ -38,14 +32,14 @@ import org.openecomp.sdc.be.model.category.GroupingDefinition;
 import org.openecomp.sdc.be.model.category.SubCategoryDefinition;
 import org.openecomp.sdc.be.model.operations.api.IElementOperation;
 import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.common.util.ValidationUtils;
 import org.openecomp.sdc.exception.ResponseFormat;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.yaml.snakeyaml.Yaml;
 
-import fj.data.Either;
+import java.util.*;
+import java.util.Map.Entry;
 
 @Component("categoriesImportManager")
 public class CategoriesImportManager {
@@ -56,7 +50,7 @@ public class CategoriesImportManager {
     @javax.annotation.Resource
     private ComponentsUtils componentsUtils;
 
-    private static final Logger log = LoggerFactory.getLogger(CategoriesImportManager.class);
+    private static final Logger log = Logger.getLogger(CategoriesImportManager.class.getName());
 
     public Either<Map<String, List<CategoryDefinition>>, ResponseFormat> createCategories(String categoriesTypesYml) {
 

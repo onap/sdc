@@ -20,92 +20,120 @@
 
 package org.openecomp.sdc.be.model;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-
+import com.google.common.collect.Lists;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
+import org.apache.commons.collections.SetUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.openecomp.sdc.be.datatypes.elements.CapabilityDataDefinition;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 /**
  * Specifies the capabilities that the Node Type exposes.
  */
-public class CapabilityDefinition extends CapabilityDataDefinition implements Serializable {
+public class CapabilityDefinition extends CapabilityDataDefinition {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -3871825415338268030L;
-
-	
-	/**
-	 * The properties field contains all properties defined for
-	 * CapabilityDefinition
-	 */
-	private List<ComponentInstanceProperty> properties;
-
-	// specifies the resource instance holding this requirement
+    /**
+     * The properties field contains all properties defined for
+     * CapabilityDefinition
+     */
+    private List<ComponentInstanceProperty> properties;
 
 
-	public CapabilityDefinition() {
-		super();
-	}
-	
-	public CapabilityDefinition(CapabilityDataDefinition cap) {
-		super(cap);
-	}
+    public CapabilityDefinition() {
+        super();
+    }
 
-	public CapabilityDefinition(CapabilityDefinition other) {
-		super((CapabilityDefinition)other);
-	
-		if (other.properties != null) {
-			this.properties = new ArrayList<>(other.properties.stream().map(p -> new ComponentInstanceProperty(p)).collect(Collectors.toList()));
+    public CapabilityDefinition(CapabilityDataDefinition cap) {
+        super(cap);
+    }
+
+	public CapabilityDefinition(CapabilityTypeDefinition other, String ownerName, String name, CapabilityDataDefinition.OwnerType ownerType) {
+		super(other);
+        this.setOwnerName(ownerName);
+        this.setOwnerType(ownerType);
+        this.setName(name);
+        this.setParentName(name);
+		if (MapUtils.isNotEmpty(other.getProperties())) {
+			this.properties = Lists.newArrayList(other.getProperties().values().stream().map(ComponentInstanceProperty::new).collect(Collectors.toList()));
 		}
-		
 	}
 
+    public CapabilityDefinition(CapabilityDefinition other) {
+        super((CapabilityDefinition)other);
 
+        if (other.properties != null) {
+			this.properties = new ArrayList<>(other.properties.stream().map(ComponentInstanceProperty::new).collect(Collectors.toList()));
+        }
+    }
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = super.hashCode();
-		result = prime * result + ((properties == null) ? 0 : properties.hashCode());
-		return result;
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result + ((properties == null) ? 0 : properties.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (!super.equals(obj))
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        CapabilityDefinition other = (CapabilityDefinition) obj;
+        if (properties == null) {
+            if (other.properties != null)
+                return false;
+        } else if (!SetUtils.isEqualSet(properties, other.getProperties()))
+            return false;
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        return "CapabilityDefinition [properties=" + properties + "]";
+    }
+
+    public List<ComponentInstanceProperty> getProperties() {
+        return properties;
+    }
+
+    public void setProperties(List<ComponentInstanceProperty> properties) {
+        this.properties = properties;
+    }
+
+	public void updateCapabilityProperties(CapabilityDefinition capabilityDefinition) {
+		if(CollectionUtils.isNotEmpty(getProperties()) && capabilityDefinition!= null && CollectionUtils.isNotEmpty(capabilityDefinition.getProperties())){
+			Map<String, ComponentInstanceProperty> propertiesInfo = capabilityDefinition.getProperties()
+					.stream()
+					.collect(Collectors.toMap(ComponentInstanceProperty::getName, p->p));
+			getProperties().forEach(p->p.updateCapabilityProperty(propertiesInfo.get(p.getName())));
+		}
 	}
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (!super.equals(obj))
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		CapabilityDefinition other = (CapabilityDefinition) obj;
-		if (properties == null) {
-			if (other.properties != null)
-				return false;
-		} else if (!properties.equals(other.properties))
-			return false;
-		return true;
-	}
+    public void updateEmptyCapabilityOwnerFields(String ownerId, String ownerName, OwnerType ownerType) {
+        if (StringUtils.isEmpty(getOwnerId())){
+            setOwnerId(ownerId);
+            if(getPath() == null){
+                setPath(new ArrayList<>());
+            }
+            if(!getPath().contains(ownerId)){
+                getPath().add(ownerId);
+            }
+            setOwnerName(ownerName);
+            setOwnerTypeIfEmpty(ownerType);
+        }
+    }
 
-	@Override
-	public String toString() {
-		return "CapabilityDefinition [properties=" + properties + "]";
-	}
-
-	public List<ComponentInstanceProperty> getProperties() {
-		return properties;
-	}
-
-	public void setProperties(List<ComponentInstanceProperty> properties) {
-		this.properties = properties;
-	}
-
-
-
-
-
+    private void setOwnerTypeIfEmpty(OwnerType ownerType) {
+        if(getOwnerType() == null){
+            setOwnerType(ownerType);
+        }
+    }
 }

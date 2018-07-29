@@ -20,14 +20,16 @@
 
 package org.openecomp.sdc.be.components.distribution.engine;
 
-/* Example {
-             "operationalEnvironmentId": "28122015552391",
-             "operationalEnvironmentName": "Operational Environment Name",
-             "operationalEnvironmentType": "ECOMP",
-             "tenantContext": "TEST",
-             "workloadContext": "ECOMP_E2E-IST",
-             "action": "Create"
-       }*/
+/**
+ *  Example {
+ *      "operationalEnvironmentId": "28122015552391",
+ *      "operationalEnvironmentName": "Operational Environment Name",
+ *      "operationalEnvironmentType": "ECOMP",
+ *      "tenantContext": "TEST",
+ *      "workloadContext": "ECOMP_E2E-IST",
+ *      "action": "Create"
+ *      }
+ */
 public class DmaapNotificationDataImpl implements IDmaapNotificationData, IDmaapAuditNotificationData {
 
     private String operationalEnvironmentId;

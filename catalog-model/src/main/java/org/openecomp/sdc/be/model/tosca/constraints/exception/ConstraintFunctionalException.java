@@ -30,21 +30,19 @@ import org.openecomp.sdc.be.model.tosca.constraints.ConstraintUtil.ConstraintInf
  */
 public class ConstraintFunctionalException extends FunctionalException {
 
-	private static final long serialVersionUID = 1L;
+    protected final transient ConstraintInformation constraintInformation;
 
-	protected ConstraintInformation constraintInformation;
+    public ConstraintFunctionalException(String message, Throwable cause) {
+        this(message, cause, null);
+    }
 
-	public ConstraintFunctionalException(String message, Throwable cause) {
-		super(message, cause);
-	}
+    public ConstraintFunctionalException(String message) {
+        this(message, null, null);
+    }
 
-	public ConstraintFunctionalException(String message) {
-		super(message);
-	}
-
-	public ConstraintFunctionalException(String message, Throwable cause, ConstraintInformation constraintInformation) {
-		super(message, cause);
-		this.constraintInformation = constraintInformation;
-	}
+    public ConstraintFunctionalException(String message, Throwable cause, ConstraintInformation constraintInformation) {
+        super(message, cause);
+        this.constraintInformation = constraintInformation;
+    }
 
 }

@@ -1,8 +1,8 @@
 package org.openecomp.sdc.be.datatypes.elements;
 
-import java.util.Map;
-
 import org.junit.Test;
+
+import java.util.Map;
 
 
 public class InterfaceDataDefinitionTest {

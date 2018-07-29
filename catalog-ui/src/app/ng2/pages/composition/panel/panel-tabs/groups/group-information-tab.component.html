@@ -1,0 +1,30 @@
+<ng2-expand-collapse state="0">
+
+    <header tooltip="General Information">General Info</header>
+
+    <content>
+    <!-- CATEGORY -->
+    <div class="component-details-panel-item">
+        <span class="name" [innerHTML]="'GENERAL_LABEL_CATEGORY' | translate"></span>
+        <span class="value" data-tests-id="rightTab_category" tooltip="Group">Group</span>
+    </div>
+
+    <!-- SUB CATEGORY -->
+    <div class="component-details-panel-item">
+        <span class="name" [innerHTML]="'GENERAL_LABEL_SUB_CATEGORY' | translate"></span>
+        <span class="value" data-tests-id="rightTab_subCategory" tooltip="Group">Group</span>
+    </div>
+
+    <!-- VERSION -->
+    <div class="component-details-panel-item">
+        <span class="name" [innerHTML]="'GENERAL_LABEL_VERSION' | translate"></span>
+        <span class="value" data-tests-id="rightTab_version" tooltip="{{group.version}}">{{group.version}}</span>
+    </div>
+
+    <!-- DESCRIPTION -->
+    <div class="component-details-panel-item description">
+        <span class="name" [innerHTML]="'GENERAL_LABEL_DESCRIPTION' | translate"></span>
+        <span class="value" ellipsis="group.description" max-chars="55" data-tests-id="rightTab_description">{{group.description}}</span>
+    </div>
+    </content>
+</ng2-expand-collapse>

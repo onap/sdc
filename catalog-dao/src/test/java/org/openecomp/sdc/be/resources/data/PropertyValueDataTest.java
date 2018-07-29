@@ -1,11 +1,11 @@
 package org.openecomp.sdc.be.resources.data;
 
+import org.junit.Test;
+import org.openecomp.sdc.be.datatypes.elements.PropertyRule;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.junit.Test;
-import org.openecomp.sdc.be.datatypes.elements.PropertyRule;
 
 
 public class PropertyValueDataTest {

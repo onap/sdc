@@ -1,9 +1,9 @@
 package org.openecomp.sdc.be.datatypes.elements;
 
+import org.junit.Test;
+
 import java.util.LinkedList;
 import java.util.List;
-
-import org.junit.Test;
 
 
 public class ListMapPropertiesDataDefinitionTest {

@@ -53,6 +53,10 @@
                 "dcae_discovery_url": "http://yyy:8183/dcaed/#/demo",
                 "dcae_source_url": "http://yyy:8183/dcaed/#/demo"
             },
+            "DCAE-TAB": {
+                "dcae_dt_discovery_url": "yyy",
+                "dcae_dt_source_url": "yyy"
+            },
             "WORKFLOW": {
                 "workflow_discovery_url": "yyy",
                 "workflow_source_url": "yyy"
@@ -93,6 +97,7 @@
             "cassandra_password": "Aa1234%^!",
             "concurrent_writes": "32",
             "cluster_name": "SDC-CS-",
+            "datacenter_name": "SDC-CS-",
             "multithreaded_compaction": "false",
             "cache_dir": "/var/lib/cassandra/saved_caches",
             "log_file": "/var/lib/cassandra/log/system.log",

@@ -20,43 +20,27 @@
 
 package org.openecomp.sdc.be.ecomp.converters;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
+import fj.data.Either;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.distribution.servlet.DistributionCatalogServlet;
-import org.openecomp.sdc.be.externalapi.servlet.representation.ArtifactMetadata;
-import org.openecomp.sdc.be.externalapi.servlet.representation.AssetMetadata;
-import org.openecomp.sdc.be.externalapi.servlet.representation.ResourceAssetDetailedMetadata;
-import org.openecomp.sdc.be.externalapi.servlet.representation.ResourceAssetMetadata;
-import org.openecomp.sdc.be.externalapi.servlet.representation.ResourceInstanceMetadata;
-import org.openecomp.sdc.be.externalapi.servlet.representation.ServiceAssetDetailedMetadata;
-import org.openecomp.sdc.be.externalapi.servlet.representation.ServiceAssetMetadata;
+import org.openecomp.sdc.be.externalapi.servlet.representation.*;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
-import org.openecomp.sdc.be.model.ArtifactDefinition;
-import org.openecomp.sdc.be.model.Component;
-import org.openecomp.sdc.be.model.ComponentInstance;
-import org.openecomp.sdc.be.model.Resource;
-import org.openecomp.sdc.be.model.Service;
+import org.openecomp.sdc.be.model.*;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import fj.data.Either;
+import java.util.*;
 
 @org.springframework.stereotype.Component("asset-metadata-utils")
 public class AssetMetadataConverter {
-    private static final Logger log = LoggerFactory.getLogger(DistributionCatalogServlet.class);
+    private static final Logger log = Logger.getLogger(DistributionCatalogServlet.class);
 
     @Autowired
     private ComponentsUtils componentsUtils;
@@ -110,11 +94,6 @@ public class AssetMetadataConverter {
 
             return generateServiceMetadata(serverBaseURL, detailed, curr);
 
-        // For future US's that include product
-        /*
-         * case PRODUCT: if (component instanceof Product) { List<ProductAssetMetadata> retResList = new LinkedList<>(); for (Component curr : componentList) { retResList.add(convertToProductAssetMetadata((Product) curr, serverBaseURL)); } return
-         * Either.left(retResList);
-         */
         default:
 
             ResponseFormat responseFormat = componentsUtils.getResponseFormatAdditionalProperty(ActionStatus.COMPONENT_INVALID_CATEGORY);
@@ -168,7 +147,7 @@ public class AssetMetadataConverter {
         metaData = convertToServiceAssetMetadata((ServiceAssetMetadata) metaData, (Service) curr, serverBaseURL, detailed);
 
         if (detailed) {
-            Either<ServiceAssetDetailedMetadata, StorageOperationStatus> converted = convertToServiceDetailedMetadata((ServiceAssetDetailedMetadata) metaData, (Service) curr, serverBaseURL);
+            Either<ServiceAssetDetailedMetadata, StorageOperationStatus> converted = convertToServiceDetailedMetadata((ServiceAssetDetailedMetadata) metaData, (Service) curr);
             if (converted.isRight()) {
                 ActionStatus storageResponse = componentsUtils.convertFromStorageResponse(converted.right().value(), ComponentTypeEnum.RESOURCE);
                 ResponseFormat responseFormat = componentsUtils.getResponseFormat(storageResponse);
@@ -237,7 +216,7 @@ public class AssetMetadataConverter {
         }
 
         Map<String, ArtifactDefinition> deploymentArtifacts = resource.getDeploymentArtifacts();
-        assetToPopulate = populateResourceWithArtifacts(assetToPopulate, resource, serverBaseURL, deploymentArtifacts);
+        assetToPopulate = populateResourceWithArtifacts(assetToPopulate, resource, deploymentArtifacts);
 
         assetToPopulate.setLastUpdaterFullName(resource.getLastUpdaterFullName());
         assetToPopulate.setToscaResourceName(resource.getToscaResourceName());
@@ -245,7 +224,7 @@ public class AssetMetadataConverter {
         return Either.left(assetToPopulate);
     }
 
-    private <T extends ServiceAssetDetailedMetadata> Either<T, StorageOperationStatus> convertToServiceDetailedMetadata(T assetToPopulate, Service service, String serverBaseURL) {
+    private <T extends ServiceAssetDetailedMetadata> Either<T, StorageOperationStatus> convertToServiceDetailedMetadata(T assetToPopulate, Service service) {
 
         List<ComponentInstance> componentInstances = service.getComponentInstances();
 
@@ -266,7 +245,7 @@ public class AssetMetadataConverter {
         return Either.left(assetToPopulate);
     }
 
-    private <T extends ResourceAssetDetailedMetadata> T populateResourceWithArtifacts(T asset, Resource resource, String serverBaseURL, Map<String, ArtifactDefinition> artifacts) {
+    private <T extends ResourceAssetDetailedMetadata> T populateResourceWithArtifacts(T asset, Resource resource, Map<String, ArtifactDefinition> artifacts) {
 
         List<ArtifactMetadata> artifactMetaList = populateAssetWithArtifacts(resource, artifacts);
 
@@ -373,18 +352,4 @@ public class AssetMetadataConverter {
         return Either.left(retList);
     }
 
-    // For future US to support Product
-    /*
-     * private ProductAssetMetadata convertToProductAssetMetadata(Product product, String serverBaseURL) { ProductAssetMetadata retProdAsset = new ProductAssetMetadata();
-     *
-     * retProdAsset = convertToAsset(retProdAsset, product, serverBaseURL); retProdAsset.setLifecycleState(product.getLifecycleState().name()); retProdAsset.setLastUpdaterUserId(product.getLastUpdaterUserId());
-     * retProdAsset.setActive(product.getIsActive()); retProdAsset.setContacts(product.getContacts());
-     *
-     * List<CategoryDefinition> categories = product.getCategories(); List<ProductCategoryGroupMetadata> categoryMetadataList = new LinkedList<>();
-     *
-     * if (categories == null || categories.isEmpty()) { return retProdAsset; } else { for (CategoryDefinition categoryDefinition : categories) { String categoryName = categoryDefinition.getName(); List<SubCategoryDefinition> subcategories =
-     * categoryDefinition.getSubcategories(); for (SubCategoryDefinition subCategoryDefinition : subcategories) { String subCategoryName = subCategoryDefinition.getName(); List<GroupDefinition> groups = product.getGroups(); for (GroupDefinition
-     * groupDefinition : groups) { String groupName = groupDefinition.getName(); categoryMetadataList.add(new ProductCategoryGroupMetadata(categoryName, subCategoryName, groupName)); } } } retProdAsset.setProductGroupings(categoryMetadataList);
-     * return retProdAsset; } }
-     */
 }

@@ -1,8 +1,10 @@
-<div class="zone-child mode-{{config.mode}}" [class.locked]="activeInstanceMode > MODE.HOVER" 
-     (mouseenter)="setMode(MODE.HOVER)" (mouseleave)="setMode(MODE.NONE)" (click)="setMode(MODE.SELECTED)">
-        <div class="zone-child__handle" (click)="setMode(MODE.TAG, $event)">+</div>
-        <div class="zone-child__body">
-            <div class="zone-child__body-content">{{config.count || defaultIconText}}</div>
+<div tooltip="{{zoneInstance.instanceData.name}}"  #currentComponent
+        class="zone-instance mode-{{zoneInstance.mode}}" [class.locked]="activeInstanceMode > MODE.HOVER" [class.hiding]="hidden"
+     (mouseenter)="setMode(MODE.HOVER)" (mouseleave)="setMode(MODE.NONE)" (click)="setMode(MODE.SELECTED, $event)">
+        <div *ngIf="zoneInstance.handle" class="target-handle {{zoneInstance.handle}}" (click)="tagHandleClicked($event)"></div>
+        <div *ngIf="!isViewOnly" class="zone-instance__handle" (click)="setMode(MODE.TAG, $event)">+</div>
+        <div class="zone-instance__body">
+            <div class="zone-instance__body-content">{{zoneInstance.assignments.length || defaultIconText}}</div>
         </div>
-        <div class="zone-child__name">{{config.name}}</div>
+        <div class="zone-instance__name">{{zoneInstance.instanceData.name}}</div>
 </div>

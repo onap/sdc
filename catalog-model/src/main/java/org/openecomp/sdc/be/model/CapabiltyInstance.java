@@ -24,29 +24,29 @@ import java.util.Map;
 
 public class CapabiltyInstance {
 
-	private String uniqueId;
+    private String uniqueId;
 
-	private Map<String, String> properties;
+    private Map<String, String> properties;
 
-	public String getUniqueId() {
-		return uniqueId;
-	}
+    public String getUniqueId() {
+        return uniqueId;
+    }
 
-	public void setUniqueId(String uniqueId) {
-		this.uniqueId = uniqueId;
-	}
+    public void setUniqueId(String uniqueId) {
+        this.uniqueId = uniqueId;
+    }
 
-	public Map<String, String> getProperties() {
-		return properties;
-	}
+    public Map<String, String> getProperties() {
+        return properties;
+    }
 
-	public void setProperties(Map<String, String> properties) {
-		this.properties = properties;
-	}
+    public void setProperties(Map<String, String> properties) {
+        this.properties = properties;
+    }
 
-	@Override
-	public String toString() {
-		return "CapabiltyInstance [uniqueId=" + uniqueId + ", properties=" + properties + "]";
-	}
+    @Override
+    public String toString() {
+        return "CapabiltyInstance [uniqueId=" + uniqueId + ", properties=" + properties + "]";
+    }
 
 }

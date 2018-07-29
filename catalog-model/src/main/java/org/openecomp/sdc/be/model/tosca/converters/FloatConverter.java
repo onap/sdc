@@ -20,23 +20,23 @@
 
 package org.openecomp.sdc.be.model.tosca.converters;
 
-import java.util.Map;
-
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 
+import java.util.Map;
+
 public class FloatConverter implements ToscaValueConverter {
-	private static FloatConverter floatConverter = new FloatConverter();
+    private static FloatConverter floatConverter = new FloatConverter();
 
-	public static FloatConverter getInstance() {
-		return floatConverter;
-	}
+    public static FloatConverter getInstance() {
+        return floatConverter;
+    }
 
-	private FloatConverter() {
+    private FloatConverter() {
 
-	}
+    }
 
-	@Override
-	public Object convertToToscaValue(String value, String innerType, Map<String, DataTypeDefinition> dataTypes) {
-		return Double.parseDouble(value);
-	}
+    @Override
+    public Object convertToToscaValue(String value, String innerType, Map<String, DataTypeDefinition> dataTypes) {
+        return Double.parseDouble(value);
+    }
 }

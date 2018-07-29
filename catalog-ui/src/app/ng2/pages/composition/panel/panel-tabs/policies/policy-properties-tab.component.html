@@ -1,0 +1,23 @@
+<ng2-expand-collapse state="0">
+    <header tooltip="Properties">Properties</header>
+    <content>
+        <ul>
+            <li *ngFor="let property of properties; let i = index"
+                class="i-sdc-designer-sidebar-section-content-item-property-and-attribute" data-tests-id="propertyRow">
+                <div class="i-sdc-designer-sidebar-section-content-item-property-and-attribute-label hand"
+                     [attr.data-tests-id]="'propertyName_'+property.name"
+                     tooltip="{{property.name}}"
+                     (click)="!isViewOnly && editProperty(property)">{{property.name}}
+                </div>
+                <div class="i-sdc-designer-sidebar-section-content-item-property-value"
+                     [attr.data-tests-id]="'value_'+property.name"
+                     tooltip="{{property.value || property.defaultValue}}">{{property.value || property.defaultValue}}
+                </div>
+            </li>
+        </ul>
+
+        <div *ngIf="properties.length===0" class="component-details-panel-tab-no-data">
+            <div class="component-details-panel-tab-no-data-title">No properties to display</div>
+        </div>
+    </content>
+</ng2-expand-collapse>

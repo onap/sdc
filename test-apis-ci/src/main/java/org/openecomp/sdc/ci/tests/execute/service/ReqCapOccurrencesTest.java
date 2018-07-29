@@ -20,10 +20,23 @@
 
 package org.openecomp.sdc.ci.tests.execute.service;
 
-import static org.openecomp.sdc.ci.tests.utils.rest.BaseRestUtils.STATUS_CODE_SUCCESS;
-import static org.testng.AssertJUnit.assertEquals;
-import static org.testng.AssertJUnit.assertNotNull;
-import static org.testng.AssertJUnit.assertTrue;
+import org.apache.http.client.ClientProtocolException;
+import org.junit.rules.TestName;
+import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
+import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
+import org.openecomp.sdc.be.model.*;
+import org.openecomp.sdc.ci.tests.api.ComponentInstanceBaseTest;
+import org.openecomp.sdc.ci.tests.datatypes.ImportReqDetails;
+import org.openecomp.sdc.ci.tests.datatypes.ResourceReqDetails;
+import org.openecomp.sdc.ci.tests.datatypes.enums.*;
+import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
+import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
+import org.openecomp.sdc.ci.tests.utils.general.ImportUtils;
+import org.openecomp.sdc.ci.tests.utils.rest.*;
+import org.openecomp.sdc.ci.tests.utils.validation.ErrorValidationUtils;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
 import java.io.File;
 import java.io.IOException;
@@ -32,44 +45,8 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-import org.apache.http.client.ClientProtocolException;
-import org.junit.rules.TestName;
-import org.openecomp.sdc.be.dao.api.ActionStatus;
-import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
-import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
-import org.openecomp.sdc.be.model.CapReqDef;
-import org.openecomp.sdc.be.model.CapabilityDefinition;
-import org.openecomp.sdc.be.model.CapabilityRequirementRelationship;
-import org.openecomp.sdc.be.model.Component;
-import org.openecomp.sdc.be.model.ComponentInstance;
-import org.openecomp.sdc.be.model.RelationshipImpl;
-import org.openecomp.sdc.be.model.RelationshipInfo;
-import org.openecomp.sdc.be.model.RequirementCapabilityRelDef;
-import org.openecomp.sdc.be.model.RequirementDefinition;
-import org.openecomp.sdc.be.model.Resource;
-import org.openecomp.sdc.be.model.Service;
-import org.openecomp.sdc.be.model.User;
-import org.openecomp.sdc.ci.tests.api.ComponentInstanceBaseTest;
-import org.openecomp.sdc.ci.tests.datatypes.ImportReqDetails;
-import org.openecomp.sdc.ci.tests.datatypes.ResourceReqDetails;
-import org.openecomp.sdc.ci.tests.datatypes.enums.LifeCycleStatesEnum;
-import org.openecomp.sdc.ci.tests.datatypes.enums.NormativeTypesEnum;
-import org.openecomp.sdc.ci.tests.datatypes.enums.ResourceCategoryEnum;
-import org.openecomp.sdc.ci.tests.datatypes.enums.ServiceCategoriesEnum;
-import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
-import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
-import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
-import org.openecomp.sdc.ci.tests.utils.general.ImportUtils;
-import org.openecomp.sdc.ci.tests.utils.rest.BaseRestUtils;
-import org.openecomp.sdc.ci.tests.utils.rest.ComponentInstanceRestUtils;
-import org.openecomp.sdc.ci.tests.utils.rest.ComponentRestUtils;
-import org.openecomp.sdc.ci.tests.utils.rest.LifecycleRestUtils;
-import org.openecomp.sdc.ci.tests.utils.rest.ResourceRestUtils;
-import org.openecomp.sdc.ci.tests.utils.rest.ResponseParser;
-import org.openecomp.sdc.ci.tests.utils.rest.ServiceRestUtils;
-import org.openecomp.sdc.ci.tests.utils.validation.ErrorValidationUtils;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
+import static org.openecomp.sdc.ci.tests.utils.rest.BaseRestUtils.STATUS_CODE_SUCCESS;
+import static org.testng.AssertJUnit.*;
 
 public class ReqCapOccurrencesTest extends ComponentInstanceBaseTest {
 
@@ -164,7 +141,7 @@ public class ReqCapOccurrencesTest extends ComponentInstanceBaseTest {
 		ResourceRestUtils.checkCreateResponse(createResourceVF200);
 		// Create Service
 		serviceDetails_01 = ElementFactory.getDefaultService("newtestservice1", ServiceCategoriesEnum.MOBILITY,
-				sdncDesignerDetails.getUserId());
+				sdncDesignerDetails.getUserId(), ServiceInstantiationType.A_LA_CARTE.getValue());
 		RestResponse createServiceRestResponse = ServiceRestUtils.createService(serviceDetails_01, sdncDesignerDetails);
 		ResourceRestUtils.checkCreateResponse(createServiceRestResponse);
 

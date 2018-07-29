@@ -1,11 +1,7 @@
 package org.openecomp.sdc.be.model.jsontitan.operations;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
 
+import fj.data.Either;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
@@ -14,12 +10,13 @@ import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
 import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
 import org.openecomp.sdc.be.datatypes.elements.MapComponentInstanceExternalRefs;
 import org.openecomp.sdc.be.model.jsontitan.utils.IdMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.openecomp.sdc.be.model.operations.impl.OperationUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import fj.data.Either;
+import java.util.*;
+
+import static java.util.Collections.emptyMap;
 
 /**
  * Created by yavivi on 26/01/2018.
@@ -27,18 +24,12 @@ import fj.data.Either;
 @Component
 public class ExternalReferencesOperation extends BaseOperation {
 
-    private static final Logger log = LoggerFactory.getLogger(ExternalReferencesOperation.class);
-
-    public IdMapper getIdMapper() {
-        return idMapper;
-    }
-
-    public void setIdMapper(IdMapper idMapper) {
-        this.idMapper = idMapper;
-    }
+    @Autowired
+    private IdMapper idMapper;
 
     @Autowired
-    protected IdMapper idMapper;
+    private OperationUtils operationUtils;
+
 
     /**
      * Constructor
@@ -51,27 +42,27 @@ public class ExternalReferencesOperation extends BaseOperation {
     }
 
     public Either<String, ActionStatus> addExternalReferenceWithCommit(String serviceUuid, String componentInstanceName, String objectType, String reference) {
-        Either<String, ActionStatus> addResult = this.addExternalReference(serviceUuid, componentInstanceName, objectType, reference);
-        this.titanDao.commit();
+        Either<String, ActionStatus> addResult = addExternalReference(serviceUuid, componentInstanceName, objectType, reference);
+        titanDao.commit();
         return addResult;
     }
 
     public Either<String, ActionStatus> deleteExternalReferenceWithCommit(String serviceUuid, String componentInstanceName, String objectType, String reference) {
-        Either<String, ActionStatus> result = this.deleteExternalReference(serviceUuid, componentInstanceName, objectType, reference);
-        this.titanDao.commit();
+        Either<String, ActionStatus> result = deleteExternalReference(serviceUuid, componentInstanceName, objectType, reference);
+        titanDao.commit();
         return result;
     }
 
     public Either<String, ActionStatus> updateExternalReferenceWithCommit(String serviceVertexUuid, String componentInstanceName, String objectType, String oldRef, String newRef) {
-        Either<String, ActionStatus> updateResult = this.updateExternalReference(serviceVertexUuid, componentInstanceName, objectType, oldRef, newRef);
-        this.titanDao.commit();
+        Either<String, ActionStatus> updateResult = updateExternalReference(serviceVertexUuid, componentInstanceName, objectType, oldRef, newRef);
+        titanDao.commit();
         return updateResult;
     }
 
     public Either<String, ActionStatus> addExternalReference(String assetUuid, String componentInstanceName, String objectType, String reference) {
 
-        //Get Service vertex
-        Either<GraphVertex, TitanOperationStatus> vertexById = this.titanDao.getVertexById(assetUuid);
+        //Get Container vertex
+        Either<GraphVertex, TitanOperationStatus> vertexById = titanDao.getVertexById(assetUuid);
         if (vertexById.isRight()){
             return Either.right(ActionStatus.RESOURCE_NOT_FOUND);
         }
@@ -84,37 +75,31 @@ public class ExternalReferencesOperation extends BaseOperation {
         }
 
         //Get the external references map vertex
-        final Either<GraphVertex, TitanOperationStatus> dataVertexResult = this.getDataVertex(serviceVertex, EdgeLabelEnum.EXTERNAL_REFS);
+        final Either<GraphVertex, TitanOperationStatus> dataVertexResult = getDataVertex(serviceVertex, EdgeLabelEnum.EXTERNAL_REFS);
 
         //Check whether data vertex found
         GraphVertex externalRefsVertex = dataVertexResult.isLeft() ? dataVertexResult.left().value() : null;
 
         //instanceId -> externalRefsMap
-        Map<String, MapComponentInstanceExternalRefs> externalReferencesFullData = null;
+        Map<String, MapComponentInstanceExternalRefs> externalReferencesFullData;
         if (externalRefsVertex == null) {
-            //External Refs vertext does not exist, create its map.
-            externalReferencesFullData = new HashMap<String, MapComponentInstanceExternalRefs>() {
-                {
-                    MapComponentInstanceExternalRefs externalRefsMap = new MapComponentInstanceExternalRefs();
-                    put(compInstanceUniqueId, externalRefsMap);
-                }
-            };
+            //External Refs vertex does not exist, create its map.
+            externalReferencesFullData = new HashMap<>();
+            externalReferencesFullData.put(compInstanceUniqueId, new MapComponentInstanceExternalRefs());
         } else {
             externalReferencesFullData = (Map<String, MapComponentInstanceExternalRefs>) externalRefsVertex.getJson();
-            if (externalReferencesFullData.get(compInstanceUniqueId) == null){
-                externalReferencesFullData.put(compInstanceUniqueId, new MapComponentInstanceExternalRefs());
-            }
+            externalReferencesFullData.computeIfAbsent(compInstanceUniqueId, k -> new MapComponentInstanceExternalRefs());
         }
 
-        boolean isAdded = this.addExternalRef(externalReferencesFullData, compInstanceUniqueId, objectType, reference);
-        this.updateFullToscaData(serviceVertex, EdgeLabelEnum.EXTERNAL_REFS, VertexTypeEnum.EXTERNAL_REF, externalReferencesFullData);
+        boolean isAdded = addExternalRef(externalReferencesFullData, compInstanceUniqueId, objectType, reference);
+        updateFullToscaData(serviceVertex, EdgeLabelEnum.EXTERNAL_REFS, VertexTypeEnum.EXTERNAL_REF, externalReferencesFullData);
 
         return isAdded ? Either.left(reference) : Either.right(ActionStatus.EXT_REF_ALREADY_EXIST);
     }
 
     public Either<String, ActionStatus> deleteExternalReference(String assetUuid, String componentInstanceName, String objectType, String reference){
         //Get Service vertex
-        Either<GraphVertex, TitanOperationStatus> vertexById = this.titanDao.getVertexById(assetUuid);
+        Either<GraphVertex, TitanOperationStatus> vertexById = titanDao.getVertexById(assetUuid);
         if (vertexById.isRight()){
             return Either.right(ActionStatus.RESOURCE_NOT_FOUND);
         }
@@ -126,7 +111,7 @@ public class ExternalReferencesOperation extends BaseOperation {
         }
 
         //Get the external references map vertex
-        final Either<GraphVertex, TitanOperationStatus> dataVertexResult = this.getDataVertex(serviceVertex, EdgeLabelEnum.EXTERNAL_REFS);
+        final Either<GraphVertex, TitanOperationStatus> dataVertexResult = getDataVertex(serviceVertex, EdgeLabelEnum.EXTERNAL_REFS);
 
         //Check whether data vertex found
         GraphVertex externalRefsVertex = dataVertexResult.isLeft() ? dataVertexResult.left().value() : null;
@@ -134,8 +119,8 @@ public class ExternalReferencesOperation extends BaseOperation {
         if (externalRefsVertex != null) {
             Map<String, MapComponentInstanceExternalRefs> externalReferencesFullData = (Map<String, MapComponentInstanceExternalRefs>) externalRefsVertex.getJson();
             if (externalReferencesFullData != null) {
-                refDeleted = this.deleteExternalRef(externalReferencesFullData, compInstanceUniqueId, objectType, reference);
-                this.updateFullToscaData(serviceVertex, EdgeLabelEnum.EXTERNAL_REFS, VertexTypeEnum.EXTERNAL_REF, externalReferencesFullData); //@ TODO if ref deleted
+                refDeleted = deleteExternalRef(externalReferencesFullData, compInstanceUniqueId, objectType, reference);
+                updateFullToscaData(serviceVertex, EdgeLabelEnum.EXTERNAL_REFS, VertexTypeEnum.EXTERNAL_REF, externalReferencesFullData);
             }
         }
 
@@ -148,7 +133,7 @@ public class ExternalReferencesOperation extends BaseOperation {
 
     public Either<String, ActionStatus> updateExternalReference(String assetUuid, String componentInstanceName, String objectType, String oldRef, String newRef) {
         //Get Service vertex
-        Either<GraphVertex, TitanOperationStatus> vertexById = this.titanDao.getVertexById(assetUuid);
+        Either<GraphVertex, TitanOperationStatus> vertexById = titanDao.getVertexById(assetUuid);
         if (vertexById.isRight()){
             return Either.right(ActionStatus.RESOURCE_NOT_FOUND);
         }
@@ -162,7 +147,7 @@ public class ExternalReferencesOperation extends BaseOperation {
         }
 
         //Get the external references map vertex
-        final Either<GraphVertex, TitanOperationStatus> dataVertexResult = this.getDataVertex(serviceVertex, EdgeLabelEnum.EXTERNAL_REFS);
+        final Either<GraphVertex, TitanOperationStatus> dataVertexResult = getDataVertex(serviceVertex, EdgeLabelEnum.EXTERNAL_REFS);
 
         //Check whether data vertex found
         GraphVertex externalRefsVertex = dataVertexResult.isLeft() ? dataVertexResult.left().value() : null;
@@ -170,8 +155,8 @@ public class ExternalReferencesOperation extends BaseOperation {
         if (externalRefsVertex != null) {
             Map<String, MapComponentInstanceExternalRefs> externalReferencesFullData = (Map<String, MapComponentInstanceExternalRefs>) externalRefsVertex.getJson();
             if (externalReferencesFullData != null) {
-                refReplaced = this.updateExternalRef(externalReferencesFullData, compInstanceUniqueId, objectType, oldRef, newRef);
-                this.updateFullToscaData(serviceVertex, EdgeLabelEnum.EXTERNAL_REFS, VertexTypeEnum.EXTERNAL_REF, externalReferencesFullData);
+                refReplaced = updateExternalRef(externalReferencesFullData, compInstanceUniqueId, objectType, oldRef, newRef);
+                updateFullToscaData(serviceVertex, EdgeLabelEnum.EXTERNAL_REFS, VertexTypeEnum.EXTERNAL_REF, externalReferencesFullData);
             }
         }
         if (refReplaced) {
@@ -183,7 +168,7 @@ public class ExternalReferencesOperation extends BaseOperation {
 
     public Either<Map<String, List<String>>, ActionStatus> getExternalReferences(String assetUuid, String objectType) {
         //Get Service vertex
-        Either<GraphVertex, TitanOperationStatus> vertexById = this.titanDao.getVertexById(assetUuid);
+        Either<GraphVertex, TitanOperationStatus> vertexById = titanDao.getVertexById(assetUuid);
         if (vertexById.isRight()){
             return Either.right(ActionStatus.RESOURCE_NOT_FOUND);
         }
@@ -193,7 +178,7 @@ public class ExternalReferencesOperation extends BaseOperation {
         Map<String, List<String>> result = new HashMap();
 
         //Get the external references map vertex
-        final Either<GraphVertex, TitanOperationStatus> dataVertexResult = this.getDataVertex(serviceVertex, EdgeLabelEnum.EXTERNAL_REFS);
+        final Either<GraphVertex, TitanOperationStatus> dataVertexResult = getDataVertex(serviceVertex, EdgeLabelEnum.EXTERNAL_REFS);
         //Check whether data vertex found
         GraphVertex externalRefsVertex = dataVertexResult.isLeft() ? dataVertexResult.left().value() : null;
         if (externalRefsVertex != null) {
@@ -214,9 +199,47 @@ public class ExternalReferencesOperation extends BaseOperation {
         return Either.left(new HashMap<>());
     }
 
+    public void addAllExternalReferences(String containerUniqueId,
+                                         String compInstanceUniqueId,
+                                         Map<String, List<String>> instanceExternalReferences) {
+
+        GraphVertex serviceVertex = titanDao.getVertexById(containerUniqueId)
+                .left()
+                .on(operationUtils::onTitanOperationFailure);
+        Either<GraphVertex, TitanOperationStatus> dataVertex = getDataVertex(serviceVertex, EdgeLabelEnum.EXTERNAL_REFS);
+        Map<String, MapComponentInstanceExternalRefs> externalReferencesFullData;
+        if (dataVertex.isLeft()) {
+            externalReferencesFullData = (Map<String, MapComponentInstanceExternalRefs>) dataVertex.left().value().getJson();
+        } else {
+            externalReferencesFullData = new HashMap<>();
+        }
+        externalReferencesFullData.put(compInstanceUniqueId, new MapComponentInstanceExternalRefs(instanceExternalReferences));
+        updateFullToscaData(serviceVertex, EdgeLabelEnum.EXTERNAL_REFS, VertexTypeEnum.EXTERNAL_REF, externalReferencesFullData);
+    }
+
+    public Map<String, List<String>> getAllExternalReferences(String containerUniqueId,
+                                                              String compInstanceUniqueId) {
+        GraphVertex serviceVertex = titanDao.getVertexById(containerUniqueId)
+            .left()
+            .on(operationUtils::onTitanOperationFailure);
+
+        Either<GraphVertex, TitanOperationStatus> dataVertex = getDataVertex(serviceVertex, EdgeLabelEnum.EXTERNAL_REFS);
+        if (dataVertex.isRight()) {
+            return new HashMap<>();
+        }
+        GraphVertex externalRefsVertex = dataVertex.left().value();
+        Map<String, MapComponentInstanceExternalRefs> externalReferencesFullData = externalRefsVertex == null ? null : (Map<String, MapComponentInstanceExternalRefs>) externalRefsVertex.getJson();
+        if (externalReferencesFullData != null) {
+            return externalReferencesFullData
+                    .getOrDefault(compInstanceUniqueId, new MapComponentInstanceExternalRefs())
+                    .getComponentInstanceExternalRefs();
+        }
+        return emptyMap();
+    }
+
     public Either<List<String>, ActionStatus> getExternalReferences(String assetUuid, String componentInstanceName, String objectType) {
         //Get Service vertex
-        Either<GraphVertex, TitanOperationStatus> vertexById = this.titanDao.getVertexById(assetUuid);
+        Either<GraphVertex, TitanOperationStatus> vertexById = titanDao.getVertexById(assetUuid);
         if (vertexById.isRight()){
             return Either.right(ActionStatus.RESOURCE_NOT_FOUND);
         }
@@ -228,14 +251,14 @@ public class ExternalReferencesOperation extends BaseOperation {
         }
 
         //Get the external references map vertex
-        final Either<GraphVertex, TitanOperationStatus> dataVertexResult = this.getDataVertex(serviceVertex, EdgeLabelEnum.EXTERNAL_REFS);
+        final Either<GraphVertex, TitanOperationStatus> dataVertexResult = getDataVertex(serviceVertex, EdgeLabelEnum.EXTERNAL_REFS);
 
         //Check whether data vertex found
         GraphVertex externalRefsVertex = dataVertexResult.isLeft() ? dataVertexResult.left().value() : null;
         if (externalRefsVertex != null) {
             Map<String, MapComponentInstanceExternalRefs> externalReferencesFullData = (Map<String, MapComponentInstanceExternalRefs>) externalRefsVertex.getJson();
             if (externalReferencesFullData != null) {
-                return Either.left(this.getExternalReferencesByObjectId(externalReferencesFullData, compInstanceUniqueId, objectType));
+                return Either.left(getExternalReferencesByObjectId(externalReferencesFullData, compInstanceUniqueId, objectType));
             }
         }
 
@@ -243,10 +266,18 @@ public class ExternalReferencesOperation extends BaseOperation {
         return Either.left(new LinkedList());
     }
 
+    public IdMapper getIdMapper() {
+        return idMapper;
+    }
+
+    public void setIdMapper(IdMapper idMapper) {
+        this.idMapper = idMapper;
+    }
+
     private List<String> getExternalReferencesByObjectId(Map<String, MapComponentInstanceExternalRefs> externalReferencesFullData, String componentInstanceId, String objectType) {
         MapComponentInstanceExternalRefs externalRefsMap = externalReferencesFullData.get(componentInstanceId);
         List<String> externalRefsByObjectType = externalRefsMap.getExternalRefsByObjectType(objectType);
-        return externalRefsByObjectType != null ? externalRefsByObjectType : new LinkedList<String>();
+        return externalRefsByObjectType != null ? externalRefsByObjectType : new LinkedList<>();
     }
 
     private boolean updateExternalRef(Map<String, MapComponentInstanceExternalRefs> externalReferencesFullData, String componentInstanceId, String objectType, String oldRef, String newRef) {

@@ -16,6 +16,15 @@
 
 package org.openecomp.sdc.validation.impl.validators.namingconvention;
 
+import static java.util.Objects.nonNull;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.regex.Pattern;
+
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -29,15 +38,6 @@ import org.openecomp.sdc.heat.datatypes.model.Resource;
 import org.openecomp.sdc.validation.ResourceValidator;
 import org.openecomp.sdc.validation.ValidationContext;
 import org.openecomp.sdc.validation.util.ValidationUtil;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.regex.Pattern;
-
-import static java.util.Objects.nonNull;
 
 
 public class ContrailServiceTemplateNamingConventionValidator implements ResourceValidator {

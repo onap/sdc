@@ -1,6 +1,6 @@
 outputFolder: target
 reportName: index.html
-catalogBeHost: 127.0.0.1
+catalogBeHost: 192.168.33.10
 #Automate
 #catalogBeHost: 135.63.125.67
 #catalogFeHost: 135.63.125.63
@@ -20,7 +20,7 @@ neoHost: neoHost
 neoPort: 7474
 neoDBusername: neo4j
 neoDBpassword: 123456
-url: http://localhost:8285/sdc1
+url: http://192.168.33.10:8285/sdc1
 #url: https://www.e-access.att.com/QA-AUTOMATE1/sdc1/portal
 #url: https://www.e-access.att.com/AA-IFT-testing/sdc1/portal
 #url: https://www.e-access.att.com/QA-SCRUM1/sdc1/portal
@@ -36,10 +36,10 @@ configurationFile: ../catalog-be/src/main/resources/config/configuration.yaml
 importTypesConfigDir: src/test/resources/CI/importTypesTest
 browser: FireFox
 windowsDownloadDirectory: "c:\\apache-ftpserver-1.1.0\\res\\home\\"
-systemUnderDebug: false
+systemUnderDebug: true
 reportDBhost: dbhost
 reportDBport: 27017
-sdcHttpMethod: https
+sdcHttpMethod: http
 localDataCenter: DC-Automate01
 
 useBrowserMobProxy: false
@@ -48,7 +48,9 @@ captureTraffic: false
 titanPropertiesFile: src/main/resources/ci/conf/titan.properties
 
 stopOnClassFailure: false
-
+#todo
+onboardingBeHost: 192.168.33.10
+onboardingBePort: 8080
 #List of non-abstract resources to keep during titan cleanup between tests
 #Only 1.0 version will be kept
 resourcesNotToDelete:

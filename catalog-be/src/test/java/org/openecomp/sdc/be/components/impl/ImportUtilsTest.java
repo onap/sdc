@@ -24,21 +24,21 @@ import fj.data.Either;
 import org.junit.Test;
 import org.openecomp.sdc.be.components.impl.ImportUtils.ResultStatusEnum;
 import org.openecomp.sdc.be.components.impl.ImportUtils.ToscaElementTypeEnum;
-import org.openecomp.sdc.be.components.impl.ImportUtils.ToscaTagNamesEnum;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
 import org.openecomp.sdc.be.model.HeatParameterDefinition;
 import org.openecomp.sdc.be.model.PropertyDefinition;
+import org.openecomp.sdc.be.utils.TypeUtils;
 import org.openecomp.sdc.common.api.ArtifactTypeEnum;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
+import java.util.Map.Entry;
+
+import static org.junit.Assert.*;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -53,12 +53,12 @@ public class ImportUtilsTest {
         Either<List<Object>, ResultStatusEnum> toscaElements = ImportUtils.findToscaElements((Map<String, Object>) loadJsonFromFile("normative-types-string-list-test.yml"), "stringTestTag", ToscaElementTypeEnum.STRING, new ArrayList<>());
         assertTrue(toscaElements.isLeft());
         List<Object> list = toscaElements.left().value();
-        assertTrue(list.size() == 4);
+        assertEquals(4, list.size());
         int count = 1;
         for (Object element : list) {
             assertTrue(element instanceof String);
             String value = (String) element;
-            assertTrue(value.equals("stringVal" + count));
+            assertEquals(value, "stringVal" + count);
             count++;
         }
     }
@@ -68,7 +68,7 @@ public class ImportUtilsTest {
         Either<List<Object>, ResultStatusEnum> toscaElements = ImportUtils.findToscaElements((Map<String, Object>) loadJsonFromFile("normative-types-all-map-test.yml"), "required", ToscaElementTypeEnum.BOOLEAN, new ArrayList<>());
         assertTrue(toscaElements.isLeft());
         List<Object> list = toscaElements.left().value();
-        assertTrue(list.size() == 3);
+        assertEquals(3, list.size());
         int count = 1;
         for (Object element : list) {
             assertTrue(element instanceof Boolean);
@@ -88,7 +88,7 @@ public class ImportUtilsTest {
         Either<List<Object>, ResultStatusEnum> toscaElements = ImportUtils.findToscaElements((Map<String, Object>) loadJsonFromFile("normative-types-string-list-test.yml"), "listTestTag", ToscaElementTypeEnum.LIST, new ArrayList<>());
         assertTrue(toscaElements.isLeft());
         List<Object> list = toscaElements.left().value();
-        assertTrue(list.size() == 3);
+        assertEquals(3, list.size());
         int count = 1;
         for (Object element : list) {
             assertTrue(element instanceof List);
@@ -111,50 +111,50 @@ public class ImportUtilsTest {
         Either<List<Object>, ResultStatusEnum> toscaElements = ImportUtils.findToscaElements((Map<String, Object>) loadJsonFromFile("normative-types-all-map-test.yml"), "allTestTag", ToscaElementTypeEnum.ALL, new ArrayList<>());
         assertTrue(toscaElements.isLeft());
         List<Object> list = toscaElements.left().value();
-        assertTrue(list.size() == 5);
+        assertEquals(5, list.size());
         int count = 1;
         for (Object element : list) {
             if (count == 1) {
                 assertTrue(element instanceof String);
-                assertTrue(element.equals("tosca.nodes.Root"));
+                assertEquals("tosca.nodes.Root", element);
             } else if (count == 2) {
                 assertTrue(element instanceof Map);
                 Map<String, Object> mapElement = (Map<String, Object>) element;
-                assertTrue(mapElement.size() == 2);
+                assertEquals(2, mapElement.size());
                 Iterator<Entry<String, Object>> elementEntries = mapElement.entrySet().iterator();
                 Entry<String, Object> elementEntry = elementEntries.next();
-                assertTrue(elementEntry.getKey().equals("mapTestTag"));
-                assertTrue(elementEntry.getValue().equals("string"));
+                assertEquals("mapTestTag", elementEntry.getKey());
+                assertEquals("string", elementEntry.getValue());
 
                 elementEntry = elementEntries.next();
-                assertTrue(elementEntry.getKey().equals("required"));
+                assertEquals("required", elementEntry.getKey());
                 assertTrue(elementEntry.getValue() instanceof Boolean);
                 assertTrue((Boolean) elementEntry.getValue());
             }
 
             else if (count == 3) {
                 assertTrue(element instanceof String);
-                assertTrue(element.equals("1 MB"));
+                assertEquals("1 MB", element);
             }
 
             else if (count == 4) {
                 assertTrue(element instanceof List);
                 List<Object> listElement = (List<Object>) element;
-                assertTrue(listElement.size() == 2);
+                assertEquals(2, listElement.size());
 
                 assertTrue(listElement.get(0) instanceof Map);
                 Map<String, Object> innerElement = (Map<String, Object>) listElement.get(0);
-                assertTrue(innerElement.size() == 1);
+                assertEquals(1, innerElement.size());
                 Entry<String, Object> innerEntry = innerElement.entrySet().iterator().next();
-                assertTrue(innerEntry.getKey().equals("greater_or_equal"));
-                assertTrue(innerEntry.getValue().equals("1 MB"));
+                assertEquals("greater_or_equal", innerEntry.getKey());
+                assertEquals("1 MB", innerEntry.getValue());
 
                 assertTrue(listElement.get(1) instanceof Map);
                 innerElement = (Map<String, Object>) listElement.get(1);
-                assertTrue(innerElement.size() == 1);
+                assertEquals(1, innerElement.size());
                 innerEntry = innerElement.entrySet().iterator().next();
-                assertTrue(innerEntry.getKey().equals("stringTestTag"));
-                assertTrue(innerEntry.getValue().equals("stringVal3"));
+                assertEquals("stringTestTag", innerEntry.getKey());
+                assertEquals("stringVal3", innerEntry.getValue());
             } else if (count == 5) {
                 assertTrue(element instanceof Boolean);
                 assertFalse((Boolean) element);
@@ -168,35 +168,35 @@ public class ImportUtilsTest {
         Either<List<Object>, ResultStatusEnum> toscaElements = ImportUtils.findToscaElements((Map<String, Object>) loadJsonFromFile("normative-types-all-map-test.yml"), "mapTestTag", ToscaElementTypeEnum.MAP, new ArrayList<>());
         assertTrue(toscaElements.isLeft());
         List<Object> list = toscaElements.left().value();
-        assertTrue(list.size() == 2);
+        assertEquals(2, list.size());
         int count = 1;
         for (Object element : list) {
             assertTrue(element instanceof Map);
 
             if (count == 1) {
                 Map<String, Object> mapElement = (Map<String, Object>) element;
-                assertTrue(mapElement.size() == 2);
+                assertEquals(2, mapElement.size());
                 Iterator<Entry<String, Object>> iterator = mapElement.entrySet().iterator();
                 Entry<String, Object> inerElementEntry = iterator.next();
-                assertTrue(inerElementEntry.getKey().equals("stringTestTag"));
-                assertTrue(inerElementEntry.getValue().equals("stringVal1"));
+                assertEquals("stringTestTag", inerElementEntry.getKey());
+                assertEquals("stringVal1", inerElementEntry.getValue());
 
                 inerElementEntry = iterator.next();
-                assertTrue(inerElementEntry.getKey().equals("listTestTag"));
+                assertEquals("listTestTag", inerElementEntry.getKey());
                 assertTrue(inerElementEntry.getValue() instanceof List);
                 List<Object> innerValue = (List<Object>) inerElementEntry.getValue();
 
-                assertTrue(innerValue.size() == 3);
+                assertEquals(3, innerValue.size());
 
             } else if (count == 2) {
                 Map<String, Object> mapElement = (Map<String, Object>) element;
-                assertTrue(mapElement.size() == 2);
+                assertEquals(2, mapElement.size());
                 Iterator<Entry<String, Object>> entryItr = mapElement.entrySet().iterator();
                 Entry<String, Object> inerElementEntry = entryItr.next();
-                assertTrue(inerElementEntry.getKey().equals("type"));
-                assertTrue(inerElementEntry.getValue().equals("tosca.capabilities.Attachment"));
+                assertEquals("type", inerElementEntry.getKey());
+                assertEquals("tosca.capabilities.Attachment", inerElementEntry.getValue());
                 inerElementEntry = entryItr.next();
-                assertTrue(inerElementEntry.getKey().equals("allTestTag"));
+                assertEquals("allTestTag", inerElementEntry.getKey());
                 assertTrue(inerElementEntry.getValue() instanceof Boolean);
             }
 
@@ -241,9 +241,9 @@ public class ImportUtilsTest {
         String name = "fullParameter";
         String description = "description_text";
 
-        Map<String, Object> parametersMap = new HashMap<String, Object>();
+        Map<String, Object> parametersMap = new HashMap<>();
         Map<String, Object> firstParam = createParameterMap(null, "aaa", name, description);
-        parametersMap.put(ToscaTagNamesEnum.PARAMETERS.getElementName(), firstParam);
+        parametersMap.put(TypeUtils.ToscaTagNamesEnum.PARAMETERS.getElementName(), firstParam);
 
         Either<List<HeatParameterDefinition>, ResultStatusEnum> heatParameters = ImportUtils.getHeatParameters(parametersMap, ArtifactTypeEnum.HEAT.getType());
         assertTrue(heatParameters.isRight());
@@ -256,12 +256,12 @@ public class ImportUtilsTest {
 
         String name = "fullParameter";
 
-        Map<String, Object> parametersMap = new HashMap<String, Object>();
+        Map<String, Object> parametersMap = new HashMap<>();
         String type = "number";
         String defValue = "defvalue";
         // default value cannot be empty in heat in case tag exists
         Map<String, Object> firstParam = createParameterMap(type, defValue, name, null);
-        parametersMap.put(ToscaTagNamesEnum.PARAMETERS.getElementName(), firstParam);
+        parametersMap.put(TypeUtils.ToscaTagNamesEnum.PARAMETERS.getElementName(), firstParam);
 
         Either<List<HeatParameterDefinition>, ResultStatusEnum> heatParameters = ImportUtils.getHeatParameters(parametersMap, ArtifactTypeEnum.HEAT.getType());
         assertTrue(heatParameters.isLeft());
@@ -279,7 +279,7 @@ public class ImportUtilsTest {
         Map<String, Object> toscaJson = (Map<String, Object>) loadJsonFromFile("importToscaWithAttribute.yml");
         Either<Map<String, PropertyDefinition>, ResultStatusEnum> actualAttributes = ImportUtils.getAttributes(toscaJson);
         assertTrue(actualAttributes.isLeft());
-        Map<String, Map<String, Object>> expectedAttributes = getElements(toscaJson, ToscaTagNamesEnum.ATTRIBUTES);
+        Map<String, Map<String, Object>> expectedAttributes = getElements(toscaJson, TypeUtils.ToscaTagNamesEnum.ATTRIBUTES);
         compareAttributes(expectedAttributes, actualAttributes.left().value());
 
     }
@@ -290,7 +290,7 @@ public class ImportUtilsTest {
         Map<String, Object> toscaJson = (Map<String, Object>) loadJsonFromFile("importToscaProperties.yml");
         Either<Map<String, PropertyDefinition>, ResultStatusEnum> actualProperties = ImportUtils.getProperties(toscaJson);
         assertTrue(actualProperties.isLeft());
-        Map<String, Map<String, Object>> expectedProperties = getElements(toscaJson, ToscaTagNamesEnum.PROPERTIES);
+        Map<String, Map<String, Object>> expectedProperties = getElements(toscaJson, TypeUtils.ToscaTagNamesEnum.PROPERTIES);
         compareProperties(expectedProperties, actualProperties.left().value());
 
     }
@@ -363,7 +363,7 @@ public class ImportUtilsTest {
 
     }
 
-    private <T> Map<String, T> getElements(Map<String, Object> toscaJson, ToscaTagNamesEnum elementType) {
+    private <T> Map<String, T> getElements(Map<String, Object> toscaJson, TypeUtils.ToscaTagNamesEnum elementType) {
 
         Either<Map<String, T>, ResultStatusEnum> toscaExpectedElements = ImportUtils.findFirstToscaMapElement(toscaJson, elementType);
         assertTrue(toscaExpectedElements.isLeft());
@@ -377,9 +377,9 @@ public class ImportUtilsTest {
         String name = "fullParameter";
         String description = "description_text";
 
-        Map<String, Object> parametersMap = new HashMap<String, Object>();
+        Map<String, Object> parametersMap = new HashMap<>();
         Map<String, Object> firstParam = createParameterMap(type, defaultVal, name, description);
-        parametersMap.put(ToscaTagNamesEnum.PARAMETERS.getElementName(), firstParam);
+        parametersMap.put(TypeUtils.ToscaTagNamesEnum.PARAMETERS.getElementName(), firstParam);
 
         Either<List<HeatParameterDefinition>, ResultStatusEnum> heatParameters = ImportUtils.getHeatParameters(parametersMap, ArtifactTypeEnum.HEAT.getType());
         assertTrue(heatParameters.isLeft());
@@ -392,12 +392,12 @@ public class ImportUtilsTest {
     }
 
     private Map<String, Object> createParameterMap(String type, Object defaultVal, String name, String description) {
-        Map<String, Object> firstParam = new HashMap<String, Object>();
-        Map<String, Object> valuesMap = new HashMap<String, Object>();
+        Map<String, Object> firstParam = new HashMap<>();
+        Map<String, Object> valuesMap = new HashMap<>();
 
-        valuesMap.put(ToscaTagNamesEnum.TYPE.getElementName(), type);
-        valuesMap.put(ToscaTagNamesEnum.DESCRIPTION.getElementName(), description);
-        valuesMap.put(ToscaTagNamesEnum.DEFAULT_VALUE.getElementName(), defaultVal);
+        valuesMap.put(TypeUtils.ToscaTagNamesEnum.TYPE.getElementName(), type);
+        valuesMap.put(TypeUtils.ToscaTagNamesEnum.DESCRIPTION.getElementName(), description);
+        valuesMap.put(TypeUtils.ToscaTagNamesEnum.DEFAULT_VALUE.getElementName(), defaultVal);
 
         firstParam.put(name, valuesMap);
         return firstParam;
@@ -413,74 +413,72 @@ public class ImportUtilsTest {
 
     private void verifyListElement3(Object element) {
         List<Object> listElement = (List<Object>) element;
-        assertTrue(listElement.size() == 2);
+        assertEquals(2, listElement.size());
 
         Map<String, String> innerElement = (Map<String, String>) listElement.get(0);
-        assertTrue(innerElement.size() == 1);
+        assertEquals(1, innerElement.size());
         Entry<String, String> innerEntry = innerElement.entrySet().iterator().next();
-        assertTrue(innerEntry.getKey().equals("testTag1"));
-        assertTrue(innerEntry.getValue().equals("1 MB"));
+        assertEquals("testTag1", innerEntry.getKey());
+        assertEquals("1 MB", innerEntry.getValue());
 
         innerElement = (Map<String, String>) listElement.get(1);
-        assertTrue(innerElement.size() == 1);
+        assertEquals(1, innerElement.size());
         innerEntry = innerElement.entrySet().iterator().next();
-        assertTrue(innerEntry.getKey().equals("type"));
-        assertTrue(innerEntry.getValue().equals("stringVal2"));
+        assertEquals("type", innerEntry.getKey());
+        assertEquals("stringVal2", innerEntry.getValue());
     }
 
     private void verifyListElement2(Object element) {
         List<Object> listElement = (List<Object>) element;
-        assertTrue(listElement.size() == 2);
+        assertEquals(2, listElement.size());
 
         Map<String, Object> innerElement = (Map<String, Object>) listElement.get(0);
-        assertTrue(innerElement.size() == 1);
+        assertEquals(1, innerElement.size());
         Entry<String, Object> innerEntry = innerElement.entrySet().iterator().next();
-        assertTrue(innerEntry.getKey().equals("testTag1"));
-        assertTrue(innerEntry.getValue().equals("1 MB"));
+        assertEquals("testTag1", innerEntry.getKey());
+        assertEquals("1 MB", innerEntry.getValue());
 
         assertTrue(listElement.get(1) instanceof Map);
         innerElement = (Map<String, Object>) listElement.get(1);
-        assertTrue(innerElement.size() == 1);
+        assertEquals(1, innerElement.size());
         innerEntry = innerElement.entrySet().iterator().next();
-        assertTrue(innerEntry.getKey().equals("listTestTag"));
+        assertEquals("listTestTag", innerEntry.getKey());
         assertTrue(innerEntry.getValue() instanceof List);
     }
 
     private void verifyListElement1(Object element) {
         List<Object> listElement = (List<Object>) element;
-        assertTrue(listElement.size() == 3);
+        assertEquals(3, listElement.size());
 
         Map<String, String> innerElement = (Map<String, String>) listElement.get(0);
-        assertTrue(innerElement.size() == 1);
+        assertEquals(1, innerElement.size());
         Entry<String, String> innerEntry = innerElement.entrySet().iterator().next();
-        assertTrue(innerEntry.getKey().equals("listTestTag"));
-        assertTrue(innerEntry.getValue().equals("1 MB"));
+        assertEquals("listTestTag", innerEntry.getKey());
+        assertEquals("1 MB", innerEntry.getValue());
 
         innerElement = (Map<String, String>) listElement.get(1);
-        assertTrue(innerElement.size() == 1);
+        assertEquals(1, innerElement.size());
         innerEntry = innerElement.entrySet().iterator().next();
-        assertTrue(innerEntry.getKey().equals("listTestTag"));
-        assertTrue(innerEntry.getValue().equals("2 MB"));
+        assertEquals("listTestTag", innerEntry.getKey());
+        assertEquals("2 MB", innerEntry.getValue());
 
         innerElement = (Map<String, String>) listElement.get(2);
-        assertTrue(innerElement.size() == 1);
+        assertEquals(1, innerElement.size());
         innerEntry = innerElement.entrySet().iterator().next();
-        assertTrue(innerEntry.getKey().equals("stringTestTag"));
-        assertTrue(innerEntry.getValue().equals("stringVal2"));
+        assertEquals("stringTestTag", innerEntry.getKey());
+        assertEquals("stringVal2", innerEntry.getValue());
     }
 
     public static String loadFileNameToJsonString(String fileName) throws IOException {
         String sourceDir = "src/test/resources/normativeTypes";
         java.nio.file.Path filePath = FileSystems.getDefault().getPath(sourceDir, fileName);
         byte[] fileContent = Files.readAllBytes(filePath);
-        String content = new String(fileContent);
-        return content;
+        return new String(fileContent);
     }
 
     private static Object loadJsonFromFile(String fileName) throws IOException {
         String content = loadFileNameToJsonString(fileName);
-        Object load = new Yaml().load(content);
-        return load;
+        return new Yaml().load(content);
     }
 
 }

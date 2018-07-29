@@ -1,43 +1,27 @@
 package org.onap.config.impl;
 
-import static org.onap.config.Constants.DB_NAMESPACE;
-import static org.onap.config.Constants.DEFAULT_NAMESPACE;
-import static org.onap.config.Constants.DEFAULT_TENANT;
-import static org.onap.config.Constants.KEY_ELEMENTS_DELEMETER;
-import static org.onap.config.Constants.LOAD_ORDER_KEY;
-import static org.onap.config.Constants.MBEAN_NAME;
-import static org.onap.config.Constants.MODE_KEY;
-import static org.onap.config.Constants.NAMESPACE_KEY;
-
-import java.io.File;
-import java.io.PrintWriter;
-import java.lang.management.ManagementFactory;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-import javax.management.MBeanServer;
-import javax.management.MBeanServerDelegate;
-import javax.management.MBeanServerNotification;
-import javax.management.Notification;
-import javax.management.ObjectName;
-import javax.management.StandardMBean;
-import org.apache.commons.configuration2.CombinedConfiguration;
-import org.apache.commons.configuration2.CompositeConfiguration;
-import org.apache.commons.configuration2.Configuration;
-import org.apache.commons.configuration2.FileBasedConfiguration;
-import org.apache.commons.configuration2.PropertiesConfiguration;
+import org.apache.commons.configuration2.*;
 import org.onap.config.ConfigurationUtils;
 import org.onap.config.Constants;
 import org.onap.config.api.ConfigurationManager;
 import org.onap.config.api.Hint;
 import org.onap.config.type.ConfigurationQuery;
 import org.onap.config.type.ConfigurationUpdate;
+
+import java.io.File;
+import java.io.PrintWriter;
+import java.util.*;
+import java.lang.management.ManagementFactory;
+import java.lang.reflect.Method;
+
+import javax.management.MBeanServer;
+import javax.management.MBeanServerDelegate;
+import javax.management.MBeanServerNotification;
+import javax.management.Notification;
+import javax.management.ObjectName;
+import javax.management.StandardMBean;
+
+import static org.onap.config.Constants.*;
 
 /**
  * The type Cli configuration.

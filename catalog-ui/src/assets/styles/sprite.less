@@ -1,3 +1,5 @@
+@import "variables";
+@import '../../assets/styles/mixins';
 .sprite-new {
     background-image: url('images/sprites/sprite-global.png');
     display: inline-block;
@@ -140,7 +142,7 @@
 .Deployed                                       { background-position: -573px -718px; width: 16px;  height: 16px;}
 
 .error-icon                                     { background-position: -51px -751px; width: 13px;  height: 11px;}
-.asdc-warning                                   { background-position: -100px -748px; width: 17px;  height: 15px;}
+.asdc-warning, .sdc-warning                     { background-position: -100px -748px; width: 17px;  height: 15px;}
 
 .link-btn                                       {  background-position: -636px -424px;  width: 19px;  height: 19px;}
 .link-btn:hover                                 {  background-position: -636px -453px;  width: 19px;  height: 19px;}
@@ -291,3 +293,43 @@
 .white-arrow-back{	background-position: -767px -918px;  width: 23px;  height: 23px;}
 .link-tooltip-arrow{background-position:-746px -961px;  width: 20px; height: 14px;}
 
+
+.archive-btn 		{ background-position: -110px -419px; width: 24px; height: 24px;}
+.archive-btn:hover 	{ background-position: -110px -447px; width: 24px; height: 24px;}
+
+.archive-component {
+    position:relative;
+    &::after {
+        content: "";
+        display: block;
+        background: url('images/sprites/sprite-global.png') no-repeat -739px -1044px;
+        width: 61px;
+        height: 61px;
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
+    &.active-component-static {
+        &::after {
+            position: static;
+        }
+    }
+}
+
+.archive-label { background-position: -739px -1136px; width: 67px; height: 18px;}
+
+.icon-group {
+    .square-icon();
+
+    &::before {
+        content: "G";
+    }
+}
+.icon-policy {
+    .square-icon();
+    background-color: @main_color_b;
+
+    &::before {
+        content: "P";
+    }
+}

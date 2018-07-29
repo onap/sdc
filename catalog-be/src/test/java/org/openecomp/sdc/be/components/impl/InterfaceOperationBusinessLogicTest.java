@@ -16,25 +16,7 @@
 
 package org.openecomp.sdc.be.components.impl;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyBoolean;
-import static org.mockito.ArgumentMatchers.anyCollection;
-import static org.mockito.ArgumentMatchers.anyObject;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.when;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import javax.servlet.ServletContext;
-
+import fj.data.Either;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -58,20 +40,9 @@ import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.WebAppContextWrapper;
-import org.openecomp.sdc.be.model.Component;
-import org.openecomp.sdc.be.model.DataTypeDefinition;
-import org.openecomp.sdc.be.model.InputDefinition;
-import org.openecomp.sdc.be.model.InterfaceDefinition;
-import org.openecomp.sdc.be.model.LifecycleStateEnum;
-import org.openecomp.sdc.be.model.Operation;
-import org.openecomp.sdc.be.model.Resource;
-import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.*;
 import org.openecomp.sdc.be.model.cache.ApplicationDataTypeCache;
-import org.openecomp.sdc.be.model.jsontitan.operations.InterfaceOperation;
-import org.openecomp.sdc.be.model.jsontitan.operations.NodeTemplateOperation;
-import org.openecomp.sdc.be.model.jsontitan.operations.NodeTypeOperation;
-import org.openecomp.sdc.be.model.jsontitan.operations.TopologyTemplateOperation;
-import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
+import org.openecomp.sdc.be.model.jsontitan.operations.*;
 import org.openecomp.sdc.be.model.operations.api.IElementOperation;
 import org.openecomp.sdc.be.model.operations.api.IPropertyOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
@@ -85,7 +56,13 @@ import org.openecomp.sdc.common.impl.FSConfigurationSource;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.web.context.WebApplicationContext;
 
-import fj.data.Either;
+import javax.servlet.ServletContext;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.when;
 
 public class InterfaceOperationBusinessLogicTest implements InterfaceOperationTestUtils{
 
@@ -153,8 +130,8 @@ public class InterfaceOperationBusinessLogicTest implements InterfaceOperationTe
 
         Either<User, ActionStatus> eitherGetUser = Either.left(user);
         when(mockUserAdmin.getUser("jh0003", false)).thenReturn(eitherGetUser);
-        when(userValidations.validateUserExists(eq(user.getUserId()), anyString(), eq(false))).thenReturn(Either.left(user));
-        when(userValidations.validateUserNotEmpty(eq(user), anyString())).thenReturn(Either.left(user));
+        when(userValidations.validateUserExists(eq(user.getUserId()), anyString(), eq(false))).thenReturn(user);
+        when(userValidations.validateUserNotEmpty(eq(user), anyString())).thenReturn(user);
         // Servlet Context attributes
         when(servletContext.getAttribute(Constants.CONFIGURATION_MANAGER_ATTR)).thenReturn(configurationManager);
         when(servletContext.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR)).thenReturn(webAppContextWrapper);
@@ -183,7 +160,8 @@ public class InterfaceOperationBusinessLogicTest implements InterfaceOperationTe
         Either<Resource, StorageOperationStatus> eitherCreate = Either.left(resourceResponse);
         Either<Integer, StorageOperationStatus> eitherValidate = Either.left(null);
         when(toscaOperationFacade.createToscaComponent(any(Resource.class))).thenReturn(eitherCreate);
-        when(toscaOperationFacade.validateCsarUuidUniqueness(Mockito.anyString())).thenReturn(eitherValidate);
+        //TODO Remove if passes
+        /*when(toscaOperationFacade.validateCsarUuidUniqueness(Mockito.anyString())).thenReturn(eitherValidate);*/
         Map<String, DataTypeDefinition> emptyDataTypes = new HashMap<String, DataTypeDefinition>();
         when(applicationDataTypeCache.getAll()).thenReturn(Either.left(emptyDataTypes));
 
@@ -223,8 +201,10 @@ public class InterfaceOperationBusinessLogicTest implements InterfaceOperationTe
 
     @Test
     public void createInterfaceOperationTest() {
+        Resource resource = createResourceForInterfaceOperation();
+        resource.setComponentType(ComponentTypeEnum.RESOURCE);
         validateUserRoles(Role.ADMIN, Role.DESIGNER);
-        when(toscaOperationFacade.getToscaElement(resourceId)).thenReturn(Either.left(createMockResourceForAddInterface()));
+        when(toscaOperationFacade.getToscaElement(resourceId)).thenReturn(Either.left(resource));
         resourceUpdate = setUpResourceMock();
         Either<Resource, ResponseFormat> interfaceOperation = bl.createInterfaceOperation(resourceId, resourceUpdate, user, true);
         Assert.assertTrue(interfaceOperation.isLeft());
@@ -235,7 +215,9 @@ public class InterfaceOperationBusinessLogicTest implements InterfaceOperationTe
     public void updateInterfaceOperationTest() {
         validateUserRoles(Role.ADMIN, Role.DESIGNER);
         resourceUpdate = setUpResourceMock();
-        when(toscaOperationFacade.getToscaElement(resourceId)).thenReturn(Either.left(createResourceForInterfaceOperation()));
+        Resource resource = createResourceForInterfaceOperation();
+        resource.setComponentType(ComponentTypeEnum.RESOURCE);
+        when(toscaOperationFacade.getToscaElement(resourceId)).thenReturn(Either.left(resource));
         Either<Resource, ResponseFormat> interfaceOperation = bl.updateInterfaceOperation(resourceId, resourceUpdate, user, true);
         Assert.assertTrue(interfaceOperation.isLeft());
     }
@@ -243,8 +225,10 @@ public class InterfaceOperationBusinessLogicTest implements InterfaceOperationTe
 
     @Test
     public void deleteInterfaceOperationTest() {
+        Resource resource = createResourceForInterfaceOperation();
+        resource.setComponentType(ComponentTypeEnum.RESOURCE);
         validateUserRoles(Role.ADMIN, Role.DESIGNER);
-        when(toscaOperationFacade.getToscaElement(resourceId)).thenReturn(Either.left(createResourceForInterfaceOperation()));
+        when(toscaOperationFacade.getToscaElement(resourceId)).thenReturn(Either.left(resource));
         when(artifactCassandraDao.deleteArtifact(any(String.class))).thenReturn(CassandraOperationStatus.OK);
         Set<String> idsToDelete = new HashSet<>();
         idsToDelete.add(operationId);
@@ -257,7 +241,9 @@ public class InterfaceOperationBusinessLogicTest implements InterfaceOperationTe
     public void deleteInterfaceOperationTestShouldFailWrongId() {
         validateUserRoles(Role.ADMIN, Role.DESIGNER);
         Set<String> idsToDelete = new HashSet<>();
-        when(toscaOperationFacade.getToscaElement(resourceId)).thenReturn(Either.left(createResourceForInterfaceOperation()));
+        Resource resource = createResourceForInterfaceOperation();
+        resource.setComponentType(ComponentTypeEnum.RESOURCE);
+        when(toscaOperationFacade.getToscaElement(resourceId)).thenReturn(Either.left(resource));
         idsToDelete.add(resourceId);
         Either<Resource, ResponseFormat> deleteResourceResponseFormatEither = bl.deleteInterfaceOperation(resourceId, idsToDelete, user, true);
         Assert.assertFalse(deleteResourceResponseFormatEither.isLeft());
@@ -266,7 +252,9 @@ public class InterfaceOperationBusinessLogicTest implements InterfaceOperationTe
 
     @Test
     public void deleteInterfaceOperationFailToDeleteArtifactTest() {
-        when(toscaOperationFacade.getToscaElement(resourceId)).thenReturn(Either.left(createResourceForInterfaceOperation()));
+        Resource resource = createResourceForInterfaceOperation();
+        resource.setComponentType(ComponentTypeEnum.RESOURCE);
+        when(toscaOperationFacade.getToscaElement(resourceId)).thenReturn(Either.left(resource));
         when(artifactCassandraDao.deleteArtifact(any(String.class))).thenReturn(CassandraOperationStatus.GENERAL_ERROR);
         validateUserRoles(Role.ADMIN, Role.DESIGNER);
         Set<String> idsToDelete = new HashSet<>();
@@ -288,8 +276,7 @@ public class InterfaceOperationBusinessLogicTest implements InterfaceOperationTe
 
     private void validateUserRoles(Role... roles) {
         List<Role> listOfRoles = Stream.of(roles).collect(Collectors.toList());
-        when(userValidations.validateUserRole(user, listOfRoles)).thenReturn(Either.left(true));
-    }
+     }
     private Resource createMockResourceForAddInterface () {
         Resource resource = new Resource();
         resource.setUniqueId(resourceId);

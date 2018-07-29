@@ -73,9 +73,11 @@ export class ComponentFactory {
 
     public updateComponentFromCsar = (csarComponent:Resource, oldComponent:Resource):Component => {
         _.pull(oldComponent.tags, oldComponent.name);
-        oldComponent.name = csarComponent.name;
-        oldComponent.selectedCategory = csarComponent.selectedCategory;
-        oldComponent.categories = csarComponent.categories;
+        if (!oldComponent.isAlreadyCertified()) {
+            oldComponent.name = csarComponent.name;
+            oldComponent.categories = csarComponent.categories;
+            oldComponent.selectedCategory = csarComponent.selectedCategory;
+        }
         oldComponent.vendorName = csarComponent.vendorName;
         oldComponent.vendorRelease = csarComponent.vendorRelease;
         oldComponent.csarUUID = csarComponent.csarUUID;
@@ -177,7 +179,7 @@ export class ComponentFactory {
     };
 
     public getComponentWithMetadataFromServer = (componentType:string, componentId:string):ng.IPromise<Component> => {
-        let deferred = this.$q.defer();
+        let deferred = this.$q.defer<Component>();
         let component = this.createEmptyComponent(componentType);
         component.setUniqueId(componentId);
         this.ComponentServiceNg2.getComponentMetadata(component).subscribe((response:ComponentGenericResponse) => {

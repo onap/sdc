@@ -20,7 +20,7 @@
 
 package org.openecomp.sdc.be.info;
 
-import org.openecomp.sdc.common.datastructure.AuditingFieldsKeysEnum;
+import org.openecomp.sdc.common.datastructure.AuditingFieldsKey;
 import org.openecomp.sdc.common.datastructure.ESTimeBasedEvent;
 
 public class DistributionStatusInfo {
@@ -32,12 +32,11 @@ public class DistributionStatusInfo {
 
     public DistributionStatusInfo(ESTimeBasedEvent distributionStatusEvent) {
         super();
-        omfComponentID = (String) distributionStatusEvent.getFields().get(AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_CONSUMER_ID.getDisplayName());
-        timestamp = (String) distributionStatusEvent.getFields().get(AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_STATUS_TIME.getDisplayName());// distributionStatusEvent.getStatusTime();
-        url = (String) distributionStatusEvent.getFields().get(AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_RESOURCE_URL.getDisplayName());// distributionStatusEvent.getResoureURL();
-        status = (String) distributionStatusEvent.getFields().get(AuditingFieldsKeysEnum.AUDIT_STATUS.getDisplayName());// distributionStatusEvent.getStatus();
-        errorReason = (String) distributionStatusEvent.getFields().get(AuditingFieldsKeysEnum.AUDIT_DESC.getDisplayName());
-
+        omfComponentID = (String) distributionStatusEvent.getFields().get(AuditingFieldsKey.AUDIT_DISTRIBUTION_CONSUMER_ID.getDisplayName());
+        timestamp = (String) distributionStatusEvent.getFields().get(AuditingFieldsKey.AUDIT_DISTRIBUTION_STATUS_TIME.getDisplayName());
+        url = (String) distributionStatusEvent.getFields().get(AuditingFieldsKey.AUDIT_DISTRIBUTION_RESOURCE_URL.getDisplayName());
+        status = (String) distributionStatusEvent.getFields().get(AuditingFieldsKey.AUDIT_STATUS.getDisplayName());
+        errorReason = (String) distributionStatusEvent.getFields().get(AuditingFieldsKey.AUDIT_DESC.getDisplayName());
     }
 
     public DistributionStatusInfo(String omfComponentID, String timestamp, String url, String status) {

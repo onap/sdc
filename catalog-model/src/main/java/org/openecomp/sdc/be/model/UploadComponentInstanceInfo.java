@@ -24,68 +24,68 @@ import java.util.List;
 import java.util.Map;
 
 public class UploadComponentInstanceInfo {
-	private String name;
-	private String type;
-	private Map<String, List<UploadCapInfo>> capabilities;
-	private Map<String, List<UploadReqInfo>> requirements;
-	private Map<String, List<UploadPropInfo>> properties;
-	private Map<String, String> capabilitiesNamesToUpdate;
-	private Map<String, String> requirementsNamesToUpdate;
+    private String name;
+    private String type;
+    private Map<String, List<UploadCapInfo>> capabilities;
+    private Map<String, List<UploadReqInfo>> requirements;
+    private Map<String, List<UploadPropInfo>> properties;
+    private Map<String, String> capabilitiesNamesToUpdate;
+    private Map<String, String> requirementsNamesToUpdate;
 
-	public Map<String, List<UploadPropInfo>> getProperties() {
-		return properties;
-	}
+    public Map<String, List<UploadPropInfo>> getProperties() {
+        return properties;
+    }
 
-	public void setProperties(Map<String, List<UploadPropInfo>> properties) {
-		this.properties = properties;
-	}
+    public void setProperties(Map<String, List<UploadPropInfo>> properties) {
+        this.properties = properties;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public String getType() {
-		return type;
-	}
+    public String getType() {
+        return type;
+    }
 
-	public void setType(String type) {
-		this.type = type;
-	}
+    public void setType(String type) {
+        this.type = type;
+    }
 
-	public Map<String, List<UploadCapInfo>> getCapabilities() {
-		return capabilities;
-	}
+    public Map<String, List<UploadCapInfo>> getCapabilities() {
+        return capabilities;
+    }
 
-	public void setCapabilities(Map<String, List<UploadCapInfo>> capabilities) {
-		this.capabilities = capabilities;
-	}
+    public void setCapabilities(Map<String, List<UploadCapInfo>> capabilities) {
+        this.capabilities = capabilities;
+    }
 
-	public Map<String, List<UploadReqInfo>> getRequirements() {
-		return requirements;
-	}
+    public Map<String, List<UploadReqInfo>> getRequirements() {
+        return requirements;
+    }
 
-	public void setRequirements(Map<String, List<UploadReqInfo>> requirements) {
-		this.requirements = requirements;
-	}
+    public void setRequirements(Map<String, List<UploadReqInfo>> requirements) {
+        this.requirements = requirements;
+    }
 
-	public Map<String, String> getCapabilitiesNamesToUpdate() {
-		return capabilitiesNamesToUpdate;
-	}
+    public Map<String, String> getCapabilitiesNamesToUpdate() {
+        return capabilitiesNamesToUpdate;
+    }
 
-	public void setCapabilitiesNamesToUpdate(Map<String, String> capabilitiesNamesToUpdate) {
-		this.capabilitiesNamesToUpdate = capabilitiesNamesToUpdate;
-	}
+    public void setCapabilitiesNamesToUpdate(Map<String, String> capabilitiesNamesToUpdate) {
+        this.capabilitiesNamesToUpdate = capabilitiesNamesToUpdate;
+    }
 
-	public Map<String, String> getRequirementsNamesToUpdate() {
-		return requirementsNamesToUpdate;
-	}
+    public Map<String, String> getRequirementsNamesToUpdate() {
+        return requirementsNamesToUpdate;
+    }
 
-	public void setRequirementsNamesToUpdate(Map<String, String> requirementsNamesToUpdate) {
-		this.requirementsNamesToUpdate = requirementsNamesToUpdate;
-	}
+    public void setRequirementsNamesToUpdate(Map<String, String> requirementsNamesToUpdate) {
+        this.requirementsNamesToUpdate = requirementsNamesToUpdate;
+    }
 
 }

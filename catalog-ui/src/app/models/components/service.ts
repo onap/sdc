@@ -39,6 +39,7 @@ export class Service extends Component {
     public serviceType:string;
     public serviceRole:string;
     public environmentContext:string;
+    public instantiationType:string;
     public forwardingPaths:{ [key:string]:ForwardingPath } = {};
 
     constructor(componentService:IServiceService, $q:ng.IQService, component?:Service) {
@@ -51,6 +52,7 @@ export class Service extends Component {
             this.namingPolicy = component.namingPolicy;
             this.serviceType = component.serviceType;
             this.serviceRole = component.serviceRole;
+            this.instantiationType = component.instantiationType;
             this.environmentContext = component.environmentContext;
             if (component.categories && component.categories[0]) {
                 this.mainCategory = component.categories[0].name;
@@ -78,7 +80,7 @@ export class Service extends Component {
      */
     public createInputsFormInstances = (instancesInputsMap:InstancesInputsOrPropertiesMapData, instancePropertiesMap:InstancesInputsOrPropertiesMapData):ng.IPromise<Array<InputModel>> => {
 
-        let deferred = this.$q.defer();
+        let deferred = this.$q.defer<Array<InputModel>>();
         let onSuccess = (inputsCreated:Array<InputModel>):void => {
             this.inputs = inputsCreated.concat(this.inputs);
             deferred.resolve(inputsCreated);
@@ -94,8 +96,8 @@ export class Service extends Component {
     };
 
     // we need to change the name of the input to vfInstanceName + input name before sending to server in order to create the inputs on the service
-    public getServiceInputInputsAndProperties = (inputId:string):ng.IPromise<Array<InputModel>> => {
-        let deferred = this.$q.defer();
+    public getServiceInputInputsAndProperties = (inputId:string):ng.IPromise<InputsAndProperties> => {
+        let deferred = this.$q.defer<InputsAndProperties>();
         let onSuccess = (inputsAndProperties:InputsAndProperties):void => {
             let input:InputModel = _.find(this.inputs, (input:InputModel) => {
                 return input.uniqueId === inputId;
@@ -112,7 +114,7 @@ export class Service extends Component {
     };
 
     public deleteServiceInput = (inputId:string):ng.IPromise<InputModel> => {
-        let deferred = this.$q.defer();
+        let deferred = this.$q.defer<InputModel>();
 
         let onSuccess = (deletedInput:InputModel):void => {
             delete _.remove(this.inputs, {uniqueId: deletedInput.uniqueId})[0];
@@ -140,7 +142,7 @@ export class Service extends Component {
 
     public updateGroupInstanceProperties = (resourceInstanceId:string, group:DisplayModule, properties:Array<PropertyModel>):ng.IPromise<Array<PropertyModel>> => {
 
-        let deferred = this.$q.defer();
+        let deferred = this.$q.defer<Array<PropertyModel>>();
         let onSuccess = (updatedProperties:Array<PropertyModel>):void => {
             _.forEach(updatedProperties, (property:PropertyModel) => { // Replace all updated properties on the we needed to update
                 _.extend(_.find(group.properties, {uniqueId: property.uniqueId}), property);
@@ -167,6 +169,7 @@ export class Service extends Component {
         this.serviceType = componentMetadata.serviceType;
         this.serviceRole = componentMetadata.serviceRole;
         this.environmentContext = componentMetadata.environmentContext;
+        this.instantiationType = componentMetadata.instantiationType;
         this.setComponentDisplayData();
     }
 
@@ -178,5 +181,21 @@ export class Service extends Component {
         }
         this.iconSprite = "sprite-services-icons";
     }
+
+    public toJSON = ():any => {
+        let temp = angular.copy(this);
+        temp.componentService = undefined;
+        temp.filterTerm = undefined;
+        temp.iconSprite = undefined;
+        temp.mainCategory = undefined;
+        temp.subCategory = undefined;
+        temp.selectedInstance = undefined;
+        temp.showMenu = undefined;
+        temp.$q = undefined;
+        temp.selectedCategory = undefined;
+        temp.modules = undefined;
+        temp.groupInstances = undefined;
+        return temp;
+    };
 }
 

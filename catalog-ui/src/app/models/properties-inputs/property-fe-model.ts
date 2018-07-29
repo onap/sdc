@@ -228,7 +228,7 @@ export class PropertyFEModel extends PropertyBEModel {
     };
 
     /* Returns array of individual parents for given prop path, with list/map UUIDs replaced with index/mapkey */
-    public getParentNamesArray = (parentPropName: string, parentNames?: Array<string>): Array<string> => {
+    public getParentNamesArray = (parentPropName: string, parentNames?: Array<string>, noHashKeys:boolean = false): Array<string> => {
         parentNames = parentNames || [];
         if (parentPropName.indexOf("#") == -1) { return parentNames; } //finished recursing parents. return
 
@@ -236,7 +236,7 @@ export class PropertyFEModel extends PropertyBEModel {
         let nameToInsert: string = parentProp.name;
 
         if (parentProp.isChildOfListOrMap) {
-            if (parentProp.derivedDataType == DerivedPropertyType.MAP) {
+            if (!noHashKeys && parentProp.derivedDataType == DerivedPropertyType.MAP) {
                 nameToInsert = parentProp.getActualMapKey();
             } else { //LIST
                 let siblingProps = this.flattenedChildren.filter(prop => prop.parentName == parentProp.parentName).map(prop => prop.propertiesName);
@@ -245,7 +245,7 @@ export class PropertyFEModel extends PropertyBEModel {
         }
 
         parentNames.splice(0, 0, nameToInsert); //add prop name to array
-        return this.getParentNamesArray(parentProp.parentName, parentNames); //continue recursing
+        return this.getParentNamesArray(parentProp.parentName, parentNames, noHashKeys); //continue recursing
     }
 
     public hasValueObjChanged() {

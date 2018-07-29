@@ -20,17 +20,9 @@
 
 package org.openecomp.sdc.be.impl;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.StreamingOutput;
-
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import fj.data.Either;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpStatus;
 import org.eclipse.jgit.util.Base64;
@@ -40,17 +32,21 @@ import org.openecomp.sdc.be.info.ArtifactAccessList;
 import org.openecomp.sdc.be.info.ServletJsonResponse;
 import org.openecomp.sdc.be.resources.data.ESArtifactData;
 import org.openecomp.sdc.common.api.Constants;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
-import fj.data.Either;
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.StreamingOutput;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DownloadArtifactLogic {
 
-    private static final Logger log = LoggerFactory.getLogger(DownloadArtifactLogic.class);
+    private static final Logger log = Logger.getLogger(DownloadArtifactLogic.class);
 
     private Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
@@ -95,9 +91,9 @@ public class DownloadArtifactLogic {
 
     public List<ArtifactAccessInfo> convertArtifactList(List<? extends ESArtifactData> artifactsList, String servletPath) {
 
-        List<ArtifactAccessInfo> artifactAccessList = new ArrayList<ArtifactAccessInfo>();
+        List<ArtifactAccessInfo> artifactAccessList = new ArrayList<>();
         for (ESArtifactData artifact : artifactsList) {
-            ArtifactAccessInfo accessInfo = new ArtifactAccessInfo(artifact, servletPath);
+            ArtifactAccessInfo accessInfo = new ArtifactAccessInfo(servletPath);
             artifactAccessList.add(accessInfo);
         }
         return artifactAccessList;
@@ -138,9 +134,7 @@ public class DownloadArtifactLogic {
         jsonResponse.setDescription(errorMessage);
         jsonResponse.setSource(Constants.CATALOG_BE);
 
-        Response response = Response.status(status).entity(jsonResponse).build();
-
-        return response;
+        return Response.status(status).entity(jsonResponse).build();
     }
 
 }

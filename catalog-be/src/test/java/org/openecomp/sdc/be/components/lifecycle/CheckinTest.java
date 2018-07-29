@@ -20,9 +20,7 @@
 
 package org.openecomp.sdc.be.components.lifecycle;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
+import fj.data.Either;
 import org.junit.Before;
 import org.junit.Test;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
@@ -34,7 +32,8 @@ import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.user.Role;
 import org.openecomp.sdc.exception.ResponseFormat;
 
-import fj.data.Either;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class CheckinTest extends LifecycleTestBase {
 
@@ -60,7 +59,7 @@ public class CheckinTest extends LifecycleTestBase {
         assertTrue(ownerResponse.isLeft());
         User owner = ownerResponse.left().value();
         changeStateResult = checkinObj.validateBeforeTransition(resource, ComponentTypeEnum.RESOURCE, user, owner, LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
-        assertEquals(changeStateResult.isLeft(), true);
+        assertTrue(changeStateResult.isLeft());
 
     }
 
@@ -74,7 +73,7 @@ public class CheckinTest extends LifecycleTestBase {
         assertTrue(ownerResponse.isLeft());
         User owner = ownerResponse.left().value();
         changeStateResult = checkinObj.validateBeforeTransition(service, ComponentTypeEnum.SERVICE, user, owner, LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
-        assertEquals(changeStateResult.isLeft(), true);
+        assertTrue(changeStateResult.isLeft());
 
     }
 
@@ -89,7 +88,7 @@ public class CheckinTest extends LifecycleTestBase {
         // changeStateResult = checkinObj.changeStateOperation(resource, user,
         // owner.left().value());
         Either<Boolean, ResponseFormat> validateBeforeTransition = checkinObj.validateBeforeTransition(resource, ComponentTypeEnum.RESOURCE, user, owner.left().value(), LifecycleStateEnum.NOT_CERTIFIED_CHECKIN);
-        assertEquals(validateBeforeTransition.isRight(), true);
+        assertTrue(validateBeforeTransition.isRight());
         changeStateResult = Either.right(validateBeforeTransition.right().value());
 
         assertResponse(changeStateResult, ActionStatus.COMPONENT_ALREADY_CHECKED_IN, resource.getName(), ComponentTypeEnum.RESOURCE.name().toLowerCase(), user.getFirstName(), user.getLastName(), user.getUserId());
@@ -106,7 +105,7 @@ public class CheckinTest extends LifecycleTestBase {
         assertTrue(owner.isLeft());
 
         Either<Boolean, ResponseFormat> validateBeforeTransition = checkinObj.validateBeforeTransition(service, ComponentTypeEnum.SERVICE, user, owner.left().value(), LifecycleStateEnum.NOT_CERTIFIED_CHECKIN);
-        assertEquals(validateBeforeTransition.isRight(), true);
+        assertTrue(validateBeforeTransition.isRight());
         changeStateResult = Either.right(validateBeforeTransition.right().value());
 
         assertServiceResponse(changeStateResult, ActionStatus.COMPONENT_ALREADY_CHECKED_IN, service.getName(), ComponentTypeEnum.SERVICE.name().toLowerCase(), user.getFirstName(), user.getLastName(), user.getUserId());
@@ -131,9 +130,9 @@ public class CheckinTest extends LifecycleTestBase {
         // changeStateResult = checkinObj.changeStateOperation(resource,
         // modifier, owner);
         Either<Boolean, ResponseFormat> validateBeforeTransition = checkinObj.validateBeforeTransition(resource, ComponentTypeEnum.RESOURCE, modifier, owner, LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
-        assertEquals(validateBeforeTransition.isRight(), true);
+        assertTrue(validateBeforeTransition.isRight());
         changeStateResult = Either.right(validateBeforeTransition.right().value());
-        assertEquals(changeStateResult.isRight(), true);
+        assertTrue(changeStateResult.isRight());
 
         assertResponse(changeStateResult, ActionStatus.COMPONENT_CHECKOUT_BY_ANOTHER_USER, resource.getName(), ComponentTypeEnum.RESOURCE.name().toLowerCase(), user.getFirstName(), user.getLastName(), user.getUserId());
 
@@ -155,9 +154,9 @@ public class CheckinTest extends LifecycleTestBase {
         assertTrue(ownerResponse.isLeft());
         User owner = ownerResponse.left().value();
         Either<Boolean, ResponseFormat> validateBeforeTransition = checkinObj.validateBeforeTransition(service, ComponentTypeEnum.RESOURCE, modifier, owner, LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
-        assertEquals(validateBeforeTransition.isRight(), true);
+        assertTrue(validateBeforeTransition.isRight());
         changeStateResult = Either.right(validateBeforeTransition.right().value());
-        assertEquals(changeStateResult.isRight(), true);
+        assertTrue(changeStateResult.isRight());
 
         assertServiceResponse(changeStateResult, ActionStatus.COMPONENT_CHECKOUT_BY_ANOTHER_USER, service.getName(), ComponentTypeEnum.RESOURCE.name().toLowerCase(), user.getFirstName(), user.getLastName(), user.getUserId());
 

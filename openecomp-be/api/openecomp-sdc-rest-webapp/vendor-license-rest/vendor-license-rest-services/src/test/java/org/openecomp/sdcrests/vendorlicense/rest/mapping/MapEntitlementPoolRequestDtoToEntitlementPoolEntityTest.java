@@ -16,15 +16,16 @@
 
 package org.openecomp.sdcrests.vendorlicense.rest.mapping;
 
-import static org.testng.Assert.assertEquals;
-
-import java.util.Collections;
-import java.util.HashSet;
 import org.junit.Test;
 import org.openecomp.sdc.vendorlicense.dao.types.EntitlementPoolEntity;
 import org.openecomp.sdc.vendorlicense.dao.types.OperationalScope;
 import org.openecomp.sdcrests.vendorlicense.types.EntitlementPoolRequestDto;
 import org.openecomp.sdcrests.vendorlicense.types.MultiChoiceOrOtherDto;
+
+import java.util.Collections;
+import java.util.HashSet;
+
+import static org.testng.Assert.assertEquals;
 
 
 public class MapEntitlementPoolRequestDtoToEntitlementPoolEntityTest {

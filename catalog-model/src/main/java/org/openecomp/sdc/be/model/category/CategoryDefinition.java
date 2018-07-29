@@ -20,47 +20,41 @@
 
 package org.openecomp.sdc.be.model.category;
 
-import java.io.Serializable;
+import org.openecomp.sdc.be.datatypes.category.CategoryDataDefinition;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import org.openecomp.sdc.be.datatypes.category.CategoryDataDefinition;
+public class CategoryDefinition extends CategoryDataDefinition {
 
-public class CategoryDefinition extends CategoryDataDefinition implements Serializable {
+    private List<SubCategoryDefinition> subcategories;
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 6552733796860992476L;
+    public CategoryDefinition() {
+        super();
+    }
 
-	List<SubCategoryDefinition> subcategories;
+    public CategoryDefinition(CategoryDataDefinition c) {
+        super(c);
+    }
 
-	public CategoryDefinition() {
-		super();
-	}
+    public List<SubCategoryDefinition> getSubcategories() {
+        return subcategories;
+    }
 
-	public CategoryDefinition(CategoryDataDefinition c) {
-		super(c);
-	}
+    public void setSubcategories(List<SubCategoryDefinition> subcategories) {
+        this.subcategories = subcategories;
+    }
 
-	public List<SubCategoryDefinition> getSubcategories() {
-		return subcategories;
-	}
+    public void addSubCategory(SubCategoryDefinition subcategory) {
+        if (subcategories == null) {
+            subcategories = new ArrayList<>();
+        }
+        subcategories.add(subcategory);
+    }
 
-	public void setSubcategories(List<SubCategoryDefinition> subcategories) {
-		this.subcategories = subcategories;
-	}
-
-	public void addSubCategory(SubCategoryDefinition subcategory) {
-		if (subcategories == null) {
-			subcategories = new ArrayList<SubCategoryDefinition>();
-		}
-		subcategories.add(subcategory);
-	}
-
-	@Override
-	public String toString() {
-		return super.toString() + " CategoryDefinition [subcategories=" + subcategories + "]";
-	}
+    @Override
+    public String toString() {
+        return super.toString() + " CategoryDefinition [subcategories=" + subcategories + "]";
+    }
 
 }

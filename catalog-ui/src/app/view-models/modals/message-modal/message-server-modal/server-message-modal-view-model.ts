@@ -24,6 +24,8 @@ import {IMessageModalModel, IMessageModalViewModelScope, MessageModalViewModel} 
 export interface IServerMessageModalModel extends IMessageModalModel {
     status:string;
     messageId:string;
+    
+    
 }
 
 export interface IServerMessageModalViewModelScope extends IMessageModalViewModelScope {

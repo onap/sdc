@@ -20,11 +20,12 @@ import com.datastax.driver.mapping.Mapper;
 import com.datastax.driver.mapping.Result;
 import com.datastax.driver.mapping.annotations.Accessor;
 import com.datastax.driver.mapping.annotations.Query;
-import java.util.Collection;
 import org.openecomp.core.dao.impl.CassandraBaseDao;
 import org.openecomp.core.nosqldb.api.NoSqlDb;
 import org.openecomp.sdc.versioning.dao.VersionInfoDao;
 import org.openecomp.sdc.versioning.dao.types.VersionInfoEntity;
+
+import java.util.Collection;
 
 public class VersionInfoDaoImpl extends CassandraBaseDao<VersionInfoEntity>
     implements VersionInfoDao {

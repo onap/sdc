@@ -16,12 +16,7 @@
 
 package org.openecomp.sdc.be.model.jsontitan.operations;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
-
+import fj.data.Either;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 import org.openecomp.sdc.be.dao.jsongraph.types.EdgeLabelEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
@@ -33,15 +28,14 @@ import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.DaoStatusConverter;
 import org.openecomp.sdc.common.jsongraph.util.CommonUtility;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 
-import fj.data.Either;
+import java.util.*;
 
 @org.springframework.stereotype.Component("interfaces-operation")
 public class InterfaceOperation extends BaseOperation {
 
-    private static Logger logger = LoggerFactory.getLogger(InterfaceOperation.class.getName());
+    private static final Logger logger = Logger.getLogger(InterfaceOperation.class.getName());
 
 
     public Either<Set<String>, StorageOperationStatus> deleteInterface(Resource resource,

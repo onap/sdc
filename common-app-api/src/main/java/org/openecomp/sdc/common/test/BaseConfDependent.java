@@ -20,12 +20,12 @@
 
 package org.openecomp.sdc.common.test;
 
-import java.io.File;
-
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.common.api.ConfigurationSource;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;
 import org.openecomp.sdc.common.impl.FSConfigurationSource;
+
+import java.io.File;
 
 public class BaseConfDependent {
 	protected static ConfigurationManager configurationManager;

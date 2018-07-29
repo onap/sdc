@@ -20,6 +20,7 @@
 
 package org.openecomp.sdc.externalApis;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
@@ -27,7 +28,6 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Rule;
 import org.junit.rules.TestName;
 import org.openecomp.sdc.be.datatypes.elements.ConsumerDataDefinition;
@@ -49,7 +49,9 @@ import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
 import org.openecomp.sdc.ci.tests.utils.Utils;
 import org.openecomp.sdc.ci.tests.utils.general.AtomicOperationUtils;
 import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
-import org.openecomp.sdc.ci.tests.utils.rest.*;
+import org.openecomp.sdc.ci.tests.utils.rest.ArtifactRestUtils;
+import org.openecomp.sdc.ci.tests.utils.rest.AssetRestUtils;
+import org.openecomp.sdc.ci.tests.utils.rest.BaseRestUtils;
 import org.openecomp.sdc.common.api.Constants;
 import org.testng.annotations.Test;
 
@@ -127,13 +129,13 @@ public class GetAssetServlet extends ComponentBaseTest {
 		resource = (Resource) AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.STARTCERTIFICATION, true).getLeft();
 		expectedAssetNamesList.add(resourceDetails.getName());
 
-		resourceDetails = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, sdncUserDetails);
+/*		resourceDetails = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, sdncUserDetails);
 		resource = AtomicOperationUtils.createResourceByResourceDetails(resourceDetails, UserRoleEnum.DESIGNER, true).left().value();
 		resource = (Resource) AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
 		resource = (Resource) AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFICATIONREQUEST, true).getLeft();
-		expectedAssetNamesList.add(resourceDetails.getName());
+		expectedAssetNamesList.add(resourceDetails.getName());*/
 
-		System.out.println("7 VF resources were created");
+		System.out.println("6 VF resources were created");
 
 		RestResponse assetResponse = AssetRestUtils.getComponentListByAssetType(true, AssetTypeEnum.RESOURCES);
 		BaseRestUtils.checkSuccess(assetResponse);
@@ -146,8 +148,8 @@ public class GetAssetServlet extends ComponentBaseTest {
 
 	/*	// Validate audit message
 		ExpectedExternalAudit expectedAssetListAudit = ElementFactory.getDefaultAssetListAudit(AssetTypeEnum.RESOURCES, AuditingActionEnum.GET_ASSET_LIST);
-		Map <AuditingFieldsKeysEnum, String> body = new HashMap<>();
-        body.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_URL, expectedAssetListAudit.getRESOURCE_URL());
+		Map <AuditingFieldsKey, String> body = new HashMap<>();
+        body.put(AuditingFieldsKey.AUDIT_RESOURCE_URL, expectedAssetListAudit.getRESOURCE_URL());
         AuditValidationUtils.validateExternalAudit(expectedAssetListAudit, AuditingActionEnum.GET_ASSET_LIST.getName(), body);*/
 
 	}
@@ -225,8 +227,8 @@ public class GetAssetServlet extends ComponentBaseTest {
 
 		/*// Validate audit message
 		ExpectedExternalAudit expectedAssetListAudit = ElementFactory.getDefaultAssetListAudit(AssetTypeEnum.SERVICES, AuditingActionEnum.GET_ASSET_LIST);
-		Map <AuditingFieldsKeysEnum, String> body = new HashMap<>();
-        body.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_URL, expectedAssetListAudit.getRESOURCE_URL());
+		Map <AuditingFieldsKey, String> body = new HashMap<>();
+        body.put(AuditingFieldsKey.AUDIT_RESOURCE_URL, expectedAssetListAudit.getRESOURCE_URL());
         AuditValidationUtils.validateExternalAudit(expectedAssetListAudit, AuditingActionEnum.GET_ASSET_LIST.getName(), body);*/
 
 	}
@@ -234,25 +236,35 @@ public class GetAssetServlet extends ComponentBaseTest {
 	@Test(enabled = false)
 	public void getToscaModelSuccess() throws Exception {
 
-		CloseableHttpClient httpclient = HttpClients.createDefault();
-		ResourceReqDetails resourceDetails = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, sdncUserDetails);
-		Resource resource = AtomicOperationUtils.createResourceByResourceDetails(resourceDetails, UserRoleEnum.DESIGNER, true).left().value();
-		HttpResponse assetResponse = AssetRestUtils.getComponentToscaModel(AssetTypeEnum.RESOURCES, resource.getUUID());
-		resource = (Resource) AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
-		String artId = resource.getToscaArtifacts().get("assettoscacsar").getEsId();
-		String url = String.format(Urls.UI_DOWNLOAD_RESOURCE_ARTIFACT, config.getCatalogBeHost(), config.getCatalogBePort(), resource.getUniqueId(), artId);
-		HttpGet httpGet = createGetRequest(url);
-		HttpResponse response = httpclient.execute(httpGet);
-		InputStream inputStream = response.getEntity().getContent();
-		ArtifactUiDownloadData artifactUiDownloadData = getArtifactUiDownloadData(IOUtils.toString(inputStream));
+		Resource resource;
+		HttpResponse assetResponse;
+		HttpResponse response;
+		InputStream inputStream;
+		ArtifactUiDownloadData artifactUiDownloadData;
+		int len;
+		byte[] res;
+		byte[] fromUiDownload;
+		String fileName;
+		try (CloseableHttpClient httpclient = HttpClients.createDefault()) {
+			ResourceReqDetails resourceDetails = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, sdncUserDetails);
+			resource = AtomicOperationUtils.createResourceByResourceDetails(resourceDetails, UserRoleEnum.DESIGNER, true).left().value();
+			assetResponse = AssetRestUtils.getComponentToscaModel(AssetTypeEnum.RESOURCES, resource.getUUID());
+			resource = (Resource) AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+			String artId = resource.getToscaArtifacts().get("assettoscacsar").getEsId();
+			String url = String.format(Urls.UI_DOWNLOAD_RESOURCE_ARTIFACT, config.getCatalogBeHost(), config.getCatalogBePort(), resource.getUniqueId(), artId);
+			HttpGet httpGet = createGetRequest(url);
+			response = httpclient.execute(httpGet);
+		}
+		inputStream = response.getEntity().getContent();
+		artifactUiDownloadData = getArtifactUiDownloadData(IOUtils.toString(inputStream));
 		assetResponse = AssetRestUtils.getComponentToscaModel(AssetTypeEnum.RESOURCES, resource.getUUID());
 		inputStream = assetResponse.getEntity().getContent();
-		int len = (int) assetResponse.getEntity().getContentLength();
-		byte[] res = new byte[len];
+		len = (int) assetResponse.getEntity().getContentLength();
+		res = new byte[len];
 		inputStream.read(res, 0, len);
-		byte[] fromUiDownload = artifactUiDownloadData.getBase64Contents().getBytes();
+		fromUiDownload = artifactUiDownloadData.getBase64Contents().getBytes();
 		assertEquals(Base64.encodeBase64(res), fromUiDownload);
-		String fileName = assetResponse.getFirstHeader(Constants.CONTENT_DISPOSITION_HEADER).getValue();
+		fileName = assetResponse.getFirstHeader(Constants.CONTENT_DISPOSITION_HEADER).getValue();
 		assertEquals(fileName, new StringBuilder().append("attachment; filename=\"")
 				.append(artifactUiDownloadData.getArtifactName()).append("\"").toString());
 	}

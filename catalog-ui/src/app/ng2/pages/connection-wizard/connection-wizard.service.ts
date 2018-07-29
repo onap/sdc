@@ -22,19 +22,6 @@ export class ConnectionWizardService {
         // this.selectedCapability = rel
     }
 
-
-    // getComponentInstanceIdOfSelectedCapability = (): string => {
-    //     if(this.selectedMatch.capability){
-    //         if(this.selectedMatch.isFromTo) {
-    //             return this.selectedMatch.toNode;
-    //         } else {
-    //             return this.selectedMatch.fromNode;
-    //         }
-    //     }
-    //     return '';
-    //
-    // }
-
     getOptionalRequirementsByInstanceUniqueId = (isFromTo: boolean, matchWith?:Capability): Dictionary<Requirement[]> => {
        let requirements: Array<Requirement> = [];
         _.forEach(this.connectRelationModel.possibleRelations, (match: Match) => {

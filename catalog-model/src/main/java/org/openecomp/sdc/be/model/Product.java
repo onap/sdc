@@ -20,61 +20,61 @@
 
 package org.openecomp.sdc.be.model;
 
-import java.util.List;
-
 import org.openecomp.sdc.be.datatypes.elements.ProductMetadataDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 
+import java.util.List;
+
 public class Product extends Component {
 
-	public Product() {
-		super(new ProductMetadataDefinition());
-		this.getComponentMetadataDefinition().getMetadataDataDefinition().setComponentType(ComponentTypeEnum.PRODUCT);
-	}
+    public Product() {
+        super(new ProductMetadataDefinition());
+        this.getComponentMetadataDefinition().getMetadataDataDefinition().setComponentType(ComponentTypeEnum.PRODUCT);
+    }
 
-	public Product(ProductMetadataDefinition productMetadataDefinition) {
-		super(productMetadataDefinition);
-		this.getComponentMetadataDefinition().getMetadataDataDefinition().setComponentType(ComponentTypeEnum.PRODUCT);
-	}
+    public Product(ProductMetadataDefinition productMetadataDefinition) {
+        super(productMetadataDefinition);
+        this.getComponentMetadataDefinition().getMetadataDataDefinition().setComponentType(ComponentTypeEnum.PRODUCT);
+    }
 
-	public String getFullName() {
-		return getProductMetadataDefinition().getFullName();
-	}
+    public String getFullName() {
+        return getProductMetadataDefinition().getFullName();
+    }
 
-	public void setFullName(String fullName) {
-		getProductMetadataDefinition().setFullName(fullName);
-	}
+    public void setFullName(String fullName) {
+        getProductMetadataDefinition().setFullName(fullName);
+    }
 
-	public String getInvariantUUID() {
-		return getProductMetadataDefinition().getInvariantUUID();
-	}
+    public String getInvariantUUID() {
+        return getProductMetadataDefinition().getInvariantUUID();
+    }
 
-	public void setInvariantUUID(String invariantUUID) {
-		getProductMetadataDefinition().setInvariantUUID(invariantUUID);
-	}
+    public void setInvariantUUID(String invariantUUID) {
+        getProductMetadataDefinition().setInvariantUUID(invariantUUID);
+    }
 
-	public List<String> getContacts() {
-		return getProductMetadataDefinition().getContacts();
-	}
+    public List<String> getContacts() {
+        return getProductMetadataDefinition().getContacts();
+    }
 
-	public void setContacts(List<String> contacts) {
-		getProductMetadataDefinition().setContacts(contacts);
-	}
+    public void setContacts(List<String> contacts) {
+        getProductMetadataDefinition().setContacts(contacts);
+    }
 
-	public void addContact(String contact) {
-		getProductMetadataDefinition().addContact(contact);
-	}
+    public void addContact(String contact) {
+        getProductMetadataDefinition().addContact(contact);
+    }
 
-	public Boolean getIsActive() {
-		return getProductMetadataDefinition().getIsActive();
-	}
+    public Boolean getIsActive() {
+        return getProductMetadataDefinition().getIsActive();
+    }
 
-	public void setIsActive(Boolean isActive) {
-		getProductMetadataDefinition().setIsActive(isActive);
-	}
+    public void setIsActive(Boolean isActive) {
+        getProductMetadataDefinition().setIsActive(isActive);
+    }
 
-	private ProductMetadataDataDefinition getProductMetadataDefinition() {
-		return (ProductMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition();
-	}
+    private ProductMetadataDataDefinition getProductMetadataDefinition() {
+        return (ProductMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition();
+    }
 
 }

@@ -16,13 +16,13 @@
 
 package org.openecomp.sdcrests.vendorlicense.rest.mapping;
 
-import static org.testng.Assert.assertEquals;
-
 import org.junit.Test;
 import org.openecomp.sdc.vendorlicense.dao.types.AggregationFunction;
 import org.openecomp.sdc.vendorlicense.dao.types.LimitEntity;
 import org.openecomp.sdc.vendorlicense.dao.types.LimitType;
 import org.openecomp.sdcrests.vendorlicense.types.LimitEntityDto;
+
+import static org.testng.Assert.assertEquals;
 
 
 public class MapLimitEntityToLimitDtoTest {

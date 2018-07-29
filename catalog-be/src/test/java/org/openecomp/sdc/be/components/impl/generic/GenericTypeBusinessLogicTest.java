@@ -1,12 +1,6 @@
 package org.openecomp.sdc.be.components.impl.generic;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.when;
-
-import java.util.Arrays;
-import java.util.List;
-
+import fj.data.Either;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -20,7 +14,12 @@ import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
 import org.openecomp.sdc.exception.ResponseFormat;
 
-import fj.data.Either;
+import java.util.Arrays;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.when;
 
 public class GenericTypeBusinessLogicTest {
 
@@ -42,6 +41,7 @@ public class GenericTypeBusinessLogicTest {
         Resource cvfc = new Resource();
         cvfc.setResourceType(ResourceTypeEnum.CVFC);
         cvfc.setDerivedFrom(Arrays.asList("genericType", "someOtherType"));
+        cvfc.setDerivedFromGenericType("genericType");
         Resource genericResource = new Resource();
         when(toscaOperationFacadeMock.getLatestCertifiedNodeTypeByToscaResourceName("genericType")).thenReturn(Either.left(genericResource));
         Either<Resource, ResponseFormat> fetchedGenericType = testInstance.fetchDerivedFromGenericType(cvfc);

@@ -20,13 +20,6 @@
 
 package org.openecomp.sdc.be.components.validation;
 
-import static java.util.stream.Collectors.toList;
-
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
@@ -39,21 +32,31 @@ import org.openecomp.sdc.be.model.ComponentParametersView;
 import org.openecomp.sdc.be.model.GroupDefinition;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.StorageException;
-import org.openecomp.sdc.be.model.operations.api.IGraphLockOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.utils.ComponentValidationUtils;
 import org.openecomp.sdc.common.util.ValidationUtils;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+
+import static java.util.stream.Collectors.toList;
 
 @org.springframework.stereotype.Component
-public final class ComponentValidations {
+public class ComponentValidations {
 
     private final ToscaOperationFacade toscaOperationFacade;
-    private final IGraphLockOperation graphLockOperation;
 
-    public ComponentValidations(ToscaOperationFacade toscaOperationFacade, IGraphLockOperation graphLockOperation) {
+    public ComponentValidations(ToscaOperationFacade toscaOperationFacade) {
         this.toscaOperationFacade = toscaOperationFacade;
-        this.graphLockOperation = graphLockOperation;
+    }
+
+    public Optional<ComponentInstance> getComponentInstance(Component component, String instanceId) {
+        return component.getComponentInstances()
+                .stream()
+                .filter(ci -> ci.getUniqueId().equals(instanceId))
+                .findFirst();
     }
 
     public static boolean validateComponentInstanceExist(Component component, String instanceId) {
@@ -103,40 +106,35 @@ public final class ComponentValidations {
         return !existingNames.contains(normalizedNewName);
     }
 
-    public Component validateComponentIsCheckedOutByUserAndLockIt(ComponentTypeEnum componentTypeEnum, String componentId, String userId) {
-        Component component = getComponent(componentId, componentTypeEnum);
-
+    void validateComponentIsCheckedOutByUser(Component component, String userId) {
         if (!ComponentValidationUtils.canWorkOnComponent(component, userId)) {
-            throw new ComponentException(ActionStatus.ILLEGAL_COMPONENT_STATE, component.getName());
+            throw new ComponentException(ActionStatus.ILLEGAL_COMPONENT_STATE, component.getComponentType().name(), component.getName(), component.getLifecycleState().name());
         }
+    }
+    Component validateComponentIsCheckedOutByUser(String componentId, ComponentTypeEnum componentTypeEnum, String userId) {
+        Component component = getComponent(componentId, componentTypeEnum);
+        validateComponentIsCheckedOutByUser(component, userId);
+        return component;
+    }
 
-        lockComponent(component);
+    Component getComponent(String componentId, ComponentTypeEnum componentType) {
+        Component component = toscaOperationFacade.getToscaElement(componentId, new ComponentParametersView())
+                .left()
+                .on(storageOperationStatus -> onToscaOperationError(storageOperationStatus, componentId));
+
+        validateComponentType(component, componentType);
 
         return component;
     }
 
-    private Component getComponent(String componentId, ComponentTypeEnum componentType) {
-        Component component = toscaOperationFacade.getToscaElement(componentId, new ComponentParametersView())
-                .left()
-                .on(this::onToscaOperationError);
-
+    private void validateComponentType(Component component, ComponentTypeEnum componentType) {
         if (componentType!=component.getComponentType()) {
             throw new ComponentException(ActionStatus.INVALID_RESOURCE_TYPE);
         }
-
-        return component;
     }
 
-    private void lockComponent(Component component) {
-        StorageOperationStatus lockComponentStatus = graphLockOperation.lockComponent(component.getUniqueId(),
-                component.getComponentType().getNodeType());
-        if (!StorageOperationStatus.OK.equals(lockComponentStatus)) {
-            throw new StorageException(lockComponentStatus);
-        }
-    }
-
-    private Component onToscaOperationError(StorageOperationStatus storageOperationStatus) {
-        throw new StorageException(storageOperationStatus);
+    private Component onToscaOperationError(StorageOperationStatus storageOperationStatus, String componentId) {
+        throw new StorageException(storageOperationStatus, componentId);
     }
 
 }

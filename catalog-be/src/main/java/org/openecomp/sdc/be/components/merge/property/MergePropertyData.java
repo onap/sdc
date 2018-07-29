@@ -1,9 +1,9 @@
 package org.openecomp.sdc.be.components.merge.property;
 
+import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 
 /**
  * A POJO which represents an instance property data definition (a {@link org.openecomp.sdc.be.model.ComponentInstanceProperty} or {@link org.openecomp.sdc.be.model.ComponentInstanceInput})

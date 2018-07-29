@@ -20,18 +20,6 @@
 
 package org.openecomp.sdc.ci.tests.execute.category;
 
-import static org.openecomp.sdc.ci.tests.utils.rest.BaseRestUtils.PRODUCT_COMPONENT_TYPE;
-import static org.openecomp.sdc.ci.tests.utils.rest.BaseRestUtils.RESOURCE_COMPONENT_TYPE;
-import static org.openecomp.sdc.ci.tests.utils.rest.BaseRestUtils.SERVICE_COMPONENT_TYPE;
-import static org.openecomp.sdc.ci.tests.utils.rest.BaseRestUtils.STATUS_CODE_ALREADY_EXISTS;
-import static org.openecomp.sdc.ci.tests.utils.rest.BaseRestUtils.STATUS_CODE_CREATED;
-import static org.openecomp.sdc.ci.tests.utils.rest.BaseRestUtils.STATUS_CODE_INVALID_CONTENT;
-import static org.openecomp.sdc.ci.tests.utils.rest.BaseRestUtils.STATUS_CODE_MISSING_INFORMATION;
-import static org.openecomp.sdc.ci.tests.utils.rest.BaseRestUtils.STATUS_CODE_NOT_FOUND;
-import static org.openecomp.sdc.ci.tests.utils.rest.BaseRestUtils.STATUS_CODE_RESTRICTED_OPERATION;
-import static org.openecomp.sdc.ci.tests.utils.rest.BaseRestUtils.STATUS_CODE_SUCCESS;
-import static org.testng.AssertJUnit.assertEquals;
-
 import org.junit.Rule;
 import org.junit.rules.TestName;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
@@ -53,6 +41,9 @@ import org.openecomp.sdc.ci.tests.utils.validation.ErrorValidationUtils;
 import org.testng.SkipException;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+
+import static org.openecomp.sdc.ci.tests.utils.rest.BaseRestUtils.*;
+import static org.testng.AssertJUnit.assertEquals;
 
 public class GroupingTest extends CategoriesBaseTest {
 

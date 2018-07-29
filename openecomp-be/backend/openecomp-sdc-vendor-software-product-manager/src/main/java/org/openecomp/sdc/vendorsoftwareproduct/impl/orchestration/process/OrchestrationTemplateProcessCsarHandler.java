@@ -16,14 +16,6 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.process;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 import org.apache.commons.collections4.MapUtils;
 import org.openecomp.core.impl.ToscaConverterImpl;
 import org.openecomp.core.utilities.file.FileContentHandler;
@@ -49,6 +41,10 @@ import org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.OrchestrationU
 import org.openecomp.sdc.vendorsoftwareproduct.services.filedatastructuremodule.CandidateService;
 import org.openecomp.sdc.vendorsoftwareproduct.types.OrchestrationTemplateActionResponse;
 import org.openecomp.sdc.vendorsoftwareproduct.types.UploadFileResponse;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.util.*;
 
 public class OrchestrationTemplateProcessCsarHandler
     implements OrchestrationTemplateProcessHandler {

@@ -20,27 +20,9 @@
 
 package org.openecomp.sdc.be.servlets;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.inject.Singleton;
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
+import com.jcabi.aspects.Loggable;
+import fj.data.Either;
+import io.swagger.annotations.*;
 import org.openecomp.sdc.be.components.impl.ElementBusinessLogic;
 import org.openecomp.sdc.be.components.scheduledtasks.ComponentsCleanBusinessLogic;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
@@ -50,12 +32,8 @@ import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
 import org.openecomp.sdc.be.info.ArtifactTypesInfo;
-import org.openecomp.sdc.be.model.ArtifactType;
-import org.openecomp.sdc.be.model.Category;
-import org.openecomp.sdc.be.model.Component;
-import org.openecomp.sdc.be.model.PropertyScope;
+import org.openecomp.sdc.be.model.*;
 import org.openecomp.sdc.be.model.Tag;
-import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.catalog.CatalogComponent;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
 import org.openecomp.sdc.be.model.category.GroupingDefinition;
@@ -63,18 +41,20 @@ import org.openecomp.sdc.be.model.category.SubCategoryDefinition;
 import org.openecomp.sdc.be.ui.model.UiCategories;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import com.jcabi.aspects.Loggable;
-
-import fj.data.Either;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import javax.inject.Singleton;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Path("/v1/")
 
@@ -89,7 +69,7 @@ import io.swagger.annotations.ApiResponses;
 @Singleton
 public class ElementServlet extends BeGenericServlet {
 
-    private static final Logger log = LoggerFactory.getLogger(ElementServlet.class);
+    private static final Logger log = Logger.getLogger(ElementServlet.class);
 
     /*
      ******************************************************************************
@@ -115,7 +95,7 @@ public class ElementServlet extends BeGenericServlet {
 
         try {
             ElementBusinessLogic elementBL = getElementBL(request.getSession().getServletContext());
-            Either<List<CategoryDefinition>, ResponseFormat> either = elementBL.getAllCategories(componentType, userId);
+            Either<List<CategoryDefinition>, ResponseFormat> either = elementBL .getAllCategories(componentType, userId);
             if (either.isRight()) {
                 log.debug("No categories were found for type {}", componentType);
                 return buildErrorResponse(either.right().value());
@@ -265,7 +245,7 @@ public class ElementServlet extends BeGenericServlet {
 
         try {
             ElementBusinessLogic elementBL = getElementBL(request.getSession().getServletContext());
-            Either<SubCategoryDefinition, ResponseFormat> deleteSubResourceCategory = elementBL.deleteSubCategory(categoryUniqueId, subCategoryUniqueId, componentType, userId);
+            Either<SubCategoryDefinition, ResponseFormat> deleteSubResourceCategory = elementBL.deleteSubCategory(subCategoryUniqueId, componentType, userId);
             if (deleteSubResourceCategory.isRight()) {
                 return buildErrorResponse(deleteSubResourceCategory.right().value());
             }
@@ -327,7 +307,7 @@ public class ElementServlet extends BeGenericServlet {
 
         try {
             ElementBusinessLogic elementBL = getElementBL(request.getSession().getServletContext());
-            Either<GroupingDefinition, ResponseFormat> deleteGrouping = elementBL.deleteGrouping(grandParentCategoryUniqueId, parentSubCategoryUniqueId, groupingUniqueId, componentType, userId);
+            Either<GroupingDefinition, ResponseFormat> deleteGrouping = elementBL.deleteGrouping(groupingUniqueId, componentType, userId);
             if (deleteGrouping.isRight()) {
                 return buildErrorResponse(deleteGrouping.right().value());
             }
@@ -464,8 +444,8 @@ public class ElementServlet extends BeGenericServlet {
                 log.debug("No resource types were found");
                 return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.NO_CONTENT));
             } else {
-                Map<String, Object> artifacts = new HashMap<String, Object>();
-                Map<String, Object> configuration = new HashMap<String, Object>();
+                Map<String, Object> artifacts = new HashMap<>();
+                Map<String, Object> configuration = new HashMap<>();
 
                 artifacts.put("other", otherEither.left().value());
                 artifacts.put("deployment", deploymentEither.left().value());
@@ -546,7 +526,7 @@ public class ElementServlet extends BeGenericServlet {
             String url = request.getMethod() + " " + request.getRequestURI();
             log.debug("Start handle request of {}", url);
 
-            Either<Map<String, List<CatalogComponent>>, ResponseFormat> catalogData = getElementBL(request.getSession().getServletContext()).getCatalogComponents(userId);
+			Either<Map<String, List<CatalogComponent>>, ResponseFormat> catalogData = getElementBL(request.getSession().getServletContext()).getCatalogComponents(userId, excludeTypes);
 
             if (catalogData.isRight()) {
                 log.debug("failed to get catalog data");
@@ -582,11 +562,11 @@ public class ElementServlet extends BeGenericServlet {
 
         NodeTypeEnum nodeType = NodeTypeEnum.getByNameIgnoreCase(componentType);
         if (nodeType == null) {
-            log.info("componentType is not valid: {]", componentType);
+            log.info("componentType is not valid: {}", componentType);
             return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.INVALID_CONTENT));
         }
 
-        List<NodeTypeEnum> componentsList = new ArrayList<NodeTypeEnum>();
+        List<NodeTypeEnum> componentsList = new ArrayList<>();
         componentsList.add(nodeType);
         try {
             ComponentsCleanBusinessLogic businessLogic = getComponentCleanerBL(context);

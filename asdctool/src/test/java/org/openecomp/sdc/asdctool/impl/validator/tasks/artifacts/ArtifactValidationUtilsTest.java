@@ -1,11 +1,11 @@
 package org.openecomp.sdc.asdctool.impl.validator.tasks.artifacts;
 
-import java.util.List;
-import java.util.Map;
-
 import org.junit.Test;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
+
+import java.util.List;
+import java.util.Map;
 
 public class ArtifactValidationUtilsTest {
 

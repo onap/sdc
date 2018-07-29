@@ -16,21 +16,21 @@
 
 package org.openecomp.sdc.translator.services.heattotosca.unifiedmodel.commands;
 
-import static org.openecomp.sdc.translator.TestUtils.createInitServiceTemplate;
-
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
 import org.onap.sdc.tosca.datatypes.model.NodeTemplate;
 import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
 import org.onap.sdc.tosca.datatypes.model.TopologyTemplate;
 import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.composition.commands.UnifiedSubstitutionNodeTemplateIdGenerator;
 import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.composition.commands.impl.ComputeNewNodeTemplateIdGenerator;
 import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.composition.to.UnifiedCompositionTo;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+
+import static org.openecomp.sdc.translator.TestUtils.createInitServiceTemplate;
 
 public class ComputeNewNodeTemplateIdGeneratorTest  {
 

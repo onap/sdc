@@ -30,6 +30,7 @@ def import_element(scheme, be_host, be_port, admin_user, exit_on_success, file_d
             error_and_exit(0, None)
 
 
+
 def createNormativeElement(scheme, be_host, be_port, admin_user, file_dir, url_suffix, element_name, element_form_name,
                            with_metadata=False):
     try:

@@ -23,41 +23,37 @@ package org.openecomp.sdc.be.model;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 
 public class GroupInstanceProperty extends GroupProperty {
-	
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	private String parentValue;
-	
-	public GroupInstanceProperty() {
-		super();
-	}
 
-	public GroupInstanceProperty(GroupProperty gp, String parentValue) {
-		super(gp);
-		this.parentValue = parentValue;
-	}
+    private String parentValue;
 
-	public GroupInstanceProperty(GroupInstanceProperty other) {
-		super(other);
-		if (other != null) {
-			this.parentValue = other.getParentValue();
-		}
-	}
-	
-	public GroupInstanceProperty(PropertyDataDefinition propertyDataDefinition) {
-		super(propertyDataDefinition);
-		parentValue = getDefaultValue();
-	}
+    public GroupInstanceProperty() {
+        super();
+    }
 
-	public String getParentValue() {
-		return parentValue;
-	}
+    public GroupInstanceProperty(GroupProperty gp, String parentValue) {
+        super(gp);
+        this.parentValue = parentValue;
+    }
 
-	public void setParentValue(String parentValue) {
-		this.parentValue = parentValue;
-	}
-	
-	
+    public GroupInstanceProperty(GroupInstanceProperty other) {
+        super(other);
+        if (other != null) {
+            this.parentValue = other.getParentValue();
+        }
+    }
+
+    public GroupInstanceProperty(PropertyDataDefinition propertyDataDefinition) {
+        super(propertyDataDefinition);
+        parentValue = getDefaultValue();
+    }
+
+    public String getParentValue() {
+        return parentValue;
+    }
+
+    public void setParentValue(String parentValue) {
+        this.parentValue = parentValue;
+    }
+
+
 }

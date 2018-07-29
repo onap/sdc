@@ -77,7 +77,7 @@ public class ElementOperationMock implements IElementOperation {
     @Override
     public Either<List<CategoryDefinition>, ActionStatus> getAllResourceCategories() {
 
-        List<CategoryDefinition> categories = new ArrayList<CategoryDefinition>();
+        List<CategoryDefinition> categories = new ArrayList<>();
         categories.add(resourceCategory);
         return Either.left(categories);
 
@@ -86,7 +86,7 @@ public class ElementOperationMock implements IElementOperation {
     @Override
     public Either<List<CategoryDefinition>, ActionStatus> getAllServiceCategories() {
 
-        List<CategoryDefinition> categories = new ArrayList<CategoryDefinition>();
+        List<CategoryDefinition> categories = new ArrayList<>();
         categories.add(serviceCategory);
         return Either.left(categories);
 
@@ -155,7 +155,7 @@ public class ElementOperationMock implements IElementOperation {
     @Override
     public Either<List<CategoryDefinition>, ActionStatus> getAllCategories(NodeTypeEnum nodeType, boolean inTransaction) {
 
-        List<CategoryDefinition> categories = new ArrayList<CategoryDefinition>();
+        List<CategoryDefinition> categories = new ArrayList<>();
         switch (nodeType) {
         case ResourceNewCategory:
             categories.add(resourceCategory);
@@ -240,7 +240,7 @@ public class ElementOperationMock implements IElementOperation {
 
     @Override
     public Either<List<CategoryDefinition>, ActionStatus> getAllProductCategories() {
-        List<CategoryDefinition> categories = new ArrayList<CategoryDefinition>();
+        List<CategoryDefinition> categories = new ArrayList<>();
         categories.add(productCategory);
         return Either.left(categories);
     }

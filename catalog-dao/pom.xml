@@ -1,5 +1,5 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>org.openecomp.sdc.be</groupId>
@@ -19,7 +19,7 @@
 			<version>${project.version}</version>
 			<scope>provided</scope>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.openecomp.sdc.be</groupId>
 			<artifactId>common-be</artifactId>
@@ -30,7 +30,7 @@
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
-            <version>${logback.version}</version>
+			<version>${logback.version}</version>
 			<scope>provided</scope>
 		</dependency>
 
@@ -83,7 +83,19 @@
 		</dependency>
 
 		<dependency>
-				<groupId>com.fasterxml.jackson.core</groupId>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-aop</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-tx</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
 			<version>${jackson.version}</version>
 		</dependency>
@@ -100,7 +112,7 @@
 			<version>${json-simple.version}</version>
 			<scope>provided</scope>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.apache.lucene</groupId>
 			<artifactId>lucene-regex</artifactId>
@@ -151,7 +163,7 @@
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
 			<artifactId>httpclient</artifactId>
-            <version>${httpclient.version}</version>
+			<version>${httpclient.version}</version>
 			<scope>provided</scope>
 		</dependency>
 
@@ -204,13 +216,6 @@
 			<scope>test</scope>
 		</dependency>
 
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-aop</artifactId>
-			<version>${spring.version}</version>
-			<scope>test</scope>
-		</dependency>
-
 		<!-- TITAN -->
 		<dependency>
 			<groupId>com.thinkaurelius.titan</groupId>
@@ -231,7 +236,7 @@
 
 		<dependency>
 			<groupId>org.onap.sdc.sdc-titan-cassandra</groupId>
-  			<artifactId>sdc-titan-cassandra</artifactId>
+			<artifactId>sdc-titan-cassandra</artifactId>
 			<version>${sdc.titan.version}</version>
 			<scope>provided</scope>
 			<exclusions>
@@ -264,13 +269,13 @@
 			<scope>provided</scope>
 		</dependency>
 		<!-- CASSANDRA END -->
-    </dependencies>
+	</dependencies>
 
 	<build>
 
 		<pluginManagement>
 			<plugins>
-				<!--This plugin's configuration is used to store Eclipse m2e settings 
+				<!--This plugin's configuration is used to store Eclipse m2e settings
 					only. It has no influence on the Maven build itself. -->
 				<plugin>
 					<groupId>org.eclipse.m2e</groupId>

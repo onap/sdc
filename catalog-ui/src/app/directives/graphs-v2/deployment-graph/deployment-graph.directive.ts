@@ -54,7 +54,7 @@ export class DeploymentGraph implements ng.IDirective {
     link = (scope: IDeploymentGraphScope, el: JQuery) => {
 
         if (scope.component.isResource()) {
-            if (scope.component.componentInstances && scope.component.componentInstancesRelations && scope.component.groups) {
+            if (scope.component.componentInstances && scope.component.componentInstancesRelations && scope.component.modules) {
                 this.loadGraph(scope, el);
             } else {
                 this.eventListenerService.registerObserverCallback(GRAPH_EVENTS.ON_DEPLOYMENT_GRAPH_DATA_LOADED, () => {
@@ -65,8 +65,8 @@ export class DeploymentGraph implements ng.IDirective {
     };
 
     public initGraphNodes = (cy: Cy.Instance, component: Component): void => {
-        if (component.groups) { // Init module nodes
-            _.each(component.groups, (groupModule: Module) => {
+        if (component.modules) { // Init module nodes
+            _.each(component.modules, (groupModule: Module) => {
                 let moduleNode = this.NodesFactory.createModuleNode(groupModule);
                 this.commonGraphUtils.addNodeToGraph(cy, moduleNode);
 
@@ -74,7 +74,7 @@ export class DeploymentGraph implements ng.IDirective {
         }
         _.each(component.componentInstances, (instance: ComponentInstance) => { // Init component instance nodes
             let componentInstanceNode = this.NodesFactory.createNode(instance);
-            componentInstanceNode.parent = this.deploymentGraphGeneralUtils.findInstanceModule(component.groups, instance.uniqueId);
+            componentInstanceNode.parent = this.deploymentGraphGeneralUtils.findInstanceModule(component.modules, instance.uniqueId);
             if (componentInstanceNode.parent) { // we are not drawing instances that are not a part of a module
                 this.commonGraphUtils.addComponentInstanceNodeToGraph(cy, componentInstanceNode);
             }

@@ -20,25 +20,15 @@
 
 package org.openecomp.sdc.be.datatypes.components;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 
-public abstract class ComponentMetadataDataDefinition extends ToscaDataDefinition implements Serializable {
+import java.util.*;
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -9114770126086263552L;
-	private static final Logger log = LoggerFactory.getLogger(ComponentMetadataDataDefinition.class.getName());
+public abstract class ComponentMetadataDataDefinition extends ToscaDataDefinition {
+
+	private static final Logger log = Logger.getLogger(ComponentMetadataDataDefinition.class.getName());
 	
 	private String uniqueId;
 
@@ -95,6 +85,13 @@ public abstract class ComponentMetadataDataDefinition extends ToscaDataDefinitio
 
 	private String lastUpdaterFullName;
 
+	//Archive/Restore
+	private Boolean isArchived = false;
+
+	private Long archiveTime;
+
+	private Boolean isVspArchived = false;
+
 	public Boolean getIsHighestVersion() {
 		return isHighestVersion;
 	}
@@ -147,6 +144,18 @@ public abstract class ComponentMetadataDataDefinition extends ToscaDataDefinitio
 		return isDeleted;
 	}
 
+	public Boolean isArchived() { return isArchived; }
+
+	public void setArchived(Boolean archived) { isArchived = archived; }
+
+	public Long getArchiveTime() { return archiveTime; }
+
+	public void setArchiveTime(Long archiveTime) { this.archiveTime = archiveTime; }
+
+	public Boolean isVspArchived() { return isVspArchived;	}
+
+	public void setVspArchived(Boolean vspArchived) { isVspArchived = vspArchived; }
+
 	public ComponentMetadataDataDefinition() {
 
 	}
@@ -173,7 +182,9 @@ public abstract class ComponentMetadataDataDefinition extends ToscaDataDefinitio
 		this.csarVersion = other.csarVersion;
 		this.importedToscaChecksum = other.getImportedToscaChecksum();
 		this.invariantUUID = other.getInvariantUUID();
-
+		this.isArchived = other.isArchived;
+		this.isVspArchived = other.isVspArchived;
+		this.archiveTime = other.getArchiveTime();
 	}
 
 	public String getUniqueId() {

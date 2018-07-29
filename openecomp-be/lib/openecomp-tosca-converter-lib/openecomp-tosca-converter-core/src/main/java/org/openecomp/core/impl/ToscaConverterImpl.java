@@ -16,23 +16,8 @@
 
 package org.openecomp.core.impl;
 
-import static org.openecomp.core.converter.datatypes.Constants.ONAP_INDEX;
-import static org.openecomp.core.converter.datatypes.Constants.capabilities;
-import static org.openecomp.core.converter.datatypes.Constants.definitionsDir;
-import static org.openecomp.core.converter.datatypes.Constants.globalStName;
-import static org.openecomp.core.converter.datatypes.Constants.globalSubstitution;
-import static org.openecomp.core.converter.datatypes.Constants.inputs;
-import static org.openecomp.core.converter.datatypes.Constants.mainStName;
-import static org.openecomp.core.converter.datatypes.Constants.metadataFile;
-import static org.openecomp.core.converter.datatypes.Constants.nodeType;
-import static org.openecomp.core.converter.datatypes.Constants.openecompHeatIndex;
-import static org.openecomp.core.converter.datatypes.Constants.outputs;
-import static org.openecomp.core.converter.datatypes.Constants.requirements;
-import static org.openecomp.core.impl.GlobalSubstitutionServiceTemplate.GLOBAL_SUBSTITUTION_SERVICE_FILE_NAME;
-import static org.openecomp.core.impl.GlobalSubstitutionServiceTemplate.HEAT_INDEX_IMPORT_FILE;
-import static org.openecomp.core.impl.GlobalSubstitutionServiceTemplate.ONAP_INDEX_IMPORT_FILE;
-
 import org.apache.commons.collections.MapUtils;
+import org.onap.sdc.tosca.datatypes.model.*;
 import org.openecomp.core.converter.ServiceTemplateReaderService;
 import org.openecomp.core.converter.ToscaConverter;
 import org.openecomp.core.converter.datatypes.Constants;
@@ -45,30 +30,17 @@ import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.ErrorCategory;
 import org.openecomp.sdc.common.errors.ErrorCode;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
-import org.onap.sdc.tosca.datatypes.model.ArtifactDefinition;
-import org.onap.sdc.tosca.datatypes.model.CapabilityAssignment;
-import org.onap.sdc.tosca.datatypes.model.Import;
-import org.onap.sdc.tosca.datatypes.model.NodeFilter;
-import org.onap.sdc.tosca.datatypes.model.NodeTemplate;
-import org.onap.sdc.tosca.datatypes.model.NodeType;
-import org.onap.sdc.tosca.datatypes.model.ParameterDefinition;
-import org.onap.sdc.tosca.datatypes.model.RequirementAssignment;
-import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
-import org.onap.sdc.tosca.datatypes.model.SubstitutionMapping;
 import org.openecomp.sdc.tosca.services.DataModelUtil;
 import org.openecomp.sdc.tosca.services.ToscaUtil;
 import org.openecomp.sdc.translator.services.heattotosca.globaltypes.GlobalTypesGenerator;
 import org.yaml.snakeyaml.error.YAMLException;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.regex.Pattern;
+
+import static org.openecomp.core.converter.datatypes.Constants.*;
+import static org.openecomp.core.impl.GlobalSubstitutionServiceTemplate.*;
 
 public class ToscaConverterImpl implements ToscaConverter {
 

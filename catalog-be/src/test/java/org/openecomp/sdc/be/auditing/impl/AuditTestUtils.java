@@ -40,9 +40,9 @@ public class AuditTestUtils {
     public final static String DPREV_STATUS = "DPREV_STATUS";
     public final static String DCURR_STATUS = "DCURR_STATUS";
 
-    public final static String CONSUMER_NAME = "consumer";
-    public final static String CONSUMER_SALT = "2a1f887d607d4515d4066fe0f5452a50";
-    public final static String CONSUMER_PASSWORD = "0a0dc557c3bf594b1a48030e3e99227580168b21f44e285c69740b8d5b13e33b";
+    final static String CONSUMER_NAME = "consumer";
+    final static String CONSUMER_SALT = "2a1f887d607d4515d4066fe0f5452a50";
+    final static String CONSUMER_PASSWORD = "0a0dc557c3bf594b1a48030e3e99227580168b21f44e285c69740b8d5b13e33b";
 
     public final static String PREV_RESOURCE_VERSION = "1.0";
     public final static String PREV_RESOURCE_STATE = "READY_FOR_CERTIFICATION";
@@ -55,8 +55,6 @@ public class AuditTestUtils {
 
     public final static String STATUS_500 = "500";
     public final static String DESC_ERROR = "Error";
-    public final static String MSG_ERROR = "Error: ";
-    public final static String MSG_OK = "OK: ";
 
     public final static String DIST_CONSUMER_ID = "ABC-123445678";
     public final static String DIST_RESOURCE_URL = "http://abc.com/res";
@@ -139,7 +137,8 @@ public class AuditTestUtils {
             MODIFIER_UID + "\" STATUS = \"" + STATUS_OK + "\" SERVICE_INSTANCE_ID = \"" + SERVICE_INSTANCE_ID + "\" INVARIANT_UUID = \"" + INVARIANT_UUID +
             "\" DESC = \"" + DESCRIPTION + "\"";
 
-    public final static String EXPECTED_DOWNLOAD_ARTIFACT_EXTERNAL_API_LOG_STR = "CONSUMER_ID = \"" + DIST_CONSUMER_ID + "\" RESOURCE_URL = \"" +
+    //TODO: remove with the old API and tests
+    public final static String EXPECTED_DOWNLOAD_ARTIFACT_EXTERNAL_API_LOG_STR = "ACTION = \"" + AuditingActionEnum.DOWNLOAD_ARTIFACT.getName() + "\" CONSUMER_ID = \"" + DIST_CONSUMER_ID + "\" RESOURCE_URL = \"" +
             DIST_RESOURCE_URL + "\" STATUS = \"" + STATUS_OK + "\" DESC = \"" + DESCRIPTION + "\"";
 
     public final static String EXPECTED_CHANGE_LIFECYCLE_EXTERNAL_API_LOG_STR = "ACTION = \"" + AuditingActionEnum.CHANGE_LIFECYCLE_BY_API.getName() + "\" RESOURCE_NAME = \"" + RESOURCE_NAME +
@@ -163,10 +162,10 @@ public class AuditTestUtils {
     public final static String EXPECTED_AUTH_REQUEST_LOG_STR = "ACTION = \"" + AuditingActionEnum.AUTH_REQUEST.getName() + "\" URL = \"" +
             AUTH_URL + "\" USER = \"" + USER_ID + "\" AUTH_STATUS = \"" + AUTH_STATUS + "\" REALM = \"" + REALM + "\"";
 
-    public final static String EXPECTED_ADD_ECOMP_USER_CRED_LOG_STR = "ACTION = \"" + AuditingActionEnum.ADD_ECOMP_USER_CREDENTIALS.getName() +
+    final static String EXPECTED_ADD_ECOMP_USER_CRED_LOG_STR = "ACTION = \"" + AuditingActionEnum.ADD_ECOMP_USER_CREDENTIALS.getName() +
             "\" MODIFIER = \"" + MODIFIER_UID + "\" ECOMP_USER = \"" + USER_ID + "\" STATUS = \"" + STATUS_OK + "\" DESC = \"" + DESCRIPTION + "\"";
 
-    public final static String EXPECTED_GET_ECOMP_USER_CRED_LOG_STR = "ACTION = \"" + AuditingActionEnum.GET_ECOMP_USER_CREDENTIALS.getName() +
+    final static String EXPECTED_GET_ECOMP_USER_CRED_LOG_STR = "ACTION = \"" + AuditingActionEnum.GET_ECOMP_USER_CREDENTIALS.getName() +
             "\" MODIFIER = \"" + MODIFIER_UID + "\" ECOMP_USER = \"" + USER_ID + "\" STATUS = \"" + STATUS_OK + "\" DESC = \"" + DESCRIPTION + "\"";
 
     public final static String EXPECTED_ADD_CATEGORY_LOG_STR = "ACTION = \"" + AuditingActionEnum.ADD_CATEGORY.getName() +
@@ -207,8 +206,21 @@ public class AuditTestUtils {
             "\" STATUS = \"" + STATUS_OK + "\" DESC = \"" + DESCRIPTION + "\"";
 
     public final static String EXPECTED_GET_UEB_CLUSTER_LOG_STR = "ACTION = \"" + AuditingActionEnum.GET_UEB_CLUSTER.getName() +
-            "\" CONSUMER_ID = \"" + DIST_CONSUMER_ID + "\" STATUS = \"" + STATUS_OK + "\" STATUS_DESC = \"" + DESCRIPTION + "\"";
+            "\" CONSUMER_ID = \"" + DIST_CONSUMER_ID + "\" STATUS_TIME = "; //STATUS_TIME value is calculated at run time
 
+    public final static String EXPECTED_GET_CATEGORY_HIERARCHY_LOG_STR = "ACTION = \"" + AuditingActionEnum.GET_CATEGORY_HIERARCHY.getName() + "\" MODIFIER = \"" + USER_UID +
+            "\" DETAILS = \"" + USER_DETAILS + "\" STATUS = \"" + STATUS_OK + "\" DESC = \"" + DESCRIPTION + "\"";
+
+    public final static String EXPECTED_EXTERNAL_ASSET_LOG_STR = "ACTION = \"" + AuditingActionEnum.GET_ASSET_METADATA.getName() +
+            "\" CONSUMER_ID = \"" + DIST_CONSUMER_ID + "\" RESOURCE_URL = \"" + DIST_RESOURCE_URL + "\" RESOURCE_NAME = \"" + RESOURCE_NAME +
+            "\" RESOURCE_TYPE = \"" + RESOURCE_TYPE +"\" SERVICE_INSTANCE_ID = \"" + SERVICE_INSTANCE_ID + "\" STATUS = \"" + STATUS_OK +
+            "\" DESC = \"" + DESCRIPTION + "\"";
+
+    public final static String EXPECTED_EXTERNAL_CREATE_RESOURCE_LOG_STR = "ACTION = \"" + AuditingActionEnum.CREATE_RESOURCE_BY_API.getName() +
+            "\" RESOURCE_NAME = \"" + RESOURCE_NAME + "\" RESOURCE_TYPE = \"" + RESOURCE_TYPE + "\" CONSUMER_ID = \"" + DIST_CONSUMER_ID +
+            "\" RESOURCE_URL = \"" + DIST_RESOURCE_URL + "\" MODIFIER = \"" + MODIFIER_UID + "\" CURR_VERSION = \"" + CURRENT_VERSION +
+            "\" CURR_STATE = \"" + CURRENT_STATE + "\" CURR_ARTIFACT_UUID = \"" + ARTIFACT_UUID + "\" STATUS = \"" + STATUS_OK +
+            "\" SERVICE_INSTANCE_ID = \"" + SERVICE_INSTANCE_ID + "\" INVARIANT_UUID = \"" + INVARIANT_UUID + "\" DESC = \"" + DESCRIPTION + "\"";
 
     public static User user;
     public static User modifier;
@@ -230,7 +242,6 @@ public class AuditTestUtils {
         modifier.setLastName(MODIFIER_LAST_NAME);
         modifier.setUserId(MODIFIER_ID);
     }
-
 
 
 }

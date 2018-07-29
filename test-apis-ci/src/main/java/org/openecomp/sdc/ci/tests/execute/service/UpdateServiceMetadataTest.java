@@ -20,13 +20,6 @@
 
 package org.openecomp.sdc.ci.tests.execute.service;
 
-import static org.testng.AssertJUnit.assertEquals;
-import static org.testng.AssertJUnit.assertNotNull;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jettison.json.JSONException;
 import org.junit.Rule;
@@ -58,6 +51,13 @@ import org.openecomp.sdc.ci.tests.utils.validation.ServiceValidationUtils;
 import org.testng.AssertJUnit;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import static org.testng.AssertJUnit.assertEquals;
+import static org.testng.AssertJUnit.assertNotNull;
 
 public class UpdateServiceMetadataTest extends ComponentBaseTest {
 

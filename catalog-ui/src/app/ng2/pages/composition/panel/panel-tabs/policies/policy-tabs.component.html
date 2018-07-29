@@ -1,0 +1,12 @@
+<sdc-tabs>
+    <sdc-tab titleIcon="info-circle">
+        <policy-information-tab [policy]="policy" [isViewOnly]="isViewOnly" *ngIf="policy"></policy-information-tab>
+    </sdc-tab>
+    <sdc-tab titleIcon="inputs-o">
+        <policy-targets-tab [policy]="policy" [topologyTemplate]="topologyTemplate" [isViewOnly]="isViewOnly" (isLoading)="setIsLoading($event)" *ngIf="policy"></policy-targets-tab>
+    </sdc-tab>
+    <sdc-tab titleIcon="settings-o">
+        <policy-properties-tab [policy]="policy" [topologyTemplate]="topologyTemplate" [isViewOnly]="isViewOnly" *ngIf="policy"></policy-properties-tab>
+    </sdc-tab>
+</sdc-tabs>
+

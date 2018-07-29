@@ -22,63 +22,72 @@ package org.openecomp.sdc.be.resources.data.auditing;
 
 import org.openecomp.sdc.common.datastructure.ESTimeBasedEvent;
 
+import java.util.Date;
+
 public class AuditingGenericEvent extends ESTimeBasedEvent {
-	protected String requestId;
-	protected String serviceInstanceId;
-	protected String action;
-	protected String status;
+    protected String requestId;
+    protected String serviceInstanceId;
+    protected String action;
+    protected String status;
 
-	protected String desc;
+    protected String desc;
 
-	// protected Map<String, Object> fields = new HashMap<String, Object>();
+    public AuditingGenericEvent() {
+        super();
+    }
 
-	public AuditingGenericEvent() {
-		super();
-	}
+    public String getRequestId() {
+        return requestId;
+    }
 
-	public String getRequestId() {
-		return requestId;
-	}
+    public void setRequestId(String requestId) {
+        this.requestId = requestId;
 
-	public void setRequestId(String requestId) {
-		this.requestId = requestId;
+    }
 
-	}
+    public String getServiceInstanceId() {
+        return serviceInstanceId;
+    }
 
-	public String getServiceInstanceId() {
-		return serviceInstanceId;
-	}
+    public void setServiceInstanceId(String serviceInstanceId) {
+        this.serviceInstanceId = serviceInstanceId;
+    }
 
-	public void setServiceInstanceId(String serviceInstanceId) {
-		this.serviceInstanceId = serviceInstanceId;
-	}
+    public String getAction() {
+        return action;
+    }
 
-	public String getAction() {
-		return action;
-	}
+    public void setAction(String action) {
+        this.action = action;
+    }
 
-	public void setAction(String action) {
-		this.action = action;
-	}
+    public String getStatus() {
+        return status;
+    }
 
-	public String getStatus() {
-		return status;
-	}
+    public void setStatus(String status) {
+        this.status = status;
+    }
 
-	public void setStatus(String status) {
-		this.status = status;
-	}
+    public String getDesc() {
+        return desc;
+    }
 
-	public String getDesc() {
-		return desc;
-	}
+    public void setDesc(String desc) {
+        this.desc = desc;
+    }
 
-	public void setDesc(String desc) {
-		this.desc = desc;
-	}
+    public void fillFields() {
 
-	public void fillFields() {
+    }
 
-	}
+    protected Date parseDateFromString(final String timestamp) {
+        try {
+            return simpleDateFormat.parse(timestamp);
+        }
+        catch (Exception e) {
+            return new Date();
+        }
+    }
 
 }

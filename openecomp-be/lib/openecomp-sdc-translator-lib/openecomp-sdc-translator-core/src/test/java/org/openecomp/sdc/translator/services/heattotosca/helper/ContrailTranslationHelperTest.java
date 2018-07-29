@@ -25,11 +25,7 @@ import org.junit.Test;
 import org.openecomp.sdc.heat.datatypes.model.Resource;
 import org.openecomp.sdc.translator.datatypes.heattotosca.TranslationContext;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 import static org.junit.Assert.assertEquals;
 
@@ -58,7 +54,7 @@ public class ContrailTranslationHelperTest {
   public void testTranslateFnSplitFunctionExp1() {
     // property value = { "Fn::Split" : [ ",", "management,left,right,other" ] }
     Map propertyValue = new HashMap();
-    List funcListVal = new ArrayList<>();
+    List funcListVal = new ArrayList();
     funcListVal.add(",");
     funcListVal.add("management,left,right,other");
     propertyValue.put("Fn::Split", funcListVal);

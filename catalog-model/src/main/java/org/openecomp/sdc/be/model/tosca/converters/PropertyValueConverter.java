@@ -20,12 +20,12 @@
 
 package org.openecomp.sdc.be.model.tosca.converters;
 
-import java.util.Map;
-
 import org.openecomp.sdc.be.model.DataTypeDefinition;
+
+import java.util.Map;
 
 public interface PropertyValueConverter {
 
-	String convert(String value, String innerType, Map<String, DataTypeDefinition> dataTypes);
+    String convert(String value, String innerType, Map<String, DataTypeDefinition> dataTypes);
 
 }

@@ -1,11 +1,11 @@
 package org.openecomp.server.filters;
 
-import static org.openecomp.sdcrests.common.RestConstants.USER_ID_HEADER_PARAM;
+import org.openecomp.sdcrests.filters.SessionContextFilter;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 
-import org.openecomp.sdcrests.filters.SessionContextFilter;
+import static org.openecomp.sdcrests.common.RestConstants.USER_ID_HEADER_PARAM;
 
 public class OnboardingSessionContextFilter extends SessionContextFilter {
 

@@ -14,14 +14,22 @@
           base-package= "org.openecomp.sdc.be.components.health,
                          org.openecomp.sdc.be.servlets,
                          org.openecomp.sdc.be.externalapi.servlet,
-                         org.openecomp.sdc.be.components.scheduledtasks,
-                         org.openecomp.sdc.be.model.jsontitan.utils">
+                         org.openecomp.sdc.be.components.scheduledtasks
+                         ">
   </context:component-scan>
 
   <bean class="org.openecomp.sdc.be.dao.config.DAOSpringConfig"/>
   <bean class="org.openecomp.sdc.be.config.CatalogModelSpringConfig"/>
   <bean class="org.openecomp.sdc.be.components.distribution.engine.config.DistributionEngineSpringConfig"/>
   <bean class="org.openecomp.sdc.config.CatalogBESpringConfig"/>
+
+
+  <aop:config>
+    <aop:aspect id="lockAspect" ref="componentLockAspect">
+      <aop:pointcut id="lockingTransaction" expression="@annotation(org.openecomp.sdc.be.components.impl.lock.LockingTransactional) and args(componentId, componentType,..)"/>
+      <aop:around method="lock" arg-names="proceedingJoinPoint,componentId,componentType" pointcut-ref="lockingTransaction"/>
+    </aop:aspect>
+  </aop:config>
 
 
   <util:properties id="elasticsearchConfig" location="file:${config.home}/elasticsearch.yml" />

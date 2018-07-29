@@ -22,7 +22,6 @@ package org.openecomp.sdc.ci.tests.execute.sanity;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.LoggerContext;
-import com.clearspring.analytics.util.Pair;
 import fj.data.Either;
 import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.Resource;
@@ -42,7 +41,6 @@ import org.slf4j.LoggerFactory;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import java.awt.*;
 import java.sql.Timestamp;
 import java.util.List;
 
@@ -96,9 +94,8 @@ public class OnboardViaApis{
 		boolean skipReport = true;
 		AmdocsLicenseMembers amdocsLicenseMembers = VendorLicenseModelRestUtils.createVendorLicense(sdncDesignerDetails1);
 		ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource();//getResourceReqDetails(ComponentConfigurationTypeEnum.DEFAULT);
-		Pair<String, VendorSoftwareProductObject> createVendorSoftwareProduct = VendorSoftwareProductRestUtils.createVendorSoftwareProduct(resourceReqDetails, vnfFile, filepath, sdncDesignerDetails1, amdocsLicenseMembers);
+		VendorSoftwareProductObject vendorSoftwareProductObject = VendorSoftwareProductRestUtils.createVendorSoftwareProduct(resourceReqDetails, vnfFile, filepath, sdncDesignerDetails1, amdocsLicenseMembers);
 //		VendorSoftwareProductObject vendorSoftwareProductObject = fillVendorSoftwareProductObjectWithMetaData(vnfFile, createVendorSoftwareProduct);
-		VendorSoftwareProductObject vendorSoftwareProductObject = createVendorSoftwareProduct.right;
 		resourceReqDetails = OnboardingUtillViaApis.prepareOnboardedResourceDetailsBeforeCreate(resourceReqDetails, vendorSoftwareProductObject);
 		Resource resource = OnboardingUtillViaApis.createResourceFromVSP(resourceReqDetails);
 		resource = (Resource) AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
@@ -121,11 +118,10 @@ public class OnboardViaApis{
 		System.out.println(distributeAndValidateService);
 	}
 
-	public Service runOnboardViaApisOnly(ServiceReqDetails serviceReqDetails, ResourceReqDetails resourceReqDetails, String filepath, String vnfFile) throws Exception, AWTException {
+	public Service runOnboardViaApisOnly(ServiceReqDetails serviceReqDetails, ResourceReqDetails resourceReqDetails, String filepath, String vnfFile) throws Exception {
 
-		Pair<String, VendorSoftwareProductObject> createVendorSoftwareProduct = OnboardingUtillViaApis.createVspViaApis(resourceReqDetails, filepath, vnfFile, sdncDesignerDetails1);
-		VendorSoftwareProductObject vendorSoftwareProductObject = createVendorSoftwareProduct.right;
-		vendorSoftwareProductObject.setName(createVendorSoftwareProduct.left);
+		VendorSoftwareProductObject vendorSoftwareProductObject = OnboardingUtillViaApis.createVspViaApis(resourceReqDetails, filepath, vnfFile, sdncDesignerDetails1);
+		vendorSoftwareProductObject.setName(vendorSoftwareProductObject.getName());
 		
 		resourceReqDetails = OnboardingUtillViaApis.prepareOnboardedResourceDetailsBeforeCreate(resourceReqDetails, vendorSoftwareProductObject);
 		Resource resource = OnboardingUtillViaApis.createResourceFromVSP(resourceReqDetails);

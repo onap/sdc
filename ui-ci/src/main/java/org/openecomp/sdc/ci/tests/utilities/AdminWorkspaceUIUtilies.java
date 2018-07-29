@@ -30,13 +30,8 @@ public class AdminWorkspaceUIUtilies {
 		AdminGeneralPage.getUserManagementTab().setNewUserBox(userId);
 		AdminGeneralPage.getUserManagementTab().selectUserRole(userRole);
 		AdminGeneralPage.getUserManagementTab().clickCreateButton();
-//		AdminWorkspaceUIUtilies.highlightNewRow();
 	}
-	
-	private static void highlightNewRow(){
-		GeneralUIUtils.HighlightMyElement(AdminGeneralPage.getUserManagementTab().getRow(0));
-	}
-	
+
 	public static void updateUserRole(int rowIndx, UserRoleEnum userRole) {
 		AdminGeneralPage.getUserManagementTab().updateUser(rowIndx);
 		AdminGeneralPage.getUserManagementTab().updateUserRole(userRole, rowIndx);

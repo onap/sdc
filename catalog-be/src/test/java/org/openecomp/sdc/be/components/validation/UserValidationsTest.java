@@ -1,26 +1,24 @@
 package org.openecomp.sdc.be.components.validation;
 
-import java.util.LinkedList;
-import java.util.List;
-
-import org.junit.Assert;
+import fj.data.Either;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.mockito.stubbing.Answer;
+import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.user.IUserBusinessLogic;
 import org.openecomp.sdc.be.user.Role;
-import org.openecomp.sdc.common.datastructure.Wrapper;
-import org.openecomp.sdc.exception.ResponseFormat;
-import org.openecomp.sdc.test.utils.TestUtilsSdc;
-import org.slf4j.LoggerFactory;import cucumber.api.java.sk.A;
-import fj.data.Either;
+
+import java.util.LinkedList;
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowable;
 
 public class UserValidationsTest {
 
@@ -35,7 +33,7 @@ public class UserValidationsTest {
 	
 	@Before
 	public void setUp() throws Exception {
-		TestUtilsSdc.setFinalStatic(UserValidations.class, "log", LoggerFactory.getLogger(UserValidations.class));
+		//TestUtilsSdc.setFinalStatic(UserValidations.class, "log", LoggerFactory.getLogger(UserValidations.class));
 		MockitoAnnotations.initMocks(this);
 	}
 
@@ -45,7 +43,7 @@ public class UserValidationsTest {
 		String ecompErrorContext = "mock";
 		User usr = new User();
 		boolean inTransaction = false;
-		Either<User, ResponseFormat> result;
+		User result;
 		
 		
 		Mockito.when(userAdmin.getUser(Mockito.anyString(), Mockito.anyBoolean())).thenReturn(Either.left(usr));
@@ -55,29 +53,30 @@ public class UserValidationsTest {
 	}
 	
 	@Test
-	public void testValidateUserExists2() throws Exception {
+	public void testValidateNonExistingUser2() throws Exception {
 		String userId = "mock";
 		String ecompErrorContext = "mock";
 		boolean inTransaction = false;
-		Either<User, ResponseFormat> result;
+		User result;
 		
 		
 		Mockito.when(userAdmin.getUser(Mockito.anyString(), Mockito.anyBoolean())).thenReturn(Either.right(ActionStatus.USER_NOT_FOUND));
-		
-		// default test
-		result = testSubject.validateUserExists(userId, ecompErrorContext, inTransaction);
+
+		Throwable thrown = catchThrowable(() -> testSubject.validateUserExists(userId, ecompErrorContext, inTransaction) );
+		assertThat(thrown).isInstanceOf(ComponentException.class).hasFieldOrPropertyWithValue("actionStatus" , ActionStatus.AUTH_FAILED);
+
 	}
 
 	@Test
 	public void testValidateUserRole() throws Exception {
 		User user = new User();
 		List<Role> roles = new LinkedList<>();
-		Either<Boolean, ResponseFormat> result;
+		roles.add(Role.DESIGNER);
 		
 		user.setRole(Role.DESIGNER.name());
 		
 		// test 1
-		result = testSubject.validateUserRole(user, roles);
+		testSubject.validateUserRole(user, roles);
 	}
 
 	@Test
@@ -109,22 +108,23 @@ public class UserValidationsTest {
 	@Test
 	public void testValidateUserNotEmpty() throws Exception {
 		User user = new User();
+		user.setUserId("userId");
 		String ecompErrorContext = "mock";
-		Either<User, ResponseFormat> result;
+		User result;
 
 		// default test
 		result = testSubject.validateUserNotEmpty(user, ecompErrorContext);
 	}
 
 	@Test
-	public void testValidateUserExist() throws Exception {
+	public void testValidateNonExistingUser() throws Exception {
 		String userId = "";
 		String ecompErrorContext = "";
-		Wrapper<ResponseFormat> errorWrapper = new Wrapper<>();
-		
+
 		Mockito.when(userAdmin.getUser(Mockito.anyString(), Mockito.anyBoolean())).thenReturn(Either.right(ActionStatus.USER_NOT_FOUND));
 		
 		// default test
-		testSubject.validateUserExist(userId, ecompErrorContext, errorWrapper);
+		Throwable thrown = catchThrowable(() -> testSubject.validateUserExist(userId, ecompErrorContext) );
+		assertThat(thrown).isInstanceOf(ComponentException.class).hasFieldOrPropertyWithValue("actionStatus" , ActionStatus.AUTH_FAILED);
 	}
 }

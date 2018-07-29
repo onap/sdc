@@ -16,11 +16,11 @@
 
 package org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation;
 
+import org.openecomp.sdc.heat.datatypes.model.Resource;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-
-import org.openecomp.sdc.heat.datatypes.model.Resource;
 
 public class PortConsolidationData {
 

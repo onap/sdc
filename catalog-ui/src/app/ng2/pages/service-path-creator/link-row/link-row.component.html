@@ -1,5 +1,45 @@
-<ui-element-dropdown data-tests-id="linkSrc" [readonly]="!link.isFirst || (link.isFirst && !link.canEdit)" class="cell link-selector" [values]="source" [(value)]="link.fromNode" (valueChange)="onSourceSelected($event)"></ui-element-dropdown>
-<ui-element-dropdown data-tests-id="linkSrcCP" [readonly]="!link.isFirst || (link.isFirst && !link.canEdit)" class="cell link-selector" [values]="srcCP" [(value)]="link.fromCP" (valueChange)="onSrcCPSelected($event)"></ui-element-dropdown>
-<ui-element-dropdown data-tests-id="linkTarget" [readonly]="!link.canEdit" class="cell link-selector" [values]="target" [(value)]="link.toNode" (valueChange)="onTargetSelected($event)"></ui-element-dropdown>
-<ui-element-dropdown data-tests-id="linkTargetCP" [readonly]="!link.canEdit" class="cell link-selector" [values]="targetCP" [(value)]="link.toCP" (valueChange)="onTargetCPSelected($event)"></ui-element-dropdown>
-<div class="cell remove" data-tests-id="removeLnk"><span *ngIf="link.canRemove" class="sprite-new delete-item-icon" (click)="removeRow()"></span></div>
+<ui-element-dropdown
+	data-tests-id="linkSrc"
+	[readonly]="!link.isFirst || (link.isFirst && !link.canEdit)"
+	class="cell link-selector"
+	[values]="source"
+	[(value)]="link.fromNode"
+	(valueChange)="onSourceSelected($event)">
+</ui-element-dropdown>
+
+<ui-element-dropdown
+	data-tests-id="linkSrcCP"
+	[readonly]="!link.isFirst || (link.isFirst && !link.canEdit)"
+	class="cell link-selector"
+	[values]="srcCP"
+	[(value)]="link.fromCP"
+	(valueChange)="onSrcCPSelected($event)">
+</ui-element-dropdown>
+
+<ui-element-dropdown
+	data-tests-id="linkTarget"
+	[readonly]="!link.canEdit"
+	class="cell link-selector"
+	[values]="target"
+	[(value)]="link.toNode"
+	(valueChange)="onTargetSelected($event)">
+</ui-element-dropdown>
+
+<ui-element-dropdown
+	data-tests-id="linkTargetCP"
+	[readonly]="!link.canEdit"
+	class="cell link-selector"
+	[values]="targetCP"
+	[(value)]="link.toCP"
+	(valueChange)="onTargetCPSelected($event)">
+</ui-element-dropdown>
+
+<div
+	class="cell remove"
+	data-tests-id="removeLnk">
+	<span
+		*ngIf="link.canRemove"
+		class="sprite-new delete-item-icon"
+		(click)="removeRow()">
+	</span>
+</div>

@@ -20,35 +20,28 @@
 
 package org.openecomp.sdc.be.model.tosca.constraints;
 
-import java.io.Serializable;
+import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintViolationException;
 
 import javax.validation.constraints.NotNull;
 
-import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintViolationException;
+public class LengthConstraint extends AbstractStringPropertyConstraint {
 
-public class LengthConstraint extends AbstractStringPropertyConstraint implements Serializable {
+    @NotNull
+    private Integer length;
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 6249912030281791233L;
+    @Override
+    protected void doValidate(String propertyValue) throws ConstraintViolationException {
+        if (propertyValue.length() != length) {
+            throw new ConstraintViolationException("The length of the value is not equals to [" + length + "]");
+        }
+    }
 
-	@NotNull
-	private Integer length;
+    public Integer getLength() {
+        return length;
+    }
 
-	@Override
-	protected void doValidate(String propertyValue) throws ConstraintViolationException {
-		if (propertyValue.length() != length) {
-			throw new ConstraintViolationException("The length of the value is not equals to [" + length + "]");
-		}
-	}
-
-	public Integer getLength() {
-		return length;
-	}
-
-	public void setLength(Integer length) {
-		this.length = length;
-	}
+    public void setLength(Integer length) {
+        this.length = length;
+    }
 
 }

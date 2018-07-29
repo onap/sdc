@@ -20,16 +20,7 @@
 
 package org.openecomp.sdc.ci.tests.execute.resource;
 
-import static org.openecomp.sdc.ci.tests.utils.rest.BaseRestUtils.STATUS_CODE_SUCCESS;
-import static org.testng.AssertJUnit.assertEquals;
-import static org.testng.AssertJUnit.assertNotNull;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import com.google.gson.Gson;
 import org.junit.Rule;
 import org.junit.rules.TestName;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
@@ -41,17 +32,8 @@ import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.ci.tests.api.ComponentBaseTest;
 import org.openecomp.sdc.ci.tests.api.Urls;
 import org.openecomp.sdc.ci.tests.config.Config;
-import org.openecomp.sdc.ci.tests.datatypes.ArtifactReqDetails;
-import org.openecomp.sdc.ci.tests.datatypes.ComponentInstanceReqDetails;
-import org.openecomp.sdc.ci.tests.datatypes.ResourceReqDetails;
-import org.openecomp.sdc.ci.tests.datatypes.ResourceRespJavaObject;
-import org.openecomp.sdc.ci.tests.datatypes.ServiceReqDetails;
-import org.openecomp.sdc.ci.tests.datatypes.enums.ErrorInfo;
-import org.openecomp.sdc.ci.tests.datatypes.enums.LifeCycleStatesEnum;
-import org.openecomp.sdc.ci.tests.datatypes.enums.NormativeTypesEnum;
-import org.openecomp.sdc.ci.tests.datatypes.enums.ResourceCategoryEnum;
-import org.openecomp.sdc.ci.tests.datatypes.enums.ServiceCategoriesEnum;
-import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
+import org.openecomp.sdc.ci.tests.datatypes.*;
+import org.openecomp.sdc.ci.tests.datatypes.enums.*;
 import org.openecomp.sdc.ci.tests.datatypes.expected.ExpectedResourceAuditJavaObject;
 import org.openecomp.sdc.ci.tests.datatypes.http.HttpHeaderEnum;
 import org.openecomp.sdc.ci.tests.datatypes.http.HttpRequest;
@@ -60,13 +42,7 @@ import org.openecomp.sdc.ci.tests.utils.DbUtils;
 import org.openecomp.sdc.ci.tests.utils.Utils;
 import org.openecomp.sdc.ci.tests.utils.general.Convertor;
 import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
-import org.openecomp.sdc.ci.tests.utils.rest.ArtifactRestUtils;
-import org.openecomp.sdc.ci.tests.utils.rest.BaseRestUtils;
-import org.openecomp.sdc.ci.tests.utils.rest.ComponentInstanceRestUtils;
-import org.openecomp.sdc.ci.tests.utils.rest.LifecycleRestUtils;
-import org.openecomp.sdc.ci.tests.utils.rest.ResourceRestUtils;
-import org.openecomp.sdc.ci.tests.utils.rest.ResponseParser;
-import org.openecomp.sdc.ci.tests.utils.rest.ServiceRestUtils;
+import org.openecomp.sdc.ci.tests.utils.rest.*;
 import org.openecomp.sdc.ci.tests.utils.validation.AuditValidationUtils;
 import org.openecomp.sdc.ci.tests.utils.validation.ErrorValidationUtils;
 import org.openecomp.sdc.ci.tests.utils.validation.ResourceValidationUtils;
@@ -74,7 +50,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.Test;
 
-import com.google.gson.Gson;
+import java.util.*;
+
+import static org.openecomp.sdc.ci.tests.utils.rest.BaseRestUtils.STATUS_CODE_SUCCESS;
+import static org.testng.AssertJUnit.assertEquals;
+import static org.testng.AssertJUnit.assertNotNull;
 
 /**
  * @author yshlosberg
@@ -2021,7 +2001,7 @@ public class CreateResourceApiTest extends ComponentBaseTest {
 		assertEquals(invariantUUIDcreation, invariantUUIDcheckout);
 		assertEquals(version, "0.2");
 
-		// do certification request
+		/*// do certification request
 		RestResponse restResponseCertificationRequest = LifecycleRestUtils.changeResourceState(resourceDetails,
 				sdncUserDetails, resourceDetails.getVersion(), LifeCycleStatesEnum.CERTIFICATIONREQUEST);
 		BaseRestUtils.checkSuccess(restResponseCertificationRequest);
@@ -2041,7 +2021,7 @@ public class CreateResourceApiTest extends ComponentBaseTest {
 		String invariantUUIDStartCertification = startCertificationRequestResource.getInvariantUUID();
 		version = startCertificationRequestResource.getVersion();
 		assertEquals(invariantUUIDcreation, invariantUUIDStartCertification);
-		assertEquals(version, "0.2");
+		assertEquals(version, "0.2");*/
 
 		// certify
 		RestResponse restResponseCertify = LifecycleRestUtils.changeResourceState(resourceDetails, sdncUserDetails,
@@ -2075,7 +2055,8 @@ public class CreateResourceApiTest extends ComponentBaseTest {
 		ResourceReqDetails resourceDetails = ElementFactory.getDefaultResourceByType("VF200", NormativeTypesEnum.ROOT,
 				ResourceCategoryEnum.GENERIC_INFRASTRUCTURE, designerUser.getUserId(), ResourceTypeEnum.VF.toString());
 		ServiceReqDetails serviceDetails = ElementFactory.getDefaultService("newtestservice1",
-				ServiceCategoriesEnum.MOBILITY, designerUser.getUserId());
+				ServiceCategoriesEnum.MOBILITY, designerUser.getUserId(),
+				ServiceInstantiationType.A_LA_CARTE.getValue());
 
 		// ResourceReqDetails resourceDetails =
 		// ElementFactory.getDefaultResource();
@@ -2115,7 +2096,7 @@ public class CreateResourceApiTest extends ComponentBaseTest {
 		assertEquals("Check response code ", BaseRestUtils.STATUS_CODE_SUCCESS, restResponse.getErrorCode().intValue());
 		assertEquals(invariantUUIDcreation, ResponseParser.getInvariantUuid(restResponse));
 		getResourceValidateInvariantUuid(resource.getUniqueId(), invariantUUIDcreation);
-		// certification request
+		/*// certification request
 		restResponse = LifecycleRestUtils.changeResourceState(resourceDetails, designerUser,
 				LifeCycleStatesEnum.CERTIFICATIONREQUEST);
 		assertEquals("Check response code ", BaseRestUtils.STATUS_CODE_SUCCESS, restResponse.getErrorCode().intValue());
@@ -2126,9 +2107,9 @@ public class CreateResourceApiTest extends ComponentBaseTest {
 				LifeCycleStatesEnum.STARTCERTIFICATION);
 		assertEquals("Check response code ", BaseRestUtils.STATUS_CODE_SUCCESS, restResponse.getErrorCode().intValue());
 		assertEquals(invariantUUIDcreation, ResponseParser.getInvariantUuid(restResponse));
-		getResourceValidateInvariantUuid(resource.getUniqueId(), invariantUUIDcreation);
+		getResourceValidateInvariantUuid(resource.getUniqueId(), invariantUUIDcreation);*/
 		// certify
-		restResponse = LifecycleRestUtils.changeResourceState(resourceDetails, testerUser, LifeCycleStatesEnum.CERTIFY);
+		restResponse = LifecycleRestUtils.changeResourceState(resourceDetails, designerUser, LifeCycleStatesEnum.CERTIFY);
 		assertEquals("Check response code ", BaseRestUtils.STATUS_CODE_SUCCESS, restResponse.getErrorCode().intValue());
 		assertEquals(invariantUUIDcreation, ResponseParser.getInvariantUuid(restResponse));
 		getResourceValidateInvariantUuid(resource.getUniqueId(), invariantUUIDcreation);
@@ -2143,11 +2124,11 @@ public class CreateResourceApiTest extends ComponentBaseTest {
 		assertEquals(BaseRestUtils.STATUS_CODE_SUCCESS, updateResponse.getErrorCode().intValue());
 		getResourceValidateInvariantUuid(resourceDetails.getUniqueId(), invariantUUIDcreation);
 
-		// certification request
+		/*// certification request
 		restResponse = LifecycleRestUtils.changeResourceState(resourceDetails, designerUser,
 				LifeCycleStatesEnum.CERTIFICATIONREQUEST);
 		assertEquals(BaseRestUtils.STATUS_CODE_SUCCESS, restResponse.getErrorCode().intValue());
-		getResourceValidateInvariantUuid(resourceDetails.getUniqueId(), invariantUUIDcreation);
+		getResourceValidateInvariantUuid(resourceDetails.getUniqueId(), invariantUUIDcreation);*/
 
 		// checkout resource
 		restResponse = LifecycleRestUtils.changeResourceState(resourceDetails, designerUser,
@@ -2155,7 +2136,7 @@ public class CreateResourceApiTest extends ComponentBaseTest {
 		assertEquals(BaseRestUtils.STATUS_CODE_SUCCESS, restResponse.getErrorCode().intValue());
 		getResourceValidateInvariantUuid(resourceDetails.getUniqueId(), invariantUUIDcreation);
 
-		// certification request
+		/*// certification request
 		restResponse = LifecycleRestUtils.changeResourceState(resourceDetails, designerUser,
 				LifeCycleStatesEnum.CERTIFICATIONREQUEST);
 		assertEquals(BaseRestUtils.STATUS_CODE_SUCCESS, restResponse.getErrorCode().intValue());
@@ -2182,7 +2163,7 @@ public class CreateResourceApiTest extends ComponentBaseTest {
 		restResponse = LifecycleRestUtils.changeResourceState(resourceDetails, testerUser,
 				LifeCycleStatesEnum.FAILCERTIFICATION);
 		assertEquals(STATUS_CODE_SUCCESS, restResponse.getErrorCode().intValue());
-		getResourceValidateInvariantUuid(resourceDetails.getUniqueId(), invariantUUIDcreation);
+		getResourceValidateInvariantUuid(resourceDetails.getUniqueId(), invariantUUIDcreation);*/
 
 		// upload artifact
 		restResponse = LifecycleRestUtils.changeResourceState(resourceDetails, designerUser,

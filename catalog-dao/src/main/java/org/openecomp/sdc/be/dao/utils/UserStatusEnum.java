@@ -20,9 +20,8 @@
 
 package org.openecomp.sdc.be.dao.utils;
 
-import org.openecomp.sdc.common.util.MethodActivationStatusEnum;
-
 import fj.data.Either;
+import org.openecomp.sdc.common.util.MethodActivationStatusEnum;
 
 public enum UserStatusEnum {
 	ACTIVE, INACTIVE;

@@ -16,26 +16,13 @@
 
 package org.onap.sdc.activityspec.be.impl;
 
-import static org.openecomp.sdc.versioning.dao.types.VersionStatus.Certified;
-import static org.openecomp.sdc.versioning.dao.types.VersionStatus.Deleted;
-import static org.openecomp.sdc.versioning.dao.types.VersionStatus.Deprecated;
-import static org.openecomp.sdc.versioning.dao.types.VersionStatus.Draft;
-
-import java.util.Collection;
-import java.util.Collections;
-import java.util.EnumMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.function.Predicate;
-
 import org.onap.sdc.activityspec.api.rest.types.ActivitySpecAction;
-import org.onap.sdc.activityspec.be.dao.ActivitySpecDao;
-import org.onap.sdc.activityspec.utils.ActivitySpecConstant;
 import org.onap.sdc.activityspec.be.ActivitySpecManager;
+import org.onap.sdc.activityspec.be.dao.ActivitySpecDao;
 import org.onap.sdc.activityspec.be.dao.types.ActivitySpecEntity;
 import org.onap.sdc.activityspec.be.datatypes.ItemType;
 import org.onap.sdc.activityspec.errors.ActivitySpecNotFoundException;
+import org.onap.sdc.activityspec.utils.ActivitySpecConstant;
 import org.openecomp.core.dao.UniqueValueDao;
 import org.openecomp.core.util.UniqueValueUtil;
 import org.openecomp.sdc.common.errors.CoreException;
@@ -51,12 +38,17 @@ import org.openecomp.sdc.versioning.dao.types.VersionStatus;
 import org.openecomp.sdc.versioning.types.Item;
 import org.openecomp.sdc.versioning.types.VersionCreationMethod;
 
+import java.util.*;
+import java.util.function.Predicate;
+
+import static org.openecomp.sdc.versioning.dao.types.VersionStatus.*;
+
 public class ActivitySpecManagerImpl implements ActivitySpecManager {
 
     private static final Map<VersionStatus, VersionStatus> EXPECTED_PREV_STATUS;
 
     static {
-        EXPECTED_PREV_STATUS = new EnumMap<>(VersionStatus.class);
+        EXPECTED_PREV_STATUS = new EnumMap<VersionStatus, VersionStatus>(VersionStatus.class);
         EXPECTED_PREV_STATUS.put(Certified, Draft);
         EXPECTED_PREV_STATUS.put(Deprecated, Certified);
         EXPECTED_PREV_STATUS.put(Deleted, Deprecated);

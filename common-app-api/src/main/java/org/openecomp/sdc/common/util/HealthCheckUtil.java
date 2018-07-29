@@ -2,8 +2,7 @@ package org.openecomp.sdc.common.util;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.openecomp.sdc.common.api.HealthCheckInfo;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -13,7 +12,7 @@ import static org.openecomp.sdc.common.api.HealthCheckInfo.HealthCheckStatus.DOW
 
 public class HealthCheckUtil {
 
-    private static Logger log = LoggerFactory.getLogger(HealthCheckUtil.class.getName());
+    private static Logger log = Logger.getLogger(HealthCheckUtil.class.getName());
     public boolean getAggregateStatus(List<HealthCheckInfo> healthCheckInfos, Collection<String> excludes) {
         boolean status = true;
         excludes = CollectionUtils.isEmpty(excludes) ? new ArrayList<>() : excludes;

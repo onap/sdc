@@ -20,98 +20,78 @@
 
 package org.openecomp.sdc.be.model.operations.impl;
 
-import org.openecomp.sdc.be.dao.api.ResourceUploadStatus;
 import org.openecomp.sdc.be.dao.cassandra.CassandraOperationStatus;
 import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 
 public class DaoStatusConverter {
 
-	public static StorageOperationStatus convertTitanStatusToStorageStatus(TitanOperationStatus titanStatus) {
+    public static StorageOperationStatus convertTitanStatusToStorageStatus(TitanOperationStatus titanStatus) {
 
-		if (titanStatus == null) {
-			return StorageOperationStatus.GENERAL_ERROR;
-		}
+        if (titanStatus == null) {
+            return StorageOperationStatus.GENERAL_ERROR;
+        }
 
-		switch (titanStatus) {
+        switch (titanStatus) {
 
-		case OK:
-			return StorageOperationStatus.OK;
+        case OK:
+            return StorageOperationStatus.OK;
 
-		case NOT_CONNECTED:
-			return StorageOperationStatus.CONNECTION_FAILURE;
+        case NOT_CONNECTED:
+            return StorageOperationStatus.CONNECTION_FAILURE;
 
-		case NOT_FOUND:
-			return StorageOperationStatus.NOT_FOUND;
+        case NOT_FOUND:
+            return StorageOperationStatus.NOT_FOUND;
 
-		case NOT_CREATED:
-			return StorageOperationStatus.SCHEMA_ERROR;
+        case NOT_CREATED:
+            return StorageOperationStatus.SCHEMA_ERROR;
 
-		case INDEX_CANNOT_BE_CHANGED:
-			return StorageOperationStatus.SCHEMA_ERROR;
+        case INDEX_CANNOT_BE_CHANGED:
+            return StorageOperationStatus.SCHEMA_ERROR;
 
-		case MISSING_UNIQUE_ID:
-			return StorageOperationStatus.BAD_REQUEST;
-		case ALREADY_LOCKED:
-			return StorageOperationStatus.FAILED_TO_LOCK_ELEMENT;
+        case MISSING_UNIQUE_ID:
+            return StorageOperationStatus.BAD_REQUEST;
+        case ALREADY_LOCKED:
+            return StorageOperationStatus.FAILED_TO_LOCK_ELEMENT;
 
-		case TITAN_SCHEMA_VIOLATION:
-			return StorageOperationStatus.SCHEMA_VIOLATION;
+        case TITAN_SCHEMA_VIOLATION:
+            return StorageOperationStatus.SCHEMA_VIOLATION;
 
-		case INVALID_ID:
-			return StorageOperationStatus.INVALID_ID;
-		case MATCH_NOT_FOUND:
-			return StorageOperationStatus.MATCH_NOT_FOUND;
+        case INVALID_ID:
+            return StorageOperationStatus.INVALID_ID;
+        case MATCH_NOT_FOUND:
+            return StorageOperationStatus.MATCH_NOT_FOUND;
 
-		case ILLEGAL_ARGUMENT:
-			return StorageOperationStatus.BAD_REQUEST;
-		case ALREADY_EXIST:
-			return StorageOperationStatus.ENTITY_ALREADY_EXISTS;
-		case PROPERTY_NAME_ALREADY_EXISTS:
-			return StorageOperationStatus.PROPERTY_NAME_ALREADY_EXISTS;
-		case INVALID_PROPERTY:
-			return StorageOperationStatus.INVALID_PROPERTY;
-		default:
-			return StorageOperationStatus.GENERAL_ERROR;
-		}
+        case ILLEGAL_ARGUMENT:
+            return StorageOperationStatus.BAD_REQUEST;
+        case ALREADY_EXIST:
+            return StorageOperationStatus.ENTITY_ALREADY_EXISTS;
+        case PROPERTY_NAME_ALREADY_EXISTS:
+            return StorageOperationStatus.PROPERTY_NAME_ALREADY_EXISTS;
+        case INVALID_PROPERTY:
+            return StorageOperationStatus.INVALID_PROPERTY;
+        default:
+            return StorageOperationStatus.GENERAL_ERROR;
+        }
 
-	}
+    }
 
-	public static StorageOperationStatus convertRsrcUploadStatusToStorageStatus(ResourceUploadStatus resourceUploadStatus) {
-		if (resourceUploadStatus == null) {
-			return StorageOperationStatus.GENERAL_ERROR;
-		}
-		switch (resourceUploadStatus) {
-		case OK:
-			return StorageOperationStatus.OK;
-		case ALREADY_EXIST:
-			return StorageOperationStatus.ENTITY_ALREADY_EXISTS;
-		case NOT_EXIST:
-			return StorageOperationStatus.ARTIFACT_NOT_FOUND;
-		case SERVICE_NOT_EXIST:
-		case COMPONENT_NOT_EXIST:
-			return StorageOperationStatus.NOT_FOUND;
-		default:
-			return StorageOperationStatus.GENERAL_ERROR;
-		}
-	}
+    public static StorageOperationStatus convertCassandraStatusToStorageStatus(CassandraOperationStatus status) {
+        if (status == null) {
+            return StorageOperationStatus.GENERAL_ERROR;
+        }
+        switch (status) {
+        case OK:
+            return StorageOperationStatus.OK;
+        case CLUSTER_NOT_CONNECTED:
+            return StorageOperationStatus.CONNECTION_FAILURE;
+        case KEYSPACE_NOT_CONNECTED:
+            return StorageOperationStatus.STORAGE_NOT_AVAILABLE;
+        case NOT_FOUND:
+            return StorageOperationStatus.NOT_FOUND;
 
-	public static StorageOperationStatus convertCassandraStatusToStorageStatus(CassandraOperationStatus status) {
-		if (status == null) {
-			return StorageOperationStatus.GENERAL_ERROR;
-		}
-		switch (status) {
-		case OK:
-			return StorageOperationStatus.OK;
-		case CLUSTER_NOT_CONNECTED:
-			return StorageOperationStatus.CONNECTION_FAILURE;
-		case KEYSPACE_NOT_CONNECTED:
-			return StorageOperationStatus.STORAGE_NOT_AVAILABLE;
-		case NOT_FOUND:
-			return StorageOperationStatus.NOT_FOUND;
-
-		default:
-			return StorageOperationStatus.GENERAL_ERROR;
-		}
-	}
+        default:
+            return StorageOperationStatus.GENERAL_ERROR;
+        }
+    }
 }

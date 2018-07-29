@@ -20,46 +20,39 @@
 
 package org.openecomp.sdc.servlets;
 
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import javax.ws.rs.core.Application;
-
 import org.glassfish.jersey.internal.inject.AbstractBinder;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.fe.config.Configuration;
 import org.openecomp.sdc.fe.config.ConfigurationManager;
 import org.openecomp.sdc.fe.servlets.PortalServlet;
 
+import javax.servlet.*;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import javax.ws.rs.core.Application;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.glassfish.jersey.test.TestProperties.CONTAINER_PORT;
+import static org.mockito.Mockito.*;
+
 public class PortalServletTest extends JerseyTest {
 	
-	final static HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
-	final static HttpSession httpSession = Mockito.mock(HttpSession.class);
-	final static ServletContext servletContext = Mockito.mock(ServletContext.class);
-	final static ConfigurationManager configurationManager = Mockito.mock(ConfigurationManager.class);
-	final static Configuration configuration = Mockito.mock(Configuration.class);
-	final static HttpServletResponse response = Mockito.spy(HttpServletResponse.class);
-	final static RequestDispatcher rd = Mockito.spy(RequestDispatcher.class);
+	private final static HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
+    private final static HttpSession httpSession = Mockito.mock(HttpSession.class);
+    private final static ServletContext servletContext = Mockito.mock(ServletContext.class);
+    private final static ConfigurationManager configurationManager = Mockito.mock(ConfigurationManager.class);
+    private final static Configuration configuration = Mockito.mock(Configuration.class);
+    private final static HttpServletResponse response = Mockito.spy(HttpServletResponse.class);
+    private final static RequestDispatcher rd = Mockito.spy(RequestDispatcher.class);
 
 	@SuppressWarnings("serial")
 	@BeforeClass
@@ -69,7 +62,7 @@ public class PortalServletTest extends JerseyTest {
 		when(httpSession.getServletContext()).thenReturn(servletContext);
 		when(servletContext.getAttribute(Constants.CONFIGURATION_MANAGER_ATTR)).thenReturn(configurationManager);
 		when(configurationManager.getConfiguration()).thenReturn(configuration);
-		List<List<String>> mandatoryHeaders = new ArrayList<List<String>>();
+		List<List<String>> mandatoryHeaders = new ArrayList<>();
 		mandatoryHeaders.add(new ArrayList<String>() {
 			{
 				add("HTTP_IV_USER");
@@ -95,7 +88,7 @@ public class PortalServletTest extends JerseyTest {
 			}
 		});
 
-		List<List<String>> optionalHeaders = new ArrayList<List<String>>();
+		List<List<String>> optionalHeaders = new ArrayList<>();
 		optionalHeaders.add(new ArrayList<String>() {
 			{
 				add("HTTP_CSP_FIRSTNAME");
@@ -129,14 +122,11 @@ public class PortalServletTest extends JerseyTest {
 	}
 
 	@Test
-	public void testSuccesfulRequest() throws IOException, ServletException {
-		Mockito.doAnswer(new Answer<Object>() {
-			public Object answer(InvocationOnMock invocation) {
-				Object[] args = invocation.getArguments();
-				String headerName = (String) args[0];
-				return headerName;
-			}
-		}).when(request).getHeader(Mockito.anyString());
+	public void testSuccessfulRequest() throws IOException, ServletException {
+		Mockito.doAnswer((Answer<Object>) invocation -> {
+            Object[] args = invocation.getArguments();
+            return (String) args[0];
+        }).when(request).getHeader(Mockito.anyString());
 		target().path("/portal").request().get();
 		verify(rd).forward(Mockito.any(ServletRequest.class), Mockito.any(ServletResponse.class));
 		Mockito.reset(response, rd);
@@ -144,6 +134,8 @@ public class PortalServletTest extends JerseyTest {
 
 	@Override
 	protected Application configure() {
+		// Use any available port - this allows us to run the BE tests in parallel with this one.
+		forceSet(CONTAINER_PORT, "0");
 		ResourceConfig resourceConfig = new ResourceConfig(PortalServlet.class);
 
 		resourceConfig.register(new AbstractBinder() {

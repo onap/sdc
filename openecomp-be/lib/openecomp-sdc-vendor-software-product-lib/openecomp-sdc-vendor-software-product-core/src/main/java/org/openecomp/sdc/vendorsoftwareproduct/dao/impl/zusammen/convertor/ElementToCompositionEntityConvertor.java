@@ -3,11 +3,7 @@ package org.openecomp.sdc.vendorsoftwareproduct.dao.impl.zusammen.convertor;
 import com.amdocs.zusammen.adaptor.inbound.api.types.item.Element;
 import org.openecomp.convertor.ElementConvertor;
 import org.openecomp.core.utilities.file.FileUtils;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComponentEntity;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.type.CompositionEntity;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ImageEntity;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.type.NicEntity;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspQuestionnaireEntity;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.type.*;
 
 public class ElementToCompositionEntityConvertor extends ElementConvertor <CompositionEntity>{
 

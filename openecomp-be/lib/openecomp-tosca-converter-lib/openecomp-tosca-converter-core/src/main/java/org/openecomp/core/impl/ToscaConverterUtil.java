@@ -21,11 +21,7 @@ import org.openecomp.core.converter.errors.CreateToscaObjectErrorBuilder;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.utils.CommonUtil;
 
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -45,8 +41,8 @@ public class ToscaConverterUtil {
   }
 
   static <T> Optional<T> createObjectFromClass(String objectId,
-                                                      Object objectCandidate,
-                                                      Class<T> classToCreate) {
+                                               Object objectCandidate,
+                                               Class<T> classToCreate) {
     try {
       return CommonUtil.createObjectUsingSetters(objectCandidate, classToCreate);
     } catch (Exception ex) {

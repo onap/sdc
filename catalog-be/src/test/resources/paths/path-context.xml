@@ -29,9 +29,12 @@
 		org.openecomp.sdc.be.components.validation
 		org.openecomp.sdc.be.switchover.detector,
 		org.openecomp.sdc.be.tosca,
+		org.openecomp.sdc.be.model.operations.impl,
 		org.openecomp.sdc.be.model.jsontitan.operations,
 		org.openecomp.sdc.be.model.jsontitan.utils,
 		org.openecomp.sdc.be.components.csar,
+		org.openecomp.sdc.be.datamodel.utils,
+		org.openecomp.sdc.be.model.utils,
 		org.openecomp.sdc.be.dao.jsongraph">
 		
    </context:component-scan>
@@ -66,6 +69,7 @@
   <bean id="tosca-operation-facade" class="org.openecomp.sdc.be.components.path.beans.ForwardingPathToscaOperationFacade" />
   <bean id="distributionEngine" class="org.openecomp.sdc.be.components.path.beans.DistributionEngineMock"/>
   <bean id="forwardingPathValidator" class="org.openecomp.sdc.be.components.path.beans.ForwardingPathValidatorMock" />
+  <bean id="dataTypeValidatorConverter" class="org.openecomp.sdc.be.model.tosca.validators.DataTypeValidatorConverter" />
   <util:properties id="elasticsearchConfig" location="paths/elasticsearch.yml" />
 
 </beans>

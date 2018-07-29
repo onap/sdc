@@ -16,8 +16,9 @@
 
 package org.openecomp.sdc.logging.api;
 
-import java.util.Objects;
 import org.openecomp.sdc.logging.spi.LoggerCreationService;
+
+import java.util.Objects;
 
 /**
  * <a>Factory to hide a concrete, framework-specific implementation of logger creation.</a>

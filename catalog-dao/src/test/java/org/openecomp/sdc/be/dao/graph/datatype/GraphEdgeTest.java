@@ -1,11 +1,11 @@
 package org.openecomp.sdc.be.dao.graph.datatype;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.openecomp.sdc.be.dao.neo4j.GraphEdgeLabels;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class GraphEdgeTest {
 

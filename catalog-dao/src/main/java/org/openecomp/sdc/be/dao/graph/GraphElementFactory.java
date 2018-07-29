@@ -20,50 +20,17 @@
 
 package org.openecomp.sdc.be.dao.graph;
 
-import java.util.Map;
-
 import org.openecomp.sdc.be.dao.graph.datatype.GraphElementTypeEnum;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphNode;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphRelation;
 import org.openecomp.sdc.be.dao.graph.datatype.RelationEndPoint;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
-import org.openecomp.sdc.be.resources.data.AdditionalInfoParameterData;
-import org.openecomp.sdc.be.resources.data.ArtifactData;
-import org.openecomp.sdc.be.resources.data.AttributeData;
-import org.openecomp.sdc.be.resources.data.AttributeValueData;
-import org.openecomp.sdc.be.resources.data.CapabilityData;
-import org.openecomp.sdc.be.resources.data.CapabilityInstData;
-import org.openecomp.sdc.be.resources.data.CapabilityTypeData;
-import org.openecomp.sdc.be.resources.data.ComponentInstanceData;
-import org.openecomp.sdc.be.resources.data.ConsumerData;
-import org.openecomp.sdc.be.resources.data.DataTypeData;
-import org.openecomp.sdc.be.resources.data.GraphNodeLock;
-import org.openecomp.sdc.be.resources.data.GroupData;
-import org.openecomp.sdc.be.resources.data.GroupInstanceData;
-import org.openecomp.sdc.be.resources.data.GroupTypeData;
-import org.openecomp.sdc.be.resources.data.HeatParameterData;
-import org.openecomp.sdc.be.resources.data.HeatParameterValueData;
-import org.openecomp.sdc.be.resources.data.InputValueData;
-import org.openecomp.sdc.be.resources.data.InputsData;
-import org.openecomp.sdc.be.resources.data.InterfaceData;
-import org.openecomp.sdc.be.resources.data.OperationData;
-import org.openecomp.sdc.be.resources.data.PolicyTypeData;
-import org.openecomp.sdc.be.resources.data.ProductMetadataData;
-import org.openecomp.sdc.be.resources.data.PropertyData;
-import org.openecomp.sdc.be.resources.data.PropertyValueData;
-import org.openecomp.sdc.be.resources.data.RelationshipInstData;
-import org.openecomp.sdc.be.resources.data.RequirementData;
-import org.openecomp.sdc.be.resources.data.RequirementImplData;
-import org.openecomp.sdc.be.resources.data.ResourceCategoryData;
-import org.openecomp.sdc.be.resources.data.ResourceMetadataData;
-import org.openecomp.sdc.be.resources.data.ServiceCategoryData;
-import org.openecomp.sdc.be.resources.data.ServiceMetadataData;
-import org.openecomp.sdc.be.resources.data.TagData;
-import org.openecomp.sdc.be.resources.data.UserData;
-import org.openecomp.sdc.be.resources.data.UserFunctionalMenuData;
+import org.openecomp.sdc.be.resources.data.*;
 import org.openecomp.sdc.be.resources.data.category.CategoryData;
 import org.openecomp.sdc.be.resources.data.category.GroupingData;
 import org.openecomp.sdc.be.resources.data.category.SubCategoryData;
+
+import java.util.Map;
 
 public class GraphElementFactory {
 
@@ -257,6 +224,8 @@ public class GraphElementFactory {
 			case GroupInstance:
 				element = clazz.cast(new GroupInstanceData(properties));
 				break;
+			case AnnotationType:
+				element = clazz.cast(new AnnotationTypeData(properties));
 			default:
 				break;
 			}

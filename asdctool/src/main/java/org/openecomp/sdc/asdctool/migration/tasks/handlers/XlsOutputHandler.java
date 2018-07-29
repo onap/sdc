@@ -1,65 +1,92 @@
 package org.openecomp.sdc.asdctool.migration.tasks.handlers;
 
-import java.io.FileOutputStream;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-
+import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.openecomp.sdc.common.log.wrappers.Logger;
+
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.text.SimpleDateFormat;
 
 public class XlsOutputHandler implements OutputHandler {
 
-	private final static Logger LOGGER = LoggerFactory.getLogger(XlsOutputHandler.class);
-	
+	private static final Logger log = Logger.getLogger(XlsOutputHandler.class);
 	private Workbook workbook;
 	private Sheet activeSheet;
-	private Row currentRow;
-	int rowCount = 0;
+	private int rowCount = 0;
+	private String sheetName;
+    private String outputPath;
 	
-	public XlsOutputHandler(Object... title){
-		initiate(title);
+	public XlsOutputHandler(String outputPath, String sheetName, Object... title){
+		this.outputPath = outputPath;
+	    this.sheetName = sheetName;
+		initiate(sheetName, title);
 	}
 	
 	@Override
-	public void initiate(Object... title) {
-		LOGGER.info("Starting to initiate xls output handler. ");
+	public void initiate(String sheetName, Object... title) {
+		log.info("#initiate - Starting to initiate XlsOutputHandler. ");
 		workbook = new HSSFWorkbook();
-		activeSheet = workbook.createSheet("Upgrade Migration 1710.0 results");
+		activeSheet = workbook.createSheet(sheetName);
 		addRecord(title);
-		LOGGER.info("Xls output handler has been initiated. ");
+		log.info("#initiate - XlsOutputHandler has been initiated. ");
 	}
 
 	@Override
 	public void addRecord(Object... record) {
-		LOGGER.debug("Going to add record {} to output. ", record);
-		currentRow = activeSheet.createRow(rowCount++);
-		LOGGER.debug("A new row has been created");
+		log.info("#addRecord - Going to add record {} to output. ", record);
+        Row currentRow = activeSheet.createRow(rowCount++);
+		log.info("#addRecord - A new row has been created");
         int columnCount = 0;
         Cell cell;
         for(Object cellValue : record){
             cell = currentRow.createCell(columnCount++);
-            if(cellValue != null)
-            	cell.setCellValue(cellValue.toString());
+            if (cellValue != null) {
+                cell.setCellValue(cellValue.toString());
+            }
         }
 	}
 
 	@Override
-	public boolean writeOutput() {
+	public boolean writeOutputAndCloseFile() {
+		if (rowCount <= 1) {
+			return false;
+		}
         try {
-			DateFormat df = new SimpleDateFormat("yyyyMMdd_HHmmss");
-        	String fileName = "UpgradeMigration1710Results_" + df.format(System.currentTimeMillis()) + ".xls";
-        	LOGGER.info("Going to write xls output file {}. ", fileName);
-			workbook.write(new FileOutputStream(fileName));
+			FileOutputStream file = getXlsFile();
+			workbook.write(file);
+			file.close();
 			return true;
 		} catch (Exception e) {
-			LOGGER.error("Failed to write an output file upon  Upgrade migration 1710. Exception {} occured. ", e);
+			log.debug("#writeOutputAndCloseFile - Failed to write an output file. ", e);
 			return false;
 		}
 	}
+
+	public String getOutputPath() {
+		return outputPath;
+	}
+
+	FileOutputStream getXlsFile() throws FileNotFoundException {
+        String fileName = buildFileName();
+        log.info("#getXlsFile - Going to write the output file {}. ", fileName);
+        return new FileOutputStream(fileName);
+    }
+
+    private String buildFileName() {
+        StringBuilder fileName = new StringBuilder();
+        if(StringUtils.isNotEmpty(outputPath)){
+            fileName.append(outputPath);
+        }
+        return fileName.append(sheetName)
+                .append("_")
+                .append(new SimpleDateFormat("yyyyMMdd_HHmmss").format(System.currentTimeMillis()))
+                .append(".xls")
+				.toString();
+    }
 
 }

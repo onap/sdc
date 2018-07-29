@@ -1,13 +1,11 @@
 package org.openecomp.sdc.be.components.distribution.engine;
 
-import java.net.URISyntaxException;
-
+import mockit.Deencapsulation;
 import org.junit.Test;
 import org.openecomp.sdc.be.components.BeConfDependentTest;
-import org.openecomp.sdc.be.config.DmaapConsumerConfiguration;
 import org.openecomp.sdc.common.api.HealthCheckInfo;
 
-import mockit.Deencapsulation;
+import java.net.URISyntaxException;
 
 public class DmaapHealthTest extends BeConfDependentTest{
 
@@ -35,16 +33,6 @@ public class DmaapHealthTest extends BeConfDependentTest{
 	}
 
 	@Test
-	public void testStartHealthCheckTask() throws Exception {
-		DmaapHealth testSubject;
-		boolean startTask = false;
-
-		// default test
-		testSubject = createTestSubject();
-		testSubject.startHealthCheckTask(startTask);
-	}
-
-	@Test
 	public void testReport() throws Exception {
 		DmaapHealth testSubject;
 		Boolean isUp = false;
@@ -52,26 +40,6 @@ public class DmaapHealthTest extends BeConfDependentTest{
 		// default test
 		testSubject = createTestSubject();
 		testSubject.report(isUp);
-	}
-
-	@Test
-	public void testLogAlarm() throws Exception {
-		DmaapHealth testSubject;
-		boolean lastHealthState = false;
-
-		// default test
-		testSubject = createTestSubject();
-		testSubject.logAlarm(lastHealthState);
-	}
-
-	@Test
-	public void testGetConfiguration() throws Exception {
-		DmaapHealth testSubject;
-		DmaapConsumerConfiguration result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getConfiguration();
 	}
 
 	@Test

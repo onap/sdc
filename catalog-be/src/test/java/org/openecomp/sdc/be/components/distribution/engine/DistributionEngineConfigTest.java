@@ -20,13 +20,6 @@
 
 package org.openecomp.sdc.be.components.distribution.engine;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.openecomp.sdc.be.config.ConfigurationManager;
@@ -37,6 +30,13 @@ import org.openecomp.sdc.be.config.DistributionEngineConfiguration.DistributionS
 import org.openecomp.sdc.common.api.ConfigurationSource;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;
 import org.openecomp.sdc.common.impl.FSConfigurationSource;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class DistributionEngineConfigTest {
 
@@ -61,11 +61,11 @@ public class DistributionEngineConfigTest {
 
         DistributionEngine distributionEngine = new DistributionEngine();
 
-        List<String> environments = new ArrayList<String>();
+        List<String> environments = new ArrayList<>();
         environments.add("PROD");
         deConfiguration.setEnvironments(environments);
 
-        List<String> servers = new ArrayList<String>();
+        List<String> servers = new ArrayList<>();
         servers.add("server1:80");
         servers.add("server2:8080");
 

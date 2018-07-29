@@ -40,23 +40,23 @@ module.exports = function(env) {
 	// Redirect all '/sdc1/feProxy/rest' to feHost
 	middlewares.push(
 		proxy(['/sdc1/feProxy/rest'],{
-                    target: 'http://' + loclahost + ':' + fePort,
+			target: 'http://' + loclahost + ':' + fePort,
 			changeOrigin: true,
 			secure: false
 		}));
 
 	// Redirect all '/sdc1/rest' to feHost
-    middlewares.push(
-        proxy(['/sdc1/rest'],{
-            target: 'http://' + loclahost + ':' + fePort,
-            changeOrigin: true,
-            secure: false
-        }));
+	middlewares.push(
+		proxy(['/sdc1/rest'],{
+			target: 'http://' + loclahost + ':' + fePort,
+			changeOrigin: true,
+			secure: false
+		}));
 
 	// Redirect dcae urls to feHost
 	middlewares.push(
 		proxy(['/dcae','/sdc1/feProxy/dcae-api'],{
-                    target: 'http://' + loclahost + ':' + fePort,
+			target: 'http://' + loclahost + ':' + fePort,
 			changeOrigin: true,
 			secure: false,
 			onProxyRes: (proxyRes, req, res) => {
@@ -70,7 +70,7 @@ module.exports = function(env) {
 	// Redirect onboarding urls to feHost
 	middlewares.push(
 		proxy(['/onboarding','/sdc1/feProxy/onboarding-api'],{
-                    target: 'http://' + loclahost + ':' + fePort,
+			target: 'http://' + loclahost + ':' + fePort,
 			changeOrigin: true,
 			secure: false,
 			onProxyRes: (proxyRes, req, res) => {

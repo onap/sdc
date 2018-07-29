@@ -1,33 +1,18 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-    <!-- Generator: Sketch 48.2 (47327) - http://www.bohemiancoding.com/sketch -->
-    <title>Group 13 Copy</title>
-    <desc>Created with Sketch.</desc>
-    <defs>
-        <path d="M3,0 L15,0 C16.6568542,-3.04359188e-16 18,1.34314575 18,3 L18,15 C18,16.6568542 16.6568542,18 15,18 L3,18 C1.34314575,18 -6.85272294e-16,16.6568542 -8.8817842e-16,15 L0,3 C-2.02906125e-16,1.34314575 1.34314575,-5.83819232e-16 3,-8.8817842e-16 Z" id="path-1"></path>
-        <filter x="-25.0%" y="-13.9%" width="150.0%" height="150.0%" filterUnits="objectBoundingBox" id="filter-2">
-            <feMorphology radius="0.5" operator="dilate" in="SourceAlpha" result="shadowSpreadOuter1"></feMorphology>
-            <feOffset dx="0" dy="2" in="shadowSpreadOuter1" result="shadowOffsetOuter1"></feOffset>
-            <feGaussianBlur stdDeviation="1" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
-            <feComposite in="shadowBlurOuter1" in2="SourceAlpha" operator="out" result="shadowBlurOuter1"></feComposite>
-            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.5 0" type="matrix" in="shadowBlurOuter1"></feColorMatrix>
-        </filter>
-        <path d="M12.6603086,4.57405469 L8.30209375,11.5833406 L5.57568359,9.20957266 C5.13068359,8.77957266 4.46368359,8.77957266 4.01968359,9.20957266 C3.57568359,9.64057266 3.57568359,10.2865727 4.01968359,10.7175727 L7.52409375,13.8453406 C7.74609375,14.0603406 7.96809375,14.1683406 8.30209375,14.1683406 C8.63509375,14.1683406 8.85809375,14.0603406 9.07909375,13.8453406 L14.2163086,6.08105469 C14.6603086,5.65105469 14.6603086,5.00505469 14.2163086,4.57405469 C13.7723086,4.14305469 13.1053086,4.14305469 12.6603086,4.57405469 Z" id="path-3"></path>
-    </defs>
-    <g id="sdc" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-        <g id="Group-13-Copy" transform="translate(3.000000, 1.000000)">
-            <g id="Group-4-Copy-9">
-                <g id="Group-3">
-                    <g id="Rectangle-15-Copy-5">
-                        <use fill="black" fill-opacity="1" filter="url(#filter-2)" xlink:href="#path-1"></use>
-                        <use stroke="#FFFFFF" stroke-width="1" fill="#0568AE" fill-rule="evenodd" xlink:href="#path-1"></use>
-                    </g>
-                </g>
-            </g>
-            <mask id="mask-4" fill="white">
-                <use xlink:href="#path-3"></use>
-            </mask>
-            <use id="Mask" fill="#FFFFFF" xlink:href="#path-3"></use>
-        </g>
-    </g>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24" height="24">
+  <defs>
+    <path id="group-13-copy-b" d="M3,0 L15,0 C16.6568542,-3.04359188e-16 18,1.34314575 18,3 L18,15 C18,16.6568542 16.6568542,18 15,18 L3,18 C1.34314575,18 -6.85272294e-16,16.6568542 -8.8817842e-16,15 L0,3 C-2.02906125e-16,1.34314575 1.34314575,-5.83819232e-16 3,-8.8817842e-16 Z"/>
+    <filter id="group-13-copy-a" width="150%" height="150%" x="-25%" y="-13.9%" filterUnits="objectBoundingBox">
+      <feMorphology in="SourceAlpha" operator="dilate" radius=".5" result="shadowSpreadOuter1"/>
+      <feOffset dy="2" in="shadowSpreadOuter1" result="shadowOffsetOuter1"/>
+      <feGaussianBlur in="shadowOffsetOuter1" result="shadowBlurOuter1" stdDeviation="1"/>
+      <feComposite in="shadowBlurOuter1" in2="SourceAlpha" operator="out" result="shadowBlurOuter1"/>
+      <feColorMatrix in="shadowBlurOuter1" values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.5 0"/>
+    </filter>
+    <path id="group-13-copy-c" d="M12.6603086,4.57405469 L8.30209375,11.5833406 L5.57568359,9.20957266 C5.13068359,8.77957266 4.46368359,8.77957266 4.01968359,9.20957266 C3.57568359,9.64057266 3.57568359,10.2865727 4.01968359,10.7175727 L7.52409375,13.8453406 C7.74609375,14.0603406 7.96809375,14.1683406 8.30209375,14.1683406 C8.63509375,14.1683406 8.85809375,14.0603406 9.07909375,13.8453406 L14.2163086,6.08105469 C14.6603086,5.65105469 14.6603086,5.00505469 14.2163086,4.57405469 C13.7723086,4.14305469 13.1053086,4.14305469 12.6603086,4.57405469 Z"/>
+  </defs>
+  <g fill="none" fill-rule="evenodd" transform="translate(3 1)">
+    <use fill="#000" filter="url(#group-13-copy-a)" xlink:href="#group-13-copy-b"/>
+    <use fill="#162F90" stroke="#FFF" xlink:href="#group-13-copy-b"/>
+    <use fill="#FFF" xlink:href="#group-13-copy-c"/>
+  </g>
 </svg>

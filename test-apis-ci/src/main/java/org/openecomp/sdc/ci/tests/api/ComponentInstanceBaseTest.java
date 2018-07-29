@@ -20,57 +20,25 @@
 
 package org.openecomp.sdc.ci.tests.api;
 
-import static org.testng.AssertJUnit.assertEquals;
-import static org.testng.AssertJUnit.assertNotNull;
-import static org.testng.AssertJUnit.assertTrue;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.junit.rules.TestName;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
-import org.openecomp.sdc.be.model.CapReqDef;
-import org.openecomp.sdc.be.model.CapabilityDefinition;
-import org.openecomp.sdc.be.model.Component;
-import org.openecomp.sdc.be.model.ComponentInstance;
-import org.openecomp.sdc.be.model.Product;
-import org.openecomp.sdc.be.model.RelationshipInfo;
-import org.openecomp.sdc.be.model.RequirementCapabilityRelDef;
-import org.openecomp.sdc.be.model.RequirementDefinition;
-import org.openecomp.sdc.be.model.Resource;
-import org.openecomp.sdc.be.model.Service;
-import org.openecomp.sdc.be.model.User;
-import org.openecomp.sdc.ci.tests.datatypes.ComponentInstanceReqDetails;
-import org.openecomp.sdc.ci.tests.datatypes.ComponentReqDetails;
-import org.openecomp.sdc.ci.tests.datatypes.ProductReqDetails;
-import org.openecomp.sdc.ci.tests.datatypes.ResourceReqDetails;
-import org.openecomp.sdc.ci.tests.datatypes.ServiceReqDetails;
-import org.openecomp.sdc.ci.tests.datatypes.enums.NormativeTypesEnum;
-import org.openecomp.sdc.ci.tests.datatypes.enums.ResourceCategoryEnum;
-import org.openecomp.sdc.ci.tests.datatypes.enums.ServiceCategoriesEnum;
-import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
+import org.openecomp.sdc.be.model.*;
+import org.openecomp.sdc.ci.tests.datatypes.*;
+import org.openecomp.sdc.ci.tests.datatypes.enums.*;
 import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
 import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
-import org.openecomp.sdc.ci.tests.utils.rest.BaseRestUtils;
-import org.openecomp.sdc.ci.tests.utils.rest.ComponentInstanceRestUtils;
-import org.openecomp.sdc.ci.tests.utils.rest.ComponentRestUtils;
-import org.openecomp.sdc.ci.tests.utils.rest.ProductRestUtils;
-import org.openecomp.sdc.ci.tests.utils.rest.ResourceRestUtils;
-import org.openecomp.sdc.ci.tests.utils.rest.ResponseParser;
-import org.openecomp.sdc.ci.tests.utils.rest.ServiceRestUtils;
+import org.openecomp.sdc.ci.tests.utils.rest.*;
 import org.testng.Assert;
+
+import java.io.IOException;
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
+import static org.testng.AssertJUnit.*;
 
 public class ComponentInstanceBaseTest extends ComponentBaseTest {
 	public static final String acceptHeaderData = "application/json";
@@ -123,9 +91,9 @@ public class ComponentInstanceBaseTest extends ComponentBaseTest {
 		resourceDetailsCP_02 = ElementFactory.getDefaultResourceByType("ciCP200", NormativeTypesEnum.PORT, ResourceCategoryEnum.GENERIC_DATABASE, sdncDesignerDetails.getUserId(), ResourceTypeEnum.CP.toString());
 		resourceDetailsVL_01 = ElementFactory.getDefaultResourceByType("ciVL100", NormativeTypesEnum.NETWORK, ResourceCategoryEnum.GENERIC_NETWORK_ELEMENTS, sdncDesignerDetails.getUserId(), ResourceTypeEnum.VL.toString());
 		resourceDetailsVL_02 = ElementFactory.getDefaultResourceByType("ciVL200", NormativeTypesEnum.NETWORK, ResourceCategoryEnum.GENERIC_NETWORK_ELEMENTS, sdncDesignerDetails.getUserId(), ResourceTypeEnum.VL.toString());
-		serviceDetails_01 = ElementFactory.getDefaultService("ciNewtestservice1", ServiceCategoriesEnum.MOBILITY, sdncDesignerDetails.getUserId());
-		serviceDetails_02 = ElementFactory.getDefaultService("ciNewtestservice2", ServiceCategoriesEnum.MOBILITY, sdncDesignerDetails.getUserId());
-		serviceDetails_03 = ElementFactory.getDefaultService("ciNewtestservice3", ServiceCategoriesEnum.MOBILITY, sdncDesignerDetails.getUserId());
+		serviceDetails_01 = ElementFactory.getDefaultService("ciNewtestservice1", ServiceCategoriesEnum.MOBILITY, sdncDesignerDetails.getUserId(), ServiceInstantiationType.A_LA_CARTE.getValue());
+		serviceDetails_02 = ElementFactory.getDefaultService("ciNewtestservice2", ServiceCategoriesEnum.MOBILITY, sdncDesignerDetails.getUserId(), ServiceInstantiationType.A_LA_CARTE.getValue());
+		serviceDetails_03 = ElementFactory.getDefaultService("ciNewtestservice3", ServiceCategoriesEnum.MOBILITY, sdncDesignerDetails.getUserId(), ServiceInstantiationType.A_LA_CARTE.getValue());
 		productDetails_01 = ElementFactory.getDefaultProduct("ciProduct01");
 		productDetails_02 = ElementFactory.getDefaultProduct("ciProduct02");
 	}

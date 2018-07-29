@@ -1,7 +1,5 @@
 package org.openecomp.sdc.common.config.generation;
 
-import javax.annotation.Generated;
-
 import org.junit.Test;
 
 public class GenerateEcompErrorsCsvTest {

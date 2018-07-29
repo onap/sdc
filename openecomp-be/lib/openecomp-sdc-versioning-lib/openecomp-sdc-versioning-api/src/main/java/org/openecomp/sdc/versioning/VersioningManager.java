@@ -16,10 +16,11 @@
 
 package org.openecomp.sdc.versioning;
 
-import java.util.List;
 import org.openecomp.sdc.versioning.dao.types.Revision;
 import org.openecomp.sdc.versioning.dao.types.Version;
 import org.openecomp.sdc.versioning.types.VersionCreationMethod;
+
+import java.util.List;
 
 public interface VersioningManager {
 

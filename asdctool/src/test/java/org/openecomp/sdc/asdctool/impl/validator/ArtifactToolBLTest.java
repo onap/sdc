@@ -1,9 +1,9 @@
 package org.openecomp.sdc.asdctool.impl.validator;
 
-import java.util.LinkedList;
-
 import org.junit.Test;
 import org.openecomp.sdc.asdctool.impl.validator.executers.NodeToscaArtifactsValidatorExecuter;
+
+import java.util.LinkedList;
 
 public class ArtifactToolBLTest {
 

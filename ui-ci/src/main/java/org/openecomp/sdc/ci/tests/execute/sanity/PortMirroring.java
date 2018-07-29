@@ -1,12 +1,10 @@
 package org.openecomp.sdc.ci.tests.execute.sanity;
 
 import com.aventstack.extentreports.Status;
-import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.ci.tests.datatypes.*;
-import org.openecomp.sdc.ci.tests.datatypes.enums.CircleSize;
 import org.openecomp.sdc.ci.tests.datatypes.enums.LifeCycleStatesEnum;
 import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
 import org.openecomp.sdc.ci.tests.execute.setup.SetupCDTest;
@@ -23,7 +21,6 @@ import org.openecomp.sdc.ci.tests.utils.general.FileHandling;
 import org.openecomp.sdc.ci.tests.verificator.PortMirroringVerificator;
 import org.openecomp.sdc.ci.tests.verificator.ServiceVerificator;
 import org.testng.AssertJUnit;
-import org.testng.SkipException;
 import org.testng.annotations.Test;
 
 import java.io.File;
@@ -34,7 +31,7 @@ public class PortMirroring extends SetupCDTest {
 
     @Test
     public void createPortMirroringConfigurationServiceProxy() throws Throwable {
-        PortMirrioringConfigurationObject portMirrioringConfigurationObject = PortMirroringUtils.createPortMirriongConfigurationStructure();
+        PortMirrioringConfigurationObject portMirrioringConfigurationObject = PortMirroringUtils.createPortMirriongConfigurationStructure(false);
         ServiceReqDetails serviceReqDetails = portMirrioringConfigurationObject.getServiceReqDetails();
         CanvasManager canvasManager = portMirrioringConfigurationObject.getCanvasManager();
         CanvasElement serviceElementVmmeSourceName = portMirrioringConfigurationObject.getServiceElementVmmeSourceName();
@@ -55,7 +52,7 @@ public class PortMirroring extends SetupCDTest {
 
     @Test
     public void distributePortMirroringConfigurationServiceProxy() throws Throwable {
-        PortMirrioringConfigurationObject portMirrioringConfigurationObject = PortMirroringUtils.createPortMirriongConfigurationStructure();
+        PortMirrioringConfigurationObject portMirrioringConfigurationObject = PortMirroringUtils.createPortMirriongConfigurationStructure(false);
         ServiceReqDetails serviceReqDetails = portMirrioringConfigurationObject.getServiceReqDetails();
         Service service = portMirrioringConfigurationObject.getService();
 
@@ -124,9 +121,7 @@ public class PortMirroring extends SetupCDTest {
                 PortMirroringEnum.PMCP_SOURCE_CAP.getValue());
 
         canvasManager.linkElementsAndSelectCapReqTypeAndCapReqName(serviceElementVmmeSource,
-                CircleSize.SERVICE,
                 portMirroringConfigurationByPolicyElement,
-                CircleSize.NORMATIVE,
                 connectionWizardPopUpObjectVMME);
 
         serviceReqDetails.setVersion("0.1");
@@ -139,7 +134,8 @@ public class PortMirroring extends SetupCDTest {
         getExtendTest().log(Status.INFO, "Adding properties to PMCP");
         
         if(true){
-			throw new SkipException("Open bug 373762, can't update properties on CP or VFC instance  on Composition screen");			
+//			throw new SkipException("Open bug 373762, can't update properties on CP or VFC instance  on Composition screen");
+        	SetupCDTest.getExtendTest().log(Status.INFO, "Open bug 373762, can't update properties on CP or VFC instance  on Composition screen");
 		}
 
         canvasManager.clickOnCanvaElement(portMirroringConfigurationByPolicyElement);
@@ -180,28 +176,22 @@ public class PortMirroring extends SetupCDTest {
         CompositionPage.searchForElement(PortMirroringEnum.PMCP_ELEMENT_IN_PALLETE.getValue());
         CanvasElement portMirroringConfigurationByPolicyElement = canvasManager.createElementOnCanvas(PortMirroringEnum.PMCP_ELEMENT_IN_PALLETE.getValue());
 
-        ImmutablePair<Integer, Integer> linkLocation = canvasManager.calcMidOfLink(serviceElementVmmeSource.getLocation(), portMirroringConfigurationByPolicyElement.getLocation());
-
         ConnectionWizardPopUpObject connectionWizardPopUpObjectVMME = new ConnectionWizardPopUpObject("",
                 "",
                 PortMirroringEnum.PM_REQ_TYPE.getValue(),
                 PortMirroringEnum.PMCP_SOURCE_CAP.getValue());
 
         canvasManager.linkElementsAndSelectCapReqTypeAndCapReqName(serviceElementVmmeSource,
-                CircleSize.SERVICE,
                 portMirroringConfigurationByPolicyElement,
-                CircleSize.NORMATIVE,
                 connectionWizardPopUpObjectVMME);
-
-        CanvasElement linkBetweenPMCP_VMME = new CanvasElement("Link", linkLocation);
 
         serviceReqDetails.setVersion("0.1");
         getExtendTest().log(Status.INFO, "Validating link between elements was created");
         ServiceVerificator.verifyLinkCreated(serviceReqDetails, getUser(), 1);
 
-        canvasManager.openLinkPopupReqsCapsConnection(linkBetweenPMCP_VMME);
+        canvasManager.openLinkPopupReqsCapsConnection(serviceElementVmmeSource, portMirroringConfigurationByPolicyElement);
         canvasManager.closeLinkPopupReqsCapsConnection();
-        canvasManager.deleteLinkPopupReqsCapsConnection(linkBetweenPMCP_VMME);
+        canvasManager.deleteLinkPopupReqsCapsConnection(serviceElementVmmeSource, portMirroringConfigurationByPolicyElement);
 
         getExtendTest().log(Status.INFO, "Validating link deleted");
         ServiceVerificator.verifyLinkCreated(serviceReqDetails, getUser(), 0);
@@ -267,9 +257,10 @@ public class PortMirroring extends SetupCDTest {
         canvasManager.clickOnCanvaElement(portMirroringConfigurationByPolicyElement);
 
         getExtendTest().log(Status.INFO, "Edit PMCP Name");
-        GeneralUIUtils.clickOnElementById(DataTestIdEnum.CompositionRightPanel.EDIT_PENCIL.getValue());
-        GeneralUIUtils.setTextInElementByDataTestID(DataTestIdEnum.CompositionRightPanel.INSTANCE_NAME_TEXTBOX.getValue(), PortMirroringEnum.PMCP_NEWNAME.getValue());
-        GeneralUIUtils.clickOnElementByTestId("OK");
+//        GeneralUIUtils.clickOnElementById(DataTestIdEnum.CompositionRightPanel.EDIT_PENCIL.getValue());
+//        GeneralUIUtils.setTextInElementByDataTestID(DataTestIdEnum.CompositionRightPanel.INSTANCE_NAME_TEXTBOX.getValue(), PortMirroringEnum.PMCP_NEWNAME.getValue());
+//        GeneralUIUtils.clickOnElementByTestId("OK");
+        canvasManager.updateElementNameInCanvas(portMirroringConfigurationByPolicyElement,PortMirroringEnum.PMCP_NEWNAME.getValue());
 
         PortMirroringVerificator.validateElementName(PortMirroringEnum.PMCP_NEWNAME.getValue());
     }
@@ -294,15 +285,16 @@ public class PortMirroring extends SetupCDTest {
         canvasManager.clickOnCanvaElement(portMirroringConfigurationByPolicyElement);
 
         getExtendTest().log(Status.INFO, String.format("Delete element %s", portMirroringConfigurationByPolicyElement.getElementType()));
-        GeneralUIUtils.clickOnElementByTestId(DataTestIdEnum.CompositionRightPanel.DELETE_ITEM.getValue());
-        GeneralUIUtils.clickOnElementByTestId("OK");
+//        GeneralUIUtils.clickOnElementByTestId(DataTestIdEnum.CompositionRightPanel.DELETE_ITEM.getValue());
+//        GeneralUIUtils.clickOnElementByTestId("OK");
+        canvasManager.deleteElementFromCanvas(portMirroringConfigurationByPolicyElement);
 
         PortMirroringVerificator.validateElementName(service.getName());
     }
 
     @Test
     public void createPortMirroringConfigurationMulipleInstances() throws Throwable {
-        PortMirrioringConfigurationObject portMirrioringConfigurationObject = PortMirroringUtils.createPortMirriongConfigurationStructure();
+        PortMirrioringConfigurationObject portMirrioringConfigurationObject = PortMirroringUtils.createPortMirriongConfigurationStructure(false);
         ServiceReqDetails serviceReqDetails = portMirrioringConfigurationObject.getServiceReqDetails();
         CanvasElement serviceElementVmmeSourceName = portMirrioringConfigurationObject.getServiceElementVmmeSourceName();
 
@@ -321,16 +313,19 @@ public class PortMirroring extends SetupCDTest {
         CompositionPage.searchForElement(PortMirroringEnum.PMC_ELEMENT_IN_PALLETE.getValue());
         CanvasElement portMirroringConfigurationElement = canvasManager.createElementOnCanvas(PortMirroringEnum.PMC_ELEMENT_IN_PALLETE.getValue());
 
+//        ConnectionWizardPopUpObject connectionWizardPopUpObjectVMME = new ConnectionWizardPopUpObject("", "",
+//                PortMirroringEnum.PM_REQ_TYPE.getValue(), PortMirroringEnum.PMC1_SOURCE_CAP.getValue());
+
         ConnectionWizardPopUpObject connectionWizardPopUpObjectVMME = new ConnectionWizardPopUpObject("", "",
-                PortMirroringEnum.PM_REQ_TYPE.getValue(), PortMirroringEnum.PMC1_SOURCE_CAP.getValue());
+              PortMirroringEnum.PM_REQ_TYPE.getValue(), PortMirroringEnum.PMC_SOURCE_CAP.getValue());
 
         getExtendTest().log(Status.INFO, "Connect VMME to PMC again");
-        canvasManager.linkElementsAndSelectCapReqTypeAndCapReqName(serviceElementVmmeSourceName, CircleSize.SERVICE, portMirroringConfigurationElement,
-                CircleSize.NORMATIVE, connectionWizardPopUpObjectVMME);
+        canvasManager.linkElementsAndSelectCapReqTypeAndCapReqName(serviceElementVmmeSourceName,portMirroringConfigurationElement,
+               connectionWizardPopUpObjectVMME);
 
         getExtendTest().log(Status.INFO, "Connect VMME to PMC again");
-        canvasManager.linkElementsAndSelectCapReqTypeAndCapReqName(serviceElementVmmeSourceName, CircleSize.SERVICE, portMirroringConfigurationElement,
-                CircleSize.NORMATIVE, connectionWizardPopUpObjectVMME);
+        canvasManager.linkElementsAndSelectCapReqTypeAndCapReqName(serviceElementVmmeSourceName, portMirroringConfigurationElement,
+               connectionWizardPopUpObjectVMME);
 
         getExtendTest().log(Status.INFO, "Validating 4 links between elements exist");
         ServiceVerificator.verifyLinkCreated(serviceReqDetails, getUser(), 4);
@@ -345,12 +340,12 @@ public class PortMirroring extends SetupCDTest {
                 PortMirroringEnum.PMCP_SOURCE_CAP.getValue());
 
         getExtendTest().log(Status.INFO, "Connect VMME to PMCP again");
-        canvasManager.linkElementsAndSelectCapReqTypeAndCapReqName(serviceElementVmmeSourceName, CircleSize.SERVICE, portMirroringConfigurationByPolicyElement,
-                CircleSize.NORMATIVE, connectionWizardPopUpObjectVMME_PMCP);
+        canvasManager.linkElementsAndSelectCapReqTypeAndCapReqName(serviceElementVmmeSourceName, portMirroringConfigurationByPolicyElement,
+               connectionWizardPopUpObjectVMME_PMCP);
 
         getExtendTest().log(Status.INFO, "Connect VMME to PMCP again");
-        canvasManager.linkElementsAndSelectCapReqTypeAndCapReqName(serviceElementVmmeSourceName, CircleSize.SERVICE, portMirroringConfigurationByPolicyElement,
-                CircleSize.NORMATIVE, connectionWizardPopUpObjectVMME_PMCP);
+        canvasManager.linkElementsAndSelectCapReqTypeAndCapReqName(serviceElementVmmeSourceName, portMirroringConfigurationByPolicyElement,
+                connectionWizardPopUpObjectVMME_PMCP);
 
         serviceReqDetails.setVersion("0.1");
         getExtendTest().log(Status.INFO, "Validating 6 links between elements exist");
@@ -360,7 +355,7 @@ public class PortMirroring extends SetupCDTest {
     @Test
     public void downloadArtifactFromPMCService() throws Throwable {
         //Scenario of bug 362271
-        PortMirrioringConfigurationObject portMirrioringConfigurationObject = PortMirroringUtils.createPortMirriongConfigurationStructure();
+        PortMirrioringConfigurationObject portMirrioringConfigurationObject = PortMirroringUtils.createPortMirriongConfigurationStructure(false);
         ServiceReqDetails serviceReqDetails = portMirrioringConfigurationObject.getServiceReqDetails();
 
         GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.MainMenuButtonsFromInsideFrame.HOME_BUTTON.getValue()).click();
@@ -387,7 +382,7 @@ public class PortMirroring extends SetupCDTest {
 
     @Test
     public void checkoutMirroringConfigurationServiceProxyAndDeletePMC() throws Throwable {
-        PortMirrioringConfigurationObject portMirrioringConfigurationObject = PortMirroringUtils.createPortMirriongConfigurationStructure();
+        PortMirrioringConfigurationObject portMirrioringConfigurationObject = PortMirroringUtils.createPortMirriongConfigurationStructure(false);
         ServiceReqDetails serviceReqDetails = portMirrioringConfigurationObject.getServiceReqDetails();
         Service service = portMirrioringConfigurationObject.getService();
         CanvasElement portMirroringConfigurationElement = portMirrioringConfigurationObject.getPortMirroringConfigurationElement();
@@ -409,10 +404,12 @@ public class PortMirroring extends SetupCDTest {
         ServiceGeneralPage.getLeftMenu().moveToCompositionScreen();
         CanvasManager canvasManager = CanvasManager.getCanvasManager();
         GeneralUIUtils.ultimateWait();
-        canvasManager.clickOnCanvasPosition(portMirroringConfigurationElement.getLocation().getLeft(), portMirroringConfigurationElement.getLocation().getRight());
+//        canvasManager.clickOnCanvasPosition(portMirroringConfigurationElement.getLocation().getLeft(), portMirroringConfigurationElement.getLocation().getRight());
+        canvasManager.clickOnCanvaElement(portMirroringConfigurationElement);
         getExtendTest().log(Status.INFO, String.format("Delete element %s", portMirroringConfigurationElement.getElementType()));
-        GeneralUIUtils.clickOnElementByTestId(DataTestIdEnum.CompositionRightPanel.DELETE_ITEM.getValue());
-        GeneralUIUtils.clickOnElementByTestId("OK");
+//        GeneralUIUtils.clickOnElementByTestId(DataTestIdEnum.CompositionRightPanel.DELETE_ITEM.getValue());
+//        GeneralUIUtils.clickOnElementByTestId("OK");
+        canvasManager.deleteElementFromCanvas(portMirroringConfigurationElement);
 
         PortMirroringVerificator.validateElementName(service.getName());
         getExtendTest().log(Status.INFO, "Validating 0 links after delete the port mirroring element");
@@ -431,7 +428,7 @@ public class PortMirroring extends SetupCDTest {
     @Test
     public void updatePortMirroringServiceInstance() throws Throwable {
 
-        PortMirrioringConfigurationObject portMirrioringConfigurationObject = PortMirroringUtils.createPortMirriongConfigurationStructure();
+        PortMirrioringConfigurationObject portMirrioringConfigurationObject = PortMirroringUtils.createPortMirriongConfigurationStructure(false);
         Service service = portMirrioringConfigurationObject.getService();
         CanvasElement vmmeCanvasElement = portMirrioringConfigurationObject.getServiceElementVmmeSourceName();
 
@@ -490,26 +487,20 @@ public class PortMirroring extends SetupCDTest {
         CompositionPage.searchForElement(PortMirroringEnum.PMCP_ELEMENT_IN_PALLETE.getValue());
         CanvasElement portMirroringConfigurationByPolicyElement = canvasManager.createElementOnCanvas(PortMirroringEnum.PMCP_ELEMENT_IN_PALLETE.getValue());
 
-        ImmutablePair<Integer, Integer> linkLocation = canvasManager.calcMidOfLink(serviceElementVmmeSource.getLocation(), portMirroringConfigurationByPolicyElement.getLocation());
-
         ConnectionWizardPopUpObject connectionWizardPopUpObjectVMME = new ConnectionWizardPopUpObject("",
                 "",
                 PortMirroringEnum.PM_REQ_TYPE.getValue(),
                 PortMirroringEnum.PMCP_SOURCE_CAP.getValue());
 
         canvasManager.linkElementsAndSelectCapReqTypeAndCapReqName(serviceElementVmmeSource,
-                CircleSize.SERVICE,
                 portMirroringConfigurationByPolicyElement,
-                CircleSize.NORMATIVE,
                 connectionWizardPopUpObjectVMME);
-
-        CanvasElement linkBetweenPMCP_VMME = new CanvasElement("Link", linkLocation);
 
         serviceReqDetails.setVersion("0.1");
         getExtendTest().log(Status.INFO, "Validating link between elements was created");
         ServiceVerificator.verifyLinkCreated(serviceReqDetails, getUser(), 1);
 
-        canvasManager.openLinkPopupReqsCapsConnection(linkBetweenPMCP_VMME);
+        canvasManager.openLinkPopupReqsCapsConnection(serviceElementVmmeSource, portMirroringConfigurationByPolicyElement);
 
         getExtendTest().log(Status.INFO, "Fill link properties with data");
         GeneralUIUtils.setTextInElementByXpath(PortMirroringEnum.NETWORK_ROLE_XPATH.getValue(),PortMirroringEnum.NETWORK_ROLE_VALUE.getValue());
@@ -518,13 +509,13 @@ public class PortMirroring extends SetupCDTest {
         GeneralUIUtils.setTextInElementByXpath(PortMirroringEnum.NF_TYPE_XPATH.getValue(),PortMirroringEnum.NF_TYPE_VALUE.getValue());
         GeneralUIUtils.ultimateWait();
         
-        if(true){
-			throw new SkipException("Open bug 373765, Can't  update link property on Port Mirroring connection");			
-		}
+//        if(true){
+//			throw new SkipException("Open bug 373765, Can't  update link property on Port Mirroring connection");
+//		}
 
         canvasManager.clickSaveOnLinkPopup();
         Thread.sleep(3000); //Temp solution. Don't remove.
-        canvasManager.openLinkPopupReqsCapsConnection(linkBetweenPMCP_VMME);
+        canvasManager.openLinkPopupReqsCapsConnection(serviceElementVmmeSource, portMirroringConfigurationByPolicyElement);
 
         PortMirroringVerificator.validateLinkProperties();
     }
@@ -533,7 +524,7 @@ public class PortMirroring extends SetupCDTest {
     public void restorePortMirroringServiceLink() throws Throwable {
 
         //Scenario is taken from bug 361475 - Second Scenario
-        PortMirrioringConfigurationObject portMirrioringConfigurationObject = PortMirroringUtils.createPortMirriongConfigurationStructure();
+        PortMirrioringConfigurationObject portMirrioringConfigurationObject = PortMirroringUtils.createPortMirriongConfigurationStructure(false);
         ServiceReqDetails serviceReqDetails = portMirrioringConfigurationObject.getServiceReqDetails();
         Service service = portMirrioringConfigurationObject.getService();
         CanvasElement vmmeCanvasElement = portMirrioringConfigurationObject.getServiceElementVmmeSourceName();
@@ -566,7 +557,7 @@ public class PortMirroring extends SetupCDTest {
     @Test
     public void restoreServiceVersionOnContainerService() throws Throwable {
         //Scenario is taken from bug 361475 - First Scenario
-        PortMirrioringConfigurationObject portMirrioringConfigurationObject = PortMirroringUtils.createPortMirriongConfigurationStructure();
+        PortMirrioringConfigurationObject portMirrioringConfigurationObject = PortMirroringUtils.createPortMirriongConfigurationStructure(false);
         ServiceReqDetails serviceReqDetails = portMirrioringConfigurationObject.getServiceReqDetails();
         Service service = portMirrioringConfigurationObject.getService();
         CanvasElement vmmeCanvasElement = portMirrioringConfigurationObject.getServiceElementVmmeSourceName();
@@ -587,7 +578,8 @@ public class PortMirroring extends SetupCDTest {
         ServiceGeneralPage.getLeftMenu().moveToCompositionScreen();
         CanvasManager canvasManager = CanvasManager.getCanvasManager();
 
-        canvasManager.linkElements(vmmeCanvasElement, CircleSize.SERVICE, vprobeCanvasElement, CircleSize.SERVICE);
+//        canvasManager.linkElements(vmmeCanvasElement, CircleSize.SERVICE, vprobeCanvasElement, CircleSize.SERVICE);
+        canvasManager.linkElements(vmmeCanvasElement, vprobeCanvasElement);
 
         getExtendTest().log(Status.INFO, String.format("Changing vmme source %s instance to version 2.0", serviceContainerVmme_Source.getName()));
         CompositionPage.changeComponentVersion(canvasManager, vmmeCanvasElement, "2.0",false);

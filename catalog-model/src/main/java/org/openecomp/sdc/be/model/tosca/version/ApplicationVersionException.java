@@ -24,13 +24,11 @@ import org.openecomp.sdc.be.model.tosca.constraints.exception.TechnicalException
 
 public class ApplicationVersionException extends TechnicalException {
 
-	private static final long serialVersionUID = -5192834855057177252L;
+    public ApplicationVersionException(String message, Throwable cause) {
+        super(message, cause);
+    }
 
-	public ApplicationVersionException(String message, Throwable cause) {
-		super(message, cause);
-	}
-
-	public ApplicationVersionException(String message) {
-		super(message);
-	}
+    public ApplicationVersionException(String message) {
+        super(message);
+    }
 }

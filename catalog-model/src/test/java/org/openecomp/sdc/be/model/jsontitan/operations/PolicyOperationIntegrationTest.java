@@ -1,15 +1,6 @@
 package org.openecomp.sdc.be.model.jsontitan.operations;
 
-import static org.apache.commons.collections.ListUtils.union;
-import static org.assertj.core.api.Assertions.assertThat;
-
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-
+import fj.data.Either;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -35,7 +26,14 @@ import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import fj.data.Either;
+import javax.annotation.Resource;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
+import static org.apache.commons.collections.ListUtils.union;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {TitanSpringConfig.class, ModelOperationsSpringConfig.class})
@@ -80,7 +78,7 @@ public class PolicyOperationIntegrationTest extends ModelTestBase {
         titanDao.createVertex(resource);
         GraphVertex loadedResource = titanDao.getVertexById(CONTAINER_ID).left().value();
         topologyTemplateOperation.addToscaDataToToscaElement(loadedResource, EdgeLabelEnum.POLICIES, VertexTypeEnum.POLICIES, policy, JsonPresentationFields.UNIQUE_ID);
-        titanDao.commit();
+//        titanDao.commit();
     }
 
     @After
@@ -118,7 +116,7 @@ public class PolicyOperationIntegrationTest extends ModelTestBase {
         componentParametersView.setIgnorePolicies(false);
         Either<ToscaElement, StorageOperationStatus> loadedCmptEither = topologyTemplateOperation.getToscaElement(CONTAINER_ID, componentParametersView);
 
-        assertThat(loadedCmptEither.isLeft());
+        assertThat(loadedCmptEither.isLeft()).isTrue();
         ToscaElement loadedCmpt = loadedCmptEither.left().value();
         assertThat(loadedCmpt).isInstanceOf(TopologyTemplate.class);
         @SuppressWarnings("unchecked") List<PropertyDataDefinition> allProperties = union(updatedProperties, nonUpdatedPropeties);

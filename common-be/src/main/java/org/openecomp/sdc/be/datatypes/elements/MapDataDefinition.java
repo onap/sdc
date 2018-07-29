@@ -20,8 +20,6 @@
 
 package org.openecomp.sdc.be.datatypes.elements;
 
-
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
@@ -56,7 +54,7 @@ public  class MapDataDefinition <T extends ToscaDataDefinition>  extends ToscaDa
 	
 	public void put(String key, T value){
 		if(mapToscaDataDefinition == null){
-			mapToscaDataDefinition = new HashMap<String, T>();
+			mapToscaDataDefinition = new HashMap<>();
 		}
 		mapToscaDataDefinition.put(key, value);
 	}
@@ -102,7 +100,6 @@ public  class MapDataDefinition <T extends ToscaDataDefinition>  extends ToscaDa
 			MapDataDefinition collectMap = new MapDataDefinition<>(collect);
 			
 			mapToscaDataDefinition.entrySet().removeIf(e -> ownerIdList.contains(e.getValue().getOwnerId()));
-			
 			return (T) collectMap;			
 		}
 		return (T) new MapDataDefinition(new HashMap<>());

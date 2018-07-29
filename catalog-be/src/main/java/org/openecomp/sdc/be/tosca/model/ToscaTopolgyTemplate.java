@@ -27,6 +27,7 @@ public class ToscaTopolgyTemplate {
     private Map<String, ToscaProperty> inputs;
     private Map<String, ToscaNodeTemplate> node_templates;
     private Map<String, ToscaGroupTemplate> groups;
+    private Map<String, ToscaPolicyTemplate> policies;
     private SubstitutionMapping substitution_mappings;
 
     public Map<String, ToscaNodeTemplate> getNode_templates() {
@@ -64,4 +65,14 @@ public class ToscaTopolgyTemplate {
         this.inputs = inputs;
     }
 
+	public void addPolicies(Map<String, ToscaPolicyTemplate> policiesMap) {
+		if ( this.policies == null ){
+            this.policies = new HashMap<>();
+        }
+        this.policies.putAll(policiesMap);		
+	}
+
+	public Map<String, ToscaPolicyTemplate> getPolicies() {
+		return policies;
+	}
 }

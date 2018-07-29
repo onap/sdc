@@ -1,10 +1,10 @@
 package org.openecomp.sdc.be.datatypes.elements;
 
+import org.junit.Test;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.junit.Test;
 
 
 public class GroupDataDefinitionTest {

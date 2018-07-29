@@ -1,9 +1,9 @@
 package org.openecomp.sdc.be.resources.data;
 
+import org.junit.Test;
+
 import java.nio.ByteBuffer;
 import java.util.Date;
-
-import org.junit.Test;
 
 
 public class SdcSchemaFilesDataTest {

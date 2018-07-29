@@ -5,18 +5,19 @@ import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingGenericEvent;
 import org.openecomp.sdc.be.resources.data.auditing.model.CommonAuditData;
 import org.openecomp.sdc.be.resources.data.auditing.model.CommonAuditData.Builder;
+import org.openecomp.sdc.be.resources.data.auditing.model.ResourceCommonInfo;
 
 public class AuditDistribDeployEventFactoryTest {
 
-	private AuditDistribDeployEventFactory createTestSubject() {
+	private AuditDistributionDeployEventFactory createTestSubject() {
 		Builder newBuilder = CommonAuditData.newBuilder();
 		CommonAuditData build = newBuilder.build();
-		return new AuditDistribDeployEventFactory(build, "", "", new User(), "", "");
+		return new AuditDistributionDeployEventFactory(build,new ResourceCommonInfo(),"", new User(), "1.0");
 	}
 
 	@Test
 	public void testGetLogMessage() throws Exception {
-		AuditDistribDeployEventFactory testSubject;
+		AuditDistributionDeployEventFactory testSubject;
 		String result;
 
 		// default test
@@ -26,7 +27,7 @@ public class AuditDistribDeployEventFactoryTest {
 
 	@Test
 	public void testGetDbEvent() throws Exception {
-		AuditDistribDeployEventFactory testSubject;
+		AuditDistributionDeployEventFactory testSubject;
 		AuditingGenericEvent result;
 
 		// default test

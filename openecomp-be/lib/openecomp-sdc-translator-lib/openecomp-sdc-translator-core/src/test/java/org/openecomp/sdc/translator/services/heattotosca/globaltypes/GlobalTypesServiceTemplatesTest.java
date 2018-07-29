@@ -16,18 +16,18 @@
 
 package org.openecomp.sdc.translator.services.heattotosca.globaltypes;
 
-import static org.openecomp.sdc.translator.services.heattotosca.globaltypes.GlobalTypesServiceTemplates.getGlobalTypesServiceTemplates;
-
-import org.openecomp.core.utilities.orchestration.OnboardingTypesEnum;
-import org.openecomp.sdc.common.errors.CoreException;
-import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
 import org.junit.Assert;
 import org.junit.Test;
+import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
+import org.openecomp.core.utilities.orchestration.OnboardingTypesEnum;
+import org.openecomp.sdc.common.errors.CoreException;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import static org.openecomp.sdc.translator.services.heattotosca.globaltypes.GlobalTypesServiceTemplates.getGlobalTypesServiceTemplates;
 
 public class GlobalTypesServiceTemplatesTest {
 

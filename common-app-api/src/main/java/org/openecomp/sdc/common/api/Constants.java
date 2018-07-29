@@ -136,7 +136,7 @@ public final class Constants {
 	public static final String HC_COMPONENT_ES = "ES";
 	public static final String HC_COMPONENT_CASSANDRA = "CASSANDRA";
 	public static final String HC_COMPONENT_DISTRIBUTION_ENGINE = "DE";
-	public static final String HC_COMPONENT_DMAAP_ENGINE = "DMAPP";
+	public static final String HC_COMPONENT_DMAAP_ENGINE = "DMAAP";
 
 	//external HealthCheck components
 	public static final String HC_COMPONENT_ON_BOARDING = "ON_BOARDING";

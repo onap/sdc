@@ -42,6 +42,7 @@ import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.config.DistributionEngineConfiguration;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.model.Service;
+import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.resources.data.OperationalEnvironmentEntry;
 import org.openecomp.sdc.common.util.YamlToObjectConverter;
@@ -288,17 +289,16 @@ public class DistributionEngine implements IDistributionEngine {
     }
 
     @Override
-    public ActionStatus notifyService(String distributionId, Service service, INotificationData notificationData, String envName, String userId, String modifierName) {
-        return notifyService(distributionId, service, notificationData, envName, envName, userId, modifierName);
+    public ActionStatus notifyService(String distributionId, Service service, INotificationData notificationData, String envName, User modifier) {
+        return notifyService(distributionId, service, notificationData, envName, envName, modifier);
     }
-
     @Override
-    public ActionStatus notifyService(String distributionId, Service service, INotificationData notificationData, String envId, String envName, String userId, String modifierName) {
-        LOGGER.debug("Received notify service request. distributionId = {}, serviceUuid = {} serviceUid = {}, envName = {}, userId = {}, modifierName {}", distributionId, service.getUUID(), service.getUniqueId(), envName, userId, modifierName);
+    public ActionStatus notifyService(String distributionId, Service service, INotificationData notificationData, String envId, String envName,  User modifier) {
+        LOGGER.debug("Received notify service request. distributionId = {}, serviceUuid = {} serviceUid = {}, envName = {}, modifier {}", distributionId, service.getUUID(), service.getUniqueId(), envName,  modifier);
         String topicName = buildTopicName(envName);
         ActionStatus notifyServiceStatus = Optional.ofNullable(environmentsEngine.getEnvironmentById(envId))
                 .map(EnvironmentMessageBusData::new)
-                .map(messageBusData -> distributionNotificationSender.sendNotification(topicName, distributionId, messageBusData, notificationData, service, userId, modifierName))
+                .map(messageBusData -> distributionNotificationSender.sendNotification(topicName, distributionId, messageBusData, notificationData, service, modifier))
                 .orElse(ActionStatus.DISTRIBUTION_ENVIRONMENT_NOT_AVAILABLE);
         LOGGER.debug("Finish notifyService. status is {}", notifyServiceStatus);
         return notifyServiceStatus;
@@ -311,23 +311,13 @@ public class DistributionEngine implements IDistributionEngine {
     }
 
     @Override
-    public StorageOperationStatus isReadyForDistribution(Service service, String envName) {
+    public StorageOperationStatus isReadyForDistribution(String envName) {
         StorageOperationStatus status = isEnvironmentAvailable(envName);
         if (status != StorageOperationStatus.OK) {
             String envErrorDec = getEnvironmentErrorDescription(status);
             BeEcompErrorManager.getInstance().logBeDistributionEngineSystemError(DistributionNotificationSender.DISTRIBUTION_NOTIFICATION_SENDING, "Environment name " + envName + " is not available. Reason : " + envErrorDec);
-            return status;
         }
-
-        return verifyServiceHasDeploymentArtifacts(service);
-    }
-
-    @Override
-    public StorageOperationStatus verifyServiceHasDeploymentArtifacts(Service service) {
-         if (!serviceDistributionArtifactsBuilder.verifyServiceContainsDeploymentArtifacts(service)) {
-             return StorageOperationStatus.DISTR_ARTIFACT_NOT_FOUND;
-         }
-        return StorageOperationStatus.OK;
+        return status;
     }
 
     @Override

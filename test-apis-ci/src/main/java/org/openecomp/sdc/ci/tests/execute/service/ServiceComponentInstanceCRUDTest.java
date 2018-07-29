@@ -20,45 +20,20 @@
 
 package org.openecomp.sdc.ci.tests.execute.service;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
-
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import org.codehaus.jettison.json.JSONException;
 import org.json.JSONArray;
 import org.junit.rules.TestName;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
-import org.openecomp.sdc.be.model.CapReqDef;
-import org.openecomp.sdc.be.model.CapabilityDefinition;
-import org.openecomp.sdc.be.model.Component;
-import org.openecomp.sdc.be.model.ComponentInstance;
-import org.openecomp.sdc.be.model.RequirementCapabilityRelDef;
-import org.openecomp.sdc.be.model.RequirementDefinition;
-import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.*;
 import org.openecomp.sdc.ci.tests.api.ComponentInstanceBaseTest;
-import org.openecomp.sdc.ci.tests.datatypes.ArtifactReqDetails;
-import org.openecomp.sdc.ci.tests.datatypes.ComponentInstanceReqDetails;
-import org.openecomp.sdc.ci.tests.datatypes.ComponentReqDetails;
-import org.openecomp.sdc.ci.tests.datatypes.ResourceReqDetails;
-import org.openecomp.sdc.ci.tests.datatypes.ServiceReqDetails;
+import org.openecomp.sdc.ci.tests.datatypes.*;
 import org.openecomp.sdc.ci.tests.datatypes.enums.ArtifactTypeEnum;
 import org.openecomp.sdc.ci.tests.datatypes.enums.LifeCycleStatesEnum;
 import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
 import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
 import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
-import org.openecomp.sdc.ci.tests.utils.rest.ArtifactRestUtils;
-import org.openecomp.sdc.ci.tests.utils.rest.ComponentInstanceRestUtils;
-import org.openecomp.sdc.ci.tests.utils.rest.ComponentRestUtils;
-import org.openecomp.sdc.ci.tests.utils.rest.LifecycleRestUtils;
-import org.openecomp.sdc.ci.tests.utils.rest.ResourceRestUtils;
-import org.openecomp.sdc.ci.tests.utils.rest.ResponseParser;
-import org.openecomp.sdc.ci.tests.utils.rest.ServiceRestUtils;
+import org.openecomp.sdc.ci.tests.utils.rest.*;
 import org.openecomp.sdc.ci.tests.utils.validation.BaseValidationUtils;
 import org.openecomp.sdc.ci.tests.utils.validation.ErrorValidationUtils;
 import org.slf4j.Logger;
@@ -66,6 +41,15 @@ import org.slf4j.LoggerFactory;
 import org.testng.AssertJUnit;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 public class ServiceComponentInstanceCRUDTest extends ComponentInstanceBaseTest {
 	private static Logger log = LoggerFactory.getLogger(ServiceComponentInstanceCRUDTest.class.getName());
@@ -115,9 +99,9 @@ public class ServiceComponentInstanceCRUDTest extends ComponentInstanceBaseTest 
 	}
 
 	private void certifyResource(ResourceReqDetails resource) throws Exception {
-		changeResourceLifecycleState(resource, sdncDesignerDetails.getUserId(),
+		/*changeResourceLifecycleState(resource, sdncDesignerDetails.getUserId(),
 				LifeCycleStatesEnum.CERTIFICATIONREQUEST);
-		changeResourceLifecycleState(resource, sdncTesterDetails.getUserId(), LifeCycleStatesEnum.STARTCERTIFICATION);
+		changeResourceLifecycleState(resource, sdncTesterDetails.getUserId(), LifeCycleStatesEnum.STARTCERTIFICATION);*/
 		changeResourceLifecycleState(resource, sdncTesterDetails.getUserId(), LifeCycleStatesEnum.CERTIFY);
 	}
 
@@ -444,7 +428,7 @@ public class ServiceComponentInstanceCRUDTest extends ComponentInstanceBaseTest 
 		getComponentAndValidateRIs(serviceDetails_01, 2, 0);
 	}
 
-	@Test
+	/*@Test
 	public void createResourceInstance_ResourceInCertificationRequestStateTest() throws Exception {
 		changeResourceLifecycleState(resourceDetailsVF_01, sdncDesignerDetails.getUserId(),
 				LifeCycleStatesEnum.CERTIFICATIONREQUEST);
@@ -453,9 +437,9 @@ public class ServiceComponentInstanceCRUDTest extends ComponentInstanceBaseTest 
 
 		createVFInstanceAndAtomicResourceInstanceSuccessully(resourceDetailsVF_01, resourceDetailsCP_01);
 		getComponentAndValidateRIs(serviceDetails_01, 2, 0);
-	}
+	}*/
 
-	@Test
+	/*@Test
 	public void createResourceInstance_startCertificationStateTest() throws Exception {
 		changeResourceLifecycleState(resourceDetailsVF_01, sdncDesignerDetails.getUserId(),
 				LifeCycleStatesEnum.CERTIFICATIONREQUEST);
@@ -471,7 +455,7 @@ public class ServiceComponentInstanceCRUDTest extends ComponentInstanceBaseTest 
 				sdncDesignerDetails);
 		getComponentAndValidateRIs(serviceDetails_01, 2, 0);
 
-	}
+	}*/
 
 	@Test
 	public void createResourceInstance_certifiedStateTest() throws Exception {

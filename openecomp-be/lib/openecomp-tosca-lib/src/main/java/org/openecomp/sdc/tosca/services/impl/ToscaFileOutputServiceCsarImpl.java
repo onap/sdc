@@ -17,13 +17,13 @@
 package org.openecomp.sdc.tosca.services.impl;
 
 import org.apache.commons.io.IOUtils;
+import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
 import org.openecomp.core.utilities.file.FileContentHandler;
 import org.openecomp.core.utilities.file.FileUtils;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
-import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
 import org.openecomp.sdc.tosca.exceptions.CsarCreationErrorBuilder;
 import org.openecomp.sdc.tosca.exceptions.CsarMissingEntryPointErrorBuilder;
 import org.openecomp.sdc.tosca.services.ToscaFileOutputService;
@@ -34,6 +34,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+
 import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;

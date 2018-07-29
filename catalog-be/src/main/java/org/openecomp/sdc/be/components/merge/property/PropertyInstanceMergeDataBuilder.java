@@ -1,27 +1,21 @@
 package org.openecomp.sdc.be.components.merge.property;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
 import org.openecomp.sdc.be.dao.utils.MapUtil;
 import org.openecomp.sdc.be.datatypes.elements.GetInputValueDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.model.InputDefinition;
 
-public class PropertyInstanceMergeDataBuilder {
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
-    private final static PropertyInstanceMergeDataBuilder INSTANCE = new PropertyInstanceMergeDataBuilder();
+class PropertyInstanceMergeDataBuilder {
 
     private PropertyInstanceMergeDataBuilder() {
     }
 
-    public static PropertyInstanceMergeDataBuilder getInstance() {
-        return INSTANCE;
-    }
-
-    public <T extends PropertyDataDefinition> List<MergePropertyData> buildDataForMerging(List<T> oldProps,
+    static <T extends PropertyDataDefinition> List<MergePropertyData> buildDataForMerging(List<T> oldProps,
                                                                                           List<InputDefinition> oldInputs,
                                                                                           List<T> newProps,
                                                                                           List<InputDefinition> newInputs) {
@@ -34,7 +28,7 @@ public class PropertyInstanceMergeDataBuilder {
 
     }
 
-    private <T extends PropertyDataDefinition> List<MergePropertyData> buildMergeData(Map<String, T> oldPropsByName, Map<String, InputDefinition> oldInputsByName, Map<String, T> newPropsByName, Map<String, InputDefinition> newInputsByName) {
+    private static <T extends PropertyDataDefinition> List<MergePropertyData> buildMergeData(Map<String, T> oldPropsByName, Map<String, InputDefinition> oldInputsByName, Map<String, T> newPropsByName, Map<String, InputDefinition> newInputsByName) {
         List<MergePropertyData> mergeData = new ArrayList<>();
         newPropsByName.forEach((name, prop) -> {
             if (oldPropsByName.containsKey(name)) {
@@ -44,7 +38,7 @@ public class PropertyInstanceMergeDataBuilder {
         return mergeData;
     }
 
-    private MergePropertyData buildMergePropertyData(PropertyDataDefinition oldProp,
+    private static MergePropertyData buildMergePropertyData(PropertyDataDefinition oldProp,
                                                     Map<String, InputDefinition> oldInputsByName,
                                                     PropertyDataDefinition newProp,
                                                     Map<String, InputDefinition> newInputsByName) {
@@ -58,18 +52,18 @@ public class PropertyInstanceMergeDataBuilder {
         return mergePropertyData;
     }
 
-    private void setGetInputData(PropertyDataDefinition oldProp, Map<String, InputDefinition> oldInputsByName, Map<String, InputDefinition> newInputsByName, MergePropertyData mergePropertyData) {
+    private static void setGetInputData(PropertyDataDefinition oldProp, Map<String, InputDefinition> oldInputsByName, Map<String, InputDefinition> newInputsByName, MergePropertyData mergePropertyData) {
         List<String> oldDeclaredByUserInputNames = getOldDeclaredInputsByUser(oldProp.getGetInputValues(), oldInputsByName);
         List<String> oldGetInputNamesWhichExistInNewVersion = getOldGetInputNamesWhichExistInNewVersion(oldProp.getGetInputValues(), newInputsByName);
         mergePropertyData.addAddGetInputNamesToMerge(oldDeclaredByUserInputNames);
         mergePropertyData.addAddGetInputNamesToMerge(oldGetInputNamesWhichExistInNewVersion);
     }
 
-    private List<String> getOldGetInputNamesWhichExistInNewVersion(List<GetInputValueDataDefinition> getInputValues, Map<String, InputDefinition> newInputsByName) {
+    private static List<String> getOldGetInputNamesWhichExistInNewVersion(List<GetInputValueDataDefinition> getInputValues, Map<String, InputDefinition> newInputsByName) {
         return getInputValues.stream().map(GetInputValueDataDefinition::getInputName).filter(newInputsByName::containsKey).collect(Collectors.toList());
     }
 
-    private List<String> getOldDeclaredInputsByUser(List<GetInputValueDataDefinition> getInputValues, Map<String, InputDefinition> oldInputsByName) {
+    private static List<String> getOldDeclaredInputsByUser(List<GetInputValueDataDefinition> getInputValues, Map<String, InputDefinition> oldInputsByName) {
         return getInputValues.stream().map(GetInputValueDataDefinition::getInputName)
                                       .map(oldInputsByName::get)
                                       .filter(oldInput -> oldInput.getInstanceUniqueId() != null)

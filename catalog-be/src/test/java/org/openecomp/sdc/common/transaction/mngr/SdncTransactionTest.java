@@ -34,28 +34,22 @@ import org.openecomp.sdc.be.resources.data.ESArtifactData;
 import org.openecomp.sdc.common.api.ConfigurationSource;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;
 import org.openecomp.sdc.common.impl.FSConfigurationSource;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.common.transaction.api.IDBAction;
 import org.openecomp.sdc.common.transaction.api.RollbackHandler;
 import org.openecomp.sdc.common.transaction.api.TransactionUtils;
-import org.openecomp.sdc.common.transaction.api.TransactionUtils.ActionTypeEnum;
-import org.openecomp.sdc.common.transaction.api.TransactionUtils.DBActionCodeEnum;
-import org.openecomp.sdc.common.transaction.api.TransactionUtils.DBTypeEnum;
-import org.openecomp.sdc.common.transaction.api.TransactionUtils.ESActionTypeEnum;
-import org.openecomp.sdc.common.transaction.api.TransactionUtils.LogMessages;
-import org.openecomp.sdc.common.transaction.api.TransactionUtils.TransactionCodeEnum;
-import org.openecomp.sdc.common.transaction.api.TransactionUtils.TransactionStatusEnum;
-import org.slf4j.Logger;
+import org.openecomp.sdc.common.transaction.api.TransactionUtils.*;
 
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.when;
 
 public class SdncTransactionTest {
     private static ESCatalogDAO esCatalogDao = Mockito.mock(ESCatalogDAO.class);
     private static TitanGenericDao titanGenericDao = Mockito.mock(TitanGenericDao.class);
-    private static final Logger log = Mockito.spy(Logger.class);
+    private static final Logger log = Mockito.spy(Logger.getLogger(SdncTransactionTest.class));
     private static int transactionId = 0;
     private static ConfigurationManager configurationManager;
 
@@ -90,7 +84,7 @@ public class SdncTransactionTest {
         TransactionSdncImpl tx = new TransactionSdncImpl(transactionId, TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT, esCatalogDao, titanGenericDao);
 
         doBasicTitanAction(transactionId, tx, false, true);
-        assertTrue(tx.getStatus() == TransactionStatusEnum.OPEN);
+        assertSame(tx.getStatus(), TransactionStatusEnum.OPEN);
     }
 
     @Test
@@ -99,7 +93,7 @@ public class SdncTransactionTest {
         TransactionSdncImpl tx = new TransactionSdncImpl(transactionId, TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT, esCatalogDao, titanGenericDao);
 
         doESAddArtifactAction(transactionId, tx, true, true);
-        assertTrue(tx.getStatus() == TransactionStatusEnum.OPEN);
+        assertSame(tx.getStatus(), TransactionStatusEnum.OPEN);
     }
 
     @Test
@@ -107,7 +101,7 @@ public class SdncTransactionTest {
         int transactionId = getNextTransactionId();
         TransactionSdncImpl tx = new TransactionSdncImpl(transactionId, TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT, esCatalogDao, titanGenericDao);
         doFinishTransaction(transactionId, tx, true);
-        assertTrue(tx.getStatus() == TransactionStatusEnum.CLOSED);
+        assertSame(tx.getStatus(), TransactionStatusEnum.CLOSED);
     }
 
     @Test
@@ -117,9 +111,9 @@ public class SdncTransactionTest {
         doFinishTransaction(transactionId, tx, true);
 
         TransactionCodeEnum finishTransaction = tx.finishTransaction();
-        assertTrue(finishTransaction == TransactionCodeEnum.TRANSACTION_CLOSED);
+        assertSame(finishTransaction, TransactionCodeEnum.TRANSACTION_CLOSED);
         verify(log).info(TransactionUtils.TRANSACTION_MARKER, LogMessages.COMMIT_ON_CLOSED_TRANSACTION, transactionId, TransactionStatusEnum.CLOSED.name(), TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT.name());
-        assertTrue(tx.getStatus() == TransactionStatusEnum.CLOSED);
+        assertSame(tx.getStatus(), TransactionStatusEnum.CLOSED);
 
     }
 
@@ -130,7 +124,7 @@ public class SdncTransactionTest {
         doBasicTitanAction(transactionId, tx, true, true);
         Either<TestResponse, TransactionCodeEnum> doBasicTitanAction = doBasicTitanAction(transactionId, tx, true, false);
         assertTrue(doBasicTitanAction.isRight());
-        assertTrue(tx.getStatus() != TransactionStatusEnum.OPEN);
+        assertNotSame(tx.getStatus(), TransactionStatusEnum.OPEN);
         verify(log).info(TransactionUtils.TRANSACTION_MARKER, LogMessages.DOUBLE_FINISH_FLAG_ACTION, transactionId, DBTypeEnum.TITAN.name(), TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT.name());
     }
 
@@ -142,18 +136,18 @@ public class SdncTransactionTest {
 
         Either<DBActionCodeEnum, TransactionCodeEnum> eitherESResult = tx.invokeESAction(false, ESActionTypeEnum.ADD_ARTIFACT, createDummyArtifactData());
         assertTrue(eitherESResult.isRight());
-        assertTrue(eitherESResult.right().value() == TransactionCodeEnum.TRANSACTION_CLOSED);
+        assertSame(eitherESResult.right().value(), TransactionCodeEnum.TRANSACTION_CLOSED);
 
         Either<Object, TransactionCodeEnum> eitherTitanResult = tx.invokeTitanAction(false, createBasicAction(TestAction.TitanAction, TestResponse.TitanResponseSuccess));
         assertTrue(eitherTitanResult.isRight());
-        assertTrue(eitherTitanResult.right().value() == TransactionCodeEnum.TRANSACTION_CLOSED);
+        assertSame(eitherTitanResult.right().value(), TransactionCodeEnum.TRANSACTION_CLOSED);
 
         Either<Object, TransactionCodeEnum> eitherGeneralDBAction = tx.invokeGeneralDBAction(true, DBTypeEnum.TITAN, createBasicAction(TestAction.TitanAction, TestResponse.TitanResponseSuccess),
                 createBasicAction(TestAction.Rollback, TestResponse.TitanResponseSuccess));
         assertTrue(eitherGeneralDBAction.isRight());
-        assertTrue(eitherGeneralDBAction.right().value() == TransactionCodeEnum.TRANSACTION_CLOSED);
+        assertSame(eitherGeneralDBAction.right().value(), TransactionCodeEnum.TRANSACTION_CLOSED);
 
-        assertTrue(tx.getStatus() == TransactionStatusEnum.CLOSED);
+        assertSame(tx.getStatus(), TransactionStatusEnum.CLOSED);
         verify(log, times(3)).info(TransactionUtils.TRANSACTION_MARKER, LogMessages.ACTION_ON_CLOSED_TRANSACTION, transactionId, TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT.name());
 
     }
@@ -164,14 +158,14 @@ public class SdncTransactionTest {
         TransactionSdncImpl tx = new TransactionSdncImpl(transactionId, TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT, esCatalogDao, titanGenericDao);
 
         doBasicTitanAction(transactionId, tx, false, true);
-        assertTrue(tx.getStatus() == TransactionStatusEnum.OPEN);
+        assertSame(tx.getStatus(), TransactionStatusEnum.OPEN);
 
         doESAddArtifactAction(transactionId, tx, true, true);
-        assertTrue(tx.getStatus() == TransactionStatusEnum.OPEN);
+        assertSame(tx.getStatus(), TransactionStatusEnum.OPEN);
 
         doFinishTransaction(transactionId, tx, true);
 
-        assertTrue(tx.getStatus() == TransactionStatusEnum.CLOSED);
+        assertSame(tx.getStatus(), TransactionStatusEnum.CLOSED);
 
     }
 
@@ -186,8 +180,8 @@ public class SdncTransactionTest {
         Either<TestResponse, TransactionCodeEnum> eitherTransactionResult = tx.invokeTitanAction(false, createCrushingAction(TestAction.TitanAction, crushMessage));
 
         assertTrue(eitherTransactionResult.isRight());
-        assertTrue(eitherTransactionResult.right().value() == TransactionCodeEnum.ROLLBACK_SUCCESS);
-        assertTrue(tx.getStatus() == TransactionStatusEnum.CLOSED);
+        assertSame(eitherTransactionResult.right().value(), TransactionCodeEnum.ROLLBACK_SUCCESS);
+        assertSame(tx.getStatus(), TransactionStatusEnum.CLOSED);
         verify(log).info(TransactionUtils.TRANSACTION_MARKER, LogMessages.DB_ACTION_FAILED_WITH_EXCEPTION, DBTypeEnum.TITAN.name(), transactionId, crushMessage, TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT.name());
 
         verify(log, times(1)).debug(LogMessages.ROLLBACK_PERSISTENT_ACTION, DBTypeEnum.ELASTIC_SEARCH.name(), transactionId, TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT.name());
@@ -212,8 +206,8 @@ public class SdncTransactionTest {
         Either<TestResponse, TransactionCodeEnum> eitherTransactionResult = tx.invokeTitanAction(false, createCrushingAction(TestAction.TitanAction, crushMessage));
 
         assertTrue(eitherTransactionResult.isRight());
-        assertTrue(tx.getStatus() == TransactionStatusEnum.FAILED_ROLLBACK);
-        assertTrue(eitherTransactionResult.right().value() == TransactionCodeEnum.ROLLBACK_FAILED);
+        assertSame(tx.getStatus(), TransactionStatusEnum.FAILED_ROLLBACK);
+        assertSame(eitherTransactionResult.right().value(), TransactionCodeEnum.ROLLBACK_FAILED);
         verify(log).info(TransactionUtils.TRANSACTION_MARKER, LogMessages.DB_ACTION_FAILED_WITH_EXCEPTION, DBTypeEnum.TITAN.name(), transactionId, crushMessage, TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT.name());
 
         verify(log, times(1)).debug(LogMessages.ROLLBACK_PERSISTENT_ACTION, DBTypeEnum.ELASTIC_SEARCH.name(), transactionId, TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT.name());
@@ -234,8 +228,8 @@ public class SdncTransactionTest {
         when(titanGenericDao.rollback()).thenReturn(TitanOperationStatus.OK);
         // finishTransaction
         TransactionCodeEnum transactionCode = tx.finishTransaction();
-        assertTrue(transactionCode == TransactionCodeEnum.ROLLBACK_SUCCESS);
-        assertTrue(tx.getStatus() == TransactionStatusEnum.CLOSED);
+        assertSame(transactionCode, TransactionCodeEnum.ROLLBACK_SUCCESS);
+        assertSame(tx.getStatus(), TransactionStatusEnum.CLOSED);
 
         verify(log, times(1)).debug(LogMessages.ROLLBACK_PERSISTENT_ACTION, DBTypeEnum.ELASTIC_SEARCH.name(), transactionId, TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT.name());
         verify(log, times(1)).debug(TransactionUtils.TRANSACTION_MARKER, LogMessages.ROLLBACK_PERSISTENT_ACTION, DBTypeEnum.ELASTIC_SEARCH.name(), transactionId, TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT.name());
@@ -260,8 +254,8 @@ public class SdncTransactionTest {
         Mockito.doThrow(new RuntimeException(esError)).when(esCatalogDao).deleteArtifact(Mockito.anyString());
         // finishTransaction
         TransactionCodeEnum transactionCode = tx.finishTransaction();
-        assertTrue(transactionCode == TransactionCodeEnum.ROLLBACK_FAILED);
-        assertTrue(tx.getStatus() == TransactionStatusEnum.FAILED_ROLLBACK);
+        assertSame(transactionCode, TransactionCodeEnum.ROLLBACK_FAILED);
+        assertSame(tx.getStatus(), TransactionStatusEnum.FAILED_ROLLBACK);
 
         verify(log, times(1)).debug(LogMessages.ROLLBACK_PERSISTENT_ACTION, DBTypeEnum.ELASTIC_SEARCH.name(), transactionId, TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT.name());
         verify(log, times(1)).debug(TransactionUtils.TRANSACTION_MARKER, LogMessages.ROLLBACK_PERSISTENT_ACTION, DBTypeEnum.ELASTIC_SEARCH.name(), transactionId, TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT.name());
@@ -282,13 +276,13 @@ public class SdncTransactionTest {
 
         Either<TestResponse, TransactionCodeEnum> eitherResult = tx.invokeGeneralDBAction(false, DBTypeEnum.MYSTERY, generalAction, rollbackAction);
         assertTrue(eitherResult.isLeft());
-        assertTrue(eitherResult.left().value() == TestResponse.GeneralSuccess);
-        assertTrue(tx.getStatus() == TransactionStatusEnum.OPEN);
+        assertSame(eitherResult.left().value(), TestResponse.GeneralSuccess);
+        assertSame(tx.getStatus(), TransactionStatusEnum.OPEN);
         eitherResult = tx.invokeGeneralDBAction(false, DBTypeEnum.MYSTERY, crushingAction, rollbackAction);
 
         assertTrue(eitherResult.isRight());
-        assertTrue(eitherResult.right().value() == TransactionCodeEnum.ROLLBACK_SUCCESS);
-        assertTrue(tx.getStatus() == TransactionStatusEnum.CLOSED);
+        assertSame(eitherResult.right().value(), TransactionCodeEnum.ROLLBACK_SUCCESS);
+        assertSame(tx.getStatus(), TransactionStatusEnum.CLOSED);
 
         verify(log).info(TransactionUtils.TRANSACTION_MARKER, LogMessages.DB_ACTION_FAILED_WITH_EXCEPTION, DBTypeEnum.MYSTERY.name(), transactionId, crushMessage, TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT.name());
 
@@ -306,7 +300,7 @@ public class SdncTransactionTest {
         if (isVerifyAction) {
             // Check Titan Action
             assertTrue(eitherTitanResult.isLeft());
-            assertTrue(eitherTitanResult.left().value() == TestResponse.TitanResponseSuccess);
+            assertSame(eitherTitanResult.left().value(), TestResponse.TitanResponseSuccess);
             verify(log).debug(TestAction.TitanAction.name());
             verify(log).debug(LogMessages.INVOKE_ACTION, transactionId, DBTypeEnum.TITAN.name(), TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT.name());
             verifyNoErrorsInLog();
@@ -324,7 +318,7 @@ public class SdncTransactionTest {
             // Check finishTransaction
             verify(log).debug(LogMessages.COMMIT_ACTION_ALL_DB, transactionId, TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT.name());
             verify(log).debug(LogMessages.COMMIT_ACTION_SPECIFIC_DB, transactionId, DBTypeEnum.TITAN.name(), TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT.name());
-            assertTrue(transactionCode == TransactionCodeEnum.SUCCESS);
+            assertSame(transactionCode, TransactionCodeEnum.SUCCESS);
         }
         return transactionCode;
     }
@@ -340,7 +334,7 @@ public class SdncTransactionTest {
         if (isVerifyAction) {
             // Check Titan Action
             assertTrue(eitherEsAction.isLeft());
-            assertTrue(eitherEsAction.left().value() == DBActionCodeEnum.SUCCESS);
+            assertSame(eitherEsAction.left().value(), DBActionCodeEnum.SUCCESS);
             verify(log).debug(LogMessages.INVOKE_ACTION, transactionId, DBTypeEnum.ELASTIC_SEARCH.name(), TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT.name());
             verifyNoErrorsInLog();
             verifyNoInfoInLog();
@@ -349,8 +343,7 @@ public class SdncTransactionTest {
 
     private ESArtifactData createDummyArtifactData() {
         String strData = "qweqwqweqw34e4wrwer";
-        ESArtifactData arData = new ESArtifactData("artifactNewMarina11", strData.getBytes());
-        return arData;
+        return new ESArtifactData("artifactNewMarina11", strData.getBytes());
     }
 
     private void verifyNoErrorsInLog() {

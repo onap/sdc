@@ -36,6 +36,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.openecomp.sdc.be.MockGenerator;
 import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic.ArtifactOperationEnum;
 import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic.ArtifactOperationInfo;
 import org.openecomp.sdc.be.components.utils.ArtifactBuilder;
@@ -54,29 +55,13 @@ import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.info.ArtifactTemplateInfo;
-import org.openecomp.sdc.be.model.ArtifactDefinition;
-import org.openecomp.sdc.be.model.ArtifactType;
-import org.openecomp.sdc.be.model.Component;
-import org.openecomp.sdc.be.model.ComponentInstance;
-import org.openecomp.sdc.be.model.DataTypeDefinition;
-import org.openecomp.sdc.be.model.GroupDefinition;
-import org.openecomp.sdc.be.model.GroupInstance;
-import org.openecomp.sdc.be.model.HeatParameterDefinition;
-import org.openecomp.sdc.be.model.InterfaceDefinition;
-import org.openecomp.sdc.be.model.LifecycleStateEnum;
+import org.openecomp.sdc.be.model.*;
 import org.openecomp.sdc.be.model.Operation;
-import org.openecomp.sdc.be.model.Resource;
-import org.openecomp.sdc.be.model.Service;
-import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.cache.ApplicationDataTypeCache;
 import org.openecomp.sdc.be.model.jsontitan.operations.ArtifactsOperations;
 import org.openecomp.sdc.be.model.jsontitan.operations.NodeTemplateOperation;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
-import org.openecomp.sdc.be.model.operations.api.IElementOperation;
-import org.openecomp.sdc.be.model.operations.api.IGraphLockOperation;
-import org.openecomp.sdc.be.model.operations.api.IInterfaceLifecycleOperation;
-import org.openecomp.sdc.be.model.operations.api.IUserAdminOperation;
-import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
+import org.openecomp.sdc.be.model.operations.api.*;
 import org.openecomp.sdc.be.model.operations.impl.ArtifactOperation;
 import org.openecomp.sdc.be.resources.data.ESArtifactData;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
@@ -86,29 +71,23 @@ import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
 import org.openecomp.sdc.common.api.ArtifactTypeEnum;
 import org.openecomp.sdc.common.api.ConfigurationSource;
-import org.openecomp.sdc.common.datastructure.AuditingFieldsKeysEnum;
+import org.openecomp.sdc.common.datastructure.Wrapper;
 import org.openecomp.sdc.common.datastructure.Wrapper;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;
 import org.openecomp.sdc.common.impl.FSConfigurationSource;
 import org.openecomp.sdc.exception.ResponseFormat;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+
+import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic.HEAT_ENV_NAME;
 import static org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic.HEAT_VF_ENV_NAME;
 
@@ -171,7 +150,7 @@ public class ArtifactsBusinessLogicTest {
 	private Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
 	private static List<ArtifactType> getAllTypes() {
-		List<ArtifactType> artifactTypes = new ArrayList<ArtifactType>();
+		List<ArtifactType> artifactTypes = new ArrayList<>();
 		List<String> artifactTypesList = ConfigurationManager.getConfigurationManager().getConfiguration()
 				.getArtifactTypes();
 		for (String artifactType : artifactTypesList) {
@@ -219,10 +198,9 @@ public class ArtifactsBusinessLogicTest {
 		// createResource
 		resourceResponse = createResourceObject(true);
 		Either<Resource, StorageOperationStatus> eitherCreate = Either.left(resourceResponse);
-		Either<Integer, StorageOperationStatus> eitherValidate = Either.left(null);
 		when(toscaOperationFacade.createToscaComponent(any(Resource.class))).thenReturn(eitherCreate);
-		when(toscaOperationFacade.validateCsarUuidUniqueness(Mockito.anyString())).thenReturn(eitherValidate);
-		Map<String, DataTypeDefinition> emptyDataTypes = new HashMap<String, DataTypeDefinition>();
+		when(toscaOperationFacade.validateCsarUuidUniqueness(Mockito.anyString())).thenReturn(StorageOperationStatus.OK);
+		Map<String, DataTypeDefinition> emptyDataTypes = new HashMap<>();
 		when(applicationDataTypeCache.getAll()).thenReturn(Either.left(emptyDataTypes));
 		when(mockTitanDao.commit()).thenReturn(TitanOperationStatus.OK);
 
@@ -420,6 +398,7 @@ public class ArtifactsBusinessLogicTest {
 				.addHeatParam(ObjectGenerator.buildHeatParam("defVal2", "val2")).build();
 
 		Resource component = new Resource();
+		component.setComponentType(ComponentTypeEnum.RESOURCE);
 		when(userBusinessLogic.getUser(anyString(), anyBoolean())).thenReturn(Either.left(USER));
 		when(artifactsOperations.addHeatEnvArtifact(any(ArtifactDefinition.class), any(ArtifactDefinition.class),
 				eq(component.getUniqueId()), eq(NodeTypeEnum.Resource), eq(true), eq("parentId")))
@@ -544,6 +523,7 @@ public class ArtifactsBusinessLogicTest {
 	public void testCheckArtifactInComponent() throws Exception {
 		ArtifactsBusinessLogic testSubject;
 		Component component = new Resource();
+		component.setComponentType(ComponentTypeEnum.RESOURCE);
 		String artifactId = "";
 		boolean result;
 
@@ -707,7 +687,7 @@ public class ArtifactsBusinessLogicTest {
 		// default test
 		testSubject = createTestSubject();
 		result = Deencapsulation.invoke(testSubject, "updateGroupForHeat", new Object[] { artifactInfo,
-				artifactInfo, component, componentType });
+				artifactInfo, component,componentType});
 	}
 
 	
@@ -723,7 +703,7 @@ public class ArtifactsBusinessLogicTest {
 		testSubject = createTestSubject();
 		result = Deencapsulation.invoke(testSubject, "updateGroupForHeat",
 				new Object[] { artifactInfo, artifactInfo, artifactInfo,
-						artifactInfo, component, componentType });
+						artifactInfo, component,componentType});
 	}
 
 
@@ -744,29 +724,11 @@ public class ArtifactsBusinessLogicTest {
 
 		// test 1
 		testSubject = createTestSubject();
+		testSubject.setComponentsUtils(MockGenerator.mockComponentUtils());
 		testSubject.handleAuditing(auditingActionEnum, component, componentId, user, artifactDefinition,
 				prevArtifactUuid, currentArtifactUuid, responseFormat, componentTypeEnum, resourceInstanceName);
 	}
 
-	@Test
-	public void testCreateArtifactAuditingFields() throws Exception {
-		ArtifactsBusinessLogic testSubject;
-		ArtifactDefinition artifactDefinition = null;
-		String prevArtifactUuid = "";
-		String currentArtifactUuid = "";
-		Map<AuditingFieldsKeysEnum, Object> result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.createArtifactAuditingFields(artifactDefinition, prevArtifactUuid, currentArtifactUuid);
-	}
-
-
-
-	
-
-
-	
 	@Test
 	public void testIgnoreUnupdateableFieldsInUpdate() throws Exception {
 		ArtifactsBusinessLogic testSubject;
@@ -1119,7 +1081,6 @@ public class ArtifactsBusinessLogicTest {
 				new Object[] { artifactInfo, artifactInfo });
 	}
 
-	
 	@Test
 	public void testValidateAndSetArtifactname() throws Exception {
 		ArtifactsBusinessLogic testSubject;
@@ -1132,7 +1093,6 @@ public class ArtifactsBusinessLogicTest {
 				new Object[] { artifactInfo });
 	}
 
-	
 	@Test
 	public void testValidateArtifactTypeNotChanged() throws Exception {
 		ArtifactsBusinessLogic testSubject;
@@ -1394,8 +1354,9 @@ public class ArtifactsBusinessLogicTest {
 		testSubject = createTestSubject();
 		prevUUID = "";
 		result = Deencapsulation.invoke(testSubject, "updateArtifactOnGroupInstance",
-				new Object[] { componentType, component, instanceId, prevUUID, artifactInfo,
+				new Object[] {componentType, component, instanceId, prevUUID, artifactInfo,
 						artifactInfo });
+		
 	}
 
 	
@@ -1541,28 +1502,6 @@ public class ArtifactsBusinessLogicTest {
 		testSubject = createTestSubject();
 		result = testSubject.handleArtifactsRequestForInnerVfcComponent(artifactsToHandle, component, user,
 				vfcsNewCreatedArtifacts, operation, shouldLock, inTransaction);
-	}
-
-	
-
-	
-
-	
-
-
-	
-
-	
-	@Test
-	public void testUpdateAuditParametersWithArtifactDefinition() throws Exception {
-	ArtifactsBusinessLogic testSubject;
-	Map<AuditingFieldsKeysEnum,Object> additionalParams = new HashMap<>();
-	ArtifactDefinition artifactInfo = buildArtifactPayload();;;
-	
-	
-	// test 1
-	testSubject=createTestSubject();
-	Deencapsulation.invoke(testSubject, "updateAuditParametersWithArtifactDefinition", new Object[]{additionalParams, artifactInfo});
 	}
 
 	

@@ -20,27 +20,24 @@
 
 package org.openecomp.sdc.common.transaction.mngr;
 
-import java.util.Queue;
-import java.util.concurrent.atomic.AtomicInteger;
-
-import javax.annotation.Resource;
-
+import com.google.common.collect.EvictingQueue;
+import com.google.common.collect.Queues;
 import org.openecomp.sdc.be.dao.impl.ESCatalogDAO;
 import org.openecomp.sdc.be.dao.titan.TitanGenericDao;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.common.transaction.api.ITransactionSdnc;
 import org.openecomp.sdc.common.transaction.api.TransactionUtils;
 import org.openecomp.sdc.common.transaction.api.TransactionUtils.ActionTypeEnum;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import com.google.common.collect.EvictingQueue;
-import com.google.common.collect.Queues;
+import javax.annotation.Resource;
+import java.util.Queue;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Component("transactionManager")
 public class TransactionManager {
 
-    private static final Logger log = LoggerFactory.getLogger(TransactionManager.class);
+    private static final Logger log = Logger.getLogger(TransactionManager.class.getName());
 
     private AtomicInteger transactionIDCounter = new AtomicInteger(0);
 

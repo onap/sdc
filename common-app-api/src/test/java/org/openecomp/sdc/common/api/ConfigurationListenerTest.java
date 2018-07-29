@@ -1,7 +1,5 @@
 package org.openecomp.sdc.common.api;
 
-import javax.annotation.Generated;
-
 import org.junit.Test;
 
 public class ConfigurationListenerTest {

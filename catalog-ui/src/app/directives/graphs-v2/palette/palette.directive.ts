@@ -27,9 +27,10 @@ import {LeftPaletteLoaderService} from "../../../services/components/utils/compo
 import {Resource} from "app/models/components/resource";
 import {ComponentType} from "app/utils/constants";
 import {LeftPaletteMetadataTypes} from "../../../models/components/displayComponent";
+import { IDirectiveLinkFn, IScope } from "angular";
 
 
-interface IPaletteScope {
+interface IPaletteScope extends IScope{
     components:Array<LeftPaletteComponent>;
     currentComponent:Component;
     model:any;
@@ -88,7 +89,8 @@ export class Palette implements ng.IDirective {
     restrict = 'E';
     template = require('./palette.html');
 
-    link = (scope:IPaletteScope, el:JQuery) => {
+    link:IDirectiveLinkFn = (scope:IPaletteScope, el:JQuery) => {
+        this.LeftPaletteLoaderService.loadLeftPanel(scope.currentComponent);
         this.nodeHtmlSubstitute = $('<div class="node-substitute"><span></span><img /></div>');
         el.append(this.nodeHtmlSubstitute);
         this.registerEventListenerForLeftPalette(scope);
@@ -277,7 +279,7 @@ export class Palette implements ng.IDirective {
                     let filteredResources = [];
                     angular.forEach(subcategory, function (component:LeftPaletteComponent) {
 
-                        let resourceFilterTerm:string = component.searchFilterTerms;
+                        let resourceFilterTerm:string = component.searchFilterTerms.toLowerCase();
                         if (resourceFilterTerm.indexOf(searchText.toLowerCase()) >= 0) {
                             filteredResources.push(component);
                         }

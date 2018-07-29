@@ -41,6 +41,7 @@ export class DynamicPropertyComponent {
     propPath: string;
     isPropertyFEModel: boolean;
     nestedLevel: number;
+    propertyTestsId: string;
 
     @Input() canBeDeclared: boolean;
     @Input() property: PropertyFEModel | DerivedFEProperty;
@@ -50,6 +51,7 @@ export class DynamicPropertyComponent {
     @Input() readonly: boolean;
     @Input() hasChildren: boolean;
     @Input() hasDeclareOption:boolean;
+    @Input() rootProperty: PropertyFEModel;
 
     @Output('propertyChanged') emitter: EventEmitter<void> = new EventEmitter<void>();
     @Output() expandChild: EventEmitter<string> = new EventEmitter<string>();
@@ -69,6 +71,8 @@ export class DynamicPropertyComponent {
         this.propType = this.property.derivedDataType;
         this.propPath = (this.property instanceof PropertyFEModel) ? this.property.name : this.property.propertiesName;
         this.nestedLevel = (this.property.propertiesName.match(/#/g) || []).length;
+        this.rootProperty = (this.rootProperty) ? this.rootProperty : <PropertyFEModel>this.property;
+        this.propertyTestsId = this.getPropertyTestsId();
     }
 
     ngDoCheck() {
@@ -104,6 +108,10 @@ export class DynamicPropertyComponent {
             return _.startsWith(prop.propertiesName + '#', property.propertiesName);
         }).length > 1;
     }
+
+    getPropertyTestsId = () => {
+        return [this.rootProperty.name].concat(this.rootProperty.getParentNamesArray(this.property.propertiesName, [], true)).join('.');
+    };
 
     onElementChanged = (event: IUiElementChangeEvent) => {
         this.property.updateValueObj(event.value, event.isValid);

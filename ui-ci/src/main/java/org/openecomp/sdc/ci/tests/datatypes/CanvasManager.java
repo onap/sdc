@@ -22,12 +22,16 @@ package org.openecomp.sdc.ci.tests.datatypes;
 
 import com.aventstack.extentreports.Status;
 import com.clearspring.analytics.util.Pair;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum.LeftPanelCanvasItems;
 import org.openecomp.sdc.ci.tests.datatypes.enums.CircleSize;
 import org.openecomp.sdc.ci.tests.execute.setup.ExtentTestActions;
 import org.openecomp.sdc.ci.tests.execute.setup.SetupCDTest;
 import org.openecomp.sdc.ci.tests.pages.CompositionPage;
+import org.openecomp.sdc.ci.tests.pages.PropertiesAssignmentPage;
+import org.openecomp.sdc.ci.tests.pages.PropertyNameBuilder;
 import org.openecomp.sdc.ci.tests.utilities.GeneralUIUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.StaleElementReferenceException;
@@ -79,6 +83,22 @@ public final class CanvasManager {
 	}
 
 	private void addCanvasElement(CanvasElement element) {
+		String prefix = element.getElementType();
+		List<CanvasElement> canvasElementsFromSameTemplate = new ArrayList<>();
+		
+		// collect all elements from from same template
+		for(CanvasElement currElement:canvasElements.values()){
+			if(currElement.getElementNameOnCanvas().toLowerCase().startsWith(prefix.toLowerCase())){
+				canvasElementsFromSameTemplate.add(currElement);
+			}
+		}
+		
+		// match element name to actual name on canvas
+		if( canvasElementsFromSameTemplate.size() > 0){
+			String newName = prefix + " " + canvasElementsFromSameTemplate.size();
+			element.setElementNameOnCanvas(newName);
+		}
+		
 		canvasElements.put(element.getUniqueId(), element);
 	}
 
@@ -116,10 +136,13 @@ public final class CanvasManager {
 	}
 
 	public void clickOnCanvaElement(CanvasElement canvasElement) {
-		actions.moveToElement(canvas, canvasElement.getLocation().left, canvasElement.getLocation().right);
+//		actions.moveToElement(canvas, canvasElement.getLocation().left, canvasElement.getLocation().right);
+		ImmutablePair<Integer, Integer> coordinates = getElementCoordinates(canvasElement.getElementNameOnCanvas());
+		actions.moveToElement(canvas, coordinates.left, coordinates.right);
 		actions.clickAndHold();
 		actions.release();
 		actions.perform();
+		GeneralUIUtils.ultimateWait();
 		actions.click().perform();
 		GeneralUIUtils.ultimateWait();
 
@@ -136,24 +159,52 @@ public final class CanvasManager {
 		clickOnCanvasPosition(x,y);
 		GeneralUIUtils.ultimateWait();
 	}
+	
+	public void openLinkPopupReqsCapsConnection(CanvasElement sourceElement, CanvasElement destElement)
+	{
+		ExtentTestActions.log(Status.INFO, "Open Link popup");
+		ImmutablePair<Integer, Integer> sourceCoordinates = getElementCoordinates(sourceElement.getElementNameOnCanvas());
+		ImmutablePair<Integer, Integer> destCoordinates = getElementCoordinates(destElement.getElementNameOnCanvas());
+		ImmutablePair<Integer, Integer> linkPosition = calcMidOfLink(sourceCoordinates, destCoordinates);
+		
+		clickOnCanvasPosition(linkPosition.left, linkPosition.right); // click on link
+		int x = linkPosition.left + 30;
+		int y = linkPosition.right + 11;
+		clickOnCanvasPosition(x,y); // click on view popup
+		GeneralUIUtils.ultimateWait();
+	}
+	
 	public void closeLinkPopupReqsCapsConnection()
 	{
 		GeneralUIUtils.clickOnElementByTestId("Cancel");
-		GeneralUIUtils.ultimateWait();
+//		GeneralUIUtils.ultimateWait();
 	}
 
 	public void clickSaveOnLinkPopup()
 	{
 		ExtentTestActions.log(Status.INFO, "Click save on link popup");
 		GeneralUIUtils.clickOnElementByTestId("Save");
-		GeneralUIUtils.ultimateWait();
+//		GeneralUIUtils.ultimateWait();
 	}
 
 	public void deleteLinkPopupReqsCapsConnection(CanvasElement canvasElement)
 	{
+		ExtentTestActions.log(Status.INFO, "Delete Link ");
 		clickOnCanvasLink(canvasElement);
 		int x = canvasElement.getLocation().getLeft() + 30; // delete button x delta
 		int y = canvasElement.getLocation().getRight() + 30; // delete button x delta
+		clickOnCanvasPosition(x,y);
+	}
+	
+	public void deleteLinkPopupReqsCapsConnection(CanvasElement sourceElement, CanvasElement destElement)
+	{
+		ExtentTestActions.log(Status.INFO, "Delete Link ");
+		ImmutablePair<Integer, Integer> sourceCoordinates = getElementCoordinates(sourceElement.getElementNameOnCanvas());
+		ImmutablePair<Integer, Integer> destCoordinates = getElementCoordinates(destElement.getElementNameOnCanvas());
+		ImmutablePair<Integer, Integer> linkPosition = calcMidOfLink(sourceCoordinates, destCoordinates);
+		clickOnCanvasPosition(linkPosition.left, linkPosition.right); // click on link
+		int x = linkPosition.left + 30; // delete button x delta
+		int y = linkPosition.right + 30; // delete button y delta
 		clickOnCanvasPosition(x,y);
 	}
 
@@ -186,16 +237,20 @@ public final class CanvasManager {
 		actions.moveToElement(canvas, canvasElement.getLocation().left, canvasElement.getLocation().right);
 		actions.click();
 		actions.perform();
+		ExtentTestActions.log(Status.INFO, String.format("Removing canvas element %s ", canvasElement.getElementType()));
 		GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.GeneralCanvasItems.DELETE_INSTANCE_BUTTON.getValue())
 				.click();
-		GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.ModalItems.OK.getValue()).click();
+		GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.ModalItems.DELETE_INSTANCE_CANCEL.getValue()).click();
+		GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.GeneralCanvasItems.DELETE_INSTANCE_BUTTON.getValue())
+				.click();
+		GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.ModalItems.DELETE_INSTANCE_OK.getValue()).click();
 		canvasElements.remove(canvasElement.getUniqueId());
 		GeneralUIUtils.ultimateWait();
 		if (canvasElement.getElementType().contains("-")){
-			ExtentTestActions.log(Status.INFO, String.format("Canvas element %s removed", canvasElement.getElementType().split("-")[4]));
+			ExtentTestActions.log(Status.INFO, String.format("Canvas element %s is removed", canvasElement.getElementType().split("-")[4]));
 		}
 		else{
-			ExtentTestActions.log(Status.INFO, String.format("Canvas element %s removed", canvasElement.getElementType()));
+			ExtentTestActions.log(Status.INFO, String.format("Canvas element %s is removed", canvasElement.getElementType()));
 		}
 	}
 
@@ -280,15 +335,37 @@ public final class CanvasManager {
 	// Will work only if 2 elements are big sized (VF size), if one of the elements is Small use the function linkElements
 	public void linkElements(CanvasElement firstElement, CanvasElement secondElement) throws Exception {
 		ExtentTestActions.log(Status.INFO, String.format("Linking between the %s instance and the %s instance.", firstElement.getElementType(), secondElement.getElementType()));
-		drawSimpleLink(firstElement, secondElement);
+		drawSimpleLink(firstElement.getElementNameOnCanvas(), secondElement.getElementNameOnCanvas());
 		selectReqAndCapAndConnect();
 		ExtentTestActions.log(Status.INFO, String.format("The instances %s and %s should now be connected.", firstElement.getElementType(), secondElement.getElementType()));
 	}
-
+    
+	// old version, depricated
 	public void linkElements(CanvasElement firstElement, CircleSize firstElementSize, CanvasElement secondElement, CircleSize secondElementSize) throws Exception {
 		drawSimpleLink(firstElement,firstElementSize, secondElement,secondElementSize);
 		selectReqAndCapAndConnect();
 		ExtentTestActions.log(Status.INFO, String.format("The instances %s and %s should now be connected.", firstElement.getElementType(), secondElement.getElementType()));
+	}
+	
+	public void linkElements(String firstElement, String secondElement) throws Exception {
+		drawSimpleLink(firstElement, secondElement);
+		selectReqAndCapAndConnect();
+		ExtentTestActions.log(Status.INFO, String.format("The instances %s and %s should now be connected.", firstElement, secondElement));
+	}
+    
+	// use JS to get coordinates of elements
+	private void drawSimpleLink(String firstElement, String secondElement) {
+		ImmutablePair<Integer, Integer> firstElementCoordinates = getGreenDotCoordinatesOfElement(firstElement);
+		ImmutablePair<Integer, Integer> secondElementCoordinates = getElementCoordinates(secondElement);
+		
+		actions.moveToElement(canvas, firstElementCoordinates.left, firstElementCoordinates.right);
+		actions.perform();
+		actions.moveToElement(canvas, firstElementCoordinates.left, firstElementCoordinates.right);
+		actions.clickAndHold();
+		actions.moveToElement(canvas, secondElementCoordinates.left, secondElementCoordinates.right);
+		actions.release();
+		actions.perform();
+		GeneralUIUtils.ultimateWait();
 	}
 
 	private void selectReqAndCapAndConnect() throws Exception {
@@ -348,6 +425,7 @@ public final class CanvasManager {
 
 		actions.moveToElement(canvas, secondElement.getLocation().left + xOffset, secondElement.getLocation().right - yOffset);
 		actions.release();
+		actions.build();
 		actions.perform();
 		GeneralUIUtils.ultimateWait();
 	}
@@ -373,13 +451,14 @@ public final class CanvasManager {
 	public String updateElementNameInCanvas(CanvasElement canvasElement, String newInstanceName) throws Exception {
 		GeneralUIUtils.ultimateWait();;
 		clickOnCanvaElement(canvasElement);
-		WebElement updateInstanceName = GeneralUIUtils.getWebElementBy(By.id("editPencil"));
-		updateInstanceName.click();
+		GeneralUIUtils.getWebElementBy(By.id("editPencil")).click();
+		GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.ModalItems.RENAME_INSTANCE_CANCEL.getValue()).click();
+		GeneralUIUtils.getWebElementBy(By.id("editPencil")).click();
 		WebElement instanceNameField = GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.GeneralCanvasItems.INSTANCE_NAME_FIELD.getValue());
 		String oldInstanceName = instanceNameField.getAttribute("value");
 		instanceNameField.clear();
 		instanceNameField.sendKeys(newInstanceName);
-		GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.ModalItems.OK.getValue()).click();
+		GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.ModalItems.RENAME_INSTANCE_OK.getValue()).click();
 		GeneralUIUtils.ultimateWait();
 		GeneralUIUtils.waitForElementInVisibilityByTestId(By.className("w-sdc-modal-resource-instance-name"));
 		SetupCDTest.getExtendTest().log(Status.INFO, String.format("Name of element instance changed from %s to %s", oldInstanceName, newInstanceName));
@@ -408,7 +487,7 @@ public final class CanvasManager {
 
 			sumOfWaiting += napPeriod;
 			if (sumOfWaiting > maxWait) {
-				throw new SkipException(String.format("Open bug 342260, can't select instance properly, waited for %s seconds", (int) (maxWait/1000)));
+				throw new SkipException(String.format("Bug 342260, can't select instance properly, waited for %s seconds after click on instance", (int) (maxWait/1000)));
 			}
 		} while (!isInstanceSelected);
 	}
@@ -447,15 +526,80 @@ public final class CanvasManager {
         GeneralUIUtils.selectByValueTextContained(dataTestId, reqCapType);
 	}
 
-	public void linkElementsAndSelectCapReqTypeAndCapReqName(CanvasElement firstElement, CircleSize firstElementSize, CanvasElement secondElement, CircleSize secondElementSize, ConnectionWizardPopUpObject connectionWizardPopUpObject) throws Exception {
-		SetupCDTest.getExtendTest().log(Status.INFO, String.format("Creating link between %s and %s", firstElement.getElementType(), secondElement.getElementType()));
-		drawSimpleLink(firstElement, firstElementSize, secondElement, secondElementSize);
+	public void linkElementsAndSelectCapReqTypeAndCapReqName(CanvasElement firstElement, CanvasElement secondElement, ConnectionWizardPopUpObject connectionWizardPopUpObject) throws Exception {
+        SetupCDTest.getExtendTest().log(Status.INFO, String.format("Creating link between %s and %s", firstElement.getElementType(), secondElement.getElementType()));
+//		drawSimpleLink(firstElement, firstElementSize, secondElement, secondElementSize);
+        drawSimpleLink(firstElement.getElementNameOnCanvas(), secondElement.getElementNameOnCanvas());
         selectTypeOfReqCap(DataTestIdEnum.LinkMenuItems.REQ_CAP_SELECT_DATA_TESTS_ID.getValue(),connectionWizardPopUpObject.getCapabilityTypeSecondItem());
-		addFirstReqOrCapAndPressNext();
-		selectReqCapByName(connectionWizardPopUpObject.getCapabilityNameSecondItem());
-		linkMenuClickOnNextButton();
+        addFirstReqOrCapAndPressNext();
+        selectReqCapByName(connectionWizardPopUpObject.getCapabilityNameSecondItem());
+        linkMenuClickOnNextButton();
         linkMenuClickOnFinishButton();
     }
+
+    public Map<String, String> linkElementsWithCapPropAssignment(CanvasElement firstElement, CanvasElement secondElement, ConnectionWizardPopUpObject connectionWizardPopUpObject) throws Exception {
+        SetupCDTest.getExtendTest().log(Status.INFO, String.format("Creating link between %s and %s", firstElement.getElementType(), secondElement.getElementType()));
+        drawSimpleLink(firstElement.getElementNameOnCanvas(), secondElement.getElementNameOnCanvas());
+        selectTypeOfReqCap(DataTestIdEnum.LinkMenuItems.REQ_CAP_SELECT_DATA_TESTS_ID.getValue(),connectionWizardPopUpObject.getCapabilityTypeSecondItem());
+        addFirstReqOrCapAndPressNext();
+        selectReqCapByName(connectionWizardPopUpObject.getCapabilityNameSecondItem());
+        linkMenuClickOnNextButton();
+        Map<String, String> mapOfValues = connectionWizardAssignCapPropValues();
+        linkMenuClickOnFinishButton();
+        Thread.sleep(5000);
+		return mapOfValues;
+    }
+
+
+
+    public Map<String, String> connectionWizardAssignCapPropValues() throws Exception{
+		//get list of capability property value fields data-tests-ids in connection wizard
+		List<String> valueField = getListOfValueFieldIDs();
+        //get map of field ids and their values, fill in values if empty
+		Map<String, String> propValues = getMapOfCapPropValues(valueField, true);
+        return propValues;
+    }
+
+    public Map<String, String> connectionWizardCollectCapPropValues() throws Exception{
+        //get list of capability property value fields data-tests-ids in connection wizard
+        List<String> valueField = getListOfValueFieldIDs();
+        //get map of field ids and their values, collect existing values
+        Map<String, String> propValues = getMapOfCapPropValues(valueField, false);
+        return propValues;
+    }
+
+	private List<String> getListOfValueFieldIDs() {
+		String propName = GeneralUIUtils.getWebElementsListByContainsClassName("multiline-ellipsis-content").get(0).getText();
+		List<WebElement> valueNameElement = GeneralUIUtils.findElementsByXpath("//div[@class='dynamic-property-row nested-level-1']/div[1]");
+		List<String> valueName = new ArrayList<>();
+		for(int i=0; i < valueNameElement.size(); i++){
+			valueName.add(valueNameElement.get(i).getText());
+		}
+		//get list of value field names as appear in data-tests-id
+		List<String> valueField = new ArrayList<>();
+		for(int i=0; i < valueName.size(); i++){
+			valueField.add(PropertyNameBuilder.buildIComplexField(propName, valueName.get(i)));
+		}
+		return valueField;
+	}
+
+	private Map<String, String> getMapOfCapPropValues(List<String> valueField, boolean isValueAssign) throws Exception {
+        SetupCDTest.getExtendTest().log(Status.INFO, String.format("Assigning values to properties of capabilities and/or collecting existing ones"));
+		Map<String, String> propValues = new HashMap<>();
+		for(int i=0; i < valueField.size(); i++){
+            String fieldId = valueField.get(i);
+            if(GeneralUIUtils.getWebElementByTestID(fieldId).getAttribute("value").isEmpty() && isValueAssign) {
+                //add value and put into map
+                propValues.put(fieldId, "value" + i);
+                PropertiesAssignmentPage.editPropertyValue(fieldId, "value" + i);
+            } else {
+                //put existing value into map
+                propValues.put(fieldId, GeneralUIUtils.getWebElementByTestID(valueField.get(i)).getAttribute("value"));
+            }
+        }
+		return propValues;
+	}
+
 
 	public ImmutablePair<Integer, Integer> calcMidOfLink(ImmutablePair<Integer, Integer> location1, ImmutablePair<Integer, Integer> location2)
 	{
@@ -464,5 +608,22 @@ public final class CanvasManager {
 
 		ImmutablePair<Integer, Integer> location = new ImmutablePair<>(x,y);
 		return location;
+	}
+	
+	public ImmutablePair<Integer, Integer> getElementCoordinates(String elementName){
+		Object position = GeneralUIUtils.getElementPositionOnCanvas(elementName);
+		return converJSJsonToCoordinates(position);
+	}
+	
+	public ImmutablePair<Integer, Integer> getGreenDotCoordinatesOfElement(String elementName){
+		Object position = GeneralUIUtils.getElementGreenDotPositionOnCanvas(elementName);
+		return converJSJsonToCoordinates(position);
+	}
+
+	public ImmutablePair<Integer, Integer> converJSJsonToCoordinates(Object position) {
+		JsonElement root  = new JsonParser().parse(position.toString());
+		int xElement = root.getAsJsonObject().get("x").getAsInt();
+		int yElement = root.getAsJsonObject().get("y").getAsInt();
+		return new ImmutablePair<Integer, Integer>(xElement, yElement);
 	}
 }

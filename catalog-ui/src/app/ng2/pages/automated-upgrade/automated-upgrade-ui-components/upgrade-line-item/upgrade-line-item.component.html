@@ -1,0 +1,6 @@
+<div class="upgrade-line-item">
+    <svg-icon *ngIf="arrowName" name="{{arrowName}}" size="medium" mode="secondary"></svg-icon>
+    <div *ngIf="icon" class="line-item-icon small sprite-services-icons {{icon}}"></div>
+    <span *ngIf="prefix" class="line-item-prefix">{{prefix}}</span>
+    <span class="line-item-text">{{text}}</span>
+</div>

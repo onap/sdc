@@ -20,15 +20,14 @@
 
 package org.openecomp.sdc.common.transaction.mngr;
 
-import org.openecomp.sdc.common.transaction.api.RollbackHandler;
-import org.openecomp.sdc.common.transaction.api.TransactionUtils.DBActionCodeEnum;
-import org.openecomp.sdc.common.transaction.api.TransactionUtils.DBTypeEnum;
-import org.openecomp.sdc.common.util.MethodActivationStatusEnum;
-
 import fj.P;
 import fj.data.Either;
 import fj.data.HashMap;
 import fj.data.List;
+import org.openecomp.sdc.common.transaction.api.RollbackHandler;
+import org.openecomp.sdc.common.transaction.api.TransactionUtils.DBActionCodeEnum;
+import org.openecomp.sdc.common.transaction.api.TransactionUtils.DBTypeEnum;
+import org.openecomp.sdc.common.util.MethodActivationStatusEnum;
 
 public class RollbackManager {
     private final HashMap<DBTypeEnum, RollbackHandler> rollbackHandlersMap;

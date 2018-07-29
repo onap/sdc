@@ -20,11 +20,10 @@
 
 package org.openecomp.sdc.be.dao.api;
 
-import java.util.List;
-
+import fj.data.Either;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphElement;
 
-import fj.data.Either;
+import java.util.List;
 
 public interface IElementDAO {
 

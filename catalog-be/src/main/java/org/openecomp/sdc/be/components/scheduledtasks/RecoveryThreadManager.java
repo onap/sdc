@@ -20,20 +20,8 @@
 
 package org.openecomp.sdc.be.components.scheduledtasks;
 
-import static org.apache.commons.collections.CollectionUtils.isEmpty;
-import static org.openecomp.sdc.common.datastructure.FunctionalInterfaces.convertToFunction;
-
-import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
-
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import javax.annotation.Resource;
-
+import com.google.common.annotations.VisibleForTesting;
+import fj.data.Either;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.lang3.concurrent.BasicThreadFactory;
 import org.openecomp.sdc.be.components.distribution.engine.EnvironmentsEngine;
@@ -44,19 +32,27 @@ import org.openecomp.sdc.be.dao.cassandra.OperationalEnvironmentDao;
 import org.openecomp.sdc.be.datatypes.enums.EnvironmentStatusEnum;
 import org.openecomp.sdc.be.resources.data.OperationalEnvironmentEntry;
 import org.openecomp.sdc.common.datastructure.Wrapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.google.common.annotations.VisibleForTesting;
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import javax.annotation.Resource;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
-import fj.data.Either;
+import static org.apache.commons.collections.CollectionUtils.isEmpty;
+import static org.openecomp.sdc.common.datastructure.FunctionalInterfaces.convertToFunction;
 
 @Component("recoveryThreadManager")
 public class RecoveryThreadManager extends AbstractScheduleTaskRunner {
 
-    private static final Logger log = LoggerFactory.getLogger(RecoveryThreadManager.class);
+    private static final Logger log = Logger.getLogger(RecoveryThreadManager.class);
     @VisibleForTesting
     FixEnvironmentTask task = new FixEnvironmentTask();
 

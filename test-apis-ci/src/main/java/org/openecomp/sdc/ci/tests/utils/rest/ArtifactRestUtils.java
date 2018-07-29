@@ -20,23 +20,12 @@
 
 package org.openecomp.sdc.ci.tests.utils.rest;
 
-import static org.testng.AssertJUnit.assertNotNull;
-import static org.testng.AssertJUnit.assertTrue;
-
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import com.google.gson.Gson;
 import org.apache.commons.codec.binary.Base64;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
-import org.openecomp.sdc.be.model.ArtifactDefinition;
-import org.openecomp.sdc.be.model.Component;
-import org.openecomp.sdc.be.model.ComponentInstance;
-import org.openecomp.sdc.be.model.Resource;
-import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.*;
 import org.openecomp.sdc.ci.tests.api.Urls;
 import org.openecomp.sdc.ci.tests.config.Config;
 import org.openecomp.sdc.ci.tests.datatypes.ArtifactReqDetails;
@@ -55,7 +44,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.AssertJUnit;
 
-import com.google.gson.Gson;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static org.testng.AssertJUnit.assertNotNull;
+import static org.testng.AssertJUnit.assertTrue;
 
 public class ArtifactRestUtils extends BaseRestUtils {
 	private static Logger logger = LoggerFactory.getLogger(ArtifactRestUtils.class.getName());
@@ -344,10 +339,10 @@ public class ArtifactRestUtils extends BaseRestUtils {
 	
 	
 	
-	public static RestResponse downloadResourceInstanceArtifact(String serviceUniqueId,String resourceInstanceId, User user, String artifactUniqeId) throws Exception
+	public static RestResponse downloadResourceInstanceArtifact(String serviceUniqueId,String resourceInstanceId, User user, String artifactUniqueId) throws Exception
 	{
 		Config config = Utils.getConfig();
-		String url = String.format(Urls.DOWNLOAD_COMPONENT_INSTANCE_ARTIFACT, config.getCatalogBeHost(),config.getCatalogBePort(), serviceUniqueId, resourceInstanceId, artifactUniqeId);
+		String url = String.format(Urls.DOWNLOAD_COMPONENT_INSTANCE_ARTIFACT, config.getCatalogBeHost(),config.getCatalogBePort(), serviceUniqueId, resourceInstanceId, artifactUniqueId);
 		RestResponse res =  sendGet(url, user.getUserId(), null);
 		return res;
 	}
@@ -903,6 +898,20 @@ public class ArtifactRestUtils extends BaseRestUtils {
 		String encodeBase64Str = new String(encodeBase64);
 		return encodeBase64Str;
 
+	}
+
+
+	/**
+	 * @param restResponse restResponse object
+	 * @return readable content(converted from base64)
+	 * @throws IOException ioexception
+	 */
+	public static String getDecodedArtifactPayloadFromResponse(RestResponse restResponse) throws IOException {
+		Gson gson = new Gson();
+		Map<String, String> fromJson = gson.fromJson(restResponse.getResponse(), Map.class);
+		String payloadData = fromJson.get("base64Contents").toString();
+		String decodedPaypload = org.openecomp.sdc.ci.tests.utils.Decoder.decode(payloadData);
+		return decodedPaypload;
 	}
 
 

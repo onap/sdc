@@ -20,14 +20,8 @@
 
 package org.openecomp.sdc.be.components.impl;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-
+import fj.data.Either;
+import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datamodel.api.CategoryTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
@@ -39,30 +33,29 @@ import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
 import org.openecomp.sdc.be.model.category.GroupingDefinition;
 import org.openecomp.sdc.be.model.category.SubCategoryDefinition;
-import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.ICacheMangerOperation;
-import org.openecomp.sdc.be.model.operations.api.IElementOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
 import org.openecomp.sdc.be.model.operations.utils.ComponentValidationUtils;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.ui.model.UiComponentDataTransfer;
 import org.openecomp.sdc.be.user.Role;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.common.util.ValidationUtils;
 import org.openecomp.sdc.exception.ResponseFormat;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import fj.data.Either;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @org.springframework.stereotype.Component("productBusinessLogic")
 public class ProductBusinessLogic extends ComponentBusinessLogic {
 
     private static final String PRODUCT_FULL_NAME = "full";
     private static final String PRODUCT_ABBREVIATED_NAME = "abbreviated";
-    private static final Logger log = LoggerFactory.getLogger(ProductBusinessLogic.class);
+    private static final Logger log = Logger.getLogger(ProductBusinessLogic.class);
     private static final String INITIAL_VERSION = "0.1";
+    private static final String CREATE_PRODUCT = "Create Product";
     private static List<Role> creationRoles;
     private static List<Role> updateRoles;
     private static List<Role> contactsRoles;
@@ -80,16 +73,10 @@ public class ProductBusinessLogic extends ComponentBusinessLogic {
     }
 
     @Autowired
-    private IElementOperation elementDao;
-
-    @Autowired
     private ComponentInstanceBusinessLogic componentInstanceBusinessLogic;
 
     @Autowired
     private ICacheMangerOperation cacheManagerOperation;
-
-    @Autowired
-    ToscaOperationFacade toscaOperationFacade;
 
     public Either<Product, ResponseFormat> createProduct(Product product, User user) {
         AuditingActionEnum actionEnum = AuditingActionEnum.CREATE_RESOURCE;
@@ -98,17 +85,9 @@ public class ProductBusinessLogic extends ComponentBusinessLogic {
         // validate user - should be first to get the maximum auditing info in
         // case of subsequent failures
         log.debug("get user from DB");
-        Either<User, ResponseFormat> eitherCreator = validateUser(user, "Create Product", product, actionEnum, false);
-        if (eitherCreator.isRight()) {
-            return Either.right(eitherCreator.right().value());
-        }
-        user = eitherCreator.left().value();
-
+        user = validateUser(user, CREATE_PRODUCT, product, actionEnum, false);
         // validate user role
-        Either<Boolean, ResponseFormat> validateRes = validateUserRole(user, product, creationRoles, actionEnum, null);
-        if (validateRes.isRight()) {
-            return Either.right(validateRes.right().value());
-        }
+        validateUserRole(user, product, creationRoles, actionEnum, null);
 
         if (product == null) {
             log.debug("Invalid product json. Check product servlet log for createProduct entry params");
@@ -127,7 +106,7 @@ public class ProductBusinessLogic extends ComponentBusinessLogic {
 
         log.debug("send product {} to dao for create", product.getComponentMetadataDefinition().getMetadataDataDefinition().getName());
 
-        Either<Boolean, ResponseFormat> lockResult = lockComponentByName(product.getSystemName(), product, "Create Product");
+        Either<Boolean, ResponseFormat> lockResult = lockComponentByName(product.getSystemName(), product, CREATE_PRODUCT);
         if (lockResult.isRight()) {
             ResponseFormat responseFormat = lockResult.right().value();
             componentsUtils.auditComponentAdmin(responseFormat, user, product, actionEnum, ComponentTypeEnum.PRODUCT);
@@ -218,10 +197,7 @@ public class ProductBusinessLogic extends ComponentBusinessLogic {
             return tagsValidation;
         }
 
-        Either<Boolean, ResponseFormat> validateIconResponse = validateIcon(user, product, actionEnum);
-        if (validateIconResponse.isRight()) {
-            return validateIconResponse;
-        }
+        validateIcon(user, product, actionEnum);
 
         Either<Boolean, ResponseFormat> projectCodeValidation = validateProjectCode(user, product, actionEnum);
         if (projectCodeValidation.isRight()) {
@@ -242,21 +218,14 @@ public class ProductBusinessLogic extends ComponentBusinessLogic {
             return productFullNameValidation;
         }
 
-        Either<Boolean, ResponseFormat> descValidation = validateDescriptionAndCleanup(user, product, actionEnum);
-        if (descValidation.isRight()) {
-            return descValidation;
-        }
+        validateDescriptionAndCleanup(user, product, actionEnum);
 
         return Either.left(true);
     }
 
     public Either<Map<String, Boolean>, ResponseFormat> validateProductNameExists(String productName, String userId) {
 
-        Either<User, ResponseFormat> resp = validateUserExists(userId, "validate Product Name Exists", false);
-        if (resp.isRight()) {
-            return Either.right(resp.right().value());
-        }
-
+        validateUserExists(userId, "validate Product Name Exists", false);
         Either<Boolean, StorageOperationStatus> dataModelResponse = toscaOperationFacade.validateComponentNameUniqueness(productName, null, ComponentTypeEnum.PRODUCT);
         // DE242223
         titanDao.commit();
@@ -298,26 +267,16 @@ public class ProductBusinessLogic extends ComponentBusinessLogic {
                 return Either.right(responseFormat);
             }
 
-            User contactUser = new User();
-            contactUser.setUserId(contact);
-            Either<User, ResponseFormat> validateUser = validateUserExists(contact, "Create Product", false);
-            if (validateUser.isRight()) {
-                log.debug("Cannot set contact with userId {} as product contact, error: {}", contact, validateUser.right().value());
+            User contactUser;
+            try{
+                contactUser = validateUserExists(contact, CREATE_PRODUCT, false);
+                validateUserRole(contactUser, contactsRoles);
+            } catch(ComponentException e){
+                log.debug("Cannot set contact with userId {} as product contact, error: {}", contact, e.getActionStatus());
                 ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.INVALID_PRODUCT_CONTACT, contact);
                 componentsUtils.auditComponentAdmin(responseFormat, user, product, actionEnum, ComponentTypeEnum.PRODUCT);
-                return Either.right(responseFormat);
+                throw new ComponentException(e.getActionStatus(), e.getParams());
             }
-
-            contactUser = validateUser.left().value();
-
-            Either<Boolean, ResponseFormat> validateUserRole = validateUserRole(contactUser, contactsRoles);
-            if (validateUserRole.isRight()) {
-                log.debug("Cannot set contact with userId {} as product contact, error: {}", contact, validateUserRole.right().value());
-                ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.INVALID_PRODUCT_CONTACT, contact);
-                componentsUtils.auditComponentAdmin(responseFormat, user, product, actionEnum, ComponentTypeEnum.PRODUCT);
-                return Either.right(responseFormat);
-            }
-
         }
 
         if (!isProductCreatorInContacts) {
@@ -326,7 +285,9 @@ public class ProductBusinessLogic extends ComponentBusinessLogic {
         }
 
         // passed - setting all contacts userIds to lowercase
-        List<String> tempContacts = contacts.stream().map(e -> e.toLowerCase()).collect(Collectors.toList());
+        List<String> tempContacts = contacts.stream()
+                .map(String::toLowerCase)
+                .collect(Collectors.toList());
         ValidationUtils.removeDuplicateFromList(tempContacts);
         product.setContacts(tempContacts);
 
@@ -339,11 +300,11 @@ public class ProductBusinessLogic extends ComponentBusinessLogic {
             log.debug("Grouping list is empty for product: {}", product.getName());
             return Either.left(true);
         }
-        Map<String, Map<String, Set<String>>> nonDuplicatedCategories = new HashMap<String, Map<String, Set<String>>>();
+        Map<String, Map<String, Set<String>>> nonDuplicatedCategories = new HashMap<>();
         // remove duplicated entries
         for (CategoryDefinition cat : categories) {
             String catName = cat.getName();
-            if (ValidationUtils.validateStringNotEmpty(catName) == false) {
+            if (!ValidationUtils.validateStringNotEmpty(catName)) {
                 // error missing cat name
                 log.debug("Missing category name for product: {}", product.getName());
                 ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.COMPONENT_MISSING_CATEGORY, ComponentTypeEnum.PRODUCT.getValue());
@@ -352,7 +313,7 @@ public class ProductBusinessLogic extends ComponentBusinessLogic {
             }
             Map<String, Set<String>> catEntry = nonDuplicatedCategories.get(catName);
             if (catEntry == null) {
-                catEntry = new HashMap<String, Set<String>>();
+                catEntry = new HashMap<>();
                 nonDuplicatedCategories.put(catName, catEntry);
             }
             List<SubCategoryDefinition> subcategories = cat.getSubcategories();
@@ -365,7 +326,7 @@ public class ProductBusinessLogic extends ComponentBusinessLogic {
             }
             for (SubCategoryDefinition subcat : subcategories) {
                 String subCatName = subcat.getName();
-                if (ValidationUtils.validateStringNotEmpty(subCatName) == false) {
+                if (!ValidationUtils.validateStringNotEmpty(subCatName)) {
                     // error missing sub cat name for cat
                     log.debug("Missing or empty sub-category for category {} in product {}", catName, product.getName());
                     ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.COMPONENT_MISSING_SUBCATEGORY);
@@ -374,13 +335,13 @@ public class ProductBusinessLogic extends ComponentBusinessLogic {
                 }
                 Set<String> subcatEntry = catEntry.get(subCatName);
                 if (subcatEntry == null) {
-                    subcatEntry = new HashSet<String>();
+                    subcatEntry = new HashSet<>();
                     catEntry.put(subCatName, subcatEntry);
                 }
                 List<GroupingDefinition> groupings = subcat.getGroupings();
                 for (GroupingDefinition group : groupings) {
                     String groupName = group.getName();
-                    if (ValidationUtils.validateStringNotEmpty(groupName) == false) {
+                    if (!ValidationUtils.validateStringNotEmpty(groupName)) {
                         // error missing grouping for sub cat name and cat
                         log.debug("Missing or empty groupng name for sub-category: {} for categor: {} in product: {}", subCatName, catName, product.getName());
                         ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.COMPONENT_MISSING_SUBCATEGORY);
@@ -407,7 +368,7 @@ public class ProductBusinessLogic extends ComponentBusinessLogic {
         boolean catExist;
         // convert non-duplicated to data modeling format and update in the
         // input object
-        List<CategoryDefinition> newCatList = new ArrayList<CategoryDefinition>();
+        List<CategoryDefinition> newCatList = new ArrayList<>();
 
         // over all categories from request
         for (Map.Entry<String, Map<String, Set<String>>> entry : nonDuplicatedCategories.entrySet()) {
@@ -485,15 +446,8 @@ public class ProductBusinessLogic extends ComponentBusinessLogic {
 
     public Either<Product, ResponseFormat> getProduct(String productId, User user) {
         String ecompErrorContext = "Get product";
-        Either<User, ResponseFormat> validateEmptyResult = validateUserNotEmpty(user, ecompErrorContext);
-        if (validateEmptyResult.isRight()) {
-            return Either.right(validateEmptyResult.right().value());
-        }
-
-        Either<User, ResponseFormat> eitherCreator = validateUserExists(user, ecompErrorContext, false);
-        if (eitherCreator.isRight()) {
-            return Either.right(eitherCreator.right().value());
-        }
+        validateUserNotEmpty(user, ecompErrorContext);
+        validateUserExists(user, ecompErrorContext, false);
 
         Either<Product, StorageOperationStatus> storageStatus = toscaOperationFacade.getToscaElement(productId);
 
@@ -511,15 +465,8 @@ public class ProductBusinessLogic extends ComponentBusinessLogic {
 
     public Either<Product, ResponseFormat> deleteProduct(String productId, User user) {
         String ecompErrorContext = "Delete product";
-        Either<User, ResponseFormat> validateEmptyResult = validateUserNotEmpty(user, ecompErrorContext);
-        if (validateEmptyResult.isRight()) {
-            return Either.right(validateEmptyResult.right().value());
-        }
-
-        Either<User, ResponseFormat> eitherCreator = validateUserExists(user, ecompErrorContext, false);
-        if (eitherCreator.isRight()) {
-            return Either.right(eitherCreator.right().value());
-        }
+        validateUserNotEmpty(user, ecompErrorContext);
+        validateUserExists(user, ecompErrorContext, false);
 
         Either<Product, StorageOperationStatus> storageStatus = toscaOperationFacade.deleteToscaComponent(productId);
 
@@ -599,13 +546,7 @@ public class ProductBusinessLogic extends ComponentBusinessLogic {
     // normalizations.
     private Either<Boolean, ResponseFormat> validateTagsListAndRemoveDuplicates(User user, Product product, String oldProductName, AuditingActionEnum actionEnum) {
         List<String> tagsList = product.getTags();
-
-        Either<Boolean, ResponseFormat> validateTags = validateComponentTags(tagsList, oldProductName, ComponentTypeEnum.PRODUCT);
-        if (validateTags.isRight()) {
-            ResponseFormat responseFormat = validateTags.right().value();
-            componentsUtils.auditComponentAdmin(responseFormat, user, product, actionEnum, ComponentTypeEnum.PRODUCT);
-            return Either.right(responseFormat);
-        }
+        validateComponentTags(tagsList, oldProductName, ComponentTypeEnum.PRODUCT, user, product, actionEnum);
         ValidationUtils.removeDuplicateFromList(tagsList);
         return Either.left(true);
     }
@@ -617,18 +558,9 @@ public class ProductBusinessLogic extends ComponentBusinessLogic {
 
     public Either<Product, ResponseFormat> updateProductMetadata(String productId, Product updatedProduct, User user) {
         ComponentTypeEnum typeEnum = ComponentTypeEnum.PRODUCT;
-        Either<User, ResponseFormat> eitherCreator = validateUser(user, "Update Product", updatedProduct, null, false);
-        if (eitherCreator.isRight()) {
-            return Either.right(eitherCreator.right().value());
-        }
-        user = eitherCreator.left().value();
-
+        user = validateUser(user, "Update Product", updatedProduct, null, false);
         // validate user role
-        Either<Boolean, ResponseFormat> validateRes = validateUserRole(user, updatedProduct, updateRoles, null, null);
-        if (validateRes.isRight()) {
-            return Either.right(validateRes.right().value());
-        }
-
+        validateUserRole(user, updatedProduct, updateRoles, null, null);
         if (updatedProduct == null) {
             log.debug("Invalid product json. Check product servlet log for updateProduct entry params");
             ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.INVALID_CONTENT);
@@ -744,7 +676,7 @@ public class ProductBusinessLogic extends ComponentBusinessLogic {
 
     private Either<Boolean, ResponseFormat> validateAndUpdateProductName(User user, Product currentProduct, Product updatedProduct) {
         String updatedProductName = updatedProduct.getName();
-        String tags = "";
+        String tags;
         String currentProductName = currentProduct.getName();
         if (updatedProductName != null) {
             Either<Boolean, ResponseFormat> validatProductNameResponse = validateProductNameAndCleanup(user, updatedProduct, null);
@@ -789,15 +721,14 @@ public class ProductBusinessLogic extends ComponentBusinessLogic {
     }
 
     private Either<Boolean, ResponseFormat> validateAndUpdateCategory(User user, Product currentProduct, Product updatedProduct) {
-        List<CategoryDefinition> categoryUpdated = updatedProduct.getCategories();
 
-        Either<Boolean, ResponseFormat> validatCategoryResponse = validateGrouping(user, updatedProduct, null);
-        if (validatCategoryResponse.isRight()) {
-            ResponseFormat errorResponse = validatCategoryResponse.right().value();
+        Either<Boolean, ResponseFormat> validateCategoryResponse = validateGrouping(user, updatedProduct, null);
+        if (validateCategoryResponse.isRight()) {
+            ResponseFormat errorResponse = validateCategoryResponse.right().value();
             return Either.right(errorResponse);
         }
 
-        categoryUpdated = updatedProduct.getCategories();
+        List<CategoryDefinition> categoryUpdated = updatedProduct.getCategories();
         if (categoryUpdated != null) {
             currentProduct.setCategories(categoryUpdated);
         }
@@ -848,10 +779,7 @@ public class ProductBusinessLogic extends ComponentBusinessLogic {
     }
 
     public Either<Product, ResponseFormat> getProductByNameAndVersion(String productName, String productVersion, String userId) {
-        Either<User, ResponseFormat> resp = validateUserExists(userId, "get Service By Name And Version", false);
-        if (resp.isRight()) {
-            return Either.right(resp.right().value());
-        }
+        validateUserExists(userId, "get Service By Name And Version", false);
         Either<Product, StorageOperationStatus> storageStatus = toscaOperationFacade.getComponentByNameAndVersion(ComponentTypeEnum.PRODUCT, productName, productVersion);
         if (storageStatus.isRight()) {
             log.debug("failed to get service by name {} and version {}", productName, productVersion);
@@ -867,7 +795,7 @@ public class ProductBusinessLogic extends ComponentBusinessLogic {
     }
 
     @Override
-    public Either<List<ComponentInstance>, ResponseFormat> getComponentInstancesFilteredByPropertiesAndInputs(String componentId, ComponentTypeEnum componentTypeEnum, String userId, String searchText) {
+    public Either<List<ComponentInstance>, ResponseFormat> getComponentInstancesFilteredByPropertiesAndInputs(String componentId, String userId) {
         return null;
     }
 

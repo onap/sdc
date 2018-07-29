@@ -16,13 +16,12 @@
 
 package org.onap.sdc.activityspec.api.rest.mapping;
 
-import java.util.ArrayList;
-
 import org.onap.sdc.activityspec.api.rest.types.ActivitySpecRequestDto;
 import org.onap.sdc.activityspec.be.dao.types.ActivitySpecEntity;
 import org.onap.sdc.activityspec.be.datatypes.ActivitySpecParameter;
 import org.openecomp.sdcrests.mapping.MappingBase;
 
+import java.util.ArrayList;
 import java.util.Objects;
 import java.util.stream.Collectors;
 

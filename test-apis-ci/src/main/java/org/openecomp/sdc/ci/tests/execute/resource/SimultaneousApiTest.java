@@ -20,10 +20,6 @@
 
 package org.openecomp.sdc.ci.tests.execute.resource;
 
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
 import org.junit.Rule;
 import org.junit.rules.TestName;
 import org.openecomp.sdc.ci.tests.api.ComponentBaseTest;
@@ -34,6 +30,10 @@ import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
 import org.openecomp.sdc.ci.tests.utils.rest.ResourceRestUtils;
 import org.openecomp.sdc.ci.tests.utils.rest.ResponseParser;
 import org.testng.annotations.Test;
+
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class SimultaneousApiTest extends ComponentBaseTest {
 

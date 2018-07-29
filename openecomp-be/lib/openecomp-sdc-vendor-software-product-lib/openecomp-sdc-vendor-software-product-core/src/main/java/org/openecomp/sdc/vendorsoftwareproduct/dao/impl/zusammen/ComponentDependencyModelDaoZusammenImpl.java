@@ -20,9 +20,7 @@ import java.util.Collection;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static org.openecomp.core.zusammen.api.ZusammenUtil.buildElement;
-import static org.openecomp.core.zusammen.api.ZusammenUtil.buildStructuralElement;
-import static org.openecomp.core.zusammen.api.ZusammenUtil.createSessionContext;
+import static org.openecomp.core.zusammen.api.ZusammenUtil.*;
 
 /**
  * Created by ayalaben on 5/16/2017.

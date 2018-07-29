@@ -20,7 +20,25 @@
 
 package org.openecomp.sdc.ci.tests.execute.inputs;
 
-import static org.testng.AssertJUnit.assertTrue;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import fj.data.Either;
+import org.apache.commons.lang3.tuple.Pair;
+import org.junit.Rule;
+import org.junit.rules.TestName;
+import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
+import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
+import org.openecomp.sdc.be.model.*;
+import org.openecomp.sdc.ci.tests.api.ComponentBaseTest;
+import org.openecomp.sdc.ci.tests.datatypes.ServiceReqDetails;
+import org.openecomp.sdc.ci.tests.datatypes.enums.LifeCycleStatesEnum;
+import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
+import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
+import org.openecomp.sdc.ci.tests.utils.general.AtomicOperationUtils;
+import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
+import org.openecomp.sdc.ci.tests.utils.rest.*;
+import org.openecomp.sdc.ci.tests.utils.validation.BaseValidationUtils;
+import org.testng.annotations.Test;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -29,38 +47,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.tuple.Pair;
-import org.junit.Rule;
-import org.junit.rules.TestName;
-import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
-import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
-import org.openecomp.sdc.be.model.Component;
-import org.openecomp.sdc.be.model.ComponentInstInputsMap;
-import org.openecomp.sdc.be.model.ComponentInstance;
-import org.openecomp.sdc.be.model.ComponentInstancePropInput;
-import org.openecomp.sdc.be.model.InputDefinition;
-import org.openecomp.sdc.be.model.Resource;
-import org.openecomp.sdc.be.model.Service;
-import org.openecomp.sdc.be.model.User;
-import org.openecomp.sdc.ci.tests.api.ComponentBaseTest;
-import org.openecomp.sdc.ci.tests.datatypes.ServiceReqDetails;
-import org.openecomp.sdc.ci.tests.datatypes.enums.LifeCycleStatesEnum;
-import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
-import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
-import org.openecomp.sdc.ci.tests.utils.general.AtomicOperationUtils;
-import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
-import org.openecomp.sdc.ci.tests.utils.rest.BaseRestUtils;
-import org.openecomp.sdc.ci.tests.utils.rest.ComponentInstanceRestUtils;
-import org.openecomp.sdc.ci.tests.utils.rest.InputsRestUtils;
-import org.openecomp.sdc.ci.tests.utils.rest.ResponseParser;
-import org.openecomp.sdc.ci.tests.utils.rest.ServiceRestUtils;
-import org.openecomp.sdc.ci.tests.utils.validation.BaseValidationUtils;
-import org.testng.annotations.Test;
-
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
-import fj.data.Either;
+import static org.testng.AssertJUnit.assertTrue;
 
 /**
  * CI-Tests for inputs 
@@ -91,7 +78,7 @@ public class InputsApiTests extends ComponentBaseTest {
 	 */
 	@Test
 	public void testCreateResourceInstanceWithInputsFromCsar() throws Exception {
-		Resource vf = AtomicOperationUtils.importResourceFromCSAR(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, inputCsar1);
+		Resource vf = AtomicOperationUtils.importResourceFromCsar(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, inputCsar1);
 		assertTrue("Success creating VF from CSAR", !vf.getInputs().isEmpty());
 	}
 	
@@ -181,7 +168,7 @@ public class InputsApiTests extends ComponentBaseTest {
 		Service service = createDefaultServiceEither.left().value();
 		
 		// Create VF from CSAR file
-		Resource vfWithInputs = AtomicOperationUtils.importResourceFromCSAR(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, inputCsar2);
+		Resource vfWithInputs = AtomicOperationUtils.importResourceFromCsar(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, inputCsar2);
 
 		// Certify VF
 		Pair<Component, RestResponse> changeComponentState = AtomicOperationUtils.changeComponentState(vfWithInputs, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true);

@@ -20,17 +20,30 @@
 
 package org.openecomp.sdc.be.model;
 
+import com.thinkaurelius.titan.core.TitanGraph;
+import com.thinkaurelius.titan.core.TitanVertex;
+import fj.data.Either;
 import org.openecomp.sdc.be.config.Configuration;
 import org.openecomp.sdc.be.config.ConfigurationManager;
+import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
+import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
+import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
+import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
+import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
+import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.common.api.ConfigurationSource;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;
 import org.openecomp.sdc.common.impl.FSConfigurationSource;
 
+import java.util.Iterator;
+
 public class ModelTestBase {
 
-	protected static ConfigurationManager configurationManager;
+    protected static ConfigurationManager configurationManager;
+    protected static final String CONTAINER_ID = "containerId";
+    protected static final String CONTAINER_NAME = "containerName";
 
-	public static void init() {
+    public static void init() {
 		String appConfigDir = "src/test/resources/config";
 		ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(),
 				appConfigDir);
@@ -42,4 +55,34 @@ public class ModelTestBase {
 
 		configurationManager.setConfiguration(configuration);
 	}
+
+    protected void removeGraphVertices(Either<TitanGraph, TitanOperationStatus> graphResult) {
+        TitanGraph graph = graphResult.left().value();
+        Iterable<TitanVertex> vertices = graph.query().vertices();
+        if (vertices != null) {
+            Iterator<TitanVertex> iterator = vertices.iterator();
+            while (iterator.hasNext()) {
+                TitanVertex vertex = iterator.next();
+                vertex.remove();
+            }
+
+        }
+    }
+
+    protected PropertyDefinition createSimpleProperty(String defaultValue, String name, String type) {
+        PropertyDefinition prop1 = new PropertyDefinition();
+        prop1.setDefaultValue(defaultValue);
+        prop1.setName(name);
+        prop1.setType(type);
+        return prop1;
+    }
+
+    protected GraphVertex createBasicContainerGraphVertex() {
+        GraphVertex resource = new GraphVertex(VertexTypeEnum.TOPOLOGY_TEMPLATE);
+        resource.addMetadataProperty(GraphPropertyEnum.UNIQUE_ID, CONTAINER_ID);
+        resource.addMetadataProperty(GraphPropertyEnum.NAME, CONTAINER_NAME);
+        resource.setJsonMetadataField(JsonPresentationFields.NAME, CONTAINER_NAME);
+        resource.setJsonMetadataField(JsonPresentationFields.COMPONENT_TYPE, ComponentTypeEnum.RESOURCE.name());
+        return resource;
+    }
 }

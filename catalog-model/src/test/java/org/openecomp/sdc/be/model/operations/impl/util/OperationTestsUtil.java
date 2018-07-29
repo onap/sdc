@@ -20,6 +20,7 @@
 
 package org.openecomp.sdc.be.model.operations.impl.util;
 
+import fj.data.Either;
 import org.openecomp.sdc.be.dao.neo4j.GraphEdgeLabels;
 import org.openecomp.sdc.be.dao.titan.TitanGenericDao;
 import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
@@ -33,63 +34,61 @@ import org.openecomp.sdc.be.resources.data.category.CategoryData;
 import org.openecomp.sdc.be.resources.data.category.SubCategoryData;
 import org.openecomp.sdc.common.util.ValidationUtils;
 
-import fj.data.Either;
-
 public class OperationTestsUtil {
 
-	public static String deleteAndCreateServiceCategory(String category, TitanGenericDao titanDao) {
-		CategoryData categoryData = new CategoryData(NodeTypeEnum.ServiceNewCategory);
-		categoryData.getCategoryDataDefinition().setName(category);
-		categoryData.getCategoryDataDefinition()
-				.setNormalizedName(ValidationUtils.normalizeCategoryName4Uniqueness(category));
-		categoryData.getCategoryDataDefinition().setUniqueId(UniqueIdBuilder.buildCategoryUid(
-				ValidationUtils.normalizeCategoryName4Uniqueness(category), NodeTypeEnum.ServiceNewCategory));
-		titanDao.deleteNode(categoryData, CategoryData.class);
-		Either<CategoryData, TitanOperationStatus> createNode = titanDao.createNode(categoryData, CategoryData.class);
-		return (String) createNode.left().value().getUniqueId();
-	}
+    public static String deleteAndCreateServiceCategory(String category, TitanGenericDao titanDao) {
+        CategoryData categoryData = new CategoryData(NodeTypeEnum.ServiceNewCategory);
+        categoryData.getCategoryDataDefinition().setName(category);
+        categoryData.getCategoryDataDefinition()
+                .setNormalizedName(ValidationUtils.normalizeCategoryName4Uniqueness(category));
+        categoryData.getCategoryDataDefinition().setUniqueId(UniqueIdBuilder.buildCategoryUid(
+                ValidationUtils.normalizeCategoryName4Uniqueness(category), NodeTypeEnum.ServiceNewCategory));
+        titanDao.deleteNode(categoryData, CategoryData.class);
+        Either<CategoryData, TitanOperationStatus> createNode = titanDao.createNode(categoryData, CategoryData.class);
+        return (String) createNode.left().value().getUniqueId();
+    }
 
-	public static String deleteAndCreateResourceCategory(String category, String subcategory,
-			TitanGenericDao titanDao) {
+    public static String deleteAndCreateResourceCategory(String category, String subcategory,
+            TitanGenericDao titanDao) {
 
-		CategoryData categoryData = new CategoryData(NodeTypeEnum.ResourceNewCategory);
-		categoryData.getCategoryDataDefinition().setName(category);
-		categoryData.getCategoryDataDefinition()
-				.setNormalizedName(ValidationUtils.normalizeCategoryName4Uniqueness(category));
-		categoryData.getCategoryDataDefinition().setUniqueId(UniqueIdBuilder.buildCategoryUid(
-				ValidationUtils.normalizeCategoryName4Uniqueness(category), NodeTypeEnum.ResourceNewCategory));
+        CategoryData categoryData = new CategoryData(NodeTypeEnum.ResourceNewCategory);
+        categoryData.getCategoryDataDefinition().setName(category);
+        categoryData.getCategoryDataDefinition()
+                .setNormalizedName(ValidationUtils.normalizeCategoryName4Uniqueness(category));
+        categoryData.getCategoryDataDefinition().setUniqueId(UniqueIdBuilder.buildCategoryUid(
+                ValidationUtils.normalizeCategoryName4Uniqueness(category), NodeTypeEnum.ResourceNewCategory));
 
-		SubCategoryData subcategoryData = new SubCategoryData(NodeTypeEnum.ResourceSubcategory);
-		subcategoryData.getSubCategoryDataDefinition().setName(subcategory);
-		subcategoryData.getSubCategoryDataDefinition()
-				.setNormalizedName(ValidationUtils.normalizeCategoryName4Uniqueness(subcategory));
-		subcategoryData.getSubCategoryDataDefinition().setUniqueId(UniqueIdBuilder
-				.buildSubCategoryUid(categoryData.getCategoryDataDefinition().getUniqueId(), subcategory));
-		titanDao.deleteNode(categoryData, CategoryData.class);
-		titanDao.deleteNode(subcategoryData, SubCategoryData.class);
-		Either<CategoryData, TitanOperationStatus> createNode = titanDao.createNode(categoryData, CategoryData.class);
-		titanDao.createNode(subcategoryData, SubCategoryData.class);
-		titanDao.createRelation(categoryData, subcategoryData, GraphEdgeLabels.SUB_CATEGORY, null);
-		return (String) createNode.left().value().getUniqueId();
-	}
+        SubCategoryData subcategoryData = new SubCategoryData(NodeTypeEnum.ResourceSubcategory);
+        subcategoryData.getSubCategoryDataDefinition().setName(subcategory);
+        subcategoryData.getSubCategoryDataDefinition()
+                .setNormalizedName(ValidationUtils.normalizeCategoryName4Uniqueness(subcategory));
+        subcategoryData.getSubCategoryDataDefinition().setUniqueId(UniqueIdBuilder
+                .buildSubCategoryUid(categoryData.getCategoryDataDefinition().getUniqueId(), subcategory));
+        titanDao.deleteNode(categoryData, CategoryData.class);
+        titanDao.deleteNode(subcategoryData, SubCategoryData.class);
+        Either<CategoryData, TitanOperationStatus> createNode = titanDao.createNode(categoryData, CategoryData.class);
+        titanDao.createNode(subcategoryData, SubCategoryData.class);
+        titanDao.createRelation(categoryData, subcategoryData, GraphEdgeLabels.SUB_CATEGORY, null);
+        return (String) createNode.left().value().getUniqueId();
+    }
 
-	public static void deleteServiceCategory(String category, TitanGenericDao titanDao) {
-		ServiceCategoryData categoryData = new ServiceCategoryData(category);
-		titanDao.deleteNode(categoryData, ServiceCategoryData.class);
-	}
+    public static void deleteServiceCategory(String category, TitanGenericDao titanDao) {
+        ServiceCategoryData categoryData = new ServiceCategoryData(category);
+        titanDao.deleteNode(categoryData, ServiceCategoryData.class);
+    }
 
-	public static void deleteResourceCategory(String category, String subcategory, TitanGenericDao titanDao) {
-		ResourceCategoryData categoryData = new ResourceCategoryData(category, subcategory);
-		titanDao.deleteNode(categoryData, ResourceCategoryData.class);
-	}
+    public static void deleteResourceCategory(String category, String subcategory, TitanGenericDao titanDao) {
+        ResourceCategoryData categoryData = new ResourceCategoryData(category, subcategory);
+        titanDao.deleteNode(categoryData, ResourceCategoryData.class);
+    }
 
-	public static User convertUserDataToUser(UserData modifierData) {
-		User modifier = new User();
-		modifier.setUserId(modifierData.getUserId());
-		modifier.setEmail(modifierData.getEmail());
-		modifier.setFirstName(modifierData.getFirstName());
-		modifier.setLastName(modifierData.getLastName());
-		modifier.setRole(modifierData.getRole());
-		return modifier;
-	}
+    public static User convertUserDataToUser(UserData modifierData) {
+        User modifier = new User();
+        modifier.setUserId(modifierData.getUserId());
+        modifier.setEmail(modifierData.getEmail());
+        modifier.setFirstName(modifierData.getFirstName());
+        modifier.setLastName(modifierData.getLastName());
+        modifier.setRole(modifierData.getRole());
+        return modifier;
+    }
 }

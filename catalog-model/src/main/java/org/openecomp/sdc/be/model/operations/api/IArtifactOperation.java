@@ -20,25 +20,23 @@
 
 package org.openecomp.sdc.be.model.operations.api;
 
-import java.util.Map;
-
+import com.thinkaurelius.titan.core.TitanVertex;
+import fj.data.Either;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
 
-import com.thinkaurelius.titan.core.TitanVertex;
-
-import fj.data.Either;
+import java.util.Map;
 
 public interface IArtifactOperation {
 
-	public Either<ArtifactDefinition, StorageOperationStatus> addArifactToComponent(ArtifactDefinition artifactInfo, String id, NodeTypeEnum type, boolean failIfExist, boolean inTransaction);
+    public Either<ArtifactDefinition, StorageOperationStatus> addArifactToComponent(ArtifactDefinition artifactInfo, String id, NodeTypeEnum type, boolean failIfExist, boolean inTransaction);
 
-	public Either<ArtifactDefinition, StorageOperationStatus> updateArifactOnResource(ArtifactDefinition artifactInfo, String id, String artifactId, NodeTypeEnum type, boolean inTransaction);
+    public Either<ArtifactDefinition, StorageOperationStatus> updateArifactOnResource(ArtifactDefinition artifactInfo, String id, String artifactId, NodeTypeEnum type, boolean inTransaction);
 
-	public Either<ArtifactDefinition, StorageOperationStatus> removeArifactFromResource(String id, String artifactId, NodeTypeEnum resource, boolean deleteMandatoryArtifact, boolean inTransaction);
+    public Either<ArtifactDefinition, StorageOperationStatus> removeArifactFromResource(String id, String artifactId, NodeTypeEnum resource, boolean deleteMandatoryArtifact, boolean inTransaction);
 
-	public Either<Map<String, ArtifactDefinition>, StorageOperationStatus> getArtifacts(String parentId, NodeTypeEnum parentType, boolean inTransaction);
+    public Either<Map<String, ArtifactDefinition>, StorageOperationStatus> getArtifacts(String parentId, NodeTypeEnum parentType, boolean inTransaction);
 
-	public StorageOperationStatus addArifactToComponent(ArtifactDefinition artifactInfo, String parentId, NodeTypeEnum type, boolean failIfExist, TitanVertex parentVertex);
+    public StorageOperationStatus addArifactToComponent(ArtifactDefinition artifactInfo, String parentId, NodeTypeEnum type, boolean failIfExist, TitanVertex parentVertex);
 
 }

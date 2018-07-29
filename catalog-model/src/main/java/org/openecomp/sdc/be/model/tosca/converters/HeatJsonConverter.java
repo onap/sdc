@@ -20,34 +20,34 @@
 
 package org.openecomp.sdc.be.model.tosca.converters;
 
-import java.util.Map;
-
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.common.util.ValidationUtils;
 
+import java.util.Map;
+
 public class HeatJsonConverter implements PropertyValueConverter {
 
-	private static HeatJsonConverter jsonConverter = new HeatJsonConverter();
+    private static HeatJsonConverter jsonConverter = new HeatJsonConverter();
 
-	public static HeatJsonConverter getInstance() {
-		return jsonConverter;
-	}
+    public static HeatJsonConverter getInstance() {
+        return jsonConverter;
+    }
 
-	private HeatJsonConverter() {
+    private HeatJsonConverter() {
 
-	}
+    }
 
-	@Override
-	public String convert(String original, String innerType, Map<String, DataTypeDefinition> dataTypes) {
-		if (original == null) {
-			return null;
-		}
-		String converted = ValidationUtils.removeNoneUtf8Chars(original);
-		converted = ValidationUtils.removeHtmlTagsOnly(converted);
-		converted = ValidationUtils.normaliseWhitespace(converted);
-		converted = ValidationUtils.stripOctets(converted);
-		// As opposed to string converter, keeping the " and ' symbols
-		return converted;
-	}
+    @Override
+    public String convert(String original, String innerType, Map<String, DataTypeDefinition> dataTypes) {
+        if (original == null) {
+            return null;
+        }
+        String converted = ValidationUtils.removeNoneUtf8Chars(original);
+        converted = ValidationUtils.removeHtmlTagsOnly(converted);
+        converted = ValidationUtils.normaliseWhitespace(converted);
+        converted = ValidationUtils.stripOctets(converted);
+        // As opposed to string converter, keeping the " and ' symbols
+        return converted;
+    }
 
 }

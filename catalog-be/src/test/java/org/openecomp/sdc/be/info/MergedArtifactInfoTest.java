@@ -1,15 +1,14 @@
 package org.openecomp.sdc.be.info;
 
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-
+import mockit.Deencapsulation;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.junit.Test;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
 
-import mockit.Deencapsulation;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
 
 public class MergedArtifactInfoTest {
 

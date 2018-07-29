@@ -20,30 +20,19 @@
 
 package org.openecomp.sdc.be.components.impl;
 
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.concurrent.Callable;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.commons.collections.CollectionUtils;
+import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Strings;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import fj.data.Either;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.components.distribution.engine.IDistributionEngine;
 import org.openecomp.sdc.be.components.distribution.engine.INotificationData;
 import org.openecomp.sdc.be.components.distribution.engine.VfModuleArtifactPayload;
 import org.openecomp.sdc.be.components.health.HealthCheckBusinessLogic;
+import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleChangeInfoWithAction;
 import org.openecomp.sdc.be.components.path.ForwardingPathValidator;
 import org.openecomp.sdc.be.components.validation.ServiceDistributionValidation;
@@ -56,23 +45,13 @@ import org.openecomp.sdc.be.datamodel.ServiceRelations;
 import org.openecomp.sdc.be.datamodel.utils.UiComponentDataConverter;
 import org.openecomp.sdc.be.datatypes.elements.ForwardingPathDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
+import org.openecomp.sdc.be.datatypes.enums.InstantiationTypes;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
 import org.openecomp.sdc.be.externalapi.servlet.representation.ServiceDistributionReqInfo;
 import org.openecomp.sdc.be.impl.ForwardingPathUtils;
 import org.openecomp.sdc.be.impl.WebAppContextWrapper;
-import org.openecomp.sdc.be.model.ArtifactDefinition;
-import org.openecomp.sdc.be.model.Component;
-import org.openecomp.sdc.be.model.ComponentInstance;
-import org.openecomp.sdc.be.model.ComponentParametersView;
-import org.openecomp.sdc.be.model.DistributionStatusEnum;
-import org.openecomp.sdc.be.model.DistributionTransitionEnum;
-import org.openecomp.sdc.be.model.GroupInstance;
-import org.openecomp.sdc.be.model.GroupInstanceProperty;
-import org.openecomp.sdc.be.model.LifecycleStateEnum;
-import org.openecomp.sdc.be.model.Resource;
-import org.openecomp.sdc.be.model.Service;
-import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.*;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
 import org.openecomp.sdc.be.model.jsontitan.operations.ForwardingPathOperation;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
@@ -83,12 +62,9 @@ import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
 import org.openecomp.sdc.be.model.operations.utils.ComponentValidationUtils;
 import org.openecomp.sdc.be.resources.data.ComponentInstanceData;
 import org.openecomp.sdc.be.resources.data.ComponentMetadataData;
-import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
-import org.openecomp.sdc.be.resources.data.auditing.AuditingGenericEvent;
-import org.openecomp.sdc.be.resources.data.auditing.DistributionDeployEvent;
-import org.openecomp.sdc.be.resources.data.auditing.DistributionNotificationEvent;
-import org.openecomp.sdc.be.resources.data.auditing.ResourceAdminEvent;
-import org.openecomp.sdc.be.resources.data.auditing.model.ResourceAuditData;
+import org.openecomp.sdc.be.resources.data.auditing.*;
+import org.openecomp.sdc.be.resources.data.auditing.model.ResourceCommonInfo;
+import org.openecomp.sdc.be.resources.data.auditing.model.ResourceVersionInfo;
 import org.openecomp.sdc.be.ui.model.UiComponentDataTransfer;
 import org.openecomp.sdc.be.user.Role;
 import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
@@ -96,76 +72,67 @@ import org.openecomp.sdc.common.api.ArtifactTypeEnum;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.datastructure.Wrapper;
 import org.openecomp.sdc.common.kpi.api.ASDCKpiApi;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.common.util.GeneralUtility;
 import org.openecomp.sdc.common.util.ThreadLocalsHolder;
 import org.openecomp.sdc.common.util.ValidationUtils;
 import org.openecomp.sdc.exception.ResponseFormat;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.context.WebApplicationContext;
 
-import com.google.common.base.Strings;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
+import java.util.concurrent.Callable;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
-import fj.data.Either;
+import static org.apache.commons.collections.CollectionUtils.isEmpty;
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+import static org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum.UPDATE_SERVICE_METADATA;
 
 @org.springframework.stereotype.Component("serviceBusinessLogic")
 public class ServiceBusinessLogic extends ComponentBusinessLogic {
 
+    private static final String CHANGE_SERVICE_DISTRIBUTION = "Change Service Distribution";
+	private static final String THE_SERVICE_WITH_SYSTEM_NAME_LOCKED = "The service with system name {} locked. ";
+	private static final String FAILED_TO_LOCK_SERVICE_RESPONSE_IS = "Failed to lock service {}. Response is {}. ";
+	private static final String AUDIT_BEFORE_SENDING_RESPONSE = "audit before sending response";
+	private static final Logger log = Logger.getLogger(ServiceBusinessLogic.class);
+    private static final String INITIAL_VERSION = "0.1";
     private static final String STATUS_SUCCESS_200 = "200";
-
-    private static final String STATUS_DEPLOYED = "DEPLOYED";
-
-    @Autowired
-    private IElementOperation elementDao;
-
+	private static final String STATUS_DEPLOYED = "DEPLOYED";
     @Autowired
     private IDistributionEngine distributionEngine;
-
     @Autowired
     private AuditCassandraDao auditCassandraDao;
-
     @Autowired
     private ComponentInstanceBusinessLogic componentInstanceBusinessLogic;
-
-    @Autowired
-    private GroupBusinessLogic groupBusinessLogic;
-
     @Autowired
     private ICacheMangerOperation cacheManagerOperation;
-
     @Autowired
     private ServiceDistributionValidation serviceDistributionValidation;
 
-    private static final Logger log = LoggerFactory.getLogger(ServiceBusinessLogic.class);
-    private static final String INITIAL_VERSION = "0.1";
     @Autowired
     private ForwardingPathOperation forwardingPathOperation;
-
     @Autowired
     private ForwardingPathValidator forwardingPathValidator;
-
-    public ServiceBusinessLogic() {
-        log.debug("ServiceBusinessLogic started");
-    }
+    @Autowired
+    private UiComponentDataConverter uiComponentDataConverter;
 
     public Either<Service, ResponseFormat> changeServiceDistributionState(String serviceId, String state, LifecycleChangeInfoWithAction commentObj, User user) {
 
-        Either<User, ResponseFormat> resp = validateUserExists(user.getUserId(), "change Service Distribution State", false);
-        if (resp.isRight()) {
-            return Either.right(resp.right().value());
-        }
+        validateUserExists(user.getUserId(), "change Service Distribution State", false);
 
         log.debug("check request state");
-        Either<DistributionTransitionEnum, ResponseFormat> validateEnum = validateTransitionEnum(state, user);
+        Either<DistributionTransitionEnum, ResponseFormat> validateEnum = validateTransitionEnum(state);
         if (validateEnum.isRight()) {
             return Either.right(validateEnum.right().value());
         }
         DistributionTransitionEnum distributionTransition = validateEnum.left().value();
         AuditingActionEnum auditAction = distributionTransition == DistributionTransitionEnum.APPROVE ? AuditingActionEnum.DISTRIBUTION_STATE_CHANGE_APPROV : AuditingActionEnum.DISTRIBUTION_STATE_CHANGE_REJECT;
-        Either<String, ResponseFormat> commentResponse = validateComment(commentObj, user, auditAction);
+        Either<String, ResponseFormat> commentResponse = validateComment(commentObj);
         if (commentResponse.isRight()) {
             return Either.right(commentResponse.right().value());
         }
@@ -211,8 +178,8 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
             titanDao.commit();
             Service updatedService = result.left().value();
             ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.OK);
-            log.debug("audit before sending response");
-            componentsUtils.auditComponent(responseFormat, user, updatedService, auditAction, ComponentTypeEnum.SERVICE, ResourceAuditData.newBuilder().build(), comment);
+            log.debug(AUDIT_BEFORE_SENDING_RESPONSE);
+            componentsUtils.auditComponent(responseFormat, user, updatedService, auditAction, new ResourceCommonInfo(ComponentTypeEnum.SERVICE.getValue()), ResourceVersionInfo.newBuilder().build(), comment);
             return Either.left(result.left().value());
         } finally {
             graphLockOperation.unlockComponent(serviceId, NodeTypeEnum.Service);
@@ -221,10 +188,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
     }
 
     public Either<List<Map<String, Object>>, ResponseFormat> getComponentAuditRecords(String componentVersion, String componentUUID, String userId) {
-        Either<User, ResponseFormat> resp = validateUserExists(userId, "get Component Audit Records", false);
-        if (resp.isRight()) {
-            return Either.right(resp.right().value());
-        }
+        validateUserExists(userId, "get Component Audit Records", false);
         Either<List<Map<String, Object>>, ActionStatus> result;
         try {
 
@@ -268,24 +232,52 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
             return Either.right(eitherCurrVerAudit.right().value());
         }
 
+
+        Either<List<ResourceAdminEvent>, ActionStatus> eitherArchiveRestoreList = getArchiveRestoreEventList(componentUUID);
+        if (eitherArchiveRestoreList.isRight()) {
+            return Either.right(eitherArchiveRestoreList.right().value());
+        }
+
         List<Map<String, Object>> prevVerAuditList = getAuditingFieldsList(eitherprevVerAudit.left().value());
         List<Map<String, Object>> currVerAuditList = getAuditingFieldsList(eitherCurrVerAudit.left().value());
 
-        List<Map<String, Object>> duplicateElements = new ArrayList<Map<String, Object>>();
+        List<Map<String, Object>> duplicateElements = new ArrayList<>();
         duplicateElements.addAll(prevVerAuditList);
         duplicateElements.retainAll(currVerAuditList);
 
-        List<Map<String, Object>> joinedNonDuplicatedList = new ArrayList<Map<String, Object>>();
+        List<Map<String, Object>> joinedNonDuplicatedList = new ArrayList<>();
         joinedNonDuplicatedList.addAll(prevVerAuditList);
         joinedNonDuplicatedList.removeAll(duplicateElements);
         joinedNonDuplicatedList.addAll(currVerAuditList);
+        joinedNonDuplicatedList.addAll(getAuditingFieldsList(eitherArchiveRestoreList.left().value()));
+
 
         return Either.left(joinedNonDuplicatedList);
     }
 
+    private Either<List<ResourceAdminEvent>, ActionStatus> getArchiveRestoreEventList(String componentUUID) {
+        // Archive Query
+        Either<List<ResourceAdminEvent>, ActionStatus> eitherArchiveAudit = auditCassandraDao.getArchiveAuditByServiceInstanceId(componentUUID);
+        if (eitherArchiveAudit.isRight()) {
+            return Either.right(eitherArchiveAudit.right().value());
+        }
+
+        // Restore Query
+        Either<List<ResourceAdminEvent>, ActionStatus> eitherRestoreAudit = auditCassandraDao.getRestoreAuditByServiceInstanceId(componentUUID);
+        if (eitherRestoreAudit.isRight()) {
+            return Either.right(eitherRestoreAudit.right().value());
+        }
+
+        List<ResourceAdminEvent> archiveAudit = new ArrayList<>();
+        archiveAudit.addAll(eitherArchiveAudit.left().value());
+        archiveAudit.addAll(eitherRestoreAudit.left().value());
+
+        return Either.left(archiveAudit);
+    }
+
     private List<Map<String, Object>> getAuditingFieldsList(List<? extends AuditingGenericEvent> prevVerAuditList) {
 
-        List<Map<String, Object>> prevVerAudit = new ArrayList<Map<String, Object>>();
+        List<Map<String, Object>> prevVerAudit = new ArrayList<>();
         for (AuditingGenericEvent auditEvent : prevVerAuditList) {
             auditEvent.fillFields();
             prevVerAudit.add(auditEvent.getFields());
@@ -305,19 +297,10 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
     public Either<Service, ResponseFormat> createService(Service service, User user) {
 
         // get user details
-        Either<User, ResponseFormat> eitherCreator = validateUser(user, "Create Service", service, AuditingActionEnum.CREATE_RESOURCE, false);
-        if (eitherCreator.isRight()) {
-            return Either.right(eitherCreator.right().value());
-        }
-        user = eitherCreator.left().value();
-
+        user = validateUser(user, "Create Service", service, AuditingActionEnum.CREATE_RESOURCE, false);
         // validate user role
-        Either<Boolean, ResponseFormat> validateRes = validateUserRole(user, service, new ArrayList<Role>(), AuditingActionEnum.CREATE_RESOURCE, null);
-        if (validateRes.isRight()) {
-            return Either.right(validateRes.right().value());
-        }
+        validateUserRole(user, service, new ArrayList<>(), AuditingActionEnum.CREATE_RESOURCE, null);
         service.setCreatorUserId(user.getUserId());
-
         // warn on overridden fields
         checkFieldsForOverideAttampt(service);
         // enrich object
@@ -358,11 +341,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
             createMandatoryArtifactsData(service, user);
             createServiceApiArtifactsData(service, user);
             setToscaArtifactsPlaceHolders(service, user);
-            Either<Resource, ResponseFormat> genericServiceEither = fetchAndSetDerivedFromGenericType(service);
-            if (genericServiceEither.isRight())
-                return Either.right(genericServiceEither.right().value());
-
-            generateAndAddInputsFromGenericTypeProperties(service, genericServiceEither.left().value());
+            generateAndAddInputsFromGenericTypeProperties(service, fetchAndSetDerivedFromGenericType(service));
 
             Either<Service, StorageOperationStatus> dataModelResponse = toscaOperationFacade.createToscaComponent(service);
 
@@ -376,7 +355,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
             }
 
             ResponseFormat responseFormat = componentsUtils.getResponseFormatByComponent(componentsUtils.convertFromStorageResponse(dataModelResponse.right().value()), service, ComponentTypeEnum.SERVICE);
-            log.debug("audit before sending response");
+            log.debug(AUDIT_BEFORE_SENDING_RESPONSE);
             componentsUtils.auditComponentAdmin(responseFormat, user, service, actionEnum, ComponentTypeEnum.SERVICE);
             return Either.right(responseFormat);
 
@@ -394,7 +373,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         String serviceUniqueId = service.getUniqueId();
         Map<String, ArtifactDefinition> artifactMap = service.getServiceApiArtifacts();
         if (artifactMap == null)
-            artifactMap = new HashMap<String, ArtifactDefinition>();
+            artifactMap = new HashMap<>();
 
         Map<String, Object> serviceApiArtifacts = ConfigurationManager.getConfigurationManager().getConfiguration().getServiceApiArtifacts();
         List<String> exludeServiceCategory = ConfigurationManager.getConfigurationManager().getConfiguration().getExcludeServiceCategory();
@@ -439,77 +418,61 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         service.setInvariantUUID(invariantUUID);
 
         return Either.left(service);
-    }
-
+    }    
+    
+    
+   
     private Either<Boolean, ResponseFormat> validateServiceFieldsBeforeCreate(User user, Service service, AuditingActionEnum actionEnum) {
-        Either<Boolean, ResponseFormat> componentsFieldsValidation = validateComponentFieldsBeforeCreate(user, service, actionEnum);
-        if (componentsFieldsValidation.isRight()) {
-            return componentsFieldsValidation;
+        try {
+            validateComponentFieldsBeforeCreate(user, service, actionEnum);
+
+            Either<Boolean, ResponseFormat> serviceNameUniquenessValidation = validateComponentNameUnique(user, service, actionEnum);
+            if (serviceNameUniquenessValidation.isRight()) {
+                throw new ComponentException(serviceNameUniquenessValidation.right().value());
+            }
+            Either<Boolean, ResponseFormat> categoryValidation = validateServiceCategory(user, service, actionEnum);
+            if (categoryValidation.isRight()) {
+                return categoryValidation;
+            }
+            Either<Boolean, ResponseFormat> projectCodeValidation = validateProjectCode(user, service, actionEnum);
+            if (projectCodeValidation.isRight()) {
+                return projectCodeValidation;
+            }
+            validateServiceTypeAndCleanup(service);
+
+            Either<Boolean, ResponseFormat> serviceRoleValidation = validateServiceRoleAndCleanup(user, service, actionEnum);
+            if (serviceRoleValidation.isRight()) {
+                return serviceRoleValidation;
+            }
+            return validateInstantiationTypeValue(user, service, actionEnum);
+        } catch (ComponentException exception) {
+            ResponseFormat responseFormat = componentsUtils.getResponseFormat(exception);
+            componentsUtils.auditComponentAdmin(responseFormat, user, service,
+                    AuditingActionEnum.CREATE_SERVICE, ComponentTypeEnum.SERVICE);
+            return Either.right(responseFormat);
         }
-
-        log.debug("validate service name uniqueness");
-        Either<Boolean, ResponseFormat> serviceNameUniquenessValidation = validateComponentNameUnique(user, service, actionEnum);
-        if (serviceNameUniquenessValidation.isRight()) {
-            return serviceNameUniquenessValidation;
-        }
-
-        log.debug("validate category");
-        Either<Boolean, ResponseFormat> categoryValidation = validateServiceCategory(user, service, actionEnum);
-        if (categoryValidation.isRight()) {
-            return categoryValidation;
-        }
-
-        // validate project name (ProjectCode) - mandatory in service
-        log.debug("validate projectName");
-        Either<Boolean, ResponseFormat> projectCodeValidation = validateProjectCode(user, service, actionEnum);
-        if (projectCodeValidation.isRight()) {
-            return projectCodeValidation;
-        }
-
-        log.debug("validate service type");
-        Either<Boolean, ResponseFormat> serviceTypeValidation = validateServiceTypeAndCleanup(user, service, actionEnum);
-        if (serviceTypeValidation.isRight()) {
-            return serviceTypeValidation;
-        }
-
-        log.debug("validate service role");
-        Either<Boolean, ResponseFormat> serviceRoleValidation = validateServiceRoleAndCleanup(user, service, actionEnum);
-        if (serviceRoleValidation.isRight()) {
-            return serviceRoleValidation;
-        }
-
-        return Either.left(true);
-
     }
 
     private Either<Boolean, ResponseFormat> validateServiceCategory(User user, Service service, AuditingActionEnum actionEnum) {
         log.debug("validate Service category");
-
-        if (service.getCategories() == null || service.getCategories().size() == 0) {
+        if (isEmpty(service.getCategories())) {
             ResponseFormat errorResponse = componentsUtils.getResponseFormat(ActionStatus.COMPONENT_MISSING_CATEGORY, ComponentTypeEnum.SERVICE.getValue());
             componentsUtils.auditComponentAdmin(errorResponse, user, service, actionEnum, ComponentTypeEnum.SERVICE);
             return Either.right(errorResponse);
         }
-
         Either<Boolean, ResponseFormat> validatCategory = validateServiceCategory(service.getCategories());
         if (validatCategory.isRight()) {
             ResponseFormat responseFormat = validatCategory.right().value();
             componentsUtils.auditComponentAdmin(responseFormat, user, service, actionEnum, ComponentTypeEnum.SERVICE);
             return Either.right(responseFormat);
         }
-
         return Either.left(true);
     }
 
     public Either<Map<String, Boolean>, ResponseFormat> validateServiceNameExists(String serviceName, String userId) {
-
-        Either<User, ResponseFormat> resp = validateUserExists(userId, "validate Service Name Exists", false);
-        if (resp.isRight()) {
-            return Either.right(resp.right().value());
-        }
+        validateUserExists(userId, "validate Service Name Exists", false);
 
         Either<Boolean, StorageOperationStatus> dataModelResponse = toscaOperationFacade.validateComponentNameUniqueness(serviceName, null, ComponentTypeEnum.SERVICE);
-
         // DE242223
         titanDao.commit();
 
@@ -519,9 +482,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
             log.debug("validation was successfully performed.");
             return Either.left(result);
         }
-
         ResponseFormat responseFormat = componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(dataModelResponse.right().value()));
-
         return Either.right(responseFormat);
     }
 
@@ -542,17 +503,9 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
     }
 
     public Either<Service, ResponseFormat> updateServiceMetadata(String serviceId, Service serviceUpdate, User user) {
-        Either<User, ResponseFormat> eitherCreator = validateUser(user, "updateServiceMetadata", serviceUpdate, null, false);
-        if (eitherCreator.isRight()) {
-            return Either.right(eitherCreator.right().value());
-        }
-        user = eitherCreator.left().value();
-
+        user = validateUser(user, "updateServiceMetadata", serviceUpdate, null, false);
         // validate user role
-        Either<Boolean, ResponseFormat> validateRes = validateUserRole(user, serviceUpdate, new ArrayList<>(), null, null);
-        if (validateRes.isRight()) {
-            return Either.right(validateRes.right().value());
-        }
+        validateUserRole(user, serviceUpdate, new ArrayList<>(), null, null);
 
         Either<Service, StorageOperationStatus> storageStatus = toscaOperationFacade.getToscaElement(serviceId);
         if (storageStatus.isRight()) {
@@ -595,17 +548,9 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
 
     public Either<Set<String>, ResponseFormat> deleteForwardingPaths(String serviceId, Set<String> pathIdsToDelete, User user, boolean lock) {
         Service serviceToDelete = initServiceToDeletePaths(serviceId, pathIdsToDelete);
-        Either<User, ResponseFormat> eitherCreator = validateUser(user, "deleteForwardingPaths", serviceToDelete, null, false);
-        if (eitherCreator.isRight()) {
-            return Either.right(eitherCreator.right().value());
-        }
-        user = eitherCreator.left().value();
-
+        user = validateUser(user, "deleteForwardingPaths", serviceToDelete, null, false);
         // validate user role
-        Either<Boolean, ResponseFormat> validateRes = validateUserRole(user, serviceToDelete, new ArrayList<>(), null, null);
-        if (validateRes.isRight()) {
-            return Either.right(validateRes.right().value());
-        }
+        validateUserRole(user, serviceToDelete, new ArrayList<>(), null, null);
         Either<Service, StorageOperationStatus> storageStatus = toscaOperationFacade.getToscaElement(serviceId);
         if (storageStatus.isRight()) {
             return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(storageStatus.right().value(), ComponentTypeEnum.SERVICE), ""));
@@ -623,12 +568,12 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         try{
             result = forwardingPathOperation.deleteForwardingPath(service ,pathIdsToDelete);
             if (result.isRight()) {
-                log.debug("Failed to lock service {}. Response is {}. ", service.getName(), result.right().value());
+                log.debug(FAILED_TO_LOCK_SERVICE_RESPONSE_IS, service.getName(), result.right().value());
                 titanDao.rollback();
                 return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(storageStatus.right().value(), ComponentTypeEnum.SERVICE)));
             }
             titanDao.commit();
-            log.debug("The service with system name {} locked. ", service.getSystemName());
+            log.debug(THE_SERVICE_WITH_SYSTEM_NAME_LOCKED, service.getSystemName());
 
         } catch (Exception e){
             log.error("Exception occurred during delete forwarding path : {}", e.getMessage(), e);
@@ -669,8 +614,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
     }
 
     private Either<Service, ResponseFormat> createOrUpdateForwardingPath(String serviceId, Service serviceUpdate, User user, boolean isUpdate, String errorContext, boolean lock) {
-        Either<Service, ResponseFormat> eitherCreator1 = validateUserAndRole(serviceUpdate, user, errorContext);
-        if (eitherCreator1 != null) return eitherCreator1;
+        validateUserAndRole(serviceUpdate, user, errorContext);
 
         Map<String, ForwardingPathDataDefinition> forwardingPaths = serviceUpdate.getForwardingPaths();
 
@@ -693,9 +637,6 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         }
         Service storedService = serviceStorageOperationStatusEither.left().value();
 
-        Set<ForwardingPathDataDefinition> forwardingPathDataDefinitions = trimmedForwardingPaths.entrySet().stream().map(entry -> entry.getValue())
-            .collect(Collectors.toSet());
-
         Either<ForwardingPathDataDefinition, StorageOperationStatus> result;
         Either<Component, StorageOperationStatus> forwardingPathOrigin = toscaOperationFacade.getLatestByName(ForwardingPathUtils.FORWARDING_PATH_NODE_NAME);
         if (forwardingPathOrigin.isRight()) {
@@ -715,11 +656,11 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
             lockResult =
                 lockComponent(storedService.getUniqueId(), storedService, "Add or Update Forwarding Path on Service");
             if (lockResult.isRight()) {
-                log.debug("Failed to lock service {}. Response is {}. ", storedService.getName(),
+                log.debug(FAILED_TO_LOCK_SERVICE_RESPONSE_IS, storedService.getName(),
                     lockResult.right().value().getFormattedMessage());
                 return Either.right(lockResult.right().value());
             } else {
-                log.debug("The service with system name {} locked. ", storedService.getSystemName());
+                log.debug(THE_SERVICE_WITH_SYSTEM_NAME_LOCKED, storedService.getSystemName());
             }
         }
         Map<String, ForwardingPathDataDefinition> resultMap = new HashMap<>();
@@ -767,175 +708,118 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         return service;
     }
 
-    private Either<Service, ResponseFormat> validateUserAndRole(Service serviceUpdate, User user, String errorContext) {
-        Either<User, ResponseFormat> eitherCreator = validateUser(user, errorContext, serviceUpdate, null, false);
-        if (eitherCreator.isRight()) {
-            return Either.right(eitherCreator.right().value());
-        }
-        user = eitherCreator.left().value();
+    private void validateUserAndRole(Service serviceUpdate, User user, String errorContext) {
+        user = validateUser(user, errorContext, serviceUpdate, null, false);
+        validateUserRole(user, serviceUpdate, new ArrayList<>(), null, null);
 
-        // validate user role
-        Either<Boolean, ResponseFormat> validateRes = validateUserRole(user, serviceUpdate, new ArrayList<>(), null, null);
-        if (validateRes.isRight()) {
-            return Either.right(validateRes.right().value());
-        }
-        return null;
-    }private Either<Service, ResponseFormat> validateAndUpdateServiceMetadata(User user, Service currentService, Service serviceUpdate) {
+    }
 
-        boolean hasBeenCertified = ValidationUtils.hasBeenCertified(currentService.getVersion());
-        Either<Boolean, ResponseFormat> response = validateAndUpdateCategory(user, currentService, serviceUpdate, hasBeenCertified, null);
-        if (response.isRight()) {
-            ResponseFormat errorResponse = response.right().value();
-            return Either.right(errorResponse);
-        }
+    @VisibleForTesting
+    Either<Service, ResponseFormat> validateAndUpdateServiceMetadata(User user, Service currentService, Service serviceUpdate) {
 
-        String creatorUserIdUpdated = serviceUpdate.getCreatorUserId();
-        String creatorUserIdCurrent = currentService.getCreatorUserId();
-        if (creatorUserIdUpdated != null && !creatorUserIdCurrent.equals(creatorUserIdUpdated)) {
-            log.info("update srvice: recived request to update creatorUserId to {} the field is not updatable ignoring.", creatorUserIdUpdated);
-        }
-
-        String creatorFullNameUpdated = serviceUpdate.getCreatorFullName();
-        String creatorFullNameCurrent = currentService.getCreatorFullName();
-        if (creatorFullNameUpdated != null && !creatorFullNameCurrent.equals(creatorFullNameUpdated)) {
-            log.info("update srvice: recived request to update creatorFullName to {} the field is not updatable ignoring.", creatorFullNameUpdated);
-        }
-
-        String lastUpdaterUserIdUpdated = serviceUpdate.getLastUpdaterUserId();
-        String lastUpdaterUserIdCurrent = currentService.getLastUpdaterUserId();
-        if (lastUpdaterUserIdUpdated != null && !lastUpdaterUserIdCurrent.equals(lastUpdaterUserIdUpdated)) {
-            log.info("update srvice: recived request to update lastUpdaterUserId to {} the field is not updatable ignoring.", lastUpdaterUserIdUpdated);
-        }
-
-        String lastUpdaterFullNameUpdated = serviceUpdate.getLastUpdaterFullName();
-        String lastUpdaterFullNameCurrent = currentService.getLastUpdaterFullName();
-        if (lastUpdaterFullNameUpdated != null && !lastUpdaterFullNameCurrent.equals(lastUpdaterFullNameUpdated)) {
-            log.info("update srvice: recived request to update lastUpdaterFullName to {} the field is not updatable ignoring.", lastUpdaterFullNameUpdated);
-        }
-
-        response = validateAndUpdateServiceName(user, currentService, serviceUpdate, hasBeenCertified, null);
-        if (response.isRight()) {
-            ResponseFormat errorResponse = response.right().value();
-            return Either.right(errorResponse);
-        }
-
-        DistributionStatusEnum distributionStatusUpdated = serviceUpdate.getDistributionStatus();
-        DistributionStatusEnum distributionStatusCurrent = currentService.getDistributionStatus();
-        if (distributionStatusUpdated != null && !distributionStatusUpdated.name().equals(distributionStatusCurrent != null ? distributionStatusCurrent.name() : null)) {
-            log.info("update service: received request to update distributionStatus to {}. the field is read only, ignoring.", distributionStatusUpdated);
-        }
-
-        if (serviceUpdate.getProjectCode() != null) {
-            response = validateAndUpdateProjectCode(user, currentService, serviceUpdate, null);
+        try {
+            boolean hasBeenCertified = ValidationUtils.hasBeenCertified(currentService.getVersion());
+            Either<Boolean, ResponseFormat> response = validateAndUpdateCategory(user, currentService, serviceUpdate, hasBeenCertified, UPDATE_SERVICE_METADATA);
             if (response.isRight()) {
                 ResponseFormat errorResponse = response.right().value();
                 return Either.right(errorResponse);
             }
+
+            verifyValuesAreIdentical(serviceUpdate.getCreatorUserId(), currentService.getCreatorUserId(), "creatorUserId");
+            verifyValuesAreIdentical(serviceUpdate.getCreatorFullName(), currentService.getCreatorFullName(), "creatorFullName");
+            verifyValuesAreIdentical(serviceUpdate.getLastUpdaterUserId(), currentService.getLastUpdaterUserId(), "lastUpdaterUserId");
+            verifyValuesAreIdentical(serviceUpdate.getLastUpdaterFullName(), currentService.getLastUpdaterFullName(), "lastUpdaterFullName");
+
+            response = validateAndUpdateServiceName(user, currentService, serviceUpdate, hasBeenCertified, null);
+            if (response.isRight()) {
+                return Either.right(response.right().value());
+            }
+
+            verifyValuesAreIdentical(serviceUpdate.getDistributionStatus(), currentService.getDistributionStatus(), "distributionStatus");
+
+            if (serviceUpdate.getProjectCode() != null) {
+                response = validateAndUpdateProjectCode(user, currentService, serviceUpdate, UPDATE_SERVICE_METADATA);
+                if (response.isRight()) {
+                    return Either.right(response.right().value());
+                }
+            }
+
+            response = validateAndUpdateIcon(user, currentService, serviceUpdate, hasBeenCertified, UPDATE_SERVICE_METADATA);
+            if (response.isRight()) {
+                return Either.right(response.right().value());
+            }
+
+            verifyValuesAreIdentical(serviceUpdate.getCreationDate(), currentService.getCreationDate(), "creationDate");
+            verifyValuesAreIdentical(serviceUpdate.getVersion(), currentService.getVersion(), "version");
+
+            response = validateAndUpdateDescription(user, currentService, serviceUpdate, UPDATE_SERVICE_METADATA);
+            if (response.isRight()) {
+                return Either.right(response.right().value());
+            }
+
+            response = validateAndUpdateTags(user, currentService, serviceUpdate, UPDATE_SERVICE_METADATA);
+            if (response.isRight()) {
+                return Either.right(response.right().value());
+            }
+
+            response = validateAndUpdateContactId(user, currentService, serviceUpdate, UPDATE_SERVICE_METADATA);
+            if (response.isRight()) {
+                return Either.right(response.right().value());
+            }
+
+            verifyValuesAreIdentical(serviceUpdate.getLastUpdateDate(), currentService.getLastUpdateDate(), "lastUpdateDate");
+            verifyValuesAreIdentical(serviceUpdate.getLifecycleState(), currentService.getLifecycleState(), "lifecycleState");
+            verifyValuesAreIdentical(serviceUpdate.isHighestVersion(), currentService.isHighestVersion(), "isHighestVersion");
+            verifyValuesAreIdentical(serviceUpdate.getUUID(), currentService.getUUID(), "uuid");
+
+            validateAndUpdateServiceType(currentService, serviceUpdate);
+
+            response = validateAndUpdateServiceRole(user, currentService, serviceUpdate, UPDATE_SERVICE_METADATA);
+            if (response.isRight()) {
+                return Either.right(response.right().value());
+            }
+
+            response = validateAndUpdateInstantiationTypeValue(user, currentService, serviceUpdate, UPDATE_SERVICE_METADATA);
+            if (response.isRight()) {
+                return Either.right(response.right().value());
+            }
+
+            verifyValuesAreIdentical(serviceUpdate.getInvariantUUID(), currentService.getInvariantUUID(), "invariantUUID");
+
+            validateAndUpdateEcompNaming(currentService, serviceUpdate);
+
+            currentService.setEnvironmentContext(serviceUpdate.getEnvironmentContext());
+
+            return Either.left(currentService);
+
+        } catch (ComponentException exception) {
+            ResponseFormat responseFormat = componentsUtils.getResponseFormat(exception);
+            componentsUtils.auditComponentAdmin(responseFormat, user, serviceUpdate,
+                    AuditingActionEnum.UPDATE_SERVICE_METADATA, ComponentTypeEnum.SERVICE);
+            return Either.right(responseFormat);
         }
+    }
 
-        response = validateAndUpdateIcon(user, currentService, serviceUpdate, hasBeenCertified, null);
-        if (response.isRight()) {
-            ResponseFormat errorResponse = response.right().value();
-            return Either.right(errorResponse);
+    private void verifyValuesAreIdentical(Object updatedValue, Object originalValue, String fieldName) {
+        if (updatedValue != null && !updatedValue.equals(originalValue)) {
+            log.info("update service: received request to update {} to {} the field is not updatable ignoring.", fieldName, updatedValue);
         }
-
-        Long creationDateUpdated = serviceUpdate.getCreationDate();
-        Long creationDateCurrent = currentService.getCreationDate();
-        if (creationDateUpdated != null && !creationDateCurrent.equals(creationDateUpdated)) {
-            log.info("update srvice: recived request to update creationDate to {} the field is not updatable ignoring.", creationDateUpdated);
-        }
-
-        String versionUpdated = serviceUpdate.getVersion();
-        String versionCurrent = currentService.getVersion();
-        if (versionUpdated != null && !versionCurrent.equals(versionUpdated)) {
-            log.info("update srvice: recived request to update version to {} the field is not updatable ignoring.", versionUpdated);
-        }
-
-        response = validateAndUpdateDescription(user, currentService, serviceUpdate, hasBeenCertified, null);
-        if (response.isRight()) {
-            ResponseFormat errorResponse = response.right().value();
-            return Either.right(errorResponse);
-        }
-
-        response = validateAndUpdateTags(user, currentService, serviceUpdate, hasBeenCertified, null);
-        if (response.isRight()) {
-            ResponseFormat errorResponse = response.right().value();
-            return Either.right(errorResponse);
-        }
-
-        response = validateAndUpdateContactId(user, currentService, serviceUpdate, null);
-        if (response.isRight()) {
-            ResponseFormat errorResponse = response.right().value();
-            return Either.right(errorResponse);
-        }
-
-        Long lastUpdateDateUpdated = serviceUpdate.getLastUpdateDate();
-        Long lastUpdateDateCurrent = currentService.getLastUpdateDate();
-        if (lastUpdateDateUpdated != null && !lastUpdateDateCurrent.equals(lastUpdateDateUpdated)) {
-            log.info("update srvice: recived request to update lastUpdateDate to {} the field is not updatable ignoring.", lastUpdateDateUpdated);
-        }
-
-        LifecycleStateEnum lifecycleStateUpdated = serviceUpdate.getLifecycleState();
-        LifecycleStateEnum lifecycleStateCurrent = currentService.getLifecycleState();
-        if (lifecycleStateUpdated != null && !lifecycleStateCurrent.name().equals(lifecycleStateUpdated.name())) {
-            log.info("update srvice: recived request to update lifecycleState to {} the field is not updatable ignoring.", lifecycleStateUpdated);
-        }
-
-        Boolean isHighestVersionUpdated = serviceUpdate.isHighestVersion();
-        Boolean isHighestVersionCurrent = currentService.isHighestVersion();
-        if (isHighestVersionUpdated != null && !isHighestVersionCurrent.equals(isHighestVersionUpdated)) {
-            log.info("update srvice: recived request to update isHighestVersion to {} the field is not updatable ignoring.", isHighestVersionUpdated);
-        }
-
-        String uuidUpdated = serviceUpdate.getUUID();
-        String uuidCurrent = currentService.getUUID();
-        if (!uuidCurrent.equals(uuidUpdated)) {
-            log.info("update service: recived request to update uuid to {} the field is not updatable ignoring.", uuidUpdated);
-        }
-
-        response = validateAndUpdateServiceType(user, currentService, serviceUpdate, null);
-        if (response.isRight()) {
-            ResponseFormat errorResponse = response.right().value();
-            return Either.right(errorResponse);
-        }
-
-        response = validateAndUpdateServiceRole(user, currentService, serviceUpdate, null);
-        if (response.isRight()) {
-            ResponseFormat errorResponse = response.right().value();
-            return Either.right(errorResponse);
-        }
-
-        String currentInvariantUuid = currentService.getInvariantUUID();
-        String updatedInvariantUuid = serviceUpdate.getInvariantUUID();
-
-        if ((updatedInvariantUuid != null) && (!updatedInvariantUuid.equals(currentInvariantUuid))) {
-            log.warn("Product invariant UUID is automatically set and cannot be updated");
-            serviceUpdate.setInvariantUUID(currentInvariantUuid);
-        }
-        validateAndUpdateEcompNaming(currentService, serviceUpdate);
-
-        currentService.setEnvironmentContext(serviceUpdate.getEnvironmentContext());
-
-        return Either.left(currentService);
-
     }
 
     private void validateAndUpdateEcompNaming(Service currentService, Service serviceUpdate) {
-        Boolean isEcompoGeneratedCurr = currentService.isEcompGeneratedNaming();
-        Boolean isEcompoGeneratedUpdate = serviceUpdate.isEcompGeneratedNaming();
-        if (isEcompoGeneratedUpdate != null && isEcompoGeneratedCurr.equals(isEcompoGeneratedUpdate)) {
-            currentService.setEcompGeneratedNaming(isEcompoGeneratedUpdate);
+        Boolean isEcompGeneratedCurr = currentService.isEcompGeneratedNaming();
+        Boolean isEcompGeneratedUpdate = serviceUpdate.isEcompGeneratedNaming();
+        if (isEcompGeneratedUpdate != null && !isEcompGeneratedUpdate.equals(isEcompGeneratedCurr)) {
+            currentService.setEcompGeneratedNaming(isEcompGeneratedUpdate);
         }
-        String namingPolicyUpd = serviceUpdate.getNamingPolicy();
-        if (!currentService.isEcompGeneratedNaming()) {
-            if (ValidationUtils.validateStringNotEmpty(namingPolicyUpd)) {
+        String namingPolicyUpdate = serviceUpdate.getNamingPolicy();
+        if (currentService.isEcompGeneratedNaming()) {
+            currentService.setNamingPolicy(namingPolicyUpdate);
+        } else {
+            if (!StringUtils.isEmpty(namingPolicyUpdate)) {
                 log.warn("NamingPolicy must be empty for EcompGeneratedNaming=false");
-                currentService.setNamingPolicy("");
-            } else {
-                currentService.setNamingPolicy(namingPolicyUpd);
             }
-        }else{
-            currentService.setNamingPolicy(namingPolicyUpd);
+            currentService.setNamingPolicy("");
         }
     }
 
@@ -943,17 +827,13 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         String contactIdUpdated = serviceUpdate.getContactId();
         String contactIdCurrent = currentService.getContactId();
         if (!contactIdCurrent.equals(contactIdUpdated)) {
-            Either<Boolean, ResponseFormat> validatContactId = validateContactId(user, serviceUpdate, audatingAction);
-            if (validatContactId.isRight()) {
-                ResponseFormat errorRespons = validatContactId.right().value();
-                return Either.right(errorRespons);
-            }
+           validateContactId(user, serviceUpdate, audatingAction);
             currentService.setContactId(contactIdUpdated.toLowerCase());
         }
         return Either.left(true);
     }
 
-    private Either<Boolean, ResponseFormat> validateAndUpdateTags(User user, Service currentService, Service serviceUpdate, boolean hasBeenCertified, AuditingActionEnum audatingAction) {
+    private Either<Boolean, ResponseFormat> validateAndUpdateTags(User user, Service currentService, Service serviceUpdate, AuditingActionEnum audatingAction) {
         List<String> tagsUpdated = serviceUpdate.getTags();
         List<String> tagsCurrent = currentService.getTags();
         if (tagsUpdated == null || tagsUpdated.isEmpty()) {
@@ -963,25 +843,17 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         }
 
         if (!(tagsCurrent.containsAll(tagsUpdated) && tagsUpdated.containsAll(tagsCurrent))) {
-            Either<Boolean, ResponseFormat> validatResponse = validateTagsListAndRemoveDuplicates(user, serviceUpdate, audatingAction);
-            if (validatResponse.isRight()) {
-                ResponseFormat errorRespons = validatResponse.right().value();
-                return Either.right(errorRespons);
-            }
+            validateTagsListAndRemoveDuplicates(user, serviceUpdate, audatingAction);
             currentService.setTags(tagsUpdated);
         }
         return Either.left(true);
     }
 
-    private Either<Boolean, ResponseFormat> validateAndUpdateDescription(User user, Service currentService, Service serviceUpdate, boolean hasBeenCertified, AuditingActionEnum audatingAction) {
+    private Either<Boolean, ResponseFormat> validateAndUpdateDescription(User user, Service currentService, Service serviceUpdate, AuditingActionEnum audatingAction) {
         String descriptionUpdated = serviceUpdate.getDescription();
         String descriptionCurrent = currentService.getDescription();
         if (!descriptionCurrent.equals(descriptionUpdated)) {
-            Either<Boolean, ResponseFormat> validateDescriptionResponse = validateDescriptionAndCleanup(user, serviceUpdate, audatingAction);
-            if (validateDescriptionResponse.isRight()) {
-                ResponseFormat errorRespons = validateDescriptionResponse.right().value();
-                return Either.right(errorRespons);
-            }
+            validateDescriptionAndCleanup(user, serviceUpdate, audatingAction);
             currentService.setDescription(serviceUpdate.getDescription());
         }
         return Either.left(true);
@@ -1008,11 +880,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         String iconCurrent = currentService.getIcon();
         if (!iconCurrent.equals(iconUpdated)) {
             if (!hasBeenCertified) {
-                Either<Boolean, ResponseFormat> validatIconResponse = validateIcon(user, serviceUpdate, audatingAction);
-                if (validatIconResponse.isRight()) {
-                    ResponseFormat errorRespons = validatIconResponse.right().value();
-                    return Either.right(errorRespons);
-                }
+                validateIcon(user, serviceUpdate, audatingAction);
                 currentService.setIcon(iconUpdated);
             } else {
                 log.info("icon {} cannot be updated once the service has been certified once.", iconUpdated);
@@ -1028,12 +896,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         String serviceNameCurrent = currentService.getName();
         if (!serviceNameCurrent.equals(serviceNameUpdated)) {
             if (!hasBeenCertified) {
-                Either<Boolean, ResponseFormat> validatServiceNameResponse = validateComponentName(user, serviceUpdate, auditingAction);
-                if (validatServiceNameResponse.isRight()) {
-                    ResponseFormat errorRespons = validatServiceNameResponse.right().value();
-                    return Either.right(errorRespons);
-                }
-
+                validateComponentName(user, serviceUpdate, auditingAction);
                 Either<Boolean, ResponseFormat> serviceNameUniquenessValidation = validateComponentNameUnique(user, serviceUpdate, auditingAction);
                 if (serviceNameUniquenessValidation.isRight()) {
                     return serviceNameUniquenessValidation;
@@ -1051,54 +914,38 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         return Either.left(true);
     }
 
-    private Either<Boolean, ResponseFormat> validateAndUpdateServiceType(User user, Service currentService, Service updatedService, AuditingActionEnum auditingAction) {
+    private void validateAndUpdateServiceType(Service currentService, Service updatedService) {
         String updatedServiceType = updatedService.getServiceType();
         String currentServiceType = currentService.getServiceType();
         if (!currentServiceType.equals(updatedServiceType)) {
-            Either<Boolean, ResponseFormat> validateServiceType = validateServiceTypeAndCleanup(user, updatedService , auditingAction);
-            if (validateServiceType.isRight()) {
-                ResponseFormat errorResponse = validateServiceType.right().value();
-                componentsUtils.auditComponentAdmin(errorResponse, user, updatedService, auditingAction, ComponentTypeEnum.SERVICE);
-                return Either.right(errorResponse);
-            }
+            validateServiceTypeAndCleanup(updatedService);
             currentService.setServiceType(updatedServiceType);
         }
-        return Either.left(true);
     }
 
-    protected Either<Boolean, ResponseFormat> validateServiceTypeAndCleanup(User user, Component component, AuditingActionEnum actionEnum) {
+    private void validateServiceTypeAndCleanup(Component component) {
+        log.debug("validate service type");
         String serviceType = ((Service)component).getServiceType();
-        if (serviceType != null){
-            serviceType = cleanUpText(serviceType);
-            Either<Boolean, ResponseFormat> validateServiceType = validateServiceType(serviceType);
-            if (validateServiceType.isRight()) {
-                ResponseFormat responseFormat = validateServiceType.right().value();
-                componentsUtils.auditComponentAdmin(responseFormat, user, component, actionEnum, ComponentTypeEnum.SERVICE);
-                return Either.right(responseFormat);
-            }
-            return Either.left(true);
-        } else {
-            return Either.left(false);
+        if (serviceType == null) {
+            log.info("service type is not valid.");
+            throw new ComponentException(ActionStatus.INVALID_SERVICE_TYPE);
         }
+        serviceType = cleanUpText(serviceType);
+        validateServiceType(serviceType);
     }
 
 
-    private Either<Boolean, ResponseFormat> validateServiceType(String serviceType) {
-        if (serviceType.equals("")){
-            return Either.left(true);
-        } else {
-            if (!ValidationUtils.validateServiceTypeLength(serviceType)) {
-                log.info("service type exceeds limit.");
-                ResponseFormat errorResponse = componentsUtils.getResponseFormat(ActionStatus.SERVICE_TYPE_EXCEEDS_LIMIT, "" + ValidationUtils.SERVICE_TYPE_MAX_LENGTH);
-                return Either.right(errorResponse);
-            }
-
-            if (!ValidationUtils.validateIsEnglish(serviceType)) {
-                log.info("service type is not valid.");
-                ResponseFormat errorResponse = componentsUtils.getResponseFormat(ActionStatus.INVALID_SERVICE_TYPE);
-                return Either.right(errorResponse);
-            }
-            return Either.left(true);
+    private void validateServiceType(String serviceType) {
+        if (serviceType.isEmpty()) {
+            return;
+        }
+        if (!ValidationUtils.validateServiceTypeLength(serviceType)) {
+            log.info("service type exceeds limit.");
+            throw new ComponentException(ActionStatus.SERVICE_TYPE_EXCEEDS_LIMIT, "" + ValidationUtils.SERVICE_TYPE_MAX_LENGTH);
+        }
+        if (!ValidationUtils.validateIsEnglish(serviceType)) {
+            log.info("service type is not valid.");
+            throw new ComponentException(ActionStatus.INVALID_SERVICE_TYPE);
         }
     }
 
@@ -1118,6 +965,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
     }
 
     protected Either<Boolean, ResponseFormat> validateServiceRoleAndCleanup(User user, Component component, AuditingActionEnum actionEnum) {
+        log.debug("validate service role");
         String serviceRole = ((Service)component).getServiceRole();
         if (serviceRole != null){
             serviceRole = cleanUpText(serviceRole);
@@ -1134,7 +982,33 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         }
     }
 
+    private Either<Boolean, ResponseFormat> validateAndUpdateInstantiationTypeValue(User user, Service currentService, Service updatedService, AuditingActionEnum auditingAction) {
+        String updatedInstaType= updatedService.getInstantiationType();
+        String currentInstaType = currentService.getInstantiationType();
+        if (!currentInstaType.equals(updatedInstaType)) {
+            Either<Boolean, ResponseFormat> validateInstantiationType = validateInstantiationTypeValue(user, updatedService , auditingAction);
+            if (validateInstantiationType.isRight()) {
+                ResponseFormat errorResponse = validateInstantiationType.right().value();
+                componentsUtils.auditComponentAdmin(errorResponse, user, updatedService, auditingAction, ComponentTypeEnum.SERVICE);
+                return Either.right(errorResponse);
+            }
+            currentService.setInstantiationType(updatedInstaType);
+        }
+        return Either.left(true);
+    }
 
+    private Either<Boolean, ResponseFormat> validateInstantiationTypeValue(User user, Service service, AuditingActionEnum actionEnum) {
+        log.debug("validate instantiation type");
+    	String instantiationType = service.getInstantiationType();
+    	if (!InstantiationTypes.containsName(instantiationType) || instantiationType == null){
+    			log.error("Recieved Instantiation type {} is not valid.", instantiationType);
+    			ResponseFormat errorResponse = componentsUtils.getResponseFormat(ActionStatus.INVALID_INSTANTIATION_TYPE);
+    			componentsUtils.auditComponentAdmin(errorResponse, user, service, actionEnum, ComponentTypeEnum.SERVICE);
+    			return Either.right(errorResponse);
+    		}
+    		return Either.left(true);
+    }
+    
     private Either<Boolean, ResponseFormat> validateServiceRole(String serviceRole) {
         if (serviceRole.equals("")){
             return Either.left(true);
@@ -1154,15 +1028,12 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         }
     }
 
-
-
     private Either<Boolean, ResponseFormat> validateAndUpdateCategory(User user, Service currentService, Service serviceUpdate, boolean hasBeenCertified, AuditingActionEnum audatingAction) {
         List<CategoryDefinition> categoryUpdated = serviceUpdate.getCategories();
         List<CategoryDefinition> categoryCurrent = currentService.getCategories();
-        Either<Boolean, ResponseFormat> validatCategoryResponse = validateServiceCategory(user, serviceUpdate, audatingAction);
-        if (validatCategoryResponse.isRight()) {
-            ResponseFormat errorRespons = validatCategoryResponse.right().value();
-            return Either.right(errorRespons);
+        Either<Boolean, ResponseFormat> validateCategoryResponse = validateServiceCategory(user, serviceUpdate, audatingAction);
+        if (validateCategoryResponse.isRight()) {
+            return Either.right(validateCategoryResponse.right().value());
         }
         if (!categoryCurrent.get(0).getName().equals(categoryUpdated.get(0).getName())) {
             if (!hasBeenCertified) {
@@ -1177,7 +1048,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
 
     }
 
-    public Either<Boolean, ResponseFormat> validateServiceCategory(List<CategoryDefinition> list) {
+    private Either<Boolean, ResponseFormat> validateServiceCategory(List<CategoryDefinition> list) {
         if (list != null) {
             if (list.size() > 1) {
                 log.debug("Must be only one category for service");
@@ -1224,16 +1095,13 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         return Either.left(serviceRelations);
 
 
-    }public ResponseFormat deleteService(String serviceId, User user) {
+    }
+
+    public ResponseFormat deleteService(String serviceId, User user) {
         ResponseFormat responseFormat;
         String ecompErrorContext = "delete service";
 
-        Either<User, ResponseFormat> eitherCreator = validateUserExists(user, ecompErrorContext, false);
-        if (eitherCreator.isRight()) {
-            return eitherCreator.right().value();
-        }
-        user = eitherCreator.left().value();
-
+        validateUserExists(user, ecompErrorContext, false);
         Either<Service, StorageOperationStatus> serviceStatus = toscaOperationFacade.getToscaElement(serviceId);
         if (serviceStatus.isRight()) {
             log.debug("failed to get service {}", serviceId);
@@ -1245,12 +1113,9 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         StorageOperationStatus result = StorageOperationStatus.OK;
         Either<Boolean, ResponseFormat> lockResult = lockComponent(service, "Mark service to delete");
         if (lockResult.isRight()) {
-            result = StorageOperationStatus.GENERAL_ERROR;
-            return componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR);
+            return lockResult.right().value();
         }
-
         try {
-
             result = markComponentToDelete(service);
             if (result.equals(StorageOperationStatus.OK)) {
                 responseFormat = componentsUtils.getResponseFormat(ActionStatus.NO_CONTENT);
@@ -1259,7 +1124,6 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
                 responseFormat = componentsUtils.getResponseFormatByResource(actionStatus, service.getName());
             }
             return responseFormat;
-
         } finally {
             if (result == null || !result.equals(StorageOperationStatus.OK)) {
                 log.warn("operation failed. do rollback");
@@ -1276,16 +1140,8 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
     public ResponseFormat deleteServiceByNameAndVersion(String serviceName, String version, User user) {
         ResponseFormat responseFormat;
         String ecompErrorContext = "delete service";
-        Either<User, ResponseFormat> validateEmptyResult = validateUserNotEmpty(user, ecompErrorContext);
-        if (validateEmptyResult.isRight()) {
-            return validateEmptyResult.right().value();
-        }
-
-        Either<User, ResponseFormat> eitherCreator = validateUserExists(user, ecompErrorContext, false);
-        if (eitherCreator.isRight()) {
-            return eitherCreator.right().value();
-        }
-        user = eitherCreator.left().value();
+        validateUserNotEmpty(user, ecompErrorContext);
+        user = validateUserExists(user, ecompErrorContext, false);
 
         Either<Service, ResponseFormat> getResult = getServiceByNameAndVersion(serviceName, version, user.getUserId());
         if (getResult.isRight()) {
@@ -1325,15 +1181,8 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
 
     public Either<Service, ResponseFormat> getService(String serviceId, User user) {
         String ecompErrorContext = "Get service";
-        Either<User, ResponseFormat> validateEmptyResult = validateUserNotEmpty(user, ecompErrorContext);
-        if (validateEmptyResult.isRight()) {
-            return Either.right(validateEmptyResult.right().value());
-        }
-
-        Either<User, ResponseFormat> eitherCreator = validateUserExists(user, ecompErrorContext, false);
-        if (eitherCreator.isRight()) {
-            return Either.right(eitherCreator.right().value());
-        }
+        validateUserNotEmpty(user, ecompErrorContext);
+        validateUserExists(user, ecompErrorContext, false);
 
         Either<Service, StorageOperationStatus> storageStatus = toscaOperationFacade.getToscaElement(serviceId);
         if (storageStatus.isRight()) {
@@ -1353,10 +1202,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
     }
 
     public Either<Service, ResponseFormat> getServiceByNameAndVersion(String serviceName, String serviceVersion, String userId) {
-        Either<User, ResponseFormat> resp = validateUserExists(userId, "get Service By Name And Version", false);
-        if (resp.isRight()) {
-            return Either.right(resp.right().value());
-        }
+        validateUserExists(userId, "get Service By Name And Version", false);
         Either<Service, StorageOperationStatus> storageStatus = toscaOperationFacade.getComponentByNameAndVersion(ComponentTypeEnum.SERVICE, serviceName, serviceVersion);
         if (storageStatus.isRight()) {
             log.debug("failed to get service by name {} and version {}", serviceName, serviceVersion);
@@ -1375,7 +1221,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         String serviceUniqueId = service.getUniqueId();
         Map<String, ArtifactDefinition> artifactMap = service.getArtifacts();
         if (artifactMap == null)
-            artifactMap = new HashMap<String, ArtifactDefinition>();
+            artifactMap = new HashMap<>();
 
         Map<String, Object> informationalServiceArtifacts = ConfigurationManager.getConfigurationManager().getConfiguration().getInformationalServiceArtifacts();
         List<String> exludeServiceCategory = ConfigurationManager.getConfigurationManager().getConfiguration().getExcludeServiceCategory();
@@ -1416,12 +1262,12 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         return artifactInfo;
     }
 
-    private Either<DistributionTransitionEnum, ResponseFormat> validateTransitionEnum(String distributionTransition, User user) {
+    private Either<DistributionTransitionEnum, ResponseFormat> validateTransitionEnum(String distributionTransition) {
         DistributionTransitionEnum transitionEnum = null;
 
         transitionEnum = DistributionTransitionEnum.getFromDisplayName(distributionTransition);
         if (transitionEnum == null) {
-            BeEcompErrorManager.getInstance().logBeSystemError("Change Service Distribution");
+            BeEcompErrorManager.getInstance().logBeSystemError(CHANGE_SERVICE_DISTRIBUTION);
             log.info("state operation is not valid. operations allowed are: {}", DistributionTransitionEnum.valuesAsString());
             ResponseFormat error = componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR);
             return Either.right(error);
@@ -1430,11 +1276,11 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         return Either.left(transitionEnum);
     }
 
-    private Either<String, ResponseFormat> validateComment(LifecycleChangeInfoWithAction comment, User user, AuditingActionEnum auditAction) {
+    private Either<String, ResponseFormat> validateComment(LifecycleChangeInfoWithAction comment) {
         String data = comment.getUserRemarks();
 
         if (data == null || data.trim().isEmpty()) {
-            BeEcompErrorManager.getInstance().logBeInvalidJsonInput("Change Service Distribution");
+            BeEcompErrorManager.getInstance().logBeInvalidJsonInput(CHANGE_SERVICE_DISTRIBUTION);
             log.debug("user comment cannot be empty or null.");
             return Either.right(componentsUtils.getResponseFormat(ActionStatus.INVALID_CONTENT));
         }
@@ -1444,7 +1290,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         data = ValidationUtils.stripOctets(data);
 
         if (!ValidationUtils.validateLength(data, ValidationUtils.COMMENT_MAX_LENGTH)) {
-            BeEcompErrorManager.getInstance().logBeInvalidJsonInput("Change Service Distribution");
+            BeEcompErrorManager.getInstance().logBeInvalidJsonInput(CHANGE_SERVICE_DISTRIBUTION);
             log.debug("user comment exceeds limit.");
             return Either.right(componentsUtils.getResponseFormat(ActionStatus.EXCEEDS_LIMIT, "comment", String.valueOf(ValidationUtils.COMMENT_MAX_LENGTH)));
         }
@@ -1458,8 +1304,8 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         Either<Service, StorageOperationStatus> storageStatus = toscaOperationFacade.getToscaElement(serviceId);
         if (storageStatus.isRight()) {
             ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.SERVICE_NOT_FOUND, serviceId);
-            log.debug("audit before sending response");
-            componentsUtils.auditComponent(responseFormat, user, auditAction, serviceId, ComponentTypeEnum.SERVICE, comment);
+            log.debug(AUDIT_BEFORE_SENDING_RESPONSE);
+            componentsUtils.auditComponent(responseFormat, user, auditAction, new ResourceCommonInfo(serviceId, ComponentTypeEnum.SERVICE.getValue()), comment);
             return Either.right(responseFormat);
         }
         Service service = storageStatus.left().value();
@@ -1477,28 +1323,24 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         log.debug("get user from DB");
 
         // get user details
-        Either<User, ResponseFormat> eitherCreator = validateUser(user, "Activate Distribution", service, auditAction, false);
-        if (eitherCreator.isRight()) {
-            return Either.right(eitherCreator.right().value());
-        }
-        user = eitherCreator.left().value();
-
+        user = validateUser(user, "Activate Distribution", service, auditAction, false);
         // validate user role
         List<Role> roles = new ArrayList<>();
         roles.add(Role.ADMIN);
         roles.add(Role.GOVERNOR);
         roles.add(Role.OPS);
-        Either<Boolean, ResponseFormat> validateRes = validateUserRole(user, service, roles, auditAction, comment);
-        if (validateRes.isRight()) {
-            return Either.right(validateRes.right().value());
-        }
+        validateUserRole(user, service, roles, auditAction, comment);
         return Either.left(user);
     }
 
     private void createAudit(User user, AuditingActionEnum auditAction, String comment, Service component, ResponseFormat responseFormat) {
-        log.debug("audit before sending response");
-        componentsUtils.auditComponent(responseFormat, user, component, auditAction, ComponentTypeEnum.SERVICE,
-                ResourceAuditData.newBuilder().state(component.getLifecycleState().name()).version(component.getVersion()).build(), comment);
+        log.debug(AUDIT_BEFORE_SENDING_RESPONSE);
+        componentsUtils.auditComponent(responseFormat, user, component, auditAction, new ResourceCommonInfo(ComponentTypeEnum.SERVICE.getValue()),
+                ResourceVersionInfo.newBuilder()
+                        .state(component.getLifecycleState().name())
+                        .version(component.getVersion())
+                        .build(),
+                comment);
     }
 
     private String getEnvNameFromConfiguration() {
@@ -1517,24 +1359,16 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         ActivationRequestInformation activationRequestInformation = activationRequestInformationEither.left().value();
 
         Either<String, ResponseFormat> result = null;
-        ResponseFormat response = null;
         String did = ThreadLocalsHolder.getUuid();
         Service service = activationRequestInformation.getServiceToActivate();
-
-        StorageOperationStatus readyForDistribution = distributionEngine.verifyServiceHasDeploymentArtifacts(service);
-        if (readyForDistribution.equals(StorageOperationStatus.OK)) {
-            result = buildAndSendServiceNotification(service, envId, did, activationRequestInformation.getWorkloadContext(), modifier);
-        } else {
-            response = componentsUtils.getResponseFormatByDE(componentsUtils.convertFromStorageResponse(readyForDistribution), service.getName(), envId);
-            result = Either.right(response);
-        }
+        result = buildAndSendServiceNotification(service, envId, did, activationRequestInformation.getWorkloadContext(), modifier);
         return result;
     }
 
     public Either<String, ResponseFormat> buildAndSendServiceNotification(Service service, String envId, String did, String workloadContext, User modifier) {
         String envName = getEnvNameFromConfiguration();
         INotificationData notificationData = distributionEngine.buildServiceForDistribution(service, did, workloadContext);
-        ActionStatus notifyServiceResponse = distributionEngine.notifyService(did, service, notificationData, envId, envName, modifier.getUserId(), modifier.getFullName());
+        ActionStatus notifyServiceResponse = distributionEngine.notifyService(did, service, notificationData, envId, envName, modifier);
         if (notifyServiceResponse == ActionStatus.OK) {
             return Either.left(did);
         } else {
@@ -1547,20 +1381,14 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
 
     public Either<Service, ResponseFormat> activateDistribution(String serviceId, String envName, User modifier, HttpServletRequest request) {
 
-        Either<User, ResponseFormat> eitherCreator = validateUserExists(modifier.getUserId(), "activate Distribution", false);
-        if (eitherCreator.isRight()) {
-            return Either.right(eitherCreator.right().value());
-        }
-
-        User user = eitherCreator.left().value();
-
+        User user = validateUserExists(modifier.getUserId(), "activate Distribution", false);
         Either<Service, ResponseFormat> result = null;
         ResponseFormat response = null;
         Service updatedService = null;
         String did = ThreadLocalsHolder.getUuid();
          // DE194021
         String configuredEnvName = ConfigurationManager.getConfigurationManager().getDistributionEngineConfiguration().getEnvironments().get(0);
-        if (configuredEnvName != null && false == envName.equals(configuredEnvName)) {
+        if (configuredEnvName != null && !configuredEnvName.equals(envName)) {
             log.trace("Update environment name to be {} instead of {}", configuredEnvName, envName);
             envName = configuredEnvName;
         }
@@ -1579,17 +1407,20 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         if (serviceRes.isRight()) {
             log.debug("failed retrieving service");
             response = componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(serviceRes.right().value(), ComponentTypeEnum.SERVICE), serviceId);
-            componentsUtils.auditComponent(response, user, null, AuditingActionEnum.DISTRIBUTION_STATE_CHANGE_REQUEST, ComponentTypeEnum.SERVICE,
-                    ResourceAuditData.newBuilder().build(), did);
+            componentsUtils.auditComponent(response, user, null, AuditingActionEnum.DISTRIBUTION_STATE_CHANGE_REQUEST,
+                    new ResourceCommonInfo(ComponentTypeEnum.SERVICE.getValue()),
+                    ResourceVersionInfo.newBuilder()
+                            .build(),
+                    did);
             return Either.right(response);
         }
         Service service = serviceRes.left().value();
         String dcurrStatus = service.getDistributionStatus().name();
         String updatedStatus = dcurrStatus;
-        StorageOperationStatus readyForDistribution = distributionEngine.isReadyForDistribution(service, envName);
+        StorageOperationStatus readyForDistribution = distributionEngine.isReadyForDistribution(envName);
         if (readyForDistribution.equals(StorageOperationStatus.OK)) {
             INotificationData notificationData = distributionEngine.buildServiceForDistribution(service, did, null);
-            ActionStatus notifyServiceResponse = distributionEngine.notifyService(did, service, notificationData, envName, user.getUserId(), user.getFullName());
+            ActionStatus notifyServiceResponse = distributionEngine.notifyService(did, service, notificationData, envName, user);
             if (notifyServiceResponse == ActionStatus.OK) {
                 Either<Service, ResponseFormat> updateStateRes = updateDistributionStatusForActivation(service, user, DistributionStatusEnum.DISTRIBUTED);
                 if (updateStateRes.isLeft() && updateStateRes.left().value() != null) {
@@ -1609,12 +1440,17 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
                 result = Either.right(response);
             }
         } else {
-            response = componentsUtils.getResponseFormatByDE(componentsUtils.convertFromStorageResponse(readyForDistribution), service.getName(), envName);
+            response = componentsUtils.getResponseFormatByDE(componentsUtils.convertFromStorageResponse(readyForDistribution), envName);
             result = Either.right(response);
         }
-        componentsUtils.auditComponent(response, user, service, AuditingActionEnum.DISTRIBUTION_STATE_CHANGE_REQUEST, ComponentTypeEnum.SERVICE,
-                ResourceAuditData.newBuilder().distributionStatus(dcurrStatus).build(),
-                ResourceAuditData.newBuilder().distributionStatus(updatedStatus).build(), service.getName(),
+        componentsUtils.auditComponent(response, user, service, AuditingActionEnum.DISTRIBUTION_STATE_CHANGE_REQUEST,
+                new ResourceCommonInfo(service.getName(),ComponentTypeEnum.SERVICE.getValue()),
+                ResourceVersionInfo.newBuilder()
+                        .distributionStatus(dcurrStatus)
+                        .build(),
+                ResourceVersionInfo.newBuilder()
+                        .distributionStatus(updatedStatus)
+                        .build(),
                 null, null, did);
         return result;
     }
@@ -1622,10 +1458,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
     // convert to private after deletion of temp url
     public Either<Service, ResponseFormat> updateDistributionStatusForActivation(Service service, User user, DistributionStatusEnum state) {
 
-        Either<User, ResponseFormat> resp = validateUserExists(user.getUserId(), "update Distribution Status For Activation", false);
-        if (resp.isRight()) {
-            return Either.right(resp.right().value());
-        }
+        validateUserExists(user.getUserId(), "update Distribution Status For Activation", false);
 
         String serviceId = service.getUniqueId();
         Either<Boolean, ResponseFormat> lockResult = lockComponent(serviceId, service, "updateDistributionStatusForActivation");
@@ -1649,11 +1482,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
 
     public Either<Service, ResponseFormat> markDistributionAsDeployed(String serviceId, String did, User user) {
 
-        Either<User, ResponseFormat> resp = validateUserExists(user.getUserId(), "mark Distribution As Deployed", false);
-        if (resp.isRight()) {
-            return Either.right(resp.right().value());
-        }
-
+        validateUserExists(user.getUserId(), "mark Distribution As Deployed", false);
         log.debug("mark distribution deployed");
 
         AuditingActionEnum auditAction = AuditingActionEnum.DISTRIBUTION_DEPLOY;
@@ -1667,13 +1496,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         }
 
         Service service = getServiceResponse.left().value();
-
-        Either<User, ResponseFormat> validateRoleForDeploy = validateRoleForDeploy(did, user, auditAction, service);
-        if (validateRoleForDeploy.isRight()) {
-            return Either.right(validateRoleForDeploy.right().value());
-        }
-        user = validateRoleForDeploy.left().value();
-
+        user = validateRoleForDeploy(did, user, auditAction, service);
         return checkDistributionAndDeploy(did, user, auditAction, service);
 
     }
@@ -1688,7 +1511,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
     }
 
     private List<ArtifactGenerator<ArtifactDefinition>> buildArtifactGenList(Service service, User modifier, boolean shouldLock, boolean inTransaction, ComponentInstance ri) {
-        List<ArtifactGenerator<ArtifactDefinition>> asList = new ArrayList<ArtifactGenerator<ArtifactDefinition>>();
+        List<ArtifactGenerator<ArtifactDefinition>> asList = new ArrayList<>();
 
         if (ri.getOriginType() == OriginTypeEnum.VF) {
             asList = Arrays.asList(new VfModuleArtifacGenerator(modifier, ri, service, shouldLock, inTransaction));
@@ -1696,15 +1519,15 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         return asList;
     }
 
-    private List<GroupInstance> collectGroupsInstanceForCompInstance(ComponentInstance currVF, Wrapper<ResponseFormat> responseWrapper) {
+    private List<GroupInstance> collectGroupsInstanceForCompInstance(ComponentInstance currVF) {
         Map<String, ArtifactDefinition> deploymentArtifacts = currVF.getDeploymentArtifacts();
         if(currVF.getGroupInstances() != null){
-            currVF.getGroupInstances().stream().forEach(gi -> gi.alignArtifactsUuid(deploymentArtifacts));
+            currVF.getGroupInstances().forEach(gi -> gi.alignArtifactsUuid(deploymentArtifacts));
         }
         return currVF.getGroupInstances();
     }
 
-    private ArtifactDefinition getVfModuleInstArtifactForCompInstance(ComponentInstance currVF, Service service, User modifier, List<GroupInstance> groupsForCurrVF, Wrapper<String> payloadWrapper, Wrapper<ResponseFormat> responseWrapper) {
+    private ArtifactDefinition getVfModuleInstArtifactForCompInstance(ComponentInstance currVF, Service service, Wrapper<String> payloadWrapper, Wrapper<ResponseFormat> responseWrapper) {
         ArtifactDefinition vfModuleAertifact = null;
         if (MapUtils.isNotEmpty(currVF.getDeploymentArtifacts())) {
             Optional<ArtifactDefinition> optionalVfModuleArtifact = currVF.getDeploymentArtifacts().values().stream().filter(p -> p.getArtifactType().equals(ArtifactTypeEnum.VF_MODULES_METADATA.name())).findAny();
@@ -1713,7 +1536,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
             }
         }
         if (vfModuleAertifact == null) {
-            Either<ArtifactDefinition, ResponseFormat> createVfModuleArtifact = createVfModuleArtifact(modifier, currVF, service, payloadWrapper.getInnerElement());
+            Either<ArtifactDefinition, ResponseFormat> createVfModuleArtifact = createVfModuleArtifact(currVF, service, payloadWrapper.getInnerElement());
             if (createVfModuleArtifact.isLeft()) {
                 vfModuleAertifact = createVfModuleArtifact.left().value();
             } else {
@@ -1724,43 +1547,40 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
     }
 
     private void fillVfModuleInstHeatEnvPayload(List<GroupInstance> groupsForCurrVF, Wrapper<String> payloadWrapper) {
-        // Converts GroupDefinition to VfModuleArtifactPayload which is the
-        // format used in the payload
-
-        List<VfModuleArtifactPayload> vfModulePayloadForCurrVF = new ArrayList<VfModuleArtifactPayload>();
+        List<VfModuleArtifactPayload> vfModulePayloads = new ArrayList<>();
         if (groupsForCurrVF != null) {
             for (GroupInstance groupInstance : groupsForCurrVF) {
                 VfModuleArtifactPayload modulePayload = new VfModuleArtifactPayload(groupInstance);
-                vfModulePayloadForCurrVF.add(modulePayload);
+                vfModulePayloads.add(modulePayload);
             }
-            Collections.sort(vfModulePayloadForCurrVF, (art1, art2) -> VfModuleArtifactPayload.compareByGroupName(art1, art2));
+            vfModulePayloads.sort(VfModuleArtifactPayload::compareByGroupName);
 
             final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
-            String vfModulePayloadString = gson.toJson(vfModulePayloadForCurrVF);
+            String vfModulePayloadString = gson.toJson(vfModulePayloads);
             payloadWrapper.setInnerElement(vfModulePayloadString);
         }
 
     }
 
     private Either<ArtifactDefinition, ResponseFormat> generateVfModuleInstanceArtifact(User modifier, ComponentInstance currVFInstance, Service service, boolean shouldLock, boolean inTransaction) {
-        ArtifactDefinition vfModuleAertifact = null;
+        ArtifactDefinition vfModuleArtifact = null;
         Wrapper<ResponseFormat> responseWrapper = new Wrapper<>();
         Wrapper<String> payloadWrapper = new Wrapper<>();
-        List<GroupInstance> groupsForCurrVF = collectGroupsInstanceForCompInstance(currVFInstance, responseWrapper);
+        List<GroupInstance> groupsForCurrVF = collectGroupsInstanceForCompInstance(currVFInstance);
         if (responseWrapper.isEmpty()) {
             fillVfModuleInstHeatEnvPayload(groupsForCurrVF, payloadWrapper);
         }
         if (responseWrapper.isEmpty() && payloadWrapper.getInnerElement() != null) {
-            vfModuleAertifact = getVfModuleInstArtifactForCompInstance(currVFInstance, service, modifier, groupsForCurrVF, payloadWrapper, responseWrapper);
+            vfModuleArtifact = getVfModuleInstArtifactForCompInstance(currVFInstance, service, payloadWrapper, responseWrapper);
         }
-        if (responseWrapper.isEmpty() && vfModuleAertifact != null) {
-            vfModuleAertifact = fillVfModulePayload(modifier, currVFInstance, vfModuleAertifact, shouldLock, inTransaction, payloadWrapper, responseWrapper, service);
+        if (responseWrapper.isEmpty() && vfModuleArtifact != null) {
+            vfModuleArtifact = fillVfModulePayload(modifier, currVFInstance, vfModuleArtifact, shouldLock, inTransaction, payloadWrapper, responseWrapper, service);
         }
 
         Either<ArtifactDefinition, ResponseFormat> result;
         if (responseWrapper.isEmpty()) {
-            result = Either.left(vfModuleAertifact);
+            result = Either.left(vfModuleArtifact);
         } else {
             result = Either.right(responseWrapper.getInnerElement());
         }
@@ -1770,7 +1590,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
 
     private ArtifactDefinition fillVfModulePayload(User modifier, ComponentInstance currVF, ArtifactDefinition vfModuleArtifact, boolean shouldLock, boolean inTransaction, Wrapper<String> payloadWrapper, Wrapper<ResponseFormat> responseWrapper, Service service) {
         ArtifactDefinition result = null;
-        Either<ArtifactDefinition, ResponseFormat> eitherPayload = artifactsBusinessLogic.generateArtifactPayload(vfModuleArtifact, ComponentTypeEnum.RESOURCE_INSTANCE, service, currVF.getName(), modifier, shouldLock, inTransaction, () -> System.currentTimeMillis(),
+        Either<ArtifactDefinition, ResponseFormat> eitherPayload = artifactsBusinessLogic.generateArtifactPayload(vfModuleArtifact, ComponentTypeEnum.RESOURCE_INSTANCE, service, currVF.getName(), modifier, shouldLock, inTransaction, System::currentTimeMillis,
                 () -> Either.left(artifactsBusinessLogic.createEsArtifactData(vfModuleArtifact, payloadWrapper.getInnerElement().getBytes(StandardCharsets.UTF_8))), currVF.getUniqueId());
         if (eitherPayload.isLeft()) {
             result = eitherPayload.left().value();
@@ -1784,7 +1604,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         return result;
     }
 
-    private Either<ArtifactDefinition, ResponseFormat> createVfModuleArtifact(User modifier, ComponentInstance currVF, Service service, String vfModulePayloadString) {
+    private Either<ArtifactDefinition, ResponseFormat> createVfModuleArtifact(ComponentInstance currVF, Service service, String vfModulePayloadString) {
 
         ArtifactDefinition vfModuleArtifactDefinition = new ArtifactDefinition();
         String newCheckSum = null;
@@ -1918,28 +1738,28 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
 
     }
 
-    private synchronized Either<Service, ResponseFormat> checkDistributionAndDeploy(String did, User user, AuditingActionEnum auditAction, Service service) {
-        boolean isDeployed = isDistributionDeployed(did, service);
+    private synchronized Either<Service, ResponseFormat> checkDistributionAndDeploy(String distributionId, User user, AuditingActionEnum auditAction, Service service) {
+        boolean isDeployed = isDistributionDeployed(distributionId);
         if (isDeployed) {
             return Either.left(service);
         }
-        Either<Boolean, ResponseFormat> distributionSuccess = checkDistributionSuccess(did, user, auditAction, service);
+        Either<Boolean, ResponseFormat> distributionSuccess = checkDistributionSuccess(distributionId, user, auditAction, service);
         if (distributionSuccess.isRight()) {
             return Either.right(distributionSuccess.right().value());
         }
 
-        log.debug("mark distribution {} as deployed - success", did);
-        componentsUtils.auditServiceDistributionDeployed(auditAction, service.getName(), service.getVersion(), service.getUUID(), did, STATUS_DEPLOYED, "OK", user);
+        log.debug("mark distribution {} as deployed - success", distributionId);
+        componentsUtils.auditServiceDistributionDeployed(service.getName(), service.getVersion(), service.getUUID(), distributionId, STATUS_DEPLOYED, "OK", user);
         return Either.left(service);
     }
 
-    private boolean isDistributionDeployed(String did, Service service) {
-        Either<List<DistributionDeployEvent>, ActionStatus> alreadyDeployed = auditCassandraDao.getDistributionDeployByStatus(did, AuditingActionEnum.DISTRIBUTION_DEPLOY.getName(), STATUS_DEPLOYED);
+    private boolean isDistributionDeployed(String distributionId) {
+        Either<List<DistributionDeployEvent>, ActionStatus> alreadyDeployed = auditCassandraDao.getDistributionDeployByStatus(distributionId, AuditingActionEnum.DISTRIBUTION_DEPLOY.getName(), STATUS_DEPLOYED);
 
         boolean isDeployed = false;
         if (alreadyDeployed.isLeft() && !alreadyDeployed.left().value().isEmpty()) {
             // already deployed
-            log.debug("distribution {} is already deployed", did);
+            log.debug("distribution {} is already deployed", distributionId);
             isDeployed = true;
         }
         return isDeployed;
@@ -2010,36 +1830,35 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         message += error.getFormattedMessage();
 
         if (service != null) {
-            componentsUtils.auditServiceDistributionDeployed(auditAction, service.getName(), service.getVersion(), service.getUUID(), did, error.getStatus().toString(), message, user);
+            componentsUtils.auditServiceDistributionDeployed(service.getName(), service.getVersion(), service.getUUID(), did, error.getStatus().toString(), message, user);
         } else {
-            componentsUtils.auditServiceDistributionDeployed(auditAction, "", "", "", did, error.getStatus().toString(), message, user);
+            componentsUtils.auditServiceDistributionDeployed("", "", "", did, error.getStatus().toString(), message, user);
         }
         return error;
     }
 
-    private Either<User, ResponseFormat> validateRoleForDeploy(String did, User user, AuditingActionEnum auditAction, Service service) {
+    private User validateRoleForDeploy(String did, User user, AuditingActionEnum auditAction, Service service) {
         Either<User, ActionStatus> eitherCreator = userAdmin.getUser(user.getUserId(), false);
         if (eitherCreator.isRight() || eitherCreator.left().value() == null) {
             BeEcompErrorManager.getInstance().logBeUserMissingError("Deploy Service", user.getUserId());
             log.debug("validateRoleForDeploy method - user is not listed. userId= {}", user.getUserId());
             ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.USER_NOT_FOUND, user.getUserId());
             auditDeployError(did, user, auditAction, service, ActionStatus.USER_NOT_FOUND);
-            return Either.right(responseFormat);
+            throw new ComponentException(ActionStatus.USER_NOT_FOUND, user.getUserId());
         }
         user = eitherCreator.left().value();
         log.debug("validate user role");
         List<Role> roles = new ArrayList<>();
         roles.add(Role.ADMIN);
         roles.add(Role.OPS);
-        Either<Boolean, ResponseFormat> validateRes = validateUserRole(user, service, roles, auditAction, null);
-        if (validateRes.isRight()) {
+        try{
+            validateUserRole(user, service, roles, auditAction, null);
+        } catch (ComponentException e){
             log.info("role {} is not allowed to perform this action", user.getRole());
-            ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.RESTRICTED_OPERATION);
-            auditDeployError(did, user, auditAction, service, ActionStatus.RESTRICTED_OPERATION);
-            return Either.right(responseFormat);
+            auditDeployError(did, user, auditAction, service, e.getActionStatus());
+            throw e;
         }
-        return Either.left(user);
-
+        return user;
     }
 
     @Override
@@ -2055,8 +1874,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
     private HealthCheckBusinessLogic getHealthCheckBL(ServletContext context) {
         WebAppContextWrapper webApplicationContextWrapper = (WebAppContextWrapper) context.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR);
         WebApplicationContext webApplicationContext = webApplicationContextWrapper.getWebAppContext(context);
-        HealthCheckBusinessLogic healthCheckBl = webApplicationContext.getBean(HealthCheckBusinessLogic.class);
-        return healthCheckBl;
+        return webApplicationContext.getBean(HealthCheckBusinessLogic.class);
     }
 
     @Override
@@ -2065,12 +1883,9 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
     }
 
     @Override
-    public Either<List<ComponentInstance>, ResponseFormat> getComponentInstancesFilteredByPropertiesAndInputs(String componentId, ComponentTypeEnum componentTypeEnum, String userId, String searchText) {
+    public Either<List<ComponentInstance>, ResponseFormat> getComponentInstancesFilteredByPropertiesAndInputs(String componentId, String userId) {
 
-        Either<User, ResponseFormat> resp = validateUserExists(userId, "Get Component Instances", false);
-        if (resp.isRight()) {
-            return Either.right(resp.right().value());
-        }
+        validateUserExists(userId, "Get Component Instances", false);
         Either<Component, StorageOperationStatus> getComponentRes = toscaOperationFacade.getToscaElement(componentId, JsonParseFlagEnum.ParseAll);
         if (getComponentRes.isRight()) {
             ResponseFormat responseFormat = componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(getComponentRes.right().value()));
@@ -2100,12 +1915,6 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
     }/**
      * updates group instance with new property values in case of successful update of group instance related component instance will be updated with new modification time and related service will be updated with new last update date
      *
-     * @param modifier
-     * @param serviceId
-     * @param componentInstanceId
-     * @param groupInstanceId
-     * @param newProperties
-     * @return
      */
     public Either<List<GroupInstanceProperty>, ResponseFormat> updateGroupInstancePropertyValues(User modifier, String serviceId, String componentInstanceId, String groupInstanceId, List<GroupInstanceProperty> newProperties) {
 
@@ -2124,10 +1933,10 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
                 component = validateUserAndComponentRes.left().value().getKey();
                 lockResult = lockComponentByName(component.getSystemName(), component, "Update Group Instance on Service");
                 if (lockResult.isRight()) {
-                    log.debug("Failed to lock service {}. Response is {}. ", component.getName(), lockResult.right().value().getFormattedMessage());
+                    log.debug(FAILED_TO_LOCK_SERVICE_RESPONSE_IS, component.getName(), lockResult.right().value().getFormattedMessage());
                     actionResult = Either.right(lockResult.right().value());
                 } else {
-                    log.debug("The service with system name {} locked. ", component.getSystemName());
+                    log.debug(THE_SERVICE_WITH_SYSTEM_NAME_LOCKED, component.getSystemName());
                 }
             }
             if (actionResult == null) {
@@ -2157,27 +1966,26 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         Either<GroupInstance, ResponseFormat> updateGroupInstanceResult = null;
         GroupInstance updatedGroupInstance = null;
         boolean inTransaction = true;
-        boolean shouldCloseTransaction = true;
         findGroupInstanceRes = findGroupInstanceOnRelatedComponentInstance(component, componentInstanceId, groupInstanceId);
         if (findGroupInstanceRes.isRight()) {
-            log.debug("Group instance {} not found. ", groupInstanceId);
+            log.debug("#validateAndUpdateGroupInstancePropertyValuesAndContainingParents - Group instance {} not found. ", groupInstanceId);
             actionResult = Either.right(findGroupInstanceRes.right().value());
         }
         if (actionResult == null) {
             oldGroupInstance = findGroupInstanceRes.left().value().getValue();
             relatedComponentInstance = findGroupInstanceRes.left().value().getKey();
-            updateGroupInstanceResult = groupBusinessLogic.validateAndUpdateGroupInstancePropertyValues(component.getUniqueId(), componentInstanceId, oldGroupInstance, newProperties, inTransaction);
+            updateGroupInstanceResult = groupBusinessLogic.validateAndUpdateGroupInstancePropertyValues(component.getUniqueId(), componentInstanceId, oldGroupInstance, newProperties);
             if (updateGroupInstanceResult.isRight()) {
-                log.debug("Failed to update group instance {} property values. ", oldGroupInstance.getName());
+                log.debug("#validateAndUpdateGroupInstancePropertyValuesAndContainingParents - Failed to update group instance {} property values. ", oldGroupInstance.getName());
                 actionResult = Either.right(updateGroupInstanceResult.right().value());
             }
         }
         if (actionResult == null) {
             updatedGroupInstance = updateGroupInstanceResult.left().value();
             if (!oldGroupInstance.getModificationTime().equals(updatedGroupInstance.getModificationTime())) {
-                updateParentsModificationTimeRes = updateParentsModificationTimeAndCustomizationUuid(component, relatedComponentInstance, updatedGroupInstance, inTransaction, shouldCloseTransaction);
+                updateParentsModificationTimeRes = updateParentsModificationTimeAndCustomizationUuid(component, relatedComponentInstance, updatedGroupInstance, inTransaction);
                 if (updateParentsModificationTimeRes.isRight()) {
-                    log.debug("Failed to update modification time. ", oldGroupInstance.getName());
+                    log.debug("#validateAndUpdateGroupInstancePropertyValuesAndContainingParents - Failed to update modification time for group instance {}. ", oldGroupInstance.getName());
                     actionResult = Either.right(updateParentsModificationTimeRes.right().value());
                 }
             }
@@ -2189,7 +1997,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
     }
 
     private Either<ImmutablePair<ComponentMetadataData, ComponentInstanceData>, ResponseFormat> updateParentsModificationTimeAndCustomizationUuid(Component component, ComponentInstance relatedComponentInstance, GroupInstance updatedGroupInstance,
-                                                                                                                                                  boolean inTranscation, boolean shouldCloseTransaction) {
+                                                                                                                                                  boolean inTranscation) {
 
         Either<ImmutablePair<ComponentMetadataData, ComponentInstanceData>, ResponseFormat> actionResult;
         Either<ComponentMetadataData, StorageOperationStatus> serviceMetadataUpdateResult;
@@ -2199,7 +2007,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
             log.debug("Failed to update component instance {} after update of group instance {}. ", relatedComponentInstance.getName(), updatedGroupInstance.getName());
             actionResult = Either.right(updateComponentInstanceRes.right().value());
         } else {
-            serviceMetadataUpdateResult = toscaOperationFacade.updateComponentLastUpdateDateOnGraph(component, updatedGroupInstance.getModificationTime());
+            serviceMetadataUpdateResult = toscaOperationFacade.updateComponentLastUpdateDateOnGraph(component);
             if (serviceMetadataUpdateResult.isRight()) {
                 log.debug("Failed to update service {} after update of component instance {} with new property values of group instance {}. ", component.getName(), relatedComponentInstance.getName(), updatedGroupInstance.getName());
                 actionResult = Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(serviceMetadataUpdateResult.right().value())));
@@ -2218,21 +2026,21 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         Component component = null;
         Either<User, ResponseFormat> validationUserResult = validateUserIgnoreAudit(modifier, "updateGroupInstancePropertyValues");
         if (validationUserResult.isRight()) {
-            log.debug("Failed to validate user with userId for update service {}. ", modifier.getUserId(), serviceId);
+            log.debug("#validateUserAndComponent - Failed to validate user with userId {}, for update service {}. ", modifier.getUserId(), serviceId);
             result = Either.right(validationUserResult.right().value());
         }
         if (result == null) {
             currUser = validationUserResult.left().value();
             validateComponentExistsRes = validateComponentExists(serviceId, ComponentTypeEnum.SERVICE, null);
             if (validateComponentExistsRes.isRight()) {
-                log.debug("Failed to validate service existing {}. ", serviceId);
+                log.debug("#validateUserAndComponent - Failed to validate service existing {}. ", serviceId);
                 result = Either.right(validateComponentExistsRes.right().value());
             }
         }
         if (result == null) {
             component = validateComponentExistsRes.left().value();
             if (!ComponentValidationUtils.canWorkOnComponent(component, currUser.getUserId())) {
-                log.info("Restricted operation for user: {}, on service: {}", currUser.getUserId(), component.getCreatorUserId());
+                log.info("#validateUserAndComponent - Restricted operation for user: {}, on service: {}", currUser.getUserId(), component.getCreatorUserId());
                 return Either.right(componentsUtils.getResponseFormat(ActionStatus.RESTRICTED_OPERATION));
             }
         }
@@ -2250,7 +2058,8 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         if (foundComponentInstance == null) {
             log.debug("Component instance {} not found on service {}. ", componentInstanceId, component.getName());
             actionResult = Either.right(componentsUtils.getResponseFormat(ActionStatus.COMPONENT_INSTANCE_NOT_FOUND_ON_CONTAINER, componentInstanceId, "resource instance", "service", component.getName()));
-        } else if (!CollectionUtils.isEmpty(foundComponentInstance.getGroupInstances())) {
+        }
+        else if (isNotEmpty(foundComponentInstance.getGroupInstances())) {
             groupInstance = foundComponentInstance.getGroupInstances().stream().filter(gi -> gi.getUniqueId().equals(groupInstanceId)).findFirst().orElse(null);
             if (groupInstance == null) {
                 log.debug("Group instance {} not found on component instance {}. ", groupInstanceId, foundComponentInstance.getName());
@@ -2265,43 +2074,38 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
 
     private ComponentInstance findRelatedComponentInstance(Component component, String componentInstanceId) {
         ComponentInstance componentInstance = null;
-        if (!CollectionUtils.isEmpty(component.getComponentInstances())) {
+        if (isNotEmpty(component.getComponentInstances())) {
             componentInstance = component.getComponentInstances().stream().filter(ci -> ci.getUniqueId().equals(componentInstanceId)).findFirst().orElse(null);
         }
         return componentInstance;
     }
 
     private Either<User, ResponseFormat> validateUserIgnoreAudit(User modifier, String ecompErrorContext) {
-        Either<User, ResponseFormat> result = validateUser(modifier, ecompErrorContext, null, null, false);
-        if (result.isLeft()) {
-            List<Role> roles = new ArrayList<>();
-            roles.add(Role.ADMIN);
-            roles.add(Role.DESIGNER);
-            Either<Boolean, ResponseFormat> validationRoleRes = validateUserRole(result.left().value(), roles);
-            if (validationRoleRes.isRight()) {
-                result = Either.right(validationRoleRes.right().value());
-            }
-        }
-        return result;
+        User user = validateUser(modifier, ecompErrorContext, null, null, false);
+        List<Role> roles = new ArrayList<>();
+        roles.add(Role.ADMIN);
+        roles.add(Role.DESIGNER);
+        validateUserRole(user, roles);
+        return Either.left(user);
     }
 
     public Either<UiComponentDataTransfer, ResponseFormat> getUiComponentDataTransferByComponentId(String serviceId, List<String> dataParamsToReturn) {
 
-        ComponentParametersView paramsToRetuen = new ComponentParametersView(dataParamsToReturn);
-        Either<Service, StorageOperationStatus> serviceResultEither = toscaOperationFacade.getToscaElement(serviceId, paramsToRetuen);
+        ComponentParametersView paramsToReturn = new ComponentParametersView(dataParamsToReturn);
+        Either<Service, StorageOperationStatus> serviceResultEither = toscaOperationFacade.getToscaElement(serviceId, paramsToReturn);
 
         if (serviceResultEither.isRight()) {
             if(serviceResultEither.right().value().equals(StorageOperationStatus.NOT_FOUND)) {
-                log.debug("Failed to found service with id {} ", serviceId);
-                Either.right(componentsUtils.getResponseFormat(ActionStatus.SERVICE_NOT_FOUND, serviceId));
+                log.debug("#getUiComponentDataTransferByComponentId - Failed to find service with id {} ", serviceId);
+                return Either.right(componentsUtils.getResponseFormat(ActionStatus.SERVICE_NOT_FOUND, serviceId));
             }
 
-            log.debug("failed to get service by id {} with filters {}", serviceId, dataParamsToReturn.toString());
+            log.debug("#getUiComponentDataTransferByComponentId - failed to get service by id {} with filters {}", serviceId, dataParamsToReturn);
             return Either.right(componentsUtils.getResponseFormatByResource(componentsUtils.convertFromStorageResponse(serviceResultEither.right().value()), ""));
         }
 
         Service service = serviceResultEither.left().value();
-        UiComponentDataTransfer dataTransfer = UiComponentDataConverter.getUiDataTransferFromServiceByParams(service, dataParamsToReturn);
+        UiComponentDataTransfer dataTransfer = uiComponentDataConverter.getUiDataTransferFromServiceByParams(service, dataParamsToReturn);
         return Either.left(dataTransfer);
     }
 }

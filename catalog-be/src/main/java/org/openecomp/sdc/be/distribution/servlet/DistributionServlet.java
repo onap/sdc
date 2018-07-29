@@ -20,20 +20,9 @@
 
 package org.openecomp.sdc.be.distribution.servlet;
 
-import javax.annotation.Resource;
-import javax.inject.Singleton;
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
+import com.jcabi.aspects.Loggable;
+import fj.data.Either;
+import io.swagger.annotations.*;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.distribution.AuditHandler;
@@ -49,23 +38,19 @@ import org.openecomp.sdc.be.servlets.BeGenericServlet;
 import org.openecomp.sdc.common.api.ArtifactTypeEnum;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.datastructure.Wrapper;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.common.util.HttpUtil;
 import org.openecomp.sdc.exception.ResponseFormat;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.web.context.WebApplicationContext;
 
-import com.jcabi.aspects.Loggable;
-
-import fj.data.Either;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
-import io.swagger.annotations.ResponseHeader;
+import javax.annotation.Resource;
+import javax.inject.Singleton;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 /**
  * This Servlet serves external users for distribution purposes.
@@ -80,7 +65,8 @@ import io.swagger.annotations.ResponseHeader;
 @Singleton
 public class DistributionServlet extends BeGenericServlet {
 
-    private static final Logger log = LoggerFactory.getLogger(DistributionServlet.class);
+    private static final String START_HANDLE_REQUEST_OF = "Start handle request of {}";
+	private static final Logger log = Logger.getLogger(DistributionServlet.class);
     @Resource
     private DistributionBusinessLogic distributionLogic;
     @Context
@@ -118,14 +104,14 @@ public class DistributionServlet extends BeGenericServlet {
 
         init(request);
         String url = request.getMethod() + " " + request.getRequestURI();
-        log.debug("Start handle request of {}", url);
+        log.debug(START_HANDLE_REQUEST_OF, url);
         Response response = null;
         ResponseFormat responseFormat = null;
 
         if (instanceId == null) {
             responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.MISSING_X_ECOMP_INSTANCE_ID);
             response = buildErrorResponse(responseFormat);
-            getComponentsUtils().auditMissingInstanceId(AuditingActionEnum.GET_UEB_CLUSTER, responseFormat.getStatus().toString(), responseFormat.getFormattedMessage());
+            getComponentsUtils().auditGetUebCluster(null, responseFormat.getStatus().toString(), responseFormat.getFormattedMessage());
             return response;
         }
 
@@ -140,14 +126,14 @@ public class DistributionServlet extends BeGenericServlet {
                 response = buildOkResponse(responseFormat, actionResponse.left().value());
             }
 
-            getComponentsUtils().auditGetUebCluster(AuditingActionEnum.GET_UEB_CLUSTER, instanceId, null, responseFormat.getStatus().toString(), responseFormat.getFormattedMessage());
+            getComponentsUtils().auditGetUebCluster(instanceId, responseFormat.getStatus().toString(), responseFormat.getFormattedMessage());
             return response;
 
         } catch (Exception e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("failed to get ueb serbver list from cofiguration");
             log.debug("failed to get ueb serbver list from cofiguration", e);
             responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR);
-            getComponentsUtils().auditGetUebCluster(AuditingActionEnum.GET_UEB_CLUSTER, instanceId, null, responseFormat.getStatus().toString(), responseFormat.getFormattedMessage());
+            getComponentsUtils().auditGetUebCluster(instanceId, responseFormat.getStatus().toString(), responseFormat.getFormattedMessage());
             response = buildErrorResponse(responseFormat);
             return response;
         }
@@ -191,7 +177,7 @@ public class DistributionServlet extends BeGenericServlet {
             @ApiParam(value = "The username and password", required = true)@HeaderParam(value = Constants.AUTHORIZATION_HEADER) String authorization,
             @ApiParam( hidden = true) String requestJson) {
         String url = request.getMethod() + " " + request.getRequestURI();
-        log.debug("Start handle request of {}", url);
+        log.debug(START_HANDLE_REQUEST_OF, url);
         init(request);
 
         Wrapper<Response> responseWrapper = new Wrapper<>();
@@ -203,7 +189,7 @@ public class DistributionServlet extends BeGenericServlet {
             validateJson(responseWrapper, registrationRequestWrapper, requestJson);
         }
         if (responseWrapper.isEmpty()) {
-            validateEnv(responseWrapper, registrationRequestWrapper.getInnerElement().getDistrEnvName());
+            validateEnv(responseWrapper);
         }
 
         if (responseWrapper.isEmpty()) {
@@ -244,11 +230,12 @@ public class DistributionServlet extends BeGenericServlet {
             @ApiParam(value = "The username and password", required = true)@HeaderParam(value = Constants.ACCEPT_HEADER) String accept) {
         init(request);
         String url = request.getMethod() + " " + request.getRequestURI();
-        log.debug("Start handle request of {}", url);
+        log.debug(START_HANDLE_REQUEST_OF, url);
         Response response = null;
 
         Wrapper<Response> responseWrapper = new Wrapper<>();
 
+        //TODO check if in use
         validateHeaders(responseWrapper, request, AuditingActionEnum.GET_VALID_ARTIFACT_TYPES);
         if (responseWrapper.isEmpty()) {
             response = buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), ArtifactTypeEnum.values());
@@ -298,7 +285,7 @@ public class DistributionServlet extends BeGenericServlet {
             @ApiParam( hidden = true) String requestJson) {
 
         String url = request.getMethod() + " " + request.getRequestURI();
-        log.debug("Start handle request of {}", url);
+        log.debug(START_HANDLE_REQUEST_OF, url);
         init(request);
 
         Wrapper<Response> responseWrapper = new Wrapper<>();
@@ -310,7 +297,7 @@ public class DistributionServlet extends BeGenericServlet {
             validateJson(responseWrapper, unRegistrationRequestWrapper, requestJson);
         }
         if (responseWrapper.isEmpty()) {
-            validateEnv(responseWrapper, unRegistrationRequestWrapper.getInnerElement().getDistrEnvName());
+            validateEnv(responseWrapper);
         }
         if (responseWrapper.isEmpty()) {
             distributionLogic.handleUnRegistration(responseWrapper, unRegistrationRequestWrapper.getInnerElement(), buildAuditHandler(request, unRegistrationRequestWrapper.getInnerElement()));
@@ -321,7 +308,7 @@ public class DistributionServlet extends BeGenericServlet {
         return responseWrapper.getInnerElement();
     }
 
-    private void validateEnv(Wrapper<Response> responseWrapper, String distrEnvName) {
+    private void validateEnv(Wrapper<Response> responseWrapper) {
 
         // DE194021
         StorageOperationStatus environmentStatus = distributionLogic.getDistributionEngine().isEnvironmentAvailable();
@@ -347,9 +334,8 @@ public class DistributionServlet extends BeGenericServlet {
         if (request.getHeader(Constants.X_ECOMP_INSTANCE_ID_HEADER) == null) {
             Response missingHeaderResponse = buildErrorResponse(distributionLogic.getResponseFormatManager().getResponseFormat(ActionStatus.MISSING_X_ECOMP_INSTANCE_ID));
             responseWrapper.setInnerElement(missingHeaderResponse);
-            // Audit
             ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.MISSING_X_ECOMP_INSTANCE_ID);
-            getComponentsUtils().auditMissingInstanceId(auditingAction, responseFormat.getStatus().toString(), responseFormat.getFormattedMessage());
+            getComponentsUtils().auditMissingInstanceIdAsDistributionEngineEvent(auditingAction, responseFormat.getStatus().toString());
 
         }
 

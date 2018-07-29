@@ -1,13 +1,13 @@
 package org.openecomp.sdc.common.http.client.api;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.openecomp.sdc.common.http.config.BasicAuthorization;
 import org.openecomp.sdc.common.http.config.ClientCertificate;
 import org.openecomp.sdc.common.http.config.HttpClientConfig;
 import org.openecomp.sdc.common.http.config.Timeouts;
+
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 final class HttpClientConfigImmutable {
 

@@ -45,7 +45,6 @@ import org.openecomp.sdc.ci.tests.verificator.VfVerificator;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.testng.AssertJUnit;
-import org.testng.SkipException;
 import org.testng.TestException;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -55,6 +54,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.testng.AssertJUnit.assertTrue;
 
 public class Service extends SetupCDTest {
@@ -66,7 +66,12 @@ public class Service extends SetupCDTest {
 	private static final String HEAT_FILE_YAML_NAME = "Heat-File.yaml";
 	private static final String HEAT_FILE_YAML_UPDATE_NAME = "Heat-File-Update.yaml";
 	private String filePath;
-	
+	private static CanvasElement computeElement;
+
+	public static CanvasElement getComputeElement(){
+		return computeElement;
+	}
+
 	@BeforeMethod
 	public void beforeTest(){
 		filePath = FileHandling.getFilePath("");
@@ -170,7 +175,8 @@ public class Service extends SetupCDTest {
 
 		ResourceReqDetails atomicResourceMetaData = ElementFactory.getDefaultResourceByTypeNormTypeAndCatregory(ResourceTypeEnum.VF, NormativeTypesEnum.ROOT, ResourceCategoryEnum.NETWORK_L2_3_ROUTERS, getUser());
 		ResourceUIUtils.createVF(atomicResourceMetaData, getUser());
-		ResourceGeneralPage.clickSubmitForTestingButton(atomicResourceMetaData.getName());
+		//TODO Andrey changed to click on ceckIn button
+		ResourceGeneralPage.clickCheckinButton(atomicResourceMetaData.getName());
 		
 		ServiceReqDetails serviceMetadata = ElementFactory.getDefaultService();
 		ServiceUIUtils.createService(serviceMetadata, getUser());
@@ -233,32 +239,39 @@ public class Service extends SetupCDTest {
 	
 	@Test
 	public void addInformationArtifactInCompositionScreenTest() throws Exception{
-		String fileName        = HEAT_FILE_YAML_NAME;
 		String descriptionText = DESCRIPTION;
+		List<String> artifactFileNames = new ArrayList<>();
 		
 		ServiceReqDetails serviceMetadata = ElementFactory.getDefaultService();
 		ServiceUIUtils.createService(serviceMetadata, getUser());
 		
 		ResourceGeneralPage.getLeftMenu().moveToCompositionScreen();
-		ArtifactInfo artifactInfo = new ArtifactInfo(filePath, fileName, descriptionText, ARTIFACT_LABEL,"OTHER");
+		ArtifactInfo artifactInfo = new ArtifactInfo(filePath, HEAT_FILE_YAML_NAME, descriptionText, ARTIFACT_LABEL,"OTHER");
 		CompositionPage.showInformationArtifactTab();
 		List<WebElement> beforeArtifactList = GeneralUIUtils.getWebElementsListBy(By.className(GET_ARTIFACT_LIST_BY_CLASS_NAME));
 		CompositionPage.clickAddArtifactButton();
 		ArtifactUIUtils.fillAndAddNewArtifactParameters(artifactInfo, CompositionPage.artifactPopup());
 		
 		List<WebElement> actualArtifactList = GeneralUIUtils.getWebElementsListBy(By.className(GET_ARTIFACT_LIST_BY_CLASS_NAME));
-		assertTrue(String.format("Wrong number of artifacts, Expected: %s Actual: %s", beforeArtifactList.size() + 1, actualArtifactList.size()),
-				                                                                  (beforeArtifactList.size() + 1) == actualArtifactList.size());
+		assertThat(actualArtifactList).as("Check number of artifacts").hasSize(beforeArtifactList.size() + 1);
+        int fileNameCounter = 0;
+		String fileName;
 		for(DataTestIdEnum.InformationalArtifactsService artifact: DataTestIdEnum.InformationalArtifactsService.values()){
-			ArtifactUIUtils.fillPlaceHolderInformationalArtifact(artifact, filePath, fileName, descriptionText);
+			fileName = HEAT_FILE_YAML_NAME_PREFIX + fileNameCounter + HEAT_FILE_YAML_NAME_SUFFIX;
+			ArtifactUIUtils.fillPlaceHolderInformationalArtifact(artifact,
+					FileHandling.getFilePath("uniqueFileNames"), fileName, descriptionText);
+            artifactFileNames.add(fileName);
+			fileNameCounter++;
 		}
-	    int numberOfFiles = CompositionPage.getAllAddedArtifacts().size();
-	    assertTrue(String.format("Wrong number of artifacts, Expected: %s Actual: %s", (beforeArtifactList.size() + 1), numberOfFiles), (beforeArtifactList.size() + 1) == numberOfFiles);
-	    
-	    for(WebElement actualArtifactFileName : CompositionPage.getAllAddedArtifacts()){
-			assertTrue(fileName.equals(actualArtifactFileName.getText()));
+        artifactFileNames.add(HEAT_FILE_YAML_NAME);
+        int numberOfFiles = CompositionPage.getAllAddedArtifacts().size();
+		assertThat(numberOfFiles).as("Check number of artifacts").isEqualTo(beforeArtifactList.size() + 1);
+
+		fileNameCounter = 0;
+		for(WebElement actualArtifact : CompositionPage.getAllAddedArtifacts()){
+			assertThat(actualArtifact.getText()).isEqualTo(artifactFileNames.get(fileNameCounter));
+			fileNameCounter++;
 		}
-	    
 	}
 	
 	@Test
@@ -468,7 +481,7 @@ public class Service extends SetupCDTest {
 			GeneralUIUtils.hoverOnAreaByTestId(DataTestIdEnum.DeploymentArtifactCompositionRightMenu.ARTIFACT_ITEM.getValue() + ARTIFACT_LABEL);
 			SetupCDTest.getExtendTest().log(Status.INFO, "Going to delete "  +  HEAT_FILE_YAML_NAME + " artifact" + " and check if deleted");
 			GeneralUIUtils.clickOnElementByTestId(DataTestIdEnum.DeploymentArtifactCompositionRightMenu.DELETE.getValue() + ARTIFACT_LABEL);
-			GeneralUIUtils.clickOnElementByTestId(DataTestIdEnum.ModalItems.OK.getValue());
+			GeneralPageElements.clickOKButton();
 			assertTrue("Artifact does not deleted", !GeneralUIUtils.waitForElementInVisibilityByTestId(By.className(GET_ARTIFACT_LIST_BY_CLASS_NAME)));
 		}
 	}
@@ -491,7 +504,8 @@ public class Service extends SetupCDTest {
 
 	public CanvasElement createServiceWithRiArtifact(ResourceReqDetails atomicResourceMetaData, ServiceReqDetails serviceMetadata, ArtifactInfo artifact) throws Exception, AWTException {
 		ResourceUIUtils.createVF(atomicResourceMetaData, getUser());
-		ResourceGeneralPage.clickSubmitForTestingButton(atomicResourceMetaData.getName());
+		//TODO Andrey should click on certify button
+		ResourceGeneralPage.clickCertifyButton(atomicResourceMetaData.getName());
 		
 		ServiceUIUtils.createService(serviceMetadata, getUser());
 		
@@ -560,8 +574,8 @@ public class Service extends SetupCDTest {
 		catch(TestException e){	
 		}
 	}
-	
-	@Test
+
+	@Test()
 	public void deploymentViewServiceTest() throws Exception{
 		
 		User user = ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER);
@@ -570,15 +584,18 @@ public class Service extends SetupCDTest {
 		ResourceReqDetails resourceMetaData = ElementFactory.getDefaultResourceByType("ciRes", NormativeTypesEnum.ROOT, ResourceCategoryEnum.APPLICATION_L4_DATABASE, getUser().getUserId(), ResourceTypeEnum.VF.toString());
 		ResourceUIUtils.importVfFromCsar(resourceMetaData, filePath, fileName2, getUser());
 		Resource resource = AtomicOperationUtils.getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, resourceMetaData.getName(), "0.1");
+
+		// update group property max_vf_module_instances of VF Module to 100
 		List<GroupDefinition> groups = resource.getGroups();
 		for (GroupDefinition group : groups) {
 			if(group.getType().equals("org.openecomp.groups.VfModule")) {
 				for(PropertyDataDefinition property : group.getProperties()){
 					if(property.getName().equals("max_vf_module_instances")) {
-						property.setValue("100");
-						List<PropertyDataDefinition> propertyList = new ArrayList<>();
-						propertyList.add(property);
-						AtomicOperationUtils.updateGroupPropertyOnResource(propertyList, resource, group.getUniqueId(), user, true);
+//						property.setValue("100");
+//						List<PropertyDataDefinition> propertyList = new ArrayList<>();
+//						propertyList.add(property);
+//                        todo pass to method correct object instaed of value for custom json
+						AtomicOperationUtils.updateGroupPropertyOnResource("100", resource, group.getUniqueId(), user, true);
 						break;
 						}
 				}
@@ -602,7 +619,8 @@ public class Service extends SetupCDTest {
 				ServiceVerificator.verifyDeploymentPageSubElements(instanceModuleText.split("\\.\\.")[2], new DeploymentViewVerificator(filePath + fileName2));
 				ServiceVerificator.verifyDisabledServiceProperties();
 				if(true){
-					throw new SkipException("Sent email to Edith Ronen, waiting for answer");
+//					throw new SkipException("Sent email to Edith Ronen, waiting for answer");
+					SetupCDTest.getExtendTest().log(Status.INFO, "Sent email to Edith Ronen, waiting for answer");
 				}
 				String isBaseValue = ServiceVerificator.getVFModulePropertyValue(serviceMetadata, "isBase", instanceModuleText);
 				if (isBaseValue.equals("false"))
@@ -633,13 +651,14 @@ public class Service extends SetupCDTest {
 		String fileName2 = "vSeGW.csar";
 		ResourceReqDetails resourceMetaData = ElementFactory.getDefaultResourceByType("ciRes", NormativeTypesEnum.ROOT, ResourceCategoryEnum.APPLICATION_L4_DATABASE, getUser().getUserId(), ResourceTypeEnum.VF.toString());
 		ResourceUIUtils.importVfFromCsar(resourceMetaData, filePath, fileName2, getUser());
-		ResourceGeneralPage.clickSubmitForTestingButton(resourceMetaData.getName());
+		//TODO Andrey should click on certify button
+		ResourceGeneralPage.clickCertifyButton(resourceMetaData.getName());
 		
-		reloginWithNewRole(UserRoleEnum.TESTER);
+		/*reloginWithNewRole(UserRoleEnum.TESTER);
 		GeneralUIUtils.findComponentAndClick(resourceMetaData.getName());
 		TesterOperationPage.certifyComponent(resourceMetaData.getName());
 		
-		reloginWithNewRole(UserRoleEnum.DESIGNER);
+		reloginWithNewRole(UserRoleEnum.DESIGNER);*/
 		
 		ServiceReqDetails serviceMetadata = ElementFactory.getDefaultService();
 		ServiceUIUtils.createService(serviceMetadata, getUser());
@@ -672,15 +691,44 @@ public class Service extends SetupCDTest {
 		assertTrue(ServiceVerificator.isEqualCustomizationUUIDsAfterChanges(allVFModuleCustomizationUUIDs, ServiceVerificator.getAllVFModuleCustomizationUUIDs(serviceMetadata)));
 	}
 
+	@Test
+	public void createServiceWithALaCarteInstanTypeAndCheckItsTosca() throws Exception {
+		getExtendTest().log(Status.INFO, "Starting the test: createServiceWithALaCarteInstanTypeAndCheckItsTosca.");
+		ServiceReqDetails serviceMetadata = ElementFactory.getDefaultService();
+		ServiceUIUtils.createServiceWithDefaultTagAndUserId(serviceMetadata, getUser());
+		getExtendTest().log(Status.INFO, "Done creating service over the UI, "
+				+ "about to move into Tosca Artifacts section.");
+		ResourceGeneralPage.moveToToscaArtifactsSectionAndDownloadTosca();
+		getExtendTest().log(Status.INFO, "Downloaded Template YAML File.");
+		AssertJUnit.assertTrue(ServiceGeneralPage.parseToscaFileIntoServiceAndValidateProperties(serviceMetadata));
+		getExtendTest().log(Status.INFO, "Test is successful.");
+	}
 
-	public synchronized String addResourceToServiceInCanvas(ResourceReqDetails resourceMetaData) throws Exception {
-		DeploymentArtifactPage.getLeftMenu().moveToCompositionScreen();
-		CanvasManager canvasManager = CanvasManager.getCanvasManager();
-		CompositionPage.searchForElement(resourceMetaData.getName());
-		CanvasElement computeElement = canvasManager.createElementOnCanvas(resourceMetaData.getName());
-		canvasManager.clickOnCanvaElement(computeElement);
-		String selectedInstanceName = CompositionPage.getSelectedInstanceName();
-		return selectedInstanceName;
+	@Test
+	public void createServiceWithALaCarteInstanTypeAndVerifyChosenValue() throws Exception {
+		getExtendTest().log(Status.INFO, "Starting the test: createServiceWithALaCarteInstanTypeAndVerifyChosenValue.");
+		ServiceReqDetails serviceMetadata = ElementFactory.getDefaultService();
+		ServiceUIUtils.createServiceWithDefaultTagAndUserId(serviceMetadata, getUser());
+		getExtendTest().log(Status.INFO, "Done creating service over the UI, "
+				+ "about to move into Home page.");
+		HomePage.navigateToHomePage();
+		GeneralUIUtils.findComponentAndClick(serviceMetadata.getName());
+		assertTrue(serviceMetadata.getInstantiationType().equals(ServiceGeneralPage.getInstantiationTypeChosenValue()));
+	}
+	
+	
+	public static synchronized String addResourceToServiceInCanvas(ResourceReqDetails resourceMetaData) throws Exception {
+        DeploymentArtifactPage.getLeftMenu().moveToCompositionScreen();
+	    if (computeElement == null) {
+			computeElement = createCanvasElement(resourceMetaData);
+		}
+		CanvasManager.getCanvasManager().clickOnCanvaElement(computeElement);
+		return CompositionPage.getSelectedInstanceName();
+	}
+
+	private static synchronized CanvasElement createCanvasElement(ResourceReqDetails resourceMetaData) throws Exception  {
+        CompositionPage.searchForElement(resourceMetaData.getName());
+		return CanvasManager.getCanvasManager().createElementOnCanvas(resourceMetaData.getName());
 	}
 		
 	public static void changeDeleteAndValidateVersionOnGeneralPage(String previousVersion, String currentVersion, String serviceName) throws Exception{

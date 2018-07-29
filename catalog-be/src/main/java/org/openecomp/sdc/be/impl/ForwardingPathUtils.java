@@ -1,14 +1,8 @@
 package org.openecomp.sdc.be.impl;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.stream.Collectors;
 
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.SetMultimap;
 import org.apache.commons.collections.CollectionUtils;
 import org.javatuples.Pair;
 import org.openecomp.sdc.be.components.impl.ResponseFormatManager;
@@ -24,8 +18,8 @@ import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.Service;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.SetMultimap;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class ForwardingPathUtils {
 
@@ -49,7 +43,10 @@ public class ForwardingPathUtils {
     }
 
     private void initNodeToCP(ComponentInstance ci, SetMultimap<NameIdPair, NameIdPair> nodeToCP) {
-        Set<CapabilityDefinition> capabilities = ci.getCapabilities().values().stream().flatMap(capabilityDefinitions -> capabilityDefinitions.stream()).collect(Collectors.toSet());
+        if (ci.getCapabilities() == null){
+            return;
+        }
+        Set<CapabilityDefinition> capabilities = ci.getCapabilities().values().stream().flatMap(Collection::stream).collect(Collectors.toSet());
         if (!CollectionUtils.isNotEmpty(capabilities)) {
             return;
         }
@@ -57,12 +54,11 @@ public class ForwardingPathUtils {
         if (!CollectionUtils.isNotEmpty(forwarderCapabilities)) {
             return;
         }
-        NameIdPair node = new NameIdPair(ci.getName(), ci.getUniqueId());
+        NameIdPair node = new NameIdPair(ci.getName(), ci.getName());
         forwarderCapabilities.forEach(fc -> {
-            NameIdPair capability = new NameIdPair(fc.getName(), fc.getUniqueId(), fc.getOwnerId());
+            NameIdPair capability = new NameIdPair(fc.getName(), fc.getName(), fc.getOwnerId());
             nodeToCP.put(node, capability);
-
-        });
+         });
 
     }
 
@@ -84,30 +80,10 @@ public class ForwardingPathUtils {
         Map<NameIdPair, Set<NameIdPair>> options = toMap(nodeToCP);
 
         Set<NameIdPair> cpOptions = options.get(wrapper.getNameIdPair());
-        List<NameIdPairWrapper> wrappers = cpOptions.stream().map(cpOption -> createWrapper(cpOption)).collect(Collectors.toList());
+        List<NameIdPairWrapper> wrappers = cpOptions.stream().map(this::createWrapper).collect(Collectors.toList());
         wrappers.forEach(cpOptionWrapper -> {
             org.openecomp.sdc.be.datamodel.NameIdPair data = wrapper.getData();
             data.addWrappedData(cpOptionWrapper);
-        });
-        addNodes(wrappers, options);
-    }
-
-    private void addNodes(List<NameIdPairWrapper> cpOptions, Map<NameIdPair, Set<NameIdPair>> options) {
-
-        cpOptions.forEach(cpOption -> {
-            Set<NameIdPairWrapper> wrappers = options.keySet().stream().map(option -> createWrapper(option)).collect(Collectors.toSet());
-            wrappers.forEach(wrapper -> {
-                cpOption.getData().addWrappedData(wrapper);
-                Collection<NameIdPair> cps = options.get(wrapper.getNameIdPair());
-                Set<NameIdPairWrapper> cpsWrappers = cps.stream().map(cp -> new NameIdPairWrapper(cp)).collect(Collectors.toSet());
-                cpsWrappers.forEach(cpw -> {
-                    NameIdPair data = wrapper.getData();
-                    if (!data.containsKey(cpw)) {
-                        data.addWrappedData(cpw);
-                    }
-                });
-            });
-
         });
     }
 
@@ -224,7 +200,7 @@ public class ForwardingPathUtils {
         return newCI.getCapabilities().values()
             .stream()
             .flatMap(List::stream)
-            .anyMatch(c -> c.getUniqueId().equals(capabilityID));
+            .anyMatch(c -> c.getName().equals(capabilityID));
     }
 
     private boolean elementContainsCIAndDoesNotContainForwarder(
@@ -242,5 +218,38 @@ public class ForwardingPathUtils {
             elementDataDefinitions.getFromCP()))
             || (elementDataDefinitions.getToNode().equals(oldCIId) && !ciContainsForwarder(newCI,
             elementDataDefinitions.getToCP()));
+    }
+
+
+    public Set<ForwardingPathDataDefinition> updateComponentInstanceName(Collection<ForwardingPathDataDefinition> forwardingPathDataDefinitions,
+        String oldName, String newName){
+        return  forwardingPathDataDefinitions.stream().filter(fp -> shouldRenameCI(fp,oldName)).
+            map(forwardingPathDataDefinition -> renamePathCI(forwardingPathDataDefinition,oldName,newName))
+            .collect(Collectors.toSet());
+
+    }
+
+    public boolean shouldRenameCI(ForwardingPathDataDefinition forwardingPathDataDefinitions,
+        String oldName){
+        return forwardingPathDataDefinitions.getPathElements().getListToscaDataDefinition().stream()
+            .anyMatch(pe -> pe.getToNode().equals(oldName) || pe.getFromNode().equals(oldName));
+    }
+
+    public ForwardingPathDataDefinition renamePathCI(ForwardingPathDataDefinition forwardingPathDataDefinitions,
+        String oldName, String newName){
+        forwardingPathDataDefinitions.getPathElements().getListToscaDataDefinition().stream()
+            .forEach(pe -> renamePathCI(pe,oldName, newName));
+        return forwardingPathDataDefinitions;
+    }
+
+    public void renamePathCI(ForwardingPathElementDataDefinition pathElementDataDefinition,
+        String oldName, String newName){
+        if (pathElementDataDefinition.getFromNode().equals(oldName)){
+            pathElementDataDefinition.setFromNode(newName);
+        }
+        if(pathElementDataDefinition.getToNode().equals(oldName)){
+            pathElementDataDefinition.setToNode(newName);
+        }
+
     }
 }

@@ -28,22 +28,13 @@ import org.openecomp.sdcrests.notifications.types.UpdateNotificationResponseStat
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.NotNull;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.lang.reflect.InvocationTargetException;
 import java.util.UUID;
 
-import static org.openecomp.sdcrests.common.RestConstants.LAST_DELIVERED_QUERY_PARAM;
-import static org.openecomp.sdcrests.common.RestConstants.USER_ID_HEADER_PARAM;
-import static org.openecomp.sdcrests.common.RestConstants.USER_MISSING_ERROR_MSG;
+import static org.openecomp.sdcrests.common.RestConstants.*;
 
 @Path("/v1.0/notifications")
 @Produces(MediaType.APPLICATION_JSON)

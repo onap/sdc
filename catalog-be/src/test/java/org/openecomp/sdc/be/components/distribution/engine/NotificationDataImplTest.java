@@ -1,8 +1,8 @@
 package org.openecomp.sdc.be.components.distribution.engine;
 
-import java.util.List;
-
 import org.junit.Test;
+
+import java.util.List;
 
 public class NotificationDataImplTest {
 

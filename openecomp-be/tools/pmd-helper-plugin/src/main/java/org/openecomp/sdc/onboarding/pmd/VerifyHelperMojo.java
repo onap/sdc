@@ -16,18 +16,6 @@
 
 package org.openecomp.sdc.onboarding.pmd;
 
-import static org.openecomp.sdc.onboarding.pmd.PMDHelperUtils.getStateFile;
-import static org.openecomp.sdc.onboarding.pmd.PMDHelperUtils.isReportEmpty;
-import static org.openecomp.sdc.onboarding.pmd.PMDHelperUtils.readCurrentPMDState;
-import static org.openecomp.sdc.onboarding.pmd.PMDHelperUtils.writeCurrentPMDState;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.UncheckedIOException;
-import java.nio.file.Files;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -37,6 +25,16 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.nio.file.Files;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static org.openecomp.sdc.onboarding.pmd.PMDHelperUtils.*;
 
 @Mojo(name = "post-verify-helper", threadSafe = true, defaultPhase = LifecyclePhase.VERIFY,
         requiresDependencyResolution = ResolutionScope.NONE)

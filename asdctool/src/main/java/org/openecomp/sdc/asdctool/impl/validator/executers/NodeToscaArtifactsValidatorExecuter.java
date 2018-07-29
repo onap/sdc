@@ -1,14 +1,14 @@
 package org.openecomp.sdc.asdctool.impl.validator.executers;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class NodeToscaArtifactsValidatorExecuter extends ArtifactValidatorExecuter implements IArtifactValidatorExecuter{
 	 protected String name;

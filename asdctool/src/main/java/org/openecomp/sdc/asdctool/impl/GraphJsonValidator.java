@@ -21,6 +21,9 @@
 package org.openecomp.sdc.asdctool.impl;
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.openecomp.sdc.common.log.wrappers.Logger;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -28,17 +31,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 /**
  * simple util class to verify that the titan export json graph is not corrupted
  */
 public class GraphJsonValidator {
 
-    private static Logger log = LoggerFactory.getLogger(GraphJsonValidator.class.getName());
+    private static Logger log = Logger.getLogger(GraphJsonValidator.class.getName());
 
     public boolean verifyTitanJson(String filePath) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();

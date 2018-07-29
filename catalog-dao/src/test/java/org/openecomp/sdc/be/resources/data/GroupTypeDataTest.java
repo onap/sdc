@@ -1,16 +1,16 @@
 package org.openecomp.sdc.be.resources.data;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.junit.Test;
 import org.openecomp.sdc.be.datatypes.elements.GroupTypeDataDefinition;
+
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class GroupTypeDataTest {
 
 	private GroupTypeData createTestSubject() {
-		return new GroupTypeData();
+		return new GroupTypeData(new GroupTypeDataDefinition());
 	}
 
 	@Test

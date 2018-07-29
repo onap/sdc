@@ -1,0 +1,11 @@
+<sdc-tabs>
+    <sdc-tab titleIcon="info-circle">
+        <group-information-tab [group]="group" [isViewOnly]="isViewOnly" *ngIf="group"></group-information-tab>
+    </sdc-tab>
+    <sdc-tab titleIcon="inputs-o">
+        <group-members-tab [group]="group" [topologyTemplate]="topologyTemplate" [isViewOnly]="isViewOnly" (isLoading)="setIsLoading($event)" *ngIf="group"></group-members-tab>
+    </sdc-tab>
+    <sdc-tab titleIcon="settings-o">
+        <group-properties-tab [group]="group" [topologyTemplate]="topologyTemplate" [isViewOnly]="isViewOnly" *ngIf="group"></group-properties-tab>
+    </sdc-tab>
+</sdc-tabs>

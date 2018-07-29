@@ -20,31 +20,16 @@
 
 package org.openecomp.sdc.be.datatypes.elements;
 
-import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
-
-import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
-public class PolicyTypeDataDefinition extends ToscaDataDefinition implements Serializable {
-
-    /**
-     *
-     */
-    private static final long serialVersionUID = -3783390539788578388L;
+public class PolicyTypeDataDefinition extends ToscaTypeDataDefinition {
 
     private String uniqueId;
-
-    private String type;
-
     private String version;
-
     private String derivedFrom;
-
     private List<String> targets;
-
     private Map<String, String> metadata;
-
     private String description;
 
     /**
@@ -56,16 +41,14 @@ public class PolicyTypeDataDefinition extends ToscaDataDefinition implements Ser
      * Timestamp of the data type last update
      */
     private Long modificationTime;
-
     private boolean highestVersion;
 
     public PolicyTypeDataDefinition() {
-
     }
 
     public PolicyTypeDataDefinition(PolicyTypeDataDefinition p) {
+        super(p);
         this.uniqueId = p.uniqueId;
-        this.type = p.type;
         this.version = p.version;
         this.targets = p.targets;
         this.metadata = p.metadata;
@@ -74,14 +57,6 @@ public class PolicyTypeDataDefinition extends ToscaDataDefinition implements Ser
         this.creationTime = p.creationTime;
         this.modificationTime = p.modificationTime;
         this.highestVersion = p.highestVersion;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
     }
 
     public String getVersion() {
@@ -142,7 +117,7 @@ public class PolicyTypeDataDefinition extends ToscaDataDefinition implements Ser
 
     @Override
     public String toString() {
-        return "PolicyTypeDataDefinition [uniqueId=" + uniqueId + ", type=" + type + ", version=" + version
+        return "PolicyTypeDataDefinition [uniqueId=" + uniqueId + ", type=" + getType() + ", name=" + getName() + ", icon=" + getIcon() + ", version=" + version
                 + ", targets=" + targets + ", metadata=" + metadata + ", description=" + description + ", creationTime="
                 + creationTime + ", modificationTime=" + modificationTime + "]";
     }
@@ -162,5 +137,4 @@ public class PolicyTypeDataDefinition extends ToscaDataDefinition implements Ser
     public void setHighestVersion(boolean isLatestVersion) {
         this.highestVersion = isLatestVersion;
     }
-
 }

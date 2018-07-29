@@ -20,10 +20,10 @@
 
 package org.openecomp.sdc.ci.tests.datatypes;
 
-import java.util.List;
-
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.model.Resource;
+
+import java.util.List;
 
 public class ResourceReqDetails extends ComponentReqDetails {
 	List<String> derivedFrom;
@@ -72,7 +72,6 @@ public class ResourceReqDetails extends ComponentReqDetails {
 		this.name = resource.getName();
 		this.description = resource.getDescription();
 		this.tags = resource.getTags();
-		// this.category = resource.getCategories();
 		this.derivedFrom = resource.getDerivedFrom();
 		this.vendorName = resource.getVendorName();
 		this.vendorRelease = resource.getVendorRelease();
@@ -99,7 +98,6 @@ public class ResourceReqDetails extends ComponentReqDetails {
 				ResourceTypeEnum.VFC.toString());
 	}
 
-	// new
 	public ResourceReqDetails(String resourceName, String description, List<String> tags, String category,
 			List<String> derivedFrom, String vendorName, String vendorRelease, String contactId, String icon,
 			String resourceType) {
@@ -108,7 +106,6 @@ public class ResourceReqDetails extends ComponentReqDetails {
 		this.name = resourceName;
 		this.description = description;
 		this.tags = tags;
-		// this.category = category;
 		this.derivedFrom = derivedFrom;
 		this.vendorName = vendorName;
 		this.vendorRelease = vendorRelease;
@@ -128,7 +125,6 @@ public class ResourceReqDetails extends ComponentReqDetails {
 		this.name = originalResource.getName();
 		this.description = originalResource.getDescription();
 		this.tags = originalResource.getTags();
-		// this.category = originalResource.getCategory();
 		this.derivedFrom = originalResource.getDerivedFrom();
 		this.vendorName = originalResource.getVendorName();
 		this.vendorRelease = originalResource.getVendorRelease();

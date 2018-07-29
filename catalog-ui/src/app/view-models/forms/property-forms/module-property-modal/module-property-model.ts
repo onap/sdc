@@ -71,7 +71,7 @@ export class ModulePropertyView extends PropertyFormBaseView {
 
     save(isNeedToCloseModal):ng.IPromise<boolean> {
 
-        let deferred = this.$q.defer();
+        let deferred = this.$q.defer<boolean>();
 
         let onSuccess = (properties:Array<PropertyModel>):void => {
             deferred.resolve(true);

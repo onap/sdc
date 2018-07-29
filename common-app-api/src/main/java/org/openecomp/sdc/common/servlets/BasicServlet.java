@@ -20,17 +20,8 @@
 
 package org.openecomp.sdc.common.servlets;
 
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import org.openecomp.sdc.common.api.Constants;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.slf4j.MDC;
-
-import javax.servlet.http.HttpServletRequest;
-import java.util.concurrent.TimeUnit;
 
 public abstract class BasicServlet {
 

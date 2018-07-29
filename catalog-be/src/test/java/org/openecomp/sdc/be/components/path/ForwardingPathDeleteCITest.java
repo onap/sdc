@@ -1,14 +1,5 @@
 package org.openecomp.sdc.be.components.path;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.openecomp.sdc.be.datatypes.elements.ForwardingPathDataDefinition;
@@ -16,6 +7,12 @@ import org.openecomp.sdc.be.datatypes.elements.ForwardingPathElementDataDefiniti
 import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
 import org.openecomp.sdc.be.impl.ForwardingPathUtils;
 import org.openecomp.sdc.be.model.Service;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+
+import static org.junit.Assert.*;
 
 public class ForwardingPathDeleteCITest {
 

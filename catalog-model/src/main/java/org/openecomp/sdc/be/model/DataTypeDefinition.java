@@ -20,63 +20,63 @@
 
 package org.openecomp.sdc.be.model;
 
-import java.util.List;
-
 import org.openecomp.sdc.be.datatypes.elements.DataTypeDataDefinition;
+
+import java.util.List;
 
 public class DataTypeDefinition extends DataTypeDataDefinition {
 
-	private DataTypeDefinition derivedFrom;
+    private DataTypeDefinition derivedFrom;
 
-	private List<PropertyConstraint> constraints;
+    private List<PropertyConstraint> constraints;
 
-	private List<PropertyDefinition> properties;
+    private List<PropertyDefinition> properties;
 
-	public DataTypeDefinition() {
-		super();
-	}
+    public DataTypeDefinition() {
+        super();
+    }
 
-	public DataTypeDefinition(DataTypeDataDefinition p) {
-		super(p);
-	}
+    public DataTypeDefinition(DataTypeDataDefinition p) {
+        super(p);
+    }
 
-	public DataTypeDefinition(DataTypeDefinition pd) {
-		this.setName(pd.getName());
-		this.setDerivedFrom(pd.getDerivedFrom());
-		this.setDerivedFromName(pd.getDerivedFromName());
-		this.setUniqueId(pd.getUniqueId());
-		this.setConstraints(pd.getConstraints());
-		this.setDescription(pd.getDescription());
-	}
+    public DataTypeDefinition(DataTypeDefinition pd) {
+        this.setName(pd.getName());
+        this.setDerivedFrom(pd.getDerivedFrom());
+        this.setDerivedFromName(pd.getDerivedFromName());
+        this.setUniqueId(pd.getUniqueId());
+        this.setConstraints(pd.getConstraints());
+        this.setDescription(pd.getDescription());
+    }
 
-	public List<PropertyConstraint> getConstraints() {
-		return constraints;
-	}
+    public List<PropertyConstraint> getConstraints() {
+        return constraints;
+    }
 
-	public void setConstraints(List<PropertyConstraint> constraints) {
-		this.constraints = constraints;
-	}
+    public void setConstraints(List<PropertyConstraint> constraints) {
+        this.constraints = constraints;
+    }
 
-	public DataTypeDefinition getDerivedFrom() {
-		return derivedFrom;
-	}
+    public DataTypeDefinition getDerivedFrom() {
+        return derivedFrom;
+    }
 
-	public void setDerivedFrom(DataTypeDefinition derivedFrom) {
-		this.derivedFrom = derivedFrom;
-	}
+    public void setDerivedFrom(DataTypeDefinition derivedFrom) {
+        this.derivedFrom = derivedFrom;
+    }
 
-	public List<PropertyDefinition> getProperties() {
-		return properties;
-	}
+    public List<PropertyDefinition> getProperties() {
+        return properties;
+    }
 
-	public void setProperties(List<PropertyDefinition> properties) {
-		this.properties = properties;
-	}
+    public void setProperties(List<PropertyDefinition> properties) {
+        this.properties = properties;
+    }
 
-	@Override
-	public String toString() {
-		return super.toString() + " DataTypeDefinition [derivedFrom=" + derivedFrom + ", constraints=" + constraints
-				+ ", properties=" + properties + "]";
-	}
+    @Override
+    public String toString() {
+        return super.toString() + " DataTypeDefinition [derivedFrom=" + derivedFrom + ", constraints=" + constraints
+                + ", properties=" + properties + "]";
+    }
 
 }

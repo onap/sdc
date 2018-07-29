@@ -56,7 +56,7 @@ public class ArtifactUtilsTest {
 		Map<String, Object> result;
 
 		// default test
-		result = ArtifactUtils.buildJsonForArtifact(artifactTemplateInfo, artifactContentent, atrifactLabelCounter);
+		result = ArtifactUtils.buildJsonForArtifact(artifactTemplateInfo, artifactContentent, atrifactLabelCounter,false);
 	}
 
 	@Test

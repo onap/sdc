@@ -21,92 +21,92 @@
 package org.openecomp.sdc.be.datatypes.enums;
 
 public enum ComponentTypeEnum {
-	RESOURCE("Resource"), 
-	SERVICE("Service"), 
-	RESOURCE_INSTANCE("Resource Instance"),
-	PRODUCT("Product"), 
-	SERVICE_INSTANCE("Service Instance");
+    RESOURCE("Resource"),
+    SERVICE("Service"),
+    RESOURCE_INSTANCE("Resource Instance"),
+    PRODUCT("Product"),
+    SERVICE_INSTANCE("Service Instance");
 
-	private String value;
+    private String value;
 
-	private ComponentTypeEnum(String value) {
-		this.value = value;
-	}
+    private ComponentTypeEnum(String value) {
+        this.value = value;
+    }
 
-	public String getValue() {
-		return value;
-	}
+    public String getValue() {
+        return value;
+    }
 
-	// Those values cannot be another field in enum, because they are needed
-	// as constants for Swagger allowedValues param
-	public static final String RESOURCE_PARAM_NAME = "resources";
-	public static final String SERVICE_PARAM_NAME = "services";
-	public static final String PRODUCT_PARAM_NAME = "products";
+    // Those values cannot be another field in enum, because they are needed
+    // as constants for Swagger allowedValues param
+    public static final String RESOURCE_PARAM_NAME = "resources";
+    public static final String SERVICE_PARAM_NAME = "services";
+    public static final String PRODUCT_PARAM_NAME = "products";
 
-	public NodeTypeEnum getNodeType() {
+    public NodeTypeEnum getNodeType() {
 
-		switch (this) {
-		case RESOURCE:
-			return NodeTypeEnum.Resource;
-		case SERVICE:
-			return NodeTypeEnum.Service;
-		case PRODUCT:
-			return NodeTypeEnum.Product;
-		case RESOURCE_INSTANCE:
-			return NodeTypeEnum.ResourceInstance;
-		default:
-			throw new UnsupportedOperationException("No nodeType is defined for: " + this.getValue());
-		}
-	}
+        switch (this) {
+            case RESOURCE:
+                return NodeTypeEnum.Resource;
+            case SERVICE:
+                return NodeTypeEnum.Service;
+            case PRODUCT:
+                return NodeTypeEnum.Product;
+            case RESOURCE_INSTANCE:
+                return NodeTypeEnum.ResourceInstance;
+            default:
+                throw new UnsupportedOperationException("No nodeType is defined for: " + this.getValue());
+        }
+    }
 
-	public static ComponentTypeEnum findByValue(String value) {
-		ComponentTypeEnum ret = null;
-		for (ComponentTypeEnum curr : ComponentTypeEnum.values()) {
-			if (curr.getValue().equals(value)) {
-				ret = curr;
-				return ret;
-			}
-		}
-		return ret;
-	}
+    public static ComponentTypeEnum findByValue(String value) {
+        ComponentTypeEnum ret = null;
+        for (ComponentTypeEnum curr : ComponentTypeEnum.values()) {
+            if (curr.getValue().equals(value)) {
+                ret = curr;
+                return ret;
+            }
+        }
+        return ret;
+    }
 
-	public static ComponentTypeEnum findByParamName(String paramName) {
-		ComponentTypeEnum ret = null;
-		switch (paramName) {
-		case RESOURCE_PARAM_NAME:
-			ret = RESOURCE;
-			break;
-		case SERVICE_PARAM_NAME:
-			ret = SERVICE;
-			break;
-		case PRODUCT_PARAM_NAME:
-			ret = PRODUCT;
-			break;
-		default:
-			break;
-		}
-		return ret;
-	}
+    public static ComponentTypeEnum findByParamName(String paramName) {
+        ComponentTypeEnum ret = null;
+        switch (paramName) {
+            case RESOURCE_PARAM_NAME:
+                ret = RESOURCE;
+                break;
+            case SERVICE_PARAM_NAME:
+                ret = SERVICE;
+                break;
+            case PRODUCT_PARAM_NAME:
+                ret = PRODUCT;
+                break;
+            default:
+                break;
+        }
+        return ret;
+    }
 
-	public static String findParamByType(ComponentTypeEnum type) {
-		String ret = null;
+    public static String findParamByType(ComponentTypeEnum type) {
+        String ret = null;
 		if (type == null) {
 			return ret;
 		}
 		
-		switch (type) {
-		case RESOURCE:
-			ret = RESOURCE_PARAM_NAME;
-			break;
-		case SERVICE:
-			ret = SERVICE_PARAM_NAME;
-			break;
-		case PRODUCT:
-			ret = PRODUCT_PARAM_NAME;
-			break;
-		default:
-			break;
-		}
-		return ret;
-	}
+        switch (type) {
+            case RESOURCE:
+                ret = RESOURCE_PARAM_NAME;
+                break;
+            case SERVICE:
+                ret = SERVICE_PARAM_NAME;
+                break;
+            case PRODUCT:
+                ret = PRODUCT_PARAM_NAME;
+                break;
+            default:
+                break;
+        }
+        return ret;
+    }
 }

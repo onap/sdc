@@ -20,27 +20,22 @@
 
 package org.openecomp.sdc.be.resources.data.auditing;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Map;
-import java.util.TimeZone;
-import java.util.UUID;
-
-import org.openecomp.sdc.be.resources.data.auditing.model.CommonAuditData;
-import org.openecomp.sdc.be.resources.data.auditing.model.DistributionData;
-import org.openecomp.sdc.common.datastructure.AuditingFieldsKeysEnum;
-
 import com.datastax.driver.core.utils.UUIDs;
 import com.datastax.driver.mapping.annotations.ClusteringColumn;
 import com.datastax.driver.mapping.annotations.Column;
 import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
+import org.openecomp.sdc.be.resources.data.auditing.model.CommonAuditData;
+import org.openecomp.sdc.be.resources.data.auditing.model.DistributionData;
+import org.openecomp.sdc.common.datastructure.AuditingFieldsKey;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.TimeZone;
+import java.util.UUID;
 
 @Table(keyspace = AuditingTypesConstants.AUDIT_KEYSPACE, name = AuditingTypesConstants.DISTRIBUTION_DOWNLOAD_EVENT_TYPE)
 public class DistributionDownloadEvent extends AuditingGenericEvent {
-
-    private static String DISTRIBUTION_DOWNLOAD_EVENT_TEMPLATE = "action=\"%s\" timestamp=\"%s\" "
-            + "consumerId=\"%s\" resourceUrl=\"%s\" status=\"%s\" desc=\"%s\"";
 
     @PartitionKey
     protected UUID timebaseduuid;
@@ -68,45 +63,11 @@ public class DistributionDownloadEvent extends AuditingGenericEvent {
     @Column(name = "resource_url")
     private String resourceUrl;
 
+    //Required to be public as it is used by Cassandra driver on get operation
     public DistributionDownloadEvent() {
-		super();
-
         timestamp1 = new Date();
         timebaseduuid = UUIDs.timeBased();
     }
-
-	public DistributionDownloadEvent(Map<AuditingFieldsKeysEnum, Object> auditingFields) {
-		this();
-		Object value;
-		value = auditingFields.get(AuditingFieldsKeysEnum.AUDIT_REQUEST_ID);
-		if (value != null) {
-			setRequestId((String) value);
-		}
-		value = auditingFields.get(AuditingFieldsKeysEnum.AUDIT_SERVICE_INSTANCE_ID);
-		if (value != null) {
-			setServiceInstanceId((String) value);
-		}
-		value = auditingFields.get(AuditingFieldsKeysEnum.AUDIT_ACTION);
-		if (value != null) {
-			setAction((String) value);
-		}
-		value = auditingFields.get(AuditingFieldsKeysEnum.AUDIT_STATUS);
-		if (value != null) {
-			setStatus((String) value);
-		}
-		value = auditingFields.get(AuditingFieldsKeysEnum.AUDIT_DESC);
-		if (value != null) {
-			setDesc((String) value);
-		}
-		value = auditingFields.get(AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_CONSUMER_ID);
-		if (value != null) {
-			setConsumerId((String) value);
-		}
-		value = auditingFields.get(AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_RESOURCE_URL);
-		if (value != null) {
-			setResourceUrl((String) value);
-		}
-	}
 
     public DistributionDownloadEvent(String action, CommonAuditData commonAuditData, DistributionData distributionData) {
         this();
@@ -119,20 +80,24 @@ public class DistributionDownloadEvent extends AuditingGenericEvent {
         this.resourceUrl = distributionData.getResourceUrl();
     }
 
-	@Override
-	public void fillFields() {
-		fields.put(AuditingFieldsKeysEnum.AUDIT_REQUEST_ID.getDisplayName(), getRequestId());
-		fields.put(AuditingFieldsKeysEnum.AUDIT_SERVICE_INSTANCE_ID.getDisplayName(), getServiceInstanceId());
-		fields.put(AuditingFieldsKeysEnum.AUDIT_ACTION.getDisplayName(), getAction());
-		fields.put(AuditingFieldsKeysEnum.AUDIT_STATUS.getDisplayName(), getStatus());
-		fields.put(AuditingFieldsKeysEnum.AUDIT_DESC.getDisplayName(), getDesc());
+    public void setTimestamp1(String timestamp) {
+        this.timestamp1 = parseDateFromString(timestamp);
+    }
 
-		fields.put(AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_CONSUMER_ID.getDisplayName(), getConsumerId());
-		fields.put(AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_RESOURCE_URL.getDisplayName(), getResourceUrl());
-		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(dateFormatPattern);
-		simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
-		fields.put(AuditingFieldsKeysEnum.AUDIT_TIMESTAMP.getDisplayName(), simpleDateFormat.format(timestamp1));
-	}
+    @Override
+    public void fillFields() {
+        fields.put(AuditingFieldsKey.AUDIT_REQUEST_ID.getDisplayName(), getRequestId());
+        fields.put(AuditingFieldsKey.AUDIT_SERVICE_INSTANCE_ID.getDisplayName(), getServiceInstanceId());
+        fields.put(AuditingFieldsKey.AUDIT_ACTION.getDisplayName(), getAction());
+        fields.put(AuditingFieldsKey.AUDIT_STATUS.getDisplayName(), getStatus());
+        fields.put(AuditingFieldsKey.AUDIT_DESC.getDisplayName(), getDesc());
+
+        fields.put(AuditingFieldsKey.AUDIT_DISTRIBUTION_CONSUMER_ID.getDisplayName(), getConsumerId());
+        fields.put(AuditingFieldsKey.AUDIT_DISTRIBUTION_RESOURCE_URL.getDisplayName(), getResourceUrl());
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(dateFormatPattern);
+        simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+        fields.put(AuditingFieldsKey.AUDIT_TIMESTAMP.getDisplayName(), simpleDateFormat.format(timestamp1));
+    }
 
     public String getConsumerId() {
         return consumerId;
@@ -202,15 +167,16 @@ public class DistributionDownloadEvent extends AuditingGenericEvent {
         return desc;
     }
 
+    @Override
     public void setDesc(String desc) {
         this.desc = desc;
     }
 
    @Override
-	public String toString() {
-		return "DistributionDownloadEvent [timebaseduuid=" + timebaseduuid + ", timestamp1=" + timestamp1
-				+ ", requestId=" + requestId + ", serviceInstanceId=" + serviceInstanceId + ", action=" + action
-				+ ", status=" + status + ", desc=" + desc + ", consumerId=" + consumerId + ", resourceUrl="	+ resourceUrl + "]";
-	}
+    public String toString() {
+        return "DistributionDownloadEvent [timebaseduuid=" + timebaseduuid + ", timestamp1=" + timestamp1
+                + ", requestId=" + requestId + ", serviceInstanceId=" + serviceInstanceId + ", action=" + action
+                + ", status=" + status + ", desc=" + desc + ", consumerId=" + consumerId + ", resourceUrl="    + resourceUrl + "]";
+    }
 
 }

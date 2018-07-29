@@ -20,14 +20,14 @@
 
 package org.openecomp.sdc.ci.tests.utils.rest;
 
+import org.openecomp.sdc.ci.tests.config.Config;
+import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
+import org.openecomp.sdc.ci.tests.utils.Utils;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-
-import org.openecomp.sdc.ci.tests.config.Config;
-import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
-import org.openecomp.sdc.ci.tests.utils.Utils;
 
 public class AutomationUtils extends BaseRestUtils {
 	
@@ -63,24 +63,24 @@ public class AutomationUtils extends BaseRestUtils {
 	
 	public static void createVersionsInfoFile(String filepath, String onboardVersion, String osVersion, String envData, String suiteName) throws IOException {
 		File myFoo = new File(filepath);
-		FileOutputStream fooStream = new FileOutputStream(myFoo, false); // true to append
-		String versions =  ("onboardVersion=\""+ onboardVersion+ "\"\n" + "osVersion=\"" + osVersion + "\"\n" + "env=\""+ envData + "\"\n" + "suiteName=\""+ suiteName+ "\"\n");
-		byte[] myBytes = versions.getBytes();
-		fooStream.write(myBytes);
-		fooStream.close();
+		try (FileOutputStream fooStream = new FileOutputStream(myFoo, false)) {
+			String versions = ("onboardVersion=\"" + onboardVersion + "\"\n" + "osVersion=\"" + osVersion + "\"\n" + "env=\"" + envData + "\"\n" + "suiteName=\"" + suiteName + "\"\n");
+			byte[] myBytes = versions.getBytes();
+			fooStream.write(myBytes);
+		}
 	}
 
 	public static void createVersionsInfoFile(String filepath, String onboardVersion, String osVersion, String envData, String suiteName, String reportStartTime) throws IOException {
 		File myFoo = new File(filepath);
-		FileOutputStream fooStream = new FileOutputStream(myFoo, false); // true to append
-		String versions =  ("onboardVersion=\""+ onboardVersion+ "\"\n" + "osVersion=\"" + osVersion + "\"\n" + "env=\""+ envData + "\"\n" + "suiteName=\""+ suiteName+ "\"\n" + "reportStartTime=\""+ reportStartTime+ "\"\n");
-		byte[] myBytes = versions.getBytes();
-		fooStream.write(myBytes);
-		fooStream.close();
+		try (FileOutputStream fooStream = new FileOutputStream(myFoo, false)) {
+			String versions = ("onboardVersion=\"" + onboardVersion + "\"\n" + "osVersion=\"" + osVersion + "\"\n" + "env=\"" + envData + "\"\n" + "suiteName=\"" + suiteName + "\"\n" + "reportStartTime=\"" + reportStartTime + "\"\n");
+			byte[] myBytes = versions.getBytes();
+			fooStream.write(myBytes);
+		}
 	}
 	
 	public static void createVersionsInfoFile(String filepath, String onboardVersion, String osVersion, String envData)
-			throws FileNotFoundException, IOException {
+			throws IOException {
 		createVersionsInfoFile(filepath, onboardVersion, osVersion, envData, null);
 	}
 	

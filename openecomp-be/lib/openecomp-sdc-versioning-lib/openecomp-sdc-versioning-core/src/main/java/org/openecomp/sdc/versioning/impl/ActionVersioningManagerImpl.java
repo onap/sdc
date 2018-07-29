@@ -16,17 +16,9 @@
 
 package org.openecomp.sdc.versioning.impl;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.ErrorCategory;
 import org.openecomp.sdc.common.errors.ErrorCode;
-import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.versioning.ActionVersioningManager;
@@ -36,30 +28,20 @@ import org.openecomp.sdc.versioning.dao.VersionDao;
 import org.openecomp.sdc.versioning.dao.VersionInfoDao;
 import org.openecomp.sdc.versioning.dao.VersionInfoDeletedDao;
 import org.openecomp.sdc.versioning.dao.VersionableEntityDaoFactory;
-import org.openecomp.sdc.versioning.dao.types.Revision;
-import org.openecomp.sdc.versioning.dao.types.SynchronizationState;
-import org.openecomp.sdc.versioning.dao.types.UserCandidateVersion;
-import org.openecomp.sdc.versioning.dao.types.Version;
-import org.openecomp.sdc.versioning.dao.types.VersionInfoDeletedEntity;
-import org.openecomp.sdc.versioning.dao.types.VersionInfoEntity;
-import org.openecomp.sdc.versioning.dao.types.VersionStatus;
-import org.openecomp.sdc.versioning.errors.CheckinOnEntityLockedByOtherErrorBuilder;
-import org.openecomp.sdc.versioning.errors.CheckinOnUnlockedEntityErrorBuilder;
-import org.openecomp.sdc.versioning.errors.CheckoutOnLockedEntityErrorBuilder;
-import org.openecomp.sdc.versioning.errors.DeleteOnLockedEntityErrorBuilder;
-import org.openecomp.sdc.versioning.errors.EditOnEntityLockedByOtherErrorBuilder;
-import org.openecomp.sdc.versioning.errors.EditOnUnlockedEntityErrorBuilder;
-import org.openecomp.sdc.versioning.errors.EntityAlreadyExistErrorBuilder;
-import org.openecomp.sdc.versioning.errors.EntityAlreadyFinalizedErrorBuilder;
-import org.openecomp.sdc.versioning.errors.EntityNotExistErrorBuilder;
-import org.openecomp.sdc.versioning.errors.SubmitLockedEntityNotAllowedErrorBuilder;
-import org.openecomp.sdc.versioning.errors.UndoCheckoutOnEntityLockedByOtherErrorBuilder;
-import org.openecomp.sdc.versioning.errors.UndoCheckoutOnUnlockedEntityErrorBuilder;
+import org.openecomp.sdc.versioning.dao.types.*;
+import org.openecomp.sdc.versioning.errors.*;
 import org.openecomp.sdc.versioning.types.VersionCreationMethod;
 import org.openecomp.sdc.versioning.types.VersionInfo;
 import org.openecomp.sdc.versioning.types.VersionableEntityAction;
 import org.openecomp.sdc.versioning.types.VersionableEntityMetadata;
-import org.slf4j.MDC;
+
+import java.util.stream.Collectors;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class ActionVersioningManagerImpl implements ActionVersioningManager {
   private static final Logger LOGGER = LoggerFactory.getLogger(ActionVersioningManagerImpl.class);

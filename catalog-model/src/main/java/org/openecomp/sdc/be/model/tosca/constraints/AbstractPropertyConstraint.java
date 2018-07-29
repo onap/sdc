@@ -20,27 +20,20 @@
 
 package org.openecomp.sdc.be.model.tosca.constraints;
 
-import java.io.Serializable;
-
 import org.openecomp.sdc.be.model.PropertyConstraint;
 import org.openecomp.sdc.be.model.tosca.ToscaType;
 import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintViolationException;
 import org.openecomp.sdc.be.model.tosca.version.ApplicationVersionException;
 
-public abstract class AbstractPropertyConstraint implements PropertyConstraint, Serializable {
+public abstract class AbstractPropertyConstraint implements PropertyConstraint {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 4459522275459723374L;
-
-	@Override
-	public void validate(ToscaType toscaType, String propertyTextValue) throws ConstraintViolationException {
-		try {
-			validate(toscaType.convert(propertyTextValue));
-		} catch (IllegalArgumentException | ApplicationVersionException e) {
-			throw new ConstraintViolationException(
-					"String value [" + propertyTextValue + "] is not valid for type [" + toscaType + "]", e);
-		}
-	}
+    @Override
+    public void validate(ToscaType toscaType, String propertyTextValue) throws ConstraintViolationException {
+        try {
+            validate(toscaType.convert(propertyTextValue));
+        } catch (IllegalArgumentException | ApplicationVersionException e) {
+            throw new ConstraintViolationException(
+                    "String value [" + propertyTextValue + "] is not valid for type [" + toscaType + "]", e);
+        }
+    }
 }

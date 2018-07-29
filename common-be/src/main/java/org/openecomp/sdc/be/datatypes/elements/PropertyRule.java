@@ -23,15 +23,9 @@ package org.openecomp.sdc.be.datatypes.elements;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 
-import java.io.Serializable;
 import java.util.List;
 
-public class PropertyRule extends ToscaDataDefinition implements Serializable {
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -3357933382124599996L;
+public class PropertyRule extends ToscaDataDefinition {
 
 	public final static String FORCE_ALL = "FORCE_ALL";
 	public final static String ALL = "ALL";
@@ -114,7 +108,7 @@ public class PropertyRule extends ToscaDataDefinition implements Serializable {
 				for (int i = 0; i < size; i++) {
 					String item = rule.get(i);
 					String comparedItem = comparedRule.get(i);
-					if (item == null || false == item.equals(comparedItem)) {
+					if (item == null || !item.equals(comparedItem)) {
 						isEqual = false;
 						break;
 					}

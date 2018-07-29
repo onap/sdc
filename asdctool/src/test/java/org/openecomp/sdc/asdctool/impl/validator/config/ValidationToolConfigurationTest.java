@@ -3,11 +3,7 @@ package org.openecomp.sdc.asdctool.impl.validator.config;
 import org.junit.Test;
 import org.openecomp.sdc.asdctool.impl.validator.ArtifactToolBL;
 import org.openecomp.sdc.asdctool.impl.validator.ValidationToolBL;
-import org.openecomp.sdc.asdctool.impl.validator.executers.NodeToscaArtifactsValidatorExecuter;
-import org.openecomp.sdc.asdctool.impl.validator.executers.ServiceToscaArtifactsValidatorExecutor;
-import org.openecomp.sdc.asdctool.impl.validator.executers.ServiceValidatorExecuter;
-import org.openecomp.sdc.asdctool.impl.validator.executers.VFToscaArtifactValidatorExecutor;
-import org.openecomp.sdc.asdctool.impl.validator.executers.VfValidatorExecuter;
+import org.openecomp.sdc.asdctool.impl.validator.executers.*;
 import org.openecomp.sdc.asdctool.impl.validator.tasks.artifacts.ArtifactValidationUtils;
 import org.openecomp.sdc.asdctool.impl.validator.tasks.artifacts.ServiceArtifactValidationTask;
 import org.openecomp.sdc.asdctool.impl.validator.tasks.artifacts.VfArtifactValidationTask;
@@ -18,14 +14,7 @@ import org.openecomp.sdc.be.dao.cassandra.CassandraClient;
 import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
 import org.openecomp.sdc.be.dao.titan.TitanGraphClient;
 import org.openecomp.sdc.be.model.DerivedNodeTypeResolver;
-import org.openecomp.sdc.be.model.jsontitan.operations.ArtifactsOperations;
-import org.openecomp.sdc.be.model.jsontitan.operations.CategoryOperation;
-import org.openecomp.sdc.be.model.jsontitan.operations.GroupsOperation;
-import org.openecomp.sdc.be.model.jsontitan.operations.NodeTypeOperation;
-import org.openecomp.sdc.be.model.jsontitan.operations.TopologyTemplateOperation;
-import org.openecomp.sdc.be.model.jsontitan.operations.ToscaDataOperation;
-import org.openecomp.sdc.be.model.jsontitan.operations.ToscaElementLifecycleOperation;
-import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
+import org.openecomp.sdc.be.model.jsontitan.operations.*;
 
 public class ValidationToolConfigurationTest {
 

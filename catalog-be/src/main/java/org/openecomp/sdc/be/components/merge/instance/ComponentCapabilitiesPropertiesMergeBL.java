@@ -1,9 +1,8 @@
 package org.openecomp.sdc.be.components.merge.instance;
 
-import java.util.List;
-import java.util.Map;
-
+import fj.data.Either;
 import org.apache.commons.collections.CollectionUtils;
+import org.openecomp.sdc.be.components.merge.VspComponentsMergeCommand;
 import org.openecomp.sdc.be.components.merge.capability.CapabilityResolver;
 import org.openecomp.sdc.be.components.merge.property.DataDefinitionsValuesMergingBusinessLogic;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
@@ -15,20 +14,24 @@ import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.ComponentParametersView;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.openecomp.sdc.common.log.wrappers.Logger;
+import org.springframework.core.annotation.Order;
 
-import fj.data.Either;
+import java.util.List;
+import java.util.Map;
+
+import static org.openecomp.sdc.be.components.merge.resource.ResourceDataMergeBusinessLogic.ANY_ORDER_COMMAND;
 
 @org.springframework.stereotype.Component
-public class ComponentCapabilitiesPropertiesMergeBL implements ComponentsMergeCommand {
+@Order(ANY_ORDER_COMMAND)
+public class ComponentCapabilitiesPropertiesMergeBL implements VspComponentsMergeCommand {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ComponentCapabilitiesPropertiesMergeBL.class);
+    private static final Logger log = Logger.getLogger(ComponentCapabilitiesPropertiesMergeBL.class);
 
-    private DataDefinitionsValuesMergingBusinessLogic dataDefinitionsValuesMergingBusinessLogic;
-    private ToscaOperationFacade toscaOperationFacade;
-    private ComponentsUtils componentsUtils;
-    private CapabilityResolver capabilityResolver;
+    private final DataDefinitionsValuesMergingBusinessLogic dataDefinitionsValuesMergingBusinessLogic;
+    private final ToscaOperationFacade toscaOperationFacade;
+    private final ComponentsUtils componentsUtils;
+    private final CapabilityResolver capabilityResolver;
 
     public ComponentCapabilitiesPropertiesMergeBL(DataDefinitionsValuesMergingBusinessLogic dataDefinitionsValuesMergingBusinessLogic, ToscaOperationFacade toscaOperationFacade, ComponentsUtils componentsUtils, CapabilityResolver capabilityResolver) {
         this.dataDefinitionsValuesMergingBusinessLogic = dataDefinitionsValuesMergingBusinessLogic;
@@ -95,7 +98,7 @@ public class ComponentCapabilitiesPropertiesMergeBL implements ComponentsMergeCo
         return toscaOperationFacade.getToscaElement(cmptId, propertiesCapabilitiesFilter)
                 .right()
                 .map(err -> {
-                   LOGGER.debug("failed to fetch cmpt {} with properties capabilities. status: {}", cmptId, err);
+                   log.debug("failed to fetch cmpt {} with properties capabilities. status: {}", cmptId, err);
                    return err;
                 });
 

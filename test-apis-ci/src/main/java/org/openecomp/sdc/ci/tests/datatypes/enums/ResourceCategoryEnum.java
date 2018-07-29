@@ -20,11 +20,6 @@
 
 package org.openecomp.sdc.ci.tests.datatypes.enums;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Random;
-
 import java.util.Random;
 
 public enum ResourceCategoryEnum {

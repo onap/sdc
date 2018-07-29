@@ -5,13 +5,8 @@ import org.apache.commons.dbcp2.BasicDataSource;
 import org.apache.commons.lang3.StringUtils;
 import org.onap.config.ConfigurationUtils;
 import org.onap.config.Constants;
-
+import java.util.*;
 import java.sql.Driver;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.ServiceLoader;
-import java.util.Set;
 
 /**
  * The type Configuration data source.

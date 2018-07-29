@@ -109,4 +109,42 @@ public class ToscaGroupPropertyDefinition {
         TypeDescription typeDescription = new TypeDescription(ToscaGroupPropertyDefinition.class);
         return typeDescription;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        ToscaGroupPropertyDefinition that = (ToscaGroupPropertyDefinition) o;
+
+        if (min_vf_module_instances != null ? !min_vf_module_instances.equals(that.min_vf_module_instances) : that.min_vf_module_instances != null)
+            return false;
+        if (max_vf_module_instances != null ? !max_vf_module_instances.equals(that.max_vf_module_instances) : that.max_vf_module_instances != null)
+            return false;
+        if (vf_module_label != null ? !vf_module_label.equals(that.vf_module_label) : that.vf_module_label != null)
+            return false;
+        if (vfc_list != null ? !vfc_list.equals(that.vfc_list) : that.vfc_list != null) return false;
+        if (vf_module_type != null ? !vf_module_type.equals(that.vf_module_type) : that.vf_module_type != null)
+            return false;
+        if (vf_module_description != null ? !vf_module_description.equals(that.vf_module_description) : that.vf_module_description != null)
+            return false;
+        if (initial_count != null ? !initial_count.equals(that.initial_count) : that.initial_count != null)
+            return false;
+        if (volume_group != null ? !volume_group.equals(that.volume_group) : that.volume_group != null) return false;
+        return availability_zone_count != null ? availability_zone_count.equals(that.availability_zone_count) : that.availability_zone_count == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = min_vf_module_instances != null ? min_vf_module_instances.hashCode() : 0;
+        result = 31 * result + (max_vf_module_instances != null ? max_vf_module_instances.hashCode() : 0);
+        result = 31 * result + (vf_module_label != null ? vf_module_label.hashCode() : 0);
+        result = 31 * result + (vfc_list != null ? vfc_list.hashCode() : 0);
+        result = 31 * result + (vf_module_type != null ? vf_module_type.hashCode() : 0);
+        result = 31 * result + (vf_module_description != null ? vf_module_description.hashCode() : 0);
+        result = 31 * result + (initial_count != null ? initial_count.hashCode() : 0);
+        result = 31 * result + (volume_group != null ? volume_group.hashCode() : 0);
+        result = 31 * result + (availability_zone_count != null ? availability_zone_count.hashCode() : 0);
+        return result;
+    }
 }

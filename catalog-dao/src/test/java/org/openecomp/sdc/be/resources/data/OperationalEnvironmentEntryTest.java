@@ -1,10 +1,10 @@
 package org.openecomp.sdc.be.resources.data;
 
-import java.util.Date;
-import java.util.Set;
-
 import org.junit.Test;
 import org.openecomp.sdc.be.datatypes.enums.EnvironmentStatusEnum;
+
+import java.util.Date;
+import java.util.Set;
 
 public class OperationalEnvironmentEntryTest {
 

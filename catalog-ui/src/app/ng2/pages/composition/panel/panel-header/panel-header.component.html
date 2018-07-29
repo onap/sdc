@@ -1,0 +1,14 @@
+<div class="component-details-panel-header" data-tests-id="w-sdc-designer-sidebar-head">
+    
+    <div class="icon">
+        <div class="large {{iconClassName}}">
+            <div [ngClass]="{'non-certified': nonCertified}" tooltip="Not certified"></div>
+        </div>
+    </div>
+
+    <div class="title" data-tests-id="selectedCompTitle" tooltip="&#8203;{{name}}">{{name}}</div>
+
+    <svg-icon-label *ngIf="!isViewOnly" name="edit-file-o" clickable="true" size="small" class="rename-instance" data-tests-id="renameInstance" (click)="renameInstance()"></svg-icon-label>
+    <svg-icon-label *ngIf="!isViewOnly" name="trash-o" clickable="true" size="small" class="delete-instance" data-tests-id="deleteInstance" (click)="deleteInstance()"></svg-icon-label>
+    
+</div>

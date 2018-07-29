@@ -20,9 +20,7 @@
 
 package org.openecomp.sdc.be.model.operations.api;
 
-import java.util.List;
-import java.util.Map;
-
+import fj.data.Either;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphNode;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
@@ -34,61 +32,62 @@ import org.openecomp.sdc.be.model.category.GroupingDefinition;
 import org.openecomp.sdc.be.model.category.SubCategoryDefinition;
 import org.openecomp.sdc.be.resources.data.CategoryData;
 
-import fj.data.Either;
+import java.util.List;
+import java.util.Map;
 
 public interface IElementOperation {
 
-	Either<List<CategoryDefinition>, ActionStatus> getAllResourceCategories();
+    Either<List<CategoryDefinition>, ActionStatus> getAllResourceCategories();
 
-	Either<List<CategoryDefinition>, ActionStatus> getAllServiceCategories();
+    Either<List<CategoryDefinition>, ActionStatus> getAllServiceCategories();
 
-	Either<List<CategoryDefinition>, ActionStatus> getAllProductCategories();
+    Either<List<CategoryDefinition>, ActionStatus> getAllProductCategories();
 
-	public Either<List<Tag>, ActionStatus> getAllTags();
+    public Either<List<Tag>, ActionStatus> getAllTags();
 
-	public Either<List<PropertyScope>, ActionStatus> getAllPropertyScopes();
+    public Either<List<PropertyScope>, ActionStatus> getAllPropertyScopes();
 
-	public Either<List<ArtifactType>, ActionStatus> getAllArtifactTypes();
+    public Either<List<ArtifactType>, ActionStatus> getAllArtifactTypes();
 
-	public Either<Map<String, Object>, ActionStatus> getAllDeploymentArtifactTypes();
+    public Either<Map<String, Object>, ActionStatus> getAllDeploymentArtifactTypes();
 
-	public Either<Integer, ActionStatus> getDefaultHeatTimeout();
+    public Either<Integer, ActionStatus> getDefaultHeatTimeout();
 
-	public <T extends GraphNode> Either<CategoryData, StorageOperationStatus> getCategoryData(String name, NodeTypeEnum type, Class<T> clazz);
+    public <T extends GraphNode> Either<CategoryData, StorageOperationStatus> getCategoryData(String name, NodeTypeEnum type, Class<T> clazz);
 
-	public <T extends GraphNode> Either<org.openecomp.sdc.be.resources.data.category.CategoryData, StorageOperationStatus> getNewCategoryData(String name, NodeTypeEnum type, Class<T> clazz);
+    public <T extends GraphNode> Either<org.openecomp.sdc.be.resources.data.category.CategoryData, StorageOperationStatus> getNewCategoryData(String name, NodeTypeEnum type, Class<T> clazz);
 
-	public Either<Map<String, String>, ActionStatus> getResourceTypesMap();
+    public Either<Map<String, String>, ActionStatus> getResourceTypesMap();
 
-	Either<CategoryDefinition, ActionStatus> createCategory(CategoryDefinition category, NodeTypeEnum nodeType);
+    Either<CategoryDefinition, ActionStatus> createCategory(CategoryDefinition category, NodeTypeEnum nodeType);
 
-	Either<CategoryDefinition, ActionStatus> createCategory(CategoryDefinition category, NodeTypeEnum nodeType, boolean inTransaction);
+    Either<CategoryDefinition, ActionStatus> createCategory(CategoryDefinition category, NodeTypeEnum nodeType, boolean inTransaction);
 
-	Either<CategoryDefinition, ActionStatus> deleteCategory(NodeTypeEnum nodeType, String categoryId);
+    Either<CategoryDefinition, ActionStatus> deleteCategory(NodeTypeEnum nodeType, String categoryId);
 
-	Either<SubCategoryDefinition, ActionStatus> deleteSubCategory(NodeTypeEnum nodeType, String subCategoryId);
+    Either<SubCategoryDefinition, ActionStatus> deleteSubCategory(NodeTypeEnum nodeType, String subCategoryId);
 
-	Either<Boolean, ActionStatus> isCategoryUniqueForType(NodeTypeEnum nodeType, String normalizedName);
+    Either<Boolean, ActionStatus> isCategoryUniqueForType(NodeTypeEnum nodeType, String normalizedName);
 
-	Either<SubCategoryDefinition, ActionStatus> createSubCategory(String categoryId, SubCategoryDefinition subCategory, NodeTypeEnum nodeType);
+    Either<SubCategoryDefinition, ActionStatus> createSubCategory(String categoryId, SubCategoryDefinition subCategory, NodeTypeEnum nodeType);
 
-	Either<SubCategoryDefinition, ActionStatus> createSubCategory(String categoryId, SubCategoryDefinition subCategory, NodeTypeEnum nodeType, boolean inTransaction);
+    Either<SubCategoryDefinition, ActionStatus> createSubCategory(String categoryId, SubCategoryDefinition subCategory, NodeTypeEnum nodeType, boolean inTransaction);
 
-	Either<List<CategoryDefinition>, ActionStatus> getAllCategories(NodeTypeEnum nodeType, boolean inTransaction);
+    Either<List<CategoryDefinition>, ActionStatus> getAllCategories(NodeTypeEnum nodeType, boolean inTransaction);
 
-	Either<CategoryDefinition, ActionStatus> getCategory(NodeTypeEnum nodeType, String categoryId);
+    Either<CategoryDefinition, ActionStatus> getCategory(NodeTypeEnum nodeType, String categoryId);
 
-	Either<SubCategoryDefinition, ActionStatus> getSubCategoryUniqueForType(NodeTypeEnum nodeType, String normalizedName);
+    Either<SubCategoryDefinition, ActionStatus> getSubCategoryUniqueForType(NodeTypeEnum nodeType, String normalizedName);
 
-	Either<Boolean, ActionStatus> isSubCategoryUniqueForCategory(NodeTypeEnum nodeType, String subCategoryNormName, String parentCategoryId);
+    Either<Boolean, ActionStatus> isSubCategoryUniqueForCategory(NodeTypeEnum nodeType, String subCategoryNormName, String parentCategoryId);
 
-	Either<GroupingDefinition, ActionStatus> createGrouping(String subCategoryId, GroupingDefinition grouping, NodeTypeEnum nodeType);
+    Either<GroupingDefinition, ActionStatus> createGrouping(String subCategoryId, GroupingDefinition grouping, NodeTypeEnum nodeType);
 
-	Either<GroupingDefinition, ActionStatus> deleteGrouping(NodeTypeEnum nodeType, String groupingId);
+    Either<GroupingDefinition, ActionStatus> deleteGrouping(NodeTypeEnum nodeType, String groupingId);
 
-	Either<SubCategoryDefinition, ActionStatus> getSubCategory(NodeTypeEnum nodeType, String subCategoryId);
+    Either<SubCategoryDefinition, ActionStatus> getSubCategory(NodeTypeEnum nodeType, String subCategoryId);
 
-	Either<Boolean, ActionStatus> isGroupingUniqueForSubCategory(NodeTypeEnum nodeType, String groupingNormName, String parentSubCategoryId);
+    Either<Boolean, ActionStatus> isGroupingUniqueForSubCategory(NodeTypeEnum nodeType, String groupingNormName, String parentSubCategoryId);
 
-	Either<GroupingDefinition, ActionStatus> getGroupingUniqueForType(NodeTypeEnum nodeType, String groupingNormalizedName);
+    Either<GroupingDefinition, ActionStatus> getGroupingUniqueForType(NodeTypeEnum nodeType, String groupingNormalizedName);
 }

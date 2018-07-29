@@ -16,17 +16,17 @@
 
 package org.openecomp.sdc.translator.services.heattotosca.impl.nameextractor;
 
-import static org.openecomp.sdc.tosca.services.ToscaConstants.HEAT_NODE_TYPE_SUFFIX;
-
-import java.util.List;
-import java.util.Optional;
-
 import org.openecomp.sdc.heat.datatypes.model.Resource;
 import org.openecomp.sdc.tosca.datatypes.ToscaNodeType;
 import org.openecomp.sdc.translator.datatypes.heattotosca.PropertyRegexMatcher;
 import org.openecomp.sdc.translator.services.heattotosca.NameExtractor;
 import org.openecomp.sdc.translator.services.heattotosca.NameExtractorUtil;
 import org.openecomp.sdc.translator.services.heattotosca.helper.ContrailTranslationHelper;
+
+import java.util.List;
+import java.util.Optional;
+
+import static org.openecomp.sdc.tosca.services.ToscaConstants.HEAT_NODE_TYPE_SUFFIX;
 
 public class NameExtractorContrailComputeImpl implements NameExtractor {
 

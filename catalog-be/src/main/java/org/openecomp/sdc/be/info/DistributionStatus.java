@@ -20,8 +20,7 @@
 
 package org.openecomp.sdc.be.info;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 
 public enum DistributionStatus {
     DEPLOYED("Deployed", "DEPLOYED");
@@ -29,7 +28,7 @@ public enum DistributionStatus {
     private String name;
     private String auditingStatus;
 
-    private static final Logger log = LoggerFactory.getLogger(DistributionStatus.class);
+    private static final Logger log = Logger.getLogger(DistributionStatus.class);
 
     DistributionStatus(String name, String auditingStatus) {
         this.name = name;

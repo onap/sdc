@@ -1,5 +1,5 @@
 pluginsList:
-   - pluginId: DCAE
+   - pluginId: DCAED
      pluginDiscoveryUrl: <%= @dcae_discovery_url %>
      pluginSourceUrl: <%= @dcae_source_url %>
      pluginStateUrl: "dcaed"
@@ -8,6 +8,15 @@ pluginsList:
             displayName: "Monitoring"
             displayContext: ["SERVICE"]
             displayRoles: ["DESIGNER"]
+    - pluginId: DCAE-DS
+      pluginDiscoveryUrl: <%= @dcae_dt_discovery_url %>
+      pluginSourceUrl: <%= @dcae_dt_source_url %>
+      pluginStateUrl: "dcae-ds"
+      pluginDisplayOptions:
+        tab:
+            displayName: "DCAE-DS"
+            displayRoles: ["DESIGNER"]
+
    - pluginId: WORKFLOW
      pluginDiscoveryUrl: <%= @workflow_discovery_url %>
      pluginSourceUrl: <%= @workflow_source_url %>

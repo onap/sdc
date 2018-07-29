@@ -27,7 +27,7 @@ export class ResourceTypeFilter {
         let filter = <ResourceTypeFilter>(resourceType:string) => {
             let uiConfiguration:any = cacheService.get('UIConfiguration');
 
-            if (uiConfiguration.resourceTypes && uiConfiguration.resourceTypes[resourceType]) {
+            if (uiConfiguration && uiConfiguration.resourceTypes && uiConfiguration.resourceTypes[resourceType]) {
                 return uiConfiguration.resourceTypes[resourceType];
             }
             return resourceType;

@@ -1,11 +1,12 @@
 package org.openecomp.sdc.be.model;
 
+import org.junit.Assert;
+import org.junit.Test;
+
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-
-import org.junit.Test;
 
 public class ComponentInstInputsMapTest {
 
@@ -46,7 +47,7 @@ public class ComponentInstInputsMapTest {
 	@Test
 	public void testSetComponentInstancePropInput() throws Exception {
 		ComponentInstInputsMap testSubject;
-		Map<String, List<ComponentInstancePropInput>> componentInstanceProperties = null;
+		Map<String, List<ComponentInstancePropInput>> componentInstanceProperties = new HashMap<>();
 
 		// default test
 		testSubject = createTestSubject();
@@ -63,8 +64,7 @@ public class ComponentInstInputsMapTest {
 		try {
 			testSubject.resolvePropertiesToDeclare();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+            Assert.assertTrue(e.getClass() == IllegalStateException.class);
 		}
 	}
 

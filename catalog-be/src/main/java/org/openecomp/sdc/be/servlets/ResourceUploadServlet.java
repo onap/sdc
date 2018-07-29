@@ -20,24 +20,8 @@
 
 package org.openecomp.sdc.be.servlets;
 
-import java.io.File;
-
-import javax.annotation.Resource;
-import javax.inject.Singleton;
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
+import com.jcabi.aspects.Loggable;
+import io.swagger.annotations.*;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.openecomp.sdc.be.components.impl.ResourceImportManager;
@@ -48,17 +32,17 @@ import org.openecomp.sdc.be.model.UploadResourceInfo;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.datastructure.Wrapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.springframework.web.context.WebApplicationContext;
 
-import com.jcabi.aspects.Loggable;
-
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import javax.inject.Singleton;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.io.File;
 
 /**
  * Root resource (exposed at "/" path)
@@ -69,7 +53,7 @@ import io.swagger.annotations.ApiResponses;
 @Singleton
 public class ResourceUploadServlet extends AbstractValidationsServlet {
 
-    private static final Logger log = LoggerFactory.getLogger(ResourceUploadServlet.class);
+    private static final Logger log = Logger.getLogger(ResourceUploadServlet.class);
     public static final String NORMATIVE_TYPE_RESOURCE = "multipart";
     public static final String CSAR_TYPE_RESOURCE = "csar";
     public static final String USER_TYPE_RESOURCE = "user-resource";
@@ -110,9 +94,6 @@ public class ResourceUploadServlet extends AbstractValidationsServlet {
             return isUserTypeResource;
         }
     }
-
-    @Resource
-    private ResourceImportManager resourceImportManager;
 
     @POST
     @Path("/{resourceAuthority}")
@@ -173,7 +154,7 @@ public class ResourceUploadServlet extends AbstractValidationsServlet {
     /********************************************************************************************************************/
 
     private void init(ServletContext context) {
-        init(log);
+        init();
         WebAppContextWrapper webApplicationContextWrapper = (WebAppContextWrapper) context.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR);
         WebApplicationContext webApplicationContext = webApplicationContextWrapper.getWebAppContext(context);
         resourceImportManager = webApplicationContext.getBean(ResourceImportManager.class);

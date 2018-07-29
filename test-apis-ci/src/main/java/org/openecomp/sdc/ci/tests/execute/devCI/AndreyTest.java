@@ -20,12 +20,6 @@
 
 package org.openecomp.sdc.ci.tests.execute.devCI;
 
-import java.io.File;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
@@ -33,6 +27,12 @@ import org.openecomp.sdc.ci.tests.tosca.datatypes.ToscaDefinition;
 import org.openecomp.sdc.ci.tests.tosca.datatypes.ToscaTopologyTemplateDefinition;
 import org.openecomp.sdc.ci.tests.utils.ToscaParserUtils;
 import org.openecomp.sdc.ci.tests.utils.general.AtomicOperationUtils;
+
+import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 public class AndreyTest {
 

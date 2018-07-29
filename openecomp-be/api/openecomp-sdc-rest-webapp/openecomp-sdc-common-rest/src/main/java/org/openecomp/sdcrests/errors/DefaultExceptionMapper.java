@@ -33,13 +33,7 @@ import org.hibernate.validator.internal.engine.path.PathImpl;
 import org.openecomp.core.utilities.CommonMethods;
 import org.openecomp.core.utilities.file.FileUtils;
 import org.openecomp.core.utilities.json.JsonUtil;
-import org.openecomp.sdc.common.errors.CoreException;
-import org.openecomp.sdc.common.errors.ErrorCategory;
-import org.openecomp.sdc.common.errors.ErrorCode;
-import org.openecomp.sdc.common.errors.ErrorCodeAndMessage;
-import org.openecomp.sdc.common.errors.GeneralErrorBuilder;
-import org.openecomp.sdc.common.errors.JsonMappingErrorBuilder;
-import org.openecomp.sdc.common.errors.ValidationErrorBuilder;
+import org.openecomp.sdc.common.errors.*;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 

@@ -16,10 +16,10 @@
 
 package org.openecomp.sdc.be.tosca.utils;
 
-import java.io.File;
-
 import org.openecomp.sdc.be.datatypes.elements.OperationDataDefinition;
 import org.openecomp.sdc.be.tosca.CsarUtils;
+
+import java.io.File;
 
 public class OperationArtifactUtil {
 

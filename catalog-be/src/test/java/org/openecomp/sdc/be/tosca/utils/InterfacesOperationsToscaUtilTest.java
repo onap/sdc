@@ -16,9 +16,6 @@
 
 package org.openecomp.sdc.be.tosca.utils;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -35,10 +32,8 @@ import org.openecomp.sdc.be.tosca.ToscaRepresentation;
 import org.openecomp.sdc.be.tosca.model.ToscaNodeType;
 import org.openecomp.sdc.be.tosca.model.ToscaTemplate;
 
-/**
- * @author KATYR
- * @since April 12, 2018
- */
+import java.util.HashMap;
+import java.util.Map;
 
 public class InterfacesOperationsToscaUtilTest {
 
@@ -47,8 +42,7 @@ public class InterfacesOperationsToscaUtilTest {
         new DummyConfigurationManager();
     }
 
-
-    @Test
+    @Test()
     public void addInterfaceTypeElement() {
         Component component = new Resource();
         component.setNormalizedName("normalizedComponentName");
@@ -61,7 +55,7 @@ public class InterfacesOperationsToscaUtilTest {
         final Map<String, Object> interfaceTypeElement =
                 InterfacesOperationsToscaUtil.addInterfaceTypeElement(component);
 
-        ToscaExportHandler handler = new ToscaExportHandler();
+        ToscaExportHandler handler = new ToscaExportHandler(null,null,null,null,null,null);
         ToscaTemplate template = new ToscaTemplate("test");
         template.setInterface_types(interfaceTypeElement);
         final ToscaRepresentation toscaRepresentation = handler.createToscaRepresentation(template);
@@ -84,7 +78,7 @@ public class InterfacesOperationsToscaUtilTest {
         ToscaNodeType nodeType = new ToscaNodeType();
         InterfacesOperationsToscaUtil.addInterfaceDefinitionElement(component, nodeType);
 
-        ToscaExportHandler handler = new ToscaExportHandler();
+        ToscaExportHandler handler = new ToscaExportHandler(null,null,null,null,null,null);
         ToscaTemplate template = new ToscaTemplate("test");
         Map<String, ToscaNodeType> nodeTypes = new HashMap<>();
         nodeTypes.put("test", nodeType);
@@ -114,7 +108,7 @@ public class InterfacesOperationsToscaUtilTest {
         ToscaNodeType nodeType = new ToscaNodeType();
         InterfacesOperationsToscaUtil.addInterfaceDefinitionElement(component, nodeType);
 
-        ToscaExportHandler handler = new ToscaExportHandler();
+        ToscaExportHandler handler = new ToscaExportHandler(null,null,null,null,null,null);
         ToscaTemplate template = new ToscaTemplate("test");
         Map<String, ToscaNodeType> nodeTypes = new HashMap<>();
         nodeTypes.put("test", nodeType);

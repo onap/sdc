@@ -17,9 +17,9 @@
                 <div class="version-container">
 
                 <span data-ng-if="!isCreateMode() && !component.isLatestVersion()" class="not-latest"></span>
-                <select class="version-selector" data-ng-if="!isCreateMode()" data-tests-id="versionHeader" data-ng-model="changeVersion.selectedVersion" data-ng-class="{'disabled': !isActiveTopBar}"
-                        ng-options="'V'+version.versionNumber for version in versionsList" data-ng-change="onVersionChanged(changeVersion.selectedVersion.versionId)">
-                </select>
+                    <select class="version-selector" data-ng-if="!isCreateMode()" data-tests-id="versionHeader" data-ng-model="changeVersion.selectedVersion" data-ng-class="{'disabled': unsavedChanges}"
+                            ng-options="'V'+version.versionNumber for version in versionsList" data-ng-change="onVersionChanged(changeVersion.selectedVersion.versionId)">
+                    </select>
                 </div>
 
                 <div class="lifecycle-state">
@@ -27,6 +27,9 @@
                     <span class="lifecycle-state-text" data-tests-id="formlifecyclestate">{{getStatus()}}</span>
                 </div>
 
+                <div class="archive-state-label" ng-if="component.archived">
+                    <div class="sprite-new archive-label" ></div>
+                </div>
 
                 <div class="progress-container" >
                     <top-progress class="general-view-top-progress" progress-value="progressService.getProgressValue(component.uniqueId)" progress-message="progressMessage"></top-progress>
@@ -34,47 +37,64 @@
 
                 <div class="sdc-workspace-top-bar-buttons">
 
-                    <span ng-if="!isCreateMode() && !component.isLatestVersion() && !showChangeStateButton()" [disabled]="!isActiveTopBar">Switch to the&nbsp;<a ng-click="getLatestVersion()">latest version</a></span>
+                    <span ng-if="!isCreateMode() && !component.isLatestVersion() && !showChangeStateButton()" [disabled]="unsavedChanges">Switch to the&nbsp;<a ng-click="getLatestVersion()">latest version</a></span>
 
-                    <button ng-if="isDesigner() && !isCreateMode()"
-                            data-ng-class="{'disabled' :!isValidForm || isDisableMode() || isViewMode() || !isActiveTopBar}"
-                            ng-click="save()"
+                 <button ng-if="isDesigner() && !isCreateMode() && component.lifecycleState === 'CERTIFIED' && (component.isService() || component.getComponentSubType() === 'VF')"
+                            ng-click="openAutomatedUpgradeModal()"
                             class="tlv-btn blue"
-                            data-tests-id="create/save"
-                            data-ng-show="showFullIcons()"
-                            sdc-smart-tooltip="">Update</button>
+                            data-ng-class="{'disabled' : component.archived}"
+                            data-tests-id="open-upgrade-vsp-popup"
+                            sdc-smart-tooltip="" prevent-double-click>{{component.isResource() ? 'Upgrade Services' : 'Update Services'}}</button>
+
 
                     <button ng-repeat="(key,button) in changeLifecycleStateButtons"
                             ng-click="changeLifecycleState(key)"
                             ng-if="showChangeStateButton() && key != 'deleteVersion'"
-                            data-ng-disabled="isCreateMode() || button.disabled || disabledButtons || !isValidForm || !isActiveTopBar"
+                            data-ng-disabled="isCreateMode() || button.disabled || disabledButtons || !isValidForm || unsavedChanges || component.archived"
                             class="change-lifecycle-state-btn tlv-btn"
                             ng-class="$first ? 'outline green' : 'grey'"
-                            data-tests-id="{{button.text  | testsId}}">
+                            data-tests-id="{{button.text  | testsId}}" prevent-double-click>
                             {{button.text}}
+
                         </button>
 
-                    <button ng-if="!isViewMode() && isCreateMode()" data-ng-disabled="!isValidForm || isDisableMode() || isLoading || !isActiveTopBar" ng-click="save()" class="tlv-btn outline green" data-tests-id="create/save">Create</button>
 
-                    <span data-ng-if="isDesigner() && !isCreateMode() && component.lifecycleState === 'NOT_CERTIFIED_CHECKOUT'" sdc-smart-tooltip=""
-                        data-ng-class="{'disabled' : !isValidForm || isDisableMode() || isViewMode() || !isActiveTopBar}" ng-click="changeLifecycleState('deleteVersion')"
-                        class="sprite-new delete-btn" data-tests-id="delete_version" sdc-smart-tooltip="">Delete</span>
+                    <button ng-if="!isCreateMode() && component.archived"
+                        data-ng-class="{'disabled' :!isDesigner() || !component.isLatestVersion()}"
+                        ng-click="restoreComponent()"
+                        class="tlv-btn blue"
+                        data-tests-id="restore-component-button"
+                        prevent-double-click>Restore</button>
 
-                    <span data-ng-if="isDesigner()" data-ng-class="{'disabled' :isDisableMode() || isViewMode() || !isActiveTopBar}"  ng-click="revert()" class="sprite-new revert-btn" data-tests-id="revert"
-                          data-ng-show="showFullIcons()" sdc-smart-tooltip="">Revert</span>
+                    <button ng-if="!isViewMode() && isCreateMode()" data-ng-disabled="!isValidForm || isDisableMode() || isLoading || unsavedChanges" ng-click="create()" class="tlv-btn outline green" data-tests-id="create/save">Create</button>
+
+                    <span data-ng-if="isDesigner() && !isCreateMode() && component.lifecycleState === 'NOT_CERTIFIED_CHECKOUT' && !component.archived" sdc-smart-tooltip=""
+                        data-ng-class="{'disabled' : !isValidForm || isDisableMode() || isViewMode() || unsavedChanges}" ng-click="changeLifecycleState('deleteVersion')"
+                        class="sprite-new delete-btn" data-tests-id="delete_version" sdc-smart-tooltip="Delete" prevent-double-click>Delete</span>
+
+                    <span data-ng-click = "archiveComponent()"
+                        ng-model-options="{ debounce: 300 }"
+                        data-ng-class="{'disabled' : !component.isLatestVersion()}"
+                        data-ng-if = "isDesigner() && component.lifecycleState !== 'NOT_CERTIFIED_CHECKOUT' && !isCreateMode() && !component.archived"
+                        data-tests-id="archive-component-button"
+                        class="sprite-new archive-btn" sdc-smart-tooltip="Archive" prevent-double-click>Archive</span>
+
+
 
                     <span class="delimiter"></span>
-                    <span class="sprite-new x-btn" data-ng-click="goToBreadcrumbHome()" sdc-smart-tooltip="">Close</span>
+                    <span class="sprite-new x-btn" data-ng-click="goToBreadcrumbHome()" data-ng-class="{'disabled' : unsavedChanges}" sdc-smart-tooltip="">Close</span>
 
                 </div>
             </div>
             <div class="w-sdc-main-container-body-content-wrapper">
-                <div class="tab-title" data-ng-if="!isComposition && !isDeployment && !isPlugins">
-                    {{getTabTitle()}}
+                <div class="w-sdc-main-container-body-content-header">
+                    <div class="tab-title" data-ng-if="!isComposition && !isDeployment && !isPlugins">
+                        {{getTabTitle()}}
+                    </div>
                 </div>
                 <div class="w-sdc-main-container-body-content" data-ng-class="{'third-party':thirdParty}" data-ui-view></div>
             </div>
         </div>
     </div>
-    <top-nav [hide-search]="true" [menu-model]="breadcrumbsModel" [version]="version"></top-nav>
+    <top-nav [hide-search]="true" [menu-model]="breadcrumbsModel" [version]="version" [unsaved-changes]="unsavedChanges" [unsaved-changes-callback]="unsavedChangesCallback"></top-nav>
 </div>

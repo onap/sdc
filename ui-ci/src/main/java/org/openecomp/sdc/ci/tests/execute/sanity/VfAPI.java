@@ -20,41 +20,19 @@
 
 package org.openecomp.sdc.ci.tests.execute.sanity;
 
-import java.awt.AWTException;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.openecomp.sdc.be.dao.api.ActionStatus;
+import com.aventstack.extentreports.Status;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
-import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.ci.tests.datatypes.*;
 import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum.InformationalArtifactsPlaceholders;
 import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum.LeftPanelCanvasItems;
 import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum.ResourceMetadataEnum;
 import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum.ToscaArtifactsScreenEnum;
-import org.openecomp.sdc.ci.tests.datatypes.enums.ArtifactTypeEnum;
-import org.openecomp.sdc.ci.tests.datatypes.enums.LifeCycleStatesEnum;
-import org.openecomp.sdc.ci.tests.datatypes.enums.NormativeTypesEnum;
-import org.openecomp.sdc.ci.tests.datatypes.enums.PropertyTypeEnum;
-import org.openecomp.sdc.ci.tests.datatypes.enums.ResourceCategoryEnum;
-import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
+import org.openecomp.sdc.ci.tests.datatypes.enums.*;
 import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
 import org.openecomp.sdc.ci.tests.execute.setup.AttFtpClient;
 import org.openecomp.sdc.ci.tests.execute.setup.SetupCDTest;
-import org.openecomp.sdc.ci.tests.pages.CompositionPage;
-import org.openecomp.sdc.ci.tests.pages.DeploymentArtifactPage;
-import org.openecomp.sdc.ci.tests.pages.GeneralPageElements;
-import org.openecomp.sdc.ci.tests.pages.InformationalArtifactPage;
-import org.openecomp.sdc.ci.tests.pages.InputsPage;
-import org.openecomp.sdc.ci.tests.pages.PropertiesPage;
-import org.openecomp.sdc.ci.tests.pages.ResourceGeneralPage;
-import org.openecomp.sdc.ci.tests.pages.TesterOperationPage;
-import org.openecomp.sdc.ci.tests.pages.ToscaArtifactsPage;
+import org.openecomp.sdc.ci.tests.pages.*;
 import org.openecomp.sdc.ci.tests.tosca.datatypes.ToscaDefinition;
 import org.openecomp.sdc.ci.tests.utilities.*;
 import org.openecomp.sdc.ci.tests.utils.ToscaParserUtils;
@@ -62,7 +40,6 @@ import org.openecomp.sdc.ci.tests.utils.general.AtomicOperationUtils;
 import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
 import org.openecomp.sdc.ci.tests.utils.rest.ResourceRestUtils;
 import org.openecomp.sdc.ci.tests.utils.rest.ResponseParser;
-import org.openecomp.sdc.ci.tests.utils.validation.ErrorValidationUtils;
 import org.openecomp.sdc.ci.tests.verificator.ServiceVerificator;
 import org.openecomp.sdc.ci.tests.verificator.VfModuleVerificator;
 import org.openecomp.sdc.ci.tests.verificator.VfVerificator;
@@ -73,13 +50,15 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import com.aventstack.extentreports.Status;
-import com.clearspring.analytics.util.Pair;
+import java.io.File;
+import java.util.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 
 public class VfAPI extends SetupCDTest {
 
 	private String filePath;
+
 	@BeforeClass
 	public void beforeClass(){
 		filePath = FileHandling.getFilePath("");
@@ -281,7 +260,7 @@ public class VfAPI extends SetupCDTest {
 		}
 	}
 	
-	@Test
+/*	@Test
 	public void changeInstanceVersionTest() throws Exception{
 		
 		ResourceReqDetails atomicResourceMetaData = null;
@@ -329,7 +308,7 @@ public class VfAPI extends SetupCDTest {
 			ResourceRestUtils.deleteResourceByNameAndVersion(atomicResourceMetaData.getName(), "1.0");
 		}
 		
-	}
+	}*/
 
     // future removed from ui
 	@Test(enabled = false)
@@ -401,18 +380,21 @@ public class VfAPI extends SetupCDTest {
 	public void addAllInformationalArtifactPlaceholdersInVfTestApi() throws Exception{
 		//Create VF via API
 		ResourceReqDetails vfMetaData = createVFviaAPI();
-
 		//Go to Catalog and find the created VF
 		CatalogUIUtilitis.clickTopMenuButton(TopMenuButtonsEnum.CATALOG);
 		GeneralUIUtils.findComponentAndClick(vfMetaData.getName());
 
 		ResourceGeneralPage.getLeftMenu().moveToInformationalArtifactScreen();
-		
+		int fileNameCounter = 0;
+		String fileName;
 		for(InformationalArtifactsPlaceholders informArtifact : InformationalArtifactsPlaceholders.values()){
-			ArtifactUIUtils.fillPlaceHolderInformationalArtifact(informArtifact, filePath,"asc_heat 0 2.yaml", informArtifact.getValue());
+			fileName = HEAT_FILE_YAML_NAME_PREFIX + fileNameCounter + HEAT_FILE_YAML_NAME_SUFFIX;
+			ArtifactUIUtils.fillPlaceHolderInformationalArtifact(informArtifact,
+					FileHandling.getFilePath("uniqueFileNames"),fileName,
+					informArtifact.getValue());
+			fileNameCounter++;
 		}
-		
-		AssertJUnit.assertTrue(InformationalArtifactPage.checkElementsCountInTable(InformationalArtifactsPlaceholders.values().length));
+		assertThat(InformationalArtifactPage.checkElementsCountInTable(InformationalArtifactsPlaceholders.values().length)).isTrue();
 	}
 	
 	@Test
@@ -432,8 +414,10 @@ public class VfAPI extends SetupCDTest {
 			String typeFromScreen = ToscaArtifactsPage.getArtifactType(i);
 			AssertJUnit.assertTrue(typeFromScreen.equals(ArtifactTypeEnum.TOSCA_CSAR.getType()) || typeFromScreen.equals(ArtifactTypeEnum.TOSCA_TEMPLATE.getType()));
 		}
-		
-		ToscaArtifactsPage.clickSubmitForTestingButton(vfMetaData.getName());
+
+		//TODO Andrey should click on certify button
+		ToscaArtifactsPage.clickCertifyButton(vfMetaData.getName());
+		vfMetaData.setVersion("1.0");
 		VfVerificator.verifyToscaArtifactsInfo(vfMetaData, getUser());
 	}
 	
@@ -571,7 +555,7 @@ public class VfAPI extends SetupCDTest {
 		AssertJUnit.assertTrue("asc_heat-0-2.yaml".equals(actualArtifactFileName));
 	}
 	
-	@Test
+	/*@Test
 	public void checkoutVfTest() throws Exception{
 		ResourceReqDetails vfMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
 		ResourceUIUtils.createVF(vfMetaData, getUser());
@@ -598,7 +582,7 @@ public class VfAPI extends SetupCDTest {
 		vfMetaData.setUniqueId(null);
 		VfVerificator.verifyVFLifecycle(vfMetaData, getUser(), LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
 		VfVerificator.verifyVfLifecycleInUI(LifeCycleStateEnum.CHECKOUT);
-	}
+	}*/
 	
 	@Test
 	public void deleteInstanceFromVfCanvasApi() throws Exception{
@@ -641,7 +625,7 @@ public class VfAPI extends SetupCDTest {
 	}
 	
 	
-	@Test
+	/*@Test
 	public void submitVfForTestingWithNonCertifiedAssetApi() throws Exception{
 		String fileName = "vFW_VFC4.yml";
 		ResourceReqDetails atomicResourceMetaData = ElementFactory.getDefaultResourceByTypeNormTypeAndCatregory(ResourceTypeEnum.VFC, NormativeTypesEnum.ROOT, ResourceCategoryEnum.NETWORK_L2_3_ROUTERS, getUser());
@@ -667,7 +651,8 @@ public class VfAPI extends SetupCDTest {
 		canvasManager.createElementOnCanvas(atomicResourceMetaData.getName());
 		
 		try{
-			CompositionPage.clickSubmitForTestingButton(vfMetaData.getName());
+			//TODO Andrey should click on certify button
+			CompositionPage.clickCertifyButton(vfMetaData.getName());
 			assert(false);
 		}
 		catch(Exception e){ 
@@ -678,7 +663,7 @@ public class VfAPI extends SetupCDTest {
 		finally{
 			ResourceRestUtils.deleteResourceByNameAndVersion(atomicResourceMetaData.getName(), "0.1");
 		}
-	}
+	}*/
 	
 	@Test
 	public void isDisabledAndReadOnlyInCheckinApi() throws Exception{		
@@ -704,20 +689,49 @@ public class VfAPI extends SetupCDTest {
 		AssertJUnit.assertTrue(GeneralUIUtils.isElementDisabled(ResourceMetadataEnum.CATEGORY.getValue()));
 		AssertJUnit.assertTrue(GeneralUIUtils.isElementDisabled(DataTestIdEnum.LifeCyleChangeButtons.CREATE.getValue()));
 	}
+
+    @Test
+    public void displayHomeAfterNavigationToOnboardingTest() throws Exception{
+        //Production bug scenario: "Home" - Click on any VF/ Service - Copy the URL - Go to “ONBOARD” - Paste the URL - Review the breadcrumbs
+        // Expected: "Home"       Actual: "Onboarding"
+
+        //Create VF via API
+        ResourceReqDetails vfMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
+        Resource vf = AtomicOperationUtils.createResourceByResourceDetails(vfMetaData, UserRoleEnum.DESIGNER, true).left().value();
+
+        //Check in  VF via API
+        vf = (Resource) AtomicOperationUtils.changeComponentState(vf, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
+
+        //Find the created VF on Home page
+        CatalogUIUtilitis.clickTopMenuButton(TopMenuButtonsEnum.CATALOG);
+        HomePage.navigateToHomePage();
+        GeneralUIUtils.findComponentAndClick(vfMetaData.getName());
+
+        //Copy current URL, navigate to OB screen and paste URL
+        String url = GeneralUIUtils.copyCurrentURL();
+        CompositionPage.moveToOnboardScreen();
+        GeneralUIUtils.navigateToURL(url);
+        GeneralUIUtils.ultimateWait();
+
+        //Validate that main menu button is Home and not Onboarding
+		String id = DataTestIdEnum.MainMenuButtonsFromInsideFrame.HOME_BUTTON.getValue();
+        WebElement button = GeneralUIUtils.getWebElementByTestID(id);
+        AssertJUnit.assertTrue(button.getAttribute("text").trim().equals("HOME"));
+    }
 	
 	@Test
-	public void exportToscaWithModulePropertiesVFTest() throws AWTException, Exception {
+	public void exportToscaWithModulePropertiesVFTest() throws Exception {
 		String vnfFile = "1-Vf-zrdm5bpxmc02-092017-(MOBILITY)_v2.0.zip";
 		ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource();//getResourceReqDetails(ComponentConfigurationTypeEnum.DEFAULT);
-		Pair<String, VendorSoftwareProductObject> vsp= OnboardingUiUtils.onboardAndValidate(resourceReqDetails, FileHandling.getVnfRepositoryPath(), vnfFile, getUser());
-		String vspName = vsp.left;
-		ResourceGeneralPage.clickSubmitForTestingButton(vsp.left);
-		Resource resource = AtomicOperationUtils.getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, vspName, "0.1");
+		VendorSoftwareProductObject vsp= OnboardingUiUtils.onboardAndValidate(resourceReqDetails, FileHandling.getVnfRepositoryPath(), vnfFile, getUser());
+		String vspName = vsp.getName();
+		ResourceGeneralPage.clickCertifyButton(vspName);
+		Resource resource = AtomicOperationUtils.getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, vspName, "1.0");
 		VfModuleVerificator.validateSpecificModulePropertiesFromRequest(resource);
 	}
 	
 	@Test
-	public void exportToscaWithModulePropertiesTemplateCheckVFTest() throws AWTException, Exception {
+	public void exportToscaWithModulePropertiesTemplateCheckVFTest() throws Exception {
 		String vnfFile = "1-Vf-zrdm5bpxmc02-092017-(MOBILITY)_v2.0.zip";
 		ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource();//getResourceReqDetails(ComponentConfigurationTypeEnum.DEFAULT);
 		OnboardingUiUtils.onboardAndValidate(resourceReqDetails, FileHandling.getVnfRepositoryPath(), vnfFile, getUser());

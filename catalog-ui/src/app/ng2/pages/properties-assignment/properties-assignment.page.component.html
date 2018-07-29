@@ -10,7 +10,7 @@
                             [searchTerm]="searchQuery"
                             [selectedPropertyId]="selectedFlatProperty.path"
                             [propertyNameSearchText]="searchPropertyName"
-                            [readonly]="isReadonly"
+                            [readonly]="isReadonly || resourceIsReadonly"
                             [isLoading]="loadingProperties || savingChangedData"
                             [hasDeclareOption]="true"
                             (propertyChanged)="dataChanged($event)"
@@ -59,7 +59,7 @@
                         <hierarchy-navigation class="hierarchy-nav"
                                 (updateSelected)="onInstanceSelectedUpdate($event)"
                                 [displayData]="isInputsTabSelected ? []: instancesNavigationData"
-                                [selectedItem]="selectedInstanceData.uniqueId"
+                                [selectedItem]="selectedInstanceData?.uniqueId"
                                 [displayOptions]="hierarchyInstancesDisplayOptions"></hierarchy-navigation>
                     </div>
                 </tab>
@@ -79,9 +79,4 @@
             </tabs>
         </div>
     </div>
-    <template #saveChangedDataModalContentTemplate>
-        <loader [display]="savingChangedData" [size]="'medium'" [relative]="true"></loader>
-        Your changes{{isValidChangedData ? '' : ' (invalid)'}} have not been saved.<br>
-        Do you want to {{isValidChangedData ? 'save' : 'discard'}} them?
-    </template>
 </div>

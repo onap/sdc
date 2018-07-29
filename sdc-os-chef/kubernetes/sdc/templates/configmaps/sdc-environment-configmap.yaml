@@ -95,6 +95,7 @@ data:
                 "cassandra_password": "Aa1234%^!",
                 "concurrent_writes": "32",
                 "cluster_name": "SDC-CS-",
+                "datacenter_name": "SDC-CS-",
                 "multithreaded_compaction": "false",
                 "cache_dir": "/var/lib/cassandra/saved_caches",
                 "log_file": "/var/lib/cassandra/log/system.log",

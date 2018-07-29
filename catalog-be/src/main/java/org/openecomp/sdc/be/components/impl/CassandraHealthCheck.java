@@ -1,39 +1,30 @@
 package org.openecomp.sdc.be.components.impl;
 
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-
-import javax.annotation.PostConstruct;
-
-import org.openecomp.sdc.be.config.ConfigurationManager;
-import org.openecomp.sdc.be.dao.cassandra.schema.SdcSchemaUtils;
-import org.openecomp.sdc.be.dao.cassandra.schema.Table;
-import org.openecomp.sdc.common.util.GeneralUtility;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
-
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.KeyspaceMetadata;
 import com.datastax.driver.core.Metadata;
 import com.datastax.driver.core.Session;
+import org.openecomp.sdc.be.config.ConfigurationManager;
+import org.openecomp.sdc.be.dao.cassandra.schema.SdcSchemaUtils;
+import org.openecomp.sdc.be.dao.cassandra.schema.Table;
+import org.openecomp.sdc.common.log.wrappers.Logger;
+import org.openecomp.sdc.common.util.GeneralUtility;
+import org.springframework.stereotype.Component;
+
+import javax.annotation.PostConstruct;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.util.*;
 
 @Component("cassandra-health-check")
 public class CassandraHealthCheck {
 
 
-    private static final Logger log = LoggerFactory.getLogger(CassandraHealthCheck.class);
+    private static final Logger log = Logger.getLogger(CassandraHealthCheck.class.getName());
 
     private String localDataCenterName = null;
 
-    private Set<String> sdcKeyspaces = new HashSet<String>();
+    private Set<String> sdcKeyspaces = new HashSet<>();
 
     private int HC_FormulaNumber;
 
@@ -92,7 +83,7 @@ public class CassandraHealthCheck {
 
             log.info("Cluster Metadata: {}", metadata);
             List<KeyspaceMetadata> keyspaces = metadata.getKeyspaces();
-            List<Integer> replactionFactorList = new ArrayList<Integer>();
+            List<Integer> replactionFactorList = new ArrayList<>();
 
             //Collect the keyspaces Replication Factor of current localDataCenter
             for (KeyspaceMetadata keyspace : keyspaces) {

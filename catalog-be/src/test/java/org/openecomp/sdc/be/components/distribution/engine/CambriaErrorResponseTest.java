@@ -1,9 +1,9 @@
 package org.openecomp.sdc.be.components.distribution.engine;
 
-import java.util.List;
-
 import org.junit.Test;
 import org.openecomp.sdc.be.distribution.api.client.CambriaOperationStatus;
+
+import java.util.List;
 
 public class CambriaErrorResponseTest {
 

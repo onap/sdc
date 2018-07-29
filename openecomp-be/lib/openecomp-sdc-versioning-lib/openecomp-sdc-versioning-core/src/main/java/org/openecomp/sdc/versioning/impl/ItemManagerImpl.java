@@ -16,9 +16,6 @@
 
 package org.openecomp.sdc.versioning.impl;
 
-import java.util.Collection;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.ErrorCategory;
 import org.openecomp.sdc.common.errors.ErrorCode;
@@ -27,6 +24,10 @@ import org.openecomp.sdc.versioning.dao.ItemDao;
 import org.openecomp.sdc.versioning.dao.types.VersionStatus;
 import org.openecomp.sdc.versioning.types.Item;
 import org.openecomp.sdc.versioning.types.ItemStatus;
+
+import java.util.Collection;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public class ItemManagerImpl implements ItemManager {
 

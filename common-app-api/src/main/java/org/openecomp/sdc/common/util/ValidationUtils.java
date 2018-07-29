@@ -30,11 +30,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.helper.StringUtil;
 import org.jsoup.safety.Whitelist;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Pattern;
 
 public class ValidationUtils {
@@ -92,8 +88,8 @@ public class ValidationUtils {
 	public final static Pattern COLON_PATTERN = Pattern.compile("[:]+");
 	public final static Pattern AT_PATTERN = Pattern.compile("[@]+");
 	public final static Pattern AND_PATTERN = Pattern.compile(" [aA][Nn][Dd] ");
-	protected final static Set<String> CATEGORY_CONJUNCTIONS = new HashSet<String>(
-			Arrays.asList("of", "to", "for", "as", "a", "an", "the"));
+	public final static Set<String> CATEGORY_CONJUNCTIONS = new HashSet<>(
+            Arrays.asList("of", "to", "for", "as", "a", "an", "the"));
 
 	public final static Pattern COST_PATTERN = Pattern.compile("^[0-9]{1,5}\\.[0-9]{1,3}$");
 	public final static Pattern ARTIFACT_LABEL_PATTERN = Pattern.compile("^[a-zA-Z0-9 \\-+]+$");
@@ -259,8 +255,7 @@ public class ValidationUtils {
 
 	public static String removeAllTags(String htmlText) {
 
-		String stripped = TAGS_PATTERN.matcher(htmlText).replaceAll("").trim();
-		return stripped;
+        return TAGS_PATTERN.matcher(htmlText).replaceAll("").trim();
 	}
 
 	public static String normaliseWhitespace(String str) {
@@ -281,9 +276,7 @@ public class ValidationUtils {
 
 	public static boolean validateIsAscii(String input) {
 
-		boolean isAscii = CharMatcher.ASCII.matchesAllOf(input);
-
-		return isAscii;
+        return CharMatcher.ASCII.matchesAllOf(input);
 	}
 
 	public static String convertHtmlTagsToEntities(String input) {
@@ -384,15 +377,13 @@ public class ValidationUtils {
 	private static String[] splitComponentName(String name) {
 		String normalizedName = name.toLowerCase();
 		normalizedName = COMPONENT_NAME_DELIMETER_PATTERN.matcher(normalizedName).replaceAll(" ");
-		String[] split = normalizedName.split(" ");
-		return split;
+        return normalizedName.split(" ");
 	}
 
 	private static String[] splitComponentInstanceName(String name) {
 		String normalizedName = name.toLowerCase();
 		normalizedName = COMPONENT_INCTANCE_NAME_DELIMETER_PATTERN.matcher(normalizedName).replaceAll(" ");
-		String[] split = normalizedName.split(" ");
-		return split;
+        return normalizedName.split(" ");
 	}
 
 	public static String convertToSystemName(String name) {
@@ -524,13 +515,11 @@ public class ValidationUtils {
 	private static String[] splitComponentName(Pattern pattern, String name) {
 		String normalizedName = name.toLowerCase();
 		normalizedName = pattern.matcher(normalizedName).replaceAll(" ");
-		String[] split = normalizedName.split(" ");
-		return split;
+        return normalizedName.split(" ");
 	}
 
 	public static String removeHtmlTagsOnly(String htmlText) {
-		String stripped = HtmlCleaner.stripHtml(htmlText, false);
-		return stripped;
+        return HtmlCleaner.stripHtml(htmlText, false);
 	}
 
 	public static boolean validateForwardingPathNamePattern(String forwardingPathName) {

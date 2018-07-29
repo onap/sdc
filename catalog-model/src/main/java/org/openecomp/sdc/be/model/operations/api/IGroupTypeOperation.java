@@ -20,42 +20,26 @@
 
 package org.openecomp.sdc.be.model.operations.api;
 
-import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
-import org.openecomp.sdc.be.model.GroupTypeDefinition;
-import org.openecomp.sdc.be.resources.data.GroupTypeData;
-
 import fj.data.Either;
+import org.openecomp.sdc.be.model.GroupTypeDefinition;
 
 public interface IGroupTypeOperation {
 
-	/**
-	 * @param groupTypeDefinition
-	 * @return
-	 */
-	public Either<GroupTypeDefinition, StorageOperationStatus> addGroupType(GroupTypeDefinition groupTypeDefinition);
+    Either<GroupTypeDefinition, StorageOperationStatus> addGroupType(GroupTypeDefinition groupTypeDefinition);
 
-	public Either<GroupTypeDefinition, StorageOperationStatus> addGroupType(GroupTypeDefinition groupTypeDefinition, boolean inTransaction);
-	
-	public Either<GroupTypeDefinition, StorageOperationStatus> upgradeGroupType(GroupTypeDefinition groupTypeDefinitionNew, GroupTypeDefinition groupTypeDefinitionOld);
+    Either<GroupTypeDefinition, StorageOperationStatus> addGroupType(GroupTypeDefinition groupTypeDefinition, boolean inTransaction);
 
-    public Either<GroupTypeDefinition, StorageOperationStatus> upgradeGroupType(GroupTypeDefinition groupTypeDefinitionNew, GroupTypeDefinition groupTypeDefinitionOld, boolean inTransaction);
+    Either<GroupTypeDefinition, StorageOperationStatus> updateGroupType(GroupTypeDefinition updatedGroupType, GroupTypeDefinition currGroupType);
 
-	/**
-	 * @param uniqueId
-	 * @return
-	 */
-	public Either<GroupTypeDefinition, StorageOperationStatus> getGroupType(String uniqueId);
+    Either<GroupTypeDefinition, StorageOperationStatus> getGroupType(String uniqueId, boolean inTransaction);
 
-	public Either<GroupTypeDefinition, StorageOperationStatus> getGroupType(String uniqueId, boolean inTransaction);
+    Either<GroupTypeDefinition, StorageOperationStatus> getLatestGroupTypeByType(String name);
 
-	public Either<GroupTypeDefinition, StorageOperationStatus> getLatestGroupTypeByType(String name);
+    Either<GroupTypeDefinition, StorageOperationStatus> getLatestGroupTypeByType(String name, boolean inTransaction);
 
-	public Either<GroupTypeDefinition, StorageOperationStatus> getLatestGroupTypeByType(String name, boolean inTransaction);
+    Either<GroupTypeDefinition, StorageOperationStatus> getGroupTypeByTypeAndVersion(String name, String version);
 
-	public Either<GroupTypeDefinition, StorageOperationStatus> getGroupTypeByTypeAndVersion(String name, String version);
+    Either<GroupTypeDefinition, StorageOperationStatus> getGroupTypeByTypeAndVersion(String name, String version, boolean inTransaction);
 
-	public Either<GroupTypeDefinition, StorageOperationStatus> getGroupTypeByTypeAndVersion(String name, String version, boolean inTransaction);
-
-	public Either<GroupTypeData, TitanOperationStatus> getLatestGroupTypeByNameFromGraph(String name);
 
 }

@@ -1,11 +1,11 @@
 package org.openecomp.sdc.be.dao.cassandra.schema;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import org.junit.Test;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.utils.DAOConfDependentTest;
+
+import java.util.LinkedList;
+import java.util.List;
 
 
 public class SdcSchemaUtilsTest extends DAOConfDependentTest{

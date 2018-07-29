@@ -120,10 +120,9 @@ public class CatalogLeftPanelTest extends  SetupCDTest{
 		
 		CatalogUIUtilitis.clickTopMenuButton(TopMenuButtonsEnum.CATALOG);
 		CatalogUIUtilitis.catalogFilterTypeChecBox(TypesEnum.valueOf(catalogType));
-		
 		CatalogVerificator.validateType(TypesEnum.valueOf(catalogType));				
 	}
-	
+
 	@Test(dataProvider = "Resource_Type_List")
 	public void filterByResourceType(String resourceType) throws Exception {
 		setLog(resourceType);		
@@ -143,7 +142,7 @@ public class CatalogLeftPanelTest extends  SetupCDTest{
 		CatalogUIUtilitis.clickTopMenuButton(TopMenuButtonsEnum.CATALOG);
 		CatalogUIUtilitis.clickOnLeftPanelElement(DataTestIdEnum.CatalogPageLeftPanelFilterTitle.CATEGORIES);
 		CatalogUIUtilitis.catalogFilterStatusChecBox(statusCheckbox);
-		
+		//TODO check the test after removing lifecycle steps for resource
 		CatalogVerificator.validateStatus(lifecycleStates, statusCheckbox.name());
 	}
 
@@ -152,13 +151,13 @@ public class CatalogLeftPanelTest extends  SetupCDTest{
 		CatalogUIUtilitis.clickTopMenuButton(TopMenuButtonsEnum.CATALOG);
 		CatalogUIUtilitis.clickOnLeftPanelElement(DataTestIdEnum.CatalogPageLeftPanelFilterTitle.TYPE);
 		
-		WebElement categorieCheckbox = CatalogUIUtilitis.clickOnUpperCategoryCheckbox();
+		WebElement categoryCheckbox = CatalogUIUtilitis.clickOnUpperCategoryCheckbox();
 		
-		CatalogVerificator.validateCategory(categorieCheckbox.getAttribute("textContent").trim());
+		CatalogVerificator.validateCategory(categoryCheckbox.getAttribute("textContent").trim());
 	}
 
 	@Test
-	public void filterByGenericDtabaseSubCategory() throws Exception{		
+	public void filterByGenericDatabaseSubCategory() throws Exception{
 		CatalogUIUtilitis.clickTopMenuButton(TopMenuButtonsEnum.CATALOG);
 		CatalogUIUtilitis.clickOnLeftPanelElement(DataTestIdEnum.CatalogPageLeftPanelFilterTitle.TYPE);
 
@@ -179,7 +178,7 @@ public class CatalogLeftPanelTest extends  SetupCDTest{
 		CatalogUIUtilitis.clickTopMenuButton(TopMenuButtonsEnum.CATALOG);
 		List<WebElement> cardElements = GeneralUIUtils.getElementsByCSS(DataTestIdEnum.DashboardCardEnum.INFO_NAME.getValue());
 		String firstElementName = cardElements.get(0).getAttribute("textContent").trim();
-		assertTrue(String.format("Wrong element name, Exepected : %s , Actual: %s", serviceMetadata.getName(), firstElementName), serviceMetadata.getName().equals(firstElementName));			
+		assertTrue(String.format("Wrong element name, Expected : %s , Actual: %s", serviceMetadata.getName(), firstElementName), serviceMetadata.getName().equals(firstElementName));
 	}
 	
 	@Test(priority = 17)
@@ -192,7 +191,7 @@ public class CatalogLeftPanelTest extends  SetupCDTest{
 		CatalogUIUtilitis.clickTopMenuButton(TopMenuButtonsEnum.CATALOG);
 		List<WebElement> cardElements = GeneralUIUtils.getElementsByCSS(DataTestIdEnum.DashboardCardEnum.INFO_NAME.getValue());
 		String firstElementName = cardElements.get(0).getAttribute("textContent").trim();
-		assertTrue(String.format("Wrong element name, Exepected : %s , Actual: %s", vfMetaData.getName(), firstElementName), vfMetaData.getName().equals(firstElementName));			
+		assertTrue(String.format("Wrong element name, Expected : %s , Actual: %s", vfMetaData.getName(), firstElementName), vfMetaData.getName().equals(firstElementName));
 	}
 	
 	@Test(priority = 5)
@@ -200,14 +199,33 @@ public class CatalogLeftPanelTest extends  SetupCDTest{
 		// create resource 
 		ResourceReqDetails vfMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
 		ResourceUIUtils.createVF(vfMetaData, getUser());
-		
 		ResourceGeneralPage.clickCheckinButton(vfMetaData.getName());
+
 		CatalogUIUtilitis.clickTopMenuButton(TopMenuButtonsEnum.CATALOG);
-		GeneralUIUtils.findComponentAndClickInCatalog(vfMetaData.getName());
+		GeneralUIUtils.findComponentAndClick(vfMetaData.getName());
 		ResourceGeneralPage.clickCheckoutButton();
 		ResourceGeneralPage.clickCheckinButton(vfMetaData.getName());		
 	}
-	
+
+    @Test
+    public void keepSearchResultsInCatalogAfterBrowserBack() throws Exception{
+		ResourceReqDetails resourceMetadata = ElementFactory.getDefaultResource();
+		ResourceUIUtils.createVF(resourceMetadata, getUser());
+		ResourceGeneralPage.clickCheckinButton(resourceMetadata.getName());
+		CatalogUIUtilitis.clickTopMenuButton(TopMenuButtonsEnum.CATALOG);
+        CatalogUIUtilitis.catalogSearchBox(resourceMetadata.getName());
+        GeneralUIUtils.findComponentAndClick(resourceMetadata.getName());
+
+		GeneralUIUtils.clickOnBrowserBackButton();
+
+		int numOfElementsInFilteredCatalog =  CatalogVerificator.getNumberOfElementsFromCatalogHeader();
+		assertTrue(String.format("Wrong number fo elements, Expected : %s , Actual: %s", 1, numOfElementsInFilteredCatalog), numOfElementsInFilteredCatalog == 1 );
+
+		List<WebElement> cardElements = GeneralUIUtils.getElementsByCSS(DataTestIdEnum.DashboardCardEnum.INFO_NAME.getValue());
+		String firstElementName = cardElements.get(0).getAttribute("textContent").trim();
+		assertTrue(String.format("Wrong element name, Expected : %s , Actual: %s", resourceMetadata.getName(), firstElementName), resourceMetadata.getName().equals(firstElementName));
+    }
+
 	@Override
 	protected UserRoleEnum getRole() {
 		return UserRoleEnum.DESIGNER;

@@ -20,59 +20,58 @@
 
 package org.openecomp.sdc.be.servlets;
 
-import java.util.ArrayList;
-import java.util.EnumMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.inject.Singleton;
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
+import com.jcabi.aspects.Loggable;
+import fj.data.Either;
+import io.swagger.annotations.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.openecomp.sdc.be.components.impl.ComponentBusinessLogic;
+import org.openecomp.sdc.be.components.impl.ComponentBusinessLogicProvider;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datamodel.api.HighestFilterEnum;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.FilterKeyEnum;
-import org.openecomp.sdc.be.model.CapReqDef;
-import org.openecomp.sdc.be.model.Component;
-import org.openecomp.sdc.be.model.ComponentInstance;
-import org.openecomp.sdc.be.model.IComponentInstanceConnectedElement;
-import org.openecomp.sdc.be.model.Resource;
-import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.mixin.GroupCompositionMixin;
+import org.openecomp.sdc.be.mixin.PolicyCompositionMixin;
+import org.openecomp.sdc.be.model.*;
 import org.openecomp.sdc.be.ui.model.UiComponentDataTransfer;
+import org.openecomp.sdc.be.view.ResponseView;
 import org.openecomp.sdc.common.api.Constants;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Controller;
 
-import com.jcabi.aspects.Loggable;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.List;
+import java.util.Map;
 
-import fj.data.Either;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/v1/catalog")
 @Api(value = "Component Servlet", description = "Component Servlet")
-@Singleton
+@Controller
 public class ComponentServlet extends BeGenericServlet {
-    private static final Logger log = LoggerFactory.getLogger(ComponentServlet.class);
+    private static final String GET_CERTIFIED_NOT_ABSTRACT_COMPONENTS_FAILED_WITH_EXCEPTION = "getCertifiedNotAbstractComponents failed with exception";
+
+	private static final String GET_CERTIFIED_NON_ABSTRACT = "Get Certified Non Abstract";
+
+	private static final String FAILED_TO_GET_ALL_NON_ABSTRACT = "failed to get all non abstract {}";
+
+	private static final String START_HANDLE_REQUEST_OF = "Start handle request of {}";
+
+	private static final Logger log = Logger.getLogger(ComponentServlet.class);
+
+    private final ComponentBusinessLogicProvider componentBusinessLogicProvider;
+
+    public ComponentServlet(ComponentBusinessLogicProvider componentBusinessLogicProvider) {
+        this.componentBusinessLogicProvider = componentBusinessLogicProvider;
+    }
 
     @GET
     @Path("/{componentType}/{componentUuid}/conformanceLevelValidation")
@@ -86,7 +85,7 @@ public class ComponentServlet extends BeGenericServlet {
         ServletContext context = request.getSession().getServletContext();
 
         String url = request.getMethod() + " " + request.getRequestURI();
-        log.debug("Start handle request of {}", url);
+        log.debug(START_HANDLE_REQUEST_OF, url);
 
         ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(componentType);
         if (componentTypeEnum != null) {
@@ -116,7 +115,7 @@ public class ComponentServlet extends BeGenericServlet {
         ServletContext context = request.getSession().getServletContext();
 
         String url = request.getMethod() + " " + request.getRequestURI();
-        log.debug("Start handle request of {}", url);
+        log.debug(START_HANDLE_REQUEST_OF, url);
 
         ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(componentType);
         if (componentTypeEnum != null) {
@@ -162,18 +161,18 @@ public class ComponentServlet extends BeGenericServlet {
 
             log.debug("Received componentUids size is {}", componentUids == null ? 0 : componentUids.size());
 
-            Either<List<Component>, ResponseFormat> actionResponse = businessLogic.getLatestVersionNotAbstractComponents(false, HighestFilterEnum.HIGHEST_ONLY, componentTypeEnum, internalComponentType, componentUids, userId);
+            Either<List<Component>, ResponseFormat> actionResponse = businessLogic.getLatestVersionNotAbstractComponents(false, componentTypeEnum, internalComponentType, componentUids, userId);
 
             if (actionResponse.isRight()) {
-                log.debug("failed to get all non abstract {}", componentType);
+                log.debug(FAILED_TO_GET_ALL_NON_ABSTRACT, componentType);
                 return buildErrorResponse(actionResponse.right().value());
             }
             Object components = RepresentationUtils.toRepresentation(actionResponse.left().value());
             return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), components);
 
         } catch (Exception e) {
-            BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Get Certified Non Abstract" + componentType);
-            log.debug("getCertifiedNotAbstractComponents failed with exception", e);
+            BeEcompErrorManager.getInstance().logBeRestApiGeneralError(GET_CERTIFIED_NON_ABSTRACT + componentType);
+            log.debug(GET_CERTIFIED_NOT_ABSTRACT_COMPONENTS_FAILED_WITH_EXCEPTION, e);
             response = buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
             return response;
 
@@ -200,26 +199,25 @@ public class ComponentServlet extends BeGenericServlet {
 
             ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(componentType);
             ComponentBusinessLogic businessLogic = getComponentBL(componentTypeEnum, context);
-            List<String> componentUids = data;
-            if (log.isDebugEnabled())
-                log.debug("Received componentUids size is {}", componentUids == null ? 0 : componentUids.size());
+            if (log.isDebugEnabled()) {
+                log.debug("Received componentUids size is {}", data == null ? 0 : data.size());
+            }
 
-            Either<List<Component>, ResponseFormat> actionResponse = businessLogic.getLatestVersionNotAbstractComponents(false, HighestFilterEnum.HIGHEST_ONLY, componentTypeEnum, internalComponentType, componentUids, userId);
+            Either<List<Component>, ResponseFormat> actionResponse = businessLogic.getLatestVersionNotAbstractComponents(false, componentTypeEnum, internalComponentType, data, userId);
 
             if (actionResponse.isRight()) {
-                if (log.isDebugEnabled())
-                    log.debug("failed to get all non abstract {}", componentType);
+                log.debug(FAILED_TO_GET_ALL_NON_ABSTRACT, componentType);
                 return buildErrorResponse(actionResponse.right().value());
 
             }
             Object components = RepresentationUtils.toRepresentation(actionResponse.left().value());
-            Response responseToReturn = buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), components);
+            return  buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), components);
 
-            return responseToReturn;
+
 
         } catch (Exception e) {
-            BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Get Certified Non Abstract" + componentType);
-            log.debug("getCertifiedNotAbstractComponents failed with exception", e);
+            BeEcompErrorManager.getInstance().logBeRestApiGeneralError(GET_CERTIFIED_NON_ABSTRACT + componentType);
+            log.debug(GET_CERTIFIED_NOT_ABSTRACT_COMPONENTS_FAILED_WITH_EXCEPTION, e);
             response = buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
             return response;
 
@@ -246,15 +244,15 @@ public class ComponentServlet extends BeGenericServlet {
 
             Either<List<Component>, ResponseFormat> actionResponse = businessLogic.getLatestVersionNotAbstractComponentsMetadata(false, HighestFilterEnum.HIGHEST_ONLY, componentTypeEnum, internalComponentType, userId);
             if (actionResponse.isRight()) {
-                log.debug("failed to get all non abstract {}", componentType);
+                log.debug(FAILED_TO_GET_ALL_NON_ABSTRACT, componentType);
                 return buildErrorResponse(actionResponse.right().value());
             }
             Object components = RepresentationUtils.toRepresentation(actionResponse.left().value());
             return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), components);
 
         } catch (Exception e) {
-            BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Get Certified Non Abstract" + componentType);
-            log.debug("getCertifiedNotAbstractComponents failed with exception", e);
+            BeEcompErrorManager.getInstance().logBeRestApiGeneralError(GET_CERTIFIED_NON_ABSTRACT + componentType);
+            log.debug(GET_CERTIFIED_NOT_ABSTRACT_COMPONENTS_FAILED_WITH_EXCEPTION, e);
             response = buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
             return response;
 
@@ -279,7 +277,7 @@ public class ComponentServlet extends BeGenericServlet {
             ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(componentType);
             ComponentBusinessLogic businessLogic = getComponentBL(componentTypeEnum, context);
 
-            Either<List<ComponentInstance>, ResponseFormat> actionResponse = businessLogic.getComponentInstancesFilteredByPropertiesAndInputs(componentId, componentTypeEnum, userId, searchText);
+            Either<List<ComponentInstance>, ResponseFormat> actionResponse = businessLogic.getComponentInstancesFilteredByPropertiesAndInputs(componentId, userId);
             if (actionResponse.isRight()) {
                 log.debug("failed to get all component instances filtered by properties and inputs", componentType);
                 return buildErrorResponse(actionResponse.right().value());
@@ -314,13 +312,12 @@ public class ComponentServlet extends BeGenericServlet {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @ApiOperation(value = "Retrieve Resource", httpMethod = "GET", notes = "Returns resource according to resourceId", response = Resource.class)
+    @ResponseView(mixin = {GroupCompositionMixin.class, PolicyCompositionMixin.class})
     @ApiResponses(value = { @ApiResponse(code = 200, message = "Resource found"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 404, message = "Resource not found") })
     public Response getComponentDataFilteredByParams(@PathParam("componentType") final String componentType, @PathParam("componentId") final String componentId, @QueryParam("include") final List<String> dataParamsToReturn, @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 
-        ServletContext context = request.getSession().getServletContext();
-
         String url = request.getMethod() + " " + request.getRequestURI();
-        log.debug("Start handle request of {}" , url);
+        log.debug(START_HANDLE_REQUEST_OF , url);
 
         // get modifier id
         User modifier = new User();
@@ -331,9 +328,8 @@ public class ComponentServlet extends BeGenericServlet {
 
         try {
             String resourceIdLower = componentId.toLowerCase();
-
             ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(componentType);
-            ComponentBusinessLogic businessLogic = getComponentBL(componentTypeEnum, context);
+            ComponentBusinessLogic businessLogic = componentBusinessLogicProvider.getInstance(componentTypeEnum);
 
             log.trace("get component with id {} filtered by ui params", componentId);
             Either<UiComponentDataTransfer, ResponseFormat> actionResponse = businessLogic.getComponentDataFilteredByParams(resourceIdLower, modifier, dataParamsToReturn);
@@ -343,8 +339,8 @@ public class ComponentServlet extends BeGenericServlet {
                 response = buildErrorResponse(actionResponse.right().value());
                 return response;
             }
-            Object resource = RepresentationUtils.toRepresentation(actionResponse.left().value());
-            return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), resource);
+            RepresentationUtils.toRepresentation(actionResponse.left().value());
+            return buildOkResponse(actionResponse.left().value());
 
         } catch (Exception e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Get component filtered by ui params");

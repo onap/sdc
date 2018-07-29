@@ -20,13 +20,12 @@
 
 package org.openecomp.sdc.asdctool.impl;
 
-import java.util.Properties;
-
 import org.apache.http.HttpStatus;
 import org.openecomp.sdc.common.http.client.api.HttpRequest;
 import org.openecomp.sdc.common.http.client.api.HttpResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.openecomp.sdc.common.log.wrappers.Logger;
+
+import java.util.Properties;
 
 /**
  * Created by mlando on 2/23/2016.
@@ -35,7 +34,7 @@ public class RestUtils {
 
 	final static String DELETE_PRODUCT = "http://%s:%s/sdc2/rest/v1/catalog/products/%s";
 
-	private static Logger log = LoggerFactory.getLogger(RestUtils.class.getName());
+	private static Logger log = Logger.getLogger(RestUtils.class.getName());
 
 	public RestUtils() {
 	}

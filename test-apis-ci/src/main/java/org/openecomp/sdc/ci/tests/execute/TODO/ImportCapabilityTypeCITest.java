@@ -20,9 +20,7 @@
 
 package org.openecomp.sdc.ci.tests.execute.TODO;
 
-import java.io.File;
-import java.io.IOException;
-
+import fj.data.Either;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
@@ -39,7 +37,8 @@ import org.testng.AssertJUnit;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.Test;
 
-import fj.data.Either;
+import java.io.File;
+import java.io.IOException;
 
 public class ImportCapabilityTypeCITest {
 	public static final DbUtils DbUtils = new DbUtils();

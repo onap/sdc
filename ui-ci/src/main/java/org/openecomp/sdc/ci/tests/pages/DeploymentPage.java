@@ -20,10 +20,7 @@
 
 package org.openecomp.sdc.ci.tests.pages;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import com.aventstack.extentreports.Status;
 import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum;
 import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum.DeploymentScreen;
 import org.openecomp.sdc.ci.tests.execute.setup.SetupCDTest;
@@ -32,7 +29,9 @@ import org.openecomp.sdc.ci.tests.utilities.ResourceUIUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
-import com.aventstack.extentreports.Status;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class DeploymentPage  {
 	
@@ -104,7 +103,7 @@ public class DeploymentPage  {
     private static void clickInDeployment(DataTestIdEnum.DeploymentScreen element){
     	SetupCDTest.getExtendTest().log(Status.INFO, String.format("Clicking on %s ...", element.getValue()));
     	GeneralUIUtils.clickOnElementByTestId(element.getValue());
-    	GeneralUIUtils.ultimateWait();
+//    	GeneralUIUtils.ultimateWait();
     }
     
     public static List<WebElement> getPropertyNames() throws Exception{

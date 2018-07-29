@@ -1,9 +1,6 @@
 package org.openecomp.sdc.be.components.path;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-
+import fj.data.Either;
 import org.apache.commons.lang.StringUtils;
 import org.openecomp.sdc.be.components.impl.ResponseFormatManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
@@ -12,13 +9,14 @@ import org.openecomp.sdc.be.model.ComponentParametersView;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import fj.data.Either;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 @Component("forwardingPathValidator")
 public class ForwardingPathValidator {
@@ -26,7 +24,7 @@ public class ForwardingPathValidator {
     @Autowired
     protected ToscaOperationFacade toscaOperationFacade;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ForwardingPathValidator.class);
+    private static final Logger logger = Logger.getLogger(ForwardingPathValidator.class);
     private static final int  PATH_NAME_LENGTH = 200;
     private static final int  PROTOCOL_LENGTH = 200;
     private static final int  DESTINATION_PORT_LENGTH = 200;
@@ -67,7 +65,7 @@ public class ForwardingPathValidator {
                                                                           ResponseFormatManager responseFormatManager) {
         if (dataDefinition.getDestinationPortNumber() != null &&
             dataDefinition.getDestinationPortNumber().length() > DESTINATION_PORT_LENGTH ) {
-            LOGGER.debug("Forwarding path destination port {} too long, , maximum allowed 200 characters ",
+            logger.debug("Forwarding path destination port {} too long, , maximum allowed 200 characters ",
                     dataDefinition.getDestinationPortNumber());
             ResponseFormat errorResponse = responseFormatManager.getResponseFormat(ActionStatus
                     .FORWARDING_PATH_DESTINATION_PORT_MAXIMUM_LENGTH, dataDefinition.getDestinationPortNumber());
@@ -79,7 +77,7 @@ public class ForwardingPathValidator {
     private Either<Boolean, ResponseFormat> validateProtocol(ForwardingPathDataDefinition dataDefinition,
                                                              ResponseFormatManager responseFormatManager) {
         if (dataDefinition.getProtocol() != null && dataDefinition.getProtocol().length() > PROTOCOL_LENGTH) {
-            LOGGER.debug("Forwarding path protocol {} too long, , maximum allowed 200 characters ", dataDefinition.getProtocol());
+            logger.debug("Forwarding path protocol {} too long, , maximum allowed 200 characters ", dataDefinition.getProtocol());
             ResponseFormat errorResponse = responseFormatManager.getResponseFormat(ActionStatus
                     .FORWARDING_PATH_PROTOCOL_MAXIMUM_LENGTH, dataDefinition.getProtocol());
             return Either.right(errorResponse);
@@ -104,7 +102,7 @@ public class ForwardingPathValidator {
             return Either.right(isPathNameUniqueResponse.right().value());
         }
         if (!isPathNameUniqueResponse.left().value()) {
-            LOGGER.debug("Forwarding path name {} already in use ", dataDefinition.getName());
+            logger.debug("Forwarding path name {} already in use ", dataDefinition.getName());
             ResponseFormat errorResponse = responseFormatManager.getResponseFormat(ActionStatus
                     .FORWARDING_PATH_NAME_ALREADY_IN_USE, dataDefinition.getName());
             return Either.right(errorResponse);
@@ -114,7 +112,7 @@ public class ForwardingPathValidator {
 
     private Either<Boolean, ResponseFormat> validatePathNameLength(ResponseFormatManager responseFormatManager, String pathName) {
         if (pathName.length() > PATH_NAME_LENGTH) {
-            LOGGER.debug("Forwarding path name  {} too long, , maximum allowed 200 characters ", pathName);
+            logger.debug("Forwarding path name  {} too long, , maximum allowed 200 characters ", pathName);
             ResponseFormat errorResponse = responseFormatManager.getResponseFormat(ActionStatus
                     .FORWARDING_PATH_NAME_MAXIMUM_LENGTH, pathName);
             return Either.right(errorResponse);
@@ -124,7 +122,7 @@ public class ForwardingPathValidator {
 
     private Either<Boolean, ResponseFormat> validatePathNameIfEmpty(ResponseFormatManager responseFormatManager, String pathName) {
         if (StringUtils.isEmpty(pathName)) {
-            LOGGER.debug("Forwarding Path Name can't be empty");
+            logger.debug("Forwarding Path Name can't be empty");
             ResponseFormat errorResponse = responseFormatManager.getResponseFormat(ActionStatus.FORWARDING_PATH_NAME_EMPTY);
             return Either.right(errorResponse);
         }

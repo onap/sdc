@@ -20,42 +20,42 @@
 
 package org.openecomp.sdc.be.model.tosca.validators;
 
-import java.util.Map;
-
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.common.util.ValidationUtils;
 
+import java.util.Map;
+
 public class KeyValidator implements PropertyTypeValidator {
 
-	public static final int STRING_MAXIMUM_LENGTH = 100;
+    public static final int STRING_MAXIMUM_LENGTH = 100;
 
-	private static KeyValidator keyValidator = new KeyValidator();
+    private static KeyValidator keyValidator = new KeyValidator();
 
-	public static KeyValidator getInstance() {
-		return keyValidator;
-	}
+    public static KeyValidator getInstance() {
+        return keyValidator;
+    }
 
-	private KeyValidator() {
+    private KeyValidator() {
 
-	}
+    }
 
-	@Override
-	public boolean isValid(String value, String innerType, Map<String, DataTypeDefinition> allDataTypes) {
+    @Override
+    public boolean isValid(String value, String innerType, Map<String, DataTypeDefinition> allDataTypes) {
 
-		if (value == null || true == value.isEmpty()) {
-			return false;
-		}
+        if (value == null || value.isEmpty()) {
+            return false;
+        }
 
-		if (value.length() > STRING_MAXIMUM_LENGTH) {
-			return false;
-		}
-		String converted = ValidationUtils.removeNoneUtf8Chars(value);
-		return ValidationUtils.validateIsEnglish(converted);
-	}
+        if (value.length() > STRING_MAXIMUM_LENGTH) {
+            return false;
+        }
+        String converted = ValidationUtils.removeNoneUtf8Chars(value);
+        return ValidationUtils.validateIsEnglish(converted);
+    }
 
-	@Override
-	public boolean isValid(String value, String innerType) {
-		return isValid(value, innerType, null);
-	}
+    @Override
+    public boolean isValid(String value, String innerType) {
+        return isValid(value, innerType, null);
+    }
 
 }

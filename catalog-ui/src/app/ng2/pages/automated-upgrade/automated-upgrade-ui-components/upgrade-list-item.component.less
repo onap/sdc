@@ -1,0 +1,44 @@
+@import "./../../../../../assets/styles/override";
+
+.components-to-upgrade-list-item {
+  border: 1px solid @sdcui_color_light-gray;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.11);
+  margin-bottom: 10px;
+  line-height: 40px;
+
+  .component-to-upgrade-data {
+    display: flex;
+    background-color: @sdcui_color_light-silver;
+    height: 40px;
+    padding: 0 10px;
+    align-items: center;
+
+    .component-to-upgrade-icon {
+      margin-left: 26px;
+    }
+
+    .component-to-upgrade-name {
+      margin-left: 8px;
+    }
+
+    .component-to-upgrade-checkbox {
+      height: 24px; // Workaround can not vertical center
+    }
+
+    .upgraded-component-status {
+      margin-left: auto;
+    }
+  }
+
+  .vsp-data {
+    align-items: center;
+    display: flex;
+    border-bottom: 1px solid @sdcui_color_silver;
+    padding: 0 10px 0 64px;
+    .vsp-data-label {
+      color: @sdcui_color_text-black;
+      margin-left: 7px;
+      font-weight: 600;
+    }
+  }
+}

@@ -35,6 +35,10 @@ export class CompositionCiNodeVf extends CompositionCiNodeBase {
         this.img = this.imagesPath + this.componentInstance.icon + '.png';
         this.imgWidth = GraphUIObjects.DEFAULT_RESOURCE_WIDTH;
         this.classes = 'vf-node';
+        if(this.archived){
+            this.classes = this.classes + ' archived';
+            return;
+        }
         if (!this.certified) {
             this.classes = this.classes + ' not-certified';
         }

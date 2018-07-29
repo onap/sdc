@@ -17,7 +17,6 @@
 package org.openecomp.core.utilities.file;
 
 import org.apache.commons.io.IOUtils;
-import org.openecomp.core.utilities.orchestration.OnboardingTypesEnum;
 import org.testng.annotations.Test;
 
 import java.io.File;
@@ -28,9 +27,7 @@ import java.nio.file.Path;
 import java.util.Map;
 import java.util.function.Function;
 
-import static org.testng.Assert.assertTrue;
-import static org.testng.Assert.assertFalse;
-import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.*;
 
 /**
  * @author EVITALIY

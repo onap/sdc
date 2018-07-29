@@ -1,19 +1,15 @@
 package org.openecomp.sdc.be.impl;
 
-import java.util.LinkedList;
-import java.util.List;
-
-import javax.ws.rs.core.Response;
-
+import com.att.aft.dme2.internal.jersey.core.util.Base64;
+import fj.data.Either;
 import org.junit.Test;
 import org.openecomp.sdc.be.dao.api.ResourceUploadStatus;
 import org.openecomp.sdc.be.info.ArtifactAccessInfo;
 import org.openecomp.sdc.be.resources.data.ESArtifactData;
 
-import com.att.aft.dme2.internal.jersey.core.util.Base64;
-
-import fj.data.Either;
-import groovyjarjarantlr.ByteBuffer;
+import javax.ws.rs.core.Response;
+import java.util.LinkedList;
+import java.util.List;
 
 public class DownloadArtifactLogicTest {
 

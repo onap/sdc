@@ -1,9 +1,7 @@
 package org.openecomp.sdc.be.components.merge.instance;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
+import fj.data.Either;
+import org.openecomp.sdc.be.components.merge.VspComponentsMergeCommand;
 import org.openecomp.sdc.be.components.merge.property.DataDefinitionsValuesMergingBusinessLogic;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
@@ -13,20 +11,28 @@ import org.openecomp.sdc.be.model.ComponentInstanceInput;
 import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
+import org.springframework.core.annotation.Order;
 
-import fj.data.Either;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import static org.openecomp.sdc.be.components.merge.resource.ResourceDataMergeBusinessLogic.ANY_ORDER_COMMAND;
 
 @org.springframework.stereotype.Component
-public class ComponentInstanceInputsMergeBL implements ComponentsMergeCommand {
+@Order(ANY_ORDER_COMMAND)
+public class ComponentInstanceInputsMergeBL implements VspComponentsMergeCommand {
 
-    @javax.annotation.Resource
-    private ToscaOperationFacade toscaOperationFacade;
+    private final ToscaOperationFacade toscaOperationFacade;
+    private final ComponentsUtils componentsUtils;
+    private final DataDefinitionsValuesMergingBusinessLogic propertyValuesMergingBusinessLogic;
 
-    @javax.annotation.Resource
-    private ComponentsUtils componentsUtils;
-
-    @javax.annotation.Resource
-    private DataDefinitionsValuesMergingBusinessLogic propertyValuesMergingBusinessLogic;
+    public ComponentInstanceInputsMergeBL(ToscaOperationFacade toscaOperationFacade, ComponentsUtils componentsUtils, DataDefinitionsValuesMergingBusinessLogic propertyValuesMergingBusinessLogic) {
+        this.toscaOperationFacade = toscaOperationFacade;
+        this.componentsUtils = componentsUtils;
+        this.propertyValuesMergingBusinessLogic = propertyValuesMergingBusinessLogic;
+    }
 
     @Override
     public ActionStatus mergeComponents(Component prevComponent, Component currentComponent) {
@@ -44,12 +50,30 @@ public class ComponentInstanceInputsMergeBL implements ComponentsMergeCommand {
     }
 
     public ActionStatus mergeComponentInstanceInputs(List<ComponentInstanceInput> oldInstProps, List<InputDefinition> oldInputs, Component newComponent, String instanceId) {
-        List<ComponentInstanceInput> newInstInput = newComponent.safeGetComponentInstanceInput(instanceId);
-        if (newInstInput == null) {
+        List<ComponentInstanceInput> newInstInputs = newComponent.safeGetComponentInstanceInput(instanceId);
+        if (newInstInputs == null) {
             return ActionStatus.OK;
         }
-        propertyValuesMergingBusinessLogic.mergeInstanceDataDefinitions(oldInstProps, oldInputs, newInstInput, newComponent.getInputs());
-        return updateComponentInstanceInputs(newComponent, instanceId, newInstInput);
+        
+        List<ComponentInstanceInput> oldRedeclaredInputs = findComponentInputs(oldInstProps);
+        oldRedeclaredInputs.forEach(oldInput -> newInstInputs.stream()
+                                                              .filter(newInstInput -> oldInput.getName().equals(newInstInput.getName()))
+                                                              .forEach(this::switchValues));
+        
+        propertyValuesMergingBusinessLogic.mergeInstanceDataDefinitions(oldInstProps, oldInputs, newInstInputs, newComponent.getInputs());
+        return updateComponentInstanceInputs(newComponent, instanceId, newInstInputs);
+    }
+    
+    private void switchValues(ComponentInstanceInput input) {
+        String tempDefaultValue = input.getDefaultValue();
+        input.setDefaultValue(input.getValue());
+        input.setValue(tempDefaultValue);
+    }
+    
+    private List<ComponentInstanceInput> findComponentInputs(List<ComponentInstanceInput> oldInstProps) {
+        return oldInstProps.stream()
+                           .filter(ComponentInstanceInput::isGetInputProperty)
+                           .collect(Collectors.toList());
     }
 
     private ActionStatus updateComponentInstanceInputs(Component newComponent, String instanceId, List<ComponentInstanceInput> newInstInput) {

@@ -20,6 +20,23 @@
 
 package org.openecomp.sdc.common.util;
 
+import org.apache.commons.codec.binary.Base64;
+import org.openecomp.sdc.be.config.Configuration.*;
+import org.openecomp.sdc.be.config.Configuration.ElasticSearchConfig.IndicesTimeFrequencyEntry;
+import org.openecomp.sdc.be.config.DistributionEngineConfiguration;
+import org.openecomp.sdc.be.config.DistributionEngineConfiguration.ComponentArtifactTypesConfig;
+import org.openecomp.sdc.be.config.DistributionEngineConfiguration.CreateTopicConfig;
+import org.openecomp.sdc.be.config.DistributionEngineConfiguration.DistributionNotificationTopicConfig;
+import org.openecomp.sdc.be.config.DistributionEngineConfiguration.DistributionStatusTopicConfig;
+import org.openecomp.sdc.be.config.validation.DeploymentArtifactHeatConfiguration;
+import org.openecomp.sdc.common.log.wrappers.Logger;
+import org.openecomp.sdc.fe.config.Configuration.FeMonitoringConfig;
+import org.yaml.snakeyaml.TypeDescription;
+import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.error.YAMLException;
+import org.yaml.snakeyaml.introspector.PropertyUtils;
+import org.yaml.snakeyaml.nodes.Node;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -29,37 +46,11 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.codec.binary.Base64;
-import org.openecomp.sdc.be.config.Configuration.ApplicationL1CacheConfig;
-import org.openecomp.sdc.be.config.Configuration.ApplicationL2CacheConfig;
-import org.openecomp.sdc.be.config.Configuration.ArtifactTypeConfig;
-import org.openecomp.sdc.be.config.Configuration.BeMonitoringConfig;
-import org.openecomp.sdc.be.config.Configuration.EcompPortalConfig;
-import org.openecomp.sdc.be.config.Configuration.ElasticSearchConfig;
-import org.openecomp.sdc.be.config.Configuration.ElasticSearchConfig.IndicesTimeFrequencyEntry;
-import org.openecomp.sdc.be.config.Configuration.OnboardingConfig;
-import org.openecomp.sdc.be.config.Configuration.SwitchoverDetectorConfig;
-import org.openecomp.sdc.be.config.Configuration.ToscaValidatorsConfig;
-import org.openecomp.sdc.be.config.DistributionEngineConfiguration;
-import org.openecomp.sdc.be.config.DistributionEngineConfiguration.ComponentArtifactTypesConfig;
-import org.openecomp.sdc.be.config.DistributionEngineConfiguration.CreateTopicConfig;
-import org.openecomp.sdc.be.config.DistributionEngineConfiguration.DistributionNotificationTopicConfig;
-import org.openecomp.sdc.be.config.DistributionEngineConfiguration.DistributionStatusTopicConfig;
-import org.openecomp.sdc.be.config.validation.DeploymentArtifactHeatConfiguration;
-import org.openecomp.sdc.fe.config.Configuration.FeMonitoringConfig;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.yaml.snakeyaml.TypeDescription;
-import org.yaml.snakeyaml.Yaml;
-import org.yaml.snakeyaml.error.YAMLException;
-import org.yaml.snakeyaml.introspector.PropertyUtils;
-import org.yaml.snakeyaml.nodes.Node;
-
 public class YamlToObjectConverter {
 
-	private static Logger log = LoggerFactory.getLogger(YamlToObjectConverter.class.getName());
+	private static Logger log = Logger.getLogger(YamlToObjectConverter.class.getName());
 
-	private static HashMap<String, Yaml> yamls = new HashMap<String, Yaml>();
+	private static HashMap<String, Yaml> yamls = new HashMap<>();
 
 	private static Yaml defaultYaml = new Yaml();
 
@@ -165,7 +156,7 @@ public class YamlToObjectConverter {
 	}
 
 	public class MyYamlConstructor extends org.yaml.snakeyaml.constructor.Constructor {
-		private HashMap<String, Class<?>> classMap = new HashMap<String, Class<?>>();
+		private HashMap<String, Class<?>> classMap = new HashMap<>();
 
 		public MyYamlConstructor(Class<? extends Object> theRoot) {
 			super(theRoot);
@@ -204,7 +195,7 @@ public class YamlToObjectConverter {
 		try {
 
 			File f = new File(fullFileName);
-			if (false == f.exists()) {
+			if (!f.exists()) {
 				log.warn("The file " + fullFileName + " cannot be found. Ignore reading configuration.");
 				return null;
 			}

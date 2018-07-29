@@ -20,20 +20,19 @@
 
 package org.openecomp.sdc.asdctool.main;
 
+import org.openecomp.sdc.asdctool.impl.UpdatePropertyOnVertex;
+import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
+import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
+import org.openecomp.sdc.common.log.wrappers.Logger;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.openecomp.sdc.asdctool.impl.UpdatePropertyOnVertex;
-import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
-import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 public class UpdateIsVnfMenu {
 
-	private static Logger log = LoggerFactory.getLogger(UpdateIsVnfMenu.class.getName());
+	private static Logger log = Logger.getLogger(UpdateIsVnfMenu.class.getName());
 
 	private static void usageAndExit() {
 		updateIsVnfTrueUsage();

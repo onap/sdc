@@ -143,19 +143,23 @@ export class DetailsViewModel {
                 this.$scope.currentComponent.changeComponentInstanceVersion(componentUid).then(onSuccess, onCancel);
             };
 
-            this.serviceService.checkComponentInstanceVersionChange(service, componentUid).subscribe((pathsToDelete:string[]) => {
-                if (pathsToDelete && pathsToDelete.length) {
-                    this.$scope.isLoading = false;
-                    this.$scope.$parent.isLoading = false;
-                    this.$scope.$parent.openVersionChangeModal(pathsToDelete).then(() => {
-                        this.$scope.isLoading = true;
-                        this.$scope.$parent.isLoading = true;
+            if (this.$scope.currentComponent.isService()) {
+                this.serviceService.checkComponentInstanceVersionChange(service, componentUid).subscribe((pathsToDelete:string[]) => {
+                    if (pathsToDelete && pathsToDelete.length) {
+                        this.$scope.isLoading = false;
+                        this.$scope.$parent.isLoading = false;
+                        this.$scope.$parent.openVersionChangeModal(pathsToDelete).then(() => {
+                            this.$scope.isLoading = true;
+                            this.$scope.$parent.isLoading = true;
+                            onUpdate();
+                        }, onCancel);
+                    } else {
                         onUpdate();
-                    }, onCancel);
-                } else {
-                    onUpdate();
-                }
-            }, onCancel);
+                    }
+                }, onCancel);
+            } else {
+                onUpdate();
+            }
         };
     }
 }

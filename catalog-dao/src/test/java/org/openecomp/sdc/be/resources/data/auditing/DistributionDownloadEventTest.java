@@ -1,12 +1,12 @@
-package org.openecomp.sdc.be.resources.data.auditing;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.UUID;
+package org.openecomp.sdc.be.resources.data.auditing;
 
 import org.junit.Test;
 import org.openecomp.sdc.be.resources.data.auditing.model.CommonAuditData;
 import org.openecomp.sdc.be.resources.data.auditing.model.DistributionData;
+
+import java.util.Date;
+import java.util.UUID;
 
 
 public class DistributionDownloadEventTest {
@@ -17,7 +17,7 @@ public class DistributionDownloadEventTest {
 
 	@Test
 	public void testCtor() throws Exception {
-		new DistributionDownloadEvent(new HashMap<>());
+		new DistributionDownloadEvent();
 		new DistributionDownloadEvent("mock", CommonAuditData.newBuilder().build(), new DistributionData("mock", "mock"));
 	}
 	

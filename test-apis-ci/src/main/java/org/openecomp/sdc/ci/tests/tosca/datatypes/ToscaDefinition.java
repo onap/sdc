@@ -20,12 +20,12 @@
 
 package org.openecomp.sdc.ci.tests.tosca.datatypes;
 
+import org.yaml.snakeyaml.TypeDescription;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.yaml.snakeyaml.TypeDescription;
 
 public class ToscaDefinition {
 

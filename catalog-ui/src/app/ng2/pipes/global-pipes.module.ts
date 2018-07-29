@@ -2,6 +2,7 @@ import {ContentAfterLastDotPipe} from "./contentAfterLastDot.pipe";
 import {SearchFilterPipe} from "./searchFilter.pipe";
 import {KeysPipe} from "./keys.pipe";
 import {GroupByPipe} from "./groupBy.pipe";
+import {ResourceNamePipe} from "./resource-name.pipe";
 import {NgModule} from "@angular/core";
 import {SafeUrlSanitizerPipe} from "./safeUrlSanitizer.pipe";
 
@@ -10,15 +11,17 @@ import {SafeUrlSanitizerPipe} from "./safeUrlSanitizer.pipe";
         ContentAfterLastDotPipe,
         GroupByPipe,
         KeysPipe,
+        SafeUrlSanitizerPipe,
         SearchFilterPipe,
-        SafeUrlSanitizerPipe
+        ResourceNamePipe
     ],
     exports: [
         ContentAfterLastDotPipe,
         GroupByPipe,
         KeysPipe,
+        SafeUrlSanitizerPipe,
         SearchFilterPipe,
-        SafeUrlSanitizerPipe
+        ResourceNamePipe
     ]
 })
 

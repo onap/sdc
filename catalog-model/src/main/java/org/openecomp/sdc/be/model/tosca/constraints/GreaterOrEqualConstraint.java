@@ -20,37 +20,30 @@
 
 package org.openecomp.sdc.be.model.tosca.constraints;
 
-import java.io.Serializable;
-
-import javax.validation.constraints.NotNull;
-
 import org.openecomp.sdc.be.model.tosca.ToscaType;
 import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintValueDoNotMatchPropertyTypeException;
 import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintViolationException;
 
-public class GreaterOrEqualConstraint extends AbstractComparablePropertyConstraint implements Serializable {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -5937851077034490609L;
+import javax.validation.constraints.NotNull;
 
-	@NotNull
-	private String greaterOrEqual;
+public class GreaterOrEqualConstraint extends AbstractComparablePropertyConstraint {
 
-	public GreaterOrEqualConstraint(String greaterOrEqual) {
-		super();
-		this.greaterOrEqual = greaterOrEqual;
-	}
+    @NotNull
+    private String greaterOrEqual;
 
-	@Override
-	public void initialize(ToscaType propertyType) throws ConstraintValueDoNotMatchPropertyTypeException {
-		initialize(greaterOrEqual, propertyType);
-	}
+    public GreaterOrEqualConstraint(String greaterOrEqual) {
+        this.greaterOrEqual = greaterOrEqual;
+    }
 
-	@Override
-	protected void doValidate(Object propertyValue) throws ConstraintViolationException {
-		if (getComparable().compareTo(propertyValue) > 0) {
-			throw new ConstraintViolationException(propertyValue + " <= " + greaterOrEqual);
-		}
-	}
+    @Override
+    public void initialize(ToscaType propertyType) throws ConstraintValueDoNotMatchPropertyTypeException {
+        initialize(greaterOrEqual, propertyType);
+    }
+
+    @Override
+    protected void doValidate(Object propertyValue) throws ConstraintViolationException {
+        if (getComparable().compareTo(propertyValue) > 0) {
+            throw new ConstraintViolationException(propertyValue + " <= " + greaterOrEqual);
+        }
+    }
 }

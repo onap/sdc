@@ -20,18 +20,6 @@
 
 package org.openecomp.sdc.be.switchover.detector;
 
-import java.net.InetAddress;
-import java.util.Properties;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.TimeUnit;
-
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-
 import org.apache.commons.codec.binary.Base64;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
@@ -39,16 +27,19 @@ import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.config.Configuration.SwitchoverDetectorConfig;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.common.http.client.api.HttpRequest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.springframework.stereotype.Component;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import java.net.InetAddress;
+import java.util.Properties;
+import java.util.concurrent.*;
 
 @Component("switchover-detector")
 public class SwitchoverDetector {
 
     protected static String SWITCHOVER_DETECTOR_LOG_CONTEXT = "switchover.detector";
-
-    private static final Logger switchoverLogger = LoggerFactory.getLogger(SWITCHOVER_DETECTOR_LOG_CONTEXT);
 
     private SwitchoverDetectorConfig switchoverDetectorConfig;
 
@@ -64,7 +55,7 @@ public class SwitchoverDetector {
 
     private Boolean feMatch = null;
 
-    private static final Logger logger = LoggerFactory.getLogger(SwitchoverDetector.class);
+    private static final Logger logger = Logger.getLogger(SwitchoverDetector.class);
 
     private volatile String siteMode = SwitchoverDetectorState.UNKNOWN.getState();
 

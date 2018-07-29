@@ -16,8 +16,8 @@
 
 package org.onap.sdc.activityspec.api.rest.mapping;
 
-import org.onap.sdc.activityspec.be.datatypes.ActivitySpecParameter;
 import org.onap.sdc.activityspec.api.rest.types.ActivitySpecParameterDto;
+import org.onap.sdc.activityspec.be.datatypes.ActivitySpecParameter;
 import org.openecomp.sdcrests.mapping.MappingBase;
 
 public class MapDtoToActivityParameter extends MappingBase<ActivitySpecParameterDto, ActivitySpecParameter> {

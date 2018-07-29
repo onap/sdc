@@ -1,10 +1,10 @@
 package org.openecomp.sdc.fe.config;
 
-import java.util.Date;
-import java.util.List;
-
 import org.junit.Test;
 import org.openecomp.sdc.fe.config.Configuration.FeMonitoringConfig;
+
+import java.util.Date;
+import java.util.List;
 
 
 public class ConfigurationTest {

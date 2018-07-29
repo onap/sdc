@@ -1,8 +1,8 @@
 package org.openecomp.sdc.asdctool.impl.validator.config;
 
-import java.util.Properties;
-
 import org.junit.Test;
+
+import java.util.Properties;
 
 
 public class ValidationConfigManagerTest {

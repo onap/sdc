@@ -20,9 +20,23 @@
 
 package org.openecomp.sdc.be.filters;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.util.StringTokenizer;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import fj.data.Either;
+import org.apache.commons.codec.binary.Base64;
+import org.openecomp.sdc.be.components.impl.ConsumerBusinessLogic;
+import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.impl.ComponentsUtils;
+import org.openecomp.sdc.be.impl.WebAppContextWrapper;
+import org.openecomp.sdc.be.model.ConsumerDefinition;
+import org.openecomp.sdc.common.api.Constants;
+import org.openecomp.sdc.common.log.enums.LogLevel;
+import org.openecomp.sdc.common.log.enums.Severity;
+import org.openecomp.sdc.common.log.wrappers.Logger;
+import org.openecomp.sdc.common.log.wrappers.LoggerSdcAudit;
+import org.openecomp.sdc.exception.ResponseFormat;
+import org.openecomp.sdc.security.Passwords;
+import org.springframework.web.context.WebApplicationContext;
 
 import javax.annotation.Priority;
 import javax.servlet.ServletContext;
@@ -33,27 +47,17 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.Response.Status;
-
-import org.apache.commons.codec.binary.Base64;
-import org.openecomp.sdc.be.components.impl.ConsumerBusinessLogic;
-import org.openecomp.sdc.be.dao.api.ActionStatus;
-import org.openecomp.sdc.be.impl.ComponentsUtils;
-import org.openecomp.sdc.be.impl.WebAppContextWrapper;
-import org.openecomp.sdc.be.model.ConsumerDefinition;
-import org.openecomp.sdc.common.api.Constants;
-import org.openecomp.sdc.exception.ResponseFormat;
-import org.openecomp.sdc.security.Passwords;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.web.context.WebApplicationContext;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
-import fj.data.Either;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.util.StringTokenizer;
 
 @Priority(10)
 public class BasicAuthenticationFilter implements ContainerRequestFilter {
+
+	private static LoggerSdcAudit audit = new LoggerSdcAudit(BasicAuthenticationFilter.class);
+    private static final Logger log = Logger.getLogger(BasicAuthenticationFilter.class);
+    private static final String COMPONENT_UTILS_FAILED = "Authentication Filter Failed to get component utils.";
+    private static final String CONSUMER_BL_FAILED = "Authentication Filter Failed to get consumerBL.";
 
     @Context
     private HttpServletRequest sr;
@@ -62,150 +66,143 @@ public class BasicAuthenticationFilter implements ContainerRequestFilter {
 
     private String realm = "ASDC";
 
-    private static final Logger log = LoggerFactory.getLogger(BasicAuthenticationFilter.class);
 
     @Override
     public void filter(ContainerRequestContext requestContext) throws IOException {
 
+		audit.startLog(requestContext);
+
         String authHeader = requestContext.getHeaderString(Constants.AUTHORIZATION_HEADER);
         if (authHeader != null) {
             StringTokenizer st = new StringTokenizer(authHeader);
+            String failedToRetrieveAuthErrorMsg = "Authentication Filter Failed Couldn't retrieve authentication, no basic authentication.";
             if (st.hasMoreTokens()) {
                 String basic = st.nextToken();
 
-                if (basic.equalsIgnoreCase("Basic")) {
+                if ("Basic".equalsIgnoreCase(basic)) {
                     try {
                         String credentials = new String(Base64.decodeBase64(st.nextToken()), "UTF-8");
-                        log.debug("Credentials: {}" , credentials);
-                        checkUserCredentiles(requestContext, credentials);
+                        log.debug("Credentials: {}", credentials);
+                        checkUserCredentials(requestContext, credentials);
                     } catch (UnsupportedEncodingException e) {
                         log.error("Authentication Filter Failed Couldn't retrieve authentication", e);
                         authInvalidHeaderError(requestContext);
                     }
                 } else {
-                    log.error("Authentication Filter Failed Couldn't retrieve authentication, no basic autantication.");
+					log.error(failedToRetrieveAuthErrorMsg);
                     authInvalidHeaderError(requestContext);
                 }
             } else {
-                log.error("Authentication Filter Failed Couldn't retrieve authentication, no basic autantication.");
+				log.error(failedToRetrieveAuthErrorMsg);
                 authInvalidHeaderError(requestContext);
             }
 
         } else {
-            log.error("Authentication Filter Failed no autharization header");
+			log.error("Authentication Filter Failed no authorization header");
             authRequiredError(requestContext);
         }
     }
 
-    private void checkUserCredentiles(ContainerRequestContext requestContext, String credentials) {
-        int p = credentials.indexOf(":");
+	private void checkUserCredentials(ContainerRequestContext requestContext, String credentials) {
+        int p = credentials.indexOf(':');
         if (p != -1) {
-            String _username = credentials.substring(0, p).trim();
-            String _password = credentials.substring(p + 1).trim();
+            String userName = credentials.substring(0, p).trim();
+            String password = credentials.substring(p + 1).trim();
 
             ConsumerBusinessLogic consumerBL = getConsumerBusinessLogic();
             if (consumerBL == null) {
-                log.error("Authentication Filter Failed to get consumerBL.");
-                requestContext.abortWith(Response.serverError().status(Status.INTERNAL_SERVER_ERROR).build());
+				abortWith(requestContext, CONSUMER_BL_FAILED, Response.serverError().status(Status.INTERNAL_SERVER_ERROR).build());
             } else {
-                Either<ConsumerDefinition, ResponseFormat> result = consumerBL.getConsumer(_username);
-                validatePassword(requestContext, _username, _password, result);
+                Either<ConsumerDefinition, ResponseFormat> result = consumerBL.getConsumer(userName);
+                validatePassword(requestContext, userName, password, result);
             }
         } else {
-            log.error("Authentication Filter Failed Couldn't retrieve authentication, no basic autantication.");
+			log.error("Authentication Filter Failed Couldn't retrieve authentication, no basic authentication.");
             authInvalidHeaderError(requestContext);
 
         }
     }
 
-    private void validatePassword(ContainerRequestContext requestContext, String _username, String _password, Either<ConsumerDefinition, ResponseFormat> result) {
+    private void validatePassword(ContainerRequestContext requestContext, String userName, String password, Either<ConsumerDefinition, ResponseFormat> result) {
         if (result.isRight()) {
             Integer status = result.right().value().getStatus();
             if (status == Status.NOT_FOUND.getStatusCode()) {
                 log.error("Authentication Filter Failed Couldn't find user");
-                authUserNotFoundError(requestContext, _username);
+                authUserNotFoundError(requestContext, userName);
             } else {
-                log.error("Authentication Filter Failed to get consumerBL.");
-                requestContext.abortWith(Response.serverError().status(Status.INTERNAL_SERVER_ERROR).build());
+				abortWith(requestContext, CONSUMER_BL_FAILED, Response.serverError().status(Status.INTERNAL_SERVER_ERROR).build());
             }
         } else {
             ConsumerDefinition consumerCredentials = result.left().value();
-            if (!Passwords.isExpectedPassword(_password, consumerCredentials.getConsumerSalt(), consumerCredentials.getConsumerPassword())) {
-                log.error("Authentication Filter Failed invalide password");
-                authInvalidePasswordError(requestContext, _username);
+            if (!Passwords.isExpectedPassword(password, consumerCredentials.getConsumerSalt(), consumerCredentials.getConsumerPassword())) {
+				log.error("Authentication Filter Failed invalid password");
+				authInvalidPasswordError(requestContext, userName);
             } else {
-                authSuccesessful(requestContext, _username);
+				authSuccessful(requestContext, userName);
             }
         }
     }
 
-    private void authSuccesessful(ContainerRequestContext requestContext, String _username) {
+	private void authSuccessful(ContainerRequestContext requestContext, String userName) {
         ComponentsUtils componentUtils = getComponentsUtils();
         if (componentUtils == null) {
-            log.error("Authentication Filter Failed to get component utils.");
-            requestContext.abortWith(Response.status(Status.INTERNAL_SERVER_ERROR).build());
+			abortWith(requestContext, COMPONENT_UTILS_FAILED, Response.status(Status.INTERNAL_SERVER_ERROR).build());
         }
-        componentUtils.auditAuthEvent(requestContext.getUriInfo().getPath(), _username, AuthStatus.AUTH_SUCCESS.toString(), realm);
+        componentUtils.auditAuthEvent(requestContext.getUriInfo().getPath(), userName, AuthStatus.AUTH_SUCCESS.toString(), realm);
     }
 
-    private void authInvalidePasswordError(ContainerRequestContext requestContext, String _username) {
+	private void authInvalidPasswordError(ContainerRequestContext requestContext, String userName) {
         ComponentsUtils componentUtils = getComponentsUtils();
         if (componentUtils == null) {
-            log.error("Authentication Filter Failed to get component utils.");
-            requestContext.abortWith(Response.status(Status.INTERNAL_SERVER_ERROR).build());
+			abortWith(requestContext, COMPONENT_UTILS_FAILED, Response.status(Status.INTERNAL_SERVER_ERROR).build());
         }
-        componentUtils.auditAuthEvent(requestContext.getUriInfo().getPath(), _username, AuthStatus.AUTH_FAILED_INVALID_PASSWORD.toString(), realm);
+        componentUtils.auditAuthEvent(requestContext.getUriInfo().getPath(), userName, AuthStatus.AUTH_FAILED_INVALID_PASSWORD.toString(), realm);
         ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.AUTH_FAILED);
-        requestContext.abortWith(buildErrorResponse(responseFormat, false));
+		abortWith(requestContext, responseFormat.getFormattedMessage(), buildErrorResponse(responseFormat, false));
     }
 
-    private void authUserNotFoundError(ContainerRequestContext requestContext, String _username) {
+    private void authUserNotFoundError(ContainerRequestContext requestContext, String userName) {
         ComponentsUtils componentUtils = getComponentsUtils();
         if (componentUtils == null) {
-            log.error("Authentication Filter Failed to get component utils.");
-            requestContext.abortWith(Response.status(Status.INTERNAL_SERVER_ERROR).build());
+			abortWith(requestContext, COMPONENT_UTILS_FAILED, Response.status(Status.INTERNAL_SERVER_ERROR).build());
         }
-        getComponentsUtils().auditAuthEvent(requestContext.getUriInfo().getPath(), _username, AuthStatus.AUTH_FAILED_USER_NOT_FOUND.toString(), realm);
+        getComponentsUtils().auditAuthEvent(requestContext.getUriInfo().getPath(), userName, AuthStatus.AUTH_FAILED_USER_NOT_FOUND.toString(), realm);
         ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.AUTH_FAILED);
-        requestContext.abortWith(buildErrorResponse(responseFormat, false));
+		abortWith(requestContext, responseFormat.getFormattedMessage(), buildErrorResponse(responseFormat, false));
     }
 
     private void authInvalidHeaderError(ContainerRequestContext requestContext) {
         ComponentsUtils componentUtils = getComponentsUtils();
         if (componentUtils == null) {
-            log.error("Authentication Filter Failed to get component utils.");
-            requestContext.abortWith(Response.status(Status.INTERNAL_SERVER_ERROR).build());
+			abortWith(requestContext, COMPONENT_UTILS_FAILED, Response.status(Status.INTERNAL_SERVER_ERROR).build());
         }
         getComponentsUtils().auditAuthEvent(requestContext.getUriInfo().getPath(), "", AuthStatus.AUTH_FAILED_INVALID_AUTHENTICATION_HEADER.toString(), realm);
         ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.AUTH_FAILED_INVALIDE_HEADER);
-        requestContext.abortWith(buildErrorResponse(responseFormat, false));
+		abortWith(requestContext, responseFormat.getFormattedMessage(), buildErrorResponse(responseFormat, false));
     }
 
     private void authRequiredError(ContainerRequestContext requestContext) {
         ComponentsUtils componentUtils = getComponentsUtils();
         if (componentUtils == null) {
-            log.error("Authentication Filter Failed to get component utils.");
-            requestContext.abortWith(Response.status(Status.INTERNAL_SERVER_ERROR).build());
+			abortWith(requestContext, COMPONENT_UTILS_FAILED, Response.status(Status.INTERNAL_SERVER_ERROR).build());
         }
         getComponentsUtils().auditAuthEvent(requestContext.getUriInfo().getPath(), "", AuthStatus.AUTH_REQUIRED.toString(), realm);
         ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.AUTH_REQUIRED);
-        requestContext.abortWith(buildErrorResponse(responseFormat, true));
+		abortWith(requestContext, responseFormat.getFormattedMessage(), buildErrorResponse(responseFormat, true));
     }
 
     private ComponentsUtils getComponentsUtils() {
         ServletContext context = sr.getSession().getServletContext();
         WebAppContextWrapper webApplicationContextWrapper = (WebAppContextWrapper) context.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR);
         WebApplicationContext webApplicationContext = webApplicationContextWrapper.getWebAppContext(context);
-        ComponentsUtils componentsUtils = webApplicationContext.getBean(ComponentsUtils.class);
-        return componentsUtils;
+        return webApplicationContext.getBean(ComponentsUtils.class);
     }
 
     private ConsumerBusinessLogic getConsumerBusinessLogic() {
         ServletContext context = sr.getSession().getServletContext();
         WebAppContextWrapper webApplicationContextWrapper = (WebAppContextWrapper) context.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR);
         WebApplicationContext webApplicationContext = webApplicationContextWrapper.getWebAppContext(context);
-        ConsumerBusinessLogic consumerBusinessLogic = webApplicationContext.getBean(ConsumerBusinessLogic.class);
-        return consumerBusinessLogic;
+        return webApplicationContext.getBean(ConsumerBusinessLogic.class);
     }
 
     public enum AuthStatus {
@@ -217,8 +214,20 @@ public class BasicAuthenticationFilter implements ContainerRequestFilter {
         if (addWwwAuthenticationHeader) {
             responseBuilder = responseBuilder.header("WWW-Authenticate", "Basic realm=\"" + realm + "\"");
         }
-        Response response = responseBuilder.entity(gson.toJson(requestErrorWrapper.getRequestError())).build();
-        return response;
+		return responseBuilder.entity(gson.toJson(requestErrorWrapper.getRequestError())).build();
     }
 
+	private void abortWith(ContainerRequestContext requestContext, String message, Response response) {
+
+		audit.log(sr.getRemoteAddr(),
+				requestContext,
+				response.getStatusInfo(),
+				LogLevel.ERROR,
+				Severity.WARNING,
+				message);
+
+		log.error(message);
+		audit.clearMyData();
+		requestContext.abortWith(response);
+	}
 }

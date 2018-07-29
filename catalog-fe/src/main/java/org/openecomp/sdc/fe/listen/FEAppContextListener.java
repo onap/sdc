@@ -20,12 +20,6 @@
 
 package org.openecomp.sdc.fe.listen;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
-
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;
 import org.openecomp.sdc.common.listener.AppContextListener;
@@ -35,6 +29,11 @@ import org.openecomp.sdc.fe.monitoring.FeMonitoringService;
 import org.openecomp.sdc.fe.servlets.HealthCheckService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class FEAppContextListener extends AppContextListener implements ServletContextListener {
 

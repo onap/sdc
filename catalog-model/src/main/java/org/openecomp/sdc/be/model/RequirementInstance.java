@@ -25,35 +25,35 @@ package org.openecomp.sdc.be.model;
  */
 public class RequirementInstance {
 
-	/**
-	 * specify the resource instance name as appears in the service
-	 */
-	private String node;
+    /**
+     * specify the resource instance name as appears in the service
+     */
+    private String node;
 
-	/**
-	 * specify the relationship impl
-	 */
-	private RelationshipImpl relationship;
+    /**
+     * specify the relationship impl
+     */
+    private RelationshipImpl relationship;
 
-	public String getNode() {
-		return node;
-	}
+    public String getNode() {
+        return node;
+    }
 
-	public void setNode(String node) {
-		this.node = node;
-	}
+    public void setNode(String node) {
+        this.node = node;
+    }
 
-	public RelationshipImpl getRelationship() {
-		return relationship;
-	}
+    public RelationshipImpl getRelationship() {
+        return relationship;
+    }
 
-	public void setRelationship(RelationshipImpl relationship) {
-		this.relationship = relationship;
-	}
+    public void setRelationship(RelationshipImpl relationship) {
+        this.relationship = relationship;
+    }
 
-	@Override
-	public String toString() {
-		return "RequirementInstance [node=" + node + ", relationship=" + relationship + "]";
-	}
+    @Override
+    public String toString() {
+        return "RequirementInstance [node=" + node + ", relationship=" + relationship + "]";
+    }
 
 }

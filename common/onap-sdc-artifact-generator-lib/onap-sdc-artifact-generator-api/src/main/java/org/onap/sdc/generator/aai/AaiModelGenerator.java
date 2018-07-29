@@ -20,9 +20,9 @@
 
 package org.onap.sdc.generator.aai;
 
-import org.onap.sdc.generator.data.GeneratorConstants;
 import org.onap.sdc.generator.aai.model.Resource;
 import org.onap.sdc.generator.aai.model.Service;
+import org.onap.sdc.generator.data.GeneratorConstants;
 import org.onap.sdc.generator.logging.CategoryLogLevel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

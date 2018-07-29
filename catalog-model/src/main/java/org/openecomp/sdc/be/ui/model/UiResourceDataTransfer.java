@@ -20,103 +20,103 @@
 
 package org.openecomp.sdc.be.ui.model;
 
-import java.util.List;
-import java.util.Map;
-
 import org.openecomp.sdc.be.datatypes.elements.InterfaceOperationDataDefinition;
 import org.openecomp.sdc.be.model.AdditionalInformationDefinition;
 import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 
+import java.util.List;
+import java.util.Map;
+
 public class UiResourceDataTransfer extends UiComponentDataTransfer{
-	
-	private UiResourceMetadata metadata;
 
-	private List<String> derivedFrom;
+    private UiResourceMetadata metadata;
 
-	private List<String> derivedList;
+    private List<String> derivedFrom;
 
-	private List<PropertyDefinition> properties;
+    private List<String> derivedList;
 
-	private List<PropertyDefinition> attributes;
+    private List<PropertyDefinition> properties;
 
-	private Map<String, InterfaceDefinition> interfaces;
+    private List<PropertyDefinition> attributes;
 
-	private List<String> defaultCapabilities;
-	
-	private List<AdditionalInformationDefinition> additionalInformation;
-	private Map<String, InterfaceOperationDataDefinition> interfaceOperations;
-	
-	public UiResourceDataTransfer(){}
-	
-	public List<AdditionalInformationDefinition> getAdditionalInformation() {
-		return additionalInformation;
-	}
+    private Map<String, InterfaceDefinition> interfaces;
 
-	public void setAdditionalInformation(List<AdditionalInformationDefinition> additionalInformation) {
-		this.additionalInformation = additionalInformation;
-	}
+    private List<String> defaultCapabilities;
 
-	public UiResourceMetadata getMetadata() {
-		return metadata;
-	}
+    private Map<String, InterfaceOperationDataDefinition> interfaceOperations;
 
-	public void setMetadata(UiResourceMetadata metadata) {
-		this.metadata = metadata;
-	}
+    public UiResourceDataTransfer(){}
 
-	public List<String> getDerivedFrom() {
-		return derivedFrom;
-	}
+    public List<AdditionalInformationDefinition> getAdditionalInformation() {
+        return additionalInformation;
+    }
 
-	public void setDerivedFrom(List<String> derivedFrom) {
-		this.derivedFrom = derivedFrom;
-	}
+    public void setAdditionalInformation(List<AdditionalInformationDefinition> additionalInformation) {
+        this.additionalInformation = additionalInformation;
+    }
 
-	public List<String> getDerivedList() {
-		return derivedList;
-	}
+    public UiResourceMetadata getMetadata() {
+        return metadata;
+    }
 
-	public void setDerivedList(List<String> derivedList) {
-		this.derivedList = derivedList;
-	}
+    public void setMetadata(UiResourceMetadata metadata) {
+        this.metadata = metadata;
+    }
 
-	public List<PropertyDefinition> getProperties() {
-		return properties;
-	}
+    public List<String> getDerivedFrom() {
+        return derivedFrom;
+    }
 
-	public void setProperties(List<PropertyDefinition> properties) {
-		this.properties = properties;
-	}
+    public void setDerivedFrom(List<String> derivedFrom) {
+        this.derivedFrom = derivedFrom;
+    }
 
-	public List<PropertyDefinition> getAttributes() {
-		return attributes;
-	}
+    public List<String> getDerivedList() {
+        return derivedList;
+    }
 
-	public void setAttributes(List<PropertyDefinition> attributes) {
-		this.attributes = attributes;
-	}
+    public void setDerivedList(List<String> derivedList) {
+        this.derivedList = derivedList;
+    }
 
-	public Map<String, InterfaceDefinition> getInterfaces() {
-		return interfaces;
-	}
+    public List<PropertyDefinition> getProperties() {
+        return properties;
+    }
 
-	public void setInterfaces(Map<String, InterfaceDefinition> interfaces) {
-		this.interfaces = interfaces;
-	}
+    public void setProperties(List<PropertyDefinition> properties) {
+        this.properties = properties;
+    }
 
-	public List<String> getDefaultCapabilities() {
-		return defaultCapabilities;
-	}
+    public List<PropertyDefinition> getAttributes() {
+        return attributes;
+    }
 
-	public void setDefaultCapabilities(List<String> defaultCapabilities) {
-		this.defaultCapabilities = defaultCapabilities;
-	}
-	public Map<String, InterfaceOperationDataDefinition> getInterfaceOperations() {
-		return interfaceOperations;
-	}
+    public void setAttributes(List<PropertyDefinition> attributes) {
+        this.attributes = attributes;
+    }
 
-	public void setInterfaceOperations(Map<String, InterfaceOperationDataDefinition> interfaceOperations) {
-		this.interfaceOperations = interfaceOperations;
-	}
+    public Map<String, InterfaceDefinition> getInterfaces() {
+        return interfaces;
+    }
+
+    public void setInterfaces(Map<String, InterfaceDefinition> interfaces) {
+        this.interfaces = interfaces;
+    }
+
+    public List<String> getDefaultCapabilities() {
+        return defaultCapabilities;
+    }
+
+    public void setDefaultCapabilities(List<String> defaultCapabilities) {
+        this.defaultCapabilities = defaultCapabilities;
+    }
+    public Map<String, InterfaceOperationDataDefinition> getInterfaceOperations() {
+        return interfaceOperations;
+    }
+
+    public void setInterfaceOperations(Map<String, InterfaceOperationDataDefinition> interfaceOperations) {
+        this.interfaceOperations = interfaceOperations;
+    }
+
 }

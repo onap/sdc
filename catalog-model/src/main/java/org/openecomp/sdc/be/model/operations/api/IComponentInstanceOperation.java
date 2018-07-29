@@ -20,6 +20,7 @@
 
 package org.openecomp.sdc.be.model.operations.api;
 
+import fj.data.Either;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.model.ComponentInstance;
@@ -27,46 +28,44 @@ import org.openecomp.sdc.be.model.ComponentInstanceInput;
 import org.openecomp.sdc.be.model.ComponentInstanceProperty;
 import org.openecomp.sdc.be.resources.data.ComponentInstanceData;
 
-import fj.data.Either;
-
 public interface IComponentInstanceOperation {
 
-	public Either<Integer, StorageOperationStatus> increaseAndGetResourceInstanceSpecificCounter(String resourceInstanceId, GraphPropertiesDictionary counterType, boolean inTransaction);
+    public Either<Integer, StorageOperationStatus> increaseAndGetResourceInstanceSpecificCounter(String resourceInstanceId, GraphPropertiesDictionary counterType, boolean inTransaction);
 
-	/**
-	 * Adds Attribute to resource instance
-	 * 
-	 * @param resourceInstanceAttribute
-	 *            * @param resourceInstanceId * @param index * @param inTransaction
-	 * @return
-	 **/
-	public Either<ComponentInstanceProperty, StorageOperationStatus> addAttributeValueToResourceInstance(ComponentInstanceProperty resourceInstanceAttribute, String resourceInstanceId, Integer index, boolean inTransaction);
+    /**
+     * Adds Attribute to resource instance
+     *
+     * @param resourceInstanceAttribute
+     *            * @param resourceInstanceId * @param index * @param inTransaction
+     * @return
+     **/
+    public Either<ComponentInstanceProperty, StorageOperationStatus> addAttributeValueToResourceInstance(ComponentInstanceProperty resourceInstanceAttribute, String resourceInstanceId, Integer index, boolean inTransaction);
 
-	/**
-	 * Updates Attribute on resource instance
-	 * 
-	 * @param attribute
-	 * @param resourceInstanceId
-	 * @param inTransaction
-	 * @return
-	 */
-	public Either<ComponentInstanceProperty, StorageOperationStatus> updateAttributeValueInResourceInstance(ComponentInstanceProperty attribute, String resourceInstanceId, boolean inTransaction);
-
-
-	public Either<ComponentInstanceInput, StorageOperationStatus> addInputValueToResourceInstance(ComponentInstanceInput input, String resourceInstanceId, Integer innerElement, boolean b);
-
-	public Either<ComponentInstanceInput, StorageOperationStatus> updateInputValueInResourceInstance(ComponentInstanceInput input, String resourceInstanceId, boolean b);
+    /**
+     * Updates Attribute on resource instance
+     *
+     * @param attribute
+     * @param resourceInstanceId
+     * @param inTransaction
+     * @return
+     */
+    public Either<ComponentInstanceProperty, StorageOperationStatus> updateAttributeValueInResourceInstance(ComponentInstanceProperty attribute, String resourceInstanceId, boolean inTransaction);
 
 
-	public StorageOperationStatus updateCustomizationUUID(String componentInstanceId);
-	/**
-	 * updates componentInstance modificationTime on graph node
-	 * @param componentInstance
-	 * @param componentInstanceType
-	 * @param modificationTime
-	 * @param inTransaction
-	 * @return
-	 */
-	public Either<ComponentInstanceData, StorageOperationStatus> updateComponentInstanceModificationTimeAndCustomizationUuidOnGraph(ComponentInstance componentInstance, NodeTypeEnum componentInstanceType, Long modificationTime, boolean inTransaction);
+    public Either<ComponentInstanceInput, StorageOperationStatus> addInputValueToResourceInstance(ComponentInstanceInput input, String resourceInstanceId, Integer innerElement, boolean b);
+
+    public Either<ComponentInstanceInput, StorageOperationStatus> updateInputValueInResourceInstance(ComponentInstanceInput input, String resourceInstanceId, boolean b);
+
+
+    public StorageOperationStatus updateCustomizationUUID(String componentInstanceId);
+    /**
+     * updates componentInstance modificationTime on graph node
+     * @param componentInstance
+     * @param componentInstanceType
+     * @param modificationTime
+     * @param inTransaction
+     * @return
+     */
+    public Either<ComponentInstanceData, StorageOperationStatus> updateComponentInstanceModificationTimeAndCustomizationUuidOnGraph(ComponentInstance componentInstance, NodeTypeEnum componentInstanceType, Long modificationTime, boolean inTransaction);
 
 }

@@ -16,24 +16,15 @@
 
 package org.openecomp.sdc.tosca.services;
 
+import org.onap.sdc.tosca.datatypes.model.*;
 import org.openecomp.sdc.tosca.datatypes.ToscaElementTypes;
 import org.openecomp.sdc.tosca.datatypes.ToscaFlatData;
-import org.onap.sdc.tosca.datatypes.model.CapabilityDefinition;
-import org.onap.sdc.tosca.datatypes.model.DefinitionOfDataType;
-import org.onap.sdc.tosca.datatypes.model.InterfaceDefinitionType;
-import org.onap.sdc.tosca.datatypes.model.NodeTemplate;
-import org.onap.sdc.tosca.datatypes.model.NodeType;
-import org.onap.sdc.tosca.datatypes.model.PropertyDefinition;
-import org.onap.sdc.tosca.datatypes.model.RequirementAssignment;
-import org.onap.sdc.tosca.datatypes.model.RequirementDefinition;
-import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
+import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
-import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
 
 public interface ToscaAnalyzerService {
 

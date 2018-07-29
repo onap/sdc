@@ -1,16 +1,15 @@
 package org.openecomp.sdc.be.model;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
+import mockit.Deencapsulation;
 import org.junit.Assert;
 import org.junit.Test;
 import org.openecomp.sdc.be.datatypes.elements.InterfaceOperationDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.unittests.utils.ModelConfDependentTest;
 
-import mockit.Deencapsulation;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 public class ResourceTest extends ModelConfDependentTest{
 
@@ -20,7 +19,7 @@ public class ResourceTest extends ModelConfDependentTest{
 
 	@Test
 	public void testCtor() throws Exception {
-		ComponentMetadataDefinition componentMetadataDefinition = new ComponentMetadataDefinition();
+		ComponentMetadataDefinition componentMetadataDefinition = new ResourceMetadataDefinition();
 		new Resource(componentMetadataDefinition);
 	}
 	

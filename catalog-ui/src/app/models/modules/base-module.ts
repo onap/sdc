@@ -43,7 +43,7 @@ export class Module {
     public artifacts:Array<string> | Array<ArtifactModel>;
     public artifactsUuid:Array<string>;
     public properties:Array<PropertyModel>;
-    public members:Array<string>;
+    public members:Map<string, string>;
     public customizationUUID:string;
     public groupInstanceUniqueId:string; // This will only have a value if this is a group instance
 

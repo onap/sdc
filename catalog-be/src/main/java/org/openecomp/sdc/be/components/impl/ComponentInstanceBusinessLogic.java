@@ -26,7 +26,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.openecomp.sdc.be.components.impl.version.PostChangeVersionOperationOrchestrator;
+import org.openecomp.sdc.be.components.impl.instance.ComponentInstanceChangeOperationOrchestrator;
 import org.openecomp.sdc.be.components.merge.instance.ComponentInstanceMergeDataBusinessLogic;
 import org.openecomp.sdc.be.components.merge.instance.DataForMergeHolder;
 import org.openecomp.sdc.be.components.validation.ComponentValidations;
@@ -67,6 +67,7 @@ import org.openecomp.sdc.be.model.RequirementDefinition;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.jsontitan.operations.ForwardingPathOperation;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.jsontitan.utils.ModelConverter;
 import org.openecomp.sdc.be.model.operations.api.IComponentInstanceOperation;
@@ -81,10 +82,9 @@ import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.datastructure.Wrapper;
 import org.openecomp.sdc.common.jsongraph.util.CommonUtility;
 import org.openecomp.sdc.common.jsongraph.util.CommonUtility.LogLevelEnum;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.common.util.ValidationUtils;
 import org.openecomp.sdc.exception.ResponseFormat;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
@@ -107,7 +107,15 @@ import static org.openecomp.sdc.be.components.property.GetInputUtils.isGetInputV
 @org.springframework.stereotype.Component
 public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 
-    private static final Logger log = LoggerFactory.getLogger(ComponentInstanceBusinessLogic.class);
+    private static final Logger log = Logger.getLogger(ComponentInstanceBusinessLogic.class.getName());
+    private static final String VF_MODULE = "org.openecomp.groups.VfModule";
+    public static final String TRY_TO_CREATE_ENTRY_ON_GRAPH = "Try to create entry on graph";
+    public static final String FAILED_TO_CREATE_ENTRY_ON_GRAPH_FOR_COMPONENT_INSTANCE = "Failed to create entry on graph for component instance {}";
+    public static final String ENTITY_ON_GRAPH_IS_CREATED = "Entity on graph is created.";
+    public static final String INVALID_COMPONENT_TYPE = "invalid component type";
+    public static final String FAILED_TO_RETRIEVE_COMPONENT_COMPONENT_ID = "Failed to retrieve component, component id {}";
+    public static final String FAILED_TO_LOCK_SERVICE = "Failed to lock service {}";
+    public static final String CREATE_OR_UPDATE_PROPERTY_VALUE = "CreateOrUpdatePropertyValue";
 
     @Autowired
     private IComponentInstanceOperation componentInstanceOperation;
@@ -119,9 +127,11 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
     private ComponentInstanceMergeDataBusinessLogic compInstMergeDataBL;
 
     @Autowired
-    private PostChangeVersionOperationOrchestrator postChangeVersionOperationOrchestrator;
+    private ComponentInstanceChangeOperationOrchestrator onChangeInstanceOperationOrchestrator;
 
-    public static final String VF_MODULE = "org.openecomp.groups.VfModule";
+    @Autowired
+    private ForwardingPathOperation forwardingPathOperation;
+
 
     public ComponentInstanceBusinessLogic() {
     }
@@ -207,12 +217,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         ComponentTypeEnum containerComponentType;
 
         try {
-            Either<User, ResponseFormat> resp = validateUserExists(userId, "create Component Instance", inTransaction);
-            if (resp.isRight()) {
-                return Either.right(resp.right().value());
-            } else {
-                user = resp.left().value();
-            }
+            user = validateUserExists(userId, "create Component Instance", inTransaction);
 
             Either<Boolean, ResponseFormat> validateValidJson = validateJsonBody(resourceInstance, ComponentInstance.class);
             if (validateValidJson.isRight()) {
@@ -329,12 +334,8 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         ComponentInstance resourceInstance = createAndAssotiateInfo.getNode();
         RequirementCapabilityRelDef associationInfo = createAndAssotiateInfo.getAssociate();
 
-        Either<User, ResponseFormat> resp = validateUserExists(userId, "create And Associate RI To RI", false);
-        if (resp.isRight()) {
-            return Either.right(resp.right().value());
-        }
+        User user = validateUserExists(userId, "create And Associate RI To RI", false);
 
-        User user = resp.left().value();
         Either<ComponentTypeEnum, ResponseFormat> validateComponentType = validateComponentType(containerComponentParam);
         if (validateComponentType.isRight()) {
             return Either.right(validateComponentType.right().value());
@@ -585,10 +586,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
     public Either<ComponentInstance, ResponseFormat> updateComponentInstanceMetadata(String containerComponentParam, String containerComponentId, String componentInstanceId, String userId, ComponentInstance componentInstance, boolean inTransaction,
             boolean needLock, boolean createNewTransaction) {
 
-        Either<User, ResponseFormat> resp = validateUserExists(userId, "update Component Instance", inTransaction);
-        if (resp.isRight()) {
-            return Either.right(resp.right().value());
-        }
+        validateUserExists(userId, "update Component Instance", inTransaction);
 
         Either<ComponentInstance, ResponseFormat> resultOp = null;
 
@@ -648,16 +646,12 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
     }
 
     // New Multiple Instance Update API
-    public Either<List<ComponentInstance>, ResponseFormat> updateComponentInstance(String containerComponentParam, String containerComponentId, String userId, List<ComponentInstance> componentInstanceList, boolean needLock,
-            boolean createNewTransaction) {
+    public Either<List<ComponentInstance>, ResponseFormat> updateComponentInstance(String containerComponentParam, String containerComponentId, String userId, List<ComponentInstance> componentInstanceList, boolean needLock) {
 
         Either<List<ComponentInstance>, ResponseFormat> resultOp = null;
         org.openecomp.sdc.be.model.Component containerComponent = null;
         try {
-            Either<User, ResponseFormat> resp = validateUserExists(userId, "update Component Instance", true);
-            if (resp.isRight()) {
-                return Either.right(resp.right().value());
-            }
+            validateUserExists(userId, "update Component Instance", true);
 
             Either<ComponentTypeEnum, ResponseFormat> validateComponentType = validateComponentType(containerComponentParam);
             if (validateComponentType.isRight()) {
@@ -857,10 +851,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 
     public Either<ComponentInstance, ResponseFormat> deleteComponentInstance(String containerComponentParam, String containerComponentId, String componentInstanceId, String userId) {
 
-        Either<User, ResponseFormat> resp = validateUserExists(userId, "delete Component Instance", false);
-        if (resp.isRight()) {
-            return Either.right(resp.right().value());
-        }
+        validateUserExists(userId, "delete Component Instance", false);
 
         Either<ComponentTypeEnum, ResponseFormat> validateComponentType = validateComponentType(containerComponentParam);
         if (validateComponentType.isRight()) {
@@ -992,7 +983,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         if (resultOp.isLeft() && CollectionUtils.isNotEmpty(containerComponent.getInputs())) {
             List<InputDefinition> inputsToDelete = containerComponent.getInputs().stream().filter(i -> i.getInstanceUniqueId() != null && i.getInstanceUniqueId().equals(componentInstanceId)).collect(Collectors.toList());
             if (CollectionUtils.isNotEmpty(inputsToDelete)) {
-                StorageOperationStatus deleteInputsRes = toscaOperationFacade.deleteComponentInstanceInputsFromTopologyTemplate(containerComponent, containerComponent.getComponentType(), inputsToDelete);
+                StorageOperationStatus deleteInputsRes = toscaOperationFacade.deleteComponentInstanceInputsFromTopologyTemplate(containerComponent, inputsToDelete);
                 if (deleteInputsRes != StorageOperationStatus.OK) {
                     log.debug("Failed to delete inputs of the component instance {} from container component. ", componentInstanceId);
                     resultOp = Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(deleteInputsRes, containerComponentType), componentInstanceId));
@@ -1032,10 +1023,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
     public Either<RequirementCapabilityRelDef, ResponseFormat> associateRIToRI(String componentId, String userId, RequirementCapabilityRelDef requirementDef, ComponentTypeEnum componentTypeEnum, boolean inTransaction, boolean needLock,
         boolean createNewTransaction) {
 
-        Either<User, ResponseFormat> resp = validateUserExists(userId, "associate Ri To RI", inTransaction);
-        if (resp.isRight()) {
-            return Either.right(resp.right().value());
-        }
+        validateUserExists(userId, "associate Ri To RI", inTransaction);
 
         Either<RequirementCapabilityRelDef, ResponseFormat> resultOp = null;
 
@@ -1106,10 +1094,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
     }
 
     public Either<RequirementCapabilityRelDef, ResponseFormat> dissociateRIFromRI(String componentId, String userId, RequirementCapabilityRelDef requirementDef, ComponentTypeEnum componentTypeEnum) {
-        Either<User, ResponseFormat> resp = validateUserExists(userId, "dissociate RI From RI", false);
-        if (resp.isRight()) {
-            return Either.right(resp.right().value());
-        }
+        validateUserExists(userId, "dissociate RI From RI", false);
 
         Either<RequirementCapabilityRelDef, ResponseFormat> resultOp = null;
         Either<org.openecomp.sdc.be.model.Component, ResponseFormat> validateComponentExists = validateComponentExists(componentId, componentTypeEnum, null);
@@ -1177,10 +1162,8 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
             Either<org.openecomp.sdc.be.model.Component, ResponseFormat> validateComponentExists = null;
             RequirementCapabilityRelDef foundRelation = null;
 
-            Either<User, ResponseFormat> validateUserRes = validateUserExists(userId, "get relation by Id", false);
-            if (validateUserRes.isRight()) {
-                resultOp = Either.right(validateUserRes.right().value());
-            }
+            validateUserExists(userId, "get relation by Id", false);
+
             if(resultOp == null){
                 validateComponentExists = validateComponentExists(componentId, componentTypeEnum, null);
                 if (validateComponentExists.isRight()) {
@@ -1366,7 +1349,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         Either<ComponentInstanceProperty, ResponseFormat> result = null;
         Wrapper<ResponseFormat> errorWrapper = new Wrapper<>();
 
-        validateUserExist(userId, "create Or Update Attribute Value", errorWrapper);
+        validateUserExist(userId, "create Or Update Attribute Value");
         if (errorWrapper.isEmpty()) {
             validateComponentTypeEnum(componentTypeEnum, "CreateOrUpdateAttributeValue", errorWrapper);
         }
@@ -1440,10 +1423,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 
         /*-------------------------------Validations---------------------------------*/
 
-        Either<User, ResponseFormat> resp = validateUserExists(userId, "create Or Update Properties Values", false);
-        if (resp.isRight()) {
-            return Either.right(resp.right().value());
-        }
+        validateUserExists(userId, "create Or Update Properties Values", false);
 
         if (componentTypeEnum == null) {
             BeEcompErrorManager.getInstance().logInvalidInputError("CreateOrUpdatePropertiesValues", "invalid component type", ErrorSeverity.INFO);
@@ -1642,10 +1622,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 
         Either<List<ComponentInstanceInput>, ResponseFormat> resultOp = null;
 
-        Either<User, ResponseFormat> resp = validateUserExists(userId, "create Or Update Property Value", false);
-        if (resp.isRight()) {
-            return Either.right(resp.right().value());
-        }
+        validateUserExists(userId, "create Or Update Property Value", false);
 
         if (componentTypeEnum == null) {
             BeEcompErrorManager.getInstance().logInvalidInputError("CreateOrUpdatePropertyValue", "invalid component type", ErrorSeverity.INFO);
@@ -1715,10 +1692,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 
         Either<ComponentInstanceProperty, ResponseFormat> resultOp = null;
 
-        Either<User, ResponseFormat> resp = validateUserExists(userId, "create Or Update Property Value", false);
-        if (resp.isRight()) {
-            return Either.right(resp.right().value());
-        }
+        validateUserExists(userId, "create Or Update Property Value", false);
 
         if (componentTypeEnum == null) {
             BeEcompErrorManager.getInstance().logInvalidInputError("CreateOrUpdatePropertyValue", "invalid component type", ErrorSeverity.INFO);
@@ -1812,10 +1786,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 
         Either<ComponentInstanceInput, ResponseFormat> resultOp = null;
 
-        Either<User, ResponseFormat> resp = validateUserExists(userId, "create Or Update Input Value", false);
-        if (resp.isRight()) {
-            return Either.right(resp.right().value());
-        }
+        validateUserExists(userId, "create Or Update Input Value", false);
 
         if (componentTypeEnum == null) {
             BeEcompErrorManager.getInstance().logInvalidInputError("createOrUpdateInputValue", "invalid component type", ErrorSeverity.INFO);
@@ -1902,10 +1873,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 
     public Either<ComponentInstanceProperty, ResponseFormat> deletePropertyValue(ComponentTypeEnum componentTypeEnum, String serviceId, String resourceInstanceId, String propertyValueId, String userId) {
 
-        Either<User, ResponseFormat> resp = validateUserExists(userId, "delete Property Value", false);
-        if (resp.isRight()) {
-            return Either.right(resp.right().value());
-        }
+        validateUserExists(userId, "delete Property Value", false);
 
         Either<ComponentInstanceProperty, ResponseFormat> resultOp = null;
 
@@ -2066,12 +2034,8 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 
     public Either<ComponentInstance, ResponseFormat> changeComponentInstanceVersion(String containerComponentParam, String containerComponentId, String componentInstanceId, String userId, ComponentInstance newComponentInstance) {
 
-        Either<User, ResponseFormat> resp = validateUserExists(userId, "change Component Instance Version", false);
-        if (resp.isRight()) {
-            return Either.right(resp.right().value());
-        }
+        User user = validateUserExists(userId, "change Component Instance Version", false);
 
-        User user = resp.left().value();
         Either<ComponentInstance, ResponseFormat> resultOp = null;
 
         Either<ComponentTypeEnum, ResponseFormat> validateComponentType = validateComponentType(containerComponentParam);
@@ -2101,7 +2065,17 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 
         ComponentInstance currentResourceInstance = resourceInstanceStatus.left().value();
 
+        return changeInstanceVersion(containerComponent, currentResourceInstance, newComponentInstance, user, containerComponentType );
+    }
+
+    public Either<ComponentInstance, ResponseFormat> changeInstanceVersion(org.openecomp.sdc.be.model.Component containerComponent, ComponentInstance currentResourceInstance,
+                                                                           ComponentInstance newComponentInstance, User user, final ComponentTypeEnum containerComponentType    ) {
+        Either<ComponentInstance, ResponseFormat> resultOp = null;
+        Either<ComponentInstance, StorageOperationStatus> resourceInstanceStatus;
+
         Either<Boolean, ResponseFormat> lockComponent = lockComponent(containerComponent, "changeComponentInstanceVersion");
+        String containerComponentId = containerComponent.getUniqueId();
+        String componentInstanceId = currentResourceInstance.getUniqueId();
         if (lockComponent.isRight()) {
             return Either.right(lockComponent.right().value());
         }
@@ -2198,7 +2172,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
                 return Either.right(mergeStatusEither.right().value());
             }
 
-            ActionStatus postChangeVersionResult = postChangeVersionOperationOrchestrator.doPostChangeVersionOperations(containerComponent, currentResourceInstance, newComponentInstance);
+            ActionStatus postChangeVersionResult = onChangeInstanceOperationOrchestrator.doPostChangeVersionOperations(containerComponent, currentResourceInstance, newComponentInstance);
             if (postChangeVersionResult != ActionStatus.OK) {
                 return Either.right(componentsUtils.getResponseFormat(postChangeVersionResult));
             }
@@ -2233,11 +2207,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 
         Either<List<ComponentInstanceProperty>, ResponseFormat> resultOp = null;
         try {
-            Either<User, ResponseFormat> validateUserExists = validateUserExists(userId, ECOMP_ERROR_CONTEXT, false);
-            if (validateUserExists.isRight()) {
-                resultOp = Either.right(validateUserExists.right().value());
-                return resultOp;
-            }
+            validateUserExists(userId, ECOMP_ERROR_CONTEXT, false);
 
             Either<ComponentTypeEnum, ResponseFormat> validateComponentType = validateComponentType(containerComponentTypeParam);
             if (validateComponentType.isRight()) {
@@ -2305,19 +2275,19 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         return result;
     }
 
-    public Either<ComponentInstance, ResponseFormat> deleteServiceProxy(String containerComponentType, String containerComponentId, String serviceProxyId, String userId) {
+    public Either<ComponentInstance, ResponseFormat> deleteServiceProxy() {
         // TODO Add implementation
         Either<ComponentInstance, ResponseFormat> result = Either.left(new ComponentInstance());
         return result;
     }
 
-    public Either<ComponentInstance, ResponseFormat> createServiceProxy(String containerComponentType, String containerComponentId, String userId, ComponentInstance componentInstance) {
+    public Either<ComponentInstance, ResponseFormat> createServiceProxy() {
         // TODO Add implementation
         Either<ComponentInstance, ResponseFormat> result = Either.left(new ComponentInstance());
         return result;
     }
 
-    public Either<ComponentInstance, ResponseFormat> changeServiceProxyVersion(String containerComponentType, String containerComponentId, String serviceProxyId, String userId) {
+    public Either<ComponentInstance, ResponseFormat> changeServiceProxyVersion() {
         // TODO Add implementation
         Either<ComponentInstance, ResponseFormat> result = Either.left(new ComponentInstance());
         return result;
@@ -2411,10 +2381,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 
         Either<List<ComponentInstanceProperty>, ResponseFormat> resultOp = null;
         try {
-            Either<User, ResponseFormat> validateUserExists = validateUserExists(userId, "Get Component Instance Properties By Id", false);
-            if (validateUserExists.isRight()) {
-                resultOp = Either.right(validateUserExists.right().value());
-            }
+            validateUserExists(userId, "Get Component Instance Properties By Id", false);
             if(resultOp == null){
                 Either<ComponentTypeEnum, ResponseFormat> validateComponentType = validateComponentType(containerComponentType);
                 if (validateComponentType.isRight()) {
@@ -2517,10 +2484,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
                                                                                                       List<ComponentInstanceProperty> properties, String userId) {
         Either<List<ComponentInstanceProperty>, ResponseFormat> resultOp = null;
 
-        Either<User, ResponseFormat> resp = validateUserExists(userId, "update instance capability property", false);
-        if (resp.isRight()) {
-            return Either.right(resp.right().value());
-        }
+        validateUserExists(userId, "update instance capability property", false);
 
         if (componentTypeEnum == null) {
             BeEcompErrorManager.getInstance().logInvalidInputError("updateInstanceCapabilityProperty", "invalid component type", ErrorSeverity.INFO);
@@ -2589,10 +2553,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         List<ComponentInstanceProperty> properties, String userId) {
         Either<List<ComponentInstanceProperty>, ResponseFormat> resultOp = null;
 
-        Either<User, ResponseFormat> resp = validateUserExists(userId, "update instance capability property", false);
-        if (resp.isRight()) {
-            return Either.right(resp.right().value());
-        }
+        validateUserExists(userId, "update instance capability property", false);
 
         if (componentTypeEnum == null) {
             BeEcompErrorManager.getInstance().logInvalidInputError("updateInstanceCapabilityProperty", "invalid component type", ErrorSeverity.INFO);

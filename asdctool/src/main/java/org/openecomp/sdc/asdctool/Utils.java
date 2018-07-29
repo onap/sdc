@@ -20,30 +20,23 @@
 
 package org.openecomp.sdc.asdctool;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.ResponseBuilder;
-
+import com.thinkaurelius.titan.core.TitanFactory;
+import com.thinkaurelius.titan.core.TitanGraph;
 import org.apache.commons.configuration.Configuration;
 import org.apache.tinkerpop.gremlin.structure.Element;
 import org.apache.tinkerpop.gremlin.structure.Property;
 import org.apache.tinkerpop.gremlin.structure.util.ElementHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 
-import com.thinkaurelius.titan.core.TitanFactory;
-import com.thinkaurelius.titan.core.TitanGraph;
-
-//import org.openecomp.sdc.be.auditing.impl.AuditingManager;
-
-//import org.openecomp.sdc.be.info.errors.ResponseFormat;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
 public class Utils {
 
-	private static Logger log = LoggerFactory.getLogger(Utils.class.getName());
+	private static Logger log = Logger.getLogger(Utils.class.getName());
 
 	public final static String NEW_LINE = System.getProperty("line.separator");
 

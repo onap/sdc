@@ -22,16 +22,9 @@ package org.openecomp.sdc.tosca.datatypes.model;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.onap.sdc.tosca.datatypes.model.ArtifactDefinition;
-import org.onap.sdc.tosca.datatypes.model.AttributeDefinition;
-import org.onap.sdc.tosca.datatypes.model.CapabilityDefinition;
-import org.onap.sdc.tosca.datatypes.model.Constraint;
-import org.onap.sdc.tosca.datatypes.model.EntrySchema;
-import org.onap.sdc.tosca.datatypes.model.NodeType;
-import org.onap.sdc.tosca.datatypes.model.PropertyDefinition;
-import org.onap.sdc.tosca.datatypes.model.Status;
-import org.openecomp.sdc.tosca.services.ToscaConstants;
+import org.onap.sdc.tosca.datatypes.model.*;
 import org.onap.sdc.tosca.services.YamlUtil;
+import org.openecomp.sdc.tosca.services.ToscaConstants;
 
 import java.util.ArrayList;
 import java.util.HashMap;

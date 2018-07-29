@@ -1,8 +1,5 @@
 package org.openecomp.sdc.be.auditing.impl;
 
-import java.util.Collections;
-import java.util.List;
-
 import org.apache.commons.lang.StringUtils;
 import org.javatuples.Pair;
 import org.openecomp.sdc.be.auditing.api.AuditEventFactory;
@@ -10,16 +7,19 @@ import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.common.api.Constants;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
 public abstract class AuditBaseEventFactory implements AuditEventFactory {
 
-    //TODO imanzon: Check if requestId and serviceInstanceId fields are required for all tables.
-    //Currently they are included even if they ahs null value. If they should not appear then
-    //createTable code should be updated so that they need to be removed from the tables
     private AuditingActionEnum action;
 
     public AuditBaseEventFactory(AuditingActionEnum action) {
-        this.action = action;
+        this.action = Objects.requireNonNull(action);
     }
+
+    public AuditBaseEventFactory() {}
 
     public AuditingActionEnum getAction() {
         return action;
@@ -68,8 +68,8 @@ public abstract class AuditBaseEventFactory implements AuditEventFactory {
     }
 
     protected static String buildUserName(User user) {
-        if (user == null || user.getUserId() == null || user.getUserId().isEmpty()) {
-            return Constants.EMPTY_STRING;
+        if (user == null || StringUtils.isEmpty(user.getUserId())) {
+            return StringUtils.EMPTY;
         }
         StringBuilder sb = new StringBuilder();
         String firstName = replaceNullNameWithEmpty(user.getFirstName());
@@ -85,9 +85,9 @@ public abstract class AuditBaseEventFactory implements AuditEventFactory {
         return sb.toString();
     }
 
-    public static String buildValue(String value) {
+    private static String buildValue(String value) {
         if (value == null) {
-            return Constants.EMPTY_STRING;
+            return StringUtils.EMPTY;
         }
         return value;
     }
@@ -96,7 +96,7 @@ public abstract class AuditBaseEventFactory implements AuditEventFactory {
         if (name != null && !name.trim().contains(Constants.NULL_STRING)) {
             return name;
         }
-        return Constants.EMPTY_STRING;
+        return StringUtils.EMPTY;
     }
 
     @Override
@@ -109,6 +109,23 @@ public abstract class AuditBaseEventFactory implements AuditEventFactory {
     public String getAuditingEsType() {
         return this.action.getAuditingEsType();
     }
+
+    @Override
+    public final String getLogMessage() {
+       return String.format(getLogPattern(), getLogArgs());
+    }
+
+    private Object[] getLogArgs() {
+        return Arrays.stream(getLogMessageParams())
+                .map(AuditBaseEventFactory::buildValue)
+                .toArray(String[]::new);
+    }
+
+    public abstract String getLogPattern();
+
+    public abstract String[] getLogMessageParams();
+
+
 
 
 }

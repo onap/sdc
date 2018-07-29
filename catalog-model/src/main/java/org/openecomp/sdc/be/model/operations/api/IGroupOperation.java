@@ -20,23 +20,21 @@
 
 package org.openecomp.sdc.be.model.operations.api;
 
-import java.util.List;
-
+import fj.data.Either;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphRelation;
-import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.model.GroupProperty;
 import org.openecomp.sdc.be.resources.data.ArtifactData;
 
-import fj.data.Either;
+import java.util.List;
 
 public interface IGroupOperation {
 
-	public Either<List<GraphRelation>, TitanOperationStatus> dissociateAllGroupsFromArtifactOnGraph(String componentId, NodeTypeEnum componentTypeEnum, String artifactId);
+    public Either<List<GraphRelation>, StorageOperationStatus> dissociateAllGroupsFromArtifactOnGraph(String componentId, NodeTypeEnum componentTypeEnum, String artifactId);
 
-	public StorageOperationStatus dissociateAndAssociateGroupsFromArtifact(String componentId, NodeTypeEnum componentTypeEnum, String oldArtifactId, ArtifactData newArtifact, boolean inTransaction);
+    public StorageOperationStatus dissociateAndAssociateGroupsFromArtifact(String componentId, NodeTypeEnum componentTypeEnum, String oldArtifactId, ArtifactData newArtifact, boolean inTransaction);
 
-	public boolean isGroupExist(String groupName, boolean inTransaction);
+    public boolean isGroupExist(String groupName, boolean inTransaction);
 
-	public StorageOperationStatus validateAndUpdatePropertyValue(GroupProperty property);
+    public StorageOperationStatus validateAndUpdatePropertyValue(GroupProperty property);
 }

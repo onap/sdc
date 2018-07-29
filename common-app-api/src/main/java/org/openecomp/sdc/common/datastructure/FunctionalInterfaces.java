@@ -20,27 +20,20 @@
 
 package org.openecomp.sdc.common.datastructure;
 
+import fj.F;
+import fj.data.Either;
+import org.apache.commons.lang3.math.NumberUtils;
+import org.openecomp.sdc.common.log.wrappers.Logger;
+
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
+import java.util.concurrent.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
-
-import org.apache.commons.lang3.math.NumberUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import fj.F;
-import fj.data.Either;
 
 /**
  * Class For Functional interfaces And Functional Methods
@@ -51,7 +44,7 @@ import fj.data.Either;
 public class FunctionalInterfaces {
 	private static final int DEFAULT_REDO_INTERVAL_TIME_MS = 50;
 	private static final int DEFAULT_MAX_WAIT_TIME_MS = 10000;
-	private static final Logger LOGGER = LoggerFactory.getLogger(FunctionalInterfaces.class);
+	private static final Logger LOGGER = Logger.getLogger(FunctionalInterfaces.class.getName());
 
 	/**
 	 * This is an interface of a List that implements Serializable
@@ -183,8 +176,7 @@ public class FunctionalInterfaces {
 	 */
 	public static <R, E extends Exception> R swallowException(SupplierThrows<R, E> methodToRun) {
 		try {
-			final R result = methodToRun.get();
-			return result;
+            return methodToRun.get();
 		} catch (Exception e) {
 			throw new FunctionalAttException(e);
 		}
@@ -510,15 +502,14 @@ public class FunctionalInterfaces {
 	}
 
 	public static <T> F<T, Boolean> convertToFunction(Consumer<T> consumer) {
-		F<T, Boolean> func = t -> {
-			try {
-				consumer.accept(t);
-				return true;
-			} catch (Exception e) {
-				return false;
-			}
-		};
-		return func;
+        return t -> {
+            try {
+                consumer.accept(t);
+                return true;
+            } catch (Exception e) {
+                return false;
+            }
+        };
 	}
 
 }

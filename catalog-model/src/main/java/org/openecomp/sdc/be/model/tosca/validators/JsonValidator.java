@@ -20,50 +20,48 @@
 
 package org.openecomp.sdc.be.model.tosca.validators;
 
-import java.io.StringReader;
-import java.util.Map;
-
-import org.openecomp.sdc.be.model.DataTypeDefinition;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.stream.JsonReader;
+import org.openecomp.sdc.be.model.DataTypeDefinition;
+import org.openecomp.sdc.common.log.wrappers.Logger;
+
+import java.io.StringReader;
+import java.util.Map;
 
 public class JsonValidator implements PropertyTypeValidator {
 
-	private static JsonValidator jsonValidator = new JsonValidator();
+    private static JsonValidator jsonValidator = new JsonValidator();
 
-	private static Logger log = LoggerFactory.getLogger(JsonValidator.class.getName());
+    private static final Logger log = Logger.getLogger(JsonValidator.class.getName());
 
-	private static JsonParser jsonParser = new JsonParser();
+    private static JsonParser jsonParser = new JsonParser();
 
-	public static JsonValidator getInstance() {
-		return jsonValidator;
-	}
+    public static JsonValidator getInstance() {
+        return jsonValidator;
+    }
 
-	@Override
-	public boolean isValid(String value, String innerType, Map<String, DataTypeDefinition> allDataTypes) {
+    @Override
+    public boolean isValid(String value, String innerType, Map<String, DataTypeDefinition> allDataTypes) {
 
-		if (value == null || value.isEmpty()) {
-			return true;
-		}
-		try {
-			StringReader reader = new StringReader(value);
-			JsonReader jsonReader = new JsonReader(reader);
-			jsonReader.setLenient(true);
-			jsonParser.parse(jsonReader);
-		} catch (JsonSyntaxException e) {
-			log.debug("Error parsing JSON property", e);
-			return false;
-		}
-		return true;
+        if (value == null || value.isEmpty()) {
+            return true;
+        }
+        try {
+            StringReader reader = new StringReader(value);
+            JsonReader jsonReader = new JsonReader(reader);
+            jsonReader.setLenient(true);
+            jsonParser.parse(jsonReader);
+        } catch (JsonSyntaxException e) {
+            log.debug("Error parsing JSON property", e);
+            return false;
+        }
+        return true;
 
-	}
+    }
 
-	@Override
-	public boolean isValid(String value, String innerType) {
-		return isValid(value, innerType, null);
-	}
+    @Override
+    public boolean isValid(String value, String innerType) {
+        return isValid(value, innerType, null);
+    }
 }

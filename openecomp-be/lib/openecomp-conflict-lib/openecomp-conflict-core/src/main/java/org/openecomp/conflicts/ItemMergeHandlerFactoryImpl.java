@@ -16,9 +16,6 @@
 
 package org.openecomp.conflicts;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
 import org.openecomp.conflicts.dao.ConflictsDaoFactory;
 import org.openecomp.conflicts.impl.VspMergeHandler;
 import org.openecomp.sdc.common.errors.CoreException;
@@ -27,6 +24,10 @@ import org.openecomp.sdc.vendorsoftwareproduct.dao.VspMergeDaoFactory;
 import org.openecomp.sdc.versioning.AsdcItemManagerFactory;
 import org.openecomp.sdc.versioning.errors.EntityNotExistErrorBuilder;
 import org.openecomp.sdc.versioning.types.Item;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
 public class ItemMergeHandlerFactoryImpl extends ItemMergeHandlerFactory {
   // TODO: 11/1/2017 read this map from configuration, move Vsp merge handler to vsp lib, rearrange lib deps

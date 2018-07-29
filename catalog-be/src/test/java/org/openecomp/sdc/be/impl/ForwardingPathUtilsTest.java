@@ -1,13 +1,6 @@
 package org.openecomp.sdc.be.impl;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-
+import mockit.Deencapsulation;
 import org.javatuples.Pair;
 import org.junit.Test;
 import org.openecomp.sdc.be.components.impl.ResponseFormatManager;
@@ -23,10 +16,7 @@ import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
 
-import com.google.common.collect.SetMultimap;
-import com.google.common.collect.TreeMultimap;
-
-import mockit.Deencapsulation;
+import java.util.*;
 
 public class ForwardingPathUtilsTest {
 
@@ -50,17 +40,6 @@ public class ForwardingPathUtilsTest {
 		service.setComponentInstances(resourceInstances);
 
 		result = testSubject.convertServiceToServiceRelations(service);
-	}
-
-	@Test
-	public void testAddNodes() throws Exception {
-		ForwardingPathUtils testSubject;
-		List<NameIdPairWrapper> cpOptions = new LinkedList<>();
-		Map<NameIdPair, Set<NameIdPair>> options = new HashMap<>();
-
-		// default test
-		testSubject = createTestSubject();
-		Deencapsulation.invoke(testSubject, "addNodes", cpOptions, options);
 	}
 
 	@Test

@@ -21,13 +21,12 @@
 package org.openecomp.sdc.be.components.impl;
 
 import org.openecomp.sdc.be.impl.ComponentsUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.springframework.stereotype.Component;
 
 @Component("requirementsBusinessLogic")
 public class RequirementsBusinessLogic {
-    private static final Logger log = LoggerFactory.getLogger(RequirementsBusinessLogic.class);
+    private static final Logger log = Logger.getLogger(RequirementsBusinessLogic.class);
 
     @javax.annotation.Resource
     private ComponentsUtils componentsUtils;

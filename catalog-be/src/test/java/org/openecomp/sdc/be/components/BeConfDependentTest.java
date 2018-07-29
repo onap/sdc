@@ -23,7 +23,7 @@ package org.openecomp.sdc.be.components;
 import org.junit.BeforeClass;
 import org.openecomp.sdc.common.test.BaseConfDependent;
 
-public class BeConfDependentTest extends BaseConfDependent {
+public abstract class BeConfDependentTest extends BaseConfDependent {
     @BeforeClass
     public static void setupBeforeClass() {
         componentName = "catalog-be";

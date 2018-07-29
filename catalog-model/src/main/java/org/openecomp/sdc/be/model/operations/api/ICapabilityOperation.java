@@ -20,18 +20,14 @@
 
 package org.openecomp.sdc.be.model.operations.api;
 
-import java.util.List;
-import java.util.Map;
-
+import fj.data.Either;
 import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 
-import fj.data.Either;
+import java.util.Map;
 
 public interface ICapabilityOperation {
 
-	Either<Map<String, PropertyDefinition>, TitanOperationStatus> getAllCapabilityTypePropertiesFromAllDerivedFrom(String firstParentType);
-
-	Either<List<PropertyDefinition>, TitanOperationStatus> validatePropertyUniqueness(Map<String, PropertyDefinition> propertiesOfCapabilityType, List<PropertyDefinition> properties);
+    Either<Map<String, PropertyDefinition>, TitanOperationStatus> getAllCapabilityTypePropertiesFromAllDerivedFrom(String firstParentType);
 
 }

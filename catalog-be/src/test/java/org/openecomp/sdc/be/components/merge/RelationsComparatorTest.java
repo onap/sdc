@@ -1,11 +1,5 @@
 package org.openecomp.sdc.be.components.merge;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
-import java.util.Arrays;
-import java.util.LinkedList;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.openecomp.sdc.be.components.utils.ComponentInstanceBuilder;
@@ -14,6 +8,12 @@ import org.openecomp.sdc.be.components.utils.RelationsBuilder;
 import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.RequirementCapabilityRelDef;
 import org.openecomp.sdc.be.model.Resource;
+
+import java.util.Arrays;
+import java.util.LinkedList;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class RelationsComparatorTest {
 

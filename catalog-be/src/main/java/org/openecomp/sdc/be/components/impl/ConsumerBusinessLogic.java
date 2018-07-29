@@ -20,28 +20,23 @@
 
 package org.openecomp.sdc.be.components.impl;
 
-import java.util.Date;
-
+import fj.data.Either;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
-import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.ConsumerDefinition;
 import org.openecomp.sdc.be.model.User;
-import org.openecomp.sdc.be.model.operations.api.IGraphLockOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.ConsumerOperation;
 import org.openecomp.sdc.be.resources.data.ConsumerData;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
-import org.openecomp.sdc.be.user.IUserBusinessLogic;
 import org.openecomp.sdc.be.user.Role;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.common.util.ValidationUtils;
 import org.openecomp.sdc.exception.ResponseFormat;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import fj.data.Either;
+import java.util.Date;
 
 @Component("ConsumerBusinessLogic")
 public class ConsumerBusinessLogic extends BaseBusinessLogic {
@@ -49,20 +44,12 @@ public class ConsumerBusinessLogic extends BaseBusinessLogic {
     private static final String CONSUMER_NAME = "Consumer name";
     private static final String CONSUMER_SALT = "Consumer salt";
     private static final String CONSUMER_PW = "Consumer password";
-
-    @javax.annotation.Resource
-    private IUserBusinessLogic userAdmin;
-
-    @javax.annotation.Resource
-    private ComponentsUtils componentsUtils;
+    public static final String AUDIT_BEFORE_SENDING_RESPONSE = "audit before sending response";
 
     @javax.annotation.Resource
     private ConsumerOperation consumerOperation;
 
-    @javax.annotation.Resource
-    private IGraphLockOperation graphLockOperation;
-
-    private static final Logger log = LoggerFactory.getLogger(ConsumerBusinessLogic.class);
+    private static final Logger log = Logger.getLogger(ConsumerBusinessLogic.class.getName());
 
     public Either<ConsumerDefinition, ResponseFormat> createConsumer(User user, ConsumerDefinition consumer) {
 
@@ -75,7 +62,7 @@ public class ConsumerBusinessLogic extends BaseBusinessLogic {
         user = userValidation.left().value();
         consumer.setLastModfierAtuid(user.getUserId());
 
-        Either<ConsumerDefinition, ResponseFormat> consumerValidationResponse = validateConsumer(consumer, user, AuditingActionEnum.ADD_ECOMP_USER_CREDENTIALS);
+        Either<ConsumerDefinition, ResponseFormat> consumerValidationResponse = validateConsumer(consumer);
         if (consumerValidationResponse.isRight()) {
             ResponseFormat responseFormat = consumerValidationResponse.right().value();
             componentsUtils.auditConsumerCredentialsEvent(AuditingActionEnum.ADD_ECOMP_USER_CREDENTIALS, consumer, responseFormat, user);
@@ -94,7 +81,7 @@ public class ConsumerBusinessLogic extends BaseBusinessLogic {
         try {
             Either<ConsumerData, StorageOperationStatus> getResponse = consumerOperation.getCredentials(consumerName);
             if (getResponse.isLeft() && getResponse.left().value() != null) {
-                return updateConsumer(consumer, user, true);
+                return updateConsumer(consumer);
             }
 
             Date date = new Date();
@@ -123,7 +110,7 @@ public class ConsumerBusinessLogic extends BaseBusinessLogic {
         if (user.getUserId() == null || user.getUserId().trim().isEmpty()) {
             log.debug("createEcompUser method - user is missing. userId= {}", user.getUserId());
             ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.MISSING_INFORMATION);
-            log.debug("audit before sending response");
+            log.debug(AUDIT_BEFORE_SENDING_RESPONSE);
             componentsUtils.auditConsumerCredentialsEvent(auditAction, consumer, responseFormat, user);
             return Either.right(responseFormat);
         }
@@ -132,7 +119,7 @@ public class ConsumerBusinessLogic extends BaseBusinessLogic {
         if (eitherCreator.isRight() || eitherCreator.left().value() == null) {
             log.debug("createEcompUser method - user is not listed. userId= {}", user.getUserId());
             ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.RESTRICTED_ACCESS);
-            log.debug("audit before sending response");
+            log.debug(AUDIT_BEFORE_SENDING_RESPONSE);
             componentsUtils.auditConsumerCredentialsEvent(auditAction, consumer, responseFormat, user);
             return Either.right(responseFormat);
         }
@@ -143,14 +130,14 @@ public class ConsumerBusinessLogic extends BaseBusinessLogic {
         if (!user.getRole().equals(Role.ADMIN.name())) {
             log.info("role {} is not allowed to perform this action", user.getRole());
             ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.RESTRICTED_OPERATION);
-            log.debug("audit before sending response");
+            log.debug(AUDIT_BEFORE_SENDING_RESPONSE);
             componentsUtils.auditConsumerCredentialsEvent(auditAction, consumer, responseFormat, user);
             return Either.right(responseFormat);
         }
         return Either.left(user);
     }
 
-    private Either<ConsumerDefinition, ResponseFormat> validateConsumer(ConsumerDefinition consumer, User user, AuditingActionEnum audatingAction) {
+    private Either<ConsumerDefinition, ResponseFormat> validateConsumer(ConsumerDefinition consumer) {
         Either<ConsumerDefinition, ResponseFormat> validateConsumerName = validateConsumerName(consumer);
         if (validateConsumerName.isRight()) {
             return Either.right(validateConsumerName.right().value());
@@ -286,7 +273,7 @@ public class ConsumerBusinessLogic extends BaseBusinessLogic {
         return Either.left(consumer);
     }
 
-    public Either<ConsumerDefinition, ResponseFormat> updateConsumer(ConsumerDefinition consumer, User modifier, boolean isCreateRequest) {
+    public Either<ConsumerDefinition, ResponseFormat> updateConsumer(ConsumerDefinition consumer) {
         Either<ConsumerData, StorageOperationStatus> updateResult = consumerOperation.updateCredentials(new ConsumerData(consumer));
         if (updateResult.isRight()) {
             ResponseFormat responseFormat = componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponseForConsumer(updateResult.right().value()));

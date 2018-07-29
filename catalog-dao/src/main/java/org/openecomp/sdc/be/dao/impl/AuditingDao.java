@@ -20,15 +20,7 @@
 
 package org.openecomp.sdc.be.dao.impl;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import javax.annotation.PostConstruct;
-
+import fj.data.Either;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
@@ -38,23 +30,24 @@ import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingGenericEvent;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingTypesConstants;
 import org.openecomp.sdc.be.resources.data.auditing.ResourceAdminEvent;
-import org.openecomp.sdc.common.datastructure.AuditingFieldsKeysEnum;
+import org.openecomp.sdc.common.datastructure.AuditingFieldsKey;
 import org.openecomp.sdc.common.datastructure.ESTimeBasedEvent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.springframework.stereotype.Component;
 
-import fj.data.Either;
+import javax.annotation.PostConstruct;
+import java.util.*;
+import java.util.Map.Entry;
 
 @Component("auditingDao")
 public class AuditingDao extends ESTimeBasedDao {
 
-	private static final String SERVICE_INSTANCE_ID_FIELD = AuditingFieldsKeysEnum.AUDIT_SERVICE_INSTANCE_ID
+	private static final String SERVICE_INSTANCE_ID_FIELD = AuditingFieldsKey.AUDIT_SERVICE_INSTANCE_ID
 			.getDisplayName(); // "serviceInstanceId";
-	private static final String STATUS_FIELD = AuditingFieldsKeysEnum.AUDIT_STATUS.getDisplayName(); // "status";
-	private static final String ACTION_FIELD = AuditingFieldsKeysEnum.AUDIT_ACTION.getDisplayName(); // "action";
-	private static final String DISTRIBUTION_ID_FIELD = AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_ID.getDisplayName(); // "distributionId";
-	private static Logger log = LoggerFactory.getLogger(AuditingDao.class.getName());
+	private static final String STATUS_FIELD = AuditingFieldsKey.AUDIT_STATUS.getDisplayName(); // "status";
+	private static final String ACTION_FIELD = AuditingFieldsKey.AUDIT_ACTION.getDisplayName(); // "action";
+	private static final String DISTRIBUTION_ID_FIELD = AuditingFieldsKey.AUDIT_DISTRIBUTION_ID.getDisplayName(); // "distributionId";
+	private static Logger log = Logger.getLogger(AuditingDao.class.getName());
 	public static final String AUDITING_INDEX = "auditingevents";
 
 	@PostConstruct
@@ -70,12 +63,12 @@ public class AuditingDao extends ESTimeBasedDao {
 		return AUDITING_INDEX;
 	}
 
-	public ActionStatus addRecord(Map<AuditingFieldsKeysEnum, Object> params, String type) {
+	public ActionStatus addRecord(Map<AuditingFieldsKey, Object> params, String type) {
 
 		// TODO rhalili - remove? check debugEnabled?
-		Map<String, Object> displayFields = new HashMap<String, Object>();
+		Map<String, Object> displayFields = new HashMap<>();
 		StringBuilder sb = new StringBuilder();
-		for (Entry<AuditingFieldsKeysEnum, Object> entry : params.entrySet()) {
+		for (Entry<AuditingFieldsKey, Object> entry : params.entrySet()) {
 			displayFields.put(entry.getKey().getDisplayName(), entry.getValue());
 			sb.append(entry.getKey().getDisplayName()).append(" = ").append(entry.getValue()).append(",");
 		}
@@ -118,7 +111,7 @@ public class AuditingDao extends ESTimeBasedDao {
 			return Either.left(remainingElements);
 		} else {
 			log.debug("not found distribution statuses for did {}", did);
-			remainingElements = new ArrayList<ESTimeBasedEvent>();
+			remainingElements = new ArrayList<>();
 			return Either.left(remainingElements);
 		}
 
@@ -126,7 +119,7 @@ public class AuditingDao extends ESTimeBasedDao {
 
 	public Either<List<ESTimeBasedEvent>, ActionStatus> getServiceDistributionStatusesList(String serviceInstanceId) {
 
-		List<ESTimeBasedEvent> resList = new ArrayList<ESTimeBasedEvent>();
+		List<ESTimeBasedEvent> resList = new ArrayList<>();
 		QueryBuilder componentNameMatch = QueryBuilders.matchQuery(SERVICE_INSTANCE_ID_FIELD, serviceInstanceId);
 		QueryBuilder componentVersionMatch = QueryBuilders.matchQuery(ACTION_FIELD,
 				AuditingActionEnum.DISTRIBUTION_STATE_CHANGE_REQUEST.getName());
@@ -185,12 +178,12 @@ public class AuditingDao extends ESTimeBasedDao {
 	}
 
 	public Either<List<ESTimeBasedEvent>, ActionStatus> getFilteredResourceAdminAuditingEvents(
-			Map<AuditingFieldsKeysEnum, Object> filterMap) {
+			Map<AuditingFieldsKey, Object> filterMap) {
 
-		Iterator<Entry<AuditingFieldsKeysEnum, Object>> filterItr = filterMap.entrySet().iterator();
+		Iterator<Entry<AuditingFieldsKey, Object>> filterItr = filterMap.entrySet().iterator();
 		BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
 		while (filterItr.hasNext()) {
-			Entry<AuditingFieldsKeysEnum, Object> curr = filterItr.next();
+			Entry<AuditingFieldsKey, Object> curr = filterItr.next();
 			boolQuery = boolQuery.must(QueryBuilders.termQuery(curr.getKey().getDisplayName(), curr.getValue()));
 		}
 
@@ -235,25 +228,25 @@ public class AuditingDao extends ESTimeBasedDao {
 
 	}
 
-	private void populateCommonFields(Map<AuditingFieldsKeysEnum, Object> params,
+	private void populateCommonFields(Map<AuditingFieldsKey, Object> params,
 			AuditingGenericEvent timeBasedIndexedData) {
-		String dateStr = (String) params.get(AuditingFieldsKeysEnum.AUDIT_TIMESTAMP);
+		String dateStr = (String) params.get(AuditingFieldsKey.AUDIT_TIMESTAMP);
 		if (dateStr != null) {
 			timeBasedIndexedData.setTimestamp(dateStr);
 		}
-		timeBasedIndexedData.setAction((String) params.get(AuditingFieldsKeysEnum.AUDIT_ACTION));
-		Object statusObj = params.get(AuditingFieldsKeysEnum.AUDIT_STATUS);
+		timeBasedIndexedData.setAction((String) params.get(AuditingFieldsKey.AUDIT_ACTION));
+		Object statusObj = params.get(AuditingFieldsKey.AUDIT_STATUS);
 		// For BC. status was Integer and is String
 		if (statusObj != null) {
 			timeBasedIndexedData.setStatus(String.valueOf(statusObj));
 		} else {
 			timeBasedIndexedData.setStatus(null);
 		}
-		// timeBasedIndexedData.setStatus((String)params.get(AuditingFieldsKeysEnum.AUDIT_STATUS));
-		timeBasedIndexedData.setDesc((String) params.get(AuditingFieldsKeysEnum.AUDIT_DESC));
+		// timeBasedIndexedData.setStatus((String)params.get(AuditingFieldsKey.AUDIT_STATUS));
+		timeBasedIndexedData.setDesc((String) params.get(AuditingFieldsKey.AUDIT_DESC));
 		timeBasedIndexedData
-				.setServiceInstanceId((String) params.get(AuditingFieldsKeysEnum.AUDIT_SERVICE_INSTANCE_ID));
-		timeBasedIndexedData.setRequestId((String) params.get(AuditingFieldsKeysEnum.AUDIT_REQUEST_ID));
+				.setServiceInstanceId((String) params.get(AuditingFieldsKey.AUDIT_SERVICE_INSTANCE_ID));
+		timeBasedIndexedData.setRequestId((String) params.get(AuditingFieldsKey.AUDIT_REQUEST_ID));
 	}
 
 }

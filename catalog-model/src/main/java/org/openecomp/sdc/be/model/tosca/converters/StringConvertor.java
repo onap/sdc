@@ -20,36 +20,36 @@
 
 package org.openecomp.sdc.be.model.tosca.converters;
 
-import java.util.Map;
-
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.common.util.ValidationUtils;
 
+import java.util.Map;
+
 public class StringConvertor implements PropertyValueConverter {
 
-	private static StringConvertor stringConverter = new StringConvertor();
+    private static StringConvertor stringConverter = new StringConvertor();
 
-	public static StringConvertor getInstance() {
-		return stringConverter;
-	}
+    public static StringConvertor getInstance() {
+        return stringConverter;
+    }
 
-	private StringConvertor() {
+    private StringConvertor() {
 
-	}
+    }
 
-	@Override
-	public String convert(String original, String innerType, Map<String, DataTypeDefinition> dataTypes) {
-		if (original == null) {
-			return null;
-		}
-		String coverted = ValidationUtils.removeNoneUtf8Chars(original);
+    @Override
+    public String convert(String original, String innerType, Map<String, DataTypeDefinition> dataTypes) {
+        if (original == null) {
+            return null;
+        }
+        String coverted = ValidationUtils.removeNoneUtf8Chars(original);
 
-		// coverted = ValidationUtils.convertHtmlTagsToEntities(coverted);
-		coverted = ValidationUtils.normaliseWhitespace(coverted);
-		coverted = ValidationUtils.stripOctets(coverted);
-		coverted = ValidationUtils.removeHtmlTagsOnly(coverted);
+        // coverted = ValidationUtils.convertHtmlTagsToEntities(coverted);
+        coverted = ValidationUtils.normaliseWhitespace(coverted);
+        coverted = ValidationUtils.stripOctets(coverted);
+        coverted = ValidationUtils.removeHtmlTagsOnly(coverted);
 
-		return coverted;
-	}
+        return coverted;
+    }
 
 }

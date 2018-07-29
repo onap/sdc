@@ -20,7 +20,11 @@
 
 package org.openecomp.sdc.ci.tests.utils.general;
 
-import static org.testng.AssertJUnit.assertTrue;
+import fj.data.Either;
+import org.openecomp.sdc.ci.tests.utils.Decoder;
+import org.openecomp.sdc.ci.tests.utils.Utils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -31,12 +35,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.openecomp.sdc.ci.tests.utils.Decoder;
-import org.openecomp.sdc.ci.tests.utils.Utils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import fj.data.Either;
+import static org.testng.AssertJUnit.assertTrue;
 
 public class FileUtils {
 	static Logger logger = LoggerFactory.getLogger(Utils.class.getName());

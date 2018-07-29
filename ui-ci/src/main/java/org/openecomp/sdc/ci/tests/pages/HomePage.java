@@ -20,9 +20,6 @@
 
 package org.openecomp.sdc.ci.tests.pages;
 
-import java.io.File;
-import java.util.List;
-
 import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum;
 import org.openecomp.sdc.ci.tests.utilities.DownloadManager;
 import org.openecomp.sdc.ci.tests.utilities.FileHandling;
@@ -31,6 +28,9 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+
+import java.io.File;
+import java.util.List;
 
 public class HomePage extends GeneralPageElements {
 

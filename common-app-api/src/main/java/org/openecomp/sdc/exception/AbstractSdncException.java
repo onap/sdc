@@ -20,13 +20,12 @@
 
 package org.openecomp.sdc.exception;
 
+import org.openecomp.sdc.common.log.wrappers.Logger;
+
 import java.util.Arrays;
 import java.util.Formatter;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public abstract class AbstractSdncException {
 
@@ -36,7 +35,7 @@ public abstract class AbstractSdncException {
 
 	private String[] variables;
 
-	private static Logger log = LoggerFactory.getLogger(AbstractSdncException.class.getName());
+	private static Logger log = Logger.getLogger(AbstractSdncException.class.getName());
 
 	private final static Pattern ERROR_PARAM_PATTERN = Pattern.compile("%\\d");
 

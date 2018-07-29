@@ -49,7 +49,7 @@ public enum YamlSuffixEnum {
 
 	public static List<String> getSuffixes() {
 
-		List<String> arrayList = new ArrayList<String>();
+		List<String> arrayList = new ArrayList<>();
 
 		for (YamlSuffixEnum yamlSuffixEnum : YamlSuffixEnum.values()) {
 			arrayList.add(yamlSuffixEnum.getSuffix());

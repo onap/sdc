@@ -32,12 +32,12 @@ public class GraphRelation extends GraphElement {
 
 	public GraphRelation() {
 		super(GraphElementTypeEnum.Relationship);
-		properties = new HashMap<String, Object>();
+		properties = new HashMap<>();
 	}
 
 	public GraphRelation(String type) {
 		super(GraphElementTypeEnum.Relationship);
-		properties = new HashMap<String, Object>();
+		properties = new HashMap<>();
 		setType(type);
 	}
 

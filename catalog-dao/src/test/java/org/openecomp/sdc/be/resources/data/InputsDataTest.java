@@ -1,12 +1,12 @@
 package org.openecomp.sdc.be.resources.data;
 
+import org.junit.Test;
+import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
+
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-
-import org.junit.Test;
-import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 
 
 public class InputsDataTest {

@@ -1,7 +1,6 @@
 package org.openecomp.sdc.be.impl;
 
-import java.util.List;
-
+import fj.data.Either;
 import org.apache.tinkerpop.gremlin.structure.T;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -18,23 +17,18 @@ import org.openecomp.sdc.be.datatypes.elements.AdditionalInfoParameterInfo;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
-import org.openecomp.sdc.be.model.CapabilityTypeDefinition;
-import org.openecomp.sdc.be.model.Component;
-import org.openecomp.sdc.be.model.DataTypeDefinition;
-import org.openecomp.sdc.be.model.GroupTypeDefinition;
-import org.openecomp.sdc.be.model.PolicyTypeDefinition;
-import org.openecomp.sdc.be.model.Resource;
-import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.*;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
-import org.openecomp.sdc.be.resources.data.auditing.model.ResourceAuditData;
+import org.openecomp.sdc.be.resources.data.auditing.model.ResourceCommonInfo;
+import org.openecomp.sdc.be.resources.data.auditing.model.ResourceVersionInfo;
 import org.openecomp.sdc.be.tosca.ToscaError;
 import org.openecomp.sdc.common.api.ConfigurationSource;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;
 import org.openecomp.sdc.common.impl.FSConfigurationSource;
 import org.openecomp.sdc.exception.ResponseFormat;
 
-import fj.data.Either;
+import java.util.List;
 
 public class ComponentsUtilsTest {
 
@@ -58,22 +52,6 @@ public class ComponentsUtilsTest {
 		// default test
 		testSubject = createTestSubject();
 		result = testSubject.getAuditingManager();
-	}
-
-	
-	@Test
-	public void testConvertJsonToObjectUsingObjectMapper() throws Exception {
-		ComponentsUtils testSubject;
-		String data = "";
-		User user = null;
-		Class<T> clazz = null;
-		AuditingActionEnum actionEnum = null;
-		ComponentTypeEnum typeEnum = null;
-		Either<T, ResponseFormat> result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.convertJsonToObjectUsingObjectMapper(data, user, clazz, actionEnum, typeEnum);
 	}
 
 	
@@ -227,7 +205,7 @@ public class ComponentsUtilsTest {
 
 		// default test
 		testSubject = createTestSubject();
-		result = testSubject.getResponseFormatByDE(actionStatus, serviceId, envName);
+		result = testSubject.getResponseFormatByDE(actionStatus, serviceId);
 	}
 
 	
@@ -244,35 +222,6 @@ public class ComponentsUtilsTest {
 		result = testSubject.getResponseFormatByArtifactId(ActionStatus.RESOURCE_NOT_FOUND, artifactId);
 	}
 
-	@Ignore
-	@Test
-	public void testGetInvalidContentErrorAndAudit() throws Exception {
-		ComponentsUtils testSubject;
-		User user = null;
-		String resourceName = "";
-		AuditingActionEnum actionEnum = null;
-		ResponseFormat result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getInvalidContentErrorAndAudit(user, resourceName, actionEnum);
-	}
-
-	@Test
-	public void testGetInvalidContentErrorAndAuditComponent() throws Exception {
-		ComponentsUtils testSubject;
-		User user = null;
-		AuditingActionEnum actionEnum = null;
-		ComponentTypeEnum typeEnum = null;
-		ResponseFormat result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getInvalidContentErrorAndAuditComponent(user, actionEnum, typeEnum);
-	}
-
-
-	
 	@Test
 	public void testAuditResource_1() throws Exception {
 		ComponentsUtils testSubject;
@@ -311,7 +260,7 @@ public class ComponentsUtilsTest {
 		Resource resource = null;
 		String resourceName = "";
 		AuditingActionEnum actionEnum = null;
-		ResourceAuditData prevResFields = null;
+		ResourceVersionInfo prevResFields = null;
 		String currentArtifactUuid = "";
 		String artifactData = "";
 
@@ -319,7 +268,7 @@ public class ComponentsUtilsTest {
 		testSubject = createTestSubject();
 		actionEnum = null;
 		testSubject.auditResource(responseFormat, modifier, resource, resourceName, actionEnum, prevResFields,
-				currentArtifactUuid, artifactData);
+				currentArtifactUuid, null);
 	}
 
 
@@ -451,44 +400,18 @@ public class ComponentsUtilsTest {
 		Component component = null;
 		AuditingActionEnum actionEnum = null;
 		ComponentTypeEnum type = null;
-		ResourceAuditData prevComponent = null;
+		ResourceCommonInfo prevComponent = null;
+		ResourceVersionInfo info = null;
 		String comment = "";
 
 		// default test
 		testSubject = createTestSubject();
-		testSubject.auditComponent(responseFormat, modifier, component, actionEnum, type, prevComponent, comment);
+		testSubject.auditComponent(responseFormat, modifier, component, actionEnum, prevComponent,info);
 	}
 
 	
-	@Test
-	public void testAuditComponentAdmin() throws Exception {
-		ComponentsUtils testSubject;
-		ResponseFormat responseFormat = null;
-		User modifier = null;
-		Component component = null;
-		AuditingActionEnum actionEnum = null;
-		ComponentTypeEnum type = null;
 
-		// default test
-		testSubject = createTestSubject();
-		testSubject.auditComponentAdmin(responseFormat, modifier, component, actionEnum, type);
-	}
 
-	
-	@Test
-	public void testAuditComponentAdmin_1() throws Exception {
-		ComponentsUtils testSubject;
-		ResponseFormat responseFormat = null;
-		User modifier = null;
-		Component component = null;
-		AuditingActionEnum actionEnum = null;
-		ComponentTypeEnum type = null;
-		ResourceAuditData prevComponent = null;
-
-		// default test
-		testSubject = createTestSubject();
-		testSubject.auditComponentAdmin(responseFormat, modifier, component, actionEnum, type, prevComponent);
-	}
 
 	
 	@Test
@@ -498,215 +421,21 @@ public class ComponentsUtilsTest {
 		User modifier = null;
 		Component component = null;
 		AuditingActionEnum actionEnum = null;
-		ComponentTypeEnum type = null;
-		ResourceAuditData prevComponent = null;
+		ResourceCommonInfo type = null;
+		ResourceVersionInfo prevComponent = null;
 
 		// default test
 		testSubject = createTestSubject();
 		testSubject.auditComponent(responseFormat, modifier, component, actionEnum, type, prevComponent);
 	}
 
-	
-	@Test
-	public void testAuditComponent_2() throws Exception {
-		ComponentsUtils testSubject;
-		ResponseFormat responseFormat = null;
-		User modifier = null;
-		AuditingActionEnum actionEnum = null;
-		String compName = "";
-		ComponentTypeEnum type = null;
-		String comment = "";
 
-		// default test
-		testSubject = createTestSubject();
-		testSubject.auditComponent(responseFormat, modifier, actionEnum, compName, type, comment);
-	}
 
-	
-	@Test
-	public void testAuditComponent_3() throws Exception {
-		ComponentsUtils testSubject;
-		ResponseFormat responseFormat = null;
-		User modifier = null;
-		Component component = null;
-		AuditingActionEnum actionEnum = null;
-		ComponentTypeEnum type = null;
-		ResourceAuditData prevComponent = null;
-		ResourceAuditData currComponent = null;
 
-		// default test
-		testSubject = createTestSubject();
-		testSubject.auditComponent(responseFormat, modifier, component, actionEnum, type, prevComponent, currComponent);
-	}
 
-	
-	@Test
-	public void testAuditComponent_4() throws Exception {
-		ComponentsUtils testSubject;
-		ResponseFormat responseFormat = null;
-		User modifier = null;
-		Component component = null;
-		AuditingActionEnum actionEnum = null;
-		ComponentTypeEnum type = null;
-		ResourceAuditData prevComponent = null;
-		ResourceAuditData currComponent = null;
-		String compName = "";
-		String comment = "";
-		String artifactData = "";
-		String did = "";
-
-		// test 1
-		testSubject = createTestSubject();
-		actionEnum = null;
-		testSubject.auditComponent(responseFormat, modifier, component, actionEnum, type, prevComponent, currComponent,
-				compName, comment, artifactData, did);
-	}
-
-	
-	@Test
-	public void testAuditDistributionEngine() throws Exception {
-		ComponentsUtils testSubject;
-		AuditingActionEnum actionEnum = AuditingActionEnum.ADD_CATEGORY;
-		String environmentName = "";
-		String topicName = "";
-		String role = "";
-		String apiKey = "";
-		String status = "";
-
-		// default test
-		testSubject = createTestSubject();
-		testSubject.auditDistributionEngine(actionEnum, environmentName, topicName, role, apiKey, status);
-	}
 
 	
 
-	
-	@Test
-	public void testAuditDistributionNotification() throws Exception {
-		ComponentsUtils testSubject;
-		AuditingActionEnum actionEnum = AuditingActionEnum.ADD_CATEGORY;
-		String serviceUUID = "";
-		String resourceName = "";
-		String resourceType = "";
-		String currVersion = "";
-		String modifierUid = "";
-		String modifierName = "";
-		String environmentName = "";
-		String currState = "";
-		String topicName = "";
-		String distributionId = "";
-		String description = "";
-		String status = "";
-		String workloadContext = "";
-		String tenant = "";
-
-		// default test
-		testSubject = createTestSubject();
-		testSubject.auditDistributionNotification(actionEnum, serviceUUID, resourceName, resourceType, currVersion,
-				modifierUid, modifierName, environmentName, currState, topicName, distributionId, description, status,
-				workloadContext, tenant);
-	}
-
-	
-	@Test
-	public void testAuditDistributionStatusNotification() throws Exception {
-		ComponentsUtils testSubject;
-		AuditingActionEnum actionEnum = AuditingActionEnum.ADD_CATEGORY;
-		String distributionId = "";
-		String consumerId = "";
-		String topicName = "";
-		String resourceUrl = "";
-		String statusTime = "";
-		String status = "";
-		String errorReason = "";
-
-		// default test
-		testSubject = createTestSubject();
-		testSubject.auditDistributionStatusNotification(actionEnum, distributionId, consumerId, topicName, resourceUrl,
-				statusTime, status, errorReason);
-	}
-
-	
-	@Test
-	public void testAuditGetUebCluster() throws Exception {
-		ComponentsUtils testSubject;
-		AuditingActionEnum actionEnum = AuditingActionEnum.ACTIVATE_SERVICE_BY_API;
-		String consumerId = "";
-		String statusTime = "";
-		String status = "";
-		String description = "";
-
-		// default test
-		testSubject = createTestSubject();
-		testSubject.auditGetUebCluster(actionEnum, consumerId, statusTime, status, description);
-	}
-
-	
-	@Test
-	public void testAuditMissingInstanceId() throws Exception {
-		ComponentsUtils testSubject;
-		AuditingActionEnum actionEnum = AuditingActionEnum.ADD_CATEGORY;
-		String status = "";
-		String description = "";
-
-		// default test
-		testSubject = createTestSubject();
-		testSubject.auditMissingInstanceId(actionEnum, status, description);
-	}
-
-	
-	@Test
-	public void testAuditTopicACLKeys() throws Exception {
-		ComponentsUtils testSubject;
-		AuditingActionEnum actionEnum = AuditingActionEnum.ADD_USER;
-		String envName = "";
-		String topicName = "";
-		String role = "";
-		String apiPublicKey = "";
-		String status = "";
-
-		// default test
-		testSubject = createTestSubject();
-		testSubject.auditTopicACLKeys(actionEnum, envName, topicName, role, apiPublicKey, status);
-	}
-
-	
-	@Test
-	public void testAuditRegisterOrUnRegisterEvent() throws Exception {
-		ComponentsUtils testSubject;
-		AuditingActionEnum actionEnum = AuditingActionEnum.ACTIVATE_SERVICE_BY_API;
-		String consumerId = "";
-		String apiPublicKey = "";
-		String envName = "";
-		String status = "";
-		String statusDesc = "";
-		String notifTopicName = "";
-		String statusTopicName = "";
-
-		// default test
-		testSubject = createTestSubject();
-		testSubject.auditRegisterOrUnRegisterEvent(actionEnum, consumerId, apiPublicKey, envName, status, statusDesc,
-				notifTopicName, statusTopicName);
-	}
-
-	
-	@Test
-	public void testAuditServiceDistributionDeployed() throws Exception {
-		ComponentsUtils testSubject;
-		AuditingActionEnum actionEnum = AuditingActionEnum.ACTIVATE_SERVICE_BY_API;
-		String serviceName = "";
-		String serviceVersion = "";
-		String serviceUUID = "";
-		String distributionId = "";
-		String status = "";
-		String desc = "";
-		User modifier = new User();
-
-		// default test
-		testSubject = createTestSubject();
-		testSubject.auditServiceDistributionDeployed(actionEnum, serviceName, serviceVersion, serviceUUID,
-				distributionId, status, desc, modifier);
-	}
 
 		
 	@Test

@@ -36,12 +36,7 @@ import org.openecomp.sdcrests.vendorlicense.rest.mapping.MapEntitlementPoolEntit
 import org.openecomp.sdcrests.vendorlicense.rest.mapping.MapFeatureGroupDescriptorDtoToFeatureGroupEntity;
 import org.openecomp.sdcrests.vendorlicense.rest.mapping.MapFeatureGroupEntityToFeatureGroupDescriptorDto;
 import org.openecomp.sdcrests.vendorlicense.rest.mapping.MapLicenseKeyGroupEntityToLicenseKeyGroupEntityDto;
-import org.openecomp.sdcrests.vendorlicense.types.EntitlementPoolEntityDto;
-import org.openecomp.sdcrests.vendorlicense.types.FeatureGroupEntityDto;
-import org.openecomp.sdcrests.vendorlicense.types.FeatureGroupModelDto;
-import org.openecomp.sdcrests.vendorlicense.types.FeatureGroupRequestDto;
-import org.openecomp.sdcrests.vendorlicense.types.FeatureGroupUpdateRequestDto;
-import org.openecomp.sdcrests.vendorlicense.types.LicenseKeyGroupEntityDto;
+import org.openecomp.sdcrests.vendorlicense.types.*;
 import org.openecomp.sdcrests.wrappers.GenericCollectionWrapper;
 import org.openecomp.sdcrests.wrappers.StringWrapperResponse;
 import org.springframework.context.annotation.Scope;

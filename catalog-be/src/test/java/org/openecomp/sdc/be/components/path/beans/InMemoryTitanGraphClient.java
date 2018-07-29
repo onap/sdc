@@ -1,11 +1,15 @@
 package org.openecomp.sdc.be.components.path.beans;
 
 
-import java.util.ArrayList;
-import java.util.HashMap;
-
-import javax.annotation.PostConstruct;
-
+import com.thinkaurelius.titan.core.*;
+import com.thinkaurelius.titan.core.schema.ConsistencyModifier;
+import com.thinkaurelius.titan.core.schema.TitanGraphIndex;
+import com.thinkaurelius.titan.core.schema.TitanManagement;
+import com.thinkaurelius.titan.core.util.TitanCleanup;
+import com.thinkaurelius.titan.diskstorage.ResourceUnavailableException;
+import com.thinkaurelius.titan.diskstorage.locking.PermanentLockingException;
+import com.thinkaurelius.titan.graphdb.database.idassigner.IDPoolExhaustedException;
+import fj.data.Either;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.openecomp.sdc.be.dao.TitanClientStrategy;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
@@ -15,23 +19,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import com.thinkaurelius.titan.core.InvalidElementException;
-import com.thinkaurelius.titan.core.InvalidIDException;
-import com.thinkaurelius.titan.core.PropertyKey;
-import com.thinkaurelius.titan.core.QueryException;
-import com.thinkaurelius.titan.core.SchemaViolationException;
-import com.thinkaurelius.titan.core.TitanConfigurationException;
-import com.thinkaurelius.titan.core.TitanFactory;
-import com.thinkaurelius.titan.core.TitanGraph;
-import com.thinkaurelius.titan.core.schema.ConsistencyModifier;
-import com.thinkaurelius.titan.core.schema.TitanGraphIndex;
-import com.thinkaurelius.titan.core.schema.TitanManagement;
-import com.thinkaurelius.titan.core.util.TitanCleanup;
-import com.thinkaurelius.titan.diskstorage.ResourceUnavailableException;
-import com.thinkaurelius.titan.diskstorage.locking.PermanentLockingException;
-import com.thinkaurelius.titan.graphdb.database.idassigner.IDPoolExhaustedException;
-
-import fj.data.Either;
+import javax.annotation.PostConstruct;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 @Component("titan-client")
 public class InMemoryTitanGraphClient extends TitanGraphClient {

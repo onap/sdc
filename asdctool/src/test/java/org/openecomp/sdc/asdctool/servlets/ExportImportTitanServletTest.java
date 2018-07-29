@@ -1,12 +1,10 @@
 package org.openecomp.sdc.asdctool.servlets;
 
-import java.io.File;
-
-import javax.ws.rs.core.Response;
-
+import com.thinkaurelius.titan.core.TitanGraph;
 import org.junit.Test;
 
-import com.thinkaurelius.titan.core.TitanGraph;
+import javax.ws.rs.core.Response;
+import java.io.File;
 
 public class ExportImportTitanServletTest {
 

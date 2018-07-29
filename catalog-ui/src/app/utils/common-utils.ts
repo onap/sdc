@@ -23,6 +23,7 @@ import {Module, AttributeModel, ResourceInstance, PropertyModel, InputFEModel, O
 import {ComponentInstanceFactory} from "./component-instance-factory";
 import {InputBEModel, PropertyBEModel, RelationshipModel} from "app/models";
 import { PolicyInstance } from "app/models/graph/zones/policy-instance";
+import { GroupInstance } from "../models/graph/zones/group-instance";
 
 export class CommonUtils {
 
@@ -125,6 +126,17 @@ export class CommonUtils {
         }
 
         return policies;
+    }
+    static initGroups = (groupsObj: Array<GroupInstance>):Array<GroupInstance> => {
+        let groups = new Array<GroupInstance>();
+
+        if(groupsObj) {
+            _.forEach(groupsObj, (group: GroupInstance):void => {
+                groups.push(new GroupInstance(group));
+            });
+        }
+
+        return groups;
     }
 
     static initInterfaceOperations(interfaces: any): Array<OperationModel> {

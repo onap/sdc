@@ -1,8 +1,9 @@
 package org.openecomp.sdc.be.dao.utils;
 
-import org.apache.tinkerpop.gremlin.structure.T;
 import org.junit.Assert;
 import org.junit.Test;
+
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class DaoUtilsTest {
 
@@ -15,12 +16,7 @@ public class DaoUtilsTest {
 		result = DaoUtils.convertToJson(object);
 		Assert.assertEquals("{}", result);
 		
-		try {
-			result = DaoUtils.convertToJson(null);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		assertThatThrownBy(()->DaoUtils.convertToJson(null)).isInstanceOf(RuntimeException.class);
 	}
 
 	@Test

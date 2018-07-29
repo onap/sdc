@@ -20,18 +20,15 @@
 
 package org.openecomp.sdc.be.components.distribution.engine;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
+import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.model.GroupDefinition;
 import org.openecomp.sdc.be.model.GroupInstance;
 import org.openecomp.sdc.be.model.GroupInstanceProperty;
 import org.openecomp.sdc.be.model.GroupProperty;
 import org.openecomp.sdc.common.api.Constants;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class VfModuleArtifactPayload {
 
@@ -109,7 +106,7 @@ public class VfModuleArtifactPayload {
 
     public void setProperties(List<GroupInstanceProperty> properties) {
         this.properties  = properties.stream().filter(p -> !p.getName().equals(Constants.IS_BASE)).collect(
-                    Collectors.toMap(x -> x.getName(), x -> x.getValue() == null? "":x.getValue() ));
+                    Collectors.toMap(PropertyDataDefinition::getName, x -> x.getValue() == null? "":x.getValue() ));
     }
 
     public static int compareByGroupName(VfModuleArtifactPayload art1, VfModuleArtifactPayload art2) {

@@ -20,14 +20,18 @@
 
 package org.openecomp.sdc.be.info;
 
-import java.util.List;
-
 import org.openecomp.sdc.be.model.GroupDefinition;
 import org.openecomp.sdc.be.model.GroupInstance;
 import org.openecomp.sdc.be.model.GroupProperty;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 public class GroupDefinitionInfo {
     private String name;
+
+    private String description;
 
     // the id is unique per group instance on graph.
     private String uniqueId;
@@ -48,11 +52,13 @@ public class GroupDefinitionInfo {
     private String invariantUUID;
     private String customizationUUID;
 
-    Boolean isBase = null;
+    private Boolean isBase = null;
 
     // artifacts - list of artifact uid. All artifacts in the group must already
     // be uploaded to the VF
     private List<ArtifactDefinitionInfo> artifacts;
+
+    private Map<String, String> members;
 
     private List<? extends GroupProperty> properties;
 
@@ -62,17 +68,20 @@ public class GroupDefinitionInfo {
 
     public GroupDefinitionInfo(GroupDefinition other) {
         this.setName(other.getName());
+        this.setDescription(other.getDescription());
         this.setUniqueId(other.getUniqueId());
         this.setVersion(other.getVersion());
         this.setGroupUUID(other.getGroupUUID());
         this.setInvariantUUID(other.getInvariantUUID());
         this.setProperties(other.convertToGroupProperties());
-
-
+        if (other.getMembers() != null) {
+            this.members = new HashMap<>(other.getMembers());
+        }
     }
 
     public GroupDefinitionInfo(GroupInstance other) {
         this.setName(other.getGroupName());
+        this.setDescription(other.getDescription());
         this.setUniqueId(other.getGroupUid());
         this.setGroupInstanceUniqueId(other.getUniqueId());
         this.setVersion(other.getVersion());
@@ -80,8 +89,6 @@ public class GroupDefinitionInfo {
         this.setCustomizationUUID(other.getCustomizationUUID());
         this.setInvariantUUID(other.getInvariantUUID());
         this.setProperties(other.convertToGroupInstancesProperties());
-
-
     }
 
     public String getInvariantUUID() {
@@ -98,6 +105,14 @@ public class GroupDefinitionInfo {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public String getUniqueId() {
@@ -142,19 +157,19 @@ public class GroupDefinitionInfo {
     }
 
     public List<ArtifactDefinitionInfo> getArtifacts() {
-        return artifacts;
+        return (artifacts==null) ? null : new ArrayList<>(artifacts);
     }
 
     public void setArtifacts(List<ArtifactDefinitionInfo> artifacts) {
-        this.artifacts = artifacts;
+        this.artifacts = (artifacts==null) ? null : new ArrayList<>(artifacts);
     }
 
-    public List<? extends GroupProperty> getProperties() {
-        return properties;
+    public List<GroupProperty> getProperties() {
+        return (properties==null) ? null : new ArrayList<>(properties);
     }
 
     public void setProperties(List<? extends GroupProperty> properties) {
-        this.properties = properties;
+        this.properties = (properties==null) ? null : new ArrayList<>(properties);
     }
 
 
@@ -165,6 +180,14 @@ public class GroupDefinitionInfo {
 
     public void setGroupInstanceUniqueId(String groupInstanceUniqueId) {
         this.groupInstanceUniqueId = groupInstanceUniqueId;
+    }
+
+    public Map<String, String> getMembers() {
+        return members;
+    }
+
+    public void setMembers(Map<String, String> members) {
+        this.members = members;
     }
 
     @Override

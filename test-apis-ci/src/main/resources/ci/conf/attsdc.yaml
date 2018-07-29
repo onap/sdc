@@ -1,6 +1,6 @@
 outputFolder: target
 reportName: index.html
-catalogBeHost: localhost
+catalogBeHost: 192.168.33.10
 catalogFeHost: fehost
 #QA-SCRUM1
 #catalogBeHost: 135.21.125.97
@@ -40,9 +40,9 @@ cassandraTruststorePath : /path/path
 cassandraTruststorePassword : 123123
 cassandraAuditKeySpace: sdcaudit
 cassandraArtifactKeySpace: sdcartifact
-url: http://localhost:8181/sdc1/proxy-designer1#/dashboard
+url: http://localhost:8285/sdc1
 
-sdcHttpMethod: https
+sdcHttpMethod: http
 localDataCenter: DC-Automate01
 
 stopOnClassFailure: false

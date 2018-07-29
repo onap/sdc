@@ -1,12 +1,6 @@
 package org.openecomp.sdc.be.components.impl.utils;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
+import com.google.common.collect.ImmutableMap;
 import org.junit.Test;
 import org.openecomp.sdc.be.components.utils.PolicyTypeBuilder;
 import org.openecomp.sdc.be.components.utils.PropertyDataDefinitionBuilder;
@@ -15,7 +9,12 @@ import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.tosca.constraints.GreaterThanConstraint;
 import org.openecomp.sdc.be.model.tosca.constraints.MinLengthConstraint;
 
-import com.google.common.collect.ImmutableMap;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 
 public class PolicyTypeImportUtilsTest {
@@ -64,6 +63,22 @@ public class PolicyTypeImportUtilsTest {
     }
 
     @Test
+    public void whenNameIsDifferent_returnFalse() {
+        PolicyTypeDefinition type1 = createPolicyTypeWithAllFields();
+        PolicyTypeDefinition type2 = createPolicyTypeWithAllFields();
+        type2.setName("newName");
+        assertThat(PolicyTypeImportUtils.isPolicyTypesEquals(type1, type2)).isFalse();
+    }
+
+    @Test
+    public void whenIconIsDifferent_returnFalse() {
+        PolicyTypeDefinition type1 = createPolicyTypeWithAllFields();
+        PolicyTypeDefinition type2 = createPolicyTypeWithAllFields();
+        type2.setIcon("newIcon");
+        assertThat(PolicyTypeImportUtils.isPolicyTypesEquals(type1, type2)).isFalse();
+    }
+
+    @Test
     public void isPolicyTypesEquals_whenDescriptionIsDifferent_returnFalse() {
         PolicyTypeDefinition type1 = createPolicyTypeWithAllFields();
         PolicyTypeDefinition type2 = createPolicyTypeWithAllFields();
@@ -101,6 +116,19 @@ public class PolicyTypeImportUtilsTest {
         PolicyTypeDefinition type2 = createPolicyTypeWithAllFields();
         type2.setMetadata(ImmutableMap.of("newKey", "newVal"));
         assertThat(PolicyTypeImportUtils.isPolicyTypesEquals(type1, type2)).isFalse();
+    }
+
+    @Test
+    public void whenBothPropertiesListNull_returnTrue() {
+        assertThat(PolicyTypeImportUtils.isPolicyTypesEquals( new PolicyTypeDefinition(),  new PolicyTypeDefinition())).isTrue();
+    }
+
+    @Test
+    public void whenOnePropertiesListIsNullAndSecondOneIsEmpty_returnTrue() {
+        PolicyTypeDefinition noProperties = new PolicyTypeDefinition();
+        PolicyTypeDefinition emptyProperties = new PolicyTypeBuilder().setProperties(Collections.emptyList()).build();
+        assertThat(PolicyTypeImportUtils.isPolicyTypesEquals(noProperties, emptyProperties)).isTrue();
+        assertThat(PolicyTypeImportUtils.isPolicyTypesEquals(emptyProperties, noProperties)).isTrue();
     }
 
     @Test
@@ -231,6 +259,8 @@ public class PolicyTypeImportUtilsTest {
                 .setCreationTime(System.currentTimeMillis())
                 .setTargets(getTargets())
                 .setOwner("owner")
+                .setName("name")
+                .setIcon("icon")
                 .setMetadata(ImmutableMap.of("key1", "val1", "key2", "val2"))
                 .build();
     }

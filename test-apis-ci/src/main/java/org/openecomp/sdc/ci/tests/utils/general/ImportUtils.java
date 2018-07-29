@@ -20,10 +20,10 @@
 
 package org.openecomp.sdc.ci.tests.utils.general;
 
+import org.openecomp.sdc.ci.tests.datatypes.ImportReqDetails;
+
 import java.io.IOException;
 import java.util.List;
-
-import org.openecomp.sdc.ci.tests.datatypes.ImportReqDetails;
 
 public class ImportUtils {
 

@@ -20,51 +20,39 @@
 
 package org.openecomp.sdc.be.model.tosca.constraints;
 
-import java.io.Serializable;
-
-import javax.validation.constraints.NotNull;
-
 import org.openecomp.sdc.be.model.tosca.ToscaType;
 import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintValueDoNotMatchPropertyTypeException;
 import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintViolationException;
 
-//import alien4cloud.json.deserializer.TextDeserializer;
-//import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import javax.validation.constraints.NotNull;
 
-public class LessOrEqualConstraint extends AbstractComparablePropertyConstraint implements Serializable {
+public class LessOrEqualConstraint extends AbstractComparablePropertyConstraint {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -4907864317687138678L;
+    @NotNull
+    private String lessOrEqual;
 
-	// @JsonDeserialize(using = TextDeserializer.class)
-	@NotNull
-	private String lessOrEqual;
+    public LessOrEqualConstraint(String lessOrEqual) {
+        this.lessOrEqual = lessOrEqual;
+    }
 
-	public LessOrEqualConstraint(String lessOrEqual) {
-		super();
-		this.lessOrEqual = lessOrEqual;
-	}
+    @Override
+    public void initialize(ToscaType propertyType) throws ConstraintValueDoNotMatchPropertyTypeException {
+        initialize(lessOrEqual, propertyType);
+    }
 
-	@Override
-	public void initialize(ToscaType propertyType) throws ConstraintValueDoNotMatchPropertyTypeException {
-		initialize(lessOrEqual, propertyType);
-	}
+    @Override
+    protected void doValidate(Object propertyValue) throws ConstraintViolationException {
+        if (getComparable().compareTo(propertyValue) < 0) {
+            throw new ConstraintViolationException(propertyValue + " >= " + lessOrEqual);
+        }
+    }
 
-	@Override
-	protected void doValidate(Object propertyValue) throws ConstraintViolationException {
-		if (getComparable().compareTo(propertyValue) < 0) {
-			throw new ConstraintViolationException(propertyValue + " >= " + lessOrEqual);
-		}
-	}
+    public String getLessOrEqual() {
+        return lessOrEqual;
+    }
 
-	public String getLessOrEqual() {
-		return lessOrEqual;
-	}
-
-	public void setLessOrEqual(String lessOrEqual) {
-		this.lessOrEqual = lessOrEqual;
-	}
+    public void setLessOrEqual(String lessOrEqual) {
+        this.lessOrEqual = lessOrEqual;
+    }
 
 }

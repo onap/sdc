@@ -1,14 +1,10 @@
 package org.openecomp.sdc.be.dao.utils;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.apache.tinkerpop.gremlin.structure.T;
 import org.junit.Assert;
 import org.junit.Test;
+
+import java.util.*;
 
 public class CollectionUtilsTest {
 

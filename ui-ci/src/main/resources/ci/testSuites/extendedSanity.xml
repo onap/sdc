@@ -16,7 +16,7 @@
 			  </methods>
 		</class>
    		<class name="org.openecomp.sdc.ci.tests.execute.sanity.CatalogLeftPanelTest"/>
-		<class name="org.openecomp.sdc.ci.tests.execute.sanity.Vf"/>
+		<!--<class name="org.openecomp.sdc.ci.tests.execute.sanity.Vf"/>-->
 		<class name="org.openecomp.sdc.ci.tests.execute.sanity.VfAPI"/>
 		<class name="org.openecomp.sdc.ci.tests.execute.sanity.Service"/>
 		<class name="org.openecomp.sdc.ci.tests.execute.sanity.ImportVFCAsset"/>
@@ -28,6 +28,13 @@
 		<class name="org.openecomp.sdc.ci.tests.execute.sanity.AdminUserManagment"/>
 		<class name="org.openecomp.sdc.ci.tests.execute.sanity.PNF"/>
 		<class name="org.openecomp.sdc.ci.tests.execute.sanity.PropertiesAssignment"/>
+		<class name="org.openecomp.sdc.ci.tests.execute.sanity.PropertiesAssignmentUpdateFlow">
+				<methods>
+					<exclude name="updatePropertyChangeVfiVersionTest"/>
+					<exclude name="deletePropertyChangeVfiVersionTest"/>
+				</methods>
+		</class>
+		<class name="org.openecomp.sdc.ci.tests.execute.sanity.ArchiveRestoreTest"/>
 		<!--  <class name="org.openecomp.sdc.ci.tests.execute.sanity.Product"/> -->
 		
 		<class name="org.openecomp.sdc.ci.tests.US.ImportUpdateInformationalDeploymentArtifacts"/>
@@ -36,7 +43,8 @@
         <class name="org.openecomp.sdc.ci.tests.US.RemoveRestrictionOfDeploymentArtifacts"/>
 		<class name="org.openecomp.sdc.ci.tests.execute.sanity.OnboardingFlowsThroughAPI"/>
 		<class name="org.openecomp.sdc.ci.tests.execute.sanity.PortMirroring"/>
-        
+        <class name="org.openecomp.sdc.ci.tests.execute.sanity.Annotation"/>
+		<class name="org.openecomp.sdc.ci.tests.execute.sanity.UpgradeServices"/>
         <!--  <class name="org.openecomp.sdc.ci.tests.US.AddComponentInstancesArtifactsInCsar"/> -->
 						
     </classes>

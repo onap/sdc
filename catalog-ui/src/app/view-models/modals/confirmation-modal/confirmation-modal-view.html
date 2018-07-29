@@ -1,4 +1,4 @@
-<sdc-modal modal="modalInstanceConfirmation" type="classic" class="w-sdc-modal-confirmation modal-type-{{confirmationModalModel.type}}" header="{{confirmationModalModel.title}}" show-close-button="true">
+<ng1-modal modal="modalInstanceConfirmation" type="classic" class="w-sdc-modal-confirmation modal-type-{{confirmationModalModel.type}}" header="{{confirmationModalModel.title}}" show-close-button="true">
     <form novalidate class="w-sdc-form" name="editForm">
         <label class="i-sdc-form-label required w-sdc-modal-label" data-ng-bind-html="confirmationModalModel.message"></label>
 
@@ -24,6 +24,6 @@
     <div class="w-sdc-modal-footer classic">
         <button class="tlv-btn {{okButtonColor}}" data-tests-id="OK" data-ng-click="ok()" data-ng-disabled="confirmationModalModel.showComment===true && (!comment.text || comment.text && comment.text.length===0)">OK</button>
         <button class="tlv-btn grey" data-ng-if="hideCancelButton===false" data-tests-id="Cancel" data-ng-click="cancel()" >Cancel</button>
-        <button class="tlv-btn blue add-property-add-another" data-ng-if="isNew" data-ng-click="saveAndAnother()" type="reset" data-ng-disabled="editForm.$invalid">Add Another</button>
+        <!--<button class="tlv-btn blue add-property-add-another" data-ng-if="isNew" data-ng-click="saveAndAnother()" type="reset" data-ng-disabled="editForm.$invalid">Add Another</button>-->
     </div>
-</sdc-modal>
+</ng1-modal>

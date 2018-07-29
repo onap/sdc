@@ -108,7 +108,7 @@ export class DeploymentViewModel {
     };
 
     private initRightTabs = ()=> {
-        if (this.$scope.currentComponent.groups) {
+        if (this.$scope.currentComponent.modules) {
             this.$templateCache.put("hierarchy-view.html", require('app/view-models/tabs/hierarchy/hierarchy-view.html'));
             let hierarchyTab = new Tab("hierarchy-view.html", 'Sdc.ViewModels.HierarchyViewModel', 'hierarchy', this.$scope.isViewMode(), this.$scope.currentComponent, 'hierarchy');
             this.$scope.tabs.push(hierarchyTab)
@@ -116,11 +116,11 @@ export class DeploymentViewModel {
     }
 
     private initGraphData = ():void => {
-        if(!this.$scope.component.componentInstances || !this.$scope.component.componentInstancesRelations || !this.$scope.component.groups) {
+        if(!this.$scope.component.componentInstances || !this.$scope.component.componentInstancesRelations || !this.$scope.component.modules) {
             this.ComponentServiceNg2.getDeploymentGraphData(this.$scope.component).subscribe((response:ComponentGenericResponse) => {
                 this.$scope.component.componentInstances = response.componentInstances;
                 this.$scope.component.componentInstancesRelations = response.componentInstancesRelations;
-                this.$scope.component.groups = response.groups;
+                this.$scope.component.modules = response.modules;
                 this.$scope.isLoading = false;
                 this.initComponent();
                 this.initRightTabs();

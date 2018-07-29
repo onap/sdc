@@ -1,18 +1,11 @@
 package org.openecomp.sdc.be.datatypes.elements;
 
-import static org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields.DESCRIPTION;
-import static org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields.PATH_DESTINATION_PORT_NUMBER;
-import static org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields.PATH_ELEMENT_LIST;
-import static org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields.PATH_NAME;
-import static org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields.PATH_PROTOCOL;
-import static org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields.TOSCA_RESOURCE_NAME;
-import static org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields.UNIQUE_ID;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
-import java.io.Serializable;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 
-public class ForwardingPathDataDefinition extends ToscaDataDefinition implements Serializable {
+import static org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields.*;
+
+public class ForwardingPathDataDefinition extends ToscaDataDefinition {
 
     @JsonCreator
     public ForwardingPathDataDefinition() {

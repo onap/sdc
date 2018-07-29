@@ -20,76 +20,73 @@
 
 package org.openecomp.sdc.be.components.impl;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import javax.annotation.Resource;
-
+import fj.data.Either;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.components.impl.CommonImportManager.ElementTypeEnum;
-import org.openecomp.sdc.be.components.impl.ImportUtils.ToscaTagNamesEnum;
+import org.openecomp.sdc.be.components.impl.model.ToscaTypeImportData;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
-import org.openecomp.sdc.be.model.CapabilityTypeDefinition;
+import org.openecomp.sdc.be.model.CapabilityDefinition;
+import org.openecomp.sdc.be.model.ComponentInstanceProperty;
 import org.openecomp.sdc.be.model.GroupTypeDefinition;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
-import org.openecomp.sdc.be.model.operations.api.IGroupTypeOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
+import org.openecomp.sdc.be.model.operations.impl.GroupTypeOperation;
+import org.openecomp.sdc.be.model.utils.TypeCompareUtils;
+import org.openecomp.sdc.be.utils.TypeUtils;
+import org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import fj.data.Either;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Component("groupTypeImportManager")
 public class GroupTypeImportManager {
 
-    public static void main(String[] args) {
+    private static final Logger log = Logger.getLogger(GroupTypeImportManager.class);
+    private final GroupTypeOperation groupTypeOperation;
+    private final ComponentsUtils componentsUtils;
+    private final ToscaOperationFacade toscaOperationFacade;
+    private final CommonImportManager commonImportManager;
 
-        List<PropertyDefinition> properties = new ArrayList<>();
-        PropertyDefinition propertyDefintion = new PropertyDefinition();
-        propertyDefintion.setName("aaa");
-        properties.add(propertyDefintion);
-
-        List<String> allParentsProps = new ArrayList<>();
-        allParentsProps.add("aaa");
-        allParentsProps.add("bbb");
-
-        Set<String> alreadyExistPropsCollection = properties.stream().filter(p -> allParentsProps.contains(p.getName())).map(p -> p.getName()).collect(Collectors.toSet());
-        System.out.println(alreadyExistPropsCollection);
-
+    public GroupTypeImportManager(GroupTypeOperation groupTypeOperation, ComponentsUtils componentsUtils, ToscaOperationFacade toscaOperationFacade, CommonImportManager commonImportManager) {
+        this.groupTypeOperation = groupTypeOperation;
+        this.componentsUtils = componentsUtils;
+        this.toscaOperationFacade = toscaOperationFacade;
+        this.commonImportManager = commonImportManager;
     }
 
-    private static final Logger log = LoggerFactory.getLogger(GroupTypeImportManager.class);
-    @Resource
-    private IGroupTypeOperation groupTypeOperation;
-    @Resource
-    private ComponentsUtils componentsUtils;
-    @Resource
-    private ToscaOperationFacade toscaOperationFacade;
-
-    @Resource
-    private CommonImportManager commonImportManager;
-
-    public Either<List<ImmutablePair<GroupTypeDefinition, Boolean>>, ResponseFormat> createGroupTypes(String groupTypesYml) {
-        return commonImportManager.createElementTypes(groupTypesYml, elementTypeYml -> createGroupTypesFromYml(elementTypeYml), groupTypesList -> createGroupTypesByDao(groupTypesList), ElementTypeEnum.GroupType);
+    public Either<List<ImmutablePair<GroupTypeDefinition, Boolean>>, ResponseFormat> createGroupTypes(ToscaTypeImportData toscaTypeImportData) {
+        return commonImportManager.createElementTypes(toscaTypeImportData, this::createGroupTypesFromYml, this::upsertGroupTypesByDao);
     }
 
     private Either<List<GroupTypeDefinition>, ActionStatus> createGroupTypesFromYml(String groupTypesYml) {
-
-        return commonImportManager.createElementTypesFromYml(groupTypesYml, (groupTypeName, groupTypeJsonData) -> createGroupType(groupTypeName, groupTypeJsonData));
+        return commonImportManager.createElementTypesFromYml(groupTypesYml, this::createGroupType);
     }
 
-    private Either<List<ImmutablePair<GroupTypeDefinition, Boolean>>, ResponseFormat> createGroupTypesByDao(List<GroupTypeDefinition> groupTypesToCreate) {
-        return commonImportManager.createElementTypesByDao(groupTypesToCreate, groupType -> validateGroupType(groupType), groupType -> new ImmutablePair<>(ElementTypeEnum.GroupType, groupType.getType()),
-                groupTypeName -> groupTypeOperation.getLatestGroupTypeByType(groupTypeName), groupType -> groupTypeOperation.addGroupType(groupType), groupTypeOperation::upgradeGroupType);
+    private Either<List<ImmutablePair<GroupTypeDefinition, Boolean>>, ResponseFormat> upsertGroupTypesByDao(List<GroupTypeDefinition> groupTypesToCreate) {
+        return commonImportManager.createElementTypesByDao(groupTypesToCreate, this::validateGroupType, groupType -> new ImmutablePair<>(ElementTypeEnum.GROUP_TYPE, groupType.getType()),
+                groupTypeOperation::getLatestGroupTypeByType, groupTypeOperation::addGroupType, this::updateGroupType);
+    }
+
+    private Either<GroupTypeDefinition, StorageOperationStatus> updateGroupType(GroupTypeDefinition newGroupType, GroupTypeDefinition oldGroupType) {
+        Either<GroupTypeDefinition, StorageOperationStatus> validationRes = groupTypeOperation.validateUpdateProperties(newGroupType);
+        if (validationRes.isRight()) {
+            log.error("#updateGroupType - One or all properties of group type {} not valid. status is {}", newGroupType, validationRes.right().value());
+            return validationRes;
+        }
+        
+        if (TypeCompareUtils.isGroupTypesEquals(newGroupType, oldGroupType)) {
+            return TypeCompareUtils.typeAlreadyExists();
+        }
+        
+        return groupTypeOperation.updateGroupType(newGroupType, oldGroupType);
     }
 
     private Either<ActionStatus, ResponseFormat> validateGroupType(GroupTypeDefinition groupType) {
@@ -123,24 +120,24 @@ public class GroupTypeImportManager {
 
         if (toscaJson != null) {
             // Description
-            commonImportManager.setField(toscaJson, ToscaTagNamesEnum.DESCRIPTION.getElementName(), groupType::setDescription);
+            commonImportManager.setField(toscaJson, TypeUtils.ToscaTagNamesEnum.DESCRIPTION.getElementName(), groupType::setDescription);
             // Derived From
-            commonImportManager.setField(toscaJson, ToscaTagNamesEnum.DERIVED_FROM.getElementName(), groupType::setDerivedFrom);
+            commonImportManager.setField(toscaJson, TypeUtils.ToscaTagNamesEnum.DERIVED_FROM.getElementName(), groupType::setDerivedFrom);
             // Properties
-            commonImportManager.setProperties(toscaJson, groupType::setProperties);
+            CommonImportManager.setProperties(toscaJson, groupType::setProperties);
             // Metadata
-            commonImportManager.setField(toscaJson, ToscaTagNamesEnum.METADATA.getElementName(), groupType::setMetadata);
+            commonImportManager.setField(toscaJson, TypeUtils.ToscaTagNamesEnum.METADATA.getElementName(), groupType::setMetadata);
             // Capabilities
-            List<CapabilityTypeDefinition> capabilityTypes = createGroupCapabilityTypes(toscaJson);
-            groupType.setCapabilityTypes(capabilityTypes);
+            Map<String, CapabilityDefinition> capabilities = createCapabilities(toscaJson);
+            groupType.setCapabilities(capabilities);
             // Members
-            commonImportManager.setField(toscaJson, ToscaTagNamesEnum.MEMBERS.getElementName(), groupType::setMembers);
+            commonImportManager.setField(toscaJson, TypeUtils.ToscaTagNamesEnum.MEMBERS.getElementName(), groupType::setMembers);
 
             groupType.setType(groupTypeName);
 
             groupType.setHighestVersion(true);
 
-            groupType.setVersion(ImportUtils.Constants.FIRST_CERTIFIED_VERSION_VERSION);
+            groupType.setVersion(TypeUtils.FIRST_CERTIFIED_VERSION_VERSION);
         }
         return groupType;
     }
@@ -149,17 +146,17 @@ public class GroupTypeImportManager {
      * @param toscaJson
      * @return
      */
-    private List<CapabilityTypeDefinition> createGroupCapabilityTypes(Map<String, Object> toscaJson) {
+    private Map<String, CapabilityDefinition> createCapabilities(Map<String, Object> toscaJson) {
         CapabilityTypeToscaJsonHolder capabilityTypeToscaJsonHolder = new CapabilityTypeToscaJsonHolder();
-        commonImportManager.setField(toscaJson, ToscaTagNamesEnum.CAPABILITIES.getElementName(), capabilityTypeToscaJsonHolder::setCapabilityTypeToscaJson);
-        List<CapabilityTypeDefinition> capabilityTypes;
+        commonImportManager.setField(toscaJson, TypeUtils.ToscaTagNamesEnum.CAPABILITIES.getElementName(), capabilityTypeToscaJsonHolder::setCapabilityTypeToscaJson);
+        Map<String, CapabilityDefinition> capabilities;
         if (capabilityTypeToscaJsonHolder.isEmpty()) {
-            capabilityTypes = Collections.emptyList();
+            capabilities = Collections.emptyMap();
         }
         else {
-            capabilityTypes = commonImportManager.createElementTypesFromToscaJsonMap(this::createGroupCapabilityType, capabilityTypeToscaJsonHolder.getCapabilityTypeToscaJson());
+            capabilities = commonImportManager.createElementTypesMapFromToscaJsonMap(this::createCapability, capabilityTypeToscaJsonHolder.getCapabilityTypeToscaJson());
         }
-        return capabilityTypes;
+        return capabilities;
     }
     
     private class CapabilityTypeToscaJsonHolder {
@@ -178,14 +175,25 @@ public class GroupTypeImportManager {
         }
     }
     
-    private CapabilityTypeDefinition createGroupCapabilityType(String capabilityTypeName, Map<String, Object> toscaJson) {
-        CapabilityTypeDefinition capabilityType = new CapabilityTypeDefinition();
+    private CapabilityDefinition createCapability(String capabilityName, Map<String, Object> toscaJson) {
+        CapabilityDefinition capability = new CapabilityDefinition();
 
-        commonImportManager.setField(toscaJson, ToscaTagNamesEnum.TYPE.getElementName(), capabilityType::setType);
+        capability.setName(capabilityName);
+        commonImportManager.setField(toscaJson, ToscaTagNamesEnum.TYPE.getElementName(), capability::setType);
         // Properties
-        commonImportManager.setPropertiesMap(toscaJson, capabilityType::setProperties);
+        CommonImportManager.setProperties(toscaJson, pl -> capability.setProperties(map(pl)));
 
-        return capabilityType;
+        return capability;
+    }
+
+    /**
+     * @param pl
+     * @return
+     */
+    private List<ComponentInstanceProperty> map(List<PropertyDefinition> pl) {
+        return pl.stream()
+                .map(ComponentInstanceProperty::new)
+                .collect(Collectors.toList());
     }
 
 }

@@ -20,29 +20,12 @@
 
 package org.openecomp.sdc.be.servlets;
 
-import java.lang.reflect.Type;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-
-import javax.inject.Singleton;
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
+import com.jcabi.aspects.Loggable;
+import fj.data.Either;
+import io.swagger.annotations.*;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -58,29 +41,31 @@ import org.openecomp.sdc.be.model.operations.impl.PropertyOperation.PropertyCons
 import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
 import org.openecomp.sdc.be.resources.data.EntryData;
 import org.openecomp.sdc.common.api.Constants;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.web.context.WebApplicationContext;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
-import com.jcabi.aspects.Loggable;
+import javax.inject.Singleton;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.lang.reflect.Type;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
-import fj.data.Either;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/v1/catalog")
 @Api(value = "Resource Property Servlet", description = "Resource Property Servlet")
 @Singleton
 public class PropertyServlet extends BeGenericServlet {
 
-    private static final Logger log = LoggerFactory.getLogger(PropertyServlet.class);
+    private static final Logger log = Logger.getLogger(PropertyServlet.class.getName());
 
     @POST
     @Path("resources/{resourceId}/properties")
@@ -279,7 +264,7 @@ public class PropertyServlet extends BeGenericServlet {
         JSONParser parser = new JSONParser();
         JSONObject root;
         try {
-            Map<String, PropertyDefinition> properties = new HashMap<String, PropertyDefinition>();
+            Map<String, PropertyDefinition> properties = new HashMap<>();
             root = (JSONObject) parser.parse(data);
 
             Set entrySet = root.entrySet();
@@ -324,8 +309,7 @@ public class PropertyServlet extends BeGenericServlet {
         }
         String value = either.left().value();
         try {
-            JSONObject root = (JSONObject) new JSONParser().parse(value);
-            return root;
+            return (JSONObject) new JSONParser().parse(value);
         } catch (ParseException e) {
             log.info("failed to convert input to json");
             log.debug("failed to convert to json", e);
@@ -379,8 +363,7 @@ public class PropertyServlet extends BeGenericServlet {
     private PropertyBusinessLogic getPropertyBL(ServletContext context) {
         WebAppContextWrapper webApplicationContextWrapper = (WebAppContextWrapper) context.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR);
         WebApplicationContext webApplicationContext = webApplicationContextWrapper.getWebAppContext(context);
-        PropertyBusinessLogic propertytBl = webApplicationContext.getBean(PropertyBusinessLogic.class);
-        return propertytBl;
+        return webApplicationContext.getBean(PropertyBusinessLogic.class);
     }
 
 }

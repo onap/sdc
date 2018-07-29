@@ -33,16 +33,11 @@ import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
 import org.openecomp.sdc.be.datatypes.components.ResourceMetadataDataDefinition;
+import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.WebAppContextWrapper;
-import org.openecomp.sdc.be.model.ArtifactDefinition;
-import org.openecomp.sdc.be.model.Component;
-import org.openecomp.sdc.be.model.ComponentMetadataDefinition;
-import org.openecomp.sdc.be.model.LifecycleStateEnum;
-import org.openecomp.sdc.be.model.Resource;
-import org.openecomp.sdc.be.model.Service;
-import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.*;
 import org.openecomp.sdc.be.model.jsontitan.datamodel.ToscaElement;
 import org.openecomp.sdc.be.model.jsontitan.datamodel.ToscaElementTypeEnum;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaElementLifecycleOperation;
@@ -139,34 +134,38 @@ public class LifecycleTestBase {
     }
 
     public static <T> Answer<T> createAnswer(final T value) {
-        Answer<T> dummy = new Answer<T>() {
+        return new Answer<T>() {
             @Override
             public T answer(InvocationOnMock invocation) throws Throwable {
                 return value;
             }
 
         };
-        return dummy;
     }
 
     protected Resource createResourceObject() {
+        return createResourceObject(ComponentTypeEnum.RESOURCE);
+    }
+
+    protected Resource createResourceObject(ComponentTypeEnum componentType) {
         Resource resource = new Resource();
         resource.setUniqueId("uid");
+        resource.setComponentType(componentType);
         resource.setName("MyResourceName");
         resource.setUniqueId("uid");
         resource.addCategory("VoIP", "INfra");
         resource.setDescription("My short description");
-        List<String> tgs = new ArrayList<String>();
+        List<String> tgs = new ArrayList<>();
         tgs.add("test");
         resource.setTags(tgs);
-        List<String> template = new ArrayList<String>();
+        List<String> template = new ArrayList<>();
         template.add("Root");
         resource.setDerivedFrom(template);
         resource.setVendorName("Motorola");
         resource.setVendorRelease("1.0.0");
         resource.setContactId("yavivi");
         resource.setIcon("MyIcon.jpg");
-        resource.setToscaType(ToscaElementTypeEnum.NodeType.getValue());
+        resource.setToscaType(ToscaElementTypeEnum.TOPOLOGY_TEMPLATE.getValue());
 
         return resource;
     }
@@ -181,17 +180,17 @@ public class LifecycleTestBase {
         resource.setName("MyResourceVFCMTName");
         resource.addCategory("VoIP", "INfra");
         resource.setDescription("My short description");
-        List<String> tgs = new ArrayList<String>();
+        List<String> tgs = new ArrayList<>();
         tgs.add("test1");
         resource.setTags(tgs);
-        List<String> template = new ArrayList<String>();
+        List<String> template = new ArrayList<>();
         template.add("Root");
         resource.setDerivedFrom(template);
         resource.setVendorName("Motorola");
         resource.setVendorRelease("1.0.0");
         resource.setContactId("yavivi");
         resource.setIcon("MyIcon.jpg");
-        resource.setToscaType(ToscaElementTypeEnum.NodeType.getValue());
+        resource.setToscaType(ToscaElementTypeEnum.NODE_TYPE.getValue());
 
         return resource;
     }
@@ -202,10 +201,10 @@ public class LifecycleTestBase {
         service.setUniqueId("sid");
         service.addCategory("VoIP", null);
         service.setDescription("My short description");
-        List<String> tgs = new ArrayList<String>();
+        List<String> tgs = new ArrayList<>();
         tgs.add("test");
         service.setTags(tgs);
-        List<String> template = new ArrayList<String>();
+        List<String> template = new ArrayList<>();
         template.add("Root");
         service.setContactId("aa0001");
         service.setIcon("MyIcon.jpg");

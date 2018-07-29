@@ -1,15 +1,7 @@
 package org.openecomp.sdc.be.model.cache;
 
-import java.nio.ByteBuffer;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.function.Function;
-
+import fj.data.Either;
+import mockit.Deencapsulation;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.junit.Assert;
@@ -31,654 +23,511 @@ import org.openecomp.sdc.be.model.Product;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
-import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.resources.data.ComponentCacheData;
 import org.openecomp.sdc.be.unittests.utils.ModelConfDependentTest;
-import org.openecomp.sdc.common.util.SerializationUtils;
-import org.openecomp.sdc.common.util.ZipUtil;
 
-import fj.data.Either;
-import mockit.Deencapsulation;
+import java.util.*;
+import java.util.function.Function;
 
 public class ComponentCacheTest extends ModelConfDependentTest {
 
-	@InjectMocks
-	ComponentCache testSubject;
-
-	@Mock
-	ComponentCassandraDao componentCassandraDao;
-
-	@Mock
-	ToscaOperationFacade toscaOperationFacade;
-
-	@Before
-	public void setUpMocks() throws Exception {
-		MockitoAnnotations.initMocks(this);
-	}
-
-	@Test
-	public void testInit() throws Exception {
-		// default test
-		testSubject.init();
-	}
-
-	@Test
-	public void testIsEnabled() throws Exception {
+    @InjectMocks
+    ComponentCache testSubject;
 
-		boolean result;
+    @Mock
+    ComponentCassandraDao componentCassandraDao;
 
-		// default test
-
-		result = testSubject.isEnabled();
-	}
-
-	@Test
-	public void testSetEnabled() throws Exception {
+    @Mock
+    ToscaOperationFacade toscaOperationFacade;
 
-		boolean enabled = false;
-
-		// default test
+    @Before
+    public void setUpMocks() throws Exception {
+        MockitoAnnotations.initMocks(this);
+    }
 
-		testSubject.setEnabled(enabled);
-	}
-
-	@Test
-	public void testGetComponentNotFound() throws Exception {
-
-		String componentUid = "mock";
-		Long lastModificationTime = null;
-		Function<Component, Component> filterFieldsFunc = null;
-		Either<Component, ActionStatus> result;
-
-		Mockito.when(componentCassandraDao.getComponent("mock"))
-				.thenReturn(Either.right(ActionStatus.ARTIFACT_NOT_FOUND));
-		// default test
-		result = testSubject.getComponent(componentUid, lastModificationTime, filterFieldsFunc);
-	}
-
-	@Test
-	public void testGetComponentInvalidDate() throws Exception {
-
-		String componentUid = "mock";
-		Long lastModificationTime = 0L;
-		Function<Component, Component> filterFieldsFunc = null;
-		Either<Component, ActionStatus> result;
-
-		ComponentCacheData a = new ComponentCacheData();
-		a.setModificationTime(new Date());
-		Mockito.when(componentCassandraDao.getComponent("mock")).thenReturn(Either.left(a));
-		// default test
-		result = testSubject.getComponent(componentUid, lastModificationTime, filterFieldsFunc);
-	}
-
-	@Test
-	public void testGetComponentDeserializeError() throws Exception {
+    @Test
+    public void testInit() throws Exception {
+        // default test
+        testSubject.init();
+    }
 
-		String componentUid = "mock";
-		Long lastModificationTime = 0L;
-		Function<Component, Component> filterFieldsFunc = null;
-		Either<Component, ActionStatus> result;
+    @Test
+    public void testIsEnabled() throws Exception {
 
-		ComponentCacheData a = new ComponentCacheData();
-		a.setModificationTime(new Date(0L));
-		a.setType(NodeTypeEnum.Resource.getName());
-		Mockito.when(componentCassandraDao.getComponent("mock")).thenReturn(Either.left(a));
-		// default test
-		result = testSubject.getComponent(componentUid, lastModificationTime, filterFieldsFunc);
-	}
+        boolean result;
 
-	@Test
-	public void testGetComponent() throws Exception {
+        // default test
 
-		String componentUid = "mock";
-		Long lastModificationTime = 0L;
-		Function<Component, Component> filterFieldsFunc = null;
-		Either<Component, ActionStatus> result;
+        result = testSubject.isEnabled();
+    }
 
-		ComponentCacheData a = new ComponentCacheData();
-		a.setModificationTime(new Date(0L));
-		a.setType(NodeTypeEnum.Resource.getName());
-		Resource resource = new Resource();
-		Either<byte[], Boolean> serialize = SerializationUtils.serializeExt(resource);
-		byte[] value = serialize.left().value();
-		a.setData(ByteBuffer.wrap(value));
-		Mockito.when(componentCassandraDao.getComponent("mock")).thenReturn(Either.left(a));
-		// default test
-		result = testSubject.getComponent(componentUid, lastModificationTime, filterFieldsFunc);
-	}
+    @Test
+    public void testSetEnabled() throws Exception {
 
-	@Test
-	public void testGetAllComponentIdTimeAndType() throws Exception {
+        boolean enabled = false;
 
-		Either<List<ComponentCacheData>, ActionStatus> result;
+        // default test
 
-		// default test
+        testSubject.setEnabled(enabled);
+    }
 
-		result = testSubject.getAllComponentIdTimeAndType();
-		testSubject.setEnabled(false);
-		result = testSubject.getAllComponentIdTimeAndType();
-	}
+    @Test
+    public void testGetComponentNotFound() throws Exception {
 
-	@Test
-	public void testUpdateCatalogInMemoryCacheWithCertified() throws Exception {
+        String componentUid = "mock";
+        Long lastModificationTime = null;
+        Function<Component, Component> filterFieldsFunc = null;
+        Either<Component, ActionStatus> result;
 
-		List<Component> foundComponents = new LinkedList<>();
+        Mockito.when(componentCassandraDao.getComponent("mock"))
+                .thenReturn(Either.right(ActionStatus.ARTIFACT_NOT_FOUND));
+        // default test
+        result = testSubject.getComponent(componentUid, lastModificationTime, filterFieldsFunc);
+    }
 
-		// default test
-		testSubject.init();
-		Deencapsulation.invoke(testSubject, "updateCatalogInMemoryCacheWithCertified", foundComponents,
-				ComponentTypeEnum.RESOURCE);
-	}
+    @Test
+    public void testGetComponentInvalidDate() throws Exception {
 
-	@Test
-	public void testGetDataFromInMemoryCache() throws Exception {
+        String componentUid = "mock";
+        Long lastModificationTime = 0L;
+        Function<Component, Component> filterFieldsFunc = null;
+        Either<Component, ActionStatus> result;
 
-		Set<String> components = new HashSet<>();
-		components.add("mock");
-		ComponentTypeEnum componentTypeEnum = null;
-		List<Component> result;
+        ComponentCacheData a = new ComponentCacheData();
+        a.setModificationTime(new Date());
+        Mockito.when(componentCassandraDao.getComponent("mock")).thenReturn(Either.left(a));
+        // default test
+        result = testSubject.getComponent(componentUid, lastModificationTime, filterFieldsFunc);
+    }
 
-		// default test
-		testSubject.init();
-		result = Deencapsulation.invoke(testSubject, "getDataFromInMemoryCache", components,
-				ComponentTypeEnum.RESOURCE);
-	}
+    @Test
+    public void testGetComponentDeserializeError() throws Exception {
 
-	@Test
-	public void testGetComponents() throws Exception {
+        String componentUid = "mock";
+        Long lastModificationTime = 0L;
+        Function<Component, Component> filterFieldsFunc = null;
+        Either<Component, ActionStatus> result;
 
-		Set<String> components = new HashSet<>();
-		Function<List<Component>, List<Component>> filterFieldsFunc = new Function<List<Component>, List<Component>>() {
+        ComponentCacheData a = new ComponentCacheData();
+        a.setModificationTime(new Date(0L));
+        a.setType(NodeTypeEnum.Resource.getName());
+        Mockito.when(componentCassandraDao.getComponent("mock")).thenReturn(Either.left(a));
+        // default test
+        result = testSubject.getComponent(componentUid, lastModificationTime, filterFieldsFunc);
+    }
 
-			@Override
-			public List<Component> apply(List<Component> t) {
-				return t;
-			}
-		};
-		Either<ImmutableTriple<List<Component>, List<Component>, Set<String>>, ActionStatus> result;
+    @Test
+    public void testGetAllComponentIdTimeAndType() throws Exception {
 
-		List<ComponentCacheData> list = new LinkedList<>();
-		Mockito.when(componentCassandraDao.getComponents(Mockito.any(List.class))).thenReturn(Either.left(list));
+        Either<List<ComponentCacheData>, ActionStatus> result;
 
-		// default test
-		testSubject.init();
-		result = testSubject.getComponents(components, filterFieldsFunc);
-	}
+        // default test
 
-	@Test
-	public void testGetComponentsNotAllowed() throws Exception {
+        result = testSubject.getAllComponentIdTimeAndType();
+        testSubject.setEnabled(false);
+        result = testSubject.getAllComponentIdTimeAndType();
+    }
 
-		Set<String> components = new HashSet<>();
-		Function<List<Component>, List<Component>> filterFieldsFunc = null;
+    @Test
+    public void testUpdateCatalogInMemoryCacheWithCertified() throws Exception {
 
-		Either<ImmutableTriple<List<Component>, List<Component>, Set<String>>, ActionStatus> result;
+        List<Component> foundComponents = new LinkedList<>();
 
-		// default test
-		testSubject.setEnabled(false);
-		result = testSubject.getComponents(components, filterFieldsFunc);
-	}
+        // default test
+        testSubject.init();
+        Deencapsulation.invoke(testSubject, "updateCatalogInMemoryCacheWithCertified", foundComponents,
+                ComponentTypeEnum.RESOURCE);
+    }
 
-	@Test
-	public void testGetComponentsCassndraError() throws Exception {
+    @Test
+    public void testGetDataFromInMemoryCache() throws Exception {
 
-		Set<String> components = new HashSet<>();
-		Function<List<Component>, List<Component>> filterFieldsFunc = null;
-		Either<ImmutableTriple<List<Component>, List<Component>, Set<String>>, ActionStatus> result;
+        Set<String> components = new HashSet<>();
+        components.add("mock");
+        ComponentTypeEnum componentTypeEnum = null;
+        List<Component> result;
 
-		Mockito.when(componentCassandraDao.getComponents(Mockito.any(List.class)))
-				.thenReturn(Either.right(ActionStatus.GENERAL_ERROR));
+        // default test
+        testSubject.init();
+        result = Deencapsulation.invoke(testSubject, "getDataFromInMemoryCache", components,
+                ComponentTypeEnum.RESOURCE);
+    }
+
+    @Test
+    public void testGetComponents() throws Exception {
 
-		// default test
-		testSubject.init();
-		result = testSubject.getComponents(components, filterFieldsFunc);
-	}
+        Set<String> components = new HashSet<>();
+        Function<List<Component>, List<Component>> filterFieldsFunc = new Function<List<Component>, List<Component>>() {
 
-	@Test
-	public void testGetComponentsForLeftPanel() throws Exception {
+            @Override
+            public List<Component> apply(List<Component> t) {
+                return t;
+            }
+        };
+        Either<ImmutableTriple<List<Component>, List<Component>, Set<String>>, ActionStatus> result;
+
+        List<ComponentCacheData> list = new LinkedList<>();
+        Mockito.when(componentCassandraDao.getComponents(Mockito.any(List.class))).thenReturn(Either.left(list));
+
+        // default test
+        testSubject.init();
+        result = testSubject.getComponents(components, filterFieldsFunc);
+    }
+
+    @Test
+    public void testGetComponentsNotAllowed() throws Exception {
+
+        Set<String> components = new HashSet<>();
+        Function<List<Component>, List<Component>> filterFieldsFunc = null;
+
+        Either<ImmutableTriple<List<Component>, List<Component>, Set<String>>, ActionStatus> result;
+
+        // default test
+        testSubject.setEnabled(false);
+        result = testSubject.getComponents(components, filterFieldsFunc);
+    }
+
+    @Test
+    public void testGetComponentsCassndraError() throws Exception {
+
+        Set<String> components = new HashSet<>();
+        Function<List<Component>, List<Component>> filterFieldsFunc = null;
+        Either<ImmutableTriple<List<Component>, List<Component>, Set<String>>, ActionStatus> result;
+
+        Mockito.when(componentCassandraDao.getComponents(Mockito.any(List.class)))
+                .thenReturn(Either.right(ActionStatus.GENERAL_ERROR));
+
+        // default test
+        testSubject.init();
+        result = testSubject.getComponents(components, filterFieldsFunc);
+    }
+
+    @Test
+    public void testGetComponentsForLeftPanel() throws Exception {
+
+        ComponentTypeEnum componentTypeEnum = null;
+        String internalComponentType = "mock";
+        Set<String> filteredResources = new HashSet<>();
+        Either<ImmutableTriple<List<Component>, List<Component>, Set<String>>, ActionStatus> result;
+
+        List<ComponentCacheData> list = new LinkedList<>();
+        Mockito.when(componentCassandraDao.getComponents(Mockito.any(List.class))).thenReturn(Either.left(list));
+
+        // default test
+        result = testSubject.getComponentsForLeftPanel(ComponentTypeEnum.RESOURCE, internalComponentType,
+                filteredResources);
+    }
 
-		ComponentTypeEnum componentTypeEnum = null;
-		String internalComponentType = "mock";
-		Set<String> filteredResources = new HashSet<>();
-		Either<ImmutableTriple<List<Component>, List<Component>, Set<String>>, ActionStatus> result;
+    @Test
+    public void testFilterForLeftPanel() throws Exception {
 
-		List<ComponentCacheData> list = new LinkedList<>();
-		Mockito.when(componentCassandraDao.getComponents(Mockito.any(List.class))).thenReturn(Either.left(list));
+        List<Component> components = new LinkedList<>();
+        List<Component> result;
 
-		// default test
-		result = testSubject.getComponentsForLeftPanel(ComponentTypeEnum.RESOURCE, internalComponentType,
-				filteredResources);
-	}
+        // test 1
 
-	@Test
-	public void testFilterForLeftPanel() throws Exception {
+        result = Deencapsulation.invoke(testSubject, "filterForLeftPanel", components);
+        Assert.assertNotEquals(null, result);
+    }
 
-		List<Component> components = new LinkedList<>();
-		List<Component> result;
+    @Test
+    public void testFilterForCatalog() throws Exception {
 
-		// test 1
+        List<Component> components = new LinkedList<>();
+        List<Component> result;
 
-		result = Deencapsulation.invoke(testSubject, "filterForLeftPanel", components);
-		Assert.assertNotEquals(null, result);
-	}
+        // test 1
+        result = Deencapsulation.invoke(testSubject, "filterForCatalog", components);
+        Assert.assertNotEquals(null, result);
+    }
 
-	@Test
-	public void testFilterForCatalog() throws Exception {
+    @Test
+    public void testFilterFieldsForLeftPanel() throws Exception {
+        Component result;
 
-		List<Component> components = new LinkedList<>();
-		List<Component> result;
+        // default test
+        Resource resource = new Resource();
+        resource.setComponentType(ComponentTypeEnum.RESOURCE);
+        result = Deencapsulation.invoke(testSubject, "filterFieldsForLeftPanel", resource);
+        Service service = new Service();
+        service.setComponentType(ComponentTypeEnum.SERVICE);
+        result = Deencapsulation.invoke(testSubject, "filterFieldsForLeftPanel", service);
+    }
 
-		// test 1
-		result = Deencapsulation.invoke(testSubject, "filterForCatalog", components);
-		Assert.assertNotEquals(null, result);
-	}
+    @Test
+    public void testFilterFieldsForCatalog() throws Exception {
+        Component result;
 
-	@Test
-	public void testFilterFieldsForLeftPanel() throws Exception {
-		Component result;
+        // default test
 
-		// default test
-		result = Deencapsulation.invoke(testSubject, "filterFieldsForLeftPanel", new Resource());
-		result = Deencapsulation.invoke(testSubject, "filterFieldsForLeftPanel", new Service());
-	}
+        Resource resource = new Resource();
+        resource.setComponentType(ComponentTypeEnum.RESOURCE);
+        result = Deencapsulation.invoke(testSubject, "filterFieldsForCatalog", resource);
+        Service service = new Service();
+        service.setComponentType(ComponentTypeEnum.SERVICE);
+        result = Deencapsulation.invoke(testSubject, "filterFieldsForCatalog", service);
+        Product product = new Product();
+        product.setComponentType(ComponentTypeEnum.PRODUCT);
+        result = Deencapsulation.invoke(testSubject, "filterFieldsForCatalog", product);
+    }
 
-	@Test
-	public void testFilterFieldsForCatalog() throws Exception {
-		Component result;
+    @Test
+    public void testCopyFieldsForLeftPanel() throws Exception {
 
-		// default test
-		result = Deencapsulation.invoke(testSubject, "filterFieldsForCatalog", new Resource());
-		result = Deencapsulation.invoke(testSubject, "filterFieldsForCatalog", new Service());
-		result = Deencapsulation.invoke(testSubject, "filterFieldsForCatalog", new Product());
-	}
+        Component component = new Resource();
+        Component filteredComponent = new Resource();
+        ((ResourceMetadataDataDefinition) component.getComponentMetadataDefinition().getMetadataDataDefinition())
+                .setResourceType(ResourceTypeEnum.VL);
+        // default test
 
-	@Test
-	public void testCopyFieldsForLeftPanel() throws Exception {
+        Deencapsulation.invoke(testSubject, "copyFieldsForLeftPanel", component, filteredComponent);
+    }
 
-		Component component = new Resource();
-		Component filteredComponent = new Resource();
-		((ResourceMetadataDataDefinition) component.getComponentMetadataDefinition().getMetadataDataDefinition())
-				.setResourceType(ResourceTypeEnum.VL);
-		// default test
+    @Test
+    public void testGetComponentsFullDisabled() throws Exception {
 
-		Deencapsulation.invoke(testSubject, "copyFieldsForLeftPanel", component, filteredComponent);
-	}
+        Set<String> filteredResources = null;
+        Either<ImmutableTriple<List<Component>, List<Component>, Set<String>>, ActionStatus> result;
 
-	@Test
-	public void testGetComponentsFullDisabled() throws Exception {
+        // default test
+        testSubject.setEnabled(false);
+        result = Deencapsulation.invoke(testSubject, "getComponentsFull", Set.class);
+    }
 
-		Set<String> filteredResources = null;
-		Either<ImmutableTriple<List<Component>, List<Component>, Set<String>>, ActionStatus> result;
 
-		// default test
-		testSubject.setEnabled(false);
-		result = Deencapsulation.invoke(testSubject, "getComponentsFull", Set.class);
-	}
+    @Test
+    public void testGetComponentsFullDesirializeError() throws Exception {
 
-	@Test
-	public void testGetComponentsFull() throws Exception {
+        Set<String> filteredResources = new HashSet<>();
+        filteredResources.add("mock");
+        Either<ImmutableTriple<List<Component>, List<Component>, Set<String>>, ActionStatus> result;
 
-		Set<String> filteredResources = new HashSet<>();
-		filteredResources.add("mock");
-		Either<ImmutableTriple<List<Component>, List<Component>, Set<String>>, ActionStatus> result;
+        List<ComponentCacheData> a = new LinkedList<>();
+        ComponentCacheData e = new ComponentCacheData();
+        e.setId("mock");
+        e.setType(NodeTypeEnum.Resource.getName());
+        a.add(e);
+        Mockito.when(componentCassandraDao.getComponents(Mockito.any(List.class))).thenReturn(Either.left(a));
 
-		List<ComponentCacheData> a = new LinkedList<>();
-		ComponentCacheData e = new ComponentCacheData();
-		e.setId("mock");
-		e.setType(NodeTypeEnum.Resource.getName());
-		Resource resource = new Resource();
-		Either<byte[], Boolean> serialize = SerializationUtils.serializeExt(resource);
-		byte[] value = serialize.left().value();
-		e.setData(ByteBuffer.wrap(value));
-		a.add(e);
-		Mockito.when(componentCassandraDao.getComponents(Mockito.any(List.class))).thenReturn(Either.left(a));
+        // default test
 
-		// default test
+        result = Deencapsulation.invoke(testSubject, "getComponentsFull", filteredResources);
+    }
 
-		result = Deencapsulation.invoke(testSubject, "getComponentsFull", filteredResources);
-	}
 
-	@Test
-	public void testGetComponentsFullDesirializeError() throws Exception {
+    @Test
+    public void testGetComponent_1() throws Exception {
 
-		Set<String> filteredResources = new HashSet<>();
-		filteredResources.add("mock");
-		Either<ImmutableTriple<List<Component>, List<Component>, Set<String>>, ActionStatus> result;
+        String componentUid = "mock";
+        Either<Component, ActionStatus> result;
 
-		List<ComponentCacheData> a = new LinkedList<>();
-		ComponentCacheData e = new ComponentCacheData();
-		e.setId("mock");
-		e.setType(NodeTypeEnum.Resource.getName());
-		a.add(e);
-		Mockito.when(componentCassandraDao.getComponents(Mockito.any(List.class))).thenReturn(Either.left(a));
+        Mockito.when(componentCassandraDao.getComponent("mock"))
+                .thenReturn(Either.right(ActionStatus.ARTIFACT_NOT_FOUND));
 
-		// default test
+        // default test
+        result = testSubject.getComponent(componentUid);
+    }
 
-		result = Deencapsulation.invoke(testSubject, "getComponentsFull", filteredResources);
-	}
+    @Test
+    public void testGetComponent_2() throws Exception {
 
-	@Test
-	public void testConvertComponentCacheToComponentServiceZipped() throws Exception {
+        String componentUid = "mock";
+        Long lastModificationTime = null;
+        Either<Component, ActionStatus> result;
 
-		ComponentCacheData componentCacheData = new ComponentCacheData();
-		Either<? extends Component, Boolean> result;
+        Mockito.when(componentCassandraDao.getComponent("mock"))
+                .thenReturn(Either.right(ActionStatus.ARTIFACT_NOT_FOUND));
 
-		componentCacheData.setId("mock");
-		componentCacheData.setType(NodeTypeEnum.Service.getName());
-		componentCacheData.setIsZipped(true);
-		Service service = new Service();
-		Either<byte[], Boolean> serialize = SerializationUtils.serializeExt(service);
-		byte[] value = serialize.left().value();
+        // default test
+        Function<Component, Component> filterFieldsFunc = new Function<Component, Component>() {
+            @Override
+            public Component apply(Component component) {
+                return new Resource();
+            }
+        };
+        result = testSubject.getComponent(componentUid, lastModificationTime, filterFieldsFunc);
+    }
 
-		componentCacheData.setData(ByteBuffer.wrap(ZipUtil.zipBytes(value)));
+    @Test
+    public void testSaveComponent() throws Exception {
 
-		// default test
+        String componentUid = "";
+        Component component = new Resource();
+        boolean result;
 
-		result = Deencapsulation.invoke(testSubject, "convertComponentCacheToComponent", componentCacheData);
-	}
+        // default test
+        Mockito.when(componentCassandraDao.saveComponent(Mockito.any(ComponentCacheData.class)))
+                .thenReturn(CassandraOperationStatus.OK);
 
-	@Test
-	public void testConvertComponentCacheToComponentProductZipped() throws Exception {
+        result = Deencapsulation.invoke(testSubject, "saveComponent", componentUid, 0L, NodeTypeEnum.Resource,
+                component);
+    }
 
-		ComponentCacheData componentCacheData = new ComponentCacheData();
-		Either<? extends Component, Boolean> result;
+    @Test
+    public void testSetComponent_1Disabled() throws Exception {
 
-		componentCacheData.setId("mock");
-		componentCacheData.setType(NodeTypeEnum.Product.getName());
-		componentCacheData.setIsZipped(true);
-		Product product = new Product();
-		Either<byte[], Boolean> serialize = SerializationUtils.serializeExt(product);
-		byte[] value = serialize.left().value();
+        Component component = new Resource();
+        component.setLastUpdateDate(0L);
+        boolean result;
 
-		componentCacheData.setData(ByteBuffer.wrap(ZipUtil.zipBytes(value)));
+        // default test
+        testSubject.setEnabled(false);
+        result = testSubject.setComponent(component, NodeTypeEnum.Resource);
+    }
 
-		// default test
+    @Test
+    public void testSetComponent_1() throws Exception {
 
-		result = Deencapsulation.invoke(testSubject, "convertComponentCacheToComponent", componentCacheData);
-	}
+        Component component = new Resource();
+        component.setLastUpdateDate(0L);
+        boolean result;
 
-	@Test
-	public void testGetComponent_1() throws Exception {
+        // default test
 
-		String componentUid = "mock";
-		Either<Component, ActionStatus> result;
+        result = testSubject.setComponent(component, NodeTypeEnum.Resource);
+    }
 
-		Mockito.when(componentCassandraDao.getComponent("mock"))
-				.thenReturn(Either.right(ActionStatus.ARTIFACT_NOT_FOUND));
 
-		// default test
-		result = testSubject.getComponent(componentUid);
-	}
+    @Test
+    public void testGetComponentsFull_1CannotDeserialize() throws Exception {
+        Map<String, Long> filteredResources = new HashMap<>();
+        Either<ImmutablePair<List<Component>, Set<String>>, ActionStatus> result;
 
-	@Test
-	public void testGetComponent_2() throws Exception {
+        // default test
+        LinkedList<ComponentCacheData> left = new LinkedList<>();
+        ComponentCacheData e = new ComponentCacheData();
+        e.setType(NodeTypeEnum.Resource.getName());
+        left.add(e);
+        ImmutablePair<List<ComponentCacheData>, Set<String>> immutablePair = ImmutablePair.of(left, new HashSet<>());
+        Mockito.when(componentCassandraDao.getComponents(Mockito.any(Map.class))).thenReturn(Either.left(immutablePair));
+
+        result = Deencapsulation.invoke(testSubject, "getComponentsFull", filteredResources);
+    }
 
-		String componentUid = "mock";
-		Long lastModificationTime = null;
-		Either<Component, ActionStatus> result;
+    @Test
+    public void testGetComponentsFull_1Disabled() throws Exception {
+        Map<String, Long> filteredResources = new HashMap<>();
+        Either<ImmutablePair<List<Component>, Set<String>>, ActionStatus> result;
 
-		Mockito.when(componentCassandraDao.getComponent("mock"))
-				.thenReturn(Either.right(ActionStatus.ARTIFACT_NOT_FOUND));
+        // default test
+        testSubject.setEnabled(false);
+        result = Deencapsulation.invoke(testSubject, "getComponentsFull", filteredResources);
+    }
 
-		// default test
+    @Test
+    public void testGetComponentsFull_1NotFound() throws Exception {
+        Map<String, Long> filteredResources = new HashMap<>();
+        Either<ImmutablePair<List<Component>, Set<String>>, ActionStatus> result;
 
-		result = testSubject.getComponent(componentUid, lastModificationTime);
-	}
+        // default test
+        Mockito.when(componentCassandraDao.getComponents(Mockito.any(Map.class))).thenReturn(Either.right(ActionStatus.ARTIFACT_NOT_FOUND));
 
-	@Test
-	public void testSetComponentDisabled() throws Exception {
+        result = Deencapsulation.invoke(testSubject, "getComponentsFull", filteredResources);
+    }
 
-		String componentUid = "";
-		Long lastModificationTime = null;
-		NodeTypeEnum nodeTypeEnum = null;
-		boolean result;
+    @Test
+    public void testGetComponentsForCatalog_1Disabled() throws Exception {
 
-		// default test
-		testSubject.setEnabled(false);
-		result = testSubject.setComponent(componentUid, lastModificationTime, nodeTypeEnum);
-	}
+        Map<String, Long> components = null;
+        Either<ImmutablePair<List<Component>, Set<String>>, ActionStatus> result;
 
-	@Test
-	public void testSetComponentNotFound() throws Exception {
+        // default test
+        testSubject.setEnabled(false);
+        result = testSubject.getComponentsForCatalog(components, ComponentTypeEnum.RESOURCE);
+    }
 
-		String componentUid = "";
-		Long lastModificationTime = null;
-		boolean result;
+    @Test
+    public void testGetComponentsForCatalog_1() throws Exception {
+        Map<String, Long> components = new HashMap<>();
+        Either<ImmutablePair<List<Component>, Set<String>>, ActionStatus> result;
 
-		// default test
-		Mockito.when(toscaOperationFacade.getToscaElement(componentUid))
-				.thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
-
-		result = testSubject.setComponent(componentUid, lastModificationTime, NodeTypeEnum.Resource);
-	}
-
-	@Test
-	public void testSetComponent() throws Exception {
-
-		String componentUid = "";
-		Long lastModificationTime = 0L;
-		boolean result;
-
-		// default test
-		Mockito.when(toscaOperationFacade.getToscaElement(componentUid)).thenReturn(Either.left(new Resource()));
-
-		result = testSubject.setComponent(componentUid, lastModificationTime, NodeTypeEnum.Resource);
-	}
-
-	@Test
-	public void testSaveComponent() throws Exception {
-
-		String componentUid = "";
-		Component component = new Resource();
-		boolean result;
-
-		// default test
-		Mockito.when(componentCassandraDao.saveComponent(Mockito.any(ComponentCacheData.class)))
-				.thenReturn(CassandraOperationStatus.OK);
-
-		result = Deencapsulation.invoke(testSubject, "saveComponent", componentUid, 0L, NodeTypeEnum.Resource,
-				component);
-	}
-
-	@Test
-	public void testSetComponent_1Disabled() throws Exception {
-
-		Component component = new Resource();
-		component.setLastUpdateDate(0L);
-		boolean result;
-
-		// default test
-		testSubject.setEnabled(false);
-		result = testSubject.setComponent(component, NodeTypeEnum.Resource);
-	}
-
-	@Test
-	public void testSetComponent_1() throws Exception {
-
-		Component component = new Resource();
-		component.setLastUpdateDate(0L);
-		boolean result;
-
-		// default test
-
-		result = testSubject.setComponent(component, NodeTypeEnum.Resource);
-	}
-
-	@Test
-	public void testGetComponentsFull_1() throws Exception {
-		Map<String, Long> filteredResources = new HashMap<>();
-		Either<ImmutablePair<List<Component>, Set<String>>, ActionStatus> result;
-
-		// default test
-		LinkedList<ComponentCacheData> left = new LinkedList<>();
-		ComponentCacheData e = new ComponentCacheData();
-		Either<byte[], Boolean> serializeExt = SerializationUtils.serializeExt(new Resource());
-		e.setData(ByteBuffer.wrap(serializeExt.left().value()));
-		e.setType(NodeTypeEnum.Resource.getName());
-		left.add(e);
-		ImmutablePair<List<ComponentCacheData>, Set<String>> immutablePair = ImmutablePair.of(left, new HashSet<>());
-		Mockito.when(componentCassandraDao.getComponents(Mockito.any(Map.class))).thenReturn(Either.left(immutablePair));
-		
-		result = Deencapsulation.invoke(testSubject, "getComponentsFull", filteredResources);
-	}
-	
-	@Test
-	public void testGetComponentsFull_1CannotDeserialize() throws Exception {
-		Map<String, Long> filteredResources = new HashMap<>();
-		Either<ImmutablePair<List<Component>, Set<String>>, ActionStatus> result;
-
-		// default test
-		LinkedList<ComponentCacheData> left = new LinkedList<>();
-		ComponentCacheData e = new ComponentCacheData();
-		e.setType(NodeTypeEnum.Resource.getName());
-		left.add(e);
-		ImmutablePair<List<ComponentCacheData>, Set<String>> immutablePair = ImmutablePair.of(left, new HashSet<>());
-		Mockito.when(componentCassandraDao.getComponents(Mockito.any(Map.class))).thenReturn(Either.left(immutablePair));
-		
-		result = Deencapsulation.invoke(testSubject, "getComponentsFull", filteredResources);
-	}
-	
-	@Test
-	public void testGetComponentsFull_1Disabled() throws Exception {
-		Map<String, Long> filteredResources = new HashMap<>();
-		Either<ImmutablePair<List<Component>, Set<String>>, ActionStatus> result;
-
-		// default test
-		testSubject.setEnabled(false);
-		result = Deencapsulation.invoke(testSubject, "getComponentsFull", filteredResources);
-	}
-	
-	@Test
-	public void testGetComponentsFull_1NotFound() throws Exception {
-		Map<String, Long> filteredResources = new HashMap<>();
-		Either<ImmutablePair<List<Component>, Set<String>>, ActionStatus> result;
-
-		// default test
-		Mockito.when(componentCassandraDao.getComponents(Mockito.any(Map.class))).thenReturn(Either.right(ActionStatus.ARTIFACT_NOT_FOUND));
-		
-		result = Deencapsulation.invoke(testSubject, "getComponentsFull", filteredResources);
-	}
-	
-	@Test
-	public void testGetComponentsForCatalog_1Disabled() throws Exception {
-
-		Map<String, Long> components = null;
-		Either<ImmutablePair<List<Component>, Set<String>>, ActionStatus> result;
-
-		// default test
-		testSubject.setEnabled(false);
-		result = testSubject.getComponentsForCatalog(components, ComponentTypeEnum.RESOURCE);
-	}
-	
-	@Test
-	public void testGetComponentsForCatalog_1() throws Exception {
-		Map<String, Long> components = new HashMap<>();
-		Either<ImmutablePair<List<Component>, Set<String>>, ActionStatus> result;
-
-		// default test
-		ImmutablePair<List<ComponentCacheData>, Set<String>> value = ImmutablePair.of(new LinkedList<>(), new HashSet<>()); 
-		Mockito.when(componentCassandraDao.getComponents(Mockito.any(Map.class))).thenReturn(Either.left(value));
-		testSubject.init();
-		result = testSubject.getComponentsForCatalog(components, ComponentTypeEnum.RESOURCE);
-	}
-	
-	@Test
-	public void testGetComponentsForCatalog_1Error() throws Exception {
-		Map<String, Long> components = new HashMap<>();
-		Either<ImmutablePair<List<Component>, Set<String>>, ActionStatus> result;
-
-		// default test
-		Mockito.when(componentCassandraDao.getComponents(Mockito.any(Map.class))).thenReturn(Either.right(ActionStatus.COMPONENT_NOT_FOUND));
-		
-		result = testSubject.getComponentsForCatalog(components, ComponentTypeEnum.RESOURCE);
-	}
-	
-	@Test
-	public void testGetComponents_1Disabled() throws Exception {
-
-		Map<String, Long> components = null;
-		Function<List<Component>, List<Component>> filterFieldsFunc = null;
-		Either<ImmutablePair<List<Component>, Set<String>>, ActionStatus> result;
-
-		// default test
-		testSubject.setEnabled(false);
-		result = testSubject.getComponents(components, filterFieldsFunc);
-	}
-
-	@Test
-	public void testGetComponentAndTime() throws Exception {
-
-		String componentUid = "";
-		Function<Component, Component> filterFieldsFunc = null;
-		Either<ImmutablePair<Component, Long>, ActionStatus> result;
-
-		// default test
-		ComponentCacheData a = new ComponentCacheData();
-		a.setModificationTime(new Date());
-		a.setType(NodeTypeEnum.Resource.getName());
-		Either<byte[], Boolean> serializeExt = SerializationUtils.serializeExt(new Resource());
-		a.setData(ByteBuffer.wrap(serializeExt.left().value()));
-		Mockito.when(componentCassandraDao.getComponent(Mockito.anyString())).thenReturn(Either.left(a));
-		
-		result = testSubject.getComponentAndTime(componentUid, filterFieldsFunc);
-	}
-
-	@Test
-	public void testGetComponentAndTimeNotFound() throws Exception {
-
-		String componentUid = "";
-		Function<Component, Component> filterFieldsFunc = null;
-		Either<ImmutablePair<Component, Long>, ActionStatus> result;
-
-		// default test
-		Mockito.when(componentCassandraDao.getComponent(Mockito.anyString())).thenReturn(Either.right(ActionStatus.API_RESOURCE_NOT_FOUND));
-		
-		result = testSubject.getComponentAndTime(componentUid, filterFieldsFunc);
-	}
-	
-	@Test
-	public void testGetComponentFromCacheDisabled() throws Exception {
-		String componentUid = "";
-		Long lastModificationTime = null;
-		Function<Component, Component> filterFieldsFunc = null;
-		Either<ImmutablePair<Component, ComponentCacheData>, ActionStatus> result;
-
-		// test 1
-		lastModificationTime = null;
-		testSubject.setEnabled(false);
-		result = Deencapsulation.invoke(testSubject, "getComponentFromCache",
-				new Object[] { componentUid, Long.class, Function.class });
-	}
-
-	@Test
-	public void testDeleteComponentFromCacheFails() throws Exception {
-
-		String id = "";
-		ActionStatus result;
-
-		// default test
-
-		result = testSubject.deleteComponentFromCache(id);
-	}
-	
-	@Test
-	public void testDeleteComponentFromCacheDisabled() throws Exception {
-
-		String id = "";
-		ActionStatus result;
-
-		// default test
-		testSubject.setEnabled(false);
-		result = testSubject.deleteComponentFromCache(id);
-	}
-	
-	@Test
-	public void testDeleteComponentFromCache() throws Exception {
-
-		String id = "";
-		ActionStatus result;
-
-		// default test
-		Mockito.when(componentCassandraDao.deleteComponent(Mockito.anyString())).thenReturn(CassandraOperationStatus.OK);
-		result = testSubject.deleteComponentFromCache(id);
-	}
+        // default test
+        ImmutablePair<List<ComponentCacheData>, Set<String>> value = ImmutablePair.of(new LinkedList<>(), new HashSet<>());
+        Mockito.when(componentCassandraDao.getComponents(Mockito.any(Map.class))).thenReturn(Either.left(value));
+        testSubject.init();
+        result = testSubject.getComponentsForCatalog(components, ComponentTypeEnum.RESOURCE);
+    }
+
+    @Test
+    public void testGetComponentsForCatalog_1Error() throws Exception {
+        Map<String, Long> components = new HashMap<>();
+        Either<ImmutablePair<List<Component>, Set<String>>, ActionStatus> result;
+
+        // default test
+        Mockito.when(componentCassandraDao.getComponents(Mockito.any(Map.class))).thenReturn(Either.right(ActionStatus.COMPONENT_NOT_FOUND));
+
+        result = testSubject.getComponentsForCatalog(components, ComponentTypeEnum.RESOURCE);
+    }
+
+    @Test
+    public void testGetComponents_1Disabled() throws Exception {
+
+        Map<String, Long> components = null;
+        Function<List<Component>, List<Component>> filterFieldsFunc = null;
+        Either<ImmutablePair<List<Component>, Set<String>>, ActionStatus> result;
+
+        // default test
+        testSubject.setEnabled(false);
+        result = testSubject.getComponents(components, filterFieldsFunc);
+    }
+
+    @Test
+    public void testGetComponentAndTimeNotFound() throws Exception {
+
+        String componentUid = "";
+        Function<Component, Component> filterFieldsFunc = null;
+        Either<ImmutablePair<Component, Long>, ActionStatus> result;
+
+        // default test
+        Mockito.when(componentCassandraDao.getComponent(Mockito.anyString())).thenReturn(Either.right(ActionStatus.API_RESOURCE_NOT_FOUND));
+
+        result = testSubject.getComponentAndTime(componentUid, filterFieldsFunc);
+    }
+
+    @Test
+    public void testGetComponentFromCacheDisabled() throws Exception {
+        String componentUid = "";
+        Long lastModificationTime = null;
+        Function<Component, Component> filterFieldsFunc = null;
+        Either<ImmutablePair<Component, ComponentCacheData>, ActionStatus> result;
+
+        // test 1
+        lastModificationTime = null;
+        testSubject.setEnabled(false);
+        result = Deencapsulation.invoke(testSubject, "getComponentFromCache",
+                new Object[]{componentUid, Long.class, Function.class});
+    }
+
+    @Test
+    public void testDeleteComponentFromCacheFails() throws Exception {
+
+        String id = "";
+        ActionStatus result;
+
+        // default test
+
+        result = testSubject.deleteComponentFromCache(id);
+    }
+
+    @Test
+    public void testDeleteComponentFromCacheDisabled() throws Exception {
+
+        String id = "";
+        ActionStatus result;
+
+        // default test
+        testSubject.setEnabled(false);
+        result = testSubject.deleteComponentFromCache(id);
+    }
+
+    @Test
+    public void testDeleteComponentFromCache() throws Exception {
+
+        String id = "";
+        ActionStatus result;
+
+        // default test
+        Mockito.when(componentCassandraDao.deleteComponent(Mockito.anyString())).thenReturn(CassandraOperationStatus.OK);
+        result = testSubject.deleteComponentFromCache(id);
+    }
 }

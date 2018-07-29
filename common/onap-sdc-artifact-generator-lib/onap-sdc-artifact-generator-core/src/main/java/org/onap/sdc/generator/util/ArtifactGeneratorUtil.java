@@ -20,70 +20,12 @@
 
 package org.onap.sdc.generator.util;
 
-import static org.onap.sdc.generator.data.GeneratorConstants.BEGIN_TIMESTAMP;
-import static org.onap.sdc.generator.data.GeneratorConstants.BE_FQDN;
-import static org.onap.sdc.generator.data.GeneratorConstants.CATEGORY_LOG_LEVEL;
-import static org.onap.sdc.generator.data.GeneratorConstants.CLIENT_IP;
-import static org.onap.sdc.generator.data.GeneratorConstants.ELAPSED_TIME;
-import static org.onap.sdc.generator.data.GeneratorConstants.END_TIMESTAMP;
-import static org.onap.sdc.generator.data.GeneratorConstants.ERROR_CATEGORY;
-import static org.onap.sdc.generator.data.GeneratorConstants.ERROR_CODE;
-import static org.onap.sdc.generator.data.GeneratorConstants.ERROR_DESCRIPTION;
-import static org.onap.sdc.generator.data.GeneratorConstants.GENERATOR_AAI_CONFIGFILE_NOT_FOUND;
-import static org.onap.sdc.generator.data.GeneratorConstants.GENERATOR_AAI_CONFIGLOCATION_NOT_FOUND;
-import static org.onap.sdc.generator.data.GeneratorConstants.GENERATOR_AAI_CONFIGLPROP_NOT_FOUND;
-import static org.onap.sdc.generator.data.GeneratorConstants.GENERATOR_AAI_PROVIDING_SERVICE_METADATA_MISSING;
-import static org.onap.sdc.generator.data.GeneratorConstants.GENERATOR_AAI_PROVIDING_SERVICE_MISSING;
-import static org.onap.sdc.generator.data.GeneratorConstants.GENERATOR_AAI_ERROR_INVALID_ID;
-import static org.onap.sdc.generator.data.GeneratorConstants.GENERATOR_AAI_ERROR_INVALID_RESOURCE_VERSION_IN_SERVICE_TOSCA;
-import static org.onap.sdc.generator.data.GeneratorConstants.GENERATOR_AAI_ERROR_INVALID_TOSCA_MSG;
-import static org.onap.sdc.generator.data.GeneratorConstants.GENERATOR_AAI_ERROR_MANDATORY_METADATA_DEFINITION_MSG;
-import static org.onap.sdc.generator.data.GeneratorConstants.GENERATOR_AAI_ERROR_MISSING_RESOURCE_TOSCA;
-import static org.onap.sdc.generator.data.GeneratorConstants.GENERATOR_AAI_ERROR_MISSING_SERVICE_TOSCA_MSG;
-import static org.onap.sdc.generator.data.GeneratorConstants.GENERATOR_AAI_ERROR_MISSING_SERVICE_VERSION;
-import static org.onap.sdc.generator.data.GeneratorConstants.GENERATOR_AAI_ERROR_NULL_RESOURCE_VERSION_IN_SERVICE_TOSCA;
-import static org.onap.sdc.generator.data.GeneratorConstants.GENERATOR_AAI_INVALID_SERVICE_VERSION;
-import static org.onap.sdc.generator.data.GeneratorConstants.GENERATOR_ERROR_ARTIFACT_GENERATION_FAILED_MSG;
-import static org.onap.sdc.generator.data.GeneratorConstants.GENERATOR_ERROR_INVALID_CLIENT_CONFIGURATION_MSG;
-import static org.onap.sdc.generator.data.GeneratorConstants.GENERATOR_PARTNER_NAME;
-import static org.onap.sdc.generator.data.GeneratorConstants.INSTANCE_UUID;
-import static org.onap.sdc.generator.data.GeneratorConstants.LOCAL_ADDR;
-import static org.onap.sdc.generator.data.GeneratorConstants.MDC_SDC_INSTANCE_UUID;
-import static org.onap.sdc.generator.data.GeneratorConstants.PARTNER_NAME;
-import static org.onap.sdc.generator.data.GeneratorConstants.REMOTE_HOST;
-import static org.onap.sdc.generator.data.GeneratorConstants.REQUEST_ID;
-import static org.onap.sdc.generator.data.GeneratorConstants.RESPONSE_CODE;
-import static org.onap.sdc.generator.data.GeneratorConstants.RESPONSE_DESCRIPTION;
-import static org.onap.sdc.generator.data.GeneratorConstants.SERVICE_INSTANCE_ID;
-import static org.onap.sdc.generator.data.GeneratorConstants.SERVICE_METRIC_BEGIN_TIMESTAMP;
-import static org.onap.sdc.generator.data.GeneratorConstants.SERVICE_NAME;
-import static org.onap.sdc.generator.data.GeneratorConstants.STATUS_CODE;
-import static org.onap.sdc.generator.data.GeneratorConstants.TARGET_ENTITY;
-import static org.onap.sdc.generator.data.GeneratorConstants.TARGET_SERVICE_NAME;
-import static org.onap.sdc.generator.logging.ArtifactGeneratorLogResponseCode.INTERNAL_SERVER_ERROR;
-import static org.onap.sdc.generator.logging.ArtifactGeneratorLogResponseCode.INVALID_CLIENT_CONFIGURATION;
-import static org.onap.sdc.generator.logging.ArtifactGeneratorLogResponseCode.INVALID_ID_VALUE;
-import static org.onap.sdc.generator.logging.ArtifactGeneratorLogResponseCode.INVALID_RESOURCE_VERSION;
-import static org.onap.sdc.generator.logging.ArtifactGeneratorLogResponseCode.INVALID_SERVICE_VERSION;
-import static org.onap.sdc.generator.logging.ArtifactGeneratorLogResponseCode.INVALID_TOSCA_YAML;
-import static org.onap.sdc.generator.logging.ArtifactGeneratorLogResponseCode.MANDATORY_ATTRIBUTE_MISSING;
-import static org.onap.sdc.generator.logging.ArtifactGeneratorLogResponseCode.MISSING_CONFIG_PROPERTIES_FILE;
-import static org.onap.sdc.generator.logging.ArtifactGeneratorLogResponseCode.MISSING_PRO_SERVICE;
-import static org.onap.sdc.generator.logging.ArtifactGeneratorLogResponseCode.MISSING_PRO_SERVICE_METADATA;
-import static org.onap.sdc.generator.logging.ArtifactGeneratorLogResponseCode.MISSING_RESOURCE_VERSION;
-import static org.onap.sdc.generator.logging.ArtifactGeneratorLogResponseCode.MISSING_SERVICE_VERSION;
-import static org.onap.sdc.generator.logging.ArtifactGeneratorLogResponseCode.MISSING_SYSTME_PROPERY_CONFIGURATION;
-import static org.onap.sdc.generator.logging.ArtifactGeneratorLogResponseCode.MISSING_WIDGET_CONFIGURATION;
-import static org.onap.sdc.generator.logging.ArtifactGeneratorLogResponseCode.RESOURCE_TOSCA_MISSING;
-import static org.onap.sdc.generator.logging.ArtifactGeneratorLogResponseCode.SERVICE_TOSCA_MISSING;
-import static org.onap.sdc.generator.logging.ArtifactGeneratorLogResponseCode.UNABLE_TO_GENERATE_ARTIFACT;
-
-import org.openecomp.sdc.logging.api.Logger;
-import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.onap.sdc.generator.data.Artifact;
 import org.onap.sdc.generator.logging.ArtifactGeneratorLogResponseCode;
 import org.onap.sdc.generator.logging.CategoryLogLevel;
 import org.onap.sdc.generator.logging.StatusCode;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.slf4j.MDC;
 
 import java.io.PrintWriter;
@@ -94,6 +36,9 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
+
+import static org.onap.sdc.generator.data.GeneratorConstants.*;
+import static org.onap.sdc.generator.logging.ArtifactGeneratorLogResponseCode.*;
 
 
 public class ArtifactGeneratorUtil {

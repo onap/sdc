@@ -28,14 +28,11 @@ package org.openecomp.sdc.be.model.tosca.constraints.exception;
  */
 public class ConstraintTechnicalException extends Exception {
 
-	private static final long serialVersionUID = 5829360730980521567L;
+    public ConstraintTechnicalException(String message, Throwable cause) {
+        super(message, cause);
+    }
 
-	public ConstraintTechnicalException(String message, Throwable cause) {
-		super(message, cause);
-	}
-
-	public ConstraintTechnicalException(String message) {
-		super(message);
-	}
-
+    public ConstraintTechnicalException(String message) {
+        super(message);
+    }
 }

@@ -20,22 +20,21 @@
 
 package org.openecomp.sdc.common.config;
 
+import fj.data.Either;
+import org.apache.commons.lang3.StringUtils;
+import org.openecomp.sdc.common.config.EcompErrorConfiguration.EcompErrorSeverity;
+import org.openecomp.sdc.common.log.enums.EcompLoggerErrorCode;
+import org.openecomp.sdc.common.log.wrappers.Logger;
+import org.slf4j.MDC;
+
 import java.util.Formatter;
 import java.util.IllegalFormatException;
 import java.util.Locale;
 
-import org.apache.commons.lang3.StringUtils;
-import org.openecomp.sdc.common.config.EcompErrorConfiguration.EcompErrorSeverity;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.slf4j.MDC;
-
-import fj.data.Either;
-
 public class EcompErrorLogUtil {
 
 	private static String ECOMP_ERROR_TMPL = "ETYPE = \"%s\" ENAME = \"%s\" ECODE = \"%s\" ECONTEXT = \"%s\" EDESC = \"%s\"";
-	private static Logger log = LoggerFactory.getLogger(EcompErrorLogUtil.class.getName());
+	private static Logger log = Logger.getLogger(EcompErrorLogUtil.class.getName());
 	private static final String FATAL_ERROR_PREFIX = "FATAL ERROR!! ";
 
 	public static void logEcompError(EcompErrorName ecompErrorName, EcompErrorInfo ecompErrorInfo,
@@ -62,24 +61,9 @@ public class EcompErrorLogUtil {
 				// else it stays ERROR
 				formatter.format(ECOMP_ERROR_TMPL, ecompErrorInfo.getType(), ecompErrorName.name(),
 						ecompErrorInfo.getCode(), ecompErrorContext, description);
-				switch (severity) {
-				case INFO:
-					log.info(formatter.toString());
-					break;
-				case WARN:
-					log.warn(formatter.toString());
-					break;
-				case ERROR:
-					log.error(formatter.toString());
-					break;
-				case FATAL:
-					// same as ERROR for now, might be additional logic later..
-					log.error(formatter.toString());
-					break;
-				default:
-					break;
-				}
-			} finally {
+                log.error(severity, EcompLoggerErrorCode.getByValue(ecompErrorInfo.getCode()),
+                        ecompErrorContext, ecompErrorContext, description);
+            } finally {
 				formatter.close();
 				MDC.remove("alarmSeverity");
 			}
@@ -96,7 +80,7 @@ public class EcompErrorLogUtil {
 		StringBuilder sb = new StringBuilder();
 		Formatter formatter = new Formatter(sb, Locale.US);
 		try {
-			String description = ecompErrorEnum.getEcompErrorCode().getDescription();
+			String description;
 
 			Either<String, Boolean> setDescriptionParamsResult = setDescriptionParams(ecompErrorEnum,
 					ecompDescriptionParams);
@@ -104,13 +88,12 @@ public class EcompErrorLogUtil {
 				description = setDescriptionParamsResult.left().value();
 			} else {
 				EcompErrorEnum mismatchErrorEnum = EcompErrorEnum.EcompMismatchParam;
-				if (logMissingParams == true) {
-					logEcompError("logEcompError", mismatchErrorEnum, false, ecompErrorEnum.name().toString());
-					return;
+				if (logMissingParams) {
+					logEcompError("logEcompError", mismatchErrorEnum, false, ecompErrorEnum.name());
 				} else {
 					log.info("Failed to log the error code {}", mismatchErrorEnum);
-					return;
 				}
+				return;
 			}
 			EcompClassification classification = ecompErrorEnum.getClassification();
 
@@ -132,23 +115,9 @@ public class EcompErrorLogUtil {
 			// else it stays ERROR
 			formatter.format(ECOMP_ERROR_TMPL, ecompErrorEnum.geteType(), ecompErrorEnum.name(), eCode,
 					ecompErrorContext, description);
-			switch (severity) {
-			case INFO:
-				log.info(formatter.toString());
-				break;
-			case WARN:
-				log.warn(formatter.toString());
-				break;
-			case ERROR:
-				log.error(formatter.toString());
-				break;
-			case FATAL:
-				// same as ERROR for now, might be additional logic later..
-				log.error(formatter.toString());
-				break;
-			default:
-				break;
-			}
+
+            log.error(severity, EcompLoggerErrorCode.getByValue(ecompErrorEnum.getEcompErrorCode().name()),
+                    ecompErrorContext, ecompErrorContext, description);
 		} finally {
 			formatter.close();
 			MDC.remove("alarmSeverity");
@@ -161,9 +130,8 @@ public class EcompErrorLogUtil {
 		String ecompErrorCode = ecompErrorEnum.getEcompErrorCode().name();
 
 		String ecodeNumber = ecompErrorCode.substring(ecompErrorCode.indexOf("_") + 1);
-		String eCode = "ASDC" + ecodeNumber + classification.getClassification();
 
-		return eCode;
+        return "ASDC" + ecodeNumber + classification.getClassification();
 	}
 
 	private static Either<String, Boolean> setDescriptionParams(EcompErrorEnum ecompErrorEnum,

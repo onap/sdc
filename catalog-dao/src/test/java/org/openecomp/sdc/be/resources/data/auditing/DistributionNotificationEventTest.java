@@ -1,12 +1,13 @@
 package org.openecomp.sdc.be.resources.data.auditing;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.UUID;
-
 import org.junit.Test;
 import org.openecomp.sdc.be.resources.data.auditing.model.CommonAuditData;
 import org.openecomp.sdc.be.resources.data.auditing.model.OperationalEnvAuditData;
+import org.openecomp.sdc.be.resources.data.auditing.model.ResourceCommonInfo;
+import org.openecomp.sdc.be.resources.data.auditing.model.ResourceVersionInfo;
+
+import java.util.Date;
+import java.util.UUID;
 
 public class DistributionNotificationEventTest {
 
@@ -16,8 +17,8 @@ public class DistributionNotificationEventTest {
 
 	@Test
 	public void testCtor() throws Exception {
-		new DistributionNotificationEvent(new HashMap<>());
-		new DistributionNotificationEvent("mock", CommonAuditData.newBuilder().build(), "mock", "mock", "mock", "mock", "mock", "mock", "mock", new OperationalEnvAuditData("mock", "mock", "mock"));
+		new DistributionNotificationEvent();
+		new DistributionNotificationEvent("mock", CommonAuditData.newBuilder().build(), new ResourceCommonInfo(),ResourceVersionInfo.newBuilder().build() , "mock", "mock", "mock", new OperationalEnvAuditData("mock", "mock", "mock"));
 	}
 	
 	@Test

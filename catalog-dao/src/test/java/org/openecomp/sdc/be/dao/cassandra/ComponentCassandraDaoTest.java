@@ -1,14 +1,9 @@
 package org.openecomp.sdc.be.dao.cassandra;
 
-import static org.junit.Assert.assertTrue;
-
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
+import com.datastax.driver.core.Session;
+import com.datastax.driver.mapping.MappingManager;
+import com.datastax.driver.mapping.Result;
+import fj.data.Either;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.junit.Before;
 import org.junit.Test;
@@ -19,11 +14,9 @@ import org.mockito.MockitoAnnotations;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.resources.data.ComponentCacheData;
 
-import com.datastax.driver.core.Session;
-import com.datastax.driver.mapping.MappingManager;
-import com.datastax.driver.mapping.Result;
+import java.util.*;
 
-import fj.data.Either;
+import static org.junit.Assert.assertTrue;
 
 public class ComponentCassandraDaoTest {
 

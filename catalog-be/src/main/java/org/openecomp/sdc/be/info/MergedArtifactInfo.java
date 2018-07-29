@@ -20,14 +20,11 @@
 
 package org.openecomp.sdc.be.info;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
+
+import java.util.*;
+
 public class MergedArtifactInfo {
 
     private List<ArtifactDefinition> createdArtifact;
@@ -40,7 +37,7 @@ public class MergedArtifactInfo {
 
     public void setCreatedArtifact(List<ArtifactDefinition> createdArtifact) {
         this.createdArtifact = createdArtifact;
-        parsetArtifactsNames = new HashSet<String>();
+        parsetArtifactsNames = new HashSet<>();
         parsetArtifactsNames.add(jsonArtifactTemplate.getFileName());
         List<ArtifactTemplateInfo> relatedGroupTemplateList = jsonArtifactTemplate.getRelatedArtifactsInfo();
         if (relatedGroupTemplateList != null && !relatedGroupTemplateList.isEmpty()) {
@@ -58,7 +55,7 @@ public class MergedArtifactInfo {
     }
 
     public List<ArtifactTemplateInfo> getListToAssociateArtifactToGroup() {
-        List<ArtifactTemplateInfo> resList = new ArrayList<ArtifactTemplateInfo>();
+        List<ArtifactTemplateInfo> resList = new ArrayList<>();
         List<ArtifactTemplateInfo> relatedArtifacts = jsonArtifactTemplate.getRelatedArtifactsInfo();
         if (relatedArtifacts != null && !relatedArtifacts.isEmpty()) {
             getNewArtifactsInGroup(resList, relatedArtifacts);
@@ -67,7 +64,7 @@ public class MergedArtifactInfo {
     }
 
     public List<ArtifactDefinition> getListToDissotiateArtifactFromGroup(List<ArtifactDefinition> deletedArtifacts) {
-        List<ArtifactDefinition> resList = new ArrayList<ArtifactDefinition>();
+        List<ArtifactDefinition> resList = new ArrayList<>();
         for (ArtifactDefinition artifactDefinition : createdArtifact) {
             boolean isDissotiate = true;
             if(parsetArtifactsNames.contains(artifactDefinition.getArtifactName())){
@@ -106,10 +103,10 @@ public class MergedArtifactInfo {
     }
 
     public List<ImmutablePair<ArtifactDefinition, ArtifactTemplateInfo>> getListToUpdateArtifactInGroup() {
-        List<ImmutablePair<ArtifactDefinition, ArtifactTemplateInfo>> resList = new ArrayList<ImmutablePair<ArtifactDefinition, ArtifactTemplateInfo>>();
+        List<ImmutablePair<ArtifactDefinition, ArtifactTemplateInfo>> resList = new ArrayList<>();
         for (ArtifactDefinition artifactDefinition : createdArtifact) {
             if (artifactDefinition.getArtifactName().equalsIgnoreCase(jsonArtifactTemplate.getFileName())) {
-                resList.add(new ImmutablePair<ArtifactDefinition, ArtifactTemplateInfo>(artifactDefinition, jsonArtifactTemplate));
+                resList.add(new ImmutablePair<>(artifactDefinition, jsonArtifactTemplate));
             }
         }
         List<ArtifactTemplateInfo> relatedArtifacts = jsonArtifactTemplate.getRelatedArtifactsInfo();
@@ -125,7 +122,7 @@ public class MergedArtifactInfo {
 
             for (ArtifactDefinition artifactDefinition : createdArtifact) {
                 if (artifactDefinition.getArtifactName().equalsIgnoreCase(artifactTemplateInfo.getFileName())) {
-                    resList.add(new ImmutablePair<ArtifactDefinition, ArtifactTemplateInfo>(artifactDefinition, artifactTemplateInfo));
+                    resList.add(new ImmutablePair<>(artifactDefinition, artifactTemplateInfo));
                 }
             }
 

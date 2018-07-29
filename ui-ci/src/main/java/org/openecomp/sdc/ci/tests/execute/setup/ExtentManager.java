@@ -33,10 +33,8 @@ import org.openecomp.sdc.ci.tests.utils.rest.AutomationUtils;
 import org.testng.ITestContext;
 
 import java.io.File;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.GregorianCalendar;
 
 public class ExtentManager {

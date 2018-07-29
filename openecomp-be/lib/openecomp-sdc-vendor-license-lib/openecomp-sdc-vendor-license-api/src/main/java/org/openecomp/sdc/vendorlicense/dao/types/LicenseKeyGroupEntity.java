@@ -25,13 +25,10 @@ import com.datastax.driver.mapping.annotations.Column;
 import com.datastax.driver.mapping.annotations.Frozen;
 import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
+
 import org.apache.commons.lang3.StringUtils;
 import org.openecomp.sdc.vendorlicense.VendorLicenseUtil;
-import org.openecomp.sdc.vendorlicense.dao.types.xml.LicenseKeyTypeForXml;
-import org.openecomp.sdc.vendorlicense.dao.types.xml.LimitForXml;
-import org.openecomp.sdc.vendorlicense.dao.types.xml.LimitXml;
-import org.openecomp.sdc.vendorlicense.dao.types.xml.OperationalScopeForXml;
-import org.openecomp.sdc.vendorlicense.dao.types.xml.ThresholdForXml;
+import org.openecomp.sdc.vendorlicense.dao.types.xml.*;
 import org.openecomp.sdc.versioning.dao.types.Version;
 import org.openecomp.sdc.versioning.dao.types.VersionableEntity;
 

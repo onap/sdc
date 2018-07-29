@@ -4,7 +4,6 @@ import org.openecomp.sdc.ci.tests.utils.general.FileHandling;
 import org.openecomp.sdc.ci.tests.utils.general.OnboardingUtils;
 import org.testng.annotations.DataProvider;
 
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

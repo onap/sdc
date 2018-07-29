@@ -1,9 +1,9 @@
 package org.openecomp.sdc.be.model;
 
-import java.util.LinkedList;
-
 import org.junit.Test;
 import org.openecomp.sdc.be.datatypes.elements.AdditionalInfoParameterDataDefinition;
+
+import java.util.LinkedList;
 
 
 public class AdditionalInformationDefinitionTest {

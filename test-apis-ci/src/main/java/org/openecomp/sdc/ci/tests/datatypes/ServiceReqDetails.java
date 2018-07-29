@@ -20,10 +20,11 @@
 
 package org.openecomp.sdc.ci.tests.datatypes;
 
-import java.util.ArrayList;
-
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
+import org.openecomp.sdc.ci.tests.datatypes.enums.ServiceInstantiationType;
+
+import java.util.ArrayList;
 
 public class ServiceReqDetails extends ComponentReqDetails {
 	
@@ -31,6 +32,7 @@ public class ServiceReqDetails extends ComponentReqDetails {
 	protected String serviceRole = "MyServiceRole";
 	protected String namingPolicy = "MyServiceNamingPolicy";
 	protected Boolean ecompGeneratedNaming = true;
+	protected String instantiationType = ServiceInstantiationType.A_LA_CARTE.getValue(); 
 
 	public String getServiceType() {
 		return serviceType;
@@ -39,7 +41,11 @@ public class ServiceReqDetails extends ComponentReqDetails {
 	public void setServiceType(String serviceType) {
 		this.serviceType = serviceType;
 	}
-
+	
+	public String getInstantiationType() {
+		return instantiationType;
+	}
+	
 	public String getServiceRole() {
 		return serviceRole;
 	}
@@ -65,9 +71,8 @@ public class ServiceReqDetails extends ComponentReqDetails {
 	}
 
 	public ServiceReqDetails(String serviceName, String category, ArrayList<String> tags, String description,
-			String contactId, String icon) {
+			String contactId, String icon, String instantiationType) {
 		this.name = serviceName;
-		// this.category = category;
 		this.tags = tags;
 		this.description = description;
 		this.contactId = contactId;
@@ -107,13 +112,13 @@ public class ServiceReqDetails extends ComponentReqDetails {
 
 	@Override
 	public String toString() {
-		return "ServiceDetails [name=" + name + ", category=" + getCategory() + ", tags=" + tags + ", description="
-				+ description + ", contactId=" + contactId + ", icon=" + icon + "]";
+		return "ServiceDetails [name = " + name + ", category = " + getCategory() + ", tags = " + tags + ", description = "
+				+ description + ", contactId = " + contactId + ", icon = " + icon + ", instantiation type = " + getInstantiationType() + "]";
 	}
 
 	public ServiceReqDetails(ServiceReqDetails aService) {
 		this(aService.getName(), aService.getCategory(), (ArrayList<String>) aService.getTags(),
-				aService.getDescription(), aService.getContactId(), aService.getIcon());
+				aService.getDescription(), aService.getContactId(), aService.getIcon(), aService.getInstantiationType());
 		uniqueId = aService.getUniqueId();
 		version = aService.getVersion();
 	}

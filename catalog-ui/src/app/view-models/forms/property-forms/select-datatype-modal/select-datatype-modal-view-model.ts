@@ -67,7 +67,7 @@ export class SelectDataTypeViewModel extends PropertyFormBaseView {
 
     //scope methods
     save(isNeedToCloseModal):ng.IPromise<boolean> {
-        let deferred = this.$q.defer();
+        let deferred = this.$q.defer<boolean>();
         this.$scope.property.propertiesName = this.DataTypesService.selectedPropertiesName;
         this.$scope.property.input = this.DataTypesService.selectedInput;
         this.$scope.property.isAlreadySelected = true;

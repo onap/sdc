@@ -16,6 +16,15 @@
 
 package org.openecomp.sdc.validation.impl.validators;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+
 import org.openecomp.core.validation.types.GlobalValidationContext;
 import org.openecomp.sdc.heat.datatypes.model.HeatOrchestrationTemplate;
 import org.openecomp.sdc.heat.datatypes.model.Output;
@@ -28,15 +37,6 @@ import org.openecomp.sdc.validation.ValidationContext;
 import org.openecomp.sdc.validation.base.ResourceBaseValidator;
 import org.openecomp.sdc.validation.type.ConfigConstants;
 import org.openecomp.sdc.validation.type.HeatResourceValidationContext;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
 
 public class HeatResourceValidator extends ResourceBaseValidator {
   private static final Logger LOGGER = LoggerFactory.getLogger(ResourceBaseValidator.class);

@@ -20,6 +20,7 @@
 
 package org.openecomp.sdc.ci.tests.verificator;
 
+//import com.att.automation.common.report_portal_integration.annotations.Step; //ReportPortal
 import com.aventstack.extentreports.Status;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.json.simple.JSONArray;
@@ -68,7 +69,7 @@ public final class VfVerificator {
 	}
 
 	public static void verifyLinkCreated(ResourceReqDetails createResourceInUI, User user, int expectedRelationsSize) {
-		SetupCDTest.getExtendTest().log(Status.INFO, String.format("Verifing that a link was created on canvas"));
+		SetupCDTest.getExtendTest().log(Status.INFO, String.format("Verifying that a link was created on canvas"));
 		String responseAfterDrag = RestCDUtils.getResource(createResourceInUI, user).getResponse();
 		JSONObject jsonResource = (JSONObject) JSONValue.parse(responseAfterDrag);
 		assertTrue(((JSONArray) jsonResource.get("componentInstancesRelations")).size() == expectedRelationsSize);
@@ -76,7 +77,7 @@ public final class VfVerificator {
 
 	}
     
-//	@Step(description="Verifying fields on General screen through UI ...")
+//	@Step(description="Verifying fields on General screen through UI ...") //ReportPortal
 	public static void verifyVFMetadataInUI(ResourceReqDetails vf) {
 		SetupCDTest.getExtendTest().log(Status.INFO, String.format("Verifying fields on General screen through UI ..."));
 		assertTrue(vf.getName().equals(ResourceGeneralPage.getNameText()));
@@ -93,7 +94,7 @@ public final class VfVerificator {
 		assertTrue(vf.getContactId().equals(ResourceGeneralPage.getContactIdText()));
 	}
 	
-//	@Step(description="Verifying fields on General screen through Backend ...")
+//	@Step(description="Verifying fields on General screen through Backend ...") //ReportPortal
 	public static void verifyVFUpdated(ResourceReqDetails vf, User user) {
 		SetupCDTest.getExtendTest().log(Status.INFO, String.format("Verifying fields on General screen through Backend ..."));
 		String response = RestCDUtils.getResource(vf, user).getResponse();
@@ -124,7 +125,7 @@ public final class VfVerificator {
 	}
 
 	public static void verifyVFLifecycle(ResourceReqDetails vf, User user, LifecycleStateEnum expectedLifecycleState) {
-		SetupCDTest.getExtendTest().log(Status.INFO, String.format("Verfiying that object %s version is %s", vf.getName(),expectedLifecycleState));
+		SetupCDTest.getExtendTest().log(Status.INFO, String.format("Verfiying that object %s state is %s", vf.getName(),expectedLifecycleState));
 		String responseAfterDrag = RestCDUtils.getResource(vf, user).getResponse();
 		JSONObject jsonResource = (JSONObject) JSONValue.parse(responseAfterDrag);
 		String actualLifecycleState = jsonResource.get("lifecycleState").toString();
@@ -132,9 +133,16 @@ public final class VfVerificator {
 	}
 
 	public static void verifyVfLifecycleInUI(LifeCycleStateEnum lifecycleState){
-		SetupCDTest.getExtendTest().log(Status.INFO, String.format("Verfiying that object version is %s", lifecycleState.getValue()));
+		SetupCDTest.getExtendTest().log(Status.INFO, String.format("Verfiying that object state is %s", lifecycleState.getValue()));
 		GeneralUIUtils.ultimateWait();
 		assertTrue(ResourceGeneralPage.getLifeCycleState().equals(lifecycleState.getValue()));
+	}
+
+	public static void verifyVersionUI(String expected){
+		SetupCDTest.getExtendTest().log(Status.INFO, String.format("Verifying that version is %s", expected));
+		String actualVersion = GeneralUIUtils.getSelectedElementFromDropDown
+				(DataTestIdEnum.GeneralElementsEnum.VERSION_HEADER.getValue()).getText().replace("V", "");
+		assertTrue(actualVersion.equals(expected), String.format( "Expected version: %s, Actual version: %s", expected, actualVersion));
 	}
 	
 	public static void verifyInstanceVersion(ResourceReqDetails vf, User user, String instanceName, String instanceVersion){
@@ -219,7 +227,30 @@ public final class VfVerificator {
 
 	public static void verifyOnboardedVnfMetadata(String vspName, VendorSoftwareProductObject vspMetadata) {
 		SetupCDTest.getExtendTest().log(Status.INFO, "Verifying metadata");
+		
 		assertTrue(vspName.equals(ResourceGeneralPage.getNameText()), "VSP name is not valid.");
+		List<WebElement> tagsList = ResourceGeneralPage.getElementsFromTagsTable();
+		assertTrue(tagsList.size() == 1, "VSP tags size is not equal to 1.");
+		assertTrue(vspName.equals(tagsList.get(0).getText()), "VSP tag is not its name.");
+		
+		verifyMetadataIndifferentToFlow(vspMetadata);
+	}
+	
+	public static void verifyOnboardedVnfMetadataAfterUpdateVNF(String vspName, VendorSoftwareProductObject vspMetadata) {
+		SetupCDTest.getExtendTest().log(Status.INFO, "Verifying metadata after update VNF");
+		
+		// VF name should be updated only only if VF not certified
+		if(Double.parseDouble(ResourceGeneralPage.getVersionUI()) < 1.0) {
+			assertTrue(vspName.equals(ResourceGeneralPage.getNameText()), "VSP name is not valid.");
+			List<WebElement> tagsList = ResourceGeneralPage.getElementsFromTagsTable();
+			assertTrue(tagsList.size() == 1, "VSP tags size is not equal to 1.");
+			assertTrue(vspName.equals(tagsList.get(0).getText()), "VSP tag is not its name.");
+		}
+		
+		verifyMetadataIndifferentToFlow(vspMetadata);
+	}
+	
+	public static void verifyMetadataIndifferentToFlow(VendorSoftwareProductObject vspMetadata) {
 		assertTrue(vspMetadata.getDescription().equals(ResourceGeneralPage.getDescriptionText()), "VSP description is not valid.");
 		
 		String [] splitedSubCategorey = vspMetadata.getSubCategory().split("\\.");
@@ -229,9 +260,6 @@ public final class VfVerificator {
 		assertTrue(expectedSubCategory.equals(actualSubCategory), "VSP category is not valid.");
 		assertTrue(vspMetadata.getVendorName().equals(ResourceGeneralPage.getVendorNameText()), "VSP vendor name is not valid.");
 		assertTrue("1.0".equals(ResourceGeneralPage.getVendorReleaseText()), "VSP version is not valid.");
-		List<WebElement> tagsList = ResourceGeneralPage.getElementsFromTagsTable();
-		assertTrue(tagsList.size() == 1, "VSP tags size is not equal to 1.");
-		assertTrue(vspName.equals(tagsList.get(0).getText()), "VSP tag is not its name.");
 		assertTrue(vspMetadata.getAttContact().equals(ResourceGeneralPage.getContactIdText()), "VSP attContact is not valid.");
 	}
 	

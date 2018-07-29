@@ -17,6 +17,7 @@
 package org.onap.sdc.tosca.datatypes.model.heatextend;
 
 import org.onap.sdc.tosca.datatypes.model.ParameterDefinition;
+
 import java.util.Map;
 
 public class ParameterDefinitionExt extends ParameterDefinition {

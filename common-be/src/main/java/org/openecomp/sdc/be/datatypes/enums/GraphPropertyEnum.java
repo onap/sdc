@@ -55,7 +55,12 @@ public enum GraphPropertyEnum {
 	EMAIL				("email",					String.class, 				false,		false),
 	LAST_LOGIN_TIME		("lastLoginTime",			Long.class, 				false,		false),
 	//used for category (old format, no json for categories)
-	ICONS				("icons",					String.class, 				false,		false);
+	ICONS				("icons",					String.class, 				false,		false),
+
+	//Archive/Restore
+	IS_ARCHIVED				("isArchived",			Boolean.class, 				false,		true),
+	IS_VSP_ARCHIVED			("isVspArchived",		Boolean.class, 				false,		true),
+	ARCHIVE_TIME			("archiveTime",			Long.class, 				false,		true);
 
 	private String property;
 	private Class clazz;
@@ -112,7 +117,7 @@ public enum GraphPropertyEnum {
 
 	public static List<String> getAllProperties() {
 
-		List<String> arrayList = new ArrayList<String>();
+		List<String> arrayList = new ArrayList<>();
 
 		for (GraphPropertyEnum graphProperty : GraphPropertyEnum.values()) {
 			arrayList.add(graphProperty.getProperty());

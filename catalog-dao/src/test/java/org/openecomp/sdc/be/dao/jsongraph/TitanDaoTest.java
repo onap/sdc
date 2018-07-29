@@ -1,9 +1,7 @@
 package org.openecomp.sdc.be.dao.jsongraph;
 
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
+import com.thinkaurelius.titan.core.TitanGraph;
+import fj.data.Either;
 import org.apache.tinkerpop.gremlin.structure.Edge;
 import org.apache.tinkerpop.gremlin.structure.Element;
 import org.apache.tinkerpop.gremlin.structure.Property;
@@ -24,9 +22,9 @@ import org.openecomp.sdc.be.utils.DAOConfDependentTest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.thinkaurelius.titan.core.TitanGraph;
-
-import fj.data.Either;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 public class TitanDaoTest extends DAOConfDependentTest{
 	
@@ -225,7 +223,7 @@ public class TitanDaoTest extends DAOConfDependentTest{
 
 		// default test
 		
-		result = dao.getCatalogVerticies();
+		result = dao.getCatalogOrArchiveVerticies(true);
 	}
 	
 	@Test

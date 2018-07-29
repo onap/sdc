@@ -24,19 +24,19 @@ import org.openecomp.sdc.be.datatypes.elements.InputsValueDataDefinition;
 
 public class PropertyValueDefinition extends InputsValueDataDefinition implements IOperationParameter {
 
-	public PropertyValueDefinition() {
-		super();
-	}
+    public PropertyValueDefinition() {
+        super();
+    }
 
-	public PropertyValueDefinition(String name, String value) {
-		super(name, value);
+    public PropertyValueDefinition(String name, String value) {
+        super(name, value);
 
-	}
+    }
 
-	@Override
-	public boolean isDefinition() {
-		// TODO Auto-generated method stub
-		return false;
-	}
+    @Override
+    public boolean isDefinition() {
+        // TODO Auto-generated method stub
+        return false;
+    }
 
 }

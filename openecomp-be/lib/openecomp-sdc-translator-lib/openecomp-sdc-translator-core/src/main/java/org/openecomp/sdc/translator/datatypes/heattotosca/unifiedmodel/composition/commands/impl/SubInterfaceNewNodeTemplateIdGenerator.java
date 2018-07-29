@@ -16,9 +16,6 @@
 
 package org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.composition.commands.impl;
 
-import static org.openecomp.sdc.translator.services.heattotosca.UnifiedCompositionUtil.getConnectedComputeConsolidationData;
-import static org.openecomp.sdc.translator.services.heattotosca.UnifiedCompositionUtil.getNewSubInterfaceNodeTemplateId;
-
 import org.onap.sdc.tosca.datatypes.model.NodeTemplate;
 import org.openecomp.sdc.tosca.services.DataModelUtil;
 import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.composition.UnifiedCompositionData;
@@ -32,6 +29,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+
+import static org.openecomp.sdc.translator.services.heattotosca.UnifiedCompositionUtil.getConnectedComputeConsolidationData;
+import static org.openecomp.sdc.translator.services.heattotosca.UnifiedCompositionUtil.getNewSubInterfaceNodeTemplateId;
 
 public class SubInterfaceNewNodeTemplateIdGenerator implements UnifiedSubstitutionNodeTemplateIdGenerator {
 

@@ -20,11 +20,11 @@
 
 package org.openecomp.sdc.be.resources.data;
 
-import java.nio.ByteBuffer;
-
 import com.datastax.driver.mapping.annotations.Column;
 import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
+
+import java.nio.ByteBuffer;
 
 @Table(keyspace = "sdcartifact", name = "resources")
 public class ESArtifactData {

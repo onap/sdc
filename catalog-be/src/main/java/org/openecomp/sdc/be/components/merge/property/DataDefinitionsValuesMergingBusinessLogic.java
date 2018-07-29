@@ -1,17 +1,23 @@
 package org.openecomp.sdc.be.components.merge.property;
 
-import java.util.Collections;
-import java.util.List;
-
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.model.InputDefinition;
 import org.springframework.stereotype.Component;
 
+import java.util.Collections;
+import java.util.List;
+
+import static org.apache.commons.collections.CollectionUtils.isEmpty;
+import static org.openecomp.sdc.be.components.merge.property.PropertyInstanceMergeDataBuilder.buildDataForMerging;
+
 @Component
 public class DataDefinitionsValuesMergingBusinessLogic  {
 
-    @javax.annotation.Resource
     private PropertyDataValueMergeBusinessLogic propertyValueMergeBL;
+
+    public DataDefinitionsValuesMergingBusinessLogic(PropertyDataValueMergeBusinessLogic propertyValueMergeBL) {
+        this.propertyValueMergeBL = propertyValueMergeBL;
+    }
 
     /**
      * Merge previous version data definition values into the new version data definition.
@@ -23,10 +29,10 @@ public class DataDefinitionsValuesMergingBusinessLogic  {
      * @param newInputs the new version inputs
      */
     public <T extends PropertyDataDefinition> void mergeInstanceDataDefinitions(List<T> oldInstanceDataDefinition, List<InputDefinition> oldInputs, List<T> updatedInstanceDataDefinition, List<InputDefinition> newInputs) {
-        if (updatedInstanceDataDefinition == null || updatedInstanceDataDefinition.isEmpty() || oldInstanceDataDefinition == null || oldInstanceDataDefinition.isEmpty()) {
+        if (isEmpty(updatedInstanceDataDefinition) || isEmpty(oldInstanceDataDefinition)) {
             return;
         }
-        List<MergePropertyData> mergePropertyData = PropertyInstanceMergeDataBuilder.getInstance().buildDataForMerging(oldInstanceDataDefinition, oldInputs, updatedInstanceDataDefinition, newInputs);
+        List<MergePropertyData> mergePropertyData = buildDataForMerging(oldInstanceDataDefinition, oldInputs, updatedInstanceDataDefinition, newInputs);
         mergePropertyData.forEach(this::mergeInstanceDefinition);
 
     }

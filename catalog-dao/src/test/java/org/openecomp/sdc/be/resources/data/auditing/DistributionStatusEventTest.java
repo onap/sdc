@@ -1,11 +1,11 @@
 package org.openecomp.sdc.be.resources.data.auditing;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.UUID;
-
 import org.junit.Test;
 import org.openecomp.sdc.be.resources.data.auditing.model.CommonAuditData;
+import org.openecomp.sdc.be.resources.data.auditing.model.DistributionData;
+
+import java.util.Date;
+import java.util.UUID;
 
 
 public class DistributionStatusEventTest {
@@ -16,8 +16,8 @@ public class DistributionStatusEventTest {
 
 	@Test
 	public void testCtor() throws Exception {
-		new DistributionStatusEvent(new HashMap<>());
-		new DistributionStatusEvent("mock", CommonAuditData.newBuilder().build(), "mock", "mock", "mock", "mock", "mock");
+		new DistributionStatusEvent();
+		new DistributionStatusEvent("mock", CommonAuditData.newBuilder().build(),new DistributionData("",""), "mock", "mock", "mock");
 	}
 	
 	@Test

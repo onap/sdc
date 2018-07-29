@@ -5,10 +5,9 @@ import com.google.common.base.MoreObjects;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 
-import java.io.Serializable;
 import java.util.Objects;
 
-public class ForwardingPathElementDataDefinition extends ToscaDataDefinition implements Serializable {
+public class ForwardingPathElementDataDefinition extends ToscaDataDefinition {
     @JsonCreator
     public ForwardingPathElementDataDefinition() {
         super();
@@ -22,7 +21,6 @@ public class ForwardingPathElementDataDefinition extends ToscaDataDefinition imp
         setToCP(toCPName);
         setFromCPOriginId(fromCPOriginId);
         setToCPOriginId(toCPOriginId);
-
     }
 
     public ForwardingPathElementDataDefinition(ForwardingPathElementDataDefinition pathElement) {

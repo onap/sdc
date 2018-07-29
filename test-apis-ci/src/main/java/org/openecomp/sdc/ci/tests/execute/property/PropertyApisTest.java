@@ -20,14 +20,6 @@
 
 package org.openecomp.sdc.ci.tests.execute.property;
 
-import static org.testng.AssertJUnit.assertTrue;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 import org.junit.Rule;
@@ -54,6 +46,10 @@ import org.openecomp.sdc.ci.tests.utils.validation.ErrorValidationUtils;
 import org.testng.AssertJUnit;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+
+import java.util.*;
+
+import static org.testng.AssertJUnit.assertTrue;
 
 public class PropertyApisTest extends SimpleOneRsrcOneServiceTest {
 

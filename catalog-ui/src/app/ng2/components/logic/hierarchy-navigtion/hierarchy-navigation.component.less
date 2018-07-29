@@ -1,3 +1,5 @@
+@import './../../../../../assets/styles/mixins.less';
+
 .navigation-wrapper {
     text-align: left;
 }
@@ -30,6 +32,25 @@
 .node-data {
     margin-left: 10px;
     margin-right: 10px;
+    align-items: center;
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 300px;
+    .archive-label{
+        margin-left: 5px;
+    }
+}
+
+.node-data-icon {
+    vertical-align: middle;
+    margin-right: 7px;
+    
+    &.defaulticon.small {
+        background-color: #999;  
+        border-radius: 14px;
+    }
 }
 
 .node-data-wrapper.selected {
@@ -49,4 +70,21 @@
 }
 
 
+
+.icon-group {
+    .square-icon();
+    background-color: @main_color_a;
+
+    &::before {
+        content: "G";
+    }
+}
+.icon-policy {
+    .square-icon();
+    background-color: @main_color_r;
+
+    &::before {
+        content: "P";
+    }
+}
 

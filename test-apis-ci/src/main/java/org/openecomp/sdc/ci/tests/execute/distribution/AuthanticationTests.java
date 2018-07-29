@@ -20,13 +20,6 @@
 
 package org.openecomp.sdc.ci.tests.execute.distribution;
 
-import static org.testng.AssertJUnit.assertEquals;
-
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.junit.Rule;
 import org.junit.rules.TestName;
 import org.openecomp.sdc.be.datatypes.elements.ConsumerDataDefinition;
@@ -53,6 +46,13 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static org.testng.AssertJUnit.assertEquals;
 
 public class AuthanticationTests extends ComponentBaseTest {
 

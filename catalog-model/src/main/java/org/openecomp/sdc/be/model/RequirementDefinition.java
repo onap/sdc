@@ -20,27 +20,22 @@
 
 package org.openecomp.sdc.be.model;
 
-import java.io.Serializable;
-
 import org.openecomp.sdc.be.datatypes.elements.RequirementDataDefinition;
 
 /**
  * Specifies the requirements that the Node Type exposes.
  */
-public class RequirementDefinition extends RequirementDataDefinition implements Serializable {
+public class RequirementDefinition extends RequirementDataDefinition {
 
-	public RequirementDefinition(){
-		super();
-	}
-	
-	public RequirementDefinition(RequirementDefinition other) {
-		super(other);
-	}
-	
-	public RequirementDefinition(RequirementDataDefinition requirementDataDefinition) {
-		super(requirementDataDefinition);
-	}
-	
-	private static final long serialVersionUID = -1899506746481882719L;
+    public RequirementDefinition(){
+        super();
+    }
 
+    public RequirementDefinition(RequirementDefinition other) {
+        super(other);
+    }
+
+    public RequirementDefinition(RequirementDataDefinition requirementDataDefinition) {
+        super(requirementDataDefinition);
+    }
 }

@@ -20,22 +20,22 @@
 
 package org.onap.sdc.generator.impl;
 
-import static org.onap.sdc.generator.util.ArtifactGeneratorUtil.logError;
-
-import org.onap.sdc.generator.data.GeneratorConstants;
-import org.onap.sdc.generator.util.ArtifactGeneratorUtil;
-import org.openecomp.sdc.logging.api.Logger;
-import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.onap.sdc.generator.GeneratorManager;
 import org.onap.sdc.generator.GeneratorTask;
 import org.onap.sdc.generator.data.Artifact;
 import org.onap.sdc.generator.data.GenerationData;
+import org.onap.sdc.generator.data.GeneratorConstants;
 import org.onap.sdc.generator.intf.ArtifactGenerator;
 import org.onap.sdc.generator.service.ArtifactGenerationService;
+import org.onap.sdc.generator.util.ArtifactGeneratorUtil;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ForkJoinPool;
+
+import static org.onap.sdc.generator.util.ArtifactGeneratorUtil.logError;
 
 /**
  * Artifact Generation Service implementation class.

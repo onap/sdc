@@ -24,14 +24,14 @@ import org.openecomp.sdc.be.datatypes.components.ResourceMetadataDataDefinition;
 
 public class ResourceMetadataDefinition extends ComponentMetadataDefinition {
 
-	public ResourceMetadataDefinition() {
-		super();
-		this.componentMetadataDataDefinition = new ResourceMetadataDataDefinition();
-	}
+    public ResourceMetadataDefinition() {
+        super();
+        this.componentMetadataDataDefinition = new ResourceMetadataDataDefinition();
+    }
 
-	public ResourceMetadataDefinition(ResourceMetadataDataDefinition other) {
-		super(other);
+    public ResourceMetadataDefinition(ResourceMetadataDataDefinition other) {
+        super(other);
 
-	}
+    }
 
 }

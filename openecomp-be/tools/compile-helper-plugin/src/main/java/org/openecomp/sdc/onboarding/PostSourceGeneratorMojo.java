@@ -16,6 +16,12 @@
 
 package org.openecomp.sdc.onboarding;
 
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.ResolutionScope;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -23,11 +29,6 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Collectors;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.LifecyclePhase;
-import org.apache.maven.plugins.annotations.Mojo;
-import org.apache.maven.plugins.annotations.ResolutionScope;
 
 
 @Mojo(name = "post-source-generator-helper", threadSafe = true, defaultPhase = LifecyclePhase.GENERATE_RESOURCES,

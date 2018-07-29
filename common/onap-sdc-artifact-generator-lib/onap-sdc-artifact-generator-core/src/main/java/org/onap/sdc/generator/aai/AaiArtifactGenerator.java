@@ -20,35 +20,18 @@
 
 package org.onap.sdc.generator.aai;
 
-import static org.onap.sdc.generator.util.ArtifactGeneratorUtil.logError;
-
-import org.onap.sdc.generator.aai.model.AllotedResource;
-import org.onap.sdc.generator.aai.model.ProvidingService;
-import org.onap.sdc.generator.aai.model.Resource;
-import org.onap.sdc.generator.aai.model.Service;
-import org.onap.sdc.generator.aai.model.Widget;
+import org.onap.sdc.generator.aai.model.*;
 import org.onap.sdc.generator.aai.tosca.GroupDefinition;
+import org.onap.sdc.generator.aai.tosca.NodeTemplate;
+import org.onap.sdc.generator.aai.tosca.ToscaTemplate;
 import org.onap.sdc.generator.aai.types.ModelType;
-import org.onap.sdc.generator.data.AdditionalParams;
-import org.onap.sdc.generator.data.ArtifactType;
-import org.onap.sdc.generator.data.GenerationData;
-import org.onap.sdc.generator.data.GeneratorConstants;
-import org.onap.sdc.generator.data.GroupType;
-import org.onap.sdc.generator.data.WidgetConfigurationUtil;
+import org.onap.sdc.generator.data.*;
 import org.onap.sdc.generator.intf.ArtifactGenerator;
 import org.onap.sdc.generator.intf.Generator;
+import org.onap.sdc.generator.logging.annotations.Audit;
 import org.onap.sdc.generator.util.ArtifactGeneratorUtil;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
-import org.onap.sdc.generator.aai.model.L3NetworkWidget;
-import org.onap.sdc.generator.aai.model.Model;
-import org.onap.sdc.generator.aai.model.TunnelXconnectWidget;
-import org.onap.sdc.generator.aai.model.VfModule;
-import org.onap.sdc.generator.aai.tosca.NodeTemplate;
-import org.onap.sdc.generator.aai.tosca.ToscaTemplate;
-import org.onap.sdc.generator.data.Artifact;
-import org.onap.sdc.generator.data.GeneratorUtil;
-import org.onap.sdc.generator.logging.annotations.Audit;
 import org.slf4j.MDC;
 
 import java.io.File;
@@ -63,6 +46,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+
+import static org.onap.sdc.generator.util.ArtifactGeneratorUtil.logError;
 
 @Generator(artifactType = ArtifactType.AAI)
 public class AaiArtifactGenerator implements ArtifactGenerator {

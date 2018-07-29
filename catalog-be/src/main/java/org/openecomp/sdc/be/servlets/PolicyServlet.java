@@ -1,24 +1,8 @@
 package org.openecomp.sdc.be.servlets;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
+import com.jcabi.aspects.Loggable;
+import fj.data.Either;
+import io.swagger.annotations.*;
 import org.apache.commons.lang3.StringUtils;
 import org.openecomp.sdc.be.components.impl.PolicyBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceImportManager;
@@ -33,17 +17,19 @@ import org.openecomp.sdc.be.model.PolicyDefinition;
 import org.openecomp.sdc.be.model.PolicyTargetDTO;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.datastructure.Wrapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.openecomp.sdc.common.log.wrappers.Logger;
+import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.stereotype.Controller;
 
-import com.jcabi.aspects.Loggable;
-
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Provides REST API to create, retrieve, update, delete a policy
@@ -56,7 +42,7 @@ import io.swagger.annotations.ApiResponses;
 @Produces(MediaType.APPLICATION_JSON)
 public class PolicyServlet extends AbstractValidationsServlet {
 
-    private static final Logger log = LoggerFactory.getLogger(PolicyServlet.class);
+    private static final Logger log = Logger.getLogger(PolicyServlet.class);
     private final PolicyBusinessLogic policyBusinessLogic;
 
     public PolicyServlet(PolicyBusinessLogic policyBusinessLogic, ServletUtils servletUtils, ResourceImportManager resourceImportManager, ComponentsUtils componentsUtils) {
@@ -76,7 +62,7 @@ public class PolicyServlet extends AbstractValidationsServlet {
                                  @PathParam("policyTypeName") final String policyTypeName,
                                  @HeaderParam(value = Constants.USER_ID_HEADER) @ApiParam(value = "USER_ID of modifier user", required = true) String userId,
                                  @Context final HttpServletRequest request) {
-        init(log);
+        init();
 
         Wrapper<Response> responseWrapper = new Wrapper<>();
         try {
@@ -103,7 +89,7 @@ public class PolicyServlet extends AbstractValidationsServlet {
                                  @ApiParam(value = "valid values: resources / services", allowableValues = ComponentTypeEnum.RESOURCE_PARAM_NAME + "," + ComponentTypeEnum.SERVICE_PARAM_NAME) @PathParam("containerComponentType") final String containerComponentType,
                                  @PathParam("policyId") final String policyId, @HeaderParam(value = Constants.USER_ID_HEADER) @ApiParam(value = "USER_ID of modifier user", required = true) String userId,
                                  @ApiParam(value = "PolicyDefinition", required = true) String policyData, @Context final HttpServletRequest request) {
-        init(log);
+        init();
 
         Wrapper<Response> responseWrapper = new Wrapper<>();
         try {
@@ -139,7 +125,7 @@ public class PolicyServlet extends AbstractValidationsServlet {
                               @ApiParam(value = "valid values: resources / services", allowableValues = ComponentTypeEnum.RESOURCE_PARAM_NAME + "," + ComponentTypeEnum.SERVICE_PARAM_NAME) @PathParam("containerComponentType") final String containerComponentType,
                               @PathParam("policyId") final String policyId, @HeaderParam(value = Constants.USER_ID_HEADER) @ApiParam(value = "USER_ID of modifier user", required = true) String userId,
                               @Context final HttpServletRequest request) {
-        init(log);
+        init();
 
         Wrapper<Response> responseWrapper = new Wrapper<>();
         try {
@@ -167,7 +153,7 @@ public class PolicyServlet extends AbstractValidationsServlet {
                                  @ApiParam(value = "valid values: resources / services", allowableValues = ComponentTypeEnum.RESOURCE_PARAM_NAME + "," + ComponentTypeEnum.SERVICE_PARAM_NAME) @PathParam("containerComponentType") final String containerComponentType,
                                  @PathParam("policyId") final String policyId, @HeaderParam(value = Constants.USER_ID_HEADER) @ApiParam(value = "USER_ID of modifier user", required = true) String userId,
                                  @Context final HttpServletRequest request) {
-        init(log);
+        init();
 
         Wrapper<Response> responseWrapper = new Wrapper<>();
         try {
@@ -195,7 +181,7 @@ public class PolicyServlet extends AbstractValidationsServlet {
                                         @ApiParam(value = "the id of the policy which its properties are to return") @PathParam("policyId") final String policyId,
                                         @ApiParam(value = "the userid", required = true)@HeaderParam(value = Constants.USER_ID_HEADER) String userId,
                                         @Context final HttpServletRequest request) {
-        init(log);
+        init();
         try {
             return convertToComponentType(containerComponentType)
                     .left()
@@ -220,7 +206,7 @@ public class PolicyServlet extends AbstractValidationsServlet {
                                            @ApiParam(value = "valid values: resources / services", allowableValues = ComponentTypeEnum.RESOURCE_PARAM_NAME + "," + ComponentTypeEnum.SERVICE_PARAM_NAME) @PathParam("containerComponentType") final String containerComponentType,
                                            @PathParam("policyId") final String policyId, @HeaderParam(value = Constants.USER_ID_HEADER) @ApiParam(value = "USER_ID of modifier user", required = true) String userId,
                                            @ApiParam(value = "PolicyDefinition", required = true) String policyData, @Context final HttpServletRequest request) {
-        init(log);
+        init();
         Wrapper<Response> responseWrapper = new Wrapper<>();
         try {
             Wrapper<ComponentTypeEnum> componentTypeWrapper = validateComponentTypeAndUserId(containerComponentType, userId, responseWrapper);
@@ -256,11 +242,11 @@ public class PolicyServlet extends AbstractValidationsServlet {
         return componentTypeWrapper;
     }
 
-	@PUT
+	@POST
 	@Path("/{containerComponentType}/{componentId}/policies/{policyId}/targets")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	@ApiOperation(value = "update policy targets", httpMethod = "PUT", notes = "Returns updated Policy", response = Response.class)
+	@ApiOperation(value = "update policy targets", httpMethod = "POST", notes = "Returns updated Policy", response = Response.class)
 	@ApiResponses(value = {@ApiResponse(code = 201, message = "Policy target updated"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 400, message = "Invalid content / Missing content")})
 	public Response updatePolicyTargets(@PathParam("componentId") final String containerComponentId,
 										@ApiParam(value = "valid values: resources / services", allowableValues = ComponentTypeEnum.RESOURCE_PARAM_NAME + "," + ComponentTypeEnum.SERVICE_PARAM_NAME) @PathParam("containerComponentType") final String containerComponentType,
@@ -270,34 +256,35 @@ public class PolicyServlet extends AbstractValidationsServlet {
 										List<PolicyTargetDTO> requestJson) {
 		try {
 
-            Map<PolicyTargetType, List<String>> policyTarget = convertTargetDTOToBLTarget(requestJson);
-            if(policyTarget == null){
-                return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.POLICY_TARGET_TYPE_DOES_NOT_EXIST, StringUtils.join(requestJson.stream().map(PolicyTargetDTO::getType).collect(Collectors.toList())), ","));
-            }
-
-            return convertToComponentType(containerComponentType)
+		    return updatePolicyTargetsFromDTO(requestJson)
                     .left()
-                    .bind(cmptType -> policyBusinessLogic.updatePolicyTargets(cmptType, containerComponentId, policyId, policyTarget, userId))
-                    .either(this::buildOkResponse,
-                            this::buildErrorResponse);
+                    .bind(policyTarget -> updatePolicyTargetsFromMap(policyTarget, containerComponentType, containerComponentId, policyId, userId))
+                    .either(this::buildOkResponse, this::buildErrorResponse);
 
         } catch (Exception e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Create Policy");
-            log.debug("Policy creation has been failed with the exception{}. ", e);
+            log.debug("Policy target update has been failed with the exception{}. ", e);
             return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
         }
     }
 
+    private Either<PolicyDefinition, ResponseFormat> updatePolicyTargetsFromMap(Map<PolicyTargetType, List<String>> policyTarget, String containerComponentType, String containerComponentId, String policyId, String userId) {
+        return convertToComponentType(containerComponentType)
+                .left()
+                .bind(cmptType -> policyBusinessLogic.updatePolicyTargets(cmptType, containerComponentId, policyId, policyTarget, userId));
+    }
 
-    private Map<PolicyTargetType, List<String>> convertTargetDTOToBLTarget(List<PolicyTargetDTO> targetDTOList) {
+    private Either<Map<PolicyTargetType, List<String>>, ResponseFormat> updatePolicyTargetsFromDTO(List<PolicyTargetDTO> targetDTOList) {
         Map<PolicyTargetType, List<String>> policyTarget = new HashMap<>();
         for (PolicyTargetDTO currentTarget : targetDTOList) {
             if(!addTargetsByType(policyTarget, currentTarget.getType(), currentTarget.getUniqueIds())){
-                return null;
+                return Either.right(componentsUtils.getResponseFormat(ActionStatus.POLICY_TARGET_TYPE_DOES_NOT_EXIST, currentTarget.getType()));
             }
         }
-        return policyTarget;
+        return Either.left(policyTarget);
     }
+
+
     public boolean addTargetsByType(Map<PolicyTargetType, List<String>> policyTarget, String type, List<String> uniqueIds) {
         PolicyTargetType targetTypeEnum = PolicyTargetType.getByNameIgnoreCase(type);
         if(targetTypeEnum != null){

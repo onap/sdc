@@ -20,39 +20,31 @@
 
 package org.openecomp.sdc.be.model.tosca.constraints;
 
-import java.io.Serializable;
-
-import javax.validation.constraints.NotNull;
-
 import org.openecomp.sdc.be.model.tosca.ToscaType;
 import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintValueDoNotMatchPropertyTypeException;
 import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintViolationException;
 
-public class LessThanConstraint extends AbstractComparablePropertyConstraint implements Serializable {
+import javax.validation.constraints.NotNull;
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 2267623014703859501L;
+public class LessThanConstraint extends AbstractComparablePropertyConstraint {
 
-	@NotNull
-	private String lessThan;
+    @NotNull
+    private String lessThan;
 
-	public LessThanConstraint(String lessThan) {
-		super();
-		this.lessThan = lessThan;
-	}
+    public LessThanConstraint(String lessThan) {
+        this.lessThan = lessThan;
+    }
 
-	@Override
-	public void initialize(ToscaType propertyType) throws ConstraintValueDoNotMatchPropertyTypeException {
-		initialize(lessThan, propertyType);
-	}
+    @Override
+    public void initialize(ToscaType propertyType) throws ConstraintValueDoNotMatchPropertyTypeException {
+        initialize(lessThan, propertyType);
+    }
 
-	@Override
-	protected void doValidate(Object propertyValue) throws ConstraintViolationException {
-		if (getComparable().compareTo(propertyValue) <= 0) {
-			throw new ConstraintViolationException(propertyValue + " > " + lessThan);
-		}
-	}
+    @Override
+    protected void doValidate(Object propertyValue) throws ConstraintViolationException {
+        if (getComparable().compareTo(propertyValue) <= 0) {
+            throw new ConstraintViolationException(propertyValue + " > " + lessThan);
+        }
+    }
 
 }

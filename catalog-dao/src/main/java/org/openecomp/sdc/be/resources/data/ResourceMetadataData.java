@@ -20,13 +20,13 @@
 
 package org.openecomp.sdc.be.resources.data;
 
-import java.util.Map;
-
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
 import org.openecomp.sdc.be.datatypes.components.ComponentMetadataDataDefinition;
 import org.openecomp.sdc.be.datatypes.components.ResourceMetadataDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
+
+import java.util.Map;
 
 public class ResourceMetadataData extends ComponentMetadataData {
 

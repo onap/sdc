@@ -64,7 +64,7 @@ import {LinksFactory} from "../models/graph/graph-links/links-factory";
 import {ImageCreatorService} from "../directives/graphs-v2/image-creator/image-creator.service";
 import {Palette} from "../directives/graphs-v2/palette/palette.directive";
 import {CompositionGraph} from "../directives/graphs-v2/composition-graph/composition-graph.directive";
-import {RelationMenuDirective} from "../directives/graphs-v2/relation-menu/relation-menu";
+// import {RelationMenuDirective} from "../directives/graphs-v2/relation-menu/relation-menu";
 import {DeploymentGraph} from "../directives/graphs-v2/deployment-graph/deployment-graph.directive";
 import {CommonGraphUtils} from "../directives/graphs-v2/common/common-graph-utils";
 import {CompositionGraphNodesUtils} from "../directives/graphs-v2/composition-graph/utils/composition-graph-nodes-utils";
@@ -77,7 +77,7 @@ import {MatchCapabilitiesRequirementsUtils} from "../directives/graphs-v2/compos
 import {CapabilitiesListDirective} from "../directives/capabilities-and-requirements/capability/capabilities-list-directive";
 import {RequirementsListDirective} from "../directives/capabilities-and-requirements/requirement/requirements-list-directive";
 import {ServicePathGraphUtils} from "../directives/graphs-v2/composition-graph/utils/composition-graph-service-path-utils";
-import {PaletteAnimationComponent} from './../ng2/components/ui/palette-animation/palette-animation.component';
+import {PreventDoubleClickDirective} from "../directives/prevent-double-click/prevent-double-click";
 
 let moduleName:string = 'Sdc.Directives';
 let directiveModule:ng.IModule = angular.module(moduleName, []);
@@ -91,7 +91,7 @@ directiveModule.directive('fileType', FileTypeDirective.factory);
 directiveModule.directive('invalidCharacters', InvalidCharactersDirective.factory);
 directiveModule.directive('perfectScrollbar', PerfectScrollerDirective.factory);
 directiveModule.directive('expandCollapse', ExpandCollapseDirective.factory);
-directiveModule.directive('sdcModal', SdcModalDirective.factory);
+directiveModule.directive('ng1Modal', SdcModalDirective.factory);
 directiveModule.directive('fileOpener', FileOpenerDirective.factory);
 directiveModule.directive('fileUpload', FileUploadDirective.factory);
 directiveModule.directive('structureTree', StructureTreeDirective.factory);
@@ -113,17 +113,19 @@ directiveModule.directive('selectTypeMap', SelectTypeMapDirective.factory);
 directiveModule.directive('selectTypeList', SelectTypeListDirective.factory);
 directiveModule.directive('infoTooltip', InfoTooltipDirective.factory);
 directiveModule.directive('validationOnLoad', ValidationOnLoadDirective.factory);
-directiveModule.directive('sdcTabs', SdcTabsDirective.factory);
+directiveModule.directive('ng1Tabs', SdcTabsDirective.factory);
 directiveModule.directive('sdcSingleTab', SdcSingleTabDirective.factory);
 directiveModule.directive('innerSdcSingleTab', InnerSdcSingleTabDirective.factory);
 directiveModule.directive('jsonExportExcel', JsonExportExcelDirective.factory);
 directiveModule.directive('expandCollapseListHeader', ExpandCollapseListHeaderDirective.factory);
+directiveModule.directive('preventDoubleClick', PreventDoubleClickDirective.factory);
+//
 //
 // // Layouts
 directiveModule.directive('topProgress', TopProgressDirective.factory);
 //
 // // Elements
-directiveModule.directive('sdcCheckbox', CheckboxElementDirective.factory);
+directiveModule.directive('ng1Checkbox', CheckboxElementDirective.factory);
 directiveModule.directive('sdcRadioButton', RadiobuttonElementDirective.factory);
 //
 // // Events
@@ -144,7 +146,7 @@ directiveModule.service('ImageCreatorService', ImageCreatorService);
 // //composition
 directiveModule.directive('palette', Palette.factory);
 directiveModule.directive('compositionGraph', CompositionGraph.factory);
-directiveModule.directive('relationMenu', RelationMenuDirective.factory);
+// directiveModule.directive('relationMenu', RelationMenuDirective.factory);
     //directiveModule.directive('assetPopover', AssetPopoverDirective.factory);
 //
 // //deployment
@@ -178,13 +180,18 @@ import { MenuListNg2Component } from "../ng2/components/downgrade-wrappers/menu-
 import { TopNavComponent } from "../ng2/components/layout/top-nav/top-nav.component";
 import { ZoneContainerComponent } from "../ng2/components/ui/canvas-zone/zone-container.component";
 import { ZoneInstanceComponent } from "../ng2/components/ui/canvas-zone/zone-instance/zone-instance.component";
+import { CompositionPanelComponent } from 'app/ng2/pages/composition/panel/panel.component';
+import { CompositionPanelHeaderComponent } from 'app/ng2/pages/composition/panel/panel-header/panel-header.component';
 import { PropertiesAssignmentComponent } from "../ng2/pages/properties-assignment/properties-assignment.page.component";
 import { SearchWithAutoCompleteComponent } from "../ng2/components/ui/search-with-autocomplete/search-with-autocomplete.component";
 import { PalettePopupPanelComponent } from "../ng2/components/ui/palette-popup-panel/palette-popup-panel.component";
 import { ServicePathComponent } from '../ng2/components/logic/service-path/service-path.component';
 import { ServicePathSelectorComponent } from '../ng2/components/logic/service-path-selector/service-path-selector.component';
+import { MultilineEllipsisComponent } from "../ng2/shared/multiline-ellipsis/multiline-ellipsis.component";
 import { InterfaceOperationComponent } from '../ng2/pages/interface-operation/interface-operation.page.component';
 import { PluginFrameComponent } from "../ng2/components/ui/plugin/plugin-frame.component";
+import { TileComponent } from "../ng2/components/ui/tile/tile.component";
+
 
 directiveModule.directive('menuListNg2', downgradeComponent({
     component: MenuListNg2Component,
@@ -193,20 +200,25 @@ directiveModule.directive('menuListNg2', downgradeComponent({
 
 directiveModule.directive('topNav', downgradeComponent({
     component: TopNavComponent,
-    inputs: ['version', 'menuModel', 'topLvlSelectedIndex', 'hideSearch', 'searchTerm', 'notificationIconCallback'],
+    inputs: ['version', 'menuModel', 'topLvlSelectedIndex', 'hideSearch', 'searchTerm', 'notificationIconCallback', 'unsavedChanges', 'unsavedChangesCallback'],
     outputs: ['searchTermChange']
 }) as ng.IDirectiveFactory);
 
 directiveModule.directive('ng2ZoneContainer', downgradeComponent({
     component: ZoneContainerComponent,
-        inputs: ['title', 'count', 'class', 'showZone', 'minifyZone'],
-    outputs: []
+        inputs: ['title', 'count', 'type', 'visible', 'minimized'],
+    outputs: ['minimize', 'backgroundClick']
 }) as angular.IDirectiveFactory);
 
 directiveModule.directive('ng2ZoneInstance', downgradeComponent({
-    component: ZoneInstanceComponent,
-    inputs: ['config', 'isActive', 'activeInstanceMode', 'defaultIconText'],
-    outputs: ['modeChange']
+        component: ZoneInstanceComponent,
+        inputs: ['zoneInstance', 'isActive', 'activeInstanceMode', 'defaultIconText', 'isViewOnly', 'hidden', 'forceSave'],
+        outputs: ['modeChange', 'tagHandleClick', 'assignmentSaveStart', 'assignmentSaveComplete']
+}) as angular.IDirectiveFactory);
+
+directiveModule.directive('ng2CompositionPanel', downgradeComponent({
+    component: CompositionPanelComponent,
+    inputs: ['isViewOnly', 'isLoading', 'isCertified', 'selectedZoneInstanceId', 'selectedZoneInstanceType', 'selectedZoneInstanceName', 'topologyTemplate'],
 }) as angular.IDirectiveFactory);
 
 directiveModule.directive('propertiesAssignment', downgradeComponent({
@@ -219,12 +231,6 @@ directiveModule.directive('ng2SearchWithAutocomplete', downgradeComponent({
     outputs: ['searchChanged', 'searchButtonClicked']
 }) as angular.IDirectiveFactory);
 
-directiveModule.directive('ng2PaletteAnimation', downgradeComponent({
-        component: PaletteAnimationComponent,
-        inputs: ['from', 'to', 'icon' ],
-        outputs: []
-    }) as angular.IDirectiveFactory);
-
 directiveModule.directive('ng2PalettePopupPanel', downgradeComponent({
     component: PalettePopupPanelComponent,
     inputs: [],
@@ -233,7 +239,7 @@ directiveModule.directive('ng2PalettePopupPanel', downgradeComponent({
 
 directiveModule.directive('ng2ServicePath', downgradeComponent({
     component: ServicePathComponent,
-    inputs: ['onCreate', 'service'],
+    inputs: ['onCreate', 'service', 'isViewOnly'],
     outputs: []
 }) as angular.IDirectiveFactory);
 
@@ -247,6 +253,18 @@ directiveModule.directive('ng2InterfaceOperation', downgradeComponent({
     component: InterfaceOperationComponent,
     inputs: ['component', 'readonly'],
     outputs: []
+}) as angular.IDirectiveFactory);
+
+directiveModule.directive('ng2MultilineEllipsis', downgradeComponent({
+    component: MultilineEllipsisComponent,
+    inputs: ['lines', 'lineHeight', 'className'],
+    outputs: ['hasEllipsisChanged']
+}) as angular.IDirectiveFactory);
+
+directiveModule.directive('ng2UiTile', downgradeComponent({
+    component: TileComponent,
+    inputs: ['component'],
+    outputs: ['onTileClick']
 }) as angular.IDirectiveFactory);
 
 directiveModule.directive('pluginFrame', downgradeComponent( {

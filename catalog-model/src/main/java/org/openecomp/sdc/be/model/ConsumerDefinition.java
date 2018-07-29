@@ -24,12 +24,12 @@ import org.openecomp.sdc.be.datatypes.elements.ConsumerDataDefinition;
 
 public class ConsumerDefinition extends ConsumerDataDefinition {
 
-	public ConsumerDefinition() {
-		super();
-	}
+    public ConsumerDefinition() {
+        super();
+    }
 
-	public ConsumerDefinition(ConsumerDataDefinition a) {
-		super(a);
+    public ConsumerDefinition(ConsumerDataDefinition a) {
+        super(a);
 
-	}
+    }
 }

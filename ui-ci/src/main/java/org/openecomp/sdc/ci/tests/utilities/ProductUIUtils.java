@@ -20,9 +20,7 @@
 
 package org.openecomp.sdc.ci.tests.utilities;
 
-import java.awt.AWTException;
-import java.util.List;
-
+import com.aventstack.extentreports.Status;
 import org.junit.rules.TestName;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum;
@@ -34,7 +32,8 @@ import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-import com.aventstack.extentreports.Status;
+import java.awt.*;
+import java.util.List;
 
 /**
  * @author al714h

@@ -1,27 +1,24 @@
 <div class="service-path-creator">
 	<form class="w-sdc-form">
 		<div class="i-sdc-form-item" >
-			<label class="i-sdc-form-label required">Path Name</label>
-			<!-- <ui-element-input type="text" name="pathName" [value]="pathName"  ></ui-element-input> -->
-			<input type="text" data-tests-id="pathName" name="pathName" [(ngModel)]="forwardingPath.name" [attr.maxLength]="100" /> <!-- TODO - make unique -->
+			<label class="i-sdc-form-label required">Flow Name</label>
+			<input type="text" data-tests-id="pathName" name="pathName" [(ngModel)]="forwardingPath.name" [attr.maxLength]="200" />
 		</div>
 
 		<div class="side-by-side">
 			<div class="i-sdc-form-item" >
 				<label class="i-sdc-form-label">Protocol</label>
-				<!-- <ui-element-input type="text" name="protocol" [value]="protocol" ></ui-element-input> -->
-				<input type="text" data-tests-id="pathProtocol" name="protocol" [(ngModel)]="forwardingPath.protocol" [attr.maxLength]="100" />
+				<input type="text" data-tests-id="pathProtocol" name="protocol" [(ngModel)]="forwardingPath.protocol" [attr.maxLength]="200" />
 			</div>
 			<div class="i-sdc-form-item" >
 				<label class="i-sdc-form-label">Destination Port Numbers</label>
-				<!-- <ui-element-input type="text" name="portNumbers" [value]="portNumbers" ></ui-element-input> -->
-				<input type="text" data-tests-id="pathPortNumbers" name="portNumbers" [(ngModel)]="forwardingPath.destinationPortNumber" pattern="[0-9,]*" /> <!-- TODO - validate delimiter -->
+				<input type="text" data-tests-id="pathPortNumbers" name="portNumbers" [(ngModel)]="forwardingPath.destinationPortNumber" pattern="[0-9,]*" />
 			</div>
 		</div>
 
 		<div class="separator-buttons">
 			<span class="based-on-title">Based On</span>
-			<a (click)="addRow()" [ngClass]="{'disabled':!isExtendAllowed()}" data-tests-id="extendPathlnk">Extend Path</a>
+			<a (click)="addRow()" [ngClass]="{'disabled':!isExtendAllowed()}" data-tests-id="extendPathlnk">Extend Flow</a>
 		</div>
 
 		<div class="generic-table">

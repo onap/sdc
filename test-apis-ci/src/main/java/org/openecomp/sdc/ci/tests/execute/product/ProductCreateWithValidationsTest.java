@@ -20,11 +20,6 @@
 
 package org.openecomp.sdc.ci.tests.execute.product;
 
-import static org.testng.AssertJUnit.assertEquals;
-import static org.testng.AssertJUnit.assertTrue;
-
-import java.util.Arrays;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.junit.Rule;
@@ -47,6 +42,11 @@ import org.openecomp.sdc.ci.tests.utils.validation.AuditValidationUtils;
 import org.openecomp.sdc.ci.tests.utils.validation.ProductValidationUtils;
 import org.openecomp.sdc.common.api.Constants;
 import org.testng.annotations.Test;
+
+import java.util.Arrays;
+
+import static org.testng.AssertJUnit.assertEquals;
+import static org.testng.AssertJUnit.assertTrue;
 
 public class ProductCreateWithValidationsTest extends ProductBaseTest {
 	@Rule

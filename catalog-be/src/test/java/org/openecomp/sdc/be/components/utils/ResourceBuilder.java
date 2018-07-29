@@ -1,9 +1,10 @@
 package org.openecomp.sdc.be.components.utils;
 
-import java.util.ArrayList;
-
+import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.Resource;
+
+import java.util.ArrayList;
 
 public class ResourceBuilder extends ComponentBuilder<Resource, ResourceBuilder> {
 
@@ -28,6 +29,11 @@ public class ResourceBuilder extends ComponentBuilder<Resource, ResourceBuilder>
         return this;
     }
 
+
+    public ResourceBuilder setResourceType(ResourceTypeEnum resourceType) {
+        resource.setResourceType(resourceType);
+        return this;
+    }
 
 
     public ResourceBuilder() {

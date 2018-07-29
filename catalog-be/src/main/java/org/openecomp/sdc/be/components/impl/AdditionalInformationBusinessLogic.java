@@ -20,10 +20,7 @@
 
 package org.openecomp.sdc.be.components.impl;
 
-import java.util.List;
-
-import javax.servlet.ServletContext;
-
+import fj.data.Either;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
@@ -31,27 +28,24 @@ import org.openecomp.sdc.be.dao.graph.datatype.AdditionalInformationEnum;
 import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
 import org.openecomp.sdc.be.datatypes.elements.AdditionalInfoParameterInfo;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
-import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.WebAppContextWrapper;
 import org.openecomp.sdc.be.model.AdditionalInformationDefinition;
-import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.operations.api.IAdditionalInformationOperation;
 import org.openecomp.sdc.be.model.operations.api.IElementOperation;
-import org.openecomp.sdc.be.model.operations.api.IGraphLockOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.DaoStatusConverter;
 import org.openecomp.sdc.be.model.operations.utils.ComponentValidationUtils;
 import org.openecomp.sdc.be.model.tosca.converters.StringConvertor;
 import org.openecomp.sdc.be.model.tosca.validators.StringValidator;
 import org.openecomp.sdc.common.api.Constants;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.common.util.ValidationUtils;
 import org.openecomp.sdc.exception.ResponseFormat;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
 
-import fj.data.Either;
+import javax.servlet.ServletContext;
+import java.util.List;
 
 @Component("additionalInformationBusinessLogic")
 public class AdditionalInformationBusinessLogic extends BaseBusinessLogic {
@@ -64,16 +58,11 @@ public class AdditionalInformationBusinessLogic extends BaseBusinessLogic {
 
     private static final String GET_ADDITIONAL_INFORMATION = "GetAdditionalInformation";
 
-    private static final Logger log = LoggerFactory.getLogger(AdditionalInformationBusinessLogic.class);
+    private static final Logger log = Logger.getLogger(AdditionalInformationBusinessLogic.class.getName());
+    private static final String FAILED_TO_LOCK_COMPONENT_ERROR = "Failed to lock component {} error - {}";
 
     @javax.annotation.Resource
     private IAdditionalInformationOperation additionalInformationOperation = null;
-
-    @javax.annotation.Resource
-    private IGraphLockOperation graphLockOperation;
-
-    @javax.annotation.Resource
-    private ComponentsUtils componentsUtils;
 
     protected static IElementOperation getElementDao(Class<IElementOperation> class1, ServletContext context) {
         WebAppContextWrapper webApplicationContextWrapper = (WebAppContextWrapper) context.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR);
@@ -85,19 +74,15 @@ public class AdditionalInformationBusinessLogic extends BaseBusinessLogic {
 
     /**
      * Create new additional information on resource/service on graph
-     *
+     * @param nodeType
      * @param resourceId
-     * @param propertyName
-     * @param newPropertyDefinition
+     * @param additionalInfoParameterInfo
      * @param userId
-     * @return Either<PropertyDefinition, ActionStatus>
+     * @return Either<AdditionalInfoParameterInfo, ResponseFormat>
      */
-    public Either<AdditionalInfoParameterInfo, ResponseFormat> createAdditionalInformation(NodeTypeEnum nodeType, String resourceId, AdditionalInfoParameterInfo additionalInfoParameterInfo, String additionalInformationUid, String userId) {
+    public Either<AdditionalInfoParameterInfo, ResponseFormat> createAdditionalInformation(NodeTypeEnum nodeType, String resourceId, AdditionalInfoParameterInfo additionalInfoParameterInfo, String userId) {
 
-        Either<User, ResponseFormat> resp = validateUserExists(userId, "create Additional Information", false);
-        if (resp.isRight()) {
-            return Either.right(resp.right().value());
-        }
+        validateUserExists(userId, "create Additional Information", false);
         Either<AdditionalInfoParameterInfo, ResponseFormat> result = null;
 
         ResponseFormat responseFormat = verifyCanWorkOnComponent(nodeType, resourceId, userId);
@@ -110,7 +95,7 @@ public class AdditionalInformationBusinessLogic extends BaseBusinessLogic {
         StorageOperationStatus lockResult = graphLockOperation.lockComponent(resourceId, nodeType);
         if (!lockResult.equals(StorageOperationStatus.OK)) {
             BeEcompErrorManager.getInstance().logBeFailedLockObjectError(CREATE_ADDITIONAL_INFORMATION, nodeType.getName(), resourceId);
-            log.info("Failed to lock component {} error - {}", resourceId, lockResult);
+            log.info(FAILED_TO_LOCK_COMPONENT_ERROR, resourceId, lockResult);
             result = Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
             return result;
         }
@@ -180,7 +165,7 @@ public class AdditionalInformationBusinessLogic extends BaseBusinessLogic {
         } else {
             String newValue = valueValidRes.left().value();
             if (log.isTraceEnabled()) {
-                if (value != null && false == value.equals(newValue)) {
+                if (value != null && !value.equals(newValue)) {
                     log.trace("The additional information value was normalized from {} to {}", value, newValue);
                 }
             }
@@ -209,10 +194,8 @@ public class AdditionalInformationBusinessLogic extends BaseBusinessLogic {
         } else {
             String convertedKey = validateKeyRes.left().value();
 
-            if (log.isTraceEnabled()) {
-                if (key != null && false == key.equals(convertedKey)) {
-                    log.trace("The additional information key {} was normalized to {}", key, convertedKey);
-                }
+            if (log.isTraceEnabled() && key != null && !key.equals(convertedKey)) {
+                log.trace("The additional information key {} was normalized to {}", key, convertedKey);
             }
             additionalInfoParameterInfo.setKey(convertedKey);
         }
@@ -259,12 +242,12 @@ public class AdditionalInformationBusinessLogic extends BaseBusinessLogic {
     private Either<String, ResponseFormat> validateValue(String value) {
 
         boolean isNonEmptyString = ValidationUtils.validateStringNotEmpty(value);
-        if (false == isNonEmptyString) {
+        if (!isNonEmptyString) {
             return Either.right(componentsUtils.getResponseFormatAdditionalProperty(ActionStatus.ADDITIONAL_INFORMATION_EMPTY_STRING_NOT_ALLOWED));
         }
 
         boolean valid = StringValidator.getInstance().isValid(value, null);
-        if (false == valid) {
+        if (!valid) {
             return Either.right(componentsUtils.getResponseFormatAdditionalProperty(ActionStatus.ADDITIONAL_INFORMATION_VALUE_NOT_ALLOWED_CHARACTERS, new AdditionalInfoParameterInfo(null, value), null, AdditionalInformationEnum.Value));
         }
 
@@ -285,29 +268,28 @@ public class AdditionalInformationBusinessLogic extends BaseBusinessLogic {
 
     /**
      * validate and normalize the key
-     *
-     * @param additionalInfoParameterInfo
-     * @return
+     * @param key
+     * @return Either<String, ResponseFormat>
      */
     private Either<String, ResponseFormat> validateAndNormalizeKey(String key) {
 
         AdditionalInfoParameterInfo additionalInfoParameterInfo = new AdditionalInfoParameterInfo();
         additionalInfoParameterInfo.setKey(key);
 
-        key = ValidationUtils.normalizeAdditionalInformation(key);
-        boolean isNonEmptyString = ValidationUtils.validateStringNotEmpty(key);
-        if (false == isNonEmptyString) {
+        String normKey = ValidationUtils.normalizeAdditionalInformation(key);
+        boolean isNonEmptyString = ValidationUtils.validateStringNotEmpty(normKey);
+        if (!isNonEmptyString) {
             return Either.right(componentsUtils.getResponseFormatAdditionalProperty(ActionStatus.ADDITIONAL_INFORMATION_EMPTY_STRING_NOT_ALLOWED, null, null, AdditionalInformationEnum.Label));
         }
-        boolean isValidString = ValidationUtils.validateAdditionalInformationKeyName(key);
-        if (false == isValidString) {
-            if (false == ValidationUtils.validateLength(key, ValidationUtils.ADDITIONAL_INFORMATION_KEY_MAX_LENGTH)) {
+        boolean isValidString = ValidationUtils.validateAdditionalInformationKeyName(normKey);
+        if (!isValidString) {
+            if (!ValidationUtils.validateLength(normKey, ValidationUtils.ADDITIONAL_INFORMATION_KEY_MAX_LENGTH)) {
                 return Either.right(componentsUtils.getResponseFormatAdditionalProperty(ActionStatus.ADDITIONAL_INFORMATION_EXCEEDS_LIMIT, additionalInfoParameterInfo, null, AdditionalInformationEnum.Label));
             }
             return Either.right(componentsUtils.getResponseFormatAdditionalProperty(ActionStatus.ADDITIONAL_INFORMATION_KEY_NOT_ALLOWED_CHARACTERS, additionalInfoParameterInfo, null, AdditionalInformationEnum.Label));
         }
 
-        return Either.left(key);
+        return Either.left(normKey);
     }
 
     /**
@@ -316,17 +298,12 @@ public class AdditionalInformationBusinessLogic extends BaseBusinessLogic {
      * @param nodeType
      * @param resourceId
      * @param additionalInfoParameterInfo
-     * @param additionalInformationUid
-     *            - Future use
      * @param userId
      * @return
      */
-    public Either<AdditionalInfoParameterInfo, ResponseFormat> updateAdditionalInformation(NodeTypeEnum nodeType, String resourceId, AdditionalInfoParameterInfo additionalInfoParameterInfo, String additionalInformationUid, String userId) {
+    public Either<AdditionalInfoParameterInfo, ResponseFormat> updateAdditionalInformation(NodeTypeEnum nodeType, String resourceId, AdditionalInfoParameterInfo additionalInfoParameterInfo, String userId) {
 
-        Either<User, ResponseFormat> resp = validateUserExists(userId, "create Additional Information", false);
-        if (resp.isRight()) {
-            return Either.right(resp.right().value());
-        }
+        validateUserExists(userId, "create Additional Information", false);
         Either<AdditionalInfoParameterInfo, ResponseFormat> result = null;
 
         ResponseFormat responseFormat = verifyCanWorkOnComponent(nodeType, resourceId, userId);
@@ -338,7 +315,7 @@ public class AdditionalInformationBusinessLogic extends BaseBusinessLogic {
         StorageOperationStatus lockResult = graphLockOperation.lockComponent(resourceId, nodeType);
         if (!lockResult.equals(StorageOperationStatus.OK)) {
             BeEcompErrorManager.getInstance().logBeFailedLockObjectError(UPDATE_ADDITIONAL_INFORMATION, nodeType.getName(), resourceId);
-            log.info("Failed to lock component {} error - {}", resourceId, lockResult);
+            log.info(FAILED_TO_LOCK_COMPONENT_ERROR, resourceId, lockResult);
             result = Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
             return result;
         }
@@ -387,17 +364,12 @@ public class AdditionalInformationBusinessLogic extends BaseBusinessLogic {
      * @param nodeType
      * @param resourceId
      * @param additionalInfoParameterInfo
-     * @param additionalInformationUid
-     *            - Null. Future use.
      * @param userId
      * @return
      */
-    public Either<AdditionalInfoParameterInfo, ResponseFormat> deleteAdditionalInformation(NodeTypeEnum nodeType, String resourceId, AdditionalInfoParameterInfo additionalInfoParameterInfo, String additionalInformationUid, String userId) {
+    public Either<AdditionalInfoParameterInfo, ResponseFormat> deleteAdditionalInformation(NodeTypeEnum nodeType, String resourceId, AdditionalInfoParameterInfo additionalInfoParameterInfo, String userId) {
 
-        Either<User, ResponseFormat> resp = validateUserExists(userId, "delete Additional Information", false);
-        if (resp.isRight()) {
-            return Either.right(resp.right().value());
-        }
+        validateUserExists(userId, "delete Additional Information", false);
         Either<AdditionalInfoParameterInfo, ResponseFormat> result = null;
 
         ResponseFormat responseFormat = verifyCanWorkOnComponent(nodeType, resourceId, userId);
@@ -408,7 +380,7 @@ public class AdditionalInformationBusinessLogic extends BaseBusinessLogic {
         StorageOperationStatus lockResult = graphLockOperation.lockComponent(resourceId, nodeType);
         if (!lockResult.equals(StorageOperationStatus.OK)) {
             BeEcompErrorManager.getInstance().logBeFailedLockObjectError(DELETE_ADDITIONAL_INFORMATION, nodeType.getName(), resourceId);
-            log.info("Failed to lock component {} error - {}", resourceId, lockResult);
+            log.info(FAILED_TO_LOCK_COMPONENT_ERROR, resourceId, lockResult);
             result = Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
             return result;
         }
@@ -453,16 +425,12 @@ public class AdditionalInformationBusinessLogic extends BaseBusinessLogic {
      * @param nodeType
      * @param resourceId
      * @param additionalInfoParameterInfo
-     * @param additionalInformationUid
      * @param userId
      * @return
      */
-    public Either<AdditionalInfoParameterInfo, ResponseFormat> getAdditionalInformation(NodeTypeEnum nodeType, String resourceId, AdditionalInfoParameterInfo additionalInfoParameterInfo, String additionalInformationUid, String userId) {
+    public Either<AdditionalInfoParameterInfo, ResponseFormat> getAdditionalInformation(NodeTypeEnum nodeType, String resourceId, AdditionalInfoParameterInfo additionalInfoParameterInfo, String userId) {
 
-        Either<User, ResponseFormat> resp = validateUserExists(userId, "get Additional Information", false);
-        if (resp.isRight()) {
-            return Either.right(resp.right().value());
-        }
+        validateUserExists(userId, "get Additional Information", false);
         Either<AdditionalInfoParameterInfo, ResponseFormat> result = null;
 
         try {
@@ -492,17 +460,12 @@ public class AdditionalInformationBusinessLogic extends BaseBusinessLogic {
      *
      * @param nodeType
      * @param resourceId
-     * @param additionalInformationUid
-     *            - Future use
      * @param userId
      * @return
      */
-    public Either<AdditionalInformationDefinition, ResponseFormat> getAllAdditionalInformation(NodeTypeEnum nodeType, String resourceId, String additionalInformationUid, String userId) {
+    public Either<AdditionalInformationDefinition, ResponseFormat> getAllAdditionalInformation(NodeTypeEnum nodeType, String resourceId, String userId) {
 
-        Either<User, ResponseFormat> resp = validateUserExists(userId, "get All Additional Information", false);
-        if (resp.isRight()) {
-            return Either.right(resp.right().value());
-        }
+        validateUserExists(userId, "get All Additional Information", false);
 
         Either<AdditionalInformationDefinition, ResponseFormat> result = null;
 

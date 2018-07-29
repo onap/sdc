@@ -1,12 +1,11 @@
 package org.openecomp.sdc.be.resources.data.auditing;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.UUID;
-
 import org.junit.Test;
 import org.openecomp.sdc.be.resources.data.auditing.model.CommonAuditData;
 import org.openecomp.sdc.be.resources.data.auditing.model.CommonAuditData.Builder;
+
+import java.util.Date;
+import java.util.UUID;
 
 public class CategoryEventTest {
 
@@ -16,7 +15,7 @@ public class CategoryEventTest {
 
 	@Test
 	public void testCtor() throws Exception {
-		new CategoryEvent(new HashMap());
+		new CategoryEvent();
 		Builder newBuilder = CommonAuditData.newBuilder();
 		new CategoryEvent("mock", newBuilder.build(), "mock", "mock", "mock", "mock", "mock");
 	}

@@ -21,8 +21,8 @@
 package org.onap.sdc.generator.aai.model;
 
 import org.onap.sdc.generator.aai.types.Cardinality;
-import org.onap.sdc.generator.aai.types.ModelType;
 import org.onap.sdc.generator.aai.types.Model;
+import org.onap.sdc.generator.aai.types.ModelType;
 import org.onap.sdc.generator.aai.types.ModelWidget;
 
 @Model(widget = Widget.Type.VSERVER, cardinality = Cardinality.UNBOUNDED, dataDeleteFlag = true)

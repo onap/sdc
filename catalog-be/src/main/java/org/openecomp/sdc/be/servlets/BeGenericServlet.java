@@ -20,33 +20,16 @@
 
 package org.openecomp.sdc.be.servlets;
 
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.function.Supplier;
-
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.ResponseBuilder;
-
-import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic;
-import org.openecomp.sdc.be.components.impl.ComponentBusinessLogic;
-import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
-import org.openecomp.sdc.be.components.impl.ElementBusinessLogic;
-import org.openecomp.sdc.be.components.impl.GroupBusinessLogic;
-import org.openecomp.sdc.be.components.impl.InterfaceOperationBusinessLogic;
-import org.openecomp.sdc.be.components.impl.MonitoringBusinessLogic;
-import org.openecomp.sdc.be.components.impl.PolicyBusinessLogic;
-import org.openecomp.sdc.be.components.impl.PolicyTypeBusinessLogic;
-import org.openecomp.sdc.be.components.impl.ProductBusinessLogic;
-import org.openecomp.sdc.be.components.impl.ResourceBusinessLogic;
-import org.openecomp.sdc.be.components.impl.ServiceBusinessLogic;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import fj.data.Either;
+import org.openecomp.sdc.be.components.impl.*;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleBusinessLogic;
 import org.openecomp.sdc.be.components.scheduledtasks.ComponentsCleanBusinessLogic;
+import org.openecomp.sdc.be.components.upgrade.UpgradeBusinessLogic;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
-import org.openecomp.sdc.be.dao.api.IElementDAO;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.ecomp.converters.AssetMetadataConverter;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
@@ -58,24 +41,26 @@ import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.datastructure.Wrapper;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.common.servlets.BasicServlet;
 import org.openecomp.sdc.exception.ResponseFormat;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.web.context.WebApplicationContext;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-
-import fj.data.Either;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.function.Supplier;
 
 public class BeGenericServlet extends BasicServlet {
 
     @Context
     protected HttpServletRequest servletRequest;
 
-    private static final Logger log = LoggerFactory.getLogger(BeGenericServlet.class);
+    private static final Logger log = Logger.getLogger(BeGenericServlet.class);
 
     /******************** New error response mechanism
      * @param requestErrorWrapper **************/
@@ -92,7 +77,7 @@ public class BeGenericServlet extends BasicServlet {
         return buildOkResponseStatic(entity);
     }
 
-    static public Response buildOkResponseStatic(Object entity) {
+    private static Response buildOkResponseStatic(Object entity) {
         return Response.status(Response.Status.OK)
                 .entity(entity)
                 .build();
@@ -137,22 +122,19 @@ public class BeGenericServlet extends BasicServlet {
 
     }
 
-    protected PolicyTypeBusinessLogic getPolicyTypeBL(ServletContext context) {
-        return getClassFromWebAppContext(context, () -> PolicyTypeBusinessLogic.class);
-    }
-
-    protected UserBusinessLogic getUserAdminManager(ServletContext context) {
+    UserBusinessLogic getUserAdminManager(ServletContext context) {
         return getClassFromWebAppContext(context, () -> UserBusinessLogic.class);
     }
 
     protected ResourceBusinessLogic getResourceBL(ServletContext context) {
         return getClassFromWebAppContext(context, () -> ResourceBusinessLogic.class);
     }
+
     protected InterfaceOperationBusinessLogic getInterfaceOperationBL(ServletContext context) {
         return getClassFromWebAppContext(context, () -> InterfaceOperationBusinessLogic.class);
     }
 
-    protected ComponentsCleanBusinessLogic getComponentCleanerBL(ServletContext context) {
+    ComponentsCleanBusinessLogic getComponentCleanerBL(ServletContext context) {
         return getClassFromWebAppContext(context, () -> ComponentsCleanBusinessLogic.class);
     }
 
@@ -160,19 +142,22 @@ public class BeGenericServlet extends BasicServlet {
         return getClassFromWebAppContext(context, () -> ServiceBusinessLogic.class);
     }
 
-    protected ProductBusinessLogic getProductBL(ServletContext context) {
+    ProductBusinessLogic getProductBL(ServletContext context) {
         return getClassFromWebAppContext(context, () -> ProductBusinessLogic.class);
     }
 
     protected ArtifactsBusinessLogic getArtifactBL(ServletContext context) {
         return getClassFromWebAppContext(context, () -> ArtifactsBusinessLogic.class);
     }
+    protected UpgradeBusinessLogic getUpgradeBL(ServletContext context) {
+        return getClassFromWebAppContext(context, () -> UpgradeBusinessLogic.class);
+    }
 
     protected ElementBusinessLogic getElementBL(ServletContext context) {
         return getClassFromWebAppContext(context, () -> ElementBusinessLogic.class);
     }
 
-    protected MonitoringBusinessLogic getMonitoringBL(ServletContext context) {
+    MonitoringBusinessLogic getMonitoringBL(ServletContext context) {
         return getClassFromWebAppContext(context, () -> MonitoringBusinessLogic.class);
     }
 
@@ -184,35 +169,23 @@ public class BeGenericServlet extends BasicServlet {
         return getClassFromWebAppContext(context, () -> LifecycleBusinessLogic.class);
     }
 
-    protected PolicyBusinessLogic getPolicyBL(ServletContext context) {
-        return getClassFromWebAppContext(context, () -> PolicyBusinessLogic.class);
-    }
-
-    protected <T> T getClassFromWebAppContext(ServletContext context, Supplier<Class<T>> businessLogicClassGen) {
+    <T> T getClassFromWebAppContext(ServletContext context, Supplier<Class<T>> businessLogicClassGen) {
         WebAppContextWrapper webApplicationContextWrapper = (WebAppContextWrapper) context.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR);
         WebApplicationContext webApplicationContext = webApplicationContextWrapper.getWebAppContext(context);
         return webApplicationContext.getBean(businessLogicClassGen.get());
     }
 
-    protected GroupBusinessLogic getGroupBL(ServletContext context) {
+    GroupBusinessLogic getGroupBL(ServletContext context) {
 
         WebAppContextWrapper webApplicationContextWrapper = (WebAppContextWrapper) context.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR);
         WebApplicationContext webApplicationContext = webApplicationContextWrapper.getWebAppContext(context);
         return webApplicationContext.getBean(GroupBusinessLogic.class);
     }
 
-    protected ComponentInstanceBusinessLogic getComponentInstanceBL(ServletContext context, ComponentTypeEnum containerComponentType) {
+    protected ComponentInstanceBusinessLogic getComponentInstanceBL(ServletContext context) {
         WebAppContextWrapper webApplicationContextWrapper = (WebAppContextWrapper) context.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR);
         WebApplicationContext webApplicationContext = webApplicationContextWrapper.getWebAppContext(context);
         return webApplicationContext.getBean(ComponentInstanceBusinessLogic.class);
-    }
-
-    protected IElementDAO getElementDao(Class<? extends IElementDAO> clazz, ServletContext context) {
-        WebAppContextWrapper webApplicationContextWrapper = (WebAppContextWrapper) context.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR);
-
-        WebApplicationContext webApplicationContext = webApplicationContextWrapper.getWebAppContext(context);
-
-        return webApplicationContext.getBean(clazz);
     }
 
     protected ComponentsUtils getComponentsUtils() {
@@ -229,7 +202,7 @@ public class BeGenericServlet extends BasicServlet {
      *
      * @return
      */
-    protected String initHeaderParam(String headerValue, HttpServletRequest request, String headerName) {
+    String initHeaderParam(String headerValue, HttpServletRequest request, String headerName) {
         String retValue;
         if (headerValue != null) {
             retValue = headerValue;
@@ -242,6 +215,8 @@ public class BeGenericServlet extends BasicServlet {
     protected String getContentDispositionValue(String artifactFileName) {
         return new StringBuilder().append("attachment; filename=\"").append(artifactFileName).append("\"").toString();
     }
+    
+    
 
     protected ComponentBusinessLogic getComponentBL(ComponentTypeEnum componentTypeEnum, ServletContext context) {
         ComponentBusinessLogic businessLogic;
@@ -265,7 +240,7 @@ public class BeGenericServlet extends BasicServlet {
         return businessLogic;
     }
 
-    protected <T> void convertJsonToObjectOfClass(String json, Wrapper<T> policyWrapper, Class<T> clazz, Wrapper<Response> errorWrapper) {
+    <T> void convertJsonToObjectOfClass(String json, Wrapper<T> policyWrapper, Class<T> clazz, Wrapper<Response> errorWrapper) {
         T object = null;
         ObjectMapper mapper = new ObjectMapper()
                 .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)

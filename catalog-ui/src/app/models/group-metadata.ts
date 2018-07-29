@@ -1,4 +1,6 @@
 export class GroupMetadata {
+    public name:string;
+    public icon:string;
     public uniqueId: string;
     public type: string;
     public version: string;
@@ -11,6 +13,8 @@ export class GroupMetadata {
     deserialize (response): GroupMetadata {
         this.uniqueId = response.uniqueId;
         this.type = response.type;
+        this.name = response.name;
+        this.icon = response.icon;
         this.version = response.version;
         this.description = response.description;
         this.creationTime = response.creationTime;

@@ -20,60 +20,60 @@
 
 package org.openecomp.sdc.be.components.impl;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import fj.data.Either;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.openecomp.sdc.be.components.impl.ImportUtils.ResultStatusEnum;
+import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
+import org.openecomp.sdc.be.components.impl.model.ToscaTypeImportData;
+import org.openecomp.sdc.be.config.BeEcompErrorManager;
+import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.datatypes.elements.ToscaTypeDataDefinition;
+import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
+import org.openecomp.sdc.be.impl.ComponentsUtils;
+import org.openecomp.sdc.be.model.*;
+import org.openecomp.sdc.be.model.normatives.ToscaTypeMetadata;
+import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
+import org.openecomp.sdc.be.model.operations.api.TypeOperations;
+import org.openecomp.sdc.be.model.operations.impl.PropertyOperation;
+import org.openecomp.sdc.common.log.wrappers.Logger;
+import org.openecomp.sdc.exception.ResponseFormat;
+import org.springframework.stereotype.Component;
+import org.yaml.snakeyaml.Yaml;
+
+import java.util.*;
 import java.util.Map.Entry;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import javax.annotation.Resource;
-
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.openecomp.sdc.be.components.impl.ImportUtils.ResultStatusEnum;
-import org.openecomp.sdc.be.config.BeEcompErrorManager;
-import org.openecomp.sdc.be.dao.api.ActionStatus;
-import org.openecomp.sdc.be.impl.ComponentsUtils;
-import org.openecomp.sdc.be.model.CapabilityTypeDefinition;
-import org.openecomp.sdc.be.model.DataTypeDefinition;
-import org.openecomp.sdc.be.model.GroupTypeDefinition;
-import org.openecomp.sdc.be.model.PolicyTypeDefinition;
-import org.openecomp.sdc.be.model.PropertyDefinition;
-import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
-import org.openecomp.sdc.be.model.operations.impl.PropertyOperation;
-import org.openecomp.sdc.exception.ResponseFormat;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
-import org.yaml.snakeyaml.Yaml;
-
-import fj.data.Either;
+import static java.util.stream.Collectors.toList;
 
 @Component("commonImportManager")
 public class CommonImportManager {
 
-    private static final Logger log = LoggerFactory.getLogger(CommonImportManager.class);
+    private static final Logger log = Logger.getLogger(CommonImportManager.class.getName());
 
-    @Resource
-    private ComponentsUtils componentsUtils;
-    @Resource
-    private PropertyOperation propertyOperation;
+    private final ComponentsUtils componentsUtils;
+    private final PropertyOperation propertyOperation;
 
-    protected void setProperties(Map<String, Object> toscaJson, Consumer<List<PropertyDefinition>> consumer) {
+    public CommonImportManager(ComponentsUtils componentsUtils, PropertyOperation propertyOperation) {
+        this.componentsUtils = componentsUtils;
+        this.propertyOperation = propertyOperation;
+    }
+
+    public static void setProperties(Map<String, Object> toscaJson, Consumer<List<PropertyDefinition>> consumer) {
         consumer.accept(getProperties(toscaJson));
     }
 
-    private List<PropertyDefinition> getProperties(Map<String, Object> toscaJson) {
+    private static List<PropertyDefinition> getProperties(Map<String, Object> toscaJson) {
         List<PropertyDefinition> values = null;
         Either<Map<String, PropertyDefinition>, ResultStatusEnum> properties = ImportUtils.getProperties(toscaJson);
 
         if (properties.isLeft()) {
             values = new ArrayList<>();
             Map<String, PropertyDefinition> propertiesMap = properties.left().value();
-            if (propertiesMap != null && propertiesMap.isEmpty() == false) {
+            if (propertiesMap != null && !propertiesMap.isEmpty()) {
 
                 for (Entry<String, PropertyDefinition> entry : propertiesMap.entrySet()) {
                     String propName = entry.getKey();
@@ -91,75 +91,104 @@ public class CommonImportManager {
     protected void setPropertiesMap(Map<String, Object> toscaJson, Consumer<Map<String, PropertyDefinition>> consumer) {
         final List<PropertyDefinition> properties = getProperties(toscaJson);
         if (properties != null) {
-            Map<String, PropertyDefinition> collect = properties.stream().collect(Collectors.toMap(e -> e.getName(), e -> e));
+            Map<String, PropertyDefinition> collect = properties.stream()
+                                                        .collect(Collectors.toMap(PropertyDefinition::getName, Function.identity()));
             consumer.accept(collect);
         }
-
     }
 
-    interface ICreateElementType<T1, T2, ElementType> {
-        ElementType createElement(T1 firstArg, T2 secondArg);
+    public interface ICreateElementType<T1, T2, T3> {
+        T3 createElement(T1 firstArg, T2 secondArg);
     }
 
-    protected <ElementDefinition> Either<List<ElementDefinition>, ActionStatus> createElementTypesFromYml(String elementTypesYml, ICreateElementType<String, Map<String, Object>, ElementDefinition> createApi) {
+    protected <T> Either<List<T>, ActionStatus> createElementTypesFromYml(String elementTypesYml, ICreateElementType<String, Map<String, Object>, T> createApi) {
 
-        List<ElementDefinition> elementTypes = new ArrayList<>();
-        try {
-            Map<String, Object> toscaJson = (Map<String, Object>) new Yaml().load(elementTypesYml);
-
-            elementTypes = createElementTypesFromToscaJsonMap(createApi, toscaJson);
-        } catch (Exception e) {
-            log.debug("Failed to yaml file {}", elementTypesYml, e);
+        List<T> elementTypes;
+        Map<String, Object> toscaJson = convertToFieldMap(elementTypesYml);
+        if (toscaJson==null) {
             return Either.right(ActionStatus.INVALID_YAML_FILE);
         }
+        elementTypes = createElementTypesFromToscaJsonMap(createApi, toscaJson);
         return Either.left(elementTypes);
     }
 
-        /**
-         * @param createApi * @param createApi
-         * @param elementTypes
-         * @param toscaJson
-         */
-    protected <ElementDefinition> List<ElementDefinition> createElementTypesFromToscaJsonMap(
-                ICreateElementType<String, Map<String, Object>, ElementDefinition> createApi, Map<String, Object> toscaJson) {
-        List<ElementDefinition> elementTypes = new ArrayList<>();
+    @SuppressWarnings("unchecked")
+    private Map<String, Object> convertToFieldMap(String elementTypesYml) {
+        Map<String, Object> toscaJson = null;
+        try {
+            toscaJson = (Map<String, Object>) new Yaml().load(elementTypesYml);
+        } catch (Exception e) {
+            log.debug("Failed to yaml file {}", elementTypesYml, e);
+        }
+        return toscaJson;
+    }
+
+
+    protected <T extends ToscaDataDefinition> List<T> createTypesFromToscaJsonMap(
+            BiFunction<String, Map<String, Object>, T> createApi, Map<String, Object> toscaJson) {
+        List<T> elementTypes = new ArrayList<>();
+
+        for (Entry<String, Object> elementTypeNameDataEntry : toscaJson.entrySet()) {
+            String elementTypeName = elementTypeNameDataEntry.getKey();
+            Map<String, Object> elementTypeJsonData = (Map<String, Object>) elementTypeNameDataEntry.getValue();
+            T elementDefinition = createApi.apply(elementTypeName, elementTypeJsonData);
+            elementTypes.add(elementDefinition);
+        }
+        return elementTypes;
+    }
+
+    protected <T> List<T> createElementTypesFromToscaJsonMap(
+                ICreateElementType<String, Map<String, Object>, T> createApi, Map<String, Object> toscaJson) {
+        List<T> elementTypes = new ArrayList<>();
+
+        for (Entry<String, Object> elementTypeNameDataEntry : toscaJson.entrySet()) {
+            String elementTypeName = elementTypeNameDataEntry.getKey();
+            Map<String, Object> elementTypeJsonData = (Map<String, Object>) elementTypeNameDataEntry.getValue();
+            T elementDefinition = createApi.createElement(elementTypeName, elementTypeJsonData);
+            elementTypes.add(elementDefinition);
+        }
+        return elementTypes;
+    }
+
+    protected <T> Map<String, T> createElementTypesMapFromToscaJsonMap(
+                ICreateElementType<String, Map<String, Object>, T> createApi, Map<String, Object> toscaJson) {
+        Map<String, T> elementTypesMap = new HashMap<>();
         
         Iterator<Entry<String, Object>> elementTypesEntryItr = toscaJson.entrySet().iterator();
         while (elementTypesEntryItr.hasNext()) {
             Entry<String, Object> elementTypeNameDataEntry = elementTypesEntryItr.next();
             String elementTypeName = elementTypeNameDataEntry.getKey();
             Map<String, Object> elementTypeJsonData = (Map<String, Object>) elementTypeNameDataEntry.getValue();
-            ElementDefinition elementDefinition = createApi.createElement(elementTypeName, elementTypeJsonData);
-            elementTypes.add(elementDefinition);
+            T elementDefinition = createApi.createElement(elementTypeName, elementTypeJsonData);
+            elementTypesMap.put(elementTypeName, elementDefinition);
         }
-        return elementTypes;
+        return elementTypesMap;
     }
 
-    protected <FieldType> void setField(Map<String, Object> toscaJson, String fieldName, Consumer<FieldType> setter) {
+    protected <F> void setField(Map<String, Object> toscaJson, String fieldName, Consumer<F> setter) {
         if (toscaJson.containsKey(fieldName)) {
-            FieldType fieldValue = (FieldType) toscaJson.get(fieldName);
+            F fieldValue = (F) toscaJson.get(fieldName);
             setter.accept(fieldValue);
         }
-
     }
 
     public enum ElementTypeEnum {
-        PolicyType, GroupType, DataType, CapabilityType, InterfaceLifecycleType
-    };
+        POLICY_TYPE, GROUP_TYPE, DATA_TYPE, CAPABILITY_TYPE, INTERFACE_LIFECYCLE_TYPE
+    }
 
     private ActionStatus convertFromStorageResponseForElementType(StorageOperationStatus status, ElementTypeEnum elementTypeEnum) {
         ActionStatus ret;
         switch (elementTypeEnum) {
-        case GroupType:
+        case GROUP_TYPE:
             ret = componentsUtils.convertFromStorageResponseForGroupType(status);
             break;
-        case DataType:
+        case DATA_TYPE:
             ret = componentsUtils.convertFromStorageResponseForDataType(status);
             break;
-        case CapabilityType:
+        case CAPABILITY_TYPE:
             ret = componentsUtils.convertFromStorageResponseForCapabilityType(status);
             break;
-        case InterfaceLifecycleType:
+        case INTERFACE_LIFECYCLE_TYPE:
             ret = componentsUtils.convertFromStorageResponseForLifecycleType(status);
             break;
         default:
@@ -169,19 +198,19 @@ public class CommonImportManager {
         return ret;
     }
 
-    private <ElementTypeDefinition> ResponseFormat getResponseFormatForElementType(ActionStatus actionStatus, ElementTypeEnum elementTypeEnum, ElementTypeDefinition elementTypeDefinition) {
+    private <T> ResponseFormat getResponseFormatForElementType(ActionStatus actionStatus, ElementTypeEnum elementTypeEnum, T elementTypeDefinition) {
         ResponseFormat ret;
         switch (elementTypeEnum) {
-        case GroupType:
+        case GROUP_TYPE:
             ret = componentsUtils.getResponseFormatByGroupType(actionStatus, (GroupTypeDefinition) elementTypeDefinition);
             break;
-        case PolicyType:
+        case POLICY_TYPE:
             ret = componentsUtils.getResponseFormatByPolicyType(actionStatus, (PolicyTypeDefinition) elementTypeDefinition);
             break;
-        case DataType:
+        case DATA_TYPE:
             ret = componentsUtils.getResponseFormatByDataType(actionStatus, (DataTypeDefinition) elementTypeDefinition, null);
             break;
-        case CapabilityType:
+        case CAPABILITY_TYPE:
             ret = componentsUtils.getResponseFormatByCapabilityType(actionStatus, (CapabilityTypeDefinition) elementTypeDefinition);
             break;
 
@@ -192,122 +221,209 @@ public class CommonImportManager {
         return ret;
     }
 
-    protected <ElementTypeDefinition> Either<List<ImmutablePair<ElementTypeDefinition, Boolean>>, ResponseFormat> createElementTypesByDao(List<ElementTypeDefinition> elementTypesToCreate,
-            Function<ElementTypeDefinition, Either<ActionStatus, ResponseFormat>> validator, Function<ElementTypeDefinition, ImmutablePair<ElementTypeEnum, String>> elementInfoGetter,
-            Function<String, Either<ElementTypeDefinition, StorageOperationStatus>> elementFetcher, Function<ElementTypeDefinition, Either<ElementTypeDefinition, StorageOperationStatus>> elementAdder,
-            BiFunction<ElementTypeDefinition, ElementTypeDefinition, Either<ElementTypeDefinition, StorageOperationStatus>> elementUpgrader) {
+    private <T extends ToscaDataDefinition> List<ImmutablePair<T, Boolean>> createTypesByDao(List<T> elementTypesToCreate,
+                                                                                             TypeOperations<T> typeOperations) {
+        List<ImmutablePair<T, Boolean>> createdElementTypes = new ArrayList<>();
+        for (T newTypeDefinition : elementTypesToCreate) {
+            try {
+                String typeName = newTypeDefinition.getType();
+                T existingDefinition = typeOperations.getLatestType(typeName);
+                if (existingDefinition == null /*new type*/) {
+                    typeOperations.addType(newTypeDefinition);
+                } else {
+                    if (typeOperations.isSameType(newTypeDefinition, existingDefinition)) {
+                        propertyOperation.getTitanGenericDao().rollback();
+                        createdElementTypes.add(new ImmutablePair<>(newTypeDefinition, null));
+                        continue;
+                    } else {
+                        typeOperations.updateType(existingDefinition, newTypeDefinition);
+                    }
+                }
+                propertyOperation.getTitanGenericDao().commit();
+                createdElementTypes.add(new ImmutablePair<>(newTypeDefinition, true));
+            } catch (Exception e) {
+                propertyOperation.getTitanGenericDao().rollback();
+                createdElementTypes.add(new ImmutablePair<>(newTypeDefinition, false));
+            }
 
-        List<ImmutablePair<ElementTypeDefinition, Boolean>> createdElementTypes = new ArrayList<>();
+        }
+        return createdElementTypes;
+    }
+    
+    protected <T> Either<List<ImmutablePair<T, Boolean>>, ResponseFormat> createElementTypesByDao(List<T> elementTypesToCreate,
+            Function<T, Either<ActionStatus, ResponseFormat>> validator, Function<T, ImmutablePair<ElementTypeEnum, String>> elementInfoGetter,
+            Function<String, Either<T, StorageOperationStatus>> elementFetcher, Function<T, Either<T, StorageOperationStatus>> elementAdder,
+            BiFunction<T, T, Either<T, StorageOperationStatus>> elementUpgrader) {
 
-        Either<List<ImmutablePair<ElementTypeDefinition, Boolean>>, ResponseFormat> eitherResult = Either.left(createdElementTypes);
+        List<ImmutablePair<T, Boolean>> createdElementTypes = new ArrayList<>();
 
-        Iterator<ElementTypeDefinition> elementTypeItr = elementTypesToCreate.iterator();
+        Either<List<ImmutablePair<T, Boolean>>, ResponseFormat> eitherResult = Either.left(createdElementTypes);
+        Iterator<T> elementTypeItr = elementTypesToCreate.iterator();
 
         try {
-
             while (elementTypeItr.hasNext()) {
-                ElementTypeDefinition elementType = elementTypeItr.next();
-                final ImmutablePair<ElementTypeEnum, String> elementInfo = elementInfoGetter.apply(elementType);
-                ElementTypeEnum elementTypeEnum = elementInfo.left;
-                String elementName = elementInfo.right;
-
-                Either<ActionStatus, ResponseFormat> validateElementType = validator.apply(elementType);
-                if (validateElementType.isRight()) {
-                    ResponseFormat responseFormat = validateElementType.right().value();
-                    log.debug("Failed in validation of element type: {}. Response is {}", elementType, responseFormat.getFormattedMessage());
-                    eitherResult = Either.right(responseFormat);
+                T elementType = elementTypeItr.next();
+                eitherResult = handleType(elementType, validator, elementInfoGetter, elementFetcher, elementAdder, elementUpgrader)
+                                            .left()
+                                            .map(elem -> append(createdElementTypes, elem));
+                
+                if (eitherResult.isRight()) {
                     break;
                 }
-
-                log.info("send {} : {} to dao for create", elementTypeEnum, elementName);
-
-                Either<ElementTypeDefinition, StorageOperationStatus> findElementType = elementFetcher.apply(elementName);
-                if (findElementType.isRight()) {
-                    StorageOperationStatus status = findElementType.right().value();
-                    log.debug("searched {} finished with result:{}", elementTypeEnum, status.name());
-                    if (status != StorageOperationStatus.NOT_FOUND) {
-                        ResponseFormat responseFormat = getResponseFormatForElementType(convertFromStorageResponseForElementType(status, elementTypeEnum), elementTypeEnum, elementType);
-                        eitherResult = Either.right(responseFormat);
-                        break;
-                    } else {
-                        Either<ElementTypeDefinition, StorageOperationStatus> dataModelResponse = elementAdder.apply(elementType);
-
-                        if (dataModelResponse.isRight()) {
-                            try {
-                                BeEcompErrorManager.getInstance().logBeFailedAddingNodeTypeError("Create {}", elementTypeEnum.name());
-                                log.debug("failed to create {}: {}", elementTypeEnum, elementName);
-                                if (dataModelResponse.right().value() != StorageOperationStatus.SCHEMA_VIOLATION) {
-                                    ResponseFormat responseFormat = getResponseFormatForElementType(convertFromStorageResponseForElementType(dataModelResponse.right().value(), elementTypeEnum), elementTypeEnum, elementType);
-
-                                    eitherResult = Either.right(responseFormat);
-                                    break;
-                                } else {
-                                    createdElementTypes.add(new ImmutablePair<ElementTypeDefinition, Boolean>(elementType, false));
-                                }
-                            } finally {
-                                propertyOperation.getTitanGenericDao().rollback();
-                            }
-                        } else {
-                            propertyOperation.getTitanGenericDao().commit();
-                            createdElementTypes.add(new ImmutablePair<ElementTypeDefinition, Boolean>(elementType, true));
-                            log.debug("{} : {}  was created successfully.", elementTypeEnum, elementName);
-                        }
-                        if (!elementTypeItr.hasNext()) {
-                            log.info("all {} were created successfully!!!", elementTypeEnum);
-                        }
-
-                    }
-                } else {
-
-                    if (elementUpgrader != null) {
-                        Either<ElementTypeDefinition, StorageOperationStatus> upgradeResponse = null;
-                        try {
-                            upgradeResponse = elementUpgrader.apply(elementType, findElementType.left().value());
-                            if (upgradeResponse.isRight()) {
-                                StorageOperationStatus status = upgradeResponse.right().value();
-                                if (status == StorageOperationStatus.OK) {
-                                    createdElementTypes.add(new ImmutablePair<ElementTypeDefinition, Boolean>(elementType, false));
-                                } else {
-                                    ResponseFormat responseFormat = getResponseFormatForElementType(convertFromStorageResponseForElementType(upgradeResponse.right().value(), elementTypeEnum), elementTypeEnum, elementType);
-                                    eitherResult = Either.right(responseFormat);
-                                    break;
-                                }
-                            } else {
-                                log.debug("{} : {}  was upgraded successfully.", elementTypeEnum, elementName);
-                                createdElementTypes.add(new ImmutablePair<ElementTypeDefinition, Boolean>(elementType, true));
-                            }
-                        } finally {
-                            if (upgradeResponse == null || upgradeResponse.isRight()) {
-                                propertyOperation.getTitanGenericDao().rollback();
-                            } else {
-                                propertyOperation.getTitanGenericDao().commit();
-                            }
-                        }
-
-                    } else {
-                        // mshitrit Once GroupType Versions are supported add
-                        // code here
-                        createdElementTypes.add(new ImmutablePair<ElementTypeDefinition, Boolean>(elementType, false));
-                        log.debug("{} : {} already exists.", elementTypeEnum, elementName);
-                    }
-
+                
+                if(!elementTypeItr.hasNext()) {
+                    log.info("all {} were created successfully!!!", elementType);
                 }
-
             }
-        } finally {
-            if (eitherResult.isRight()) {
+        }
+        catch(Exception e) {
+            eitherResult = Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
+            throw e;
+        } 
+        finally {
+            if (eitherResult.isLeft()) {
+                propertyOperation.getTitanGenericDao().commit();
+            }
+            else {
                 propertyOperation.getTitanGenericDao().rollback();
             }
         }
 
         return eitherResult;
+    }
+    
+    private static <T> List<T> append(List<T> list, T value) {
+        list.add(value);
+        return list;
+    }
+    
+    
+    private <T> Either<ImmutablePair<T, Boolean>, ResponseFormat> handleType(T elementType, 
+            Function<T, Either<ActionStatus, ResponseFormat>> validator, Function<T, ImmutablePair<ElementTypeEnum, String>> elementInfoGetter,
+            Function<String, Either<T, StorageOperationStatus>> elementFetcher, Function<T, Either<T, StorageOperationStatus>> elementAdder,
+            BiFunction<T, T, Either<T, StorageOperationStatus>> elementUpgrader) {
+        
+        final ImmutablePair<ElementTypeEnum, String> elementInfo = elementInfoGetter.apply(elementType);
+        ElementTypeEnum elementTypeEnum = elementInfo.left;
+        String elementName = elementInfo.right;
+        
+        Either<ActionStatus, ResponseFormat> validateElementType = validator.apply(elementType);
+        if (validateElementType.isRight()) {
+            ResponseFormat responseFormat = validateElementType.right().value();
+            log.debug("Failed in validation of element type: {}. Response is {}", elementType, responseFormat.getFormattedMessage());
+            return Either.right(responseFormat);
+        }
 
+        log.info("send {} : {} to dao for create", elementTypeEnum, elementName);
+
+        Either<T, StorageOperationStatus> findElementType = elementFetcher.apply(elementName);
+        if (findElementType.isRight()) {
+            StorageOperationStatus status = findElementType.right().value();
+            log.debug("searched {} finished with result:{}", elementTypeEnum, status);
+            if (status != StorageOperationStatus.NOT_FOUND) {
+                ResponseFormat responseFormat = getResponseFormatForElementType(convertFromStorageResponseForElementType(status, elementTypeEnum), elementTypeEnum, elementType);
+                return Either.right(responseFormat);
+            } else {
+                return addElementType(elementType, elementAdder, elementTypeEnum, elementName);
+            }
+        } else {
+
+            if (elementUpgrader != null) {
+                return updateElementType(elementType, elementUpgrader, elementTypeEnum, elementName, findElementType.left().value());
+
+            } else {
+                // mshitrit Once GroupType Versions are supported add
+                // code here
+                log.debug("{} : {} already exists.", elementTypeEnum, elementName);
+                return Either.left(new ImmutablePair<>(elementType, false));
+            }
+
+        }
     }
 
-    public <ElementTypeDefinition> Either<List<ImmutablePair<ElementTypeDefinition, Boolean>>, ResponseFormat> createElementTypes(String elementTypesYml, Function<String, Either<List<ElementTypeDefinition>, ActionStatus>> elementTypeFromYmlCreater,
-            Function<List<ElementTypeDefinition>, Either<List<ImmutablePair<ElementTypeDefinition, Boolean>>, ResponseFormat>> elementTypeDaoCreater, ElementTypeEnum elementTypeEnum) {
+    private <T> Either<ImmutablePair<T, Boolean>, ResponseFormat> addElementType(T elementType, Function<T, Either<T, StorageOperationStatus>> elementAdder, ElementTypeEnum elementTypeEnum, String elementName) {
+        Either<T, StorageOperationStatus> dataModelResponse = elementAdder.apply(elementType);
+        
+        if (dataModelResponse.isRight()) {
+            BeEcompErrorManager.getInstance().logBeFailedAddingNodeTypeError("Create {}", elementTypeEnum.name());
+            log.debug("failed to create {}: {}", elementTypeEnum, elementName);
+            if (dataModelResponse.right().value() != StorageOperationStatus.OK) {
+                ResponseFormat responseFormat = getResponseFormatForElementType(convertFromStorageResponseForElementType(dataModelResponse.right().value(), elementTypeEnum), elementTypeEnum, elementType);
+                
+                return Either.right(responseFormat);
+            } else {
+                return Either.left(new ImmutablePair<>(elementType, false));
+            }
+        } else {
+            log.debug("{} : {}  was created successfully.", elementTypeEnum, elementName);
+            return Either.left(new ImmutablePair<>(elementType, true));
+        }
+    }
+    
+    
+    private <T> Either<ImmutablePair<T, Boolean>, ResponseFormat> updateElementType(T elementType, BiFunction<T, T, Either<T, StorageOperationStatus>> elementUpgrader, 
+                                                        ElementTypeEnum elementTypeEnum, String elementName, T existingElementType) {
+        Either<T, StorageOperationStatus> upgradeResponse = elementUpgrader.apply(elementType, existingElementType);
+        if (upgradeResponse.isRight()) {
+            StorageOperationStatus status = upgradeResponse.right().value();
+            if (status == StorageOperationStatus.OK) {
+                return Either.left(new ImmutablePair<>(elementType, false));
+            } else {
+                ResponseFormat responseFormat = getResponseFormatForElementType(convertFromStorageResponseForElementType(upgradeResponse.right().value(), elementTypeEnum), elementTypeEnum, elementType);
+                return Either.right(responseFormat);
+            }
+        } else {
+            log.debug("{} : {}  was upgraded successfully.", elementTypeEnum, elementName);
+            return Either.left(new ImmutablePair<>(elementType, true));
+        }
+    }
 
-        Either<List<ElementTypeDefinition>, ActionStatus> elementTypes = elementTypeFromYmlCreater.apply(elementTypesYml);
+    
+    public <T extends ToscaTypeDataDefinition> Either<List<ImmutablePair<T, Boolean>>, ResponseFormat> createElementTypes(ToscaTypeImportData toscaTypeImportData, Function<String, Either<List<T>, ActionStatus>> elementTypeFromYmlCreater,
+                                                                                                                          Function<List<T>, Either<List<ImmutablePair<T, Boolean>>, ResponseFormat>> elementTypeDaoCreater) {
+        Either<List<T>, ActionStatus> elementTypes = elementTypeFromYmlCreater.apply(toscaTypeImportData.getToscaTypesYml());
+        return elementTypes
+                .right()
+                .map(err -> componentsUtils.getResponseFormat(err, ""))
+                .left()
+                .map(toscaTypes -> enrichTypesWithNonToscaMetadata(toscaTypes, toscaTypeImportData.getToscaTypeMetadata()))
+                .left()
+                .bind(elementTypeDaoCreater::apply);
+    }
+
+    public <T extends ToscaDataDefinition> List<ImmutablePair<T, Boolean>> createElementTypes(String toscaTypesYml,
+                                                                                              BiFunction<String, Map<String, Object>, T> createApi,
+                                                                                              TypeOperations<T> typeOperations) {
+        Map<String, Object> fieldMap = convertToFieldMap(toscaTypesYml);
+        if (fieldMap==null) {
+            throw new ComponentException(ActionStatus.INVALID_YAML_FILE);
+        }
+        List<T> elementTypes = createTypesFromToscaJsonMap(createApi, fieldMap);
+        return createTypesByDao(elementTypes, typeOperations);
+    }
+
+    private <T extends ToscaTypeDataDefinition> List<T> enrichTypesWithNonToscaMetadata(List<T> toscaTypes, Map<String, ToscaTypeMetadata> toscaTypeMetadata) {
+        return toscaTypes.stream()
+                  .map(toscaType -> setNonToscaMetaDataOnType(toscaTypeMetadata, toscaType))
+                  .collect(toList());
+    }
+
+    private <T extends ToscaTypeDataDefinition> T setNonToscaMetaDataOnType(Map<String, ToscaTypeMetadata> toscaTypeMetadata, T toscaTypeDefinition) {
+        String toscaType = toscaTypeDefinition.getType();
+        ToscaTypeMetadata typeMetaData = toscaTypeMetadata.get(toscaType);
+        if (typeMetaData == null) {
+            log.debug("failing while trying to associate metadata for type {}. type not exist", toscaType);
+            throw new ComponentException(ActionStatus.GENERAL_ERROR);
+        }
+        toscaTypeDefinition.setIcon(typeMetaData.getIcon());
+        toscaTypeDefinition.setName(typeMetaData.getDisplayName());
+        return toscaTypeDefinition;
+    }
+
+    public <T> Either<List<ImmutablePair<T, Boolean>>, ResponseFormat> createElementTypes(String elementTypesYml, Function<String, Either<List<T>, ActionStatus>> elementTypeFromYmlCreater,
+            Function<List<T>, Either<List<ImmutablePair<T, Boolean>>, ResponseFormat>> elementTypeDaoCreater, ElementTypeEnum elementTypeEnum) {
+
+        Either<List<T>, ActionStatus> elementTypes = elementTypeFromYmlCreater.apply(elementTypesYml);
         if (elementTypes.isRight()) {
             ActionStatus status = elementTypes.right().value();
             ResponseFormat responseFormat = getResponseFormatForElementType(status, elementTypeEnum, null);

@@ -1,11 +1,11 @@
-<div class="sdc-canvas-zone {{class}}-zone" [class.minimized]="minifyZone" [class.hidden]="!showZone">
-    <div class="sdc-canvas-zone__header" (click)="unminifyZone()" >
+<div class="sdc-canvas-zone {{class}}-zone" [class.minimized]="minimized" [class.hidden]="!visible" (click)="backgroundClicked()">
+    <div class="sdc-canvas-zone__header" (click)="unminifyZone(); $event.stopPropagation();" >
         <div class="sdc-canvas-zone__title">{{title}} 
             <span class="sdc-canvas-zone__counter">{{count}}</span>
         </div>
         <span class="sdc-canvas-zone__state-button">&ndash;</span>
     </div>
-    <div class="sdc-canvas-zone__container">
+    <div class="sdc-canvas-zone__container" #scrollDiv >
         <ng-content></ng-content>
     </div>
 </div>

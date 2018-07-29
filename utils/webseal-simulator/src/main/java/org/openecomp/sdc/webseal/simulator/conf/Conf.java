@@ -1,14 +1,13 @@
 package org.openecomp.sdc.webseal.simulator.conf;
 
+import com.typesafe.config.Config;
+import com.typesafe.config.ConfigFactory;
+import org.openecomp.sdc.webseal.simulator.User;
+
 import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.openecomp.sdc.webseal.simulator.User;
-
-import com.typesafe.config.Config;
-import com.typesafe.config.ConfigFactory;
 
 public class Conf {
 

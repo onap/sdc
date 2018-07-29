@@ -20,10 +20,10 @@
 
 package org.openecomp.sdc.be.components.distribution.engine;
 
+import org.openecomp.sdc.be.distribution.api.client.CambriaOperationStatus;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import org.openecomp.sdc.be.distribution.api.client.CambriaOperationStatus;
 
 public class CambriaErrorResponse {
 
@@ -33,7 +33,7 @@ public class CambriaErrorResponse {
 
     CambriaOperationStatus operationStatus;
     Integer httpCode;
-    List<String> variables = new ArrayList<String>();
+    List<String> variables = new ArrayList<>();
 
     public CambriaErrorResponse() {
         super();

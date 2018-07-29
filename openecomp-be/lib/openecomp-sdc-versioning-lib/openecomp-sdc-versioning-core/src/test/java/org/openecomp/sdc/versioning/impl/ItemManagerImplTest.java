@@ -7,7 +7,6 @@ import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.itempermissions.PermissionsServices;
 import org.openecomp.sdc.notification.services.SubscriptionService;
 import org.openecomp.sdc.versioning.dao.ItemDao;
-import org.openecomp.sdc.versioning.dao.types.VersionStatus;
 import org.openecomp.sdc.versioning.types.Item;
 import org.openecomp.sdc.versioning.types.ItemStatus;
 import org.testng.annotations.AfterMethod;

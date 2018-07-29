@@ -20,13 +20,13 @@
 
 package org.openecomp.sdc.be.resources.data;
 
-import java.nio.ByteBuffer;
-import java.util.Date;
-
 import com.datastax.driver.mapping.annotations.ClusteringColumn;
 import com.datastax.driver.mapping.annotations.Column;
 import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
+
+import java.nio.ByteBuffer;
+import java.util.Date;
 
 @Table(keyspace = "sdcartifact", name = "sdcschemafiles")
 public class SdcSchemaFilesData {

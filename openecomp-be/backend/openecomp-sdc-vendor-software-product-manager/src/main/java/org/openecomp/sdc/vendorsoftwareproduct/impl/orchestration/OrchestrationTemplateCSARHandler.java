@@ -24,10 +24,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.openecomp.core.validation.errors.ErrorMessagesFormatBuilder.getErrorWithParameters;
-import static org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.CSARConstants.ELIGBLE_FOLDERS;
-import static org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.CSARConstants.ELIGIBLE_FILES;
-import static org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.CSARConstants.MAIN_SERVICE_TEMPLATE_MF_FILE_NAME;
-import static org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.CSARConstants.MAIN_SERVICE_TEMPLATE_YAML_FILE_NAME;
+import static org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.CSARConstants.*;
 
 public class OrchestrationTemplateCSARHandler extends BaseOrchestrationTemplateHandler
     implements OrchestrationTemplateFileHandler {

@@ -1,8 +1,8 @@
 package org.openecomp.sdc.common.http.config;
 
-import java.util.Map;
-
 import org.openecomp.sdc.common.http.client.api.ComparableHttpRequestRetryHandler;
+
+import java.util.Map;
 
 public class HttpClientConfig {
 

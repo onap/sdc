@@ -14,11 +14,7 @@ import org.openecomp.sdc.versioning.dao.ItemDaoFactory;
 import org.openecomp.sdc.versioning.dao.types.Version;
 import org.openecomp.sdc.versioning.types.Item;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * Created by ayalaben on 8/28/2017

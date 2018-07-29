@@ -17,6 +17,10 @@
 package org.openecomp.sdc.tosca.services.impl;
 
 import org.apache.commons.io.FilenameUtils;
+import org.onap.sdc.tosca.parser.config.ConfigurationManager;
+import org.onap.sdc.tosca.parser.exceptions.SdcToscaParserException;
+import org.onap.sdc.tosca.parser.impl.SdcToscaParserFactory;
+import org.onap.sdc.toscaparser.api.common.JToscaValidationIssue;
 import org.openecomp.core.utilities.file.FileContentHandler;
 import org.openecomp.core.utilities.file.FileUtils;
 import org.openecomp.core.utilities.orchestration.OnboardingTypesEnum;
@@ -26,25 +30,24 @@ import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
-import org.openecomp.sdc.tosca.parser.config.ConfigurationManager;
-import org.openecomp.sdc.tosca.parser.exceptions.SdcToscaParserException;
-import org.openecomp.sdc.tosca.parser.impl.SdcToscaParserFactory;
 import org.openecomp.sdc.tosca.services.ToscaValidationService;
-import org.openecomp.sdc.toscaparser.api.common.JToscaValidationIssue;
 import org.yaml.snakeyaml.Yaml;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
+
+
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
 
 public class ToscaValidationServiceImpl implements ToscaValidationService {
 

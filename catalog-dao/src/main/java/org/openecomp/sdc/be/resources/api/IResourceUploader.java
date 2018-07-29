@@ -20,10 +20,9 @@
 
 package org.openecomp.sdc.be.resources.api;
 
+import fj.data.Either;
 import org.openecomp.sdc.be.dao.api.ResourceUploadStatus;
 import org.openecomp.sdc.be.resources.data.ESArtifactData;
-
-import fj.data.Either;
 
 /**
  * DAO to manage image upload and retrieval.

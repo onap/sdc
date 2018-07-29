@@ -20,36 +20,36 @@
 
 package org.openecomp.sdc.be.model.tosca.validators;
 
+import org.openecomp.sdc.be.model.DataTypeDefinition;
+
 import java.util.Arrays;
 import java.util.Map;
 
-import org.openecomp.sdc.be.model.DataTypeDefinition;
-
 public class BooleanValidator implements PropertyTypeValidator {
 
-	private static BooleanValidator booleanValidator = new BooleanValidator();
-	private static String[] validValues = { "true", "t", "on", "yes", "y", "1", "false", "f", "off", "no", "n", "0" };
+    private static BooleanValidator booleanValidator = new BooleanValidator();
+    private static String[] validValues = { "true", "t", "on", "yes", "y", "1", "false", "f", "off", "no", "n", "0" };
 
-	public static BooleanValidator getInstance() {
-		return booleanValidator;
-	}
+    public static BooleanValidator getInstance() {
+        return booleanValidator;
+    }
 
-	private BooleanValidator() {
+    private BooleanValidator() {
 
-	}
+    }
 
-	@Override
-	public boolean isValid(String value, String innerType, Map<String, DataTypeDefinition> allDataTypes) {
+    @Override
+    public boolean isValid(String value, String innerType, Map<String, DataTypeDefinition> allDataTypes) {
 
-		if (value == null || true == value.isEmpty()) {
-			return true;
-		}
+        if (value == null || value.isEmpty()) {
+            return true;
+        }
 
-		return (Arrays.stream(validValues).filter(str -> str.equalsIgnoreCase(value)).toArray().length == 1);
-	}
+        return (Arrays.stream(validValues).filter(str -> str.equalsIgnoreCase(value)).toArray().length == 1);
+    }
 
-	@Override
-	public boolean isValid(String value, String innerType) {
-		return isValid(value, null, null);
-	}
+    @Override
+    public boolean isValid(String value, String innerType) {
+        return isValid(value, null, null);
+    }
 }

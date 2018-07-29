@@ -20,9 +20,9 @@
 
 package org.openecomp.sdc.common.test.config;
 
-import static java.lang.String.format;
-
 import org.openecomp.sdc.common.api.BasicConfiguration;
+
+import static java.lang.String.format;
 
 public class TestNotExistConfiguration extends BasicConfiguration {
 

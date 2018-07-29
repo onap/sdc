@@ -1,14 +1,14 @@
 package org.openecomp.sdc.be.components.merge;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
 import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.RelationshipInfo;
 import org.openecomp.sdc.be.model.RequirementCapabilityRelDef;
 import org.openecomp.sdc.be.model.Resource;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @Component
 public class RelationsComparator {

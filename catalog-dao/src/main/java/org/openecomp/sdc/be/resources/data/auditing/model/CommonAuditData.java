@@ -18,6 +18,10 @@ public class CommonAuditData {
         return description;
     }
 
+    public void setRequestId(String requestId) {
+        this.requestId = requestId;
+    }
+
     public String getRequestId() {
         return requestId;
     }

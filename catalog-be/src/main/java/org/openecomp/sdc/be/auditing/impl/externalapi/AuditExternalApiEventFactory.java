@@ -6,17 +6,23 @@ import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingGenericEvent;
 import org.openecomp.sdc.be.resources.data.auditing.ExternalApiEvent;
 import org.openecomp.sdc.be.resources.data.auditing.model.CommonAuditData;
-import org.openecomp.sdc.be.resources.data.auditing.model.ResourceAuditData;
+import org.openecomp.sdc.be.resources.data.auditing.model.DistributionData;
+import org.openecomp.sdc.be.resources.data.auditing.model.ResourceCommonInfo;
+import org.openecomp.sdc.be.resources.data.auditing.model.ResourceVersionInfo;
+import org.openecomp.sdc.common.util.ThreadLocalsHolder;
 
 public abstract class AuditExternalApiEventFactory extends AuditBaseEventFactory {
 
     protected final ExternalApiEvent event;
 
-    public AuditExternalApiEventFactory(AuditingActionEnum action, CommonAuditData commonFields, String resourceType, String resourceName,
-                                        String consumerId, String resourceUrl, ResourceAuditData prevParams, ResourceAuditData currParams,
+    public AuditExternalApiEventFactory(AuditingActionEnum action, CommonAuditData commonAuditData, ResourceCommonInfo resourceCommonInfo,
+                                        DistributionData distributionData, ResourceVersionInfo prevParams, ResourceVersionInfo currParams,
                                         String invariantUuid, User modifier, String artifactData) {
         super(action);
-        event = new ExternalApiEvent(getAction().getName(), commonFields, resourceType, resourceName, consumerId, resourceUrl,
+        if (commonAuditData.getRequestId() == null) {
+            commonAuditData.setRequestId(ThreadLocalsHolder.getUuid());
+        }
+        event = new ExternalApiEvent(getAction().getName(), commonAuditData, resourceCommonInfo, distributionData,
                 prevParams, currParams, AuditBaseEventFactory.buildUserName(modifier), invariantUuid, artifactData) ;
     }
 

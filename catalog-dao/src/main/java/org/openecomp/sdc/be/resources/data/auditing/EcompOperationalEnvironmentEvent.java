@@ -1,16 +1,16 @@
 package org.openecomp.sdc.be.resources.data.auditing;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Map;
-import java.util.TimeZone;
-
-import org.openecomp.sdc.common.datastructure.AuditingFieldsKeysEnum;
-
 import com.datastax.driver.mapping.annotations.ClusteringColumn;
 import com.datastax.driver.mapping.annotations.Column;
 import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
+import org.openecomp.sdc.common.datastructure.AuditingFieldsKey;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.TimeZone;
+
+//import org.openecomp.sdc.common.datastructure.AuditingFieldsKeysEnum;
 
 @Table(keyspace = AuditingTypesConstants.AUDIT_KEYSPACE, name = AuditingTypesConstants.ECOMP_OPERATIONAL_ENV_EVENT_TYPE)
 public class EcompOperationalEnvironmentEvent  extends AuditingGenericEvent {
@@ -37,39 +37,9 @@ public class EcompOperationalEnvironmentEvent  extends AuditingGenericEvent {
     protected String tenantContext;
 
 
+    //Required to be public as it is used by Cassandra driver on get operation
     public EcompOperationalEnvironmentEvent() {
-        super();
         timestamp1 = new Date();
-    }
-
-    public EcompOperationalEnvironmentEvent(Map<AuditingFieldsKeysEnum, Object> auditingFields) {
-        this();
-        Object value;
-
-        value = auditingFields.get(AuditingFieldsKeysEnum.AUDIT_ACTION);
-        if (value != null) {
-            setAction((String) value);
-        }
-        value = auditingFields.get(AuditingFieldsKeysEnum.AUDIT_OPERATIONAL_ENVIRONMENT_ID);
-        if (value != null) {
-            setOperationalEnvironmentId((String) value);
-        }
-        value = auditingFields.get(AuditingFieldsKeysEnum.AUDIT_OPERATIONAL_ENVIRONMENT_NAME);
-        if (value != null) {
-            setOperationalEnvironmentName((String) value);
-        }
-        value = auditingFields.get(AuditingFieldsKeysEnum.AUDIT_OPERATIONAL_ENVIRONMENT_TYPE);
-        if (value != null) {
-            setOperational_environment_type((String) value);
-        }
-        value = auditingFields.get(AuditingFieldsKeysEnum.AUDIT_OPERATIONAL_ENVIRONMENT_ACTION);
-        if (value != null) {
-            setOperationalEnvironmentAction((String) value);
-        }
-        value = auditingFields.get(AuditingFieldsKeysEnum.AUDIT_TENANT_CONTEXT);
-        if (value != null) {
-            setTenantContext((String) value);
-        }
     }
 
     public EcompOperationalEnvironmentEvent(String action, String operationalEnvironmentId, String operationalEnvironmentName,
@@ -143,15 +113,15 @@ public class EcompOperationalEnvironmentEvent  extends AuditingGenericEvent {
 
     @Override
     public void fillFields() {
-        fields.put(AuditingFieldsKeysEnum.AUDIT_ACTION.getDisplayName(), getAction());
-        fields.put(AuditingFieldsKeysEnum.AUDIT_OPERATIONAL_ENVIRONMENT_ID.getDisplayName(), getOperationalEnvironmentId());
-        fields.put(AuditingFieldsKeysEnum.AUDIT_OPERATIONAL_ENVIRONMENT_NAME.getDisplayName(), getOperationalEnvironmentName());
-        fields.put(AuditingFieldsKeysEnum.AUDIT_OPERATIONAL_ENVIRONMENT_TYPE.getDisplayName(), getOperationalEnvironmentType());
-        fields.put(AuditingFieldsKeysEnum.AUDIT_OPERATIONAL_ENVIRONMENT_ACTION.getDisplayName(), getOperationalEnvironmentAction());
-        fields.put(AuditingFieldsKeysEnum.AUDIT_TENANT_CONTEXT.getDisplayName(), getTenantContext());
+        fields.put(AuditingFieldsKey.AUDIT_ACTION.getDisplayName(), getAction());
+        fields.put(AuditingFieldsKey.AUDIT_OPERATIONAL_ENVIRONMENT_ID.getDisplayName(), getOperationalEnvironmentId());
+        fields.put(AuditingFieldsKey.AUDIT_OPERATIONAL_ENVIRONMENT_NAME.getDisplayName(), getOperationalEnvironmentName());
+        fields.put(AuditingFieldsKey.AUDIT_OPERATIONAL_ENVIRONMENT_TYPE.getDisplayName(), getOperationalEnvironmentType());
+        fields.put(AuditingFieldsKey.AUDIT_OPERATIONAL_ENVIRONMENT_ACTION.getDisplayName(), getOperationalEnvironmentAction());
+        fields.put(AuditingFieldsKey.AUDIT_TENANT_CONTEXT.getDisplayName(), getTenantContext());
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(dateFormatPattern);
         simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
-        fields.put(AuditingFieldsKeysEnum.AUDIT_TIMESTAMP.getDisplayName(), simpleDateFormat.format(timestamp1));
+        fields.put(AuditingFieldsKey.AUDIT_TIMESTAMP.getDisplayName(), simpleDateFormat.format(timestamp1));
     }
 
     @Override

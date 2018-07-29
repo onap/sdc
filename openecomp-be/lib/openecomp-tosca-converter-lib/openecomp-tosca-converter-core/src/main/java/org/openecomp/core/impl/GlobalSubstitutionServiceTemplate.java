@@ -16,23 +16,18 @@
 
 package org.openecomp.core.impl;
 
-import static org.openecomp.core.converter.datatypes.Constants.ONAP_INDEX;
-
 import org.apache.commons.collections4.MapUtils;
-import org.openecomp.core.utilities.orchestration.OnboardingTypesEnum;
-import org.openecomp.sdc.logging.api.Logger;
-import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.onap.sdc.tosca.datatypes.model.Import;
 import org.onap.sdc.tosca.datatypes.model.NodeType;
 import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
+import org.openecomp.core.utilities.orchestration.OnboardingTypesEnum;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.translator.services.heattotosca.globaltypes.GlobalTypesGenerator;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
+
+import static org.openecomp.core.converter.datatypes.Constants.ONAP_INDEX;
 
 public class GlobalSubstitutionServiceTemplate extends ServiceTemplate {
     private static final Logger logger = LoggerFactory.getLogger(ServiceTemplate.class);

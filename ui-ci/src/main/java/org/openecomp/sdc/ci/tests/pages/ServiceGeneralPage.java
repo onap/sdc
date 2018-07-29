@@ -20,16 +20,27 @@
 
 package org.openecomp.sdc.ci.tests.pages;
 
-import java.util.ArrayList;
-
+import com.aventstack.extentreports.Status;
+import fj.data.Either;
+import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum;
+import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum.ServiceMetadataEnum;
 import org.openecomp.sdc.ci.tests.datatypes.ServiceReqDetails;
+import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
 import org.openecomp.sdc.ci.tests.execute.setup.SetupCDTest;
+import org.openecomp.sdc.ci.tests.tosca.datatypes.ToscaDefinition;
+import org.openecomp.sdc.ci.tests.utilities.FileHandling;
 import org.openecomp.sdc.ci.tests.utilities.GeneralUIUtils;
+import org.openecomp.sdc.ci.tests.utils.ToscaParserUtils;
+import org.openecomp.sdc.ci.tests.utils.Utils;
+import org.openecomp.sdc.ci.tests.utils.general.AtomicOperationUtils;
+import org.openecomp.sdc.ci.tests.verificator.ToscaValidation;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
-import com.aventstack.extentreports.Status;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Map;
 
 public class ServiceGeneralPage extends ResourceGeneralPage {
 
@@ -82,8 +93,16 @@ public class ServiceGeneralPage extends ResourceGeneralPage {
 		return GeneralUIUtils.getSelectedElementFromDropDown(getCategoryDataTestsIdAttribute()).getText();
 	}
 	
+	public static String getInstantiationTypeChosenValue() {
+		return GeneralUIUtils.getSelectedElementFromDropDown(getInstantiationTypeIdAttribute()).getText();
+	}
+	
+	private static String getInstantiationTypeIdAttribute() {
+		return ServiceMetadataEnum.INSTANTIATION_TYPE.getValue();
+	}
+	
 	public static void clickAddWorkflow (){
-		SetupCDTest.getExtendTest().log(Status.INFO, String.format("Adding workflow..."));
+		SetupCDTest.getExtendTest().log(Status.INFO, "Adding workflow...");
 		GeneralUIUtils.clickOnElementByText("Add Workflow");
 	}
 	
@@ -93,7 +112,7 @@ public class ServiceGeneralPage extends ResourceGeneralPage {
 		insertText(name, "label + input");
 		SetupCDTest.getExtendTest().log(Status.INFO, String.format("Filling description filed with %s", name));
 		insertText(description,"label + textarea");
-		SetupCDTest.getExtendTest().log(Status.INFO, String.format("Clicking save button "));
+		SetupCDTest.getExtendTest().log(Status.INFO, "Clicking save button ");
 		clickSave();
 	}
 	
@@ -106,9 +125,27 @@ public class ServiceGeneralPage extends ResourceGeneralPage {
 	}
 	
 	public static void clickSave() {
-		SetupCDTest.getExtendTest().log(Status.INFO, String.format("Clicking on Save button"));
-		GeneralUIUtils.clickOnElementByText("Save");
+		SetupCDTest.getExtendTest().log(Status.INFO, "Clicking on Save button");
+		GeneralUIUtils.clickOnElementByXpath("//*[@data-test-id='form-submit-button']");
 		GeneralUIUtils.ultimateWait();
 	}
-
+	
+	public static void defineInstantiationType(String instantiationType) {
+		GeneralUIUtils.getSelectList(instantiationType, DataTestIdEnum.ServiceMetadataEnum.INSTANTIATION_TYPE.getValue());
+	}
+	
+	public Service prepareServiceObject(ServiceReqDetails serviceMetadata) throws Exception {
+		return AtomicOperationUtils.getServiceObjectByNameAndVersion(UserRoleEnum.DESIGNER, serviceMetadata.getName(), "0.1");
+	}
+	
+	public static boolean parseToscaFileIntoServiceAndValidateProperties(ServiceReqDetails serviceMetadata) throws Exception {
+		ServiceGeneralPage serviceGeneralPageObject = new ServiceGeneralPage();
+		Service service = serviceGeneralPageObject.prepareServiceObject(serviceMetadata);
+		Map<String, String> expectedMetadataMap = Utils.generateServiceMetadataToExpectedObject(serviceMetadata, service);
+		File latestFilefromDir = FileHandling.getLastModifiedFileNameFromDir();
+		ToscaDefinition toscaServiceDefinition = ToscaParserUtils.parseToscaMainYamlToJavaObjectByCsarLocation(latestFilefromDir);
+		Either<Boolean,Map<String, Object>> serviceToscaMetadataValidator = ToscaValidation.serviceToscaMetadataValidator(expectedMetadataMap, toscaServiceDefinition);
+		return serviceToscaMetadataValidator.isRight();
+	}
+	
 }

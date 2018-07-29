@@ -17,8 +17,8 @@
                           tooltip="{{input.description}}" tooltipDelay="0"></span>
                 </div>
                 <div class="table-cell col3">
-                    <div class="inner-cell-div" tooltip="{{instanceNamesMap[input.instanceUniqueId]}}">
-                        <span>{{instanceNamesMap[input.instanceUniqueId]}}</span>
+                    <div class="inner-cell-div" tooltip="{{instanceNamesMap[input.instanceUniqueId]?.name}}">
+                        <span>{{instanceNamesMap[input.instanceUniqueId]?.name}}</span>
                     </div>
                 </div>
                 <div class="table-cell col2">
@@ -34,7 +34,8 @@
                                      [type]="input.type"
                                      [name]="input.name"
                                      (elementChanged)="onInputChanged(input, $event)"
-                                     [readonly]="readonly">
+                                     [readonly]="readonly"
+                                     [testId]="'input-' + input.name">
                     </dynamic-element>
                     <div class="delete-button-container">
                         <span *ngIf="input.instanceUniqueId && !readonly" class="sprite-new delete-btn" (click)="openDeleteModal(input)" data-tests-id="delete-input-button"></span>

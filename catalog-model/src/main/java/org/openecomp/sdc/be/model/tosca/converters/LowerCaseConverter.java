@@ -20,29 +20,29 @@
 
 package org.openecomp.sdc.be.model.tosca.converters;
 
-import java.util.Map;
-
 import org.openecomp.sdc.be.model.DataTypeDefinition;
+
+import java.util.Map;
 
 public class LowerCaseConverter implements PropertyValueConverter {
 
-	private static LowerCaseConverter booleanConverter = new LowerCaseConverter();
+    private static LowerCaseConverter booleanConverter = new LowerCaseConverter();
 
-	public static LowerCaseConverter getInstance() {
-		return booleanConverter;
-	}
+    public static LowerCaseConverter getInstance() {
+        return booleanConverter;
+    }
 
-	private LowerCaseConverter() {
+    private LowerCaseConverter() {
 
-	}
+    }
 
-	@Override
-	public String convert(String value, String innerType, Map<String, DataTypeDefinition> dataTypes) {
+    @Override
+    public String convert(String value, String innerType, Map<String, DataTypeDefinition> dataTypes) {
 
-		if (value == null) {
-			return null;
-		}
-		return value.toLowerCase();
-	}
+        if (value == null) {
+            return null;
+        }
+        return value.toLowerCase();
+    }
 
 }

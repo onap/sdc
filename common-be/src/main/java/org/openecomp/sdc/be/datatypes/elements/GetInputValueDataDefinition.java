@@ -22,21 +22,17 @@ package org.openecomp.sdc.be.datatypes.elements;
 
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 
-import java.io.Serializable;
 import java.util.Map;
 
-public class GetInputValueDataDefinition  extends ToscaDataDefinition implements Serializable{
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 5466910697527037975L;
+public class GetInputValueDataDefinition  extends ToscaDataDefinition {
+
 	private String propName;
 	private String inputName;
 	private String inputId;
 	private Integer indexValue;
 	private GetInputValueDataDefinition getInputIndex;
 
-	boolean isList = false;
+	private boolean isList = false;
 	
 	public GetInputValueDataDefinition(){
 		super();
@@ -44,13 +40,9 @@ public class GetInputValueDataDefinition  extends ToscaDataDefinition implements
 
 	public GetInputValueDataDefinition(Map<String, Object> pr) {
 		super(pr);
-		
 	}
 
 	public GetInputValueDataDefinition(GetInputValueDataDefinition p) {
-		
-		
-		super();
 		this.setPropName(p.getPropName());
 		this.setInputName( p.getInputName());
 		this.setInputId( p.getInputId());

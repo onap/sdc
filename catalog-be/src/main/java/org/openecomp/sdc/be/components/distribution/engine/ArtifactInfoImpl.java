@@ -20,17 +20,18 @@
 
 package org.openecomp.sdc.be.components.distribution.engine;
 
+import org.openecomp.sdc.be.config.ConfigurationManager;
+import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
+import org.openecomp.sdc.be.model.ArtifactDefinition;
+import org.openecomp.sdc.be.model.ComponentInstance;
+import org.openecomp.sdc.be.model.Service;
+import org.openecomp.sdc.common.api.ArtifactTypeEnum;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import org.openecomp.sdc.be.config.ConfigurationManager;
-import org.openecomp.sdc.be.model.ArtifactDefinition;
-import org.openecomp.sdc.be.model.ComponentInstance;
-import org.openecomp.sdc.be.model.Service;
-import org.openecomp.sdc.common.api.ArtifactTypeEnum;
 
 public class ArtifactInfoImpl implements IArtifactInfo {
 
@@ -61,7 +62,7 @@ public class ArtifactInfoImpl implements IArtifactInfo {
     }
 
     public static List<ArtifactInfoImpl> convertToArtifactInfoImpl(Service service, ComponentInstance resourceInstance, Collection<ArtifactDefinition> list) {
-        List<ArtifactInfoImpl> ret = new ArrayList<ArtifactInfoImpl>();
+        List<ArtifactInfoImpl> ret = new ArrayList<>();
         Map<String, List<ArtifactDefinition>> artifactIdToDef = list.stream().collect(Collectors.groupingBy(ArtifactDefinition::getUniqueId));
         if (list != null) {
             for (ArtifactDefinition artifactDef : list) {
@@ -82,7 +83,7 @@ public class ArtifactInfoImpl implements IArtifactInfo {
     }
 
     public static List<ArtifactInfoImpl> convertServiceArtifactToArtifactInfoImpl(Service service, Collection<ArtifactDefinition> list) {
-        List<ArtifactInfoImpl> ret = new ArrayList<ArtifactInfoImpl>();
+        List<ArtifactInfoImpl> ret = new ArrayList<>();
         Map<String, List<ArtifactDefinition>> artifactIdToDef = list.stream().collect(Collectors.groupingBy(ArtifactDefinition::getUniqueId));
         if (list != null) {
             for (ArtifactDefinition artifactDef : list) {
@@ -104,7 +105,7 @@ public class ArtifactInfoImpl implements IArtifactInfo {
     private static List<String> getUpdatedRequiredArtifactsFromNamesToUuids(ArtifactDefinition artifactDefinition, Map<String, ArtifactDefinition> artifacts) {
         List<String> requiredArtifacts = null;
         if (artifactDefinition != null && artifactDefinition.getRequiredArtifacts() != null && !artifactDefinition.getRequiredArtifacts().isEmpty() && artifacts != null && !artifacts.isEmpty()) {
-            requiredArtifacts = artifacts.values().stream().filter(art -> artifactDefinition.getRequiredArtifacts().contains(art.getArtifactName())).map(art -> art.getArtifactUUID()).collect(Collectors.toList());
+            requiredArtifacts = artifacts.values().stream().filter(art -> artifactDefinition.getRequiredArtifacts().contains(art.getArtifactName())).map(ArtifactDataDefinition::getArtifactUUID).collect(Collectors.toList());
         }
         return requiredArtifacts;
     }

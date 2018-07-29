@@ -20,10 +20,10 @@
 
 package org.openecomp.sdc.be.ui.model;
 
-import java.util.List;
-
 import org.openecomp.sdc.be.datatypes.components.ServiceMetadataDataDefinition;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
+
+import java.util.List;
 
 public class UiServiceMetadata extends UiComponentMetadata {
 	
@@ -33,6 +33,7 @@ public class UiServiceMetadata extends UiComponentMetadata {
 	private String serviceType;
 	private String serviceRole;
 	private String environmentContext;
+	private String instantiationType;
 
 	public UiServiceMetadata(List<CategoryDefinition> categories, ServiceMetadataDataDefinition metadata) {
 		super(categories, metadata);
@@ -42,49 +43,58 @@ public class UiServiceMetadata extends UiComponentMetadata {
 		this.serviceType = metadata.getServiceType();
 		this.serviceRole = metadata.getServiceRole();
 		this.environmentContext = metadata.getEnvironmentContext();
-	}	
+		this.instantiationType = metadata.getInstantiationType();
+	}
 	
 	public String getDistributionStatus() {
 		return distributionStatus;
 	}
 
-	public void setDistributionStatus(String distributionStatus) {
-		this.distributionStatus = distributionStatus;
-	}
-	
-	public Boolean getEcompGeneratedNaming() {
-		return ecompGeneratedNaming;
-	}
+    public void setDistributionStatus(String distributionStatus) {
+        this.distributionStatus = distributionStatus;
+    }
 
-	public void setEcompGeneratedNaming(Boolean ecompGeneratedNaming) {
-		this.ecompGeneratedNaming = ecompGeneratedNaming;
-	}
+    public Boolean getEcompGeneratedNaming() {
+        return ecompGeneratedNaming;
+    }
 
-	public String getNamingPolicy() {
-		return namingPolicy;
-	}
+    public void setEcompGeneratedNaming(Boolean ecompGeneratedNaming) {
+        this.ecompGeneratedNaming = ecompGeneratedNaming;
+    }
 
-	public void setNamingPolicy(String namingPolicy) {
-		this.namingPolicy = namingPolicy;
-	}
-	
-	public String getServiceType() {
-		return serviceType;
-	}
+    public String getNamingPolicy() {
+        return namingPolicy;
+    }
 
-	public void setServiceType(String serviceType) {
-		this.serviceType = serviceType;
-	}
-	
-	public String getServiceRole() {
-		return serviceRole;
-	}
+    public void setNamingPolicy(String namingPolicy) {
+        this.namingPolicy = namingPolicy;
+    }
+
+    public String getServiceType() {
+        return serviceType;
+    }
+
+    public void setServiceType(String serviceType) {
+        this.serviceType = serviceType;
+    }
+
+    public String getServiceRole() {
+        return serviceRole;
+    }
 
 	public void setServiceRole(String serviceRole) {
 		this.serviceRole = serviceRole;
 	}
 
-	public String getEnvironmentContext() { return environmentContext; }
+	public String getInstantiationType() {
+		return instantiationType;
+	}
 
-	public void setEnvironmentContext(String environmentContext) { this.environmentContext = environmentContext; }
+	public void setInstantiationType(String instantiationType) {
+		this.instantiationType = instantiationType;
+	}
+
+    public String getEnvironmentContext() { return environmentContext; }
+
+    public void setEnvironmentContext(String environmentContext) { this.environmentContext = environmentContext; }
 }

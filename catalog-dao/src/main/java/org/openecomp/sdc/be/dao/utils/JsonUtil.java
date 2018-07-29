@@ -20,12 +20,6 @@
 
 package org.openecomp.sdc.be.dao.utils;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -33,6 +27,12 @@ import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Simple utility for JSon processing.
@@ -47,32 +47,8 @@ public final class JsonUtil {
 	}
 
 	private JsonUtil() {
+	    // No instances allowed
 	}
-
-	// /**
-	// * Parse a {@link RestResponse} by using the specified dataType as the
-	// expected data object's class.
-	// *
-	// * @param responseAsString
-	// * The {@link RestResponse} as a JSon String
-	// * @param dataType
-	// * The type of the data object.
-	// * @return The parsed {@link RestResponse} object matching the given JSon.
-	// * @throws JsonParseException
-	// * In case of a JSon parsing issue.
-	// * @throws JsonMappingException
-	// * In case of a JSon parsing issue.
-	// * @throws IOException
-	// * In case of an IO error.
-	// */
-	// public static <T> RestResponse<T> read(String responseAsString, Class<T>
-	// dataType) throws IOException {
-	// ObjectMapper mapper = getOneObjectMapper();
-	// JavaType restResponseType =
-	// mapper.getTypeFactory().constructParametricType(RestResponse.class,
-	// dataType);
-	// return mapper.readValue(responseAsString, restResponseType);
-	// }
 
 	/**
 	 * Deserialize json text to object
@@ -116,36 +92,6 @@ public final class JsonUtil {
 		};
 		return getOneObjectMapper().readValue(objectText, typeRef);
 	}
-
-	// /**
-	// * Parse a {@link RestResponse} without being interested in parameterized
-	// type
-	// *
-	// * @param responseAsString
-	// * @return
-	// * @throws JsonParseException
-	// * @throws JsonMappingException
-	// * @throws IOException
-	// */
-	// public static RestResponse<?> read(String responseAsString) throws
-	// IOException {
-	// return getOneObjectMapper().readValue(responseAsString,
-	// RestResponse.class);
-	// }
-
-	// /**
-	// * Serialize the given object in a JSon String.
-	// *
-	// * @param obj
-	// * The object to serialize.
-	// * @return The JSon serialization of the given object.
-	// * @throws JsonProcessingException
-	// * In case of a failure in serialization.
-	// */
-	// public static String toString(Object obj) throws JsonProcessingException
-	// {
-	// return getOneObjectMapper().writeValueAsString(obj);
-	// }
 
 	/**
 	 * Deserialize the given json string to a map

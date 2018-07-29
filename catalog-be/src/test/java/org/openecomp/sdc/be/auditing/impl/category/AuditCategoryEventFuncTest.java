@@ -1,26 +1,5 @@
 package org.openecomp.sdc.be.auditing.impl.category;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyMap;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.CATEGORY;
-import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.DESCRIPTION;
-import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.EXPECTED_ADD_CATEGORY_LOG_STR;
-import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.GROUPING_NAME;
-import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.MODIFIER_UID;
-import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.REQUEST_ID;
-import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.RESOURCE_TYPE;
-import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.SERVICE_INSTANCE_ID;
-import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.STATUS_OK;
-import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.SUB_CATEGORY;
-import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.init;
-import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.modifier;
-
-import java.util.EnumMap;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -39,8 +18,14 @@ import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingGenericEvent;
 import org.openecomp.sdc.be.resources.data.auditing.CategoryEvent;
 import org.openecomp.sdc.be.resources.data.auditing.model.CommonAuditData;
-import org.openecomp.sdc.common.datastructure.AuditingFieldsKeysEnum;
 import org.openecomp.sdc.common.util.ThreadLocalsHolder;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AuditCategoryEventFuncTest {
@@ -54,7 +39,7 @@ public class AuditCategoryEventFuncTest {
     private static Configuration.ElasticSearchConfig esConfig;
 
     @Captor
-    private ArgumentCaptor<AuditingGenericEvent> eventCaptor;
+    private ArgumentCaptor<CategoryEvent> eventCaptor;
 
     @Before
     public void setUp() {
@@ -64,8 +49,9 @@ public class AuditCategoryEventFuncTest {
     }
 
     @Test
-    public void testNewAddCategoryEvent() {
-        AuditEventFactory builder = new AuditAddCategoryEventFactory(
+    public void testAddCategoryEvent() {
+        AuditEventFactory builder = new AuditCategoryEventFactory(
+                AuditingActionEnum.ADD_CATEGORY,
                 CommonAuditData.newBuilder()
                         .description(DESCRIPTION)
                         .status(STATUS_OK)
@@ -82,40 +68,13 @@ public class AuditCategoryEventFuncTest {
         verifyCategoryEvent(AuditingActionEnum.ADD_CATEGORY.getName());
     }
 
-    @Test
-    public void testOldAddEcompUserCredEvent() {
-        when(auditingDao.addRecord(anyMap(), eq(AuditingActionEnum.ADD_CATEGORY.getAuditingEsType())))
-                .thenReturn(ActionStatus.OK);
-        when(cassandraDao.saveRecord(any(AuditingGenericEvent.class))).thenReturn(CassandraOperationStatus.OK);
-
-        assertThat(auditingManager.auditEvent(fillMap(AuditingActionEnum.ADD_CATEGORY))).isEqualTo(EXPECTED_ADD_CATEGORY_LOG_STR);
-        verifyCategoryEvent(AuditingActionEnum.ADD_CATEGORY.getName());
-
-    }
-
-    private EnumMap<AuditingFieldsKeysEnum, Object> fillMap(AuditingActionEnum action) {
-        EnumMap<AuditingFieldsKeysEnum, Object> auditingFields = new EnumMap<>(AuditingFieldsKeysEnum.class);
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_ACTION, action.getName());
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_MODIFIER_NAME, modifier.getFirstName() + " " + modifier.getLastName());
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_MODIFIER_UID, modifier.getUserId());
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_STATUS, STATUS_OK);
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_DESC, DESCRIPTION);
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_CATEGORY_NAME, CATEGORY);
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_SUB_CATEGORY_NAME, SUB_CATEGORY);
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_GROUPING_NAME, GROUPING_NAME);
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_TYPE, RESOURCE_TYPE);
-        auditingFields.put(AuditingFieldsKeysEnum.AUDIT_SERVICE_INSTANCE_ID, SERVICE_INSTANCE_ID);
-
-        return auditingFields;
-    }
-
     private void verifyCategoryEvent(String action) {
         verify(cassandraDao).saveRecord(eventCaptor.capture());
-        CategoryEvent storedEvent = (CategoryEvent) eventCaptor.getValue();
+        CategoryEvent storedEvent = eventCaptor.getValue();
         assertThat(storedEvent.getModifier()).isEqualTo(MODIFIER_UID);
         assertThat(storedEvent.getDesc()).isEqualTo(DESCRIPTION);
         assertThat(storedEvent.getStatus()).isEqualTo(STATUS_OK);
-//        assertThat(storedEvent.getRequestId()).isEqualTo(REQUEST_ID);
+        assertThat(storedEvent.getRequestId()).isEqualTo(REQUEST_ID);
         assertThat(storedEvent.getServiceInstanceId()).isEqualTo(SERVICE_INSTANCE_ID);
         assertThat(storedEvent.getAction()).isEqualTo(action);
         assertThat(storedEvent.getCategoryName()).isEqualTo(CATEGORY);

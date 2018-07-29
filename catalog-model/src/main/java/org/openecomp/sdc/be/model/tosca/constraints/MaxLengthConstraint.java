@@ -20,42 +20,35 @@
 
 package org.openecomp.sdc.be.model.tosca.constraints;
 
-import java.io.Serializable;
+import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintViolationException;
 
 import javax.validation.constraints.NotNull;
 
-import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintViolationException;
+public class MaxLengthConstraint extends AbstractStringPropertyConstraint {
 
-public class MaxLengthConstraint extends AbstractStringPropertyConstraint implements Serializable {
+    @NotNull
+    private Integer maxLength;
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 6377603705670201256L;
+    public MaxLengthConstraint(Integer maxLength) {
+        this.maxLength = maxLength;
+    }
 
-	@NotNull
-	private Integer maxLength;
+    public MaxLengthConstraint() {
+        super();
+    }
 
-	public MaxLengthConstraint(Integer maxLength) {
-		this.maxLength = maxLength;
-	}
+    @Override
+    protected void doValidate(String propertyValue) throws ConstraintViolationException {
+        if (propertyValue.length() > maxLength) {
+            throw new ConstraintViolationException("The length of the value is greater than [" + maxLength + "]");
+        }
+    }
 
-	public MaxLengthConstraint() {
-		super();
-	}
+    public Integer getMaxLength() {
+        return maxLength;
+    }
 
-	@Override
-	protected void doValidate(String propertyValue) throws ConstraintViolationException {
-		if (propertyValue.length() > maxLength) {
-			throw new ConstraintViolationException("The length of the value is greater than [" + maxLength + "]");
-		}
-	}
-
-	public Integer getMaxLength() {
-		return maxLength;
-	}
-
-	public void setMaxLength(Integer maxLength) {
-		this.maxLength = maxLength;
-	}
+    public void setMaxLength(Integer maxLength) {
+        this.maxLength = maxLength;
+    }
 }

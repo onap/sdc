@@ -25,11 +25,11 @@ public enum GraphPropertiesDictionary {
 //													stored in graph 			index	
 	// Common
 	LABEL				("nodeLabel",				String.class, 				false,		true),
-	HEALTH_CHECK		("healthcheckis",			String.class, 				true,		true), //yavivi
+	HEALTH_CHECK		("healthcheckis",			String.class, 				true,		true),
 	// Resource
 	NAME				("name", 					String.class, 				false,		true),
 	TOSCA_RESOURCE_NAME	("toscaResourceName",		String.class, 				false,		true),
-	CATEGORY_NAME		("categoryName", 			String.class, 				false,		true), // ?
+	CATEGORY_NAME		("categoryName", 			String.class, 				false,		true),
 	VERSION				("version",					String.class, 				false,		true),
 	CREATION_DATE		("creationDate",			Long.class, 				false,		false),
 	LAST_UPDATE_DATE	("modificationDate",		Long.class, 				false,		false),
@@ -145,15 +145,15 @@ public enum GraphPropertiesDictionary {
 	FUNCTIONAL_MENU		("functionalMenu",		   	String.class, 				false,		false),
 	REQUIRED_ARTIFACTS	("requiredArtifacts",		String.class,	 			false,		false),
 	CUSTOMIZATION_UUID	("customizationUUID",		String.class,	 			false,		false),
-	;
-
+	IS_ARCHIVED				("isArchived",			Boolean.class, 				false,		true),
+	IS_VSP_ARCHIVED			("isVspArchived",		Boolean.class, 				false,		true),
+	ARCHIVE_TIME			("archiveTime",			Long.class, 				false,		true);
 
 
 	private final String property;
 	private final Class clazz;
 	private final boolean unique;
 	private final boolean indexed;
-	
 	
 	GraphPropertiesDictionary(String property,Class clazz, boolean unique,boolean indexed) {
 		this.property = property;
@@ -170,7 +170,7 @@ public enum GraphPropertiesDictionary {
 	public Class getClazz() {
 		return clazz;
 	}
-	
+
 	public boolean isUnique() {
 		return unique;
 	}

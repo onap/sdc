@@ -20,12 +20,11 @@
 
 package org.openecomp.sdc.be.dao.api;
 
-import java.util.List;
-
+import fj.data.Either;
 import org.openecomp.sdc.be.resources.data.ESArtifactData;
 import org.openecomp.sdc.be.resources.exception.ResourceDAOException;
 
-import fj.data.Either;
+import java.util.List;
 
 public interface ICatalogDAO {
 

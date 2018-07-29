@@ -1,9 +1,9 @@
 package org.openecomp.sdc.asdctool.migration.dao;
 
-import java.math.BigInteger;
-
 import org.junit.Test;
 import org.openecomp.sdc.be.resources.data.MigrationTaskEntry;
+
+import java.math.BigInteger;
 
 public class MigrationTasksDaoTest {
 

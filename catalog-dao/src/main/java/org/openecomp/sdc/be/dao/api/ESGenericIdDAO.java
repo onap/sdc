@@ -20,15 +20,8 @@
 
 package org.openecomp.sdc.be.dao.api;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexResponse;
 import org.elasticsearch.action.get.GetResponse;
@@ -36,22 +29,22 @@ import org.elasticsearch.action.get.MultiGetItemResponse;
 import org.elasticsearch.action.get.MultiGetResponse;
 import org.elasticsearch.client.Client;
 import org.openecomp.sdc.be.dao.es.ElasticSearchClient;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.IndexingServiceException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import javax.annotation.Resource;
+import java.io.IOException;
+import java.util.*;
 
 public abstract class ESGenericIdDAO implements IGenericIdDAO {
 
-	private static Logger log = LoggerFactory.getLogger(ESGenericIdDAO.class.getName());
+	private static Logger log = Logger.getLogger(ESGenericIdDAO.class.getName());
 
 	@Resource(name = "elasticsearch-client")
 	private ElasticSearchClient esClient;
 
 	private ObjectMapper jsonMapper = new ObjectMapper();
-	private final Map<String, String> typesToIndices = new HashMap<String, String>();
+	private final Map<String, String> typesToIndices = new HashMap<>();
 
 	public Client getClient() {
 		return this.esClient.getClient();

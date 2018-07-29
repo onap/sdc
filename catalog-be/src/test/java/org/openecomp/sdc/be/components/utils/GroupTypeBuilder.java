@@ -24,6 +24,16 @@ public class GroupTypeBuilder {
         return this;
     }
 
+    public GroupTypeBuilder setName(String name) {
+        groupTypeDataDefinition.setName(name);
+        return this;
+    }
+
+    public GroupTypeBuilder setIcon(String icon) {
+        groupTypeDataDefinition.setIcon(icon);
+        return this;
+    }
+
     public GroupTypeBuilder setVersion(String version) {
         groupTypeDataDefinition.setVersion(version);
         return this;

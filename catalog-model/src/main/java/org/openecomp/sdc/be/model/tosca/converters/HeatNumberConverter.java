@@ -20,31 +20,31 @@
 
 package org.openecomp.sdc.be.model.tosca.converters;
 
+import org.openecomp.sdc.be.model.DataTypeDefinition;
+
 import java.math.BigDecimal;
 import java.util.Map;
 
-import org.openecomp.sdc.be.model.DataTypeDefinition;
-
 public class HeatNumberConverter implements PropertyValueConverter {
 
-	private static HeatNumberConverter numberConverter = new HeatNumberConverter();
+    private static HeatNumberConverter numberConverter = new HeatNumberConverter();
 
-	public static HeatNumberConverter getInstance() {
-		return numberConverter;
-	}
+    public static HeatNumberConverter getInstance() {
+        return numberConverter;
+    }
 
-	private HeatNumberConverter() {
+    private HeatNumberConverter() {
 
-	}
+    }
 
-	@Override
-	public String convert(String original, String innerType, Map<String, DataTypeDefinition> dataTypes) {
+    @Override
+    public String convert(String original, String innerType, Map<String, DataTypeDefinition> dataTypes) {
 
-		if (original == null || original.isEmpty()) {
-			return null;
-		}
+        if (original == null || original.isEmpty()) {
+            return null;
+        }
 
-		return new BigDecimal(original).toPlainString();
-	}
+        return new BigDecimal(original).toPlainString();
+    }
 
 }

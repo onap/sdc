@@ -1,11 +1,13 @@
 {
-  "artifact": {
-    "name": { "allowedChar": "a-zA-Z_0-9" },
-    "encoded": "true",
-    "consumer": "appc,catalog"
-  },
-  "_config": {
-    "namespace": "JSONConfig",
-    "mergeStrategy": "override"
-  }
+	"artifact": {
+		"name": {
+			"allowedChar": "a-zA-Z_0-9"
+		},
+		"encoded": "true",
+		"consumer": "appc,catalog"
+	},
+	"_config": {
+		"namespace": "JSONConfig",
+		"mergeStrategy": "override"
+	}
 }

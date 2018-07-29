@@ -19,7 +19,7 @@
  */
 
 'use strict';
-import {ComponentType, CHANGE_COMPONENT_CSAR_VERSION_FLAG, SEVERITY, FileUtils, ModalsHandler, ComponentFactory} from "app/utils";
+import {ComponentType, SEVERITY, FileUtils, ModalsHandler, ComponentFactory} from "app/utils";
 import {OnboardingService, CacheService} from "app/services";
 import {Component, IComponent, IUser, IAppConfigurtaion, Resource} from "app/models";
 import {IServerMessageModalModel} from "../message-modal/message-server-modal/server-message-modal-view-model";
@@ -63,6 +63,7 @@ export class OnboardingModalViewModel {
         'Sdc.Services.OnboardingService',
         'okButtonText',
         'currentCsarUUID',
+        'currentCsarVersion',
         'Sdc.Services.CacheService',
         'FileUtils',
         'ComponentFactory',
@@ -77,6 +78,7 @@ export class OnboardingModalViewModel {
                 private onBoardingService:OnboardingService,
                 private okButtonText:string,
                 private currentCsarUUID:string,
+                private currentCsarVersion:string,
                 private cacheService:CacheService,
                 private fileUtils:FileUtils,
                 private componentFactory:ComponentFactory,
@@ -107,28 +109,27 @@ export class OnboardingModalViewModel {
 
         // Dismiss the modal and pass the "mini" component to workspace general page
         this.$scope.doImportCsar = ():void => {
-            this.$uibModalInstance.dismiss();
-            this.$state.go('workspace.general', {
-                type: ComponentType.RESOURCE.toLowerCase(),
-                componentCsar: this.$scope.selectedComponent
+
+            this.$uibModalInstance.close({
+                componentCsar: this.$scope.selectedComponent,
+                type: ComponentType.RESOURCE.toLowerCase()
             });
         };
 
         this.$scope.doUpdateCsar = ():void => {
-            // In case user select on update the checkin and submit for testing buttons (in general page) should be disabled.
-            // to do that we need to pass to workspace.general state parameter to know to disable the buttons.
-            this.$uibModalInstance.close();
+            
             // Change the component version to the CSAR version we want to update.
-            /*(<Resource>this.$scope.componentFromServer).csarVersion = (<Resource>this.$scope.selectedComponent).csarVersion;
-             let component:Components.Component = this.componentFactory.createComponent(this.$scope.componentFromServer);
-             this.$state.go('workspace.general', {vspComponent: component, disableButtons: true });*/
-            this.cacheService.set(CHANGE_COMPONENT_CSAR_VERSION_FLAG, (<Resource>this.$scope.selectedComponent).csarVersion);
-            this.$state.go('workspace.general', {
-                id: this.$scope.componentFromServer.uniqueId,
-                componentCsar: this.$scope.selectedComponent,
-                type: this.$scope.componentFromServer.componentType.toLowerCase(),
-                disableButtons: true
-            });
+            if(!this.currentCsarVersion || this.currentCsarVersion != (<Resource>this.$scope.selectedComponent).csarVersion) {
+                this.$uibModalInstance.close({
+                    componentCsar: this.$scope.selectedComponent,
+                    previousComponent: this.$scope.componentFromServer,
+                    type: this.$scope.componentFromServer.componentType.toLowerCase()
+                    
+                });
+
+            } else {
+                this.$uibModalInstance.close();
+            }
         };
 
         this.$scope.downloadCsar = (packageId:string):void => {

@@ -104,7 +104,7 @@ export class Resource extends Component {
     };
 
     public createComponentOnServer = ():ng.IPromise<Component> => {
-        let deferred = this.$q.defer();
+        let deferred = this.$q.defer<Component>();
         let onSuccess = (component:Resource):void => {
             this.payloadData = undefined;
             this.payloadName = undefined;
@@ -125,7 +125,7 @@ export class Resource extends Component {
 
 
     public updateResourceGroupProperties = (module:DisplayModule, properties:Array<PropertyModel>):ng.IPromise<Array<PropertyModel>> => {
-        let deferred = this.$q.defer();
+        let deferred = this.$q.defer<Array<PropertyModel>>();
         let onSuccess = (updatedProperties:Array<PropertyModel>):void => {
             _.forEach(updatedProperties, (property:PropertyModel) => { // Replace all updated properties on the module we needed to update
                 _.extend(_.find(module.properties, {uniqueId: property.uniqueId}), property);
@@ -144,7 +144,7 @@ export class Resource extends Component {
 
     // For now we only implement the logic in service level
     public createInputsFormInstances = (instanceInputsPropertiesMap:InstancesInputsOrPropertiesMapData):ng.IPromise<Array<InputModel>> => {
-        let deferred = this.$q.defer();
+        let deferred = this.$q.defer<Array<InputModel>>();
         return deferred.promise;
     };
 
@@ -175,6 +175,9 @@ export class Resource extends Component {
         temp.$q = undefined;
         temp.selectedCategory = undefined;
         temp.importedFile = undefined;
+        temp.modules = undefined;
+        temp.groupInstances = undefined;
+        temp.policies = undefined;
         return temp;
     };
 }

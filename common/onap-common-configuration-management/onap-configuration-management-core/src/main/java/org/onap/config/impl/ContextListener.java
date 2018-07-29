@@ -1,13 +1,14 @@
 package org.onap.config.impl;
 
-import static org.onap.config.Constants.MBEAN_NAME;
+import org.onap.config.api.ConfigurationManager;
 
-import java.lang.management.ManagementFactory;
 import javax.management.ObjectName;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
-import org.onap.config.api.ConfigurationManager;
+import java.lang.management.ManagementFactory;
+
+import static org.onap.config.Constants.MBEAN_NAME;
 
 @WebListener
 public class ContextListener implements ServletContextListener {

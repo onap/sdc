@@ -20,24 +20,10 @@
 
 package org.openecomp.sdc.be.servlets;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.lang.reflect.Type;
-import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Supplier;
-import java.util.zip.ZipInputStream;
-
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.Response;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
+import fj.data.Either;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -47,8 +33,8 @@ import org.openecomp.sdc.be.components.impl.CsarValidationUtils;
 import org.openecomp.sdc.be.components.impl.ImportUtils;
 import org.openecomp.sdc.be.components.impl.ImportUtils.ResultStatusEnum;
 import org.openecomp.sdc.be.components.impl.ImportUtils.ToscaElementTypeEnum;
-import org.openecomp.sdc.be.components.impl.ImportUtils.ToscaTagNamesEnum;
 import org.openecomp.sdc.be.components.impl.ResourceImportManager;
+import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
@@ -57,31 +43,41 @@ import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.ServletUtils;
 import org.openecomp.sdc.be.impl.WebAppContextWrapper;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
+import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.UploadResourceInfo;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.servlets.ResourceUploadServlet.ResourceAuthorityTypeEnum;
 import org.openecomp.sdc.be.user.IUserBusinessLogic;
 import org.openecomp.sdc.be.user.Role;
+import org.openecomp.sdc.be.utils.TypeUtils;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.api.UploadArtifactInfo;
 import org.openecomp.sdc.common.datastructure.Wrapper;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.common.util.GeneralUtility;
 import org.openecomp.sdc.common.util.YamlToObjectConverter;
 import org.openecomp.sdc.common.util.ZipUtil;
 import org.openecomp.sdc.exception.ResponseFormat;
-import org.slf4j.Logger;
 import org.springframework.web.context.WebApplicationContext;
 import org.yaml.snakeyaml.Yaml;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.Gson;
-import com.google.gson.JsonSyntaxException;
-
-import fj.data.Either;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.core.Response;
+import java.io.*;
+import java.lang.reflect.Type;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Supplier;
+import java.util.zip.ZipInputStream;
 
 public abstract class AbstractValidationsServlet extends BeGenericServlet {
 
+    private static final Logger log = Logger.getLogger(AbstractValidationsServlet.class);
     private static final String TOSCA_SIMPLE_YAML_PREFIX = "tosca_simple_yaml_";
     private static final List<String> TOSCA_DEFINITION_VERSIONS = Arrays.asList(TOSCA_SIMPLE_YAML_PREFIX + "1_0_0", TOSCA_SIMPLE_YAML_PREFIX + "1_1_0", "tosca_simple_profile_for_nfv_1_0_0", TOSCA_SIMPLE_YAML_PREFIX + "1_0", TOSCA_SIMPLE_YAML_PREFIX + "1_1");
     private static final List<String> TOSCA_YML_CSAR_VALID_SUFFIX = Arrays.asList(".yml", ".yaml", ".csar");
@@ -92,18 +88,8 @@ public abstract class AbstractValidationsServlet extends BeGenericServlet {
 
     protected ComponentsUtils componentsUtils;
 
-    private Logger log = null;
-
-    protected void init(Logger log) {
-        initLog(log);
+    protected void init() {
         initSpringFromContext();
-
-    }
-
-    protected synchronized void initLog(Logger log) {
-        if (this.log == null) {
-            this.log = log;
-        }
     }
 
     private synchronized void initSpringFromContext() {
@@ -114,6 +100,7 @@ public abstract class AbstractValidationsServlet extends BeGenericServlet {
             WebApplicationContext webApplicationContext = webApplicationContextWrapper.getWebAppContext(context);
             servletUtils = webApplicationContext.getBean(ServletUtils.class);
             resourceImportManager = webApplicationContext.getBean(ResourceImportManager.class);
+            componentsUtils = webApplicationContext.getBean(ComponentsUtils.class);
         }
     }
 
@@ -204,13 +191,17 @@ public abstract class AbstractValidationsServlet extends BeGenericServlet {
     }
 
     protected void fillZipContents(Wrapper<String> yamlStringWrapper, File file) throws FileNotFoundException {
+        extractZipContents(yamlStringWrapper, file);
+    }
+
+    public static void extractZipContents(Wrapper<String> yamlStringWrapper, File file) throws FileNotFoundException {
         InputStream fileInputStream = new FileInputStream(file);
         Map<String, byte[]> unzippedFolder = ZipUtil.readZip(new ZipInputStream(fileInputStream));
         String ymlName = unzippedFolder.keySet().iterator().next();
         fillToscaTemplateFromZip(yamlStringWrapper, ymlName, file);
     }
 
-    protected void fillToscaTemplateFromZip(Wrapper<String> yamlStringWrapper, String payloadName, File file) throws FileNotFoundException {
+    private static void fillToscaTemplateFromZip(Wrapper<String> yamlStringWrapper, String payloadName, File file) throws FileNotFoundException {
         InputStream fileInputStream = new FileInputStream(file);
         Map<String, byte[]> unzippedFolder = ZipUtil.readZip(new ZipInputStream(fileInputStream));
         byte[] yamlFileInBytes = unzippedFolder.get(payloadName);
@@ -322,7 +313,7 @@ public abstract class AbstractValidationsServlet extends BeGenericServlet {
         log.debug("checking payload is valid tosca");
         boolean isValid;
         Map<String, Object> mappedToscaTemplate = (Map<String, Object>) new Yaml().load(toscaPayload);
-        Either<String, ResultStatusEnum> findFirstToscaStringElement = ImportUtils.findFirstToscaStringElement(mappedToscaTemplate, ToscaTagNamesEnum.TOSCA_VERSION);
+        Either<String, ResultStatusEnum> findFirstToscaStringElement = ImportUtils.findFirstToscaStringElement(mappedToscaTemplate, TypeUtils.ToscaTagNamesEnum.TOSCA_VERSION);
 
         if (findFirstToscaStringElement.isRight()) {
             isValid = false;
@@ -360,7 +351,7 @@ public abstract class AbstractValidationsServlet extends BeGenericServlet {
         boolean isValid;
         String nameSpace = "";
         Map<String, Object> mappedToscaTemplate = (Map<String, Object>) new Yaml().load(toscaPayload);
-        Either<Map<String, Object>, ResultStatusEnum> toscaElement = ImportUtils.findFirstToscaMapElement(mappedToscaTemplate, ToscaTagNamesEnum.NODE_TYPES);
+        Either<Map<String, Object>, ResultStatusEnum> toscaElement = ImportUtils.findFirstToscaMapElement(mappedToscaTemplate, TypeUtils.ToscaTagNamesEnum.NODE_TYPES);
         if (toscaElement.isRight() || toscaElement.left().value().size() != 1) {
             isValid = false;
         } else {
@@ -389,7 +380,7 @@ public abstract class AbstractValidationsServlet extends BeGenericServlet {
         log.debug("checking payload contains single resource");
         boolean isValid;
         Map<String, Object> mappedToscaTemplate = (Map<String, Object>) new Yaml().load(toscaPayload);
-        Either<Map<String, Object>, ResultStatusEnum> toscaElement = ImportUtils.findFirstToscaMapElement(mappedToscaTemplate, ToscaTagNamesEnum.NODE_TYPES);
+        Either<Map<String, Object>, ResultStatusEnum> toscaElement = ImportUtils.findFirstToscaMapElement(mappedToscaTemplate, TypeUtils.ToscaTagNamesEnum.NODE_TYPES);
         if (toscaElement.isRight()) {
             isValid = false;
         } else {
@@ -408,7 +399,7 @@ public abstract class AbstractValidationsServlet extends BeGenericServlet {
     protected void validatePayloadIsNotService(Wrapper<Response> responseWrapper, User user, UploadResourceInfo uploadResourceInfo, String toscaPayload) {
         log.debug("checking payload is not a tosca service");
         Map<String, Object> mappedToscaTemplate = (Map<String, Object>) new Yaml().load(toscaPayload);
-        Either<Object, ResultStatusEnum> toscaElement = ImportUtils.findToscaElement(mappedToscaTemplate, ToscaTagNamesEnum.TOPOLOGY_TEMPLATE, ToscaElementTypeEnum.ALL);
+        Either<Object, ResultStatusEnum> toscaElement = ImportUtils.findToscaElement(mappedToscaTemplate, TypeUtils.ToscaTagNamesEnum.TOPOLOGY_TEMPLATE, ToscaElementTypeEnum.ALL);
 
         if (toscaElement.isLeft()) {
             ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.NOT_RESOURCE_TOSCA_TEMPLATE);
@@ -617,14 +608,13 @@ public abstract class AbstractValidationsServlet extends BeGenericServlet {
 
 
     protected void handleImport(Wrapper<Response> responseWrapper, User user, UploadResourceInfo resourceInfoObject, String yamlAsString, ResourceAuthorityTypeEnum authority, boolean createNewVersion, String resourceUniqueId) {
-        Either<ImmutablePair<org.openecomp.sdc.be.model.Resource, ActionStatus>, ResponseFormat> createOrUpdateResponse;
-        Response response;
+        Either<ImmutablePair<Resource, ActionStatus>, ResponseFormat> createOrUpdateResponse = null;
+        Response response = null;
         Object representation = null;
-
+        ImmutablePair<Resource, ActionStatus> importedResourceStatus = null;
         if (CsarValidationUtils.isCsarPayloadName(resourceInfoObject.getPayloadName())) {
             log.debug("import resource from csar");
-
-            createOrUpdateResponse = importResourceFromUICsar(resourceInfoObject, user, resourceUniqueId);
+            importedResourceStatus = importResourceFromUICsar(resourceInfoObject, user, resourceUniqueId);
         } else if (!authority.isUserTypeResource()) {
             log.debug("import normative type resource");
             createOrUpdateResponse = resourceImportManager.importNormativeResource(yamlAsString, resourceInfoObject, user, createNewVersion, true);
@@ -632,57 +622,56 @@ public abstract class AbstractValidationsServlet extends BeGenericServlet {
             log.debug("import user resource (not normative type)");
             createOrUpdateResponse = resourceImportManager.importUserDefinedResource(yamlAsString, resourceInfoObject, user,  false);
         }
-        if (createOrUpdateResponse.isRight()) {
-            response = buildErrorResponse(createOrUpdateResponse.right().value());
-        } else {
+        if (createOrUpdateResponse!= null){
+            if(createOrUpdateResponse.isRight()){
+                response = buildErrorResponse(createOrUpdateResponse.right().value());
+            }else {
+                importedResourceStatus = createOrUpdateResponse.left().value();
+            }
+        }
+        if(importedResourceStatus != null){
             try {
-                representation = RepresentationUtils.toRepresentation(createOrUpdateResponse.left().value().getLeft());
+                representation = RepresentationUtils.toRepresentation(importedResourceStatus.left);
             } catch (IOException e) {
                 log.debug("Error while building resource representation : {}", e.getMessage(), e);
             }
-            ActionStatus successStatus = createOrUpdateResponse.left().value().right;
-            response = buildOkResponse(getComponentsUtils().getResponseFormat(successStatus), representation);
+            response = buildOkResponse(getComponentsUtils().getResponseFormat(importedResourceStatus.right), representation);
         }
         responseWrapper.setInnerElement(response);
     }
 
-    private Either<ImmutablePair<org.openecomp.sdc.be.model.Resource, ActionStatus>, ResponseFormat> importResourceFromUICsar(UploadResourceInfo resourceInfoObject, User user, String resourceUniqueId) {
+    private ImmutablePair<Resource, ActionStatus> importResourceFromUICsar(UploadResourceInfo resourceInfoObject, User user, String resourceUniqueId) {
 
-        Either<org.openecomp.sdc.be.model.Resource, ResponseFormat> createOrUpdateResourceRes;
-        ImmutablePair<org.openecomp.sdc.be.model.Resource, ActionStatus> result = null;
+        Resource newResource;
+        ImmutablePair<Resource, ActionStatus> result = null;
         ActionStatus actionStatus;
-        org.openecomp.sdc.be.model.Resource resource = new org.openecomp.sdc.be.model.Resource();
+        Resource resource = new Resource();
         String payloadName = resourceInfoObject.getPayloadName();
         fillResourceFromResourceInfoObject(resource, resourceInfoObject);
 
-        Either<Map<String, byte[]>, ResponseFormat> csarUIPayloadRes = getScarFromPayload(resourceInfoObject);
+        Either<Map<String, byte[]>, ResponseFormat> csarUIPayloadRes = getCsarFromPayload(resourceInfoObject);
         if (csarUIPayloadRes.isRight()) {
-            return Either.right(csarUIPayloadRes.right().value());
+            throw new ComponentException(csarUIPayloadRes.right().value());
         }
         Map<String, byte[]> csarUIPayload = csarUIPayloadRes.left().value();
 
-        createOrUpdateResourceRes = getAndValidateCsarYaml(csarUIPayload, resource, user, payloadName);
-        if (createOrUpdateResourceRes.isRight()) {
-            return Either.right(createOrUpdateResourceRes.right().value());
-        }
+        getAndValidateCsarYaml(csarUIPayload, resource, user, payloadName);
+
         if (resourceUniqueId == null || resourceUniqueId.isEmpty()) {
-            createOrUpdateResourceRes = resourceImportManager.getResourceBusinessLogic().createResource(resource, AuditingActionEnum.CREATE_RESOURCE, user, csarUIPayload, payloadName);
-            if (createOrUpdateResourceRes.isRight()) {
-                return Either.right(createOrUpdateResourceRes.right().value());
-            }
+            newResource = resourceImportManager.getResourceBusinessLogic().createResource(resource, AuditingActionEnum.CREATE_RESOURCE, user, csarUIPayload, payloadName);
             actionStatus = ActionStatus.CREATED;
         } else {
-            createOrUpdateResourceRes = resourceImportManager.getResourceBusinessLogic().validateAndUpdateResourceFromCsar(resource, user, csarUIPayload, payloadName, resourceUniqueId);
-            if (createOrUpdateResourceRes.isRight()) {
-                return Either.right(createOrUpdateResourceRes.right().value());
-            }
+            newResource = resourceImportManager.getResourceBusinessLogic().validateAndUpdateResourceFromCsar(resource, user, csarUIPayload, payloadName, resourceUniqueId);
             actionStatus = ActionStatus.OK;
         }
-        result = new ImmutablePair<org.openecomp.sdc.be.model.Resource, ActionStatus>(createOrUpdateResourceRes.left().value(), actionStatus);
-        return Either.left(result);
+        return new ImmutablePair<>(newResource, actionStatus);
     }
 
-    private Either<org.openecomp.sdc.be.model.Resource, ResponseFormat> getAndValidateCsarYaml(Map<String, byte[]> csarUIPayload, org.openecomp.sdc.be.model.Resource resource, User user, String csarUUID) {
+    private Resource throwComponentException(ResponseFormat responseFormat) {
+        throw new ComponentException(responseFormat);
+    }
+
+    private void getAndValidateCsarYaml(Map<String, byte[]> csarUIPayload, Resource resource, User user, String csarUUID) {
 
         Either<ImmutablePair<String, String>, ResponseFormat> getToscaYamlRes = CsarValidationUtils.getToscaYaml(csarUIPayload, csarUUID, getComponentsUtils());
 
@@ -691,7 +680,7 @@ public abstract class AbstractValidationsServlet extends BeGenericServlet {
             log.debug("Error when try to get csar toscayamlFile with csar ID {}, error: {}", csarUUID, responseFormat);
             BeEcompErrorManager.getInstance().logBeDaoSystemError("Creating resource from CSAR: fetching CSAR with id " + csarUUID + " failed");
             getComponentsUtils().auditResource(responseFormat, user, resource, AuditingActionEnum.CREATE_RESOURCE);
-            return Either.right(responseFormat);
+            throwComponentException(responseFormat);
         }
         String toscaYaml = getToscaYamlRes.left().value().getValue();
 
@@ -701,13 +690,12 @@ public abstract class AbstractValidationsServlet extends BeGenericServlet {
         if (!isValid) {
             ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.INVALID_YAML_FILE);
             getComponentsUtils().auditResource(responseFormat, user, resource, AuditingActionEnum.IMPORT_RESOURCE);
-            return Either.right(responseFormat);
+            throwComponentException(responseFormat);
         }
 
         log.debug("checking payload is valid tosca");
-        String heatDecodedPayload = toscaYaml;
-        Map<String, Object> mappedToscaTemplate = (Map<String, Object>) new Yaml().load(heatDecodedPayload);
-        Either<String, ResultStatusEnum> findFirstToscaStringElement = ImportUtils.findFirstToscaStringElement(mappedToscaTemplate, ToscaTagNamesEnum.TOSCA_VERSION);
+        Map<String, Object> mappedToscaTemplate = (Map<String, Object>) new Yaml().load(toscaYaml);
+        Either<String, ResultStatusEnum> findFirstToscaStringElement = ImportUtils.findFirstToscaStringElement(mappedToscaTemplate, TypeUtils.ToscaTagNamesEnum.TOSCA_VERSION);
 
         if (findFirstToscaStringElement.isRight()) {
             isValid = false;
@@ -723,22 +711,21 @@ public abstract class AbstractValidationsServlet extends BeGenericServlet {
         if (!isValid) {
             ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.INVALID_TOSCA_TEMPLATE);
             getComponentsUtils().auditResource(responseFormat, user, resource, AuditingActionEnum.IMPORT_RESOURCE);
-            return Either.right(responseFormat);
+            throwComponentException(responseFormat);
         }
-        return Either.left(resource);
     }
 
-    private void fillResourceFromResourceInfoObject(org.openecomp.sdc.be.model.Resource resource, UploadResourceInfo resourceInfoObject) {
+    private void fillResourceFromResourceInfoObject(Resource resource, UploadResourceInfo resourceInfoObject) {
         resourceImportManager.populateResourceMetadata(resourceInfoObject, resource);
         fillArtifacts(resource, resourceInfoObject);
 
     }
 
-    private void fillArtifacts(org.openecomp.sdc.be.model.Resource resource, UploadResourceInfo resourceInfoObject) {
+    private void fillArtifacts(Resource resource, UploadResourceInfo resourceInfoObject) {
         if (resource != null && resourceInfoObject != null) {
             List<UploadArtifactInfo> artifactList = resourceInfoObject.getArtifactList();
             if (artifactList != null) {
-                Map<String, ArtifactDefinition> artifactsHM = new HashMap<String, ArtifactDefinition>();
+                Map<String, ArtifactDefinition> artifactsHM = new HashMap<>();
                 for (UploadArtifactInfo artifact : artifactList) {
                     ArtifactDefinition artifactDef = new ArtifactDefinition();
                     artifactDef.setArtifactName(artifact.getArtifactName());
@@ -753,7 +740,7 @@ public abstract class AbstractValidationsServlet extends BeGenericServlet {
         }
     }
 
-    private Either<Map<String, byte[]>, ResponseFormat> getScarFromPayload(UploadResourceInfo innerElement) {
+    private Either<Map<String, byte[]>, ResponseFormat> getCsarFromPayload(UploadResourceInfo innerElement) {
         String csarUUID = innerElement.getPayloadName();
         String payloadData = innerElement.getPayloadData();
         if (payloadData == null) {
@@ -805,7 +792,7 @@ public abstract class AbstractValidationsServlet extends BeGenericServlet {
         ServletContext context = request.getSession().getServletContext();
 
         ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(containerComponentType);
-        ComponentInstanceBusinessLogic componentInstanceLogic = getComponentInstanceBL(context, componentTypeEnum);
+        ComponentInstanceBusinessLogic componentInstanceLogic = getComponentInstanceBL(context);
         if (componentInstanceLogic == null) {
             log.debug("Unsupported component type {}", containerComponentType);
             errorWrapper.setInnerElement(getComponentsUtils().getResponseFormat(ActionStatus.UNSUPPORTED_ERROR, containerComponentType));

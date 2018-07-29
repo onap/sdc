@@ -24,33 +24,33 @@ import java.util.List;
 import java.util.Map;
 
 public class CapReqDef {
-	Map<String, List<CapabilityDefinition>> capabilities;
-	Map<String, List<RequirementDefinition>> requirements;
+    Map<String, List<CapabilityDefinition>> capabilities;
+    Map<String, List<RequirementDefinition>> requirements;
 
-	public CapReqDef() {
-		super();
-	}
+    public CapReqDef() {
+        super();
+    }
 
-	public CapReqDef(Map<String, List<RequirementDefinition>> requirements,
-			Map<String, List<CapabilityDefinition>> capabilities) {
-		super();
-		this.capabilities = capabilities;
-		this.requirements = requirements;
-	}
+    public CapReqDef(Map<String, List<RequirementDefinition>> requirements,
+            Map<String, List<CapabilityDefinition>> capabilities) {
+        super();
+        this.capabilities = capabilities;
+        this.requirements = requirements;
+    }
 
-	public Map<String, List<CapabilityDefinition>> getCapabilities() {
-		return capabilities;
-	}
+    public Map<String, List<CapabilityDefinition>> getCapabilities() {
+        return capabilities;
+    }
 
-	public Map<String, List<RequirementDefinition>> getRequirements() {
-		return requirements;
-	}
+    public Map<String, List<RequirementDefinition>> getRequirements() {
+        return requirements;
+    }
 
-	public void setCapabilities(Map<String, List<CapabilityDefinition>> capabilities) {
-		this.capabilities = capabilities;
-	}
+    public void setCapabilities(Map<String, List<CapabilityDefinition>> capabilities) {
+        this.capabilities = capabilities;
+    }
 
-	public void setRequirements(Map<String, List<RequirementDefinition>> requirements) {
-		this.requirements = requirements;
-	}
+    public void setRequirements(Map<String, List<RequirementDefinition>> requirements) {
+        this.requirements = requirements;
+    }
 }

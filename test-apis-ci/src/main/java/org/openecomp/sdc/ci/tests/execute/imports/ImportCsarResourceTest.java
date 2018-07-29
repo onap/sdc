@@ -20,23 +20,7 @@
 
 package org.openecomp.sdc.ci.tests.execute.imports;
 
-import static org.testng.AssertJUnit.assertEquals;
-import static org.testng.AssertJUnit.assertNotNull;
-import static org.testng.AssertJUnit.assertTrue;
-
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-
+import com.google.gson.Gson;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.WordUtils;
 import org.junit.Rule;
@@ -44,46 +28,34 @@ import org.junit.rules.TestName;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
-import org.openecomp.sdc.be.model.ArtifactDefinition;
-import org.openecomp.sdc.be.model.CapabilityDefinition;
-import org.openecomp.sdc.be.model.ComponentInstance;
-import org.openecomp.sdc.be.model.GroupDefinition;
-import org.openecomp.sdc.be.model.RequirementCapabilityRelDef;
-import org.openecomp.sdc.be.model.Resource;
-import org.openecomp.sdc.be.model.Service;
-import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.*;
 import org.openecomp.sdc.ci.tests.api.ComponentBaseTest;
 import org.openecomp.sdc.ci.tests.api.Urls;
 import org.openecomp.sdc.ci.tests.config.Config;
-import org.openecomp.sdc.ci.tests.datatypes.ArtifactReqDetails;
-import org.openecomp.sdc.ci.tests.datatypes.ComponentInstanceReqDetails;
-import org.openecomp.sdc.ci.tests.datatypes.ImportReqDetails;
-import org.openecomp.sdc.ci.tests.datatypes.ResourceReqDetails;
-import org.openecomp.sdc.ci.tests.datatypes.ServiceReqDetails;
+import org.openecomp.sdc.ci.tests.datatypes.*;
 import org.openecomp.sdc.ci.tests.datatypes.enums.LifeCycleStatesEnum;
 import org.openecomp.sdc.ci.tests.datatypes.enums.ServiceCategoriesEnum;
+import org.openecomp.sdc.ci.tests.datatypes.enums.ServiceInstantiationType;
 import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
 import org.openecomp.sdc.ci.tests.datatypes.http.HttpHeaderEnum;
 import org.openecomp.sdc.ci.tests.datatypes.http.HttpRequest;
 import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
 import org.openecomp.sdc.ci.tests.utils.Utils;
 import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
-import org.openecomp.sdc.ci.tests.utils.rest.ArtifactRestUtils;
-import org.openecomp.sdc.ci.tests.utils.rest.BaseRestUtils;
-import org.openecomp.sdc.ci.tests.utils.rest.ComponentInstanceRestUtils;
-import org.openecomp.sdc.ci.tests.utils.rest.GroupRestUtils;
-import org.openecomp.sdc.ci.tests.utils.rest.ImportRestUtils;
-import org.openecomp.sdc.ci.tests.utils.rest.LifecycleRestUtils;
-import org.openecomp.sdc.ci.tests.utils.rest.ResourceRestUtils;
-import org.openecomp.sdc.ci.tests.utils.rest.ResponseParser;
-import org.openecomp.sdc.ci.tests.utils.rest.ServiceRestUtils;
+import org.openecomp.sdc.ci.tests.utils.rest.*;
 import org.openecomp.sdc.ci.tests.utils.validation.ErrorValidationUtils;
 import org.openecomp.sdc.common.util.ValidationUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.Test;
 
-import com.google.gson.Gson;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static org.testng.AssertJUnit.*;
 
 public class ImportCsarResourceTest extends ComponentBaseTest {
 	private static Logger log = LoggerFactory.getLogger(ImportCsarResourceTest.class.getName());
@@ -558,10 +530,10 @@ public class ImportCsarResourceTest extends ComponentBaseTest {
 		LifecycleRestUtils.checkSuccess(lifecycleChangeResponse);
 		lifecycleChangeResponse = LifecycleRestUtils.changeResourceState(resourceDetails, designerUserId, LifeCycleStatesEnum.CHECKIN);
 		LifecycleRestUtils.checkSuccess(lifecycleChangeResponse);
-		lifecycleChangeResponse = LifecycleRestUtils.changeResourceState(resourceDetails, designerUserId, LifeCycleStatesEnum.CERTIFICATIONREQUEST);
+/*		lifecycleChangeResponse = LifecycleRestUtils.changeResourceState(resourceDetails, designerUserId, LifeCycleStatesEnum.CERTIFICATIONREQUEST);
 		LifecycleRestUtils.checkSuccess(lifecycleChangeResponse);
 		lifecycleChangeResponse = LifecycleRestUtils.changeResourceState(resourceDetails, testerUserId, LifeCycleStatesEnum.STARTCERTIFICATION);
-		LifecycleRestUtils.checkSuccess(lifecycleChangeResponse);
+		LifecycleRestUtils.checkSuccess(lifecycleChangeResponse);*/
 		lifecycleChangeResponse = LifecycleRestUtils.changeResourceState(resourceDetails, testerUserId, LifeCycleStatesEnum.CERTIFY);
 		LifecycleRestUtils.checkSuccess(lifecycleChangeResponse);
 		lifecycleChangeResponse = LifecycleRestUtils.changeResourceState(resourceDetails, designerUserId, LifeCycleStatesEnum.CHECKOUT);
@@ -1554,10 +1526,10 @@ public class ImportCsarResourceTest extends ComponentBaseTest {
 		LifecycleRestUtils.checkSuccess(lifecycleChangeResponse);
 		lifecycleChangeResponse = LifecycleRestUtils.changeResourceState(resourceDetails, designerUserId, LifeCycleStatesEnum.CHECKIN);
 		LifecycleRestUtils.checkSuccess(lifecycleChangeResponse);
-		lifecycleChangeResponse = LifecycleRestUtils.changeResourceState(resourceDetails, designerUserId, LifeCycleStatesEnum.CERTIFICATIONREQUEST);
+/*		lifecycleChangeResponse = LifecycleRestUtils.changeResourceState(resourceDetails, designerUserId, LifeCycleStatesEnum.CERTIFICATIONREQUEST);
 		LifecycleRestUtils.checkSuccess(lifecycleChangeResponse);
 		lifecycleChangeResponse = LifecycleRestUtils.changeResourceState(resourceDetails, testerUserId, LifeCycleStatesEnum.STARTCERTIFICATION);
-		LifecycleRestUtils.checkSuccess(lifecycleChangeResponse);
+		LifecycleRestUtils.checkSuccess(lifecycleChangeResponse);*/
 		lifecycleChangeResponse = LifecycleRestUtils.changeResourceState(resourceDetails, testerUserId, LifeCycleStatesEnum.CERTIFY);
 		LifecycleRestUtils.checkSuccess(lifecycleChangeResponse);
 		Resource certifiedResource = ResponseParser.parseToObjectUsingMapper(lifecycleChangeResponse.getResponse(), Resource.class);
@@ -1566,7 +1538,9 @@ public class ImportCsarResourceTest extends ComponentBaseTest {
 		User modifier = new User();
 		modifier.setUserId(designerUserId);
 
-		ServiceReqDetails serviceDetails = ElementFactory.getDefaultService("newtestservice1", ServiceCategoriesEnum.MOBILITY, designerUserId);
+		ServiceReqDetails serviceDetails = ElementFactory.getDefaultService(
+				"newtestservice1", ServiceCategoriesEnum.MOBILITY, designerUserId,
+				ServiceInstantiationType.A_LA_CARTE.getValue());
 		
 		RestResponse serviceRes = ServiceRestUtils.createService(serviceDetails, modifier);
 		ResourceRestUtils.checkCreateResponse(serviceRes);

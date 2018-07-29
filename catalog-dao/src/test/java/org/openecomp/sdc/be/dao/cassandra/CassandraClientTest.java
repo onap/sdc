@@ -1,19 +1,17 @@
 package org.openecomp.sdc.be.dao.cassandra;
 
+import com.datastax.driver.core.Cluster;
+import com.datastax.driver.core.Cluster.Builder;
+import com.datastax.driver.core.Session;
+import com.datastax.driver.mapping.MappingManager;
+import fj.data.Either;
+import mockit.Deencapsulation;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.tinkerpop.gremlin.structure.T;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.utils.DAOConfDependentTest;
-
-import com.datastax.driver.core.Cluster;
-import com.datastax.driver.core.Cluster.Builder;
-import com.datastax.driver.core.Session;
-import com.datastax.driver.mapping.MappingManager;
-
-import fj.data.Either;
-import mockit.Deencapsulation;
 
 public class CassandraClientTest extends DAOConfDependentTest {
 

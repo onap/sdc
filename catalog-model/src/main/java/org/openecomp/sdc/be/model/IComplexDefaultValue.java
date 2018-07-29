@@ -23,13 +23,13 @@ package org.openecomp.sdc.be.model;
 import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
 
 public interface IComplexDefaultValue {
-	String getType();
+    String getType();
 
-	String getName();
+    String getName();
 
-	String getDefaultValue();
+    String getDefaultValue();
 
-	void setDefaultValue(String value);
+    void setDefaultValue(String value);
 
-	SchemaDefinition getSchema();
+    SchemaDefinition getSchema();
 }

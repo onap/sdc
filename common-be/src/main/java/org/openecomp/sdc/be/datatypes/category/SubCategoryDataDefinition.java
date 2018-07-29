@@ -20,16 +20,11 @@
 
 package org.openecomp.sdc.be.datatypes.category;
 
-import java.io.Serializable;
-import java.util.List;
-
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 
-public class SubCategoryDataDefinition extends ToscaDataDefinition implements Serializable {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 8279397988497086676L;
+import java.util.List;
+
+public class SubCategoryDataDefinition extends ToscaDataDefinition {
 
 	private String name;
 	private String normalizedName;

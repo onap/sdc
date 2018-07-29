@@ -20,13 +20,12 @@
 
 package org.openecomp.sdc.ci.tests.execute.setup;
 
-import java.io.IOException;
-
+import com.aventstack.extentreports.Status;
 import org.openecomp.sdc.ci.tests.execute.setup.ExtentManager.suiteNameXml;
 import org.testng.ITestContext;
 import org.testng.ITestResult;
 
-import com.aventstack.extentreports.Status;
+import java.io.IOException;
 
 public class ReportAfterTestManager extends ExtentTestActions  {
 	

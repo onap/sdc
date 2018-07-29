@@ -24,15 +24,15 @@ import java.util.List;
 import java.util.Map;
 
 public class ToscaTemplateCapability {
-    private List<String> valid_source_types;
+    private List<String> validSourceTypes;
     private Map<String, Object> properties;
 
-    public List<String> getValid_source_types() {
-        return valid_source_types;
+    public List<String> getValidSourceTypes() {
+        return validSourceTypes;
     }
 
-    public void setValid_source_types(List<String> valid_source_types) {
-        this.valid_source_types = valid_source_types;
+    public void setValidSourceTypes(List<String> validSourceTypes) {
+        this.validSourceTypes = validSourceTypes;
     }
 
     public Map<String, Object> getProperties() {

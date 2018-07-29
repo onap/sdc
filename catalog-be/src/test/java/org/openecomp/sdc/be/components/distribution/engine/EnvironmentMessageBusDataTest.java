@@ -1,10 +1,10 @@
 package org.openecomp.sdc.be.components.distribution.engine;
 
-import java.util.HashSet;
-import java.util.List;
-
 import org.junit.Test;
 import org.openecomp.sdc.be.resources.data.OperationalEnvironmentEntry;
+
+import java.util.HashSet;
+import java.util.List;
 
 public class EnvironmentMessageBusDataTest {
 

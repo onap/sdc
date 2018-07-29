@@ -20,10 +20,7 @@
 
 package org.openecomp.sdc.ci.tests.execute.product;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-
+import com.google.gson.Gson;
 import org.junit.Rule;
 import org.junit.rules.TestName;
 import org.openecomp.sdc.be.model.ArtifactUiDownloadData;
@@ -31,7 +28,9 @@ import org.openecomp.sdc.ci.tests.utils.Decoder;
 import org.openecomp.sdc.ci.tests.utils.Utils;
 import org.testng.annotations.Test;
 
-import com.google.gson.Gson;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 public class ProductToscaYamlGenerationTest extends ProductTestBase {
 

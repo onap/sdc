@@ -20,6 +20,9 @@
 
 package org.openecomp.sdc.common.util;
 
+import org.apache.commons.io.output.ByteArrayOutputStream;
+import org.openecomp.sdc.common.log.wrappers.Logger;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -31,13 +34,9 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
-import org.apache.commons.io.output.ByteArrayOutputStream;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 public class ZipUtil {
 
-	private static Logger log = LoggerFactory.getLogger(ZipUtil.class.getName());
+	private static Logger log = Logger.getLogger(ZipUtil.class.getName());
 
 	private ZipUtil() {
 	}
@@ -52,7 +51,7 @@ public class ZipUtil {
 
 	public static Map<String, byte[]> readZip(ZipInputStream zis) {
 
-		Map<String, byte[]> fileNameToByteArray = new HashMap<String, byte[]>();
+		Map<String, byte[]> fileNameToByteArray = new HashMap<>();
 
 		byte[] buffer = new byte[1024];
 		try {
@@ -63,7 +62,7 @@ public class ZipUtil {
 
 				String fileName = ze.getName();
 
-				if (false == ze.isDirectory()) {
+				if (!ze.isDirectory()) {
 
 					ByteArrayOutputStream os = new ByteArrayOutputStream();
 					try {
@@ -129,14 +128,13 @@ public class ZipUtil {
 
 	public static byte[] zipBytes(byte[] input) throws IOException {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		try (ZipOutputStream zos = new ZipOutputStream(baos)) {
-			ZipEntry entry = new ZipEntry("zip");
-			entry.setSize(input.length);
-			zos.putNextEntry(entry);
-			zos.write(input);
-			zos.closeEntry();
-			zos.close();
-		}
+		ZipOutputStream zos = new ZipOutputStream(baos);
+		ZipEntry entry = new ZipEntry("zip");
+		entry.setSize(input.length);
+		zos.putNextEntry(entry);
+		zos.write(input);
+		zos.closeEntry();
+		zos.close();
 		return baos.toByteArray();
 	}
 

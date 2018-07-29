@@ -20,6 +20,7 @@
 
 package org.onap.sdc.generator;
 
+import org.junit.Assert;
 import org.onap.sdc.generator.aai.model.*;
 import org.onap.sdc.generator.aai.model.Service;
 import org.onap.sdc.generator.aai.tosca.GroupDefinition;

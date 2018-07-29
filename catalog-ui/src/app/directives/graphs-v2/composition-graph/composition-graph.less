@@ -6,6 +6,10 @@ composition-graph {
   .sdc-composition-graph-wrapper{
     height:100%;
     width: 100%;
+
+    &.with-sidebar {
+      width: calc(~'100% - 300px');
+    }
   }
 
   .view-only{
@@ -29,10 +33,18 @@ composition-graph {
     }
   }
 
+ 
   .group-tagging {
-    cursor: url("/assets/styles/images/canvas-tagging-icons/adding_group.svg"), pointer;
+    cursor: url("../../../../assets/styles/images/canvas-tagging-icons/group_1.svg"), pointer;
+  }
+  .group-tagging-hover {
+    cursor: url("../../../../assets/styles/images/canvas-tagging-icons/group_2.svg"), pointer;
   }
   .policy-tagging {
-    cursor: url("/assets/styles/images/canvas-tagging-icons/adding_policy.svg"), pointer;
+    cursor: url("../../../../assets/styles/images/canvas-tagging-icons/policy_1.svg"), pointer;
   }
+  .policy-tagging-hover {
+    cursor: url("../../../../assets/styles/images/canvas-tagging-icons/policy_2.svg"), pointer;
+  }
+
 }

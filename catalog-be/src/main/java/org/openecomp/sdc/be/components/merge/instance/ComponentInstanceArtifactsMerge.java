@@ -1,22 +1,17 @@
 package org.openecomp.sdc.be.components.merge.instance;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
+import fj.data.Either;
 import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic;
-import org.openecomp.sdc.be.model.ArtifactDefinition;
-import org.openecomp.sdc.be.model.Component;
-import org.openecomp.sdc.be.model.ComponentInstance;
-import org.openecomp.sdc.be.model.Operation;
-import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.*;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import fj.data.Either;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Created by chaya on 9/20/2017.
@@ -37,7 +32,7 @@ public class ComponentInstanceArtifactsMerge implements ComponentInstanceMergeIn
         Map<String, ArtifactDefinition> deploymentArtifactsCreatedOnTheInstance = componentInstancesDeploymentArtifacts.entrySet()
                 .stream()
                 .filter(i -> !originalComponentDeploymentArtifacts.containsKey(i.getKey()))
-                .collect(Collectors.toMap(p -> p.getKey(), p -> p.getValue()));
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
         dataHolder.setOrigComponentDeploymentArtifactsCreatedOnTheInstance(deploymentArtifactsCreatedOnTheInstance);
 
@@ -46,7 +41,7 @@ public class ComponentInstanceArtifactsMerge implements ComponentInstanceMergeIn
         Map<String, ArtifactDefinition> informationalArtifactsCreatedOnTheInstance = componentInstancesInformationalArtifacts.entrySet()
                 .stream()
                 .filter(i -> !originalComponentInformationalArtifacts.containsKey(i.getKey()))
-                .collect(Collectors.toMap(p -> p.getKey(), p -> p.getValue()));
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
         dataHolder.setOrigComponentInformationalArtifactsCreatedOnTheInstance(informationalArtifactsCreatedOnTheInstance);
     }
 
@@ -60,12 +55,12 @@ public class ComponentInstanceArtifactsMerge implements ComponentInstanceMergeIn
         Map<String, ArtifactDefinition> currentInstanceDeploymentArtifacts = updatedContainerComponent.safeGetComponentInstanceDeploymentArtifacts(newInstanceId);
         Map<String, ArtifactDefinition> filteredDeploymentArtifactsToAdd = Optional.ofNullable(origInstanceDeploymentArtifactsCreatedOnTheInstance).orElse(new HashMap<>()).entrySet().stream()
                 .filter(artifact -> noArtifactWithTheSameLabel(artifact.getValue().getArtifactLabel(), currentInstanceDeploymentArtifacts))
-                .collect(Collectors.toMap(p -> p.getKey(), q -> q.getValue()));
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
         Map<String, ArtifactDefinition> origInstanceInformationalArtifactsCreatedOnTheInstance = dataHolder.getOrigComponentInformationalArtifactsCreatedOnTheInstance();
         Map<String, ArtifactDefinition> currentInstanceInformationalArtifacts = updatedContainerComponent.safeGetComponentInstanceInformationalArtifacts(newInstanceId);
         Map<String, ArtifactDefinition> filteredInformationalArtifactsToAdd = Optional.ofNullable(origInstanceInformationalArtifactsCreatedOnTheInstance).orElse(new HashMap<>()).entrySet().stream()
                 .filter(artifact -> noArtifactWithTheSameLabel(artifact.getValue().getArtifactLabel(), currentInstanceInformationalArtifacts))
-                .collect(Collectors.toMap(p -> p.getKey(), q -> q.getValue()));
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
         Map<String, ArtifactDefinition> allFilteredArtifactsToAdd = new HashMap<>();
         allFilteredArtifactsToAdd.putAll(filteredDeploymentArtifactsToAdd);
         allFilteredArtifactsToAdd.putAll(filteredInformationalArtifactsToAdd);
@@ -89,7 +84,6 @@ public class ComponentInstanceArtifactsMerge implements ComponentInstanceMergeIn
             if (uploadArtifactToService.isRight()) {
                 return Either.right(uploadArtifactToService.right().value());
             }
-            toscaOperationFacade.commit();
         }
         return Either.left(updatedContainerComponent);
     }

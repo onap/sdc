@@ -1,14 +1,13 @@
 package org.openecomp.sdc.be.resources.data;
 
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
-
-import org.openecomp.sdc.be.datatypes.enums.EnvironmentStatusEnum;
-
 import com.datastax.driver.mapping.annotations.Column;
 import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
+import org.openecomp.sdc.be.datatypes.enums.EnvironmentStatusEnum;
+
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 @Table(keyspace = "sdcrepository", name = "operationalEnvironment")
 public class OperationalEnvironmentEntry {

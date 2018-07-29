@@ -128,8 +128,7 @@ export interface IConfigRoles {
 }
 
 export interface IConfigRole {
-    pages:Array<string>;
-    states:IConfigState;
+    changeLifecycleStateButtons:any;
 }
 
 export interface IConfigState {
@@ -220,6 +219,11 @@ export interface IHostedApplicationState {
 
 export interface ITester {
     email:string;
+}
+
+export interface IComponentType {
+    RESOURCE:any;
+    SERVICE:any;
 }
 
 export interface IAppMenu {

@@ -1,28 +1,29 @@
 package org.openecomp.sdc.be.components.merge.resource;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
-import static org.mockito.Mockito.when;
-
-import java.util.Arrays;
-
+import fj.data.Either;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.openecomp.sdc.be.components.merge.instance.ComponentsMergeCommand;
+import org.openecomp.sdc.be.components.merge.ComponentsMergeCommand;
 import org.openecomp.sdc.be.components.utils.ObjectGenerator;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.model.Resource;
+
+import static java.util.Arrays.asList;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ResourceDataMergeBusinessLogicTest {
 
     @InjectMocks
     private ResourceDataMergeBusinessLogic testInstance;
+
+    @Mock
+    private MergeCommandsFactory mergeCommandsFactory;
 
     @Mock
     private ComponentsMergeCommand commandA;
@@ -33,15 +34,25 @@ public class ResourceDataMergeBusinessLogicTest {
     @Mock
     private ComponentsMergeCommand commandC;
 
+    private Resource oldResource, newResource;
+
     @Before
     public void setUp() throws Exception {
-        testInstance = new ResourceDataMergeBusinessLogic(Arrays.asList(commandA, commandB, commandC));
+        oldResource = ObjectGenerator.buildBasicResource();
+        newResource = ObjectGenerator.buildBasicResource();
+        when(mergeCommandsFactory.getMergeCommands(oldResource, newResource)).thenReturn(Either.left(asList(commandA, commandB, commandC)));
+    }
+
+    @Test
+    public void whenCommandsFactoryFails_propagateTheFailure() {
+        when(mergeCommandsFactory.getMergeCommands(oldResource, newResource)).thenReturn(Either.right(ActionStatus.GENERAL_ERROR));
+        ActionStatus actionStatus = testInstance.mergeResourceEntities(oldResource, newResource);
+        assertEquals(ActionStatus.GENERAL_ERROR, actionStatus);
+        verifyZeroInteractions(commandA, commandB, commandC);
     }
 
     @Test
     public void mergeResources_allMergeClassesAreCalled() {
-        Resource oldResource = ObjectGenerator.buildBasicResource();
-        Resource newResource = ObjectGenerator.buildBasicResource();
         when(commandA.mergeComponents(oldResource, newResource)).thenReturn(ActionStatus.OK);
         when(commandB.mergeComponents(oldResource, newResource)).thenReturn(ActionStatus.OK);
         when(commandC.mergeComponents(oldResource, newResource)).thenReturn(ActionStatus.OK);
@@ -51,8 +62,6 @@ public class ResourceDataMergeBusinessLogicTest {
 
     @Test
     public void mergeResources_mergeCommandFailed_dontCallOtherMergeMethods() {
-        Resource oldResource = ObjectGenerator.buildBasicResource();
-        Resource newResource = ObjectGenerator.buildBasicResource();
         when(commandA.mergeComponents(oldResource, newResource)).thenReturn(ActionStatus.GENERAL_ERROR);
         ActionStatus actionStatus = testInstance.mergeResourceEntities(oldResource, newResource);
         assertEquals(ActionStatus.GENERAL_ERROR, actionStatus);

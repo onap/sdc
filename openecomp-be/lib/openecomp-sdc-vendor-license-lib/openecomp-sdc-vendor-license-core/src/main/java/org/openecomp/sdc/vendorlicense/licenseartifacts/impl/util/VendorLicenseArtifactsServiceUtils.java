@@ -16,12 +16,14 @@
 
 package org.openecomp.sdc.vendorlicense.licenseartifacts.impl.util;
 
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+
 import org.apache.commons.collections4.MultiValuedMap;
 import org.apache.commons.collections4.multimap.ArrayListValuedHashMap;
 import org.openecomp.sdc.vendorlicense.HealingServiceFactory;
@@ -35,6 +37,8 @@ import org.openecomp.sdc.versioning.VersioningManagerFactory;
 import org.openecomp.sdc.versioning.dao.types.Version;
 import org.openecomp.sdc.versioning.dao.types.VersionStatus;
 import org.openecomp.sdc.versioning.dao.types.VersionableEntity;
+
+
 
 /**
  * @author katyr

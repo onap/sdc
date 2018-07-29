@@ -16,13 +16,8 @@
 
 package org.openecomp.sdc.onboarding;
 
-import static org.openecomp.sdc.onboarding.Constants.CHECKSUM;
-import static org.openecomp.sdc.onboarding.Constants.COLON;
-import static org.openecomp.sdc.onboarding.Constants.DOT;
-import static org.openecomp.sdc.onboarding.Constants.JAR;
-import static org.openecomp.sdc.onboarding.Constants.JAVA_EXT;
-import static org.openecomp.sdc.onboarding.Constants.SHA1;
-import static org.openecomp.sdc.onboarding.Constants.UNICORN;
+import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.project.MavenProject;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -49,8 +44,8 @@ import java.util.concurrent.RecursiveTask;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 import java.util.stream.Collectors;
-import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.project.MavenProject;
+
+import static org.openecomp.sdc.onboarding.Constants.*;
 
 class BuildHelper {
 

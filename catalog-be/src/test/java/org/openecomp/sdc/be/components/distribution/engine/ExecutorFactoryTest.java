@@ -1,13 +1,12 @@
 package org.openecomp.sdc.be.components.distribution.engine;
 
+import mockit.Deencapsulation;
+import org.junit.Test;
+
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
-
-import org.junit.Test;
-
-import mockit.Deencapsulation;
 
 public class ExecutorFactoryTest {
 

@@ -20,8 +20,8 @@
 
 package org.onap.sdc.generator.intf;
 
-import org.onap.sdc.generator.data.GenerationData;
 import org.onap.sdc.generator.data.Artifact;
+import org.onap.sdc.generator.data.GenerationData;
 
 import java.util.List;
 import java.util.Map;

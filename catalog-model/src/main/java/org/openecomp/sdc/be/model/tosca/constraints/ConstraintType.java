@@ -25,36 +25,36 @@ import java.util.List;
 
 public enum ConstraintType {
 
-	IN_RANGE("inRange"),
+    IN_RANGE("inRange"),
 
-	GREATER_THAN("greaterThan", "greater_than"),
+    GREATER_THAN("greaterThan", "greater_than"),
 
-	GREATER_OR_EQUAL("greaterOrEqual", "greater_or_equal"),
+    GREATER_OR_EQUAL("greaterOrEqual", "greater_or_equal"),
 
-	LESS_OR_EQUAL("lessOrEqual", "less_or_equal"),
+    LESS_OR_EQUAL("lessOrEqual", "less_or_equal"),
 
-	MIN_LENGTH("minLength", "min_length"),
+    MIN_LENGTH("minLength", "min_length"),
 
-	VALID_VALUES("validValues", "valid_values"),
+    VALID_VALUES("validValues", "valid_values"),
 
-	LESS_THAN("lessThan", "less_than");
+    LESS_THAN("lessThan", "less_than");
 
-	List<String> types;
+    List<String> types;
 
-	private ConstraintType(String... types) {
-		this.types = Arrays.asList(types);
-	}
+    private ConstraintType(String... types) {
+        this.types = Arrays.asList(types);
+    }
 
-	public List<String> getTypes() {
-		return types;
-	}
+    public List<String> getTypes() {
+        return types;
+    }
 
-	public static ConstraintType getByType(String type) {
-		for (ConstraintType inst : ConstraintType.values()) {
-			if (inst.getTypes().contains(type)) {
-				return inst;
-			}
-		}
-		return null;
-	}
+    public static ConstraintType getByType(String type) {
+        for (ConstraintType inst : ConstraintType.values()) {
+            if (inst.getTypes().contains(type)) {
+                return inst;
+            }
+        }
+        return null;
+    }
 }

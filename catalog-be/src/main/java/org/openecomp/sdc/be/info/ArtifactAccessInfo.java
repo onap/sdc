@@ -30,7 +30,7 @@ public class ArtifactAccessInfo {
         this.id = artifactData.getId();
     }
 
-    public ArtifactAccessInfo(ESArtifactData artifactData, String servletContext) {
+    public ArtifactAccessInfo(String servletContext) {
         StringBuilder urlBuilder = new StringBuilder();
         urlBuilder = urlBuilder.append(servletContext).append("/");
         urlBuilder.append("resources/")

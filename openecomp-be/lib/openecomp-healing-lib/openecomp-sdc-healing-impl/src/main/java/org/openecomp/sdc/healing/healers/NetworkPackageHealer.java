@@ -55,9 +55,7 @@ import java.nio.ByteBuffer;
 import java.util.Collection;
 import java.util.Objects;
 
-import static org.openecomp.core.zusammen.api.ZusammenUtil.buildElement;
-import static org.openecomp.core.zusammen.api.ZusammenUtil.buildStructuralElement;
-import static org.openecomp.core.zusammen.api.ZusammenUtil.createSessionContext;
+import static org.openecomp.core.zusammen.api.ZusammenUtil.*;
 
 public class NetworkPackageHealer implements Healer {
 

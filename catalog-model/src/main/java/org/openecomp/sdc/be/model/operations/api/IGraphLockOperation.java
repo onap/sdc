@@ -24,12 +24,12 @@ import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 
 public interface IGraphLockOperation {
 
-	public abstract StorageOperationStatus lockComponent(String componentId, NodeTypeEnum nodeType);
+    StorageOperationStatus lockComponent(String componentId, NodeTypeEnum nodeType);
 
-	public abstract StorageOperationStatus unlockComponent(String componentId, NodeTypeEnum nodeType);
+    StorageOperationStatus unlockComponent(String componentId, NodeTypeEnum nodeType);
 
-	public abstract StorageOperationStatus lockComponentByName(String name, NodeTypeEnum nodeType);
+    StorageOperationStatus lockComponentByName(String name, NodeTypeEnum nodeType);
 
-	public abstract StorageOperationStatus unlockComponentByName(String name, String componentId, NodeTypeEnum nodeType);
+    StorageOperationStatus unlockComponentByName(String name, String componentId, NodeTypeEnum nodeType);
 
 }

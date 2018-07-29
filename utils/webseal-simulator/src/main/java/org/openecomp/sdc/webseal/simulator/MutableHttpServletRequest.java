@@ -1,15 +1,9 @@
 package org.openecomp.sdc.webseal.simulator;
 
 
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
+import java.util.*;
 
 public final class MutableHttpServletRequest extends HttpServletRequestWrapper {
 	// holds custom header and value mapping
@@ -17,7 +11,7 @@ public final class MutableHttpServletRequest extends HttpServletRequestWrapper {
 
 	public MutableHttpServletRequest(HttpServletRequest request){
 		super(request);
-		this.customHeaders = new HashMap<String, String>();
+		this.customHeaders = new HashMap<>();
 	}
 	
 	public void putHeader(String name, String value){
@@ -37,7 +31,7 @@ public final class MutableHttpServletRequest extends HttpServletRequestWrapper {
 
 	public Enumeration<String> getHeaderNames() {
 		// create a set of the custom header names
-		Set<String> set = new HashSet<String>(customHeaders.keySet());
+		Set<String> set = new HashSet<>(customHeaders.keySet());
 		
 		// now add the headers from the wrapped request object
 		@SuppressWarnings("unchecked")

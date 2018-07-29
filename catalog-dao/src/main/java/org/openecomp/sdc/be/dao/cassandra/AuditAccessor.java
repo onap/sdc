@@ -20,15 +20,14 @@
 
 package org.openecomp.sdc.be.dao.cassandra;
 
-import org.openecomp.sdc.be.resources.data.auditing.DistributionDeployEvent;
-import org.openecomp.sdc.be.resources.data.auditing.DistributionNotificationEvent;
-import org.openecomp.sdc.be.resources.data.auditing.DistributionStatusEvent;
-import org.openecomp.sdc.be.resources.data.auditing.ResourceAdminEvent;
-
 import com.datastax.driver.mapping.Result;
 import com.datastax.driver.mapping.annotations.Accessor;
 import com.datastax.driver.mapping.annotations.Param;
 import com.datastax.driver.mapping.annotations.Query;
+import org.openecomp.sdc.be.resources.data.auditing.DistributionDeployEvent;
+import org.openecomp.sdc.be.resources.data.auditing.DistributionNotificationEvent;
+import org.openecomp.sdc.be.resources.data.auditing.DistributionStatusEvent;
+import org.openecomp.sdc.be.resources.data.auditing.ResourceAdminEvent;
 
 @Accessor
 public interface AuditAccessor {
@@ -54,6 +53,12 @@ public interface AuditAccessor {
 	@Query("SELECT * FROM sdcaudit.resourceadminevent WHERE SERVICE_INSTANCE_ID = :serviceInstanceId AND CURR_VERSION = :currVersion ALLOW FILTERING")
 	Result<ResourceAdminEvent> getAuditByServiceIdAndCurrVersion(@Param("serviceInstanceId") String serviceInstanceId,
 			@Param("currVersion") String currVersion);
+
+	@Query("SELECT * FROM sdcaudit.resourceadminevent WHERE SERVICE_INSTANCE_ID = :serviceInstanceId AND ACTION = 'ArchiveComponent' ALLOW FILTERING")
+	Result<ResourceAdminEvent> getArchiveAuditByServiceInstanceId(@Param("serviceInstanceId") String serviceInstanceId);
+
+	@Query("SELECT * FROM sdcaudit.resourceadminevent WHERE SERVICE_INSTANCE_ID = :serviceInstanceId AND ACTION = 'RestoreComponent' ALLOW FILTERING")
+	Result<ResourceAdminEvent> getRestoreAuditByServiceInstanceId(@Param("serviceInstanceId") String serviceInstanceId);
 
 	// ***** distributiondeployevent table
 	@Query("SELECT * FROM sdcaudit.distributiondeployevent WHERE SERVICE_INSTANCE_ID = :serviceInstanceId AND ACTION = 'DResult' ALLOW FILTERING")

@@ -1,0 +1,25 @@
+.multiline-ellipsis-container {
+	position: relative;
+	display: block;
+	overflow: hidden;
+	white-space: normal;
+	//max-height: @num_lines * @line_height;
+
+	.multiline-ellipsis-content {
+		word-break: break-all;
+		position: relative;
+		//max-height: (@num_lines + 1) * @line_height;
+
+		.multiline-ellipsis-dots {
+			display: block;
+			position: absolute;
+			right: 0;
+			//top: calc(#{@num_lines * 2} - 100%);
+
+			&::before {
+				display: block;
+				content: '...';
+			}
+		}
+	}
+}

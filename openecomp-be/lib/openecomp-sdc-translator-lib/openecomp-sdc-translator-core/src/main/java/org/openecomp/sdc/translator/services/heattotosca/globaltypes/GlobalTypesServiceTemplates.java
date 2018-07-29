@@ -16,10 +16,6 @@
 
 package org.openecomp.sdc.translator.services.heattotosca.globaltypes;
 
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
 import org.onap.sdc.tosca.services.ToscaExtensionYamlUtil;
 import org.openecomp.core.utilities.orchestration.OnboardingTypesEnum;
@@ -29,6 +25,10 @@ import org.openecomp.sdc.common.errors.ErrorCode;
 import org.openecomp.sdc.tosca.services.ToscaUtil;
 import org.openecomp.sdc.translator.services.heattotosca.Constants;
 import org.openecomp.sdc.translator.utils.ResourceWalker;
+
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.Map;
 
 public class GlobalTypesServiceTemplates {
 

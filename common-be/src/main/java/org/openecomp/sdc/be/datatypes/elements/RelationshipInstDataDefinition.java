@@ -23,23 +23,17 @@ package org.openecomp.sdc.be.datatypes.elements;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 
-import java.io.Serializable;
 import java.util.List;
 
-public class RelationshipInstDataDefinition extends ToscaDataDefinition implements Serializable {
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1104043358598884458L;
+public class RelationshipInstDataDefinition extends ToscaDataDefinition {
 
 	public RelationshipInstDataDefinition(RelationshipInstDataDefinition cdt) {
-		super();
 		this.setUniqueId(cdt.getUniqueId());
 		this.setDescription(cdt.getDescription());
 		this.setType(cdt.getType());
 		this.setValidSourceTypes(cdt.getValidSourceTypes());
 		this.setVersion(cdt.getVersion());
+		this.setOriginUI(cdt.isOriginUI());
 		this.setCreationTime(cdt.getCreationTime());
 		this.setModificationTime(cdt.getModificationTime());
 		this.setCapabilityOwnerId(cdt.getCapabilityOwnerId());
@@ -50,7 +44,6 @@ public class RelationshipInstDataDefinition extends ToscaDataDefinition implemen
 		this.setToId(cdt.getToId());
 		this.setRequirement(cdt.getRequirement());
 		this.setCapability(cdt.getCapability());
-
 	}
 
 	public void setRequirement(String requirement) {
@@ -158,6 +151,14 @@ public class RelationshipInstDataDefinition extends ToscaDataDefinition implemen
 	public void setVersion(String version) {
 		setToscaPresentationValue(JsonPresentationFields.VERSION, version);
 	}
+	
+	public Boolean isOriginUI() {
+	    return (Boolean) getToscaPresentationValue(JsonPresentationFields.ORIGIN_UI);
+	}
+	
+	public void setOriginUI(Boolean originUI) {
+	    setToscaPresentationValue(JsonPresentationFields.ORIGIN_UI, originUI);
+	}
 
 	public Long getCreationTime() {
 		return (Long) getToscaPresentationValue(JsonPresentationFields.CREATION_TIME);
@@ -183,11 +184,12 @@ public class RelationshipInstDataDefinition extends ToscaDataDefinition implemen
 		String type = getType();
 		List<String> validSourceTypes = getValidSourceTypes();
 		String version = getVersion();
+		Boolean originUI = isOriginUI();
 		Long creationTime = getCreationTime();
 		Long modificationTime = getModificationTime();
 
-		return "RelationshipTypeDataDefinition [uniqueId=" + uniqueId + ", description=" + description + ", type=" + type + ", validSourceTypes=" + validSourceTypes + ", version=" + version + ", creationTime=" + creationTime + ", modificationTime="
-				+ modificationTime + "]";
+		return "RelationshipTypeDataDefinition [uniqueId=" + uniqueId + ", description=" + description + ", type=" + type + ", validSourceTypes=" + validSourceTypes + 
+		        ", version=" + version + ", originUI=" + originUI + ", creationTime=" + creationTime + ", modificationTime=" + modificationTime + "]";
 	}
 
 }

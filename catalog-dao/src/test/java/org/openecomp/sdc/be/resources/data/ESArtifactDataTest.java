@@ -1,8 +1,8 @@
 package org.openecomp.sdc.be.resources.data;
 
-import java.nio.ByteBuffer;
-
 import org.junit.Test;
+
+import java.nio.ByteBuffer;
 
 public class ESArtifactDataTest {
 

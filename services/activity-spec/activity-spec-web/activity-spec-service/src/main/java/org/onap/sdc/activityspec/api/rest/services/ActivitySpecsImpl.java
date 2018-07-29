@@ -21,16 +21,11 @@ import org.onap.sdc.activityspec.api.rest.mapping.MapActivitySpecRequestDtoToAct
 import org.onap.sdc.activityspec.api.rest.mapping.MapActivitySpecToActivitySpecCreateResponse;
 import org.onap.sdc.activityspec.api.rest.mapping.MapActivitySpecToActivitySpecGetResponse;
 import org.onap.sdc.activityspec.api.rest.mapping.MapItemToListResponseDto;
-import org.onap.sdc.activityspec.api.rest.types.ActivitySpecActionRequestDto;
-import org.onap.sdc.activityspec.api.rest.types.ActivitySpecGetResponse;
-import org.onap.sdc.activityspec.api.rest.types.ActivitySpecListResponseDto;
-import org.onap.sdc.activityspec.api.rest.types.ActivitySpecRequestDto;
-import org.onap.sdc.activityspec.api.rest.types.InternalEmptyObject;
+import org.onap.sdc.activityspec.api.rest.types.*;
 import org.onap.sdc.activityspec.be.ActivitySpecManager;
+import org.onap.sdc.activityspec.be.dao.impl.ActivitySpecDaoZusammenImpl;
 import org.onap.sdc.activityspec.be.dao.types.ActivitySpecEntity;
 import org.onap.sdc.activityspec.be.impl.ActivitySpecManagerImpl;
-import org.onap.sdc.activityspec.api.rest.types.ActivitySpecCreateResponse;
-import org.onap.sdc.activityspec.be.dao.impl.ActivitySpecDaoZusammenImpl;
 import org.openecomp.core.dao.UniqueValueDaoFactory;
 import org.openecomp.core.zusammen.api.ZusammenAdaptorFactory;
 import org.openecomp.sdc.common.errors.CoreException;
@@ -38,7 +33,6 @@ import org.openecomp.sdc.common.errors.ErrorCode;
 import org.openecomp.sdc.versioning.ItemManagerFactory;
 import org.openecomp.sdc.versioning.VersioningManagerFactory;
 import org.openecomp.sdc.versioning.dao.types.Version;
-
 import org.openecomp.sdcrests.wrappers.GenericCollectionWrapper;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;

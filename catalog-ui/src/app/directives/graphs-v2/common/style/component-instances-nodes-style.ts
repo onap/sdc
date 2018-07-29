@@ -22,6 +22,7 @@ import { GraphColors, GraphUIObjects} from "app/utils/constants";
 import constant = require("lodash/constant");
 import {ImagesUrl} from "app/utils/constants";
 import {AngularJSBridge} from "app/services/angular-js-bridge-service";
+import { CanvasHandleTypes } from "app/utils";
 /**
  * Created by obarda on 12/18/2016.
  */
@@ -102,8 +103,10 @@ export class ComponentInstanceNodesStyle {
                     'background-image': 'data(img)',
                     'background-width': GraphUIObjects.SMALL_RESOURCE_WIDTH,
                     'background-height': GraphUIObjects.SMALL_RESOURCE_WIDTH,
-                    'width': GraphUIObjects.SMALL_RESOURCE_WIDTH,
-                    'height': GraphUIObjects.SMALL_RESOURCE_WIDTH,
+                    'width': GraphUIObjects.SMALL_RESOURCE_WIDTH + GraphUIObjects.HANDLE_SIZE,
+                    'height': GraphUIObjects.SMALL_RESOURCE_WIDTH + GraphUIObjects.HANDLE_SIZE/2,
+                    'background-position-x': GraphUIObjects.HANDLE_SIZE / 2,
+                    'background-position-y': GraphUIObjects.HANDLE_SIZE / 2,
                     'text-valign': 'bottom',
                     'text-halign': 'center',
                     'background-opacity': 0,
@@ -120,8 +123,10 @@ export class ComponentInstanceNodesStyle {
                     'background-image': 'data(img)',
                     'background-width': GraphUIObjects.SMALL_RESOURCE_WIDTH,
                     'background-height': GraphUIObjects.SMALL_RESOURCE_WIDTH,
-                    'width': GraphUIObjects.SMALL_RESOURCE_WIDTH,
-                    'height': GraphUIObjects.SMALL_RESOURCE_WIDTH,
+                    'background-position-x': GraphUIObjects.HANDLE_SIZE / 2,
+                    'background-position-y': GraphUIObjects.HANDLE_SIZE / 2,
+                    'width': GraphUIObjects.SMALL_RESOURCE_WIDTH + GraphUIObjects.HANDLE_SIZE,
+                    'height': GraphUIObjects.SMALL_RESOURCE_WIDTH + GraphUIObjects.HANDLE_SIZE / 2,
                     'text-valign': 'bottom',
                     'text-halign': 'center',
                     'background-opacity': 0,
@@ -164,6 +169,16 @@ export class ComponentInstanceNodesStyle {
                     'target-arrow-shape': 'triangle',
                     'curve-style': 'bezier',
                     'control-point-step-size': 30
+                }
+            },
+            {
+                selector: '.archived',
+                css: {
+                    'shape': 'rectangle',
+                    'background-image': (ele:Cy.Collection) => {
+                        return ele.data().setArchivedImageBgStyle(ele, GraphUIObjects.NODE_OVERLAP_MIN_SIZE); //Change name to setArchivedImageBgStyle ??
+                    },
+                    "border-width": 0
                 }
             },
             {
@@ -222,7 +237,7 @@ export class ComponentInstanceNodesStyle {
                 css: {
                     'shape': 'rectangle',
                     'background-image': (ele:Cy.Collection) => {
-                        return ele.data().initUncertifiedImage(ele, GraphUIObjects.NODE_OVERLAP_MIN_SIZE)
+                        return ele.data().setUncertifiedImageBgStyle(ele, GraphUIObjects.NODE_OVERLAP_MIN_SIZE);//Change name to setUncertifiedImageBgStyle??
                     },
                     "border-width": 0
                 }
@@ -256,8 +271,10 @@ export class ComponentInstanceNodesStyle {
                     'background-image': 'data(img)',
                     'background-width': GraphUIObjects.SMALL_RESOURCE_WIDTH,
                     'background-height': GraphUIObjects.SMALL_RESOURCE_WIDTH,
-                    'width': GraphUIObjects.SMALL_RESOURCE_WIDTH,
-                    'height': GraphUIObjects.SMALL_RESOURCE_WIDTH,
+                    'background-position-x': GraphUIObjects.HANDLE_SIZE / 2,
+                    'background-position-y': GraphUIObjects.HANDLE_SIZE / 2,
+                    'width': GraphUIObjects.SMALL_RESOURCE_WIDTH + GraphUIObjects.HANDLE_SIZE,
+                    'height': GraphUIObjects.SMALL_RESOURCE_WIDTH + GraphUIObjects.HANDLE_SIZE/2,
                     'text-valign': 'bottom',
                     'text-halign': 'center',
                     'background-opacity': 0,
@@ -268,52 +285,57 @@ export class ComponentInstanceNodesStyle {
         ]
     }
 
-    public static getBasicNodeHanlde = () => {
+    public static getAddEdgeHandle = () => {
         return {
-            positionX: "right",
-            positionY: "top",
-            offsetX: 15,
-            offsetY: -20,
-            color: "#27a337",
-            type: "default",
+
             single: false,
-            nodeTypeNames: ["basic-node"],
+            type: CanvasHandleTypes.ADD_EDGE,
             imageUrl: AngularJSBridge.getAngularConfig().imagesPath + ImagesUrl.CANVAS_PLUS_ICON,
+            lineColor: '#27a337',
             lineWidth: 2,
             lineStyle: 'dashed'
 
         }
     }
 
-    public static getBasicSmallNodeHandle = () => {
+    public static getTagHandle = () => {
         return {
-            positionX: "right",
-            positionY: "top",
-            offsetX: 3,
-            offsetY: -25,
-            color: "#27a337",
-            type: "default",
             single: false,
-            nodeTypeNames: ["basic-small-node"],
-            imageUrl: AngularJSBridge.getAngularConfig().imagesPath + ImagesUrl.CANVAS_PLUS_ICON,
-            lineWidth: 2,
-            lineStyle: 'dashed'
-        }
+            type: CanvasHandleTypes.TAG_AVAILABLE,
+            imageUrl: AngularJSBridge.getAngularConfig().imagesPath + ImagesUrl.CANVAS_TAG_ICON,
+        }        
     }
 
-    public static getUcpeCpNodeHandle = () => {
+    public static getTaggedPolicyHandle = () => {
         return {
-            positionX: "center",
-            positionY: "center",
-            offsetX: -8,
-            offsetY: -10,
-            color: "#27a337",
-            type: "default",
             single: false,
-            nodeTypeNames: ["ucpe-cp-node"],
-            imageUrl: AngularJSBridge.getAngularConfig().imagesPath + ImagesUrl.CANVAS_PLUS_ICON,
-            lineWidth: 2,
-            lineStyle: 'dashed'
-        }
+            type: CanvasHandleTypes.TAGGED_POLICY,
+            imageUrl: AngularJSBridge.getAngularConfig().imagesPath + ImagesUrl.CANVAS_POLICY_TAGGED_ICON,
+        }        
     }
+
+    public static getTaggedGroupHandle = () => {
+        return {
+            single: false,
+            type: CanvasHandleTypes.TAGGED_GROUP,
+            imageUrl: AngularJSBridge.getAngularConfig().imagesPath + ImagesUrl.CANVAS_GROUP_TAGGED_ICON,
+        }        
+    }
+
+
+    // public static getUcpeCpNodeHandle = () => {
+    //     return {
+    //         positionX: "center",
+    //         positionY: "center",
+    //         offsetX: -8,
+    //         offsetY: -10,
+    //         color: "#27a337",
+    //         type: "default",
+    //         single: false,
+    //         nodeTypeNames: ["ucpe-cp-node"],
+    //         imageUrl: AngularJSBridge.getAngularConfig().imagesPath + ImagesUrl.CANVAS_PLUS_ICON,
+    //         lineWidth: 2,
+    //         lineStyle: 'dashed'
+    //     }
+    // }
 }

@@ -32,7 +32,7 @@ export class DeploymentGraphGeneralUtils {
 
     public findInstanceModule = (groupsArray:Array<Module>, componentInstanceId:string):string => {
         let parentGroup:Module = _.find(groupsArray, (group:Module) => {
-            return _.find(group.members, (member) => {
+            return _.find((<any>Object).values(group.members), (member: string) => {
                 return member === componentInstanceId;
             });
         });

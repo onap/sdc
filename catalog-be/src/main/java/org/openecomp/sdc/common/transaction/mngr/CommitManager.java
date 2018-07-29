@@ -20,20 +20,19 @@
 
 package org.openecomp.sdc.common.transaction.mngr;
 
-import java.util.List;
-
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.common.transaction.api.ICommitHandler;
 import org.openecomp.sdc.common.transaction.api.TransactionUtils;
 import org.openecomp.sdc.common.transaction.api.TransactionUtils.DBActionCodeEnum;
 import org.openecomp.sdc.common.transaction.api.TransactionUtils.LogMessages;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import java.util.List;
 
 public class CommitManager {
 
     // TODO test using slf4j-test and make this final
-    private static Logger log = LoggerFactory.getLogger(CommitManager.class);
+    private static Logger log = Logger.getLogger(CommitManager.class);
     private List<ICommitHandler> commitHandlers;
     private Integer transactionId;
     private String userId, actionType;

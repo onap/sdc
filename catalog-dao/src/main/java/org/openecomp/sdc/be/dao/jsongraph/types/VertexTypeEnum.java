@@ -20,23 +20,7 @@
 
 package org.openecomp.sdc.be.dao.jsongraph.types;
 
-import org.openecomp.sdc.be.datatypes.elements.AdditionalInfoParameterDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.CompositionDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.ForwardingPathDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.GroupDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.InterfaceDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.ListCapabilityDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.ListRequirementDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.MapArtifactDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.MapCapabiltyProperty;
-import org.openecomp.sdc.be.datatypes.elements.MapComponentInstanceExternalRefs;
-import org.openecomp.sdc.be.datatypes.elements.MapGroupsDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.MapListCapabiltyDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.MapListRequirementDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.MapPropertiesDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.PolicyDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.*;
 
 
 public enum VertexTypeEnum {
@@ -65,15 +49,16 @@ public enum VertexTypeEnum {
 	INST_INPUTS					("instInputs",					MapPropertiesDataDefinition.class),
 	INST_GROUPS					("instGroups",					MapGroupsDataDefinition.class),
 	SERVICE_API_ARTIFACTS		("serviceApiArtifacts",			ArtifactDataDefinition.class),
-	CALCULATED_CAPABILITIES 	("calculatedCapabilities",		MapListCapabiltyDataDefinition.class),
-	FULLFILLED_CAPABILITIES 	("fullfilledCapabilities",		MapListCapabiltyDataDefinition.class), 
+	CALCULATED_CAPABILITIES 	("calculatedCapabilities",		MapListCapabilityDataDefinition.class),
+	FULLFILLED_CAPABILITIES 	("fullfilledCapabilities",		MapListCapabilityDataDefinition.class),
 	CALCULATED_REQUIREMENTS 	("calculatedRequirements",		MapListRequirementDataDefinition.class),
 	FULLFILLED_REQUIREMENTS		("fullfilledRequirements",		MapListRequirementDataDefinition.class),
-	CALCULATED_CAP_PROPERTIES	("calculatedCapProperties",		MapCapabiltyProperty.class),
+	CALCULATED_CAP_PROPERTIES	("calculatedCapProperties",		MapCapabilityProperty.class),
 	FORWARDING_PATH             ("path",                  		ForwardingPathDataDefinition.class),
 	POLICIES					("policies",					PolicyDataDefinition.class),
 	EXTERNAL_REF				("componentInstanceExtRefs",    MapComponentInstanceExternalRefs.class),
-	CATALOG_ROOT                ("catalogRoot",                 null);
+	CATALOG_ROOT                ("catalogRoot",                 null),
+	ARCHIVE_ROOT                ("archiveRoot",                 null);
 
 	private String name;
 	private Class classOfJson;

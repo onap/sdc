@@ -15,11 +15,6 @@
  */
 package org.openecomp.sdc.be.tosca.utils;
 
-import static org.junit.Assert.assertEquals;
-
-import java.io.File;
-import java.util.HashMap;
-
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openecomp.sdc.be.DummyConfigurationManager;
@@ -28,6 +23,11 @@ import org.openecomp.sdc.be.datatypes.elements.OperationDataDefinition;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.Resource;
+
+import java.io.File;
+import java.util.HashMap;
+
+import static org.junit.Assert.assertEquals;
 
 public class OperationArtifactUtilTest {
 

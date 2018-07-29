@@ -1,0 +1,25 @@
+<div class="automated-upgrade-component">
+
+    <div *ngIf="certificationStatusText" class="certification-status">
+        <svg-icon-label
+                name="success-circle-o"
+                mode="success"
+                size="medium"
+                clickable="false"
+                disabled="false"
+                labelPlacement="right">
+        </svg-icon-label>
+        <span class="certification-status-text">{{certificationStatusText}}</span>
+    </div>
+
+    <div>
+        <span innerHTML="{{informationText}}"> </span>
+        <div class="components-to-upgrade-list">
+            <ul>
+                <li *ngFor="let component of componentsToUpgrade | upgradeListItemOrderBy">
+                    <upgrade-list-item (onCheckedChange)= "onComponentSelected(component.uniqueId)" [disabled]="disabled" [componentToUpgrade]="component"></upgrade-list-item>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>

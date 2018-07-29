@@ -1,19 +1,13 @@
 package org.openecomp.sdc.ci.tests.config;
 
 
-import fj.data.Either;
 import org.apache.commons.io.IOUtils;
 import org.json.JSONObject;
-import org.openecomp.sdc.be.model.Service;
-import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
-import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
-import org.openecomp.sdc.ci.tests.utils.general.AtomicOperationUtils;
 import org.openecomp.sdc.ci.tests.utils.general.FileHandling;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.*;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 public class MainToTest {

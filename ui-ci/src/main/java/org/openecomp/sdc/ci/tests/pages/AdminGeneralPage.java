@@ -20,15 +20,14 @@
 
 package org.openecomp.sdc.ci.tests.pages;
 
-import java.util.List;
-
+import com.aventstack.extentreports.Status;
 import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum;
 import org.openecomp.sdc.ci.tests.datatypes.UserManagementTab;
 import org.openecomp.sdc.ci.tests.execute.setup.SetupCDTest;
 import org.openecomp.sdc.ci.tests.utilities.GeneralUIUtils;
 import org.openqa.selenium.WebElement;
 
-import com.aventstack.extentreports.Status;
+import java.util.List;
 
 public class AdminGeneralPage extends GeneralPageElements {
 
@@ -70,7 +69,7 @@ public class AdminGeneralPage extends GeneralPageElements {
 		GeneralUIUtils.clickOnElementByTestId(DataTestIdEnum.CategoryManagement.NEW_CATEGORY_BUTTON.getValue());
 		GeneralUIUtils.waitForLoader();
 		defineNewResourceCategoryName(name);
-		GeneralUIUtils.clickOnElementByTestId(DataTestIdEnum.ModalItems.OK.getValue());
+		GeneralPageElements.clickOKButton();
 		GeneralUIUtils.waitForLoader();
 	}
 	
@@ -94,7 +93,7 @@ public class AdminGeneralPage extends GeneralPageElements {
 		GeneralUIUtils.clickOnElementByTestId(DataTestIdEnum.CategoryManagement.NEW_SUB_CATEGORY_BUTTON.getValue());
 		GeneralUIUtils.waitForLoader();
 		defineNewResourceCategoryName(subCategoryName);
-		GeneralUIUtils.clickOnElementByTestId(DataTestIdEnum.ModalItems.OK.getValue());
+		GeneralPageElements.clickOKButton();
 		GeneralUIUtils.waitForLoader();
 		
 		
@@ -106,7 +105,7 @@ public class AdminGeneralPage extends GeneralPageElements {
 		GeneralUIUtils.clickOnElementByTestId(DataTestIdEnum.CategoryManagement.NEW_CATEGORY_BUTTON.getValue());
 		GeneralUIUtils.waitForLoader();
 		defineNewResourceCategoryName(name);
-		GeneralUIUtils.clickOnElementByTestId(DataTestIdEnum.ModalItems.OK.getValue());
+		GeneralPageElements.clickOKButton();
 		GeneralUIUtils.waitForLoader();
 		
 	}	

@@ -1,39 +1,26 @@
 package org.openecomp.sdc.be.components.validation;
 
-import javax.annotation.Generated;
-
+import fj.data.Either;
+import mockit.Deencapsulation;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.openecomp.sdc.be.datatypes.elements.AdditionalInfoParameterDataDefinition;
-import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
-import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
-import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
-import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
-import org.openecomp.sdc.be.model.operations.impl.GraphLockOperation;
-import org.apache.commons.collections.CollectionUtils;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
-import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.datatypes.elements.AdditionalInfoParameterDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 import org.openecomp.sdc.be.model.Component;
-import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.ComponentParametersView;
-import org.openecomp.sdc.be.model.GroupDefinition;
+import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.StorageException;
-import org.openecomp.sdc.be.model.operations.api.IGraphLockOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
-import org.openecomp.sdc.be.model.operations.utils.ComponentValidationUtils;
-import org.openecomp.sdc.common.util.ValidationUtils;
-
-import fj.data.Either;
-import mockit.Deencapsulation;
+import org.openecomp.sdc.be.model.operations.impl.GraphLockOperation;
 
 public class ComponentValidationsTest {
 
@@ -89,11 +76,13 @@ public class ComponentValidationsTest {
 		String componentId = "";
 		String userId = "";
 		Component result;
+		Resource resource = new  Resource();
+		resource.setLifecycleState(LifecycleStateEnum.CERTIFICATION_IN_PROGRESS);
 		
-		Mockito.when(toscaOperationFacadeMock.getToscaElement(Mockito.anyString(), Mockito.any(ComponentParametersView.class))).thenReturn(Either.left(new Resource()));
+		Mockito.when(toscaOperationFacadeMock.getToscaElement(Mockito.anyString(), Mockito.any(ComponentParametersView.class))).thenReturn(Either.left(resource));
 		
 		// default test
-		result = testSubject.validateComponentIsCheckedOutByUserAndLockIt(ComponentTypeEnum.RESOURCE, componentId,
+		result = testSubject.validateComponentIsCheckedOutByUser("",ComponentTypeEnum.RESOURCE,
 				userId);
 	}
 
@@ -102,19 +91,12 @@ public class ComponentValidationsTest {
 		String componentId = "mock";
 		ComponentTypeEnum componentType = null;
 		Component result;
-
-		Mockito.when(toscaOperationFacadeMock.getToscaElement(Mockito.anyString(), Mockito.any(ComponentParametersView.class))).thenReturn(Either.left(new Resource()));
+		Component resource = new Resource();
+		resource.setComponentType(ComponentTypeEnum.RESOURCE);
+		Mockito.when(toscaOperationFacadeMock.getToscaElement(Mockito.anyString(), Mockito.any(ComponentParametersView.class))).thenReturn(Either.left(resource));
 		
 		// default test
 		result = Deencapsulation.invoke(testSubject, "getComponent", componentId, ComponentTypeEnum.RESOURCE);
-	}
-
-	@Test(expected = StorageException.class)
-	public void testLockComponent() throws Exception {
-		Component component = new Resource();
-
-		// default test
-		Deencapsulation.invoke(testSubject, "lockComponent", component);
 	}
 
 	@Test(expected = StorageException.class)
@@ -123,6 +105,6 @@ public class ComponentValidationsTest {
 
 		// default test
 		result = Deencapsulation.invoke(testSubject, "onToscaOperationError",
-				StorageOperationStatus.ARTIFACT_NOT_FOUND);
+				StorageOperationStatus.ARTIFACT_NOT_FOUND,"");
 	}
 }

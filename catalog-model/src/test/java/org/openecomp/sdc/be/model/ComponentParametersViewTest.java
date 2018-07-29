@@ -1,11 +1,11 @@
 package org.openecomp.sdc.be.model;
 
-import java.util.LinkedList;
-
 import org.junit.Test;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.datatypes.enums.ComponentFieldsEnum;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
+
+import java.util.LinkedList;
 
 public class ComponentParametersViewTest {
 
@@ -215,17 +215,6 @@ public class ComponentParametersViewTest {
 
 	
 	@Test
-	public void testSetIgnoreAdditionalInformation() throws Exception {
-		ComponentParametersView testSubject;
-		boolean ignoreAdditionalInformation = false;
-
-		// default test
-		testSubject = createTestSubject();
-		testSubject.setIgnoreAdditionalInformation(ignoreAdditionalInformation);
-	}
-
-	
-	@Test
 	public void testIsIgnoreArtifacts() throws Exception {
 		ComponentParametersView testSubject;
 		boolean result;
@@ -301,16 +290,6 @@ public class ComponentParametersViewTest {
 		result = testSubject.isIgnoreInterfaces();
 	}
 
-	
-	@Test
-	public void testSetIgnoreInterfaces() throws Exception {
-		ComponentParametersView testSubject;
-		boolean ignoreInterfaces = false;
-
-		// default test
-		testSubject = createTestSubject();
-		testSubject.setIgnoreInterfaces(ignoreInterfaces);
-	}
 
 	
 	@Test
@@ -345,16 +324,6 @@ public class ComponentParametersViewTest {
 		result = testSubject.isIgnoreComponentInstancesAttributesFrom();
 	}
 
-	
-	@Test
-	public void testSetIgnoreComponentInstancesAttributesFrom() throws Exception {
-		ComponentParametersView testSubject;
-		boolean ignoreComponentInstancesAttributesFrom = false;
-
-		// default test
-		testSubject = createTestSubject();
-		testSubject.setIgnoreComponentInstancesAttributesFrom(ignoreComponentInstancesAttributesFrom);
-	}
 
 	
 	@Test
@@ -367,16 +336,6 @@ public class ComponentParametersViewTest {
 		result = testSubject.isIgnoreDerivedFrom();
 	}
 
-	
-	@Test
-	public void testSetIgnoreDerivedFrom() throws Exception {
-		ComponentParametersView testSubject;
-		boolean ignoreDerivedFrom = false;
-
-		// default test
-		testSubject = createTestSubject();
-		testSubject.setIgnoreDerivedFrom(ignoreDerivedFrom);
-	}
 
 	
 	@Test

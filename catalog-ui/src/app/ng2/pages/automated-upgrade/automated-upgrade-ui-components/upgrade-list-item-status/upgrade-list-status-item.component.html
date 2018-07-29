@@ -1,0 +1,13 @@
+<div class="components-to-upgrade-list-item">
+    <div class="component-to-upgrade-data">
+        <div class="component-to-upgrade-icon small sprite-services-icons {{upgradedComponent.icon}}"></div>
+        <span class="component-to-upgrade-name">{{upgradedComponent.name}} ({{upgradedComponent.version}})</span>
+        <svg-icon-label class="upgraded-component-status" *ngIf="upgradeComponentStatus.status === 'OK'"
+                        name="success-circle-o" mode="success" size="medium" clickable="false"></svg-icon-label>
+        <svg-icon-label class="upgraded-component-status" *ngIf="upgradeComponentStatus.status !== 'OK'"
+                        name="x-circle-o" mode="error"
+                        size="medium" [label]="'Update Failed'" clickable="false" disabled="false" labelPlacement="left"></svg-icon-label>
+    </div>
+
+    <upgrade-list-item-inner-content [vspInstances]="upgradedComponent.vspInstances"></upgrade-list-item-inner-content>
+</div>

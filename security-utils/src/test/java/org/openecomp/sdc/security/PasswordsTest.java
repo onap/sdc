@@ -2,53 +2,55 @@ package org.openecomp.sdc.security;
 
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class PasswordsTest {
 
     @Test
     public void hashPassword() throws Exception {
         String hash = Passwords.hashPassword("hello1234");
-        assertEquals(true, Passwords.isExpectedPassword("hello1234", hash));
+        assertTrue(Passwords.isExpectedPassword("hello1234", hash));
 
         //test different salt-> result in different hash
         String hash2 = Passwords.hashPassword("hello1234");
-        assertEquals(false, hash.equals(hash2));
+        assertFalse(hash.equals(hash2));
 
         String hash3  = Passwords.hashPassword("");
-        assertEquals(true, Passwords.isExpectedPassword("", hash3));
+        assertTrue(Passwords.isExpectedPassword("", hash3));
 
         String hash4  = Passwords.hashPassword(null);
-        assertEquals(true, hash4 == null );
+        assertTrue(hash4 == null);
     }
 
     @Test
     public void isExpectedPassword() throws Exception {
         //region isExpectedPassword(String password, String salt, String hash)
-        assertEquals(true, Passwords.isExpectedPassword(null, null , null));
+        assertTrue(Passwords.isExpectedPassword(null, null, null));
         //valid hash
-        assertEquals(true, Passwords.isExpectedPassword("hello1234", "e0277df331f4ff8f74752ac4a8fbe03b","6dfbad308cdf53c9ff2ee2dca811ee92f1b359586b33027580e2ff92578edbd0"));
+        assertTrue(Passwords.isExpectedPassword("hello1234", "e0277df331f4ff8f74752ac4a8fbe03b", "6dfbad308cdf53c9ff2ee2dca811ee92f1b359586b33027580e2ff92578edbd0"));
         //invalid salt
-        assertEquals(false, Passwords.isExpectedPassword("hello1234", "c0000df331f4ff8f74752ac4a00be03c","6dfbad308cdf53c9ff2ee2dca811ee92f1b359586b33027580e2ff92578edbd0"));
-        assertEquals(false, Passwords.isExpectedPassword("hello1234", null,"6dfbad308cdf53c9ff2ee2dca811ee92f1b359586b33027580e2ff92578edbd0"));
+        assertFalse(Passwords.isExpectedPassword("hello1234", "c0000df331f4ff8f74752ac4a00be03c", "6dfbad308cdf53c9ff2ee2dca811ee92f1b359586b33027580e2ff92578edbd0"));
+        assertFalse(Passwords.isExpectedPassword("hello1234", null, "6dfbad308cdf53c9ff2ee2dca811ee92f1b359586b33027580e2ff92578edbd0"));
         //exacly 1 param uninitialized
-        assertEquals(false,Passwords.isExpectedPassword("hello1234", "",null));
-        assertEquals(false,Passwords.isExpectedPassword( null, "" , "hello1234"));
+        assertFalse(Passwords.isExpectedPassword("hello1234", "", null));
+        assertFalse(Passwords.isExpectedPassword(null, "", "hello1234"));
         //no salt & no hash
-        assertEquals(false, Passwords.isExpectedPassword("hello1234", null ,"hello1234"));
+        assertFalse(Passwords.isExpectedPassword("hello1234", null, "hello1234"));
         //endregion
 
         //region isExpectedPassword(String password, String expectedHash)
-        assertEquals(true, Passwords.isExpectedPassword(null, null));
+        assertTrue(Passwords.isExpectedPassword(null, null));
         //valid hash
-        assertEquals(true, Passwords.isExpectedPassword("hello1234", "e0277df331f4ff8f74752ac4a8fbe03b:6dfbad308cdf53c9ff2ee2dca811ee92f1b359586b33027580e2ff92578edbd0"));
+        assertTrue(Passwords.isExpectedPassword("hello1234", "e0277df331f4ff8f74752ac4a8fbe03b:6dfbad308cdf53c9ff2ee2dca811ee92f1b359586b33027580e2ff92578edbd0"));
         //invalid salt
-        assertEquals(false, Passwords.isExpectedPassword("hello1234", "c0000df331f4ff8f74752ac4a00be03c:6dfbad308cdf53c9ff2ee2dca811ee92f1b359586b33027580e2ff92578edbd0"));
+        assertFalse(Passwords.isExpectedPassword("hello1234", "c0000df331f4ff8f74752ac4a00be03c:6dfbad308cdf53c9ff2ee2dca811ee92f1b359586b33027580e2ff92578edbd0"));
         //exacly 1 param uninitialized
-        assertEquals(false,Passwords.isExpectedPassword("hello1234", null));
-        assertEquals(false,Passwords.isExpectedPassword( null,"hello1234"));
+        assertFalse(Passwords.isExpectedPassword("hello1234", null));
+        assertFalse(Passwords.isExpectedPassword(null, "hello1234"));
         //no salt & no hash
-        assertEquals(false, Passwords.isExpectedPassword("hello1234", "hello1234"));
+        assertFalse(Passwords.isExpectedPassword("hello1234", "hello1234"));
         //endregion
     }
 

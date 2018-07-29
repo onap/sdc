@@ -1,5 +1,7 @@
 export class PolicyMetadata {
     public uniqueId: string;
+    public name:string;
+    public icon:string;
     public type: string;
     public version: string;
     public description: string;
@@ -11,6 +13,8 @@ export class PolicyMetadata {
     deserialize (response): PolicyMetadata {
         this.uniqueId = response.uniqueId;
         this.type = response.type;
+        this.name = response.name;
+        this.icon = response.icon;
         this.version = response.version;
         this.description = response.description;
         this.creationTime = response.creationTime;

@@ -20,15 +20,14 @@
 
 package org.openecomp.sdc.common.util;
 
+import org.apache.commons.lang3.StringEscapeUtils;
+
+import javax.swing.text.html.HTML;
+import javax.swing.text.html.HTML.Tag;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import javax.swing.text.html.HTML;
-import javax.swing.text.html.HTML.Tag;
-
-import org.apache.commons.lang3.StringEscapeUtils;
 
 public class HtmlCleaner {
 
@@ -57,7 +56,7 @@ public class HtmlCleaner {
 
 	public static String stripHtml(String input, boolean toEscape) {
 
-		if (input == null || true == input.isEmpty()) {
+		if (input == null || input.isEmpty()) {
 			return input;
 		}
 
@@ -77,7 +76,7 @@ public class HtmlCleaner {
 			if (groupCount > 0) {
 				String tag = matcher.group(1);
 				if (tag != null && htmlTags.contains(tag.toLowerCase())) {
-					if (false == tagsToRemove.contains(matchTag)) {
+					if (!tagsToRemove.contains(matchTag)) {
 						tagsToRemove.add(matchTag);
 					}
 				}
@@ -87,7 +86,7 @@ public class HtmlCleaner {
 		String stripHtmlStr = removeTagsFromString(tagsToRemove, input);
 
 		if (stripHtmlStr != null) {
-			if (true == toEscape) {
+			if (toEscape) {
 				stripHtmlStr = StringEscapeUtils.escapeHtml4(stripHtmlStr);
 			}
 		}
@@ -99,7 +98,7 @@ public class HtmlCleaner {
 	private static String removeTagsFromString(Set<String> tagsToRemove, String input) {
 
 		String stripStr = input;
-		if (input == null || true == tagsToRemove.isEmpty()) {
+		if (input == null || tagsToRemove.isEmpty()) {
 			return input;
 		}
 

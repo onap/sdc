@@ -16,11 +16,6 @@
 
 package org.openecomp.sdc.validation.impl.validators;
 
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-
 import org.apache.commons.collections4.MapUtils;
 import org.openecomp.core.validation.ErrorMessageCode;
 import org.openecomp.core.validation.errors.ErrorMessagesFormatBuilder;
@@ -36,6 +31,11 @@ import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.validation.Validator;
 import org.openecomp.sdc.validation.util.ValidationUtil;
+
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 
 public class ForbiddenResourceGuideLineValidator implements Validator {
   private static Set<String> forbiddenResources = new HashSet<>();

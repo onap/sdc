@@ -24,6 +24,10 @@ export class ModalService {
         this.createCustomModal(modalModel).instance.open();
     }
 
+    public openErrorModal = (closeButtonText?: string, errorMessage?: string):void => {
+        let errorModal = this.createErrorModal(closeButtonText, errorMessage);
+        errorModal.instance.open();
+    };
 
     /**
      * Shortcut method to open a basic modal with title, message, and an action button with callback, as well as close button.
@@ -77,7 +81,7 @@ export class ModalService {
         return wizardInstance;
     }
 
-
+    
     public closeCurrentModal = () => {
         if (!this.currentModal) return;
         this.currentModal.instance.close();
@@ -102,3 +106,5 @@ export class ModalService {
 
 
 }
+
+

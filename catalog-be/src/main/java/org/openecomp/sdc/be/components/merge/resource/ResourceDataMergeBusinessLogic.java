@@ -1,23 +1,25 @@
 package org.openecomp.sdc.be.components.merge.resource;
 
-import java.util.List;
-
-import org.openecomp.sdc.be.components.merge.instance.ComponentsMergeCommand;
+import org.openecomp.sdc.be.components.merge.ComponentsMergeCommand;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.model.Resource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 @Component
 public class ResourceDataMergeBusinessLogic implements MergeResourceBusinessLogic {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ResourceDataMergeBusinessLogic.class);
+    private static final Logger log = Logger.getLogger(ResourceDataMergeBusinessLogic.class);
+    public static final int FIRST_COMMAND = 0;
+    public static final int LAST_COMMAND = Integer.MAX_VALUE;
+    public static final int ANY_ORDER_COMMAND = 1;
 
-    private List<ComponentsMergeCommand> componentMergingCommands;
+    private MergeCommandsFactory mergeCommandsFactory;
 
-    public ResourceDataMergeBusinessLogic(List<ComponentsMergeCommand> componentMergingCommands) {
-        this.componentMergingCommands = componentMergingCommands;
+    public ResourceDataMergeBusinessLogic(MergeCommandsFactory mergeCommandsFactory) {
+        this.mergeCommandsFactory = mergeCommandsFactory;
     }
 
     @Override
@@ -25,10 +27,16 @@ public class ResourceDataMergeBusinessLogic implements MergeResourceBusinessLogi
         if (oldResource == null) {
             return ActionStatus.OK;
         }
+        return mergeCommandsFactory.getMergeCommands(oldResource, newResource)
+                .either(mergeCommands -> executeMergeCommands(oldResource, newResource, mergeCommands),
+                        err -> err);
+    }
+
+    private ActionStatus executeMergeCommands(Resource oldResource, Resource newResource, List<? extends ComponentsMergeCommand> componentMergingCommands) {
         for (ComponentsMergeCommand componentMergeCommand : componentMergingCommands) {
             ActionStatus mergeStatus = componentMergeCommand.mergeComponents(oldResource, newResource);
             if (mergeStatus != ActionStatus.OK) {
-                LOGGER.error("failed on merge command {} of resource {} status is {}", componentMergeCommand.description(), newResource.getUniqueId(), mergeStatus);
+                log.error("failed on merge command {} of resource {} status is {}", componentMergeCommand.description(), newResource.getUniqueId(), mergeStatus);
                 return mergeStatus;
             }
         }

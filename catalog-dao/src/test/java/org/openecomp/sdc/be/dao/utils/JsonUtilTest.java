@@ -1,19 +1,14 @@
 package org.openecomp.sdc.be.dao.utils;
 
-import java.io.BufferedInputStream;
-import java.io.InputStream;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.cassandra.utils.vint.EncodedDataInputStream;
-import org.apache.tinkerpop.gremlin.structure.T;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import mockit.Deencapsulation;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import mockit.Deencapsulation;
+import java.io.InputStream;
+import java.util.List;
+import java.util.Map;
 
 public class JsonUtilTest {
 	
@@ -33,17 +28,6 @@ public class JsonUtilTest {
 
 		// default test
 		result = JsonUtil.readObject(objectText, objectClass);
-	}
-
-	@Ignore
-	@Test
-	public void testReadObject_1() throws Exception {
-		InputStream jsonStream = Mockito.mock(InputStream.class);
-		Class objectClass = Object.class;
-		Object result;
-
-		// default test
-		result = JsonUtil.readObject(jsonStream, objectClass);
 	}
 
 	@Test
@@ -93,16 +77,5 @@ public class JsonUtilTest {
 
 		// default test
 		result = JsonUtil.toList(json, clazz);
-	}
-
-	@Test
-	public void testToList_1() throws Exception {
-		String json = "[]";
-		Class elementClass = List.class;;
-		Class elementGenericClass = List.class;;
-		List result;
-
-		// default test
-		result = JsonUtil.toList(json, elementClass, elementGenericClass);
 	}
 }

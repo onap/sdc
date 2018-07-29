@@ -16,9 +16,14 @@
 
 package org.openecomp.sdc.onboarding.pmd;
 
-import static org.openecomp.sdc.onboarding.pmd.PMDHelperUtils.getStateFile;
-import static org.openecomp.sdc.onboarding.pmd.PMDHelperUtils.readCurrentPMDState;
-import static org.openecomp.sdc.onboarding.pmd.PMDHelperUtils.readInputStream;
+import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.plugins.annotations.ResolutionScope;
+import org.apache.maven.project.MavenProject;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -32,14 +37,8 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.Map;
-import org.apache.maven.plugin.AbstractMojo;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.LifecyclePhase;
-import org.apache.maven.plugins.annotations.Mojo;
-import org.apache.maven.plugins.annotations.Parameter;
-import org.apache.maven.plugins.annotations.ResolutionScope;
-import org.apache.maven.project.MavenProject;
+
+import static org.openecomp.sdc.onboarding.pmd.PMDHelperUtils.*;
 
 @Mojo(name = "init-pmd-helper", threadSafe = true, defaultPhase = LifecyclePhase.PREPARE_PACKAGE,
         requiresDependencyResolution = ResolutionScope.NONE)

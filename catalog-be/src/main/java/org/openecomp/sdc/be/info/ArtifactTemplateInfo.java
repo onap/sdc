@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,12 +20,9 @@
 
 package org.openecomp.sdc.be.info;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import fj.data.Either;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.config.Configuration.ArtifactTypeConfig;
 import org.openecomp.sdc.be.config.ConfigurationManager;
@@ -34,44 +31,38 @@ import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.ArtifactType;
 import org.openecomp.sdc.common.api.ArtifactTypeEnum;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-
-import fj.data.Either;
+import java.util.*;
 
 public class ArtifactTemplateInfo {
-    public static final String TYPE = "type";
-    public static final String FILE_NAME = "fileName";
-    public static final String ENV = "env";
-    public static final String IS_BASE = "isBase";
-
-    public static final String CSAR_HEAT = "HEAT";
+    private static final Logger log = Logger.getLogger(ArtifactTemplateInfo.class);
+    private static final Gson gson = new Gson();
     public static final String CSAR_ARTIFACT = "artifacts";
-    public static final String CSAR_NETWORK = "network";
-    public static final String CSAR_VOLUME = "volume";
-    public static final String CSAR_NESTED = "nested";
-    private static final Object DESC = "description";
-    private static final Logger log = LoggerFactory.getLogger(ArtifactTemplateInfo.class);
-    String type;
-    String fileName;
-    String env;
-    boolean isBase;
-    String groupName;
-    String description;
 
-    List<ArtifactTemplateInfo> relatedArtifactsInfo;
-    private static Gson gson = new Gson();
+    private static final String ARTIFACT_TEMPLATE_TYPE = "type";
+    private static final String FILE_NAME = "fileName";
+    private static final String ARTIFACT_TEMPLATE_ENV = "env";
+    private static final String IS_BASE = "isBase";
+    private static final String CSAR_HEAT = "HEAT";
+    private static final String CSAR_NETWORK = "network";
+    private static final String CSAR_VOLUME = "volume";
+    private static final String CSAR_NESTED = "nested";
+    private static final String DESC = "description";
 
-    public ArtifactTemplateInfo() {
-        super();
-    }
+    private String type;
+    private String fileName;
+    private String env;
+    private boolean isBase;
+    private String groupName;
+    private String description;
+
+    private List<ArtifactTemplateInfo> relatedArtifactsInfo;
+
+    public ArtifactTemplateInfo() {}
 
     public ArtifactTemplateInfo(String type, String fileName, String env, List<ArtifactTemplateInfo> relatedArtifactsInfo) {
-        super();
         this.type = type;
         this.fileName = fileName;
         this.env = env;
@@ -147,19 +138,23 @@ public class ArtifactTemplateInfo {
 
         jsonElement = gson.fromJson(content, jsonElement.getClass());
 
-        Map<String, Object> artifactTemplateMap = componentsUtils.parseJsonToObject(jsonElement.toString(), HashMap.class);
-        if (artifactTemplateMap.containsKey(TYPE))
-            resourceInfo.setType((String) artifactTemplateMap.get(TYPE));
-        if (artifactTemplateMap.containsKey(FILE_NAME))
+        Map<String, Object> artifactTemplateMap = ComponentsUtils.parseJsonToObject(jsonElement.toString(), HashMap.class);
+        if (artifactTemplateMap.containsKey(ARTIFACT_TEMPLATE_TYPE)) {
+            resourceInfo.setType((String) artifactTemplateMap.get(ARTIFACT_TEMPLATE_TYPE));
+        }
+        if (artifactTemplateMap.containsKey(FILE_NAME)) {
             resourceInfo.setFileName((String) artifactTemplateMap.get(FILE_NAME));
-        if (artifactTemplateMap.containsKey(IS_BASE))
+        }
+        if (artifactTemplateMap.containsKey(IS_BASE)) {
             resourceInfo.setBase((Boolean) artifactTemplateMap.get(IS_BASE));
-        if (artifactTemplateMap.containsKey(ENV)) {
-            Object envObj = artifactTemplateMap.get(ENV);
+        }
+        if (artifactTemplateMap.containsKey(ARTIFACT_TEMPLATE_ENV)) {
+            Object envObj = artifactTemplateMap.get(ARTIFACT_TEMPLATE_ENV);
             String envStr = "";
             if (envObj instanceof String) {
                 envStr = (String) envObj;
-            } else if (envObj instanceof Map) {
+            }
+            else if (envObj instanceof Map) {
                 Map envMap = (Map) envObj;
                 if (envMap.containsKey(FILE_NAME)) {
                     envStr = (String) envMap.get(FILE_NAME);
@@ -174,23 +169,30 @@ public class ArtifactTemplateInfo {
         }
 
         boolean artifactTypeExist = false;
-        String correctType = type;
-        if (type.equalsIgnoreCase(CSAR_NESTED))
+        String correctType;
+        if (type.equalsIgnoreCase(CSAR_NESTED)) {
             correctType = ArtifactTypeEnum.HEAT_NESTED.getType();
-        else if (type.equalsIgnoreCase(CSAR_VOLUME))
-            correctType = ArtifactTypeEnum.HEAT_VOL.getType();
-        else if (type.equalsIgnoreCase(CSAR_NETWORK))
-            correctType = ArtifactTypeEnum.HEAT_NET.getType();
-        else if (type.equalsIgnoreCase(CSAR_ARTIFACT)){
-            if( parentArtifact != null)
-                correctType = ArtifactTypeEnum.HEAT_ARTIFACT.getType();
-            else
-                correctType = resourceInfo.type;
         }
-        else if (type.equalsIgnoreCase(CSAR_HEAT))
+        else if (type.equalsIgnoreCase(CSAR_VOLUME)) {
+            correctType = ArtifactTypeEnum.HEAT_VOL.getType();
+        }
+        else if (type.equalsIgnoreCase(CSAR_NETWORK)) {
+            correctType = ArtifactTypeEnum.HEAT_NET.getType();
+        }
+        else if (type.equalsIgnoreCase(CSAR_ARTIFACT)){
+            if( parentArtifact != null) {
+                correctType = ArtifactTypeEnum.HEAT_ARTIFACT.getType();
+            }
+            else {
+                correctType = resourceInfo.type;
+            }
+        }
+        else if (type.equalsIgnoreCase(CSAR_HEAT)) {
             correctType = ArtifactTypeEnum.HEAT.getType();
-        else
+        }
+        else {
             correctType = ArtifactTypeEnum.OTHER.getType();
+        }
         Either<List<ArtifactType>, ActionStatus> allArtifactTypes = getDeploymentArtifactTypes(NodeTypeEnum.Resource);
 
         if (allArtifactTypes.isRight()) {
@@ -214,24 +216,29 @@ public class ArtifactTemplateInfo {
         }
 
         Either<Boolean, ResponseFormat> eitherNeedToCreate = validateEnv(componentsUtils, createdArtifactTemplateInfoList, resourceInfo);
-        if (eitherNeedToCreate.isRight())
+        if (eitherNeedToCreate.isRight()) {
             return Either.right(eitherNeedToCreate.right().value());
+        }
         eitherNeedToCreate = validateParentType(componentsUtils, resourceInfo, parentArtifact);
-        if (eitherNeedToCreate.isRight())
+        if (eitherNeedToCreate.isRight()) {
             return Either.right(eitherNeedToCreate.right().value());
+        }
         eitherNeedToCreate = validateIsAlreadyExist(componentsUtils, resourceInfo, createdArtifactTemplateInfoList, parentArtifact);
-        if (eitherNeedToCreate.isRight())
+        if (eitherNeedToCreate.isRight()) {
             return Either.right(eitherNeedToCreate.right().value());
+        }
         Set<String> keys = o.keySet();
         for (String key : keys) {
             if (o.get(key) instanceof List) {
                 List<Map<String, Object>> artifList = (List<Map<String, Object>>) o.get(key);
                 for (Map<String, Object> relatedArtifactsMap : artifList) {
                     Either<ArtifactTemplateInfo, ResponseFormat> relatedArtifact = ArtifactTemplateInfo.createArtifactTemplateInfoFromJson(componentsUtils, key, relatedArtifactsMap, createdArtifactTemplateInfoList, resourceInfo);
-                    if (relatedArtifact.isRight())
+                    if (relatedArtifact.isRight()) {
                         return relatedArtifact;
-                    if (resourceInfo.relatedArtifactsInfo == null)
-                        resourceInfo.relatedArtifactsInfo = new ArrayList<ArtifactTemplateInfo>();
+                    }
+                    if (resourceInfo.relatedArtifactsInfo == null) {
+                        resourceInfo.relatedArtifactsInfo = new ArrayList<>();
+                    }
                     resourceInfo.relatedArtifactsInfo.add(relatedArtifact.left().value());
                 }
             }
@@ -255,10 +262,8 @@ public class ArtifactTemplateInfo {
             if (relatedArtifacts == null || relatedArtifacts.isEmpty())
                 return Either.left(true);
             for (ArtifactTemplateInfo relatedArtifact : relatedArtifacts) {
-                if (relatedArtifact.getType().equalsIgnoreCase(resourceInfo.getType())) {
-                    if (relatedArtifact.getFileName().equalsIgnoreCase(resourceInfo.getFileName())) {
-                        return Either.right(componentsUtils.getResponseFormat(ActionStatus.ARTIFACT_ALRADY_EXIST_IN_MASTER_IN_CSAR, resourceInfo.getFileName(), parentArtifact.getFileName()));
-                    }
+                if (relatedArtifact.getType().equalsIgnoreCase(resourceInfo.getType()) && relatedArtifact.getFileName().equalsIgnoreCase(resourceInfo.getFileName())) {
+                    return Either.right(componentsUtils.getResponseFormat(ActionStatus.ARTIFACT_ALRADY_EXIST_IN_MASTER_IN_CSAR, resourceInfo.getFileName(), parentArtifact.getFileName()));
                 }
             }
             return Either.left(true);
@@ -267,11 +272,13 @@ public class ArtifactTemplateInfo {
 
     private static Either<Boolean, ResponseFormat> validateParentType(ComponentsUtils componentsUtils, ArtifactTemplateInfo resourceInfo, ArtifactTemplateInfo parentArtifact) {
 
-        if (parentArtifact == null)
+        if (parentArtifact == null) {
             return Either.left(true);
-        if (resourceInfo.getType().equalsIgnoreCase(ArtifactTypeEnum.HEAT_ARTIFACT.getType()))
+        }
+        if (resourceInfo.getType().equalsIgnoreCase(ArtifactTypeEnum.HEAT_ARTIFACT.getType())) {
             return Either.left(true);
-        if (resourceInfo.getType().equalsIgnoreCase(ArtifactTypeEnum.HEAT.getType()) && parentArtifact != null) {
+        }
+        if (resourceInfo.getType().equalsIgnoreCase(ArtifactTypeEnum.HEAT.getType())) {
             return Either.right(componentsUtils.getResponseFormat(ActionStatus.ARTIFACT_NOT_VALID_IN_MASTER, resourceInfo.getFileName(), resourceInfo.getType(), parentArtifact.getFileName(), parentArtifact.getType()));
         }
         if ((resourceInfo.getType().equalsIgnoreCase(ArtifactTypeEnum.HEAT_NET.getType()) || resourceInfo.getType().equalsIgnoreCase(ArtifactTypeEnum.HEAT_VOL.getType()))
@@ -329,7 +336,7 @@ public class ArtifactTemplateInfo {
     private static Either<List<ArtifactType>, ActionStatus> getDeploymentArtifactTypes(NodeTypeEnum parentType) {
 
         Map<String, ArtifactTypeConfig> deploymentArtifacts = null;
-        List<ArtifactType> artifactTypes = new ArrayList<ArtifactType>();
+        List<ArtifactType> artifactTypes = new ArrayList<>();
 
         if (parentType.equals(NodeTypeEnum.Service)) {
             deploymentArtifacts = ConfigurationManager.getConfigurationManager().getConfiguration().getServiceDeploymentArtifacts();

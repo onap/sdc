@@ -16,18 +16,6 @@
 
 package org.openecomp.sdc.onboarding;
 
-import static org.openecomp.sdc.onboarding.Constants.INSTRUMENT_ONLY;
-import static org.openecomp.sdc.onboarding.Constants.INSTRUMENT_WITH_TEST_ONLY;
-import static org.openecomp.sdc.onboarding.Constants.RESOURCE_ONLY;
-import static org.openecomp.sdc.onboarding.Constants.RESOURCE_WITH_TEST_ONLY;
-import static org.openecomp.sdc.onboarding.Constants.SKIP_MAIN_SOURCE_COMPILE;
-import static org.openecomp.sdc.onboarding.Constants.SKIP_PMD;
-import static org.openecomp.sdc.onboarding.Constants.SKIP_TEST_SOURCE_COMPILE;
-import static org.openecomp.sdc.onboarding.Constants.TEST_ONLY;
-import static org.openecomp.sdc.onboarding.Constants.TEST_RESOURCE_ONLY;
-import static org.openecomp.sdc.onboarding.Constants.UNICORN;
-
-import java.io.File;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -35,6 +23,10 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
+
+import java.io.File;
+
+import static org.openecomp.sdc.onboarding.Constants.*;
 
 @Mojo(name = "post-compile-helper", threadSafe = true, defaultPhase = LifecyclePhase.TEST_COMPILE,
         requiresDependencyResolution = ResolutionScope.TEST)
