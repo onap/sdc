@@ -22,11 +22,15 @@ package org.openecomp.sdc.fe.servlets;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+import java.net.MalformedURLException;
+import java.net.URL;
 import org.eclipse.jetty.client.api.Response;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.fe.config.Configuration;
 import org.openecomp.sdc.fe.config.ConfigurationManager;
 import org.openecomp.sdc.fe.config.FeEcompErrorManager;
+import org.openecomp.sdc.fe.config.PluginsConfiguration;
+import org.openecomp.sdc.fe.config.PluginsConfiguration.Plugin;
 import org.openecomp.sdc.fe.impl.MdcData;
 import org.openecomp.sdc.fe.utils.BeProtocol;
 import org.slf4j.Logger;
@@ -42,20 +46,33 @@ public class FeProxyServlet extends SSLProxyServlet {
 	private static final String URL = "%s://%s%s%s";
 	private static final String ONBOARDING_CONTEXT = "/onboarding-api";
 	private static final String DCAED_CONTEXT = "/dcae-api";
+	private static final String WORKFLOW_CONTEXT = "/wf";
+	private static final String SDC1_FE_PROXY = "/sdc1/feProxy";
+	private static final String PLUGIN_ID_WORKFLOW = "WORKFLOW";
+
 	private static final Logger log = LoggerFactory.getLogger(FeProxyServlet.class.getName());
 	private static Cache<String, MdcData> mdcDataCache = CacheBuilder.newBuilder().expireAfterWrite(10, TimeUnit.SECONDS).build();
 
 
 	@Override
 	protected String rewriteTarget(HttpServletRequest request) {
+		String originalUrl="";
+		String redirectedUrl = "";
+
 		try {
 			logFeRequest(request);
-		} catch (Exception e) {
+
+			originalUrl = request.getRequestURL().toString();
+			redirectedUrl = getModifiedUrl(request);
+
+		} catch(MalformedURLException mue){
+			FeEcompErrorManager.getInstance().logFeHttpLoggingError("FE Request");
+			log.error("Unexpected FE request processing error :", mue);
+		}
+		catch (Exception e) {
 			FeEcompErrorManager.getInstance().logFeHttpLoggingError("FE Request");
 			log.error("Unexpected FE request logging error :", e);
 		}
-		String originalUrl = request.getRequestURL().toString();
-		String redirectedUrl = getModifiedUrl(request);
 
 		log.debug("FeProxyServlet Redirecting request from: {} , to: {}", originalUrl, redirectedUrl);
 
@@ -138,7 +155,7 @@ public class FeProxyServlet extends SSLProxyServlet {
 
 	
 	
-	private String getModifiedUrl(HttpServletRequest request) {
+	private String getModifiedUrl(HttpServletRequest request) throws MalformedURLException {
 		Configuration config = getConfiguration(request);
 		if (config == null) {
 			log.error("failed to retrive configuration.");
@@ -149,12 +166,12 @@ public class FeProxyServlet extends SSLProxyServlet {
 		String host;
 		String port;
 		if (uri.contains(ONBOARDING_CONTEXT)){
-			uri = uri.replace("/sdc1/feProxy"+ONBOARDING_CONTEXT,ONBOARDING_CONTEXT);
+			uri = uri.replace(SDC1_FE_PROXY+ONBOARDING_CONTEXT,ONBOARDING_CONTEXT);
 			protocol = config.getOnboarding().getProtocolBe();
 			host = config.getOnboarding().getHostBe();
 			port = config.getOnboarding().getPortBe().toString();		
 		}else if(uri.contains(DCAED_CONTEXT)){
-			uri = uri.replace("/sdc1/feProxy"+DCAED_CONTEXT,DCAED_CONTEXT);
+			uri = uri.replace(SDC1_FE_PROXY+DCAED_CONTEXT,DCAED_CONTEXT);
 			protocol = config.getBeProtocol();
 			host = config.getBeHost();
 			if (config.getBeProtocol().equals(BeProtocol.HTTP.getProtocolName())) {
@@ -163,8 +180,21 @@ public class FeProxyServlet extends SSLProxyServlet {
 				port = config.getBeSslPort().toString();
 			}
 		}
+		else if (uri.contains(WORKFLOW_CONTEXT)){
+			uri = uri.replace(SDC1_FE_PROXY +WORKFLOW_CONTEXT,WORKFLOW_CONTEXT);
+			String workflowPluginURL = getPluginConfiguration(request).getPluginsList()
+					.stream()
+					.filter(plugin -> plugin.getPluginId().equalsIgnoreCase(PLUGIN_ID_WORKFLOW))
+					.map(Plugin::getPluginSourceUrl)
+					.findFirst().orElse(null);
+
+			java.net.URL workflowURL = new URL(workflowPluginURL);
+			protocol = workflowURL.getProtocol();
+			host = workflowURL.getHost();
+			port = String.valueOf(workflowURL.getPort());
+		}
 		else{
-			uri = uri.replace("/sdc1/feProxy","/sdc2");
+			uri = uri.replace(SDC1_FE_PROXY,"/sdc2");
 			protocol = config.getBeProtocol();
 			host = config.getBeHost();
 			if (config.getBeProtocol().equals(BeProtocol.HTTP.getProtocolName())) {
@@ -180,9 +210,9 @@ public class FeProxyServlet extends SSLProxyServlet {
 
 	}
 
-
-
-
+	private PluginsConfiguration getPluginConfiguration(HttpServletRequest request) {
+		return ((ConfigurationManager) request.getSession().getServletContext().getAttribute(Constants.CONFIGURATION_MANAGER_ATTR)).getPluginsConfiguration();
+  }
 
 
 	private Configuration getConfiguration(HttpServletRequest request) {
