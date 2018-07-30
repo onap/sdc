@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a6a9dd7_5d95abe2",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vnf-repository-rest-services/pom.xml",
+        "patchSetId": 6
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-07-30T17:38:07Z",
+      "side": 0,
+      "message": "finally we remove this!",
+      "range": {
+        "startLine": 68,
+        "startChar": 23,
+        "endLine": 68,
+        "endChar": 38
+      },
+      "revId": "a8480d1fec5b5696be04eb887f4cbed6b56238be",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
