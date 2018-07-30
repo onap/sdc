@@ -91,6 +91,9 @@
 
         <!-- sonar -->
         <sonar.language>java</sonar.language>
+        <sonar.sourceEncoding>${project.build.sourceEncoding}</sonar.sourceEncoding>
+        <sonar.projectBaseDir>${project.basedir}</sonar.projectBaseDir>
+        <sonar.branch>${project.version}</sonar.branch>
 
         <!--cassandra -->
         <cassandra.driver.version>3.0.0</cassandra.driver.version>
