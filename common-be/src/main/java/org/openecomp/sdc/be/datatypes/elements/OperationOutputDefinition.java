@@ -30,10 +30,12 @@ public class OperationOutputDefinition extends InputDataDefinition {
         super(definition);
         setName(name);
     }
-    public OperationOutputDefinition(String paramName, String paramId) {
+    public OperationOutputDefinition(String paramName, String paramId,Boolean mandatory, String type) {
         super();
         setName(paramName);
         setInputId(paramId);
+        setRequired(mandatory);
+        setType(type);
     }
     public String getLabel() {
         return (String) getToscaPresentationValue(JsonPresentationFields.ARTIFACT_LABEL);

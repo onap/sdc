@@ -33,10 +33,12 @@ public class OperationInputDefinition extends InputDataDefinition {
         setName(name);
     }
 
-    public OperationInputDefinition(String paramName, String paramId) {
+    public OperationInputDefinition(String paramName, String paramId,  Boolean mandatory, String type) {
         super();
         setName(paramName);
         setInputId(paramId);
+        setRequired(mandatory);
+        setType(type);
     }
 
     public String getLabel() {
