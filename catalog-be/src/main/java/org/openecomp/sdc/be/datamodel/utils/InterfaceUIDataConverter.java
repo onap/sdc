@@ -37,16 +37,23 @@ public class InterfaceUIDataConverter {
     ListDataDefinition<OperationInputDefinition> inputs = new ListDataDefinition<>();
     if (inputParams != null) {
       List<OperationInputDefinition> inputList = inputParams.getListToscaDataDefinition().stream()
-              .map(interfaceOperationParamDataDefinition -> new OperationInputDefinition(interfaceOperationParamDataDefinition.getParamName(),
-                      interfaceOperationParamDataDefinition.getParamId())).collect(Collectors.toList());
+              .map(interfaceOperationParamDataDefinition -> new OperationInputDefinition(
+                      interfaceOperationParamDataDefinition.getName(),
+                      interfaceOperationParamDataDefinition.getProperty(),
+                      interfaceOperationParamDataDefinition.getMandatory(),
+                      interfaceOperationParamDataDefinition.getType()
+                      )).collect(Collectors.toList());
       inputList.forEach(inputs::add);
     }
     ListDataDefinition<InterfaceOperationParamDataDefinition> outputParams = interfaceOperation.getOutputParams();
     ListDataDefinition<OperationOutputDefinition> outputs = new ListDataDefinition<>();
     if(outputParams != null) {
       List<OperationOutputDefinition> outputList = outputParams.getListToscaDataDefinition().stream()
-              .map(interfaceOperationParamDataDefinition -> new OperationOutputDefinition(interfaceOperationParamDataDefinition.getParamName(),
-                      interfaceOperationParamDataDefinition.getParamId())).collect(Collectors.toList());
+              .map(interfaceOperationParamDataDefinition -> new OperationOutputDefinition(
+                      interfaceOperationParamDataDefinition.getName(),
+                      interfaceOperationParamDataDefinition.getMandatory(),
+                      interfaceOperationParamDataDefinition.getType()
+                      )).collect(Collectors.toList());
       outputList.forEach(outputs::add);
     }
 
@@ -67,7 +74,9 @@ public class InterfaceUIDataConverter {
     ListDataDefinition<OperationInputDefinition> inputs = operationData.getInputs();
     List<InterfaceOperationParamDataDefinition> inputParamList = inputs.getListToscaDataDefinition().stream()
             .map(operationInputDefinition -> new InterfaceOperationParamDataDefinition(operationInputDefinition.getName(),
-                    operationInputDefinition.getInputId())).collect(
+                    operationInputDefinition.getInputId(),
+                    operationInputDefinition.isRequired(),
+                    operationInputDefinition.getType())).collect(
             Collectors.toList());
     ListDataDefinition<InterfaceOperationParamDataDefinition> inputParams = new ListDataDefinition<>();
     inputParamList.forEach(inputParams::add);
@@ -75,7 +84,8 @@ public class InterfaceUIDataConverter {
     ListDataDefinition<OperationOutputDefinition> outputs = operationData.getOutputs();
     List<InterfaceOperationParamDataDefinition> outputParamList = outputs.getListToscaDataDefinition()
             .stream().map(operationOutputDefinition -> new InterfaceOperationParamDataDefinition(operationOutputDefinition.getName(),
-                    operationOutputDefinition.getInputId())).collect(Collectors.toList());
+                    operationOutputDefinition.isRequired(),
+                    operationOutputDefinition.getType())).collect(Collectors.toList());
     ListDataDefinition<InterfaceOperationParamDataDefinition> outputParams = new ListDataDefinition<>();
     outputParamList.forEach(outputParams::add);
 

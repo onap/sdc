@@ -15,7 +15,7 @@ public class OperationInputDefinitionTest {
 
 		// default test
 		testSubject = createTestSubject();
-		new OperationInputDefinition("", "");
+		new OperationInputDefinition("", "", true, "");
 		new OperationInputDefinition("stam", testSubject);
 	}
 	

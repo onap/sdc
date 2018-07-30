@@ -16,7 +16,7 @@ public class InterfaceOperationParamDataDefinitionTest {
 		// default test
 		testSubject = createTestSubject();
 		new InterfaceOperationParamDataDefinition(testSubject);
-		new InterfaceOperationParamDataDefinition("", "");
+		new InterfaceOperationParamDataDefinition("", "",true, "");
 	}
 	
 	@Test
@@ -26,7 +26,7 @@ public class InterfaceOperationParamDataDefinitionTest {
 
 		// default test
 		testSubject = createTestSubject();
-		result = testSubject.getParamName();
+		result = testSubject.getName();
 	}
 
 	@Test
@@ -36,7 +36,7 @@ public class InterfaceOperationParamDataDefinitionTest {
 
 		// default test
 		testSubject = createTestSubject();
-		testSubject.setParamName(paramName);
+		testSubject.setName(paramName);
 	}
 
 	@Test
@@ -46,7 +46,7 @@ public class InterfaceOperationParamDataDefinitionTest {
 
 		// default test
 		testSubject = createTestSubject();
-		result = testSubject.getParamId();
+		result = testSubject.getProperty();
 	}
 
 	@Test
@@ -56,6 +56,6 @@ public class InterfaceOperationParamDataDefinitionTest {
 
 		// default test
 		testSubject = createTestSubject();
-		testSubject.setParamId(paramId);
+		testSubject.setProperty(paramId);
 	}
 }

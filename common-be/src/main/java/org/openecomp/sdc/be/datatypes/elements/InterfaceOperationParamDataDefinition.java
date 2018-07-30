@@ -21,8 +21,10 @@ import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 
 import java.io.Serializable;
 
-import static org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields.IO_PARAM_ID;
-import static org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields.IO_PARAM_NAME;
+import static org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields.IO_MANDATORY;
+import static org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields.IO_PROPERTY;
+import static org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields.IO_NAME;
+import static org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields.IO_TYPE;
 
 public class InterfaceOperationParamDataDefinition extends ToscaDataDefinition implements Serializable {
 
@@ -33,28 +35,53 @@ public class InterfaceOperationParamDataDefinition extends ToscaDataDefinition i
 
     public InterfaceOperationParamDataDefinition(InterfaceOperationParamDataDefinition iopdd) {
         super();
-        setParamName(iopdd.getParamName());
-        setParamId(iopdd.getParamId());
+        setName(iopdd.getName());
+        setProperty(iopdd.getProperty());
+        setMandatory(iopdd.getMandatory());
+        setType(iopdd.getType());
     }
 
-    public InterfaceOperationParamDataDefinition(String paramName, String paramId) {
+    public InterfaceOperationParamDataDefinition(String paramName, String paramId, boolean mandatory, String type) {
         super();
-        setParamName(paramName);
-        setParamId(paramId);
+        setName(paramName);
+        setProperty(paramId);
+        setMandatory(mandatory);
+        setType(type);
     }
 
-    public String getParamName() {
-        return (String) getToscaPresentationValue(IO_PARAM_NAME);
-    }
-    public void setParamName(String paramName) {
-        setToscaPresentationValue(IO_PARAM_NAME, paramName);
-    }
-
-    public String getParamId() {
-        return (String) getToscaPresentationValue(IO_PARAM_ID);
-    }
-    public void setParamId(String paramId) {
-        setToscaPresentationValue(IO_PARAM_ID, paramId);
+    //used for OperationOutputDefinition
+    public InterfaceOperationParamDataDefinition(String paramName, boolean mandatory, String type) {
+        super();
+        setName(paramName);
+        setMandatory(mandatory);
+        setType(type);
     }
 
+    public String getName() {
+        return (String) getToscaPresentationValue(IO_NAME);
+    }
+    public void setName(String paramName) {
+        setToscaPresentationValue(IO_NAME, paramName);
+    }
+
+    public String getProperty() {
+        return (String) getToscaPresentationValue(IO_PROPERTY);
+    }
+    public void setProperty(String paramId) {
+        setToscaPresentationValue(IO_PROPERTY, paramId);
+    }
+
+    public Boolean getMandatory() {
+        return (Boolean) getToscaPresentationValue(IO_MANDATORY);
+    }
+    public void setMandatory(Boolean mandatory) {
+        setToscaPresentationValue(IO_MANDATORY, mandatory);
+    }
+
+    public String getType() {
+        return (String) getToscaPresentationValue(IO_TYPE);
+    }
+    public void setType(String type) {
+        setToscaPresentationValue(IO_TYPE, type);
+    }
 }
