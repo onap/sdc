@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a6a9dd7_ab3361f5",
+        "filename": "catalog-fe/src/main/java/org/openecomp/sdc/fe/servlets/FeProxyServlet.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-07-30T21:57:14Z",
+      "side": 1,
+      "message": "keep in mind that this is error prone.\nas the ide may change and the logic is hard coded.",
+      "range": {
+        "startLine": 51,
+        "startChar": 28,
+        "endLine": 51,
+        "endChar": 48
+      },
+      "revId": "b4920529c2fa5b138009bc7276631a46a1966f6a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a6a9dd7_2b09912c",
+        "filename": "catalog-fe/src/main/java/org/openecomp/sdc/fe/servlets/FeProxyServlet.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 214,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-07-30T21:57:14Z",
+      "side": 1,
+      "message": "why not call the function getconfig below and request from it the configuration for the plugins?",
+      "range": {
+        "startLine": 214,
+        "startChar": 9,
+        "endLine": 214,
+        "endChar": 53
+      },
+      "revId": "b4920529c2fa5b138009bc7276631a46a1966f6a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
