@@ -28,8 +28,7 @@ default['elasticsearch']['cluster_name'] = "SDC-ES-"
 default['ONBOARDING_BE'][:http_port] = 8081
 default['ONBOARDING_BE'][:https_port] = 8445
 
-#UEB 
-default['UEB']['fqdn'] = [ "uebsb91sfdc.it.att.com", "uebsb92sfdc.it.att.com", "uebsb93sfdc.it.att.com" ]
+#UEB
 default['UEB']['PublicKey'] = "sSJc5qiBnKy2qrlc"
 default['UEB']['SecretKey'] = "4ZRPzNJfEUK0sSNBvccd2m7X"
 
