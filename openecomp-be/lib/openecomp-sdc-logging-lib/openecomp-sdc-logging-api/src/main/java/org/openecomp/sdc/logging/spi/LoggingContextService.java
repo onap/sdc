@@ -16,9 +16,8 @@
 
 package org.openecomp.sdc.logging.spi;
 
-import org.openecomp.sdc.logging.api.ContextData;
-
 import java.util.concurrent.Callable;
+import org.openecomp.sdc.logging.api.ContextData;
 
 /**
  * Should be used to implement a framework-specific mechanism of managing a per-thread diagnostic context (for instance
