@@ -1,11 +1,15 @@
 import * as _ from "lodash";
 import {Component, Input, ComponentRef, Inject} from '@angular/core';
 import {Component as IComponent} from 'app/models/components/component';
+
+import {ModalComponent} from 'app/ng2/components/ui/modal/modal.component';
 import {ModalService} from 'app/ng2/services/modal.service';
 import {ModalModel, ButtonModel, InputModel, OperationModel, CreateOperationResponse} from 'app/models';
-import {ModalComponent} from 'app/ng2/components/ui/modal/modal.component';
+
 import {ComponentServiceNg2} from 'app/ng2/services/component-services/component.service';
 import {ComponentGenericResponse} from 'app/ng2/services/responses/component-generic-response';
+import {WorkflowServiceNg2} from 'app/ng2/services/workflow.service';
+
 import {OperationCreatorComponent} from './operation-creator/operation-creator.component';
 
 @Component({
@@ -27,6 +31,7 @@ export class InterfaceOperationComponent {
     constructor(
         @Inject('$state') private $state:ng.ui.IStateService,
         private ComponentServiceNg2: ComponentServiceNg2,
+        private WorkflowServiceNg2: WorkflowServiceNg2,
         private ModalServiceNg2: ModalService,
     ) {}
 
@@ -87,8 +92,15 @@ export class InterfaceOperationComponent {
                 () => {
                     this.modalInstance.instance.dynamicContent.instance.createInputParamList();
                     this.ModalServiceNg2.closeCurrentModal();
-                    const {operation} = this.modalInstance.instance.dynamicContent.instance;
-                    this.openOperation = operation;
+
+                    const {operation, isAssociateWorkflow} = this.modalInstance.instance.dynamicContent.instance;
+                    this.openOperation = {...operation};
+
+                    if (!isAssociateWorkflow) {
+                        operation.workflowId = null;
+                        operation.workflowVersionId = null;
+                    }
+
                     modalData.submitCallback(operation);
                 },
                 this.getDisabled,
@@ -103,6 +115,7 @@ export class InterfaceOperationComponent {
             );
 
             this.modalInstance = this.ModalServiceNg2.createCustomModal(modalModel);
+
             this.ModalServiceNg2.addDynamicContentToModal(
                 this.modalInstance,
                 OperationCreatorComponent,
@@ -145,22 +158,15 @@ export class InterfaceOperationComponent {
         this.ComponentServiceNg2.createInterfaceOperation(this.component, operation).subscribe((response: CreateOperationResponse) => {
             this.openOperation = null;
 
-            const workflowId = response.artifactUUID;
-            const operationId = response.uniqueId;
-            const resourceId = this.component.uuid;
+            if (response.workflowId) {
+                const resourceId = this.component.uuid;
+                const operationId = response.uniqueId;
+                const workflowId = response.workflowId;
+                const versionId = response.workflowVersionId;
+                const artifactId = response.artifactUUID;
 
-            const queryParams = {
-                id: workflowId,
-                operationID: operationId,
-                uuid: resourceId,
-                displayMode: 'create',
-            };
-
-            this.$state.go('workspace.plugins', {
-                path: 'workflowDesigner',
-                queryParams
-            });
-
+                this.WorkflowServiceNg2.associateWorkflowArtifact(resourceId, operationId, workflowId, versionId, artifactId);
+            }
         });
     }
 

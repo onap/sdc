@@ -4,7 +4,7 @@ const mockApis = require('./configurations/mock.json').sdcConfig;
 const proxy = require('http-proxy-middleware');
 const devPort = 9000;
 const fePort = 8181;
-const loclahost = "192.168.33.10"; // "localhost"
+const localhost = "192.168.33.10"; // "localhost" 
 
 module.exports = function(env) {
 
@@ -25,65 +25,79 @@ module.exports = function(env) {
 			exclude: ['node_modules']
 		},
 		setup: server => {
-		let userType = mockApis.userTypes[env.role];
+			let userType = mockApis.userTypes[env.role];
 
-	let middlewares = [
-		(req, res, next) => {
-		res.cookie(mockApis.cookie.userIdSuffix, req.headers[mockApis.cookie.userIdSuffix] || userType.userId);
-	res.cookie(mockApis.cookie.userEmail, req.headers[mockApis.cookie.userEmail] || userType.email);
-	res.cookie(mockApis.cookie.userFirstName, req.headers[mockApis.cookie.userFirstName] || userType.firstName);
-	res.cookie(mockApis.cookie.userLastName, req.headers[mockApis.cookie.userLastName] || userType.lastName);
-	next();
-}
-];
+			let middlewares = [
+				(req, res, next) => {
+					res.cookie(mockApis.cookie.userIdSuffix, req.headers[mockApis.cookie.userIdSuffix] || userType.userId);
+					res.cookie(mockApis.cookie.userEmail, req.headers[mockApis.cookie.userEmail] || userType.email);
+					res.cookie(mockApis.cookie.userFirstName, req.headers[mockApis.cookie.userFirstName] || userType.firstName);
+					res.cookie(mockApis.cookie.userLastName, req.headers[mockApis.cookie.userLastName] || userType.lastName);
+					next();
+				}
+			];
 
-	// Redirect all '/sdc1/feProxy/rest' to feHost
-	middlewares.push(
-		proxy(['/sdc1/feProxy/rest'],{
-			target: 'http://' + loclahost + ':' + fePort,
-			changeOrigin: true,
-			secure: false
-		}));
+			// Redirect all '/sdc1/feProxy/rest' to feHost
+			middlewares.push(
+				proxy(['/sdc1/feProxy/rest'], {
+					target: 'http://' + localhost + ':' + fePort,
+					changeOrigin: true,
+					secure: false
+				}));
 
-	// Redirect all '/sdc1/rest' to feHost
-	middlewares.push(
-		proxy(['/sdc1/rest'],{
-			target: 'http://' + loclahost + ':' + fePort,
-			changeOrigin: true,
-			secure: false
-		}));
+			// Redirect all '/sdc1/rest' to feHost
+			middlewares.push(
+				proxy(['/sdc1/rest'],{
+					target: 'http://' + localhost + ':' + fePort,
+					changeOrigin: true,
+					secure: false
+				}));
 
-	// Redirect dcae urls to feHost
-	middlewares.push(
-		proxy(['/dcae','/sdc1/feProxy/dcae-api'],{
-			target: 'http://' + loclahost + ':' + fePort,
-			changeOrigin: true,
-			secure: false,
-			onProxyRes: (proxyRes, req, res) => {
-			let setCookie = proxyRes.headers['set-cookie'];
-	if (setCookie) {
-		setCookie[0] = setCookie[0].replace(/\bSecure\b(; )?/, '');
-	}
-}
-}));
+			// Redirect dcae urls to feHost
+			middlewares.push(
+				proxy(['/dcae','/sdc1/feProxy/dcae-api'], {
+					target: 'http://' + localhost + ':' + fePort,
+					changeOrigin: true,
+					secure: false,
+					onProxyRes: (proxyRes, req, res) => {
+						let setCookie = proxyRes.headers['set-cookie'];
+						if (setCookie) {
+							setCookie[0] = setCookie[0].replace(/\bSecure\b(; )?/, '');
+						}
+					}
+			}));
 
-	// Redirect onboarding urls to feHost
-	middlewares.push(
-		proxy(['/onboarding','/sdc1/feProxy/onboarding-api'],{
-			target: 'http://' + loclahost + ':' + fePort,
-			changeOrigin: true,
-			secure: false,
-			onProxyRes: (proxyRes, req, res) => {
-			let setCookie = proxyRes.headers['set-cookie'];
-	if (setCookie) {
-		setCookie[0] = setCookie[0].replace(/\bSecure\b(; )?/, '');
-	}
-}
-}));
+			// Redirect onboarding urls to feHost
+			middlewares.push(
+				proxy(['/onboarding', '/sdc1/feProxy/onboarding-api'], {
+					target: 'http://' + localhost + ':' + fePort,
+					changeOrigin: true,
+					secure: false,
+					onProxyRes: (proxyRes, req, res) => {
+						let setCookie = proxyRes.headers['set-cookie'];
+						if (setCookie) {
+							setCookie[0] = setCookie[0].replace(/\bSecure\b(; )?/, '');
+						}
+					}
+			}));
 
-	server.use(middlewares);
-}
-};
+			// Redirect workflow urls to feHost
+			middlewares.push(
+				proxy(['/sdc1/feProxy/wf', '/wf'], {
+					target: 'http://' + localhost + ':' + fePort,
+					changeOrigin: true,
+					secure: false,
+					onProxyRes: (proxyRes, req, res) => {
+						let setCookie = proxyRes.headers['set-cookie'];
+						if (setCookie) {
+							setCookie[0] = setCookie[0].replace(/\bSecure\b(; )?/, '');
+						}
+					}
+			}));
+
+			server.use(middlewares);
+		}
+	};
 
 	return ServerConfig;
 }
