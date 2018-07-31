@@ -1,18 +1,40 @@
-<div class="cell">
+<div class="cell field-name">
     <input
+        *ngIf="!isAssociateWorkflow"
         type="text"
-        data-tests-id="inputParamName"
-        [(ngModel)]="param.paramName" />
+        data-tests-id="paramName"
+        [(ngModel)]="param.name" />
+    <span *ngIf="isAssociateWorkflow">{{param.name}}</span>
 </div>
 
-<ui-element-dropdown
-    class="cell"
-    data-tests-id="inputParamProperty"
-    [values]="inputProps"
-    [(value)]="param.paramId">
-</ui-element-dropdown>
+<div class="cell field-type">
+    <ui-element-dropdown
+        *ngIf="!isAssociateWorkflow"
+        data-tests-id="paramType"
+        [values]="propTypeEnum"
+        [(value)]="param.type"
+        (valueChange)="onChangeType()">
+    </ui-element-dropdown>
+    <span *ngIf="isAssociateWorkflow">{{param.type}}</span>
+</div>
 
-<div class="cell remove">
+<div class="cell field-property">
+    <ui-element-dropdown
+        data-tests-id="paramProperty"
+        [values]="filteredInputProps"
+        [(value)]="param.property">
+    </ui-element-dropdown>
+</div>
+
+<div class="cell field-mandatory" *ngIf="!isAssociateWorkflow">
+    <checkbox
+        *ngIf="!isAssociateWorkflow"
+        data-tests-id="paramMandatory"
+        [(checked)]="param.mandatory">
+    </checkbox>
+</div>
+
+<div class="cell remove" *ngIf="!isAssociateWorkflow">
     <span
         class="sprite-new delete-item-icon"
         data-tests-id="removeInputParam"

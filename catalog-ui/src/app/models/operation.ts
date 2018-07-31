@@ -1,27 +1,43 @@
 'use strict';
 
-export class OperationParam {
-    paramName: string = '';
-    paramId: string = '';
+export class OperationParameter {
+    name: string;
+    type: string;
+    property: string;
+    mandatory: boolean;
 
-    constructor(param?: OperationParam) {
+    constructor(param?: OperationParameter) {
         if (param) {
-            this.paramId = param.paramId;
-            this.paramName = param.paramName;
+            this.name = param.name;
+            this.type = param.type;
+            this.property = param.property;
+            this.mandatory = param.mandatory;
         }
     }
 }
 
 export interface IOperationParamsList {
-    listToscaDataDefinition: Array<OperationParam>;
+    listToscaDataDefinition: Array<OperationParameter>;
 }
 
 export class OperationModel {
-    description: string;
-    inputParams: IOperationParamsList;
     operationType: string;
-    outputParams: IOperationParamsList;
+    description: string;
     uniqueId: string;
+
+    inputParams: IOperationParamsList;
+    outputParams: IOperationParamsList;
+
+    workflowId: string;
+    workflowVersionId: string;
+
+    protected OperationTypeEnum: Array<String> = [
+        'Create',
+        'Delete',
+        'Instantiate',
+        'Start',
+        'Stop'
+    ];
 
     constructor(operation?: any) {
         if (operation) {
@@ -30,16 +46,18 @@ export class OperationModel {
             this.operationType = operation.operationType;
             this.outputParams = operation.outputParams;
             this.uniqueId = operation.uniqueId;
+            this.workflowId = operation.workflowId;
+            this.workflowVersionId = operation.workflowVersionId;
         }
     }
 
-    public createInputParamsList(inputParams: Array<OperationParam>): void {
+    public createInputParamsList(inputParams: Array<OperationParameter>): void {
         this.inputParams = {
             listToscaDataDefinition: inputParams
         };
     }
 
-    public createOutputParamsList(outputParams: Array<OperationParam>): void {
+    public createOutputParamsList(outputParams: Array<OperationParameter>): void {
         this.outputParams = {
             listToscaDataDefinition: outputParams
         };

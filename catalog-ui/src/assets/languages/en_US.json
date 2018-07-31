@@ -451,6 +451,9 @@
     "SERVICE_PATH_SELECTOR_HIDE_ALL_VALUE" : "⚊ Hide all ⚊",
     "SERVICE_PATH_SELECTOR_SHOW_ALL_VALUE" : "⚊ Show all ⚊",
 
+    "=========== OPERATION CREATOR ============": "",
+    "OPERATION_PROPERTY_TOOLTIP_TEXT": "VNF properties are defined by the input parameter type. In case you can't find a certain parameter, it might be due to a wrong type selection.",
+
     "=========== PLUGIN NOT CONNECTED ===========": "",
     "PLUGIN_NOT_CONNECTED_ERROR_MAIN": "The \"{{pluginName}}\" plugin is currently unavailable.",
     "PLUGIN_NOT_CONNECTED_ERROR_SUB": "Please try again later.",

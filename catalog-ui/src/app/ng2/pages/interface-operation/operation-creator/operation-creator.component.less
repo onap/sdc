@@ -48,19 +48,59 @@
         max-height: 233px;
 
         .header-row .header-cell {
-            &:last-child {
-                padding: 0;
+            &.remove {
+                padding: 8px;
+            }
+            .info-icon {
+                float: right;
+            }
+            .tooltip-inner {
+                &.tooltip-inner {
+                    &.tooltip-inner {
+                        max-width: 230px;
+                    }
+                }
             }
         }
 
         .data-row {
             &.empty-msg {
-                padding: 6px 14px;
+                .bold-message {
+                    font-weight: 600;
+                }
+
+                :first-child {
+                    &:not(:only-child) {
+                        margin: 6px 0;
+                    }
+                }
+
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                padding: 11px 0;
             }
         }
 
         /deep/ .cell {
-            &:last-child {
+            &.field-name {
+                flex: 2;
+            }
+
+
+            &.field-mandatory {
+                flex: 0.5;
+                text-align: center;
+            }
+
+            &.field-property {
+                &, &:last-child {
+                    flex: 1;
+                }
+            }
+
+            &.remove {
                 min-width: 40px;
             }
         }
