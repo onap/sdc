@@ -1,16 +1,17 @@
 <div class="operation-creator">
+    <loader [display]="isLoading" [size]="'large'" [relative]="true"></loader>
+
     <form class="w-sdc-form">
 
         <div class="side-by-side">
             <div class="i-sdc-form-item">
-                <label class="i-sdc-form-label">Operation Type</label>
-                <input
-                    type="text"
-                    data-tests-id="operationType"
-                    name="operationType"
-                    [(ngModel)]="operation.operationType"
-                    [attr.maxLength]="200"
-                    [disabled]="isEditMode" />
+                <label class="i-sdc-form-label" [ngClass]="{'required': !isEditMode}">Operation Type</label>
+                <ui-element-dropdown
+                    data-tests-id="operationTypeDropdown"
+                    [values]="operationTypeEnum"
+                    [(value)]="operation.operationType"
+                    [readonly]="isEditMode">
+                </ui-element-dropdown>
             </div>
 
             <div class="i-sdc-form-item" >
@@ -24,33 +25,85 @@
             </div>
         </div>
 
+        <div class="i-sdc-form-item">
+            <checkbox
+                [label]="'Assign Workflow'"
+                [(checked)]="isAssociateWorkflow"
+                (checkedChange)="toggleAssociateWorkflow()"
+                data-tests-id="checkbox-assign-workflow">
+            </checkbox>
+        </div>
+
+        <div class="side-by-side" *ngIf="isAssociateWorkflow">
+            <div class="i-sdc-form-item">
+                <label class="i-sdc-form-label required">Workflow</label>
+                <ui-element-dropdown
+                    data-tests-id="associated-workflow"
+                    [values]="workflows"
+                    [(value)]="operation.workflowId"
+                    (valueChange)="onSelectWorkflow()">
+                </ui-element-dropdown>
+            </div>
+
+            <div class="i-sdc-form-item">
+                <label class="i-sdc-form-label required">Workflow Version</label>
+                <ui-element-dropdown
+                    data-tests-id="associated-workflow-version"
+                    [ngClass]="{'disabled': !operation.workflowId}"
+                    [values]="workflowVersions"
+                    [(value)]="operation.workflowVersionId"
+                    (valueChange)="changeWorkflowVersion()">
+                </ui-element-dropdown>
+            </div>
+        </div>
+
         <div class="separator-buttons">
             <span class="input-param-title">Input Parameters</span>
             <a
-                class="add-param-link"
+                class="add-param-link add-btn"
+                *ngIf="!isAssociateWorkflow"
                 data-tests-id="addInputParameter"
-                [ngClass]="{'disabled':!isAddAllowed()}"
-                (click)="addParam()">
-                Add Input Parameter
-            </a>
+                [ngClass]="{'disabled':!isParamsValid()}"
+                (click)="addParam()">Add Input Parameter</a>
         </div>
 
         <div class="generic-table">
             <div class="header-row table-row">
-                <span class="cell header-cell">Name</span>
-                <span class="cell header-cell">Property Name</span>
-                <span class="cell header-cell"></span>
+                <span class="cell header-cell field-name">Name</span>
+                <span class="cell header-cell">Type</span>
+                <span class="cell header-cell field-property">
+                    Property
+                    <span
+                        *ngIf="!isAssociateWorkflow"
+                        class="sprite-new info-icon"
+                        tooltip="{{propertyTooltipText}}"
+                        tooltipDelay="0">
+                    </span>
+                </span>
+                <span class="cell header-cell field-mandatory" *ngIf="!isAssociateWorkflow">Mandatory</span>
+                <span class="cell header-cell remove" *ngIf="!isAssociateWorkflow">●●●</span>
             </div>
 
-            <div class="empty-msg data-row" *ngIf="inputParams.length === 0">
-                No data to display.
+            <div class="empty-msg data-row" *ngIf="inputParameters.length === 0">
+                <div>NO PARAMETERS TO SHOW</div>
+                <div *ngIf="isAssociateWorkflow && !operation.workflowVersionId">
+                    <div *ngIf="workflows.length">
+                        <span class="bold-message">Select Workflow and Workflow Version above</span>
+                        <span>in order to see the parameters</span>
+                    </div>
+                    <div *ngIf="!workflows.length">
+                        Only <span class="bold-message">certified</span> workflow versions can be assigned to an operation
+                    </div>
+                </div>
             </div>
 
             <param-row
-                *ngFor="let param of inputParams; let idx=index"
+                *ngFor="let param of inputParameters; let idx=index"
                 class="data-row"
+                [isAssociateWorkflow]="isAssociateWorkflow"
                 [param]="param"
                 [inputProps]="inputProperties"
+                [propTypes]="inputPropertyTypes"
                 [onRemoveParam]="onRemoveParam">
             </param-row>
         </div>

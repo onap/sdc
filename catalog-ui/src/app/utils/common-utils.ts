@@ -153,13 +153,23 @@ export class CommonUtils {
                         });
                         if (inputs) {
                             const inputParams = _.map(inputs.listToscaDataDefinition, (input:any) => {
-                                return {paramName: input.name, paramId: input.inputId};
+                                return {
+                                    name: input.name,
+                                    property: input.inputId,
+                                    type: input.type,
+                                    mandatory: input.mandatory
+                                };
                             });
                             operation.createInputParamsList(inputParams);
                         }
                         if (outputs) {
                             const outputParams = _.map(outputs.listToscaDataDefinition, (output:any) => {
-                                return {paramName: output.name, paramId: output.outputId};
+                                return {
+                                    name: output.name,
+                                    property: output.inputId,
+                                    type: output.type,
+                                    mandatory: output.mandatory
+                                };
                             });
                             operation.createOutputParamsList(outputParams);
                         }

@@ -41,11 +41,12 @@ import { ComponentServiceNg2 } from "./services/component-services/component.ser
 import { ComponentServiceFactoryNg2 } from "./services/component-services/component.service.factory";
 import { ServiceServiceNg2 } from "./services/component-services/service.service";
 import { ComponentInstanceServiceNg2 } from "./services/component-instance-services/component-instance.service";
+import { WorkflowServiceNg2 } from './services/workflow.service';
 import { ModalService } from "./services/modal.service";
 import { UiElementsModule } from "./components/ui/ui-elements.module";
 import { ConnectionWizardModule } from "./pages/connection-wizard/connection-wizard.module";
-import {InterfaceOperationModule} from "./pages/interface-operation/interface-operation.module";
-import {OperationCreatorModule} from "./pages/interface-operation/operation-creator/operation-creator.module";
+import { InterfaceOperationModule } from "./pages/interface-operation/interface-operation.module";
+import { OperationCreatorModule } from "./pages/interface-operation/operation-creator/operation-creator.module";
 import { LayoutModule } from "./components/layout/layout.module";
 import { UserService } from "./services/user.service";
 import { DynamicComponentService } from "./services/dynamic-component.service";
@@ -135,6 +136,7 @@ export function configServiceFactory(config: ConfigService) {
         ModalService,
         ServiceServiceNg2,
         AutomatedUpgradeService,
+        WorkflowServiceNg2,
         HttpService,
         UserService,
         PoliciesService,

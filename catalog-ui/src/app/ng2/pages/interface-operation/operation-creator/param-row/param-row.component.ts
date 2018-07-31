@@ -1,6 +1,6 @@
 import {Component, Input} from '@angular/core';
 import {DropdownValue} from "app/ng2/components/ui/form-components/dropdown/ui-element-dropdown.component";
-import {OperationParam} from 'app/models';
+import {OperationParameter} from 'app/models';
 
 @Component({
     selector: 'param-row',
@@ -9,7 +9,22 @@ import {OperationParam} from 'app/models';
 })
 
 export class ParamRowComponent {
-    @Input() param: OperationParam;
+    @Input() param: OperationParameter;
     @Input() inputProps: Array<DropdownValue>;
+    @Input() propTypes: {};
     @Input() onRemoveParam: Function;
+    @Input() isAssociateWorkflow: boolean;
+
+    propTypeEnum: Array<string> = ['boolean', 'float', 'integer', 'string'];
+    filteredInputProps: Array<DropdownValue> = [];
+
+    ngOnInit() {
+        this.onChangeType();
+    }
+
+    onChangeType() {
+        this.filteredInputProps = _.filter(this.inputProps, prop => {
+            return this.propTypes[prop.value] === this.param.type;
+        });
+    }
 }
