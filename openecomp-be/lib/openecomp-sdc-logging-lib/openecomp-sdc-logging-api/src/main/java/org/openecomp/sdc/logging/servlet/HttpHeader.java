@@ -16,6 +16,11 @@
 
 package org.openecomp.sdc.logging.servlet;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Function;
 
 /**
@@ -28,28 +33,79 @@ import java.util.function.Function;
  */
 public class HttpHeader {
 
-    private final String[] keys;
+    private static final String NAMES_CANNOT_BE_NULL = "Names cannot be null";
+    private static final String AT_LEAST_ONE_NAME_REQUIRED = "At least one name required";
 
-    public HttpHeader(String... keys) {
-        this.keys = keys;
+    private final List<String> names;
+
+    /**
+     * Receives a list of accepted header names as a String array.
+     *
+     * @param names cannot be null or empty
+     */
+    public HttpHeader(String[] names) {
+
+        if (Objects.requireNonNull(names, NAMES_CANNOT_BE_NULL).length < 1) {
+            throw new IllegalArgumentException(AT_LEAST_ONE_NAME_REQUIRED);
+        }
+
+        this.names = Arrays.asList(names);
+    }
+
+    /**
+     * Receives a list of accepted header names as a list of String.
+     *
+     * @param names cannot be null or empty
+     */
+    public HttpHeader(List<String> names) {
+
+        if (Objects.requireNonNull(names, NAMES_CANNOT_BE_NULL).isEmpty()) {
+            throw new IllegalArgumentException(AT_LEAST_ONE_NAME_REQUIRED);
+        }
+
+        this.names = new ArrayList<>(names);
     }
 
     /**
      * Returns the value of any of the possible headers.
      *
      * @param reader function for reading an HTTP header.
-     * @return value or null if not found
+     * @return value or empty if not found
      */
-    public String getAny(Function<String, String> reader) {
+    public Optional<String> getAny(Function<String, String> reader) {
 
-        for (String k : keys) {
+        for (String k : names) {
 
             String value = reader.apply(k);
             if (value != null) {
-                return value;
+                return Optional.of(value);
             }
         }
 
-        return null;
+        return Optional.empty();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        HttpHeader that = (HttpHeader) o;
+        return Objects.equals(names, that.names);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(names);
+    }
+
+    @Override
+    public String toString() {
+        return "HttpHeader{" + "names=" + names + '}';
     }
 }
