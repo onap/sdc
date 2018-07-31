@@ -16,19 +16,16 @@
 
 package org.openecomp.sdc.logging.servlet.jaxrs;
 
-import org.openecomp.sdc.logging.api.*;
-
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerResponseContext;
 import javax.ws.rs.container.ContainerResponseFilter;
-import javax.ws.rs.container.ResourceInfo;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.Provider;
-
-import static org.openecomp.sdc.logging.api.StatusCode.COMPLETE;
-import static org.openecomp.sdc.logging.api.StatusCode.ERROR;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
+import org.openecomp.sdc.logging.api.LoggingContext;
 
 /**
  * <p>Takes care of logging when an HTTP request leaves the application. This includes writing to audit and clearing
@@ -51,19 +48,10 @@ import static org.openecomp.sdc.logging.api.StatusCode.ERROR;
 @Provider
 public class LoggingResponseFilter implements ContainerResponseFilter {
 
-    private static final int UNKNOWN_START_TIME = 0;
-
     private static final Logger LOGGER = LoggerFactory.getLogger(LoggingResponseFilter.class);
 
-    /**
-     * Tracks reporting configuration problems to the log. We want to report them only once, and not to write to log
-     * upon every request, as the configuration will not change in runtime.
-     */
-    private boolean reportBadConfiguration = true;
-
     private HttpServletRequest httpRequest;
-
-    private ResourceInfo resource;
+    private HttpServletResponse httpResponse;
 
     /**
      * Injection of HTTP request object from JAX-RS context.
@@ -76,13 +64,13 @@ public class LoggingResponseFilter implements ContainerResponseFilter {
     }
 
     /**
-     * Injection of a resource that matches the request from JAX-RS context.
+     * Injection of HTTP response object from JAX-RS context.
      *
-     * @param resource automatically injected by JAX-RS container
+     * @param httpResponse automatically injected by JAX-RS container
      */
     @Context
-    public void setResource(ResourceInfo resource) {
-        this.resource = resource;
+    public void setHttpResponse(HttpServletResponse httpResponse) {
+        this.httpResponse = httpResponse;
     }
 
     @Override
@@ -103,65 +91,8 @@ public class LoggingResponseFilter implements ContainerResponseFilter {
         }
     }
 
-    private void writeAudit(ContainerRequestContext containerRequestContext,
-            ContainerResponseContext containerResponseContext) {
 
-        Logger resourceLogger = LoggerFactory.getLogger(resource.getResourceMethod().getDeclaringClass());
-        if (!resourceLogger.isAuditEnabled()) {
-            return;
-        }
+//        Logger resourceLogger = LoggerFactory.getLogger(resource.getResourceMethod().getDeclaringClass());
 
-        long start = readStartTime(containerRequestContext);
-        long end = System.currentTimeMillis();
-
-        Response.StatusType statusInfo = containerResponseContext.getStatusInfo();
-        int responseCode = statusInfo.getStatusCode();
-        StatusCode statusCode = isSuccess(responseCode) ? COMPLETE : ERROR;
-
-        AuditData auditData = AuditData.builder().startTime(start).endTime(end).statusCode(statusCode)
-                                       .responseCode(Integer.toString(responseCode))
-                                       .responseDescription(statusInfo.getReasonPhrase())
-                                       .clientIpAddress(httpRequest.getRemoteAddr()).build();
-        resourceLogger.audit(auditData);
-    }
-
-    private boolean isSuccess(int responseCode) {
-        return responseCode > 199 && responseCode < 400;
-    }
-
-    private long readStartTime(ContainerRequestContext containerRequestContext) {
-
-        Object startTime = containerRequestContext.getProperty(LoggingRequestFilter.START_TIME_KEY);
-        if (startTime == null) {
-            return handleMissingStartTime();
-        }
-
-        return parseStartTime(startTime);
-    }
-
-    private long handleMissingStartTime() {
-        reportConfigProblem("{} key was not found in JAX-RS request context. "
-                + "Make sure you configured a request filter", LoggingRequestFilter.START_TIME_KEY);
-        return UNKNOWN_START_TIME;
-    }
-
-    private long parseStartTime(Object startTime) {
-
-        try {
-            return Long.class.cast(startTime);
-        } catch (ClassCastException e) {
-            reportConfigProblem("{} key in JAX-RS request context contains an object of type '{}', but 'java.lang.Long'"
-                    + " is expected", LoggingRequestFilter.START_TIME_KEY, startTime.getClass().getName(), e);
-            return 0;
-        }
-    }
-
-    private void reportConfigProblem(String message, Object... arguments) {
-
-        if (reportBadConfiguration) {
-            reportBadConfiguration = false;
-            LOGGER.error(message, arguments);
-        }
-    }
 }
 

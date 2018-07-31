@@ -20,6 +20,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
 import java.util.function.Function;
+import java.util.function.Supplier;
 import org.junit.Test;
 import org.openecomp.sdc.logging.servlet.HttpHeader;
 
@@ -33,6 +34,7 @@ public class HttpHeaderTest {
 
     private static final String KEY_FIRST = "First";
     private static final String KEY_SECOND = "Second";
+    private static final Supplier<? extends Throwable> VALUE_EXPECTED = () -> new AssertionError("Value expected");
 
     @Test
     public void valueReturnedWhenSinglePossibleHeader() {
@@ -41,7 +43,7 @@ public class HttpHeaderTest {
         final String value = "1234";
 
         Function<String, String> reader = createReader(key, value);
-        HttpHeader header = new HttpHeader(key);
+        HttpHeader header = new HttpHeader(new String[]{ key });
         assertEquals(value, header.getAny(reader));
     }
 
@@ -51,44 +53,44 @@ public class HttpHeaderTest {
         final String key = "Head";
 
         Function<String, String> reader = createReader(key, null);
-        HttpHeader header = new HttpHeader(key);
+        HttpHeader header = new HttpHeader(new String[]{ key });
         assertNull(header.getAny(reader));
     }
 
     @Test
     public void nullReturnedWhenNoneHeaderMatches() {
         Function<String, String> reader = createReader("None", "Value");
-        HttpHeader header = new HttpHeader("A", "B", "C");
+        HttpHeader header = new HttpHeader(new String[]{ "A", "B", "C" });
         assertNull(header.getAny(reader));
     }
 
     @Test
-    public void valueReturnedWhenLastHeaderMatches() {
+    public void valueReturnedWhenLastHeaderMatches() throws Throwable {
 
         final String lastKey = "Last";
         final String value = "1234";
 
         Function<String, String> reader = createReader(lastKey, value);
-        HttpHeader header = new HttpHeader(KEY_FIRST, KEY_SECOND, lastKey);
-        assertEquals(value, header.getAny(reader));
+        HttpHeader header = new HttpHeader(new String[]{ KEY_FIRST, KEY_SECOND, lastKey });
+        assertEquals(value, header.getAny(reader).orElseThrow(VALUE_EXPECTED));
     }
 
     @Test
-    public void valueReturnedWhenFirstHeaderMatches() {
+    public void valueReturnedWhenFirstHeaderMatches() throws Throwable {
 
         final String value = "1234";
         Function<String, String> reader = createReader(KEY_FIRST, value);
-        HttpHeader header = new HttpHeader(KEY_FIRST, KEY_SECOND, "Third");
-        assertEquals(value, header.getAny(reader));
+        HttpHeader header = new HttpHeader(new String[]{ KEY_FIRST, KEY_SECOND, "Third" });
+        assertEquals(value, header.getAny(reader).orElseThrow(VALUE_EXPECTED));
     }
 
     @Test
-    public void valueReturnedWhenMiddleHeaderMatches() {
+    public void valueReturnedWhenMiddleHeaderMatches() throws Throwable {
 
         final String value = "1234";
         Function<String, String> reader = createReader(KEY_SECOND, value);
-        HttpHeader header = new HttpHeader(KEY_FIRST, KEY_SECOND, "Third");
-        assertEquals(value, header.getAny(reader));
+        HttpHeader header = new HttpHeader(new String[]{ KEY_FIRST, KEY_SECOND, "Third" });
+        assertEquals(value, header.getAny(reader).orElseThrow(VALUE_EXPECTED));
     }
 
     private Function<String, String> createReader(String key, String value) {

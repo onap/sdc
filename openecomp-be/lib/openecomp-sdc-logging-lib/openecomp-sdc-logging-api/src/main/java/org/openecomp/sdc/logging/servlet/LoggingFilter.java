@@ -90,7 +90,7 @@ public class LoggingFilter implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
 
-        HttpServletRequest httpRequest = HttpServletRequest.class.cast(request);
+        HttpServletRequest httpRequest = (HttpServletRequest) request;
 
         try {
 
@@ -100,13 +100,10 @@ public class LoggingFilter implements Filter {
 
             contextData.serviceName(httpRequest.getRequestURI());
 
-            String requestId = requestIdHeaders.getAny(httpRequest::getHeader);
-            contextData.requestId(requestId == null ? UUID.randomUUID().toString() : requestId);
+            partnerNameHeaders.getAny(httpRequest::getHeader).ifPresent(contextData::partnerName);
 
-            String partner = partnerNameHeaders.getAny(httpRequest::getHeader);
-            if (partner != null) {
-                contextData.partnerName(partner);
-            }
+            String requestId = requestIdHeaders.getAny(httpRequest::getHeader).orElse(UUID.randomUUID().toString());
+            contextData.requestId(requestId);
 
             LoggingContext.put(contextData.build());
 
@@ -123,14 +120,8 @@ public class LoggingFilter implements Filter {
     }
 
     private HttpHeader getInitParam(FilterConfig config, String paramName, String defaultValue) {
-
         String value = config.getInitParameter(paramName);
         LOGGER.debug("Logging filter configuration param '{}' value '{}'", paramName, value);
-
-        if (value == null) {
-            return new HttpHeader(defaultValue);
-        } else {
-            return new HttpHeader(value.split(MULTI_VALUE_SEPARATOR));
-        }
+        return new HttpHeader(value == null ? new String[] { defaultValue } : value.split(MULTI_VALUE_SEPARATOR));
     }
 }

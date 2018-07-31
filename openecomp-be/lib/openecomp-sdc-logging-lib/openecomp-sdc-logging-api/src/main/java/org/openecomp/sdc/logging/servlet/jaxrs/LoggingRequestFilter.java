@@ -19,13 +19,12 @@ package org.openecomp.sdc.logging.servlet.jaxrs;
 import static org.openecomp.sdc.logging.LoggingConstants.DEFAULT_PARTNER_NAME_HEADER;
 import static org.openecomp.sdc.logging.LoggingConstants.DEFAULT_REQUEST_ID_HEADER;
 
-import java.util.UUID;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
+import javax.ws.rs.container.ResourceInfo;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.ext.Provider;
-import org.openecomp.sdc.logging.api.ContextData;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.logging.api.LoggingContext;
@@ -66,9 +65,20 @@ public class LoggingRequestFilter implements ContainerRequestFilter {
 
     private HttpServletRequest httpRequest;
 
-    private HttpHeader requestIdHeader = new HttpHeader(DEFAULT_REQUEST_ID_HEADER);
-    private HttpHeader partnerNameHeader = new HttpHeader(DEFAULT_PARTNER_NAME_HEADER);
+    private HttpHeader requestIdHeader = new HttpHeader(new String[]{ DEFAULT_REQUEST_ID_HEADER });
+    private HttpHeader partnerNameHeader = new HttpHeader(new String[]{ DEFAULT_PARTNER_NAME_HEADER});
     private boolean includeHttpMethod = true;
+    private ResourceInfo resource;
+
+    /**
+     * Injection of a resource that matches the request from JAX-RS context.
+     *
+     * @param resource automatically injected by JAX-RS container
+     */
+    @Context
+    public void setResource(ResourceInfo resource) {
+        this.resource = resource;
+    }
 
     /**
      * Injection of HTTP request object from JAX-RS context.
@@ -110,18 +120,7 @@ public class LoggingRequestFilter implements ContainerRequestFilter {
 
         containerRequestContext.setProperty(START_TIME_KEY, System.currentTimeMillis());
 
-        ContextData.ContextDataBuilder contextData = ContextData.builder();
-        contextData.serviceName(getServiceName());
 
-        String partnerName = partnerNameHeader.getAny(containerRequestContext::getHeaderString);
-        if (partnerName != null) {
-            contextData.partnerName(partnerName);
-        }
-
-        String requestId = requestIdHeader.getAny(containerRequestContext::getHeaderString);
-        contextData.requestId(requestId == null ? UUID.randomUUID().toString() : requestId);
-
-        LoggingContext.put(contextData.build());
     }
 
     private String getServiceName() {
