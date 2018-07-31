@@ -5,7 +5,7 @@
     align-items: center;
     justify-content: center;
 
-    .delete-item-icon {
+    .delete-btn {
         &:hover {
             cursor: pointer;
         }
@@ -14,16 +14,26 @@
 
 
 .cell {
-    padding: 0;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+
+    > * {
+        flex-basis: 100%;
+    }
 
     /deep/ select {
         height: 30px;
-        border: none;
     }
 
     input {
         height: 30px;
-        border: none;
         padding-left: 10px;
+    }
+
+    &.field-property {
+        &:last-child {
+            flex: 1;
+        }
     }
 }
