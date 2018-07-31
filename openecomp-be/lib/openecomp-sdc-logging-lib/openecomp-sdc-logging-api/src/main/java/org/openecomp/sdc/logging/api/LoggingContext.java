@@ -16,10 +16,9 @@
 
 package org.openecomp.sdc.logging.api;
 
-import org.openecomp.sdc.logging.spi.LoggingContextService;
-
 import java.util.Objects;
 import java.util.concurrent.Callable;
+import org.openecomp.sdc.logging.spi.LoggingContextService;
 
 /**
  * <p>Factory to hide a concrete, framework-specific implementation of diagnostic context.</p>
