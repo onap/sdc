@@ -16,13 +16,12 @@
 
 package org.openecomp.sdc.logging.api;
 
-import org.openecomp.sdc.logging.spi.LoggerCreationService;
-import org.openecomp.sdc.logging.spi.LoggingContextService;
-import org.openecomp.sdc.logging.spi.LoggingServiceProvider;
-
 import java.util.Iterator;
 import java.util.Optional;
 import java.util.ServiceLoader;
+import org.openecomp.sdc.logging.spi.LoggerCreationService;
+import org.openecomp.sdc.logging.spi.LoggingContextService;
+import org.openecomp.sdc.logging.spi.LoggingServiceProvider;
 
 /**
  * <p>Binds to a concrete implementation of logging services.</p>
@@ -37,7 +36,7 @@ import java.util.ServiceLoader;
 
 // No advanced logging can be used here because we don't know
 // which underlying implementation will be used
-@SuppressWarnings({"UseOfSystemOutOrSystemErr", "squid:S106"})
+@SuppressWarnings({"UseOfSystemOutOrSystemErr", "squid:S106", "squid:S1166"})
 class ServiceBinder {
 
     private static final LoggingServiceProvider PROVIDER = lookupProvider();
