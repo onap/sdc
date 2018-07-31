@@ -997,14 +997,6 @@ node_types:
         description: All attributes.
         type: string
         status: SUPPORTED
-    requirements:
-    - binding:
-        capability: tosca.capabilities.network.Bindable
-        node: org.openecomp.resource.cp.nodes.network.Port
-        relationship: tosca.relationships.network.BindsTo
-        occurrences:
-        - 1
-        - 1
 
   org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface:
     derived_from: org.openecomp.resource.cp.nodes.network.SubInterface

@@ -432,7 +432,11 @@ node_types:
         relationship: tosca.relationships.network.LinksTo
     - binding:
         capability: tosca.capabilities.network.Bindable
+        node: org.openecomp.resource.cp.nodes.network.Port
         relationship: tosca.relationships.network.BindsTo
+        occurrences:
+        - 1
+        - 1
 
   org.openecomp.resource.cp.nodes.network.SubInterface:
     derived_from: tosca.nodes.network.Port
@@ -536,6 +540,14 @@ node_types:
         - UNBOUNDED
       forwarder:
         type: org.openecomp.capabilities.Forwarder
+      binding:
+        type: tosca.capabilities.network.Bindable
+        occurrences:
+        - 0
+        - UNBOUNDED
+        valid_source_types:
+        - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        - org.openecomp.resource.cp.nodes.network.v2.SubInterface
 
   org.openecomp.resource.nodes.DeploymentFlavor:
     derived_from: tosca.nodes.Root
@@ -772,14 +784,6 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      binding:
-        type: tosca.capabilities.network.Bindable
-        valid_source_types:
-        - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
-        - org.openecomp.resource.cp.nodes.heat.network.v2.contrailV2.VLANSubInterface
-        occurrences:
-        - 0
-        - UNBOUNDED
 
   org.openecomp.resource.cp.v2.extContrailCP:
     derived_from: org.openecomp.resource.cp.v2.extCP
@@ -892,15 +896,6 @@ node_types:
         description: All attributes.
         type: string
         status: SUPPORTED
-    capabilities:
-      binding:
-        type: tosca.capabilities.network.Bindable
-        occurrences:
-        - 0
-        - UNBOUNDED
-        valid_source_types:
-        - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
-        - org.openecomp.resource.cp.nodes.heat.network.v2.contrailV2.VLANSubInterface
 
   org.openecomp.nodes.ForwardingPath:
     derived_from: tosca.nodes.Root
