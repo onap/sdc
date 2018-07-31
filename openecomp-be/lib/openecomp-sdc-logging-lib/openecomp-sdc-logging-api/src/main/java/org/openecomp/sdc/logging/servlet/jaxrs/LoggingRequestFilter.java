@@ -19,25 +19,24 @@ package org.openecomp.sdc.logging.servlet.jaxrs;
 import static org.openecomp.sdc.logging.LoggingConstants.DEFAULT_PARTNER_NAME_HEADER;
 import static org.openecomp.sdc.logging.LoggingConstants.DEFAULT_REQUEST_ID_HEADER;
 
-import java.util.UUID;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
+import javax.ws.rs.container.ResourceInfo;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.ext.Provider;
-import org.openecomp.sdc.logging.api.ContextData;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
-import org.openecomp.sdc.logging.api.LoggingContext;
+import org.openecomp.sdc.logging.servlet.CombinedTracker;
 import org.openecomp.sdc.logging.servlet.HttpHeader;
+import org.openecomp.sdc.logging.servlet.Tracker;
 
 /**
  * <p>Takes care of logging initialization an HTTP request hits the application. This includes populating logging
- * context and storing the request processing start time, so that it can be used for audit. The filter was built
- * <b>works in tandem</b> with {@link LoggingResponseFilter} or a similar implementation.</p>
+ * context and tracking the request for audit. The filter <b>works in tandem</b> with {@link LoggingResponseFilter} or
+ * a similar implementation.</p>
  * <p>The filter requires a few HTTP header names to be configured. These HTTP headers are used for propagating logging
- * and tracing information between ONAP components.</p>
- * <p>Sample configuration for a Spring environment:</p>
+ * and tracing information between ONAP components. Sample configuration for a Spring environment:</p>
  * <pre>
  *     &lt;jaxrs:providers&gt;
  *         &lt;bean class="org.openecomp.sdc.logging.ws.rs.LoggingRequestFilter"&gt;
@@ -51,24 +50,33 @@ import org.openecomp.sdc.logging.servlet.HttpHeader;
  * </p>
  *
  * @author evitaliy, katyr
- * @since 29 Oct 17
- *
  * @see ContainerRequestFilter
+ * @since 29 Oct 17
  */
 @Provider
 public class LoggingRequestFilter implements ContainerRequestFilter {
 
-    static final String MULTI_VALUE_SEPARATOR = ",";
+    static final String LOGGING_TRACKER_KEY = "onap.logging.tracker";
 
-    static final String START_TIME_KEY = "audit.start.time";
-
+    private static final String MULTI_VALUE_SEPARATOR = ",";
     private static final Logger LOGGER = LoggerFactory.getLogger(LoggingRequestFilter.class);
 
     private HttpServletRequest httpRequest;
 
-    private HttpHeader requestIdHeader = new HttpHeader(DEFAULT_REQUEST_ID_HEADER);
-    private HttpHeader partnerNameHeader = new HttpHeader(DEFAULT_PARTNER_NAME_HEADER);
-    private boolean includeHttpMethod = true;
+    private HttpHeader requestIdHeader = new HttpHeader(new String[] {DEFAULT_REQUEST_ID_HEADER});
+    private HttpHeader partnerNameHeader = new HttpHeader(new String[] {DEFAULT_PARTNER_NAME_HEADER});
+
+    private ResourceInfo resource;
+
+    /**
+     * Injection of a resource that matches the request from JAX-RS context.
+     *
+     * @param resource automatically injected by JAX-RS container
+     */
+    @Context
+    public void setResource(ResourceInfo resource) {
+        this.resource = resource;
+    }
 
     /**
      * Injection of HTTP request object from JAX-RS context.
@@ -78,13 +86,6 @@ public class LoggingRequestFilter implements ContainerRequestFilter {
     @Context
     public void setHttpRequest(HttpServletRequest httpRequest) {
         this.httpRequest = httpRequest;
-    }
-
-    /**
-     * Configuration parameter to include the HTTP method of a request in service name.
-     */
-    public void setHttpMethodInServiceName(boolean includeHttpMethod) {
-        this.includeHttpMethod = includeHttpMethod;
     }
 
     /**
@@ -104,33 +105,10 @@ public class LoggingRequestFilter implements ContainerRequestFilter {
     }
 
     @Override
-    public void filter(ContainerRequestContext containerRequestContext) {
-
-        LoggingContext.clear();
-
-        containerRequestContext.setProperty(START_TIME_KEY, System.currentTimeMillis());
-
-        ContextData.ContextDataBuilder contextData = ContextData.builder();
-        contextData.serviceName(getServiceName());
-
-        String partnerName = partnerNameHeader.getAny(containerRequestContext::getHeaderString);
-        if (partnerName != null) {
-            contextData.partnerName(partnerName);
-        }
-
-        String requestId = requestIdHeader.getAny(containerRequestContext::getHeaderString);
-        contextData.requestId(requestId == null ? UUID.randomUUID().toString() : requestId);
-
-        LoggingContext.put(contextData.build());
-    }
-
-    private String getServiceName() {
-        return includeHttpMethod
-                       ? formatServiceName(this.httpRequest.getMethod(), this.httpRequest.getRequestURI())
-                       : this.httpRequest.getRequestURI();
-    }
-
-    static String formatServiceName(String httpMethod, String requestUri) {
-        return httpMethod + " " + requestUri;
+    public void filter(ContainerRequestContext requestContext) {
+        Class<?> resourceClass = resource.getResourceMethod().getDeclaringClass();
+        Tracker tracker = new CombinedTracker(resourceClass, partnerNameHeader, requestIdHeader);
+        requestContext.setProperty(LOGGING_TRACKER_KEY, tracker);
+        tracker.preRequest(httpRequest);
     }
 }
