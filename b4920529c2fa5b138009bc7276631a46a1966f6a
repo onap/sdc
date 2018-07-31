@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "9a6a9dd7_eb7639d8",
+        "filename": "catalog-fe/src/main/java/org/openecomp/sdc/fe/servlets/FeProxyServlet.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 2125
+      },
+      "writtenOn": "2018-07-31T05:12:06Z",
+      "side": 1,
+      "message": "Yes Michael. I wanted to fetch the configuration from Plugins config file but it may contain multiple plugins. To drill down to exact plugin I see the pluginId could be a unique value across plugins and used it. Do you think is there any other way of letting the FE proxy know to which workflow plugin should it redirects to?",
+      "parentUuid": "9a6a9dd7_ab3361f5",
+      "range": {
+        "startLine": 51,
+        "startChar": 28,
+        "endLine": 51,
+        "endChar": 48
+      },
+      "revId": "b4920529c2fa5b138009bc7276631a46a1966f6a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9a6a9dd7_2b09912c",
         "filename": "catalog-fe/src/main/java/org/openecomp/sdc/fe/servlets/FeProxyServlet.java",
         "patchSetId": 3
@@ -36,6 +60,30 @@
       "writtenOn": "2018-07-30T21:57:14Z",
       "side": 1,
       "message": "why not call the function getconfig below and request from it the configuration for the plugins?",
+      "range": {
+        "startLine": 214,
+        "startChar": 9,
+        "endLine": 214,
+        "endChar": 53
+      },
+      "revId": "b4920529c2fa5b138009bc7276631a46a1966f6a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a6a9dd7_0b74cdcd",
+        "filename": "catalog-fe/src/main/java/org/openecomp/sdc/fe/servlets/FeProxyServlet.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 214,
+      "author": {
+        "id": 2125
+      },
+      "writtenOn": "2018-07-31T05:12:06Z",
+      "side": 1,
+      "message": "the below function is returning the object model for configuration.yaml that\u0027s why I have directly fetched the object model for plugin configurations.",
+      "parentUuid": "9a6a9dd7_2b09912c",
       "range": {
         "startLine": 214,
         "startChar": 9,
