@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "9a6a9dd7_26e788e6",
+        "filename": "catalog-fe/src/main/java/org/openecomp/sdc/fe/servlets/FeProxyServlet.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-07-31T10:03:00Z",
+      "side": 1,
+      "message": "not today this is not blocking. I am just pointing out the issue here.",
+      "parentUuid": "9a6a9dd7_eb7639d8",
+      "range": {
+        "startLine": 51,
+        "startChar": 28,
+        "endLine": 51,
+        "endChar": 48
+      },
+      "revId": "b4920529c2fa5b138009bc7276631a46a1966f6a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9a6a9dd7_2b09912c",
         "filename": "catalog-fe/src/main/java/org/openecomp/sdc/fe/servlets/FeProxyServlet.java",
         "patchSetId": 3
@@ -84,6 +108,30 @@
       "side": 1,
       "message": "the below function is returning the object model for configuration.yaml that\u0027s why I have directly fetched the object model for plugin configurations.",
       "parentUuid": "9a6a9dd7_2b09912c",
+      "range": {
+        "startLine": 214,
+        "startChar": 9,
+        "endLine": 214,
+        "endChar": 53
+      },
+      "revId": "b4920529c2fa5b138009bc7276631a46a1966f6a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a6a9dd7_46ecfcc7",
+        "filename": "catalog-fe/src/main/java/org/openecomp/sdc/fe/servlets/FeProxyServlet.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 214,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-07-31T10:03:00Z",
+      "side": 1,
+      "message": "you are correct I forget it was a separate file.",
+      "parentUuid": "9a6a9dd7_0b74cdcd",
       "range": {
         "startLine": 214,
         "startChar": 9,
