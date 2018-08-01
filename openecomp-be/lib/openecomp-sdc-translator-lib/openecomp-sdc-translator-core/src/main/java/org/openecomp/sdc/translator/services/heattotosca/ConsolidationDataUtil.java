@@ -39,9 +39,9 @@ import org.openecomp.sdc.translator.services.heattotosca.impl.functiontranslatio
 
 import static org.openecomp.sdc.translator.services.heattotosca.ConfigConstants.TRANS_MAPPING_DELIMITER_CHAR;
 
-/**
- * Utility class for consolidation data collection helper methods.
- */
+    /**
+     * Utility class for consolidation data collection helper methods.
+    */
     public class ConsolidationDataUtil {
 
     private static final String UNDERSCORE = "_";
@@ -195,24 +195,6 @@ import static org.openecomp.sdc.translator.services.heattotosca.ConfigConstants.
     /**
      * Checks if the current HEAT resource if of type compute.
      *
-     * @param heatOrchestrationTemplate the heat orchestration template
-     * @param resourceId                the resource id
-     * @return true if the resource is of compute type and false otherwise
-     */
-    public static boolean isComputeResource(HeatOrchestrationTemplate heatOrchestrationTemplate,
-                                                   String resourceId) {
-        String resourceType = heatOrchestrationTemplate.getResources().get(resourceId).getType();
-        Map<String, ImplementationConfiguration> supportedComputeResources =
-                TranslationContext.getSupportedConsolidationComputeResources();
-        if (supportedComputeResources.containsKey(resourceType)) {
-            return supportedComputeResources.get(resourceType).isEnable();
-        }
-        return false;
-    }
-
-    /**
-     * Checks if the current HEAT resource if of type compute.
-     *
      * @param resource the resource
      * @return true if the resource is of compute type and false otherwise
      */
@@ -222,24 +204,6 @@ import static org.openecomp.sdc.translator.services.heattotosca.ConfigConstants.
                 TranslationContext.getSupportedConsolidationComputeResources();
         if (supportedComputeResources.containsKey(resourceType)) {
             return supportedComputeResources.get(resourceType).isEnable();
-        }
-        return false;
-    }
-
-    /**
-     * Checks if the current HEAT resource if of type port.
-     *
-     * @param heatOrchestrationTemplate the heat orchestration template
-     * @param resourceId                the resource id
-     * @return true if the resource is of port type and false otherwise
-     */
-    public static boolean isPortResource(HeatOrchestrationTemplate heatOrchestrationTemplate,
-                                                String resourceId) {
-        String resourceType = heatOrchestrationTemplate.getResources().get(resourceId).getType();
-        Map<String, ImplementationConfiguration> supportedPortResources =
-                TranslationContext.getSupportedConsolidationPortResources();
-        if (supportedPortResources.containsKey(resourceType)) {
-            return supportedPortResources.get(resourceType).isEnable();
         }
         return false;
     }
@@ -258,21 +222,6 @@ import static org.openecomp.sdc.translator.services.heattotosca.ConfigConstants.
             return supportedPortResources.get(resourceType).isEnable();
         }
         return false;
-    }
-
-    /**
-     * Checks if the current HEAT resource if of type volume.
-     *
-     * @param heatOrchestrationTemplate the heat orchestration template
-     * @param resourceId                the resource id
-     * @return true if the resource is of volume type and false otherwise
-     */
-    public static boolean isVolumeResource(HeatOrchestrationTemplate heatOrchestrationTemplate,
-                                                  String resourceId) {
-        String resourceType = heatOrchestrationTemplate.getResources().get(resourceId).getType();
-        return resourceType.equals(HeatResourcesTypes.CINDER_VOLUME_RESOURCE_TYPE.getHeatResource())
-                       || resourceType.equals(HeatResourcesTypes.CINDER_VOLUME_ATTACHMENT_RESOURCE_TYPE
-                                                      .getHeatResource());
     }
 
     /**
@@ -403,19 +352,19 @@ import static org.openecomp.sdc.translator.services.heattotosca.ConfigConstants.
     }
 
     private static String getToscaPropertyName(FunctionTranslator functionTranslator) {
-        String toscaPropertyName = functionTranslator.getPropertyName();
         HeatOrchestrationTemplate heatOrchestrationTemplate = functionTranslator.getHeatOrchestrationTemplate();
         Resource resource = heatOrchestrationTemplate.getResources().get(functionTranslator.getResourceId());
-        boolean isNestedResource = HeatToToscaUtil.isNestedResource(resource);
-        if (!isNestedResource) {
-            String heatPropertyName = toscaPropertyName;
-            //For handling get_attr in inner levels for complex properties
-            if (toscaPropertyName.contains(TRANS_MAPPING_DELIMITER_CHAR)) {
-                heatPropertyName =
-                        toscaPropertyName.substring(0, toscaPropertyName.indexOf(TRANS_MAPPING_DELIMITER_CHAR));
-            }
-            toscaPropertyName = HeatToToscaUtil.getToscaPropertyName(functionTranslator.getContext(),
-                    resource.getType(), heatPropertyName);
+        String toscaPropertyName = functionTranslator.getPropertyName();
+        if (!HeatToToscaUtil.isNestedResource(resource)) {
+            return HeatToToscaUtil.getToscaPropertyName(functionTranslator.getContext(),
+                    resource.getType(), getHeatPropertyName(toscaPropertyName));
+        }
+        return toscaPropertyName;
+    }
+
+    private static String getHeatPropertyName(String toscaPropertyName) {
+        if (toscaPropertyName.contains(TRANS_MAPPING_DELIMITER_CHAR)) {
+            return toscaPropertyName.substring(0, toscaPropertyName.indexOf(TRANS_MAPPING_DELIMITER_CHAR));
         }
         return toscaPropertyName;
     }
