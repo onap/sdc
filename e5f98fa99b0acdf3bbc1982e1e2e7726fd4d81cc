@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_19442b73",
+        "filename": "catalog-ui/src/app/ng2/pages/interface-operation/operation-creator/operation-creator.component.html",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1921
+      },
+      "writtenOn": "2018-08-01T12:00:08Z",
+      "side": 1,
+      "message": "i18n for the text please",
+      "revId": "e5f98fa99b0acdf3bbc1982e1e2e7726fd4d81cc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_3949e78b",
+        "filename": "catalog-ui/src/app/ng2/pages/interface-operation/operation-creator/operation-creator.component.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1921
+      },
+      "writtenOn": "2018-08-01T12:00:08Z",
+      "side": 1,
+      "message": "add constants for the operation type enum",
+      "revId": "e5f98fa99b0acdf3bbc1982e1e2e7726fd4d81cc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_d95d534a",
+        "filename": "catalog-ui/src/app/ng2/pages/interface-operation/operation-creator/param-row/param-row.component.less",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1921
+      },
+      "writtenOn": "2018-08-01T12:00:08Z",
+      "side": 1,
+      "message": "hard coded fill color?",
+      "revId": "e5f98fa99b0acdf3bbc1982e1e2e7726fd4d81cc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
