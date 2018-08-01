@@ -213,8 +213,6 @@ public class FeProxyServlet extends SSLProxyServlet {
 	private PluginsConfiguration getPluginConfiguration(HttpServletRequest request) {
 		return ((ConfigurationManager) request.getSession().getServletContext().getAttribute(Constants.CONFIGURATION_MANAGER_ATTR)).getPluginsConfiguration();
   }
-
-
 	private Configuration getConfiguration(HttpServletRequest request) {
 		return ((ConfigurationManager) request.getSession().getServletContext().getAttribute(Constants.CONFIGURATION_MANAGER_ATTR)).getConfiguration();
 	}
