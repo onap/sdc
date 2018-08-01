@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_d67682d8",
+        "filename": "catalog-ui/src/app/ng2/pages/interface-operation/operation-creator/operation-creator.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1921
+      },
+      "writtenOn": "2018-08-01T07:28:33Z",
+      "side": 1,
+      "message": "string is too long. also what about i18n? what about constants \u0027CERTIFIED\u0027 ?",
+      "revId": "e020a225c1693fed221607802f15b1fce699af71",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_96800a8d",
+        "filename": "catalog-ui/src/app/ng2/services/workflow.service.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1921
+      },
+      "writtenOn": "2018-08-01T07:28:33Z",
+      "side": 1,
+      "message": "again not using constants",
+      "revId": "e020a225c1693fed221607802f15b1fce699af71",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_564a7284",
+        "filename": "catalog-ui/webpack.server.js",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1921
+      },
+      "writtenOn": "2018-08-01T07:28:33Z",
+      "side": 1,
+      "message": "change localhost string back",
+      "revId": "e020a225c1693fed221607802f15b1fce699af71",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
