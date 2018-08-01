@@ -23,6 +23,7 @@ package org.openecomp.sdc.fe.servlets;
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.client.api.Request;
 import org.eclipse.jetty.http.HttpHeader;
+import org.eclipse.jetty.proxy.AbstractProxyServlet;
 import org.eclipse.jetty.proxy.ProxyServlet;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.openecomp.sdc.common.api.Constants;
@@ -40,27 +41,6 @@ public abstract class SSLProxyServlet extends ProxyServlet {
 
 	private static final long serialVersionUID = 1L;
 	private static Logger log = LoggerFactory.getLogger(SSLProxyServlet.class.getName());
-
-
-
-	@Override
-	public void customizeProxyRequest(Request proxyRequest, HttpServletRequest request) {
-		super.customizeProxyRequest(proxyRequest, request);
-		// Add Missing Headers to proxy request
-		@SuppressWarnings("unchecked")
-		Enumeration<String> headerNames = request.getHeaderNames();
-		while (headerNames.hasMoreElements()) {
-			String headerName = headerNames.nextElement();
-			if (!proxyRequest.getHeaders().containsKey(headerName)) {
-				String headerVal = request.getHeader(headerName);
-				log.debug("Adding missing header to request,  header name: {} , header value: {}", headerName,
-						headerVal);
-				proxyRequest.header(headerName, headerVal);
-			}
-		}
-		proxyRequest.getHeaders().remove(HttpHeader.HOST);
-
-	}
 
 	@Override
 	protected HttpClient createHttpClient() throws ServletException {

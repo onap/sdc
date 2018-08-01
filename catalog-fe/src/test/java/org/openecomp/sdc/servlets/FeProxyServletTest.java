@@ -179,16 +179,6 @@ public class FeProxyServletTest {
 		assertTrue(rewriteURI.equals(expectedChangedUrl));
 	}
 
-
-
-	@Test
-	public void testCustomizeProxyRequest() {
-		feProxy.customizeProxyRequest(proxyRequest, servletRequest);
-		verify(proxyRequest).header(HEADER_3, HEADER_3_VAL);
-		verify(proxyRequest, times(1)).header(Mockito.anyString(), Mockito.anyString());
-
-	}
-
 	@Test
 	public void testRewriteURIWithWFAPIRequest() {
 		when(servletRequest.getRequestURI()).thenReturn("/sdc1/feProxy/wf/workflows");
