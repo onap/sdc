@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_a705d215",
+        "filename": "catalog-fe/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 321,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-08-01T21:28:17Z",
+      "side": 0,
+      "message": "please delete the line",
+      "range": {
+        "startLine": 321,
+        "startChar": 4,
+        "endLine": 321,
+        "endChar": 45
+      },
+      "revId": "8b7fbe7f36fdff210ae956e206478d55a71eabd7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_07092631",
+        "filename": "catalog-fe/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 323,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-08-01T21:28:17Z",
+      "side": 0,
+      "message": "why did you remove this?",
+      "range": {
+        "startLine": 323,
+        "startChar": 5,
+        "endLine": 323,
+        "endChar": 33
+      },
+      "revId": "8b7fbe7f36fdff210ae956e206478d55a71eabd7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_82044416",
+        "filename": "catalog-fe/src/main/java/org/openecomp/sdc/fe/servlets/SSLProxyServlet.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-08-01T21:28:17Z",
+      "side": 0,
+      "message": "you remove thsi because it was not used?\nthe proxy sarvlet does not go through this method?",
+      "range": {
+        "startLine": 47,
+        "startChar": 13,
+        "endLine": 47,
+        "endChar": 38
+      },
+      "revId": "8b7fbe7f36fdff210ae956e206478d55a71eabd7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
