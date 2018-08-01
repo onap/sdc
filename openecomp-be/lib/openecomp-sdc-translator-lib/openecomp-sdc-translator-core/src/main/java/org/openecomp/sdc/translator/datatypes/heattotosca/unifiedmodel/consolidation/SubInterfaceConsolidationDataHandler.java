@@ -1,5 +1,4 @@
 /*
-/*
  * Copyright © 2016-2018 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -80,7 +79,7 @@ public class SubInterfaceConsolidationDataHandler implements ConsolidationDataHa
 
 
         throw new UnsupportedOperationException(
-                "API removeParamNameFromAttrFuncList " + "not supported for SubInterfaceConsolidationDataHandler");
+                "API removeParamNameFromAttrFuncList doesn't supported for SubInterfaceConsolidationDataHandler");
     }
 
     @Override
@@ -190,12 +189,9 @@ public class SubInterfaceConsolidationDataHandler implements ConsolidationDataHa
         if (MapUtils.isEmpty(resourceIdTranslatedResourceIdMap)) {
             return Optional.empty();
         }
-        for (Map.Entry<String, String> entry : resourceIdTranslatedResourceIdMap.entrySet()) {
-            if (entry.getValue().equals(parentPortNodeTemplateId)) {
-                return Optional.of(entry.getKey());
-            }
-        }
-        return Optional.empty();
+        return resourceIdTranslatedResourceIdMap.entrySet().stream()
+               .filter(entry -> entry.getValue().equals(parentPortNodeTemplateId))
+                        .findFirst().map(Map.Entry::getKey);
     }
 
     private TranslateTo createTranslateTo(FunctionTranslator functionTranslator, String resourceId,
