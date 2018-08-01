@@ -38,7 +38,7 @@ public class KibanaServlet extends ProxyServlet {
 	private static Logger log = LoggerFactory.getLogger(KibanaServlet.class.getName());
 
 	@Override
-	public URI rewriteURI(HttpServletRequest request) {
+	public String rewriteTarget(HttpServletRequest request) {
 
 		String originalUrl = request.getRequestURI();
 
@@ -46,19 +46,7 @@ public class KibanaServlet extends ProxyServlet {
 
 		log.debug("KibanaServlet Redirecting request from: {} , to: {}", originalUrl, redirectedUrl);
 
-		return URI.create(redirectedUrl);
-	}
-
-	@Override
-	public void customizeProxyRequest(Request proxyRequest, HttpServletRequest request) {
-		super.customizeProxyRequest(proxyRequest, request);
-
-	}
-
-	@Override
-	protected void onResponseSuccess(HttpServletRequest request, HttpServletResponse response, Response proxyResponse) {
-
-		super.onResponseSuccess(request, response, proxyResponse);
+		return redirectedUrl;
 	}
 
 	public String getModifiedUrl(HttpServletRequest request) {
