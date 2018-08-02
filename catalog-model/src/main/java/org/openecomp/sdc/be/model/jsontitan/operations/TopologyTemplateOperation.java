@@ -172,6 +172,13 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
             result = Either.right(associateCapProperties);
             return result;
         }
+
+        StorageOperationStatus associateInterfaces = associateInterfacesToResource(topologyTemplateVertex, topologyTemplate);
+        if (associateInterfaces != StorageOperationStatus.OK) {
+            result = Either.right(associateInterfaces);
+        return result;
+        }
+
         StorageOperationStatus associatePathProperties = associateForwardingPathToResource(topologyTemplateVertex, topologyTemplate);
         if (associateCapProperties != StorageOperationStatus.OK) {
             result = Either.right(associatePathProperties);
@@ -691,8 +698,44 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
 
             }
         }
+        
+        if (!componentParametersView.isIgnoreInterfaces()) {
+            TitanOperationStatus storageStatus = setInterfcesFromGraph(componentV, toscaElement);
+            if (storageStatus != TitanOperationStatus.OK) {
+                return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(storageStatus));
+                
+            }
+        }
 
         return Either.left(toscaElement);
+    }
+
+    private TitanOperationStatus setInterfcesFromGraph(GraphVertex componentV, TopologyTemplate topologyTemplate) {
+      Either<Map<String, InterfaceDataDefinition>, TitanOperationStatus> result = getDataFromGraph(componentV, EdgeLabelEnum.INTERFACE_ARTIFACTS);
+      if (result.isLeft()) {
+        topologyTemplate.setInterfaces(result.left().value());
+      } else {
+        if (result.right().value() != TitanOperationStatus.NOT_FOUND) {
+          return result.right().value();
+        }
+      }
+      return TitanOperationStatus.OK;
+    }
+    
+    private StorageOperationStatus associateInterfacesToResource(GraphVertex topologyTemplateVertex,
+        TopologyTemplate topologyTemplate) {
+      Map<String, InterfaceDataDefinition> interfaces = topologyTemplate.getInterfaces();
+      return associateInterfacesToComponent(topologyTemplateVertex,interfaces);
+    }
+    
+    public StorageOperationStatus associateInterfacesToComponent(GraphVertex nodeTypeVertex, Map<String, InterfaceDataDefinition> interfaceMap) {
+      if (interfaceMap != null && !interfaceMap.isEmpty()) {
+        Either<GraphVertex, StorageOperationStatus> assosiateElementToData = associateElementToData(nodeTypeVertex, VertexTypeEnum.INTERFACE_ARTIFACTS, EdgeLabelEnum.INTERFACE_ARTIFACTS, interfaceMap);
+        if (assosiateElementToData.isRight()) {
+          return assosiateElementToData.right().value();
+        }
+      }
+      return StorageOperationStatus.OK;
     }
 
     private TitanOperationStatus setPoliciesFromGraph(GraphVertex componentV, TopologyTemplate toscaElement) {

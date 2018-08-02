@@ -14,8 +14,10 @@
  * limitations under the License.
  */
 
-package org.openecomp.sdc.be.components;
+package org.openecomp.sdc.test.utils;
 
+import java.util.HashMap;
+import java.util.Map;
 import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationInputDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationOutputDefinition;
@@ -23,13 +25,10 @@ import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.Operation;
 
-import java.util.HashMap;
-import java.util.Map;
+public class InterfaceOperationTestUtils {
 
-public interface InterfaceOperationTestUtils {
-
-    default InterfaceDefinition createInterface(String uniqueID, String description, String type,
-                                                String toscaResourceName, Map<String, Operation> op) {
+    public static InterfaceDefinition createInterface(String uniqueID, String description, String type,
+        String toscaResourceName, Map<String, Operation> op) {
         InterfaceDefinition id = new InterfaceDefinition();
         id.setType(type);
         id.setDescription(description);
@@ -38,31 +37,28 @@ public interface InterfaceOperationTestUtils {
         id.setOperationsMap(op);
         return id;
     }
-    default InterfaceDefinition mockInterfaceDefinitionToReturn(String resourceNamme) {
+
+    public static InterfaceDefinition mockInterfaceDefinitionToReturn(String resourceNamme) {
         Map<String, Operation> operationMap = createMockOperationMap();
         return createInterface("int1", "Interface 1",
-                "lifecycle", "org.openecomp.interfaces.node.lifecycle." + resourceNamme, operationMap);
+            "lifecycle", "org.openecomp.interfaces.node.lifecycle." + resourceNamme, operationMap);
     }
 
-
-
-    default Operation createInterfaceOperation(String uniqueID, String description, ArtifactDefinition artifactDefinition,
-                                               ListDataDefinition<OperationInputDefinition> inputs,
-                                               ListDataDefinition<OperationOutputDefinition> outputs, String name) {
+    public static Operation createInterfaceOperation(String uniqueID, String description, ArtifactDefinition artifactDefinition,
+        ListDataDefinition<OperationInputDefinition> inputs,
+        ListDataDefinition<OperationOutputDefinition> outputs, String name) {
         Operation operation = new Operation();
-
         operation.setUniqueId(uniqueID);
         operation.setDescription(description);
         operation.setImplementation(artifactDefinition);
         operation.setInputs(inputs);
         operation.setOutputs(outputs);
         operation.setName(name);
-
         return operation;
     }
 
 
-    default Map<String, Operation> createMockOperationMap() {
+    public static Map<String, Operation> createMockOperationMap() {
         Operation operation = new Operation();
         ListDataDefinition<OperationInputDefinition> operationInputDefinitionList = new ListDataDefinition<>();
         operationInputDefinitionList.add(createMockOperationInputDefinition("label1"));
@@ -86,26 +82,25 @@ public interface InterfaceOperationTestUtils {
         return operationMap;
     }
 
-
-    default OperationInputDefinition createMockOperationInputDefinition(String name) {
+    public static OperationInputDefinition createMockOperationInputDefinition(String name) {
         OperationInputDefinition operationInputDefinition = new OperationInputDefinition();
         operationInputDefinition.setName(name);
         operationInputDefinition.setUniqueId("uniqueId1");
         return operationInputDefinition;
     }
 
-    default OperationOutputDefinition createMockOperationOutputDefinition(String name) {
+    public static OperationOutputDefinition createMockOperationOutputDefinition(String name) {
         OperationOutputDefinition operationOutputDefinition = new OperationOutputDefinition();
         operationOutputDefinition.setName(name);
         operationOutputDefinition.setUniqueId("uniqueId1");
         return operationOutputDefinition;
     }
 
-    default   Map<String, InterfaceDefinition> createMockInterfaceDefinition(String resourceName) {
+    public static Map<String, InterfaceDefinition> createMockInterfaceDefinition(String resourceName) {
         Map<String, Operation> operationMap = createMockOperationMap();
         Map<String, InterfaceDefinition> interfaceDefinitionMap = new HashMap<>();
         interfaceDefinitionMap.put("int1", createInterface("int1", "Interface 1",
-                "lifecycle", "org.openecomp.interfaces.node.lifecycle." + resourceName, operationMap));
+            "lifecycle", "org.openecomp.interfaces.node.lifecycle." + resourceName, operationMap));
 
         return interfaceDefinitionMap;
     }

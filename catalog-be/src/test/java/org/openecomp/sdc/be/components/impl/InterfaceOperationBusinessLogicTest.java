@@ -25,7 +25,7 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.openecomp.sdc.ElementOperationMock;
 import org.openecomp.sdc.be.auditing.impl.AuditingManager;
-import org.openecomp.sdc.be.components.InterfaceOperationTestUtils;
+import org.openecomp.sdc.test.utils.InterfaceOperationTestUtils;
 import org.openecomp.sdc.be.components.impl.generic.GenericTypeBusinessLogic;
 import org.openecomp.sdc.be.components.validation.InterfaceOperationValidation;
 import org.openecomp.sdc.be.components.validation.UserValidations;
@@ -65,7 +65,7 @@ import java.util.stream.Stream;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 
-public class InterfaceOperationBusinessLogicTest implements InterfaceOperationTestUtils{
+public class InterfaceOperationBusinessLogicTest {
 
     public static final String RESOURCE_CATEGORY1 = "Network Layer 2-3";
     public static final String RESOURCE_SUBCATEGORY = "Router";
@@ -169,11 +169,11 @@ public class InterfaceOperationBusinessLogicTest implements InterfaceOperationTe
         //InterfaceOperation
 
         when(operationValidator.validateInterfaceOperations(anyCollection(), anyString(), anyBoolean())).thenReturn(Either.left(true));
-        when(interfaceOperation.addInterface(anyString(), anyObject())).thenReturn(Either.left(mockInterfaceDefinitionToReturn(RESOURCE_NAME)));
-        when(interfaceOperation.updateInterface(anyString(), anyObject())).thenReturn(Either.left(mockInterfaceDefinitionToReturn(RESOURCE_NAME)));
+        when(interfaceOperation.addInterface(anyString(), anyObject())).thenReturn(Either.left(InterfaceOperationTestUtils.mockInterfaceDefinitionToReturn(RESOURCE_NAME)));
+        when(interfaceOperation.updateInterface(anyString(), anyObject())).thenReturn(Either.left(InterfaceOperationTestUtils.mockInterfaceDefinitionToReturn(RESOURCE_NAME)));
         when(interfaceOperation.deleteInterface(anyObject(), anyObject())).thenReturn(Either.left(new HashSet<>()));
         when(interfaceOperation.deleteInterface(any(),any())).thenReturn(Either.left(new HashSet<>()));
-        when(interfaceOperation.updateInterface(any(),any())).thenReturn(Either.left(mockInterfaceDefinitionToReturn(RESOURCE_NAME)));
+        when(interfaceOperation.updateInterface(any(),any())).thenReturn(Either.left(InterfaceOperationTestUtils.mockInterfaceDefinitionToReturn(RESOURCE_NAME)));
         when(mockTitanDao.commit()).thenReturn(TitanOperationStatus.OK);
 
         // BL object
@@ -293,7 +293,7 @@ public class InterfaceOperationBusinessLogicTest implements InterfaceOperationTe
 
         Map<String, Operation> operationMap = new HashMap<>();
         Map<String, InterfaceDefinition> interfaceDefinitionMap = new HashMap<>();
-        interfaceDefinitionMap.put("int1", createInterface("int1", "Interface 1",
+        interfaceDefinitionMap.put("int1", InterfaceOperationTestUtils.createInterface("int1", "Interface 1",
                 "lifecycle", "org.openecomp.interfaces.node.lifecycle." + RESOURCE_NAME, operationMap));
         resource.setInterfaces(interfaceDefinitionMap);
         List<InputDefinition> inputDefinitionList = new ArrayList<>();
@@ -315,7 +315,7 @@ public class InterfaceOperationBusinessLogicTest implements InterfaceOperationTe
         resource.setName(RESOURCE_NAME);
         resource.addCategory(RESOURCE_CATEGORY1, RESOURCE_SUBCATEGORY);
         resource.setDescription("My short description");
-        resource.setInterfaces(createMockInterfaceDefinition(RESOURCE_NAME));
+        resource.setInterfaces(InterfaceOperationTestUtils.createMockInterfaceDefinition(RESOURCE_NAME));
 
         List<InputDefinition> inputDefinitionList = new ArrayList<>();
         inputDefinitionList.add(createInputDefinition("uniqueId1"));
@@ -338,7 +338,7 @@ public class InterfaceOperationBusinessLogicTest implements InterfaceOperationTe
         resource.setName(RESOURCE_NAME);
         resource.addCategory(RESOURCE_CATEGORY1, RESOURCE_SUBCATEGORY);
         resource.setDescription("Resource name for response");
-        resource.setInterfaces(createMockInterfaceDefinition(RESOURCE_NAME));
+        resource.setInterfaces(InterfaceOperationTestUtils.createMockInterfaceDefinition(RESOURCE_NAME));
         return resource;
     }
 

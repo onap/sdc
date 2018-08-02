@@ -25,7 +25,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.openecomp.sdc.be.components.InterfaceOperationTestUtils;
+import org.openecomp.sdc.test.utils.InterfaceOperationTestUtils;
 import org.openecomp.sdc.be.components.impl.ResponseFormatManager;
 import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationInputDefinition;
@@ -43,7 +43,7 @@ import java.util.Set;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-public class InterfaceOperationValidationTest implements InterfaceOperationTestUtils {
+public class InterfaceOperationValidationTest {
 
     private Resource  resource = (Resource) getToscaFullElement().left().value();
 
@@ -69,8 +69,8 @@ public class InterfaceOperationValidationTest implements InterfaceOperationTestU
 
     @Test
     public void testValidInterfaceOperation() {
-        operationInputDefinitionList.add(createMockOperationInputDefinition("label1"));
-        operationOutputDefinitionList.add(createMockOperationOutputDefinition("label1"));
+        operationInputDefinitionList.add(InterfaceOperationTestUtils.createMockOperationInputDefinition("label1"));
+        operationOutputDefinitionList.add(InterfaceOperationTestUtils.createMockOperationOutputDefinition("label1"));
         Collection<Operation> operations = createInterfaceOperationData("op2",
                 "interface operation2",new ArtifactDefinition(), operationInputDefinitionList,
                         operationOutputDefinitionList,"upgrade");
@@ -81,8 +81,8 @@ public class InterfaceOperationValidationTest implements InterfaceOperationTestU
 
     @Test
     public void testInterfaceOperationDescriptionLength() {
-        operationInputDefinitionList.add(createMockOperationInputDefinition("label1"));
-        operationOutputDefinitionList.add(createMockOperationOutputDefinition("label1"));
+        operationInputDefinitionList.add(InterfaceOperationTestUtils.createMockOperationInputDefinition("label1"));
+        operationOutputDefinitionList.add(InterfaceOperationTestUtils.createMockOperationOutputDefinition("label1"));
         Collection<Operation> operations = createInterfaceOperationData("op2",
                 "interface operation2 -  The Spring Initializer provides a project generator to make you " +
                         "productive with the certain technology stack from the beginning. You can create a skeleton project" +
@@ -97,8 +97,8 @@ public class InterfaceOperationValidationTest implements InterfaceOperationTestU
 
     @Test
     public void testInterfaceOperationForEmptyType() {
-        operationInputDefinitionList.add(createMockOperationInputDefinition("label1"));
-        operationOutputDefinitionList.add(createMockOperationOutputDefinition("label1"));
+        operationInputDefinitionList.add(InterfaceOperationTestUtils.createMockOperationInputDefinition("label1"));
+        operationOutputDefinitionList.add(InterfaceOperationTestUtils.createMockOperationOutputDefinition("label1"));
         Collection<Operation> operations = createInterfaceOperationData("op2",
                 "interface operation2",new ArtifactDefinition(), operationInputDefinitionList,
                 operationOutputDefinitionList, "");
@@ -109,8 +109,8 @@ public class InterfaceOperationValidationTest implements InterfaceOperationTestU
 
     @Test
     public void testInterfaceOperationForEmptyInputParam() {
-        operationInputDefinitionList.add(createMockOperationInputDefinition("label1"));
-        operationOutputDefinitionList.add(createMockOperationOutputDefinition("label1"));
+        operationInputDefinitionList.add(InterfaceOperationTestUtils.createMockOperationInputDefinition("label1"));
+        operationOutputDefinitionList.add(InterfaceOperationTestUtils.createMockOperationOutputDefinition("label1"));
         Collection<Operation> operations = createInterfaceOperationData("op2",
                 "interface operation2",new ArtifactDefinition(), operationInputDefinitionList,
                 operationOutputDefinitionList,"input2");
@@ -121,8 +121,8 @@ public class InterfaceOperationValidationTest implements InterfaceOperationTestU
 
     @Test
     public void testInterfaceOperationForNonUniqueType() {
-        operationInputDefinitionList.add(createMockOperationInputDefinition("label1"));
-        operationOutputDefinitionList.add(createMockOperationOutputDefinition("label1"));
+        operationInputDefinitionList.add(InterfaceOperationTestUtils.createMockOperationInputDefinition("label1"));
+        operationOutputDefinitionList.add(InterfaceOperationTestUtils.createMockOperationOutputDefinition("label1"));
         Collection<Operation> operations = createInterfaceOperationData("op2",
                 "interface operation2",new ArtifactDefinition(), operationInputDefinitionList,
                 operationOutputDefinitionList,"CREATE");
@@ -133,8 +133,8 @@ public class InterfaceOperationValidationTest implements InterfaceOperationTestU
 
     @Test
     public void testInterfaceOperationTypeLength() {
-        operationInputDefinitionList.add(createMockOperationInputDefinition("label1"));
-        operationOutputDefinitionList.add(createMockOperationOutputDefinition("label1"));
+        operationInputDefinitionList.add(InterfaceOperationTestUtils.createMockOperationInputDefinition("label1"));
+        operationOutputDefinitionList.add(InterfaceOperationTestUtils.createMockOperationOutputDefinition("label1"));
         Collection<Operation> operations = createInterfaceOperationData("op2",
                 "interface operation2",new ArtifactDefinition(), operationInputDefinitionList,
                 operationOutputDefinitionList,
@@ -149,11 +149,11 @@ public class InterfaceOperationValidationTest implements InterfaceOperationTestU
 
     @Test
     public void testInterfaceOperationUniqueInputParamNameInvalid() {
-        operationInputDefinitionList.add(createMockOperationInputDefinition("label1"));
-        operationInputDefinitionList.add(createMockOperationInputDefinition("label1"));
-        operationInputDefinitionList.add(createMockOperationInputDefinition("label2"));
-        operationInputDefinitionList.add(createMockOperationInputDefinition("label2"));
-        operationOutputDefinitionList.add(createMockOperationOutputDefinition("label1"));
+        operationInputDefinitionList.add(InterfaceOperationTestUtils.createMockOperationInputDefinition("label1"));
+        operationInputDefinitionList.add(InterfaceOperationTestUtils.createMockOperationInputDefinition("label1"));
+        operationInputDefinitionList.add(InterfaceOperationTestUtils.createMockOperationInputDefinition("label2"));
+        operationInputDefinitionList.add(InterfaceOperationTestUtils.createMockOperationInputDefinition("label2"));
+        operationOutputDefinitionList.add(InterfaceOperationTestUtils.createMockOperationOutputDefinition("label1"));
         Collection<Operation> operations = createInterfaceOperationData("op2",
                 "interface operation2",new ArtifactDefinition(), operationInputDefinitionList,
                 operationOutputDefinitionList,"create");
@@ -165,9 +165,9 @@ public class InterfaceOperationValidationTest implements InterfaceOperationTestU
 
     @Test
     public void testInterfaceOperationUniqueInputParamNameValid() {
-        operationInputDefinitionList.add(createMockOperationInputDefinition("label1"));
-        operationInputDefinitionList.add(createMockOperationInputDefinition("label2"));
-        operationOutputDefinitionList.add(createMockOperationOutputDefinition("label1"));
+        operationInputDefinitionList.add(InterfaceOperationTestUtils.createMockOperationInputDefinition("label1"));
+        operationInputDefinitionList.add(InterfaceOperationTestUtils.createMockOperationInputDefinition("label2"));
+        operationOutputDefinitionList.add(InterfaceOperationTestUtils.createMockOperationOutputDefinition("label1"));
         Collection<Operation> operations = createInterfaceOperationData("op2",
                 "interface operation2",new ArtifactDefinition(), operationInputDefinitionList,
                 operationOutputDefinitionList,"update");
@@ -180,9 +180,9 @@ public class InterfaceOperationValidationTest implements InterfaceOperationTestU
 
     @Test
     public void testInterfaceOperationeInputParamNameEmpty() {
-        operationInputDefinitionList.add(createMockOperationInputDefinition("  "));
-        operationInputDefinitionList.add(createMockOperationInputDefinition("label1"));
-        operationOutputDefinitionList.add(createMockOperationOutputDefinition("label1"));
+        operationInputDefinitionList.add(InterfaceOperationTestUtils.createMockOperationInputDefinition("  "));
+        operationInputDefinitionList.add(InterfaceOperationTestUtils.createMockOperationInputDefinition("label1"));
+        operationOutputDefinitionList.add(InterfaceOperationTestUtils.createMockOperationOutputDefinition("label1"));
         Collection<Operation> operations = createInterfaceOperationData("op2",
                 "interface operation2",new ArtifactDefinition(), operationInputDefinitionList,
                 operationOutputDefinitionList,"update");
@@ -196,7 +196,7 @@ public class InterfaceOperationValidationTest implements InterfaceOperationTestU
     private Set<Operation> createInterfaceOperationData( String uniqueID, String description, ArtifactDefinition artifactDefinition,
                                                          ListDataDefinition<OperationInputDefinition> inputs,
                                                          ListDataDefinition<OperationOutputDefinition> outputs, String name) {
-        return Sets.newHashSet(createInterfaceOperation(uniqueID, description, artifactDefinition, inputs, outputs, name));
+        return Sets.newHashSet(InterfaceOperationTestUtils.createInterfaceOperation(uniqueID, description, artifactDefinition, inputs, outputs, name));
     }
 
     private  <T extends Component> Either<T, StorageOperationStatus> getToscaFullElement() {
@@ -212,9 +212,9 @@ public class InterfaceOperationValidationTest implements InterfaceOperationTestU
     }
 
     private  Map<String, InterfaceDefinition> createMockInterfaceDefinition() {
-        Map<String, Operation> operationMap = createMockOperationMap();
+        Map<String, Operation> operationMap = InterfaceOperationTestUtils.createMockOperationMap();
         Map<String, InterfaceDefinition> interfaceDefinitionMap = new HashMap<>();
-        interfaceDefinitionMap.put("int1", createInterface("int1", "Interface 1",
+        interfaceDefinitionMap.put("int1", InterfaceOperationTestUtils.createInterface("int1", "Interface 1",
                 "lifecycle", "tosca", operationMap));
 
         return interfaceDefinitionMap;
