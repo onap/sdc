@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_55ec9fc7",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ResourceBusinessLogic.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 3992,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-08-02T22:38:02Z",
+      "side": 1,
+      "message": "please remove the exclamation marks.",
+      "range": {
+        "startLine": 3992,
+        "startChar": 67,
+        "endLine": 3992,
+        "endChar": 71
+      },
+      "revId": "ea0b1710c0e5802ab13c2d84cdf7a37497510300",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_d5d74fec",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ResourceBusinessLogic.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 5230,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-08-02T22:38:02Z",
+      "side": 1,
+      "message": "the message is part of the stack trace. why do you print it twice?",
+      "range": {
+        "startLine": 5230,
+        "startChar": 92,
+        "endLine": 5230,
+        "endChar": 106
+      },
+      "revId": "ea0b1710c0e5802ab13c2d84cdf7a37497510300",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_35fec36c",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ResourceBusinessLogicTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 129,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-08-02T22:38:02Z",
+      "side": 1,
+      "message": "why is this better than defining the class as a field?",
+      "range": {
+        "startLine": 129,
+        "startChar": 50,
+        "endLine": 129,
+        "endChar": 77
+      },
+      "revId": "ea0b1710c0e5802ab13c2d84cdf7a37497510300",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
