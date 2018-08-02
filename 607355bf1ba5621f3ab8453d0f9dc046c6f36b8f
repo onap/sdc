@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_9fbfb6d0",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ResourceBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 5230,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-08-02T13:39:18Z",
+      "side": 1,
+      "message": "titan.rollback should be called in case of Exception",
+      "revId": "607355bf1ba5621f3ab8453d0f9dc046c6f36b8f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_3fb462f1",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ResourceBusinessLogicTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1000,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-08-02T13:39:18Z",
+      "side": 1,
+      "message": "is printStackTrace required?",
+      "revId": "607355bf1ba5621f3ab8453d0f9dc046c6f36b8f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
