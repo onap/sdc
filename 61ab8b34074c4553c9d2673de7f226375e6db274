@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_4d73bdb1",
+        "filename": "onboarding/pom.xml",
+        "patchSetId": 6
+      },
+      "lineNbr": 94,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-08-02T05:15:23Z",
+      "side": 1,
+      "message": "why do you use beta version?",
+      "range": {
+        "startLine": 94,
+        "startChar": 27,
+        "endLine": 94,
+        "endChar": 39
+      },
+      "revId": "61ab8b34074c4553c9d2673de7f226375e6db274",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_ed6729e9",
+        "filename": "openecomp-be/lib/openecomp-sdc-logging-lib/openecomp-sdc-logging-api/src/main/java/org/openecomp/sdc/logging/servlet/HttpHeader.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-08-02T05:15:23Z",
+      "side": 1,
+      "message": "change the name of the parameter to httpHeaderNames and delete the comment",
+      "range": {
+        "startLine": 41,
+        "startChar": 4,
+        "endLine": 46,
+        "endChar": 39
+      },
+      "revId": "61ab8b34074c4553c9d2673de7f226375e6db274",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_0d65c5e0",
+        "filename": "openecomp-be/lib/openecomp-sdc-logging-lib/openecomp-sdc-logging-api/src/main/java/org/openecomp/sdc/logging/servlet/HttpHeader.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-08-02T05:15:23Z",
+      "side": 1,
+      "message": "change the name of the parameter to httpHeaderNames and delete the comment",
+      "range": {
+        "startLine": 55,
+        "startChar": 4,
+        "endLine": 60,
+        "endChar": 43
+      },
+      "revId": "61ab8b34074c4553c9d2673de7f226375e6db274",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_2da52104",
+        "filename": "openecomp-be/lib/openecomp-sdc-logging-lib/openecomp-sdc-logging-api/src/test/java/org/openecomp/sdc/logging/servlet/AuditTrackerTest.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2018-08-02T05:15:23Z",
+      "side": 1,
+      "message": "what is \"correctly\"? find a better name",
+      "range": {
+        "startLine": 95,
+        "startChar": 16,
+        "endLine": 95,
+        "endChar": 42
+      },
+      "revId": "61ab8b34074c4553c9d2673de7f226375e6db274",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
