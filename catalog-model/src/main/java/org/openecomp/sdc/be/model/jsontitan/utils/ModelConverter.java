@@ -180,6 +180,7 @@ public class ModelConverter {
 				resource.setCsarUUID((String) topologyTemplate.getMetadataValue(JsonPresentationFields.CSAR_UUID));
 				resource.setCsarVersion((String) topologyTemplate.getMetadataValue(JsonPresentationFields.CSAR_VERSION));
 				resource.setImportedToscaChecksum((String) topologyTemplate.getMetadataValue(JsonPresentationFields.IMPORTED_TOSCA_CHECKSUM));
+				convertInterfaces(topologyTemplate, resource);
 
             }
             convertComponentInstances(topologyTemplate, resource);
@@ -193,7 +194,18 @@ public class ModelConverter {
         convertAdditionalInformation(toscaElement, resource);
 
         return resource;
-    }
+	}
+
+	private static void convertInterfaces(TopologyTemplate toscaElement, Resource resource) {
+		Map<String, InterfaceDataDefinition> interfaces = toscaElement.getInterfaces();
+		Map<String, InterfaceDefinition> copy;
+		if (interfaces != null) {
+			copy = interfaces.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> new InterfaceDefinition(e.getValue())));
+		} else {
+			copy = new HashMap<>();
+		}
+		resource.setInterfaces(copy);
+	}
 
     private static void convertAttributes(NodeType nodeType, Resource resource) {
         Map<String, PropertyDataDefinition> attributes = nodeType.getAttributes();
@@ -881,6 +893,7 @@ public class ModelConverter {
             topologyTemplate.setMetadataValue(JsonPresentationFields.CSAR_UUID, resource.getCsarUUID());
             topologyTemplate.setMetadataValue(JsonPresentationFields.CSAR_VERSION, resource.getCsarVersion());
             topologyTemplate.setMetadataValue(JsonPresentationFields.IMPORTED_TOSCA_CHECKSUM, resource.getImportedToscaChecksum());
+			convertInterfaces(resource, topologyTemplate);
         }
         if (componentType == ComponentTypeEnum.SERVICE) {
             convertServiceSpecificEntities((Service) component, topologyTemplate);
@@ -901,6 +914,14 @@ public class ModelConverter {
         return topologyTemplate;
     }
 
+	private static void convertInterfaces(Resource resource, TopologyTemplate topologyTemplate) {
+		Map<String, InterfaceDefinition> interfaces = resource.getInterfaces();
+		if (interfaces != null && !interfaces.isEmpty()) {
+			Map<String, InterfaceDataDefinition> copy = interfaces.entrySet().stream()
+					.collect(Collectors.toMap(Map.Entry::getKey, e -> new InterfaceDataDefinition(e.getValue())));
+			topologyTemplate.setInterfaces(copy);
+		}
+	}
     private static void convertServiceSpecificEntities(Service service, TopologyTemplate topologyTemplate) {
         convertServiceMetaData(service, topologyTemplate);
         convertServiceApiArtifacts(service, topologyTemplate);
