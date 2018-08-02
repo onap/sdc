@@ -48,6 +48,30 @@
     },
     {
       "key": {
+        "uuid": "1a76adc5_a8b83f2b",
+        "filename": "catalog-fe/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 323,
+      "author": {
+        "id": 1343
+      },
+      "writtenOn": "2018-08-02T08:29:30Z",
+      "side": 0,
+      "message": "Cause the \u003ccontextPath\u003e needs to be in \u003cwebApp\u003e scope in \u003cconfiguration\u003e outer scope is useless. Warned by the IDE, checked in the Jetty documentation.",
+      "parentUuid": "1a76adc5_07092631",
+      "range": {
+        "startLine": 323,
+        "startChar": 5,
+        "endLine": 323,
+        "endChar": 33
+      },
+      "revId": "8b7fbe7f36fdff210ae956e206478d55a71eabd7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1a76adc5_82044416",
         "filename": "catalog-fe/src/main/java/org/openecomp/sdc/fe/servlets/SSLProxyServlet.java",
         "patchSetId": 1
