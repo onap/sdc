@@ -17,7 +17,8 @@ JETTY_BASE="/var/lib/jetty"
 RELEASE=latest
 LOCAL=false
 RUNTESTS=false
-DEBUG_PORT="--publish 4000:4000"
+BE_DEBUG_PORT="--publish 4000:4000"
+FE_DEBUG_PORT="--publish 6000:6000"
 ONBOARD_DEBUG_PORT="--publish 4001:4000"
 
 
@@ -386,7 +387,7 @@ function sdc-BE {
     if [ ${LOCAL} = false ]; then
         docker pull ${PREFIX}/sdc-backend:${RELEASE}
     else
-        ADDITIONAL_ARGUMENTS=${DEBUG_PORT}
+        ADDITIONAL_ARGUMENTS=${BE_DEBUG_PORT}
     fi
     docker run --detach --name ${DOCKER_NAME} --env HOST_IP=${IP} --env ENVNAME="${DEP_ENV}" --env cassandra_ssl_enabled="false" --env JAVA_OPTIONS="${BE_JAVA_OPTIONS}" --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --ulimit nofile=4096:100000 ${LOCAL_TIME_MOUNT_CMD} --volume ${WORKSPACE}/data/logs/BE/:/var/lib/jetty/logs  --volume ${WORKSPACE}/data/environments:/root/chef-solo/environments --publish 8443:8443 --publish 8080:8080 ${ADDITIONAL_ARGUMENTS} ${PREFIX}/sdc-backend:${RELEASE}
     command_exit_status $? ${DOCKER_NAME}
@@ -436,8 +437,10 @@ function sdc-FE {
     echo "docker run sdc-frontend..."
     if [ ${LOCAL} = false ]; then
         docker pull ${PREFIX}/sdc-frontend:${RELEASE}
+    else
+        ADDITIONAL_ARGUMENTS=${FE_DEBUG_PORT}
     fi
-    docker run --detach --name ${DOCKER_NAME} --env HOST_IP=${IP} --env ENVNAME="${DEP_ENV}" --env JAVA_OPTIONS="${FE_JAVA_OPTIONS}" --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --ulimit nofile=4096:100000 ${LOCAL_TIME_MOUNT_CMD}  --volume ${WORKSPACE}/data/logs/FE/:/var/lib/jetty/logs --volume ${WORKSPACE}/data/environments:/root/chef-solo/environments --publish 9443:9443 --publish 8181:8181 ${PREFIX}/sdc-frontend:${RELEASE}
+    docker run --detach --name ${DOCKER_NAME} --env HOST_IP=${IP} --env ENVNAME="${DEP_ENV}" --env JAVA_OPTIONS="${FE_JAVA_OPTIONS}" --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --ulimit nofile=4096:100000 ${LOCAL_TIME_MOUNT_CMD}  --volume ${WORKSPACE}/data/logs/FE/:/var/lib/jetty/logs --volume ${WORKSPACE}/data/environments:/root/chef-solo/environments --publish 9443:9443 --publish 8181:8181 ${ADDITIONAL_ARGUMENTS} ${PREFIX}/sdc-frontend:${RELEASE}
     command_exit_status $? ${DOCKER_NAME}
     echo "please wait while FE is starting....."
     monitor_docker ${DOCKER_NAME}
