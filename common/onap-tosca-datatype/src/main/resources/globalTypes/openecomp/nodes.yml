@@ -913,3 +913,28 @@ node_types:
         capability: org.openecomp.capabilities.Forwarder
         relationship: org.openecomp.relationships.ForwardsTo
         occurrences: [ 0, UNBOUNDED ]
+
+  org.openecomp.nodes.Configuration:
+    derived_from: tosca.nodes.Root
+    properties:
+      type:
+        type: string
+        description: The type of the node, the configuration will be defined for it. E.g. SBC
+        required: false
+      role:
+        type: string
+        description: The role of the node, the configuration will be defined for it. E.g. Active, Standby
+        required: false
+      function:
+        type: string
+        description: The function of the node, the configuration will be defined for it. E.g. NAT Traversal
+        required: false
+
+  org.openecomp.nodes.FabricConfiguration:
+    derived_from: org.openecomp.nodes.Configuration
+    requirements:
+    - fabric_configuration_monitoring:
+        capability: org.openecomp.capabilities.FabricConfiguration
+        occurrences:
+        - 1
+        - UNBOUNDED
