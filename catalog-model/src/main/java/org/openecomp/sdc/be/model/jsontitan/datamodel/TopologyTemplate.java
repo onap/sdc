@@ -53,6 +53,7 @@ public class TopologyTemplate extends ToscaElement{
     private Map<String, MapCapabilityProperty> calculatedCapabilitiesProperties;
     private Map<String, MapArtifactDataDefinition> instDeploymentArtifacts;
     private Map<String, MapArtifactDataDefinition> instanceArtifacts;
+    private Map<String, InterfaceDataDefinition> interfaces;
     
     //Component Instances External References (instanceId -> ExternalRefsMap)
     //-----------------------------------------------------------------------
@@ -67,6 +68,13 @@ public class TopologyTemplate extends ToscaElement{
     }
     //-----------------------------------------------------------------------
 
+	  public Map<String, InterfaceDataDefinition> getInterfaces() {
+		  return interfaces;
+	  }
+
+	  public void setInterfaces(Map<String, InterfaceDataDefinition> interfaces) {
+		  this.interfaces = interfaces;
+	  }
 
     public Map<String, PropertyDataDefinition> getInputs() {
         return inputs;
