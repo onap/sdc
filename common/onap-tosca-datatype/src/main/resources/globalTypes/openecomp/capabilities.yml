@@ -117,3 +117,7 @@ capability_types:
           type: string
           description: ability to recognize capability per vfc instance group on vnf instance
           required: true
+
+  org.openecomp.capabilities.FabricConfiguration:
+     derived_from: tosca.capabilities.Root
+     description: fabric configuration capability of VFC depended on the VFC's port property
