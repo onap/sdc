@@ -8,7 +8,7 @@ node_types:
         type_of_storage:
           type: string
           constraints:
-              - valid_values: [volume, object, root, block]
+            - valid_values: [volume, object, root, block]
           required: true
         size_of_storage:
           type: scalar-unit.size
@@ -24,7 +24,7 @@ node_types:
       capabilities:
         virtual_storage:
           type: tosca.capabilities.nfv.VirtualStorage
-      artifacts: 
-        - sw_image:
-            file:      
-            type: tosca.artifacts.Deployment.Image
+     # artifacts: 
+     #   - sw_image:
+     #       file:      
+     #       type: tosca.artifacts.Deployment.Image
