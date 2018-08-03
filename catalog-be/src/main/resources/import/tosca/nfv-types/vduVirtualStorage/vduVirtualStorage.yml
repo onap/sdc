@@ -24,7 +24,7 @@ node_types:
       capabilities:
         virtual_storage:
           type: tosca.capabilities.nfv.VirtualStorage
-      artifacts: 
-        - sw_image:
-            file:      
-            type: tosca.artifacts.Deployment.Image
+     # artifacts: artifacts should be defined in template file instead of node type 
+     #   - sw_image:
+     #       file:      
+     #       type: tosca.artifacts.Deployment.Image
