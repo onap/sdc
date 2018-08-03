@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_106dd532",
+        "filename": "catalog-dao/src/main/java/org/openecomp/sdc/be/dao/cassandra/schema/SdcSchemaBuilder.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 164,
+      "author": {
+        "id": 3541
+      },
+      "writtenOn": "2018-08-03T07:10:02Z",
+      "side": 1,
+      "message": "Reformat this part. Current format is misleading",
+      "range": {
+        "startLine": 164,
+        "startChar": 0,
+        "endLine": 164,
+        "endChar": 1
+      },
+      "revId": "55dfdd4729257263d354357124bb81fb83c8d6c1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_7088c9e7",
+        "filename": "catalog-dao/src/main/java/org/openecomp/sdc/be/dao/cassandra/schema/SdcSchemaBuilder.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 175,
+      "author": {
+        "id": 3541
+      },
+      "writtenOn": "2018-08-03T07:10:02Z",
+      "side": 1,
+      "message": "Reformat this part. Current format is misleading",
+      "revId": "55dfdd4729257263d354357124bb81fb83c8d6c1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
