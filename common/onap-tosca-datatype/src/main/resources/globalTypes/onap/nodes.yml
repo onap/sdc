@@ -17,7 +17,7 @@ tosca_definitions_version: tosca_simple_yaml_1_1
 metadata:
   filename: onap/nodes.yml
   version: '1.0'
-  
+
 imports:
 - onap_index:
     file: _index.yml
@@ -142,21 +142,21 @@ node_types:
           type: string
         required: false
       configurable_properties:
-         type: map   #In the IM, the multipilicity of VnfcConfigurableProperties is 1, not a map.
-         entry_schema:
-            type: tosca.datatypes.nfv.VnfcConfigurableProperties
-         required: true
+        type: map   #In the IM, the multipilicity of VnfcConfigurableProperties is 1, not a map.
+        entry_schema:
+          type: tosca.datatypes.nfv.VnfcConfigurableProperties
+        required: true
       vdu_profile:
-         type: tosca.datatypes.nfv.VduProfile
-         required: true
+        type: tosca.datatypes.nfv.VduProfile
+        required: true
       inject_files: # Used for vCPE usecase Aligned with ONAP R2 IM. not defined in IFA011 v2.4.1 and SOL001 v0.6.0.
-         type: tosca.datatypes.nfv.injectFile
-         required: false  #Aligned with ONAP R2 IM. it should be false.
+        type: tosca.datatypes.nfv.injectFile
+        required: false  #Aligned with ONAP R2 IM. it should be false.
       meta_data: #metadata attached to the VM or container
-         type: map
-         entry_schema:
-           type: string
-         required: false
+        type: map
+        entry_schema:
+          type: string
+        required: false
       user_data: #cloudinit userdata script support
         type: string
         required: false
@@ -174,17 +174,17 @@ node_types:
         - 0
         - UNBOUNDED
     requirements:
-    - virtual_storage:
-        capability: tosca.capabilities.nfv.VirtualStorage
-        relationship: tosca.relationships.nfv.Vdu.AttachedTo
-        node: tosca.nodes.nfv.VDU.VirtualStorage
-        occurences:
-        - 0
-        - UNBOUNDED 
-    artifacts:
-      sw_image:
-        file:
-        type: tosca.artifacts.nfv.SwImage
+      - virtual_storage:
+          capability: tosca.capabilities.nfv.VirtualStorage
+          relationship: tosca.relationships.nfv.Vdu.AttachedTo
+          node: tosca.nodes.nfv.Vdu.VirtualStorage
+          occurences:
+          - 0
+          - UNBOUNDED
+    #artifacts: artifacts should be defined in template file instead of node type
+    #  sw_image:
+    #    file:
+    #    type: tosca.artifacts.nfv.SwImage
 
 
   tosca.nodes.nfv.Vdu.VirtualStorage:
@@ -211,10 +211,10 @@ node_types:
     capabilities:
       virtual_storage:
         type: tosca.capabilities.nfv.VirtualStorage
-    artifacts:
-      sw_image:
-        file:
-        type: tosca.artifacts.Deployment.Image
+    #artifacts: artifacts should be defined in template file instead of node type
+    #  sw_image:
+    #    file:
+    #    type: tosca.artifacts.Deployment.Image
 
   tosca.nodes.nfv.ext.zte.VNF:
     capabilities:
@@ -361,16 +361,16 @@ node_types:
       configurable_properties:
         type: tosca.datatypes.nfv.VnfConfigurableProperties
         required: false
-        #        modifiable_attributes:
-        #          type: tosca.datatypes.nfv.VnfInfoModifiableAttributes
-        #          required: false  # true in IFA011, but all of members are false. Align with the IM, it is false
+      modifiable_attributes:
+        type: tosca.datatypes.nfv.VnfInfoModifiableAttributes
+        required: false  # true in IFA011, but all of members are false. Align with the IM, it is false
       flavour_id:
         type: string
         required: true
       flavour_description:
         type: string
         required: true
-    capabilities:
+    #capabilities:
       # monitoring_parameter:
       # modelled as ad hoc capabilities in the VNF node template
     requirements:
@@ -383,7 +383,7 @@ node_types:
         - UNBOUNDED
     interfaces:
       Nfv:
-        type: tosca.interfaces.node.lifecycle.Standard
+        type: tosca.interfaces.nfv.vnf.lifecycle.Nfv
 
   tosca.nodes.nfv.VduCp:
     derived_from: tosca.nodes.nfv.Cp

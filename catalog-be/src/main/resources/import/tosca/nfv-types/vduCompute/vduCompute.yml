@@ -55,11 +55,11 @@ node_types:
         - virtual_storage:
             capability: tosca.capabilities.nfv.VirtualStorage
             relationship: tosca.relationships.nfv.Vdu.AttachedTo
-            node: tosca.nodes.nfv.VDU.VirtualStorage
+            node: tosca.nodes.nfv.Vdu.VirtualStorage
             occurences:
             - 0
             - UNBOUNDED
-      artifacts:   
-        - sw_image:
-            file:   
-            type: tosca.artifacts.nfv.SwImage
+      #artifacts: artifacts should be defined in template file instead of node type  
+      #  - sw_image:
+      #      file:   
+      #      type: tosca.artifacts.nfv.SwImage
