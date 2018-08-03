@@ -64,3 +64,92 @@ tosca.interfaces.node.lifecycle.Standard:
     description: Standard lifecycle stop operation.
   delete:
     description: Standard lifecycle delete operation.
+tosca.interfaces.nfv.Vnflcm:
+  instantiate:
+    description: Invoked upon receipt of an Instantiate VNF request
+    inputs:
+      additional_parameters:
+        type: tosca.datatypes.nfv.VnfOperationAdditionalParameters
+        required: false
+  instantiate_start:
+    description: Invoked before instantiate
+  instantiate_end:
+    description: Invoked after instantiate
+  terminate:
+    description: Invoked upon receipt Terminate VNF request
+    inputs:
+      additional_parameters:
+        type: tosca.datatypes.nfv.VnfOperationAdditionalParameters
+        required: false
+  terminate_start:
+    description: Invoked before terminate
+  terminate_end:
+    description: Invoked after terminate
+  modify_information:
+    description: Invoked upon receipt of a Modify VNF Information request
+  modify_information_start:
+    description: Invoked before modify_information
+  modify_information_end:
+    description: Invoked after modify_information
+  change_flavour:
+    description: Invoked upon receipt of a Change VNF Flavour request
+    inputs:
+      additional_parameters:
+        type: tosca.datatypes.nfv.VnfOperationAdditionalParameters
+        required: false
+  change_flavour_start:
+    description: Invoked before change_flavour
+  change_flavour_end:
+    description: Invoked after change_flavour
+  change_external_connectivity:
+    description: Invoked upon receipt of a Change External VNF Connectivity   request
+    inputs:
+      additional_parameters:
+        type: tosca.datatypes.nfv.VnfOperationAdditionalParameters
+        required: false
+  change_external_connectivity_start:
+    description: Invoked before change_external_connectivity
+  change_external_connectivity_end:
+    description: Invoked after change_external_connectivity
+  operate:
+    description: Invoked upon receipt of an Operate VNF request
+    inputs:
+      additional_parameters:
+        type: tosca.datatypes.nfv.VnfOperationAdditionalParameters
+        required: false
+  operate_start:
+    description: Invoked before operate
+  operate_end:
+    description: Invoked after operate
+  heal:
+    description: Invoked upon receipt of a Heal VNF request
+    inputs:
+      additional_parameters:
+        type: tosca.datatypes.nfv.VnfOperationAdditionalParameters
+        required: false
+  heal_start:
+    description: Invoked before heal
+  heal_end:
+    description: Invoked after heal
+  scale:
+    description: Invoked upon receipt of a Scale VNF request
+    inputs:
+      additional_parameters:
+        type: tosca.datatypes.nfv.VnfOperationAdditionalParameters
+        required: false
+  scale_start:
+    description: Invoked before scale
+  scale_end:
+    description: Invoked after scale
+  scale_to_level:
+    description: Invoked upon receipt of a Scale VNF to Level request
+    inputs:
+      additional_parameters:
+        type: tosca.datatypes.nfv.VnfOperationAdditionalParameters
+        required: false
+  scale_to_level_start:
+    description: Invoked before scale_to_level
+  scale_to_level_end:
+    description: Invoked after scale_to_level
+ #  indicator_changed:
+ #    description: On receiving a VNF indicator value change notification

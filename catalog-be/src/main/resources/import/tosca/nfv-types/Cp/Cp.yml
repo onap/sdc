@@ -3,29 +3,29 @@ node_types:
   tosca.nodes.nfv.Cp:
     derived_from: tosca.nodes.Root
     properties:
-        layer_protocol:
-          type: list
-          entry_schema:
-            type: string
-            constraints:
-              - valid_values: [ethernet, mpls, odu2, ipv4, ipv6, pseudo_wire ]
-          required: true
-        role: #Name in ETSI NFV IFA011 v0.7.3 cpRole
+      layer_protocol:
+        type: list
+        entry_schema:
           type: string
           constraints:
-            - valid_values: [ root, leaf ]
-          required: false
-        description:
-          type: string
-          required: false
-        protocol_data:
-          type: list
-          entry_schema:
-            type: tosca.datatypes.nfv.CpProtocolData
-          required: true
-        trunk_mode:
-          type: boolean
-          required: true
-        allowed_address_data: # Aligned with ONAP R2 Im.not defined in IFA011 v2.4.1 and SOL001 v0.6.0.             
-          type: tosca.datatypes.nfv.AddressData   #In the IM, it is a array, but here it is not a array. TBD.
-          required: false
+            - valid_values: [ethernet, mpls, odu2, ipv4, ipv6, pseudo_wire ]
+        required: true
+      role: #Name in ETSI NFV IFA011 v0.7.3 cpRole
+        type: string
+        constraints:
+          - valid_values: [ root, leaf ]
+        required: false
+      description:
+        type: string
+        required: false
+      protocol_data:
+        type: list
+        entry_schema:
+          type: tosca.datatypes.nfv.CpProtocolData
+        required: true
+      trunk_mode:
+        type: boolean
+        required: true
+      allowed_address_data: # Aligned with ONAP R2 Im.not defined in IFA011 v2.4.1 and SOL001 v0.6.0.             
+        type: tosca.datatypes.nfv.AddressData   #In the IM, it is a array, but here it is not a array. TBD.
+        required: false
