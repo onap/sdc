@@ -40,16 +40,16 @@ node_types:
         configurable_properties:
           type: tosca.datatypes.nfv.VnfConfigurableProperties
           required: false
-#        modifiable_attributes:
-#          type: tosca.datatypes.nfv.VnfInfoModifiableAttributes
-#          required: false  # true in IFA011, but all of members are false. Align with the IM, it is false
+        modifiable_attributes:
+          type: tosca.datatypes.nfv.VnfInfoModifiableAttributes
+          required: false  # true in IFA011, but all of members are false. Align with the IM, it is false
         flavour_id:
           type: string
           required: true 
         flavour_description:
           type: string
           required: true 
-      capabilities:
+      #capabilities:
           # monitoring_parameter:
           # modelled as ad hoc capabilities in the VNF node template
       requirements:
@@ -57,9 +57,7 @@ node_types:
             capability: tosca.capabilities.nfv.VirtualLinkable
             relationship: tosca.relationships.nfv.VirtualLinksTo
             node: tosca.nodes.nfv.VnfVirtualLink
-            occurrences:
-            - 0
-            - UNBOUNDED
+            occurrences: [ 0, UNBOUNDED ]
       interfaces:
         Nfv:
-          type: tosca.interfaces.node.lifecycle.Standard
+          type: tosca.interfaces.nfv.vnf.lifecycle.Nfv
