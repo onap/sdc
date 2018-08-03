@@ -1,27 +1,25 @@
 tosca_definitions_version: tosca_simple_yaml_1_0_0
 node_types:
   tosca.nodes.nfv.VnfVirtualLink:
-      derived_from: tosca.nodes.Root
-      properties:
-        connectivity_type:
-          type: tosca.datatypes.nfv.ConnectivityType
-          required: true
-        description:
+    derived_from: tosca.nodes.Root
+    properties:
+      connectivity_type:
+        type: tosca.datatypes.nfv.ConnectivityType
+        required: true
+      description:
+        type: string
+        required: false
+      test_access:
+        type: list
+        entry_schema:
           type: string
-          required: false
-        test_access:
-          type: list
-          entry_schema:
-            type: string
-          required: false
-        vl_profile:
-          type: tosca.datatypes.nfv.VlProfile
-          required: true
-      capabilities:
-        monitoring_parameter:   # this is not a very clear data structure enough to be coded, suggest to be annotated.
-          type: tosca.capabilities.nfv.Metric
-          occurrences:
-          - 0
-          - UNBOUNDED
-        virtual_linkable:
-          type: tosca.capabilities.nfv.VirtualLinkable
+        required: false
+      vl_profile:
+        type: tosca.datatypes.nfv.VlProfile
+        required: true
+    capabilities:
+      monitoring_parameter:   # this is not a very clear data structure enough to be coded, suggest to be annotated.
+        type: tosca.capabilities.nfv.Metric
+        occurrences: [0, UNBOUNDED]
+      virtual_linkable:
+        type: tosca.capabilities.nfv.VirtualLinkable

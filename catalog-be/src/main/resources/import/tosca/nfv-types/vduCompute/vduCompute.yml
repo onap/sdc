@@ -10,12 +10,12 @@ node_types:
           type: string
           required: true
         boot_order:
-          type: map
+          type: list 
           entry_schema:
             type: string
           required: false
         nfvi_constraints: 
-          type: map # Align with IM, it shoul be a array of KeyValuePair/NameValuePair
+          type: list # Align with IM, it shoul be a array of KeyValuePair/NameValuePair
           entry_schema:
             type: string
           required: false
@@ -43,23 +43,17 @@ node_types:
           type: tosca.capabilities.nfv.VirtualCompute
         virtual_binding:
           type: tosca.capabilities.nfv.VirtualBindable
-          occurrences:
-          - 1
-          - UNBOUNDED
+          occurrences: [1, UNBOUNDED]	
         monitoring_parameter:    
           type: tosca.capabilities.nfv.Metric
-          occurrences:
-          - 0
-          - UNBOUNDED
+          occurrences: [0, UNBOUNDED]
       requirements:
         - virtual_storage:
             capability: tosca.capabilities.nfv.VirtualStorage
             relationship: tosca.relationships.nfv.Vdu.AttachedTo
-            node: tosca.nodes.nfv.VDU.VirtualStorage
-            occurences:
-            - 0
-            - UNBOUNDED
-      artifacts:   
-        - sw_image:
-            file:   
-            type: tosca.artifacts.nfv.SwImage
+            node: tosca.nodes.nfv.Vdu.VirtualStorage
+            occurences: [ 0, UNBOUNDED ]
+      #artifacts:   
+      #  - sw_image:
+      #      file:   
+      #      type: tosca.artifacts.nfv.SwImage
