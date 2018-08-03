@@ -152,7 +152,7 @@ tosca.capabilities.network.Linkable:
 org.openecomp.capabilities.AllottedResource:
   derived_from: tosca.capabilities.Root
 tosca.capabilities.nfv.Metric:
-  derived_from: tosca.capabilities.Endpoint
+  derived_from: tosca.capabilities.Root
 org.openecomp.capabilities.Metric:
   derived_from: tosca.capabilities.nfv.Metric
   description: A node type that includes the Metric capability indicates that it can be monitored.
@@ -233,9 +233,11 @@ tosca.capabilities.nfv.VirtualCompute:
     logical_node:
       type: tosca.datatypes.nfv.LogicalNodeData
       required: false
-#    compute_requirements: Type is TBD
-#      type: map
-#      required: false
+    compute_requirements:
+      type: map
+      entry_schema:
+        type: string
+      required: false
     requested_additional_capabilities:
       type: map
       entry_schema:
