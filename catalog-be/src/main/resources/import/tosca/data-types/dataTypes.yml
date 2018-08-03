@@ -1377,8 +1377,6 @@ tosca.datatypes.nfv.VirtualNetworkInterfaceRequirements:
     support_mandatory:
       type: boolean
       required: true
-    requirement:
-      type: string      # not specified
     network_interface_requirements:
       type: map
       entry_schema:
@@ -1402,9 +1400,6 @@ tosca.datatypes.nfv.L2AddressData:
     mac_address_assignment: 
       type: boolean
       required: true
-    address:
-      type: string
-      required: false
 tosca.datatypes.nfv.L3AddressData:
   derived_from: tosca.datatypes.Root
   properties: 
@@ -1428,17 +1423,19 @@ tosca.datatypes.nfv.L3AddressData:
         type: string
       required: false
 tosca.datatypes.nfv.AddressData:
+  derived_from: tosca.datatypes.Root
   properties: 
     address_type: 
-      constraints: 
-      - valid_values: [mac_address, ip_address]
       type: string
+      required: true
+      constraints: 
+        - valid_values: [mac_address, ip_address]
     l2_address_data: 
-      required: false
       type: tosca.datatypes.nfv.L2AddressData
-    l3_address_data: 
       required: false
+    l3_address_data: 
       type: tosca.datatypes.nfv.L3AddressData
+      required: false
 tosca.datatypes.nfv.ConnectivityType:
   derived_from: tosca.datatypes.Root
   properties:  
@@ -1536,7 +1533,7 @@ tosca.datatypes.nfv.VduProfile:
       required: true
     vmBootUpTimeOut: #Align with ONAP R2 IM. not defined in IFA011 v2.4.1 and SOL001 v.6.0
       type: integer
-      required: optional
+      required: false
 tosca.datatypes.nfv.LinkBitRateRequirements:
   derived_from: tosca.datatypes.Root
   properties:
@@ -1557,6 +1554,8 @@ tosca.datatypes.nfv.Qos:
       required: true
     packet_loss_ratio:
       type: float #Number [0 ..1]
+      constraints:
+        - in_range: [ 0.0, 1.0 ]
       required: false
 tosca.datatypes.nfv.VlProfile:
   derived_from: tosca.datatypes.Root
@@ -1650,9 +1649,12 @@ tosca.datatypes.nfv.InstantiationLevel:
       required: false
       entry_schema:
         type: tosca.datatypes.nfv.ScaleInfo
-#tosca.datatypes.nfv.VnfInstantiateOperationConfiguration:
-#  derived_from: tosca.datatypes.Root
-  #properties:
+tosca.datatypes.nfv.VnfInstantiateOperationConfiguration:
+  derived_from: tosca.datatypes.Root
+  properties:
+    description:
+      type: string
+      required: false
     #parameters:
        #modeled as part of operation parameter list
 tosca.datatypes.nfv.VnfScaleOperationConfiguration:
@@ -1695,8 +1697,8 @@ tosca.datatypes.nfv.VnfOperateOperationConfiguration:
 tosca.datatypes.nfv.VnfLcmOperationsConfiguration:
   derived_from: tosca.datatypes.Root
   properties:
-#    instantiate:
-#      type: tosca.datatypes.nfv.VnfInstantiateOperationConfiguration
+    instantiate:
+      type: tosca.datatypes.nfv.VnfInstantiateOperationConfiguration
     scale:
       type: tosca.datatypes.nfv.VnfScaleOperationConfiguration
     scale_to_level:
@@ -1718,8 +1720,12 @@ tosca.datatypes.nfv.CpProtocolData:
     address_data:
       type: tosca.datatypes.nfv.AddressData
       required: false
-#tosca.datatypes.nfv.VnfAdditionalConfigurableProperties:
-#  derived_from: tosca.datatypes.Root
+tosca.datatypes.nfv.VnfAdditionalConfigurableProperties:
+  derived_from: tosca.datatypes.Root
+  properties:
+    description:
+      type: string
+      required: false
 tosca.datatypes.nfv.VnfConfigurableProperties:
   derived_from: tosca.datatypes.Root
   properties:
@@ -1729,19 +1735,27 @@ tosca.datatypes.nfv.VnfConfigurableProperties:
     is_autoheal_enabled:
       type: boolean
       required: false
-#    additional_configurable_properties:
-#      type: tosca.datatypes.nfv.VnfAdditionalConfigurableProperties
-#      required: false
-#tosca.datatypes.nfv.VnfInfoModifiableAttributesExtensions:
-#  derived_from: tosca.datatypes.Root
-#tosca.datatypes.nfv.VnfInfoModifiableAttributesMetadata:
-#  derived_from: tosca.datatypes.Root
-#tosca.datatypes.nfv.VnfInfoModifiableAttributes:
-#  derived_from: tosca.datatypes.Root
-#  properties:
-#    extensions:
-#      type: tosca.datatypes.nfv.VnfInfoModifiableAttributesExtensions
-#      required: false
-#    metadata:
-#      type: tosca.datatypes.nfv.VnfInfoModifiableAttributesMetadata
-#      required: false
+    additional_configurable_properties:
+      type: tosca.datatypes.nfv.VnfAdditionalConfigurableProperties
+      required: false
+tosca.datatypes.nfv.VnfInfoModifiableAttributesExtensions:
+  derived_from: tosca.datatypes.Root
+  properties:
+    description:
+      type: string
+      required: false
+tosca.datatypes.nfv.VnfInfoModifiableAttributesMetadata:
+  derived_from: tosca.datatypes.Root
+  properties:
+    description:
+      type: string
+      required: false
+tosca.datatypes.nfv.VnfInfoModifiableAttributes:
+  derived_from: tosca.datatypes.Root
+  properties:
+    extensions:
+      type: tosca.datatypes.nfv.VnfInfoModifiableAttributesExtensions
+      required: false
+    metadata:
+      type: tosca.datatypes.nfv.VnfInfoModifiableAttributesMetadata
+      required: false
