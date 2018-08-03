@@ -23,14 +23,6 @@ imports:
     file: _index.yml
 
 relationship_types:
-  
-  tosca.relationships.nfv.VDU.AttachedTo:
-    derived_from: tosca.relationships.Root
-    properties:
-      location:
-        required: false
-        type: string
-
   tosca.relationships.nfv.VirtualBindsTo:
     derived_from: tosca.relationships.DependsOn
     valid_target_types:
@@ -40,3 +32,7 @@ relationship_types:
     derived_from: tosca.relationships.DependsOn
     valid_target_types:
     - tosca.capabilities.nfv.VirtualLinkable
+
+  tosca.relationships.nfv.Vdu.AttachedTo:
+    derived_from: tosca.relationships.DependsOn
+    valid_target_types: [ tosca.capabilities.nfv.VirtualStorage ]
