@@ -25,3 +25,4 @@ node_types:
           - UNBOUNDED
         virtual_linkable:
           type: tosca.capabilities.nfv.VirtualLinkable
+
