@@ -132,31 +132,31 @@ node_types:
         type: string
         required: true
       boot_order:
-        type: map
+        type: list 
         entry_schema:
           type: string
         required: false
       nfvi_constraints:
-        type: map # Align with IM, it shoul be a array of KeyValuePair/NameValuePair
+        type: list # Align with IM, it shoul be a array of KeyValuePair/NameValuePair
         entry_schema:
           type: string
         required: false
       configurable_properties:
-         type: map   #In the IM, the multipilicity of VnfcConfigurableProperties is 1, not a map.
-         entry_schema:
-            type: tosca.datatypes.nfv.VnfcConfigurableProperties
-         required: true
+        type: map   #In the IM, the multipilicity of VnfcConfigurableProperties is 1, not a map.
+        entry_schema:
+          type: tosca.datatypes.nfv.VnfcConfigurableProperties
+        required: true
       vdu_profile:
-         type: tosca.datatypes.nfv.VduProfile
-         required: true
+        type: tosca.datatypes.nfv.VduProfile
+        required: true
       inject_files: # Used for vCPE usecase Aligned with ONAP R2 IM. not defined in IFA011 v2.4.1 and SOL001 v0.6.0.
-         type: tosca.datatypes.nfv.injectFile
-         required: false  #Aligned with ONAP R2 IM. it should be false.
+        type: tosca.datatypes.nfv.injectFile
+        required: false  #Aligned with ONAP R2 IM. it should be false.
       meta_data: #metadata attached to the VM or container
-         type: map
-         entry_schema:
-           type: string
-         required: false
+        type: map
+        entry_schema:
+          type: string
+        required: false
       user_data: #cloudinit userdata script support
         type: string
         required: false
@@ -165,26 +165,20 @@ node_types:
         type: tosca.capabilities.nfv.VirtualCompute
       virtual_binding:
         type: tosca.capabilities.nfv.VirtualBindable
-        occurrences:
-        - 1
-        - UNBOUNDED
+        occurrences: [1, UNBOUNDED]
       monitoring_parameter:
         type: tosca.capabilities.nfv.Metric
-        occurrences:
-        - 0
-        - UNBOUNDED
+        occurrences: [0, UNBOUNDED]
     requirements:
-    - virtual_storage:
-        capability: tosca.capabilities.nfv.VirtualStorage
-        relationship: tosca.relationships.nfv.Vdu.AttachedTo
-        node: tosca.nodes.nfv.VDU.VirtualStorage
-        occurences:
-        - 0
-        - UNBOUNDED 
-    artifacts:
-      sw_image:
-        file:
-        type: tosca.artifacts.nfv.SwImage
+      - virtual_storage:
+          capability: tosca.capabilities.nfv.VirtualStorage
+          relationship: tosca.relationships.nfv.Vdu.AttachedTo
+          node: tosca.nodes.nfv.Vdu.VirtualStorage
+          occurences: [ 0, UNBOUNDED ]
+    #artifacts:
+    #  sw_image:
+    #    file:
+    #    type: tosca.artifacts.nfv.SwImage
 
 
   tosca.nodes.nfv.Vdu.VirtualStorage:
@@ -195,7 +189,7 @@ node_types:
       type_of_storage:
         type: string
         constraints:
-        - valid_values: [volume, object, root, block]
+          - valid_values: [volume, object, root, block]
         required: true
       size_of_storage:
         type: scalar-unit.size
@@ -211,10 +205,10 @@ node_types:
     capabilities:
       virtual_storage:
         type: tosca.capabilities.nfv.VirtualStorage
-    artifacts:
-      sw_image:
-        file:
-        type: tosca.artifacts.Deployment.Image
+    #artifacts:
+    #  sw_image:
+    #    file:
+    #    type: tosca.artifacts.Deployment.Image
 
   tosca.nodes.nfv.ext.zte.VNF:
     capabilities:
@@ -361,29 +355,27 @@ node_types:
       configurable_properties:
         type: tosca.datatypes.nfv.VnfConfigurableProperties
         required: false
-        #        modifiable_attributes:
-        #          type: tosca.datatypes.nfv.VnfInfoModifiableAttributes
-        #          required: false  # true in IFA011, but all of members are false. Align with the IM, it is false
+      modifiable_attributes:
+        type: tosca.datatypes.nfv.VnfInfoModifiableAttributes
+        required: false  # true in IFA011, but all of members are false. Align with the IM, it is false
       flavour_id:
         type: string
         required: true
       flavour_description:
         type: string
         required: true
-    capabilities:
+    #capabilities:
       # monitoring_parameter:
       # modelled as ad hoc capabilities in the VNF node template
     requirements:
-    - virtual_link:
-        capability: tosca.capabilities.nfv.VirtualLinkable
-        relationship: tosca.relationships.nfv.VirtualLinksTo
-        node: tosca.nodes.nfv.VnfVirtualLink
-        occurrences:
-        - 0
-        - UNBOUNDED
+      - virtual_link:
+          capability: tosca.capabilities.nfv.VirtualLinkable
+          relationship: tosca.relationships.nfv.VirtualLinksTo
+          node: tosca.nodes.nfv.VnfVirtualLink
+          occurrences: [0, UNBOUNDED]
     interfaces:
       Nfv:
-        type: tosca.interfaces.node.lifecycle.Standard
+        type: tosca.interfaces.nfv.vnf.lifecycle.Nfv
 
   tosca.nodes.nfv.VduCp:
     derived_from: tosca.nodes.nfv.Cp
@@ -400,7 +392,7 @@ node_types:
       vnic_type: # Aligned with ONAP R2 Im. not defined in IFA011 v2.4.1 and SOL001 v0.6.0
         type: string
         constraints:
-        - valid_values: [normal, macvtap, direct, baremetal, direct-physical, virtio-forwarder]
+          - valid_values: [normal, macvtap, direct, baremetal, direct-physical, virtio-forwarder]
         required: false
       virtual_network_interface_requirements:
         type: list
@@ -413,14 +405,14 @@ node_types:
         #   constraints:
         #     - greater_or_equal: 0
     requirements:
-    - virtual_link:
-        capability: tosca.capabilities.nfv.VirtualLinkable
-        relationship: tosca.relationships.nfv.VirtualLinksTo
-        node: tosca.nodes.nfv.VnfVirtualLink
-    - virtual_binding:
-        capability: tosca.capabilities.nfv.VirtualBindable
-        relationship: tosca.relationships.nfv.VirtualBindsTo
-        node: tosca.nodes.nfv.Vdu.Compute
+      - virtual_link:
+          capability: tosca.capabilities.nfv.VirtualLinkable
+          relationship: tosca.relationships.nfv.VirtualLinksTo
+          node: tosca.nodes.nfv.VnfVirtualLink
+      - virtual_binding:
+          capability: tosca.capabilities.nfv.VirtualBindable
+          relationship: tosca.relationships.nfv.VirtualBindsTo
+          node: tosca.nodes.nfv.Vdu.Compute
 
   tosca.nodes.nfv.VnfVirtualLink:
     derived_from: tosca.nodes.Root
@@ -442,8 +434,6 @@ node_types:
     capabilities:
       monitoring_parameter:   # this is not a very clear data structure enough to be coded, suggest to be annotated.
         type: tosca.capabilities.nfv.Metric
-        occurrences:
-        - 0
-        - UNBOUNDED
+        occurrences: [0, UNBOUNDED]
       virtual_linkable:
         type: tosca.capabilities.nfv.VirtualLinkable
