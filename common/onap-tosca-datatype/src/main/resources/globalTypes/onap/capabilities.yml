@@ -42,9 +42,11 @@ capability_types:
       logical_node:
         type: tosca.datatypes.nfv.LogicalNodeData
         required: false
-        #compute_requirements: Type is TBD
-        #type: map
-        #required: false
+      compute_requirements:
+        type: map
+        entry_schema:
+          type: string
+        required: false
       requested_additional_capabilities:
         type: map
         entry_schema:
