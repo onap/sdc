@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,8 +20,6 @@
 
 package org.openecomp.sdc.be.monitoring;
 
-import org.eclipse.jetty.client.api.Request;
-import org.eclipse.jetty.client.api.Response;
 import org.eclipse.jetty.proxy.ProxyServlet;
 import org.openecomp.sdc.be.components.impl.MonitoringBusinessLogic;
 import org.openecomp.sdc.be.impl.WebAppContextWrapper;
@@ -31,8 +29,6 @@ import org.springframework.web.context.WebApplicationContext;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.net.URI;
 
 public class EsGateway extends ProxyServlet {
 
@@ -40,25 +36,13 @@ public class EsGateway extends ProxyServlet {
     private static final Logger log = Logger.getLogger(EsGateway.class);
 
     @Override
-    public URI rewriteURI(HttpServletRequest request) {
+    public String rewriteTarget(HttpServletRequest request) {
 
         String originalUrl = request.getRequestURI();
-
         String redirectedUrl = getModifiedUrl(request);
 
         log.debug("EsGateway Redirecting request from: {} , to: {}", originalUrl, redirectedUrl);
-        return URI.create(redirectedUrl);
-    }
-
-    @Override
-    public void customizeProxyRequest(Request proxyRequest, HttpServletRequest request) {
-        super.customizeProxyRequest(proxyRequest, request);
-
-    }
-
-    @Override
-    protected void onResponseSuccess(HttpServletRequest request, HttpServletResponse response, Response proxyResponse) {
-        super.onResponseSuccess(request, response, proxyResponse);
+        return redirectedUrl;
     }
 
     public String getModifiedUrl(HttpServletRequest request) {

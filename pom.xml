@@ -36,7 +36,7 @@
         <elastic-search.version>2.4.0</elastic-search.version>
         <catalog-artifacts.version>1.0.0-SNAPSHOT</catalog-artifacts.version>
         <catalog-builders.version>1.0.0-SNAPSHOT</catalog-builders.version>
-        <jetty.version>9.2.22.v20170606</jetty.version>
+        <jetty.version>9.3.20.v20170531</jetty.version>
 
         <!-- JSON and YAML Parsing -->
         <jackson.version>2.8.10</jackson.version>
