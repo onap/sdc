@@ -40,7 +40,7 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 
 public class FeProxyServletTest {
 	/*
@@ -177,16 +177,6 @@ public class FeProxyServletTest {
 		String rewriteURI = feProxy.rewriteTarget(servletRequest);
 
 		assertTrue(rewriteURI.equals(expectedChangedUrl));
-	}
-
-
-
-	@Test
-	public void testCustomizeProxyRequest() {
-		feProxy.customizeProxyRequest(proxyRequest, servletRequest);
-		verify(proxyRequest).header(HEADER_3, HEADER_3_VAL);
-		verify(proxyRequest, times(1)).header(Mockito.anyString(), Mockito.anyString());
-
 	}
 
 	@Test

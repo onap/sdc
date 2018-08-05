@@ -320,7 +320,6 @@
 				<version>${jetty.version}</version>
 				<!--<version>9.0.6.v20130930</version>-->
 				<configuration>
-					<contextPath>/</contextPath>
 					<webApp>
 						<contextPath>/</contextPath>
 						<webInfIncludeJarPattern>.*/.*jersey-[^/]\.jar$</webInfIncludeJarPattern>

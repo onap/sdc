@@ -22,8 +22,6 @@ package org.openecomp.sdc.fe.servlets;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import java.net.MalformedURLException;
-import java.net.URL;
 import org.eclipse.jetty.client.api.Response;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.fe.config.Configuration;
@@ -39,6 +37,8 @@ import org.slf4j.MDC;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.concurrent.TimeUnit;
 
 public class FeProxyServlet extends SSLProxyServlet {
@@ -213,8 +213,6 @@ public class FeProxyServlet extends SSLProxyServlet {
 	private PluginsConfiguration getPluginConfiguration(HttpServletRequest request) {
 		return ((ConfigurationManager) request.getSession().getServletContext().getAttribute(Constants.CONFIGURATION_MANAGER_ATTR)).getPluginsConfiguration();
   }
-
-
 	private Configuration getConfiguration(HttpServletRequest request) {
 		return ((ConfigurationManager) request.getSession().getServletContext().getAttribute(Constants.CONFIGURATION_MANAGER_ATTR)).getConfiguration();
 	}
