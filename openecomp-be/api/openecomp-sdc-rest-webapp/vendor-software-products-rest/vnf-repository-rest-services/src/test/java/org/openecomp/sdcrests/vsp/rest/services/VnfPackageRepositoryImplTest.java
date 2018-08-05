@@ -53,6 +53,7 @@ public class VnfPackageRepositoryImplTest {
 
     @ClassRule
     public static final WireMockRule wireMockRule = new WireMockRule(wireMockConfig().dynamicPort());
+
     private static final String VSP = "anyVsp";
     private static final String VERSION = "anyVersion";
     private static final String USER = "anyUser";
@@ -88,7 +89,7 @@ public class VnfPackageRepositoryImplTest {
 
     @Test
     public void listVnfsReturnsInternalServerErrorWhenRemoteClientError() {
-        stubFor(get(GET_PATH).willReturn(aResponse().withStatus(403)));
+        stubFor(get(GET_PATH).willReturn(aResponse().withStatus(403).withBody("Forbidden")));
         VnfPackageRepositoryImpl repository = new VnfPackageRepositoryImpl(config);
         Response response = repository.getVnfPackages(VSP, VERSION, USER);
         assertEquals(500, response.getStatus());
@@ -97,7 +98,7 @@ public class VnfPackageRepositoryImplTest {
 
     @Test
     public void listVnfsReturnsInternalServerErrorWhenRemoteReturnsNotOk() {
-        stubFor(get(GET_PATH).willReturn(aResponse().withStatus(204)));
+        stubFor(get(GET_PATH).willReturn(aResponse().withStatus(201).withBody("Created")));
         VnfPackageRepositoryImpl repository = new VnfPackageRepositoryImpl(config);
         Response response = repository.getVnfPackages(VSP, VERSION, USER);
         assertEquals(500, response.getStatus());
@@ -117,7 +118,7 @@ public class VnfPackageRepositoryImplTest {
 
     @Test
     public void downloadVnfsReturnsInternalServerErrorWhenRemoteClientError() {
-        stubFor(get(DOWNLOAD_PATH).willReturn(aResponse().withStatus(403)));
+        stubFor(get(DOWNLOAD_PATH).willReturn(aResponse().withStatus(403).withBody("{\"error\": \"Permissions\"}")));
         VnfPackageRepositoryImpl repository = new VnfPackageRepositoryImpl(config);
         Response response = repository.downloadVnfPackage(VSP, VERSION, CSAR, USER);
         assertEquals(500, response.getStatus());
@@ -126,7 +127,7 @@ public class VnfPackageRepositoryImplTest {
 
     @Test
     public void downloadVnfsReturnsInternalServerErrorWhenRemoteReturnsNotOk() {
-        stubFor(get(DOWNLOAD_PATH).willReturn(aResponse().withStatus(204)));
+        stubFor(get(DOWNLOAD_PATH).willReturn(aResponse().withStatus(201).withBody(new byte[0])));
         VnfPackageRepositoryImpl repository = new VnfPackageRepositoryImpl(config);
         Response response = repository.downloadVnfPackage(VSP, VERSION, CSAR, USER);
         assertEquals(500, response.getStatus());
