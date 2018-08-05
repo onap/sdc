@@ -10,7 +10,7 @@
 		<groupId>org.openecomp.sdc</groupId>
 		<artifactId>openecomp-sdc-api</artifactId>
 		<version>1.3.0-SNAPSHOT</version>
-		<relativePath>../</relativePath>
+		<relativePath>../pom.xml</relativePath>
 	</parent>
 
 	<modules>

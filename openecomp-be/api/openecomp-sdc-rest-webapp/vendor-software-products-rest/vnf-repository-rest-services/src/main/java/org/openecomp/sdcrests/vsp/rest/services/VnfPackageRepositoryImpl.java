@@ -197,9 +197,15 @@ public class VnfPackageRepositoryImpl implements VnfPackageRepository {
     }
 
     private static Response handleUnexpectedStatus(String action, String uri, Response response) {
+
         ErrorCode error = new GeneralErrorBuilder().build();
-        LOGGER.error("Unexpected response status while {}: URI={}, Response={}", action, uri, response,
-                new CoreException(error));
+
+        if (LOGGER.isErrorEnabled()) {
+            String body = response.hasEntity() ? response.readEntity(String.class) : "";
+            LOGGER.error("Unexpected response status while {}: URI={}, status={}, body={}", action, uri,
+                    response.getStatus(), body, new CoreException(error));
+        }
+
         return generateInternalServerError(error);
     }
 
