@@ -20,8 +20,6 @@
 
 package org.openecomp.sdc.fe.servlets;
 
-import org.eclipse.jetty.client.api.Request;
-import org.eclipse.jetty.client.api.Response;
 import org.eclipse.jetty.proxy.ProxyServlet;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.fe.config.Configuration;
@@ -30,15 +28,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.net.URI;
 
 public class KibanaServlet extends ProxyServlet {
 	private static final long serialVersionUID = 1L;
 	private static Logger log = LoggerFactory.getLogger(KibanaServlet.class.getName());
 
 	@Override
-	public URI rewriteURI(HttpServletRequest request) {
+	public String rewriteTarget(HttpServletRequest request) {
 
 		String originalUrl = request.getRequestURI();
 
@@ -46,19 +42,7 @@ public class KibanaServlet extends ProxyServlet {
 
 		log.debug("KibanaServlet Redirecting request from: {} , to: {}", originalUrl, redirectedUrl);
 
-		return URI.create(redirectedUrl);
-	}
-
-	@Override
-	public void customizeProxyRequest(Request proxyRequest, HttpServletRequest request) {
-		super.customizeProxyRequest(proxyRequest, request);
-
-	}
-
-	@Override
-	protected void onResponseSuccess(HttpServletRequest request, HttpServletResponse response, Response proxyResponse) {
-
-		super.onResponseSuccess(request, response, proxyResponse);
+		return redirectedUrl;
 	}
 
 	public String getModifiedUrl(HttpServletRequest request) {
