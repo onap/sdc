@@ -367,7 +367,8 @@
   "Item successfully Archived": "Item successfully Archived",
   "Item successfully Restored": "Item successfully Restored",
   "VSPs": "VSPs",
-  
+  "UUID:": "UUID:",
+  "Invariant UUID:": "Invariant UUID:",
   "VendorSoftwareProduct": "VSP",
   "VendorSoftwareProduct/category": "Category",
   "VendorSoftwareProduct/description": "Description",

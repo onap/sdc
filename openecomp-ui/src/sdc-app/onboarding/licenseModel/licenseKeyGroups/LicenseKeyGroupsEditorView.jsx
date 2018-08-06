@@ -23,27 +23,21 @@ import Tab from 'sdc-ui/lib/react/Tab.js';
 
 import Button from 'sdc-ui/lib/react/Button.js';
 import Form from 'nfvo-components/input/validation/Form.jsx';
-import Input from 'nfvo-components/input/validation/Input.jsx';
-import GridSection from 'nfvo-components/grid/GridSection.jsx';
-import GridItem from 'nfvo-components/grid/GridItem.jsx';
-import {
-    optionsInputValues as licenseKeyGroupOptionsInputValues,
-    LKG_FORM_NAME,
-    tabIds
-} from './LicenseKeyGroupsConstants.js';
-import { optionsInputValues as LicenseModelOptionsInputValues } from '../LicenseModelConstants.js';
+//import GridSection from 'nfvo-components/grid/GridSection.jsx';
+import { LKG_FORM_NAME, tabIds } from './LicenseKeyGroupsConstants.js';
+
 import {
     validateStartDate,
     thresholdValueValidation
 } from '../LicenseModelValidations.js';
-
-import { DATE_FORMAT } from 'sdc-app/onboarding/OnboardingConstants.js';
 
 import LicenseKeyGroupsLimits from './LicenseKeyGroupsLimits.js';
 import {
     limitType,
     NEW_LIMIT_TEMP_ID
 } from '../limits/LimitEditorConstants.js';
+import LicenseKeyGroupFormContent from './components/FormContent.jsx';
+import ModalButtons from 'sdc-app/onboarding/licenseModel/components/ModalButtons.jsx';
 
 const LicenseKeyGroupPropType = PropTypes.shape({
     id: PropTypes.string,
@@ -56,194 +50,6 @@ const LicenseKeyGroupPropType = PropTypes.shape({
     startDate: PropTypes.string,
     expiryDate: PropTypes.string
 });
-
-const LicenseKeyGroupFormContent = ({
-    data,
-    onDataChanged,
-    genericFieldInfo,
-    validateName,
-    validateStartDate,
-    thresholdValueValidation
-}) => {
-    let {
-        name,
-        description,
-        increments,
-        type,
-        thresholdUnits,
-        thresholdValue,
-        startDate,
-        expiryDate
-    } = data;
-    return (
-        <GridSection hasLostColSet>
-            <GridItem colSpan={2}>
-                <Input
-                    onChange={name =>
-                        onDataChanged({ name }, LKG_FORM_NAME, {
-                            name: validateName
-                        })
-                    }
-                    label={i18n('Name')}
-                    data-test-id="create-lkg-name"
-                    value={name}
-                    isValid={genericFieldInfo.name.isValid}
-                    errorText={genericFieldInfo.name.errorText}
-                    isRequired={true}
-                    type="text"
-                />
-            </GridItem>
-            <GridItem>
-                <Input
-                    onChange={e => {
-                        // setting the unit to the correct value
-                        const selectedIndex = e.target.selectedIndex;
-                        const val = e.target.options[selectedIndex].value;
-                        onDataChanged({ thresholdUnits: val }, LKG_FORM_NAME);
-                        // TODO make sure that the value is valid too
-                        onDataChanged(
-                            { thresholdValue: thresholdValue },
-                            LKG_FORM_NAME,
-                            {
-                                thresholdValue: thresholdValueValidation
-                            }
-                        );
-                    }}
-                    value={thresholdUnits}
-                    label={i18n('Threshold Units')}
-                    data-test-id="create-ep-threshold-units"
-                    isValid={genericFieldInfo.thresholdUnits.isValid}
-                    errorText={genericFieldInfo.thresholdUnits.errorText}
-                    groupClassName="bootstrap-input-options"
-                    className="input-options-select"
-                    type="select">
-                    {LicenseModelOptionsInputValues.THRESHOLD_UNITS.map(
-                        mtype => (
-                            <option key={mtype.enum} value={mtype.enum}>{`${
-                                mtype.title
-                            }`}</option>
-                        )
-                    )}
-                </Input>
-            </GridItem>
-            <GridItem lastColInRow>
-                <Input
-                    className="entitlement-pools-form-row-threshold-value"
-                    onChange={thresholdValue =>
-                        onDataChanged({ thresholdValue }, LKG_FORM_NAME, {
-                            thresholdValue: thresholdValueValidation
-                        })
-                    }
-                    label={i18n('Threshold Value')}
-                    isValid={genericFieldInfo.thresholdValue.isValid}
-                    errorText={genericFieldInfo.thresholdValue.errorText}
-                    data-test-id="create-ep-threshold-value"
-                    value={thresholdValue}
-                    type="text"
-                />
-            </GridItem>
-            <GridItem colSpan={2}>
-                <Input
-                    onChange={description =>
-                        onDataChanged({ description }, LKG_FORM_NAME)
-                    }
-                    label={i18n('Description')}
-                    data-test-id="create-lkg-description"
-                    value={description}
-                    isValid={genericFieldInfo.description.isValid}
-                    errorText={genericFieldInfo.description.errorText}
-                    type="textarea"
-                    overlayPos="bottom"
-                />
-            </GridItem>
-            <GridItem colSpan={2} lastColInRow>
-                <Input
-                    onChange={increments =>
-                        onDataChanged({ increments }, LKG_FORM_NAME)
-                    }
-                    label={i18n('Increments')}
-                    value={increments}
-                    data-test-id="create-ep-increments"
-                    type="text"
-                />
-            </GridItem>
-            <GridItem colSpan={2}>
-                <Input
-                    isRequired={true}
-                    onChange={e => {
-                        const selectedIndex = e.target.selectedIndex;
-                        const val = e.target.options[selectedIndex].value;
-                        onDataChanged({ type: val }, LKG_FORM_NAME);
-                    }}
-                    value={type}
-                    label={i18n('Type')}
-                    data-test-id="create-lkg-type"
-                    isValid={genericFieldInfo.type.isValid}
-                    errorText={genericFieldInfo.type.errorText}
-                    groupClassName="bootstrap-input-options"
-                    className="input-options-select"
-                    overlayPos="bottom"
-                    type="select">
-                    {licenseKeyGroupOptionsInputValues.TYPE.map(type => (
-                        <option key={type.enum} value={type.enum}>
-                            {type.title}
-                        </option>
-                    ))}
-                </Input>
-            </GridItem>
-            <GridItem>
-                <Input
-                    type="date"
-                    label={i18n('Start Date')}
-                    value={startDate}
-                    dateFormat={DATE_FORMAT}
-                    startDate={startDate}
-                    endDate={expiryDate}
-                    onChange={startDate =>
-                        onDataChanged(
-                            {
-                                startDate: startDate
-                                    ? startDate.format(DATE_FORMAT)
-                                    : ''
-                            },
-                            LKG_FORM_NAME,
-                            { startDate: validateStartDate }
-                        )
-                    }
-                    isValid={genericFieldInfo.startDate.isValid}
-                    errorText={genericFieldInfo.startDate.errorText}
-                    selectsStart
-                />
-            </GridItem>
-            <GridItem lastColInRow>
-                <Input
-                    type="date"
-                    label={i18n('Expiry Date')}
-                    value={expiryDate}
-                    dateFormat={DATE_FORMAT}
-                    startDate={startDate}
-                    endDate={expiryDate}
-                    onChange={expiryDate => {
-                        onDataChanged(
-                            {
-                                expiryDate: expiryDate
-                                    ? expiryDate.format(DATE_FORMAT)
-                                    : ''
-                            },
-                            LKG_FORM_NAME
-                        );
-                        onDataChanged({ startDate }, LKG_FORM_NAME, {
-                            startDate: validateStartDate
-                        });
-                    }}
-                    isValid={genericFieldInfo.expiryDate.isValid}
-                    errorText={genericFieldInfo.expiryDate.errorText}
-                    selectsEnd
-                />
-            </GridItem>
-        </GridSection>
-    );
-};
 
 class LicenseKeyGroupsEditorView extends React.Component {
     static propTypes = {
@@ -396,31 +202,19 @@ class LicenseKeyGroupsEditorView extends React.Component {
                     ) // Render empty div to not break tabs
                     }
                 </Tabs>
-
-                <GridSection className="license-model-modal-buttons license-key-group-editor-buttons">
-                    {!this.state.selectedLimit && (
-                        <Button
-                            btnType="primary"
-                            disabled={!this.props.isFormValid || isReadOnlyMode}
-                            onClick={() => this.submit()}
-                            type="reset">
-                            {i18n('Save')}
-                        </Button>
-                    )}
-                    <Button
-                        btnType={
-                            this.state.selectedLimit ? 'primary' : 'secondary'
-                        }
-                        onClick={() => this.props.onCancel()}
-                        type="reset">
-                        {i18n('Cancel')}
-                    </Button>
-                </GridSection>
+                <ModalButtons
+                    className="license-key-group-editor-buttons"
+                    selectedLimit={this.state.selectedLimit}
+                    isFormValid={this.props.isFormValid}
+                    isReadOnlyMode={isReadOnlyMode}
+                    onSubmit={this.submit}
+                    onCancel={this.props.onCancel}
+                />
             </div>
         );
     }
 
-    submit() {
+    submit = () => {
         const {
             data: licenseKeyGroup,
             previousData: previousLicenseKeyGroup,
@@ -433,7 +227,7 @@ class LicenseKeyGroupsEditorView extends React.Component {
         } else {
             onSubmit({ licenseKeyGroup, previousLicenseKeyGroup });
         }
-    }
+    };
 
     validateName(value) {
         const { data: { id }, LKGNames } = this.props;

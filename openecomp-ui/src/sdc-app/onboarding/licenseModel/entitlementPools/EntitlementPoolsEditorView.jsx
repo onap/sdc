@@ -19,21 +19,19 @@ import PropTypes from 'prop-types';
 import i18n from 'nfvo-utils/i18n/i18n.js';
 import Validator from 'nfvo-utils/Validator.js';
 
-import Input from 'nfvo-components/input/validation/Input.jsx';
 import Form from 'nfvo-components/input/validation/Form.jsx';
 import Button from 'sdc-ui/lib/react/Button.js';
-import GridSection from 'nfvo-components/grid/GridSection.jsx';
-import GridItem from 'nfvo-components/grid/GridItem.jsx';
+import ModalButtons from 'sdc-app/onboarding/licenseModel/components/ModalButtons.jsx';
+
 import {
     SP_ENTITLEMENT_POOL_FORM,
     tabIds
 } from './EntitlementPoolsConstants.js';
-import { optionsInputValues as LicenseModelOptionsInputValues } from '../LicenseModelConstants.js';
 import {
     validateStartDate,
     thresholdValueValidation
 } from '../LicenseModelValidations.js';
-import { DATE_FORMAT } from 'sdc-app/onboarding/OnboardingConstants.js';
+
 import Tabs from 'sdc-ui/lib/react/Tabs.js';
 import Tab from 'sdc-ui/lib/react/Tab.js';
 import EntitlementPoolsLimits from './EntitlementPoolsLimits.js';
@@ -41,6 +39,7 @@ import {
     limitType,
     NEW_LIMIT_TEMP_ID
 } from '../limits/LimitEditorConstants.js';
+import EntitlementPoolsFormContent from './components/FormContent.jsx';
 
 const EntitlementPoolPropType = PropTypes.shape({
     id: PropTypes.string,
@@ -52,178 +51,6 @@ const EntitlementPoolPropType = PropTypes.shape({
     startDate: PropTypes.string,
     expiryDate: PropTypes.string
 });
-
-const EntitlementPoolsFormContent = ({
-    data,
-    genericFieldInfo,
-    onDataChanged,
-    validateName,
-    thresholdValueValidation,
-    validateStartDate
-}) => {
-    let {
-        name,
-        description,
-        thresholdUnits,
-        thresholdValue,
-        increments,
-        startDate,
-        expiryDate
-    } = data;
-    return (
-        <GridSection hasLastColSet>
-            <GridItem colSpan={2}>
-                <Input
-                    onChange={name =>
-                        onDataChanged({ name }, SP_ENTITLEMENT_POOL_FORM, {
-                            name: validateName
-                        })
-                    }
-                    isValid={genericFieldInfo.name.isValid}
-                    isRequired={true}
-                    errorText={genericFieldInfo.name.errorText}
-                    label={i18n('Name')}
-                    value={name}
-                    data-test-id="create-ep-name"
-                    type="text"
-                />
-            </GridItem>
-            <GridItem colSpan={2} lastColInRow>
-                <div className="threshold-section">
-                    <Input
-                        onChange={e => {
-                            // setting the unit to the correct value
-                            const selectedIndex = e.target.selectedIndex;
-                            const val = e.target.options[selectedIndex].value;
-                            onDataChanged(
-                                { thresholdUnits: val },
-                                SP_ENTITLEMENT_POOL_FORM
-                            );
-                            // TODO make sure that the value is valid too
-                            if (thresholdValue && thresholdValue !== '') {
-                                onDataChanged(
-                                    { thresholdValue: thresholdValue },
-                                    SP_ENTITLEMENT_POOL_FORM,
-                                    { thresholdValue: thresholdValueValidation }
-                                );
-                            }
-                        }}
-                        value={thresholdUnits}
-                        label={i18n('Threshold Units')}
-                        data-test-id="create-ep-threshold-units"
-                        isValid={genericFieldInfo.thresholdUnits.isValid}
-                        errorText={genericFieldInfo.thresholdUnits.errorText}
-                        groupClassName="bootstrap-input-options"
-                        className="input-options-select"
-                        type="select">
-                        {LicenseModelOptionsInputValues.THRESHOLD_UNITS.map(
-                            mtype => (
-                                <option key={mtype.enum} value={mtype.enum}>{`${
-                                    mtype.title
-                                }`}</option>
-                            )
-                        )}
-                    </Input>
-
-                    <Input
-                        className="entitlement-pools-form-row-threshold-value"
-                        onChange={thresholdValue =>
-                            onDataChanged(
-                                { thresholdValue },
-                                SP_ENTITLEMENT_POOL_FORM,
-                                {
-                                    thresholdValue: thresholdValueValidation
-                                }
-                            )
-                        }
-                        label={i18n('Threshold Value')}
-                        isValid={genericFieldInfo.thresholdValue.isValid}
-                        errorText={genericFieldInfo.thresholdValue.errorText}
-                        data-test-id="create-ep-threshold-value"
-                        value={thresholdValue}
-                        type="text"
-                    />
-                </div>
-            </GridItem>
-            <GridItem colSpan={2} stretch>
-                <Input
-                    onChange={description =>
-                        onDataChanged({ description }, SP_ENTITLEMENT_POOL_FORM)
-                    }
-                    isValid={genericFieldInfo.description.isValid}
-                    errorText={genericFieldInfo.description.errorText}
-                    label={i18n('Description')}
-                    value={description}
-                    data-test-id="create-ep-description"
-                    type="textarea"
-                />
-            </GridItem>
-            <GridItem colSpan={2} lastColInRow>
-                <Input
-                    onChange={increments =>
-                        onDataChanged({ increments }, SP_ENTITLEMENT_POOL_FORM)
-                    }
-                    label={i18n('Increments')}
-                    value={increments}
-                    data-test-id="create-ep-increments"
-                    type="text"
-                />
-                <div className="date-section">
-                    <Input
-                        type="date"
-                        label={i18n('Start Date')}
-                        value={startDate}
-                        dateFormat={DATE_FORMAT}
-                        startDate={startDate}
-                        endDate={expiryDate}
-                        onChange={startDate =>
-                            onDataChanged(
-                                {
-                                    startDate: startDate
-                                        ? startDate.format(DATE_FORMAT)
-                                        : ''
-                                },
-                                SP_ENTITLEMENT_POOL_FORM,
-                                { startDate: validateStartDate }
-                            )
-                        }
-                        isValid={genericFieldInfo.startDate.isValid}
-                        errorText={genericFieldInfo.startDate.errorText}
-                        selectsStart
-                    />
-                    <Input
-                        type="date"
-                        label={i18n('Expiry Date')}
-                        value={expiryDate}
-                        dateFormat={DATE_FORMAT}
-                        startDate={startDate}
-                        endDate={expiryDate}
-                        onChange={expiryDate => {
-                            onDataChanged(
-                                {
-                                    expiryDate: expiryDate
-                                        ? expiryDate.format(DATE_FORMAT)
-                                        : ''
-                                },
-                                SP_ENTITLEMENT_POOL_FORM
-                            );
-                            onDataChanged(
-                                { startDate },
-                                SP_ENTITLEMENT_POOL_FORM,
-                                {
-                                    startDate: validateStartDate
-                                }
-                            );
-                        }}
-                        isValid={genericFieldInfo.expiryDate.isValid}
-                        errorText={genericFieldInfo.expiryDate.errorText}
-                        selectsEnd
-                    />
-                </div>
-            </GridItem>
-        </GridSection>
-    );
-};
 
 class EntitlementPoolsEditorView extends React.Component {
     static propTypes = {
@@ -317,6 +144,7 @@ class EntitlementPoolsEditorView extends React.Component {
                             </Form>
                         )}
                     </Tab>
+
                     <Tab
                         disabled={isTabsDisabled}
                         tabId={tabIds.SP_LIMITS}
@@ -378,30 +206,19 @@ class EntitlementPoolsEditorView extends React.Component {
                     ) // Render empty div to not break tabs
                     }
                 </Tabs>
-                <GridSection className="license-model-modal-buttons entitlement-pools-editor-buttons">
-                    {!this.state.selectedLimit && (
-                        <Button
-                            btnType="primary"
-                            disabled={!this.props.isFormValid || isReadOnlyMode}
-                            onClick={() => this.submit()}
-                            type="reset">
-                            {i18n('Save')}
-                        </Button>
-                    )}
-                    <Button
-                        btnType={
-                            this.state.selectedLimit ? 'primary' : 'secondary'
-                        }
-                        onClick={() => this.props.onCancel()}
-                        type="reset">
-                        {i18n('Cancel')}
-                    </Button>
-                </GridSection>
+                <ModalButtons
+                    className="entitlement-pools-editor-buttons"
+                    selectedLimit={this.state.selectedLimit}
+                    isFormValid={this.props.isFormValid}
+                    isReadOnlyMode={isReadOnlyMode}
+                    onSubmit={this.submit}
+                    onCancel={this.props.onCancel}
+                />
             </div>
         );
     }
 
-    submit() {
+    submit = () => {
         const {
             data: entitlementPool,
             previousData: previousEntitlementPool,
@@ -412,7 +229,7 @@ class EntitlementPoolsEditorView extends React.Component {
         } else {
             this.props.onSubmit({ entitlementPool, previousEntitlementPool });
         }
-    }
+    };
 
     validateName(value) {
         const { data: { id }, EPNames } = this.props;
