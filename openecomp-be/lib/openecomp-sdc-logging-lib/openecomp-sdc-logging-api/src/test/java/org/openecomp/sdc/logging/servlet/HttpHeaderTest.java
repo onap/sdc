@@ -49,7 +49,7 @@ public class HttpHeaderTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void throwExceptionWhenInputArrayEmpty() {
-        new HttpHeader(new String[0]);
+        new HttpHeader();
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -59,7 +59,7 @@ public class HttpHeaderTest {
 
     @Test
     public void valueNotReturnedWhenNameInArrayNotRequested() {
-        HttpHeader header = new HttpHeader(new String[] {"A"});
+        HttpHeader header = new HttpHeader("A");
         assertFalse(header.getAny(NULL_WHEN_NAME_NOT_B).isPresent());
     }
 
@@ -71,7 +71,7 @@ public class HttpHeaderTest {
 
     @Test
     public void valueReturnedWhenSinglePossibleHeaderInArrayMatches() {
-        HttpHeader header = new HttpHeader(new String[] {"B"});
+        HttpHeader header = new HttpHeader("B");
         assertTrue(header.getAny(NULL_WHEN_NAME_NOT_B).isPresent());
     }
 
@@ -83,7 +83,7 @@ public class HttpHeaderTest {
 
     @Test
     public void valueReturnedWhenLastHeaderInArrayMatches() throws Throwable {
-        HttpHeader header = new HttpHeader(new String[] {"A", "B"});
+        HttpHeader header = new HttpHeader("A", "B");
         header.getAny(NULL_WHEN_NAME_NOT_B).orElseThrow(VALUE_EXPECTED);
     }
 
@@ -95,7 +95,7 @@ public class HttpHeaderTest {
 
     @Test
     public void valueReturnedWhenFirstHeaderInArrayMatches() throws Throwable {
-        HttpHeader header = new HttpHeader(new String[] {"B", "A"});
+        HttpHeader header = new HttpHeader("B", "A");
         header.getAny(NULL_WHEN_NAME_NOT_B).orElseThrow(VALUE_EXPECTED);
     }
 
@@ -107,7 +107,7 @@ public class HttpHeaderTest {
 
     @Test
     public void valueReturnedWhenMiddleHeaderInArrayMatches() throws Throwable {
-        HttpHeader header = new HttpHeader(new String[] {"A", "B", "C"});
+        HttpHeader header = new HttpHeader("A", "B", "C");
         header.getAny(NULL_WHEN_NAME_NOT_B).orElseThrow(VALUE_EXPECTED);
     }
 

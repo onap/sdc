@@ -16,13 +16,12 @@
 
 package org.openecomp.sdc.logging.slf4j;
 
+import java.text.SimpleDateFormat;
 import org.openecomp.sdc.logging.api.AuditData;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.MetricsData;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
-
-import java.text.SimpleDateFormat;
 
 /**
  * Delegates log calls to SLF4J API and MDC.

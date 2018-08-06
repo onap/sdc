@@ -114,4 +114,44 @@ public class LoggingInterceptorTest {
         assertEquals(status, result.getStatus());
         assertEquals(COMPLETE, result.getStatusCode());
     }
+
+    @Test
+    public void errorStatusWhenNonStandardInformationalCode() {
+        final int status = 133;
+        LoggingInterceptor.ServletResponseResult result = new LoggingInterceptor.ServletResponseResult(status);
+        assertEquals(status, result.getStatus());
+        assertEquals(ERROR, result.getStatusCode());
+    }
+
+    @Test
+    public void errorStatusWhenNonStandardClientErrorCode() {
+        final int status = 485;
+        LoggingInterceptor.ServletResponseResult result = new LoggingInterceptor.ServletResponseResult(status);
+        assertEquals(status, result.getStatus());
+        assertEquals(ERROR, result.getStatusCode());
+    }
+
+    @Test
+    public void errorStatusWhenNonStandardServerErrorCode() {
+        final int status = 547;
+        LoggingInterceptor.ServletResponseResult result = new LoggingInterceptor.ServletResponseResult(status);
+        assertEquals(status, result.getStatus());
+        assertEquals(ERROR, result.getStatusCode());
+    }
+
+    @Test
+    public void completeStatusWhenNonStandardSuccessCode() {
+        final int status = 277;
+        LoggingInterceptor.ServletResponseResult result = new LoggingInterceptor.ServletResponseResult(status);
+        assertEquals(status, result.getStatus());
+        assertEquals(COMPLETE, result.getStatusCode());
+    }
+
+    @Test
+    public void completeStatusWhenNonStandardRedirectionCode() {
+        final int status = 364;
+        LoggingInterceptor.ServletResponseResult result = new LoggingInterceptor.ServletResponseResult(status);
+        assertEquals(status, result.getStatus());
+        assertEquals(COMPLETE, result.getStatusCode());
+    }
 }

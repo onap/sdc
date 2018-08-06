@@ -265,8 +265,8 @@ public class SLF4JLoggerWrapperTest {
         // build a dynamic proxy to avoid implementing the long list of Logger methods
         // when we actually need just Logger.info() with the audit marker
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        return SpyLogger.class.cast(
-                Proxy.newProxyInstance(classLoader, new Class<?>[]{SpyLogger.class}, new SpyingInvocationHandler()));
+        return (SpyLogger) Proxy.newProxyInstance(classLoader, new Class<?>[] {SpyLogger.class},
+                new SpyingInvocationHandler());
     }
 
     private static class SpyingInvocationHandler implements InvocationHandler {
