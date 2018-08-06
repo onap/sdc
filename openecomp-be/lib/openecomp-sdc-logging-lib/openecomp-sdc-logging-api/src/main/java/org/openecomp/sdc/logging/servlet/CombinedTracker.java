@@ -16,40 +16,42 @@
 
 package org.openecomp.sdc.logging.servlet;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.ListIterator;
 import javax.servlet.http.HttpServletRequest;
-import org.openecomp.sdc.logging.api.Logger;
 
 /**
- * Tracker for all the elements of ONAP logging and tracing at an entry point to an application - context and audit.
- * The order of invocations is important, assuming the context must be kept as long as audit hasn't been finished.
+ * Tracker for all the elements of ONAP logging and tracing at an entry point to an application.
+ * The order of invocations is important, and on {@link #preRequest(HttpServletRequest)} it respects the order of
+ * trackers passed to the constructor. On {@link #postRequest(RequestProcessingResult)}, the invocation will be in the
+ * <b>reverse</b> order.
  *
  * @author evitaliy
  * @since 01 Aug 2018
  */
 public class CombinedTracker implements Tracker {
 
-    private final ContextTracker context;
-    private final AuditTracker audit;
+    private final List<Tracker> trackers;
 
-    public CombinedTracker(Logger logger, HttpHeader partnerNameHeader, HttpHeader requestIdHeader) {
-        this.context = new ContextTracker(partnerNameHeader, requestIdHeader);
-        this.audit = new AuditTracker(logger);
-    }
-
-    public CombinedTracker(Class<?> resourceType, HttpHeader partnerNameHeader, HttpHeader requestIdHeader) {
-        this.context = new ContextTracker(partnerNameHeader, requestIdHeader);
-        this.audit = new AuditTracker(resourceType);
+    public CombinedTracker(Tracker... trackers) {
+        this.trackers = Arrays.asList(trackers);
     }
 
     @Override
     public void preRequest(HttpServletRequest request) {
-        this.context.preRequest(request);
-        this.audit.preRequest(request);
+
+        for (Tracker t : trackers) {
+            t.preRequest(request);
+        }
     }
 
     @Override
     public void postRequest(RequestProcessingResult result) {
-        this.audit.postRequest(result);
-        this.context.postRequest(result);
+
+        ListIterator<Tracker> iterator = trackers.listIterator(trackers.size());
+        while (iterator.hasPrevious()) {
+            iterator.previous().postRequest(result);
+        }
     }
 }

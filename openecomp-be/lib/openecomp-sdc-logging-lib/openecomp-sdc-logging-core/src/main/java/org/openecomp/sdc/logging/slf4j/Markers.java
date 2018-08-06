@@ -41,10 +41,10 @@ import org.slf4j.MarkerFactory;
  */
 public class Markers {
 
+    public static final Marker AUDIT = MarkerFactory.getMarker("AUDIT");
+    public static final Marker METRICS = MarkerFactory.getMarker("METRICS");
+
     private Markers() {
         // prevent instantiation
     }
-
-    public static final Marker AUDIT = MarkerFactory.getMarker("AUDIT");
-    public static final Marker METRICS = MarkerFactory.getMarker("METRICS");
 }

@@ -18,6 +18,8 @@ package org.openecomp.sdc.logging.servlet.spring;
 
 import static org.openecomp.sdc.logging.api.StatusCode.COMPLETE;
 import static org.openecomp.sdc.logging.api.StatusCode.ERROR;
+import static org.springframework.http.HttpStatus.Series.REDIRECTION;
+import static org.springframework.http.HttpStatus.Series.SUCCESSFUL;
 
 import java.util.Objects;
 import javax.servlet.http.HttpServletRequest;
@@ -25,7 +27,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.logging.api.StatusCode;
+import org.openecomp.sdc.logging.servlet.AuditTracker;
 import org.openecomp.sdc.logging.servlet.CombinedTracker;
+import org.openecomp.sdc.logging.servlet.ContextTracker;
 import org.openecomp.sdc.logging.servlet.HttpHeader;
 import org.openecomp.sdc.logging.servlet.RequestProcessingResult;
 import org.openecomp.sdc.logging.servlet.Tracker;
@@ -34,7 +38,7 @@ import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 /**
- * <p>IMPORTANT: For this interceptor to work, all exceptions must be properly handled before being returned to a
+ * <p><b>IMPORTANT</b>: For this interceptor to work, all exceptions must be properly handled before being returned to a
  * client. Any unexpected, automatically handled exception bypasses the interceptor and will not be logged.</p>
  * <p>The interceptor must be either registered in Spring configuration XML as a bean, or programmatically as described
  * in <a href="https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html#mvc-config-interceptors">
@@ -60,7 +64,9 @@ public class LoggingInterceptor extends HandlerInterceptorAdapter {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
         Class<?> resourceClass = getResourceType(handler);
-        Tracker tracker = new CombinedTracker(resourceClass, partnerNameHeader, requestIdHeader);
+        Tracker tracker = new CombinedTracker(
+                new ContextTracker(partnerNameHeader, requestIdHeader),
+                new AuditTracker(resourceClass));
         request.setAttribute(LOGGING_TRACKER_KEY, tracker);
         tracker.preRequest(request);
         return true;
@@ -91,25 +97,63 @@ public class LoggingInterceptor extends HandlerInterceptorAdapter {
 
     static class ServletResponseResult implements RequestProcessingResult {
 
-        private final HttpStatus status;
+        private final StatusInfo statusInfo;
 
         ServletResponseResult(int status) {
-            this.status = HttpStatus.valueOf(status);
+            this.statusInfo = init(status);
+        }
+
+        private StatusInfo init(int status) {
+
+            try {
+                return new StatusInfo(HttpStatus.valueOf(status));
+            } catch (IllegalArgumentException e) {
+                return new StatusInfo(status, "Non-standard HTTP status", HttpStatus.Series.valueOf(status));
+            }
         }
 
         @Override
         public int getStatus() {
-            return status.value();
+            return statusInfo.getStatus();
         }
 
         @Override
         public StatusCode getStatusCode() {
-            return status.is2xxSuccessful() || status.is3xxRedirection() ? COMPLETE : ERROR;
+            return statusInfo.getStatusCode();
         }
 
         @Override
         public String getStatusPhrase() {
-            return status.getReasonPhrase();
+            return statusInfo.getReasonPhrase();
+        }
+    }
+
+    private static class StatusInfo {
+
+        private final int status;
+        private final String reasonPhrase;
+        private final HttpStatus.Series series;
+
+        private StatusInfo(HttpStatus httpStatus) {
+            this(httpStatus.value(), httpStatus.getReasonPhrase(), httpStatus.series());
+        }
+
+        private StatusInfo(int status, String reasonPhrase, HttpStatus.Series series) {
+            this.status = status;
+            this.reasonPhrase = reasonPhrase;
+            this.series = series;
+        }
+
+        private int getStatus() {
+            return status;
+        }
+
+        private String getReasonPhrase() {
+            return reasonPhrase;
+        }
+
+        private StatusCode getStatusCode() {
+            return series.equals(SUCCESSFUL) || series.equals(REDIRECTION) ? COMPLETE : ERROR;
         }
     }
 }

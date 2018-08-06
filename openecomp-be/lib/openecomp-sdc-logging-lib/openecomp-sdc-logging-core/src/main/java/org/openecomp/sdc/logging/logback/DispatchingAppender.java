@@ -24,11 +24,10 @@ import ch.qos.logback.core.Appender;
 import ch.qos.logback.core.AppenderBase;
 import ch.qos.logback.core.joran.spi.DefaultClass;
 import ch.qos.logback.core.sift.Discriminator;
-import org.slf4j.LoggerFactory;
-
 import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import org.slf4j.LoggerFactory;
 
 /**
  * <p>Allows to use EELF logging configuration almost as is, by using a custom routing function, but pre-configured
@@ -55,7 +54,7 @@ public class DispatchingAppender extends AppenderBase<ILoggingEvent> {
     // "magic" appender to indicate a missing appender
     private static final Appender<ILoggingEvent> NO_APPENDER = new DispatchingAppender();
 
-    private Map<String, Appender<ILoggingEvent>> appenders = new ConcurrentHashMap<>();
+    private final Map<String, Appender<ILoggingEvent>> appenders = new ConcurrentHashMap<>();
 
     private Discriminator<ILoggingEvent> discriminator;
     private String appenderNamePattern;
