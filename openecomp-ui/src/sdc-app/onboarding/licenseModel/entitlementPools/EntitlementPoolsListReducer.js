@@ -1,5 +1,5 @@
 /*!
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright © 2016-2018 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,23 +18,6 @@ export default (state = [], action) => {
     switch (action.type) {
         case actionTypes.ENTITLEMENT_POOLS_LIST_LOADED:
             return [...action.response.results];
-        case actionTypes.ADD_ENTITLEMENT_POOL:
-            return [...state, action.entitlementPool];
-        case actionTypes.EDIT_ENTITLEMENT_POOL:
-            const indexForEdit = state.findIndex(
-                entitlementPool =>
-                    entitlementPool.id === action.entitlementPool.id
-            );
-            return [
-                ...state.slice(0, indexForEdit),
-                action.entitlementPool,
-                ...state.slice(indexForEdit + 1)
-            ];
-        case actionTypes.DELETE_ENTITLEMENT_POOL:
-            return state.filter(
-                entitlementPool =>
-                    entitlementPool.id !== action.entitlementPoolId
-            );
         default:
             return state;
     }

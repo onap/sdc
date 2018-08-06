@@ -1,5 +1,5 @@
 /*!
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright © 2016-2018 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,16 +20,12 @@ import InputOptions, {
 } from 'nfvo-components/input/validation/InputOptions.jsx';
 
 export const actionTypes = keyMirror({
-    ENTITLEMENT_POOLS_LIST_LOADED: null,
-    ADD_ENTITLEMENT_POOL: null,
-    EDIT_ENTITLEMENT_POOL: null,
-    DELETE_ENTITLEMENT_POOL: null,
-
+    ENTITLEMENT_POOLS_LIST_LOADED: 'ENTITLEMENT_POOLS_LIST_LOADED',
     entitlementPoolsEditor: {
-        OPEN: null,
-        CLOSE: null,
-        DATA_CHANGED: null,
-        LIMITS_LIST_LOADED: null
+        OPEN: 'epEditor/OPEN',
+        CLOSE: 'epEditor/CLOSE',
+        DATA_CHANGED: 'epEditor/DATA_CHANGED',
+        LIMITS_LIST_LOADED: 'epEditor/LIMITS_LIST_LOADED'
     }
 });
 

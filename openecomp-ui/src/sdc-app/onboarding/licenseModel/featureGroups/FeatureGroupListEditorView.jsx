@@ -1,5 +1,5 @@
 /*!
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright © 2016-2018 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -107,7 +107,6 @@ class FeatureGroupListEditorView extends React.Component {
         let {
             name,
             description,
-            manufacturerReferenceNumber,
             entitlementPoolsIds = [],
             licenseKeyGroupsIds = []
         } = listItem;
@@ -139,18 +138,6 @@ class FeatureGroupListEditorView extends React.Component {
                         </div>
                     </div>
                 </div>
-
-                <div className="list-editor-item-view-field">
-                    <div className="feature-groups-count-field">
-                        <div className="title title-no-wrap">
-                            {i18n('Manufacturer Reference Number')}
-                        </div>
-                        <div className="feature-groups-mrn-ep">
-                            {manufacturerReferenceNumber}
-                        </div>
-                    </div>
-                </div>
-
                 <div className="list-editor-item-view-field">
                     <div className="title">{i18n('Description')}</div>
                     <div className="text description">{description}</div>

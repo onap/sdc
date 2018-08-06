@@ -1,5 +1,5 @@
 /*!
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright © 2016-2018 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,16 +20,13 @@ import InputOptions, {
 } from 'nfvo-components/input/validation/InputOptions.jsx';
 
 export const actionTypes = keyMirror({
-    LICENSE_KEY_GROUPS_LIST_LOADED: null,
-    DELETE_LICENSE_KEY_GROUP: null,
-    EDIT_LICENSE_KEY_GROUP: null,
-    ADD_LICENSE_KEY_GROUP: null,
-    LICENSE_KEY_GROUPS_DELETE_CONFIRM: null,
+    LICENSE_KEY_GROUPS_LIST_LOADED: 'LICENSE_KEY_GROUPS_LIST_LOADED',
+    LICENSE_KEY_GROUPS_DELETE_CONFIRM: 'LICENSE_KEY_GROUPS_DELETE_CONFIRM',
     licenseKeyGroupsEditor: {
-        OPEN: null,
-        CLOSE: null,
-        DATA_CHANGED: null,
-        LIMITS_LIST_LOADED: null
+        OPEN: 'licenseKeyGroupsEditor/OPEN',
+        CLOSE: 'licenseKeyGroupsEditor/CLOSE',
+        DATA_CHANGED: 'licenseKeyGroupsEditor/DATA_CHANGED',
+        LIMITS_LIST_LOADED: 'licenseKeyGroupsEditor/LIMITS_LIST_LOADED'
     }
 });
 
