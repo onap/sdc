@@ -1,5 +1,6 @@
 package org.onap.config.impl;
 
+
 import org.apache.commons.configuration2.Configuration;
 import org.apache.commons.configuration2.DatabaseConfiguration;
 import org.onap.config.ConfigurationUtils;
@@ -39,6 +40,7 @@ public class ConfigurationImpl implements org.onap.config.api.Configuration {
     ;
   };
   private static boolean instantiated = false;
+  private static NonConfigResource nonConfigResource = NonConfigResource.create(propertyName -> System.getProperties().getProperty(propertyName));
   /**
    * The Change notifier.
    */
@@ -66,7 +68,7 @@ public class ConfigurationImpl implements org.onap.config.api.Configuration {
         }
         moduleConfig.addConfig(url);
       } else {
-        NonConfigResource.add(url);
+        nonConfigResource.add(url);
       }
     }
     String configLocation = System.getProperty("config.location");
@@ -84,7 +86,7 @@ public class ConfigurationImpl implements org.onap.config.api.Configuration {
           }
           moduleConfig.addConfig(file);
         } else {
-          NonConfigResource.add(file);
+          nonConfigResource.add(file);
         }
       }
     }
@@ -453,7 +455,7 @@ public class ConfigurationImpl implements org.onap.config.api.Configuration {
     if (String.class.equals(clazz)) {
       if (obj.toString().startsWith("@") && ConfigurationUtils.isExternalLookup(processingHint)) {
         String contents = ConfigurationUtils
-            .getFileContents(NonConfigResource.locate(obj.toString().substring(1).trim()));
+            .getFileContents(nonConfigResource.locate(obj.toString().substring(1).trim()));
         if (contents == null) {
           contents = ConfigurationUtils.getFileContents(obj.toString().substring(1).trim());
         }
