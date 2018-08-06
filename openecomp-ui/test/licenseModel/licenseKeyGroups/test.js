@@ -153,6 +153,17 @@ describe('License Key Groups Module Tests', function() {
             };
         });
 
+        mockRest.addHandler('fetch', ({ data, options, baseUrl }) => {
+            expect(baseUrl).toEqual(
+                `/onboarding-api/v1.0/vendor-license-models/${LICENSE_MODEL_ID}/versions/${
+                    version.id
+                }/license-key-groups`
+            );
+            expect(data).toEqual(undefined);
+            expect(options).toEqual(undefined);
+            return { results: [] };
+        });
+
         return LicenseKeyGroupsActionHelper.deleteLicenseKeyGroup(
             store.dispatch,
             {
@@ -235,6 +246,17 @@ describe('License Key Groups Module Tests', function() {
             return {
                 ...returnedVersionFields
             };
+        });
+
+        mockRest.addHandler('fetch', ({ data, options, baseUrl }) => {
+            expect(baseUrl).toEqual(
+                `/onboarding-api/v1.0/vendor-license-models/${LICENSE_MODEL_ID}/versions/${
+                    version.id
+                }/license-key-groups`
+            );
+            expect(data).toEqual(undefined);
+            expect(options).toEqual(undefined);
+            return { results: [LicenseKeyGroupStore] };
         });
 
         return LicenseKeyGroupsActionHelper.saveLicenseKeyGroup(
@@ -336,6 +358,17 @@ describe('License Key Groups Module Tests', function() {
             return {
                 ...returnedVersionFields
             };
+        });
+
+        mockRest.addHandler('fetch', ({ data, options, baseUrl }) => {
+            expect(baseUrl).toEqual(
+                `/onboarding-api/v1.0/vendor-license-models/${LICENSE_MODEL_ID}/versions/${
+                    version.id
+                }/license-key-groups`
+            );
+            expect(data).toEqual(undefined);
+            expect(options).toEqual(undefined);
+            return { results: [licenseKeyGroupUpdatedData] };
         });
 
         return LicenseKeyGroupsActionHelper.saveLicenseKeyGroup(

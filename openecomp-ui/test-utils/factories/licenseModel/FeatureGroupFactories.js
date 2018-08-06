@@ -1,5 +1,5 @@
 /*!
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright © 2016-2018 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,69 +14,68 @@
  * permissions and limitations under the License.
  */
 import { Factory } from 'rosie';
-import {overviewEditorHeaders} from 'sdc-app/onboarding/licenseModel/overview/LicenseModelOverviewConstants.js';
+import { overviewEditorHeaders } from 'sdc-app/onboarding/licenseModel/overview/LicenseModelOverviewConstants.js';
 import IdMixin from 'test-utils/factories/mixins/IdMixin.js';
 
-Factory.define('FeatureGroupBaseFactory')
-	.attrs({
-		'name': 'featureGroup',
-		'description': 'description'
-	});
+Factory.define('FeatureGroupBaseFactory').attrs({
+    name: 'featureGroup',
+    description: 'description'
+});
 
 Factory.define('FeatureGroupExtendedBaseFactory')
-	.extend('FeatureGroupBaseFactory')
-	.attrs({
-		'partNumber': '1212'
-	});
+    .extend('FeatureGroupBaseFactory')
+    .attrs({
+        partNumber: '1212'
+    });
 
 export const FeatureGroupListItemFactory = new Factory()
-	.extend('FeatureGroupBaseFactory')
-	.extend(IdMixin)
-	.attrs({
-		children: [],
-		isCollapsed: true,
-		itemType: overviewEditorHeaders.FEATURE_GROUP
-	});
+    .extend('FeatureGroupBaseFactory')
+    .extend(IdMixin)
+    .attrs({
+        children: [],
+        isCollapsed: true,
+        itemType: overviewEditorHeaders.FEATURE_GROUP
+    });
 
 export const FeatureGroupDispatchFactory = new Factory()
-	.extend('FeatureGroupExtendedBaseFactory')
-	.attrs({
-		'licenseKeyGroupsIds': [],
-		'entitlementPoolsIds': []
-	});
+    .extend('FeatureGroupExtendedBaseFactory')
+    .attrs({
+        licenseKeyGroupsIds: [],
+        entitlementPoolsIds: []
+    });
 
 export const FeatureGroupStoreFactory = new Factory()
-	.extend('FeatureGroupExtendedBaseFactory')
-	.extend(IdMixin)
-	.attrs({
-		licenseKeyGroupsIds: [],
-		entitlementPoolsIds: [],
-		referencingLicenseAgreements: []
-	});
+    .extend('FeatureGroupExtendedBaseFactory')
+    .extend(IdMixin)
+    .attrs({
+        licenseKeyGroupsIds: [],
+        entitlementPoolsIds: [],
+        referencingLicenseAgreements: []
+    });
 
 export const FeatureGroupDataListFactory = new Factory()
-	.extend('FeatureGroupExtendedBaseFactory')
-	.extend(IdMixin)
-	.attrs({
-		licenseKeyGroupsIds: [],
-		entitlementPoolsIds: [],
-		referencingLicenseAgreements: [],
-		children: [],
-		itemType: overviewEditorHeaders.FEATURE_GROUP
-	});
+    .extend('FeatureGroupExtendedBaseFactory')
+    .extend(IdMixin)
+    .attrs({
+        licenseKeyGroupsIds: [],
+        entitlementPoolsIds: [],
+        referencingLicenseAgreements: [],
+        children: [],
+        itemType: overviewEditorHeaders.FEATURE_GROUP
+    });
 
 export const FeatureGroupPostFactory = new Factory()
-	.extend('FeatureGroupExtendedBaseFactory')
-	.attrs({
-		addedLicenseKeyGroupsIds: [],
-		addedEntitlementPoolsIds: []
-	});
+    .extend('FeatureGroupExtendedBaseFactory')
+    .attrs({
+        addedLicenseKeyGroupsIds: [],
+        addedEntitlementPoolsIds: []
+    });
 
 export const FeatureGroupPutFactory = new Factory()
-	.extend('FeatureGroupExtendedBaseFactory')
-	.attrs({
-		addedLicenseKeyGroupsIds: [],
-		addedEntitlementPoolsIds: [],
-		removedLicenseKeyGroupsIds: [],
-		removedEntitlementPoolsIds: []
-	});
+    .extend('FeatureGroupExtendedBaseFactory')
+    .attrs({
+        addedLicenseKeyGroupsIds: [],
+        addedEntitlementPoolsIds: [],
+        removedLicenseKeyGroupsIds: [],
+        removedEntitlementPoolsIds: []
+    });

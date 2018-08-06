@@ -1,5 +1,5 @@
 /*!
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright © 2016-2018 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -122,7 +122,8 @@ class EntitlementPoolsListEditorView extends React.Component {
             name,
             description,
             thresholdValue,
-            thresholdUnits
+            thresholdUnits,
+            manufacturerReferenceNumber
         } = entitlementPool;
         let {
             onEditEntitlementPoolClick,
@@ -149,7 +150,14 @@ class EntitlementPoolsListEditorView extends React.Component {
                             `${thresholdValue} ${extractUnits(thresholdUnits)}`}
                     </div>
                 </div>
-
+                <div className="list-editor-item-view-field">
+                    <div className="title">
+                        {i18n('Manufacturer Reference Number')}
+                    </div>
+                    <div className="text description">
+                        {manufacturerReferenceNumber}
+                    </div>
+                </div>
                 <div className="list-editor-item-view-field">
                     <div className="title">{i18n('Description')}</div>
                     <div className="text description">{description}</div>

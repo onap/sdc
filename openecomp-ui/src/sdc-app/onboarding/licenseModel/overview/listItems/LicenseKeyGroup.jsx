@@ -1,5 +1,5 @@
 /*!
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright © 2016-2018 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,10 @@ import {
 
 class LicenseKeyGroup extends Component {
     render() {
-        let { lkgData: { name, description, type }, isOrphan } = this.props;
+        let {
+            lkgData: { name, description, type, manufacturerReferenceNumber },
+            isOrphan
+        } = this.props;
         return (
             <div
                 className={`vlm-list-item vlm-list-item-lkg ${
@@ -42,6 +45,13 @@ class LicenseKeyGroup extends Component {
                         name={i18n('Type')}
                         value={extractValue(type)}
                     />
+                    {manufacturerReferenceNumber && (
+                        <AdditionalDataElement
+                            className="vlm-list-item-entitlement-metric"
+                            name={i18n('Manufacturer Reference Number')}
+                            value={manufacturerReferenceNumber}
+                        />
+                    )}
                 </AdditionalDataCol>
             </div>
         );
