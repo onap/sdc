@@ -1,0 +1,30 @@
+{
+  "importStructure": {
+    "heat": [
+      {
+        "fileName": "base_vIECCF.yml",
+        "type": "HEAT",
+        "isBase": true,
+        "env": {
+          "fileName": "base_vIECCF.env",
+          "type": "HEAT_ENV"
+        },
+        "volume": [
+          {
+            "fileName": "base_vIECCF_volume.yml",
+            "type": "HEAT_VOL",
+            "env": {
+              "fileName": "base_vIECCF_volume.env",
+              "type": "HEAT_ENV"
+            }
+          }
+        ],
+        "artifacts": [
+          {
+            "fileName": "node_userdata_script.sh"
+          }
+        ]
+      }
+    ]
+  }
+}
