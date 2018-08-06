@@ -670,7 +670,7 @@ public class ConfigurationUtils {
         Configuration dbConfig = ConfigurationRepository.lookup()
                 .getConfigurationFor(Constants.DEFAULT_TENANT, Constants.DB_NAMESPACE);
         BasicConfigurationBuilder<AgglomerateConfiguration> builder =
-                new BasicConfigurationBuilder<>(AgglomerateConfiguration.class);
+                new BasicConfigurationBuilder<AgglomerateConfiguration>(AgglomerateConfiguration.class);
         builder.configure(
                 new Parameters().database()
                         .setDataSource(ConfigurationDataSource.lookup())
