@@ -65,27 +65,7 @@ public class InterfaceUtils {
         }
     }
 
-    public static Map<String, Operation> getInterfaceOperationsFromInterfaces(
-        Map<String, InterfaceDefinition> interfaces,
-        Resource resource) throws IllegalStateException {
-        if (MapUtils.isEmpty(interfaces)) {
-            return Collections.EMPTY_MAP;
-        }
-        Optional<InterfaceDefinition> optionalInterface = getInterfaceDefinitionFromToscaName(
-            interfaces.values(), resource.getName());
-        if (!optionalInterface.isPresent()) {
-            return Collections.EMPTY_MAP;
-        }
-        InterfaceDefinition interfaceDefinition = optionalInterface.get();
-        interfaceDefinition.getOperationsMap().values().stream()
-            .forEach(operation -> createInputOutput(operation, resource.getInputs()));
-
-
-        return interfaceDefinition.getOperationsMap();
-
-    }
-
-    private static void createInputOutput(Operation operation, List<InputDefinition> inputs) throws IllegalStateException {
+    public static void createInputOutput(Operation operation, List<InputDefinition> inputs) throws IllegalStateException {
         ListDataDefinition<OperationInputDefinition> inputDefinitionListDataDefinition = operation.getInputs();
         if (inputDefinitionListDataDefinition != null) {
             return;
@@ -130,13 +110,5 @@ public class InterfaceUtils {
         }
         throw new IllegalStateException("Could not find output :"+ output.getLabel());
     }
-    public static List<Operation> getOperationsFromInterface(Map<String, InterfaceDefinition> interfaces) {
-        List<Operation> operationData = new ArrayList<>();
-        if (!MapUtils.isEmpty(interfaces)) {
-            operationData = interfaces.values().stream()
-                .filter(a -> MapUtils.isNotEmpty(a.getOperationsMap()))
-                .map(a-> new ArrayList<>(a.getOperationsMap().values())).flatMap(List::stream).collect(Collectors.toList());
-        }
-        return operationData;
-    }
+
 }

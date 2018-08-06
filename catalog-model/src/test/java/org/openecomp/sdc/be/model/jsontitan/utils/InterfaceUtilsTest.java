@@ -47,24 +47,4 @@ public class InterfaceUtilsTest {
 		// default test
 		result = InterfaceUtils.createInterfaceToscaResourceName(resourceName);
 	}
-
-	
-	@Test
-	public void testGetInterfaceOperationsFromInterfaces() throws Exception {
-		Map<String, InterfaceDefinition> interfaces = null;
-		Resource resource = null;
-		Map<String, Operation> result;
-
-		// default test
-		result = InterfaceUtils.getInterfaceOperationsFromInterfaces(interfaces, resource);
-	}
-
-	@Test
-	public void testGetOperationsFromInterface() throws Exception {
-		Map<String, InterfaceDefinition> interfaces = null;
-		List<Operation> result;
-
-		// default test
-		result = InterfaceUtils.getOperationsFromInterface(interfaces);
-	}
 }

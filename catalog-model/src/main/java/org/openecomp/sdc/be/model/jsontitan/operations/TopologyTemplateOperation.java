@@ -711,7 +711,7 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
     }
 
     private TitanOperationStatus setInterfcesFromGraph(GraphVertex componentV, TopologyTemplate topologyTemplate) {
-      Either<Map<String, InterfaceDataDefinition>, TitanOperationStatus> result = getDataFromGraph(componentV, EdgeLabelEnum.INTERFACE_ARTIFACTS);
+      Either<Map<String, InterfaceDataDefinition>, TitanOperationStatus> result = getDataFromGraph(componentV, EdgeLabelEnum.INTERFACE);
       if (result.isLeft()) {
         topologyTemplate.setInterfaces(result.left().value());
       } else {
@@ -730,7 +730,7 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
     
     public StorageOperationStatus associateInterfacesToComponent(GraphVertex nodeTypeVertex, Map<String, InterfaceDataDefinition> interfaceMap) {
       if (interfaceMap != null && !interfaceMap.isEmpty()) {
-        Either<GraphVertex, StorageOperationStatus> assosiateElementToData = associateElementToData(nodeTypeVertex, VertexTypeEnum.INTERFACE_ARTIFACTS, EdgeLabelEnum.INTERFACE_ARTIFACTS, interfaceMap);
+        Either<GraphVertex, StorageOperationStatus> assosiateElementToData = associateElementToData(nodeTypeVertex, VertexTypeEnum.INTERFACE, EdgeLabelEnum.INTERFACE, interfaceMap);
         if (assosiateElementToData.isRight()) {
           return assosiateElementToData.right().value();
         }

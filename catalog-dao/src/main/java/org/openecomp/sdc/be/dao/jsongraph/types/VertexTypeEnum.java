@@ -58,7 +58,9 @@ public enum VertexTypeEnum {
 	POLICIES					("policies",					PolicyDataDefinition.class),
 	EXTERNAL_REF				("componentInstanceExtRefs",    MapComponentInstanceExternalRefs.class),
 	CATALOG_ROOT                ("catalogRoot",                 null),
-	ARCHIVE_ROOT                ("archiveRoot",                 null);
+	ARCHIVE_ROOT                ("archiveRoot",                 null),
+	INTERFACE		("interface",			InterfaceDataDefinition.class),
+	INTERFACE_OPERATION			("interfaceOperation",			OperationDataDefinition.class);
 
 	private String name;
 	private Class classOfJson;
