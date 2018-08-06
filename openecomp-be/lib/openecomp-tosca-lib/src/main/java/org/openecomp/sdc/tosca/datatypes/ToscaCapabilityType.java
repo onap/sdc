@@ -50,6 +50,7 @@ public class ToscaCapabilityType {
   public static final String METRIC_CEILOMETER = CAPABILITY_PREFIX + "metric.Ceilometer";
   public static final String METRIC_SNMP_TRAP = CAPABILITY_PREFIX + "metric.SnmpTrap";
   public static final String METRIC_SNMP_POLLING = CAPABILITY_PREFIX + "metric.SnmpPolling";
+  public static final String FABRIC_CONFIGURATION = CAPABILITY_PREFIX + "FabricConfiguration";
 
   public static final String FABRIC_CONFIGURATION = CAPABILITY_PREFIX + "FabricConfiguration";
 
