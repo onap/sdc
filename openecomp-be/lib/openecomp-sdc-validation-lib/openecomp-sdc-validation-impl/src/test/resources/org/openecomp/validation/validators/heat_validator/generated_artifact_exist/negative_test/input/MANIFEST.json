@@ -1,0 +1,44 @@
+{
+  "name": "vCCF_vUSP_1806DCAE_CtrlLp",
+  "description": "vCCF VSP for ControlLoop tenant",
+  "version": "0.0",
+  "data": [
+    {
+      "isBase": true,
+      "file": "base_vIECCF.yml",
+      "type": "HEAT",
+      "data": [
+        {
+          "file": "base_vIECCF.env",
+          "type": "HEAT_ENV"
+        },
+        {
+          "file": "base_vIECCF_volume.yml",
+          "type": "HEAT_VOL",
+          "data": [
+            {
+              "file": "base_vIECCF_volume.env",
+              "type": "HEAT_ENV"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "file": "HEAT.meta",
+      "type": "OTHER"
+    },
+    {
+      "file": "vf-license-model.xml",
+      "type": "OTHER"
+    },
+    {
+      "file": "node_userdata_script.sh",
+      "type": "OTHER"
+    },
+    {
+      "file": "vendor-license-model.xml",
+      "type": "OTHER"
+    }
+  ]
+}

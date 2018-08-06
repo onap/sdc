@@ -1,0 +1,2225 @@
+heat_template_version: '2014-10-16'
+description: ''
+
+## Note: Nokia VM HOT file for vCCF
+## Copyright: Nokia 2016
+## Name: "base_vIECCF.yml"
+## Date: 20 Dec 2016
+## Juno Version
+## Version History
+##  12/20/2016 
+##      - Initial version for IECCF R30.3.3
+##  01/06/2017
+##      - Updated vCCF package to address removal of shared volume for IO VMs
+##  01/19/2017
+##      - Updated vCCF package to address ICE feedback reviewed on 1/13/2017
+##      - Updated to remove Nokia related values and match AT&T environment
+##      - Updated vm_role to match vm_type used in the resource naming convention
+##  02/17/2017
+##      - Updated vCCF package from Nokia
+##  06/23/2017
+##      - Updated vCCF package from Nokia to add output parameter for OAM IP address
+##  07/05/2017
+##      - Modified servicedata2 and app volume sizes to include space for eccfdata and incoming4cdrsch
+##  11/16/2017
+##      - Nokia update to replace ':' in VIP port names with '_'
+##  01/08/2018
+##      - Address AAP issue
+##  06/06/2018
+##      - Nokia update to the template package for CR418 (internal security group creation in the template)
+##      - Includes updates to comply with the 1Q2018 AT&T Heat guidelines
+
+parameters:
+    vnf_id:
+        type: string
+        description: Unique ID for this VF instance
+    vf_module_id:
+        type: string
+        description: Unique ID for this VF Module instance
+    vnf_name:
+        type: string
+        description: Unique name for this VF instance
+    vf_module_name:
+        type: string
+        description: Unique name for this VF Module instance
+
+    plt_names:
+        type: comma_delimited_list
+        description: VM names for plt VMs
+    iox_names:
+        type: comma_delimited_list
+        description: VM names for iox VMs
+    app_names:
+        type: comma_delimited_list
+        description: VM names for app VMs
+
+    openstack_cacert: # Is this needed, and why?
+        type: string
+        label: 'OpenStack CA Certificate'
+        description: 'CA Certificate to use for OpenStack client calls.'
+    config_server_cacert:
+        type: string
+        label: 'configure server CA Certificate'
+        description: 'CA Certificate for download from siteinfo url and config url.'
+        
+    ignore_siteinfo_audit:
+        type: string
+        label: 'Siteinfo Audit Ignore Flag'
+        description: 'Set to true if siteinfo audit failure should not prevent system installation'
+
+    availability_zone_0:
+        type: string
+        description: First availability zone ID or Name
+    availability_zone_1:
+        type: string
+        description: Second availability zone ID or Name
+
+    plt_image_name:
+        type: string
+        description: Pilot image
+        
+    plt_flavor_name:
+        type: string
+        description: Pilot flavor        
+        
+    iox_image_name:
+        type: string
+        description: IO image
+        
+    iox_flavor_name:
+        type: string
+        description: IO flavor
+        
+    app_image_name:
+        type: string
+        description: App image
+        
+    app_flavor_name:
+        type: string
+        description: App flavor
+        
+    oam_Sec_Grp:
+        type: comma_delimited_list
+        description: OAM security group
+        
+    data_Sec_Grp:
+        type: comma_delimited_list
+        description: DATA security group
+
+    oam_net_id:
+        type: string
+        description: 'OAM network'
+        
+    data_net_id:
+        type: string
+        description: 'DATA network'
+
+    siteinfo_url:
+        type: string
+        description: 'siteinfo url'
+    ieccf_config_url:
+        type: string
+        description: 'IECCF configuration package URL'
+    ieccf_debug:
+        type: string
+        description: 'IECCF debug flag'
+
+    name_server_1:
+        type: string
+        description: 'IP address of name server 1'
+    name_server_2:
+        type: string
+        description: 'IP address of name server 2'
+    domain:
+        type: string
+        description: What is this domain? 
+
+    plt_oam_ips:
+        type: comma_delimited_list
+        description: Fixed IPv4 assignments for plt VMs on the OAM network
+    iox_oam_ips:
+        type: comma_delimited_list
+        description: Fixed IPv4 assignments for iox VMs on the OAM network
+    app_oam_ips:
+        type: comma_delimited_list
+        description: Fixed IPv4 assignments for app VMs on the OAM network
+
+    plt_data_v6_ips:
+        type: comma_delimited_list
+        description: Fixed IPv6 assignments for plt VMs on the DATA network
+    iox_data_v6_ips:
+        type: comma_delimited_list
+        description: Fixed IPv6 assignments for iox VMs on the DATA network
+    app_data_v6_ips:
+        type: comma_delimited_list
+        description: Fixed IPv6 assignments for app VMs on the DATA network
+
+    plt_oam_floating_ip:
+        type: string
+        description: Floating IPv4 for plt VMs on the OAM network
+    iox_oam_floating_ip:
+        type: string
+        description: Floating IPv4 for iox VMs on the OAM network
+
+    plt_data_floating_v6_ip:
+        type: string
+        description: Floating IPv6 for plt VMs on the DATA network
+    iox_data_floating_v6_ip:
+        type: string
+        description: Floating IPv6 for iox VMs on the DATA network
+
+    int_internal_subnet_cidr:
+        type: string
+        description: IP subnet for internal network
+
+    plt_pair_uuid:
+        type: string
+        description: UUID for plt VM pair
+    iox_pair_uuid:
+        type: string
+        description: UUID for iox VM pair
+
+    plt_volume_shared_id_0:
+        type: string
+        description: ServiceData2 volume for plt VMs
+
+    plt_volume_id_0:
+        type: string
+        description: ServiceData1 volume for first plt VM
+
+    plt_volume_id_1:
+        type: string
+        description: ServiceData1 volume for second plt VM
+
+    app_volume_id_0:
+        type: string
+        description: ServiceData1 volume for first app VM
+
+    app_volume_id_1:
+        type: string
+        description: ServiceData1 volume for second app VM
+
+    app_volume_id_2:
+        type: string
+        description: ServiceData1 volume for third app VM
+
+    app_volume_id_3:
+        type: string
+        description: ServiceData1 volume for fourth app VM
+
+    app_volume_id_4:
+        type: string
+        description: ServiceData1 volume for fifth app VM
+
+    app_volume_id_5:
+        type: string
+        description: ServiceData1 volume for sixth app VM
+
+    app_volume_id_6:
+        type: string
+        description: ServiceData1 volume for seventh app VM
+
+                     
+resources:
+       
+    int_internal_network:
+        type: OS::Neutron::Net
+        properties:
+            name:
+                str_replace:
+                    template: $prefix-int_internal_network
+                    params:
+                        $prefix: { get_param: vnf_name }
+            
+    int_internal_subnet_0:
+        type: OS::Neutron::Subnet
+        properties:
+            name:
+                str_replace:
+                    template: $vnf_name-int_internal_subnet_0
+                    params:
+                        $vnf_name:
+                            get_param: vnf_name
+            cidr: {get_param: int_internal_subnet_cidr}
+            network: {get_resource: int_internal_network }
+            enable_dhcp: 'True'
+            gateway_ip: ''
+
+    plt_int_internal_Sec_Grp:
+        type: OS::Neutron::SecurityGroup
+        properties:
+            description: Open ports needed by plt instance, enable ping
+            name:
+                str_replace:
+                  template: $vnf_name-plt_int_internal_Sec_Grp
+                  params:
+                    $vnf_name: { get_param: vnf_name }
+            rules: [
+                {direction: ingress, ethertype: IPv4, remote_ip_prefix: { get_attr: [ int_internal_subnet_0, cidr ] } },
+                {direction: egress, ethertype: IPv4, remote_ip_prefix: { get_attr: [ int_internal_subnet_0, cidr ] } }
+            ] 
+
+    iox_int_internal_Sec_Grp:
+        type: OS::Neutron::SecurityGroup
+        properties:
+            description: Open ports needed by iox instance, enable ping
+            name:
+                str_replace:
+                  template: $vnf_name-iox_int_internal_Sec_Grp
+                  params:
+                    $vnf_name: { get_param: vnf_name }
+            rules: [
+                {direction: ingress, ethertype: IPv4, remote_ip_prefix: { get_attr: [ int_internal_subnet_0, cidr ] } },
+                {direction: egress, ethertype: IPv4, remote_ip_prefix: { get_attr: [ int_internal_subnet_0, cidr ] } }
+            ] 
+    
+    app_int_internal_Sec_Grp:
+        type: OS::Neutron::SecurityGroup
+        properties:
+            description: Open ports needed by app instance, enable ping
+            name:
+                str_replace:
+                  template: $vnf_name-app_int_internal_Sec_Grp
+                  params:
+                    $vnf_name: { get_param: vnf_name }
+            rules: [
+                {direction: ingress, ethertype: IPv4, remote_ip_prefix: { get_attr: [ int_internal_subnet_0, cidr ] } },
+                {direction: egress, ethertype: IPv4, remote_ip_prefix: { get_attr: [ int_internal_subnet_0, cidr ] } }
+            ]
+            
+    app_Server_Grp:
+        type: OS::Nova::ServerGroup
+        properties:
+            name:
+                str_replace:
+                  params:
+                      $vnf_name: {get_param: vnf_name}
+                  template: $vnf_name-app_Server_Grp
+            policies:
+                - anti-affinity
+
+#    plt_server_0:
+    'node:m001:server':
+        type: OS::Nova::Server
+        properties:
+            name: { get_param: [plt_names, 0]}
+            availability_zone:
+                get_param: availability_zone_0
+            image:
+                get_param: plt_image_name
+            flavor:
+                get_param: plt_flavor_name
+            image_update_policy: REBUILD
+            config_drive: 'True'
+            block_device_mapping:
+                -
+                    delete_on_termination: 'false'
+                    device_name: vdb
+                    volume_id:
+                        get_param: plt_volume_id_0
+            networks:
+                -
+                    port:
+                        get_resource: plt_0_int_internal_port_0
+                -
+                    port:
+                        get_resource: plt_0_oam_port_0
+                -
+                    port:
+                        get_resource: plt_0_data_port_0
+            user_data_format: RAW
+            user_data:
+                str_replace:
+                    template:
+                        get_file: node_userdata_script.sh
+#                        get_param: _node_userdata_script_
+                    params:
+                        __heat_stack_name__:
+                            get_param: 'OS::stack_name'
+                        __node_siteinfo_url__: { get_param: siteinfo_url }
+                        __ieccf_config_url__: { get_param: ieccf_config_url }
+                        __ieccf_debug__: { get_param: ieccf_debug }
+                        __activepilot_ip__:
+                            get_attr:
+#                                - Reserve_Port_plt_int_internal_floating_ip_0
+                                - 'network:system:vip:m001:m002'
+                                - fixed_ips
+                                - 0
+                                - ip_address
+                        __host_key__:
+                            get_attr:
+                                - 'sysinfo:host_key'
+                                - value
+                        __pilot__: A
+                        __script_url__: ''
+                        __script_args__: ''
+                        __os_cacert__:
+                            get_param: openstack_cacert
+#                            get_file: openstack_cacert.crt
+                        __cs_cacert__:
+                            get_param: config_server_cacert
+#                            get_file: config_server_cacert.crt
+                        __post_exec__: ''
+                        __ignore_siteinfo_audit__:
+                            get_param: ignore_siteinfo_audit
+                        __nameserver1__: {get_param: name_server_1}
+                        __nameserver2__: {get_param: name_server_2}
+                        __domain__: { get_param: domain }
+                        __shared_volid1__:
+#                            get_resource: 'node:m001:m002:shared_vol1'
+                            get_param: plt_volume_shared_id_0
+
+            metadata:
+                vnf_id: {get_param: vnf_id}
+                vnf_name: {get_param: vnf_name}
+                vf_module_id: {get_param: vf_module_id}
+                vf_module_name: {get_param: vf_module_name}
+                vm_role: plt
+        metadata:
+            mcas_id: m001
+            networks:
+                -
+                    get_attr:
+                        - plt_0_int_internal_port_0
+                        - network_id
+                -
+                    get_attr:
+                        - plt_0_oam_port_0
+                        - network_id
+                -
+                    get_attr:
+                        - plt_0_data_port_0
+                        - network_id
+            mcas_mate_id: m002
+            pair_uuid: {get_param: plt_pair_uuid}
+            shared_vol1: {get_param: plt_volume_shared_id_0}
+            
+    plt_0_int_internal_port_0:
+        type: OS::Neutron::Port
+        properties:
+            name:
+                str_replace:
+                    template: $vnf_name-plt_0_int_internal_port_0
+                    params:
+                        $vnf_name:
+                            get_param: vnf_name
+            network: {get_resource: int_internal_network }
+            replacement_policy: AUTO
+            allowed_address_pairs:
+                -
+                    ip_address:
+                        get_attr:
+                            - 'network:system:vip:m001:m002'
+                            - fixed_ips
+                            - 0
+                            - ip_address
+            security_groups:
+                -
+                    get_resource: plt_int_internal_Sec_Grp
+        metadata:
+            os_net: {get_resource: int_internal_network }
+            
+    plt_0_oam_port_0:
+        type: OS::Neutron::Port
+        properties:
+            name:
+                str_replace:
+                    template: $vnf_name-plt_0_oam_port_0
+                    params:
+                        $vnf_name:
+                            get_param: vnf_name
+            network: { get_param: oam_net_id }
+            replacement_policy: AUTO
+            allowed_address_pairs:
+                -
+                    ip_address:
+                        get_attr:
+#                            - Reserve_Port_plt_oam_floating_ip_0
+                            - 'network:oam:vip:m001:m002'
+                            - fixed_ips
+                            - 0
+                            - ip_address
+            fixed_ips:
+                -
+                    ip_address: {get_param: [plt_oam_ips, 0]}
+            security_groups:
+                get_param: oam_Sec_Grp
+        metadata:
+            os_net: { get_param: oam_net_id }
+            ext_net: oam
+            
+    plt_0_data_port_0:
+        type: OS::Neutron::Port
+        properties:
+            name:
+                str_replace:
+                    template: $vnf_name-plt_0_data_port_0
+                    params:
+                        $vnf_name:
+                            get_param: vnf_name
+            network: { get_param: data_net_id }
+            replacement_policy: AUTO
+            allowed_address_pairs:
+                -
+                    ip_address:
+                        get_attr:
+#                            - Reserve_Port_plt_data_floating_ip_0
+                            - 'network:data:vip:m001:m002'
+                            - fixed_ips
+                            - 0
+                            - ip_address
+            fixed_ips:
+                -
+                    ip_address: {get_param: [plt_data_v6_ips, 0]}
+            security_groups:
+                get_param: data_Sec_Grp
+        metadata:
+            os_net: { get_param: data_net_id }
+            ext_net: data
+
+#    plt_server_1:
+    'node:m002:server':
+        type: OS::Nova::Server
+        properties:
+            name: { get_param: [plt_names, 1]}
+            availability_zone:
+                get_param: availability_zone_1
+            image:
+                get_param: plt_image_name
+            flavor:
+                get_param: plt_flavor_name
+            image_update_policy: REBUILD
+            config_drive: 'True'
+            block_device_mapping:
+                -
+                    delete_on_termination: 'false'
+                    device_name: vdb
+                    volume_id:
+                        get_param: plt_volume_id_1
+            networks:
+                -
+                    port:
+                        get_resource: plt_1_int_internal_port_0
+                -
+                    port:
+                        get_resource: plt_1_oam_port_0
+                -
+                    port:
+                        get_resource: plt_1_data_port_0
+            user_data_format: RAW
+            user_data:
+                str_replace:
+                    template:
+                        get_file: node_userdata_script.sh
+#                        get_param: _node_userdata_script_
+                    params:
+                        __heat_stack_name__:
+                            get_param: 'OS::stack_name'
+                        __node_siteinfo_url__: { get_param: siteinfo_url }
+                        __ieccf_config_url__: { get_param: ieccf_config_url }
+                        __ieccf_debug__: { get_param: ieccf_debug }
+                        __activepilot_ip__:
+                            get_attr:
+#                                - Reserve_Port_plt_int_internal_floating_ip_0
+                                - 'network:system:vip:m001:m002'
+                                - fixed_ips
+                                - 0
+                                - ip_address
+                        __host_key__:
+                            get_attr:
+                                - 'sysinfo:host_key'
+                                - value
+                        __pilot__: B
+                        __script_url__: ''
+                        __script_args__: ''
+                        __os_cacert__:
+                            get_param: openstack_cacert
+#                            get_file: openstack_cacert.crt
+                        __cs_cacert__:
+                            get_param: config_server_cacert
+#                            get_file: config_server_cacert.crt
+                        __post_exec__: ''
+                        __ignore_siteinfo_audit__:
+                            get_param: ignore_siteinfo_audit
+                        __nameserver1__: {get_param: name_server_1}
+                        __nameserver2__: {get_param: name_server_2}
+                        __domain__: {get_param: domain}
+                        __shared_volid1__:
+#                            get_resource: 'node:m001:m002:shared_vol1'
+                            get_param: plt_volume_shared_id_0
+
+            metadata:
+                vnf_id: {get_param: vnf_id}
+                vnf_name: {get_param: vnf_name}
+                vf_module_id: {get_param: vf_module_id}
+                vf_module_name: {get_param: vf_module_name}
+                vm_role: plt
+        metadata:
+            mcas_id: m002
+            networks:
+                -
+                    get_attr:
+                        - plt_1_int_internal_port_0
+                        - network_id
+                -
+                    get_attr:
+                        - plt_1_oam_port_0
+                        - network_id
+                -
+                    get_attr:
+                        - plt_1_data_port_0
+                        - network_id
+            mcas_mate_id: m001
+            pair_uuid: {get_param: plt_pair_uuid}
+            shared_vol1: {get_param: plt_volume_shared_id_0}
+            
+    plt_1_int_internal_port_0:
+        type: OS::Neutron::Port
+        properties:
+            name:
+                str_replace:
+                    template: $vnf_name-plt_1_int_internal_port_0
+                    params:
+                        $vnf_name:
+                            get_param: vnf_name
+            network: {get_resource: int_internal_network }
+            replacement_policy: AUTO
+            allowed_address_pairs:
+                -
+                    ip_address:
+                        get_attr:
+                            - 'network:system:vip:m001:m002'
+                            - fixed_ips
+                            - 0
+                            - ip_address
+            security_groups:
+                -
+                    get_resource: plt_int_internal_Sec_Grp
+        metadata:
+            os_net: {get_resource: int_internal_network }
+
+    plt_1_oam_port_0:
+        type: OS::Neutron::Port
+        properties:
+            name:
+                str_replace:
+                    template: $vnf_name-plt_1_oam_port_0
+                    params:
+                        $vnf_name:
+                            get_param: vnf_name
+            network: { get_param: oam_net_id }
+            replacement_policy: AUTO
+            allowed_address_pairs:
+                -
+                    ip_address:
+                        get_attr:
+#                            - Reserve_Port_plt_oam_floating_ip_0
+                            - 'network:oam:vip:m001:m002'
+                            - fixed_ips
+                            - 0
+                            - ip_address
+            fixed_ips:
+                -
+                    ip_address: {get_param: [plt_oam_ips, 1]}
+                    
+            security_groups:
+                get_param: oam_Sec_Grp
+        metadata:
+            os_net: { get_param: oam_net_id }
+            ext_net: oam
+            
+    plt_1_data_port_0:
+        type: OS::Neutron::Port
+        properties:
+            name:
+                str_replace:
+                    template: $vnf_name-plt_1_data_port_0
+                    params:
+                        $vnf_name:
+                            get_param: vnf_name
+            network: { get_param: data_net_id }
+            replacement_policy: AUTO
+            allowed_address_pairs:
+                -
+                    ip_address:
+                        get_attr:
+#                            - Reserve_Port_plt_data_floating_ip_0
+                            - 'network:data:vip:m001:m002'
+                            - fixed_ips
+                            - 0
+                            - ip_address
+            fixed_ips:
+                -
+                    ip_address: {get_param: [plt_data_v6_ips, 1]}
+            security_groups:
+                get_param: data_Sec_Grp
+        metadata:
+            os_net: { get_param: data_net_id }
+            ext_net: data
+            
+#    Reserve_Port_plt_int_internal_floating_ip_0:
+    'network:system:vip:m001:m002':
+        type: OS::Neutron::Port
+        properties:
+            name:
+                str_replace:
+                    template: '$vnf_name-network_system_vip_m001_m002'
+                    params:
+                        $vnf_name:
+                            get_param: vnf_name
+            network: {get_resource: int_internal_network }
+
+            replacement_policy: AUTO
+            security_groups:
+                -
+                    get_resource: plt_int_internal_Sec_Grp
+        metadata:
+            os_net: {get_resource: int_internal_network }
+
+            pair_uuid: {get_param: plt_pair_uuid}
+            
+#    Reserve_Port_plt_oam_floating_ip_0:
+    'network:oam:vip:m001:m002':
+        type: OS::Neutron::Port
+        properties:
+            name:
+                str_replace:
+                    template: '$vnf_name-network_oam_vip_m001_m002'
+                    params:
+                        $vnf_name:
+                            get_param: vnf_name
+            network: { get_param: oam_net_id }
+            replacement_policy: AUTO
+            fixed_ips:
+                -
+                    ip_address: {get_param: plt_oam_floating_ip}
+            security_groups:
+                get_param: oam_Sec_Grp
+        metadata:
+            os_net: { get_param: oam_net_id }
+            ext_net: oam
+            pair_uuid: {get_param: plt_pair_uuid}
+            
+#    Reserve_Port_plt_data_floating_ip_0:
+    'network:data:vip:m001:m002':
+        type: OS::Neutron::Port
+        properties:
+            name:
+                str_replace:
+                    template: '$vnf_name-network_data_vip_m001_m002'
+                    params:
+                        $vnf_name:
+                            get_param: vnf_name
+            network: { get_param: data_net_id }
+            replacement_policy: AUTO
+            fixed_ips:
+                -
+                    ip_address: {get_param: plt_data_floating_v6_ip}
+            security_groups:
+                get_param: data_Sec_Grp
+        metadata:
+            os_net: { get_param: data_net_id }
+            ext_net: data
+            pair_uuid: {get_param: plt_pair_uuid}
+
+#    iox_server_0:
+    'node:m003:server':
+        type: OS::Nova::Server
+        properties:
+            name: { get_param: [iox_names, 0]}
+            availability_zone:
+                get_param: availability_zone_0
+            image:
+                get_param: iox_image_name
+            flavor:
+                get_param: iox_flavor_name
+            image_update_policy: REBUILD
+            config_drive: 'True'
+            networks:
+                -
+                    port:
+                        get_resource: iox_0_int_internal_port_0
+                -
+                    port:
+                        get_resource: iox_0_oam_port_0
+                -
+                    port:
+                        get_resource: iox_0_data_port_0
+            user_data_format: RAW
+            user_data:
+                str_replace:
+                    template:
+                        get_file: node_userdata_script.sh
+#                        get_param: _node_userdata_script_
+                    params:
+                        __heat_stack_name__:
+                            get_param: 'OS::stack_name'
+                        __node_siteinfo_url__: { get_param: siteinfo_url }
+                        __ieccf_config_url__: { get_param: ieccf_config_url }
+                        __ieccf_debug__: { get_param: ieccf_debug }
+                        __activepilot_ip__:
+                            get_attr:
+#                                - Reserve_Port_plt_int_internal_floating_ip_0
+                                - 'network:system:vip:m001:m002'
+                                - fixed_ips
+                                - 0
+                                - ip_address
+                        __host_key__:
+                            get_attr:
+                                - 'sysinfo:host_key'
+                                - value
+                        __pilot__: ''
+                        __script_url__: ''
+                        __script_args__: ''
+                        __os_cacert__: ''
+                        __cs_cacert__: ''
+                        __post_exec__: ''
+                        __ignore_siteinfo_audit__:
+                            get_param: ignore_siteinfo_audit
+                        __nameserver1__: {get_param: name_server_1}
+                        __nameserver2__: {get_param: name_server_2}
+                        __domain__: {get_param: domain}
+#                        __shared_volid1__:
+#                            get_resource: 'node:m003:m004:shared_vol1'
+#                            get_param: iox_volume_shared_0
+
+            metadata:
+                vnf_id: {get_param: vnf_id}
+                vnf_name: {get_param: vnf_name}
+                vf_module_id: {get_param: vf_module_id}
+                vf_module_name: {get_param: vf_module_name}
+                vm_role: iox
+        metadata:
+            mcas_id: m003
+            networks:
+                -
+                    get_attr:
+                        - iox_0_int_internal_port_0
+                        - network_id
+                -
+                    get_attr:
+                        - iox_0_oam_port_0
+                        - network_id
+                -
+                    get_attr:
+                        - iox_0_data_port_0
+                        - network_id
+            mcas_mate_id: m004
+            pair_uuid: {get_param: iox_pair_uuid}
+
+    iox_0_int_internal_port_0:
+        type: OS::Neutron::Port
+        properties:
+            name:
+                str_replace:
+                    template: $vnf_name-iox_0_int_internal_port_0
+                    params:
+                        $vnf_name:
+                            get_param: vnf_name
+            network: {get_resource: int_internal_network }
+            replacement_policy: AUTO
+            security_groups:
+                -
+                    get_resource: iox_int_internal_Sec_Grp
+        metadata:
+            os_net: {get_resource: int_internal_network }
+
+    iox_0_oam_port_0:
+        type: OS::Neutron::Port
+        properties:
+            name:
+                str_replace:
+                    template: $vnf_name-iox_0_oam_port_0
+                    params:
+                        $vnf_name:
+                            get_param: vnf_name
+            network: { get_param: oam_net_id }
+            replacement_policy: AUTO
+            allowed_address_pairs:
+                -
+                    ip_address:
+                        get_attr:
+#                            - Reserve_Port_iox_oam_floating_ip_0
+                            - 'network:io:vip:m004:m003'
+                            - fixed_ips
+                            - 0
+                            - ip_address
+            fixed_ips:
+                -
+                    ip_address: {get_param: [iox_oam_ips, 0]}
+            security_groups:
+                get_param: oam_Sec_Grp
+        metadata:
+            os_net: { get_param: oam_net_id }
+            ext_net: io
+            
+    iox_0_data_port_0:
+        type: OS::Neutron::Port
+        properties:
+            name:
+                str_replace:
+                    template: $vnf_name-iox_0_data_port_0
+                    params:
+                        $vnf_name:
+                            get_param: vnf_name
+            network: { get_param: data_net_id }
+            replacement_policy: AUTO
+            allowed_address_pairs:
+                -
+                    ip_address:
+                        get_attr:
+#                            - Reserve_Port_iox_data_floating_ip_0
+                            - 'network:data:vip:m004:m003'
+                            - fixed_ips
+                            - 0
+                            - ip_address
+            fixed_ips:
+                -
+                    ip_address: {get_param: [iox_data_v6_ips, 0]}
+            security_groups:
+                get_param: data_Sec_Grp
+        metadata:
+            os_net: { get_param: data_net_id }
+            ext_net: data
+#    iox_server_1:
+    'node:m004:server':
+        type: OS::Nova::Server
+        properties:
+            name: { get_param: [iox_names, 1]}
+            availability_zone:
+                get_param: availability_zone_1
+            image:
+                get_param: iox_image_name
+            flavor:
+                get_param: iox_flavor_name
+            image_update_policy: REBUILD
+            config_drive: 'True'
+            networks:
+                -
+                    port:
+                        get_resource: iox_1_int_internal_port_0
+                -
+                    port:
+                        get_resource: iox_1_oam_port_0
+                -
+                    port:
+                        get_resource: iox_1_data_port_0
+            user_data_format: RAW
+            user_data:
+                str_replace:
+                    template:
+                        get_file: node_userdata_script.sh
+#                        get_param: _node_userdata_script_
+                    params:
+                        __heat_stack_name__:
+                            get_param: 'OS::stack_name'
+                        __node_siteinfo_url__: { get_param: siteinfo_url }
+                        __ieccf_config_url__: { get_param: ieccf_config_url }
+                        __ieccf_debug__: { get_param: ieccf_debug }
+                        __activepilot_ip__:
+                            get_attr:
+#                                - Reserve_Port_plt_int_internal_floating_ip_0
+                                - 'network:system:vip:m001:m002'
+                                - fixed_ips
+                                - 0
+                                - ip_address
+                        __host_key__:
+                            get_attr:
+                                - 'sysinfo:host_key'
+                                - value
+                        __pilot__: ''
+                        __script_url__: ''
+                        __script_args__: ''
+                        __os_cacert__: ''
+                        __cs_cacert__: ''
+                        __post_exec__: ''
+                        __ignore_siteinfo_audit__:
+                            get_param: ignore_siteinfo_audit
+                        __nameserver1__: {get_param: name_server_1}
+                        __nameserver2__: {get_param: name_server_2}
+                        __domain__: {get_param: domain}
+#                        __shared_volid1__:
+#                            get_resource: 'node:m003:m004:shared_vol1'
+#                            get_param: iox_volume_shared_0
+
+            metadata:
+                vnf_id: {get_param: vnf_id}
+                vnf_name: {get_param: vnf_name}
+                vf_module_id: {get_param: vf_module_id}
+                vf_module_name: {get_param: vf_module_name}
+                vm_role: iox
+        metadata:
+            mcas_id: m004
+            networks:
+                -
+                    get_attr:
+                        - iox_1_int_internal_port_0
+                        - network_id
+                -
+                    get_attr:
+                        - iox_1_oam_port_0
+                        - network_id
+                -
+                    get_attr:
+                        - iox_1_data_port_0
+                        - network_id
+            mcas_mate_id: m003
+            pair_uuid: {get_param: iox_pair_uuid}
+            
+    iox_1_int_internal_port_0:
+        type: OS::Neutron::Port
+        properties:
+            name:
+                str_replace:
+                    template: $vnf_name-iox_1_int_internal_port_0
+                    params:
+                        $vnf_name:
+                            get_param: vnf_name
+            network: {get_resource: int_internal_network }
+
+            replacement_policy: AUTO
+            security_groups:
+                -
+                    get_resource: iox_int_internal_Sec_Grp
+        metadata:
+            os_net: {get_resource: int_internal_network }
+ 
+    iox_1_oam_port_0:
+        type: OS::Neutron::Port
+        properties:
+            name:
+                str_replace:
+                    template: $vnf_name-iox_1_oam_port_0
+                    params:
+                        $vnf_name:
+                            get_param: vnf_name
+            network: { get_param: oam_net_id }
+            replacement_policy: AUTO
+            allowed_address_pairs:
+                -
+                    ip_address:
+                        get_attr:
+#                            - Reserve_Port_iox_oam_floating_ip_0
+                            - 'network:io:vip:m004:m003'
+                            - fixed_ips
+                            - 0
+                            - ip_address
+            fixed_ips:
+                -
+                    ip_address: {get_param: [iox_oam_ips, 1]}
+            security_groups:
+                get_param: oam_Sec_Grp
+        metadata:
+            os_net: { get_param: oam_net_id }
+            ext_net: io
+            
+    iox_1_data_port_0:
+        type: OS::Neutron::Port
+        properties:
+            name:
+                str_replace:
+                    template: $vnf_name-iox_1_data_port_0
+                    params:
+                        $vnf_name:
+                            get_param: vnf_name
+            network: { get_param: data_net_id }
+            replacement_policy: AUTO
+            allowed_address_pairs:
+                -
+                    ip_address:
+                        get_attr:
+#                            - Reserve_Port_iox_data_floating_ip_0
+                            - 'network:data:vip:m004:m003'
+                            - fixed_ips
+                            - 0
+                            - ip_address
+            fixed_ips:
+                -
+                    ip_address: {get_param: [iox_data_v6_ips, 1]}
+            security_groups:
+                get_param: data_Sec_Grp
+        metadata:
+            os_net: { get_param: data_net_id }
+            ext_net: data
+            
+#    Reserve_Port_iox_oam_floating_ip_0:
+    'network:io:vip:m004:m003':
+        type: OS::Neutron::Port
+        properties:
+            name:
+                str_replace:
+                    template: '$vnf_name-network_io_vip_m004_m003'
+                    params:
+                        $vnf_name:
+                            get_param: vnf_name
+            network: { get_param: oam_net_id }
+            replacement_policy: AUTO
+            fixed_ips:
+                -
+                    ip_address: {get_param: iox_oam_floating_ip}
+            security_groups:
+                get_param: oam_Sec_Grp
+        metadata:
+            os_net: { get_param: oam_net_id }
+            ext_net: io
+            pair_uuid: {get_param: iox_pair_uuid}
+            
+#    Reserve_Port_iox_data_floating_ip_0:
+    'network:data:vip:m004:m003':
+        type: OS::Neutron::Port
+        properties:
+            name:
+                str_replace:
+                    template: '$vnf_name-network_data_vip_m004_m003'
+                    params:
+                        $vnf_name:
+                            get_param: vnf_name
+            network: { get_param: data_net_id }
+            replacement_policy: AUTO
+            fixed_ips:
+                -
+                    ip_address: {get_param: iox_data_floating_v6_ip}
+            security_groups:
+                get_param: data_Sec_Grp
+        metadata:
+            os_net: { get_param: data_net_id }
+            ext_net: data
+            pair_uuid: {get_param: iox_pair_uuid}
+
+#    app_server_0:
+    'node:m005:server':
+        type: OS::Nova::Server
+        properties:
+            name: { get_param: [app_names, 0]}
+            availability_zone:
+                get_param: availability_zone_0
+            image:
+                get_param: app_image_name
+            flavor:
+                get_param: app_flavor_name
+            image_update_policy: REBUILD
+            config_drive: 'True'
+            block_device_mapping:
+                -
+                    delete_on_termination: 'false'
+                    device_name: vdb
+                    volume_id:
+                        get_param: app_volume_id_0
+            networks:
+                -
+                    port:
+                        get_resource: app_0_int_internal_port_0
+                -
+                    port:
+                        get_resource: app_0_oam_port_0
+                -
+                    port:
+                        get_resource: app_0_data_port_0
+            user_data_format: RAW
+            user_data:
+                str_replace:
+                    template:
+                        get_file: node_userdata_script.sh
+#                        get_param: _node_userdata_script_
+                    params:
+                        __heat_stack_name__:
+                            get_param: 'OS::stack_name'
+                        __node_siteinfo_url__: { get_param: siteinfo_url }
+                        __ieccf_config_url__: { get_param: ieccf_config_url }
+                        __ieccf_debug__: { get_param: ieccf_debug }
+                        __activepilot_ip__:
+                            get_attr:
+#                                - Reserve_Port_plt_int_internal_floating_ip_0
+                                - 'network:system:vip:m001:m002'
+                                - fixed_ips
+                                - 0
+                                - ip_address
+                        __host_key__:
+                            get_attr:
+                                - 'sysinfo:host_key'
+                                - value
+                        __pilot__: ''
+                        __script_url__: ''
+                        __script_args__: ''
+                        __os_cacert__: ''
+                        __cs_cacert__: ''
+                        __post_exec__: ''
+                        __ignore_siteinfo_audit__:
+                            get_param: ignore_siteinfo_audit
+                        __nameserver1__: {get_param: name_server_1}
+                        __nameserver2__: {get_param: name_server_2}
+                        __domain__: {get_param: domain}
+            scheduler_hints: 
+                group: {get_resource: app_Server_Grp}
+
+            metadata:
+                vnf_id: {get_param: vnf_id}
+                vnf_name: {get_param: vnf_name}
+                vf_module_id: {get_param: vf_module_id}
+                vf_module_name: {get_param: vf_module_name}
+                vm_role: app
+        metadata:
+            mcas_id: m005
+            networks:
+                -
+                    get_attr:
+                        - app_0_int_internal_port_0
+                        - network_id
+                -
+                    get_attr:
+                        - app_0_oam_port_0
+                        - network_id
+                -
+                    get_attr:
+                        - app_0_data_port_0
+                        - network_id
+                        
+    app_0_int_internal_port_0:
+        type: OS::Neutron::Port
+        properties:
+            name:
+                str_replace:
+                    template: $vnf_name-app_0_int_internal_port_0
+                    params:
+                        $vnf_name:
+                            get_param: vnf_name
+            network: {get_resource: int_internal_network }
+            replacement_policy: AUTO
+            security_groups:
+                -
+                    get_resource: app_int_internal_Sec_Grp
+        metadata:
+            os_net: {get_resource: int_internal_network }
+
+    app_0_oam_port_0:
+        type: OS::Neutron::Port
+        properties:
+            name:
+                str_replace:
+                    template: $vnf_name-app_0_oam_port_0
+                    params:
+                        $vnf_name:
+                            get_param: vnf_name
+            network: { get_param: oam_net_id }
+            replacement_policy: AUTO
+            fixed_ips:
+                -
+                    ip_address: {get_param: [app_oam_ips, 0]}
+                    
+            security_groups:
+                get_param: oam_Sec_Grp
+        metadata:
+            os_net: { get_param: oam_net_id }
+            ext_net: oam    
+    
+    app_0_data_port_0:
+        type: OS::Neutron::Port
+        properties:
+            name:
+                str_replace:
+                    template: $vnf_name-app_0_data_port_0
+                    params:
+                        $vnf_name:
+                            get_param: vnf_name
+            network: { get_param: data_net_id }
+            replacement_policy: AUTO
+            fixed_ips:
+                -
+                    ip_address: {get_param: [app_data_v6_ips, 0]}
+            security_groups:
+                get_param: data_Sec_Grp
+        metadata:
+            os_net: { get_param: data_net_id }
+            ext_net: data
+
+#    app_server_1:
+    'node:m006:server':
+        type: OS::Nova::Server
+        properties:
+            name: { get_param: [app_names, 1]}
+            availability_zone:
+                get_param: availability_zone_1
+            image:
+                get_param: app_image_name
+            flavor:
+                get_param: app_flavor_name
+            image_update_policy: REBUILD
+            config_drive: 'True'
+            block_device_mapping:
+                -
+                    delete_on_termination: 'false'
+                    device_name: vdb
+                    volume_id:
+                        get_param: app_volume_id_1
+            networks:
+                -
+                    port:
+                        get_resource: app_1_int_internal_port_0
+                -
+                    port:
+                        get_resource: app_1_oam_port_0
+                -
+                    port:
+                        get_resource: app_1_data_port_0
+            user_data_format: RAW
+            user_data:
+                str_replace:
+                    template:
+                        get_file: node_userdata_script.sh
+#                        get_param: _node_userdata_script_
+                    params:
+                        __heat_stack_name__:
+                            get_param: 'OS::stack_name'
+                        __node_siteinfo_url__: { get_param: siteinfo_url }
+                        __ieccf_config_url__: { get_param: ieccf_config_url }
+                        __ieccf_debug__: { get_param: ieccf_debug }
+                        __activepilot_ip__:
+                            get_attr:
+#                                - Reserve_Port_plt_int_internal_floating_ip_0
+                                - 'network:system:vip:m001:m002'
+                                - fixed_ips
+                                - 0
+                                - ip_address
+                        __host_key__:
+                            get_attr:
+                                - 'sysinfo:host_key'
+                                - value
+                        __pilot__: ''
+                        __script_url__: ''
+                        __script_args__: ''
+                        __os_cacert__: ''
+                        __cs_cacert__: ''
+                        __post_exec__: ''
+                        __ignore_siteinfo_audit__:
+                            get_param: ignore_siteinfo_audit
+                        __nameserver1__: {get_param: name_server_1}
+                        __nameserver2__: {get_param: name_server_2}
+                        __domain__: {get_param: domain}
+            scheduler_hints: 
+                group: {get_resource: app_Server_Grp}
+
+
+            metadata:
+                vnf_id: {get_param: vnf_id}
+                vnf_name: {get_param: vnf_name}
+                vf_module_id: {get_param: vf_module_id}
+                vf_module_name: {get_param: vf_module_name}
+                vm_role: app
+        metadata:
+            mcas_id: m006
+            networks:
+                -
+                    get_attr:
+                        - app_1_int_internal_port_0
+                        - network_id
+                -
+                    get_attr:
+                        - app_1_oam_port_0
+                        - network_id
+                -
+                    get_attr:
+                        - app_1_data_port_0
+                        - network_id
+                        
+    app_1_int_internal_port_0:
+        type: OS::Neutron::Port
+        properties:
+            name:
+                str_replace:
+                    template: $vnf_name-app_1_int_internal_port_0
+                    params:
+                        $vnf_name:
+                            get_param: vnf_name
+            network: {get_resource: int_internal_network }
+            replacement_policy: AUTO
+            security_groups:
+                -
+                    get_resource: app_int_internal_Sec_Grp
+        metadata:
+            os_net: {get_resource: int_internal_network }
+
+    app_1_oam_port_0:
+        type: OS::Neutron::Port
+        properties:
+            name:
+                str_replace:
+                    template: $vnf_name-app_1_oam_port_0
+                    params:
+                        $vnf_name:
+                            get_param: vnf_name
+            network: { get_param: oam_net_id }
+            replacement_policy: AUTO
+            fixed_ips:
+                -
+                    ip_address: {get_param: [app_oam_ips, 1]}
+                    
+            security_groups:
+                get_param: oam_Sec_Grp
+        metadata:
+            os_net: { get_param: oam_net_id }
+            ext_net: oam    
+
+    app_1_data_port_0:
+        type: OS::Neutron::Port
+        properties:
+            name:
+                str_replace:
+                    template: $vnf_name-app_1_data_port_0
+                    params:
+                        $vnf_name:
+                            get_param: vnf_name
+            network: { get_param: data_net_id }
+            replacement_policy: AUTO
+            fixed_ips:
+                -
+                    ip_address: {get_param: [app_data_v6_ips, 1]}
+            security_groups:
+                get_param: data_Sec_Grp
+        metadata:
+            os_net: { get_param: data_net_id }
+            ext_net: data
+
+#    app_server_2:
+    'node:m007:server':
+        type: OS::Nova::Server
+        properties:
+            name: { get_param: [app_names, 2]}
+            availability_zone:
+                get_param: availability_zone_0
+            image:
+                get_param: app_image_name
+            flavor:
+                get_param: app_flavor_name
+            image_update_policy: REBUILD
+            config_drive: 'True'
+            block_device_mapping:
+                -
+                    delete_on_termination: 'false'
+                    device_name: vdb
+                    volume_id:
+                        get_param: app_volume_id_2
+            networks:
+                -
+                    port:
+                        get_resource: app_2_int_internal_port_0
+                -
+                    port:
+                        get_resource: app_2_oam_port_0
+                -
+                    port:
+                        get_resource: app_2_data_port_0
+            user_data_format: RAW
+            user_data:
+                str_replace:
+                    template:
+                        get_file: node_userdata_script.sh
+#                        get_param: _node_userdata_script_
+                    params:
+                        __heat_stack_name__:
+                            get_param: 'OS::stack_name'
+                        __node_siteinfo_url__: { get_param: siteinfo_url }
+                        __ieccf_config_url__: { get_param: ieccf_config_url }
+                        __ieccf_debug__: { get_param: ieccf_debug }
+                        __activepilot_ip__:
+                            get_attr:
+#                                - Reserve_Port_plt_int_internal_floating_ip_0
+                                - 'network:system:vip:m001:m002'
+                                - fixed_ips
+                                - 0
+                                - ip_address
+                        __host_key__:
+                            get_attr:
+                                - 'sysinfo:host_key'
+                                - value
+                        __pilot__: ''
+                        __script_url__: ''
+                        __script_args__: ''
+                        __os_cacert__: ''
+                        __cs_cacert__: ''
+                        __post_exec__: ''
+                        __ignore_siteinfo_audit__:
+                            get_param: ignore_siteinfo_audit
+                        __nameserver1__: {get_param: name_server_1}
+                        __nameserver2__: {get_param: name_server_2}
+                        __domain__: {get_param: domain}
+            scheduler_hints: 
+                group: {get_resource: app_Server_Grp}
+
+            metadata:
+                vnf_id: {get_param: vnf_id}
+                vnf_name: {get_param: vnf_name}
+                vf_module_id: {get_param: vf_module_id}
+                vf_module_name: {get_param: vf_module_name}
+                vm_role: app
+        metadata:
+            mcas_id: m007
+            networks:
+                -
+                    get_attr:
+                        - app_2_int_internal_port_0
+                        - network_id
+                -
+                    get_attr:
+                        - app_2_oam_port_0
+                        - network_id
+                -
+                    get_attr:
+                        - app_2_data_port_0
+                        - network_id
+                        
+    app_2_int_internal_port_0:
+        type: OS::Neutron::Port
+        properties:
+            name:
+                str_replace:
+                    template: $vnf_name-app_2_int_internal_port_0
+                    params:
+                        $vnf_name:
+                            get_param: vnf_name
+            network: {get_resource: int_internal_network }
+            replacement_policy: AUTO
+            security_groups:
+                -
+                    get_resource: app_int_internal_Sec_Grp
+        metadata:
+            os_net: {get_resource: int_internal_network }
+
+    app_2_oam_port_0:
+        type: OS::Neutron::Port
+        properties:
+            name:
+                str_replace:
+                    template: $vnf_name-app_2_oam_port_0
+                    params:
+                        $vnf_name:
+                            get_param: vnf_name
+            network: { get_param: oam_net_id }
+            replacement_policy: AUTO
+            fixed_ips:
+                -
+                    ip_address: {get_param: [app_oam_ips, 2]}
+                    
+            security_groups:
+                get_param: oam_Sec_Grp
+        metadata:
+            os_net: { get_param: oam_net_id }
+            ext_net: oam    
+
+    app_2_data_port_0:
+        type: OS::Neutron::Port
+        properties:
+            name:
+                str_replace:
+                    template: $vnf_name-app_2_data_port_0
+                    params:
+                        $vnf_name:
+                            get_param: vnf_name
+            network: { get_param: data_net_id }
+            replacement_policy: AUTO
+            fixed_ips:
+                -
+                    ip_address: {get_param: [app_data_v6_ips, 2]}
+            security_groups:
+                get_param: data_Sec_Grp
+        metadata:
+            os_net: { get_param: data_net_id }
+            ext_net: data
+
+#    app_server_3:
+    'node:m008:server':
+        type: OS::Nova::Server
+        properties:
+            name: { get_param: [app_names, 3]}
+            availability_zone:
+                get_param: availability_zone_1
+            image:
+                get_param: app_image_name
+            flavor:
+                get_param: app_flavor_name
+            image_update_policy: REBUILD
+            config_drive: 'True'
+            block_device_mapping:
+                -
+                    delete_on_termination: 'false'
+                    device_name: vdb
+                    volume_id:
+                        get_param: app_volume_id_3
+            networks:
+                -
+                    port:
+                        get_resource: app_3_int_internal_port_0
+                -
+                    port:
+                        get_resource: app_3_oam_port_0
+                -
+                    port:
+                        get_resource: app_3_data_port_0
+            user_data_format: RAW
+            user_data:
+                str_replace:
+                    template:
+                        get_file: node_userdata_script.sh
+#                        get_param: _node_userdata_script_
+                    params:
+                        __heat_stack_name__:
+                            get_param: 'OS::stack_name'
+                        __node_siteinfo_url__: { get_param: siteinfo_url }
+                        __ieccf_config_url__: { get_param: ieccf_config_url }
+                        __ieccf_debug__: { get_param: ieccf_debug }
+                        __activepilot_ip__:
+                            get_attr:
+#                                - Reserve_Port_plt_int_internal_floating_ip_0
+                                - 'network:system:vip:m001:m002'
+                                - fixed_ips
+                                - 0
+                                - ip_address
+                        __host_key__:
+                            get_attr:
+                                - 'sysinfo:host_key'
+                                - value
+                        __pilot__: ''
+                        __script_url__: ''
+                        __script_args__: ''
+                        __os_cacert__: ''
+                        __cs_cacert__: ''
+                        __post_exec__: ''
+                        __ignore_siteinfo_audit__:
+                            get_param: ignore_siteinfo_audit
+                        __nameserver1__: {get_param: name_server_1}
+                        __nameserver2__: {get_param: name_server_2}
+                        __domain__: {get_param: domain}
+            scheduler_hints: 
+                group: {get_resource: app_Server_Grp}
+
+            metadata:
+                vnf_id: {get_param: vnf_id}
+                vnf_name: {get_param: vnf_name}
+                vf_module_id: {get_param: vf_module_id}
+                vf_module_name: {get_param: vf_module_name}
+                vm_role: app
+        metadata:
+            mcas_id: m008
+            networks:
+                -
+                    get_attr:
+                        - app_3_int_internal_port_0
+                        - network_id
+                -
+                    get_attr:
+                        - app_3_oam_port_0
+                        - network_id
+                -
+                    get_attr:
+                        - app_3_data_port_0
+                        - network_id
+                        
+    app_3_int_internal_port_0:
+        type: OS::Neutron::Port
+        properties:
+            name:
+                str_replace:
+                    template: $vnf_name-app_3_int_internal_port_0
+                    params:
+                        $vnf_name:
+                            get_param: vnf_name
+            network: {get_resource: int_internal_network }
+            replacement_policy: AUTO
+            security_groups:
+                -
+                    get_resource: app_int_internal_Sec_Grp
+        metadata:
+            os_net: {get_resource: int_internal_network }
+
+    app_3_oam_port_0:
+        type: OS::Neutron::Port
+        properties:
+            name:
+                str_replace:
+                    template: $vnf_name-app_3_oam_port_0
+                    params:
+                        $vnf_name:
+                            get_param: vnf_name
+            network: { get_param: oam_net_id }
+            replacement_policy: AUTO
+            fixed_ips:
+                -
+                    ip_address: {get_param: [app_oam_ips, 3]}
+                    
+            security_groups:
+                get_param: oam_Sec_Grp
+        metadata:
+            os_net: { get_param: oam_net_id }
+            ext_net: oam    
+
+    app_3_data_port_0:
+        type: OS::Neutron::Port
+        properties:
+            name:
+                str_replace:
+                    template: $vnf_name-app_3_data_port_0
+                    params:
+                        $vnf_name:
+                            get_param: vnf_name
+            network: { get_param: data_net_id }
+            replacement_policy: AUTO
+            fixed_ips:
+                -
+                    ip_address: {get_param: [app_data_v6_ips, 3]}
+            security_groups:
+                get_param: data_Sec_Grp
+        metadata:
+            os_net: { get_param: data_net_id }
+            ext_net: data
+
+#    app_server_4:
+    'node:m009:server':
+        type: OS::Nova::Server
+        properties:
+            name: { get_param: [app_names, 4]}
+            availability_zone:
+                get_param: availability_zone_0
+            image:
+                get_param: app_image_name
+            flavor:
+                get_param: app_flavor_name
+            image_update_policy: REBUILD
+            config_drive: 'True'
+            block_device_mapping:
+                -
+                    delete_on_termination: 'false'
+                    device_name: vdb
+                    volume_id:
+                        get_param: app_volume_id_4
+            networks:
+                -
+                    port:
+                        get_resource: app_4_int_internal_port_0
+                -
+                    port:
+                        get_resource: app_4_oam_port_0
+                -
+                    port:
+                        get_resource: app_4_data_port_0
+            user_data_format: RAW
+            user_data:
+                str_replace:
+                    template:
+                        get_file: node_userdata_script.sh
+#                        get_param: _node_userdata_script_
+                    params:
+                        __heat_stack_name__:
+                            get_param: 'OS::stack_name'
+                        __node_siteinfo_url__: { get_param: siteinfo_url }
+                        __ieccf_config_url__: { get_param: ieccf_config_url }
+                        __ieccf_debug__: { get_param: ieccf_debug }
+                        __activepilot_ip__:
+                            get_attr:
+#                                - Reserve_Port_plt_int_internal_floating_ip_0
+                                - 'network:system:vip:m001:m002'
+                                - fixed_ips
+                                - 0
+                                - ip_address
+                        __host_key__:
+                            get_attr:
+                                - 'sysinfo:host_key'
+                                - value
+                        __pilot__: ''
+                        __script_url__: ''
+                        __script_args__: ''
+                        __os_cacert__: ''
+                        __cs_cacert__: ''
+                        __post_exec__: ''
+                        __ignore_siteinfo_audit__:
+                            get_param: ignore_siteinfo_audit
+                        __nameserver1__: {get_param: name_server_1}
+                        __nameserver2__: {get_param: name_server_2}
+                        __domain__: {get_param: domain}
+            scheduler_hints: 
+                group: {get_resource: app_Server_Grp}
+
+            metadata:
+                vnf_id: {get_param: vnf_id}
+                vnf_name: {get_param: vnf_name}
+                vf_module_id: {get_param: vf_module_id}
+                vf_module_name: {get_param: vf_module_name}
+                vm_role: app
+        metadata:
+            mcas_id: m009
+            networks:
+                -
+                    get_attr:
+                        - app_4_int_internal_port_0
+                        - network_id
+                -
+                    get_attr:
+                        - app_4_oam_port_0
+                        - network_id
+                -
+                    get_attr:
+                        - app_4_data_port_0
+                        - network_id
+                        
+    app_4_int_internal_port_0:
+        type: OS::Neutron::Port
+        properties:
+            name:
+                str_replace:
+                    template: $vnf_name-app_4_int_internal_port_0
+                    params:
+                        $vnf_name:
+                            get_param: vnf_name
+            network: {get_resource: int_internal_network }
+            replacement_policy: AUTO
+            security_groups:
+                -
+                    get_resource: app_int_internal_Sec_Grp
+        metadata:
+            os_net: {get_resource: int_internal_network }
+
+    app_4_oam_port_0:
+        type: OS::Neutron::Port
+        properties:
+            name:
+                str_replace:
+                    template: $vnf_name-app_4_oam_port_0
+                    params:
+                        $vnf_name:
+                            get_param: vnf_name
+            network: { get_param: oam_net_id }
+            replacement_policy: AUTO
+            fixed_ips:
+                -
+                    ip_address: {get_param: [app_oam_ips, 4]}
+                    
+            security_groups:
+                get_param: oam_Sec_Grp
+        metadata:
+            os_net: { get_param: oam_net_id }
+            ext_net: oam    
+
+    app_4_data_port_0:
+        type: OS::Neutron::Port
+        properties:
+            name:
+                str_replace:
+                    template: $vnf_name-app_4_data_port_0
+                    params:
+                        $vnf_name:
+                            get_param: vnf_name
+            network: { get_param: data_net_id }
+            replacement_policy: AUTO
+            fixed_ips:
+                -
+                    ip_address: {get_param: [app_data_v6_ips, 4]}
+            security_groups:
+                get_param: data_Sec_Grp
+        metadata:
+            os_net: { get_param: data_net_id }
+            ext_net: data
+
+#    app_server_5:
+    'node:m010:server':
+        type: OS::Nova::Server
+        properties:
+            name: { get_param: [app_names, 5]}
+            availability_zone:
+                get_param: availability_zone_1
+            image:
+                get_param: app_image_name
+            flavor:
+                get_param: app_flavor_name
+            image_update_policy: REBUILD
+            config_drive: 'True'
+            block_device_mapping:
+                -
+                    delete_on_termination: 'false'
+                    device_name: vdb
+                    volume_id:
+                        get_param: app_volume_id_5
+            networks:
+                -
+                    port:
+                        get_resource: app_5_int_internal_port_0
+                -
+                    port:
+                        get_resource: app_5_oam_port_0
+                -
+                    port:
+                        get_resource: app_5_data_port_0
+            user_data_format: RAW
+            user_data:
+                str_replace:
+                    template:
+                        get_file: node_userdata_script.sh
+#                        get_param: _node_userdata_script_
+                    params:
+                        __heat_stack_name__:
+                            get_param: 'OS::stack_name'
+                        __node_siteinfo_url__: { get_param: siteinfo_url }
+                        __ieccf_config_url__: { get_param: ieccf_config_url }
+                        __ieccf_debug__: { get_param: ieccf_debug }
+                        __activepilot_ip__:
+                            get_attr:
+#                                - Reserve_Port_plt_int_internal_floating_ip_0
+                                - 'network:system:vip:m001:m002'
+                                - fixed_ips
+                                - 0
+                                - ip_address
+                        __host_key__:
+                            get_attr:
+                                - 'sysinfo:host_key'
+                                - value
+                        __pilot__: ''
+                        __script_url__: ''
+                        __script_args__: ''
+                        __os_cacert__: ''
+                        __cs_cacert__: ''
+                        __post_exec__: ''
+                        __ignore_siteinfo_audit__:
+                            get_param: ignore_siteinfo_audit
+                        __nameserver1__: {get_param: name_server_1}
+                        __nameserver2__: {get_param: name_server_2}
+                        __domain__: {get_param: domain}
+            scheduler_hints: 
+                group: {get_resource: app_Server_Grp}
+
+
+            metadata:
+                vnf_id: {get_param: vnf_id}
+                vnf_name: {get_param: vnf_name}
+                vf_module_id: {get_param: vf_module_id}
+                vf_module_name: {get_param: vf_module_name}
+                vm_role: app
+        metadata:
+            mcas_id: m010
+            networks:
+                -
+                    get_attr:
+                        - app_5_int_internal_port_0
+                        - network_id
+                -
+                    get_attr:
+                        - app_5_oam_port_0
+                        - network_id
+                -
+                    get_attr:
+                        - app_5_data_port_0
+                        - network_id
+                        
+    app_5_int_internal_port_0:
+        type: OS::Neutron::Port
+        properties:
+            name:
+                str_replace:
+                    template: $vnf_name-app_5_int_internal_port_0
+                    params:
+                        $vnf_name:
+                            get_param: vnf_name
+            network: {get_resource: int_internal_network }
+            replacement_policy: AUTO
+            security_groups:
+                -
+                    get_resource: app_int_internal_Sec_Grp
+        metadata:
+            os_net: {get_resource: int_internal_network }
+
+    app_5_oam_port_0:
+        type: OS::Neutron::Port
+        properties:
+            name:
+                str_replace:
+                    template: $vnf_name-app_5_oam_port_0
+                    params:
+                        $vnf_name:
+                            get_param: vnf_name
+            network: { get_param: oam_net_id }
+            replacement_policy: AUTO
+            fixed_ips:
+                -
+                    ip_address: {get_param: [app_oam_ips, 5]}
+                    
+            security_groups:
+                get_param: oam_Sec_Grp
+        metadata:
+            os_net: { get_param: oam_net_id }
+            ext_net: oam    
+
+    app_5_data_port_0:
+        type: OS::Neutron::Port
+        properties:
+            name:
+                str_replace:
+                    template: $vnf_name-app_5_data_port_0
+                    params:
+                        $vnf_name:
+                            get_param: vnf_name
+            network: { get_param: data_net_id }
+            replacement_policy: AUTO
+            fixed_ips:
+                -
+                    ip_address: {get_param: [app_data_v6_ips, 5]}
+            security_groups:
+                get_param: data_Sec_Grp
+        metadata:
+            os_net: { get_param: data_net_id }
+            ext_net: data
+
+#    app_server_6:
+    'node:m011:server':
+        type: OS::Nova::Server
+        properties:
+            name: { get_param: [app_names, 6]}
+            availability_zone:
+                get_param: availability_zone_0
+            image:
+                get_param: app_image_name
+            flavor:
+                get_param: app_flavor_name
+            image_update_policy: REBUILD
+            config_drive: 'True'
+            block_device_mapping:
+                -
+                    delete_on_termination: 'false'
+                    device_name: vdb
+                    volume_id:
+                        get_param: app_volume_id_6
+            networks:
+                -
+                    port:
+                        get_resource: app_6_int_internal_port_0
+                -
+                    port:
+                        get_resource: app_6_oam_port_0
+                -
+                    port:
+                        get_resource: app_6_data_port_0
+            user_data_format: RAW
+            user_data:
+                str_replace:
+                    template:
+                        get_file: node_userdata_script.sh
+#                        get_param: _node_userdata_script_
+                    params:
+                        __heat_stack_name__:
+                            get_param: 'OS::stack_name'
+                        __node_siteinfo_url__: { get_param: siteinfo_url }
+                        __ieccf_config_url__: { get_param: ieccf_config_url }
+                        __ieccf_debug__: { get_param: ieccf_debug }
+                        __activepilot_ip__:
+                            get_attr:
+#                                - Reserve_Port_plt_int_internal_floating_ip_0
+                                - 'network:system:vip:m001:m002'
+                                - fixed_ips
+                                - 0
+                                - ip_address
+                        __host_key__:
+                            get_attr:
+                                - 'sysinfo:host_key'
+                                - value
+                        __pilot__: ''
+                        __script_url__: ''
+                        __script_args__: ''
+                        __os_cacert__: ''
+                        __cs_cacert__: ''
+                        __post_exec__: ''
+                        __ignore_siteinfo_audit__:
+                            get_param: ignore_siteinfo_audit
+                        __nameserver1__: {get_param: name_server_1}
+                        __nameserver2__: {get_param: name_server_2}
+                        __domain__: {get_param: domain}
+            scheduler_hints: 
+                group: {get_resource: app_Server_Grp}
+
+            metadata:
+                vnf_id: {get_param: vnf_id}
+                vnf_name: {get_param: vnf_name}
+                vf_module_id: {get_param: vf_module_id}
+                vf_module_name: {get_param: vf_module_name}
+                vm_role: app
+        metadata:
+            mcas_id: m011
+            networks:
+                -
+                    get_attr:
+                        - app_6_int_internal_port_0
+                        - network_id
+                -
+                    get_attr:
+                        - app_6_oam_port_0
+                        - network_id
+                -
+                    get_attr:
+                        - app_6_data_port_0
+                        - network_id
+                        
+    app_6_int_internal_port_0:
+        type: OS::Neutron::Port
+        properties:
+            name:
+                str_replace:
+                    template: $vnf_name-app_6_int_internal_port_0
+                    params:
+                        $vnf_name:
+                            get_param: vnf_name
+            network: {get_resource: int_internal_network }
+            replacement_policy: AUTO
+            security_groups:
+                -
+                    get_resource: app_int_internal_Sec_Grp
+        metadata:
+            os_net: {get_resource: int_internal_network }
+
+    app_6_oam_port_0:
+        type: OS::Neutron::Port
+        properties:
+            name:
+                str_replace:
+                    template: $vnf_name-app_6_oam_port_0
+                    params:
+                        $vnf_name:
+                            get_param: vnf_name
+            network: { get_param: oam_net_id }
+            replacement_policy: AUTO
+            fixed_ips:
+                -
+                    ip_address: {get_param: [app_oam_ips, 6]}
+                    
+            security_groups:
+                get_param: oam_Sec_Grp
+        metadata:
+            os_net: { get_param: oam_net_id }
+            ext_net: oam    
+
+    app_6_data_port_0:
+        type: OS::Neutron::Port
+        properties:
+            name:
+                str_replace:
+                    template: $vnf_name-app_6_data_port_0
+                    params:
+                        $vnf_name:
+                            get_param: vnf_name
+            network: { get_param: data_net_id }
+            replacement_policy: AUTO
+            fixed_ips:
+                -
+                    ip_address: {get_param: [app_data_v6_ips, 6]}
+            security_groups:
+                get_param: data_Sec_Grp
+        metadata:
+            os_net: { get_param: data_net_id }
+            ext_net: data
+
+    'sysinfo:input_store':  # What is the purpose of this?
+        type: 'OS::Heat::RandomString'
+        metadata:
+            parameters:
+                vnf_name:
+                    get_param: vnf_name
+                __os_cacert__:
+                    get_param: openstack_cacert
+#                    get_file: openstack_cacert.crt
+                __cs_cacert__:
+                    get_param: config_server_cacert
+#                    get_file: config_server_cacert.crt
+                ignore_siteinfo_audit:
+                    get_param: ignore_siteinfo_audit
+                m001_avail_zone:
+                    get_param: availability_zone_0
+                m001_image:
+                    get_param: plt_image_name
+                m001_flavor:
+                    get_param: plt_flavor_name
+                m001_security_groups:
+                    get_resource: plt_int_internal_Sec_Grp
+                m002_avail_zone:
+                    get_param: availability_zone_1
+                m002_image:
+                    get_param: plt_image_name
+                m002_flavor:
+                    get_param: plt_flavor_name
+                m002_security_groups:
+                    get_resource: plt_int_internal_Sec_Grp
+                m003_avail_zone:
+                    get_param: availability_zone_0
+                m003_image:
+                    get_param: iox_image_name
+                m003_flavor:
+                    get_param: iox_flavor_name
+                m003_security_groups:
+                    get_resource: iox_int_internal_Sec_Grp
+                m004_avail_zone:
+                    get_param: availability_zone_1
+                m004_image:
+                    get_param: iox_image_name
+                m004_flavor:
+                    get_param: iox_flavor_name
+                m004_security_groups:
+                    get_resource: iox_int_internal_Sec_Grp
+                m005_avail_zone:
+                    get_param: availability_zone_0
+                m005_image:
+                    get_param: app_image_name
+                m005_flavor:
+                    get_param: app_flavor_name
+                m005_security_groups:
+                    get_resource: app_int_internal_Sec_Grp
+                m006_avail_zone:
+                    get_param: availability_zone_1
+                m006_image:
+                    get_param: app_image_name
+                m006_flavor:
+                    get_param: app_flavor_name
+                m006_security_groups:
+                    get_resource: app_int_internal_Sec_Grp
+                m007_avail_zone:
+                    get_param: availability_zone_0
+                m007_image:
+                    get_param: app_image_name
+                m007_flavor:
+                    get_param: app_flavor_name
+                m007_security_groups:
+                    get_resource: app_int_internal_Sec_Grp
+                m008_avail_zone:
+                    get_param: availability_zone_1
+                m008_image:
+                    get_param: app_image_name
+                m008_flavor:
+                    get_param: app_flavor_name
+                m008_security_groups:
+                    get_resource: app_int_internal_Sec_Grp
+                m009_avail_zone:
+                    get_param: availability_zone_0
+                m009_image:
+                    get_param: app_image_name
+                m009_flavor:
+                    get_param: app_flavor_name
+                m009_security_groups:
+                    get_resource: app_int_internal_Sec_Grp
+                m010_avail_zone:
+                    get_param: availability_zone_1
+                m010_image:
+                    get_param: app_image_name
+                m010_flavor:
+                    get_param: app_flavor_name
+                m010_security_groups:
+                    get_resource: app_int_internal_Sec_Grp
+                m011_avail_zone:
+                    get_param: availability_zone_0
+                m011_image:
+                    get_param: app_image_name
+                m011_flavor:
+                    get_param: app_flavor_name
+                m011_security_groups:
+                    get_resource: app_int_internal_Sec_Grp
+    'sysinfo:host_key':
+        type: 'OS::Heat::RandomString'
+        properties:
+            length: 255
+
+outputs:
+    oam_management_v4_address:
+        description: pilot OAM IP
+#        value: { get_attr: [Reserve_Port_plt_oam_floating_ip_0,fixed_ips, 0, ip_address ]}
+        value: { get_attr: ['network:oam:vip:m001:m002',fixed_ips, 0, ip_address ]}
+

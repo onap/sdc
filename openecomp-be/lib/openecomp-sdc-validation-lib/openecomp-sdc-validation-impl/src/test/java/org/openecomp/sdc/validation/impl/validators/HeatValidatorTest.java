@@ -22,12 +22,15 @@ package org.openecomp.sdc.validation.impl.validators;
 
 
 import org.openecomp.core.validation.types.MessageContainer;
+import org.openecomp.sdc.common.errors.Messages;
+import org.openecomp.sdc.datatypes.error.ErrorMessage;
 import org.openecomp.sdc.validation.Validator;
 import org.openecomp.sdc.validation.util.ValidationTestUtil;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 
@@ -159,7 +162,29 @@ public class HeatValidatorTest {
         "WARNING: [HOT10]: Invalid HEAT format problem - " +
             "[The heat file does not contain any resources]");
     Assert.assertEquals(messages.get("mount_iso_script.sh").getErrorMessageList().get(0).
-        getMessage(),"WARNING: [HOT11]: Artifact file is not referenced.");
+                                                                                                getMessage(),
+            "WARNING: [HOT11]: Artifact file is not referenced.");
+  }
+
+  @Test
+  public void testGeneratedArtifactExistInHeat() throws IOException {
+    Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(new HeatValidator(),
+            RESOURCE_PATH + "/generated_artifact_exist/negative_test/input");
+    Assert.assertNotNull(messages);
+    Assert.assertEquals(messages.size(), 3);
+    checkGeneratedArtifactMessage(HeatValidator.VENDOR_LICENSE_MODEL_XML, messages);
+    checkGeneratedArtifactMessage(HeatValidator.VF_LICENSE_MODEL_XML, messages);
+    checkGeneratedArtifactMessage(HeatValidator.HEAT_META, messages);
+  }
+
+
+  private void checkGeneratedArtifactMessage(String fileName, Map<String, MessageContainer> messages) {
+      List<ErrorMessage> errorMessages = messages.get(fileName).getErrorMessageList();
+      Assert.assertEquals(errorMessages.size(), 2);
+      Assert.assertEquals(errorMessages.get(0).getMessage(),
+            "WARNING: [HOT11]: Artifact file is not referenced.");
+      String message = String.format(Messages.GENERATED_ARTIFACT_IN_USE.getErrorMessage(), fileName);
+      Assert.assertTrue(errorMessages.get(1).getMessage().contains(message));
   }
 
   @Test
