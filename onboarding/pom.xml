@@ -25,6 +25,11 @@
     </modules>
 
     <properties>
+
+        <maven.test.redirectTestOutputToFile>true</maven.test.redirectTestOutputToFile>
+        <jacoco.skip>true</jacoco.skip>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
         <!-- Maven plugin versions -->
         <jacoco.version>0.7.9</jacoco.version>
         <mvn.assembly.version>2.1</mvn.assembly.version>
@@ -94,7 +99,6 @@
         <org.everit.json.schema.version>1.5.1</org.everit.json.schema.version>
         <org.reflections.version>0.9.10</org.reflections.version>
         <powermock.version>2.0.0-beta.5</powermock.version>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <servlet.version>2.5</servlet.version>
         <slf4j.version>1.7.21</slf4j.version>
         <snakeyaml.version>1.17</snakeyaml.version>
@@ -110,7 +114,6 @@
         <pmd.version>5.8.1</pmd.version>
         <build.tools.version>${project.version}</build.tools.version>
         <togglz.version>2.4.1.Final</togglz.version>
-        <jacoco.skip>true</jacoco.skip>
         <maven.pmd.plugin.version>3.9.0</maven.pmd.plugin.version>
         <pmd.java.version>6.3.0</pmd.java.version>
         <pmd.core.version>6.3.0</pmd.core.version>
@@ -345,7 +348,6 @@
                     <forkCount>${fork.count}</forkCount>
                     <forkMode>${fork.mode}</forkMode>
                     <printSummary>false</printSummary>
-                    <redirectTestOutputToFile>true</redirectTestOutputToFile>
                     <additionalClasspathElements>
                         <additionalClasspathElement>${project.basedir}/src/test/resources</additionalClasspathElement>
                     </additionalClasspathElements>
