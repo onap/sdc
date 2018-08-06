@@ -603,6 +603,11 @@ public class HeatToToscaUtil {
                        && MapUtils.isNotEmpty(resource.getProperties()) && resource.getProperties().containsKey(
                 HeatConstants.VMI_REFS_PROPERTY_NAME);
     }
+    
+    public static boolean isValueSpecsPropertyExists(Resource resource) {
+        return  MapUtils.isNotEmpty(resource.getProperties()) && resource.getProperties().containsKey(
+                HeatConstants.VALUE_SPECS_PROPERTY_NAME);
+    }
 
     public static String getSubInterfaceResourceType(Resource resource) {
         if (!HeatToToscaUtil.isYamlFile(resource.getType())) {
