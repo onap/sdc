@@ -17,24 +17,7 @@ import { actionTypes } from './EntitlementPoolsConstants';
 export default (state = [], action) => {
     switch (action.type) {
         case actionTypes.ENTITLEMENT_POOLS_LIST_LOADED:
-            return [...action.response.results];
-        case actionTypes.ADD_ENTITLEMENT_POOL:
-            return [...state, action.entitlementPool];
-        case actionTypes.EDIT_ENTITLEMENT_POOL:
-            const indexForEdit = state.findIndex(
-                entitlementPool =>
-                    entitlementPool.id === action.entitlementPool.id
-            );
-            return [
-                ...state.slice(0, indexForEdit),
-                action.entitlementPool,
-                ...state.slice(indexForEdit + 1)
-            ];
-        case actionTypes.DELETE_ENTITLEMENT_POOL:
-            return state.filter(
-                entitlementPool =>
-                    entitlementPool.id !== action.entitlementPoolId
-            );
+            return action.response.results;
         default:
             return state;
     }

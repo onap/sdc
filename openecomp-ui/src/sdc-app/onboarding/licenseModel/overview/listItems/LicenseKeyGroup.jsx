@@ -26,7 +26,10 @@ import {
 
 class LicenseKeyGroup extends Component {
     render() {
-        let { lkgData: { name, description, type }, isOrphan } = this.props;
+        let {
+            lkgData: { name, description, type, manufacturerReferenceNumber },
+            isOrphan
+        } = this.props;
         return (
             <div
                 className={`vlm-list-item vlm-list-item-lkg ${
@@ -42,6 +45,13 @@ class LicenseKeyGroup extends Component {
                         name={i18n('Type')}
                         value={extractValue(type)}
                     />
+                    {manufacturerReferenceNumber && (
+                        <AdditionalDataElement
+                            className="vlm-list-item-entitlement-metric"
+                            name={i18n('Manufacturer Reference Number')}
+                            value={manufacturerReferenceNumber}
+                        />
+                    )}
                 </AdditionalDataCol>
             </div>
         );

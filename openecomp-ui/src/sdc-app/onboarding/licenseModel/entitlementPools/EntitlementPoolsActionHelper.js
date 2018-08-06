@@ -39,7 +39,8 @@ function postEntitlementPool(licenseModelId, entitlementPool, version) {
         increments: entitlementPool.increments,
         time: entitlementPool.time,
         startDate: entitlementPool.startDate,
-        expiryDate: entitlementPool.expiryDate
+        expiryDate: entitlementPool.expiryDate,
+        manufacturerReferenceNumber: entitlementPool.manufacturerReferenceNumber
     });
 }
 
@@ -59,7 +60,9 @@ function putEntitlementPool(
             increments: entitlementPool.increments,
             time: entitlementPool.time,
             startDate: entitlementPool.startDate,
-            expiryDate: entitlementPool.expiryDate
+            expiryDate: entitlementPool.expiryDate,
+            manufacturerReferenceNumber:
+                entitlementPool.manufacturerReferenceNumber
         }
     );
 }
@@ -119,7 +122,7 @@ function putLimit(licenseModelId, entitlementPoolId, version, limit) {
     );
 }
 
-export default {
+const EntitlementPoolsActionHelper = {
     fetchEntitlementPoolsList(dispatch, { licenseModelId, version }) {
         return fetchEntitlementPoolsList(licenseModelId, version).then(
             response =>
@@ -148,23 +151,20 @@ export default {
         });
     },
 
-    deleteEntitlementPool(
+    async deleteEntitlementPool(
         dispatch,
         { licenseModelId, entitlementPoolId, version }
     ) {
-        return deleteEntitlementPool(
+        await deleteEntitlementPool(licenseModelId, entitlementPoolId, version);
+
+        await ItemsHelper.checkItemStatus(dispatch, {
+            itemId: licenseModelId,
+            versionId: version.id
+        });
+
+        await EntitlementPoolsActionHelper.fetchEntitlementPoolsList(dispatch, {
             licenseModelId,
-            entitlementPoolId,
             version
-        ).then(() => {
-            dispatch({
-                type: entitlementPoolsActionTypes.DELETE_ENTITLEMENT_POOL,
-                entitlementPoolId
-            });
-            return ItemsHelper.checkItemStatus(dispatch, {
-                itemId: licenseModelId,
-                versionId: version.id
-            });
         });
     },
 
@@ -182,46 +182,28 @@ export default {
         });
     },
 
-    saveEntitlementPool(
+    async saveEntitlementPool(
         dispatch,
         { licenseModelId, previousEntitlementPool, entitlementPool, version }
     ) {
         if (previousEntitlementPool) {
-            return putEntitlementPool(
+            await putEntitlementPool(
                 licenseModelId,
                 previousEntitlementPool,
                 entitlementPool,
                 version
-            ).then(() => {
-                dispatch({
-                    type: entitlementPoolsActionTypes.EDIT_ENTITLEMENT_POOL,
-                    entitlementPool
-                });
-                return ItemsHelper.checkItemStatus(dispatch, {
-                    itemId: licenseModelId,
-                    versionId: version.id
-                });
-            });
+            );
         } else {
-            return postEntitlementPool(
-                licenseModelId,
-                entitlementPool,
-                version
-            ).then(response => {
-                dispatch({
-                    type: entitlementPoolsActionTypes.ADD_ENTITLEMENT_POOL,
-                    entitlementPool: {
-                        ...entitlementPool,
-                        referencingFeatureGroups: [],
-                        id: response.value
-                    }
-                });
-                return ItemsHelper.checkItemStatus(dispatch, {
-                    itemId: licenseModelId,
-                    versionId: version.id
-                });
-            });
+            await postEntitlementPool(licenseModelId, entitlementPool, version);
         }
+        await ItemsHelper.checkItemStatus(dispatch, {
+            itemId: licenseModelId,
+            versionId: version.id
+        });
+        await EntitlementPoolsActionHelper.fetchEntitlementPoolsList(dispatch, {
+            licenseModelId,
+            version
+        });
     },
 
     hideDeleteConfirm(dispatch) {
@@ -291,3 +273,5 @@ export default {
         });
     }
 };
+
+export default EntitlementPoolsActionHelper;

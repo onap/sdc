@@ -17,24 +17,7 @@ import { actionTypes } from './LicenseKeyGroupsConstants.js';
 export default (state = [], action) => {
     switch (action.type) {
         case actionTypes.LICENSE_KEY_GROUPS_LIST_LOADED:
-            return [...action.response.results];
-        case actionTypes.DELETE_LICENSE_KEY_GROUP:
-            return state.filter(
-                licenseKeyGroup =>
-                    licenseKeyGroup.id !== action.licenseKeyGroupId
-            );
-        case actionTypes.ADD_LICENSE_KEY_GROUP:
-            return [...state, action.licenseKeyGroup];
-        case actionTypes.EDIT_LICENSE_KEY_GROUP:
-            const indexForEdit = state.findIndex(
-                licenseKeyGroup =>
-                    licenseKeyGroup.id === action.licenseKeyGroup.id
-            );
-            return [
-                ...state.slice(0, indexForEdit),
-                action.licenseKeyGroup,
-                ...state.slice(indexForEdit + 1)
-            ];
+            return action.response.results;
         default:
             return state;
     }

@@ -45,7 +45,8 @@ function postLicenseKeyGroup(licenseModelId, licenseKeyGroup, version) {
         thresholdValue: licenseKeyGroup.thresholdValue,
         thresholdUnits: getValue(licenseKeyGroup.thresholdUnits),
         startDate: licenseKeyGroup.startDate,
-        expiryDate: licenseKeyGroup.expiryDate
+        expiryDate: licenseKeyGroup.expiryDate,
+        manufacturerReferenceNumber: licenseKeyGroup.manufacturerReferenceNumber
     });
 }
 
@@ -60,7 +61,9 @@ function putLicenseKeyGroup(licenseModelId, licenseKeyGroup, version) {
             thresholdValue: licenseKeyGroup.thresholdValue,
             thresholdUnits: getValue(licenseKeyGroup.thresholdUnits),
             startDate: licenseKeyGroup.startDate,
-            expiryDate: licenseKeyGroup.expiryDate
+            expiryDate: licenseKeyGroup.expiryDate,
+            manufacturerReferenceNumber:
+                licenseKeyGroup.manufacturerReferenceNumber
         }
     );
 }
@@ -149,64 +152,37 @@ export default {
         });
     },
 
-    saveLicenseKeyGroup(
+    async saveLicenseKeyGroup(
         dispatch,
         { licenseModelId, previousLicenseKeyGroup, licenseKeyGroup, version }
     ) {
         if (previousLicenseKeyGroup) {
-            return putLicenseKeyGroup(
-                licenseModelId,
-                licenseKeyGroup,
-                version
-            ).then(() => {
-                dispatch({
-                    type: licenseKeyGroupsConstants.EDIT_LICENSE_KEY_GROUP,
-                    licenseKeyGroup
-                });
-                return ItemsHelper.checkItemStatus(dispatch, {
-                    itemId: licenseModelId,
-                    versionId: version.id
-                });
-            });
+            await putLicenseKeyGroup(licenseModelId, licenseKeyGroup, version);
         } else {
-            return postLicenseKeyGroup(
-                licenseModelId,
-                licenseKeyGroup,
-                version
-            ).then(response => {
-                dispatch({
-                    type: licenseKeyGroupsConstants.ADD_LICENSE_KEY_GROUP,
-                    licenseKeyGroup: {
-                        ...licenseKeyGroup,
-                        referencingFeatureGroups: [],
-                        id: response.value
-                    }
-                });
-                return ItemsHelper.checkItemStatus(dispatch, {
-                    itemId: licenseModelId,
-                    versionId: version.id
-                });
-            });
+            await postLicenseKeyGroup(licenseModelId, licenseKeyGroup, version);
         }
+        await ItemsHelper.checkItemStatus(dispatch, {
+            itemId: licenseModelId,
+            versionId: version.id
+        });
+        await this.fetchLicenseKeyGroupsList(dispatch, {
+            licenseModelId,
+            version
+        });
     },
 
-    deleteLicenseKeyGroup(
+    async deleteLicenseKeyGroup(
         dispatch,
         { licenseModelId, licenseKeyGroupId, version }
     ) {
-        return deleteLicenseKeyGroup(
+        await deleteLicenseKeyGroup(licenseModelId, licenseKeyGroupId, version);
+        await ItemsHelper.checkItemStatus(dispatch, {
+            itemId: licenseModelId,
+            versionId: version.id
+        });
+        await this.fetchLicenseKeyGroupsList(dispatch, {
             licenseModelId,
-            licenseKeyGroupId,
             version
-        ).then(() => {
-            dispatch({
-                type: licenseKeyGroupsConstants.DELETE_LICENSE_KEY_GROUP,
-                licenseKeyGroupId
-            });
-            return ItemsHelper.checkItemStatus(dispatch, {
-                itemId: licenseModelId,
-                versionId: version.id
-            });
         });
     },
 

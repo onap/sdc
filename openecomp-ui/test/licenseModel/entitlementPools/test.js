@@ -154,6 +154,17 @@ describe('Entitlement Pools Module Tests', function() {
             };
         });
 
+        mockRest.addHandler('fetch', ({ data, options, baseUrl }) => {
+            expect(baseUrl).toEqual(
+                `/onboarding-api/v1.0/vendor-license-models/${LICENSE_MODEL_ID}/versions/${
+                    version.id
+                }/entitlement-pools`
+            );
+            expect(data).toEqual(undefined);
+            expect(options).toEqual(undefined);
+            return { results: [] };
+        });
+
         return EntitlementPoolsActionHelper.deleteEntitlementPool(
             store.dispatch,
             {
@@ -241,6 +252,17 @@ describe('Entitlement Pools Module Tests', function() {
             return {
                 ...returnedVersionFields
             };
+        });
+
+        mockRest.addHandler('fetch', ({ data, options, baseUrl }) => {
+            expect(baseUrl).toEqual(
+                `/onboarding-api/v1.0/vendor-license-models/${LICENSE_MODEL_ID}/versions/${
+                    version.id
+                }/entitlement-pools`
+            );
+            expect(data).toEqual(undefined);
+            expect(options).toEqual(undefined);
+            return { results: [entitlementPoolAfterAdd] };
         });
 
         return EntitlementPoolsActionHelper.saveEntitlementPool(
@@ -345,6 +367,17 @@ describe('Entitlement Pools Module Tests', function() {
             return {
                 ...returnedVersionFields
             };
+        });
+
+        mockRest.addHandler('fetch', ({ data, options, baseUrl }) => {
+            expect(baseUrl).toEqual(
+                `/onboarding-api/v1.0/vendor-license-models/${LICENSE_MODEL_ID}/versions/${
+                    version.id
+                }/entitlement-pools`
+            );
+            expect(data).toEqual(undefined);
+            expect(options).toEqual(undefined);
+            return { results: [entitlementPoolUpdateData] };
         });
 
         return EntitlementPoolsActionHelper.saveEntitlementPool(
