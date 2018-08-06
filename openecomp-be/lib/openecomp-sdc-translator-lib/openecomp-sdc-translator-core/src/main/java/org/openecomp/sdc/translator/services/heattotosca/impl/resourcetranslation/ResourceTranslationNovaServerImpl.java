@@ -36,6 +36,8 @@ import org.onap.sdc.tosca.datatypes.model.NodeType;
 import org.onap.sdc.tosca.datatypes.model.RelationshipTemplate;
 import org.onap.sdc.tosca.datatypes.model.RequirementAssignment;
 import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
+import org.onap.sdc.tosca.datatypes.model.CapabilityDefinition;
+import org.openecomp.sdc.heat.datatypes.HeatBoolean;
 import org.openecomp.sdc.heat.datatypes.model.HeatOrchestrationTemplate;
 import org.openecomp.sdc.heat.datatypes.model.HeatResourcesTypes;
 import org.openecomp.sdc.heat.datatypes.model.PropertiesMapKeyTypes;
@@ -67,6 +69,8 @@ public class ResourceTranslationNovaServerImpl extends ResourceTranslationBase {
     private static final Logger logger = LoggerFactory.getLogger(ResourceTranslationNovaServerImpl.class);
     private static final String BLOCK_DEVICE_MAPPING_DEVICE_NAME = "device_name";
     private static final String VOL_ATTACH_DEVICE_PROPERTY_NAME = "device";
+    private static final String FABRIC_CONFIGURATION_KEY = "fabric_configuration_monitoring";
+    private static final String ATT_FABRIC_CONFIGURATION_REQUIRED = "ATT_FABRIC_CONFIGURATION_REQUIRED";
 
     @Override
     protected void translate(TranslateTo translateTo) {
@@ -350,14 +354,45 @@ public class ResourceTranslationNovaServerImpl extends ResourceTranslationBase {
         }
 
         List<Map<String, Object>> heatNetworkList = (List<Map<String, Object>>) networks;
-
+        
+        boolean isAddFabricConfigurationCapability = false;
         for (Map<String, Object> heatNetwork : heatNetworkList) {
-            getOrTranslatePortTemplate(translateTo, heatNetwork.get(
+           
+            Resource portResource = getOrTranslatePortTemplate(translateTo, heatNetwork.get(
                     Constants.PORT_PROPERTY_NAME), translatedId, novaNodeTemplate);
+        
+            if(!isAddFabricConfigurationCapability){
+                isAddFabricConfigurationCapability = isFabricConfigurationCapabilityNeeded(portResource);
+            }           
+            
         }
+        if(isAddFabricConfigurationCapability){
+            addFabricConfigurationCapability(translateTo, novaNodeTemplate.getType());
+        }
+    }  
+    
+    private boolean isFabricConfigurationCapabilityNeeded(Resource portResource ){        
+       
+        if(portResource != null && HeatToToscaUtil.isValueSpecsPropertyExists(portResource)){
+            Map<String, Object> valueSpecsMap = (Map)(portResource.getProperties().get(HeatConstants.VALUE_SPECS_PROPERTY_NAME));
+            if(MapUtils.isNotEmpty(valueSpecsMap) && valueSpecsMap.containsKey(ATT_FABRIC_CONFIGURATION_REQUIRED)){               
+                return HeatBoolean.eval( valueSpecsMap.get(ATT_FABRIC_CONFIGURATION_REQUIRED));
+            }
+        }
+       
+        return false;
+        
+    }
+    private void addFabricConfigurationCapability(TranslateTo translateTo, String localType){
+        ServiceTemplate serviceTemplate = translateTo.getServiceTemplate();
+        Map<String, CapabilityDefinition> mapCapabilities = new HashMap<>();
+        CapabilityDefinition fabricConfigurationCap = new CapabilityDefinition();        
+        fabricConfigurationCap.setType(ToscaCapabilityType.FABRIC_CONFIGURATION);
+        mapCapabilities.put(FABRIC_CONFIGURATION_KEY, fabricConfigurationCap);
+        DataModelUtil.addNodeTypeCapabilitiesDef (DataModelUtil.getNodeType(serviceTemplate, localType), mapCapabilities);            
     }
 
-    private void getOrTranslatePortTemplate(TranslateTo translateTo,
+    private Resource getOrTranslatePortTemplate(TranslateTo translateTo,
                                                    Object port,
                                                    String novaServerResourceId,
                                                    NodeTemplate novaNodeTemplate) {
@@ -367,7 +402,7 @@ public class ResourceTranslationNovaServerImpl extends ResourceTranslationBase {
         Optional<AttachedResourceId> attachedPortId = HeatToToscaUtil
                 .extractAttachedResourceId(heatFileName, heatOrchestrationTemplate, context, port);
         if (!attachedPortId.isPresent() || !attachedPortId.get().isGetResource()) {
-            return;
+            return null;
         }
         String resourceId = (String) attachedPortId.get().getEntityId();
         Resource portResource = HeatToToscaUtil.getResource(heatOrchestrationTemplate, resourceId, heatFileName);
@@ -377,7 +412,7 @@ public class ResourceTranslationNovaServerImpl extends ResourceTranslationBase {
                     + "Supported types are: {}, {}", resourceId, portResource.getType(),
                     HeatResourcesTypes.NEUTRON_PORT_RESOURCE_TYPE.getHeatResource(),
                     HeatResourcesTypes.CONTRAIL_V2_VIRTUAL_MACHINE_INTERFACE_RESOURCE_TYPE.getHeatResource());
-            return;
+            return null;
         } else if (HeatResourcesTypes.CONTRAIL_V2_VIRTUAL_MACHINE_INTERFACE_RESOURCE_TYPE
                            .getHeatResource().equals(portResource.getType())) {
             Map<String, Object> properties = portResource.getProperties();
@@ -400,7 +435,9 @@ public class ResourceTranslationNovaServerImpl extends ResourceTranslationBase {
             logger.warn("NovaServer connect to port resource with id : {} and type : {}. This resource type"
                     + " is not supported, therefore the connection to the port is ignored.", resourceId,
                     portResource.getType());
+            return null;
         }
+        return portResource;
     }
 
     private boolean isSupportedPortResource(Resource portResource) {
