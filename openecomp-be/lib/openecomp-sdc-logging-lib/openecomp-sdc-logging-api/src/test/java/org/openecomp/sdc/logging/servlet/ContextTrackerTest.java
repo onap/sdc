@@ -45,10 +45,10 @@ import org.powermock.modules.junit4.PowerMockRunner;
 public class ContextTrackerTest {
 
     private static final String X_REQUEST_ID = "X-REQUEST-ID";
-    private static final HttpHeader REQUEST_ID_HEADER = new HttpHeader(new String[] {X_REQUEST_ID});
+    private static final HttpHeader REQUEST_ID_HEADER = new HttpHeader(X_REQUEST_ID);
 
     private static final String X_PARTNER_NAME = "X-PARTNER-NAME";
-    private static final HttpHeader PARTNER_NAME_HEADER = new HttpHeader(new String[] {X_PARTNER_NAME});
+    private static final HttpHeader PARTNER_NAME_HEADER = new HttpHeader(X_PARTNER_NAME);
 
     @Test(expected = NullPointerException.class)
     public void throwExceptionWhenPartnerNamesNull() {

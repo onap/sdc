@@ -43,7 +43,7 @@ public class HttpHeader {
      *
      * @param headerNames cannot be null or empty
      */
-    public HttpHeader(String[] headerNames) {
+    public HttpHeader(String... headerNames) {
 
         if (Objects.requireNonNull(headerNames, NAMES_CANNOT_BE_NULL).length < 1) {
             throw new IllegalArgumentException(AT_LEAST_ONE_NAME_REQUIRED);

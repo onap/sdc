@@ -16,12 +16,11 @@
 
 package org.openecomp.sdc.logging.slf4j;
 
+import java.util.Objects;
+import java.util.concurrent.Callable;
 import org.openecomp.sdc.logging.api.ContextData;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.spi.LoggingServiceProvider;
-
-import java.util.Objects;
-import java.util.concurrent.Callable;
 
 /**
  * Uses SLF4J as backend for logging service.

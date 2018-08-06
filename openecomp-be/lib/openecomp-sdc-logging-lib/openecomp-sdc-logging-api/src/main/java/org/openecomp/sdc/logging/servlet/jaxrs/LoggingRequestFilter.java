@@ -27,7 +27,9 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.ext.Provider;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
+import org.openecomp.sdc.logging.servlet.AuditTracker;
 import org.openecomp.sdc.logging.servlet.CombinedTracker;
+import org.openecomp.sdc.logging.servlet.ContextTracker;
 import org.openecomp.sdc.logging.servlet.HttpHeader;
 import org.openecomp.sdc.logging.servlet.Tracker;
 
@@ -63,8 +65,8 @@ public class LoggingRequestFilter implements ContainerRequestFilter {
 
     private HttpServletRequest httpRequest;
 
-    private HttpHeader requestIdHeader = new HttpHeader(new String[] {DEFAULT_REQUEST_ID_HEADER});
-    private HttpHeader partnerNameHeader = new HttpHeader(new String[] {DEFAULT_PARTNER_NAME_HEADER});
+    private HttpHeader requestIdHeader = new HttpHeader(DEFAULT_REQUEST_ID_HEADER);
+    private HttpHeader partnerNameHeader = new HttpHeader(DEFAULT_PARTNER_NAME_HEADER);
 
     private ResourceInfo resource;
 
@@ -107,7 +109,9 @@ public class LoggingRequestFilter implements ContainerRequestFilter {
     @Override
     public void filter(ContainerRequestContext requestContext) {
         Class<?> resourceClass = resource.getResourceMethod().getDeclaringClass();
-        Tracker tracker = new CombinedTracker(resourceClass, partnerNameHeader, requestIdHeader);
+        Tracker tracker = new CombinedTracker(
+                new ContextTracker(partnerNameHeader, requestIdHeader),
+                new AuditTracker(resourceClass));
         requestContext.setProperty(LOGGING_TRACKER_KEY, tracker);
         tracker.preRequest(httpRequest);
     }
