@@ -16,10 +16,9 @@
 
 package org.openecomp.sdc.logging.slf4j;
 
-import org.slf4j.MDC;
-
 import java.util.EnumMap;
 import java.util.Map;
+import org.slf4j.MDC;
 
 /**
  * Because we don't know which information should be carried over from MDC, and which shouldn't, copy just the keys that

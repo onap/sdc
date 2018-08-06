@@ -16,13 +16,12 @@
 
 package org.openecomp.sdc.logging.slf4j;
 
-import org.openecomp.sdc.logging.context.HostAddressCache;
-import org.openecomp.sdc.logging.context.InstanceId;
-
 import java.net.InetAddress;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Optional;
+import org.openecomp.sdc.logging.context.HostAddressCache;
+import org.openecomp.sdc.logging.context.InstanceId;
 
 /**
  * Maps global logging context to corresponding MDC fields.

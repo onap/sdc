@@ -16,10 +16,9 @@
 
 package org.openecomp.sdc.logging.slf4j;
 
-import org.openecomp.sdc.logging.api.ContextData;
-
 import java.util.EnumMap;
 import java.util.Map;
+import org.openecomp.sdc.logging.api.ContextData;
 
 /**
  * Maps request data sent to the context service to corresponding MDC fields.
