@@ -153,7 +153,7 @@ public class ArtifactsOperations extends BaseOperation {
 
     }
 	private ArtifactDataDefinition findInterfaceArtifact(String parentId, String id) {
-		Either<Map<String, InterfaceDefinition>, TitanOperationStatus> dataFromGraph = getDataFromGraph(parentId, EdgeLabelEnum.INTERFACE_ARTIFACTS);
+		Either<Map<String, InterfaceDefinition>, TitanOperationStatus> dataFromGraph = getDataFromGraph(parentId, EdgeLabelEnum.INTERFACE);
 		if (dataFromGraph.isRight()){
 			log.debug("failed to fetch interfaces {} for tosca element with id {}, error {}", id, parentId ,dataFromGraph.right().value());
 			return null;

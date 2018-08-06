@@ -61,7 +61,9 @@ public enum EdgeLabelEnum {
     ARCHIVE_ELEMENT,
 	INSTANCE_OF,
 	PROXY_OF,
-	ALLOTTED_OF;
+	ALLOTTED_OF,
+	INTERFACE,
+	INTERFACE_OPERATION;
     
     /**
 	 * Returns EdgeLabelEnum according received name

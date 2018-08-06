@@ -70,10 +70,10 @@ public class InterfaceOperationBusinessLogicTest {
     public static final String RESOURCE_CATEGORY1 = "Network Layer 2-3";
     public static final String RESOURCE_SUBCATEGORY = "Router";
 
-
     private String resourceId = "resourceId1";
     private String operationId = "uniqueId1";
     Resource resourceUpdate;
+    Operation operation;
 
     public static final String RESOURCE_NAME = "My-Resource_Name with   space";
 
@@ -101,7 +101,6 @@ public class InterfaceOperationBusinessLogicTest {
     ComponentsUtils componentsUtils;
     ArtifactsBusinessLogic artifactManager = new ArtifactsBusinessLogic();
     private GenericTypeBusinessLogic genericTypeBusinessLogic = Mockito.mock(GenericTypeBusinessLogic.class);
-
 
     @InjectMocks
     InterfaceOperationBusinessLogic bl = new InterfaceOperationBusinessLogic();
@@ -167,12 +166,14 @@ public class InterfaceOperationBusinessLogicTest {
         when(applicationDataTypeCache.getAll()).thenReturn(Either.left(emptyDataTypes));
 
         //InterfaceOperation
-
         when(operationValidator.validateInterfaceOperations(anyCollection(), anyString(), anyBoolean())).thenReturn(Either.left(true));
         when(interfaceOperation.addInterface(anyString(), anyObject())).thenReturn(Either.left(InterfaceOperationTestUtils.mockInterfaceDefinitionToReturn(RESOURCE_NAME)));
         when(interfaceOperation.updateInterface(anyString(), anyObject())).thenReturn(Either.left(InterfaceOperationTestUtils.mockInterfaceDefinitionToReturn(RESOURCE_NAME)));
-        when(interfaceOperation.deleteInterface(anyObject(), anyObject())).thenReturn(Either.left(new HashSet<>()));
-        when(interfaceOperation.deleteInterface(any(),any())).thenReturn(Either.left(new HashSet<>()));
+        when(interfaceOperation.addInterfaceOperation(anyObject(), anyObject(), anyObject())).thenReturn(Either.left(InterfaceOperationTestUtils.mockOperationToReturn(RESOURCE_NAME)));
+        when(interfaceOperation.updateInterfaceOperation(anyObject(), anyObject(), anyObject())).thenReturn(Either.left(InterfaceOperationTestUtils.mockOperationToReturn(RESOURCE_NAME)));
+        when(interfaceOperation.getInterfaceOperation(anyObject(), anyObject())).thenReturn(Either.left(InterfaceOperationTestUtils.mockOperationToReturn(RESOURCE_NAME)));
+        when(interfaceOperation.deleteInterfaceOperation(anyObject(), anyObject(), anyObject())).thenReturn(Either.left(InterfaceOperationTestUtils.mockOperationToReturn(RESOURCE_NAME)));
+        when(interfaceOperation.deleteInterfaceOperation(any(),any(), any())).thenReturn(Either.left(InterfaceOperationTestUtils.mockOperationToReturn(RESOURCE_NAME)));
         when(interfaceOperation.updateInterface(any(),any())).thenReturn(Either.left(InterfaceOperationTestUtils.mockInterfaceDefinitionToReturn(RESOURCE_NAME)));
         when(mockTitanDao.commit()).thenReturn(TitanOperationStatus.OK);
 
@@ -191,13 +192,11 @@ public class InterfaceOperationBusinessLogicTest {
         bl.setUserValidations(userValidations);
         bl.setInterfaceOperation(interfaceOperation);
         bl.setInterfaceOperationValidation(operationValidator);
-        bl.setArtifactCassandraDao(artifactCassandraDao);
         Resource resourceCsar = createResourceObjectCsar(true);
         setCanWorkOnResource(resourceCsar);
         Either<Component, StorageOperationStatus> oldResourceRes = Either.left(resourceCsar);
         when(toscaOperationFacade.getToscaFullElement(resourceCsar.getUniqueId())).thenReturn(oldResourceRes);
         responseManager = ResponseFormatManager.getInstance();
-
     }
 
     @Test
@@ -206,29 +205,23 @@ public class InterfaceOperationBusinessLogicTest {
         resource.setComponentType(ComponentTypeEnum.RESOURCE);
         validateUserRoles(Role.ADMIN, Role.DESIGNER);
         when(toscaOperationFacade.getToscaElement(resourceId)).thenReturn(Either.left(resource));
-        resourceUpdate = setUpResourceMock();
-        Either<Resource, ResponseFormat> interfaceOperation = bl.createInterfaceOperation(resourceId, resourceUpdate, user, true);
+        operation = InterfaceOperationTestUtils.createMockOperation();
+        Either<Operation, ResponseFormat> interfaceOperation = bl.createInterfaceOperation(resourceId, operation, user, true);
         Assert.assertTrue(interfaceOperation.isLeft());
-        Map<String, Operation> interfaceOperationsFromInterfaces = InterfaceUtils
-                .getInterfaceOperationsFromInterfaces(interfaceOperation.left().value().getInterfaces(),
-                interfaceOperation.left().value());
-        for(Operation operation : interfaceOperationsFromInterfaces.values()) {
-            Assert.assertNotNull(operation.getWorkflowId());
-            Assert.assertNotNull(operation.getWorkflowVersionId());
-        }
+        Assert.assertNotNull(interfaceOperation.left().value().getWorkflowId());
+        Assert.assertNotNull(interfaceOperation.left().value().getWorkflowVersionId());
     }
 
     @Test
     public void updateInterfaceOperationTest() {
         validateUserRoles(Role.ADMIN, Role.DESIGNER);
-        resourceUpdate = setUpResourceMock();
+        operation = InterfaceOperationTestUtils.createMockOperation();
         Resource resource = createResourceForInterfaceOperation();
         resource.setComponentType(ComponentTypeEnum.RESOURCE);
         when(toscaOperationFacade.getToscaElement(resourceId)).thenReturn(Either.left(resource));
-        Either<Resource, ResponseFormat> interfaceOperation = bl.updateInterfaceOperation(resourceId, resourceUpdate, user, true);
+        Either<Operation, ResponseFormat> interfaceOperation = bl.updateInterfaceOperation(resourceId, operation, user, true);
         Assert.assertTrue(interfaceOperation.isLeft());
     }
-
 
     @Test
     public void deleteInterfaceOperationTest() {
@@ -237,71 +230,23 @@ public class InterfaceOperationBusinessLogicTest {
         validateUserRoles(Role.ADMIN, Role.DESIGNER);
         when(toscaOperationFacade.getToscaElement(resourceId)).thenReturn(Either.left(resource));
         when(artifactCassandraDao.deleteArtifact(any(String.class))).thenReturn(CassandraOperationStatus.OK);
-        Set<String> idsToDelete = new HashSet<>();
-        idsToDelete.add(operationId);
-
-        Either<Resource, ResponseFormat> deleteResourceResponseFormatEither = bl.deleteInterfaceOperation(resourceId, idsToDelete, user, true);
+        Either<Operation, ResponseFormat> deleteResourceResponseFormatEither = bl.deleteInterfaceOperation(resourceId, operationId, user, true);
         Assert.assertTrue(deleteResourceResponseFormatEither.isLeft());
     }
 
     @Test
-    public void deleteInterfaceOperationTestShouldFailWrongId() {
-        validateUserRoles(Role.ADMIN, Role.DESIGNER);
-        Set<String> idsToDelete = new HashSet<>();
+    public void getInterfaceOperationTest() {
         Resource resource = createResourceForInterfaceOperation();
         resource.setComponentType(ComponentTypeEnum.RESOURCE);
-        when(toscaOperationFacade.getToscaElement(resourceId)).thenReturn(Either.left(resource));
-        idsToDelete.add(resourceId);
-        Either<Resource, ResponseFormat> deleteResourceResponseFormatEither = bl.deleteInterfaceOperation(resourceId, idsToDelete, user, true);
-        Assert.assertFalse(deleteResourceResponseFormatEither.isLeft());
-    }
-
-
-    @Test
-    public void deleteInterfaceOperationFailToDeleteArtifactTest() {
-        Resource resource = createResourceForInterfaceOperation();
-        resource.setComponentType(ComponentTypeEnum.RESOURCE);
-        when(toscaOperationFacade.getToscaElement(resourceId)).thenReturn(Either.left(resource));
-        when(artifactCassandraDao.deleteArtifact(any(String.class))).thenReturn(CassandraOperationStatus.GENERAL_ERROR);
         validateUserRoles(Role.ADMIN, Role.DESIGNER);
-        Set<String> idsToDelete = new HashSet<>();
-        idsToDelete.add(operationId);
-
-        Either<Resource, ResponseFormat> deleteResourceResponseFormatEither = bl.deleteInterfaceOperation(resourceId, idsToDelete, user, true);
-        Assert.assertTrue(deleteResourceResponseFormatEither.isRight());
-    }
-
-    @Test
-    public void interfaceOperationFailedScenarioTest() {
-        validateUserRoles(Role.ADMIN, Role.DESIGNER);
-        Resource resourceWithoutInterface = new Resource();
-        resourceWithoutInterface.setUniqueId(resourceId);
-        when(toscaOperationFacade.getToscaElement(resourceId)).thenReturn(Either.left(resourceWithoutInterface));
-        Either<Resource, ResponseFormat> interfaceOperation = bl.updateInterfaceOperation(resourceId, resourceWithoutInterface, user, true);
-        Assert.assertTrue(interfaceOperation.isRight());
+        when(toscaOperationFacade.getToscaElement(resourceId)).thenReturn(Either.left(resource));
+        Either<Operation, ResponseFormat> getResourceResponseFormatEither = bl.getInterfaceOperation(resourceId, operationId, user, true);
+        Assert.assertTrue(getResourceResponseFormatEither.isLeft());
     }
 
     private void validateUserRoles(Role... roles) {
         List<Role> listOfRoles = Stream.of(roles).collect(Collectors.toList());
      }
-    private Resource createMockResourceForAddInterface () {
-        Resource resource = new Resource();
-        resource.setUniqueId(resourceId);
-        resource.setName(RESOURCE_NAME);
-        resource.addCategory(RESOURCE_CATEGORY1, RESOURCE_SUBCATEGORY);
-        resource.setDescription("My short description");
-
-        Map<String, Operation> operationMap = new HashMap<>();
-        Map<String, InterfaceDefinition> interfaceDefinitionMap = new HashMap<>();
-        interfaceDefinitionMap.put("int1", InterfaceOperationTestUtils.createInterface("int1", "Interface 1",
-                "lifecycle", "org.openecomp.interfaces.node.lifecycle." + RESOURCE_NAME, operationMap));
-        resource.setInterfaces(interfaceDefinitionMap);
-        List<InputDefinition> inputDefinitionList = new ArrayList<>();
-        inputDefinitionList.add(createInputDefinition("uniqueId1"));
-        resource.setInputs(inputDefinitionList);
-
-        return  resource;
-    }
 
     private Resource setCanWorkOnResource(Resource resource) {
         resource.setLifecycleState(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
