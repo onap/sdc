@@ -82,9 +82,15 @@ public class VnfPackageRepositoryImplTest {
 
     @Test
     public void configurationLoadedFromFile() {
-        final String prefix = "http://10.57.30.20:1111/";
-        assertEquals(prefix + "download-vnf-31", new VnfPackageRepositoryImpl.FileConfiguration().getDownloadUri());
-        assertEquals(prefix + "get-vnf-13", new VnfPackageRepositoryImpl.FileConfiguration().getGetUri());
+
+        try {
+            final String prefix = "http://10.57.30.20:1111/";
+            assertEquals(prefix + "download-vnf-31", new VnfPackageRepositoryImpl.FileConfiguration().getDownloadUri());
+            assertEquals(prefix + "get-vnf-13", new VnfPackageRepositoryImpl.FileConfiguration().getGetUri());
+        } catch (Throwable t) {
+            t.printStackTrace();
+            throw t;
+        }
     }
 
     @Test
