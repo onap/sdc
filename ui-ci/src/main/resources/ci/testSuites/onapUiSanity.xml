@@ -7,7 +7,7 @@
 
         <class name="org.openecomp.sdc.ci.tests.execute.sanity.Vf">
             <methods>
-                <include name="updateVF"/>
+                <include name="changeInstanceNameInVfTest"/>
             </methods>
         </class>
 
