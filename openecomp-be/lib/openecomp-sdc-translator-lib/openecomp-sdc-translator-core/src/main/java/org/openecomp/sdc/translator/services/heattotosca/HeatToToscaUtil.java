@@ -653,14 +653,8 @@ public class HeatToToscaUtil {
         HeatOrchestrationTemplate nestedHeatOrchestrationTemplate = new YamlUtil().yamlToObject(
                 context.getFileContent(nestedHeatFileName.get()), HeatOrchestrationTemplate.class);
         Map<String, Resource> resources = nestedHeatOrchestrationTemplate.getResources();
-        if (Objects.nonNull(resources)) {
-            for (Resource innerResource : resources.values()) {
-                if (ConsolidationDataUtil.isComputeResource(innerResource)) {
-                    return true;
-                }
-            }
-        }
-        return false;
+        return Objects.nonNull(resources) && resources.values().stream()
+                     .anyMatch(ConsolidationDataUtil::isComputeResource);
     }
 
     /**
