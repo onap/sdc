@@ -30,6 +30,7 @@ import org.openecomp.sdc.be.dao.jsongraph.types.EdgeLabelEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
 import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
+import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
@@ -115,9 +116,10 @@ public class InterfaceOperation extends BaseOperation {
       return Either.right(statusRes);
     }
     GraphVertex interfaceVertex = getToscaElementInt.left().value();
-    if (!isUpdateAction) {
+    if (!isUpdateAction)
       initNewOperation(operation);
-    }
+    else
+      operation.setImplementation(getArtifactImplFromOperation(operation, interfaceDef));
 
     statusRes = performUpdateToscaAction(isUpdateAction, interfaceVertex, Arrays.asList(operation),
         EdgeLabelEnum.INTERFACE_OPERATION, VertexTypeEnum.INTERFACE_OPERATION);
@@ -214,15 +216,24 @@ public class InterfaceOperation extends BaseOperation {
     }
   }
 
-  private void initNewOperation(Operation operation){
+  private ArtifactDefinition createNewArtifactDefForOperation(){
     ArtifactDefinition artifactDefinition = new ArtifactDefinition();
     String artifactUUID = UUID.randomUUID().toString();
     artifactDefinition.setArtifactUUID(artifactUUID);
     artifactDefinition.setUniqueId(artifactUUID);
     artifactDefinition.setArtifactType(ArtifactTypeEnum.PLAN.getType());
     artifactDefinition.setArtifactGroupType(ArtifactGroupTypeEnum.LIFE_CYCLE);
-    operation.setImplementation(artifactDefinition);
+    return artifactDefinition;
+  }
+
+  private ArtifactDataDefinition getArtifactImplFromOperation(Operation operation, InterfaceDefinition interfaceDef){
+    Either<Operation, StorageOperationStatus> operationData = getInterfaceOperation(interfaceDef, operation.getUniqueId());
+    return operationData.isLeft()? operationData.left().value().getImplementation() : createNewArtifactDefForOperation();
+  }
+
+  private void initNewOperation(Operation operation){
     operation.setUniqueId(UUID.randomUUID().toString());
+    operation.setImplementation(createNewArtifactDefForOperation());
   }
 
   private InterfaceDefinition getUpdatedInterfaceDef(InterfaceDefinition interfaceDef, Operation operation, String operationId){
