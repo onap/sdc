@@ -95,7 +95,7 @@
                     <threadCount>1</threadCount>
                     <forkCount>${fork.count}</forkCount>
                     <forkMode>${fork.mode}</forkMode>
-                    <printSummary>false</printSummary>
+                    <printSummary>true</printSummary>
                     <redirectTestOutputToFile>true</redirectTestOutputToFile>
                     <rerunFailingTestsCount>1</rerunFailingTestsCount>
                     <additionalClasspathElements>
@@ -109,6 +109,14 @@
                 </configuration>
             </plugin>
         </plugins>
+        <testResources>
+            <testResource>
+                <directory>src/test/resources</directory>
+                <includes>
+                    <include>**/*</include>
+                </includes>
+            </testResource>
+        </testResources>        
     </build>
 
     <properties>
