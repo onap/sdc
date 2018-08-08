@@ -18,19 +18,18 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.openecomp.sdc.translator.impl.heattotosca.resources;
+package org.openecomp.sdc.translator.services.heattotosca.impl.resourcetranslation;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.openecomp.sdc.translator.services.heattotosca.buildconsolidationdata.ConsolidationDataValidationType;
-import org.openecomp.sdc.translator.services.heattotosca.impl.resourcetranslation.BaseResourceTranslationTest;
 
 import java.io.IOException;
 
 import static org.openecomp.sdc.translator.services.heattotosca.buildconsolidationdata.TestConstants.TEST_PORT_POSITIVE;
 import static org.openecomp.sdc.translator.services.heattotosca.buildconsolidationdata.TestConstants.TEST_VOLUME_POSITIVE;
 
-public class OSNovaServerTest extends BaseResourceTranslationTest {
+public class ResourceTranslationNovaServerImplTest extends BaseResourceTranslationTest {
 
   @Override
   @Before
@@ -59,4 +58,56 @@ public class OSNovaServerTest extends BaseResourceTranslationTest {
     validateComputeTemplateConsolidationData(ConsolidationDataValidationType.VALIDATE_PORT,
         TEST_PORT_POSITIVE);
   }
+  
+  @Test
+  public void testFabricConfigurationOnlyOnePortTrue() throws IOException {
+    inputFilesPath =
+        "/mock/services/heattotosca/novaservertranslation/one_port_true/input";
+    outputFilesPath =
+        "/mock/services/heattotosca/novaservertranslation/one_port_true/output";
+    initTranslatorAndTranslate();
+    testTranslation();
+  }
+  
+  @Test
+  public void testFabricConfigurationAllFalse() throws IOException {
+    inputFilesPath =
+        "/mock/services/heattotosca/novaservertranslation/all_false/input";
+    outputFilesPath =
+        "/mock/services/heattotosca/novaservertranslation/all_false/output";
+    initTranslatorAndTranslate();
+    testTranslation();
+  }
+  
+  @Test
+  public void testFabricConfigurationPropertyNull() throws IOException {
+    inputFilesPath =
+        "/mock/services/heattotosca/novaservertranslation/property_null/input";
+    outputFilesPath =
+        "/mock/services/heattotosca/novaservertranslation/property_null/output";
+    initTranslatorAndTranslate();
+    testTranslation();
+  }
+  
+  @Test
+  public void testFabricConfigurationWithoutProperty() throws IOException {
+    inputFilesPath =
+        "/mock/services/heattotosca/novaservertranslation/without_property/input";
+    outputFilesPath =
+        "/mock/services/heattotosca/novaservertranslation/without_property/output";
+    initTranslatorAndTranslate();
+    testTranslation();
+  }
+  
+  @Test
+  public void testFabricConfiguration2Ports() throws IOException {
+    inputFilesPath =
+        "/mock/services/heattotosca/novaservertranslation/2ports/input";
+    outputFilesPath =
+        "/mock/services/heattotosca/novaservertranslation/2ports/output";
+    initTranslatorAndTranslate();
+    testTranslation();
+  }
+  
+  
 }

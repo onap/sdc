@@ -215,6 +215,31 @@ public class DataModelUtil {
         if (MapUtils.isEmpty(nodeType.getCapabilities())) {
             nodeType.setCapabilities(new HashMap<>());
         }
+       
+        for (Map.Entry<String, CapabilityDefinition> entry : capabilities.entrySet()) {
+            nodeType.getCapabilities().put(entry.getKey(), entry.getValue());
+        }
+    }
+    
+    /**
+     * Set capabilities def to node type.
+     *
+     * @param nodeType     the node type
+     * @param capabilities the capability definitions
+     */
+    public static void setNodeTypeCapabilitiesDef(NodeType nodeType, Map<String, CapabilityDefinition> capabilities) {
+        if (MapUtils.isEmpty(capabilities) || capabilities.entrySet().isEmpty()) {
+            return;
+        }
+
+        if (nodeType == null) {
+            throw new CoreException(new InvalidAddActionNullEntityErrorBuilder("Capability Definition", NODE_TYPE)
+                                            .build());
+        }
+
+        if (MapUtils.isEmpty(nodeType.getCapabilities())) {
+            nodeType.setCapabilities(new HashMap<>());
+        }
         if (capabilities.size() > 0) {
             nodeType.setCapabilities(new HashMap<>());
         }

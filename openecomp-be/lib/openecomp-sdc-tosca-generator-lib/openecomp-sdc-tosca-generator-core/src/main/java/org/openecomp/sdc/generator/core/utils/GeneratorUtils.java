@@ -133,7 +133,7 @@ public class GeneratorUtils {
                 }
             }
 
-            DataModelUtil.addNodeTypeCapabilitiesDef(substitutionNodeType, exposedCapabilitiesDefinition);
+            DataModelUtil.setNodeTypeCapabilitiesDef(substitutionNodeType, exposedCapabilitiesDefinition);
         } catch (Exception ex) {
             return null;
         }

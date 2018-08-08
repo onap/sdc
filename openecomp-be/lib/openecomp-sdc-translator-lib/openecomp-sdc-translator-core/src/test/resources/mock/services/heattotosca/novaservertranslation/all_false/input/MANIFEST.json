@@ -1,0 +1,32 @@
+{
+  "name": "lastTestFabric",
+  "description": "lastTestFabric",
+  "version": "0.0",
+  "data": [
+    {
+      "isBase": true,
+      "file": "base_vCE.yaml",
+      "type": "HEAT",
+      "data": [
+        {
+          "file": "base_vCE.env",
+          "type": "HEAT_ENV"
+        },
+        {
+          "file": "base_vCE_volume.yaml",
+          "type": "HEAT_VOL",
+          "data": [
+            {
+              "file": "base_vCE_volume.env",
+              "type": "HEAT_ENV"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "file": "vCE_Cloudinit.txt",
+      "type": "OTHER"
+    }
+  ]
+}
