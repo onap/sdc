@@ -108,7 +108,7 @@
                     <skip>${skipTestRun}</skip>
                 </configuration>
             </plugin>
-        </plugins>
+        </plugins>           
     </build>
 
     <properties>
