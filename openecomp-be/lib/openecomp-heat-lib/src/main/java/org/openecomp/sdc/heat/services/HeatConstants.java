@@ -62,6 +62,7 @@ public class HeatConstants {
     public static final String SUBNETS_PROPERTY_NAME = "subnets";
     public static final String ENABLE_DHCP_PROPERTY_NAME = "enable_dhcp";
     public static final String VALUE_SPECS_PROPERTY_NAME = "value_specs";
+    public static final String ATT_FABRIC_CONFIGURATION_REQUIRED = "ATT_FABRIC_CONFIGURATION_REQUIRED";
 
     private HeatConstants() {
         //Hide the implicit constructor

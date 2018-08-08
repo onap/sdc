@@ -608,6 +608,14 @@ public class HeatToToscaUtil {
         return  MapUtils.isNotEmpty(resource.getProperties()) && resource.getProperties().containsKey(
                 HeatConstants.VALUE_SPECS_PROPERTY_NAME);
     }
+    
+    public static Optional<Object> getResourceProperty(Resource resource, String propertyName){
+        Map<String, Object> properties = resource.getProperties();
+        if(MapUtils.isNotEmpty(properties) && properties.containsKey(propertyName)){
+            return Optional.ofNullable(resource.getProperties().get(propertyName));
+        }
+        return Optional.empty();  
+    }
 
     public static String getSubInterfaceResourceType(Resource resource) {
         if (!HeatToToscaUtil.isYamlFile(resource.getType())) {
@@ -1229,7 +1237,7 @@ public class HeatToToscaUtil {
         exposedCapabilitiesDefinition = toscaAnalyzerService
                                                 .calculateExposedCapabilities(nodeTypeCapabilitiesDefinition,
                                                         fullFilledRequirementsDefinition);
-        DataModelUtil.addNodeTypeCapabilitiesDef(substitutionNodeType, exposedCapabilitiesDefinition);
+        DataModelUtil.setNodeTypeCapabilitiesDef(substitutionNodeType, exposedCapabilitiesDefinition);
         return substitutionMapping;
     }
 
