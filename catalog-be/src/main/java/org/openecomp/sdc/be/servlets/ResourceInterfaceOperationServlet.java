@@ -139,17 +139,14 @@ public class ResourceInterfaceOperationServlet extends AbstractValidationsServle
     modifier.setUserId(userId);
     log.debug("Start get request of {} with modifier id {}", url, userId);
 
-    Response response;
-
     try {
       String resourceIdLower = resourceId.toLowerCase();
       InterfaceOperationBusinessLogic businessLogic = getInterfaceOperationBL(context);
 
       Either<Operation, ResponseFormat> actionResponse = businessLogic.getInterfaceOperation(resourceIdLower, interfaceOperationId, modifier, true);
       if (actionResponse.isRight()) {
-        log.debug("failed to get interface operation");
-        response = buildErrorResponse(actionResponse.right().value());
-        return response;
+        log.error("failed to get interface operation");
+        return buildErrorResponse(actionResponse.right().value());
       }
 
       InterfaceOperationDataDefinition interfaceOperationDataDefinition = InterfaceUIDataConverter.convertOperationDataToInterfaceData(actionResponse.left().value());
@@ -158,7 +155,7 @@ public class ResourceInterfaceOperationServlet extends AbstractValidationsServle
     }
     catch (Exception e) {
       BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Get Resource interface operations");
-      log.debug("get resource interface operations failed with exception", e);
+      log.error("get resource interface operations failed with exception", e);
       return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
     }
   }
@@ -173,17 +170,14 @@ public class ResourceInterfaceOperationServlet extends AbstractValidationsServle
     modifier.setUserId(userId);
     log.debug("Start delete request of {} with modifier id {}", url, userId);
 
-    Response response;
-
     try {
       String resourceIdLower = resourceId.toLowerCase();
       InterfaceOperationBusinessLogic businessLogic = getInterfaceOperationBL(context);
 
       Either<Operation, ResponseFormat> actionResponse = businessLogic.deleteInterfaceOperation(resourceIdLower, interfaceOperationId, modifier, true);
       if (actionResponse.isRight()) {
-        log.debug("failed to delete interface operation");
-        response = buildErrorResponse(actionResponse.right().value());
-        return response;
+        log.error("failed to delete interface operation");
+        return buildErrorResponse(actionResponse.right().value());
       }
 
       InterfaceOperationDataDefinition interfaceOperationDataDefinition = InterfaceUIDataConverter.convertOperationDataToInterfaceData(actionResponse.left().value());
@@ -192,9 +186,8 @@ public class ResourceInterfaceOperationServlet extends AbstractValidationsServle
     }
     catch (Exception e) {
       BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Delete Interface Operation");
-      log.debug("Delete interface operation with an error", e);
-      response = buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
-      return response;
+      log.error("Delete interface operation with an error", e);
+      return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
     }
   }
 
@@ -206,7 +199,6 @@ public class ResourceInterfaceOperationServlet extends AbstractValidationsServle
     modifier.setUserId(userId);
     log.debug("Start create or update request of {} with modifier id {}", url, userId);
 
-    Response response;
     try {
       String resourceIdLower = resourceId.toLowerCase();
       InterfaceOperationBusinessLogic businessLogic = getInterfaceOperationBL(context);
@@ -220,9 +212,8 @@ public class ResourceInterfaceOperationServlet extends AbstractValidationsServle
       }
 
       if (actionResponse.isRight()) {
-        log.debug("failed to update or create interface operation");
-        response = buildErrorResponse(actionResponse.right().value());
-        return response;
+        log.error("failed to update or create interface operation");
+        return buildErrorResponse(actionResponse.right().value());
       }
 
       InterfaceOperationDataDefinition interfaceOperationDataDefinition = InterfaceUIDataConverter.convertOperationDataToInterfaceData(actionResponse.left().value());
@@ -231,9 +222,8 @@ public class ResourceInterfaceOperationServlet extends AbstractValidationsServle
     }
     catch (Exception e) {
       BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Interface Operation Creation or update");
-      log.debug("create or update interface Operation with an error", e);
-      response = buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
-      return response;
+      log.error("create or update interface Operation with an error", e);
+      return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
     }
   }
 

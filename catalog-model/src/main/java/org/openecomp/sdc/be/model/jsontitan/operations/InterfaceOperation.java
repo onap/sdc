@@ -30,7 +30,6 @@ import org.openecomp.sdc.be.dao.jsongraph.types.EdgeLabelEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
 import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
-import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
@@ -38,15 +37,10 @@ import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.Operation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.DaoStatusConverter;
-import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
-import org.openecomp.sdc.common.api.ArtifactTypeEnum;
-import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @org.springframework.stereotype.Component("interfaces-operation")
 public class InterfaceOperation extends BaseOperation {
-
-  private static final Logger logger = Logger.getLogger(InterfaceOperation.class.getName());
 
   @Autowired
   private ArtifactCassandraDao artifactCassandraDao;
@@ -70,7 +64,6 @@ public class InterfaceOperation extends BaseOperation {
     getToscaElementRes = titanDao.getVertexById(componentId, JsonParseFlagEnum.NoParse);
     if (getToscaElementRes.isRight()) {
       TitanOperationStatus status = getToscaElementRes.right().value();
-      logger.debug("Failed to get tosca element {} while adding or updating interface. Status is {}. ", componentId, status);
       statusRes = DaoStatusConverter.convertTitanStatusToStorageStatus(status);
       return Either.right(statusRes);
     }
@@ -80,7 +73,6 @@ public class InterfaceOperation extends BaseOperation {
     }
     statusRes = performUpdateToscaAction(isUpdateAction, componentVertex, Arrays.asList(interfaceDefinition), EdgeLabelEnum.INTERFACE, VertexTypeEnum.INTERFACE);
     if (!statusRes.equals(StorageOperationStatus.OK)) {
-      logger.debug("Failed to add or update interface of component {}. status is {}", componentId, statusRes);
       return Either.right(statusRes);
     }
     return Either.left(interfaceDefinition);
@@ -103,7 +95,6 @@ public class InterfaceOperation extends BaseOperation {
     getToscaElementRes = titanDao.getVertexById(componentId, JsonParseFlagEnum.NoParse);
     if (getToscaElementRes.isRight()) {
       TitanOperationStatus status = getToscaElementRes.right().value();
-      logger.debug("Failed to get tosca element {} while adding or updating operation. Status is {}. ", componentId, status);
       statusRes = DaoStatusConverter.convertTitanStatusToStorageStatus(status);
       return Either.right(statusRes);
     }
@@ -111,27 +102,20 @@ public class InterfaceOperation extends BaseOperation {
     getToscaElementInt = titanDao.getChildVertex(componentVertex, EdgeLabelEnum.INTERFACE, JsonParseFlagEnum.NoParse);
     if (getToscaElementInt.isRight()) {
       TitanOperationStatus status = getToscaElementInt.right().value();
-      logger.debug("Failed to get tosca element {} while adding or updating operation. Status is {}. ", interfaceDef.getUniqueId(), status);
       statusRes = DaoStatusConverter.convertTitanStatusToStorageStatus(status);
       return Either.right(statusRes);
     }
     GraphVertex interfaceVertex = getToscaElementInt.left().value();
-    if (!isUpdateAction)
-      initNewOperation(operation);
-    else
-      operation.setImplementation(getArtifactImplFromOperation(operation, interfaceDef));
 
     statusRes = performUpdateToscaAction(isUpdateAction, interfaceVertex, Arrays.asList(operation),
         EdgeLabelEnum.INTERFACE_OPERATION, VertexTypeEnum.INTERFACE_OPERATION);
     if (!statusRes.equals(StorageOperationStatus.OK)) {
-      logger.debug("Failed to add or update operation of interface {}. status is {}", interfaceDef.getUniqueId(), statusRes);
       return Either.right(statusRes);
     }
 
     getUpdatedInterfaceDef(interfaceDef, operation, operation.getUniqueId());
     Either<InterfaceDefinition, StorageOperationStatus> intUpdateStatus = updateInterface(componentId, interfaceDef);
     if (intUpdateStatus.isRight() && !intUpdateStatus.right().value().equals(StorageOperationStatus.OK)) {
-      logger.debug("Failed to update interface details on component {}. status is {}", componentId, statusRes);
       return Either.right(statusRes);
     }
 
@@ -163,7 +147,6 @@ public class InterfaceOperation extends BaseOperation {
       String artifactUUID = implementationArtifact.getArtifactUUID();
       CassandraOperationStatus cassandraStatus = artifactCassandraDao.deleteArtifact(artifactUUID);
       if (cassandraStatus != CassandraOperationStatus.OK) {
-        logger.debug("Failed to delete the artifact {} from the database. ", artifactUUID);
         return Either.right(DaoStatusConverter.convertCassandraStatusToStorageStatus(cassandraStatus));
       }
 
@@ -181,6 +164,10 @@ public class InterfaceOperation extends BaseOperation {
 
       getUpdatedInterfaceDef(interfaceDef, null, operationToDelete);
       if (interfaceDef.getOperations().isEmpty()) {
+        status = deleteToscaDataElements(getComponentVertex.left().value(), EdgeLabelEnum.INTERFACE, Arrays.asList(interfaceDef.getUniqueId()));
+        if (status != StorageOperationStatus.OK) {
+          return Either.right(status);
+        }
         status = removeToscaDataVertex(getComponentVertex.left().value(), EdgeLabelEnum.INTERFACE, VertexTypeEnum.INTERFACE);
         if (status != StorageOperationStatus.OK) {
           return Either.right(status);
@@ -196,17 +183,6 @@ public class InterfaceOperation extends BaseOperation {
     return Either.left(operation);
   }
 
-  public Either<Operation, StorageOperationStatus> getInterfaceOperation(InterfaceDefinition interfaceDef, String operationToGet) {
-    Operation operation = new Operation();
-    Optional<Entry<String, Operation>> operationToFetch = interfaceDef.getOperationsMap().entrySet().stream()
-        .filter(entry -> entry.getValue().getUniqueId().equals(operationToGet)).findAny();
-    if (operationToFetch.isPresent()){
-      Map.Entry<String, Operation> stringOperationEntry = operationToFetch.get();
-      operation = stringOperationEntry.getValue();
-    }
-    return Either.left(operation);
-  }
-
   private StorageOperationStatus performUpdateToscaAction(boolean isUpdate, GraphVertex graphVertex,
       List<ToscaDataDefinition> toscaDataList, EdgeLabelEnum edgeLabel, VertexTypeEnum vertexLabel) {
     if (isUpdate) {
@@ -216,29 +192,9 @@ public class InterfaceOperation extends BaseOperation {
     }
   }
 
-  private ArtifactDefinition createNewArtifactDefForOperation(){
-    ArtifactDefinition artifactDefinition = new ArtifactDefinition();
-    String artifactUUID = UUID.randomUUID().toString();
-    artifactDefinition.setArtifactUUID(artifactUUID);
-    artifactDefinition.setUniqueId(artifactUUID);
-    artifactDefinition.setArtifactType(ArtifactTypeEnum.PLAN.getType());
-    artifactDefinition.setArtifactGroupType(ArtifactGroupTypeEnum.LIFE_CYCLE);
-    return artifactDefinition;
-  }
-
-  private ArtifactDataDefinition getArtifactImplFromOperation(Operation operation, InterfaceDefinition interfaceDef){
-    Either<Operation, StorageOperationStatus> operationData = getInterfaceOperation(interfaceDef, operation.getUniqueId());
-    return operationData.isLeft()? operationData.left().value().getImplementation() : createNewArtifactDefForOperation();
-  }
-
-  private void initNewOperation(Operation operation){
-    operation.setUniqueId(UUID.randomUUID().toString());
-    operation.setImplementation(createNewArtifactDefForOperation());
-  }
-
   private InterfaceDefinition getUpdatedInterfaceDef(InterfaceDefinition interfaceDef, Operation operation, String operationId){
     Map<String, Operation> operationMap = interfaceDef.getOperationsMap();
-    if(operation != null && !operation.isEmpty()){
+    if(operation != null){
       operationMap.put(operationId, operation);
       interfaceDef.setOperationsMap(operationMap);
     }

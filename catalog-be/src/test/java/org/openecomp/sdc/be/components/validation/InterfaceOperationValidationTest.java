@@ -16,56 +16,48 @@
 
 package org.openecomp.sdc.be.components.validation;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+
 import com.google.common.collect.Sets;
 import fj.data.Either;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
-import org.openecomp.sdc.test.utils.InterfaceOperationTestUtils;
-import org.openecomp.sdc.be.components.impl.ResponseFormatManager;
-import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.OperationInputDefinition;
-import org.openecomp.sdc.be.datatypes.elements.OperationOutputDefinition;
-import org.openecomp.sdc.be.model.*;
-import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
-import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
-import org.openecomp.sdc.exception.ResponseFormat;
-
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
+import org.openecomp.sdc.be.components.impl.ResponseFormatManager;
+import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.OperationInputDefinition;
+import org.openecomp.sdc.be.datatypes.elements.OperationOutputDefinition;
+import org.openecomp.sdc.be.model.ArtifactDefinition;
+import org.openecomp.sdc.be.model.InterfaceDefinition;
+import org.openecomp.sdc.be.model.Operation;
+import org.openecomp.sdc.be.model.Resource;
+import org.openecomp.sdc.exception.ResponseFormat;
+import org.openecomp.sdc.test.utils.InterfaceOperationTestUtils;
 
 public class InterfaceOperationValidationTest {
 
-    private Resource  resource = (Resource) getToscaFullElement().left().value();
+    private Resource resource = setUpResourceMock();
+    ResponseFormatManager responseFormatManagerMock;
 
-    ResponseFormatManager mock;
-    @Mock
-    ToscaOperationFacade toscaOperationFacade;
-
-    @InjectMocks
     InterfaceOperationValidationUtilTest interfaceOperationValidationUtilTest = new InterfaceOperationValidationUtilTest();
-    private static final String RESOURCE_ID = "resource1";
     ListDataDefinition<OperationInputDefinition> operationInputDefinitionList = new ListDataDefinition<>();
     ListDataDefinition<OperationOutputDefinition> operationOutputDefinitionList = new ListDataDefinition<>();
+
     @Before
     public void init() {
         MockitoAnnotations.initMocks(this);
-        mock = Mockito.mock(ResponseFormatManager.class);
-        when(toscaOperationFacade.getToscaElement(any(), any(ComponentParametersView.class))).thenReturn(Either.left(resource));
-        when(mock.getResponseFormat(any())).thenReturn(new ResponseFormat());
-        when(mock.getResponseFormat(any(), any())).thenReturn(new ResponseFormat());
-        when(mock.getResponseFormat(any(), any(), any())).thenReturn(new ResponseFormat());
+        responseFormatManagerMock = Mockito.mock(ResponseFormatManager.class);
+        when(responseFormatManagerMock.getResponseFormat(any())).thenReturn(new ResponseFormat());
+        when(responseFormatManagerMock.getResponseFormat(any(), any())).thenReturn(new ResponseFormat());
+        when(responseFormatManagerMock.getResponseFormat(any(), any(), any())).thenReturn(new ResponseFormat());
     }
-
 
     @Test
     public void testValidInterfaceOperation() {
@@ -75,7 +67,7 @@ public class InterfaceOperationValidationTest {
                 "interface operation2",new ArtifactDefinition(), operationInputDefinitionList,
                         operationOutputDefinitionList,"upgrade");
         Either<Boolean, ResponseFormat> booleanResponseFormatEither = interfaceOperationValidationUtilTest
-                .validateInterfaceOperations(operations, RESOURCE_ID, false);
+                .validateInterfaceOperations(operations, resource, false);
         Assert.assertTrue(booleanResponseFormatEither.isLeft());
     }
 
@@ -89,7 +81,7 @@ public class InterfaceOperationValidationTest {
                         "with web, data access (relational and NoSQL datastores), cloud, or messaging support",
                 new ArtifactDefinition(), operationInputDefinitionList, operationOutputDefinitionList,"update");
         Either<Boolean, ResponseFormat> booleanResponseFormatEither = interfaceOperationValidationUtilTest
-                .validateInterfaceOperations(operations, RESOURCE_ID, false);
+                .validateInterfaceOperations(operations, resource, false);
         Assert.assertTrue(booleanResponseFormatEither.isRight());
     }
 
@@ -103,7 +95,7 @@ public class InterfaceOperationValidationTest {
                 "interface operation2",new ArtifactDefinition(), operationInputDefinitionList,
                 operationOutputDefinitionList, "");
         Either<Boolean, ResponseFormat> booleanResponseFormatEither = interfaceOperationValidationUtilTest
-                .validateInterfaceOperations(operations, RESOURCE_ID, false);
+                .validateInterfaceOperations(operations, resource, false);
         Assert.assertTrue(booleanResponseFormatEither.isRight());
     }
 
@@ -115,7 +107,7 @@ public class InterfaceOperationValidationTest {
                 "interface operation2",new ArtifactDefinition(), operationInputDefinitionList,
                 operationOutputDefinitionList,"input2");
         Either<Boolean, ResponseFormat> booleanResponseFormatEither = interfaceOperationValidationUtilTest
-                .validateInterfaceOperations(operations, RESOURCE_ID, false);
+                .validateInterfaceOperations(operations, resource, false);
         Assert.assertTrue(booleanResponseFormatEither.isRight());
     }
 
@@ -127,7 +119,7 @@ public class InterfaceOperationValidationTest {
                 "interface operation2",new ArtifactDefinition(), operationInputDefinitionList,
                 operationOutputDefinitionList,"CREATE");
         Either<Boolean, ResponseFormat> booleanResponseFormatEither = interfaceOperationValidationUtilTest
-                .validateInterfaceOperations(operations, RESOURCE_ID, false);
+                .validateInterfaceOperations(operations, resource, false);
         Assert.assertTrue(booleanResponseFormatEither.isRight());
     }
 
@@ -142,7 +134,7 @@ public class InterfaceOperationValidationTest {
                         "productive with the certain technology stack from the beginning. You can create a skeleton project" +
                         "with web, data access (relational and NoSQL datastores), cloud, or messaging support");
         Either<Boolean, ResponseFormat> booleanResponseFormatEither = interfaceOperationValidationUtilTest
-                .validateInterfaceOperations(operations, RESOURCE_ID, false);
+                .validateInterfaceOperations(operations, resource, false);
         Assert.assertTrue(booleanResponseFormatEither.isRight());
     }
 
@@ -159,7 +151,7 @@ public class InterfaceOperationValidationTest {
                 operationOutputDefinitionList,"create");
 
         Either<Boolean, ResponseFormat> booleanResponseFormatEither = interfaceOperationValidationUtilTest
-                .validateInterfaceOperations(operations, RESOURCE_ID, false);
+                .validateInterfaceOperations(operations, resource, false);
         Assert.assertTrue(booleanResponseFormatEither.isRight());
     }
 
@@ -174,7 +166,7 @@ public class InterfaceOperationValidationTest {
 
 
         Either<Boolean, ResponseFormat> booleanResponseFormatEither = interfaceOperationValidationUtilTest
-                .validateInterfaceOperations(operations, RESOURCE_ID, false);
+                .validateInterfaceOperations(operations, resource, false);
         Assert.assertTrue(booleanResponseFormatEither.isLeft());
     }
 
@@ -189,7 +181,7 @@ public class InterfaceOperationValidationTest {
 
 
         Either<Boolean, ResponseFormat> booleanResponseFormatEither = interfaceOperationValidationUtilTest
-                .validateInterfaceOperations(operations, RESOURCE_ID, false);
+                .validateInterfaceOperations(operations, resource, false);
         Assert.assertTrue(booleanResponseFormatEither.isRight());
     }
 
@@ -199,15 +191,9 @@ public class InterfaceOperationValidationTest {
         return Sets.newHashSet(InterfaceOperationTestUtils.createInterfaceOperation(uniqueID, description, artifactDefinition, inputs, outputs, name));
     }
 
-    private  <T extends Component> Either<T, StorageOperationStatus> getToscaFullElement() {
-
-        return Either.left((T) setUpResourceMock());
-    }
-
     private Resource setUpResourceMock(){
         Resource resource = new Resource();
         resource.setInterfaces(createMockInterfaceDefinition());
-
         return  resource;
     }
 
@@ -223,7 +209,7 @@ public class InterfaceOperationValidationTest {
     private class InterfaceOperationValidationUtilTest extends InterfaceOperationValidation {
 
         protected ResponseFormatManager getResponseFormatManager() {
-            return mock;
+            return responseFormatManagerMock;
         }
     }
 }

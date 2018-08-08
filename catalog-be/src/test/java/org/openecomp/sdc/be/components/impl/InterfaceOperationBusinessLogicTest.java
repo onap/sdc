@@ -16,7 +16,22 @@
 
 package org.openecomp.sdc.be.components.impl;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyCollection;
+import static org.mockito.ArgumentMatchers.anyObject;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.when;
+
 import fj.data.Either;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import javax.servlet.ServletContext;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -25,7 +40,6 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.openecomp.sdc.ElementOperationMock;
 import org.openecomp.sdc.be.auditing.impl.AuditingManager;
-import org.openecomp.sdc.test.utils.InterfaceOperationTestUtils;
 import org.openecomp.sdc.be.components.impl.generic.GenericTypeBusinessLogic;
 import org.openecomp.sdc.be.components.validation.InterfaceOperationValidation;
 import org.openecomp.sdc.be.components.validation.UserValidations;
@@ -40,10 +54,19 @@ import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.WebAppContextWrapper;
-import org.openecomp.sdc.be.model.*;
+import org.openecomp.sdc.be.model.Component;
+import org.openecomp.sdc.be.model.DataTypeDefinition;
+import org.openecomp.sdc.be.model.InputDefinition;
+import org.openecomp.sdc.be.model.LifecycleStateEnum;
+import org.openecomp.sdc.be.model.Operation;
+import org.openecomp.sdc.be.model.Resource;
+import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.cache.ApplicationDataTypeCache;
-import org.openecomp.sdc.be.model.jsontitan.operations.*;
-import org.openecomp.sdc.be.model.jsontitan.utils.InterfaceUtils;
+import org.openecomp.sdc.be.model.jsontitan.operations.InterfaceOperation;
+import org.openecomp.sdc.be.model.jsontitan.operations.NodeTemplateOperation;
+import org.openecomp.sdc.be.model.jsontitan.operations.NodeTypeOperation;
+import org.openecomp.sdc.be.model.jsontitan.operations.TopologyTemplateOperation;
+import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.IElementOperation;
 import org.openecomp.sdc.be.model.operations.api.IPropertyOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
@@ -55,15 +78,8 @@ import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;
 import org.openecomp.sdc.common.impl.FSConfigurationSource;
 import org.openecomp.sdc.exception.ResponseFormat;
+import org.openecomp.sdc.test.utils.InterfaceOperationTestUtils;
 import org.springframework.web.context.WebApplicationContext;
-
-import javax.servlet.ServletContext;
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.when;
 
 public class InterfaceOperationBusinessLogicTest {
 
@@ -166,12 +182,11 @@ public class InterfaceOperationBusinessLogicTest {
         when(applicationDataTypeCache.getAll()).thenReturn(Either.left(emptyDataTypes));
 
         //InterfaceOperation
-        when(operationValidator.validateInterfaceOperations(anyCollection(), anyString(), anyBoolean())).thenReturn(Either.left(true));
+        when(operationValidator.validateInterfaceOperations(anyCollection(), anyObject(), anyBoolean())).thenReturn(Either.left(true));
         when(interfaceOperation.addInterface(anyString(), anyObject())).thenReturn(Either.left(InterfaceOperationTestUtils.mockInterfaceDefinitionToReturn(RESOURCE_NAME)));
         when(interfaceOperation.updateInterface(anyString(), anyObject())).thenReturn(Either.left(InterfaceOperationTestUtils.mockInterfaceDefinitionToReturn(RESOURCE_NAME)));
         when(interfaceOperation.addInterfaceOperation(anyObject(), anyObject(), anyObject())).thenReturn(Either.left(InterfaceOperationTestUtils.mockOperationToReturn(RESOURCE_NAME)));
         when(interfaceOperation.updateInterfaceOperation(anyObject(), anyObject(), anyObject())).thenReturn(Either.left(InterfaceOperationTestUtils.mockOperationToReturn(RESOURCE_NAME)));
-        when(interfaceOperation.getInterfaceOperation(anyObject(), anyObject())).thenReturn(Either.left(InterfaceOperationTestUtils.mockOperationToReturn(RESOURCE_NAME)));
         when(interfaceOperation.deleteInterfaceOperation(anyObject(), anyObject(), anyObject())).thenReturn(Either.left(InterfaceOperationTestUtils.mockOperationToReturn(RESOURCE_NAME)));
         when(interfaceOperation.deleteInterfaceOperation(any(),any(), any())).thenReturn(Either.left(InterfaceOperationTestUtils.mockOperationToReturn(RESOURCE_NAME)));
         when(interfaceOperation.updateInterface(any(),any())).thenReturn(Either.left(InterfaceOperationTestUtils.mockInterfaceDefinitionToReturn(RESOURCE_NAME)));
@@ -185,7 +200,6 @@ public class InterfaceOperationBusinessLogicTest {
         bl.setComponentsUtils(componentsUtils);
         bl.setGraphLockOperation(graphLockOperation);
         bl.setTitanGenericDao(mockTitanDao);
-        bl.setGenericTypeBusinessLogic(genericTypeBusinessLogic);
         toscaOperationFacade.setNodeTypeOperation(nodeTypeOperation);
         toscaOperationFacade.setTopologyTemplateOperation(topologyTemplateOperation);
         bl.setToscaOperationFacade(toscaOperationFacade);

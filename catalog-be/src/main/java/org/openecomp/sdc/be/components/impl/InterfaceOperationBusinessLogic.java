@@ -18,18 +18,14 @@
 package org.openecomp.sdc.be.components.impl;
 
 import fj.data.Either;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
+import java.util.Map;
 import java.util.Optional;
-import org.apache.commons.lang.StringUtils;
+import java.util.UUID;
 import org.openecomp.sdc.be.components.validation.InterfaceOperationValidation;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
-import org.openecomp.sdc.be.datamodel.utils.UiComponentDataConverter;
-import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
-import org.openecomp.sdc.be.model.ComponentInstance;
-import org.openecomp.sdc.be.model.ComponentParametersView;
+import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.Operation;
 import org.openecomp.sdc.be.model.Resource;
@@ -37,7 +33,8 @@ import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.jsontitan.operations.InterfaceOperation;
 import org.openecomp.sdc.be.model.jsontitan.utils.InterfaceUtils;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
-import org.openecomp.sdc.be.ui.model.UiComponentDataTransfer;
+import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
+import org.openecomp.sdc.common.api.ArtifactTypeEnum;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,22 +42,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component("interfaceOperationBusinessLogic")
-public class InterfaceOperationBusinessLogic extends ComponentBusinessLogic{
+public class InterfaceOperationBusinessLogic extends BaseBusinessLogic {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(InterfaceOperationBusinessLogic.class);
-    public static final String FAILED_TO_LOCK_COMPONENT_RESPONSE_IS = "Failed to lock component {}. Response is {}. ";
+    private static final String FAILED_TO_LOCK_COMPONENT_RESPONSE_IS = "Failed to lock component {}. Response is {}";
+    private static final String EXCEPTION_OCCURRED_DURING_INTERFACE_OPERATION = "Exception occurred during {}. Response is {}";
+    private static final String DELETE_INTERFACE_OPERATION = "deleteInterfaceOperation";
+    private static final String GET_INTERFACE_OPERATION = "getInterfaceOperation";
+    private static final String CREATE_INTERFACE_OPERATION = "createInterfaceOperation";
+    private static final String UPDATE_INTERFACE_OPERATION = "updateInterfaceOperation";
 
     @Autowired
     private InterfaceOperationValidation interfaceOperationValidation;
 
     @Autowired
-    private ComponentInstanceBusinessLogic componentInstanceBusinessLogic;
-
-    @Autowired
     private InterfaceOperation interfaceOperation;
-
-    @Autowired
-    private UiComponentDataConverter uiComponentDataConverter;
 
     public void setInterfaceOperation(InterfaceOperation interfaceOperation) {
         this.interfaceOperation = interfaceOperation;
@@ -71,20 +67,16 @@ public class InterfaceOperationBusinessLogic extends ComponentBusinessLogic{
     }
 
     public Either<Operation, ResponseFormat> deleteInterfaceOperation(String componentId, String interfaceOperationToDelete, User user, boolean lock) {
-        if (StringUtils.isEmpty(interfaceOperationToDelete)){
-            LOGGER.debug("Invalid parameter interfaceOperationToDelete was empty");
-            return Either.right(componentsUtils.getResponseFormat(ActionStatus.INVALID_PROPERTY));
-        }
-
         Either<org.openecomp.sdc.be.model.Component, ResponseFormat> componentEither = getComponentDetails(componentId);
         if (componentEither.isRight()){
             return Either.right(componentEither.right().value());
         }
         org.openecomp.sdc.be.model.Component storedComponent = componentEither.left().value();
-        validateUserAndRole(storedComponent, user, "deleteInterfaceOperation");
+        validateUserExists(user.getUserId(), DELETE_INTERFACE_OPERATION, true);
 
+        Either<Boolean, ResponseFormat> lockResult = null;
         if (lock) {
-            Either<Boolean, ResponseFormat> lockResult = lockComponent(storedComponent.getUniqueId(), storedComponent, "Delete interface Operation on a storedComponent");
+            lockResult = lockComponent(storedComponent.getUniqueId(), storedComponent, DELETE_INTERFACE_OPERATION);
             if (lockResult.isRight()) {
                 LOGGER.debug(FAILED_TO_LOCK_COMPONENT_RESPONSE_IS, storedComponent.getName(), lockResult.right().value().getFormattedMessage());
                 titanDao.rollback();
@@ -94,43 +86,49 @@ public class InterfaceOperationBusinessLogic extends ComponentBusinessLogic{
 
         try {
             Optional<InterfaceDefinition> optionalInterface = InterfaceUtils.getInterfaceDefinitionFromToscaName(((Resource)storedComponent).getInterfaces().values(), storedComponent.getName());
-            Either<InterfaceDefinition, ResponseFormat> sValue = getInterfaceDefinition(storedComponent, optionalInterface.orElse(null));
-            if (sValue.isRight()) {
-                return Either.right(sValue.right().value());
+            Either<InterfaceDefinition, ResponseFormat> getInterfaceEither = getInterfaceDefinition(storedComponent, optionalInterface.orElse(null));
+            if (getInterfaceEither.isRight()) {
+                return Either.right(getInterfaceEither.right().value());
             }
-            InterfaceDefinition interfaceDefinition = sValue.left().value();
+            InterfaceDefinition interfaceDefinition = getInterfaceEither.left().value();
+
+            Either<Operation, ResponseFormat> getOperationEither = getOperationFromInterfaceDef(storedComponent, interfaceDefinition, interfaceOperationToDelete);
+            if (getOperationEither.isRight()){
+                return Either.right(getOperationEither.right().value());
+            }
 
             Either<Operation, StorageOperationStatus> deleteEither = interfaceOperation.deleteInterfaceOperation(componentId, interfaceDefinition, interfaceOperationToDelete);
             if (deleteEither.isRight()){
-                LOGGER.error("Failed to delete interface operation from storedComponent {}. Response is {}. ", storedComponent.getName(), deleteEither.right().value());
-                return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(deleteEither.right().value(), ComponentTypeEnum.RESOURCE)));
+                LOGGER.error("Failed to delete interface operation from component {}. Response is {}", storedComponent.getName(), deleteEither.right().value());
+                return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(deleteEither.right().value(), storedComponent.getComponentType())));
             }
+
             titanDao.commit();
             return Either.left(deleteEither.left().value());
-        } catch (Exception e){
-            LOGGER.error("Exception occurred during delete interface operation : {}", e.getMessage(), e);
+        }
+        catch (Exception e){
+            LOGGER.error(EXCEPTION_OCCURRED_DURING_INTERFACE_OPERATION, "delete", e);
             titanDao.rollback();
-            return Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
-        } finally {
-            graphLockOperation.unlockComponent(storedComponent.getUniqueId(), NodeTypeEnum.Resource);
+            return Either.right(componentsUtils.getResponseFormat(ActionStatus.INTERFACE_OPERATION_NOT_DELETED));
+        }
+        finally {
+            if (lockResult != null && lockResult.isLeft() && lockResult.left().value()) {
+                graphLockOperation.unlockComponent(storedComponent.getUniqueId(), NodeTypeEnum.getByNameIgnoreCase(storedComponent.getComponentType().getValue()));
+            }
         }
     }
 
     public Either<Operation, ResponseFormat> getInterfaceOperation(String componentId, String interfaceOperationToGet, User user, boolean lock) {
-        if (StringUtils.isEmpty(interfaceOperationToGet)){
-            LOGGER.debug("Invalid parameter interfaceOperationToGet was empty");
-            return Either.right(componentsUtils.getResponseFormat(ActionStatus.INVALID_PROPERTY));
-        }
-
         Either<org.openecomp.sdc.be.model.Component, ResponseFormat> componentEither = getComponentDetails(componentId);
         if (componentEither.isRight()){
             return Either.right(componentEither.right().value());
         }
         org.openecomp.sdc.be.model.Component storedComponent = componentEither.left().value();
-        validateUserAndRole(storedComponent, user, "getInterfaceOperation");
+        validateUserExists(user.getUserId(), GET_INTERFACE_OPERATION, true);
 
+        Either<Boolean, ResponseFormat> lockResult = null;
         if (lock) {
-            Either<Boolean, ResponseFormat> lockResult = lockComponent(storedComponent.getUniqueId(), storedComponent, "Get interface Operation on a storedComponent");
+            lockResult = lockComponent(storedComponent.getUniqueId(), storedComponent, GET_INTERFACE_OPERATION);
             if (lockResult.isRight()) {
                 LOGGER.debug(FAILED_TO_LOCK_COMPONENT_RESPONSE_IS, storedComponent.getName(), lockResult.right().value().getFormattedMessage());
                 titanDao.rollback();
@@ -140,25 +138,29 @@ public class InterfaceOperationBusinessLogic extends ComponentBusinessLogic{
 
         try {
             Optional<InterfaceDefinition> optionalInterface = InterfaceUtils.getInterfaceDefinitionFromToscaName(((Resource)storedComponent).getInterfaces().values(), storedComponent.getName());
-            Either<InterfaceDefinition, ResponseFormat> sValue = getInterfaceDefinition(storedComponent, optionalInterface.orElse(null));
-            if (sValue.isRight()) {
-                return Either.right(sValue.right().value());
+            Either<InterfaceDefinition, ResponseFormat> getInterfaceEither = getInterfaceDefinition(storedComponent, optionalInterface.orElse(null));
+            if (getInterfaceEither.isRight()) {
+                return Either.right(getInterfaceEither.right().value());
             }
-            InterfaceDefinition interfaceDefinition = sValue.left().value();
+            InterfaceDefinition interfaceDefinition = getInterfaceEither.left().value();
 
-            Either<Operation, StorageOperationStatus> getEither = interfaceOperation.getInterfaceOperation(interfaceDefinition, interfaceOperationToGet);
-            if (getEither.isRight()){
-                LOGGER.error("Failed to get interface operation from storedComponent {}. Response is {}. ", storedComponent.getName(), getEither.right().value());
-                return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(getEither.right().value(), ComponentTypeEnum.RESOURCE)));
+            Either<Operation, ResponseFormat> getOperationEither = getOperationFromInterfaceDef(storedComponent, interfaceDefinition, interfaceOperationToGet);
+            if (getOperationEither.isRight()){
+                return Either.right(getOperationEither.right().value());
             }
+
             titanDao.commit();
-            return Either.left(getEither.left().value());
-        } catch (Exception e){
-            LOGGER.error("Exception occurred during get interface operation : {}", e.getMessage(), e);
+            return Either.left(getOperationEither.left().value());
+        }
+        catch (Exception e){
+            LOGGER.error(EXCEPTION_OCCURRED_DURING_INTERFACE_OPERATION, "get", e);
             titanDao.rollback();
-            return Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
-        } finally {
-            graphLockOperation.unlockComponent(storedComponent.getUniqueId(), NodeTypeEnum.Resource);
+            return Either.right(componentsUtils.getResponseFormat(ActionStatus.INTERFACE_OPERATION_NOT_FOUND, componentId));
+        }
+        finally {
+            if (lockResult != null && lockResult.isLeft() && lockResult.left().value()) {
+                graphLockOperation.unlockComponent(storedComponent.getUniqueId(), NodeTypeEnum.getByNameIgnoreCase(storedComponent.getComponentType().getValue()));
+            }
         }
     }
 
@@ -171,19 +173,19 @@ public class InterfaceOperationBusinessLogic extends ComponentBusinessLogic{
             Either<InterfaceDefinition, StorageOperationStatus> interfaceCreateEither = interfaceOperation.addInterface(component.getUniqueId(), interfaceDefinition);
             if (interfaceCreateEither.isRight()){
                 StorageOperationStatus sValue = interfaceCreateEither.right().value();
-                return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(sValue,
-                    ComponentTypeEnum.RESOURCE), ""));
+                LOGGER.error("Failed to get interface from component {}. Response is {}", component.getName(), sValue);
+                return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(sValue, component.getComponentType()), ""));
             }
             return Either.left(interfaceCreateEither.left().value());
         }
     }
 
     public Either<Operation, ResponseFormat> createInterfaceOperation(String componentId, Operation operation, User user, boolean lock) {
-        return createOrUpdateInterfaceOperation(componentId, operation, user, false, "createInterfaceOperation", lock);
+        return createOrUpdateInterfaceOperation(componentId, operation, user, false, CREATE_INTERFACE_OPERATION, lock);
     }
 
     public Either<Operation, ResponseFormat> updateInterfaceOperation(String componentId, Operation operation, User user, boolean lock) {
-        return createOrUpdateInterfaceOperation(componentId, operation, user, true, "updateInterfaceOperation", lock);
+        return createOrUpdateInterfaceOperation(componentId, operation, user, true, UPDATE_INTERFACE_OPERATION, lock);
     }
 
     private Either<Operation, ResponseFormat> createOrUpdateInterfaceOperation(String componentId, Operation operation, User user, boolean isUpdate, String errorContext, boolean lock) {
@@ -192,18 +194,18 @@ public class InterfaceOperationBusinessLogic extends ComponentBusinessLogic{
             return Either.right(componentEither.right().value());
         }
         org.openecomp.sdc.be.model.Component storedComponent = componentEither.left().value();
-        validateUserAndRole(storedComponent, user, errorContext);
+        validateUserExists(user.getUserId(), errorContext, true);
 
-        InterfaceUtils.createInputOutput(operation, storedComponent.getInputs());
+        InterfaceUtils.createInputOutput(operation, storedComponent.getInputs(), storedComponent.getInputs());
         Either<Boolean, ResponseFormat> interfaceOperationValidationResponseEither = interfaceOperationValidation
-            .validateInterfaceOperations(Arrays.asList(operation), componentId, isUpdate);
+            .validateInterfaceOperations(Arrays.asList(operation), storedComponent, isUpdate);
         if(interfaceOperationValidationResponseEither.isRight()) {
             return 	Either.right(interfaceOperationValidationResponseEither.right().value());
         }
 
         Either<Boolean, ResponseFormat> lockResult = null;
         if (lock) {
-            lockResult = lockComponent(storedComponent.getUniqueId(), storedComponent, "Create or Update interface Operation on Component");
+            lockResult = lockComponent(storedComponent.getUniqueId(), storedComponent, errorContext);
             if (lockResult.isRight()) {
                 LOGGER.debug(FAILED_TO_LOCK_COMPONENT_RESPONSE_IS, storedComponent.getName(), lockResult.right().value().getFormattedMessage());
                 titanDao.rollback();
@@ -211,24 +213,32 @@ public class InterfaceOperationBusinessLogic extends ComponentBusinessLogic{
             }
         }
 
-        Either<Operation, StorageOperationStatus> result;
         try {
             Optional<InterfaceDefinition> optionalInterface = InterfaceUtils.getInterfaceDefinitionFromToscaName(((Resource)storedComponent).getInterfaces().values(), storedComponent.getName());
-            Either<InterfaceDefinition, ResponseFormat> sValue = getInterfaceDefinition(storedComponent, optionalInterface.orElse(null));
-            if (sValue.isRight()) {
-                return Either.right(sValue.right().value());
+            Either<InterfaceDefinition, ResponseFormat> getInterfaceEither = getInterfaceDefinition(storedComponent, optionalInterface.orElse(null));
+            if (getInterfaceEither.isRight()) {
+                return Either.right(getInterfaceEither.right().value());
             }
-            InterfaceDefinition interfaceDefinition = sValue.left().value();
+            InterfaceDefinition interfaceDefinition = getInterfaceEither.left().value();
 
-            if (isUpdate) {
-                result = interfaceOperation.updateInterfaceOperation(componentId, interfaceDefinition, operation);
-            } else {
+            Either<Operation, StorageOperationStatus> result;
+            if(!isUpdate){
+                initNewOperation(operation);
                 result = interfaceOperation.addInterfaceOperation(componentId, interfaceDefinition, operation);
             }
+            else {
+                Either<Operation, ResponseFormat> getOperationEither = getOperationFromInterfaceDef(storedComponent, interfaceDefinition, operation.getUniqueId());
+                if (getOperationEither.isRight()){
+                    return Either.right(getOperationEither.right().value());
+                }
+                operation.setImplementation(getOperationEither.left().value().getImplementation());
+                result = interfaceOperation.updateInterfaceOperation(componentId, interfaceDefinition, operation);
+            }
+
             if (result.isRight()) {
                 titanDao.rollback();
-                LOGGER.debug("Failed to add/update interface operation on component {}. Response is {}. ", storedComponent.getName(), result.right().value());
-                return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(result.right().value(), ComponentTypeEnum.RESOURCE)));
+                LOGGER.debug("Failed to addOrUpdate interface operation on component {}. Response is {}", storedComponent.getName(), result.right().value());
+                return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(result.right().value(), storedComponent.getComponentType())));
             }
 
             titanDao.commit();
@@ -236,64 +246,45 @@ public class InterfaceOperationBusinessLogic extends ComponentBusinessLogic{
         }
         catch (Exception e) {
             titanDao.rollback();
-            LOGGER.error("Exception occurred during add or update interface operation property values:{}", e.getMessage(), e);
+            LOGGER.error(EXCEPTION_OCCURRED_DURING_INTERFACE_OPERATION, "addOrUpdate", e);
             return Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
         }
         finally {
             if (lockResult != null && lockResult.isLeft() && lockResult.left().value()) {
-                graphLockOperation.unlockComponent(storedComponent.getUniqueId(), NodeTypeEnum.Resource);
+                graphLockOperation.unlockComponent(storedComponent.getUniqueId(), NodeTypeEnum.getByNameIgnoreCase(storedComponent.getComponentType().getValue()));
             }
         }
-    }
-
-    private void validateUserAndRole(org.openecomp.sdc.be.model.Component component, User user, String errorContext) {
-        user = validateUser(user, errorContext, component, null, false);
-        validateUserRole(user, component, new ArrayList<>(), null, null);
     }
 
     private Either<org.openecomp.sdc.be.model.Component, ResponseFormat> getComponentDetails(String componentId){
         Either<org.openecomp.sdc.be.model.Component, StorageOperationStatus> componentStorageOperationStatusEither = toscaOperationFacade.getToscaElement(componentId);
         if (componentStorageOperationStatusEither.isRight()) {
             StorageOperationStatus errorStatus = componentStorageOperationStatusEither.right().value();
-            LOGGER.error("Failed to fetch component information by component id {}, error {}", componentId, errorStatus);
+            LOGGER.error("Failed to fetch component information by component id {}, Response is {}", componentId, errorStatus);
             return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(errorStatus)));
         }
         return Either.left(componentStorageOperationStatusEither.left().value());
     }
 
-    @Override
-    public Either<UiComponentDataTransfer, ResponseFormat> getUiComponentDataTransferByComponentId(String componentId, List<String> dataParamsToReturn) {
-        ComponentParametersView paramsToRetuen = new ComponentParametersView(dataParamsToReturn);
-        Either<org.openecomp.sdc.be.model.Component, StorageOperationStatus> componentResultEither = toscaOperationFacade.getToscaElement(componentId, paramsToRetuen);
-
-        if (componentResultEither.isRight()) {
-            if (componentResultEither.right().value().equals(StorageOperationStatus.NOT_FOUND)) {
-                LOGGER.error("Failed to found component with id {} ", componentId);
-                Either.right(componentsUtils.getResponseFormat(ActionStatus.RESOURCE_NOT_FOUND, componentId));
-            }
-            LOGGER.error("failed to get component by id {} with filters {}", componentId, dataParamsToReturn);
-            return Either.right(componentsUtils.getResponseFormatByResource(componentsUtils.convertFromStorageResponse(componentResultEither.right().value()), ""));
+    private Either<Operation, ResponseFormat> getOperationFromInterfaceDef(
+        org.openecomp.sdc.be.model.Component component, InterfaceDefinition interfaceDefinition, String operationToFetch) {
+        Optional<Map.Entry<String, Operation>> operationMap = interfaceDefinition.getOperationsMap().entrySet().stream()
+            .filter(entry -> entry.getValue().getUniqueId().equals(operationToFetch)).findAny();
+        if (!operationMap.isPresent()) {
+            LOGGER.error("Failed to get interface operation from component {}. Response is {}", component.getUniqueId(), ActionStatus.INTERFACE_OPERATION_NOT_FOUND);
+            return Either.right(componentsUtils.getResponseFormat(ActionStatus.INTERFACE_OPERATION_NOT_FOUND, component.getUniqueId()));
         }
-
-        org.openecomp.sdc.be.model.Component component = componentResultEither.left().value();
-        UiComponentDataTransfer dataTransfer = uiComponentDataConverter.getUiDataTransferFromResourceByParams((Resource)component, dataParamsToReturn);
-        return Either.left(dataTransfer);
+        return Either.left(operationMap.get().getValue());
     }
 
-    @Override
-    public Either<List<ComponentInstance>, ResponseFormat> getComponentInstancesFilteredByPropertiesAndInputs(
-        String componentId, String userId) {
-        return null;
+    private void initNewOperation(Operation operation){
+        ArtifactDefinition artifactDefinition = new ArtifactDefinition();
+        String artifactUUID = UUID.randomUUID().toString();
+        artifactDefinition.setArtifactUUID(artifactUUID);
+        artifactDefinition.setUniqueId(artifactUUID);
+        artifactDefinition.setArtifactType(ArtifactTypeEnum.PLAN.getType());
+        artifactDefinition.setArtifactGroupType(ArtifactGroupTypeEnum.LIFE_CYCLE);
+        operation.setUniqueId(UUID.randomUUID().toString());
+        operation.setImplementation(artifactDefinition);
     }
-
-    @Override
-    public Either<List<String>, ResponseFormat> deleteMarkedComponents() {
-        return deleteMarkedComponents(ComponentTypeEnum.RESOURCE);
-    }
-
-    @Override
-    public ComponentInstanceBusinessLogic getComponentInstanceBL() {
-        return componentInstanceBusinessLogic;
-    }
-
 }
