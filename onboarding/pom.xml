@@ -26,12 +26,11 @@
 
     <properties>
 
-        <maven.test.redirectTestOutputToFile>false</maven.test.redirectTestOutputToFile>
+        <maven.test.redirectTestOutputToFile>true</maven.test.redirectTestOutputToFile>
         <jacoco.skip>true</jacoco.skip>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <!-- Maven plugin versions -->
-        <jacoco.version>0.7.9</jacoco.version>
         <mvn.assembly.version>2.1</mvn.assembly.version>
         <mvn.compiler.version>3.7.0</mvn.compiler.version>
         <mvn.clean.version>2.5</mvn.clean.version>
@@ -283,6 +282,11 @@
                 <groupId>io.swagger</groupId>
                 <artifactId>swagger-annotations</artifactId>
                 <version>${swagger.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.tomakehurst</groupId>
+                <artifactId>wiremock</artifactId>
+                <version>${wire-mock.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.testng</groupId>
