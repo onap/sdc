@@ -28,7 +28,7 @@ data_types:
     derived_from: org.openecomp.datatypes.Root
     properties:
       is_provider_network:
-        description: \"true\" indicates that this a Neutron provider type of network
+        description: \"true\" testShouldLocatePathWhenResourcePresentInUrlsindicates that this a Neutron provider type of network
         type: boolean
         required: true
       physical_network_name:
@@ -44,6 +44,9 @@ data_types:
           - Physnet44
           - Physnet21
           - Physnet22
+          - sriovnet1
+          - sriovnet2
+          - oam
       numa:
         description: |
           PNIC instance within the NUMA processor cluster PNIC Instance correlates to the second digit of the Physical Network Name suffix (e.g. "01" = PNIC 1, "02" = "PNIC 2)
@@ -446,6 +449,25 @@ data_types:
         description: Reference to VLAN or other address plan ID used to assign subnets to this network
         type: string
         required: true
+      related_networks:
+        type: list
+        description: Related Networks List.
+        required: false
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
+      is_trunked:
+        type: boolean
+        required: true
+        description: \"true\" indicates that network is trunked
+        default: false
+
+  org.openecomp.datatypes.RelatedNetworksAssignments:
+    derived_from: org.openecomp.datatypes.Root
+    properties:
+      related_network_role:
+        description: The network role of the related network, sharing provider network
+        type: string
+        required: false
 
   org.openecomp.datatypes.network.IPv6SubnetAssignments:
     derived_from: org.openecomp.datatypes.network.SubnetAssignments
