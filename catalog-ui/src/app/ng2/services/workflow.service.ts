@@ -14,7 +14,7 @@ export class WorkflowServiceNg2 {
 
     constructor(private http: HttpService, @Inject(SdcConfigToken) sdcConfig:ISdcConfig) {
         this.baseUrl = sdcConfig.api.workflow_root;
-        this.catalogBaseUrl = sdcConfig.api.POST_workflow_artifact;
+        this.catalogBaseUrl = sdcConfig.api.PUT_workflow_artifact;
     }
 
     public getWorkflows(filterCertified: boolean = true): Observable<any> {
@@ -42,7 +42,7 @@ export class WorkflowServiceNg2 {
         return this.http.post(this.baseUrl + '/workflows/' + workflowId + '/versions/' + workflowVersionId + '/artifact-deliveries',
             {
                 endpoint: this.catalogBaseUrl + '/resources/' + resourceUuid + '/interfaces/' + operationId + '/artifacts/' + artifactUuid,
-                method: 'POST'
+                method: 'PUT'
             })
             .map((res:Response) => {
                 return res.json();

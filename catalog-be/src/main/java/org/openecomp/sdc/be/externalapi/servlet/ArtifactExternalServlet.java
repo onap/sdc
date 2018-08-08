@@ -29,6 +29,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import javax.ws.rs.PUT;
 import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic.ArtifactOperationEnum;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
@@ -87,7 +88,7 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
 
     private static String startLog = "Start handle request of ";
 
-    @POST
+    @PUT
     @Path("/resources/{uuid}/interfaces/{operationUUID}/artifacts/{artifactUUID}")
     @Produces(MediaType.APPLICATION_JSON)
     @ApiOperation(value = "uploads of artifact to VF operation workflow", httpMethod = "POST", notes = "uploads of artifact to VF operation workflow")
