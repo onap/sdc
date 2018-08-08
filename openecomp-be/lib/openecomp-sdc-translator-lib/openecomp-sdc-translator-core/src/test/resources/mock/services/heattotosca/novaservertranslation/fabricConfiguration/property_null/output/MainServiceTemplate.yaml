@@ -1,0 +1,880 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: Main
+imports:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+node_types:
+  org.openecomp.resource.vfc.nodes.heat.vce:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+topology_template:
+  inputs:
+    ATT_VF_UNKNOWN_UNICAST_ALLOW_vCE_SRIOV2_0:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vCE
+            source_type: HEAT
+            param_name: ATT_VF_UNKNOWN_UNICAST_ALLOW_vCE_SRIOV2_0
+      type: boolean
+      description: boolean to specify allowance of unknown unicast
+    oam0_net_id:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vCE
+            source_type: HEAT
+            param_name: oam0_net_id
+      type: string
+      description: OAM network - 1st vNIC
+    vce_flavor_name:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vCE
+            source_type: HEAT
+            param_name: vce_flavor_name
+      type: string
+      description: VM instance sizing
+    ATT_VF_VLAN_STRIP_vCE_SRIOV2_0:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vCE
+            source_type: HEAT
+            param_name: ATT_VF_VLAN_STRIP_vCE_SRIOV2_0
+      type: boolean
+      description: boolean to specify VLAN Strip option
+    dcae_0:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vCE
+            source_type: HEAT
+            param_name: dcae_0
+      type: string
+      description: IP Address of DCAE CTS Server
+    ATT_VF_VLAN_FILTER_vCE_SRIOV2_0:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vCE
+            source_type: HEAT
+            param_name: ATT_VF_VLAN_FILTER_vCE_SRIOV2_0
+      type: json
+      description: VF VLAN Filters specified in JSON list object
+    ATT_VF_INSERT_STAG_vCE_SRIOV1_0:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vCE
+            source_type: HEAT
+            param_name: ATT_VF_INSERT_STAG_vCE_SRIOV1_0
+      type: boolean
+      description: boolean to specify insertion of outer tag for traffic coming out of VM
+    vce_name_0:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vCE
+            source_type: HEAT
+            param_name: vce_name_0
+      type: string
+      description: Name of the VM
+    tacplus_ip_3:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vCE
+            source_type: HEAT
+            param_name: tacplus_ip_3
+      type: string
+      description: IP Address of first TACPLUS Server
+    tacplus_ip_2:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vCE
+            source_type: HEAT
+            param_name: tacplus_ip_2
+      type: string
+      description: IP Address of first TACPLUS Server
+    tacplus_ip_1:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vCE
+            source_type: HEAT
+            param_name: tacplus_ip_1
+      type: string
+      description: IP Address of first TACPLUS Server
+    tacplus_ip_0:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vCE
+            source_type: HEAT
+            param_name: tacplus_ip_0
+      type: string
+      description: IP Address of first TACPLUS Server
+    ATT_VF_BROADCAST_ALLOW_vCE_SRIOV1_0:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vCE
+            source_type: HEAT
+            param_name: ATT_VF_BROADCAST_ALLOW_vCE_SRIOV1_0
+      type: boolean
+      description: boolean to specify allowance of broadcast traffic
+    oam0_subnet_0_default_gateway:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vCE
+            source_type: HEAT
+            param_name: oam0_subnet_0_default_gateway
+      type: string
+      description: Default Gateway for OAM network
+    vce_SRIOV1_0_net_id:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vCE
+            source_type: HEAT
+            param_name: vce_SRIOV1_0_net_id
+      type: string
+      description: SRIOV Provider 0 network id
+    sdnc_artifact_name:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vCE
+            source_type: HEAT
+            param_name: sdnc_artifact_name
+      type: string
+      description: SDNC Artifact Name
+    tacplus_key_0:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vCE
+            source_type: HEAT
+            param_name: tacplus_key_0
+      type: string
+      description: TACPLUS key
+    ATT_VF_LINK_STATUS_vCE_SRIOV1_0:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vCE
+            source_type: HEAT
+            param_name: ATT_VF_LINK_STATUS_vCE_SRIOV1_0
+      type: string
+      description: specify link status of SRIOV VF
+    ATT_VF_UNKNOWN_MULTICAST_ALLOW_vCE_SRIOV2_0:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vCE
+            source_type: HEAT
+            param_name: ATT_VF_UNKNOWN_MULTICAST_ALLOW_vCE_SRIOV2_0
+      type: boolean
+      description: boolean to specify allowance of unknown multicast
+    syslog_ip_2:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vCE
+            source_type: HEAT
+            param_name: syslog_ip_2
+      type: string
+      description: IP Address of third syslog Server
+    syslog_ip_3:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vCE
+            source_type: HEAT
+            param_name: syslog_ip_3
+      type: string
+      description: IP Address of fourth syslog Server
+    vce_oam0_port_name:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vCE
+            source_type: HEAT
+            param_name: vce_oam0_port_name
+      type: string
+      description: Neutron name for the OAM Port
+    syslog_ip_0:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vCE
+            source_type: HEAT
+            param_name: syslog_ip_0
+      type: string
+      description: IP Address of first syslog Server
+    syslog_ip_1:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vCE
+            source_type: HEAT
+            param_name: syslog_ip_1
+      type: string
+      description: IP Address of second syslog Server
+    ATT_VF_MAC_ANTI_SPOOF_CHECK_vCE_SRIOV2_0:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vCE
+            source_type: HEAT
+            param_name: ATT_VF_MAC_ANTI_SPOOF_CHECK_vCE_SRIOV2_0
+      type: boolean
+      description: boolean to specify mac anti spoof check option
+    sdnc_model_version:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vCE
+            source_type: HEAT
+            param_name: sdnc_model_version
+      type: string
+      description: SDNC Model Version
+    ATT_VF_VLAN_ANTI_SPOOF_CHECK_vCE_SRIOV2_0:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vCE
+            source_type: HEAT
+            param_name: ATT_VF_VLAN_ANTI_SPOOF_CHECK_vCE_SRIOV2_0
+      type: boolean
+      description: boolean to specify vlan anti spoof check option
+    vf_module_id:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vCE
+            source_type: HEAT
+            param_name: vf_module_id
+      type: string
+      description: Unique ID for this VF Module instance -- Not used for this VNF
+    ATT_VF_UNKNOWN_UNICAST_ALLOW_vCE_SRIOV1_0:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vCE
+            source_type: HEAT
+            param_name: ATT_VF_UNKNOWN_UNICAST_ALLOW_vCE_SRIOV1_0
+      type: boolean
+      description: boolean to specify allowance of unknown unicast
+    vnf_name:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vCE
+            source_type: HEAT
+            param_name: vnf_name
+      type: string
+      description: Unique name for this VF instance
+    vce_SRIOV2_0_net_id:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vCE
+            source_type: HEAT
+            param_name: vce_SRIOV2_0_net_id
+      type: string
+      description: SRIOV Provider 1 network id
+    vf_module_name:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vCE
+            source_type: HEAT
+            param_name: vf_module_name
+      type: string
+      description: Unique name for this VF Module instance -- Not used for this VNF
+    ATT_VF_VLAN_STRIP_vCE_SRIOV1_0:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vCE
+            source_type: HEAT
+            param_name: ATT_VF_VLAN_STRIP_vCE_SRIOV1_0
+      type: boolean
+      description: boolean to specify VLAN Strip option
+    ntp_ip_1:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vCE
+            source_type: HEAT
+            param_name: ntp_ip_1
+      type: string
+      description: IP Address of secondary NTP Server
+    tacplus_port_0:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vCE
+            source_type: HEAT
+            param_name: tacplus_port_0
+      type: string
+      description: TACPLUS Domain Port
+    ntp_ip_0:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vCE
+            source_type: HEAT
+            param_name: ntp_ip_0
+      type: string
+      description: IP Address of primary NTP Server
+    ATT_VF_VLAN_FILTER_vCE_SRIOV1_0:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vCE
+            source_type: HEAT
+            param_name: ATT_VF_VLAN_FILTER_vCE_SRIOV1_0
+      type: json
+      description: VF VLAN Filters specified in JSON list object
+    ATT_VF_INSERT_STAG_vCE_SRIOV2_0:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vCE
+            source_type: HEAT
+            param_name: ATT_VF_INSERT_STAG_vCE_SRIOV2_0
+      type: boolean
+      description: boolean to specify insertion of outer tag for traffic coming out of VM
+    vnf_id:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vCE
+            source_type: HEAT
+            param_name: vnf_id
+      type: string
+      description: Unique ID for this VF instance; Unique ID for VNF for AAI metadata
+    vce_oam0_ip_0:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vCE
+            source_type: HEAT
+            param_name: vce_oam0_ip_0
+      type: string
+      description: IP Address of OAM port
+    availability_zone_0:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vCE
+            source_type: HEAT
+            param_name: availability_zone_0
+      type: string
+      description: The Availability Zone to launch the instance.
+    ATT_VF_BROADCAST_ALLOW_vCE_SRIOV2_0:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vCE
+            source_type: HEAT
+            param_name: ATT_VF_BROADCAST_ALLOW_vCE_SRIOV2_0
+      type: boolean
+      description: boolean to specify allowance of broadcast traffic
+    vce_SRIOV2_0_port_name:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vCE
+            source_type: HEAT
+            param_name: vce_SRIOV2_0_port_name
+      type: string
+      description: name for sriov Port 1
+    vce_SRIOV1_0_port_name:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vCE
+            source_type: HEAT
+            param_name: vce_SRIOV1_0_port_name
+      type: string
+      description: name for sriov Port 0
+    ATT_VF_LINK_STATUS_vCE_SRIOV2_0:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vCE
+            source_type: HEAT
+            param_name: ATT_VF_LINK_STATUS_vCE_SRIOV2_0
+      type: string
+      description: specify link status of SRIOV VF
+    snmp_ip_0:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vCE
+            source_type: HEAT
+            param_name: snmp_ip_0
+      type: string
+      description: IP Address of first SNMP Server
+    ATT_VF_UNKNOWN_MULTICAST_ALLOW_vCE_SRIOV1_0:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vCE
+            source_type: HEAT
+            param_name: ATT_VF_UNKNOWN_MULTICAST_ALLOW_vCE_SRIOV1_0
+      type: boolean
+      description: boolean to specify allowance of unknown multicast
+    snmp_ip_2:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vCE
+            source_type: HEAT
+            param_name: snmp_ip_2
+      type: string
+      description: IP Address of third SNMP Server
+    snmp_ip_1:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vCE
+            source_type: HEAT
+            param_name: snmp_ip_1
+      type: string
+      description: IP Address of second SNMP Server
+    snmp_community_0:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vCE
+            source_type: HEAT
+            param_name: snmp_community_0
+      type: string
+      description: SNMP Community value
+    snmp_ip_3:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vCE
+            source_type: HEAT
+            param_name: snmp_ip_3
+      type: string
+      description: IP Address of fourth SNMP Server
+    ATT_VF_VLAN_ANTI_SPOOF_CHECK_vCE_SRIOV1_0:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vCE
+            source_type: HEAT
+            param_name: ATT_VF_VLAN_ANTI_SPOOF_CHECK_vCE_SRIOV1_0
+      type: boolean
+      description: boolean to specify vlan anti spoof check option
+    vce_volume_id_0:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vCE
+            source_type: HEAT
+            param_name: vce_volume_id_0
+      type: string
+      description: ID of the boot disk volume
+    ATT_VF_MAC_ANTI_SPOOF_CHECK_vCE_SRIOV1_0:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vCE
+            source_type: HEAT
+            param_name: ATT_VF_MAC_ANTI_SPOOF_CHECK_vCE_SRIOV1_0
+      type: boolean
+      description: boolean to specify mac anti spoof check option
+    sdnc_model_name:
+      hidden: false
+      immutable: false
+      annotations:
+        source:
+          type: org.openecomp.annotations.Source
+          properties:
+            vf_module_label:
+            - base_vCE
+            source_type: HEAT
+            param_name: sdnc_model_name
+      type: string
+      description: SDNC Blue Print Name
+  node_templates:
+    vce_SRIOV2_0_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        admin_state_up: true
+        name:
+          get_input: vce_SRIOV2_0_port_name
+        binding:vnic_type: direct
+        value_specs:
+          ATT_VF_BROADCAST_ALLOW:
+            get_input: ATT_VF_BROADCAST_ALLOW_vCE_SRIOV2_0
+          ATT_VF_VLAN_ANTI_SPOOF_CHECK:
+            get_input: ATT_VF_VLAN_ANTI_SPOOF_CHECK_vCE_SRIOV2_0
+          ATT_VF_UNKNOWN_MULTICAST_ALLOW:
+            get_input: ATT_VF_UNKNOWN_MULTICAST_ALLOW_vCE_SRIOV2_0
+          ATT_VF_MAC_ANTI_SPOOF_CHECK:
+            get_input: ATT_VF_MAC_ANTI_SPOOF_CHECK_vCE_SRIOV2_0
+          ATT_VF_VLAN_FILTER:
+            get_input: ATT_VF_VLAN_FILTER_vCE_SRIOV2_0
+          ATT_VF_VLAN_STRIP:
+            get_input: ATT_VF_VLAN_STRIP_vCE_SRIOV2_0
+          ATT_VF_LINK_STATUS:
+            get_input: ATT_VF_LINK_STATUS_vCE_SRIOV2_0
+          ATT_VF_UNKNOWN_UNICAST_ALLOW:
+            get_input: ATT_VF_UNKNOWN_UNICAST_ALLOW_vCE_SRIOV2_0
+          ATT_VF_INSERT_STAG:
+            get_input: ATT_VF_INSERT_STAG_vCE_SRIOV2_0
+        network_role_tag: vce_SRIOV2_0
+        network:
+          get_input: vce_SRIOV2_0_net_id
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: vce_0
+          relationship: tosca.relationships.network.BindsTo
+    vce_oam0_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        fixed_ips:
+        - ip_address:
+            get_input: vce_oam0_ip_0
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        admin_state_up: true
+        name:
+          get_input: vce_oam0_port_name
+        network_role_tag: oam0
+        network:
+          get_input: oam0_net_id
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: vce_0
+          relationship: tosca.relationships.network.BindsTo
+    vce_0:
+      type: org.openecomp.resource.vfc.nodes.heat.vce
+      properties:
+        flavor:
+          get_input: vce_flavor_name
+        availability_zone:
+          get_input: availability_zone_0
+        metadata:
+          vf_module_id:
+            get_input: vf_module_id
+          hostname:
+            get_input: vnf_name
+          vnf_id:
+            get_input: vnf_id
+          sdnc_model_version:
+            get_input: sdnc_model_version
+          sdnc_artifact_name:
+            get_input: sdnc_artifact_name
+          vnf_name:
+            get_input: vnf_name
+          sdnc_model_name:
+            get_input: sdnc_model_name
+          vf_module_name:
+            get_input: vf_module_name
+          gateway:
+            get_input: oam0_subnet_0_default_gateway
+        user_data_format: RAW
+        name:
+          get_input: vce_name_0
+    vce_SRIOV1_0_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        admin_state_up: true
+        name:
+          get_input: vce_SRIOV1_0_port_name
+        binding:vnic_type: direct
+        value_specs:
+          ATT_VF_BROADCAST_ALLOW:
+            get_input: ATT_VF_BROADCAST_ALLOW_vCE_SRIOV1_0
+          ATT_VF_VLAN_ANTI_SPOOF_CHECK:
+            get_input: ATT_VF_VLAN_ANTI_SPOOF_CHECK_vCE_SRIOV1_0
+          ATT_VF_UNKNOWN_MULTICAST_ALLOW:
+            get_input: ATT_VF_UNKNOWN_MULTICAST_ALLOW_vCE_SRIOV1_0
+          ATT_FABRIC_CONFIGURATION_REQUIRED: null
+          ATT_VF_MAC_ANTI_SPOOF_CHECK:
+            get_input: ATT_VF_MAC_ANTI_SPOOF_CHECK_vCE_SRIOV1_0
+          ATT_VF_VLAN_FILTER:
+            get_input: ATT_VF_VLAN_FILTER_vCE_SRIOV1_0
+          ATT_VF_VLAN_STRIP:
+            get_input: ATT_VF_VLAN_STRIP_vCE_SRIOV1_0
+          ATT_VF_LINK_STATUS:
+            get_input: ATT_VF_LINK_STATUS_vCE_SRIOV1_0
+          ATT_VF_UNKNOWN_UNICAST_ALLOW:
+            get_input: ATT_VF_UNKNOWN_UNICAST_ALLOW_vCE_SRIOV1_0
+          ATT_VF_INSERT_STAG:
+            get_input: ATT_VF_INSERT_STAG_vCE_SRIOV1_0
+        network_role_tag: vce_SRIOV1_0
+        network:
+          get_input: vce_SRIOV1_0_net_id
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: vce_0
+          relationship: tosca.relationships.network.BindsTo
+  groups:
+    base_vCE_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/base_vCE.yaml
+        description: ATT Vyatta vRouter template with 3 ports total - 1 Mgmt - 2 SR-IOV.
+      members:
+      - vce_SRIOV2_0_port
+      - vce_oam0_port
+      - vce_0
+      - vce_SRIOV1_0_port

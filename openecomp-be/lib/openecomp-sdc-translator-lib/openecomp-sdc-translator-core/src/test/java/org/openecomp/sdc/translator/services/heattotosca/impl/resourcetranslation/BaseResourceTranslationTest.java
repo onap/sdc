@@ -121,7 +121,7 @@ public class BaseResourceTranslationTest {
           "Error in validation " + TestUtils.getErrorAsString(translatorOutput.getErrorMessages()))
           .withId("Validation Error").withCategory(ErrorCategory.APPLICATION).build());
     }
-
+    
     return new ToscaFileOutputServiceCsarImpl().createOutputFile(translatorOutput.getToscaServiceModel(), null);
   }
 
