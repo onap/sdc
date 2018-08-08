@@ -22,7 +22,6 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <mvn.surefire.version>2.19.1</mvn.surefire.version>
-        <jacoco.version>0.7.9</jacoco.version>
         <mvn.compiler.version>2.5.1</mvn.compiler.version>
         <mvn.license.version>1.10</mvn.license.version>
         <mvn.assembly.version>2.1</mvn.assembly.version>
