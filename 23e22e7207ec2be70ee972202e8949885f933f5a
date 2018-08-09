@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_0061f038",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/impl/resourcetranslation/ResourceTranslationNovaServerImpl.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 371,
+      "author": {
+        "id": 2871
+      },
+      "writtenOn": "2018-08-09T11:53:41Z",
+      "side": 1,
+      "message": "what is \"op\" ? \nplease rename to meaningful name like - valueSpacesProperty",
+      "range": {
+        "startLine": 371,
+        "startChar": 24,
+        "endLine": 371,
+        "endChar": 25
+      },
+      "revId": "23e22e7207ec2be70ee972202e8949885f933f5a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_c05a1883",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/test/java/org/openecomp/sdc/translator/services/heattotosca/impl/resourcetranslation/BaseResourceTranslationTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 2871
+      },
+      "writtenOn": "2018-08-09T11:53:41Z",
+      "side": 1,
+      "message": "look like there is no change in this class, please remove the import",
+      "range": {
+        "startLine": 36,
+        "startChar": 0,
+        "endLine": 36,
+        "endChar": 63
+      },
+      "revId": "23e22e7207ec2be70ee972202e8949885f933f5a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_807740d4",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/test/resources/mock/services/heattotosca/novaservertranslation/2ports/input/MANIFEST.json",
+        "patchSetId": 4
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 2871
+      },
+      "writtenOn": "2018-08-09T11:53:41Z",
+      "side": 1,
+      "message": "In all your tests\n1. please make the mock test data more simple, you only need to test one heat file which has nova server and ports, no need env file, no need volume files ... it can add \"noise\" to the test.\nin case we will add change in the volume translation, this test will fail even though you wanted to test only the nova::server\n2. please add sub-folder to your test of fabricConfiguration",
+      "range": {
+        "startLine": 6,
+        "startChar": 4,
+        "endLine": 6,
+        "endChar": 5
+      },
+      "revId": "23e22e7207ec2be70ee972202e8949885f933f5a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
