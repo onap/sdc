@@ -11,7 +11,6 @@
 		<artifactId>onap-common-configuration-management</artifactId>
 		<groupId>org.onap.sdc.common</groupId>
 		<version>1.2.0-SNAPSHOT</version>
-		<relativePath>..</relativePath>
 	</parent>
 
 	<dependencies>

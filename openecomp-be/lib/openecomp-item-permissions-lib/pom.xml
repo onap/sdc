@@ -8,7 +8,6 @@
         <artifactId>openecomp-sdc-lib</artifactId>
         <groupId>org.openecomp.sdc</groupId>
         <version>1.3.0-SNAPSHOT</version>
-        <relativePath>..</relativePath>
     </parent>
 
     <artifactId>openecomp-item-permissions-lib</artifactId>

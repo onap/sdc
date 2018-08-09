@@ -8,7 +8,6 @@
         <groupId>org.openecomp.sdc</groupId>
         <artifactId>openecomp-sdc-lib</artifactId>
         <version>1.3.0-SNAPSHOT</version>
-        <relativePath>..</relativePath>
     </parent>
 
     <artifactId>openecomp-conflict-lib</artifactId>

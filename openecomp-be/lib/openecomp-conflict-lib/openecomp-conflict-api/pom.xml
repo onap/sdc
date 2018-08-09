@@ -9,7 +9,6 @@
         <groupId>org.openecomp.sdc</groupId>
         <artifactId>openecomp-conflict-lib</artifactId>
         <version>1.3.0-SNAPSHOT</version>
-        <relativePath>..</relativePath>
     </parent>
 
     <artifactId>openecomp-conflict-api</artifactId>
