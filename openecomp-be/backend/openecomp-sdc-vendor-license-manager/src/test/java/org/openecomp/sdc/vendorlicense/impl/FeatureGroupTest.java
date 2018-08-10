@@ -255,7 +255,6 @@ public class FeatureGroupTest {
 
         existingFG.setEntitlementPoolIds(new HashSet<String>());
         existingFG.setLicenseKeyGroupIds(new HashSet<String>());
-        existingFG.setManufacturerReferenceNumber("MRN");
 
         doReturn(existingFG).when(featureGroupDao).get(anyObject());
 
@@ -283,7 +282,6 @@ public class FeatureGroupTest {
             anyObject(),anyObject(), anyObject());
 
         FeatureGroupEntity fg = new FeatureGroupEntity(vlm1_id, VERSION01, fg1_id);
-        fg.setManufacturerReferenceNumber("MRN_UPD");
 
         vendorLicenseManagerImpl.updateFeatureGroup(fg,addedLKGs,removedLKGs, addedEPs,
             removedEPs);
@@ -298,9 +296,6 @@ public class FeatureGroupTest {
 
         verify(featureGroupDao)
             .updateFeatureGroup(fg,addedEPs,removedEPs, addedLKGs, removedLKGs);
-
-        verify(entitlementPoolDao, times(2)).update(anyObject());
-        verify(licenseKeyGroupDao,times(2)).update(anyObject());
     }
 
     @Test
@@ -311,7 +306,6 @@ public class FeatureGroupTest {
         HashSet<String> lkgSet = new HashSet<String>(); lkgSet.add(lkg1_id);
         existingFG.setEntitlementPoolIds(epSet);
         existingFG.setLicenseKeyGroupIds(lkgSet);
-        existingFG.setManufacturerReferenceNumber("MRN");
 
         doReturn(existingFG).when(featureGroupDao).get(anyObject());
 
@@ -330,7 +324,6 @@ public class FeatureGroupTest {
             anyObject(),anyObject(), anyObject());
 
         FeatureGroupEntity fg = new FeatureGroupEntity(vlm1_id, VERSION01, fg1_id);
-        fg.setManufacturerReferenceNumber("MRN_UPD");
 
         vendorLicenseManagerImpl.updateFeatureGroup(fg,addedLKGs,removedLKGs, addedEPs,
             removedEPs);
@@ -346,8 +339,6 @@ public class FeatureGroupTest {
         verify(featureGroupDao)
             .updateFeatureGroup(fg,addedEPs,removedEPs, addedLKGs, removedLKGs);
 
-        verify(entitlementPoolDao, times(1)).update(anyObject());
-        verify(licenseKeyGroupDao,times(1)).update(anyObject());
     }
 
 

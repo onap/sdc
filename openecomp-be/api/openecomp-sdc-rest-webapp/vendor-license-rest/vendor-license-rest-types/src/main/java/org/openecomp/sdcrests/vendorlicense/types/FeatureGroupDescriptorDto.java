@@ -34,10 +34,6 @@ public class FeatureGroupDescriptorDto {
   @NotNull
   private String partNumber;
 
-
-  @Size(max = 100)
-  private String manufacturerReferenceNumber;
-
   public String getName() {
     return name;
   }
@@ -62,11 +58,4 @@ public class FeatureGroupDescriptorDto {
     this.partNumber = partNumber;
   }
 
-  public String getManufacturerReferenceNumber() {
-    return manufacturerReferenceNumber;
-  }
-
-  public void setManufacturerReferenceNumber(String manufacturerReferenceNumber) {
-    this.manufacturerReferenceNumber = manufacturerReferenceNumber;
-  }
 }

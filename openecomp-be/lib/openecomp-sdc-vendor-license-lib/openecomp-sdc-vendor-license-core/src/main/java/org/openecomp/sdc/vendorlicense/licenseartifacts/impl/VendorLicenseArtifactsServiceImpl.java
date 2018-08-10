@@ -17,8 +17,8 @@
 package org.openecomp.sdc.vendorlicense.licenseartifacts.impl;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.openecomp.core.utilities.file.FileContentHandler;
-import org.openecomp.sdc.common.togglz.ToggleableFeature;
 import org.openecomp.sdc.vendorlicense.HealingServiceFactory;
 import org.openecomp.sdc.vendorlicense.dao.types.EntitlementPoolEntity;
 import org.openecomp.sdc.vendorlicense.dao.types.FeatureGroupEntity;
@@ -65,61 +65,37 @@ public class VendorLicenseArtifactsServiceImpl implements VendorLicenseArtifacts
       for (String featureGroupId : featureGroups) {
         FeatureGroupModel featureGroupModel = vendorLicenseFacade
             .getFeatureGroupModel(new FeatureGroupEntity(vlmId, vlmVersion, featureGroupId));
+        Set<EntitlementPoolEntity> entitlementPoolEntities =
+            featureGroupModel.getEntitlementPools();
+        String manufacturerReferenceNumber = featureGroupModel.getEntityManufacturerReferenceNumber();
+        for (EntitlementPoolEntity entitlementPoolEntity : entitlementPoolEntities) {
+          entitlementPoolEntity.setLimits(vendorLicenseFacade.listLimits(vlmId, vlmVersion,
+              entitlementPoolEntity.getId()));
+          if (Objects.nonNull(manufacturerReferenceNumber)  && !manufacturerReferenceNumber.trim().isEmpty()) {
+            entitlementPoolEntity.setManufacturerReferenceNumber(manufacturerReferenceNumber);
+          }
+        }
 
-        updateEntitlementPools(vlmId, vlmVersion, featureGroupModel);
-        updateLicenseKeyGroupEntities(vlmId, vlmVersion, featureGroupModel);
+        Set<LicenseKeyGroupEntity> licenseKeyGroupEntities =
+            featureGroupModel.getLicenseKeyGroups();
+        for (LicenseKeyGroupEntity licenseKeyGroupEntity : licenseKeyGroupEntities) {
+          licenseKeyGroupEntity.setLimits(vendorLicenseFacade.listLimits(vlmId, vlmVersion,
+              licenseKeyGroupEntity.getId()));
+          if (Objects.nonNull(manufacturerReferenceNumber)  && !manufacturerReferenceNumber.trim().isEmpty()) {
+            licenseKeyGroupEntity.setManufacturerReferenceNumber(manufacturerReferenceNumber);
+          }
+        }
 
+        featureGroupModel.setEntitlementPools(entitlementPoolEntities.stream().map(
+            entitlementPoolEntity -> (EntitlementPoolEntity) healingService
+                .heal(entitlementPoolEntity)).collect(Collectors.toSet()));
+        featureGroupModel.setLicenseKeyGroups(licenseKeyGroupEntities.stream().map(
+            licenseKeyGroupEntity -> (LicenseKeyGroupEntity) healingService
+                .heal(licenseKeyGroupEntity)).collect(Collectors.toSet()));
         artifact.getFeatureGroups().add(featureGroupModel);
       }
     }
     return artifact.toXml().getBytes();
-  }
-
-  private static void updateEntitlementPools(String vlmId, Version vlmVersion, FeatureGroupModel featureGroupModel) {
-
-    Set<EntitlementPoolEntity> entitlementPoolEntities =
-        featureGroupModel.getEntitlementPools();
-
-    for (EntitlementPoolEntity entitlementPoolEntity : entitlementPoolEntities) {
-      entitlementPoolEntity.setLimits(vendorLicenseFacade.listLimits(vlmId, vlmVersion,
-          entitlementPoolEntity.getId()));
-      String manuFacturerReferenceNumber = featureGroupModel.getEntityManufacturerReferenceNumber();
-      if (ToggleableFeature.MRN.isActive()) {
-        if (Objects.nonNull(manuFacturerReferenceNumber)
-            && !manuFacturerReferenceNumber.trim().isEmpty()) {
-          entitlementPoolEntity.setManufacturerReferenceNumber(manuFacturerReferenceNumber);
-        }
-      } else {
-        entitlementPoolEntity.setManufacturerReferenceNumber(manuFacturerReferenceNumber);
-      }
-    }
-    featureGroupModel.setEntitlementPools(entitlementPoolEntities.stream().map(
-        entitlementPoolEntity -> (EntitlementPoolEntity) healingService
-            .heal(entitlementPoolEntity)).collect(Collectors.toSet()));
-  }
-
-  private static void updateLicenseKeyGroupEntities(String vlmId, Version vlmVersion, FeatureGroupModel featureGroupModel) {
-
-    Set<LicenseKeyGroupEntity> licenseKeyGroupEntities =
-        featureGroupModel.getLicenseKeyGroups();
-    for (LicenseKeyGroupEntity licenseKeyGroupEntity : licenseKeyGroupEntities) {
-      licenseKeyGroupEntity.setLimits(vendorLicenseFacade.listLimits(vlmId, vlmVersion,
-          licenseKeyGroupEntity.getId()));
-      String manuFacturerReferenceNumber = featureGroupModel.getEntityManufacturerReferenceNumber();
-      if (ToggleableFeature.MRN.isActive()) {
-        if (Objects.nonNull(manuFacturerReferenceNumber)
-            && !manuFacturerReferenceNumber.trim().isEmpty()) {
-          licenseKeyGroupEntity.setManufacturerReferenceNumber(manuFacturerReferenceNumber);
-        }
-      } else {
-        licenseKeyGroupEntity.setManufacturerReferenceNumber(manuFacturerReferenceNumber);
-      }
-    }
-
-    featureGroupModel.setLicenseKeyGroups(licenseKeyGroupEntities.stream().map(
-        licenseKeyGroupEntity -> (LicenseKeyGroupEntity) healingService
-            .heal(licenseKeyGroupEntity)).collect(Collectors.toSet()));
-
   }
 
   private static byte[] createVendorLicenseArtifact(String vlmId, String vendorName) {
@@ -180,7 +156,7 @@ public class VendorLicenseArtifactsServiceImpl implements VendorLicenseArtifacts
             .getManufacturerReferenceNumber() : null;
       }
     }
-    return manufactureReferenceNumber != null ? Optional.of(manufactureReferenceNumber) :
+    return StringUtils.isNotEmpty(manufactureReferenceNumber) ? Optional.of(manufactureReferenceNumber) :
         Optional.empty();
   }
 

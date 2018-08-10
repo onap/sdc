@@ -26,7 +26,6 @@ import org.openecomp.core.util.UniqueValueUtil;
 import org.openecomp.core.utilities.CommonMethods;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.ErrorCode;
-import org.openecomp.sdc.common.togglz.ToggleableFeature;
 import org.openecomp.sdc.vendorlicense.VendorLicenseConstants;
 import org.openecomp.sdc.vendorlicense.dao.*;
 import org.openecomp.sdc.vendorlicense.dao.types.*;
@@ -41,7 +40,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
 
 
 import static org.openecomp.sdc.vendorlicense.VendorLicenseConstants.VENDOR_LICENSE_MODEL_VERSIONABLE_TYPE;
@@ -79,11 +77,7 @@ public class VendorLicenseFacadeImpl implements VendorLicenseFacade {
     FeatureGroupEntity retrieved = featureGroupDao.get(featureGroup);
     VersioningUtil
         .validateEntityExistence(retrieved, featureGroup, VendorLicenseModelEntity.ENTITY_TYPE);
-    if (!ToggleableFeature.MRN.isActive()) { //Remove updateManufacturerNumberInFeatureGroup() while removing remove toggle
-      if (retrieved.getManufacturerReferenceNumber() == null) {
-        updateManufacturerNumberInFeatureGroup(retrieved);
-      }
-    }
+
     return retrieved;
   }
 
@@ -262,12 +256,7 @@ public class VendorLicenseFacadeImpl implements VendorLicenseFacade {
 
   @Override
   public Collection<FeatureGroupEntity> listFeatureGroups(String vlmId, Version version) {
-    Collection<FeatureGroupEntity> featureGroupEntities =
-        featureGroupDao.list(new FeatureGroupEntity(vlmId, version, null));
-    featureGroupEntities.stream()
-        .filter(fgEntity -> Objects.isNull(fgEntity.getManufacturerReferenceNumber()))
-        .forEach(this::updateManufacturerNumberInFeatureGroup);
-    return featureGroupEntities;
+    return featureGroupDao.list(new FeatureGroupEntity(vlmId, version, null));
   }
 
 
@@ -327,22 +316,6 @@ public class VendorLicenseFacadeImpl implements VendorLicenseFacade {
   @Override
   public void updateLimit(LimitEntity limit) {
     limitDao.update(limit);
-  }
-
-  private void updateManufacturerNumberInFeatureGroup(FeatureGroupEntity featureGroupEntity) {
-    if (CollectionUtils.isNotEmpty(featureGroupEntity.getEntitlementPoolIds())) {
-      Object[] entitlementPoolIdsList = featureGroupEntity.getEntitlementPoolIds().toArray();
-      if (entitlementPoolIdsList.length > 0) {
-        String entitlementPoolId = entitlementPoolIdsList[0].toString();
-        EntitlementPoolEntity entitlementPoolEntity =
-            new EntitlementPoolEntity(featureGroupEntity.getVendorLicenseModelId(),
-                featureGroupEntity.getVersion(), entitlementPoolId);
-        entitlementPoolEntity = entitlementPoolDao.get(entitlementPoolEntity);
-        featureGroupEntity.setManufacturerReferenceNumber(
-            entitlementPoolDao.getManufacturerReferenceNumber(entitlementPoolEntity));
-        featureGroupDao.update(featureGroupEntity);
-      }
-    }
   }
 
   @Override

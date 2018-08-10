@@ -32,7 +32,7 @@ import java.util.Set;
 
 public class ManufacturerReferenceNumberHealer implements Healer {
 
-  private static final String manufacturerReferenceNumber = "MRN";
+  private static final String MANUFACTURER_REFERENCE_NUMBER = "MRN";
   private VendorLicenseFacade vendorLicenseFacade = VendorLicenseFacadeFactory.getInstance()
       .createInterface();
   private static final FeatureGroupDao featureGroupDao =
@@ -64,7 +64,7 @@ public class ManufacturerReferenceNumberHealer implements Healer {
         entitlementPoolEntity.setManufacturerReferenceNumber(getMRN(itemId, version,
             referencingFeatureGroup));
       } else {
-        entitlementPoolEntity.setManufacturerReferenceNumber(manufacturerReferenceNumber);
+        entitlementPoolEntity.setManufacturerReferenceNumber(MANUFACTURER_REFERENCE_NUMBER);
       }
       vendorLicenseFacade.updateEntitlementPool(entitlementPoolEntity);
     }
@@ -80,7 +80,7 @@ public class ManufacturerReferenceNumberHealer implements Healer {
         licenseKeyGroupEntity.setManufacturerReferenceNumber(getMRN(itemId, version,
             referencingFeatureGroup));
       } else {
-        licenseKeyGroupEntity.setManufacturerReferenceNumber(manufacturerReferenceNumber);
+        licenseKeyGroupEntity.setManufacturerReferenceNumber(MANUFACTURER_REFERENCE_NUMBER);
       }
       vendorLicenseFacade.updateLicenseKeyGroup(licenseKeyGroupEntity);
     }
@@ -99,7 +99,7 @@ public class ManufacturerReferenceNumberHealer implements Healer {
         (itemId, version);
 
     for (FeatureGroupEntity featureGroupEntity : featureGroupEntities) {
-      featureGroupEntity.setManufacturerReferenceNumber("");
+      featureGroupEntity.setManufacturerReferenceNumber(null);
       featureGroupDao.update(featureGroupEntity);
     }
   }
