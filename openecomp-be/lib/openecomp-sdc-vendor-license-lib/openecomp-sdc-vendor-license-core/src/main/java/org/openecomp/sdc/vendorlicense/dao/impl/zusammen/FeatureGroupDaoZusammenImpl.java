@@ -269,7 +269,6 @@ public class FeatureGroupDaoZusammenImpl implements FeatureGroupDao {
     info.setDescription(featureGroup.getDescription());
     info.addProperty(ElementPropertyName.elementType.name(), ElementType.FeatureGroup);
     info.addProperty("partNumber", featureGroup.getPartNumber());
-    info.addProperty("manufacturerReferenceNumber", featureGroup.getManufacturerReferenceNumber());
     featureGroupElement.setInfo(info);
 
     featureGroupElement.setRelations(new ArrayList<>());

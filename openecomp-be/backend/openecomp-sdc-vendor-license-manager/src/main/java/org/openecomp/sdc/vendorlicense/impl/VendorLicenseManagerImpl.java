@@ -16,10 +16,8 @@
 
 package org.openecomp.sdc.vendorlicense.impl;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.openecomp.core.dao.UniqueValueDao;
 import org.openecomp.core.util.UniqueValueUtil;
-import org.openecomp.core.utilities.CommonMethods;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.ErrorCode;
 import org.openecomp.sdc.vendorlicense.VendorLicenseConstants;
@@ -35,7 +33,6 @@ import org.openecomp.sdc.versioning.dao.types.Version;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Collection;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
@@ -213,61 +210,6 @@ public class VendorLicenseManagerImpl implements VendorLicenseManager {
     featureGroupDao.updateFeatureGroup(featureGroup, addedEntitlementPools, removedEntitlementPools,
         addedLicenseKeyGroups, removedLicenseKeyGroups);
 
-    updateEpLkgOnMrnChange(featureGroup, addedLicenseKeyGroups, addedEntitlementPools, retrieved);
-  }
-
-  /**
-   * If MRN is updated in feature group then update all linked EPs and Lkgs with new versionUuId
-   * @param featureGroup - Feature Group entity which is requested for update
-   * @param addedLicenseKeyGroups - LicenseKeyGroups added with Feature Group
-   * @param addedEntitlementPools - EntitlementPools added with Feature Group
-   * @param retrieved - Feature Group entity fetched from database
-   */
-  private void updateEpLkgOnMrnChange(FeatureGroupEntity featureGroup,
-                                      Set<String> addedLicenseKeyGroups,
-                                      Set<String> addedEntitlementPools,
-                                      FeatureGroupEntity retrieved) {
-    if (Objects.nonNull(retrieved.getManufacturerReferenceNumber())
-        && !retrieved.getManufacturerReferenceNumber().equals(featureGroup
-        .getManufacturerReferenceNumber())) {
-      if (CollectionUtils.isEmpty(addedEntitlementPools)) {
-        updateEntitlementPool(featureGroup, retrieved.getEntitlementPoolIds());
-      } else {
-        updateEntitlementPool(featureGroup, addedEntitlementPools);
-      }
-
-      if (CollectionUtils.isEmpty(addedLicenseKeyGroups)) {
-        updateLicenseKeyGroup(featureGroup, retrieved.getLicenseKeyGroupIds());
-      } else {
-        updateLicenseKeyGroup(featureGroup, addedLicenseKeyGroups);
-      }
-    }
-  }
-
-  private void updateEntitlementPool(FeatureGroupEntity featureGroup,
-                                     Set<String> entitlementPoolIds) {
-    for (String epId: entitlementPoolIds) {
-      final EntitlementPoolEntity entitlementPoolEntity = entitlementPoolDao
-          .get(new EntitlementPoolEntity(featureGroup.getVendorLicenseModelId(), featureGroup
-              .getVersion(), epId));
-      if (Objects.nonNull(entitlementPoolEntity)) {
-        entitlementPoolEntity.setVersionUuId(CommonMethods.nextUuId());
-        entitlementPoolDao.update(entitlementPoolEntity);
-      }
-    }
-  }
-
-  private void updateLicenseKeyGroup(FeatureGroupEntity featureGroup,
-                                     Set<String> licenseKeyGroupIds) {
-    for (String lkgId: licenseKeyGroupIds) {
-      final LicenseKeyGroupEntity licenseKeyGroupEntity = licenseKeyGroupDao
-          .get(new LicenseKeyGroupEntity(featureGroup.getVendorLicenseModelId(),
-              featureGroup.getVersion(), lkgId));
-      if (Objects.nonNull(licenseKeyGroupEntity)) {
-        licenseKeyGroupEntity.setVersionUuId(CommonMethods.nextUuId());
-        licenseKeyGroupDao.update(licenseKeyGroupEntity);
-      }
-    }
   }
 
   @Override

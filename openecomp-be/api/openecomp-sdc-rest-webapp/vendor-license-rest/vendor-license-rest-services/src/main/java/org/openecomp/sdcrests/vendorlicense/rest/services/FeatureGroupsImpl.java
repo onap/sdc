@@ -21,9 +21,6 @@
 package org.openecomp.sdcrests.vendorlicense.rest.services;
 
 import org.openecomp.core.utilities.CommonMethods;
-import org.openecomp.sdc.common.errors.CoreException;
-import org.openecomp.sdc.common.errors.ErrorCode;
-import org.openecomp.sdc.common.togglz.ToggleableFeature;
 import org.openecomp.sdc.vendorlicense.VendorLicenseManager;
 import org.openecomp.sdc.vendorlicense.VendorLicenseManagerFactory;
 import org.openecomp.sdc.vendorlicense.dao.types.EntitlementPoolEntity;
@@ -46,7 +43,6 @@ import javax.inject.Named;
 import javax.ws.rs.core.Response;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Objects;
 
 @Named
 @Service("featureGroups")
@@ -79,15 +75,6 @@ public class FeatureGroupsImpl implements FeatureGroups {
   @Override
   public Response createFeatureGroup(FeatureGroupRequestDto request, String vlmId, String versionId,
                                      String user) {
-    //Below if block is introduced to have feature toggleable. This if block needs to remove when
-    // we remove toggle.
-    if (!ToggleableFeature.MRN.isActive()) {
-      if (Objects.isNull(request.getManufacturerReferenceNumber())) {
-        throw new CoreException((new ErrorCode.ErrorCodeBuilder().withMessage("Field does not " +
-            "conform to predefined criteria : manufacturerReferenceNumber : is mandatory and should not be empty").build()));
-      }
-    }
-
     FeatureGroupEntity featureGroupEntity = new MapFeatureGroupDescriptorDtoToFeatureGroupEntity()
         .applyMapping(request, FeatureGroupEntity.class);
     featureGroupEntity.setVendorLicenseModelId(vlmId);

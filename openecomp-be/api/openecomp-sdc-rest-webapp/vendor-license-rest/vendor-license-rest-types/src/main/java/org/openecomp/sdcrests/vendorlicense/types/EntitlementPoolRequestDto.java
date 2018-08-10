@@ -22,6 +22,7 @@ package org.openecomp.sdcrests.vendorlicense.types;
 
 import io.swagger.annotations.ApiModel;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import org.hibernate.validator.constraints.NotBlank;
 import org.openecomp.sdc.vendorlicense.dao.types.OperationalScope;
 import org.openecomp.sdc.vendorlicense.dao.types.ThresholdUnit;
 
@@ -37,6 +38,7 @@ public class EntitlementPoolRequestDto {
   @Size(max = 120)
   private String name;
 
+  @NotBlank(message = "is mandatory and should not be empty")
   @Size(max = 100)
   private String manufacturerReferenceNumber;
 
