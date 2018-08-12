@@ -1,0 +1,34 @@
+heat_template_version: 2015-04-30
+
+description: Vyatta vRouter template 
+
+parameters:
+  vnf_name:
+    type: string
+    description: Unique name for this VF instance
+  vce_image_name:
+    type: string
+    description: Name of the disk image
+  vce_volume_size_0:
+    type: number
+    description: Size of the disk volume
+    constraints:
+      - range: { min: 4, max: 25 }
+        description: The size of the volume in GB.
+
+resources:
+  vce_volume_0:
+    type: OS::Cinder::Volume
+    properties:
+      image: {get_param: vce_image_name}
+      size: {get_param: vce_volume_size_0}
+      name: 
+        str_replace:
+          template: vnfname%-volume
+          params:
+            "vnfname%": {get_param: vnf_name}
+
+outputs:
+  vce_volume_id_0:
+    description: Return the UUID of the created volume
+    value: {get_resource: vce_volume_0}
