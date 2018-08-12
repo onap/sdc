@@ -16,7 +16,6 @@
     <modules>
         <module>../openecomp-be/tools/artifact-copy-plugin</module>
         <module>../openecomp-be/tools/compile-helper-plugin</module>
-        <module>../openecomp-be/tools/pmd-helper-plugin</module>
         <module>../common</module>
         <module>../openecomp-be</module>
         <module>../openecomp-be/tools/build-data-installer</module>
@@ -110,12 +109,8 @@
         <zusammen-state-store.version>1.0.1</zusammen-state-store.version>
         <zusammen-collaboration-store.version>1.0.1</zusammen-collaboration-store.version>
         <zusammen-index-store.version>1.0.0</zusammen-index-store.version>
-        <pmd.version>5.8.1</pmd.version>
         <build.tools.version>${project.version}</build.tools.version>
         <togglz.version>2.4.1.Final</togglz.version>
-        <maven.pmd.plugin.version>3.9.0</maven.pmd.plugin.version>
-        <pmd.java.version>6.3.0</pmd.java.version>
-        <pmd.core.version>6.3.0</pmd.core.version>
     </properties>
 
     <dependencyManagement>

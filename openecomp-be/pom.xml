@@ -87,13 +87,6 @@
                 <groupId>org.openecomp.sdc.onboarding</groupId>
                 <artifactId>compile-helper-plugin</artifactId>
                 <version>${project.version}</version>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.openecomp.sdc.onboarding</groupId>
-                        <artifactId>pmd-helper-plugin</artifactId>
-                        <version>${project.version}</version>
-                    </dependency>
-                </dependencies>
                 <executions>
                     <execution>
                         <goals>
@@ -114,87 +107,6 @@
                         <compileStateFilePath>org.openecomp.sdc:sdc-onboarding/target/build-data/compileState.dat
                         </compileStateFilePath>
                     </buildState>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-pmd-plugin</artifactId>
-                <version>${maven.pmd.plugin.version}</version>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.openecomp.sdc</groupId>
-                        <artifactId>build-tools</artifactId>
-                        <version>${build.tools.version}</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>net.sourceforge.pmd</groupId>
-                        <artifactId>pmd-core</artifactId>
-                        <version>${pmd.core.version}</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>net.sourceforge.pmd</groupId>
-                        <artifactId>pmd-java</artifactId>
-                        <version>${pmd.java.version}</version>
-                    </dependency>
-                </dependencies>
-                <configuration>
-                    <skip>${skipPMD}</skip>
-                    <showPmdLog>false</showPmdLog>
-                    <analysisCache>false</analysisCache>
-                    <analysisCacheLocation>${project.build.directory}/pmd/pmd.cache</analysisCacheLocation>
-                    <failOnViolation>false</failOnViolation>
-                    <printFailingErrors>false</printFailingErrors>
-                    <format>csv</format>
-                    <targetDirectory>${project.build.directory}/pmd</targetDirectory>
-                    <includeTests>true</includeTests>
-                    <linkXRef>false</linkXRef>
-                    <aggregate>false</aggregate>
-                    <rulesets>
-                        <ruleset>/category/java/bestpractices.xml</ruleset>
-                        <ruleset>/category/java/codestyle.xml</ruleset>
-                        <ruleset>/category/java/design.xml</ruleset>
-                        <ruleset>/category/java/errorprone.xml</ruleset>
-                        <ruleset>/category/java/multithreading.xml</ruleset>
-                        <ruleset>/category/java/performance.xml</ruleset>
-                        <ruleset>/category/java/security.xml</ruleset>
-                    </rulesets>
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                        <phase>integration-test</phase>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.openecomp.sdc.onboarding</groupId>
-                <artifactId>pmd-helper-plugin</artifactId>
-                <version>${project.version}</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>init-pmd-helper</goal>
-                            <goal>post-verify-helper</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <excludePackaging>pom</excludePackaging>
-                    <pmdTargetLocation>${project.build.directory}/pmd/pmd.xml</pmdTargetLocation>
-                    <pmdFailureReportLocation>${project.build.directory}/pmd.txt</pmdFailureReportLocation>
-                    <pmdReportFile>${project.build.directory}/pmd/pmd.csv</pmdReportFile>
-                    <persistingModuleCoordinates>org.openecomp.sdc:build-data-installer</persistingModuleCoordinates>
-                    <pmdCurrentStateFilePath>org.openecomp.sdc:sdc-onboarding/target/build-data/pmdState.dat
-                    </pmdCurrentStateFilePath>
-                    <pmdStateFile>${project.build.outputDirectory}/pmd.dat</pmdStateFile>
-                    <compiledFilesList>
-                        ${project.build.directory}/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst
-                    </compiledFilesList>
-                    <compiledTestFilesList>
-                        ${project.build.directory}/maven-status/maven-compiler-plugin/testCompile/default-testCompile/createdFiles.lst
-                    </compiledTestFilesList>
                 </configuration>
             </plugin>
             <plugin>

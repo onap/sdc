@@ -384,7 +384,6 @@
                 <activeByDefault>true</activeByDefault>
             </activation>
             <modules>
-                <module>build-tools</module>
                 <module>security-utils</module>
                 <module>common-app-api</module>
                 <module>onboarding</module>
@@ -435,7 +434,6 @@
                 <activeByDefault>false</activeByDefault>
             </activation>
             <modules>
-                <module>build-tools</module>
                 <module>onboarding</module>
             </modules>
         </profile>
