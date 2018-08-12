@@ -20,9 +20,13 @@
 
 package org.openecomp.sdc.translator.services.heattotosca.impl.resourcetranslation;
 
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
+import org.openecomp.sdc.common.togglz.ToggleableFeature;
 import org.openecomp.sdc.translator.services.heattotosca.buildconsolidationdata.ConsolidationDataValidationType;
+import org.togglz.testing.TestFeatureManagerProvider;
 
 import java.io.IOException;
 
@@ -36,6 +40,13 @@ public class ResourceTranslationNovaServerImplTest extends BaseResourceTranslati
   public void setUp() throws IOException {
     // do not delete this function. it prevents the superclass setup from running
   }
+  
+  @BeforeClass
+  public static void enableFabricConfigurationTagging() {
+      manager.enable(ToggleableFeature.FABRIC_CONFIGURATION);
+      TestFeatureManagerProvider.setFeatureManager(manager);
+  }
+
 
   @Test
   public void testTranslate() throws Exception {
@@ -108,6 +119,15 @@ public class ResourceTranslationNovaServerImplTest extends BaseResourceTranslati
     initTranslatorAndTranslate();
     testTranslation();
   }
+  
+  
+  @AfterClass
+  public static void disableFabricConfiguration() {
+      manager.disable(ToggleableFeature.FABRIC_CONFIGURATION);
+      manager = null;
+      TestFeatureManagerProvider.setFeatureManager(null);
+  }
+
   
   
 }

@@ -1,0 +1,618 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: Nested_vce
+imports:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+- GlobalSubstitutionTypes:
+    file: GlobalSubstitutionTypesServiceTemplate.yaml
+node_types:
+  org.openecomp.resource.vfc.compute.nodes.heat.vce:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+    capabilities:
+      fabric_configuration_monitoring:
+        type: org.openecomp.capabilities.FabricConfiguration
+        occurrences:
+        - 1
+        - UNBOUNDED
+topology_template:
+  inputs:
+    port_vce_SRIOV2_0_port_binding:vnic_type:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_vce_SRIOV1_0_port_network_role_tag:
+      type: string
+      required: true
+    port_vce_SRIOV2_0_port_subnetpoolid:
+      type: string
+      required: true
+    port_vce_SRIOV1_0_port_value_specs:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    compute_vce_name:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    compute_vce_metadata:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    port_vce_oam0_port_exCP_naming:
+      type: org.openecomp.datatypes.Naming
+      required: true
+    port_vce_SRIOV1_0_port_ip_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.IpRequirements
+    port_vce_SRIOV1_0_port_network_role:
+      type: string
+      required: true
+    vm_flavor_name:
+      type: string
+      required: true
+    port_vce_SRIOV2_0_port_value_specs:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    port_vce_oam0_port_network:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_vce_SRIOV2_0_port_network_role_tag:
+      type: string
+      required: true
+    port_vce_oam0_port_network_role_tag:
+      type: string
+      required: true
+    port_vce_SRIOV1_0_port_order:
+      type: integer
+      required: true
+    port_vce_oam0_port_ip_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.IpRequirements
+    port_vce_oam0_port_name:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_vce_oam0_port_order:
+      type: integer
+      required: true
+    port_vce_SRIOV1_0_port_network:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_vce_SRIOV2_0_port_order:
+      type: integer
+      required: true
+    compute_vce_availability_zone:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_vce_oam0_port_vlan_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.VlanRequirements
+    port_vce_SRIOV1_0_port_exCP_naming:
+      type: org.openecomp.datatypes.Naming
+      required: true
+    port_vce_SRIOV2_0_port_admin_state_up:
+      type: list
+      required: true
+      entry_schema:
+        type: boolean
+    port_vce_SRIOV2_0_port_exCP_naming:
+      type: org.openecomp.datatypes.Naming
+      required: true
+    port_vce_SRIOV1_0_port_mac_requirements:
+      type: org.openecomp.datatypes.network.MacRequirements
+      required: true
+    index_value:
+      type: integer
+      description: Index value of this substitution service template runtime instance
+      required: false
+      default: 0
+      constraints:
+      - greater_or_equal: 0
+    port_vce_SRIOV1_0_port_subnetpoolid:
+      type: string
+      required: true
+    port_vce_SRIOV1_0_port_vlan_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.VlanRequirements
+    port_vce_SRIOV2_0_port_ip_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.IpRequirements
+    port_vce_SRIOV2_0_port_network:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_vce_SRIOV2_0_port_vlan_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.VlanRequirements
+    port_vce_SRIOV1_0_port_name:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_vce_SRIOV2_0_port_network_role:
+      type: string
+      required: true
+    port_vce_oam0_port_fixed_ips:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.heat.neutron.port.FixedIps
+    port_vce_oam0_port_admin_state_up:
+      type: list
+      required: true
+      entry_schema:
+        type: boolean
+    port_vce_SRIOV2_0_port_name:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_vce_oam0_port_subnetpoolid:
+      type: string
+      required: true
+    port_vce_SRIOV2_0_port_mac_requirements:
+      type: org.openecomp.datatypes.network.MacRequirements
+      required: true
+    port_vce_SRIOV1_0_port_admin_state_up:
+      type: list
+      required: true
+      entry_schema:
+        type: boolean
+    compute_vce_user_data_format:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_vce_oam0_port_mac_requirements:
+      type: org.openecomp.datatypes.network.MacRequirements
+      required: true
+    port_vce_oam0_port_network_role:
+      type: string
+      required: true
+    port_vce_SRIOV1_0_port_binding:vnic_type:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+  node_templates:
+    vce:
+      type: org.openecomp.resource.vfc.compute.nodes.heat.vce
+      properties:
+        availability_zone:
+          get_input:
+          - compute_vce_availability_zone
+          - index_value
+        flavor:
+          get_input: vm_flavor_name
+        metadata:
+          get_input:
+          - compute_vce_metadata
+          - index_value
+        name:
+          get_input:
+          - compute_vce_name
+          - index_value
+        user_data_format:
+          get_input:
+          - compute_vce_user_data_format
+          - index_value
+    vce_vce_SRIOV2_0_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        mac_requirements:
+          get_input: port_vce_SRIOV2_0_port_mac_requirements
+        order:
+          get_input: port_vce_SRIOV2_0_port_order
+        binding:vnic_type:
+          get_input:
+          - port_vce_SRIOV2_0_port_binding:vnic_type
+          - index_value
+        value_specs:
+          get_input:
+          - port_vce_SRIOV2_0_port_value_specs
+          - index_value
+        exCP_naming:
+          get_input: port_vce_SRIOV2_0_port_exCP_naming
+        vlan_requirements:
+          get_input: port_vce_SRIOV2_0_port_vlan_requirements
+        subinterface_indicator: false
+        ip_requirements:
+          get_input: port_vce_SRIOV2_0_port_ip_requirements
+        network_role_tag:
+          get_input: port_vce_SRIOV2_0_port_network_role_tag
+        admin_state_up:
+          get_input:
+          - port_vce_SRIOV2_0_port_admin_state_up
+          - index_value
+        network_role:
+          get_input: port_vce_SRIOV2_0_port_network_role
+        subnetpoolid:
+          get_input: port_vce_SRIOV2_0_port_subnetpoolid
+        name:
+          get_input:
+          - port_vce_SRIOV2_0_port_name
+          - index_value
+        network:
+          get_input:
+          - port_vce_SRIOV2_0_port_network
+          - index_value
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: vce
+          relationship: tosca.relationships.network.BindsTo
+    vce_vce_oam0_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        mac_requirements:
+          get_input: port_vce_oam0_port_mac_requirements
+        order:
+          get_input: port_vce_oam0_port_order
+        exCP_naming:
+          get_input: port_vce_oam0_port_exCP_naming
+        vlan_requirements:
+          get_input: port_vce_oam0_port_vlan_requirements
+        subinterface_indicator: false
+        ip_requirements:
+          get_input: port_vce_oam0_port_ip_requirements
+        network_role_tag:
+          get_input: port_vce_oam0_port_network_role_tag
+        admin_state_up:
+          get_input:
+          - port_vce_oam0_port_admin_state_up
+          - index_value
+        network_role:
+          get_input: port_vce_oam0_port_network_role
+        fixed_ips:
+          get_input:
+          - port_vce_oam0_port_fixed_ips
+          - index_value
+        subnetpoolid:
+          get_input: port_vce_oam0_port_subnetpoolid
+        name:
+          get_input:
+          - port_vce_oam0_port_name
+          - index_value
+        network:
+          get_input:
+          - port_vce_oam0_port_network
+          - index_value
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: vce
+          relationship: tosca.relationships.network.BindsTo
+    vce_vce_SRIOV1_0_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        mac_requirements:
+          get_input: port_vce_SRIOV1_0_port_mac_requirements
+        order:
+          get_input: port_vce_SRIOV1_0_port_order
+        binding:vnic_type:
+          get_input:
+          - port_vce_SRIOV1_0_port_binding:vnic_type
+          - index_value
+        value_specs:
+          get_input:
+          - port_vce_SRIOV1_0_port_value_specs
+          - index_value
+        exCP_naming:
+          get_input: port_vce_SRIOV1_0_port_exCP_naming
+        vlan_requirements:
+          get_input: port_vce_SRIOV1_0_port_vlan_requirements
+        subinterface_indicator: false
+        ip_requirements:
+          get_input: port_vce_SRIOV1_0_port_ip_requirements
+        network_role_tag:
+          get_input: port_vce_SRIOV1_0_port_network_role_tag
+        admin_state_up:
+          get_input:
+          - port_vce_SRIOV1_0_port_admin_state_up
+          - index_value
+        network_role:
+          get_input: port_vce_SRIOV1_0_port_network_role
+        subnetpoolid:
+          get_input: port_vce_SRIOV1_0_port_subnetpoolid
+        name:
+          get_input:
+          - port_vce_SRIOV1_0_port_name
+          - index_value
+        network:
+          get_input:
+          - port_vce_SRIOV1_0_port_network
+          - index_value
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: vce
+          relationship: tosca.relationships.network.BindsTo
+  substitution_mappings:
+    node_type: org.openecomp.resource.abstract.nodes.vce
+    capabilities:
+      memory.resident_vce:
+      - vce
+      - memory.resident
+      network.outpoing.packets_vce_vce_SRIOV2_0_port:
+      - vce_vce_SRIOV2_0_port
+      - network.outpoing.packets
+      feature_vce:
+      - vce
+      - feature
+      network.outgoing.packets.rate_vce_vce_oam0_port:
+      - vce_vce_oam0_port
+      - network.outgoing.packets.rate
+      network.incoming.packets.rate_vce_vce_SRIOV1_0_port:
+      - vce_vce_SRIOV1_0_port
+      - network.incoming.packets.rate
+      scalable_vce:
+      - vce
+      - scalable
+      cpu_vce:
+      - vce
+      - cpu
+      network.outgoing.bytes_vce_vce_oam0_port:
+      - vce_vce_oam0_port
+      - network.outgoing.bytes
+      network.outpoing.packets_vce_vce_SRIOV1_0_port:
+      - vce_vce_SRIOV1_0_port
+      - network.outpoing.packets
+      disk.usage_vce:
+      - vce
+      - disk.usage
+      forwarder_vce_vce_oam0_port:
+      - vce_vce_oam0_port
+      - forwarder
+      disk.device.write.bytes_vce:
+      - vce
+      - disk.device.write.bytes
+      network.incoming.bytes.rate_vce_vce_oam0_port:
+      - vce_vce_oam0_port
+      - network.incoming.bytes.rate
+      network.outgoing.packets.rate_vce_vce_SRIOV2_0_port:
+      - vce_vce_SRIOV2_0_port
+      - network.outgoing.packets.rate
+      network.outgoing.packets.rate_vce_vce_SRIOV1_0_port:
+      - vce_vce_SRIOV1_0_port
+      - network.outgoing.packets.rate
+      os_vce:
+      - vce
+      - os
+      disk.allocation_vce:
+      - vce
+      - disk.allocation
+      binding_vce:
+      - vce
+      - binding
+      network.incoming.packets.rate_vce_vce_SRIOV2_0_port:
+      - vce_vce_SRIOV2_0_port
+      - network.incoming.packets.rate
+      network.incoming.bytes.rate_vce_vce_SRIOV2_0_port:
+      - vce_vce_SRIOV2_0_port
+      - network.incoming.bytes.rate
+      network.incoming.bytes.rate_vce_vce_SRIOV1_0_port:
+      - vce_vce_SRIOV1_0_port
+      - network.incoming.bytes.rate
+      forwarder_vce_vce_SRIOV1_0_port:
+      - vce_vce_SRIOV1_0_port
+      - forwarder
+      binding_vce_vce_SRIOV2_0_port:
+      - vce_vce_SRIOV2_0_port
+      - binding
+      instance_vce:
+      - vce
+      - instance
+      disk.device.usage_vce:
+      - vce
+      - disk.device.usage
+      fabric_configuration_monitoring_vce:
+      - vce
+      - fabric_configuration_monitoring
+      disk.device.allocation_vce:
+      - vce
+      - disk.device.allocation
+      network.outgoing.bytes.rate_vce_vce_SRIOV1_0_port:
+      - vce_vce_SRIOV1_0_port
+      - network.outgoing.bytes.rate
+      disk.write.bytes.rate_vce:
+      - vce
+      - disk.write.bytes.rate
+      disk.ephemeral.size_vce:
+      - vce
+      - disk.ephemeral.size
+      disk.device.write.bytes.rate_vce:
+      - vce
+      - disk.device.write.bytes.rate
+      disk.read.bytes_vce:
+      - vce
+      - disk.read.bytes
+      network.incoming.bytes_vce_vce_SRIOV2_0_port:
+      - vce_vce_SRIOV2_0_port
+      - network.incoming.bytes
+      disk.capacity_vce:
+      - vce
+      - disk.capacity
+      disk.device.read.bytes.rate_vce:
+      - vce
+      - disk.device.read.bytes.rate
+      network.incoming.packets_vce_vce_oam0_port:
+      - vce_vce_oam0_port
+      - network.incoming.packets
+      disk.device.write.requests.rate_vce:
+      - vce
+      - disk.device.write.requests.rate
+      attachment_vce_vce_oam0_port:
+      - vce_vce_oam0_port
+      - attachment
+      feature_vce_vce_SRIOV1_0_port:
+      - vce_vce_SRIOV1_0_port
+      - feature
+      network.incoming.packets_vce_vce_SRIOV2_0_port:
+      - vce_vce_SRIOV2_0_port
+      - network.incoming.packets
+      network.incoming.packets_vce_vce_SRIOV1_0_port:
+      - vce_vce_SRIOV1_0_port
+      - network.incoming.packets
+      feature_vce_vce_SRIOV2_0_port:
+      - vce_vce_SRIOV2_0_port
+      - feature
+      attachment_vce_vce_SRIOV1_0_port:
+      - vce_vce_SRIOV1_0_port
+      - attachment
+      disk.write.requests_vce:
+      - vce
+      - disk.write.requests
+      memory_vce:
+      - vce
+      - memory
+      network.outpoing.packets_vce_vce_oam0_port:
+      - vce_vce_oam0_port
+      - network.outpoing.packets
+      disk.root.size_vce:
+      - vce
+      - disk.root.size
+      cpu.delta_vce:
+      - vce
+      - cpu.delta
+      disk.device.write.requests_vce:
+      - vce
+      - disk.device.write.requests
+      disk.device.read.requests.rate_vce:
+      - vce
+      - disk.device.read.requests.rate
+      attachment_vce_vce_SRIOV2_0_port:
+      - vce_vce_SRIOV2_0_port
+      - attachment
+      network.incoming.packets.rate_vce_vce_oam0_port:
+      - vce_vce_oam0_port
+      - network.incoming.packets.rate
+      network.outgoing.bytes.rate_vce_vce_oam0_port:
+      - vce_vce_oam0_port
+      - network.outgoing.bytes.rate
+      disk.device.read.bytes_vce:
+      - vce
+      - disk.device.read.bytes
+      host_vce:
+      - vce
+      - host
+      disk.device.latency_vce:
+      - vce
+      - disk.device.latency
+      vcpus_vce:
+      - vce
+      - vcpus
+      disk.write.requests.rate_vce:
+      - vce
+      - disk.write.requests.rate
+      network.outgoing.bytes_vce_vce_SRIOV2_0_port:
+      - vce_vce_SRIOV2_0_port
+      - network.outgoing.bytes
+      network.outgoing.bytes_vce_vce_SRIOV1_0_port:
+      - vce_vce_SRIOV1_0_port
+      - network.outgoing.bytes
+      disk.device.iops_vce:
+      - vce
+      - disk.device.iops
+      disk.latency_vce:
+      - vce
+      - disk.latency
+      binding_vce_vce_SRIOV1_0_port:
+      - vce_vce_SRIOV1_0_port
+      - binding
+      forwarder_vce_vce_SRIOV2_0_port:
+      - vce_vce_SRIOV2_0_port
+      - forwarder
+      disk.iops_vce:
+      - vce
+      - disk.iops
+      disk.read.bytes.rate_vce:
+      - vce
+      - disk.read.bytes.rate
+      network.outgoing.bytes.rate_vce_vce_SRIOV2_0_port:
+      - vce_vce_SRIOV2_0_port
+      - network.outgoing.bytes.rate
+      binding_vce_vce_oam0_port:
+      - vce_vce_oam0_port
+      - binding
+      network.incoming.bytes_vce_vce_SRIOV1_0_port:
+      - vce_vce_SRIOV1_0_port
+      - network.incoming.bytes
+      network.incoming.bytes_vce_vce_oam0_port:
+      - vce_vce_oam0_port
+      - network.incoming.bytes
+      cpu_util_vce:
+      - vce
+      - cpu_util
+      feature_vce_vce_oam0_port:
+      - vce_vce_oam0_port
+      - feature
+      disk.write.bytes_vce:
+      - vce
+      - disk.write.bytes
+      memory.usage_vce:
+      - vce
+      - memory.usage
+      disk.device.capacity_vce:
+      - vce
+      - disk.device.capacity
+      disk.device.read.requests_vce:
+      - vce
+      - disk.device.read.requests
+      endpoint_vce:
+      - vce
+      - endpoint
+      disk.read.requests_vce:
+      - vce
+      - disk.read.requests
+    requirements:
+      local_storage_vce:
+      - vce
+      - local_storage
+      link_vce_vce_SRIOV1_0_port:
+      - vce_vce_SRIOV1_0_port
+      - link
+      dependency_vce_vce_SRIOV1_0_port:
+      - vce_vce_SRIOV1_0_port
+      - dependency
+      link_vce_vce_SRIOV2_0_port:
+      - vce_vce_SRIOV2_0_port
+      - link
+      link_vce_vce_oam0_port:
+      - vce_vce_oam0_port
+      - link
+      dependency_vce_vce_oam0_port:
+      - vce_vce_oam0_port
+      - dependency
+      dependency_vce_vce_SRIOV2_0_port:
+      - vce_vce_SRIOV2_0_port
+      - dependency
+      dependency_vce:
+      - vce
+      - dependency
