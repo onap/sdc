@@ -1,0 +1,279 @@
+heat_template_version: 2015-04-30
+
+description: ATT Vyatta vRouter template with 3 ports total - 1 Mgmt - 2 SR-IOV. 
+
+#Create two AIC network ports via SR-IOV provider networks -- assumes one-time site-prep template has been run already
+
+parameters:
+#VM Parameters
+  vce_name_0:
+    type: string
+    description: Name of the VM
+  vce_flavor_name:
+    type: string
+    description: VM instance sizing
+  availability_zone_0:
+    type: string
+    description: The Availability Zone to launch the instance.
+  vnf_name:
+    type: string
+    description: Unique name for this VF instance
+  vnf_id:
+    type: string
+    description: Unique ID for this VF instance; Unique ID for VNF for AAI metadata
+  vf_module_name:
+    type: string
+    description: Unique name for this VF Module instance -- Not used for this VNF 
+  sdnc_model_name: 
+    type: string
+    description: SDNC Blue Print Name
+  sdnc_model_version:
+    type: string
+    description: SDNC Model Version 
+  sdnc_artifact_name:
+    type: string
+    description:  SDNC Artifact Name
+  vf_module_id:
+    type: string
+    description: Unique ID for this VF Module instance -- Not used for this VNF
+  vce_volume_id_0:
+    type: string
+    description: ID of the boot disk volume
+  dcae_0:
+    type: string
+    description: IP Address of DCAE CTS Server
+  ntp_ip_0:
+    type: string
+    description: IP Address of primary NTP Server
+  ntp_ip_1: 
+    type: string
+    description: IP Address of secondary NTP Server
+  syslog_ip_0: 
+    type: string
+    description: IP Address of first syslog Server
+  syslog_ip_1: 
+    type: string
+    description: IP Address of second syslog Server
+  syslog_ip_2: 
+    type: string
+    description: IP Address of third syslog Server
+  syslog_ip_3: 
+    type: string
+    description: IP Address of fourth syslog Server
+  snmp_community_0: 
+    type: string
+    description: SNMP Community value
+  snmp_ip_0: 
+    type: string
+    description: IP Address of first SNMP Server
+  snmp_ip_1: 
+    type: string
+    description: IP Address of second SNMP Server
+  snmp_ip_2: 
+    type: string
+    description: IP Address of third SNMP Server
+  snmp_ip_3: 
+    type: string
+    description: IP Address of fourth SNMP Server
+  tacplus_key_0: 
+    type: string
+    description: TACPLUS key
+  tacplus_ip_0: 
+    type: string
+    description: IP Address of first TACPLUS Server
+  tacplus_ip_1: 
+    type: string
+    description: IP Address of first TACPLUS Server
+  tacplus_ip_2: 
+    type: string
+    description: IP Address of first TACPLUS Server
+  tacplus_ip_3: 
+    type: string
+    description: IP Address of first TACPLUS Server
+  tacplus_port_0: 
+    type: string
+    description: TACPLUS Domain Port
+#Networking Parameters
+#SRIOV Port 0
+  vce_SRIOV1_0_net_id:
+    type: string
+    description: SRIOV Provider 0 network id 
+  vce_SRIOV1_0_port_name:
+    type: string
+    description: name for sriov Port 0
+  ATT_VF_VLAN_FILTER_vCE_SRIOV1_0: 
+    type: json
+    description: VF VLAN Filters specified in JSON list object
+  ATT_VF_VLAN_STRIP_vCE_SRIOV1_0:
+    type: boolean
+    description: boolean to specify VLAN Strip option
+  ATT_VF_VLAN_ANTI_SPOOF_CHECK_vCE_SRIOV1_0: 
+    type: boolean
+    description: boolean to specify vlan anti spoof check option
+  ATT_VF_MAC_ANTI_SPOOF_CHECK_vCE_SRIOV1_0:
+    type: boolean
+    description: boolean to specify mac anti spoof check option
+  ATT_VF_BROADCAST_ALLOW_vCE_SRIOV1_0:
+    type: boolean
+    description: boolean to specify allowance of broadcast traffic
+  ATT_VF_UNKNOWN_MULTICAST_ALLOW_vCE_SRIOV1_0:
+    type: boolean
+    description: boolean to specify allowance of unknown multicast
+  ATT_VF_UNKNOWN_UNICAST_ALLOW_vCE_SRIOV1_0:
+    type: boolean
+    description: boolean to specify allowance of unknown unicast
+  ATT_VF_INSERT_STAG_vCE_SRIOV1_0:
+    type: boolean
+    description: boolean to specify insertion of outer tag for traffic coming out of VM
+  ATT_VF_LINK_STATUS_vCE_SRIOV1_0:
+    type: string
+    description: specify link status of SRIOV VF
+#SRIOV Port 1
+  vce_SRIOV2_0_net_id:
+    type: string
+    description: SRIOV Provider 1 network id 
+  vce_SRIOV2_0_port_name:
+    type: string
+    description: name for sriov Port 1
+  ATT_VF_VLAN_FILTER_vCE_SRIOV2_0: 
+    type: json
+    description: VF VLAN Filters specified in JSON list object
+  ATT_VF_VLAN_STRIP_vCE_SRIOV2_0:
+    type: boolean
+    description: boolean to specify VLAN Strip option
+  ATT_VF_VLAN_ANTI_SPOOF_CHECK_vCE_SRIOV2_0: 
+    type: boolean
+    description: boolean to specify vlan anti spoof check option
+  ATT_VF_MAC_ANTI_SPOOF_CHECK_vCE_SRIOV2_0:
+    type: boolean
+    description: boolean to specify mac anti spoof check option
+  ATT_VF_BROADCAST_ALLOW_vCE_SRIOV2_0:
+    type: boolean
+    description: boolean to specify allowance of broadcast traffic
+  ATT_VF_UNKNOWN_MULTICAST_ALLOW_vCE_SRIOV2_0:
+    type: boolean
+    description: boolean to specify allowance of unknown multicast
+  ATT_VF_UNKNOWN_UNICAST_ALLOW_vCE_SRIOV2_0:
+    type: boolean
+    description: boolean to specify allowance of unknown unicast
+  ATT_VF_INSERT_STAG_vCE_SRIOV2_0:
+    type: boolean
+    description: boolean to specify insertion of outer tag for traffic coming out of VM
+  ATT_VF_LINK_STATUS_vCE_SRIOV2_0:
+    type: string
+    description: specify link status of SRIOV VF
+#OAM Port 0
+  oam0_net_id:
+    type: string
+    description: OAM network - 1st vNIC
+  vce_oam0_port_name:
+    type: string
+    description: Neutron name for the OAM Port
+  vce_oam0_ip_0:
+    type: string
+    description: IP Address of OAM port
+  oam0_subnet_0_default_gateway:
+    type: string
+    description: Default Gateway for OAM network
+
+
+
+# NOTE: Normally when creating an OS SR-IOV Neutron port, you have to specify the binding:vnic_type=direct;
+
+resources:
+  vce_oam0_port:
+    type: OS::Neutron::Port
+    properties:
+      admin_state_up: true
+      name: { get_param: vce_oam0_port_name}
+      network: { get_param: oam0_net_id }
+      fixed_ips: [ { "ip_address": {get_param: vce_oam0_ip_0}}]
+
+  vce_SRIOV1_0_port:
+    type: OS::Neutron::Port
+    properties:
+      admin_state_up: true
+      name: { get_param: vce_SRIOV1_0_port_name}
+      network: { get_param: vce_SRIOV1_0_net_id }
+      binding:vnic_type: direct
+      value_specs:  
+           ATT_VF_VLAN_FILTER: { get_param: ATT_VF_VLAN_FILTER_vCE_SRIOV1_0 }
+           ATT_VF_VLAN_STRIP: { get_param: ATT_VF_VLAN_STRIP_vCE_SRIOV1_0 }
+           ATT_VF_VLAN_ANTI_SPOOF_CHECK: { get_param: ATT_VF_VLAN_ANTI_SPOOF_CHECK_vCE_SRIOV1_0 }
+           ATT_VF_MAC_ANTI_SPOOF_CHECK: { get_param: ATT_VF_MAC_ANTI_SPOOF_CHECK_vCE_SRIOV1_0 }
+           ATT_VF_BROADCAST_ALLOW: { get_param: ATT_VF_BROADCAST_ALLOW_vCE_SRIOV1_0 }
+           ATT_VF_UNKNOWN_MULTICAST_ALLOW: { get_param: ATT_VF_UNKNOWN_MULTICAST_ALLOW_vCE_SRIOV1_0 }
+           ATT_VF_UNKNOWN_UNICAST_ALLOW: { get_param: ATT_VF_UNKNOWN_UNICAST_ALLOW_vCE_SRIOV1_0 }
+           ATT_VF_INSERT_STAG: { get_param: ATT_VF_INSERT_STAG_vCE_SRIOV1_0 }
+           ATT_VF_LINK_STATUS: { get_param: ATT_VF_LINK_STATUS_vCE_SRIOV1_0 }
+           ATT_FABRIC_CONFIGURATION_REQUIRED: false
+
+  vce_SRIOV2_0_port:
+    type: OS::Neutron::Port
+    properties:
+      admin_state_up: true
+      name: { get_param: vce_SRIOV2_0_port_name}
+      network: { get_param: vce_SRIOV2_0_net_id }
+      binding:vnic_type: direct
+      value_specs:  
+           ATT_VF_VLAN_FILTER: { get_param: ATT_VF_VLAN_FILTER_vCE_SRIOV2_0 }
+           ATT_VF_VLAN_STRIP: { get_param: ATT_VF_VLAN_STRIP_vCE_SRIOV2_0 }
+           ATT_VF_VLAN_ANTI_SPOOF_CHECK: { get_param: ATT_VF_VLAN_ANTI_SPOOF_CHECK_vCE_SRIOV2_0 }
+           ATT_VF_MAC_ANTI_SPOOF_CHECK: { get_param: ATT_VF_MAC_ANTI_SPOOF_CHECK_vCE_SRIOV2_0 }
+           ATT_VF_BROADCAST_ALLOW: { get_param: ATT_VF_BROADCAST_ALLOW_vCE_SRIOV2_0 }
+           ATT_VF_UNKNOWN_MULTICAST_ALLOW: { get_param: ATT_VF_UNKNOWN_MULTICAST_ALLOW_vCE_SRIOV2_0 }
+           ATT_VF_UNKNOWN_UNICAST_ALLOW: { get_param: ATT_VF_UNKNOWN_UNICAST_ALLOW_vCE_SRIOV2_0 }
+           ATT_VF_INSERT_STAG: { get_param: ATT_VF_INSERT_STAG_vCE_SRIOV2_0 }
+           ATT_VF_LINK_STATUS: { get_param: ATT_VF_LINK_STATUS_vCE_SRIOV2_0 }
+
+  vce_0:
+    type: OS::Nova::Server
+    properties:
+      name: { get_param: vce_name_0 }
+      block_device_mapping: 
+      - device_name: vda
+        volume_id: { get_param: vce_volume_id_0 }
+        delete_on_termination: false
+      flavor: { get_param: vce_flavor_name }
+      availability_zone: { get_param: availability_zone_0 }
+      networks:
+      - port: { get_resource: vce_oam0_port }
+      - port: { get_resource: vce_SRIOV1_0_port }
+      - port: { get_resource: vce_SRIOV2_0_port }
+      metadata:
+        vnf_name: { get_param: vnf_name }
+        vnf_id: { get_param: vnf_id }
+        vf_module_name: { get_param: vf_module_name }
+        vf_module_id: { get_param: vf_module_id }
+        hostname: { get_param: vnf_name }
+        gateway: { get_param: oam0_subnet_0_default_gateway }
+        sdnc_model_name:  { get_param: sdnc_model_name }
+        sdnc_model_version: { get_param: sdnc_model_version }
+        sdnc_artifact_name:  { get_param: sdnc_artifact_name }
+      user_data_format: RAW
+      user_data: 
+        str_replace:
+          template: { get_file: vCE_Cloudinit.txt }
+          params: 
+            $OAM0_IP_0: { get_param: vce_oam0_ip_0 }
+            $OAM0_GATEWAY: { get_param: oam0_subnet_0_default_gateway }
+            $DCAE_CTS: { get_param: dcae_0 }
+            $HOSTNAME: { get param: vnf_name }
+            $NTP_SERVER_IPV4_1: { get_param: ntp_ip_0 }
+            $NTP_SERVER_IPV4_2: { get_param: ntp_ip_1 }
+            $SYSLOG_SERVER_IPV4_1: { get_param: syslog_ip_0 }
+            $SYSLOG_SERVER_IPV4_2: { get_param: syslog_ip_1 }
+            $SYSLOG_SERVER_IPV4_3: { get_param: syslog_ip_2 }
+            $SYSLOG_SERVER_IPV4_4: { get_param: syslog_ip_3 }
+            $SNMP_COMMUNITY: { get_param: snmp_community_0 }
+            $SNMP_TRAP_SERVER_IPV4_1: { get_param: snmp_ip_0 }
+            $SNMP_TRAP_SERVER_IPV4_2: { get_param: snmp_ip_1 }
+            $SNMP_TRAP_SERVER_IPV4_3: { get_param: snmp_ip_2 }
+            $SNMP_TRAP_SERVER_IPV4_4: { get_param: snmp_ip_3 }
+            $TACPLUS_KEY: { get_param: tacplus_key_0 }
+            $TACPLUS_SERVER_IPV4_1: { get_param: tacplus_ip_0 }
+            $TACPLUS_SERVER_IPV4_2: { get_param: tacplus_ip_1 }
+            $TACPLUS_SERVER_IPV4_3: { get_param: tacplus_ip_2 }
+            $TACPLUS_SERVER_IPV4_4: { get_param: tacplus_ip_3 }
+            $TACPLUS_DOMAIN_PORT: { get_param: tacplus_port_0 }
+
