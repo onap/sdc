@@ -20,9 +20,13 @@
 
 package org.openecomp.sdc.translator.services.heattotosca.impl.resourcetranslation;
 
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
+import org.openecomp.sdc.common.togglz.ToggleableFeature;
 import org.openecomp.sdc.translator.services.heattotosca.buildconsolidationdata.ConsolidationDataValidationType;
+import org.togglz.testing.TestFeatureManagerProvider;
 
 import java.io.IOException;
 
@@ -36,6 +40,13 @@ public class ResourceTranslationNovaServerImplTest extends BaseResourceTranslati
   public void setUp() throws IOException {
     // do not delete this function. it prevents the superclass setup from running
   }
+  
+  @BeforeClass
+  public static void enablefabricConfigurationTagging() {
+      manager.enable(ToggleableFeature.FABRIC_CONFIGURATION);
+      TestFeatureManagerProvider.setFeatureManager(manager);
+  }
+
 
   @Test
   public void testTranslate() throws Exception {
@@ -62,9 +73,9 @@ public class ResourceTranslationNovaServerImplTest extends BaseResourceTranslati
   @Test
   public void testFabricConfigurationOnlyOnePortTrue() throws IOException {
     inputFilesPath =
-        "/mock/services/heattotosca/novaservertranslation/fabricConfiguration/one_port_true/input";
+        "/mock/services/heattotosca/novaservertranslation/one_port_true/input";
     outputFilesPath =
-        "/mock/services/heattotosca/novaservertranslation/fabricConfiguration/one_port_true/output";
+        "/mock/services/heattotosca/novaservertranslation/one_port_true/output";
     initTranslatorAndTranslate();
     testTranslation();
   }
@@ -72,9 +83,9 @@ public class ResourceTranslationNovaServerImplTest extends BaseResourceTranslati
   @Test
   public void testFabricConfigurationAllFalse() throws IOException {
     inputFilesPath =
-        "/mock/services/heattotosca/novaservertranslation/fabricConfiguration/all_false/input";
+        "/mock/services/heattotosca/novaservertranslation/all_false/input";
     outputFilesPath =
-        "/mock/services/heattotosca/novaservertranslation/fabricConfiguration/all_false/output";
+        "/mock/services/heattotosca/novaservertranslation/all_false/output";
     initTranslatorAndTranslate();
     testTranslation();
   }
@@ -82,9 +93,9 @@ public class ResourceTranslationNovaServerImplTest extends BaseResourceTranslati
   @Test
   public void testFabricConfigurationPropertyNull() throws IOException {
     inputFilesPath =
-        "/mock/services/heattotosca/novaservertranslation/fabricConfiguration/property_null/input";
+        "/mock/services/heattotosca/novaservertranslation/property_null/input";
     outputFilesPath =
-        "/mock/services/heattotosca/novaservertranslation/fabricConfiguration/property_null/output";
+        "/mock/services/heattotosca/novaservertranslation/property_null/output";
     initTranslatorAndTranslate();
     testTranslation();
   }
@@ -92,9 +103,9 @@ public class ResourceTranslationNovaServerImplTest extends BaseResourceTranslati
   @Test
   public void testFabricConfigurationWithoutProperty() throws IOException {
     inputFilesPath =
-        "/mock/services/heattotosca/novaservertranslation/fabricConfiguration/without_property/input";
+        "/mock/services/heattotosca/novaservertranslation/without_property/input";
     outputFilesPath =
-        "/mock/services/heattotosca/novaservertranslation/fabricConfiguration/without_property/output";
+        "/mock/services/heattotosca/novaservertranslation/without_property/output";
     initTranslatorAndTranslate();
     testTranslation();
   }
@@ -102,12 +113,21 @@ public class ResourceTranslationNovaServerImplTest extends BaseResourceTranslati
   @Test
   public void testFabricConfiguration2Ports() throws IOException {
     inputFilesPath =
-        "/mock/services/heattotosca/novaservertranslation/fabricConfiguration/2ports/input";
+        "/mock/services/heattotosca/novaservertranslation/2ports/input";
     outputFilesPath =
-        "/mock/services/heattotosca/novaservertranslation/fabricConfiguration/2ports/output";
+        "/mock/services/heattotosca/novaservertranslation/2ports/output";
     initTranslatorAndTranslate();
     testTranslation();
   }
+  
+  
+  @AfterClass
+  public static void disableVLANTagging() {
+      manager.disable(ToggleableFeature.FABRIC_CONFIGURATION);
+      manager = null;
+      TestFeatureManagerProvider.setFeatureManager(null);
+  }
+
   
   
 }
