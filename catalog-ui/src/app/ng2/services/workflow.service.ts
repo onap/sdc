@@ -20,14 +20,14 @@ export class WorkflowServiceNg2 {
     public getWorkflows(filterCertified: boolean = true): Observable<any> {
         return this.http.get(this.baseUrl + '/workflows' + (filterCertified ? '?versionState=' + this.VERSION_STATE_CERTIFIED : ''))
             .map((res:Response) => {
-                return res.json().results;
+                return res.json().items;
             });
     }
 
     public getWorkflowVersions(workflowId: string, filterCertified: boolean = true): Observable<any> {
         return this.http.get(this.baseUrl + '/workflows/' + workflowId + '/versions' + (filterCertified ? '?state=' + this.VERSION_STATE_CERTIFIED : ''))
             .map((res:Response) => {
-                return res.json().results;
+                return res.json().items;
             });
     }
 
