@@ -29,6 +29,7 @@ import org.openecomp.sdc.be.config.DistributionEngineConfiguration.CreateTopicCo
 import org.openecomp.sdc.be.config.DistributionEngineConfiguration.DistributionNotificationTopicConfig;
 import org.openecomp.sdc.be.config.DistributionEngineConfiguration.DistributionStatusTopicConfig;
 import org.openecomp.sdc.be.config.validation.DeploymentArtifactHeatConfiguration;
+import org.openecomp.sdc.common.log.enums.EcompLoggerErrorCode;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.fe.config.Configuration.FeMonitoringConfig;
 import org.yaml.snakeyaml.TypeDescription;
@@ -149,7 +150,7 @@ public class YamlToObjectConverter {
 			config = convert(fullFileName, className);
 
 		} catch (Exception e) {
-			log.error("Failed to convert yaml file {} to object.", configFileName,e);
+			log.error(EcompLoggerErrorCode.UNKNOWN_ERROR,"","","Failed to convert yaml file {} to object.", configFileName,e);
 		}
 
 		return config;
@@ -196,7 +197,7 @@ public class YamlToObjectConverter {
 
 			File f = new File(fullFileName);
 			if (!f.exists()) {
-				log.warn("The file " + fullFileName + " cannot be found. Ignore reading configuration.");
+				log.warn(EcompLoggerErrorCode.UNKNOWN_ERROR,"","","The file {} cannot be found. Ignore reading configuration.",fullFileName);
 				return null;
 			}
 			in = Files.newInputStream(Paths.get(fullFileName));
@@ -205,7 +206,7 @@ public class YamlToObjectConverter {
 
 			// System.out.println(config.toString());
 		} catch (Exception e) {
-			log.error("Failed to convert yaml file {} to object.", fullFileName, e);
+			log.error(EcompLoggerErrorCode.UNKNOWN_ERROR,"","","Failed to convert yaml file {} to object.", fullFileName, e);
 		} finally {
 			if (in != null) {
 				try {
@@ -233,7 +234,7 @@ public class YamlToObjectConverter {
 			config = yaml.loadAs(in, className);
 
 		} catch (Exception e) {
-			log.error("Failed to convert yaml file to object", e);
+			log.error(EcompLoggerErrorCode.UNKNOWN_ERROR,"","","Failed to convert yaml file to object", e);
 		} finally {
 			if (in != null) {
 				try {
@@ -253,7 +254,7 @@ public class YamlToObjectConverter {
 		
 		return isValidYaml(decodedFileContents);
 	}
-	
+	@SuppressWarnings("unchecked")
 	public boolean isValidYaml(byte[] fileContents) {
 		try {
 			
@@ -265,7 +266,7 @@ public class YamlToObjectConverter {
 			 }
 			
 		} catch (Exception e) {
-			log.error("Failed to convert yaml file to object - yaml is invalid", e);
+			log.error(EcompLoggerErrorCode.UNKNOWN_ERROR,"","","Failed to convert yaml file to object - yaml is invalid", e);
 			return false;
 		}
 		return true;
