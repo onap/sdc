@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_f4310d0c",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/test/resources/mock/services/heattotosca/fulltest/localNode/novaServerWithFabricConfigurationCapability/in/vCE_Cloudinit.txt",
+        "patchSetId": 4
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1867
+      },
+      "writtenOn": "2018-08-13T09:59:16Z",
+      "side": 1,
+      "message": "i don\u0027t see any use for this file. in this case, remove it in order to avoid redundant files",
+      "revId": "5d7f333327d977b1124d2c8d7cbc91dfc299f229",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
