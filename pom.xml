@@ -8,16 +8,7 @@
     <packaging>pom</packaging>
     <name>sdc</name>
     <properties>
-
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
-
-        <!-- ==================== -->
-        <!-- Generic properties -->
-        <!-- ==================== -->
-        <build.type>-SNAPSHOT</build.type>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <sprint.number>74</sprint.number>
 
         <!-- 3rd parties versions -->
         <lang3.version>3.3.2</lang3.version>
@@ -62,7 +53,7 @@
         <jcabi.version>0.20.1</jcabi.version>
         <aspectjrt.version>1.8.4</aspectjrt.version>
         <aspectj.version>1.7.4</aspectj.version>
-        <jcabi.plugin.version>0.13.2</jcabi.plugin.version>
+        <jcabi.maven.plugin.version>0.13.2</jcabi.maven.plugin.version>
 
         <!-- Logging end -->
         <!-- System Metrics -->
@@ -102,16 +93,16 @@
         <nexus.id.snapshot>nexus</nexus.id.snapshot>
 
         <!--nexus-->
+        <npm.registry>https://registry.npmjs.org/</npm.registry>
+        <!-- https://nexus.onap.org/content/repositories/npm/ -->
         <nexus.proxy>https://nexus.onap.org</nexus.proxy>
         <sitePath>/content/sites/site/org/openecomp/sdc/${project.version}</sitePath>
         <staging.profile.id>176c31dfe190a</staging.profile.id>
         <!--maven-->
         <maven.build.timestamp.format>yyyyMMdd'T'HHmmss'Z'</maven.build.timestamp.format>
-        <!--io.fabric8-->
-        <fabric8.version>0.23.0</fabric8.version>
         <!--docker tags-->
         <docker.tag>${project.version}-${maven.build.timestamp}</docker.tag>
-        <!--<docker.latest.tag>${project.version}-latest</docker.latest.tag>-->
+
 
     </properties>
 
@@ -179,7 +170,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.0.0</version>
+                <version>3.0.1</version>
                 <configuration>
                     <failOnError>false</failOnError>
                     <doclet>org.umlgraph.doclet.UmlGraphDoc</doclet>
@@ -205,20 +196,6 @@
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-site-plugin</artifactId>
-                    <version>3.4</version>
-                    <dependencies>
-                        <dependency>
-                            <groupId>org.apache.maven.wagon</groupId>
-                            <artifactId>wagon-webdav-jackrabbit</artifactId>
-                            <version>2.10</version>
-                        </dependency>
-                    </dependencies>
-                </plugin>
-
-
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-assembly-plugin</artifactId>
                     <version>3.1.0</version>
                 </plugin>
@@ -226,12 +203,77 @@
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>exec-maven-plugin</artifactId>
-                    <version>1.4.0</version>
+                    <version>1.6.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.sonarsource.scanner.maven</groupId>
                     <artifactId>sonar-maven-plugin</artifactId>
-                    <version>3.0.2</version>
+                    <version>3.4.1.1168</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-clean-plugin</artifactId>
+                    <version>3.1.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>ru.yaal.maven</groupId>
+                    <artifactId>write-text-files-maven-plugin</artifactId>
+                    <version>1.1</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.gmaven</groupId>
+                    <artifactId>gmaven-plugin</artifactId>
+                    <version>1.5</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>build-helper-maven-plugin</artifactId>
+                    <version>3.0.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-deploy-plugin</artifactId>
+                    <version>2.8.2</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-shade-plugin</artifactId>
+                    <version>3.1.1</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-resources-plugin</artifactId>
+                    <version>3.1.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>io.fabric8</groupId>
+                    <artifactId>docker-maven-plugin</artifactId>
+                    <version>0.26.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-war-plugin</artifactId>
+                    <version>3.2.2</version>
+                </plugin>
+                <plugin>
+                    <groupId>com.github.eirslett</groupId>
+                    <artifactId>frontend-maven-plugin</artifactId>
+                    <version>1.6</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>2.22.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.8.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.sonatype.plugins</groupId>
+                    <artifactId>nexus-staging-maven-plugin</artifactId>
+                    <version>1.6.8</version>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -242,7 +284,6 @@
             <plugin>
                 <groupId>org.sonatype.plugins</groupId>
                 <artifactId>nexus-staging-maven-plugin</artifactId>
-                <version>1.6.7</version>
                 <extensions>true</extensions>
                 <configuration>
                     <nexusUrl>${nexus.proxy}</nexusUrl>
@@ -255,10 +296,10 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
-                <version>1.8</version>
                 <executions>
                     <execution>
                         <id>parse-version</id>
+                        <phase>pre-clean</phase>
                         <goals>
                             <goal>parse-version</goal>
                         </goals>
@@ -289,11 +330,12 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-site-plugin</artifactId>
+                <version>3.7.1</version>
                 <dependencies>
                     <dependency>
                         <groupId>org.apache.maven.wagon</groupId>
                         <artifactId>wagon-webdav-jackrabbit</artifactId>
-                        <version>2.10</version>
+                        <version>3.0.0</version>
                     </dependency>
                 </dependencies>
             </plugin>
@@ -302,7 +344,6 @@
             <plugin>
                 <groupId>org.codehaus.gmaven</groupId>
                 <artifactId>gmaven-plugin</artifactId>
-                <version>1.4</version>
                 <executions>
                     <execution>
                         <inherited>false</inherited>
@@ -324,55 +365,20 @@
                     </execution>
                 </executions>
             </plugin>
-
-            <!-- license plugin -->
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>license-maven-plugin</artifactId>
-                <version>1.10</version>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <addJavaLicenseAfterPackage>false</addJavaLicenseAfterPackage>
-                    <processStartTag>============LICENSE_START=======================================================</processStartTag>
-                    <processEndTag>============LICENSE_END=========================================================</processEndTag>
-                    <sectionDelimiter>================================================================================</sectionDelimiter>
-                    <sectionDelimiter>================================================================================</sectionDelimiter>
-                    <licenseName>apache_v2</licenseName>
-                    <inceptionYear>2017</inceptionYear>
-                    <organizationName>AT&amp;T Intellectual Property. All rights
-                        reserved.
-                    </organizationName>
-                    <projectName>SDC</projectName>
-                    <canUpdateCopyright>true</canUpdateCopyright>
-                    <canUpdateDescription>true</canUpdateDescription>
-                    <canUpdateLicense>true</canUpdateLicense>
-                    <emptyLineAfterHeader>true</emptyLineAfterHeader>
-                    <verbose>false</verbose>
-                    <includes>
-                        <include>**/*.java</include>
-                        <include>**/*.ts</include>
-                    </includes>
-                    <excludes>
-                        <exclude>**/*.d.ts</exclude>
-                    </excludes>
-                    <roots>
-                        <root>src</root>
-                        <root>app</root>
-                        <root>server-mock</root>
-                        <root>typings</root>
-                    </roots>
-                    <extraExtensions>
-                        <ts>java</ts>
-                    </extraExtensions>
+                    <source>1.8</source>
+                    <target>1.8</target>
                 </configuration>
-                <executions>
-                    <execution>
-                        <id>first</id>
-                        <goals>
-                            <goal>update-file-header</goal>
-                        </goals>
-                        <!--phase>process-sources</phase -->
-                    </execution>
-                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <printSummary>false</printSummary>
+                </configuration>
             </plugin>
         </plugins>
     </build>
@@ -385,10 +391,10 @@
             </activation>
             <modules>
                 <module>build-tools</module>
-                <module>security-utils</module>
-                <module>common-app-api</module>
                 <module>onboarding</module>
                 <module>services/activity-spec</module>
+                <module>security-utils</module>
+                <module>common-app-api</module>
                 <module>common-be</module>
                 <module>catalog-dao</module>
                 <module>catalog-model</module>

@@ -23,6 +23,7 @@ package org.openecomp.sdc.common.impl;
 import org.apache.commons.jci.listeners.FileChangeListener;
 import org.openecomp.sdc.common.api.BasicConfiguration;
 import org.openecomp.sdc.common.api.ConfigurationListener;
+import org.openecomp.sdc.common.log.enums.EcompLoggerErrorCode;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.common.util.YamlToObjectConverter;
 
@@ -64,12 +65,11 @@ public class ConfigFileChangeListener extends FileChangeListener {
 							BasicConfiguration basicConfiguration = yamlToObjectConverter.convert(pFile.getAbsolutePath(), configClass);
 
 							if (basicConfiguration == null) {
-								log.warn("Cannot update the listeners for file Change since the file content is invalid");
+								log.warn(EcompLoggerErrorCode.UNKNOWN_ERROR,"","","Cannot update the listeners for file Change since the file content is invalid");
 								continue;
 							}
 							log.debug("Loaded configuration after converting is {}", basicConfiguration);
-							// System.out.println("New configuration is " +
-							// basicConfiguration);
+
 
 							configurationListener.getCallBack().reconfigure(basicConfiguration);
 
@@ -77,7 +77,7 @@ public class ConfigFileChangeListener extends FileChangeListener {
 					}
 				} else {
 
-					log.warn("Cannot calculate id from file {}", pFile.getName());
+					log.warn(EcompLoggerErrorCode.UNKNOWN_ERROR,"","","Cannot calculate id from file {}", pFile.getName());
 				}
 			}
 
