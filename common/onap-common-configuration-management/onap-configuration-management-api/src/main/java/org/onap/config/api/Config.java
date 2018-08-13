@@ -12,10 +12,10 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Config {
 
-  /**
-   * Key string.
-   *
-   * @return the string
-   */
-  String key() default "";
+    /**
+     * Key string.
+     *
+     * @return the string
+     */
+    String key();
 }
