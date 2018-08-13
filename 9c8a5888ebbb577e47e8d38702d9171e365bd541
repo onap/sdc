@@ -1,0 +1,180 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_6f72087e",
+        "filename": "asdctool/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 703,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-08-13T11:16:13Z",
+      "side": 1,
+      "message": "Please remove as \"false\" is the default, and can be overridden with -Ddocker.verbose\u003dtrue if needed.",
+      "revId": "9c8a5888ebbb577e47e8d38702d9171e365bd541",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_ef05b8c2",
+        "filename": "catalog-be/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 975,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-08-13T11:16:13Z",
+      "side": 1,
+      "message": "Please remove as \"false\" is the default.",
+      "revId": "9c8a5888ebbb577e47e8d38702d9171e365bd541",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_0f0b54d7",
+        "filename": "catalog-fe/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 480,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-08-13T11:16:13Z",
+      "side": 1,
+      "message": "Please remove.",
+      "revId": "9c8a5888ebbb577e47e8d38702d9171e365bd541",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_ef2cd84c",
+        "filename": "openecomp-be/dist/sdc-onboard-backend-docker/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-08-13T11:16:13Z",
+      "side": 1,
+      "message": "Please remove",
+      "revId": "9c8a5888ebbb577e47e8d38702d9171e365bd541",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_0f3274a7",
+        "filename": "openecomp-be/dist/sdc-onboard-db-init-docker/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-08-13T11:16:13Z",
+      "side": 1,
+      "message": "Please remove.",
+      "revId": "9c8a5888ebbb577e47e8d38702d9171e365bd541",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_cf2b1c2f",
+        "filename": "pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 114,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-08-13T11:16:13Z",
+      "side": 1,
+      "message": "I think all these should be removed in favor of pluginManagement",
+      "range": {
+        "startLine": 104,
+        "startChar": 0,
+        "endLine": 114,
+        "endChar": 1
+      },
+      "revId": "9c8a5888ebbb577e47e8d38702d9171e365bd541",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_2f1ad017",
+        "filename": "sdc-os-chef/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-08-13T11:16:13Z",
+      "side": 1,
+      "message": "Not needed",
+      "revId": "9c8a5888ebbb577e47e8d38702d9171e365bd541",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_efd37836",
+        "filename": "test-apis-ci/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 498,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-08-13T11:16:13Z",
+      "side": 1,
+      "message": "Not needed",
+      "revId": "9c8a5888ebbb577e47e8d38702d9171e365bd541",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_0fd91457",
+        "filename": "ui-ci/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 393,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-08-13T11:16:13Z",
+      "side": 1,
+      "message": "Not needed, please remove",
+      "revId": "9c8a5888ebbb577e47e8d38702d9171e365bd541",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_afdd8044",
+        "filename": "utils/webseal-simulator/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 202,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-08-13T11:16:13Z",
+      "side": 1,
+      "message": "Please remove, this is not needed.",
+      "revId": "9c8a5888ebbb577e47e8d38702d9171e365bd541",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
