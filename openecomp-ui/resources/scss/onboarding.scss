@@ -20,90 +20,10 @@
   }
 }
 
-/* Out of namespace context for datepicker */
-div[data-reactroot].customized-date-picker-calendar {
-  @import "common/variables";
-  @import "common/typography";
-  border-color: $light-gray;
-  margin-top: -8px;
-	color: $black;
-  .react-datepicker__triangle {
-      margin-top: 0px;
-  }
-  .react-datepicker__navigation--previous::before, .react-datepicker__navigation--next::before {
-    width: 8px;
-    height: 8px;
-    display: inline-block;
-    position: absolute;
-    top: -4px;
-  }
-  .react-datepicker__navigation--previous::before {
-    left: 0;
-    content: url(../../node_modules/sdc-ui/assets/icons/angleLeft.svg);
-  }
-  .react-datepicker__navigation--next::before {
-    right: 0;
-    content: url(../../node_modules/sdc-ui/assets/icons/angleRight.svg);
-  }
 
-  .react-datepicker__navigation--previous, .react-datepicker__navigation--next {
-      border: none;
-  }
-
-
-  .react-datepicker__month-container {
-		.react-datepicker__header {
-			background-color: $background-gray;
-      border-bottom: none;
-      .react-datepicker__current-month {
-        @extend .body-1-semibold;
-        background-color: $background-gray;
-        margin-bottom: 10px;
-      }
-      .react-datepicker__day-names {
-        @extend .body-1;
-        background-color: $white;
-      }
-		}
-    .react-datepicker__day--selected, .react-datepicker__day--keyboard-selected {
-      @extend .body-1;
-      background-color: $blue;
-			color: $white;
-    }
-    .react-datepicker__day {
-			border-radius: 0px;
-			margin: 0;
-			flex: 1;
-      @extend .body-1;
-    }
-
-		.react-datepicker__day--in-range, .react-datepicker__day--in-selecting-range {
-			background-color: $tlv-hover;
-			color: $black;
-			&.react-datepicker__day--selected, &.react-datepicker__day--keyboard-selected, &.react-datepicker__day--range-start, &.react-datepicker__day--range-end  {
-				background-color: $blue;
-				color: $white;
-			}
-			&.react-datepicker__day--selecting-range-start, &.react-datepicker__day--selecting-range-end {
-				background-color: lighten($blue, 40%);
-				color: $black;
-			}
-			&.react-datepicker__day--selecting-range-start.react-datepicker__day--range-start,
-			&.react-datepicker__day--selecting-range-end.react-datepicker__day--range-end,
-			&.react-datepicker__day--selecting-range-start.react-datepicker__day--keyboard-selected {
-				background-color: $blue;
-				color: $white;
-			}
-		}
-
-		.react-datepicker__week {
-			display: flex;
-    }
-	}
-}
 
 /* Out of namespace context for tooltips */
-div[data-reactroot].tooltip {
+div[data-onboardingroot].tooltip {
   @import "common/variables";
   @import "common/typography";
 

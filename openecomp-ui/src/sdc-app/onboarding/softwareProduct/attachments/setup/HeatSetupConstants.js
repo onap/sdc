@@ -29,7 +29,8 @@ export const actionTypes = keyMirror({
     MANIFEST_LOADED: null,
 
     GO_TO_VALIDATION: null,
-    IN_VALIDATION: null
+    IN_VALIDATION: null,
+    TOGGLE_VOL_DISPLAY: 'HEAT_SETUP.TOGGLE_VOL_DISPLAY'
 });
 
 export const fileTypes = {

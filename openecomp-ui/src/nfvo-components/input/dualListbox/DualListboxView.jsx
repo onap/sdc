@@ -16,7 +16,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import SVGIcon from 'sdc-ui/lib/react/SVGIcon.js';
-import Input from 'nfvo-components/input/validation/InputWrapper.jsx';
+import Input from 'nfvo-components/input/validation/Input.jsx';
 
 class DualListboxView extends React.Component {
     static propTypes = {

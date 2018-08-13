@@ -4,9 +4,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -61,25 +61,34 @@ export default class Modal extends React.Component {
         }
     };
 
-    componentWillMount() {
+    constructor() {
+        super();
         this.modalId = `dox-ui-modal-${nextModalId++}`;
     }
 
-    componentDidMount() {
-        this.ensureRootClass();
+    componentDidUpdate() {
+        setTimeout(() => this.ensureRootClass(), 0);
     }
 
-    componentDidUpdate() {
-        this.ensureRootClass();
+    componentDidMount() {
+        setTimeout(() => this.ensureRootClass(), 0);
     }
 
     ensureRootClass() {
         let element = document.getElementById(this.modalId);
-        while (element && !element.hasAttribute('data-reactroot')) {
+        if (element) {
+            element = element.parentElement;
+        } else {
+            return;
+        }
+        while (element && !(element.getAttribute('role') === 'dialog')) {
             element = element.parentElement;
         }
         if (element && !element.classList.contains('dox-ui')) {
             element.classList.add('dox-ui');
+        }
+        if (element && !element.getAttribute('data-onboardingroot')) {
+            element.setAttribute('data-onboardingroot', '');
         }
     }
 

@@ -19,7 +19,7 @@ import classnames from 'classnames';
 import Collapse from 'react-bootstrap/lib/Collapse.js';
 
 class NavigationSideBar extends React.Component {
-    static PropTypes = {
+    static propTypes = {
         activeItemId: PropTypes.string.isRequired,
         onSelect: PropTypes.func,
         onToggle: PropTypes.func,
@@ -70,10 +70,10 @@ class NavigationSideBar extends React.Component {
 }
 
 class NavigationMenu extends React.Component {
-    static PropTypes = {
+    static propTypes = {
         activeItemId: PropTypes.string.isRequired,
         onNavigationItemClick: PropTypes.func,
-        menu: PropTypes.array
+        menu: PropTypes.object
     };
 
     render() {

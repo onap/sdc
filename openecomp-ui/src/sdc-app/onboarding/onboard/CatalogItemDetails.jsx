@@ -101,8 +101,8 @@ const CatalogItemDetails = ({
     );
 };
 
-CatalogItemDetails.PropTypes = {
-    catalogItemData: PropTypes.obj,
+CatalogItemDetails.propTypes = {
+    catalogItemData: PropTypes.object,
     catalogItemTypeClass: PropTypes.string,
     onSelect: PropTypes.func,
     onMigrate: PropTypes.func
