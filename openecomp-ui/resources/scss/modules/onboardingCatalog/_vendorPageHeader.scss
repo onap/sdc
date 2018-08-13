@@ -1,21 +1,21 @@
 .vendor-page-header {
-  display: flex;
-  align-items: center;
-  margin-top: 34px;
-  margin-left: 9px;
-  margin-bottom: 29px;
-  .vendor-name {
-	@extend .heading-1;
-	color: $blue;
-	margin-left: 20px;
-	text-transform: uppercase;
-  }
-  .svg-icon-wrapper {
-	padding: 5px 18px 5px 0;
-	.svg-icon.back {
-	  height: 25px;
-	  width: 25px;
-	  fill: $blue;
-	}
-  }
+    display: flex;
+    align-items: center;
+    margin-top: 34px;
+    margin-left: 9px;
+    margin-bottom: 29px;
+    .vendor-name {
+        @extend .heading-1;
+        color: $blue;
+        margin-left: 20px;
+        text-transform: uppercase;
+    }
+    .svg-icon-wrapper {
+        padding: 5px 18px 5px 0;
+        .svg-icon.back {
+            height: 25px;
+            width: 25px;
+            fill: $blue;
+        }
+    }
 }

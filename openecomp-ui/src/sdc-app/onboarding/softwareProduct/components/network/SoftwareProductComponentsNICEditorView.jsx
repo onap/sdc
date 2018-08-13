@@ -63,6 +63,7 @@ class SoftwareProductComponentsNetworkEditorView extends React.Component {
                             this.form = form;
                         }}
                         hasButtons={true}
+                        btnClassName="sdc-modal__footer"
                         onSubmit={() => this.submit()}
                         onReset={() => onCancel()}
                         labledButtons={true}
