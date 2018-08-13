@@ -1,76 +1,76 @@
 .section-title {
-  @extend .heading-3-semibold;
-  padding: 50px 0 20px 0;
-  &:first-child {
-    padding-top: 0;
-  }
+    @extend .heading-3-semibold;
+    padding: 50px 0 20px 0;
+    &:first-child {
+        padding-top: 0;
+    }
 }
 
 .validation-form-content {
-	fieldset[disabled] {
-		.form-group {
-			opacity: 0.7;
-			cursor: auto;
-			pointer-events: none;
-			.dropdown-multi-select {
-				.form-group {
-					opacity: 1;
-				}
-				.Select-control {
-					background-color: $tlv-light-gray;
-				}
-			}
-		}
-	}
+    fieldset[disabled] {
+        .form-group {
+            opacity: 0.7;
+            cursor: auto;
+            pointer-events: none;
+            .dropdown-multi-select {
+                .form-group {
+                    opacity: 1;
+                }
+                .Select-control {
+                    background-color: $tlv-light-gray;
+                }
+            }
+        }
+    }
 }
 
 .dropdown-multi-select {
-  .Select {
-    display: block;
-    width: 100%;
-		.Select-menu-outer {
-			.Select-option {
-				&:hover {
-					background-color: $blue;
-					color: $white;
-				}
-			}
-		}
-    .Select-control {
-      height: 28px;
-      border-radius: 2px;
-      .Select-input {
-        height: 28px;
-        input {
-          height: 28px;
-          padding: 0;
+    .Select {
+        display: block;
+        width: 100%;
+        .Select-menu-outer {
+            .Select-option {
+                &:hover {
+                    background-color: $blue;
+                    color: $white;
+                }
+            }
         }
-      }
-      .Select-placeholder {
-        line-height: 30px;
-      }
+        .Select-control {
+            height: 28px;
+            border-radius: 2px;
+            .Select-input {
+                height: 28px;
+                input {
+                    height: 28px;
+                    padding: 0;
+                }
+            }
+            .Select-placeholder {
+                line-height: 30px;
+            }
+        }
+        &.Select--multi {
+            .Select-value {
+                color: $text-black;
+                background-color: $background-gray;
+                border: none;
+                margin: 3px 0 3px 10px;
+                border-radius: 10px;
+                padding-left: 8px;
+                padding-right: 6px;
+            }
+            .Select-value-icon {
+                border: none;
+                float: right;
+                &:hover {
+                    background-color: inherit;
+                    color: inherit;
+                }
+            }
+            .Select-arrow-zone {
+                padding-top: 4px;
+            }
+        }
     }
-    &.Select--multi {
-      .Select-value {
-        color: $text-black;
-        background-color: $background-gray;
-				border: none;
-				margin: 3px 0 3px 10px;
-        border-radius: 10px;
-				padding-left: 8px;
-				padding-right: 6px;
-      }
-      .Select-value-icon {
-        border: none;
-				float: right;
-				&:hover {
-					background-color: inherit;
-					color: inherit;
-				}
-      }
-      .Select-arrow-zone {
-				padding-top: 4px;
-      }
-    }
-  }
 }

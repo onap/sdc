@@ -38,7 +38,8 @@ class FlowsEditorModalView extends Component {
                         onReset={onCancel}
                         formReady={formReady}
                         isValid={isFormValid}
-                        onValidateForm={() => onValidateForm()}>
+                        onValidateForm={() => onValidateForm()}
+                        btnClassName="sdc-modal__footer">
                         <Input
                             type="text"
                             name="name"

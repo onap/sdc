@@ -1,14 +1,14 @@
 .tile {
-  background-color: $white;
-  margin: 9px;
-  width: 204px;
-  height: 200px;
-  display: flex;
-  flex-direction: column;
-  cursor: pointer;
-  border: 1px solid $tlv-light-gray;
-  @include box-shadow(0.5px 0.8px 4px 0 rgba(24, 24, 25, 0.05));
-  &:active {
-	border: 1px solid $light-blue;
-  }
+    background-color: $white;
+    margin: 9px;
+    width: 204px;
+    height: 200px;
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+    border: 1px solid $tlv-light-gray;
+    @include box-shadow(0.5px 0.8px 4px 0 rgba(24, 24, 25, 0.05));
+    &:active {
+        border: 1px solid $light-blue;
+    }
 }

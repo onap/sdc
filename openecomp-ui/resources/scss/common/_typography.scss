@@ -1,23 +1,24 @@
 /* Fonts */
 
 @mixin base-font-regular() {
-  font-family: OpenSans, OpenSans-Regular, 'Open Sans',omnes-regular, Arial, sans-serif;
+    font-family: OpenSans, OpenSans-Regular, 'Open Sans', omnes-regular, Arial,
+        sans-serif;
 }
 
 @mixin base-font-light() {
-  font-family: OpenSans-Light, 'Open Sans', omnes-light, Arial, sans-serif;
+    font-family: OpenSans-Light, 'Open Sans', omnes-light, Arial, sans-serif;
 }
 
-@mixin base-font-italic(){
-  font-family: OpenSans-Italic, 'Open Sans', omnes-italic, Arial, sans-serif;
+@mixin base-font-italic() {
+    font-family: OpenSans-Italic, 'Open Sans', omnes-italic, Arial, sans-serif;
 }
 
 @mixin base-font-semibold() {
-  font-family: OpenSans-Semibold, 'Open Sans', omnes-medium, Arial, sans-serif;
+    font-family: OpenSans-Semibold, 'Open Sans', omnes-medium, Arial, sans-serif;
 }
 
 @mixin base-font-bold() {
-  font-family: OpenSans-Bold, 'Open Sans', omnes-bold, Arial, sans-serif;
+    font-family: OpenSans-Bold, 'Open Sans', omnes-bold, Arial, sans-serif;
 }
 
 $heading-font-1: 28px;
@@ -34,109 +35,107 @@ $body-font-4: 10px;
 $icon-font-size: 10px;
 $icon-font-family: Arial;
 
-
 .heading-1 {
-  @include base-font-light;
-  font-size: $heading-font-1;
+    @include base-font-light;
+    font-size: $heading-font-1;
 }
 
 .heading-2 {
-  @include base-font-light;
-  font-size: $heading-font-2;
+    @include base-font-light;
+    font-size: $heading-font-2;
 }
 
 .heading-3-light {
-  @include base-font-light;
-  font-size: $heading-font-3;
-  @extend .text-uppercase !optional;
+    @include base-font-light;
+    font-size: $heading-font-3;
+    @extend .text-uppercase !optional;
 }
 
 .heading-3 {
-  @include base-font-regular;
-  font-size: $heading-font-3;
-  @extend .text-uppercase !optional;
+    @include base-font-regular;
+    font-size: $heading-font-3;
+    @extend .text-uppercase !optional;
 }
 
 .heading-3-semibold {
-  @include base-font-semibold;
-  font-size: $heading-font-3;
-  @extend .text-uppercase !optional;
+    @include base-font-semibold;
+    font-size: $heading-font-3;
+    @extend .text-uppercase !optional;
 }
 
 .heading-4 {
-  @include base-font-regular;
-  font-size: $heading-font-4;
+    @include base-font-regular;
+    font-size: $heading-font-4;
 }
 
 .heading-4-semibold {
-  @include base-font-semibold;
-  font-size: $heading-font-4;
+    @include base-font-semibold;
+    font-size: $heading-font-4;
 }
 
 .heading-5 {
-  @include base-font-regular;
-  font-size: $heading-font-5;
+    @include base-font-regular;
+    font-size: $heading-font-5;
 }
 
 .heading-5-semibold {
-  @include base-font-semibold;
-  font-size: $heading-font-5;
+    @include base-font-semibold;
+    font-size: $heading-font-5;
 }
 
 .body-1 {
-  @include base-font-regular;
-  font-size: $body-font-1;
+    @include base-font-regular;
+    font-size: $body-font-1;
 }
 
 .body-1-semibold {
-  @include base-font-semibold;
-  font-size: $body-font-1;
+    @include base-font-semibold;
+    font-size: $body-font-1;
 }
 
 .body-1-light {
-  @include base-font-light;
-  font-size: $body-font-1;
+    @include base-font-light;
+    font-size: $body-font-1;
 }
 
 .body-2 {
-  @include base-font-regular;
-  font-size: $body-font-2;
+    @include base-font-regular;
+    font-size: $body-font-2;
 }
 
 .body-2-semibold {
-  @include base-font-semibold;
-  font-size: $body-font-2;
+    @include base-font-semibold;
+    font-size: $body-font-2;
 }
 
 .body-3 {
-  @include base-font-regular;
-  font-size: $body-font-3;
+    @include base-font-regular;
+    font-size: $body-font-3;
 }
 
 .body-3-semibold {
-  @include base-font-semibold;
-  font-size: $body-font-3;
+    @include base-font-semibold;
+    font-size: $body-font-3;
 }
 
 .body-4 {
-  @include base-font-regular;
-  font-size: $body-font-4;
+    @include base-font-regular;
+    font-size: $body-font-4;
 }
 
 .body-4-semibold {
-  @include base-font-semibold;
-  font-size: $body-font-4;
+    @include base-font-semibold;
+    font-size: $body-font-4;
 }
 
 .body-3-light {
-  @include base-font-light;
-  font-size: $body-font-3;
+    @include base-font-light;
+    font-size: $body-font-3;
 }
-
 
 .warning-text {
-  color: $yellow;
+    color: $yellow;
 }
 .error-text {
-  color: $red;
+    color: $red;
 }

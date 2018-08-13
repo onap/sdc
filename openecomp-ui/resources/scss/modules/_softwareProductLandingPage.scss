@@ -1,276 +1,273 @@
 .upload-modal-body-content {
-  padding-left: 30px;
-  padding-right: 30px;
-  padding-bottom: 10px;
-  .title {
-    @extend .body-1-semibold;
-  }
-  .file-name {
-    padding-left: 5px;
-    @extend .body-1-semibold;
-  }
+    padding-left: 30px;
+    padding-right: 30px;
+    padding-bottom: 10px;
+    .title {
+        @extend .body-1-semibold;
+    }
+    .file-name {
+        padding-left: 5px;
+        @extend .body-1-semibold;
+    }
 }
 
-
 .software-product-view {
-  display: flex;
-  height:100%;
+    display: flex;
+    height: 100%;
 
-  .description {
-    @extend .body-1;
-    padding-right: 20px;
+    .description {
+        @extend .body-1;
+        padding-right: 20px;
 
-    .missing-license {
-      display: flex;
-      align-items: baseline;
-      .svg-icon{
-        margin-right: 7px;
-        margin-left: 3px;
-        &.__exclamationTriangleFull {
-          fill: $orange;
-            width: 17px;
-            height: 17px;
-        }
-      }
-      .warning-text {
-        position: relative;
-        top: -2px;
-      }
-    }
-  }
-  .name {
-    @extend .body-1-semibold;
-  }
-  .software-product-landing-view-right-side {
-    @extend .flex;
-    overflow-y: hidden;
-    .list-editor-view {
-      .list-editor-view-title {
-        margin-bottom: 0;
-      }
-    }
-  }
-  .software-product-landing-view {
-    padding-bottom: 50px;
-
-
-    .software-product-landing-view-top {
-      .details-container {
-        @extend .flex-column;
-
-        .single-detail-section {
-
-          @extend  .flex-column;
-          &.title-section {
-            flex: 0.8;
-            @extend .heading-5-semibold;
-          }
-          &.title-text {
-            margin-bottom: 24px;
-          }
-          .description {
-              @include multiline-ellipsis();
-          }
-        }
-        .title {
-          @extend .body-3;
-          color: $gray;
-          &.extra-large {
-            min-width: 130px;
-          }
-        }
-        .details-section {
-          display: flex;
-        }
-        .multiple-details-section {
-          @extend .flex-column;
-          justify-content: space-between;
-          .detail-col {
-            padding-bottom: 10px;
-          }
-        }
-      }
-      .row {
-        margin: 0;
-        display: flex;
-        .details-panel {
-          flex: 1;
-          margin-right: 50px;
-          &:last-child {
-            margin-right: 0;
-          }
-          .software-product-landing-view-top-block-col-upl  {
-            height: 215px;
-            width: initial;
-          }
-        }
-        .col-md-6 {
-          padding: 0;
-
-          overflow-wrap: break-word;
-          &:first-child {
-            padding-right: 25px;
-          }
-          &:last-child {
-            padding-left: 25px;
-          }
-        }
-        .title {
-          @extend .body-1-semibold;
-        }
-        .software-product-landing-view-heading-title {
-          @extend .section-title;
-          color: $dark-gray;
-          padding-bottom: 20px;
-          &:first-child {
-            padding-bottom: 20px;
-          }
-        }
-        .software-product-landing-view-top-block {
-          &.clickable {
-          cursor: pointer;
-            &:hover {
-              @extend .box-hover;
-            }
-          }
-          border: 1px solid $light-gray;
-          padding: 20px 18px 0 18px;
-          height: 215px;
-          display: flex;
-          justify-content: space-between;
-          background-color: $white;
-
-          .col-md-6 {
-            @extend .body-1;
-          }
-          .software-product-landing-view-top-block-col {
-            @extend .body-1;
-            flex: 0.8;
+        .missing-license {
             display: flex;
-            justify-content: space-between;
-            flex-direction: column;
-            .description {
-              overflow: hidden;
-              padding-right: 20px;
+            align-items: baseline;
+            .svg-icon {
+                margin-right: 7px;
+                margin-left: 3px;
+                &.__exclamationTriangleFull {
+                    fill: $orange;
+                    width: 17px;
+                    height: 17px;
+                }
             }
-            .attachment-details {
-              padding-bottom: 10px;
+            .warning-text {
+                position: relative;
+                top: -2px;
             }
-            .attachment-details-count {
-              color: $light-blue;
-            }
-          }
         }
-
-        .software-product-landing-view-top-block-col-upl {
-          @extend .flex;
-          height: 215px;
-          text-align: center;
-          flex-direction: column;
-          justify-content: center;
-          border: 2px dashed $light-gray;
-          margin-bottom: 20px;
-          @extend .body-1;
-          align-items: center;
-          .upload-btn {
-            padding: 15px 55px;
-
-          }
-          .drag-text {
-            color: $blue;
-            @extend .body-1-semibold;
-          }
-          .or-text {
-            margin-top: 10px;
-            margin-bottom: 10px;
-            color: $light-gray;
-          }
-          .upload {
-            width: 50%;
-            border : 0px !important;
-          }
-          .vnfRepo {
-            width: 50%;
-            cursor: pointer;
-            .searchRepo-text {
-              color: $blue;
-              @extend .body-1-semibold;
-              width: 72px;
-              line-height: 24px;
-              margin-left: auto;
-              margin-right: auto;
-            }
-            .svg-icon-wrapper {
-              .svg-icon.__search {
-                width: 34px;
-                height: 34px;
-                margin-top: 10px;
-              }
-              &.__positive {
-                fill: $blue;
-                color: $blue;
-              }
-            }
-          }
-          .verticalLine {
-            height: 90%;
-            border-left: 1px solid $light-gray;
-          }
-        }
-        .showVnf {
-          flex-direction: row;
-        }
-      }
     }
-  }
+    .name {
+        @extend .body-1-semibold;
+    }
+    .software-product-landing-view-right-side {
+        @extend .flex;
+        overflow-y: hidden;
+        .list-editor-view {
+            .list-editor-view-title {
+                margin-bottom: 0;
+            }
+        }
+    }
+    .software-product-landing-view {
+        padding-bottom: 50px;
+
+        .software-product-landing-view-top {
+            .details-container {
+                @extend .flex-column;
+
+                .single-detail-section {
+                    @extend .flex-column;
+                    &.title-section {
+                        flex: 0.8;
+                        @extend .heading-5-semibold;
+                    }
+                    &.title-text {
+                        margin-bottom: 24px;
+                    }
+                    .description {
+                        @include multiline-ellipsis();
+                    }
+                }
+                .title {
+                    @extend .body-3;
+                    color: $gray;
+                    &.extra-large {
+                        min-width: 130px;
+                    }
+                }
+                .details-section {
+                    display: flex;
+                }
+                .multiple-details-section {
+                    @extend .flex-column;
+                    justify-content: space-between;
+                    .detail-col {
+                        padding-bottom: 10px;
+                    }
+                }
+            }
+            .row {
+                margin: 0;
+                display: flex;
+                .details-panel {
+                    flex: 1;
+                    margin-right: 50px;
+                    &:last-child {
+                        margin-right: 0;
+                    }
+                    .software-product-landing-view-top-block-col-upl {
+                        height: 215px;
+                        width: initial;
+                    }
+                }
+                .col-md-6 {
+                    padding: 0;
+
+                    overflow-wrap: break-word;
+                    &:first-child {
+                        padding-right: 25px;
+                    }
+                    &:last-child {
+                        padding-left: 25px;
+                    }
+                }
+                .title {
+                    @extend .body-1-semibold;
+                }
+                .software-product-landing-view-heading-title {
+                    @extend .section-title;
+                    color: $dark-gray;
+                    padding-bottom: 20px;
+                    &:first-child {
+                        padding-bottom: 20px;
+                    }
+                }
+                .software-product-landing-view-top-block {
+                    &.clickable {
+                        cursor: pointer;
+                        &:hover {
+                            @extend .box-hover;
+                        }
+                    }
+                    border: 1px solid $light-gray;
+                    padding: 20px 18px 0 18px;
+                    height: 215px;
+                    display: flex;
+                    justify-content: space-between;
+                    background-color: $white;
+
+                    .col-md-6 {
+                        @extend .body-1;
+                    }
+                    .software-product-landing-view-top-block-col {
+                        @extend .body-1;
+                        flex: 0.8;
+                        display: flex;
+                        justify-content: space-between;
+                        flex-direction: column;
+                        .description {
+                            overflow: hidden;
+                            padding-right: 20px;
+                        }
+                        .attachment-details {
+                            padding-bottom: 10px;
+                        }
+                        .attachment-details-count {
+                            color: $light-blue;
+                        }
+                    }
+                }
+
+                .software-product-landing-view-top-block-col-upl {
+                    @extend .flex;
+                    height: 215px;
+                    text-align: center;
+                    flex-direction: column;
+                    justify-content: center;
+                    border: 2px dashed $light-gray;
+                    margin-bottom: 20px;
+                    @extend .body-1;
+                    align-items: center;
+                    .upload-btn {
+                        padding: 15px 55px;
+                    }
+                    .drag-text {
+                        color: $blue;
+                        @extend .body-1-semibold;
+                    }
+                    .or-text {
+                        margin-top: 10px;
+                        margin-bottom: 10px;
+                        color: $light-gray;
+                    }
+                    .upload {
+                        width: 50%;
+                        border: 0px !important;
+                    }
+                    .vnfRepo {
+                        width: 50%;
+                        cursor: pointer;
+                        .searchRepo-text {
+                            color: $blue;
+                            @extend .body-1-semibold;
+                            width: 72px;
+                            line-height: 24px;
+                            margin-left: auto;
+                            margin-right: auto;
+                        }
+                        .svg-icon-wrapper {
+                            .svg-icon.__search {
+                                width: 34px;
+                                height: 34px;
+                                margin-top: 10px;
+                            }
+                            &.__positive {
+                                fill: $blue;
+                                color: $blue;
+                            }
+                        }
+                    }
+                    .verticalLine {
+                        height: 90%;
+                        border-left: 1px solid $light-gray;
+                    }
+                }
+                .showVnf {
+                    flex-direction: row;
+                }
+            }
+        }
+    }
 }
 
 .vsp-details-page {
-  .grid-section-general {
-    padding-bottom: 30px;
-  }
-  .vsp-general-tab {
-    .validation-form-content {
-      margin: 0;
+    .grid-section-general {
+        padding-bottom: 30px;
     }
-    .validation-buttons {
-      margin: 43px 0;
-      padding: 0 52px;
-    }
-    .validation-form-content {
-      .vsp-general-tab-inline-section {
-        display: flex;
+    .vsp-general-tab {
+        .validation-form-content {
+            margin: 0;
+        }
+        .validation-buttons {
+            margin: 43px 0;
+            padding: 0 52px;
+        }
+        .validation-form-content {
+            .vsp-general-tab-inline-section {
+                display: flex;
 
-        .vsp-general-tab-sub-section:not(:last-of-type) {
-          margin-right: 40px;
+                .vsp-general-tab-sub-section:not(:last-of-type) {
+                    margin-right: 40px;
+                }
+                .field-section {
+                    width: 440px;
+                }
+                .form-group textarea {
+                    height: 192px;
+                }
+                select optgroup[label] {
+                    color: $dark-blue;
+                }
+                option {
+                    color: $dark-gray;
+                }
+                .Select,
+                .input-options {
+                    width: 440px;
+                }
+            }
         }
-        .field-section {
-          width: 440px;
+        .validation-buttons {
+            position: fixed;
+            display: block;
+            bottom: 0;
+            width: 66%;
         }
-        .form-group textarea {
-          height: 192px;
+        .validation-input-wrapper {
+            select.form-control {
+                width: 100%;
+            }
         }
-        select optgroup[label] {
-          color: $dark-blue;
-        }
-        option {
-          color: $dark-gray;
-        }
-        .Select, .input-options {
-          width: 440px;
-        }
-      }
     }
-    .validation-buttons {
-      position: fixed;
-      display: block;
-      bottom: 0;
-      width: 66%;
-    }
-    .validation-input-wrapper {
-      select.form-control {
-        width: 100%;
-      }
-    }
-  }
 }

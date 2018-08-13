@@ -1,35 +1,35 @@
 .vsp-components-load-balancing {
-  .svg-icon-wrapper {
-	position: relative;
-	top: -4px;
-  }
+    .svg-icon-wrapper {
+        position: relative;
+        top: -4px;
+    }
 
-  .halb-data {
-	.question {
-	  padding-top: 10px;
-	  &:first-child {
-		padding-top: 0;
-	  }
-	}
-	.title {
-	  @extend .body-1-semibold;
-	  margin-bottom: 8px;
-	  cursor: pointer;
-	  .svg-icon {
-		@include transition(transform 0.3s);
-		margin-right: 5px;
-		position: relative;
-		top: 4px;
-	  }
-	}
-	.add-padding {
-	  padding-bottom: 20px;
-	}
-	.new-line {
-	  margin-left: 16px;
-	}
-	textarea.form-control {
-	  height: 90px;
-	}
-  }
+    .halb-data {
+        .question {
+            padding-top: 10px;
+            &:first-child {
+                padding-top: 0;
+            }
+        }
+        .title {
+            @extend .body-1-semibold;
+            margin-bottom: 8px;
+            cursor: pointer;
+            .svg-icon {
+                @include transition(transform 0.3s);
+                margin-right: 5px;
+                position: relative;
+                top: 4px;
+            }
+        }
+        .add-padding {
+            padding-bottom: 20px;
+        }
+        .new-line {
+            margin-left: 16px;
+        }
+        textarea.form-control {
+            height: 90px;
+        }
+    }
 }

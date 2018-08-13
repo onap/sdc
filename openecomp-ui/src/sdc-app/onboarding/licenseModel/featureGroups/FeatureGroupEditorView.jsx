@@ -85,7 +85,7 @@ const GeneralTab = ({
             </GridItem>
             <GridItem colSpan={4}>
                 <Input
-                    groupClassName="field-section"
+                    groupClassName="field-section no-bottom-margin"
                     onChange={partNumber =>
                         onDataChanged({ partNumber }, FG_EDITOR_FORM)
                     }
@@ -203,7 +203,7 @@ class FeatureGroupEditorView extends React.Component {
             licenseKeyGroupsList
         } = this.props;
         return (
-            <div>
+            <div className="license-model-modal feature-group-modal">
                 {genericFieldInfo && (
                     <Form
                         ref="validationForm"
@@ -218,6 +218,7 @@ class FeatureGroupEditorView extends React.Component {
                         labledButtons={true}
                         isReadOnlyMode={isReadOnlyMode}
                         name="feature-group-validation-form"
+                        btnClassName="sdc-modal__footer"
                         className="license-model-form feature-group-form">
                         <Tabs
                             activeTab={onTabSelect ? selectedTab : undefined}

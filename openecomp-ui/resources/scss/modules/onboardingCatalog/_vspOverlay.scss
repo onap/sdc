@@ -1,74 +1,73 @@
-.vsp-overlay-wrapper{
-  display:flex;
-  align-items: center;
-  position:absolute;
-  left: 68%;
-  top: 14%;
-  height: 100%;
-  pointer-events: none;
-  z-index: 100;
-  .vsp-overlay-list {
-	padding: 0 20px;
-  }
-  .vsp-overlay-arrow {
-	border-style: solid;
-	position: relative;
-	bottom: -18px;
-	border-width: 6px;
-	border-left-width: 2px;
-	border-color: transparent;
-	border-right-color: $light-gray;
-	&:after {
-	  position: absolute;
-	  border-style: solid;
-	  bottom: -10px;
-	  left: -9px;
-	  border-width: 10px;
-	  border-color: transparent;
-	  border-right-color: $white;
-	  content:' ';
-	}
-  }
-  .vsp-overlay {
-	pointer-events: all;
-	width: 205px;
-	cursor: default;
-	background-color: $white;
-	@include box-shadow(0px 2px 9.2px 0.8px rgba(24, 24, 25, 0.25));
-	border-radius: 6px;
-	padding: 0 0 10px 0;
-	display: flex;
-	flex-direction: column;
-	margin: 10px 0 10px 0;
-	.vsp-overlay-title {
-	  @extend .heading-5-semibold;
-	  margin-bottom: 15px;
-	  padding: 10px 20px 10px 20px;
-	  background: $highlight-gray;
-		color: $text-black;
-	  text-transform: uppercase;
-	  border-radius: 6px 6px 0 0;
-	}
-	.vsp-overlay-detail{
-	  @extend .body-2;
-	  &:hover {
-		color: $blue;
-	  }
-	  text-transform: none;
-	  @include ellipsis(auto, block);
-	  border-bottom: 1px solid $tlv-light-gray;
-	  cursor: pointer;
-	  padding: 5px 0 5px 0;
-	  &:last-child {
-		border-bottom: none;
-	  }
-	}
-	.vsp-overlay-see-more{
-	  color: $blue;
-	  cursor: pointer;
-	  margin-top: 12px;
-	  align-self:center;
-	}
-
-  }
+.vsp-overlay-wrapper {
+    display: flex;
+    align-items: center;
+    position: absolute;
+    left: 68%;
+    top: 14%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 100;
+    .vsp-overlay-list {
+        padding: 0 20px;
+    }
+    .vsp-overlay-arrow {
+        border-style: solid;
+        position: relative;
+        bottom: -18px;
+        border-width: 6px;
+        border-left-width: 2px;
+        border-color: transparent;
+        border-right-color: $light-gray;
+        &:after {
+            position: absolute;
+            border-style: solid;
+            bottom: -10px;
+            left: -9px;
+            border-width: 10px;
+            border-color: transparent;
+            border-right-color: $white;
+            content: ' ';
+        }
+    }
+    .vsp-overlay {
+        pointer-events: all;
+        width: 205px;
+        cursor: default;
+        background-color: $white;
+        @include box-shadow(0px 2px 9.2px 0.8px rgba(24, 24, 25, 0.25));
+        border-radius: 6px;
+        padding: 0 0 10px 0;
+        display: flex;
+        flex-direction: column;
+        margin: 10px 0 10px 0;
+        .vsp-overlay-title {
+            @extend .heading-5-semibold;
+            margin-bottom: 15px;
+            padding: 10px 20px 10px 20px;
+            background: $highlight-gray;
+            color: $text-black;
+            text-transform: uppercase;
+            border-radius: 6px 6px 0 0;
+        }
+        .vsp-overlay-detail {
+            @extend .body-2;
+            &:hover {
+                color: $blue;
+            }
+            text-transform: none;
+            @include ellipsis(auto, block);
+            border-bottom: 1px solid $tlv-light-gray;
+            cursor: pointer;
+            padding: 5px 0 5px 0;
+            &:last-child {
+                border-bottom: none;
+            }
+        }
+        .vsp-overlay-see-more {
+            color: $blue;
+            cursor: pointer;
+            margin-top: 12px;
+            align-self: center;
+        }
+    }
 }
