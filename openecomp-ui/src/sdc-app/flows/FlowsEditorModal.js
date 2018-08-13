@@ -50,10 +50,10 @@ export const mapStateToProps = ({ flows }) => {
 const mapActionsToProps = (dispatch, { isNewArtifact }) => {
     return {
         onSubmit: flow => {
-            FlowsActions.closeFlowDetailsEditor(dispatch);
+            FlowsActions.closeEditCreateWFModal(dispatch);
             FlowsActions.createOrUpdateFlow(dispatch, { flow }, isNewArtifact);
         },
-        onCancel: () => FlowsActions.closeFlowDetailsEditor(dispatch),
+        onCancel: () => FlowsActions.closeEditCreateWFModal(dispatch),
         onDataChanged: deltaData =>
             ValidationHelper.dataChanged(dispatch, {
                 deltaData,

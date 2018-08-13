@@ -13,22 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 import React from 'react';
-import { mount } from 'enzyme';
-import { Provider } from 'react-redux';
-import { storeCreator } from 'sdc-app/AppStore.js';
-import Filter from 'sdc-app/onboarding//onboard/filter/Filter.jsx';
+import i18n from 'nfvo-utils/i18n/i18n.js';
 
-describe('Filter component view Tests', () => {
-    it('simple jsx test', () => {
-        const store = storeCreator();
-        const wrapper = mount(
-            <Provider store={store}>
-                <Filter />
-            </Provider>
-        );
-        const filter = wrapper.find('.catalog-filter').hostNodes();
-        expect(filter.hasClass('catalog-filter')).toBeTruthy();
-    });
-});
+const EmptyListContent = props => {
+    let { heatDataExist } = props;
+    let displayText = heatDataExist ? 'All Files Are Assigned' : '';
+    return (
+        <div className="go-to-validation-button-wrapper">
+            <div className="all-files-assigned">{i18n(displayText)}</div>
+        </div>
+    );
+};
+
+export default EmptyListContent;

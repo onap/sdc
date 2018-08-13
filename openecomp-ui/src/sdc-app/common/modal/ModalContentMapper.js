@@ -31,6 +31,10 @@ import Tree from 'nfvo-components/tree/Tree.jsx';
 import MergeEditor from 'sdc-app/common/merge/MergeEditor.js';
 import Revisions from 'sdc-app/onboarding/revisions/Revisions.js';
 import VendorSelector from 'sdc-app/onboarding/softwareProduct/details/SoftwareProductDetailsVendorSelector.jsx';
+import FlowsEditor from 'sdc-app/flows/FlowsEditorModal.js';
+import EntitlementPoolsEditor from 'sdc-app/onboarding/licenseModel/entitlementPools/EntitlementPoolsEditor.js';
+import FeatureGroupEditor from 'sdc-app/onboarding/licenseModel/featureGroups/FeatureGroupEditor';
+import LicenseAgreementEditor from 'sdc-app/onboarding/licenseModel/licenseAgreement/LicenseAgreementEditor';
 
 export const modalContentMapper = {
     SOFTWARE_PRODUCT_CREATION: 'SOFTWARE_PRODUCT_CREATION',
@@ -50,7 +54,11 @@ export const modalContentMapper = {
     MERGE_EDITOR: 'MERGE_EDITOR',
     REVISIONS_LIST: 'REVISIONS_LIST',
     VENDOR_SELECTOR: 'VENDOR_SELECTOR',
-    VNF_IMPORT: 'VNF_IMPORT'
+    VNF_IMPORT: 'VNF_IMPORT',
+    FLOWS_EDITOR: 'FLOWS_EDITOR',
+    EP_EDITOR: 'EP_EDITOR',
+    FG_EDITOR: 'FG_EDITOR',
+    LA_EDITOR: 'LA_EDITOR'
 };
 
 export const modalContentComponents = {
@@ -70,5 +78,9 @@ export const modalContentComponents = {
     MERGE_EDITOR: MergeEditor,
     REVISIONS_LIST: Revisions,
     VENDOR_SELECTOR: VendorSelector,
-    VNF_IMPORT: VNFImport
+    VNF_IMPORT: VNFImport,
+    FLOWS_EDITOR: FlowsEditor,
+    EP_EDITOR: EntitlementPoolsEditor,
+    FG_EDITOR: FeatureGroupEditor,
+    LA_EDITOR: LicenseAgreementEditor
 };

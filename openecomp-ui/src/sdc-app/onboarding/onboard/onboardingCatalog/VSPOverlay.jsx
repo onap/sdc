@@ -59,7 +59,7 @@ const VSPOverlay = ({ VSPList, onSelectVSP, onSeeMore, onMigrate }) => (
     </div>
 );
 
-VSPOverlay.PropTypes = {
+VSPOverlay.propTypes = {
     VSPList: PropTypes.array,
     onSelectVSP: PropTypes.func
 };

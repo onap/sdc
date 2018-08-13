@@ -18,6 +18,12 @@ import Configuration from 'sdc-app/config/Configuration.js';
 import { actionTypes as licenseAgreementActionTypes } from './LicenseAgreementConstants.js';
 import FeatureGroupsActionHelper from 'sdc-app/onboarding/licenseModel/featureGroups/FeatureGroupsActionHelper.js';
 import ItemsHelper from 'sdc-app/common/helpers/ItemsHelper.js';
+import {
+    actionTypes as modalActionTypes,
+    modalSizes
+} from 'nfvo-components/modal/GlobalModalConstants.js';
+import { modalContentMapper } from 'sdc-app/common/modal/ModalContentMapper.js';
+import i18n from 'nfvo-utils/i18n/i18n.js';
 
 function baseUrl(licenseModelId, version) {
     const restPrefix = Configuration.get('restPrefix');
@@ -103,7 +109,7 @@ export default {
 
     openLicenseAgreementEditor(
         dispatch,
-        { licenseModelId, licenseAgreement, version }
+        { licenseModelId, licenseAgreement, version, isReadOnlyMode }
     ) {
         FeatureGroupsActionHelper.fetchFeatureGroupsList(dispatch, {
             licenseModelId,
@@ -113,11 +119,31 @@ export default {
             type: licenseAgreementActionTypes.licenseAgreementEditor.OPEN,
             licenseAgreement
         });
+        dispatch({
+            type: modalActionTypes.GLOBAL_MODAL_SHOW,
+            data: {
+                modalComponentName: modalContentMapper.LA_EDITOR,
+                modalComponentProps: {
+                    version,
+                    licenseModelId,
+                    isReadOnlyMode,
+                    size: modalSizes.LARGE
+                },
+                bodyClassName: 'la-editor-body',
+                title:
+                    licenseModelId && version
+                        ? i18n('Edit License Agreement')
+                        : i18n('Create New License Agreement')
+            }
+        });
     },
 
     closeLicenseAgreementEditor(dispatch) {
         dispatch({
             type: licenseAgreementActionTypes.licenseAgreementEditor.CLOSE
+        });
+        dispatch({
+            type: modalActionTypes.GLOBAL_MODAL_CLOSE
         });
     },
 

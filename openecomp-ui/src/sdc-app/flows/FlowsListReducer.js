@@ -71,17 +71,13 @@ export default (state = {}, action) => {
                         validations: [{ type: 'required', data: true }]
                     }
                 },
-                data: action.flow,
-                isDisplayModal: true,
-                isModalInEditMode: Boolean(action.flow && action.flow.uniqueId)
+                data: action.flow
             };
 
         case actionTypes.CLOSE_FLOW_DETAILS_EDITOR:
             return {
                 ...state,
-                data: undefined,
-                isDisplayModal: false,
-                isModalInEditMode: false
+                data: undefined
             };
         case actionTypes.OPEN_FLOW_DIAGRAM_EDITOR:
             return {

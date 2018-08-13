@@ -18,7 +18,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import i18n from 'nfvo-utils/i18n/i18n.js';
 import Button from 'sdc-ui/lib/react/Button.js';
-import GridSection from 'nfvo-components/grid/GridSection.jsx';
 
 const ModalButtons = ({
     isFormValid,
@@ -28,7 +27,7 @@ const ModalButtons = ({
     onCancel,
     className
 }) => (
-    <GridSection className={`license-model-modal-buttons ${className}`}>
+    <div className={`${className}`}>
         {!selectedLimit && (
             <Button
                 btnType="primary"
@@ -44,11 +43,11 @@ const ModalButtons = ({
             type="reset">
             {i18n('Cancel')}
         </Button>
-    </GridSection>
+    </div>
 );
 
 ModalButtons.propTypes = {
-    isFormValid: PropTypes.func,
+    isFormValid: PropTypes.bool,
     isReadOnlyMode: PropTypes.bool,
     onSubmit: PropTypes.func,
     selectedLimit: PropTypes.string,

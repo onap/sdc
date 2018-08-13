@@ -13,22 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 import React from 'react';
-import { mount } from 'enzyme';
-import { Provider } from 'react-redux';
-import { storeCreator } from 'sdc-app/AppStore.js';
-import Filter from 'sdc-app/onboarding//onboard/filter/Filter.jsx';
+import FormControl from 'react-bootstrap/lib/FormControl.js';
 
-describe('Filter component view Tests', () => {
-    it('simple jsx test', () => {
-        const store = storeCreator();
-        const wrapper = mount(
-            <Provider store={store}>
-                <Filter />
-            </Provider>
+class NameEditInput extends React.Component {
+    componentDidMount() {
+        this.input.focus();
+    }
+
+    render() {
+        return (
+            <FormControl
+                {...this.props}
+                className="name-edit"
+                inputRef={input => (this.input = input)}
+            />
         );
-        const filter = wrapper.find('.catalog-filter').hostNodes();
-        expect(filter.hasClass('catalog-filter')).toBeTruthy();
-    });
-});
+    }
+}
+
+export default NameEditInput;

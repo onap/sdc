@@ -1,5 +1,5 @@
 
-.entitlement-pools-list-editor {  
+.entitlement-pools-list-editor {
     .list-editor-item-view-field {
 
       .entitlement-pools-count {
@@ -8,7 +8,9 @@
     }
   }
 }
-
+.sdc-modal .sdc-modal__wrapper.sdc-modal-type-custom .sdc-modal__content.ep-editor-body {
+  padding: 20px 0 0 0;
+}
 .entitlement-pools-modal {
   .entitlement-pools-form {
     .threshold-section, .date-section {

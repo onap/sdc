@@ -7,7 +7,7 @@
 		padding-bottom: 30px;
 	}
 	.sdc-tabs-list {
-		padding-left: 50px;
+		padding-left: 40px;
 		border-bottom: 1px solid $tlv-light-gray;
 		display: flex;
 		align-items: baseline;
@@ -22,15 +22,15 @@
 		text-align: end;
 	}
 	.license-model-form {
-		.validation-form-content, .validation-buttons {
-      padding: 20px 50px;
-    }
+		.validation-form-content {
+      		padding: 20px 40px;
+    	}
 		&.license-agreement-form, &.feature-group-form {
 			.validation-form-content {
 				padding: 0;
 			}
 			.sdc-tab-content {
-				padding: 20px 50px;
+				padding: 20px 40px;
 			}
 		}
 	}

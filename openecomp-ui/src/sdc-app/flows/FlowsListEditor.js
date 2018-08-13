@@ -44,9 +44,9 @@ export const mapStateToProps = ({ flows }) => {
 
 const mapActionsToProps = dispatch => {
     return {
-        onAddWorkflowClick: () => FlowsActions.openFlowDetailsEditor(dispatch),
+        onAddWorkflowClick: () => FlowsActions.openEditCreateWFModal(dispatch),
         onEditFlowDetailsClick: flow =>
-            FlowsActions.openFlowDetailsEditor(dispatch, flow),
+            FlowsActions.openEditCreateWFModal(dispatch, flow),
         onEditFlowDiagramClick: flow =>
             FlowsActions.fetchArtifact(dispatch, { flow }),
         onDeleteFlowClick: flow => FlowsActions.deleteFlow(dispatch, { flow }),

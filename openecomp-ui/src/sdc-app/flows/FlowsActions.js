@@ -17,6 +17,9 @@ import RestAPIUtil from 'nfvo-utils/RestAPIUtil.js';
 import Configuration from 'sdc-app/config/Configuration.js';
 import { actionTypes, enums } from './FlowsConstants.js';
 import SequenceDiagramModelHelper from './SequenceDiagramModelHelper.js';
+import { actionTypes as modalActionTypes } from 'nfvo-components/modal/GlobalModalConstants.js';
+import { modalContentMapper } from 'sdc-app/common/modal/ModalContentMapper.js';
+import i18n from 'nfvo-utils/i18n/i18n.js';
 
 function baseUrl(serviceId, artifactId = '') {
     const restCatalogPrefix = Configuration.get('restCatalogPrefix');
@@ -97,7 +100,7 @@ const FlowsActions = Object.freeze({
                 readonly
             });
             if (!readonly) {
-                FlowsActions.openFlowDetailsEditor(dispatch);
+                FlowsActions.openEditCreateWFModal(dispatch);
             }
         } else {
             Object.keys(artifacts).forEach(artifact =>
@@ -194,14 +197,6 @@ const FlowsActions = Object.freeze({
         );
     },
 
-    openFlowDetailsEditor(dispatch, flow) {
-        dispatch({ type: actionTypes.OPEN_FLOW_DETAILS_EDITOR, flow });
-    },
-
-    closeFlowDetailsEditor(dispatch) {
-        dispatch({ type: actionTypes.CLOSE_FLOW_DETAILS_EDITOR });
-    },
-
     openFlowDiagramEditor(dispatch, { flow }) {
         dispatch({ type: actionTypes.OPEN_FLOW_DIAGRAM_EDITOR, flow });
     },
@@ -212,6 +207,27 @@ const FlowsActions = Object.freeze({
 
     reset(dispatch) {
         dispatch({ type: actionTypes.RESET });
+    },
+    openEditCreateWFModal(dispatch, flow) {
+        dispatch({ type: actionTypes.OPEN_FLOW_DETAILS_EDITOR, flow });
+        dispatch({
+            type: modalActionTypes.GLOBAL_MODAL_SHOW,
+            data: {
+                modalComponentName: modalContentMapper.FLOWS_EDITOR,
+                modalComponentProps: {
+                    isNewArtifact: Boolean(flow && flow.uniqueId)
+                },
+                title: flow
+                    ? i18n('Edit Workflow')
+                    : i18n('Create New Workflow')
+            }
+        });
+    },
+    closeEditCreateWFModal(dispatch) {
+        dispatch({
+            type: modalActionTypes.GLOBAL_MODAL_CLOSE
+        });
+        dispatch({ type: actionTypes.CLOSE_FLOW_DETAILS_EDITOR });
     }
 });
 

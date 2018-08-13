@@ -17,11 +17,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import i18n from 'nfvo-utils/i18n/i18n.js';
-import Modal from 'nfvo-components/modal/Modal.jsx';
 import ListEditorView from 'nfvo-components/listEditor/ListEditorView.jsx';
 import ListEditorItemView from 'nfvo-components/listEditor/ListEditorItemView.jsx';
 
-import EntitlementPoolsEditor from './EntitlementPoolsEditor.js';
 import { extractUnits } from './EntitlementPoolsConstants';
 
 class EntitlementPoolsListEditorView extends React.Component {
@@ -46,13 +44,7 @@ class EntitlementPoolsListEditorView extends React.Component {
     };
 
     render() {
-        let {
-            licenseModelId,
-            isReadOnlyMode,
-            isDisplayModal,
-            isModalInEditMode,
-            version
-        } = this.props;
+        let { isReadOnlyMode } = this.props;
         let { onAddEntitlementPoolClick } = this.props;
         const { localFilter } = this.state;
 
@@ -72,28 +64,6 @@ class EntitlementPoolsListEditorView extends React.Component {
                         )
                     )}
                 </ListEditorView>
-                <Modal
-                    show={isDisplayModal}
-                    bsSize="large"
-                    animation={true}
-                    className="onborading-modal license-model-modal entitlement-pools-modal">
-                    <Modal.Header>
-                        <Modal.Title>{`${
-                            isModalInEditMode
-                                ? i18n('Edit Entitlement Pool')
-                                : i18n('Create New Entitlement Pool')
-                        }`}</Modal.Title>
-                    </Modal.Header>
-                    <Modal.Body>
-                        {isDisplayModal && (
-                            <EntitlementPoolsEditor
-                                version={version}
-                                licenseModelId={licenseModelId}
-                                isReadOnlyMode={isReadOnlyMode}
-                            />
-                        )}
-                    </Modal.Body>
-                </Modal>
             </div>
         );
     }

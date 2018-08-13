@@ -42,7 +42,8 @@ class Form extends React.Component {
         cancelButtonText: PropTypes.string,
         onValidChange: PropTypes.func,
         onValidityChanged: PropTypes.func,
-        onValidateForm: PropTypes.func
+        onValidateForm: PropTypes.func,
+        btnClassName: PropTypes.string
     };
 
     constructor(props) {
@@ -64,6 +65,7 @@ class Form extends React.Component {
             submitButtonText,
             cancelButtonText,
             children,
+            btnClassName,
             ...formProps
         } = this.props;
         /* eslint-enable no-unused-vars */
@@ -82,6 +84,7 @@ class Form extends React.Component {
                         cancelButtonText={cancelButtonText}
                         ref={this.setButtonsRef}
                         isReadOnlyMode={isReadOnlyMode}
+                        className={btnClassName}
                     />
                 )}
             </form>
@@ -159,6 +162,7 @@ export class TabsForm extends Form {
             onValidChange,
             onValidityChanged,
             onDataChanged,
+            btnClassName,
             children,
             ...formProps
         } = this.props;
@@ -176,6 +180,7 @@ export class TabsForm extends Form {
                         cancelButtonText={cancelButtonText}
                         ref={buttons => (this.buttons = buttons)}
                         isReadOnlyMode={isReadOnlyMode}
+                        className={btnClassName}
                     />
                 )}
             </form>

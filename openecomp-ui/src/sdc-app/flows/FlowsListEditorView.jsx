@@ -16,11 +16,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import i18n from 'nfvo-utils/i18n/i18n.js';
-import Modal from 'nfvo-components/modal/Modal.jsx';
 
 import ListEditorView from 'nfvo-components/listEditor/ListEditorView.jsx';
 import ListEditorItemView from 'nfvo-components/listEditor/ListEditorItemView.jsx';
-import FlowsEditorModal from './FlowsEditorModal.js';
 import SequenceDiagram from './SequenceDiagram.jsx';
 
 class FlowsListEditorView extends Component {
@@ -57,7 +55,7 @@ class FlowsListEditorView extends Component {
     }
 
     renderWorkflowsEditor() {
-        let { isDisplayModal, onAddWorkflowClick, isCheckedOut } = this.props;
+        let { onAddWorkflowClick, isCheckedOut } = this.props;
         const { localFilter } = this.state;
 
         return (
@@ -72,32 +70,7 @@ class FlowsListEditorView extends Component {
                         this.renderWorkflowListItem(flow, isCheckedOut)
                     )}
                 </ListEditorView>
-
-                {isDisplayModal && this.renderWorkflowEditorModal()}
             </div>
-        );
-    }
-
-    renderWorkflowEditorModal() {
-        let { isDisplayModal, isModalInEditMode } = this.props;
-        return (
-            <Modal
-                show={isDisplayModal}
-                animation={true}
-                className="onborading-modal workflows-editor-modal">
-                <Modal.Header>
-                    <Modal.Title>
-                        {`${
-                            isModalInEditMode
-                                ? i18n('Edit Workflow')
-                                : i18n('Create New Workflow')
-                        }`}
-                    </Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <FlowsEditorModal isNewArtifact={!isModalInEditMode} />
-                </Modal.Body>
-            </Modal>
         );
     }
 

@@ -19,6 +19,12 @@ import { actionTypes as featureGroupsActionConstants } from './FeatureGroupsCons
 import EntitlementPoolsActionHelper from 'sdc-app/onboarding/licenseModel/entitlementPools/EntitlementPoolsActionHelper.js';
 import LicenseKeyGroupsActionHelper from 'sdc-app/onboarding/licenseModel/licenseKeyGroups/LicenseKeyGroupsActionHelper.js';
 import ItemsHelper from 'sdc-app/common/helpers/ItemsHelper.js';
+import {
+    actionTypes as modalActionTypes,
+    modalSizes
+} from 'nfvo-components/modal/GlobalModalConstants.js';
+import { modalContentMapper } from 'sdc-app/common/modal/ModalContentMapper.js';
+import i18n from 'nfvo-utils/i18n/i18n.js';
 
 function baseUrl(licenseModelId, version) {
     const restPrefix = Configuration.get('restPrefix');
@@ -189,7 +195,7 @@ export default {
 
     openFeatureGroupsEditor(
         dispatch,
-        { featureGroup, licenseModelId, version }
+        { featureGroup, licenseModelId, version, isReadOnlyMode }
     ) {
         return Promise.all([
             EntitlementPoolsActionHelper.fetchEntitlementPoolsList(dispatch, {
@@ -205,12 +211,36 @@ export default {
                 type: featureGroupsActionConstants.featureGroupsEditor.OPEN,
                 featureGroup
             });
+            dispatch({
+                type: featureGroupsActionConstants.featureGroupsEditor.OPEN,
+                featureGroup
+            });
+            dispatch({
+                type: modalActionTypes.GLOBAL_MODAL_SHOW,
+                data: {
+                    modalComponentName: modalContentMapper.FG_EDITOR,
+                    modalComponentProps: {
+                        version,
+                        licenseModelId,
+                        isReadOnlyMode,
+                        size: modalSizes.LARGE
+                    },
+                    bodyClassName: 'fg-editor-body',
+                    title:
+                        licenseModelId && version
+                            ? i18n('Edit Feature Group')
+                            : i18n('Create New Feature Group')
+                }
+            });
         });
     },
 
     closeFeatureGroupsEditor(dispatch) {
         dispatch({
             type: featureGroupsActionConstants.featureGroupsEditor.CLOSE
+        });
+        dispatch({
+            type: modalActionTypes.GLOBAL_MODAL_CLOSE
         });
     }
 };

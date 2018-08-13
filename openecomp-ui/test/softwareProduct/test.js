@@ -75,7 +75,7 @@ describe('Software Product Module Tests', function() {
             msg: 'This software product successfully submitted',
             timeout: 2000,
             title: 'Submit Succeeded',
-            type: 'success'
+            type: 'info'
         };
 
         let expectedStore = store.getState();

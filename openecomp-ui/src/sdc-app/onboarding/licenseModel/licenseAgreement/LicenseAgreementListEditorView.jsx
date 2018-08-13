@@ -16,11 +16,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import i18n from 'nfvo-utils/i18n/i18n.js';
-import Modal from 'nfvo-components/modal/Modal.jsx';
 
 import ListEditorView from 'nfvo-components/listEditor/ListEditorView.jsx';
 import ListEditorItemView from 'nfvo-components/listEditor/ListEditorItemView.jsx';
-import LicenseAgreementEditor from './LicenseAgreementEditor.js';
 import { extractValue } from './LicenseAgreementConstants';
 
 class LicenseAgreementListEditorView extends React.Component {
@@ -45,13 +43,7 @@ class LicenseAgreementListEditorView extends React.Component {
     };
 
     render() {
-        const {
-            licenseModelId,
-            isReadOnlyMode,
-            isDisplayModal,
-            isModalInEditMode,
-            version
-        } = this.props;
+        const { isReadOnlyMode, version } = this.props;
         const { onAddLicenseAgreementClick } = this.props;
         const { localFilter } = this.state;
 
@@ -72,28 +64,6 @@ class LicenseAgreementListEditorView extends React.Component {
                         )
                     )}
                 </ListEditorView>
-                <Modal
-                    show={isDisplayModal}
-                    bsSize="large"
-                    animation={true}
-                    className="onborading-modal license-model-modal license-agreement-modal">
-                    <Modal.Header>
-                        <Modal.Title>{`${
-                            isModalInEditMode
-                                ? i18n('Edit License Agreement')
-                                : i18n('Create New License Agreement')
-                        }`}</Modal.Title>
-                    </Modal.Header>
-                    <Modal.Body>
-                        {isDisplayModal && (
-                            <LicenseAgreementEditor
-                                version={version}
-                                licenseModelId={licenseModelId}
-                                isReadOnlyMode={isReadOnlyMode}
-                            />
-                        )}
-                    </Modal.Body>
-                </Modal>
             </div>
         );
     }
@@ -133,7 +103,11 @@ class LicenseAgreementListEditorView extends React.Component {
             <ListEditorItemView
                 key={id}
                 onSelect={() =>
-                    onEditLicenseAgreementClick(licenseAgreement, version)
+                    onEditLicenseAgreementClick(
+                        licenseAgreement,
+                        version,
+                        isReadOnlyMode
+                    )
                 }
                 onDelete={() =>
                     onDeleteLicenseAgreement(licenseAgreement, version)
