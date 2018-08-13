@@ -119,7 +119,6 @@ const MergeEditorActionHelper = {
                         type: modalActionTypes.GLOBAL_MODAL_SHOW,
                         data: {
                             modalComponentName: modalContentMapper.MERGE_EDITOR,
-                            modalClassName: 'merge-editor-modal',
                             title: `${i18n('Merge Required')} - ${
                                 version.description
                             }`,
@@ -131,7 +130,8 @@ const MergeEditorActionHelper = {
                             modalComponentProps: {
                                 size: 'lg',
                                 type: 'default'
-                            }
+                            },
+                            bodyClassName: 'merge-editor-modal'
                         }
                     })
                 );

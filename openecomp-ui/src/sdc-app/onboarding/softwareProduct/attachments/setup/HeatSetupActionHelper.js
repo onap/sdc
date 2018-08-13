@@ -21,6 +21,10 @@ import SoftwareProductActionHelper from 'sdc-app/onboarding/softwareProduct/Soft
 // import {actionTypes as modalActionTypes} from 'nfvo-components/modal/GlobalModalConstants.js';
 
 export default {
+    toggleVolFilesDisplay(dispatch, data) {
+        dispatch({ type: actionTypes.TOGGLE_VOL_DISPLAY, data });
+    },
+
     addModule(dispatch, isBase) {
         dispatch({ type: actionTypes.ADD_MODULE, data: { isBase } });
     },
@@ -94,7 +98,7 @@ export default {
 				dispatch({
 					type: modalActionTypes.GLOBAL_MODAL_WARNING,
 					data:{
-						msg: i18n(`You have uploaded a new HEAT. If you navigate away or Check-in without proceeding to validation, 
+						msg: i18n(`You have uploaded a new HEAT. If you navigate away or Check-in without proceeding to validation,
 							Old HEAT zip file will be in use. new HEAT will be ignored. Do you want to continue?`),
 						confirmationButtonText: i18n('Continue'),
 						onConfirmed: () => resolve(),

@@ -34,14 +34,15 @@ class RevisionsView extends React.Component {
     render() {
         let { onCancel, onRevert, revisions, users } = this.props;
         return (
-            <div className="manage-revisions-page">
+            <div className="manage-revisions-modal">
                 <Form
                     hasButtons={true}
                     isValid={this.state.revertId}
                     onSubmit={() => onRevert(this.state.revertId)}
                     onReset={() => onCancel()}
                     submitButtonText={i18n('Revert')}
-                    labledButtons={true}>
+                    labledButtons={true}
+                    btnClassName="sdc-modal__footer">
                     <ListEditorView
                         title={i18n('Select a Commit')}
                         isReadOnlyMode={false}>

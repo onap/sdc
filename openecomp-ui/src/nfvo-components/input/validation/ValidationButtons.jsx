@@ -57,8 +57,12 @@ class ValidationButtons extends React.Component {
         ) : (
             <SVGIcon className="close" name="close" />
         );
+        let className = 'validation-buttons';
+        if (this.props.className) {
+            className += ' ' + this.props.className;
+        }
         return (
-            <div className="validation-buttons">
+            <div className={className}>
                 {!this.props.isReadOnlyMode ? (
                     <div>
                         <Button

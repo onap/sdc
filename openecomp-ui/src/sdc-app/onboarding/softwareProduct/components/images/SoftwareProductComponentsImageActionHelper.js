@@ -199,7 +199,7 @@ const SoftwareProductComponentImagesActionHelper = {
                 modalComponentName:
                     modalContentMapper.SOFTWARE_PRODUCT_COMPONENT_IMAGE_EDITOR,
                 title: title,
-                modalClassName: className,
+                bodyClassName: className,
                 modalComponentProps: {
                     softwareProductId,
                     componentId,

@@ -100,7 +100,7 @@ describe('License Model Module Tests', function() {
             msg: 'This license model successfully submitted',
             timeout: 2000,
             title: 'Submit Succeeded',
-            type: 'success'
+            type: 'info'
         };
 
         const versionsList = {

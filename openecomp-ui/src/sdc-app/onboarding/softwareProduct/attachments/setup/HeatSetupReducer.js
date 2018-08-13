@@ -15,6 +15,7 @@
  */
 import { actionTypes } from './HeatSetupConstants.js';
 import differenceWith from 'lodash/differenceWith.js';
+import cloneDeep from 'lodash/cloneDeep';
 
 const emptyModule = (isBase, currentLength) => ({
     name: `${isBase ? 'base_' : 'module_'}${currentLength + 1}`,
@@ -65,6 +66,15 @@ function addDeletedModuleFilesToUnassigned(unassigned, deletedModule) {
 
 export default (state = {}, action) => {
     switch (action.type) {
+        case actionTypes.TOGGLE_VOL_DISPLAY:
+            let clonedState = cloneDeep(state);
+            const indexToModify = findModuleIndexByName(
+                clonedState.modules,
+                action.data.module.name
+            );
+            let modToModify = clonedState.modules[indexToModify];
+            modToModify.showVolFiles = action.data.value;
+            return clonedState;
         case actionTypes.MANIFEST_LOADED:
             return {
                 ...state,

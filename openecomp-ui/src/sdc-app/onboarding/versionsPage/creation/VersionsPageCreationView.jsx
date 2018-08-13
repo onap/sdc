@@ -53,6 +53,7 @@ class VersionsPageCreationView extends React.Component {
                             (this.validationForm = validationForm)
                         }
                         hasButtons={true}
+                        btnClassName="sdc-modal__footer"
                         onSubmit={() => this.submit()}
                         submitButtonText={i18n('Create')}
                         onReset={() => onCancel()}
@@ -101,6 +102,7 @@ class VersionsPageCreationView extends React.Component {
                                     onDataChanged({ description })
                                 }
                                 isRequired
+                                groupClassName="no-bottom-margin"
                             />
                         </div>
                     </Form>

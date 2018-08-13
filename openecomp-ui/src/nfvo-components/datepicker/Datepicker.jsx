@@ -97,8 +97,21 @@ class Datepicker extends React.Component {
                             placeholderText={placeholderText}
                         />
                     }
-                    minDate={selectsEnd && props.startDate}
-                    maxDate={selectsStart && props.endDate}
+                    minDate={
+                        selectsEnd && props.startDate
+                            ? props.startDate
+                            : undefined
+                    }
+                    maxDate={
+                        selectsStart && props.endDate
+                            ? props.endDate
+                            : undefined
+                    }
+                    popperModifiers={{
+                        preventOverflow: {
+                            boundariesElement: 'scrollParent'
+                        }
+                    }}
                     {...props}
                 />
             </div>

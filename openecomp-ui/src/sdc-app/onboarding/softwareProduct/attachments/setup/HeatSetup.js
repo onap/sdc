@@ -65,6 +65,12 @@ export const mapActionsToProps = (dispatch, {}) => {
                 value,
                 type
             }),
+        onToggleVolFilesDisplay: ({ module, value }) => {
+            HeatSetupActionHelper.toggleVolFilesDisplay(dispatch, {
+                module,
+                value
+            });
+        },
         onArtifactListChange: artifacts =>
             HeatSetupActionHelper.changeArtifactList(dispatch, artifacts),
         onAddAllUnassigned: () =>

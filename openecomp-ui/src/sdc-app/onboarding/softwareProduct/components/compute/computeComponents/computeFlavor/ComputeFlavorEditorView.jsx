@@ -63,6 +63,7 @@ class ComputeEditorView extends React.Component {
                             this.form = form;
                         }}
                         hasButtons={true}
+                        btnClassName="sdc-modal__footer"
                         onSubmit={() => onSubmit({ data, qdata })}
                         onReset={() => onCancel()}
                         labledButtons={true}

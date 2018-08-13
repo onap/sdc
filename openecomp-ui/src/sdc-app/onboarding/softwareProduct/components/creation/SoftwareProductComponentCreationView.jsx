@@ -47,7 +47,7 @@ class ComponentCreationView extends React.Component {
                         onValidateForm={() =>
                             this.props.onValidateForm(forms.CREATE_FORM)
                         }
-                        className="entitlement-pools-form">
+                        btnClassName="sdc-modal__footer">
                         <GridSection hasLastColSet>
                             <GridItem colSpan={4} lastColInRow>
                                 <Input
@@ -82,6 +82,7 @@ class ComponentCreationView extends React.Component {
                                     }
                                     data-test-id="description"
                                     type="textarea"
+                                    groupClassName="no-bottom-margin"
                                 />
                             </GridItem>
                         </GridSection>

@@ -19,10 +19,7 @@ import { actionTypes as modalActionTypes } from 'nfvo-components/modal/GlobalMod
 import { modalContentMapper } from 'sdc-app/common/modal/ModalContentMapper.js';
 
 export default {
-    open(
-        dispatch,
-        { softwareProductId, componentId, modalClassName, version }
-    ) {
+    open(dispatch, { softwareProductId, componentId, version }) {
         dispatch({
             type: actionTypes.NICCreation.OPEN
         });
@@ -32,7 +29,6 @@ export default {
             data: {
                 modalComponentName: modalContentMapper.NIC_CREATION,
                 title: i18n('Create NEW NIC'),
-                modalClassName,
                 modalComponentProps: { softwareProductId, componentId, version }
             }
         });

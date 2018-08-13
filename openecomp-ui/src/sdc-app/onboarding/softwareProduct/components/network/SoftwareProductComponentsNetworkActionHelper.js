@@ -18,7 +18,10 @@ import Configuration from 'sdc-app/config/Configuration.js';
 import i18n from 'nfvo-utils/i18n/i18n.js';
 
 import { actionTypes } from './SoftwareProductComponentsNetworkConstants.js';
-import { actionTypes as GlobalModalActions } from 'nfvo-components/modal/GlobalModalConstants.js';
+import {
+    actionTypes as GlobalModalActions,
+    modalSizes
+} from 'nfvo-components/modal/GlobalModalConstants.js';
 import { modalContentMapper as modalPagesMapper } from 'sdc-app/common/modal/ModalContentMapper.js';
 import ValidationHelper from 'sdc-app/common/helpers/ValidationHelper.js';
 import { NIC_QUESTIONNAIRE } from 'sdc-app/onboarding/softwareProduct/components/network/SoftwareProductComponentsNetworkConstants.js';
@@ -125,7 +128,6 @@ const SoftwareProductComponentNetworkActionHelper = {
             softwareProductId,
             componentId,
             isReadOnlyMode,
-            modalClassName,
             version
         }
     ) {
@@ -136,12 +138,12 @@ const SoftwareProductComponentNetworkActionHelper = {
         dispatch({
             type: GlobalModalActions.GLOBAL_MODAL_SHOW,
             data: {
-                modalClassName,
                 modalComponentProps: {
                     softwareProductId,
                     componentId,
                     isReadOnlyMode,
-                    version
+                    version,
+                    size: modalSizes.LARGE
                 },
                 modalComponentName: modalPagesMapper.NIC_EDITOR,
                 title: i18n('Edit NIC')

@@ -44,8 +44,7 @@ const mapActionToProps = dispatch => {
         onAddComponent: (softwareProductId, version) =>
             SoftwareProductActionHelper.addComponent(dispatch, {
                 softwareProductId,
-                version,
-                modalClassName: 'create-vfc-modal'
+                version
             }),
         onDeleteComponent: (component, softwareProductId, version) =>
             dispatch({

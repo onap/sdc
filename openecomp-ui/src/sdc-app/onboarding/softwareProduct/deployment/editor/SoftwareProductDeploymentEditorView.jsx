@@ -46,7 +46,8 @@ export default class SoftwareProductDeploymentEditorView extends React.Component
                         onValidateForm={() => this.validate()}
                         isValid={this.props.isFormValid}
                         formReady={this.props.formReady}
-                        className="vsp-deployment-editor">
+                        className="vsp-deployment-editor"
+                        btnClassName="sdc-modal__footer">
                         <GridSection hasLastColSet>
                             <GridItem colSpan={1}>
                                 <Input

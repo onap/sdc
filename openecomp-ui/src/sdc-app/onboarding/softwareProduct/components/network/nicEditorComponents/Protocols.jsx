@@ -93,9 +93,9 @@ const Protocols = ({
     );
 };
 
-Protocols.PropTypes = {
+Protocols.propTypes = {
     protocols: PropTypes.array,
-    onQDataChanged: PropTypes.function,
+    onQDataChanged: PropTypes.func,
     dataMap: PropTypes.object,
     qgenericFieldInfo: PropTypes.object
 };

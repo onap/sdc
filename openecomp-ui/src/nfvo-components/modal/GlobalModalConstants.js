@@ -24,13 +24,15 @@ export const actionTypes = keyMirror({
 });
 
 export const typeEnum = {
-    DEFAULT: 'default',
+    DEFAULT: 'custom',
     ERROR: 'error',
-    WARNING: 'warning',
-    SUCCESS: 'success'
+    WARNING: 'alert',
+    SUCCESS: 'info'
 };
 
 export const modalSizes = {
     LARGE: 'large',
-    SMALL: 'small'
+    SMALL: 'small',
+    XLARGE: 'extraLarge',
+    MEDIUM: 'medium'
 };

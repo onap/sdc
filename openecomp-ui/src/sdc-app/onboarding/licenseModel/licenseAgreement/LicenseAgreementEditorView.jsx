@@ -77,7 +77,12 @@ const GeneralTabContent = ({
                     isMultiSelect={false}
                     onEnumChange={licenseTerm =>
                         onDataChanged(
-                            { licenseTerm: { choice: licenseTerm, other: '' } },
+                            {
+                                licenseTerm: {
+                                    choice: licenseTerm,
+                                    other: ''
+                                }
+                            },
                             LA_EDITOR_FORM
                         )
                     }
@@ -163,7 +168,7 @@ class LicenseAgreementEditorView extends React.Component {
             genericFieldInfo
         } = this.props;
         return (
-            <div>
+            <div className="license-model-modal license-agreement-modal">
                 {genericFieldInfo && (
                     <Form
                         ref="validationForm"
@@ -177,7 +182,8 @@ class LicenseAgreementEditorView extends React.Component {
                         onValidateForm={() =>
                             this.props.onValidateForm(LA_EDITOR_FORM)
                         }
-                        className="license-model-form license-agreement-form">
+                        className="license-model-form license-agreement-form"
+                        btnClassName="sdc-modal__footer">
                         <Tabs
                             activeTab={onTabSelect ? selectedTab : undefined}
                             onTabClick={onTabSelect}

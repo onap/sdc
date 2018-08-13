@@ -28,15 +28,12 @@ export const mapStateToProps = ({ softwareProduct }) => {
         },
         softwareProductComponents: { componentProcesses = {} }
     } = softwareProduct;
-    let { processesList = [], processesEditor = {} } = componentProcesses;
-    let { data } = processesEditor;
+    let { processesList = [] } = componentProcesses;
 
     return {
         currentSoftwareProduct,
         isValidityData,
-        processesList,
-        isDisplayModal: Boolean(data),
-        isModalInEditMode: Boolean(data && data.id)
+        processesList
     };
 };
 
@@ -46,12 +43,20 @@ const mapActionsToProps = (
 ) => {
     return {
         onAddProcess: () =>
-            SoftwareProductComponentProcessesActionHelper.openEditor(dispatch),
-        onEditProcess: process =>
-            SoftwareProductComponentProcessesActionHelper.openEditor(
-                dispatch,
-                process
-            ),
+            SoftwareProductComponentProcessesActionHelper.openEditor(dispatch, {
+                isReadOnlyMode: false,
+                componentId,
+                softwareProductId,
+                version
+            }),
+        onEditProcess: (process, isReadOnlyMode) =>
+            SoftwareProductComponentProcessesActionHelper.openEditor(dispatch, {
+                process,
+                isReadOnlyMode,
+                componentId,
+                softwareProductId,
+                version
+            }),
         onDeleteProcess: process =>
             dispatch({
                 type: modalActionTypes.GLOBAL_MODAL_WARNING,

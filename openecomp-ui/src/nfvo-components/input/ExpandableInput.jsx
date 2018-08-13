@@ -36,8 +36,8 @@ class ExpandableInputOpened extends React.Component {
         this.rawDomNode.focus();
     }
 
-    componentWillReceiveProps(newProps) {
-        if (!newProps.value) {
+    componentDidUpdate() {
+        if (!this.props.value) {
             if (!(document.activeElement === this.rawDomNode)) {
                 this.props.handleBlur();
             }
