@@ -1,145 +1,146 @@
 .select-action-table-view {
-	.svg-icon-wrapper {
-		flex-direction: row;
-		.svg-icon {
-			&:not(.__plus) {
-				margin-left: 5px;
-				margin-right: 5px;
-				width:16px;
-				height:16px;
-			}
-		}
-	}
-	.dummy-icon {
-		background-color: $white;
-		fill: $white;
-		.locked {
-			fill: $white;
-		}
-	}
+    .svg-icon-wrapper {
+        flex-direction: row;
+        .svg-icon {
+            &:not(.__plus) {
+                margin-left: 5px;
+                margin-right: 5px;
+                width: 16px;
+                height: 16px;
+            }
+        }
+    }
+    .dummy-icon {
+        background-color: $white;
+        fill: $white;
+        .locked {
+            fill: $white;
+        }
+    }
 
-	.select-action-table-controllers {
-		display: flex;
-		.svg-icon-wrapper {
-			&:hover {
-				cursor: pointer;
-			}
-			&:first-child {
-				margin-left: auto;
-			}
-		}
-	}
-	.select-action-table {
-		display: flex;
-		flex-direction: column;
-		border-color: $light-gray;
+    .select-action-table-controllers {
+        display: flex;
+        .svg-icon-wrapper {
+            &:hover {
+                cursor: pointer;
+            }
+            &:first-child {
+                margin-left: auto;
+            }
+        }
+    }
+    .select-action-table {
+        display: flex;
+        flex-direction: column;
+        border-color: $light-gray;
 
-		.select-action-table-headers {
-			display: flex;
-			background-color: $tlv-light-gray;
-			border-color: inherit;
-			.select-action-table-header {
-				@extend .body-1-semibold;
-				flex: 1;
-				border-top: 1px solid;
-				border-right: 1px solid;
-				border-color: inherit;
-				padding: 8px 0 7px 20px;
-				&:first-child {
-					border-left: 1px solid;
-					border-color: inherit;
-				}
-			}
-		}
-		.select-action-table-row-wrapper {
-			display: flex;
-			flex-direction: row;
-    		margin-bottom: 14px;
-			.svg-icon-wrapper.hideDelete {
-				.svg-icon {
-					fill: $white;
-				}
-			}
-			.select-action-table-row {
-				display: flex;
-				flex: 1;
-				border: 1px solid;
-				border-color: $light-gray;
-				&.has-error {
-					border-color: $red;
-				}
+        .select-action-table-headers {
+            display: flex;
+            background-color: $tlv-light-gray;
+            border-color: inherit;
+            .select-action-table-header {
+                @extend .body-1-semibold;
+                flex: 1;
+                border-top: 1px solid;
+                border-right: 1px solid;
+                border-color: inherit;
+                padding: 8px 0 7px 20px;
+                &:first-child {
+                    border-left: 1px solid;
+                    border-color: inherit;
+                }
+            }
+        }
+        .select-action-table-row-wrapper {
+            display: flex;
+            flex-direction: row;
+            margin-bottom: 14px;
+            .svg-icon-wrapper.hideDelete {
+                .svg-icon {
+                    fill: $white;
+                }
+            }
+            .select-action-table-row {
+                display: flex;
+                flex: 1;
+                border: 1px solid;
+                border-color: $light-gray;
+                &.has-error {
+                    border-color: $red;
+                }
 
-				.select-action-table-cell {
-					flex: 1;
-					border-right: 1px solid;
-					border-color: $light-gray;
-					@extend .body-1;
-					.dropdown-multi-select {
-						.form-group {
-							.Select{
-								&.is-open {
-									border: 1px solid $blue;
-								}
-							}
-						}
-					}
-					.form-group {
-						margin: 0;
-						.Select-control {
-							height:36px;
-							border: none;
-							.is-open {
-								border-left-color: $blue;
-								border-right-color: $blue;
-							}
-							.Select-value, .Select-placeholder, .Select-input {
-								padding-left: 20px;
-								padding-right: 50px;
-								padding-top: 4px;
-
-							}
-							.Select-placeholder {
-								color: $dark-gray;
-							}
-							.Select-arrow-zone {
-								padding-right: 15px;
-							}
-						}
-					}
-					&:last-child {
-						border-right: none;
-					}
-				}
-				.Select-menu-outer {
-						border-left: 1px solid $blue;
-						border-right: 1px solid $blue;
-						border-bottom: 1px solid $blue;
-						overflow: auto;
-						.Select-menu {
-							.Select-option {
-								overflow: hidden;
-								text-overflow: ellipsis;
-								border-bottom: 1px solid $light-gray;
-								&:hover {
-									background-color: $blue;
-									color: $white;
-									&.is-focused {
-										background-color: $blue;
-									}
-									&.is-focused {
-										background-color: $blue;
-									}
-								}
-								&.is-selected {
-									background-color: transparent;
-								}
-								&.is-focused {
-									background-color: transparent;
-								}
-							}
-						}
-					}
-			}
-		}
-	}
+                .select-action-table-cell {
+                    flex: 1;
+                    border-right: 1px solid;
+                    border-color: $light-gray;
+                    @extend .body-1;
+                    .dropdown-multi-select {
+                        .form-group {
+                            .Select {
+                                &.is-open {
+                                    border: 1px solid $blue;
+                                }
+                            }
+                        }
+                    }
+                    .form-group {
+                        margin: 0;
+                        .Select-control {
+                            height: 36px;
+                            border: none;
+                            .is-open {
+                                border-left-color: $blue;
+                                border-right-color: $blue;
+                            }
+                            .Select-value,
+                            .Select-placeholder,
+                            .Select-input {
+                                padding-left: 20px;
+                                padding-right: 50px;
+                                padding-top: 4px;
+                            }
+                            .Select-placeholder {
+                                color: $dark-gray;
+                            }
+                            .Select-arrow-zone {
+                                padding-right: 15px;
+                            }
+                        }
+                    }
+                    &:last-child {
+                        border-right: none;
+                    }
+                }
+                .Select-menu-outer {
+                    border-left: 1px solid $blue;
+                    border-right: 1px solid $blue;
+                    border-bottom: 1px solid $blue;
+                    overflow: auto;
+                    .Select-menu {
+                        .Select-option {
+                            overflow: hidden;
+                            text-overflow: ellipsis;
+                            border-bottom: 1px solid $light-gray;
+                            &:hover {
+                                background-color: $blue;
+                                color: $white;
+                                &.is-focused {
+                                    background-color: $blue;
+                                }
+                                &.is-focused {
+                                    background-color: $blue;
+                                }
+                            }
+                            &.is-selected {
+                                background-color: transparent;
+                            }
+                            &.is-focused {
+                                background-color: transparent;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 }

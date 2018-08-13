@@ -46,11 +46,26 @@ const EntitlementPoolPropType = PropTypes.shape({
     name: PropTypes.string,
     description: PropTypes.string,
     thresholdUnits: PropTypes.string,
-    thresholdValue: PropTypes.string,
+    thresholdValue: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     increments: PropTypes.string,
     startDate: PropTypes.string,
     expiryDate: PropTypes.string
 });
+
+const TabButton = props => {
+    const { onClick, disabled, className } = props;
+    const dataTestId = props['data-test-id'];
+    return (
+        <div
+            className={className}
+            onClick={disabled ? undefined : onClick}
+            data-test-id={dataTestId}
+            role="tab"
+            disabled={disabled}>
+            {props.children}
+        </div>
+    );
+};
 
 class EntitlementPoolsEditorView extends React.Component {
     static propTypes = {
@@ -95,7 +110,7 @@ class EntitlementPoolsEditorView extends React.Component {
         const isTabsDisabled = !data.id || !this.props.isFormValid;
 
         return (
-            <div>
+            <div className="entitlement-pools-modal license-model-modal">
                 <Tabs
                     type="menu"
                     activeTab={selectedTab}
@@ -191,23 +206,29 @@ class EntitlementPoolsEditorView extends React.Component {
                         )}
                     </Tab>
                     {selectedTab !== tabIds.GENERAL ? (
-                        <Button
-                            disabled={
-                                this.state.selectedLimit || isReadOnlyMode
-                            }
-                            className="add-limit-button"
+                        <TabButton
                             tabId={tabIds.ADD_LIMIT_BUTTON}
-                            btnType="link"
-                            iconName="plus">
-                            {i18n('Add Limit')}
-                        </Button>
+                            disabled={
+                                !!this.state.selectedLimit || isReadOnlyMode
+                            }
+                            data-test-id="add-limits-tab"
+                            className="add-limit-button">
+                            <Button
+                                disabled={
+                                    !!this.state.selectedLimit || isReadOnlyMode
+                                }
+                                btnType="link"
+                                iconName="plus">
+                                {i18n('Add Limit')}
+                            </Button>
+                        </TabButton>
                     ) : (
-                        <div key="empty_ep_tab_key" />
+                        <TabButton key="empty_ep_tab_key" />
                     ) // Render empty div to not break tabs
                     }
                 </Tabs>
                 <ModalButtons
-                    className="entitlement-pools-editor-buttons"
+                    className="sdc-modal__footer"
                     selectedLimit={this.state.selectedLimit}
                     isFormValid={this.props.isFormValid}
                     isReadOnlyMode={isReadOnlyMode}
