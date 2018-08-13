@@ -88,7 +88,6 @@ node_types:
         type: org.openecomp.datatypes.network.NetworkFlows
         required: false
 
-
   org.openecomp.resource.vfc.nodes.Compute:
     derived_from: tosca.nodes.Compute
     capabilities:
@@ -489,6 +488,12 @@ node_types:
         description: subnet pool id
         type: string
         required: false
+      related_networks:
+        type: list
+        description: Related Networks List.
+        required: false
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
     capabilities:
       network.incoming.packets.rate:
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.

@@ -940,6 +940,17 @@ org.openecomp.datatypes.network.NetworkAssignments:
       type: org.openecomp.datatypes.network.IPv6SubnetAssignments
       required: true
       description: IPv6 defualt subnet assignments
+    related_networks:
+      type: list
+      description: Related Networks List.
+      required: false
+      entry_schema:
+        type: org.openecomp.datatypes.network.RelatedNetworksAssignments
+    is_trunked:
+      type: boolean
+      required: true
+      description: \"true\" indicates that network is trunked
+      default: false
 
 org.openecomp.datatypes.network.ProviderNetwork:
   derived_from: org.openecomp.datatypes.Root
@@ -952,7 +963,7 @@ org.openecomp.datatypes.network.ProviderNetwork:
       type: string
       required: false
       constraints:
-        - valid_values: ["Physnet41", "Physnet42", "Physnet43", "Physnet44", "Physnet21", "Physnet22"]
+        - valid_values: ["Physnet41", "Physnet42", "Physnet43", "Physnet44", "Physnet21", "Physnet22", "sriovnet1", "sriovnet2", "oam"]
       description: >
         Identifies the NUMA processor cluster to which this physical network interface belongs.
         NUMA instance correlates to the first digit of the Physical Network Name suffix (e.g. \"01\" = NUMA 0, \"11\" = NUMA 1)
