@@ -120,12 +120,9 @@ const ComputeFlavorActionHelper = {
             data: {
                 modalComponentName:
                     modalContentMapper.COMPONENT_COMPUTE_FLAVOR_EDITOR,
-                modalClassName: `compute-flavor-editor-modal-${
-                    props.compute ? 'edit' : 'create'
-                }`,
                 modalComponentProps: {
                     ...props,
-                    size: props.compute ? modalSizes.LARGE : undefined,
+                    size: props.compute ? modalSizes.XLARGE : undefined,
                     dialogClassName: 'compute-flavor-editor-modal'
                 },
                 title: `${

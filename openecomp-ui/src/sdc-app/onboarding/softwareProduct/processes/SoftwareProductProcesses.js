@@ -38,9 +38,18 @@ export const mapStateToProps = ({ softwareProduct }) => {
 const mapActionsToProps = (dispatch, { softwareProductId, version }) => {
     return {
         onAddProcess: () =>
-            SoftwareProductProcessesActionHelper.openEditor(dispatch),
-        onEditProcess: process =>
-            SoftwareProductProcessesActionHelper.openEditor(dispatch, process),
+            SoftwareProductProcessesActionHelper.openEditor(dispatch, {
+                softwareProductId,
+                version,
+                isReadOnlyMode: false
+            }),
+        onEditProcess: (process, isReadOnlyMode) =>
+            SoftwareProductProcessesActionHelper.openEditor(dispatch, {
+                process,
+                softwareProductId,
+                version,
+                isReadOnlyMode
+            }),
         onDeleteProcess: process =>
             dispatch({
                 type: modalActionTypes.GLOBAL_MODAL_WARNING,

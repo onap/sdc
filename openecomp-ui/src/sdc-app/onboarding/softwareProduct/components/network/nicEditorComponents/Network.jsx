@@ -83,7 +83,7 @@ const Network = ({
     );
 };
 
-Network.PropTypes = {
+Network.propTypes = {
     networkValues: PropTypes.array
 };
 

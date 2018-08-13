@@ -63,6 +63,7 @@ class CommitCommentModal extends React.Component {
                 submitButtonText={commitButtonText}
                 labledButtons={true}
                 isValid={true}
+                btnClassName="sdc-modal__footer"
                 className="comment-commit-form">
                 <div className="commit-modal-text">{descriptionText}</div>
                 <Input
@@ -71,6 +72,7 @@ class CommitCommentModal extends React.Component {
                     label={i18n('Enter Commit Comment:')}
                     value={this.state.comment}
                     type="textarea"
+                    groupClassName="no-bottom-margin"
                 />
             </Form>
         );

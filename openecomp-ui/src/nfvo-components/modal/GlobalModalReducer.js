@@ -25,20 +25,17 @@ export default (state = null, action) => {
         case actionTypes.GLOBAL_MODAL_ERROR:
             return {
                 type: typeEnum.ERROR,
-                modalClassName: 'notification-modal',
                 ...action.data
             };
         case actionTypes.GLOBAL_MODAL_WARNING:
             return {
                 type: typeEnum.WARNING,
-                modalClassName: 'notification-modal',
                 ...action.data
             };
 
         case actionTypes.GLOBAL_MODAL_SUCCESS:
             return {
                 type: typeEnum.SUCCESS,
-                modalClassName: 'notification-modal',
                 ...action.data
             };
 

@@ -57,7 +57,8 @@ class Permissions extends React.Component {
                     hasButtons={true}
                     onSubmit={() => this.onsaveItemUsers()}
                     onReset={() => onCancel()}
-                    labledButtons={true}>
+                    labledButtons={true}
+                    btnClassName="sdc-modal__footer">
                     <div className="manage-permissions-title">
                         {i18n('Owner')}
                     </div>

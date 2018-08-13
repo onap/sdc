@@ -54,7 +54,6 @@ const RevisionaActionHelper = {
                 type: modalActionTypes.GLOBAL_MODAL_SHOW,
                 data: {
                     modalComponentName: modalContentMapper.REVISIONS_LIST,
-                    modalClassName: 'manage-revisions-modal',
                     title: i18n('Revert'),
                     modalComponentProps: {
                         itemId: itemId,

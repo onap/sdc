@@ -66,7 +66,7 @@ class SoftwareProductProcessesListView extends React.Component {
                 key={id}
                 className="list-editor-item-view"
                 isReadOnlyMode={isReadOnlyMode}
-                onSelect={() => onEditProcess(process)}
+                onSelect={() => onEditProcess(process, isReadOnlyMode)}
                 onDelete={() => onDeleteProcess(process, version)}>
                 <div className="list-editor-item-view-field">
                     <div className="title">{i18n('Name')}</div>

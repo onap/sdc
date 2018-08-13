@@ -171,7 +171,7 @@ const SoftwareProductDeploymentActionHelper = {
             data: {
                 modalComponentName: modalContentMapper.DEPLOYMENT_FLAVOR_EDITOR,
                 modalComponentProps: { softwareProductId, version },
-                modalClassName,
+                bodyClassName: modalClassName,
                 title: isEdit
                     ? 'Edit Deployment Flavor'
                     : 'Create a New Deployment Flavor'

@@ -16,8 +16,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import i18n from 'nfvo-utils/i18n/i18n.js';
-import Modal from 'nfvo-components/modal/Modal.jsx';
-import SoftwareProductProcessesEditor from './SoftwareProductComponentProcessesEditor.js';
 import SoftwareProductProcessListView from 'sdc-app/onboarding/softwareProduct/processes/SoftwareProductProcessListView.jsx';
 
 class SoftwareProductProcessesView extends React.Component {
@@ -42,7 +40,6 @@ class SoftwareProductProcessesView extends React.Component {
             <div className="vsp-processes-page">
                 <div className="software-product-view">
                     <div className="software-product-landing-view-right-side vsp-components-processes-page flex-column">
-                        {this.renderEditor()}
                         <SoftwareProductProcessListView
                             addButtonTitle={i18n(
                                 'Add Component Process Details'
@@ -52,40 +49,6 @@ class SoftwareProductProcessesView extends React.Component {
                     </div>
                 </div>
             </div>
-        );
-    }
-
-    renderEditor() {
-        let {
-            softwareProductId,
-            version,
-            componentId,
-            isReadOnlyMode,
-            isDisplayModal,
-            isModalInEditMode
-        } = this.props;
-        return (
-            <Modal
-                show={isDisplayModal}
-                bsSize="large"
-                animation={true}
-                className="onborading-modal">
-                <Modal.Header>
-                    <Modal.Title>
-                        {isModalInEditMode
-                            ? i18n('Edit Process Details')
-                            : i18n('Create New Process Details')}
-                    </Modal.Title>
-                </Modal.Header>
-                <Modal.Body className="edit-process-modal">
-                    <SoftwareProductProcessesEditor
-                        componentId={componentId}
-                        softwareProductId={softwareProductId}
-                        version={version}
-                        isReadOnlyMode={isReadOnlyMode}
-                    />
-                </Modal.Body>
-            </Modal>
         );
     }
 }

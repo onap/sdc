@@ -71,7 +71,6 @@ const mapActionsToProps = (
             NICCreationActionHelper.open(dispatch, {
                 softwareProductId,
                 componentId,
-                modalClassName: 'network-nic-modal-create',
                 version
             }),
         onDeleteNic: nic =>
@@ -119,7 +118,6 @@ const mapActionsToProps = (
                         isReadOnlyMode,
                         softwareProductId,
                         componentId,
-                        modalClassName: 'network-nic-modal-edit',
                         version
                     }
                 )

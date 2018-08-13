@@ -68,7 +68,12 @@ const mapActionsToProps = dispatch => {
             switch (name) {
                 case overviewItems.ENTITLEMENT_POOLS:
                     EntitlementPoolsActionHelper.openEntitlementPoolsEditor(
-                        dispatch
+                        dispatch,
+                        {
+                            licenseModelId,
+                            version,
+                            isReadOnlyMode: false
+                        }
                     );
                     break;
                 case overviewItems.FEATURE_GROUPS:
@@ -76,7 +81,8 @@ const mapActionsToProps = dispatch => {
                         dispatch,
                         {
                             licenseModelId,
-                            version
+                            version,
+                            isReadOnlyMode: false
                         }
                     );
                     break;
@@ -85,13 +91,19 @@ const mapActionsToProps = dispatch => {
                         dispatch,
                         {
                             licenseModelId,
-                            version
+                            version,
+                            isReadOnlyMode: false
                         }
                     );
                     break;
                 case overviewItems.LICENSE_KEY_GROUPS:
                     LicenseKeyGroupsActionHelper.openLicenseKeyGroupsEditor(
-                        dispatch
+                        dispatch,
+                        {
+                            licenseModelId,
+                            version,
+                            isReadOnlyMode: false
+                        }
                     );
                     break;
                 default:
