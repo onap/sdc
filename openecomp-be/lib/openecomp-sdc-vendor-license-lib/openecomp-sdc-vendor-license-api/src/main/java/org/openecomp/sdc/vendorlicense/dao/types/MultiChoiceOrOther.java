@@ -155,6 +155,10 @@ public class MultiChoiceOrOther<E extends Enum<E>> {
     if (this == obj) {
       return true;
     }
+    if (obj == null && choices == null && other == null && results == null ) {
+      return true;
+    }
+
     if (obj == null || getClass() != obj.getClass()) {
       return false;
     }
