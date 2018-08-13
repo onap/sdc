@@ -45,8 +45,12 @@ fi
 
 
 function usage {
-    echo "usage: docker_run.sh [ -r|--release <RELEASE-NAME> ]  [ -e|--environment <ENV-NAME> ] [ -p|--port <Docker-hub-port>] [ -l|--local <Run-without-pull>] [ -t|--runTests <Run-with-sanityDocker>] [ -dcae|--dcae <Run-with-DCAE>][ -h|--help ]"
-    echo "example: sudo bash docker_run.sh -e AUTO -r 1.2-STAGING-latest  -dcae"
+    echo "usage: docker_run.sh [ -r|--release <RELEASE-NAME> ] [ -e|--environment <ENV-NAME> ] [ -p|--port <Docker-hub-port>] [ -l|--local <Run-without-pull>] [ -t|--runTests <Run-with-sanityDocker>] [ -sim|--simulator <Run-with-simulator>] [ -ta <run api tests with the supplied test suit>] [ -tu <run ui tests with the supplied test suit>] [ -ta <run api tests with the supplied test suit>] [ -tu <run ui tests with the supplied test suit>] [ -tad <run api tests with the default test suit>] [ -tu <run ui tests with the default test suit>] [ -dcae|--dcae <Run-with-DCAE>][ -h|--help ]"
+    echo "start dockers built locally example: docker_run.sh -l"
+    echo "start dockers built locally and simulator example: docker_run.sh -l -sim"
+    echo "start dockers, pull from onap nexus according to release and simulator example: docker_run.sh -r 1.3-STAGING-latest -sim"
+    echo "start dockers built locally and run api tests docker example: docker_run.sh -l -tad"
+    echo "start dockers built locally and run only the catalog be example: docker_run.sh -l -d sdc-BE "
 }
 #
 
@@ -177,6 +181,18 @@ function probe_dcae_tools {
         return ${SUCCESS}
     fi
     return ${SUCCESS}
+}
+#
+
+# check simulator status
+function probe_sim {
+    if lsof -Pi :8285 -sTCP:LISTEN -t >/dev/null ; then
+        echo "running"
+        sim_stat=true
+    else
+        echo "not running"
+        sim_stat=false
+    fi
 }
 #
 
@@ -538,7 +554,7 @@ function sdc-ui-tests {
             if [ ${LOCAL} = false ]; then
                 docker pull ${PREFIX}/sdc-ui-tests:${RELEASE}
             fi
-
+            RUN_SIMULATOR=true;
             sdc-sim
             docker run --detach --name sdc-ui-tests --env HOST_IP=${IP} --env ENVNAME="${DEP_ENV}" --env JAVA_OPTIONS="${UI_TESTS_JAVA_OPTIONS}" --env SUITE_NAME=${UI_SUITE} --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --ulimit nofile=4096:100000 ${LOCAL_TIME_MOUNT_CMD} --volume ${WORKSPACE}/data/logs/sdc-ui-tests/target:/var/lib/tests/target --volume ${WORKSPACE}/data/logs/sdc-ui-tests/ExtentReport:/var/lib/tests/ExtentReport --volume ${WORKSPACE}/data/environments:/root/chef-solo/environments --publish 5901:5901 --publish 6901:6901 ${PREFIX}/sdc-ui-tests:${RELEASE}
             echo "please wait while SDC-UI-TESTS is starting....."
@@ -551,16 +567,29 @@ function sdc-ui-tests {
 
 # SDC-Simulator
 function sdc-sim {
-    echo "docker run sdc-webSimulator..."
-    if [ ${LOCAL} = false ]; then
-        docker pull ${PREFIX}/sdc-simulator:${RELEASE}
-    fi
+    if [ ${RUN_SIMULATOR} = true ]; then
+        echo "docker run sdc-webSimulator..."
+        if [ ${LOCAL} = false ]; then
+            docker pull ${PREFIX}/sdc-simulator:${RELEASE}
+        fi
 
-    probe_sim
-    if [ sim_stat=false ]; then
-        docker run --detach --name sdc-sim  --env JAVA_OPTIONS="${SIM_JAVA_OPTIONS}" --env ENVNAME="${DEP_ENV}" ${LOCAL_TIME_MOUNT_CMD} --volume ${WORKSPACE}/data/logs/WS/:/var/lib/jetty/logs --volume ${WORKSPACE}/data/environments:/root/chef-solo/environments --publish 8285:8080 --publish 8286:8443 ${PREFIX}/sdc-simulator:${RELEASE}
-        echo "please wait while SDC-WEB-SIMULATOR is starting....."
-        monitor_docker sdc-sim
+        probe_sim
+        sim_stat=$?
+        if [ sim_stat=1 ]; then
+            docker run \
+                --detach \
+                --name sdc-sim \
+                --env FE_URL="${FE_URL}" \
+                --env JAVA_OPTIONS="${SIM_JAVA_OPTIONS}" \
+                --env ENVNAME="${DEP_ENV}" \
+                ${LOCAL_TIME_MOUNT_CMD} \
+                --volume ${WORKSPACE}/data/logs/WS/:/var/lib/jetty/logs \
+                --volume ${WORKSPACE}/data/environments:/root/chef-solo/environments \
+                --publish 8285:8080 \
+                --publish 8286:8443 ${PREFIX}/sdc-simulator:${RELEASE}
+            echo "please wait while SDC-WEB-SIMULATOR is starting....."
+            monitor_docker sdc-sim
+        fi
     fi
 }
 #
@@ -628,7 +657,15 @@ while [ $# -gt 0 ]; do
           shift 1 ;
           DOCKER=$1;
           shift 1 ;;
-
+    # -sim | --simulator run the simulator
+    -sim | --simulator )
+         RUN_SIMULATOR=true;
+         shift 1 ;;
+    # -sim | --simulator run the simulator
+    -u | --fe_url )
+         shift 1 ;
+         FE_URL=$1;
+         shift 1 ;;
     # -dcae | --dcae - Use this to deploy DCAE upon SDC
     -dcae | --dcae )
          shift 1 ;
@@ -684,6 +721,7 @@ if [ -z "${DOCKER}" ]; then
 	dcae-tools
 	dcae-fe
 	healthCheck
+    sdc-sim
 	sdc-api-tests
 	sdc-ui-tests
 else

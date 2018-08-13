@@ -20,6 +20,7 @@
 
 package org.openecomp.sdc.exception;
 
+import org.openecomp.sdc.common.log.enums.EcompLoggerErrorCode;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 
 import java.util.Arrays;
@@ -58,11 +59,11 @@ public abstract class AbstractSdncException {
 		}
 		int actualParamsNum = (variables != null) ? variables.length : 0;
 		if (actualParamsNum < expectedParamsNum) {
-			log.warn(
+			log.warn(EcompLoggerErrorCode.UNKNOWN_ERROR,"","",
 					"Received less parameters than expected for error with messageId {}, expected: {}, actual: {}. Missing parameters are padded with null values.",
 					messageId, expectedParamsNum, actualParamsNum);
 		} else if (actualParamsNum > expectedParamsNum) {
-			log.warn(
+			log.warn(EcompLoggerErrorCode.UNKNOWN_ERROR,"","","",
 					"Received more parameters than expected for error with messageId {}, expected: {}, actual: {}. Extra parameters are ignored.",
 					messageId, expectedParamsNum, actualParamsNum);
 		}

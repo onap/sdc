@@ -1574,6 +1574,7 @@ public class Configuration extends BasicConfiguration {
         this.resourcesForUpgrade = resourcesForUpgrade;
     }
 
+    @SuppressWarnings("unchecked")
     public static <K,V> Map<K,V> safeGetCapsInsensitiveMap(Map<K,V> map) {
         return map == null ? emptyMap() : new CaseInsensitiveMap(map);
     }
