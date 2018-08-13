@@ -74,10 +74,10 @@
                     <plugin>
                         <groupId>io.fabric8</groupId>
                         <artifactId>docker-maven-plugin</artifactId>
-                        <version>${fabric8.version}</version>
+                        <version>${docker.maven.plugin.version}</version>
 
                         <configuration>
-                            <verbose>true</verbose>
+                            <verbose>false</verbose>
                             <apiVersion>1.23</apiVersion>
                             <registry>nexus3.onap.org:10001</registry>
                             <authConfig>

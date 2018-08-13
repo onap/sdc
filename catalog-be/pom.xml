@@ -617,9 +617,8 @@
 
         <plugins>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
-                <version>2.6</version>
+                <version>${maven.war.plugin.version}</version>
                 <configuration>
                     <packagingExcludes>WEB-INF\lib\slf4j-log4j*.jar,
                         WEB-INF/classes/elasticsearch.yml,
@@ -646,8 +645,8 @@
             </plugin>
 
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
+                <version>${maven.dependency.plugin.version}</version>
                 <executions>
                     <execution>
                         <id>copy-dependencies</id>
@@ -683,7 +682,7 @@
             <plugin>
                 <groupId>com.jcabi</groupId>
                 <artifactId>jcabi-maven-plugin</artifactId>
-                <version>${jcabi.plugin.version}</version>
+                <version>${jcabi.maven.plugin.version}</version>
                 <executions>
                     <execution>
                         <goals>
@@ -694,7 +693,6 @@
             </plugin>
 
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <executions>
                     <execution>
@@ -715,7 +713,6 @@
             </plugin>
             <plugin>
                 <artifactId>maven-clean-plugin</artifactId>
-                <version>3.0.0</version>
                 <executions>
                     <execution>
                         <id>clean.sdc.backend.folder</id>
@@ -783,7 +780,7 @@
 
             <plugin>
                 <artifactId>maven-resources-plugin</artifactId>
-                <version>3.0.2</version>
+                <version>${maven.resources.plugin.version}</version>
                 <executions>
                     <execution>
                         <id>copy-static-configuration-files</id>
@@ -871,7 +868,6 @@
                     </configuration>
                 </plugin>
                 <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-deploy-plugin</artifactId>
                     <version>2.7</version>
                     <configuration>
@@ -901,7 +897,7 @@
                 <plugins>
                     <plugin>
                         <artifactId>maven-resources-plugin</artifactId>
-                        <version>3.0.2</version>
+                        <version>${maven.resources.plugin.version}</version>
                         <executions>
                             <execution>
                                 <id>copy-resources-apidocs</id>
@@ -973,10 +969,10 @@
                     <plugin>
                         <groupId>io.fabric8</groupId>
                         <artifactId>docker-maven-plugin</artifactId>
-                        <version>${fabric8.version}</version>
+                        <version>${docker.maven.plugin.version}</version>
 
                         <configuration>
-                            <verbose>true</verbose>
+                            <verbose>false</verbose>
                             <apiVersion>1.23</apiVersion>
                             <registry>nexus3.onap.org:10001</registry>
                             <authConfig>

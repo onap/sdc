@@ -6,7 +6,7 @@ import org.junit.Test;
 public class WrapperTest {
 
 	private Wrapper createTestSubject() {
-		return new Wrapper(null);
+		return new Wrapper("test");
 	}
 
 

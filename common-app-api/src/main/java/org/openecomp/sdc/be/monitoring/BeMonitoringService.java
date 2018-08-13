@@ -33,6 +33,7 @@ import org.openecomp.sdc.common.http.client.api.HttpRequest;
 import org.openecomp.sdc.common.http.client.api.HttpResponse;
 import org.openecomp.sdc.common.http.config.HttpClientConfig;
 import org.openecomp.sdc.common.http.config.Timeouts;
+import org.openecomp.sdc.common.log.enums.EcompLoggerErrorCode;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.common.monitoring.MonitoringEvent;
 import org.openecomp.sdc.common.monitoring.MonitoringMetricsFetcher;
@@ -99,10 +100,10 @@ public class BeMonitoringService {
 			HttpResponse<String> httpResponse = HttpRequest.post(redirectedUrl, myEntity, new HttpClientConfig(new Timeouts(timeout, timeout)));
             int beResponseStatus = httpResponse.getStatusCode();
             if (beResponseStatus != HttpStatus.SC_OK) {
-                monitoringLogger.error("Unexpected HTTP response from BE : {}", beResponseStatus);
+                monitoringLogger.error(EcompLoggerErrorCode.UNKNOWN_ERROR,"","","Unexpected HTTP response from BE : {}", beResponseStatus);
             }
 		} catch (Exception e) {
-			monitoringLogger.error("Monitoring BE failed with exception ", e);
+			monitoringLogger.error(EcompLoggerErrorCode.UNKNOWN_ERROR,"","","Monitoring BE failed with exception ", e);
 		}
 	}
 }

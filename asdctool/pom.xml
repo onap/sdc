@@ -513,7 +513,6 @@
 		<plugins>
 			<plugin>
 				<artifactId>maven-clean-plugin</artifactId>
-				<version>3.0.0</version>
 				<executions>
 					<execution>
 						<id>clean-static-files</id>
@@ -553,16 +552,14 @@
 			</plugin>
 
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-deploy-plugin</artifactId>
-				<version>2.7</version>
+				<version>${maven.deploy.plugin.version}</version>
 				<configuration>
 					<skip>true</skip>
 				</configuration>
 			</plugin>
 
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-assembly-plugin</artifactId>
 				<executions>
 					<execution>
@@ -583,9 +580,8 @@
 			</plugin>
 
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-shade-plugin</artifactId>
-				<version>3.1.0</version>
+				<version>${maven.shade.plugin.version}</version>
 				<executions>
 					<execution>
 						<phase>package</phase>
@@ -619,7 +615,6 @@
 			<plugin>
 				<groupId>ru.yaal.maven</groupId>
 				<artifactId>write-text-files-maven-plugin</artifactId>
-				<version>1.1</version>
 				<configuration>
 					<charset>UTF-8</charset>
 					<files>
@@ -644,9 +639,8 @@
 				</executions>
 			</plugin>
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-resources-plugin</artifactId>
-				<version>3.0.2</version>
+				<version>${maven.resources.plugin.version}</version>
 				<executions>
 					<execution>
 						<id>copy-tosca-folder</id>
@@ -679,7 +673,7 @@
 				<plugins>
 					<plugin>
 						<artifactId>maven-resources-plugin</artifactId>
-						<version>3.0.2</version>
+						<version>${maven.resources.plugin.version}</version>
 						<executions>
 							<execution>
 								<id>copy-sdctool</id>
@@ -704,9 +698,9 @@
 					<plugin>
 						<groupId>io.fabric8</groupId>
 						<artifactId>docker-maven-plugin</artifactId>
-						<version>${fabric8.version}</version>
+						<version>${docker.maven.plugin.version}</version>
 						<configuration>
-							<verbose>true</verbose>
+							<verbose>false</verbose>
 							<apiVersion>1.23</apiVersion>
 							<registry>nexus3.onap.org:10001</registry>
 							<authConfig>
