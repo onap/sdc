@@ -22,6 +22,7 @@ package org.openecomp.sdc.common.rest.impl.validator;
 
 import org.apache.commons.codec.binary.Base64;
 import org.openecomp.sdc.common.api.Constants;
+import org.openecomp.sdc.common.log.enums.EcompLoggerErrorCode;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 
 import javax.servlet.http.HttpServletRequest;
@@ -58,7 +59,7 @@ public class RequestHeadersValidator {
 				headersMap.put(requiredHeader, headerVal);
 				log.debug("found header - {} : {}", requiredHeader, headerVal);
 			} else {
-				log.error("missing identification header: {}", requiredHeader);
+				log.error(EcompLoggerErrorCode.UNKNOWN_ERROR,"","","missing identification header: {}", requiredHeader);
 				throw new RestRequestValidationException("missing identification header: " + requiredHeader);
 			}
 		}

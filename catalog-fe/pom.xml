@@ -296,9 +296,8 @@
 
 		<plugins>
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-war-plugin</artifactId>
-				<version>2.6</version>
+				<version>${maven.war.plugin.version}</version>
 				<configuration>
 					<archive>
 						<manifest>
@@ -318,7 +317,6 @@
 				<groupId>org.eclipse.jetty</groupId>
 				<artifactId>jetty-maven-plugin</artifactId>
 				<version>${jetty.version}</version>
-				<!--<version>9.0.6.v20130930</version>-->
 				<configuration>
 					<webApp>
 						<contextPath>/</contextPath>
@@ -329,7 +327,6 @@
 			</plugin>
 
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-deploy-plugin</artifactId>
 				<version>2.7</version>
 				<configuration>
@@ -340,7 +337,7 @@
 			<plugin>
 				<groupId>com.jcabi</groupId>
 				<artifactId>jcabi-maven-plugin</artifactId>
-				<version>${jcabi.plugin.version}</version>
+				<version>${jcabi.maven.plugin.version}</version>
 				<executions>
 					<execution>
 						<goals>
@@ -351,7 +348,6 @@
 			</plugin>
 			<plugin>
 				<artifactId>maven-clean-plugin</artifactId>
-				<version>3.0.0</version>
 				<executions>
 					<execution>
 						<id>clean.catalog.fe.folder</id>
@@ -447,7 +443,7 @@
 				<plugins>
 					<plugin>
 						<artifactId>maven-resources-plugin</artifactId>
-						<version>3.0.2</version>
+						<version>${maven.resources.plugin.version}</version>
 						<executions>
 							<execution>
 								<id>copy-resources-fe</id>
@@ -478,10 +474,10 @@
 					<plugin>
 						<groupId>io.fabric8</groupId>
 						<artifactId>docker-maven-plugin</artifactId>
-						<version>${fabric8.version}</version>
+						<version>${docker.maven.plugin.version}</version>
 
 						<configuration>
-							<verbose>true</verbose>
+							<verbose>false</verbose>
 							<apiVersion>1.23</apiVersion>
 							<registry>nexus3.onap.org:10001</registry>
 							<authConfig>

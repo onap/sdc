@@ -87,22 +87,6 @@
 	</dependencies>
 	<build>
 		<finalName>WSSimulator-${project.version}</finalName>
-		<plugins>
-			<!-- ================================================== -->
-			<!-- Set the JDK compiler version. -->
-			<!-- ================================================== -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>2.5.1</version>
-				<inherited>true</inherited>
-				<configuration>
-					<source>1.8</source>
-					<target>1.8</target>
-				</configuration>
-			</plugin>
-
-		</plugins>
 	</build>
 	
 	<repositories>
@@ -212,10 +196,10 @@
 					<plugin>
 						<groupId>io.fabric8</groupId>
 						<artifactId>docker-maven-plugin</artifactId>
-						<version>${fabric8.version}</version>
+						<version>${docker.maven.plugin.version}</version>
 
 						<configuration>
-							<verbose>true</verbose>
+							<verbose>false</verbose>
 							<apiVersion>1.23</apiVersion>
 							<registry>nexus3.onap.org:10001</registry>
 							<authConfig>
