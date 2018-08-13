@@ -16,21 +16,20 @@
 
 package org.openecomp.core.factory.impl;
 
+import static org.openecomp.core.utilities.CommonMethods.newInstance;
+
+import java.util.Collection;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.lang3.StringUtils;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.ErrorCategory;
 import org.openecomp.sdc.common.errors.ErrorCode;
 
-import java.util.Collection;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
-import static org.openecomp.core.utilities.CommonMethods.newInstance;
-
 public abstract class AbstractFactoryBase {
 
-  /**
+    /**
    * Temporary registry of default implementations. The map keeps class names rather then class
    * types to allow unloading of those classes from memory by garbage collector if factory is not
    * actually used.
@@ -41,8 +40,9 @@ public abstract class AbstractFactoryBase {
    * Cached factory instances.
    */
   private static final Map<String, AbstractFactoryBase> FACTORY_MAP = new ConcurrentHashMap<>();
+    public static final String E0001 = "E0001";
 
-  /**
+    /**
    * Registers implementor for an abstract factory. The method accepts Java classes rather then
    * class names to ensure type safety at compilation time.
    *
@@ -55,13 +55,13 @@ public abstract class AbstractFactoryBase {
                                                                         Class<? extends F> impl) {
     if (factory == null) {
       throw new CoreException(
-          new ErrorCode.ErrorCodeBuilder().withId("E0001").withMessage("Mandatory input factory.")
+          new ErrorCode.ErrorCodeBuilder().withId(E0001).withMessage("Mandatory input factory.")
               .withCategory(ErrorCategory.SYSTEM).build());
     }
 
     if (impl == null) {
       throw new CoreException(
-          new ErrorCode.ErrorCodeBuilder().withId("E0001").withMessage("Mandatory input impl.")
+          new ErrorCode.ErrorCodeBuilder().withId(E0001).withMessage("Mandatory input impl.")
               .withCategory(ErrorCategory.SYSTEM).build());
     }
     if (FACTORY_MAP.containsKey(factory.getName())) {
@@ -84,7 +84,7 @@ public abstract class AbstractFactoryBase {
   public static <F extends AbstractFactoryBase> void unregisterFactory(Class<F> factory) {
     if (factory == null) {
       throw new CoreException(
-          new ErrorCode.ErrorCodeBuilder().withId("E0001").withMessage("Mandatory input factory.")
+          new ErrorCode.ErrorCodeBuilder().withId(E0001).withMessage("Mandatory input factory.")
               .withCategory(ErrorCategory.SYSTEM).build());
     }
 
@@ -103,7 +103,7 @@ public abstract class AbstractFactoryBase {
   public static <I, F extends AbstractFactoryBase> F getInstance(Class<F> factoryType) {
     if (factoryType == null) {
       throw new CoreException(
-          new ErrorCode.ErrorCodeBuilder().withId("E0001")
+          new ErrorCode.ErrorCodeBuilder().withId(E0001)
               .withMessage("Mandatory input factory type.").withCategory(ErrorCategory.SYSTEM)
               .build());
 
@@ -113,7 +113,7 @@ public abstract class AbstractFactoryBase {
     // Check for the first time access
     if (factory == null) {
       // Synchronize factory instantiation
-      synchronized (factoryType) {
+      synchronized (FACTORY_MAP) {
         // Re-check the factory instance
         factory = (F) FACTORY_MAP.get(factoryType.getName());
         if (factory == null) {
@@ -122,7 +122,7 @@ public abstract class AbstractFactoryBase {
 
           if (StringUtils.isEmpty(implName)) {
             throw new CoreException(
-                new ErrorCode.ErrorCodeBuilder().withId("E0001")
+                new ErrorCode.ErrorCodeBuilder().withId(E0001)
                     .withMessage("Mandatory input factory implementation.")
                     .withCategory(ErrorCategory.SYSTEM).build());
           }
@@ -153,7 +153,7 @@ public abstract class AbstractFactoryBase {
     boolean isFactoryRegistered = false;
     if (factoryType == null) {
       throw new CoreException(
-          new ErrorCode.ErrorCodeBuilder().withId("E0001")
+          new ErrorCode.ErrorCodeBuilder().withId(E0001)
               .withMessage("Mandatory input factory type.").withCategory(ErrorCategory.SYSTEM)
               .build());
     }

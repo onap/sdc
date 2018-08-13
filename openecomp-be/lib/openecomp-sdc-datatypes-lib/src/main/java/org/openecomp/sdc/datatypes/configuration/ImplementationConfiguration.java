@@ -28,7 +28,7 @@ import java.util.Map;
  * @author shiria
  * @since November 30, 2016.
  */
-@Config
+@Config(key = "")
 public class ImplementationConfiguration {
   @Config(key = "enable")
   Boolean enable = true;
