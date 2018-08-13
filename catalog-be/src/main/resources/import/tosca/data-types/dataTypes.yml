@@ -930,6 +930,14 @@ org.openecomp.datatypes.network.IPv6SubnetAssignments:
       required: true
       description: Indicates IPv6 subnet assignments
 
+org.openecomp.datatypes.network.RelatedNetworksAssignments:
+  derived_from: org.openecomp.datatypes.Root
+  properties:
+    related_network_role:
+      description: The network role of the related network, sharing provider network
+      type: string
+      required: false
+
 org.openecomp.datatypes.network.NetworkAssignments:
   derived_from: org.openecomp.datatypes.Root
   properties:
@@ -970,7 +978,7 @@ org.openecomp.datatypes.network.ProviderNetwork:
       type: string
       required: false
       constraints:
-        - valid_values: ["Physnet41", "Physnet42", "Physnet43", "Physnet44", "Physnet21", "Physnet22"]
+        - valid_values: ["Physnet41", "Physnet42", "Physnet43", "Physnet44", "Physnet21", "Physnet22", "sriovnet1", "sriovnet2", "oam"]
       description: >
         Identifies the NUMA processor cluster to which this physical network interface belongs.
         NUMA instance correlates to the first digit of the Physical Network Name suffix (e.g. \"01\" = NUMA 0, \"11\" = NUMA 1)

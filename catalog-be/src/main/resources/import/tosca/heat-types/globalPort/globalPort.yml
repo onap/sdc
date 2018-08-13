@@ -40,6 +40,12 @@ node_types:
         type: boolean
         required: false
         default: false
+      related_networks:
+        type: list
+        description: Related Networks List.
+        required: false
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
     capabilities:
       network.incoming.packets.rate:
         type: org.openecomp.capabilities.metric.Ceilometer
