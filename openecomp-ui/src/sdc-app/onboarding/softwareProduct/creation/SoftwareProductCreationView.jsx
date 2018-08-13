@@ -81,6 +81,7 @@ class SoftwareProductCreationView extends React.Component {
                         isValid={this.props.isFormValid}
                         submitButtonText={i18n('Create')}
                         formReady={this.props.formReady}
+                        btnClassName="sdc-modal__footer"
                         onValidateForm={() => this.validate()}>
                         <GridSection hasLastColSet>
                             <GridItem colSpan="2">
@@ -321,6 +322,7 @@ const OnboardingProcedure = ({
                     }
                     type="radio"
                     data-test-id="new-vsp-creation-procedure-manual"
+                    groupClassName="no-bottom-margin"
                 />
             </GridItem>
         </GridSection>

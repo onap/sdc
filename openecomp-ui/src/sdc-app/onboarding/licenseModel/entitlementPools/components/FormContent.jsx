@@ -161,11 +161,13 @@ export const EntitlementPoolsFormContent = ({
                     data-test-id="create-ep-manufacturerReferenceNumber-value"
                     value={manufacturerReferenceNumber}
                     type="text"
+                    groupClassName="no-bottom-margin"
                 />
             </GridItem>
             <GridItem colSpan={2} lastColInRow>
                 <div className="date-section">
                     <Input
+                        groupClassName="no-bottom-margin"
                         type="date"
                         label={i18n('Start Date')}
                         value={startDate}
@@ -188,6 +190,7 @@ export const EntitlementPoolsFormContent = ({
                         selectsStart
                     />
                     <Input
+                        groupClassName="no-bottom-margin"
                         type="date"
                         label={i18n('Expiry Date')}
                         value={expiryDate}

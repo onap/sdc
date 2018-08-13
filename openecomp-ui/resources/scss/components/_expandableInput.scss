@@ -1,56 +1,55 @@
 .expandable-input-top {
-	display: flex;
-	height: 22px;
-	.expandable-input-wrapper {
-		display: flex;
-		&.closed {
-			.svg-icon
-			{
-				&.__search {
-					height: 17px;
-					width: 17px;
-					transition: fill 0.5s ease-in;
-					fill: $blue;
-					cursor: pointer;
-					&:hover {
-						transition: fill 0.5s ease-in;
-						fill: $dark-blue;
-					}
-				}
-			}
-		}
-		&.opened {
-			.svg-icon-wrapper {
-				margin-left: 3px;
-			}
-			.svg-icon {
-				&.__search {
-					height: 17px;
-					width: 17px;
-					fill: $dark-blue;
-				}
-			}
-			.svg-icon {
-				&.__close {
-					margin-left: 7px;
-					opacity: 0.6;
-					fill: $dark-gray;
-					&:hover {
-						opacity: 1;
-					}
-				}
-			}
-		}
-		.expandable-input-control {
-			.form-control {
-				border: none;
-				background-color: transparent;
-				border-radius: 0;
-				border-bottom: 1px solid $gray;
-				height: 22px;
-				padding: 0 5px;
-			}
-			margin: 0;
-		}
-	}
+    display: flex;
+    height: 22px;
+    .expandable-input-wrapper {
+        display: flex;
+        &.closed {
+            .svg-icon {
+                &.__search {
+                    height: 17px;
+                    width: 17px;
+                    transition: fill 0.5s ease-in;
+                    fill: $blue;
+                    cursor: pointer;
+                    &:hover {
+                        transition: fill 0.5s ease-in;
+                        fill: $dark-blue;
+                    }
+                }
+            }
+        }
+        &.opened {
+            .svg-icon-wrapper {
+                margin-left: 3px;
+            }
+            .svg-icon {
+                &.__search {
+                    height: 17px;
+                    width: 17px;
+                    fill: $dark-blue;
+                }
+            }
+            .svg-icon {
+                &.__close {
+                    margin-left: 7px;
+                    opacity: 0.6;
+                    fill: $dark-gray;
+                    &:hover {
+                        opacity: 1;
+                    }
+                }
+            }
+        }
+        .expandable-input-control {
+            .form-control {
+                border: none;
+                background-color: transparent;
+                border-radius: 0;
+                border-bottom: 1px solid $gray;
+                height: 22px;
+                padding: 0 5px;
+            }
+            margin: 0;
+        }
+    }
 }

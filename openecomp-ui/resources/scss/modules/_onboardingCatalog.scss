@@ -1,63 +1,63 @@
 $transitionLength: 0.6s;
 
 .catalog-view {
-	background-color: $background-gray;
-	overflow: hidden;
-	height: 100%;
-	display: flex;
-	@import "onboardingCatalog/catalogFilter.scss";
-	.catalog-parts {
-		width: 100%;
-		@import "onboardingCatalog/onboardHeader";
-		@import "onboardingCatalog/catalogHeader";
-	}	
-	@import "onboardingCatalog/vendorPageHeader";
-	@import "onboardingCatalog/catalogList";
-	@import "onboardingCatalog/vspOverlay";
-	.catalog-wrapper {
-		height: 100%;
-		overflow: auto;
-		.tab-separator {
-		  content: '';
-		  height: 25px;
-		  border-right: 1px solid $dark-gray;
-		}
-		.catalog-list {
-			overflow: hidden;
-			height: auto;
-			.sdc-tile {
-				margin: 9px;
-				.sdc-tile-header {
-					position: initial;
-					display: block;
-					flex-shrink: initial;
-					align-items: initial;
-					flex-direction: initial;
-				}
-				.sdc-tile-content {
-					position: initial;
-					flex: initial;
-					display: flex;
-					align-items: initial;
-					flex-direction: column;
-					justify-content: space-between;
-					overflow: initial;
-					.sdc-tile-info-line {
-						.with-overlay {
-							line-height: 1.2em;
-							@include ellipsis($width: initial, $max-width: 100%);
-						}
-					}
-				}
-				.sdc-tile-footer {
-					position: initial;
-					flex-shrink: initial;
-					display: flex;
-					align-items: center;
-					flex-direction: row;
-					text-transform: none;
-				}
-			}
-		}
-	}
+    background-color: $background-gray;
+    overflow: hidden;
+    height: 100%;
+    display: flex;
+    @import 'onboardingCatalog/catalogFilter.scss';
+    .catalog-parts {
+        width: 100%;
+        @import 'onboardingCatalog/onboardHeader';
+        @import 'onboardingCatalog/catalogHeader';
+    }
+    @import 'onboardingCatalog/vendorPageHeader';
+    @import 'onboardingCatalog/catalogList';
+    @import 'onboardingCatalog/vspOverlay';
+    .catalog-wrapper {
+        height: 100%;
+        overflow: auto;
+        .tab-separator {
+            content: '';
+            height: 25px;
+            border-right: 1px solid $dark-gray;
+        }
+        .catalog-list {
+            overflow: hidden;
+            height: auto;
+            .sdc-tile {
+                margin: 9px;
+                .sdc-tile-header {
+                    position: initial;
+                    display: block;
+                    flex-shrink: initial;
+                    align-items: initial;
+                    flex-direction: initial;
+                }
+                .sdc-tile-content {
+                    position: initial;
+                    flex: initial;
+                    display: flex;
+                    align-items: initial;
+                    flex-direction: column;
+                    justify-content: space-between;
+                    overflow: initial;
+                    .sdc-tile-info-line {
+                        .with-overlay {
+                            line-height: 1.2em;
+                            @include ellipsis($width: initial, $max-width: 100%);
+                        }
+                    }
+                }
+                .sdc-tile-footer {
+                    position: initial;
+                    flex-shrink: initial;
+                    display: flex;
+                    align-items: center;
+                    flex-direction: row;
+                    text-transform: none;
+                }
+            }
+        }
+    }
 }

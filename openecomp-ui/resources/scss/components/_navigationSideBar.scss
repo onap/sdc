@@ -1,63 +1,63 @@
 .software-product-navigation-side-bar {
-  width: 245px;
-  height: 100%;
-  background-color: $white;
-  border-right: 1px solid $light-gray;
-  @include box-shadow(1px -1px 3px 0px $tlv-light-gray);
-  border-bottom: 0;
-
-  .navigation-side-content {
-    overflow: hidden;
+    width: 245px;
     height: 100%;
+    background-color: $white;
+    border-right: 1px solid $light-gray;
+    @include box-shadow(1px -1px 3px 0px $tlv-light-gray);
+    border-bottom: 0;
 
-    .navigation-group {
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-      background-color: $tlv-gray;
-      .group-name {
-        @extend .heading-4-semibold;
-        @include ellipsis;
-        min-height: 70px;
-        display: block;
-        height: 70px;
-        padding: 24px 12px 13px 40px;
-        background-color: $white;
-        border-bottom: 1px solid $tlv-light-gray;
-      }
-    }
+    .navigation-side-content {
+        overflow: hidden;
+        height: 100%;
 
-    .navigation-group-items {
-      padding-left: 20px;
-      overflow-y: auto;
+        .navigation-group {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            background-color: $tlv-gray;
+            .group-name {
+                @extend .heading-4-semibold;
+                @include ellipsis;
+                min-height: 70px;
+                display: block;
+                height: 70px;
+                padding: 24px 12px 13px 40px;
+                background-color: $white;
+                border-bottom: 1px solid $tlv-light-gray;
+            }
+        }
 
-      .navigation-group-item {
-        @extend .body-1;
-        cursor: pointer;
-        margin: 18px 0;
-        padding-left: 20px;
-        color: $dark-gray;
-        line-height: 17px;
-        &.selected-item {
-          padding-left: 0;
-          .collapse.in {
+        .navigation-group-items {
             padding-left: 20px;
-          }
+            overflow-y: auto;
+
+            .navigation-group-item {
+                @extend .body-1;
+                cursor: pointer;
+                margin: 18px 0;
+                padding-left: 20px;
+                color: $dark-gray;
+                line-height: 17px;
+                &.selected-item {
+                    padding-left: 0;
+                    .collapse.in {
+                        padding-left: 20px;
+                    }
+                }
+                .navigation-group-item-name {
+                    @include ellipsis;
+                    white-space: normal;
+                    &.selected {
+                        @extend .body-1-semibold;
+                        border-left: 4px solid $blue;
+                        padding-left: 18px;
+                        color: $blue;
+                    }
+                    &.bold-name {
+                        @extend .body-1-semibold;
+                    }
+                }
+            }
         }
-        .navigation-group-item-name {
-          @include ellipsis;
-          white-space: normal;
-          &.selected {
-            @extend .body-1-semibold;
-            border-left: 4px solid $blue;
-            padding-left: 18px;
-            color: $blue;
-          }
-          &.bold-name {
-            @extend .body-1-semibold;
-          }
-        }
-      }
     }
-  }
 }

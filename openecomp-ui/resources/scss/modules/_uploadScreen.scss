@@ -1,32 +1,32 @@
 .heat-validation-stand-alone {
-  .upload-screen {
-    margin-top: 100px;
-    .title {
-      text-align: center;
-      margin-bottom: 50px;
-    }
-  }
-
-  .attachments-screen {
-    .back-button {
-      z-index: 1000;
-      position: absolute;
-      top: 20px;
-      right: 20px;
-      width: 200px;
-    }
-    .software-product-attachments {
-      display: block;
-      .software-product-view {
-        display: block;
-        .software-product-landing-view-right-side {
-          display: block;
-          .software-product-attachments-main {
-            display: flex;
-            height: 100vh;
-          }
+    .upload-screen {
+        margin-top: 100px;
+        .title {
+            text-align: center;
+            margin-bottom: 50px;
         }
-      }
     }
-  }
+
+    .attachments-screen {
+        .back-button {
+            z-index: 1000;
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 200px;
+        }
+        .software-product-attachments {
+            display: block;
+            .software-product-view {
+                display: block;
+                .software-product-landing-view-right-side {
+                    display: block;
+                    .software-product-attachments-main {
+                        display: flex;
+                        height: 100vh;
+                    }
+                }
+            }
+        }
+    }
 }

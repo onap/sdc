@@ -1,147 +1,144 @@
 .catalog-tile {
-  &:hover {
-	box-shadow: 0.3px 5px 12.8px 1.3px rgba(24, 24, 25, 0.15);
-	border: 1px solid $light-gray;
-  }
-  .catalog-tile-top {
-	position: relative;
-	flex: 1;
-	display: flex;
-	padding-top: 29px;
-	padding-left: 10px;
-	align-items: flex-start;
-	flex-direction: column;
-	.catalog-tile-content {
-	  margin-top: auto;
-	  width: 180px;
-	}
-
-	.catalog-tile-type {
-	  display: block;
-	  margin-top: -25px;
-	  font-size: $heading-font-5;
-	  &.license-model-type {
-		color: $purple;
-	  }
-	  &.software-product-type {
-		color: $blue;
-	  }
-	}
-	.catalog-tile-entity-details {
-	  margin-top: 20px;
-		display: flex;
-		flex-direction: column;
-		justify-content: space-between;
-		flex: 0.8;
-	  .catalog-tile-version-info {
-		display: flex;
-		justify-content: space-between;
-
-		.catalog-tile-item-version {
-		  @extend .body-2;
-		  line-height: 6px;
-		}
-	  }
-	  .catalog-tile-vendor-name {
-		@extend .body-3;
-		flex: 0.4;
-		align-self: baseline;
-		color: $gray;
-		line-height: 10px;
-		&:first-letter {
-      text-transform: capitalize;
+    &:hover {
+        box-shadow: 0.3px 5px 12.8px 1.3px rgba(24, 24, 25, 0.15);
+        border: 1px solid $light-gray;
     }
-		@include ellipsis(auto, inline-block, 178px);
-	  }
+    .catalog-tile-top {
+        position: relative;
+        flex: 1;
+        display: flex;
+        padding-top: 29px;
+        padding-left: 10px;
+        align-items: flex-start;
+        flex-direction: column;
+        .catalog-tile-content {
+            margin-top: auto;
+            width: 180px;
+        }
 
-	}
-	.catalog-tile-item-name {
-	  @extend .heading-5-semibold;
-	  color: $black;
-	  @include ellipsis(auto, inline-block, 175px);
-		line-height: inherit;
-		&:first-letter {
-			text-transform: capitalize;
-		}
-	}
-  }
-  .catalog-tile-icon {
+        .catalog-tile-type {
+            display: block;
+            margin-top: -25px;
+            font-size: $heading-font-5;
+            &.license-model-type {
+                color: $purple;
+            }
+            &.software-product-type {
+                color: $blue;
+            }
+        }
+        .catalog-tile-entity-details {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            flex: 0.8;
+            .catalog-tile-version-info {
+                display: flex;
+                justify-content: space-between;
 
-	width: 58px;
-	height: 58px;
-	text-align: center;
-	justify-content: center;
-	display: flex;
+                .catalog-tile-item-version {
+                    @extend .body-2;
+                    line-height: 6px;
+                }
+            }
+            .catalog-tile-vendor-name {
+                @extend .body-3;
+                flex: 0.4;
+                align-self: baseline;
+                color: $gray;
+                line-height: 10px;
+                &:first-letter {
+                    text-transform: capitalize;
+                }
+                @include ellipsis(auto, inline-block, 178px);
+            }
+        }
+        .catalog-tile-item-name {
+            @extend .heading-5-semibold;
+            color: $black;
+            @include ellipsis(auto, inline-block, 175px);
+            line-height: inherit;
+            &:first-letter {
+                text-transform: capitalize;
+            }
+        }
+    }
+    .catalog-tile-icon {
+        width: 58px;
+        height: 58px;
+        text-align: center;
+        justify-content: center;
+        display: flex;
 
-	.icon {
-	  align-self: center;
-	  height: 58px;
-	  width: 58px;
-	  margin-left: 122px;
-	  background-repeat: no-repeat;
-	  .svg-icon {
-		&.__vendor {
-			fill: $dark-gray;
-			&:hover {
-			  fill: $dark-gray;
-			}
-		  margin-top: 22px;
-		}
-		&.__vsp {
-			fill: $light-blue;
-		  }
-		  margin-top: 18px;
-		  margin-left: 3px;
-		&.__vlm {
-		  margin-top: 18px;
-			fill: $purple;
-		}
-	  }
-	}
-  }
-  .catalog-tile-content {
-	border-top: 1px solid $background-gray;
-	padding-top: 5px;
-	display: flex;
-	justify-content: space-between;
-	margin-top: 2px;
-	padding-bottom: 3px;
-	@extend .body-2-semibold;
-	.svg-icon {
-	  &.__plus {
-		  width: 20px;
-		  height: 20px;
-		  fill: $blue;
-	  }
-	}
-	.catalog-tile-item-details {
-	  overflow: hidden;
-	}
+        .icon {
+            align-self: center;
+            height: 58px;
+            width: 58px;
+            margin-left: 122px;
+            background-repeat: no-repeat;
+            .svg-icon {
+                &.__vendor {
+                    fill: $dark-gray;
+                    &:hover {
+                        fill: $dark-gray;
+                    }
+                    margin-top: 22px;
+                }
+                &.__vsp {
+                    fill: $light-blue;
+                }
+                margin-top: 18px;
+                margin-left: 3px;
+                &.__vlm {
+                    margin-top: 18px;
+                    fill: $purple;
+                }
+            }
+        }
+    }
+    .catalog-tile-content {
+        border-top: 1px solid $background-gray;
+        padding-top: 5px;
+        display: flex;
+        justify-content: space-between;
+        margin-top: 2px;
+        padding-bottom: 3px;
+        @extend .body-2-semibold;
+        .svg-icon {
+            &.__plus {
+                width: 20px;
+                height: 20px;
+                fill: $blue;
+            }
+        }
+        .catalog-tile-item-details {
+            overflow: hidden;
+        }
 
-	.catalog-tile-add-new-vsp {
-	  color: $blue;
-		.svg-icon {
-			&.__plus {
-				width: 20px;
-				height: 20px;
-
-			}
-		}
-	  margin-left: 40px;
-	}
-	.catalog-tile-locking-user-name {
-	  @extend .body-2;
-	  @include ellipsis(auto, inline-block, 180px);
-	}
-	.catalog-tile-check-in-status {
-	  .svg-icon {
-		&.__locked {
-			fill: $gray;
-		}
-		&.__unlocked {
-			fill: $gray;
-		}
-	  }
-	}
-  }
+        .catalog-tile-add-new-vsp {
+            color: $blue;
+            .svg-icon {
+                &.__plus {
+                    width: 20px;
+                    height: 20px;
+                }
+            }
+            margin-left: 40px;
+        }
+        .catalog-tile-locking-user-name {
+            @extend .body-2;
+            @include ellipsis(auto, inline-block, 180px);
+        }
+        .catalog-tile-check-in-status {
+            .svg-icon {
+                &.__locked {
+                    fill: $gray;
+                }
+                &.__unlocked {
+                    fill: $gray;
+                }
+            }
+        }
+    }
 }
