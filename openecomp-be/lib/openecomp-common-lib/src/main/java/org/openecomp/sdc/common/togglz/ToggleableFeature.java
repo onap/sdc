@@ -6,13 +6,10 @@ import org.togglz.core.context.FeatureContext;
 
 public enum ToggleableFeature implements Feature {
 
-  @Label(("MRN"))
-  MRN,
-  
-  @Label("Fabric Configuration")
-  FABRIC_CONFIGURATION;
+    @Label("Fabric Configuration")
+    FABRIC_CONFIGURATION;
 
-  public boolean isActive() {
-    return FeatureContext.getFeatureManager().isActive(this);
-  }
+    public boolean isActive() {
+        return FeatureContext.getFeatureManager().isActive(this);
+    }
 }
