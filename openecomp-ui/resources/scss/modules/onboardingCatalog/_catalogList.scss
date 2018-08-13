@@ -1,39 +1,37 @@
 .catalog-list {
-  height: 100%;
-  overflow: auto;
-  display: flex;
-  flex-direction: column;
-  padding: 0 10px 0 42px;
-  .catalog-title {
-	@extend .heading-1;
-	color: $blue;
-	margin:0 0 12px 18px;
-  }
+    height: 100%;
+    overflow: auto;
+    display: flex;
+    flex-direction: column;
+    padding: 0 10px 0 42px;
+    .catalog-title {
+        @extend .heading-1;
+        color: $blue;
+        margin: 0 0 12px 18px;
+    }
 
-  .catalog-items {
-	display: flex;
-	flex-wrap: wrap;
-	@import "tile";
-	@import "createItemTile";
-	@import "catalogTile";
-	@import "vendorTile";
-	@import "vlmTile";
-	&:after {
-	  content: " ";
-	  height: 250px;
-	  display: block;
-	  width: 100%;
-	}
-	.venodor-tile-btn {
-		border: 1px solid $light-gray;
-		color: $black;
-		line-height: 20px;
-		&:hover {
-				background-color: $light-gray;
-		}
-	}
-  }
+    .catalog-items {
+        display: flex;
+        flex-wrap: wrap;
+        @import 'tile';
+        @import 'createItemTile';
+        @import 'catalogTile';
+        @import 'vendorTile';
+        &:after {
+            content: ' ';
+            height: 250px;
+            display: block;
+            width: 100%;
+        }
+        .venodor-tile-btn {
+            border: 1px solid $light-gray;
+            color: $black;
+            line-height: 20px;
+            &:hover {
+                background-color: $light-gray;
+            }
+        }
+    }
 
-  // Bottom spacing - cross browser solution
-
+    // Bottom spacing - cross browser solution
 }

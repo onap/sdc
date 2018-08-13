@@ -429,6 +429,8 @@
   "ComponentDependencies" : "Component Dependencies",
 
   "ComponentQuestionnaire" : "Component Questionnaire",
+  "ComponentQuestionnaire/general/nfcFunction" : "NFC Function",
+  "ComponentQuestionnaire/general/nfcNamingCode" : "NFC Naming",
   "ComponentQuestionnaire/compute" : "Compute",
   "ComponentQuestionnaire/storage/backup/backupStorageSize": "Backup Storage Size",
   "ComponentQuestionnaire/storage/backup/backupSolution": "Backup Solution",

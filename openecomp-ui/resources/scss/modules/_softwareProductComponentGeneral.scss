@@ -1,13 +1,13 @@
 .vsp-components-general {
-  .general-data {
-    .one-line-textarea {
-      height: 30px;
+    .general-data {
+        .one-line-textarea {
+            height: 30px;
+        }
+        .multi-line-textarea {
+            height: calc(100% - 25px);
+            textarea {
+                height: inherit;
+            }
+        }
     }
-    .multi-line-textarea {
-      height: calc(100% - 25px);
-      textarea {
-        height: inherit;
-      }
-    }
-  }
 }

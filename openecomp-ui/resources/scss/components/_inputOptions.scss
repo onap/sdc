@@ -1,85 +1,84 @@
 .disabled {
-	.Select-control {
-		background-color: $tlv-light-gray;
-		.Select-placeholder {
-			color: $dark-gray;
-		}
-	}
+    .Select-control {
+        background-color: $tlv-light-gray;
+        .Select-placeholder {
+            color: $dark-gray;
+        }
+    }
 }
 
 .input-options {
-  display: flex;
-  border: 1px solid $light-gray;
-  border-radius: 2px;
-  height: 30px;
-  &:hover {
-    border-color: $gray;
-  }
-  .input-options-select {
-    float: left;
-    border: none;
-    transition-property: width;
-    transition-duration: 300ms;
-    padding-top:0px;
-    padding-bottom: 0px;
-    height:28px;
-
-  }
-
-  .input-options-other{
-    float: left;
+    display: flex;
+    border: 1px solid $light-gray;
+    border-radius: 2px;
     height: 30px;
-    border: none;
-    padding-top:0px;
-    padding-bottom: 0px;
-    height:28px;
-  }
-  .input-options-separator {
-    width: 1px;
-    height: 24px;
-    margin-top: 2px;
-    margin-bottom: 2px;
-    border:1px solid $light-gray;
-  }
+    &:hover {
+        border-color: $gray;
+    }
+    .input-options-select {
+        float: left;
+        border: none;
+        transition-property: width;
+        transition-duration: 300ms;
+        padding-top: 0px;
+        padding-bottom: 0px;
+        height: 28px;
+    }
+
+    .input-options-other {
+        float: left;
+        height: 30px;
+        border: none;
+        padding-top: 0px;
+        padding-bottom: 0px;
+        height: 28px;
+    }
+    .input-options-separator {
+        width: 1px;
+        height: 24px;
+        margin-top: 2px;
+        margin-bottom: 2px;
+        border: 1px solid $light-gray;
+    }
 }
 
 .input-options.has-error {
-   border-color: $crimson;
+    border-color: $crimson;
 }
 
 .bootstrap-input-options {
-  display: flex;
-  flex-direction: column;
-  .input-options-select {
-	border: 1px solid $light-gray;
-	border-radius: 2px;
-	height: 30px;
-	float: left;
-	transition-property: width;
-	transition-duration: 300ms;
-	padding-top: 0px;
-	padding-bottom: 0px;
-	width: 100%;
-	&:hover {
-	  border-color: $gray;
-	}
-  }
-  .input-options-other {
-	float: left;
-	height: 30px;
-	border: none;
-	padding-top: 0px;
-	padding-bottom: 0px;
-	height: 28px;
-  }
-  .input-options-separator {
-	width: 1px;
-	height: 24px;
-	margin-top: 2px;
-	margin-bottom: 2px;
-	border: 1px solid $light-gray;
-  }
-  &.has-error {
-	border-color: $crimson;
-  }
+    display: flex;
+    flex-direction: column;
+    .input-options-select {
+        border: 1px solid $light-gray;
+        border-radius: 2px;
+        height: 30px;
+        float: left;
+        transition-property: width;
+        transition-duration: 300ms;
+        padding-top: 0;
+        padding-bottom: 0;
+        width: 100%;
+        &:hover {
+            border-color: $gray;
+        }
+    }
+    .input-options-other {
+        float: left;
+        height: 30px;
+        border: none;
+        padding-top: 0;
+        padding-bottom: 0;
+        height: 28px;
+    }
+    .input-options-separator {
+        width: 1px;
+        height: 24px;
+        margin-top: 2px;
+        margin-bottom: 2px;
+        border: 1px solid $light-gray;
+    }
+    &.has-error {
+        border-color: $crimson;
+    }
 }
