@@ -1,62 +1,63 @@
 .toggle-input-wrapper {
-  $toggle-width: 40px;
-  $toggle-height: 20px;
-  display: table;
-  .toggle-switch, .toggle-input-label {
-    display: table-cell;
-    vertical-align: middle;
-    padding-left: 10px;
-  }
-  .toggle {
-    position: absolute;
-    margin-left: -9999px;
-    visibility: hidden;
-  }
-  .toggle + label {
-    @extend %noselect;
-    display: block;
-    position: relative;
-    cursor: pointer;
-    outline: none;
-  }
+    $toggle-width: 40px;
+    $toggle-height: 20px;
+    display: table;
+    .toggle-switch,
+    .toggle-input-label {
+        display: table-cell;
+        vertical-align: middle;
+        padding-left: 10px;
+    }
+    .toggle {
+        position: absolute;
+        margin-left: -9999px;
+        visibility: hidden;
+    }
+    .toggle + label {
+        @extend %noselect;
+        display: block;
+        position: relative;
+        cursor: pointer;
+        outline: none;
+    }
 
-  input.toggle-round-flat + label {
-    padding: 1px;
-    width: $toggle-width;
-    height: $toggle-height;
-    background-color: $dark-gray;
-    border-radius: $toggle-height;
-    transition: background 0.4s;
-  }
-  input.toggle-round-flat + label:before,
-  input.toggle-round-flat + label:after {
-    display: block;
-    position: absolute;
-    content: "";
-  }
-  input.toggle-round-flat + label:before {
-    top: 1px;
-    left: 1px;
-    bottom: 1px;
-    right: 1px;
-    background-color: $white;
-    border-radius: $toggle-height;
-    transition: background 0.4s;
-  }
-  input.toggle-round-flat + label:after {
-    top: 4px;
-    left: 4px;
-    bottom: 4px;
-    width: $toggle-height - 8;
-    background-color: $dark-gray;
-    border-radius: $toggle-height - 8;
-    transition: margin 0.4s, background 0.4s;
-  }
-  input.toggle-round-flat:checked + label {
-    background-color: $link-blue;
-  }
-  input.toggle-round-flat:checked + label:after {
-    margin-left: $toggle-height;
-    background-color: $link-blue;
-  }
+    input.toggle-round-flat + label {
+        padding: 1px;
+        width: $toggle-width;
+        height: $toggle-height;
+        background-color: $dark-gray;
+        border-radius: $toggle-height;
+        transition: background 0.4s;
+    }
+    input.toggle-round-flat + label:before,
+    input.toggle-round-flat + label:after {
+        display: block;
+        position: absolute;
+        content: '';
+    }
+    input.toggle-round-flat + label:before {
+        top: 1px;
+        left: 1px;
+        bottom: 1px;
+        right: 1px;
+        background-color: $white;
+        border-radius: $toggle-height;
+        transition: background 0.4s;
+    }
+    input.toggle-round-flat + label:after {
+        top: 4px;
+        left: 4px;
+        bottom: 4px;
+        width: $toggle-height - 8;
+        background-color: $dark-gray;
+        border-radius: $toggle-height - 8;
+        transition: margin 0.4s, background 0.4s;
+    }
+    input.toggle-round-flat:checked + label {
+        background-color: $link-blue;
+    }
+    input.toggle-round-flat:checked + label:after {
+        margin-left: $toggle-height;
+        background-color: $link-blue;
+    }
 }

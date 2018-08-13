@@ -98,8 +98,8 @@ class ConflictCategory extends React.Component {
                     <GridItem className="resolve">
                         <Button
                             className="conflict-resolve-btn"
-                            btnType="outline"
-                            color="gray"
+                            btnType="secondary"
+                            size="default"
                             onClick={() =>
                                 onResolveConflict({
                                     conflictId,

@@ -4,9 +4,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -59,7 +59,7 @@ class NICCreationView extends React.Component {
         } = this.props;
         let { name, description, networkDescription } = data;
         return (
-            <div>
+            <div className="network-nic-modal-create">
                 {genericFieldInfo && (
                     <Form
                         hasButtons={true}
@@ -71,7 +71,8 @@ class NICCreationView extends React.Component {
                         labledButtons={true}
                         isValid={isFormValid}
                         onValidateForm={this.validate}
-                        formReady={formReady}>
+                        formReady={formReady}
+                        btnClassName="sdc-modal__footer">
                         <GridSection hasLastColSet>
                             <GridItem colSpan={4} lastColInRow>
                                 <Input

@@ -20,6 +20,12 @@ import { actionTypes as entitlementPoolsActionTypes } from './EntitlementPoolsCo
 import { actionTypes as limitEditorActions } from 'sdc-app/onboarding/licenseModel/limits/LimitEditorConstants.js';
 import { default as getValue, getStrValue } from 'nfvo-utils/getValue.js';
 import ItemsHelper from 'sdc-app/common/helpers/ItemsHelper.js';
+import i18n from 'nfvo-utils/i18n/i18n.js';
+import {
+    actionTypes as modalActionTypes,
+    modalSizes
+} from 'nfvo-components/modal/GlobalModalConstants.js';
+import { modalContentMapper } from 'sdc-app/common/modal/ModalContentMapper.js';
 
 function baseUrl(licenseModelId, version) {
     const restPrefix = Configuration.get('restPrefix');
@@ -137,9 +143,9 @@ const EntitlementPoolsActionHelper = {
 
     openEntitlementPoolsEditor(
         dispatch,
-        { entitlementPool, licenseModelId, version } = {}
+        { entitlementPool, licenseModelId, version, isReadOnlyMode } = {}
     ) {
-        if (licenseModelId && version) {
+        if (licenseModelId && version && entitlementPool) {
             this.fetchLimits(dispatch, {
                 licenseModelId,
                 version,
@@ -149,6 +155,22 @@ const EntitlementPoolsActionHelper = {
         dispatch({
             type: entitlementPoolsActionTypes.entitlementPoolsEditor.OPEN,
             entitlementPool
+        });
+        dispatch({
+            type: modalActionTypes.GLOBAL_MODAL_SHOW,
+            data: {
+                modalComponentName: modalContentMapper.EP_EDITOR,
+                modalComponentProps: {
+                    version,
+                    licenseModelId,
+                    isReadOnlyMode,
+                    size: modalSizes.LARGE
+                },
+                title:
+                    licenseModelId && version && entitlementPool
+                        ? i18n('Edit Entitlement Pool')
+                        : i18n('Create New Entitlement Pool')
+            }
         });
     },
 
@@ -180,6 +202,9 @@ const EntitlementPoolsActionHelper = {
     closeEntitlementPoolsEditor(dispatch) {
         dispatch({
             type: entitlementPoolsActionTypes.entitlementPoolsEditor.CLOSE
+        });
+        dispatch({
+            type: modalActionTypes.GLOBAL_MODAL_CLOSE
         });
     },
 

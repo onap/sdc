@@ -1,234 +1,157 @@
-.dox-ui {
-  @import "bootstrap";
-  @import "~react-select/dist/react-select.min.css";
-  @import "~react-datepicker/dist/react-datepicker.min.css";
+.dox-ui,
+.onap-sdc-portal {
+    @import 'bootstrap';
+    @import '~react-select/dist/react-select.min.css';
+    @import '~react-datepicker/dist/react-datepicker.min.css';
 
-  @import "common";
-  @import "components";
-  @import "modules";
+    @import 'common';
+    @import 'components';
+    @import 'modules';
 
-  &.dox-ui-punch-out {
-    background-color: $content-background-color;
-    &.dox-ui-punch-out-full-page {
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      overflow-y: auto;
+    .sdc-alert__header,
+    .sdc-error__header,
+    .sdc-info__header {
+        box-sizing: content-box;
     }
-  }
-}
-
-/* Out of namespace context for datepicker */
-div[data-reactroot].customized-date-picker-calendar {
-  @import "common/variables";
-  @import "common/typography";
-  border-color: $light-gray;
-  margin-top: -8px;
-	color: $black;
-  .react-datepicker__triangle {
-      margin-top: 0px;
-  }
-  .react-datepicker__navigation--previous::before, .react-datepicker__navigation--next::before {
-    width: 8px;
-    height: 8px;
-    display: inline-block;
-    position: absolute;
-    top: -4px;
-  }
-  .react-datepicker__navigation--previous::before {
-    left: 0;
-    content: url(../../node_modules/sdc-ui/assets/icons/angleLeft.svg);
-  }
-  .react-datepicker__navigation--next::before {
-    right: 0;
-    content: url(../../node_modules/sdc-ui/assets/icons/angleRight.svg);
-  }
-
-  .react-datepicker__navigation--previous, .react-datepicker__navigation--next {
-      border: none;
-  }
-
-
-  .react-datepicker__month-container {
-		.react-datepicker__header {
-			background-color: $background-gray;
-      border-bottom: none;
-      .react-datepicker__current-month {
-        @extend .body-1-semibold;
-        background-color: $background-gray;
-        margin-bottom: 10px;
-      }
-      .react-datepicker__day-names {
-        @extend .body-1;
-        background-color: $white;
-      }
-		}
-    .react-datepicker__day--selected, .react-datepicker__day--keyboard-selected {
-      @extend .body-1;
-      background-color: $blue;
-			color: $white;
+    &.dox-ui-punch-out {
+        background-color: $content-background-color;
+        &.dox-ui-punch-out-full-page {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            overflow-y: auto;
+        }
     }
-    .react-datepicker__day {
-			border-radius: 0px;
-			margin: 0;
-			flex: 1;
-      @extend .body-1;
-    }
-
-		.react-datepicker__day--in-range, .react-datepicker__day--in-selecting-range {
-			background-color: $tlv-hover;
-			color: $black;
-			&.react-datepicker__day--selected, &.react-datepicker__day--keyboard-selected, &.react-datepicker__day--range-start, &.react-datepicker__day--range-end  {
-				background-color: $blue;
-				color: $white;
-			}
-			&.react-datepicker__day--selecting-range-start, &.react-datepicker__day--selecting-range-end {
-				background-color: lighten($blue, 40%);
-				color: $black;
-			}
-			&.react-datepicker__day--selecting-range-start.react-datepicker__day--range-start,
-			&.react-datepicker__day--selecting-range-end.react-datepicker__day--range-end,
-			&.react-datepicker__day--selecting-range-start.react-datepicker__day--keyboard-selected {
-				background-color: $blue;
-				color: $white;
-			}
-		}
-
-		.react-datepicker__week {
-			display: flex;
-    }
-	}
 }
 
 /* Out of namespace context for tooltips */
-div[data-reactroot].tooltip {
-  @import "common/variables";
-  @import "common/typography";
+div[data-onboardingroot].tooltip {
+    @import 'common/variables';
+    @import 'common/typography';
 
-  &.in {
-  	opacity: 1;
-  }
-  &.validation-error-message {
+    &.in {
+        opacity: 1;
+    }
+    &.validation-error-message {
+        &.bottom {
+            .tooltip-arrow {
+                border-bottom-color: $red !important;
+            }
+        }
+        &.left {
+            .tooltip-arrow {
+                border-left-color: $red !important;
+            }
+        }
+        &.right {
+            .tooltip-arrow {
+                border-right-color: $red !important;
+            }
+        }
+        &.top {
+            .tooltip-arrow {
+                border-top-color: $red !important;
+            }
+        }
+    }
     &.bottom {
-      .tooltip-arrow {
-      border-bottom-color: $red !important;
-      }
-    }
-    &.left {
-      .tooltip-arrow {
-        border-left-color: $red !important;
-      }
-    }
-    &.right {
-      .tooltip-arrow {
-        border-right-color: $red !important;
-      }
+        .tooltip-arrow {
+            border-bottom-color: $dark-gray !important;
+        }
     }
     &.top {
-      .tooltip-arrow {
-        border-top-color: $red !important;
-      }
+        .tooltip-arrow {
+            border-top-color: $dark-gray !important;
+        }
     }
-  }
-  &.bottom {
-    .tooltip-arrow {
-      border-bottom-color: $dark-gray !important;
+    &.right {
+        .tooltip-arrow {
+            border-right-color: $dark-gray !important;
+        }
     }
-  }
-  &.top {
-    .tooltip-arrow {
-      border-top-color: $dark-gray !important;
+    &.left {
+        .tooltip-arrow {
+            border-left-color: $dark-gray !important;
+        }
     }
-  }
-  &.right {
-    .tooltip-arrow {
-      border-right-color: $dark-gray !important;
+    .tooltip-inner {
+        @extend .body-1;
+        max-width: 100%;
+        background-color: $dark-gray;
+        padding: 6px 9px;
+        &:first-letter {
+            text-transform: capitalize;
+        }
     }
-  }
-  &.left {
-    .tooltip-arrow {
-      border-left-color: $dark-gray !important;
-    }
-  }
-  .tooltip-inner {
-    @extend .body-1;
-    max-width: 100%;
-    background-color: $dark-gray;
-    padding: 6px 9px;
-    &:first-letter {
-      text-transform: capitalize;
-    }
-  }
 
-  // activity log tooltip
-  &.activity-log-message-tooltip {
-	  @include base-font-regular;
-    font-size: $body-font-2;
-    .message-block {
-      text-align: left;
-      padding: 3px 12px;
+    // activity log tooltip
+    &.activity-log-message-tooltip {
+        @include base-font-regular;
+        font-size: $body-font-2;
+        .message-block {
+            text-align: left;
+            padding: 3px 12px;
+        }
     }
-  }
-  // manage permisions modal
-  &.manage-permissions-owner-tooltip {
-    .tooltip-inner {
-      width: 400px;
+    // manage permisions modal
+    &.manage-permissions-owner-tooltip {
+        .tooltip-inner {
+            width: 400px;
+        }
     }
-  }
-  // WS/Catalog Tile
-  &.tile-super-info {
-    .tooltip-inner {
-      font-size: $body-font-3;
+    // WS/Catalog Tile
+    &.tile-super-info {
+        .tooltip-inner {
+            font-size: $body-font-3;
+        }
     }
-  }
-  //dependency table error tooltip
-  &.select-action-table-error-tooltip{
-    @include base-font-regular;
-    margin-right: 5px;
-    font-size: $body-font-2;
-    .message-block {
-      text-align: left;
-      padding: 3px 12px;
-    }
-    .tooltip-arrow {
-           border-bottom-color: $red !important;
-	  }
+    //dependency table error tooltip
+    &.select-action-table-error-tooltip {
+        @include base-font-regular;
+        margin-right: 5px;
+        font-size: $body-font-2;
+        .message-block {
+            text-align: left;
+            padding: 3px 12px;
+        }
+        .tooltip-arrow {
+            border-bottom-color: $red !important;
+        }
 
-    .tooltip-inner {
-      background-color: $red;
-      padding: 6px 8px;
-      font-size: $body-font-2;
+        .tooltip-inner {
+            background-color: $red;
+            padding: 6px 8px;
+            font-size: $body-font-2;
+        }
     }
-  }
 
-  // for read-only mode, vendor description in VLM overview
-  &.vendor-description-tooltip {
-    .tooltip-inner {
-      max-width: 600px;
+    // for read-only mode, vendor description in VLM overview
+    &.vendor-description-tooltip {
+        .tooltip-inner {
+            max-width: 600px;
+        }
     }
-  }
 }
 
 /* Out of namespace context for notifications */
 .onboarding-notifications-container {
-  position: absolute;
-  &.position-top-right {
-    right: 30px;
-    top: 50px;
-  }
+    position: absolute;
+    &.position-top-right {
+        right: 30px;
+        top: 50px;
+    }
 }
 
-
 .onboarding-loader {
-  .onboarding-loader-backdrop {
-    @import "common/variables";
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    position: absolute;
-    background-color: $transparent-black;
-  }
+    .onboarding-loader-backdrop {
+        @import 'common/variables';
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        position: absolute;
+        background-color: $transparent-black;
+    }
 }

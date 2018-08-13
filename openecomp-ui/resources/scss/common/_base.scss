@@ -1,6 +1,6 @@
 html {
-  font-size: 100%;
-  height: 100%;
+    font-size: 100%;
+    height: 100%;
 }
 
 body {
@@ -16,65 +16,70 @@ $scrollbar-height: 8px;
 $ff-scrollbar-width: 17px;
 /* scrollbar styling for Google Chrome | Safari | Opera */
 ::-webkit-scrollbar {
-  width: $scrollbar-width;
-  height: $scrollbar-height;
+    width: $scrollbar-width;
+    height: $scrollbar-height;
 }
 
 ::-webkit-scrollbar-track {
-  background-color: transparent;
-  border-radius: 10px;
+    background-color: transparent;
+    border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb {
-  border-radius: 10px;
-  background-color: $light-gray;
-  border-right: 2px solid $content-background-color;
+    border-radius: 10px;
+    background-color: $light-gray;
+    border-right: 2px solid $content-background-color;
 }
 
 /* Mozilla Firefox currently doesn't support scrollbar styling */
 
 ul {
-  list-style: none;
+    list-style: none;
 }
 
-h1, h2, h3, h4, h5, h6, ul {
-  margin: 0;
-  padding: 0;
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+ul {
+    margin: 0;
+    padding: 0;
 }
 
 input {
-
-  padding: 7px 10px;
+    padding: 7px 10px;
 }
 
 .disabled {
-  opacity: 0.7 !important;
+    opacity: 0.7 !important;
 }
 
 fieldset {
-  border: none;
+    border: none;
 }
 
 fieldset {
-  label {
-	display: inline-block;
-  }
+    label {
+        display: inline-block;
+    }
 }
 
 .nav-tabs > li > a:focus,
 .btn:focus,
 .btn:active:focus,
 .btn.active:focus {
-  outline: none;
+    outline: none;
 }
 
 .box-hover {
-  border: 1px solid $light-blue;
+    border: 1px solid $light-blue;
 }
 /* monkey patch */
 .sdc-button.sdc-button__link.sdc-button.sdc-button__link {
-  width: initial;
-  &:focus {
-    border: none;
-  }
+    width: initial;
+    &:focus {
+        border: none;
+    }
 }

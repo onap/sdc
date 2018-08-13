@@ -1,133 +1,132 @@
 .license-model-limits-view {
-	max-height: 490px;
-	overflow: auto;
+    max-height: 490px;
+    overflow: auto;
 
-	.limit-editor-title {
-		padding: 10px 50px;
-		background-color: $blue;
-		color: $white;
+    .limit-editor-title {
+        padding: 10px 50px;
+        background-color: $blue;
+        color: $white;
+    }
+    .list-editor-view-add-title {
+        margin-right: 20px;
+    }
 
-	}
-	.list-editor-view-add-title {
-		margin-right: 20px;
-	}
+    .no-limits-text {
+        padding-left: 50px;
+    }
 
-	.no-limits-text {
-		padding-left: 50px;
-	}
+    .list-editor-view {
+        .list-editor-view-header {
+            border-bottom: none;
+            padding-top: 30px;
+            padding-bottom: 0;
+        }
 
-	.list-editor-view {
-		.list-editor-view-header {
-			border-bottom: none;
-			padding-top: 30px;
-			padding-bottom: 0;
-		}
+        .list-editor-view-list-scroller {
+            margin-top: 0;
+            margin-bottom: 30px;
+        }
+        .list-editor-view-list {
+            width: 100%;
+            .list-editor-item-view {
+                min-height: 50px;
+                height: 50px;
+                background-color: $tlv-light-gray;
+                border-color: transparent;
+                margin: 1px 0;
+                .list-editor-item-view-content {
+                    padding-left: 0;
+                }
 
-		.list-editor-view-list-scroller {
-			margin-top: 0;
-			margin-bottom: 30px;
-		}
-		.list-editor-view-list {
-			width: 100%;
-			.list-editor-item-view {
-				min-height: 50px;
-				height: 50px;
-				background-color: $tlv-light-gray;
-				border-color: transparent;
-				margin: 1px 0;
-				.list-editor-item-view-content {
-					padding-left: 0;
-				}
+                .svg-icon {
+                    margin-top: 10px;
+                    margin-right: 50px;
+                    fill: $gray;
+                    &:hover {
+                        fill: $dark-gray;
+                    }
+                }
 
-				.svg-icon {
-					margin-top: 10px;
-					margin-right: 50px;
-					fill: $gray;
-					&:hover {
-							fill: $dark-gray;
-						}
-				}
+                &.selectable {
+                    &:hover {
+                        .list-editor-item-view-field {
+                            .text.description,
+                            .text-name {
+                                &:after {
+                                    background-color: darken(
+                                        $tlv-light-gray,
+                                        4%
+                                    );
+                                }
+                            }
+                        }
+                        background-color: darken($tlv-light-gray, 4%);
+                        cursor: pointer;
+                    }
+                }
+                &:hover {
+                    border-color: transparent;
+                    cursor: default;
+                }
+                .list-editor-item-view-content {
+                    .list-editor-item-view-field {
+                        display: flex;
+                        align-items: center;
+                        white-space: nowrap;
 
-				&.selectable {
-					&:hover {
-						.list-editor-item-view-field {
-							.text.description, .text-name {
-								&:after {
-									background-color: darken($tlv-light-gray, 4%);
-								}
-							}
+                        &.limit-name {
+                            .text.name {
+                                @extend .body-1-semibold;
+                                color: $blue;
+                                text-transform: uppercase;
+                                margin-left: 45px;
+                            }
 
-						}
-						background-color: darken($tlv-light-gray, 4%);
-						cursor: pointer;
-					}
+                            border-right: 1px solid $light-gray;
+                            margin-right: 22px;
+                            flex: 0.4;
+                            display: flex;
+                            justify-content: left;
+                        }
 
-				}
-				&:hover {
-					border-color: transparent;
-					cursor: default;
-				}
-				.list-editor-item-view-content {
-					.list-editor-item-view-field {
-						display: flex;
-    				align-items: center;
-						white-space: nowrap;
+                        &.limit-description {
+                            max-width: 300px;
+                            margin-right: 22px;
+                        }
 
-						&.limit-name {
-							.text.name {
-								@extend .body-1-semibold;
-								color: $blue;
-								text-transform: uppercase;
-								margin-left : 45px;
-							}
-							
-							border-right: 1px solid $light-gray;
-							margin-right: 22px;
-							flex: 0.4;
-							display: flex;
-							justify-content: left;
-						}
+                        &.limit-metric-details {
+                            max-width: 300px;
+                        }
 
-						&.limit-description {
-							max-width: 300px;
-							margin-right: 22px;
-						}
-
-						&.limit-metric-details {
-							max-width: 300px;
-						}
-
-
-						.text.description, .text.name {
-							overflow: hidden;
-							text-overflow: ellipsis;
-							white-space: nowrap;
-							&:after {
-								background: $tlv-light-gray;
-							}
-
-						}
-					}
-
-				}			
-			}
-		}
-	}
-	.limit-editor{
-		.limit-editor-form {
-			.limit-editor-form-grid-section {
-				padding-bottom: 0;
-			}
-			.validation-form-content {
-				padding: 21px 45px;
-			}
-			.limit-editor-buttons {			
-				display: flex;
-				justify-content: flex-end;
-				.sdc-button {
-				margin-left: 20px;
-				}
-			}
-		}
-	}
+                        .text.description,
+                        .text.name {
+                            overflow: hidden;
+                            text-overflow: ellipsis;
+                            white-space: nowrap;
+                            &:after {
+                                background: $tlv-light-gray;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    .limit-editor {
+        .limit-editor-form {
+            .limit-editor-form-grid-section {
+                padding-bottom: 0;
+            }
+            .validation-form-content {
+                padding: 21px 45px;
+            }
+            .limit-editor-buttons {
+                display: flex;
+                justify-content: flex-end;
+                .sdc-button {
+                    margin-left: 20px;
+                }
+            }
+        }
+    }
 }

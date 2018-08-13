@@ -1,24 +1,22 @@
-
 .vsp-component-monitoring {
-  .dropzone {
-    &:not(:last-child) {
-      padding-bottom: 50px;
-    }
+    .dropzone {
+        &:not(:last-child) {
+            padding-bottom: 50px;
+        }
 
-    .monitoring-file {
-      display: flex;
-      .filename {
-        opacity: 1;
-        width: auto;
-        border-right-style: none;
-      }
-      .delete {
-        display: flex;
-        width: 30px;
-        justify-content: center;
-        align-items: center;
-      }
+        .monitoring-file {
+            display: flex;
+            .filename {
+                opacity: 1;
+                width: auto;
+                border-right-style: none;
+            }
+            .delete {
+                display: flex;
+                width: 30px;
+                justify-content: center;
+                align-items: center;
+            }
+        }
     }
-  }
-
 }

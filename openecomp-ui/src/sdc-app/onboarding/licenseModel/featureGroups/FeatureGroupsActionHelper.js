@@ -1,17 +1,17 @@
-/*!
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+/*
+ * Copyright © 2016-2018 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
- * or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 import RestAPIUtil from 'nfvo-utils/RestAPIUtil.js';
 import Configuration from 'sdc-app/config/Configuration.js';
@@ -19,6 +19,12 @@ import { actionTypes as featureGroupsActionConstants } from './FeatureGroupsCons
 import EntitlementPoolsActionHelper from 'sdc-app/onboarding/licenseModel/entitlementPools/EntitlementPoolsActionHelper.js';
 import LicenseKeyGroupsActionHelper from 'sdc-app/onboarding/licenseModel/licenseKeyGroups/LicenseKeyGroupsActionHelper.js';
 import ItemsHelper from 'sdc-app/common/helpers/ItemsHelper.js';
+import {
+    actionTypes as modalActionTypes,
+    modalSizes
+} from 'nfvo-components/modal/GlobalModalConstants.js';
+import { modalContentMapper } from 'sdc-app/common/modal/ModalContentMapper.js';
+import i18n from 'nfvo-utils/i18n/i18n.js';
 
 function baseUrl(licenseModelId, version) {
     const restPrefix = Configuration.get('restPrefix');
@@ -189,7 +195,7 @@ export default {
 
     openFeatureGroupsEditor(
         dispatch,
-        { featureGroup, licenseModelId, version }
+        { featureGroup, licenseModelId, version, isReadOnlyMode }
     ) {
         return Promise.all([
             EntitlementPoolsActionHelper.fetchEntitlementPoolsList(dispatch, {
@@ -205,12 +211,35 @@ export default {
                 type: featureGroupsActionConstants.featureGroupsEditor.OPEN,
                 featureGroup
             });
+            dispatch({
+                type: featureGroupsActionConstants.featureGroupsEditor.OPEN,
+                featureGroup
+            });
+            dispatch({
+                type: modalActionTypes.GLOBAL_MODAL_SHOW,
+                data: {
+                    modalComponentName: modalContentMapper.FG_EDITOR,
+                    modalComponentProps: {
+                        version,
+                        licenseModelId,
+                        isReadOnlyMode,
+                        size: modalSizes.LARGE
+                    },
+                    title:
+                        licenseModelId && version && featureGroup
+                            ? i18n('Edit Feature Group')
+                            : i18n('Create New Feature Group')
+                }
+            });
         });
     },
 
     closeFeatureGroupsEditor(dispatch) {
         dispatch({
             type: featureGroupsActionConstants.featureGroupsEditor.CLOSE
+        });
+        dispatch({
+            type: modalActionTypes.GLOBAL_MODAL_CLOSE
         });
     }
 };

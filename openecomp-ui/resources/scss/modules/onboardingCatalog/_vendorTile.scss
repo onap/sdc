@@ -1,91 +1,91 @@
 @mixin flipOverlayDirection($itemsInRow) {
-  &:nth-child(#{$itemsInRow}n) {
-	.vsp-overlay-wrapper {
-	  right: 74%;
-	  left: inherit;
-	  .vsp-overlay-arrow {
-		border-right-color: transparent;
-		border-left-color: $tlv-light-gray;
-		border-right-width: 2px;
-		border-left-width: 6px;
-		left: 100%;
-		&:after {
-		  border-left-color: $white;
-		  border-right-color: transparent;
-		  left: -11px;
-		}
-	  }
-	}
-  }
+    &:nth-child(#{$itemsInRow}n) {
+        .vsp-overlay-wrapper {
+            right: 74%;
+            left: inherit;
+            .vsp-overlay-arrow {
+                border-right-color: transparent;
+                border-left-color: $tlv-light-gray;
+                border-right-width: 2px;
+                border-left-width: 6px;
+                left: 100%;
+                &:after {
+                    border-left-color: $white;
+                    border-right-color: transparent;
+                    left: -11px;
+                }
+            }
+        }
+    }
 }
 
 .catalog-tile.vendor-type {
-  position: relative;
-  .catalog-tile-top {
-	.catalog-tile-item-name {
-	  margin-top: 21px;
-		line-height: inherit;
-		&:first-letter {
-      text-transform: capitalize;
-    }	
-	}
-	.catalog-tile-vsp-count {
-	  @extend .body-3-semibold;
-	  margin-top: 8px;
-	  margin-left: 54px;
-	  margin-bottom: 9px;
-	  color: $dark-gray;
-	  border: 1px solid $dark-gray;
-	  padding: 0 15px 0 15px;
-	  border-radius: 15px;
+    position: relative;
+    .catalog-tile-top {
+        .catalog-tile-item-name {
+            margin-top: 21px;
+            line-height: inherit;
+            &:first-letter {
+                text-transform: capitalize;
+            }
+        }
+        .catalog-tile-vsp-count {
+            @extend .body-3-semibold;
+            margin-top: 8px;
+            margin-left: 54px;
+            margin-bottom: 9px;
+            color: $dark-gray;
+            border: 1px solid $dark-gray;
+            padding: 0 15px 0 15px;
+            border-radius: 15px;
 
-	  &.clickable {
-		&:hover {
-		  background-color: #eceff3;
-		  color: $dark-gray;
-		}
-	  }
-	  &.active {
-		background-color: $white;
-		color: $dark-gray;
-	  }
-	}
-  }
+            &.clickable {
+                &:hover {
+                    background-color: #eceff3;
+                    color: $dark-gray;
+                }
+            }
+            &.active {
+                background-color: $white;
+                color: $dark-gray;
+            }
+        }
+    }
 
-  .catalog-tile-content {
-	flex-basis: auto;
-	max-height: 31px;
-	height: 31px;
-	text-align: center;
-	color: $blue;
-	display: block;
-	background-color: $white;
-	margin-bottom: 7px;
-	padding-bottom: 0px;
-	.create-new-vsp-button {
-	  margin-top: 1px;
-	}
-	&:hover {
-	  color: $dark-blue;
-	  .svg-icon.plus {
-		fill: $dark-blue;
-	  }
-	}
-	&.disabled {
-	  cursor: default;
-	}
-  }
-  @media (min-width: 1900px) {
-	@include flipOverlayDirection($itemsInRow: 8);
-  }
-  @media (min-width: 1586px) and (max-width: 1899px) {
-	@include flipOverlayDirection($itemsInRow: 7);
-  }
-  @media (min-width: 1368px) and (max-width: 1585px) {
-	@include flipOverlayDirection($itemsInRow: 6);
-  }
-  @media (max-width: 1367px) {
-	@include flipOverlayDirection($itemsInRow: 5);
-  }
-  @import "vspOverlay";
+    .catalog-tile-content {
+        flex-basis: auto;
+        max-height: 31px;
+        height: 31px;
+        text-align: center;
+        color: $blue;
+        display: block;
+        background-color: $white;
+        margin-bottom: 7px;
+        padding-bottom: 0px;
+        .create-new-vsp-button {
+            margin-top: 1px;
+        }
+        &:hover {
+            color: $dark-blue;
+            .svg-icon.plus {
+                fill: $dark-blue;
+            }
+        }
+        &.disabled {
+            cursor: default;
+        }
+    }
+    @media (min-width: 1900px) {
+        @include flipOverlayDirection($itemsInRow: 8);
+    }
+    @media (min-width: 1586px) and (max-width: 1899px) {
+        @include flipOverlayDirection($itemsInRow: 7);
+    }
+    @media (min-width: 1368px) and (max-width: 1585px) {
+        @include flipOverlayDirection($itemsInRow: 6);
+    }
+    @media (max-width: 1367px) {
+        @include flipOverlayDirection($itemsInRow: 5);
+    }
+    @import 'vspOverlay';
 }

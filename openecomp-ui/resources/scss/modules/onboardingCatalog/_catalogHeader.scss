@@ -1,33 +1,33 @@
 .catalog-header {
-  margin: 34px 0 29px 50px;
-  display: flex;
-  flex-direction: row;
-  .expandable-input-top {
-	margin-right: 60px;
-  }
-  &.workspace-header {
-	@extend .heading-1;
-	color: $blue;
-  }
-  .catalog-header-tabs {
-	display: flex;
-	flex-direction: row;
-	.tab-separator {
-	  position: relative;
-	  top: 8px;
-	}
-	.catalog-header-tab {
-	  @extend .heading-1;
-	  cursor: pointer;
-	  padding: 0 15px 0 15px;
-	  display: flex;
-	  align-items: center;
-	  &.active {
-		color: $blue;
-	  }
-	  &:first-child {
-		padding-left: 0;
-	  }
-	}
-  }
+    margin: 34px 0 29px 50px;
+    display: flex;
+    flex-direction: row;
+    .expandable-input-top {
+        margin-right: 60px;
+    }
+    &.workspace-header {
+        @extend .heading-1;
+        color: $blue;
+    }
+    .catalog-header-tabs {
+        display: flex;
+        flex-direction: row;
+        .tab-separator {
+            position: relative;
+            top: 8px;
+        }
+        .catalog-header-tab {
+            @extend .heading-1;
+            cursor: pointer;
+            padding: 0 15px 0 15px;
+            display: flex;
+            align-items: center;
+            &.active {
+                color: $blue;
+            }
+            &:first-child {
+                padding-left: 0;
+            }
+        }
+    }
 }

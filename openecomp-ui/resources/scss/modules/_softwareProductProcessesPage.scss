@@ -1,60 +1,60 @@
 .edit-process-modal {
-  height: 100%;
-  .vsp-processes-editor {
-    padding-left: 0;
-    padding-right: 0;
-    .editor-title {
-      @extend .heading-2;
-      color: $dark-gray;
-      padding-bottom: 50px;
-    }
-    .file-upload-box {
-      @extend .body-1;
-      display: flex;
-      text-align: center;
-      flex-direction: column;
-      justify-content: center;
-      border: 2px dashed $light-gray;
-      padding-top: 20px;
-      padding-bottom: 20px;
-
-      .process-type {
-        width: 100%;
-      }
-    }
-    .vsp-processes-editor-data {
-      .validation-input-wrapper {
-        .form-group.vsp-process-description > textarea {
-            height: 113px;
+    height: 100%;
+    .vsp-processes-editor {
+        padding-left: 0;
+        padding-right: 0;
+        .editor-title {
+            @extend .heading-2;
+            color: $dark-gray;
+            padding-bottom: 50px;
         }
-      }
-      .process-type {
-        width: 100%;
-      }
-      .process-editor-file-box {
-        width: 380px;
-      }
+        .file-upload-box {
+            @extend .body-1;
+            display: flex;
+            text-align: center;
+            flex-direction: column;
+            justify-content: center;
+            border: 2px dashed $light-gray;
+            padding-top: 20px;
+            padding-bottom: 20px;
+
+            .process-type {
+                width: 100%;
+            }
+        }
+        .vsp-processes-editor-data {
+            .validation-input-wrapper {
+                .form-group.vsp-process-description > textarea {
+                    height: 113px;
+                }
+            }
+            .process-type {
+                width: 100%;
+            }
+            .process-editor-file-box {
+                width: 380px;
+            }
+        }
     }
-  }
 }
 
 .software-product-landing-view-right-side.vsp-processes-page {
-	overflow-y: initial;
-  .processes-list {
-    @extend .flex-column;
-  }
-  .list-editor-view {
-    .list-editor-view-list {
-      .list-editor-item-view {
-        .list-editor-item-view-content {
-          .list-editor-item-view-field {
-            .artifact-name {
-              @extend .body-1;
-              color: $light-green;
-            }
-          }
-        }
-      }
+    overflow-y: initial;
+    .processes-list {
+        @extend .flex-column;
     }
-  }
+    .list-editor-view {
+        .list-editor-view-list {
+            .list-editor-item-view {
+                .list-editor-item-view-content {
+                    .list-editor-item-view-field {
+                        .artifact-name {
+                            @extend .body-1;
+                            color: $light-green;
+                        }
+                    }
+                }
+            }
+        }
+    }
 }

@@ -21,7 +21,7 @@ import i18n from 'nfvo-utils/i18n/i18n.js';
 const UuidElement = ({ title, value }) => (
     <div className="uuid-container">
         <div className="uuid-title">{title}</div>
-        <div className="uuid-value" selectable>
+        <div className="uuid-value" selectable="true">
             {value}
         </div>
     </div>

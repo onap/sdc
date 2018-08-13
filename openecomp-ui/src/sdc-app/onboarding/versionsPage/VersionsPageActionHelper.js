@@ -80,7 +80,7 @@ const VersionsPageActionHelper = {
                     dispatch({
                         type: modalActionTypes.GLOBAL_MODAL_CLOSE
                     }),
-                modalClassName: 'versions-tree-modal',
+                bodyClassName: 'versions-tree-modal',
                 cancelButtonText: i18n('Close'),
                 title: i18n('Version Tree')
             }

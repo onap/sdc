@@ -16,11 +16,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import i18n from 'nfvo-utils/i18n/i18n.js';
-import Modal from 'nfvo-components/modal/Modal.jsx';
 import ListEditorView from 'nfvo-components/listEditor/ListEditorView.jsx';
 import ListEditorItemView from 'nfvo-components/listEditor/ListEditorItemView.jsx';
 
-import LicenseKeyGroupsEditor from './LicenseKeyGroupsEditor.js';
 import InputOptions, {
     other as optionInputOther
 } from 'nfvo-components/input/validation/InputOptions.jsx';
@@ -32,8 +30,6 @@ class LicenseKeyGroupsListEditorView extends React.Component {
         licenseModelId: PropTypes.string.isRequired,
         licenseKeyGroupsList: PropTypes.array,
         isReadOnlyMode: PropTypes.bool.isRequired,
-        isDisplayModal: PropTypes.bool,
-        isModalInEditMode: PropTypes.bool,
         onAddLicenseKeyGroupClick: PropTypes.func,
         onEditLicenseKeyGroupClick: PropTypes.func,
         onDeleteLicenseKeyGroupClick: PropTypes.func
@@ -48,13 +44,7 @@ class LicenseKeyGroupsListEditorView extends React.Component {
     };
 
     render() {
-        let {
-            licenseModelId,
-            isReadOnlyMode,
-            isDisplayModal,
-            isModalInEditMode,
-            version
-        } = this.props;
+        let { isReadOnlyMode } = this.props;
         let { onAddLicenseKeyGroupClick } = this.props;
         const { localFilter } = this.state;
 
@@ -74,28 +64,6 @@ class LicenseKeyGroupsListEditorView extends React.Component {
                         )
                     )}
                 </ListEditorView>
-                <Modal
-                    show={isDisplayModal}
-                    bsSize="large"
-                    animation={true}
-                    className="onborading-modal license-model-modal license-key-groups-modal">
-                    <Modal.Header>
-                        <Modal.Title>{`${
-                            isModalInEditMode
-                                ? i18n('Edit License Key Group')
-                                : i18n('Create New License Key Group')
-                        }`}</Modal.Title>
-                    </Modal.Header>
-                    <Modal.Body>
-                        {isDisplayModal && (
-                            <LicenseKeyGroupsEditor
-                                version={version}
-                                licenseModelId={licenseModelId}
-                                isReadOnlyMode={isReadOnlyMode}
-                            />
-                        )}
-                    </Modal.Body>
-                </Modal>
             </div>
         );
     }
@@ -134,7 +102,9 @@ class LicenseKeyGroupsListEditorView extends React.Component {
         return (
             <ListEditorItemView
                 key={id}
-                onSelect={() => onEditLicenseKeyGroupClick(licenseKeyGroup)}
+                onSelect={() =>
+                    onEditLicenseKeyGroupClick(licenseKeyGroup, isReadOnlyMode)
+                }
                 onDelete={() => onDeleteLicenseKeyGroupClick(licenseKeyGroup)}
                 className="list-editor-item-view"
                 isReadOnlyMode={isReadOnlyMode}>

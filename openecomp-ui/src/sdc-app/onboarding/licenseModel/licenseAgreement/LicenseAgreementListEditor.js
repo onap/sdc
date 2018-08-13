@@ -25,7 +25,6 @@ const mapStateToProps = ({
     licenseModel: { licenseAgreement, licenseModelEditor }
 }) => {
     let { licenseAgreementList } = licenseAgreement;
-    let { data } = licenseAgreement.licenseAgreementEditor;
     let { vendorName, version } = licenseModelEditor.data;
 
     return {
@@ -34,9 +33,7 @@ const mapStateToProps = ({
         licenseAgreementList: sortByStringProperty(
             licenseAgreementList,
             SORTING_PROPERTY_NAME
-        ),
-        isDisplayModal: Boolean(data),
-        isModalInEditMode: Boolean(data && data.id)
+        )
     };
 };
 
@@ -45,13 +42,19 @@ const mapActionsToProps = (dispatch, { licenseModelId }) => {
         onAddLicenseAgreementClick: version =>
             LicenseAgreementActionHelper.openLicenseAgreementEditor(dispatch, {
                 licenseModelId,
-                version
+                version,
+                isReadOnlyMode: false
             }),
-        onEditLicenseAgreementClick: (licenseAgreement, version) =>
+        onEditLicenseAgreementClick: (
+            licenseAgreement,
+            version,
+            isReadOnlyMode
+        ) =>
             LicenseAgreementActionHelper.openLicenseAgreementEditor(dispatch, {
                 licenseModelId,
                 licenseAgreement,
-                version
+                version,
+                isReadOnlyMode
             }),
         onDeleteLicenseAgreement: (licenseAgreement, version) =>
             dispatch({

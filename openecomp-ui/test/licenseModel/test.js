@@ -96,11 +96,10 @@ describe('License Model Module Tests', function() {
         };
         const expectedSuccessModal = {
             cancelButtonText: 'OK',
-            modalClassName: 'notification-modal',
             msg: 'This license model successfully submitted',
             timeout: 2000,
             title: 'Submit Succeeded',
-            type: 'success'
+            type: 'info'
         };
 
         const versionsList = {

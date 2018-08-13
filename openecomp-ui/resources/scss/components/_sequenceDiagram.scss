@@ -1,18 +1,18 @@
 .sequence-diagram {
-  .sequence-diagram-sequencer {
-	.asdcs-diagram {
-	  overflow: auto;
-	  max-height: 60vh;
-	}
-	.asdcs-editor {
-	  height: 60vh;
-	}
-  }
-  .sequence-diagram-action-buttons {
-	margin-left: 20px;
-	margin-top: 20px;
-	button:first-of-type {
-	  margin-right: 20px;
-	}
-  }
+    .sequence-diagram-sequencer {
+        .asdcs-diagram {
+            overflow: auto;
+            max-height: 60vh;
+        }
+        .asdcs-editor {
+            height: 60vh;
+        }
+    }
+    .sequence-diagram-action-buttons {
+        margin-left: 20px;
+        margin-top: 20px;
+        button:first-of-type {
+            margin-right: 20px;
+        }
+    }
 }

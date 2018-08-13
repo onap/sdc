@@ -16,9 +16,16 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import SVGIcon from 'sdc-ui/lib/react/SVGIcon.js';
-import Input from 'nfvo-components/input/validation/InputWrapper.jsx';
+import Input from 'nfvo-components/input/validation/Input.jsx';
 
 class DualListboxView extends React.Component {
+    constructor(props) {
+        super(props);
+        this.availableListRef = React.createRef();
+        this.availableListFilterRef = React.createRef();
+        this.selectedValuesListFilterRef = React.createRef();
+        this.selectedValuesRef = React.createRef();
+    }
     static propTypes = {
         availableList: PropTypes.arrayOf(
             PropTypes.shape({
@@ -77,13 +84,13 @@ class DualListboxView extends React.Component {
                     unselectedList,
                     {
                         value: availableListFilter,
-                        ref: 'availableListFilter',
+                        ref: this.availableListFilterRef,
                         disabled: isReadOnlyMode,
                         onChange: value =>
                             this.setState({ availableListFilter: value })
                     },
                     {
-                        ref: 'availableValues',
+                        ref: this.availableListRef,
                         disabled: isReadOnlyMode,
                         testId: 'available'
                     }
@@ -94,13 +101,13 @@ class DualListboxView extends React.Component {
                     selectedList,
                     {
                         value: selectedValuesListFilter,
-                        ref: 'selectedValuesListFilter',
+                        ref: this.selectedValuesListFilterRef,
                         disabled: isReadOnlyMode,
                         onChange: value =>
                             this.setState({ selectedValuesListFilter: value })
                     },
                     {
-                        ref: 'selectedValues',
+                        ref: this.selectedValuesRef,
                         disabled: isReadOnlyMode,
                         testId: 'selected'
                     }
@@ -235,6 +242,12 @@ class DualListboxView extends React.Component {
 
     removeAllFromSelectedList() {
         this.props.onChange([]);
+    }
+
+    // fix for auto-selection of first value in the list on the first render
+    componentDidMount() {
+        this.availableListRef.current.input.value = '';
+        this.selectedValuesRef.current.input.value = '';
     }
 }
 

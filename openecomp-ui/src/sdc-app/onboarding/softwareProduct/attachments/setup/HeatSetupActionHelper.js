@@ -1,26 +1,28 @@
-/*!
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+/*
+ * Copyright © 2016-2018 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
- * or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 import { actionTypes } from './HeatSetupConstants.js';
 import isEqual from 'lodash/isEqual.js';
 import cloneDeep from 'lodash/cloneDeep.js';
 import SoftwareProductActionHelper from 'sdc-app/onboarding/softwareProduct/SoftwareProductActionHelper.js';
-// import i18n from 'nfvo-utils/i18n/i18n.js';
-// import {actionTypes as modalActionTypes} from 'nfvo-components/modal/GlobalModalConstants.js';
 
 export default {
+    toggleVolFilesDisplay(dispatch, data) {
+        dispatch({ type: actionTypes.TOGGLE_VOL_DISPLAY, data });
+    },
+
     addModule(dispatch, isBase) {
         dispatch({ type: actionTypes.ADD_MODULE, data: { isBase } });
     },
@@ -94,7 +96,7 @@ export default {
 				dispatch({
 					type: modalActionTypes.GLOBAL_MODAL_WARNING,
 					data:{
-						msg: i18n(`You have uploaded a new HEAT. If you navigate away or Check-in without proceeding to validation, 
+						msg: i18n(`You have uploaded a new HEAT. If you navigate away or Check-in without proceeding to validation,
 							Old HEAT zip file will be in use. new HEAT will be ignored. Do you want to continue?`),
 						confirmationButtonText: i18n('Continue'),
 						onConfirmed: () => resolve(),

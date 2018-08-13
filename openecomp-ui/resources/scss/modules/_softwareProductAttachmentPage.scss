@@ -1,267 +1,262 @@
-
 .vsp-attachments-view {
-  position: relative;
-  .attachments-tabs {
-    .sdc-tabs-list {
-      padding-left: 28px;
-      background-color: $tlv-gray;
-      box-shadow: none;
-      border-bottom: 1px solid $light-gray;
-      .sdc-tab {
-          @extend .heading-2;
-        padding-top: 10px;
-        margin-top: 0;
-        &.sdc-tab-active {
-          color: $blue;
-          font-weight: bold;
+    position: relative;
+    .attachments-tabs {
+        .sdc-tabs-list {
+            padding-left: 28px;
+            background-color: $tlv-gray;
+            box-shadow: none;
+            border-bottom: 1px solid $light-gray;
+            .sdc-tab {
+                @extend .heading-2;
+                padding-top: 10px;
+                margin-top: 0;
+                &.sdc-tab-active {
+                    color: $blue;
+                    font-weight: bold;
+                }
+            }
         }
-      }
+        .sdc-tab-content {
+            margin-top: 0;
+        }
     }
-    .sdc-tab-content {
-      margin-top: 0;
-    }
-  }
-  .attachments-view-controllers {
-    position: absolute;
-    right: 40px;
-    top: 10px;
-    display: flex;
+    .attachments-view-controllers {
+        position: absolute;
+        right: 40px;
+        top: 10px;
+        display: flex;
 
-    
-    .icon-component {
-      margin-right: 30px;      
-    }
+        .icon-component {
+            margin-right: 30px;
+        }
 
-    input[type="file"] {
-      visibility: hidden;
-      width: 1px;
-      padding: 0;
-      margin-left: -1px;
-    }
+        input[type='file'] {
+            visibility: hidden;
+            width: 1px;
+            padding: 0;
+            margin-left: -1px;
+        }
 
-    .proceed-to-validation-btn {
-      margin-right: 30px;
+        .proceed-to-validation-btn {
+            margin-right: 30px;
+        }
+        .go-to-overview-btn {
+            width: 191px;
+            margin-right: 36px;
+            height: 36px;
+        }
+        .separator {
+            height: 27px;
+            border: 1px solid $light-gray;
+            margin-right: 31px;
+            margin-left: 0px;
+            margin-top: 3px;
+        }
+        .abort-btn {
+            fill: $blue;
+            color: $blue;
+            &:hover {
+                color: $light-blue;
+                fill: $light-blue;
+            }
+        }
     }
-    .go-to-overview-btn {
-      width: 191px;
-      margin-right: 36px;
-      height: 36px;
-    }
-    .separator {
-      height: 27px;
-      border: 1px solid $light-gray;
-      margin-right: 31px;
-      margin-left: 0px; 
-      margin-top: 3px;
-    }
-    .abort-btn {      
-      fill: $blue;
-      color: $blue;
-      &:hover {
-        color: $light-blue;
-        fill: $light-blue;
-      }
-    }      
-  }
 }
 
 .vsp-attachments-heat-validation {
-  @extend .body-1;
-  display: flex;
-  .svg-icon.exclamationTriangleFull {
-    fill: $orange;
-    width: 15px;
-    height: 15px;
-    &.large {
-      width: 20px;
-      height: 20px;
-    }
-  }
-  .validation-tree-section {
+    @extend .body-1;
     display: flex;
-    width: 400px;
-    justify-content: space-between;
-  }
-  .vsp-attachments-heat-validation-tree {
-    @extend .flex-column;
-    margin: 0;
-    overflow: auto;
-    height: 100%;
-    .attachments-tree-header {
-      display: flex;
-      justify-content: space-between;
-      height: 55px;
-      align-items: center;
-      &.header-selected {
-        background: $tlv-gray;
-      }
-      .header-icon {
-        top: -3px;
-        position: relative;
-        margin-left: 20px;
-      }
-      .tree-header-title-text {
-        @extend .heading-4-semibold;
-        padding-left: 32px;
-        cursor: pointer;
-        &.tree-header-title-selected{
-          color: $blue;
-        }
-      }
-      .tree-header-title {
-        display: flex;
-      }
-    }
-    .counters {
-      display: flex;
-      justify-content: space-between;
-      z-index: 1;
-      padding-right: 20px;
-      .counter {
-        .svg-icon {
-          &.__exclamationTriangleLine {
-            fill: $orange;
-          }
-        }
-        display: flex;
-        &:first-child {
-          margin-right: 20px;
-        }
-        &:only-child {
-          margin-right: 0;
-        }
-        .svg-icon-wrapper {
-          margin-right: 5px;
-        }
-        .counter-icon {
-          margin-right: 5px;
-        }
-        .error-text, .warning-text {
-          @extend .body-3;
-          &.large {
-            @extend .heading-4-semibold;
-          }
-        }
-      }
-    }
-    .tree-wrapper {
-      flex: 1 1;
-      position: relative;
-      padding-bottom: 10px;
-
-      @-moz-document url-prefix() {
-        .tree-block-inside {
-          top: 0;
-          position: relative;
-        }
-      }
-      .tree-block-inside {
-        padding-left: 20px;
-        .tree-node-row {
-          cursor: default;
-          white-space: nowrap;
-          display: flex;
-          justify-content: space-between;
-          height: 40px;
-          align-items: center;
-          .svg-icon {
-            &.__chevronUp, &.__chevronDown {
-              height: 10px;
-              width: 10px;
-            }
-          }
-
-          &:after {
-            border-top: 1px solid $tlv-gray;
-            height: 40px;
-            position: absolute;
-            left: 0;
-            right: 0;
-            content: ' ';
-          }
-          @-moz-document url-prefix() {
-            &:after {
-              top: 0;
-            }
-          }
-          &.tree-node-selected::before {
-            position: absolute;
-            left: 0;
-            right: 0;
+    .svg-icon.exclamationTriangleFull {
+        fill: $orange;
+        width: 15px;
+        height: 15px;
+        &.large {
+            width: 20px;
             height: 20px;
-            display: inline-block;
-            content: ' ';
-            background-color: $tlv-gray;
-            color: $blue;
-          }
-
-          &.tree-node-clicked {
-            color: $blue;
-            &:after {
-              background: $tlv-gray;
-              height: 40px;
-              position: absolute;
-              left: 0;
-              right: 0;
-              content: ' ';
+        }
+    }
+    .validation-tree-section {
+        display: flex;
+        width: 400px;
+        justify-content: space-between;
+    }
+    .vsp-attachments-heat-validation-tree {
+        @extend .flex-column;
+        margin: 0;
+        overflow: auto;
+        height: 100%;
+        .attachments-tree-header {
+            display: flex;
+            justify-content: space-between;
+            height: 55px;
+            align-items: center;
+            &.header-selected {
+                background: $tlv-gray;
             }
-          }
-          .tree-node-name {
-            cursor: pointer;
-          }
-          .name-section {
+            .header-icon {
+                top: -3px;
+                position: relative;
+                margin-left: 20px;
+            }
+            .tree-header-title-text {
+                @extend .heading-4-semibold;
+                padding-left: 32px;
+                cursor: pointer;
+                &.tree-header-title-selected {
+                    color: $blue;
+                }
+            }
+            .tree-header-title {
+                display: flex;
+            }
+        }
+        .counters {
+            display: flex;
+            justify-content: space-between;
             z-index: 1;
-            flex: 1;
-            @include ellipsis(auto);
-          }
-          .tree-node-expander {
+            padding-right: 20px;
+            .counter {
+                .svg-icon {
+                    &.__exclamationTriangleLine {
+                        fill: $orange;
+                    }
+                }
+                display: flex;
+                &:first-child {
+                    margin-right: 20px;
+                }
+                &:only-child {
+                    margin-right: 0;
+                }
+                .svg-icon-wrapper {
+                    margin-right: 5px;
+                }
+                .counter-icon {
+                    margin-right: 5px;
+                }
+                .error-text,
+                .warning-text {
+                    @extend .body-3;
+                    &.large {
+                        @extend .heading-4-semibold;
+                    }
+                }
+            }
+        }
+        .tree-wrapper {
+            flex: 1 1;
             position: relative;
-            display: inline-block;
-            cursor: pointer;
-          }
-          .tree-node-icon {
-            margin: 0 7px;
-          }
+            padding-bottom: 10px;
+
+            @-moz-document url-prefix() {
+                .tree-block-inside {
+                    top: 0;
+                    position: relative;
+                }
+            }
+            .tree-block-inside {
+                padding-left: 20px;
+                .tree-node-row {
+                    cursor: default;
+                    white-space: nowrap;
+                    display: flex;
+                    justify-content: space-between;
+                    height: 40px;
+                    align-items: center;
+                    .svg-icon {
+                        &.__chevronUp,
+                        &.__chevronDown {
+                            height: 10px;
+                            width: 10px;
+                        }
+                    }
+
+                    &:after {
+                        border-top: 1px solid $tlv-gray;
+                        height: 40px;
+                        position: absolute;
+                        left: 0;
+                        right: 0;
+                        content: ' ';
+                    }
+                    @-moz-document url-prefix() {
+                        &:after {
+                            top: 0;
+                        }
+                    }
+                    &.tree-node-selected::before {
+                        position: absolute;
+                        left: 0;
+                        right: 0;
+                        height: 20px;
+                        display: inline-block;
+                        content: ' ';
+                        background-color: $tlv-gray;
+                        color: $blue;
+                    }
+
+                    &.tree-node-clicked {
+                        color: $blue;
+                        &:after {
+                            background: $tlv-gray;
+                            height: 40px;
+                            position: absolute;
+                            left: 0;
+                            right: 0;
+                            content: ' ';
+                        }
+                    }
+                    .tree-node-name {
+                        cursor: pointer;
+                    }
+                    .name-section {
+                        z-index: 1;
+                        flex: 1;
+                        @include ellipsis(auto);
+                    }
+                    .tree-node-expander {
+                        position: relative;
+                        display: inline-block;
+                        cursor: pointer;
+                    }
+                    .tree-node-icon {
+                        margin: 0 7px;
+                    }
+                }
+            }
         }
-      }
     }
-  }
-  .vsp-attachments-heat-validation-separator {
-    border-left: 1px solid $tlv-light-gray;
-    height: 100%;
-    width: 5px;
-    cursor: e-resize;
-  }
+    .vsp-attachments-heat-validation-separator {
+        border-left: 1px solid $tlv-light-gray;
+        height: 100%;
+        width: 5px;
+        cursor: e-resize;
+    }
 
-  .message-board-section {
-    @extend .flex-column;
-    padding-left: 25px;
-    padding-top: 10px;
-    padding-right: 60px;
-    overflow: auto;
-    margin-bottom: 70px;
-    .error-item {
-      display: flex;
-      margin: 10px 0;
-      .large {
-        .svg-icon {
-          width: 20px;
-          height: 20px;
-          fill: $orange;
+    .message-board-section {
+        @extend .flex-column;
+        padding-left: 25px;
+        padding-top: 10px;
+        padding-right: 60px;
+        overflow: auto;
+        margin-bottom: 70px;
+        .error-item {
+            display: flex;
+            margin: 10px 0;
+            .large {
+                .svg-icon {
+                    width: 20px;
+                    height: 20px;
+                    fill: $orange;
+                }
+            }
+            .error-item-file-type {
+                margin-left: 15px;
+            }
+            .error-file-name {
+                @extend .body-1-semibold;
+                margin-right: 5px;
+            }
         }
-      }
-      .error-item-file-type {
-        margin-left: 15px;
-      }
-      .error-file-name {
-        @extend .body-1-semibold;
-        margin-right: 5px;
-      }
-
-
-
     }
-
-  }
-
 }

@@ -26,16 +26,12 @@ import { SORTING_PROPERTY_NAME } from 'sdc-app/onboarding/licenseModel/LicenseMo
 export const mapStateToProps = ({
     licenseModel: { featureGroup, licenseModelEditor }
 }) => {
-    const { featureGroupEditor: { data }, featureGroupsList } = featureGroup;
+    const { featureGroupsList } = featureGroup;
     const { vendorName, version } = licenseModelEditor.data;
 
     return {
         vendorName,
         version,
-        featureGroupsModal: {
-            show: Boolean(data),
-            editMode: Boolean(data && data.id)
-        },
         featureGroupsList: sortByStringProperty(
             featureGroupsList,
             SORTING_PROPERTY_NAME
@@ -63,13 +59,19 @@ const mapActionsToProps = (dispatch, { licenseModelId }) => {
         onAddFeatureGroupClick: actualVersion =>
             FeatureGroupsActionHelper.openFeatureGroupsEditor(dispatch, {
                 licenseModelId,
-                version: actualVersion
+                version: actualVersion,
+                isReadOnlyMode: false
             }),
-        onEditFeatureGroupClick: (featureGroup, actualVersion) =>
+        onEditFeatureGroupClick: (
+            featureGroup,
+            actualVersion,
+            isReadOnlyMode
+        ) =>
             FeatureGroupsActionHelper.openFeatureGroupsEditor(dispatch, {
                 featureGroup,
                 licenseModelId,
-                version: actualVersion
+                version: actualVersion,
+                isReadOnlyMode
             })
     };
 };

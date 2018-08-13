@@ -1,46 +1,38 @@
 .deployment-flavor-editor {
-	.modal-dialog {
-		width: 780px;
-	}
-	.deployment-feature-groups-section.no-feature-groups {
-		padding-bottom: 0;
-		.form-group {
-			margin-bottom: 5px;
-		}
-	}
-	.deployment-feature-group-warning-section {
-			padding-bottom: 30px;
-			span {
-				@extend .body-2;
-				color: $red;
-			}
-	}
-	.grid-section.vfc-table {
-		.section-title {
-			padding-bottom: 10px;
-		}
-	}
-	.modal-content {
-		.modal-body {
-			.validation-form-content {
-				overflow-y: visible;
-				.grid-col-1 {
-					flex-basis: 30%;
-				}
+    .deployment-feature-groups-section.no-feature-groups {
+        padding-bottom: 0;
+        .form-group {
+            margin-bottom: 5px;
+        }
+    }
+    .deployment-feature-group-warning-section {
+        padding-bottom: 30px;
+        span {
+            @extend .body-2;
+            color: $red;
+        }
+    }
+    .grid-section.vfc-table {
+        .section-title {
+            padding-bottom: 10px;
+        }
+    }
+    &.sdc-modal__content {
+        .validation-form-content {
+            .grid-col-1 {
+                flex-basis: 30%;
+            }
 
+            .grid-section.vfc-table {
+                padding-bottom: 50px;
+                .Select-menu {
+                    max-height: 100px;
+                }
+            }
 
-				.grid-section.vfc-table {
-					padding-bottom: 50px;
-					.Select-menu {
-						max-height: 100px;
-					}
-
-				}
-
-				.grid-col-3 {
-					flex-basis: 65%;
-				}
-			}
-		}
-	}
+            .grid-col-3 {
+                flex-basis: 65%;
+            }
+        }
+    }
 }

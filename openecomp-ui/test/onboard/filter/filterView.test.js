@@ -28,7 +28,7 @@ describe('Filter component view Tests', () => {
                 <Filter />
             </Provider>
         );
-        const filter = wrapper.find('.catalog-filter');
+        const filter = wrapper.find('.catalog-filter').hostNodes();
         expect(filter.hasClass('catalog-filter')).toBeTruthy();
     });
 });

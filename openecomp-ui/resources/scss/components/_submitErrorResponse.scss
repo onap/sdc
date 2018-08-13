@@ -1,65 +1,63 @@
 .submit-error-response-view {
-  max-height: 500px;
-  overflow: auto;
-  .list-group-item {
-    border-top: none;
-  }
-  .panel-title {
-    a {
-      &:after {
-        content: "(details)";
-        color: $link-blue;
-        float: right;
-
-      }
-      &:hover {
-        color: $blue;
-        text-decoration: underline;
-      }
-    }
-  }
-  .error-block {
-    margin: 10px 0;
-    .error-block-header {
-      background-color: $tlv-gray;
-      padding: 5px;
-      cursor: pointer;
-      .svg-icon {
-        &.__chevronDown {
-          margin-right: 10px;
-        }
-      }
-      .collapse-right {
-        .svg-icon {
-          &.__chevronDown {
-            transform: rotate(270deg);
-          }
-        }
-      }
-
-    }
-    .error-code-list-item {
-      display: flex;
-      justify-content: flex-start;
-      .icon-label {
-        @extend .body-1;
-        color: $dark-gray;
-        margin-left: 10px;
-      }
-      .icon-component {
-        align-items: baseline;
-      }
-    }
+    max-height: 500px;
+    overflow: auto;
     .list-group-item {
-      .error-item-text {
-        margin-top:-2px;
-        max-width: 100px;
-      }
+        border-top: none;
     }
-    .component-name-header {
-      margin-left: 45px;
-      margin-top: 10px;
-      @extend .heading-5-semibold;
+    .panel-title {
+        a {
+            &:after {
+                content: '(details)';
+                color: $link-blue;
+                float: right;
+            }
+            &:hover {
+                color: $blue;
+                text-decoration: underline;
+            }
+        }
     }
-  }
+    .error-block {
+        margin: 10px 0;
+        .error-block-header {
+            background-color: $tlv-gray;
+            padding: 5px;
+            cursor: pointer;
+            .svg-icon {
+                &.__chevronDown {
+                    margin-right: 10px;
+                }
+            }
+            .collapse-right {
+                .svg-icon {
+                    &.__chevronDown {
+                        transform: rotate(270deg);
+                    }
+                }
+            }
+        }
+        .error-code-list-item {
+            display: flex;
+            justify-content: flex-start;
+            .icon-label {
+                @extend .body-1;
+                color: $dark-gray;
+                margin-left: 10px;
+            }
+            .icon-component {
+                align-items: baseline;
+            }
+        }
+        .list-group-item {
+            .error-item-text {
+                margin-top: -2px;
+                max-width: 100px;
+            }
+        }
+        .component-name-header {
+            margin-left: 45px;
+            margin-top: 10px;
+            @extend .heading-5-semibold;
+        }
+    }
 }

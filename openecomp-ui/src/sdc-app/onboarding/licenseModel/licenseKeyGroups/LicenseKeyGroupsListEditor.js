@@ -29,7 +29,6 @@ const mapStateToProps = ({
     licenseModel: { licenseKeyGroup, licenseModelEditor }
 }) => {
     let { licenseKeyGroupsList } = licenseKeyGroup;
-    let { data } = licenseKeyGroup.licenseKeyGroupsEditor;
     let { vendorName } = licenseModelEditor.data;
 
     return {
@@ -37,21 +36,24 @@ const mapStateToProps = ({
         licenseKeyGroupsList: sortByStringProperty(
             licenseKeyGroupsList,
             SORTING_PROPERTY_NAME
-        ),
-        isDisplayModal: Boolean(data),
-        isModalInEditMode: Boolean(data && data.id)
+        )
     };
 };
 
 const mapActionsToProps = (dispatch, { licenseModelId, version }) => {
     return {
         onAddLicenseKeyGroupClick: () =>
-            LicenseKeyGroupsActionHelper.openLicenseKeyGroupsEditor(dispatch),
-        onEditLicenseKeyGroupClick: licenseKeyGroup =>
+            LicenseKeyGroupsActionHelper.openLicenseKeyGroupsEditor(dispatch, {
+                isReadOnlyMode: false,
+                version,
+                licenseModelId
+            }),
+        onEditLicenseKeyGroupClick: (licenseKeyGroup, isReadOnlyMode) =>
             LicenseKeyGroupsActionHelper.openLicenseKeyGroupsEditor(dispatch, {
                 licenseKeyGroup,
                 licenseModelId,
-                version
+                version,
+                isReadOnlyMode
             }),
         onDeleteLicenseKeyGroupClick: licenseKeyGroup =>
             dispatch({

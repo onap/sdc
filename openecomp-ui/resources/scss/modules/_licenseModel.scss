@@ -1,55 +1,42 @@
 .license-model-modal {
-  .modal-body {
-    padding: 0;
-  }
-	.modal-header {
-		border-bottom: none;
-		padding-bottom: 30px;
-	}
-	.sdc-tabs-list {
-		padding-left: 50px;
-		border-bottom: 1px solid $tlv-light-gray;
-		display: flex;
-		align-items: baseline;
-	}
-	.sdc-tab-content {
-		margin-top: 0;
-	}
-	.add-limit-button {
-		margin-left: auto;
-		margin-right: 50px;
-		padding-right: 0;
-		text-align: end;
-	}
-	.license-model-form {
-		.validation-form-content, .validation-buttons {
-      padding: 20px 50px;
+    .sdc-tabs {
+        margin-top: 20px;
     }
-		&.license-agreement-form, &.feature-group-form {
-			.validation-form-content {
-				padding: 0;
-			}
-			.sdc-tab-content {
-				padding: 20px 50px;
-			}
-		}
-	}
-	.license-model-modal-buttons {
-		padding: 21px 50px;
-    display: flex;
-    justify-content: flex-end;
-		background-color: $tlv-gray;
-		margin-top: 2px;
-    .sdc-button {
-      margin-left: 20px;
+    .sdc-tabs-list {
+        padding-left: 40px;
+        border-bottom: 1px solid $tlv-light-gray;
+        display: flex;
+        align-items: baseline;
     }
-	}
+    .sdc-tab-content {
+        margin-top: 0;
+    }
+    .add-limit-button {
+        margin-left: auto;
+        margin-right: 50px;
+        padding-right: 0;
+        text-align: end;
+    }
+    .license-model-form {
+        &.license-agreement-form,
+        &.feature-group-form {
+            .validation-form-content {
+                padding: 0;
+            }
+            .sdc-tab-content {
+                padding: 20px 40px;
+                .dual-list-box {
+                    margin: 0;
+                }
+            }
+        }
+    }
 }
 .license-model-list-editor {
-	.list-editor-view-list {
-		.list-editor-item-view {
-			min-height: 110px;
-			height: 110px;
-		}
-	}
+    .list-editor-view-list {
+        .list-editor-item-view {
+            min-height: 110px;
+            height: 110px;
+        }
+    }
 }

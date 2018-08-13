@@ -17,20 +17,13 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import i18n from 'nfvo-utils/i18n/i18n.js';
-import Modal from 'nfvo-components/modal/Modal.jsx';
 import ListEditorView from 'nfvo-components/listEditor/ListEditorView.jsx';
 import ListEditorItemView from 'nfvo-components/listEditor/ListEditorItemView.jsx';
-
-import FeatureGroupEditor from './FeatureGroupEditor.js';
 
 class FeatureGroupListEditorView extends React.Component {
     static propTypes = {
         vendorName: PropTypes.string,
         licenseModelId: PropTypes.string.isRequired,
-        featureGroupsModal: PropTypes.shape({
-            show: PropTypes.bool,
-            editMode: PropTypes.bool
-        }),
         isReadOnlyMode: PropTypes.bool.isRequired,
         onAddFeatureGroupClick: PropTypes.func,
         onEditFeatureGroupClick: PropTypes.func,
@@ -40,11 +33,7 @@ class FeatureGroupListEditorView extends React.Component {
     };
 
     static defaultProps = {
-        featureGroupsList: [],
-        featureGroupsModal: {
-            show: false,
-            editMode: false
-        }
+        featureGroupsList: []
     };
 
     state = {
@@ -52,13 +41,7 @@ class FeatureGroupListEditorView extends React.Component {
     };
 
     render() {
-        let {
-            licenseModelId,
-            featureGroupsModal,
-            isReadOnlyMode,
-            onAddFeatureGroupClick,
-            version
-        } = this.props;
+        let { isReadOnlyMode, onAddFeatureGroupClick, version } = this.props;
         const { localFilter } = this.state;
         return (
             <div className="license-model-list-editor feature-groups-list-editor">
@@ -77,28 +60,6 @@ class FeatureGroupListEditorView extends React.Component {
                         )
                     )}
                 </ListEditorView>
-                {featureGroupsModal.show && (
-                    <Modal
-                        show={featureGroupsModal.show}
-                        bsSize="large"
-                        animation={true}
-                        className="onborading-modal license-model-modal feature-group-modal">
-                        <Modal.Header>
-                            <Modal.Title>{`${
-                                featureGroupsModal.editMode
-                                    ? i18n('Edit Feature Group')
-                                    : i18n('Create New Feature Group')
-                            }`}</Modal.Title>
-                        </Modal.Header>
-                        <Modal.Body>
-                            <FeatureGroupEditor
-                                version={version}
-                                licenseModelId={licenseModelId}
-                                isReadOnlyMode={isReadOnlyMode}
-                            />
-                        </Modal.Body>
-                    </Modal>
-                )}
             </div>
         );
     }
@@ -114,7 +75,9 @@ class FeatureGroupListEditorView extends React.Component {
             <ListEditorItemView
                 key={listItem.id}
                 onDelete={() => this.deleteFeatureGroupItem(listItem, version)}
-                onSelect={() => this.editFeatureGroupItem(listItem, version)}
+                onSelect={() =>
+                    this.editFeatureGroupItem(listItem, version, isReadOnlyMode)
+                }
                 className="list-editor-item-view"
                 isReadOnlyMode={isReadOnlyMode}>
                 <div className="list-editor-item-view-field">

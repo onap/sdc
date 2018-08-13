@@ -245,7 +245,7 @@ class VNFImportView extends React.Component {
                             <Button
                                 className="vnf-submit"
                                 type="button"
-                                btnType="default"
+                                btnType="primary"
                                 onClick={() =>
                                     onSubmit(
                                         this.state.selectedRow,
@@ -257,7 +257,7 @@ class VNFImportView extends React.Component {
                             <Button
                                 className="Cancel"
                                 type="button"
-                                btnType="outline"
+                                btnType="secondary"
                                 onClick={onCancel}>
                                 {i18n('Cancel')}
                             </Button>

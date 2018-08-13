@@ -14,43 +14,55 @@
  * limitations under the License.
  */
 
-
 import React from 'react';
 import ShallowRenderer from 'react-test-renderer/shallow';
 import TestUtils from 'react-dom/test-utils';
 import TabulatedEditor from 'nfvo-components/editor/TabulatedEditor.jsx';
 import { Provider } from 'react-redux';
-import {storeCreator} from 'sdc-app/AppStore.js';
+import { storeCreator } from 'sdc-app/AppStore.js';
 
-describe('Tabulated Editor test: ', function () {
-	const store = storeCreator();
-	it('basic view test', () => {
-		const renderer = new ShallowRenderer();
-		renderer.render(
-			<Provider store={store}><TabulatedEditor><button>test</button></TabulatedEditor></Provider>
-		);
-		let renderedOutput = renderer.getRenderOutput();
-		expect(renderedOutput).toBeTruthy();
+describe('Tabulated Editor test: ', function() {
+    const store = storeCreator();
+    it('basic view test', () => {
+        const renderer = new ShallowRenderer();
+        renderer.render(
+            <Provider store={store}>
+                <TabulatedEditor>
+                    <button>test</button>
+                </TabulatedEditor>
+            </Provider>
+        );
+        let renderedOutput = renderer.getRenderOutput();
+        expect(renderedOutput).toBeTruthy();
+    });
 
-	});
-
-	it('handle func test', () => {
-		let props = {
-			navigationBarProps: {
-				groups: [],
-				onNavigationItemClick: ()=>{}
-			},
-			versionControllerProps: {
-				isCheckedOut: false,
-				version: {id: '0.1', label: '0.1'},
-				viewableVersions: [{id: '0.1', label: '0.1'}],
-				itemPermission: {isCertified: false, isCollaborator: true, isDirty: false},
-				onSubmit: ()=>{},
-				onRevert: ()=>{}
-			}
-		};
-		const view = TestUtils.renderIntoDocument(<Provider store={store}><TabulatedEditor {...props}><button>test</button></TabulatedEditor></Provider>);
-		expect(view).toBeTruthy();
-	});
-
+    it('handle func test', () => {
+        let props = {
+            navigationBarProps: {
+                groups: [],
+                onNavigationItemClick: () => {},
+                activeItemId: 'test'
+            },
+            versionControllerProps: {
+                isCheckedOut: false,
+                version: { id: '0.1', label: '0.1' },
+                viewableVersions: [{ id: '0.1', label: '0.1' }],
+                itemPermission: {
+                    isCertified: false,
+                    isCollaborator: true,
+                    isDirty: false
+                },
+                onSubmit: () => {},
+                onRevert: () => {}
+            }
+        };
+        const view = TestUtils.renderIntoDocument(
+            <Provider store={store}>
+                <TabulatedEditor {...props}>
+                    <button>test</button>
+                </TabulatedEditor>
+            </Provider>
+        );
+        expect(view).toBeTruthy();
+    });
 });

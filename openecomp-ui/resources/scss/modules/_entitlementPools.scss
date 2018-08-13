@@ -1,37 +1,37 @@
-
-.entitlement-pools-list-editor {  
+.entitlement-pools-list-editor {
     .list-editor-item-view-field {
-
-      .entitlement-pools-count {
-        @extend .heading-1;
-      color: $purple;
+        .entitlement-pools-count {
+            @extend .heading-1;
+            color: $purple;
+        }
     }
-  }
 }
 
 .entitlement-pools-modal {
-  .entitlement-pools-form {
-    .threshold-section, .date-section {
-			display: flex;
-			justify-content: space-between;
-			.validation-input-wrapper {
-				flex: 0 0 46%;
-			}
-    }
-    .uuid-row-wrapper {
-      display: flex;
-      .separator{
-        margin-left: 30px;
-        margin-right: 30px;
-        height: 35px;
-        border: 1px solid $tlv-light-gray;
-      }
-      .uuid-container {
-        .uuid-value {
-          @extend .body-3;
-          user-select: text;
+    .entitlement-pools-form {
+        .threshold-section,
+        .date-section {
+            display: flex;
+            justify-content: space-between;
+            .validation-input-wrapper {
+                flex: 0 0 46%;
+            }
         }
-      }
+        .uuid-row-wrapper {
+            display: flex;
+            margin-top: 20px;
+            .separator {
+                margin-left: 30px;
+                margin-right: 30px;
+                height: 35px;
+                border: 1px solid $tlv-light-gray;
+            }
+            .uuid-container {
+                .uuid-value {
+                    @extend .body-3;
+                    user-select: text;
+                }
+            }
+        }
     }
-		}
 }

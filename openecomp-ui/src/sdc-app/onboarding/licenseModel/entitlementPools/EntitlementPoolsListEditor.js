@@ -27,7 +27,6 @@ const mapStateToProps = ({
     licenseModel: { entitlementPool, licenseModelEditor }
 }) => {
     const { entitlementPoolsList } = entitlementPool;
-    const { data } = entitlementPool.entitlementPoolEditor;
     const { vendorName } = licenseModelEditor.data;
 
     return {
@@ -35,21 +34,27 @@ const mapStateToProps = ({
         entitlementPoolsList: sortByStringProperty(
             entitlementPoolsList,
             SORTING_PROPERTY_NAME
-        ),
-        isDisplayModal: Boolean(data),
-        isModalInEditMode: Boolean(data && data.id)
+        )
     };
 };
 
-const mapActionsToProps = (dispatch, { licenseModelId, version }) => {
+const mapActionsToProps = (
+    dispatch,
+    { licenseModelId, version, isReadOnlyMode }
+) => {
     return {
         onAddEntitlementPoolClick: () =>
-            EntitlementPoolsActionHelper.openEntitlementPoolsEditor(dispatch),
+            EntitlementPoolsActionHelper.openEntitlementPoolsEditor(dispatch, {
+                licenseModelId,
+                version,
+                isReadOnlyMode
+            }),
         onEditEntitlementPoolClick: entitlementPool =>
             EntitlementPoolsActionHelper.openEntitlementPoolsEditor(dispatch, {
                 entitlementPool,
                 licenseModelId,
-                version
+                version,
+                isReadOnlyMode
             }),
         onDeleteEntitlementPool: entitlementPool =>
             dispatch({

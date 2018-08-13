@@ -1,31 +1,32 @@
 .license-key-groups-list-editor {
-  .list-editor-view-list {
-    .list-editor-item-view-field {
-
-      .operational-scope, .type {
-        color: $orange;
-      }
-      .operational-scope {
-        @include ellipsis;
-      }
+    .list-editor-view-list {
+        .list-editor-item-view-field {
+            .operational-scope,
+            .type {
+                color: $orange;
+            }
+            .operational-scope {
+                @include ellipsis;
+            }
+        }
     }
-  }
 }
 
 .license-keygroup-editor {
-  .uuid-row-wrapper {
-    display: flex;
-    .separator{
-      margin-left: 30px;
-      margin-right: 30px;
-      height: 35px;
-      border: 1px solid $tlv-light-gray;
+    .uuid-row-wrapper {
+        display: flex;
+        margin-top: 20px;
+        .separator {
+            margin-left: 30px;
+            margin-right: 30px;
+            height: 35px;
+            border: 1px solid $tlv-light-gray;
+        }
+        .uuid-container {
+            .uuid-value {
+                @extend .body-3;
+                user-select: text;
+            }
+        }
     }
-    .uuid-container {
-      .uuid-value {
-        @extend .body-3;
-        user-select: text;
-      }
-    }
-  }
 }

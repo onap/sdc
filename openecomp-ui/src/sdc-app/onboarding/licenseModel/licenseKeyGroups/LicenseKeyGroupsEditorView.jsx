@@ -39,6 +39,21 @@ import {
 import LicenseKeyGroupFormContent from './components/FormContent.jsx';
 import ModalButtons from 'sdc-app/onboarding/licenseModel/components/ModalButtons.jsx';
 
+const TabButton = props => {
+    const { onClick, disabled, className } = props;
+    const dataTestId = props['data-test-id'];
+    return (
+        <div
+            className={className}
+            onClick={disabled ? undefined : onClick}
+            data-test-id={dataTestId}
+            role="tab"
+            disabled={disabled}>
+            {props.children}
+        </div>
+    );
+};
+
 const LicenseKeyGroupPropType = PropTypes.shape({
     id: PropTypes.string,
     name: PropTypes.string,
@@ -94,7 +109,7 @@ class LicenseKeyGroupsEditorView extends React.Component {
         let { selectedTab } = this.state;
         const isTabsDisabled = !data.id || !this.props.isFormValid;
         return (
-            <div className="license-keygroup-editor">
+            <div className="license-keygroup-editor license-model-modal license-key-groups-modal">
                 <Tabs
                     type="menu"
                     activeTab={selectedTab}
@@ -187,23 +202,29 @@ class LicenseKeyGroupsEditorView extends React.Component {
                         )}
                     </Tab>
                     {selectedTab !== tabIds.GENERAL ? (
-                        <Button
-                            className="add-limit-button"
+                        <TabButton
                             tabId={tabIds.ADD_LIMIT_BUTTON}
-                            btnType="link"
-                            iconName="plus"
                             disabled={
-                                this.state.selectedLimit || isReadOnlyMode
-                            }>
-                            {i18n('Add Limit')}
-                        </Button>
+                                !!this.state.selectedLimit || isReadOnlyMode
+                            }
+                            data-test-id="add-limits-tab"
+                            className="add-limit-button">
+                            <Button
+                                btnType="link"
+                                iconName="plus"
+                                disabled={
+                                    !!this.state.selectedLimit || isReadOnlyMode
+                                }>
+                                {i18n('Add Limit')}
+                            </Button>
+                        </TabButton>
                     ) : (
-                        <div key="empty_lm_tab_key" />
+                        <TabButton key="empty_lm_tab_key" />
                     ) // Render empty div to not break tabs
                     }
                 </Tabs>
                 <ModalButtons
-                    className="license-key-group-editor-buttons"
+                    className="sdc-modal__footer"
                     selectedLimit={this.state.selectedLimit}
                     isFormValid={this.props.isFormValid}
                     isReadOnlyMode={isReadOnlyMode}

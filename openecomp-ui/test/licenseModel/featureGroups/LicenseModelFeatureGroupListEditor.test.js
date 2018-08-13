@@ -16,75 +16,75 @@
 
 import React from 'react';
 import TestUtils from 'react-dom/test-utils';
-import {mapStateToProps} from 'sdc-app/onboarding/licenseModel/featureGroups/FeatureGroupListEditor.js';
+import { mapStateToProps } from 'sdc-app/onboarding/licenseModel/featureGroups/FeatureGroupListEditor.js';
 import FeatureGroupsListEditorView from 'sdc-app/onboarding/licenseModel/featureGroups/FeatureGroupListEditorView.jsx';
 import { FeatureGroupStoreFactory } from 'test-utils/factories/licenseModel/FeatureGroupFactories.js';
-import {LicenseModelOverviewFactory} from 'test-utils/factories/licenseModel/LicenseModelFactories.js';
+import { LicenseModelOverviewFactory } from 'test-utils/factories/licenseModel/LicenseModelFactories.js';
 import { buildListFromFactory } from 'test-utils/Util.js';
 import VersionControllerUtilsFactory from 'test-utils/factories/softwareProduct/VersionControllerUtilsFactory.js';
 
-describe('License Model  Feature Group List  Module Tests', function () {
+describe('License Model  Feature Group List  Module Tests', function() {
+    it('should mapper exist', () => {
+        expect(mapStateToProps).toBeTruthy();
+    });
 
-	it('should mapper exist', () => {
-		expect(mapStateToProps).toBeTruthy();
-	});
+    it('should return empty data', () => {
+        let licenseModel = LicenseModelOverviewFactory.build({
+            featureGroup: {
+                featureGroupEditor: {},
+                featureGroupsList: []
+            },
+            licenseModelEditor: {
+                data: {
+                    ...VersionControllerUtilsFactory.build()
+                }
+            }
+        });
+        var results = mapStateToProps({ licenseModel });
+        expect(results.vendorName).toEqual(undefined);
+        expect(results.featureGroupsList).toEqual([]);
+    });
 
+    it('should return true for show and edit mode and vendorName should be not empty', () => {
+        let licenseModel = LicenseModelOverviewFactory.build({
+            featureGroup: {
+                featureGroupEditor: {
+                    data: FeatureGroupStoreFactory.build()
+                },
+                featureGroupsList: []
+            }
+        });
+        var results = mapStateToProps({ licenseModel });
+        expect(results.vendorName).toEqual(
+            licenseModel.licenseModelEditor.data.vendorName
+        );
+    });
 
-	it('should return empty data', () => {
+    it('jsx view test', () => {
+        var view = TestUtils.renderIntoDocument(
+            <FeatureGroupsListEditorView
+                vendorName=""
+                licenseModelId=""
+                isReadOnlyMode={false}
+                onAddFeatureGroupClick={() => {}}
+                featureGroupsList={[]}
+            />
+        );
+        expect(view).toBeTruthy();
+    });
 
-
-		let licenseModel = LicenseModelOverviewFactory.build({
-			featureGroup: {
-				featureGroupEditor: {},
-				featureGroupsList: []
-			},
-			licenseModelEditor: {
-				data:{
-					...VersionControllerUtilsFactory.build()
-				}
-			}
-		});
-		var results = mapStateToProps({licenseModel});
-		expect(results.vendorName).toEqual(undefined);
-		expect(results.featureGroupsModal.show).toEqual(false);
-		expect(results.featureGroupsModal.editMode).toEqual(false);
-		expect(results.featureGroupsList).toEqual([]);
-	});
-
-	it('should return true for show and edit mode and vendorName should be not empty', () => {
-
-		let licenseModel = LicenseModelOverviewFactory.build({
-			featureGroup: {
-				featureGroupEditor: {
-					data: FeatureGroupStoreFactory.build()
-				},
-				featureGroupsList: []
-			}
-		});
-		var results = mapStateToProps({licenseModel});
-		expect(results.featureGroupsModal.show).toEqual(true);
-		expect(results.featureGroupsModal.editMode).toEqual(true);
-		expect(results.vendorName).toEqual(licenseModel.licenseModelEditor.data.vendorName);
-	});
-
-	it('jsx view test', () => {
-		var view = TestUtils.renderIntoDocument(<FeatureGroupsListEditorView  vendorName=''
-			licenseModelId=''
-			featureGroupsModal={{show: false, editMode: false}}
-			isReadOnlyMode={false}
-			onAddFeatureGroupClick={()=>{}}
-			featureGroupsList={[]} />);
-		expect(view).toBeTruthy();
-	});
-
-	it('jsx view list test', () => {
-		var view = TestUtils.renderIntoDocument(<FeatureGroupsListEditorView  vendorName=''
-			licenseModelId=''
-			featureGroupsModal={{show: false, editMode: true}}
-			isReadOnlyMode={false}
-			onAddFeatureGroupClick={()=>{}}
-			featureGroupsList={buildListFromFactory(FeatureGroupStoreFactory)} />);
-		expect(view).toBeTruthy();
-	});
-
+    it('jsx view list test', () => {
+        var view = TestUtils.renderIntoDocument(
+            <FeatureGroupsListEditorView
+                vendorName=""
+                licenseModelId=""
+                isReadOnlyMode={false}
+                onAddFeatureGroupClick={() => {}}
+                featureGroupsList={buildListFromFactory(
+                    FeatureGroupStoreFactory
+                )}
+            />
+        );
+        expect(view).toBeTruthy();
+    });
 });

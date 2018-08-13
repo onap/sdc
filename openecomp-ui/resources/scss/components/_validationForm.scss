@@ -1,118 +1,110 @@
 form {
-  .validation-form-content {
-    .validation-input-wrapper {
-      position: relative;
-      flex: 1;
-    }
-    .validation-radio-wrapper {
-      position: relative;
-    }
-    .sdc-tabs {
-      position: relative;
-      .invalid-tab:not(.sdc-tab-active) {
-          color: $red;
-      }
-    }
-    .validation-error-message {
-      &.bottom {
-        .tooltip-arrow {
-          border-bottom-color: $red;
+    .validation-form-content {
+        .validation-input-wrapper {
+            position: relative;
+            flex: 1;
         }
-      }
-      &.right {
-        .tooltip-arrow {
-          border-right-color: $red;
+        .validation-radio-wrapper {
+            position: relative;
         }
-      }
-      &.left {
-        .tooltip-arrow {
-          border-left-color: $red;
-        }
-      }
-      .tooltip-inner {
-        background-color: $red;
-      }
-    }
-    .input-row {
-      padding-bottom: 32px;
-      &:only-child {
-        padding-bottom: 0;
-      }
-      &:last-child {
-        padding-bottom: 0;
-      }
-      .form-group {
-        margin-bottom: 0;
-      }
-    }
-
-    .rows-section {
-      .row-flex-components {
-        display: flex;
-      }
-      .validation-input-wrapper {
-        flex: 1;
-      }
-      .empty-col {
-        flex: 1.2;
-        content: ' ';
-      }
-      .empty-two-col {
-        flex: 2.4;
-        content: ' ';
-      }
-
-      .two-col {
-        flex: 2.2;
-      }
-      .three-col {
-        flex: 3.4;
-      }
-      .single-col {
-        flex: 1.2;
-        display: flex;
-        &:after {
-          flex: 0.2;
-          content: ' ';
-        }
-        @media (min-width: 1389px) {
-          &.add-line-break {
-            .control-label {
-              &:after {
-                content: "\00a0";
-                display: block;
-              }
+        .sdc-tabs {
+            position: relative;
+            .invalid-tab:not(.sdc-tab-active) {
+                color: $red;
             }
-          }
+        }
+        .validation-error-message {
+            &.bottom {
+                .tooltip-arrow {
+                    border-bottom-color: $red;
+                }
+            }
+            &.right {
+                .tooltip-arrow {
+                    border-right-color: $red;
+                }
+            }
+            &.left {
+                .tooltip-arrow {
+                    border-left-color: $red;
+                }
+            }
+            .tooltip-inner {
+                background-color: $red;
+            }
+        }
+        .input-row {
+            padding-bottom: 32px;
+            &:only-child {
+                padding-bottom: 0;
+            }
+            &:last-child {
+                padding-bottom: 0;
+            }
+            .form-group {
+                margin-bottom: 0;
+            }
         }
 
-      }
-    }
-  }
+        .rows-section {
+            .row-flex-components {
+                display: flex;
+            }
+            .validation-input-wrapper {
+                flex: 1;
+            }
+            .empty-col {
+                flex: 1.2;
+                content: ' ';
+            }
+            .empty-two-col {
+                flex: 2.4;
+                content: ' ';
+            }
 
-  .validation-buttons {
-    padding: 20px 0;
-    text-align: right;
-    button:first-child {
-      margin-right: 15px;
-      min-width: 120px;
+            .two-col {
+                flex: 2.2;
+            }
+            .three-col {
+                flex: 3.4;
+            }
+            .single-col {
+                flex: 1.2;
+                display: flex;
+                &:after {
+                    flex: 0.2;
+                    content: ' ';
+                }
+                @media (min-width: 1389px) {
+                    &.add-line-break {
+                        .control-label {
+                            &:after {
+                                content: '\00a0';
+                                display: block;
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
-		.svg-icon {
-			height: 14px;
-			width: 14px;
-		}
-		.svg-icon.check {
-			fill: $white;
-		}
-		.svg-icon.close {
-			fill: $blue;
-		}
-  }
-}
 
-.modal-body {
-  .validation-buttons {
-    padding: 20px 15px;
-    background-color: $tlv-gray;
-  }
+    .validation-buttons {
+        padding: 20px 0;
+        text-align: right;
+        button:first-child {
+            margin-right: 15px;
+            min-width: 120px;
+        }
+        .svg-icon {
+            height: 14px;
+            width: 14px;
+        }
+        .svg-icon.check {
+            fill: $white;
+        }
+        .svg-icon.close {
+            fill: $blue;
+        }
+    }
 }

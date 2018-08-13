@@ -1,26 +1,24 @@
-
 .license-agreement-list-editor {
-
-  .list-editor-view-list {
-    .list-editor-item-view-field {
-      .list-editor-item-view-field-tight {
-        vertical-align: top;
-        display: inline-block;
-        &:first-child {
-          @include ellipsis;
-          margin-right: 95px;
-          width: 20%;
-          overflow-wrap: break-word;
+    .list-editor-view-list {
+        .list-editor-item-view-field {
+            .list-editor-item-view-field-tight {
+                vertical-align: top;
+                display: inline-block;
+                &:first-child {
+                    @include ellipsis;
+                    margin-right: 95px;
+                    width: 20%;
+                    overflow-wrap: break-word;
+                }
+            }
+            .feature-groups-count,
+            .type {
+                color: $light-green;
+            }
+            .feature-groups-count {
+                @extend .heading-1;
+                padding-top: 2px;
+            }
         }
-      }
-      .feature-groups-count, .type {
-        color: $light-green;
-      }
-      .feature-groups-count {
-        @extend .heading-1;
-        padding-top: 2px;
-      }
-
     }
-  }
 }

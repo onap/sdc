@@ -1,35 +1,53 @@
 .sdc-app {
-  height: 100%;
-
+    height: 100%;
 }
 .flex {
-  display: flex;
-  flex: 1;
+    display: flex;
+    flex: 1;
 }
 
 .flex-column {
-  @extend .flex;
-  flex-direction: column;
+    @extend .flex;
+    flex-direction: column;
 }
 
 .content-area {
-  padding: 30px 60px 70px 60px;
-  overflow-y: auto;
-	overflow-x: hidden;
-  height: 100%;
-  &.no-padding-content-area {
-    padding: 0;
-  }
+    padding: 30px 60px 70px 60px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    height: 100%;
+    &.no-padding-content-area {
+        padding: 0;
+    }
 }
 
-.onborading-modal {
-  .modal-title {
-    text-transform: uppercase;
-  }
-}
 .page-title {
-  @extend .heading-1;
-  @extend .text-uppercase !optional;
-  margin-bottom: 20px;
-  color: $blue;
+    @extend .heading-1;
+    @extend .text-uppercase !optional;
+    margin-bottom: 20px;
+    color: $blue;
+}
+.sdc-modal {
+    .sdc-modal__wrapper.sdc-modal-type-custom {
+        .sdc-modal__content {
+            padding: 0;
+            .entitlement-pools-modal,
+            .license-key-groups-modal,
+            .manage-permissions-page {
+                .validation-form-content {
+                    overflow-y: visible;
+                }
+            }
+            .validation-form-content {
+                padding: 20px 40px;
+                overflow-y: auto;
+                .no-bottom-margin {
+                    margin-bottom: 0;
+                    .customized-date-picker {
+                        margin-bottom: 0;
+                    }
+                }
+            }
+        }
+    }
 }
