@@ -1,17 +1,17 @@
-/*!
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+/*
+ * Copyright © 2016-2018 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
- * or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 import SoftwareProductCreation from 'sdc-app/onboarding/softwareProduct/creation/SoftwareProductCreation.js';
@@ -31,6 +31,13 @@ import Tree from 'nfvo-components/tree/Tree.jsx';
 import MergeEditor from 'sdc-app/common/merge/MergeEditor.js';
 import Revisions from 'sdc-app/onboarding/revisions/Revisions.js';
 import VendorSelector from 'sdc-app/onboarding/softwareProduct/details/SoftwareProductDetailsVendorSelector.jsx';
+import FlowsEditor from 'sdc-app/flows/FlowsEditorModal.js';
+import EntitlementPoolsEditor from 'sdc-app/onboarding/licenseModel/entitlementPools/EntitlementPoolsEditor.js';
+import FeatureGroupEditor from 'sdc-app/onboarding/licenseModel/featureGroups/FeatureGroupEditor';
+import LicenseAgreementEditor from 'sdc-app/onboarding/licenseModel/licenseAgreement/LicenseAgreementEditor';
+import LicenseKeyGroupsEditor from 'sdc-app/onboarding/licenseModel/licenseKeyGroups/LicenseKeyGroupsEditor';
+import SoftwareProductProcessesEditor from 'sdc-app/onboarding/softwareProduct/processes/SoftwareProductProcessesEditor';
+import SoftwareProductComponentProcessesEditor from 'sdc-app/onboarding/softwareProduct/components/processes/SoftwareProductComponentProcessesEditor';
 
 export const modalContentMapper = {
     SOFTWARE_PRODUCT_CREATION: 'SOFTWARE_PRODUCT_CREATION',
@@ -50,7 +57,14 @@ export const modalContentMapper = {
     MERGE_EDITOR: 'MERGE_EDITOR',
     REVISIONS_LIST: 'REVISIONS_LIST',
     VENDOR_SELECTOR: 'VENDOR_SELECTOR',
-    VNF_IMPORT: 'VNF_IMPORT'
+    VNF_IMPORT: 'VNF_IMPORT',
+    FLOWS_EDITOR: 'FLOWS_EDITOR',
+    EP_EDITOR: 'EP_EDITOR',
+    FG_EDITOR: 'FG_EDITOR',
+    LA_EDITOR: 'LA_EDITOR',
+    LKG_EDITOR: 'LKG_EDITOR',
+    PROCESS_EDITOR: 'PROCESS_EDITOR',
+    COMP_PROCESS_EDITOR: 'COMP_PROCESS_EDITOR'
 };
 
 export const modalContentComponents = {
@@ -70,5 +84,12 @@ export const modalContentComponents = {
     MERGE_EDITOR: MergeEditor,
     REVISIONS_LIST: Revisions,
     VENDOR_SELECTOR: VendorSelector,
-    VNF_IMPORT: VNFImport
+    VNF_IMPORT: VNFImport,
+    FLOWS_EDITOR: FlowsEditor,
+    EP_EDITOR: EntitlementPoolsEditor,
+    FG_EDITOR: FeatureGroupEditor,
+    LA_EDITOR: LicenseAgreementEditor,
+    LKG_EDITOR: LicenseKeyGroupsEditor,
+    PROCESS_EDITOR: SoftwareProductProcessesEditor,
+    COMP_PROCESS_EDITOR: SoftwareProductComponentProcessesEditor
 };

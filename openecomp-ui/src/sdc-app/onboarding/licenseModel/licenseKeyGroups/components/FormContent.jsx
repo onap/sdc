@@ -211,6 +211,7 @@ const LicenseKeyGroupFormContent = ({
                     value={manufacturerReferenceNumber}
                     data-test-id="create-ep-mrn"
                     type="text"
+                    groupClassName="no-bottom-margin"
                 />
             </GridItem>
 
@@ -223,6 +224,7 @@ const LicenseKeyGroupFormContent = ({
                     value={increments}
                     data-test-id="create-ep-increments"
                     type="text"
+                    groupClassName="no-bottom-margin"
                 />
             </GridItem>
             {id && versionUUID && <UuId id={id} versionUUID={versionUUID} />}

@@ -1,17 +1,17 @@
-/*!
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+/*
+ * Copyright © 2016-2018 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
- * or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 import { actionTypes } from '../SoftwareProductComponentsNetworkConstants';
 import i18n from 'nfvo-utils/i18n/i18n.js';
@@ -19,10 +19,7 @@ import { actionTypes as modalActionTypes } from 'nfvo-components/modal/GlobalMod
 import { modalContentMapper } from 'sdc-app/common/modal/ModalContentMapper.js';
 
 export default {
-    open(
-        dispatch,
-        { softwareProductId, componentId, modalClassName, version }
-    ) {
+    open(dispatch, { softwareProductId, componentId, version }) {
         dispatch({
             type: actionTypes.NICCreation.OPEN
         });
@@ -32,7 +29,6 @@ export default {
             data: {
                 modalComponentName: modalContentMapper.NIC_CREATION,
                 title: i18n('Create NEW NIC'),
-                modalClassName,
                 modalComponentProps: { softwareProductId, componentId, version }
             }
         });

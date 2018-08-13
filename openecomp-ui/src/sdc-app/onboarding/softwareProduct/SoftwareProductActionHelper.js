@@ -801,7 +801,7 @@ const SoftwareProductActionHelper = {
     },
 
     /** for the next verision */
-    addComponent(dispatch, { softwareProductId, modalClassName, version }) {
+    addComponent(dispatch, { softwareProductId, version }) {
         SoftwareProductComponentsActionHelper.clearComponentCreationData(
             dispatch
         );
@@ -813,7 +813,6 @@ const SoftwareProductActionHelper = {
             data: {
                 modalComponentName: modalContentMapper.COMPONENT_CREATION,
                 modalComponentProps: { softwareProductId, version },
-                modalClassName,
                 title: 'Create Virtual Function Component'
             }
         });

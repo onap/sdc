@@ -1,27 +1,19 @@
-
 .workflows {
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  left: 0;
-  top: 0;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    top: 0;
 
-  background-color: $background-gray;
-  .list-editor-view-list .list-editor-item-view .list-editor-item-view-content .list-editor-item-view-field:last-child {
-    flex: 2 1;
-  }
+    background-color: $background-gray;
+    .list-editor-view-list
+        .list-editor-item-view
+        .list-editor-item-view-content
+        .list-editor-item-view-field:last-child {
+        flex: 2 1;
+    }
 
-  .list-editor-view {
-    padding: 30px 50px;
-  }
-
-}
-
-.workflows-editor-modal {
-  .modal-body {
-    padding: 0;
-  }
-  .validation-form-content {
-    padding: 15px;
-  }
+    .list-editor-view {
+        padding: 30px 50px;
+    }
 }
