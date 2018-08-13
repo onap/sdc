@@ -32,7 +32,7 @@ import VSPOverlay from './VSPOverlay.jsx';
 import { TooltipWrapper } from './Tooltip.jsx';
 
 class VendorItem extends React.Component {
-    static PropTypes = {
+    static propTypes = {
         softwareProductList: PropTypes.array,
         vendor: PropTypes.object,
         shouldShowOverlay: PropTypes.bool,

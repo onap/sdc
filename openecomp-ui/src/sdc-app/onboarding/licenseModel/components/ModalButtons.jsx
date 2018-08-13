@@ -48,7 +48,7 @@ const ModalButtons = ({
 );
 
 ModalButtons.propTypes = {
-    isFormValid: PropTypes.func,
+    isFormValid: PropTypes.bool,
     isReadOnlyMode: PropTypes.bool,
     onSubmit: PropTypes.func,
     selectedLimit: PropTypes.string,
