@@ -1,101 +1,98 @@
 $message-info-icon-size: 16px;
 
 @mixin status-icon-class {
-  @extend .body-1-light;
-  width: $message-info-icon-size;
-  height: $message-info-icon-size;
-  margin-left: 8px;
-  color: $white;
-  border-radius: $message-info-icon-size / 2;
-  display: inline-block;
-  text-align: center;
+    @extend .body-1-light;
+    width: $message-info-icon-size;
+    height: $message-info-icon-size;
+    margin-left: 8px;
+    color: $white;
+    border-radius: $message-info-icon-size / 2;
+    display: inline-block;
+    text-align: center;
 }
 
 .activity-log-view {
+    .list-editor-view .list-editor-view-header {
+        border: none;
+        .list-editor-view-title {
+            @extend .heading-1;
+            color: $blue;
+        }
+    }
+    .list-editor-view-list {
+        border: 1px solid $light-gray;
+        border-bottom: none;
+        overflow-y: hidden;
+    }
+    .activity-list-item {
+        display: flex;
+        height: 36px;
+        @extend .body-1;
+        &.header {
+            @extend .body-1-semibold;
+            background-color: $tlv-light-gray;
+            color: $text-black;
+        }
+    }
 
-  .list-editor-view .list-editor-view-header {
-	border: none;
-	.list-editor-view-title {
-	  @extend .heading-1;
-	  color: $blue;
-	}
-  }
-  .list-editor-view-list {
-	border: 1px solid $light-gray;
-	border-bottom: none;
-	overflow-y: hidden;
-  }
-  .activity-list-item {
-	display: flex;
-	height: 36px;
-	@extend .body-1;
-	&.header {
-	  @extend .body-1-semibold;
-	  background-color: $tlv-light-gray;
-	  color: $text-black;
-	}
-  }
+    .activity-status {
+        .svg-icon-wrapper {
+            float: right;
+        }
 
-  .activity-status {
-	.svg-icon-wrapper {
-	  float: right;
-	}
+        .status-icon.false:after {
+            @include status-icon-class;
+            float: right;
+            background-color: $red;
+            content: '!';
+        }
+    }
 
-	.status-icon.false:after {
-	  @include status-icon-class;
-	  float: right;
-	  background-color: $red;
-	  content: "!";
-	}
-  }
+    .message-further-info-icon {
+        @include status-icon-class;
+        background-color: $gray;
+    }
 
-  .message-further-info-icon {
-	@include status-icon-class;
-	background-color: $gray;
-  }
+    .table-cell {
+        border-right: 1px solid $light-gray;
+        border-bottom: 1px solid $light-gray;
+        &:last-child {
+            border-right: none;
+        }
+        flex-basis: 20%;
+        display: flex;
+        padding: 0 20px;
+        justify-content: center;
+        flex-direction: column;
+        &.activity-comment {
+            min-width: 0;
+            span {
+                @include ellipsis(100%);
+            }
+        }
+    }
 
-  .table-cell {
-	border-right: 1px solid $light-gray;
-	border-bottom: 1px solid $light-gray;
-	&:last-child {
-	  border-right: none;
-	}
-	flex-basis: 20%;
-	display: flex;
-	padding: 0 20px;
-	justify-content: center;
-	flex-direction: column;
-	&.activity-comment {
-	  min-width: 0;
-	  span {
-		@include ellipsis(100%);
-	  }
-	}
-  }
+    .date-header {
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        .header-sort-arrow {
+            width: 0;
+            height: 0;
+            border-left: 5px solid transparent;
+            border-right: 5px solid transparent;
+            margin-left: 9px;
+            &.up {
+                border-bottom: 5px solid $black;
+            }
+            &.down {
+                border-top: 5px solid $black;
+            }
+        }
+    }
 
-  .date-header {
-	cursor: pointer;
-	display: flex;
-	align-items: center;
-	.header-sort-arrow {
-	  width: 0;
-	  height: 0;
-	  border-left: 5px solid transparent;
-	  border-right: 5px solid transparent;
-	  margin-left: 9px;
-	  &.up {
-		border-bottom: 5px solid $black;
-	  }
-	  &.down {
-		border-top: 5px solid $black;
-	  }
-
-	}
-  }
-
-  .date-cell {
-	display: flex;
-	justify-content: space-between;
-  }
-
+    .date-cell {
+        display: flex;
+        justify-content: space-between;
+    }
 }

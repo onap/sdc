@@ -1,12 +1,12 @@
 /*
- * Copyright © 2016-2017 European Support Limited
+ * Copyright © 2016-2018 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -70,7 +70,8 @@ class SoftwareProductProcessesEditorForm extends React.Component {
                         isValid={this.props.isFormValid}
                         formReady={this.props.formReady}
                         onValidateForm={() => this.props.onValidateForm()}
-                        className="vsp-processes-editor">
+                        className="vsp-processes-editor"
+                        btnClassName="sdc-modal__footer">
                         <div
                             className={`vsp-processes-editor-data${
                                 isReadOnlyMode ? ' disabled' : ''
@@ -129,7 +130,7 @@ class SoftwareProductProcessesEditorForm extends React.Component {
                                     <GridItem colSpan={2}>
                                         <Input
                                             name="vsp-process-description"
-                                            groupClassName="vsp-process-description"
+                                            groupClassName="vsp-process-description no-bottom-margin"
                                             onChange={description =>
                                                 onDataChanged({ description })
                                             }
@@ -169,6 +170,7 @@ class SoftwareProductProcessesEditorForm extends React.Component {
                                             label={i18n('Process Type')}
                                             className="process-type"
                                             data-test-id="process-type"
+                                            groupClassName="no-bottom-margin"
                                             isValid={
                                                 genericFieldInfo.type.isValid
                                             }

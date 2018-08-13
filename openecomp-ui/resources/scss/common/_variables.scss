@@ -1,4 +1,3 @@
-
 // primary colors
 $blue: #009fdb;
 $dark-blue: #0568ae;
@@ -29,7 +28,7 @@ $tlv-gray: #f8f8f8;
 $tlv-light-gray: #eaeaea;
 $tlv-hover: #e6f6fb;
 $highlight-gray: #eceff3;
-$transparent-black: rgba(0,0,0,.3);
+$transparent-black: rgba(0, 0, 0, 0.3);
 
 $content-background-color: $white;
 
@@ -44,8 +43,9 @@ $tablet-max-width: 1024px;
 $laptop-min-width: 1224px;
 $desktop-min-width: 1824px;
 
+$loader-background: #e1e4e6;
 
-
-
-
-
+$action-button-active-bg: #0091c7;
+$action-button-active-border: #006186;
+$action-button-hover-bg: #1ec2ff;
+$action-button-hover-border: #0091c8;

@@ -1,282 +1,278 @@
 @mixin modules-and-artifacts-list-items {
-	background-color: $tlv-gray;
-	margin-bottom: 12px;
-	border: 1px solid $light-gray;
-	border-left-width: 18px;
-	border-left-color: $blue;
-	display: flex;
-	flex-direction: column;
-	justify-content: space-between;
-  padding: 10px 20px 0 20px;
+    background-color: $tlv-gray;
+    margin-bottom: 12px;
+    border: 1px solid $light-gray;
+    border-left-width: 18px;
+    border-left-color: $blue;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 10px 20px 0 20px;
 }
 
 .heat-setup-view {
-	margin-top: 20px;
-	display: flex;
-	justify-content: space-between;
-  padding: 0 60px 0 36px;
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-between;
+    padding: 0 60px 0 36px;
 
-	.heat-setup-view-modules-and-artifacts {
-		margin-right: 20px;
-		flex: 1;
-		.heat-setup-module-icon {
-		  margin: 0 6px 0 0;
-		  position: relative;
-		  top: -2px;
-		}
+    .heat-setup-view-modules-and-artifacts {
+        margin-right: 20px;
+        flex: 1;
+        .heat-setup-module-icon {
+            margin: 0 6px 0 0;
+            position: relative;
+            top: -2px;
+        }
 
-		.modules-list-wrapper {
-			&.modules-list-wrapper-divider {
-				border-bottom: 1px solid $tlv-light-gray;
-			}
+        .modules-list-wrapper {
+            &.modules-list-wrapper-divider {
+                border-bottom: 1px solid $tlv-light-gray;
+            }
 
-			ul {
-				.undefined-dragging {
-					opacity: 0.5;
-				}
-				.modules-list-item-selectors {
-					display: flex;
-					justify-content: space-between;
-					flex-wrap: wrap;
-					padding-bottom: 3px;
-					.Select-value-label {
-						@include ellipsis(85%);
-					}
+            ul {
+                .undefined-dragging {
+                    opacity: 0.5;
+                }
+                .modules-list-item-selectors {
+                    display: flex;
+                    justify-content: space-between;
+                    flex-wrap: wrap;
+                    padding-bottom: 3px;
+                    .Select-value-label {
+                        @include ellipsis(85%);
+                    }
 
-					.validation-input-wrapper {
-						flex-basis: 48%;
-					}
+                    .validation-input-wrapper {
+                        flex-basis: 48%;
+                    }
 
-					.control-label {
-						margin-bottom: 4px;
-					}
+                    .control-label {
+                        margin-bottom: 4px;
+                    }
 
-					.form-group {
-						margin-bottom: 12px;
-					}
-				}
-			}
+                    .form-group {
+                        margin-bottom: 12px;
+                    }
+                }
+            }
 
-			.modules-list-item-controllers {
-				display: flex;
-				justify-content: space-between;
-				margin-bottom: 7px;
+            .modules-list-item-controllers {
+                display: flex;
+                justify-content: space-between;
+                margin-bottom: 7px;
 
-				.btn {
-					min-width: 0;
-				}
+                .btn {
+                    min-width: 0;
+                }
 
-				.svg-icon {
-					&.__trashO {
-						fill: $dark-gray;
-						&:hover {
-							fill: $black;
-						}
-					}
-				}
+                .svg-icon {
+                    &.__trashO {
+                        fill: $dark-gray;
+                        &:hover {
+                            fill: $black;
+                        }
+                    }
+                }
 
-				.module-title-by-type {
-					@extend .heading-5-semibold;
-					margin-right: 3px;
-				}
-				.modules-list-item-filename {
-					display: flex;
-					align-items: center;
+                .module-title-by-type {
+                    @extend .heading-5-semibold;
+                    margin-right: 3px;
+                }
+                .modules-list-item-filename {
+                    display: flex;
+                    align-items: center;
 
-					.svg-icon {
-						&.__pencil {
-							margin-left: 3px;
-							opacity: 0;
-						}
-					}
+                    .svg-icon {
+                        &.__pencil {
+                            margin-left: 3px;
+                            opacity: 0;
+                        }
+                    }
 
+                    .filename-text {
+                        @extend .heading-5-semibold;
+                    }
 
+                    .text-and-icon {
+                        padding: 5px;
+                        border: 1px solid transparent;
+                        display: flex;
+                        align-items: center;
+                        height: 35px;
+                        &.in-edit {
+                            padding: 0;
+                            .name-edit {
+                                padding: 4px;
+                                @extend .heading-5-semibold;
+                                height: 100%;
+                                border: 1px solid $light-gray;
+                                width: 400px;
+                            }
+                        }
+                    }
 
-					.filename-text {
-						@extend .heading-5-semibold;
+                    input[disabled] {
+                        border: none;
+                    }
+                    &:hover {
+                        .text-and-icon {
+                            border-color: $light-gray;
+                            background-color: $white;
 
-					}
+                            &.in-edit {
+                                border-color: transparent;
+                            }
+                        }
+                        .svg-icon {
+                            &.__pencil {
+                                margin-left: 10px;
+                                opacity: 1;
+                                .svg-icon {
+                                    stroke: $dark-gray;
+                                    &:hover {
+                                        stroke: $black;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
 
-					.text-and-icon {
-						padding: 5px;
-						border: 1px solid transparent;
-						display: flex;
-						align-items: center;
-						height: 35px;
-						&.in-edit {
-							padding: 0;
-							.name-edit {
-								padding: 4px;
-								@extend .heading-5-semibold;
-								height: 100%;
-								border: 1px solid $light-gray;
-								width: 400px;
-							}
-						}
-					}
+            .modules-list-item {
+                @include modules-and-artifacts-list-items;
+                position: relative;
+                .Select-option {
+                    @extend .body-1;
+                    &.is-selected {
+                        @extend .body-1-semibold;
+                        background-color: $white;
+                    }
+                    &.is-focused {
+                        background-color: $blue;
+                        color: $white;
+                    }
+                }
+                .add-or-delete-volumes {
+                    margin-right: 8px;
+                    margin-bottom: 11px;
+                }
+                &:before {
+                    content: '\00B7\00B7\00B7\00B7\00B7\00B7';
+                    color: $white;
+                    position: absolute;
+                    left: -27px;
+                    top: 56%;
+                    font-size: 27px;
+                    width: 75px;
+                    @include transform-rotate(90);
+                    height: 0;
+                    letter-spacing: 1px;
+                }
+            }
+        }
 
-					input[disabled] {
-						border: none;
-					}
-					&:hover {
-						.text-and-icon {
-							border-color: $light-gray;
-							background-color: $white;
+        .artifact-files {
+            @include modules-and-artifacts-list-items;
+            &.with-list-items {
+                margin-top: 10px;
+            }
 
-							&.in-edit {
-								border-color: transparent;
-							}
-						}
-						.svg-icon {
-							&.__pencil {
-								margin-left: 10px;
-								opacity: 1;
-								.svg-icon {
-									stroke: $dark-gray;
-									&:hover {
-										stroke: $black;
-									}
-								}
-							}
-						}
-					}
-				}
-			}
+            &.nested {
+                .nested-list {
+                    display: flex;
+                    flex-wrap: wrap;
+                    margin-bottom: 18px;
+                }
 
-			.modules-list-item {
-				@include modules-and-artifacts-list-items;
-				position: relative;
-				.Select-option {
-					@extend .body-1;
-					&.is-selected {
-						@extend .body-1-semibold;
-						background-color: $white;
-					}
-					&.is-focused {
-						background-color: $blue;
-						color: $white;
-					}
-				}
-				.add-or-delete-volumes {
-					margin-right: 8px;
-					margin-bottom: 11px;
-				}
-				&:before {
-					content: "\00B7\00B7\00B7\00B7\00B7\00B7";
-					color: $white;
-					position: absolute;
-					left: -27px;
-					top: 56%;
-					font-size: 27px;
-					width: 75px;
-					@include transform-rotate(90);
-					height: 0;
-					letter-spacing: 1px;
-				}
-			}
-		}
+                .nested-list-item {
+                    border-radius: 15px;
+                    background-color: $tlv-light-gray;
+                    padding: 4px 15px;
+                    margin: 2px 10px 2px 0;
+                }
+            }
 
-		.artifact-files {
-			@include modules-and-artifacts-list-items;
-			&.with-list-items {
-				margin-top: 10px;
-			}
+            .artifact-files-header {
+                @extend .heading-5-semibold;
+                display: flex;
+                margin-bottom: 10px;
+                justify-content: space-between;
+                .image-icon.artifacts {
+                    margin-right: 10px;
+                }
 
-			&.nested {
-				.nested-list {
-					display: flex;
-					flex-wrap: wrap;
-					margin-bottom: 18px;
-				}
+                span {
+                    display: flex;
+                }
+            }
+        }
+    }
 
-				.nested-list-item {
-					border-radius: 15px;
-					background-color: $tlv-light-gray;
-					padding: 4px 15px;
-					margin: 2px 10px 2px 0;
-				}
-			}
+    .modules-list-header {
+        height: 30px;
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        justify-content: flex-end;
+        align-items: baseline;
+    }
 
-			.artifact-files-header {
-				@extend .heading-5-semibold;
-				display: flex;
-				margin-bottom: 10px;
-				justify-content: space-between;
-				.image-icon.artifacts {
-					margin-right: 10px;
-				}
+    .unassigned-files {
+        border: 1px solid $light-gray;
+        background-color: $white;
+        height: 250px;
+        width: 250px;
 
-				span {
-					display: flex;
-				}
+        // Will work in chrome from chrome 56
+        position: sticky;
+        top: 10px;
 
-			}
-		}
-	}
+        .unassigned-files-title {
+            @extend .heading-5-semibold;
+            background-color: $tlv-gray;
+            padding: 11px 0 9px 15px;
+        }
 
-	.modules-list-header {
-		height: 30px;
-		display: flex;
-		flex-direction: row;
-		flex-wrap: nowrap;
-		justify-content: flex-end;
-		align-items: baseline;
-	}
+        .unassigned-files-list {
+            height: 207px;
+            overflow-y: auto;
+            padding-bottom: 5px;
 
-	.unassigned-files {
-		border: 1px solid $light-gray;
-		background-color: $white;
-		height: 250px;
-		width: 250px;
+            .go-to-validation-button-wrapper {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                margin-top: 70px;
+                .all-files-assigned {
+                    @extend .heading-4;
+                    margin-bottom: 10px;
+                }
+                .svg-icon-wrapper {
+                    margin-bottom: 10px;
+                    .svg-icon {
+                        &.__angleRight {
+                            width: 10px;
+                            height: 10px;
+                        }
+                    }
+                }
+            }
 
-		// Will work in chrome from chrome 56
-		position: sticky;
-		top: 10px;
-
-		.unassigned-files-title {
-			@extend .heading-5-semibold;
-			background-color: $tlv-gray;
-			padding: 11px 0 9px 15px;
-		}
-
-		.unassigned-files-list {
-			height: 207px;
-    	overflow-y: auto;
-    	padding-bottom: 5px;
-
-			.go-to-validation-button-wrapper {
-				display: flex;
-				flex-direction: column;
-				justify-content: center;
-				align-items: center;
-				margin-top: 70px;
-				.all-files-assigned {
-					@extend .heading-4;
-					margin-bottom: 10px;
-				}
-				.svg-icon-wrapper {
-					margin-bottom: 10px;
-					.svg-icon {
-						&.__angleRight {
-							width: 10px;
-							height: 10px;
-						}
-					}
-				}
-			}
-
-			.unassigned-files-list-item {
-				@include ellipsis();
-				border-bottom: 1px solid $tlv-light-gray;
-				padding: 0 5px 5px 15px;
-				&:first-child {
-					padding-top: 5px;
-				}
-				&:last-child {
-					border-bottom: none;
-					padding-bottom: 0;
-				}
-			}
-		}
-	}
+            .unassigned-files-list-item {
+                @include ellipsis();
+                border-bottom: 1px solid $tlv-light-gray;
+                padding: 0 5px 5px 15px;
+                &:first-child {
+                    padding-top: 5px;
+                }
+                &:last-child {
+                    border-bottom: none;
+                    padding-bottom: 0;
+                }
+            }
+        }
+    }
 }

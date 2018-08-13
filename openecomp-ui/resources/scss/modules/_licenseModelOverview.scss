@@ -4,236 +4,233 @@ $icon-margin: 30px;
 $arrow-element-width: 30px;
 $list-item-padding: 15px;
 
-
-
 $la-color: $dark-blue;
 $fg-color: $blue;
 $lkg-ep-color: $light-blue;
 @mixin overview-tile-shadow() {
-  @include box-shadow(0.5px 0.8px 4px 0 rgba(24, 24, 25, 0.05));
+    @include box-shadow(0.5px 0.8px 4px 0 rgba(24, 24, 25, 0.05));
 }
 
 .license-model-overview {
-  .overview-top-section {
-    .overview-title{
-      @extend .heading-1;
-      @extend .text-uppercase !optional;
-      margin-bottom: 20px;
-      color: $blue;
-    }
-    .license-model-overview-top {
-      display: flex;
-      justify-content: flex-start;
-      flex-direction: row;
-      padding-bottom: 10px;
-      min-height: 155px;
-      .separator {
-        width: 1px;
-        border-right: 1px solid $tlv-light-gray;
-        margin-left: 20px;
-      }
-      .vendor-data-view {
-        @extend .flex-column;
-        background-color: $tlv-gray;
-        padding: 13px 30px;
-        border: 1px solid $tlv-light-gray;
-        @include overview-tile-shadow();
-        .vendor-title {
-          margin-top:5px;
+    .overview-top-section {
+        .overview-title {
+            @extend .heading-1;
+            @extend .text-uppercase !optional;
+            margin-bottom: 20px;
+            color: $blue;
         }
-        .vendor-name {
-          @extend .heading-4-semibold;
-          text-transform: none;
-          padding-bottom: 10px;
-          border-bottom: 1px solid $tlv-light-gray;
-        }
-        .vendor-description, .vendor-description-readonly {
-          @extend .flex;
-          @extend .body-1;
-          justify-content: space-between;
-          overflow: hidden;
-					position: relative;
-					flex: initial;
-        }
-
-        &:not(.read-only) .vendor-description {
-          border: 1px solid transparent;
-          width: 100%;
-          padding: 2px 0 2px 6px;
-          margin-top: 10px;
-          position: relative;
-          .svg-icon-wrapper {
-            position: absolute;;
-            right:0;
-            top:0;
-            opacity: 0;
-          }
-          $hover-padding-right: 16px;
-          @include percent-plus-value($property: width, $percent: 100%, $value: -$hover-padding-right); // compensate for padding added on hover
-          &:hover {
-            padding-right: $hover-padding-right;
-            border: 1px solid $light-gray;
-            cursor: pointer;
-
-            background-color: $white;
-            .svg-icon-wrapper {
-              opacity: 1;
-              z-index: 10;
-            }
-            .description-data:after {
-              background: white;
-            }
-            .description-data {
-              width: 100%;
-            }
-          }
-        }
-
-        .vendor-description-readonly {
-          margin-top: 16px;
-        }
-
-				.description-data {
-					@include multiline-ellipsis($lineCount: 3, $bgColor: $tlv-gray);
-					flex: initial;
-				}
-
-        .vendor-description-edit {
-          @extend .flex;
-          flex-direction: column;
-          border: none;
-          margin-top: 10px;
-          position: relative;
-          left: -6px;
-          width: 101%;
-          textarea {
-            padding-left: 6px;
-            resize: vertical;
-          }
-          .buttons-row {
-            @extend .flex;
-            justify-content: flex-end;
+        .license-model-overview-top {
+            display: flex;
+            justify-content: flex-start;
             flex-direction: row;
-            margin-top: -25px;
-            .buttons-wrapper {
-              @extend .flex;
-              @extend .body-3;
-              border: 1px solid $light-gray;
-              width: 95px;
-              height: 19px;
-              background-color: $tlv-light-gray;
-              border-radius: 2px;
-              position: relative;
-              flex: 0 1 auto;
-              text-align: center;
-              .description-button {
-                cursor: pointer;
-                flex: 1;
-                &:hover {
-                  background-color: $white;
-                }
-              }
-              .description-save {
-                cursor: pointer;
-                flex: 1;
-                color:$blue;
-                &:hover {
-                  background-color: $white;
-                }
-              }
+            padding-bottom: 10px;
+            min-height: 155px;
+            .separator {
+                width: 1px;
+                border-right: 1px solid $tlv-light-gray;
+                margin-left: 20px;
             }
-          }
-          .description-edit-textarea {
-            height:67px;
-            border: 1px solid $tlv-light-gray;
-            resize: none;
-            position: relative;
-            left: -12px;
-          }
-          .validation-error-message.tooltip {
-            z-index: 1000;
-            .tooltip-inner {
-              background-color: $red;
+            .vendor-data-view {
+                @extend .flex-column;
+                background-color: $tlv-gray;
+                padding: 13px 30px;
+                border: 1px solid $tlv-light-gray;
+                @include overview-tile-shadow();
+                .vendor-title {
+                    margin-top: 5px;
+                }
+                .vendor-name {
+                    @extend .heading-4-semibold;
+                    text-transform: none;
+                    padding-bottom: 10px;
+                    border-bottom: 1px solid $tlv-light-gray;
+                }
+                .vendor-description,
+                .vendor-description-readonly {
+                    @extend .flex;
+                    @extend .body-1;
+                    justify-content: space-between;
+                    overflow: hidden;
+                    position: relative;
+                    flex: initial;
+                }
+
+                &:not(.read-only) .vendor-description {
+                    border: 1px solid transparent;
+                    width: 100%;
+                    padding: 2px 0 2px 6px;
+                    margin-top: 10px;
+                    position: relative;
+                    .svg-icon-wrapper {
+                        position: absolute;
+                        right: 0;
+                        top: 0;
+                        opacity: 0;
+                    }
+                    $hover-padding-right: 16px;
+                    @include percent-plus-value($property: width, $percent: 100%, $value: -$hover-padding-right); // compensate for padding added on hover
+                    &:hover {
+                        padding-right: $hover-padding-right;
+                        border: 1px solid $light-gray;
+                        cursor: pointer;
+
+                        background-color: $white;
+                        .svg-icon-wrapper {
+                            opacity: 1;
+                            z-index: 10;
+                        }
+                        .description-data:after {
+                            background: white;
+                        }
+                        .description-data {
+                            width: 100%;
+                        }
+                    }
+                }
+
+                .vendor-description-readonly {
+                    margin-top: 16px;
+                }
+
+                .description-data {
+                    @include multiline-ellipsis($lineCount: 3, $bgColor: $tlv-gray);
+                    flex: initial;
+                }
+
+                .vendor-description-edit {
+                    @extend .flex;
+                    flex-direction: column;
+                    border: none;
+                    margin-top: 10px;
+                    position: relative;
+                    left: -6px;
+                    width: 101%;
+                    textarea {
+                        padding-left: 6px;
+                        resize: vertical;
+                    }
+                    .buttons-row {
+                        @extend .flex;
+                        justify-content: flex-end;
+                        flex-direction: row;
+                        margin-top: -25px;
+                        .buttons-wrapper {
+                            @extend .flex;
+                            @extend .body-3;
+                            border: 1px solid $light-gray;
+                            width: 95px;
+                            height: 19px;
+                            background-color: $tlv-light-gray;
+                            border-radius: 2px;
+                            position: relative;
+                            flex: 0 1 auto;
+                            text-align: center;
+                            .description-button {
+                                cursor: pointer;
+                                flex: 1;
+                                &:hover {
+                                    background-color: $white;
+                                }
+                            }
+                            .description-save {
+                                cursor: pointer;
+                                flex: 1;
+                                color: $blue;
+                                &:hover {
+                                    background-color: $white;
+                                }
+                            }
+                        }
+                    }
+                    .description-edit-textarea {
+                        height: 67px;
+                        border: 1px solid $tlv-light-gray;
+                        resize: none;
+                        position: relative;
+                        left: -12px;
+                    }
+                    .validation-error-message.tooltip {
+                        z-index: 1000;
+                        .tooltip-inner {
+                            background-color: $red;
+                        }
+                    }
+                }
             }
-          }
+            .summary-count-list {
+                @extend .flex-column;
+                flex: 0.6;
+                margin-left: 20px;
+                justify-content: space-between;
+                border: 1px solid $tlv-light-gray;
+                @include overview-tile-shadow();
+                background-color: $tlv-gray;
+                .summary-count-item {
+                    @extend .flex;
+                    @extend .heading-5-semibold;
+                    align-items: center;
+                    padding-left: 45px;
+                    padding-right: 45px;
+                    border-bottom: 1px solid $tlv-light-gray;
+                    &:last-child {
+                        border-bottom: none;
+                    }
+                    .item-count {
+                        flex-grow: 2;
+                        margin-left: 5px;
+                    }
+                    .summary-name-and-count {
+                        width: 100%;
+                    }
+                    .svg-icon-wrapper {
+                        .svg-icon {
+                            &.__plusCircle {
+                                margin-top: 3px;
+                                margin-left: auto;
+                                fill: $dark-gray;
+                                &:hover {
+                                    fill: $blue;
+                                }
+                            }
+                        }
+                    }
+
+                    .summary-name-and-count {
+                        &:hover {
+                            cursor: pointer;
+                            color: $blue;
+                        }
+                    }
+                }
+            }
+            .plus-icon {
+                font-size: $icon-font-size;
+                border-radius: 50%;
+                border: 1px solid $black;
+                color: $black;
+                height: 16px;
+                width: 16px;
+                padding: 2px 2px 2px 3px;
+            }
         }
-      }
-      .summary-count-list {
-        @extend .flex-column;
-        flex: 0.6;
-        margin-left: 20px;
-        justify-content: space-between;
-        border: 1px solid $tlv-light-gray;
-        @include overview-tile-shadow();
-        background-color: $tlv-gray;
-        .summary-count-item {
-          @extend .flex;
-					@extend .heading-5-semibold;
-					align-items: center;
-          padding-left: 45px;
-          padding-right: 45px;
-          border-bottom: 1px solid $tlv-light-gray;
-          &:last-child { border-bottom: none; }
-          .item-count {
-            flex-grow: 2;
-            margin-left: 5px;
-          }
-          .summary-name-and-count {
-            width: 100%;
-          }
-          .svg-icon-wrapper {
-            .svg-icon {
-              &.__plusCircle {
-                margin-top: 3px;
-                margin-left: auto;
-                fill: $dark-gray;
-                &:hover {
-                  fill: $blue;
-                }
-              }
-            }
-
-          }
-
-          .summary-name-and-count {
-            &:hover {
-              cursor: pointer;
-              color: $blue;
-            }
-          }
-
-
+    }
+    .vlm-list-tab-panel {
+        @extend .flex;
+        margin-bottom: 7px;
+        .section-title {
+            flex: 1;
         }
-      }
-      .plus-icon {
-        font-size: $icon-font-size;
-        border-radius: 50%;
-        border: 1px solid $black;
-        color: $black;
-        height: 16px;
-        width: 16px;
-        padding: 2px 2px 2px 3px;
-      }
-    }
-  }
-  .vlm-list-tab-panel {
-
-		@extend .flex;
-		margin-bottom: 7px;
-    .section-title {
-      flex: 1;
-    }
-    .overview-buttons-section {
-      margin-top: 20px;
-      display: flex;
-      justify-content: flex-start;
-      .button-vlm-list-view {
-        height: 32px;
-        width: 34px;
-        margin-left:10px;
-        cursor: pointer;
-      }
-      /**
+        .overview-buttons-section {
+            margin-top: 20px;
+            display: flex;
+            justify-content: flex-start;
+            .button-vlm-list-view {
+                height: 32px;
+                width: 34px;
+                margin-left: 10px;
+                cursor: pointer;
+            }
+            /**
       .vlm-list-icon {
         background-size: 32px;
         background-repeat: no-repeat;
@@ -251,262 +248,253 @@ $lkg-ep-color: $light-blue;
         }
       }
       **/
-    }
-  }
-
-  .overview-list-section {
-    @extend .flex-column;
-    margin-top: 35px;
-    .section-title {
-      @extend .heading-2;
-      padding-top: 20px;
-      margin-bottom: 15px;
-      padding-bottom: 0px;
-    }
-    &.overview-list-orphans {
-      .chevron::before
-      {
-        display: none;
-      }
-      .vlm-list-view {
-        .vlm-list {
-          .vlm-list-item.orphan-list-item {
-						@include overview-tile-shadow();
-						margin-left: 0;
-
-						.vlm-list-item-title {
-
-							.item-name {
-								color: $dark-gray;
-							}
-						}
-						.list-item-icon-col {
-							.overview-list-icon {
-								background-color: $gray;
-								border-color: $gray;
-							}
-						}
-						.list-item-section {
-							&:first-child {
-								display: flex;
-								color: $white;
-								min-width: $arrow-element-width;
-							}
-							&.list-item-icon-col {
-								margin-left: 65px;
-								margin-right: 65px - $list-item-padding;
-							}
-						}
-          }
         }
-      }
     }
-    .vlm-list-view {
-      flex: 1;
-      .vlm-list {
-        @extend .flex;
-        flex-direction: column;
-        .vlm-list-item {
-          @include border-shadow();
-          min-height: 90px;
-          height: 90px;
-          background-color: $tlv-gray;
-          @extend .flex;
-          border: 1px solid $tlv-light-gray;
-          margin-bottom: 0px;
-          .clickable {
-						cursor: pointer;
-					}
 
-          .list-item-section {
-						.count-value {
-							@extend .body-3;
-						}
-						&.list-item-icon-col {
-							display: flex;
-							flex-direction: column;
-							justify-content: center;
-							align-items: center;
-							padding: 0;
-							margin-right: 40px - $list-item-padding;
-							margin-left: $icon-margin;
-							.overview-list-icon {
-								@extend .body-2;
-							}
-						}
-						padding: 15px;
-						&.list-item-arrow-col {
-							padding: 0;
-						}
-            .children-count {
-              @extend .body-1;
-              color: $gray;
-              padding-left: 5px;
-              .count-value {
-                padding: 0 5px;
-              }
+    .overview-list-section {
+        @extend .flex-column;
+        margin-top: 35px;
+        .section-title {
+            @extend .heading-2;
+            padding-top: 20px;
+            margin-bottom: 15px;
+            padding-bottom: 0px;
+        }
+        &.overview-list-orphans {
+            .chevron::before {
+                display: none;
             }
-            .additional-data {
-							padding-left: 60px;
-							display: flex;
-							flex-direction: column;
-							justify-content: space-between;
-							*:last-child {
-								margin-top: 20px;
-							}
-							*:only-child {
-								margin-top: 0;
-							}
-              .additional-data-name {
-                @extend .body-2-semibold;
-              }
-            }
-            .additional-data-col-border {
-              border-left: 1px solid $tlv-light-gray;
-              min-height: 100%;
-              height: 100%;
-            }
-          }
-          .list-item-additional-data-col {
-            @extend .body-2;
-            @extend .flex;
-            align-items: stretch;
-						flex: 0.8;
-						margin-left: 30px;
-						padding-top: 17px;
-						padding-bottom: 11px;
-          }
-          .arrow-icon {
-						align-self: center;
+            .vlm-list-view {
+                .vlm-list {
+                    .vlm-list-item.orphan-list-item {
+                        @include overview-tile-shadow();
+                        margin-left: 0;
 
-          }
-          .vlm-item-info {
+                        .vlm-list-item-title {
+                            .item-name {
+                                color: $dark-gray;
+                            }
+                        }
+                        .list-item-icon-col {
+                            .overview-list-icon {
+                                background-color: $gray;
+                                border-color: $gray;
+                            }
+                        }
+                        .list-item-section {
+                            &:first-child {
+                                display: flex;
+                                color: $white;
+                                min-width: $arrow-element-width;
+                            }
+                            &.list-item-icon-col {
+                                margin-left: 65px;
+                                margin-right: 65px - $list-item-padding;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        .vlm-list-view {
             flex: 1;
-          }
-          .vlm-list-item-title {
-						@extend .flex;
-						align-items: baseline;
-            .item-name {
-              @extend .heading-5-semibold;
-              flex: 0 1 auto;
-							margin-bottom: 4px;
-							text-transform: uppercase;
-            }
-          }
-          .vlm-list-item-description {
-            @extend .body-1;
-						@include multiline-ellipsis($lineCount: 3, $bgColor: $tlv-gray);
-            max-height: 38px;
-          }
-          &.vlm-list-item-la {
-            margin-top: 10px;
-            .la-icon {
-              @include create-circle($circle-icon-size, $la-color);
-              color: $white;
-						}
-						.vlm-list-item-title {
-							.item-name {
-								color: $la-color;
-							}
-						}
-            .list-item-section {
+            .vlm-list {
+                @extend .flex;
+                flex-direction: column;
+                .vlm-list-item {
+                    @include border-shadow();
+                    min-height: 90px;
+                    height: 90px;
+                    background-color: $tlv-gray;
+                    @extend .flex;
+                    border: 1px solid $tlv-light-gray;
+                    margin-bottom: 0px;
+                    .clickable {
+                        cursor: pointer;
+                    }
 
-              &:first-child {
-                display: flex;
-                color: $la-color;
-                min-width: $arrow-element-width;
-              }
-            }
-            .list-item-arrow-col {
-              flex: 0.01;
-							margin-left: $arrow-margin;
-							justify-content: center;
-            }
-          }
-          &.vlm-list-item-fg {
-            margin-left: $list-indentation;
-						margin-top: 10px;
-						.fg-pipeline-separator {
-							color: $dark-gray;
-							padding: 0 5px;
-						}
-						.list-item-icon-col {
-							margin-left: 29px;
-						}
-            .fg-icon {
-              @include create-circle($circle-icon-size, $fg-color);
-              color: $white;
-						}
+                    .list-item-section {
+                        .count-value {
+                            @extend .body-3;
+                        }
+                        &.list-item-icon-col {
+                            display: flex;
+                            flex-direction: column;
+                            justify-content: center;
+                            align-items: center;
+                            padding: 0;
+                            margin-right: 40px - $list-item-padding;
+                            margin-left: $icon-margin;
+                            .overview-list-icon {
+                                @extend .body-2;
+                            }
+                        }
+                        padding: 15px;
+                        &.list-item-arrow-col {
+                            padding: 0;
+                        }
+                        .children-count {
+                            @extend .body-1;
+                            color: $gray;
+                            padding-left: 5px;
+                            .count-value {
+                                padding: 0 5px;
+                            }
+                        }
+                        .additional-data {
+                            padding-left: 60px;
+                            display: flex;
+                            flex-direction: column;
+                            justify-content: space-between;
+                            *:last-child {
+                                margin-top: 20px;
+                            }
+                            *:only-child {
+                                margin-top: 0;
+                            }
+                            .additional-data-name {
+                                @extend .body-2-semibold;
+                            }
+                        }
+                        .additional-data-col-border {
+                            border-left: 1px solid $tlv-light-gray;
+                            min-height: 100%;
+                            height: 100%;
+                        }
+                    }
+                    .list-item-additional-data-col {
+                        @extend .body-2;
+                        @extend .flex;
+                        align-items: stretch;
+                        flex: 0.8;
+                        margin-left: 30px;
+                        padding-top: 17px;
+                        padding-bottom: 11px;
+                    }
+                    .arrow-icon {
+                        align-self: center;
+                    }
+                    .vlm-item-info {
+                        flex: 1;
+                    }
+                    .vlm-list-item-title {
+                        @extend .flex;
+                        align-items: baseline;
+                        .item-name {
+                            @extend .heading-5-semibold;
+                            flex: 0 1 auto;
+                            margin-bottom: 4px;
+                            text-transform: uppercase;
+                        }
+                    }
+                    .vlm-list-item-description {
+                        @extend .body-1;
+                        @include multiline-ellipsis($lineCount: 3, $bgColor: $tlv-gray);
+                        max-height: 38px;
+                    }
+                    &.vlm-list-item-la {
+                        margin-top: 10px;
+                        .la-icon {
+                            @include create-circle($circle-icon-size, $la-color);
+                            color: $white;
+                        }
+                        .vlm-list-item-title {
+                            .item-name {
+                                color: $la-color;
+                            }
+                        }
+                        .list-item-section {
+                            &:first-child {
+                                display: flex;
+                                color: $la-color;
+                                min-width: $arrow-element-width;
+                            }
+                        }
+                        .list-item-arrow-col {
+                            flex: 0.01;
+                            margin-left: $arrow-margin;
+                            justify-content: center;
+                        }
+                    }
+                    &.vlm-list-item-fg {
+                        margin-left: $list-indentation;
+                        margin-top: 10px;
+                        .fg-pipeline-separator {
+                            color: $dark-gray;
+                            padding: 0 5px;
+                        }
+                        .list-item-icon-col {
+                            margin-left: 29px;
+                        }
+                        .fg-icon {
+                            @include create-circle($circle-icon-size, $fg-color);
+                            color: $white;
+                        }
 
-						.vlm-list-item-title {
-							.item-name {
-								color: $fg-color;
-							}
-						}
-            .list-item-section {
-              &:first-child {
-                display: flex;
-                color: $fg-color;
-                min-width: $arrow-element-width;
-
-              }
+                        .vlm-list-item-title {
+                            .item-name {
+                                color: $fg-color;
+                            }
+                        }
+                        .list-item-section {
+                            &:first-child {
+                                display: flex;
+                                color: $fg-color;
+                                min-width: $arrow-element-width;
+                            }
+                        }
+                        .list-item-arrow-col {
+                            flex: 0.01;
+                            margin-left: $arrow-margin - $list-indentation;
+                            padding-left: $list-indentation;
+                        }
+                    }
+                    &.vlm-list-item-ep {
+                        margin-left: $list-indentation * 2;
+                        margin-top: 10px;
+                        cursor: default;
+                        .ep-icon {
+                            @include create-circle($circle-icon-size, $lkg-ep-color);
+                            color: $white;
+                        }
+                        .vlm-list-item-title {
+                            .item-name {
+                                color: $lkg-ep-color;
+                            }
+                        }
+                        .list-item-section {
+                            &:first-child {
+                                display: none;
+                            }
+                            &.list-item-icon-col {
+                                margin-left: 52px;
+                            }
+                        }
+                    }
+                    &.vlm-list-item-lkg {
+                        margin-top: 10px;
+                        margin-left: $list-indentation * 2;
+                        cursor: default;
+                        .lkg-icon {
+                            @include create-circle($circle-icon-size, $lkg-ep-color);
+                            color: $white;
+                        }
+                        .vlm-list-item-title {
+                            .item-name {
+                                color: $lkg-ep-color;
+                            }
+                        }
+                        .list-item-section {
+                            &:first-child {
+                                display: none;
+                            }
+                            &.list-item-icon-col {
+                                margin-left: 52px;
+                            }
+                        }
+                    }
+                }
             }
-            .list-item-arrow-col {
-              flex: 0.01;
-							margin-left: $arrow-margin - $list-indentation;
-							padding-left: $list-indentation;
-            }
-          }
-          &.vlm-list-item-ep {
-            margin-left: $list-indentation * 2;
-            margin-top: 10px;
-            cursor: default;
-            .ep-icon {
-              @include create-circle($circle-icon-size, $lkg-ep-color);
-              color: $white;
-						}
-						.vlm-list-item-title {
-							.item-name {
-								color: $lkg-ep-color;
-							}
-						}
-            .list-item-section {
-              &:first-child {
-                display: none;
-							}
-							&.list-item-icon-col {
-								margin-left: 52px;
-							}
-            }
-
-          }
-          &.vlm-list-item-lkg {
-            margin-top: 10px;
-            margin-left: $list-indentation * 2;
-            cursor: default;
-            .lkg-icon {
-              @include create-circle($circle-icon-size, $lkg-ep-color);
-              color: $white;
-						}
-						.vlm-list-item-title {
-							.item-name {
-								color: $lkg-ep-color;
-							}
-						}
-            .list-item-section {
-              &:first-child {
-                display: none;
-							}
-							&.list-item-icon-col {
-								margin-left: 52px;
-							}
-
-            }
-          }
         }
-
-      }
     }
-  }
-
 }

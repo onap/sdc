@@ -19,6 +19,12 @@ import { actionTypes as licenseKeyGroupsConstants } from './LicenseKeyGroupsCons
 import { actionTypes as limitEditorActions } from 'sdc-app/onboarding/licenseModel/limits/LimitEditorConstants.js';
 import { default as getValue, getStrValue } from 'nfvo-utils/getValue.js';
 import ItemsHelper from 'sdc-app/common/helpers/ItemsHelper.js';
+import i18n from 'nfvo-utils/i18n/i18n.js';
+import {
+    actionTypes as modalActionTypes,
+    modalSizes
+} from 'nfvo-components/modal/GlobalModalConstants.js';
+import { modalContentMapper } from 'sdc-app/common/modal/ModalContentMapper.js';
 
 function baseUrl(licenseModelId, version) {
     const restPrefix = Configuration.get('restPrefix');
@@ -131,9 +137,9 @@ export default {
 
     openLicenseKeyGroupsEditor(
         dispatch,
-        { licenseKeyGroup, licenseModelId, version } = {}
+        { licenseKeyGroup, licenseModelId, version, isReadOnlyMode } = {}
     ) {
-        if (licenseModelId && version) {
+        if (licenseModelId && version && licenseKeyGroup) {
             this.fetchLimits(dispatch, {
                 licenseModelId,
                 version,
@@ -144,11 +150,30 @@ export default {
             type: licenseKeyGroupsConstants.licenseKeyGroupsEditor.OPEN,
             licenseKeyGroup
         });
+        dispatch({
+            type: modalActionTypes.GLOBAL_MODAL_SHOW,
+            data: {
+                modalComponentName: modalContentMapper.LKG_EDITOR,
+                modalComponentProps: {
+                    version,
+                    licenseModelId,
+                    isReadOnlyMode,
+                    size: modalSizes.LARGE
+                },
+                title:
+                    licenseModelId && version && licenseKeyGroup
+                        ? i18n('Edit License Key Group')
+                        : i18n('Create New License Key Group')
+            }
+        });
     },
 
     closeLicenseKeyGroupEditor(dispatch) {
         dispatch({
             type: licenseKeyGroupsConstants.licenseKeyGroupsEditor.CLOSE
+        });
+        dispatch({
+            type: modalActionTypes.GLOBAL_MODAL_CLOSE
         });
     },
 

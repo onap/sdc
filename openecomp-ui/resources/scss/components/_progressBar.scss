@@ -1,24 +1,24 @@
- .progress-bar-view {
+.progress-bar-view {
     display: -webkit-box;
     padding: 5px;
     .progress-bar-outside {
-      display: flex;
-      width: 90%;
-      justify-content: space-between;
-      background-color: lightgray;
-      border-radius: 15px;
-      height: 10px;
-      .progress-bar-inside {
-        display: block;
-        border: 1px solid gainsboro;
-        background-color: #4faa39;
-        border-radius: inherit;
-      }
+        display: flex;
+        width: 90%;
+        justify-content: space-between;
+        background-color: lightgray;
+        border-radius: 15px;
+        height: 10px;
+        .progress-bar-inside {
+            display: block;
+            border: 1px solid gainsboro;
+            background-color: #4faa39;
+            border-radius: inherit;
+        }
     }
     .progress-bar-view-label {
-      margin-right: -30px;
-      margin-top: -2px;
-      margin-left: 10px;
-      color: black;
-     }
-  }
+        margin-right: -30px;
+        margin-top: -2px;
+        margin-left: 10px;
+        color: black;
+    }
+}
