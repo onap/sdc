@@ -240,53 +240,21 @@
 			<scope>compile</scope>
 		</dependency>
 
-		<!--<dependency>-->
-			<!--<groupId>com.att.automation.common</groupId>-->
-			<!--<artifactId>report-portal-integration</artifactId>-->
-			<!--<version>RELEASE</version>-->
-		<!--</dependency>-->
-
 		<dependency>
 			<groupId>com.google.inject</groupId>
 			<artifactId>guice</artifactId>
 			<version>4.1.0</version>
 		</dependency>
 
-
-
-
-
 	</dependencies>
 
 	<build>
 
 		<plugins>
-<!-- 			<plugin> -->
-<!-- 				<groupId>org.apache.maven.plugins</groupId> -->
-<!-- 				<artifactId>maven-compiler-plugin</artifactId> -->
-<!-- 				<version>3.7.0</version> -->
-<!-- 				<configuration> -->
-<!-- 					<compilerArgument>-g:vars</compilerArgument> -->
-<!-- 					<debug>true</debug> -->
-<!-- 					<debuglevel>lines,vars,source</debuglevel> -->
-<!-- 				</configuration> -->
-<!-- 			</plugin> -->
-
-<!-- 			<plugin> -->
-<!-- 				<groupId>org.apache.maven.plugins</groupId> -->
-<!-- 				<artifactId>maven-surefire-plugin</artifactId> -->
-<!-- 				<version>2.19.1</version> -->
-<!-- 				<configuration> -->
-<!-- 					<suiteXmlFiles> -->
-<!-- 						<suiteXmlFile>${suiteXmlFile}</suiteXmlFile> -->
-<!-- 					</suiteXmlFiles> -->
-<!-- 					<argLine>-javaagent:${settings.localRepository}/org/aspectj/aspectjweaver/${aspectj.version}/aspectjweaver-${aspectj.version}.jar</argLine> -->
-<!-- 				</configuration> -->
-<!-- 			</plugin> -->
 
 			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-clean-plugin</artifactId>
-				<version>3.0.0</version>
 				<executions>
 					<execution>
 						<id>clean.tosca.chef.os.folder</id>
@@ -318,15 +286,10 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-deploy-plugin</artifactId>
-				<version>2.7</version>
 				<configuration>
 					<skip>true</skip>
 				</configuration>
 			</plugin>
-
-			<!-- ============================================= -->
-			<!-- Create the JAR file with its dependencies -->
-			<!-- ============================================= -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-assembly-plugin</artifactId>
@@ -350,7 +313,6 @@
 					</execution>
 				</executions>
 			</plugin>
-
 		</plugins>
 	</build>
 	<profiles>
@@ -362,8 +324,8 @@
 			<build>
 				<plugins>
 					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-resources-plugin</artifactId>
-						<version>3.0.2</version>
 						<executions>
 							<execution>
 								<id>copy-tests-suites</id>
@@ -427,10 +389,7 @@
 					<plugin>
 						<groupId>io.fabric8</groupId>
 						<artifactId>docker-maven-plugin</artifactId>
-						<version>${fabric8.version}</version>
-
 						<configuration>
-							<verbose>true</verbose>
 							<apiVersion>1.23</apiVersion>
 							<registry>nexus3.onap.org:10001</registry>
 							<authConfig>
@@ -492,18 +451,6 @@
 					</plugin>
 				</plugins>
 			</build>
-	<!--<repositories>-->
-		<!--<repository>-->
 		</profile>
 	</profiles>
-			<!--<id>nexus_att_repository_id</id>-->
-			<!--<url>http://135.76.5.78:8083/nexus/content/groups/public</url>-->
-		<!--</repository>-->
-	<!--</repositories>-->
-	<!--<pluginRepositories>-->
-		<!--<pluginRepository>-->
-			<!--<id>nexus_att_repository_id</id>-->
-			<!--<url>http://135.76.5.78:8083/nexus/content/groups/public</url>-->
-		<!--</pluginRepository>-->
-	<!--</pluginRepositories>-->
 </project>
