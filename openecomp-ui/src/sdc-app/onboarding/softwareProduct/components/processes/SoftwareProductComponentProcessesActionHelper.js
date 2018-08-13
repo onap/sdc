@@ -1,21 +1,27 @@
-/*!
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+/*
+ * Copyright © 2016-2018 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
- * or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 import RestAPIUtil from 'nfvo-utils/RestAPIUtil.js';
 import Configuration from 'sdc-app/config/Configuration.js';
 import { actionTypes } from './SoftwareProductComponentProcessesConstants.js';
+import i18n from 'nfvo-utils/i18n/i18n.js';
+import {
+    actionTypes as modalActionTypes,
+    modalSizes
+} from 'nfvo-components/modal/GlobalModalConstants.js';
+import { modalContentMapper } from 'sdc-app/common/modal/ModalContentMapper.js';
 
 function baseUrl(softwareProductId, version, componentId) {
     const restPrefix = Configuration.get('restPrefix');
@@ -182,15 +188,38 @@ const SoftwareProductComponentProcessesActionHelper = {
         });
     },
 
-    openEditor(dispatch, process = {}) {
+    openEditor(
+        dispatch,
+        { process, softwareProductId, version, isReadOnlyMode, componentId }
+    ) {
         dispatch({
             type: actionTypes.SOFTWARE_PRODUCT_PROCESS_COMPONENTS_EDITOR_OPEN,
-            process
+            process: process ? process : {}
+        });
+        dispatch({
+            type: modalActionTypes.GLOBAL_MODAL_SHOW,
+            data: {
+                modalComponentName: modalContentMapper.COMP_PROCESS_EDITOR,
+                modalComponentProps: {
+                    version,
+                    softwareProductId,
+                    isReadOnlyMode,
+                    componentId,
+                    size: modalSizes.LARGE
+                },
+                bodyClassName: 'edit-process-modal',
+                title: process
+                    ? i18n('Edit Process Details')
+                    : i18n('Create New Process Details')
+            }
         });
     },
     closeEditor(dispatch) {
         dispatch({
             type: actionTypes.SOFTWARE_PRODUCT_PROCESS_COMPONENTS_EDITOR_CLOSE
+        });
+        dispatch({
+            type: modalActionTypes.GLOBAL_MODAL_CLOSE
         });
     }
 };

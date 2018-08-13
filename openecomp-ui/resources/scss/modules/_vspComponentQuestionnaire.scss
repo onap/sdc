@@ -1,48 +1,47 @@
-
 .vsp-component-questionnaire-view {
-  input[type='checkbox'] {
-    &:before {
-      border: 1px solid $dark-gray;
-      cursor: pointer;
-    }
-    &:checked:before {
-      border: 1px solid $blue;
-    }
-  }
-  .component-questionnaire-validation-form {
-
-    .section-field {
-      textarea {
-        height: 80px;
-      }
-    }
-
-    .rows-section, .grid-items {
-      .row-flex-components {
-        display: flex;
-      }
-
-      .vertical-flex {
-        flex-direction: column;
-        .control-label {
-          @extend .body-2-semibold;
+    input[type='checkbox'] {
+        &:before {
+            border: 1px solid $dark-gray;
+            cursor: pointer;
         }
-        .radio-options-content-row {
-          display: flex;
-          margin-top: -4px;
-          .validation-radio-wrapper {
-            margin-right: 20px;
-
-            & > .form-group {
-              display: flex;
-            }
-            .form-group .sdc-radio {
-              width: auto;
-              margin-right: 0;
-            }
-          }
+        &:checked:before {
+            border: 1px solid $blue;
         }
-      }
     }
-  }
+    .component-questionnaire-validation-form {
+        .section-field {
+            textarea {
+                height: 80px;
+            }
+        }
+
+        .rows-section,
+        .grid-items {
+            .row-flex-components {
+                display: flex;
+            }
+
+            .vertical-flex {
+                flex-direction: column;
+                .control-label {
+                    @extend .body-2-semibold;
+                }
+                .radio-options-content-row {
+                    display: flex;
+                    margin-top: -4px;
+                    .validation-radio-wrapper {
+                        margin-right: 20px;
+
+                        & > .form-group {
+                            display: flex;
+                        }
+                        .form-group .sdc-radio {
+                            width: auto;
+                            margin-right: 0;
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
