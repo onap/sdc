@@ -306,8 +306,7 @@ public class LicenseKeyGroupEntity implements VersionableEntity {
         && Objects.equals(name, that.name)
         && Objects.equals(description, that.description)
         && type == that.type
-        && Objects.equals(operationalScope, that.operationalScope)
-        && Objects.equals(referencingFeatureGroups, that.referencingFeatureGroups)
+        && Objects.equals(that.operationalScope, operationalScope)
         && Objects.equals(startDate, that.startDate)
         && Objects.equals(expiryDate, that.expiryDate)
         && Objects.equals(thresholdValue, that.thresholdValue)
