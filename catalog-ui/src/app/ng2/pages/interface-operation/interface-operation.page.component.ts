@@ -157,15 +157,14 @@ export class InterfaceOperationComponent {
     private createOperation = (operation: OperationModel): any => {
         this.ComponentServiceNg2.createInterfaceOperation(this.component, operation).subscribe((response: CreateOperationResponse) => {
             this.openOperation = null;
-
+            this.operationList.push(new OperationModel(response));
             if (response.workflowId) {
                 const resourceId = this.component.uuid;
                 const operationId = response.uniqueId;
                 const workflowId = response.workflowId;
                 const versionId = response.workflowVersionId;
                 const artifactId = response.artifactUUID;
-
-                this.WorkflowServiceNg2.associateWorkflowArtifact(resourceId, operationId, workflowId, versionId, artifactId);
+                this.WorkflowServiceNg2.associateWorkflowArtifact(resourceId, operationId, workflowId, versionId, artifactId).subscribe();
             }
         });
     }
