@@ -34,13 +34,12 @@ export class WorkflowServiceNg2 {
     public updateWorkflowVersion(workflowId: string, versionId: string, payload: any): Observable<any> {
         return this.http.put(this.baseUrl + '/workflows/' + workflowId + '/versions/' + versionId, payload)
             .map((res:Response) => {
-                return res;
+                return res.json();
             });
     }
 
     public associateWorkflowArtifact(resourceUuid, operationId, workflowId, workflowVersionId, artifactUuid): Observable<any> {
-        return this.http.post(this.baseUrl + '/workflows/' + workflowId + '/versions/' + workflowVersionId + '/artifact-deliveries',
-            {
+        return this.http.post(this.baseUrl + '/workflows/' + workflowId + '/versions/' + workflowVersionId + '/artifact-deliveries', {
                 endpoint: this.catalogBaseUrl + '/resources/' + resourceUuid + '/interfaces/' + operationId + '/artifacts/' + artifactUuid,
                 method: 'POST'
             })
