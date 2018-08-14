@@ -39,13 +39,12 @@ export class WorkflowServiceNg2 {
     }
 
     public associateWorkflowArtifact(resourceUuid, operationId, workflowId, workflowVersionId, artifactUuid): Observable<any> {
-        return this.http.post(this.baseUrl + '/workflows/' + workflowId + '/versions/' + workflowVersionId + '/artifact-deliveries',
-            {
+        return this.http.post(this.baseUrl + '/workflows/' + workflowId + '/versions/' + workflowVersionId + '/artifact-deliveries', {
                 endpoint: this.catalogBaseUrl + '/resources/' + resourceUuid + '/interfaces/' + operationId + '/artifacts/' + artifactUuid,
                 method: 'POST'
             })
             .map((res:Response) => {
-                return res.json();
+                return res;
             });
     }
 
