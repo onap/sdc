@@ -1,0 +1,124 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_987483fe",
+        "filename": "catalog-be/pom.xml",
+        "patchSetId": 4
+      },
+      "lineNbr": 680,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-08-14T14:35:09Z",
+      "side": 1,
+      "message": "Please remove the commented out code.",
+      "range": {
+        "startLine": 647,
+        "startChar": 1,
+        "endLine": 680,
+        "endChar": 28
+      },
+      "revId": "d47b31800ada774c15617a3072111cc2ad2a4534",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_5866eb52",
+        "filename": "catalog-be/pom.xml",
+        "patchSetId": 4
+      },
+      "lineNbr": 685,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-08-14T14:35:09Z",
+      "side": 1,
+      "message": "The version should be defined in pluginManagement. Or, if this is a one-off usage of the plugin, the version should be put here instead of a property.",
+      "range": {
+        "startLine": 685,
+        "startChar": 16,
+        "endLine": 685,
+        "endChar": 64
+      },
+      "revId": "d47b31800ada774c15617a3072111cc2ad2a4534",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_58cd8b30",
+        "filename": "catalog-fe/src/test/resources/logback-test.xml",
+        "patchSetId": 4
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-08-14T14:35:09Z",
+      "side": 1,
+      "message": "If the log is OFF, why do you need an appender? I think \u003croot level\u003d\"OFF\"/\u003e could do.",
+      "range": {
+        "startLine": 10,
+        "startChar": 0,
+        "endLine": 12,
+        "endChar": 11
+      },
+      "revId": "d47b31800ada774c15617a3072111cc2ad2a4534",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_f8d1f7cd",
+        "filename": "catalog-ui/pom.xml",
+        "patchSetId": 4
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-08-14T14:35:09Z",
+      "side": 1,
+      "message": "The formatting is broken.",
+      "revId": "d47b31800ada774c15617a3072111cc2ad2a4534",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_18d713c3",
+        "filename": "catalog-ui/pom.xml",
+        "patchSetId": 4
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-08-14T14:35:09Z",
+      "side": 1,
+      "message": "The formatting is broken. This file is full of tabs, while in this line spaces are used.",
+      "revId": "d47b31800ada774c15617a3072111cc2ad2a4534",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_78e5e7a6",
+        "filename": "sdc-os-chef/scripts/docker_run.sh",
+        "patchSetId": 4
+      },
+      "lineNbr": 724,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-08-14T14:35:09Z",
+      "side": 1,
+      "message": "Formatting issue.",
+      "revId": "d47b31800ada774c15617a3072111cc2ad2a4534",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
