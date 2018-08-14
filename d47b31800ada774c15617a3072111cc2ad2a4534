@@ -48,6 +48,30 @@
     },
     {
       "key": {
+        "uuid": "1a76adc5_c3dd3072",
+        "filename": "catalog-be/pom.xml",
+        "patchSetId": 4
+      },
+      "lineNbr": 685,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-08-14T15:08:10Z",
+      "side": 1,
+      "message": "next push i will fix this as well.",
+      "parentUuid": "1a76adc5_5866eb52",
+      "range": {
+        "startLine": 685,
+        "startChar": 16,
+        "endLine": 685,
+        "endChar": 64
+      },
+      "revId": "d47b31800ada774c15617a3072111cc2ad2a4534",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1a76adc5_58cd8b30",
         "filename": "catalog-fe/src/test/resources/logback-test.xml",
         "patchSetId": 4
@@ -59,6 +83,30 @@
       "writtenOn": "2018-08-14T14:35:09Z",
       "side": 1,
       "message": "If the log is OFF, why do you need an appender? I think \u003croot level\u003d\"OFF\"/\u003e could do.",
+      "range": {
+        "startLine": 10,
+        "startChar": 0,
+        "endLine": 12,
+        "endChar": 11
+      },
+      "revId": "d47b31800ada774c15617a3072111cc2ad2a4534",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_e365cce1",
+        "filename": "catalog-fe/src/test/resources/logback-test.xml",
+        "patchSetId": 4
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-08-14T15:08:10Z",
+      "side": 1,
+      "message": "this allows me to locally open the logs for debugging ut esaly",
+      "parentUuid": "1a76adc5_58cd8b30",
       "range": {
         "startLine": 10,
         "startChar": 0,
@@ -88,6 +136,24 @@
     },
     {
       "key": {
+        "uuid": "1a76adc5_a38d947d",
+        "filename": "catalog-ui/pom.xml",
+        "patchSetId": 4
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-08-14T15:08:10Z",
+      "side": 1,
+      "message": "wired i do not see this issue locally.\ni will recheck after the merge",
+      "parentUuid": "1a76adc5_f8d1f7cd",
+      "revId": "d47b31800ada774c15617a3072111cc2ad2a4534",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1a76adc5_18d713c3",
         "filename": "catalog-ui/pom.xml",
         "patchSetId": 4
@@ -99,6 +165,24 @@
       "writtenOn": "2018-08-14T14:35:09Z",
       "side": 1,
       "message": "The formatting is broken. This file is full of tabs, while in this line spaces are used.",
+      "revId": "d47b31800ada774c15617a3072111cc2ad2a4534",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_23f984e9",
+        "filename": "catalog-ui/pom.xml",
+        "patchSetId": 4
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-08-14T15:08:10Z",
+      "side": 1,
+      "message": "same as above i do not see it locally.",
+      "parentUuid": "1a76adc5_18d713c3",
       "revId": "d47b31800ada774c15617a3072111cc2ad2a4534",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
