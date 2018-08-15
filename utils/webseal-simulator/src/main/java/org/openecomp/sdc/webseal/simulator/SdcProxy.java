@@ -1,5 +1,6 @@
 package org.openecomp.sdc.webseal.simulator;
 
+import java.util.Objects;
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
@@ -105,8 +106,6 @@ public class SdcProxy extends HttpServlet {
 		System.out.print(request.getRequestURI() + " -> ");
 
 		String userIdHeader = getUseridFromRequest(request);
-		//System.out.print(" (userIdHeader=" + userIdHeader + ") ");
-		User user = getUser(userIdHeader);
 
 		// new request - forward to login page
 		if (userIdHeader == null) {
@@ -114,6 +113,7 @@ public class SdcProxy extends HttpServlet {
 			response.sendRedirect("/login");
 			return;
 		}
+		User user = getUser(userIdHeader);
 
 		String uri = getUri(request, requestParameters);
 		HttpMethodBase proxyMethod = getMethod(request, methodEnum, uri);
@@ -139,10 +139,12 @@ public class SdcProxy extends HttpServlet {
 		Enumeration<String> headerNames = request.getHeaderNames();
 		while (headerNames.hasMoreElements()) {
 			String headerName = headerNames.nextElement();
-			Enumeration<String> headers = request.getHeaders(headerName);
-			while (headers.hasMoreElements()) {
-				String headerValue = headers.nextElement();
-				proxyMethod.addRequestHeader(headerName, headerValue);
+			if (Objects.isNull(proxyMethod.getRequestHeader(headerName))) {
+				Enumeration<String> headers = request.getHeaders(headerName);
+				while (headers.hasMoreElements()) {
+					String headerValue = headers.nextElement();
+					proxyMethod.addRequestHeader(headerName, headerValue);
+				}
 			}
 		}
 	}
