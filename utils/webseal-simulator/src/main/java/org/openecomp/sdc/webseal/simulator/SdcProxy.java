@@ -1,14 +1,24 @@
 package org.openecomp.sdc.webseal.simulator;
 
-import org.apache.commons.httpclient.Header;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpException;
-import org.apache.commons.httpclient.HttpMethodBase;
-import org.apache.commons.httpclient.methods.*;
-import org.apache.commons.httpclient.protocol.Protocol;
-import org.openecomp.sdc.webseal.simulator.SSL.DummySSLProtocolSocketFactory;
-import org.openecomp.sdc.webseal.simulator.conf.Conf;
-
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.zip.GZIPInputStream;
 import javax.net.ssl.X509TrustManager;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletConfig;
@@ -17,17 +27,18 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.*;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLEncoder;
-import java.security.cert.CertificateException;
-import java.security.cert.X509Certificate;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.Map;
-import java.util.zip.GZIPInputStream;
+import org.apache.commons.httpclient.Header;
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpException;
+import org.apache.commons.httpclient.HttpMethodBase;
+import org.apache.commons.httpclient.methods.DeleteMethod;
+import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.commons.httpclient.methods.InputStreamRequestEntity;
+import org.apache.commons.httpclient.methods.PostMethod;
+import org.apache.commons.httpclient.methods.PutMethod;
+import org.apache.commons.httpclient.protocol.Protocol;
+import org.openecomp.sdc.webseal.simulator.SSL.DummySSLProtocolSocketFactory;
+import org.openecomp.sdc.webseal.simulator.conf.Conf;
 
 public class SdcProxy extends HttpServlet {
 
@@ -35,13 +46,15 @@ public class SdcProxy extends HttpServlet {
 	private URL url;
 	private HttpClient proxy;
 	private Conf conf;
-	
+
 	private final String SDC1 = "/sdc1";
 	private final String ONBOARDING = "/onboarding/";
 	private final String SCRIPTS = "/scripts";
 	private final String STYLES = "/styles";
 	private final String LANGUAGES = "/languages";
 	private final String CONFIGURATIONS = "/configurations";
+
+	private static final Set<String> RESERVED_HEADERS = Arrays.stream(ReservedHeaders.values()).map(h -> h.name()).collect(Collectors.toSet());
 
 	public void init(ServletConfig config) throws ServletException {
 		super.init(config);
@@ -105,8 +118,6 @@ public class SdcProxy extends HttpServlet {
 		System.out.print(request.getRequestURI() + " -> ");
 
 		String userIdHeader = getUseridFromRequest(request);
-		//System.out.print(" (userIdHeader=" + userIdHeader + ") ");
-		User user = getUser(userIdHeader);
 
 		// new request - forward to login page
 		if (userIdHeader == null) {
@@ -116,35 +127,24 @@ public class SdcProxy extends HttpServlet {
 		}
 
 		String uri = getUri(request, requestParameters);
-		HttpMethodBase proxyMethod = getMethod(request, methodEnum, uri);
+		HttpMethodBase proxyMethod = createHttpMethod(request, methodEnum, uri);
 		System.out.println(uri);
-		addHeaders(user, proxyMethod);
-		addHeaders(request, proxyMethod);
+
+		User user = getUser(userIdHeader);
+		addHeadersToMethod(proxyMethod, user, request);
 		this.proxy.executeMethod(proxyMethod);
 		response.setStatus(proxyMethod.getStatusCode());
-		
+
 		if (request.getRequestURI().indexOf(".svg") > -1) {
 			response.setContentType("image/svg+xml");
 		}
-		
+
 		InputStream responseBodyStream = proxyMethod.getResponseBodyAsStream();
 		Header contentEncodingHeader = proxyMethod.getResponseHeader("Content-Encoding");
 		if (contentEncodingHeader != null && contentEncodingHeader.getValue().equalsIgnoreCase("gzip")) {
 			responseBodyStream = new GZIPInputStream(responseBodyStream);
 		}
 		write(responseBodyStream, response.getOutputStream());
-	}
-
-	private void addHeaders(HttpServletRequest request, HttpMethodBase proxyMethod) {
-		Enumeration<String> headerNames = request.getHeaderNames();
-		while (headerNames.hasMoreElements()) {
-			String headerName = headerNames.nextElement();
-			Enumeration<String> headers = request.getHeaders(headerName);
-			while (headers.hasMoreElements()) {
-				String headerValue = headers.nextElement();
-				proxyMethod.addRequestHeader(headerName, headerValue);
-			}
-		}
 	}
 
 	private User getUser(String userId, String password) {
@@ -159,16 +159,16 @@ public class SdcProxy extends HttpServlet {
 		return conf.getUsers().get(userId);
 
 	}
-	
+
 	private List<String> getContextPaths(){
-		 List<String> contextPaths = new ArrayList<>();
-		 contextPaths.add(SDC1);
-		 contextPaths.add(ONBOARDING);
-		 contextPaths.add(STYLES);
-		 contextPaths.add(SCRIPTS);
-		 contextPaths.add(LANGUAGES);
-		 contextPaths.add(CONFIGURATIONS);
-		 return contextPaths;
+		List<String> contextPaths = new ArrayList<>();
+		contextPaths.add(SDC1);
+		contextPaths.add(ONBOARDING);
+		contextPaths.add(STYLES);
+		contextPaths.add(SCRIPTS);
+		contextPaths.add(LANGUAGES);
+		contextPaths.add(CONFIGURATIONS);
+		return contextPaths;
 	}
 
 	private String getUri(HttpServletRequest request, Map<String, String[]> requestParameters) throws UnsupportedEncodingException {
@@ -181,23 +181,23 @@ public class SdcProxy extends HttpServlet {
 		return uri;
 	}
 
-	private HttpMethodBase getMethod(HttpServletRequest request, MethodEnum methodEnum, String uri) throws IOException {
+	private HttpMethodBase createHttpMethod(HttpServletRequest request, MethodEnum methodEnum, String uri) throws IOException {
 		HttpMethodBase proxyMethod = null;
 		switch (methodEnum) {
-		case GET:
-			proxyMethod = new GetMethod(uri);
-			break;
-		case POST:
-			proxyMethod = new PostMethod(uri);
-			((PostMethod) proxyMethod).setRequestEntity(new InputStreamRequestEntity(request.getInputStream()));
-			break;
-		case PUT:
-			proxyMethod = new PutMethod(uri);
-			((PutMethod) proxyMethod).setRequestBody(getBody(request));
-			break;
-		case DELETE:
-			proxyMethod = new DeleteMethod(uri);
-			break;
+			case GET:
+				proxyMethod = new GetMethod(uri);
+				break;
+			case POST:
+				proxyMethod = new PostMethod(uri);
+				((PostMethod) proxyMethod).setRequestEntity(new InputStreamRequestEntity(request.getInputStream()));
+				break;
+			case PUT:
+				proxyMethod = new PutMethod(uri);
+				((PutMethod) proxyMethod).setRequestBody(getBody(request));
+				break;
+			case DELETE:
+				proxyMethod = new DeleteMethod(uri);
+				break;
 		}
 		return proxyMethod;
 	}
@@ -217,41 +217,54 @@ public class SdcProxy extends HttpServlet {
 		if (cookies != null){
 			for (int i=0; i<cookies.length; ++i){
 				if (cookies[i].getName().equals("USER_ID")){
-					userIdHeader = cookies[i].getValue(); 
+					userIdHeader = cookies[i].getValue();
 				}
 			}
 		}
 		return userIdHeader;
 	}
-	
-	private void addHeaders(User user, HttpMethodBase proxyMethod) {
-		proxyMethod.addRequestHeader("HTTP_IV_USER", user.getUserId());
-		proxyMethod.addRequestHeader("USER_ID", user.getUserId());
-		proxyMethod.addRequestHeader("HTTP_CSP_FIRSTNAME", user.getFirstName());
-		proxyMethod.addRequestHeader("HTTP_CSP_EMAIL", user.getEmail());
-		proxyMethod.addRequestHeader("HTTP_CSP_LASTNAME", user.getLastName());
-		proxyMethod.addRequestHeader("HTTP_IV_REMOTE_ADDRESS", "0.0.0.0");
-		proxyMethod.addRequestHeader("HTTP_CSP_WSTYPE", "Intranet");
-		proxyMethod.addRequestHeader("HTTP_CSP_EMAIL", "me@mail.com");
+
+	private void addHeadersToMethod(HttpMethodBase proxyMethod, User user, HttpServletRequest request) {
+
+		proxyMethod.addRequestHeader(ReservedHeaders.HTTP_IV_USER.name(), user.getUserId());
+		proxyMethod.addRequestHeader(ReservedHeaders.USER_ID.name(), user.getUserId());
+		proxyMethod.addRequestHeader(ReservedHeaders.HTTP_CSP_FIRSTNAME.name(), user.getFirstName());
+		proxyMethod.addRequestHeader(ReservedHeaders.HTTP_CSP_EMAIL.name(), user.getEmail());
+		proxyMethod.addRequestHeader(ReservedHeaders.HTTP_CSP_LASTNAME.name(), user.getLastName());
+		proxyMethod.addRequestHeader(ReservedHeaders.HTTP_IV_REMOTE_ADDRESS.name(), "0.0.0.0");
+		proxyMethod.addRequestHeader(ReservedHeaders.HTTP_CSP_WSTYPE.name(), "Intranet");
+		proxyMethod.addRequestHeader(ReservedHeaders.HTTP_CSP_EMAIL.name(), "me@mail.com");
+
+		Enumeration<String> headerNames = request.getHeaderNames();
+		while (headerNames.hasMoreElements()) {
+			String headerName = headerNames.nextElement();
+			if (!RESERVED_HEADERS.contains(headerName)) {
+				Enumeration<String> headers = request.getHeaders(headerName);
+				while (headers.hasMoreElements()) {
+					String headerValue = headers.nextElement();
+					proxyMethod.addRequestHeader(headerName, headerValue);
+				}
+			}
+		}
 	}
 
 	private String alignUrlProxy(String requestURI) {
-		
+
 		int i = requestURI.indexOf(ONBOARDING);
 		if (-1 != i){
 			return requestURI.substring(i);
 		}
-		
+
 		i = requestURI.indexOf(SDC1+SDC1);
 		if (-1 != i){
 			return requestURI.substring(SDC1.length());
 		}
-		
+
 		i = requestURI.indexOf(SDC1);
 		if (-1 != i){
 			return requestURI;
 		}
-		
+
 		return SDC1+requestURI;
 	}
 
@@ -284,8 +297,8 @@ public class SdcProxy extends HttpServlet {
 	public String getServletInfo() {
 		return "Http Proxy Servlet";
 	}
-	
-	
+
+
 	public String getBody(HttpServletRequest request) throws IOException {
 
 		String body = null;
@@ -318,6 +331,10 @@ public class SdcProxy extends HttpServlet {
 
 		body = stringBuilder.toString();
 		return body;
+	}
+
+	private enum ReservedHeaders {
+		HTTP_IV_USER, USER_ID, HTTP_CSP_FIRSTNAME, HTTP_CSP_EMAIL, HTTP_CSP_LASTNAME, HTTP_IV_REMOTE_ADDRESS, HTTP_CSP_WSTYPE
 	}
 
 	private class DefaultTrustManager implements X509TrustManager {
