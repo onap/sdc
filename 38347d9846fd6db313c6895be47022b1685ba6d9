@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_21909742",
+        "filename": "build.gradle",
+        "patchSetId": 1
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-08-15T19:11:50Z",
+      "side": 1,
+      "message": "please remove att refrance",
+      "range": {
+        "startLine": 24,
+        "startChar": 8,
+        "endLine": 24,
+        "endChar": 20
+      },
+      "revId": "38347d9846fd6db313c6895be47022b1685ba6d9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
