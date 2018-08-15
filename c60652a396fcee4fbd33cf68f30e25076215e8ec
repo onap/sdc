@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_61c8cf74",
+        "filename": "utils/webseal-simulator/src/main/java/org/openecomp/sdc/webseal/simulator/SdcProxy.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 142,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-08-15T19:05:33Z",
+      "side": 1,
+      "message": "Make sure it doesn\u0027t accidentally remove legitimate multi-value headers. Here your assumption is that proxyMethod already has some headers you don\u0027t want to override/modify - the ones populated by addHeaders(user, proxyMethod) in line 121. I would probably explicitly filter out the headers managed by the simulator, and keep all the rest as it is. But even simply combining the two methods in a slightly different way can help prevent such problems in the future. \n\nBTW, have a look at https://stackoverflow.com/questions/3096888/standard-for-adding-multiple-values-of-a-single-http-header-to-a-request-or-resp",
+      "revId": "c60652a396fcee4fbd33cf68f30e25076215e8ec",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
