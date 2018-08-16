@@ -20,6 +20,7 @@
 
 package org.openecomp.sdc.vendorlicense.facade;
 
+import java.util.Optional;
 import org.openecomp.sdc.common.errors.ErrorCode;
 import org.openecomp.sdc.vendorlicense.dao.types.*;
 import org.openecomp.sdc.versioning.dao.types.Version;
@@ -68,6 +69,8 @@ public interface VendorLicenseFacade {
   Collection<ErrorCode> validateLicensingData(String vlmId, Version vlmVersion,
                                               String licenseAgreementId,
                                               Collection<String> featureGroupIds);
+
+  Optional<ErrorCode> validateVendorForUsage(String vlmId);
 
   void validate(String vendorLicenseModelId, Version version);
 }

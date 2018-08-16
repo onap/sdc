@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,33 +20,56 @@
 
 package org.openecomp.sdc.vendorlicense.facade.impl;
 
-import org.apache.commons.collections4.CollectionUtils;
-import org.openecomp.core.dao.UniqueValueDaoFactory;
-import org.openecomp.core.util.UniqueValueUtil;
-import org.openecomp.core.utilities.CommonMethods;
-import org.openecomp.sdc.common.errors.CoreException;
-import org.openecomp.sdc.common.errors.ErrorCode;
-import org.openecomp.sdc.vendorlicense.VendorLicenseConstants;
-import org.openecomp.sdc.vendorlicense.dao.*;
-import org.openecomp.sdc.vendorlicense.dao.types.*;
-import org.openecomp.sdc.vendorlicense.errors.SubmitUncompletedLicenseModelErrorBuilder;
-import org.openecomp.sdc.vendorlicense.errors.VendorLicenseModelNotFoundErrorBuilder;
-import org.openecomp.sdc.vendorlicense.facade.VendorLicenseFacade;
-import org.openecomp.sdc.versioning.VersioningUtil;
-import org.openecomp.sdc.versioning.dao.types.Version;
-import org.openecomp.sdc.versioning.errors.VersionableSubEntityNotFoundErrorBuilder;
+import static org.openecomp.sdc.common.errors.ValidationErrorBuilder.FIELD_VALIDATION_ERROR_ERR_ID;
+import static org.openecomp.sdc.vendorlicense.VendorLicenseConstants.VENDOR_LICENSE_MODEL_VERSIONABLE_TYPE;
+import static org.openecomp.sdc.vendorlicense.errors.UncompletedVendorLicenseModelErrorType.SUBMIT_UNCOMPLETED_VLM_MSG_FG_MISSING_EP;
+import static org.openecomp.sdc.vendorlicense.errors.UncompletedVendorLicenseModelErrorType.SUBMIT_UNCOMPLETED_VLM_MSG_LA_MISSING_FG;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
-
-
-import static org.openecomp.sdc.vendorlicense.VendorLicenseConstants.VENDOR_LICENSE_MODEL_VERSIONABLE_TYPE;
-import static org.openecomp.sdc.vendorlicense.errors.UncompletedVendorLicenseModelErrorType.SUBMIT_UNCOMPLETED_VLM_MSG_FG_MISSING_EP;
-import static org.openecomp.sdc.vendorlicense.errors.UncompletedVendorLicenseModelErrorType.SUBMIT_UNCOMPLETED_VLM_MSG_LA_MISSING_FG;
+import java.util.Optional;
+import org.apache.commons.collections4.CollectionUtils;
+import org.openecomp.core.dao.UniqueValueDaoFactory;
+import org.openecomp.core.util.UniqueValueUtil;
+import org.openecomp.core.utilities.CommonMethods;
+import org.openecomp.sdc.common.errors.CoreException;
+import org.openecomp.sdc.common.errors.ErrorCategory;
+import org.openecomp.sdc.common.errors.ErrorCode;
+import org.openecomp.sdc.vendorlicense.VendorLicenseConstants;
+import org.openecomp.sdc.vendorlicense.dao.EntitlementPoolDao;
+import org.openecomp.sdc.vendorlicense.dao.EntitlementPoolDaoFactory;
+import org.openecomp.sdc.vendorlicense.dao.FeatureGroupDao;
+import org.openecomp.sdc.vendorlicense.dao.FeatureGroupDaoFactory;
+import org.openecomp.sdc.vendorlicense.dao.LicenseAgreementDao;
+import org.openecomp.sdc.vendorlicense.dao.LicenseAgreementDaoFactory;
+import org.openecomp.sdc.vendorlicense.dao.LicenseKeyGroupDao;
+import org.openecomp.sdc.vendorlicense.dao.LicenseKeyGroupDaoFactory;
+import org.openecomp.sdc.vendorlicense.dao.LimitDao;
+import org.openecomp.sdc.vendorlicense.dao.LimitDaoFactory;
+import org.openecomp.sdc.vendorlicense.dao.VendorLicenseModelDao;
+import org.openecomp.sdc.vendorlicense.dao.VendorLicenseModelDaoFactory;
+import org.openecomp.sdc.vendorlicense.dao.types.EntitlementPoolEntity;
+import org.openecomp.sdc.vendorlicense.dao.types.FeatureGroupEntity;
+import org.openecomp.sdc.vendorlicense.dao.types.FeatureGroupModel;
+import org.openecomp.sdc.vendorlicense.dao.types.LicenseAgreementEntity;
+import org.openecomp.sdc.vendorlicense.dao.types.LicenseAgreementModel;
+import org.openecomp.sdc.vendorlicense.dao.types.LicenseKeyGroupEntity;
+import org.openecomp.sdc.vendorlicense.dao.types.LimitEntity;
+import org.openecomp.sdc.vendorlicense.dao.types.VendorLicenseModelEntity;
+import org.openecomp.sdc.vendorlicense.errors.SubmitUncompletedLicenseModelErrorBuilder;
+import org.openecomp.sdc.vendorlicense.errors.VendorLicenseModelNotFoundErrorBuilder;
+import org.openecomp.sdc.vendorlicense.facade.VendorLicenseFacade;
+import org.openecomp.sdc.versioning.ItemManagerFactory;
+import org.openecomp.sdc.versioning.VersioningUtil;
+import org.openecomp.sdc.versioning.dao.types.Version;
+import org.openecomp.sdc.versioning.errors.VersionableSubEntityNotFoundErrorBuilder;
+import org.openecomp.sdc.versioning.types.Item;
+import org.openecomp.sdc.versioning.types.ItemStatus;
 
 public class VendorLicenseFacadeImpl implements VendorLicenseFacade {
+
   private static final VendorLicenseModelDao
       vendorLicenseModelDao = VendorLicenseModelDaoFactory.getInstance().createInterface();
   private static final LicenseAgreementDao
@@ -60,6 +83,13 @@ public class VendorLicenseFacadeImpl implements VendorLicenseFacade {
   private static final LimitDao limitDao = LimitDaoFactory.getInstance().createInterface();
   private static final UniqueValueUtil uniqueValueUtil = new UniqueValueUtil
       (UniqueValueDaoFactory.getInstance().createInterface());
+  private static final ErrorCode USED_VLM_NOT_EXIST_ERROR =
+          new ErrorCode.ErrorCodeBuilder().withCategory(ErrorCategory.APPLICATION).withId(FIELD_VALIDATION_ERROR_ERR_ID)
+                  .withMessage("The supplied vendor does not exist").build();
+  private static final ErrorCode USED_VLM_ARCHIVE_ERROR =
+          new ErrorCode.ErrorCodeBuilder().withCategory(ErrorCategory.APPLICATION).withId(FIELD_VALIDATION_ERROR_ERR_ID)
+                  .withMessage("The supplied vendor is archived and therefore cannot be used").build();
+
   /**
    * Instantiates a new Vendor license facade.
    */
@@ -291,6 +321,16 @@ public class VendorLicenseFacadeImpl implements VendorLicenseFacade {
     }
 
     return errorMessages;
+  }
+
+  @Override
+  public Optional<ErrorCode> validateVendorForUsage(String vlmId) {
+    Item vlm = ItemManagerFactory.getInstance().createInterface().get(vlmId);
+    return vlm == null
+                   ? Optional.of(USED_VLM_NOT_EXIST_ERROR)
+                   : ItemStatus.ARCHIVED == vlm.getStatus()
+                             ? Optional.of(USED_VLM_ARCHIVE_ERROR)
+                             : Optional.empty();
   }
 
   @Override
