@@ -1,5 +1,5 @@
 {
-  "payloadName": "extCP.yml",
+  "payloadName": "extCP2.yml",
   "contactId": "DS200P",
   "name": "ExtCP2",
   "description": "The AT&T Connection Point base type all other CP derive from",
