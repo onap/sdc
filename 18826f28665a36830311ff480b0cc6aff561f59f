@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_5bb57bec",
+        "filename": "test-apis-ci/src/main/java/org/openecomp/sdc/ci/tests/utils/general/VendorLicenseModelRestUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 198,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-08-16T09:40:50Z",
+      "side": 1,
+      "message": "Please don\u0027t leave commented-out code. Git already keeps any historical information for you, so there\u0027s no need to pollute the code.",
+      "revId": "18826f28665a36830311ff480b0cc6aff561f59f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
