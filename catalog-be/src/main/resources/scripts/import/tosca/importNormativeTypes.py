@@ -1,5 +1,6 @@
 import pycurl
 import sys, getopt
+import zipfile
 from StringIO import StringIO
 import json
 import copy
@@ -37,8 +38,13 @@ def createNormativeType(scheme, beHost, bePort, adminUser, fileDir, ELEMENT_NAME
 		#c.setopt(pycurl.HTTPHEADER, ['Content-Type: application/json', 'Accept: application/json', adminHeader])
 		c.setopt(pycurl.HTTPHEADER, [adminHeader])
 
-
+		yml_path = fileDir + ELEMENT_NAME + "/" + ELEMENT_NAME + ".yml"
 		path = fileDir + ELEMENT_NAME + "/" + ELEMENT_NAME + ".zip"
+
+		zf = zipfile.ZipFile(path, "w")
+		zf.write(yml_path, ELEMENT_NAME + '.yml')
+		zf.close()
+
 		debug(path)
         	CURRENT_JSON_FILE=fileDir + ELEMENT_NAME + "/" + ELEMENT_NAME + ".json"
         	#sed -i 's/"userId": ".*",/"userId": "'${USER_ID}'",/' ${CURRENT_JSON_FILE}

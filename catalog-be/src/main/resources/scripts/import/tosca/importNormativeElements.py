@@ -1,4 +1,5 @@
 import pycurl
+import zipfile
 from StringIO import StringIO
 import json
 import copy
@@ -47,7 +48,7 @@ def createNormativeElement(scheme, be_host, be_port, admin_user, file_dir, url_s
 
         type_file_name = file_dir + "/" + element_name
 
-        multi_part_form_data = create_multipart_form_data(element_form_name, type_file_name, with_metadata)
+        multi_part_form_data = create_multipart_form_data(element_form_name, type_file_name, with_metadata, element_name)
 
         c.setopt(pycurl.HTTPPOST, multi_part_form_data)
         c.setopt(c.WRITEFUNCTION, buffer.write)
@@ -69,8 +70,8 @@ def createNormativeElement(scheme, be_host, be_port, admin_user, file_dir, url_s
         return (element_name, None, None)
 
 
-def create_multipart_form_data(element_form_name, type_file_name, with_metadata):
-    tosca_type_zip_part = create_zip_file_multi_part(element_form_name, type_file_name)
+def create_multipart_form_data(element_form_name, type_file_name, with_metadata, element_name):
+    tosca_type_zip_part = create_zip_file_multi_part(element_form_name, type_file_name, element_name)
     multi_part_form_data = [tosca_type_zip_part]
     if with_metadata:
         metadata_type_part = create_metadata_multipart(type_file_name)
@@ -84,7 +85,11 @@ def create_metadata_multipart(type_file_name):
     return ("toscaTypeMetadata", metadata)
 
 
-def create_zip_file_multi_part(element_form_name, type_file_name):
+def create_zip_file_multi_part(element_form_name, type_file_name, element_name):
+    zf = zipfile.ZipFile(type_file_name + ".zip", "w")
+    zf.write(type_file_name + '.yml', element_name + '.yml')
+    zf.close()
+
     tosca_type_zip_path = type_file_name + ".zip"
     tosca_type_zip_part = (element_form_name, (pycurl.FORM_FILE, tosca_type_zip_path))
     return tosca_type_zip_part
