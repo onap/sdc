@@ -330,24 +330,31 @@ public class CompositionDataExtractorImpl implements CompositionDataExtractor {
     List<String> images = imageList.get(computeId);
     List<String> computeFlavors = computeFlavorNodeTemplates.get(computeId);
 
-    if (connectedPortIds != null) {
+    if (CollectionUtils.isNotEmpty(connectedPortIds)) {
       componentModel.setNics(new ArrayList<>());
       componentModel.setImages(new ArrayList<>());
       componentModel.setCompute(new ArrayList<>());
-      for (String portId : connectedPortIds) {
+
+      connectedPortIds.forEach(portId -> {
         Nic port = extractPort(serviceTemplate, portId);
         componentModel.getNics().add(port);
         context.addNic(portId, port);
+      });
+
+      if (CollectionUtils.isNotEmpty(images)) {
+        images.forEach(image -> {
+          Image img = new Image(image);
+          componentModel.getImages().add(img);
+          context.addImage(image, img);
+        });
       }
-      for (String image : images) {
-        Image img = new Image(image);
-        componentModel.getImages().add(img);
-        context.addImage(image, img);
-      }
-      for (String flavor : computeFlavors) {
-        ComputeData computeFlavor = new ComputeData(flavor);
-        componentModel.getCompute().add(computeFlavor);
-        context.addCompute(flavor,computeFlavor);
+
+      if (CollectionUtils.isNotEmpty(computeFlavors)) {
+        computeFlavors.forEach(flavor -> {
+          ComputeData computeFlavor = new ComputeData(flavor);
+          componentModel.getCompute().add(computeFlavor);
+          context.addCompute(flavor, computeFlavor);
+        });
       }
     }
     context.addComponent(componentModel);
