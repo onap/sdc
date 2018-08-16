@@ -298,26 +298,6 @@
 	      <appender-ref ref="ERROR_ROLLING" />
 	</appender>
 
-	<!-- <appender name="DISPATCHER" class="ch.qos.logback.classic.sift.SiftingAppender">
-		<discriminator class="org.openecomp.core.logging.logback.EventTypeDiscriminator"/>
-		<sift>
-			<appender name="Audit" class="ch.qos.logback.core.rolling.RollingFileAppender">
-				<file>${logDirectory}/audit.log</file>
-				<rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
-					<fileNamePattern>${logDirectory}/audit.%i.log.zip</fileNamePattern>
-					<minIndex>1</minIndex>
-					<maxIndex>9</maxIndex>
-				</rollingPolicy>
-				<triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
-					<maxFileSize>5MB</maxFileSize>
-				</triggeringPolicy>
-				<encoder>
-					<pattern>${default-log-pattern}</pattern>
-				</encoder>
-			</appender>
-		</sift>
-	</appender>-->
-
 	<root level="INFO">
 		<appender-ref ref="ASYNC_ERROR" />
 		<appender-ref ref="ASYNC_DEBUG" />

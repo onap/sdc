@@ -1,20 +1,12 @@
-<configuration scan="true" scanPeriod="3 seconds">
-
-    <property name="logDir" value="logs" />
-    <property name="componentName" value="SDC" />
-
-    <property name="defaultPattern"
-              value="%logger|%date{ISO8601,UTC}|%X{RequestId}|%X{ServiceInstanceId}|%thread|%X{VirtualServerName}|%X{ServiceName}|%X{InstanceUUID}|%.-5level|%X{AlertSeverity}|%X{ServerIPAddress}|%X{ServerFQDN}|%X{RemoteHost}|%X{ClassName}|%X{Timer}| %msg%n" />
-
-    <property name="logDirectory" value="${logDir}/${componentName}" />
+<configuration>
 
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>${defaultPattern}</pattern>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n</pattern>
         </encoder>
     </appender>
 
-    <root level="ERROR">
+    <root level="OFF">
         <appender-ref ref="STDOUT" />
     </root>
 
