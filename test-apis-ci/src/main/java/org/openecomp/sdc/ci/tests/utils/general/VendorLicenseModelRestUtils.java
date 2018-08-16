@@ -195,7 +195,7 @@ public class VendorLicenseModelRestUtils {
         jObject.put("name", "xyz");
         jObject.put("description", "new vendor license feature groups");
         jObject.put("partNumber", "123abc456");
-        jObject.put("manufacturerReferenceNumber", "5");
+//      jObject.put("manufacturerReferenceNumber", "5");
         jObject.put("addedLicenseKeyGroupsIds", Arrays.asList(licenseKeyGroupId).toArray());
         jObject.put("addedEntitlementPoolsIds", Arrays.asList(entitlementPoolId).toArray());
 
