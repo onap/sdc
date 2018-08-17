@@ -1,9 +1,18 @@
 <div class="properties-table">
     <loader [display]="isLoading" [size]="'large'" [relative]="true" [loaderDelay]="500"></loader>
     <div class="table-header">
-        <div class="table-cell col1">Property Name</div>
-        <div class="table-cell col2" *ngIf="!hidePropertyType">Type</div>
-        <div class="table-cell col3" *ngIf="!hidePropertyType">ES</div>
+        <div class="table-cell col1" (click)="sort('name')">Property Name
+            <span *ngIf="sortBy === 'name'" class="table-header-sort-arrow" [ngClass]="{'down': reverse, 'up':!reverse}">
+            </span>
+        </div>
+        <div class="table-cell col2" (click)="sort('type')" *ngIf="!hidePropertyType">Type
+            <span *ngIf="sortBy === 'type'" class="table-header-sort-arrow" [ngClass]="{'down': reverse, 'up':!reverse}">
+            </span>
+        </div>
+        <div class="table-cell col3" (click)="sort('schema.property.type')" *ngIf="!hidePropertyType">ES
+            <span *ngIf="sortBy === 'schema.property.type'" class="table-header-sort-arrow" [ngClass]="{'down': reverse, 'up':!reverse}">
+            </span>
+        </div>
         <div class="table-cell valueCol">Value</div>
     </div>
     <div class="table-body" [ngClass]="{'view-mode': readonly}">
@@ -11,28 +20,26 @@
 
         <ng-container *ngFor="let instanceId of fePropertiesMap | keys; trackBy:vspId">
             <div class="table-rows-header white-sub-header" *ngIf="feInstanceNamesMap">
-             
-                    
+
+
                 <span [ngClass]="['prop-instance-icon', feInstanceNamesMap[instanceId].iconClass, 'small']"></span>
                 {{feInstanceNamesMap[instanceId].name}}
-                <div class="sprite-new archive-label" *ngIf="feInstanceNamesMap[instanceId].originArchived == true" ></div>
+                <div class="sprite-new archive-label" *ngIf="feInstanceNamesMap[instanceId].originArchived == true"></div>
             </div>
 
-            <div class="table-row"
-                *ngFor="let property of fePropertiesMap[instanceId] | searchFilter:'name':searchTerm; trackBy:property?.name"
-                (click)="onClickPropertyRow(property, instanceId, $event)"
-                [ngClass]="{'selected': selectedPropertyId && selectedPropertyId === property.name, 'readonly': property.isDisabled || property.isDeclared}">
+            <div class="table-row" *ngFor="let property of fePropertiesMap[instanceId] | searchFilter:'name':searchTerm | orderBy:{path: path, direction: direction}; trackBy:property?.name "
+                (click)="onClickPropertyRow(property, instanceId, $event)" [ngClass]="{'selected': selectedPropertyId && selectedPropertyId === property.name, 'readonly': property.isDisabled || property.isDeclared}">
 
                 <div class="table-cell col1" [ngClass]="{'filtered':property.name === propertyNameSearchText}" [class.round-checkbox]="property.isDeclared">
-                <div class="property-name">
-                    <checkbox *ngIf="hasDeclareOption" [(checked)]="property.isSelected"
-                          [disabled]="property.isDisabled || property.isDeclared || readonly"
-                          (checkedChange)="propertyChecked(property)" [attr.data-tests-id]="property.name"></checkbox>
-                    <div class="inner-cell-div-multiline" tooltip="{{property.name}}">
-                        <multiline-ellipsis className="table-cell-multiline-ellipsis" [lines]="2">{{property.name}}</multiline-ellipsis>
+                    <div class="property-name">
+                        <checkbox *ngIf="hasDeclareOption" [(checked)]="property.isSelected" [disabled]="property.isDisabled || property.isDeclared || readonly"
+                            (checkedChange)="propertyChecked(property)" [attr.data-tests-id]="property.name"></checkbox>
+                        <div class="inner-cell-div-multiline" tooltip="{{property.name}}">
+                            <multiline-ellipsis className="table-cell-multiline-ellipsis" [lines]="2">{{property.name}}</multiline-ellipsis>
+                        </div>
                     </div>
-                </div>
-                <span *ngIf="property.description" class="property-description-icon sprite-new show-desc" tooltip="{{property.description}}" tooltipDelay="0"></span>
+                    <span *ngIf="property.description" class="property-description-icon sprite-new show-desc" tooltip="{{property.description}}"
+                        tooltipDelay="0"></span>
                 </div>
                 <div class="table-cell col2" *ngIf="!hidePropertyType">
                     <div class="inner-cell-div" tooltip="{{property.type | contentAfterLastDot}}">

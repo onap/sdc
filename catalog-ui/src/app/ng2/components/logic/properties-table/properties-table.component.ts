@@ -44,6 +44,18 @@ export class PropertiesTableComponent {
     @Output() selectPropertyRow: EventEmitter<PropertyRowSelectedEvent> = new EventEmitter<PropertyRowSelectedEvent>();
     @Output() updateCheckedPropertyCount: EventEmitter<boolean> = new EventEmitter<boolean>();//only for hasDeclareOption
 
+    sortBy: String;
+    reverse: boolean;
+    direction: number;
+    path:string[];
+
+    sort(sortBy){
+        this.reverse = (this.sortBy === sortBy) ? !this.reverse : true;
+        this.direction = this.reverse ? 1 : -1;
+        this.sortBy = sortBy;
+        this.path = sortBy.split('.');
+    }
+
     constructor (private propertiesService:PropertiesService ){
     }
     
