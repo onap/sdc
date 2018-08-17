@@ -5,6 +5,7 @@ import {GroupByPipe} from "./groupBy.pipe";
 import {ResourceNamePipe} from "./resource-name.pipe";
 import {NgModule} from "@angular/core";
 import {SafeUrlSanitizerPipe} from "./safeUrlSanitizer.pipe";
+import {OrderByPipe} from "./orderBy.pipe";
 
 @NgModule({
     declarations: [
@@ -13,7 +14,8 @@ import {SafeUrlSanitizerPipe} from "./safeUrlSanitizer.pipe";
         KeysPipe,
         SafeUrlSanitizerPipe,
         SearchFilterPipe,
-        ResourceNamePipe
+        ResourceNamePipe,
+        OrderByPipe
     ],
     exports: [
         ContentAfterLastDotPipe,
@@ -21,7 +23,8 @@ import {SafeUrlSanitizerPipe} from "./safeUrlSanitizer.pipe";
         KeysPipe,
         SafeUrlSanitizerPipe,
         SearchFilterPipe,
-        ResourceNamePipe
+        ResourceNamePipe,
+        OrderByPipe
     ]
 })
 
