@@ -3,6 +3,7 @@
  * SDC
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Modifications Copyright (C) 2017 Huawei Intellectual Property. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,6 +44,18 @@ export class PropertiesTableComponent {
     @Output('propertyChanged') emitter: EventEmitter<PropertyFEModel> = new EventEmitter<PropertyFEModel>();
     @Output() selectPropertyRow: EventEmitter<PropertyRowSelectedEvent> = new EventEmitter<PropertyRowSelectedEvent>();
     @Output() updateCheckedPropertyCount: EventEmitter<boolean> = new EventEmitter<boolean>();//only for hasDeclareOption
+
+    sortBy: String;
+    reverse: boolean;
+    direction: number;
+    path:string[];
+
+    sort(sortBy){
+        this.reverse = (this.sortBy === sortBy) ? !this.reverse : true;
+        this.direction = this.reverse ? 1 : -1;
+        this.sortBy = sortBy;
+        this.path = sortBy.split('.');
+    }
 
     constructor (private propertiesService:PropertiesService ){
     }
