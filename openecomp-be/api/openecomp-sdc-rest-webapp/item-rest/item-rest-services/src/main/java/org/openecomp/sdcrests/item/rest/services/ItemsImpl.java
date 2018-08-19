@@ -16,6 +16,9 @@
 
 package org.openecomp.sdcrests.item.rest.services;
 
+import org.openecomp.sdc.activitylog.ActivityLogManager;
+import org.openecomp.sdc.activitylog.ActivityLogManagerFactory;
+import org.openecomp.sdc.activitylog.dao.type.ActivityLogEntity;
 import org.openecomp.sdc.activitylog.dao.type.ActivityType;
 import org.openecomp.sdc.datatypes.model.ItemType;
 import org.openecomp.sdc.itempermissions.PermissionsManager;
@@ -64,6 +67,7 @@ public class ItemsImpl implements Items {
 
     private ItemManager itemManager = ItemManagerFactory.getInstance().createInterface();
 
+    private static ActivityLogManager activityLogManager = ActivityLogManagerFactory.getInstance().createInterface();
 
     private VersioningManager versioningManager = VersioningManagerFactory.getInstance().createInterface();
 
@@ -200,6 +204,9 @@ public class ItemsImpl implements Items {
 
         private void execute(Item item, String user) {
             notifyUsers(item.getId(), item.getName(), user, this.notificationType);
+            activityLogManager.logActivity(
+                    new ActivityLogEntity(item.getId(), getLatestVersion(item.getId()), this.activityType, user, true,
+                            "", ""));
         }
 
         private void notifyUsers(String itemId, String itemName, String userName, NotificationEventTypes eventType) {
