@@ -20,6 +20,10 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.cxf.jaxrs.ext.multipart.Attachment;
 import org.openecomp.core.validation.errors.ErrorMessagesFormatBuilder;
+import org.openecomp.sdc.activitylog.ActivityLogManager;
+import org.openecomp.sdc.activitylog.ActivityLogManagerFactory;
+import org.openecomp.sdc.activitylog.dao.type.ActivityLogEntity;
+import org.openecomp.sdc.activitylog.dao.type.ActivityType;
 import org.openecomp.sdc.common.errors.Messages;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
@@ -66,6 +70,8 @@ public class OrchestrationTemplateCandidateImpl implements OrchestrationTemplate
       OrchestrationTemplateCandidateManagerFactory.getInstance().createInterface();
   private VendorSoftwareProductManager vendorSoftwareProductManager = VspManagerFactory
       .getInstance().createInterface();
+  private ActivityLogManager activityLogManager =
+          ActivityLogManagerFactory.getInstance().createInterface();
 
   @Override
   public Response upload(String vspId, String versionId, Attachment fileToUpload, String user) {
@@ -117,6 +123,9 @@ public class OrchestrationTemplateCandidateImpl implements OrchestrationTemplate
 
     Version version = new Version(versionId);
     OrchestrationTemplateActionResponse response = candidateManager.process(vspId, version);
+
+    activityLogManager.logActivity(new ActivityLogEntity(vspId, version,
+            ActivityType.Upload_Network_Package, user, true, "", ""));
 
     OrchestrationTemplateActionResponseDto responseDto =
         new OrchestrationTemplateActionResponseDto();

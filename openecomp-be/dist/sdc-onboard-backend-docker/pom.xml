@@ -22,6 +22,33 @@
     <build>
         <plugins>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-clean-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>clean files</id>
+                        <phase>clean</phase>
+                        <goals>
+                            <goal>clean</goal>
+                        </goals>
+                        <configuration>
+                            <filesets>
+                                <fileset>
+                                    <directory>${project.basedir}/artifacts/</directory>
+                                    <followSymlinks>false</followSymlinks>
+                                    <includes>
+                                        <include>*.war</include>
+                                        <include>onboarding_configuration.yaml</include>
+                                        <include>logback.xml</include>
+                                    </includes>
+                                </fileset>
+                            </filesets>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
                 <artifactId>maven-resources-plugin</artifactId>
                 <version>3.0.2</version>
                         <executions>

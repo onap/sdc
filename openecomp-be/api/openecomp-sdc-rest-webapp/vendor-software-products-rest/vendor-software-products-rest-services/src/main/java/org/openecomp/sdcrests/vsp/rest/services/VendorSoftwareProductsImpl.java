@@ -19,6 +19,10 @@ package org.openecomp.sdcrests.vsp.rest.services;
 import org.apache.commons.collections4.MapUtils;
 import org.openecomp.core.dao.UniqueValueDaoFactory;
 import org.openecomp.core.util.UniqueValueUtil;
+import org.openecomp.sdc.activitylog.ActivityLogManager;
+import org.openecomp.sdc.activitylog.ActivityLogManagerFactory;
+import org.openecomp.sdc.activitylog.dao.type.ActivityLogEntity;
+import org.openecomp.sdc.activitylog.dao.type.ActivityType;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.ErrorCode;
 import org.openecomp.sdc.common.errors.Messages;
@@ -100,6 +104,8 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
             VersioningManagerFactory.getInstance().createInterface();
     private final VendorSoftwareProductManager vendorSoftwareProductManager =
             VspManagerFactory.getInstance().createInterface();
+    private final ActivityLogManager activityLogManager =
+            ActivityLogManagerFactory.getInstance().createInterface();
     private final NotificationPropagationManager notifier =
             NotificationPropagationManagerFactory.getInstance().createInterface();
     private final UniqueValueUtil uniqueValueUtil = new UniqueValueUtil(UniqueValueDaoFactory
@@ -161,7 +167,8 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
         ItemCreationDto itemCreationDto = new ItemCreationDto();
         itemCreationDto.setItemId(item.getId());
         itemCreationDto.setVersion(new MapVersionToDto().applyMapping(version, VersionDto.class));
-
+        activityLogManager.logActivity(new ActivityLogEntity(vspDetails.getId(), version,
+                ActivityType.Create, user, true, "", ""));
         return itemCreationDto;
     }
 
@@ -493,12 +500,15 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
         Map<String, List<ErrorMessage>> compilationErrors =
                 vendorSoftwareProductManager.compile(vspId, version);
         if (!validationResponse.isValid() || MapUtils.isNotEmpty(compilationErrors)) {
-
+            activityLogManager.logActivity(
+                    new ActivityLogEntity(vspId, version, ActivityType.Submit, user, false,
+                            "Failed on validation before submit", ""));
             return Optional.of(validationResponse);
         }
 
         versioningManager.submit(vspId, version, message);
-
+        activityLogManager.logActivity(
+                new ActivityLogEntity(vspId, version, ActivityType.Submit, user, true, "", message));
         return Optional.empty();
     }
 
