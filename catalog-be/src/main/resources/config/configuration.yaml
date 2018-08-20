@@ -670,6 +670,7 @@ environmentContext:
        - General_Non-Revenue
 
 dmaapConsumerConfiguration:
+    isActive: false
     hosts: olsd004.wnsnet.attws.com:3905
     consumerGroup: asdc
     consumerId: mama #mama - in Order To Consume Remove This String And Replace It With -> mama
