@@ -83,9 +83,11 @@ public class EnvironmentsEngine implements INotificationHandler {
         try {
             environments = populateEnvironments();
             createUebTopicsForEnvironments();
-            initDmeGlobalConfig();
-            dmaapConsumer.consumeDmaapTopic(this::handleMessage,
-                    (t, e) -> log.error("An error occurred upon consuming topic by Dmaap consumer client: ", e));
+            if(ConfigurationManager.getConfigurationManager().getConfiguration().getDmaapConsumerConfiguration().isActive()){
+                initDmeGlobalConfig();
+                dmaapConsumer.consumeDmaapTopic(this::handleMessage,
+                        (t, e) -> log.error("An error occurred upon consuming topic by Dmaap consumer client: ", e));
+            }
         } catch (Exception e) {
             log.error("An error occurred upon consuming topic by Dmaap consumer client.", e);
         }

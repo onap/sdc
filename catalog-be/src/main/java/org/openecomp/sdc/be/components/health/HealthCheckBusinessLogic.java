@@ -125,7 +125,9 @@ public class HealthCheckBusinessLogic {
         List<HealthCheckInfo> healthCheckInfos = new ArrayList<>();
 
         //Dmaap
-        getDmaapHealthCheck(healthCheckInfos);
+        if(ConfigurationManager.getConfigurationManager().getConfiguration().getDmaapConsumerConfiguration().isActive()){
+            getDmaapHealthCheck(healthCheckInfos);
+        }
         // BE
         getBeHealthCheck(healthCheckInfos);
 

@@ -33,3 +33,6 @@ default['UEB']['PublicKey'] = "sSJc5qiBnKy2qrlc"
 default['UEB']['SecretKey'] = "4ZRPzNJfEUK0sSNBvccd2m7X"
 
 default['Pair_EnvName'] = ""
+
+#DmaapConsumer
+default['dmaap']['dmaap_consumer_is_active'] = false
