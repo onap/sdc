@@ -22,6 +22,30 @@
       "revId": "81993c2a7d7b05b983a1cae9d03c5e2aff67ff01",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_4927e812",
+        "filename": "openecomp-be/dist/sdc-onboard-backend-docker/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-08-20T18:18:49Z",
+      "side": 1,
+      "message": "this is an addition to fix that no clean up is done on the folder, as a result, I had a bug where I had two wars in the folder and one was chosen and copied without me knowing it.",
+      "parentUuid": "1a76adc5_3da42aa5",
+      "range": {
+        "startLine": 25,
+        "startChar": 0,
+        "endLine": 51,
+        "endChar": 20
+      },
+      "revId": "81993c2a7d7b05b983a1cae9d03c5e2aff67ff01",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
