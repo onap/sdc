@@ -14,6 +14,11 @@ topology_template:
     port_ps_server_1b_port_1_network_role_tag:
       type: string
       required: true
+    port_ps_server_1b_port_1_related_networks:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.RelatedNetworksAssignments
     ps_server_1b_ips:
       hidden: false
       immutable: false
@@ -134,6 +139,11 @@ topology_template:
     ps_server_1b_port_1:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
+        subnetpoolid:
+          get_input: port_ps_server_1b_port_1_subnetpoolid
+        related_networks:
+          get_input: port_ps_server_1b_port_1_related_networks
+        network: packet_int_network
         replacement_policy: AUTO
         ip_requirements:
           get_input: port_ps_server_1b_port_1_ip_requirements
@@ -144,8 +154,6 @@ topology_template:
             get_input:
             - ps_server_1b_ips
             - 0
-        subnetpoolid:
-          get_input: port_ps_server_1b_port_1_subnetpoolid
         mac_requirements:
           get_input: port_ps_server_1b_port_1_mac_requirements
         subinterface_indicator: true
@@ -155,7 +163,6 @@ topology_template:
           get_input: port_ps_server_1b_port_1_vlan_requirements
         network_role_tag:
           get_input: port_ps_server_1b_port_1_network_role_tag
-        network: packet_int_network
         order:
           get_input: port_ps_server_1b_port_1_order
       requirements:

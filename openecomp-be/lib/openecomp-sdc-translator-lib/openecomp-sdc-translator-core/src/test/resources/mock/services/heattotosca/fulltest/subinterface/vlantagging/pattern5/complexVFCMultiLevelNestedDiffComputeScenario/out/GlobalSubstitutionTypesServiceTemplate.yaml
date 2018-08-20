@@ -942,6 +942,12 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: string
+      port_pd_server_1b_port_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       port_pd_server_1b_port_network_role_tag:
         type: string
         required: true
@@ -1385,6 +1391,12 @@ node_types:
         type: string
         required: true
         status: SUPPORTED
+      port_ps_server_1b_port_1_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       ps_server_1b_ips:
         type: string
         required: true

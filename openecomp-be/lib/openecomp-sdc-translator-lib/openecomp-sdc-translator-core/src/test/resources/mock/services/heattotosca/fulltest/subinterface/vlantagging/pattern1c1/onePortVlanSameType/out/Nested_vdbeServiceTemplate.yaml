@@ -165,6 +165,11 @@ topology_template:
       required: true
       entry_schema:
         type: string
+    port_vdbe_untr_port_related_networks:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.RelatedNetworksAssignments
     port_vdbe_untr_port_ip_requirements:
       type: list
       required: true
@@ -206,6 +211,8 @@ topology_template:
         vlan_requirements:
           get_input: port_vdbe_untr_port_vlan_requirements
         subinterface_indicator: true
+        related_networks:
+          get_input: port_vdbe_untr_port_related_networks
         virtual_network_refs:
           get_input:
           - port_vdbe_untr_port_virtual_network_refs

@@ -32,6 +32,12 @@ node_types:
         type: org.openecomp.datatypes.Naming
         required: true
         status: SUPPORTED
+      port_pd01_port_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       vm_flavor_name:
         type: string
         required: true
@@ -453,6 +459,12 @@ node_types:
         type: org.openecomp.datatypes.Naming
         required: true
         status: SUPPORTED
+      port_pd01_port_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       vm_flavor_name:
         type: string
         required: true
@@ -858,18 +870,12 @@ node_types:
         type: string
         required: true
         status: SUPPORTED
-      port_pd01_port_3_order:
-        type: integer
+      port_pd01_port_3_related_networks:
+        type: list
         required: true
         status: SUPPORTED
-      index_value:
-        type: integer
-        description: Index value of this substitution service template runtime instance
-        required: false
-        default: 0
-        status: SUPPORTED
-        constraints:
-        - greater_or_equal: 0
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       port_pd01_port_2_vlan_requirements:
         type: list
         required: true
@@ -902,10 +908,6 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: org.openecomp.datatypes.network.IpRequirements
-      port_pd01_port_3_mac_requirements:
-        type: org.openecomp.datatypes.network.MacRequirements
-        required: true
-        status: SUPPORTED
       port_pd01_port_3_network:
         type: list
         required: true
@@ -934,22 +936,8 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: string
-      port_pd01_port_3_vlan_requirements:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: org.openecomp.datatypes.network.VlanRequirements
       port_pd01_port_2_mac_requirements:
         type: org.openecomp.datatypes.network.MacRequirements
-        required: true
-        status: SUPPORTED
-      port_pd01_port_2_exCP_naming:
-        type: org.openecomp.datatypes.Naming
-        required: true
-        status: SUPPORTED
-      port_pd01_port_3_network_role_tag:
-        type: string
         required: true
         status: SUPPORTED
       compute_pd_server_user_data_format:
@@ -964,6 +952,42 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: org.openecomp.datatypes.network.IpRequirements
+      port_pd01_port_3_order:
+        type: integer
+        required: true
+        status: SUPPORTED
+      index_value:
+        type: integer
+        description: Index value of this substitution service template runtime instance
+        required: false
+        default: 0
+        status: SUPPORTED
+        constraints:
+        - greater_or_equal: 0
+      port_pd01_port_3_mac_requirements:
+        type: org.openecomp.datatypes.network.MacRequirements
+        required: true
+        status: SUPPORTED
+      port_pd01_port_2_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
+      port_pd01_port_3_vlan_requirements:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.VlanRequirements
+      port_pd01_port_2_exCP_naming:
+        type: org.openecomp.datatypes.Naming
+        required: true
+        status: SUPPORTED
+      port_pd01_port_3_network_role_tag:
+        type: string
+        required: true
+        status: SUPPORTED
       port_pd01_port_3_exCP_naming:
         type: org.openecomp.datatypes.Naming
         required: true

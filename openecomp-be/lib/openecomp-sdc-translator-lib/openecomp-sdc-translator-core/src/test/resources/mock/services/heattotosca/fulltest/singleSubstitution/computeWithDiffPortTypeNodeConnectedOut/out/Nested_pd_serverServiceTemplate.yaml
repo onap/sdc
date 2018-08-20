@@ -61,6 +61,11 @@ topology_template:
       required: true
       entry_schema:
         type: string
+    port_pd02_port_related_networks:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.RelatedNetworksAssignments
     index_value:
       type: integer
       description: Index value of this substitution service template runtime instance
@@ -74,6 +79,11 @@ topology_template:
     port_pd01_port_exCP_naming:
       type: org.openecomp.datatypes.Naming
       required: true
+    port_pd01_port_related_networks:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.RelatedNetworksAssignments
     port_pd02_port_order:
       type: integer
       required: true
@@ -138,23 +148,25 @@ topology_template:
     pd_server_pd01_port:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
-        exCP_naming:
-          get_input: port_pd01_port_exCP_naming
         replacement_policy:
           get_input:
           - port_pd01_port_replacement_policy
           - index_value
+        mac_requirements:
+          get_input: port_pd01_port_mac_requirements
+        order:
+          get_input: port_pd01_port_order
+        exCP_naming:
+          get_input: port_pd01_port_exCP_naming
         vlan_requirements:
           get_input: port_pd01_port_vlan_requirements
         subinterface_indicator: false
         ip_requirements:
           get_input: port_pd01_port_ip_requirements
+        related_networks:
+          get_input: port_pd01_port_related_networks
         network_role_tag:
           get_input: port_pd01_port_network_role_tag
-        mac_requirements:
-          get_input: port_pd01_port_mac_requirements
-        order:
-          get_input: port_pd01_port_order
         network_role:
           get_input: port_pd01_port_network_role
         subnetpoolid:
@@ -171,23 +183,25 @@ topology_template:
     pd_server_pd02_port:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
-        exCP_naming:
-          get_input: port_pd02_port_exCP_naming
         replacement_policy:
           get_input:
           - port_pd02_port_replacement_policy
           - index_value
+        mac_requirements:
+          get_input: port_pd02_port_mac_requirements
+        order:
+          get_input: port_pd02_port_order
+        exCP_naming:
+          get_input: port_pd02_port_exCP_naming
         vlan_requirements:
           get_input: port_pd02_port_vlan_requirements
         subinterface_indicator: false
         ip_requirements:
           get_input: port_pd02_port_ip_requirements
+        related_networks:
+          get_input: port_pd02_port_related_networks
         network_role_tag:
           get_input: port_pd02_port_network_role_tag
-        mac_requirements:
-          get_input: port_pd02_port_mac_requirements
-        order:
-          get_input: port_pd02_port_order
         network_role:
           get_input: port_pd02_port_network_role
         subnetpoolid:

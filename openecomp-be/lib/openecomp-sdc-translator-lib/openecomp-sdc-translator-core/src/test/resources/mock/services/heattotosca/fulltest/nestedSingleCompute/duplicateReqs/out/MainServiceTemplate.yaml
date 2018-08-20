@@ -2488,8 +2488,6 @@ topology_template:
             get_input: lbd_ims_core_v6_vip_0
         compute_lbd_user_data_format:
         - RAW
-        compute_lbd_config_drive:
-        - true
         port_lbd_internal_1_port_name:
         - str_replace:
             template: $PREFIX$DELeth0
@@ -2503,15 +2501,6 @@ topology_template:
         - ip_address: 128.0.0.0/1
         - ip_address: ::/1
         - ip_address: 8000::/1
-        port_lbd_ims_core_1_port_ip_requirements:
-        - ip_version: 6
-          ip_count_required:
-            is_required: true
-          floating_ip_count_required:
-            is_required: false
-        port_lbd_dpdk_1_port_mac_requirements:
-          mac_count_required:
-            is_required: false
         vm_flavor_name:
           get_input: lbd_flavor_name
         port_lbd_ims_core_1_port_mac_requirements:
@@ -2519,14 +2508,6 @@ topology_template:
             is_required: false
         compute_lbd_availability_zone:
         - get_input: availability_zone_1
-        port_lbd_internal_1_port_ip_requirements:
-        - ip_version: 4
-          ip_count_required:
-            is_required: true
-          floating_ip_count_required:
-            is_required: false
-        port_lbd_internal_1_port_security_groups:
-        - - cscf_RSG
         vm_image_name:
           get_input: lbd_image_name
         port_lbd_dpdk_1_port_network:
@@ -2539,16 +2520,6 @@ topology_template:
                 get_input: lbd_name_1
               $DEL:
                 get_input: vcscf_name_delimeter
-        port_lbd_ims_core_1_port_security_groups:
-        - - cscf_RSG
-        port_lbd_ims_core_1_port_fixed_ips:
-        - ip_address:
-            get_input: lbd_ims_core_v6_ip_1
-        port_lbd_internal_1_port_fixed_ips:
-        - ip_address:
-            get_input: lbd_internal_ip_1
-        port_lbd_ims_core_1_port_network:
-        - get_input: ims_core_net_id
         compute_lbd_scheduler_hints:
         - group: lbd_server_group_group
         port_lbd_dpdk_1_port_name:
@@ -2559,13 +2530,48 @@ topology_template:
                 get_input: lbd_name_1
               $DEL:
                 get_input: vcscf_name_delimeter
+        port_lbd_internal_1_port_network:
+        - cscf_internal_network_0
+        port_lbd_internal_1_port_mac_requirements:
+          mac_count_required:
+            is_required: false
+        compute_lbd_name:
+        - get_input: lbd_name_1
+        port_lbd_ims_core_1_port_network_role_tag: ims_core
+        compute_lbd_config_drive:
+        - true
+        port_lbd_ims_core_1_port_ip_requirements:
+        - ip_version: 6
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        port_lbd_dpdk_1_port_mac_requirements:
+          mac_count_required:
+            is_required: false
+        port_lbd_internal_1_port_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        port_lbd_internal_1_port_security_groups:
+        - - cscf_RSG
+        port_lbd_ims_core_1_port_security_groups:
+        - - cscf_RSG
+        port_lbd_ims_core_1_port_fixed_ips:
+        - ip_address:
+            get_input: lbd_ims_core_v6_ip_1
+        port_lbd_internal_1_port_fixed_ips:
+        - ip_address:
+            get_input: lbd_internal_ip_1
+        port_lbd_ims_core_1_port_network:
+        - get_input: ims_core_net_id
         port_lbd_dpdk_1_port_security_groups:
         - - cscf_RSG
         port_lbd_dpdk_1_port_fixed_ips:
         - ip_address:
             get_input: lbd_internal_dpdk_ip_1
-        port_lbd_internal_1_port_network:
-        - cscf_internal_network_0
         port_lbd_dpdk_1_port_ip_requirements:
         - ip_version: 4
           ip_count_required:
@@ -2582,12 +2588,6 @@ topology_template:
             get_input: vnf_name
           vf_module_name:
             get_input: vf_module_name
-        port_lbd_internal_1_port_mac_requirements:
-          mac_count_required:
-            is_required: false
-        compute_lbd_name:
-        - get_input: lbd_name_1
-        port_lbd_ims_core_1_port_network_role_tag: ims_core
         service_template_filter:
           substitute_service_template: Nested_lbdServiceTemplate.yaml
           count: 1
@@ -3276,17 +3276,8 @@ topology_template:
       properties:
         compute_lbd_user_data_format:
         - RAW
-        compute_lbd_config_drive:
-        - true
-        port_lbd_dpdk_0_port_fixed_ips:
-        - ip_address:
-            get_input: lbd_internal_dpdk_ip_0
-        port_lbd_internal_0_port_security_groups:
-        - - cscf_RSG
         vm_flavor_name:
           get_input: lbd_flavor_name
-        port_lbd_dpdk_0_port_security_groups:
-        - - cscf_RSG
         compute_lbd_availability_zone:
         - get_input: availability_zone_0
         port_lbd_dpdk_0_port_allowed_address_pairs:
@@ -3296,14 +3287,6 @@ topology_template:
         - ip_address: 8000::/1
         vm_image_name:
           get_input: lbd_image_name
-        port_lbd_dpdk_0_port_name:
-        - str_replace:
-            template: $PREFIX$DELeth1
-            params:
-              $PREFIX:
-                get_input: lbd_name_0
-              $DEL:
-                get_input: vcscf_name_delimeter
         port_lbd_dpdk_0_port_ip_requirements:
         - ip_version: 4
           ip_count_required:
@@ -3312,8 +3295,6 @@ topology_template:
             is_required: false
         port_lbd_ims_core_0_port_network:
         - get_input: ims_core_net_id
-        port_lbd_dpdk_0_port_network:
-        - cscf_internal_dpdk_network_0
         port_lbd_ims_core_0_port_mac_requirements:
           mac_count_required:
             is_required: false
@@ -3334,41 +3315,19 @@ topology_template:
         port_lbd_internal_0_port_mac_requirements:
           mac_count_required:
             is_required: false
-        port_lbd_ims_core_0_port_fixed_ips:
-        - ip_address:
-            get_input: lbd_ims_core_v6_ip_0
         port_lbd_ims_core_0_port_ip_requirements:
         - ip_version: 6
           ip_count_required:
             is_required: true
           floating_ip_count_required:
             is_required: false
-        port_lbd_internal_0_port_fixed_ips:
-        - ip_address:
-            get_input: lbd_internal_ip_0
         port_lbd_internal_0_port_network:
         - cscf_internal_network_0
         port_lbd_dpdk_0_port_mac_requirements:
           mac_count_required:
             is_required: false
-        compute_lbd_metadata:
-        - vf_module_id:
-            get_input: vf_module_id
-          vm_role: lbd
-          vnf_id:
-            get_input: vnf_id
-          vnf_name:
-            get_input: vnf_name
-          vf_module_name:
-            get_input: vf_module_name
         compute_lbd_name:
         - get_input: lbd_name_0
-        port_lbd_internal_0_port_ip_requirements:
-        - ip_version: 4
-          ip_count_required:
-            is_required: true
-          floating_ip_count_required:
-            is_required: false
         port_lbd_ims_core_0_port_security_groups:
         - - cscf_RSG
         port_lbd_ims_core_0_port_name:
@@ -3379,6 +3338,47 @@ topology_template:
                 get_input: lbd_name_0
               $DEL:
                 get_input: vcscf_name_delimeter
+        compute_lbd_config_drive:
+        - true
+        port_lbd_dpdk_0_port_fixed_ips:
+        - ip_address:
+            get_input: lbd_internal_dpdk_ip_0
+        port_lbd_internal_0_port_security_groups:
+        - - cscf_RSG
+        port_lbd_dpdk_0_port_security_groups:
+        - - cscf_RSG
+        port_lbd_dpdk_0_port_name:
+        - str_replace:
+            template: $PREFIX$DELeth1
+            params:
+              $PREFIX:
+                get_input: lbd_name_0
+              $DEL:
+                get_input: vcscf_name_delimeter
+        port_lbd_dpdk_0_port_network:
+        - cscf_internal_dpdk_network_0
+        port_lbd_ims_core_0_port_fixed_ips:
+        - ip_address:
+            get_input: lbd_ims_core_v6_ip_0
+        port_lbd_internal_0_port_fixed_ips:
+        - ip_address:
+            get_input: lbd_internal_ip_0
+        compute_lbd_metadata:
+        - vf_module_id:
+            get_input: vf_module_id
+          vm_role: lbd
+          vnf_id:
+            get_input: vnf_id
+          vnf_name:
+            get_input: vnf_name
+          vf_module_name:
+            get_input: vf_module_name
+        port_lbd_internal_0_port_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         service_template_filter:
           substitute_service_template: Nested_lbd_1ServiceTemplate.yaml
           count: 1

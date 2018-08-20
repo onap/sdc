@@ -253,6 +253,12 @@ node_types:
         description: Unique name for this VF instance
         required: true
         status: SUPPORTED
+      port_vdbe_untr_1_port_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       vdbe_untrusted_ip_1:
         type: string
         description: IPV4 address of the secondary vDBE VM on the VAN untrusted network
@@ -292,6 +298,12 @@ node_types:
         description: Unique ID for this VF inst
         required: true
         status: SUPPORTED
+      port_vdbe_untr_2_port_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       vdbe_name_1:
         type: string
         description: VM Name for this vdbe node 1

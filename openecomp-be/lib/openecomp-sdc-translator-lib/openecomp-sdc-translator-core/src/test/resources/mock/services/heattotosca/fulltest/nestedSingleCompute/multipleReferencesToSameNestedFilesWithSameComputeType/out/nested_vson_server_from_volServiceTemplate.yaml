@@ -85,6 +85,11 @@ topology_template:
     port_vson_server_oam_net_port_10_subnetpoolid:
       type: string
       required: true
+    port_vson_server_oam_net_port_10_related_networks:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.RelatedNetworksAssignments
     vson_dc_unit:
       label: vSON Data Center name
       hidden: false
@@ -215,6 +220,8 @@ topology_template:
       properties:
         subnetpoolid:
           get_input: port_vson_server_oam_net_port_10_subnetpoolid
+        related_networks:
+          get_input: port_vson_server_oam_net_port_10_related_networks
         network:
           get_input: oam_net_id
         ip_requirements:

@@ -8,6 +8,12 @@ node_types:
   org.openecomp.resource.abstract.nodes.plt:
     derived_from: org.openecomp.resource.abstract.nodes.VFC
     properties:
+      port_plt_data_0_port_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       port_plt_oam_0_port_exCP_naming:
         type: org.openecomp.datatypes.Naming
         required: true
@@ -124,6 +130,12 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: json
+      port_plt_oam_0_port_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       port_plt_internal_0_port_mac_requirements:
         type: org.openecomp.datatypes.network.MacRequirements
         required: true
@@ -168,6 +180,12 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: string
+      port_plt_internal_0_port_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       port_plt_oam_0_port_order:
         type: integer
         required: true
@@ -879,6 +897,12 @@ node_types:
         type: string
         required: true
         status: SUPPORTED
+      port_app_internal_0_port_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       port_app_oam_0_port_network_role:
         type: string
         required: true
@@ -889,6 +913,12 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: json
+      port_app_data_0_port_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       port_app_data_0_port_ip_requirements:
         type: list
         required: true
@@ -909,6 +939,12 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: org.openecomp.datatypes.heat.network.AddressPair
+      port_app_oam_0_port_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       port_app_data_0_port_subnetpoolid:
         type: string
         required: true
@@ -1574,6 +1610,12 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: string
+      port_iox_data_0_port_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       vm_flavor_name:
         type: string
         required: true
@@ -1674,6 +1716,12 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: string
+      port_iox_oam_0_port_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       port_iox_internal_0_port_security_groups:
         type: list
         required: true
@@ -1774,6 +1822,12 @@ node_types:
         type: string
         required: true
         status: SUPPORTED
+      port_iox_internal_0_port_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       port_iox_oam_0_port_allowed_address_pairs:
         type: list
         required: true

@@ -1,15 +1,25 @@
-import javax.imageio.ImageIO
-import javax.swing.*
-import java.awt.*
-import java.awt.event.ActionEvent
-import java.awt.event.ActionListener
-import java.util.List
 import java.util.concurrent.Callable
 import java.util.concurrent.Executors
 import java.util.concurrent.atomic.AtomicBoolean
+import java.awt.AWTException
+import java.awt.Font
+import java.awt.Image
+import java.awt.Menu
+import java.awt.MenuItem
+import java.awt.PopupMenu
+import java.awt.SystemTray
+import java.awt.TrayIcon
+import java.awt.event.ActionEvent
+import java.awt.event.ActionListener
+import javax.swing.JOptionPane
+import javax.imageio.ImageIO
 
-import static ServiceControl.*
 import static Services.*
+import static ServiceControl.*
+/*
+* open CMD  -> gradle health
+*
+* */
 
 group 'com.att.ecomp'
 version '1.01-SNAPSHOT'
@@ -48,35 +58,39 @@ enum ServiceControl {
     STOP ,
     KILL
 }
+enum Environment {
+    OLD_VAGRANT , PROD_VAGRANT , ONAP_VAGRANT
+}
 //env variables
 //fill YOUR_WINDOWS_USER_HOME
-project.ext.set("NEW_VAG",Boolean.FALSE) //flags to use new vagrant configuration
+project.ext.set("VM_TYPE", Environment.ONAP_VAGRANT) //flags to use new vagrant configuration
+//project.ext.set("NEW_VAG",Boolean.FALSE) //flags to use new vagrant configuration
 project.ext.set("IS_HOTSWAP",Boolean.FALSE) //flags to use new vagrant configuration
 project.ext.set("PROJECT_PATH", System.getenv("SDC")) //ex. 'C:\\GIT_WORK\\asdc\\sdc')
-project.ext.set("VAGRANT_HOME", NEW_VAG ? System.getenv("NEW_VAG") : System.getenv("VAG")) //ex. 'C:\\GIT_WORK\\vagrant-asdc-all-in-one')
+project.ext.set("VAGRANT_HOME", isProductionVM() ? System.getenv("NEW_VAG") : isOnapVM() ? System.getenv("ONAP_VAG") :System.getenv("VAG")) //ex. 'C:\\GIT_WORK\\vagrant-asdc-all-in-one')
 project.ext.set("USER_HOME", "${System.getenv("USERPROFILE")}\\.ssh")
-project.ext.set("BE_REMOTE", NEW_VAG ? '/opt/app/jetty/base/be' : '/home/vagrant/catalog-be' )
-project.ext.set("FE_REMOTE", NEW_VAG ? '/opt/app/jetty/base/fe' : '/home/vagrant/catalog-fe' )
-project.ext.set("VAGRANT_USER",     NEW_VAG ? 'm11981' : 'vagrant' )
-project.ext.set("RSA_PRIVATE_KEY_PATH", NEW_VAG ? "$VAGRANT_HOME/id_rsa" : '' )
-project.ext.set("VAGRANT_PASSWORD", NEW_VAG ? 'Aa123456' : 'vagrant' )
+project.ext.set("BE_REMOTE", isProductionVM() ? '/opt/app/jetty/base/be' : '/home/vagrant/catalog-be' )
+project.ext.set("FE_REMOTE", isProductionVM() ? '/opt/app/jetty/base/fe' : '/home/vagrant/catalog-fe' )
+project.ext.set("VAGRANT_USER",     isProductionVM() ? 'm11981' : 'vagrant' )
+project.ext.set("RSA_PRIVATE_KEY_PATH", isProductionVM() ? "$VAGRANT_HOME/id_rsa" : '' )
+project.ext.set("VAGRANT_PASSWORD", isProductionVM() ? 'Aa123456' : 'vagrant' )
 project.ext.set("X_FOLDER",'/xFolder' )
 project.ext.set("BE_DEPENDENCIES", 'common-be,common-app-api,catalog-dao,catalog-model,security-utils' )
-project.ext.set("command", [ (ALL) :  [  (HEALTH) : { NEW_VAG ? 'sudo curl -i http://localhost:8181/sdc1/rest/healthCheck' : 'curl -i localhost:8080/sdc2/rest/healthCheck' } ,
-                                         (KILL) : { NEW_VAG ? 'sudo pkill java' : 'pkill java'} ]  ,   //  TODO: refine kill only for services
-                             (BACKEND) : [  (START) : { NEW_VAG ? 'sudo service jettyBE start' : 'service catalog-be start'} ,
-                                            (STOP) : { NEW_VAG ? 'sudo service jettyBE stop' : 'service catalog-be stop'} ,
-                                            (RESTART) : { NEW_VAG ? 'sudo service jettyBE restart' : 'service catalog-be restart'}]  ,
-                             (DB) : [  (START) : { NEW_VAG ? 'sudo service cassandra start' : 'start-asdc-storage.sh' } ,
-                                       (STOP) : { NEW_VAG ? 'sudo service cassandra stop' : 'service cassandra stop'} ,
-                                       (RESTART) : { NEW_VAG ? 'sudo service cassandra restart' : 'service cassandra restart'} ]  ,
-                             (FRONTEND): [  (START) : {  NEW_VAG ? 'sudo service jettyFE start' : 'service catalog-fe start'   } ,
-                                            (STOP) : { NEW_VAG ? 'sudo service jettyFE stop' : 'service catalog-fe stop'} ,
-                                            (RESTART) : {  NEW_VAG ? 'sudo service jettyFE restart' : 'service catalog-fe restart'   } ]  ,
-                             (CACHING): [  (START) : { NEW_VAG ? 'sudo service elasticsearch start' : 'echo "starting es is not yet supported"'   } ],
-                             (SECURITY): [  (START) : {  NEW_VAG ? 'sudo docker start sdc-WebSeal-Simulator' : 'service webseal-simulator start'   } ,
-                                            (STOP) : { NEW_VAG ? 'sudo docker stop sdc-WebSeal-Simulator' : 'service webseal-simulator stop'} ,
-                                            (RESTART) : { NEW_VAG ? 'sudo docker restart sdc-WebSeal-Simulator' : 'service webseal-simulator restart'}]
+project.ext.set("command", [ (ALL) :  [  (HEALTH) : { isProductionVM() ? 'sudo curl -i http://localhost:8181/sdc1/rest/healthCheck' : isOnapVM() ? 'sudo -i /data/scripts/docker_health.sh' : 'curl -i localhost:8080/sdc2/rest/healthCheck' } ,
+                                         (KILL) : { isProductionVM() ? 'sudo pkill java' : isOnapVM() ? 'sudo -i docker kill $(docker ps -q)' : 'pkill java'} ]  ,   //  TODO: refine kill only for services
+                             (BACKEND) : [  (START) : { isProductionVM() ? 'sudo service jettyBE start' : isOnapVM() ? 'sudo -i docker start sdc-BE' : 'service catalog-be start'} ,
+                                            (STOP) : { isProductionVM() ? 'sudo service jettyBE stop' : isOnapVM() ? 'sudo -i docker stop sdc-BE' : 'service catalog-be stop'} ,
+                                            (RESTART) : { isProductionVM() ? 'sudo service jettyBE restart' : isOnapVM() ? 'sudo -i docker restart sdc-BE' : 'service catalog-be restart'}]  ,
+                             (DB) : [  (START) : { isProductionVM() ? 'sudo service cassandra start' :  isOnapVM() ? 'sudo -i docker start sdc-cs' : 'start-asdc-storage.sh' } ,
+                                       (STOP) : { isProductionVM() ? 'sudo service cassandra stop' : isOnapVM() ? 'sudo -i docker stop sdc-cs' : 'service cassandra stop'} ,
+                                       (RESTART) : { isProductionVM() ? 'sudo service cassandra restart' : isOnapVM() ? 'sudo -i docker restart sdc-cs' : 'service cassandra restart'} ]  ,
+                             (FRONTEND): [  (START) : {  isProductionVM() ? 'sudo service jettyFE start' : isOnapVM() ? 'sudo -i docker start sdc-FE' : 'service catalog-fe start'   } ,
+                                            (STOP) : { isProductionVM() ? 'sudo service jettyFE stop' : isOnapVM() ? 'sudo -i docker stop sdc-FE' : 'service catalog-fe stop'} ,
+                                            (RESTART) : {  isProductionVM() ? 'sudo service jettyFE restart' : isOnapVM() ? 'sudo -i docker restart sdc-FE' : 'service catalog-fe restart'   } ]  ,
+                             (CACHING): [  (START) : { isProductionVM() ? 'sudo service elasticsearch start' : isOnapVM() ? 'sudo -i docker start sdc-es' : 'echo "starting es is not yet supported"'   } ],
+                             (SECURITY): [  (START) : {  isProductionVM() ? 'sudo docker start sdc-WebSeal-Simulator' : isOnapVM() ? 'sudo -i /data/scripts/simulator_docker_run.sh -r $(echo $(sudo -i docker images onap/sdc-simulator | grep onap/sdc-simulator | head -1 |  awk \'{print $2}\'))' :  'service webseal-simulator start'   } ,
+                                            (STOP) : { isProductionVM() ? 'sudo docker stop sdc-WebSeal-Simulator' : isOnapVM() ? 'sudo -i docker stop sdc-sim' : 'service webseal-simulator stop'} ,
+                                            (RESTART) : { isProductionVM() ? 'sudo docker restart sdc-WebSeal-Simulator' : isOnapVM() ? 'sudo -i docker restart sdc-sim' : 'service webseal-simulator restart'}]
                              ] )      //abstraction level to shell scripts , support old and new vagrant bash commands
 
 //icons
@@ -108,31 +122,6 @@ project.ext.set("toggleHealthItemView" , null )
 project.ext.set("IS_MVN_INSTALL",false)
 project.ext.set("executor" , null )
 project.ext.set("lockObj" , new Object() )
-/*compile?.doLast {
-    println "2. hello compile2"
-}*/
-
-/*def post(String host , String serviceName,String msg){
-    // POST
-    def post = new URL("$host/$serviceName").openConnection();
-    def message = '{"message":"this is a message"}'
-    post.setRequestMethod("POST")
-    post.setDoOutput(true)
-    post.setRequestProperty("Content-Type", "application/json")
-    post.getOutputStream().write(message.getBytes("UTF-8"));
-    def postRC = post.getResponseCode();
-    println(postRC);
-    if( postRC.equals(200)) {
-        println(post.getInputStream().getText());
-    }
-}
-
-def postStat( long operationTime, String user , String meta  ){
-    def host = 'http://135.76.123.70:8888'
-    def params = "user=$user&meta=$meta"
-    post host , "UserStats" , params
-}*/
-
 
 def hash( List list ){
     def map = list?.collectEntries { File file -> [(file?.absolutePath) : file?.text?.hashCode() ]}
@@ -154,7 +143,7 @@ def pomChanges(){
     changes?.each { pomChangesMap[it] = new File(it)?.text?.hashCode() }
     println "\n\n[MasterD][POM]--> pom map -> $pomChangesMap"
 
-    println """ 
+    println """
             ****** POM changes detection finished after -> ${System.currentTimeMillis()- started}ms  ******
             """
 
@@ -285,9 +274,17 @@ remotes {
         port = 2222
         user = VAGRANT_USER
         password = VAGRANT_PASSWORD
-        identity = NEW_VAG ? new File(RSA_PRIVATE_KEY_PATH) : null
+        identity = isProductionVM() ? new File(RSA_PRIVATE_KEY_PATH) : null
     }
 
+}
+
+def isProductionVM(){
+  return VM_TYPE?.equals(Environment.PROD_VAGRANT)
+}
+
+def isOnapVM(){
+    return VM_TYPE?.equals(Environment.ONAP_VAGRANT)
 }
 
 def gitLatest(){
@@ -336,7 +333,7 @@ def cleanTitan(){
         }
         ssh.run {
             session(remotes.vagrant) {
-                execute "cqlsh -e 'DROP KEYSPACE titan;'"
+                execute "sudo cqlsh -e 'DROP KEYSPACE titan;'"
                 println "[MasterD][DB_DROP]-> Dropped 'titan' KEYSPACE."
             }
         }
@@ -470,6 +467,8 @@ def copyFE() {
             println "[MasterD][FrontEnd] copying ${file.length()/(1024*1024)} MB, from ${file?.name} to $FE_REMOTE/webapps"
             ssh.run {
                 session(remotes.vagrant) {
+                    if ( isProductionVM() )
+                        execute 'sudo chmod -R 777 /opt/app/jetty/base/fe/webapps'
                     put from: file?.absolutePath , into: "$FE_REMOTE/webapps"
                 }
             }
@@ -499,6 +498,8 @@ def copyBE(){
             println "[MasterD][BackEnd] copying ${file.length()/(1024*1024)} MB, from ${file?.name} to $BE_REMOTE/webapps"
             ssh.run {
                 session(remotes.vagrant) {
+                    if (isProductionVM())
+                        execute 'sudo chmod -R 777 /opt/app/jetty/base/be/webapps'
                     put from: file?.absolutePath , into: "$BE_REMOTE/webapps"
                 }
             }
@@ -794,7 +795,7 @@ def restartBackend(){
         }
         ssh.run {
             session(remotes.vagrant) {
-                println msg("[MasterD] restarting backend sever")
+                println msg("[MasterD] restarting backend server")
 
                 execute command[BACKEND][RESTART]()
             }
@@ -803,6 +804,51 @@ def restartBackend(){
     println """[MasterD]->  finished !!
 					    """
 }
+
+def startSecurity(){
+    println "[MasterD] starting security&simulator engine"
+    execSafe {
+        ssh.settings {
+            knownHosts = allowAnyHosts
+        }
+        ssh.run {
+            session(remotes.vagrant) {
+                execute command[SECURITY][START]()
+            }
+        }
+    }
+    println """[MasterD]->  finished !!
+					    """
+}
+task startSecurity(){
+    doLast {
+        startSecurity()
+    }
+}
+
+def stopSecurity(){
+    println "[MasterD] stopping security&simulator engine"
+    execSafe {
+        ssh.settings {
+            knownHosts = allowAnyHosts
+        }
+        ssh.run {
+            session(remotes.vagrant) {
+                execute command[SECURITY][STOP]()
+            }
+        }
+    }
+    println """[MasterD]->  finished !!
+					    """
+}
+
+task stopSecurity(){
+    doLast {
+        stopSecurity()
+    }
+}
+
+
 //todo- remove this if you want to auto-deploy on every file save
 /*
 compileJava.doFirst{
@@ -874,7 +920,7 @@ def importNormative(){
 											importNormative
 								*-*-************************************-*-*
 							"""
-                execute "python -v $BE_REMOTE/scripts/import/tosca/importNormativeAll.py"
+                execute "sudo python -v $BE_REMOTE/scripts/import/tosca/importNormativeAll.py"
             }
         }
     }
@@ -883,17 +929,17 @@ def importNormative(){
 def startAll(){
     def startCassandra = """
                         #!/bin/bash
-                        
+
                         cassandra&
                         elasticsearch -d
-                        
+
                         #Wait until ES is up
                         until curl localhost:9200/_cluster/health;
                         do
                             printf "."
                             sleep 3
                         done
-                        
+
                         # Create Elastic Mapping if not exist in ES
                         createESMapping.sh
                         """
@@ -904,7 +950,7 @@ def startAll(){
 								starting all SDC services(DB,BE,FE,Webseal)
 							*-*-************************************-*-*
 				"""
-                if ( NEW_VAG ){
+                if ( isProductionVM() ){
                     execute command[DB][START]()
                     Thread.sleep(5000)
                     execute command[CACHING][START]()
@@ -1098,11 +1144,13 @@ ext.updateTray = { STATUS status ->
         Menu backendMenu = new Menu("Backend");
         Menu frontendMenu = new Menu("Frontend");
         Menu dbMenu = new Menu("Database");
+        Menu securityMenu = new Menu("Security");
         try{
             deployMasterMenu.setFont(new Font("Cooper Black" ,Font.BOLD ,14f ))
             backendMenu.setFont(new Font("Cooper Black" ,Font.PLAIN ,13f ))
             frontendMenu.setFont(new Font("Cooper Black" ,Font.PLAIN ,13f ))
             dbMenu.setFont(new Font("Cooper Black" ,Font.PLAIN ,13f ))
+            securityMenu.setFont(new Font("Cooper Black" ,Font.PLAIN ,13f ))
         }catch(Exception e){
             println e
         }
@@ -1129,7 +1177,7 @@ ext.updateTray = { STATUS status ->
         MenuItem copyBeWarItem = new MenuItem("[BE] Copy War");
         backendMenu.add(startItem);
         backendMenu.add(stopItem);
-        backendMenu.add(copyBeWarItem);
+        (isOnapVM()) ?: backendMenu.add(copyBeWarItem);
 
         //FE menu
         MenuItem startFEItem = new MenuItem("[FE] Start");
@@ -1137,7 +1185,7 @@ ext.updateTray = { STATUS status ->
         MenuItem copyFeWarItem = new MenuItem("[FE] Copy War");
         frontendMenu.add(startFEItem);
         frontendMenu.add(stopFEItem);
-        frontendMenu.add(copyFeWarItem);
+        (isOnapVM()) ?: frontendMenu.add(copyFeWarItem);
 
         //DB menu
         MenuItem startDBItem = new MenuItem("[DB] Start");
@@ -1149,7 +1197,11 @@ ext.updateTray = { STATUS status ->
         dbMenu.add(backupDBItem);
         dbMenu.add(restoreDBItem);
         //endregion
-
+        //Security Menu
+        MenuItem startSecurityItem = new MenuItem("[Security] Start");
+        MenuItem stopSecurityItem = new MenuItem("[Security] Stop");
+        securityMenu.add(startSecurityItem)
+        securityMenu.add(stopSecurityItem)
 
         MenuItem killItem = new MenuItem("Kill All");
         MenuItem startAllItem = new MenuItem("Start All");
@@ -1161,22 +1213,24 @@ ext.updateTray = { STATUS status ->
 
         toggleHealthItemView = toggleHealthItem;
 
-        popup.add(hotswapItem);
-        popup?.addSeparator();
-        popup.add(deployMasterMenu);
-        popup?.addSeparator();
+        (isOnapVM()) ?: popup.add(hotswapItem);
+        (isOnapVM()) ?:popup?.addSeparator();
+        (isOnapVM()) ?: popup.add(deployMasterMenu);
+        (isOnapVM()) ?:popup?.addSeparator();
         popup.add(backendMenu)
         popup.add(frontendMenu)
-        popup.add(dbMenu)
+        (isOnapVM()) ?: popup.add(dbMenu)
+        popup?.addSeparator();
+        popup?.add(securityMenu)
         popup?.addSeparator();
         popup.add(startAllItem);
         popup.add(killItem);
         popup?.addSeparator();
         popup.add(toggleHealthItem);
         popup.add(healthInfoItem);
-        popup?.addSeparator();
-        popup.add(importItem);
-        popup.add(logsItem);
+        (isOnapVM()) ?:popup?.addSeparator();
+        (isOnapVM()) ?: popup.add(importItem);
+        (isOnapVM()) ?: popup.add(logsItem);
         popup?.addSeparator();
         popup.add(exitItem);
         //endregion UI
@@ -1201,6 +1255,9 @@ ext.updateTray = { STATUS status ->
         ActionListener killJavaListener = newListener { killJava() }
 
         ActionListener startAllListener = newListener { parallel { startAll() } }
+
+        ActionListener startSecurityListener = newListener { startSecurity() }
+        ActionListener stopSecurityListener = newListener { stopSecurity() }
 
         ActionListener listener5 = new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -1329,6 +1386,8 @@ ext.updateTray = { STATUS status ->
         stopItem.addActionListener(stopBackendListener)
         startItem.addActionListener(startBEListener)
         copyBeWarItem.addActionListener(copyBeWarListener);
+        startSecurityItem.addActionListener(startSecurityListener)
+        stopSecurityItem.addActionListener(stopSecurityListener)
         killItem.addActionListener(killJavaListener)
         startAllItem.addActionListener(startAllListener)
         importItem.addActionListener(listener5)

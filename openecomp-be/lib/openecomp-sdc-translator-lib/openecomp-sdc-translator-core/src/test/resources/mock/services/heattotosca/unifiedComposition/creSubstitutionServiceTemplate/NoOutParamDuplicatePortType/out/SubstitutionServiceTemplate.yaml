@@ -11,24 +11,15 @@ node_types:
     derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
 topology_template:
   inputs:
-    port_FSB1_Internal_mac_address:
-      type: string
-      required: true
     port_FSB1_Internal_ip_requirements:
       type: list
       required: true
       entry_schema:
         type: org.openecomp.datatypes.network.IpRequirements
-    port_FSB2_Internal_2_mac_requirements:
-      type: org.openecomp.datatypes.network.MacRequirements
-      required: true
     port_FSB1_Internal_subnetpoolid:
       type: string
       required: true
     port_FSB2_Internal_2_subnetpoolid:
-      type: string
-      required: true
-    port_FSB1_OAM_subnetpoolid:
       type: string
       required: true
     compute_FSB1_metadata:
@@ -36,6 +27,79 @@ topology_template:
       required: true
       entry_schema:
         type: json
+    port_FSB2_Internal_2_order:
+      type: integer
+      required: true
+    vm_flavor_name:
+      type: string
+      required: true
+    port_FSB1_Internal_related_networks:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.RelatedNetworksAssignments
+    port_FSB1_OAM_vlan_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.VlanRequirements
+    port_FSB1_Internal_vlan_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.VlanRequirements
+    port_FSB1_Internal_network:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_FSB2_Internal_1_order:
+      type: integer
+      required: true
+    port_FSB2_Internal_2_ip_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.IpRequirements
+    port_FSB1_OAM_network:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_FSB2_Internal_2_related_networks:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.RelatedNetworksAssignments
+    port_FSB2_Internal_1_network:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_FSB2_Internal_2_network_role:
+      type: string
+      required: true
+    port_FSB1_OAM_network_role:
+      type: string
+      required: true
+    port_FSB2_Internal_1_network_role:
+      type: string
+      required: true
+    port_FSB2_Internal_2_network_role_tag:
+      type: string
+      required: true
+    port_FSB2_Internal_1_subnetpoolid:
+      type: string
+      required: true
+    port_FSB1_Internal_mac_address:
+      type: string
+      required: true
+    port_FSB2_Internal_2_mac_requirements:
+      type: org.openecomp.datatypes.network.MacRequirements
+      required: true
+    port_FSB1_OAM_subnetpoolid:
+      type: string
+      required: true
     port_FSB2_Internal_1_exCP_naming:
       type: org.openecomp.datatypes.Naming
       required: true
@@ -47,13 +111,7 @@ topology_template:
       required: true
       entry_schema:
         type: org.openecomp.datatypes.network.IpRequirements
-    port_FSB2_Internal_2_order:
-      type: integer
-      required: true
     port_FSB2_Internal_1_mac_address:
-      type: string
-      required: true
-    vm_flavor_name:
       type: string
       required: true
     port_FSB2_Internal_2_mac_address:
@@ -72,16 +130,6 @@ topology_template:
     port_FSB1_Internal_network_role_tag:
       type: string
       required: true
-    port_FSB1_OAM_vlan_requirements:
-      type: list
-      required: true
-      entry_schema:
-        type: org.openecomp.datatypes.network.VlanRequirements
-    port_FSB1_Internal_vlan_requirements:
-      type: list
-      required: true
-      entry_schema:
-        type: org.openecomp.datatypes.network.VlanRequirements
     port_FSB1_Internal_exCP_naming:
       type: org.openecomp.datatypes.Naming
       required: true
@@ -99,11 +147,6 @@ topology_template:
       required: true
       entry_schema:
         type: string
-    port_FSB1_Internal_network:
-      type: list
-      required: true
-      entry_schema:
-        type: string
     index_value:
       type: integer
       description: Index value of this substitution service template runtime instance
@@ -111,14 +154,6 @@ topology_template:
       default: 0
       constraints:
       - greater_or_equal: 0
-    port_FSB2_Internal_1_order:
-      type: integer
-      required: true
-    port_FSB2_Internal_2_ip_requirements:
-      type: list
-      required: true
-      entry_schema:
-        type: org.openecomp.datatypes.network.IpRequirements
     port_FSB1_OAM_order:
       type: integer
       required: true
@@ -127,36 +162,27 @@ topology_template:
       required: true
       entry_schema:
         type: org.openecomp.datatypes.network.VlanRequirements
-    port_FSB1_OAM_network:
-      type: list
-      required: true
-      entry_schema:
-        type: string
-    port_FSB2_Internal_1_network:
-      type: list
-      required: true
-      entry_schema:
-        type: string
     port_FSB2_Internal_2_network:
       type: list
       required: true
       entry_schema:
         type: string
-    port_FSB2_Internal_2_network_role:
-      type: string
-      required: true
     port_FSB2_Internal_1_network_role_tag:
       type: string
       required: true
     port_FSB1_Internal_order:
       type: integer
       required: true
-    port_FSB1_OAM_network_role:
-      type: string
+    port_FSB2_Internal_1_related_networks:
+      type: list
       required: true
-    port_FSB2_Internal_1_network_role:
-      type: string
+      entry_schema:
+        type: org.openecomp.datatypes.network.RelatedNetworksAssignments
+    port_FSB1_OAM_related_networks:
+      type: list
       required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.RelatedNetworksAssignments
     port_FSB1_OAM_network_role_tag:
       type: string
       required: true
@@ -173,19 +199,19 @@ topology_template:
       required: true
       entry_schema:
         type: org.openecomp.datatypes.heat.neutron.port.FixedIps
-    port_FSB2_Internal_2_network_role_tag:
-      type: string
-      required: true
     port_FSB2_Internal_2_exCP_naming:
       type: org.openecomp.datatypes.Naming
-      required: true
-    port_FSB2_Internal_1_subnetpoolid:
-      type: string
       required: true
   node_templates:
     FSB1_FSB1_Internal:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
+        mac_requirements:
+          get_input: port_FSB1_Internal_mac_requirements
+        order:
+          get_input: port_FSB1_Internal_order
+        mac_address:
+          get_input: port_FSB1_Internal_mac_address
         exCP_naming:
           get_input: port_FSB1_Internal_exCP_naming
         vlan_requirements:
@@ -193,12 +219,10 @@ topology_template:
         subinterface_indicator: false
         ip_requirements:
           get_input: port_FSB1_Internal_ip_requirements
+        related_networks:
+          get_input: port_FSB1_Internal_related_networks
         network_role_tag:
           get_input: port_FSB1_Internal_network_role_tag
-        mac_requirements:
-          get_input: port_FSB1_Internal_mac_requirements
-        order:
-          get_input: port_FSB1_Internal_order
         network_role:
           get_input: port_FSB1_Internal_network_role
         subnetpoolid:
@@ -207,8 +231,6 @@ topology_template:
           get_input:
           - port_FSB1_Internal_network
           - index_value
-        mac_address:
-          get_input: port_FSB1_Internal_mac_address
       requirements:
       - binding:
           capability: tosca.capabilities.network.Bindable
@@ -217,6 +239,12 @@ topology_template:
     FSB1_FSB2_Internal_1:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
+        mac_requirements:
+          get_input: port_FSB2_Internal_1_mac_requirements
+        order:
+          get_input: port_FSB2_Internal_1_order
+        mac_address:
+          get_input: port_FSB2_Internal_1_mac_address
         exCP_naming:
           get_input: port_FSB2_Internal_1_exCP_naming
         vlan_requirements:
@@ -224,12 +252,10 @@ topology_template:
         subinterface_indicator: false
         ip_requirements:
           get_input: port_FSB2_Internal_1_ip_requirements
+        related_networks:
+          get_input: port_FSB2_Internal_1_related_networks
         network_role_tag:
           get_input: port_FSB2_Internal_1_network_role_tag
-        mac_requirements:
-          get_input: port_FSB2_Internal_1_mac_requirements
-        order:
-          get_input: port_FSB2_Internal_1_order
         network_role:
           get_input: port_FSB2_Internal_1_network_role
         subnetpoolid:
@@ -238,8 +264,6 @@ topology_template:
           get_input:
           - port_FSB2_Internal_1_network
           - index_value
-        mac_address:
-          get_input: port_FSB2_Internal_1_mac_address
       requirements:
       - binding:
           capability: tosca.capabilities.network.Bindable
@@ -248,6 +272,12 @@ topology_template:
     FSB1_FSB2_Internal_2:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
+        mac_requirements:
+          get_input: port_FSB2_Internal_2_mac_requirements
+        order:
+          get_input: port_FSB2_Internal_2_order
+        mac_address:
+          get_input: port_FSB2_Internal_2_mac_address
         exCP_naming:
           get_input: port_FSB2_Internal_2_exCP_naming
         vlan_requirements:
@@ -255,12 +285,10 @@ topology_template:
         subinterface_indicator: false
         ip_requirements:
           get_input: port_FSB2_Internal_2_ip_requirements
+        related_networks:
+          get_input: port_FSB2_Internal_2_related_networks
         network_role_tag:
           get_input: port_FSB2_Internal_2_network_role_tag
-        mac_requirements:
-          get_input: port_FSB2_Internal_2_mac_requirements
-        order:
-          get_input: port_FSB2_Internal_2_order
         network_role:
           get_input: port_FSB2_Internal_2_network_role
         subnetpoolid:
@@ -269,8 +297,6 @@ topology_template:
           get_input:
           - port_FSB2_Internal_2_network
           - index_value
-        mac_address:
-          get_input: port_FSB2_Internal_2_mac_address
       requirements:
       - binding:
           capability: tosca.capabilities.network.Bindable
@@ -279,6 +305,10 @@ topology_template:
     FSB1_FSB1_OAM:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
+        mac_requirements:
+          get_input: port_FSB1_OAM_mac_requirements
+        order:
+          get_input: port_FSB1_OAM_order
         exCP_naming:
           get_input: port_FSB1_OAM_exCP_naming
         vlan_requirements:
@@ -286,20 +316,18 @@ topology_template:
         subinterface_indicator: false
         ip_requirements:
           get_input: port_FSB1_OAM_ip_requirements
+        related_networks:
+          get_input: port_FSB1_OAM_related_networks
         network_role_tag:
           get_input: port_FSB1_OAM_network_role_tag
-        mac_requirements:
-          get_input: port_FSB1_OAM_mac_requirements
-        order:
-          get_input: port_FSB1_OAM_order
         network_role:
           get_input: port_FSB1_OAM_network_role
-        subnetpoolid:
-          get_input: port_FSB1_OAM_subnetpoolid
         fixed_ips:
           get_input:
           - port_FSB1_OAM_fixed_ips
           - index_value
+        subnetpoolid:
+          get_input: port_FSB1_OAM_subnetpoolid
         network:
           get_input:
           - port_FSB1_OAM_network

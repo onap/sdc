@@ -1048,6 +1048,12 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: org.openecomp.datatypes.heat.neutron.port.FixedIps
+      port_pcm_port_3_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       index_value:
         type: integer
         description: Index value of this substitution service template runtime instance
@@ -1086,6 +1092,12 @@ node_types:
         type: string
         required: true
         status: SUPPORTED
+      port_pcm_port_2_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       port_pcm_port_3_network:
         type: list
         required: true
@@ -1594,6 +1606,12 @@ node_types:
         type: string
         required: true
         status: SUPPORTED
+      port_pcm_port_00_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       port_pcm_port_00_ip_requirements:
         type: list
         required: true
@@ -1613,6 +1631,12 @@ node_types:
         description: CPS network gateway
         required: true
         status: SUPPORTED
+      port_pcm_port_01_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       security_group_name:
         type: string
         description: the name of security group
@@ -2126,6 +2150,12 @@ node_types:
         type: string
         required: true
         status: SUPPORTED
+      port_1c2_t1_port_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       port_1c2_t2_port_network_role:
         type: string
         required: true
@@ -2166,6 +2196,12 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: org.openecomp.datatypes.network.IpRequirements
+      port_1c2_t2_port_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       port_1c2_t1_port_mac_requirements:
         type: org.openecomp.datatypes.network.MacRequirements
         required: true
@@ -2682,6 +2718,12 @@ node_types:
         type: string
         required: true
         status: SUPPORTED
+      port_pcm_port_1_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       port_pcm_port_1_network_role_tag:
         type: string
         required: true
@@ -2726,6 +2768,12 @@ node_types:
         type: string
         required: true
         status: SUPPORTED
+      port_pcm_port_0_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       port_pcm_port_1_subnetpoolid:
         type: string
         required: true
@@ -3271,6 +3319,12 @@ node_types:
         type: string
         required: true
         status: SUPPORTED
+      port_1b_t2_port_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       port_1b_t1_port_ip_requirements:
         type: list
         required: true
@@ -3307,6 +3361,12 @@ node_types:
         type: string
         required: true
         status: SUPPORTED
+      port_1b_t1_port_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       port_1b_t2_port_mac_requirements:
         type: org.openecomp.datatypes.network.MacRequirements
         required: true
@@ -3831,6 +3891,12 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: string
+      port_1c1_t2_port_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       port_1c1_t2_port_network_role_tag:
         type: string
         required: true
@@ -3839,6 +3905,12 @@ node_types:
         type: string
         required: true
         status: SUPPORTED
+      port_1c1_t1_port_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       port_1c1_t1_port_ip_requirements:
         type: list
         required: true
@@ -4456,6 +4528,12 @@ node_types:
         type: string
         required: true
         status: SUPPORTED
+      port_1a_t2_port_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       port_1a_t2_port_ip_requirements:
         type: list
         required: true
@@ -4492,6 +4570,12 @@ node_types:
         status: SUPPORTED
         constraints:
         - greater_or_equal: 0
+      port_1a_t1_port_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       port_1a_t1_port_network_role_tag:
         type: string
         required: true
@@ -4990,6 +5074,12 @@ node_types:
         type: string
         required: true
         status: SUPPORTED
+      port_1b_t2_port_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       port_1b_t1_port_ip_requirements:
         type: list
         required: true
@@ -5026,6 +5116,12 @@ node_types:
         type: string
         required: true
         status: SUPPORTED
+      port_1b_t1_port_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       port_1b_t2_port_mac_requirements:
         type: org.openecomp.datatypes.network.MacRequirements
         required: true

@@ -11,6 +11,11 @@ node_types:
     derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
 topology_template:
   inputs:
+    port_plt_data_0_port_related_networks:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.RelatedNetworksAssignments
     port_plt_oam_0_port_exCP_naming:
       type: org.openecomp.datatypes.Naming
       required: true
@@ -105,6 +110,11 @@ topology_template:
       required: true
       entry_schema:
         type: json
+    port_plt_oam_0_port_related_networks:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.RelatedNetworksAssignments
     port_plt_internal_0_port_mac_requirements:
       type: org.openecomp.datatypes.network.MacRequirements
       required: true
@@ -140,6 +150,11 @@ topology_template:
       required: true
       entry_schema:
         type: string
+    port_plt_internal_0_port_related_networks:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.RelatedNetworksAssignments
     port_plt_oam_0_port_order:
       type: integer
       required: true
@@ -246,6 +261,8 @@ topology_template:
         vlan_requirements:
           get_input: port_plt_internal_0_port_vlan_requirements
         subinterface_indicator: false
+        related_networks:
+          get_input: port_plt_internal_0_port_related_networks
         ip_requirements:
           get_input: port_plt_internal_0_port_ip_requirements
         network_role_tag:
@@ -289,6 +306,8 @@ topology_template:
         vlan_requirements:
           get_input: port_plt_data_0_port_vlan_requirements
         subinterface_indicator: false
+        related_networks:
+          get_input: port_plt_data_0_port_related_networks
         ip_requirements:
           get_input: port_plt_data_0_port_ip_requirements
         network_role_tag:
@@ -367,6 +386,8 @@ topology_template:
         vlan_requirements:
           get_input: port_plt_oam_0_port_vlan_requirements
         subinterface_indicator: false
+        related_networks:
+          get_input: port_plt_oam_0_port_related_networks
         ip_requirements:
           get_input: port_plt_oam_0_port_ip_requirements
         network_role_tag:

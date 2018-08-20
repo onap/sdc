@@ -14,12 +14,6 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: string
-      subinterface_vlan1_ip_v6_address:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: string
       subinterface_vlan1_aap_sec_untrusted_ip_prefix:
         type: list
         required: true
@@ -27,12 +21,6 @@ node_types:
         entry_schema:
           type: string
       compute_vdbe_availability_zone:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: string
-      subinterface_vlan1_aap_untrusted_ip_prefix:
         type: list
         required: true
         status: SUPPORTED
@@ -52,38 +40,16 @@ node_types:
         type: string
         required: true
         status: SUPPORTED
-      port_vdbe_untr_2_port_virtual_network_refs:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: json
       subinterface_vlan1_counter:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
           type: float
-      subinterface_vlan1_subinterfaces_name_prefix:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: string
       vm_image_name:
         type: string
         required: true
         status: SUPPORTED
-      port_vdbe_untr_1_port_network_role:
-        type: string
-        required: true
-        status: SUPPORTED
-      port_vdbe_untr_2_port_name:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: string
       port_vdbe_untr_2_port_network_role:
         type: string
         required: true
@@ -100,12 +66,6 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: string
-      port_vdbe_untr_1_port_virtual_network_refs:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: json
       port_vdbe_untr_1_port_ip_requirements:
         type: list
         required: true
@@ -122,6 +82,112 @@ node_types:
         type: org.openecomp.datatypes.Naming
         required: true
         status: SUPPORTED
+      port_vdbe_untr_2_port_ip_requirements:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.IpRequirements
+      port_vdbe_untr_1_port_mac_requirements:
+        type: org.openecomp.datatypes.network.MacRequirements
+        required: true
+        status: SUPPORTED
+      port_vdbe_untr_1_port_order:
+        type: integer
+        required: true
+        status: SUPPORTED
+      port_vdbe_untr_1_port_subnetpoolid:
+        type: string
+        required: true
+        status: SUPPORTED
+      port_vdbe_untr_2_port_mac_requirements:
+        type: org.openecomp.datatypes.network.MacRequirements
+        required: true
+        status: SUPPORTED
+      port_vdbe_untr_1_port_virtual_machine_interface_allowed_address_pairs:
+        type: org.openecomp.datatypes.heat.contrailV2.virtual.machine.subInterface.AddressPairs
+        required: true
+        status: SUPPORTED
+      subinterface_vlan1_mac_address:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      subinterface_vlan1_aap_untrusted_ip_prefix_len:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      subinterface_vlan1_ip_address:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      compute_vdbe_name:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_vdbe_untr_1_port_network_role_tag:
+        type: string
+        required: true
+        status: SUPPORTED
+      subinterface_vlan1_ip_v6_address:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_vdbe_untr_1_port_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
+      subinterface_vlan1_aap_untrusted_ip_prefix:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_vdbe_untr_2_port_virtual_network_refs:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
+      subinterface_vlan1_subinterfaces_name_prefix:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_vdbe_untr_1_port_network_role:
+        type: string
+        required: true
+        status: SUPPORTED
+      port_vdbe_untr_2_port_name:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_vdbe_untr_2_port_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
+      port_vdbe_untr_1_port_virtual_network_refs:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
       subinterface_vlan1_vn_network_list:
         type: list
         required: true
@@ -142,20 +208,6 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: float
-      port_vdbe_untr_2_port_ip_requirements:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: org.openecomp.datatypes.network.IpRequirements
-      port_vdbe_untr_1_port_mac_requirements:
-        type: org.openecomp.datatypes.network.MacRequirements
-        required: true
-        status: SUPPORTED
-      port_vdbe_untr_1_port_order:
-        type: integer
-        required: true
-        status: SUPPORTED
       subinterface_vlan1_parent_interface:
         type: list
         required: true
@@ -180,10 +232,6 @@ node_types:
         type: org.openecomp.datatypes.Naming
         required: true
         status: SUPPORTED
-      port_vdbe_untr_1_port_subnetpoolid:
-        type: string
-        required: true
-        status: SUPPORTED
       subinterface_vlan1_optional_property_1:
         type: list
         required: true
@@ -196,39 +244,13 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: string
-      port_vdbe_untr_2_port_mac_requirements:
-        type: org.openecomp.datatypes.network.MacRequirements
-        required: true
-        status: SUPPORTED
       subinterface_vlan1_optional_property_2:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
           type: string
-      port_vdbe_untr_1_port_virtual_machine_interface_allowed_address_pairs:
-        type: org.openecomp.datatypes.heat.contrailV2.virtual.machine.subInterface.AddressPairs
-        required: true
-        status: SUPPORTED
       subinterface_vlan1_aap_sec_untrusted_ip_prefix_len:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: string
-      subinterface_vlan1_mac_address:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: string
-      subinterface_vlan1_aap_untrusted_ip_prefix_len:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: string
-      subinterface_vlan1_ip_address:
         type: list
         required: true
         status: SUPPORTED
@@ -236,16 +258,6 @@ node_types:
           type: string
       port_vdbe_untr_2_port_virtual_machine_interface_allowed_address_pairs:
         type: org.openecomp.datatypes.heat.contrailV2.virtual.machine.subInterface.AddressPairs
-        required: true
-        status: SUPPORTED
-      compute_vdbe_name:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: string
-      port_vdbe_untr_1_port_network_role_tag:
-        type: string
         required: true
         status: SUPPORTED
       port_vdbe_untr_1_port_vlan_requirements:

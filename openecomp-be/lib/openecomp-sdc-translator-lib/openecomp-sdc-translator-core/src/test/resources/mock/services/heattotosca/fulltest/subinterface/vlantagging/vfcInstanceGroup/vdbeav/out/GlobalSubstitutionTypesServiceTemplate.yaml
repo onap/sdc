@@ -126,6 +126,12 @@ node_types:
         type: org.openecomp.datatypes.heat.contrailV2.virtual.machine.subInterface.AddressPairs
         required: true
         status: SUPPORTED
+      port_vdbe_untr_vmi_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       subinterface_vdbeav_subinterface_heat_template_aap_address_mode:
         type: list
         required: true
@@ -230,6 +236,12 @@ node_types:
         type: org.openecomp.datatypes.Naming
         required: true
         status: SUPPORTED
+      port_vdbe_ctrl_0_port_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       port_vdbe_ctrl_0_port_network_role_tag:
         type: string
         required: true
@@ -320,6 +332,12 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: string
+      port_vdbe_trst_0_port_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       port_vdbe_fabr_0_port_virtual_network_refs:
         type: list
         required: true
@@ -354,10 +372,22 @@ node_types:
         type: string
         required: true
         status: SUPPORTED
+      port_vdbe_oam_0_port_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       port_vdbe_untr_vmi_network_role_tag:
         type: string
         required: true
         status: SUPPORTED
+      port_vdbe_fabr_0_port_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       subinterface_vdbeav_subinterface_heat_template_mac_address:
         type: list
         required: true
@@ -1214,6 +1244,12 @@ node_types:
         type: org.openecomp.datatypes.heat.contrailV2.virtual.machine.subInterface.AddressPairs
         required: true
         status: SUPPORTED
+      port_vdbe_untr_vmi_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       subinterface_vdbeav_subinterface_heat_template_aap_address_mode:
         type: list
         required: true
@@ -1230,6 +1266,12 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: string
+      port_vdbe_oam_1_port_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       port_vdbe_ctrl_1_port_network_role:
         type: string
         required: true
@@ -1288,6 +1330,12 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: org.openecomp.datatypes.network.IpRequirements
+      port_vdbe_ctrl_1_port_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       port_vdbe_fabr_1_port_name:
         type: list
         required: true
@@ -1430,6 +1478,12 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: org.openecomp.datatypes.network.VlanRequirements
+      port_vdbe_trst_1_port_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       subinterface_vdbeav_subinterface_heat_template_ip_address:
         type: list
         required: true
@@ -1576,6 +1630,12 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: org.openecomp.datatypes.network.VlanRequirements
+      port_vdbe_fabr_1_port_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       port_vdbe_ctrl_1_port_ip_requirements:
         type: list
         required: true
