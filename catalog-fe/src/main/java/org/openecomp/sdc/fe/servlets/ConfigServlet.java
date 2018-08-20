@@ -67,7 +67,7 @@ public class ConfigServlet extends LoggingServlet {
 		} catch (Exception e) {
 			FeEcompErrorManager.getInstance().logFeHttpLoggingError("FE Response");
 			log.error("Unexpected FE response logging error :", e);
-			return Response.status(Status.OK).entity(null).build();
+			return Response.status(Status.INTERNAL_SERVER_ERROR).entity("{}").build();
 		}
 
 	}

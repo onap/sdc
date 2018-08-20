@@ -7,6 +7,7 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpHead;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.openecomp.sdc.exception.InvalidArgumentException;
 import org.openecomp.sdc.fe.config.ConfigurationManager;
 import org.openecomp.sdc.fe.config.PluginsConfiguration;
 import org.openecomp.sdc.fe.config.PluginsConfiguration.Plugin;
@@ -45,6 +46,8 @@ public class PluginStatusBL {
 
 		if (pluginsConfiguration == null || pluginsConfiguration.getPluginsList() == null) {
 			log.warn("Configuration of type {} was not found", PluginsConfiguration.class);
+			throw new InvalidArgumentException("the plugin configuration was not read successfully.");
+
 		} else {
 			log.debug("The value returned from getConfig is {}", pluginsConfiguration);
 			connectionTimeout = pluginsConfiguration.getConnectionTimeout();
