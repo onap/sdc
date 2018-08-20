@@ -1,0 +1,95 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_6ed98a82",
+        "filename": "arch-rule/pom.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-08-20T14:50:17Z",
+      "side": 1,
+      "message": "Please give a clearer name to the project.",
+      "revId": "405d8a6350616d31fd97a6cba4bbcfe6f5be2569",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_4ede0e6f",
+        "filename": "arch-rule/pom.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-08-20T14:50:17Z",
+      "side": 1,
+      "message": "Must be a mistake :)",
+      "range": {
+        "startLine": 18,
+        "startChar": 0,
+        "endLine": 24,
+        "endChar": 51
+      },
+      "revId": "405d8a6350616d31fd97a6cba4bbcfe6f5be2569",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_ced1be58",
+        "filename": "catalog-be/src/main/resources/import/tosca/heat-types/extCP2/extCP2.json",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-08-20T14:50:17Z",
+      "side": 1,
+      "message": "Why was this file renamed? I think you weren\u0027t supposed to touch it.",
+      "revId": "405d8a6350616d31fd97a6cba4bbcfe6f5be2569",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_ee627aac",
+        "filename": "openecomp-be/pom.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 81,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-08-20T14:50:17Z",
+      "side": 1,
+      "message": "Please add also \"javax.ws.rs-api\". Servlet API is both \"javax.servlet-api\" and \"servlet-api\". Also, I think this configuration must include the groupId\u0027s.",
+      "revId": "405d8a6350616d31fd97a6cba4bbcfe6f5be2569",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_8e598600",
+        "filename": "openecomp-be/pom.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 85,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-08-20T14:50:17Z",
+      "side": 1,
+      "message": "Please don\u0027t commit commented-out code.",
+      "revId": "405d8a6350616d31fd97a6cba4bbcfe6f5be2569",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
