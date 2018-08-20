@@ -73,6 +73,9 @@ public class DmaapHealth {
 
     @PostConstruct
     public DmaapHealth init() {
+        if(ConfigurationManager.getConfigurationManager().getConfiguration().getDmaapConsumerConfiguration().isActive()){
+            return this;
+        }
         log.trace("Enter init method of Dmaap health");
         synchronized (DmaapHealth.class){
             this.configuration = ConfigurationManager.getConfigurationManager().getConfiguration().getDmaapConsumerConfiguration();
