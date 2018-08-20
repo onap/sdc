@@ -184,18 +184,6 @@ function probe_dcae_tools {
 }
 #
 
-# check simulator status
-function probe_sim {
-    if lsof -Pi :8285 -sTCP:LISTEN -t >/dev/null ; then
-        echo "running"
-        sim_stat=true
-    else
-        echo "not running"
-        sim_stat=false
-    fi
-}
-#
-
 
 function monitor_docker {
     DOCKER_NAME=$1
@@ -567,7 +555,7 @@ function sdc-ui-tests {
 
 # SDC-Simulator
 function sdc-sim {
-    if [ ${RUN_SIMULATOR} = true ]; then
+    if [ ${RUN_SIMULATOR} == true ]; then
         echo "docker run sdc-webSimulator..."
         if [ ${LOCAL} = false ]; then
             docker pull ${PREFIX}/sdc-simulator:${RELEASE}
@@ -575,7 +563,7 @@ function sdc-sim {
 
         probe_sim
         sim_stat=$?
-        if [ sim_stat=1 ]; then
+        if [ ${sim_stat} == 1 ]; then
             docker run \
                 --detach \
                 --name sdc-sim \
