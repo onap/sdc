@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_c9d45822",
+        "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/main/DataSchemaMenu.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-08-20T17:52:40Z",
+      "side": 1,
+      "message": "during execution it looks like we receive an NPE because the config is not initialized. keep in mind that this is called from an sh file when we deploy the dockers this was the error we saw.",
+      "range": {
+        "startLine": 40,
+        "startChar": 2,
+        "endLine": 41,
+        "endChar": 91
+      },
+      "revId": "f4df52cd29a0c6bbfb77442e75463e635edd4b98",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
