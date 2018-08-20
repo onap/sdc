@@ -71,7 +71,7 @@ export class ConfigService {
                 PluginsConfiguration.plugins = pluginsData;
                 resolve();
             }).catch((ex) => {
-                console.warn("Error loading plugins configuration from FE", ex);
+                console.error("Error loading plugins configuration from FE", ex);
 
                 PluginsConfiguration.plugins = [] as Plugins;
                 resolve();
