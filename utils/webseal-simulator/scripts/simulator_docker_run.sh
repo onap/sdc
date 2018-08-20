@@ -1,16 +1,15 @@
 #!/bin/bash
 
-export IP=`ifconfig eth0 | awk -F: '/inet addr/ {gsub(/ .*/,"",$2); print $2}'`
 export PREFIX=${NEXUS_DOCKER_REPO}'/onap'
 PREFIX='onap'
 RELEASE=latest
 LOCAL=true
 JAVA_OPTIONS=" -Xmx128m -Xms128m -Xss1m"
 
-[ -f /opt/config/env_name.txt ] && DEP_ENV=$(cat /opt/config/env_name.txt)
-[ -f /opt/config/nexus_username.txt ] && NEXUS_USERNAME=$(cat /opt/config/nexus_username.txt)    || NEXUS_USERNAME=release
-[ -f /opt/config/nexus_password.txt ] && NEXUS_PASSWD=$(cat /opt/config/nexus_password.txt)      || NEXUS_PASSWD=sfWU3DFVdBr7GVxB85mTYgAW
-[ -f /opt/config/nexus_docker_repo.txt ] && NEXUS_DOCKER_REPO=$(cat /opt/config/nexus_docker_repo.txt)
+[ -f ${WORKSPACE}/opt/config/env_name.txt ] && DEP_ENV=$(cat ${WORKSPACE}/opt/config/env_name.txt)
+[ -f ${WORKSPACE}/opt/config/nexus_username.txt ] && NEXUS_USERNAME=$(cat ${WORKSPACE}/opt/config/nexus_username.txt)    || NEXUS_USERNAME=release
+[ -f ${WORKSPACE}/opt/config/nexus_password.txt ] && NEXUS_PASSWD=$(cat ${WORKSPACE}/opt/config/nexus_password.txt)      || NEXUS_PASSWD=sfWU3DFVdBr7GVxB85mTYgAW
+[ -f ${WORKSPACE}/opt/config/nexus_docker_repo.txt ] && NEXUS_DOCKER_REPO=$(cat ${WORKSPACE}/opt/config/nexus_docker_repo.txt)
 
 function usage {
     cat <<EOF
@@ -35,8 +34,8 @@ function cleanup {
 }
 
 function dir_perms {
-    mkdir -p /data/logs/WS/
-    chmod -R 777 /data/logs
+    mkdir -p ${WORKSPACE}/data/logs/WS/
+    chmod -R 777 ${WORKSPACE}/data/logs
 }
 
 while getopts "r:e:u:-:" OPTION "${@}"; do
@@ -80,7 +79,7 @@ while getopts "r:e:u:-:" OPTION "${@}"; do
     shift
 done
 
-[ -f /opt/config/nexus_username.txt ] && docker login -u $NEXUS_USERNAME -p $NEXUS_PASSWD $NEXUS_DOCKER_REPO
+[ -f ${WORKSPACE}/opt/config/nexus_username.txt ] && docker login -u $NEXUS_USERNAME -p $NEXUS_PASSWD $NEXUS_DOCKER_REPO
 
 cleanup
 
@@ -96,8 +95,8 @@ docker run --detach --name sdc-sim \
     --env https_proxy=${https_proxy} \
     --env no_proxy=${no_proxy} \
     --volume /etc/localtime:/etc/localtime:ro \
-    --volume /data/logs/WS/:/var/lib/jetty/logs \
-    --volume /data/environments:/root/chef-solo/environments \
+    --volume ${WORKSPACE}/data/logs/WS/:/var/lib/jetty/logs \
+    --volume ${WORKSPACE}/data/environments:/root/chef-solo/environments \
     --publish 8285:8080 \
     --publish 8286:8443 ${PREFIX}/sdc-simulator:${RELEASE}
 
