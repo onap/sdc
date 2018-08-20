@@ -55,7 +55,7 @@ def importHeatTypes(scheme, beHost, bePort, adminUser, fileDir, updateversion):
 				  "contrailV2VLANSubInterface",
 				  "multiFlavorVFC",
 				  "vnfConfiguration",
-				  "extCP2",
+				  "extCp2",
 				  "extNeutronCP",
                   "extContrailCP",
 				  "portMirroringByPolicy",
