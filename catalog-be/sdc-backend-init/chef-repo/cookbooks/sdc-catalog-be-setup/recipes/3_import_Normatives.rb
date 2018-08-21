@@ -26,11 +26,11 @@ bash "excuting-import_Normatives" do
      resources_len=`cat ${check_normative}| jq '.["resources"]|length'`
      mkdir -p /var/lib/jetty/logs
      if [ $resources_len -eq 0 ] ; then
-        python importONAPNormativeAll.py --debug=true -i #{be_ip} > /var/lib/jetty/logs/importNormativeAll.log
+        python importONAPNormativeAll.py -i #{be_ip} > /var/lib/jetty/logs/importNormativeAll.log
             rc=$?
             if [[ $rc != 0 ]]; then exit $rc; fi
      else
-        python upgradeONAPNormative.py --debug=true -i #{be_ip} > /var/lib/jetty/logs/upgradeNormative.log
+        python upgradeONAPNormative.py -i #{be_ip} > /var/lib/jetty/logs/upgradeNormative.log
             rc=$?
             if [[ $rc != 0 ]]; then exit $rc; fi
      fi
