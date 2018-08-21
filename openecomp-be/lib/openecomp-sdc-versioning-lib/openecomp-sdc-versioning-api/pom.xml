@@ -14,6 +14,11 @@
 
     <dependencies>
         <dependency>
+            <groupId>com.datastax.cassandra</groupId>
+            <artifactId>cassandra-driver-extras</artifactId>
+            <version>${datastax.cassandra.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.openecomp.sdc.core</groupId>
             <artifactId>openecomp-session-lib</artifactId>
             <version>${project.version}</version>

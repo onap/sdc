@@ -16,16 +16,19 @@
 
 package org.openecomp.sdc.versioning.dao.impl;
 
+import com.datastax.driver.extras.codecs.enums.EnumNameCodec;
 import com.datastax.driver.mapping.Mapper;
 import com.datastax.driver.mapping.Result;
 import com.datastax.driver.mapping.annotations.Accessor;
 import com.datastax.driver.mapping.annotations.Query;
+
+import java.util.Collection;
+
 import org.openecomp.core.dao.impl.CassandraBaseDao;
 import org.openecomp.core.nosqldb.api.NoSqlDb;
 import org.openecomp.sdc.versioning.dao.VersionInfoDao;
 import org.openecomp.sdc.versioning.dao.types.VersionInfoEntity;
-
-import java.util.Collection;
+import org.openecomp.sdc.versioning.dao.types.VersionStatus;
 
 public class VersionInfoDaoImpl extends CassandraBaseDao<VersionInfoEntity>
     implements VersionInfoDao {
@@ -40,6 +43,8 @@ public class VersionInfoDaoImpl extends CassandraBaseDao<VersionInfoEntity>
     this.noSqlDb = noSqlDb;
     this.mapper = this.noSqlDb.getMappingManager().mapper(VersionInfoEntity.class);
     this.accessor = this.noSqlDb.getMappingManager().createAccessor(VersionInfoAccessor.class);
+    this.noSqlDb.getMappingManager().getSession().getCluster().getConfiguration().getCodecRegistry()
+            .register(new EnumNameCodec<>(VersionStatus.class));
   }
 
   @Override

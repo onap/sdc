@@ -20,6 +20,88 @@
 
 package org.openecomp.sdcrests.action.rest.services;
 
+import static org.openecomp.sdc.action.ActionConstants.ACTION_REQUEST_PARAM_NAME;
+import static org.openecomp.sdc.action.ActionConstants.ACTION_REQUEST_PARAM_SUPPORTED_COMPONENTS;
+import static org.openecomp.sdc.action.ActionConstants.ACTION_REQUEST_PARAM_SUPPORTED_MODELS;
+import static org.openecomp.sdc.action.ActionConstants.ARTIFACT_FILE;
+import static org.openecomp.sdc.action.ActionConstants.ARTIFACT_NAME;
+import static org.openecomp.sdc.action.ActionConstants.BE_FQDN;
+import static org.openecomp.sdc.action.ActionConstants.CATEGORY_LOG_LEVEL;
+import static org.openecomp.sdc.action.ActionConstants.CLIENT_IP;
+import static org.openecomp.sdc.action.ActionConstants.ERROR_DESCRIPTION;
+import static org.openecomp.sdc.action.ActionConstants.FILTER_TYPE_CATEGORY;
+import static org.openecomp.sdc.action.ActionConstants.FILTER_TYPE_MODEL;
+import static org.openecomp.sdc.action.ActionConstants.FILTER_TYPE_NAME;
+import static org.openecomp.sdc.action.ActionConstants.FILTER_TYPE_NONE;
+import static org.openecomp.sdc.action.ActionConstants.FILTER_TYPE_OPEN_ECOMP_COMPONENT;
+import static org.openecomp.sdc.action.ActionConstants.FILTER_TYPE_VENDOR;
+import static org.openecomp.sdc.action.ActionConstants.INSTANCE_UUID;
+import static org.openecomp.sdc.action.ActionConstants.LOCAL_ADDR;
+import static org.openecomp.sdc.action.ActionConstants.MAX_ACTION_ARTIFACT_SIZE;
+import static org.openecomp.sdc.action.ActionConstants.MDC_ASDC_INSTANCE_UUID;
+import static org.openecomp.sdc.action.ActionConstants.PARTNER_NAME;
+import static org.openecomp.sdc.action.ActionConstants.REMOTE_HOST;
+import static org.openecomp.sdc.action.ActionConstants.REQUEST_EMPTY_BODY;
+import static org.openecomp.sdc.action.ActionConstants.REQUEST_ID;
+import static org.openecomp.sdc.action.ActionConstants.REQUEST_TYPE_CREATE_ACTION;
+import static org.openecomp.sdc.action.ActionConstants.REQUEST_TYPE_UPDATE_ACTION;
+import static org.openecomp.sdc.action.ActionConstants.REQUEST_TYPE_VERSION_ACTION;
+import static org.openecomp.sdc.action.ActionConstants.SERVICE_INSTANCE_ID;
+import static org.openecomp.sdc.action.ActionConstants.SERVICE_METRIC_BEGIN_TIMESTAMP;
+import static org.openecomp.sdc.action.ActionConstants.SERVICE_NAME;
+import static org.openecomp.sdc.action.ActionConstants.STATUS;
+import static org.openecomp.sdc.action.ActionConstants.STATUS_CODE;
+import static org.openecomp.sdc.action.ActionConstants.SUPPORTED_COMPONENTS_ID;
+import static org.openecomp.sdc.action.ActionConstants.SUPPORTED_MODELS_VERSION_ID;
+import static org.openecomp.sdc.action.ActionConstants.TIMESTAMP;
+import static org.openecomp.sdc.action.ActionConstants.UPDATED_BY;
+import static org.openecomp.sdc.action.ActionConstants.X_OPEN_ECOMP_INSTANCE_ID_HEADER_PARAM;
+import static org.openecomp.sdc.action.ActionConstants.X_OPEN_ECOMP_REQUEST_ID_HEADER_PARAM;
+import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_ARTIFACT_CHECKSUM_ERROR_CODE;
+import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_ARTIFACT_INVALID_NAME;
+import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_ARTIFACT_INVALID_NAME_CODE;
+import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_ARTIFACT_INVALID_PROTECTION_CODE;
+import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_ARTIFACT_READ_FILE_ERROR;
+import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_ARTIFACT_TOO_BIG_ERROR;
+import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_ARTIFACT_TOO_BIG_ERROR_CODE;
+import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_ENTITY_INTERNAL_SERVER_ERROR_MSG;
+import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_ENTITY_NOT_EXIST;
+import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_ENTITY_NOT_EXIST_CODE;
+import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_FILTER_MULTIPLE_QUERY_PARAM_NOT_SUPPORTED;
+import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_INTERNAL_SERVER_ERR_CODE;
+import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_INVALID_INSTANCE_ID_CODE;
+import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_INVALID_PARAM_CODE;
+import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_INVALID_REQUEST_BODY_CODE;
+import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_INVALID_REQUEST_ID_CODE;
+import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_INVALID_SEARCH_CRITERIA;
+import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_MULT_SEARCH_CRITERIA;
+import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_REQUEST_ARTIFACT_CHECKSUM_ERROR;
+import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_REQUEST_ARTIFACT_INVALID_PROTECTION_VALUE;
+import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_REQUEST_ARTIFACT_OPERATION_ALLOWED;
+import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_REQUEST_BODY_EMPTY;
+import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_REQUEST_CONTENT_TYPE_INVALID;
+import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_REQUEST_FILTER_PARAM_INVALID;
+import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_REQUEST_INVALID_GENERIC_CODE;
+import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_REQUEST_INVALID_NAME;
+import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_REQUEST_MISSING_MANDATORY_PARAM;
+import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_REQUEST_OPEN_ECOMP_INSTANCE_ID_INVALID;
+import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_REQUEST_OPEN_ECOMP_REQUEST_ID_INVALID;
+import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_UNSUPPORTED_OPERATION;
+import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_UPDATE_NOT_ALLOWED_CODE;
+import static org.openecomp.sdc.action.util.ActionUtil.actionErrorLogProcessor;
+import static org.openecomp.sdc.action.util.ActionUtil.actionLogPostProcessor;
+import static org.openecomp.sdc.action.util.ActionUtil.getUtcDateStringFromTimestamp;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.jaxrs.ext.multipart.Attachment;
@@ -31,7 +113,11 @@ import org.openecomp.sdc.action.errors.ActionErrorConstants;
 import org.openecomp.sdc.action.errors.ActionException;
 import org.openecomp.sdc.action.logging.CategoryLogLevel;
 import org.openecomp.sdc.action.logging.StatusCode;
-import org.openecomp.sdc.action.types.*;
+import org.openecomp.sdc.action.types.Action;
+import org.openecomp.sdc.action.types.ActionArtifact;
+import org.openecomp.sdc.action.types.ActionArtifactProtection;
+import org.openecomp.sdc.action.types.ActionRequest;
+import org.openecomp.sdc.action.types.OpenEcompComponent;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdcrests.action.rest.Actions;
@@ -49,15 +135,6 @@ import org.springframework.validation.annotation.Validated;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Response;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.*;
-
-import static org.openecomp.sdc.action.ActionConstants.*;
-import static org.openecomp.sdc.action.errors.ActionErrorConstants.*;
-import static org.openecomp.sdc.action.util.ActionUtil.*;
 
 /**
  * Implements various CRUD API that can be performed on Action
@@ -987,7 +1064,7 @@ public class ActionsImpl implements Actions {
         if(action.getSupportedComponents() != null && !isIDPresentInMap(action
             .getSupportedComponents(), SUPPORTED_COMPONENTS_ID)){
           setErrorValue(ACTION_REQUEST_INVALID_GENERIC_CODE,
-              ACTION_REQUEST_PARAM_SUPPORTED_MODELS, requestBodyErrorMap);
+              ACTION_REQUEST_PARAM_SUPPORTED_COMPONENTS, requestBodyErrorMap);
         }
         if(action.getArtifacts() != null){
           setErrorValue(ACTION_UPDATE_NOT_ALLOWED_CODE,
