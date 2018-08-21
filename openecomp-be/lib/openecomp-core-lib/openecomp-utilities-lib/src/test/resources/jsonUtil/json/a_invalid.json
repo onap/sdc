@@ -9,5 +9,7 @@
       "code": "test"
     }
   ],
+  "dateOfBirth" : "20101988",
+  "gender" : 123,
   "cityOfBirth": "Paris"
 }

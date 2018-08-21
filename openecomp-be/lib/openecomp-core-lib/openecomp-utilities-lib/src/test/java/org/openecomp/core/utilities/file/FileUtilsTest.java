@@ -16,18 +16,25 @@
 
 package org.openecomp.core.utilities.file;
 
-import org.apache.commons.io.IOUtils;
-import org.testng.annotations.Test;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-import static org.testng.Assert.*;
+import org.apache.commons.io.IOUtils;
+import org.testng.Assert;
+import org.testng.annotations.Test;
 
 /**
  * @author EVITALIY
@@ -48,22 +55,22 @@ public class FileUtilsTest {
     };
 
     @Test
-    public void testReadViaInputStreamWithSlash() throws Exception {
+    public void testReadViaInputStreamWithSlash() {
         assertTrue(FileUtils.readViaInputStream(TEST_RESOURCE, TEST_FUNCTION) > 0);
     }
 
     @Test
-    public void testReadViaInputStreamWithoutSlash() throws Exception {
+    public void testReadViaInputStreamWithoutSlash() {
         assertTrue(FileUtils.readViaInputStream(TEST_RESOURCE, TEST_FUNCTION) > 0);
     }
 
     @Test(expectedExceptions = NullPointerException.class)
-    public void testReadViaInputStreamNull() throws Exception {
+    public void testReadViaInputStreamNull() {
         FileUtils.readViaInputStream((String) null, TEST_FUNCTION);
     }
 
     @Test(expectedExceptions = IllegalArgumentException.class)
-    public void testReadViaInputStreamNotFound() throws Exception {
+    public void testReadViaInputStreamNotFound() {
         FileUtils.readViaInputStream("notfound.txt", TEST_FUNCTION);
     }
 
@@ -91,10 +98,100 @@ public class FileUtilsTest {
     }
 
     @Test
-    public void testIsValidYamlExtension() throws IOException {
+    public void testIsValidYamlExtension() {
         assertTrue(FileUtils.isValidYamlExtension("yaml"));
         assertTrue(FileUtils.isValidYamlExtension("yml"));
         assertFalse(FileUtils.isValidYamlExtension("yml1"));
         assertFalse(FileUtils.isValidYamlExtension("zip"));
+    }
+
+    @Test
+    public void testGetFileWithoutExtention() {
+        Assert.assertEquals(FileUtils.getFileWithoutExtention("test.txt"), "test");
+    }
+
+    @Test
+    public void testGetFileWithoutExtentionContainsNoExtension() {
+        Assert.assertEquals(FileUtils.getFileWithoutExtention("test"), "test");
+    }
+
+    @Test
+    public void testGetFileExtention() {
+        Assert.assertEquals(FileUtils.getFileExtension("test.txt"), "txt");
+    }
+
+    @Test
+    public void testGetNetworkPackageName() {
+        Assert.assertEquals(FileUtils.getNetworkPackageName("heat.zip"), "heat");
+    }
+
+    @Test
+    public void testGetNetworkPackageNameWithoutExtension() {
+        Assert.assertNull(FileUtils.getNetworkPackageName("heat"));
+    }
+
+    @Test
+    public void testToByteArrayNullStream() {
+        Assert.assertNotNull(FileUtils.toByteArray(null));
+    }
+
+    @Test
+    public void testGetAllLocations() {
+        List<URL> urlList = FileUtils.getAllLocations("org/openecomp/core/utilities/file/testFileUtils.txt");
+        Assert.assertNotNull(urlList);
+        Assert.assertEquals(urlList.size(), 1);
+    }
+
+    @Test
+    public void testConvertToBytesNullObject() {
+        Assert.assertNotNull(FileUtils.convertToBytes(null, null));
+    }
+
+    @Test
+    public void testConvertToBytes() {
+        byte[] bytesArray = FileUtils.convertToBytes(Stream.of("Json", "Util", "Test").collect(Collectors.toList()),
+                                FileUtils.FileExtension.YAML);
+
+        Assert.assertNotNull(bytesArray);
+    }
+
+    @Test
+    public void testConvertToBytesNotYaml() {
+        byte[] bytesArray = FileUtils.convertToBytes(Stream.of("Json", "Util", "Test").collect(Collectors.toList()),
+                FileUtils.FileExtension.JSON);
+
+        Assert.assertNotNull(bytesArray);
+    }
+
+    @Test
+    public void testConvertToInputStreamNullObject() {
+        Assert.assertNull(FileUtils.convertToInputStream(null, null));
+    }
+
+    @Test
+    public void testConvertToInputStream() {
+        InputStream inputStream = FileUtils.convertToInputStream(Stream.of("Json", "Util", "Test")
+                        .collect(Collectors.toList()), FileUtils.FileExtension.YAML);
+
+        Assert.assertNotNull(inputStream);
+    }
+
+    @Test(expectedExceptions = RuntimeException.class)
+    public void testLoadFileToInputStreamIncorrectFilePath() {
+        FileUtils.loadFileToInputStream("invalidfilepath");
+    }
+
+    @Test
+    public void testLoadFileToInputStream() throws IOException{
+        int i;
+        StringBuilder builder = new StringBuilder(20);
+        InputStream inputStream = FileUtils.loadFileToInputStream(
+                "org/openecomp/core/utilities/file/testFileUtils.txt");
+        while((i = inputStream.read())!=-1) {
+            builder.append((char)i);
+        }
+
+        Assert.assertNotNull(inputStream);
+        Assert.assertEquals(builder.toString(), "hello-test");
     }
 }

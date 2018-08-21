@@ -16,6 +16,14 @@
   },
   "type": "object",
   "properties": {
+    "pincode" : {
+      "type" : "integer",
+      "default": 111111
+    },
+    "houseNumber" : {
+      "type" : "number",
+      "default": 1
+    },
     "address": {
       "type": "object",
       "properties": {
