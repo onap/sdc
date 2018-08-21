@@ -1,33 +1,32 @@
-/*-
- * ============LICENSE_START=======================================================
- * SDC
- * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
- * ================================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * 
- *      http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ============LICENSE_END=========================================================
- */
+/*
+* Copyright © 2016-2018 European Support Limited
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
 
 package org.openecomp.sdc.action.types;
+
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 
 import org.openecomp.sdc.action.ActionConstants;
 import org.openecomp.sdc.action.dao.types.ActionEntity;
 import org.openecomp.sdc.versioning.dao.types.Version;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
 
 public class Action implements Comparable {
   private String actionUuId;
@@ -40,8 +39,8 @@ public class Action implements Comparable {
   private List<String> categoryList;
   private Date timestamp;
   private String user;
-  private List<HashMap<String, String>> supportedModels;
-  private List<HashMap<String, String>> supportedComponents;
+  private List<Map<String, String>> supportedModels;
+  private List<Map<String, String>> supportedComponents;
   //private List<HashMap<String,String>> artifacts;
   private List<ActionArtifact> artifacts;
   private String data;
@@ -151,19 +150,19 @@ public class Action implements Comparable {
     this.user = user;
   }
 
-  public List<HashMap<String, String>> getSupportedModels() {
+  public List<Map<String, String>> getSupportedModels() {
     return supportedModels;
   }
 
-  public void setSupportedModels(List<HashMap<String, String>> supportedModels) {
+  public void setSupportedModels(List<Map<String, String>> supportedModels) {
     this.supportedModels = supportedModels;
   }
 
-  public List<HashMap<String, String>> getSupportedComponents() {
+  public List<Map<String, String>> getSupportedComponents() {
     return supportedComponents;
   }
 
-  public void setSupportedComponents(List<HashMap<String, String>> supportedComponents) {
+  public void setSupportedComponents(List<Map<String, String>> supportedComponents) {
     this.supportedComponents = supportedComponents;
   }
 
@@ -197,8 +196,12 @@ public class Action implements Comparable {
     destination.setActionInvariantUuId(
         this.getActionInvariantUuId() != null ? this.getActionInvariantUuId().toUpperCase() : null);
     destination.setName(this.getName() != null ? this.getName().toLowerCase() : null);
-    destination.setVendorList(this.getVendorList());
-    destination.setCategoryList(this.getCategoryList());
+    if (Objects.nonNull(this.getVendorList())) {
+      destination.setVendorList(new HashSet<>(this.getVendorList()));
+    }
+    if (Objects.nonNull(this.getCategoryList())) {
+      destination.setCategoryList(new HashSet<>(this.getCategoryList()));
+    }
     destination.setTimestamp(this.getTimestamp());
     destination.setUser(this.getUser());
     destination.setVersion(Version.valueOf(this.getVersion()));
@@ -213,10 +216,10 @@ public class Action implements Comparable {
     return destination;
   }
 
-  private List<String> getIdFromMap(List<HashMap<String, String>> map, String idName) {
-    List<String> list = new ArrayList<>();
+  private Set<String> getIdFromMap(List<Map<String, String>> map, String idName) {
+    Set<String> list = new HashSet<>();
     if (map != null && !map.isEmpty()) {
-      for (HashMap<String, String> entry : map) {
+      for (Map<String, String> entry : map) {
         if (entry.containsKey(idName)) {
           list.add(entry.get(idName) != null ? entry.get(idName).toLowerCase() : null);
         }

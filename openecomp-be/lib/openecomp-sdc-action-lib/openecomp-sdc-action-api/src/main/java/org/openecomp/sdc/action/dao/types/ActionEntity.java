@@ -1,22 +1,18 @@
-/*-
- * ============LICENSE_START=======================================================
- * SDC
- * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
- * ================================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * 
- *      http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ============LICENSE_END=========================================================
- */
+/*
+* Copyright © 2016-2018 European Support Limited
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
 
 package org.openecomp.sdc.action.dao.types;
 
@@ -24,14 +20,14 @@ import com.datastax.driver.mapping.annotations.Column;
 import com.datastax.driver.mapping.annotations.Frozen;
 import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
+
+import java.util.Date;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import org.openecomp.core.utilities.json.JsonUtil;
 import org.openecomp.sdc.action.types.Action;
 import org.openecomp.sdc.versioning.dao.types.Version;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.stream.Collectors;
 
 
 @Table(keyspace = "dox", name = "Action")
@@ -51,17 +47,17 @@ public class ActionEntity {
   @Column(name = "name")
   private String name;
   @Column(name = "vendor_list")
-  private List<String> vendorList;
+  private Set<String> vendorList;
   @Column(name = "category_list")
-  private List<String> categoryList;
+  private Set<String> categoryList;
   @Column(name = "timestamp")
   private Date timestamp;
   @Column(name = "user")
   private String user;
   @Column(name = "supportedModels")
-  private List<String> supportedModels;
+  private Set<String> supportedModels;
   @Column(name = "supportedComponents")
-  private List<String> supportedComponents;
+  private Set<String> supportedComponents;
   @Column(name = "data")
   private String data;
 
@@ -119,7 +115,7 @@ public class ActionEntity {
     this.name = name;
   }
 
-  public List<String> getVendorList() {
+  public Set<String> getVendorList() {
     return vendorList;
   }
 
@@ -128,18 +124,12 @@ public class ActionEntity {
    *
    * @param vendorList the vendor list
    */
-  public void setVendorList(List<String> vendorList) {
-    if (vendorList != null && !vendorList.isEmpty()) {
-      List<String> lowerCaseVendorList = new ArrayList<>();
-      lowerCaseVendorList
-          .addAll(vendorList.stream().map(String::toLowerCase).collect(Collectors.toList()));
-      this.vendorList = lowerCaseVendorList;
-    } else {
-      this.vendorList = vendorList;
-    }
+  public void setVendorList(Set<String> vendorList) {
+    this.vendorList = vendorList != null && !vendorList.isEmpty() ?
+                              vendorList.stream().map(String::toLowerCase).collect(Collectors.toSet()) : vendorList;
   }
 
-  public List<String> getCategoryList() {
+  public Set<String> getCategoryList() {
     return categoryList;
   }
 
@@ -148,15 +138,10 @@ public class ActionEntity {
    *
    * @param categoryList the category list
    */
-  public void setCategoryList(List<String> categoryList) {
-    if (categoryList != null && !categoryList.isEmpty()) {
-      List<String> lowerCaseCategoryList = new ArrayList<>();
-      lowerCaseCategoryList
-          .addAll(categoryList.stream().map(String::toLowerCase).collect(Collectors.toList()));
-      this.categoryList = lowerCaseCategoryList;
-    } else {
-      this.categoryList = categoryList;
-    }
+  public void setCategoryList(Set<String> categoryList) {
+    this.categoryList = categoryList != null && !categoryList.isEmpty() ?
+                                categoryList.stream().map(String::toLowerCase).collect(Collectors.toSet()) :
+                                categoryList;
   }
 
   public Date getTimestamp() {
@@ -175,19 +160,19 @@ public class ActionEntity {
     this.user = user;
   }
 
-  public List<String> getSupportedModels() {
+  public Set<String> getSupportedModels() {
     return supportedModels;
   }
 
-  public void setSupportedModels(List<String> supportedModels) {
+  public void setSupportedModels(Set<String> supportedModels) {
     this.supportedModels = supportedModels;
   }
 
-  public List<String> getSupportedComponents() {
+  public Set<String> getSupportedComponents() {
     return supportedComponents;
   }
 
-  public void setSupportedComponents(List<String> supportedComponents) {
+  public void setSupportedComponents(Set<String> supportedComponents) {
     this.supportedComponents = supportedComponents;
   }
 
