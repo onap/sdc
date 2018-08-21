@@ -28,12 +28,18 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.hibernate.validator.internal.engine.path.PathImpl;
-import org.openecomp.core.utilities.CommonMethods;
 import org.openecomp.core.utilities.file.FileUtils;
 import org.openecomp.core.utilities.json.JsonUtil;
-import org.openecomp.sdc.common.errors.*;
+import org.openecomp.sdc.common.errors.CoreException;
+import org.openecomp.sdc.common.errors.ErrorCategory;
+import org.openecomp.sdc.common.errors.ErrorCode;
+import org.openecomp.sdc.common.errors.ErrorCodeAndMessage;
+import org.openecomp.sdc.common.errors.GeneralErrorBuilder;
+import org.openecomp.sdc.common.errors.JsonMappingErrorBuilder;
+import org.openecomp.sdc.common.errors.ValidationErrorBuilder;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 
@@ -98,14 +104,14 @@ public class DefaultExceptionMapper implements ExceptionMapper<Exception> {
         String message;
 
         String fieldName = null;
-        if (!CommonMethods.isEmpty(constraintViolationSet)) {
+        if (CollectionUtils.isEmpty(constraintViolationSet)) {
+            message = validationException.getMessage();
+        } else {
             // getting the first violation message for the output response.
             ConstraintViolation<?> constraintViolation = constraintViolationSet.iterator().next();
             message = constraintViolation.getMessage();
             fieldName = getFieldName(constraintViolation.getPropertyPath());
 
-        } else {
-            message = validationException.getMessage();
         }
 
         ErrorCode validationErrorCode = new ValidationErrorBuilder(message, fieldName).build();
