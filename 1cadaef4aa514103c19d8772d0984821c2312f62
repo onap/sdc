@@ -67,6 +67,24 @@
       "revId": "1cadaef4aa514103c19d8772d0984821c2312f62",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_6ca988de",
+        "filename": "openecomp-be/lib/openecomp-sdc-action-lib/openecomp-sdc-action-core/src/main/java/org/openecomp/sdc/action/dao/impl/ActionDaoImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 511,
+      "author": {
+        "id": 1631
+      },
+      "writtenOn": "2018-08-22T06:27:57Z",
+      "side": 1,
+      "message": "Due to driver upgrade the accessor query was throwing a CodecNotFoundException as the parameters supposedly were incompatible list\u003cdox.version\u003e -\u003e Set\u003cVersion\u003e. So this was changed similar to the Action entity changes.",
+      "parentUuid": "1a76adc5_f92a388f",
+      "revId": "1cadaef4aa514103c19d8772d0984821c2312f62",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
