@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "1a76adc5_ac09e0de",
+        "filename": "openecomp-be/lib/openecomp-sdc-action-lib/openecomp-sdc-action-api/src/main/java/org/openecomp/sdc/action/types/Action.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 199,
+      "author": {
+        "id": 1631
+      },
+      "writtenOn": "2018-08-22T07:02:47Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1a76adc5_59132c66",
+      "revId": "1cadaef4aa514103c19d8772d0984821c2312f62",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1a76adc5_79162857",
         "filename": "openecomp-be/lib/openecomp-sdc-action-lib/openecomp-sdc-action-api/src/main/java/org/openecomp/sdc/action/types/Action.java",
         "patchSetId": 1
@@ -36,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "1a76adc5_8c0664cd",
+        "filename": "openecomp-be/lib/openecomp-sdc-action-lib/openecomp-sdc-action-api/src/main/java/org/openecomp/sdc/action/types/Action.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 200,
+      "author": {
+        "id": 1631
+      },
+      "writtenOn": "2018-08-22T07:02:47Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1a76adc5_79162857",
+      "revId": "1cadaef4aa514103c19d8772d0984821c2312f62",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1a76adc5_d9065c20",
         "filename": "openecomp-be/lib/openecomp-sdc-action-lib/openecomp-sdc-action-api/src/main/java/org/openecomp/sdc/action/types/Action.java",
         "patchSetId": 1
@@ -47,6 +83,24 @@
       "writtenOn": "2018-08-22T06:03:07Z",
       "side": 1,
       "message": "Use Map instead of HashMap.",
+      "revId": "1cadaef4aa514103c19d8772d0984821c2312f62",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_ec67d8b5",
+        "filename": "openecomp-be/lib/openecomp-sdc-action-lib/openecomp-sdc-action-api/src/main/java/org/openecomp/sdc/action/types/Action.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 215,
+      "author": {
+        "id": 1631
+      },
+      "writtenOn": "2018-08-22T07:02:47Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1a76adc5_d9065c20",
       "revId": "1cadaef4aa514103c19d8772d0984821c2312f62",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
