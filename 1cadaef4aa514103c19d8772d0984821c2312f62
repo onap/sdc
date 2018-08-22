@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_59132c66",
+        "filename": "openecomp-be/lib/openecomp-sdc-action-lib/openecomp-sdc-action-api/src/main/java/org/openecomp/sdc/action/types/Action.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 199,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-08-22T06:03:07Z",
+      "side": 1,
+      "message": "There should be null pointer protection",
+      "revId": "1cadaef4aa514103c19d8772d0984821c2312f62",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_79162857",
+        "filename": "openecomp-be/lib/openecomp-sdc-action-lib/openecomp-sdc-action-api/src/main/java/org/openecomp/sdc/action/types/Action.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 200,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-08-22T06:03:07Z",
+      "side": 1,
+      "message": "There should be null pointer protection",
+      "revId": "1cadaef4aa514103c19d8772d0984821c2312f62",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_d9065c20",
+        "filename": "openecomp-be/lib/openecomp-sdc-action-lib/openecomp-sdc-action-api/src/main/java/org/openecomp/sdc/action/types/Action.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 215,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-08-22T06:03:07Z",
+      "side": 1,
+      "message": "Use Map instead of HashMap.",
+      "revId": "1cadaef4aa514103c19d8772d0984821c2312f62",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_f92a388f",
+        "filename": "openecomp-be/lib/openecomp-sdc-action-lib/openecomp-sdc-action-core/src/main/java/org/openecomp/sdc/action/dao/impl/ActionDaoImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 511,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-08-22T06:03:07Z",
+      "side": 1,
+      "message": "Why Set was changed to List? All the calls above were using Set. Both line 394 and 511",
+      "revId": "1cadaef4aa514103c19d8772d0984821c2312f62",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
