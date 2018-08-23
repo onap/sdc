@@ -147,10 +147,7 @@ public class GenerateEcompErrorsCsv {
 
 		String outputFile = targetFolder + "ecompErrorCodes" + dateFormatted + ".csv";
 
-		FileWriter writer = null;
-
-		try {
-			writer = new FileWriter(outputFile);
+		try(FileWriter writer = new FileWriter(outputFile)) {
 
 			List<EcompErrorRow> errors = new ArrayList<>();
 
@@ -200,17 +197,6 @@ public class GenerateEcompErrorsCsv {
 
 		} catch (Exception e) {
 			log.info("generate Ecomp Errors Csv File failed - {}" , e);
-
-		} finally {
-			if (writer != null) {
-				try {
-					writer.flush();
-					writer.close();
-				} catch (IOException e) {
-					log.info("close FileOutputStream failed - {}" , e);
-				}
-
-			}
 		}
 
 		return result;
