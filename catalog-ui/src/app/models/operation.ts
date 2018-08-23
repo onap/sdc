@@ -31,14 +31,6 @@ export class OperationModel {
     workflowId: string;
     workflowVersionId: string;
 
-    protected OperationTypeEnum: Array<String> = [
-        'Create',
-        'Delete',
-        'Instantiate',
-        'Start',
-        'Stop'
-    ];
-
     constructor(operation?: any) {
         if (operation) {
             this.description = operation.description;
