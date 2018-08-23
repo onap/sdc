@@ -64,8 +64,7 @@ public class ZipUtil {
 
 				if (!ze.isDirectory()) {
 
-					ByteArrayOutputStream os = new ByteArrayOutputStream();
-					try {
+					try(ByteArrayOutputStream os = new ByteArrayOutputStream()) {
 						int len;
 						while ((len = zis.read(buffer)) > 0) {
 							os.write(buffer, 0, len);
@@ -73,10 +72,6 @@ public class ZipUtil {
 
 						fileNameToByteArray.put(fileName, os.toByteArray());
 
-					} finally {
-						if (os != null) {
-							os.close();
-						}
 					}
 				}
 				ze = zis.getNextEntry();
@@ -87,7 +82,6 @@ public class ZipUtil {
 			zis.close();
 
 		} catch (IOException ex) {
-			
 			log.info("close Byte stream failed - {}" , ex);
 			return null;
 		} finally {
@@ -96,7 +90,7 @@ public class ZipUtil {
 					zis.closeEntry();
 					zis.close();
 				} catch (IOException e) {
-					// TODO: add log
+					log.info("Close ZipInputStream failed - {}" , e);
 				}
 
 			}
@@ -127,50 +121,29 @@ public class ZipUtil {
 	}
 
 	public static byte[] zipBytes(byte[] input) throws IOException {
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		ZipOutputStream zos = new ZipOutputStream(baos);
-		ZipEntry entry = new ZipEntry("zip");
-		entry.setSize(input.length);
-		zos.putNextEntry(entry);
-		zos.write(input);
-		zos.closeEntry();
-		zos.close();
-		return baos.toByteArray();
+		try(ByteArrayOutputStream baos = new ByteArrayOutputStream();
+				ZipOutputStream zos = new ZipOutputStream(baos)){
+			ZipEntry entry = new ZipEntry("zip");
+			entry.setSize(input.length);
+			zos.putNextEntry(entry);
+			zos.write(input);
+			zos.closeEntry();
+			return baos.toByteArray();
+		}
 	}
 
 	public static byte[] unzip(byte[] zipped) {
-		ZipInputStream zipinputstream = null;
-		ByteArrayOutputStream outputStream = null;
-		try {
+		try(ZipInputStream zipinputstream = new ZipInputStream(new ByteArrayInputStream(zipped));
+				ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
 			byte[] buf = new byte[1024];
-
-			zipinputstream = new ZipInputStream(new ByteArrayInputStream(zipped));
 			ZipEntry zipentry = zipinputstream.getNextEntry();
-			outputStream = new ByteArrayOutputStream();
 			int n;
 			while ((n = zipinputstream.read(buf, 0, 1024)) > -1) {
 				outputStream.write(buf, 0, n);
 			}
-
 			return outputStream.toByteArray();
 		} catch (Exception e) {
 			throw new IllegalStateException("Can't unzip input stream", e);
-		} finally {
-			if (outputStream != null) {
-				try {
-					outputStream.close();
-				} catch (IOException e) {
-					log.debug("Failed to close output stream", e);
-				}
-			}
-			if (zipinputstream != null) {
-				try {
-					zipinputstream.closeEntry();
-					zipinputstream.close();
-				} catch (IOException e) {
-					log.debug("Failed to close zip input stream", e);
-				}
-			}
 		}
 	}
 
