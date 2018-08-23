@@ -175,6 +175,14 @@ export class InterfaceOperationComponent {
             const index = _.findIndex(this.operationList, el => el.uniqueId === operation.uniqueId);
             this.operationList.splice(index, 1, newOperation);
             this.component.interfaceOperations = this.operationList;
+            if (newOperation.workflowId) {
+                const resourceId = this.component.uuid;
+                const operationId = newOperation.uniqueId;
+                const workflowId = newOperation.workflowId;
+                const versionId = newOperation.workflowVersionId;
+                const artifactId = newOperation.artifactUUID;
+                this.WorkflowServiceNg2.associateWorkflowArtifact(resourceId, operationId, workflowId, versionId, artifactId).subscribe();
+            }
         });
     }
 

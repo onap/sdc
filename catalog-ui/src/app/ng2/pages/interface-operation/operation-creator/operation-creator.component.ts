@@ -59,9 +59,10 @@ export class OperationCreatorComponent {
         const buildInputParams = () => {
             if (inputOperation.inputParams) {
                 this.inputParameters = [];
-                _.forEach(inputOperation.inputParams.listToscaDataDefinition, (input: OperationParameter) => {
-                    this.addParam(input);
-                });
+                _.forEach(
+                    inputOperation.inputParams.listToscaDataDefinition.sort((a, b) => a.name.localeCompare(b.name)),
+                    (input: OperationParameter) => this.addParam(input)
+                );
             }
         }
 
@@ -104,7 +105,9 @@ export class OperationCreatorComponent {
             this.isLoading = false;
 
             this.workflowVersions = _.map(
-                _.filter(versions, version => version.state === this.workflowServiceNg2.VERSION_STATE_CERTIFIED),
+                _.filter(
+                    versions, version => version.state === this.workflowServiceNg2.VERSION_STATE_CERTIFIED
+                ).sort((a, b) => a.name.localeCompare(b.name)),
                 (version: any) => {
                     if (!this.assignInputParameters[this.operation.workflowId][version.id]) {
                         this.assignInputParameters[this.operation.workflowId][version.id] = _.map(version.inputs, (input: any) => {
@@ -114,14 +117,15 @@ export class OperationCreatorComponent {
                                 property: null,
                                 mandatory: input.mandatory,
                             });
-                        });
+                        })
+                        .sort((a, b) => a.name.localeCompare(b.name));
                     }
-                    return new DropdownValue(version.id, `v. ${version.name}`);
+                    return new DropdownValue(version.id, version.name);
                 }
             );
 
             if (!selectedVersionId && versions.length) {
-                this.operation.workflowVersionId = _.last(versions.sort()).id;
+                this.operation.workflowVersionId = _.last(this.workflowVersions).value;
             }
             this.changeWorkflowVersion();
         });

@@ -5,13 +5,13 @@
 
         <div class="side-by-side">
             <div class="i-sdc-form-item">
-                <label class="i-sdc-form-label" [ngClass]="{'required': !isEditMode}">Operation Type</label>
-                <ui-element-dropdown
-                    data-tests-id="operationTypeDropdown"
-                    [values]="operation.OperationTypeEnum"
-                    [(value)]="operation.operationType"
-                    [readonly]="isEditMode">
-                </ui-element-dropdown>
+                <label class="i-sdc-form-label" [ngClass]="{'required': !isEditMode}">Operation Name</label>
+                <input
+                    type="text"
+                    data-tests-id="operationName"
+                    name="name"
+                    [(ngModel)]="operation.operationType"
+                    [attr.maxLength]="200" />
             </div>
 
             <div class="i-sdc-form-item" >
