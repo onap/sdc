@@ -19,19 +19,6 @@ topology_template:
       required: true
       entry_schema:
         type: string
-    subinterface_vdbe_untr_2_subports_aap_untrusted_ip_prefix:
-      type: list
-      required: true
-      entry_schema:
-        type: string
-    subinterface_vdbe_untr_1_subports_aap_untrusted_ip_prefix:
-      type: list
-      required: true
-      entry_schema:
-        type: string
-    port_vdbe_untr_port_subnetpoolid:
-      type: string
-      required: true
     subinterface_vdbe_untr_1_subports_aap_sec_untrusted_ip_prefix:
       type: list
       required: true
@@ -64,11 +51,6 @@ topology_template:
       type: integer
       required: true
     subinterface_vdbe_untr_1_subports_mac_address:
-      type: list
-      required: true
-      entry_schema:
-        type: string
-    subinterface_vdbe_untr_1_subports_ip_v6_address:
       type: list
       required: true
       entry_schema:
@@ -114,6 +96,92 @@ topology_template:
       required: true
       entry_schema:
         type: json
+    subinterface_vdbe_untr_1_subports_vn_network_list:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_vdbe_untr_port_name:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_vdbe_untr_port_network_role:
+      type: string
+      required: true
+    subinterface_vdbe_untr_2_subports_vn_network_list:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    subinterface_vdbe_untr_1_subports_aap_untrusted_v6_ip_prefix:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    subinterface_vdbe_untr_2_subports_ip_v6_address:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    subinterface_vdbe_untr_2_subports_mac_address:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    subinterface_vdbe_untr_2_subports_aap_untrusted_v6_ip_prefix_len:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    compute_vdbe_name:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    subinterface_vdbe_untr_1_subports_aap_sec_untrusted_ip_prefix_len:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_vdbe_untr_port_related_networks:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.RelatedNetworksAssignments
+    subinterface_vdbe_untr_2_subports_aap_sec_untrusted_ip_prefix_len:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_vdbe_untr_port_ip_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.IpRequirements
+    subinterface_vdbe_untr_1_subports_vlan_tag_list:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    subinterface_vdbe_untr_2_subports_aap_untrusted_ip_prefix:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    subinterface_vdbe_untr_1_subports_aap_untrusted_ip_prefix:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_vdbe_untr_port_subnetpoolid:
+      type: string
+      required: true
+    subinterface_vdbe_untr_1_subports_ip_v6_address:
+      type: list
+      required: true
+      entry_schema:
+        type: string
     port_vdbe_untr_port_mac_requirements:
       type: org.openecomp.datatypes.network.MacRequirements
       required: true
@@ -139,16 +207,6 @@ topology_template:
       required: true
       entry_schema:
         type: float
-    subinterface_vdbe_untr_1_subports_vn_network_list:
-      type: list
-      required: true
-      entry_schema:
-        type: string
-    port_vdbe_untr_port_name:
-      type: list
-      required: true
-      entry_schema:
-        type: string
     port_vdbe_untr_port_vlan_requirements:
       type: list
       required: true
@@ -159,9 +217,6 @@ topology_template:
       required: true
       entry_schema:
         type: string
-    port_vdbe_untr_port_network_role:
-      type: string
-      required: true
     subinterface_vdbe_untr_1_subports_vmac_address:
       type: list
       required: true
@@ -172,32 +227,7 @@ topology_template:
       required: true
       entry_schema:
         type: string
-    subinterface_vdbe_untr_2_subports_vn_network_list:
-      type: list
-      required: true
-      entry_schema:
-        type: string
-    subinterface_vdbe_untr_1_subports_aap_untrusted_v6_ip_prefix:
-      type: list
-      required: true
-      entry_schema:
-        type: string
     subinterface_vdbe_untr_2_subports_aap_sec_untrusted_ip_prefix:
-      type: list
-      required: true
-      entry_schema:
-        type: string
-    subinterface_vdbe_untr_2_subports_ip_v6_address:
-      type: list
-      required: true
-      entry_schema:
-        type: string
-    subinterface_vdbe_untr_2_subports_mac_address:
-      type: list
-      required: true
-      entry_schema:
-        type: string
-    subinterface_vdbe_untr_2_subports_aap_untrusted_v6_ip_prefix_len:
       type: list
       required: true
       entry_schema:
@@ -212,31 +242,6 @@ topology_template:
       required: true
       entry_schema:
         type: string
-    compute_vdbe_name:
-      type: list
-      required: true
-      entry_schema:
-        type: string
-    subinterface_vdbe_untr_1_subports_aap_sec_untrusted_ip_prefix_len:
-      type: list
-      required: true
-      entry_schema:
-        type: string
-    subinterface_vdbe_untr_2_subports_aap_sec_untrusted_ip_prefix_len:
-      type: list
-      required: true
-      entry_schema:
-        type: string
-    port_vdbe_untr_port_ip_requirements:
-      type: list
-      required: true
-      entry_schema:
-        type: org.openecomp.datatypes.network.IpRequirements
-    subinterface_vdbe_untr_1_subports_vlan_tag_list:
-      type: list
-      required: true
-      entry_schema:
-        type: json
   node_templates:
     vdbe_vdbe_untr_port_vdbe_untr_1_subports:
       type: org.openecomp.resource.abstract.nodes.heat.subinterface.nested
@@ -428,6 +433,8 @@ topology_template:
         vlan_requirements:
           get_input: port_vdbe_untr_port_vlan_requirements
         subinterface_indicator: true
+        related_networks:
+          get_input: port_vdbe_untr_port_related_networks
         ip_requirements:
           get_input: port_vdbe_untr_port_ip_requirements
         network_role_tag:

@@ -14,6 +14,11 @@ topology_template:
     port_vdbe_untr_vmi_virtual_machine_interface_allowed_address_pairs:
       type: org.openecomp.datatypes.heat.contrailV2.virtual.machine.subInterface.AddressPairs
       required: true
+    port_vdbe_untr_vmi_related_networks:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.RelatedNetworksAssignments
     subinterface_vlan1_aap_untrusted_v6_ip_prefix:
       type: list
       required: true
@@ -288,6 +293,11 @@ topology_template:
       required: true
       entry_schema:
         type: string
+    port_vdbe_oam_vmi_related_networks:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.RelatedNetworksAssignments
     port_vdbe_untr_vmi_vlan_requirements:
       type: list
       required: true
@@ -418,6 +428,8 @@ topology_template:
         vlan_requirements:
           get_input: port_vdbe_untr_vmi_vlan_requirements
         subinterface_indicator: true
+        related_networks:
+          get_input: port_vdbe_untr_vmi_related_networks
         virtual_network_refs:
           get_input:
           - port_vdbe_untr_vmi_virtual_network_refs
@@ -459,6 +471,8 @@ topology_template:
         vlan_requirements:
           get_input: port_vdbe_oam_vmi_vlan_requirements
         subinterface_indicator: true
+        related_networks:
+          get_input: port_vdbe_oam_vmi_related_networks
         virtual_network_refs:
           get_input:
           - port_vdbe_oam_vmi_virtual_network_refs

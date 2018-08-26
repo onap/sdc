@@ -958,17 +958,6 @@ org.openecomp.datatypes.network.NetworkAssignments:
       type: org.openecomp.datatypes.network.IPv6SubnetAssignments
       required: true
       description: IPv6 defualt subnet assignments
-    related_networks:
-      type: list
-      required: false
-      description: Related Networks List.
-      entry_schema:
-        type: org.openecomp.datatypes.network.RelatedNetworksAssignments
-    is_trunked:
-      type: boolean
-      required: true
-      description: \"true\" indicates that network is trunked 
-      default: false
 
 org.openecomp.datatypes.network.ProviderNetwork:
   derived_from: org.openecomp.datatypes.Root
@@ -981,7 +970,7 @@ org.openecomp.datatypes.network.ProviderNetwork:
       type: string
       required: false
       constraints:
-        - valid_values: ["Physnet41", "Physnet42", "Physnet43", "Physnet44", "Physnet21", "Physnet22", "sriovnet1", "sriovnet2", "oam"]
+        - valid_values: ["Physnet41", "Physnet42", "Physnet43", "Physnet44", "Physnet21", "Physnet22"]
       description: >
         Identifies the NUMA processor cluster to which this physical network interface belongs.
         NUMA instance correlates to the first digit of the Physical Network Name suffix (e.g. \"01\" = NUMA 0, \"11\" = NUMA 1)
@@ -1283,15 +1272,6 @@ org.openecomp.datatypes.ImageInfo:
         type: string
         required: false
         default: md5
-
-org.openecomp.datatypes.network.RelatedNetworksAssignments:
-  derived_from: org.openecomp.datatypes.Root
-  properties:
-    related_network_role:
-      type: string
-      description: The network role of the related network, sharing provider network.
-      required: false
-
 #ONAP types 
 tosca.datatypes.nfv.VnfcConfigurableProperties:
   derived_from: tosca.datatypes.Root

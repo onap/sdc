@@ -28,7 +28,7 @@ data_types:
     derived_from: org.openecomp.datatypes.Root
     properties:
       is_provider_network:
-        description: \"true\" testShouldLocatePathWhenResourcePresentInUrlsindicates that this a Neutron provider type of network
+        description: \"true\" indicates that this a Neutron provider type of network
         type: boolean
         required: true
       physical_network_name:

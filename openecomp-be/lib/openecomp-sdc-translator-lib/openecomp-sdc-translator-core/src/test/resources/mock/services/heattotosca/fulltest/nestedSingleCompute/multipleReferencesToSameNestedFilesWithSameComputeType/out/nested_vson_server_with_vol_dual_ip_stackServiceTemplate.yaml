@@ -127,6 +127,11 @@ topology_template:
       type: string
       description: |
         Swift account auth token. Example:  041a5187bb4641f9b89583e2539776b0
+    port_vson_server_oam_net_port_0_related_networks:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.RelatedNetworksAssignments
     default_gateway_v6:
       label: Default IPv6 gateway
       hidden: false
@@ -250,6 +255,8 @@ topology_template:
       properties:
         subnetpoolid:
           get_input: port_vson_server_oam_net_port_0_subnetpoolid
+        related_networks:
+          get_input: port_vson_server_oam_net_port_0_related_networks
         network:
           get_input: oam_net_id
         ip_requirements:

@@ -34,7 +34,8 @@
       "network_role",
       "order",
       "exCP_naming",
-      "subnetpoolid"
+      "subnetpoolid",
+      "related_networks"
     ]
   ,
   "_config": {

@@ -14,6 +14,11 @@ topology_template:
     port_pcm_port_11_network_role_tag:
       type: string
       required: true
+    port_pcm_port_11_related_networks:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.RelatedNetworksAssignments
     availabilityzone_name:
       label: availabilityzone name
       hidden: false
@@ -80,6 +85,11 @@ topology_template:
     port_pcm_port_11_network_role:
       type: string
       required: true
+    port_pcm_port_01_related_networks:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.RelatedNetworksAssignments
     security_group_name:
       label: security group name
       hidden: false
@@ -149,6 +159,12 @@ topology_template:
     pcm_port_11:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
+        subnetpoolid:
+          get_input: port_pcm_port_11_subnetpoolid
+        related_networks:
+          get_input: port_pcm_port_11_related_networks
+        network:
+          get_input: oam_net_name
         ip_requirements:
           get_input: port_pcm_port_11_ip_requirements
         security_groups:
@@ -158,8 +174,6 @@ topology_template:
         fixed_ips:
         - ip_address:
             get_input: oam_net_ip
-        subnetpoolid:
-          get_input: port_pcm_port_11_subnetpoolid
         mac_requirements:
           get_input: port_pcm_port_11_mac_requirements
         subinterface_indicator: false
@@ -169,8 +183,6 @@ topology_template:
           get_input: port_pcm_port_11_vlan_requirements
         network_role_tag:
           get_input: port_pcm_port_11_network_role_tag
-        network:
-          get_input: oam_net_name
         order:
           get_input: port_pcm_port_11_order
       requirements:
@@ -181,6 +193,12 @@ topology_template:
     pcm_port_01:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
+        subnetpoolid:
+          get_input: port_pcm_port_01_subnetpoolid
+        related_networks:
+          get_input: port_pcm_port_01_related_networks
+        network:
+          get_input: cps_net_name
         ip_requirements:
           get_input: port_pcm_port_01_ip_requirements
         security_groups:
@@ -190,8 +208,6 @@ topology_template:
         fixed_ips:
         - ip_address:
             get_input: cps_net_ip
-        subnetpoolid:
-          get_input: port_pcm_port_01_subnetpoolid
         mac_requirements:
           get_input: port_pcm_port_01_mac_requirements
         subinterface_indicator: false
@@ -201,8 +217,6 @@ topology_template:
           get_input: port_pcm_port_01_vlan_requirements
         network_role_tag:
           get_input: port_pcm_port_01_network_role_tag
-        network:
-          get_input: cps_net_name
         order:
           get_input: port_pcm_port_01_order
       requirements:

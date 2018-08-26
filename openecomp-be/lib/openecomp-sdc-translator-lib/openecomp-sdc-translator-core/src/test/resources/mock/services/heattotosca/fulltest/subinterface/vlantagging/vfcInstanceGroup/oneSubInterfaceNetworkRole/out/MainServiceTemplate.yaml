@@ -416,10 +416,6 @@ topology_template:
       properties:
         subinterface_vdbe_untr_1_subports_ip_address:
         - get_input: vdbe_untrusted_ip_1
-        subinterface_vdbe_untr_2_subports_aap_untrusted_ip_prefix:
-        - get_input: vdbe_aap_untrusted_ip_prefix
-        subinterface_vdbe_untr_1_subports_aap_untrusted_ip_prefix:
-        - get_input: vdbe_aap_untrusted_ip_prefix
         subinterface_vdbe_untr_1_subports_aap_sec_untrusted_ip_prefix:
         - get_input: vdbe_aap_sec_untrusted_ip_prefix
         subinterface_vdbe_untr_2_subports_aap_untrusted_v6_ip_prefix:
@@ -434,8 +430,6 @@ topology_template:
         - get_input: vdbe_aap_untrusted_ip_prefix_len
         subinterface_vdbe_untr_1_subports_mac_address:
         - get_input: vdbe_hw_untr_mac_1
-        subinterface_vdbe_untr_1_subports_ip_v6_address:
-        - get_input: vdbe_untrusted_v6_ip_1
         subinterface_vdbe_untr_1_subports_subinterfaces_name_prefix:
         - str_replace:
             template: VM_NAMEDBE001p1n004
@@ -463,30 +457,9 @@ topology_template:
         - get_input: aap_address_mode
         subinterface_vdbe_untr_2_subports_vlan_tag_list:
         - get_input: untrusted_vlan_tags
-        port_vdbe_untr_port_mac_requirements:
-          mac_count_required:
-            is_required: false
-        subinterface_vdbe_untr_1_subports_parent_interface:
-        - vdbe_1_untr_port_1
-        subinterface_vdbe_untr_2_subports_service_template_filter_count:
-        - 5
-        subinterface_vdbe_untr_1_subports_service_template_filter_count:
-        - get_input: untrusted_num_vn
         subinterface_vdbe_untr_1_subports_vn_network_list:
         - get_input: untrusted_vn_networks
         port_vdbe_untr_port_name:
-        - str_replace:
-            template: VM_NAMEDBE001p1n004
-            params:
-              DBE:
-                get_input: vdbe_device_name
-              VM_NAME:
-                get_input: vdbe_name_1
-        subinterface_vdbe_untr_2_subports_ip_address:
-        - get_input: vdbe_untrusted_ip_1
-        subinterface_vdbe_untr_1_subports_vmac_address:
-        - get_input: vdbe_untrusted_vmac_address
-        subinterface_vdbe_untr_2_subports_subinterfaces_name_prefix:
         - str_replace:
             template: VM_NAMEDBE001p1n004
             params:
@@ -498,18 +471,12 @@ topology_template:
         - get_input: untrusted_vn_networks
         subinterface_vdbe_untr_1_subports_aap_untrusted_v6_ip_prefix:
         - get_input: vdbe_aap_untrusted_v6_ip_prefix
-        subinterface_vdbe_untr_2_subports_aap_sec_untrusted_ip_prefix:
-        - get_input: vdbe_aap_sec_untrusted_ip_prefix
         subinterface_vdbe_untr_2_subports_ip_v6_address:
         - get_input: vdbe_untrusted_v6_ip_1
         subinterface_vdbe_untr_2_subports_mac_address:
         - get_input: vdbe_hw_untr_mac_1
         subinterface_vdbe_untr_2_subports_aap_untrusted_v6_ip_prefix_len:
         - get_input: vdbe_aap_untrusted_v6_ip_prefix_len
-        subinterface_vdbe_untr_1_subports_aap_untrusted_ip_prefix_len:
-        - get_input: vdbe_aap_untrusted_ip_prefix_len
-        subinterface_vdbe_untr_2_subports_parent_interface:
-        - vdbe_1_untr_port_1
         compute_vdbe_name:
         - get_input: vdbe_name_1
         subinterface_vdbe_untr_1_subports_aap_sec_untrusted_ip_prefix_len:
@@ -524,6 +491,39 @@ topology_template:
             is_required: false
         subinterface_vdbe_untr_1_subports_vlan_tag_list:
         - get_input: untrusted_vlan_tags
+        subinterface_vdbe_untr_2_subports_aap_untrusted_ip_prefix:
+        - get_input: vdbe_aap_untrusted_ip_prefix
+        subinterface_vdbe_untr_1_subports_aap_untrusted_ip_prefix:
+        - get_input: vdbe_aap_untrusted_ip_prefix
+        subinterface_vdbe_untr_1_subports_ip_v6_address:
+        - get_input: vdbe_untrusted_v6_ip_1
+        port_vdbe_untr_port_mac_requirements:
+          mac_count_required:
+            is_required: false
+        subinterface_vdbe_untr_1_subports_parent_interface:
+        - vdbe_1_untr_port_1
+        subinterface_vdbe_untr_2_subports_service_template_filter_count:
+        - 5
+        subinterface_vdbe_untr_1_subports_service_template_filter_count:
+        - get_input: untrusted_num_vn
+        subinterface_vdbe_untr_2_subports_ip_address:
+        - get_input: vdbe_untrusted_ip_1
+        subinterface_vdbe_untr_1_subports_vmac_address:
+        - get_input: vdbe_untrusted_vmac_address
+        subinterface_vdbe_untr_2_subports_subinterfaces_name_prefix:
+        - str_replace:
+            template: VM_NAMEDBE001p1n004
+            params:
+              DBE:
+                get_input: vdbe_device_name
+              VM_NAME:
+                get_input: vdbe_name_1
+        subinterface_vdbe_untr_2_subports_aap_sec_untrusted_ip_prefix:
+        - get_input: vdbe_aap_sec_untrusted_ip_prefix
+        subinterface_vdbe_untr_1_subports_aap_untrusted_ip_prefix_len:
+        - get_input: vdbe_aap_untrusted_ip_prefix_len
+        subinterface_vdbe_untr_2_subports_parent_interface:
+        - vdbe_1_untr_port_1
         service_template_filter:
           substitute_service_template: Nested_vdbeServiceTemplate.yaml
           count: 1

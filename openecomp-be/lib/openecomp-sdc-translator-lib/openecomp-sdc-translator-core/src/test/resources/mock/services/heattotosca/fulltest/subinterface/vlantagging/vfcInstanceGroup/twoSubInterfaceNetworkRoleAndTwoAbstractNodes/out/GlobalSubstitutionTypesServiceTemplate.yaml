@@ -280,6 +280,12 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: string
+      port_vdbe_untr_port_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       subinterface_nested1_aap_sec_untrusted_ip_prefix:
         type: list
         required: true
@@ -951,6 +957,12 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: string
+      port_vdbe_untr_port_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       port_vdbe_untr_port_ip_requirements:
         type: list
         required: true

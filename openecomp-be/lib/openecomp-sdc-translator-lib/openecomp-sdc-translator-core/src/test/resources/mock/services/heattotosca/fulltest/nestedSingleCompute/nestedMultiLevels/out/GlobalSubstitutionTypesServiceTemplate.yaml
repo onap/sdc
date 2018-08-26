@@ -311,6 +311,12 @@ node_types:
         type: integer
         required: true
         status: SUPPORTED
+      port_cmaui_port_7_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       port_cmaui_port_7_network_role_tag:
         type: string
         required: true
@@ -405,6 +411,12 @@ node_types:
         type: string
         required: true
         status: SUPPORTED
+      port_cmaui_port_8_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
     requirements:
     - dependency_cmaui_port_7:
         capability: tosca.capabilities.Node
@@ -834,6 +846,12 @@ node_types:
   org.openecomp.resource.abstract.nodes.cmaui:
     derived_from: org.openecomp.resource.abstract.nodes.VFC
     properties:
+      port_cmaui_port_6_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       port_cmaui_port_6_fixed_ips:
         type: list
         required: true
@@ -876,6 +894,12 @@ node_types:
         type: string
         required: true
         status: SUPPORTED
+      port_cmaui_port_5_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       port_cmaui_port_6_network:
         type: list
         required: true
@@ -1507,6 +1531,12 @@ node_types:
         status: SUPPORTED
         constraints:
         - greater_or_equal: 0
+      port_cmaui_port_3_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       port_cmaui_port_3_ip_requirements:
         type: list
         required: true
@@ -1555,6 +1585,12 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: json
+      port_cmaui_port_4_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       port_cmaui_port_4_exCP_naming:
         type: org.openecomp.datatypes.Naming
         required: true
@@ -3784,6 +3820,12 @@ node_types:
         type: string
         required: true
         status: SUPPORTED
+      port_cmaui_port_1_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       port_cmaui_port_1_security_groups:
         type: list
         required: true
@@ -3828,6 +3870,12 @@ node_types:
         type: string
         required: true
         status: SUPPORTED
+      port_cmaui_port_2_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       port_cmaui_port_2_network_role_tag:
         type: string
         required: true

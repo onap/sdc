@@ -43,6 +43,11 @@ topology_template:
     port_cif_oam_1_port_3_subnetpoolid:
       type: string
       required: true
+    port_cif_oam_1_port_3_related_networks:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.RelatedNetworksAssignments
     vm_image_name:
       type: string
       required: true
@@ -96,6 +101,11 @@ topology_template:
     port_cif_ims_li_1_port_subnetpoolid:
       type: string
       required: true
+    port_cif_ims_core_1_port_related_networks:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.RelatedNetworksAssignments
     port_cif_ims_li_1_port_allowed_address_pairs:
       type: list
       required: true
@@ -133,6 +143,11 @@ topology_template:
     port_cif_internal_1_port_exCP_naming:
       type: org.openecomp.datatypes.Naming
       required: true
+    port_cif_internal_1_port_related_networks:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.RelatedNetworksAssignments
     port_cif_oam_1_port_1_fixed_ips:
       type: list
       required: true
@@ -264,6 +279,11 @@ topology_template:
       required: true
       entry_schema:
         type: string
+    port_cif_oam_1_port_1_related_networks:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.RelatedNetworksAssignments
     port_cif_ims_core_1_port_subnetpoolid:
       type: string
       required: true
@@ -297,6 +317,11 @@ topology_template:
       required: true
       entry_schema:
         type: string
+    port_cif_ims_li_1_port_related_networks:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.RelatedNetworksAssignments
     port_cif_ims_li_1_port_network_role_tag:
       type: string
       required: true
@@ -369,6 +394,8 @@ topology_template:
         vlan_requirements:
           get_input: port_cif_ims_li_1_port_vlan_requirements
         subinterface_indicator: false
+        related_networks:
+          get_input: port_cif_ims_li_1_port_related_networks
         ip_requirements:
           get_input: port_cif_ims_li_1_port_ip_requirements
         network_role_tag:
@@ -412,6 +439,8 @@ topology_template:
         vlan_requirements:
           get_input: port_cif_internal_1_port_vlan_requirements
         subinterface_indicator: false
+        related_networks:
+          get_input: port_cif_internal_1_port_related_networks
         ip_requirements:
           get_input: port_cif_internal_1_port_ip_requirements
         network_role_tag:
@@ -455,6 +484,8 @@ topology_template:
         vlan_requirements:
           get_input: port_cif_oam_1_port_1_vlan_requirements
         subinterface_indicator: false
+        related_networks:
+          get_input: port_cif_oam_1_port_1_related_networks
         ip_requirements:
           get_input: port_cif_oam_1_port_1_ip_requirements
         network_role_tag:
@@ -498,6 +529,8 @@ topology_template:
         vlan_requirements:
           get_input: port_cif_ims_core_1_port_vlan_requirements
         subinterface_indicator: false
+        related_networks:
+          get_input: port_cif_ims_core_1_port_related_networks
         ip_requirements:
           get_input: port_cif_ims_core_1_port_ip_requirements
         network_role_tag:
@@ -541,6 +574,8 @@ topology_template:
         vlan_requirements:
           get_input: port_cif_oam_1_port_3_vlan_requirements
         subinterface_indicator: false
+        related_networks:
+          get_input: port_cif_oam_1_port_3_related_networks
         ip_requirements:
           get_input: port_cif_oam_1_port_3_ip_requirements
         network_role_tag:

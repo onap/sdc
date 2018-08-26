@@ -88,6 +88,11 @@ topology_template:
     port_app_internal_0_port_network_role_tag:
       type: string
       required: true
+    port_app_internal_0_port_related_networks:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.RelatedNetworksAssignments
     port_app_oam_0_port_network_role:
       type: string
       required: true
@@ -96,6 +101,11 @@ topology_template:
       required: true
       entry_schema:
         type: json
+    port_app_data_0_port_related_networks:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.RelatedNetworksAssignments
     port_app_data_0_port_ip_requirements:
       type: list
       required: true
@@ -112,6 +122,11 @@ topology_template:
       required: true
       entry_schema:
         type: org.openecomp.datatypes.heat.network.AddressPair
+    port_app_oam_0_port_related_networks:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.RelatedNetworksAssignments
     port_app_data_0_port_subnetpoolid:
       type: string
       required: true
@@ -276,6 +291,8 @@ topology_template:
         vlan_requirements:
           get_input: port_app_internal_0_port_vlan_requirements
         subinterface_indicator: false
+        related_networks:
+          get_input: port_app_internal_0_port_related_networks
         ip_requirements:
           get_input: port_app_internal_0_port_ip_requirements
         network_role_tag:
@@ -317,6 +334,8 @@ topology_template:
         vlan_requirements:
           get_input: port_app_oam_0_port_vlan_requirements
         subinterface_indicator: false
+        related_networks:
+          get_input: port_app_oam_0_port_related_networks
         ip_requirements:
           get_input: port_app_oam_0_port_ip_requirements
         network_role_tag:
@@ -362,6 +381,8 @@ topology_template:
         vlan_requirements:
           get_input: port_app_data_0_port_vlan_requirements
         subinterface_indicator: false
+        related_networks:
+          get_input: port_app_data_0_port_related_networks
         ip_requirements:
           get_input: port_app_data_0_port_ip_requirements
         network_role_tag:

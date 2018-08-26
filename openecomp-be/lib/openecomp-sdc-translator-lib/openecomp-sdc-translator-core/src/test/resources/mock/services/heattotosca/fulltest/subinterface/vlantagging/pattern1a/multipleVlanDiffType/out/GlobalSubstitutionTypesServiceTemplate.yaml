@@ -168,6 +168,12 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: string
+      port_vdbe_untr_1_port_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       subinterface_vlan1_aap_untrusted_ip_prefix:
         type: list
         required: true

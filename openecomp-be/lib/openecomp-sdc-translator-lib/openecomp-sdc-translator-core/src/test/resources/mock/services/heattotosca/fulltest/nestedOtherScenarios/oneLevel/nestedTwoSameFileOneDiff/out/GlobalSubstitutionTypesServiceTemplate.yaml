@@ -86,6 +86,12 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: string
+      port_pd_server_port_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       port_pd_server_port_mac_requirements:
         type: org.openecomp.datatypes.network.MacRequirements
         required: true
@@ -1997,6 +2003,12 @@ node_types:
         type: string
         required: true
         status: SUPPORTED
+      port_oam_server_port_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       port_oam_server_port_fixed_ips:
         type: list
         required: true
@@ -2460,6 +2472,12 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: org.openecomp.datatypes.heat.neutron.port.FixedIps
+      port_sm_server_port_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
     requirements:
     - dependency_sm_server:
         capability: tosca.capabilities.Node
@@ -2855,6 +2873,12 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: org.openecomp.datatypes.heat.neutron.port.FixedIps
+      port_ps_server_port_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       vm_flavor_name:
         type: string
         required: true

@@ -24,6 +24,12 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: org.openecomp.datatypes.network.IpRequirements
+      port_cdi_ims_core_0_port_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       vm_flavor_name:
         type: string
         required: true
@@ -172,6 +178,12 @@ node_types:
         type: integer
         required: true
         status: SUPPORTED
+      port_cdi_internal_0_port_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       port_cdi_ims_core_0_port_allowed_address_pairs:
         type: list
         required: true
@@ -621,12 +633,6 @@ node_types:
   org.openecomp.resource.abstract.nodes.lbd:
     derived_from: org.openecomp.resource.abstract.nodes.VFC
     properties:
-      port_lbd_internal_1_port_vlan_requirements:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: org.openecomp.datatypes.network.VlanRequirements
       port_lbd_ims_core_1_port_allowed_address_pairs:
         type: list
         required: true
@@ -639,12 +645,6 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: string
-      compute_lbd_config_drive:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: boolean
       port_lbd_internal_1_port_name:
         type: list
         required: true
@@ -657,22 +657,6 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: org.openecomp.datatypes.heat.network.AddressPair
-      port_lbd_ims_core_1_port_ip_requirements:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: org.openecomp.datatypes.network.IpRequirements
-      port_lbd_ims_core_1_port_vlan_requirements:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: org.openecomp.datatypes.network.VlanRequirements
-      port_lbd_dpdk_1_port_mac_requirements:
-        type: org.openecomp.datatypes.network.MacRequirements
-        required: true
-        status: SUPPORTED
       port_lbd_dpdk_1_port_subnetpoolid:
         type: string
         required: true
@@ -701,22 +685,6 @@ node_types:
         status: SUPPORTED
       port_lbd_internal_1_port_order:
         type: integer
-        required: true
-        status: SUPPORTED
-      port_lbd_internal_1_port_ip_requirements:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: org.openecomp.datatypes.network.IpRequirements
-      port_lbd_internal_1_port_security_groups:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: json
-      port_lbd_ims_core_1_port_subnetpoolid:
-        type: string
         required: true
         status: SUPPORTED
       vm_image_name:
@@ -751,6 +719,98 @@ node_types:
         type: string
         required: true
         status: SUPPORTED
+      port_lbd_ims_core_1_port_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
+      compute_lbd_scheduler_hints:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
+      port_lbd_dpdk_1_port_name:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_lbd_ims_core_1_port_exCP_naming:
+        type: org.openecomp.datatypes.Naming
+        required: true
+        status: SUPPORTED
+      port_lbd_internal_1_port_network:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_lbd_internal_1_port_mac_requirements:
+        type: org.openecomp.datatypes.network.MacRequirements
+        required: true
+        status: SUPPORTED
+      compute_lbd_name:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_lbd_ims_core_1_port_network_role_tag:
+        type: string
+        required: true
+        status: SUPPORTED
+      port_lbd_internal_1_port_vlan_requirements:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.VlanRequirements
+      compute_lbd_config_drive:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: boolean
+      port_lbd_ims_core_1_port_ip_requirements:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.IpRequirements
+      port_lbd_ims_core_1_port_vlan_requirements:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.VlanRequirements
+      port_lbd_dpdk_1_port_mac_requirements:
+        type: org.openecomp.datatypes.network.MacRequirements
+        required: true
+        status: SUPPORTED
+      port_lbd_internal_1_port_ip_requirements:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.IpRequirements
+      port_lbd_internal_1_port_security_groups:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
+      port_lbd_ims_core_1_port_subnetpoolid:
+        type: string
+        required: true
+        status: SUPPORTED
+      port_lbd_internal_1_port_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       port_lbd_internal_1_port_subnetpoolid:
         type: string
         required: true
@@ -791,18 +851,6 @@ node_types:
         type: string
         required: true
         status: SUPPORTED
-      compute_lbd_scheduler_hints:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: json
-      port_lbd_dpdk_1_port_name:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: string
       port_lbd_dpdk_1_port_security_groups:
         type: list
         required: true
@@ -815,16 +863,6 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: org.openecomp.datatypes.heat.neutron.port.FixedIps
-      port_lbd_ims_core_1_port_exCP_naming:
-        type: org.openecomp.datatypes.Naming
-        required: true
-        status: SUPPORTED
-      port_lbd_internal_1_port_network:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: string
       port_lbd_internal_1_port_network_role:
         type: string
         required: true
@@ -841,26 +879,18 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: json
-      port_lbd_internal_1_port_mac_requirements:
-        type: org.openecomp.datatypes.network.MacRequirements
-        required: true
-        status: SUPPORTED
       port_lbd_dpdk_1_port_vlan_requirements:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
           type: org.openecomp.datatypes.network.VlanRequirements
-      compute_lbd_name:
+      port_lbd_dpdk_1_port_related_networks:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
-          type: string
-      port_lbd_ims_core_1_port_network_role_tag:
-        type: string
-        required: true
-        status: SUPPORTED
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       port_lbd_dpdk_1_port_network_role:
         type: string
         required: true
@@ -1382,6 +1412,12 @@ node_types:
         type: string
         required: true
         status: SUPPORTED
+      port_oam_internal_1_port_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       port_oam_internal_1_port_security_groups:
         type: list
         required: true
@@ -1444,6 +1480,12 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: org.openecomp.datatypes.heat.neutron.port.FixedIps
+      port_oam_oam_1_port_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       port_oam_internal_1_port_vlan_requirements:
         type: list
         required: true
@@ -1995,6 +2037,12 @@ node_types:
         type: string
         required: true
         status: SUPPORTED
+      port_oam_oam_2_port_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       port_oam_oam_2_port_security_groups:
         type: list
         required: true
@@ -2139,6 +2187,12 @@ node_types:
         type: integer
         required: true
         status: SUPPORTED
+      port_oam_internal_2_port_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       compute_oam_scheduler_hints:
         type: list
         required: true
@@ -2641,6 +2695,12 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: org.openecomp.datatypes.network.IpRequirements
+      port_tdcore_dpdk_0_port_1_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       port_tdcore_internal_0_port_0_vlan_requirements:
         type: list
         required: true
@@ -2708,6 +2768,12 @@ node_types:
         type: org.openecomp.datatypes.network.MacRequirements
         required: true
         status: SUPPORTED
+      port_tdcore_internal_0_port_0_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       tdcore_flavor_name:
         type: string
         description: flavor name
@@ -3272,6 +3338,12 @@ node_types:
         type: string
         required: true
         status: SUPPORTED
+      port_cdi_internal_1_port_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       vm_flavor_name:
         type: string
         required: true
@@ -3424,6 +3496,12 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: org.openecomp.datatypes.network.IpRequirements
+      port_cdi_ims_core_1_port_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       compute_cdi_metadata:
         type: list
         required: true
@@ -3881,18 +3959,6 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: string
-      compute_lbd_config_drive:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: boolean
-      port_lbd_dpdk_0_port_fixed_ips:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: org.openecomp.datatypes.heat.neutron.port.FixedIps
       port_lbd_internal_0_port_exCP_naming:
         type: org.openecomp.datatypes.Naming
         required: true
@@ -3905,22 +3971,16 @@ node_types:
         type: string
         required: true
         status: SUPPORTED
-      port_lbd_internal_0_port_security_groups:
+      port_lbd_dpdk_0_port_related_networks:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
-          type: json
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       vm_flavor_name:
         type: string
         required: true
         status: SUPPORTED
-      port_lbd_dpdk_0_port_security_groups:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: json
       compute_lbd_availability_zone:
         type: list
         required: true
@@ -3937,23 +3997,7 @@ node_types:
         type: string
         required: true
         status: SUPPORTED
-      port_lbd_dpdk_0_port_vlan_requirements:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: org.openecomp.datatypes.network.VlanRequirements
       vm_image_name:
-        type: string
-        required: true
-        status: SUPPORTED
-      port_lbd_dpdk_0_port_name:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: string
-      port_lbd_internal_0_port_subnetpoolid:
         type: string
         required: true
         status: SUPPORTED
@@ -3967,26 +4011,12 @@ node_types:
         type: integer
         required: true
         status: SUPPORTED
-      port_lbd_ims_core_0_port_network_role:
-        type: string
-        required: true
-        status: SUPPORTED
       port_lbd_ims_core_0_port_network:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
           type: string
-      port_lbd_dpdk_0_port_network:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: string
-      port_lbd_dpdk_0_port_network_role_tag:
-        type: string
-        required: true
-        status: SUPPORTED
       port_lbd_ims_core_0_port_mac_requirements:
         type: org.openecomp.datatypes.network.MacRequirements
         required: true
@@ -4003,6 +4033,130 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: string
+      port_lbd_ims_core_0_port_network_role_tag:
+        type: string
+        required: true
+        status: SUPPORTED
+      port_lbd_ims_core_0_port_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
+      compute_lbd_scheduler_hints:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
+      port_lbd_internal_0_port_mac_requirements:
+        type: org.openecomp.datatypes.network.MacRequirements
+        required: true
+        status: SUPPORTED
+      port_lbd_dpdk_0_port_order:
+        type: integer
+        required: true
+        status: SUPPORTED
+      port_lbd_ims_core_0_port_ip_requirements:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.IpRequirements
+      port_lbd_internal_0_port_network:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_lbd_dpdk_0_port_mac_requirements:
+        type: org.openecomp.datatypes.network.MacRequirements
+        required: true
+        status: SUPPORTED
+      compute_lbd_name:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_lbd_ims_core_0_port_security_groups:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
+      port_lbd_ims_core_0_port_name:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_lbd_internal_0_port_vlan_requirements:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.VlanRequirements
+      compute_lbd_config_drive:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: boolean
+      port_lbd_internal_0_port_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
+      port_lbd_dpdk_0_port_fixed_ips:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.heat.neutron.port.FixedIps
+      port_lbd_internal_0_port_security_groups:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
+      port_lbd_dpdk_0_port_security_groups:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
+      port_lbd_dpdk_0_port_vlan_requirements:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.VlanRequirements
+      port_lbd_dpdk_0_port_name:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_lbd_internal_0_port_subnetpoolid:
+        type: string
+        required: true
+        status: SUPPORTED
+      port_lbd_ims_core_0_port_network_role:
+        type: string
+        required: true
+        status: SUPPORTED
+      port_lbd_dpdk_0_port_network:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_lbd_dpdk_0_port_network_role_tag:
+        type: string
+        required: true
+        status: SUPPORTED
       port_lbd_internal_0_port_order:
         type: integer
         required: true
@@ -4029,36 +4183,12 @@ node_types:
         status: SUPPORTED
         constraints:
         - greater_or_equal: 0
-      port_lbd_ims_core_0_port_network_role_tag:
-        type: string
-        required: true
-        status: SUPPORTED
-      compute_lbd_scheduler_hints:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: json
-      port_lbd_internal_0_port_mac_requirements:
-        type: org.openecomp.datatypes.network.MacRequirements
-        required: true
-        status: SUPPORTED
       port_lbd_ims_core_0_port_fixed_ips:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
           type: org.openecomp.datatypes.heat.neutron.port.FixedIps
-      port_lbd_dpdk_0_port_order:
-        type: integer
-        required: true
-        status: SUPPORTED
-      port_lbd_ims_core_0_port_ip_requirements:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: org.openecomp.datatypes.network.IpRequirements
       port_lbd_ims_core_0_port_exCP_naming:
         type: org.openecomp.datatypes.Naming
         required: true
@@ -4069,52 +4199,18 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: org.openecomp.datatypes.heat.neutron.port.FixedIps
-      port_lbd_internal_0_port_network:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: string
-      port_lbd_dpdk_0_port_mac_requirements:
-        type: org.openecomp.datatypes.network.MacRequirements
-        required: true
-        status: SUPPORTED
       compute_lbd_metadata:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
           type: json
-      compute_lbd_name:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: string
       port_lbd_internal_0_port_ip_requirements:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
           type: org.openecomp.datatypes.network.IpRequirements
-      port_lbd_ims_core_0_port_security_groups:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: json
-      port_lbd_ims_core_0_port_name:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: string
-      port_lbd_internal_0_port_vlan_requirements:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: org.openecomp.datatypes.network.VlanRequirements
     requirements:
     - dependency_lbd_lbd_ims_core_0_port:
         capability: tosca.capabilities.Node
@@ -4668,6 +4764,12 @@ node_types:
         type: string
         required: true
         status: SUPPORTED
+      port_cif_oam_1_port_3_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       vm_image_name:
         type: string
         required: true
@@ -4734,6 +4836,12 @@ node_types:
         type: string
         required: true
         status: SUPPORTED
+      port_cif_ims_core_1_port_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       port_cif_ims_li_1_port_allowed_address_pairs:
         type: list
         required: true
@@ -4780,6 +4888,12 @@ node_types:
         type: org.openecomp.datatypes.Naming
         required: true
         status: SUPPORTED
+      port_cif_internal_1_port_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       port_cif_oam_1_port_1_fixed_ips:
         type: list
         required: true
@@ -4942,6 +5056,12 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: string
+      port_cif_oam_1_port_1_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       port_cif_ims_core_1_port_subnetpoolid:
         type: string
         required: true
@@ -4982,6 +5102,12 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: string
+      port_cif_ims_li_1_port_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       port_cif_ims_li_1_port_network_role_tag:
         type: string
         required: true
@@ -5769,6 +5895,12 @@ node_types:
         description: Unique ID for this VF instance
         required: true
         status: SUPPORTED
+      port_cscf_internal_0_port_0_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       availability_zone_0:
         type: string
         description: Availability zone name for CSCF instances.
@@ -6265,6 +6397,12 @@ node_types:
         type: integer
         required: true
         status: SUPPORTED
+      port_oam_internal_0_port_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       vm_image_name:
         type: string
         required: true
@@ -6323,6 +6461,12 @@ node_types:
         status: SUPPORTED
         constraints:
         - greater_or_equal: 0
+      port_oam_oam_0_port_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       compute_oam_user_data_format:
         type: list
         required: true
@@ -6864,6 +7008,12 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: org.openecomp.datatypes.network.IpRequirements
+      port_tdcore_dpdk_0_port_1_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       port_tdcore_internal_0_port_0_vlan_requirements:
         type: list
         required: true
@@ -6931,6 +7081,12 @@ node_types:
         type: org.openecomp.datatypes.network.MacRequirements
         required: true
         status: SUPPORTED
+      port_tdcore_internal_0_port_0_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       tdcore_flavor_name:
         type: string
         description: flavor name
@@ -7491,6 +7647,12 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: org.openecomp.datatypes.heat.neutron.port.FixedIps
+      port_cif_internal_0_port_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       port_cif_ims_li_0_port_network_role:
         type: string
         required: true
@@ -7523,6 +7685,12 @@ node_types:
         type: org.openecomp.datatypes.Naming
         required: true
         status: SUPPORTED
+      port_cif_oam_0_port_1_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       port_cif_oam_0_port_3_exCP_naming:
         type: org.openecomp.datatypes.Naming
         required: true
@@ -7543,6 +7711,12 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: org.openecomp.datatypes.network.IpRequirements
+      port_cif_ims_core_0_port_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       port_cif_oam_0_port_1_vlan_requirements:
         type: list
         required: true
@@ -7635,6 +7809,12 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: json
+      port_cif_oam_0_port_3_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       port_cif_oam_0_port_1_subnetpoolid:
         type: string
         required: true
@@ -7765,6 +7945,12 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: string
+      port_cif_ims_li_0_port_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       port_cif_internal_0_port_security_groups:
         type: list
         required: true
@@ -8605,6 +8791,12 @@ node_types:
         description: Unique ID for this VF instance
         required: true
         status: SUPPORTED
+      port_cscf_internal_0_port_0_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       availability_zone_0:
         type: string
         description: Availability zone name for CSCF instances.

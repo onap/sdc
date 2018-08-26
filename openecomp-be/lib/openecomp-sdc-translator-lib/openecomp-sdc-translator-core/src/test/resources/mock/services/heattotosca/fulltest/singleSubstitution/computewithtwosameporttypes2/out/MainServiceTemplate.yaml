@@ -855,10 +855,6 @@ topology_template:
             is_required: false
           floating_ip_count_required:
             is_required: false
-        port_pd_1_port_0_network_role_tag: oam
-        port_pd_2_port_1_mac_requirements:
-          mac_count_required:
-            is_required: false
         port_pd_2_port_1_ip_requirements:
         - ip_version: 4
           ip_count_required:
@@ -868,6 +864,10 @@ topology_template:
         port_pd_2_port_1_network_role_tag: oam
         compute_pd_server_user_data_format:
         - RAW
+        port_pd_1_port_0_network_role_tag: oam
+        port_pd_2_port_1_mac_requirements:
+          mac_count_required:
+            is_required: false
         service_template_filter:
           substitute_service_template: Nested_pd_serverServiceTemplate.yaml
           count: 1

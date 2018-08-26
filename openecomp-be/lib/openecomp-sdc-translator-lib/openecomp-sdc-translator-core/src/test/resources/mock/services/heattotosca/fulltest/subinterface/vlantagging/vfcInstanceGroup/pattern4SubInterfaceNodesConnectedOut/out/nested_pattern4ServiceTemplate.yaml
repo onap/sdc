@@ -16,6 +16,11 @@ topology_template:
       immutable: false
       type: string
       description: Unique ID for this VF module inst
+    port_vdbe_0_untr_vmi_1_related_networks:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.RelatedNetworksAssignments
     port_vdbe_0_untr_vmi_1_network_role_tag:
       type: string
       required: true
@@ -198,6 +203,8 @@ topology_template:
       properties:
         subnetpoolid:
           get_input: port_vdbe_0_untr_vmi_1_subnetpoolid
+        related_networks:
+          get_input: port_vdbe_0_untr_vmi_1_related_networks
         ip_requirements:
           get_input: port_vdbe_0_untr_vmi_1_ip_requirements
         network_role:

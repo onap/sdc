@@ -64,6 +64,12 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: json
+      port_vce_SRIOV2_0_port_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       port_vce_oam0_port_network:
         type: list
         required: true
@@ -78,6 +84,12 @@ node_types:
         type: string
         required: true
         status: SUPPORTED
+      port_vce_oam0_port_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       port_vce_SRIOV1_0_port_order:
         type: integer
         required: true
@@ -108,6 +120,12 @@ node_types:
         type: integer
         required: true
         status: SUPPORTED
+      port_vce_SRIOV1_0_port_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       compute_vce_availability_zone:
         type: list
         required: true

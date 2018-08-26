@@ -8,6 +8,12 @@ node_types:
   org.openecomp.resource.abstract.nodes.pd_server:
     derived_from: org.openecomp.resource.abstract.nodes.VFC
     properties:
+      port_pcm_port_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       index_value:
         type: integer
         description: Index value of this substitution service template runtime instance
@@ -447,6 +453,12 @@ node_types:
   org.openecomp.resource.abstract.nodes.pcm_server:
     derived_from: org.openecomp.resource.abstract.nodes.VFC
     properties:
+      port_pcm_port_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       index_value:
         type: integer
         description: Index value of this substitution service template runtime instance

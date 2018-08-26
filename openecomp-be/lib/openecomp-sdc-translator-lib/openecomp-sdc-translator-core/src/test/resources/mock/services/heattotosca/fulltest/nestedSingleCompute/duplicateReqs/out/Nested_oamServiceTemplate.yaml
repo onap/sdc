@@ -51,6 +51,11 @@ topology_template:
     port_oam_oam_0_port_order:
       type: integer
       required: true
+    port_oam_internal_0_port_related_networks:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.RelatedNetworksAssignments
     vm_image_name:
       type: string
       required: true
@@ -98,6 +103,11 @@ topology_template:
       default: 0
       constraints:
       - greater_or_equal: 0
+    port_oam_oam_0_port_related_networks:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.RelatedNetworksAssignments
     compute_oam_user_data_format:
       type: list
       required: true
@@ -179,6 +189,8 @@ topology_template:
         vlan_requirements:
           get_input: port_oam_oam_0_port_vlan_requirements
         subinterface_indicator: false
+        related_networks:
+          get_input: port_oam_oam_0_port_related_networks
         ip_requirements:
           get_input: port_oam_oam_0_port_ip_requirements
         network_role_tag:
@@ -222,6 +234,8 @@ topology_template:
         vlan_requirements:
           get_input: port_oam_internal_0_port_vlan_requirements
         subinterface_indicator: false
+        related_networks:
+          get_input: port_oam_internal_0_port_related_networks
         ip_requirements:
           get_input: port_oam_internal_0_port_ip_requirements
         network_role_tag:

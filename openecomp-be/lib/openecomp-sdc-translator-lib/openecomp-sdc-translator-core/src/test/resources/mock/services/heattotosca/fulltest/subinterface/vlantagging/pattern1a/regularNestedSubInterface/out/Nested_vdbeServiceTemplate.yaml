@@ -31,6 +31,11 @@ topology_template:
       required: true
       entry_schema:
         type: string
+    port_vdbe_untr_1_port_related_networks:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.RelatedNetworksAssignments
     subinterface_nested_service_template_filter_count:
       type: list
       required: true
@@ -286,6 +291,8 @@ topology_template:
         vlan_requirements:
           get_input: port_vdbe_untr_1_port_vlan_requirements
         subinterface_indicator: true
+        related_networks:
+          get_input: port_vdbe_untr_1_port_related_networks
         virtual_network_refs:
           get_input:
           - port_vdbe_untr_1_port_virtual_network_refs

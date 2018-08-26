@@ -11,11 +11,6 @@ node_types:
     derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
 topology_template:
   inputs:
-    port_lbd_internal_1_port_vlan_requirements:
-      type: list
-      required: true
-      entry_schema:
-        type: org.openecomp.datatypes.network.VlanRequirements
     port_lbd_ims_core_1_port_allowed_address_pairs:
       type: list
       required: true
@@ -26,11 +21,6 @@ topology_template:
       required: true
       entry_schema:
         type: string
-    compute_lbd_config_drive:
-      type: list
-      required: true
-      entry_schema:
-        type: boolean
     port_lbd_internal_1_port_name:
       type: list
       required: true
@@ -41,19 +31,6 @@ topology_template:
       required: true
       entry_schema:
         type: org.openecomp.datatypes.heat.network.AddressPair
-    port_lbd_ims_core_1_port_ip_requirements:
-      type: list
-      required: true
-      entry_schema:
-        type: org.openecomp.datatypes.network.IpRequirements
-    port_lbd_ims_core_1_port_vlan_requirements:
-      type: list
-      required: true
-      entry_schema:
-        type: org.openecomp.datatypes.network.VlanRequirements
-    port_lbd_dpdk_1_port_mac_requirements:
-      type: org.openecomp.datatypes.network.MacRequirements
-      required: true
     port_lbd_dpdk_1_port_subnetpoolid:
       type: string
       required: true
@@ -76,19 +53,6 @@ topology_template:
       required: true
     port_lbd_internal_1_port_order:
       type: integer
-      required: true
-    port_lbd_internal_1_port_ip_requirements:
-      type: list
-      required: true
-      entry_schema:
-        type: org.openecomp.datatypes.network.IpRequirements
-    port_lbd_internal_1_port_security_groups:
-      type: list
-      required: true
-      entry_schema:
-        type: json
-    port_lbd_ims_core_1_port_subnetpoolid:
-      type: string
       required: true
     vm_image_name:
       type: string
@@ -115,6 +79,81 @@ topology_template:
     port_lbd_ims_core_1_port_network_role:
       type: string
       required: true
+    port_lbd_ims_core_1_port_related_networks:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.RelatedNetworksAssignments
+    compute_lbd_scheduler_hints:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    port_lbd_dpdk_1_port_name:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_lbd_ims_core_1_port_exCP_naming:
+      type: org.openecomp.datatypes.Naming
+      required: true
+    port_lbd_internal_1_port_network:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_lbd_internal_1_port_mac_requirements:
+      type: org.openecomp.datatypes.network.MacRequirements
+      required: true
+    compute_lbd_name:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_lbd_ims_core_1_port_network_role_tag:
+      type: string
+      required: true
+    port_lbd_internal_1_port_vlan_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.VlanRequirements
+    compute_lbd_config_drive:
+      type: list
+      required: true
+      entry_schema:
+        type: boolean
+    port_lbd_ims_core_1_port_ip_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.IpRequirements
+    port_lbd_ims_core_1_port_vlan_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.VlanRequirements
+    port_lbd_dpdk_1_port_mac_requirements:
+      type: org.openecomp.datatypes.network.MacRequirements
+      required: true
+    port_lbd_internal_1_port_ip_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.IpRequirements
+    port_lbd_internal_1_port_security_groups:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    port_lbd_ims_core_1_port_subnetpoolid:
+      type: string
+      required: true
+    port_lbd_internal_1_port_related_networks:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.RelatedNetworksAssignments
     port_lbd_internal_1_port_subnetpoolid:
       type: string
       required: true
@@ -148,16 +187,6 @@ topology_template:
     port_lbd_dpdk_1_port_network_role_tag:
       type: string
       required: true
-    compute_lbd_scheduler_hints:
-      type: list
-      required: true
-      entry_schema:
-        type: json
-    port_lbd_dpdk_1_port_name:
-      type: list
-      required: true
-      entry_schema:
-        type: string
     port_lbd_dpdk_1_port_security_groups:
       type: list
       required: true
@@ -168,14 +197,6 @@ topology_template:
       required: true
       entry_schema:
         type: org.openecomp.datatypes.heat.neutron.port.FixedIps
-    port_lbd_ims_core_1_port_exCP_naming:
-      type: org.openecomp.datatypes.Naming
-      required: true
-    port_lbd_internal_1_port_network:
-      type: list
-      required: true
-      entry_schema:
-        type: string
     port_lbd_internal_1_port_network_role:
       type: string
       required: true
@@ -189,22 +210,16 @@ topology_template:
       required: true
       entry_schema:
         type: json
-    port_lbd_internal_1_port_mac_requirements:
-      type: org.openecomp.datatypes.network.MacRequirements
-      required: true
     port_lbd_dpdk_1_port_vlan_requirements:
       type: list
       required: true
       entry_schema:
         type: org.openecomp.datatypes.network.VlanRequirements
-    compute_lbd_name:
+    port_lbd_dpdk_1_port_related_networks:
       type: list
       required: true
       entry_schema:
-        type: string
-    port_lbd_ims_core_1_port_network_role_tag:
-      type: string
-      required: true
+        type: org.openecomp.datatypes.network.RelatedNetworksAssignments
     port_lbd_dpdk_1_port_network_role:
       type: string
       required: true
@@ -227,6 +242,8 @@ topology_template:
         vlan_requirements:
           get_input: port_lbd_ims_core_1_port_vlan_requirements
         subinterface_indicator: false
+        related_networks:
+          get_input: port_lbd_ims_core_1_port_related_networks
         ip_requirements:
           get_input: port_lbd_ims_core_1_port_ip_requirements
         network_role_tag:
@@ -270,6 +287,8 @@ topology_template:
         vlan_requirements:
           get_input: port_lbd_dpdk_1_port_vlan_requirements
         subinterface_indicator: false
+        related_networks:
+          get_input: port_lbd_dpdk_1_port_related_networks
         ip_requirements:
           get_input: port_lbd_dpdk_1_port_ip_requirements
         network_role_tag:
@@ -311,6 +330,8 @@ topology_template:
         vlan_requirements:
           get_input: port_lbd_internal_1_port_vlan_requirements
         subinterface_indicator: false
+        related_networks:
+          get_input: port_lbd_internal_1_port_related_networks
         ip_requirements:
           get_input: port_lbd_internal_1_port_ip_requirements
         network_role_tag:

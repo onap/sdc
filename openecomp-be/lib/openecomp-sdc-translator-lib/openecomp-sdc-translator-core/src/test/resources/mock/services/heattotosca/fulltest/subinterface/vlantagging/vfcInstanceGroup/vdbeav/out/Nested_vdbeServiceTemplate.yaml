@@ -14,6 +14,11 @@ topology_template:
     port_vdbe_untr_vmi_virtual_machine_interface_allowed_address_pairs:
       type: org.openecomp.datatypes.heat.contrailV2.virtual.machine.subInterface.AddressPairs
       required: true
+    port_vdbe_untr_vmi_related_networks:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.RelatedNetworksAssignments
     subinterface_vdbeav_subinterface_heat_template_aap_address_mode:
       type: list
       required: true
@@ -98,6 +103,11 @@ topology_template:
     port_vdbe_ctrl_0_port_exCP_naming:
       type: org.openecomp.datatypes.Naming
       required: true
+    port_vdbe_ctrl_0_port_related_networks:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.RelatedNetworksAssignments
     port_vdbe_ctrl_0_port_network_role_tag:
       type: string
       required: true
@@ -170,6 +180,11 @@ topology_template:
       required: true
       entry_schema:
         type: string
+    port_vdbe_trst_0_port_related_networks:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.RelatedNetworksAssignments
     port_vdbe_fabr_0_port_virtual_network_refs:
       type: list
       required: true
@@ -197,9 +212,19 @@ topology_template:
     port_vdbe_trst_0_port_subnetpoolid:
       type: string
       required: true
+    port_vdbe_oam_0_port_related_networks:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.RelatedNetworksAssignments
     port_vdbe_untr_vmi_network_role_tag:
       type: string
       required: true
+    port_vdbe_fabr_0_port_related_networks:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.RelatedNetworksAssignments
     subinterface_vdbeav_subinterface_heat_template_mac_address:
       type: list
       required: true
@@ -339,23 +364,25 @@ topology_template:
     vdbe_vdbe_fabr_0_port:
       type: org.openecomp.resource.cp.nodes.heat.contrailV2.VirtualMachineInterface
       properties:
+        mac_requirements:
+          get_input: port_vdbe_fabr_0_port_mac_requirements
+        order:
+          get_input: port_vdbe_fabr_0_port_order
         exCP_naming:
           get_input: port_vdbe_fabr_0_port_exCP_naming
         vlan_requirements:
           get_input: port_vdbe_fabr_0_port_vlan_requirements
         subinterface_indicator: false
-        ip_requirements:
-          get_input: port_vdbe_fabr_0_port_ip_requirements
         virtual_network_refs:
           get_input:
           - port_vdbe_fabr_0_port_virtual_network_refs
           - index_value
+        ip_requirements:
+          get_input: port_vdbe_fabr_0_port_ip_requirements
+        related_networks:
+          get_input: port_vdbe_fabr_0_port_related_networks
         network_role_tag:
           get_input: port_vdbe_fabr_0_port_network_role_tag
-        mac_requirements:
-          get_input: port_vdbe_fabr_0_port_mac_requirements
-        order:
-          get_input: port_vdbe_fabr_0_port_order
         network_role:
           get_input: port_vdbe_fabr_0_port_network_role
         subnetpoolid:
@@ -387,6 +414,8 @@ topology_template:
           - index_value
         ip_requirements:
           get_input: port_vdbe_oam_0_port_ip_requirements
+        related_networks:
+          get_input: port_vdbe_oam_0_port_related_networks
         network_role_tag:
           get_input: port_vdbe_oam_0_port_network_role_tag
         virtual_machine_interface_mac_addresses:
@@ -422,6 +451,8 @@ topology_template:
         vlan_requirements:
           get_input: port_vdbe_trst_0_port_vlan_requirements
         subinterface_indicator: false
+        related_networks:
+          get_input: port_vdbe_trst_0_port_related_networks
         virtual_network_refs:
           get_input:
           - port_vdbe_trst_0_port_virtual_network_refs
@@ -486,6 +517,8 @@ topology_template:
         vlan_requirements:
           get_input: port_vdbe_untr_vmi_vlan_requirements
         subinterface_indicator: true
+        related_networks:
+          get_input: port_vdbe_untr_vmi_related_networks
         virtual_network_refs:
           get_input:
           - port_vdbe_untr_vmi_virtual_network_refs
@@ -514,23 +547,25 @@ topology_template:
     vdbe_vdbe_ctrl_0_port:
       type: org.openecomp.resource.cp.nodes.heat.contrailV2.VirtualMachineInterface
       properties:
+        mac_requirements:
+          get_input: port_vdbe_ctrl_0_port_mac_requirements
+        order:
+          get_input: port_vdbe_ctrl_0_port_order
         exCP_naming:
           get_input: port_vdbe_ctrl_0_port_exCP_naming
         vlan_requirements:
           get_input: port_vdbe_ctrl_0_port_vlan_requirements
         subinterface_indicator: false
-        ip_requirements:
-          get_input: port_vdbe_ctrl_0_port_ip_requirements
         virtual_network_refs:
           get_input:
           - port_vdbe_ctrl_0_port_virtual_network_refs
           - index_value
+        ip_requirements:
+          get_input: port_vdbe_ctrl_0_port_ip_requirements
+        related_networks:
+          get_input: port_vdbe_ctrl_0_port_related_networks
         network_role_tag:
           get_input: port_vdbe_ctrl_0_port_network_role_tag
-        mac_requirements:
-          get_input: port_vdbe_ctrl_0_port_mac_requirements
-        order:
-          get_input: port_vdbe_ctrl_0_port_order
         network_role:
           get_input: port_vdbe_ctrl_0_port_network_role
         subnetpoolid:

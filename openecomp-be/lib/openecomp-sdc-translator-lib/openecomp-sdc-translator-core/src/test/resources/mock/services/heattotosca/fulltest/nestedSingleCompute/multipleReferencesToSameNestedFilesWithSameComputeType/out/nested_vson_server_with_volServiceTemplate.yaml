@@ -55,6 +55,11 @@ topology_template:
       immutable: false
       type: string
       description: Unique name for this VF module instance.
+    port_vson_server_oam_net_port_00_related_networks:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.RelatedNetworksAssignments
     dns_servers:
       label: DNS servers
       hidden: false
@@ -230,6 +235,8 @@ topology_template:
       properties:
         subnetpoolid:
           get_input: port_vson_server_oam_net_port_00_subnetpoolid
+        related_networks:
+          get_input: port_vson_server_oam_net_port_00_related_networks
         network:
           get_input: oam_net_id
         ip_requirements:

@@ -84,6 +84,12 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: string
+      port_pd02_port_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
     requirements:
     - dependency_pd_server:
         capability: tosca.capabilities.Node
@@ -447,6 +453,12 @@ node_types:
         type: org.openecomp.datatypes.Naming
         required: true
         status: SUPPORTED
+      port_pd01_port_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       vm_flavor_name:
         type: string
         required: true
@@ -886,6 +898,12 @@ node_types:
         type: org.openecomp.datatypes.Naming
         required: true
         status: SUPPORTED
+      port_pd01_port_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       vm_flavor_name:
         type: string
         required: true
@@ -1353,6 +1371,12 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: string
+      port_oam02_port_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       compute_oam_availability_zone:
         type: list
         required: true
@@ -1764,6 +1788,12 @@ node_types:
         type: string
         required: true
         status: SUPPORTED
+      port_oam01_port_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       vm_image_name:
         type: string
         required: true
@@ -2149,6 +2179,12 @@ node_types:
   org.openecomp.resource.abstract.nodes.cmaui:
     derived_from: org.openecomp.resource.abstract.nodes.VFC
     properties:
+      port_cmaui02_port_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       index_value:
         type: integer
         description: Index value of this substitution service template runtime instance
@@ -2644,6 +2680,12 @@ node_types:
         type: string
         required: true
         status: SUPPORTED
+      port_cmaui01_port_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       port_cmaui01_port_exCP_naming:
         type: org.openecomp.datatypes.Naming
         required: true
@@ -6643,6 +6685,12 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: string
+      port_pd02_port_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
     requirements:
     - dependency_ps:
         capability: tosca.capabilities.Node

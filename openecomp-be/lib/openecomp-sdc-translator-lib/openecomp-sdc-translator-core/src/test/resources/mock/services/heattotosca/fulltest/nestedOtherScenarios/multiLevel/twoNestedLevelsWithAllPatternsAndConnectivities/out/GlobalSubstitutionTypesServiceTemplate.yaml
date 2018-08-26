@@ -32,6 +32,12 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: org.openecomp.datatypes.network.VlanRequirements
+      port_pd_server_1b_port_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       port_pd_server_1b_port_network_role_tag:
         type: string
         required: true
@@ -515,6 +521,12 @@ node_types:
         type: integer
         required: true
         status: SUPPORTED
+      port_osm_port_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       compute_osm_server_1c2_metadata:
         type: list
         required: true
@@ -912,6 +924,12 @@ node_types:
         type: string
         required: true
         status: SUPPORTED
+      port_oam_port_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       vm_flavor_name:
         type: string
         required: true
@@ -1388,6 +1406,12 @@ node_types:
         type: string
         required: true
         status: SUPPORTED
+      port_pd_server_port_1_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       port_pd_server_port_1_network_role_tag:
         type: string
         required: true
@@ -1414,6 +1438,12 @@ node_types:
         type: integer
         required: true
         status: SUPPORTED
+      port_pd_server_port_2_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       port_pd_server_port_2_network_role_tag:
         type: string
         required: true
@@ -1913,6 +1943,12 @@ node_types:
         type: string
         required: true
         status: SUPPORTED
+      port_ps_server_1b_port_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       port_ps_server_1b_port_network:
         type: list
         required: true
@@ -2364,6 +2400,12 @@ node_types:
         type: string
         required: true
         status: SUPPORTED
+      port_BE_port_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       vm_image_name:
         type: string
         required: true
@@ -5401,6 +5443,12 @@ node_types:
         type: string
         required: true
         status: SUPPORTED
+      port_ps_server_1b_port_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       port_ps_server_1b_port_network:
         type: list
         required: true
@@ -5868,6 +5916,12 @@ node_types:
         type: org.openecomp.datatypes.Naming
         required: true
         status: SUPPORTED
+      port_rd_server_1b_port_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
     attributes:
       rd_server_1b_accessIPv4:
         type: string
@@ -6578,6 +6632,12 @@ node_types:
         type: string
         required: true
         status: SUPPORTED
+      port_pd_server_port_1_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       port_pd_server_port_1_network_role_tag:
         type: string
         required: true
@@ -6603,6 +6663,12 @@ node_types:
         type: integer
         required: true
         status: SUPPORTED
+      port_pd_server_port_2_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       port_pd_server_port_2_network_role_tag:
         type: string
         required: true
@@ -7134,6 +7200,12 @@ node_types:
         type: string
         required: true
         status: SUPPORTED
+      port_pd_server_port_1_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       port_pd_server_port_1_network_role_tag:
         type: string
         required: true
@@ -7159,6 +7231,12 @@ node_types:
         type: integer
         required: true
         status: SUPPORTED
+      port_pd_server_port_2_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       port_pd_server_port_2_network_role_tag:
         type: string
         required: true
@@ -7638,6 +7716,12 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: string
+      port_cmaui_port_related_networks:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       index_value:
         type: integer
         description: Index value of this substitution service template runtime instance
