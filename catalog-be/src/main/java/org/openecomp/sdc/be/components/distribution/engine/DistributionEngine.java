@@ -94,7 +94,6 @@ public class DistributionEngine implements IDistributionEngine {
 
     @PostConstruct
     private void init() {
-
         LOGGER.trace("Enter init method of DistributionEngine");
 
         DistributionEngineConfiguration distributionEngineConfiguration = ConfigurationManager.getConfigurationManager().getDistributionEngineConfiguration();
@@ -131,7 +130,6 @@ public class DistributionEngine implements IDistributionEngine {
         distributionEngineClusterHealth.startHealthCheckTask(envNamePerStatus);
 
         LOGGER.trace("Exit init method of DistributionEngine");
-
     }
 
     @PreDestroy

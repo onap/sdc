@@ -51,7 +51,7 @@ public class EnvironmentsEngine implements INotificationHandler {
     private static final Logger log = Logger.getLogger(EnvironmentsEngine.class.getName());
     private ConfigurationManager configurationManager = ConfigurationManager.getConfigurationManager();
 
-    private Map<String, OperationalEnvironmentEntry> environments;
+    private Map<String, OperationalEnvironmentEntry> environments = new HashMap<>();
     private Map<String, AtomicBoolean> envNamePerStatus = new HashMap<>();
     private Map<String, DistributionEnginePollingTask> envNamePerPollingTask = new HashMap<>();
     private Map<String, DistributionEngineInitTask> envNamePerInitTask = new HashMap<>();
@@ -79,13 +79,18 @@ public class EnvironmentsEngine implements INotificationHandler {
     @VisibleForTesting
     @PostConstruct
     void init() {
-        log.trace("Environments engine has been initialized. ");
         try {
+            //TODO the following block in try scope hide null pointer exception during tests - needs refactoring
             environments = populateEnvironments();
             createUebTopicsForEnvironments();
             initDmeGlobalConfig();
+            if(!configurationManager.getConfiguration().getDmaapConsumerConfiguration().isActive()){
+                log.info("Environments engine is disabled");
+                return;
+            }
             dmaapConsumer.consumeDmaapTopic(this::handleMessage,
-                    (t, e) -> log.error("An error occurred upon consuming topic by Dmaap consumer client: ", e));
+                (t, e) -> log.error("An error occurred upon consuming topic by Dmaap consumer client: ", e));
+            log.info("Environments engine has been initialized.");
         } catch (Exception e) {
             log.error("An error occurred upon consuming topic by Dmaap consumer client.", e);
         }
