@@ -126,6 +126,7 @@ public class HealthCheckBusinessLogic {
 
         //Dmaap
         getDmaapHealthCheck(healthCheckInfos);
+
         // BE
         getBeHealthCheck(healthCheckInfos);
 
@@ -182,9 +183,14 @@ public class HealthCheckBusinessLogic {
     }
 
     private List<HealthCheckInfo> getDmaapHealthCheck(List<HealthCheckInfo> healthCheckInfos) {
-        String appVersion = getAppVersion();
-        dmaapHealth.getHealthCheckInfo().setVersion(appVersion);
-        healthCheckInfos.add(dmaapHealth.getHealthCheckInfo());
+        if(ConfigurationManager.getConfigurationManager().getConfiguration().getDmaapConsumerConfiguration().isActive()){
+            String appVersion = getAppVersion();
+            dmaapHealth.getHealthCheckInfo().setVersion(appVersion);
+            healthCheckInfos.add(dmaapHealth.getHealthCheckInfo());
+        } else {
+          log.debug("Dmaap health check disabled");
+        }
+
         return healthCheckInfos;
     }
 

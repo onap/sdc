@@ -87,7 +87,9 @@
             "num_of_replicas": "0",
             "num_of_shards": "1"
         },
-
+        "DMAAP": {
+            "active": false
+        },
         "cassandra": {
             "concurrent_reads": "32",
             "num_tokens": "256",
