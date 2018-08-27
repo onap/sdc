@@ -52,7 +52,6 @@ public class EnvironmentsEngineTest extends BeConfDependentTest {
 
 	@Test
 	public void testInit() throws Exception {
-
 		// default test
 		Deencapsulation.invoke(testSubject, "init");
 	}

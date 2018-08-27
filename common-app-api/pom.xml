@@ -171,6 +171,13 @@
 			<scope>test</scope>
 		</dependency>
 
+		<dependency>
+			<groupId>com.google.code.bean-matchers</groupId>
+			<artifactId>bean-matchers</artifactId>
+			<version>${bean-matchers.version}</version>
+			<scope>test</scope>
+		</dependency>
+
 		<!-- jsoup HTML parser library @ http://jsoup.org/ -->
 		<dependency>
 			<groupId>org.jsoup</groupId>

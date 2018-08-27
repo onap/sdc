@@ -9,8 +9,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.openecomp.sdc.be.components.BeConfDependentTest;
+import org.openecomp.sdc.be.config.Configuration;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.config.DistributionEngineConfiguration;
+import org.openecomp.sdc.be.config.DmaapConsumerConfiguration;
 import org.openecomp.sdc.be.dao.cassandra.CassandraOperationStatus;
 import org.openecomp.sdc.be.dao.cassandra.OperationalEnvironmentDao;
 import org.openecomp.sdc.be.datatypes.enums.EnvironmentStatusEnum;
@@ -33,21 +36,15 @@ public class EnvironmentsEngineMockTest {
     @InjectMocks
     private EnvironmentsEngine envEngine;
     @Mock
-    private DmaapConsumer dmaapConsumer;
-    @Mock
     private OperationalEnvironmentDao operationalEnvironmentDao;
-    @Mock
-    private DME2EndpointIteratorCreator epIterCreator;
     @Mock
     private ConfigurationManager configurationManager;
     @Mock
     private DistributionEngineConfiguration distributionEngineConfiguration;
     @Mock
     private AaiRequestHandler aaiRequestHandler;
-
     @Before
     public void preStart() {
-        when(configurationManager.getDistributionEngineConfiguration()).thenReturn(distributionEngineConfiguration);
         envEngine.setConfigurationManager(configurationManager);
     }
 
@@ -56,12 +53,12 @@ public class EnvironmentsEngineMockTest {
         List<OperationalEnvironmentEntry> entryList = Arrays.asList(createOpEnvEntry("Env1"), createOpEnvEntry("Env2"));
         Either<List<OperationalEnvironmentEntry>, CassandraOperationStatus> successEither = Either.left(entryList);
         when(operationalEnvironmentDao.getByEnvironmentsStatus(EnvironmentStatusEnum.COMPLETED)).thenReturn(successEither);
-
+        when(configurationManager.getDistributionEngineConfiguration()).thenReturn(distributionEngineConfiguration);
         when(distributionEngineConfiguration.getEnvironments()).thenReturn(Arrays.asList("Env Loaded From Configuration"));
         when(distributionEngineConfiguration.getUebPublicKey()).thenReturn("Dummy Public Key");
         when(distributionEngineConfiguration.getUebSecretKey()).thenReturn("Dummy Private Key");
         when(distributionEngineConfiguration.getUebServers()).thenReturn(
-                Arrays.asList("uebsb91kcdc.it.att.com:3904", "uebsb92kcdc.it.att.com:3904", "uebsb91kcdc.it.att.com:3904"));
+                Arrays.asList("uebsb91kcdc.it.com:3904", "uebsb92kcdc.it.com:3904", "uebsb91kcdc.it.com:3904"));
 
         envEngine.init();
 
