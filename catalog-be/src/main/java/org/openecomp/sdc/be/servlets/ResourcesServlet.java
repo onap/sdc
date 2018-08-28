@@ -31,12 +31,13 @@ import org.openecomp.sdc.be.components.impl.ImportUtils;
 import org.openecomp.sdc.be.components.impl.ResourceBusinessLogic;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
+import org.openecomp.sdc.be.dao.jsongraph.utils.IdBuilderUtils;
 import org.openecomp.sdc.be.datamodel.api.HighestFilterEnum;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
-import org.openecomp.sdc.be.model.Resource;
-import org.openecomp.sdc.be.model.UploadResourceInfo;
-import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.*;
+import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.servlets.ResourceUploadServlet.ResourceAuthorityTypeEnum;
 import org.openecomp.sdc.common.api.Constants;
@@ -168,6 +169,106 @@ public class ResourcesServlet extends AbstractValidationsServlet {
             ret.left().value().setCapabilities(null);
         }
         return ret;
+    }
+
+    @POST
+    @Path("/resources/combination/{serviceId}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @ApiOperation(value = "Create Combination Resource", httpMethod = "POST", notes = "Returns combination resource", response = Resource.class)
+    @ApiResponses(value = { @ApiResponse(code = 201, message = "Resource created"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 400, message = "Invalid content / Missing content"),
+            @ApiResponse(code = 409, message = "Resource already exist") })
+    public Response createCombinationResource(@ApiParam(value = "Resource object to be created", required = true) String data, @PathParam("serviceId") final String serviceId, @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+
+        userId = (userId != null) ? userId : request.getHeader(Constants.USER_ID_HEADER);
+        //TODO:Saty why is init() needed?
+        init();
+
+        ServletContext context = request.getSession().getServletContext();
+
+        String url = request.getMethod() + " " + request.getRequestURI();
+        log.debug("Start handle request of {}" , url);
+
+        // get modifier id
+        User modifier = new User();
+        modifier.setUserId(userId);
+        log.debug("modifier id is {}", userId);
+
+        Response response;
+        try {
+
+            Wrapper<Response> responseWrapper = new Wrapper<>();
+            // UI Import
+            if (isUIImport(data)) {
+                performUIImport(responseWrapper, data, request, userId, null);
+            }
+            // UI Create
+            else {
+                ResourceBusinessLogic resourceBusinessLogic = getResourceBL(context);
+                //TODO:Saty Used getService() instead of getServiceInfo()
+                Either<Service, ResponseFormat> getServiceResponse = getServiceBL(context).getService(serviceId.toLowerCase(), modifier);  //getServiceInfo() is new function. I think
+                // it can be replaced with getService() function
+                if (getServiceResponse.isRight()) {
+                    log.debug("failed to get service");
+                    response = buildErrorResponse(getServiceResponse.right().value());
+                    return response;
+                }
+                Service service = getServiceResponse.left().value();
+                //TODO:Saty need to check if the procedure to find name uniqueness is valid
+                String resourceUUid = service.getUniqueId() + "__" + service.getName() + "__" + service.getVersion();
+                //TODO:Saty getComponentByUuid() new function
+                Component component = resourceBusinessLogic.getComponentByUuid(resourceUUid);
+                if (component != null) {
+                    Object representation = RepresentationUtils.toRepresentation(component);
+                    response = buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.CREATED),
+                            representation);
+                    responseWrapper.setInnerElement(response);
+                    return responseWrapper.getInnerElement();
+                }
+
+                Either<Resource, ResponseFormat> convertResponse = parseToResource(data, modifier);
+                if (convertResponse.isRight()) {
+                    log.debug("failed to parse resource");
+                    response = buildErrorResponse(convertResponse.right().value());
+                    return response;
+                }
+                Resource resource = convertResponse.left().value();
+                //TODO:Saty Below is a new function
+                convertServiceToResource(service, resource);                                                                    //convertServiceToResource() new function
+
+                Resource createdResource = resourceBusinessLogic.createResource(resource, AuditingActionEnum.CREATE_RESOURCE, modifier, null, null);
+                Object representation = RepresentationUtils.toRepresentation(createdResource);
+                response = buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.CREATED), representation);
+                responseWrapper.setInnerElement(response);
+            }
+            return responseWrapper.getInnerElement();
+        } catch (IOException e) {
+            BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Create Resource Combination");
+            log.debug("create combination resource failed with exception", e);
+            response = buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
+            return response;
+        }
+    }
+
+    private void convertServiceToResource(Service service, Resource resource) {
+        String uid = UniqueIdBuilder.buildResourceUniqueId();
+        resource.setUniqueId(uid);
+        resource.setArtifacts(service.getArtifacts());
+        resource.setDeploymentArtifacts(service.getDeploymentArtifacts());
+        resource.setToscaArtifacts(service.getToscaArtifacts());
+        resource.setComponentInstances(service.getComponentInstances());
+        resource.setComponentInstancesRelations(service.getComponentInstancesRelations());
+        resource.setComponentInstancesAttributes(service.getComponentInstancesAttributes());
+        resource.setComponentInstancesProperties(service.getComponentInstancesProperties());
+        resource.setInputs(service.getInputs());
+
+        List<AdditionalInformationDefinition> addInformation = service.getAdditionalInformation();
+        if (org.apache.commons.collections.CollectionUtils.isNotEmpty(addInformation)) {
+            String id = IdBuilderUtils.generateChildId(uid, VertexTypeEnum.ADDITIONAL_INFORMATION);
+            addInformation.get(0).setUniqueId(id);
+        }
+        resource.setAdditionalInformation(addInformation);
+        resource.setUUID(service.getUniqueId() + "__" + service.getName() + "__" + service.getVersion());
     }
 
     @DELETE

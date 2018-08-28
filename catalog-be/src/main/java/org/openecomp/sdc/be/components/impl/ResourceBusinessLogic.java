@@ -3924,6 +3924,24 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         return Either.left(getResource.left().value());
     }
 
+    public Component getComponentByUuid(String componentUuid) {
+        Component component = null;
+        Either<List<Component>, StorageOperationStatus> getComponentRes = toscaOperationFacade.
+                getComponentListByUuid(componentUuid, null);
+        if (getComponentRes.isRight()) {
+            StorageOperationStatus status = getComponentRes.right().value();
+            log.debug("Could not fetch component with uuid {}. Status is {}. Hence component name is unique", componentUuid, status);
+        } else {
+            List<Component> value = getComponentRes.left().value();
+            if (value.isEmpty()) {
+                log.debug("Could not fetch component with uuid {}", componentUuid);
+            } else {
+                component = value.get(0);
+            }
+        }
+        return component;
+    }
+
     /**
      * updateResourceMetadata
      *
