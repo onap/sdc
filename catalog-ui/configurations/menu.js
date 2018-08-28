@@ -27,6 +27,13 @@ const SDC_MENU_CONFIG = {
                             "alertModal": "lifecycleState/UNDOCHECKOUT"
                         }
                     },
+                    "COMBINATION": {
+                        "certify": {
+                            "text": "Certify",
+                            "url": "lifecycleState/certify",
+                            "confirmationModal": "lifecycleState/certify"
+                        }
+                    },
                     "SERVICE": {
                         "submitForTesting": {
                             "text": "Submit for Testing",
@@ -50,6 +57,7 @@ const SDC_MENU_CONFIG = {
                     "RESOURCE": {
                         "checkOut": { "text": "Check Out", "url": "lifecycleState/CHECKOUT" }
                     },
+                    "COMBINATION": {},
                     "SERVICE": {
                         "checkOut": { "text": "Check Out", "url": "lifecycleState/CHECKOUT" }
                     }
@@ -63,6 +71,7 @@ const SDC_MENU_CONFIG = {
                         },
                         "checkOut": { "text": "Check Out", "url": "lifecycleState/CHECKOUT" }
                     },
+                    "COMBINATION": {},
                     "SERVICE": {
                         "submitForTesting": {
                             "text": "Submit for Testing",
@@ -92,12 +101,14 @@ const SDC_MENU_CONFIG = {
             "changeLifecycleStateButtons": {
                 "READY_FOR_CERTIFICATION": {
                     "RESOURCE": {},
+                    "COMBINATION": {},
                     "SERVICE": {
                         "startTesting": { "text": "Start Testing", "url": "lifecycleState/startCertification" }
                     }
                 },
                 "CERTIFICATION_IN_PROGRESS": {
                     "RESOURCE": {},
+                    "COMBINATION": {},
                     "SERVICE": {
                         "accept": {
                             "text": "Accept",
@@ -132,6 +143,7 @@ const SDC_MENU_CONFIG = {
             "changeLifecycleStateButtons": {
                 "DISTRIBUTION_APPROVED": {
                     "RESOURCE": {},
+                    "COMBINATION": {},
                     "SERVICE": {
                         "distribute": {
                             "text": "Distribute",
@@ -146,6 +158,7 @@ const SDC_MENU_CONFIG = {
                 },
                 "DISTRIBUTED": {
                     "RESOURCE": {},
+                    "COMBINATION": {},
                     "SERVICE": {
                         "redistribute": {
                             "text": "Redistribute",
@@ -178,6 +191,7 @@ const SDC_MENU_CONFIG = {
             "changeLifecycleStateButtons": {
                 "DISTRIBUTION_NOT_APPROVED": {
                     "RESOURCE": {},
+                    "COMBINATION": {},
                     "SERVICE": {
                         "approve": {
                             "text": "Approve",
@@ -197,6 +211,7 @@ const SDC_MENU_CONFIG = {
                 },
                 "DISTRIBUTION_APPROVED": {
                     "RESOURCE": {},
+                    "COMBINATION": {},
                     "SERVICE": {
                         "reject": {
                             "text": "Reject",
@@ -207,6 +222,7 @@ const SDC_MENU_CONFIG = {
                 },
                 "DISTRIBUTED": {
                     "RESOURCE": {},
+                    "COMBINATION": {},
                     "SERVICE": {
                         "reject": {
                             "text": "Reject",
@@ -217,6 +233,7 @@ const SDC_MENU_CONFIG = {
                 },
                 "DISTRIBUTION_REJECTED": {
                     "RESOURCE": {},
+                    "COMBINATION": {},
                     "SERVICE": {
                         "approve": {
                             "text": "Approve",
@@ -469,6 +486,11 @@ const SDC_MENU_CONFIG = {
             { "text": "Deployment", "action": "onMenuItemPressed", "state": "workspace.deployment" },
             // {"text":"Inputs", "action":"onMenuItemPressed", "state": "workspace.resource_inputs"},
             { "text": "Properties Assignment", "action": "onMenuItemPressed", "state": "workspace.properties_assignment" }
+        ],
+        "Combination": [
+            { "text": "General", "action": "onMenuItemPressed", "state": "workspace.general" },
+            //{"text": "Composition", "action": "onMenuItemPressed", "state": "workspace.composition.details"},
+            { "text": "Activity Log", "action": "onMenuItemPressed", "state": "workspace.activity_log" },
         ],
         "PNF": [
             { "text": "General", "action": "onMenuItemPressed", "state": "workspace.general" },
