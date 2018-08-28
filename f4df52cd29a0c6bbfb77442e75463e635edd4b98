@@ -22,6 +22,29 @@
       "revId": "f4df52cd29a0c6bbfb77442e75463e635edd4b98",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_e4c171e5",
+        "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/main/DataSchemaMenu.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 1343
+      },
+      "writtenOn": "2018-08-28T14:08:02Z",
+      "side": 1,
+      "message": "The ConfigurationManager is not initialized. Failing on java.lang.NullPointerException\n\nPlease fix",
+      "range": {
+        "startLine": 40,
+        "startChar": 2,
+        "endLine": 41,
+        "endChar": 91
+      },
+      "revId": "f4df52cd29a0c6bbfb77442e75463e635edd4b98",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
