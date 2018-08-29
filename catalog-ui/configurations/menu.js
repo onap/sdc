@@ -32,6 +32,11 @@ const SDC_MENU_CONFIG = {
                             "text": "Certify",
                             "url": "lifecycleState/certify",
                             "confirmationModal": "lifecycleState/certify"
+                        },
+                        "deleteVersion": {
+                            "text": "Delete Version",
+                            "url": "lifecycleState/UNDOCHECKOUT",
+                            "alertModal": "lifecycleState/UNDOCHECKOUT"
                         }
                     },
                     "SERVICE": {
