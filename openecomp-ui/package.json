@@ -29,6 +29,7 @@
         "intl-relativeformat": "^1.2.0",
         "lodash": "^4.13.1",
         "md5": "^2.1.0",
+        "object-keys": "^1.0.12",
         "prop-types": "^15.6.0",
         "react": "^15.6.2",
         "react-bootstrap": "^0.32.1",

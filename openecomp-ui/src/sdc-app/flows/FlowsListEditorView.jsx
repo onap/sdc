@@ -20,7 +20,6 @@ import Modal from 'nfvo-components/modal/Modal.jsx';
 
 import ListEditorView from 'nfvo-components/listEditor/ListEditorView.jsx';
 import ListEditorItemView from 'nfvo-components/listEditor/ListEditorItemView.jsx';
-import FlowRelatedView from './ImportantLogic.jsx';
 import FlowsEditorModal from './FlowsEditorModal.js';
 import SequenceDiagram from './SequenceDiagram.jsx';
 
@@ -63,7 +62,6 @@ class FlowsListEditorView extends Component {
 
         return (
             <div className="workflows license-agreement-list-editor">
-                <FlowRelatedView display={localFilter} />
                 <ListEditorView
                     plusButtonTitle={i18n('Add Workflow')}
                     onAdd={onAddWorkflowClick}

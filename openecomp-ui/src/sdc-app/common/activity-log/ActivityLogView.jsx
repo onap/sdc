@@ -19,7 +19,6 @@ import Tooltip from 'react-bootstrap/lib/Tooltip.js';
 import ListEditorView from 'nfvo-components/listEditor/ListEditorView.jsx';
 import SVGIcon from 'sdc-ui/lib/react/SVGIcon.js';
 import i18n from 'nfvo-utils/i18n/i18n.js';
-import LogDetails from './LogixUtil.jsx';
 
 function ActivityLogSortableCellHeader({ isHeader, data, isDes, onSort }) {
     //TODO check icon sdc-ui
@@ -133,7 +132,6 @@ class ActivityLogView extends Component {
     render() {
         return (
             <div className="activity-log-view">
-                <LogDetails display={this.state.localFilter} />
                 <ListEditorView
                     title={i18n('Activity Log')}
                     filterValue={this.state.localFilter}
