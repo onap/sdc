@@ -35,7 +35,7 @@ import {
     NodesFactory,
     Point
 } from "app/models";
-import { ComponentInstanceFactory, ComponentFactory, GRAPH_EVENTS, GraphColors } from "app/utils";
+import { ComponentInstanceFactory, ComponentFactory, GRAPH_EVENTS, GraphColors, ModalsHandler } from "app/utils";
 import { EventListenerService, LoaderService } from "app/services";
 import { CompositionGraphLinkUtils } from "./utils/composition-graph-links-utils";
 import { CompositionGraphGeneralUtils } from "./utils/composition-graph-general-utils";
@@ -161,7 +161,8 @@ export class CompositionGraph implements ng.IDirective {
         private ModalServiceNg2: ModalService,
         private ConnectionWizardServiceNg2: ConnectionWizardService,
         private ComponentInstanceServiceNg2: ComponentInstanceServiceNg2,
-        private servicePathGraphUtils: ServicePathGraphUtils) {
+        private servicePathGraphUtils: ServicePathGraphUtils,
+        private ModalsHandler: ModalsHandler) {
 
     }
 
@@ -547,6 +548,16 @@ export class CompositionGraph implements ng.IDirective {
             }
         };
 
+        document.onkeydown = (event) => {
+            let isModalExist = document.getElementsByTagName('body')[0].classList.contains('modal-open');
+
+            if (!scope.isViewOnly && !isModalExist && event.keyCode == 46) {
+
+                this.deleteSelectedElement();
+
+            }
+        };
+
         /*
          scope.hideAssetPopover = ():void => {
 
@@ -562,6 +573,29 @@ export class CompositionGraph implements ng.IDirective {
          //scope.hideAssetPopover();
          }
          };*/
+    }
+
+    private deleteSelectedElement() {
+        if (this._cy) {
+            let nodesToDelete = this._cy.$('node:selected');
+
+            if (nodesToDelete.length !== 1) {
+                return;
+            }
+
+            let title: string = "Delete Confirmation";
+            let componentInstancetoDelete = nodesToDelete[0].data().componentInstance;
+            let showName = componentInstancetoDelete.name;
+            let message: string = "Are you sure you would like to delete" + " " + showName + "?";
+
+            let onOk = (): void => {
+                this.eventListenerService.notifyObservers(GRAPH_EVENTS.ON_DELETE_COMPONENT_INSTANCE, componentInstancetoDelete);
+            };
+
+            this.ModalsHandler.openConfirmationModal(title, message, false).then(onOk);
+
+        }
+
     }
 
     private registerCytoscapeGraphEvents(scope: ICompositionGraphScope) {
@@ -941,7 +975,8 @@ export class CompositionGraph implements ng.IDirective {
         ModalService,
         ConnectionWizardService,
         ComponentInstanceServiceNg2,
-        ServicePathGraphUtils) => {
+        ServicePathGraphUtils,
+        ModalsHandler) => {
         return new CompositionGraph(
             $q,
             $log,
@@ -962,7 +997,8 @@ export class CompositionGraph implements ng.IDirective {
             ModalService,
             ConnectionWizardService,
             ComponentInstanceServiceNg2,
-            ServicePathGraphUtils);
+            ServicePathGraphUtils,
+            ModalsHandler);
     }
 }
 
@@ -986,5 +1022,6 @@ CompositionGraph.factory.$inject = [
     'ModalServiceNg2',
     'ConnectionWizardServiceNg2',
     'ComponentInstanceServiceNg2',
-    'ServicePathGraphUtils'
+    'ServicePathGraphUtils',
+    'ModalsHandler'
 ];
