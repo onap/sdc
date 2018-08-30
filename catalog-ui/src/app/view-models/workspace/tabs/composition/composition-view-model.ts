@@ -31,7 +31,7 @@ import { ServiceGenericResponse } from "app/ng2/services/responses/service-gener
 import { Service } from "app/models/components/service";
 import { ZoneInstance } from "app/models/graph/zones/zone-instance";
 import { ComponentServiceNg2 } from "app/ng2/services/component-services/component.service";
-import { ModalService as ModalServiceSdcUI} from "sdc-ui/lib/angular/modals/modal.service"
+import { ModalService as ModalServiceSdcUI } from "sdc-ui/lib/angular/modals/modal.service"
 import { IModalConfig, IModalButtonComponent } from "sdc-ui/lib/angular/modals/models/modal-config";
 import { ValueEditComponent } from "app/ng2/components/ui/forms/value-edit/value-edit.component";
 import { UnsavedChangesComponent } from "../../../../ng2/components/ui/forms/unsaved-changes/unsaved-changes.component";
@@ -41,38 +41,38 @@ import { ModalButtonComponent } from "sdc-ui/lib/angular/components";
 
 export interface ICompositionViewModelScope extends IWorkspaceViewModelScope {
 
-    currentComponent:Component;
+    currentComponent: Component;
 
     //Added for now, in the future need to remove and use only id and type to pass to tabs.
     selectedComponent: Component;
     selectedZoneInstance: ZoneInstance;
 
     componentInstanceNames: Array<string>;
-    isLoading:boolean;
-    graphApi:any;
-    sharingService:SharingService;
-    sdcMenu:IAppMenu;
-    version:string;
-    isViewOnly:boolean;
-    isCanvasTagging:boolean;
-    isLoadingRightPanel:boolean;
-    disabledTabs:boolean;
-    openVersionChangeModal(pathsToDelete:string[]):ng.IPromise<any>;
-    onComponentInstanceVersionChange(component:Component);
-    isComponentInstanceSelected():boolean;
-    updateSelectedComponent():void;
+    isLoading: boolean;
+    graphApi: any;
+    sharingService: SharingService;
+    sdcMenu: IAppMenu;
+    version: string;
+    isViewOnly: boolean;
+    isCanvasTagging: boolean;
+    isLoadingRightPanel: boolean;
+    disabledTabs: boolean;
+    openVersionChangeModal(pathsToDelete: string[]): ng.IPromise<any>;
+    onComponentInstanceVersionChange(component: Component);
+    isComponentInstanceSelected(): boolean;
+    updateSelectedComponent(): void;
     openUpdateModal();
-    deleteSelectedComponentInstance():void;
-    onBackgroundClick():void;
-    setSelectedInstance(componentInstance:ComponentInstance):void;
-    setSelectedZoneInstance(zoneInstance: ZoneInstance):void;
-    changeZoneInstanceName(newName:string):void;
-    printScreen():void;
-    isPNF():boolean;
-    isConfiguration():boolean;
-    preventMoveTab(state: boolean):void;
-    ComponentServiceNg2:ComponentServiceNg2,
-    cacheComponentsInstancesFullData:Component;
+    deleteSelectedComponentInstance(): void;
+    onBackgroundClick(): void;
+    setSelectedInstance(componentInstance: ComponentInstance): void;
+    setSelectedZoneInstance(zoneInstance: ZoneInstance): void;
+    changeZoneInstanceName(newName: string): void;
+    printScreen(): void;
+    isPNF(): boolean;
+    isConfiguration(): boolean;
+    preventMoveTab(state: boolean): void;
+    ComponentServiceNg2: ComponentServiceNg2,
+    cacheComponentsInstancesFullData: Component;
 }
 
 export class CompositionViewModel {
@@ -98,25 +98,25 @@ export class CompositionViewModel {
         'Notification'
     ];
 
-    constructor(private $scope:ICompositionViewModelScope,
-                private $log:ng.ILogService,
-                private sdcMenu:IAppMenu,
-                private MenuHandler:MenuHandler,
-                private $uibModal:ng.ui.bootstrap.IModalService,
-                private $state:ng.ui.IStateService,
-                private sharingService:SharingService,
-                private $filter:ng.IFilterService,
-                private cacheService:CacheService,
-                private ComponentFactory:ComponentFactory,
-                private ChangeLifecycleStateHandler:ChangeLifecycleStateHandler,
-                private LeftPaletteLoaderService:LeftPaletteLoaderService,
-                private ModalsHandler:ModalsHandler,
-                private ModalServiceSdcUI: ModalServiceSdcUI,
-                private eventListenerService:EventListenerService,
-                private ComponentServiceFactoryNg2: ComponentServiceFactoryNg2,
-                private ComponentServiceNg2:ComponentServiceNg2,
-                private Notification:any
-            ) {
+    constructor(private $scope: ICompositionViewModelScope,
+        private $log: ng.ILogService,
+        private sdcMenu: IAppMenu,
+        private MenuHandler: MenuHandler,
+        private $uibModal: ng.ui.bootstrap.IModalService,
+        private $state: ng.ui.IStateService,
+        private sharingService: SharingService,
+        private $filter: ng.IFilterService,
+        private cacheService: CacheService,
+        private ComponentFactory: ComponentFactory,
+        private ChangeLifecycleStateHandler: ChangeLifecycleStateHandler,
+        private LeftPaletteLoaderService: LeftPaletteLoaderService,
+        private ModalsHandler: ModalsHandler,
+        private ModalServiceSdcUI: ModalServiceSdcUI,
+        private eventListenerService: EventListenerService,
+        private ComponentServiceFactoryNg2: ComponentServiceFactoryNg2,
+        private ComponentServiceNg2: ComponentServiceNg2,
+        private Notification: any
+    ) {
 
         this.$scope.setValidState(true);
         this.initScope();
@@ -125,13 +125,13 @@ export class CompositionViewModel {
     }
 
 
-    private initGraphData = ():void => {
-        if(!this.hasCompositionGraphData(this.$scope.component)) {
+    private initGraphData = (): void => {
+        if (!this.hasCompositionGraphData(this.$scope.component)) {
             this.$scope.isLoading = true;
             let service = this.ComponentServiceFactoryNg2.getComponentService(this.$scope.component);
-            service.getComponentCompositionData(this.$scope.component).subscribe((response:ComponentGenericResponse) => {
+            service.getComponentCompositionData(this.$scope.component).subscribe((response: ComponentGenericResponse) => {
                 if (this.$scope.component.isService()) {
-                    (<Service> this.$scope.component).forwardingPaths = (<ServiceGenericResponse>response).forwardingPaths;
+                    (<Service>this.$scope.component).forwardingPaths = (<ServiceGenericResponse>response).forwardingPaths;
                 }
                 this.$scope.component.componentInstances = response.componentInstances || [];
                 this.$scope.component.componentInstancesRelations = response.componentInstancesRelations || [];
@@ -147,13 +147,13 @@ export class CompositionViewModel {
         this.eventListenerService.unRegisterObserver(GRAPH_EVENTS.ON_COMPOSITION_GRAPH_DATA_LOADED);
     };
 
-    private hasCompositionGraphData = (component:Component):boolean => {
+    private hasCompositionGraphData = (component: Component): boolean => {
         return !!(component.componentInstances && component.componentInstancesRelations && component.policies && component.groupInstances);
     };
 
-    private cacheComponentsInstancesFullData:Array<Component>;
+    private cacheComponentsInstancesFullData: Array<Component>;
 
-    private initComponent = ():void => {
+    private initComponent = (): void => {
         this.$scope.currentComponent = this.$scope.component;
         this.$scope.selectedComponent = this.$scope.currentComponent;
         this.$scope.selectedZoneInstance = null;
@@ -161,42 +161,42 @@ export class CompositionViewModel {
         this.$scope.isViewOnly = this.$scope.isViewMode();
     };
 
-    private registerGraphEvents = (scope:ICompositionViewModelScope):void => {
+    private registerGraphEvents = (scope: ICompositionViewModelScope): void => {
         this.eventListenerService.registerObserverCallback(GRAPH_EVENTS.ON_NODE_SELECTED, scope.setSelectedInstance);
         this.eventListenerService.registerObserverCallback(GRAPH_EVENTS.ON_ZONE_INSTANCE_SELECTED, scope.setSelectedZoneInstance);
         this.eventListenerService.registerObserverCallback(GRAPH_EVENTS.ON_GRAPH_BACKGROUND_CLICKED, scope.onBackgroundClick);
-        this.eventListenerService.registerObserverCallback(GRAPH_EVENTS.ON_CANVAS_TAG_START, () => { 
+        this.eventListenerService.registerObserverCallback(GRAPH_EVENTS.ON_CANVAS_TAG_START, () => {
             scope.isCanvasTagging = true;
             this.eventListenerService.notifyObservers(EVENTS.ON_WORKSPACE_UNSAVED_CHANGES, true, this.showUnsavedChangesAlert);
         });
-        this.eventListenerService.registerObserverCallback(GRAPH_EVENTS.ON_CANVAS_TAG_END, () => { 
-            scope.isCanvasTagging = false; 
+        this.eventListenerService.registerObserverCallback(GRAPH_EVENTS.ON_CANVAS_TAG_END, () => {
+            scope.isCanvasTagging = false;
             this.resetUnsavedChanges();
         });
         this.eventListenerService.registerObserverCallback(GRAPH_EVENTS.ON_ZONE_INSTANCE_NAME_CHANGED, scope.changeZoneInstanceName);
         this.eventListenerService.registerObserverCallback(EVENTS.UPDATE_PANEL, this.removeSelectedZoneInstance);
     };
 
-    private showUnsavedChangesAlert = (afterSave?:Function):Promise<any> => {
-        let deferred = new Promise<any>((resolve, reject)=> {
+    private showUnsavedChangesAlert = (afterSave?: Function): Promise<any> => {
+        let deferred = new Promise<any>((resolve, reject) => {
             const modal = this.ModalServiceSdcUI.openCustomModal(
                 {
                     title: "Unsaved Changes",
                     size: 'sm',
                     type: 'custom',
-                    
+
                     buttons: [
-                        {id: 'cancelButton', text: 'Cancel', type: 'secondary', size: 'xsm', closeModal: true, callback: () => reject()},
-                        {id: 'discardButton', text: 'Discard', type: 'secondary', size: 'xsm', closeModal: true, callback: () => { this.resetUnsavedChanges(); resolve()}},
-                        {id: 'saveButton', text: 'Save', type: 'primary', size: 'xsm', closeModal: true, callback: () => {  reject(); this.saveUnsavedChanges(afterSave);  }}
-                ] as IModalButtonComponent[]
-            }, UnsavedChangesComponent, { isValidChangedData: true});
+                        { id: 'cancelButton', text: 'Cancel', type: 'secondary', size: 'xsm', closeModal: true, callback: () => reject() },
+                        { id: 'discardButton', text: 'Discard', type: 'secondary', size: 'xsm', closeModal: true, callback: () => { this.resetUnsavedChanges(); resolve() } },
+                        { id: 'saveButton', text: 'Save', type: 'primary', size: 'xsm', closeModal: true, callback: () => { reject(); this.saveUnsavedChanges(afterSave); } }
+                    ] as IModalButtonComponent[]
+                }, UnsavedChangesComponent, { isValidChangedData: true });
         });
 
         return deferred;
     }
 
-    private unRegisterGraphEvents = (scope: ICompositionViewModelScope):void => {
+    private unRegisterGraphEvents = (scope: ICompositionViewModelScope): void => {
         this.eventListenerService.unRegisterObserver(GRAPH_EVENTS.ON_NODE_SELECTED, scope.setSelectedInstance);
         this.eventListenerService.unRegisterObserver(GRAPH_EVENTS.ON_ZONE_INSTANCE_SELECTED, scope.setSelectedZoneInstance);
         this.eventListenerService.unRegisterObserver(GRAPH_EVENTS.ON_GRAPH_BACKGROUND_CLICKED, scope.onBackgroundClick);
@@ -211,25 +211,25 @@ export class CompositionViewModel {
         this.eventListenerService.notifyObservers(EVENTS.ON_WORKSPACE_UNSAVED_CHANGES, false);
     }
 
-    private saveUnsavedChanges = (afterSaveFunction?:Function):void => {
+    private saveUnsavedChanges = (afterSaveFunction?: Function): void => {
         this.$scope.selectedZoneInstance.forceSave.next(afterSaveFunction);
         this.eventListenerService.notifyObservers(EVENTS.ON_WORKSPACE_UNSAVED_CHANGES, false);
     }
 
-    private openUpdateComponentInstanceNameModal = ():void => {
+    private openUpdateComponentInstanceNameModal = (): void => {
 
-        let modalConfig:IModalConfig = {
+        let modalConfig: IModalConfig = {
             title: "Edit Name",
             size: "sm",
             type: "custom",
             testId: "renameInstanceModal",
             buttons: [
-                {id: 'saveButton', text: 'OK', size: 'xsm', callback: this.saveInstanceName, closeModal: false},
-                {id: 'cancelButton', text: 'Cancel', size: 'sm', closeModal: true} 
+                { id: 'saveButton', text: 'OK', size: 'xsm', callback: this.saveInstanceName, closeModal: false },
+                { id: 'cancelButton', text: 'Cancel', size: 'sm', closeModal: true }
             ]
         };
 
-        this.ModalServiceSdcUI.openCustomModal(modalConfig, ValueEditComponent, {name: this.$scope.currentComponent.selectedInstance.name, validityChangedCallback: this.enableOrDisableSaveButton});
+        this.ModalServiceSdcUI.openCustomModal(modalConfig, ValueEditComponent, { name: this.$scope.currentComponent.selectedInstance.name, validityChangedCallback: this.enableOrDisableSaveButton });
 
     };
 
@@ -241,28 +241,28 @@ export class CompositionViewModel {
 
     private saveInstanceName = () => {
         let currentModal = this.ModalServiceSdcUI.getCurrentInstance();
-        let nameFromModal:string = currentModal.innerModalContent.instance.name;
+        let nameFromModal: string = currentModal.innerModalContent.instance.name;
 
-        if(nameFromModal != this.$scope.currentComponent.selectedInstance.name){
+        if (nameFromModal != this.$scope.currentComponent.selectedInstance.name) {
             currentModal.buttons[0].disabled = true;
-            let componentInstanceModel:ComponentInstance = ComponentInstanceFactory.createComponentInstance(this.$scope.currentComponent.selectedInstance);
+            let componentInstanceModel: ComponentInstance = ComponentInstanceFactory.createComponentInstance(this.$scope.currentComponent.selectedInstance);
             componentInstanceModel.name = nameFromModal;
 
             let onFailed = (error) => {
                 currentModal.buttons[0].disabled = false;
             };
-            let onSuccess = (componentInstance:ComponentInstance) => {
+            let onSuccess = (componentInstance: ComponentInstance) => {
 
                 this.$scope.currentComponent.selectedInstance.name = componentInstance.name;
                 //update requirements and capabilities owner name
-                _.forEach(this.$scope.currentComponent.selectedInstance.requirements, (requirementsArray:Array<Requirement>) => {
-                    _.forEach(requirementsArray, (requirement:Requirement):void => {
+                _.forEach(this.$scope.currentComponent.selectedInstance.requirements, (requirementsArray: Array<Requirement>) => {
+                    _.forEach(requirementsArray, (requirement: Requirement): void => {
                         requirement.ownerName = componentInstance.name;
                     });
                 });
 
-                _.forEach(this.$scope.currentComponent.selectedInstance.capabilities, (capabilitiesArray:Array<Capability>) => {
-                    _.forEach(capabilitiesArray, (capability:Capability):void => {
+                _.forEach(this.$scope.currentComponent.selectedInstance.capabilities, (capabilitiesArray: Array<Capability>) => {
+                    _.forEach(capabilitiesArray, (capability: Capability): void => {
                         capability.ownerName = componentInstance.name;
                     });
                 });
@@ -271,25 +271,25 @@ export class CompositionViewModel {
             };
 
             this.$scope.currentComponent.updateComponentInstance(componentInstanceModel).then(onSuccess, onFailed);
-        }  else {
+        } else {
             this.ModalServiceSdcUI.closeModal();
         }
-        
+
     };
 
-    private removeSelectedComponentInstance = ():void => {
+    private removeSelectedComponentInstance = (): void => {
         this.eventListenerService.notifyObservers(GRAPH_EVENTS.ON_DELETE_COMPONENT_INSTANCE, this.$scope.currentComponent.selectedInstance)
         this.$scope.currentComponent.selectedInstance = null;
         this.$scope.selectedComponent = this.$scope.currentComponent;
     };
 
-    private removeSelectedZoneInstance = ():void => {
+    private removeSelectedZoneInstance = (): void => {
         this.$scope.currentComponent.selectedInstance = null;
         this.$scope.selectedZoneInstance = null;
         this.$scope.selectedComponent = this.$scope.currentComponent;
     }
 
-    private updateUuidMap = ():void => {
+    private updateUuidMap = (): void => {
         /**
          * In case user press F5, the page is refreshed and this.sharingService.currentEntity will be undefined,
          * but after loadService or loadResource this.sharingService.currentEntity will be defined.
@@ -298,7 +298,7 @@ export class CompositionViewModel {
         this.sharingService.addUuidValue(this.$scope.currentComponent.uniqueId, this.$scope.currentComponent.uuid);
     };
 
-    private initScope = ():void => {
+    private initScope = (): void => {
         this.$scope.sharingService = this.sharingService;
         this.$scope.sdcMenu = this.sdcMenu;
         this.$scope.isLoading = false;
@@ -310,7 +310,7 @@ export class CompositionViewModel {
 
         this.cacheComponentsInstancesFullData = new Array<Component>();
 
-        this.$scope.isComponentInstanceSelected = ():boolean => {
+        this.$scope.isComponentInstanceSelected = (): boolean => {
             return this.$scope.currentComponent && this.$scope.currentComponent.selectedInstance != undefined && this.$scope.currentComponent.selectedInstance != null;
         };
 
@@ -318,21 +318,21 @@ export class CompositionViewModel {
             this.unRegisterGraphEvents(this.$scope);
         })
 
-        this.$scope.restoreComponent = ():void => {
+        this.$scope.restoreComponent = (): void => {
             this.ComponentServiceNg2.restoreComponent(this.$scope.selectedComponent.componentType, this.$scope.selectedComponent.uniqueId).subscribe(() => {
-                    this.Notification.success({
-                        message: '&lt;' + this.$scope.component.name + '&gt; ' + this.$filter('translate')("ARCHIVE_SUCCESS_MESSAGE_TEXT"),
-                        title: this.$filter('translate')("ARCHIVE_SUCCESS_MESSAGE_TITLE")
-                    });
-                    this.$scope.selectedComponent.archived = false;
-                }
+                this.Notification.success({
+                    message: '&lt;' + this.$scope.component.name + '&gt; ' + this.$filter('translate')("ARCHIVE_SUCCESS_MESSAGE_TEXT"),
+                    title: this.$filter('translate')("ARCHIVE_SUCCESS_MESSAGE_TITLE")
+                });
+                this.$scope.selectedComponent.archived = false;
+            }
             )
         };
 
-        this.$scope.updateSelectedComponent = ():void => {
+        this.$scope.updateSelectedComponent = (): void => {
             if (this.$scope.currentComponent.selectedInstance) {
                 let parentComponentUid = this.$scope.currentComponent.selectedInstance.componentUid
-                if(this.$scope.currentComponent.selectedInstance.originType === ComponentType.SERVICE_PROXY){
+                if (this.$scope.currentComponent.selectedInstance.originType === ComponentType.SERVICE_PROXY) {
                     parentComponentUid = this.$scope.currentComponent.selectedInstance.sourceModelUid;
                 }
                 let componentParent = _.find(this.cacheComponentsInstancesFullData, (component) => {
@@ -343,12 +343,12 @@ export class CompositionViewModel {
                 }
                 else {
                     try {
-                        let onSuccess = (component:Component) => {
+                        let onSuccess = (component: Component) => {
                             this.$scope.isLoadingRightPanel = false;
                             this.$scope.selectedComponent = component;
                             this.cacheComponentsInstancesFullData.push(component);
                         };
-                        let onError = (component:Component) => {
+                        let onError = (component: Component) => {
                             console.log("Error updating selected component");
                             this.$scope.isLoadingRightPanel = false;
                         };
@@ -365,7 +365,7 @@ export class CompositionViewModel {
             }
         };
 
-        this.$scope.setSelectedInstance = (selectedComponent:ComponentInstance):void => {
+        this.$scope.setSelectedInstance = (selectedComponent: ComponentInstance): void => {
 
             this.$log.debug('composition-view-model::onNodeSelected:: with id: ' + selectedComponent.uniqueId);
             this.$scope.currentComponent.setSelectedInstance(selectedComponent);
@@ -385,7 +385,7 @@ export class CompositionViewModel {
             this.$scope.selectedZoneInstance = zoneInstance;
         };
 
-        this.$scope.onBackgroundClick = ():void => {
+        this.$scope.onBackgroundClick = (): void => {
             this.$scope.currentComponent.selectedInstance = null;
             this.$scope.selectedZoneInstance = null;
             this.$scope.selectedComponent = this.$scope.currentComponent;
@@ -394,26 +394,26 @@ export class CompositionViewModel {
                 this.$state.go('workspace.composition.details');
             }
 
-            if(this.$scope.selectedComponent.isService() && this.$state.current.name === 'workspace.composition.relations'){
+            if (this.$scope.selectedComponent.isService() && this.$state.current.name === 'workspace.composition.relations') {
                 this.$state.go('workspace.composition.api');
             }
         };
 
-        this.$scope.openUpdateModal = ():void => {
+        this.$scope.openUpdateModal = (): void => {
             this.openUpdateComponentInstanceNameModal();
         };
 
-        this.$scope.changeZoneInstanceName = (newName:string):void => {
+        this.$scope.changeZoneInstanceName = (newName: string): void => {
             this.$scope.selectedZoneInstance.instanceData.name = newName;
         };
-    
-        this.$scope.deleteSelectedComponentInstance = ():void => {
-            const {currentComponent} = this.$scope;
-            const {title, message} = this.$scope.sdcMenu.alertMessages['deleteInstance'];
+
+        this.$scope.deleteSelectedComponentInstance = (): void => {
+            const { currentComponent } = this.$scope;
+            const { title, message } = this.$scope.sdcMenu.alertMessages['deleteInstance'];
             let modalText = message.format([currentComponent.selectedInstance.name]);
 
             if (currentComponent.isService()) {
-                const {forwardingPaths} = (<Service>currentComponent);
+                const { forwardingPaths } = (<Service>currentComponent);
                 const instanceId = currentComponent.selectedInstance.uniqueId;
 
                 const relatedPaths = _.filter(forwardingPaths, forwardingPath => {
@@ -429,9 +429,9 @@ export class CompositionViewModel {
             this.ModalServiceSdcUI.openAlertModal(title, modalText, "OK", this.removeSelectedComponentInstance, "deleteInstanceModal");
         };
 
-        this.$scope.openVersionChangeModal = (pathsToDelete:string[]):ng.IPromise<any> => {
-            const {currentComponent} = this.$scope;
-            const {forwardingPaths} = <Service>currentComponent;
+        this.$scope.openVersionChangeModal = (pathsToDelete: string[]): ng.IPromise<any> => {
+            const { currentComponent } = this.$scope;
+            const { forwardingPaths } = <Service>currentComponent;
 
             const relatedPaths = _.filter(forwardingPaths, path =>
                 _.find(pathsToDelete, id =>
@@ -440,11 +440,11 @@ export class CompositionViewModel {
             ).map(path => path.name);
             const pathNames = _.join(relatedPaths, ', ') || 'none';
 
-            const {title, message} = this.$scope.sdcMenu.alertMessages['upgradeInstance'];
+            const { title, message } = this.$scope.sdcMenu.alertMessages['upgradeInstance'];
             return this.ModalsHandler.openConfirmationModal(title, message.format([pathNames]), false);
         };
 
-        this.$scope.onComponentInstanceVersionChange = (component:Component):void => {
+        this.$scope.onComponentInstanceVersionChange = (component: Component): void => {
             let onChange = () => {
                 this.$scope.currentComponent = component;
                 this.$scope.setComponent(this.$scope.currentComponent);
@@ -454,7 +454,7 @@ export class CompositionViewModel {
 
             if (component.isService()) {
                 const service = this.ComponentServiceFactoryNg2.getComponentService(component);
-                service.getComponentCompositionData(component).subscribe((response:ServiceGenericResponse) => {
+                service.getComponentCompositionData(component).subscribe((response: ServiceGenericResponse) => {
                     (<Service>component).forwardingPaths = response.forwardingPaths;
                     onChange();
                 });
