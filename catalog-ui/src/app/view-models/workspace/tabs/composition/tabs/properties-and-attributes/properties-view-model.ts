@@ -28,24 +28,24 @@ import {
     PropertyModel,
     PropertiesGroup
 } from "app/models";
-import {ICompositionViewModelScope} from "../../composition-view-model";
-import {ModalsHandler} from "app/utils";
-import {ComponentServiceNg2} from "app/ng2/services/component-services/component.service";
-import {ComponentGenericResponse} from "app/ng2/services/responses/component-generic-response";
+import { ICompositionViewModelScope } from "../../composition-view-model";
+import { ModalsHandler } from "app/utils";
+import { ComponentServiceNg2 } from "app/ng2/services/component-services/component.service";
+import { ComponentGenericResponse } from "app/ng2/services/responses/component-generic-response";
 
 interface IResourcePropertiesAndAttributesViewModelScope extends ICompositionViewModelScope {
-    properties:PropertiesGroup;
-    attributes:AttributesGroup;
-    propertiesMessage:string;
-    groupPropertiesByInstance:boolean;
-    showGroupsOfInstanceProperties:Array<boolean>;
-    addProperty():void;
-    updateProperty(property:PropertyModel):void;
-    deleteProperty(property:PropertyModel):void;
-    viewAttribute(attribute:AttributeModel):void;
-    groupNameByKey(key:string):string;
-    isPropertyOwner():boolean;
-    getComponentInstanceNameFromInstanceByKey(key:string):string;
+    properties: PropertiesGroup;
+    attributes: AttributesGroup;
+    propertiesMessage: string;
+    groupPropertiesByInstance: boolean;
+    showGroupsOfInstanceProperties: Array<boolean>;
+    addProperty(): void;
+    updateProperty(property: PropertyModel): void;
+    deleteProperty(property: PropertyModel): void;
+    viewAttribute(attribute: AttributeModel): void;
+    groupNameByKey(key: string): string;
+    isPropertyOwner(): boolean;
+    getComponentInstanceNameFromInstanceByKey(key: string): string;
 }
 
 export class ResourcePropertiesViewModel {
@@ -60,17 +60,17 @@ export class ResourcePropertiesViewModel {
     ];
 
 
-    constructor(private $scope:IResourcePropertiesAndAttributesViewModelScope,
-                private $filter:ng.IFilterService,
-                private $uibModal:ng.ui.bootstrap.IModalService,
-                private ModalsHandler:ModalsHandler,
-                private ComponentServiceNg2:ComponentServiceNg2) {
+    constructor(private $scope: IResourcePropertiesAndAttributesViewModelScope,
+        private $filter: ng.IFilterService,
+        private $uibModal: ng.ui.bootstrap.IModalService,
+        private ModalsHandler: ModalsHandler,
+        private ComponentServiceNg2: ComponentServiceNg2) {
 
         this.getComponentInstancesPropertiesAndAttributes();
     }
 
-    private initComponentProperties = ():void => {
-        let result:PropertiesGroup = {};
+    private initComponentProperties = (): void => {
+        let result: PropertiesGroup = {};
 
         if (this.$scope.selectedComponent) {
             this.$scope.propertiesMessage = undefined;
@@ -88,7 +88,7 @@ export class ResourcePropertiesViewModel {
                 let key = this.$scope.selectedComponent.uniqueId;
                 result[key] = Array<PropertyModel>();
                 let derived = Array<PropertyModel>();
-                _.forEach(this.$scope.selectedComponent.properties, (property:PropertyModel) => {
+                _.forEach(this.$scope.selectedComponent.properties, (property: PropertyModel) => {
                     if (key == property.parentUniqueId) {
                         result[key].push(property);
                     } else {
@@ -105,8 +105,8 @@ export class ResourcePropertiesViewModel {
     };
 
 
-    private initComponentAttributes = ():void => {
-        let result:AttributesGroup = {};
+    private initComponentAttributes = (): void => {
+        let result: AttributesGroup = {};
 
         if (this.$scope.selectedComponent) {
             if (this.$scope.isComponentInstanceSelected()) {
@@ -122,7 +122,7 @@ export class ResourcePropertiesViewModel {
      * This function is checking if the component is the value owner of the current property
      * in order to notify the edit property modal which fields to disable
      */
-    private isPropertyValueOwner = ():boolean => {
+    private isPropertyValueOwner = (): boolean => {
         return this.$scope.currentComponent.isService() || !!this.$scope.currentComponent.selectedInstance;
     };
 
@@ -133,33 +133,33 @@ export class ResourcePropertiesViewModel {
      *
      * @param property the wanted property to edit/create
      */
-    private openEditPropertyModal = (property:PropertyModel):void => {
+    private openEditPropertyModal = (property: PropertyModel): void => {
         this.ModalsHandler.openEditPropertyModal(property,
             this.$scope.component,
             (this.$scope.isPropertyOwner() ?
                 this.$scope.properties[property.parentUniqueId] :
                 this.$scope.properties[property.resourceInstanceUniqueId]) || [],
-            this.isPropertyValueOwner(), "component", property.resourceInstanceUniqueId).then((updatedProperty:PropertyModel) => {
-                if(updatedProperty){
-                    let oldProp = _.find(this.$scope.properties[updatedProperty.resourceInstanceUniqueId], (prop:PropertyModel) => {return prop.uniqueId == updatedProperty.uniqueId;});
+            this.isPropertyValueOwner(), "component", property.resourceInstanceUniqueId).then((updatedProperty: PropertyModel) => {
+                if (updatedProperty) {
+                    let oldProp = _.find(this.$scope.properties[updatedProperty.resourceInstanceUniqueId], (prop: PropertyModel) => { return prop.uniqueId == updatedProperty.uniqueId; });
                     oldProp.value = updatedProperty.value;
                 }
-        });
+            });
     };
 
-    private openAttributeModal = (atrribute:AttributeModel):void => {
+    private openAttributeModal = (atrribute: AttributeModel): void => {
 
-        let modalOptions:ng.ui.bootstrap.IModalSettings = {
+        let modalOptions: ng.ui.bootstrap.IModalSettings = {
             template: 'app/view-models/forms/attribute-form/attribute-form-view.html',
             controller: 'Sdc.ViewModels.AttributeFormViewModel',
             size: 'sdc-md',
             backdrop: 'static',
             keyboard: false,
             resolve: {
-                attribute: ():AttributeModel => {
+                attribute: (): AttributeModel => {
                     return atrribute;
                 },
-                component: ():Component => {
+                component: (): Component => {
                     return this.$scope.currentComponent;
                 }
             }
@@ -169,24 +169,24 @@ export class ResourcePropertiesViewModel {
 
     private getComponentInstancesPropertiesAndAttributes = () => {
 
-        this.ComponentServiceNg2.getComponentInstanceAttributesAndProperties(this.$scope.currentComponent).subscribe((genericResponse:ComponentGenericResponse) => {
+        this.ComponentServiceNg2.getComponentInstanceAttributesAndProperties(this.$scope.currentComponent).subscribe((genericResponse: ComponentGenericResponse) => {
             this.$scope.currentComponent.componentInstancesAttributes = genericResponse.componentInstancesAttributes;
             this.$scope.currentComponent.componentInstancesProperties = genericResponse.componentInstancesProperties;
             this.initScope();
         });
     };
 
-    private initScope = ():void => {
+    private initScope = (): void => {
 
 
         this.initComponentProperties();
         this.initComponentAttributes();
 
-        this.$scope.$watchCollection('currentComponent.properties', (newData:any):void => {
+        this.$scope.$watchCollection('currentComponent.properties', (newData: any): void => {
             this.initComponentProperties();
         });
 
-        this.$scope.$watch('currentComponent.selectedInstance', (newInstance:ComponentInstance):void => {
+        this.$scope.$watch('currentComponent.selectedInstance', (newInstance: ComponentInstance): void => {
             if (angular.isDefined(newInstance)) {
                 this.initComponentProperties();
                 this.initComponentAttributes();
@@ -194,30 +194,30 @@ export class ResourcePropertiesViewModel {
             }
         });
 
-        this.$scope.isPropertyOwner = ():boolean => {
+        this.$scope.isPropertyOwner = (): boolean => {
             return this.$scope.currentComponent && this.$scope.currentComponent.isResource() && !this.$scope.isComponentInstanceSelected();
         };
 
-        this.$scope.updateProperty = (property:PropertyModel):void => {
+        this.$scope.updateProperty = (property: PropertyModel): void => {
             this.openEditPropertyModal(property);
         };
 
-        this.$scope.deleteProperty = (property:PropertyModel):void => {
+        this.$scope.deleteProperty = (property: PropertyModel): void => {
 
-            let onOk = ():void => {
+            let onOk = (): void => {
                 this.$scope.currentComponent.deleteProperty(property.uniqueId);
             };
 
-            let title:string = this.$filter('translate')("PROPERTY_VIEW_DELETE_MODAL_TITLE");
-            let message:string = this.$filter('translate')("PROPERTY_VIEW_DELETE_MODAL_TEXT", "{'name': '" + property.name + "'}");
+            let title: string = this.$filter('translate')("PROPERTY_VIEW_DELETE_MODAL_TITLE");
+            let message: string = this.$filter('translate')("PROPERTY_VIEW_DELETE_MODAL_TEXT", "{'name': '" + property.name + "'}");
             this.ModalsHandler.openConfirmationModal(title, message, false).then(onOk);
         };
 
-        this.$scope.viewAttribute = (attribute:AttributeModel):void => {
+        this.$scope.viewAttribute = (attribute: AttributeModel): void => {
             this.openAttributeModal(attribute);
         };
 
-        this.$scope.groupNameByKey = (key:string):string => {
+        this.$scope.groupNameByKey = (key: string): string => {
             switch (key) {
                 case 'derived':
                     return "Derived";
@@ -226,16 +226,16 @@ export class ResourcePropertiesViewModel {
                     return this.$filter("resourceName")(this.$scope.currentComponent.name);
 
                 default:
-                    let componentInstance = _.find(this.$scope.currentComponent.componentInstances, {uniqueId: key});
-                    if(componentInstance)
+                    let componentInstance = _.find(this.$scope.currentComponent.componentInstances, { uniqueId: key });
+                    if (componentInstance)
                         return this.$filter("resourceName")(componentInstance.name);
             }
         };
 
-        this.$scope.getComponentInstanceNameFromInstanceByKey = (key:string):string => {
-            let instanceName:string = "";
+        this.$scope.getComponentInstanceNameFromInstanceByKey = (key: string): string => {
+            let instanceName: string = "";
             if (key !== undefined && this.$scope.selectedComponent.uniqueId == this.$scope.currentComponent.selectedInstance.componentUid) {
-                instanceName = this.$filter("resourceName")((_.find(this.$scope.selectedComponent.componentInstances, {uniqueId: key})).name);
+                instanceName = this.$filter("resourceName")((_.find(this.$scope.selectedComponent.componentInstances, { uniqueId: key })).name);
             }
             return instanceName;
         };

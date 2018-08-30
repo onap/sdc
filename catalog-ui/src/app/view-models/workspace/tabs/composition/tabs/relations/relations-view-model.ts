@@ -20,31 +20,31 @@
 
 'use strict';
 import * as _ from "lodash";
-import {ICompositionViewModelScope} from "../../composition-view-model";
-import {CapabilitiesGroup, Requirement, RequirementsGroup} from "app/models";
-import {ComponentServiceNg2} from "app/ng2/services/component-services/component.service";
-import {ComponentGenericResponse} from "app/ng2/services/responses/component-generic-response";
-import {GRAPH_EVENTS} from "app/utils";
-import {EventListenerService} from "app/services";
-import {ComponentInstance, Capability} from "app/models";
+import { ICompositionViewModelScope } from "../../composition-view-model";
+import { CapabilitiesGroup, Requirement, RequirementsGroup } from "app/models";
+import { ComponentServiceNg2 } from "app/ng2/services/component-services/component.service";
+import { ComponentGenericResponse } from "app/ng2/services/responses/component-generic-response";
+import { GRAPH_EVENTS } from "app/utils";
+import { EventListenerService } from "app/services";
+import { ComponentInstance, Capability } from "app/models";
 
 interface IRelationsViewModelScope extends ICompositionViewModelScope {
-    isLoading:boolean;
-    $parent:ICompositionViewModelScope;
-    getRelation(requirement:any):any;
-    capabilities:Array<Capability>;
-    requirements:Array<Requirement>;
+    isLoading: boolean;
+    $parent: ICompositionViewModelScope;
+    getRelation(requirement: any): any;
+    capabilities: Array<Capability>;
+    requirements: Array<Requirement>;
 
     //for complex components
-    capabilitiesInstancesMap:InstanceCapabilitiesMap;
-    requirementsInstancesMap:InstanceRequirementsMap;
+    capabilitiesInstancesMap: InstanceCapabilitiesMap;
+    requirementsInstancesMap: InstanceRequirementsMap;
 }
 export class InstanceCapabilitiesMap {
-    [key:string]:Array<Capability>;
+    [key: string]: Array<Capability>;
 }
 
 export class InstanceRequirementsMap {
-    [key:string]:Array<Requirement>;
+    [key: string]: Array<Requirement>;
 }
 
 export class RelationsViewModel {
@@ -56,16 +56,16 @@ export class RelationsViewModel {
         'EventListenerService'
     ];
 
-    constructor(private $scope:IRelationsViewModelScope,
-                private $filter:ng.IFilterService,
-                private ComponentServiceNg2:ComponentServiceNg2,
-                private eventListenerService:EventListenerService) {
+    constructor(private $scope: IRelationsViewModelScope,
+        private $filter: ng.IFilterService,
+        private ComponentServiceNg2: ComponentServiceNg2,
+        private eventListenerService: EventListenerService) {
         this.initScope();
     }
 
     private loadComplexComponentData = () => {
         this.$scope.isLoading = true;
-        this.ComponentServiceNg2.getCapabilitiesAndRequirements(this.$scope.currentComponent.componentType, this.$scope.currentComponent.uniqueId).subscribe((response:ComponentGenericResponse) => {
+        this.ComponentServiceNg2.getCapabilitiesAndRequirements(this.$scope.currentComponent.componentType, this.$scope.currentComponent.uniqueId).subscribe((response: ComponentGenericResponse) => {
             this.$scope.currentComponent.capabilities = response.capabilities;
             this.$scope.currentComponent.requirements = response.requirements;
             this.setScopeCapabilitiesRequirements(this.$scope.currentComponent.capabilities, this.$scope.currentComponent.requirements);
@@ -75,25 +75,25 @@ export class RelationsViewModel {
     }
 
 
-    private extractValuesFromMap = (map:CapabilitiesGroup | RequirementsGroup):Array<any> => {
+    private extractValuesFromMap = (map: CapabilitiesGroup | RequirementsGroup): Array<any> => {
         let values = [];
-        _.forEach(map, (capabilitiesOrRequirements:Array<Capability> | Array<Requirement>, key) => {
-                values = values.concat(capabilitiesOrRequirements)
-            }
+        _.forEach(map, (capabilitiesOrRequirements: Array<Capability> | Array<Requirement>, key) => {
+            values = values.concat(capabilitiesOrRequirements)
+        }
         );
         return values;
     }
 
-    private setScopeCapabilitiesRequirements = (capabilities:CapabilitiesGroup, requirements:RequirementsGroup) => {
+    private setScopeCapabilitiesRequirements = (capabilities: CapabilitiesGroup, requirements: RequirementsGroup) => {
         this.$scope.capabilities = this.extractValuesFromMap(capabilities);
         this.$scope.requirements = this.extractValuesFromMap(requirements);
     }
 
 
-    private initInstancesMap = ():void => {
+    private initInstancesMap = (): void => {
 
         this.$scope.capabilitiesInstancesMap = new InstanceCapabilitiesMap();
-        _.forEach(this.$scope.capabilities, (capability:Capability) => {
+        _.forEach(this.$scope.capabilities, (capability: Capability) => {
             if (this.$scope.capabilitiesInstancesMap[capability.ownerName]) {
                 this.$scope.capabilitiesInstancesMap[capability.ownerName] = this.$scope.capabilitiesInstancesMap[capability.ownerName].concat(capability);
             } else {
@@ -102,7 +102,7 @@ export class RelationsViewModel {
         });
 
         this.$scope.requirementsInstancesMap = new InstanceRequirementsMap();
-        _.forEach(this.$scope.requirements, (requirement:Requirement) => {
+        _.forEach(this.$scope.requirements, (requirement: Requirement) => {
             if (this.$scope.requirementsInstancesMap[requirement.ownerName]) {
                 this.$scope.requirementsInstancesMap[requirement.ownerName] = this.$scope.requirementsInstancesMap[requirement.ownerName].concat(requirement);
             } else {
@@ -139,14 +139,14 @@ export class RelationsViewModel {
         }
     }
 
-    private initEvents = ():void => {
+    private initEvents = (): void => {
         this.eventListenerService.registerObserverCallback(GRAPH_EVENTS.ON_NODE_SELECTED, this.initRequirementsAndCapabilities);
         this.eventListenerService.registerObserverCallback(GRAPH_EVENTS.ON_GRAPH_BACKGROUND_CLICKED, this.updateRequirementCapabilities);
-        this.eventListenerService.registerObserverCallback(GRAPH_EVENTS.ON_CREATE_COMPONENT_INSTANCE,  this.updateRequirementCapabilities);
-        this.eventListenerService.registerObserverCallback(GRAPH_EVENTS.ON_DELETE_COMPONENT_INSTANCE,  this.updateRequirementCapabilities);
+        this.eventListenerService.registerObserverCallback(GRAPH_EVENTS.ON_CREATE_COMPONENT_INSTANCE, this.updateRequirementCapabilities);
+        this.eventListenerService.registerObserverCallback(GRAPH_EVENTS.ON_DELETE_COMPONENT_INSTANCE, this.updateRequirementCapabilities);
     }
 
-    private initScope = ():void => {
+    private initScope = (): void => {
 
         this.$scope.requirements = [];
         this.$scope.capabilities = [];
@@ -154,7 +154,7 @@ export class RelationsViewModel {
         this.initEvents();
         this.initRequirementsAndCapabilities();
 
-        this.$scope.isCurrentDisplayComponentIsComplex = ():boolean => {
+        this.$scope.isCurrentDisplayComponentIsComplex = (): boolean => {
             if (this.$scope.isComponentInstanceSelected()) {
                 if (this.$scope.currentComponent.selectedInstance.originType === 'VF') {
                     return true;

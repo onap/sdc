@@ -19,7 +19,7 @@
  */
 
 'use strict';
-import {ICompositionViewModelScope} from "../../composition-view-model";
+import { ICompositionViewModelScope } from "../../composition-view-model";
 
 interface IStructureViewModel extends ICompositionViewModelScope {
 }
@@ -29,6 +29,6 @@ export class StructureViewModel {
         '$scope'
     ];
 
-    constructor(private $scope:IStructureViewModel) {
+    constructor(private $scope: IStructureViewModel) {
     }
 }
