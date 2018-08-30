@@ -1535,6 +1535,27 @@ public class ToscaOperationFacade {
         }
     }
 
+    private void buildInputs (String origServiceId, String currServiceId, Map<String, List<InputDefinition>> inputsMap,
+                              Map<String, InputDefinition> newInputs, ComponentInstance c, String oriUniqueId,
+                              String normalizeName, String newUniqueId) {
+
+        List<InputDefinition> instanceInputs = inputsMap.get(oriUniqueId);
+        if(CollectionUtils.isEmpty(instanceInputs)) {
+            return;
+        }
+        for (InputDefinition input : instanceInputs) {
+            String inputUid = input.getUniqueId();
+            inputUid = inputUid
+                    .replace(origServiceId + "." + c.getNormalizedName(), currServiceId + "." + normalizeName);
+            String inputName = input.getName();
+            inputName = inputName.replace(c.getNormalizedName(), normalizeName);
+            input.setUniqueId(inputUid);
+            input.setName(inputName);
+            input.setInstanceUniqueId(newUniqueId);
+            newInputs.put(input.getName(), input);
+        }
+    }
+
     private List<VertexTypeEnum> getInternalVertexTypes(ComponentTypeEnum componentTypeEnum, String internalComponentType) {
         List<VertexTypeEnum> internalVertexTypes = new ArrayList<>();
         if (ComponentTypeEnum.RESOURCE == componentTypeEnum) {
