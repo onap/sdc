@@ -21,6 +21,8 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.openecomp.sdc.heat.datatypes.model.HeatResourcesTypes;
 
 public class HeatResourceUtil {
@@ -31,10 +33,17 @@ public class HeatResourceUtil {
     private static final String PORT_RESOURCE_ID_REGEX_PREFIX =
             WORDS_REGEX + PORT_RESOURCE_ID_REGEX_SUFFIX;
     private static final String PORT_INT_RESOURCE_ID_REGEX_PREFIX = PORT_RESOURCE_ID_REGEX_PREFIX
-            + UNDERSCORE + "int_"+ WORDS_REGEX + UNDERSCORE;
+            + UNDERSCORE + "int_" + WORDS_REGEX + UNDERSCORE;
     private static final String SUB_INTERFACE_INT_RESOURCE_ID_REGEX_PREFIX =
-            PORT_RESOURCE_ID_REGEX_PREFIX + UNDERSCORE + "subint_"+ WORDS_REGEX + UNDERSCORE;
+            PORT_RESOURCE_ID_REGEX_PREFIX + UNDERSCORE + "subint_" + WORDS_REGEX + UNDERSCORE;
 
+    /**
+     * Evaluate network role from resource id optional.
+     *
+     * @param resourceId   the resource id
+     * @param resourceType the resource type
+     * @return the optional
+     */
     public static Optional<String> evaluateNetworkRoleFromResourceId(String resourceId,
                                                                      String resourceType) {
         Optional<PortType> portType = getPortType(resourceType);
@@ -56,17 +65,23 @@ public class HeatResourceUtil {
     }
 
     private static Optional<PortType> getPortType(String resourceType) {
-        if (resourceType.equals(
-                HeatResourcesTypes.CONTRAIL_V2_VIRTUAL_MACHINE_INTERFACE_RESOURCE_TYPE.getHeatResource())) {
+        if (HeatResourcesTypes.CONTRAIL_V2_VIRTUAL_MACHINE_INTERFACE_RESOURCE_TYPE.getHeatResource()
+                .equals(resourceType)) {
             return Optional.of(PortType.VMI);
-        } else if (resourceType.equals(
-                HeatResourcesTypes.NEUTRON_PORT_RESOURCE_TYPE.getHeatResource())) {
+        } else if (HeatResourcesTypes.NEUTRON_PORT_RESOURCE_TYPE.getHeatResource().equals(resourceType)) {
             return Optional.of(PortType.PORT);
         }
         return Optional.empty();
     }
 
-    public static Optional<String> extractNetworkRoleFromSubInterfaceId(String  resourceId,
+    /**
+     * Extract network role from sub interface id optional.
+     *
+     * @param resourceId   the resource id
+     * @param resourceType the resource type
+     * @return the optional
+     */
+    public static Optional<String> extractNetworkRoleFromSubInterfaceId(String resourceId,
                                                                         String resourceType) {
         Optional<PortType> portType = getPortType(resourceType);
         if (portType.isPresent()) {
@@ -79,19 +94,13 @@ public class HeatResourceUtil {
         return Optional.empty();
     }
 
+    @AllArgsConstructor
+    @Getter
     private enum PortType {
         PORT("port"),
         VMI("vmi");
 
         private String portTypeName;
-
-        PortType(String portTypeName) {
-            this.portTypeName = portTypeName;
-        }
-
-        public String getPortTypeName() {
-            return portTypeName;
-        }
     }
 
     private static String getNetworkRole(String portResourceId, String portIdRegex) {
