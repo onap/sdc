@@ -9,3 +9,7 @@ node_types:
         type: string
       nf_type:
         type: string
+      software_versions:
+        type: list
+        entry_schema:
+          type: string
