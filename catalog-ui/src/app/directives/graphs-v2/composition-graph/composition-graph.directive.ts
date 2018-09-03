@@ -183,7 +183,23 @@ export class CompositionGraph implements ng.IDirective {
         } else {
             this.loadGraphData(scope);
         }
-
+        
+        this.eventListenerService.registerObserverCallback(GRAPH_EVENTS.ON_CREATE_COMPONENT_INSTANCE,(originalType:string) => {
+            let onSuccess = (response:any):void =>
+            {
+               debugger;
+                this._cy.elements().remove();
+                scope.component.componentInstances = response.componentInstances;
+                scope.component.componentInstancesRelations = response.componentInstancesRelations;
+                this.loadGraphData(scope);
+            }
+            let onError = (response:any):void=>{
+                debugger;
+                //on error
+            };
+            debugger;
+            this.ComponentServiceNg2.getComponentCompositionData(scope.component).subscribe(onSuccess,onError);
+        });
         
         scope.$on('$destroy', () => {
             this._cy.destroy();
@@ -333,6 +349,7 @@ export class CompositionGraph implements ng.IDirective {
 
         this.eventListenerService.registerObserverCallback(GRAPH_EVENTS.ON_DELETE_COMPONENT_INSTANCE, (componentInstance:ComponentInstance) => {
             let nodeToDelete = this._cy.getElementById(componentInstance.uniqueId);
+            debugger;
             this.NodesGraphUtils.deleteNode(this._cy, scope.component, nodeToDelete);
         });
 
