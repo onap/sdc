@@ -125,7 +125,6 @@ export class Palette implements ng.IDirective {
     }
 
     private initLeftPanel(leftPanelComponents: Array<LeftPaletteComponent>, resourceFilterTypes: Array<string>): LeftPanelModel {
-        debugger;
         let leftPanelModel = new LeftPanelModel();
 
         if (resourceFilterTypes && resourceFilterTypes.length) {
@@ -214,11 +213,10 @@ export class Palette implements ng.IDirective {
 
     private updateLeftPanelDisplay(scope: IPaletteScope) {
         let entityType: string = scope.currentComponent.componentType.toLowerCase();
-        if(entityType == "resource")
-        {
+        if (entityType == "resource") {
             entityType = scope.currentComponent.getComponentSubType().toLowerCase() == "combination" ? "combination" : entityType;
         }
-        let resourceFilterTypes: Array<string> = this.sdcConfig.resourceTypesFilter[entityType];        
+        let resourceFilterTypes: Array<string> = this.sdcConfig.resourceTypesFilter[entityType];
         scope.components = this.LeftPaletteLoaderService.getLeftPanelComponentsForDisplay(scope.currentComponent);
         //remove the container component  from the list
         let componentTempToDisplay = angular.copy(scope.components);

@@ -41,10 +41,9 @@ export class InputsTableComponent {
     @Output() deleteInput: EventEmitter<any> = new EventEmitter<any>();
     sortBy: String;
     reverse: boolean;
-    selectedInputToDelete: InputFEModel;    
+    selectedInputToDelete: InputFEModel;
 
     sort = (sortBy) => {
-        debugger;
         this.reverse = (this.sortBy === sortBy) ? !this.reverse : true;
         let reverse = this.reverse ? 1 : -1;
         this.sortBy = sortBy;
@@ -59,7 +58,7 @@ export class InputsTableComponent {
             else {
                 aVal = a[sortBy];
                 bVal = b[sortBy];
-            }            
+            }
             if (aVal < bVal) {
                 return -1 * reverse;
             }
