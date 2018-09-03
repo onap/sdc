@@ -101,7 +101,14 @@ export class CompositionGraphPaletteUtils {
             if (ucpe.length > 0) {
                 this.eventListenerService.notifyObservers(GRAPH_EVENTS.ON_INSERT_NODE_TO_UCPE, cyNode, ucpe, false);
             }
-            this.eventListenerService.notifyObservers(GRAPH_EVENTS.ON_CREATE_COMPONENT_INSTANCE);
+            if(componentInstanceToCreate.originType == "Combination")
+            {
+                this.eventListenerService.notifyObservers(GRAPH_EVENTS.ON_CREATE_COMPONENT_INSTANCE, componentInstanceToCreate.originType);
+            }
+            else
+            {
+                this.eventListenerService.notifyObservers(GRAPH_EVENTS.ON_CREATE_COMPONENT_INSTANCE);
+            }
 
         };
 
