@@ -54,6 +54,7 @@ export class ResourceType {
     static CVFC = 'CVFC';
     static CONFIGURATION = 'Configuration';
     static CR = 'CR';
+    static Combination = 'Combination';
 }
 
 export class ComponentState {

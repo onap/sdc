@@ -44,6 +44,7 @@ export class InputsTableComponent {
     selectedInputToDelete: InputFEModel;    
 
     sort = (sortBy) => {
+        debugger;
         this.reverse = (this.sortBy === sortBy) ? !this.reverse : true;
         let reverse = this.reverse ? 1 : -1;
         this.sortBy = sortBy;

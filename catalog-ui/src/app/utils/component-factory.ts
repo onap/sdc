@@ -157,6 +157,7 @@ export class ComponentFactory {
             case ResourceType.PNF:
             case ResourceType.CVFC:
             case ResourceType.CONFIGURATION:
+            case ResourceType.Combination:
                 newComponent = new Resource(this.ResourceService, this.$q);
                 break;
         }
