@@ -1005,6 +1005,18 @@ export abstract class Component implements IComponent {
         return status;
     };
 
+    public pasteMenuComponentInstance = (msg: string): ng.IPromise<string> => {
+        let deferred = this.$q.defer<string>();
+        let onSuccess = (response): void => {
+            deferred.resolve(response);
+        };
+        let onFailed = (error: any): void => {
+            deferred.reject(error);
+        };
+        this.componentService.pasteMenuComponentInstance(this.uniqueId, msg).then(onSuccess, onFailed);
+        return deferred.promise;
+        
+    };
     public abstract setComponentDisplayData():void;
     public abstract getTypeUrl():string;
 

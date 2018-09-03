@@ -35,7 +35,8 @@ import {
     NodesFactory,
     Point
 } from "app/models";
-import { ComponentInstanceFactory, ComponentFactory, GRAPH_EVENTS, GraphColors } from "app/utils";
+import { ComponentInstanceFactory, ComponentFactory, GRAPH_EVENTS, GraphColors, GraphUIObjects } from "app/utils";
+import { ModalsHandler } from "app/utils";
 import { EventListenerService, LoaderService } from "app/services";
 import { CompositionGraphLinkUtils } from "./utils/composition-graph-links-utils";
 import { CompositionGraphGeneralUtils } from "./utils/composition-graph-general-utils";
@@ -128,6 +129,9 @@ export interface ICompositionGraphScope extends ng.IScope {
     drawPathOnCy(data: ForwardingPath): void;
     selectedPathId: string;
 
+    copyComponentInstance(): void;    
+    pasteComponentInstance(event: IDragDropEvent);
+    origComponentId: string;
     /*//asset popover menu
      assetPopoverObj:AssetPopoverObj;
      assetPopoverOpen:boolean;
@@ -141,6 +145,7 @@ export class CompositionGraph implements ng.IDirective {
     // private $document:JQuery = $(document);
     private dragElement: JQuery;
     private dragComponent: ComponentInstance;
+    private cyBackgroundClickEvent: any;
 
     constructor(private $q: ng.IQService,
         private $log: ng.ILogService,
@@ -161,7 +166,8 @@ export class CompositionGraph implements ng.IDirective {
         private ModalServiceNg2: ModalService,
         private ConnectionWizardServiceNg2: ConnectionWizardService,
         private ComponentInstanceServiceNg2: ComponentInstanceServiceNg2,
-        private servicePathGraphUtils: ServicePathGraphUtils) {
+        private servicePathGraphUtils: ServicePathGraphUtils,
+        private ModalsHandler: ModalsHandler) {
 
     }
 
@@ -559,6 +565,146 @@ export class CompositionGraph implements ng.IDirective {
             }
         };
 
+
+        document.onkeydown = (event) => {
+            let isModalExist = document.getElementsByTagName('body')[0].classList.contains('modal-open');
+
+            if (!scope.isViewOnly && !isModalExist) {
+
+                switch (event.keyCode) {
+
+                    case 46: //delete
+                        this.deleteSelectedElements();
+                        break;
+
+                    case 67: //shift+c : copy componentInstance                       
+                        if (event.ctrlKey) {
+                            scope.copyComponentInstance();
+                        }
+                        break;
+                    case 86: // shift+v: paste componentInstance
+                        if (event.ctrlKey) {
+                            let hidePasteObj = $(".w-canvas-content-paste");
+                            hidePasteObj.click();
+                            //scope.pasteComponentInstanceId(event);
+                        }
+                        break;
+
+                }
+            }
+        }
+
+        scope.copyComponentInstance = () => {
+            scope.origComponentId = scope.component.uniqueId;
+            if (scope.component.selectedInstance) {
+                scope.origSelectedInstance = scope.component.selectedInstance;
+                scope.componentInstanceId = scope.component.selectedInstance.uniqueId;
+            }
+        };
+
+
+        scope.pasteComponentInstance = (event: IDragDropEvent) => {
+            event.clientX = event.clientX ? event.clientX : this.cyBackgroundClickEvent ? this.cyBackgroundClickEvent.originalEvent.clientX : "no";
+            event.clientY = event.clientY ? event.clientY : this.cyBackgroundClickEvent ? this.cyBackgroundClickEvent.originalEvent.clientY : "no";
+
+            if (isNaN(event.clientX) || isNaN(event.clientY)) {
+                return;
+            }
+            let offsetPosition = {
+                x: event.clientX - GraphUIObjects.DIAGRAM_PALETTE_WIDTH_OFFSET,
+                y: event.clientY - GraphUIObjects.DIAGRAM_HEADER_OFFSET
+            };
+            /*let offsetPosition = {
+                x: (event.clientX - GraphUIObjects.DIAGRAM_PALETTE_WIDTH_OFFSET) / (this._cy.zoom()),
+                y: (event.clientY - GraphUIObjects.DIAGRAM_HEADER_OFFSET) / (this._cy.zoom())
+
+            };*/
+
+            let mousePosition = this.commonGraphUtils.HTMLCoordsToCytoscapeCoords(this._cy.extent(), offsetPosition);
+            let newPositionX = mousePosition.x;
+            let newPositionY = mousePosition.y;
+            let origSelectedInstance = scope.origSelectedInstance;
+
+            let copyComponentInstance = `{
+                "origComponentId":"${scope.origComponentId}",
+                "componentInstanceId":"${scope.componentInstanceId}",
+                "posX":"${newPositionX}",
+                "posY":"${newPositionY}"
+
+            }`;
+
+            this.isComponentPasteValid(scope, this._cy, event, offsetPosition, origSelectedInstance);
+            debugger;
+
+            let onSuccess = (response): void => {
+                scope.componentArray = response;
+                let success = (component: Component) => {
+                    debugger;
+                    scope.component.componentInstances = component.componentInstances;
+                    scope.component.componentInstancesRelations = component.componentInstancesRelations;
+                    if (component.isService() && component.componentInstances.length > 0) {
+                        _.forEach(component.componentInstances, (instance: ComponentInstance, key) => {
+                            _.forEach(scope.component.componentInstances, (currentInstance: ComponentInstance, key) => {
+                                if (instance.uniqueId === currentInstance.uniqueId) {
+                                    currentInstance.requirements = angular.copy(instance.requirements);
+                                }
+                            });
+                        });
+                        let problematicVfNodeList: Array<string> = new Array();
+                        let allInstances = new Array<ComponentInstance>();
+                        let instances = new Array<ComponentInstance>();
+
+                        let componentInstancelists = response.componentInstances;
+                        let componentInstancesRelationlists = response.componentInstanceRelations;
+                        for (var i = 0; i < component.componentInstances.length; i++) {
+                            for (var j = 0; j < componentInstancelists.length; j++) {
+                                if (component.componentInstances[i].uniqueId == componentInstancelists[j].uniqueId) {
+                                    allInstances.push(component.componentInstances[i]);
+                                }
+                            }
+                        }
+
+                        while (instances.length != allInstances.length) {
+                            _.each(allInstances, (instance) => {
+                                instances.push(instance);
+                            });
+                        }
+
+                        _.each(instances, (instance) => {
+                            // involves planName : need to check if needed in SDC
+                            //this.processVfNode(instance, component, problematicVfNodeList);
+                            let compositionGraphNode = this.NodesFactory.createNode(instance);
+                            this.commonGraphUtils.addComponentInstanceNodeToGraph(this._cy, compositionGraphNode);
+                        });
+
+                        _.each(instances, (instance) => {
+                            let parentNode = this._cy.nodes("[id = '" + instance.uniqueId + "']");
+                            this.initCompoundEmptyNodesPos(parentNode);
+                        });
+                        if (componentInstancesRelationlists) {
+                            this.commonGraphUtils.initGraphLinks(this._cy, componentInstancesRelationlists, scope.component.getRelationRequirementCapability.bind(scope.component));
+                        }
+                    }
+                    // Need to check if this method call is required or not in SDC
+                    //  this.initSOCRelationPicture(scope,response.componentInstances);
+                };
+
+                scope.component.getComponent().then(success);
+                scope.isLoading = false;
+            };
+            let onFailed = (error: any): void => {
+
+                console.log(error);
+                scope.isLoading = false;
+            };
+
+
+            if (scope.pasteValid) {
+                scope.isLoading = true;
+                scope.component.pasteMenuComponentInstance(copyComponentInstance).then(onSuccess, onFailed);
+            } 
+        };
+        
         /*
          scope.hideAssetPopover = ():void => {
 
@@ -574,6 +720,34 @@ export class CompositionGraph implements ng.IDirective {
          //scope.hideAssetPopover();
          }
          };*/
+    }
+
+    private deleteSelectedElements() {
+        if (this._cy) {
+            var nodesToDelete = this._cy.$('node:selected');
+            let edgesSelected = this._cy.$('edge:selected');
+            if (nodesToDelete.length + edgesSelected.length <= 0) {
+                return;
+            }
+            var componentInstancetobeDele;
+            let title: string = "Delete Confirmation";
+            let message: string = "Are you sure you would like to delete selected elements?";
+            if (nodesToDelete.size() == 1 && edgesSelected.size() == 0) {
+
+                componentInstancetobeDele = nodesToDelete[0].data().componentInstance;
+                let showName = nodesToDelete[0].data().componentInstance.name;
+                message = "Are you sure you would like to delete" + " " + showName + "?";
+            }
+
+
+            let onOk = (): void => {
+
+                this.eventListenerService.notifyObservers(GRAPH_EVENTS.ON_DELETE_COMPONENT_INSTANCE, componentInstancetobeDele);
+
+            };
+
+            this.ModalsHandler.openConfirmationModal(title, message, false).then(onOk);
+        }
     }
 
     private registerCytoscapeGraphEvents(scope: ICompositionGraphScope) {
@@ -697,6 +871,8 @@ export class CompositionGraph implements ng.IDirective {
                     }
                     this.eventListenerService.notifyObservers(GRAPH_EVENTS.ON_GRAPH_BACKGROUND_CLICKED);
                 }
+                this.cyBackgroundClickEvent = event;
+                //console.log(this.cyBackgroundClickEvent);
                 scope.hideRelationMenu();
             }
 
@@ -818,6 +994,64 @@ export class CompositionGraph implements ng.IDirective {
         });
     }
 
+    private initCompoundEmptyNodesPos(parentNode: Cy.CollectionNodes) {
+        let dummyNodes = [];
+        let childNodesX = [];
+        let childNodesY = [];
+
+        let childNodes = parentNode.children();
+        for (let i = 0; i < childNodes.length; i++) {
+            let childNode = childNodes[i];
+            if (childNode.hasClass('sf-dummy-node')) {
+                dummyNodes.push(childNode);
+                childNodesX.push(childNode.position().x);
+                childNodesY.push(childNode.position().y);
+            }
+            else {
+                childNodesX.push(childNode.position().x - GraphUIObjects.DEFAULT_RESOURCE_WIDTH / 2);
+                childNodesX.push(childNode.position().x + GraphUIObjects.DEFAULT_RESOURCE_WIDTH / 2);
+                childNodesY.push(childNode.position().y - GraphUIObjects.DEFAULT_RESOURCE_WIDTH / 2);
+                childNodesY.push(childNode.position().y + GraphUIObjects.DEFAULT_RESOURCE_WIDTH / 2 + 20);
+            }
+        }
+
+        childNodesX = childNodesX.sort(function (a, b) {
+            return a - b;
+        });
+
+        childNodesY = childNodesY.sort(function (a, b) {
+            return a - b;
+        });
+
+
+        if (dummyNodes[0]) {
+            dummyNodes[0].position({
+                x: childNodesX[0] - 30,
+                y: childNodesY[0] - 30
+            });
+        }
+
+        if (dummyNodes[1]) {
+            dummyNodes[1].position({
+                x: childNodesX[childNodesX.length - 1] + 30,
+                y: childNodesY[0] - 30
+            });
+        }
+
+        if (dummyNodes[2]) {
+            dummyNodes[2].position({
+                x: childNodesX[0] - 30,
+                y: childNodesY[childNodesY.length - 1] + 30
+            });
+        }
+
+        if (dummyNodes[3]) {
+            dummyNodes[3].position({
+                x: childNodesX[childNodesX.length - 1] + 30,
+                y: childNodesY[childNodesY.length - 1] + 30
+            });
+        }
+    }
 
     private initDropZone(scope: ICompositionGraphScope) {
 
@@ -932,7 +1166,31 @@ export class CompositionGraph implements ng.IDirective {
             }
         };
     };
+    private isComponentPasteValid(scope: ICompositionGraphScope, cy: Cy.Instance, event: IDragDropEvent, offsetPosition: Cy.Position, origSelectedInstance: ComponentInstance) {
+        debugger;
+        let bbox = this._getNodeBBox(cy, event, origSelectedInstance, offsetPosition);
 
+        if (this.GeneralGraphUtils.isPaletteDropValid(cy, bbox, origSelectedInstance)) {
+            scope.pasteValid = true;
+        } else {
+            scope.pasteValid = false;
+        }
+    }
+
+    private _getNodeBBox(cy: Cy.Instance, event: IDragDropEvent, origSelectedInstance: ComponentInstance, position?: Cy.Position) {
+        let bbox = <Cy.BoundingBox>{};
+        if (!position) {
+            position = this.commonGraphUtils.getCytoscapeNodePosition(cy, event);
+        }
+        let cushionWidth: number = 40;
+        let cushionHeight: number = 40;
+
+        bbox.x1 = position.x - cushionWidth / 2;
+        bbox.y1 = position.y - cushionHeight / 2;
+        bbox.x2 = position.x + cushionWidth / 2;
+        bbox.y2 = position.y + cushionHeight / 2;
+        return bbox;
+    }
 
     public static factory = ($q,
         $log,
@@ -953,7 +1211,8 @@ export class CompositionGraph implements ng.IDirective {
         ModalService,
         ConnectionWizardService,
         ComponentInstanceServiceNg2,
-        ServicePathGraphUtils) => {
+        ServicePathGraphUtils,
+        ModalsHandler) => {
         return new CompositionGraph(
             $q,
             $log,
@@ -974,7 +1233,8 @@ export class CompositionGraph implements ng.IDirective {
             ModalService,
             ConnectionWizardService,
             ComponentInstanceServiceNg2,
-            ServicePathGraphUtils);
+            ServicePathGraphUtils,
+            ModalsHandler);
     }
 }
 
@@ -998,5 +1258,6 @@ CompositionGraph.factory.$inject = [
     'ModalServiceNg2',
     'ConnectionWizardServiceNg2',
     'ComponentInstanceServiceNg2',
-    'ServicePathGraphUtils'
+    'ServicePathGraphUtils',
+    'ModalsHandler'
 ];
