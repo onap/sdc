@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * SDC
  * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2017 Huawei Intellectual Property. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -56,7 +56,7 @@ export interface IResourceViewModelScope extends ng.IScope {
     save(): void;
     close(): void;
     initCategoreis(): void;
-    onCategoryChange(): void;  
+    onCategoryChange(): void;
     calculateUnique(mainCategory: string, subCategory: string): string; // Build unique string from main and sub category
     validateField(field: any): boolean;
     onVendorNameChange(oldVendorName: string): void;
@@ -170,8 +170,6 @@ export class ResourceSaveViewFormModel {
         }
 
         this.$scope.validateName = (isInit: boolean): void => {
-            debugger;
-
             let name = this.$scope.component.name;
             if (!name || name === "") {
                 if (this.$scope.forms.editForm
@@ -209,7 +207,7 @@ export class ResourceSaveViewFormModel {
                 ) {
                     this.$scope.component.validateName(name, subtype).then(onSuccess, onFailed);
                 }
-            } 
+            }
 
         };
 

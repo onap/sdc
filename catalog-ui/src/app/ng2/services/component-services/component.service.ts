@@ -19,53 +19,53 @@
  */
 
 import * as _ from "lodash";
-import {Injectable, Inject} from '@angular/core';
-import {Observable} from 'rxjs/Observable';
+import { Injectable, Inject } from '@angular/core';
+import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/toPromise';
-import {Response, URLSearchParams} from '@angular/http';
-import { Component, InputBEModel, InstancePropertiesAPIMap, FilterPropertiesAssignmentData, OperationModel, CreateOperationResponse} from "app/models";
-import {downgradeInjectable} from '@angular/upgrade/static';
-import {COMPONENT_FIELDS} from "app/utils";
-import {ComponentGenericResponse} from "../responses/component-generic-response";
-import {InstanceBePropertiesMap} from "../../../models/properties-inputs/property-fe-map";
-import {API_QUERY_PARAMS} from "app/utils";
+import { Response, URLSearchParams } from '@angular/http';
+import { Component, InputBEModel, InstancePropertiesAPIMap, FilterPropertiesAssignmentData, OperationModel, CreateOperationResponse } from "app/models";
+import { downgradeInjectable } from '@angular/upgrade/static';
+import { COMPONENT_FIELDS } from "app/utils";
+import { ComponentGenericResponse } from "../responses/component-generic-response";
+import { InstanceBePropertiesMap } from "../../../models/properties-inputs/property-fe-map";
+import { API_QUERY_PARAMS } from "app/utils";
 import { ComponentType, ServerTypeUrl } from "../../../utils/constants";
 import { HttpService } from '../http.service';
-import {SdcConfigToken, ISdcConfig} from "../../config/sdc-config.config";
-import {IDependenciesServerResponse} from "../responses/dependencies-server-response";
-import {AutomatedUpgradeGenericResponse} from "../responses/automated-upgrade-response";
-import {IAutomatedUpgradeRequestObj} from "../../pages/automated-upgrade/automated-upgrade.service";
+import { SdcConfigToken, ISdcConfig } from "../../config/sdc-config.config";
+import { IDependenciesServerResponse } from "../responses/dependencies-server-response";
+import { AutomatedUpgradeGenericResponse } from "../responses/automated-upgrade-response";
+import { IAutomatedUpgradeRequestObj } from "../../pages/automated-upgrade/automated-upgrade.service";
 
-declare var angular:angular.IAngularStatic;
+declare var angular: angular.IAngularStatic;
 
 @Injectable()
 export class ComponentServiceNg2 {
 
     protected baseUrl;
 
-    constructor(protected http:HttpService, @Inject(SdcConfigToken) sdcConfig:ISdcConfig) {
+    constructor(protected http: HttpService, @Inject(SdcConfigToken) sdcConfig: ISdcConfig) {
         this.baseUrl = sdcConfig.api.root + sdcConfig.api.component_api_root;
     }
 
-    protected getComponentDataByFieldsName(componentType:string, componentId: string, fields:Array<string>):Observable<ComponentGenericResponse> {
+    protected getComponentDataByFieldsName(componentType: string, componentId: string, fields: Array<string>): Observable<ComponentGenericResponse> {
 
-        let params:URLSearchParams = new URLSearchParams();
-        _.forEach(fields, (field:string):void => {
+        let params: URLSearchParams = new URLSearchParams();
+        _.forEach(fields, (field: string): void => {
             params.append(API_QUERY_PARAMS.INCLUDE, field);
         });
 
-        return this.http.get(this.baseUrl + this.getServerTypeUrl(componentType) + componentId + '/filteredDataByParams', {search: params})
-            .map((res:Response) => {
+        return this.http.get(this.baseUrl + this.getServerTypeUrl(componentType) + componentId + '/filteredDataByParams', { search: params })
+            .map((res: Response) => {
                 return this.analyzeComponentDataResponse(res);
             });
     }
 
-    protected analyzeComponentDataResponse(res: Response):ComponentGenericResponse {
+    protected analyzeComponentDataResponse(res: Response): ComponentGenericResponse {
         return new ComponentGenericResponse().deserialize(res.json());
     }
 
-    private getServerTypeUrl = (componentType:string):string => {
+    private getServerTypeUrl = (componentType: string): string => {
         switch (componentType) {
             case ComponentType.SERVICE:
                 return ServerTypeUrl.SERVICES;
@@ -74,171 +74,169 @@ export class ComponentServiceNg2 {
         }
     }
 
-    getComponentMetadata(component:Component):Observable<ComponentGenericResponse> {
+    getComponentMetadata(component: Component): Observable<ComponentGenericResponse> {
         return this.getComponentDataByFieldsName(component.componentType, component.uniqueId, [COMPONENT_FIELDS.COMPONENT_METADATA]);
     }
 
-    getComponentInstanceAttributesAndProperties(component:Component):Observable<ComponentGenericResponse> {
+    getComponentInstanceAttributesAndProperties(component: Component): Observable<ComponentGenericResponse> {
         return this.getComponentDataByFieldsName(component.componentType, component.uniqueId, [COMPONENT_FIELDS.COMPONENT_INSTANCES_PROPERTIES, COMPONENT_FIELDS.COMPONENT_INSTANCES_ATTRIBUTES]);
     }
 
-    getComponentAttributes(component:Component):Observable<ComponentGenericResponse> {
+    getComponentAttributes(component: Component): Observable<ComponentGenericResponse> {
         return this.getComponentDataByFieldsName(component.componentType, component.uniqueId, [COMPONENT_FIELDS.COMPONENT_ATTRIBUTES]);
     }
 
-    getComponentInstancesAndRelation(component:Component):Observable<ComponentGenericResponse> {
+    getComponentInstancesAndRelation(component: Component): Observable<ComponentGenericResponse> {
         return this.getComponentDataByFieldsName(component.componentType, component.uniqueId, [COMPONENT_FIELDS.COMPONENT_INSTANCES_RELATION, COMPONENT_FIELDS.COMPONENT_INSTANCES]);
-    }    
+    }
 
-    getComponentCompositionData(component:Component):Observable<ComponentGenericResponse> {
+    getComponentCompositionData(component: Component): Observable<ComponentGenericResponse> {
         return this.getComponentDataByFieldsName(component.componentType, component.uniqueId, [COMPONENT_FIELDS.COMPONENT_INSTANCES_RELATION, COMPONENT_FIELDS.COMPONENT_INSTANCES, COMPONENT_FIELDS.COMPONENT_NON_EXCLUDED_POLICIES, COMPONENT_FIELDS.COMPONENT_NON_EXCLUDED_GROUPS]);
     }
 
-    getComponentResourcePropertiesData(component:Component):Observable<ComponentGenericResponse> {
+    getComponentResourcePropertiesData(component: Component): Observable<ComponentGenericResponse> {
         return this.getComponentDataByFieldsName(component.componentType, component.uniqueId, [COMPONENT_FIELDS.COMPONENT_INSTANCES, COMPONENT_FIELDS.COMPONENT_POLICIES, COMPONENT_FIELDS.COMPONENT_NON_EXCLUDED_GROUPS]);
     }
 
-    getComponentResourceInstances(component:Component):Observable<ComponentGenericResponse> {
+    getComponentResourceInstances(component: Component): Observable<ComponentGenericResponse> {
         return this.getComponentDataByFieldsName(component.componentType, component.uniqueId, [COMPONENT_FIELDS.COMPONENT_INSTANCES]);
     }
 
-    getComponentInputs(component:Component):Observable<ComponentGenericResponse> {
+    getComponentInputs(component: Component): Observable<ComponentGenericResponse> {
         return this.getComponentDataByFieldsName(component.componentType, component.uniqueId, [COMPONENT_FIELDS.COMPONENT_INPUTS]);
     }
 
-    getComponentDeploymentArtifacts(component:Component):Observable<ComponentGenericResponse> {
+    getComponentDeploymentArtifacts(component: Component): Observable<ComponentGenericResponse> {
         return this.getComponentDataByFieldsName(component.componentType, component.uniqueId, [COMPONENT_FIELDS.COMPONENT_DEPLOYMENT_ARTIFACTS]);
     }
 
-    getComponentInformationalArtifacts(component:Component):Observable<ComponentGenericResponse> {
+    getComponentInformationalArtifacts(component: Component): Observable<ComponentGenericResponse> {
         return this.getComponentDataByFieldsName(component.componentType, component.uniqueId, [COMPONENT_FIELDS.COMPONENT_INFORMATIONAL_ARTIFACTS]);
     }
 
-    getComponentInformationalArtifactsAndInstances(component:Component):Observable<ComponentGenericResponse> {
+    getComponentInformationalArtifactsAndInstances(component: Component): Observable<ComponentGenericResponse> {
         return this.getComponentDataByFieldsName(component.componentType, component.uniqueId, [COMPONENT_FIELDS.COMPONENT_INFORMATIONAL_ARTIFACTS, COMPONENT_FIELDS.COMPONENT_INSTANCES]);
     }
 
-    getComponentToscaArtifacts(component:Component):Observable<ComponentGenericResponse> {
+    getComponentToscaArtifacts(component: Component): Observable<ComponentGenericResponse> {
         return this.getComponentDataByFieldsName(component.componentType, component.uniqueId, [COMPONENT_FIELDS.COMPONENT_TOSCA_ARTIFACTS]);
     }
 
-    getComponentProperties(component:Component):Observable<ComponentGenericResponse> {
+    getComponentProperties(component: Component): Observable<ComponentGenericResponse> {
         return this.getComponentDataByFieldsName(component.componentType, component.uniqueId, [COMPONENT_FIELDS.COMPONENT_PROPERTIES]);
     }
 
-    getInterfaceOperations(component:Component):Observable<ComponentGenericResponse> {
+    getInterfaceOperations(component: Component): Observable<ComponentGenericResponse> {
         return this.getComponentDataByFieldsName(component.componentType, component.uniqueId, [COMPONENT_FIELDS.COMPONENT_INTERFACE_OPERATIONS]);
     }
 
-    getInterfaceOperation(component:Component, operation:OperationModel):Observable<OperationModel> {
+    getInterfaceOperation(component: Component, operation: OperationModel): Observable<OperationModel> {
         return this.http.get(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/interfaceOperations/' + operation.uniqueId)
-            .map((res:Response) => {
+            .map((res: Response) => {
                 return res.json();
             });
     }
 
-    createInterfaceOperation(component:Component, operation:OperationModel):Observable<CreateOperationResponse> {
+    createInterfaceOperation(component: Component, operation: OperationModel): Observable<CreateOperationResponse> {
         const operationList = {
             'interfaceOperations': {
                 [operation.operationType]: operation
             }
         };
         return this.http.post(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/interfaceOperations', operationList)
-            .map((res:Response) => {
+            .map((res: Response) => {
                 return res.json();
             });
     }
 
-    updateInterfaceOperation(component:Component, operation:OperationModel):Observable<CreateOperationResponse> {
+    updateInterfaceOperation(component: Component, operation: OperationModel): Observable<CreateOperationResponse> {
         const operationList = {
             'interfaceOperations': {
                 [operation.operationType]: operation
             }
         };
         return this.http.put(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/interfaceOperations', operationList)
-            .map((res:Response) => {
+            .map((res: Response) => {
                 return res.json();
             });
     }
 
-    deleteInterfaceOperation(component:Component, operation:OperationModel):Observable<OperationModel> {
+    deleteInterfaceOperation(component: Component, operation: OperationModel): Observable<OperationModel> {
         return this.http.delete(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/interfaceOperations/' + operation.uniqueId)
-            .map((res:Response) => {
+            .map((res: Response) => {
                 return res.json();
             });
     }
 
-    getCapabilitiesAndRequirements(componentType: string, componentId:string):Observable<ComponentGenericResponse> {
+    getCapabilitiesAndRequirements(componentType: string, componentId: string): Observable<ComponentGenericResponse> {
         return this.getComponentDataByFieldsName(componentType, componentId, [COMPONENT_FIELDS.COMPONENT_REQUIREMENTS, COMPONENT_FIELDS.COMPONENT_CAPABILITIES]);
     }
 
-    getDeploymentGraphData(component:Component):Observable<ComponentGenericResponse> {
+    getDeploymentGraphData(component: Component): Observable<ComponentGenericResponse> {
         return this.getComponentDataByFieldsName(component.componentType, component.uniqueId, [COMPONENT_FIELDS.COMPONENT_INSTANCES_RELATION, COMPONENT_FIELDS.COMPONENT_INSTANCES, COMPONENT_FIELDS.COMPONENT_GROUPS]);
     }
 
-    createInput(component:Component, inputsToCreate:InstancePropertiesAPIMap):Observable<any> {
+    createInput(component: Component, inputsToCreate: InstancePropertiesAPIMap): Observable<any> {
         return this.http.post(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/create/inputs', inputsToCreate)
             .map(res => {
                 return res.json();
             })
     }
     // Check This code
-    createServiceInput(component:Component, serviceId:string):Observable<any> {
-        debugger;
-        return this.http.post(this.baseUrl + component.getTypeUrl() + 'combination/'+ serviceId , component)
+    createServiceInput(component: Component, serviceId: string): Observable<any> {
+        return this.http.post(this.baseUrl + component.getTypeUrl() + 'combination/' + serviceId, component)
             .map(res => {
-                debugger;
                 return res.json();
             })
-    }    
+    }
 
-    restoreComponent(componentType:string, componentId:string){ 
+    restoreComponent(componentType: string, componentId: string) {
         return this.http.post(this.baseUrl + this.getServerTypeUrl(componentType) + componentId + '/restore', {})
     }
 
-    archiveComponent(componentType:string, componentId:string){
+    archiveComponent(componentType: string, componentId: string) {
         return this.http.post(this.baseUrl + this.getServerTypeUrl(componentType) + componentId + '/archive', {})
     }
 
 
-    deleteInput(component:Component, input:InputBEModel):Observable<InputBEModel> {
+    deleteInput(component: Component, input: InputBEModel): Observable<InputBEModel> {
 
         return this.http.delete(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/delete/' + input.uniqueId + '/input')
-            .map((res:Response) => {
+            .map((res: Response) => {
                 return new InputBEModel(res.json());
             })
     }
 
-    updateComponentInputs(component:Component, inputs:InputBEModel[]):Observable<InputBEModel[]> {
+    updateComponentInputs(component: Component, inputs: InputBEModel[]): Observable<InputBEModel[]> {
 
         return this.http.post(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/update/inputs', inputs)
-            .map((res:Response) => {
+            .map((res: Response) => {
                 return res.json().map((input) => new InputBEModel(input));
             })
     }
 
-    filterComponentInstanceProperties(component: Component, filterData:FilterPropertiesAssignmentData): Observable<InstanceBePropertiesMap> {//instance-property-be-map
+    filterComponentInstanceProperties(component: Component, filterData: FilterPropertiesAssignmentData): Observable<InstanceBePropertiesMap> {//instance-property-be-map
         let params: URLSearchParams = new URLSearchParams();
-        _.forEach(filterData.selectedTypes, (type:string) => {
+        _.forEach(filterData.selectedTypes, (type: string) => {
             params.append('resourceType', type);
         });
 
-        return this.http.get(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/filteredproperties/' + filterData.propertyName, {search: params})
+        return this.http.get(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/filteredproperties/' + filterData.propertyName, { search: params })
             .map((res: Response) => {
                 return res.json();
             });
     }
 
-    getDependencies(componentType:string, componentId: string):Observable<Array<IDependenciesServerResponse>> {
+    getDependencies(componentType: string, componentId: string): Observable<Array<IDependenciesServerResponse>> {
         return this.http.get(this.baseUrl + this.getServerTypeUrl(componentType) + componentId + '/dependencies')
-            .map((res:Response) => {
+            .map((res: Response) => {
                 return res.json();
             });
     }
 
-    automatedUpgrade(componentType:string, componentId: string, componentsIdsToUpgrade:Array<IAutomatedUpgradeRequestObj>):Observable<AutomatedUpgradeGenericResponse> {
+    automatedUpgrade(componentType: string, componentId: string, componentsIdsToUpgrade: Array<IAutomatedUpgradeRequestObj>): Observable<AutomatedUpgradeGenericResponse> {
         return this.http.post(this.baseUrl + this.getServerTypeUrl(componentType) + componentId + '/automatedupgrade', componentsIdsToUpgrade)
-            .map((res:Response) => {
+            .map((res: Response) => {
                 return res.json();
             });
     }

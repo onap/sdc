@@ -437,7 +437,6 @@ export class ModalsHandler implements IModalsHandler {
     };
 
     public openAddResourceFormModal = (currentComponent: Component, serviceId: string): ng.IPromise<any> => {
-        debugger;
         let deferred = this.$q.defer();
 
         let modalOptions: ng.ui.bootstrap.IModalSettings = {
