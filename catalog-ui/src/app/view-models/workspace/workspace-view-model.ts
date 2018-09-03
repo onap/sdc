@@ -97,7 +97,7 @@ export interface IWorkspaceViewModelScope extends ng.IScope {
     disableMenuItems():void;
     enableMenuItems():void;
     isDesigner():boolean;
-    isViewMode():boolean;
+    isViewMode():boolean;    
     isEditMode():boolean;
     isCreateMode():boolean;
     isDisableMode():boolean;
@@ -113,6 +113,7 @@ export interface IWorkspaceViewModelScope extends ng.IScope {
     updateMenuComponentName(ComponentName:string):void;
     getTabTitle():string;
     reload(component:Component):void;
+    openSaveResourceModel():void;
 }
 
 export class WorkspaceViewModel {
@@ -191,8 +192,15 @@ export class WorkspaceViewModel {
 
     private initChangeLifecycleStateButtons = ():void => {
         let state = this.$scope.component.isService() && (Role.OPS == this.role || Role.GOVERNOR == this.role) ? this.$scope.component.distributionStatus : this.$scope.component.lifecycleState;
-        this.$scope.changeLifecycleStateButtons = (this.sdcMenu.roles[this.role].changeLifecycleStateButtons[state] || [])[this.$scope.component.componentType.toUpperCase()];
-
+        debugger;
+        if(this.$scope.component.componentType.toUpperCase() =="RESOURCE" && this.$scope.component.getComponentSubType() == "Combination")
+        {
+            this.$scope.changeLifecycleStateButtons = (this.sdcMenu.roles[this.role].changeLifecycleStateButtons[state] || [])["COMBINATION"];
+        }
+        else
+        {
+            this.$scope.changeLifecycleStateButtons = (this.sdcMenu.roles[this.role].changeLifecycleStateButtons[state] || [])[this.$scope.component.componentType.toUpperCase()];
+        }  
     };
 
     private initLeftPalette = ():void => {
@@ -632,8 +640,6 @@ export class WorkspaceViewModel {
             this.ChangeLifecycleStateHandler.changeLifecycleState(this.$scope.component, data, this.$scope, onSuccess);
         };
 
-
-
         this.$scope.isViewMode = ():boolean => {
             return this.$scope.mode === WorkspaceMode.VIEW;
         };
@@ -739,6 +745,16 @@ export class WorkspaceViewModel {
         this.$scope.reload = (component:Component):void => {
             this.$state.go(this.$state.current.name, {id: component.uniqueId}, {reload: true});
         };
+
+        this.$scope.openSaveResourceModel = () :void => {          
+            let newComponent = this.ComponentFactory.createEmptyComponent("RESOURCE");
+            let serviceId = this.$scope.component.uniqueId;
+            newComponent.componentType = "RESOURCE";
+            newComponent.selectedCategory = "";
+            (<Resource>newComponent).resourceType = "Combination";
+            this.ModalsHandler.openAddResourceFormModal(newComponent,serviceId).then(()=>{});
+
+        };        
 
         this.$scope.$on('$destroy', () => {
             this.EventListenerService.unRegisterObserver(EVENTS.ON_WORKSPACE_UNSAVED_CHANGES);

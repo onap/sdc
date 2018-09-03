@@ -23,7 +23,7 @@
                 {{subCategory}}
             </div>
             <div class="i-sdc-designer-leftbar-section-content-item"
-                 data-ng-class="{'default-pointer': isViewOnly}"
+                 data-ng-class="{'default-pointer': isViewOnly,'default-combination1':isShowDashLine(component),'combination1':isCombination}"
                  data-ng-mouseover="!isViewOnly && onMouseOver(component, $event.currentTarget)"
                  data-ng-mouseleave="!isViewOnly && onMouseOut(component)"
                  data-drag="!isViewOnly && component.isDraggable"

@@ -637,7 +637,7 @@ export abstract class Component implements IComponent {
         };
         let onFailed = (error:any):void => {
             deferred.reject(error);
-        };
+        };        
         this.componentService.deleteComponentInstance(this.uniqueId, componentInstanceId).then(onSuccess, onFailed);
         return deferred.promise;
     };

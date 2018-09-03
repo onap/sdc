@@ -22,16 +22,16 @@
  */
 'use strict';
 import * as _ from "lodash";
-import {LeftPaletteComponent, LeftPaletteMetadataTypes} from "app/models/components/displayComponent";
-import {Component} from "app/models/components/component";
-import {EventListenerService} from "../../event-listener-service";
-import {ComponentFactory} from "../../../utils/component-factory";
-import {IAppConfigurtaion} from "app/models/app-config";
-import {ResourceType, ComponentType, EVENTS} from "../../../utils/constants";
-import {ComponentMetadata} from "app/models/component-metadata";
-import {GroupMetadata, GroupTpes} from "app/models/group-metadata";
-import {PolicyMetadata, PolicyTpes} from "app/models/policy-metadata";
-import {Resource} from "app/models/components/resource";
+import { LeftPaletteComponent, LeftPaletteMetadataTypes } from "app/models/components/displayComponent";
+import { Component } from "app/models/components/component";
+import { EventListenerService } from "../../event-listener-service";
+import { ComponentFactory } from "../../../utils/component-factory";
+import { IAppConfigurtaion } from "app/models/app-config";
+import { ResourceType, ComponentType, EVENTS } from "../../../utils/constants";
+import { ComponentMetadata } from "app/models/component-metadata";
+import { GroupMetadata, GroupTpes } from "app/models/group-metadata";
+import { PolicyMetadata, PolicyTpes } from "app/models/policy-metadata";
+import { Resource } from "app/models/components/resource";
 
 export class LeftPaletteLoaderService {
 
@@ -44,59 +44,63 @@ export class LeftPaletteLoaderService {
 
     ];
 
-    constructor(protected restangular:restangular.IElement,
-                protected sdcConfig:IAppConfigurtaion,
-                protected $q:ng.IQService,
-                protected ComponentFactory:ComponentFactory,
-                protected EventListenerService:EventListenerService) {
+    constructor(protected restangular: restangular.IElement,
+        protected sdcConfig: IAppConfigurtaion,
+        protected $q: ng.IQService,
+        protected ComponentFactory: ComponentFactory,
+        protected EventListenerService: EventListenerService) {
 
         this.restangular.setBaseUrl(sdcConfig.api.root + sdcConfig.api.component_api_root);
 
     }
 
-    leftPanelComponents:Array<LeftPaletteComponent>;
+    leftPanelComponents: Array<LeftPaletteComponent>;
 
-    public loadLeftPanel = (component:Component):void => {
+    public loadLeftPanel = (component: Component): void => {
         this.leftPanelComponents = [];
         this.updateLeftPaletteForTopologyTemplate(component);
     }
 
-    private updateLeftPalette = (componentInternalType:string):void => {
+    private updateLeftPalette = (componentInternalType: string): void => {
 
-        /* add components */
-        this.restangular.one("resources").one('/latestversion/notabstract/metadata').get({'internalComponentType': componentInternalType}).then((leftPaletteComponentMetadata:Array<ComponentMetadata>) => {    
-            _.forEach(leftPaletteComponentMetadata, (componentMetadata:ComponentMetadata) => {
-                this.leftPanelComponents.push(new LeftPaletteComponent(LeftPaletteMetadataTypes.Component, componentMetadata));
-            });
-            
-            /* add groups */
-            this.restangular.one('/groupTypes').get({'internalComponentType': componentInternalType}).then((leftPaletteGroupTypes:GroupTpes) => {
-                _.forEach(leftPaletteGroupTypes, (groupMetadata: GroupMetadata) => {
-                    this.leftPanelComponents.push(new LeftPaletteComponent(LeftPaletteMetadataTypes.Group, groupMetadata));
-                }); 
-                this.EventListenerService.notifyObservers(EVENTS.LEFT_PALETTE_UPDATE_EVENT);
-            });
+        if (componentInternalType === "Combination") {
+            this.EventListenerService.notifyObservers(EVENTS.LEFT_PALETTE_UPDATE_EVENT);
+        } else {
+            /* add components */
+            this.restangular.one("resources").one('/latestversion/notabstract/metadata').get({ 'internalComponentType': componentInternalType }).then((leftPaletteComponentMetadata: Array<ComponentMetadata>) => {
+                _.forEach(leftPaletteComponentMetadata, (componentMetadata: ComponentMetadata) => {
+                    this.leftPanelComponents.push(new LeftPaletteComponent(LeftPaletteMetadataTypes.Component, componentMetadata));
+                });
 
-            /* add policies */
-            this.restangular.one('/policyTypes').get({'internalComponentType': componentInternalType}).then((leftPalettePolicyTypes:PolicyTpes) => {
-                _.forEach(leftPalettePolicyTypes, (policyMetadata: PolicyMetadata) => {
-                    this.leftPanelComponents.push(new LeftPaletteComponent(LeftPaletteMetadataTypes.Policy, policyMetadata));
-                }); 
-                this.EventListenerService.notifyObservers(EVENTS.LEFT_PALETTE_UPDATE_EVENT);
+                /* add groups */
+                this.restangular.one('/groupTypes').get({ 'internalComponentType': componentInternalType }).then((leftPaletteGroupTypes: GroupTpes) => {
+                    _.forEach(leftPaletteGroupTypes, (groupMetadata: GroupMetadata) => {
+                        this.leftPanelComponents.push(new LeftPaletteComponent(LeftPaletteMetadataTypes.Group, groupMetadata));
+                    });
+                    this.EventListenerService.notifyObservers(EVENTS.LEFT_PALETTE_UPDATE_EVENT);
+                });
+
+                /* add policies */
+                this.restangular.one('/policyTypes').get({ 'internalComponentType': componentInternalType }).then((leftPalettePolicyTypes: PolicyTpes) => {
+                    _.forEach(leftPalettePolicyTypes, (policyMetadata: PolicyMetadata) => {
+                        this.leftPanelComponents.push(new LeftPaletteComponent(LeftPaletteMetadataTypes.Policy, policyMetadata));
+                    });
+                    this.EventListenerService.notifyObservers(EVENTS.LEFT_PALETTE_UPDATE_EVENT);
+                });
             });
-        });
+        }
 
 
     }
 
-    public getLeftPanelComponentsForDisplay = (component:Component):Array<LeftPaletteComponent> => {
+    public getLeftPanelComponentsForDisplay = (component: Component): Array<LeftPaletteComponent> => {
         return this.leftPanelComponents;
     };
 
     /**
      * Update left palete items according to current topology templates we are in.
      */
-    public updateLeftPaletteForTopologyTemplate = (component:Component):void => {
+    public updateLeftPaletteForTopologyTemplate = (component: Component): void => {
         switch (component.componentType) {
             case ComponentType.SERVICE:
                 this.updateLeftPalette(ComponentType.SERVICE);
@@ -105,7 +109,7 @@ export class LeftPaletteLoaderService {
                 this.updateLeftPalette((<Resource>component).resourceType);
                 break;
             default:
-                console.log('ERROR: Component type '+ component.componentType + ' is not exists');
+                console.log('ERROR: Component type ' + component.componentType + ' is not exists');
         }
     };
 }

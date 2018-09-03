@@ -191,7 +191,7 @@ export class CatalogViewModel {
         // Checklist init
         this.$scope.checkboxes = <Checkboxes>{};
         this.$scope.checkboxes.componentTypes = ['Resource', 'Service'];
-        this.$scope.checkboxes.resourceSubTypes = ['VF', 'VFC', 'CR', 'PNF', 'CP', 'VL'];
+        this.$scope.checkboxes.resourceSubTypes = ['VF', 'VFC', 'CR', 'PNF', 'CP', 'VL', 'Combination'];
         this.categoriesMap = this.initCategoriesMap();
 
         this.initCheckboxesFilter();

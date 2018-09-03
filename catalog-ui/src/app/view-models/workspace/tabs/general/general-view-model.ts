@@ -135,6 +135,7 @@ export class GeneralViewModel {
                 private onBoardingService:OnboardingService,
                 private ComponentFactory:ComponentFactory) {
 
+        debugger;
         this.initScopeValidation();
         this.initScopeMethods();
         this.initScope();

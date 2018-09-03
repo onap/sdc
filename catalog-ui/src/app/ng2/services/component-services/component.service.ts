@@ -86,6 +86,10 @@ export class ComponentServiceNg2 {
         return this.getComponentDataByFieldsName(component.componentType, component.uniqueId, [COMPONENT_FIELDS.COMPONENT_ATTRIBUTES]);
     }
 
+    getComponentInstancesAndRelation(component:Component):Observable<ComponentGenericResponse> {
+        return this.getComponentDataByFieldsName(component.componentType, component.uniqueId, [COMPONENT_FIELDS.COMPONENT_INSTANCES_RELATION, COMPONENT_FIELDS.COMPONENT_INSTANCES]);
+    }    
+
     getComponentCompositionData(component:Component):Observable<ComponentGenericResponse> {
         return this.getComponentDataByFieldsName(component.componentType, component.uniqueId, [COMPONENT_FIELDS.COMPONENT_INSTANCES_RELATION, COMPONENT_FIELDS.COMPONENT_INSTANCES, COMPONENT_FIELDS.COMPONENT_NON_EXCLUDED_POLICIES, COMPONENT_FIELDS.COMPONENT_NON_EXCLUDED_GROUPS]);
     }
@@ -178,6 +182,15 @@ export class ComponentServiceNg2 {
                 return res.json();
             })
     }
+    // Check This code
+    createServiceInput(component:Component, serviceId:string):Observable<any> {
+        debugger;
+        return this.http.post(this.baseUrl + component.getTypeUrl() + 'combination/'+ serviceId , component)
+            .map(res => {
+                debugger;
+                return res.json();
+            })
+    }    
 
     restoreComponent(componentType:string, componentId:string){ 
         return this.http.post(this.baseUrl + this.getServerTypeUrl(componentType) + componentId + '/restore', {})
