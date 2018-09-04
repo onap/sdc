@@ -25,12 +25,10 @@ import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipException;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
@@ -49,87 +47,63 @@ public class ZipUtil {
             return null;
         }
     }
-
 	public static Map<String, byte[]> readZip(byte[] zipAsBytes) {
 		Map<String, byte[]> fileNameToByteArray = new HashMap<>();
-		byte[] buffer = new byte[1024];
+		try (ZipInputStream stream = input) {
         try(ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(zipAsBytes);
 			ZipInputStream zis = new ZipInputStream(byteArrayInputStream)) {
-			// get the zipped file list entry
-			ZipEntry ze = zis.getNextEntry();
-
-			while (ze != null) {
-
-				String fileName = ze.getName();
-
-				if (!ze.isDirectory()) {
-
-					try(ByteArrayOutputStream os = new ByteArrayOutputStream()) {
-						int len;
-						while ((len = zis.read(buffer)) > 0) {
-							os.write(buffer, 0, len);
-						}
-
-						fileNameToByteArray.put(fileName, os.toByteArray());
-
-					}
-				}
-				ze = zis.getNextEntry();
-			}
-		} catch (IOException ex) {
+				assertEntryNotVulnerable(entry);
+				if (!isDirectory(entry)) {
+					fileNameToByteArray.put(entry.getName(), IOUtils.toByteArray(stream));
 			log.info("close Byte stream failed" , ex);
-			return null;
 		}
-
 		return fileNameToByteArray;
-
 	}
 
-	public static void main(String[] args) {
-
-		String zipFileName = "/src/test/resources/config/config.zip";
-
-		zipFileName = "C:\\Git_work\\D2-SDnC\\catalog-be\\src\\test\\resources\\config\\config.zip";
-
-		Path path = Paths.get(zipFileName);
-
-		try {
-			byte[] zipAsBytes = Files.readAllBytes(path);
-			// encode to base
-
-			ZipUtil.readZip(zipAsBytes);
-
-		} catch (IOException e) {
+	public static Map<String, byte[]> readZip(byte[] zipAsBytes) throws IOException {
+		return readZip(new ZipInputStream(new ByteArrayInputStream(zipAsBytes)));
 			log.info("close Byte stream failed" , e);
-		}
+	}
 
+	public static byte[] unzip(byte[] zipped) throws IOException {
+		return readZip(zipped)
+				.values()
+				.stream()
+				.collect(
+						ByteArrayOutputStream::new,
+						ZipUtil::appendStream,
+						(a, b) -> {})
+				.toByteArray();
 	}
 
 	public static byte[] zipBytes(byte[] input) throws IOException {
-		try(ByteArrayOutputStream baos = new ByteArrayOutputStream();
-				ZipOutputStream zos = new ZipOutputStream(baos)){
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		try (ZipOutputStream zos = new ZipOutputStream(baos)) {
 			ZipEntry entry = new ZipEntry("zip");
 			entry.setSize(input.length);
 			zos.putNextEntry(entry);
 			zos.write(input);
 			zos.closeEntry();
-			return baos.toByteArray();
+		}
+		return baos.toByteArray();
+	}
+
+	private static boolean isDirectory(ZipEntry entry) {
+		return entry.isDirectory();
+	}
+
+	private static void assertEntryNotVulnerable(ZipEntry entry) throws ZipException {
+		if (entry.getName().contains("../")) {
+			throw new ZipException("Path traversal attempt discovered.");
 		}
 	}
 
-	public static byte[] unzip(byte[] zipped) {
-		try(ZipInputStream zipinputstream = new ZipInputStream(new ByteArrayInputStream(zipped));
-				ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
-			byte[] buf = new byte[1024];
-			ZipEntry zipentry = zipinputstream.getNextEntry();
-			int n;
-			while ((n = zipinputstream.read(buf, 0, 1024)) > -1) {
-				outputStream.write(buf, 0, n);
-			}
-			return outputStream.toByteArray();
-		} catch (Exception e) {
-			throw new IllegalStateException("Can't unzip input stream", e);
+	private static void appendStream(ByteArrayOutputStream result, byte[] x) {
+		try {
+			result.write(x);
+		} catch (IOException e) {
+			log.info("Appending stream failed - {}" , e);
+			// TODO exception
 		}
 	}
-
 }

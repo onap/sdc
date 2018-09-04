@@ -36,7 +36,11 @@ import org.openecomp.sdc.be.datatypes.components.ResourceMetadataDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
-import org.openecomp.sdc.be.model.*;
+import org.openecomp.sdc.be.model.Component;
+import org.openecomp.sdc.be.model.LifecycleStateEnum;
+import org.openecomp.sdc.be.model.Product;
+import org.openecomp.sdc.be.model.Resource;
+import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.resources.data.ComponentCacheData;
 import org.openecomp.sdc.common.log.wrappers.Logger;
@@ -46,11 +50,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
-import java.util.*;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
-import java.util.function.Function;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -540,8 +544,12 @@ public class ComponentCache {
         byte[] dataAsArray = componentCacheData.getDataAsArray();
 
         if (componentCacheData.getIsZipped()) {
+            try {
+                dataAsArray = ZipUtil.unzip(dataAsArray);
+            } catch (IOException e) {
+                log.error("Unzipping component failed.", e);
+            }
             long startUnzip = System.nanoTime();
-            dataAsArray = ZipUtil.unzip(dataAsArray);
             long endUnzip = System.nanoTime();
             log.trace("Unzip component {} took {} microsecond", compUid, (endUnzip - startUnzip) / 1000);
         }
