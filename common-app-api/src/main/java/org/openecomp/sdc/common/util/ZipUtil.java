@@ -20,17 +20,16 @@
 
 package org.openecomp.sdc.common.util;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipException;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
@@ -41,137 +40,64 @@ public class ZipUtil {
 	private ZipUtil() {
 	}
 
-	public static Map<String, byte[]> readZip(byte[] zipAsBytes) {
-
-		ZipInputStream zis = null;
-		zis = new ZipInputStream(new ByteArrayInputStream(zipAsBytes));
-
-		return readZip(zis);
-	}
-
-	public static Map<String, byte[]> readZip(ZipInputStream zis) {
-
+	public static Map<String, byte[]> readZip(ZipInputStream input) throws IOException {
 		Map<String, byte[]> fileNameToByteArray = new HashMap<>();
 
-		byte[] buffer = new byte[1024];
-		try {
-			// get the zipped file list entry
-			ZipEntry ze = zis.getNextEntry();
-
-			while (ze != null) {
-
-				String fileName = ze.getName();
-
-				if (!ze.isDirectory()) {
-
-					ByteArrayOutputStream os = new ByteArrayOutputStream();
-					try {
-						int len;
-						while ((len = zis.read(buffer)) > 0) {
-							os.write(buffer, 0, len);
-						}
-
-						fileNameToByteArray.put(fileName, os.toByteArray());
-
-					} finally {
-						if (os != null) {
-							os.close();
-						}
-					}
+		try (ZipInputStream stream = input) {
+			ZipEntry entry;
+			while ((entry = stream.getNextEntry()) != null) {
+				assertEntryNotVulnerable(entry);
+				if (!isDirectory(entry)) {
+					fileNameToByteArray.put(entry.getName(), IOUtils.toByteArray(stream));
 				}
-				ze = zis.getNextEntry();
-
-			}
-
-			zis.closeEntry();
-			zis.close();
-
-		} catch (IOException ex) {
-			
-			log.info("close Byte stream failed - {}" , ex);
-			return null;
-		} finally {
-			if (zis != null) {
-				try {
-					zis.closeEntry();
-					zis.close();
-				} catch (IOException e) {
-					// TODO: add log
-				}
-
 			}
 		}
-
 		return fileNameToByteArray;
-
 	}
 
-	public static void main(String[] args) {
+	public static Map<String, byte[]> readZip(byte[] zipAsBytes) throws IOException {
+		return readZip(new ZipInputStream(new ByteArrayInputStream(zipAsBytes)));
+	}
 
-		String zipFileName = "/src/test/resources/config/config.zip";
-
-		zipFileName = "C:\\Git_work\\D2-SDnC\\catalog-be\\src\\test\\resources\\config\\config.zip";
-
-		Path path = Paths.get(zipFileName);
-
-		try {
-			byte[] zipAsBytes = Files.readAllBytes(path);
-			// encode to base
-
-			ZipUtil.readZip(zipAsBytes);
-
-		} catch (IOException e) {
-			log.info("close Byte stream failed - {}" , e);
-		}
-
+	public static byte[] unzip(byte[] zipped) throws IOException {
+		return readZip(zipped)
+				.values()
+				.stream()
+				.collect(
+						ByteArrayOutputStream::new,
+						ZipUtil::appendStream,
+						(a, b) -> {})
+				.toByteArray();
 	}
 
 	public static byte[] zipBytes(byte[] input) throws IOException {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		ZipOutputStream zos = new ZipOutputStream(baos);
-		ZipEntry entry = new ZipEntry("zip");
-		entry.setSize(input.length);
-		zos.putNextEntry(entry);
-		zos.write(input);
-		zos.closeEntry();
-		zos.close();
+		try (ZipOutputStream zos = new ZipOutputStream(baos)) {
+			ZipEntry entry = new ZipEntry("zip");
+			entry.setSize(input.length);
+			zos.putNextEntry(entry);
+			zos.write(input);
+			zos.closeEntry();
+		}
 		return baos.toByteArray();
 	}
 
-	public static byte[] unzip(byte[] zipped) {
-		ZipInputStream zipinputstream = null;
-		ByteArrayOutputStream outputStream = null;
-		try {
-			byte[] buf = new byte[1024];
+	private static boolean isDirectory(ZipEntry entry) {
+		return entry.isDirectory();
+	}
 
-			zipinputstream = new ZipInputStream(new ByteArrayInputStream(zipped));
-			ZipEntry zipentry = zipinputstream.getNextEntry();
-			outputStream = new ByteArrayOutputStream();
-			int n;
-			while ((n = zipinputstream.read(buf, 0, 1024)) > -1) {
-				outputStream.write(buf, 0, n);
-			}
-
-			return outputStream.toByteArray();
-		} catch (Exception e) {
-			throw new IllegalStateException("Can't unzip input stream", e);
-		} finally {
-			if (outputStream != null) {
-				try {
-					outputStream.close();
-				} catch (IOException e) {
-					log.debug("Failed to close output stream", e);
-				}
-			}
-			if (zipinputstream != null) {
-				try {
-					zipinputstream.closeEntry();
-					zipinputstream.close();
-				} catch (IOException e) {
-					log.debug("Failed to close zip input stream", e);
-				}
-			}
+	private static void assertEntryNotVulnerable(ZipEntry entry) throws ZipException {
+		if (entry.getName().contains("../")) {
+			throw new ZipException("Path traversal attempt discovered.");
 		}
 	}
 
+	private static void appendStream(ByteArrayOutputStream result, byte[] x) {
+		try {
+			result.write(x);
+		} catch (IOException e) {
+			log.info("Appending stream failed - {}" , e);
+			// TODO exception
+		}
+	}
 }
