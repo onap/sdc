@@ -483,7 +483,7 @@ public abstract class AbstractValidationsServlet extends BeGenericServlet {
     }
 
     protected void fillPayload(Wrapper<Response> responseWrapper, Wrapper<UploadResourceInfo> uploadResourceInfoWrapper, Wrapper<String> yamlStringWrapper, User user, String resourceInfoJsonString, ResourceAuthorityTypeEnum resourceAuthorityEnum,
-            File file) throws FileNotFoundException {
+            File file) throws IOException {
 
         if (responseWrapper.isEmpty()) {
             if (resourceAuthorityEnum.isBackEndImport()) {
@@ -750,8 +750,10 @@ public abstract class AbstractValidationsServlet extends BeGenericServlet {
             return Either.right(componentsUtils.getResponseFormat(ActionStatus.CSAR_NOT_FOUND, csarUUID));
         }
 
-        Map<String, byte[]> csar = ZipUtil.readZip(decodedPayload);
-        if (csar == null) {
+        Map<String, byte[]> csar;
+        try {
+            csar = ZipUtil.readZip(decodedPayload);
+        } catch (IOException e) {
             log.info("Failed to unzip received csar", csarUUID);
             return Either.right(componentsUtils.getResponseFormat(ActionStatus.CSAR_INVALID, csarUUID));
         }

@@ -21,7 +21,6 @@
 package org.openecomp.sdc.be.model.operations.impl;
 
 import fj.data.Either;
-import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.http.HttpStatus;
 import org.openecomp.sdc.be.config.Configuration.OnboardingConfig;
 import org.openecomp.sdc.be.config.ConfigurationManager;
@@ -32,10 +31,6 @@ import org.openecomp.sdc.common.http.client.api.HttpResponse;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.common.util.ZipUtil;
 
-import java.io.File;
-import java.io.FileFilter;
-import java.io.IOException;
-import java.nio.file.Files;
 import java.util.Map;
 import java.util.Properties;
 
@@ -62,29 +57,6 @@ public class OnboardingClient {
         Either<Map<String, byte[]>, StorageOperationStatus> csar = csarOperation.getCsar(csarUuid, null);
         System.out.println(csar.left().value());
 
-    }
-
-    public Either<Map<String, byte[]>, StorageOperationStatus> getMockCsar(String csarUuid) {
-        File dir = new File("/var/tmp/mockCsar");
-        FileFilter fileFilter = new WildcardFileFilter("*.csar");
-        File[] files = dir.listFiles(fileFilter);
-        for (int i = 0; i < files.length; i++) {
-            File csar = files[i];
-            if (csar.getName().startsWith(csarUuid)) {
-                log.debug("Found CSAR file {} matching the passed csarUuid {}", csar.getAbsolutePath(), csarUuid);
-                byte[] data;
-                try {
-                    data = Files.readAllBytes(csar.toPath());
-                } catch (IOException e) {
-                    log.debug("Error reading mock file for CSAR, error: {}", e);
-                    return Either.right(StorageOperationStatus.NOT_FOUND);
-                }
-                Map<String, byte[]> readZip = ZipUtil.readZip(data);
-                return Either.left(readZip);
-            }
-        }
-        log.debug("Couldn't find mock file for CSAR starting with {}", csarUuid);
-        return Either.right(StorageOperationStatus.NOT_FOUND);
     }
 
     public Either<Map<String, byte[]>, StorageOperationStatus> getCsar(String csarUuid, String userId) {
