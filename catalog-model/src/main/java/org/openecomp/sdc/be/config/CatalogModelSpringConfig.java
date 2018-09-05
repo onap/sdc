@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Configuration;
                 "org.openecomp.sdc.be.model.cache",
                 "org.openecomp.sdc.be.model.jsontitan.utils",
                 "org.openecomp.sdc.be.model.jsontitan.operations",
+                "org.openecomp.sdc.be.dao.cassandra"
 })
 public class CatalogModelSpringConfig {
 

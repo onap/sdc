@@ -143,6 +143,8 @@ public class ModelConverter {
 
         convertServicePaths(topologyTemplate, service);
 
+        convertServiceInterfaces(topologyTemplate, service);
+
         return service;
     }
 
@@ -205,6 +207,17 @@ public class ModelConverter {
         copy = new HashMap<>();
       }
       resource.setInterfaces(copy);
+    }
+
+    private static void convertServiceInterfaces(TopologyTemplate toscaElement, Service service) {
+        Map<String, InterfaceDataDefinition> interfaces = toscaElement.getInterfaces();
+        Map<String, InterfaceDefinition> copy;
+        if (interfaces != null) {
+            copy = interfaces.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> new InterfaceDefinition(e.getValue())));
+        } else {
+            copy = new HashMap<>();
+        }
+        service.setInterfaces(copy);
     }
 
     private static void convertAttributes(NodeType nodeType, Resource resource) {
@@ -922,10 +935,21 @@ public class ModelConverter {
 			topologyTemplate.setInterfaces(copy);
 		}
 	}
+
+    private static void convertServiceInterfaces(Service service, TopologyTemplate topologyTemplate) {
+        Map<String, InterfaceDefinition> interfaces = service.getInterfaces();
+        if (interfaces != null && !interfaces.isEmpty()) {
+            Map<String, InterfaceDataDefinition> copy = interfaces.entrySet().stream()
+                .collect(Collectors.toMap(Map.Entry::getKey, e -> new InterfaceDataDefinition(e.getValue())));
+            topologyTemplate.setInterfaces(copy);
+        }
+    }
+
     private static void convertServiceSpecificEntities(Service service, TopologyTemplate topologyTemplate) {
         convertServiceMetaData(service, topologyTemplate);
         convertServiceApiArtifacts(service, topologyTemplate);
         convertServicePaths(service,topologyTemplate);
+        convertServiceInterfaces(service, topologyTemplate);
     }
 
     private static void convertServicePaths(Service service, TopologyTemplate topologyTemplate) {

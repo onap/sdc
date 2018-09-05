@@ -40,7 +40,7 @@ public class InterfaceUIDataConverter {
               .map(interfaceOperationParamDataDefinition -> new OperationInputDefinition(
                       interfaceOperationParamDataDefinition.getName(),
                       interfaceOperationParamDataDefinition.getProperty(),
-                      interfaceOperationParamDataDefinition.getMandatory(),
+                      interfaceOperationParamDataDefinition.getMandatory() == null ? false : interfaceOperationParamDataDefinition.getMandatory(),
                       interfaceOperationParamDataDefinition.getType()
                       )).collect(Collectors.toList());
       inputList.forEach(inputs::add);
@@ -70,7 +70,6 @@ public class InterfaceUIDataConverter {
   }
 
   public static InterfaceOperationDataDefinition convertOperationDataToInterfaceData(Operation operationData){
-
     ListDataDefinition<OperationInputDefinition> inputs = operationData.getInputs();
     List<InterfaceOperationParamDataDefinition> inputParamList = inputs.getListToscaDataDefinition().stream()
             .map(operationInputDefinition -> new InterfaceOperationParamDataDefinition(operationInputDefinition.getName(),

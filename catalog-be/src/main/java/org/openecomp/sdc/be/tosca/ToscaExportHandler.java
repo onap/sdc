@@ -561,7 +561,7 @@ public class ToscaExportHandler {
 
         List<InputDefinition> inputDef = component.getInputs();
         Map<String, ToscaProperty> inputs = new HashMap<>();
-
+        addInterfaceDefinitionElement(component, toscaNodeType);
         if (inputDef != null) {
             inputDef.forEach(i -> {
                 ToscaProperty property = propertyConvertor.convertProperty(dataTypes, i, false);
@@ -569,7 +569,6 @@ public class ToscaExportHandler {
             });
             if (!inputs.isEmpty()) {
                 toscaNodeType.setProperties(inputs);
-                addInterfaceDefinitionElement(component, toscaNodeType);
             }
         }
         return convertReqCapAndTypeName(componentsCache, component, toscaNode, nodeTypes, toscaNodeType, dataTypes);

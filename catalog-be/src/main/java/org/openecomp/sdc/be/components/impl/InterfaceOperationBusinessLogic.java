@@ -18,7 +18,7 @@
 package org.openecomp.sdc.be.components.impl;
 
 import fj.data.Either;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -28,9 +28,7 @@ import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.Operation;
-import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.User;
-import org.openecomp.sdc.be.model.jsontitan.operations.InterfaceOperation;
 import org.openecomp.sdc.be.model.jsontitan.utils.InterfaceUtils;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
@@ -55,13 +53,6 @@ public class InterfaceOperationBusinessLogic extends BaseBusinessLogic {
     @Autowired
     private InterfaceOperationValidation interfaceOperationValidation;
 
-    @Autowired
-    private InterfaceOperation interfaceOperation;
-
-    public void setInterfaceOperation(InterfaceOperation interfaceOperation) {
-        this.interfaceOperation = interfaceOperation;
-    }
-
     public void setInterfaceOperationValidation(InterfaceOperationValidation interfaceOperationValidation) {
         this.interfaceOperationValidation = interfaceOperationValidation;
     }
@@ -74,18 +65,13 @@ public class InterfaceOperationBusinessLogic extends BaseBusinessLogic {
         org.openecomp.sdc.be.model.Component storedComponent = componentEither.left().value();
         validateUserExists(user.getUserId(), DELETE_INTERFACE_OPERATION, true);
 
-        Either<Boolean, ResponseFormat> lockResult = null;
-        if (lock) {
-            lockResult = lockComponent(storedComponent.getUniqueId(), storedComponent, DELETE_INTERFACE_OPERATION);
-            if (lockResult.isRight()) {
-                LOGGER.debug(FAILED_TO_LOCK_COMPONENT_RESPONSE_IS, storedComponent.getName(), lockResult.right().value().getFormattedMessage());
-                titanDao.rollback();
-                return Either.right(lockResult.right().value());
-            }
+        Either<Boolean, ResponseFormat> lockResult = lockComponentResult(lock, storedComponent, DELETE_INTERFACE_OPERATION);
+        if (lockResult.isRight()) {
+            return Either.right(lockResult.right().value());
         }
 
         try {
-            Optional<InterfaceDefinition> optionalInterface = InterfaceUtils.getInterfaceDefinitionFromToscaName(((Resource)storedComponent).getInterfaces().values(), storedComponent.getName());
+            Optional<InterfaceDefinition> optionalInterface = InterfaceUtils.getInterfaceDefinitionFromToscaName(storedComponent.getInterfaces().values(), storedComponent.getName());
             Either<InterfaceDefinition, ResponseFormat> getInterfaceEither = getInterfaceDefinition(storedComponent, optionalInterface.orElse(null));
             if (getInterfaceEither.isRight()) {
                 return Either.right(getInterfaceEither.right().value());
@@ -112,7 +98,7 @@ public class InterfaceOperationBusinessLogic extends BaseBusinessLogic {
             return Either.right(componentsUtils.getResponseFormat(ActionStatus.INTERFACE_OPERATION_NOT_DELETED));
         }
         finally {
-            if (lockResult != null && lockResult.isLeft() && lockResult.left().value()) {
+            if (lockResult.isLeft() && lockResult.left().value()) {
                 graphLockOperation.unlockComponent(storedComponent.getUniqueId(), NodeTypeEnum.getByNameIgnoreCase(storedComponent.getComponentType().getValue()));
             }
         }
@@ -126,18 +112,13 @@ public class InterfaceOperationBusinessLogic extends BaseBusinessLogic {
         org.openecomp.sdc.be.model.Component storedComponent = componentEither.left().value();
         validateUserExists(user.getUserId(), GET_INTERFACE_OPERATION, true);
 
-        Either<Boolean, ResponseFormat> lockResult = null;
-        if (lock) {
-            lockResult = lockComponent(storedComponent.getUniqueId(), storedComponent, GET_INTERFACE_OPERATION);
-            if (lockResult.isRight()) {
-                LOGGER.debug(FAILED_TO_LOCK_COMPONENT_RESPONSE_IS, storedComponent.getName(), lockResult.right().value().getFormattedMessage());
-                titanDao.rollback();
-                return Either.right(lockResult.right().value());
-            }
+        Either<Boolean, ResponseFormat> lockResult = lockComponentResult(lock, storedComponent, GET_INTERFACE_OPERATION);
+        if (lockResult.isRight()) {
+            return Either.right(lockResult.right().value());
         }
 
         try {
-            Optional<InterfaceDefinition> optionalInterface = InterfaceUtils.getInterfaceDefinitionFromToscaName(((Resource)storedComponent).getInterfaces().values(), storedComponent.getName());
+            Optional<InterfaceDefinition> optionalInterface = InterfaceUtils.getInterfaceDefinitionFromToscaName(storedComponent.getInterfaces().values(), storedComponent.getName());
             Either<InterfaceDefinition, ResponseFormat> getInterfaceEither = getInterfaceDefinition(storedComponent, optionalInterface.orElse(null));
             if (getInterfaceEither.isRight()) {
                 return Either.right(getInterfaceEither.right().value());
@@ -158,13 +139,13 @@ public class InterfaceOperationBusinessLogic extends BaseBusinessLogic {
             return Either.right(componentsUtils.getResponseFormat(ActionStatus.INTERFACE_OPERATION_NOT_FOUND, componentId));
         }
         finally {
-            if (lockResult != null && lockResult.isLeft() && lockResult.left().value()) {
+            if (lockResult.isLeft() && lockResult.left().value()) {
                 graphLockOperation.unlockComponent(storedComponent.getUniqueId(), NodeTypeEnum.getByNameIgnoreCase(storedComponent.getComponentType().getValue()));
             }
         }
     }
 
-    public Either<InterfaceDefinition, ResponseFormat> getInterfaceDefinition(org.openecomp.sdc.be.model.Component component, InterfaceDefinition interfaceDef) {
+    private Either<InterfaceDefinition, ResponseFormat> getInterfaceDefinition(org.openecomp.sdc.be.model.Component component, InterfaceDefinition interfaceDef) {
         if (interfaceDef != null){
             return Either.left(interfaceDef);
         } else {
@@ -195,26 +176,19 @@ public class InterfaceOperationBusinessLogic extends BaseBusinessLogic {
         }
         org.openecomp.sdc.be.model.Component storedComponent = componentEither.left().value();
         validateUserExists(user.getUserId(), errorContext, true);
-
-        InterfaceUtils.createInputOutput(operation, storedComponent.getInputs(), storedComponent.getInputs());
         Either<Boolean, ResponseFormat> interfaceOperationValidationResponseEither = interfaceOperationValidation
-            .validateInterfaceOperations(Arrays.asList(operation), storedComponent, isUpdate);
+            .validateInterfaceOperations(Collections.singletonList(operation), storedComponent, isUpdate);
         if(interfaceOperationValidationResponseEither.isRight()) {
             return 	Either.right(interfaceOperationValidationResponseEither.right().value());
         }
 
-        Either<Boolean, ResponseFormat> lockResult = null;
-        if (lock) {
-            lockResult = lockComponent(storedComponent.getUniqueId(), storedComponent, errorContext);
-            if (lockResult.isRight()) {
-                LOGGER.debug(FAILED_TO_LOCK_COMPONENT_RESPONSE_IS, storedComponent.getName(), lockResult.right().value().getFormattedMessage());
-                titanDao.rollback();
-                return Either.right(lockResult.right().value());
-            }
+        Either<Boolean, ResponseFormat> lockResult = lockComponentResult(lock, storedComponent, errorContext);
+        if (lockResult.isRight()) {
+            return Either.right(lockResult.right().value());
         }
 
         try {
-            Optional<InterfaceDefinition> optionalInterface = InterfaceUtils.getInterfaceDefinitionFromToscaName(((Resource)storedComponent).getInterfaces().values(), storedComponent.getName());
+            Optional<InterfaceDefinition> optionalInterface = InterfaceUtils.getInterfaceDefinitionFromToscaName(storedComponent.getInterfaces().values(), storedComponent.getName());
             Either<InterfaceDefinition, ResponseFormat> getInterfaceEither = getInterfaceDefinition(storedComponent, optionalInterface.orElse(null));
             if (getInterfaceEither.isRight()) {
                 return Either.right(getInterfaceEither.right().value());
@@ -250,7 +224,7 @@ public class InterfaceOperationBusinessLogic extends BaseBusinessLogic {
             return Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
         }
         finally {
-            if (lockResult != null && lockResult.isLeft() && lockResult.left().value()) {
+            if (lockResult.isLeft() && lockResult.left().value()) {
                 graphLockOperation.unlockComponent(storedComponent.getUniqueId(), NodeTypeEnum.getByNameIgnoreCase(storedComponent.getComponentType().getValue()));
             }
         }
@@ -286,5 +260,17 @@ public class InterfaceOperationBusinessLogic extends BaseBusinessLogic {
         artifactDefinition.setArtifactGroupType(ArtifactGroupTypeEnum.LIFE_CYCLE);
         operation.setUniqueId(UUID.randomUUID().toString());
         operation.setImplementation(artifactDefinition);
+    }
+
+    private Either<Boolean, ResponseFormat> lockComponentResult(boolean lock, org.openecomp.sdc.be.model.Component component, String action){
+        if (lock) {
+            Either<Boolean, ResponseFormat> lockResult = lockComponent(component.getUniqueId(), component, action);
+            if (lockResult.isRight()) {
+                LOGGER.debug(FAILED_TO_LOCK_COMPONENT_RESPONSE_IS, component.getName(), lockResult.right().value().getFormattedMessage());
+                titanDao.rollback();
+                return Either.right(lockResult.right().value());
+            }
+        }
+        return Either.left(true);
     }
 }

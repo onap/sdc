@@ -66,6 +66,15 @@ public abstract class Component {
     private String derivedFromGenericVersion;
     private String toscaType;
     protected List<AdditionalInformationDefinition> additionalInformation;
+    private Map<String, InterfaceDefinition> interfaces;
+
+    public Map<String, InterfaceDefinition> getInterfaces() {
+        return interfaces;
+    }
+
+    public void setInterfaces(Map<String, InterfaceDefinition> interfaces) {
+        this.interfaces = interfaces;
+    }
 
     public Component(ComponentMetadataDefinition componentMetadataDefinition) {
         this.componentMetadataDefinition = componentMetadataDefinition;
@@ -545,6 +554,7 @@ public abstract class Component {
         result = prime * result + ((policies == null) ? 0 : policies.hashCode());
         result = prime * result + ((derivedFromGenericType == null) ? 0 : derivedFromGenericType.hashCode());
         result = prime * result + ((derivedFromGenericVersion == null) ? 0 : derivedFromGenericVersion.hashCode());
+        result = prime * result + ((interfaces == null) ? 0 : interfaces.hashCode());
         return result;
     }
 
@@ -671,6 +681,14 @@ public abstract class Component {
             }
         }
         else if (!derivedFromGenericVersion.equals(other.derivedFromGenericVersion)) {
+            return false;
+        }
+        if (interfaces == null) {
+            if (other.interfaces != null) {
+                return false;
+            }
+        }
+        else if (!interfaces.equals(other.interfaces)) {
             return false;
         }
         return true;

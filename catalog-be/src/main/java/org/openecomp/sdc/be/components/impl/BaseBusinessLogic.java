@@ -40,6 +40,7 @@ import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.*;
 import org.openecomp.sdc.be.model.cache.ApplicationDataTypeCache;
 import org.openecomp.sdc.be.model.jsontitan.operations.ArtifactsOperations;
+import org.openecomp.sdc.be.model.jsontitan.operations.InterfaceOperation;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.StorageException;
 import org.openecomp.sdc.be.model.operations.api.*;
@@ -122,6 +123,12 @@ public abstract class BaseBusinessLogic {
     @Autowired
     protected ApplicationDataTypeCache dataTypeCache;
 
+    @Autowired
+    protected InterfaceOperation interfaceOperation;
+
+    @Autowired
+    protected InterfaceOperationBusinessLogic interfaceOperationBusinessLogic;
+
     @javax.annotation.Resource
     private UserValidations userValidations;
 
@@ -154,6 +161,10 @@ public abstract class BaseBusinessLogic {
 
     public void setPropertyOperation(PropertyOperation propertyOperation) {
         this.propertyOperation = propertyOperation;
+    }
+
+    public void setInterfaceOperation(InterfaceOperation interfaceOperation) {
+        this.interfaceOperation = interfaceOperation;
     }
 
     User validateUserNotEmpty(User user, String ecompErrorContext) {

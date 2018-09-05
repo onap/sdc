@@ -339,6 +339,9 @@ public class UiComponentDataConverter {
                     UiServiceMetadata metadata = new UiServiceMetadata(service.getCategories(), (ServiceMetadataDataDefinition) service.getComponentMetadataDefinition().getMetadataDataDefinition());
                     dataTransfer.setMetadata(metadata);
                     break;
+                case INTERFACES:
+                    setInterfaces(service, dataTransfer);
+                    break;
                 default:
                     setUiTranferDataByFieldName(dataTransfer, service, fieldName);
             }
@@ -362,6 +365,13 @@ public class UiComponentDataConverter {
         }
     }
 
+    private void setInterfaces(Service service, UiServiceDataTransfer dataTransfer) {
+        if (service.getInterfaces() == null) {
+            dataTransfer.setInterfaces(new HashMap<>());
+        } else {
+            dataTransfer.setInterfaces(service.getInterfaces());
+        }
+    }
 
     public static UiComponentMetadata convertToUiComponentMetadata(Component component) {
 

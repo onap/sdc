@@ -17,28 +17,32 @@
 package org.openecomp.sdc.be.components.validation;
 
 import fj.data.Either;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.elasticsearch.common.Strings;
 import org.openecomp.sdc.be.components.impl.ResponseFormatManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.OperationInputDefinition;
+import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.Operation;
-import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @Component("interfaceOperationValidation")
 public class InterfaceOperationValidation {
@@ -77,6 +81,13 @@ public class InterfaceOperationValidation {
             return Either.right(descriptionResponseEither.right().value());
         }
 
+        Either<Boolean, ResponseFormat> inputPropertyExistInComponent = validateInputPropertyExistInComponent(interfaceOperation,
+                component.getInputs(), responseFormatManager);
+        if(inputPropertyExistInComponent.isRight()) {
+            return Either.right(inputPropertyExistInComponent.right().value());
+
+        }
+
         Either<Boolean, ResponseFormat> inputParametersResponse = validateInputParameters(interfaceOperation,
             responseFormatManager);
         if(inputParametersResponse.isRight()) {
@@ -109,14 +120,14 @@ public class InterfaceOperationValidation {
         }
 
         Either<Boolean, ResponseFormat> operationTypeUniqueResponse = validateOperationTypeUnique(interfaceOperation,
-            component, isUpdate, responseFormatManager );
+            component, isUpdate );
         if(operationTypeUniqueResponse.isRight()) {
             return Either.right(operationTypeUniqueResponse.right().value());
         }
         if (!operationTypeUniqueResponse.left().value()) {
             LOGGER.error("Interface Operation type  {} already in use ", interfaceOperation.getName());
             ResponseFormat errorResponse = responseFormatManager.getResponseFormat(ActionStatus
-                .INTERFACE_OPERATION_TYPE_ALREADY_IN_USE, interfaceOperation.getName());
+                .INTERFACE_OPERATION_NAME_ALREADY_IN_USE, interfaceOperation.getName());
             return Either.right(errorResponse);
         }
         return Either.left(Boolean.TRUE);
@@ -128,7 +139,7 @@ public class InterfaceOperationValidation {
             LOGGER.error("Interface Operation type {} is invalid, Operation type should not contain" +
                 "Special character, space, numbers and  should not be greater than 200 characters", operationType);
             ResponseFormat errorResponse = responseFormatManager.getResponseFormat(ActionStatus
-                .INTERFACE_OPERATION_TYPE_INVALID, operationType);
+                .INTERFACE_OPERATION_NAME_INVALID, operationType);
             return Either.right(errorResponse);
         }
         return Either.left(Boolean.TRUE);
@@ -139,7 +150,7 @@ public class InterfaceOperationValidation {
         if (StringUtils.isEmpty(operationType)) {
             LOGGER.error("Interface Operation type is mandatory");
             ResponseFormat errorResponse = responseFormatManager.getResponseFormat(ActionStatus
-                .INTERFACE_OPERATION_TYPE_MANDATORY);
+                .INTERFACE_OPERATION_NAME_MANDATORY);
             return Either.right(errorResponse);
         }
         return Either.left(Boolean.TRUE);
@@ -150,7 +161,7 @@ public class InterfaceOperationValidation {
         if (!Strings.isNullOrEmpty(description) && description.length() > DESCRIPTION_MAX_LENGTH) {
             LOGGER.error("Interface Operation description {} is invalid, maximum 200 characters allowed", description);
             ResponseFormat errorResponse = responseFormatManager.getResponseFormat(ActionStatus
-                .INTERFACE_OPERATION_DESCRIPTION_MAX_LENGTH);
+                .INTERFACE_OPERATION_DESCRIPTION_MAX_LENGTH, description);
             return Either.right(errorResponse);
         }
         return Either.left(Boolean.TRUE);
@@ -163,14 +174,12 @@ public class InterfaceOperationValidation {
     private Either<Boolean, ResponseFormat> validateOperationTypeUnique(
         Operation interfaceOperation,
         org.openecomp.sdc.be.model.Component component,
-        boolean isUpdate,
-        ResponseFormatManager responseFormatManager) {
+        boolean isUpdate) {
         boolean isOperationTypeUnique = false;
 
-        Map<String, InterfaceDefinition> interfaceDefinitionMap = ((Resource)component).getInterfaces();
+        Map<String, InterfaceDefinition> interfaceDefinitionMap = component.getInterfaces();
         if(interfaceDefinitionMap.isEmpty()){
-            isOperationTypeUnique = true;
-            return Either.left(isOperationTypeUnique);
+            return Either.left(true);
         }
 
         Collection<Operation> allOperations = interfaceDefinitionMap.values().stream()
@@ -178,8 +187,7 @@ public class InterfaceOperationValidation {
             .map(a -> a.getOperationsMap().values()).flatMap(Collection::stream)
             .collect(Collectors.toList());
         if(CollectionUtils.isEmpty(allOperations)){
-            isOperationTypeUnique = true;
-            return Either.left(isOperationTypeUnique);
+            return Either.left(true);
         }
 
         Map<String, String> operationTypes = new HashMap<>();
@@ -236,8 +244,6 @@ public class InterfaceOperationValidation {
         }
         return Either.left(Boolean.TRUE);
     }
-
-
     private Either<Boolean, Set<String>> isInputParametersUnique(Operation operationDataDefinition) {
         Set<String> inputParamNamesSet = new HashSet<>();
         Set<String> duplicateParamNamesToReturn = new HashSet<>();
@@ -277,17 +283,32 @@ public class InterfaceOperationValidation {
             .anyMatch(inputParam -> inputParam.getName() == null || inputParam.getName().trim().equals(StringUtils.EMPTY));
     }
 
-    private boolean validateOperationTypeUniqueForUpdate(Operation interfaceOperation, Map<String, String> operationTypes) {
-        boolean isOperationTypeUnique = false;
-        Optional<String> id = operationTypes.entrySet().stream().filter(entry -> Objects.equals(entry.getValue(), interfaceOperation.getName()))
-            .map(Map.Entry::getKey).findAny();
-        if(id.isPresent() && id.get().equalsIgnoreCase(interfaceOperation.getUniqueId())){
-            isOperationTypeUnique = true;
+    private  Either<Boolean, ResponseFormat> validateInputPropertyExistInComponent(Operation operation,
+                                                    List<InputDefinition> inputs,
+                                                    ResponseFormatManager responseFormatManager) {
+        ListDataDefinition<OperationInputDefinition> inputDefinitionListDataDefinition = operation.getInputs();
+        if (inputDefinitionListDataDefinition == null) {
+            return Either.left(Boolean.TRUE);
         }
-        return isOperationTypeUnique;
+        List<OperationInputDefinition> inputListToscaDataDefinition = inputDefinitionListDataDefinition.getListToscaDataDefinition();
+
+        for(OperationInputDefinition inputDefinition : inputListToscaDataDefinition ) {
+            if(!validateInputExistsInComponent(inputDefinition, inputs)) {
+                String missingPropertyName = inputDefinition.getInputId().contains(".") ? inputDefinition.getInputId().substring(inputDefinition.getInputId().indexOf(".") + 1) : inputDefinition.getInputId();
+                LOGGER.error("Interface operation input property {} not found in component input properties", missingPropertyName);
+                ResponseFormat inputResponse = responseFormatManager.getResponseFormat(ActionStatus.INTERFACE_OPERATION_INPUT_PROPERTY_NOT_FOUND_IN_COMPONENT, missingPropertyName);
+                return Either.right(inputResponse);
+            }
+        }
+        return Either.left(Boolean.TRUE);
     }
 
-    protected ResponseFormatManager getResponseFormatManager() {
+    private boolean validateInputExistsInComponent(OperationInputDefinition input,
+                                                   List<InputDefinition> inputs) {
+        return inputs.stream().anyMatch(inp -> inp.getUniqueId().equals(input.getInputId()));
+    }
+
+    private ResponseFormatManager getResponseFormatManager() {
         return ResponseFormatManager.getInstance();
     }
 

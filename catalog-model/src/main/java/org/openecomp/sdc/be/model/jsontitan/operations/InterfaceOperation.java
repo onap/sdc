@@ -17,7 +17,7 @@
 package org.openecomp.sdc.be.model.jsontitan.operations;
 
 import fj.data.Either;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -71,7 +71,8 @@ public class InterfaceOperation extends BaseOperation {
     if (!isUpdateAction) {
       interfaceDefinition.setUniqueId(UUID.randomUUID().toString());
     }
-    statusRes = performUpdateToscaAction(isUpdateAction, componentVertex, Arrays.asList(interfaceDefinition), EdgeLabelEnum.INTERFACE, VertexTypeEnum.INTERFACE);
+    statusRes = performUpdateToscaAction(isUpdateAction, componentVertex,
+        Collections.singletonList(interfaceDefinition), EdgeLabelEnum.INTERFACE, VertexTypeEnum.INTERFACE);
     if (!statusRes.equals(StorageOperationStatus.OK)) {
       return Either.right(statusRes);
     }
@@ -107,8 +108,8 @@ public class InterfaceOperation extends BaseOperation {
     }
     GraphVertex interfaceVertex = getToscaElementInt.left().value();
 
-    statusRes = performUpdateToscaAction(isUpdateAction, interfaceVertex, Arrays.asList(operation),
-        EdgeLabelEnum.INTERFACE_OPERATION, VertexTypeEnum.INTERFACE_OPERATION);
+    statusRes = performUpdateToscaAction(isUpdateAction, interfaceVertex,
+        Collections.singletonList(operation), EdgeLabelEnum.INTERFACE_OPERATION, VertexTypeEnum.INTERFACE_OPERATION);
     if (!statusRes.equals(StorageOperationStatus.OK)) {
       return Either.right(statusRes);
     }
@@ -126,7 +127,7 @@ public class InterfaceOperation extends BaseOperation {
     Either<GraphVertex, TitanOperationStatus> getInterfaceVertex;
     Either<GraphVertex, TitanOperationStatus> getComponentVertex;
     Operation operation = new Operation();
-    StorageOperationStatus status = null;
+    StorageOperationStatus status;
 
     getComponentVertex = titanDao.getVertexById(componentId, JsonParseFlagEnum.NoParse);
     if (getComponentVertex.isRight()) {
@@ -144,14 +145,16 @@ public class InterfaceOperation extends BaseOperation {
       Map.Entry<String, Operation> stringOperationEntry = operationToRemove.get();
       operation = stringOperationEntry.getValue();
       ArtifactDefinition implementationArtifact = operation.getImplementationArtifact();
-      String artifactUUID = implementationArtifact.getArtifactUUID();
-      CassandraOperationStatus cassandraStatus = artifactCassandraDao.deleteArtifact(artifactUUID);
-      if (cassandraStatus != CassandraOperationStatus.OK) {
-        return Either.right(DaoStatusConverter.convertCassandraStatusToStorageStatus(cassandraStatus));
+      if(implementationArtifact != null){
+        String artifactUUID = implementationArtifact.getArtifactUUID();
+        CassandraOperationStatus cassandraStatus = artifactCassandraDao.deleteArtifact(artifactUUID);
+        if (cassandraStatus != CassandraOperationStatus.OK) {
+          return Either.right(DaoStatusConverter.convertCassandraStatusToStorageStatus(cassandraStatus));
+        }
       }
 
       if(interfaceDef.getOperationsMap().size() > 1){
-        status = deleteToscaDataElements(getInterfaceVertex.left().value(), EdgeLabelEnum.INTERFACE_OPERATION, Arrays.asList(operationToDelete));
+        status = deleteToscaDataElements(getInterfaceVertex.left().value(), EdgeLabelEnum.INTERFACE_OPERATION, Collections.singletonList(operationToDelete));
         if (status != StorageOperationStatus.OK) {
           return Either.right(status);
         }
@@ -164,7 +167,7 @@ public class InterfaceOperation extends BaseOperation {
 
       getUpdatedInterfaceDef(interfaceDef, null, operationToDelete);
       if (interfaceDef.getOperations().isEmpty()) {
-        status = deleteToscaDataElements(getComponentVertex.left().value(), EdgeLabelEnum.INTERFACE, Arrays.asList(interfaceDef.getUniqueId()));
+        status = deleteToscaDataElements(getComponentVertex.left().value(), EdgeLabelEnum.INTERFACE, Collections.singletonList(interfaceDef.getUniqueId()));
         if (status != StorageOperationStatus.OK) {
           return Either.right(status);
         }
@@ -192,7 +195,7 @@ public class InterfaceOperation extends BaseOperation {
     }
   }
 
-  private InterfaceDefinition getUpdatedInterfaceDef(InterfaceDefinition interfaceDef, Operation operation, String operationId){
+  private void getUpdatedInterfaceDef(InterfaceDefinition interfaceDef, Operation operation, String operationId){
     Map<String, Operation> operationMap = interfaceDef.getOperationsMap();
     if(operation != null){
       operationMap.put(operationId, operation);
@@ -202,7 +205,6 @@ public class InterfaceOperation extends BaseOperation {
       operationMap.remove(operationId);
       interfaceDef.setOperationsMap(operationMap);
     }
-    return interfaceDef;
   }
 
 }
