@@ -23,7 +23,6 @@ package org.openecomp.sdc.be.model;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.utils.MapUtil;
 import org.openecomp.sdc.be.datatypes.components.ResourceMetadataDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.InterfaceOperationDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 
@@ -42,8 +41,6 @@ public class Resource extends Component {
     private List<PropertyDefinition> properties;
 
     private List<PropertyDefinition> attributes;
-
-    private Map<String, InterfaceDefinition> interfaces;
 
     private List<String> defaultCapabilities;
     
@@ -104,14 +101,6 @@ public class Resource extends Component {
         this.attributes = attributes;
     }
 
-    public Map<String, InterfaceDefinition> getInterfaces() {
-        return interfaces;
-    }
-
-    public void setInterfaces(Map<String, InterfaceDefinition> interfaces) {
-        this.interfaces = interfaces;
-    }
-
     public Boolean isAbstract() {
         return ((ResourceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition())
                 .isAbstract();
@@ -158,7 +147,6 @@ public class Resource extends Component {
         result = prime * result + ((attributes == null) ? 0 : attributes.hashCode());
         result = prime * result + ((defaultCapabilities == null) ? 0 : defaultCapabilities.hashCode());
         result = prime * result + ((derivedFrom == null) ? 0 : derivedFrom.hashCode());
-        result = prime * result + ((interfaces == null) ? 0 : interfaces.hashCode());
         result = prime * result + ((properties == null) ? 0 : properties.hashCode());
         result = prime * result + ((derivedList == null) ? 0 : derivedList.hashCode());
         return result;
@@ -194,11 +182,6 @@ public class Resource extends Component {
                 return false;
         } else if (!derivedList.equals(other.derivedList))
             return false;
-        if (interfaces == null) {
-            if (other.interfaces != null)
-                return false;
-        } else if (!interfaces.equals(other.interfaces))
-            return false;
         if (properties == null) {
             if (other.properties != null)
                 return false;
@@ -210,7 +193,6 @@ public class Resource extends Component {
     @Override
     public String toString() {
         return "Resource [derivedFrom=" + derivedFrom + ", properties=" + properties + ", attributes=" + attributes
-                + ", interfaces=" + interfaces
                 + ", defaultCapabilities=" + defaultCapabilities + ", additionalInformation=" + additionalInformation
                 + "Metadata [" + getComponentMetadataDefinition().getMetadataDataDefinition().toString() + "]";
     }

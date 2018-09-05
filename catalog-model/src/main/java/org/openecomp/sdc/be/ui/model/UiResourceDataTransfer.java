@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,13 +20,10 @@
 
 package org.openecomp.sdc.be.ui.model;
 
-import org.openecomp.sdc.be.datatypes.elements.InterfaceOperationDataDefinition;
 import org.openecomp.sdc.be.model.AdditionalInformationDefinition;
-import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 
 import java.util.List;
-import java.util.Map;
 
 public class UiResourceDataTransfer extends UiComponentDataTransfer{
 
@@ -40,11 +37,9 @@ public class UiResourceDataTransfer extends UiComponentDataTransfer{
 
     private List<PropertyDefinition> attributes;
 
-    private Map<String, InterfaceDefinition> interfaces;
 
     private List<String> defaultCapabilities;
 
-    private Map<String, InterfaceOperationDataDefinition> interfaceOperations;
 
     public UiResourceDataTransfer(){}
 
@@ -96,14 +91,6 @@ public class UiResourceDataTransfer extends UiComponentDataTransfer{
         this.attributes = attributes;
     }
 
-    public Map<String, InterfaceDefinition> getInterfaces() {
-        return interfaces;
-    }
-
-    public void setInterfaces(Map<String, InterfaceDefinition> interfaces) {
-        this.interfaces = interfaces;
-    }
-
     public List<String> getDefaultCapabilities() {
         return defaultCapabilities;
     }
@@ -111,12 +98,4 @@ public class UiResourceDataTransfer extends UiComponentDataTransfer{
     public void setDefaultCapabilities(List<String> defaultCapabilities) {
         this.defaultCapabilities = defaultCapabilities;
     }
-    public Map<String, InterfaceOperationDataDefinition> getInterfaceOperations() {
-        return interfaceOperations;
-    }
-
-    public void setInterfaceOperations(Map<String, InterfaceOperationDataDefinition> interfaceOperations) {
-        this.interfaceOperations = interfaceOperations;
-    }
-
 }

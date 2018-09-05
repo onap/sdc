@@ -41,18 +41,18 @@ public class InterfaceOperationParamDataDefinition extends ToscaDataDefinition i
         setType(iopdd.getType());
     }
 
-    public InterfaceOperationParamDataDefinition(String paramName, String paramId, boolean mandatory, String type) {
+    public InterfaceOperationParamDataDefinition(String name, String property, boolean mandatory, String type) {
         super();
-        setName(paramName);
-        setProperty(paramId);
+        setName(name);
+        setProperty(property);
         setMandatory(mandatory);
         setType(type);
     }
 
     //used for OperationOutputDefinition
-    public InterfaceOperationParamDataDefinition(String paramName, boolean mandatory, String type) {
+    public InterfaceOperationParamDataDefinition(String name, boolean mandatory, String type) {
         super();
-        setName(paramName);
+        setName(name);
         setMandatory(mandatory);
         setType(type);
     }
@@ -60,15 +60,15 @@ public class InterfaceOperationParamDataDefinition extends ToscaDataDefinition i
     public String getName() {
         return (String) getToscaPresentationValue(IO_NAME);
     }
-    public void setName(String paramName) {
-        setToscaPresentationValue(IO_NAME, paramName);
+    public void setName(String name) {
+        setToscaPresentationValue(IO_NAME, name);
     }
 
     public String getProperty() {
         return (String) getToscaPresentationValue(IO_PROPERTY);
     }
-    public void setProperty(String paramId) {
-        setToscaPresentationValue(IO_PROPERTY, paramId);
+    public void setProperty(String property) {
+        setToscaPresentationValue(IO_PROPERTY, property);
     }
 
     public Boolean getMandatory() {

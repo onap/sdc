@@ -49,21 +49,21 @@ import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.model.Operation;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
-import org.openecomp.sdc.be.ui.model.UiResourceDataTransfer;
+import org.openecomp.sdc.be.ui.model.UiComponentDataTransfer;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
-@Path("/v1/catalog/resources/{resourceId}/interfaceOperations")
+@Path("/v1/catalog/{componentType}/{componentId}/interfaceOperations")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 @Api(value = "Interface Operation", description = "Interface Operation Servlet")
 @Singleton
-public class ResourceInterfaceOperationServlet extends AbstractValidationsServlet {
+public class InterfaceOperationServlet extends AbstractValidationsServlet {
 
-  private static final Logger log = LoggerFactory.getLogger(ResourceInterfaceOperationServlet.class);
+  private static final Logger log = LoggerFactory.getLogger(InterfaceOperationServlet.class);
 
   @POST
   @Consumes(MediaType.APPLICATION_JSON)
@@ -76,10 +76,11 @@ public class ResourceInterfaceOperationServlet extends AbstractValidationsServle
       @ApiResponse(code = 409, message = "Interface Operation already exist")})
   public Response createInterfaceOperation(
       @ApiParam(value = "Interface Operation to create", required = true) String data,
-      @ApiParam(value = "Resource Id") @PathParam("resourceId") String resourceId,
+      @ApiParam(value = "Component type") @PathParam("componentType") String componentType,
+      @ApiParam(value = "Component Id") @PathParam("componentId") String componentId,
       @Context final HttpServletRequest request,
       @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
-    return createOrUpdate(data, resourceId, request, userId, false);
+    return createOrUpdate(data, componentType ,componentId, request, userId, false);
   }
 
   @PUT
@@ -92,10 +93,11 @@ public class ResourceInterfaceOperationServlet extends AbstractValidationsServle
       @ApiResponse(code = 400, message = "Invalid content / Missing content")})
   public Response updateInterfaceOperation(
       @ApiParam(value = "Interface Operation to update", required = true) String data,
-      @ApiParam(value = "Resource Id") @PathParam("resourceId") String resourceId,
+      @ApiParam(value = "Component type") @PathParam("componentType") String componentType,
+      @ApiParam(value = "Component Id") @PathParam("componentId") String componentId,
       @Context final HttpServletRequest request,
       @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
-    return createOrUpdate(data, resourceId, request, userId, true);
+    return createOrUpdate(data, componentType,componentId, request, userId, true);
   }
 
   @DELETE
@@ -108,10 +110,10 @@ public class ResourceInterfaceOperationServlet extends AbstractValidationsServle
       @ApiResponse(code = 400, message = "Invalid content / Missing content")})
   public Response deleteInterfaceOperation(
       @ApiParam(value = "Interface Operation Id") @PathParam("interfaceOperationId") String interfaceOperationId,
-      @ApiParam(value = "Resource Id") @PathParam("resourceId") String resourceId,
+      @ApiParam(value = "Component Id") @PathParam("componentId") String componentId,
       @Context final HttpServletRequest request,
       @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
-    return delete(interfaceOperationId, resourceId, request, userId);
+    return delete(interfaceOperationId, componentId, request, userId);
   }
 
   @GET
@@ -124,14 +126,14 @@ public class ResourceInterfaceOperationServlet extends AbstractValidationsServle
       @ApiResponse(code = 400, message = "Invalid content / Missing content")})
   public Response getInterfaceOperation(
       @ApiParam(value = "Interface Operation Id") @PathParam("interfaceOperationId") String interfaceOperationId,
-      @ApiParam(value = "Resource Id") @PathParam("resourceId") String resourceId,
+      @ApiParam(value = "Component Id") @PathParam("componentId") String componentId,
       @Context final HttpServletRequest request,
       @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 
-    return get(interfaceOperationId, resourceId, request, userId);
+    return get(interfaceOperationId, componentId, request, userId);
   }
 
-  private Response get (String interfaceOperationId, String resourceId, HttpServletRequest request, String userId){
+  private Response get (String interfaceOperationId,  String componentId, HttpServletRequest request, String userId){
     ServletContext context = request.getSession().getServletContext();
     String url = request.getMethod() + " " + request.getRequestURI();
 
@@ -140,10 +142,10 @@ public class ResourceInterfaceOperationServlet extends AbstractValidationsServle
     log.debug("Start get request of {} with modifier id {}", url, userId);
 
     try {
-      String resourceIdLower = resourceId.toLowerCase();
+      String componentIdLower = componentId.toLowerCase();
       InterfaceOperationBusinessLogic businessLogic = getInterfaceOperationBL(context);
 
-      Either<Operation, ResponseFormat> actionResponse = businessLogic.getInterfaceOperation(resourceIdLower, interfaceOperationId, modifier, true);
+      Either<Operation, ResponseFormat> actionResponse = businessLogic.getInterfaceOperation(componentIdLower, interfaceOperationId, modifier, true);
       if (actionResponse.isRight()) {
         log.error("failed to get interface operation");
         return buildErrorResponse(actionResponse.right().value());
@@ -154,13 +156,13 @@ public class ResourceInterfaceOperationServlet extends AbstractValidationsServle
       return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), result);
     }
     catch (Exception e) {
-      BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Get Resource interface operations");
-      log.error("get resource interface operations failed with exception", e);
+      BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Get Component interface operations");
+      log.error("get component interface operations failed with exception", e);
       return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
     }
   }
 
-  private Response delete (String interfaceOperationId, String resourceId, HttpServletRequest
+  private Response delete (String interfaceOperationId, String componentId, HttpServletRequest
       request, String userId){
 
     ServletContext context = request.getSession().getServletContext();
@@ -171,10 +173,10 @@ public class ResourceInterfaceOperationServlet extends AbstractValidationsServle
     log.debug("Start delete request of {} with modifier id {}", url, userId);
 
     try {
-      String resourceIdLower = resourceId.toLowerCase();
+      String componentIdLower = componentId.toLowerCase();
       InterfaceOperationBusinessLogic businessLogic = getInterfaceOperationBL(context);
 
-      Either<Operation, ResponseFormat> actionResponse = businessLogic.deleteInterfaceOperation(resourceIdLower, interfaceOperationId, modifier, true);
+      Either<Operation, ResponseFormat> actionResponse = businessLogic.deleteInterfaceOperation(componentIdLower, interfaceOperationId, modifier, true);
       if (actionResponse.isRight()) {
         log.error("failed to delete interface operation");
         return buildErrorResponse(actionResponse.right().value());
@@ -191,7 +193,7 @@ public class ResourceInterfaceOperationServlet extends AbstractValidationsServle
     }
   }
 
-  private Response createOrUpdate (String data, String resourceId, HttpServletRequest request, String userId, boolean isUpdate) {
+  private Response createOrUpdate (String data, String componentType, String componentId, HttpServletRequest request, String userId, boolean isUpdate) {
     ServletContext context = request.getSession().getServletContext();
     String url = request.getMethod() + " " + request.getRequestURI();
 
@@ -200,15 +202,15 @@ public class ResourceInterfaceOperationServlet extends AbstractValidationsServle
     log.debug("Start create or update request of {} with modifier id {}", url, userId);
 
     try {
-      String resourceIdLower = resourceId.toLowerCase();
+      String componentIdLower = componentId.toLowerCase();
       InterfaceOperationBusinessLogic businessLogic = getInterfaceOperationBL(context);
 
-      Operation operation = getMappedOperationData(data, isUpdate, modifier);
+      Operation operation = getMappedOperationData(data, isUpdate, modifier, ComponentTypeEnum.findByParamName(componentType));
       Either<Operation, ResponseFormat> actionResponse ;
       if (isUpdate) {
-        actionResponse = businessLogic.updateInterfaceOperation(resourceIdLower, operation, modifier, true);
+        actionResponse = businessLogic.updateInterfaceOperation(componentIdLower, operation, modifier, true);
       } else {
-        actionResponse = businessLogic.createInterfaceOperation(resourceIdLower, operation, modifier, true);
+        actionResponse = businessLogic.createInterfaceOperation(componentIdLower, operation, modifier, true);
       }
 
       if (actionResponse.isRight()) {
@@ -227,9 +229,9 @@ public class ResourceInterfaceOperationServlet extends AbstractValidationsServle
     }
   }
 
-  private Operation getMappedOperationData(String inputJson, boolean isUpdate, User user){
-    Either<UiResourceDataTransfer, ResponseFormat> uiResourceEither = getComponentsUtils().convertJsonToObjectUsingObjectMapper(inputJson, user, UiResourceDataTransfer.class, AuditingActionEnum.CREATE_RESOURCE, ComponentTypeEnum.RESOURCE);
-    Optional<InterfaceOperationDataDefinition> opDef = uiResourceEither.left().value().getInterfaceOperations().values().stream().findFirst();
+  private Operation getMappedOperationData(String inputJson, boolean isUpdate, User user, ComponentTypeEnum componentTypeEnum){
+    Either<UiComponentDataTransfer, ResponseFormat> uiComponentEither = getComponentsUtils().convertJsonToObjectUsingObjectMapper(inputJson, user, UiComponentDataTransfer.class, AuditingActionEnum.CREATE_RESOURCE, componentTypeEnum);
+    Optional<InterfaceOperationDataDefinition> opDef = uiComponentEither.left().value().getInterfaceOperations().values().stream().findFirst();
     InterfaceOperationDataDefinition interfaceOperationDataDefinition = new InterfaceOperationDataDefinition();
     if(opDef.isPresent()) {
       interfaceOperationDataDefinition = opDef.get();

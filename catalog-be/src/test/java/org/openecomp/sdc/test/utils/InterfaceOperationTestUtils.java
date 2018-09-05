@@ -51,13 +51,13 @@ public class InterfaceOperationTestUtils {
         return operation;
     }
 
-    public static InterfaceDefinition mockInterfaceDefinitionToReturn(String resourceNamme) {
+    public static InterfaceDefinition mockInterfaceDefinitionToReturn(String resourceName) {
         Map<String, Operation> operationMap = createMockOperationMap();
         return createInterface("int1", "Interface 1",
-            "lifecycle", "org.openecomp.interfaces.node.lifecycle." + resourceNamme, operationMap);
+            "lifecycle", "org.openecomp.interfaces.node.lifecycle." + resourceName, operationMap);
     }
 
-    public static Operation mockOperationToReturn(String resourceNamme) {
+    public static Operation mockOperationToReturn() {
         return createMockOperation();
     }
 
@@ -93,6 +93,7 @@ public class InterfaceOperationTestUtils {
         OperationInputDefinition operationInputDefinition = new OperationInputDefinition();
         operationInputDefinition.setName(name);
         operationInputDefinition.setUniqueId("uniqueId1");
+        operationInputDefinition.setInputId("inputId1");
         return operationInputDefinition;
     }
 
@@ -100,6 +101,7 @@ public class InterfaceOperationTestUtils {
         OperationOutputDefinition operationOutputDefinition = new OperationOutputDefinition();
         operationOutputDefinition.setName(name);
         operationOutputDefinition.setUniqueId("uniqueId1");
+        operationOutputDefinition.setInputId("inputId1");
         return operationOutputDefinition;
     }
 

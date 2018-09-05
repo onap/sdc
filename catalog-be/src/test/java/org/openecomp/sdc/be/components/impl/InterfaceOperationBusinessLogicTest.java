@@ -40,7 +40,6 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.openecomp.sdc.ElementOperationMock;
 import org.openecomp.sdc.be.auditing.impl.AuditingManager;
-import org.openecomp.sdc.be.components.impl.generic.GenericTypeBusinessLogic;
 import org.openecomp.sdc.be.components.validation.InterfaceOperationValidation;
 import org.openecomp.sdc.be.components.validation.UserValidations;
 import org.openecomp.sdc.be.config.ConfigurationManager;
@@ -56,7 +55,6 @@ import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.WebAppContextWrapper;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
-import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.Operation;
 import org.openecomp.sdc.be.model.Resource;
@@ -83,42 +81,37 @@ import org.springframework.web.context.WebApplicationContext;
 
 public class InterfaceOperationBusinessLogicTest {
 
-    public static final String RESOURCE_CATEGORY1 = "Network Layer 2-3";
-    public static final String RESOURCE_SUBCATEGORY = "Router";
+    private static final String RESOURCE_CATEGORY1 = "Network Layer 2-3";
+    private static final String RESOURCE_SUBCATEGORY = "Router";
 
-    private String resourceId = "resourceId1";
-    private String operationId = "uniqueId1";
-    Resource resourceUpdate;
-    Operation operation;
+    private final String resourceId = "resourceId1";
+    private final String operationId = "uniqueId1";
+    private Operation operation;
 
-    public static final String RESOURCE_NAME = "My-Resource_Name with   space";
+    private static final String RESOURCE_NAME = "My-Resource_Name with   space";
 
-    final ServletContext servletContext = Mockito.mock(ServletContext.class);
-    IElementOperation mockElementDao;
-    TitanDao mockTitanDao = Mockito.mock(TitanDao.class);
-    UserBusinessLogic mockUserAdmin = Mockito.mock(UserBusinessLogic.class);
-    ToscaOperationFacade toscaOperationFacade = Mockito.mock(ToscaOperationFacade.class);
-    NodeTypeOperation nodeTypeOperation = Mockito.mock(NodeTypeOperation.class);
-    NodeTemplateOperation nodeTemplateOperation = Mockito.mock(NodeTemplateOperation.class);
-    TopologyTemplateOperation topologyTemplateOperation = Mockito.mock(TopologyTemplateOperation.class);
-    final IPropertyOperation propertyOperation = Mockito.mock(IPropertyOperation.class);
-    final ApplicationDataTypeCache applicationDataTypeCache = Mockito.mock(ApplicationDataTypeCache.class);
-    WebAppContextWrapper webAppContextWrapper = Mockito.mock(WebAppContextWrapper.class);
-    UserValidations userValidations = Mockito.mock(UserValidations.class);
-    WebApplicationContext webAppContext = Mockito.mock(WebApplicationContext.class);
-    ArtifactCassandraDao artifactCassandraDao = Mockito.mock(ArtifactCassandraDao.class);
-    InterfaceOperation interfaceOperation = Mockito.mock(InterfaceOperation.class);
-    InterfaceOperationValidation operationValidator = Mockito.mock(InterfaceOperationValidation.class);
+    private final ServletContext servletContext = Mockito.mock(ServletContext.class);
+    private final TitanDao mockTitanDao = Mockito.mock(TitanDao.class);
+    private final UserBusinessLogic mockUserAdmin = Mockito.mock(UserBusinessLogic.class);
+    private final ToscaOperationFacade toscaOperationFacade = Mockito.mock(ToscaOperationFacade.class);
+    private final NodeTypeOperation nodeTypeOperation = Mockito.mock(NodeTypeOperation.class);
+    private final NodeTemplateOperation nodeTemplateOperation = Mockito.mock(NodeTemplateOperation.class);
+    private final TopologyTemplateOperation topologyTemplateOperation = Mockito.mock(TopologyTemplateOperation.class);
+    private final IPropertyOperation propertyOperation = Mockito.mock(IPropertyOperation.class);
+    private final ApplicationDataTypeCache applicationDataTypeCache = Mockito.mock(ApplicationDataTypeCache.class);
+    private final WebAppContextWrapper webAppContextWrapper = Mockito.mock(WebAppContextWrapper.class);
+    private final UserValidations userValidations = Mockito.mock(UserValidations.class);
+    private final WebApplicationContext webAppContext = Mockito.mock(WebApplicationContext.class);
+    private final ArtifactCassandraDao artifactCassandraDao = Mockito.mock(ArtifactCassandraDao.class);
+    private final InterfaceOperation interfaceOperation = Mockito.mock(InterfaceOperation.class);
+    private final InterfaceOperationValidation operationValidator = Mockito.mock(InterfaceOperationValidation.class);
 
-    ResponseFormatManager responseManager = null;
-    GraphLockOperation graphLockOperation = Mockito.mock(GraphLockOperation.class);
-    User user = null;
-    Resource resourceResponse = null;
-    ComponentsUtils componentsUtils;
-    ArtifactsBusinessLogic artifactManager = new ArtifactsBusinessLogic();
-    private GenericTypeBusinessLogic genericTypeBusinessLogic = Mockito.mock(GenericTypeBusinessLogic.class);
+    private final GraphLockOperation graphLockOperation = Mockito.mock(GraphLockOperation.class);
+    private User user = null;
+    private final ArtifactsBusinessLogic artifactManager = new ArtifactsBusinessLogic();
 
     @InjectMocks
+    private
     InterfaceOperationBusinessLogic bl = new InterfaceOperationBusinessLogic();
 
     @Before
@@ -132,10 +125,10 @@ public class InterfaceOperationBusinessLogicTest {
         String appConfigDir = "src/test/resources/config/catalog-be";
         ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(), appConfigDir);
         ConfigurationManager configurationManager = new ConfigurationManager(configurationSource);
-        componentsUtils = new ComponentsUtils(Mockito.mock(AuditingManager.class));
+        ComponentsUtils componentsUtils = new ComponentsUtils(Mockito.mock(AuditingManager.class));
 
         // Elements
-        mockElementDao = new ElementOperationMock();
+        IElementOperation mockElementDao = new ElementOperationMock();
 
         // User data and management
         user = new User();
@@ -172,23 +165,22 @@ public class InterfaceOperationBusinessLogicTest {
         when(graphLockOperation.lockComponentByName(Mockito.anyString(), eq(NodeTypeEnum.Resource))).thenReturn(StorageOperationStatus.OK);
 
         // createResource
-        resourceResponse = createResourceObject(true);
+        Resource resourceResponse = createResourceObject(true);
         Either<Resource, StorageOperationStatus> eitherCreate = Either.left(resourceResponse);
-        Either<Integer, StorageOperationStatus> eitherValidate = Either.left(null);
         when(toscaOperationFacade.createToscaComponent(any(Resource.class))).thenReturn(eitherCreate);
         //TODO Remove if passes
         /*when(toscaOperationFacade.validateCsarUuidUniqueness(Mockito.anyString())).thenReturn(eitherValidate);*/
-        Map<String, DataTypeDefinition> emptyDataTypes = new HashMap<String, DataTypeDefinition>();
+        Map<String, DataTypeDefinition> emptyDataTypes = new HashMap<>();
         when(applicationDataTypeCache.getAll()).thenReturn(Either.left(emptyDataTypes));
 
         //InterfaceOperation
         when(operationValidator.validateInterfaceOperations(anyCollection(), anyObject(), anyBoolean())).thenReturn(Either.left(true));
         when(interfaceOperation.addInterface(anyString(), anyObject())).thenReturn(Either.left(InterfaceOperationTestUtils.mockInterfaceDefinitionToReturn(RESOURCE_NAME)));
         when(interfaceOperation.updateInterface(anyString(), anyObject())).thenReturn(Either.left(InterfaceOperationTestUtils.mockInterfaceDefinitionToReturn(RESOURCE_NAME)));
-        when(interfaceOperation.addInterfaceOperation(anyObject(), anyObject(), anyObject())).thenReturn(Either.left(InterfaceOperationTestUtils.mockOperationToReturn(RESOURCE_NAME)));
-        when(interfaceOperation.updateInterfaceOperation(anyObject(), anyObject(), anyObject())).thenReturn(Either.left(InterfaceOperationTestUtils.mockOperationToReturn(RESOURCE_NAME)));
-        when(interfaceOperation.deleteInterfaceOperation(anyObject(), anyObject(), anyObject())).thenReturn(Either.left(InterfaceOperationTestUtils.mockOperationToReturn(RESOURCE_NAME)));
-        when(interfaceOperation.deleteInterfaceOperation(any(),any(), any())).thenReturn(Either.left(InterfaceOperationTestUtils.mockOperationToReturn(RESOURCE_NAME)));
+        when(interfaceOperation.addInterfaceOperation(anyObject(), anyObject(), anyObject())).thenReturn(Either.left(InterfaceOperationTestUtils.mockOperationToReturn()));
+        when(interfaceOperation.updateInterfaceOperation(anyObject(), anyObject(), anyObject())).thenReturn(Either.left(InterfaceOperationTestUtils.mockOperationToReturn()));
+        when(interfaceOperation.deleteInterfaceOperation(anyObject(), anyObject(), anyObject())).thenReturn(Either.left(InterfaceOperationTestUtils.mockOperationToReturn()));
+        when(interfaceOperation.deleteInterfaceOperation(any(),any(), any())).thenReturn(Either.left(InterfaceOperationTestUtils.mockOperationToReturn()));
         when(interfaceOperation.updateInterface(any(),any())).thenReturn(Either.left(InterfaceOperationTestUtils.mockInterfaceDefinitionToReturn(RESOURCE_NAME)));
         when(mockTitanDao.commit()).thenReturn(TitanOperationStatus.OK);
 
@@ -210,7 +202,6 @@ public class InterfaceOperationBusinessLogicTest {
         setCanWorkOnResource(resourceCsar);
         Either<Component, StorageOperationStatus> oldResourceRes = Either.left(resourceCsar);
         when(toscaOperationFacade.getToscaFullElement(resourceCsar.getUniqueId())).thenReturn(oldResourceRes);
-        responseManager = ResponseFormatManager.getInstance();
     }
 
     @Test
@@ -260,37 +251,13 @@ public class InterfaceOperationBusinessLogicTest {
 
     private void validateUserRoles(Role... roles) {
         List<Role> listOfRoles = Stream.of(roles).collect(Collectors.toList());
-     }
+    }
 
-    private Resource setCanWorkOnResource(Resource resource) {
+    private void setCanWorkOnResource(Resource resource) {
         resource.setLifecycleState(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
         resource.setLastUpdaterUserId(user.getUserId());
-        return resource;
     }
 
-    private Resource setUpResourceMock(){
-        Resource resource = new Resource();
-        resource.setUniqueId(resourceId);
-        resource.setName(RESOURCE_NAME);
-        resource.addCategory(RESOURCE_CATEGORY1, RESOURCE_SUBCATEGORY);
-        resource.setDescription("My short description");
-        resource.setInterfaces(InterfaceOperationTestUtils.createMockInterfaceDefinition(RESOURCE_NAME));
-
-        List<InputDefinition> inputDefinitionList = new ArrayList<>();
-        inputDefinitionList.add(createInputDefinition("uniqueId1"));
-        resource.setInputs(inputDefinitionList);
-
-        return  resource;
-    }
-
-    private InputDefinition createInputDefinition(String inputId) {
-        InputDefinition inputDefinition = new InputDefinition();
-        inputDefinition.setInputId(inputId);
-        inputDefinition.setDescription("Input Description");
-
-        return  inputDefinition;
-
-    }
     private Resource createResourceForInterfaceOperation() {
         Resource resource = new Resource();
         resource.setUniqueId(resourceId);
@@ -306,11 +273,11 @@ public class InterfaceOperationBusinessLogicTest {
         resource.setName(RESOURCE_NAME);
         resource.addCategory(RESOURCE_CATEGORY1, RESOURCE_SUBCATEGORY);
         resource.setDescription("My short description");
-        List<String> tgs = new ArrayList<String>();
+        List<String> tgs = new ArrayList<>();
         tgs.add("test");
         tgs.add(resource.getName());
         resource.setTags(tgs);
-        List<String> template = new ArrayList<String>();
+        List<String> template = new ArrayList<>();
         template.add("Root");
         resource.setDerivedFrom(template);
         resource.setVendorName("Motorola");
@@ -324,7 +291,6 @@ public class InterfaceOperationBusinessLogicTest {
         if (afterCreate) {
             resource.setName(resource.getName());
             resource.setVersion("0.1");
-
             resource.setUniqueId(resource.getName().toLowerCase() + ":" + resource.getVersion());
             resource.setCreatorUserId(user.getUserId());
             resource.setCreatorFullName(user.getFirstName() + " " + user.getLastName());
@@ -338,11 +304,11 @@ public class InterfaceOperationBusinessLogicTest {
         resource.setName(RESOURCE_NAME);
         resource.addCategory(RESOURCE_CATEGORY1, RESOURCE_SUBCATEGORY);
         resource.setDescription("My short description");
-        List<String> tgs = new ArrayList<String>();
+        List<String> tgs = new ArrayList<>();
         tgs.add("test");
         tgs.add(resource.getName());
         resource.setTags(tgs);
-        List<String> template = new ArrayList<String>();
+        List<String> template = new ArrayList<>();
         template.add("Root");
         resource.setDerivedFrom(template);
         resource.setVendorName("Motorola");
