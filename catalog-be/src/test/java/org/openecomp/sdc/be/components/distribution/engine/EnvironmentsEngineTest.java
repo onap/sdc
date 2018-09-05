@@ -3,310 +3,331 @@ package org.openecomp.sdc.be.components.distribution.engine;
 import com.att.nsa.apiClient.credentials.ApiCredential;
 import fj.data.Either;
 import mockit.Deencapsulation;
+import org.apache.http.HttpStatus;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.openecomp.sdc.be.components.BeConfDependentTest;
-import org.openecomp.sdc.be.components.distribution.engine.IDmaapNotificationData.DmaapActionEnum;
-import org.openecomp.sdc.be.components.distribution.engine.IDmaapNotificationData.OperationaEnvironmentTypeEnum;
+import org.openecomp.sdc.be.config.Configuration;
 import org.openecomp.sdc.be.config.ConfigurationManager;
+import org.openecomp.sdc.be.config.DistributionEngineConfiguration;
+import org.openecomp.sdc.be.config.DmaapConsumerConfiguration;
 import org.openecomp.sdc.be.dao.cassandra.CassandraOperationStatus;
 import org.openecomp.sdc.be.dao.cassandra.OperationalEnvironmentDao;
 import org.openecomp.sdc.be.datatypes.enums.EnvironmentStatusEnum;
-import org.openecomp.sdc.be.impl.ComponentsUtils;
+import org.openecomp.sdc.be.info.OperationalEnvInfo;
 import org.openecomp.sdc.be.resources.data.OperationalEnvironmentEntry;
 import org.openecomp.sdc.common.datastructure.Wrapper;
 import org.openecomp.sdc.common.http.client.api.HttpResponse;
-import org.springframework.test.util.ReflectionTestUtils;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.io.IOException;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class EnvironmentsEngineTest extends BeConfDependentTest {
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.when;
 
-	@InjectMocks
-	EnvironmentsEngine testSubject;
+public class EnvironmentsEngineTest {
 
-	@Mock
-	ComponentsUtils componentUtils;
+    @InjectMocks
+    private EnvironmentsEngine envEngine;
+    @Mock
+    private OperationalEnvironmentDao operationalEnvironmentDao;
+    @Mock
+    private ConfigurationManager configurationManager;
+    @Mock
+    private DistributionEngineConfiguration distributionEngineConfiguration;
+    @Mock
+    private AaiRequestHandler aaiRequestHandler;
 
-	@Mock
-	OperationalEnvironmentDao operationalEnvironmentDao;
+    @Before
+    public void preStart() {
+        MockitoAnnotations.initMocks(this);
+    }
 
-	@Mock
-	CambriaHandler cambriaHandler;
-	
-	@Mock
-	AaiRequestHandler aaiRequestHandler;
-	
-	@Before
-	public void setUpMocks() throws Exception {
-		MockitoAnnotations.initMocks(this);
-	}
+    @Test
+    public void testInit() {
+        envEngine.setConfigurationManager(configurationManager);
+        Configuration config = Mockito.mock(Configuration.class);
+        DmaapConsumerConfiguration dmaapConf = Mockito.mock(DmaapConsumerConfiguration.class);
+        List<OperationalEnvironmentEntry> entryList = Arrays.asList(createOpEnvEntry("Env1"), createOpEnvEntry("Env2"));
+        Either<List<OperationalEnvironmentEntry>, CassandraOperationStatus> successEither = Either.left(entryList);
+        when(operationalEnvironmentDao.getByEnvironmentsStatus(EnvironmentStatusEnum.COMPLETED)).thenReturn(successEither);
+        when(configurationManager.getDistributionEngineConfiguration()).thenReturn(distributionEngineConfiguration);
+        when(distributionEngineConfiguration.getEnvironments()).thenReturn(Arrays.asList("Env Loaded From Configuration"));
+        when(distributionEngineConfiguration.getUebPublicKey()).thenReturn("Dummy Public Key");
+        when(distributionEngineConfiguration.getUebSecretKey()).thenReturn("Dummy Private Key");
+        when(distributionEngineConfiguration.getUebServers()).thenReturn(
+                Arrays.asList("uebsb91kcdc.it.com:3904", "uebsb92kcdc.it.com:3904", "uebsb91kcdc.it.com:3904"));
+        when(configurationManager.getConfiguration()).thenReturn(config);
+        when(config.getDmaapConsumerConfiguration()).thenReturn(dmaapConf);
+        when(dmaapConf.isActive()).thenReturn(false);
+        envEngine.init();
 
-	@Test
-	public void testInit() throws Exception {
+        Map<String, OperationalEnvironmentEntry> mapEnvs = envEngine.getEnvironments();
+        assertEquals("unexpected size of map",3, mapEnvs.size());
+    }
 
-		// default test
-		Deencapsulation.invoke(testSubject, "init");
-	}
 
-	@Test
-	public void testConnectUebTopicTenantIsolation() throws Exception {
-		OperationalEnvironmentEntry opEnvEntry = new OperationalEnvironmentEntry();
-		opEnvEntry.setEnvironmentId("mock");
-		AtomicBoolean status = null;
-		Map<String, DistributionEngineInitTask> envNamePerInitTask = new HashMap<>();
-		Map<String, DistributionEnginePollingTask> envNamePerPollingTask = new HashMap<>();
+    @Test
+    public void testGetFullOperationalEnvByIdSuccess() {
+        String json = getFullOperationalEnvJson();
+        
+        HttpResponse restResponse = new HttpResponse(json, HttpStatus.SC_OK, "Successfully completed");
+        when(aaiRequestHandler.getOperationalEnvById(Mockito.anyString())).thenReturn(restResponse);
+        
+        Either<OperationalEnvInfo, Integer> response = envEngine.getOperationalEnvById("DummyId");
+        assertTrue("The operational environment request ran as not expected", response.isLeft());
+        
+        OperationalEnvInfo operationalEnvInfo = response.left().value();
 
-		// default test
-		testSubject.connectUebTopicTenantIsolation(opEnvEntry, status, envNamePerInitTask, envNamePerPollingTask);
-	}
+        assertEquals("The operational environment json is not as expected", operationalEnvInfo.toString(), json);
+    }
 
-	@Test
-	public void testConnectUebTopic() throws Exception {
-		OperationalEnvironmentEntry opEnvEntry = new OperationalEnvironmentEntry();
-		AtomicBoolean status = new AtomicBoolean(true);
-		Map<String, DistributionEngineInitTask> envNamePerInitTask = new HashMap<>();
-		Map<String, DistributionEnginePollingTask> envNamePerPollingTask = new HashMap<>();
+    @Test
+    public void testGetPartialOperationalEnvByIdSuccess() {
+        String json = getPartialOperationalEnvJson();
+        
+        HttpResponse<String> restResponse = new HttpResponse<String>(json, HttpStatus.SC_OK, "Successfully completed");
+        when(aaiRequestHandler.getOperationalEnvById(Mockito.anyString())).thenReturn(restResponse);
+        
+        Either<OperationalEnvInfo, Integer> response = envEngine.getOperationalEnvById("DummyId");
+        assertTrue("The operational environment request ran as not expected", response.isLeft());
+        
+        OperationalEnvInfo operationalEnvInfo = response.left().value();
 
-		// default test
-		Deencapsulation.invoke(testSubject, "connectUebTopic", opEnvEntry, status, envNamePerInitTask,
-				envNamePerPollingTask);
-	}
+        assertEquals("The operational environment json is not as expected", operationalEnvInfo.toString(), json);
+    }
 
-	@Test
-	public void testHandleMessage() throws Exception {
-		String notification = "";
-		boolean result;
+    
+    @Test
+    public void testGetOperationalEnvByIdFailedByJsonConvert() {
+        String jsonCorrupted = getCorruptedOperationalEnvJson();
+        
+        HttpResponse<String> restResponse = new HttpResponse<String>(jsonCorrupted, HttpStatus.SC_OK, "Successfully Completed");
+        when(aaiRequestHandler.getOperationalEnvById(Mockito.anyString())).thenReturn(restResponse);
+        
+        Either<OperationalEnvInfo, Integer> response = envEngine.getOperationalEnvById("DummyId");
+        assertTrue("The operational environment request ran as not expected", response.isRight());
+        assertEquals("The operational environment request status code is not as expected", (Integer)HttpStatus.SC_INTERNAL_SERVER_ERROR, response.right().value());
+    }
 
-		// default test
-		result = testSubject.handleMessage(notification);
-	}
+    @Test
+    public void testGetOperationalEnvByIdFailed404() {
+        String json = getFullOperationalEnvJson();
+        HttpResponse<String> restResponse = new HttpResponse<String>(json, HttpStatus.SC_NOT_FOUND, "Not Found");
+        when(aaiRequestHandler.getOperationalEnvById(Mockito.anyString())).thenReturn(restResponse);
+        
+        Either<OperationalEnvInfo, Integer> response = envEngine.getOperationalEnvById("DummyId");
+        assertTrue("The operational environment request ran as not expected", response.isRight());
+        assertEquals("The operational environment request status code is not as expected", (Integer)HttpStatus.SC_NOT_FOUND, response.right().value());
+    }
 
-	@Test
-	public void testHandleMessageLogic() throws Exception {
-		String notification = "";
-		boolean result;
 
-		// default test
-		result = testSubject.handleMessageLogic(notification);
-	}
+    @Test(expected = IOException.class)
+    public void testCorruptedOperationalEnvJson() throws IOException {
+        String jsonCorrupted = getCorruptedOperationalEnvJson();
+        OperationalEnvInfo.createFromJson(jsonCorrupted);
+    }
 
-	@Test
-	public void testValidateNotification() throws Exception {
-		Wrapper<Boolean> errorWrapper = new Wrapper<>();
-		errorWrapper.setInnerElement(true);
-		IDmaapNotificationData notificationData = Mockito.mock(IDmaapNotificationData.class);
-		IDmaapAuditNotificationData auditNotificationData = Mockito.mock(IDmaapAuditNotificationData.class);
+    @Test
+    public void getEnvironmentById() {
+        OperationalEnvironmentEntry oe = new OperationalEnvironmentEntry();
+        oe.setEnvironmentId("mock");
+        envEngine.addToMap(oe);
+        assertTrue(envEngine.isInMap("mock"));
+        assertTrue(envEngine.isInMap(oe));
+        OperationalEnvironmentEntry returnedOe = envEngine.getEnvironmentById("mock");
+        assertTrue(oe == returnedOe);
+    }
 
-		// default test
-		Deencapsulation.invoke(testSubject, "validateNotification", errorWrapper, notificationData,
-				auditNotificationData);
-	}
+    private String getCorruptedOperationalEnvJson() {
+        return "{\"OPERATIONAL-environment-name\":\"Op Env Name\","
+                + "\"OPERATIONAL-environment-type\":\"VNF\","
+                + "\"OPERATIONAL-environment-status\":\"Activate\","
+                + "\"tenant-context\":\"Test\"}";
+    }
 
-	@Test
-	public void testSaveEntryWithFailedStatus() throws Exception {
-		Wrapper<Boolean> errorWrapper = new Wrapper<>();
-		OperationalEnvironmentEntry opEnvEntry = new OperationalEnvironmentEntry();
+    private String getPartialOperationalEnvJson() {
+        return "{" +
+                "\"operational-environment-id\":\"UUID of Operational Environment\"," +
+                "\"operational-environment-name\":\"Op Env Name\"," +
+                "\"operational-environment-type\":\"VNF\"," +
+                "\"operational-environment-status\":\"Activate\"," +
+                "\"tenant-context\":\"Test\"," +
+                "\"workload-context\":\"VNF_Development\"," +
+                "\"resource-version\":\"1505228226913\"," +
+                "\"relationship-list\":{" +
+                "\"relationship\":[]" +
+                "}" +
+             "}";
+    }
 
-		// default test
-		Deencapsulation.invoke(testSubject, "saveEntryWithFailedStatus", errorWrapper, opEnvEntry);
-	}
+    private String getFullOperationalEnvJson() {
+        return  "{" +
+                "\"operational-environment-id\":\"OEid1\"," +
+                "\"operational-environment-name\":\"OEname1\"," +
+                "\"operational-environment-type\":\"OEtype1\"," +
+                "\"operational-environment-status\":\"OEstatus1\"," +
+                "\"tenant-context\":\"OEtenantcontext1\"," +
+                "\"workload-context\":\"OEworkloadcontext1\"," +
+                "\"resource-version\":\"1511363173278\"," +
+                "\"relationship-list\":{" +
+                "\"relationship\":[" +
+                "{" +
+                "\"related-to\":\"operational-environment\"," +
+                "\"relationship-label\":\"managedBy\"," +
+                "\"related-link\":\"/aai/v12/cloud-infrastructure/operational-environments/operational-environment/OEid3\"," +
+                "\"relationship-data\":[" +
+                "{" +
+                "\"relationship-key\":\"operational-environment.operational-environment-id\"," +
+                "\"relationship-value\":\"OEid3\"" +
+                "}" +
+                "]," +
+                "\"related-to-property\":[" +
+                "{" +
+                "\"property-key\":\"operational-environment.operational-environment-name\"," +
+                "\"property-value\":\"OEname3\"" +
+                "}]}]}}";
+    }
+    
+    private OperationalEnvironmentEntry createOpEnvEntry(String name) {
+        OperationalEnvironmentEntry entry = new OperationalEnvironmentEntry();
+        entry.setEnvironmentId(name);
+        return entry;
+    }
 
-	@Test
-	public void testRetrieveUebAddressesFromAftDme() throws Exception {
-		Wrapper<Boolean> errorWrapper = new Wrapper<>();
-		OperationalEnvironmentEntry opEnvEntry = new OperationalEnvironmentEntry();
+    public void testHandleMessageLogic() throws Exception {
+        String notification = "";
+        boolean result;
 
-		// default test
-		Deencapsulation.invoke(testSubject, "retrieveUebAddressesFromAftDme", errorWrapper, opEnvEntry);
-	}
+        // default test
+        result = envEngine.handleMessageLogic(notification);
+    }
 
-	@Test
-	public void testCreateUebKeys() throws Exception {
-		Wrapper<Boolean> errorWrapper = new Wrapper<>();
-		OperationalEnvironmentEntry opEnvEntry = new OperationalEnvironmentEntry();
+    @Test
+    public void testValidateNotification() throws Exception {
+        Wrapper<Boolean> errorWrapper = new Wrapper<>();
+        errorWrapper.setInnerElement(true);
+        IDmaapNotificationData notificationData = Mockito.mock(IDmaapNotificationData.class);
+        IDmaapAuditNotificationData auditNotificationData = Mockito.mock(IDmaapAuditNotificationData.class);
 
-		Set<String> dmaapUebAddress = new HashSet<>();
-		dmaapUebAddress.add("mock");
-		opEnvEntry.setDmaapUebAddress(dmaapUebAddress);
-		
-		Mockito.when(cambriaHandler.createUebKeys(Mockito.any())).thenReturn(Either.left(new ApiCredential("mock", "mock")));
-		
-		// default test
-		Deencapsulation.invoke(testSubject, "createUebKeys", errorWrapper, opEnvEntry);
-	}
-	
-	@Test
-	public void testCreateUebKeysError() throws Exception {
-		Wrapper<Boolean> errorWrapper = new Wrapper<>();
-		OperationalEnvironmentEntry opEnvEntry = new OperationalEnvironmentEntry();
+        // default test
+        Deencapsulation.invoke(envEngine, "validateNotification", errorWrapper, notificationData,
+                auditNotificationData);
+    }
 
-		Set<String> dmaapUebAddress = new HashSet<>();
-		dmaapUebAddress.add("mock");
-		opEnvEntry.setDmaapUebAddress(dmaapUebAddress);
-		
-		Mockito.when(cambriaHandler.createUebKeys(Mockito.any())).thenReturn(Either.right(new CambriaErrorResponse()));
-		
-		// default test
-		Deencapsulation.invoke(testSubject, "createUebKeys", errorWrapper, opEnvEntry);
-	}
-	
-	@Test
-	public void testRetrieveOpEnvInfoFromAAI() throws Exception {
-		Wrapper<Boolean> errorWrapper = new Wrapper<>();
-		OperationalEnvironmentEntry opEnvEntry = new OperationalEnvironmentEntry();
-		opEnvEntry.setEnvironmentId("mock");
-		Mockito.when(aaiRequestHandler.getOperationalEnvById(Mockito.nullable(String.class))).thenReturn(new HttpResponse<String>("{}", 200));
-		// default test
-		Deencapsulation.invoke(testSubject, "retrieveOpEnvInfoFromAAI", new Wrapper<>(), opEnvEntry);
-	}
+    @Test
+    public void testSaveEntryWithFailedStatus() throws Exception {
+        Wrapper<Boolean> errorWrapper = new Wrapper<>();
+        OperationalEnvironmentEntry opEnvEntry = new OperationalEnvironmentEntry();
 
-	@Test
-	public void testRetrieveOpEnvInfoFromAAIError() throws Exception {
-		Wrapper<Boolean> errorWrapper = new Wrapper<>();
-		OperationalEnvironmentEntry opEnvEntry = new OperationalEnvironmentEntry();
-		opEnvEntry.setEnvironmentId("mock");
-		Mockito.when(aaiRequestHandler.getOperationalEnvById(Mockito.nullable(String.class))).thenReturn(new HttpResponse<String>("{}", 500));
-		// default test
-		Deencapsulation.invoke(testSubject, "retrieveOpEnvInfoFromAAI", new Wrapper<>(), opEnvEntry);
-	}
-	
-	@Test
-	public void testSaveEntryWithInProgressStatus() throws Exception {
-		Wrapper<Boolean> errorWrapper = new Wrapper<>();
-		Wrapper<OperationalEnvironmentEntry> opEnvEntryWrapper = new Wrapper<>();
-		IDmaapNotificationData notificationData = Mockito.mock(IDmaapNotificationData.class);
+        // default test
+        Deencapsulation.invoke(envEngine, "saveEntryWithFailedStatus", errorWrapper, opEnvEntry);
+    }
 
-		Deencapsulation.invoke(testSubject, "saveEntryWithInProgressStatus", errorWrapper, opEnvEntryWrapper,
-				notificationData);
-	}
+    @Test
+    public void testRetrieveUebAddressesFromAftDme() throws Exception {
+        Wrapper<Boolean> errorWrapper = new Wrapper<>();
+        OperationalEnvironmentEntry opEnvEntry = new OperationalEnvironmentEntry();
 
-	@Test
-	public void testValidateStateGeneralError() throws Exception {
-		Wrapper<Boolean> errorWrapper = null;
-		IDmaapNotificationData notificationData = Mockito.mock(IDmaapNotificationData.class);
+        // default test
+        Deencapsulation.invoke(envEngine, "retrieveUebAddressesFromAftDme", errorWrapper, opEnvEntry);
+    }
 
-		Mockito.when(operationalEnvironmentDao.get(Mockito.nullable(String.class)))
-				.thenReturn(Either.right(CassandraOperationStatus.GENERAL_ERROR));
+    @Test
+    public void testRetrieveOpEnvInfoFromAAI() throws Exception {
+        Wrapper<Boolean> errorWrapper = new Wrapper<>();
+        OperationalEnvironmentEntry opEnvEntry = new OperationalEnvironmentEntry();
+        opEnvEntry.setEnvironmentId("mock");
+        Mockito.when(aaiRequestHandler.getOperationalEnvById(Mockito.nullable(String.class))).thenReturn(new HttpResponse<String>("{}", 200));
+        // default test
+        Deencapsulation.invoke(envEngine, "retrieveOpEnvInfoFromAAI", new Wrapper<>(), opEnvEntry);
+    }
 
-		Deencapsulation.invoke(testSubject, "validateState", new Wrapper<>(), notificationData);
-	}
+    @Test
+    public void testRetrieveOpEnvInfoFromAAIError() throws Exception {
+        Wrapper<Boolean> errorWrapper = new Wrapper<>();
+        OperationalEnvironmentEntry opEnvEntry = new OperationalEnvironmentEntry();
+        opEnvEntry.setEnvironmentId("mock");
+        Mockito.when(aaiRequestHandler.getOperationalEnvById(Mockito.nullable(String.class))).thenReturn(new HttpResponse<String>("{}", 500));
+        // default test
+        Deencapsulation.invoke(envEngine, "retrieveOpEnvInfoFromAAI", new Wrapper<>(), opEnvEntry);
+    }
 
-	@Test
-	public void testValidateState() throws Exception {
-		Wrapper<Boolean> errorWrapper = null;
-		IDmaapNotificationData notificationData = Mockito.mock(IDmaapNotificationData.class);
+    @Test
+    public void testSaveEntryWithInProgressStatus() throws Exception {
+        Wrapper<Boolean> errorWrapper = new Wrapper<>();
+        Wrapper<OperationalEnvironmentEntry> opEnvEntryWrapper = new Wrapper<>();
+        IDmaapNotificationData notificationData = Mockito.mock(IDmaapNotificationData.class);
 
-		OperationalEnvironmentEntry a = new OperationalEnvironmentEntry();
-		a.setStatus(EnvironmentStatusEnum.IN_PROGRESS.getName());
-		Mockito.when(operationalEnvironmentDao.get(Mockito.nullable(String.class))).thenReturn(Either.left(a));
+        Deencapsulation.invoke(envEngine, "saveEntryWithInProgressStatus", errorWrapper, opEnvEntryWrapper,
+                notificationData);
+    }
 
-		Deencapsulation.invoke(testSubject, "validateState", new Wrapper<>(), notificationData);
-	}
+    @Test
+    public void testValidateStateGeneralError() throws Exception {
+        Wrapper<Boolean> errorWrapper = null;
+        IDmaapNotificationData notificationData = Mockito.mock(IDmaapNotificationData.class);
 
-	@Test
-	public void testValidateActionType() throws Exception {
-		Wrapper<Boolean> errorWrapper = new Wrapper<>();
-		IDmaapNotificationData notificationData = Mockito.mock(IDmaapNotificationData.class);
-		Mockito.when(notificationData.getAction()).thenReturn(DmaapActionEnum.DELETE);
+        Mockito.when(operationalEnvironmentDao.get(Mockito.nullable(String.class)))
+                .thenReturn(Either.right(CassandraOperationStatus.GENERAL_ERROR));
 
-		Deencapsulation.invoke(testSubject, "validateActionType", errorWrapper, notificationData);
-	}
+        Deencapsulation.invoke(envEngine, "validateState", new Wrapper<>(), notificationData);
+    }
 
-	@Test
-	public void testValidateActionType2() throws Exception {
-		Wrapper<Boolean> errorWrapper = new Wrapper<>();
-		IDmaapNotificationData notificationData = Mockito.mock(IDmaapNotificationData.class);
-		Mockito.when(notificationData.getAction()).thenReturn(DmaapActionEnum.CREATE);
+    @Test
+    public void testValidateState() throws Exception {
+        Wrapper<Boolean> errorWrapper = null;
+        IDmaapNotificationData notificationData = Mockito.mock(IDmaapNotificationData.class);
 
-		Deencapsulation.invoke(testSubject, "validateActionType", errorWrapper, notificationData);
-	}
+        OperationalEnvironmentEntry a = new OperationalEnvironmentEntry();
+        a.setStatus(EnvironmentStatusEnum.IN_PROGRESS.getName());
+        Mockito.when(operationalEnvironmentDao.get(Mockito.nullable(String.class))).thenReturn(Either.left(a));
 
-	@Test
-	public void testValidateEnvironmentType() throws Exception {
-		Wrapper<Boolean> errorWrapper = new Wrapper<>();
-		IDmaapNotificationData notificationData = Mockito.mock(IDmaapNotificationData.class);
-		IDmaapAuditNotificationData auditNotificationData = Mockito.mock(IDmaapAuditNotificationData.class);
-		Mockito.when(auditNotificationData.getOperationalEnvironmentName()).thenReturn("mock");
-		Mockito.when(notificationData.getOperationalEnvironmentType()).thenReturn(OperationaEnvironmentTypeEnum.ECOMP);
+        Deencapsulation.invoke(envEngine, "validateState", new Wrapper<>(), notificationData);
+    }
 
-		// default test
-		Deencapsulation.invoke(testSubject, "validateEnvironmentType", errorWrapper, notificationData,
-				auditNotificationData);
-	}
+    @Test
+    public void testValidateActionType() throws Exception {
+        Wrapper<Boolean> errorWrapper = new Wrapper<>();
+        IDmaapNotificationData notificationData = Mockito.mock(IDmaapNotificationData.class);
+        Mockito.when(notificationData.getAction()).thenReturn(IDmaapNotificationData.DmaapActionEnum.DELETE);
 
-	@Test
-	public void testValidateEnvironmentType1() throws Exception {
-		Wrapper<Boolean> errorWrapper = new Wrapper<>();
-		IDmaapNotificationData notificationData = Mockito.mock(IDmaapNotificationData.class);
-		IDmaapAuditNotificationData auditNotificationData = Mockito.mock(IDmaapAuditNotificationData.class);
-		Mockito.when(auditNotificationData.getOperationalEnvironmentName()).thenReturn("mock");
-		Mockito.when(notificationData.getOperationalEnvironmentType()).thenReturn(OperationaEnvironmentTypeEnum.UNKONW);
-		Mockito.when(notificationData.getAction()).thenReturn(DmaapActionEnum.CREATE);
+        Deencapsulation.invoke(envEngine, "validateActionType", errorWrapper, notificationData);
+    }
 
-		Deencapsulation.invoke(testSubject, "validateEnvironmentType", errorWrapper, notificationData,
-				auditNotificationData);
-	}
+    @Test
+    public void testValidateActionType2() throws Exception {
+        Wrapper<Boolean> errorWrapper = new Wrapper<>();
+        IDmaapNotificationData notificationData = Mockito.mock(IDmaapNotificationData.class);
+        Mockito.when(notificationData.getAction()).thenReturn(IDmaapNotificationData.DmaapActionEnum.CREATE);
 
-	@Test
-	public void testMap2OpEnvKey() throws Exception {
-		OperationalEnvironmentEntry entry = new OperationalEnvironmentEntry();
-		String result;
+        Deencapsulation.invoke(envEngine, "validateActionType", errorWrapper, notificationData);
+    }
 
-		// default test
-		result = Deencapsulation.invoke(testSubject, "map2OpEnvKey", entry);
-	}
+    @Test
+    public void testValidateEnvironmentType() throws Exception {
+        Wrapper<Boolean> errorWrapper = new Wrapper<>();
+        IDmaapNotificationData notificationData = Mockito.mock(IDmaapNotificationData.class);
+        IDmaapAuditNotificationData auditNotificationData = Mockito.mock(IDmaapAuditNotificationData.class);
+        Mockito.when(auditNotificationData.getOperationalEnvironmentName()).thenReturn("mock");
+        Mockito.when(notificationData.getOperationalEnvironmentType()).thenReturn(IDmaapNotificationData.OperationaEnvironmentTypeEnum.ECOMP);
 
-	@Test
-	public void testReadEnvFromConfig() throws Exception {
-		OperationalEnvironmentEntry result;
+        // default test
+        Deencapsulation.invoke(envEngine, "validateEnvironmentType", errorWrapper, notificationData,
+                auditNotificationData);
+    }
 
-		// default test
-		result = Deencapsulation.invoke(testSubject, "readEnvFromConfig");
-	}
+    @Test
+    public void testMap2OpEnvKey() throws Exception {
+        OperationalEnvironmentEntry entry = new OperationalEnvironmentEntry();
+        String result;
 
-	@Test
-	public void testCreateUebTopicsForEnvironment() throws Exception {
-		OperationalEnvironmentEntry opEnvEntry = new OperationalEnvironmentEntry();
-
-		// default test
-		testSubject.createUebTopicsForEnvironment(opEnvEntry);
-	}
-
-	@Test
-	public void testSetConfigurationManager() throws Exception {
-		ConfigurationManager configurationManager = null;
-
-		// default test
-		Deencapsulation.invoke(testSubject, "setConfigurationManager", new Object[] { ConfigurationManager.class });
-	}
-
-	@Test
-	public void testGetEnvironments() throws Exception {
-		Map<String, OperationalEnvironmentEntry> result;
-
-		// default test
-		result = testSubject.getEnvironments();
-	}
-
-	@Test
-	public void testIsInMap() throws Exception {
-		OperationalEnvironmentEntry env = new OperationalEnvironmentEntry();
-		env.setEnvironmentId("mock");
-		Map<String, OperationalEnvironmentEntry> mockEnvironments = new HashMap<>();
-		mockEnvironments.put("mock", new OperationalEnvironmentEntry());
-		boolean result;
-
-		// default test
-		ReflectionTestUtils.setField(testSubject, "environments", mockEnvironments);
-		result = testSubject.isInMap(env);
-	}
+        // default test
+        result = Deencapsulation.invoke(envEngine, "map2OpEnvKey", entry);
+    }
 }
