@@ -3,7 +3,7 @@ package org.openecomp.sdc.be.config;
  * Contains DMAAP Client configuration parameters
  */
 public class DmaapConsumerConfiguration {
-	
+	private boolean active;
 	private String hosts;
 	private String consumerGroup;
 	private String consumerId;
@@ -216,7 +216,11 @@ public class DmaapConsumerConfiguration {
 	public void setCredential(Credential credential) {
 		this.credential = credential;
 	}
-	
+
+	public boolean isActive() { return active; }
+
+	public void setActive(boolean isActive) { this.active = isActive; }
+
 	/**
 	 * Contains Dmaap Client credential parameters: username and password
 	 */
@@ -246,7 +250,7 @@ public class DmaapConsumerConfiguration {
 
 	@Override
 	public String toString() {
-		return "DmaapConsumerConfiguration [hosts=" + hosts + ", consumerGroup=" + consumerGroup + ", consumerId="
+		return "DmaapConsumerConfiguration [active=" + active + ", hosts=" + hosts + ", consumerGroup=" + consumerGroup + ", consumerId="
 				+ consumerId + ", timeoutMs=" + timeoutMs + ", limit=" + limit + ", pollingInterval=" + pollingInterval
 				+ ", topic=" + topic + ", latitude=" + latitude + ", longitude=" + longitude + ", version=" + version
 				+ ", serviceName=" + serviceName + ", environment=" + environment + ", partner=" + partner
