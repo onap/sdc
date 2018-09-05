@@ -7,7 +7,7 @@ identificationHeaderFields:
 
 # catalog backend hostname
 beFqdn: localhost
-# sdccatalog.att.com
+# sdccatalog.com
 
 # catalog backend http port
 beHttpPort: 8080
@@ -645,17 +645,18 @@ environmentContext:
        - General_Non-Revenue
 
 dmaapConsumerConfiguration:
-    hosts: olsd004.wnsnet.attws.com:3905
+    active: true
+    hosts: olsd004.wnsnet.com:3905
     consumerGroup: asdc
     consumerId: invalidMamaUser #mama - in Order To Consume Remove This String And Replace It With -> mama
     timeoutMs: 15000
     limit: 1
     pollingInterval: 2
-    topic: com.att.sdc.23911-SDCforTestDev-v001
+    topic: com.sdc.23911-SDCforTestDev-v001
     latitude: 32.109333
     longitude: 34.855499
     version: 1.0
-    serviceName: dmaap-v1.dev.dmaap.dt.saat.acsi.att.com/events
+    serviceName: dmaap-v1.dev.dmaap.dt.saat.acsi.com/events
     environment: TEST
     partner: BOT_R
     routeOffer: MR1
@@ -669,7 +670,7 @@ dmaapConsumerConfiguration:
     dme2preferredRouterFilePath: DME2preferredRouter.txt 
     timeLimitForNotificationHandleMs: 0
     credential:
-        username: m09875@sdc.att.com
+        username: m09875@sdc.com
         password: hmXYcznAljMSisdy8zgcag==
         
 dmeConfiguration:
