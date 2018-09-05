@@ -1,7 +1,5 @@
 {
   "heat": [
-    "configuration",
-    "fabricConfiguration",
     "Generic_PNF"
   ],
   "normative": [
