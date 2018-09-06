@@ -252,6 +252,10 @@ Modifications copyright (c) 2018 Nokia
 					<artifactId>slf4j-log4j12</artifactId>
 					<groupId>org.slf4j</groupId>
 				</exclusion>
+				<exclusion>
+					<artifactId>commons-collections</artifactId>
+					<groupId>commons-collections</groupId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 
