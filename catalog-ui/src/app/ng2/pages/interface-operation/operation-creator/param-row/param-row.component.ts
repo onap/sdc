@@ -1,6 +1,8 @@
 import {Component, Input} from '@angular/core';
-import {DropdownValue} from "app/ng2/components/ui/form-components/dropdown/ui-element-dropdown.component";
+import {PROPERTY_DATA} from "app/utils";
+import {DataTypeService} from "app/ng2/services/data-type.service";
 import {OperationParameter} from 'app/models';
+import {DropdownValue} from "app/ng2/components/ui/form-components/dropdown/ui-element-dropdown.component";
 
 @Component({
     selector: 'param-row',
@@ -11,14 +13,27 @@ import {OperationParameter} from 'app/models';
 export class ParamRowComponent {
     @Input() param: OperationParameter;
     @Input() inputProps: Array<DropdownValue>;
-    @Input() propTypes: {};
+    @Input() propTypes: { [key: string]: string };
     @Input() onRemoveParam: Function;
     @Input() isAssociateWorkflow: boolean;
+    @Input() readonly: boolean;
 
-    propTypeEnum: Array<string> = ['boolean', 'float', 'integer', 'string'];
+    propTypeEnum: Array<String> = [];
     filteredInputProps: Array<DropdownValue> = [];
 
+    constructor(private dataTypeService:DataTypeService) {}
+
     ngOnInit() {
+        const types = PROPERTY_DATA.TYPES.concat(
+            _.filter(
+                Object.keys(this.dataTypeService.getAllDataTypes()),
+                type => PROPERTY_DATA.TYPES.indexOf(type) === -1
+            )
+        );
+        this.propTypeEnum = _.filter(
+            types,
+            type => _.toArray(this.propTypes).indexOf(type) > -1
+        );
         this.onChangeType();
     }
 

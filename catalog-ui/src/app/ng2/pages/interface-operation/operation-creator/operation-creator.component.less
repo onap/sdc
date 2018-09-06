@@ -84,20 +84,19 @@
         }
 
         /deep/ .cell {
-            &.field-name {
-                flex: 2;
-            }
-
-
-            &.field-mandatory {
-                flex: 0.5;
-                text-align: center;
+            &.field-name, &.field-type {
+                flex: 1;
             }
 
             &.field-property {
                 &, &:last-child {
                     flex: 1;
                 }
+            }
+
+            &.field-mandatory {
+                flex: 0.5;
+                text-align: center;
             }
 
             &.remove {

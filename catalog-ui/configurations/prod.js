@@ -84,6 +84,7 @@ const SDC_CONFIG = {
 		"xEcompRequestId": " X-ECOMP-RequestID"
 	},
 	"imagesPath": "/sdc1",
+	"enableWorkflowAssociation": "true",
 	"cpEndPointInstances" : ["cloudep","ossep","personep","premisesep"],
 	"toscaFileExtension":"yaml,yml",
 	"csarFileExtension":"csar",
