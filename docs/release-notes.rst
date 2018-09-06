@@ -497,7 +497,7 @@ In addition, the release enhances the list of supported use cases to support the
 New Features
 ------------
 
-Main Fetures
+Main Features
 -  Full and comprehensive VNF/Software Application(VF) and service design
 -  Collaborative design
 -  VNF/VF/SERVICE testing and certification
