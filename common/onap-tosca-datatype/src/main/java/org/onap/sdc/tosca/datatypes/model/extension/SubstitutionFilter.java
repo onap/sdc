@@ -14,33 +14,44 @@
  * limitations under the License.
  */
 
-package org.onap.sdc.tosca.datatypes.model;
+package org.onap.sdc.tosca.datatypes.model.extension;
+
 
 import java.util.List;
+
 import java.util.Map;
+import org.onap.sdc.tosca.datatypes.model.Constraint;
 import org.onap.sdc.tosca.services.DataModelNormalizeUtil;
 
-
-public class NodeFilter {
+public class SubstitutionFilter {
 
     private List<Map<String, List<Constraint>>> properties;
-    private List<Map<String, CapabilityFilter>> capabilities;
 
-    public List<Map<String, CapabilityFilter>> getCapabilities() {
-        return capabilities;
-    }
-
-    public void setCapabilities(List<Map<String, CapabilityFilter>> capabilities) {
-        this.capabilities = DataModelNormalizeUtil.getNormalizeCapabilitiesFilter(capabilities);
+    public List<Map<String, List<Constraint>>> getProperties() {
+        return properties;
     }
 
     public void setProperties(List<Map<String, List<Constraint>>> properties) {
         this.properties = DataModelNormalizeUtil.getNormalizePropertiesFilter(properties);
     }
 
-    public List<Map<String, List<Constraint>>> getProperties() {
-        return properties;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof SubstitutionFilter)) {
+            return false;
+        }
+
+        SubstitutionFilter that = (SubstitutionFilter) o;
+
+        return getProperties() != null ? getProperties().equals(that.getProperties()) : that.getProperties() == null;
     }
 
-
+    @Override
+    public int hashCode() {
+        return getProperties() != null ? getProperties().hashCode() : 0;
+    }
 }

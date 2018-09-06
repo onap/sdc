@@ -1,0 +1,17 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: Test
+  template_author: OPENECOMP
+  template_version: 1.0.0
+description: testing desc tosca service template
+
+topology_template:
+  description: topologi template descroption
+  substitution_mappings:
+    node_type: myNodeType.node
+    capabilities:
+      database_endpoint:
+      - database
+      - database_endpoint
+    requirements:
+      database_endpoint: [ app, database ]

@@ -16,14 +16,13 @@
 
 package org.onap.sdc.tosca.services;
 
+import java.beans.IntrospectionException;
 import org.onap.sdc.tosca.error.ToscaRuntimeException;
 import org.yaml.snakeyaml.constructor.Constructor;
 import org.yaml.snakeyaml.introspector.Property;
 import org.yaml.snakeyaml.introspector.PropertyUtils;
 import org.yaml.snakeyaml.nodes.MappingNode;
 import org.yaml.snakeyaml.nodes.NodeId;
-
-import java.beans.IntrospectionException;
 
 
 public class ToscaExtensionYamlUtil extends YamlUtil {
@@ -36,6 +35,10 @@ public class ToscaExtensionYamlUtil extends YamlUtil {
             "org.onap.sdc.tosca.datatypes.model.RequirementAssignment";
     public static final String TOSCA_MODEL_EXT_REQUIREMENT_ASSIGNMENT =
             "org.onap.sdc.tosca.datatypes.model.extension.RequirementAssignment";
+    public static final String TOSCA_MODEL_SUBSTITUTION_MAPPING =
+            "org.onap.sdc.tosca.datatypes.model.SubstitutionMapping";
+    public static final String TOSCA_MODEL_EXT_SUBSTITUTION_MAPPING =
+            "org.onap.sdc.tosca.datatypes.model.extension.SubstitutionMappingExt";
 
     @Override
     public <T> Constructor getConstructor(Class<T> typClass) {
@@ -58,6 +61,9 @@ public class ToscaExtensionYamlUtil extends YamlUtil {
                 }
                 if (type.equals(Class.forName(TOSCA_MODEL_REQUIREMENT_ASSIGNMENT))) {
                     classType = Class.forName(TOSCA_MODEL_EXT_REQUIREMENT_ASSIGNMENT);
+                }
+                if (type.equals(Class.forName(TOSCA_MODEL_SUBSTITUTION_MAPPING))) {
+                    classType = Class.forName(TOSCA_MODEL_EXT_SUBSTITUTION_MAPPING);
                 }
             } catch (ClassNotFoundException ex) {
                 throw new ToscaRuntimeException(ex);
@@ -86,6 +92,11 @@ public class ToscaExtensionYamlUtil extends YamlUtil {
                         return super.constructJavaBean2ndStep(node, extendHeatObject);
                     } else if (type.equals(Class.forName(TOSCA_MODEL_REQUIREMENT_ASSIGNMENT))) {
                         Class extendHeatClass = Class.forName(TOSCA_MODEL_EXT_REQUIREMENT_ASSIGNMENT);
+                        Object extendHeatObject = extendHeatClass.newInstance();
+                        // create JavaBean
+                        return super.constructJavaBean2ndStep(node, extendHeatObject);
+                    } else if (type.equals(Class.forName(TOSCA_MODEL_SUBSTITUTION_MAPPING))) {
+                        Class extendHeatClass = Class.forName(TOSCA_MODEL_EXT_SUBSTITUTION_MAPPING);
                         Object extendHeatObject = extendHeatClass.newInstance();
                         // create JavaBean
                         return super.constructJavaBean2ndStep(node, extendHeatObject);

@@ -62,6 +62,8 @@ public class ToscaModelTest {
     private static final String DEPENDENCY_NAME = "script1.sh";
     private static final String STRING_TYPE = "string";
     private static final String ST_WITH_SERVICE_FILTER = "/serviceTemplateWithServiceFilter.yaml";
+    private static final String SUBSTITUTION_MAPPING = "/serviceTemplateWithSubstitutionMapping.yaml";
+    private static final String SUBSTITUTION_MAPPING_EXT = "/substitutionMappingExt.yaml";
 
     @Test
     public void testServiceTemplateJavaToYaml() {
@@ -445,6 +447,44 @@ public class ToscaModelTest {
 
         String serviceTemplateYaml = toscaExtensionYamlUtil.objectToYaml(serviceTemplateWithServiceFilter);
         Assert.assertNotNull(serviceTemplateYaml);
+
+    }
+
+    @Test
+    public void testSubstitutionMapping() throws IOException {
+        ServiceTemplate serviceTemplate = getServiceTemplateExt(BASE_DIR + SUBSTITUTION_MAPPING);
+
+        SubstitutionMapping substitutionMappings = DataModelUtil.getSubstitutionMappings(serviceTemplate);
+        Assert.assertEquals("myNodeType.node", substitutionMappings.getNode_type());
+        Assert.assertNotNull(substitutionMappings.getCapabilities());
+        Assert.assertEquals(1,substitutionMappings.getCapabilities().size());
+        Assert.assertNotNull(substitutionMappings.getRequirements());
+        Assert.assertEquals(1,substitutionMappings.getRequirements().size());
+        Assert.assertEquals(true, substitutionMappings instanceof SubstitutionMappingExt);
+        Assert.assertNull(((SubstitutionMappingExt)substitutionMappings).getSubstitution_filter());
+
+    }
+
+    @Test
+    public void testSubstitutionMappingExt() throws IOException {
+        ServiceTemplate serviceTemplate = getServiceTemplateExt(BASE_DIR + SUBSTITUTION_MAPPING_EXT);
+
+        SubstitutionMapping substitutionMappings = DataModelUtil.getSubstitutionMappings(serviceTemplate);
+        Assert.assertEquals("myNodeType.node", substitutionMappings.getNode_type());
+        Assert.assertNotNull(substitutionMappings.getCapabilities());
+        Assert.assertEquals(1,substitutionMappings.getCapabilities().size());
+        Assert.assertNotNull(substitutionMappings.getRequirements());
+        Assert.assertEquals(1,substitutionMappings.getRequirements().size());
+        Assert.assertEquals(true, substitutionMappings instanceof SubstitutionMappingExt);
+        SubstitutionFilter substitutionFilter = ((SubstitutionMappingExt) substitutionMappings).getSubstitution_filter();
+        Assert.assertNotNull(substitutionFilter);
+        Assert.assertNotNull(substitutionFilter.getProperties());
+        Assert.assertEquals(2,substitutionFilter.getProperties().size());
+        List<Constraint> vendorFilter = substitutionFilter.getProperties().get(0).get("vendor");
+        Assert.assertNotNull(vendorFilter);
+        Assert.assertNotNull(vendorFilter.get(0).getEqual());
+
+
 
     }
 
