@@ -43,6 +43,10 @@ export class DataTypeService {
         return this.dataTypes[typeName];
     }
 
+    public getAllDataTypes(){
+        return this.dataTypes;
+    }
+
 
     public getDerivedDataTypeProperties(dataTypeObj: DataTypeModel, propertiesArray: Array<DerivedFEProperty>, parentName: string) {
         //push all child properties to array

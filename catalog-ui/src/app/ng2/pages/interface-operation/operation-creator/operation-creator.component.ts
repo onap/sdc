@@ -5,20 +5,27 @@ import {Subscription} from "rxjs/Subscription";
 
 import {TranslateService} from "app/ng2/shared/translator/translate.service";
 import {WorkflowServiceNg2} from 'app/ng2/services/workflow.service';
-import {InputModel, OperationModel, OperationParameter} from 'app/models';
+import {OperationModel, OperationParameter, InputBEModel} from 'app/models';
 
 import {DropdownValue} from "app/ng2/components/ui/form-components/dropdown/ui-element-dropdown.component";
 
 @Component({
     selector: 'operation-creator',
     templateUrl: './operation-creator.component.html',
-    styleUrls:['./operation-creator.component.less'],
+    styleUrls: ['./operation-creator.component.less'],
     providers: [TranslateService]
 })
 
 export class OperationCreatorComponent {
 
-    input: any;
+    input: {
+        operation,
+        inputProperties: Array<InputBEModel>,
+        enableWorkflowAssociation: boolean,
+        readonly: boolean,
+        isService: boolean
+    };
+
     operation: OperationModel;
 
     workflows: Array<DropdownValue> = [];
@@ -30,9 +37,12 @@ export class OperationCreatorComponent {
     noAssignInputParameters: Array<OperationParameter> = [];
     assignInputParameters: { [key: string]: { [key: string]: Array<OperationParameter>; }; } = {};
 
-    isAssociateWorkflow: boolean = false;
+    enableWorkflowAssociation: boolean;
+    isAssociateWorkflow: boolean;
     isEditMode: boolean = false;
     isLoading: boolean = false;
+    readonly: boolean;
+    isService: boolean;
 
     propertyTooltipText: String;
 
@@ -44,12 +54,16 @@ export class OperationCreatorComponent {
 
     ngOnInit() {
 
+        this.readonly = this.input.readonly;
+        this.isService = this.input.isService;
+        this.enableWorkflowAssociation = this.input.enableWorkflowAssociation && !this.isService;
+
         this.inputProperties = _.map(this.input.inputProperties,
-            (input: InputModel) => new DropdownValue(input.uniqueId, input.name)
+            (input: InputBEModel) => new DropdownValue(input.uniqueId, input.name)
         );
 
         this.inputPropertyTypes = {};
-        _.forEach(this.input.inputProperties, (input: InputModel) => {
+        _.forEach(this.input.inputProperties, (input: InputBEModel) => {
             this.inputPropertyTypes[input.uniqueId] = input.type;
         });
 
@@ -58,37 +72,44 @@ export class OperationCreatorComponent {
 
         const buildInputParams = () => {
             if (inputOperation.inputParams) {
-                this.inputParameters = [];
-                _.forEach(inputOperation.inputParams.listToscaDataDefinition, (input: OperationParameter) => {
-                    this.addParam(input);
-                });
+                _.forEach(
+                    [...inputOperation.inputParams.listToscaDataDefinition].sort((a, b) => a.name.localeCompare(b.name)),
+                    (input: OperationParameter) => {
+                        this.addParam(input);
+                    }
+                );
             }
         }
 
-        this.isLoading = true;
-        this.workflowServiceNg2.getWorkflows().subscribe(workflows => {
-            this.isLoading = false;
-
-            this.workflows = _.map(workflows, (workflow: any) => {
-                return new DropdownValue(workflow.id, workflow.name);
-            });
-
+        const reconstructOperation = () => {
             if (inputOperation) {
-                if (inputOperation.workflowVersionId) {
-                    this.isAssociateWorkflow = true;
-                    this.onSelectWorkflow(inputOperation.workflowVersionId).add(buildInputParams);
-                } else {
+                if (!this.enableWorkflowAssociation || !inputOperation.workflowVersionId || this.isService) {
                     this.inputParameters = this.noAssignInputParameters;
                     this.isAssociateWorkflow = false;
                     buildInputParams();
+                } else {
+                    this.isAssociateWorkflow = true;
+                    this.onSelectWorkflow(inputOperation.workflowVersionId).add(buildInputParams);
                 }
 
                 if (inputOperation.uniqueId) {
                     this.isEditMode = true;
                 }
             }
-        });
+        }
 
+        if (this.enableWorkflowAssociation) {
+            this.isLoading = true;
+            this.workflowServiceNg2.getWorkflows().subscribe(workflows => {
+                this.isLoading = false;
+                this.workflows = _.map(workflows, (workflow: any) => {
+                    return new DropdownValue(workflow.id, workflow.name);
+                });
+                reconstructOperation();
+            });
+        } else {
+            reconstructOperation();
+        }
 
     }
 
@@ -104,7 +125,9 @@ export class OperationCreatorComponent {
             this.isLoading = false;
 
             this.workflowVersions = _.map(
-                _.filter(versions, version => version.state === this.workflowServiceNg2.VERSION_STATE_CERTIFIED),
+                _.filter(
+                    versions, version => version.state === this.workflowServiceNg2.VERSION_STATE_CERTIFIED
+                ).sort((a, b) => a.name.localeCompare(b.name)),
                 (version: any) => {
                     if (!this.assignInputParameters[this.operation.workflowId][version.id]) {
                         this.assignInputParameters[this.operation.workflowId][version.id] = _.map(version.inputs, (input: any) => {
@@ -114,14 +137,15 @@ export class OperationCreatorComponent {
                                 property: null,
                                 mandatory: input.mandatory,
                             });
-                        });
+                        })
+                        .sort((a, b) => a.name.localeCompare(b.name));
                     }
-                    return new DropdownValue(version.id, `v. ${version.name}`);
+                    return new DropdownValue(version.id, `V ${version.name}`);
                 }
             );
 
-            if (!selectedVersionId && versions.length) {
-                this.operation.workflowVersionId = _.last(versions.sort()).id;
+            if (!selectedVersionId && this.workflowVersions.length) {
+                this.operation.workflowVersionId = _.last(this.workflowVersions).value;
             }
             this.changeWorkflowVersion();
         });

@@ -3,11 +3,13 @@
         class="add-btn"
         [ngClass]="{'disabled': readonly}"
         data-tests-id="addInterfaceOperation"
-        (click)="onAddOperation()">
+        (click)="onEditOperation()">
         Add Operation
     </div>
 
-    <div class="operation-list" [ngClass]="{'disabled': readonly}">
+    <div class="operation-list">
+
+        <loader [display]="isLoading" [size]="'large'" [relative]="true"></loader>
 
         <div
             class="operation-row"
@@ -24,7 +26,7 @@
                 </span>
             </span>
 
-            <span class="operation-dumbo">
+            <span class="operation-dumbo" *ngIf="!readonly">
                 <span
                     class="sprite-new delete-item-icon"
                     data-tests-id="deleteInterfaceOperation"

@@ -491,6 +491,7 @@ const SDC_MENU_CONFIG = {
             {"text": "General", "action": "onMenuItemPressed", "state": "workspace.general"},
             {"text": "TOSCA Artifacts", "action": "onMenuItemPressed", "state": "workspace.tosca_artifacts"},
             {"text": "Composition", "action": "onMenuItemPressed", "state": "workspace.composition.details"},
+            {"text": "Operation", "action":"onMenuItemPressed", "state": "workspace.interface_operation"},
             {"text": "Activity Log", "action": "onMenuItemPressed", "state": "workspace.activity_log"},
             {"text": "Management Workflow", "action": "onMenuItemPressed", "state": "workspace.management_workflow"},
             {"text": "Network Call Flow ", "action": "onMenuItemPressed", "state": "workspace.network_call_flow"},
