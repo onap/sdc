@@ -1,0 +1,102 @@
+{
+  "artifacts": {
+
+  },
+  "toscaArtifacts": {
+
+  },
+  "contactId": "cs0008",
+  "categories": [
+    {
+      "name": "Network L4+",
+      "normalizedName": "network l4+",
+      "uniqueId": "serviceNewCategory.network l4+",
+      "icons": [
+        "network_l_4"
+      ],
+      "subcategories": null,
+      "version": null,
+      "ownerId": null,
+      "empty": false,
+      "type": null
+    }
+  ],
+  "description": "service1 for bdd",
+  "icon": "defaulticon",
+  "componentInstancesProperties": {
+
+  },
+  "componentInstancesAttributes": {
+
+  },
+  "name": "service1",
+  "tags": [
+    "service1"
+  ],
+  "capabilities": {
+
+  },
+  "requirements": {
+
+  },
+  "deploymentArtifacts": {
+
+  },
+  "componentType": "SERVICE",
+  "projectCode": "010203",
+  "componentInstances": [
+
+  ],
+  "properties": [
+
+  ],
+
+  "inputs": [
+    {
+      "uniqueId": "03eeb10e-cf2a-41b8-9d8e-d2dbd094f9d4.test1_dasddas",
+      "type": "scalar-unit.size",
+      "required": false,
+      "definition": false,
+      "schema": {
+        "properties": {
+
+        },
+        "property": {
+          "type": "",
+          "required": false,
+          "definition": true,
+          "password": false,
+          "hidden": false,
+          "immutable": false,
+          "getInputProperty": false,
+          "empty": false
+        },
+        "empty": false
+      },
+      "password": false,
+      "name": "test1_dasddas",
+      "hidden": false,
+      "immutable": false,
+      "instanceUniqueId": "03eeb10e-cf2a-41b8-9d8e-d2dbd094f9d4",
+      "propertyId": "03eeb10e-cf2a-41b8-9d8e-d2dbd094f9d4.dasddas",
+      "parentUniqueId": "cs0008",
+      "schemaType": "",
+      "getInputProperty": false,
+      "ownerId": "cs0008",
+      "empty": false
+    }
+  ],
+
+  "attributes": [
+
+  ],
+  "forwardingPaths": {
+
+  },
+  "ecompGeneratedNaming": true,
+  "serviceApiArtifacts": {
+
+  },
+  "instantiationType": "A-la-carte",
+  "environmentContext": "General_Revenue-Bearing"
+}
