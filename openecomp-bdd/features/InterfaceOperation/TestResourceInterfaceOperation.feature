@@ -26,12 +26,12 @@ Feature: Interface Operation Feature
   When I want to delete an Operation
 
   #Checkin
-  When I want to checkin this VF
+  When I want to checkin this component
   Then I want to check property "lifecycleState" for value "NOT_CERTIFIED_CHECKIN"
 
-  #Submit
-  Then I want to submit this VF
-  And I want to check property "lifecycleState" for value "READY_FOR_CERTIFICATION"
+  #Certify
+  Then I want to certify this component
+  And I want to check property "lifecycleState" for value "CERTIFIED"
 
  Scenario: Test InterfaceOperation CREATE
   #Create Operations
@@ -46,12 +46,12 @@ Feature: Interface Operation Feature
   When I want to list Operations
 
 #Checkin
-  When I want to checkin this VF
+  When I want to checkin this component
   Then I want to check property "lifecycleState" for value "NOT_CERTIFIED_CHECKIN"
 
-#Submit
-  Then I want to submit this VF
-  And I want to check property "lifecycleState" for value "READY_FOR_CERTIFICATION"
+#Certify
+  Then I want to certify this component
+  And I want to check property "lifecycleState" for value "CERTIFIED"
 
 
  Scenario: Test InterfaceOperation UPDATE
@@ -67,12 +67,12 @@ Feature: Interface Operation Feature
   Then I want to check property "uniqueId" exists
 
   #Checkin
-  When I want to checkin this VF
+  When I want to checkin this component
   Then I want to check property "lifecycleState" for value "NOT_CERTIFIED_CHECKIN"
 
-  #Submit
-  Then I want to submit this VF
-  And I want to check property "lifecycleState" for value "READY_FOR_CERTIFICATION"
+  #Certify
+  Then I want to certify this component
+  And I want to check property "lifecycleState" for value "CERTIFIED"
 
 
  Scenario: Test InterfaceOperation DELETE
@@ -88,9 +88,9 @@ Feature: Interface Operation Feature
   When I want to delete an Operation
 
   #Checkin
-  When I want to checkin this VF
+  When I want to checkin this component
   Then I want to check property "lifecycleState" for value "NOT_CERTIFIED_CHECKIN"
 
-  #Submit
-  Then I want to submit this VF
-  And I want to check property "lifecycleState" for value "READY_FOR_CERTIFICATION"
+  #certify
+  Then I want to certify this component
+  And I want to check property "lifecycleState" for value "CERTIFIED"

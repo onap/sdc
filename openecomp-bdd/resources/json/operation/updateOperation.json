@@ -2,14 +2,6 @@
   "interfaceOperations": {
     "create": {
       "description": "create operation_Updated",
-      "inputParams": {
-        "listToscaDataDefinition": [
-          {
-            "paramName": "inp1",
-            "paramId": "REPLACE FROM CONTEXT"
-          }
-        ]
-      },
       "operationType": "create",
       "uniqueId": "REPLACE FROM CONTEXT"
     }
