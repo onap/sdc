@@ -1,0 +1,20 @@
+{
+  "interfaceOperations": {
+    "create": {
+      "description": "abcd description",
+      "inputParams": {
+        "listToscaDataDefinition": [
+          {
+            "name": "inp1",
+            "type": "string",
+            "property": "97477d27-8fe2-45a1-83cb-83368ef2a402.nf_naming_code",
+            "mandatory": true
+          }
+        ]
+      },
+      "operationType": "create",
+      "workflowId" : null,
+      "workflowVersionId" : null
+    }
+  }
+}
