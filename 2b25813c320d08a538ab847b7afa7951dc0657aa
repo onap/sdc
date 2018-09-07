@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_e43b1fcf",
+        "filename": "common/onap-common-configuration-management/onap-configuration-management-core/src/main/java/org/onap/config/NonConfigResource.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 4025
+      },
+      "writtenOn": "2018-09-07T10:14:48Z",
+      "side": 1,
+      "message": "nice place to add logger",
+      "revId": "2b25813c320d08a538ab847b7afa7951dc0657aa",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
