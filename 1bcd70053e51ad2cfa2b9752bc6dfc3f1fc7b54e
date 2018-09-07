@@ -71,6 +71,30 @@
     },
     {
       "key": {
+        "uuid": "1a76adc5_49d22c5d",
+        "filename": "catalog-be/src/main/resources/import/tosca/nfv-types/vduCompute/vduCompute.yml",
+        "patchSetId": 10
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 2737
+      },
+      "writtenOn": "2018-09-07T05:23:06Z",
+      "side": 1,
+      "message": "per SOL001, here should be list",
+      "parentUuid": "1a76adc5_eaae9d97",
+      "range": {
+        "startLine": 13,
+        "startChar": 16,
+        "endLine": 13,
+        "endChar": 21
+      },
+      "revId": "1bcd70053e51ad2cfa2b9752bc6dfc3f1fc7b54e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1a76adc5_8a97e947",
         "filename": "catalog-be/src/main/resources/import/tosca/nfv-types/vduCompute/vduCompute.yml",
         "patchSetId": 10
@@ -82,6 +106,30 @@
       "writtenOn": "2018-09-04T09:57:17Z",
       "side": 1,
       "message": "this does not aligne with the r2+ model.",
+      "range": {
+        "startLine": 18,
+        "startChar": 16,
+        "endLine": 18,
+        "endChar": 22
+      },
+      "revId": "1bcd70053e51ad2cfa2b9752bc6dfc3f1fc7b54e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_09c8b4a6",
+        "filename": "catalog-be/src/main/resources/import/tosca/nfv-types/vduCompute/vduCompute.yml",
+        "patchSetId": 10
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 2737
+      },
+      "writtenOn": "2018-09-07T05:23:06Z",
+      "side": 1,
+      "message": "per SOL001, here should be list",
+      "parentUuid": "1a76adc5_8a97e947",
       "range": {
         "startLine": 18,
         "startChar": 16,
