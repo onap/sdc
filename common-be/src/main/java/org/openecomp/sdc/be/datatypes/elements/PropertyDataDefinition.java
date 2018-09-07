@@ -483,6 +483,12 @@ public class PropertyDataDefinition extends ToscaDataDefinition {
         }
 	}
 
+	public void convertPropertyDefaultValueToValue() {
+		if (null == value) {
+			defaultValue = value;
+		}
+	}
+
 	public boolean isGetInputProperty() {
 		return this.getGetInputValues() != null && !this.getGetInputValues().isEmpty();
 	}

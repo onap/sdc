@@ -1972,6 +1972,19 @@ public class NodeTemplateOperation extends BaseOperation {
         return updateToscaDataDeepElementsOfToscaElement(containerComponent.getUniqueId(), EdgeLabelEnum.INST_PROPERTIES, VertexTypeEnum.INST_PROPERTIES, properties, pathKeys, JsonPresentationFields.NAME);
     }
 
+    public StorageOperationStatus updateComponentInstanceAttribute(Component containerComponent, String componentInstanceId, ComponentInstanceProperty property){
+        List<String> pathKeys = new ArrayList<>();
+        pathKeys.add(componentInstanceId);
+        return updateToscaDataDeepElementOfToscaElement(containerComponent.getUniqueId(), EdgeLabelEnum.INST_ATTRIBUTES, VertexTypeEnum.INST_ATTRIBUTES, property, pathKeys, JsonPresentationFields.NAME);
+    }
+
+    public StorageOperationStatus addComponentInstanceAttribute(Component containerComponent, String componentInstanceId, ComponentInstanceProperty property){
+        List<String> pathKeys = new ArrayList<>();
+        pathKeys.add(componentInstanceId);
+        property.convertPropertyDefaultValueToValue();
+        return addToscaDataDeepElementToToscaElement(containerComponent.getUniqueId(), EdgeLabelEnum.INST_ATTRIBUTES, VertexTypeEnum.INST_ATTRIBUTES, property, pathKeys, JsonPresentationFields.NAME);
+    }
+
     public StorageOperationStatus updateComponentInstanceInput(Component containerComponent, String componentInstanceId, ComponentInstanceInput property) {
 
         List<String> pathKeys = new ArrayList<>();
