@@ -105,6 +105,12 @@ errors:
         message: "Error: Invalid userId '%1'.",
         messageId: "SVC4008"
     }
+#---------SVC4009-----------------------------
+    USER_DEFINED: {
+        code: 400,
+        message: "Error: User Defined '%1'.",
+        messageId: "SVC4009"
+    }
 #---------SVC4049------------------------------
 # %1 - service/resource
     COMPONENT_MISSING_CONTACT: {
