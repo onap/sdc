@@ -555,7 +555,7 @@ function sdc-ui-tests {
 
 # SDC-Simulator
 function sdc-sim {
-    if [ ${RUN_SIMULATOR} == true ]; then
+    if [ "${RUN_SIMULATOR}" == true ]; then
         echo "docker run sdc-webSimulator..."
         if [ ${LOCAL} = false ]; then
             docker pull ${PREFIX}/sdc-simulator:${RELEASE}
