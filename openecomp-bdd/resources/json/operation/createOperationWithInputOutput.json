@@ -1,7 +1,7 @@
 {
   "interfaceOperations": {
     "operation": {
-      "description": "create operation_Updated",
+      "description": "abcd description",
       "inputParams": {
         "listToscaDataDefinition": [
           {
@@ -22,7 +22,8 @@
         ]
       },
       "operationType": "create",
-      "uniqueId": "REPLACE FROM CONTEXT"
+      "workflowId" : null,
+      "workflowVersionId" : null
     }
   }
 }
