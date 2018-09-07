@@ -1,6 +1,10 @@
 package org.openecomp.sdc.be.servlets;
 
 import fj.data.Either;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import javax.ws.rs.client.Entity;
 import org.eclipse.jetty.http.HttpStatus;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.server.ResourceConfig;
@@ -16,7 +20,10 @@ import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.ServletUtils;
 import org.openecomp.sdc.be.impl.WebAppContextWrapper;
+import org.openecomp.sdc.be.model.CapabilityDefinition;
+import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.RequirementCapabilityRelDef;
+import org.openecomp.sdc.be.model.RequirementDefinition;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.context.ApplicationContext;
@@ -31,6 +38,7 @@ import javax.ws.rs.core.Response;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
@@ -92,6 +100,36 @@ public class ComponentInstanceServletTest extends JerseyTest {
                 .get( Response.class);
 
         assertEquals(response.getStatus(), HttpStatus.BAD_REQUEST_400);
+    }
+
+    @Test
+    public void testCopyComponentInstanceSuccess(){
+
+        String componentId = "componentId";
+        String componentInstanceId = "componentInstanceId";
+        String path = "/v1/catalog/services/" + componentId + "/copyComponentInstance/" + componentInstanceId;
+
+        Either<Map<String, ComponentInstance>, ResponseFormat> successResponse = Either.left(new HashMap<String, ComponentInstance>());
+        when(componentInstanceBusinessLogic.copyComponentInstance(any(ComponentInstance.class), eq(componentId), eq(componentInstanceId), eq(USER_ID))).thenReturn(successResponse);
+        when(responseFormat.getStatus()).thenReturn(HttpStatus.OK_200);
+        when(componentsUtils.getResponseFormat(ActionStatus.OK)).thenReturn(responseFormat);
+
+        ComponentInstance c = new ComponentInstance();
+        c.setName("comp1");
+        c.setUniqueId("comp1");
+        c.setComponentUid("comp1");
+        c.setPosX("10");
+        c.setPosY("10");
+        c.setCapabilities(new HashMap<String, List<CapabilityDefinition>>());
+        c.setRequirements(new HashMap<String, List<RequirementDefinition>>());
+
+        Response response = target()
+            .path(path)
+            .request(MediaType.APPLICATION_JSON)
+            .header("USER_ID", USER_ID)
+            .post(Entity.json(c));
+
+        assertEquals(response.getStatus(), HttpStatus.OK_200);
     }
 
     @Override

@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -36,43 +36,45 @@ import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
 import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
-import org.openecomp.sdc.be.datatypes.elements.CapabilityDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ForwardingPathDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.GetInputValueDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.GroupDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.RequirementDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.CapabilityDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
+import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
 import org.openecomp.sdc.be.impl.ForwardingPathUtils;
 import org.openecomp.sdc.be.info.CreateAndAssotiateInfo;
-import org.openecomp.sdc.be.model.ArtifactDefinition;
-import org.openecomp.sdc.be.model.CapabilityDefinition;
 import org.openecomp.sdc.be.model.Component;
-import org.openecomp.sdc.be.model.ComponentInstance;
-import org.openecomp.sdc.be.model.ComponentInstanceInput;
-import org.openecomp.sdc.be.model.ComponentInstanceProperty;
 import org.openecomp.sdc.be.model.ComponentParametersView;
-import org.openecomp.sdc.be.model.DataTypeDefinition;
-import org.openecomp.sdc.be.model.GroupDefinition;
-import org.openecomp.sdc.be.model.InputDefinition;
-import org.openecomp.sdc.be.model.LifecycleStateEnum;
-import org.openecomp.sdc.be.model.PropertyDefinition;
-import org.openecomp.sdc.be.model.PropertyDefinition.PropertyNames;
-import org.openecomp.sdc.be.model.RelationshipInfo;
-import org.openecomp.sdc.be.model.RequirementCapabilityRelDef;
+import org.openecomp.sdc.be.model.CapabilityDefinition;
 import org.openecomp.sdc.be.model.RequirementDefinition;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.ComponentInstancePropInput;
+import org.openecomp.sdc.be.model.LifecycleStateEnum;
+import org.openecomp.sdc.be.model.ArtifactDefinition;
+import org.openecomp.sdc.be.model.DataTypeDefinition;
+import org.openecomp.sdc.be.model.PropertyDefinition;
+import org.openecomp.sdc.be.model.GroupDefinition;
+import org.openecomp.sdc.be.model.InputDefinition;
+import org.openecomp.sdc.be.model.RelationshipInfo;
+import org.openecomp.sdc.be.model.RequirementCapabilityRelDef;
+import org.openecomp.sdc.be.model.ComponentInstance;
+import org.openecomp.sdc.be.model.ComponentInstanceInput;
+import org.openecomp.sdc.be.model.ComponentInstanceProperty;
+import org.openecomp.sdc.be.model.PropertyDefinition.PropertyNames;
 import org.openecomp.sdc.be.model.jsontitan.operations.ForwardingPathOperation;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.jsontitan.utils.ModelConverter;
 import org.openecomp.sdc.be.model.operations.api.IComponentInstanceOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.DaoStatusConverter;
+import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
 import org.openecomp.sdc.be.model.operations.utils.ComponentValidationUtils;
 import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
 import org.openecomp.sdc.be.resources.data.ComponentInstanceData;
@@ -132,11 +134,11 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
     @Autowired
     private ForwardingPathOperation forwardingPathOperation;
 
-
     public ComponentInstanceBusinessLogic() {
     }
 
-    public Either<ComponentInstance, ResponseFormat> createComponentInstance(String containerComponentParam, String containerComponentId, String userId, ComponentInstance resourceInstance) {
+    public Either<ComponentInstance, ResponseFormat> createComponentInstance(
+            String containerComponentParam, String containerComponentId, String userId, ComponentInstance resourceInstance) {
         return createComponentInstance(containerComponentParam, containerComponentId, userId, resourceInstance, false, true);
     }
 
@@ -171,7 +173,6 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
             });
         }
         return resList;
-
     }
 
     public List<ComponentInstanceInput> getComponentInstanceInputsByInputId(org.openecomp.sdc.be.model.Component component, String inputId){
@@ -205,10 +206,10 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
             });
         }
         return resList;
-
     }
 
-    public Either<ComponentInstance, ResponseFormat> createComponentInstance(String containerComponentParam, String containerComponentId, String userId, ComponentInstance resourceInstance, boolean inTransaction, boolean needLock) {
+    public Either<ComponentInstance, ResponseFormat> createComponentInstance(
+            String containerComponentParam, String containerComponentId, String userId, ComponentInstance resourceInstance, boolean inTransaction, boolean needLock) {
 
         Component origComponent = null;
         Either<ComponentInstance, ResponseFormat> resultOp = null;
@@ -462,15 +463,15 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         return resultOp;
     }
 
-/**
- * addResourceInstanceArtifacts - add artifacts (HEAT_ENV) to resource instance The instance artifacts are generated from the resource's artifacts
- * @param containerComponent
- * @param componentInstance
- * @param originComponent
- * @param user
- * @param existingEnvVersions
- * @return
- */
+    /**
+     * addResourceInstanceArtifacts - add artifacts (HEAT_ENV) to resource instance The instance artifacts are generated from the resource's artifacts
+     * @param containerComponent
+     * @param componentInstance
+     * @param originComponent
+     * @param user
+     * @param existingEnvVersions
+     * @return
+     */
     protected Either<ActionStatus, ResponseFormat> addComponentInstanceArtifacts(org.openecomp.sdc.be.model.Component containerComponent, ComponentInstance componentInstance, org.openecomp.sdc.be.model.Component originComponent, User user,    Map<String, String> existingEnvVersions) {
 
         log.debug("add artifacts to resource instance");
@@ -584,7 +585,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
     }
 
     public Either<ComponentInstance, ResponseFormat> updateComponentInstanceMetadata(String containerComponentParam, String containerComponentId, String componentInstanceId, String userId, ComponentInstance componentInstance, boolean inTransaction,
-            boolean needLock, boolean createNewTransaction) {
+                                                                                     boolean needLock, boolean createNewTransaction) {
 
         validateUserExists(userId, "update Component Instance", inTransaction);
 
@@ -682,7 +683,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
                 boolean validateParent = validateParent(containerComponent, componentInstance.getUniqueId());
                 if (!validateParent) {
                     resultOp = Either.right(componentsUtils.getResponseFormat(ActionStatus.COMPONENT_INSTANCE_NOT_FOUND_ON_CONTAINER, componentInstance.getName(), instanceType.getValue().toLowerCase(), containerComponentType.getValue().toLowerCase(),
-                        containerComponentId));
+                            containerComponentId));
                     return resultOp;
                 }
             }
@@ -761,7 +762,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
     }
 
     private Either<ComponentInstance, ResponseFormat> updateComponentInstanceMetadata(Component containerComponent, ComponentTypeEnum containerComponentType, org.openecomp.sdc.be.model.Component origComponent, String componentInstanceId,
-            ComponentInstance componentInstance) {
+                                                                                      ComponentInstance componentInstance) {
 
         Either<ComponentInstance, ResponseFormat> resultOp = null;
         Optional<ComponentInstance> componentInstanceOptional = null;
@@ -881,7 +882,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
                 return resultOp;
             }
             Either<ComponentInstance, ResponseFormat> deleteEither = deleteForwardingPathsRelatedTobeDeletedComponentInstance(containerComponentId,
-                containerComponentType, resultOp);
+                    containerComponentType, resultOp);
             if (deleteEither.isRight()){
                 return deleteEither;
             }
@@ -893,7 +894,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
     }
 
     public Either<ComponentInstance, ResponseFormat> deleteForwardingPathsRelatedTobeDeletedComponentInstance(String containerComponentId, ComponentTypeEnum containerComponentType,
-            Either<ComponentInstance, ResponseFormat> resultOp) {
+                                                                                                              Either<ComponentInstance, ResponseFormat> resultOp) {
         if(containerComponentType.equals(ComponentTypeEnum.SERVICE) && resultOp.isLeft() ){
             final ComponentInstance componentInstance = resultOp.left().value();
             List<String> pathIDsToBeDeleted = getForwardingPathsRelatedToComponentInstance(containerComponentId, componentInstance.getName());
@@ -917,7 +918,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
             return Either.right(componentsUtils.getResponseFormat(storageStatus.right().value()));
         }
         Either<Set<String>, StorageOperationStatus> result = forwardingPathOperation.deleteForwardingPath(storageStatus.left().value(),
-            Sets.newHashSet(pathIdsToDelete));
+                Sets.newHashSet(pathIdsToDelete));
 
         if(result.isRight()) {
             return Either.right(componentsUtils.getResponseFormat(result.right().value()));
@@ -944,7 +945,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         return pathDataDefinition.getPathElements().getListToscaDataDefinition()
                 .stream().anyMatch(elementDataDefinition -> elementDataDefinition.getFromNode().equalsIgnoreCase(componentInstanceId) ||
                         elementDataDefinition.getToNode()
-                 .equalsIgnoreCase(componentInstanceId));
+                                .equalsIgnoreCase(componentInstanceId));
     }
 
 
@@ -1021,7 +1022,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
     }
 
     public Either<RequirementCapabilityRelDef, ResponseFormat> associateRIToRI(String componentId, String userId, RequirementCapabilityRelDef requirementDef, ComponentTypeEnum componentTypeEnum, boolean inTransaction, boolean needLock,
-        boolean createNewTransaction) {
+                                                                               boolean createNewTransaction) {
 
         validateUserExists(userId, "associate Ri To RI", inTransaction);
 
@@ -1240,8 +1241,8 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 
     private boolean isBelongingRequirement(RelationshipInfo relationshipInfo, RequirementDataDefinition req) {
         return  req.getName().equals(relationshipInfo.getRequirement()) &&
-            req.getUniqueId().equals(relationshipInfo.getRequirementUid()) &&
-            req.getOwnerId().equals(relationshipInfo.getRequirementOwnerId());
+                req.getUniqueId().equals(relationshipInfo.getRequirementUid()) &&
+                req.getOwnerId().equals(relationshipInfo.getRequirementOwnerId());
     }
 
     private Either<RequirementCapabilityRelDef, ResponseFormat> setRelatedCapability(RequirementCapabilityRelDef foundRelation, Component containerComponent) {
@@ -1688,7 +1689,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
     }
 
     public Either<ComponentInstanceProperty, ResponseFormat> createOrUpdateGroupInstancePropertyValue(ComponentTypeEnum componentTypeEnum, String componentId, String resourceInstanceId, String groupInstanceId, ComponentInstanceProperty property,
-        String userId) {
+                                                                                                      String userId) {
 
         Either<ComponentInstanceProperty, ResponseFormat> resultOp = null;
 
@@ -1955,33 +1956,33 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         return eitherResponse;
     }
 
-      public Either<Set<String>, ResponseFormat> forwardingPathOnVersionChange(String containerComponentParam,
-                                                                                String containerComponentId,
-                                                                                String componentInstanceId,
-                                                                                ComponentInstance newComponentInstance) {
+    public Either<Set<String>, ResponseFormat> forwardingPathOnVersionChange(String containerComponentParam,
+                                                                             String containerComponentId,
+                                                                             String componentInstanceId,
+                                                                             ComponentInstance newComponentInstance) {
         Either<Set<String>, ResponseFormat> resultOp;
         Either<ComponentTypeEnum, ResponseFormat> validateComponentType = validateComponentType(containerComponentParam);
         if (validateComponentType.isRight()) {
-          return Either.right(validateComponentType.right().value());
+            return Either.right(validateComponentType.right().value());
         }
         final ComponentTypeEnum containerComponentType = validateComponentType.left().value();
         ComponentParametersView componentParametersView = getComponentParametersViewForForwardingPath();
 
         //Fetch Component
         Either<org.openecomp.sdc.be.model.Component, ResponseFormat> validateComponentExists =
-            validateComponentExists(containerComponentId, containerComponentType, componentParametersView);
+                validateComponentExists(containerComponentId, containerComponentType, componentParametersView);
         if (validateComponentExists.isRight()) {
-          return Either.right(validateComponentExists.right().value());
+            return Either.right(validateComponentExists.right().value());
         }
         Component containerComponent = validateComponentExists.left().value();
 
         //Fetch current component instance
         Either<ComponentInstance, StorageOperationStatus> eitherResourceInstance =
-            getResourceInstanceById(containerComponent, componentInstanceId);
+                getResourceInstanceById(containerComponent, componentInstanceId);
         if (eitherResourceInstance.isRight()) {
-          resultOp = Either.right(componentsUtils.getResponseFormat(
-              ActionStatus.RESOURCE_INSTANCE_NOT_FOUND_ON_SERVICE, componentInstanceId, containerComponentId));
-          return resultOp;
+            resultOp = Either.right(componentsUtils.getResponseFormat(
+                    ActionStatus.RESOURCE_INSTANCE_NOT_FOUND_ON_SERVICE, componentInstanceId, containerComponentId));
+            return resultOp;
         }
         ComponentInstance currentResourceInstance = eitherResourceInstance.left().value();
 
@@ -1989,29 +1990,29 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         String resourceId = newComponentInstance.getComponentUid();
         Either<Boolean, StorageOperationStatus> componentExistsRes = toscaOperationFacade.validateComponentExists(resourceId);
         if (componentExistsRes.isRight()) {
-          log.debug("Failed to find resource ", resourceId);
-          resultOp = Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse
-              (componentExistsRes.right().value()), resourceId));
-          return resultOp;
+            log.debug("Failed to find resource ", resourceId);
+            resultOp = Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse
+                    (componentExistsRes.right().value()), resourceId));
+            return resultOp;
         } else if (!componentExistsRes.left().value()) {
-          log.debug("The resource {} not found ", resourceId);
-          resultOp = Either.right(componentsUtils.getResponseFormat(ActionStatus.RESOURCE_NOT_FOUND, resourceId));
-          return resultOp;
+            log.debug("The resource {} not found ", resourceId);
+            resultOp = Either.right(componentsUtils.getResponseFormat(ActionStatus.RESOURCE_NOT_FOUND, resourceId));
+            return resultOp;
         }
 
         //Fetch component using new component instance uid
         Either<Component, ResponseFormat> eitherResourceName = getOriginComponentFromComponentInstance(newComponentInstance);
         if (eitherResourceName.isRight()) {
-          resultOp = Either.right(eitherResourceName.right().value());
-          return resultOp;
+            resultOp = Either.right(eitherResourceName.right().value());
+            return resultOp;
         }
         Component updatedContainerComponent=eitherResourceName.left().value();
         Set<String> toDeleteForwardingPaths = getForwardingPaths(containerComponent,
-            currentResourceInstance, updatedContainerComponent);
+                currentResourceInstance, updatedContainerComponent);
         resultOp=Either.left(toDeleteForwardingPaths);
 
         return resultOp;
-      }
+    }
 
     private Set<String> getForwardingPaths(Component containerComponent, ComponentInstance currentResourceInstance,
                                            Component updatedContainerComponent) {
@@ -2022,7 +2023,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         ForwardingPathUtils forwardingPathUtils = new ForwardingPathUtils();
 
         return forwardingPathUtils.
-            getForwardingPathsToBeDeletedOnVersionChange(service,dataForMergeHolder,updatedContainerComponent);
+                getForwardingPathsToBeDeletedOnVersionChange(service,dataForMergeHolder,updatedContainerComponent);
     }
 
     private ComponentParametersView getComponentParametersViewForForwardingPath() {
@@ -2499,7 +2500,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         Component containerComponent = getResourceResult.left().value();
 
         if (!ComponentValidationUtils.canWorkOnComponent(containerComponent, userId)) {
-            log.info("Restricted operation for user: {} on component {}", userId, containerComponentId);
+            log.info("Restricted operation for user: {sourcePropList} on component {}", userId, containerComponentId);
             return Either.right(componentsUtils.getResponseFormat(ActionStatus.RESTRICTED_OPERATION));
         }
         Either<ComponentInstance, StorageOperationStatus> resourceInstanceStatus = getResourceInstanceById(containerComponent, componentInstanceUniqueId);
@@ -2525,8 +2526,8 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
             for (ComponentInstanceProperty property : properties) {
                 Either<String, ResponseFormat> newPropertyValueEither = updatePropertyObjectValue(property, false);
                 newPropertyValueEither.bimap(updatedValue ->
-                        updateCapabilityPropertyOnContainerComponent(property,updatedValue, containerComponent, foundResourceInstance, capabilityType, capabilityName, ownerId),
-                    responseFormat -> Either.right(responseFormat));
+                                updateCapabilityPropertyOnContainerComponent(property,updatedValue, containerComponent, foundResourceInstance, capabilityType, capabilityName, ownerId),
+                        responseFormat -> Either.right(responseFormat));
             }
             Either<Component, StorageOperationStatus> updateContainerRes = toscaOperationFacade.updateComponentInstanceMetadataOfTopologyTemplate(containerComponent);
 
@@ -2550,7 +2551,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
     }
 
     public Either<List<ComponentInstanceProperty>, ResponseFormat> updateInstanceCapabilityProperties(ComponentTypeEnum componentTypeEnum, String containerComponentId, String componentInstanceUniqueId, String capabilityType, String capabilityName,
-        List<ComponentInstanceProperty> properties, String userId) {
+                                                                                                      List<ComponentInstanceProperty> properties, String userId) {
         Either<List<ComponentInstanceProperty>, ResponseFormat> resultOp = null;
 
         validateUserExists(userId, "update instance capability property", false);
@@ -2609,5 +2610,383 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
             // unlock resource
             graphLockOperation.unlockComponent(containerComponentId, componentTypeEnum.getNodeType());
         }
+    }
+
+    public Either<Map<String, ComponentInstance>, ResponseFormat> copyComponentInstance(ComponentInstance inputComponentInstance,
+                                                                                        String containerComponentId,
+                                                                                        String componentInstanceId,
+                                                                                        String userId) {
+
+        Map<String, ComponentInstance> resultMap = new HashMap<>();
+        Either<Component, StorageOperationStatus> getOrigComponent = toscaOperationFacade.getToscaElement(containerComponentId);
+        if (getOrigComponent.isRight()) {
+            log.error("Failed to get the original component information");
+            return Either.right(componentsUtils.getResponseFormat(
+                    ActionStatus.USER_DEFINED, "Failed to copy the component instance to the canvas"));
+        }
+
+        Component origComponent = getOrigComponent.left().value();
+
+        Either<Boolean, ResponseFormat> lockComponent = lockComponent(origComponent, "copyComponentInstance");
+        if (lockComponent.isRight()) {
+            log.error("destComponentInstance's data is {}", origComponent.toString());
+            return Either.right(lockComponent.right().value());
+        }
+
+
+        Either<ComponentInstance, ResponseFormat> actionResponse = null;
+        try {
+            actionResponse = createComponentInstance(
+                    "services", containerComponentId, userId, inputComponentInstance, true, false);
+
+
+        }
+        finally {
+
+            // on failure of the create instance unlock the resource and rollback the transaction.
+            if (null== actionResponse || actionResponse.isRight()) {
+                titanDao.rollback();
+                log.error("Failed to copy the component instance to the canvas");
+
+                unlockComponent(actionResponse, origComponent);
+
+                return Either.right(componentsUtils.getResponseFormat(
+                        ActionStatus.USER_DEFINED, "Failed to copy the component instance to the canvas"));
+            }
+
+        }
+
+        Either<String, ResponseFormat> resultOp = null;
+
+        try {
+            ComponentInstance destComponentInstance = actionResponse.left().value();
+            log.debug("destComponentInstance's data is {}", destComponentInstance.toString());
+
+
+            resultOp = deepCopyComponentInstance(
+                    origComponent, containerComponentId, componentInstanceId, destComponentInstance, userId);
+
+            resultMap.put("componentInstance", destComponentInstance);
+        }
+        finally{
+            // unlock resource
+            unlockComponent(resultOp, origComponent);
+
+            if (resultOp == null || resultOp.isRight()) {
+                titanDao.rollback();
+                log.error("Failed to deep copy component instance");
+                return Either.right(componentsUtils.getResponseFormat(
+                        ActionStatus.USER_DEFINED, "Failed to deep copy the component instance to the canvas"));
+            } else {
+                titanDao.commit();
+                log.debug("Success trasaction commit");
+            }
+        }
+
+        return Either.left(resultMap);
+    }
+
+    private Either<String, ResponseFormat> deepCopyComponentInstance(
+            Component sourceComponent, String containerComponentId, String sourceComponentInstanceId,
+            ComponentInstance destComponentInstance, String userId) {
+
+        Either<Component, StorageOperationStatus> getDestComponent = toscaOperationFacade.getToscaElement(containerComponentId);
+        if (getDestComponent.isRight()) {
+            log.error("Failed to get the dest component information");
+            return Either.right(componentsUtils.getResponseFormat(
+                    ActionStatus.USER_DEFINED, "Failed to copy the component instance to the canvas"));
+        }
+
+        Component destComponent = getDestComponent.left().value();
+
+        Either<String, ResponseFormat> copyComponentInstanceWithPropertiesAndInputs = copyComponentInstanceWithPropertiesAndInputs(
+                sourceComponent, destComponent, sourceComponentInstanceId, destComponentInstance, userId);
+        if (copyComponentInstanceWithPropertiesAndInputs.isRight()) {
+            log.error("Failed to copy component instance with properties and inputs as part of deep copy");
+            return Either.right(componentsUtils.getResponseFormat(
+                    ActionStatus.USER_DEFINED, "Failed to copy the component instance with properties and inputs as part of deep copy"));
+        }
+
+        Either<String, ResponseFormat> copyComponentInstanceWithAttributes = copyComponentInstanceWithAttributes(
+                sourceComponent, destComponent, sourceComponentInstanceId, destComponentInstance, userId);
+        if (copyComponentInstanceWithAttributes.isRight()) {
+            log.error("Failed to copy component instance with attributes as part of deep copy");
+            return Either.right(componentsUtils.getResponseFormat(
+                    ActionStatus.USER_DEFINED, "Failed to copy the component instance with attributes as part of deep copy"));
+        }
+        return Either.left("Copy component Instance OK");
+    }
+
+    private Either<String, ResponseFormat> copyComponentInstanceWithPropertiesAndInputs(
+            Component sourceComponent, Component destComponent, String sourceComponentInstanceId,
+            ComponentInstance destComponentInstance, String userId) {
+        log.debug("start to copy ComponentInstance with properties and inputs");
+
+        List<ComponentInstanceProperty> sourcePropList = null;
+        if (sourceComponent.getComponentInstancesProperties() != null
+                && sourceComponent.getComponentInstancesProperties().get(sourceComponentInstanceId) != null) {
+            sourcePropList = sourceComponent.getComponentInstancesProperties().get(sourceComponentInstanceId);
+            log.debug("sourcePropList");
+        }
+
+        List<ComponentInstanceProperty> destPropList = null;
+        String destComponentInstanceId = destComponentInstance.getUniqueId();
+        log.debug("destComponentInstanceId: {}", destComponentInstance.getUniqueId());
+        if (destComponent.getComponentInstancesProperties() != null
+                && destComponent.getComponentInstancesProperties().get(destComponentInstanceId) != null) {
+            destPropList = destComponent.getComponentInstancesProperties().get(destComponentInstanceId);
+            log.debug("destPropList {}");
+        }
+
+        List<ComponentInstancePropInput> componentInstancePropInputList = new ArrayList<>();
+
+        if (null != destPropList && null != sourcePropList) {
+            log.debug("start to set property and attribute");
+            for (ComponentInstanceProperty destProp : destPropList) {
+                String destPropertyName = destProp.getName();
+                for (ComponentInstanceProperty sourceProp : sourcePropList) {
+                    if (!destPropertyName.equals(sourceProp.getName())) {
+                        continue;
+                    }
+                    log.debug("now set property");
+                    if (sourceProp.getGetInputValues() == null && !StringUtils.isEmpty(sourceProp.getValue())
+                            && (destProp.getValue() == null || !destProp.getValue().equals(sourceProp.getValue()))) {
+                        log.debug("Now starting to copy the property {} in value {}", destPropertyName, sourceProp.getValue());
+
+                        destProp.setValue(sourceProp.getValue());
+                        Either<String, ResponseFormat> updatePropertyValueEither = updateComponentInstanceProperty(
+                                destComponent.getUniqueId(), destComponentInstanceId, destProp);
+                        if (updatePropertyValueEither.isRight()) {
+                            log.error("Failed to copy the property {}", destPropertyName);
+                            return Either.right(componentsUtils.getResponseFormat(
+                                    ActionStatus.INVALID_CONTENT_PARAM, "Failed to paste component instance to the canvas, property copy"));
+                        }
+                        break;
+                    }
+
+                    log.debug("Now start to update inputs");
+
+                    if (sourceProp.getGetInputValues() != null) {
+                        if (sourceProp.getGetInputValues().size() < 1) {
+                            log.debug("property is return from input, set by man");
+                            break;
+                        }
+                        log.debug("Now starting to copy the {} property", destPropertyName);
+
+                        Either<String, ResponseFormat> getSourceInputDefaultValue = getInputListDefaultValue(
+                                sourceComponent, sourceProp.getGetInputValues().get(0).getInputId());
+                        if (getSourceInputDefaultValue.isRight()) {
+                            return Either.right(getSourceInputDefaultValue.right().value());
+                        }
+                        componentInstancePropInputList.add(new ComponentInstancePropInput(destProp));
+                    }
+                }
+            }
+        }
+        return Either.left("Copy component Instance OK");
+    }
+
+    private Either<String, ResponseFormat> copyComponentInstanceWithAttributes(Component sourceComponent,
+                                                                               Component destComponent,
+                                                                               String sourceComponentInstanceId,
+                                                                               ComponentInstance destComponentInstance,
+                                                                               String userId) {
+        String destComponentInstanceId = destComponentInstance.getUniqueId();
+
+        log.info("start to copy component instance with attributes");
+
+        List<ComponentInstanceProperty> sourceAttributeList = null;
+        if (sourceComponent.getComponentInstancesAttributes() != null
+                && sourceComponent.getComponentInstancesAttributes().get(sourceComponentInstanceId) != null) {
+            sourceAttributeList = sourceComponent.getComponentInstancesAttributes().get(sourceComponentInstanceId);
+            log.info("sourceAttributes {}");
+        }
+
+        List<ComponentInstanceProperty> destAttributeList = null;
+        if (destComponent.getComponentInstancesAttributes() != null
+                && destComponent.getComponentInstancesAttributes().get(destComponentInstanceId) != null) {
+            destAttributeList = destComponent.getComponentInstancesAttributes().get(destComponentInstanceId);
+            log.info("destAttributeList {}");
+        }
+        if (null != sourceAttributeList && null != destAttributeList) {
+            log.info("set attribute");
+
+            for (ComponentInstanceProperty sourceAttribute : sourceAttributeList) {
+                String sourceAttributeName = sourceAttribute.getName();
+                for (ComponentInstanceProperty destAttribute : destAttributeList) {
+                    if (sourceAttributeName.equals(destAttribute.getName())) {
+                        if (sourceAttribute.getValue() != null && !sourceAttribute.getValue().isEmpty()) {
+                            log.debug("Start to copy the attribute exists {}", sourceAttributeName);
+
+                            sourceAttribute.setUniqueId(
+                                    UniqueIdBuilder.buildResourceInstanceUniuqeId(
+                                    "attribute" , destComponentInstanceId.split("\\.")[1] , sourceAttributeName));
+
+                            Either<ComponentInstanceProperty, ResponseFormat> updateAttributeValueEither =
+                                    createOrUpdateAttributeValueForCopyPaste(ComponentTypeEnum.SERVICE,
+                                            destComponent.getUniqueId(), destComponentInstanceId, sourceAttribute,
+                                            userId);
+                            if (updateAttributeValueEither.isRight()) {
+                                log.error("Failed to copy the attribute");
+                                return Either.right(componentsUtils
+                                        .getResponseFormat(ActionStatus.INVALID_CONTENT_PARAM,
+                                                "Failed to paste component instance to the canvas, attribute copy"));
+                            }
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        return Either.left("Copy component Instance OK");
+    }
+
+    private Either<ComponentInstanceProperty, ResponseFormat> createOrUpdateAttributeValueForCopyPaste(ComponentTypeEnum componentTypeEnum,
+                                                                                                       String componentId,
+                                                                                                       String resourceInstanceId,
+                                                                                                       ComponentInstanceProperty attribute,
+                                                                                                       String userId) {
+
+        Either<ComponentInstanceProperty, ResponseFormat> resultOp = null;
+
+        validateUserExists(userId, "Create or Update attribute value", false);
+
+        if (componentTypeEnum == null) {
+            BeEcompErrorManager.getInstance().logInvalidInputError(
+                    "createOrUpdateAttributeValue", "invalid component type", ErrorSeverity.INFO);
+            resultOp = Either.right(componentsUtils.getResponseFormat(ActionStatus.NOT_ALLOWED));
+            return resultOp;
+        }
+
+        Either<Component, StorageOperationStatus> getResourceResult = toscaOperationFacade.getToscaElement(componentId, JsonParseFlagEnum.ParseAll);
+
+        if (getResourceResult.isRight()) {
+            log.info("Failed to retrieve component id {}", componentId);
+            resultOp = Either.right(componentsUtils.getResponseFormat(ActionStatus.RESTRICTED_OPERATION));
+            return resultOp;
+        }
+
+        Component containerComponent = getResourceResult.left().value();
+
+        Either<ComponentInstance, StorageOperationStatus> resourceInstanceStatus = getResourceInstanceById(containerComponent, resourceInstanceId);
+
+        if (resourceInstanceStatus.isRight()) {
+            resultOp = Either.right(componentsUtils.getResponseFormat(
+                    ActionStatus.RESOURCE_INSTANCE_NOT_FOUND_ON_SERVICE, resourceInstanceId, componentId));
+            return resultOp;
+        }
+
+        ComponentInstance foundResourceInstance = resourceInstanceStatus.left().value();
+
+
+        String propertyType = attribute.getType();
+        ToscaPropertyType type = ToscaPropertyType.isValidType(propertyType);
+        log.info("The type of attribute id{},is {} ", attribute.getUniqueId(), propertyType);
+
+        if (type == ToscaPropertyType.LIST || type == ToscaPropertyType.MAP) {
+            SchemaDefinition def = attribute.getSchema();
+            if (def == null) {
+                log.info("Schema doesn't exists for attribute of type {}", type);
+                return Either.right(componentsUtils.getResponseFormat(
+                        componentsUtils.convertFromStorageResponse(StorageOperationStatus.INVALID_VALUE)));
+            }
+            PropertyDataDefinition propDef = def.getProperty();
+            if (propDef == null) {
+                log.info("Attribute in Schema Definition inside attribute of type {} doesn't exist", type);
+                return Either.right(componentsUtils.getResponseFormat(
+                        componentsUtils.convertFromStorageResponse(StorageOperationStatus.INVALID_VALUE)));
+            }
+        }
+
+        List<ComponentInstanceProperty> instanceAttributes = containerComponent.
+                getComponentInstancesAttributes().get(resourceInstanceId);
+        Optional<ComponentInstanceProperty> instanceAttribute =
+                instanceAttributes.stream().filter(p -> p.getUniqueId().equals(attribute.getUniqueId())).findAny();
+        StorageOperationStatus status;
+
+        if (instanceAttribute.isPresent()) {
+            log.info("updateComponentInstanceAttribute");
+            status = toscaOperationFacade.updateComponentInstanceAttribute(containerComponent, foundResourceInstance.getUniqueId(), attribute);
+        } else {
+            log.info("addComponentInstanceAttribute");
+            status = toscaOperationFacade.addComponentInstanceAttribute(containerComponent, foundResourceInstance.getUniqueId(), attribute);
+        }
+        if (status != StorageOperationStatus.OK) {
+            ActionStatus actionStatus = componentsUtils.convertFromStorageResponseForResourceInstanceProperty(status);
+            resultOp = Either.right(componentsUtils.getResponseFormatForResourceInstanceProperty(actionStatus, ""));
+            return resultOp;
+        }
+        List<String> path = new ArrayList<>();
+        path.add(foundResourceInstance.getUniqueId());
+        attribute.setPath(path);
+
+        foundResourceInstance.setCustomizationUUID(UUID.randomUUID().toString());
+        Either<Component, StorageOperationStatus> updateContainerRes = toscaOperationFacade.
+                updateComponentInstanceMetadataOfTopologyTemplate(containerComponent);
+
+        if (updateContainerRes.isRight()) {
+            ActionStatus actionStatus = componentsUtils.
+                    convertFromStorageResponseForResourceInstanceProperty(updateContainerRes.right().value());
+            resultOp = Either.right(componentsUtils.
+                    getResponseFormatForResourceInstanceProperty(actionStatus, ""));
+            return resultOp;
+        }
+        resultOp = Either.left(attribute);
+        return resultOp;
+
+
+
+    }
+
+    private Either<String, ResponseFormat> updateComponentInstanceProperty(String containerComponentId,
+                                                                           String componentInstanceId,
+                                                                           ComponentInstanceProperty property) {
+        Either<String, ResponseFormat> resultOp;
+        Either<Component, StorageOperationStatus> getComponent = toscaOperationFacade.getToscaElement(containerComponentId);
+
+        if (getComponent.isRight()) {
+            log.error("Failed to get the component information");
+            return Either.right(componentsUtils.getResponseFormatForResourceInstanceProperty(
+                    ActionStatus.INVALID_CONTENT_PARAM, "Failed to get the component information"));
+        }
+
+        Component containerComponent = getComponent.left().value();
+
+        StorageOperationStatus status = toscaOperationFacade.updateComponentInstanceProperty(
+                containerComponent, componentInstanceId, property);
+        if (status != StorageOperationStatus.OK) {
+            ActionStatus actionStatus = componentsUtils.convertFromStorageResponseForResourceInstanceProperty(status);
+            resultOp = Either.right(componentsUtils.getResponseFormatForResourceInstanceProperty(actionStatus, ""));
+            return resultOp;
+        }
+
+        Either<Component, StorageOperationStatus> updateContainerRes = toscaOperationFacade.
+                updateComponentInstanceMetadataOfTopologyTemplate(containerComponent);
+
+        if (updateContainerRes.isRight()) {
+            ActionStatus actionStatus = componentsUtils.
+                    convertFromStorageResponseForResourceInstanceProperty(updateContainerRes.right().value());
+            resultOp = Either.right(componentsUtils.getResponseFormatForResourceInstanceProperty(actionStatus, ""));
+            return resultOp;
+        }
+
+        return Either.left("Update OK");
+    }
+
+    private Either<String, ResponseFormat> getInputListDefaultValue(Component component, String inputId) {
+        List<InputDefinition> inputList = component.getInputs();
+        for (InputDefinition input : inputList) {
+            if (input.getUniqueId().equals(inputId)) {
+                if (input.getDefaultValue() == null) {
+                    log.debug("The input's default value is null");
+                    return Either.left(null);
+                }
+                return Either.left(input.getDefaultValue());
+            }
+        }
+        log.error("The input's default value with id {} is not found", inputId);
+        return Either.right(componentsUtils.getResponseFormat(
+                ActionStatus.USER_DEFINED, "Failed to paste component instance to the canvas"));
     }
 }
