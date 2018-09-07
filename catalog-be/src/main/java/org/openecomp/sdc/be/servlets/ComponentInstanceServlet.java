@@ -54,10 +54,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.InputStream;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Root resource (exposed at "/" path) .json
@@ -1203,6 +1200,68 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
         forwardingPaths.setForwardingPathToDelete(actionResponse.left().value());
         return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), forwardingPaths);
 
+    }
+
+    @POST
+    @Path("/services/{componentId}/copyComponentInstance")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces((MediaType.APPLICATION_JSON))
+    @ApiOperation(value = "Copy Component Instance", httpMethod = "POST", notes = "Returns updated service information", response = Service.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 201, message = "Copy and Paste Success"),
+            @ApiResponse(code = 403, message = "Restricted Operation"),
+            @ApiResponse(code = 400, message = "Invalid Content / Missing content")  })
+    public Response copyComponentInstance(
+            @ApiParam(value = "service unique id in pasted canvas") @PathParam("componentId") final String componentId,
+            @ApiParam(value = "Data for copying", required = true) String data,
+            @Context final HttpServletRequest request) {
+        log.info("Start to copy component instance");
+
+        ServletContext context = request.getSession().getServletContext();
+        ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName("services");
+        ComponentInstanceBusinessLogic componentInstanceLogic = getComponentInstanceBL(context);
+
+        if(componentInstanceLogic == null)
+        {
+            log.error("componentInstanceLogic is null!");
+            return buildErrorResponse(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
+        }
+        String userId = request.getHeader(Constants.USER_ID_HEADER);
+        log.info("userId {}", userId);
+
+        ObjectMapper mapper = new ObjectMapper();
+        String origComponentId;
+        String componentInstanceId;
+        String posX;
+        String posY;
+
+        log.info("data for copying is {}", data);
+        try
+        {
+            Map<String, String> resultMap = null;
+            resultMap = mapper.readValue(data, Map.class);
+            origComponentId = resultMap.get("origComponentId");
+            componentInstanceId = resultMap.get("componentInstanceId");
+            posX = resultMap.get("posX");
+            posY = resultMap.get("posY");
+        }
+
+        catch(Exception e)
+        {
+            log.error("Failed to convert json to Map { }, error: { }", data, e.toString());
+            return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.USER_DEFINED,
+                    "Failed to get the copied component instance information"));
+        }
+
+        log.info("data convert to map: origComponentId { }, componentInstanceId { }, posX { }, posY { }", origComponentId, componentInstanceId, posX, posY);
+        Either<Map<String, ComponentInstance>, ResponseFormat> copyComponentInstance = componentInstanceLogic.copyComponentInstance(origComponentId, componentId, componentInstanceId, posX, posY, userId);
+        if(copyComponentInstance.isRight())
+        {
+            return buildErrorResponse(copyComponentInstance.right().value());
+        }
+
+        return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK),
+                copyComponentInstance.left().value());
     }
 
 }

@@ -2222,6 +2222,14 @@ public class ToscaOperationFacade {
         return nodeTemplateOperation.addComponentInstanceProperty(containerComponent, componentInstanceId, property);
     }
 
+    public StorageOperationStatus updateComponentInstanceAttribute(Component containerComponent, String componentInstanceId, ComponentInstanceProperty property){
+        return nodeTemplateOperation.updateComponentInstanceAttribute(containerComponent, componentInstanceId, property);
+    }
+
+    public StorageOperationStatus addComponentInstanceAttribute(Component containerComponent, String componentInstanceId, ComponentInstanceProperty property){
+        return nodeTemplateOperation.addComponentInstanceAttribute(containerComponent, componentInstanceId, property);
+    }
+
     public StorageOperationStatus updateComponentInstanceInput(Component containerComponent, String componentInstanceId, ComponentInstanceInput property) {
         return nodeTemplateOperation.updateComponentInstanceInput(containerComponent, componentInstanceId, property);
     }
