@@ -1,6 +1,5 @@
 package org.openecomp.sdc.be.components.impl;
 
-import static org.junit.Assert.assertSame;
 import static org.assertj.core.api.Assertions.assertThat;
 import fj.data.Either;
 
@@ -16,14 +15,18 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.components.validation.UserValidations;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
+import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
 import org.openecomp.sdc.be.datatypes.elements.*;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
+import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.ServletUtils;
 import org.openecomp.sdc.be.info.CreateAndAssotiateInfo;
@@ -32,19 +35,22 @@ import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.jsontitan.operations.ForwardingPathOperation;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
+import org.openecomp.sdc.be.model.operations.impl.GraphLockOperation;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
+import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
 import org.openecomp.sdc.exception.ResponseFormat;
 
 import java.util.function.BiPredicate;
 
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anySet;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
-import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 
@@ -86,6 +92,14 @@ public class ComponentInstanceBusinessLogicTest {
     private User user;
     @Mock
     private UserValidations userValidations;
+    @Mock
+    private TitanDao titanDao;
+    @Mock
+    private ArtifactsBusinessLogic artifactBusinessLogic;
+    @Mock
+    private GraphLockOperation graphLockOperation;
+    @Mock
+    private AdditionalInformationBusinessLogic additionalInformationBusinessLogic;
     private Component service;
     private Component resource;
     private ComponentInstance toInstance;
@@ -158,8 +172,8 @@ public class ComponentInstanceBusinessLogicTest {
 
         Either<Set<String>, ResponseFormat> resultOp = componentInstanceBusinessLogic.forwardingPathOnVersionChange
             (containerComponentParam,containerComponentID,componentInstanceID,newComponentInstance);
-        Assert.assertEquals(1,resultOp.left().value().size());
-        Assert.assertEquals("FP-ID-1",resultOp.left().value().iterator().next());
+        assertEquals(1,resultOp.left().value().size());
+        assertEquals("FP-ID-1",resultOp.left().value().iterator().next());
 
     }
 
@@ -1066,5 +1080,211 @@ public class ComponentInstanceBusinessLogicTest {
         result=testSubject.updateInstanceCapabilityProperties(componentTypeEnum, containerComponentId, componentInstanceUniqueId, capabilityType, capabilityName, properties, userId);
         when(toscaOperationFacade.getToscaFullElement(containerComponentId)).thenReturn(Either.left(resource));
         result=testSubject.updateInstanceCapabilityProperties(componentTypeEnum, containerComponentId, componentInstanceUniqueId, capabilityType, capabilityName, properties, userId);
+    }
+
+    @Test
+    public void testCopyComponentInstanceWrongUserId() {
+
+        Either<Map<String, ComponentInstance>, ResponseFormat> result;
+        ComponentInstance inputComponentInstance = createComponetInstanceFromComponent(resource);
+        String containerComponentId = service.getUniqueId();
+        String componentInstanceId = resource.getUniqueId();
+        String oldLastUpdatedUserId = service.getLastUpdaterUserId();
+        service.setLastUpdaterUserId("wrong user id");
+
+        Either<Component, StorageOperationStatus> leftServiceOp = Either.left(service);
+        when(toscaOperationFacade.getToscaElement(containerComponentId)).thenReturn(leftServiceOp);
+        when(toscaOperationFacade.getToscaElement(eq(containerComponentId), any(ComponentParametersView.class)))
+                .thenReturn(leftServiceOp);
+        when(titanDao.rollback()).thenReturn(TitanOperationStatus.OK);
+        when(graphLockOperation.unlockComponent(Mockito.anyString(), eq(NodeTypeEnum.Service)))
+                .thenReturn(StorageOperationStatus.OK);
+        when(graphLockOperation.lockComponent(Mockito.anyString(), eq(NodeTypeEnum.Service)))
+                .thenReturn(StorageOperationStatus.OK);
+
+        result = componentInstanceBusinessLogic
+                .copyComponentInstance(inputComponentInstance, containerComponentId, componentInstanceId, USER_ID);
+
+        service.setLastUpdaterUserId(oldLastUpdatedUserId);
+
+        assertThat(result.isRight());
+    }
+
+    @Test
+    public void testCopyComponentInstanceComponentWrongState() {
+        Either<Map<String, ComponentInstance>, ResponseFormat> result;
+        ComponentInstance inputComponentInstance = createComponetInstanceFromComponent(resource);
+        String containerComponentId = service.getUniqueId();
+        String componentInstanceId = resource.getUniqueId();
+        String oldServiceLastUpdatedUserId = service.getLastUpdaterUserId();
+        service.setLastUpdaterUserId(USER_ID);
+
+        Either<Component, StorageOperationStatus> leftServiceOp = Either.left(service);
+        when(toscaOperationFacade.getToscaElement(containerComponentId)).thenReturn(leftServiceOp);
+        when(toscaOperationFacade.getToscaElement(eq(containerComponentId), any(ComponentParametersView.class)))
+                .thenReturn(leftServiceOp);
+        when(titanDao.rollback()).thenReturn(TitanOperationStatus.OK);
+        when(graphLockOperation.unlockComponent(Mockito.anyString(), eq(NodeTypeEnum.Service)))
+                .thenReturn(StorageOperationStatus.OK);
+        when(graphLockOperation.lockComponent(Mockito.anyString(), eq(NodeTypeEnum.Service)))
+                .thenReturn(StorageOperationStatus.OK);
+        Either<Component, StorageOperationStatus> getComponentRes = Either.left(resource);
+        when(toscaOperationFacade.getToscaFullElement(inputComponentInstance.getComponentUid()))
+                .thenReturn(getComponentRes);
+
+        result = componentInstanceBusinessLogic
+                .copyComponentInstance(inputComponentInstance, containerComponentId, componentInstanceId, USER_ID);
+
+        service.setLastUpdaterUserId(oldServiceLastUpdatedUserId);
+
+        assertThat(result.isRight());
+    }
+
+    @Test
+    public void testCopyComponentInstance() {
+        Either<Map<String, ComponentInstance>, ResponseFormat> result;
+        ComponentInstance inputComponentInstance = createComponetInstanceFromComponent(resource);
+        String containerComponentId = service.getUniqueId();
+        String componentInstanceId = resource.getUniqueId();
+        String oldServiceLastUpdatedUserId = service.getLastUpdaterUserId();
+        service.setLastUpdaterUserId(USER_ID);
+        LifecycleStateEnum oldResourceLifeCycle = resource.getLifecycleState();
+        resource.setLifecycleState(LifecycleStateEnum.CERTIFIED);
+
+        Either<Component, StorageOperationStatus> leftServiceOp = Either.left(service);
+        when(toscaOperationFacade.getToscaElement(containerComponentId)).thenReturn(leftServiceOp);
+        when(toscaOperationFacade.getToscaElement(eq(containerComponentId), any(ComponentParametersView.class)))
+                .thenReturn(leftServiceOp);
+        when(graphLockOperation.unlockComponent(Mockito.anyString(), eq(NodeTypeEnum.Service)))
+                .thenReturn(StorageOperationStatus.OK);
+        when(graphLockOperation.lockComponent(Mockito.anyString(), eq(NodeTypeEnum.Service)))
+                .thenReturn(StorageOperationStatus.OK);
+        Either<Component, StorageOperationStatus> getComponentRes = Either.left(resource);
+        when(toscaOperationFacade.getToscaFullElement(inputComponentInstance.getComponentUid()))
+                .thenReturn(getComponentRes);
+        ImmutablePair<Component, String> pair = new ImmutablePair<>(resource, TO_INSTANCE_ID);
+        Either<ImmutablePair<Component, String>, StorageOperationStatus> result2 = Either.left(pair);
+        when(toscaOperationFacade
+                .addComponentInstanceToTopologyTemplate(eq(service), eq(resource), eq(inputComponentInstance), eq(false),
+                        isNull(User.class))).thenReturn(result2);
+        Either<Map<String, ArtifactDefinition>, StorageOperationStatus> getResourceDeploymentArtifacts = Either
+                .left(new HashMap<String, ArtifactDefinition>());
+        when(artifactBusinessLogic.getArtifacts(eq(inputComponentInstance.getComponentUid()), eq(NodeTypeEnum.Resource),
+                eq(ArtifactGroupTypeEnum.DEPLOYMENT), isNull(String.class))).thenReturn(getResourceDeploymentArtifacts);
+        StorageOperationStatus artStatus = StorageOperationStatus.OK;
+        when(toscaOperationFacade
+                .addInformationalArtifactsToInstance(eq(resource.getUniqueId()), eq(inputComponentInstance),
+                        isNull(Map.class))).thenReturn(artStatus);
+        AdditionalInformationDefinition aid = Mockito.mock(AdditionalInformationDefinition.class);
+        Either<AdditionalInformationDefinition, ResponseFormat> getAdditionalInfo = Either.left(aid);
+        when(additionalInformationBusinessLogic
+                .getAllAdditionalInformation(eq(NodeTypeEnum.Service), anyString(), anyString()))
+                .thenReturn(getAdditionalInfo);
+
+        result = componentInstanceBusinessLogic
+                .copyComponentInstance(inputComponentInstance, containerComponentId, componentInstanceId, USER_ID);
+
+        service.setLastUpdaterUserId(oldServiceLastUpdatedUserId);
+        resource.setLifecycleState(oldResourceLifeCycle);
+
+        assertThat(result.isLeft());
+    }
+
+    @Test
+    public void testCreateOrUpdateAttributeValueForCopyPaste() {
+        ComponentInstance serviceComponentInstance = createComponetInstanceFromComponent(service);
+        ComponentInstanceProperty attribute = new ComponentInstanceProperty();
+        attribute.setType("string");
+        attribute.setUniqueId("testCreateOrUpdateAttributeValueForCopyPaste");
+        SchemaDefinition def = Mockito.mock(SchemaDefinition.class);
+        attribute.setSchema(def);
+        LifecycleStateEnum oldLifeCycleState = service.getLifecycleState();
+        String oldLastUpdatedUserId = service.getLastUpdaterUserId();
+        service.setLastUpdaterUserId(USER_ID);
+        service.setLifecycleState(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
+
+        Map<String, List<ComponentInstanceProperty>> instAttrsMap = new HashMap<String, List<ComponentInstanceProperty>>();
+        List<ComponentInstanceProperty> instAttrsList = new ArrayList<ComponentInstanceProperty>();
+        ComponentInstanceProperty prop = new ComponentInstanceProperty();
+        prop.setUniqueId(attribute.getUniqueId());
+        instAttrsList.add(prop);
+        instAttrsMap.put(toInstance.getUniqueId(), instAttrsList);
+        service.setComponentInstancesAttributes(instAttrsMap);
+
+        Either<Component, StorageOperationStatus> serviceEitherLeft = Either.left(service);
+        when(toscaOperationFacade.getToscaElement(serviceComponentInstance.getUniqueId(), JsonParseFlagEnum.ParseAll)).thenReturn(serviceEitherLeft);
+        when(toscaOperationFacade.updateComponentInstanceAttribute(service, toInstance.getUniqueId(), attribute)).thenReturn(StorageOperationStatus.OK);
+        when(toscaOperationFacade.updateComponentInstanceMetadataOfTopologyTemplate(service)).thenReturn(serviceEitherLeft);
+
+        Either<ComponentInstanceProperty, ResponseFormat> result = Deencapsulation.invoke(componentInstanceBusinessLogic, "createOrUpdateAttributeValueForCopyPaste", ComponentTypeEnum.SERVICE,
+                serviceComponentInstance.getUniqueId(),
+                toInstance.getUniqueId(),
+                attribute,
+                USER_ID);
+
+        service.setLastUpdaterUserId(oldLastUpdatedUserId);
+        service.setLifecycleState(oldLifeCycleState);
+
+        assertTrue(result.isLeft());
+        ComponentInstanceProperty resultProp = result.left().value();
+        assertEquals(resultProp.getPath().size(), 1);
+        assertEquals(resultProp.getPath().get(0), toInstance.getUniqueId());
+    }
+
+    @Test
+    public void testUpdateComponentInstanceProperty() {
+
+        String containerComponentId = service.getUniqueId();
+        String componentInstanceId = "dummy_id";
+        ComponentInstanceProperty property = Mockito.mock(ComponentInstanceProperty.class);
+
+        Either<Component, StorageOperationStatus> getComponent = Either.left(service);
+        when(toscaOperationFacade.getToscaElement(containerComponentId)).thenReturn(getComponent);
+        StorageOperationStatus status = StorageOperationStatus.OK;
+        when(toscaOperationFacade.updateComponentInstanceProperty(service, componentInstanceId, property))
+                .thenReturn(status);
+        Either<Component, StorageOperationStatus> updateContainerRes = Either.left(service);
+        when(toscaOperationFacade.updateComponentInstanceMetadataOfTopologyTemplate(service))
+                .thenReturn(updateContainerRes);
+
+        Either<String, ResponseFormat> result = Deencapsulation
+                .invoke(componentInstanceBusinessLogic, "updateComponentInstanceProperty", containerComponentId,
+                        componentInstanceId, property);
+
+        assertTrue(result.isLeft());
+    }
+
+    @Test
+    public void testGetInputListDefaultValue() {
+        Component component = service;
+        String inputId = "dummy_id";
+        String defaultValue = "dummy_default_value";
+        List<InputDefinition> newInputs = new ArrayList<InputDefinition>();
+        InputDefinition in = new InputDefinition();
+        in.setUniqueId(inputId);
+        in.setDefaultValue(defaultValue);
+        newInputs.add(in);
+        List<InputDefinition> oldInputs = service.getInputs();
+        service.setInputs(newInputs);
+
+        Either<String, ResponseFormat> result = Deencapsulation
+                .invoke(componentInstanceBusinessLogic, "getInputListDefaultValue", component, inputId);
+
+        service.setInputs(oldInputs);
+
+        assertEquals(result.left().value(), defaultValue);
+    }
+
+    private ComponentInstance createComponetInstanceFromComponent(Component component) {
+        ComponentInstance componentInst = new ComponentInstance();
+        componentInst.setUniqueId(component.getUniqueId());
+        componentInst.setComponentUid(component.getUniqueId() + "_test");
+        componentInst.setPosX("10");
+        componentInst.setPosY("10");
+        componentInst.setCapabilities(component.getCapabilities());
+        componentInst.setRequirements(component.getRequirements());
+        componentInst.setArtifacts(component.getArtifacts());
+        componentInst.setDeploymentArtifacts(component.getDeploymentArtifacts());
+        return componentInst;
     }
 }
