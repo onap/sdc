@@ -21,7 +21,6 @@
 package org.openecomp.sdc.be.components.impl;
 
 import com.google.common.collect.Sets;
-import com.google.gson.JsonObject;
 import fj.data.Either;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
@@ -48,13 +47,14 @@ import org.openecomp.sdc.be.model.PropertyDefinition.PropertyNames;
 import org.openecomp.sdc.be.model.jsontitan.operations.ForwardingPathOperation;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.jsontitan.utils.ModelConverter;
+import org.openecomp.sdc.be.model.operations.api.IAdditionalInformationOperation;
 import org.openecomp.sdc.be.model.operations.api.IComponentInstanceOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.DaoStatusConverter;
 import org.openecomp.sdc.be.model.operations.utils.ComponentValidationUtils;
 import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
 import org.openecomp.sdc.be.resources.data.ComponentInstanceData;
-import org.openecomp.sdc.be.servlets.RepresentationUtils;
+
 import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
 import org.openecomp.sdc.common.api.ArtifactTypeEnum;
 import org.openecomp.sdc.common.api.Constants;
@@ -65,11 +65,19 @@ import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.common.util.ValidationUtils;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.context.ContextLoader;
-import org.springframework.web.context.WebApplicationContext;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
@@ -102,6 +110,9 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 
     @Autowired
     private ForwardingPathOperation forwardingPathOperation;
+
+    @Autowired
+    private IAdditionalInformationOperation additionalInfoOperation;
 
 
     public ComponentInstanceBusinessLogic() {
@@ -1064,11 +1075,41 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 
     }
 
-    public Either<RequirementCapabilityRelDef, ResponseFormat> dissociateRIFromRI(String componentId, String userId, RequirementCapabilityRelDef requirementDef, ComponentTypeEnum componentTypeEnum) {
+    /**
+     * @param componentId
+     * @param userId
+     * @param requirementDefList
+     * @param componentTypeEnum
+     * @return
+     */
+    public List<RequirementCapabilityRelDef> dissociateRIFromRI(
+            String componentId,
+            String userId,
+            List<RequirementCapabilityRelDef> requirementDefList,
+            ComponentTypeEnum componentTypeEnum) {
+
+        List<RequirementCapabilityRelDef> delOkResult = new ArrayList<>();
+        for (RequirementCapabilityRelDef requirementDef : requirementDefList) {
+            Either<RequirementCapabilityRelDef, ResponseFormat> actionResponse = dissociateRIFromRI(
+                    componentId, userId, requirementDef, componentTypeEnum);
+
+            if (actionResponse.isLeft()) {
+                delOkResult.add(actionResponse.left().value());
+            }
+        }
+        return delOkResult;
+    }
+
+    public Either<RequirementCapabilityRelDef, ResponseFormat> dissociateRIFromRI(
+            String componentId,
+            String userId,
+            RequirementCapabilityRelDef requirementDef,
+            ComponentTypeEnum componentTypeEnum) {
         validateUserExists(userId, "dissociate RI From RI", false);
 
         Either<RequirementCapabilityRelDef, ResponseFormat> resultOp = null;
-        Either<org.openecomp.sdc.be.model.Component, ResponseFormat> validateComponentExists = validateComponentExists(componentId, componentTypeEnum, null);
+        Either<org.openecomp.sdc.be.model.Component, ResponseFormat> validateComponentExists = validateComponentExists(
+                componentId, componentTypeEnum, null);
         if (validateComponentExists.isRight()) {
             return Either.right(validateComponentExists.right().value());
         }
@@ -1117,6 +1158,8 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
             unlockComponent(resultOp, containerComponent);
         }
     }
+
+
     /**
      * Allows to get relation contained in specified component according to received Id
      * @param componentId
@@ -2582,513 +2625,94 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         }
     }
 
-    public Either<Map<String, List<Object>>, ResponseFormat> copyComponentInstance(String origComponentId, String componentId, String componentInstanceId, String posX, String posY, String userId){
+    /**
+     * Method to delete selected nodes and edges on composition page
+     * @param containerComponentType
+     * @param componentId
+     * @param componentInstanceIdList
+     * @param userId
+     * @return
+     */
+    public Map<String, List<String>> batchDeleteComponentInstance(String containerComponentType,
+                                                                  String componentId,
+                                                                  List<String> componentInstanceIdList,
+                                                                  String userId) {
 
-        Map<String, List<Object>> resultMap = new HashMap<>();
-        List<Object> cIList = new ArrayList<>();
-        WebApplicationContext wac = ContextLoader.getCurrentWebApplicationContext();
+        List<String> deleteErrorIds = new ArrayList<>();
+        Map<String, List<String>> deleteErrorMap = new HashMap<>();
 
-        ToscaOperationFacade toscaOperationFacade = (ToscaOperationFacade) wac.getBean("tosca-operation-facade");
-        if(toscaOperationFacade.getToscaElement(origComponentId).isRight())
-        {
-            log.error("Failed to get the original component information");
-            return Either.right(componentsUtils.getResponseFormat(ActionStatus.USER_DEFINED, "Failed to copy the component instance to the canvas"));
+        for (String eachInstanceId : componentInstanceIdList) {
+            Either<ComponentInstance, ResponseFormat> actionResponse = batchDeleteComponentInstance(
+                    containerComponentType, componentId, eachInstanceId, userId);
+            log.debug("batchDeleteResourceInstances actionResponse is {}", actionResponse);
+            if (actionResponse.isRight()) {
+                log.error("Failed to delete ComponentInstance [{}]", eachInstanceId);
+                deleteErrorIds.add(eachInstanceId);
+            }
+            /* need to confirm if the additional info also needs to be deleted with the instance...
+            else {
+                ComponentInstance componentInstance = actionResponse.left().value();
 
+                String componentInstanceName = componentInstance.getInvariantName();
+
+                log.info("deleted component instances list is " + componentInstanceName);
+
+                Either<Boolean, ActionStatus> deleteResult = deleteAdditionalInfo(componentId, componentInstanceName);
+                log.debug("batchDeleteResourceInstances deleteAdditionalInfo deleteResult is {}", deleteResult);
+            }*/
         }
-
-        Component origComponent = toscaOperationFacade.getToscaElement(origComponentId).left().value();
-
-        Either<ComponentInstance, ResponseFormat> createComponentInstance = createComponentInstanceForCopy(origComponent, componentId, componentInstanceId, null, posX, posY, userId);
-
-        if(createComponentInstance.isRight())
-        {
-            return Either.right(createComponentInstance.right().value());
-        }
-        ComponentInstance destComponentInstance = createComponentInstance.left().value();
-        log.info("destComponentInstance's data os { }");
-
-        if(toscaOperationFacade.getToscaElement(componentId).isRight())
-        {
-            log.error("Failed to get the dest component information");
-            return Either.right(componentsUtils.getResponseFormat(ActionStatus.USER_DEFINED, "Failed to copy the component instance to the canvas"));
-        }
-
-        Component destComponent = toscaOperationFacade.getToscaElement(componentId).left().value();
-
-        Either<String, ResponseFormat> copyComponentInstanceWithInfo = deepCopyComponentInstance(origComponent, destComponent, componentInstanceId, destComponentInstance, userId);
-
-        if(copyComponentInstanceWithInfo.isRight())
-        {
-            log.error("Failed to deep copy component instance");
-            return Either.right(componentsUtils.getResponseFormat(ActionStatus.USER_DEFINED, "Failed to deep copy the component instance to the canvas"));
-        }
-
-        cIList.add(destComponentInstance);
-        resultMap.put("componentInstances", cIList);
-        return Either.left(resultMap);
+        //sending the ids of the error nodes that were not deleted to UI
+        deleteErrorMap.put("deleteFailedIds", deleteErrorIds);
+        return deleteErrorMap;
     }
 
+    private Either<ComponentInstance, ResponseFormat> batchDeleteComponentInstance(String containerComponentParam,
+                                                                                  String containerComponentId,
+                                                                                  String componentInstanceId,
+                                                                                  String userId) {
+        validateUserExists(userId, "delete Component Instance", false);
+        Either<ComponentTypeEnum, ResponseFormat> validateComponentType = validateComponentType(containerComponentParam);
+        if (validateComponentType.isRight()) {
+            log.error("ComponentType[{}] doesn't support", containerComponentParam);
+            return Either.right(validateComponentType.right().value());
+        }
 
-    public Either<ComponentInstance, ResponseFormat> createComponentInstanceForCopy(Component origComponent, String componentId, String componentInstanceId, Map<String, String> groupInstanceMap, String posX, String posY, String userId)
-    {
-        log.info("Start to create component instance, group is { }");
-        ComponentInstance destComponentInstance = null;
-        List<ComponentInstance> sourceComponentInstanceList = origComponent.getComponentInstances();
-        for(ComponentInstance sourceComponentInstance : sourceComponentInstanceList)
-        {
-            if(componentInstanceId.equals(sourceComponentInstance.getUniqueId()))
-            {
-                JsonObject createComponentInstanceData = new JsonObject();
-                createComponentInstanceData.addProperty("uniqueId", sourceComponentInstance.getComponentUid() + Calendar.getInstance().getTimeInMillis());
-                createComponentInstanceData.addProperty("posX", posX);
-                createComponentInstanceData.addProperty("posY", posY);
-                createComponentInstanceData.addProperty("name", sourceComponentInstance.getComponentName());
-                createComponentInstanceData.addProperty("componentVersion", sourceComponentInstance.getComponentVersion());
-                createComponentInstanceData.addProperty("originType", sourceComponentInstance.getOriginType().getValue());
-                createComponentInstanceData.addProperty("icon", sourceComponentInstance.getIcon());
-                createComponentInstanceData.addProperty("componentUid", sourceComponentInstance.getComponentUid());
+        final ComponentTypeEnum containerComponentType = validateComponentType.left().value();
+        Either<Component, ResponseFormat> validateComponentExists = validateComponentExists(containerComponentId, containerComponentType, null);
+        if (validateComponentExists.isRight()) {
+            log.error("Component Id[{}] doesn't exist", containerComponentId);
+            return Either.right(validateComponentExists.right().value());
+        }
 
-                String createStr = createComponentInstanceData.toString();
-                log.info("create ComponentInstance Data is { }", createStr);
+        Component containerComponent = validateComponentExists.left().value();
+        Either<Boolean, ResponseFormat> validateCanWorkOnComponent = validateCanWorkOnComponent(containerComponent, userId);
+        if (validateCanWorkOnComponent.isRight()) {
+            return Either.right(validateCanWorkOnComponent.right().value());
+        }
 
-                ComponentInstance componentInstance = RepresentationUtils.fromRepresentation(createStr, ComponentInstance.class);
+        Either<ComponentInstance, ResponseFormat> resultOp = null;
 
-                if(componentInstance == null)
-                {
-                    log.error("An error occured during preset component conversion");
-                    return Either.right(componentsUtils.getResponseFormat(ActionStatus.USER_DEFINED, "Failed to copy the component instance to the canvas"));
-                }
-
-                componentInstance.setInvariantName(null);
-
-                WebApplicationContext wac = ContextLoader.getCurrentWebApplicationContext();
-                ComponentInstanceBusinessLogic componentInstanceLogic = wac.getBean(ComponentInstanceBusinessLogic.class);
-
-                if(componentInstanceLogic == null)
-                {
-                    return Either.right(componentsUtils.getResponseFormat(ActionStatus.USER_DEFINED, "Failed to copy the component instance to the canvas"));
-                }
-
-                Either<ComponentInstance, ResponseFormat> actionResponse = componentInstanceLogic.createComponentInstance("services", componentId, userId, componentInstance);
-
-                if(actionResponse.isRight())
-                {
-                    return Either.right(componentsUtils.getResponseFormat(ActionStatus.USER_DEFINED, "Failed to copy the component instance to the canvas"));
-                }
-
-                destComponentInstance = actionResponse.left().value();
-
-                break;
-
+        try {
+            Either<Boolean, ResponseFormat> lockComponent = lockComponent(containerComponent, "batchDeleteComponentInstance");
+            if (lockComponent.isRight()) {
+                return Either.right(lockComponent.right().value());
             }
-        }
 
-        if(destComponentInstance == null)
-        {
-            log.error("Failed to create new component instance, can't find source component instance in source" + "component");
-            return Either.right(componentsUtils.getResponseFormat(ActionStatus.USER_DEFINED, "Failed to copy the component instance to the canvas"));
-        }
+            resultOp = deleteComponentInstance(containerComponent, componentInstanceId, containerComponentType);
 
-        return Either.left(destComponentInstance);
+            if (resultOp.isRight()) {
+                log.error("Failed to deleteComponentInstance with instanceId[{}]", componentInstanceId);
+                return Either.right(resultOp.right().value());
+            }
+
+            containerComponent = toscaOperationFacade.getToscaElement(containerComponentId, new ComponentParametersView()).left().value();
+            log.info("Successfully deleted instance with id " + componentInstanceId);
+
+            return Either.left(resultOp.left().value());
+
+        } finally {
+            unlockComponent(resultOp, containerComponent);
+        }
     }
-
-    public Either<String, ResponseFormat> deepCopyComponentInstance(Component sourceComponent, Component destComponent, String sourceComponentInstanceId, ComponentInstance destComponentInstance, String userId) {
-
-        Either<String, ResponseFormat> copyComponentInstanceWithPropertiesAndInputs = copyComponentInstanceWithPropertiesAndInputs(sourceComponent, destComponent, sourceComponentInstanceId, destComponentInstance, userId);
-        if(copyComponentInstanceWithPropertiesAndInputs.isRight())
-        {
-            log.error("Failed to copy component instance with properties and inputs as part of deep copy");
-            return Either.right(componentsUtils.getResponseFormat(ActionStatus.USER_DEFINED, "Failed to copy the component instance with properties and inputs as part of deep copy"));
-        }
-
-        Either<String, ResponseFormat> copyComponentInstanceWithAttributes = copyComponentInstanceWithAttributes(sourceComponent, destComponent, sourceComponentInstanceId, destComponentInstance, userId);
-        if(copyComponentInstanceWithAttributes.isRight())
-        {
-            log.error("Failed to copy component instance with attributes as part of deep copy");
-            return Either.right(componentsUtils.getResponseFormat(ActionStatus.USER_DEFINED, "Failed to copy the component instance with attributes as part of deep copy"));
-        }
-
-        Either<String, ResponseFormat> copyComponentInstanceWithAdditionalInfo =copyComponentInstanceWithAdditionalInfo(sourceComponent, destComponent, sourceComponentInstanceId, destComponentInstance, userId);
-        if(copyComponentInstanceWithAdditionalInfo.isRight())
-        {
-            log.error("Failed to copy component instance with additional info as part of deep copy");
-            return Either.right(componentsUtils.getResponseFormat(ActionStatus.USER_DEFINED, "Failed to copy the component instance with additional info as part of deep copy"));
-        }
-
-        return Either.left("Copy component Instance OK");
-    }
-
-    public Either<String, ResponseFormat> copyComponentInstanceWithPropertiesAndInputs(Component sourceComponent, Component destComponent, String sourceComponentInstanceId, ComponentInstance destComponentInstance, String userId)
-    {
-        log.info("start to copy ComponentInstance1");
-
-        List<ComponentInstanceProperty> sourcePropList = null;
-        if (sourceComponent.getComponentInstancesProperties() != null && sourceComponent.getComponentInstancesProperties().get(sourceComponentInstanceId) != null) {
-            sourcePropList = sourceComponent.getComponentInstancesProperties().get(sourceComponentInstanceId);
-            log.info("sourcePropList {}");
-        }
-
-        List<ComponentInstanceProperty> destPropList = null;
-        String destComponentInstanceId = destComponentInstance.getUniqueId();
-        log.info("destComponentInstanceId: " + destComponentInstance.getUniqueId());
-        if (destComponent.getComponentInstancesProperties() != null && destComponent.getComponentInstancesProperties().get(destComponentInstanceId) != null) {
-            destPropList = destComponent.getComponentInstancesProperties().get(destComponentInstanceId);
-            log.info("destPropList {}");
-        }
-
-        List<ComponentInstancePropInput> componentInstancePropInputList = new ArrayList<>();
-        Map<String,String> destInputNewValueMap = new HashMap<>();
-
-        if (null != destPropList && null != sourcePropList) {
-            log.info("start to set property and attribute");
-            for (ComponentInstanceProperty destProp : destPropList) {
-                String destPropertyName = destProp.getName();
-                for (ComponentInstanceProperty sourceProp : sourcePropList) {
-                    if (!destPropertyName.equals(sourceProp.getName())) {
-                        continue;
-                    }
-                    log.info("now set property");
-                    if (sourceProp.getGetInputValues() == null && !StringUtils.isEmpty(sourceProp.getValue()) && (destProp.getValue() == null || !destProp.getValue().equals(sourceProp.getValue()))) {
-                        log.info("Now starting to copy the property {} in value {}", destPropertyName, sourceProp.getValue());
-
-                        destProp.setValue(sourceProp.getValue());
-                        log.info("sourceProp {} to destProp {}");
-
-                        Either<String, ResponseFormat> updatePropertyValueEither = updateComponentInstanceProperty(destComponent.getUniqueId(), destComponentInstanceId, destProp);
-                        if (updatePropertyValueEither.isRight()) {
-                            log.error("Failed to copy the property {}", destPropertyName);
-                            return Either.right(componentsUtils.getResponseFormat(ActionStatus.INVALID_CONTENT_PARAM, "Failed to paste component instance to the canvas, property copy"));
-                        }
-                        break;
-                    }
-
-                    log.info("Now start to update inputs");
-
-                    if(sourceProp.getGetInputValues() != null)
-                    {
-                        if(sourceProp.getGetInputValues().size() < 1)
-                        {
-                            log.info("property is return from input, set by man");
-                            break;
-                        }
-                        log.info("Now starting to copy the {} property", destPropertyName);
-
-                        Either<String, ResponseFormat> getSourceInputDefaultValue = getInputListDefaultValue(sourceComponent, sourceProp.getGetInputValues().get(0).getInputId());
-                        if(getSourceInputDefaultValue.isRight())
-                        {
-                            return Either.right(getSourceInputDefaultValue.right().value());
-                        }
-                        if(getSourceInputDefaultValue.left().value() != null)
-                        {
-                            destInputNewValueMap.put(destComponent.getUniqueId() + "." + destComponentInstance.getNormalizedName()+"_"+destPropertyName, getSourceInputDefaultValue.left().value());
-                        }
-                        componentInstancePropInputList.add(new ComponentInstancePropInput(destProp));
-                    }
-                }
-            }
-        }
-        return Either.left("Copy component Instance OK");
-    }
-
-    public Either<String, ResponseFormat> copyComponentInstanceWithAttributes(Component sourceComponent, Component destComponent, String sourceComponentInstanceId, ComponentInstance destComponentInstance, String userId)
-    {
-        String destComponentInstanceId = destComponentInstance.getUniqueId();
-
-        log.info("start to set attribute");
-        WebApplicationContext wac = ContextLoader.getCurrentWebApplicationContext();
-
-        List<ComponentInstanceProperty> sourceAttributeList = null;
-        if (sourceComponent.getComponentInstancesAttributes() != null && sourceComponent.getComponentInstancesAttributes().get(sourceComponentInstanceId) != null) {
-            sourceAttributeList = sourceComponent.getComponentInstancesAttributes().get(sourceComponentInstanceId);
-            log.info("soourceAttributes {}");
-        }
-
-        List<ComponentInstanceProperty> destAttributeList = null;
-        if (destComponent.getComponentInstancesAttributes() != null && destComponent.getComponentInstancesAttributes().get(destComponentInstanceId) != null) {
-            destAttributeList = destComponent.getComponentInstancesAttributes().get(destComponentInstanceId);
-            log.info("destAttributeList {}");
-        }
-        if (null != sourceAttributeList && null != destAttributeList) {
-            log.info("set attribute");
-            ComponentInstanceBusinessLogic componentInstanceBusinessLogic =
-                    wac.getBean(ComponentInstanceBusinessLogic.class);
-
-            for (ComponentInstanceProperty sourceAttribute : sourceAttributeList) {
-                String sourceAttributeName = sourceAttribute.getName();
-                boolean isFindAttribute = false;
-                for (ComponentInstanceProperty destAttribute : destAttributeList) {
-                    if (sourceAttributeName.equals(destAttribute.getName())) {
-                        isFindAttribute = true;
-                        if (sourceAttribute.getValue() != null && !"".equals(sourceAttribute.getValue())) {
-                            log.info("Now starting to copy the attribute exists", sourceAttributeName);
-                            log.info("sourceProp {}");
-                            sourceAttribute.setUniqueId("attribute" + "." + destComponentInstanceId.split("\\.")[1] + "." + sourceAttributeName);
-                            log.info("copy to destProp {}");
-
-                            Either<ComponentInstanceProperty, ResponseFormat> updateAttributeValueEither =
-                                    componentInstanceBusinessLogic
-                                            .createOrUpdateAttributeValueForCopyPaste(ComponentTypeEnum.SERVICE,
-                                                    destComponent.getUniqueId(), destComponentInstanceId, sourceAttribute,
-                                                    userId);
-                            if (updateAttributeValueEither.isRight()) {
-                                log.error("Failed to copy the attribute");
-                                return Either.right(componentsUtils
-                                        .getResponseFormat(ActionStatus.INVALID_CONTENT_PARAM,
-                                                "Failed to paste component instance to the canvas, attribute copy"));
-                            }
-                            break;
-                        }
-                    }
-                }
-                if (!isFindAttribute) {
-                    log.info("Now starting to copy the {} attribute new", sourceAttributeName);
-                    sourceAttribute.setUniqueId(
-                            "attribute" + "." + destComponentInstanceId.split("\\.")[1] + "." + sourceAttributeName);
-                    log.info("destProp is set: {}");
-                    Either<ComponentInstanceProperty, ResponseFormat> updateAttributeValueEither =
-                            componentInstanceBusinessLogic
-                                    .createOrUpdateAttributeValueForCopyPaste(ComponentTypeEnum.SERVICE, destComponent.getUniqueId(),
-                                            destComponentInstanceId, sourceAttribute, userId);
-                    if (updateAttributeValueEither.isRight()) {
-                        log.error("Failed to copy the attribute");
-                        return Either.right(componentsUtils.getResponseFormat(ActionStatus.INVALID_CONTENT_PARAM,
-                                "Failed to paste component instance to the canvas, new attribute copy"));
-                    }
-                }
-            }
-        }
-
-        return Either.left("Copy component Instance OK");
-    }
-
-    public Either<String, ResponseFormat> copyComponentInstanceWithAdditionalInfo(Component sourceComponent, Component destComponent, String sourceComponentInstanceId, ComponentInstance destComponentInstance, String userId)
-    {
-
-        String destComponentInstanceId = destComponentInstance.getUniqueId();
-        log.info("now set additionInfo");
-        WebApplicationContext wac = ContextLoader.getCurrentWebApplicationContext();
-        AdditionalInformationBusinessLogic additionalInformationBusinessLogic = (AdditionalInformationBusinessLogic) wac.getBean("additionalInformationBusinessLogic");
-        log.info("now get all additional information");
-        Either<AdditionalInformationDefinition, ResponseFormat> getAdditionalInfo = additionalInformationBusinessLogic.getAllAdditionalInformation(NodeTypeEnum.Service, sourceComponent.getUniqueId(), userId);
-
-        if (getAdditionalInfo.isRight()) {
-            log.info("errorMessage {} {}", getAdditionalInfo.right().value().getFormattedMessage(), getAdditionalInfo.right().value().getStatus().toString());
-        }
-        if (getAdditionalInfo.isLeft()) {
-            AdditionalInformationDefinition additionalInfo = getAdditionalInfo.left().value();
-            log.info("The source additional information is {}");
-
-            if (additionalInfo.getParameters() != null || additionalInfo.getParameters().size() > 0) {
-                List<AdditionalInfoParameterInfo> parameterList = additionalInfo.getParameters();
-                Either<AdditionalInfoParameterInfo, ResponseFormat> destAdditionalInfo;
-
-                for (AdditionalInfoParameterInfo parameterInfo : parameterList) {
-                    log.info("start to set parameter {}");
-                    String parameterInfoUid = parameterInfo.getUniqueId();
-                    if (parameterInfoUid.contains(sourceComponentInstanceId) && !"".equals(parameterInfo.getValue())) {
-                        log.info("parameterInfo value is {}, parameter is {}", parameterInfo.getValue(),
-                                parameterInfoUid.split("\\.")[parameterInfoUid.split("\\.").length - 1]);
-
-                        String destParameterUid = destComponentInstanceId + "." + parameterInfoUid.split("\\.")[
-                                parameterInfoUid.split("\\.").length - 1];
-                        parameterInfo.setUniqueId(destParameterUid);
-                        parameterInfo.setKey(destParameterUid);
-
-                        log.info("After copying, dest parameterInfo is {}");
-                        destAdditionalInfo = additionalInformationBusinessLogic.createAdditionalInformation(NodeTypeEnum.Service, destComponent.getUniqueId(),
-                                parameterInfo, userId);
-
-                        if (destAdditionalInfo.isRight()) {
-                            log.error("parameterInfo {}, destComponentId {}, destComponentInstanceId {}",
-                                    destComponentInstanceId);
-                            return Either.right(componentsUtils.getResponseFormat(ActionStatus.INVALID_CONTENT_PARAM,
-                                    "Failed to paste component instance to the canvas, additionalInfo copy"));
-                        }
-                        log.info("The dest additional information is {}");
-                    }
-                }
-            }
-        }
-
-        return Either.left("Copy component Instance OK");
-    }
-
-    public Either<ComponentInstanceProperty, ResponseFormat> createOrUpdateAttributeValueForCopyPaste(ComponentTypeEnum componentTypeEnum, String componentId, String resourceInstanceId, ComponentInstanceProperty attribute, String userId) {
-
-        Either<ComponentInstanceProperty, ResponseFormat> resultOp = null;
-
-        validateUserExists(userId, "Create or Update attribute value", false);
-
-        if(componentTypeEnum == null)
-        {
-            BeEcompErrorManager.getInstance().logInvalidInputError("createOrUpdateAttributeValue", "invalid component type", ErrorSeverity.INFO);
-            resultOp = Either.right(componentsUtils.getResponseFormat(ActionStatus.NOT_ALLOWED));
-            return resultOp;
-        }
-
-        Either<Component, StorageOperationStatus> getResourceResult = toscaOperationFacade.getToscaElement(componentId, JsonParseFlagEnum.ParseAll);
-
-        if(getResourceResult.isRight())
-        {
-            log.info("Failed to retrieve component id {}", componentId);
-            resultOp = Either.right(componentsUtils.getResponseFormat(ActionStatus.RESTRICTED_OPERATION));
-            return resultOp;
-        }
-
-        Component containerComponent = getResourceResult.left().value();
-
-        if(!ComponentValidationUtils.canWorkOnComponent(containerComponent, userId))
-        {
-            log.info("Restricted operation for user: {} on service {}", userId, componentId);
-            resultOp = Either.right(componentsUtils.getResponseFormat(ActionStatus.RESTRICTED_OPERATION));
-            return resultOp;
-        }
-
-        Either<ComponentInstance, StorageOperationStatus> resourceInstanceStatus = getResourceInstanceById(containerComponent, resourceInstanceId);
-
-        if(resourceInstanceStatus.isRight())
-        {
-            resultOp = Either.right(componentsUtils.getResponseFormat(ActionStatus.RESOURCE_INSTANCE_NOT_FOUND_ON_SERVICE, resourceInstanceId, componentId ));
-            return resultOp;
-        }
-
-        ComponentInstance foundResourceInstance = resourceInstanceStatus.left().value();
-
-        StorageOperationStatus lockStatus = graphLockOperation.lockComponent(componentId, componentTypeEnum.getNodeType());
-        if(lockStatus != StorageOperationStatus.OK)
-        {
-            log.info("Failed to lock service {}", componentId);
-            resultOp = Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(lockStatus)));
-            return resultOp;
-        }
-
-        String propertyType = attribute.getType();
-        ToscaPropertyType type = ToscaPropertyType.isValidType(propertyType);
-        log.info("The type of attribute is {}", attribute.getUniqueId(), propertyType);
-
-        if(type == ToscaPropertyType.LIST || type == ToscaPropertyType.MAP)
-        {
-            SchemaDefinition def = attribute.getSchema();
-            if(def == null)
-            {
-                log.info("Schema doesn't exists for attribute of type {}", type);
-                return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(StorageOperationStatus.INVALID_VALUE)));
-            }
-            PropertyDataDefinition propDef = def.getProperty();
-            if(propDef == null)
-            {
-                log.info("Attribute in Schema Definition inside attribute of type {} doesn't exist", type);
-                return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(StorageOperationStatus.INVALID_VALUE)));
-            }
-
-        }
-
-        try
-        {
-            List<ComponentInstanceProperty> instanceAttributes = containerComponent.getComponentInstancesAttributes().get(resourceInstanceId);
-            Optional<ComponentInstanceProperty> instanceAttribute = instanceAttributes.stream().filter(p -> p.getUniqueId().equals(attribute.getUniqueId())).findAny();
-            StorageOperationStatus status;
-
-            if(instanceAttribute.isPresent())
-            {
-                log.info("updateComponentInstanceAttribute");
-                status = toscaOperationFacade.updateComponentInstanceAttribute(containerComponent, foundResourceInstance.getUniqueId(), attribute);
-            }
-            else
-            {
-                log.info("addComponentInstanceAttribute");
-                status = toscaOperationFacade.addComponentInstanceAttribute(containerComponent, foundResourceInstance.getUniqueId(), attribute);
-            }
-            if(status != StorageOperationStatus.OK)
-            {
-                ActionStatus actionStatus = componentsUtils.convertFromStorageResponseForResourceInstanceProperty(status);
-                resultOp = Either.right(componentsUtils.getResponseFormatForResourceInstanceProperty(actionStatus, ""));
-                return resultOp;
-            }
-            List<String> path = new ArrayList<>();
-            path.add(foundResourceInstance.getUniqueId());
-            attribute.setPath(path);
-
-            foundResourceInstance.setCustomizationUUID(UUID.randomUUID().toString());
-            Either<Component, StorageOperationStatus> updateContainerRes = toscaOperationFacade.updateComponentInstanceMetadataOfTopologyTemplate(containerComponent);
-
-            if(updateContainerRes.isRight())
-            {
-                ActionStatus actionStatus = componentsUtils.convertFromStorageResponseForResourceInstanceProperty(updateContainerRes.right().value());
-                resultOp = Either.right(componentsUtils.getResponseFormatForResourceInstanceProperty(actionStatus, ""));
-                return resultOp;
-            }
-            resultOp = Either.left(attribute);
-            return resultOp;
-        }
-        finally {
-            if(resultOp == null || resultOp.isRight())
-            {
-                titanDao.rollback();
-            }
-            else
-            {
-                titanDao.commit();
-            }
-
-            graphLockOperation.unlockComponent(componentId, componentTypeEnum.getNodeType());
-        }
-
-    }
-
-    public Either<String, ResponseFormat> updateComponentInstanceProperty(String containerComponentId, String componentInstanceId, ComponentInstanceProperty property)
-    {
-        Either<String, ResponseFormat> resultOp;
-
-        if(toscaOperationFacade.getToscaElement(containerComponentId).isRight())
-        {
-            log.error("Failed to get the component information");
-            return Either.right(componentsUtils.getResponseFormatForResourceInstanceProperty(ActionStatus.INVALID_CONTENT_PARAM, "Failed to get the component information"));
-        }
-
-        Component containerComponent = toscaOperationFacade.getToscaElement(containerComponentId).left().value();
-
-        synchronized (containerComponentId)
-        {
-            StorageOperationStatus status = toscaOperationFacade.updateComponentInstanceProperty(containerComponent, componentInstanceId, property);
-            if(status != StorageOperationStatus.OK)
-            {
-                ActionStatus actionStatus = componentsUtils.convertFromStorageResponseForResourceInstanceProperty(status);
-                resultOp = Either.right(componentsUtils.getResponseFormatForResourceInstanceProperty(actionStatus, ""));
-                return  resultOp;
-            }
-
-            Either<Component, StorageOperationStatus> updateContainerRes = toscaOperationFacade.updateComponentInstanceMetadataOfTopologyTemplate(containerComponent);
-
-            if(updateContainerRes.isRight())
-            {
-                ActionStatus actionStatus = componentsUtils.convertFromStorageResponseForResourceInstanceProperty(updateContainerRes.right().value());
-                resultOp = Either.right(componentsUtils.getResponseFormatForResourceInstanceProperty(actionStatus,""));
-                return resultOp;
-            }
-        }
-
-        return Either.left("Update OK");
-    }
-
-    public Either<String, ResponseFormat> getInputListDefaultValue(Component component, String inputId)
-    {
-        List<InputDefinition> inputList = component.getInputs();
-        for(InputDefinition input : inputList)
-        {
-            if(input.getUniqueId().equals(inputId))
-            {
-                if(input.getDefaultValue() == null)
-                {
-                    log.error("The input's default value is null {}");
-                    return Either.left(null);
-                }
-                return Either.left(input.getDefaultValue());
-            }
-        }
-        log.error("The input's default value with id {} is not found", inputId);
-        return Either.right(componentsUtils.getResponseFormat(ActionStatus.USER_DEFINED, "Failed to paste component instance to the canvas"));
-    }
-
 
 }

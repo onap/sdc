@@ -1,6 +1,25 @@
+/*-
+ * ============LICENSE_START=======================================================
+ * SDC
+ * ================================================================================
+ * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * ================================================================================
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ============LICENSE_END=========================================================
+ */
+
 package org.openecomp.sdc.be.components.impl;
 
-import static org.junit.Assert.assertSame;
 import static org.assertj.core.api.Assertions.assertThat;
 import fj.data.Either;
 
@@ -16,14 +35,19 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.components.validation.UserValidations;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
+import org.openecomp.sdc.be.dao.titan.TitanGenericDao;
+import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
 import org.openecomp.sdc.be.datatypes.elements.*;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
+import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.ServletUtils;
 import org.openecomp.sdc.be.info.CreateAndAssotiateInfo;
@@ -32,19 +56,22 @@ import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.jsontitan.operations.ForwardingPathOperation;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
+import org.openecomp.sdc.be.model.operations.impl.AdditionalInformationOperation;
+import org.openecomp.sdc.be.model.operations.impl.GraphLockOperation;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.exception.ResponseFormat;
 
 import java.util.function.BiPredicate;
 
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anySet;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
-import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 
@@ -86,6 +113,14 @@ public class ComponentInstanceBusinessLogicTest {
     private User user;
     @Mock
     private UserValidations userValidations;
+    @Mock
+    private GraphLockOperation graphLockOperation;
+    @Mock
+    private TitanDao titanDao;
+    @Mock
+    private TitanGenericDao titanGenericDao;
+    @Mock
+    private AdditionalInformationOperation additionalInfoOperation;
     private Component service;
     private Component resource;
     private ComponentInstance toInstance;
@@ -1067,4 +1102,89 @@ public class ComponentInstanceBusinessLogicTest {
         when(toscaOperationFacade.getToscaFullElement(containerComponentId)).thenReturn(Either.left(resource));
         result=testSubject.updateInstanceCapabilityProperties(componentTypeEnum, containerComponentId, componentInstanceUniqueId, capabilityType, capabilityName, properties, userId);
     }
+
+    @Test
+    public void testBatchDeleteComponentInstanceFailureWrongType() {
+        Map<String, List<String>> result;
+        List<String> componentInstanceIdList = new ArrayList<>();
+        String containerComponentParam = "WRONG_TYPE";
+        String containerComponentId = "containerComponentId";
+        String componentInstanceId = "componentInstanceId";
+        componentInstanceIdList.add(componentInstanceId);
+        String userId = USER_ID;
+        Map<String, List<String>> deleteErrorMap = new HashMap<>();
+        List<String> deleteErrorIds = new ArrayList<>();
+        deleteErrorIds.add(componentInstanceId);
+        deleteErrorMap.put("deleteFailedIds", deleteErrorIds);
+
+        result = componentInstanceBusinessLogic
+            .batchDeleteComponentInstance(containerComponentParam, containerComponentId, componentInstanceIdList,
+                userId);
+
+        assertEquals(deleteErrorMap, result);
+    }
+
+    @Test
+    public void testBatchDeleteComponentInstanceFailureCompIds() {
+        Map<String, List<String>> result;
+        String containerComponentParam = ComponentTypeEnum.SERVICE_PARAM_NAME;
+        String containerComponentId = "containerComponentId";
+        String componentInstanceId = "componentInstanceId";
+        List<String> componentInstanceIdList = new ArrayList<>();
+        componentInstanceIdList.add(componentInstanceId);
+        String userId = USER_ID;
+        Map<String, List<String>> deleteErrorMap = new HashMap<>();
+        List<String> deleteErrorIds = new ArrayList<>();
+        deleteErrorIds.add(componentInstanceId);
+        deleteErrorMap.put("deleteFailedIds", deleteErrorIds);
+
+        Either<Component, StorageOperationStatus> err = Either.right(StorageOperationStatus.GENERAL_ERROR);
+        when(toscaOperationFacade.getToscaElement(eq(containerComponentId), any(ComponentParametersView.class)))
+            .thenReturn(err);
+
+        result = componentInstanceBusinessLogic
+            .batchDeleteComponentInstance(containerComponentParam, containerComponentId, componentInstanceIdList,
+                userId);
+
+        assertEquals(deleteErrorMap, result);
+    }
+
+    @Test
+    public void testBatchDeleteComponentInstanceSuccess() {
+        Map<String, List<String>> result;
+        String containerComponentParam = ComponentTypeEnum.SERVICE_PARAM_NAME;
+        LifecycleStateEnum oldLifeCycleState = service.getLifecycleState();
+        String oldLastUpdatedUserId = service.getLastUpdaterUserId();
+        service.setLastUpdaterUserId(USER_ID);
+        service.setLifecycleState(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
+        String containerComponentId = service.getUniqueId();
+        String componentInstanceId = TO_INSTANCE_ID;
+        String userId = USER_ID;
+        List<String> componentInstanceIdList = new ArrayList<>();
+        componentInstanceIdList.add(componentInstanceId);
+        Map<String, List<String>> deleteErrorMap = new HashMap<>();
+        List<String> deleteErrorIds = new ArrayList<>();
+        deleteErrorMap.put("deleteFailedIds", deleteErrorIds);
+
+        Either<Component, StorageOperationStatus> cont = Either.left(service);
+        when(graphLockOperation.unlockComponent(Mockito.anyString(), eq(NodeTypeEnum.Service)))
+                .thenReturn(StorageOperationStatus.OK);
+        when(graphLockOperation.lockComponent(Mockito.anyString(), eq(NodeTypeEnum.Service)))
+                .thenReturn(StorageOperationStatus.OK);
+        ImmutablePair<Component, String> pair = new ImmutablePair<>(resource, TO_INSTANCE_ID);
+        Either<ImmutablePair<Component, String>, StorageOperationStatus> result2 = Either.left(pair);
+        when(toscaOperationFacade.deleteComponentInstanceFromTopologyTemplate(service, componentInstanceId))
+                .thenReturn(result2);
+        when(toscaOperationFacade.getToscaElement(eq(service.getUniqueId()), any(ComponentParametersView.class)))
+                .thenReturn(cont);
+        when(titanDao.commit()).thenReturn(TitanOperationStatus.OK);
+
+        result = componentInstanceBusinessLogic
+                .batchDeleteComponentInstance(containerComponentParam, containerComponentId, componentInstanceIdList, userId);
+
+        service.setLastUpdaterUserId(oldLastUpdatedUserId);
+        service.setLifecycleState(oldLifeCycleState);
+        assertEquals(deleteErrorMap,result);
+    }
+
 }
