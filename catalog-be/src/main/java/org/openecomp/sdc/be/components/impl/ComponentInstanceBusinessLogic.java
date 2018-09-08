@@ -48,6 +48,7 @@ import org.openecomp.sdc.be.model.PropertyDefinition.PropertyNames;
 import org.openecomp.sdc.be.model.jsontitan.operations.ForwardingPathOperation;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.jsontitan.utils.ModelConverter;
+import org.openecomp.sdc.be.model.operations.api.IAdditionalInformationOperation;
 import org.openecomp.sdc.be.model.operations.api.IComponentInstanceOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.DaoStatusConverter;
@@ -55,6 +56,7 @@ import org.openecomp.sdc.be.model.operations.utils.ComponentValidationUtils;
 import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
 import org.openecomp.sdc.be.resources.data.ComponentInstanceData;
 import org.openecomp.sdc.be.servlets.RepresentationUtils;
+import org.openecomp.sdc.be.ui.model.UiComponentDataTransfer;
 import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
 import org.openecomp.sdc.common.api.ArtifactTypeEnum;
 import org.openecomp.sdc.common.api.Constants;
@@ -102,6 +104,9 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 
     @Autowired
     private ForwardingPathOperation forwardingPathOperation;
+
+    @Autowired
+    private IAdditionalInformationOperation additionalInfoOperation;
 
 
     public ComponentInstanceBusinessLogic() {
@@ -2582,7 +2587,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         }
     }
 
-    public Either<Map<String, List<Object>>, ResponseFormat> copyComponentInstance(String origComponentId, String componentId, String componentInstanceId, String posX, String posY, String userId){
+    public Either<Map<String, List<Object>>, ResponseFormat> copyComponentInstance(String origComponentId, String componentId, String componentInstanceId, String posX, String posY, String userId) {
 
         Map<String, List<Object>> resultMap = new HashMap<>();
         List<Object> cIList = new ArrayList<>();
@@ -2629,8 +2634,13 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
     }
 
 
-    public Either<ComponentInstance, ResponseFormat> createComponentInstanceForCopy(Component origComponent, String componentId, String componentInstanceId, Map<String, String> groupInstanceMap, String posX, String posY, String userId)
-    {
+    public Either<ComponentInstance, ResponseFormat> createComponentInstanceForCopy(Component origComponent,
+                                                                                    String componentId,
+                                                                                    String componentInstanceId,
+                                                                                    Map<String, String> groupInstanceMap,
+                                                                                    String posX,
+                                                                                    String posY, 
+                                                                                    String userId) {
         log.info("Start to create component instance, group is { }");
         ComponentInstance destComponentInstance = null;
         List<ComponentInstance> sourceComponentInstanceList = origComponent.getComponentInstances();
@@ -3090,5 +3100,145 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         return Either.right(componentsUtils.getResponseFormat(ActionStatus.USER_DEFINED, "Failed to paste component instance to the canvas"));
     }
 
+    public Either<ComponentInstance, ResponseFormat> batchDeleteComponentInstance(String containerComponentParam, String containerComponentId, String componentInstanceId, String userId) {
+        validateUserExists(userId, "delete Component Instance", false);
+        Either<ComponentTypeEnum, ResponseFormat> validateComponentType = validateComponentType(containerComponentParam);
+        if (validateComponentType.isRight()) {
+            log.error("ComponentType[{}] doesn't support", containerComponentParam);
+            return Either.right(validateComponentType.right().value());
+        }
+
+        final ComponentTypeEnum containerComponentType = validateComponentType.left().value();
+        Either<Component, ResponseFormat> validateComponentExists = validateComponentExists(containerComponentId, containerComponentType, null);
+        if (validateComponentExists.isRight()) {
+            log.error("Component Id[{}] doesn't exist", containerComponentId);
+            return Either.right(validateComponentExists.right().value());
+        }
+
+        Component containerComponent = validateComponentExists.left().value();
+        Either<Boolean, ResponseFormat> validateCanWorkOnComponent = validateCanWorkOnComponent(containerComponent, userId);
+        if (validateCanWorkOnComponent.isRight()) {
+            return Either.right(validateCanWorkOnComponent.right().value());
+        }
+
+        Either<ComponentInstance, ResponseFormat> resultOp = null;
+
+        try {
+            Either<Boolean, ResponseFormat> lockComponent = lockComponent(containerComponent, "batchDeleteComponentInstance");
+            if (lockComponent.isRight()) {
+                return Either.right(lockComponent.right().value());
+            }
+
+            resultOp = deleteComponentInstance(containerComponent, componentInstanceId, containerComponentType);
+
+            if (resultOp.isRight()) {
+                log.error("Failed to deleteComponentInstance with instanceId[{}]", componentInstanceId);
+                return Either.right(resultOp.right().value());
+            }
+
+            containerComponent = toscaOperationFacade.getToscaElement(containerComponentId, new ComponentParametersView()).left().value();
+            log.info("Successfully deleted instance with id " + componentInstanceId);
+
+            return Either.left(resultOp.left().value());
+
+        } finally {
+            unlockComponent(resultOp, containerComponent);
+        }
+    }
+
+    public Either<Boolean, ActionStatus> deleteAdditionalInfo(String serviceId, List<String> nameList) {
+      
+        NodeTypeEnum nodeType = NodeTypeEnum.Service;
+
+        Either<AdditionalInformationDefinition, TitanOperationStatus> findIdRes = additionalInfoOperation.getAllAdditionalInformationParameters(nodeType, serviceId, false);
+
+        if(findIdRes.isRight())
+        {
+            StorageOperationStatus status = DaoStatusConverter.convertTitanStatusToStorageStatus(findIdRes.right().value());
+            ActionStatus actionStatus = componentsUtils.convertFromStorageResponseForAdditionalInformation(status);
+            log.error("Fail to get All AdditionalInformation, ActionStatus is {}", actionStatus);
+            return Either.right(actionStatus);
+        }
+
+        AdditionalInformationDefinition informationDefinition = findIdRes.left().value();
+        List<String> labelIdList = findMatchLabelIdList(informationDefinition, nameList);
+
+        if(labelIdList.isEmpty())
+        {
+            log.info("There is no matching additionalinfo to delete");
+            return Either.right(ActionStatus.OK);
+        }
+
+        try
+        {
+            StorageOperationStatus lockResult = graphLockOperation.lockComponent(serviceId, nodeType);
+            if(!lockResult.equals(StorageOperationStatus.OK))
+            {
+                ActionStatus actionStatus = componentsUtils.convertFromStorageResponse(lockResult, ComponentTypeEnum.SERVICE);
+                log.error("Failed to lock service {} error - {}", serviceId, actionStatus);
+                return Either.right(actionStatus);
+            }
+
+            for(String labelId : labelIdList)
+            {
+                Either<AdditionalInformationDefinition, TitanOperationStatus> addResult = additionalInfoOperation.deleteAdditionalInformationParameter(nodeType, serviceId, labelId);
+
+                if(addResult.isRight())
+                {
+                    StorageOperationStatus status = DaoStatusConverter.convertTitanStatusToStorageStatus(addResult.right().value());
+                    ActionStatus actionStatus = componentsUtils.convertFromStorageResponseForAdditionalInformation(status);
+                    log.error("Failed to delete additionalinfo with key [{}], error - {}", labelId, actionStatus);
+                    return Either.right(actionStatus);
+                }
+            }
+
+            log.info("Successful in deleting all matching label ids");
+            return Either.left(true);
+        }
+        finally
+        {
+            titanGenericDao.commit();
+            graphLockOperation.unlockComponent(serviceId, nodeType);
+        }
+    }
+
+    private List<String> findMatchLabelIdList(AdditionalInformationDefinition informationDefinition, List<String> nameList) {
+        List<String> labelIdList = new ArrayList<>();
+
+        List<AdditionalInfoParameterInfo> serviceAdditionInfoList = informationDefinition.getParameters();
+        for(AdditionalInfoParameterInfo tempInfo : serviceAdditionInfoList)
+        {
+            String key = tempInfo.getKey();
+            String name = getResourceNameFromKey(key);
+
+            for(String resourceName : nameList)
+            {
+                if(resourceName.equalsIgnoreCase(name))
+                {
+                    log.info("Success to find match key[{}] to delete", key);
+                    labelIdList.add(key);
+                }
+            }
+        }
+
+        return labelIdList;
+    }
+
+    private String getResourceNameFromKey(String key) {
+        if(StringUtils.isEmpty(key))
+        {
+            return null;
+        }
+      
+        final int ADDITIONALINFO_VALUE_LENGTH=4;
+        final int ADDITIONALINFO_PARAM_KEY=2;
+
+        String[] values = key.split("\\.");
+        if(null == values || ADDITIONALINFO_VALUE_LENGTH != values.length)
+        {
+            return null;
+        }
+        return values[ADDITIONALINFO_PARAM_KEY];
+    }
 
 }
