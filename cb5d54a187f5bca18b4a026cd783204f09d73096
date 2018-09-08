@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_f523c7ba",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/Combination.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 897
+      },
+      "writtenOn": "2018-09-08T09:59:08Z",
+      "side": 1,
+      "message": "Its better to restirct the length of the line to 100 maximum characters for better readability of the code",
+      "revId": "cb5d54a187f5bca18b4a026cd783204f09d73096",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_d526cbcd",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/Combination.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 897
+      },
+      "writtenOn": "2018-09-08T09:59:08Z",
+      "side": 1,
+      "message": "dont provide methods with so many argurments.\nBetter to pass an object",
+      "revId": "cb5d54a187f5bca18b4a026cd783204f09d73096",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_952cd3ad",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/Combination.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 897
+      },
+      "writtenOn": "2018-09-08T09:59:08Z",
+      "side": 1,
+      "message": "provide commnents for the overriden methods for better understanding of their purpose",
+      "revId": "cb5d54a187f5bca18b4a026cd783204f09d73096",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
