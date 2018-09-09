@@ -14,6 +14,7 @@
  * permissions and limitations under the License.
  */
 import { connect } from 'react-redux';
+import sortByStringProperty from 'nfvo-utils/sortByStringProperty.js';
 import LicenseModelActionHelper from 'sdc-app/onboarding/licenseModel/LicenseModelActionHelper.js';
 import LicenseModelOverviewView from './LicenseModelOverviewView.jsx';
 import {
@@ -78,12 +79,24 @@ export const mapStateToProps = ({
                 ...curFeatureGroup,
                 itemType: overviewEditorHeaders.FEATURE_GROUP,
                 children: [
-                    ...(entitlementPoolsIds.length
-                        ? entitlementPoolsIds.reduce(reduceEntitlementPools, [])
-                        : []),
-                    ...(licenseKeyGroupsIds.length
-                        ? licenseKeyGroupsIds.reduce(reduceLicenseKeyGroups, [])
-                        : [])
+                    ...sortByStringProperty(
+                        entitlementPoolsIds.length
+                            ? entitlementPoolsIds.reduce(
+                                  reduceEntitlementPools,
+                                  []
+                              )
+                            : [],
+                        'name'
+                    ),
+                    ...sortByStringProperty(
+                        licenseKeyGroupsIds.length
+                            ? licenseKeyGroupsIds.reduce(
+                                  reduceLicenseKeyGroups,
+                                  []
+                              )
+                            : [],
+                        'name'
+                    )
                 ]
             });
         }
@@ -145,7 +158,10 @@ export const mapStateToProps = ({
             ...licenseAgreement,
             itemType: overviewEditorHeaders.LICENSE_AGREEMENT,
             children: featureGroupsIds.length
-                ? featureGroupsIds.reduce(reduceFeatureGroups, [])
+                ? sortByStringProperty(
+                      featureGroupsIds.reduce(reduceFeatureGroups, []),
+                      'name'
+                  )
                 : []
         };
     };
@@ -177,15 +193,29 @@ export const mapStateToProps = ({
     }
 
     let orphanDataList = [
-        ...featureGroup.featureGroupsList.reduce(checkFG, []),
-        ...entitlementPool.entitlementPoolsList.reduce(checkEP, []),
-        ...licenseKeyGroup.licenseKeyGroupsList.reduce(checkLG, [])
+        ...sortByStringProperty(
+            featureGroup.featureGroupsList.reduce(checkFG, []),
+            'name'
+        ),
+        ...sortByStringProperty(
+            entitlementPool.entitlementPoolsList.reduce(checkEP, []),
+            'name'
+        ),
+        ...sortByStringProperty(
+            licenseKeyGroup.licenseKeyGroupsList.reduce(checkLG, []),
+            'name'
+        )
     ];
 
     licensingDataList =
         licenseAgreement.licenseAgreementList &&
         licenseAgreement.licenseAgreementList.length
-            ? licenseAgreement.licenseAgreementList.map(mapLicenseAgreementData)
+            ? sortByStringProperty(
+                  licenseAgreement.licenseAgreementList.map(
+                      mapLicenseAgreementData
+                  ),
+                  'name'
+              )
             : [];
     let selectedTab = licenseModelOverview.selectedTab;
     // on first entry, we will decide what tab to open depending on data. if there are no connections, we will open the orphans

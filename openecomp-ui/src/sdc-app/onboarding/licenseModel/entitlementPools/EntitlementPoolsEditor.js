@@ -14,6 +14,7 @@
  * permissions and limitations under the License.
  */
 import { connect } from 'react-redux';
+import sortByStringProperty from 'nfvo-utils/sortByStringProperty.js';
 import EntitlementPoolsActionHelper from './EntitlementPoolsActionHelper.js';
 import EntitlementPoolsEditorView from './EntitlementPoolsEditorView.jsx';
 import ValidationHelper from 'sdc-app/common/helpers/ValidationHelper.js';
@@ -25,7 +26,7 @@ const mapStateToProps = ({ licenseModel: { entitlementPool } }) => {
         data,
         genericFieldInfo,
         formReady,
-        limitsList
+        limitsList = []
     } = entitlementPool.entitlementPoolEditor;
 
     let isFormValid = ValidationHelper.checkFormValid(genericFieldInfo);
@@ -51,7 +52,7 @@ const mapStateToProps = ({ licenseModel: { entitlementPool } }) => {
         isFormValid,
         formReady,
         EPNames,
-        limitsList
+        limitsList: sortByStringProperty(limitsList, 'name')
     };
 };
 

@@ -14,6 +14,7 @@
  * permissions and limitations under the License.
  */
 import { connect } from 'react-redux';
+import sortByStringProperty from 'nfvo-utils/sortByStringProperty.js';
 import FeatureGroupsActionHelper from './FeatureGroupsActionHelper.js';
 import FeatureGroupListEditorView, {
     generateConfirmationMsg
@@ -34,7 +35,7 @@ export const mapStateToProps = ({
             show: Boolean(data),
             editMode: Boolean(data && data.id)
         },
-        featureGroupsList
+        featureGroupsList: sortByStringProperty(featureGroupsList, 'name')
     };
 };
 

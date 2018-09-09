@@ -15,6 +15,7 @@
  */
 import { connect } from 'react-redux';
 import i18n from 'nfvo-utils/i18n/i18n.js';
+import sortByStringProperty from 'nfvo-utils/sortByStringProperty.js';
 import LicenseAgreementActionHelper from './LicenseAgreementActionHelper.js';
 import LicenseAgreementListEditorView from './LicenseAgreementListEditorView.jsx';
 import { actionTypes as globalMoadlActions } from 'nfvo-components/modal/GlobalModalConstants.js';
@@ -29,7 +30,10 @@ const mapStateToProps = ({
     return {
         vendorName,
         version,
-        licenseAgreementList,
+        licenseAgreementList: sortByStringProperty(
+            licenseAgreementList,
+            'name'
+        ),
         isDisplayModal: Boolean(data),
         isModalInEditMode: Boolean(data && data.id)
     };

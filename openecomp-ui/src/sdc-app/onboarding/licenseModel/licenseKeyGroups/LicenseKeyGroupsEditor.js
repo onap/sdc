@@ -14,6 +14,7 @@
  * permissions and limitations under the License.
  */
 import { connect } from 'react-redux';
+import sortByStringProperty from 'nfvo-utils/sortByStringProperty.js';
 import LicenseKeyGroupsActionHelper from './LicenseKeyGroupsActionHelper.js';
 import LicenseKeyGroupsEditorView from './LicenseKeyGroupsEditorView.jsx';
 import LimitEditorActionHelper from '../limits/LimitEditorActionHelper.js';
@@ -24,7 +25,7 @@ const mapStateToProps = ({ licenseModel: { licenseKeyGroup } }) => {
         data,
         genericFieldInfo,
         formReady,
-        limitsList
+        limitsList = []
     } = licenseKeyGroup.licenseKeyGroupsEditor;
 
     let previousData,
@@ -50,7 +51,7 @@ const mapStateToProps = ({ licenseModel: { licenseKeyGroup } }) => {
         isFormValid,
         formReady,
         LKGNames,
-        limitsList
+        limitsList: sortByStringProperty(limitsList, 'name')
     };
 };
 

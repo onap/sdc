@@ -15,6 +15,7 @@
  */
 import { connect } from 'react-redux';
 import i18n from 'nfvo-utils/i18n/i18n.js';
+import sortByStringProperty from 'nfvo-utils/sortByStringProperty.js';
 import EntitlementPoolsActionHelper from './EntitlementPoolsActionHelper.js';
 import EntitlementPoolsListEditorView, {
     generateConfirmationMsg
@@ -30,7 +31,10 @@ const mapStateToProps = ({
 
     return {
         vendorName,
-        entitlementPoolsList,
+        entitlementPoolsList: sortByStringProperty(
+            entitlementPoolsList,
+            'name'
+        ),
         isDisplayModal: Boolean(data),
         isModalInEditMode: Boolean(data && data.id)
     };
