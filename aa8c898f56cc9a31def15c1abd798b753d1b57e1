@@ -1,0 +1,78 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_99d40dbe",
+        "filename": "catalog-ui/src/app/ng2/components/logic/inputs-table/inputs-table.component.ts",
+        "patchSetId": 3
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 1341
+      },
+      "writtenOn": "2018-09-09T08:46:41Z",
+      "side": 1,
+      "message": "Add line break between the Input/Output section and the local variables",
+      "revId": "aa8c898f56cc9a31def15c1abd798b753d1b57e1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_b9f0e967",
+        "filename": "catalog-ui/src/app/ng2/components/logic/inputs-table/inputs-table.component.ts",
+        "patchSetId": 3
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 1341
+      },
+      "writtenOn": "2018-09-09T08:46:41Z",
+      "side": 1,
+      "message": "Please change to a meaningful variable name",
+      "range": {
+        "startLine": 51,
+        "startChar": 1,
+        "endLine": 53,
+        "endChar": 42
+      },
+      "revId": "aa8c898f56cc9a31def15c1abd798b753d1b57e1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_19e0fd94",
+        "filename": "catalog-ui/src/app/ng2/components/logic/properties-table/properties-table.component.ts",
+        "patchSetId": 3
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 1341
+      },
+      "writtenOn": "2018-09-09T08:46:41Z",
+      "side": 1,
+      "message": "Add line break between the Input/Output section and the local variables",
+      "revId": "aa8c898f56cc9a31def15c1abd798b753d1b57e1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_d9f5a557",
+        "filename": "catalog-ui/src/app/ng2/pipes/orderBy.pipe.ts",
+        "patchSetId": 3
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 1341
+      },
+      "writtenOn": "2018-09-09T08:46:41Z",
+      "side": 1,
+      "message": "Please change to a meaningful variable name",
+      "revId": "aa8c898f56cc9a31def15c1abd798b753d1b57e1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
