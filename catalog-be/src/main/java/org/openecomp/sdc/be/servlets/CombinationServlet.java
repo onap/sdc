@@ -104,16 +104,20 @@ public class CombinationServlet extends AbstractValidationsServlet {
                     response = buildErrorResponse(convertResponse.right().value());
                     return response;
                 }
-
                 UICombination UICombination = convertResponse.left().value();
                 Combination combination = new Combination(UICombination);
                 Either<Combination, ResponseFormat> createdCombination = businessLogic.createCombination(combination, service);
+                if (createdCombination.isRight()) {
+                    log.error("Failed to create Combination");
+                    response = buildErrorResponse(createdCombination.right().value());
+                    return response;
+                }
                 Object representation = RepresentationUtils.toRepresentation(createdCombination);
                 response = buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.CREATED), representation);
                 responseWrapper.setInnerElement(response);
             }
             return responseWrapper.getInnerElement();
-        } catch (IOException e) {
+        } catch (Exception e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Create Resource");
             log.debug("create resource failed with exception", e);
             response = buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
@@ -122,8 +126,12 @@ public class CombinationServlet extends AbstractValidationsServlet {
     }
 
     private Either<UICombination, ResponseFormat> parseToCombination(String data) {
-        UICombination combination = gson.fromJson(data, UICombination.class);
-        return Either.left(combination);
+        try {
+            UICombination combination = gson.fromJson(data, UICombination.class);
+            return Either.left(combination);
+        } catch (Exception e) {
+            return Either.right(getComponentsUtils().getResponseFormat(ActionStatus.INVALID_CONTENT));
+        }
     }
 
     private boolean isUIImport(String data) {
