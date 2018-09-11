@@ -44,15 +44,15 @@ public class ArtifactValidatorExecuter{
 		   Map<String, List<Component>> result = new HashMap<>();
 	        Either<List<GraphVertex>, TitanOperationStatus> resultsEither = titanDao.getByCriteria(type, hasProps);
 	        if (resultsEither.isRight()) {
-	            System.out.println("getVerticesToValidate failed "+ resultsEither.right().value());
+	            log.info("getVerticesToValidate failed "+ resultsEither.right().value());
 	            return result;
 	        }
-	        System.out.println("getVerticesToValidate: "+resultsEither.left().value().size()+" vertices to scan");
+	        log.info("getVerticesToValidate: "+resultsEither.left().value().size()+" vertices to scan");
 	        List<GraphVertex> componentsList = resultsEither.left().value();
 	        componentsList.forEach(vertex -> {
 	        	String ivariantUuid = (String)vertex.getMetadataProperty(GraphPropertyEnum.INVARIANT_UUID);
 	        	if(!result.containsKey(ivariantUuid)){
-	        		List<Component> compList = new ArrayList<Component>();
+	        		List<Component> compList = new ArrayList<>();
 	        		result.put(ivariantUuid, compList);
 	        	}
 	        	List<Component> compList = result.get(ivariantUuid);
@@ -62,7 +62,7 @@ public class ArtifactValidatorExecuter{
 				
 				Either<Component, StorageOperationStatus> toscaElement = toscaOperationFacade.getToscaElement(vertex.getUniqueId(), filter);
 				if (toscaElement.isRight()) {
-					System.out.println("getVerticesToValidate: failed to find element"+ vertex.getUniqueId()+" staus is" + toscaElement.right().value());
+					log.info("getVerticesToValidate: failed to find element"+ vertex.getUniqueId()+" staus is" + toscaElement.right().value());
 				}else{
 					compList.add(toscaElement.left().value());
 				}
@@ -76,9 +76,7 @@ public class ArtifactValidatorExecuter{
 		   boolean result = true;
 		   long time = System.currentTimeMillis();
 		   String fileName = ValidationConfigManager.getOutputFilePath() + this.getName() + "_"+ time + ".csv";
-		   Writer writer = null;
-		   try {
-			writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileName), "utf-8"));
+				   try (Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileName), "utf-8"))){
 			writer.write("name, UUID, invariantUUID, state, version\n");
 			Collection<List<Component>> collection = vertices.values();
 			for(List<Component> compList: collection ){
@@ -96,20 +94,14 @@ public class ArtifactValidatorExecuter{
 						artifactEsId.addAll(toscaArtifacts.values().stream().map(ArtifactDefinition::getEsId).collect(Collectors.toList()))	;
 					}
 				}
-				
+
 			}
-			
-		   } catch (Exception e) {
+			   } catch (Exception e) {
 				log.info("Failed to fetch vf resources ", e);
 				return false;
 			} finally {
 				titanDao.commit();
-				try {
-					writer.flush();
-					writer.close();
-				} catch (Exception ex) {
-					/* ignore */}
-			}
+				   }
 			return result;
 	    }
 	   
@@ -117,14 +109,13 @@ public class ArtifactValidatorExecuter{
 			try {
 				// "service name, service id, state, version
 				for(Component component: components ){
-					StringBuffer sb = new StringBuffer(component.getName());
+					StringBuilder sb = new StringBuilder(component.getName());
 					sb.append(",").append(component.getUniqueId()).append(",").append(component.getInvariantUUID()).append(",").append(component.getLifecycleState()).append(",").append(component.getVersion());
-					
 					sb.append("\n");
 					writer.write(sb.toString());
 				}
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
+                log.info("Failed to write module result to file. ", e);
 				e.printStackTrace();
 			}
 		}
