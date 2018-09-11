@@ -1,0 +1,142 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_e2b6a53d",
+        "filename": "common/onap-tosca-datatype/src/main/resources/globalTypes/onap/data.yml",
+        "patchSetId": 15
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 2363
+      },
+      "writtenOn": "2018-09-11T01:22:44Z",
+      "side": 1,
+      "message": "I suppose \"scalar-unit.size\" is integer, how to express unit like \"GB\"",
+      "range": {
+        "startLine": 51,
+        "startChar": 14,
+        "endLine": 51,
+        "endChar": 30
+      },
+      "revId": "86385dad96207b5f3d7909161dfa9986efd300ee",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_c2892976",
+        "filename": "common/onap-tosca-datatype/src/main/resources/globalTypes/onap/data.yml",
+        "patchSetId": 15
+      },
+      "lineNbr": 193,
+      "author": {
+        "id": 2363
+      },
+      "writtenOn": "2018-09-11T01:22:44Z",
+      "side": 1,
+      "message": "Please delete this blank.",
+      "range": {
+        "startLine": 193,
+        "startChar": 22,
+        "endLine": 193,
+        "endChar": 23
+      },
+      "revId": "86385dad96207b5f3d7909161dfa9986efd300ee",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_025de114",
+        "filename": "common/onap-tosca-datatype/src/main/resources/globalTypes/onap/nodes.yml",
+        "patchSetId": 15
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 2363
+      },
+      "writtenOn": "2018-09-11T01:22:44Z",
+      "side": 1,
+      "message": "This version is 1.0, but tosca_definitions_version is tosca_simple_yaml_1_1 which is 1.1.",
+      "range": {
+        "startLine": 19,
+        "startChar": 2,
+        "endLine": 19,
+        "endChar": 16
+      },
+      "revId": "86385dad96207b5f3d7909161dfa9986efd300ee",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_a29d0dbe",
+        "filename": "common/onap-tosca-datatype/src/main/resources/globalTypes/onap/nodes.yml",
+        "patchSetId": 15
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 2363
+      },
+      "writtenOn": "2018-09-11T01:22:44Z",
+      "side": 1,
+      "message": "Please delete this blanks",
+      "range": {
+        "startLine": 20,
+        "startChar": 0,
+        "endLine": 20,
+        "endChar": 2
+      },
+      "revId": "86385dad96207b5f3d7909161dfa9986efd300ee",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_e25f850d",
+        "filename": "common/onap-tosca-datatype/src/main/resources/globalTypes/onap/nodes.yml",
+        "patchSetId": 15
+      },
+      "lineNbr": 135,
+      "author": {
+        "id": 2363
+      },
+      "writtenOn": "2018-09-11T01:22:44Z",
+      "side": 1,
+      "message": "Please delete this blank.",
+      "range": {
+        "startLine": 135,
+        "startChar": 17,
+        "endLine": 135,
+        "endChar": 18
+      },
+      "revId": "86385dad96207b5f3d7909161dfa9986efd300ee",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_426759e9",
+        "filename": "common/onap-tosca-datatype/src/main/resources/globalTypes/onap/nodes.yml",
+        "patchSetId": 15
+      },
+      "lineNbr": 181,
+      "author": {
+        "id": 2363
+      },
+      "writtenOn": "2018-09-11T01:22:44Z",
+      "side": 1,
+      "message": "Why do you comment on artifacts?\nIf we want to use artifacts, how to use it?",
+      "range": {
+        "startLine": 178,
+        "startChar": 0,
+        "endLine": 181,
+        "endChar": 42
+      },
+      "revId": "86385dad96207b5f3d7909161dfa9986efd300ee",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
