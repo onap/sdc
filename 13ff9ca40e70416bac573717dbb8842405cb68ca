@@ -1,0 +1,556 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_22d33d05",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4217
+      },
+      "writtenOn": "2018-09-11T05:40:11Z",
+      "side": 1,
+      "message": "Opening braces should not be on a new line.\nMax line length should be 120.\n\nCode style should follow sonar rules (https://sonar.onap.org/coding_rules) and google code style (https://google.github.io/styleguide/javaguide.html) - with some changes: https://wiki.onap.org/display/DW/Java+code+style\n\nTry this: Intellij code formatter for google code: https://github.com/google/styleguide/blob/gh-pages/intellij-java-google-style.xml, and change the line length to 120.",
+      "revId": "13ff9ca40e70416bac573717dbb8842405cb68ca",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_42d0b9f5",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 2585,
+      "author": {
+        "id": 4217
+      },
+      "writtenOn": "2018-09-11T05:40:11Z",
+      "side": 1,
+      "message": "Max line length should be 120.",
+      "revId": "13ff9ca40e70416bac573717dbb8842405cb68ca",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_0e018d05",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 2596,
+      "author": {
+        "id": 4217
+      },
+      "writtenOn": "2018-09-11T05:40:11Z",
+      "side": 1,
+      "message": "remove empty line",
+      "revId": "13ff9ca40e70416bac573717dbb8842405cb68ca",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_02188173",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 2608,
+      "author": {
+        "id": 4217
+      },
+      "writtenOn": "2018-09-11T05:40:11Z",
+      "side": 1,
+      "message": "\"os\" should it be \"is\"?",
+      "revId": "13ff9ca40e70416bac573717dbb8842405cb68ca",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_022ac18f",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 2634,
+      "author": {
+        "id": 4217
+      },
+      "writtenOn": "2018-09-11T05:40:11Z",
+      "side": 1,
+      "message": "Need an item for the {} placeholder.",
+      "revId": "13ff9ca40e70416bac573717dbb8842405cb68ca",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_2256dd5c",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 2665,
+      "author": {
+        "id": 4217
+      },
+      "writtenOn": "2018-09-11T05:40:11Z",
+      "side": 1,
+      "message": "Do we need to construct a new instance of the current class so that we can call componentInstanceLogic.createComponentInstance, but instead simply call createComponentinstance() on the current class?",
+      "range": {
+        "startLine": 2664,
+        "startChar": 0,
+        "endLine": 2665,
+        "endChar": 122
+      },
+      "revId": "13ff9ca40e70416bac573717dbb8842405cb68ca",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_e24b05af",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 2711,
+      "author": {
+        "id": 4217
+      },
+      "writtenOn": "2018-09-11T05:40:11Z",
+      "side": 1,
+      "message": "Add space",
+      "range": {
+        "startLine": 2711,
+        "startChar": 79,
+        "endLine": 2711,
+        "endChar": 80
+      },
+      "revId": "13ff9ca40e70416bac573717dbb8842405cb68ca",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_02e08194",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 2723,
+      "author": {
+        "id": 4217
+      },
+      "writtenOn": "2018-09-11T05:40:11Z",
+      "side": 1,
+      "message": "match start/finish log statements at the start of the method:\n\"start: copy component instance properties and inputs\"\nAt the end of the method:\n\"finish: copy component instance properties and inputs, OK\"",
+      "revId": "13ff9ca40e70416bac573717dbb8842405cb68ca",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_a2be6d63",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 2739,
+      "author": {
+        "id": 4217
+      },
+      "writtenOn": "2018-09-11T05:40:11Z",
+      "side": 1,
+      "message": "componentInstancePropInputList is declared and objects added to it, but it is never used?",
+      "revId": "13ff9ca40e70416bac573717dbb8842405cb68ca",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_c2c369eb",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 2740,
+      "author": {
+        "id": 4217
+      },
+      "writtenOn": "2018-09-11T05:40:11Z",
+      "side": 1,
+      "message": "destinputNewValueMap  is declared and objects added to it, but it is never used?",
+      "range": {
+        "startLine": 2740,
+        "startChar": 27,
+        "endLine": 2740,
+        "endChar": 47
+      },
+      "revId": "13ff9ca40e70416bac573717dbb8842405cb68ca",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_82b9f17a",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 2755,
+      "author": {
+        "id": 4217
+      },
+      "writtenOn": "2018-09-11T05:40:11Z",
+      "side": 1,
+      "message": "Do we need this log info? If so, then it needs objects to fill the {}.",
+      "revId": "13ff9ca40e70416bac573717dbb8842405cb68ca",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_427679d8",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 2797,
+      "author": {
+        "id": 4217
+      },
+      "writtenOn": "2018-09-11T05:40:11Z",
+      "side": 1,
+      "message": "match start/finish log statements at the start of the method:\n\"start: copy component instance attributes\"\nAt the end of the method:\n\"finish: copy component instance attributes, OK\"",
+      "revId": "13ff9ca40e70416bac573717dbb8842405cb68ca",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_a24c2d9f",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 2813,
+      "author": {
+        "id": 4217
+      },
+      "writtenOn": "2018-09-11T05:40:11Z",
+      "side": 1,
+      "message": "Do we need to instantiate a new instance of this very class?",
+      "revId": "13ff9ca40e70416bac573717dbb8842405cb68ca",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_22601d00",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 2822,
+      "author": {
+        "id": 4217
+      },
+      "writtenOn": "2018-09-11T05:40:11Z",
+      "side": 1,
+      "message": "Change to !sourceAttribute.getValue().isEmpty()",
+      "range": {
+        "startLine": 2822,
+        "startChar": 70,
+        "endLine": 2822,
+        "endChar": 76
+      },
+      "revId": "13ff9ca40e70416bac573717dbb8842405cb68ca",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_425d1946",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 2826,
+      "author": {
+        "id": 4217
+      },
+      "writtenOn": "2018-09-11T05:40:11Z",
+      "side": 1,
+      "message": "Only need one line of logging, and make sure {} match values in the logged line.",
+      "range": {
+        "startLine": 2823,
+        "startChar": 0,
+        "endLine": 2826,
+        "endChar": 60
+      },
+      "revId": "13ff9ca40e70416bac573717dbb8842405cb68ca",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_823ed1d8",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 2847,
+      "author": {
+        "id": 4217
+      },
+      "writtenOn": "2018-09-11T05:40:11Z",
+      "side": 1,
+      "message": "Need a value in the log line for {}",
+      "revId": "13ff9ca40e70416bac573717dbb8842405cb68ca",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_e27ea5ae",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 2868,
+      "author": {
+        "id": 4217
+      },
+      "writtenOn": "2018-09-11T05:40:11Z",
+      "side": 1,
+      "message": "match start/finish log statements at the start of the method:\n\"start: copy component instance additional info\"\nAt the end of the method:\n\"finish: copy component instance additional info, OK\"",
+      "revId": "13ff9ca40e70416bac573717dbb8842405cb68ca",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_220edd3b",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 2888,
+      "author": {
+        "id": 4217
+      },
+      "writtenOn": "2018-09-11T05:40:11Z",
+      "side": 1,
+      "message": "This might be better: parameterInfo.getValue() !\u003d null \u0026\u0026 !parameterInfo.getValue().isEmpty()",
+      "revId": "13ff9ca40e70416bac573717dbb8842405cb68ca",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_02016105",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 2890,
+      "author": {
+        "id": 4217
+      },
+      "writtenOn": "2018-09-11T05:40:11Z",
+      "side": 1,
+      "message": "Because parameterInfoUid.split(\"\\\\.\") is used many times, better to store it in a local variable and use that.",
+      "revId": "13ff9ca40e70416bac573717dbb8842405cb68ca",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_2515873f",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 2897,
+      "author": {
+        "id": 4217
+      },
+      "writtenOn": "2018-09-11T05:40:11Z",
+      "side": 1,
+      "message": "Need an item for the print line {}",
+      "revId": "13ff9ca40e70416bac573717dbb8842405cb68ca",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_05188b73",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 2902,
+      "author": {
+        "id": 4217
+      },
+      "writtenOn": "2018-09-11T05:40:11Z",
+      "side": 1,
+      "message": "Match {} with parameters",
+      "revId": "13ff9ca40e70416bac573717dbb8842405cb68ca",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_a528b786",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 2907,
+      "author": {
+        "id": 4217
+      },
+      "writtenOn": "2018-09-11T05:40:11Z",
+      "side": 1,
+      "message": "Match {} with parameters",
+      "revId": "13ff9ca40e70416bac573717dbb8842405cb68ca",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_651e1f61",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 2967,
+      "author": {
+        "id": 4217
+      },
+      "writtenOn": "2018-09-11T05:40:11Z",
+      "side": 1,
+      "message": "Match {} to paramters",
+      "revId": "13ff9ca40e70416bac573717dbb8842405cb68ca",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_85233ba6",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 2983,
+      "author": {
+        "id": 4217
+      },
+      "writtenOn": "2018-09-11T05:40:11Z",
+      "side": 1,
+      "message": "Remove empty line",
+      "revId": "13ff9ca40e70416bac573717dbb8842405cb68ca",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_052f2b89",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 3049,
+      "author": {
+        "id": 4217
+      },
+      "writtenOn": "2018-09-11T05:40:11Z",
+      "side": 1,
+      "message": "toscaOperationFacade.getToscaElement is expensive, so only do it once, store it in a variable, and then then test the variable isRight or call .left()",
+      "range": {
+        "startLine": 3043,
+        "startChar": 0,
+        "endLine": 3049,
+        "endChar": 97
+      },
+      "revId": "13ff9ca40e70416bac573717dbb8842405cb68ca",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_a54f576a",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 3083,
+      "author": {
+        "id": 4217
+      },
+      "writtenOn": "2018-09-11T05:40:11Z",
+      "side": 1,
+      "message": "Do we log an error? We are returning .left(), implying this is not an error. Maybe log a warning.",
+      "revId": "13ff9ca40e70416bac573717dbb8842405cb68ca",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_e548ef5d",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/ComponentInstanceServlet.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1211,
+      "author": {
+        "id": 4217
+      },
+      "writtenOn": "2018-09-11T05:40:11Z",
+      "side": 1,
+      "message": "message \u003d \"Copy/paste success\"",
+      "revId": "13ff9ca40e70416bac573717dbb8842405cb68ca",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_8571fba9",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/ComponentInstanceServlet.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1218,
+      "author": {
+        "id": 4217
+      },
+      "writtenOn": "2018-09-11T05:40:11Z",
+      "side": 1,
+      "message": "Opening braces should not be on a new line.\nMax line length should be 120.\n\nTry this: Intellij code formatter for google code: https://github.com/google/styleguide/blob/gh-pages/intellij-java-google-style.xml, and change the line length to 120.",
+      "revId": "13ff9ca40e70416bac573717dbb8842405cb68ca",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_a57677a2",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/ComponentInstanceServlet.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1219,
+      "author": {
+        "id": 4217
+      },
+      "writtenOn": "2018-09-11T05:40:11Z",
+      "side": 1,
+      "message": "Have a matching log entry at the end of this method:\n\"Start: copy component instance\"\n\"Finished: copy component instance\"",
+      "revId": "13ff9ca40e70416bac573717dbb8842405cb68ca",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_e5b6af3d",
+        "filename": "catalog-dao/src/main/java/org/openecomp/sdc/be/dao/api/ActionStatus.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 4217
+      },
+      "writtenOn": "2018-09-11T05:40:11Z",
+      "side": 1,
+      "message": "It appears that you have used USER_DEFINED in the other code to represent a generic user defined error? If so, this appears incorrect as USER_ errors are errors about actual users in the system. \nYou should replace usages of USER_DEFINED with actual existing or new specific errors, such as PROPERTY_NOT_FOUND, RESOURCE_NOT_FOUND, etc, and then remove USER_DEFINED. \nAlso consider using GENERAL_ERROR.",
+      "range": {
+        "startLine": 26,
+        "startChar": 273,
+        "endLine": 26,
+        "endChar": 285
+      },
+      "revId": "13ff9ca40e70416bac573717dbb8842405cb68ca",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
