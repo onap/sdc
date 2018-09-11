@@ -1,0 +1,208 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_8501fb6b",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 3142,
+      "author": {
+        "id": 4217
+      },
+      "writtenOn": "2018-09-11T08:28:11Z",
+      "side": 1,
+      "message": "remove empty line",
+      "revId": "144c3f28be9a1b667d1b3b3a410e072b4b9672bc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_e5ef8faf",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 3146,
+      "author": {
+        "id": 4217
+      },
+      "writtenOn": "2018-09-11T08:28:11Z",
+      "side": 1,
+      "message": "Should not be on a new line, same comment for all opening braces on a new line.",
+      "revId": "144c3f28be9a1b667d1b3b3a410e072b4b9672bc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_e5746fff",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 3165,
+      "author": {
+        "id": 4217
+      },
+      "writtenOn": "2018-09-11T08:28:11Z",
+      "side": 1,
+      "message": "Should this be Either.left, if everything is OK?",
+      "revId": "144c3f28be9a1b667d1b3b3a410e072b4b9672bc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_058e4bd0",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 3202,
+      "author": {
+        "id": 4217
+      },
+      "writtenOn": "2018-09-11T08:28:11Z",
+      "side": 1,
+      "message": "Should not be on a new line, same comment for all opening braces on a new line.",
+      "revId": "144c3f28be9a1b667d1b3b3a410e072b4b9672bc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_25602700",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 3203,
+      "author": {
+        "id": 4217
+      },
+      "writtenOn": "2018-09-11T08:28:11Z",
+      "side": 1,
+      "message": "Not sure it makes sense to initialize the array\u0027s initial capacity to 8.",
+      "revId": "144c3f28be9a1b667d1b3b3a410e072b4b9672bc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_c5c373eb",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 3225,
+      "author": {
+        "id": 4217
+      },
+      "writtenOn": "2018-09-11T08:28:11Z",
+      "side": 1,
+      "message": "Should not be on a new line, same comment for all opening braces on a new line.",
+      "revId": "144c3f28be9a1b667d1b3b3a410e072b4b9672bc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_2527c7cb",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 3232,
+      "author": {
+        "id": 4217
+      },
+      "writtenOn": "2018-09-11T08:28:11Z",
+      "side": 1,
+      "message": "Would be better to declare a constant for 4 as the expected additional information parameter key part size.",
+      "revId": "144c3f28be9a1b667d1b3b3a410e072b4b9672bc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_e52c6fae",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 3236,
+      "author": {
+        "id": 4217
+      },
+      "writtenOn": "2018-09-11T08:28:11Z",
+      "side": 1,
+      "message": "Would be better to declare a constant for 2 as the name part of additional information parameter key.",
+      "revId": "144c3f28be9a1b667d1b3b3a410e072b4b9672bc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_c51ff36a",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/ComponentInstanceServlet.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1265,
+      "author": {
+        "id": 4217
+      },
+      "writtenOn": "2018-09-11T08:28:11Z",
+      "side": 1,
+      "message": "Should this be @DELETE",
+      "revId": "144c3f28be9a1b667d1b3b3a410e072b4b9672bc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_65105f59",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/ComponentInstanceServlet.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1283,
+      "author": {
+        "id": 4217
+      },
+      "writtenOn": "2018-09-11T08:28:11Z",
+      "side": 1,
+      "message": "Should not be on a new line, same for all opening braces",
+      "revId": "144c3f28be9a1b667d1b3b3a410e072b4b9672bc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_b8545aff",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/ComponentInstanceServlet.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1330,
+      "author": {
+        "id": 4217
+      },
+      "writtenOn": "2018-09-11T08:28:11Z",
+      "side": 1,
+      "message": "This could be changed so that if we have NO failed deletes, then build OK response, otherwise build failed response and pass the list of failed deletes.",
+      "revId": "144c3f28be9a1b667d1b3b3a410e072b4b9672bc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_785a422b",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/ComponentInstanceServlet.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1390,
+      "author": {
+        "id": 4217
+      },
+      "writtenOn": "2018-09-11T08:28:11Z",
+      "side": 1,
+      "message": "This could be changed to also build a list of failed dissociateRIFromRI, and then if it is not empty, build an error response.",
+      "revId": "144c3f28be9a1b667d1b3b3a410e072b4b9672bc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
