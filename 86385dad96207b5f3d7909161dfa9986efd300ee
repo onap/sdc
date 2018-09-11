@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "1a76adc5_02ec01f2",
+        "filename": "common/onap-tosca-datatype/src/main/resources/globalTypes/onap/data.yml",
+        "patchSetId": 15
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 309
+      },
+      "writtenOn": "2018-09-11T02:12:24Z",
+      "side": 1,
+      "message": "No scalar size is a special type in tosca, e.g. 1 GB, 2 MB",
+      "parentUuid": "1a76adc5_e2e4653d",
+      "range": {
+        "startLine": 51,
+        "startChar": 14,
+        "endLine": 51,
+        "endChar": 30
+      },
+      "revId": "86385dad96207b5f3d7909161dfa9986efd300ee",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1a76adc5_c2892976",
         "filename": "common/onap-tosca-datatype/src/main/resources/globalTypes/onap/data.yml",
         "patchSetId": 15
@@ -199,6 +223,30 @@
       "writtenOn": "2018-09-11T01:35:38Z",
       "side": 1,
       "message": "@lianhao, could you please help address Haibin\u0027s comment",
+      "parentUuid": "1a76adc5_426759e9",
+      "range": {
+        "startLine": 178,
+        "startChar": 0,
+        "endLine": 181,
+        "endChar": 42
+      },
+      "revId": "86385dad96207b5f3d7909161dfa9986efd300ee",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_82b7b1f4",
+        "filename": "common/onap-tosca-datatype/src/main/resources/globalTypes/onap/nodes.yml",
+        "patchSetId": 15
+      },
+      "lineNbr": 181,
+      "author": {
+        "id": 309
+      },
+      "writtenOn": "2018-09-11T02:12:24Z",
+      "side": 1,
+      "message": "just specify the artifacts in node_template, node_type definition can\u0027t define the artifact type per tosca spec.",
       "parentUuid": "1a76adc5_426759e9",
       "range": {
         "startLine": 178,
