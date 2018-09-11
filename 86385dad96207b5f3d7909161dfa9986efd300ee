@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "1a76adc5_e2e4653d",
+        "filename": "common/onap-tosca-datatype/src/main/resources/globalTypes/onap/data.yml",
+        "patchSetId": 15
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 2737
+      },
+      "writtenOn": "2018-09-11T01:35:38Z",
+      "side": 1,
+      "message": "@lianhao, could you please help address Haibin\u0027s comment",
+      "parentUuid": "1a76adc5_e2b6a53d",
+      "range": {
+        "startLine": 51,
+        "startChar": 14,
+        "endLine": 51,
+        "endChar": 30
+      },
+      "revId": "86385dad96207b5f3d7909161dfa9986efd300ee",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1a76adc5_c2892976",
         "filename": "common/onap-tosca-datatype/src/main/resources/globalTypes/onap/data.yml",
         "patchSetId": 15
@@ -59,6 +83,30 @@
       "writtenOn": "2018-09-11T01:22:44Z",
       "side": 1,
       "message": "This version is 1.0, but tosca_definitions_version is tosca_simple_yaml_1_1 which is 1.1.",
+      "range": {
+        "startLine": 19,
+        "startChar": 2,
+        "endLine": 19,
+        "endChar": 16
+      },
+      "revId": "86385dad96207b5f3d7909161dfa9986efd300ee",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_82f6d1f7",
+        "filename": "common/onap-tosca-datatype/src/main/resources/globalTypes/onap/nodes.yml",
+        "patchSetId": 15
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 2737
+      },
+      "writtenOn": "2018-09-11T01:35:38Z",
+      "side": 1,
+      "message": "this version should be the dedicated version of nodes.yml and have nothing to do with tosca definition version,",
+      "parentUuid": "1a76adc5_025de114",
       "range": {
         "startLine": 19,
         "startChar": 2,
@@ -128,6 +176,30 @@
       "writtenOn": "2018-09-11T01:22:44Z",
       "side": 1,
       "message": "Why do you comment on artifacts?\nIf we want to use artifacts, how to use it?",
+      "range": {
+        "startLine": 178,
+        "startChar": 0,
+        "endLine": 181,
+        "endChar": 42
+      },
+      "revId": "86385dad96207b5f3d7909161dfa9986efd300ee",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_22dfbd6a",
+        "filename": "common/onap-tosca-datatype/src/main/resources/globalTypes/onap/nodes.yml",
+        "patchSetId": 15
+      },
+      "lineNbr": 181,
+      "author": {
+        "id": 2737
+      },
+      "writtenOn": "2018-09-11T01:35:38Z",
+      "side": 1,
+      "message": "@lianhao, could you please help address Haibin\u0027s comment",
+      "parentUuid": "1a76adc5_426759e9",
       "range": {
         "startLine": 178,
         "startChar": 0,
