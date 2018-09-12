@@ -43,22 +43,27 @@ import org.openecomp.sdc.logging.api.LoggerFactory;
 public class PermissionsFilter implements Filter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PermissionsFilter.class);
-    private final PermissionsServices permissionsServices;
+    private PermissionsServices permissionsServices;
     private static final String IRRELEVANT_REQUEST = "Irrelevant_Request";
     private static final String EDIT_ITEM = "Edit_Item";
 
-    public PermissionsFilter() {
+    /*public PermissionsFilter() {
         this.permissionsServices = PermissionsServicesFactory.getInstance().createInterface();
-    }
+    }*/
 
     @Override
     public void init(FilterConfig filterConfig) {
         // required by servlet API
     }
 
+    public PermissionsServices getPermissionsServices() {
+        return PermissionsServicesFactory.getInstance().createInterface();
+    }
+
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain)
             throws IOException, ServletException {
+        permissionsServices = getPermissionsServices();
 
         if ((servletRequest instanceof HttpServletRequest)
                     && isRelevant((HttpServletRequest) servletRequest, servletResponse)) {
