@@ -44,7 +44,7 @@ public class ArtifactValidatorExecuter{
 		   Map<String, List<Component>> result = new HashMap<>();
 	        Either<List<GraphVertex>, TitanOperationStatus> resultsEither = titanDao.getByCriteria(type, hasProps);
 	        if (resultsEither.isRight()) {
-	            System.out.println("getVerticesToValidate failed "+ resultsEither.right().value());
+	        	log.error("getVerticesToValidate failed "+ resultsEither.right().value());
 	            return result;
 	        }
 	        System.out.println("getVerticesToValidate: "+resultsEither.left().value().size()+" vertices to scan");
@@ -62,7 +62,7 @@ public class ArtifactValidatorExecuter{
 				
 				Either<Component, StorageOperationStatus> toscaElement = toscaOperationFacade.getToscaElement(vertex.getUniqueId(), filter);
 				if (toscaElement.isRight()) {
-					System.out.println("getVerticesToValidate: failed to find element"+ vertex.getUniqueId()+" staus is" + toscaElement.right().value());
+					log.error("getVerticesToValidate: failed to find element"+ vertex.getUniqueId()+" staus is" + toscaElement.right().value());
 				}else{
 					compList.add(toscaElement.left().value());
 				}
@@ -76,9 +76,7 @@ public class ArtifactValidatorExecuter{
 		   boolean result = true;
 		   long time = System.currentTimeMillis();
 		   String fileName = ValidationConfigManager.getOutputFilePath() + this.getName() + "_"+ time + ".csv";
-		   Writer writer = null;
-		   try {
-			writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileName), "utf-8"));
+		   try(Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileName), "utf-8"))) {
 			writer.write("name, UUID, invariantUUID, state, version\n");
 			Collection<List<Component>> collection = vertices.values();
 			for(List<Component> compList: collection ){
@@ -104,11 +102,6 @@ public class ArtifactValidatorExecuter{
 				return false;
 			} finally {
 				titanDao.commit();
-				try {
-					writer.flush();
-					writer.close();
-				} catch (Exception ex) {
-					/* ignore */}
 			}
 			return result;
 	    }
@@ -124,8 +117,7 @@ public class ArtifactValidatorExecuter{
 					writer.write(sb.toString());
 				}
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				log.info("Failed to write module result to file ", e);
 			}
 		}
 
