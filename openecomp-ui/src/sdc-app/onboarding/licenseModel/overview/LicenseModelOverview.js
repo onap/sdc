@@ -1,19 +1,20 @@
-/*!
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
- * or implied. See the License for the specific language governing
- * permissions and limitations under the License.
- */
+/*
+* Copyright © 2016-2018 European Support Limited
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
 import { connect } from 'react-redux';
+import sortByStringProperty from 'nfvo-utils/sortByStringProperty.js';
 import LicenseModelActionHelper from 'sdc-app/onboarding/licenseModel/LicenseModelActionHelper.js';
 import LicenseModelOverviewView from './LicenseModelOverviewView.jsx';
 import {
@@ -21,6 +22,7 @@ import {
     selectedButton
 } from './LicenseModelOverviewConstants.js';
 import licenseModelOverviewActionHelper from './licenseModelOverviewActionHelper.js';
+import { SORTING_PROPERTY_NAME } from 'sdc-app/onboarding/licenseModel/LicenseModelConstants.js';
 
 export const mapStateToProps = ({
     licenseModel: {
@@ -78,12 +80,24 @@ export const mapStateToProps = ({
                 ...curFeatureGroup,
                 itemType: overviewEditorHeaders.FEATURE_GROUP,
                 children: [
-                    ...(entitlementPoolsIds.length
-                        ? entitlementPoolsIds.reduce(reduceEntitlementPools, [])
-                        : []),
-                    ...(licenseKeyGroupsIds.length
-                        ? licenseKeyGroupsIds.reduce(reduceLicenseKeyGroups, [])
-                        : [])
+                    ...sortByStringProperty(
+                        entitlementPoolsIds.length
+                            ? entitlementPoolsIds.reduce(
+                                  reduceEntitlementPools,
+                                  []
+                              )
+                            : [],
+                        SORTING_PROPERTY_NAME
+                    ),
+                    ...sortByStringProperty(
+                        licenseKeyGroupsIds.length
+                            ? licenseKeyGroupsIds.reduce(
+                                  reduceLicenseKeyGroups,
+                                  []
+                              )
+                            : [],
+                        SORTING_PROPERTY_NAME
+                    )
                 ]
             });
         }
@@ -145,7 +159,10 @@ export const mapStateToProps = ({
             ...licenseAgreement,
             itemType: overviewEditorHeaders.LICENSE_AGREEMENT,
             children: featureGroupsIds.length
-                ? featureGroupsIds.reduce(reduceFeatureGroups, [])
+                ? sortByStringProperty(
+                      featureGroupsIds.reduce(reduceFeatureGroups, []),
+                      SORTING_PROPERTY_NAME
+                  )
                 : []
         };
     };
@@ -177,15 +194,29 @@ export const mapStateToProps = ({
     }
 
     let orphanDataList = [
-        ...featureGroup.featureGroupsList.reduce(checkFG, []),
-        ...entitlementPool.entitlementPoolsList.reduce(checkEP, []),
-        ...licenseKeyGroup.licenseKeyGroupsList.reduce(checkLG, [])
+        ...sortByStringProperty(
+            featureGroup.featureGroupsList.reduce(checkFG, []),
+            SORTING_PROPERTY_NAME
+        ),
+        ...sortByStringProperty(
+            entitlementPool.entitlementPoolsList.reduce(checkEP, []),
+            SORTING_PROPERTY_NAME
+        ),
+        ...sortByStringProperty(
+            licenseKeyGroup.licenseKeyGroupsList.reduce(checkLG, []),
+            SORTING_PROPERTY_NAME
+        )
     ];
 
     licensingDataList =
         licenseAgreement.licenseAgreementList &&
         licenseAgreement.licenseAgreementList.length
-            ? licenseAgreement.licenseAgreementList.map(mapLicenseAgreementData)
+            ? sortByStringProperty(
+                  licenseAgreement.licenseAgreementList.map(
+                      mapLicenseAgreementData
+                  ),
+                  SORTING_PROPERTY_NAME
+              )
             : [];
     let selectedTab = licenseModelOverview.selectedTab;
     // on first entry, we will decide what tab to open depending on data. if there are no connections, we will open the orphans

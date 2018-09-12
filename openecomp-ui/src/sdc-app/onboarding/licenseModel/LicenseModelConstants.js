@@ -36,3 +36,5 @@ export const optionsInputValues = {
         { enum: thresholdUnitType.PERCENTAGE, title: '%' }
     ]
 };
+
+export const SORTING_PROPERTY_NAME = 'name';

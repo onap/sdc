@@ -1,25 +1,27 @@
-/*!
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
- * or implied. See the License for the specific language governing
- * permissions and limitations under the License.
- */
+/*
+* Copyright © 2016-2018 European Support Limited
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
 import { connect } from 'react-redux';
 import i18n from 'nfvo-utils/i18n/i18n.js';
+import sortByStringProperty from 'nfvo-utils/sortByStringProperty.js';
 import EntitlementPoolsActionHelper from './EntitlementPoolsActionHelper.js';
 import EntitlementPoolsListEditorView, {
     generateConfirmationMsg
 } from './EntitlementPoolsListEditorView.jsx';
 import { actionTypes as globalMoadlActions } from 'nfvo-components/modal/GlobalModalConstants.js';
+import { SORTING_PROPERTY_NAME } from 'sdc-app/onboarding/licenseModel/LicenseModelConstants.js';
 
 const mapStateToProps = ({
     licenseModel: { entitlementPool, licenseModelEditor }
@@ -30,7 +32,10 @@ const mapStateToProps = ({
 
     return {
         vendorName,
-        entitlementPoolsList,
+        entitlementPoolsList: sortByStringProperty(
+            entitlementPoolsList,
+            SORTING_PROPERTY_NAME
+        ),
         isDisplayModal: Boolean(data),
         isModalInEditMode: Boolean(data && data.id)
     };
