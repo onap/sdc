@@ -97,7 +97,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -1040,10 +1039,8 @@ public class ActionsImpl implements Actions {
     if (StringUtils.isEmpty(requestJSON) || requestJSON.equals(REQUEST_EMPTY_BODY)) {
       requestBodyErrorMap.put(ACTION_INVALID_REQUEST_BODY_CODE, ACTION_REQUEST_BODY_EMPTY);
     } else {
-      if(requestType == ActionConstants.REQUEST_TYPE_CREATE_ACTION){
-        //placeholder for future implementation
-      }
-      if(requestType == ActionConstants.REQUEST_TYPE_UPDATE_ACTION){
+      if(requestType == ActionConstants.REQUEST_TYPE_CREATE_ACTION
+              || requestType == ActionConstants.REQUEST_TYPE_UPDATE_ACTION){
         //Semantic request specific validations
         Action action = JsonUtil.json2Object(requestJSON, Action.class);
         if(StringUtils.isEmpty(action.getName())){
