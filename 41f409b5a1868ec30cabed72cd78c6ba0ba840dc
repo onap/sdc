@@ -1,0 +1,123 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_d408fa29",
+        "filename": "catalog-ui/src/app/ng2/pages/interface-operation/interface-operation.page.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4739
+      },
+      "writtenOn": "2018-09-12T09:14:08Z",
+      "side": 1,
+      "message": "Please use the onap-ui modal and not the old one",
+      "revId": "41f409b5a1868ec30cabed72cd78c6ba0ba840dc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_541cea69",
+        "filename": "catalog-ui/src/app/ng2/pages/interface-operation/operation-creator/operation-creator.component.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4739
+      },
+      "writtenOn": "2018-09-12T09:14:08Z",
+      "side": 1,
+      "message": "please use onap-ui input, checkbox and dropdown",
+      "revId": "41f409b5a1868ec30cabed72cd78c6ba0ba840dc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_d41f9a59",
+        "filename": "catalog-ui/src/app/ng2/pages/interface-operation/operation-creator/operation-creator.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 4739
+      },
+      "writtenOn": "2018-09-12T09:14:08Z",
+      "side": 1,
+      "message": "Please create interface and typing",
+      "revId": "41f409b5a1868ec30cabed72cd78c6ba0ba840dc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_d456ba05",
+        "filename": "catalog-ui/src/app/ng2/pages/interface-operation/operation-creator/operation-creator.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 4739
+      },
+      "writtenOn": "2018-09-12T09:14:08Z",
+      "side": 1,
+      "message": "Please remove deceleration of functions from the ngOnInit",
+      "revId": "41f409b5a1868ec30cabed72cd78c6ba0ba840dc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_943da2c6",
+        "filename": "catalog-ui/src/app/ng2/pages/interface-operation/operation-creator/param-row/param-row.component.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4739
+      },
+      "writtenOn": "2018-09-12T09:14:08Z",
+      "side": 1,
+      "message": "Please use onapui for all ui elements",
+      "revId": "41f409b5a1868ec30cabed72cd78c6ba0ba840dc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_54338af5",
+        "filename": "catalog-ui/src/app/ng2/pages/interface-operation/operation-creator/param-row/param-row.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 4739
+      },
+      "writtenOn": "2018-09-12T09:14:08Z",
+      "side": 1,
+      "message": "Please use typing",
+      "revId": "41f409b5a1868ec30cabed72cd78c6ba0ba840dc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_1451920e",
+        "filename": "catalog-ui/src/app/ng2/services/data-type.service.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 4739
+      },
+      "writtenOn": "2018-09-12T09:14:08Z",
+      "side": 1,
+      "message": "please add return type",
+      "revId": "41f409b5a1868ec30cabed72cd78c6ba0ba840dc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
