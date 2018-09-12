@@ -1,0 +1,300 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_ffccefbc",
+        "filename": "catalog-ui/src/app/directives/graphs-v2/composition-graph/composition-graph.directive.ts",
+        "patchSetId": 3
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 1341
+      },
+      "writtenOn": "2018-09-12T12:44:19Z",
+      "side": 1,
+      "message": "unify to one row please",
+      "range": {
+        "startLine": 39,
+        "startChar": 11,
+        "endLine": 40,
+        "endChar": 12
+      },
+      "revId": "b186a82382c90c1fd7cb3f7ffe86ebc57dd446b4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_ff9b8f63",
+        "filename": "catalog-ui/src/app/directives/graphs-v2/composition-graph/composition-graph.directive.ts",
+        "patchSetId": 3
+      },
+      "lineNbr": 134,
+      "author": {
+        "id": 1341
+      },
+      "writtenOn": "2018-09-12T12:44:19Z",
+      "side": 1,
+      "message": "Add function return type",
+      "revId": "b186a82382c90c1fd7cb3f7ffe86ebc57dd446b4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_7fa77fa7",
+        "filename": "catalog-ui/src/app/directives/graphs-v2/composition-graph/composition-graph.directive.ts",
+        "patchSetId": 3
+      },
+      "lineNbr": 558,
+      "author": {
+        "id": 1341
+      },
+      "writtenOn": "2018-09-12T12:44:19Z",
+      "side": 1,
+      "message": "Add function return type",
+      "revId": "b186a82382c90c1fd7cb3f7ffe86ebc57dd446b4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_1fba0bc1",
+        "filename": "catalog-ui/src/app/directives/graphs-v2/composition-graph/composition-graph.directive.ts",
+        "patchSetId": 3
+      },
+      "lineNbr": 585,
+      "author": {
+        "id": 1341
+      },
+      "writtenOn": "2018-09-12T12:44:19Z",
+      "side": 1,
+      "message": "Add function return type",
+      "revId": "b186a82382c90c1fd7cb3f7ffe86ebc57dd446b4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_3fbd87b7",
+        "filename": "catalog-ui/src/app/directives/graphs-v2/composition-graph/composition-graph.directive.ts",
+        "patchSetId": 3
+      },
+      "lineNbr": 594,
+      "author": {
+        "id": 1341
+      },
+      "writtenOn": "2018-09-12T12:44:19Z",
+      "side": 1,
+      "message": "Add function return type",
+      "revId": "b186a82382c90c1fd7cb3f7ffe86ebc57dd446b4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_1fbe8bd5",
+        "filename": "catalog-ui/src/app/directives/graphs-v2/composition-graph/composition-graph.directive.ts",
+        "patchSetId": 3
+      },
+      "lineNbr": 609,
+      "author": {
+        "id": 1341
+      },
+      "writtenOn": "2018-09-12T12:44:19Z",
+      "side": 1,
+      "message": "Please remove the commented code",
+      "range": {
+        "startLine": 605,
+        "startChar": 10,
+        "endLine": 609,
+        "endChar": 16
+      },
+      "revId": "b186a82382c90c1fd7cb3f7ffe86ebc57dd446b4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_1fa52bb5",
+        "filename": "catalog-ui/src/app/directives/graphs-v2/composition-graph/composition-graph.directive.ts",
+        "patchSetId": 3
+      },
+      "lineNbr": 662,
+      "author": {
+        "id": 1341
+      },
+      "writtenOn": "2018-09-12T12:44:19Z",
+      "side": 1,
+      "message": "Please remove the commented code",
+      "revId": "b186a82382c90c1fd7cb3f7ffe86ebc57dd446b4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_dfafb37b",
+        "filename": "catalog-ui/src/app/directives/graphs-v2/composition-graph/composition-graph.directive.ts",
+        "patchSetId": 3
+      },
+      "lineNbr": 712,
+      "author": {
+        "id": 1341
+      },
+      "writtenOn": "2018-09-12T12:44:19Z",
+      "side": 1,
+      "message": "Add function return type",
+      "revId": "b186a82382c90c1fd7cb3f7ffe86ebc57dd446b4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_7f70df3f",
+        "filename": "catalog-ui/src/app/directives/graphs-v2/composition-graph/composition-graph.directive.ts",
+        "patchSetId": 3
+      },
+      "lineNbr": 854,
+      "author": {
+        "id": 1341
+      },
+      "writtenOn": "2018-09-12T12:44:19Z",
+      "side": 1,
+      "message": "Please remove the commented code",
+      "revId": "b186a82382c90c1fd7cb3f7ffe86ebc57dd446b4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_ffb2afe3",
+        "filename": "catalog-ui/src/app/directives/graphs-v2/composition-graph/composition-graph.directive.ts",
+        "patchSetId": 3
+      },
+      "lineNbr": 976,
+      "author": {
+        "id": 1341
+      },
+      "writtenOn": "2018-09-12T12:44:19Z",
+      "side": 1,
+      "message": "Add function return type",
+      "revId": "b186a82382c90c1fd7cb3f7ffe86ebc57dd446b4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_9fcdbb68",
+        "filename": "catalog-ui/src/app/directives/graphs-v2/composition-graph/composition-graph.directive.ts",
+        "patchSetId": 3
+      },
+      "lineNbr": 1148,
+      "author": {
+        "id": 1341
+      },
+      "writtenOn": "2018-09-12T12:44:19Z",
+      "side": 1,
+      "message": "Add function return type",
+      "revId": "b186a82382c90c1fd7cb3f7ffe86ebc57dd446b4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_bfc8b755",
+        "filename": "catalog-ui/src/app/directives/graphs-v2/composition-graph/composition-graph.directive.ts",
+        "patchSetId": 3
+      },
+      "lineNbr": 1159,
+      "author": {
+        "id": 1341
+      },
+      "writtenOn": "2018-09-12T12:44:19Z",
+      "side": 1,
+      "message": "Add function return type",
+      "revId": "b186a82382c90c1fd7cb3f7ffe86ebc57dd446b4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_5fdac317",
+        "filename": "catalog-ui/src/app/services/components/component-service.ts",
+        "patchSetId": 3
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 1341
+      },
+      "writtenOn": "2018-09-12T12:44:19Z",
+      "side": 1,
+      "message": "Please remove the commented code",
+      "revId": "b186a82382c90c1fd7cb3f7ffe86ebc57dd446b4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_7fd53fe3",
+        "filename": "catalog-ui/src/app/services/components/component-service.ts",
+        "patchSetId": 3
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 1341
+      },
+      "writtenOn": "2018-09-12T12:44:19Z",
+      "side": 1,
+      "message": "Please remove the commented code",
+      "revId": "b186a82382c90c1fd7cb3f7ffe86ebc57dd446b4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_bff6778d",
+        "filename": "catalog-ui/src/app/services/components/component-service.ts",
+        "patchSetId": 3
+      },
+      "lineNbr": 758,
+      "author": {
+        "id": 1341
+      },
+      "writtenOn": "2018-09-12T12:44:19Z",
+      "side": 1,
+      "message": "Please remove the commented code",
+      "range": {
+        "startLine": 748,
+        "startChar": 3,
+        "endLine": 758,
+        "endChar": 8
+      },
+      "revId": "b186a82382c90c1fd7cb3f7ffe86ebc57dd446b4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_5ff16393",
+        "filename": "catalog-ui/src/app/services/components/component-service.ts",
+        "patchSetId": 3
+      },
+      "lineNbr": 781,
+      "author": {
+        "id": 1341
+      },
+      "writtenOn": "2018-09-12T12:44:19Z",
+      "side": 1,
+      "message": "Please remove the commented code",
+      "range": {
+        "startLine": 771,
+        "startChar": 4,
+        "endLine": 781,
+        "endChar": 7
+      },
+      "revId": "b186a82382c90c1fd7cb3f7ffe86ebc57dd446b4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
