@@ -70,39 +70,30 @@ public class ExportImportTitanServlet {
 
 		conf.setProperty("storage.machine-id-appendix", System.currentTimeMillis() % 1000);
 
-		TitanGraph openGraph = Utils.openGraph(conf);
-		if (openGraph == null) {
-			Response buildErrorResponse = Utils.buildOkResponse(500, "failed to open graph", null);
-			return buildErrorResponse;
+		try(TitanGraph openGraph = Utils.openGraph(conf)){
+			
+			if (openGraph == null) {
+				Response buildErrorResponse = Utils.buildOkResponse(500, "failed to open graph", null);
+				return buildErrorResponse;
+			}
+	
+			// Open Titan Graph
+	
+			Response buildOkResponse = Utils.buildOkResponse(200, "ok man", null);
+	
+			return buildOkResponse;
 		}
-
-		// Open Titan Graph
-
-		Response buildOkResponse = Utils.buildOkResponse(200, "ok man", null);
-
-		return buildOkResponse;
 	}
 
 	private Properties convertFileToProperties(File titanPropertiesFile) {
 
 		Properties properties = new Properties();
 
-		FileReader fileReader = null;
-		try {
-			fileReader = new FileReader(titanPropertiesFile);
+		try (FileReader fileReader = new FileReader(titanPropertiesFile)){
 			properties.load(fileReader);
-
 		} catch (Exception e) {
 			log.error("Failed to convert file to properties", e);
 			return null;
-		} finally {
-			if (fileReader != null) {
-				try {
-					fileReader.close();
-				} catch (IOException e) {
-					log.error("Failed to close file", e);
-				}
-			}
 		}
 
 		return properties;
