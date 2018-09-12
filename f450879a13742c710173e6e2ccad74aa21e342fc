@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_9175b465",
+        "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/impl/validator/executers/ArtifactValidatorExecuter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-09-12T05:26:12Z",
+      "side": 0,
+      "message": "ASDC tool is a command line tool. Did you check that the messages reach the console?",
+      "revId": "f450879a13742c710173e6e2ccad74aa21e342fc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}

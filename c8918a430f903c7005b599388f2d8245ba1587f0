@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_714fb834",
+        "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/impl/validator/executers/ArtifactValidatorExecuter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-09-12T05:26:12Z",
+      "side": 1,
+      "message": "1. ASDC tool is a command line tool. Did you check that the messages reach the console?\n2. This should be logged as an error.",
+      "revId": "c8918a430f903c7005b599388f2d8245ba1587f0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_d157acc8",
+        "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/impl/validator/executers/ArtifactValidatorExecuter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-09-12T05:26:12Z",
+      "side": 1,
+      "message": "ASDC tool is a command line tool. Did you check that the messages reach the console?",
+      "revId": "c8918a430f903c7005b599388f2d8245ba1587f0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_3165c0b4",
+        "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/impl/validator/executers/ArtifactValidatorExecuter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-09-12T05:26:12Z",
+      "side": 1,
+      "message": "1. ASDC tool is a command line tool. Did you check that the messages reach the console?\n2. This should be logged as an error.",
+      "revId": "c8918a430f903c7005b599388f2d8245ba1587f0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_f15ae8f0",
+        "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/impl/validator/executers/ArtifactValidatorExecuter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 118,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-09-12T05:26:12Z",
+      "side": 1,
+      "message": "1. ASDC tool is a command line tool. Did you check that the messages reach the console?\n2. This should be logged as an error.",
+      "revId": "c8918a430f903c7005b599388f2d8245ba1587f0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
