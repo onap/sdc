@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_6854a2fe",
+        "filename": "openecomp-be/lib/openecomp-item-permissions-lib/openecomp-item-permissions-core/src/main/java/org/openecomp/sdc/itempermissions/servlet/PermissionsFilter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-09-13T13:54:22Z",
+      "side": 1,
+      "message": "Please don\u0027t leave any commented-out code.",
+      "range": {
+        "startLine": 50,
+        "startChar": 1,
+        "endLine": 52,
+        "endChar": 7
+      },
+      "revId": "0639b83a6eb4fdf715c07460535d431a17f9242c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_c89936c5",
+        "filename": "openecomp-be/lib/openecomp-item-permissions-lib/openecomp-item-permissions-core/src/main/java/org/openecomp/sdc/itempermissions/servlet/PermissionsFilter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-09-13T13:54:22Z",
+      "side": 1,
+      "message": "I don\u0027t think this is the right thing to do. A filter runs in a multi-threaded environment and may be shared among requests. In this case multiple threads calling doFilter() will override each other\u0027s permissionsServices. The old code was thread-safe because permissionsServices was initiated only once on the creation of a filter instance.",
+      "revId": "0639b83a6eb4fdf715c07460535d431a17f9242c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
