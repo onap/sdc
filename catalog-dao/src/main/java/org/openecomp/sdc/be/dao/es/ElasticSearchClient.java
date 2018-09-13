@@ -27,7 +27,6 @@ import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import org.elasticsearch.node.Node;
 import org.elasticsearch.node.NodeBuilder;
-import org.elasticsearch.shield.ShieldPlugin;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -99,7 +98,7 @@ public class ElasticSearchClient {
 		}
 		if (isTransportClient()) {
 			log.info("******* ElasticSearchClient type is Transport Client *****");
-			TransportClient transportClient = TransportClient.builder().addPlugin(ShieldPlugin.class).settings(settings)
+			TransportClient transportClient = TransportClient.builder().settings(settings)
 					.build();
 
 			String[] nodesArray = transportClient.settings().getAsArray("transport.client.initial_nodes");

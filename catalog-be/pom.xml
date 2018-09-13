@@ -370,12 +370,6 @@
             <scope>compile</scope>
         </dependency>
 
-        <dependency>
-            <groupId>org.elasticsearch.plugin</groupId>
-            <artifactId>shield</artifactId>
-            <version>${elastic-search.version}</version>
-            <scope>compile</scope>
-        </dependency>
         <!-- functional java -->
         <dependency>
             <groupId>org.functionaljava</groupId>
