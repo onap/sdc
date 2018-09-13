@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_08e88e7a",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/notifications-fe/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-09-13T15:01:43Z",
+      "side": 1,
+      "message": "Will it make sense to replace with a property inherited from the parent POM, or with a reference to the parent\u0027s dependencyManagement?",
+      "range": {
+        "startLine": 70,
+        "startChar": 21,
+        "endLine": 70,
+        "endChar": 32
+      },
+      "revId": "75dfbc421493c41da1b30a84f3645e3dff9dee10",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_88fb3e46",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/notifications-fe/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 145,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-09-13T15:01:43Z",
+      "side": 1,
+      "message": "This, too, should probably use ${cxf.version}.",
+      "range": {
+        "startLine": 145,
+        "startChar": 21,
+        "endLine": 145,
+        "endChar": 27
+      },
+      "revId": "75dfbc421493c41da1b30a84f3645e3dff9dee10",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
