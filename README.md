@@ -1,214 +1,109 @@
-# OpenECOMP SDC
+# ONAP SDC
 
----
----
+## Introduction
 
+SDC is the ONAP visual modeling and design tool. It creates internal metadata that describes assets used by all ONAP components, both at design time and run time.
 
-# Introduction
+The SDC manages the content of a catalog, and logical assemblies of selected catalog items to completely define how and when VNFs are realized in a target environment. 
+A complete virtual assembly of specific catalog items, together with selected workflows and instance configuration data, completely defines how the deployment, activation, and life-cycle management of VNFs are accomplished.
 
-OpenECOMP SDC is delivered with 5 Docker containers:
-1. sdc-FE	- frontend SDC application running on jetty server
-2. sdc-BE	- backend SDC application running on jetty server
-3. sdc-kbn	- hosting kibana application
-4. sdc-cs	- hosting cassandra
-5. sdc-es	- hosting elastic search
+SDC manages four levels of assets:
 
-All containers runs on the same machine and can be started by running the command:
-/data/scripts/docker_run.sh -e <environment name> -r <release> -p <docker-hub-port>
-Example: /data/scripts/docker_run.sh -e OS-ETE-DFW -p 51220
+* Resource - A fundamental capability, implemented either entirely in software, or as software that interacts with a hardware device. 
+Each Resource is a combination of one or more Virtual Function Components (VFCs), along with all the information necessary to instantiate, update, delete, and manage the Resource. 
+* Service - A well formed object comprising one or more Resources. Service Designers create Services from Resources, and include all of the information about the Service needed to instantiate, update, delete, and manage the Service
 
+The key output of SDC is a set of models containing descriptions of asset capabilities and instructions to manage them. These models are stored in the SDC Master Reference Catalog for the entire enterprise to use.
 
-# Compiling SDC
+There are four major components of SDC:
+
+* Catalog - The repository for assets at the Resource, Service and Product levels. Assets are added to the Catalog using the Design Studio.
+* Design Studio - Used to create, modify, and add Resource, Service, and Product definitions in the Catalog.
+* Certification Studio - Available in a future release, is used to test new assets at all levels. It will be used for sandbox experimentation, and will include support for automated testing.
+* Distribution Studio - Used to deploy certified assets. From the Distribution studio, new Product assets, including their underlying Resources and Services, are deployed into lab environments for testing purposes, and into production after certification is complete. In a future release, there will be a way to export Product information to external Business Support Systems for customer ordering and billing.
+
+## Compiling the Project
 
 SDC is built from several projects, while "sdc-main" contains the main pom.xml for all project:
+- asdctool          - set of utilities used for scheme creation and data migration in SDC
 - catalog-be		- backend code
 - catalog-fe		- frontend java code (servlet, proxy)
 - catalog-dao		- database layer
 - catalog-model		- data model of the application
 - catalog-ui		- front end code (javascript, html, css)
+- common            - set of utilities used by the onboarding project
 - common-app-api	- common code for frontend and backend
 - common-be			- utilities, datatypes and enums
 - security-utils	- handle encryption/decryption of passwords
+- onboarding-be     - onboarding backend code
+- onboarding-ui     - onboarding frontend code
+- test-apis-ci      - the automation framework used by SDC for API based testing
+- ui-ci             - the automation framework used by SDC for UI based testing, Based on selenium
+- sdc-os-chef       - chefs scripts used for docker creation and startup
+- utils             - set of dev utils used for working with the project locally
 
-SDC projects can be compiled easily using maven command: `mvn clean install`. 
-In order to build all projects, enter to sdc-main project and run the command: `mvn clean install`.
-By default unit test will run when compiling
+In order to build all the projects, go to sdc-main project and run the command: `mvn clean install`
 
-** igor **
-Docker containers are build with the following profile 
-`-P docker -Ddocker.buildArg.chef_repo_branch_name=bugfix/external_adress -Ddocker.buildArg.chef_repo_git_username=git -Ddocker.buildArg.chef_repo_address=23.253.149.175/SDC -Ddocker.buildArg.chef_repo_git_name=chef-repo`
+Currently SDC build process also supports docker building.
+In order to build and upload local dockers to a local environment you'll need to define an environment variable on your machine with key: `DOCKER_HOST` and value: `tcp://<vagrant_ip_address>:2375`
+For the dockers to be built during the build process use the "docker" profile by adding this: `-P docker` to the `mvn clean install` command
 
+More flags to use in the build process are:
+* -DskipTests - Skips unit tests execution
+* -DskipUICleanup=true - Skips deleting the UI folders 
+* -Djacoco.skip=true - Skips running jacoco tests
+* -DskipPMD - Skips creating a PMD report
 
-# Getting the containers
+**using those flags will speed up the building process of the project**
 
-***to be changed for release*** OpenECOMP SDC containers are stored on the Rackspace Nexus Docker Registry
+## Accessing SDC
 
-The following Docker images are the actual deployment images used for running SDC
+In order to access the sdc from you're local vagrant environment you'll need to run the webseal_simulator docker.
+This can be achieved by using the command: `/data/scripts/simulator_docker_run.sh`
 
-| Name    | Tag       | Description                                                                                                                   |
-|---------|-----------|-------------------------------------------------------------------------------------------------------------------------------|
-| sdc-FE  | 1610.2.16 | Contains Jetty + OpenJDK + SDC frontend code + **3rd party jars**                                                             |
-| sdc-BE  | 1610.2.16 | Contains Jetty + OpenJDK + SDC backend code + **3rd party jars**                                                              |
-| sdc-kbn | 1610.2.16 | Contains nodeJs + Kibana application                                                                                          |
-| sdc-cs  | 1610.2.16 | OpenJDK + Contains cassandra application                                                                                      |
-| sdc-es  | 1610.2.16 | Elastic search application                                                                                                    |
+to Access the simulator just go to this url: `http://<vagrant_ip_address>:8285/login`
 
+For more information regarding using the webseal_simulator please refer to the following guide: [SDC Simulator](https://wiki.onap.org/display/DW/SDC+Simulator)
 
-*********************** Israel ************************
-# Starting SDC
-There are several ways to start OpenECOMP SDC:
-TBD - Israel
+## Testing the Project
 
-# Accessing SDC
-SDC UI can be accessed from:
+When building SDC dockers part of the dockers that will be built are the dockers that responsible for running automation tests in the local environment.
 
-### Ecomp portal
-Login to ecomp portal URL with user that has permission for SDC application.
-Define in your hosts file the following:
-<ip address of SDC application> sdc.api.simpledemo.openecomp.org
-<ip address of Ecomp portal URL> portal.api.simpledemo.openecomp.org
-Open browser and navigate to: http://portal.api.simpledemo.openecomp.org:8989/ECOMPPORTAL/login.htm
+In order to run the automation tests when starting the dockers on the machine just add the flag "-t" to the docker run command.
 
-### Webseal/SDC simulator
-This options is for developers to run locally SDC
+You can go to this link to view all the commands in the vagrant-onap: [Vagrant Common Commands](https://wiki.onap.org/display/DW/SDC+Vagrant+Common+Commands)
 
-# SDC Simulator
+And to this guide regarding using the docker run script: [SDC docker_run Script Usage](https://wiki.onap.org/display/DW/SDC+docker_run+Script+Usage)
 
-This options is for developers to run locally SDC
-SDC Simulator is a project that enables emulation of web server that provides security policy and sign-on to the SDC component in dev environments.
+For more information regarding testing the project please refer to the following guide: [SDC Sanity](https://wiki.onap.org/display/DW/SDC+Sanity)
 
-  - Provides sign on to the basic user roles/functionalities
-  - Creation of basic user accounts
+For more information regarding SDC Troubleshooting please refer to the following guide: [SDC Troubleshooting](https://wiki.onap.org/display/DW/SDC+Troubleshooting)
 
-# Docker compilation - Docker Maven Build Profile (io.fabric8 maven Plugin)
+## SDC on OOM
 
-If you are using onap vagrant you can deploy the simulator by:
+For more information regarding SDC on OOM please refer to the following page: [SDC on OOM](https://wiki.onap.org/display/DW/SDC+on+OOM)
 
-Set up the DOCKER_HOST environmental variable
+## Troubleshooting
 
-To set environmental variable in Windows (the docker engine environment):
-- Run `cmd`
--- Issue command `set NAME=VAL
-Example: set DOCKER_HOST=tcp://127.0.0.1:2375
---To check if the variable set succeeded issue `echo %DOCKER_HOST%`
+In order to check the life state of SDC you can run the command `health` from inside the vagrant.
+Alternatively you can run the following commands to check the FE and BE status:
 
-- To compile sdc-simulator docker:
-1. Run `mvn clean package docker:build -Ddocker.buildArg.http_proxy=<http_proxy> -Ddocker.buildArg.https_proxy=<https_proxy> -P docker`
--- The proxy arguments are passed and used as environmental variables in Dockerfiles 
-2. Copy the script /webseal-simulator/scripts/simulator_docker_run.sh to the docker engine environment and run:
-`simulator_docker_run.sh -r 1.1-STAGING-latest`
-3. Run `docker ps` to verify that sdc-simulator docker is up and running.
-4. Enter to UI: `http://<ip address>:8285/login`
+FE - `curl http://localhost:8181/sdc1/rest/healthCheck`
 
-# Docker compilation - Docker Engine
+BE - `curl http://localhost:8080/sdc2/rest/healthCheck`
 
-1. Build web simulator WAR file: run `mvn clean install` on project â€œwebseal simulatorâ€�. This will generate war file (WSSimulator.war) in the target folder.
-2. Ftp war file: webseal-simulator/sdc-simulator folder to your localhost vagrant machine which runs docker engine daemon.
--- Check that WSSimulator.war exists after first step No.1 in webseal-simulator/sdc-simulator folder.
-3. Run `docker build -t openecomp/sdc-simulator:1.1-STAGING-latest <PATH/sdc-simulator>`
-Example: docker build -t openecomp/sdc-simulator:1.1-STAGING-latest /tmp/docker/sdc-simulator/
--- If running behind a proxy:
-`docker build --build-arg http_proxy=http://URL:PORT --build-arg https_proxy=http://URL:PORT -t openecomp/sdc-simulator:1.1-STAGING-latest /tmp/docker/sdc-simulator/`
-4. Validate that images pushed to the local repo by executing `docker images`
-5. Copy the script /webseal-simulator/scripts/simulator_docker_run.sh to the docker engine environment and run: `simulator_docker_run.sh -r 1.1-STAGING-latest`
-6. Run `docker ps` to verify that sdc-simulator docker is up and running.
-7. Enter to UI: `http://<ip address>:8285/login`
+Another method to check about problems in SDC in be looking in the log files.
+The log files of the SDC can be found in the `/data/logs` folder
 
-# WAR compilation
+The docker logs are found under the directory `/docker_logs`.
 
-  - To compile WSSimulator.war:
-1. Build web simulator WAR file: run `mvn clean install` on project "webseal simulator". This will generate war file (WSSimulator.war) in the target folder.
-2. Ftp war file: webseal-simulator\target\WSSimulator.war to your localhost vagrant machine: /home/vagrant/webseal-simulator/webapps folder
-3. Ftp configuration file: webseal-simulator\src\main\resources\webseal.conf to your localhost vagrant machine: /home/vagrant/webseal-simulator/config
-4. Add users to simulator: open configuration file - webseal.conf and add new user to the user list.
-   Note: You need to define the user in the SDC as well.
-5. To run the simulator, enter to your local vagrant and run: startWebsealSimulator.sh
--- Restart the simulator:
-   Stop the simulator: stopWebsealSimulator.sh
-   Start the simulator: startWebsealSimulator.sh
-6. Enter to UI: http://<ip address>:8285/login
+The jetty(Applicative) are found in the respective folder according to the wanted section
+For Example, the BE logs will found under the directory `/BE`.
 
+## Getting Help
 
-### SDC import normatives from CLI
-SDC needs to work with predefined basic normatives, in order to update the database with the normatives need to:
-1. From catalog-be project copy:
-   src\main\resources\import\tosca -> to <machine ip address>:catalog-be/import/tosca
-   src\main\resources\scripts\import\tosca ->to <machine ip address>:catalog-be/scripts/import/tosca
-2. cd catalog-be/scripts/import/tosca
-3. Run: python importNormativeAll.py
-4. Wait until all normatives are loaded to the database
+#####  [Mailing list](mailto:onap-sdc@lists.onap.org)
 
+##### [JIRA](http://jira.onap.org)
 
-### SDC APIs
-TBD
-
-##### Main API endpoints in the first open source release 
-
-- ***to be completed*** APIHandler health checks
-TBD
-
-# Configuration of SDC
-TBD
-
-Here are the main parameters you could change: 
-TBD
-
-The credentials are defined in 2 places:
-TBD
-
-# Logging
-TBD
-
-### Jetty
-TBD
-
-### Debuging
-TBD
-
-# Testing SDC Functionalities
-TBD
-
-### Frontend Local Env - onboarding
-
-Steps:
-------
-Install nodejs & gulp
-1. download nodejs from here: https://nodejs.org/en/ (take the "current" version with latest features) & install it.
-2. install gulp by running the following command: npm install --global gulp-cli
-
-Install DOX-UI a:
------------------
-1. pull for latest changes
-2. go to folder dox-sequence-diagram-ui
-3. run npm install
-4. wait for it...
-5. go to folder dox-ui
-6. run npm install
-7. create a copy of devConfig.defaults.json file and name it devConfig.json (we already configured git to ignore it so it will not be pushed)
-8. in that file, populate the fields of the IP addresses of your BE machine you'd like to connect (pay attention, it is a JSON file): For example http://<host>:<port>
-9. after everything was successful, run gulp
-10. after server was up, your favorite UI will wait for you at: http://localhost:9000/sdc1/proxy-designer1#/onboardVendor
-
-Troubleshooting:
-----------------
-| Problem                       |   Why is this happening | Solution                                                                                   |
---------------------------------------------------------------------------------------------------------------------------------------------------------
-| npm cannot reach destination  | onboarding proxy        | When within onboarding network, you should set onboarding proxy to NPM as the following:   |
-|                               |                         | npm config set proxy http://genproxy:8080                                                  |
-|                               |                         | npm config set https-proxy http://genproxy:8080                                            |
-|                               |                         |                                                                                            |
-| git protocol is blocked       | onboarding network      | When within onboarding network, you should set globally that when git                      |
-| and cannot connect            | rules for protocols     | protocol is used, then it will be replaced with "https"                                    |
-|                               |                         | git config --global url."https://".insteadOf git://                                        |
---------------------------------------------------------------------------------------------------------------------------------------------------------
-
-# Getting Help
-
-*** to be completed on rrelease ***
-
-SDC@lists.openecomp.org
-
-SDC Javadoc and Maven site
- 
-*** to be completed on rrelease ***
-
+##### [WIKI](https://wiki.onap.org/display/DW/Service+Design+and+Creation+%28SDC%29+Portal)
