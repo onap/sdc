@@ -1,0 +1,67 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_8aa4964b",
+        "filename": "openecomp-be/lib/openecomp-core-lib/openecomp-utilities-lib/src/test/java/org/openecomp/core/utilities/CommonMethodsTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-09-13T10:59:53Z",
+      "side": 1,
+      "message": "I think a large part of CommonMethods could be replaced with standard JDK methods.",
+      "revId": "94097c6bef6267c93d23094ff3c1d8d42574a663",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_caae0e2e",
+        "filename": "openecomp-be/lib/openecomp-core-lib/openecomp-utilities-lib/src/test/java/org/openecomp/core/utilities/CommonMethodsTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-09-13T10:59:53Z",
+      "side": 1,
+      "message": "String.class.getName()",
+      "range": {
+        "startLine": 42,
+        "startChar": 52,
+        "endLine": 42,
+        "endChar": 69
+      },
+      "revId": "94097c6bef6267c93d23094ff3c1d8d42574a663",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_4a519e34",
+        "filename": "openecomp-be/lib/openecomp-core-lib/openecomp-utilities-lib/src/test/java/org/openecomp/core/utilities/CommonMethodsTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 263,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-09-13T10:59:53Z",
+      "side": 1,
+      "message": "There are formatting issues here.",
+      "range": {
+        "startLine": 260,
+        "startChar": 0,
+        "endLine": 263,
+        "endChar": 9
+      },
+      "revId": "94097c6bef6267c93d23094ff3c1d8d42574a663",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
