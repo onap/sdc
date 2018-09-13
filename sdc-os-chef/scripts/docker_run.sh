@@ -45,7 +45,7 @@ fi
 
 
 function usage {
-    echo "usage: docker_run.sh [ -r|--release <RELEASE-NAME> ] [ -e|--environment <ENV-NAME> ] [ -p|--port <Docker-hub-port>] [ -l|--local <Run-without-pull>] [ -t|--runTests <Run-with-sanityDocker>] [ -sim|--simulator <Run-with-simulator>] [ -ta <run api tests with the supplied test suit>] [ -tu <run ui tests with the supplied test suit>] [ -ta <run api tests with the supplied test suit>] [ -tu <run ui tests with the supplied test suit>] [ -tad <run api tests with the default test suit>] [ -tu <run ui tests with the default test suit>] [ -dcae|--dcae <Run-with-DCAE>][ -h|--help ]"
+    echo "usage: docker_run.sh [ -r|--release <RELEASE-NAME> ] [ -e|--environment <ENV-NAME> ] [ -p|--port <Docker-hub-port>] [ -l|--local <Run-without-pull>] [ -sim|--simulator <Run-with-simulator>] [ -ta <run api tests with the supplied test suit>] [ -tu <run ui tests with the supplied test suit>] [ -ta <run api tests with the supplied test suit>] [ -tu <run ui tests with the supplied test suit>] [ -tad <run api tests with the default test suit>] [ -tu <run ui tests with the default test suit>] [ -dcae|--dcae <Run-with-DCAE>][ -h|--help ]"
     echo "start dockers built locally example: docker_run.sh -l"
     echo "start dockers built locally and simulator example: docker_run.sh -l -sim"
     echo "start dockers, pull from onap nexus according to release and simulator example: docker_run.sh -r 1.3-STAGING-latest -sim"
