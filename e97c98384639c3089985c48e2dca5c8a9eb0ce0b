@@ -16,6 +16,24 @@
       "revId": "e97c98384639c3089985c48e2dca5c8a9eb0ce0b",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_37c04be0",
+        "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/impl/validator/executers/ArtifactValidatorExecuter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 120,
+      "author": {
+        "id": 2493
+      },
+      "writtenOn": "2018-09-13T04:25:13Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1a76adc5_542e2aa6",
+      "revId": "e97c98384639c3089985c48e2dca5c8a9eb0ce0b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
