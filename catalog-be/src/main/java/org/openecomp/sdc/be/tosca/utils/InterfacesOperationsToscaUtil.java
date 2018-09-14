@@ -64,6 +64,9 @@ public class InterfacesOperationsToscaUtil {
             return null;
         }
         final Map<String, InterfaceDefinition> interfaces = component.getInterfaces();
+        if (MapUtils.isEmpty(interfaces)) {
+            return null;
+        }
         Map<String, Object> toscaInterfaceTypes = new HashMap<>();
         for (InterfaceDefinition interfaceDefinition : interfaces.values()) {
             ToscaInterfaceNodeType toscaInterfaceType = new ToscaInterfaceNodeType();

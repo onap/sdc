@@ -550,7 +550,7 @@ public class ToscaExportHandler {
             Map<String, ToscaNodeType> nodeTypes) {
         log.debug("start convert node type for {}", component.getUniqueId());
         ToscaNodeType toscaNodeType = createNodeType(component);
-
+        toscaNode.setInterface_types(addInterfaceTypeElement(component));
         Either<Map<String, DataTypeDefinition>, TitanOperationStatus> dataTypesEither = dataTypeCache.getAll();
         if (dataTypesEither.isRight()) {
             log.debug("Failed to fetch all data types :", dataTypesEither.right().value());
