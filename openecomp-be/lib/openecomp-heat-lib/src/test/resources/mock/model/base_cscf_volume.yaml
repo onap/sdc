@@ -1,0 +1,105 @@
+## Copyright:: Nokia Corporation 2017
+## Note: Nokia VM HOT file for CFX
+## Name: "base_cscf_volume.yaml"
+## Date: 20 Mar 2017
+## Kilo Version
+heat_template_version: 2015-04-30
+
+description: Volume template for CFX
+
+parameters:
+  vnf_name:
+    type: string
+    description: Unique name for this VF instance
+
+  vcscf_name_delimeter:
+    type: string
+    description: 'delimeter used in concatenating different words while naming (ex: "-","_",".",...)'
+    constraints:
+      - allowed_values: [ '-', '', '_', '.']
+
+  availability_zone_0:
+    type: string
+    description: Storage availability zone for volume of first vm
+
+  availability_zone_1:
+    type: string
+    description: Storage availability zone for volume of second vm
+
+  cif_volume_size_0:
+    type: number
+    description: Size of Volume for cif VMs
+    constraints:
+      - range: { min: 1, max: 300 }
+
+  oam_volume_size_0:
+    type: number
+    description: Size of Volume for oam VMs
+    constraints:
+      - range: { min: 1, max: 300 }
+
+resources:
+  cif_volume_0:
+    type: OS::Cinder::Volume
+    properties:
+      size: { get_param: cif_volume_size_0 }
+      availability_zone: { get_param: availability_zone_0}
+      name:
+        str_replace:
+          template: "$VNF$DELcif$DELvolume$DEL0"
+          params:
+            $VNF: { get_param: vnf_name }
+            $DEL: { get_param: vcscf_name_delimeter }
+
+  cif_volume_1:
+    type: OS::Cinder::Volume
+    properties:
+      availability_zone: { get_param: availability_zone_1}
+      size: { get_param: cif_volume_size_0 }
+      name:
+        str_replace:
+          template: "$VNF$DELcif$DELvolume$DEL1"
+          params:
+            $VNF: { get_param: vnf_name }
+            $DEL: { get_param: vcscf_name_delimeter }
+
+  oam_volume_0:
+    type: OS::Cinder::Volume
+    properties:
+      size: { get_param: oam_volume_size_0 }
+      availability_zone: { get_param: availability_zone_0}
+      name:
+        str_replace:
+          template: "$VNF$DELoam$DELvolume$DEL0"
+          params:
+            $VNF: { get_param: vnf_name }
+            $DEL: { get_param: vcscf_name_delimeter }
+
+  oam_volume_1:
+    type: OS::Cinder::Volume
+    properties:
+      size: { get_param: oam_volume_size_0 }
+      availability_zone: { get_param: availability_zone_1}
+      name:
+        str_replace:
+          template: "$VNF$DELoam$DELvolume$DEL1"
+          params:
+            $VNF: { get_param: vnf_name }
+            $DEL: { get_param: vcscf_name_delimeter }
+
+outputs:
+  cif_volume_id_0:
+    description: volume id for first cif
+    value: {get_resource: cif_volume_0}
+
+  cif_volume_id_1:
+    description: volume id for second cif
+    value: {get_resource: cif_volume_1}
+
+  oam_volume_id_0:
+    description: volume id for first oam
+    value: {get_resource: oam_volume_0}
+
+  oam_volume_id_1:
+    description: volume id for second oam
+    value: {get_resource: oam_volume_1}

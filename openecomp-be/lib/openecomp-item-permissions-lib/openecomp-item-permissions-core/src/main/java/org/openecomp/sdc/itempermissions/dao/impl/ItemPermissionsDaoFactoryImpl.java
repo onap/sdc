@@ -1,6 +1,5 @@
 package org.openecomp.sdc.itempermissions.dao.impl;
 
-
 import org.openecomp.sdc.itempermissions.dao.ItemPermissionsDao;
 import org.openecomp.sdc.itempermissions.dao.ItemPermissionsDaoFactory;
 
@@ -10,10 +9,10 @@ import org.openecomp.sdc.itempermissions.dao.ItemPermissionsDaoFactory;
  */
 public class ItemPermissionsDaoFactoryImpl extends ItemPermissionsDaoFactory {
 
-  private static ItemPermissionsDao INSTANCE =new ItemPermissionsDaoImpl();
+    private static ItemPermissionsDao INSTANCE = new ItemPermissionsDaoImpl();
 
-  @Override
-  public ItemPermissionsDao createInterface() {
-    return INSTANCE;
-  }
+    @Override
+    public ItemPermissionsDao createInterface() {
+        return INSTANCE;
+    }
 }
