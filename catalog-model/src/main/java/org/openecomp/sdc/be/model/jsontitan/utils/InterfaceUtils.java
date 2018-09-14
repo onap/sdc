@@ -28,6 +28,7 @@ import org.openecomp.sdc.be.datatypes.elements.OperationOutputDefinition;
 import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.Operation;
+import org.openecomp.sdc.common.util.ValidationUtils;
 
 public class InterfaceUtils {
 
@@ -61,7 +62,7 @@ public class InterfaceUtils {
     public static String createInterfaceToscaResourceName(String resourceName) {
         StringBuilder sb = new StringBuilder();
         try(Formatter formatter = new Formatter(sb)){
-            return formatter.format(INTERFACE_TOSCA_RESOURCE_NAME, resourceName).toString();
+            return formatter.format(INTERFACE_TOSCA_RESOURCE_NAME, ValidationUtils.convertToSystemName(resourceName)).toString();
         }
     }
 
