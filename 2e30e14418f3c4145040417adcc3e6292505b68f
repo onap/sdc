@@ -1,0 +1,67 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_6617e945",
+        "filename": "README.md",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-16T07:13:26Z",
+      "side": 1,
+      "message": "add info on running catalog ui in dev mod\n\nadd git section with adding support for long path on windows\n\nadd docker description with image link from \nhttps://wiki.onap.org/display/DW/SDC+Troubleshooting",
+      "revId": "2e30e14418f3c4145040417adcc3e6292505b68f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_8616c54a",
+        "filename": "README.md",
+        "patchSetId": 1
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-16T07:13:26Z",
+      "side": 1,
+      "message": "update the information to reflect the current testing exaction",
+      "range": {
+        "startLine": 68,
+        "startChar": 4,
+        "endLine": 68,
+        "endChar": 20
+      },
+      "revId": "2e30e14418f3c4145040417adcc3e6292505b68f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_a6118153",
+        "filename": "README.md",
+        "patchSetId": 1
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-16T07:13:26Z",
+      "side": 1,
+      "message": "use a \u003cip\u003e instead of localhost to make it clearer",
+      "range": {
+        "startLine": 91,
+        "startChar": 18,
+        "endLine": 91,
+        "endChar": 27
+      },
+      "revId": "2e30e14418f3c4145040417adcc3e6292505b68f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}

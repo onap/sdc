@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_461c2d6a",
+        "filename": "README.md",
+        "patchSetId": 1
+      },
+      "lineNbr": 203,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-16T07:13:26Z",
+      "side": 0,
+      "message": "leave on boarding part",
+      "range": {
+        "startLine": 171,
+        "startChar": 0,
+        "endLine": 203,
+        "endChar": 123
+      },
+      "revId": "b65c8eeb334a2c579a2dc0241f480d81e9309f9c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
