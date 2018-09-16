@@ -69,10 +69,10 @@ export class TopNavComponent {
         this.topLvlMenu.menuItems.every((item:MenuItem, index:number)=> {
             if (item.state === this.$state.current.name) {
                 if (this.$state.current.name === 'plugins') {
-                    const pluginIdx = _.findIndex(PluginsConfiguration.plugins, (plugin: Plugin) => plugin.pluginStateUrl === this.$state.params.path);
-                    if (pluginIdx !== -1) {
-                        result = index + pluginIdx;
-                        return false;
+                    const {path: itemPath} = item.params;
+                    if (itemPath === this.$state.params.path) {
+                        result = index;
+                        return false
                     }
                 } else {
                     result = index;
@@ -151,7 +151,13 @@ export class TopNavComponent {
 
     goToState(state:string, params:any):Promise<boolean> {
         return new Promise((resolve, reject) => {
-            this.$state.go(state, params || undefined);
+            let options;
+
+            if (state === 'plugins') {
+                options = {reload: true}
+            }
+
+            this.$state.go(state, params || undefined, options);
             resolve(true);
         });
     }
