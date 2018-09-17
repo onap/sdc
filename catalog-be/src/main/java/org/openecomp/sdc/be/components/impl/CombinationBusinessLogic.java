@@ -29,9 +29,12 @@ import org.openecomp.sdc.be.dao.jsongraph.types.EdgeLabelEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
 import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
+import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
+import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.model.*;
 import org.openecomp.sdc.be.model.jsontitan.operations.CombinationOperation;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaElementOperation;
+import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.DaoStatusConverter;
 import org.openecomp.sdc.be.servlets.RepresentationUtils;
@@ -39,9 +42,7 @@ import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @org.springframework.stereotype.Component("combinationBusinessLogic")
 public class CombinationBusinessLogic extends BaseBusinessLogic {
@@ -57,6 +58,7 @@ public class CombinationBusinessLogic extends BaseBusinessLogic {
     public Either<Combination, ResponseFormat> createCombination(Combination combination, Service service) {
 
         try {
+            combination.setUniqueId(combination.getName());
             Either<Boolean, ResponseFormat> validateCombinationExists = validateCombinationExists(combination);
             if (validateCombinationExists.isRight()) {
                 log.error("failed to validate");
@@ -108,6 +110,10 @@ public class CombinationBusinessLogic extends BaseBusinessLogic {
         String uniqueId = combination.getName();
         try {
             combination.setUniqueId(uniqueId);
+            if (service.getComponentInstances() == null) {
+                log.error("The service is empty");
+                return Either.right(componentsUtils.getResponseFormat(ActionStatus.INVALID_CONTENT_PARAM));
+            }
             combination.setComponentInstances(service.getComponentInstances());
             combination.setComponentInstancesRelations(service.getComponentInstancesRelations());
             combination.setComponentInstancesAttributes(service.getComponentInstancesAttributes());
@@ -120,136 +126,225 @@ public class CombinationBusinessLogic extends BaseBusinessLogic {
         }
     }
 
-    public Either<ComponentInstance, ResponseFormat> createCombinationInstance
+    public Either<List<UICombination>, ResponseFormat> getAllCombinationTypes() {
+        Either<List<String>, TitanOperationStatus> combinationStringListEither = combinationOperation.getAllCombinations();
+        List<UICombination> uiCombinationList = new ArrayList<>();
+        if (combinationStringListEither.isRight()) {
+            log.error("Failed to get all Combinations");
+            ResponseFormat responseFormat = componentsUtils.getResponseFormat
+                    (componentsUtils.convertFromStorageResponse
+                            (DaoStatusConverter.convertTitanStatusToStorageStatus
+                                    (combinationStringListEither.right().value())));
+            return Either.right(responseFormat);
+        }
+        List<String> combinationStringList = combinationStringListEither.left().value();
+        try {
+            for (String combinationJson : combinationStringList) {
+                Combination combination = RepresentationUtils.fromRepresentation(combinationJson, Combination.class);
+                UICombination uiCombination = new UICombination();
+                uiCombination.setUniqueId(combination.getUniqueId());
+                uiCombination.setName(combination.getName());
+                uiCombination.setDescription(combination.getDesc());
+                uiCombinationList.add(uiCombination);
+            }
+            return Either.left(uiCombinationList);
+        } catch (Exception e) {
+            log.error("Failed to Convert to Combination Object");
+            return Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
+        }
+    }
+    public Either<Combination, ResponseFormat> getCombinationById (String combinationId) {
+
+        Either<String, ResponseFormat> getCombinationEither = combinationOperation.getCombination(combinationId);
+        if (getCombinationEither.isRight()) {
+            return Either.right(getCombinationEither.right().value());
+        }
+        String combinationJson = getCombinationEither.left().value();
+        Combination combination = RepresentationUtils.fromRepresentation(combinationJson, Combination.class);
+        return Either.left(combination);
+    }
+
+    public ResponseFormat createCombinationInstance
             (String containerComponentType, String containerComponentId, String userId, ComponentInstance componentInstance) {
 
-                    //Do validations
-                    boolean inTransaction = false;
-                    boolean needLock = true;
-                    Component containerComponent = null;
-                    Combination combination;
-                    Either<ComponentInstance, ResponseFormat> resultOp = null;
+        boolean inTransaction = false;
+        boolean needLock = true;
+        Component containerComponent;
+        Combination combination;
 
-                    try {
-                        if (!containerComponentType.equals("services")) {
-                            log.error("Container component is not of service type");
-                            return Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
-                        }
+        try {
+            if (!containerComponentType.equals("services")) {
+                log.error("Container component is not of service type");
+                return componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR);
+            }
 
-                        User user = validateUserExists(userId, "create Component Instance", inTransaction);
-                        Either<Component, ResponseFormat> validateComponentExists =
-                                validateComponentExists(containerComponentId, ComponentTypeEnum.SERVICE, null);
-                        if (validateComponentExists.isRight()) {
-                            return Either.right(validateComponentExists.right().value());
-                        } else {
-                            containerComponent = validateComponentExists.left().value();
-                        }
-                        Either<String, ResponseFormat> getOriginComponentRes = combinationOperation.getCombination(componentInstance);
-
-                        if (getOriginComponentRes.isRight()) {
-                            return Either.right(getOriginComponentRes.right().value());
+            User user = validateUserExists(userId, "create Component Instance", inTransaction);
+            Either<Component, ResponseFormat> validateComponentExists =
+                    validateComponentExists(containerComponentId, ComponentTypeEnum.SERVICE, null);
+            if (validateComponentExists.isRight()) {
+                return validateComponentExists.right().value();
             } else {
-                String combinationJson = getOriginComponentRes.left().value();
-                combination = RepresentationUtils.fromRepresentation(combinationJson, Combination.class);
+                containerComponent = validateComponentExists.left().value();
+            }
+            Either<Combination, ResponseFormat> getOriginComponentRes = getCombinationById (componentInstance.getComponentUid());
+
+            if (getOriginComponentRes.isRight()) {
+                return getOriginComponentRes.right().value();
+            } else {
+                combination = getOriginComponentRes.left().value();
             }
 
             if (needLock) {
                 Either<Boolean, ResponseFormat> lockComponent = lockComponent(containerComponent, "createComponentInstance");
                 if (lockComponent.isRight()) {
-                    return Either.right(lockComponent.right().value());
+                    return lockComponent.right().value();
                 }
             }
             log.debug("Try to create entry on graph");
-            resultOp = handleCombinationInstance(containerComponent, combination, componentInstance, user);
-            return resultOp;
-
-        } finally {
-            if (needLock)
-                unlockComponent(resultOp, containerComponent);
+            return handleCombinationInstance(containerComponent, combination, componentInstance, user);
+        } catch (Exception e) {
+            log.error("Exception Occured" + e);
+            return componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR);
         }
     }
 
-    private Either<ComponentInstance, ResponseFormat> handleCombinationInstance
+    private ResponseFormat handleCombinationInstance
             (Component containerComponent, Combination combination, ComponentInstance jsonObject,
              User user) {
 
-        final String containerComponentId = containerComponent.getUniqueId();
+        String containerComponentId = containerComponent.getUniqueId();
         boolean allowDeleted = false;
+        boolean componentInstancesSuccess = true;
+        boolean componentInstanceRelationsSuccess = true;
+        boolean componentInstancePropertiesSuccess = true;
+        Map<String, String> latestComponentCounterMap = new HashMap<>();
+
         Either<Component, StorageOperationStatus> componentRes;
         Either<ImmutablePair<Component, String>, StorageOperationStatus> addResult;
-        log.info("Start to handle {} combination component instance", combination.getName());
-        List<ComponentInstance> parentComponentInstances = combination.getComponentInstances();
-        List<RequirementCapabilityRelDef> parentComponentRelations = combination.getComponentInstancesRelations();
+        List<ComponentInstance> componentInstances = combination.getComponentInstances();
+        List<RequirementCapabilityRelDef> componentInstancesRelations = combination.getComponentInstancesRelations();
         Map<String, List<ComponentInstanceProperty>> componentInstancesProperties = combination.getComponentInstancesProperties();
         Position jsonObjPosition = new Position(jsonObject.getPosX(), jsonObject.getPosY());
-        initPositionBoundaries(jsonObjPosition, parentComponentInstances);
+        initPositionBoundaries(jsonObjPosition, componentInstances);
 
+        // Creating map with new Service ID
         Map<String, List<ComponentInstanceProperty>> newComponentInstancesProperties = new HashMap<>();
         for (Map.Entry<String, List<ComponentInstanceProperty>> entry : componentInstancesProperties.entrySet()) {
             log.debug("Key = " + entry.getKey() + ", Value = " + entry.getValue());
             newComponentInstancesProperties.put(replaceOldContainerId(containerComponent.getUniqueId(), entry.getKey()), entry.getValue());
         }
 
-        //handle components
+        log.info("Start to handle {} combination component instance", combination.getName());
         try {
-            for (ComponentInstance componentInstance : parentComponentInstances) {
+            //handle components
+            for (ComponentInstance componentInstance : componentInstances) {
                 String id = replaceOldContainerId(containerComponentId, componentInstance.getUniqueId());
                 componentInstance.setUniqueId(id);
                 componentRes = toscaOperationFacade.getToscaElement(componentInstance.getComponentUid());
                 if (componentRes.isRight()) {
-                    return Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
+                    return componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR);
                 }
                 Component childComponent = componentRes.left().value();
                 componentRes = toscaOperationFacade.getToscaElement(containerComponent.getUniqueId());
                 if (componentRes.isRight()) {
-                    return Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
+                    return componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR);
                 }
                 containerComponent = componentRes.left().value();
-                //calculateNewPosition(jsonObjPosition, componentInstance);
+                calculateNewPosition(jsonObjPosition, componentInstance);
+                String componentName = (String)componentInstance.getToscaPresentationValue(JsonPresentationFields.CI_COMPONENT_NAME);
+                componentInstance.setToscaPresentationValue(JsonPresentationFields.NAME, componentName);
+                componentInstance.setCustomizationUUID(UUID.randomUUID().toString());
+                String counter = toscaOperationFacade.getLastestComponentInstanceCounter(containerComponent, childComponent.getName());
+                latestComponentCounterMap.put(childComponent.getNormalizedName(), counter);
                 addResult = toscaOperationFacade
-                        .addComponentInstanceToTopologyTemplate(containerComponent, childComponent, componentInstance, allowDeleted, user);
+                        .addComponentInstanceToTopologyTemplate(containerComponent, childComponent,
+                                componentInstance, allowDeleted, user);
                 if (addResult.isRight()) {
-                    log.debug("Failed to connect resources");
+                    if (addResult.right().value() == StorageOperationStatus.ENTITY_ALREADY_EXISTS) {
+                        log.error("Only Single drag drop is supported");
+                    } else {
+                        componentInstancesSuccess = false;
+                    }
                 }
-                else {
-                    titanDao.commit();
-                }
+                log.info("Finished to handle {} combination component instances", combination.getName());
             }
-        } finally {
-            Either<List<ComponentInstance>, ResponseFormat> resultOp = Either.left(parentComponentInstances);
+            titanDao.commit();
+
+            Either<List<ComponentInstance>, ResponseFormat> resultOp = Either.left(componentInstances);
             unlockComponent(resultOp, containerComponent);
-        }
-        //handle component relations
-        for (RequirementCapabilityRelDef relDef : parentComponentRelations) {
-            mergeContainerIdWithRelations(containerComponent.getUniqueId(), relDef);
-            String rl = relDef.getRelationships().get(0).getRelation().getRelationship().getType();
-            if (rl.equals("tosca.relationships.network.LinksTo")) {
-                relDef.getRelationships().get(0).getRelation().getRelationship().setType("tosca.capabilities.network.Linkable");
+
+
+            //handle component relations
+            for (RequirementCapabilityRelDef relDef : componentInstancesRelations) {
+
+                updateRelations (containerComponent, relDef, latestComponentCounterMap);
+
+                Either<RequirementCapabilityRelDef, ResponseFormat> associateRelations = componentInstanceBusinessLogic.
+                        associateRIToRI(containerComponent.getUniqueId(), user.getUserId(), relDef,
+                                ComponentTypeEnum.SERVICE, true, true, true);
+                if (associateRelations.isRight()) {
+                    log.debug("Failed to connect resources");
+                    componentInstanceRelationsSuccess = false;
+                }
             }
+            log.info("Finished to handle {} combination component relations", combination.getName());
 
-            Either<RequirementCapabilityRelDef, ResponseFormat> associateRelations = componentInstanceBusinessLogic.
-                    associateRIToRI(containerComponent.getUniqueId(), user.getUserId(), relDef,
-                            ComponentTypeEnum.SERVICE, true, false, true);
-            if (associateRelations.isRight()) {
-                log.debug("Failed to connect resources");
+            //handle component properties
+            for (ComponentInstance componentInstance : componentInstances) {
+
+                Either<List<ComponentInstanceProperty>, ResponseFormat> updateProperties = componentInstanceBusinessLogic.
+                        createOrUpdatePropertiesValues(ComponentTypeEnum.SERVICE, containerComponent.getUniqueId(),
+                                componentInstance.getUniqueId(), newComponentInstancesProperties.get
+                                        (componentInstance.getUniqueId()), user.getUserId());
+                if (updateProperties.isRight()) {
+                    log.debug("Failed to add properties");
+                    componentInstancePropertiesSuccess = false;
+                }
             }
-        }
-        log.info("Finished to handle {} combination component instance", combination.getName());
-
-        //handle component properties
-        for (ComponentInstance componentInstance : parentComponentInstances) {
-
-            Either<List<ComponentInstanceProperty>, ResponseFormat> updateProperties = componentInstanceBusinessLogic.
-                    createOrUpdatePropertiesValues(ComponentTypeEnum.SERVICE, containerComponent.getUniqueId(),
-                            componentInstance.getUniqueId(), newComponentInstancesProperties.get
-                                    (componentInstance.getUniqueId()), user.getUserId());
-            if (updateProperties.isRight()) {
-                log.debug("Failed to connect resources");
-                return Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
+            if (componentInstancesSuccess && componentInstanceRelationsSuccess && componentInstancePropertiesSuccess) {
+                log.debug("Successfully created combination Instance");
+                return componentsUtils.getResponseFormat(ActionStatus.OK);
+            } else {
+                return componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR);
             }
-
+        } catch (Exception e) {
+            log.debug("Exception occured");
         }
         return null;
+    }
+
+    private void updateRelations(Component containerComponent, RequirementCapabilityRelDef relDef, Map<String, String> latestComponentCounterMap) {
+
+        String[] fromNode = relDef.getFromNode().split("\\.");
+        String[] toNode = relDef.getToNode().split("\\.");
+        String[] capabilityOwnerId = relDef.getRelationships().get(0).getRelation().getCapabilityOwnerId().split("\\.");
+        String[] requirementOwnerId = relDef.getRelationships().get(0).getRelation().getRequirementOwnerId().split("\\.");
+        for (Map.Entry<String, String> entry : latestComponentCounterMap.entrySet()) {
+            log.debug("Key = " + entry.getKey() + ", Value = " + entry.getValue());
+
+            if (fromNode[2].contains(entry.getKey())) {
+                String id = fromNode[2].substring(0, fromNode[2].length() - 1) + entry.getValue();
+                relDef.setFromNode(fromNode[0] + "." + fromNode[1] + "." + id);
+            }
+            if (toNode[2].contains(entry.getKey())) {
+                String id = toNode[2].substring(0, toNode[2].length() - 1) + entry.getValue();
+                relDef.setToNode(toNode[0] + "." + toNode[1] + "." + id);
+            }
+            if (capabilityOwnerId[2].contains(entry.getKey())) {
+                String id = capabilityOwnerId[2].substring(0, capabilityOwnerId[2].length() - 1) + entry.getValue();
+                relDef.getRelationships().get(0).getRelation().setCapabilityOwnerId(capabilityOwnerId[0] + "." + capabilityOwnerId[1] + "." + id);
+            }
+            if (requirementOwnerId[2].contains(entry.getKey())) {
+                String id = requirementOwnerId[2].substring(0, requirementOwnerId[2].length() - 1) + entry.getValue();
+                relDef.getRelationships().get(0).getRelation().setRequirementOwnerId(requirementOwnerId[0] + "." + requirementOwnerId[1] + "." + id);
+            }
+        }
+
+        mergeContainerIdWithRelations(containerComponent.getUniqueId(), relDef);
+        String rl = relDef.getRelationships().get(0).getRelation().getRelationship().getType();
+        if (rl.equals("tosca.relationships.network.LinksTo")) {
+            relDef.getRelationships().get(0).getRelation().getRelationship().setType("tosca.capabilities.network.Linkable");
+        }
     }
 
     private void mergeContainerIdWithRelations(String containerUniqueId, RequirementCapabilityRelDef relation) {
@@ -259,7 +354,7 @@ public class CombinationBusinessLogic extends BaseBusinessLogic {
         relation.setFromNode(newId);
 
         //Fix toNode
-        newId = replaceOldContainerId(containerUniqueId, relation.getFromNode());
+        newId = replaceOldContainerId(containerUniqueId, relation.getToNode());
         relation.setToNode(newId);
 
         //Fix Capability Owner Id

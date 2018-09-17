@@ -20,23 +20,34 @@
 
 package org.openecomp.sdc.be.servlets;
 
+import com.google.gson.reflect.TypeToken;
 import com.jcabi.aspects.Loggable;
 import fj.data.Either;
 import io.swagger.annotations.*;
+import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.openecomp.sdc.be.components.impl.CombinationBusinessLogic;
 import org.openecomp.sdc.be.components.impl.CsarValidationUtils;
 import org.openecomp.sdc.be.components.impl.ImportUtils;
+import org.openecomp.sdc.be.components.impl.ResourceBusinessLogic;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
+import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
+import org.openecomp.sdc.be.mixin.GroupTypeMixin;
 import org.openecomp.sdc.be.model.*;
+import org.openecomp.sdc.be.model.jsontitan.operations.CombinationOperation;
+import org.openecomp.sdc.be.model.normatives.ToscaTypeMetadata;
 import org.openecomp.sdc.be.servlets.ResourceUploadServlet.ResourceAuthorityTypeEnum;
+import org.openecomp.sdc.be.view.ResponseView;
 import org.openecomp.sdc.common.api.Constants;
+import org.openecomp.sdc.common.datastructure.FunctionalInterfaces;
 import org.openecomp.sdc.common.datastructure.Wrapper;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.inject.Singleton;
 import javax.servlet.ServletContext;
@@ -45,8 +56,11 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/v1/catalog")
@@ -55,6 +69,9 @@ import java.io.IOException;
 public class CombinationServlet extends AbstractValidationsServlet {
 
     private static final Logger log = Logger.getLogger(CombinationServlet.class);
+
+    @Autowired
+    protected CombinationOperation combinationOperation;
 
     @POST
     @Path("/combination/{serviceId}")
@@ -112,7 +129,7 @@ public class CombinationServlet extends AbstractValidationsServlet {
                     response = buildErrorResponse(createdCombination.right().value());
                     return response;
                 }
-                Object representation = RepresentationUtils.toRepresentation(createdCombination);
+                Object representation = RepresentationUtils.toRepresentation(createdCombination.left().value());
                 response = buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.CREATED), representation);
                 responseWrapper.setInnerElement(response);
             }
@@ -185,22 +202,90 @@ public class CombinationServlet extends AbstractValidationsServlet {
         try {
 
             ComponentInstance componentInstance = RepresentationUtils.fromRepresentation(data, ComponentInstance.class);
+            if (componentInstance == null) {
+                return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.INVALID_CONTENT, containerComponentType));
+            }
             CombinationBusinessLogic businessLogic = getCombinationBL(context);
             if (businessLogic == null) {
                 log.debug("unsupported type", containerComponentType);
                 return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.UNSUPPORTED_ERROR, containerComponentType));
             }
-            Either<ComponentInstance, ResponseFormat> actionResponse = businessLogic.createCombinationInstance(containerComponentType, containerComponentId, userId, componentInstance);
+            ResponseFormat actionResponse = businessLogic.createCombinationInstance(containerComponentType, containerComponentId, userId, componentInstance);
 
-            if (actionResponse.isRight()) {
-                return buildErrorResponse(actionResponse.right().value());
-            }
-            return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.CREATED), actionResponse.left().value());
+            return buildOkResponse(actionResponse);
 
         } catch (Exception e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Create Component Instance");
             log.debug("create component instance failed with exception", e);
             return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
+        }
+    }
+
+    @GET
+    @Path("/combinationTypes")
+    @ApiOperation(value = "Retrieve Resource", httpMethod = "GET", notes = "Returns resource according to resourceId", response = Resource.class)
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "Resource found"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 404, message = "Resource not found") })
+    public Response getCombinationTypes(@PathParam("resourceId") final String resourceId, @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+
+        Response response;
+        ServletContext context = request.getSession().getServletContext();
+        try {
+            CombinationBusinessLogic businessLogic = getCombinationBL(context);
+            Either<List<UICombination>, ResponseFormat> allCombinations = businessLogic.getAllCombinationTypes();
+            if (allCombinations.isRight()) {
+                log.error("Failed to create Combination");
+                response = buildErrorResponse(allCombinations.right().value());
+                return response;
+            }
+            Object representation = RepresentationUtils.toRepresentation(allCombinations.left().value());
+            response = buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.CREATED), representation);
+            return response;
+
+        } catch (Exception e) {
+            log.error("Exception occured" + e);
+            return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
+        }
+
+    }
+
+    @GET
+    @Path("/combinations/{combinationId}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @ApiOperation(value = "Retrieve Combination", httpMethod = "GET", notes = "Returns resource according to resourceId", response = Combination.class)
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "Combination found"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 404, message = "Combination not found") })
+    public Response getCombinationById(@PathParam("combinationId") final String combinationId, @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+
+        ServletContext context = request.getSession().getServletContext();
+
+        String url = request.getMethod() + " " + request.getRequestURI();
+        log.debug("Start handle request of {}" , url);
+
+        // get modifier id
+        User modifier = new User();
+        modifier.setUserId(userId);
+        log.debug("modifier id is {}" , userId);
+
+        Response response;
+
+        try {
+            CombinationBusinessLogic businessLogic = getCombinationBL(context);
+            log.trace("get resource with id {}", combinationId);
+            Either<Combination, ResponseFormat> actionResponse = businessLogic.getCombinationById(combinationId);
+
+            if (actionResponse.isRight()) {
+                log.debug("failed to get resource");
+                response = buildErrorResponse(actionResponse.right().value());
+                return response;
+            }
+            Object combination = RepresentationUtils.toRepresentation(actionResponse.left().value());
+            return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), combination);
+
+        } catch (IOException e) {
+            BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Get Resource");
+            log.debug("get resource failed with exception", e);
+            return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
+
         }
     }
 }

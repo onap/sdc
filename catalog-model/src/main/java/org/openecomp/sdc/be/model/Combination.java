@@ -39,30 +39,10 @@ public class Combination {
     public Combination() {
     }
 
-    public Combination(String uniqueId, String name, String description, List<ComponentInstance> componentInstances, List<RequirementCapabilityRelDef> componentInstancesRelations, Map<String, List<ComponentInstanceInput>> componentInstancesInputs, Map<String, List<ComponentInstanceProperty>> componentInstancesProperties, Map<String, List<ComponentInstanceProperty>> componentInstancesAttributes) {
-        this.uniqueId = uniqueId;
-        this.name = name;
-        this.description = description;
-        this.componentInstances = componentInstances;
-        this.componentInstancesRelations = componentInstancesRelations;
-        this.componentInstancesInputs = componentInstancesInputs;
-        this.componentInstancesProperties = componentInstancesProperties;
-        this.componentInstancesAttributes = componentInstancesAttributes;
-    }
-
     public Combination(UICombination UICombination) {
+        uniqueId = UICombination.getUniqueId();
         name = UICombination.getName();
         description = UICombination.getDescription();
-    }
-
-    public Combination(Object uniqueId, Object name, Object description, Object componentInstances, Object componentInstancesRelations, Object componentInstancesRelations1, Object componentInstancesInputs, Object componentInstancesProperties) {
-        this.uniqueId = (String) uniqueId;
-        this.name = (String) name;
-        this.description = (String) description;
-        this.componentInstances = (List<ComponentInstance>) componentInstances;
-        this.componentInstancesRelations = (List<RequirementCapabilityRelDef>) componentInstancesRelations;
-        this.componentInstancesInputs = (Map<String, List<ComponentInstanceInput>>) componentInstancesInputs;
-        this.componentInstancesProperties = (Map<String, List<ComponentInstanceProperty>>) componentInstancesProperties;
     }
 
     public String getName() {

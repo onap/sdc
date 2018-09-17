@@ -22,12 +22,25 @@ package org.openecomp.sdc.be.model;
 
 public class UICombination {
 
-    String name;
-    String description;
+    private String uniqueId;
+    private String name;
+    private String description;
 
-    public UICombination(String name, String description) {
+    public UICombination(String uniqueId, String name, String description) {
+        this.uniqueId = uniqueId;
         this.name = name;
         this.description = description;
+    }
+
+    public UICombination() {
+    }
+
+    public String getUniqueId() {
+        return uniqueId;
+    }
+
+    public void setUniqueId(String uniqueId) {
+        this.uniqueId = uniqueId;
     }
 
     public String getName() {

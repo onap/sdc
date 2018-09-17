@@ -33,8 +33,7 @@ public enum OriginTypeEnum {
 	PNF("PNF", "PNF (Physical Network Function)", "resource instance", ComponentTypeEnum.RESOURCE, false),
 	CR("CR", "CR (Complex Resource)", "resource instance", ComponentTypeEnum.RESOURCE, false),
 	ServiceProxy("Service Proxy", "Service Proxy", "service proxy", ComponentTypeEnum.RESOURCE, false),
-	Combination("Combination", "Combination", "combination instance", ComponentTypeEnum.COMBINATION, false)
-	;
+	Combination("Combination", "Combination", "combination instance", ComponentTypeEnum.COMBINATION, false);
 
 	private String value;
 	private String displayValue;
