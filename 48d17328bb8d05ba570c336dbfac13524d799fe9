@@ -1,0 +1,90 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_fab946cc",
+        "filename": "openecomp-be/lib/openecomp-heat-lib/pom.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-09-17T14:17:13Z",
+      "side": 1,
+      "message": "This doesn\u0027t have any effect because it cannot override dependencyManagement of a parent POM. If you need the particular version, change the definition in the dependencyManagement.",
+      "range": {
+        "startLine": 19,
+        "startChar": 0,
+        "endLine": 19,
+        "endChar": 37
+      },
+      "revId": "48d17328bb8d05ba570c336dbfac13524d799fe9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_7ad456eb",
+        "filename": "openecomp-be/lib/openecomp-heat-lib/src/main/java/org/openecomp/sdc/heat/datatypes/structure/Artifact.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 63,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-09-17T14:17:13Z",
+      "side": 1,
+      "message": "Please try to make use of Lombok as much as possible.\n\nWhat if fileName is null? See Objects.hashCode() and Objects.hash().",
+      "range": {
+        "startLine": 63,
+        "startChar": 15,
+        "endLine": 63,
+        "endChar": 34
+      },
+      "revId": "48d17328bb8d05ba570c336dbfac13524d799fe9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_5ad5dae2",
+        "filename": "openecomp-be/lib/openecomp-heat-lib/src/main/java/org/openecomp/sdc/heat/datatypes/structure/Artifact.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-09-17T14:17:13Z",
+      "side": 1,
+      "message": "Same problem with fileName potentially being null. Use Lombok or a method of java.util.Objects.\n\nBTW, this code indicates missing unit-tests. And that\u0027s why using Lombok or another automatic code generation tool is preferable.",
+      "range": {
+        "startLine": 77,
+        "startChar": 1,
+        "endLine": 77,
+        "endChar": 50
+      },
+      "revId": "48d17328bb8d05ba570c336dbfac13524d799fe9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_1a33e2ab",
+        "filename": "openecomp-be/lib/openecomp-item-permissions-lib/openecomp-item-permissions-core/src/main/java/org/openecomp/sdc/itempermissions/servlet/PermissionsFilter.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-09-17T14:17:13Z",
+      "side": 1,
+      "message": "See my comments in https://gerrit.onap.org/r/#/c/66087/1/openecomp-be/lib/openecomp-item-permissions-lib/openecomp-item-permissions-core/src/main/java/org/openecomp/sdc/itempermissions/servlet/PermissionsFilter.java",
+      "revId": "48d17328bb8d05ba570c336dbfac13524d799fe9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
