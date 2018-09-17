@@ -42,6 +42,24 @@
     },
     {
       "key": {
+        "uuid": "1a76adc5_c9e7eeaa",
+        "filename": "openecomp-be/lib/openecomp-heat-lib/src/main/java/org/openecomp/sdc/heat/datatypes/model/Resource.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 1879
+      },
+      "writtenOn": "2018-09-17T09:41:42Z",
+      "side": 1,
+      "message": "I tried to remove it but few of the test case are dependent on this kind of formatting so I reverted back my lombok toString",
+      "parentUuid": "1a76adc5_8d17d044",
+      "revId": "7614046577461a75bf5f4a48c354c821f61cda82",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1a76adc5_ad3decc5",
         "filename": "openecomp-be/lib/openecomp-heat-lib/src/main/java/org/openecomp/sdc/heat/datatypes/structure/Artifact.java",
         "patchSetId": 1
@@ -53,6 +71,30 @@
       "writtenOn": "2018-09-13T11:45:55Z",
       "side": 1,
       "message": "Is these implementations are standard, you may remove them and let Lombok\u0027s @Data generate them automatically.",
+      "range": {
+        "startLine": 60,
+        "startChar": 0,
+        "endLine": 78,
+        "endChar": 5
+      },
+      "revId": "7614046577461a75bf5f4a48c354c821f61cda82",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_dc37aa4b",
+        "filename": "openecomp-be/lib/openecomp-heat-lib/src/main/java/org/openecomp/sdc/heat/datatypes/structure/Artifact.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 1879
+      },
+      "writtenOn": "2018-09-17T09:41:42Z",
+      "side": 1,
+      "message": "Tried to create hashcode and equal using lombok but created method are not similar. I think we need to upgrade the lombok version to 1.18.2 as Exclude field is not working in present version",
+      "parentUuid": "1a76adc5_ad3decc5",
       "range": {
         "startLine": 60,
         "startChar": 0,
@@ -174,6 +216,30 @@
     },
     {
       "key": {
+        "uuid": "1a76adc5_7c16964d",
+        "filename": "openecomp-be/lib/openecomp-heat-lib/src/test/java/org/openecomp/sdc/heat/services/HeatStructureUtilTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 1879
+      },
+      "writtenOn": "2018-09-17T09:41:42Z",
+      "side": 1,
+      "message": "Mock created is getting used in all test cases",
+      "parentUuid": "1a76adc5_6d6114d2",
+      "range": {
+        "startLine": 39,
+        "startChar": 2,
+        "endLine": 45,
+        "endChar": 5
+      },
+      "revId": "7614046577461a75bf5f4a48c354c821f61cda82",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1a76adc5_8d5cb01a",
         "filename": "openecomp-be/lib/openecomp-heat-lib/src/test/java/org/openecomp/sdc/heat/services/manifest/ManifestUtilTest.java",
         "patchSetId": 1
@@ -260,6 +326,24 @@
     },
     {
       "key": {
+        "uuid": "1a76adc5_1c8f622b",
+        "filename": "openecomp-be/lib/openecomp-heat-lib/src/test/resources/mock/model/base_cscf_volume.env",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1879
+      },
+      "writtenOn": "2018-09-17T09:41:42Z",
+      "side": 1,
+      "message": "This file is already present in our project, I just copied it from one location to another.",
+      "parentUuid": "1a76adc5_eda44409",
+      "revId": "7614046577461a75bf5f4a48c354c821f61cda82",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1a76adc5_0da8a0d9",
         "filename": "openecomp-be/lib/openecomp-heat-lib/src/test/resources/mock/model/base_cscf_volume.yaml",
         "patchSetId": 1
@@ -271,6 +355,30 @@
       "writtenOn": "2018-09-13T11:45:55Z",
       "side": 1,
       "message": "This file seems copyrighted. Does the license permit copying it into our repo?",
+      "range": {
+        "startLine": 1,
+        "startChar": 0,
+        "endLine": 1,
+        "endChar": 37
+      },
+      "revId": "7614046577461a75bf5f4a48c354c821f61cda82",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_dc848a0c",
+        "filename": "openecomp-be/lib/openecomp-heat-lib/src/test/resources/mock/model/base_cscf_volume.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1879
+      },
+      "writtenOn": "2018-09-17T09:41:42Z",
+      "side": 1,
+      "message": "This file is already present in our project, I just copied it from one location to another.",
+      "parentUuid": "1a76adc5_0da8a0d9",
       "range": {
         "startLine": 1,
         "startChar": 0,
