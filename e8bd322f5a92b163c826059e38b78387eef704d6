@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "1a76adc5_1f9c340e",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/CombinationBusinessLogic.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 4655
+      },
+      "writtenOn": "2018-09-17T12:47:42Z",
+      "side": 1,
+      "message": "fixed. will push in commit 6",
+      "parentUuid": "1a76adc5_ceaf0b7c",
+      "revId": "e8bd322f5a92b163c826059e38b78387eef704d6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1a76adc5_eeb207e4",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/CombinationBusinessLogic.java",
         "patchSetId": 2
@@ -30,6 +48,24 @@
       "writtenOn": "2018-09-12T04:40:00Z",
       "side": 1,
       "message": "Should only store in db if validateCombinationExists returns false.",
+      "revId": "e8bd322f5a92b163c826059e38b78387eef704d6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_3ffb3048",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/CombinationBusinessLogic.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 4655
+      },
+      "writtenOn": "2018-09-17T12:47:42Z",
+      "side": 1,
+      "message": "fixed in commit 5",
+      "parentUuid": "1a76adc5_eeb207e4",
       "revId": "e8bd322f5a92b163c826059e38b78387eef704d6",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "1a76adc5_bf9e6005",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/CombinationBusinessLogic.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 4655
+      },
+      "writtenOn": "2018-09-17T12:47:42Z",
+      "side": 1,
+      "message": "fixed in commit 5",
+      "parentUuid": "1a76adc5_8ecd9368",
+      "revId": "e8bd322f5a92b163c826059e38b78387eef704d6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1a76adc5_6ebef7af",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/CombinationBusinessLogic.java",
         "patchSetId": 2
@@ -64,6 +118,24 @@
       "writtenOn": "2018-09-12T04:40:00Z",
       "side": 1,
       "message": "This could return an Either object to represent success or failure. Alternatively the combination could be set to null if an exception occurs, so that the caller knows if it was successful or not.",
+      "revId": "e8bd322f5a92b163c826059e38b78387eef704d6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_dfa1dc46",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/CombinationBusinessLogic.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 4655
+      },
+      "writtenOn": "2018-09-17T12:47:42Z",
+      "side": 1,
+      "message": "fixed in commit 5",
+      "parentUuid": "1a76adc5_6ebef7af",
       "revId": "e8bd322f5a92b163c826059e38b78387eef704d6",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
@@ -87,6 +159,24 @@
     },
     {
       "key": {
+        "uuid": "1a76adc5_7f8c48da",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/CombinationBusinessLogic.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 4655
+      },
+      "writtenOn": "2018-09-17T12:47:42Z",
+      "side": 1,
+      "message": "For now, reached to this conclusion after discussing with Seshu and Anjali. There are other complications. Need to discuss offline.",
+      "parentUuid": "1a76adc5_9144d44a",
+      "revId": "e8bd322f5a92b163c826059e38b78387eef704d6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1a76adc5_aef64f8d",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/CombinationBusinessLogic.java",
         "patchSetId": 2
@@ -98,6 +188,24 @@
       "writtenOn": "2018-09-12T04:40:00Z",
       "side": 1,
       "message": "We could lock on the combination object to prevent 2 users from creating the same combination in the db at the same time.",
+      "revId": "e8bd322f5a92b163c826059e38b78387eef704d6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_3f9250f6",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/CombinationBusinessLogic.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 4655
+      },
+      "writtenOn": "2018-09-17T12:47:42Z",
+      "side": 1,
+      "message": "Preferable. Need help with implementation.",
+      "parentUuid": "1a76adc5_aef64f8d",
       "revId": "e8bd322f5a92b163c826059e38b78387eef704d6",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
@@ -121,6 +229,24 @@
     },
     {
       "key": {
+        "uuid": "1a76adc5_5f8dccd1",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/CombinationBusinessLogic.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 4655
+      },
+      "writtenOn": "2018-09-17T12:47:42Z",
+      "side": 1,
+      "message": "fixed in commit 5",
+      "parentUuid": "1a76adc5_8ed4b3ec",
+      "revId": "e8bd322f5a92b163c826059e38b78387eef704d6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1a76adc5_aecf2f55",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/CombinationBusinessLogic.java",
         "patchSetId": 2
@@ -138,6 +264,24 @@
     },
     {
       "key": {
+        "uuid": "1a76adc5_1fc3d4ed",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/CombinationBusinessLogic.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 94,
+      "author": {
+        "id": 4655
+      },
+      "writtenOn": "2018-09-17T12:47:42Z",
+      "side": 1,
+      "message": "fixed in commit 5",
+      "parentUuid": "1a76adc5_aecf2f55",
+      "revId": "e8bd322f5a92b163c826059e38b78387eef704d6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1a76adc5_2e323f5f",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/CombinationBusinessLogic.java",
         "patchSetId": 2
@@ -149,6 +293,24 @@
       "writtenOn": "2018-09-12T04:40:00Z",
       "side": 1,
       "message": "Should use combination.getUniqueId(), so that in the future if someone sets the uniqueId to not be the name, then this code will still work.",
+      "revId": "e8bd322f5a92b163c826059e38b78387eef704d6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_bfb5007f",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/CombinationBusinessLogic.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 98,
+      "author": {
+        "id": 4655
+      },
+      "writtenOn": "2018-09-17T12:47:42Z",
+      "side": 1,
+      "message": "fixed. will push in commit 6",
+      "parentUuid": "1a76adc5_2e323f5f",
       "revId": "e8bd322f5a92b163c826059e38b78387eef704d6",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
@@ -178,6 +340,30 @@
     },
     {
       "key": {
+        "uuid": "1a76adc5_dfb8fc76",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/CombinationBusinessLogic.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 128,
+      "author": {
+        "id": 4655
+      },
+      "writtenOn": "2018-09-17T12:47:42Z",
+      "side": 1,
+      "message": "kept it for future use. will discuss offline.",
+      "parentUuid": "1a76adc5_ee8527cf",
+      "range": {
+        "startLine": 128,
+        "startChar": 16,
+        "endLine": 128,
+        "endChar": 24
+      },
+      "revId": "e8bd322f5a92b163c826059e38b78387eef704d6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1a76adc5_6e71170b",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/CombinationBusinessLogic.java",
         "patchSetId": 2
@@ -189,6 +375,24 @@
       "writtenOn": "2018-09-12T04:40:00Z",
       "side": 1,
       "message": "Should return Either.right here",
+      "revId": "e8bd322f5a92b163c826059e38b78387eef704d6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_ff661829",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/CombinationBusinessLogic.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 175,
+      "author": {
+        "id": 4655
+      },
+      "writtenOn": "2018-09-17T12:47:42Z",
+      "side": 1,
+      "message": "fixed in commit 5",
+      "parentUuid": "1a76adc5_6e71170b",
       "revId": "e8bd322f5a92b163c826059e38b78387eef704d6",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
@@ -212,6 +416,24 @@
     },
     {
       "key": {
+        "uuid": "1a76adc5_3fa9f023",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/CombinationBusinessLogic.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 201,
+      "author": {
+        "id": 4655
+      },
+      "writtenOn": "2018-09-17T12:47:42Z",
+      "side": 1,
+      "message": "okay.",
+      "parentUuid": "1a76adc5_2ecebf2e",
+      "revId": "e8bd322f5a92b163c826059e38b78387eef704d6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1a76adc5_8e8cb3db",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/CombinationBusinessLogic.java",
         "patchSetId": 2
@@ -223,6 +445,24 @@
       "writtenOn": "2018-09-12T04:40:00Z",
       "side": 1,
       "message": "Probably should not commit inside the for loop",
+      "revId": "e8bd322f5a92b163c826059e38b78387eef704d6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_bf6c2009",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/CombinationBusinessLogic.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 227,
+      "author": {
+        "id": 4655
+      },
+      "writtenOn": "2018-09-17T12:47:42Z",
+      "side": 1,
+      "message": "fixed in commit 5",
+      "parentUuid": "1a76adc5_8e8cb3db",
       "revId": "e8bd322f5a92b163c826059e38b78387eef704d6",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
@@ -263,6 +503,24 @@
     },
     {
       "key": {
+        "uuid": "1a76adc5_5f52ac35",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/CombinationBusinessLogic.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 238,
+      "author": {
+        "id": 4655
+      },
+      "writtenOn": "2018-09-17T12:47:42Z",
+      "side": 1,
+      "message": "will fix in commit 6",
+      "parentUuid": "1a76adc5_6ea4b74a",
+      "revId": "e8bd322f5a92b163c826059e38b78387eef704d6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1a76adc5_ae75efcb",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/CombinationBusinessLogic.java",
         "patchSetId": 2
@@ -274,6 +532,24 @@
       "writtenOn": "2018-09-12T04:40:00Z",
       "side": 1,
       "message": "Should we return Either.right here?",
+      "revId": "e8bd322f5a92b163c826059e38b78387eef704d6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_bf43c06a",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/CombinationBusinessLogic.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 246,
+      "author": {
+        "id": 4655
+      },
+      "writtenOn": "2018-09-17T12:47:42Z",
+      "side": 1,
+      "message": "fixed in commit 5",
+      "parentUuid": "1a76adc5_ae75efcb",
       "revId": "e8bd322f5a92b163c826059e38b78387eef704d6",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
@@ -297,6 +573,24 @@
     },
     {
       "key": {
+        "uuid": "1a76adc5_5f7b8cbd",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/CombinationBusinessLogic.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 262,
+      "author": {
+        "id": 4655
+      },
+      "writtenOn": "2018-09-17T12:47:42Z",
+      "side": 1,
+      "message": "done",
+      "parentUuid": "1a76adc5_6e7b57be",
+      "revId": "e8bd322f5a92b163c826059e38b78387eef704d6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1a76adc5_2ec31fee",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/CombinationBusinessLogic.java",
         "patchSetId": 2
@@ -308,6 +602,24 @@
       "writtenOn": "2018-09-12T04:40:00Z",
       "side": 1,
       "message": "Should return an Either.left object for success.",
+      "revId": "e8bd322f5a92b163c826059e38b78387eef704d6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_bf0bc07b",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/CombinationBusinessLogic.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 264,
+      "author": {
+        "id": 4655
+      },
+      "writtenOn": "2018-09-17T12:47:42Z",
+      "side": 1,
+      "message": "which object should it return ?",
+      "parentUuid": "1a76adc5_2ec31fee",
       "revId": "e8bd322f5a92b163c826059e38b78387eef704d6",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
@@ -331,6 +643,24 @@
     },
     {
       "key": {
+        "uuid": "1a76adc5_7f61a803",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/CombinationBusinessLogic.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 274,
+      "author": {
+        "id": 4655
+      },
+      "writtenOn": "2018-09-17T12:47:42Z",
+      "side": 1,
+      "message": "fixed in commit 5",
+      "parentUuid": "1a76adc5_2e51df35",
+      "revId": "e8bd322f5a92b163c826059e38b78387eef704d6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1a76adc5_ae5c0f4c",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/CombinationBusinessLogic.java",
         "patchSetId": 2
@@ -342,6 +672,24 @@
       "writtenOn": "2018-09-12T04:40:00Z",
       "side": 1,
       "message": "Rename method to what it is doing, e.g. generateContainerId.\nCould rewrite without storing local variables:\n\nprivate String generateContainerId(String containerUniqueId, String id) {\n         return containerUniqueId + id.substring(id.indexOf(\u0027.\u0027));\n    }",
+      "revId": "e8bd322f5a92b163c826059e38b78387eef704d6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_bfd0a0c9",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/CombinationBusinessLogic.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 286,
+      "author": {
+        "id": 4655
+      },
+      "writtenOn": "2018-09-17T12:47:42Z",
+      "side": 1,
+      "message": "I think the older name makes it more clear what this function is actually doing. Please suggest.",
+      "parentUuid": "1a76adc5_ae5c0f4c",
       "revId": "e8bd322f5a92b163c826059e38b78387eef704d6",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
@@ -371,6 +719,30 @@
     },
     {
       "key": {
+        "uuid": "1a76adc5_9fd924f5",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/CombinationServlet.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 63,
+      "author": {
+        "id": 4655
+      },
+      "writtenOn": "2018-09-17T12:47:42Z",
+      "side": 1,
+      "message": "following the onap way as in other servlets",
+      "parentUuid": "1a76adc5_f170a8a5",
+      "range": {
+        "startLine": 63,
+        "startChar": 119,
+        "endLine": 63,
+        "endChar": 136
+      },
+      "revId": "e8bd322f5a92b163c826059e38b78387eef704d6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1a76adc5_1151a40e",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/CombinationServlet.java",
         "patchSetId": 2
@@ -382,6 +754,30 @@
       "writtenOn": "2018-09-12T04:40:00Z",
       "side": 1,
       "message": "This is related to csar import of resources. It is not needed.",
+      "range": {
+        "startLine": 83,
+        "startChar": 0,
+        "endLine": 87,
+        "endChar": 13
+      },
+      "revId": "e8bd322f5a92b163c826059e38b78387eef704d6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_3fe490aa",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/CombinationServlet.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 4655
+      },
+      "writtenOn": "2018-09-17T12:47:42Z",
+      "side": 1,
+      "message": "I have seen this being used for UT. That\u0027s why didnt remove this.",
+      "parentUuid": "1a76adc5_1151a40e",
       "range": {
         "startLine": 83,
         "startChar": 0,
@@ -468,6 +864,24 @@
       "writtenOn": "2018-09-12T04:40:00Z",
       "side": 1,
       "message": "Should this follow the either pattern? e.g.\nEither\u003cService, ResponseFormat\u003e getServiceResponse \u003d getServiceBL(context)\nif (getServiceResponse.isRight()) {",
+      "revId": "e8bd322f5a92b163c826059e38b78387eef704d6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_7f052844",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/CombinationServlet.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 181,
+      "author": {
+        "id": 4655
+      },
+      "writtenOn": "2018-09-17T12:47:42Z",
+      "side": 1,
+      "message": "This pattern only followed where createComponent is called in the same line. Other it does not use Either. example - resourcesServlet",
+      "parentUuid": "1a76adc5_b166b0eb",
       "revId": "e8bd322f5a92b163c826059e38b78387eef704d6",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
