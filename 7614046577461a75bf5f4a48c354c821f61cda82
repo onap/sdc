@@ -344,6 +344,24 @@
     },
     {
       "key": {
+        "uuid": "1a76adc5_9a6b721d",
+        "filename": "openecomp-be/lib/openecomp-heat-lib/src/test/resources/mock/model/base_cscf_volume.env",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-09-17T14:17:13Z",
+      "side": 1,
+      "message": "So it looks like the problem is why this file is in our repo in the first place. Please open a bug and make sure your test uses a different version, with a proper copyright header (Apache and all the stuff).",
+      "parentUuid": "1a76adc5_1c8f622b",
+      "revId": "7614046577461a75bf5f4a48c354c821f61cda82",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1a76adc5_0da8a0d9",
         "filename": "openecomp-be/lib/openecomp-heat-lib/src/test/resources/mock/model/base_cscf_volume.yaml",
         "patchSetId": 1
@@ -379,6 +397,30 @@
       "side": 1,
       "message": "This file is already present in our project, I just copied it from one location to another.",
       "parentUuid": "1a76adc5_0da8a0d9",
+      "range": {
+        "startLine": 1,
+        "startChar": 0,
+        "endLine": 1,
+        "endChar": 37
+      },
+      "revId": "7614046577461a75bf5f4a48c354c821f61cda82",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_facaa619",
+        "filename": "openecomp-be/lib/openecomp-heat-lib/src/test/resources/mock/model/base_cscf_volume.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-09-17T14:17:13Z",
+      "side": 1,
+      "message": "It doesn\u0027t justify another (potentially illegal) copy. I personally don\u0027t know where this file comes from, and cannot validate that the license permits storing it in the ONAP repo. The easiest way to solve this is probably to write our own file that satisfies the unit-tests.",
+      "parentUuid": "1a76adc5_dc848a0c",
       "range": {
         "startLine": 1,
         "startChar": 0,
