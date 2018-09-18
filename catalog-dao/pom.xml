@@ -311,6 +311,12 @@ Modifications copyright (c) 2018 Nokia
 			<scope>test</scope>
 		</dependency>
 		<!-- CASSANDRA END -->
+
+		<dependency>
+			<groupId>org.codehaus.groovy</groupId>
+			<artifactId>groovy</artifactId>
+			<version>2.4.8</version>
+		</dependency>
 	</dependencies>
 
 	<build>
