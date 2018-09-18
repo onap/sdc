@@ -24,11 +24,10 @@ import java.util.Map;
 
 @org.springframework.stereotype.Component("combination-operation")
 public class CombinationOperation {
+    private static final Logger log = Logger.getLogger(CombinationOperation.class);
 
     @Autowired
     protected TitanDao titanDao;
-
-    private static Logger log = Logger.getLogger(ToscaElementOperation.class.getName());
 
     public Either<Combination, StorageOperationStatus> createCombinationElement
             (Service service, Combination combination, String combinationJson) {
@@ -56,7 +55,7 @@ public class CombinationOperation {
 
     private GraphVertex fillMetadata
             (GraphVertex combinationVertex, Combination combination, Service service, String combinationJson) {
-        combinationVertex.setUniqueId(combination.getName());
+        combinationVertex.setUniqueId(combination.getUniqueId());
         combinationVertex.setLabel(VertexTypeEnum.COMBINATION);
         combinationVertex.setType(ComponentTypeEnum.COMBINATION);
         combinationVertex.addMetadataProperty(GraphPropertyEnum.NORMALIZED_NAME, ValidationUtils.normaliseComponentName

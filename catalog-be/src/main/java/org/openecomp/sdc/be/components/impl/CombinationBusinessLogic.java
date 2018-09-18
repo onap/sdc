@@ -25,16 +25,11 @@ import fj.data.Either;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
-import org.openecomp.sdc.be.dao.jsongraph.types.EdgeLabelEnum;
-import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
 import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
-import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.model.*;
 import org.openecomp.sdc.be.model.jsontitan.operations.CombinationOperation;
-import org.openecomp.sdc.be.model.jsontitan.operations.ToscaElementOperation;
-import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.DaoStatusConverter;
 import org.openecomp.sdc.be.servlets.RepresentationUtils;
@@ -47,13 +42,15 @@ import java.util.*;
 @org.springframework.stereotype.Component("combinationBusinessLogic")
 public class CombinationBusinessLogic extends BaseBusinessLogic {
 
+    private static final Logger log = Logger.getLogger(CombinationBusinessLogic.class);
+    public static final String NATIVE_NETWORK_LINKABLE = "tosca.capabilities.network.Linkable";
+    public static final String NATIVE_NETWORK_LINK_TO = "tosca.relationships.network.LinksTo";
+
     @Autowired
     private ComponentInstanceBusinessLogic componentInstanceBusinessLogic;
 
     @Autowired
     protected CombinationOperation combinationOperation;
-
-    private static Logger log = Logger.getLogger(ToscaElementOperation.class.getName());
 
     public Either<Combination, ResponseFormat> createCombination(Combination combination, Service service) {
 
@@ -230,7 +227,6 @@ public class CombinationBusinessLogic extends BaseBusinessLogic {
         // Creating map with new Service ID
         Map<String, List<ComponentInstanceProperty>> newComponentInstancesProperties = new HashMap<>();
         for (Map.Entry<String, List<ComponentInstanceProperty>> entry : componentInstancesProperties.entrySet()) {
-            log.debug("Key = " + entry.getKey() + ", Value = " + entry.getValue());
             newComponentInstancesProperties.put(replaceOldContainerId(containerComponent.getUniqueId(), entry.getKey()), entry.getValue());
         }
 
@@ -317,33 +313,34 @@ public class CombinationBusinessLogic extends BaseBusinessLogic {
 
         String[] fromNode = relDef.getFromNode().split("\\.");
         String[] toNode = relDef.getToNode().split("\\.");
+        String id;
         String[] capabilityOwnerId = relDef.getRelationships().get(0).getRelation().getCapabilityOwnerId().split("\\.");
         String[] requirementOwnerId = relDef.getRelationships().get(0).getRelation().getRequirementOwnerId().split("\\.");
         for (Map.Entry<String, String> entry : latestComponentCounterMap.entrySet()) {
             log.debug("Key = " + entry.getKey() + ", Value = " + entry.getValue());
 
             if (fromNode[2].contains(entry.getKey())) {
-                String id = fromNode[2].substring(0, fromNode[2].length() - 1) + entry.getValue();
+                id = fromNode[2].substring(0, fromNode[2].length() - 1) + entry.getValue();
                 relDef.setFromNode(fromNode[0] + "." + fromNode[1] + "." + id);
             }
             if (toNode[2].contains(entry.getKey())) {
-                String id = toNode[2].substring(0, toNode[2].length() - 1) + entry.getValue();
+                id = toNode[2].substring(0, toNode[2].length() - 1) + entry.getValue();
                 relDef.setToNode(toNode[0] + "." + toNode[1] + "." + id);
             }
             if (capabilityOwnerId[2].contains(entry.getKey())) {
-                String id = capabilityOwnerId[2].substring(0, capabilityOwnerId[2].length() - 1) + entry.getValue();
+                id = capabilityOwnerId[2].substring(0, capabilityOwnerId[2].length() - 1) + entry.getValue();
                 relDef.getRelationships().get(0).getRelation().setCapabilityOwnerId(capabilityOwnerId[0] + "." + capabilityOwnerId[1] + "." + id);
             }
             if (requirementOwnerId[2].contains(entry.getKey())) {
-                String id = requirementOwnerId[2].substring(0, requirementOwnerId[2].length() - 1) + entry.getValue();
+                id = requirementOwnerId[2].substring(0, requirementOwnerId[2].length() - 1) + entry.getValue();
                 relDef.getRelationships().get(0).getRelation().setRequirementOwnerId(requirementOwnerId[0] + "." + requirementOwnerId[1] + "." + id);
             }
         }
 
         mergeContainerIdWithRelations(containerComponent.getUniqueId(), relDef);
         String rl = relDef.getRelationships().get(0).getRelation().getRelationship().getType();
-        if (rl.equals("tosca.relationships.network.LinksTo")) {
-            relDef.getRelationships().get(0).getRelation().getRelationship().setType("tosca.capabilities.network.Linkable");
+        if (rl.equals(NATIVE_NETWORK_LINK_TO)) {
+            relDef.getRelationships().get(0).getRelation().getRelationship().setType(NATIVE_NETWORK_LINKABLE);
         }
     }
 
@@ -367,9 +364,7 @@ public class CombinationBusinessLogic extends BaseBusinessLogic {
     }
 
     private String replaceOldContainerId(String containerUniqueId, String id) {
-        int index = id.indexOf('.');
-        String substring = id.substring(index);
-        return containerUniqueId + substring;
+        return containerUniqueId + id.substring(id.indexOf('.'));
     }
 
     private void calculateNewPosition(Position position, ComponentInstance c) {

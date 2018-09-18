@@ -35,7 +35,8 @@ public class Combination {
     private Map<String, List<ComponentInstanceInput>> componentInstancesInputs;
     private Map<String, List<ComponentInstanceProperty>> componentInstancesProperties;
     private Map<String, List<ComponentInstanceProperty>> componentInstancesAttributes;
-
+    
+    // constructor needed for jackson and other gson converter libraries
     public Combination() {
     }
 
