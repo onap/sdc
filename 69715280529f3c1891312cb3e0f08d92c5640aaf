@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_c94da19b",
+        "filename": "utils/webseal-simulator/scripts/simulator_docker_run.sh",
+        "patchSetId": 5
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-18T16:03:52Z",
+      "side": 1,
+      "message": "if you see it is not used remove it.\nin addition, we are trying to remove this script in favor of the docker run. it now has the option -sim to start all with the simulator",
+      "range": {
+        "startLine": 3,
+        "startChar": 0,
+        "endLine": 3,
+        "endChar": 80
+      },
+      "revId": "69715280529f3c1891312cb3e0f08d92c5640aaf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
