@@ -3315,6 +3315,11 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
             if (newResource.getToscaArtifacts() == null || newResource.getToscaArtifacts().isEmpty()) {
                 setToscaArtifactsPlaceHolders(newResource, user);
             }
+
+            if (newResource.getInterfaces() == null || newResource.getInterfaces().isEmpty()) {
+                newResource.setInterfaces(oldResource.getInterfaces());
+            }
+
             Either<Resource, StorageOperationStatus> overrideResource = toscaOperationFacade
                     .overrideComponent(newResource, oldResource);
 

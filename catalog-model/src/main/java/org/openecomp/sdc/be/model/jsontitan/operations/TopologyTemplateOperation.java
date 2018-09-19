@@ -173,7 +173,7 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
             return result;
         }
 
-        StorageOperationStatus associateInterfaces = associateInterfacesToResource(topologyTemplateVertex, topologyTemplate);
+        StorageOperationStatus associateInterfaces = associateInterfacesToComponent(topologyTemplateVertex, topologyTemplate);
         if (associateInterfaces != StorageOperationStatus.OK) {
             result = Either.right(associateInterfaces);
         return result;
@@ -721,18 +721,22 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
       }
       return TitanOperationStatus.OK;
     }
-    
-    private StorageOperationStatus associateInterfacesToResource(GraphVertex topologyTemplateVertex,
-        TopologyTemplate topologyTemplate) {
-      Map<String, InterfaceDataDefinition> interfaces = topologyTemplate.getInterfaces();
-      return associateInterfacesToComponent(topologyTemplateVertex,interfaces);
-    }
-    
-    public StorageOperationStatus associateInterfacesToComponent(GraphVertex nodeTypeVertex, Map<String, InterfaceDataDefinition> interfaceMap) {
+
+    private StorageOperationStatus associateInterfacesToComponent(GraphVertex topologyTemplateVertex, TopologyTemplate topologyTemplate) {
+      Map<String, InterfaceDataDefinition> interfaceMap = topologyTemplate.getInterfaces();
       if (interfaceMap != null && !interfaceMap.isEmpty()) {
-        Either<GraphVertex, StorageOperationStatus> assosiateElementToData = associateElementToData(nodeTypeVertex, VertexTypeEnum.INTERFACE, EdgeLabelEnum.INTERFACE, interfaceMap);
+        Either<GraphVertex, StorageOperationStatus> assosiateElementToData = associateElementToData(topologyTemplateVertex, VertexTypeEnum.INTERFACE, EdgeLabelEnum.INTERFACE, interfaceMap);
         if (assosiateElementToData.isRight()) {
           return assosiateElementToData.right().value();
+        }
+        else {
+          Map<String, OperationDataDefinition> operationMap = interfaceMap.values().stream().filter(op -> MapUtils.isNotEmpty(op.getOperations())).flatMap(a -> a.getOperations().entrySet().stream()).collect(Collectors.toMap(entry -> entry.getKey(), entry -> entry.getValue()));
+          if(MapUtils.isNotEmpty(operationMap)) {
+            Either<GraphVertex, StorageOperationStatus> assosiateOpToInterface = associateElementToData(assosiateElementToData.left().value(), VertexTypeEnum.INTERFACE_OPERATION, EdgeLabelEnum.INTERFACE_OPERATION, operationMap);
+            if (assosiateOpToInterface.isRight()) {
+              return assosiateOpToInterface.right().value();
+            }
+          }
         }
       }
       return StorageOperationStatus.OK;
@@ -1057,6 +1061,23 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
         if (status != TitanOperationStatus.OK) {
             log.debug("Failed to disassociate service api artifacts for {} error {}", toscaElementVertex.getUniqueId(), status);
             Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
+        }
+
+        Either<GraphVertex, TitanOperationStatus> getInterfaceVertex = titanDao.getChildVertex(toscaElementVertex, EdgeLabelEnum.INTERFACE, JsonParseFlagEnum.NoParse);
+        if (getInterfaceVertex.isLeft()) {
+            status = titanDao.disassociateAndDeleteLast(getInterfaceVertex.left().value(), Direction.OUT, EdgeLabelEnum.INTERFACE_OPERATION);
+            if (status != TitanOperationStatus.OK) {
+                log.debug("Failed to disassociate interface operations for {} error {}", getInterfaceVertex.left().value().getUniqueId(), status);
+                Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
+            }
+            else {
+                status = titanDao.disassociateAndDeleteLast(toscaElementVertex, Direction.OUT, EdgeLabelEnum.INTERFACE);
+                if (status != TitanOperationStatus.OK) {
+                    log.debug("Failed to disassociate interfaces for {} error {}", toscaElementVertex.getUniqueId(), status);
+                    Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
+                }
+            }
+
         }
 
         titanDao.disassociateAndDeleteLast(toscaElementVertex, Direction.OUT, EdgeLabelEnum.INSTANCE_ARTIFACTS);
