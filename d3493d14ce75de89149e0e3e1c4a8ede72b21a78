@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_ccd60a4f",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 2887,
+      "author": {
+        "id": 4217
+      },
+      "writtenOn": "2018-09-19T04:38:34Z",
+      "side": 1,
+      "message": "Needs to be: log.error(\"error in destAdditionalInfo with dest component instance id:{}\", destComponentInstanceId);",
+      "revId": "d3493d14ce75de89149e0e3e1c4a8ede72b21a78",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_2cc77e97",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 2952,
+      "author": {
+        "id": 4217
+      },
+      "writtenOn": "2018-09-19T04:38:34Z",
+      "side": 1,
+      "message": "Need to match each parameter to {}, e.g:\nlog.info(\"The type of attribute id {}, is {}\", attribute.getUniqueId(), propertyType);",
+      "revId": "d3493d14ce75de89149e0e3e1c4a8ede72b21a78",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
