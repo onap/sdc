@@ -60,7 +60,8 @@ public enum GraphPropertyEnum {
 	//Archive/Restore
 	IS_ARCHIVED				("isArchived",			Boolean.class, 				false,		true),
 	IS_VSP_ARCHIVED			("isVspArchived",		Boolean.class, 				false,		true),
-	ARCHIVE_TIME			("archiveTime",			Long.class, 				false,		true);
+	ARCHIVE_TIME			("archiveTime",			Long.class, 				false,		true),
+	JSON_STRING				("jsonString", 			String.class, 				false, 		false);
 
 	private String property;
 	private Class clazz;

@@ -14,6 +14,7 @@ import org.openecomp.sdc.be.dao.jsongraph.types.EdgeLabelEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
 import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
+import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
 import org.openecomp.sdc.be.model.catalog.CatalogComponent;
 
 import java.util.ArrayList;
@@ -45,6 +46,7 @@ public class ToscaElementOperationCatalogTest {
         when(titanDao.getChildVertex(vertex, EdgeLabelEnum.CATEGORY, JsonParseFlagEnum.NoParse))
                 .thenReturn(Either.right(TitanOperationStatus.NOT_FOUND));
         when(vertex.property(GraphPropertiesDictionary.METADATA.getProperty())).thenReturn(property);
+        when(vertex.property(GraphPropertyEnum.COMPONENT_TYPE.getProperty())).thenReturn(property);
     }
 
     @Test

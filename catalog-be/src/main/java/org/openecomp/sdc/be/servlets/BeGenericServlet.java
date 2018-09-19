@@ -130,6 +130,10 @@ public class BeGenericServlet extends BasicServlet {
         return getClassFromWebAppContext(context, () -> ResourceBusinessLogic.class);
     }
 
+    protected CombinationBusinessLogic getCombinationBL(ServletContext context) {
+        return getClassFromWebAppContext(context, () -> CombinationBusinessLogic.class);
+    }
+
     protected InterfaceOperationBusinessLogic getInterfaceOperationBL(ServletContext context) {
         return getClassFromWebAppContext(context, () -> InterfaceOperationBusinessLogic.class);
     }
