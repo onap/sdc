@@ -1,6 +1,8 @@
 package org.openecomp.sdc.be.impl;
 
 import fj.data.Either;
+import junit.framework.Assert;
+
 import org.apache.tinkerpop.gremlin.structure.T;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -11,6 +13,7 @@ import org.openecomp.sdc.be.components.impl.ImportUtils.ResultStatusEnum;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.cassandra.AuditCassandraDao;
+import org.openecomp.sdc.be.dao.cassandra.CassandraOperationStatus;
 import org.openecomp.sdc.be.dao.graph.datatype.AdditionalInformationEnum;
 import org.openecomp.sdc.be.dao.impl.AuditingDao;
 import org.openecomp.sdc.be.datatypes.elements.AdditionalInfoParameterInfo;
@@ -28,9 +31,16 @@ import org.openecomp.sdc.common.impl.ExternalConfiguration;
 import org.openecomp.sdc.common.impl.FSConfigurationSource;
 import org.openecomp.sdc.exception.ResponseFormat;
 
+
 import java.util.List;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+
 public class ComponentsUtilsTest {
+
+
+
 
 	private ComponentsUtils createTestSubject() {
 		return new ComponentsUtils(new AuditingManager(new AuditingDao(), new AuditCassandraDao()));
@@ -41,7 +51,9 @@ public class ComponentsUtilsTest {
 	String appConfigDir = "src/test/resources/config/catalog-be";
     ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(), appConfigDir);
 	ConfigurationManager configurationManager = new ConfigurationManager(configurationSource);
+
 	ComponentsUtils componentsUtils = new ComponentsUtils(Mockito.mock(AuditingManager.class));
+
 	}
 
 	@Test
@@ -586,4 +598,79 @@ public class ComponentsUtilsTest {
 		dataType = null;
 		result = testSubject.getResponseFormatByDataType(actionStatus, dataType, properties);
 	}
+
+
+	@Test
+	public void testconvertJsonToObject() throws Exception {
+
+        AuditingManager auditingmanager = Mockito.mock(AuditingManager.class);
+        ComponentsUtils compUtils = new ComponentsUtils(auditingmanager);
+        when(auditingmanager.auditEvent(any())).thenReturn("OK");
+
+        User user = new User();
+        ComponentsUtils testSubject = createTestSubject();
+	    String data="{ firstName=\"xyz\", lastName=\"xyz\", userId=\"12\", email=\"demo.z@ymail.com\",role=\"123\", lastlogintime=20180201233412 }";
+
+        Either<User,ResponseFormat> response=compUtils.convertJsonToObject(data,user,User.class,AuditingActionEnum.ADD_USER);
+		User assertuser = new User("xyz","xyz","12","demo.z@ymail.com","123",null);
+
+        Assert.assertEquals(assertuser,response.left().value());
+	}
+
+	@Test
+	public void testconvertJsonToObject_NllData() throws Exception {
+
+		AuditingManager auditingmanager = Mockito.mock(AuditingManager.class);
+		ComponentsUtils compUtils = new ComponentsUtils(auditingmanager);
+		when(auditingmanager.auditEvent(any())).thenReturn("OK");
+		User user = new User();
+		String data=null;
+		Either<User,ResponseFormat> response=compUtils.convertJsonToObject(data,user,User.class,AuditingActionEnum.ADD_USER);
+
+		Assert.assertEquals(true,response.isRight());
+	}
+
+	@Test
+	public void testconvertJsonToObjectInvalidData() throws Exception {
+
+		AuditingManager auditingmanager = Mockito.mock(AuditingManager.class);
+		ComponentsUtils compUtils = new ComponentsUtils(auditingmanager);
+		when(auditingmanager.auditEvent(any())).thenReturn("OK");
+
+		User user = new User();
+
+		String data="{ User [ firstName=\"xyz\", lastName=\"xyz\", userId=\"12\", email=\"demo.z@ymail.com\",role=\"123\", lastlogintime=20180201233412 }";
+
+		Either<User,ResponseFormat> response=compUtils.convertJsonToObject(data,user,User.class,AuditingActionEnum.ADD_USER);
+
+
+		Assert.assertEquals(true,response.isRight());
+	}
+
+	@Test
+	public void testconvertToStorageOperationStatus() {
+		AuditingManager auditingmanager = Mockito.mock(AuditingManager.class);
+		ComponentsUtils compUtils = new ComponentsUtils(auditingmanager);
+		when(auditingmanager.auditEvent(any())).thenReturn("OK");
+		Assert.assertEquals(StorageOperationStatus.OK,compUtils.convertToStorageOperationStatus(CassandraOperationStatus.OK));
+		Assert.assertEquals(StorageOperationStatus.NOT_FOUND,compUtils.convertToStorageOperationStatus(CassandraOperationStatus.NOT_FOUND));
+		Assert.assertEquals(StorageOperationStatus.GENERAL_ERROR,compUtils.convertToStorageOperationStatus(CassandraOperationStatus.GENERAL_ERROR));
+		Assert.assertEquals(StorageOperationStatus.CONNECTION_FAILURE,compUtils.convertToStorageOperationStatus(CassandraOperationStatus.CLUSTER_NOT_CONNECTED));
+		Assert.assertEquals(StorageOperationStatus.CONNECTION_FAILURE,compUtils.convertToStorageOperationStatus(CassandraOperationStatus.KEYSPACE_NOT_CONNECTED));
+	}
+
+	@Test
+	public void testgetResponseFormatByDataType() {
+		AuditingManager auditingmanager = Mockito.mock(AuditingManager.class);
+		ComponentsUtils compUtils = new ComponentsUtils(auditingmanager);
+		when(auditingmanager.auditEvent(any())).thenReturn("OK");
+		DataTypeDefinition dataType = new DataTypeDefinition();
+		dataType.setName("demo");
+		List<String> properties;
+		ResponseFormat responseFormat = compUtils.getResponseFormatByDataType(ActionStatus.DATA_TYPE_ALREADY_EXIST, dataType,  null);
+        Assert.assertNotNull(responseFormat);
+        Assert.assertEquals((Integer) 409,responseFormat.getStatus());
+	}
+
+
 }
