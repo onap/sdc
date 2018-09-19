@@ -154,6 +154,7 @@ public class ResourceBusinessLogicTest {
     WebApplicationContext webAppContext = Mockito.mock(WebApplicationContext.class);
     IInterfaceLifecycleOperation interfaceTypeOperation = Mockito.mock(IInterfaceLifecycleOperation.class);
     InterfaceOperation interfaceOperation = Mockito.mock(InterfaceOperation.class);
+    InterfaceOperationBusinessLogic interfaceOperationBl = Mockito.mock(InterfaceOperationBusinessLogic.class);
 
     @InjectMocks
     ResourceBusinessLogic bl = new ResourceBusinessLogic();
@@ -239,6 +240,7 @@ public class ResourceBusinessLogicTest {
         Map<String, DataTypeDefinition> emptyDataTypes = new HashMap<>();
         when(applicationDataTypeCache.getAll()).thenReturn(Either.left(emptyDataTypes));
         when(mockTitanDao.commit()).thenReturn(TitanOperationStatus.OK);
+        when(interfaceOperationBl.validateAndUpdateInterfaces(any(Component.class), any(Component.class))).thenReturn(Either.left(true));
 
         // BL object
         artifactManager.setNodeTemplateOperation(nodeTemplateOperation);
@@ -261,6 +263,7 @@ public class ResourceBusinessLogicTest {
         bl.setUserValidations(userValidations);
         bl.setInterfaceTypeOperation(interfaceTypeOperation);
         bl.setInterfaceOperation(interfaceOperation);
+        bl.setInterfaceOperationBusinessLogic(interfaceOperationBl);
 
         csarBusinessLogic.setCsarOperation(csarOperation);
         Resource resourceCsar = createResourceObjectCsar(true);
