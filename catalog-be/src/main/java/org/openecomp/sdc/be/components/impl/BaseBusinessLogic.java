@@ -166,6 +166,10 @@ public abstract class BaseBusinessLogic {
     public void setInterfaceOperation(InterfaceOperation interfaceOperation) {
         this.interfaceOperation = interfaceOperation;
     }
+    public void setInterfaceOperationBusinessLogic(InterfaceOperationBusinessLogic interfaceOperationBusinessLogic) {
+        this.interfaceOperationBusinessLogic = interfaceOperationBusinessLogic;
+    }
+
 
     User validateUserNotEmpty(User user, String ecompErrorContext) {
         return userValidations.validateUserNotEmpty(user, ecompErrorContext);

@@ -63,8 +63,6 @@ import org.openecomp.sdc.be.model.*;
 import org.openecomp.sdc.be.model.cache.ApplicationDataTypeCache;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
 import org.openecomp.sdc.be.model.category.SubCategoryDefinition;
-import org.openecomp.sdc.be.model.jsontitan.operations.InterfaceOperation;
-import org.openecomp.sdc.be.model.jsontitan.utils.InterfaceUtils;
 import org.openecomp.sdc.be.model.jsontitan.utils.ModelConverter;
 import org.openecomp.sdc.be.model.operations.StorageException;
 import org.openecomp.sdc.be.model.operations.api.*;
@@ -98,6 +96,8 @@ import org.yaml.snakeyaml.Yaml;
 import javax.servlet.ServletContext;
 import java.util.*;
 import java.util.Map.Entry;
+import java.util.Optional;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 
@@ -170,13 +170,6 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 
     @Autowired
     private CsarBusinessLogic csarBusinessLogic;
-
-    @Autowired
-    private InterfaceOperation interfaceOperation;
-	
-    public void setInterfaceOperation(InterfaceOperation interfaceOperation) {
-        this.interfaceOperation = interfaceOperation;
-    }
 
     public LifecycleBusinessLogic getLifecycleBusinessLogic() {
         return lifecycleBusinessLogic;
@@ -3987,7 +3980,8 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                 newResource.setDerivedFrom(null);
             }
 
-            Either<Boolean, ResponseFormat> validateAndUpdateInterfacesEither = validateAndUpdateInterfaces(resourceIdToUpdate, newResource);
+            Either<Boolean, ResponseFormat> validateAndUpdateInterfacesEither =
+                    interfaceOperationBusinessLogic.validateComponentNameAndUpdateInterfaces(currentResource, newResource);
             if (validateAndUpdateInterfacesEither.isRight()) {
                 log.error("failed to validate and update Interfaces");
                 rollbackNeeded = true;
@@ -5172,65 +5166,4 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
             return super.shouldUpgradeToLatestDerived(clonedComponent);
         }
     }
-
-    private Either<Boolean, ResponseFormat> validateAndUpdateInterfaces(String resourceId, Resource resourceUpdate) {
-      Either<Resource, StorageOperationStatus> resourceStorageOperationStatusEither =
-          toscaOperationFacade.getToscaElement(resourceId);
-      if (resourceStorageOperationStatusEither.isRight()) {
-        StorageOperationStatus errorStatus = resourceStorageOperationStatusEither.right().value();
-        log.error("Failed to fetch resource information by resource id {}, error {}", resourceId, errorStatus);
-        return Either.right(componentsUtils
-            .getResponseFormat(componentsUtils.convertFromStorageResponse(errorStatus)));
-      }
-    
-      Resource storedResource = resourceStorageOperationStatusEither.left().value();
-      Map<String, InterfaceDefinition> storedResourceInterfaces = storedResource.getInterfaces();
-    
-      if(!storedResource.getName().equals(resourceUpdate.getName()) ) {
-        Collection<InterfaceDefinition> interfaceDefinitionListFromToscaName = InterfaceUtils
-            .getInterfaceDefinitionListFromToscaName(storedResource.getInterfaces().values(),
-                storedResource.getName());
-    
-        for (InterfaceDefinition interfaceDefinition : storedResourceInterfaces.values()) {
-          Either<InterfaceDefinition, ResponseFormat> updateInterfaceDefinitionEither = updateInterfaceDefinition(resourceUpdate,
-              interfaceDefinition,
-              interfaceDefinitionListFromToscaName);
-          if(updateInterfaceDefinitionEither.isRight()) {
-            return Either.right(updateInterfaceDefinitionEither.right().value());
-          }
-        }
-      }
-    
-      return  Either.left(Boolean.TRUE);
-    }
-    
-    private Either<InterfaceDefinition, ResponseFormat > updateInterfaceDefinition(Resource resourceUpdate,
-        InterfaceDefinition interfaceDefinition,
-        Collection<InterfaceDefinition> interfaceDefinitionListFromToscaName) {
-      interfaceDefinitionListFromToscaName.forEach(interfaceDefinitionFromList -> {
-        if(interfaceDefinitionFromList.getToscaResourceName().equals(interfaceDefinition.getToscaResourceName())) {
-          log.info("Going to Update interface definition toscaResourceName {} to {}",
-              interfaceDefinitionFromList.getToscaResourceName(),
-              InterfaceUtils.createInterfaceToscaResourceName(resourceUpdate.getName()));
-          interfaceDefinition.setToscaResourceName(InterfaceUtils
-              .createInterfaceToscaResourceName(resourceUpdate.getName()));
-        }
-      } );
-      try {
-        Either<InterfaceDefinition, StorageOperationStatus> interfaceUpdate = interfaceOperation
-            .updateInterface(resourceUpdate.getUniqueId(), interfaceDefinition);
-        if (interfaceUpdate.isRight()) {
-          log.error("Failed to Update interface {}. Response is {}. ", resourceUpdate.getName(), interfaceUpdate.right().value());
-          titanDao.rollback();
-          return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(interfaceUpdate.right().value(), ComponentTypeEnum.RESOURCE)));
-        }
-      } catch (Exception e) {
-        log.error("Exception occurred during update interface toscaResourceName  : {}", e);
-        titanDao.rollback();
-        return Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
-      }
-    
-      return Either.left( interfaceDefinition);
-    }
-    
 }
