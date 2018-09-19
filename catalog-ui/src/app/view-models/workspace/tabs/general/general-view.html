@@ -1,5 +1,5 @@
 <div include-padding="true" class="sdc-workspace-general-step">
-    <div class="w-sdc-main-container-body-content-action-buttons">
+    <div data-ng-if="!component.isCombination()" class="w-sdc-main-container-body-content-action-buttons">
         <div data-ng-if="unsavedFile && !isCreateMode() && !isViewMode()" class="unsaved-file-warning">
              <span class="sprite-new sdc-warning"></span> Click save to update to the new VSP
         </div>
@@ -17,7 +17,7 @@
 
                 <div class="w-sdc-form-column">
                     <div class="upper-general-fields">
-                        <div class="selected-icon-container" data-ng-class="{'show-only-on-over':'defaulticon'!=component.icon && !isViewMode()}">
+                        <div data-ng-if="!component.isCombination()" class="selected-icon-container" data-ng-class="{'show-only-on-over':'defaulticon'!=component.icon && !isViewMode()}">
                             <div class="selected-icon-inner-container ">
                                 <div class="sprite-new update-component-icon" data-ng-click="updateIcon()" data-ng-if="!isViewMode() && possibleToUpdateIcon()"></div>
                                 <div class="i-sdc-form-item-suggested-icon large selected-icon {{component.iconSprite}} {{component.icon}}"
@@ -64,7 +64,7 @@
 
 
                             <!--------------------- CATEGORIES -------------------->
-                            <div class="i-sdc-form-item"
+                            <div data-ng-if="!component.isCombination()" class="i-sdc-form-item"
                                  data-ng-class="{'error': validateField(editForm.category)}">
                                 <loader data-display="!categories && !initCategoreis()" relative="true"></loader>
                                 <label class="i-sdc-form-label required">Category</label>
@@ -100,7 +100,7 @@
                         </div>
                     </div>
                 <!--------------------- RESOURCE TAGS -------------------->
-                <div class="i-sdc-form-item" data-ng-class="{'error': validateField(editForm.tags)}">
+                <div data-ng-if="!component.isCombination()" class="i-sdc-form-item" data-ng-class="{'error': validateField(editForm.tags)}">
                     <label class="i-sdc-form-label">Tags</label>
 
                     <sdc-tags form-element="editForm" element-name="tags" max-tags="20" class="i-sdc-form-item-tags"
@@ -141,7 +141,7 @@
 
             </div><!-- Close w-sdc-form-column -->
 
-                <div class="w-sdc-form-column">
+                <div data-ng-if="!component.isCombination()" class="w-sdc-form-column">
                     <!--------------------- IMPORT TOSCA FILE USING BROWSE (ALSO VFC) -------------------->
                     <div class="i-sdc-form-item" ng-if="isShowFileBrowse">
                        

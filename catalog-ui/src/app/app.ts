@@ -749,6 +749,8 @@ ng1appModule.run([
             categoryResourceService.getAllCategories((categories: Categories):void => {
                 cacheService.set('serviceCategories', categories.serviceCategories);
                 cacheService.set('resourceCategories', categories.resourceCategories);
+                let combinationCat =[{"name":"combination","normalizedName":"combination","uniqueId":"combination","icons":[],"subcategories":null,"version":null,"ownerId":null,"empty":false,"type":null}]
+                cacheService.set('combinationCategories', combinationCat);
             }, onError);
         };
 

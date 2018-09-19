@@ -46,6 +46,7 @@ export interface IComponentService {
     addInstanceArtifact(componentId:string, instanceId:string, artifact:ArtifactModel):ng.IPromise<ArtifactModel>;
     deleteInstanceArtifact(componentId:string, instanceId:string, artifact:string, artifactLabel):ng.IPromise<ArtifactModel>;
     createComponentInstance(componentId:string, componentInstance:ComponentInstance):ng.IPromise<ComponentInstance>;
+    createComponentCombinationInstance(componentId:string, componentInstance:ComponentInstance):ng.IPromise<ComponentInstance>;
     updateComponentInstance(componentId:string, componentInstance:ComponentInstance):ng.IPromise<ComponentInstance>;
     updateMultipleComponentInstances(componentId:string, instances:Array<ComponentInstance>):ng.IPromise< Array<ComponentInstance>>;
     downloadArtifact(componentId:string, artifactId:string):ng.IPromise<IFileDownload>;
@@ -367,6 +368,19 @@ export class ComponentService implements IComponentService {
         });
         return deferred.promise;
     };
+
+    public createComponentCombinationInstance = (componentId:string, componentInstance:ComponentInstance):ng.IPromise<ComponentInstance> => {
+        let deferred = this.$q.defer<ComponentInstance>();
+        this.restangular.one(componentId).one("combinationInstance").customPOST(JSON.stringify(componentInstance)).then((response:any) => {
+            let componentInstance:ComponentInstance = ComponentInstanceFactory.createComponentInstance(response);
+            console.log("Component Instance created", componentInstance);
+            deferred.resolve(componentInstance);
+        }, (err)=> {
+            console.log("Failed to create componentInstance. With Name: " + componentInstance.name);
+            deferred.reject(err);
+        });
+        return deferred.promise;
+    };    
 
     public updateComponentInstance = (componentId:string, componentInstance:ComponentInstance):ng.IPromise<ComponentInstance> => {
         let deferred = this.$q.defer<ComponentInstance>();

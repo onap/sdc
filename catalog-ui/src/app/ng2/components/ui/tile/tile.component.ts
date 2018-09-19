@@ -18,7 +18,7 @@ export class TileComponent {
         this.hasEllipsis = false;
     }
 
-    public tileClicked() {
+    public tileClicked() {        
         this.onTileClick.emit(this.component);
     }
 }

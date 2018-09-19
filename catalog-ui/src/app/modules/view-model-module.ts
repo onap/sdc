@@ -43,6 +43,7 @@ import {ClientMessageModalViewModel} from "../view-models/modals/message-modal/m
 import {ErrorViewModel} from "../view-models/modals/error-modal/error-view-model";
 import {RelationsViewModel} from "../view-models/workspace/tabs/composition/tabs/relations/relations-view-model";
 import {ResourceInstanceNameViewModel} from "../view-models/forms/resource-instance-name-form/resource-instance-name-model";
+import {ResourceSaveViewFormModel} from "../view-models/forms/save-resource-form/resource-save-form-model";
 import {WelcomeViewModel} from "../view-models/welcome/welcome-view";
 import {PreLoadingViewModel} from "../view-models/preloading/preloading-view";
 import {TutorialEndViewModel} from "../view-models/tutorial-end/tutorial-end";
@@ -106,6 +107,7 @@ viewModelModule
   .controller(moduleName + '.ErrorViewModel', ErrorViewModel)
   .controller(moduleName + '.RelationsViewModel', RelationsViewModel)
   .controller(moduleName + '.ResourceInstanceNameViewModel', ResourceInstanceNameViewModel)
+  .controller(moduleName + '.ResourceSaveViewFormModel', ResourceSaveViewFormModel)  
   .controller(moduleName + '.WelcomeViewModel', WelcomeViewModel)
   .controller(moduleName + '.PreLoadingViewModel', PreLoadingViewModel)
   .controller(moduleName + '.TutorialEndViewModel', TutorialEndViewModel)

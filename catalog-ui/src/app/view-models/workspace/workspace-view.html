@@ -79,8 +79,11 @@
                         data-tests-id="archive-component-button"
                         class="sprite-new archive-btn" sdc-smart-tooltip="Archive" prevent-double-click>Archive</span>
 
-
-
+                    <span data-ng-if="isDesigner() && isComposition && !isCreateMode() &&  component.lifecycleState !== 'NOT_CERTIFIED_CHECKOUT' && component.isService() && !component.archived"
+                        data-ng-click="openSaveResourceModel()" ng-model-options="{ debounce: 300 }"                         
+                        data-tests-id="open-save-resource-model" class="sprite-new save-combination-btn" 
+                        sdc-smart-tooltip="Save Combination" prevent-double-click>Save Combination</span>
+                    
                     <span class="delimiter"></span>
                     <span class="sprite-new x-btn" data-ng-click="goToBreadcrumbHome()" data-ng-class="{'disabled' : unsavedChanges}" sdc-smart-tooltip="">Close</span>
 

@@ -68,8 +68,9 @@ const SDC_CONFIG = {
 	},
 	"resourceTypesFilter":{
         "resource":["CP","VFC","VL","CVFC","GROUP","POLICY"],
-        "service":["CP","VF","VL", "PNF","CR","CVFC","SERVICE","Configuration","GROUP","POLICY"]
-	},
+        "service":["CP","VF","VL", "PNF","CR","CVFC","SERVICE","Configuration","GROUP","POLICY" ,"Combination"],
+        "combination":[]
+	},  
 	"logConfig": {
 		"minLogLevel": "debug",
 		"prefix": "sdcApp"
