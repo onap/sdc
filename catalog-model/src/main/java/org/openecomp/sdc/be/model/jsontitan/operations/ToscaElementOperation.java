@@ -1173,7 +1173,12 @@ public abstract class ToscaElementOperation extends BaseOperation {
         }
         Iterator<Vertex> vertices = verticesEither.left().value();
         while (vertices.hasNext()) {
-            handleCatalogComponent(existInCatalog, vertices.next(), excludeTypes);
+            Vertex vertex = vertices.next();
+            VertexProperty<Object> property = vertex.property(GraphPropertyEnum.COMPONENT_TYPE.getProperty());
+            String json = (String) property.value();
+            if (!(json.contains("combination") || json.contains("Combination") || json.contains("COMBINATION"))) {
+                handleCatalogComponent(existInCatalog, vertex, excludeTypes);
+            }
         }
         stopWatch.stop();
         String timeToFetchElements = stopWatch.prettyPrint();
@@ -1209,7 +1214,7 @@ public abstract class ToscaElementOperation extends BaseOperation {
             if (catalogComponent.getComponentType() == ComponentTypeEnum.SERVICE) {
                 setServiceCategoryFromGraphV(vertex, catalogComponent);
 
-            } else {
+            }else {
                 setResourceCategoryFromGraphV(vertex, catalogComponent);
             }
             List<String> tags = (List<String>) metadatObj.get(JsonPresentationFields.TAGS.getPresentation());
