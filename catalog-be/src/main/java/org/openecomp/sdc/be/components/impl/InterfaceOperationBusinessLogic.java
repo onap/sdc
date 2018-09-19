@@ -18,12 +18,9 @@
 package org.openecomp.sdc.be.components.impl;
 
 import fj.data.Either;
-import java.util.Collections;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
 import org.openecomp.sdc.be.components.validation.InterfaceOperationValidation;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.InterfaceDefinition;
@@ -38,6 +35,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 
 @Component("interfaceOperationBusinessLogic")
 public class InterfaceOperationBusinessLogic extends BaseBusinessLogic {
@@ -272,5 +275,44 @@ public class InterfaceOperationBusinessLogic extends BaseBusinessLogic {
             }
         }
         return Either.left(true);
+    }
+
+    public Either<Boolean, ResponseFormat> validateComponentNameAndUpdateInterfaces(org.openecomp.sdc.be.model.Component oldComponent,
+                                                                                    org.openecomp.sdc.be.model.Component newComponent) {
+        if(!oldComponent.getName().equals(newComponent.getName()) ) {
+            Collection<InterfaceDefinition> interfaceDefinitionListFromToscaName = InterfaceUtils
+                    .getInterfaceDefinitionListFromToscaName(oldComponent.getInterfaces().values(),
+                            oldComponent.getName());
+            for (InterfaceDefinition interfaceDefinition : interfaceDefinitionListFromToscaName) {
+
+                Either<InterfaceDefinition, ResponseFormat> interfaceDefinitionResponseEither = updateInterfaceDefinition(oldComponent,
+                                                                    newComponent, interfaceDefinition);
+                if(interfaceDefinitionResponseEither.isRight()) {
+                    return Either.right(interfaceDefinitionResponseEither.right().value());
+                }
+            }
+        }
+        return  Either.left(Boolean.TRUE);
+    }
+    private Either<InterfaceDefinition, ResponseFormat > updateInterfaceDefinition(org.openecomp.sdc.be.model.Component oldComponent,
+                                        org.openecomp.sdc.be.model.Component newComponent,
+                                        InterfaceDefinition interfaceDefinition) {
+                        InterfaceUtils.createInterfaceToscaResourceName(newComponent.getName());
+                interfaceDefinition.setToscaResourceName(InterfaceUtils
+                        .createInterfaceToscaResourceName(newComponent.getName()));
+        try {
+            Either<InterfaceDefinition, StorageOperationStatus> interfaceUpdate = interfaceOperation
+                    .updateInterface(oldComponent.getUniqueId(), interfaceDefinition);
+            if (interfaceUpdate.isRight()) {
+                LOGGER.error("Failed to Update interface {}. Response is {}. ", newComponent.getName(), interfaceUpdate.right().value());
+                titanDao.rollback();
+                return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(interfaceUpdate.right().value(), ComponentTypeEnum.RESOURCE)));
+            }
+        } catch (Exception e) {
+            LOGGER.error("Exception occurred during update interface toscaResourceName  : {}", e);
+            titanDao.rollback();
+            return Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
+        }
+        return Either.left( interfaceDefinition);
     }
 }
