@@ -25,7 +25,8 @@ public enum ComponentTypeEnum {
     SERVICE("Service"),
     RESOURCE_INSTANCE("Resource Instance"),
     PRODUCT("Product"),
-    SERVICE_INSTANCE("Service Instance");
+    SERVICE_INSTANCE("Service Instance"),
+    COMBINATION("Combination");
 
     private String value;
 
