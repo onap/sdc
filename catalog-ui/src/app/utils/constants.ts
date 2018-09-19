@@ -36,12 +36,14 @@ export class GeneralStatus {
 export class ComponentType {
     static SERVICE = 'SERVICE';
     static RESOURCE = 'RESOURCE';
-    static SERVICE_PROXY = 'ServiceProxy'
+    static SERVICE_PROXY = 'ServiceProxy';
+    static COMBINATION = 'Combination'
 }
 
 export class ServerTypeUrl {
     static RESOURCES = 'resources/';
     static SERVICES = 'services/';
+    static COMBINATIONS = 'combinations/';
 }
 
 export class ResourceType {

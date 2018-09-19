@@ -23,7 +23,7 @@
 import * as _ from "lodash";
 import {AsdcComment, ArtifactModel, ArtifactGroupModel, IFileDownload, PropertyModel, PropertiesGroup, AttributeModel, AttributesGroup, ComponentInstance,
     InputModel, DisplayModule, Module, IValidate, RelationshipModel, IMainCategory, RequirementsGroup, CapabilitiesGroup, AdditionalInformationModel,
-    Resource, IAppMenu, OperationModel, Service} from "../../models";
+    Resource, IAppMenu, OperationModel, Service, Combination} from "../../models";
 
 import {IComponentService} from "../../services/components/component-service";
 import {CommonUtils} from "../../utils/common-utils";
@@ -577,7 +577,14 @@ export abstract class Component implements IComponent {
         let onFailed = (error:any):void => {
             deferred.reject(error);
         };
-        this.componentService.createComponentInstance(this.uniqueId, componentInstance).then(onSuccess, onFailed);
+        if(componentInstance.originType == "Combination")
+        {
+            this.componentService.createComponentCombinationInstance(this.uniqueId, componentInstance).then(onSuccess, onFailed);
+        }
+        else
+        {
+            this.componentService.createComponentInstance(this.uniqueId, componentInstance).then(onSuccess, onFailed);
+        }    
         return deferred.promise;
     };
 
@@ -921,7 +928,13 @@ export abstract class Component implements IComponent {
 
     public isResource = ():boolean => {
         return this instanceof Resource;
+    };    
+    
+    public isCombination = ():boolean => {
+        return this instanceof Combination;
     };
+
+
 
     public getComponentSubType = ():string => {
         return this.componentType;
