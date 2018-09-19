@@ -241,7 +241,21 @@ export class CompositionGraph implements ng.IDirective {
 
     private registerCustomEvents(scope: ICompositionGraphScope, el: JQuery) {
 
-        this.eventListenerService.registerObserverCallback(GRAPH_EVENTS.ON_GROUP_INSTANCE_UPDATE, (groupInstance: GroupInstance) => {
+        this.eventListenerService.registerObserverCallback(GRAPH_EVENTS.ON_CREATE_COMPONENT_INSTANCE,(originalType:string) => {
+            let onSuccess = (response:any):void =>
+            {
+                this._cy.elements().remove();
+                scope.component.componentInstances = response.componentInstances;
+                scope.component.componentInstancesRelations = response.componentInstancesRelations;
+                this.loadGraphData(scope);
+            }
+            let onError = (response:any):void=>{
+            };
+
+            this.ComponentServiceNg2.getComponentCompositionData(scope.component).subscribe(onSuccess,onError);
+        });
+        
+        this.eventListenerService.registerObserverCallback(GRAPH_EVENTS.ON_GROUP_INSTANCE_UPDATE, (groupInstance:GroupInstance) => {
             this.compositionGraphZoneUtils.findAndUpdateZoneInstanceData(scope.zones, groupInstance);
             this.GeneralGraphUtils.showGroupUpdateSuccess();
         });
@@ -261,6 +275,12 @@ export class CompositionGraph implements ng.IDirective {
             let nodesData = this.NodesGraphUtils.getAllNodesData(this._cy.nodes());
             let nodesLinks = this.GeneralGraphUtils.getAllCompositionCiLinks(this._cy);
 
+            if (leftPaletteComponent.componentType == "Combination")
+            {
+                return;
+
+            }
+
             if (this.GeneralGraphUtils.componentRequirementsAndCapabilitiesCaching.containsKey(leftPaletteComponent.uniqueId)) {
                 let cacheComponent = this.GeneralGraphUtils.componentRequirementsAndCapabilitiesCaching.getValue(leftPaletteComponent.uniqueId);
                 let filteredNodesData = this.matchCapabilitiesRequirementsUtils.findMatchingNodes(cacheComponent, nodesData, nodesLinks);
@@ -273,7 +293,8 @@ export class CompositionGraph implements ng.IDirective {
 
             //----------------------- ORIT TO FIX------------------------//
 
-            this.ComponentServiceNg2.getCapabilitiesAndRequirements(leftPaletteComponent.componentType, leftPaletteComponent.uniqueId).subscribe((response: ComponentGenericResponse) => {
+
+            this.ComponentServiceNg2.getCapabilitiesAndRequirements(leftPaletteComponent.componentType, leftPaletteComponent.uniqueId).subscribe((response:ComponentGenericResponse) => {
 
                 let component = this.ComponentFactory.createEmptyComponent(leftPaletteComponent.componentType);
                 component.uniqueId = component.uniqueId;

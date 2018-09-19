@@ -740,6 +740,15 @@ export class WorkspaceViewModel {
             this.$state.go(this.$state.current.name, {id: component.uniqueId}, {reload: true});
         };
 
+        this.$scope.openSaveResourceModel = () :void => {          
+            let newComponent = this.ComponentFactory.createEmptyComponent("Combination");
+            let serviceId = this.$scope.component.uniqueId;
+            let parentComponent = this.$scope.component;
+            newComponent.componentType = "Combination";
+            newComponent.selectedCategory = "";           
+            this.ModalsHandler.openAddResourceFormModal(newComponent,serviceId,parentComponent).then(()=>{});
+
+        };        
         this.$scope.$on('$destroy', () => {
             this.EventListenerService.unRegisterObserver(EVENTS.ON_WORKSPACE_UNSAVED_CHANGES);
         });

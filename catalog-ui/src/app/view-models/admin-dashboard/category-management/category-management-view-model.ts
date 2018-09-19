@@ -30,6 +30,7 @@ interface ICategoryManagementViewModelScope extends ng.IScope {
     categoriesToShow:Array<ICategoryResource>;
     serviceCategories:Array<ICategoryResource>;
     resourceCategories:Array<ICategoryResource>;
+    combinationCategories:Array<ICategoryResource>;
     selectedCategory:ICategoryResource;
     selectedSubCategory:ICategoryResource;
     modalInstance:ng.ui.bootstrap.IModalServiceInstance;
@@ -192,5 +193,6 @@ export class CategoryManagementViewModel {
 
         this.$scope.serviceCategories = this.cacheService.get('serviceCategories');
         this.$scope.resourceCategories = this.cacheService.get('resourceCategories');
+        this.$scope.combinationCategories = this.cacheService.get('combinationCategories');
     }
 }
