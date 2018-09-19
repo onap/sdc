@@ -21,8 +21,8 @@
 'use strict';
 import * as _ from "lodash";
 import {DEFAULT_ICON, ResourceType, ComponentType} from "./constants";
-import {ServiceService, CacheService, ResourceService} from "app/services";
-import {IMainCategory, ISubCategory, ICsarComponent, Component, Resource, Service} from "app/models";
+import {ServiceService, CacheService, ResourceService, CombinationService} from "app/services";
+import {IMainCategory, ISubCategory, ICsarComponent, Component, Resource, Service, Combination} from "app/models";
 import {ComponentMetadata} from "../models/component-metadata";
 import {ComponentServiceNg2} from "../ng2/services/component-services/component.service";
 import {ComponentGenericResponse} from "../ng2/services/responses/component-generic-response";
@@ -33,6 +33,7 @@ export class ComponentFactory {
     static '$inject' = [
         'Sdc.Services.Components.ResourceService',
         'Sdc.Services.Components.ServiceService',
+        'Sdc.Services.Components.CombinationService',
         'Sdc.Services.CacheService',
         '$q',
         'ComponentServiceNg2'
@@ -40,6 +41,7 @@ export class ComponentFactory {
 
     constructor(private ResourceService:ResourceService,
                 private ServiceService:ServiceService,
+                private CombinationService:CombinationService,
                 private cacheService:CacheService,
                 private $q:ng.IQService,
                 private ComponentServiceNg2: ComponentServiceNg2) {
@@ -56,6 +58,9 @@ export class ComponentFactory {
             case 'RESOURCE':
                 newComponent = new Resource(this.ResourceService, this.$q, <Resource> component);
                 break;
+            case 'COMBINATION':
+                newComponent = new Combination(this.CombinationService, this.$q, <Combination> component);
+                break;
 
         }
         return newComponent;
@@ -70,6 +75,11 @@ export class ComponentFactory {
         let newResource:Resource = new Resource(this.ResourceService, this.$q, <Resource> resource);
         return newResource;
     };
+
+    public createCombination = (combination:Combination):Combination => {
+        let newCombination:Combination = new Combination(this.CombinationService, this.$q, <Combination> combination);
+        return newCombination;
+    };    
 
     public updateComponentFromCsar = (csarComponent:Resource, oldComponent:Resource):Component => {
         _.pull(oldComponent.tags, oldComponent.name);
@@ -147,7 +157,9 @@ export class ComponentFactory {
             case ComponentType.SERVICE:
                 newComponent = new Service(this.ServiceService, this.$q);
                 break;
-
+            case ComponentType.COMBINATION:
+                newComponent = new Combination(this.CombinationService, this.$q);
+                break;
             case ComponentType.RESOURCE:
             case ResourceType.VF:
             case ResourceType.VL:

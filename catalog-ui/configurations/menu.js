@@ -499,7 +499,11 @@ const SDC_MENU_CONFIG = {
             {"text": "Deployment", "action": "onMenuItemPressed", "state": "workspace.deployment"},
             // {"text":"Inputs", "action":"onMenuItemPressed", "state": "workspace.service_inputs"},
             {"text": "Properties Assignment", "action": "onMenuItemPressed", "state": "workspace.properties_assignment"}
-        ]
+        ],
+        "COMBINATION": [ 
+            { "text": "General", "action": "onMenuItemPressed", "state": "workspace.general" },           
+            { "text": "Composition", "action": "onMenuItemPressed", "state": "workspace.composition.details" },            
+        ] 
     }
 
 }

@@ -352,6 +352,9 @@ export class GeneralViewModel {
             if (this.$scope.componentType === ComponentType.SERVICE) {
                 this.$scope.categories = this.cacheService.get('serviceCategories');
             }
+            if (this.$scope.componentType === ComponentType.COMBINATION) {
+                this.$scope.categories = this.cacheService.get('combinationCategories');
+            }            
         };
 
         this.$scope.initInstantiationTypes = ():void => {

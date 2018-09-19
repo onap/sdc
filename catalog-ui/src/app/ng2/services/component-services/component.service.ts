@@ -69,6 +69,8 @@ export class ComponentServiceNg2 {
         switch (componentType) {
             case ComponentType.SERVICE:
                 return ServerTypeUrl.SERVICES;
+            case ComponentType.COMBINATION:
+                return ServerTypeUrl.COMBINATIONS;                
             default:
                 return ServerTypeUrl.RESOURCES;
         }
@@ -174,6 +176,13 @@ export class ComponentServiceNg2 {
 
     createInput(component:Component, inputsToCreate:InstancePropertiesAPIMap):Observable<any> {
         return this.http.post(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/create/inputs', inputsToCreate)
+            .map(res => {
+                return res.json();
+            })
+    }
+    createServiceInput(component: Component, serviceId: string): Observable<any> {  
+              
+        return this.http.post(this.baseUrl + 'combination/' + serviceId, component)
             .map(res => {
                 return res.json();
             })

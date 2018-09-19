@@ -3,6 +3,7 @@
     <div class='sdc-tile-header' [ngClass]="{'purple': component.isResource(), 'blue': !component.isResource()}">
         <div *ngIf="component.isResource()" data-tests-id="asset-type">{{component.getComponentSubType()}}</div>
         <div *ngIf="component.isService()">S</div>
+        <div *ngIf="component.isCombination()">C</div>
     </div>
 
     <div class='sdc-tile-content' data-tests-id="dashboard-Elements" (click)="tileClicked()">

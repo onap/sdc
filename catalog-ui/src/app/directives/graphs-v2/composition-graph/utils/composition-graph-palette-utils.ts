@@ -85,23 +85,31 @@ export class CompositionGraphPaletteUtils {
         let onSuccessCreatingInstance = (createInstance:ComponentInstance):void => {
 
             this.loaderService.hideLoader('composition-graph');
-
-            createInstance.name = this.$filter('resourceName')(createInstance.name);
-            createInstance.requirements = new RequirementsGroup(createInstance.requirements);
-            createInstance.capabilities = new CapabilitiesGroup(createInstance.capabilities);
-            createInstance.componentVersion = fullComponent.version;
-            createInstance.icon = fullComponent.icon;
-            createInstance.setInstanceRC();
-
-            let newNode:CompositionCiNodeBase = this.nodesFactory.createNode(createInstance);
-            let cyNode:Cy.CollectionNodes = this.commonGraphUtils.addComponentInstanceNodeToGraph(cy, newNode);
-
-            //check if node was dropped into a UCPE
-            let ucpe:Cy.CollectionElements = this.commonGraphUtils.isInUcpe(cy, cyNode.boundingbox());
-            if (ucpe.length > 0) {
-                this.eventListenerService.notifyObservers(GRAPH_EVENTS.ON_INSERT_NODE_TO_UCPE, cyNode, ucpe, false);
+           
+            if(componentInstanceToCreate.originType == "Combination")
+            {
+                
+                this.eventListenerService.notifyObservers(GRAPH_EVENTS.ON_CREATE_COMPONENT_INSTANCE, componentInstanceToCreate.originType);
             }
-            this.eventListenerService.notifyObservers(GRAPH_EVENTS.ON_CREATE_COMPONENT_INSTANCE);
+            else
+            {
+                createInstance.name = this.$filter('resourceName')(createInstance.name);
+                createInstance.requirements = new RequirementsGroup(createInstance.requirements);
+                createInstance.capabilities = new CapabilitiesGroup(createInstance.capabilities);
+                createInstance.componentVersion = fullComponent.version;
+                createInstance.icon = fullComponent.icon;
+                createInstance.setInstanceRC();
+    
+                let newNode:CompositionCiNodeBase = this.nodesFactory.createNode(createInstance);
+                let cyNode:Cy.CollectionNodes = this.commonGraphUtils.addComponentInstanceNodeToGraph(cy, newNode);
+    
+                //check if node was dropped into a UCPE
+                let ucpe:Cy.CollectionElements = this.commonGraphUtils.isInUcpe(cy, cyNode.boundingbox());
+                if (ucpe.length > 0) {
+                    this.eventListenerService.notifyObservers(GRAPH_EVENTS.ON_INSERT_NODE_TO_UCPE, cyNode, ucpe, false);
+                } 
+                this.eventListenerService.notifyObservers(GRAPH_EVENTS.ON_CREATE_COMPONENT_INSTANCE);
+            }
 
         };
 

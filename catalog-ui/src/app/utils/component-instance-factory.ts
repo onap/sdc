@@ -21,7 +21,7 @@
  * Created by obarda on 3/7/2016.
  */
 'use strict';
-import {ComponentInstance, ServiceInstance, ResourceInstance, Component, ServiceProxyInstance} from "../models";
+import {ComponentInstance, ServiceInstance, CombinationInstance, ResourceInstance, Component, ServiceProxyInstance} from "../models";
 import {ComponentType} from "app/utils";
 import {LeftPaletteComponent} from "../models/components/displayComponent";
 
@@ -36,6 +36,9 @@ export class ComponentInstanceFactory {
            case ComponentType.SERVICE_PROXY:
                 newComponentInstance = new ServiceProxyInstance(componentInstance);
                 break;
+            case ComponentType.COMBINATION:
+                newComponentInstance = new CombinationInstance(componentInstance);
+                break;                 
             default :
                 newComponentInstance = new ResourceInstance(componentInstance);
                 break;
@@ -52,6 +55,9 @@ export class ComponentInstanceFactory {
             case ComponentType.SERVICE_PROXY:
                 newComponentInstance = new ServiceProxyInstance();
                 break;
+            case ComponentType.COMBINATION:
+                newComponentInstance = new CombinationInstance();
+                break;                
             default :
                 newComponentInstance = new ResourceInstance();
                 break;
@@ -68,7 +74,10 @@ export class ComponentInstanceFactory {
         newComponentInstance.componentVersion = component.version;
         newComponentInstance.originType = component.getComponentSubType();
         if(component.getComponentSubType() === ComponentType.SERVICE){
-            newComponentInstance.originType = ComponentType.SERVICE_PROXY
+            newComponentInstance.originType = ComponentType.SERVICE_PROXY;
+        }
+        if(component.getComponentSubType() === ComponentType.COMBINATION){
+            newComponentInstance.originType = ComponentType.COMBINATION;
         }
         //new component instance -> req. & cap. are added on successful instance creation
         newComponentInstance.requirements = component.requirements;
