@@ -868,6 +868,10 @@ public class ToscaOperationFacade {
         return result;
     }
 
+    public String getLastestComponentInstanceCounter(Component containerComponent, String originResourceName) {
+        return getNextComponentInstanceCounter(containerComponent, originResourceName);
+    }
+
     private String getNextComponentInstanceCounter(Component containerComponent, String originResourceName) {
         Integer nextCounter = 0;
         if (CollectionUtils.isNotEmpty(containerComponent.getComponentInstances())) {
