@@ -123,20 +123,91 @@ export class CompositionGraphNodesUtils {
 
     };
 
-/*
-        public confirmDeleteNode = (nodeId:string, cy:Cy.Instance, component:Component) => {
-            let node:Cy.CollectionNodes = cy.getElementById(nodeId);
-            let onOk = ():void => {
-                this.deleteNode(cy, component, node);
+    /**
+     * Batch delete component instances on server and then removes them from the graph as well
+     * @param cy
+     * @param component
+     * @param nodesToDelete
+     */
+    public batchDeleteNodes(cy:Cy.Instance, component:Component, nodesToDelete:Cy.CollectionNodes):Array<string> {
+        let nodesToDeleteIds:Array<string> = new Array<string>();
+        if(nodesToDelete && nodesToDelete.size() > 0){
+            nodesToDelete.each((i:number, node:Cy.CollectionNodes) => {
+                nodesToDeleteIds.push(node.data('id'));
+            });
+            this.loaderService.showLoader('composition-graph');
+            let componentInstances:Array<ComponentInstance> = component.componentInstances;
+            let onSuccess:(response:any) => void = (deleteFailedIds:any) => {
+                this.removeDeletedNodesOnGraph(cy, nodesToDelete, deleteFailedIds, componentInstances);
             };
 
-            let componentInstance:ComponentInstance = node.data().componentInstance;
-            let state = "deleteInstance";
-            let title:string =  this.sdcMenu.alertMessages[state].title;
-            let message:string =  this.sdcMenu.alertMessages[state].message.format([componentInstance.name]);
+            let onFailed:(response:any) => void = (response:any) => {
+                console.error('batchDeleteNodes failed error is', response);
+            };
 
-            this.ModalsHandler.openAlertModal(title, message).then(onOk);
-        };*/
+            this.GeneralGraphUtils.getGraphUtilsServerUpdateQueue().addBlockingUIActionWithReleaseCallback(
+                () => component.batchDeleteComponentInstance(nodesToDeleteIds).then(onSuccess, onFailed),
+                () => this.loaderService.hideLoader('composition-graph')
+            );
+        }
+
+            return nodesToDeleteIds;
+    };
+
+    private deleteNodeSuccess(cy:Cy.Instance, component:Component, nodeToDelete:Cy.CollectionNodes):void{
+        //if node to delete is a UCPE, remove all children (except UCPE-CPs) and remove their "hostedOn" links
+        if (nodeToDelete.data().isUcpe) {
+            _.each(cy.nodes('[?isInsideGroup]'), (node)=> {
+                this.eventListenerService.notifyObservers(GRAPH_EVENTS.ON_REMOVE_NODE_FROM_UCPE, node, nodeToDelete);
+            });
+        }
+
+        //check whether the node is connected to any VLs that only have one other connection. If so, delete that VL as well
+        if (!(nodeToDelete.data() instanceof CompositionCiNodeVl)) {
+            let connectedVls:Array<Cy.CollectionFirstNode> = this.getConnectedVlToNode(nodeToDelete);
+            this.handleConnectedVlsToDelete(connectedVls);
+        }
+
+        // check whether there is a service path going through this node, and if so clean it from the graph.
+        let nodeId = nodeToDelete.data().id;
+        let connectedPathLinks = cy.collection(`[type="${CompositionCiServicePathLink.LINK_TYPE}"][source="${nodeId}"], [type="${CompositionCiServicePathLink.LINK_TYPE}"][target="${nodeId}"]`);
+        _.forEach(connectedPathLinks, (link, key) => {
+            cy.remove(`[pathId="${link.data().pathId}"]`);
+        });
+
+        // update service path list
+        this.serviceService.getComponentCompositionData(component).subscribe((response:ServiceGenericResponse) => {
+            (<Service>component).forwardingPaths = response.forwardingPaths;
+        });
+
+        this.eventListenerService.notifyObservers(GRAPH_EVENTS.ON_DELETE_COMPONENT_INSTANCE_SUCCESS, nodeId);
+
+        //update UI
+        cy.remove(nodeToDelete);
+    }
+
+    private removeDeletedNodesOnGraph(cy:Cy.Instance, nodesToDelete:Cy.CollectionNodes, deleteFailedIds:Array<string>, componentInstances:Array<ComponentInstance>):void {
+        nodesToDelete.each((j:number, nodeToDelete:Cy.CollectionNodes) => {
+            if(deleteFailedIds.indexOf(nodeToDelete.data('id')) < 0) {
+                //if node to delete is a UCPE, remove all children (except UCPE-CPs) and remove their "hostedOn" links
+                if (nodeToDelete.data().isUcpe) {
+                    _.each(cy.nodes('[?isInsideGroup]'), (node)=> {
+                        this.eventListenerService.notifyObservers(GRAPH_EVENTS.ON_REMOVE_NODE_FROM_UCPE, node , nodeToDelete);
+                    });
+                }
+
+                //check whether the node is connected to any VLs that only have one other connection. If so, delete that VL as well
+                if(!(nodeToDelete.data() instanceof CompositionCiNodeVl)) {
+                    let connectedVls:Array<Cy.CollectionFirstNode> = this.getConnectedVlToNode(nodeToDelete);
+                    this.handleConnectedVlsToDelete(connectedVls);
+                }
+
+
+                cy.remove(nodeToDelete);
+            }
+        });
+    }
+ 
     /**
      * Finds all VLs connected to a single node
      * @param node
@@ -285,32 +356,6 @@ export class CompositionGraphNodesUtils {
             this.eventListenerService.notifyObservers(GRAPH_EVENTS.ON_INSERT_NODE_TO_UCPE, node, ucpeContainer, true);
         }
     }
-        /**
-         * Gets the position for the asset popover menu
-         * Then, check if right edge of menu would overlap horizontal screen edge (palette offset + canvas width - right panel)
-         * Then, check if bottom edge of menu would overlap the vertical end of the canvas.
-         * @param cy
-         * @param node
-         * @returns {Cy.Position}
-        
-        public createAssetPopover = (cy: Cy.Instance, node:Cy.CollectionFirstNode, isViewOnly:boolean):AssetPopoverObj => {
-
-            let menuOffset:Cy.Position = { x: node.renderedWidth() / 2, y: -(node.renderedWidth() / 2) };// getNodePositionWithOffset returns central point of node. First add node.renderedWidth()/2 to get its to border.
-            let menuPosition:Cy.Position = this.commonGraphUtils.getNodePositionWithOffset(node, menuOffset);
-            let menuSide:string = 'right';
-
-            if(menuPosition.x + GraphUIObjects.COMPOSITION_NODE_MENU_WIDTH >= cy.width() + GraphUIObjects.DIAGRAM_PALETTE_WIDTH_OFFSET - GraphUIObjects.COMPOSITION_RIGHT_PANEL_OFFSET){
-                menuPosition.x -= menuOffset.x * 2 + GraphUIObjects.COMPOSITION_NODE_MENU_WIDTH; //menu position already includes offset to the right. Therefore, subtract double offset so we have same distance from node for menu on left
-                menuSide = 'left';
-            }
-
-            if(menuPosition.y + GraphUIObjects.COMPOSITION_NODE_MENU_HEIGHT >= cy.height()){
-                menuPosition.y = menuPosition.y - GraphUIObjects.COMPOSITION_NODE_MENU_HEIGHT - menuOffset.y * 2;
-            }
-
-            return new AssetPopoverObj(node.data().id, node.data().name, menuPosition, menuSide, isViewOnly);
-        };
- */
 
     }
 
