@@ -314,6 +314,9 @@ export class CompositionViewModel {
             return this.$scope.currentComponent && this.$scope.currentComponent.selectedInstance != undefined && this.$scope.currentComponent.selectedInstance != null;
         };
 
+        this.$scope.isNotCombination = (): boolean => {
+            return !(this.$scope.currentComponent.isCombination());
+        };
         this.$scope.$on('$destroy', () => {
             this.unRegisterGraphEvents(this.$scope);
         })

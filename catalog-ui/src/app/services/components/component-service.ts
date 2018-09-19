@@ -27,51 +27,55 @@ import {ComponentMetadata} from "../../models/component-metadata";
 
 export interface IComponentService {
 
-    getComponent(id:string);
-    updateComponent(component:Component):ng.IPromise<Component>;
-    changeLifecycleState(component:Component, state:string, userRemarks:any):ng.IPromise<ComponentMetadata> ;
-    validateName(newName:string, subtype?:string):ng.IPromise<IValidate>;
-    createComponent(component:Component):ng.IPromise<Component>;
-    addOrUpdateArtifact(componentId:string, artifact:ArtifactModel):ng.IPromise<ArtifactModel>;
-    deleteArtifact(componentId:string, artifact:string, artifactLabel):ng.IPromise<ArtifactModel>;
-    addProperty(componentId:string, property:PropertyModel):ng.IPromise<PropertyModel>;
-    updateProperty(componentId:string, property:PropertyModel):ng.IPromise<PropertyModel>;
-    addAttribute(componentId:string, attribute:AttributeModel):ng.IPromise<AttributeModel>;
-    updateAttribute(componentId:string, attribute:AttributeModel):ng.IPromise<AttributeModel>;
-    deleteProperty(componentId:string, propertyId:string):ng.IPromise<PropertyModel>;
-    deleteAttribute(componentId:string, attributeId:string):ng.IPromise<AttributeModel>;
-    checkResourceInstanceVersionChange(componentId:string, componentInstanceId:string, componentUid:string):ng.IPromise<any>;
-    changeResourceInstanceVersion(componentId:string, componentInstanceId:string, componentUid:string):ng.IPromise<ComponentInstance>;
-    updateInstanceArtifact(componentId:string, instanceId:string, artifact:ArtifactModel):ng.IPromise<ArtifactModel>;
-    addInstanceArtifact(componentId:string, instanceId:string, artifact:ArtifactModel):ng.IPromise<ArtifactModel>;
-    deleteInstanceArtifact(componentId:string, instanceId:string, artifact:string, artifactLabel):ng.IPromise<ArtifactModel>;
-    createComponentInstance(componentId:string, componentInstance:ComponentInstance):ng.IPromise<ComponentInstance>;
-    updateComponentInstance(componentId:string, componentInstance:ComponentInstance):ng.IPromise<ComponentInstance>;
-    updateMultipleComponentInstances(componentId:string, instances:Array<ComponentInstance>):ng.IPromise< Array<ComponentInstance>>;
-    downloadArtifact(componentId:string, artifactId:string):ng.IPromise<IFileDownload>;
-    uploadInstanceEnvFile(componentId:string, instanceId:string, artifact:ArtifactModel):ng.IPromise<ArtifactModel>;
-    downloadInstanceArtifact(componentId:string, instanceId:string, artifactId:string):ng.IPromise<IFileDownload>;
-    deleteComponentInstance(componentId:string, componentInstanceId:string):ng.IPromise<ComponentInstance>;
-    createRelation(componentId:string, link:RelationshipModel):ng.IPromise<RelationshipModel>;
-    deleteRelation(componentId:string, link:RelationshipModel):ng.IPromise<RelationshipModel>;
-    fetchRelation(componentId:string, linkId:string):ng.IPromise<RelationshipModel>;
-    getRequirementsCapabilities(componentId:string):ng.IPromise<any>;
-    updateInstanceProperties(componentId:string, componentInstanceId:string, properties:PropertyModel[]):ng.IPromise<PropertyModel[]>;
-    updateInstanceAttribute(componentId:string, attribute:AttributeModel):ng.IPromise<AttributeModel>;
-    getComponentInstancesFilteredByInputsAndProperties(componentId:string, searchText:string):ng.IPromise<Array<ComponentInstance>>
-    getComponentInstanceInputs(componentId:string, instanceId:string, originComponentUid):ng.IPromise<Array<InputModel>>;
-    getComponentInputs(componentId:string):ng.IPromise<Array<InputModel>>;
-    getComponentInstanceInputProperties(componentId:string, instanceId:string, inputId:string):ng.IPromise<Array<PropertyModel>>;
-    getComponentInstanceProperties(componentId:string, instanceId:string):ng.IPromise<Array<PropertyModel>>;
-    getModuleForDisplay(componentId:string, moduleId:string):ng.IPromise<DisplayModule>;
-    getComponentInstanceModule(componentId:string, componentInstanceId:string, moduleId:string):ng.IPromise<DisplayModule>;
-    updateGroupMetadata(componentId:string, group:Module):ng.IPromise<Module>;
-    getComponentInputInputsAndProperties(serviceId:string, input:string):ng.IPromise<InputsAndProperties>;
-    createInputsFromInstancesInputs(serviceId:string, instancesInputsMap:InstancesInputsPropertiesMap):ng.IPromise<Array<InputModel>>;
-    createInputsFromInstancesInputsProperties(resourceId:string, instanceInputsPropertiesMap:InstancesInputsPropertiesMap):ng.IPromise<Array<PropertyModel>>;
-    deleteComponentInput(serviceId:string, inputId:string):ng.IPromise<InputModel>;
-    getArtifactByGroupType(componentId:string, artifactGroupType:string):ng.IPromise<ArtifactGroupModel>;
-    getComponentInstanceArtifactsByGroupType(componentId:string, componentInstanceId:string, artifactGroupType:string):ng.IPromise<ArtifactGroupModel>;
+        getComponent(id: string);
+    updateComponent(component: Component): ng.IPromise<Component>;
+    changeLifecycleState(component: Component, state: string, userRemarks: any): ng.IPromise<ComponentMetadata>;
+    validateName(newName: string, subtype?: string): ng.IPromise<IValidate>;
+    createComponent(component: Component): ng.IPromise<Component>;
+    addOrUpdateArtifact(componentId: string, artifact: ArtifactModel): ng.IPromise<ArtifactModel>;
+    deleteArtifact(componentId: string, artifact: string, artifactLabel): ng.IPromise<ArtifactModel>;
+    addProperty(componentId: string, property: PropertyModel): ng.IPromise<PropertyModel>;
+    updateProperty(componentId: string, property: PropertyModel): ng.IPromise<PropertyModel>;
+    addAttribute(componentId: string, attribute: AttributeModel): ng.IPromise<AttributeModel>;
+    updateAttribute(componentId: string, attribute: AttributeModel): ng.IPromise<AttributeModel>;
+    deleteProperty(componentId: string, propertyId: string): ng.IPromise<PropertyModel>;
+    deleteAttribute(componentId: string, attributeId: string): ng.IPromise<AttributeModel>;
+    checkResourceInstanceVersionChange(componentId: string, componentInstanceId: string, componentUid: string): ng.IPromise<any>;
+    changeResourceInstanceVersion(componentId: string, componentInstanceId: string, componentUid: string): ng.IPromise<ComponentInstance>;
+    updateInstanceArtifact(componentId: string, instanceId: string, artifact: ArtifactModel): ng.IPromise<ArtifactModel>;
+    addInstanceArtifact(componentId: string, instanceId: string, artifact: ArtifactModel): ng.IPromise<ArtifactModel>;
+    deleteInstanceArtifact(componentId: string, instanceId: string, artifact: string, artifactLabel): ng.IPromise<ArtifactModel>;
+    createComponentInstance(componentId: string, componentInstance: ComponentInstance): ng.IPromise<ComponentInstance>;
+    updateComponentInstance(componentId: string, componentInstance: ComponentInstance): ng.IPromise<ComponentInstance>;
+    updateMultipleComponentInstances(componentId: string, instances: Array<ComponentInstance>): ng.IPromise<Array<ComponentInstance>>;
+    downloadArtifact(componentId: string, artifactId: string): ng.IPromise<IFileDownload>;
+    uploadInstanceEnvFile(componentId: string, instanceId: string, artifact: ArtifactModel): ng.IPromise<ArtifactModel>;
+    downloadInstanceArtifact(componentId: string, instanceId: string, artifactId: string): ng.IPromise<IFileDownload>;
+    deleteComponentInstance(componentId: string, componentInstanceId: string): ng.IPromise<ComponentInstance>;
+    createRelation(componentId: string, link: RelationshipModel): ng.IPromise<RelationshipModel>;
+    deleteRelation(componentId: string, link: RelationshipModel): ng.IPromise<RelationshipModel>;
+    fetchRelation(componentId: string, linkId: string): ng.IPromise<RelationshipModel>;
+    getRequirementsCapabilities(componentId: string): ng.IPromise<any>;
+    updateInstanceProperties(componentId: string, componentInstanceId: string, properties: PropertyModel[]): ng.IPromise<PropertyModel[]>;
+    updateInstanceAttribute(componentId: string, attribute: AttributeModel): ng.IPromise<AttributeModel>;
+    getComponentInstancesFilteredByInputsAndProperties(componentId: string, searchText: string): ng.IPromise<Array<ComponentInstance>>
+    getComponentInstanceInputs(componentId: string, instanceId: string, originComponentUid): ng.IPromise<Array<InputModel>>;
+    getComponentInputs(componentId: string): ng.IPromise<Array<InputModel>>;
+    getComponentInstanceInputProperties(componentId: string, instanceId: string, inputId: string): ng.IPromise<Array<PropertyModel>>;
+    getComponentInstanceProperties(componentId: string, instanceId: string): ng.IPromise<Array<PropertyModel>>;
+    getModuleForDisplay(componentId: string, moduleId: string): ng.IPromise<DisplayModule>;
+    getComponentInstanceModule(componentId: string, componentInstanceId: string, moduleId: string): ng.IPromise<DisplayModule>;
+    updateGroupMetadata(componentId: string, group: Module): ng.IPromise<Module>;
+    getComponentInputInputsAndProperties(serviceId: string, input: string): ng.IPromise<InputsAndProperties>;
+    createInputsFromInstancesInputs(serviceId: string, instancesInputsMap: InstancesInputsPropertiesMap): ng.IPromise<Array<InputModel>>;
+    createInputsFromInstancesInputsProperties(resourceId: string, instanceInputsPropertiesMap: InstancesInputsPropertiesMap): ng.IPromise<Array<PropertyModel>>;
+    deleteComponentInput(serviceId: string, inputId: string): ng.IPromise<InputModel>;
+    getArtifactByGroupType(componentId: string, artifactGroupType: string): ng.IPromise<ArtifactGroupModel>;
+    getComponentInstanceArtifactsByGroupType(componentId: string, componentInstanceId: string, artifactGroupType: string): ng.IPromise<ArtifactGroupModel>;
+    batchDeleteComponentInstance(componentId: string, componentInstanceIdList: Array<string>): ng.IPromise<any>;
+    pasteMenuComponentInstance(componentId: string, srcComponentId: string, msg: string): ng.IPromise<string>;
+    batchDeleteRelation(componentId: string, links: Array<RelationshipModel>): ng.IPromise<Array<RelationshipModel>>;
+    createComponentCombinationInstance(componentId:string, componentInstance:ComponentInstance):ng.IPromise<ComponentInstance>;
 }
 
 export class ComponentService implements IComponentService {
@@ -368,6 +372,19 @@ export class ComponentService implements IComponentService {
         return deferred.promise;
     };
 
+    public createComponentCombinationInstance = (componentId:string, componentInstance:ComponentInstance):ng.IPromise<ComponentInstance> => {
+        let deferred = this.$q.defer<ComponentInstance>();
+        this.restangular.one(componentId).one("combinationInstance").customPOST(JSON.stringify(componentInstance)).then((response:any) => {
+            let componentInstance:ComponentInstance = ComponentInstanceFactory.createComponentInstance(response);
+            console.log("Component Instance created", componentInstance);
+            deferred.resolve(componentInstance);
+        }, (err)=> {
+            console.log("Failed to create componentInstance. With Name: " + componentInstance.name);
+            deferred.reject(err);
+        });
+        return deferred.promise;
+    };    
+
     public updateComponentInstance = (componentId:string, componentInstance:ComponentInstance):ng.IPromise<ComponentInstance> => {
         let deferred = this.$q.defer<ComponentInstance>();
         this.restangular.one(componentId).one("resourceInstance").one(componentInstance.uniqueId).customPOST(JSON.stringify(componentInstance)).then((response:any) => {
@@ -380,6 +397,19 @@ export class ComponentService implements IComponentService {
         });
         return deferred.promise;
     };
+    
+    public createComponentCombinationInstance = (componentId:string, componentInstance:ComponentInstance):ng.IPromise<ComponentInstance> => {
+        let deferred = this.$q.defer<ComponentInstance>();
+        this.restangular.one(componentId).one("combinationInstance").customPOST(JSON.stringify(componentInstance)).then((response:any) => {
+            let componentInstance:ComponentInstance = ComponentInstanceFactory.createComponentInstance(response);
+            console.log("Component Instance created", componentInstance);
+            deferred.resolve(componentInstance);
+        }, (err)=> {
+            console.log("Failed to create componentInstance. With Name: " + componentInstance.name);
+            deferred.reject(err);
+        });
+        return deferred.promise;
+    };     
 
     public updateMultipleComponentInstances = (componentId:string, instances:Array<ComponentInstance>):ng.IPromise<Array<ComponentInstance>> => {
         let deferred = this.$q.defer<Array<ComponentInstance>>();
