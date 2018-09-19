@@ -18,12 +18,9 @@
 package org.openecomp.sdc.be.components.impl;
 
 import fj.data.Either;
-import java.util.Collections;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
 import org.openecomp.sdc.be.components.validation.InterfaceOperationValidation;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.InterfaceDefinition;
@@ -38,6 +35,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 
 @Component("interfaceOperationBusinessLogic")
 public class InterfaceOperationBusinessLogic extends BaseBusinessLogic {
@@ -272,5 +275,52 @@ public class InterfaceOperationBusinessLogic extends BaseBusinessLogic {
             }
         }
         return Either.left(true);
+    }
+
+    public Either<Boolean, ResponseFormat> validateAndUpdateInterfaces(org.openecomp.sdc.be.model.Component currentComponent,
+                                                                       org.openecomp.sdc.be.model.Component componentToUpdate) {
+        Map<String, InterfaceDefinition> storedResourceInterfaces = currentComponent.getInterfaces();
+        if(!currentComponent.getName().equals(componentToUpdate.getName()) ) {
+            Collection<InterfaceDefinition> interfaceDefinitionListFromToscaName = InterfaceUtils
+                    .getInterfaceDefinitionListFromToscaName(currentComponent.getInterfaces().values(),
+                            currentComponent.getName());
+            for (InterfaceDefinition interfaceDefinition : storedResourceInterfaces.values()) {
+                Either<InterfaceDefinition, ResponseFormat> updateInterfaceDefinitionEither = updateInterfaceDefinition(currentComponent,componentToUpdate,
+                        interfaceDefinition,
+                        interfaceDefinitionListFromToscaName);
+                if(updateInterfaceDefinitionEither.isRight()) {
+                    return Either.right(updateInterfaceDefinitionEither.right().value());
+                }
+            }
+        }
+        return  Either.left(Boolean.TRUE);
+    }
+    private Either<InterfaceDefinition, ResponseFormat > updateInterfaceDefinition(org.openecomp.sdc.be.model.Component currentComponent,
+                                        org.openecomp.sdc.be.model.Component componentToUpdate,
+                                        InterfaceDefinition interfaceDefinition,
+                                        Collection<InterfaceDefinition> interfaceDefinitionListFromToscaName) {
+        interfaceDefinitionListFromToscaName.forEach(interfaceDefinitionFromList -> {
+            if(interfaceDefinitionFromList.getToscaResourceName().equals(interfaceDefinition.getToscaResourceName())) {
+                LOGGER.info("Going to Update interface definition toscaResourceName {} to {}",
+                        interfaceDefinitionFromList.getToscaResourceName(),
+                        InterfaceUtils.createInterfaceToscaResourceName(componentToUpdate.getName()));
+                interfaceDefinition.setToscaResourceName(InterfaceUtils
+                        .createInterfaceToscaResourceName(componentToUpdate.getName()));
+            }
+        } );
+        try {
+            Either<InterfaceDefinition, StorageOperationStatus> interfaceUpdate = interfaceOperation
+                    .updateInterface(currentComponent.getUniqueId(), interfaceDefinition);
+            if (interfaceUpdate.isRight()) {
+                LOGGER.error("Failed to Update interface {}. Response is {}. ", componentToUpdate.getName(), interfaceUpdate.right().value());
+                titanDao.rollback();
+                return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(interfaceUpdate.right().value(), ComponentTypeEnum.RESOURCE)));
+            }
+        } catch (Exception e) {
+            LOGGER.error("Exception occurred during update interface toscaResourceName  : {}", e);
+            titanDao.rollback();
+            return Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
+        }
+        return Either.left( interfaceDefinition);
     }
 }
