@@ -32,6 +32,8 @@ Modifications copyright (c) 2018 Nokia
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <!-- 3rd parties versions -->
+        <bean-matcher.version>0.11</bean-matcher.version>
+        <lang3.version>3.3.2</lang3.version>
         <lang3.version>3.3.2</lang3.version>
         <guava.version>18.0</guava.version>
         <titan.version>1.0.0</titan.version>
