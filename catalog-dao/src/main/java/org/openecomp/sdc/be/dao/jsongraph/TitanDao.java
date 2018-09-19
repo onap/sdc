@@ -251,6 +251,10 @@ public class TitanDao {
             String jsonMetadataStr = JsonParserUtils.toJson(jsonMetadata);
             vertex.property(GraphPropertyEnum.METADATA.getProperty(), jsonMetadataStr);
         }
+        String jsonString = graphVertex.getJsonString();
+        if (jsonString != null) {
+            vertex.property(GraphPropertyEnum.JSON_STRING.getProperty(), jsonString);
+        }
     }
 
     public void setVertexProperties(Vertex vertex, Map<String, Object> properties) throws IOException {
@@ -299,6 +303,12 @@ public class TitanDao {
                     String json = (String) entry.getValue();
                     Map<String, Object> metadatObj = JsonParserUtils.toMap(json);
                     graphVertex.setMetadataJson(metadatObj);
+                }
+                break;
+            case JSON_STRING:
+                String jsonString = (String) entry.getValue();
+                if (jsonString != null) {
+                    graphVertex.setJsonString(jsonString);
                 }
                 break;
             default:

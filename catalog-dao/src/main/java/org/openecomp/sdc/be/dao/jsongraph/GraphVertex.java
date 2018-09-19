@@ -43,6 +43,15 @@ public class GraphVertex {
 	private Map<String, ? extends ToscaDataDefinition> json;
 	private Map<String, Object> metadataJson;
 	private Map<GraphPropertyEnum, Object> metadataProperties;
+	private String jsonString;
+
+	public String getJsonString() {
+		return jsonString;
+	}
+
+	public void setJsonString(String jsonString) {
+		this.jsonString = jsonString;
+	}
 
 	public GraphVertex() {
 

@@ -208,4 +208,9 @@ public class UniqueIdBuilder {
         return groupUniqueId + DOT + "property" + DOT + index;
 
     }
+
+    public static String buildCombinationUniqueid(String serviceuniqueid) {
+        return serviceuniqueid + DOT + "combination";
+
+    }
 }
