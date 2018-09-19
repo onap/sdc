@@ -26,13 +26,15 @@ import {ComponentType} from "../../utils/constants";
 import {ComponentMetadata} from "../component-metadata";
 import {PolicyMetadata} from "../policy-metadata";
 import {GroupMetadata} from "../group-metadata";
+import {CombinationMetadata} from "../combination-metadata";
 import {RequirementsGroup} from "../requirement";
 import {CapabilitiesGroup} from "../capability";
 
 export enum LeftPaletteMetadataTypes {
     Component,
     Group,
-    Policy
+    Policy,
+    Combination
 }
 
 export class LeftPaletteComponent {
@@ -64,7 +66,7 @@ export class LeftPaletteComponent {
 
     categoryType:LeftPaletteMetadataTypes;
 
-    constructor(metadataType: LeftPaletteMetadataTypes, item: ComponentMetadata | PolicyMetadata | GroupMetadata) {
+    constructor(metadataType: LeftPaletteMetadataTypes, item: ComponentMetadata | PolicyMetadata | GroupMetadata | CombinationMetadata) {
         if (metadataType === LeftPaletteMetadataTypes.Policy) {
             this.initPolicy(item as PolicyMetadata);
             return;
@@ -74,6 +76,11 @@ export class LeftPaletteComponent {
             this.initGroup(item as GroupMetadata);
             return;
         }
+
+        if (metadataType === LeftPaletteMetadataTypes.Combination) {
+            this.initCombination(item as ComponentMetadata);
+            return;
+        }        
 
         if (metadataType === LeftPaletteMetadataTypes.Component) {
             this.initComponent(item as ComponentMetadata);
@@ -149,6 +156,32 @@ export class LeftPaletteComponent {
         this.isDraggable = false;
     }
 
+    private initCombination(combination:ComponentMetadata): void {
+        this.categoryType = LeftPaletteMetadataTypes.Combination;
+        this.icon = "combination";
+        this.version = "1.0"; //combination.version;
+        this.uniqueId = combination.uniqueId ||  combination.name;
+        this.isRequirmentAndCapabilitiesLoaded = false;
+        this.uuid = this.uniqueId;
+        this.name = combination.name;
+        this.allVersions = ["1.0"];
+        this.componentType = "Combination";
+        this.systemName = combination.name;
+        this.invariantUUID = this.uniqueId;
+        this.isDraggable = true;
+
+        this.mainCategory = 'COMBINATIONS';
+        this.subCategory = 'Combinations';
+        this.componentSubType = 'Combination';
+        this.displayName = combination.name;
+        this.searchFilterTerms = this.type + ' ' + combination.name;
+        this.iconClass = "sprite-resource-icons combination";
+        //this.initIconSprite("combination");
+        this.certifiedIconClass = '';
+    }    
+
+  
+
     public initDisplayName = (name:string):void => {
         let newName =
             _.last(_.last(_.last(_.last(_.last(_.last(_.last(_.last(name.split('tosca.nodes.'))
@@ -165,7 +198,7 @@ export class LeftPaletteComponent {
         switch (this.componentSubType) {
             case ComponentType.SERVICE:
                 this.iconClass = "sprite-services-icons " + icon;
-                break;
+                break;  
             default:
                 this.iconClass = "sprite-resource-icons " + icon;
         }
