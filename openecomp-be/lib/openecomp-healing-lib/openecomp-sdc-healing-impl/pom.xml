@@ -14,6 +14,11 @@
     <dependencies>
         <dependency>
             <groupId>org.openecomp.sdc</groupId>
+            <artifactId>openecomp-sdc-model-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.openecomp.sdc</groupId>
             <artifactId>openecomp-sdc-healing-api</artifactId>
             <version>${project.version}</version>
         </dependency>
