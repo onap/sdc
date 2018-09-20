@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_9066dc4f",
+        "filename": "catalog-be/src/main/resources/import/tosca/capability-types/capabilityTypes.yml",
+        "patchSetId": 27
+      },
+      "lineNbr": 155,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-20T06:40:53Z",
+      "side": 1,
+      "message": "where was this defined? it is not part of the clean version.\nbased on spec http://docs.oasis-open.org/tosca/tosca-nfv/v1.0/csd03/tosca-nfv-v1.0-csd03.html#_Toc447714694\nit is ok.\nregardless of this changing a derived value requires migration and it is problematic.",
+      "range": {
+        "startLine": 155,
+        "startChar": 2,
+        "endLine": 155,
+        "endChar": 39
+      },
+      "revId": "96fe2fc807bd5733d413e561c7e1fc93d4657555",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_b04c38c9",
+        "filename": "catalog-be/src/main/resources/import/tosca/data-types/dataTypes.yml",
+        "patchSetId": 27
+      },
+      "lineNbr": 1446,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-20T06:40:53Z",
+      "side": 1,
+      "message": "it is problematic to change the derived from once the data type has been defined and it requires migration to de done",
+      "range": {
+        "startLine": 1446,
+        "startChar": 2,
+        "endLine": 1446,
+        "endChar": 36
+      },
+      "revId": "96fe2fc807bd5733d413e561c7e1fc93d4657555",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_d04774a1",
+        "filename": "catalog-be/src/main/resources/import/tosca/interface-lifecycle-types/interfaceLifecycleTypes.yml",
+        "patchSetId": 27
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-20T06:40:53Z",
+      "side": 1,
+      "message": "where was this defined i do not see it in the clean version?",
+      "range": {
+        "startLine": 67,
+        "startChar": 0,
+        "endLine": 67,
+        "endChar": 28
+      },
+      "revId": "96fe2fc807bd5733d413e561c7e1fc93d4657555",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}

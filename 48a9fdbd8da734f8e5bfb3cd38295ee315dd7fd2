@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_505cc47c",
+        "filename": "catalog-be/src/main/resources/import/tosca/data-types/dataTypes.yml",
+        "patchSetId": 27
+      },
+      "lineNbr": 1401,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-20T06:40:53Z",
+      "side": 0,
+      "message": "we do not allow removing properties please keep the existing properties.",
+      "range": {
+        "startLine": 1400,
+        "startChar": 3,
+        "endLine": 1401,
+        "endChar": 39
+      },
+      "revId": "48a9fdbd8da734f8e5bfb3cd38295ee315dd7fd2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_f056305b",
+        "filename": "catalog-be/src/main/resources/import/tosca/data-types/dataTypes.yml",
+        "patchSetId": 27
+      },
+      "lineNbr": 1427,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-20T06:40:53Z",
+      "side": 0,
+      "message": "we do not allow removing properties please keep the existing properties.",
+      "range": {
+        "startLine": 1425,
+        "startChar": 0,
+        "endLine": 1427,
+        "endChar": 21
+      },
+      "revId": "48a9fdbd8da734f8e5bfb3cd38295ee315dd7fd2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
