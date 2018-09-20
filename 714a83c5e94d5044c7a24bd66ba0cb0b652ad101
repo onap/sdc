@@ -1,0 +1,157 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_5614bc4b",
+        "filename": "common/onap-tosca-datatype/src/main/java/org/onap/sdc/tosca/datatypes/model/Implementation.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-09-20T13:38:56Z",
+      "side": 1,
+      "message": "Should implements  java.lang.Cloneable",
+      "revId": "714a83c5e94d5044c7a24bd66ba0cb0b652ad101",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_d6ff6c00",
+        "filename": "common/onap-tosca-datatype/src/main/java/org/onap/sdc/tosca/datatypes/model/Implementation.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-09-20T13:38:56Z",
+      "side": 1,
+      "message": "This looks very dangerous. Why list are converted to HashSet? \nId dependencies actually a Set?",
+      "revId": "714a83c5e94d5044c7a24bd66ba0cb0b652ad101",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_6a078c82",
+        "filename": "common/onap-tosca-datatype/src/main/java/org/onap/sdc/tosca/datatypes/model/Implementation.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-09-20T13:38:56Z",
+      "side": 1,
+      "message": "dependencies is not transformed to HashSet. This not consistent with equal function",
+      "revId": "714a83c5e94d5044c7a24bd66ba0cb0b652ad101",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_0af6188f",
+        "filename": "common/onap-tosca-datatype/src/main/java/org/onap/sdc/tosca/datatypes/model/Interface.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-09-20T13:38:56Z",
+      "side": 1,
+      "message": "Sonar major remark\nGeneric wildcard types should not be used in return parameters",
+      "revId": "714a83c5e94d5044c7a24bd66ba0cb0b652ad101",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_8a31c85b",
+        "filename": "common/onap-tosca-datatype/src/main/java/org/onap/sdc/tosca/datatypes/model/InterfaceDefinition.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-09-20T13:38:56Z",
+      "side": 1,
+      "message": "Sonar remark \nUnused type parameters should be removed",
+      "revId": "714a83c5e94d5044c7a24bd66ba0cb0b652ad101",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_4a0e508d",
+        "filename": "common/onap-tosca-datatype/src/main/java/org/onap/sdc/tosca/datatypes/model/InterfaceDefinitionType.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-09-20T13:38:56Z",
+      "side": 1,
+      "message": "Sonar \nChild class fields should not shadow parent class fields",
+      "revId": "714a83c5e94d5044c7a24bd66ba0cb0b652ad101",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_aa1e04b9",
+        "filename": "common/onap-tosca-datatype/src/main/java/org/onap/sdc/tosca/datatypes/model/NodeTemplate.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 188,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-09-20T13:38:56Z",
+      "side": 1,
+      "message": "Sonar \nExpressions should not be too complex\n \nCode smell\n \nMajor\nsquid:S1067\n \nThe complexity of an expression is defined by the number of \u0026\u0026, || and condition ? ifTrue : ifFalse operators it contains.\nA single expression\u0027s complexity should not become too high to keep the code readable.",
+      "revId": "714a83c5e94d5044c7a24bd66ba0cb0b652ad101",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_2ad0b4c7",
+        "filename": "openecomp-be/lib/openecomp-tosca-lib/src/main/java/org/openecomp/sdc/tosca/services/impl/ToscaAnalyzerServiceImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 935,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-09-20T13:38:56Z",
+      "side": 1,
+      "message": "overload method should not be split. Previous overload method in line 249",
+      "revId": "714a83c5e94d5044c7a24bd66ba0cb0b652ad101",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_4a5c107d",
+        "filename": "openecomp-be/lib/openecomp-tosca-lib/src/test/java/org/openecomp/sdc/tosca/datatypes/ToscaModelTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 233,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-09-20T13:38:56Z",
+      "side": 1,
+      "message": "Checkstyle remark.\ndeclared in line 233 but first used in line 299.\nOnly 3 lines are allowed.",
+      "revId": "714a83c5e94d5044c7a24bd66ba0cb0b652ad101",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
