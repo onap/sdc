@@ -115,9 +115,7 @@ export class ResourceSaveViewFormModel {
             let onSaveSuccess = (response: any): void => {
                 this.$uibModalInstance.close();
                 this.$scope.isAlreadyPressed = false;
-                //this.$state.go('catalog');
-                //this.LeftPaletteLoaderService.loadLeftPanel(this.$scope.parentComponent);
-                this.$state.go('workspace.general', { id: response.uniqueId, type: this.$scope.component.componentType.toLowerCase(),mode: WorkspaceMode.VIEW});
+                this.$state.go('catalog');
             }
             let onSaveFailed = (response: any): void => {
                 this.$uibModalInstance.close();

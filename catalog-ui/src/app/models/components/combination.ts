@@ -43,6 +43,7 @@ export class Combination extends Component {
         this.lifecycleState ="CERTIFIED";
         this.icon = "combination";
         this.componentType = "Combination";  
+        this.uuid = this.uniqueId;
     }
 
     getTypeUrl():string {

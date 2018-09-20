@@ -307,7 +307,7 @@ export class WorkspaceViewModel {
 
         });
 
-        this.$scope.$on('$stateChangeSuccess', (event, toState) => {
+        this.$scope.$on('$stateChangeSuccess', (event, toState) => {            
             this.$scope.updateSelectedMenuItem(this.$state.current.name);
         });
 

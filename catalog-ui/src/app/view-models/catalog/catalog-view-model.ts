@@ -20,36 +20,36 @@
 
 'use strict';
 import * as _ from "lodash";
-import {Component, IMainCategory, IGroup, IConfigStatuses, IAppMenu, IAppConfigurtaion, IUserProperties, ISubCategory, ICategoryBase} from "app/models";
-import {EntityService, CacheService} from "app/services";
-import {ComponentFactory, ResourceType, MenuHandler, ChangeLifecycleStateHandler} from "app/utils";
-import {UserService} from "../../ng2/services/user.service";
-import {ArchiveService} from "../../ng2/services/archive.service";
+import { Component, IMainCategory, IGroup, IConfigStatuses, IAppMenu, IAppConfigurtaion, IUserProperties, ISubCategory, ICategoryBase } from "app/models";
+import { EntityService, CacheService } from "app/services";
+import { ComponentFactory, ResourceType, MenuHandler, ChangeLifecycleStateHandler } from "app/utils";
+import { UserService } from "../../ng2/services/user.service";
+import { ArchiveService } from "../../ng2/services/archive.service";
 import { ICatalogSelector, CatalogSelectorTypes } from "../../models/catalogSelector";
-import {IConfigStatus} from "../../models/app-config";
+import { IConfigStatus } from "../../models/app-config";
 
 interface Checkboxes {
-    componentTypes:Array<string>;
-    resourceSubTypes:Array<string>;
+    componentTypes: Array<string>;
+    resourceSubTypes: Array<string>;
 }
 
 interface CheckboxesFilter {
     // Types
-    selectedComponentTypes:Array<string>;
-    selectedResourceSubTypes:Array<string>;
+    selectedComponentTypes: Array<string>;
+    selectedResourceSubTypes: Array<string>;
     // Categories
-    selectedCategoriesModel:Array<string>;
+    selectedCategoriesModel: Array<string>;
     // Statuses
-    selectedStatuses:Array<Array<string>>;
+    selectedStatuses: Array<Array<string>>;
 }
 
 interface Gui {
-    isLoading:boolean;
-    onComponentSubTypesClick:Function;
-    onComponentTypeClick:Function;
-    onCategoryClick:Function;
-    onStatusClick:Function;
-    changeFilterTerm:Function;
+    isLoading: boolean;
+    onComponentSubTypesClick: Function;
+    onComponentTypeClick: Function;
+    onCategoryClick: Function;
+    onStatusClick: Function;
+    changeFilterTerm: Function;
 }
 
 interface IFilterParams {
@@ -69,42 +69,42 @@ interface ICategoriesMap {
 }
 
 export interface ICatalogViewModelScope extends ng.IScope {
-    checkboxes:Checkboxes;
-    checkboxesFilter:CheckboxesFilter;
-    gui:Gui;
+    checkboxes: Checkboxes;
+    checkboxesFilter: CheckboxesFilter;
+    gui: Gui;
 
-    categories:Array<IMainCategory>;
-    confStatus:IConfigStatuses;
-    sdcMenu:IAppMenu;
-    catalogFilterdItems:Array<Component>;
-    expandedSection:Array<string>;
-    actionStrategy:any;
-    user:IUserProperties;
-    catalogMenuItem:any;
-    version:string;
-    sortBy:string;
-    reverse:boolean;
-    vfcmtType:string;
+    categories: Array<IMainCategory>;
+    confStatus: IConfigStatuses;
+    sdcMenu: IAppMenu;
+    catalogFilterdItems: Array<Component>;
+    expandedSection: Array<string>;
+    actionStrategy: any;
+    user: IUserProperties;
+    catalogMenuItem: any;
+    version: string;
+    sortBy: string;
+    reverse: boolean;
+    vfcmtType: string;
 
     //this is for UI paging
-    numberOfItemToDisplay:number;
-    isAllItemDisplay:boolean;
-    catalogFilteredItemsNum:number;
-    changeLifecycleState(entity:any, state:string):void;
-    sectionClick (section:string):void;
-    order(sortBy:string):void;
-    getElementFoundTitle(num:number):string;
-    goToComponent(component:Component):void;
-    raiseNumberOfElementToDisplay():void;
+    numberOfItemToDisplay: number;
+    isAllItemDisplay: boolean;
+    catalogFilteredItemsNum: number;
+    changeLifecycleState(entity: any, state: string): void;
+    sectionClick(section: string): void;
+    order(sortBy: string): void;
+    getElementFoundTitle(num: number): string;
+    goToComponent(component: Component): void;
+    raiseNumberOfElementToDisplay(): void;
 
     selectedCatalogItem: ICatalogSelector;
     catalogSelectorItems: Array<ICatalogSelector>;
     showCatalogSelector: boolean;
-    catalogAllItems:Array<Component>; /* fake data */
+    catalogAllItems: Array<Component>; /* fake data */
     elementFoundTitle: string;
     elementTypeTitle: string;
 
-    selectLeftSwitchItem (item: ICatalogSelector): void;
+    selectLeftSwitchItem(item: ICatalogSelector): void;
 }
 
 export class CatalogViewModel {
@@ -124,7 +124,7 @@ export class CatalogViewModel {
         'ArchiveServiceNg2'
     ];
 
-    private defaultFilterParams:IFilterParams = {
+    private defaultFilterParams: IFilterParams = {
         components: [],
         categories: [],
         statuses: [],
@@ -132,52 +132,52 @@ export class CatalogViewModel {
         term: '',
         active: true
     };
-    private categoriesMap:ICategoriesMap;
+    private categoriesMap: ICategoriesMap;
 
-    constructor(private $scope:ICatalogViewModelScope,
-                private $filter:ng.IFilterService,
-                private EntityService:EntityService,
-                private sdcConfig:IAppConfigurtaion,
-                private sdcMenu:IAppMenu,
-                private $state:ng.ui.IStateService,
-                private $q:ng.IQService,
-                private userService:UserService,
-                private cacheService:CacheService,
-                private ComponentFactory:ComponentFactory,
-                private ChangeLifecycleStateHandler:ChangeLifecycleStateHandler,
-                private MenuHandler:MenuHandler,
-                private ArchiveService:ArchiveService
-            ) {
+    constructor(private $scope: ICatalogViewModelScope,
+        private $filter: ng.IFilterService,
+        private EntityService: EntityService,
+        private sdcConfig: IAppConfigurtaion,
+        private sdcMenu: IAppMenu,
+        private $state: ng.ui.IStateService,
+        private $q: ng.IQService,
+        private userService: UserService,
+        private cacheService: CacheService,
+        private ComponentFactory: ComponentFactory,
+        private ChangeLifecycleStateHandler: ChangeLifecycleStateHandler,
+        private MenuHandler: MenuHandler,
+        private ArchiveService: ArchiveService
+    ) {
 
 
         this.initLeftSwitch();
         this.initScopeMembers();
-        this.loadFilterParams(); 
+        this.loadFilterParams();
         this.initCatalogData(); // Async task to get catalog from server.
         this.initScopeMethods();
     }
 
 
-    private initLeftSwitch = ():void => {
+    private initLeftSwitch = (): void => {
         this.$scope.showCatalogSelector = false;
 
         this.$scope.catalogSelectorItems = [
-            {value: CatalogSelectorTypes.Active, title: "Active Items", header: "Active"},
-            {value: CatalogSelectorTypes.Archive, title: "Archive", header: "Archived"}
+            { value: CatalogSelectorTypes.Active, title: "Active Items", header: "Active" },
+            { value: CatalogSelectorTypes.Archive, title: "Archive", header: "Archived" }
         ];
         // set active items is default
         this.$scope.selectedCatalogItem = this.$scope.catalogSelectorItems[0];
     };
 
-    private initCatalogData = ():void => {
-        if(this.$scope.selectedCatalogItem.value === CatalogSelectorTypes.Archive){
+    private initCatalogData = (): void => {
+        if (this.$scope.selectedCatalogItem.value === CatalogSelectorTypes.Archive) {
             this.getArchiveCatalogItems();
         } else {
             this.getActiveCatalogItems();
         }
     };
 
-    private initScopeMembers = ():void => {
+    private initScopeMembers = (): void => {
         // Gui init
         this.$scope.gui = <Gui>{};
         this.$scope.numberOfItemToDisplay = 0;
@@ -211,7 +211,7 @@ export class CatalogViewModel {
         this.$scope.checkboxesFilter.selectedStatuses = [];
     }
 
-    private initCategoriesMap(categoriesList?:(ICategoryBase)[], parentCategory:ICategoryBase=null): ICategoriesMap {
+    private initCategoriesMap(categoriesList?: (ICategoryBase)[], parentCategory: ICategoryBase = null): ICategoriesMap {
         categoriesList = (categoriesList) ? categoriesList : this.$scope.categories;
 
         // Init categories map
@@ -232,7 +232,7 @@ export class CatalogViewModel {
         }, <ICategoriesMap>{});
     }
 
-    private initScopeMethods = ():void => {
+    private initScopeMethods = (): void => {
         this.$scope.selectLeftSwitchItem = (item: ICatalogSelector): void => {
 
             if (this.$scope.selectedCatalogItem.value !== item.value) {
@@ -246,7 +246,7 @@ export class CatalogViewModel {
                         this.getArchiveCatalogItems(true);
                         break;
                 }
-                this.changeFilterParams({active: (item.value === CatalogSelectorTypes.Active)})
+                this.changeFilterParams({ active: (item.value === CatalogSelectorTypes.Active) })
             }
         };
 
@@ -271,12 +271,12 @@ export class CatalogViewModel {
 
         this.$scope.goToComponent = (component: Component): void => {
             this.$scope.gui.isLoading = true;
-            this.$state.go('workspace.general', {id: component.uniqueId, type: component.componentType.toLowerCase()});
+            this.$state.go('workspace.general', { id: component.uniqueId, type: component.componentType.toLowerCase() });
         };
 
 
         // Will print the number of elements found in catalog
-        this.$scope.getNumOfElements = (num:number):string => {
+        this.$scope.getNumOfElements = (num: number): string => {
             if (!num || num === 0) {
                 return `No <b>${this.$scope.selectedCatalogItem.header}</b> Elements found`;
             } else if (num === 1) {
@@ -436,12 +436,12 @@ export class CatalogViewModel {
 
     }
 
-    private getAllCategoryChildrenIdsFlat(category:ICategoryBase) {
+    private getAllCategoryChildrenIdsFlat(category: ICategoryBase) {
         let catChildrenIds = [];
         if ((<IMainCategory>category).subcategories) {
             catChildrenIds = (<IMainCategory>category).subcategories.reduce((acc, scat) => {
-                    return acc.concat(this.getAllCategoryChildrenIdsFlat(scat));
-                }, (<IMainCategory>category).subcategories.map((scat) => scat.uniqueId));
+                return acc.concat(this.getAllCategoryChildrenIdsFlat(scat));
+            }, (<IMainCategory>category).subcategories.map((scat) => scat.uniqueId));
         }
         else if ((<ISubCategory>category).groupings) {
             catChildrenIds = (<ISubCategory>category).groupings.map((g) => g.uniqueId);
@@ -449,7 +449,7 @@ export class CatalogViewModel {
         return catChildrenIds;
     }
 
-    private getParentCategoryChildren(parentCategory:ICategoryBase): ICategoryBase[] {
+    private getParentCategoryChildren(parentCategory: ICategoryBase): ICategoryBase[] {
         if ((<IMainCategory>parentCategory).subcategories) {
             return (<IMainCategory>parentCategory).subcategories;
         } else if ((<ISubCategory>parentCategory).groupings) {
@@ -458,7 +458,7 @@ export class CatalogViewModel {
         return [];
     }
 
-    private cleanSubsFromList(list:Array<string>, delimiter:string='.', removeSubsList?:Array<string>) {
+    private cleanSubsFromList(list: Array<string>, delimiter: string = '.', removeSubsList?: Array<string>) {
         let curRemoveSubsList = (removeSubsList || list).slice().sort();  // by default remove any children of any item in list
         while (curRemoveSubsList.length) {
             const curRemoveSubItem = curRemoveSubsList.shift();
@@ -469,7 +469,7 @@ export class CatalogViewModel {
         return list;
     }
 
-    private applyFilterParamsToView(filterParams:IFilterParams) {
+    private applyFilterParamsToView(filterParams: IFilterParams) {
         // reset checkboxes filter
         this.initCheckboxesFilter();
 
@@ -480,7 +480,7 @@ export class CatalogViewModel {
         this.applyFilterParamsTerm(filterParams);
     }
 
-    private applyFilterParamsComponents(filterParams:IFilterParams) {
+    private applyFilterParamsComponents(filterParams: IFilterParams) {
         const componentList = [];
         const componentSubTypesLists = {};
         filterParams.components.forEach((compStr) => {
@@ -516,10 +516,10 @@ export class CatalogViewModel {
 
         let selectedCatalogIndex = filterParams.active ? CatalogSelectorTypes.Active : CatalogSelectorTypes.Archive;
         this.$scope.selectedCatalogItem = this.$scope.catalogSelectorItems[selectedCatalogIndex];
-        
+
     }
 
-    private applyFilterParamsCategories(filterParams:IFilterParams) {
+    private applyFilterParamsCategories(filterParams: IFilterParams) {
         this.$scope.checkboxesFilter.selectedCategoriesModel = filterParams.categories.reduce((acc, c) => {
             acc.push(c);
             const cat = this.categoriesMap[c].category;
@@ -534,14 +534,14 @@ export class CatalogViewModel {
 
         if (forceReload || this.componentShouldReload()) {
             this.$scope.gui.isLoading = true;
-            let onSuccess = (followedResponse:Array<Component>):void => {
+            let onSuccess = (followedResponse: Array<Component>): void => {
                 this.updateCatalogItems(followedResponse);
                 this.$scope.gui.isLoading = false;
-                this.cacheService.set('breadcrumbsComponentsState', this.$state.current.name);  //catalog
+                this.cacheService.set('breadcrumbsComponentsState', this.$state.current.name);  //catalog                
                 this.cacheService.set('breadcrumbsComponents', followedResponse);
             };
 
-            let onError = ():void => {
+            let onError = (): void => {
                 console.info('Failed to load catalog CatalogViewModel::getActiveCatalogItems');
                 this.$scope.gui.isLoading = false;
             };
@@ -553,19 +553,19 @@ export class CatalogViewModel {
     }
 
     private getArchiveCatalogItems(forceReload?: boolean): void {
-        if(forceReload || !this.cacheService.contains("archiveComponents")) {
+        if (forceReload || !this.cacheService.contains("archiveComponents")) {
             this.$scope.gui.isLoading = true;
-            let onSuccess = (followedResponse:Array<Component>):void => {
+            let onSuccess = (followedResponse: Array<Component>): void => {
                 this.cacheService.set("archiveComponents", followedResponse);
                 this.updateCatalogItems(followedResponse);
                 this.$scope.gui.isLoading = false;
             };
-    
-            let onError = ():void => {
+
+            let onError = (): void => {
                 console.info('Failed to load catalog CatalogViewModel::getArchiveCatalogItems');
                 this.$scope.gui.isLoading = false;
             };
-    
+
             this.ArchiveService.getArchiveCatalog().subscribe(onSuccess, onError);
         } else {
             let archiveCache = this.cacheService.get("archiveComponents");
@@ -574,13 +574,13 @@ export class CatalogViewModel {
 
     }
 
-    private updateCatalogItems = (items:Array<Component>):void => {
+    private updateCatalogItems = (items: Array<Component>): void => {
         this.$scope.catalogFilterdItems = items;
         this.$scope.isAllItemDisplay = this.$scope.numberOfItemToDisplay >= this.$scope.catalogFilterdItems.length;
         this.$scope.categories = this.cacheService.get('serviceCategories').concat(this.cacheService.get('resourceCategories'));
     }
 
-    private componentShouldReload = ():boolean => {
+    private componentShouldReload = (): boolean => {
         let breadcrumbsValid: boolean = (this.$state.current.name === this.cacheService.get('breadcrumbsComponentsState') && this.cacheService.contains('breadcrumbsComponents'));
         return !breadcrumbsValid || this.isDefaultFilter();
     }
@@ -590,7 +590,7 @@ export class CatalogViewModel {
     }
 
     private applyFilterParamsStatuses(filterParams: IFilterParams) {
-        this.$scope.checkboxesFilter.selectedStatuses = filterParams.statuses.reduce((acc, stKey:string) => {
+        this.$scope.checkboxesFilter.selectedStatuses = filterParams.statuses.reduce((acc, stKey: string) => {
             const status = this.$scope.confStatus[stKey];
             if (status) {
                 acc.push(status.values);
@@ -674,7 +674,7 @@ export class CatalogViewModel {
             this.$scope.filterParams[k] = changedFilterParams[k];
             newParams['filter.' + k] = newVal;
         });
-        this.$state.go('.', newParams, {location: 'replace', notify: false}).then(() => {
+        this.$state.go('.', newParams, { location: 'replace', notify: false }).then(() => {
             this.applyFilterParamsToView(this.$scope.filterParams);
         });
     }

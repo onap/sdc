@@ -30,7 +30,7 @@ import './modules/utils.ts';
 import './modules/directive-module.ts';
 import './modules/service-module';
 import './modules/view-model-module.ts';
-import {SdcUiComponentsNg1Module} from 'sdc-ui/lib/angular';
+import { SdcUiComponentsNg1Module } from 'sdc-ui/lib/angular';
 
 import {
     DataTypesService,
@@ -44,33 +44,33 @@ import {
     EntityService
 } from "./services";
 import { UserService } from "./ng2/services/user.service";
-import {forwardRef} from '@angular/core';
-import {UpgradeAdapter} from '@angular/upgrade';
-import {CHANGE_COMPONENT_CSAR_VERSION_FLAG, States, PREVIOUS_CSAR_COMPONENT} from "./utils";
-import {IAppConfigurtaion, IAppMenu, IMainCategory, Resource, IHostedApplication} from "./models";
-import {ComponentFactory} from "./utils/component-factory";
-import {ModalsHandler} from "./utils/modals-handler";
-import {downgradeComponent} from "@angular/upgrade/static";
+import { forwardRef } from '@angular/core';
+import { UpgradeAdapter } from '@angular/upgrade';
+import { CHANGE_COMPONENT_CSAR_VERSION_FLAG, States, PREVIOUS_CSAR_COMPONENT } from "./utils";
+import { IAppConfigurtaion, IAppMenu, IMainCategory, Resource, IHostedApplication } from "./models";
+import { ComponentFactory } from "./utils/component-factory";
+import { ModalsHandler } from "./utils/modals-handler";
+import { downgradeComponent } from "@angular/upgrade/static";
 
-import {AppModule} from './ng2/app.module';
-import {Component} from "./models/components/component";
-import {ComponentServiceNg2} from "./ng2/services/component-services/component.service";
-import {ComponentMetadata} from "./models/component-metadata";
-import {Categories} from "./models/categories";
-import {IUserProperties} from "./models/user";
+import { AppModule } from './ng2/app.module';
+import { Component } from "./models/components/component";
+import { ComponentServiceNg2 } from "./ng2/services/component-services/component.service";
+import { ComponentMetadata } from "./models/component-metadata";
+import { Categories } from "./models/categories";
+import { IUserProperties } from "./models/user";
 
-let moduleName:string = 'sdcApp';
-let viewModelsModuleName:string = 'Sdc.ViewModels';
-let directivesModuleName:string = 'Sdc.Directives';
-let servicesModuleName:string = 'Sdc.Services';
-let filtersModuleName:string = 'Sdc.Filters';
-let utilsModuleName:string = 'Sdc.Utils';
+let moduleName: string = 'sdcApp';
+let viewModelsModuleName: string = 'Sdc.ViewModels';
+let directivesModuleName: string = 'Sdc.Directives';
+let servicesModuleName: string = 'Sdc.Services';
+let filtersModuleName: string = 'Sdc.Filters';
+let utilsModuleName: string = 'Sdc.Utils';
 
 // Load configuration according to environment.
-declare var __ENV__:string;
-let sdcConfig:IAppConfigurtaion;
-let sdcMenu:IAppMenu;
-let pathPrefix:string = '';
+declare var __ENV__: string;
+let sdcConfig: IAppConfigurtaion;
+let sdcMenu: IAppMenu;
+let pathPrefix: string = '';
 if (__ENV__ === 'dev') {
     sdcConfig = require('./../../configurations/dev.js');
 } else if (__ENV__ === 'prod') {
@@ -81,7 +81,7 @@ if (__ENV__ === 'dev') {
 }
 sdcMenu = require('./../../configurations/menu.js');
 
-let dependentModules:Array<string> = [
+let dependentModules: Array<string> = [
     'ui.router',
     'ui.bootstrap',
     'ui.bootstrap.tpls',
@@ -110,7 +110,7 @@ let dependentModules:Array<string> = [
 
 // ===================== Hosted applications section ====================
 // Define here new hosted apps
-let hostedApplications:Array<IHostedApplication> = [
+let hostedApplications: Array<IHostedApplication> = [
     {
         "moduleName": "dcaeApp",
         "navTitle": "DCAE",
@@ -125,7 +125,7 @@ let hostedApplications:Array<IHostedApplication> = [
 ];
 
 // Check if module exists (in case the javascript was not loaded).
-let isModuleExists = (moduleName:string):boolean => {
+let isModuleExists = (moduleName: string): boolean => {
     try {
         angular.module(moduleName);
         dependentModules.push(moduleName);
@@ -137,14 +137,14 @@ let isModuleExists = (moduleName:string):boolean => {
 };
 
 // Check which hosted applications exists
-_.each(hostedApplications, (hostedApp)=> {
+_.each(hostedApplications, (hostedApp) => {
     if (isModuleExists(hostedApp.moduleName)) {
         hostedApp['exists'] = true;
     }
 });
 // ===================== Hosted applications section ====================
 
-export const ng1appModule:ng.IModule = angular.module(moduleName, dependentModules);
+export const ng1appModule: ng.IModule = angular.module(moduleName, dependentModules);
 
 ng1appModule.config([
     '$stateProvider',
@@ -153,12 +153,12 @@ ng1appModule.config([
     '$httpProvider',
     'tooltipsConfigProvider',
     'NotificationProvider',
-    ($stateProvider:any,
-     $translateProvider:any,
-     $urlRouterProvider:ng.ui.IUrlRouterProvider,
-     $httpProvider:ng.IHttpProvider,
-     tooltipsConfigProvider:any,
-     NotificationProvider:any):void => {
+    ($stateProvider: any,
+        $translateProvider: any,
+        $urlRouterProvider: ng.ui.IUrlRouterProvider,
+        $httpProvider: ng.IHttpProvider,
+        tooltipsConfigProvider: any,
+        NotificationProvider: any): void => {
 
         NotificationProvider.setOptions({
             delay: 5000,
@@ -200,7 +200,7 @@ ng1appModule.config([
             }
         );
 
-        let componentsParam:Array<any> = ['$stateParams', 'Sdc.Services.EntityService', 'Sdc.Services.CacheService', ($stateParams:any, EntityService:EntityService, cacheService:CacheService) => {
+        let componentsParam: Array<any> = ['$stateParams', 'Sdc.Services.EntityService', 'Sdc.Services.CacheService', ($stateParams: any, EntityService: EntityService, cacheService: CacheService) => {
             if (cacheService.get('breadcrumbsComponentsState') === $stateParams.previousState) {
                 const breadcrumbsComponents = cacheService.get('breadcrumbsComponents');
                 if (breadcrumbsComponents) {
@@ -225,7 +225,7 @@ ng1appModule.config([
             }
         }];
 
-        const oldWorkspaceController:Array<any> = ['$location', ($location:ng.ILocationService) => {
+        const oldWorkspaceController: Array<any> = ['$location', ($location: ng.ILocationService) => {
             // redirect old /workspace/* urls to /catalog/workspace/* url
             const newUrl = '/catalog' + $location.url();
             console.log('old workspace path - redirecting to:', newUrl);
@@ -242,23 +242,24 @@ ng1appModule.config([
         $stateProvider.state(
             'workspace', {
                 url: '/:previousState/workspace/:id/:type/',
-                params: {'importedFile': null, 'componentCsar': null, 'resourceType': null, 'disableButtons': null},
+                params: { 'importedFile': null, 'componentCsar': null, 'resourceType': null, 'disableButtons': null },
                 templateUrl: './view-models/workspace/workspace-view.html',
                 controller: viewModelsModuleName + '.WorkspaceViewModel',
                 resolve: {
-                    injectComponent: ['$stateParams', 'ComponentFactory', 'Sdc.Services.CacheService', 'ComponentServiceNg2', function ($stateParams, ComponentFactory:ComponentFactory, cacheService:CacheService, ComponentServiceNg2:ComponentServiceNg2) {
+                    injectComponent: ['$stateParams', 'ComponentFactory', 'Sdc.Services.CacheService', 'ComponentServiceNg2', function ($stateParams, ComponentFactory: ComponentFactory, cacheService: CacheService, ComponentServiceNg2: ComponentServiceNg2) {
 
                         if ($stateParams.id && $stateParams.id.length) { //need to check length in case ID is an empty string
+
                             return ComponentFactory.getComponentWithMetadataFromServer($stateParams.type.toUpperCase(), $stateParams.id).then(
-                                (component:Component)=> {
-                                if ($stateParams.componentCsar && component.isResource()){
-                                    if((<Resource>component).csarVersion != $stateParams.componentCsar.csarVersion) {
-                                        cacheService.set(PREVIOUS_CSAR_COMPONENT, angular.copy(component));
+                                (component: Component) => {
+                                    if ($stateParams.componentCsar && component.isResource()) {
+                                        if ((<Resource>component).csarVersion != $stateParams.componentCsar.csarVersion) {
+                                            cacheService.set(PREVIOUS_CSAR_COMPONENT, angular.copy(component));
+                                        }
+                                        component = ComponentFactory.updateComponentFromCsar($stateParams.componentCsar, <Resource>component);
                                     }
-                                    component = ComponentFactory.updateComponentFromCsar($stateParams.componentCsar, <Resource>component);
-                                }
-                                return component;
-                            });
+                                    return component;
+                                });
                         } else if ($stateParams.componentCsar && $stateParams.componentCsar.csarUUID) {
                             return $stateParams.componentCsar;
                         } else {
@@ -284,7 +285,7 @@ ng1appModule.config([
                 parent: 'workspace',
                 controller: viewModelsModuleName + '.GeneralViewModel',
                 templateUrl: './view-models/workspace/tabs/general/general-view.html',
-                data: {unsavedChanges: false, bodyClass: 'general'}
+                data: { unsavedChanges: false, bodyClass: 'general' }
             }
         );
 
@@ -360,11 +361,11 @@ ng1appModule.config([
         $stateProvider.state(
             States.WORKSPACE_PROPERTIES_ASSIGNMENT, {
                 url: 'properties_assignment',
-                params: {'component': null},
+                params: { 'component': null },
                 template: '<properties-assignment></properties-assignment>',
                 parent: 'workspace',
                 resolve: {
-                    componentData: ['injectComponent', '$stateParams', function (injectComponent:Component, $stateParams) {
+                    componentData: ['injectComponent', '$stateParams', function (injectComponent: Component, $stateParams) {
                         //injectComponent.componentService = null; // this is for not passing the service so no one will use old api and start using new api
                         $stateParams.component = injectComponent;
                         return injectComponent;
@@ -558,7 +559,7 @@ ng1appModule.config([
             'workspace.plugins', {
                 url: 'plugins/*path',
                 parent: 'workspace',
-                params: {'queryParams': null},
+                params: { 'queryParams': null },
                 templateUrl: './view-models/workspace/tabs/plugins/plugins-context-view.html',
                 controller: viewModelsModuleName + '.PluginsContextViewModel'
             }
@@ -590,7 +591,7 @@ ng1appModule.config([
         );
 
         // Build the states for all hosted apps dynamically
-        _.each(hostedApplications, (hostedApp)=> {
+        _.each(hostedApplications, (hostedApp) => {
             if (hostedApp.exists) {
                 $stateProvider.state(
                     hostedApp.state.name, {
@@ -608,12 +609,12 @@ ng1appModule.config([
                 templateUrl: './view-models/catalog/catalog-view.html',
                 controller: viewModelsModuleName + '.CatalogViewModel',
                 resolve: {
-                    auth: ["$q", "UserServiceNg2", ($q:any, userService:UserService) => {
-                        let userInfo:IUserProperties = userService.getLoggedinUser();
+                    auth: ["$q", "UserServiceNg2", ($q: any, userService: UserService) => {
+                        let userInfo: IUserProperties = userService.getLoggedinUser();
                         if (userInfo) {
                             return $q.when(userInfo);
                         } else {
-                            return $q.reject({authenticated: false});
+                            return $q.reject({ authenticated: false });
                         }
                     }]
                 }
@@ -690,34 +691,34 @@ ng1appModule.run([
     'Sdc.Services.DataTypesService',
     'AngularJSBridge',
     '$templateCache',
-    ($http:ng.IHttpService,
-     cacheService:CacheService,
-     cookieService:CookieService,
-     ConfigurationUi:ConfigurationUiService,
-     userService:UserService,
-     categoryResourceService:ICategoryResourceClass,
-     sdcVersionService:SdcVersionService,
-     $state:ng.ui.IStateService,
-     $rootScope:ng.IRootScopeService,
-     $location:ng.ILocationService,
-     sdcMenu:IAppMenu,
-     ModalsHandler:ModalsHandler,
-     ecompHeaderService:EcompHeaderService,
-     LeftPaletteLoaderService:LeftPaletteLoaderService,
-     DataTypesService:DataTypesService,
-     AngularJSBridge,
-     $templateCache:ng.ITemplateCacheService):void => {
+    ($http: ng.IHttpService,
+        cacheService: CacheService,
+        cookieService: CookieService,
+        ConfigurationUi: ConfigurationUiService,
+        userService: UserService,
+        categoryResourceService: ICategoryResourceClass,
+        sdcVersionService: SdcVersionService,
+        $state: ng.ui.IStateService,
+        $rootScope: ng.IRootScopeService,
+        $location: ng.ILocationService,
+        sdcMenu: IAppMenu,
+        ModalsHandler: ModalsHandler,
+        ecompHeaderService: EcompHeaderService,
+        LeftPaletteLoaderService: LeftPaletteLoaderService,
+        DataTypesService: DataTypesService,
+        AngularJSBridge,
+        $templateCache: ng.ITemplateCacheService): void => {
         $templateCache.put('notification-custom-template.html', require('./view-models/shared/notification-custom-template.html'));
         $templateCache.put('notification-custom-template.html', require('./view-models/shared/notification-custom-template.html'));
         //handle cache data - version
-        let initAsdcVersion:Function = ():void => {
+        let initAsdcVersion: Function = (): void => {
 
             let onFailed = (response) => {
                 console.info('onFailed initAsdcVersion', response);
                 cacheService.set('version', 'N/A');
             };
 
-            let onSuccess = (version:any) => {
+            let onSuccess = (version: any) => {
                 let tmpVerArray = version.version.split(".");
                 let ver = tmpVerArray[0] + "." + tmpVerArray[1] + "." + tmpVerArray[2];
                 cacheService.set('version', ver);
@@ -727,29 +728,29 @@ ng1appModule.run([
 
         };
 
-        let initEcompMenu:Function = (user):void => {
-            ecompHeaderService.getMenuItems(user.userId).then((data)=> {
+        let initEcompMenu: Function = (user): void => {
+            ecompHeaderService.getMenuItems(user.userId).then((data) => {
                 $rootScope['menuItems'] = data;
             });
         };
 
-        let initConfigurationUi:Function = ():void => {
+        let initConfigurationUi: Function = (): void => {
             ConfigurationUi
                 .getConfigurationUi()
-                .then((configurationUi:any) => {
+                .then((configurationUi: any) => {
                     cacheService.set('UIConfiguration', configurationUi);
                 });
         };
 
-        let initCategories:Function = ():void => {
-            let onError = ():void => {
+        let initCategories: Function = (): void => {
+            let onError = (): void => {
                 console.log('Failed to init categories');
             };
 
-            categoryResourceService.getAllCategories((categories: Categories):void => {
+            categoryResourceService.getAllCategories((categories: Categories): void => {
                 cacheService.set('serviceCategories', categories.serviceCategories);
                 cacheService.set('resourceCategories', categories.resourceCategories);
-                let combinationCat =[{"name":"combination","normalizedName":"combination","uniqueId":"combination","icons":[],"subcategories":null,"version":null,"ownerId":null,"empty":false,"type":null}]
+                let combinationCat = [{ "name": "combination", "normalizedName": "combination", "uniqueId": "combination", "icons": [], "subcategories": null, "version": null, "ownerId": null, "empty": false, "type": null }]
                 cacheService.set('combinationCategories', combinationCat);
             }, onError);
         };
@@ -764,11 +765,11 @@ ng1appModule.run([
 
         initAsdcVersion();
         initConfigurationUi();
-       // initLeftPalette();
+        // initLeftPalette();
         DataTypesService.initDataTypes();
 
         //handle stateChangeStart
-        let internalDeregisterStateChangeStartWatcher:Function = ():void => {
+        let internalDeregisterStateChangeStartWatcher: Function = (): void => {
             if (deregisterStateChangeStartWatcher) {
                 deregisterStateChangeStartWatcher();
                 deregisterStateChangeStartWatcher = null;
@@ -779,11 +780,11 @@ ng1appModule.run([
             }
         };
 
-        let removeLoader:Function = ():void => {
+        let removeLoader: Function = (): void => {
             $(".sdc-loading-page .main-loader").addClass("animated fadeOut");
             $(".sdc-loading-page .caption1").addClass("animated fadeOut");
             $(".sdc-loading-page .caption2").addClass("animated fadeOut");
-            window.setTimeout(():void=> {
+            window.setTimeout((): void => {
                 $(".sdc-loading-page .main-loader").css("display", "none");
                 $(".sdc-loading-page .caption1").css("display", "none");
                 $(".sdc-loading-page .caption2").css("display", "none");
@@ -791,8 +792,8 @@ ng1appModule.run([
             }, 1000);
         };
 
-        let onNavigateOut:Function = (toState, toParams):void => {
-            let onOk = ():void => {
+        let onNavigateOut: Function = (toState, toParams): void => {
+            let onOk = (): void => {
                 $state.current.data.unsavedChanges = false;
                 $state.go(toState.name, toParams);
             };
@@ -802,7 +803,7 @@ ng1appModule.run([
             ModalsHandler.openAlertModal(data.title, data.message).then(onOk);
         };
 
-        let onStateChangeStart:Function = (event, toState, toParams, fromState, fromParams):void => {
+        let onStateChangeStart: Function = (event, toState, toParams, fromState, fromParams): void => {
             console.info((new Date()).getTime());
             console.info('$stateChangeStart', toState.name);
 
@@ -811,7 +812,7 @@ ng1appModule.run([
                     event.preventDefault();
                 }
 
-                userService.authorize().subscribe((userInfo:IUserProperties) => {
+                userService.authorize().subscribe((userInfo: IUserProperties) => {
                     if (!doesUserHasAccess(toState, userInfo)) {
                         $state.go('error-403');
                         console.info('User has no permissions');
@@ -833,7 +834,7 @@ ng1appModule.run([
                         }
 
                         // After user authorized init categories
-                        window.setTimeout(():void=> {
+                        window.setTimeout((): void => {
                             if ($state.current.name === '') {
                                 $state.go(toState.name, toParams);
                             }
@@ -876,7 +877,7 @@ ng1appModule.run([
 
         };
 
-        let onStateChangeSuccess:Function = (event, toState, toParams, fromState, fromParams):void => {
+        let onStateChangeSuccess: Function = (event, toState, toParams, fromState, fromParams): void => {
             console.info('$stateChangeSuccess', toState.name);
 
             // Workaround in case we are entering other state then workspace (user move to catalog)
@@ -885,7 +886,7 @@ ng1appModule.run([
                 if (cacheService.contains(CHANGE_COMPONENT_CSAR_VERSION_FLAG)) {
                     cacheService.remove(CHANGE_COMPONENT_CSAR_VERSION_FLAG);
                 }
-                if (cacheService.contains(PREVIOUS_CSAR_COMPONENT)){
+                if (cacheService.contains(PREVIOUS_CSAR_COMPONENT)) {
                     cacheService.remove(PREVIOUS_CSAR_COMPONENT);
                 }
             }
@@ -897,7 +898,7 @@ ng1appModule.run([
             }
         };
 
-        let doesUserHasAccess:Function = (toState, user):boolean => {
+        let doesUserHasAccess: Function = (toState, user): boolean => {
 
             let isUserHasAccess = true;
             if (toState.permissions && toState.permissions.length > 0) {
@@ -905,16 +906,18 @@ ng1appModule.run([
             }
             return isUserHasAccess;
         };
-        let deregisterStateChangeStartWatcher:Function;
-        let deregisterStateChangeSuccessWatcher:Function;
+        let deregisterStateChangeStartWatcher: Function;
+        let deregisterStateChangeSuccessWatcher: Function;
 
-        let registerStateChangeStartWatcher:Function = ():void => {
+        let registerStateChangeStartWatcher: Function = (): void => {
             internalDeregisterStateChangeStartWatcher();
             console.info('registerStateChangeStartWatcher $stateChangeStart');
-            deregisterStateChangeStartWatcher = $rootScope.$on('$stateChangeStart', (event, toState, toParams, fromState, fromParams):void => {
+            deregisterStateChangeStartWatcher = $rootScope.$on('$stateChangeStart', (event, toState, toParams, fromState, fromParams): void => {
+
                 onStateChangeStart(event, toState, toParams, fromState, fromParams);
             });
-            deregisterStateChangeSuccessWatcher = $rootScope.$on('$stateChangeSuccess', (event, toState, toParams, fromState, fromParams):void => {
+            deregisterStateChangeSuccessWatcher = $rootScope.$on('$stateChangeSuccess', (event, toState, toParams, fromState, fromParams): void => {
+
                 onStateChangeSuccess(event, toState, toParams, fromState, fromParams);
             });
         };
