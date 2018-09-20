@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -24,71 +24,115 @@ import java.util.List;
 import java.util.Map;
 
 
-
 public class PolicyType {
 
-  private String derived_from;
-  private String version;
-  private Map<String, String> metadata;
-  private String description;
-  private Map<String, PropertyDefinition> properties;
-  private List<String> targets;
-  private List<Trigger> triggers;
+    private String derived_from;
+    private String version;
+    private Map<String, String> metadata;
+    private String description;
+    private Map<String, PropertyDefinition> properties;
+    private List<String> targets;
+    private Map<String, Trigger> triggers;
 
-  public String getDerived_from() {
-    return derived_from;
-  }
+    @Override
+    public int hashCode() {
+        int result = getDerived_from() != null ? getDerived_from().hashCode() : 0;
+        result = 31 * result + (getVersion() != null ? getVersion().hashCode() : 0);
+        result = 31 * result + (getMetadata() != null ? getMetadata().hashCode() : 0);
+        result = 31 * result + (getDescription() != null ? getDescription().hashCode() : 0);
+        result = 31 * result + (getProperties() != null ? getProperties().hashCode() : 0);
+        result = 31 * result + (getTargets() != null ? getTargets().hashCode() : 0);
+        result = 31 * result + (getTriggers() != null ? getTriggers().hashCode() : 0);
+        return result;
+    }
 
-  public void setDerived_from(String derived_from) {
-    this.derived_from = derived_from;
-  }
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof PolicyType)) {
+            return false;
+        }
 
-  public String getVersion() {
-    return version;
-  }
+        PolicyType that = (PolicyType) o;
 
-  public void setVersion(String version) {
-    this.version = version;
-  }
+        if (getDerived_from() != null ? !getDerived_from().equals(that.getDerived_from()) :
+                    that.getDerived_from() != null) {
+            return false;
+        }
+        if (getVersion() != null ? !getVersion().equals(that.getVersion()) : that.getVersion() != null) {
+            return false;
+        }
+        if (getMetadata() != null ? !getMetadata().equals(that.getMetadata()) : that.getMetadata() != null) {
+            return false;
+        }
+        if (getDescription() != null ? !getDescription().equals(that.getDescription()) :
+                    that.getDescription() != null) {
+            return false;
+        }
+        if (getProperties() != null ? !getProperties().equals(that.getProperties()) : that.getProperties() != null) {
+            return false;
+        }
+        if (getTargets() != null ? !getTargets().equals(that.getTargets()) : that.getTargets() != null) {
+            return false;
+        }
+        return getTriggers() != null ? getTriggers().equals(that.getTriggers()) : that.getTriggers() == null;
+    }
 
-  public String getDescription() {
-    return description;
-  }
+    public String getDerived_from() {
+        return derived_from;
+    }
 
-  public void setDescription(String description) {
-    this.description = description;
-  }
+    public void setDerived_from(String derivedFrom) {
+        this.derived_from = derivedFrom;
+    }
 
-  public Map<String, PropertyDefinition> getProperties() {
-    return properties;
-  }
+    public String getVersion() {
+        return version;
+    }
 
-  public void setProperties(Map<String, PropertyDefinition> properties) {
-    this.properties = properties;
-  }
+    public void setVersion(String version) {
+        this.version = version;
+    }
 
-  public List<String> getTargets() {
-    return targets;
-  }
+    public Map<String, String> getMetadata() {
+        return metadata;
+    }
 
-  public void setTargets(List<String> targets) {
-    this.targets = targets;
-  }
+    public String getDescription() {
+        return description;
+    }
 
-  public Map<String, String> getMetadata() {
-    return metadata;
-  }
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-  public void setMetadata(Map<String, String> metadata) {
-    this.metadata = metadata;
-  }
+    public Map<String, PropertyDefinition> getProperties() {
+        return properties;
+    }
 
-  public List<Trigger> getTriggers() {
-    return triggers;
-  }
+    public void setProperties(Map<String, PropertyDefinition> properties) {
+        this.properties = properties;
+    }
 
-  public void setTriggers(
-      List<Trigger> triggers) {
-    this.triggers = triggers;
-  }
+    public List<String> getTargets() {
+        return targets;
+    }
+
+    public void setTargets(List<String> targets) {
+        this.targets = targets;
+    }
+
+    public Map<String, Trigger> getTriggers() {
+        return triggers;
+    }
+
+    public void setTriggers(Map<String, Trigger> triggers) {
+        this.triggers = triggers;
+    }
+
+    public void setMetadata(Map<String, String> metadata) {
+        this.metadata = metadata;
+    }
 }
