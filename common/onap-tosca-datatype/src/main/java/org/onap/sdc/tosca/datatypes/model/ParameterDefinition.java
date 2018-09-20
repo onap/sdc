@@ -19,4 +19,19 @@ package org.onap.sdc.tosca.datatypes.model;
 
 public class ParameterDefinition extends DefinitionOfDataType {
 
+    @Override
+    public ParameterDefinition clone() {
+        DefinitionOfDataType definitionOfDataType = super.clone();
+        ParameterDefinition parameterDefinition = new ParameterDefinition();
+        parameterDefinition.set_default(definitionOfDataType.get_default());
+        parameterDefinition.setConstraints(definitionOfDataType.getConstraints());
+        parameterDefinition.setDescription(definitionOfDataType.getDescription());
+        parameterDefinition.setEntry_schema(definitionOfDataType.getEntry_schema());
+        parameterDefinition.setRequired(definitionOfDataType.getRequired());
+        parameterDefinition.setType(definitionOfDataType.getType());
+        parameterDefinition.setStatus(definitionOfDataType.getStatus());
+        parameterDefinition.setValue(definitionOfDataType.getValue());
+        return parameterDefinition;
+    }
+
 }

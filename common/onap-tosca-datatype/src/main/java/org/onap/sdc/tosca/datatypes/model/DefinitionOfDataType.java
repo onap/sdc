@@ -17,8 +17,10 @@
 package org.onap.sdc.tosca.datatypes.model;
 
 import java.util.List;
+import java.util.Objects;
+import org.onap.sdc.tosca.services.DataModelCloneUtil;
 
-public class DefinitionOfDataType {
+public class DefinitionOfDataType implements Cloneable{
 
   protected String type;
   protected String description;
@@ -91,6 +93,20 @@ public class DefinitionOfDataType {
 
   public void setEntry_schema(EntrySchema entry_schema) {
     this.entry_schema = entry_schema;
+  }
+
+  @Override
+  public DefinitionOfDataType clone() {
+    DefinitionOfDataType definitionOfDataType = new DefinitionOfDataType();
+    definitionOfDataType.setType(this.getType());
+    definitionOfDataType.setDescription(this.getDescription());
+    definitionOfDataType.setRequired(this.getRequired());
+    definitionOfDataType.set_default(this.get_default());
+    definitionOfDataType.setStatus(this.getStatus());
+    definitionOfDataType.setEntry_schema(
+            Objects.isNull(this.getEntry_schema()) ? null : this.getEntry_schema().clone());
+    definitionOfDataType.setConstraints(DataModelCloneUtil.cloneConstraints(this.getConstraints()));
+    return definitionOfDataType;
   }
 
 }

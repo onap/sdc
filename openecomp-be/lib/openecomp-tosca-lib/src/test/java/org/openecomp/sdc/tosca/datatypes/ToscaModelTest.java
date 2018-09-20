@@ -25,9 +25,35 @@ import java.util.Map;
 import java.util.Optional;
 import org.junit.Assert;
 import org.junit.Test;
-import org.onap.sdc.tosca.datatypes.model.*;
+import org.onap.sdc.tosca.datatypes.model.ArtifactType;
+import org.onap.sdc.tosca.datatypes.model.AttributeDefinition;
+import org.onap.sdc.tosca.datatypes.model.CapabilityAssignment;
+import org.onap.sdc.tosca.datatypes.model.CapabilityDefinition;
+import org.onap.sdc.tosca.datatypes.model.CapabilityFilter;
+import org.onap.sdc.tosca.datatypes.model.Constraint;
+import org.onap.sdc.tosca.datatypes.model.Directive;
+import org.onap.sdc.tosca.datatypes.model.Implementation;
+import org.onap.sdc.tosca.datatypes.model.Import;
+import org.onap.sdc.tosca.datatypes.model.InterfaceDefinitionTemplate;
+import org.onap.sdc.tosca.datatypes.model.InterfaceDefinitionType;
+import org.onap.sdc.tosca.datatypes.model.InterfaceType;
+import org.onap.sdc.tosca.datatypes.model.NodeFilter;
+import org.onap.sdc.tosca.datatypes.model.NodeTemplate;
+import org.onap.sdc.tosca.datatypes.model.NodeType;
+import org.onap.sdc.tosca.datatypes.model.OperationDefinition;
+import org.onap.sdc.tosca.datatypes.model.OperationDefinitionTemplate;
+import org.onap.sdc.tosca.datatypes.model.OperationDefinitionType;
+import org.onap.sdc.tosca.datatypes.model.ParameterDefinition;
+import org.onap.sdc.tosca.datatypes.model.PropertyDefinition;
+import org.onap.sdc.tosca.datatypes.model.PropertyType;
 import org.onap.sdc.tosca.datatypes.model.RequirementAssignment;
-import org.onap.sdc.tosca.datatypes.model.extension.*;
+import org.onap.sdc.tosca.datatypes.model.RequirementDefinition;
+import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
+import org.onap.sdc.tosca.datatypes.model.SubstitutionMapping;
+import org.onap.sdc.tosca.datatypes.model.TopologyTemplate;
+import org.onap.sdc.tosca.datatypes.model.extension.RequirementAssignmentExt;
+import org.onap.sdc.tosca.datatypes.model.extension.SubstitutionFilter;
+import org.onap.sdc.tosca.datatypes.model.extension.SubstitutionMappingExt;
 import org.onap.sdc.tosca.datatypes.model.heatextend.ParameterDefinitionExt;
 import org.onap.sdc.tosca.services.ToscaExtensionYamlUtil;
 import org.onap.sdc.tosca.services.YamlUtil;
@@ -72,6 +98,7 @@ public class ToscaModelTest {
         metadata.put("Template_author", "OPENECOMP");
         metadata.put(ToscaConstants.ST_METADATA_TEMPLATE_NAME, "Test");
         metadata.put("Template_version", "1.0.0");
+        serviceTemplate.setMetadata(metadata);
         serviceTemplate.setTosca_definitions_version("tosca_simple_yaml_1_0_0");
         serviceTemplate.setDescription("testing desc tosca service template");
 
@@ -156,13 +183,13 @@ public class ToscaModelTest {
         nodeType.setRequirements(reqList);
 
 
-        Map<String, CapabilityDefinition> capsDef = new HashMap<>();
         CapabilityDefinition capdef = new CapabilityDefinition();
         capdef.setType("tosca.cap");
         List<String> vvSource = new ArrayList<>();
         vvSource.add("node1");
         vvSource.add("node2");
         capdef.setValid_source_types(vvSource);
+        Map<String, CapabilityDefinition> capsDef = new HashMap<>();
         capsDef.put("cap1", capdef);
         nodeType.setCapabilities(capsDef);
 
@@ -172,7 +199,6 @@ public class ToscaModelTest {
 
         TopologyTemplate topologyTemplate = new TopologyTemplate();
         topologyTemplate.setDescription("topologi template descroption");
-        Map<String, ParameterDefinition> inputs = new HashMap<>();
         ParameterDefinition paramDef = new ParameterDefinition();
         paramDef.setType(PropertyType.STRING.getDisplayName());
         paramDef.setDescription("desc");
@@ -187,10 +213,10 @@ public class ToscaModelTest {
         paramConstraint.add(paramConst1);
         paramConstraint.add(paramConst2);
         paramDef.setConstraints(paramConstraint);
+        Map<String, ParameterDefinition> inputs = new HashMap<>();
         inputs.put("inParam1", paramDef);
         topologyTemplate.setInputs(inputs);
 
-        Map<String, NodeTemplate> nodeTemplates = new HashMap<>();
         NodeTemplate nodeTemplate = new NodeTemplate();
         nodeTemplate.setType("nodeTypeRef");
         List<String> directives = new ArrayList<>();
@@ -204,6 +230,7 @@ public class ToscaModelTest {
         Map<String, Object> nodeTemplateAtts = new HashMap<>();
         nodeTemplateAtts.put("att1", "att1Val");
         nodeTemplateAtts.put("att2", "{ get_input: my_mysql_rootpw }");
+        Map<String, NodeTemplate> nodeTemplates = new HashMap<>();
         nodeTemplate.setAttributes(nodeTemplateAtts);
 
 
@@ -215,7 +242,6 @@ public class ToscaModelTest {
         reqAssOccurrences[0] = 1;
         reqAssOccurrences[1] = 2;
         reqAssignment1.setOccurrences(reqAssOccurrences);
-        NodeFilter reqNodeFilter = new NodeFilter();
         List<Constraint> propConstraint1 = new ArrayList<>();
         Constraint propConst1 = new Constraint();
         propConst1.setGreater_or_equal(9);
@@ -232,6 +258,7 @@ public class ToscaModelTest {
         propsMap.put("propName1", propConstraint1);
         propsMap.put("propName2", propConstraint2);
         nodeFilterProp.add(propsMap);
+        NodeFilter reqNodeFilter = new NodeFilter();
         reqNodeFilter.setProperties(nodeFilterProp);
         reqAssignment1.setNode_filter(reqNodeFilter);
 
@@ -247,7 +274,6 @@ public class ToscaModelTest {
         nodeTemplate.getRequirements().add(nodeTemplateRequirement1);
         nodeTemplate.getRequirements().add(nodeTemplateRequirement2);
 
-        Map<String, CapabilityAssignment> nodeTemplateCapability = new HashMap<>();
         CapabilityAssignment capAss = new CapabilityAssignment();
         Map<String, Object> capProps = new HashMap<>();
         capProps.put("num_cpus", "{ get_input: cpus }");
@@ -255,10 +281,10 @@ public class ToscaModelTest {
         Map<String, Object> capAtts = new HashMap<>();
         capAtts.put("num_cpus", "66");
         capAss.setAttributes(capAtts);
+        Map<String, CapabilityAssignment> nodeTemplateCapability = new HashMap<>();
         nodeTemplateCapability.put("cap1", capAss);
         nodeTemplate.setCapabilities(nodeTemplateCapability);
 
-        NodeFilter nodeTemplateNodeFilter = new NodeFilter();
         List<Map<String, List<Constraint>>> nodeFilterProp2 = new ArrayList<>();
         Map<String, List<Constraint>> propsMap2 = new HashMap<>();
         Constraint c1 = new Constraint();
@@ -267,6 +293,7 @@ public class ToscaModelTest {
         consList.add(c1);
         propsMap2.put("test1", consList);
         nodeFilterProp2.add(propsMap2);
+        NodeFilter nodeTemplateNodeFilter = new NodeFilter();
         nodeTemplateNodeFilter.setProperties(nodeFilterProp2);
         nodeTemplate.setNode_filter(nodeTemplateNodeFilter);
         nodeTemplates.put("firatNodeTemplate", nodeTemplate);
@@ -275,10 +302,10 @@ public class ToscaModelTest {
         SubstitutionMapping subMap = new SubstitutionMapping();
         subMap.setNode_type("myNodeType.node");
         Map<String, List<String>> mapCapabilities = new HashMap<>();
-        List<String> NodeCap = new ArrayList<>();
-        NodeCap.add("database");
-        NodeCap.add("database_endpoint");
-        mapCapabilities.put("database_endpoint", NodeCap);
+        List<String> nodeCap = new ArrayList<>();
+        nodeCap.add("database");
+        nodeCap.add("database_endpoint");
+        mapCapabilities.put("database_endpoint", nodeCap);
         subMap.setCapabilities(mapCapabilities);
         topologyTemplate.setSubstitution_mappings(subMap);
         serviceTemplate.setTopology_template(topologyTemplate);
@@ -291,8 +318,7 @@ public class ToscaModelTest {
 
   @Test
   public void testYamlToServiceTemplateObj() throws IOException {
-    ServiceTemplate serviceTemplateFromYaml =
-        getServiceTemplate(BASE_DIR + ST);
+    ServiceTemplate serviceTemplateFromYaml = getServiceTemplate(BASE_DIR + ST);
     Assert.assertNotNull(serviceTemplateFromYaml);
   }
 
@@ -303,7 +329,7 @@ public class ToscaModelTest {
 
         InterfaceType expectedInterfaceType = createInterfaceType();
 
-        Map<String, InterfaceType> interfaceTypes = DataModelUtil.getInterfaceTypes(serviceTemplateWithOperation);
+        Map<String, InterfaceType> interfaceTypes = serviceTemplateWithOperation.getNormalizeInterfaceTypes();
         Assert.assertEquals(1, interfaceTypes.size());
         InterfaceType actualInterfaceType = interfaceTypes.get(INTERFACE_ID);
         Assert.assertEquals(expectedInterfaceType, actualInterfaceType);
@@ -316,9 +342,10 @@ public class ToscaModelTest {
         ServiceTemplate serviceTemplateWithOperation = getServiceTemplate(BASE_DIR + ST_WITH_OPERATIONS);
 
         OperationDefinition operationDefinition = createOperationDefinition();
-
-        DataModelUtil.addInterfaceOperation(serviceTemplateWithInterface, INTERFACE_ID, OPERATION_START,
-                operationDefinition);
+        InterfaceType normalizeInterfaceType =
+                serviceTemplateWithInterface.getNormalizeInterfaceTypes().get(INTERFACE_ID);
+        normalizeInterfaceType.addOperation(OPERATION_START, operationDefinition);
+        serviceTemplateWithInterface.addInterfaceType(INTERFACE_ID, normalizeInterfaceType);
         String expectedServiceTemplate = yamlUtil.objectToYaml(serviceTemplateWithOperation);
         String actualServiceTemplate = yamlUtil.objectToYaml(serviceTemplateWithInterface);
         Assert.assertEquals(expectedServiceTemplate, actualServiceTemplate);
@@ -330,7 +357,7 @@ public class ToscaModelTest {
         ServiceTemplate serviceTemplateWithOperation = getServiceTemplate(BASE_DIR + ST_WITH_OPERATIONS);
         InterfaceType interfaceType = createInterfaceType();
 
-        Optional<Object> interfaceAsObj = DataModelUtil.convertInterfaceTypeToObj(interfaceType);
+        Optional<Object> interfaceAsObj = interfaceType.convertInterfaceTypeToToscaObj();
         Assert.assertTrue(interfaceAsObj.isPresent());
 
         Map<String, Object> interfaceTypes = new HashMap<>();
@@ -345,14 +372,10 @@ public class ToscaModelTest {
     @Test
     public void testObjToInterfaceTypeConversion() throws IOException, ReflectiveOperationException {
         ServiceTemplate serviceTemplateWithOperation = getServiceTemplate(BASE_DIR + ST_WITH_OPERATIONS);
-        Map<String, Object> interfaceTypes = serviceTemplateWithOperation.getInterface_types();
-        Object interfaceObj = interfaceTypes.get(INTERFACE_ID);
-        Optional<InterfaceType> actualInterfaceType =
-                DataModelUtil.convertObjToInterfaceType(INTERFACE_ID, interfaceObj);
-
-        Assert.assertTrue(actualInterfaceType.isPresent());
+        Map<String, InterfaceType> interfaceTypes = serviceTemplateWithOperation.getNormalizeInterfaceTypes();
+        InterfaceType actualInterfaceType = interfaceTypes.get(INTERFACE_ID);
         InterfaceType expectedInterfaceType = createInterfaceType();
-        Assert.assertEquals(expectedInterfaceType, actualInterfaceType.get());
+        Assert.assertEquals(expectedInterfaceType, actualInterfaceType);
     }
 
     @Test
@@ -362,33 +385,22 @@ public class ToscaModelTest {
         Map<String, Object> interfaces = nodeTypeWithInterface.getInterfaces();
         Object interfaceObj = interfaces.get(INTERFACE_ID);
 
-        Optional<? extends InterfaceDefinition> actualInterfaceDefinition = DataModelUtil
-                                                                                    .convertObjToInterfaceDefinition(
-                                                                                            INTERFACE_ID, interfaceObj,
-                                                                                            InterfaceDefinitionType.class);
-
-        Assert.assertTrue(actualInterfaceDefinition.isPresent());
-
+        InterfaceDefinitionType actualInterfaceDefinition = new InterfaceDefinitionType(interfaceObj);
         InterfaceDefinitionType expectedInterfaceDefinitionType = createInterfaceDefinitionType();
-        Assert.assertEquals(expectedInterfaceDefinitionType, actualInterfaceDefinition.get());
+        Assert.assertEquals(expectedInterfaceDefinitionType, actualInterfaceDefinition);
     }
 
     @Test
-    public void testObjToInterfaceDefinitionTemplateConversion() throws IOException, ReflectiveOperationException {
+    public void testObjToInterfaceDefinitionTemplateConversion() throws IOException {
         ServiceTemplate serviceTemplateWithInterfaceDef = getServiceTemplate(BASE_DIR + ST_WITH_INTERFACE_DEF);
         NodeTemplate nodeTemplateWithInterface =
                 DataModelUtil.getNodeTemplate(serviceTemplateWithInterfaceDef, NODE_TEMPLATE_ID);
         Map<String, Object> interfaces = nodeTemplateWithInterface.getInterfaces();
         Object interfaceObj = interfaces.get(INTERFACE_ID);
 
-        Optional<? extends InterfaceDefinition> actualInterfaceDefinition = DataModelUtil
-                                                                                    .convertObjToInterfaceDefinition(
-                                                                                            INTERFACE_ID, interfaceObj,
-                                                                                            InterfaceDefinitionTemplate.class);
-
-        Assert.assertTrue(actualInterfaceDefinition.isPresent());
+        InterfaceDefinitionTemplate actualInterfaceDefinition = new InterfaceDefinitionTemplate(interfaceObj);
         InterfaceDefinitionTemplate expectedInterfaceDefinitionTemplate = createInterfaceDefinitionTemplate();
-        Assert.assertEquals(expectedInterfaceDefinitionTemplate, actualInterfaceDefinition.get());
+        Assert.assertEquals(expectedInterfaceDefinitionTemplate, actualInterfaceDefinition);
     }
 
     @Test
@@ -416,19 +428,17 @@ public class ToscaModelTest {
                 DataModelUtil.getNodeTemplateRequirements(firstNodeTemplate);
 
         Object req1 = nodeTemplateRequirements.get(REQ1);
-        Assert.assertEquals(true, req1 instanceof org.onap.sdc.tosca.datatypes.model.extension.RequirementAssignment);
-        Assert.assertNotNull(((org.onap.sdc.tosca.datatypes.model.extension.RequirementAssignment)req1).getService_filter());
+        Assert.assertTrue(req1 instanceof RequirementAssignmentExt);
+        Assert.assertNotNull(((RequirementAssignmentExt) req1).getService_filter());
         List<Map<String, List<Constraint>>> properties =
-                ((org.onap.sdc.tosca.datatypes.model.extension.RequirementAssignment) req1).getService_filter()
-                                                                                           .getProperties();
+                ((RequirementAssignmentExt) req1).getService_filter().getProperties();
         Assert.assertNotNull(properties);
         List<Constraint> vmdNameConstrain = properties.get(0).get(VMD_NAME);
         Assert.assertNotNull(vmdNameConstrain);
         Assert.assertNotNull(vmdNameConstrain.get(0).getEqual());
 
         List<Map<String, CapabilityFilter>> capabilities =
-                ((org.onap.sdc.tosca.datatypes.model.extension.RequirementAssignment) req1).getService_filter()
-                                                                                           .getCapabilities();
+                ((RequirementAssignmentExt) req1).getService_filter().getCapabilities();
         Assert.assertNotNull(capabilities);
         CapabilityFilter capabilityFilter = capabilities.get(0).get(DIRECTOR);
         Assert.assertNotNull(capabilityFilter);
@@ -436,13 +446,11 @@ public class ToscaModelTest {
 
 
         Object req2 = nodeTemplateRequirements.get(REQ2);
-        Assert.assertEquals(true, req2 instanceof org.onap.sdc.tosca.datatypes.model.extension.RequirementAssignment);
-        Assert.assertNotNull(((org.onap.sdc.tosca.datatypes.model.extension.RequirementAssignment)req2).getService_filter());
-        Object tosca_id =
-                ((org.onap.sdc.tosca.datatypes.model.extension.RequirementAssignment) req2).getService_filter()
-                                                                                           .getTosca_id();
-        Assert.assertNotNull(tosca_id);
-        Assert.assertEquals(SERVICE_FILTER_TOSCA_ID, tosca_id.toString());
+        Assert.assertTrue(req2 instanceof RequirementAssignmentExt);
+        Assert.assertNotNull(((RequirementAssignmentExt) req2).getService_filter());
+        Object toscaId = ((RequirementAssignmentExt) req2).getService_filter().getTosca_id();
+        Assert.assertNotNull(toscaId);
+        Assert.assertEquals(SERVICE_FILTER_TOSCA_ID, toscaId.toString());
 
 
         String serviceTemplateYaml = toscaExtensionYamlUtil.objectToYaml(serviceTemplateWithServiceFilter);

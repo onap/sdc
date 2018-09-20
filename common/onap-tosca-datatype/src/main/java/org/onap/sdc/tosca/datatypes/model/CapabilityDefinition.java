@@ -25,7 +25,7 @@ import org.onap.sdc.tosca.services.DataModelCloneUtil;
 import java.util.List;
 import java.util.Map;
 
-public class CapabilityDefinition {
+public class CapabilityDefinition implements Cloneable{
 
   private String type;
   private String description;
@@ -104,7 +104,7 @@ public class CapabilityDefinition {
         .setAttributes(DataModelCloneUtil.cloneAttributeDefinitions(this.getAttributes()));
     capabilityDefinition.setDescription(this.getDescription());
     capabilityDefinition
-        .setValid_source_types(DataModelCloneUtil.cloneValidSourceTypes(this.getValid_source_types()));
+        .setValid_source_types(DataModelCloneUtil.cloneListString(this.getValid_source_types()));
     return capabilityDefinition;
 
   }
