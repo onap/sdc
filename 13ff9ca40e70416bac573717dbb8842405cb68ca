@@ -36,6 +36,75 @@
     },
     {
       "key": {
+        "uuid": "1a76adc5_dbea35d7",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 2585,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-20T09:01:15Z",
+      "side": 1,
+      "message": "missing user vlidation, validateCanWorkOnComponent, validateComponentExists pleasee see creat resource instance as an example\n\nin addition before making any change to the component it needs to be locked\nlockComponent\n\nwhy are you returning list?\nyou are changing one instance.",
+      "range": {
+        "startLine": 2585,
+        "startChar": 57,
+        "endLine": 2585,
+        "endChar": 80
+      },
+      "revId": "13ff9ca40e70416bac573717dbb8842405cb68ca",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_bb18991e",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 2591,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-20T09:01:15Z",
+      "side": 1,
+      "message": "this is incorrect the been is already available in the class we are inherited from. in general, we are using auto wire",
+      "range": {
+        "startLine": 2589,
+        "startChar": 8,
+        "endLine": 2591,
+        "endChar": 113
+      },
+      "revId": "13ff9ca40e70416bac573717dbb8842405cb68ca",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_fbe931e6",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 2592,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-20T09:01:15Z",
+      "side": 1,
+      "message": "this is done twice please store the response and use it again.",
+      "range": {
+        "startLine": 2592,
+        "startChar": 14,
+        "endLine": 2592,
+        "endChar": 64
+      },
+      "revId": "13ff9ca40e70416bac573717dbb8842405cb68ca",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1a76adc5_0e018d05",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
         "patchSetId": 1
@@ -81,6 +150,29 @@
       "writtenOn": "2018-09-11T05:40:11Z",
       "side": 1,
       "message": "Need an item for the {} placeholder.",
+      "revId": "13ff9ca40e70416bac573717dbb8842405cb68ca",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_1ba18d93",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 2654,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-20T09:01:15Z",
+      "side": 1,
+      "message": "this needs to be done in the servlet.",
+      "range": {
+        "startLine": 2641,
+        "startChar": 15,
+        "endLine": 2654,
+        "endChar": 129
+      },
       "revId": "13ff9ca40e70416bac573717dbb8842405cb68ca",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
@@ -525,6 +617,75 @@
       "writtenOn": "2018-09-11T05:40:11Z",
       "side": 1,
       "message": "Have a matching log entry at the end of this method:\n\"Start: copy component instance\"\n\"Finished: copy component instance\"",
+      "revId": "13ff9ca40e70416bac573717dbb8842405cb68ca",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_1bf74dd4",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/ComponentInstanceServlet.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1239,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-20T09:01:15Z",
+      "side": 1,
+      "message": "insted of creating a new json use the existing instance structure pass it from the ui and trit it as from.\nthsi way you will not need to create you own conversion.",
+      "range": {
+        "startLine": 1239,
+        "startChar": 8,
+        "endLine": 1239,
+        "endChar": 49
+      },
+      "revId": "13ff9ca40e70416bac573717dbb8842405cb68ca",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_7b2f613f",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/ComponentInstanceServlet.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1252,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-20T09:01:15Z",
+      "side": 1,
+      "message": "you need to update error-configuration. you need to update it there so that we will be able to map it a correct exception",
+      "range": {
+        "startLine": 1252,
+        "startChar": 10,
+        "endLine": 1252,
+        "endChar": 64
+      },
+      "revId": "13ff9ca40e70416bac573717dbb8842405cb68ca",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_9b327da5",
+        "filename": "catalog-dao/src/main/java/org/openecomp/sdc/be/dao/api/ActionStatus.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-20T09:01:15Z",
+      "side": 1,
+      "message": "please update the error configuration so that the mapping from the enum to it will be available.",
+      "range": {
+        "startLine": 23,
+        "startChar": 12,
+        "endLine": 23,
+        "endChar": 24
+      },
       "revId": "13ff9ca40e70416bac573717dbb8842405cb68ca",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
