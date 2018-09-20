@@ -48,7 +48,11 @@ public class PermissionsFilter implements Filter {
     private static final String EDIT_ITEM = "Edit_Item";
 
     public PermissionsFilter() {
-        this.permissionsServices = PermissionsServicesFactory.getInstance().createInterface();
+        this(PermissionsServicesFactory.getInstance().createInterface());
+    }
+
+    PermissionsFilter(PermissionsServices permissionsServices) {
+        this.permissionsServices = permissionsServices;
     }
 
     @Override

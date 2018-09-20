@@ -12,9 +12,12 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
-*/
+ */
 
 package org.openecomp.sdc.heat.datatypes;
+
+import java.util.HashSet;
+import java.util.Set;
 
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.ErrorCategory;
@@ -23,77 +26,75 @@ import org.openecomp.sdc.heat.services.ErrorCodes;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 
-import java.util.HashSet;
-import java.util.Set;
-
 public class HeatBoolean {
 
-  private static Set<Object> heatFalse;
-  private static Set<Object> heatTrue;
-  private static final  Logger LOG = LoggerFactory.getLogger(HeatBoolean.class.getName());
+    private static Set<Object> heatFalse;
+    private static Set<Object> heatTrue;
+    private static final Logger LOG = LoggerFactory.getLogger(HeatBoolean.class.getName());
 
-  private HeatBoolean() {
-    //Utility classes, which are a collection of static members, are not meant to be instantiated
-  }
-  static {
-
-
-    heatFalse = new HashSet<>();
-    heatFalse.add("f");
-    heatFalse.add(false);
-    heatFalse.add("false");
-    heatFalse.add("off");
-    heatFalse.add("n");
-    heatFalse.add("no");
-    heatFalse.add(0);
-
-    heatTrue = new HashSet<>();
-    heatTrue.add("t");
-    heatTrue.add(true);
-    heatTrue.add("true");
-    heatTrue.add("on");
-    heatTrue.add("y");
-    heatTrue.add("yes");
-    heatTrue.add(1);
-
-  }
-
-  /**
-   * Eval boolean.
-   *
-   * @param value the value
-   * @return the boolean
-   */
-  public static Boolean eval(Object value) {
-
-    if (value instanceof String) {
-      value = ((String) value).toLowerCase();
-    }
-    if (heatFalse.contains(value)) {
-      return false;
-    } else if (heatTrue.contains(value)) {
-      return true;
-    } else {
-      throw new CoreException((new ErrorCode.ErrorCodeBuilder()).withId(ErrorCodes.INVALID_BOOLEAN)
-          .withCategory(ErrorCategory.APPLICATION)
-          .withMessage("Invalid boolean value [" + value + "].").build());
+    private HeatBoolean() {
+        //Utility classes, which are a collection of static members, are not meant to be instantiated
     }
 
-  }
+    static {
 
-  /**
-   * Is value boolean boolean.
-   *
-   * @param value the value
-   * @return the boolean
-   */
-  public static boolean isValueBoolean(Object value) {
-    try {
-      eval(value);
-      return true;
-    } catch (CoreException ce) {
-      LOG.error("Failed to evaluate value as boolean: {}", value, ce);
-      return false;
+
+        heatFalse = new HashSet<>();
+        heatFalse.add("f");
+        heatFalse.add(false);
+        heatFalse.add("false");
+        heatFalse.add("off");
+        heatFalse.add("n");
+        heatFalse.add("no");
+        heatFalse.add(0);
+
+        heatTrue = new HashSet<>();
+        heatTrue.add("t");
+        heatTrue.add(true);
+        heatTrue.add("true");
+        heatTrue.add("on");
+        heatTrue.add("y");
+        heatTrue.add("yes");
+        heatTrue.add(1);
+
     }
-  }
+
+    /**
+     * Eval boolean.
+     *
+     * @param value the value
+     * @return the boolean
+     */
+    public static Boolean eval(Object value) {
+
+        if (value instanceof String) {
+            value = ((String) value).toLowerCase();
+        }
+        if (heatFalse.contains(value)) {
+            return false;
+        } else if (heatTrue.contains(value)) {
+            return true;
+        } else {
+            throw new CoreException((new ErrorCode.ErrorCodeBuilder()).withId(ErrorCodes.INVALID_BOOLEAN)
+                    .withCategory(ErrorCategory.APPLICATION)
+                    .withMessage("Invalid boolean value [" + value + "].").build());
+        }
+
+    }
+
+    /**
+     * Is value boolean boolean.
+     *
+     * @param value the value
+     * @return the boolean
+     */
+    public static boolean isValueBoolean(Object value) {
+        try {
+            eval(value);
+            return true;
+        } catch (CoreException ce) {
+            LOG.error("Failed to evaluate value as boolean: {}", value, ce);
+            return false;
+        }
+    }
 }
