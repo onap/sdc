@@ -16,10 +16,6 @@
 
 package org.onap.sdc.tosca.datatypes.model;
 
-import org.onap.sdc.tosca.services.DataModelCloneUtil;
-
-import java.util.Objects;
-
 public class PropertyDefinition extends DefinitionOfDataType {
 
   public PropertyDefinition() {
@@ -29,15 +25,16 @@ public class PropertyDefinition extends DefinitionOfDataType {
 
   @Override
   public PropertyDefinition clone() {
+    DefinitionOfDataType definitionOfDataType = super.clone();
     PropertyDefinition propertyDefinition = new PropertyDefinition();
-    propertyDefinition.setType(this.getType());
-    propertyDefinition.setDescription(this.getDescription());
-    propertyDefinition.setRequired(this.getRequired());
-    propertyDefinition.set_default(this.get_default());
-    propertyDefinition.setStatus(this.getStatus());
-    propertyDefinition.setEntry_schema(
-        Objects.isNull(this.getEntry_schema()) ? null : this.getEntry_schema().clone());
-    propertyDefinition.setConstraints(DataModelCloneUtil.cloneConstraints(this.getConstraints()));
+    propertyDefinition.set_default(definitionOfDataType.get_default());
+    propertyDefinition.setConstraints(definitionOfDataType.getConstraints());
+    propertyDefinition.setDescription(definitionOfDataType.getDescription());
+    propertyDefinition.setEntry_schema(definitionOfDataType.getEntry_schema());
+    propertyDefinition.setRequired(definitionOfDataType.getRequired());
+    propertyDefinition.setType(definitionOfDataType.getType());
+    propertyDefinition.setStatus(definitionOfDataType.getStatus());
+    propertyDefinition.setValue(definitionOfDataType.getValue());
     return propertyDefinition;
   }
 

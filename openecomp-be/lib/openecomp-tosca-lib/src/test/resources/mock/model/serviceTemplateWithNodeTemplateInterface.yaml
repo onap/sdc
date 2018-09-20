@@ -86,9 +86,9 @@ topology_template:
           relationship: relationB
           node_filter:
             properties:
-              propName1:
+            - propName1:
               - greater_or_equal: 9
-              propName2:
+            - propName2:
               - min_length: 1
               - max_length: 2
           occurrences:

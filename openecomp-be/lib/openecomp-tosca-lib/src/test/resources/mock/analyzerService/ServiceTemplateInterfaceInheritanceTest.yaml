@@ -39,11 +39,11 @@ node_types:
     derived_from: org.openecomp.resource.vfc.nodes.heat.cmaui_image
     interfaces:
       Standard:
+        type: amdocs.interfaces.interfaceNoOper
         inputs:
           url_path:
             type: string
             required: false
-        type: tosca.interfaces.node.lifecycle.Standard
         create:
           inputs:
             peeringSessions:
@@ -53,6 +53,21 @@ node_types:
         start:
           inputs:
             time:
+              type: string
+
+
+  org.openecomp.resource.vfc.nodes.heat.cmaui_image_interfaceTest:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.cmaui_image
+    interfaces:
+      Standard:
+        type: amdocs.interfaces.interfaceInheritance
+        inputs:
+          url_path:
+            type: string
+            required: false
+        newOper:
+          inputs:
+            name:
               type: string
 
 data_types:
@@ -81,6 +96,16 @@ data_types:
         status: SUPPORTED
         required: true
         default: overridden default value
+interface_types:
+  amdocs.interfaces.interfaceNoOper:
+    derived_from: tosca.interfaces.node.lifecycle.Standard
+
+  amdocs.interfaces.interfaceInheritance:
+    derived_from: tosca.interfaces.node.lifecycle.Standard
+    newOper:
+      description: new operation
+
+
 topology_template:
   inputs:
     cmaui_names:
@@ -148,48 +173,48 @@ topology_template:
           node: server_cmaui
           relationship: tosca.relationships.network.BindsTo
     cmaui1_port_1:
-          type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
-          properties:
-            replacement_policy: AUTO
-            security_groups:
-            - get_input: security_group_name
-            fixed_ips:
-            - subnet: subnetNameVal
-              ip_address:
-                get_input:
-                - cmaui_oam_ips
-                - 1
-            - subnet: subnetNameVal2
-              ip_address:
-                get_input:
-                - cmaui_oam_ips
-                - 1
-            network: jsa_net
-          requirements:
-          - link:
-              capability: tosca.capabilities.network.Linkable
-              node: jsa_net1
-              relationship: tosca.relationships.network.LinksTo
-          - link:
-              capability: tosca.capabilities.network.Linkable
-              node: jsa_net2
-              relationship: tosca.relationships.network.LinksTo
-          - binding:
-              capability: tosca.capabilities.network.Bindable
-              node: server_cmaui
-              relationship: tosca.relationships.network.BindsTo
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - subnet: subnetNameVal
+          ip_address:
+            get_input:
+            - cmaui_oam_ips
+            - 1
+        - subnet: subnetNameVal2
+          ip_address:
+            get_input:
+            - cmaui_oam_ips
+            - 1
+        network: jsa_net
+      requirements:
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: jsa_net1
+          relationship: tosca.relationships.network.LinksTo
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: jsa_net2
+          relationship: tosca.relationships.network.LinksTo
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_cmaui
+          relationship: tosca.relationships.network.BindsTo
     jsa_net1:
-          type: org.openecomp.resource.vl.nodes.heat.network.neutron.Net
-          properties:
-            shared: true
-            network_name:
-              get_input: jsa_net_name
+      type: org.openecomp.resource.vl.nodes.heat.network.neutron.Net
+      properties:
+        shared: true
+        network_name:
+          get_input: jsa_net_name
     jsa_net2:
-              type: org.openecomp.resource.vl.nodes.heat.network.neutron.Net
-              properties:
-                shared: true
-                network_name:
-                  get_input: jsa_net_name
+      type: org.openecomp.resource.vl.nodes.heat.network.neutron.Net
+      properties:
+        shared: true
+        network_name:
+          get_input: jsa_net_name
   groups:
     nested:
       type: org.openecomp.groups.heat.HeatStack

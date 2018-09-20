@@ -1,0 +1,37 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+
+node_types:
+  amdocs.nodes.nodeInterface:
+    derived_from: tosca.nodes.Root
+    properties:
+      prop1:
+        type: string
+        required: true
+    interfaces:
+      Standard:
+        type: tosca.interfaces.node.lifecycle.Standard
+        inputs:
+          url_path:
+            type: string
+        create:
+          inputs:
+            name:
+              type: string
+
+topology_template:
+  description: topology template descroption
+  node_templates:
+    nodeWithInterface:
+      type: amdocs.nodes.nodeInterface
+      properties:
+        prop1: abcd
+      interfaces:
+        Standard:
+          inputs:
+            url_path: { get_property: [ SELF, prop1 ] }
+          create:
+            implementation:
+              primary: Artifacts/Deployment/WORKFLOW/nodeCreateWorkFlow.json
+            inputs:
+              name: myName
+              last: ["a","b"]

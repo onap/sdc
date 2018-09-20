@@ -23,7 +23,7 @@ package org.onap.sdc.tosca.datatypes.model;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Constraint {
+public class Constraint implements Cloneable {
   private Object equal;
   private Object greater_or_equal;
   private Object greater_than;
