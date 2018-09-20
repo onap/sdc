@@ -1,12 +1,12 @@
 metadata:
 
 
-source: MainServiceTemplate.yaml
+Source: MainServiceTemplate.yaml
 
-source: Definitions/GlobalSubstitutionTypesServiceTemplate.yaml
+Source: Definitions/GlobalSubstitutionTypesServiceTemplate.yaml
 
-source: Artifacts/install.sh
+Source: Artifacts/install.sh
 
-source: Artifacts/create_stack.sh
+Source: Artifacts/create_stack.sh
 
-source: Licenses/license.xml
+Source: Licenses/license.xml

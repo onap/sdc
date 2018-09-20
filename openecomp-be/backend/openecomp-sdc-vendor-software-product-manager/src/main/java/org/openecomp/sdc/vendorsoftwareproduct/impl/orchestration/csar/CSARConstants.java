@@ -30,7 +30,7 @@ public class CSARConstants {
             of(MAIN_SERVICE_TEMPLATE_MF_FILE_NAME,MAIN_SERVICE_TEMPLATE_YAML_FILE_NAME);
 
     public static final String METADATA_MF_ATTRIBUTE = "metadata";
-    public static final String SOURCE_MF_ATTRIBUTE = "source";
+    public static final String SOURCE_MF_ATTRIBUTE = "Source";
     public static final String SEPERATOR_MF_ATTRIBUTE = ":";
 
     private CSARConstants() {
