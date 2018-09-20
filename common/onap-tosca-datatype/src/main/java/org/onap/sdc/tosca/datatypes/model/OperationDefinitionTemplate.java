@@ -18,44 +18,53 @@ package org.onap.sdc.tosca.datatypes.model;
 
 import java.util.Map;
 import java.util.Objects;
+import org.onap.sdc.tosca.services.DataModelCloneUtil;
 
 public class OperationDefinitionTemplate extends OperationDefinition {
 
-  private Implementation implementation;
-  private Map<String, Object> inputs;
+    private Implementation implementation;
+    private Map<String, Object> inputs;
 
-  public Implementation getImplementation() {
-    return implementation;
-  }
-
-  public void setImplementation(Implementation implementation) {
-    this.implementation = implementation;
-  }
-
-  public Map<String, Object> getInputs() {
-    return inputs;
-  }
-
-  public void setInputs(Map<String, Object> inputs) {
-    this.inputs = inputs;
-  }
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) {
-      return true;
+    public Implementation getImplementation() {
+        return implementation;
     }
-    if (!(o instanceof OperationDefinitionTemplate)) {
-      return false;
+
+    public void setImplementation(Implementation implementation) {
+        this.implementation = implementation;
     }
-    OperationDefinitionTemplate that = (OperationDefinitionTemplate) o;
-    return Objects.equals(implementation, that.implementation) &&
-        Objects.equals(inputs, that.inputs);
-  }
 
-  @Override
-  public int hashCode() {
+    public Map<String, Object> getInputs() {
+        return inputs;
+    }
 
-    return Objects.hash(implementation, inputs);
-  }
+    public void setInputs(Map<String, Object> inputs) {
+        this.inputs = inputs;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof OperationDefinitionTemplate)) {
+            return false;
+        }
+        OperationDefinitionTemplate that = (OperationDefinitionTemplate) o;
+        return Objects.equals(implementation, that.implementation) && Objects.equals(inputs, that.inputs);
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(implementation, inputs);
+    }
+
+    @Override
+    public OperationDefinitionTemplate clone() {
+        OperationDefinitionTemplate operationDefinition = new OperationDefinitionTemplate();
+        operationDefinition.setDescription(this.getDescription());
+        operationDefinition.setImplementation(this.getImplementation());
+        operationDefinition.setInputs(DataModelCloneUtil.cloneStringObjectMap(this.getInputs()));
+        return operationDefinition;
+    }
 }

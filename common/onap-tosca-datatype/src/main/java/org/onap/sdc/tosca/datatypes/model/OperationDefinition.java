@@ -4,31 +4,38 @@ import java.util.Objects;
 
 public class OperationDefinition {
 
-  protected String description;
+    protected String description;
 
-  public String getDescription() {
-    return description;
-  }
-
-  public void setDescription(String description) {
-    this.description = description;
-  }
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) {
-      return true;
+    public String getDescription() {
+        return description;
     }
-    if (!(o instanceof OperationDefinition)) {
-      return false;
+
+    public void setDescription(String description) {
+        this.description = description;
     }
-    OperationDefinition that = (OperationDefinition) o;
-    return Objects.equals(description, that.description);
-  }
 
-  @Override
-  public int hashCode() {
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof OperationDefinition)) {
+            return false;
+        }
+        OperationDefinition that = (OperationDefinition) o;
+        return Objects.equals(description, that.description);
+    }
 
-    return Objects.hash(description);
-  }
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(description);
+    }
+
+    @Override
+    public OperationDefinition clone() {
+        OperationDefinition operationDefinition = new OperationDefinition();
+        operationDefinition.setDescription(this.getDescription());
+        return operationDefinition;
+    }
 }

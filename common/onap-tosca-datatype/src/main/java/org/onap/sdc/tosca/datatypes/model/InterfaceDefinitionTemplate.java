@@ -16,59 +16,76 @@
 
 package org.onap.sdc.tosca.datatypes.model;
 
-import org.apache.commons.collections4.MapUtils;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
+import org.apache.commons.collections4.MapUtils;
+import org.onap.sdc.tosca.services.DataModelCloneUtil;
 
 public class InterfaceDefinitionTemplate extends InterfaceDefinition {
 
-  private Map<String, Object> inputs;
-  private Map<String, OperationDefinitionTemplate> operations;
+    private Map<String, Object> inputs;
+    private Map<String, OperationDefinitionTemplate> operations;
 
-  public Map<String, Object> getInputs() {
-    return inputs;
-  }
-
-  public void setInputs(
-      Map<String, Object> inputs) {
-    this.inputs = inputs;
-  }
-
-  public Map<String, OperationDefinitionTemplate> getOperations() {
-    return operations;
-  }
-
-  public void addOperation(String operationName, OperationDefinitionTemplate operation) {
-    if(MapUtils.isEmpty(this.operations)) {
-      this.operations = new HashMap<>();
+    public InterfaceDefinitionTemplate() {
     }
 
-    this.operations.put(operationName, operation);
-  }
+    public InterfaceDefinitionTemplate(Object toscaInterfaceDefTemplateObj) {
+        InterfaceDefinitionTemplate interfaceDefinitionTemplate =
+                (InterfaceDefinitionTemplate) convertObjToInterfaceDefinition(toscaInterfaceDefTemplateObj);
+        this.setInputs(DataModelCloneUtil.cloneStringObjectMap(interfaceDefinitionTemplate.getInputs()));
+        this.setOperations(
+                DataModelCloneUtil.cloneStringOperationTemplateMap(interfaceDefinitionTemplate.getOperations()));
 
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) {
-      return true;
     }
-    if (!(o instanceof InterfaceDefinitionTemplate)) {
-      return false;
+
+    public Map<String, Object> getInputs() {
+        return inputs;
     }
-    InterfaceDefinitionTemplate that = (InterfaceDefinitionTemplate) o;
-    return Objects.equals(inputs, that.inputs) &&
-        Objects.equals(operations, that.operations);
-  }
 
-  @Override
-  public int hashCode() {
+    public void setInputs(Map<String, Object> inputs) {
+        this.inputs = inputs;
+    }
 
-    return Objects.hash(inputs, operations);
-  }
+    public Map<String, OperationDefinitionTemplate> getOperations() {
+        return operations;
+    }
 
-  @Override
-  public void addOperation(String operationName, OperationDefinition operationDefinition) {
-    addOperation(operationName, (OperationDefinitionTemplate)operationDefinition);
-  }
+    public void setOperations(Map<String, OperationDefinitionTemplate> operations) {
+        this.operations = operations;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(inputs, operations);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof InterfaceDefinitionTemplate)) {
+            return false;
+        }
+        InterfaceDefinitionTemplate that = (InterfaceDefinitionTemplate) o;
+        return Objects.equals(inputs, that.inputs) && Objects.equals(operations, that.operations);
+    }
+
+    @Override
+    public void addOperation(String operationName, OperationDefinition operationDefinition) {
+        addOperation(operationName, (OperationDefinitionTemplate) operationDefinition);
+    }
+
+    private void addOperation(String operationName, OperationDefinitionTemplate operation) {
+        if (MapUtils.isEmpty(this.operations)) {
+            this.operations = new HashMap<>();
+        }
+        this.operations.put(operationName, operation);
+    }
+
+    public Optional<Object> convertInterfaceDefTemplateToToscaObj() {
+        return convertInterfaceToToscaInterfaceObj(this);
+    }
 }

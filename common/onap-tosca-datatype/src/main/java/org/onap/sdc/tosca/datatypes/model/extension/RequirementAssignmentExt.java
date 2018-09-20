@@ -16,19 +16,18 @@
 
 package org.onap.sdc.tosca.datatypes.model.extension;
 
-import org.onap.sdc.tosca.datatypes.model.NodeFilter;
+import org.onap.sdc.tosca.datatypes.model.RequirementAssignment;
 
+public class RequirementAssignmentExt extends RequirementAssignment {
 
-public class ServiceFilter extends NodeFilter {
+    private ServiceFilter service_filter;
 
-    Object tosca_id;
-
-    public Object getTosca_id() {
-        return tosca_id;
+    public ServiceFilter getService_filter() {
+        return service_filter;
     }
 
-    public void setTosca_id(Object toscaId) {
-        this.tosca_id = toscaId;
+    public void setService_filter(ServiceFilter serviceFilter) {
+        this.service_filter = serviceFilter;
     }
 
     @Override
@@ -36,17 +35,18 @@ public class ServiceFilter extends NodeFilter {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof ServiceFilter)) {
+        if (!(o instanceof RequirementAssignmentExt)) {
             return false;
         }
 
-        ServiceFilter that = (ServiceFilter) o;
+        RequirementAssignmentExt that = (RequirementAssignmentExt) o;
 
-        return getTosca_id() != null ? getTosca_id().equals(that.getTosca_id()) : that.getTosca_id() == null;
+        return getService_filter() != null ? getService_filter().equals(that.getService_filter()) :
+                       that.getService_filter() == null;
     }
 
     @Override
     public int hashCode() {
-        return getTosca_id() != null ? getTosca_id().hashCode() : 0;
+        return getService_filter() != null ? getService_filter().hashCode() : 0;
     }
 }
