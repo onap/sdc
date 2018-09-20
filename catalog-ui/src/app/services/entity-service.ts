@@ -68,6 +68,18 @@ export class EntityService implements IEntityService {
                     this.sharingService.addUuidValue(component.uniqueId, component.uuid);
                 });
 
+               
+                // let combinationData ={"combinations":[{"version":"0.1","componentType":"Combination","icon":"combinationicon","uniqueId":"9d9a939c-a6d0-4626-8b13-d7ac717888b6-c1","lastUpdateDate":1536301828584,"name":"combination1"}]}; //response.data;
+                
+                this.$http.get(this.api.root + "/v1/catalog/combinationTypes").then((combinationData:any) =>
+                {
+                    combinationData.data.forEach((combinationResponse:Combination) => {                        
+                        let component:Combination = this.ComponentFactory.createCombination(combinationResponse);                        
+                        componentsList.push(component);
+                        this.sharingService.addUuidValue(component.uniqueId, component.uuid);
+                    });
+
+                });
                 defer.resolve(componentsList);
             },(responce) => {
                 defer.reject(responce);

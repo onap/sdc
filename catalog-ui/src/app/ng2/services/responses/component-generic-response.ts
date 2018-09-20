@@ -51,7 +51,7 @@ export class ComponentGenericResponse  implements Serializable<ComponentGenericR
     public interfaces:any;
     public interfaceOperations:Array<OperationModel>;
     public additionalInformation:any;
-    public derivedList:Array<any>;
+    public derivedList:Array<any>;    
 
     deserialize (response): ComponentGenericResponse {
 

@@ -56,6 +56,10 @@ export class ComponentFactory {
             case 'RESOURCE':
                 newComponent = new Resource(this.ResourceService, this.$q, <Resource> component);
                 break;
+            case 'COMBINATION':
+            case 'Combination':
+                newComponent = new Combination(this.CombinationService, this.$q, <Combination> component);
+                break;
 
         }
         return newComponent;
@@ -147,7 +151,11 @@ export class ComponentFactory {
             case ComponentType.SERVICE:
                 newComponent = new Service(this.ServiceService, this.$q);
                 break;
-
+            case (ComponentType.COMBINATION).toUpperCase():
+            case (ComponentType.COMBINATION).toLowerCase():
+            case  ComponentType.COMBINATION:
+                newComponent = new Combination(this.CombinationService, this.$q);
+                break;
             case ComponentType.RESOURCE:
             case ResourceType.VF:
             case ResourceType.VL:
@@ -160,7 +168,7 @@ export class ComponentFactory {
                 newComponent = new Resource(this.ResourceService, this.$q);
                 break;
         }
-        newComponent.componentType = componentType;
+        newComponent.componentType = componentType.toUpperCase() == "COMBINATION" ? ComponentType.COMBINATION : componentType;
         newComponent.tags = [];
         newComponent.icon = DEFAULT_ICON;
         return newComponent;
@@ -182,10 +190,25 @@ export class ComponentFactory {
         let deferred = this.$q.defer<Component>();
         let component = this.createEmptyComponent(componentType);
         component.setUniqueId(componentId);
-        this.ComponentServiceNg2.getComponentMetadata(component).subscribe((response:ComponentGenericResponse) => {
-            component.setComponentMetadata(response.metadata);
-            deferred.resolve(component);
-        });
+        if(componentType.toUpperCase() == "COMBINATION")
+        {
+            this.ComponentServiceNg2.getCombinationData(component).subscribe((response:any) => {                
+                component.uniqueId = response.uniqueId;
+                component.uuid = response.uniqueId;
+                component.name = response.name;
+                component.systemName = response.name;
+                component.description =response.description;
+                component.componentType = ComponentType.COMBINATION;
+                deferred.resolve(component);
+            });
+        }
+        else
+        {
+            this.ComponentServiceNg2.getComponentMetadata(component).subscribe((response:ComponentGenericResponse) => {
+                component.setComponentMetadata(response.metadata);
+                deferred.resolve(component);
+            });
+        }    
         return deferred.promise;
     }
 }
