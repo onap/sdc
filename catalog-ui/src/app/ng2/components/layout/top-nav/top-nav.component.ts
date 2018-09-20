@@ -50,6 +50,7 @@ export class TopNavComponent {
 
     public topLvlMenu:MenuItemGroup;
     public user:IUserProperties;
+    private topNavPlugins: Array<Plugin>;
 
     constructor(private translateService:TranslateService,
                 @Inject('$state') private $state:ng.ui.IStateService,
@@ -69,7 +70,7 @@ export class TopNavComponent {
         this.topLvlMenu.menuItems.every((item:MenuItem, index:number)=> {
             if (item.state === this.$state.current.name) {
                 if (this.$state.current.name === 'plugins') {
-                    const pluginIdx = _.findIndex(PluginsConfiguration.plugins, (plugin: Plugin) => plugin.pluginStateUrl === this.$state.params.path);
+                    const pluginIdx = _.findIndex(this.topNavPlugins, (plugin: Plugin) => plugin.pluginStateUrl === this.$state.params.path);
                     if (pluginIdx !== -1) {
                         result = index + pluginIdx;
                         return false;
@@ -112,6 +113,9 @@ export class TopNavComponent {
     ngOnInit() {
         console.log('Nav is init!', this.menuModel);
         this.user = this.userService.getLoggedinUser();
+        this.topNavPlugins = _.filter(PluginsConfiguration.plugins, (plugin: Plugin) => {
+            return plugin.pluginDisplayOptions["tab"] !== undefined;
+        });
 
         this.translateService.languageChangedObservable.subscribe((lang) => {
             let tmpArray: Array<MenuItem> = [
