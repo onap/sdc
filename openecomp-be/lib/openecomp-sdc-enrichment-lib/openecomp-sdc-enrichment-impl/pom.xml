@@ -54,11 +54,6 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.openecomp.sdc</groupId>
-            <artifactId>openecomp-sdc-model-core</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
             <groupId>org.openecomp.sdc.core</groupId>
             <artifactId>openecomp-common-lib</artifactId>
             <version>${project.version}</version>
