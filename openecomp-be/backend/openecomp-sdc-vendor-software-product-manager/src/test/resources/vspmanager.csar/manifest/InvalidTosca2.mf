@@ -2,17 +2,17 @@ metadata:
     vnf_product_name: Mock
     vnf_provider_id: ZTE
 
-source: MainServiceTemplate.yaml
+Source: MainServiceTemplate.yaml
 
     vnf_package_version: 1.0
     vnf_release_data_time: 2017.01.01T10:00+03:00
 
 
 
-source: Definitions/GlobalSubstitutionTypesServiceTemplate.yaml
+Source: Definitions/GlobalSubstitutionTypesServiceTemplate.yaml
 
-source: Artifacts/install.sh
+Source: Artifacts/install.sh
 
-source: Artifacts/create_stack.sh
+Source: Artifacts/create_stack.sh
 
-source: Licenses/license.xml
+Source: Licenses/license.xml
