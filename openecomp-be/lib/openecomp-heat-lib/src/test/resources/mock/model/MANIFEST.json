@@ -1,0 +1,48 @@
+{
+  "name": "validTest",
+  "description": "Valid Test",
+  "version": "1610",
+  "data": [
+    {
+      "file": "first.yaml",
+      "type": "HEAT",
+      "isBase": true,
+      "data": [
+        {
+          "file": "first.env",
+          "type": "HEAT_ENV"
+        },
+        {
+          "file": "base_cscf_volume.yaml",
+          "type": "HEAT_VOL",
+          "data": [
+            {
+              "file": "base_cscf_volume.env",
+              "type": "HEAT_ENV"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "file": "nested.yml",
+      "type": "HEAT",
+      "isBase": false
+    },
+    {
+      "file": "network.yml",
+      "type": "HEAT_NET"
+    },
+    {
+      "file": "testHeat.yml",
+      "type": "OTHER"
+    },
+    {
+      "file": "testHeat.yml",
+      "type": "VF_LICENSE"
+    },
+    {
+      "file": "envSettings.env"
+    }
+  ]
+}

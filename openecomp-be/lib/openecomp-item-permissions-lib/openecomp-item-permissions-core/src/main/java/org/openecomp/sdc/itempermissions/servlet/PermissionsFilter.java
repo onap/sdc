@@ -43,12 +43,16 @@ import org.openecomp.sdc.logging.api.LoggerFactory;
 public class PermissionsFilter implements Filter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PermissionsFilter.class);
-    private final PermissionsServices permissionsServices;
+    private PermissionsServices permissionsServices;
     private static final String IRRELEVANT_REQUEST = "Irrelevant_Request";
     private static final String EDIT_ITEM = "Edit_Item";
 
     public PermissionsFilter() {
         this.permissionsServices = PermissionsServicesFactory.getInstance().createInterface();
+    }
+
+    PermissionsFilter(PermissionsServices permissionsServices) {
+        this.permissionsServices = permissionsServices;
     }
 
     @Override
