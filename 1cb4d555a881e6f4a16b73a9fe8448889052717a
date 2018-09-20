@@ -1,0 +1,1131 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_701b0081",
+        "filename": "catalog-be/src/main/resources/swagger/index.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-20T07:45:48Z",
+      "side": 1,
+      "message": "please change to att copy right since this code was done by them",
+      "range": {
+        "startLine": 2,
+        "startChar": 18,
+        "endLine": 2,
+        "endChar": 47
+      },
+      "revId": "1cb4d555a881e6f4a16b73a9fe8448889052717a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_901edc6e",
+        "filename": "catalog-be/src/main/resources/swagger/o2c.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-20T07:45:48Z",
+      "side": 1,
+      "message": "please change to att copy right since this code was done by them",
+      "range": {
+        "startLine": 2,
+        "startChar": 26,
+        "endLine": 2,
+        "endChar": 50
+      },
+      "revId": "1cb4d555a881e6f4a16b73a9fe8448889052717a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_3011085d",
+        "filename": "catalog-be/src/main/webapp/index.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-20T07:45:48Z",
+      "side": 1,
+      "message": "please change to att copy right since this code was done by them",
+      "range": {
+        "startLine": 2,
+        "startChar": 27,
+        "endLine": 2,
+        "endChar": 50
+      },
+      "revId": "1cb4d555a881e6f4a16b73a9fe8448889052717a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_f00e303a",
+        "filename": "catalog-fe/src/test/SpecRunner.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-20T07:45:48Z",
+      "side": 1,
+      "message": "please change to att copy right since this code was done by them",
+      "range": {
+        "startLine": 2,
+        "startChar": 16,
+        "endLine": 2,
+        "endChar": 43
+      },
+      "revId": "1cb4d555a881e6f4a16b73a9fe8448889052717a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_100acc25",
+        "filename": "catalog-fe/src/test/jasmine-standalone-2.0.0/SpecRunner.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-20T07:45:48Z",
+      "side": 1,
+      "message": "please change to att copy right since this code was done by them",
+      "range": {
+        "startLine": 2,
+        "startChar": 19,
+        "endLine": 2,
+        "endChar": 44
+      },
+      "revId": "1cb4d555a881e6f4a16b73a9fe8448889052717a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_b0043818",
+        "filename": "catalog-ui/src/app/directives/capabilities-and-requirements/capability/capabilities-list-view.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-20T07:45:48Z",
+      "side": 1,
+      "message": "please change to att copy right since this code was done by them",
+      "range": {
+        "startLine": 2,
+        "startChar": 22,
+        "endLine": 2,
+        "endChar": 39
+      },
+      "revId": "1cb4d555a881e6f4a16b73a9fe8448889052717a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_d0ff7400",
+        "filename": "catalog-ui/src/app/directives/capabilities-and-requirements/requirement/requirements-list-view.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-20T07:45:48Z",
+      "side": 1,
+      "message": "please change to att copy right since this code was done by them",
+      "range": {
+        "startLine": 2,
+        "startChar": 20,
+        "endLine": 2,
+        "endChar": 48
+      },
+      "revId": "1cb4d555a881e6f4a16b73a9fe8448889052717a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_7b02010b",
+        "filename": "catalog-ui/src/app/directives/ecomp-header/ecomp-header.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-20T07:45:48Z",
+      "side": 1,
+      "message": "please change to att copy right since this code was done by them",
+      "range": {
+        "startLine": 2,
+        "startChar": 15,
+        "endLine": 2,
+        "endChar": 42
+      },
+      "revId": "1cb4d555a881e6f4a16b73a9fe8448889052717a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_9b059d12",
+        "filename": "catalog-ui/src/app/directives/edit-name-popover/edit-module-name-popover.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-20T07:45:48Z",
+      "side": 1,
+      "message": "please change to att copy right since this code was done by them",
+      "range": {
+        "startLine": 2,
+        "startChar": 13,
+        "endLine": 2,
+        "endChar": 43
+      },
+      "revId": "1cb4d555a881e6f4a16b73a9fe8448889052717a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_3b080927",
+        "filename": "catalog-ui/src/app/directives/edit-name-popover/edit-name-popover-view.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-20T07:45:48Z",
+      "side": 1,
+      "message": "please change to att copy right since this code was done by them",
+      "range": {
+        "startLine": 2,
+        "startChar": 16,
+        "endLine": 2,
+        "endChar": 38
+      },
+      "revId": "1cb4d555a881e6f4a16b73a9fe8448889052717a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_fb15b13f",
+        "filename": "catalog-ui/src/app/directives/elements/checkbox/checkbox.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-20T07:45:48Z",
+      "side": 1,
+      "message": "please change to att copy right since this code was done by them",
+      "range": {
+        "startLine": 2,
+        "startChar": 16,
+        "endLine": 2,
+        "endChar": 45
+      },
+      "revId": "1cb4d555a881e6f4a16b73a9fe8448889052717a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_1b118d51",
+        "filename": "catalog-ui/src/app/directives/elements/radiobutton/radiobutton.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-20T07:45:48Z",
+      "side": 1,
+      "message": "please change to att copy right since this code was done by them",
+      "range": {
+        "startLine": 2,
+        "startChar": 13,
+        "endLine": 2,
+        "endChar": 36
+      },
+      "revId": "1cb4d555a881e6f4a16b73a9fe8448889052717a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_db16b548",
+        "filename": "catalog-ui/src/app/directives/ellipsis/ellipsis-directive.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-20T07:45:48Z",
+      "side": 1,
+      "message": "please change to att copy right since this code was done by them",
+      "range": {
+        "startLine": 2,
+        "startChar": 15,
+        "endLine": 2,
+        "endChar": 45
+      },
+      "revId": "1cb4d555a881e6f4a16b73a9fe8448889052717a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_7b29a188",
+        "filename": "catalog-ui/src/app/directives/export-json-to-excel/export-json-to-excel.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-20T07:45:48Z",
+      "side": 1,
+      "message": "please change to att copy right since this code was done by them",
+      "range": {
+        "startLine": 2,
+        "startChar": 13,
+        "endLine": 2,
+        "endChar": 38
+      },
+      "revId": "1cb4d555a881e6f4a16b73a9fe8448889052717a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_9b2cbd9a",
+        "filename": "catalog-ui/src/app/directives/file-opener/file-opener.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-20T07:45:48Z",
+      "side": 1,
+      "message": "please change to att copy right since this code was done by them",
+      "range": {
+        "startLine": 2,
+        "startChar": 16,
+        "endLine": 2,
+        "endChar": 44
+      },
+      "revId": "1cb4d555a881e6f4a16b73a9fe8448889052717a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_3b1fa95c",
+        "filename": "catalog-ui/src/app/directives/file-upload/file-upload.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-20T07:45:48Z",
+      "side": 1,
+      "message": "please change to att copy right since this code was done by them",
+      "range": {
+        "startLine": 2,
+        "startChar": 19,
+        "endLine": 2,
+        "endChar": 38
+      },
+      "revId": "1cb4d555a881e6f4a16b73a9fe8448889052717a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_5b22a5a3",
+        "filename": "catalog-ui/src/app/directives/graphs-v2/asset-popover/asset-popover.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-20T07:45:48Z",
+      "side": 1,
+      "message": "please change to att copy right since this code was done by them",
+      "range": {
+        "startLine": 2,
+        "startChar": 17,
+        "endLine": 2,
+        "endChar": 38
+      },
+      "revId": "1cb4d555a881e6f4a16b73a9fe8448889052717a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_fb3cd1c9",
+        "filename": "catalog-ui/src/app/directives/graphs-v2/composition-graph/composition-graph.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-20T07:45:48Z",
+      "side": 1,
+      "message": "please change to att copy right since this code was done by them",
+      "range": {
+        "startLine": 2,
+        "startChar": 14,
+        "endLine": 2,
+        "endChar": 38
+      },
+      "revId": "1cb4d555a881e6f4a16b73a9fe8448889052717a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_1b38add1",
+        "filename": "catalog-ui/src/app/directives/graphs-v2/deployment-graph/deployment-graph.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-20T07:45:48Z",
+      "side": 1,
+      "message": "please change to att copy right since this code was done by them",
+      "range": {
+        "startLine": 2,
+        "startChar": 15,
+        "endLine": 2,
+        "endChar": 46
+      },
+      "revId": "1cb4d555a881e6f4a16b73a9fe8448889052717a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_bb32d9ef",
+        "filename": "catalog-ui/src/app/directives/graphs-v2/palette/palette.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-20T07:45:48Z",
+      "side": 1,
+      "message": "please change to att copy right since this code was done by them",
+      "range": {
+        "startLine": 2,
+        "startChar": 15,
+        "endLine": 2,
+        "endChar": 42
+      },
+      "revId": "1cb4d555a881e6f4a16b73a9fe8448889052717a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_db2d5590",
+        "filename": "catalog-ui/src/app/directives/info-tooltip/info-tooltip.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-20T07:45:48Z",
+      "side": 1,
+      "message": "please change to att copy right since this code was done by them",
+      "range": {
+        "startLine": 2,
+        "startChar": 16,
+        "endLine": 2,
+        "endChar": 41
+      },
+      "revId": "1cb4d555a881e6f4a16b73a9fe8448889052717a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_7b50c10a",
+        "filename": "catalog-ui/src/app/directives/inputs-and-properties/inputs/input-row-view.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-20T07:45:48Z",
+      "side": 1,
+      "message": "please change to att copy right since this code was done by them",
+      "range": {
+        "startLine": 2,
+        "startChar": 13,
+        "endLine": 2,
+        "endChar": 43
+      },
+      "revId": "1cb4d555a881e6f4a16b73a9fe8448889052717a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_9b535d16",
+        "filename": "catalog-ui/src/app/directives/inputs-and-properties/properties/property-row-view.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-20T07:45:48Z",
+      "side": 1,
+      "message": "please change to att copy right since this code was done by them",
+      "range": {
+        "startLine": 2,
+        "startChar": 12,
+        "endLine": 2,
+        "endChar": 41
+      },
+      "revId": "1cb4d555a881e6f4a16b73a9fe8448889052717a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_3b56c906",
+        "filename": "catalog-ui/src/app/directives/layout/top-progress/top-progress.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-20T07:45:48Z",
+      "side": 1,
+      "message": "please change to att copy right since this code was done by them",
+      "range": {
+        "startLine": 2,
+        "startChar": 10,
+        "endLine": 2,
+        "endChar": 30
+      },
+      "revId": "1cb4d555a881e6f4a16b73a9fe8448889052717a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_5b594533",
+        "filename": "catalog-ui/src/app/directives/loader/loader-directive.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-20T07:45:48Z",
+      "side": 1,
+      "message": "please change to att copy right since this code was done by them",
+      "range": {
+        "startLine": 2,
+        "startChar": 14,
+        "endLine": 2,
+        "endChar": 32
+      },
+      "revId": "1cb4d555a881e6f4a16b73a9fe8448889052717a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_fb43713f",
+        "filename": "catalog-ui/src/app/directives/modal/sdc-modal.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-20T07:45:48Z",
+      "side": 1,
+      "message": "please change to att copy right since this code was done by them",
+      "range": {
+        "startLine": 2,
+        "startChar": 13,
+        "endLine": 2,
+        "endChar": 34
+      },
+      "revId": "1cb4d555a881e6f4a16b73a9fe8448889052717a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_1b3f4db5",
+        "filename": "catalog-ui/src/app/directives/property-types/data-type-fields-structure/data-type-fields-structure.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-20T07:45:48Z",
+      "side": 1,
+      "message": "please change to att copy right since this code was done by them",
+      "range": {
+        "startLine": 2,
+        "startChar": 13,
+        "endLine": 2,
+        "endChar": 41
+      },
+      "revId": "1cb4d555a881e6f4a16b73a9fe8448889052717a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_bb497961",
+        "filename": "catalog-ui/src/app/directives/property-types/type-list/type-list-directive.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-20T07:45:48Z",
+      "side": 1,
+      "message": "please change to att copy right since this code was done by them",
+      "range": {
+        "startLine": 2,
+        "startChar": 15,
+        "endLine": 2,
+        "endChar": 32
+      },
+      "revId": "1cb4d555a881e6f4a16b73a9fe8448889052717a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_db447548",
+        "filename": "catalog-ui/src/app/directives/property-types/type-map/type-map-directive.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-20T07:45:48Z",
+      "side": 1,
+      "message": "please change to att copy right since this code was done by them",
+      "range": {
+        "startLine": 2,
+        "startChar": 16,
+        "endLine": 2,
+        "endChar": 45
+      },
+      "revId": "1cb4d555a881e6f4a16b73a9fe8448889052717a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_7b7761a0",
+        "filename": "catalog-ui/src/app/directives/sdc-tabs/sdc-tabs-directive-view.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-20T07:45:48Z",
+      "side": 1,
+      "message": "please change to att copy right since this code was done by them",
+      "range": {
+        "startLine": 2,
+        "startChar": 14,
+        "endLine": 2,
+        "endChar": 42
+      },
+      "revId": "1cb4d555a881e6f4a16b73a9fe8448889052717a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_3b6d69cc",
+        "filename": "catalog-ui/src/app/directives/select-property-types/select-data-type-fields-structure/select-data-type-fields-structure.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-20T07:45:48Z",
+      "side": 1,
+      "message": "please change to att copy right since this code was done by them",
+      "range": {
+        "startLine": 2,
+        "startChar": 13,
+        "endLine": 2,
+        "endChar": 40
+      },
+      "revId": "1cb4d555a881e6f4a16b73a9fe8448889052717a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_5b7065a3",
+        "filename": "catalog-ui/src/app/directives/select-property-types/select-type-list/select-type-list-directive.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-20T07:45:48Z",
+      "side": 1,
+      "message": "please change to att copy right since this code was done by them",
+      "range": {
+        "startLine": 2,
+        "startChar": 16,
+        "endLine": 2,
+        "endChar": 40
+      },
+      "revId": "1cb4d555a881e6f4a16b73a9fe8448889052717a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_fb6a91b1",
+        "filename": "catalog-ui/src/app/directives/select-property-types/select-type-map/select-type-map-directive.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-20T07:45:48Z",
+      "side": 1,
+      "message": "please change to att copy right since this code was done by them",
+      "range": {
+        "startLine": 2,
+        "startChar": 16,
+        "endLine": 2,
+        "endChar": 38
+      },
+      "revId": "1cb4d555a881e6f4a16b73a9fe8448889052717a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_1b666ded",
+        "filename": "catalog-ui/src/app/directives/structure-tree/structure-tree-directive.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-20T07:45:48Z",
+      "side": 1,
+      "message": "please change to att copy right since this code was done by them",
+      "range": {
+        "startLine": 2,
+        "startChar": 15,
+        "endLine": 2,
+        "endChar": 42
+      },
+      "revId": "1cb4d555a881e6f4a16b73a9fe8448889052717a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_db5b1520",
+        "filename": "catalog-ui/src/app/directives/tag/tag-directive.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-20T07:45:48Z",
+      "side": 1,
+      "message": "please change to att copy right since this code was done by them",
+      "range": {
+        "startLine": 2,
+        "startChar": 17,
+        "endLine": 2,
+        "endChar": 40
+      },
+      "revId": "1cb4d555a881e6f4a16b73a9fe8448889052717a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_7b9e81ba",
+        "filename": "catalog-ui/src/app/directives/user-header-details/user-header-details-directive.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-20T07:45:48Z",
+      "side": 1,
+      "message": "please change to att copy right since this code was done by them",
+      "range": {
+        "startLine": 2,
+        "startChar": 15,
+        "endLine": 2,
+        "endChar": 40
+      },
+      "revId": "1cb4d555a881e6f4a16b73a9fe8448889052717a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_9ba11dfa",
+        "filename": "catalog-ui/src/app/directives/utils/expand-collapse-list-header/expand-collapse-list-header.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-20T07:45:48Z",
+      "side": 1,
+      "message": "please change to att copy right since this code was done by them",
+      "range": {
+        "startLine": 2,
+        "startChar": 15,
+        "endLine": 2,
+        "endChar": 43
+      },
+      "revId": "1cb4d555a881e6f4a16b73a9fe8448889052717a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_3ba48906",
+        "filename": "catalog-ui/src/app/directives/utils/expand-collapse-menu-box/expand-collapse-menu-box.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-20T07:45:48Z",
+      "side": 1,
+      "message": "please change to att copy right since this code was done by them",
+      "range": {
+        "startLine": 2,
+        "startChar": 15,
+        "endLine": 2,
+        "endChar": 45
+      },
+      "revId": "1cb4d555a881e6f4a16b73a9fe8448889052717a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_5ba7050b",
+        "filename": "catalog-ui/src/app/directives/utils/expand-collapse/expand-collapse.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-20T07:45:48Z",
+      "side": 1,
+      "message": "please change to att copy right since this code was done by them",
+      "range": {
+        "startLine": 2,
+        "startChar": 16,
+        "endLine": 2,
+        "endChar": 40
+      },
+      "revId": "1cb4d555a881e6f4a16b73a9fe8448889052717a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_fbb13147",
+        "filename": "catalog-ui/src/app/directives/utils/sdc-tags/sdc-tags.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-20T07:45:48Z",
+      "side": 1,
+      "message": "please change to att copy right since this code was done by them",
+      "range": {
+        "startLine": 2,
+        "startChar": 6,
+        "endLine": 2,
+        "endChar": 39
+      },
+      "revId": "1cb4d555a881e6f4a16b73a9fe8448889052717a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_1bad0de9",
+        "filename": "catalog-ui/src/app/ng2/app.component.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-20T07:45:48Z",
+      "side": 1,
+      "message": "please change to att copy right since this code was done by them",
+      "range": {
+        "startLine": 2,
+        "startChar": 15,
+        "endLine": 2,
+        "endChar": 34
+      },
+      "revId": "1cb4d555a881e6f4a16b73a9fe8448889052717a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_bbb73939",
+        "filename": "catalog-ui/src/app/ng2/components/downgrade-wrappers/menu-list-ng2/menu-list-ng2.component.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-20T07:45:48Z",
+      "side": 1,
+      "message": "please change to att copy right since this code was done by them",
+      "range": {
+        "startLine": 2,
+        "startChar": 14,
+        "endLine": 2,
+        "endChar": 44
+      },
+      "revId": "1cb4d555a881e6f4a16b73a9fe8448889052717a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_dbb23548",
+        "filename": "catalog-ui/src/app/ng2/components/layout/top-nav/top-nav.component.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-20T07:45:48Z",
+      "side": 1,
+      "message": "please change to att copy right since this code was done by them",
+      "range": {
+        "startLine": 2,
+        "startChar": 14,
+        "endLine": 2,
+        "endChar": 44
+      },
+      "revId": "1cb4d555a881e6f4a16b73a9fe8448889052717a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_7b852158",
+        "filename": "catalog-ui/src/app/ng2/components/logic/hierarchy-navigtion/hierarchy-navigation.component.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-20T07:45:48Z",
+      "side": 1,
+      "message": "please change to att copy right since this code was done by them",
+      "range": {
+        "startLine": 2,
+        "startChar": 15,
+        "endLine": 2,
+        "endChar": 51
+      },
+      "revId": "1cb4d555a881e6f4a16b73a9fe8448889052717a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_9b883d72",
+        "filename": "catalog-ui/src/app/ng2/components/logic/inputs-table/inputs-table.component.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-20T07:45:48Z",
+      "side": 1,
+      "message": "please change to att copy right since this code was done by them",
+      "range": {
+        "startLine": 2,
+        "startChar": 5,
+        "endLine": 2,
+        "endChar": 48
+      },
+      "revId": "1cb4d555a881e6f4a16b73a9fe8448889052717a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_3b7b297c",
+        "filename": "catalog-ui/src/app/ng2/components/logic/properties-table/dynamic-property/dynamic-property.component.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-20T07:45:48Z",
+      "side": 1,
+      "message": "please change to att copy right since this code was done by them",
+      "range": {
+        "startLine": 2,
+        "startChar": 12,
+        "endLine": 2,
+        "endChar": 43
+      },
+      "revId": "1cb4d555a881e6f4a16b73a9fe8448889052717a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_5b7e256b",
+        "filename": "catalog-ui/src/app/ng2/components/logic/properties-table/properties-table.component.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-20T07:45:48Z",
+      "side": 1,
+      "message": "please change to att copy right since this code was done by them",
+      "range": {
+        "startLine": 2,
+        "startChar": 22,
+        "endLine": 2,
+        "endChar": 46
+      },
+      "revId": "1cb4d555a881e6f4a16b73a9fe8448889052717a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_fb9851c1",
+        "filename": "catalog-ui/src/app/ng2/components/ui/canvas-zone/zone-container.component.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-20T07:45:48Z",
+      "side": 1,
+      "message": "please change to att copy right since this code was done by them",
+      "range": {
+        "startLine": 2,
+        "startChar": 21,
+        "endLine": 2,
+        "endChar": 43
+      },
+      "revId": "1cb4d555a881e6f4a16b73a9fe8448889052717a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_1b942d89",
+        "filename": "catalog-ui/src/app/ng2/components/ui/canvas-zone/zone-instance/zone-instance.component.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-20T07:45:48Z",
+      "side": 1,
+      "message": "please change to att copy right since this code was done by them",
+      "range": {
+        "startLine": 2,
+        "startChar": 15,
+        "endLine": 2,
+        "endChar": 39
+      },
+      "revId": "1cb4d555a881e6f4a16b73a9fe8448889052717a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
