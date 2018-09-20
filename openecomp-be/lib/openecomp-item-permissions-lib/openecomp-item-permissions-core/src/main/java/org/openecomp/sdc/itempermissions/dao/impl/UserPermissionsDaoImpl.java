@@ -19,13 +19,14 @@ package org.openecomp.sdc.itempermissions.dao.impl;
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.mapping.annotations.Accessor;
 import com.datastax.driver.mapping.annotations.Query;
-import org.openecomp.core.nosqldb.api.NoSqlDb;
-import org.openecomp.core.nosqldb.factory.NoSqlDbFactory;
-import org.openecomp.sdc.itempermissions.dao.UserPermissionsDao;
 
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+
+import org.openecomp.core.nosqldb.api.NoSqlDb;
+import org.openecomp.core.nosqldb.factory.NoSqlDbFactory;
+import org.openecomp.sdc.itempermissions.dao.UserPermissionsDao;
 
 public class UserPermissionsDaoImpl implements UserPermissionsDao {
 
@@ -36,23 +37,23 @@ public class UserPermissionsDaoImpl implements UserPermissionsDao {
 
     @Override
     public Set<String> listUserPermittedItems(String userId, String permission) {
-        ResultSet resultSet = accessor.getUserPermissionItems(userId,permission);
-        if(resultSet.isExhausted()){
+        ResultSet resultSet = accessor.getUserPermissionItems(userId, permission);
+        if (resultSet.isExhausted()) {
             return new HashSet<>();
         } else {
-            return resultSet.one().getSet(0,String.class);
+            return resultSet.one().getSet(0, String.class);
         }
     }
 
     @Override
     public void updatePermissions(String itemId, String permission, Set<String> addedUsersIds,
-                                      Set<String> removedUsersIds) {
+                                  Set<String> removedUsersIds) {
         Set<String> itemSet = Collections.singleton(itemId);
 
         addedUsersIds.forEach(userId ->
-                accessor.addItem(itemSet, userId,permission));
+                accessor.addItem(itemSet, userId, permission));
         removedUsersIds.forEach(userId ->
-                accessor.removeItem(itemSet,userId,permission));
+                accessor.removeItem(itemSet, userId, permission));
     }
 
     @Accessor
