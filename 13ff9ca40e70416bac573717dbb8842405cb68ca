@@ -19,6 +19,23 @@
     },
     {
       "key": {
+        "uuid": "1a76adc5_bbfad940",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-20T09:47:43Z",
+      "side": 1,
+      "message": "why is this needed it looks like it is connected to the service.",
+      "revId": "13ff9ca40e70416bac573717dbb8842405cb68ca",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1a76adc5_42d0b9f5",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
         "patchSetId": 1
@@ -150,6 +167,29 @@
       "writtenOn": "2018-09-11T05:40:11Z",
       "side": 1,
       "message": "Need an item for the {} placeholder.",
+      "revId": "13ff9ca40e70416bac573717dbb8842405cb68ca",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_dbeb15a2",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 2642,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-20T09:47:43Z",
+      "side": 1,
+      "message": "this is not the corect way to create it iw will be generated automaticly in the create.",
+      "range": {
+        "startLine": 2642,
+        "startChar": 56,
+        "endLine": 2642,
+        "endChar": 112
+      },
       "revId": "13ff9ca40e70416bac573717dbb8842405cb68ca",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
@@ -549,6 +589,23 @@
         "endLine": 3049,
         "endChar": 97
       },
+      "revId": "13ff9ca40e70416bac573717dbb8842405cb68ca",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_fb8b71c0",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 3051,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-20T09:47:43Z",
+      "side": 1,
+      "message": "why is this needed?",
       "revId": "13ff9ca40e70416bac573717dbb8842405cb68ca",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
