@@ -74,6 +74,7 @@ export class EntityService implements IEntityService {
                 this.$http.get(this.api.root + "/v1/catalog/combinationTypes").then((combinationData:any) =>
                 {
                     combinationData.data.forEach((combinationResponse:Combination) => {
+                        debugger;
                         let component:Combination = this.ComponentFactory.createCombination(combinationResponse);                        
                         componentsList.push(component);
                         this.sharingService.addUuidValue(component.uniqueId, component.uuid);
