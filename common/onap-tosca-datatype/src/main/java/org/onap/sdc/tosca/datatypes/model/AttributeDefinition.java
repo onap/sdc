@@ -22,7 +22,7 @@ package org.onap.sdc.tosca.datatypes.model;
 
 import java.util.Objects;
 
-public class AttributeDefinition {
+public class AttributeDefinition implements Cloneable{
 
   private String type;
   private String description;

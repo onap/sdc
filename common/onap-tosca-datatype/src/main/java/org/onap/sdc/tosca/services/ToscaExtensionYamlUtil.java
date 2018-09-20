@@ -34,7 +34,7 @@ public class ToscaExtensionYamlUtil extends YamlUtil {
     public static final String TOSCA_MODEL_REQUIREMENT_ASSIGNMENT =
             "org.onap.sdc.tosca.datatypes.model.RequirementAssignment";
     public static final String TOSCA_MODEL_EXT_REQUIREMENT_ASSIGNMENT =
-            "org.onap.sdc.tosca.datatypes.model.extension.RequirementAssignment";
+            "org.onap.sdc.tosca.datatypes.model.extension.RequirementAssignmentExt";
     public static final String TOSCA_MODEL_SUBSTITUTION_MAPPING =
             "org.onap.sdc.tosca.datatypes.model.SubstitutionMapping";
     public static final String TOSCA_MODEL_EXT_SUBSTITUTION_MAPPING =

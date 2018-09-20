@@ -16,7 +16,48 @@
 
 package org.onap.sdc.tosca.datatypes.model;
 
-public abstract class InterfaceDefinition {
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import org.onap.sdc.tosca.error.ToscaRuntimeException;
+import org.onap.sdc.tosca.services.CommonUtil;
+
+public abstract class InterfaceDefinition extends Interface {
+
+    protected static final String CONVERT_INTERFACE_DEFINITION_OBJECT_ERROR =
+            "Could not create InterfaceDefinition from input object, input object -  ";
+
+    protected InterfaceDefinition convertObjToInterfaceDefinition(Object toscaInterfaceObj) {
+        try {
+            Optional<? extends InterfaceDefinition> interfaceDefinition =
+                    CommonUtil.createObjectUsingSetters(toscaInterfaceObj, this.getClass());
+            if (interfaceDefinition.isPresent()) {
+                updateInterfaceDefinitionOperations(CommonUtil.getObjectAsMap(toscaInterfaceObj),
+                        interfaceDefinition.get());
+                return interfaceDefinition.get();
+            } else {
+                throw new ToscaRuntimeException(
+                        CONVERT_INTERFACE_DEFINITION_OBJECT_ERROR + toscaInterfaceObj.toString());
+            }
+        } catch (Exception exc) {
+            throw new ToscaRuntimeException(CONVERT_INTERFACE_DEFINITION_OBJECT_ERROR
+                                                    + toscaInterfaceObj.toString(), exc);
+        }
+
+    }
+
+    private <T extends OperationDefinition> void updateInterfaceDefinitionOperations(Map<String, Object> interfaceAsMap,
+            InterfaceDefinition interfaceDefinition) {
+        Set<String> fieldNames = CommonUtil.getClassFieldNames(interfaceDefinition.getClass());
+        for (Map.Entry<String, Object> entry : interfaceAsMap.entrySet()) {
+            Optional<Map.Entry<String, ? extends OperationDefinition>> operationDefinition =
+                    createOperation(entry.getKey(), entry.getValue(), fieldNames,
+                            interfaceDefinition instanceof InterfaceDefinitionType ? OperationDefinitionType.class :
+                                    OperationDefinitionTemplate.class);
+            operationDefinition
+                    .ifPresent(operation -> interfaceDefinition.addOperation(operation.getKey(), operation.getValue()));
+        }
+    }
 
     public abstract void addOperation(String operationName, OperationDefinition operationDefinition);
 }

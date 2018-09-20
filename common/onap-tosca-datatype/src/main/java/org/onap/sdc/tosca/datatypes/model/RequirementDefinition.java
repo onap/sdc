@@ -21,7 +21,7 @@
 package org.onap.sdc.tosca.datatypes.model;
 
 
-public class RequirementDefinition {
+public class RequirementDefinition implements Cloneable {
 
   private String capability;
   private String node;

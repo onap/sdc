@@ -16,27 +16,53 @@
 
 package org.openecomp.sdc.tosca.services;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.NotSerializableException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
-import org.onap.sdc.tosca.datatypes.model.*;
+import org.onap.sdc.tosca.datatypes.model.AttributeDefinition;
+import org.onap.sdc.tosca.datatypes.model.CapabilityAssignment;
+import org.onap.sdc.tosca.datatypes.model.CapabilityDefinition;
+import org.onap.sdc.tosca.datatypes.model.Constraint;
+import org.onap.sdc.tosca.datatypes.model.EntrySchema;
+import org.onap.sdc.tosca.datatypes.model.GroupDefinition;
+import org.onap.sdc.tosca.datatypes.model.Import;
+import org.onap.sdc.tosca.datatypes.model.NodeTemplate;
+import org.onap.sdc.tosca.datatypes.model.NodeType;
+import org.onap.sdc.tosca.datatypes.model.ParameterDefinition;
+import org.onap.sdc.tosca.datatypes.model.PolicyDefinition;
+import org.onap.sdc.tosca.datatypes.model.PropertyDefinition;
+import org.onap.sdc.tosca.datatypes.model.RelationshipTemplate;
+import org.onap.sdc.tosca.datatypes.model.RequirementAssignment;
+import org.onap.sdc.tosca.datatypes.model.RequirementDefinition;
+import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
+import org.onap.sdc.tosca.datatypes.model.SubstitutionMapping;
+import org.onap.sdc.tosca.datatypes.model.TopologyTemplate;
 import org.onap.sdc.tosca.datatypes.model.heatextend.ParameterDefinitionExt;
 import org.onap.sdc.tosca.services.ToscaExtensionYamlUtil;
 import org.onap.sdc.tosca.services.YamlUtil;
 import org.openecomp.core.utilities.CommonMethods;
 import org.openecomp.sdc.common.errors.CoreException;
-import org.openecomp.sdc.common.utils.CommonUtil;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.tosca.datatypes.ToscaCapabilityType;
 import org.openecomp.sdc.tosca.datatypes.ToscaFunctions;
 import org.openecomp.sdc.tosca.datatypes.ToscaRelationshipType;
-import org.openecomp.sdc.tosca.errors.*;
+import org.openecomp.sdc.tosca.errors.InvalidAddActionNullEntityErrorBuilder;
+import org.openecomp.sdc.tosca.errors.InvalidRequirementAssignmentErrorBuilder;
 import org.openecomp.sdc.tosca.services.impl.ToscaAnalyzerServiceImpl;
-
-import java.io.*;
-import java.util.*;
 
 /**
  * The type Data model util.
@@ -46,7 +72,6 @@ public class DataModelUtil {
     private static final Logger LOGGER = LoggerFactory.getLogger(DataModelUtil.class);
     private static final String SERVICE_TEMPLATE = "Service Template";
     private static final String NODE_TYPE = "Node Type";
-    private static final String OPERATIONS = "operations";
 
     private DataModelUtil() {
         // prevent instantiation
@@ -59,7 +84,7 @@ public class DataModelUtil {
      * @param substitutionMapping the substitution mapping
      */
     public static void addSubstitutionMapping(ServiceTemplate serviceTemplate,
-                                                     SubstitutionMapping substitutionMapping) {
+                                              SubstitutionMapping substitutionMapping) {
         if (serviceTemplate == null) {
             throw new CoreException(new InvalidAddActionNullEntityErrorBuilder("Substitution Mapping", SERVICE_TEMPLATE)
                                             .build());
@@ -92,11 +117,11 @@ public class DataModelUtil {
      * @param substitutionMappingRequirementList the substitution mapping requirement list
      */
     public static void addSubstitutionMappingReq(ServiceTemplate serviceTemplate,
-                                                        String substitutionMappingRequirementId,
-                                                        List<String> substitutionMappingRequirementList) {
+            String substitutionMappingRequirementId, List<String> substitutionMappingRequirementList) {
         if (serviceTemplate == null) {
-            throw new CoreException(new InvalidAddActionNullEntityErrorBuilder("Substitution Mapping Requirements",
-                                                                                      SERVICE_TEMPLATE).build());
+            throw new CoreException(
+                    new InvalidAddActionNullEntityErrorBuilder("Substitution Mapping Requirements", SERVICE_TEMPLATE)
+                            .build());
         }
 
         if (serviceTemplate.getTopology_template() == null) {
@@ -121,8 +146,7 @@ public class DataModelUtil {
      * @param substitutionMappingCapabilityList the substitution mapping capability list
      */
     public static void addSubstitutionMappingCapability(ServiceTemplate serviceTemplate,
-                                                               String substitutionMappingCapabilityId,
-                                                               List<String> substitutionMappingCapabilityList) {
+            String substitutionMappingCapabilityId, List<String> substitutionMappingCapabilityList) {
         if (serviceTemplate == null) {
             throw new CoreException(new InvalidAddActionNullEntityErrorBuilder("Substitution Mapping Capabilities",
                                                                                       SERVICE_TEMPLATE).build());
@@ -180,10 +204,10 @@ public class DataModelUtil {
      * @param nodeTemplate    the node template
      */
     public static void addNodeTemplate(ServiceTemplate serviceTemplate, String nodeTemplateId,
-                                              NodeTemplate nodeTemplate) {
+            NodeTemplate nodeTemplate) {
         if (serviceTemplate == null) {
-            throw new CoreException(new InvalidAddActionNullEntityErrorBuilder("Node Template", SERVICE_TEMPLATE)
-                                            .build());
+            throw new CoreException(
+                    new InvalidAddActionNullEntityErrorBuilder("Node Template", SERVICE_TEMPLATE).build());
         }
         TopologyTemplate topologyTemplate = serviceTemplate.getTopology_template();
         if (Objects.isNull(topologyTemplate)) {
@@ -208,8 +232,8 @@ public class DataModelUtil {
         }
 
         if (nodeType == null) {
-            throw new CoreException(new InvalidAddActionNullEntityErrorBuilder("Capability Definition", NODE_TYPE)
-                                            .build());
+            throw new CoreException(
+                    new InvalidAddActionNullEntityErrorBuilder("Capability Definition", NODE_TYPE).build());
         }
 
         if (MapUtils.isEmpty(nodeType.getCapabilities())) {
@@ -256,10 +280,10 @@ public class DataModelUtil {
      * @param policyDefinition the policy definition
      */
     public static void addPolicyDefinition(ServiceTemplate serviceTemplate, String policyId,
-                                                  PolicyDefinition policyDefinition) {
+            PolicyDefinition policyDefinition) {
         if (serviceTemplate == null) {
-            throw new CoreException(new InvalidAddActionNullEntityErrorBuilder("Policy Definition", SERVICE_TEMPLATE)
-                                            .build());
+            throw new CoreException(
+                    new InvalidAddActionNullEntityErrorBuilder("Policy Definition", SERVICE_TEMPLATE).build());
         }
         TopologyTemplate topologyTemplate = serviceTemplate.getTopology_template();
         if (Objects.isNull(topologyTemplate)) {
@@ -297,10 +321,10 @@ public class DataModelUtil {
      * @param relationshipTemplate   the relationship template
      */
     public static void addRelationshipTemplate(ServiceTemplate serviceTemplate, String relationshipTemplateId,
-                                                      RelationshipTemplate relationshipTemplate) {
+            RelationshipTemplate relationshipTemplate) {
         if (serviceTemplate == null) {
-            throw new CoreException(new InvalidAddActionNullEntityErrorBuilder("Relationship Template",
-                                                                                      SERVICE_TEMPLATE).build());
+            throw new CoreException(
+                    new InvalidAddActionNullEntityErrorBuilder("Relationship Template", SERVICE_TEMPLATE).build());
         }
         if (serviceTemplate.getTopology_template() == null) {
             serviceTemplate.setTopology_template(new TopologyTemplate());
@@ -320,10 +344,11 @@ public class DataModelUtil {
      * @param requirementAssignment the requirement assignment
      */
     public static void addRequirementAssignment(NodeTemplate nodeTemplate, String requirementId,
-                                                       RequirementAssignment requirementAssignment) {
+            RequirementAssignment requirementAssignment) {
         if (nodeTemplate == null) {
-            throw new CoreException(new InvalidAddActionNullEntityErrorBuilder("Requirement Assignment",
-                                                                                      "Node Template").build());
+            throw new CoreException(
+                    new InvalidAddActionNullEntityErrorBuilder("Requirement Assignment",
+                                                             "Node Template").build());
         }
         if (requirementAssignment.getNode() == null) {
             throw new CoreException(new InvalidRequirementAssignmentErrorBuilder(requirementId).build());
@@ -401,8 +426,8 @@ public class DataModelUtil {
      * @param requirementsDefinitionList requirement definition list
      * @param requirementKey             requirement key
      */
-    public static Optional<RequirementDefinition> getRequirementDefinition(List<Map<String, RequirementDefinition>> requirementsDefinitionList,
-                                                                                  String requirementKey) {
+    public static Optional<RequirementDefinition> getRequirementDefinition(
+            List<Map<String, RequirementDefinition>> requirementsDefinitionList, String requirementKey) {
         if (CollectionUtils.isEmpty(requirementsDefinitionList)) {
             return Optional.empty();
         }
@@ -427,7 +452,7 @@ public class DataModelUtil {
      * @return the capability definition
      */
     public static Optional<CapabilityDefinition> getCapabilityDefinition(NodeType nodeType,
-                                                                                String capabilityDefinitionId) {
+            String capabilityDefinitionId) {
         if (nodeType == null || nodeType.getCapabilities() == null || capabilityDefinitionId == null) {
             return Optional.empty();
         }
@@ -442,10 +467,10 @@ public class DataModelUtil {
      * @param group           the group
      */
     public static void addGroupDefinitionToTopologyTemplate(ServiceTemplate serviceTemplate, String groupName,
-                                                                   GroupDefinition group) {
+            GroupDefinition group) {
         if (serviceTemplate == null) {
-            throw new CoreException(new InvalidAddActionNullEntityErrorBuilder("Group Definition", SERVICE_TEMPLATE)
-                                            .build());
+            throw new CoreException(
+                    new InvalidAddActionNullEntityErrorBuilder("Group Definition", SERVICE_TEMPLATE).build());
         }
 
         TopologyTemplate topologyTemplate = serviceTemplate.getTopology_template();
@@ -500,8 +525,7 @@ public class DataModelUtil {
      * @return the property definition
      */
     public static ParameterDefinition createParameterDefinition(String type, String description, boolean required,
-                                                                       List<Constraint> constraints,
-                                                                       EntrySchema entrySchema, Object defaultVal) {
+            List<Constraint> constraints, EntrySchema entrySchema, Object defaultVal) {
         ParameterDefinition paramDef = new ParameterDefinition();
         paramDef.setType(type);
         paramDef.setDescription(description);
@@ -522,7 +546,7 @@ public class DataModelUtil {
      * @return the requirement definition
      */
     public static RequirementDefinition createRequirement(String capability, String node, String relationship,
-                                                                 Object[] occurrences) {
+            Object[] occurrences) {
         RequirementDefinition requirementDefinition = new RequirementDefinition();
         requirementDefinition.setCapability(capability);
         requirementDefinition.setNode(node);
@@ -562,7 +586,7 @@ public class DataModelUtil {
      * @return the map
      */
     public static Map createGetInputPropertyValueFromListParameter(String inputPropertyListName, int indexInTheList,
-                                                                          String... nestedPropertyName) {
+            String... nestedPropertyName) {
         List<Object> propertyList = new ArrayList<>();
         propertyList.add(inputPropertyListName);
         propertyList.add(indexInTheList);
@@ -607,7 +631,7 @@ public class DataModelUtil {
      * @return the parameter definition ext
      */
     public static ParameterDefinitionExt convertAttributeDefToParameterDef(AttributeDefinition attributeDefinition,
-                                                                                  Map<String, List> outputValue) {
+            Map<String, List> outputValue) {
         if (attributeDefinition == null) {
             return null;
         }
@@ -630,11 +654,11 @@ public class DataModelUtil {
      * @param parameterDefinition   the parameter definition
      */
     public static void addInputParameterToTopologyTemplate(ServiceTemplate serviceTemplate,
-                                                                  String parameterDefinitionId,
-                                                                  ParameterDefinition parameterDefinition) {
+            String parameterDefinitionId, ParameterDefinition parameterDefinition) {
         if (Objects.isNull(serviceTemplate)) {
-            throw new CoreException(new InvalidAddActionNullEntityErrorBuilder("Topology Template Input Parameter",
-                                                                                      SERVICE_TEMPLATE).build());
+            throw new CoreException(
+                    new InvalidAddActionNullEntityErrorBuilder("Topology Template Input Parameter", SERVICE_TEMPLATE)
+                            .build());
         }
         TopologyTemplate topologyTemplate = serviceTemplate.getTopology_template();
         if (Objects.isNull(topologyTemplate)) {
@@ -655,11 +679,11 @@ public class DataModelUtil {
      * @param parameterDefinition   the parameter definition
      */
     public static void addOutputParameterToTopologyTemplate(ServiceTemplate serviceTemplate,
-                                                                   String parameterDefinitionId,
-                                                                   ParameterDefinition parameterDefinition) {
+            String parameterDefinitionId, ParameterDefinition parameterDefinition) {
         if (Objects.isNull(serviceTemplate)) {
-            throw new CoreException(new InvalidAddActionNullEntityErrorBuilder("Topology Template Output Parameter",
-                                                                                      SERVICE_TEMPLATE).build());
+            throw new CoreException(
+                    new InvalidAddActionNullEntityErrorBuilder("Topology Template Output Parameter", SERVICE_TEMPLATE)
+                            .build());
         }
         TopologyTemplate topologyTemplate = serviceTemplate.getTopology_template();
         if (Objects.isNull(topologyTemplate)) {
@@ -679,7 +703,7 @@ public class DataModelUtil {
      * @param requirementDef  added requirement def
      */
     public static void addRequirementToList(List<Map<String, RequirementDefinition>> requirementList,
-                                                   Map<String, RequirementDefinition> requirementDef) {
+            Map<String, RequirementDefinition> requirementDef) {
         if (requirementDef == null) {
             return;
         }
@@ -710,9 +734,8 @@ public class DataModelUtil {
         ToscaExtensionYamlUtil toscaExtensionYamlUtil = new ToscaExtensionYamlUtil();
         for (Map<String, RequirementAssignment> requirementAssignmentMap : templateRequirements) {
             for (Map.Entry<String, RequirementAssignment> requirementEntry : requirementAssignmentMap.entrySet()) {
-                RequirementAssignment requirementAssignment =
-                        (toscaExtensionYamlUtil.yamlToObject(toscaExtensionYamlUtil.objectToYaml(requirementEntry.getValue()),
-                                RequirementAssignment.class));
+                RequirementAssignment requirementAssignment = (toscaExtensionYamlUtil.yamlToObject(
+                        toscaExtensionYamlUtil.objectToYaml(requirementEntry.getValue()), RequirementAssignment.class));
                 nodeTemplateRequirementsAssignment.put(requirementEntry.getKey(), requirementAssignment);
             }
         }
@@ -757,8 +780,8 @@ public class DataModelUtil {
      * @param requirementsAssignmentList requirement definition list
      * @param requirementKey             requirement key
      */
-    public static Optional<List<RequirementAssignment>> getRequirementAssignment(List<Map<String, RequirementAssignment>> requirementsAssignmentList,
-                                                                                        String requirementKey) {
+    public static Optional<List<RequirementAssignment>> getRequirementAssignment(
+            List<Map<String, RequirementAssignment>> requirementsAssignmentList, String requirementKey) {
         if (CollectionUtils.isEmpty(requirementsAssignmentList)) {
             return Optional.empty();
         }
@@ -786,7 +809,7 @@ public class DataModelUtil {
      * @param requirementKey             requirement key
      */
     public static void removeRequirementsDefinition(List<Map<String, RequirementDefinition>> requirementsDefinitionList,
-                                                           String requirementKey) {
+            String requirementKey) {
         if (requirementsDefinitionList == null) {
             return;
         }
@@ -810,7 +833,7 @@ public class DataModelUtil {
      * @param requirementKey             requirement key
      */
     public static void removeRequirementsAssignment(List<Map<String, RequirementAssignment>> requirementsAssignmentList,
-                                                           String requirementKey) {
+            String requirementKey) {
         if (requirementsAssignmentList == null) {
             return;
         }
@@ -836,7 +859,7 @@ public class DataModelUtil {
      * @param requirementAssignmentToBeDeleted the requirement assignment to be deleted
      */
     public static void removeRequirementAssignment(NodeTemplate nodeTemplate, String requirementKey,
-                                                          RequirementAssignment requirementAssignmentToBeDeleted) {
+            RequirementAssignment requirementAssignmentToBeDeleted) {
         ToscaAnalyzerService toscaAnalyzerService = new ToscaAnalyzerServiceImpl();
         List<Map<String, RequirementAssignment>> nodeTemplateRequirements = nodeTemplate.getRequirements();
         if (nodeTemplateRequirements == null) {
@@ -960,7 +983,7 @@ public class DataModelUtil {
      * @return node template properties
      */
     public static Map<String, Object> getNodeTemplateProperties(ServiceTemplate serviceTemplate,
-                                                                       String nodeTemplateId) {
+            String nodeTemplateId) {
         if (serviceTemplate == null || serviceTemplate.getTopology_template() == null
                     || serviceTemplate.getTopology_template().getNode_templates() == null
                     || serviceTemplate.getTopology_template().getNode_templates().get(nodeTemplateId) == null) {
@@ -1097,8 +1120,7 @@ public class DataModelUtil {
      * @return the substitution mapping
      */
     public static SubstitutionMapping createSubstitutionTemplateSubMapping(String nodeTypeKey,
-                                                                                  NodeType substitutionNodeType,
-                                                                                  Map<String, Map<String, List<String>>> mapping) {
+            NodeType substitutionNodeType, Map<String, Map<String, List<String>>> mapping) {
         SubstitutionMapping substitutionMapping = new SubstitutionMapping();
         substitutionMapping.setNode_type(nodeTypeKey);
         substitutionMapping.setCapabilities(manageCapabilityMapping(substitutionNodeType.getCapabilities(),
@@ -1117,8 +1139,7 @@ public class DataModelUtil {
      * @param capabilityAttributes the capability attributes
      */
     public static void addNodeTemplateCapability(NodeTemplate nodeTemplate, String capabilityId,
-                                                        Map<String, Object> capabilityProperties,
-                                                        Map<String, Object> capabilityAttributes) {
+            Map<String, Object> capabilityProperties, Map<String, Object> capabilityAttributes) {
         Map<String, CapabilityAssignment> capabilities = nodeTemplate.getCapabilities();
         if (Objects.isNull(capabilities)) {
             capabilities = new HashMap<>();
@@ -1130,8 +1151,9 @@ public class DataModelUtil {
         nodeTemplate.setCapabilities(capabilities);
     }
 
-    private static Map<String, List<String>> manageRequirementMapping(List<Map<String, RequirementDefinition>> requirementList,
-                                                                             Map<String, List<String>> requirementSubstitutionMapping) {
+    private static Map<String, List<String>> manageRequirementMapping(
+            List<Map<String, RequirementDefinition>> requirementList,
+            Map<String, List<String>> requirementSubstitutionMapping) {
         if (requirementList == null) {
             return null;
         }
@@ -1149,7 +1171,7 @@ public class DataModelUtil {
     }
 
     private static Map<String, List<String>> manageCapabilityMapping(Map<String, CapabilityDefinition> capabilities,
-                                                                            Map<String, List<String>> capabilitySubstitutionMapping) {
+            Map<String, List<String>> capabilitySubstitutionMapping) {
         if (capabilities == null) {
             return null;
         }
@@ -1165,153 +1187,8 @@ public class DataModelUtil {
         return capabilityMapping;
     }
 
-    /**
-     * Add interface operation.
-     *
-     * @param serviceTemplate     the service template
-     * @param interfaceId         the interface id
-     * @param operationId         the operation id
-     * @param operationDefinition the operation definition
-     */
-    public static void addInterfaceOperation(ServiceTemplate serviceTemplate, String interfaceId, String operationId,
-                                                    OperationDefinition operationDefinition) {
-        Map<String, Object> interfaceTypes = serviceTemplate.getInterface_types();
-        if (MapUtils.isEmpty(interfaceTypes) || Objects.isNull(interfaceTypes.get(interfaceId))) {
-            return;
-        }
-
-        Object interfaceObject = interfaceTypes.get(interfaceId);
-        Map<String, Object> interfaceAsMap = CommonUtil.getObjectAsMap(interfaceObject);
-        interfaceAsMap.put(operationId, operationDefinition);
-    }
-
-    public static Map<String, InterfaceType> getInterfaceTypes(ServiceTemplate serviceTemplate) {
-        Map<String, Object> interfaceTypes = serviceTemplate.getInterface_types();
-
-        if (MapUtils.isEmpty(interfaceTypes)) {
-            return new HashMap<>();
-        }
-
-        Map<String, InterfaceType> convertedInterfaceTypes = new HashMap<>();
-        for (Map.Entry<String, Object> interfaceEntry : interfaceTypes.entrySet()) {
-            try {
-                Optional<InterfaceType> interfaceType =
-                        convertObjToInterfaceType(interfaceEntry.getKey(), interfaceEntry.getValue());
-                interfaceType.ifPresent(
-                        interfaceValue -> convertedInterfaceTypes.put(interfaceEntry.getKey(), interfaceValue));
-            } catch (Exception e) {
-                LOGGER.error("Cannot create interface object", e);
-                throw new CoreException(new ToscaInvalidInterfaceValueErrorBuilder(e.getMessage()).build());
-            }
-        }
-
-        return convertedInterfaceTypes;
-    }
-
-    public static <T extends InterfaceDefinition> Optional<T> convertObjToInterfaceDefinition(String interfaceId,
-                                                                                                     Object interfaceObj,
-                                                                                                     Class<T> interfaceClass) {
-        try {
-            Optional<T> interfaceDefinition = CommonUtil.createObjectUsingSetters(interfaceObj, interfaceClass);
-            interfaceDefinition.ifPresent(interfaceDefinitionType1 -> updateInterfaceDefinitionOperations(
-                    CommonUtil.getObjectAsMap(interfaceObj), interfaceDefinitionType1));
-            return interfaceDefinition;
-        } catch (Exception ex) {
-            LOGGER.error("Could not create {} from {}", InterfaceDefinitionType.class.getName(), interfaceId, ex);
-            throw new CoreException(new CreateInterfaceObjectErrorBuilder(InterfaceDefinitionType.class.getName(),
-                                                                                 interfaceId, ex.getMessage()).build());
-        }
-
-    }
-
-
-    public static Optional<InterfaceType> convertObjToInterfaceType(String interfaceId, Object interfaceObj) {
-        try {
-            Optional<InterfaceType> interfaceType =
-                    CommonUtil.createObjectUsingSetters(interfaceObj, InterfaceType.class);
-            interfaceType.ifPresent(
-                    interfaceType1 -> updateInterfaceTypeOperations(CommonUtil.getObjectAsMap(interfaceObj),
-                            interfaceType1));
-            return interfaceType;
-        } catch (Exception ex) {
-            LOGGER.error("Could not create {} from {}", InterfaceType.class.getName(), interfaceId, ex);
-            throw new CoreException(new CreateInterfaceObjectErrorBuilder(InterfaceType.class.getName(), interfaceId,
-                                                                                 ex.getMessage()).build());
-        }
-    }
-
-    public static Optional<Object> convertInterfaceTypeToObj(InterfaceType interfaceType) {
-        return converInterfaceToToscaInterfaceObj(interfaceType);
-    }
-
-    public static Optional<Object> convertInterfaceDefinitionTypeToObj(InterfaceDefinitionType interfaceDefinitionType) {
-        return converInterfaceToToscaInterfaceObj(interfaceDefinitionType);
-    }
-
-    private static Optional<Object> converInterfaceToToscaInterfaceObj(Object interfaceEntity) {
-        if (Objects.isNull(interfaceEntity)) {
-            return Optional.empty();
-        }
-
-        Map<String, Object> interfaceAsMap = CommonUtil.getObjectAsMap(interfaceEntity);
-        Map<String, Object> operations = (Map<String, Object>) interfaceAsMap.get(OPERATIONS);
-        if (MapUtils.isNotEmpty(operations)) {
-            interfaceAsMap.remove(OPERATIONS);
-            interfaceAsMap.putAll(operations);
-        }
-
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.configure(SerializationFeature.WRITE_NULL_MAP_VALUES, false);
-        return Optional.of(objectMapper.convertValue(interfaceAsMap, Object.class));
-    }
-
-    private static void updateInterfaceTypeOperations(Map<String, Object> interfaceAsMap, InterfaceType interfaceType) {
-
-        Set<String> fieldNames = CommonUtil.getClassFieldNames(InterfaceType.class);
-
-        for (Map.Entry<String, Object> entry : interfaceAsMap.entrySet()) {
-            Optional<? extends OperationDefinition> operationDefinition =
-                    createOperation(entry.getKey(), entry.getValue(), fieldNames, OperationDefinitionType.class);
-            operationDefinition.ifPresent(operation -> interfaceType.addOperation(entry.getKey(), operation));
-        }
-    }
-
-    private static Optional<? extends OperationDefinition> createOperation(String propertyName,
-                                                                                  Object operationCandidate,
-                                                                                  Set<String> fieldNames,
-                                                                                  Class<? extends OperationDefinition> operationClass) {
-        if (!fieldNames.contains(propertyName)) {
-            try {
-                return CommonUtil.createObjectUsingSetters(operationCandidate, operationClass);
-            } catch (Exception ex) {
-                LOGGER.error("Could not create Operation from {}", propertyName, ex);
-                throw new CoreException(new CreateInterfaceOperationObjectErrorBuilder(propertyName, ex.getMessage())
-                                                .build());
-            }
-        }
-
-        return Optional.empty();
-    }
-
-    private static <T extends OperationDefinition> void updateInterfaceDefinitionOperations(Map<String, Object> interfaceAsMap,
-                                                                                                   InterfaceDefinition interfaceDefinition) {
-
-        Set<String> fieldNames = CommonUtil.getClassFieldNames(InterfaceDefinitionType.class);
-        Optional<? extends OperationDefinition> operationDefinition;
-
-        for (Map.Entry<String, Object> entry : interfaceAsMap.entrySet()) {
-            operationDefinition = createOperation(entry.getKey(), entry.getValue(), fieldNames,
-                    interfaceDefinition instanceof InterfaceDefinitionType ? OperationDefinitionType.class :
-                            OperationDefinitionTemplate.class);
-            operationDefinition.ifPresent(operation -> interfaceDefinition.addOperation(entry.getKey(), operation));
-        }
-
-    }
-
-
     public static void addSubstitutionNodeTypeRequirements(NodeType substitutionNodeType,
-                                                                  List<Map<String, RequirementDefinition>> requirementsList,
-                                                                  String templateName) {
+            List<Map<String, RequirementDefinition>> requirementsList, String templateName) {
         if (CollectionUtils.isEmpty(requirementsList)) {
             return;
         }
@@ -1341,7 +1218,7 @@ public class DataModelUtil {
      * @return the relationship template
      */
     public static Optional<RelationshipTemplate> getRelationshipTemplate(ServiceTemplate serviceTemplate,
-                                                                                String relationshipId) {
+            String relationshipId) {
         if (serviceTemplate == null || serviceTemplate.getTopology_template() == null
                     || serviceTemplate.getTopology_template().getRelationship_templates() == null
                     || serviceTemplate.getTopology_template().getRelationship_templates().get(relationshipId) == null) {

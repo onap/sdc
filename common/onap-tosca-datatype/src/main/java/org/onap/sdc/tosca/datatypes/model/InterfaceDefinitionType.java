@@ -17,16 +17,29 @@
 
 package org.onap.sdc.tosca.datatypes.model;
 
-import org.apache.commons.collections4.MapUtils;
-
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
+import org.apache.commons.collections4.MapUtils;
+import org.onap.sdc.tosca.services.DataModelCloneUtil;
 
 public class InterfaceDefinitionType extends InterfaceDefinition {
 
     private String type;
     private Map<String, PropertyDefinition> inputs;
     private Map<String, OperationDefinitionType> operations;
+
+    public InterfaceDefinitionType() {
+    }
+
+    public InterfaceDefinitionType(Object toscaInterfaceDefinitionType) {
+        InterfaceDefinitionType interfaceDefinitionType =
+                (InterfaceDefinitionType) convertObjToInterfaceDefinition(toscaInterfaceDefinitionType);
+        this.setType(interfaceDefinitionType.getType());
+        this.setInputs(DataModelCloneUtil.cloneStringPropertyDefinitionMap(interfaceDefinitionType.getInputs()));
+        this.setOperations(
+                DataModelCloneUtil.cloneStringOperationDefinitionMap(interfaceDefinitionType.getOperations()));
+    }
 
     public String getType() {
         return type;
@@ -50,14 +63,6 @@ public class InterfaceDefinitionType extends InterfaceDefinition {
 
     public void setOperations(Map<String, OperationDefinitionType> operations) {
         this.operations = operations;
-    }
-
-    public void addOperation(String operationName, OperationDefinitionType operation) {
-        if (MapUtils.isEmpty(this.operations)) {
-            this.operations = new HashMap<>();
-        }
-
-        this.operations.put(operationName, operation);
     }
 
     @Override
@@ -92,4 +97,16 @@ public class InterfaceDefinitionType extends InterfaceDefinition {
     public void addOperation(String operationName, OperationDefinition operationDefinition) {
         addOperation(operationName, (OperationDefinitionType) operationDefinition);
     }
+
+    private void addOperation(String operationName, OperationDefinitionType operation) {
+        if (MapUtils.isEmpty(this.operations)) {
+            this.operations = new HashMap<>();
+        }
+        this.operations.put(operationName, operation);
+    }
+
+    public Optional<Object> convertInterfaceDefinitionTypeToToscaObj() {
+        return convertInterfaceToToscaInterfaceObj(this);
+    }
+
 }

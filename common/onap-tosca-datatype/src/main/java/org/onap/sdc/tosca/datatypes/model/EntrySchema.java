@@ -24,7 +24,7 @@ import org.onap.sdc.tosca.services.DataModelCloneUtil;
 
 import java.util.List;
 
-public class EntrySchema {
+public class EntrySchema implements Cloneable {
 
   private String description;
   private String type;
