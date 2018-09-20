@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "1a76adc5_306ca807",
+        "filename": "catalog-be/src/main/resources/import/tosca/data-types/dataTypes.yml",
+        "patchSetId": 27
+      },
+      "lineNbr": 1401,
+      "author": {
+        "id": 309
+      },
+      "writtenOn": "2018-09-20T07:28:34Z",
+      "side": 0,
+      "message": "@Michael, I believe it\u0027s a legacy from tosca nfv profile.\nBut because neither ONAP R2 DM or SOL001 has ever defined this, I don\u0027t expect the VNF providers would use this property when they\u0027re creating VNFD templates.\n\nIf we can\u0027t remove this due to backward compatibility, we should at least mark this \u0027required: false\u0027 so when VNF provider creates VNFD based on ONAP R2 DM, they won\u0027t create a VNFD which doesn\u0027t seem \u0027valid\u0027 due to this mandatory property.",
+      "parentUuid": "1a76adc5_505cc47c",
+      "range": {
+        "startLine": 1400,
+        "startChar": 3,
+        "endLine": 1401,
+        "endChar": 39
+      },
+      "revId": "48a9fdbd8da734f8e5bfb3cd38295ee315dd7fd2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1a76adc5_f056305b",
         "filename": "catalog-be/src/main/resources/import/tosca/data-types/dataTypes.yml",
         "patchSetId": 27
@@ -36,6 +60,30 @@
       "writtenOn": "2018-09-20T06:40:53Z",
       "side": 0,
       "message": "we do not allow removing properties please keep the existing properties.",
+      "range": {
+        "startLine": 1425,
+        "startChar": 0,
+        "endLine": 1427,
+        "endChar": 21
+      },
+      "revId": "48a9fdbd8da734f8e5bfb3cd38295ee315dd7fd2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_3043486d",
+        "filename": "catalog-be/src/main/resources/import/tosca/data-types/dataTypes.yml",
+        "patchSetId": 27
+      },
+      "lineNbr": 1427,
+      "author": {
+        "id": 309
+      },
+      "writtenOn": "2018-09-20T07:28:34Z",
+      "side": 0,
+      "message": "Again, this property is not defined by any DM, nor ONAP R2 neither SOL001. So I don\u0027t expect any VNF providers would use this property when they\u0027re creating VNFD templates. But since it is an optional property, I think we\u0027re ok to keep this for backward compatibility.",
+      "parentUuid": "1a76adc5_f056305b",
       "range": {
         "startLine": 1425,
         "startChar": 0,

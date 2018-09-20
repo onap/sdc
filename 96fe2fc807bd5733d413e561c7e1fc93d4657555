@@ -48,6 +48,30 @@
     },
     {
       "key": {
+        "uuid": "1a76adc5_1075ecc9",
+        "filename": "catalog-be/src/main/resources/import/tosca/data-types/dataTypes.yml",
+        "patchSetId": 27
+      },
+      "lineNbr": 1446,
+      "author": {
+        "id": 309
+      },
+      "writtenOn": "2018-09-20T07:28:34Z",
+      "side": 1,
+      "message": "I think according to TOSCA spec, every data type is by default derived from tosca.datatypes.Root.\n\nHere we don\u0027t change the derivation, we just make the default explicitly expressed.",
+      "parentUuid": "1a76adc5_b04c38c9",
+      "range": {
+        "startLine": 1446,
+        "startChar": 2,
+        "endLine": 1446,
+        "endChar": 36
+      },
+      "revId": "96fe2fc807bd5733d413e561c7e1fc93d4657555",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1a76adc5_d04774a1",
         "filename": "catalog-be/src/main/resources/import/tosca/interface-lifecycle-types/interfaceLifecycleTypes.yml",
         "patchSetId": 27
