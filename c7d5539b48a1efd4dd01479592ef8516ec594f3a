@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_767778a0",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/model/ToscaTypeImportDataImplTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-20T10:06:29Z",
+      "side": 1,
+      "message": "please fix the license hedar to the corect format \nhttps://wiki.onap.org/display/DW/Working+with+SDC#WorkingwithSDC-licenseguideline",
+      "range": {
+        "startLine": 2,
+        "startChar": 2,
+        "endLine": 2,
+        "endChar": 46
+      },
+      "revId": "c7d5539b48a1efd4dd01479592ef8516ec594f3a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
