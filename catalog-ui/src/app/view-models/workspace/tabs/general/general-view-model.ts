@@ -20,69 +20,71 @@
 
 'use strict';
 import * as _ from "lodash";
-import {ModalsHandler, ValidationUtils, EVENTS, CHANGE_COMPONENT_CSAR_VERSION_FLAG, ComponentType, DEFAULT_ICON,
-    ResourceType, ComponentState, instantiationType, ComponentFactory} from "app/utils";
-import {CacheService, EventListenerService, ProgressService, OnboardingService} from "app/services";
-import {IAppConfigurtaion, IValidate, IMainCategory, Resource, ISubCategory,Service, ICsarComponent, Component} from "app/models";
-import {IWorkspaceViewModelScope} from "app/view-models/workspace/workspace-view-model";
-import {Dictionary} from "lodash";
+import {
+    ModalsHandler, ValidationUtils, EVENTS, CHANGE_COMPONENT_CSAR_VERSION_FLAG, ComponentType, DEFAULT_ICON,
+    ResourceType, ComponentState, instantiationType, ComponentFactory
+} from "app/utils";
+import { CacheService, EventListenerService, ProgressService, OnboardingService } from "app/services";
+import { IAppConfigurtaion, IValidate, IMainCategory, Resource, ISubCategory, Service, ICsarComponent, Component } from "app/models";
+import { IWorkspaceViewModelScope } from "app/view-models/workspace/workspace-view-model";
+import { Dictionary } from "lodash";
 import { PREVIOUS_CSAR_COMPONENT } from "../../../../utils/constants";
 
 
 export class Validation {
-    componentNameValidationPattern:RegExp;
-    contactIdValidationPattern:RegExp;
-    tagValidationPattern:RegExp;
-    VendorReleaseValidationPattern:RegExp;
-    VendorNameValidationPattern:RegExp;
-    VendorModelNumberValidationPattern:RegExp;
-    commentValidationPattern:RegExp;
-    projectCodeValidationPattern:RegExp;
+    componentNameValidationPattern: RegExp;
+    contactIdValidationPattern: RegExp;
+    tagValidationPattern: RegExp;
+    VendorReleaseValidationPattern: RegExp;
+    VendorNameValidationPattern: RegExp;
+    VendorModelNumberValidationPattern: RegExp;
+    commentValidationPattern: RegExp;
+    projectCodeValidationPattern: RegExp;
 }
 
 export class componentCategories {//categories field bind to this obj in order to solve this bug: DE242059
-    selectedCategory:string;
+    selectedCategory: string;
 }
 
 export interface IEnvironmentContext {
-    defaultValue:string;
-    validValues:Array<string>;
+    defaultValue: string;
+    validValues: Array<string>;
 }
 
 export interface IGeneralScope extends IWorkspaceViewModelScope {
-    validation:Validation;
-    editForm:ng.IFormController;
-    categories:Array<IMainCategory>;
-    environmentContextObj:IEnvironmentContext;
-    latestCategoryId:string;
-    latestVendorName:string;
-    importedFileExtension:any;
-    isCreate:boolean;
-    isShowFileBrowse:boolean;
-    isShowOnboardingSelectionBrowse:boolean;
-    importedToscaBrowseFileText:string;
-    importCsarProgressKey:string;
-    browseFileLabel:string;
-    componentCategories:componentCategories;
-    instantiationTypes:Array<instantiationType>;
+    validation: Validation;
+    editForm: ng.IFormController;
+    categories: Array<IMainCategory>;
+    environmentContextObj: IEnvironmentContext;
+    latestCategoryId: string;
+    latestVendorName: string;
+    importedFileExtension: any;
+    isCreate: boolean;
+    isShowFileBrowse: boolean;
+    isShowOnboardingSelectionBrowse: boolean;
+    importedToscaBrowseFileText: string;
+    importCsarProgressKey: string;
+    browseFileLabel: string;
+    componentCategories: componentCategories;
+    instantiationTypes: Array<instantiationType>;
 
-    save():Promise<any>;
-    revert():void;
-    onImportFileChange():void;
-    validateField(field:any):boolean;
-    validateName(isInit:boolean):void;
-    calculateUnique(mainCategory:string, subCategory:string):string; // Build unique string from main and sub category
-    onVendorNameChange(oldVendorName:string):void;
-    convertCategoryStringToOneArray(category:string, subcategory:string):Array<IMainCategory>;
-    onCategoryChange():void;
-    onEcompGeneratedNamingChange():void;
-    openOnBoardingModal():void;
-    initCategoreis():void;
-    initEnvironmentContext():void;
-    initInstantiationTypes():void;
-    onInstantiationTypeChange():void;
-    updateIcon():void;
-    possibleToUpdateIcon():boolean;
+    save(): Promise<any>;
+    revert(): void;
+    onImportFileChange(): void;
+    validateField(field: any): boolean;
+    validateName(isInit: boolean): void;
+    calculateUnique(mainCategory: string, subCategory: string): string; // Build unique string from main and sub category
+    onVendorNameChange(oldVendorName: string): void;
+    convertCategoryStringToOneArray(category: string, subcategory: string): Array<IMainCategory>;
+    onCategoryChange(): void;
+    onEcompGeneratedNamingChange(): void;
+    openOnBoardingModal(): void;
+    initCategoreis(): void;
+    initEnvironmentContext(): void;
+    initInstantiationTypes(): void;
+    onInstantiationTypeChange(): void;
+    updateIcon(): void;
+    possibleToUpdateIcon(): boolean;
 }
 
 export class GeneralViewModel {
@@ -112,28 +114,29 @@ export class GeneralViewModel {
         'ComponentFactory'
     ];
 
-    constructor(private $scope:IGeneralScope,
-                private cacheService:CacheService,
-                private ComponentNameValidationPattern:RegExp,
-                private ContactIdValidationPattern:RegExp,
-                private TagValidationPattern:RegExp,
-                private VendorReleaseValidationPattern:RegExp,
-                private VendorNameValidationPattern:RegExp,
-                private VendorModelNumberValidationPattern:RegExp,
-                private CommentValidationPattern:RegExp,
-                private ValidationUtils:ValidationUtils,
-                private sdcConfig:IAppConfigurtaion,
-                private ProjectCodeValidationPattern:RegExp,
-                private $state:ng.ui.IStateService,
-                private ModalsHandler:ModalsHandler,
-                private EventListenerService:EventListenerService,
-                private Notification:any,
-                private progressService:ProgressService,
-                protected $interval:any,
-                private $filter:ng.IFilterService,
-                private $timeout:ng.ITimeoutService,
-                private onBoardingService:OnboardingService,
-                private ComponentFactory:ComponentFactory) {
+    constructor(private $scope: IGeneralScope,
+        private cacheService: CacheService,
+        private ComponentNameValidationPattern: RegExp,
+        private ContactIdValidationPattern: RegExp,
+        private TagValidationPattern: RegExp,
+        private VendorReleaseValidationPattern: RegExp,
+        private VendorNameValidationPattern: RegExp,
+        private VendorModelNumberValidationPattern: RegExp,
+        private CommentValidationPattern: RegExp,
+        private ValidationUtils: ValidationUtils,
+        private sdcConfig: IAppConfigurtaion,
+        private ProjectCodeValidationPattern: RegExp,
+        private $state: ng.ui.IStateService,
+        private ModalsHandler: ModalsHandler,
+        private EventListenerService: EventListenerService,
+        private Notification: any,
+        private progressService: ProgressService,
+        protected $interval: any,
+        private $filter: ng.IFilterService,
+        private $timeout: ng.ITimeoutService,
+        private onBoardingService: OnboardingService,
+        private ComponentFactory: ComponentFactory) {
+
 
         this.initScopeValidation();
         this.initScopeMethods();
@@ -143,7 +146,7 @@ export class GeneralViewModel {
 
 
 
-    private initScopeValidation = ():void => {
+    private initScopeValidation = (): void => {
         this.$scope.validation = new Validation();
         this.$scope.validation.componentNameValidationPattern = this.ComponentNameValidationPattern;
         this.$scope.validation.contactIdValidationPattern = this.ContactIdValidationPattern;
@@ -155,62 +158,62 @@ export class GeneralViewModel {
         this.$scope.validation.projectCodeValidationPattern = this.ProjectCodeValidationPattern;
     };
 
-    private loadOnboardingFileCache = ():ng.IPromise<Dictionary<any>> =>{
+    private loadOnboardingFileCache = (): ng.IPromise<Dictionary<any>> => {
 
-        let onboardCsarFilesMap:Dictionary<Dictionary<string>>;
-        let onSuccess = (vsps:Array<ICsarComponent>) =>{
+        let onboardCsarFilesMap: Dictionary<Dictionary<string>>;
+        let onSuccess = (vsps: Array<ICsarComponent>) => {
             onboardCsarFilesMap = {};
-            _.each(vsps, (vsp:ICsarComponent)=>{
+            _.each(vsps, (vsp: ICsarComponent) => {
                 onboardCsarFilesMap[vsp.packageId] = onboardCsarFilesMap[vsp.packageId] || {};
                 onboardCsarFilesMap[vsp.packageId][vsp.version] = vsp.vspName + " (" + vsp.version + ")";
             });
             this.cacheService.set('onboardCsarFilesMap', onboardCsarFilesMap);
             return onboardCsarFilesMap;
         };
-        let onError = (): void =>{
+        let onError = (): void => {
             console.log("Error getting onboarding list");
-        };               
+        };
         return this.onBoardingService.getOnboardingVSPs().then(onSuccess, onError);
     };
 
-    private setImportedFileText = ():void => {
+    private setImportedFileText = (): void => {
 
-        if(!this.$scope.isShowOnboardingSelectionBrowse) return;
+        if (!this.$scope.isShowOnboardingSelectionBrowse) return;
 
         //these variables makes it easier to read this logic
-        let csarUUID:string = (<Resource>this.$scope.component).csarUUID; 
-        let csarVersion:string = (<Resource>this.$scope.component).csarVersion;
+        let csarUUID: string = (<Resource>this.$scope.component).csarUUID;
+        let csarVersion: string = (<Resource>this.$scope.component).csarVersion;
 
-        let onboardCsarFilesMap:Dictionary<Dictionary<string>> = this.cacheService.get('onboardCsarFilesMap');
-        let assignFileName = ():void => {
-            if(this.$scope.component.vspArchived){
+        let onboardCsarFilesMap: Dictionary<Dictionary<string>> = this.cacheService.get('onboardCsarFilesMap');
+        let assignFileName = (): void => {
+            if (this.$scope.component.vspArchived) {
                 this.$scope.importedToscaBrowseFileText = 'VSP is archived';
             } else {
                 this.$scope.importedToscaBrowseFileText = onboardCsarFilesMap[csarUUID][csarVersion];
             }
         }
 
-        
-        if(this.$scope.component.vspArchived || (onboardCsarFilesMap && onboardCsarFilesMap[csarUUID] && onboardCsarFilesMap[csarUUID][csarVersion])){ //check that the file name is already in cache
+
+        if (this.$scope.component.vspArchived || (onboardCsarFilesMap && onboardCsarFilesMap[csarUUID] && onboardCsarFilesMap[csarUUID][csarVersion])) { //check that the file name is already in cache
             assignFileName();
         } else {
             this.loadOnboardingFileCache().then((onboardingFiles) => {
                 onboardCsarFilesMap = onboardingFiles;
                 this.cacheService.set('onboardCsarFilesMap', onboardingFiles);
                 assignFileName();
-            }, ()=> {});
+            }, () => { });
         }
-        
+
     }
 
-    isCreateModeAvailable(verifyObj:string): boolean {
-        var isCheckout:boolean = ComponentState.NOT_CERTIFIED_CHECKOUT === this.$scope.component.lifecycleState;
+    isCreateModeAvailable(verifyObj: string): boolean {
+        var isCheckout: boolean = ComponentState.NOT_CERTIFIED_CHECKOUT === this.$scope.component.lifecycleState;
         return this.$scope.isCreateMode() || (isCheckout && !verifyObj)
     }
 
-    private initScope = ():void => {
+    private initScope = (): void => {
 
-       
+
         this.$scope.importCsarProgressKey = "importCsarProgressKey";
 
         this.$scope.browseFileLabel = this.$scope.component.isResource() && (<Resource>this.$scope.component).resourceType === ResourceType.VF ? "Upload file" : "Upload VFC";
@@ -230,7 +233,7 @@ export class GeneralViewModel {
         // Init the decision if to show file browse.
         this.$scope.isShowFileBrowse = false;
         if (this.$scope.component.isResource()) {
-            let resource:Resource = <Resource>this.$scope.component;
+            let resource: Resource = <Resource>this.$scope.component;
             console.log(resource.name + ": " + resource.csarUUID);
             if (resource.importedFile) { // Component has imported file.
                 this.$scope.isShowFileBrowse = true;
@@ -238,7 +241,7 @@ export class GeneralViewModel {
             if (this.$scope.isEditMode() && resource.resourceType == ResourceType.VF && !resource.csarUUID) {
                 this.$scope.isShowFileBrowse = true;
             }
-        } else if(this.$scope.component.isService()){
+        } else if (this.$scope.component.isService()) {
             // Init Instantiation types
             this.$scope.initInstantiationTypes();
         }
@@ -264,12 +267,12 @@ export class GeneralViewModel {
         } else {
             this.$scope.isShowOnboardingSelectionBrowse = false;
         }
-        
+
 
         //init file extensions based on the file that was imported.
         if (this.$scope.component.isResource() && (<Resource>this.$scope.component).importedFile) {
-            let fileName:string = (<Resource>this.$scope.component).importedFile.filename;
-            let fileExtension:string = fileName.split(".").pop();
+            let fileName: string = (<Resource>this.$scope.component).importedFile.filename;
+            let fileExtension: string = fileName.split(".").pop();
             if (this.sdcConfig.csarFileExtension.indexOf(fileExtension.toLowerCase()) !== -1) {
                 this.$scope.importedFileExtension = this.sdcConfig.csarFileExtension;
                 (<Resource>this.$scope.component).importedFile.filetype = "csar";
@@ -287,8 +290,8 @@ export class GeneralViewModel {
 
         this.$scope.setValidState(true);
 
-        this.$scope.calculateUnique = (mainCategory:string, subCategory:string):string => {
-            let uniqueId:string = mainCategory;
+        this.$scope.calculateUnique = (mainCategory: string, subCategory: string): string => {
+            let uniqueId: string = mainCategory;
             if (subCategory) {
                 uniqueId += "_#_" + subCategory; // Set the select category combobox to show the selected category.
             }
@@ -301,7 +304,7 @@ export class GeneralViewModel {
             this.$scope.originComponent.contactId = this.$scope.component.contactId;
         }
 
-        
+
         this.$scope.$on('$destroy', () => {
             this.EventListenerService.unRegisterObserver(EVENTS.ON_LIFECYCLE_CHANGE_WITH_SAVE);
             this.EventListenerService.unRegisterObserver(EVENTS.ON_LIFECYCLE_CHANGE);
@@ -310,13 +313,13 @@ export class GeneralViewModel {
     };
 
     // Convert category string MainCategory_#_SubCategory to Array with one item (like the server except)
-    private convertCategoryStringToOneArray = ():Array<IMainCategory> => {
+    private convertCategoryStringToOneArray = (): Array<IMainCategory> => {
         let tmp = this.$scope.component.selectedCategory.split("_#_");
         let mainCategory = tmp[0];
         let subCategory = tmp[1];
 
         // Find the selected category and add the relevant sub category.
-        let selectedMainCategory:IMainCategory = <IMainCategory>_.find(this.$scope.categories, function (item) {
+        let selectedMainCategory: IMainCategory = <IMainCategory>_.find(this.$scope.categories, function (item) {
             return item["name"] === mainCategory;
 
         });
@@ -328,23 +331,23 @@ export class GeneralViewModel {
             });
             mainCategoryClone['subcategories'] = [angular.copy(selectedSubcategory)];
         }
-        let tmpSelected = <IMainCategory> mainCategoryClone;
+        let tmpSelected = <IMainCategory>mainCategoryClone;
 
-        let result:Array<IMainCategory> = [];
+        let result: Array<IMainCategory> = [];
         result.push(tmpSelected);
 
         return result;
     };
 
-    private updateComponentNameInBreadcrumbs = ():void => {
+    private updateComponentNameInBreadcrumbs = (): void => {
         //update breadcrum after changing name
         this.$scope.breadcrumbsModel[1].updateSelectedMenuItemText(this.$scope.component.getComponentSubType() + ': ' + this.$scope.component.name);
         this.$scope.updateMenuComponentName(this.$scope.component.name);
     };
 
-    private initScopeMethods = ():void => {
+    private initScopeMethods = (): void => {
 
-        this.$scope.initCategoreis = ():void => {
+        this.$scope.initCategoreis = (): void => {
             if (this.$scope.componentType === ComponentType.RESOURCE) {
                 this.$scope.categories = this.cacheService.get('resourceCategories');
 
@@ -354,16 +357,16 @@ export class GeneralViewModel {
             }
             if (this.$scope.componentType === ComponentType.COMBINATION) {
                 this.$scope.categories = this.cacheService.get('combinationCategories');
-            }            
+            }
         };
 
-        this.$scope.initInstantiationTypes = ():void => {
+        this.$scope.initInstantiationTypes = (): void => {
             if (this.$scope.componentType === ComponentType.SERVICE) {
                 this.$scope.instantiationTypes = new Array();
                 this.$scope.instantiationTypes.push(instantiationType.A_LA_CARTE);
                 this.$scope.instantiationTypes.push(instantiationType.MACRO);
-                var instantiationTypeField:string =(<Service>this.$scope.component).instantiationType;
-                if (instantiationTypeField === ""){
+                var instantiationTypeField: string = (<Service>this.$scope.component).instantiationType;
+                if (instantiationTypeField === "") {
                     this.$scope.instantiationTypes.push("");
                 }
                 else if (this.isCreateModeAvailable(instantiationTypeField)) {
@@ -373,67 +376,67 @@ export class GeneralViewModel {
             }
         };
 
-        this.$scope.initEnvironmentContext = ():void => {
+        this.$scope.initEnvironmentContext = (): void => {
             if (this.$scope.componentType === ComponentType.SERVICE) {
                 this.$scope.environmentContextObj = this.cacheService.get('UIConfiguration').environmentContext;
-                var environmentContext:string =(<Service>this.$scope.component).environmentContext;
+                var environmentContext: string = (<Service>this.$scope.component).environmentContext;
                 // In creation new service OR check outing old service without environmentContext parameter - set default value
-                if(this.isCreateModeAvailable(environmentContext)){
+                if (this.isCreateModeAvailable(environmentContext)) {
                     (<Service>this.$scope.component).environmentContext = this.$scope.environmentContextObj.defaultValue;
                 }
             }
         };
 
-        this.$scope.validateField = (field:any):boolean => {
+        this.$scope.validateField = (field: any): boolean => {
             if (field && field.$dirty && field.$invalid) {
                 return true;
             }
             return false;
         };
 
-        this.$scope.openOnBoardingModal = ():void => {
-            if(this.$scope.component.vspArchived) return;
+        this.$scope.openOnBoardingModal = (): void => {
+            if (this.$scope.component.vspArchived) return;
             let csarUUID = (<Resource>this.$scope.component).csarUUID;
             let csarVersion = (<Resource>this.$scope.component).csarVersion;
-            this.ModalsHandler.openOnboadrdingModal('Update', csarUUID, csarVersion).then((result)=> {
+            this.ModalsHandler.openOnboadrdingModal('Update', csarUUID, csarVersion).then((result) => {
 
-                if(result){
+                if (result) {
                     this.ComponentFactory.getComponentWithMetadataFromServer(result.type.toUpperCase(), result.previousComponent.uniqueId).then(
-                        (component:Component)=> {
-                        if (result.componentCsar && component.isResource()){
-                            this.cacheService.set(PREVIOUS_CSAR_COMPONENT, angular.copy(component));
-                            component = this.ComponentFactory.updateComponentFromCsar(result.componentCsar, <Resource>component);
-                        }
-                            
-                        this.$scope.setComponent(component);
-                        this.$scope.updateUnsavedFileFlag(true);
-                        this.setImportedFileText();
-                    }, ()=> {
-                        // ERROR
-                    });
+                        (component: Component) => {
+                            if (result.componentCsar && component.isResource()) {
+                                this.cacheService.set(PREVIOUS_CSAR_COMPONENT, angular.copy(component));
+                                component = this.ComponentFactory.updateComponentFromCsar(result.componentCsar, <Resource>component);
+                            }
+
+                            this.$scope.setComponent(component);
+                            this.$scope.updateUnsavedFileFlag(true);
+                            this.setImportedFileText();
+                        }, () => {
+                            // ERROR
+                        });
                 }
-            }, () => {});
+            }, () => { });
         };
 
-        this.$scope.updateIcon = ():void => {
-            this.ModalsHandler.openUpdateIconModal(this.$scope.component).then((isDirty:boolean)=> {
-                if(isDirty && !this.$scope.isCreateMode()){
+        this.$scope.updateIcon = (): void => {
+            this.ModalsHandler.openUpdateIconModal(this.$scope.component).then((isDirty: boolean) => {
+                if (isDirty && !this.$scope.isCreateMode()) {
                     this.setUnsavedChanges(true);
                 }
-            }, ()=> {
+            }, () => {
                 // ERROR
             });
         };
 
-        this.$scope.possibleToUpdateIcon = ():boolean => {
-            if(this.$scope.componentCategories.selectedCategory && (!this.$scope.component.isResource() || this.$scope.component.vendorName) && !this.$scope.component.isAlreadyCertified()){
+        this.$scope.possibleToUpdateIcon = (): boolean => {
+            if (this.$scope.componentCategories.selectedCategory && (!this.$scope.component.isResource() || this.$scope.component.vendorName) && !this.$scope.component.isAlreadyCertified()) {
                 return true;
-            }else{
+            } else {
                 return false;
             }
         }
 
-        this.$scope.validateName = (isInit:boolean):void => {
+        this.$scope.validateName = (isInit: boolean): void => {
             if (isInit === undefined) {
                 isInit = false;
             }
@@ -450,14 +453,14 @@ export class GeneralViewModel {
 
                 return;
             }
-            let subtype:string = ComponentType.RESOURCE == this.$scope.componentType ? this.$scope.component.getComponentSubType() : undefined;
+            let subtype: string = ComponentType.RESOURCE == this.$scope.componentType ? this.$scope.component.getComponentSubType() : undefined;
 
             let onFailed = (response) => {
                 //console.info('onFaild', response);
                 //this.$scope.isLoading = false;
             };
 
-            let onSuccess = (validation:IValidate) => {
+            let onSuccess = (validation: IValidate) => {
                 this.$scope.editForm["componentName"].$setValidity('nameExist', validation.isValid);
                 if (validation.isValid) {
                     //update breadcrumb after changing name
@@ -494,17 +497,17 @@ export class GeneralViewModel {
 
 
         this.EventListenerService.registerObserverCallback(EVENTS.ON_LIFECYCLE_CHANGE_WITH_SAVE, (nextState) => {
-            if (this.$state.current.data.unsavedChanges && this.$scope.isValidForm){
+            if (this.$state.current.data.unsavedChanges && this.$scope.isValidForm) {
                 this.$scope.save().then(() => {
                     this.$scope.handleChangeLifecycleState(nextState);
                 }, () => {
                     console.error("Save failed, unable to change lifecycle state to " + nextState);
                 });
-            } else if(!this.$scope.isValidForm){
+            } else if (!this.$scope.isValidForm) {
                 console.error("Form is not valid");
             } else {
-                let newCsarVersion:string;
-                if(this.$scope.unsavedFile){
+                let newCsarVersion: string;
+                if (this.$scope.unsavedFile) {
                     newCsarVersion = (<Resource>this.$scope.component).csarVersion;
                 }
                 this.$scope.handleChangeLifecycleState(nextState, newCsarVersion);
@@ -512,16 +515,16 @@ export class GeneralViewModel {
         });
 
 
-        this.$scope.revert = ():void => {
+        this.$scope.revert = (): void => {
             //in state of import file leave the file in place
 
             this.$scope.setComponent(this.ComponentFactory.createComponent(this.$scope.originComponent));
 
             if (this.$scope.component.isResource() && this.$scope.restoreFile) {
                 (<Resource>this.$scope.component).importedFile = angular.copy(this.$scope.restoreFile);
-            } 
-    
-            this.setImportedFileText(); 
+            }
+
+            this.setImportedFileText();
             this.$scope.updateBreadcrumbs(this.$scope.component); //update on workspace
 
             this.$scope.componentCategories.selectedCategory = this.$scope.originComponent.selectedCategory;
@@ -532,8 +535,8 @@ export class GeneralViewModel {
 
         this.$scope.onImportFileChange = () => {
 
-            if( !this.$scope.restoreFile && this.$scope.editForm.fileElement.value && this.$scope.editForm.fileElement.value.filename || //if file started empty but we have added a new one
-                this.$scope.restoreFile && !angular.equals(this.$scope.restoreFile, this.$scope.editForm.fileElement.value)){ //or file was swapped for a new one
+            if (!this.$scope.restoreFile && this.$scope.editForm.fileElement.value && this.$scope.editForm.fileElement.value.filename || //if file started empty but we have added a new one
+                this.$scope.restoreFile && !angular.equals(this.$scope.restoreFile, this.$scope.editForm.fileElement.value)) { //or file was swapped for a new one
                 this.$scope.updateUnsavedFileFlag(true);
             } else {
                 this.$scope.updateUnsavedFileFlag(false);
@@ -541,7 +544,7 @@ export class GeneralViewModel {
             }
         };
 
-        this.$scope.$watchCollection('component.name', (newData:any):void => {
+        this.$scope.$watchCollection('component.name', (newData: any): void => {
             this.$scope.validateName(false);
         });
 
@@ -557,19 +560,19 @@ export class GeneralViewModel {
 
         });
 
-        this.$scope.onCategoryChange = ():void => {
+        this.$scope.onCategoryChange = (): void => {
             this.$scope.component.selectedCategory = this.$scope.componentCategories.selectedCategory;
             this.$scope.component.categories = this.convertCategoryStringToOneArray();
             this.$scope.component.icon = DEFAULT_ICON;
         };
 
-        this.$scope.onEcompGeneratedNamingChange = ():void =>{
-            if(!(<Service>this.$scope.component).ecompGeneratedNaming){
+        this.$scope.onEcompGeneratedNamingChange = (): void => {
+            if (!(<Service>this.$scope.component).ecompGeneratedNaming) {
                 (<Service>this.$scope.component).namingPolicy = '';
             }
         };
 
-        this.$scope.onVendorNameChange = (oldVendorName:string):void => {
+        this.$scope.onVendorNameChange = (oldVendorName: string): void => {
             if (this.$scope.component.icon === oldVendorName) {
                 this.$scope.component.icon = DEFAULT_ICON;
             }
@@ -578,7 +581,7 @@ export class GeneralViewModel {
 
     };
 
-    private setUnsavedChanges = (hasChanges:boolean):void => {
+    private setUnsavedChanges = (hasChanges: boolean): void => {
         this.$state.current.data.unsavedChanges = hasChanges;
     };
 

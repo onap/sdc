@@ -126,7 +126,7 @@ export class MenuHandler {
         let result = new MenuItemGroup(0, [], false);
         if (components) {
             result.selectedIndex = this.findBreadcrumbComponentIndex(components, selected);
-            let clickItemCallback = (component:Component):ng.IPromise<boolean> => {
+            let clickItemCallback = (component:Component):ng.IPromise<boolean> => {                
                 this.$state.go('workspace.general', {
                     id: component.uniqueId,
                     type: component.componentType.toLowerCase(),

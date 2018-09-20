@@ -16,8 +16,8 @@
             <div class="sdc-workspace-top-bar">
                 <div class="version-container">
 
-                <span data-ng-if="!isCreateMode() && !component.isLatestVersion()" class="not-latest"></span>
-                    <select class="version-selector" data-ng-if="!isCreateMode()" data-tests-id="versionHeader" data-ng-model="changeVersion.selectedVersion" data-ng-class="{'disabled': unsavedChanges}"
+                <span data-ng-if="!component.isCombination() && !isCreateMode() && !component.isLatestVersion()" class="not-latest"></span>
+                    <select class="version-selector" data-ng-if="!component.isCombination() && !isCreateMode()" data-tests-id="versionHeader" data-ng-model="changeVersion.selectedVersion" data-ng-class="{'disabled': unsavedChanges}"
                             ng-options="'V'+version.versionNumber for version in versionsList" data-ng-change="onVersionChanged(changeVersion.selectedVersion.versionId)">
                     </select>
                 </div>
