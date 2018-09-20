@@ -21,7 +21,7 @@ import org.openecomp.sdc.itempermissions.dao.UserPermissionsDaoFactory;
 
 public class UserPermissionsDaoFactoryImpl extends UserPermissionsDaoFactory {
 
-    private static UserPermissionsDao INSTANCE =new UserPermissionsDaoImpl();
+    private static UserPermissionsDao INSTANCE = new UserPermissionsDaoImpl();
 
     @Override
     public UserPermissionsDao createInterface() {

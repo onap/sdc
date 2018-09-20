@@ -1,0 +1,733 @@
+heat_template_version: 2013-05-23
+
+description: heat template that creates MOG stack
+
+parameters:
+  pd_server_names:
+    type: comma_delimited_list
+    label: PD server names
+    description: name of the PD instance
+  pd_image_name:
+    type: string
+    label: image name
+    description: PD image name
+  pd_flavor_name:
+    type: string
+    label: PD flavor name
+    description: flavor name of PD instance
+  oam_server_names:
+    type: comma_delimited_list
+    label: OAM server names
+    description: name of the OAM instance
+  oam_image_name:
+    type: string
+    label: image name
+    description: OAM image name
+  oam_flavor_name:
+    type: string
+    label: OAM flavor name
+    description: flavor name of OAM instance
+  sm_server_names:
+    type: comma_delimited_list
+    label: SM server names
+    description: name of the SM instance
+  sm_image_name:
+    type: string
+    label: image name
+    description: SM image name
+  sm_flavor_name:
+    type: string
+    label: SM flavor name
+    description: flavor name of SM instance
+  ps_server_names:
+    type: comma_delimited_list
+    label: PS server names
+    description: name of the PS instance
+  ps_image_name:
+    type: string
+    label: PS image name
+    description: PS image name
+  ps_flavor_name:
+    type: string
+    label: PS flavor name
+    description: flavor name of PS instance
+  cm_server_names:
+    type: comma_delimited_list
+    label: CM server names
+    description: name of the CM instance
+  cm_image_name:
+    type: string
+    label: image name
+    description: CM image name
+  cm_flavor_name:
+    type: string
+    label: CM flavor name
+    description: flavor name of CM instance
+  availabilityzone_name:
+    type: string
+    label: availabilityzone name
+    description: availabilityzone name
+  oam_net_name:
+    type: string
+    label: oam network name
+    description: name of the oam network
+  oam_net_ips:
+    type: comma_delimited_list
+    label: internet network ips
+    description: ip of the OAM network
+ # internet_net_name:
+ #   type: string
+ #   label: internet network name
+ #   description: id of the internet network
+ # internet_net_ips:
+ #   type: comma_delimited_list
+ #   label: internet network ips
+ #   description: ip of the internet network
+ # internet_net_floating_ip:
+ #   type: string
+ #   label: mog internet virtual ip
+ #   description: mog internet virtual ip
+  sl_net_name:
+    type: string
+    label: silver lining network name
+    description: id of the sl network
+  sl_net_ips:
+    type: comma_delimited_list
+    label: silver lining network ips
+    description: ips of the sl network
+  sl_net_floating_ip:
+    type: string
+    label: mog sl net virtual ip
+    description: mog sl net virtual ip
+  repl_net_name:
+    type: string
+    label: Replication network name
+    description: name of the replication network
+  repl_net_ips:
+    type: comma_delimited_list
+    label: repl network ips
+    description: ips of repl network
+  rx_net_name:
+    type: string
+    label: Rx network name
+    description: Rx network name
+  rx_net_ips:
+    type: comma_delimited_list
+    label: Rx network ips
+    description: Rx network ips
+  rx_net_floating_ip:
+    type: string
+    label: mog rx net virtual ip
+    description: mog rx net virtual ip
+  ran_net_name:
+    type: string
+    label: RAN network name
+    description: RAN network name
+  ran_net_ips:
+    type: comma_delimited_list
+    label: RAN network ips
+    description: RAN network ip
+  ran_net_floating_ip:
+    type: string
+    label: mog ran net virtual ip
+    description: mog ran net virtual ip
+  csb_net_name:
+    type: string
+    label: csb internal network name
+    description: csb internal network name
+  csb_net_start:
+    type: string
+    label: csb internal start
+    description: csb internal start
+  csb_net_end:
+    type: string
+    label: csb internal end
+    description: csb internal end
+  csb_net_cidr:
+    type: string
+    label: csb ineternal cidr
+    description: csb internal cidr
+  csb_net_netmask:
+    type: string
+    description: CSB internal network subnet mask
+  csb_net_ips:
+    type: comma_delimited_list
+    description: mog_csb_net IP addresses
+  dummy_net_name_0:
+    type: string
+    label: csb internal network name
+    description: csb internal network name
+  dummy_net_start_0:
+    type: string
+    label: csb internal start
+    description: csb internal start
+  dummy_net_end_0:
+    type: string
+    label: csb internal end
+    description: csb internal end
+  dummy_net_cidr_0:
+    type: string
+    label: csb ineternal cidr
+    description: csb internal cidr
+  dummy_net_netmask_0:
+    type: string
+    description: CSB internal network subnet mask
+  dummy_net_name_1:
+    type: string
+    label: csb internal network name
+    description: csb internal network name
+  dummy_net_start_1:
+    type: string
+    label: csb internal start
+    description: csb internal start
+  dummy_net_end_1:
+    type: string
+    label: csb internal end
+    description: csb internal end
+  dummy_net_cidr_1:
+    type: string
+    label: csb ineternal cidr
+    description: csb internal cidr
+  dummy_net_netmask_1:
+    type: string
+    description: CSB internal network subnet mask
+
+  security_group_name:
+    type: string
+    label: security group name
+    description: the name of security group
+  cluster-manager-vol-1:
+    type: string
+    label: mog-cm-vol-1
+    description: Cluster Manager volume 1
+  session-manager-vol-1:
+    type: string
+    label: mog-sm-vol-1
+    description: Session Manager volume 1
+  session-manager-vol-2:
+    type: string
+    label: mog-sm-vol-2
+    description: Session Manager volume 2
+  oam-vol-1:
+    type: string
+    label: mog-oam-vol-1
+    description: OAM volume 1
+  oam-vol-2:
+    type: string
+    label: mog-oam-vol-2
+    description: OAM volume 2
+  mog_swift_container:
+    type: string
+    label: mog Config URL
+    description: Config URL
+  mog_script_dir:
+    type: string
+    label: mog Config script directory
+    description: Config script directory
+  mog_script_name:
+    type: string
+    label: mog Config script name
+    description: Config script name
+  mog_parameter_name:
+    type: string
+    label: mog script parameter name
+    description: Config script parameter csv file name
+  cluster-manager-vol-2:
+    type: string
+    label: mog-cm-vol-2
+    description: Cluster Manager volume 2 with ISO image
+
+resources:
+  mog_security_group:
+    type: OS::Neutron::SecurityGroup
+    properties:
+      description: mog security group
+      name: {get_param: security_group_name}
+      rules: [{"direction": egress, "ethertype": IPv4, "port_range_min": 1, "port_range_max": 65535, "protocol": tcp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": egress, "ethertype": IPv4, "port_range_min": 1, "port_range_max": 65535, "protocol": udp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": egress, "ethertype": IPv4, "protocol": icmp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": ingress, "ethertype": IPv4, "port_range_min": 1, "port_range_max": 65535, "protocol": tcp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": ingress, "ethertype": IPv4, "port_range_min": 1, "port_range_max": 65535, "protocol": udp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": ingress, "ethertype": IPv4, "protocol": icmp, "remote_ip_prefix": 0.0.0.0/0}
+              ]
+
+  csb_net:
+    type: OS::Contrail::VirtualNetwork
+    properties:
+      name: { get_param: csb_net_name}
+
+  csb_ip_subnet:
+    type: OS::Neutron::Subnet
+    properties:
+      name: {get_param: csb_net_name}
+      network_id: { get_resource: csb_net }
+      cidr: { get_param: csb_net_cidr }
+      allocation_pools: [{"start": {get_param: csb_net_start}, "end": {get_param: csb_net_end}}]
+      enable_dhcp: true
+
+  dummy_net_0:
+    type: OS::Contrail::VirtualNetwork
+    properties:
+      name: { get_param: dummy_net_name_0}
+
+  dummy_ip_subnet_0:
+    type: OS::Neutron::Subnet
+    properties:
+      name: {get_param: dummy_net_name_0}
+      network_id: { get_resource: dummy_net_0 }
+      cidr: { get_param: dummy_net_cidr_0 }
+      allocation_pools: [{"start": {get_param: dummy_net_start_0}, "end": {get_param: dummy_net_end_0}}]
+      enable_dhcp: true
+
+  dummy_net_1:
+    type: OS::Contrail::VirtualNetwork
+    properties:
+      name: { get_param: dummy_net_name_1}
+
+  dummy_ip_subnet_1:
+    type: OS::Neutron::Subnet
+    properties:
+      name: {get_param: dummy_net_name_1}
+      network_id: { get_resource: dummy_net_1 }
+      cidr: { get_param: dummy_net_cidr_1 }
+      allocation_pools: [{"start": {get_param: dummy_net_start_1}, "end": {get_param: dummy_net_end_1}}]
+      enable_dhcp: true
+
+
+  mogconfig:
+    type: OS::Heat::SoftwareConfig
+    properties:
+      group: ungrouped
+      config:
+        str_replace:
+          template: |
+            #!/bin/bash
+            wget -P script_dir swift_container/script_name
+            wget -P script_dir swift_container/parameter_name
+            chmod 755 script_dir/script_name
+            script_dir/script_name
+          params:
+            swift_container: {get_param: mog_swift_container}
+            script_dir: {get_param: mog_script_dir}
+            script_name: {get_param: mog_script_name}
+            #parameter_name: {get_param: mog_parameter_name}
+
+
+  servergroup_mog01:
+    type: OS::Nova::ServerGroup
+    properties:
+      policies:
+        - anti-affinity
+  server_pd_01:
+    type: OS::Nova::Server
+    properties:
+#      config_drive: "True"
+      name: {get_param: [pd_server_names, 0]}
+      image: {get_param: pd_image_name}
+      flavor: {get_param: pd_flavor_name}
+      availability_zone: {get_param: availabilityzone_name}
+      networks:
+        - port: {get_resource: pd01_port_0}
+        - port: {get_resource: pd01_port_1}
+        - port: {get_resource: pd01_port_2}
+        - port: {get_resource: pd01_port_3}
+        - port: {get_resource: pd01_port_4}
+        - port: {get_resource: pd01_port_5}
+        - port: {get_resource: pd01_port_6}
+     #   - port: {get_resource: pd01_port_7}
+      user_data:
+      scheduler_hints: {group: {get_resource: servergroup_mog01}}
+      user_data_format:  RAW
+
+
+  pd01_port_0:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_resource: csb_net}
+      security_groups: [{get_resource: mog_security_group}]
+  pd01_port_1:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_param: oam_net_name}
+      fixed_ips: [{"ip_address": {get_param: [oam_net_ips, 0]}}]
+      security_groups: [{get_resource: mog_security_group}]
+  pd01_port_2:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_resource: dummy_net_0}
+      security_groups: [{get_resource: mog_security_group}]
+  pd01_port_3:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_param: rx_net_name}
+      fixed_ips: [{"ip_address": {get_param: [rx_net_ips, 0]}}]
+      allowed_address_pairs: [{"ip_address": {get_param: rx_net_floating_ip} }]
+      security_groups: [{get_resource: mog_security_group}]
+  pd01_port_4:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_resource: dummy_net_1}
+      security_groups: [{get_resource: mog_security_group}]
+  pd01_port_5:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_param: ran_net_name}
+      fixed_ips: [{"ip_address": {get_param: [ran_net_ips, 0]}}]
+      allowed_address_pairs: [{"ip_address": {get_param: ran_net_floating_ip} }]
+      security_groups: [{get_resource: mog_security_group}]
+
+  pd01_port_6:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_param: sl_net_name}
+      fixed_ips: [{"ip_address": {get_param: [sl_net_ips, 0]}}]
+      allowed_address_pairs: [{"ip_address": {get_param: sl_net_floating_ip}}]
+      security_groups: [{get_resource: mog_security_group}]
+
+ # pd01_port_7:
+ #j   type: OS::Neutron::Port
+ #   properties:
+ #     network: {get_param: internet_net_name}
+ #     fixed_ips: [{"ip_address": {get_param: [internet_net_ips, 0]}}]
+ #     allowed_address_pairs: [{"ip_address": {get_param: internet_net_floating_ip} }]
+ #    security_groups: [{get_resource: mog_security_group}]
+
+  server_pd_02:
+    type: OS::Nova::Server
+    properties:
+#      config_drive: "True"
+      name: {get_param: [pd_server_names, 1]}
+      image: {get_param: pd_image_name}
+      flavor: {get_param: pd_flavor_name}
+      availability_zone: {get_param: availabilityzone_name}
+      networks:
+        - port: {get_resource: pd02_port_0}
+        - port: {get_resource: pd02_port_1}
+        - port: {get_resource: pd01_port_2}
+        - port: {get_resource: pd01_port_3}
+        - port: {get_resource: pd02_port_4}
+        - port: {get_resource: pd02_port_5}
+        - port: {get_resource: pd02_port_6}
+      #  - port: {get_resource: pd02_port_7}
+
+      user_data:
+      scheduler_hints: {group: {get_resource: servergroup_mog01}}
+      user_data_format:  RAW
+
+  pd02_port_0:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_resource: csb_net}
+      security_groups: [{get_resource: mog_security_group}]
+
+  pd02_port_1:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_param: oam_net_name}
+      fixed_ips: [{"ip_address": {get_param: [oam_net_ips, 1]}}]
+      security_groups: [{get_resource: mog_security_group}]
+
+  pd02_port_2:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_resource: dummy_net_0}
+      security_groups: [{get_resource: mog_security_group}]
+
+  pd02_port_3:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_param: rx_net_name}
+      fixed_ips: [{"ip_address": {get_param: [rx_net_ips, 1]}}]
+      allowed_address_pairs: [{"ip_address": {get_param: rx_net_floating_ip} }]
+      security_groups: [{get_resource: mog_security_group}]
+
+  pd02_port_4:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_resource: dummy_net_1}
+      security_groups: [{get_resource: mog_security_group}]
+
+  pd02_port_5:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_param: ran_net_name}
+      fixed_ips: [{"ip_address": {get_param: [ran_net_ips, 1]}}]
+      allowed_address_pairs: [{"ip_address": {get_param: ran_net_floating_ip} }]
+      security_groups: [{get_resource: mog_security_group}]
+
+  pd02_port_6:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_param: sl_net_name}
+      fixed_ips: [{"ip_address": {get_param: [sl_net_ips, 1]}}]
+      allowed_address_pairs: [{"ip_address": {get_param: sl_net_floating_ip}}]
+      security_groups: [{get_resource: mog_security_group}]
+
+ # pd02_port_7:
+ #   type: OS::Neutron::Port
+ #   properties:
+    #  network: {get_param: internet_net_name}
+    #  fixed_ips: [{"ip_address": {get_param: [internet_net_ips, 1]}}]
+   #   allowed_address_pairs: [{"ip_address": {get_param: internet_net_floating_ip} }]
+   #   security_groups: [{get_resource: mog_security_group}]
+
+  servergroup_mog02:
+    type: OS::Nova::ServerGroup
+    properties:
+      policies:
+        - anti-affinity
+  server_oam01:
+    type: OS::Nova::Server
+    properties:
+#      config_drive: "True"
+      name: {get_param: [oam_server_names, 0]}
+      image: {get_param: oam_image_name}
+      flavor: {get_param: oam_flavor_name}
+      availability_zone: {get_param: availabilityzone_name}
+      networks:
+        - port: {get_resource: oam01_port_0}
+        - port: {get_resource: oam01_port_1}
+#      block_device_mapping:
+#        - device_name: vdd
+#          volume_id: { get_param: oam-vol-1 }
+      user_data:
+      scheduler_hints: {group: {get_resource: servergroup_mog02}}
+      user_data_format:  RAW
+
+  oam01_port_0:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_resource: csb_net}
+      security_groups: [{get_resource: mog_security_group}]
+
+  oam01_port_1:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_param: oam_net_name}
+      fixed_ips: [{"ip_address": {get_param: [oam_net_ips, 2]}}]
+      security_groups: [{get_resource: mog_security_group}]
+
+
+  server_oam02:
+    type: OS::Nova::Server
+    properties:
+#      config_drive: "True"
+      name: {get_param: [oam_server_names, 1]}
+      image: {get_param: oam_image_name}
+      flavor: {get_param: oam_flavor_name}
+      availability_zone: {get_param: availabilityzone_name}
+      networks:
+        - port: {get_resource: oam02_port_0}
+        - port: {get_resource: oam02_port_1}
+#      block_device_mapping:
+#        - device_name: vdd
+#          volume_id: { get_param: oam-vol-2 }
+      user_data:
+      scheduler_hints: {group: {get_resource: servergroup_mog02}}
+      user_data_format:  RAW
+
+  oam02_port_0:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_resource: csb_net}
+      security_groups: [{get_resource: mog_security_group}]
+
+  oam02_port_1:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_param: oam_net_name}
+      fixed_ips: [{"ip_address": {get_param: [oam_net_ips, 3]}}]
+      security_groups: [{get_resource: mog_security_group}]
+
+
+  server_sm01:
+    type: OS::Nova::Server
+    properties:
+#      config_drive: "True"
+      name: {get_param: [sm_server_names, 0]}
+      image: {get_param: sm_image_name}
+      flavor: {get_param: sm_flavor_name}
+      availability_zone: {get_param: availabilityzone_name}
+      networks:
+        - port: {get_resource: sm01_port_0}
+        - port: {get_resource: sm01_port_1}
+#      block_device_mapping:
+#        - device_name: vdd
+#          volume_id: { get_param: session-manager-vol-1 }
+      user_data:
+      scheduler_hints: {group: {get_resource: servergroup_mog02}}
+      user_data_format:  RAW
+
+  sm01_port_0:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_resource: csb_net}
+      security_groups: [{get_resource: mog_security_group}]
+
+  sm01_port_1:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_resource: dummy_net_0}
+      security_groups: [{get_resource: mog_security_group}]
+
+  sm01_port_2:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_param: repl_net_name}
+      fixed_ips: [{"ip_address": {get_param: [repl_net_ips, 0]}}]
+      security_groups: [{get_resource: mog_security_group}]
+
+  server_sm02:
+    type: OS::Nova::Server
+    properties:
+#      config_drive: "True"
+      name: {get_param: [sm_server_names, 1]}
+      image: {get_param: sm_image_name}
+      flavor: {get_param: sm_flavor_name}
+      availability_zone: {get_param: availabilityzone_name}
+#      block_device_mapping:
+#        - device_name: vdd
+#          volume_id: { get_param: session-manager-vol-2 }
+      networks:
+        - port: {get_resource: sm02_port_0}
+        - port: {get_resource: sm02_port_1}
+      user_data:
+      scheduler_hints: {group: {get_resource: servergroup_mog02}}
+      user_data_format:  RAW
+
+  sm02_port_0:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_resource: csb_net}
+      security_groups: [{get_resource: mog_security_group}]
+
+  sm02_port_1:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_resource: dummy_net_0}
+      security_groups: [{get_resource: mog_security_group}]
+
+  sm02_port_2:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_param: repl_net_name}
+      fixed_ips: [{"ip_address": {get_param: [repl_net_ips, 1]}}]
+      security_groups: [{get_resource: mog_security_group}]
+
+  servergroup_mog03:
+    type: OS::Nova::ServerGroup
+    properties:
+      policies:
+        - anti-affinity
+  server_ps01:
+    type: OS::Nova::Server
+    properties:
+#      config_drive: "True"
+      name: {get_param: [ps_server_names, 0]}
+      image: {get_param: ps_image_name}
+      flavor: {get_param: ps_flavor_name}
+      availability_zone: {get_param: availabilityzone_name}
+      networks:
+        - port: {get_resource: ps01_port_0}
+      user_data:
+      scheduler_hints: {group: {get_resource: servergroup_mog03}}
+      user_data_format:  RAW
+
+  ps01_port_0:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_resource: csb_net}
+      security_groups: [{get_resource: mog_security_group}]
+
+  server_ps02:
+    type: OS::Nova::Server
+    properties:
+#      config_drive: "True"
+      name: {get_param: [ps_server_names, 1]}
+      image: {get_param: ps_image_name}
+      flavor: {get_param: ps_flavor_name}
+      availability_zone: {get_param: availabilityzone_name}
+      networks:
+        - port: {get_resource: ps02_port_0}
+      user_data:
+      scheduler_hints: {group: {get_resource: servergroup_mog03}}
+      user_data_format:  RAW
+
+  ps02_port_0:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_resource: csb_net}
+      security_groups: [{get_resource: mog_security_group}]
+
+  server_ps03:
+    type: OS::Nova::Server
+    properties:
+      name: {get_param: [ps_server_names, 2]}
+      image: {get_param: ps_image_name}
+      flavor: {get_param: ps_flavor_name}
+      availability_zone: {get_param: availabilityzone_name}
+      networks:
+        - port: {get_resource: ps03_port_0}
+      user_data:
+      scheduler_hints: {group: {get_resource: servergroup_mog03}}
+      user_data_format:  RAW
+
+  ps03_port_0:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_resource: csb_net}
+      security_groups: [{get_resource: mog_security_group}]
+
+  server_ps04:
+    type: OS::Nova::Server
+    properties:
+      name: {get_param: [ps_server_names, 3]}
+      image: {get_param: ps_image_name}
+      flavor: {get_param: ps_flavor_name}
+      availability_zone: {get_param: availabilityzone_name}
+      networks:
+        - port: {get_resource: ps04_port_0}
+      user_data:
+      scheduler_hints: {group: {get_resource: servergroup_mog03}}
+      user_data_format:  RAW
+
+  ps04_port_0:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_resource: csb_net}
+      security_groups: [{get_resource: mog_security_group}]
+
+  server_cm01:
+    type: OS::Nova::Server
+    properties:
+#      config_drive: "True"
+      name: {get_param: [cm_server_names, 0]}
+      image: {get_param: cm_image_name}
+      flavor: {get_param: cm_flavor_name}
+      availability_zone: {get_param: availabilityzone_name}
+      networks:
+        - port: {get_resource: cm01_port_0}
+        - port: {get_resource: cm01_port_1}
+#      block_device_mapping:
+#        - device_name: vdd
+#          volume_id: { get_param: cluster-manager-vol-2 }
+#        - device_name: vde
+#          volume_id: { get_param: cluster-manager-vol-1 }
+      user_data:
+      scheduler_hints: {group: {get_resource: servergroup_mog03}}
+      user_data_format:  RAW
+
+  cm01_port_0:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_resource: csb_net}
+      fixed_ips: [{"ip_address": {get_param: [csb_net_ips, 10]}}]
+      security_groups: [{get_resource: mog_security_group}]
+
+  cm01_port_1:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_param: oam_net_name}
+      fixed_ips: [{"ip_address": {get_param: [oam_net_ips, 4]}}]
+      security_groups: [{get_resource: mog_security_group}]
+
