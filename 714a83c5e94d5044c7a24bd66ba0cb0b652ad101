@@ -121,6 +121,57 @@
     },
     {
       "key": {
+        "uuid": "1a76adc5_af512e31",
+        "filename": "common/onap-tosca-datatype/src/main/java/org/onap/sdc/tosca/services/DataModelCloneUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 107,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-09-21T09:56:20Z",
+      "side": 1,
+      "message": "Why not to create a new List(validSourceTypes)",
+      "revId": "714a83c5e94d5044c7a24bd66ba0cb0b652ad101",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_6f50f631",
+        "filename": "common/onap-tosca-datatype/src/main/java/org/onap/sdc/tosca/services/DataModelCloneUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 117,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-09-21T09:56:20Z",
+      "side": 1,
+      "message": "Why not to use HashMap constructor which receives a map?",
+      "revId": "714a83c5e94d5044c7a24bd66ba0cb0b652ad101",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_0f43826c",
+        "filename": "common/onap-tosca-datatype/src/main/java/org/onap/sdc/tosca/services/DataModelCloneUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 145,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-09-21T09:56:20Z",
+      "side": 1,
+      "message": "Why to clonea new object. It was just created.",
+      "revId": "714a83c5e94d5044c7a24bd66ba0cb0b652ad101",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1a76adc5_2ad0b4c7",
         "filename": "openecomp-be/lib/openecomp-tosca-lib/src/main/java/org/openecomp/sdc/tosca/services/impl/ToscaAnalyzerServiceImpl.java",
         "patchSetId": 1
