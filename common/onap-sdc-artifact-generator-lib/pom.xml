@@ -18,7 +18,6 @@
 	<modules>
 		<module>onap-sdc-artifact-generator-api</module>
 		<module>onap-sdc-artifact-generator-core</module>
-		<module>onap-sdc-artifact-generator-test</module>
 	</modules>
 
 </project>
