@@ -47,7 +47,7 @@ Workflow information is available in readthedocs
 -  [`SDC-181 <https://jira.onap.org/browse/SDC-181>`__\ ] - This epic is for modeling relationship in TOSCA between nodes (VNFs)
 -  [`SDC-220 <https://jira.onap.org/browse/SDC-220>`__\ ] - integrate VNF onboarding using VNF-SDK
 -  [`SDC-326 <https://jira.onap.org/browse/SDC-326>`__\ ] - Support work flows in SDC
--  [`SDC-383 <https://jira.onap.org/browse/SDC-383>`__\ ] - sdc will enchance our testing to provide better testing covrage
+-  [`SDC-383 <https://jira.onap.org/browse/SDC-383>`__\ ] - sdc will enhance our testing to provide better testing coverage
 -  [`SDC-647 <https://jira.onap.org/browse/SDC-647>`__\ ] - process build and deploy process optimization
 -  [`SDC-659 <https://jira.onap.org/browse/SDC-659>`__\ ] - SDC deploy and build optimization
 -  [`SDC-731 <https://jira.onap.org/browse/SDC-731>`__\ ] - sdc designer integration
@@ -81,7 +81,7 @@ Workflow information is available in readthedocs
 -  [`SDC-82 <https://jira.onap.org/browse/SDC-82>`__\ ] - support adding artifact type for node template
 -  [`SDC-118 <https://jira.onap.org/browse/SDC-118>`__\ ] - support sub process
 -  [`SDC-124 <https://jira.onap.org/browse/SDC-124>`__\ ] - support insert a sub process which is already defined
--  [`SDC-143 <https://jira.onap.org/browse/SDC-143>`__\ ] - create local DEV envurment based on onap vagrant
+-  [`SDC-143 <https://jira.onap.org/browse/SDC-143>`__\ ] - create local DEV environment based on onap vagrant
 -  [`SDC-242 <https://jira.onap.org/browse/SDC-242>`__\ ] - TDP 325252 - resolve get_input values
 -  [`SDC-243 <https://jira.onap.org/browse/SDC-243>`__\ ] - TDP 319197 - tosca parser port mirroring
 -  [`SDC-259 <https://jira.onap.org/browse/SDC-259>`__\ ] - TDP 316633 - TenantIsolation ContextDistribution
@@ -101,17 +101,17 @@ Workflow information is available in readthedocs
 -  [`SDC-615 <https://jira.onap.org/browse/SDC-615>`__\ ] - add new artifact type to SDC
 -  [`SDC-619 <https://jira.onap.org/browse/SDC-619>`__\ ] - ONAP support
 -  [`SDC-627 <https://jira.onap.org/browse/SDC-627>`__\ ] - Collaboration - BE - Healing - new healing table
--  [`SDC-650 <https://jira.onap.org/browse/SDC-650>`__\ ] - review docker memory asignment
+-  [`SDC-650 <https://jira.onap.org/browse/SDC-650>`__\ ] - review docker memory assignment
 -  [`SDC-652 <https://jira.onap.org/browse/SDC-652>`__\ ] - K8/OOM adoption - Research
 -  [`SDC-655 <https://jira.onap.org/browse/SDC-655>`__\ ] - Fixing update HEAT
 -  [`SDC-660 <https://jira.onap.org/browse/SDC-660>`__\ ] - docker image size optimization
--  [`SDC-679 <https://jira.onap.org/browse/SDC-679>`__\ ] - Generate bpmn files that can be executed on activiti engine
+-  [`SDC-679 <https://jira.onap.org/browse/SDC-679>`__\ ] - Generate bpmn files that can be executed on activity engine
 -  [`SDC-683 <https://jira.onap.org/browse/SDC-683>`__\ ] - sync release-1.1-0 with master
 -  [`SDC-685 <https://jira.onap.org/browse/SDC-685>`__\ ] - create unit tests for jtosca
 -  [`SDC-686 <https://jira.onap.org/browse/SDC-686>`__\ ] - code sync
 -  [`SDC-687 <https://jira.onap.org/browse/SDC-687>`__\ ] - sdc designer integration part 1
 -  [`SDC-712 <https://jira.onap.org/browse/SDC-712>`__\ ] - import normative superation
--  [`SDC-713 <https://jira.onap.org/browse/SDC-713>`__\ ] - amsterdam branch
+-  [`SDC-713 <https://jira.onap.org/browse/SDC-713>`__\ ] - Amsterdam branch
 -  [`SDC-728 <https://jira.onap.org/browse/SDC-728>`__\ ] - sdc designer integration part 2
 -  [`SDC-732 <https://jira.onap.org/browse/SDC-732>`__\ ] - sdc designer integration part 3
 -  [`SDC-740 <https://jira.onap.org/browse/SDC-740>`__\ ] - converter support IntermediateCatchEvent
@@ -140,7 +140,7 @@ Workflow information is available in readthedocs
 -  [`SDC-899 <https://jira.onap.org/browse/SDC-899>`__\ ] - update microservice config info
 -  [`SDC-901 <https://jira.onap.org/browse/SDC-901>`__\ ] - add internationalization
 -  [`SDC-902 <https://jira.onap.org/browse/SDC-902>`__\ ] - add exclusive gateway
--  [`SDC-903 <https://jira.onap.org/browse/SDC-903>`__\ ] - sdc designer integration part 5 bus and event resource and dafanition
+-  [`SDC-903 <https://jira.onap.org/browse/SDC-903>`__\ ] - sdc designer integration part 5 bus and event resource and definition
 -  [`SDC-905 <https://jira.onap.org/browse/SDC-905>`__\ ] - add backend service
 -  [`SDC-906 <https://jira.onap.org/browse/SDC-906>`__\ ] - Deploy K8 on Vagrant
 -  [`SDC-907 <https://jira.onap.org/browse/SDC-907>`__\ ] - Cassandra OOM Alignment - update OOM deployment
@@ -166,11 +166,11 @@ Workflow information is available in readthedocs
 -  [`SDC-952 <https://jira.onap.org/browse/SDC-952>`__\ ] - update SDC-DISTRIBUTION-CLIENT packages
 -  [`SDC-953 <https://jira.onap.org/browse/SDC-953>`__\ ] - update SDC-DOCKER-BASE packages
 -  [`SDC-954 <https://jira.onap.org/browse/SDC-954>`__\ ] - update SDC-TITAN-CASSANDRA packages
--  [`SDC-955 <https://jira.onap.org/browse/SDC-955>`__\ ] - configuration ovriding capabelties.
+-  [`SDC-955 <https://jira.onap.org/browse/SDC-955>`__\ ] - configuration overriding capabilities.
 -  [`SDC-957 <https://jira.onap.org/browse/SDC-957>`__\ ] - add ignore conformance level option
 -  [`SDC-969 <https://jira.onap.org/browse/SDC-969>`__\ ] - sync1802E to ONAP part 1
 -  [`SDC-972 <https://jira.onap.org/browse/SDC-972>`__\ ] - sdc designer integration part 4 design alignment
--  [`SDC-977 <https://jira.onap.org/browse/SDC-977>`__\ ] - sdc designer integration part 6 bus implamintation
+-  [`SDC-977 <https://jira.onap.org/browse/SDC-977>`__\ ] - sdc designer integration part 6 bus implementation
 -  [`SDC-981 <https://jira.onap.org/browse/SDC-981>`__\ ] - Setup Micro-Service for WF Designer SDC Adapter
 -  [`SDC-987 <https://jira.onap.org/browse/SDC-987>`__\ ] - Update Dropwizard to the Latest Version
 -  [`SDC-990 <https://jira.onap.org/browse/SDC-990>`__\ ] - Add BDD Testing for onboarding
@@ -195,7 +195,7 @@ Workflow information is available in readthedocs
 -  [`SDC-1061 <https://jira.onap.org/browse/SDC-1061>`__\ ] - ONAP Support
 -  [`SDC-1073 <https://jira.onap.org/browse/SDC-1073>`__\ ] - Support VFC Instance Group per networkrole
 -  [`SDC-1080 <https://jira.onap.org/browse/SDC-1080>`__\ ] - Close the 'DirectoryStream' after its be used.
--  [`SDC-1104 <https://jira.onap.org/browse/SDC-1104>`__\ ] - Normative alignemet
+-  [`SDC-1104 <https://jira.onap.org/browse/SDC-1104>`__\ ] - Normative alignment
 -  [`SDC-1117 <https://jira.onap.org/browse/SDC-1117>`__\ ] - achieve the 50% unit test coverage
 -  [`SDC-1130 <https://jira.onap.org/browse/SDC-1130>`__\ ] - Display Extend Activities on WF Designer UI
 -  [`SDC-1131 <https://jira.onap.org/browse/SDC-1131>`__\ ] - Use Extend Activities to Design Workflow and Save
@@ -203,7 +203,7 @@ Workflow information is available in readthedocs
 -  [`SDC-1165 <https://jira.onap.org/browse/SDC-1165>`__\ ] - SDC designer Integration part 9 - Create component that disables selected layouts
 -  [`SDC-1169 <https://jira.onap.org/browse/SDC-1169>`__\ ] - CII passing bage
 -  [`SDC-1172 <https://jira.onap.org/browse/SDC-1172>`__\ ] - reach 50% unit test coverage sdc workflow
--  [`SDC-1174 <https://jira.onap.org/browse/SDC-1174>`__\ ] - Support unified Tosca pattern 1C2 for vlan subinterface
+-  [`SDC-1174 <https://jira.onap.org/browse/SDC-1174>`__\ ] - Support unified Tosca pattern 1C2 for vlan sub-interface
 -  [`SDC-1197 <https://jira.onap.org/browse/SDC-1197>`__\ ] - Enhance SDC Parser to support Interface and Operations
 -  [`SDC-1221 <https://jira.onap.org/browse/SDC-1221>`__\ ] - Fix library CVEs in sdc-cassandra
 -  [`SDC-1310 <https://jira.onap.org/browse/SDC-1310>`__\ ] - Fix additional library CVEs in sdc-docker-base
@@ -232,13 +232,13 @@ Workflow information is available in readthedocs
 -  [`SDC-434 <https://jira.onap.org/browse/SDC-434>`__\ ] - Healing should be added to the resubmitAll utility REST
 -  [`SDC-438 <https://jira.onap.org/browse/SDC-438>`__\ ] - Unable to Access SDC from Portal
 -  [`SDC-440 <https://jira.onap.org/browse/SDC-440>`__\ ] - When creating a new VSP "HSS_FE_test_100617", HEAT validation failed with 2 errors
--  [`SDC-458 <https://jira.onap.org/browse/SDC-458>`__\ ] - Onboard questionaire-component missing enum AIC
+-  [`SDC-458 <https://jira.onap.org/browse/SDC-458>`__\ ] - Onboard questionnaire-component missing enum AIC
 -  [`SDC-459 <https://jira.onap.org/browse/SDC-459>`__\ ] - Month navigation does not work in firefox
 -  [`SDC-466 <https://jira.onap.org/browse/SDC-466>`__\ ] - Submit failed for existing VSP "Nimbus 3.1 PCRF 0717"
 -  [`SDC-468 <https://jira.onap.org/browse/SDC-468>`__\ ] - add check for flat node type, in case of port mirroring
 -  [`SDC-473 <https://jira.onap.org/browse/SDC-473>`__\ ] - healing does not work on submitted vsps
 -  [`SDC-479 <https://jira.onap.org/browse/SDC-479>`__\ ] - Fix the sdc vagrant-onap to work as a local deployment vagrant
--  [`SDC-480 <https://jira.onap.org/browse/SDC-480>`__\ ] - fix failing healers dureing resubmit
+-  [`SDC-480 <https://jira.onap.org/browse/SDC-480>`__\ ] - fix failing healers during resubmit
 -  [`SDC-484 <https://jira.onap.org/browse/SDC-484>`__\ ] - Deleting a connection between VNF resources causes 500 error code on SDC Composition GUI
 -  [`SDC-485 <https://jira.onap.org/browse/SDC-485>`__\ ] - Limits - issue in display
 -  [`SDC-488 <https://jira.onap.org/browse/SDC-488>`__\ ] - parse error message
@@ -305,7 +305,7 @@ Workflow information is available in readthedocs
 -  [`SDC-773 <https://jira.onap.org/browse/SDC-773>`__\ ] - SDC Import Export Executors should be supported.
 -  [`SDC-774 <https://jira.onap.org/browse/SDC-774>`__\ ] - fix parameter value check in vm grouping
 -  [`SDC-776 <https://jira.onap.org/browse/SDC-776>`__\ ] - Sonar coverage drop onboarding
--  [`SDC-777 <https://jira.onap.org/browse/SDC-777>`__\ ] - sonar scan alignement
+-  [`SDC-777 <https://jira.onap.org/browse/SDC-777>`__\ ] - sonar scan alignment
 -  [`SDC-792 <https://jira.onap.org/browse/SDC-792>`__\ ] - Add a private constructor to hide the implicit public one to ConfigurationUtils
 -  [`SDC-811 <https://jira.onap.org/browse/SDC-811>`__\ ] - Assign Mib to Component
 -  [`SDC-830 <https://jira.onap.org/browse/SDC-830>`__\ ] - Broken mapping of ChoiceOrOther because of missing default constructor
@@ -316,7 +316,7 @@ Workflow information is available in readthedocs
 -  [`SDC-874 <https://jira.onap.org/browse/SDC-874>`__\ ] - fix upload csar unit tests
 -  [`SDC-876 <https://jira.onap.org/browse/SDC-876>`__\ ] - Null pointer exception while creating Deployment flavor
 -  [`SDC-879 <https://jira.onap.org/browse/SDC-879>`__\ ] - Improve ConfigurationUtils class
--  [`SDC-881 <https://jira.onap.org/browse/SDC-881>`__\ ] - Togglz support for UI
+-  [`SDC-881 <https://jira.onap.org/browse/SDC-881>`__\ ] - Toggle support for UI
 -  [`SDC-886 <https://jira.onap.org/browse/SDC-886>`__\ ] - ZipOutputStream need to be closed
 -  [`SDC-888 <https://jira.onap.org/browse/SDC-888>`__\ ] - sonar fix - Stack
 -  [`SDC-892 <https://jira.onap.org/browse/SDC-892>`__\ ] - Fail to Export VLM
@@ -404,7 +404,7 @@ Workflow information is available in readthedocs
 -  [`SDC-1261 <https://jira.onap.org/browse/SDC-1261>`__\ ] - Unable to create more than one component dependency for VSP
 -  [`SDC-1262 <https://jira.onap.org/browse/SDC-1262>`__\ ] - Add multiple servers for BDD testing
 -  [`SDC-1265 <https://jira.onap.org/browse/SDC-1265>`__\ ] - SDC OOM Install elastic search in crashbackloop
--  [`SDC-1267 <https://jira.onap.org/browse/SDC-1267>`__\ ] - service submit for testing failes
+-  [`SDC-1267 <https://jira.onap.org/browse/SDC-1267>`__\ ] - service submit for testing fails
 -  [`SDC-1268 <https://jira.onap.org/browse/SDC-1268>`__\ ] - Submit for testing fails
 -  [`SDC-1269 <https://jira.onap.org/browse/SDC-1269>`__\ ] - Error message appear twice
 -  [`SDC-1271 <https://jira.onap.org/browse/SDC-1271>`__\ ] - Incorrect message when not choosing commit
@@ -627,7 +627,7 @@ New Features
 -  [`SDC-232 <https://jira.onap.org/browse/SDC-232>`__\ ] - Import TOSCA
    YAML CSAR - BE
 -  [`SDC-240 <https://jira.onap.org/browse/SDC-240>`__\ ] - WorkFlow
-   Deisigner seed code
+   Designer seed code
 -  [`SDC-248 <https://jira.onap.org/browse/SDC-248>`__\ ] - add verify
    job for workflow-designer in ci-manager
 -  [`SDC-255 <https://jira.onap.org/browse/SDC-255>`__\ ] - support add
@@ -806,7 +806,7 @@ Bug Fixes
    stored under vendor CSAR Artifacts directory is not included in CSAR
    created by SDC after VSP import
 -  [`SDC-491 <https://jira.onap.org/browse/SDC-491>`__\ ] - Artifact are
-   incorectly passed
+   incorrectly passed
 -  [`SDC-495 <https://jira.onap.org/browse/SDC-495>`__\ ] - artifacts
    are not packed correctly when uploading csar
 -  [`SDC-525 <https://jira.onap.org/browse/SDC-525>`__\ ] - Docker RUN
