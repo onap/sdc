@@ -11,7 +11,7 @@
         "lint-fix": "eslint --fix -c eslintrc.json --ext .js --ext .jsx src"
     },
     "author": "ONAP",
-    "license": "SEE LICENSE IN LICENSE",
+    "license": "Apache-2.0",
     "dependencies": {
         "d3": "^4.10.0",
         "lodash": "^4.12.0",

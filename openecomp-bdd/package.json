@@ -13,7 +13,7 @@
     "cucumber-docs": "jsdoc ./stepDefinitions  -c plugins/jsdoc_config.json --readme plugins/README.md"
   },
   "author": "",
-  "license": "SEE LICENSE IN LICENSE.TXT",
+  "license": "Apache-2.0",
   "dependencies": {
     "assert": "^1.4.1",
     "cucumber": "^3.2.1",
