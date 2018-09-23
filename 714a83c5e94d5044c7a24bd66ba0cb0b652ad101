@@ -53,6 +53,23 @@
     },
     {
       "key": {
+        "uuid": "1a76adc5_c7ed6eb9",
+        "filename": "common/onap-tosca-datatype/src/main/java/org/onap/sdc/tosca/datatypes/model/Implementation.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-09-23T04:05:34Z",
+      "side": 1,
+      "message": "why dependencies are not converted to Set?\nThis will fail to enter to HashMap",
+      "revId": "714a83c5e94d5044c7a24bd66ba0cb0b652ad101",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1a76adc5_0af6188f",
         "filename": "common/onap-tosca-datatype/src/main/java/org/onap/sdc/tosca/datatypes/model/Interface.java",
         "patchSetId": 1
