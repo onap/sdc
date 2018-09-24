@@ -604,9 +604,15 @@ export class CompositionGraph implements ng.IDirective {
 
         scope.copyComponentInstance = (): void => {
             scope.origComponentId = scope.component.uniqueId;
-            if (scope.component.selectedInstance) {
+            if (scope.component.selectedInstance) {                
                 scope.origSelectedInstance = scope.component.selectedInstance;
                 scope.componentInstanceId = scope.component.selectedInstance.uniqueId;
+                scope.name = scope.component.selectedInstance.componentName;
+                scope.componentVersion = scope.component.selectedInstance.componentVersion;
+                scope.originType = scope.component.selectedInstance.originType;
+                scope.icon = scope.component.selectedInstance.icon;
+                scope.componentUid=scope.component.selectedInstance.componentUid;
+                scope.uniqueId=scope.component.selectedInstance.componentUid+ (new Date()).getTime();
             }
         };
 
@@ -632,8 +638,13 @@ export class CompositionGraph implements ng.IDirective {
                 "origComponentId":"${scope.origComponentId}",
                 "componentInstanceId":"${scope.componentInstanceId}",
                 "posX":"${newPositionX}",
-                "posY":"${newPositionY}"
-
+                "posY":"${newPositionY}",
+                "name":"${scope.name}",
+                "componentVersion":"${scope.componentVersion }",
+                "originType":"${scope.originType}",
+                "icon":"${scope.icon}",
+                "componentUid":"${scope.componentUid}",
+                "uniqueId": "${scope.uniqueId}"
             }`;
 
             this.isComponentPasteValid(scope, this._cy, event, offsetPosition, origSelectedInstance);
