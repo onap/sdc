@@ -124,7 +124,7 @@ public class ConfigurationManager {
     }
 
     String[] addressesArray;
-    addressesArray = (String[]) lsAddresses.toArray(new String[lsAddresses.size()]);
+    addressesArray = (String[]) lsAddresses.toArray(new String[0]);
     return addressesArray;
 
   }

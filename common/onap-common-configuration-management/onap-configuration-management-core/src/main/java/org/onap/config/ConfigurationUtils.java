@@ -67,11 +67,6 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 import static com.google.common.collect.ImmutableMap.builder;
 
 import static java.util.Optional.ofNullable;
@@ -88,11 +83,10 @@ import static org.onap.config.api.Hint.*;
  */
 public class ConfigurationUtils {
     private static final Logger LOGGER = LoggerFactory.getLogger(ConfigurationUtils.class);
+    private static ImmutableMap<Class, Class> arrayClassMap;
 
     private ConfigurationUtils() {
     }
-
-    private static ImmutableMap<Class, Class> arrayClassMap;
 
     static {
         ImmutableMap.Builder<Class, Class> builder = builder();
@@ -110,7 +104,7 @@ public class ConfigurationUtils {
      * @return the thread factory
      */
     public static ThreadFactory getThreadFactory() {
-        return (r1) -> {
+        return r1 -> {
             Thread thread = Executors.privilegedThreadFactory().newThread(r1);
             thread.setDaemon(true);
             return thread;

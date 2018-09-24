@@ -56,7 +56,7 @@ public class CombinationBusinessLogic extends BaseBusinessLogic {
     public Either<Combination, ResponseFormat> createCombination(Combination combination, Service service) {
 
         try {
-            combination.setUniqueId(combination.getName());
+            combination.setUniqueId(service.getUniqueId() + ".combination");
             Either<Boolean, ResponseFormat> validateCombinationExists = validateCombinationExists(combination);
             if (validateCombinationExists.isRight()) {
                 log.error("failed to validate");
@@ -105,9 +105,7 @@ public class CombinationBusinessLogic extends BaseBusinessLogic {
     }
 
     private Either<Combination, ResponseFormat> buildServiceToCombination(Service service, Combination combination) {
-        String uniqueId = combination.getName();
         try {
-            combination.setUniqueId(uniqueId);
             if (service.getComponentInstances() == null) {
                 log.error("The service is empty");
                 return Either.right(componentsUtils.getResponseFormat(ActionStatus.INVALID_CONTENT_PARAM));
@@ -122,6 +120,10 @@ public class CombinationBusinessLogic extends BaseBusinessLogic {
             log.debug("failed to convert to combination");
             return Either.right(componentsUtils.getResponseFormat(ActionStatus.CONVERT_COMPONENT_ERROR));
         }
+    }
+
+    public void setCombinationOperation(CombinationOperation combinationOperation) {
+        this.combinationOperation = combinationOperation;
     }
 
     public Either<List<UiCombination>, ResponseFormat> getAllCombinationTypes() {

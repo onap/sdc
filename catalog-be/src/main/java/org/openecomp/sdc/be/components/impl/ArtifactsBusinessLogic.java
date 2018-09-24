@@ -1154,7 +1154,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         }
 
         // artifactGroupType is not allowed to be updated
-        if (!ArtifactOperationEnum.isCreateOrLink(operation.getArtifactOperationEnum())) {
+        if (!ArtifactOperationEnum.isCreateOrLink(operation.getArtifactOperationEnum()) && currentArtifactInfo != null) {
             Either<ArtifactDefinition, ResponseFormat> validateGroupType = validateOrSetArtifactGroupType(artifactInfo, currentArtifactInfo);
             if (validateGroupType.isRight()) {
                 return Either.right(validateGroupType.right().value());

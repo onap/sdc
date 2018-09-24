@@ -87,8 +87,8 @@ public class EsToCassandraDataMigrationMenu {
 			default:
 				usageAndExit();
 			}
-		} catch (Throwable t) {
-			log.info("data migration failed - {}", t);
+		} catch (Exception e) {
+			log.info("data migration exception - {}", e);
 			System.exit(3);
 		}
 	}
