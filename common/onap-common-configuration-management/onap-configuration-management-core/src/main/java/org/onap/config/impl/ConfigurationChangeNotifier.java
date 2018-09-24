@@ -104,7 +104,7 @@ public final class ConfigurationChangeNotifier {
       if (paths != null) {
         for (Path path : paths) {
           File file = path.toAbsolutePath().toFile();
-          String repositoryKey = null;
+          String repositoryKey = "";
           if (ConfigurationUtils.isConfig(file) && file.isFile()) {
             if (isTenantLocation) {
               Collection<File> tenantsRoot =

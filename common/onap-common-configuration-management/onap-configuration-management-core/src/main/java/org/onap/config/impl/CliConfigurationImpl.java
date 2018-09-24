@@ -96,8 +96,8 @@ public final class CliConfigurationImpl extends ConfigurationImpl implements Con
             }
         } catch (Exception exception) {
             exception.printStackTrace();
+            return ConfigurationUtils.getCommaSeparatedList(Arrays.asList());
         }
-        return null;
     }
 
     public void updateConfigurationValue(Map<String, Object> input) {
@@ -229,11 +229,11 @@ public final class CliConfigurationImpl extends ConfigurationImpl implements Con
             for (String key : keys) {
                 map.put(key, getConfigurationValue(query.key(key)));
             }
+            return map;
         } catch (Exception exception) {
             exception.printStackTrace();
-            return null;
+            return new HashMap<>();
         }
-        return map;
     }
 
     @Override
