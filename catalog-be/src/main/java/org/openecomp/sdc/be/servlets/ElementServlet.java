@@ -494,7 +494,7 @@ public class ElementServlet extends BeGenericServlet {
                 userData = either.left().value();
                 Either<Map<String, List<? extends Component>>, ResponseFormat> followedResourcesServices = getElementBL(request.getSession().getServletContext()).getFollowed(userData);
                 if (followedResourcesServices.isRight()) {
-                    log.debug("failed to get followed resources services ");
+                    log.error("failed to get followed resources services ");
                     return buildErrorResponse(followedResourcesServices.right().value());
                 }
                 Object data = RepresentationUtils.toRepresentation(followedResourcesServices.left().value());
@@ -529,7 +529,7 @@ public class ElementServlet extends BeGenericServlet {
 			Either<Map<String, List<CatalogComponent>>, ResponseFormat> catalogData = getElementBL(request.getSession().getServletContext()).getCatalogComponents(userId, excludeTypes);
 
             if (catalogData.isRight()) {
-                log.debug("failed to get catalog data");
+                log.error("failed to get catalog data");
                 return buildErrorResponse(catalogData.right().value());
             }
             Object data = RepresentationUtils.toRepresentation(catalogData.left().value());
@@ -574,7 +574,7 @@ public class ElementServlet extends BeGenericServlet {
             Either<List<String>, ResponseFormat> cleanResult = cleanComponentsResult.get(nodeType);
 
             if (cleanResult.isRight()) {
-                log.debug("failed to delete marked components of type {}", nodeType);
+                log.error("failed to delete marked components of type {}", nodeType);
                 response = buildErrorResponse(cleanResult.right().value());
                 return response;
             }

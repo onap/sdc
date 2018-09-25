@@ -39,7 +39,7 @@ public class ToscaTypesDefinitionUtils {
         try {
             return yaml.load(payload);
         } catch (Exception e) {
-            log.debug("Failed to parse tosca yaml file", e);
+            log.error("Failed to parse tosca yaml file", e);
             e.printStackTrace();
             fail("Failed to parse tosca yaml file");
         }

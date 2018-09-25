@@ -158,7 +158,7 @@ public class UserAdminServlet extends BeGenericServlet {
             Either<User, ResponseFormat> updateUserResponse = businessLogic.updateUserRole(modifier, userIdUpdateUser, updateInfoUser.getRole());
 
             if (updateUserResponse.isRight()) {
-                log.debug("failed to update user role");
+                log.error("failed to update user role");
                 response = buildErrorResponse(updateUserResponse.right().value());
                 return response;
             }
@@ -203,7 +203,7 @@ public class UserAdminServlet extends BeGenericServlet {
             Either<User, ResponseFormat> createUserResponse = businessLogic.createUser(modifier, newUserInfo);
 
             if (createUserResponse.isRight()) {
-                log.debug("failed to create user");
+                log.error("failed to create user");
                 response = buildErrorResponse(createUserResponse.right().value());
                 return response;
             }
@@ -296,7 +296,7 @@ public class UserAdminServlet extends BeGenericServlet {
             Either<List<User>, ResponseFormat> either = userAdminManager.getAllAdminUsers();
 
             if (either.isRight()) {
-                log.debug("Failed to get all admin users");
+                log.error("Failed to get all admin users");
                 return buildErrorResponse(either.right().value());
             } else {
                 if (either.left().value() != null) {
@@ -339,7 +339,7 @@ public class UserAdminServlet extends BeGenericServlet {
             Either<List<User>, ResponseFormat> either = userAdminManager.getUsersList(userId, rolesList, roles);
 
             if (either.isRight()) {
-                log.debug("Failed to get ASDC users");
+                log.error("Failed to get ASDC users");
                 return buildErrorResponse(either.right().value());
             } else {
                 return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), either.left().value());
@@ -376,7 +376,7 @@ public class UserAdminServlet extends BeGenericServlet {
             Either<User, ResponseFormat> deactiveUserResponse = userAdminManager.deActivateUser(modifier, userId);
 
             if (deactiveUserResponse.isRight()) {
-                log.debug("Failed to deactivate user");
+                log.error("Failed to deactivate user");
                 response = buildErrorResponse(deactiveUserResponse.right().value());
                 return response;
             }

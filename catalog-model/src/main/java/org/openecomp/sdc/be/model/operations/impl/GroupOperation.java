@@ -294,7 +294,7 @@ public class GroupOperation extends AbstractOperation implements IGroupOperation
                 .map(DaoStatusConverter::convertTitanStatusToStorageStatus);
         if (groupRes.isRight()) {
             StorageOperationStatus status = groupRes.right().value();
-            log.debug("Failed to retrieve group {}  from graph. Status is {}", uniqueId, status);
+            log.error("Failed to retrieve group {}  from graph. Status is {}", uniqueId, status);
             BeEcompErrorManager.getInstance().logBeFailedRetrieveNodeError("Fetch Group", uniqueId, String.valueOf(status));
             result = Either.right(status);
             return result;
@@ -308,7 +308,7 @@ public class GroupOperation extends AbstractOperation implements IGroupOperation
 
         if (groupTypeOfGroup.isRight()) {
             StorageOperationStatus status = groupTypeOfGroup.right().value();
-            log.debug("Failed to retrieve capability type of capability {}. Status is {}", uniqueId, status);
+            log.error("Failed to retrieve capability type of capability {}. Status is {}", uniqueId, status);
 
             result = Either.right(status);
             return result;
@@ -569,13 +569,13 @@ public class GroupOperation extends AbstractOperation implements IGroupOperation
         Either<Object, Boolean> isValid = null;
         if (allDataTypes.isRight()) {
             TitanOperationStatus status = allDataTypes.right().value();
-            log.debug("Failed to fetch data types from cache. Status is {}. ", status);
+            log.error("Failed to fetch data types from cache. Status is {}. ", status);
             result = DaoStatusConverter.convertTitanStatusToStorageStatus(status);
         }
         if(result == null){
             isValid = propertyOperation.validateAndUpdatePropertyValue(property.getType(), property.getValue(), innerType, allDataTypes.left().value());
             if(isValid.isRight()){
-                log.debug("Failed to validate property value {}. Status is {}. ", property.getValue(), StorageOperationStatus.INVALID_PROPERTY);
+                log.error("Failed to validate property value {}. Status is {}. ", property.getValue(), StorageOperationStatus.INVALID_PROPERTY);
                 result =  StorageOperationStatus.INVALID_PROPERTY;
             }
         }

@@ -71,7 +71,7 @@ public class ArtifactsOperations extends BaseOperation {
         Either<ArtifactDataDefinition, StorageOperationStatus> status = updateArtifactOnGraph(parentId, artifactInfo, type, artifactId, instanceId, false, false);
         if (status.isRight()) {
 
-            log.debug("Failed to update artifact {} of {} {}. status is {}", artifactInfo.getArtifactName(), type.getName(), parentId, status.right().value());
+            log.error("Failed to update artifact {} of {} {}. status is {}", artifactInfo.getArtifactName(), type.getName(), parentId, status.right().value());
             BeEcompErrorManager.getInstance().logBeFailedUpdateNodeError("Update Artifact", artifactInfo.getArtifactName(), String.valueOf(status.right().value()));
             return Either.right(status.right().value());
         } else {
@@ -90,7 +90,7 @@ public class ArtifactsOperations extends BaseOperation {
         Either<ArtifactDataDefinition, StorageOperationStatus> status = updateArtifactOnGraph(id, artifactInfo, type, artifactId, instanceId, true, false);
         if (status.isRight()) {
 
-            log.debug("Failed to update artifact {} of {} {}. status is {}", artifactInfo.getArtifactName(), type.getName(), id, status.right().value());
+            log.error("Failed to update artifact {} of {} {}. status is {}", artifactInfo.getArtifactName(), type.getName(), id, status.right().value());
             BeEcompErrorManager.getInstance().logBeFailedUpdateNodeError("Update Artifact", artifactInfo.getArtifactName(), String.valueOf(status.right().value()));
             return Either.right(status.right().value());
         } else {
@@ -155,7 +155,7 @@ public class ArtifactsOperations extends BaseOperation {
 	private ArtifactDataDefinition findInterfaceArtifact(String parentId, String id) {
 		Either<Map<String, InterfaceDefinition>, TitanOperationStatus> dataFromGraph = getDataFromGraph(parentId, EdgeLabelEnum.INTERFACE);
 		if (dataFromGraph.isRight()){
-			log.debug("failed to fetch interfaces {} for tosca element with id {}, error {}", id, parentId ,dataFromGraph.right().value());
+			log.error("failed to fetch interfaces {} for tosca element with id {}, error {}", id, parentId ,dataFromGraph.right().value());
 			return null;
 		}
 
@@ -199,7 +199,7 @@ public class ArtifactsOperations extends BaseOperation {
 
         if (status.isRight()) {
 
-            log.debug("Failed to delete artifact {} of resource {}", artifactId, id);
+            log.error("Failed to delete artifact {} of resource {}", artifactId, id);
 
             BeEcompErrorManager.getInstance().logBeFailedDeleteNodeError("Delete Artifact", artifactId, String.valueOf(status.right().value()));
             return Either.right(status.right().value());
@@ -218,7 +218,7 @@ public class ArtifactsOperations extends BaseOperation {
         Map<String, ArtifactDefinition> resMap = new HashMap<>();
         foundArtifact = getArtifactByLabel(parentId, instanceId, edgeLabelEnum);
         if (foundArtifact.isRight()) {
-            log.debug("Failed to find artifact in component {} with label {} ", parentId, edgeLabelEnum);
+            log.error("Failed to find artifact in component {} with label {} ", parentId, edgeLabelEnum);
             return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(foundArtifact.right().value()));
         }
 
@@ -275,7 +275,7 @@ public class ArtifactsOperations extends BaseOperation {
 
         Either<ArtifactDefinition, StorageOperationStatus> artifactData = this.getArtifactById(id, artifactId);
         if (artifactData.isRight()) {
-            log.debug("Failed to find artifact in component {} with id {} ", id, artifactId);
+            log.error("Failed to find artifact in component {} with id {} ", id, artifactId);
             return Either.right(artifactData.right().value());
         }
         ArtifactDataDefinition artifactDefinition = artifactData.left().value();
@@ -369,7 +369,7 @@ public class ArtifactsOperations extends BaseOperation {
 
         Either<Map<String, ArtifactDefinition>, TitanOperationStatus> artifactsEither = getArtifactByLabel(id, instanceId, EdgeLabelEnum.DEPLOYMENT_ARTIFACTS);
         if (artifactsEither.isRight()) {
-            log.debug("Failed to find artifacts in component {} with id {} ", id, artifactsEither.right().value());
+            log.error("Failed to find artifacts in component {} with id {} ", id, artifactsEither.right().value());
             return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(artifactsEither.right().value()));
         }
 
@@ -420,7 +420,7 @@ public class ArtifactsOperations extends BaseOperation {
 
         MapArtifactDataDefinition artifactsPerInstance = artifacts.get(parentId);
         if (artifactsPerInstance == null) {
-            log.debug("failed to fetch artifacts for instance {} in tosca element with id {}, error {}", parentId, containerId, artifactsEither.right().value());
+            log.error("failed to fetch artifacts for instance {} in tosca element with id {}, error {}", parentId, containerId, artifactsEither.right().value());
             return null;
         }
         Optional<ArtifactDataDefinition> op = artifactsPerInstance.getMapToscaDataDefinition().values().stream().filter(p -> p.getUniqueId().equals(id)).findAny();
@@ -532,7 +532,7 @@ public class ArtifactsOperations extends BaseOperation {
 
         Either<Boolean, StorageOperationStatus> isNeedToCloneEither = isCloneNeeded(componentId, edgeLabelEnum);
         if (isNeedToCloneEither.isRight()) {
-            log.debug("Failed check is clone needed {}", componentId);
+            log.error("Failed check is clone needed {}", componentId);
             return Either.right(isNeedToCloneEither.right().value());
 
         }
@@ -642,7 +642,7 @@ public class ArtifactsOperations extends BaseOperation {
                     pathKeysPerInst.add(e.getKey());
                     status = updateToscaDataDeepElementsOfToscaElement(componentId, edgeLabelEnum, vertexTypeEnum, toscaDataListPerInst, pathKeysPerInst, JsonPresentationFields.ARTIFACT_LABEL);
                     if (status != StorageOperationStatus.OK) {
-                        log.debug("Failed to update atifacts group for instance {} in component {} edge type {} error {}", instanceId, componentId, edgeLabelEnum, status);
+                        log.error("Failed to update atifacts group for instance {} in component {} edge type {} error {}", instanceId, componentId, edgeLabelEnum, status);
                         res = Either.right(status);
                         break;
                     }

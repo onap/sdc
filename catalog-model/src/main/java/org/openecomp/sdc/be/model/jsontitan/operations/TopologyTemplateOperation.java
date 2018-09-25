@@ -944,7 +944,7 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
     private TitanOperationStatus setServiceCategoryFromGraph(GraphVertex componentV, ToscaElement toscaElement, List<CategoryDefinition> categories) {
         Either<GraphVertex, TitanOperationStatus> childVertex = titanDao.getChildVertex(componentV, EdgeLabelEnum.CATEGORY, JsonParseFlagEnum.NoParse);
         if (childVertex.isRight()) {
-            log.debug("failed to fetch {} for tosca element with id {}, error {}", EdgeLabelEnum.CATEGORY, componentV.getUniqueId(), childVertex.right().value());
+            log.error("failed to fetch {} for tosca element with id {}, error {}", EdgeLabelEnum.CATEGORY, componentV.getUniqueId(), childVertex.right().value());
             return childVertex.right().value();
         }
         GraphVertex categoryV = childVertex.left().value();
@@ -978,7 +978,7 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
     public Either<ToscaElement, StorageOperationStatus> deleteToscaElement(GraphVertex toscaElementVertex) {
         Either<ToscaElement, StorageOperationStatus> nodeType = getToscaElement(toscaElementVertex, new ComponentParametersView());
         if (nodeType.isRight()) {
-            log.debug("Failed to fetch tosca element {} error {}", toscaElementVertex.getUniqueId(), nodeType.right().value());
+            log.error("Failed to fetch tosca element {} error {}", toscaElementVertex.getUniqueId(), nodeType.right().value());
             return nodeType;
         }
         TitanOperationStatus status = disassociateAndDeleteCommonElements(toscaElementVertex);
@@ -987,79 +987,79 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
         }
         status = titanDao.disassociateAndDeleteLast(toscaElementVertex, Direction.OUT, EdgeLabelEnum.INST_ATTRIBUTES);
         if (status != TitanOperationStatus.OK) {
-            log.debug("Failed to disassociate instances attributes for {} error {}", toscaElementVertex.getUniqueId(), status);
+            log.error("Failed to disassociate instances attributes for {} error {}", toscaElementVertex.getUniqueId(), status);
             Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
         }
         status = titanDao.disassociateAndDeleteLast(toscaElementVertex, Direction.OUT, EdgeLabelEnum.INST_PROPERTIES);
         if (status != TitanOperationStatus.OK) {
-            log.debug("Failed to disassociate instances properties for {} error {}", toscaElementVertex.getUniqueId(), status);
+            log.error("Failed to disassociate instances properties for {} error {}", toscaElementVertex.getUniqueId(), status);
             Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
         }
 
         status = titanDao.disassociateAndDeleteLast(toscaElementVertex, Direction.OUT, EdgeLabelEnum.INST_INPUTS);
         if (status != TitanOperationStatus.OK) {
-            log.debug("Failed to disassociate instances inputs for {} error {}", toscaElementVertex.getUniqueId(), status);
+            log.error("Failed to disassociate instances inputs for {} error {}", toscaElementVertex.getUniqueId(), status);
             Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
         }
 
         status = titanDao.disassociateAndDeleteLast(toscaElementVertex, Direction.OUT, EdgeLabelEnum.GROUPS);
         if (status != TitanOperationStatus.OK) {
-            log.debug("Failed to disassociate groups for {} error {}", toscaElementVertex.getUniqueId(), status);
+            log.error("Failed to disassociate groups for {} error {}", toscaElementVertex.getUniqueId(), status);
             Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
         }
         status = titanDao.disassociateAndDeleteLast(toscaElementVertex, Direction.OUT, EdgeLabelEnum.INST_GROUPS);
         if (status != TitanOperationStatus.OK) {
-            log.debug("Failed to disassociate instance groups for {} error {}", toscaElementVertex.getUniqueId(), status);
+            log.error("Failed to disassociate instance groups for {} error {}", toscaElementVertex.getUniqueId(), status);
             Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
         }
         status = titanDao.disassociateAndDeleteLast(toscaElementVertex, Direction.OUT, EdgeLabelEnum.INPUTS);
         if (status != TitanOperationStatus.OK) {
-            log.debug("Failed to disassociate inputs for {} error {}", toscaElementVertex.getUniqueId(), status);
+            log.error("Failed to disassociate inputs for {} error {}", toscaElementVertex.getUniqueId(), status);
             Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
         }
         status = titanDao.disassociateAndDeleteLast(toscaElementVertex, Direction.OUT, EdgeLabelEnum.INST_INPUTS);
         if (status != TitanOperationStatus.OK) {
-            log.debug("Failed to disassociate instance inputs for {} error {}", toscaElementVertex.getUniqueId(), status);
+            log.error("Failed to disassociate instance inputs for {} error {}", toscaElementVertex.getUniqueId(), status);
             Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
         }
         status = titanDao.disassociateAndDeleteLast(toscaElementVertex, Direction.OUT, EdgeLabelEnum.CALCULATED_CAPABILITIES);
         if (status != TitanOperationStatus.OK) {
-            log.debug("Failed to disassociate calculated capabiliites for {} error {}", toscaElementVertex.getUniqueId(), status);
+            log.error("Failed to disassociate calculated capabiliites for {} error {}", toscaElementVertex.getUniqueId(), status);
             Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
         }
         status = titanDao.disassociateAndDeleteLast(toscaElementVertex, Direction.OUT, EdgeLabelEnum.FULLFILLED_CAPABILITIES);
         if (status != TitanOperationStatus.OK) {
-            log.debug("Failed to disassociate fullfilled capabilities for {} error {}", toscaElementVertex.getUniqueId(), status);
+            log.error("Failed to disassociate fullfilled capabilities for {} error {}", toscaElementVertex.getUniqueId(), status);
             Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
         }
         status = titanDao.disassociateAndDeleteLast(toscaElementVertex, Direction.OUT, EdgeLabelEnum.CALCULATED_CAP_PROPERTIES);
         if (status != TitanOperationStatus.OK) {
-            log.debug("Failed to disassociate calculated capabiliites properties for {} error {}", toscaElementVertex.getUniqueId(), status);
+            log.error("Failed to disassociate calculated capabiliites properties for {} error {}", toscaElementVertex.getUniqueId(), status);
             Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
         }
         status = titanDao.disassociateAndDeleteLast(toscaElementVertex, Direction.OUT, EdgeLabelEnum.CALCULATED_REQUIREMENTS);
         if (status != TitanOperationStatus.OK) {
-            log.debug("Failed to disassociate calculated requirements for {} error {}", toscaElementVertex.getUniqueId(), status);
+            log.error("Failed to disassociate calculated requirements for {} error {}", toscaElementVertex.getUniqueId(), status);
             Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
         }
         status = titanDao.disassociateAndDeleteLast(toscaElementVertex, Direction.OUT, EdgeLabelEnum.FULLFILLED_REQUIREMENTS);
         if (status != TitanOperationStatus.OK) {
-            log.debug("Failed to disassociate full filled requirements for {} error {}", toscaElementVertex.getUniqueId(), status);
+            log.error("Failed to disassociate full filled requirements for {} error {}", toscaElementVertex.getUniqueId(), status);
             Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
         }
         status = titanDao.disassociateAndDeleteLast(toscaElementVertex, Direction.OUT, EdgeLabelEnum.INST_DEPLOYMENT_ARTIFACTS);
         if (status != TitanOperationStatus.OK) {
-            log.debug("Failed to disassociate instance artifacts for {} error {}", toscaElementVertex.getUniqueId(), status);
+            log.error("Failed to disassociate instance artifacts for {} error {}", toscaElementVertex.getUniqueId(), status);
             Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
         }
         status = titanDao.disassociateAndDeleteLast(toscaElementVertex, Direction.OUT, EdgeLabelEnum.SERVICE_API_ARTIFACTS);
         if (status != TitanOperationStatus.OK) {
-            log.debug("Failed to disassociate service api artifacts for {} error {}", toscaElementVertex.getUniqueId(), status);
+            log.error("Failed to disassociate service api artifacts for {} error {}", toscaElementVertex.getUniqueId(), status);
             Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
         }
         status = titanDao.disassociateAndDeleteLast(toscaElementVertex, Direction.OUT, EdgeLabelEnum.FORWARDING_PATH);
         if (status != TitanOperationStatus.OK) {
-            log.debug("Failed to disassociate service api artifacts for {} error {}", toscaElementVertex.getUniqueId(), status);
+            log.error("Failed to disassociate service api artifacts for {} error {}", toscaElementVertex.getUniqueId(), status);
             Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
         }
 
@@ -1128,7 +1128,7 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
 
         Either<GraphVertex, TitanOperationStatus> childVertex = titanDao.getChildVertex(elementV, EdgeLabelEnum.CATEGORY, JsonParseFlagEnum.NoParse);
         if (childVertex.isRight()) {
-            log.debug("failed to fetch {} for tosca element with id {}, error {}", EdgeLabelEnum.CATEGORY, elementV.getUniqueId(), childVertex.right().value());
+            log.error("failed to fetch {} for tosca element with id {}, error {}", EdgeLabelEnum.CATEGORY, elementV.getUniqueId(), childVertex.right().value());
             return DaoStatusConverter.convertTitanStatusToStorageStatus(childVertex.right().value());
         }
 
