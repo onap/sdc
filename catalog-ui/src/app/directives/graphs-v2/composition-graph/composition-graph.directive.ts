@@ -654,7 +654,7 @@ export class CompositionGraph implements ng.IDirective {
                     scope.component.componentInstances = component.componentInstances;                    
                     if (component.isService() && component.componentInstances.length > 0) {
                         for (var i = 0; i < component.componentInstances.length; i++) {
-                            if (component.componentInstances[i].uniqueId == response.componentInstances.uniqueId) {
+                            if (component.componentInstances[i].uniqueId == response.componentInstance.uniqueId) {
                                 let compositionGraphNode = this.NodesFactory.createNode(component.componentInstances[i]);
                                 this.commonGraphUtils.addComponentInstanceNodeToGraph(this._cy, compositionGraphNode);
                             }
