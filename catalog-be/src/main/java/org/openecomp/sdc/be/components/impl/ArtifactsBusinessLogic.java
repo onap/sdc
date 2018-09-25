@@ -1366,7 +1366,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
                 }
             }
             boolean isNeedToDeleteArtifactFromDB = true;
-            if (resultOp == null) {
+            if (resultOp == null && needCloneRes != null) {
 
                 if (componentType == ComponentTypeEnum.RESOURCE_INSTANCE) {
                     String instanceId = parentId;
