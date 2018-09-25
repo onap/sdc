@@ -349,7 +349,7 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
 
         Either<Boolean, ActionStatus> categoryUniqueEither = elementOperation.isCategoryUniqueForType(nodeType, normalizedName);
         if (categoryUniqueEither.isRight()) {
-            log.debug("Failed to check category uniqueness, name {}, componentType {}", categoryName, componentType);
+            log.error("Failed to check category uniqueness, name {}, componentType {}", categoryName, componentType);
             ResponseFormat responseFormat = componentsUtils.getResponseFormat(categoryUniqueEither.right().value());
             handleCategoryAuditing(responseFormat, user, origCategoryName, auditingAction, componentType);
             return Either.right(responseFormat);
@@ -365,7 +365,7 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
 
         Either<CategoryDefinition, ActionStatus> createCategoryByType = elementOperation.createCategory(category, nodeType);
         if (createCategoryByType.isRight()) {
-            log.debug("Failed to create category, name {}, componentType {}", categoryName, componentType);
+            log.error("Failed to create category, name {}, componentType {}", categoryName, componentType);
             ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.COMPONENT_CATEGORY_ALREADY_EXISTS, componentType, categoryName);
             handleCategoryAuditing(responseFormat, user, origCategoryName, auditingAction, componentType);
             return Either.right(componentsUtils.getResponseFormat(createCategoryByType.right().value()));
@@ -468,7 +468,7 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
         // Uniqueness under this category
         Either<Boolean, ActionStatus> subCategoryUniqueForCategory = elementOperation.isSubCategoryUniqueForCategory(childNodeType, normalizedName, parentCategoryId);
         if (subCategoryUniqueForCategory.isRight()) {
-            log.debug("Failed to check sub-category uniqueness, parent name {}, subcategory norm name {}, componentType {}", parentCategoryName, normalizedName, componentType);
+            log.error("Failed to check sub-category uniqueness, parent name {}, subcategory norm name {}, componentType {}", parentCategoryName, normalizedName, componentType);
             ResponseFormat responseFormat = componentsUtils.getResponseFormat(subCategoryUniqueForCategory.right().value());
             handleCategoryAuditing(responseFormat, user, parentCategoryName, origSubCategoryName, auditingAction, componentType);
             return Either.right(responseFormat);
@@ -490,7 +490,7 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
         // his subcategory name will be Router-->kUKU.
         Either<SubCategoryDefinition, ActionStatus> subCategoryUniqueForType = elementOperation.getSubCategoryUniqueForType(childNodeType, normalizedName);
         if (subCategoryUniqueForType.isRight()) {
-            log.debug("Failed validation of whether similar sub-category exists, normalizedName {} componentType {}", normalizedName, componentType);
+            log.error("Failed validation of whether similar sub-category exists, normalizedName {} componentType {}", normalizedName, componentType);
             ResponseFormat responseFormat = componentsUtils.getResponseFormat(subCategoryUniqueForType.right().value());
             handleCategoryAuditing(responseFormat, user, parentCategoryName, origSubCategoryName, auditingAction, componentType);
             return Either.right(responseFormat);
@@ -505,7 +505,7 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
 
         Either<SubCategoryDefinition, ActionStatus> createSubCategory = elementOperation.createSubCategory(parentCategoryId, subCategory, childNodeType);
         if (createSubCategory.isRight()) {
-            log.debug("Failed to create sub-category, name {}, componentType {}", subCategoryName, componentType);
+            log.error("Failed to create sub-category, name {}, componentType {}", subCategoryName, componentType);
             ResponseFormat responseFormat = componentsUtils.getResponseFormat(subCategoryUniqueForType.right().value());
             handleCategoryAuditing(responseFormat, user, parentCategoryName, origSubCategoryName, auditingAction, componentType);
             return Either.right(responseFormat);
@@ -628,7 +628,7 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
         // Uniqueness under this category
         Either<Boolean, ActionStatus> groupingUniqueForSubCategory = elementOperation.isGroupingUniqueForSubCategory(childNodeType, normalizedName, parentSubCategoryId);
         if (groupingUniqueForSubCategory.isRight()) {
-            log.debug("Failed to check grouping uniqueness, parent name {}, grouping norm name {}, componentType {}", parentSubCategoryName, normalizedName, componentType);
+            log.error("Failed to check grouping uniqueness, parent name {}, grouping norm name {}, componentType {}", parentSubCategoryName, normalizedName, componentType);
             ResponseFormat responseFormat = componentsUtils.getResponseFormat(groupingUniqueForSubCategory.right().value());
             handleCategoryAuditing(responseFormat, user, parentCategoryName, parentSubCategoryName, origGroupingName, auditingAction, componentType);
             return Either.right(responseFormat);
@@ -650,7 +650,7 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
         // his grouping name will be Router-->kUKU.
         Either<GroupingDefinition, ActionStatus> groupingUniqueForType = elementOperation.getGroupingUniqueForType(childNodeType, normalizedName);
         if (groupingUniqueForType.isRight()) {
-            log.debug("Failed validation of whether similar grouping exists, normalizedName {} componentType {}", normalizedName, componentType);
+            log.error("Failed validation of whether similar grouping exists, normalizedName {} componentType {}", normalizedName, componentType);
             ResponseFormat responseFormat = componentsUtils.getResponseFormat(groupingUniqueForType.right().value());
             handleCategoryAuditing(responseFormat, user, parentCategoryName, parentSubCategoryName, origGroupingName, auditingAction, componentType);
             return Either.right(responseFormat);
@@ -665,7 +665,7 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
 
         Either<GroupingDefinition, ActionStatus> createGrouping = elementOperation.createGrouping(parentSubCategoryId, grouping, childNodeType);
         if (createGrouping.isRight()) {
-            log.debug("Failed to create grouping, name {}, componentType {}", groupingName, componentType);
+            log.error("Failed to create grouping, name {}, componentType {}", groupingName, componentType);
             ResponseFormat responseFormat = componentsUtils.getResponseFormat(createGrouping.right().value());
             handleCategoryAuditing(responseFormat, user, parentCategoryName, parentSubCategoryName, origGroupingName, auditingAction, componentType);
             return Either.right(responseFormat);
@@ -837,7 +837,7 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
                 log.debug("Not authorized user, userId = {}", userId);
                 responseFormat = componentsUtils.getResponseFormat(ActionStatus.RESTRICTED_OPERATION);
             } else {
-                log.debug("Failed to authorize user, userId = {}", userId);
+                log.error("Failed to authorize user, userId = {}", userId);
                 responseFormat = componentsUtils.getResponseFormat(userResult.right().value());
             }
 
@@ -880,7 +880,7 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
     private Either<CategoryDefinition, ResponseFormat> validateCategoryExists(NodeTypeEnum nodeType, String categoryId, ComponentTypeEnum componentType) {
         Either<CategoryDefinition, ActionStatus> categoryByTypeAndId = elementOperation.getCategory(nodeType, categoryId);
         if (categoryByTypeAndId.isRight()) {
-            log.debug("Failed to fetch parent category, parent categoryId {}", categoryId);
+            log.error("Failed to fetch parent category, parent categoryId {}", categoryId);
             ActionStatus actionStatus = categoryByTypeAndId.right().value();
             ResponseFormat responseFormat;
             if (actionStatus == ActionStatus.COMPONENT_CATEGORY_NOT_FOUND) {
@@ -896,7 +896,7 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
     private Either<SubCategoryDefinition, ResponseFormat> validateSubCategoryExists(NodeTypeEnum nodeType, String subCategoryId, ComponentTypeEnum componentType) {
         Either<SubCategoryDefinition, ActionStatus> subCategoryByTypeAndId = elementOperation.getSubCategory(nodeType, subCategoryId);
         if (subCategoryByTypeAndId.isRight()) {
-            log.debug("Failed to fetch parent category, parent categoryId {}", subCategoryId);
+            log.error("Failed to fetch parent category, parent categoryId {}", subCategoryId);
             ActionStatus actionStatus = subCategoryByTypeAndId.right().value();
             ResponseFormat responseFormat;
             if (actionStatus == ActionStatus.COMPONENT_CATEGORY_NOT_FOUND) {

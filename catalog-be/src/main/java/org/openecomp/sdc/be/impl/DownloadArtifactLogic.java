@@ -78,7 +78,7 @@ public class DownloadArtifactLogic {
                 try {
                     IOUtils.copy(artifactStream, output);
                 } catch (IOException e) {
-                    log.debug("failed to copy artifact payload into response");
+                    log.error("failed to copy artifact payload into response");
                     throw new WebApplicationException(e);
                 }
             };

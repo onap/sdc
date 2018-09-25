@@ -764,7 +764,7 @@ public class ArtifactUuidFix {
 			}
 			if (groupVertexEither.isRight()) {
 				res = false;
-				log.debug("failed to get child {}  vertex for component  unique id {}, error: {}", edgeLabelEnum,
+				log.error("failed to get child {}  vertex for component  unique id {}, error: {}", edgeLabelEnum,
 						componentId, groupVertexEither.right().value());
 			}
 			if (res) {
@@ -772,7 +772,7 @@ public class ArtifactUuidFix {
 				toscaDataVertex.setJson(groups);
 				Either<GraphVertex, TitanOperationStatus> updatevertexEither = titanDao.updateVertex(toscaDataVertex);
 				if (updatevertexEither.isRight()) {
-					log.debug("failed to update vertex for component  unique id {}, error: {}", componentId,
+					log.error("failed to update vertex for component  unique id {}, error: {}", componentId,
 							updatevertexEither.right().value());
 					titanDao.rollback();
 					return false;
@@ -1190,7 +1190,7 @@ public class ArtifactUuidFix {
 
 				Either<ToscaRepresentation, ToscaError> exportComponent = toscaExportUtils.exportComponent(parent);
 				if (exportComponent.isRight()) {
-					log.debug("Failed export tosca yaml for component {} error {}", parent.getUniqueId(),
+					log.error("Failed export tosca yaml for component {} error {}", parent.getUniqueId(),
 							exportComponent.right().value());
 
 					return Either.right(exportComponent.right().value());
@@ -1224,7 +1224,7 @@ public class ArtifactUuidFix {
 				Either<byte[], ResponseFormat> generated = csarUtils.createCsar(parent, true, true);
 
 				if (generated.isRight()) {
-					log.debug("Failed to export tosca csar for component {} error {}", parent.getUniqueId(),
+					log.error("Failed to export tosca csar for component {} error {}", parent.getUniqueId(),
 							generated.right().value());
 
 					return Either.right(ToscaError.GENERAL_ERROR);

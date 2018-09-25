@@ -112,7 +112,7 @@ public class SyncWorker implements Runnable, IWorker {
                                     delay, updateDelayInMilliseconds);
                         }
                     } else {
-                        log.debug("failed to get metadata for id:{} from graph error:{}", k, error);
+                        log.error("failed to get metadata for id:{} from graph error:{}", k, error);
                     }
                 } else {
                     log.trace("id {} is in graph nothing to do", k);

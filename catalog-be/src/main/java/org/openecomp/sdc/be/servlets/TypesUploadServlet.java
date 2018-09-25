@@ -293,7 +293,7 @@ public class TypesUploadServlet extends AbstractValidationsServlet {
 
             } catch (IOException e) {
                 BeEcompErrorManager.getInstance().logBeRestApiGeneralError(CREATE + elementTypeName);
-                log.debug("failed to convert {} to json", elementTypeName, e);
+                log.error("failed to convert {} to json", elementTypeName, e);
                 Response response = buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
                 responseWrapper.setInnerElement(response);
             }

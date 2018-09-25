@@ -452,7 +452,7 @@ public class ProductBusinessLogic extends ComponentBusinessLogic {
         Either<Product, StorageOperationStatus> storageStatus = toscaOperationFacade.getToscaElement(productId);
 
         if (storageStatus.isRight()) {
-            log.debug("failed to get resource by id {}", productId);
+            log.error("failed to get resource by id {}", productId);
             if (storageStatus.right().value().equals(StorageOperationStatus.NOT_FOUND)) {
                 // TODO check error
                 return Either.right(componentsUtils.getResponseFormat(ActionStatus.PRODUCT_NOT_FOUND, ComponentTypeEnum.PRODUCT.getValue()));
@@ -471,7 +471,7 @@ public class ProductBusinessLogic extends ComponentBusinessLogic {
         Either<Product, StorageOperationStatus> storageStatus = toscaOperationFacade.deleteToscaComponent(productId);
 
         if (storageStatus.isRight()) {
-            log.debug("failed to delete resource by id {}", productId);
+            log.error("failed to delete resource by id {}", productId);
             return Either.right(componentsUtils.getResponseFormatByResource(componentsUtils.convertFromStorageResponse(storageStatus.right().value()), ""));
         }
         return Either.left(storageStatus.left().value());
@@ -598,7 +598,7 @@ public class ProductBusinessLogic extends ComponentBusinessLogic {
             Either<Product, StorageOperationStatus> updateResponse = toscaOperationFacade.updateToscaElement(productToUpdate);
             if (updateResponse.isRight()) {
                 toscaOperationFacade.rollback();
-                log.debug("failed to update product {}", productToUpdate.getUniqueId());
+                log.error("failed to update product {}", productToUpdate.getUniqueId());
                 return Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
             }
             toscaOperationFacade.commit();
@@ -782,7 +782,7 @@ public class ProductBusinessLogic extends ComponentBusinessLogic {
         validateUserExists(userId, "get Service By Name And Version", false);
         Either<Product, StorageOperationStatus> storageStatus = toscaOperationFacade.getComponentByNameAndVersion(ComponentTypeEnum.PRODUCT, productName, productVersion);
         if (storageStatus.isRight()) {
-            log.debug("failed to get service by name {} and version {}", productName, productVersion);
+            log.error("failed to get service by name {} and version {}", productName, productVersion);
             return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(storageStatus.right().value(), ComponentTypeEnum.PRODUCT), productName));
         }
         Product product = storageStatus.left().value();

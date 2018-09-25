@@ -486,7 +486,7 @@ public class AdditionalInformationOperation implements IAdditionalInformationOpe
 
             if (either.isRight()) {
                 TitanOperationStatus status = either.right().value();
-                log.debug("Failed to add additional information property {} to component {}. Status is {}", key, resourceId, status);
+                log.error("Failed to add additional information property {} to component {}. Status is {}", key, resourceId, status);
                 BeEcompErrorManager.getInstance().logBeFailedUpdateNodeError("CreateAdditionalInformationParameter", ADDITIONAL_INFORMATION_OF + nodeType.getName() + " " + resourceId, String.valueOf(status));
                 result = Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
             } else {

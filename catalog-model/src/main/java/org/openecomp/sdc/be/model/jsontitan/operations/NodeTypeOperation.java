@@ -662,7 +662,7 @@ public class NodeTypeOperation extends ToscaElementOperation {
     public Either<ToscaElement, StorageOperationStatus> deleteToscaElement(GraphVertex toscaElementVertex) {
         Either<ToscaElement, StorageOperationStatus> nodeType = getToscaElement(toscaElementVertex, new ComponentParametersView());
         if (nodeType.isRight()) {
-            log.debug("Failed to fetch tosca element {} error {}", toscaElementVertex.getUniqueId(), nodeType.right().value());
+            log.error("Failed to fetch tosca element {} error {}", toscaElementVertex.getUniqueId(), nodeType.right().value());
             return nodeType;
         }
         TitanOperationStatus status = disassociateAndDeleteCommonElements(toscaElementVertex);
@@ -671,27 +671,27 @@ public class NodeTypeOperation extends ToscaElementOperation {
         }
         status = titanDao.disassociateAndDeleteLast(toscaElementVertex, Direction.OUT, EdgeLabelEnum.CAPABILITIES);
         if (status != TitanOperationStatus.OK) {
-            log.debug("Failed to disassociate capabilties for {} error {}", toscaElementVertex.getUniqueId(), status);
+            log.error("Failed to disassociate capabilties for {} error {}", toscaElementVertex.getUniqueId(), status);
             Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
         }
         status = titanDao.disassociateAndDeleteLast(toscaElementVertex, Direction.OUT, EdgeLabelEnum.CAPABILITIES_PROPERTIES);
         if (status != TitanOperationStatus.OK) {
-            log.debug("Failed to disassociate capabilties properties for {} error {}", toscaElementVertex.getUniqueId(), status);
+            log.error("Failed to disassociate capabilties properties for {} error {}", toscaElementVertex.getUniqueId(), status);
             Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
         }
         status = titanDao.disassociateAndDeleteLast(toscaElementVertex, Direction.OUT, EdgeLabelEnum.REQUIREMENTS);
         if (status != TitanOperationStatus.OK) {
-            log.debug("Failed to disassociate requirements for {} error {}", toscaElementVertex.getUniqueId(), status);
+            log.error("Failed to disassociate requirements for {} error {}", toscaElementVertex.getUniqueId(), status);
             Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
         }
         status = titanDao.disassociateAndDeleteLast(toscaElementVertex, Direction.OUT, EdgeLabelEnum.ATTRIBUTES);
         if (status != TitanOperationStatus.OK) {
-            log.debug("Failed to disassociate attributes for {} error {}", toscaElementVertex.getUniqueId(), status);
+            log.error("Failed to disassociate attributes for {} error {}", toscaElementVertex.getUniqueId(), status);
             Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
         }
         status = titanDao.disassociateAndDeleteLast(toscaElementVertex, Direction.OUT, EdgeLabelEnum.INTERFACE_ARTIFACTS);
         if (status != TitanOperationStatus.OK) {
-            log.debug("Failed to disassociate interface artifacts for {} error {}", toscaElementVertex.getUniqueId(), status);
+            log.error("Failed to disassociate interface artifacts for {} error {}", toscaElementVertex.getUniqueId(), status);
             Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
         }
         toscaElementVertex.getVertex().remove();
@@ -730,7 +730,7 @@ public class NodeTypeOperation extends ToscaElementOperation {
             Either<GraphVertex, TitanOperationStatus> childVertex = titanDao.getChildVertex(nodeTypeV, EdgeLabelEnum.DERIVED_FROM, JsonParseFlagEnum.NoParse);
             if (childVertex.isRight()) {
                 TitanOperationStatus getchieldError = childVertex.right().value();
-                log.debug("Failed to fetch derived resource for element {} error {}", nodeTypeV.getUniqueId(), getchieldError);
+                log.error("Failed to fetch derived resource for element {} error {}", nodeTypeV.getUniqueId(), getchieldError);
                 return DaoStatusConverter.convertTitanStatusToStorageStatus(getchieldError);
             }
             GraphVertex firstDerivedInChain = childVertex.left().value();
@@ -789,7 +789,7 @@ public class NodeTypeOperation extends ToscaElementOperation {
         Either<Edge, TitanOperationStatus> deleteEdge = titanDao.deleteEdge(nodeTypeV, preDerivedV, EdgeLabelEnum.DERIVED_FROM);
         if (deleteEdge.isRight()) {
             TitanOperationStatus deleteError = deleteEdge.right().value();
-            log.debug("Failed to disassociate element {} from derived {} , error {}", nodeTypeV.getUniqueId(), preDerivedV.getUniqueId(), deleteError);
+            log.error("Failed to disassociate element {} from derived {} , error {}", nodeTypeV.getUniqueId(), preDerivedV.getUniqueId(), deleteError);
             return DaoStatusConverter.convertTitanStatusToStorageStatus(deleteError);
         }
 
@@ -921,7 +921,7 @@ public class NodeTypeOperation extends ToscaElementOperation {
                 return Either.right(StorageOperationStatus.OK);
             }
 
-            log.debug("Failed to fetch derived resource for element {} error {}", nodeTypeV.getUniqueId(), getchildError);
+            log.error("Failed to fetch derived resource for element {} error {}", nodeTypeV.getUniqueId(), getchildError);
             return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(getchildError));
         }
         GraphVertex firstDerivedInChain = childVertex.left().value();
@@ -937,7 +937,7 @@ public class NodeTypeOperation extends ToscaElementOperation {
         propsHasNot.put(GraphPropertyEnum.IS_DELETED, true);
         Either<List<GraphVertex>, TitanOperationStatus> byCriteria = titanDao.getByCriteria(VertexTypeEnum.NODE_TYPE, props, propsHasNot, JsonParseFlagEnum.NoParse);
         if (byCriteria.isRight()) {
-            log.debug("Failed to fetch derived by props {} error {}", props, byCriteria.right().value());
+            log.error("Failed to fetch derived by props {} error {}", props, byCriteria.right().value());
             return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(byCriteria.right().value()));
         }
         List<GraphVertex> lastDerived = byCriteria.left().value();
@@ -950,7 +950,7 @@ public class NodeTypeOperation extends ToscaElementOperation {
             StorageOperationStatus updateDerived = updateDerived(toscaElementToUpdate, nodeTypeV, firstDerivedInChain, derivedFromHighest, true);
 
             if (updateDerived != StorageOperationStatus.OK) {
-                log.debug("Failed to update {} to highest derived {} from error {}", nodeTypeV.getUniqueId(), derivedFromHighest.getUniqueId(), updateDerived);
+                log.error("Failed to update {} to highest derived {} from error {}", nodeTypeV.getUniqueId(), derivedFromHighest.getUniqueId(), updateDerived);
                 return Either.right(updateDerived);
             }
             return getToscaElement(nodeTypeV.getUniqueId(), new ComponentParametersView());

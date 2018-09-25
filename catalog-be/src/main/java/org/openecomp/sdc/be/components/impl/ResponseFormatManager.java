@@ -57,7 +57,7 @@ public class ResponseFormatManager {
         ErrorConfiguration errorConfiguration = configurationManager.getErrorConfiguration();
         ErrorInfo errorInfo = errorConfiguration.getErrorInfo(responseEnum.name());
         if (errorInfo == null) {
-            log.debug("failed to locate {} in error configuration", responseEnum);
+            log.error("failed to locate {} in error configuration", responseEnum);
             errorInfo = errorConfiguration.getErrorInfo(ActionStatus.GENERAL_ERROR.name());
         }
         ResponseFormat errorResponseWrapper = new ResponseFormat(errorInfo.getCode());

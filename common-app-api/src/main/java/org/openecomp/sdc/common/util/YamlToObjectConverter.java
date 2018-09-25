@@ -212,7 +212,7 @@ public class YamlToObjectConverter {
 				try {
 					in.close();
 				} catch (IOException e) {
-					log.debug("Failed to close input stream", e);
+					log.error("Failed to close input stream", e);
 				}
 			}
 		}
@@ -240,7 +240,7 @@ public class YamlToObjectConverter {
 				try {
 					in.close();
 				} catch (IOException e) {
-					log.debug("Failed to close input stream", e);
+					log.error("Failed to close input stream", e);
 				}
 			}
 		}

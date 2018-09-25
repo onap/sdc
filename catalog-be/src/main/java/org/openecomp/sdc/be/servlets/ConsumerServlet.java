@@ -76,7 +76,7 @@ public class ConsumerServlet extends BeGenericServlet {
             Either<ConsumerDefinition, ResponseFormat> convertionResponse = convertJsonToObject(data, modifier, AuditingActionEnum.ADD_ECOMP_USER_CREDENTIALS);
 
             if (convertionResponse.isRight()) {
-                log.debug("failed to create Consumer");
+                log.error("failed to create Consumer");
                 return buildErrorResponse(convertionResponse.right().value());
             }
 
@@ -85,7 +85,7 @@ public class ConsumerServlet extends BeGenericServlet {
             Either<ConsumerDefinition, ResponseFormat> actionResult = businessLogic.createConsumer(modifier, consumer);
 
             if (actionResult.isRight()) {
-                log.debug("failed to create Consumer");
+                log.error("failed to create Consumer");
                 return buildErrorResponse(actionResult.right().value());
             }
 
@@ -124,7 +124,7 @@ public class ConsumerServlet extends BeGenericServlet {
             Either<ConsumerDefinition, ResponseFormat> actionResponse = businessLogic.getConsumer(consumerId, modifier);
 
             if (actionResponse.isRight()) {
-                log.debug("failed to get consumer");
+                log.error("failed to get consumer");
                 response = buildErrorResponse(actionResponse.right().value());
                 return response;
             }
@@ -162,7 +162,7 @@ public class ConsumerServlet extends BeGenericServlet {
             Either<ConsumerDefinition, ResponseFormat> actionResponse = businessLogic.deleteConsumer(consumerId, modifier);
 
             if (actionResponse.isRight()) {
-                log.debug("failed to delete consumer");
+                log.error("failed to delete consumer");
                 response = buildErrorResponse(actionResponse.right().value());
                 return response;
             }
@@ -197,7 +197,7 @@ public class ConsumerServlet extends BeGenericServlet {
         } catch (Exception e) {
             // INVALID JSON
             BeEcompErrorManager.getInstance().logBeInvalidJsonInput("convertJsonToObject");
-            log.debug("failed to convert from json {}", data, e);
+            log.error("failed to convert from json {}", data, e);
             ResponseFormat responseFormat = getComponentsUtils().getInvalidContentErrorForConsumerAndAudit(user, null, actionEnum);
             return Either.right(responseFormat);
         }

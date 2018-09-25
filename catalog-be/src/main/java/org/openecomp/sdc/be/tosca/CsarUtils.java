@@ -186,7 +186,7 @@ public class CsarUtils {
 			zip.write(toscaBlock0Byte);
             Either<ZipOutputStream, ResponseFormat> populateZip = populateZip(component, getFromCS, zip, isInCertificationRequest);
             if (populateZip.isRight()) {
-                log.debug("Failed to populate CSAR zip file {}", populateZip.right().value());
+                log.error("Failed to populate CSAR zip file {}", populateZip.right().value());
                 return Either.right(populateZip.right().value());
             }
 
@@ -195,7 +195,7 @@ public class CsarUtils {
 
 			return Either.left(byteArray);
 		} catch (IOException | NullPointerException e) {
-			log.debug("Failed with IOexception to create CSAR zip for component {}", component.getUniqueId(), e);
+			log.error("Failed with IOexception to create CSAR zip for component {}", component.getUniqueId(), e);
 
 			ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR);
 			return Either.right(responseFormat);
@@ -253,7 +253,7 @@ public class CsarUtils {
 		if (dependencies == null) {
 			Either<ToscaTemplate, ToscaError> dependenciesRes = toscaExportUtils.getDependencies(component);
 			if (dependenciesRes.isRight()) {
-				log.debug("Failed to retrieve dependencies for component {}, error {}", component.getUniqueId(),
+				log.error("Failed to retrieve dependencies for component {}, error {}", component.getUniqueId(),
 						dependenciesRes.right().value());
 				ActionStatus convertFromToscaError = componentsUtils
 						.convertFromToscaError(dependenciesRes.right().value());
@@ -296,7 +296,7 @@ public class CsarUtils {
 				Either<byte[], ActionStatus> entryData = getEntryData(innerComponentTriple.getLeft(), innerComponent);
 				if (entryData.isRight()) {
 					ResponseFormat responseFormat = componentsUtils.getResponseFormat(entryData.right().value());
-					log.debug("Failed adding to zip component {}, error {}", innerComponentTriple.getLeft(),
+					log.error("Failed adding to zip component {}, error {}", innerComponentTriple.getLeft(),
 							entryData.right().value());
 					return Either.right(responseFormat);
 				}
@@ -390,7 +390,7 @@ public class CsarUtils {
 					Either<Resource, StorageOperationStatus> resource = toscaOperationFacade
 							.getToscaElement(ci.getComponentUid());
 					if (resource == null || resource.isRight()) {
-                                             log.debug("Failed to fetch resource with id {} for instance {}", ci.getComponentUid(), ci.getName());
+                                             log.error("Failed to fetch resource with id {} for instance {}", ci.getComponentUid(), ci.getName());
 					} else {
 						Component componentRI = resource.left().value();
 
@@ -455,7 +455,7 @@ public class CsarUtils {
 		if (cassandraId == null || cassandraId.isEmpty()) {
 			Either<ToscaRepresentation, ToscaError> exportRes = toscaExportUtils.exportComponent(childComponent);
 			if (exportRes.isRight()) {
-				log.debug("Failed to export tosca template for child component {} error {}",
+				log.error("Failed to export tosca template for child component {} error {}",
 						childComponent.getUniqueId(), exportRes.right().value());
 				return Either.right(componentsUtils.convertFromToscaError(exportRes.right().value()));
 			}
@@ -476,7 +476,7 @@ public class CsarUtils {
 				.getSpecificSchemaFiles(versionFirstThreeOctates, CONFORMANCE_LEVEL);
 
 		if (specificSchemaFiles.isRight()) {
-			log.debug("Failed to get the schema files SDC-Version: {} Conformance-Level {}", versionFirstThreeOctates,
+			log.error("Failed to get the schema files SDC-Version: {} Conformance-Level {}", versionFirstThreeOctates,
 					CONFORMANCE_LEVEL);
 			StorageOperationStatus storageStatus = DaoStatusConverter
 					.convertCassandraStatusToStorageStatus(specificSchemaFiles.right().value());
@@ -487,7 +487,7 @@ public class CsarUtils {
 		List<SdcSchemaFilesData> listOfSchemas = specificSchemaFiles.left().value();
 
 		if (listOfSchemas.isEmpty()) {
-			log.debug("Failed to get the schema files SDC-Version: {} Conformance-Level {}", versionFirstThreeOctates,
+			log.error("Failed to get the schema files SDC-Version: {} Conformance-Level {}", versionFirstThreeOctates,
 					CONFORMANCE_LEVEL);
 			return Either.right(componentsUtils.getResponseFormat(ActionStatus.TOSCA_SCHEMA_FILES_NOT_FOUND,
 					versionFirstThreeOctates, CONFORMANCE_LEVEL));
@@ -503,7 +503,7 @@ public class CsarUtils {
 				.getArtifact(cassandraId);
 
 		if (artifactResponse.isRight()) {
-			log.debug("Failed to fetch artifact from Cassandra by id {} error {} ", cassandraId,
+			log.error("Failed to fetch artifact from Cassandra by id {} error {} ", cassandraId,
 					artifactResponse.right().value());
 
 			StorageOperationStatus storageStatus = DaoStatusConverter
@@ -939,7 +939,7 @@ public class CsarUtils {
 				if (fromCassandra.isRight()) {
 					log.debug("ArtifactName {}, unique ID {}", artifactDefinition.getArtifactName(),
 							artifactDefinition.getUniqueId());
-					log.debug("Failed to get {} payload from DB reason: {}", artifactFileName,
+					log.error("Failed to get {} payload from DB reason: {}", artifactFileName,
 							fromCassandra.right().value());
 					continue;
 				}

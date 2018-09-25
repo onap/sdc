@@ -102,7 +102,7 @@ public class ComponentsUtils {
         } catch (Exception e) {
             // INVALID JSON
             BeEcompErrorManager.getInstance().logBeInvalidJsonInput(CONVERT_JSON_TO_OBJECT);
-            log.debug("failed to convert from json {}", data, e);
+            log.error("failed to convert from json {}", data, e);
             ResponseFormat responseFormat = getInvalidContentErrorAndAudit(user, actionEnum);
             return Either.right(responseFormat);
         }
@@ -135,7 +135,7 @@ public class ComponentsUtils {
             }
         } catch (Exception e) {
             BeEcompErrorManager.getInstance().logBeInvalidJsonInput(CONVERT_JSON_TO_OBJECT);
-            log.debug("failed to convert from json {}", data, e);
+            log.error("failed to convert from json {}", data, e);
             ResponseFormat responseFormat = getInvalidContentErrorAndAuditComponent(user, actionEnum, typeEnum);
             return Either.right(responseFormat);
         }

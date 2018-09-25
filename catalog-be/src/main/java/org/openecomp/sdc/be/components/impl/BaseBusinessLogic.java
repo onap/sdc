@@ -485,7 +485,7 @@ public abstract class BaseBusinessLogic {
     void validateComponentLock(String componentId, ComponentTypeEnum componentTypeEnum, Wrapper<ResponseFormat> errorWrapper) {
         StorageOperationStatus lockStatus = graphLockOperation.lockComponent(componentId, componentTypeEnum.getNodeType());
         if (lockStatus != StorageOperationStatus.OK) {
-            log.debug("Failed to lock {} {}", componentTypeEnum.getValue(), componentId);
+            log.error("Failed to lock {} {}", componentTypeEnum.getValue(), componentId);
             errorWrapper.setInnerElement(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(lockStatus)));
         }
 

@@ -230,7 +230,7 @@ public class HeatParametersOperation implements IHeatParametersOperation {
             HeatParameterData heatParameterData = new HeatParameterData(property);
             Either<HeatParameterData, TitanOperationStatus> updateNode = titanGenericDao.updateNode(heatParameterData, HeatParameterData.class);
             if (updateNode.isRight()) {
-                log.debug("failed to update heat parameter in graph. id = {}", property.getUniqueId());
+                log.error("failed to update heat parameter in graph. id = {}", property.getUniqueId());
                 return DaoStatusConverter.convertTitanStatusToStorageStatus(updateNode.right().value());
             }
         }
@@ -390,24 +390,24 @@ public class HeatParametersOperation implements IHeatParametersOperation {
         if (heatParam.getCurrentValue() == null || (heatParam.getDefaultValue() != null && heatParam.getCurrentValue().equals(heatParam.getDefaultValue()))) {
             Either<GraphRelation, TitanOperationStatus> deleteParameterValueIncomingRelation = titanGenericDao.deleteIncomingRelationByCriteria(heatParameterValue, GraphEdgeLabels.PARAMETER_VALUE, null);
             if (deleteParameterValueIncomingRelation.isRight()) {
-                log.debug("Failed to delete heat parameter value incoming relation on graph. id = {}", heatParameterValue.getUniqueId());
+                log.error("Failed to delete heat parameter value incoming relation on graph. id = {}", heatParameterValue.getUniqueId());
                 return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(deleteParameterValueIncomingRelation.right().value()));
             }
             Either<Edge, TitanOperationStatus> getOutgoingRelation = titanGenericDao.getOutgoingEdgeByCriteria(GraphPropertiesDictionary.UNIQUE_ID.getProperty(), (String) heatParameterValue.getUniqueId(), GraphEdgeLabels.PARAMETER_IMPL, null);
             if (getOutgoingRelation.isRight()) {
-                log.debug("Failed to get heat parameter value outgoing relation from graph. id = {}", heatParameterValue.getUniqueId());
+                log.error("Failed to get heat parameter value outgoing relation from graph. id = {}", heatParameterValue.getUniqueId());
                 return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(getOutgoingRelation.right().value()));
             }
             Edge edge = getOutgoingRelation.left().value();
             if (edge == null) {
-                log.debug("Failed to get heat parameter value outgoing relation from graph. id = {}", heatParameterValue.getUniqueId());
+                log.error("Failed to get heat parameter value outgoing relation from graph. id = {}", heatParameterValue.getUniqueId());
                 return Either.right(StorageOperationStatus.GENERAL_ERROR);
             }
             edge.remove();
 
             Either<HeatParameterValueData, TitanOperationStatus> deleteNode = titanGenericDao.deleteNode(heatParameterValue, HeatParameterValueData.class);
             if (deleteNode.isRight()) {
-                log.debug("Failed to delete heat parameter value on graph. id = {}", heatParameterValue.getUniqueId());
+                log.error("Failed to delete heat parameter value on graph. id = {}", heatParameterValue.getUniqueId());
                 return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(deleteNode.right().value()));
             }
             return Either.left(deleteNode.left().value());
@@ -415,7 +415,7 @@ public class HeatParametersOperation implements IHeatParametersOperation {
         heatParameterValue.setValue(heatParam.getCurrentValue());
         Either<HeatParameterValueData, TitanOperationStatus> updateNode = titanGenericDao.updateNode(heatParameterValue, HeatParameterValueData.class);
         if (updateNode.isRight()) {
-            log.debug("Failed to update heat parameter value in graph. id = {}", heatParameterValue.getUniqueId());
+            log.error("Failed to update heat parameter value in graph. id = {}", heatParameterValue.getUniqueId());
             return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(updateNode.right().value()));
         }
         return Either.left(updateNode.left().value());
@@ -425,7 +425,7 @@ public class HeatParametersOperation implements IHeatParametersOperation {
 
         Either<HeatParameterValueData, TitanOperationStatus> addHeatValueToGraph = addHeatValueToGraph(heatParam, artifactLabel, artifactId, resourceInstanceId);
         if (addHeatValueToGraph.isRight()) {
-            log.debug("Failed to create heat parameters value on graph for artifact {}", artifactId);
+            log.error("Failed to create heat parameters value on graph for artifact {}", artifactId);
             return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(addHeatValueToGraph.right().value()));
         }
         return Either.left(addHeatValueToGraph.left().value());

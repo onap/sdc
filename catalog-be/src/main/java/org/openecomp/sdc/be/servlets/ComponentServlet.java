@@ -279,7 +279,7 @@ public class ComponentServlet extends BeGenericServlet {
 
             Either<List<ComponentInstance>, ResponseFormat> actionResponse = businessLogic.getComponentInstancesFilteredByPropertiesAndInputs(componentId, userId);
             if (actionResponse.isRight()) {
-                log.debug("failed to get all component instances filtered by properties and inputs", componentType);
+                log.error("failed to get all component instances filtered by properties and inputs", componentType);
                 return buildErrorResponse(actionResponse.right().value());
             }
             Object components = RepresentationUtils.toRepresentation(actionResponse.left().value());
@@ -335,7 +335,7 @@ public class ComponentServlet extends BeGenericServlet {
             Either<UiComponentDataTransfer, ResponseFormat> actionResponse = businessLogic.getComponentDataFilteredByParams(resourceIdLower, modifier, dataParamsToReturn);
 
             if (actionResponse.isRight()) {
-                log.debug("failed to get component data filtered by ui params");
+                log.error("failed to get component data filtered by ui params");
                 response = buildErrorResponse(actionResponse.right().value());
                 return response;
             }

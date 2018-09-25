@@ -72,7 +72,7 @@ public class ConsumerBusinessLogic extends BaseBusinessLogic {
         StorageOperationStatus lockResult = graphLockOperation.lockComponent(consumerName, NodeTypeEnum.ConsumerCredentials);
         if (!lockResult.equals(StorageOperationStatus.OK)) {
             BeEcompErrorManager.getInstance().logBeFailedLockObjectError("createConsumer", NodeTypeEnum.ConsumerCredentials.getName(), consumerName);
-            log.debug("Failed to lock consumer: {} error - {}", consumerName, lockResult);
+            log.error("Failed to lock consumer: {} error - {}", consumerName, lockResult);
             ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR);
 
             componentsUtils.auditConsumerCredentialsEvent(AuditingActionEnum.ADD_ECOMP_USER_CREDENTIALS, consumer, responseFormat, user);

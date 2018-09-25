@@ -98,7 +98,7 @@ public class ComponentInstanceRelationMerge implements ComponentInstanceMergeInt
                     resultWrapper.setInnerElement(Either.left(updatedContainerComponent));
                 }
                 else {
-                    log.debug("Failed to associate instances of resource {} status is {}", updatedContainerComponent.getUniqueId(), saveResult);
+                    log.error("Failed to associate instances of resource {} status is {}", updatedContainerComponent.getUniqueId(), saveResult);
                     ResponseFormat responseFormat = componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(saveResult), updatedContainerComponent.getUniqueId());
                     resultWrapper.setInnerElement(Either.right(responseFormat));
                 }
@@ -141,7 +141,7 @@ public class ComponentInstanceRelationMerge implements ComponentInstanceMergeInt
             Wrapper<Either<Component, ResponseFormat>> resultWrapper) {
         ComponentInstance componentInstance = containerComponent.getComponentInstanceById(instanceId).orElse(null);
         if (componentInstance == null) {
-            log.debug("Failed to get VF instance by new VF instance ID: {}", instanceId);
+            log.error("Failed to get VF instance by new VF instance ID: {}", instanceId);
             resultWrapper.setInnerElement(Either.left(containerComponent));
         }
 

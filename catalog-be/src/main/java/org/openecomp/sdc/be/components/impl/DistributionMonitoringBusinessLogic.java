@@ -89,7 +89,7 @@ public class DistributionMonitoringBusinessLogic extends BaseBusinessLogic {
         log.trace("getListOfDistributionServiceStatus for serviceUUID {}", serviceUuid);
         Either<List<? extends AuditingGenericEvent>, ActionStatus> status = cassandraDao.getServiceDistributionStatusesList(serviceUuid);
         if (status.isRight()) {
-            log.debug("failed to find service distribution statuses. error: {}", status);
+            log.error("failed to find service distribution statuses. error: {}", status);
             return Either.right(componentsUtils.getResponseFormat(status.right().value(), serviceUuid));
         }
         List<DistributionStatusOfServiceInfo> distribStatusInfoList;

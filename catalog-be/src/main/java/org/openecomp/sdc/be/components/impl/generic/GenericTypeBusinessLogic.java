@@ -39,13 +39,13 @@ public class GenericTypeBusinessLogic {
         String genericTypeToscaName = getGenericTypeToscaName(component);
         log.debug("Fetching generic tosca name {}", genericTypeToscaName);
         if(null == genericTypeToscaName) {
-            log.debug("Failed to fetch certified generic node type for component {}", component.getName());
+            log.error("Failed to fetch certified generic node type for component {}", component.getName());
             return Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
         }
 
         Either<Resource, StorageOperationStatus> findLatestGeneric = toscaOperationFacade.getLatestCertifiedNodeTypeByToscaResourceName(genericTypeToscaName);
         if(findLatestGeneric.isRight()){
-            log.debug("Failed to fetch certified node type by tosca resource name {}", genericTypeToscaName);
+            log.error("Failed to fetch certified node type by tosca resource name {}", genericTypeToscaName);
             return Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERIC_TYPE_NOT_FOUND, component.assetType(), genericTypeToscaName));
         }
 

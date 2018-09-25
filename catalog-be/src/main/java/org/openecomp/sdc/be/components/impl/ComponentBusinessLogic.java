@@ -671,7 +671,7 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
 
         StorageOperationStatus markResourceToDelete = toscaOperationFacade.markComponentToDelete(component);
         if (StorageOperationStatus.OK != markResourceToDelete) {
-            log.debug("failed to mark component {} of type {} for delete. error = {}", uniqueId, componentType, markResourceToDelete);
+            log.error("failed to mark component {} of type {} for delete. error = {}", uniqueId, componentType, markResourceToDelete);
             return markResourceToDelete;
         } else {
             log.debug("Component {}  of type {} was marked as deleted", uniqueId, componentType);
@@ -740,7 +740,7 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
         Either<Map<String, ArtifactDefinition>, StorageOperationStatus> artifactsResponse = artifactToscaOperation.getArtifacts(parentId);
         if (artifactsResponse.isRight()) {
             if (!artifactsResponse.right().value().equals(StorageOperationStatus.NOT_FOUND)) {
-                log.debug("failed to retrieve artifacts for {} {}", parentType, parentId);
+                log.error("failed to retrieve artifacts for {} {}", parentType, parentId);
                 return Either.right(artifactsResponse.right().value());
             }
         } else {
@@ -808,7 +808,7 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
     protected <T extends Component> Resource fetchAndSetDerivedFromGenericType(T component){
         Either<Resource, ResponseFormat> genericTypeEither = this.genericTypeBusinessLogic.fetchDerivedFromGenericType(component);
         if(genericTypeEither.isRight()){
-            log.debug("Failed to fetch latest generic type for component {} of type", component.getName(), component.assetType());
+            log.error("Failed to fetch latest generic type for component {} of type", component.getName(), component.assetType());
             throw new ComponentException(ActionStatus.GENERIC_TYPE_NOT_FOUND, component.assetType());
         }
         Resource genericTypeResource = genericTypeEither.left().value();

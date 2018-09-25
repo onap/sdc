@@ -160,7 +160,7 @@ public class BeMonitoringServlet extends BeGenericServlet {
             object = gson.fromJson(content, clazz);
             object.setFields(null);
         } catch (Exception e) {
-            log.debug("Failed to convert the content {} to object.", content.substring(0, Math.min(50, content.length())), e);
+            log.error("Failed to convert the content {} to object.", content.substring(0, Math.min(50, content.length())), e);
         }
 
         return object;

@@ -110,7 +110,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
 
         if(!ComponentValidations.validateComponentInstanceExist(component, componentInstanceId)){
             ActionStatus actionStatus = ActionStatus.COMPONENT_INSTANCE_NOT_FOUND;
-            log.debug("Failed to found component instance inputs {}, error: {}", componentInstanceId, actionStatus);
+            log.error("Failed to found component instance inputs {}, error: {}", componentInstanceId, actionStatus);
             return Either.right(componentsUtils.getResponseFormat(actionStatus));
         }
         Map<String, List<ComponentInstanceInput>> ciInputs = Optional.ofNullable(component.getComponentInstancesInputs()).orElse(Collections.emptyMap());
@@ -270,7 +270,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
                 InputDefinition currInput = getInputFromInputsListById(componentsOldInputs, newInput);
                 if (currInput == null) {
                     ActionStatus actionStatus = ActionStatus.COMPONENT_NOT_FOUND;
-                    log.debug("Failed to found newInput {} under component {}, error: {}", newInput.getUniqueId(), componentId, actionStatus);
+                    log.error("Failed to found newInput {} under component {}, error: {}", newInput.getUniqueId(), componentId, actionStatus);
                     result = Either.right(componentsUtils.getResponseFormat(actionStatus));
                     return result;
                 }
@@ -450,7 +450,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
 
         Either<List<InputDefinition>, StorageOperationStatus> associateInputsEither = toscaOperationFacade.createAndAssociateInputs(inputs, component.getUniqueId());
         if(associateInputsEither.isRight()){
-            log.debug("Failed to create inputs under component {}. Status is {}", component.getUniqueId(), associateInputsEither.right().value());
+            log.error("Failed to create inputs under component {}. Status is {}", component.getUniqueId(), associateInputsEither.right().value());
             return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(associateInputsEither.right().value())));
         }
         return Either.left(associateInputsEither.left().value());

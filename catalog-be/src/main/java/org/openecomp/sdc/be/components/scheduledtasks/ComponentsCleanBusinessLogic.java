@@ -99,7 +99,7 @@ public class ComponentsCleanBusinessLogic extends BaseBusinessLogic {
     private void processDeletionForType(Map<NodeTypeEnum, Either<List<String>, ResponseFormat>> cleanedComponents, NodeTypeEnum type, ComponentBusinessLogic componentBusinessLogic) {
         Either<List<String>, ResponseFormat> deleteMarkedResources = componentBusinessLogic.deleteMarkedComponents();
         if (deleteMarkedResources.isRight()) {
-            log.debug("failed to clean deleted components of type {}. error: {}", type, deleteMarkedResources.right().value().getFormattedMessage());
+            log.error("failed to clean deleted components of type {}. error: {}", type, deleteMarkedResources.right().value().getFormattedMessage());
         } else {
             log.debug("list of deleted components - type {}: {}", type, deleteMarkedResources.left().value());
         }

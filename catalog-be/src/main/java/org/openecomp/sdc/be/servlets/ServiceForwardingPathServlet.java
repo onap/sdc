@@ -96,7 +96,7 @@ public class ServiceForwardingPathServlet extends AbstractValidationsServlet {
 
             Either<Service, ResponseFormat> convertResponse = parseToService(data, modifier);
             if (convertResponse.isRight()) {
-                log.debug("failed to parse service");
+                log.error("failed to parse service");
                 response = buildErrorResponse(convertResponse.right().value());
                 return response;
             }
@@ -109,7 +109,7 @@ public class ServiceForwardingPathServlet extends AbstractValidationsServlet {
             }
 
             if (actionResponse.isRight()) {
-                log.debug("failed to update or create paths");
+                log.error("failed to update or create paths");
                 response = buildErrorResponse(actionResponse.right().value());
                 return response;
             }
@@ -207,7 +207,7 @@ public class ServiceForwardingPathServlet extends AbstractValidationsServlet {
             Either<Set<String>, ResponseFormat> actionResponse = businessLogic.deleteForwardingPaths(serviceIdLower, Sets.newHashSet(forwardingPathId), modifier, true);
 
             if (actionResponse.isRight()) {
-                log.debug("failed to delete paths");
+                log.error("failed to delete paths");
                 response = buildErrorResponse(actionResponse.right().value());
                 return response;
             }

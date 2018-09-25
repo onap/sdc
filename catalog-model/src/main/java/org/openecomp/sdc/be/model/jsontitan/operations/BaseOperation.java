@@ -211,7 +211,7 @@ public abstract class BaseOperation {
         Either<GraphVertex, TitanOperationStatus> childVertex = titanDao.getChildVertex(componentV, edgelabel, JsonParseFlagEnum.ParseJson);
         if (childVertex.isRight()) {
             if (childVertex.right().value() != TitanOperationStatus.NOT_FOUND) {
-                log.debug("failed to fetch {} for tosca element with id {}, error {}", edgelabel, componentV.getUniqueId(), childVertex.right().value());
+                log.error("failed to fetch {} for tosca element with id {}, error {}", edgelabel, componentV.getUniqueId(), childVertex.right().value());
             }
             return Either.right(childVertex.right().value());
         }
@@ -256,14 +256,14 @@ public abstract class BaseOperation {
     public Either<Boolean, StorageOperationStatus> isCloneNeeded(String elemementId, EdgeLabelEnum label) {
         Either<GraphVertex, TitanOperationStatus> vertexById = titanDao.getVertexById(elemementId);
         if (vertexById.isRight()) {
-            log.debug("Failed to fetch element by id {} error {}", elemementId, vertexById.right().value());
+            log.error("Failed to fetch element by id {} error {}", elemementId, vertexById.right().value());
             return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(vertexById.right().value()));
         }
         GraphVertex toscaElementVertex = vertexById.left().value();
         Either<GraphVertex, TitanOperationStatus> childVertex = titanDao.getChildVertex(toscaElementVertex, label, JsonParseFlagEnum.NoParse);
         if (childVertex.isRight()) {
             if (childVertex.right().value() != TitanOperationStatus.NOT_FOUND) {
-                log.debug("failed to fetch {} for tosca element with id {}, error {}", label, toscaElementVertex.getUniqueId(), childVertex.right().value());
+                log.error("failed to fetch {} for tosca element with id {}, error {}", label, toscaElementVertex.getUniqueId(), childVertex.right().value());
                 return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(childVertex.right().value()));
             }
             return Either.left(Boolean.FALSE);
@@ -323,13 +323,13 @@ public abstract class BaseOperation {
 
         Either<GraphVertex, TitanOperationStatus> createVertex = titanDao.createVertex(newDataVertex);
         if (createVertex.isRight()) {
-            log.debug("Failed to clone data vertex for {} error {}", dataVertex.getUniqueId(), createVertex.right().value());
+            log.error("Failed to clone data vertex for {} error {}", dataVertex.getUniqueId(), createVertex.right().value());
             return createVertex;
         }
         newDataVertex = createVertex.left().value();
         TitanOperationStatus createEdge = titanDao.createEdge(toscaElementVertex, newDataVertex, label, titanDao.getEdgeProperties(edgeToRemove));
         if (createEdge != TitanOperationStatus.OK) {
-            log.debug("Failed to associate vertex {} to vertex {}, error {}", toscaElementVertex.getUniqueId(), newDataVertex.getUniqueId(), createEdge);
+            log.error("Failed to associate vertex {} to vertex {}, error {}", toscaElementVertex.getUniqueId(), newDataVertex.getUniqueId(), createEdge);
             return Either.right(createEdge);
         }
         edgeToRemove.remove();

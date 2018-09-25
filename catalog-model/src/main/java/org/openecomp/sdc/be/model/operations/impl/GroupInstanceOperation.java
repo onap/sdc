@@ -76,7 +76,7 @@ public class GroupInstanceOperation extends AbstractOperation implements IGroupI
 
         Either<TitanGraph, TitanOperationStatus> graph = titanGenericDao.getGraph();
         if (graph.isRight()) {
-            log.debug("Failed to work with graph {}", graph.right().value());
+            log.error("Failed to work with graph {}", graph.right().value());
             return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(graph.right().value()));
         }
         TitanGraph tGraph = graph.left().value();
@@ -98,7 +98,7 @@ public class GroupInstanceOperation extends AbstractOperation implements IGroupI
 
         if (childrenByEdgeCriteria.isRight()) {
             TitanOperationStatus status = childrenByEdgeCriteria.right().value();
-            log.debug("Failed to find group instance {} on graph", childrenByEdgeCriteria.right().value());
+            log.error("Failed to find group instance {} on graph", childrenByEdgeCriteria.right().value());
 
             if (status == TitanOperationStatus.NOT_FOUND) {
                 return Either.left(groupInstanceRes);
@@ -730,7 +730,7 @@ public class GroupInstanceOperation extends AbstractOperation implements IGroupI
                             NodeTypeEnum.PropertyValue, PropertyValueData.class, true);
             if(getPropertyValueChildrenRes.isRight()){
                 TitanOperationStatus status = getPropertyValueChildrenRes.right().value();
-                log.debug("Failed to fetch property value nodes for group instance {}. Status is {}. ", groupInstData.getName(), status);
+                log.error("Failed to fetch property value nodes for group instance {}. Status is {}. ", groupInstData.getName(), status);
                 if(status == TitanOperationStatus.NOT_FOUND){
                     result = Either.left(null);
                 }else{

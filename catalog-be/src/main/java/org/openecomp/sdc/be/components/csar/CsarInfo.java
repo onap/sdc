@@ -92,7 +92,7 @@ public class CsarInfo {
         if(!cvfcToCreateQueue.contains(nodeName)) {
             cvfcToCreateQueue.add(nodeName);
         } else {
-            log.debug("Failed to validate complex VFC {}. Loop detected, VSP {}. ", nodeName,
+            log.error("Failed to validate complex VFC {}. Loop detected, VSP {}. ", nodeName,
                     getVfResourceName());
             throw new ComponentException(ActionStatus.CFVC_LOOP_DETECTED,
                     getVfResourceName(), nodeName);

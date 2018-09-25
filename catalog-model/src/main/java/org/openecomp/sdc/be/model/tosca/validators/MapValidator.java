@@ -118,7 +118,7 @@ public class MapValidator implements PropertyTypeValidator {
             JsonObject valueAsJson = jsonObject.getAsJsonObject();
             return validateJsonObject(allDataTypes, innerValidator, keyValidator, valueAsJson);
         } catch (JsonSyntaxException e) {
-            log.debug("Failed to parse json : {}", value, e);
+            log.error("Failed to parse json : {}", value, e);
             BeEcompErrorManager.getInstance().logBeInvalidJsonInput("Map Validator");
         }
 

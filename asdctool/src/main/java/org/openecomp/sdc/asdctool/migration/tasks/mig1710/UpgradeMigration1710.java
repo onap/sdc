@@ -293,7 +293,7 @@ public class UpgradeMigration1710 implements PostMigration {
         } catch (Exception e) {
             result = false;
             log.error("Failed to upgrade service with uniqueId {} due to a reason {}. ", currUid, e.getMessage());
-            log.debug("Failed to upgrade service with uniqueId {}", currUid, e);
+            log.error("Failed to upgrade service with uniqueId {}", currUid, e);
         }
         finally {
             if (result) {
@@ -537,7 +537,7 @@ public class UpgradeMigration1710 implements PostMigration {
                 propertyUuid.get().setValue((String) getLatestOriginServiceRes.left().value().get(0).getJsonMetadataField(JsonPresentationFields.UUID));
                 componentInstanceBusinessLogic.createOrUpdatePropertiesValues(component.getComponentType(), component.getUniqueId(), instance.getUniqueId(), Lists.newArrayList(propertyUuid.get()), user.getUserId())
                         .right()
-                        .forEach(e -> log.debug("Failed to update property {} of the instance {} of the component {}. ", SERVICE_UUID_RPOPERTY, instance.getUniqueId(), component.getName()));
+                        .forEach(e -> log.error("Failed to update property {} of the instance {} of the component {}. ", SERVICE_UUID_RPOPERTY, instance.getUniqueId(), component.getName()));
             }
         }
         return instance;
@@ -681,7 +681,7 @@ public class UpgradeMigration1710 implements PostMigration {
         log.info("Starting upgrade VF with uniqueId {} upon upgrade migration 1710 process. ", uniqueId);
         Either<org.openecomp.sdc.be.model.Component, StorageOperationStatus> getRes = toscaOperationFacade.getToscaElement(uniqueId);
         if (getRes.isRight()) {
-            log.debug("Failed to fetch VF with uniqueId {} upon upgrade migration 1710 process. ", uniqueId);
+            log.error("Failed to fetch VF with uniqueId {} upon upgrade migration 1710 process. ", uniqueId);
             outputHandler.addRecord(ComponentTypeEnum.RESOURCE.name(), UNKNOWN, UNKNOWN, uniqueId, MigrationResult.MigrationStatus.FAILED.name(), getRes.right().value());
             return false;
         }
@@ -693,7 +693,7 @@ public class UpgradeMigration1710 implements PostMigration {
             log.info("Going to fetch the latest version of VSP with csarUUID {} upon upgrade migration 1710 process. ", getRes.left().value().getCsarUUID());
             Either<String, StorageOperationStatus> latestVersionRes = csarOperation.getCsarLatestVersion(getRes.left().value().getCsarUUID(), user);
             if (latestVersionRes.isRight()) {
-                log.debug("Failed to fetch the latest version of VSP with csarUUID {} upon upgrade migration 1710 process. ", getRes.left().value().getCsarUUID());
+                log.error("Failed to fetch the latest version of VSP with csarUUID {} upon upgrade migration 1710 process. ", getRes.left().value().getCsarUUID());
                 outputHandler.addRecord(getRes.left().value().getComponentType().name(), getRes.left().value().getName(), getRes.left().value().getUUID(), getRes.left().value().getUniqueId(), MigrationResult.MigrationStatus.FAILED.name(), latestVersionRes.right().value());
                 return false;
             }
@@ -992,7 +992,7 @@ public class UpgradeMigration1710 implements PostMigration {
         Either<List<GraphVertex>, TitanOperationStatus> highestResources = titanDao.getByCriteria(null, propertiesToMatch, propertiesNotToMatch, JsonParseFlagEnum.ParseMetadata);
         if (highestResources.isRight()) {
             TitanOperationStatus status = highestResources.right().value();
-            log.debug("Failed to fetch resource with name {}. Status is {} ", nodeName, status);
+            log.error("Failed to fetch resource with name {}. Status is {} ", nodeName, status);
             return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
         }
         List<GraphVertex> resources = highestResources.left().value();
@@ -1123,7 +1123,7 @@ public class UpgradeMigration1710 implements PostMigration {
                 isCleanupLocked = false;
             }
             catch (Exception e) {
-                log.debug("Failed to unlock delete operation", e);
+                log.error("Failed to unlock delete operation", e);
                 log.error("Failed to unlock delete operation due to the error {}", e.getMessage());
             }
         }

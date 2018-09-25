@@ -328,7 +328,7 @@ public class ImportRestUtils extends BaseRestUtils {
 				client.close();
 			}
 		} catch (IOException e) {
-			log.debug("failed to close client or response: ", e);
+			log.error("failed to close client or response: ", e);
 		}
 	}
 
@@ -338,7 +338,7 @@ public class ImportRestUtils extends BaseRestUtils {
 				response.close();
 			}
 		} catch (IOException e) {
-			log.debug("failed to close client or response: {}", e);
+			log.error("failed to close client or response: {}", e);
 		}
 	}
 

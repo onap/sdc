@@ -103,7 +103,7 @@ public class LifecycleServlet extends BeGenericServlet {
 
         catch (Exception e) {
             BeEcompErrorManager.getInstance().logBeInvalidJsonInput("convertJsonToObject");
-            log.debug("failed to convert from json {}", jsonChangeInfo, e);
+            log.error("failed to convert from json {}", jsonChangeInfo, e);
             ResponseFormat responseFormat = getComponentsUtils().getInvalidContentErrorAndAudit(user, componentId, AuditingActionEnum.CHECKOUT_RESOURCE);
             return buildErrorResponse(responseFormat);
         }

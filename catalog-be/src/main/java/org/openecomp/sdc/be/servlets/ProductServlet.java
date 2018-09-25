@@ -73,7 +73,7 @@ public class ProductServlet extends BeGenericServlet {
             Either<Product, ResponseFormat> actionResponse = businessLogic.createProduct(product, modifier);
 
             if (actionResponse.isRight()) {
-                log.debug("Failed to create product");
+                log.error("Failed to create product");
                 response = buildErrorResponse(actionResponse.right().value());
                 return response;
             }
@@ -115,7 +115,7 @@ public class ProductServlet extends BeGenericServlet {
             Either<Product, ResponseFormat> actionResponse = businessLogic.getProduct(productId, modifier);
 
             if (actionResponse.isRight()) {
-                log.debug("Failed to get product");
+                log.error("Failed to get product");
                 response = buildErrorResponse(actionResponse.right().value());
                 return response;
             }
@@ -192,7 +192,7 @@ public class ProductServlet extends BeGenericServlet {
             Either<Product, ResponseFormat> actionResponse = businessLogic.deleteProduct(productId, modifier);
 
             if (actionResponse.isRight()) {
-                log.debug("Failed to delete product");
+                log.error("Failed to delete product");
                 response = buildErrorResponse(actionResponse.right().value());
                 return response;
             }
@@ -235,7 +235,7 @@ public class ProductServlet extends BeGenericServlet {
             Either<Product, ResponseFormat> actionResponse = businessLogic.updateProductMetadata(productIdLower, updatedProduct, modifier);
 
             if (actionResponse.isRight()) {
-                log.debug("failed to update product");
+                log.error("failed to update product");
                 response = buildErrorResponse(actionResponse.right().value());
                 return response;
             }
@@ -272,7 +272,7 @@ public class ProductServlet extends BeGenericServlet {
             Either<Map<String, Boolean>, ResponseFormat> actionResponse = businessLogic.validateProductNameExists(productName, userId);
 
             if (actionResponse.isRight()) {
-                log.debug("failed to get validate service name");
+                log.error("failed to get validate service name");
                 response = buildErrorResponse(actionResponse.right().value());
                 return response;
             }

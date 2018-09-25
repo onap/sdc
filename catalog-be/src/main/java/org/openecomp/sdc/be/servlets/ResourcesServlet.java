@@ -101,7 +101,7 @@ public class ResourcesServlet extends AbstractValidationsServlet {
 
                 Either<Resource, ResponseFormat> convertResponse = parseToResource(data, modifier);
                 if (convertResponse.isRight()) {
-                    log.debug("failed to parse resource");
+                    log.error("failed to parse resource");
                     response = buildErrorResponse(convertResponse.right().value());
                     return response;
                 }
@@ -128,7 +128,7 @@ public class ResourcesServlet extends AbstractValidationsServlet {
             String payloadName = json.getString(ImportUtils.Constants.UI_JSON_PAYLOAD_NAME);
             isUIImport = payloadName != null && !payloadName.isEmpty();
         } catch (JSONException e) {
-            log.debug("failed to parse json sent from client, json:{}", data, e);
+            log.error("failed to parse json sent from client, json:{}", data, e);
             isUIImport = false;
         }
         return isUIImport;
@@ -193,7 +193,7 @@ public class ResourcesServlet extends AbstractValidationsServlet {
             ResponseFormat actionResponse = businessLogic.deleteResource(resourceIdLower, modifier);
 
             if (actionResponse.getStatus() != HttpStatus.SC_NO_CONTENT) {
-                log.debug("failed to delete resource");
+                log.error("failed to delete resource");
                 response = buildErrorResponse(actionResponse);
                 return response;
             }
@@ -229,7 +229,7 @@ public class ResourcesServlet extends AbstractValidationsServlet {
         ResponseFormat actionResponse = businessLogic.deleteResourceByNameAndVersion(resourceName, version, modifier);
 
         if (actionResponse.getStatus() != HttpStatus.SC_NO_CONTENT) {
-            log.debug("failed to delete resource");
+            log.error("failed to delete resource");
             response = buildErrorResponse(actionResponse);
             return response;
         }
@@ -264,7 +264,7 @@ public class ResourcesServlet extends AbstractValidationsServlet {
             Either<Resource, ResponseFormat> actionResponse = businessLogic.getResource(resourceIdLower, modifier);
 
             if (actionResponse.isRight()) {
-                log.debug("failed to get resource");
+                log.error("failed to get resource");
                 response = buildErrorResponse(actionResponse.right().value());
                 return response;
             }
@@ -343,7 +343,7 @@ public class ResourcesServlet extends AbstractValidationsServlet {
         Either<Map<String, Boolean>, ResponseFormat> actionResponse = businessLogic.validateResourceNameExists(resourceName, typeEnum, userId);
 
         if (actionResponse.isRight()) {
-            log.debug("failed to validate resource name");
+            log.error("failed to validate resource name");
             response = buildErrorResponse(actionResponse.right().value());
             return response;
         }
@@ -417,7 +417,7 @@ public class ResourcesServlet extends AbstractValidationsServlet {
             String resourceIdLower = resourceId.toLowerCase();
             Either<Resource, ResponseFormat> updateInfoResource = getComponentsUtils().convertJsonToObjectUsingObjectMapper(data, modifier, Resource.class, AuditingActionEnum.UPDATE_RESOURCE_METADATA, ComponentTypeEnum.RESOURCE);
             if (updateInfoResource.isRight()) {
-                log.debug("failed to parse resource metadata");
+                log.error("failed to parse resource metadata");
                 response = buildErrorResponse(updateInfoResource.right().value());
                 return response;
             }
@@ -462,7 +462,7 @@ public class ResourcesServlet extends AbstractValidationsServlet {
                 ResourceBusinessLogic businessLogic = getResourceBL(context);
                 Either<Resource, ResponseFormat> convertResponse = parseToLightResource(data, modifier);
                 if (convertResponse.isRight()) {
-                    log.debug("failed to parse resource");
+                    log.error("failed to parse resource");
                     response = buildErrorResponse(convertResponse.right().value());
                     return response;
                 }
@@ -513,7 +513,7 @@ public class ResourcesServlet extends AbstractValidationsServlet {
 
             // validate response
             if (eitherResource.isRight()) {
-                log.debug("failed to get resource from csarUuid : {}", csarUUID);
+                log.error("failed to get resource from csarUuid : {}", csarUUID);
                 response = buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), eitherResource.right().value());
             } else {
                 Object representation = RepresentationUtils.toRepresentation(eitherResource.left().value());

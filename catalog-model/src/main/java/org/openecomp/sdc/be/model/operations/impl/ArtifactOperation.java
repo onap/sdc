@@ -102,7 +102,7 @@ public class ArtifactOperation implements IArtifactOperation {
             if (!inTransaction) {
                 titanGenericDao.rollback();
             }
-            log.debug("Failed to add artifact {} to {} {}", artifactInfo.getArtifactName(), type , parentId);
+            log.error("Failed to add artifact {} to {} {}", artifactInfo.getArtifactName(), type , parentId);
             return Either.right(status.right().value());
         } else {
             if (!inTransaction) {
@@ -124,7 +124,7 @@ public class ArtifactOperation implements IArtifactOperation {
         StorageOperationStatus status = addArtifactToGraph(artifactInfo, parentId, type, failIfExist, parentVertex);
 
         if (status.equals(StorageOperationStatus.OK)) {
-            log.debug("Failed to add artifact {} {} to {}", artifactInfo.getArtifactName(), type, parentId);
+            log.error("Failed to add artifact {} {} to {}", artifactInfo.getArtifactName(), type, parentId);
         }
         return status;
     }
@@ -153,7 +153,7 @@ public class ArtifactOperation implements IArtifactOperation {
 
                 if (createNodeResult.isRight()) {
                     TitanOperationStatus operationStatus = createNodeResult.right().value();
-                    log.debug("Failed to add artifact {} to graph. status is {}", artifactData.getArtifactDataDefinition().getArtifactName(), operationStatus);
+                    log.error("Failed to add artifact {} to graph. status is {}", artifactData.getArtifactDataDefinition().getArtifactName(), operationStatus);
                     BeEcompErrorManager.getInstance().logBeFailedCreateNodeError("Add artifact", artifactData.getArtifactDataDefinition().getArtifactName(), String.valueOf(operationStatus));
                     return DaoStatusConverter.convertTitanStatusToStorageStatus(operationStatus);
                 }
@@ -162,13 +162,13 @@ public class ArtifactOperation implements IArtifactOperation {
                 if (artifactInfo.getHeatParameters() != null && !artifactInfo.getHeatParameters().isEmpty() && !artifactInfo.getArtifactType().equals(ArtifactTypeEnum.HEAT_ENV.getType())) {
                     StorageOperationStatus addPropertiesStatus = heatParametersOperation.addPropertiesToGraph(artifactInfo.getListHeatParameters(), artifactData.getUniqueId().toString(), NodeTypeEnum.ArtifactRef);
                     if (addPropertiesStatus != StorageOperationStatus.OK) {
-                        log.debug("Failed to create heat parameters on graph for artifact {}", artifactInfo.getArtifactName());
+                        log.error("Failed to create heat parameters on graph for artifact {}", artifactInfo.getArtifactName());
                         return addPropertiesStatus;
                     }
                 }
 
             } else {
-                log.debug("Failed to check existance of artifact in graph for id {}", artifactData.getUniqueId());
+                log.error("Failed to check existance of artifact in graph for id {}", artifactData.getUniqueId());
                 return DaoStatusConverter.convertTitanStatusToStorageStatus(existArtifact.right().value());
             }
         } else if (failIfexist) {
@@ -183,7 +183,7 @@ public class ArtifactOperation implements IArtifactOperation {
             properties.put(GraphEdgePropertiesDictionary.GROUP_TYPE.getProperty(), artifactInfo.getArtifactGroupType().getType());
         TitanOperationStatus relation = titanGenericDao.createEdge(parentVertex, artifactData, GraphEdgeLabels.ARTIFACT_REF, properties);
         if (!relation.equals(TitanOperationStatus.OK)) {
-            log.debug("Failed to create relation in graph for id {} to new artifact", id);
+            log.error("Failed to create relation in graph for id {} to new artifact", id);
             return DaoStatusConverter.convertTitanStatusToStorageStatus(relation);
         }
 
@@ -215,7 +215,7 @@ public class ArtifactOperation implements IArtifactOperation {
 
                 if (createNodeResult.isRight()) {
                     TitanOperationStatus operationStatus = createNodeResult.right().value();
-                    log.debug("Failed to add artifact {} to graph. status is {}", artifactData.getArtifactDataDefinition().getArtifactName(), operationStatus);
+                    log.error("Failed to add artifact {} to graph. status is {}", artifactData.getArtifactDataDefinition().getArtifactName(), operationStatus);
                     BeEcompErrorManager.getInstance().logBeFailedCreateNodeError("Add artifact", artifactData.getArtifactDataDefinition().getArtifactName(), String.valueOf(operationStatus));
                     return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(operationStatus));
                 }
@@ -225,13 +225,13 @@ public class ArtifactOperation implements IArtifactOperation {
                 if (artifactInfo.getHeatParameters() != null && !artifactInfo.getHeatParameters().isEmpty() && !artifactInfo.getArtifactType().equals(ArtifactTypeEnum.HEAT_ENV.getType())) {
                     StorageOperationStatus addPropertiesStatus = heatParametersOperation.addPropertiesToGraph(artifactInfo.getListHeatParameters(), artifactData.getUniqueId().toString(), NodeTypeEnum.ArtifactRef);
                     if (addPropertiesStatus != StorageOperationStatus.OK) {
-                        log.debug("Failed to create heat parameters on graph for artifact {}", artifactInfo.getArtifactName());
+                        log.error("Failed to create heat parameters on graph for artifact {}", artifactInfo.getArtifactName());
                         return Either.right(addPropertiesStatus);
                     }
                 }
 
             } else {
-                log.debug("Failed to check existance of artifact in graph for id {}", artifactData.getUniqueId());
+                log.error("Failed to check existance of artifact in graph for id {}", artifactData.getUniqueId());
                 return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(existArtifact.right().value()));
             }
         } else if (failIfexist) {
@@ -250,7 +250,7 @@ public class ArtifactOperation implements IArtifactOperation {
             properties.put(GraphEdgePropertiesDictionary.GROUP_TYPE.getProperty(), artifactInfo.getArtifactGroupType().getType());
         Either<GraphRelation, TitanOperationStatus> relation = titanGenericDao.createRelation(parent, artifactData, GraphEdgeLabels.ARTIFACT_REF, properties);
         if (relation.isRight()) {
-            log.debug("Failed to create relation in graph fro id {} to new artifact", id);
+            log.error("Failed to create relation in graph fro id {} to new artifact", id);
             return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(relation.right().value()));
         }
 
@@ -293,7 +293,7 @@ public class ArtifactOperation implements IArtifactOperation {
             if (!inTransaction) {
                 titanGenericDao.rollback();
             }
-            log.debug("Failed to update artifact {} of {} {}. status is {}", artifactId, type.getName(), id, status.right().value());
+            log.error("Failed to update artifact {} of {} {}. status is {}", artifactId, type.getName(), id, status.right().value());
             BeEcompErrorManager.getInstance().logBeFailedUpdateNodeError("Update Artifact", artifactId, String.valueOf(status.right().value()));
             return Either.right(status.right().value());
         } else {
@@ -316,7 +316,7 @@ public class ArtifactOperation implements IArtifactOperation {
             if (!inTransaction) {
                 titanGenericDao.rollback();
             }
-            log.debug("Failed to delete artifact {} of resource {}", artifactId, id);
+            log.error("Failed to delete artifact {} of resource {}", artifactId, id);
 
             BeEcompErrorManager.getInstance().logBeFailedDeleteNodeError("Delete Artifact", artifactId, String.valueOf(status.right().value()));
             return Either.right(status.right().value());
@@ -452,7 +452,7 @@ public class ArtifactOperation implements IArtifactOperation {
                 // update exist
                 Either<ArtifactData, TitanOperationStatus> updatedArtifact = titanGenericDao.updateNode(artifactData, ArtifactData.class);
                 if (updatedArtifact.isRight()) {
-                    log.debug("failed to update artifact node for id {}", artifactData.getUniqueId());
+                    log.error("failed to update artifact node for id {}", artifactData.getUniqueId());
                     return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(updatedArtifact.right().value()));
                 }
 
@@ -483,13 +483,13 @@ public class ArtifactOperation implements IArtifactOperation {
                     } else {
                         Either<List<HeatParameterDefinition>, StorageOperationStatus> deleteParameters = heatParametersOperation.deleteAllHeatParametersAssociatedToNode(NodeTypeEnum.ArtifactRef, artifactInfo.getUniqueId());
                         if (deleteParameters.isRight()) {
-                            log.debug("failed to update heat parameters for artifact id {}", artifactData.getUniqueId());
+                            log.error("failed to update heat parameters for artifact id {}", artifactData.getUniqueId());
                             return Either.right(StorageOperationStatus.GENERAL_ERROR);
                         }
 
                         StorageOperationStatus addParameters = heatParametersOperation.addPropertiesToGraph(artifactInfo.getListHeatParameters(), artifactId, NodeTypeEnum.ArtifactRef);
                         if (!addParameters.equals(StorageOperationStatus.OK)) {
-                            log.debug("failed to update heat parameters for artifact id {}", artifactData.getUniqueId());
+                            log.error("failed to update heat parameters for artifact id {}", artifactData.getUniqueId());
                             return Either.right(StorageOperationStatus.GENERAL_ERROR);
                         }
 
@@ -562,7 +562,7 @@ public class ArtifactOperation implements IArtifactOperation {
                 .right()
                 .map(DaoStatusConverter::convertTitanStatusToStorageStatus);
         if (artifactData.isRight()) {
-            log.debug("Failed to retrieve  artifact for id = {}", artifactId);
+            log.error("Failed to retrieve  artifact for id = {}", artifactId);
             return Either.right(artifactData.right().value());
         }
         ArtifactDataDefinition artifactDefinition = artifactData.left().value().getArtifactDataDefinition();
@@ -651,7 +651,7 @@ public class ArtifactOperation implements IArtifactOperation {
         try {
             Either<TitanGraph, TitanOperationStatus> graph = titanGenericDao.getGraph();
             if (graph.isRight()) {
-                log.debug("Failed to work with graph {}", graph.right().value());
+                log.error("Failed to work with graph {}", graph.right().value());
                 return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(graph.right().value()));
             }
             TitanGraph tGraph = graph.left().value();
@@ -690,7 +690,7 @@ public class ArtifactOperation implements IArtifactOperation {
                             List<HeatParameterDefinition> heatParams = new ArrayList<>();
                             StorageOperationStatus heatParametersStatus = heatParametersOperation.getHeatParametersOfNode(NodeTypeEnum.ArtifactRef, artifactDefinition.getUniqueId(), heatParams);
                             if (!heatParametersStatus.equals(StorageOperationStatus.OK)) {
-                                log.debug("failed to get heat parameters for node {}  {}", parentType.getName(), parentId);
+                                log.error("failed to get heat parameters for node {}  {}", parentType.getName(), parentId);
                                 return Either.right(heatParametersStatus);
                             }
                             if (!heatParams.isEmpty()) {

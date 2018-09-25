@@ -269,7 +269,7 @@ public class ElementOperation implements IElementOperation {
                     log.trace("Found category {}, category type {}", categoryName, nodeType);
                     TitanOperationStatus setSubCategories = setSubCategories(nodeType, categoryDefinition);
                     if (setSubCategories != TitanOperationStatus.OK) {
-                        log.debug("Failed to set sub-categories for category {}, category type {}, error {}", categoryName, nodeType, setSubCategories);
+                        log.error("Failed to set sub-categories for category {}, category type {}, error {}", categoryName, nodeType, setSubCategories);
                         return Either.right(ActionStatus.GENERAL_ERROR);
                     }
                     categoryList.add(categoryDefinition);
@@ -307,7 +307,7 @@ public class ElementOperation implements IElementOperation {
                 log.trace("Found sub-category {} for category {}, category type {}", subCategoryDataDefinition.getName(), categoryName, parentNodeType);
                 TitanOperationStatus setGroupings = setGroupings(childNodeType, subCategoryDefinition);
                 if (setGroupings != TitanOperationStatus.OK) {
-                    log.debug("Failed to set groupings for sub-category {}, sub-category type {}, error {}", subCategoryDataDefinition.getName(), childNodeType, setGroupings);
+                    log.error("Failed to set groupings for sub-category {}, sub-category type {}, error {}", subCategoryDataDefinition.getName(), childNodeType, setGroupings);
                     return TitanOperationStatus.GENERAL_ERROR;
                 }
                 subCategoriesDefinitions.add(subCategoryDefinition);
@@ -421,7 +421,7 @@ public class ElementOperation implements IElementOperation {
             }
             Either<CategoryData, TitanOperationStatus> categoryDataEither = titanGenericDao.getNode(UniqueIdBuilder.getKeyByNodeType(nodeType), categoryId, CategoryData.class);
             if (categoryDataEither.isRight()) {
-                log.debug("Failed to retrieve  category for id {} ", categoryId);
+                log.error("Failed to retrieve  category for id {} ", categoryId);
                 result = Either.right(ActionStatus.GENERAL_ERROR);
                 return result;
             }
@@ -467,7 +467,7 @@ public class ElementOperation implements IElementOperation {
             }
             Either<SubCategoryData, TitanOperationStatus> subCategoryDataEither = titanGenericDao.getNode(UniqueIdBuilder.getKeyByNodeType(nodeType), subCategoryId, SubCategoryData.class);
             if (subCategoryDataEither.isRight()) {
-                log.debug("Failed to retrieve  sub-category for id {}", subCategoryId);
+                log.error("Failed to retrieve  sub-category for id {}", subCategoryId);
                 result = Either.right(ActionStatus.GENERAL_ERROR);
                 return result;
             }
@@ -515,7 +515,7 @@ public class ElementOperation implements IElementOperation {
             }
             Either<GroupingData, TitanOperationStatus> groupingDataEither = titanGenericDao.getNode(UniqueIdBuilder.getKeyByNodeType(nodeType), groupingId, GroupingData.class);
             if (groupingDataEither.isRight()) {
-                log.debug("Failed to retrieve  grouping for id {}", groupingId);
+                log.error("Failed to retrieve  grouping for id {}", groupingId);
                 result = Either.right(ActionStatus.GENERAL_ERROR);
                 return result;
             }
@@ -559,7 +559,7 @@ public class ElementOperation implements IElementOperation {
         try {
             Either<List<CategoryData>, TitanOperationStatus> categoryEither = titanGenericDao.getByCriteria(nodeType, properties, CategoryData.class);
             if (categoryEither.isRight() && categoryEither.right().value() != TitanOperationStatus.NOT_FOUND) {
-                log.debug("Failed to get categories, nodeType {}, normalizedName {}, error {}", nodeType, normalizedName, categoryEither.right().value());
+                log.error("Failed to get categories, nodeType {}, normalizedName {}, error {}", nodeType, normalizedName, categoryEither.right().value());
                 return Either.right(ActionStatus.GENERAL_ERROR);
             }
             List<CategoryData> categoryList = (categoryEither.isLeft() ? categoryEither.left().value() : null);
@@ -586,7 +586,7 @@ public class ElementOperation implements IElementOperation {
         try {
             Either<SubCategoryData, TitanOperationStatus> subCategoryDataEither = titanGenericDao.getNode(UniqueIdBuilder.getKeyByNodeType(nodeType), subCategoryId, SubCategoryData.class);
             if (subCategoryDataEither.isRight() && subCategoryDataEither.right().value() != TitanOperationStatus.NOT_FOUND) {
-                log.debug("Failed to get sub-category with id {}, error {}", subCategoryId, subCategoryDataEither.right().value());
+                log.error("Failed to get sub-category with id {}, error {}", subCategoryId, subCategoryDataEither.right().value());
                 return Either.right(ActionStatus.GENERAL_ERROR);
             }
             SubCategoryData subCategoryData = (subCategoryDataEither.isLeft() ? subCategoryDataEither.left().value() : null);
@@ -609,7 +609,7 @@ public class ElementOperation implements IElementOperation {
         try {
             Either<GroupingData, TitanOperationStatus> groupingDataEither = titanGenericDao.getNode(UniqueIdBuilder.getKeyByNodeType(nodeType), groupingId, GroupingData.class);
             if (groupingDataEither.isRight() && groupingDataEither.right().value() != TitanOperationStatus.NOT_FOUND) {
-                log.debug("Failed to get grouping with id {}, error {}", groupingId, groupingDataEither.right().value());
+                log.error("Failed to get grouping with id {}, error {}", groupingId, groupingDataEither.right().value());
                 return Either.right(ActionStatus.GENERAL_ERROR);
             }
             GroupingData groupingData = (groupingDataEither.isLeft() ? groupingDataEither.left().value() : null);
@@ -632,7 +632,7 @@ public class ElementOperation implements IElementOperation {
         try {
             Either<List<SubCategoryData>, TitanOperationStatus> subCategoryEither = titanGenericDao.getByCriteria(nodeType, properties, SubCategoryData.class);
             if (subCategoryEither.isRight() && subCategoryEither.right().value() != TitanOperationStatus.NOT_FOUND) {
-                log.debug("Failed to get sub-categories, nodeType {}, normalizedName {}, error {}", nodeType, normalizedName, subCategoryEither.right().value());
+                log.error("Failed to get sub-categories, nodeType {}, normalizedName {}, error {}", nodeType, normalizedName, subCategoryEither.right().value());
                 return Either.right(ActionStatus.GENERAL_ERROR);
             }
             List<SubCategoryData> subCategoryList = (subCategoryEither.isLeft() ? subCategoryEither.left().value() : null);
@@ -657,7 +657,7 @@ public class ElementOperation implements IElementOperation {
         try {
             Either<List<GroupingData>, TitanOperationStatus> groupingEither = titanGenericDao.getByCriteria(nodeType, properties, GroupingData.class);
             if (groupingEither.isRight() && groupingEither.right().value() != TitanOperationStatus.NOT_FOUND) {
-                log.debug("Failed to get grouping, nodeType {}, normalizedName {}, error {}", nodeType, groupingNormalizedName, groupingEither.right().value());
+                log.error("Failed to get grouping, nodeType {}, normalizedName {}, error {}", nodeType, groupingNormalizedName, groupingEither.right().value());
                 return Either.right(ActionStatus.GENERAL_ERROR);
             }
             List<GroupingData> groupingList = (groupingEither.isLeft() ? groupingEither.left().value() : null);

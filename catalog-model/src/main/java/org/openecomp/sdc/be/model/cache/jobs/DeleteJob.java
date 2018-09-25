@@ -44,7 +44,7 @@ public class DeleteJob extends Job {
                     nodeTypeEnum, timestamp);
             ActionStatus status = this.daoInfo.getComponentCache().deleteComponentFromCache(componentId);
             if (!ActionStatus.OK.equals(status)) {
-                log.debug("failed to delete componentId:{} nodeTypeEnum:", componentId, nodeTypeEnum);
+                log.error("failed to delete componentId:{} nodeTypeEnum:", componentId, nodeTypeEnum);
                 return false;
             }
             log.trace("cache successfully deleted  componentId:{} nodeTypeEnum:{} timestamp:{}.", componentId,

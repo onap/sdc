@@ -107,7 +107,7 @@ public class GroupServlet extends AbstractValidationsServlet {
                     .getGroupWithArtifactsById(componentTypeEnum, componentId, groupId, userId, false);
 
             if (actionResponse.isRight()) {
-                log.debug("failed to get all non abstract {}", containerComponentType);
+                log.error("failed to get all non abstract {}", containerComponentType);
                 return buildErrorResponse(actionResponse.right().value());
             }
 
@@ -199,7 +199,7 @@ public class GroupServlet extends AbstractValidationsServlet {
 
             Either<GroupDefinition, ResponseFormat> convertResponse = parseToObject(data, () -> GroupDefinition.class);
             if (convertResponse.isRight()) {
-                log.debug("failed to parse group");
+                log.error("failed to parse group");
                 response = buildErrorResponse(convertResponse.right().value());
                 return response;
             }
@@ -211,7 +211,7 @@ public class GroupServlet extends AbstractValidationsServlet {
                     .validateAndUpdateGroupMetadata(componentId, user, componentTypeEnum, updatedGroup, true ,true);
 
             if (actionResponse.isRight()) {
-                log.debug("failed to update GroupDefinition");
+                log.error("failed to update GroupDefinition");
                 response = buildErrorResponse(actionResponse.right().value());
                 return response;
             }

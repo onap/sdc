@@ -78,7 +78,7 @@ public class InputsServlet extends AbstractValidationsServlet {
                     .convertJsonToObjectUsingObjectMapper(data, modifier, InputDefinition[].class,
                             AuditingActionEnum.UPDATE_RESOURCE_METADATA, ComponentTypeEnum.SERVICE);
             if(inputsEither.isRight()){
-                log.debug("Failed to convert data to input definition. Status is {}", inputsEither.right().value());
+                log.error("Failed to convert data to input definition. Status is {}", inputsEither.right().value());
                 return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.INVALID_CONTENT));
             }
             List<InputDefinition> inputsToUpdate = Arrays.asList(inputsEither.left().value());
@@ -130,7 +130,7 @@ public class InputsServlet extends AbstractValidationsServlet {
 
             Either<List<ComponentInstanceInput>, ResponseFormat> inputsResponse = businessLogic.getComponentInstanceInputs(userId, componentId, instanceId);
             if (inputsResponse.isRight()) {
-                log.debug("failed to get component instance inputs {}", componentType);
+                log.error("failed to get component instance inputs {}", componentType);
                 return buildErrorResponse(inputsResponse.right().value());
             }
             Object inputs = RepresentationUtils.toRepresentation(inputsResponse.left().value());
@@ -162,7 +162,7 @@ public class InputsServlet extends AbstractValidationsServlet {
 
             Either<List<ComponentInstanceProperty>, ResponseFormat> inputPropertiesRes = businessLogic.getComponentInstancePropertiesByInputId(userId, componentId, instanceId, inputId);
             if (inputPropertiesRes.isRight()) {
-                log.debug("failed to get properties of input: {}, with instance id: {}", inputId, instanceId);
+                log.error("failed to get properties of input: {}, with instance id: {}", inputId, instanceId);
                 return buildErrorResponse(inputPropertiesRes.right().value());
             }
             Object properties = RepresentationUtils.toRepresentation(inputPropertiesRes.left().value());
@@ -194,7 +194,7 @@ public class InputsServlet extends AbstractValidationsServlet {
             Either<List<ComponentInstanceInput>, ResponseFormat> inputsRes = businessLogic.getInputsForComponentInput(userId, componentId, inputId);
 
             if (inputsRes.isRight()) {
-                log.debug("failed to get inputs of input: {}, with instance id: {}", inputId, componentId);
+                log.error("failed to get inputs of input: {}, with instance id: {}", inputId, componentId);
                 return buildErrorResponse(inputsRes.right().value());
             }
             Object properties = RepresentationUtils.toRepresentation(inputsRes.left().value());
@@ -227,7 +227,7 @@ public class InputsServlet extends AbstractValidationsServlet {
             Either<InputDefinition, ResponseFormat> inputsRes = businessLogic.getInputsAndPropertiesForComponentInput(userId, componentId, inputId, false);
 
             if (inputsRes.isRight()) {
-                log.debug("failed to get inputs of input: {}, with instance id: {}", inputId, componentId);
+                log.error("failed to get inputs of input: {}, with instance id: {}", inputId, componentId);
                 return buildErrorResponse(inputsRes.right().value());
             }
             Object properties = RepresentationUtils.toRepresentation(inputsRes.left().value());
@@ -268,7 +268,7 @@ public class InputsServlet extends AbstractValidationsServlet {
 
             Either<ComponentInstInputsMap, ResponseFormat> componentInstInputsMapRes = parseToComponentInstanceMap(componentInstInputsMapObj, modifier);
             if (componentInstInputsMapRes.isRight()) {
-                log.debug("failed to parse componentInstInputsMap");
+                log.error("failed to parse componentInstInputsMap");
                 response = buildErrorResponse(componentInstInputsMapRes.right().value());
                 return response;
             }
@@ -278,7 +278,7 @@ public class InputsServlet extends AbstractValidationsServlet {
 
             Either<List<InputDefinition>, ResponseFormat> inputPropertiesRes = businessLogic.createMultipleInputs(userId, componentId, componentTypeEnum, componentInstInputsMap, true, false);
             if (inputPropertiesRes.isRight()) {
-                log.debug("failed to create inputs  for service: {}", componentId);
+                log.error("failed to create inputs  for service: {}", componentId);
                 return buildErrorResponse(inputPropertiesRes.right().value());
             }
             Object properties = RepresentationUtils.toRepresentation(inputPropertiesRes.left().value());

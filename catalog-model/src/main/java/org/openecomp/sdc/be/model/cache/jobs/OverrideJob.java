@@ -47,14 +47,14 @@ public class OverrideJob extends Job {
             // get component from grath
             Either<Component, StorageOperationStatus> componentRes = daoInfo.getToscaOperationFacade().getToscaElement(componentId);
             if (componentRes.isRight()) {
-                log.debug("failed to get full component:{} from graph status:{}", componentId,
+                log.error("failed to get full component:{} from graph status:{}", componentId,
                         componentRes.right().value());
                 return false;
             }
             Component component = componentRes.left().value();
             // store in cache
             if (!this.daoInfo.getComponentCache().setComponent(component, nodeTypeEnum)) {
-                log.debug("failed to store componentId:{} nodeTypeEnum:", componentId, nodeTypeEnum);
+                log.error("failed to store componentId:{} nodeTypeEnum:", componentId, nodeTypeEnum);
                 return false;
             }
             log.debug("cache successfully overrided  componentId:{} nodeTypeEnum:{} timestemp:{}.", componentId,

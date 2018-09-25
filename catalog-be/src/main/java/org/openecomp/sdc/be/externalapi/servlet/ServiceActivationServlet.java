@@ -103,7 +103,7 @@ public class ServiceActivationServlet extends AbstractValidationsServlet {
                 Either<String, ResponseFormat> distResponse = businessLogic.activateServiceOnTenantEnvironment(serviceUUID, opEnvId, modifier, reqMetadata);
 
                 if (distResponse.isRight()) {
-                    log.debug("failed to activate service distribution");
+                    log.error("failed to activate service distribution");
                     responseFormat = distResponse.right().value();
                     return buildErrorResponse(responseFormat);
                 }

@@ -57,7 +57,7 @@ public class ComponentValidationUtils {
         Either<Component, StorageOperationStatus> getResourceResult = toscaOperationFacade.getToscaElement(componentId, JsonParseFlagEnum.ParseMetadata);
 
         if (getResourceResult.isRight()) {
-            log.debug("Failed to retrieve component, component id {}", componentId);
+            log.error("Failed to retrieve component, component id {}", componentId);
             return false;
         }
         Component component = getResourceResult.left().value();

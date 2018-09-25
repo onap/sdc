@@ -131,7 +131,7 @@ public class DistributionServlet extends BeGenericServlet {
 
         } catch (Exception e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("failed to get ueb serbver list from cofiguration");
-            log.debug("failed to get ueb serbver list from cofiguration", e);
+            log.error("failed to get ueb serbver list from cofiguration", e);
             responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR);
             getComponentsUtils().auditGetUebCluster(instanceId, responseFormat.getStatus().toString(), responseFormat.getFormattedMessage());
             response = buildErrorResponse(responseFormat);

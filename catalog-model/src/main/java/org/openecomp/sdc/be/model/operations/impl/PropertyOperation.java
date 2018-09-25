@@ -1442,7 +1442,7 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
 
 		if (createDataTypeResult.isRight()) {
 			TitanOperationStatus operationStatus = createDataTypeResult.right().value();
-			log.debug("Failed to data type {} to graph. status is {}", dataTypeDefinition.getName(), operationStatus);
+			log.error("Failed to data type {} to graph. status is {}", dataTypeDefinition.getName(), operationStatus);
 			BeEcompErrorManager.getInstance().logBeFailedAddingNodeTypeError("AddDataType", NodeTypeEnum.DataType.getName());
 			return Either.right(operationStatus);
 		}
@@ -1451,7 +1451,7 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
 		List<PropertyDefinition> properties = dataTypeDefinition.getProperties();
 		Either<Map<String, PropertyData>, TitanOperationStatus> addPropertiesToDataType = addPropertiesToDataType(resultCTD.getUniqueId(), properties);
 		if (addPropertiesToDataType.isRight()) {
-			log.debug("Failed add properties {} to data type {}", properties, dataTypeDefinition.getName());
+			log.error("Failed add properties {} to data type {}", properties, dataTypeDefinition.getName());
 			return Either.right(addPropertiesToDataType.right().value());
 		}
 
@@ -1520,7 +1520,7 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
 				Either<PropertyData, TitanOperationStatus> addPropertyToNodeType = this.addPropertyToNodeType(propertyName, propertyDefinition, NodeTypeEnum.DataType, uniqueId);
 				if (addPropertyToNodeType.isRight()) {
 					TitanOperationStatus operationStatus = addPropertyToNodeType.right().value();
-					log.debug("Failed to associate data type {} to property {} in graph. status is {}", uniqueId, propertyName, operationStatus);
+					log.error("Failed to associate data type {} to property {} in graph. status is {}", uniqueId, propertyName, operationStatus);
 					BeEcompErrorManager.getInstance().logInternalFlowError("AddPropertyToDataType", "Failed to associate property to data type. Status is " + operationStatus, ErrorSeverity.ERROR);
 					return Either.right(operationStatus);
 				}
@@ -1535,7 +1535,7 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
 			Either<DataTypeData, TitanOperationStatus> updateNode = titanGenericDao.updateNode(dataTypeData, DataTypeData.class);
 			if (updateNode.isRight()) {
 				TitanOperationStatus operationStatus = updateNode.right().value();
-				log.debug("Failed to update modification time data type {} from graph. status is {}", uniqueId, operationStatus);
+				log.error("Failed to update modification time data type {} from graph. status is {}", uniqueId, operationStatus);
 				BeEcompErrorManager.getInstance().logInternalFlowError("AddPropertyToDataType", "Failed to fetch data type. Status is " + operationStatus, ErrorSeverity.ERROR);
 				return Either.right(operationStatus);
 			} else {
@@ -1645,7 +1645,7 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
 			Either<DataTypeData, TitanOperationStatus> eitherStatus = addDataTypeToGraph(dataTypeDefinition);
 
 			if (eitherStatus.isRight()) {
-				log.debug("Failed to add data type {} to Graph. status is {}", dataTypeDefinition, eitherStatus.right().value().name());
+				log.error("Failed to add data type {} to Graph. status is {}", dataTypeDefinition, eitherStatus.right().value().name());
 				BeEcompErrorManager.getInstance().logBeFailedAddingNodeTypeError("AddDataType", "DataType");
 				result = Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(eitherStatus.right().value()));
 				return result;
@@ -2031,7 +2031,7 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
 			currentNodeUid = derivedFrom.left().value().getUniqueId();
 			TitanOperationStatus titanOperationStatus = fillPropertiesList(currentNodeUid, nodeType, accumulatedProps::addAll);
 			if (titanOperationStatus != TitanOperationStatus.OK) {
-				log.debug("failed to fetch properties for type {} with id {}", nodeType, currentNodeUid);
+				log.error("failed to fetch properties for type {} with id {}", nodeType, currentNodeUid);
 				return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(titanOperationStatus));
 			}
 		}
@@ -2167,7 +2167,7 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
 			Either<Map<String, PropertyData>, TitanOperationStatus> addPropertiesToDataType = addPropertiesToDataType(oldDataTypeDefinition.getUniqueId(), propertiesToAdd);
 
 			if (addPropertiesToDataType.isRight()) {
-				log.debug("Failed to update data type {} to Graph. Status is {}", oldDataTypeDefinition, addPropertiesToDataType.right().value().name());
+				log.error("Failed to update data type {} to Graph. Status is {}", oldDataTypeDefinition, addPropertiesToDataType.right().value().name());
 				BeEcompErrorManager.getInstance().logBeFailedAddingNodeTypeError(UPDATE_DATA_TYPE, PROPERTY);
 				result = Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(addPropertiesToDataType.right().value()));
 				return result;
@@ -2176,7 +2176,7 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
 				Either<DataTypeDefinition, TitanOperationStatus> dataTypeByUid = this.getDataTypeByUid(oldDataTypeDefinition.getUniqueId());
 				if (dataTypeByUid.isRight()) {
 					TitanOperationStatus status = addPropertiesToDataType.right().value();
-					log.debug("Failed to get data type {} after update. Status is {}", oldDataTypeDefinition.getUniqueId(), status.name());
+					log.error("Failed to get data type {} after update. Status is {}", oldDataTypeDefinition.getUniqueId(), status.name());
 					BeEcompErrorManager.getInstance().logBeFailedRetrieveNodeError(UPDATE_DATA_TYPE, PROPERTY, status.name());
 					result = Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
 				} else {
@@ -2339,7 +2339,7 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
 	    }
 	    Either<TitanVertex, TitanOperationStatus> vertexService = titanGenericDao.getVertexByProperty(UniqueIdBuilder.getKeyByNodeType(nodeType), instanceId);
 	    if (vertexService.isRight()) {
-	        log.debug("failed to fetch vertex of resource instance for id = {}", instanceId);
+	        log.error("failed to fetch vertex of resource instance for id = {}", instanceId);
 	        return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(vertexService.right().value()));
 	    }
 	    Vertex vertex = vertexService.left().value();
