@@ -325,7 +325,7 @@ public class CrudExternalServlet extends AbstractValidationsServlet {
                 }
                 catch (IOException e) {
                     BeEcompErrorManager.getInstance().logBeInvalidJsonInput("convertJsonToObject");
-                    log.debug("failed to convert from json {}", jsonChangeInfo, e);
+                    log.error("failed to convert from json {}", jsonChangeInfo, e);
                     ResponseFormat responseFormat = getComponentsUtils().getInvalidContentErrorAndAudit(modifier, componentId, AuditingActionEnum.CHECKOUT_RESOURCE);
                     responseWrapper.setInnerElement(responseFormat);
                     return buildErrorResponse(responseFormat);

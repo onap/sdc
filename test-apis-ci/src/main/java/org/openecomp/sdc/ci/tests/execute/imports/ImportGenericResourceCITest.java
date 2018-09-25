@@ -418,7 +418,7 @@ public class ImportGenericResourceCITest extends ComponentBaseTest {
 				client.close();
 			}
 		} catch (IOException e) {
-			log.debug("failed to close client or response: ", e);
+			log.error("failed to close client or response: ", e);
 		}
 	}
 
@@ -428,7 +428,7 @@ public class ImportGenericResourceCITest extends ComponentBaseTest {
 				response.close();
 			}
 		} catch (IOException e) {
-			log.debug("failed to close client or response: ", e);
+			log.error("failed to close client or response: ", e);
 		}
 	}
 

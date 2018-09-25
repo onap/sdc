@@ -220,7 +220,7 @@ public class AttributeServlet extends AbstractValidationsServlet {
             AttributeBusinessLogic businessLogic = getClassFromWebAppContext(context, () -> AttributeBusinessLogic.class);
             Either<PropertyDefinition, ResponseFormat> eitherAttribute = businessLogic.deleteAttribute(resourceId, attributeId, userId);
             if (eitherAttribute.isRight()) {
-                log.debug("Failed to delete Attribute. Reason - ", eitherAttribute.right().value());
+                log.error("Failed to delete Attribute. Reason - ", eitherAttribute.right().value());
                 return buildErrorResponse(eitherAttribute.right().value());
             }
             PropertyDefinition attributeDefinition = eitherAttribute.left().value();

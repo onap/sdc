@@ -161,7 +161,7 @@ public class ToscaListValueConverter extends ToscaValueBaseConverter implements 
         } catch (
 
         JsonParseException e) {
-            log.debug("Failed to parse json : {}", value, e);
+            log.error("Failed to parse json : {}", value, e);
             BeEcompErrorManager.getInstance().logBeInvalidJsonInput("List Converter");
             return null;
         }

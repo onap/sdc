@@ -134,7 +134,7 @@ public abstract class ToscaElementOperation extends BaseOperation {
 
             StorageOperationStatus updateComponent;
             if (updateNode.isRight()) {
-                log.debug("Failed to update component {}. status is {}", componentToDelete.getUniqueId(), updateNode.right().value());
+                log.error("Failed to update component {}. status is {}", componentToDelete.getUniqueId(), updateNode.right().value());
                 updateComponent = DaoStatusConverter.convertTitanStatusToStorageStatus(updateNode.right().value());
                 result = Either.right(updateComponent);
                 return result;
@@ -219,7 +219,7 @@ public abstract class ToscaElementOperation extends BaseOperation {
     protected TitanOperationStatus setLastModifierFromGraph(GraphVertex componentV, ToscaElement toscaElement) {
         Either<GraphVertex, TitanOperationStatus> parentVertex = titanDao.getParentVertex(componentV, EdgeLabelEnum.LAST_MODIFIER, JsonParseFlagEnum.NoParse);
         if (parentVertex.isRight()) {
-            log.debug("Failed to fetch last modifier for tosca element with id {} error {}", componentV.getUniqueId(), parentVertex.right().value());
+            log.error("Failed to fetch last modifier for tosca element with id {} error {}", componentV.getUniqueId(), parentVertex.right().value());
             return parentVertex.right().value();
         }
         GraphVertex userV = parentVertex.left().value();
@@ -247,7 +247,7 @@ public abstract class ToscaElementOperation extends BaseOperation {
     protected TitanOperationStatus setCreatorFromGraph(GraphVertex componentV, ToscaElement toscaElement) {
         Either<GraphVertex, TitanOperationStatus> parentVertex = titanDao.getParentVertex(componentV, EdgeLabelEnum.CREATOR, JsonParseFlagEnum.NoParse);
         if (parentVertex.isRight()) {
-            log.debug("Failed to fetch creator for tosca element with id {} error {}", componentV.getUniqueId(), parentVertex.right().value());
+            log.error("Failed to fetch creator for tosca element with id {} error {}", componentV.getUniqueId(), parentVertex.right().value());
             return parentVertex.right().value();
         }
         GraphVertex userV = parentVertex.left().value();
@@ -439,47 +439,47 @@ public abstract class ToscaElementOperation extends BaseOperation {
     protected TitanOperationStatus disassociateAndDeleteCommonElements(GraphVertex toscaElementVertex) {
         TitanOperationStatus status = titanDao.disassociateAndDeleteLast(toscaElementVertex, Direction.OUT, EdgeLabelEnum.ARTIFACTS);
         if (status != TitanOperationStatus.OK) {
-            log.debug("Failed to disaccociate artifact for {} error {}", toscaElementVertex.getUniqueId(), status);
+            log.error("Failed to disaccociate artifact for {} error {}", toscaElementVertex.getUniqueId(), status);
             return status;
         }
         status = titanDao.disassociateAndDeleteLast(toscaElementVertex, Direction.OUT, EdgeLabelEnum.TOSCA_ARTIFACTS);
         if (status != TitanOperationStatus.OK) {
-            log.debug("Failed to disaccociate tosca artifact for {} error {}", toscaElementVertex.getUniqueId(), status);
+            log.error("Failed to disaccociate tosca artifact for {} error {}", toscaElementVertex.getUniqueId(), status);
             return status;
         }
         status = titanDao.disassociateAndDeleteLast(toscaElementVertex, Direction.OUT, EdgeLabelEnum.DEPLOYMENT_ARTIFACTS);
         if (status != TitanOperationStatus.OK) {
-            log.debug("Failed to deployment artifact for {} error {}", toscaElementVertex.getUniqueId(), status);
+            log.error("Failed to deployment artifact for {} error {}", toscaElementVertex.getUniqueId(), status);
             return status;
         }
         status = titanDao.disassociateAndDeleteLast(toscaElementVertex, Direction.OUT, EdgeLabelEnum.PROPERTIES);
         if (status != TitanOperationStatus.OK) {
-            log.debug("Failed to disaccociate properties for {} error {}", toscaElementVertex.getUniqueId(), status);
+            log.error("Failed to disaccociate properties for {} error {}", toscaElementVertex.getUniqueId(), status);
             return status;
         }
         status = titanDao.disassociateAndDeleteLast(toscaElementVertex, Direction.OUT, EdgeLabelEnum.ATTRIBUTES);
         if (status != TitanOperationStatus.OK) {
-            log.debug("Failed to disaccociate attributes for {} error {}", toscaElementVertex.getUniqueId(), status);
+            log.error("Failed to disaccociate attributes for {} error {}", toscaElementVertex.getUniqueId(), status);
             return status;
         }
         status = titanDao.disassociateAndDeleteLast(toscaElementVertex, Direction.OUT, EdgeLabelEnum.ADDITIONAL_INFORMATION);
         if (status != TitanOperationStatus.OK) {
-            log.debug("Failed to disaccociate additional information for {} error {}", toscaElementVertex.getUniqueId(), status);
+            log.error("Failed to disaccociate additional information for {} error {}", toscaElementVertex.getUniqueId(), status);
             return status;
         }
         status = titanDao.disassociateAndDeleteLast(toscaElementVertex, Direction.OUT, EdgeLabelEnum.CAPABILITIES);
         if (status != TitanOperationStatus.OK) {
-            log.debug("Failed to disaccociate capabilities for {} error {}", toscaElementVertex.getUniqueId(), status);
+            log.error("Failed to disaccociate capabilities for {} error {}", toscaElementVertex.getUniqueId(), status);
             return status;
         }
         status = titanDao.disassociateAndDeleteLast(toscaElementVertex, Direction.OUT, EdgeLabelEnum.REQUIREMENTS);
         if (status != TitanOperationStatus.OK) {
-            log.debug("Failed to disaccociate requirements for {} error {}", toscaElementVertex.getUniqueId(), status);
+            log.error("Failed to disaccociate requirements for {} error {}", toscaElementVertex.getUniqueId(), status);
             return status;
         }
         status = titanDao.disassociateAndDeleteLast(toscaElementVertex, Direction.OUT, EdgeLabelEnum.FORWARDING_PATH);
         if (status != TitanOperationStatus.OK) {
-            log.debug("Failed to disaccociate requirements for {} error {}", toscaElementVertex.getUniqueId(), status);
+            log.error("Failed to disaccociate requirements for {} error {}", toscaElementVertex.getUniqueId(), status);
             return status;
         }
         return TitanOperationStatus.OK;
@@ -523,7 +523,7 @@ public abstract class ToscaElementOperation extends BaseOperation {
     private StorageOperationStatus associateToCatalogRoot(GraphVertex nodeTypeVertex) {
         Either<GraphVertex, TitanOperationStatus> catalog = titanDao.getVertexByLabel(VertexTypeEnum.CATALOG_ROOT);
         if (catalog.isRight()) {
-            log.debug("Failed to fetch catalog vertex. error {}", catalog.right().value());
+            log.error("Failed to fetch catalog vertex. error {}", catalog.right().value());
             return DaoStatusConverter.convertTitanStatusToStorageStatus(catalog.right().value());
         }
         TitanOperationStatus createEdge = titanDao.createEdge(catalog.left().value(), nodeTypeVertex, EdgeLabelEnum.CATALOG_ELEMENT, null);
@@ -582,7 +582,7 @@ public abstract class ToscaElementOperation extends BaseOperation {
                 Either<List<GraphVertex>, TitanOperationStatus> derivedProperties = titanDao.getChildrenVertecies(derived, edge, JsonParseFlagEnum.ParseJson);
                 if (derivedProperties.isRight()) {
                     if (derivedProperties.right().value() != TitanOperationStatus.NOT_FOUND) {
-                        log.debug("Failed to get properties for derived from {} error {}", derived.getUniqueId(), derivedProperties.right().value());
+                        log.error("Failed to get properties for derived from {} error {}", derived.getUniqueId(), derivedProperties.right().value());
                         return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(derivedProperties.right().value()));
                     } else {
                         continue;
@@ -681,7 +681,7 @@ public abstract class ToscaElementOperation extends BaseOperation {
         // for Tester and Admin retrieve all users
         Either<List<GraphVertex>, TitanOperationStatus> usersByCriteria = titanDao.getByCriteria(VertexTypeEnum.USER, props, JsonParseFlagEnum.NoParse);
         if (usersByCriteria.isRight()) {
-            log.debug("Failed to fetch users by criteria {} error {}", props, usersByCriteria.right().value());
+            log.error("Failed to fetch users by criteria {} error {}", props, usersByCriteria.right().value());
             return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(usersByCriteria.right().value()));
         }
         List<GraphVertex> users = usersByCriteria.left().value();
@@ -693,7 +693,7 @@ public abstract class ToscaElementOperation extends BaseOperation {
             HashSet<String> ids = new HashSet<>();
             Either<List<GraphVertex>, TitanOperationStatus> childrenVertecies = titanDao.getChildrenVertecies(userV, EdgeLabelEnum.STATE, JsonParseFlagEnum.NoParse);
             if (childrenVertecies.isRight() && childrenVertecies.right().value() != TitanOperationStatus.NOT_FOUND) {
-                log.debug("Failed to fetch children vertices for user {} by edge {} error {}", userV.getMetadataProperty(GraphPropertyEnum.USERID), EdgeLabelEnum.STATE, childrenVertecies.right().value());
+                log.error("Failed to fetch children vertices for user {} by edge {} error {}", userV.getMetadataProperty(GraphPropertyEnum.USERID), EdgeLabelEnum.STATE, childrenVertecies.right().value());
                 return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(childrenVertecies.right().value()));
             }
 
@@ -712,7 +712,7 @@ public abstract class ToscaElementOperation extends BaseOperation {
                 // get all resource with last state
                 childrenVertecies = titanDao.getChildrenVertecies(userV, EdgeLabelEnum.LAST_STATE, JsonParseFlagEnum.NoParse);
                 if (childrenVertecies.isRight() && childrenVertecies.right().value() != TitanOperationStatus.NOT_FOUND) {
-                    log.debug("Failed to fetch children vertices for user {} by edge {} error {}", userV.getMetadataProperty(GraphPropertyEnum.USERID), EdgeLabelEnum.LAST_STATE, childrenVertecies.right().value());
+                    log.error("Failed to fetch children vertices for user {} by edge {} error {}", userV.getMetadataProperty(GraphPropertyEnum.USERID), EdgeLabelEnum.LAST_STATE, childrenVertecies.right().value());
                     return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(childrenVertecies.right().value()));
                 }
                 if (childrenVertecies.isLeft()) {
@@ -802,7 +802,7 @@ public abstract class ToscaElementOperation extends BaseOperation {
 
         Either<T, StorageOperationStatus> component = getLightComponent(vertexComponent, nodeType, new ComponentParametersView(true));
         if (component.isRight()) {
-            log.debug("Failed to get component for id =  {}  error : {} skip resource", vertexComponent.getUniqueId(), component.right().value());
+            log.error("Failed to get component for id =  {}  error : {} skip resource", vertexComponent.getUniqueId(), component.right().value());
         } else {
             components.add(component.left().value());
         }
@@ -933,7 +933,7 @@ public abstract class ToscaElementOperation extends BaseOperation {
 
         Either<GraphVertex, TitanOperationStatus> parentVertex = titanDao.getParentVertex(subCategoryV, EdgeLabelEnum.SUB_CATEGORY, JsonParseFlagEnum.NoParse);
         if (parentVertex.isRight()) {
-            log.debug("failed to fetch {} for category with id {}, error {}", EdgeLabelEnum.SUB_CATEGORY, subCategoryV.getUniqueId(), parentVertex.right().value());
+            log.error("failed to fetch {} for category with id {}, error {}", EdgeLabelEnum.SUB_CATEGORY, subCategoryV.getUniqueId(), parentVertex.right().value());
             return childVertex.right().value();
         }
         GraphVertex categoryV = parentVertex.left().value();
@@ -985,7 +985,7 @@ public abstract class ToscaElementOperation extends BaseOperation {
 
         Either<GraphVertex, TitanOperationStatus> parentVertex = titanDao.getParentVertex(elementV, EdgeLabelEnum.LAST_MODIFIER, JsonParseFlagEnum.NoParse);
         if (parentVertex.isRight()) {
-            log.debug("Failed to fetch last modifier for tosca element with id {} error {}", toscaElementId, parentVertex.right().value());
+            log.error("Failed to fetch last modifier for tosca element with id {} error {}", toscaElementId, parentVertex.right().value());
             return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(parentVertex.right().value()));
         }
         GraphVertex userV = parentVertex.left().value();
@@ -1033,7 +1033,7 @@ public abstract class ToscaElementOperation extends BaseOperation {
         if (newSystemName != null && !newSystemName.equals(prevSystemName)) {
             Either<Map<String, ArtifactDataDefinition>, TitanOperationStatus> resultToscaArt = getDataFromGraph(updateElementV, EdgeLabelEnum.TOSCA_ARTIFACTS);
             if (resultToscaArt.isRight()) {
-                log.debug("Failed to get  tosca artifact from graph for tosca element {} error {}", toscaElementId, resultToscaArt.right().value());
+                log.error("Failed to get  tosca artifact from graph for tosca element {} error {}", toscaElementId, resultToscaArt.right().value());
                 return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(resultToscaArt.right().value()));
             }
 
@@ -1050,7 +1050,7 @@ public abstract class ToscaElementOperation extends BaseOperation {
         if (toscaElementToUpdate.getComponentType() == ComponentTypeEnum.RESOURCE) {
             StorageOperationStatus resultDerived = updateDerived(toscaElementToUpdate, updateElementV);
             if (resultDerived != StorageOperationStatus.OK) {
-                log.debug("Failed to update from derived data for element {} error {}", toscaElementId, resultDerived);
+                log.error("Failed to update from derived data for element {} error {}", toscaElementId, resultDerived);
                 return Either.right(resultDerived);
             }
         }
@@ -1098,7 +1098,7 @@ public abstract class ToscaElementOperation extends BaseOperation {
 
         Either<GraphVertex, TitanOperationStatus> parentVertex = titanDao.getParentVertex(subCategoryV, EdgeLabelEnum.SUB_CATEGORY, JsonParseFlagEnum.NoParse);
         if (parentVertex.isRight()) {
-            log.debug("failed to fetch {} for category with id {}, error {}", EdgeLabelEnum.SUB_CATEGORY, subCategoryV.getUniqueId(), parentVertex.right().value());
+            log.error("failed to fetch {} for category with id {}, error {}", EdgeLabelEnum.SUB_CATEGORY, subCategoryV.getUniqueId(), parentVertex.right().value());
             return DaoStatusConverter.convertTitanStatusToStorageStatus(childVertex.right().value());
         }
         GraphVertex categoryV = parentVertex.left().value();
@@ -1151,7 +1151,7 @@ public abstract class ToscaElementOperation extends BaseOperation {
                 for (GraphVertex vertexComponent : highestAndAllCertified) {
                     Either<T, StorageOperationStatus> component = getLightComponent(vertexComponent, componentType, new ComponentParametersView(true));
                     if (component.isRight()) {
-                        log.debug("Failed to fetch light element for {} error {}", vertexComponent.getUniqueId(), component.right().value());
+                        log.error("Failed to fetch light element for {} error {}", vertexComponent.getUniqueId(), component.right().value());
                         return Either.right(component.right().value());
                     } else {
                         result.add(component.left().value());

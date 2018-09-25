@@ -1894,12 +1894,12 @@ public class NodeTemplateOperation extends BaseOperation {
         CompositionDataDefinition compositionDataDefinition = json.get(JsonConstantKeysEnum.COMPOSITION.getValue());
         StorageOperationStatus status = updateCustomizationUUID(instanceId, compositionDataDefinition);
         if (status != StorageOperationStatus.OK) {
-            log.debug("Failed to update customization UUID for instance {} in component {} error {}", instanceId, componentId, status);
+            log.error("Failed to update customization UUID for instance {} in component {} error {}", instanceId, componentId, status);
             return status;
         }
         Either<GraphVertex, TitanOperationStatus> updateVertex = titanDao.updateVertex(metaVertex);
         if (updateVertex.isRight()) {
-            log.debug("Failed to update vertex of component {} error {}", componentId, updateVertex.right().value());
+            log.error("Failed to update vertex of component {} error {}", componentId, updateVertex.right().value());
             return DaoStatusConverter.convertTitanStatusToStorageStatus(updateVertex.right().value());
         }
         return StorageOperationStatus.OK;
@@ -2009,7 +2009,7 @@ public class NodeTemplateOperation extends BaseOperation {
     public StorageOperationStatus createAllottedOfEdge(String componentId, String instanceId, String serviceUUID) {
         Either<GraphVertex, TitanOperationStatus> vertexById = titanDao.getVertexById(componentId);
         if ( vertexById.isRight() ){
-            log.debug("Failed to fetch component metadata vertex for id {} error {}", componentId, vertexById.right().value());
+            log.error("Failed to fetch component metadata vertex for id {} error {}", componentId, vertexById.right().value());
             return DaoStatusConverter.convertTitanStatusToStorageStatus(vertexById.right().value());
         }
         GraphVertex metadataVertex = vertexById.left().value(); 
@@ -2023,7 +2023,7 @@ public class NodeTemplateOperation extends BaseOperation {
 
         Either<List<GraphVertex>, TitanOperationStatus> byCriteria = titanDao.getByCriteria(VertexTypeEnum.TOPOLOGY_TEMPLATE, props,hasNot, JsonParseFlagEnum.ParseMetadata );
         if ( byCriteria.isRight() ){
-            log.debug("Failed to fetch vertex by criteria {} error {}", props, byCriteria.right().value());
+            log.error("Failed to fetch vertex by criteria {} error {}", props, byCriteria.right().value());
             return DaoStatusConverter.convertTitanStatusToStorageStatus(byCriteria.right().value());
         }
         List<GraphVertex> vertecies = byCriteria.left().value();
@@ -2092,7 +2092,7 @@ public class NodeTemplateOperation extends BaseOperation {
             
             edge.property(EdgePropertyEnum.INSTANCES.getProperty(), jsonArr);
         } catch (IOException e) {
-           log.debug("Failed to convert INSTANCES edge property to json for container {}", metadataVertex.getUniqueId(), e );
+           log.error("Failed to convert INSTANCES edge property to json for container {}", metadataVertex.getUniqueId(), e );
            return Either.right(TitanOperationStatus.GENERAL_ERROR);
         }
         return Either.left(metadataVertex);
@@ -2116,7 +2116,7 @@ public class NodeTemplateOperation extends BaseOperation {
                 String jsonArr = JsonParserUtils.toJson(property);
                 edge.property(EdgePropertyEnum.INSTANCES.getProperty(), jsonArr);
             } catch (IOException e) {
-               log.debug("Failed to convert INSTANCES edge property to json for container {}", metadataVertex.getUniqueId(), e );
+               log.error("Failed to convert INSTANCES edge property to json for container {}", metadataVertex.getUniqueId(), e );
                return Either.right(TitanOperationStatus.GENERAL_ERROR);
             }
         }
@@ -2141,7 +2141,7 @@ public class NodeTemplateOperation extends BaseOperation {
             return edgeResult == TitanOperationStatus.OK ? Either.left(metadataVertex) : Either.right(edgeResult);
         }
         // error
-        log.debug("Failed to fetch edge with label {} and to vertex with id {} error {} ", edgeLabel, componentUid, retrieveEdgeStatus);
+        log.error("Failed to fetch edge with label {} and to vertex with id {} error {} ", edgeLabel, componentUid, retrieveEdgeStatus);
         return Either.right(retrieveEdgeStatus);
     }
 
@@ -2150,7 +2150,7 @@ public class NodeTemplateOperation extends BaseOperation {
             log.debug("No edge {} to remove between container {} and origin {}", edgeLabel, metadataVertex.getUniqueId(), componentUid);
         } else {
             // error
-            log.debug("Failed to fetch edge with label {} and to vertex with id {} error {} ", edgeLabel, componentUid, retrieveEdgeStatus);
+            log.error("Failed to fetch edge with label {} and to vertex with id {} error {} ", edgeLabel, componentUid, retrieveEdgeStatus);
         }
         return retrieveEdgeStatus;
     }

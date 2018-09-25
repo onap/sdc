@@ -149,7 +149,7 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
         Either<Resource, ResponseFormat> deletedArtifactsEither = deleteArtifactsInUpdateCsarFlow(
                 updatedResource, csarInfo.getModifier(), shouldLock, inTransaction, artifactsToDelete, groupToDelete, deletedArtifacts);
         if (deletedArtifactsEither.isRight()) {
-            log.debug("Failed to delete artifacts. Status is {} ", deletedArtifactsEither.right().value());
+            log.error("Failed to delete artifacts. Status is {} ", deletedArtifactsEither.right().value());
 
             return Either.right(deletedArtifactsEither.right().value());
 
@@ -180,7 +180,7 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
                 createdDeplymentArtifactsAfterDelete, mergedgroup, deletedArtifacts);
         groups = updatedResource.getGroups();
         if (assDissotiateEither.isRight()) {
-            log.debug("Failed to delete artifacts. Status is {} ", assDissotiateEither.right().value());
+            log.error("Failed to delete artifacts. Status is {} ", assDissotiateEither.right().value());
 
             return Either.right(assDissotiateEither.right().value());
 
@@ -273,7 +273,7 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
             Either<List<GroupDefinition>, ResponseFormat> updateVersionEither = groupBusinessLogic
                     .updateGroups(updatedResource, groupsId, true);
             if (updateVersionEither.isRight()) {
-                log.debug("Failed to update groups version. Status is {} ", updateVersionEither.right().value());
+                log.error("Failed to update groups version. Status is {} ", updateVersionEither.right().value());
 
                 return Either.right(updateVersionEither.right().value());
 
@@ -437,7 +437,7 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
             return Either.left(artifactsMap);
         } catch (Exception e) {
             log.debug(ARTIFACT_FILE_IS_NOT_IN_EXPECTED_FORMAT_FILE_NAME, artifactFileName);
-            log.debug("failed with exception.", e);
+            log.error("failed with exception.", e);
             BeEcompErrorManager.getInstance().logInternalDataError(
                     ARTIFACT_FILE_IS_NOT_IN_EXPECTED_FORMAT_FILE_NAME1 + artifactFileName,
                     ARTIFACT_INTERNALS_ARE_INVALID, ErrorSeverity.ERROR);
@@ -723,7 +723,7 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
             Either<ArtifactDefinition, ResponseFormat> updateEnvEither = updateHeatParamsFromCsar(resource, csarInfo,
                     artifactTemplateInfo, currentInfo, false);
             if (updateEnvEither.isRight()) {
-                log.debug("failed to update parameters to artifact {}", artifactFileName);
+                log.error("failed to update parameters to artifact {}", artifactFileName);
                 return Either.right(updateEnvEither.right().value());
 
             }
@@ -798,7 +798,7 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
                         .updateArtifactOnResource(artifactInfoHeatEnv, updatedResource.getUniqueId(),
                                 artifactInfoHeatEnv.getUniqueId(), null, null);
                 if (updateArifactOnResource.isRight()) {
-                    log.debug("Failed to update heat env on CSAR flow for component {} artifact {} label {}",
+                    log.error("Failed to update heat env on CSAR flow for component {} artifact {} label {}",
                             updatedResource.getUniqueId(), artifactInfoHeatEnv.getUniqueId(),
                             artifactInfoHeatEnv.getArtifactLabel());
                     return Either.right(componentsUtils.getResponseFormat(
@@ -1437,7 +1437,7 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
                             csarInfo, resource, artifact.getKey(), artifact.getValue(), updatedArtifacts,
                             artifact.getRight().getRelatedArtifactsInfo());
                     if (updateArtifactEither.isRight()) {
-                        log.debug("failed to update artifacts. status is {}", updateArtifactEither.right().value());
+                        log.error("failed to update artifacts. status is {}", updateArtifactEither.right().value());
                         resEither = Either.right(updateArtifactEither.right().value());
                         return resEither;
                     }
@@ -1621,7 +1621,7 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
         Either<ArtifactDefinition, ResponseFormat> updateEnvEither = updateHeatParamsFromCsar(resource, csarInfo,
                 artifactTemplateInfo, currentInfo, true);
         if (updateEnvEither.isRight()) {
-            log.debug("failed to update parameters to artifact {}", artifactFileName);
+            log.error("failed to update parameters to artifact {}", artifactFileName);
             resStatus = Either.right(updateEnvEither.right().value());
             return resStatus;
         }

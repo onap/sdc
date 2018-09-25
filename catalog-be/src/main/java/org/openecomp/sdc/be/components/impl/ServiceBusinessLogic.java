@@ -536,7 +536,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
             if (updateResponse.isRight()) {
                 titanDao.rollback();
                 BeEcompErrorManager.getInstance().logBeSystemError("Update Service Metadata");
-                log.debug("failed to update sevice {}", serviceToUpdate.getUniqueId());
+                log.error("failed to update sevice {}", serviceToUpdate.getUniqueId());
                 return Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
             }
             titanDao.commit();
@@ -632,7 +632,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
 
         if(serviceStorageOperationStatusEither.isRight()){
             StorageOperationStatus errorStatus = serviceStorageOperationStatusEither.right().value();
-            log.debug("Failed to fetch service information by service id, error {}", errorStatus);
+            log.error("Failed to fetch service information by service id, error {}", errorStatus);
             return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(errorStatus)));
         }
         Service storedService = serviceStorageOperationStatusEither.left().value();
@@ -641,7 +641,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         Either<Component, StorageOperationStatus> forwardingPathOrigin = toscaOperationFacade.getLatestByName(ForwardingPathUtils.FORWARDING_PATH_NODE_NAME);
         if (forwardingPathOrigin.isRight()) {
             StorageOperationStatus errorStatus = forwardingPathOrigin.right().value();
-            log.debug("Failed to fetch normative forwarding path resource by tosca name, error {}", errorStatus);
+            log.error("Failed to fetch normative forwarding path resource by tosca name, error {}", errorStatus);
             return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(errorStatus)));
         }
         Component component = forwardingPathOrigin.left().value();
@@ -1070,7 +1070,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
             log.debug("validating service category {} against valid categories list", list);
             Either<List<CategoryDefinition>, ActionStatus> categorys = elementDao.getAllServiceCategories();
             if (categorys.isRight()) {
-                log.debug("failed to retrive service categories from Titan");
+                log.error("failed to retrive service categories from Titan");
                 ResponseFormat responseFormat = componentsUtils.getResponseFormat(categorys.right().value());
                 return Either.right(responseFormat);
             }
@@ -1104,7 +1104,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         validateUserExists(user, ecompErrorContext, false);
         Either<Service, StorageOperationStatus> serviceStatus = toscaOperationFacade.getToscaElement(serviceId);
         if (serviceStatus.isRight()) {
-            log.debug("failed to get service {}", serviceId);
+            log.error("failed to get service {}", serviceId);
             return componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(serviceStatus.right().value()), "");
         }
 
@@ -1186,7 +1186,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
 
         Either<Service, StorageOperationStatus> storageStatus = toscaOperationFacade.getToscaElement(serviceId);
         if (storageStatus.isRight()) {
-            log.debug("failed to get service by id {}", serviceId);
+            log.error("failed to get service by id {}", serviceId);
             return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(storageStatus.right().value(), ComponentTypeEnum.SERVICE), serviceId));
         }
 
@@ -1205,7 +1205,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         validateUserExists(userId, "get Service By Name And Version", false);
         Either<Service, StorageOperationStatus> storageStatus = toscaOperationFacade.getComponentByNameAndVersion(ComponentTypeEnum.SERVICE, serviceName, serviceVersion);
         if (storageStatus.isRight()) {
-            log.debug("failed to get service by name {} and version {}", serviceName, serviceVersion);
+            log.error("failed to get service by name {} and version {}", serviceName, serviceVersion);
             return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(storageStatus.right().value(), ComponentTypeEnum.SERVICE), serviceName));
         }
         Service service = storageStatus.left().value();
@@ -1405,7 +1405,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
 
         Either<Service, StorageOperationStatus> serviceRes = toscaOperationFacade.getToscaElement(serviceId);
         if (serviceRes.isRight()) {
-            log.debug("failed retrieving service");
+            log.error("failed retrieving service");
             response = componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(serviceRes.right().value(), ComponentTypeEnum.SERVICE), serviceId);
             componentsUtils.auditComponent(response, user, null, AuditingActionEnum.DISTRIBUTION_STATE_CHANGE_REQUEST,
                     new ResourceCommonInfo(ComponentTypeEnum.SERVICE.getValue()),
@@ -1660,11 +1660,11 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
                     try {
                         callRes = entry.call();
                         if (callRes.isRight()) {
-                            log.debug("Failed to generate artifact error : {}", callRes.right().value());
+                            log.error("Failed to generate artifact error : {}", callRes.right().value());
                             return Either.right(callRes.right().value());
                         }
                     } catch (Exception e) {
-                        log.debug("Failed to generate artifact exception : {}", e);
+                        log.error("Failed to generate artifact exception : {}", e);
                         return Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
                     }
                 }
@@ -1942,7 +1942,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
             if (actionResult == null) {
                 actionResult = validateAndUpdateGroupInstancePropertyValuesAndContainingParents(component, componentInstanceId, groupInstanceId, newProperties);
                 if (actionResult.isRight()) {
-                    log.debug("Failed to validate and update group instance {} property values and containing parents. The message is {}. ", groupInstanceId, actionResult.right().value().getFormattedMessage());
+                    log.error("Failed to validate and update group instance {} property values and containing parents. The message is {}. ", groupInstanceId, actionResult.right().value().getFormattedMessage());
                 }
             }
         } catch (Exception e) {
@@ -2004,12 +2004,12 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         Either<ComponentInstanceData, ResponseFormat> updateComponentInstanceRes = componentInstanceBusinessLogic.updateComponentInstanceModificationTimeAndCustomizationUuid(relatedComponentInstance, NodeTypeEnum.ResourceInstance,
                 updatedGroupInstance.getModificationTime(), inTranscation);
         if (updateComponentInstanceRes.isRight()) {
-            log.debug("Failed to update component instance {} after update of group instance {}. ", relatedComponentInstance.getName(), updatedGroupInstance.getName());
+            log.error("Failed to update component instance {} after update of group instance {}. ", relatedComponentInstance.getName(), updatedGroupInstance.getName());
             actionResult = Either.right(updateComponentInstanceRes.right().value());
         } else {
             serviceMetadataUpdateResult = toscaOperationFacade.updateComponentLastUpdateDateOnGraph(component);
             if (serviceMetadataUpdateResult.isRight()) {
-                log.debug("Failed to update service {} after update of component instance {} with new property values of group instance {}. ", component.getName(), relatedComponentInstance.getName(), updatedGroupInstance.getName());
+                log.error("Failed to update service {} after update of component instance {} with new property values of group instance {}. ", component.getName(), relatedComponentInstance.getName(), updatedGroupInstance.getName());
                 actionResult = Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(serviceMetadataUpdateResult.right().value())));
             } else {
                 actionResult = Either.left(new ImmutablePair<>(serviceMetadataUpdateResult.left().value(), updateComponentInstanceRes.left().value()));
