@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_8bdc581a",
+        "filename": "common/onap-common-configuration-management/onap-configuration-management-core/src/main/java/org/onap/config/impl/CliConfigurationImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-09-25T16:38:51Z",
+      "side": 1,
+      "message": "This change seems risky. It definitely affects client behavior. What were you trying to fix?",
+      "revId": "599b724b361c2567dbb2d37d4218f81afc314ce2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_cbd9f023",
+        "filename": "common/onap-common-configuration-management/onap-configuration-management-core/src/main/java/org/onap/config/impl/CliConfigurationImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 235,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-09-25T16:38:51Z",
+      "side": 1,
+      "message": "It must affect client behavior, but I do not see the client code changed accordingly.",
+      "revId": "599b724b361c2567dbb2d37d4218f81afc314ce2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_ab083492",
+        "filename": "common/onap-common-configuration-management/onap-configuration-management-core/src/main/java/org/onap/config/impl/ConfigurationChangeNotifier.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 107,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-09-25T16:38:51Z",
+      "side": 1,
+      "message": "This seems risky. Why did you have to change it?",
+      "revId": "599b724b361c2567dbb2d37d4218f81afc314ce2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
