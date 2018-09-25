@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "1a76adc5_d201a507",
+        "filename": "catalog-be/src/main/resources/import/tosca/data-types/dataTypes.yml",
+        "patchSetId": 27
+      },
+      "lineNbr": 1401,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-25T10:50:04Z",
+      "side": 0,
+      "message": "i understand but since this will cause an issue please leave it there the vendor does not have to populate the value.",
+      "parentUuid": "1a76adc5_306ca807",
+      "range": {
+        "startLine": 1400,
+        "startChar": 3,
+        "endLine": 1401,
+        "endChar": 39
+      },
+      "revId": "48a9fdbd8da734f8e5bfb3cd38295ee315dd7fd2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1a76adc5_f056305b",
         "filename": "catalog-be/src/main/resources/import/tosca/data-types/dataTypes.yml",
         "patchSetId": 27
@@ -84,6 +108,30 @@
       "side": 0,
       "message": "Again, this property is not defined by any DM, nor ONAP R2 neither SOL001. So I don\u0027t expect any VNF providers would use this property when they\u0027re creating VNFD templates. But since it is an optional property, I think we\u0027re ok to keep this for backward compatibility.",
       "parentUuid": "1a76adc5_f056305b",
+      "range": {
+        "startLine": 1425,
+        "startChar": 0,
+        "endLine": 1427,
+        "endChar": 21
+      },
+      "revId": "48a9fdbd8da734f8e5bfb3cd38295ee315dd7fd2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_9503170d",
+        "filename": "catalog-be/src/main/resources/import/tosca/data-types/dataTypes.yml",
+        "patchSetId": 27
+      },
+      "lineNbr": 1427,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-25T10:50:04Z",
+      "side": 0,
+      "message": "same as above",
+      "parentUuid": "1a76adc5_3043486d",
       "range": {
         "startLine": 1425,
         "startChar": 0,
