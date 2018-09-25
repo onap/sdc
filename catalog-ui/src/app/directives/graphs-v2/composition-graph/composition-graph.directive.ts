@@ -531,6 +531,142 @@ export class CompositionGraph implements ng.IDirective {
                 this.CompositionGraphLinkUtils.deleteLink(this._cy, scope.component, true, link);
             }
         };
+
+
+        document.onkeydown = (event) => {
+            let isModalExist = document.getElementsByTagName('body')[0].classList.contains('modal-open');
+
+            if (!scope.isViewOnly && !isModalExist) {
+
+                switch (event.keyCode) {
+
+                    case 46: //delete
+                        scope.deleteSelectedElements();
+                        break;
+
+                    case 67: //ctrl+c : copy componentInstance                       
+                        if (event.ctrlKey && scope.component.isService()) {
+                            scope.copyComponentInstance();
+                        }
+                        break;
+                    case 86: // ctrl+v: paste componentInstance
+                        if (event.ctrlKey && scope.component.isService()) {
+                            let hidePasteObj = $(".w-canvas-content-paste");
+                            hidePasteObj.click();
+                            //scope.pasteComponentInstanceId(event);
+                        }
+                        break;
+
+                }
+            }
+        }
+
+        scope.deleteSelectedElements = (): void => {
+            if (this._cy) {
+                var nodesToDelete = this._cy.$('node:selected');
+                let edgesSelected = this._cy.$('edge:selected');
+                if (nodesToDelete.length + edgesSelected.length <= 0) {
+                    return;
+                }
+                var componentInstancetobeDele;
+                let title: string = "Delete Confirmation";
+                let message: string = "Are you sure you would like to delete selected elements?";
+                if (nodesToDelete.size() == 1 && edgesSelected.size() == 0) {
+
+                    componentInstancetobeDele = nodesToDelete[0].data().componentInstance;
+                    let showName = nodesToDelete[0].data().componentInstance.name;
+                    message = "Are you sure you would like to delete" + " " + showName + "?";
+                }
+
+                //let component = scope.component;
+                let onOk = (): void => {
+                    if (nodesToDelete.size() == 1 && edgesSelected.size() == 0) {
+                        this.eventListenerService.notifyObservers(GRAPH_EVENTS.ON_DELETE_COMPONENT_INSTANCE, componentInstancetobeDele);
+                    }
+                    else {
+                        let deletedNodeIds: Array<string> = this.NodesGraphUtils.batchDeleteNodes(this._cy, scope.component, nodesToDelete);
+                    }
+
+                };
+
+                this.ModalsHandler.openConfirmationModal(title, message, false).then(onOk);
+            }
+
+        }
+
+        scope.copyComponentInstance = (): void => {
+            scope.origComponentId = scope.component.uniqueId;
+            if (scope.component.selectedInstance) {
+                scope.origSelectedInstance = scope.component.selectedInstance;
+                scope.componentInstanceId = scope.component.selectedInstance.uniqueId;
+                scope.name = scope.component.selectedInstance.componentName;
+                scope.componentVersion = scope.component.selectedInstance.componentVersion;
+                scope.originType = scope.component.selectedInstance.originType;
+                scope.icon = scope.component.selectedInstance.icon;
+                scope.componentUid = scope.component.selectedInstance.componentUid;
+                scope.uniqueId = scope.component.selectedInstance.componentUid + (new Date()).getTime();
+            }
+        };
+
+
+        scope.pasteComponentInstance = (event: IDragDropEvent): void => {
+            event.clientX = event.clientX ? event.clientX : this.cyBackgroundClickEvent ? this.cyBackgroundClickEvent.originalEvent.clientX : "no";
+            event.clientY = event.clientY ? event.clientY : this.cyBackgroundClickEvent ? this.cyBackgroundClickEvent.originalEvent.clientY : "no";
+
+            if (isNaN(event.clientX) || isNaN(event.clientY)) {
+                return;
+            }
+            let offsetPosition = {
+                x: event.clientX - GraphUIObjects.DIAGRAM_PALETTE_WIDTH_OFFSET,
+                y: event.clientY - GraphUIObjects.DIAGRAM_HEADER_OFFSET
+            };
+
+            let mousePosition = this.commonGraphUtils.HTMLCoordsToCytoscapeCoords(this._cy.extent(), offsetPosition);
+            let newPositionX = mousePosition.x;
+            let newPositionY = mousePosition.y;
+            let origSelectedInstance = scope.origSelectedInstance;
+
+            let copyComponentInstance = `{
+                "uniqueId": "${scope.uniqueId}",
+                "posX":"${newPositionX}",
+                "posY":"${newPositionY}",
+                "name":"${scope.name}",
+                "componentVersion":"${scope.componentVersion}",
+                "originType":"${scope.originType}",
+                "icon":"${scope.icon}",
+                "componentUid":"${scope.componentUid}"
+                
+            }`;
+
+            this.isComponentPasteValid(scope, this._cy, event, offsetPosition, origSelectedInstance);
+
+
+            let onSuccess = (response): void => {
+                let success = (component: Component) => {
+                    scope.component.componentInstances = component.componentInstances;                    
+                    if (component.isService() && component.componentInstances.length > 0) {
+                        for (var i = 0; i < component.componentInstances.length; i++) {
+                            if (component.componentInstances[i].uniqueId == response.componentInstance.uniqueId) {
+                                let compositionGraphNode = this.NodesFactory.createNode(component.componentInstances[i]);
+                                this.commonGraphUtils.addComponentInstanceNodeToGraph(this._cy, compositionGraphNode);
+                            }
+                        }
+                    }
+                    scope.isLoading = false;
+                };
+                scope.component.getComponent().then(success);                
+            };
+            let onFailed = (error: any): void => {
+                console.log(error);
+                scope.isLoading = false;
+            };
+
+            if (scope.pasteValid) {
+                scope.isLoading = true;
+                scope.component.pasteMenuComponentInstance(scope.componentInstanceId, copyComponentInstance).then(onSuccess, onFailed);
+            }
+        };
+
     }
 
     private registerCytoscapeGraphEvents(scope: ICompositionGraphScope) {
