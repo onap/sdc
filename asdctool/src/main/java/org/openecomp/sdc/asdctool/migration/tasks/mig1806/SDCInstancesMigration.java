@@ -98,7 +98,7 @@ public class SDCInstancesMigration implements Migration {
         if (componentType == ComponentTypeEnum.RESOURCE) {
             Either<GraphVertex, TitanOperationStatus> subcategoryV = titanDao.getChildVertex(containerV, EdgeLabelEnum.CATEGORY, JsonParseFlagEnum.NoParse);
             if (subcategoryV.isRight()) {
-                log.debug("Failed to fetch category vertex for resource {} error {}  ", containerV.getUniqueId(), subcategoryV.right().value());
+                log.error("Failed to fetch category vertex for resource {} error {}  ", containerV.getUniqueId(), subcategoryV.right().value());
                 return StorageOperationStatus.GENERAL_ERROR;
             }
             GraphVertex catV = subcategoryV.left().value();
@@ -139,7 +139,7 @@ public class SDCInstancesMigration implements Migration {
             if (instProps.right().value() == TitanOperationStatus.NOT_FOUND) {
                 instanceProperties = new HashMap<>();
             } else {
-                log.debug("Failed to fetch instance properties vertex for resource {} error {}  ", containerV.getUniqueId(), instProps.right().value());
+                log.error("Failed to fetch instance properties vertex for resource {} error {}  ", containerV.getUniqueId(), instProps.right().value());
                 return Either.right(StorageOperationStatus.GENERAL_ERROR);
             }
         } else {
@@ -160,7 +160,7 @@ public class SDCInstancesMigration implements Migration {
                     log.debug("reset status and continue");
                     status = StorageOperationStatus.OK;
                 }else{
-                    log.debug("Failed handle instance. exit");
+                    log.error("Failed handle instance. exit");
                     break;
                 }
             }
@@ -177,7 +177,7 @@ public class SDCInstancesMigration implements Migration {
                 log.debug("No origin for instance {} with ID {}. The component is highest ={},  Reset status and continue.. ", instance.getUniqueId(), instance.getComponentUid(), highest);
                 status = StorageOperationStatus.OK;
             }else{
-                log.debug("Failed to connect in container {} instance {} to origin {} error {}  ", containerV.getUniqueId(), instance.getUniqueId(), instance.getComponentUid(), status);
+                log.error("Failed to connect in container {} instance {} to origin {} error {}  ", containerV.getUniqueId(), instance.getUniqueId(), instance.getComponentUid(), status);
                 return status;
             }
         }
@@ -221,7 +221,7 @@ public class SDCInstancesMigration implements Migration {
                         log.debug("No origin for allotted reference {} with UUID {}. the component highest = {}, Reset status and continue.. ", instance.getUniqueId(), serviceUUID, highest);
                         status = StorageOperationStatus.OK;
                     }else{
-                        log.debug("Failed to connect in container {} instance {} to allotted service {} error {}  ", containerV.getUniqueId(), instance.getUniqueId(), instance.getComponentUid(), status);
+                        log.error("Failed to connect in container {} instance {} to allotted service {} error {}  ", containerV.getUniqueId(), instance.getUniqueId(), instance.getComponentUid(), status);
                         return status;
                     }
                 }

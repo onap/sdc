@@ -81,7 +81,7 @@ public class ServiceServlet extends AbstractValidationsServlet {
             ServiceBusinessLogic businessLogic = getServiceBL(context);
             Either<Service, ResponseFormat> convertResponse = parseToService(data, modifier);
             if (convertResponse.isRight()) {
-                log.debug("failed to parse service");
+                log.error("failed to parse service");
                 response = buildErrorResponse(convertResponse.right().value());
                 return response;
             }
@@ -90,7 +90,7 @@ public class ServiceServlet extends AbstractValidationsServlet {
             Either<Service, ResponseFormat> actionResponse = businessLogic.createService(service, modifier);
 
             if (actionResponse.isRight()) {
-                log.debug("Failed to create service");
+                log.error("Failed to create service");
                 response = buildErrorResponse(actionResponse.right().value());
                 return response;
             }
@@ -133,7 +133,7 @@ public class ServiceServlet extends AbstractValidationsServlet {
             Either<Map<String, Boolean>, ResponseFormat> actionResponse = businessLogic.validateServiceNameExists(serviceName, userId);
 
             if (actionResponse.isRight()) {
-                log.debug("failed to get validate service name");
+                log.error("failed to get validate service name");
                 response = buildErrorResponse(actionResponse.right().value());
                 return response;
             }
@@ -244,7 +244,7 @@ public class ServiceServlet extends AbstractValidationsServlet {
             ResponseFormat actionResponse = businessLogic.deleteService(serviceIdLower, modifier);
 
             if (actionResponse.getStatus() != HttpStatus.SC_NO_CONTENT) {
-                log.debug("failed to delete service");
+                log.error("failed to delete service");
                 response = buildErrorResponse(actionResponse);
                 return response;
             }
@@ -280,7 +280,7 @@ public class ServiceServlet extends AbstractValidationsServlet {
             ResponseFormat actionResponse = businessLogic.deleteServiceByNameAndVersion(serviceName, version, modifier);
 
             if (actionResponse.getStatus() != HttpStatus.SC_NO_CONTENT) {
-                log.debug("failed to delete service");
+                log.error("failed to delete service");
                 response = buildErrorResponse(actionResponse);
                 return response;
             }
@@ -321,7 +321,7 @@ public class ServiceServlet extends AbstractValidationsServlet {
 
             Either<Service, ResponseFormat> convertResponse = parseToService(data, modifier);
             if (convertResponse.isRight()) {
-                log.debug("failed to parse service");
+                log.error("failed to parse service");
                 response = buildErrorResponse(convertResponse.right().value());
                 return response;
             }
@@ -329,7 +329,7 @@ public class ServiceServlet extends AbstractValidationsServlet {
             Either<Service, ResponseFormat> actionResponse = businessLogic.updateServiceMetadata(serviceIdLower, updatedService, modifier);
 
             if (actionResponse.isRight()) {
-                log.debug("failed to update service");
+                log.error("failed to update service");
                 response = buildErrorResponse(actionResponse.right().value());
                 return response;
             }
@@ -433,7 +433,7 @@ public class ServiceServlet extends AbstractValidationsServlet {
             Either<Service, ResponseFormat> actionResponse = businessLogic.getService(serviceIdLower, modifier);
 
             if (actionResponse.isRight()) {
-                log.debug("failed to get service");
+                log.error("failed to get service");
                 response = buildErrorResponse(actionResponse.right().value());
                 return response;
             }
@@ -513,7 +513,7 @@ public class ServiceServlet extends AbstractValidationsServlet {
             Either<Service, ResponseFormat> actionResponse = businessLogic.changeServiceDistributionState(serviceId, state, jsonChangeInfo, modifier);
 
             if (actionResponse.isRight()) {
-                log.debug("failed to Update Service Distribution State");
+                log.error("failed to Update Service Distribution State");
                 response = buildErrorResponse(actionResponse.right().value());
                 return response;
             }
@@ -552,7 +552,7 @@ public class ServiceServlet extends AbstractValidationsServlet {
             Either<Service, ResponseFormat> distResponse = businessLogic.activateDistribution(serviceId, env, modifier, request);
 
             if (distResponse.isRight()) {
-                log.debug("failed to activate service distribution");
+                log.error("failed to activate service distribution");
                 response = buildErrorResponse(distResponse.right().value());
                 return response;
             }
@@ -590,7 +590,7 @@ public class ServiceServlet extends AbstractValidationsServlet {
             Either<Service, ResponseFormat> distResponse = businessLogic.markDistributionAsDeployed(serviceId, did, modifier);
 
             if (distResponse.isRight()) {
-                log.debug("failed to mark distribution as deployed");
+                log.error("failed to mark distribution as deployed");
                 response = buildErrorResponse(distResponse.right().value());
                 return response;
             }
@@ -632,7 +632,7 @@ public class ServiceServlet extends AbstractValidationsServlet {
             return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), null);
         } catch (Exception e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("tempUrlToBeDeleted");
-            log.debug("failed with exception", e);
+            log.error("failed with exception", e);
             response = buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
             return response;
         }
@@ -664,7 +664,7 @@ public class ServiceServlet extends AbstractValidationsServlet {
             Either<ServiceRelations, ResponseFormat> actionResponse = businessLogic.getServiceComponentsRelations(serviceIdLower, modifier);
 
             if (actionResponse.isRight()) {
-                log.debug("failed to get service relations data");
+                log.error("failed to get service relations data");
                 response = buildErrorResponse(actionResponse.right().value());
                 return response;
             }

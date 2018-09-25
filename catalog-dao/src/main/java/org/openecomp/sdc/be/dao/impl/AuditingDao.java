@@ -104,7 +104,7 @@ public class AuditingDao extends ESTimeBasedDao {
 					remainingElementQueryBuilder, null);
 		} catch (Exception e) {
 			BeEcompErrorManager.getInstance().logBeDaoSystemError("Get DistributionStatuses List");
-			log.debug("failed to get distribution statuses for ", e);
+			log.error("failed to get distribution statuses for ", e);
 			return Either.right(ActionStatus.GENERAL_ERROR);
 		}
 		if (remainingElements != null && !remainingElements.isEmpty()) {
@@ -131,7 +131,7 @@ public class AuditingDao extends ESTimeBasedDao {
 					remainingElementQueryBuilder, null);
 		} catch (Exception e) {
 			BeEcompErrorManager.getInstance().logBeDaoSystemError("Get Service DistributionStatuses List");
-			log.debug("failed to get  distribution statuses for action {}",
+			log.error("failed to get  distribution statuses for action {}",
 					AuditingActionEnum.DISTRIBUTION_STATE_CHANGE_REQUEST.getName(), e);
 			return Either.right(ActionStatus.GENERAL_ERROR);
 		}
@@ -148,7 +148,7 @@ public class AuditingDao extends ESTimeBasedDao {
 					remainingElementQueryBuilder, null);
 		} catch (Exception e) {
 			BeEcompErrorManager.getInstance().logBeDaoSystemError("Get Service DistributionStatuses List");
-			log.debug("failed to get distribution statuses for action {}",
+			log.error("failed to get distribution statuses for action {}",
 					AuditingActionEnum.DISTRIBUTION_DEPLOY.getName(), e);
 			return Either.right(ActionStatus.GENERAL_ERROR);
 		}
@@ -165,7 +165,7 @@ public class AuditingDao extends ESTimeBasedDao {
 					remainingElementQueryBuilder, null);
 		} catch (Exception e) {
 			BeEcompErrorManager.getInstance().logBeDaoSystemError("Get Service DistributionStatuses List");
-			log.debug("failed to get distribution statuses for action {}",
+			log.error("failed to get distribution statuses for action {}",
 					AuditingActionEnum.DISTRIBUTION_NOTIFY.getName(), e);
 			return Either.right(ActionStatus.GENERAL_ERROR);
 		}
@@ -192,7 +192,7 @@ public class AuditingDao extends ESTimeBasedDao {
 					ResourceAdminEvent.class.getSimpleName().toLowerCase(), boolQuery, null);
 			return Either.left(customFindEvent);
 		} catch (Exception e) {
-			log.debug("Failed to query AuditRecords in es");
+			log.error("Failed to query AuditRecords in es");
 			return Either.right(ActionStatus.GENERAL_ERROR);
 		}
 
@@ -220,7 +220,7 @@ public class AuditingDao extends ESTimeBasedDao {
 					null);
 		} catch (Exception e) {
 			BeEcompErrorManager.getInstance().logBeDaoSystemError("Get DistributionStatuses List");
-			log.debug("failed to get distribution statuses for action {}", actionType, e);
+			log.error("failed to get distribution statuses for action {}", actionType, e);
 			return Either.right(ActionStatus.GENERAL_ERROR);
 		}
 

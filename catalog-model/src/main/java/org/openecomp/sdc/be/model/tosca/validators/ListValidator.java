@@ -108,7 +108,7 @@ public class ListValidator implements PropertyTypeValidator {
             return true;
 
         } catch (Exception e) {
-            log.debug("Failed to parse json : {}", value, e);
+            log.error("Failed to parse json : {}", value, e);
             BeEcompErrorManager.getInstance().logBeInvalidJsonInput("List Validator");
         }
 
