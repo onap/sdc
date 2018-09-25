@@ -4,7 +4,7 @@ COPY chef-solo /root/chef-solo/
 
 COPY chef-repo/cookbooks /root/chef-solo/cookbooks/
 
-RUN cp ${JETTY_HOME}/resources/log4j.properties ${JETTY_BASE}/resources/log4j.properties
+#RUN cp ${JETTY_HOME}/resources/log4j.properties ${JETTY_BASE}/resources/log4j.properties
 
 ADD WSSimulator*.war                    	${JETTY_BASE}/webapps/
 

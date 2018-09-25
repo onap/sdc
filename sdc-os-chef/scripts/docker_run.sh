@@ -28,7 +28,7 @@ FE_JAVA_OPTIONS="-Xdebug -agentlib:jdwp=transport=dt_socket,address=6000,server=
 ONBOARD_BE_JAVA_OPTIONS="-Xdebug -agentlib:jdwp=transport=dt_socket,address=4001,server=y,suspend=n -Xmx1g -Xms1g"
 DCAE_BE_JAVA_OPTIONS="-XX:MaxPermSize=256m -Xmx1024m -Dconfig.home=config -Dlog.home=/var/lib/jetty/logs/ -Dlogging.config=config/dcae-be/logback-spring.xml"
 DCAE_FE_JAVA_OPTIONS="-XX:MaxPermSize=256m -Xmx1024m -Dconfig.home=config -Dlog.home=/var/lib/jetty/logs/ -Dlogging.config=config/dcae-fe/logback-spring.xml"
-SIM_JAVA_OPTIONS=" -Xmx128m -Xms128m -Xss1m"
+SIM_JAVA_OPTIONS=" -Xmx128m -Xms128m -Xss1m -Dlog4j.configuration=file:///${JETTY_BASE}/config/sdc-simulator/log4j.properties"
 API_TESTS_JAVA_OPTIONS="-Xmx512m -Xms512m"
 UI_TESTS_JAVA_OPTIONS="-Xmx1024m -Xms1024m"
 #Define this as variable, so it can be excluded in run commands on Docker for OSX, as /etc/localtime cant be mounted there.
