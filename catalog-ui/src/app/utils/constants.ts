@@ -252,8 +252,6 @@ export class States {
     public static WORKSPACE_ACTIVITY_LOG = 'workspace.activity_log';
     public static WORKSPACE_DEPLOYMENT_ARTIFACTS = 'workspace.deployment_artifacts';
     public static WORKSPACE_PROPERTIES = 'workspace.properties';
-    public static WORKSPACE_SERVICE_INPUTS = 'workspace.service_inputs';
-    public static WORKSPACE_RESOURCE_INPUTS = 'workspace.resource_inputs';
     public static WORKSPACE_ATTRIBUTES = 'workspace.attributes';
     public static WORKSPACE_INFORMATION_ARTIFACTS = 'workspace.information_artifacts';
     public static WORKSPACE_TOSCA_ARTIFACTS = 'workspace.tosca_artifacts';
