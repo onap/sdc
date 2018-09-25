@@ -346,18 +346,6 @@ ng1appModule.config([
         );
 
         $stateProvider.state(
-            States.WORKSPACE_SERVICE_INPUTS, {
-                url: 'service_inputs',
-                parent: 'workspace',
-                controller: viewModelsModuleName + '.ServiceInputsViewModel',
-                templateUrl: './view-models/workspace/tabs/inputs/service-input/service-inputs-view.html',
-                data: {
-                    bodyClass: 'workspace-inputs'
-                }
-            }
-        );
-
-        $stateProvider.state(
             States.WORKSPACE_PROPERTIES_ASSIGNMENT, {
                 url: 'properties_assignment',
                 params: {'component': null},
@@ -376,17 +364,6 @@ ng1appModule.config([
             }
         );
 
-        $stateProvider.state(
-            States.WORKSPACE_RESOURCE_INPUTS, {
-                url: 'resource_inputs',
-                parent: 'workspace',
-                controller: viewModelsModuleName + '.ResourceInputsViewModel',
-                templateUrl: './view-models/workspace/tabs/inputs/resource-input/resource-inputs-view.html',
-                data: {
-                    bodyClass: 'workspace-inputs'
-                }
-            }
-        );
 
         $stateProvider.state(
             States.WORKSPACE_ATTRIBUTES, {
