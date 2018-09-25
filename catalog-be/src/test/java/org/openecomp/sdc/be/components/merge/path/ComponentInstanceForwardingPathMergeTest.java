@@ -19,9 +19,9 @@ import org.openecomp.sdc.exception.ResponseFormat;
 
 import java.util.Set;
 
-import static groovy.util.GroovyTestCase.assertEquals;
-import static junit.framework.Assert.assertNotNull;
 import static junit.framework.TestCase.assertTrue;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.Mockito.when;

@@ -249,6 +249,10 @@ Modifications copyright (c) 2018 Nokia
 					<artifactId>commons-collections</artifactId>
 					<groupId>commons-collections</groupId>
 				</exclusion>
+				<exclusion>
+					<artifactId>groovy</artifactId>
+					<groupId>org.codehaus.groovy</groupId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 
@@ -315,7 +319,6 @@ Modifications copyright (c) 2018 Nokia
 		<dependency>
 			<groupId>org.codehaus.groovy</groupId>
 			<artifactId>groovy</artifactId>
-			<version>2.4.8</version>
 		</dependency>
 	</dependencies>
 
