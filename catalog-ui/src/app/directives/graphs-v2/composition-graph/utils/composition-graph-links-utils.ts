@@ -105,6 +105,46 @@ export class CompositionGraphLinkUtils {
         this.createLink(linkObg, cy, component);
     };
 
+    public batchDeleteEdges(cy: Cy.Instance, component: Component, edgesToDelete: Cy.CollectionEdges, alreadyDeleteNodeIds?: Array<string>): void {
+        let toDeleteLinks: Array<RelationshipModel> = new Array<RelationshipModel>();
+        if (alreadyDeleteNodeIds && alreadyDeleteNodeIds.length > 0) {
+            edgesToDelete.each((i: number, link: Cy.CollectionEdges) => {
+                if (alreadyDeleteNodeIds.indexOf(link.data().source) < 0 && alreadyDeleteNodeIds.indexOf(link.data().target) < 0) {
+                    toDeleteLinks.push(link.data().relation);
+                }
+            });
+        }
+        else {
+            edgesToDelete.each((i: number, link: Cy.CollectionEdges) => {
+                toDeleteLinks.push(link.data().relation);
+            });
+        }
+        this.loaderService.showLoader('composition-graph');
+        let onSuccessDeleteRelations = (response: Array<RelationshipModel>) => {
+            console.info('onSuccessDeleteRelations response is ', response);
+            //remove tempSimplePortNodes
+            if (alreadyDeleteNodeIds && alreadyDeleteNodeIds.length > 0) {
+                edgesToDelete.each((i: number, link: Cy.CollectionEdges) => {
+                    if (alreadyDeleteNodeIds.indexOf(link.data().source) < 0 && alreadyDeleteNodeIds.indexOf(link.data().target) < 0) {
+                        cy.remove(edgesToDelete);
+                    }
+                });
+            }
+            else {
+                edgesToDelete.each((i: number, link: Cy.CollectionEdges) => {
+                    cy.remove(edgesToDelete);
+                });
+            }
+        };
+
+        if (toDeleteLinks.length > 0) {
+            this.generalGraphUtils.getGraphUtilsServerUpdateQueue().addBlockingUIActionWithReleaseCallback(
+                () => component.batchDeleteRelation(toDeleteLinks).then(onSuccessDeleteRelations),
+                () => this.loaderService.hideLoader('composition-graph'));
+
+        }
+    };  
+
     public createLinkFromMenu = (cy:Cy.Instance, chosenMatch:Match, component:Component):void => {
 
         if (chosenMatch) {
