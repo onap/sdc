@@ -78,7 +78,7 @@ public class RepresentationUtils {
 
         } catch (Exception e) {
             BeEcompErrorManager.getInstance().logBeArtifactInformationInvalidError("Artifact Upload / Update");
-            log.debug("Failed to convert the content {} to object.", content.substring(0, Math.min(50, content.length())), e);
+            log.error("Failed to convert the content {} to object.", content.substring(0, Math.min(50, content.length())), e);
         }
 
         return resourceInfo;
@@ -159,7 +159,7 @@ public class RepresentationUtils {
 
         } catch (Exception e) {
             BeEcompErrorManager.getInstance().logBeArtifactInformationInvalidError("Artifact Upload / Update");
-            log.debug("Failed to convert the content {} to object.", content.substring(0, Math.min(50, content.length())), e);
+            log.error("Failed to convert the content {} to object.", content.substring(0, Math.min(50, content.length())), e);
         }
 
         return resourceInfo;

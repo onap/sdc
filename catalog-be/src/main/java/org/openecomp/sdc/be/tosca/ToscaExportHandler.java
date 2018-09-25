@@ -242,7 +242,7 @@ public class ToscaExportHandler {
         Map<String, Component> componentCache = importsRes.left().value().right;
         Either<Map<String, ToscaNodeType>, ToscaError> nodeTypesMapEither = createProxyNodeTypes(componentCache , component );
         if (nodeTypesMapEither.isRight()) {
-            log.debug("Failed to fetch normative service proxy resource by tosca name, error {}",
+            log.error("Failed to fetch normative service proxy resource by tosca name, error {}",
                     nodeTypesMapEither.right().value());
             return Either.right(nodeTypesMapEither.right().value());
         }
@@ -254,7 +254,7 @@ public class ToscaExportHandler {
 
         Either<Map<String, DataTypeDefinition>, TitanOperationStatus> dataTypesEither = dataTypeCache.getAll();
         if (dataTypesEither.isRight()) {
-            log.debug("Failed to retrieve all data types {}", dataTypesEither.right().value());
+            log.error("Failed to retrieve all data types {}", dataTypesEither.right().value());
             return Either.right(ToscaError.GENERAL_ERROR);
         }
         Map<String, DataTypeDefinition> dataTypes = dataTypesEither.left().value();
@@ -473,7 +473,7 @@ public class ToscaExportHandler {
             Either<Component, StorageOperationStatus> resource = toscaOperationFacade
                     .getToscaFullElement(ci.getComponentUid());
             if ((resource.isRight()) && (log.isDebugEnabled())) {
-                log.debug("Failed to fetch resource with id {} for instance {}",ci.getComponentUid() ,ci.getUniqueId());
+                log.error("Failed to fetch resource with id {} for instance {}",ci.getComponentUid() ,ci.getUniqueId());
                 return ;
             }
 
@@ -484,7 +484,7 @@ public class ToscaExportHandler {
                 Either<Component, StorageOperationStatus> sourceService = toscaOperationFacade
                         .getToscaFullElement(ci.getSourceModelUid());
                 if (sourceService.isRight() && (log.isDebugEnabled())) {
-                    log.debug("Failed to fetch source service with id {} for proxy {}", ci.getSourceModelUid(), ci.getUniqueId());
+                    log.error("Failed to fetch source service with id {} for proxy {}", ci.getSourceModelUid(), ci.getUniqueId());
                 }
                 Component fetchedSource = sourceService.left().value();
                 componentCache.put(fetchedSource.getUniqueId(), fetchedSource);
@@ -529,7 +529,7 @@ public class ToscaExportHandler {
 
         Either<Map<String, DataTypeDefinition>, TitanOperationStatus> dataTypesEither = dataTypeCache.getAll();
         if (dataTypesEither.isRight()) {
-            log.debug("Failed to fetch all data types :", dataTypesEither.right().value());
+            log.error("Failed to fetch all data types :", dataTypesEither.right().value());
             return Either.right(ToscaError.GENERAL_ERROR);
         }
 
@@ -553,7 +553,7 @@ public class ToscaExportHandler {
         toscaNode.setInterface_types(addInterfaceTypeElement(component));
         Either<Map<String, DataTypeDefinition>, TitanOperationStatus> dataTypesEither = dataTypeCache.getAll();
         if (dataTypesEither.isRight()) {
-            log.debug("Failed to fetch all data types :", dataTypesEither.right().value());
+            log.error("Failed to fetch all data types :", dataTypesEither.right().value());
             return Either.right(ToscaError.GENERAL_ERROR);
         }
 
@@ -813,7 +813,7 @@ public class ToscaExportHandler {
         Either<Resource, StorageOperationStatus> serviceProxyOrigin = toscaOperationFacade
                 .getLatestByName("serviceProxy");
         if (serviceProxyOrigin.isRight()) {
-            log.debug("Failed to fetch normative service proxy resource by tosca name, error {}",
+            log.error("Failed to fetch normative service proxy resource by tosca name, error {}",
                     serviceProxyOrigin.right().value());
             return Either.right(ToscaError.NOT_SUPPORTED_TOSCA_TYPE);
         }
@@ -827,7 +827,7 @@ public class ToscaExportHandler {
             Either<Component, StorageOperationStatus> service = toscaOperationFacade
                     .getToscaElement(entryProxy.getValue().getSourceModelUid(), componentParametersView);
             if (service.isRight()) {
-                log.debug("Failed to fetch resource with id {} for instance {}", entryProxy.getValue().getSourceModelUid(),  entryProxy.getValue().getName());
+                log.error("Failed to fetch resource with id {} for instance {}", entryProxy.getValue().getSourceModelUid(),  entryProxy.getValue().getName());
             } else {
                 serviceComponent = service.left().value();
             }
@@ -847,7 +847,7 @@ public class ToscaExportHandler {
         toscaNodeType.setDerived_from(derivedFrom);
         Either<Map<String, DataTypeDefinition>, TitanOperationStatus> dataTypesEither = dataTypeCache.getAll();
         if (dataTypesEither.isRight()) {
-            log.debug("Failed to retrieve all data types {}", dataTypesEither.right().value());
+            log.error("Failed to retrieve all data types {}", dataTypesEither.right().value());
         }
         Map<String, DataTypeDefinition> dataTypes = dataTypesEither.left().value();
         Map<String, ToscaCapability> capabilities = this.capabilityRequirementConverter
@@ -864,7 +864,7 @@ public class ToscaExportHandler {
 
         List<Map<String, ToscaTemplateRequirement>> toscaRequirements = new ArrayList<>();
         if (!addRequirements(component, componentInstance, relations, originComponent, toscaRequirements, componentCache)) {
-            log.debug("Failed to convert component instance requirements for the component instance {}. ",
+            log.error("Failed to convert component instance requirements for the component instance {}. ",
                     componentInstance.getName());
             return Either.right(ToscaError.NODE_TYPE_REQUIREMENT_ERROR);
         }
@@ -900,14 +900,14 @@ public class ToscaExportHandler {
         ComponentInstance toInstance = instancesList.stream().filter(i -> rel.getToNode().equals(i.getUniqueId()))
                 .findFirst().orElse(null);
         if (toInstance == null) {
-            log.debug("Failed to find a relation from the node {} to the node {}", fromInstance.getName(),
+            log.error("Failed to find a relation from the node {} to the node {}", fromInstance.getName(),
                     rel.getToNode());
             result = false;
         }
         if (result) {
             reqOpt = findRequirement(fromOriginComponent, reqMap, reqAndRelationshipPair, fromInstance.getUniqueId());
             if (!reqOpt.isPresent()) {
-                log.debug("Failed to find a requirement with uniqueId {} on a component with uniqueId {}",
+                log.error("Failed to find a requirement with uniqueId {} on a component with uniqueId {}",
                         reqAndRelationshipPair.getRequirementUid(), fromOriginComponent.getUniqueId());
                 result = false;
             }
@@ -919,7 +919,7 @@ public class ToscaExportHandler {
             filter.setIgnoreGroups(false);
             getOriginRes = toscaOperationFacade.getToscaElement(toInstance.getActualComponentUid(), filter);
             if (getOriginRes.isRight()) {
-                log.debug("Failed to build substituted name for the requirement {}. Failed to get an origin component with uniqueId {}",
+                log.error("Failed to build substituted name for the requirement {}. Failed to get an origin component with uniqueId {}",
                         reqOpt.get().getName(), toInstance.getActualComponentUid());
                 result = false;
             }
@@ -932,7 +932,7 @@ public class ToscaExportHandler {
                 capOpt = findCapability(reqAndRelationshipPair, toOriginComponent, fromOriginComponent, reqOpt.get());
                 if(!capOpt.isPresent()){
                 result = false;
-                log.debug("Failed to find a capability with name {} on a component with uniqueId {}",
+                log.error("Failed to find a capability with name {} on a component with uniqueId {}",
                         reqAndRelationshipPair.getCapability(), fromOriginComponent.getUniqueId());
                 }
             }
@@ -951,7 +951,7 @@ public class ToscaExportHandler {
     private Optional<CapabilityDefinition> findCapability(RelationshipInfo reqAndRelationshipPair, Component toOriginComponent, Component fromOriginComponent, RequirementDefinition requirement) {
         Optional<CapabilityDefinition> cap = toOriginComponent.getCapabilities().get(requirement.getCapability()).stream().filter(c -> c.getType().equals(requirement.getCapability())).findFirst();
         if (!cap.isPresent()) {
-            log.debug("Failed to find a capability with name {} on a component with uniqueId {}", reqAndRelationshipPair.getCapability(), fromOriginComponent.getUniqueId());
+            log.error("Failed to find a capability with name {} on a component with uniqueId {}", reqAndRelationshipPair.getCapability(), fromOriginComponent.getUniqueId());
         }
         return cap;
     }
@@ -1006,7 +1006,7 @@ public class ToscaExportHandler {
      */
     private boolean isRequirementBelongToRelation(Component originComponent, RelationshipInfo reqAndRelationshipPair, RequirementDefinition requirement, String fromInstanceId) {
         if (!StringUtils.equals(requirement.getName(), reqAndRelationshipPair.getRequirement())) {
-            log.debug("Failed to find a requirement with name {} and  reqAndRelationshipPair {}",
+            log.error("Failed to find a requirement with name {} and  reqAndRelationshipPair {}",
                     requirement.getName(), reqAndRelationshipPair.getRequirement());
             return false;
         }
@@ -1031,7 +1031,7 @@ public class ToscaExportHandler {
                 .convertSubstitutionMappingCapabilities(componentCache, component);
         if (toscaCapabilitiesRes.isRight()) {
             result = Either.right(toscaCapabilitiesRes.right().value());
-            log.debug("Failed convert capabilities for the component {}. ", component.getName());
+            log.error("Failed convert capabilities for the component {}. ", component.getName());
         } else if (isNotEmpty(toscaCapabilitiesRes.left().value())) {
             substitutionMappings.setCapabilities(toscaCapabilitiesRes.left().value());
             log.debug("Finish convert capabilities for the component {}. ", component.getName());

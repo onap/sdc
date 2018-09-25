@@ -783,7 +783,7 @@ public abstract class AbstractValidationsServlet extends BeGenericServlet {
                 parsedClassWrapper.setInnerElement(parsedClass);
             }
         } catch (JsonSyntaxException e) {
-            log.debug("Failed to decode received {} {} to object.", classGen.get().getName(), data, e);
+            log.error("Failed to decode received {} {} to object.", classGen.get().getName(), data, e);
             errorWrapper.setInnerElement(getComponentsUtils().getResponseFormat(ActionStatus.INVALID_CONTENT));
         }
     }
@@ -844,7 +844,7 @@ public abstract class AbstractValidationsServlet extends BeGenericServlet {
             T object = RepresentationUtils.fromRepresentation(json, classSupplier.get());
             return Either.left(object);
         } catch (Exception e) {
-            log.debug("Failed to parse json to {} object", classSupplier.get().getName(), e);
+            log.error("Failed to parse json to {} object", classSupplier.get().getName(), e);
             ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.INVALID_CONTENT);
             return Either.right(responseFormat);
         }
@@ -862,7 +862,7 @@ public abstract class AbstractValidationsServlet extends BeGenericServlet {
             List<T> listOfObjects = gson.fromJson(json, type);
             return Either.left(listOfObjects);
         } catch (Exception e) {
-            log.debug("Failed to parse json to {} object", type.getClass().getName(), e);
+            log.error("Failed to parse json to {} object", type.getClass().getName(), e);
             ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.INVALID_CONTENT);
             return Either.right(responseFormat);
         }

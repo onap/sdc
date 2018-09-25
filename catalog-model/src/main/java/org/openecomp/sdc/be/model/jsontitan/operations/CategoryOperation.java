@@ -78,7 +78,7 @@ public class CategoryOperation extends BaseOperation{
     public  Either<GraphVertex, StorageOperationStatus> getSubCategoryForCategory(GraphVertex categoryV, String name ) {
         Either<List<GraphVertex>, TitanOperationStatus> childrenVertecies = titanDao.getChildrenVertecies(categoryV, EdgeLabelEnum.SUB_CATEGORY, JsonParseFlagEnum.NoParse);
         if ( childrenVertecies.isRight() ){
-            log.debug("Failed to fetch children verticies for category {} error {}", categoryV.getUniqueId(), childrenVertecies.right().value());
+            log.error("Failed to fetch children verticies for category {} error {}", categoryV.getUniqueId(), childrenVertecies.right().value());
             return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(childrenVertecies.right().value()));
         }
         for ( GraphVertex childV : childrenVertecies.left().value() ){

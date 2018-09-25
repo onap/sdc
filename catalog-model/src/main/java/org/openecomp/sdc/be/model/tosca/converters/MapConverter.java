@@ -172,7 +172,7 @@ public class MapConverter implements PropertyValueConverter {
                 log.debug("inner Tosca Type unknown : {}", innerToscaType);
             }
         } catch (JsonParseException e) {
-            log.debug("Failed to parse json : {}", value, e);
+            log.error("Failed to parse json : {}", value, e);
             BeEcompErrorManager.getInstance().logBeInvalidJsonInput("Map Converter");
             return Either.right(false);
         }
