@@ -36,9 +36,7 @@ export class CompositionGraphNodesUtils {
         private commonGraphUtils: CommonGraphUtils,
         private eventListenerService: EventListenerService,
         private loaderService: LoaderService,
-        private serviceService: ServiceServiceNg2,
-                /*private sdcMenu: IAppMenu,
-                private ModalsHandler: ModalsHandler*/) {
+        private serviceService: ServiceServiceNg2) {
 
     }
 
