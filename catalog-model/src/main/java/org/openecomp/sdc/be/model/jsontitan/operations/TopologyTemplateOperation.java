@@ -940,7 +940,7 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
     private TitanOperationStatus setServiceCategoryFromGraph(GraphVertex componentV, ToscaElement toscaElement, List<CategoryDefinition> categories) {
         Either<GraphVertex, TitanOperationStatus> childVertex = titanDao.getChildVertex(componentV, EdgeLabelEnum.CATEGORY, JsonParseFlagEnum.NoParse);
         if (childVertex.isRight()) {
-            log.debug("failed to fetch {} for tosca element with id {}, error {}", EdgeLabelEnum.CATEGORY, componentV.getUniqueId(), childVertex.right().value());
+            log.error("failed to fetch {} for tosca element with id {}, error {}", EdgeLabelEnum.CATEGORY, componentV.getUniqueId(), childVertex.right().value());
             return childVertex.right().value();
         }
         GraphVertex categoryV = childVertex.left().value();
@@ -1107,7 +1107,7 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
 
         Either<GraphVertex, TitanOperationStatus> childVertex = titanDao.getChildVertex(elementV, EdgeLabelEnum.CATEGORY, JsonParseFlagEnum.NoParse);
         if (childVertex.isRight()) {
-            log.debug("failed to fetch {} for tosca element with id {}, error {}", EdgeLabelEnum.CATEGORY, elementV.getUniqueId(), childVertex.right().value());
+            log.error("failed to fetch {} for tosca element with id {}, error {}", EdgeLabelEnum.CATEGORY, elementV.getUniqueId(), childVertex.right().value());
             return DaoStatusConverter.convertTitanStatusToStorageStatus(childVertex.right().value());
         }
 

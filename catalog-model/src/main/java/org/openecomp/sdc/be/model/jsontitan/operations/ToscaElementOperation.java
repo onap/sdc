@@ -933,7 +933,7 @@ public abstract class ToscaElementOperation extends BaseOperation {
 
         Either<GraphVertex, TitanOperationStatus> parentVertex = titanDao.getParentVertex(subCategoryV, EdgeLabelEnum.SUB_CATEGORY, JsonParseFlagEnum.NoParse);
         if (parentVertex.isRight()) {
-            log.debug("failed to fetch {} for category with id {}, error {}", EdgeLabelEnum.SUB_CATEGORY, subCategoryV.getUniqueId(), parentVertex.right().value());
+            log.error("failed to fetch {} for category with id {}, error {}", EdgeLabelEnum.SUB_CATEGORY, subCategoryV.getUniqueId(), parentVertex.right().value());
             return childVertex.right().value();
         }
         GraphVertex categoryV = parentVertex.left().value();
@@ -1098,7 +1098,7 @@ public abstract class ToscaElementOperation extends BaseOperation {
 
         Either<GraphVertex, TitanOperationStatus> parentVertex = titanDao.getParentVertex(subCategoryV, EdgeLabelEnum.SUB_CATEGORY, JsonParseFlagEnum.NoParse);
         if (parentVertex.isRight()) {
-            log.debug("failed to fetch {} for category with id {}, error {}", EdgeLabelEnum.SUB_CATEGORY, subCategoryV.getUniqueId(), parentVertex.right().value());
+            log.error("failed to fetch {} for category with id {}, error {}", EdgeLabelEnum.SUB_CATEGORY, subCategoryV.getUniqueId(), parentVertex.right().value());
             return DaoStatusConverter.convertTitanStatusToStorageStatus(childVertex.right().value());
         }
         GraphVertex categoryV = parentVertex.left().value();

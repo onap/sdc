@@ -535,7 +535,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
             }
             StorageOperationStatus result = toscaOperationFacade.addGroupInstancesToComponentInstance(containerComponent, componentInstance, filteredGroups, groupInstancesArtifacts);
             if (result != StorageOperationStatus.OK) {
-                log.debug("failed to update group instance for component instance {}", componentInstance.getUniqueId());
+                log.error("failed to update group instance for component instance {}", componentInstance.getUniqueId());
                 return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(result)));
             }
             componentInstance.setDeploymentArtifacts(finalDeploymentArtifacts);
@@ -2112,7 +2112,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
             DataForMergeHolder dataHolder = compInstMergeDataBL.saveAllDataBeforeDeleting(containerComponent, currentResourceInstance, eitherOriginComponent.left().value());
             resultOp = deleteComponentInstance(containerComponent, componentInstanceId, containerComponentType);
             if (resultOp.isRight()) {
-                log.debug("failed to delete resource instance {}", resourceId);
+                log.error("failed to delete resource instance {}", resourceId);
                 return resultOp;
             }
             ComponentInstance resResourceInfo = resultOp.left().value();
@@ -2157,13 +2157,13 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
             resultOp = createComponentInstanceOnGraph(containerComponent, origComponent, newComponentInstance, user);
 
             if (resultOp.isRight()) {
-                log.debug("failed to create resource instance {}", resourceId);
+                log.error("failed to create resource instance {}", resourceId);
                 return resultOp;
             }
 
             ComponentInstance updatedComponentInstance = resultOp.left().value();
             if (resultOp.isRight()) {
-                log.debug("failed to create resource instance {}", resourceId);
+                log.error("failed to create resource instance {}", resourceId);
                 return resultOp;
             }
 

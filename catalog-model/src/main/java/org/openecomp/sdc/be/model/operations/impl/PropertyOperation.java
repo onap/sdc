@@ -2031,7 +2031,7 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
 			currentNodeUid = derivedFrom.left().value().getUniqueId();
 			TitanOperationStatus titanOperationStatus = fillPropertiesList(currentNodeUid, nodeType, accumulatedProps::addAll);
 			if (titanOperationStatus != TitanOperationStatus.OK) {
-				log.debug("failed to fetch properties for type {} with id {}", nodeType, currentNodeUid);
+				log.error("failed to fetch properties for type {} with id {}", nodeType, currentNodeUid);
 				return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(titanOperationStatus));
 			}
 		}
@@ -2339,7 +2339,7 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
 	    }
 	    Either<TitanVertex, TitanOperationStatus> vertexService = titanGenericDao.getVertexByProperty(UniqueIdBuilder.getKeyByNodeType(nodeType), instanceId);
 	    if (vertexService.isRight()) {
-	        log.debug("failed to fetch vertex of resource instance for id = {}", instanceId);
+	        log.error("failed to fetch vertex of resource instance for id = {}", instanceId);
 	        return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(vertexService.right().value()));
 	    }
 	    Vertex vertex = vertexService.left().value();

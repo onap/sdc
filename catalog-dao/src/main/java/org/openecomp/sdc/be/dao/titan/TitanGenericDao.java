@@ -395,12 +395,12 @@ public class TitanGenericDao {
 				GraphRelation relation = GraphElementFactory.createRelation(label.getProperty(), properties, nodeFrom, to);
 				return Either.left(relation);
 			} else {
-				log.debug("failed to get graph");
+				log.error("failed to get graph");
 				return Either.right(graph.right().value());
 			}
 
 		} else {
-			log.debug("failed to find edge {} to {}", label.getProperty(), to.getUniqueId());
+			log.error("failed to find edge {} to {}", label.getProperty(), to.getUniqueId());
 			return Either.right(edgeByCriteria.right().value());
 		}
 
@@ -420,12 +420,12 @@ public class TitanGenericDao {
 				GraphRelation relation = GraphElementFactory.createRelation(label.getProperty(), properties, nodeFrom, to);
 				return Either.left(relation);
 			} else {
-				log.debug("failed to get graph");
+				log.error("failed to get graph");
 				return Either.right(graph.right().value());
 			}
 
 		} else {
-			log.debug("failed to find edge {} to {}", label.getProperty(), to.getUniqueId());
+			log.error("failed to find edge {} to {}", label.getProperty(), to.getUniqueId());
 			return Either.right(edgeByCriteria.right().value());
 		}
 
@@ -1510,7 +1510,7 @@ public class TitanGenericDao {
 		Either<List<ImmutablePair<T, GraphEdge>>, TitanOperationStatus> parentNodesRes = this.getParentNodes(key, uniqueId, edgeType, nodeTypeEnum, clazz);
 
 		if (parentNodesRes.isRight()) {
-			log.debug("failed to get edge key:{} uniqueId:{} edgeType {} nodeTypeEnum: {}, reason:{}", key, uniqueId, edgeType, nodeTypeEnum, parentNodesRes.right().value());
+			log.error("failed to get edge key:{} uniqueId:{} edgeType {} nodeTypeEnum: {}, reason:{}", key, uniqueId, edgeType, nodeTypeEnum, parentNodesRes.right().value());
 			return Either.right(parentNodesRes.right().value());
 		}
 

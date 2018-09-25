@@ -230,7 +230,7 @@ public class HeatParametersOperation implements IHeatParametersOperation {
             HeatParameterData heatParameterData = new HeatParameterData(property);
             Either<HeatParameterData, TitanOperationStatus> updateNode = titanGenericDao.updateNode(heatParameterData, HeatParameterData.class);
             if (updateNode.isRight()) {
-                log.debug("failed to update heat parameter in graph. id = {}", property.getUniqueId());
+                log.error("failed to update heat parameter in graph. id = {}", property.getUniqueId());
                 return DaoStatusConverter.convertTitanStatusToStorageStatus(updateNode.right().value());
             }
         }

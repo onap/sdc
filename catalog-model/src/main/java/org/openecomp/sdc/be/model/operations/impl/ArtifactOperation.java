@@ -452,7 +452,7 @@ public class ArtifactOperation implements IArtifactOperation {
                 // update exist
                 Either<ArtifactData, TitanOperationStatus> updatedArtifact = titanGenericDao.updateNode(artifactData, ArtifactData.class);
                 if (updatedArtifact.isRight()) {
-                    log.debug("failed to update artifact node for id {}", artifactData.getUniqueId());
+                    log.error("failed to update artifact node for id {}", artifactData.getUniqueId());
                     return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(updatedArtifact.right().value()));
                 }
 
@@ -483,13 +483,13 @@ public class ArtifactOperation implements IArtifactOperation {
                     } else {
                         Either<List<HeatParameterDefinition>, StorageOperationStatus> deleteParameters = heatParametersOperation.deleteAllHeatParametersAssociatedToNode(NodeTypeEnum.ArtifactRef, artifactInfo.getUniqueId());
                         if (deleteParameters.isRight()) {
-                            log.debug("failed to update heat parameters for artifact id {}", artifactData.getUniqueId());
+                            log.error("failed to update heat parameters for artifact id {}", artifactData.getUniqueId());
                             return Either.right(StorageOperationStatus.GENERAL_ERROR);
                         }
 
                         StorageOperationStatus addParameters = heatParametersOperation.addPropertiesToGraph(artifactInfo.getListHeatParameters(), artifactId, NodeTypeEnum.ArtifactRef);
                         if (!addParameters.equals(StorageOperationStatus.OK)) {
-                            log.debug("failed to update heat parameters for artifact id {}", artifactData.getUniqueId());
+                            log.error("failed to update heat parameters for artifact id {}", artifactData.getUniqueId());
                             return Either.right(StorageOperationStatus.GENERAL_ERROR);
                         }
 
@@ -690,7 +690,7 @@ public class ArtifactOperation implements IArtifactOperation {
                             List<HeatParameterDefinition> heatParams = new ArrayList<>();
                             StorageOperationStatus heatParametersStatus = heatParametersOperation.getHeatParametersOfNode(NodeTypeEnum.ArtifactRef, artifactDefinition.getUniqueId(), heatParams);
                             if (!heatParametersStatus.equals(StorageOperationStatus.OK)) {
-                                log.debug("failed to get heat parameters for node {}  {}", parentType.getName(), parentId);
+                                log.error("failed to get heat parameters for node {}  {}", parentType.getName(), parentId);
                                 return Either.right(heatParametersStatus);
                             }
                             if (!heatParams.isEmpty()) {

@@ -309,7 +309,7 @@ public class ToscaOperationFacade {
             if (resources.right().value() == TitanOperationStatus.NOT_FOUND) {
                 return StorageOperationStatus.OK;
             } else {
-                log.debug("failed to get resources from graph with property name: {}", csarUUID);
+                log.error("failed to get resources from graph with property name: {}", csarUUID);
                 return DaoStatusConverter.convertTitanStatusToStorageStatus(resources.right().value());
             }
         }
@@ -416,7 +416,7 @@ public class ToscaOperationFacade {
         Either<List<GraphVertex>, TitanOperationStatus> resources = titanDao.getByCriteria(null, properties, JsonParseFlagEnum.ParseMetadata);
 
         if (resources.isRight() && resources.right().value() != TitanOperationStatus.NOT_FOUND) {
-            log.debug("failed to get resources from graph with property name: {}", name);
+            log.error("failed to get resources from graph with property name: {}", name);
             return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(resources.right().value()));
         }
         List<GraphVertex> resourceList = (resources.isLeft() ? resources.left().value() : null);
@@ -547,7 +547,7 @@ public class ToscaOperationFacade {
         Either<List<GraphVertex>, TitanOperationStatus> highestResources = titanDao.getByCriteria(null, propertiesToMatch, propertiesNotToMatch, parseFlag);
         if (highestResources.isRight()) {
             TitanOperationStatus status = highestResources.right().value();
-            log.debug("failed to find resource with name {}. status={} ", nodeName, status);
+            log.error("failed to find resource with name {}. status={} ", nodeName, status);
             result = Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
             return result;
         }
@@ -632,7 +632,7 @@ public class ToscaOperationFacade {
         Either<List<GraphVertex>, TitanOperationStatus> getResourceRes = titanDao.getByCriteria(null, hasProperties, hasNotProperties, parseFlag);
         if (getResourceRes.isRight()) {
             TitanOperationStatus status = getResourceRes.right().value();
-            log.debug("failed to find resource with name {}, version {}. Status is {} ", name, version, status);
+            log.error("failed to find resource with name {}, version {}. Status is {} ", name, version, status);
             result = Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
             return result;
         }
@@ -1475,7 +1475,7 @@ public class ToscaOperationFacade {
 
         Either<List<GraphVertex>, TitanOperationStatus> vertexEither = titanDao.getByCriteria(vertexType, properties, JsonParseFlagEnum.NoParse);
         if (vertexEither.isRight() && vertexEither.right().value() != TitanOperationStatus.NOT_FOUND) {
-            log.debug("failed to get vertex from graph with property normalizedName: {}", normalizedName);
+            log.error("failed to get vertex from graph with property normalizedName: {}", normalizedName);
             return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(vertexEither.right().value()));
         }
         List<GraphVertex> vertexList = vertexEither.isLeft() ? vertexEither.left().value() : null;
@@ -1716,7 +1716,7 @@ public class ToscaOperationFacade {
         Either<List<GraphVertex>, TitanOperationStatus> getResourceRes = titanDao.getByCriteria(null, hasProperties, hasNotProperties, parseFlag);
         if (getResourceRes.isRight()) {
             TitanOperationStatus status = getResourceRes.right().value();
-            log.debug("failed to find resource with name {}, version {}. Status is {} ", name, version, status);
+            log.error("failed to find resource with name {}, version {}. Status is {} ", name, version, status);
             result = Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
             return result;
         }

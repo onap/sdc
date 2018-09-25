@@ -536,7 +536,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
             if (updateResponse.isRight()) {
                 titanDao.rollback();
                 BeEcompErrorManager.getInstance().logBeSystemError("Update Service Metadata");
-                log.debug("failed to update sevice {}", serviceToUpdate.getUniqueId());
+                log.error("failed to update sevice {}", serviceToUpdate.getUniqueId());
                 return Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
             }
             titanDao.commit();
@@ -1070,7 +1070,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
             log.debug("validating service category {} against valid categories list", list);
             Either<List<CategoryDefinition>, ActionStatus> categorys = elementDao.getAllServiceCategories();
             if (categorys.isRight()) {
-                log.debug("failed to retrive service categories from Titan");
+                log.error("failed to retrive service categories from Titan");
                 ResponseFormat responseFormat = componentsUtils.getResponseFormat(categorys.right().value());
                 return Either.right(responseFormat);
             }
@@ -1104,7 +1104,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         validateUserExists(user, ecompErrorContext, false);
         Either<Service, StorageOperationStatus> serviceStatus = toscaOperationFacade.getToscaElement(serviceId);
         if (serviceStatus.isRight()) {
-            log.debug("failed to get service {}", serviceId);
+            log.error("failed to get service {}", serviceId);
             return componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(serviceStatus.right().value()), "");
         }
 
@@ -1186,7 +1186,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
 
         Either<Service, StorageOperationStatus> storageStatus = toscaOperationFacade.getToscaElement(serviceId);
         if (storageStatus.isRight()) {
-            log.debug("failed to get service by id {}", serviceId);
+            log.error("failed to get service by id {}", serviceId);
             return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(storageStatus.right().value(), ComponentTypeEnum.SERVICE), serviceId));
         }
 
@@ -1205,7 +1205,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         validateUserExists(userId, "get Service By Name And Version", false);
         Either<Service, StorageOperationStatus> storageStatus = toscaOperationFacade.getComponentByNameAndVersion(ComponentTypeEnum.SERVICE, serviceName, serviceVersion);
         if (storageStatus.isRight()) {
-            log.debug("failed to get service by name {} and version {}", serviceName, serviceVersion);
+            log.error("failed to get service by name {} and version {}", serviceName, serviceVersion);
             return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(storageStatus.right().value(), ComponentTypeEnum.SERVICE), serviceName));
         }
         Service service = storageStatus.left().value();
@@ -1405,7 +1405,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
 
         Either<Service, StorageOperationStatus> serviceRes = toscaOperationFacade.getToscaElement(serviceId);
         if (serviceRes.isRight()) {
-            log.debug("failed retrieving service");
+            log.error("failed retrieving service");
             response = componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(serviceRes.right().value(), ComponentTypeEnum.SERVICE), serviceId);
             componentsUtils.auditComponent(response, user, null, AuditingActionEnum.DISTRIBUTION_STATE_CHANGE_REQUEST,
                     new ResourceCommonInfo(ComponentTypeEnum.SERVICE.getValue()),

@@ -158,7 +158,7 @@ public class UserAdminServlet extends BeGenericServlet {
             Either<User, ResponseFormat> updateUserResponse = businessLogic.updateUserRole(modifier, userIdUpdateUser, updateInfoUser.getRole());
 
             if (updateUserResponse.isRight()) {
-                log.debug("failed to update user role");
+                log.error("failed to update user role");
                 response = buildErrorResponse(updateUserResponse.right().value());
                 return response;
             }
@@ -203,7 +203,7 @@ public class UserAdminServlet extends BeGenericServlet {
             Either<User, ResponseFormat> createUserResponse = businessLogic.createUser(modifier, newUserInfo);
 
             if (createUserResponse.isRight()) {
-                log.debug("failed to create user");
+                log.error("failed to create user");
                 response = buildErrorResponse(createUserResponse.right().value());
                 return response;
             }

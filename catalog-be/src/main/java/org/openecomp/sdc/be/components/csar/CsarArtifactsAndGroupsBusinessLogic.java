@@ -437,7 +437,7 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
             return Either.left(artifactsMap);
         } catch (Exception e) {
             log.debug(ARTIFACT_FILE_IS_NOT_IN_EXPECTED_FORMAT_FILE_NAME, artifactFileName);
-            log.debug("failed with exception.", e);
+            log.error("failed with exception.", e);
             BeEcompErrorManager.getInstance().logInternalDataError(
                     ARTIFACT_FILE_IS_NOT_IN_EXPECTED_FORMAT_FILE_NAME1 + artifactFileName,
                     ARTIFACT_INTERNALS_ARE_INVALID, ErrorSeverity.ERROR);
@@ -723,7 +723,7 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
             Either<ArtifactDefinition, ResponseFormat> updateEnvEither = updateHeatParamsFromCsar(resource, csarInfo,
                     artifactTemplateInfo, currentInfo, false);
             if (updateEnvEither.isRight()) {
-                log.debug("failed to update parameters to artifact {}", artifactFileName);
+                log.error("failed to update parameters to artifact {}", artifactFileName);
                 return Either.right(updateEnvEither.right().value());
 
             }
@@ -1437,7 +1437,7 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
                             csarInfo, resource, artifact.getKey(), artifact.getValue(), updatedArtifacts,
                             artifact.getRight().getRelatedArtifactsInfo());
                     if (updateArtifactEither.isRight()) {
-                        log.debug("failed to update artifacts. status is {}", updateArtifactEither.right().value());
+                        log.error("failed to update artifacts. status is {}", updateArtifactEither.right().value());
                         resEither = Either.right(updateArtifactEither.right().value());
                         return resEither;
                     }
@@ -1621,7 +1621,7 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
         Either<ArtifactDefinition, ResponseFormat> updateEnvEither = updateHeatParamsFromCsar(resource, csarInfo,
                 artifactTemplateInfo, currentInfo, true);
         if (updateEnvEither.isRight()) {
-            log.debug("failed to update parameters to artifact {}", artifactFileName);
+            log.error("failed to update parameters to artifact {}", artifactFileName);
             resStatus = Either.right(updateEnvEither.right().value());
             return resStatus;
         }

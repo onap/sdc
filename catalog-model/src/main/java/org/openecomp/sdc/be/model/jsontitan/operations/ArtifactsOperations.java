@@ -155,7 +155,7 @@ public class ArtifactsOperations extends BaseOperation {
 	private ArtifactDataDefinition findInterfaceArtifact(String parentId, String id) {
 		Either<Map<String, InterfaceDefinition>, TitanOperationStatus> dataFromGraph = getDataFromGraph(parentId, EdgeLabelEnum.INTERFACE);
 		if (dataFromGraph.isRight()){
-			log.debug("failed to fetch interfaces {} for tosca element with id {}, error {}", id, parentId ,dataFromGraph.right().value());
+			log.error("failed to fetch interfaces {} for tosca element with id {}, error {}", id, parentId ,dataFromGraph.right().value());
 			return null;
 		}
 
@@ -420,7 +420,7 @@ public class ArtifactsOperations extends BaseOperation {
 
         MapArtifactDataDefinition artifactsPerInstance = artifacts.get(parentId);
         if (artifactsPerInstance == null) {
-            log.debug("failed to fetch artifacts for instance {} in tosca element with id {}, error {}", parentId, containerId, artifactsEither.right().value());
+            log.error("failed to fetch artifacts for instance {} in tosca element with id {}, error {}", parentId, containerId, artifactsEither.right().value());
             return null;
         }
         Optional<ArtifactDataDefinition> op = artifactsPerInstance.getMapToscaDataDefinition().values().stream().filter(p -> p.getUniqueId().equals(id)).findAny();

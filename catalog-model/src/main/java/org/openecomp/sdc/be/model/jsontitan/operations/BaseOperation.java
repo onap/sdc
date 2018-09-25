@@ -211,7 +211,7 @@ public abstract class BaseOperation {
         Either<GraphVertex, TitanOperationStatus> childVertex = titanDao.getChildVertex(componentV, edgelabel, JsonParseFlagEnum.ParseJson);
         if (childVertex.isRight()) {
             if (childVertex.right().value() != TitanOperationStatus.NOT_FOUND) {
-                log.debug("failed to fetch {} for tosca element with id {}, error {}", edgelabel, componentV.getUniqueId(), childVertex.right().value());
+                log.error("failed to fetch {} for tosca element with id {}, error {}", edgelabel, componentV.getUniqueId(), childVertex.right().value());
             }
             return Either.right(childVertex.right().value());
         }
@@ -263,7 +263,7 @@ public abstract class BaseOperation {
         Either<GraphVertex, TitanOperationStatus> childVertex = titanDao.getChildVertex(toscaElementVertex, label, JsonParseFlagEnum.NoParse);
         if (childVertex.isRight()) {
             if (childVertex.right().value() != TitanOperationStatus.NOT_FOUND) {
-                log.debug("failed to fetch {} for tosca element with id {}, error {}", label, toscaElementVertex.getUniqueId(), childVertex.right().value());
+                log.error("failed to fetch {} for tosca element with id {}, error {}", label, toscaElementVertex.getUniqueId(), childVertex.right().value());
                 return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(childVertex.right().value()));
             }
             return Either.left(Boolean.FALSE);

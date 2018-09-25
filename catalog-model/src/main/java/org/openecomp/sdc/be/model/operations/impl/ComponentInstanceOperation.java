@@ -95,7 +95,7 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
             }
             Either<TitanVertex, TitanOperationStatus> vertexService = titanGenericDao.getVertexByProperty(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.ResourceInstance), resourceInstanceId);
             if (vertexService.isRight()) {
-                log.debug("failed to fetch vertex of resource instance for id = {}", resourceInstanceId);
+                log.error("failed to fetch vertex of resource instance for id = {}", resourceInstanceId);
                 TitanOperationStatus status = vertexService.right().value();
                 if (status == TitanOperationStatus.NOT_FOUND) {
                     status = TitanOperationStatus.INVALID_ID;

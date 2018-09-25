@@ -764,7 +764,7 @@ public class ArtifactUuidFix {
 			}
 			if (groupVertexEither.isRight()) {
 				res = false;
-				log.debug("failed to get child {}  vertex for component  unique id {}, error: {}", edgeLabelEnum,
+				log.error("failed to get child {}  vertex for component  unique id {}, error: {}", edgeLabelEnum,
 						componentId, groupVertexEither.right().value());
 			}
 			if (res) {
@@ -772,7 +772,7 @@ public class ArtifactUuidFix {
 				toscaDataVertex.setJson(groups);
 				Either<GraphVertex, TitanOperationStatus> updatevertexEither = titanDao.updateVertex(toscaDataVertex);
 				if (updatevertexEither.isRight()) {
-					log.debug("failed to update vertex for component  unique id {}, error: {}", componentId,
+					log.error("failed to update vertex for component  unique id {}, error: {}", componentId,
 							updatevertexEither.right().value());
 					titanDao.rollback();
 					return false;

@@ -119,7 +119,7 @@ public class CategoriesImportManager {
                 String groupingId = UniqueIdBuilder.buildGroupingUid(grouping.getUniqueId(), grouping.getNormalizedName());
                 createdGrouping = elementOperation.getGroupingUniqueForType(nodeTypeGroup, groupingId);
                 if (createdGrouping.isRight()) {
-                    log.debug("failed to get grouping that exists groupingId: {} type: {}", groupingId, nodeTypeGroup);
+                    log.error("failed to get grouping that exists groupingId: {} type: {}", groupingId, nodeTypeGroup);
                     return Either.right(componentsUtils.getResponseFormat(createdGrouping.right().value()));
                 }
             }
@@ -144,7 +144,7 @@ public class CategoriesImportManager {
                 String subCategoryId = UniqueIdBuilder.buildSubCategoryUid(newcategory.getUniqueId(), subcategory.getNormalizedName());
                 createdSubCategory = elementOperation.getSubCategory(nodeTypeSubCategory, subCategoryId);
                 if (createdSubCategory.isRight()) {
-                    log.debug("failed to get sub category that exists subCategoryId: {} type: {}", subCategoryId, nodeTypeSubCategory);
+                    log.error("failed to get sub category that exists subCategoryId: {} type: {}", subCategoryId, nodeTypeSubCategory);
                     return Either.right(componentsUtils.getResponseFormat(createdSubCategory.right().value()));
                 }
             } else {
@@ -169,7 +169,7 @@ public class CategoriesImportManager {
                 String categoryId = UniqueIdBuilder.buildCategoryUid(category.getNormalizedName(), nodeTypeCategory);
                 createdCategory = elementOperation.getCategory(nodeTypeCategory, categoryId);
                 if (createdCategory.isRight()) {
-                    log.debug("failed to get category that exists categoryId: {} type: {}", categoryId, nodeTypeCategory);
+                    log.error("failed to get category that exists categoryId: {} type: {}", categoryId, nodeTypeCategory);
                     return Either.right(componentsUtils.getResponseFormat(createdCategory.right().value()));
                 }
             }

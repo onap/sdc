@@ -43,7 +43,7 @@ public class StoreJob extends Job {
             log.trace("starting work on job.");
             log.trace("store component in cache, componentId:{} of nodeTypeEnum:{} with timestamp:{}.", componentId, nodeTypeEnum, timestamp);
             if (!this.daoInfo.getComponentCache().setComponent(component, nodeTypeEnum)) {
-                log.debug("failed to store componentId:{} nodeTypeEnum:", componentId, nodeTypeEnum);
+                log.error("failed to store componentId:{} nodeTypeEnum:", componentId, nodeTypeEnum);
                 return false;
             }
             log.debug("cache successfully updated for componentId:{} nodeTypeEnum:{} timestemp:{}.", componentId, nodeTypeEnum, timestamp);

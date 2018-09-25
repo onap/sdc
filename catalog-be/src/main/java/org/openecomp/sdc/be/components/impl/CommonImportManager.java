@@ -346,7 +346,7 @@ public class CommonImportManager {
         
         if (dataModelResponse.isRight()) {
             BeEcompErrorManager.getInstance().logBeFailedAddingNodeTypeError("Create {}", elementTypeEnum.name());
-            log.debug("failed to create {}: {}", elementTypeEnum, elementName);
+            log.error("failed to create {}: {}", elementTypeEnum, elementName);
             if (dataModelResponse.right().value() != StorageOperationStatus.OK) {
                 ResponseFormat responseFormat = getResponseFormatForElementType(convertFromStorageResponseForElementType(dataModelResponse.right().value(), elementTypeEnum), elementTypeEnum, elementType);
                 

@@ -364,7 +364,7 @@ public class EnvironmentsEngine implements INotificationHandler {
             CassandraOperationStatus operationStatus = eitherOpEnv.right().value();
             if (operationStatus != CassandraOperationStatus.NOT_FOUND) {
                 errorWrapper.setInnerElement(false);
-                log.debug("failed to retrieve operationa environment with id:{} cassandra error was :{}", opEnvId,
+                log.error("failed to retrieve operationa environment with id:{} cassandra error was :{}", opEnvId,
                         operationStatus);
             }
         }

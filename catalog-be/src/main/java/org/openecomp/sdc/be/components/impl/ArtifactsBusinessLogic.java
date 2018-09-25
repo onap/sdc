@@ -1872,7 +1872,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
             artifactsResponse = artifactToscaOperation.getArtifacts(componentId);
         }
         if (artifactsResponse.isRight() && artifactsResponse.right().value().equals(StorageOperationStatus.NOT_FOUND)) {
-            log.debug("failed to retrieve artifacts for {} ", componentId);
+            log.error("failed to retrieve artifacts for {} ", componentId);
             return Either.right(artifactsResponse.right().value());
         }
         return Either.left(artifactsResponse.left().value().entrySet()
@@ -5324,7 +5324,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
             Either<ArtifactDefinition, StorageOperationStatus> addHeatEnvArtifact = addHeatEnvArtifact(artifactHeatEnv, heatArtifact, component
                     .getUniqueId(), parentType, parentId);
             if (addHeatEnvArtifact.isRight()) {
-                log.debug("failed to create heat env artifact on resource instance");
+                log.error("failed to create heat env artifact on resource instance");
                 return Either.right(componentsUtils.getResponseFormatForResourceInstance(componentsUtils.convertFromStorageResponseForResourceInstance(addHeatEnvArtifact
                         .right()
                         .value(), false), "", null));
