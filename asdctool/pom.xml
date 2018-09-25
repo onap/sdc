@@ -208,8 +208,7 @@
 		<!-- groovy -->
 		<dependency>
 			<groupId>org.codehaus.groovy</groupId>
-			<artifactId>groovy-all</artifactId>
-			<version>${groovy.version}</version>
+			<artifactId>groovy</artifactId>
 			<scope>compile</scope>
 		</dependency>
 
@@ -509,12 +508,6 @@
             <scope>test</scope>
         </dependency>
         <!-- testing end -->
-
-        <dependency>
-            <groupId>org.codehaus.groovy</groupId>
-            <artifactId>groovy</artifactId>
-            <version>2.4.8</version>
-        </dependency>
 	</dependencies>
 
 	<build>
