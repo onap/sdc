@@ -556,7 +556,7 @@ public class GroupTypeOperation implements IGroupTypeOperation {
             return createRelation;
         } else {
             TitanOperationStatus status = derivedFromGroupTypeResult.right().value();
-            log.debug("Failed to found parent Group Type {}, stauts is {}.", derivedFrom, status);
+            log.error("Failed to found parent Group Type {}, stauts is {}.", derivedFrom, status);
             return Either.right(status);
         }
     }

@@ -117,7 +117,7 @@ public class ToscaParserUtils {
         try {
         	toscaDefinition = (ToscaDefinition) yaml.load(fis);
 		} catch (Exception e) {
-			log.debug("Failed to parse tosca yaml file");
+			log.error("Failed to parse tosca yaml file");
 			System.out.println("Exception: " + e);
 		} finally {
 			fis.close();
@@ -135,7 +135,7 @@ public class ToscaParserUtils {
         try {
         	toscaDefinition = (ToscaDefinition) yaml.load(payload);
 		} catch (Exception e) {
-			log.debug("Failed to parse tosca yaml file");
+			log.error("Failed to parse tosca yaml file");
 			log.debug("Exception: " + e);
 			System.out.println("Exception: " + e);
 			assertTrue("Exception: " + e, false);

@@ -55,7 +55,7 @@ public class ComponentInstanceForwardingPathMerge implements ComponentInstanceMe
         }
         Either<Component, StorageOperationStatus> resourceEither = toscaOperationFacade.getToscaFullElement(ci.getComponentUid());
         if (resourceEither.isRight() ) {
-            log.debug("Failed to fetch resource with id {} for instance {}",ci.getComponentUid() ,ci.getUniqueId());
+            log.error("Failed to fetch resource with id {} for instance {}",ci.getComponentUid() ,ci.getUniqueId());
             ResponseFormat responseFormat = componentsUtils
                 .getResponseFormat(componentsUtils.convertFromStorageResponse(resourceEither.right().value()));
             return Either.right(responseFormat);
@@ -72,7 +72,7 @@ public class ComponentInstanceForwardingPathMerge implements ComponentInstanceMe
                 .deleteForwardingPaths(service.getUniqueId(), new HashSet<>(deleted.keySet()), user, false);
             if (deleteEither.isRight()) {
                 if (log.isDebugEnabled()) {
-                    log.debug("Failed to delete forwarding paths : {}", deleted.values().stream()
+                    log.error("Failed to delete forwarding paths : {}", deleted.values().stream()
                         .map(ForwardingPathDataDefinition::getName).collect(Collectors.joining(", ", "( ", " )")));
                 }
                 return Either.right(deleteEither.right().value());
@@ -86,7 +86,7 @@ public class ComponentInstanceForwardingPathMerge implements ComponentInstanceMe
                 .updateForwardingPath(service.getUniqueId(), updateFPService, user, false);
             if (updateFPEither.isRight()) {
                 if (log.isDebugEnabled()) {
-                    log.debug("Failed to update forwarding paths : {}", updated.values().stream()
+                    log.error("Failed to update forwarding paths : {}", updated.values().stream()
                         .map(ForwardingPathDataDefinition::getName).collect(Collectors.joining(", ", "( ", " )")));
                 }
                 return Either.right(updateFPEither.right().value());

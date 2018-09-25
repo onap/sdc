@@ -269,7 +269,7 @@ public class UserAdminOperation implements IUserAdminOperation {
         Either<TitanVertex, TitanOperationStatus> vertexUser = titanGenericDao.getVertexByProperty(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.User), user.getUserId());
         if (vertexUser.isRight()) {
             TitanOperationStatus tos = vertexUser.right().value();
-            log.debug("Failed to get User {} from graph while retrieving pending tasks. Reason - {}", user.getUserId(), tos);
+            log.error("Failed to get User {} from graph while retrieving pending tasks. Reason - {}", user.getUserId(), tos);
             return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(tos));
         }
         List<Edge> pendingTasks = new ArrayList<>();
@@ -279,7 +279,7 @@ public class UserAdminOperation implements IUserAdminOperation {
             if (tos == TitanOperationStatus.NOT_FOUND) {
                 return Either.left(pendingTasks);
             } else {
-                log.debug("Failed while retrieving pending tasks for user {} . Reason - {}", user.getUserId(), tos);
+                log.error("Failed while retrieving pending tasks for user {} . Reason - {}", user.getUserId(), tos);
                 return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(tos));
             }
         }

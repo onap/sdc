@@ -67,7 +67,7 @@ public class JsonParserUtils {
                            .readValue(json);
         }
         catch (Exception e) {
-            log.debug("Failed to parse json {}", json, e);
+            log.error("Failed to parse json {}", json, e);
         }
         return object;
     }
@@ -85,7 +85,7 @@ public class JsonParserUtils {
                            .readValue(json);
         }
         catch (Exception e) {
-            log.debug("Failed to parse json {} to map", json, e);
+            log.error("Failed to parse json {} to map", json, e);
         }
         return object;
     }
@@ -102,7 +102,7 @@ public class JsonParserUtils {
                     .readValue(json);
         }
         catch (Exception e) {
-            log.debug("Failed to parse json {} to list", json, e);
+            log.error("Failed to parse json {} to list", json, e);
         }
         return object;
     }

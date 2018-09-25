@@ -98,7 +98,7 @@ public class ComponentCapabilitiesPropertiesMergeBL implements VspComponentsMerg
         return toscaOperationFacade.getToscaElement(cmptId, propertiesCapabilitiesFilter)
                 .right()
                 .map(err -> {
-                   log.debug("failed to fetch cmpt {} with properties capabilities. status: {}", cmptId, err);
+                   log.error("failed to fetch cmpt {} with properties capabilities. status: {}", cmptId, err);
                    return err;
                 });
 

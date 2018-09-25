@@ -146,7 +146,7 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
                 Either<ArtifactDefinition, ResponseFormat> uploadArtifactEither = artifactsLogic.updateArtifactOnInterfaceOperationByResourceUUID(data, request, componentType, uuid, artifactUUID, operationUUID,
                         resourceCommonInfo, artifactsLogic.new ArtifactOperationInfo(true, false, ArtifactOperationEnum.UPDATE));
                 if (uploadArtifactEither.isRight()) {
-                    log.debug("failed to update artifact");
+                    log.error("failed to update artifact");
                     responseFormat = uploadArtifactEither.right().value();
                     responseWrapper.setInnerElement(buildErrorResponse(responseFormat));
                 } else {
@@ -246,7 +246,7 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
                 Either<ArtifactDefinition, ResponseFormat> uploadArtifactEither = artifactsLogic.uploadArtifactToComponentByUUID(data, request, componentType, uuid,
                         resourceCommonInfo, artifactsLogic.new ArtifactOperationInfo(true, false, ArtifactOperationEnum.CREATE));
                 if (uploadArtifactEither.isRight()) {
-                    log.debug("failed to upload artifact");
+                    log.error("failed to upload artifact");
                     responseWrapper.setInnerElement(uploadArtifactEither.right().value());
                 } else {
                     artifactDefinition = uploadArtifactEither.left().value();
@@ -348,7 +348,7 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
                 Either<ArtifactDefinition, ResponseFormat> uploadArtifactEither = artifactsLogic.uploadArtifactToRiByUUID(data, request, componentType, uuid, resourceInstanceName,
                         artifactsLogic.new ArtifactOperationInfo(true, false, ArtifactOperationEnum.CREATE));
                 if (uploadArtifactEither.isRight()) {
-                    log.debug("failed to upload artifact");
+                    log.error("failed to upload artifact");
                     responseFormat = uploadArtifactEither.right().value();
                     responseWrapper.setInnerElement(buildErrorResponse(responseFormat));
                 } else {
@@ -452,7 +452,7 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
                 Either<ArtifactDefinition, ResponseFormat> uploadArtifactEither = artifactsLogic.updateArtifactOnComponentByUUID(data, request, componentType, uuid, artifactUUID,
                         resourceCommonInfo, artifactsLogic.new ArtifactOperationInfo(true, false, ArtifactOperationEnum.UPDATE));
                 if (uploadArtifactEither.isRight()) {
-                    log.debug("failed to update artifact");
+                    log.error("failed to update artifact");
                     responseFormat = uploadArtifactEither.right().value();
                     responseWrapper.setInnerElement(buildErrorResponse(responseFormat));
                 } else {
@@ -552,7 +552,7 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
                 Either<ArtifactDefinition, ResponseFormat> uploadArtifactEither = artifactsLogic.updateArtifactOnRiByUUID(data, request, componentType, uuid, resourceInstanceName, artifactUUID,
                          artifactsLogic.new ArtifactOperationInfo(true, false, ArtifactOperationEnum.UPDATE));
                 if (uploadArtifactEither.isRight()) {
-                    log.debug("failed to update artifact");
+                    log.error("failed to update artifact");
                     responseFormat = uploadArtifactEither.right().value();
                     responseWrapper.setInnerElement(buildErrorResponse(responseFormat));
                 } else {
@@ -646,7 +646,7 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
                 Either<ArtifactDefinition, ResponseFormat> uploadArtifactEither = artifactsLogic.deleteArtifactOnComponentByUUID(request, componentType, uuid, artifactUUID,
                         resourceCommonInfo, artifactsLogic.new ArtifactOperationInfo(true, false, ArtifactOperationEnum.DELETE));
                 if (uploadArtifactEither.isRight()) {
-                    log.debug("failed to delete artifact");
+                    log.error("failed to delete artifact");
                     responseFormat = uploadArtifactEither.right().value();
                     responseWrapper.setInnerElement(buildErrorResponse(responseFormat));
                 } else {
@@ -741,7 +741,7 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
                 Either<ArtifactDefinition, ResponseFormat> uploadArtifactEither = artifactsLogic.deleteArtifactOnRiByUUID(request, componentType, uuid, resourceInstanceName, artifactUUID,
                          artifactsLogic.new ArtifactOperationInfo(true, false, ArtifactOperationEnum.DELETE));
                 if (uploadArtifactEither.isRight()) {
-                    log.debug("failed to delete artifact");
+                    log.error("failed to delete artifact");
                     responseFormat = uploadArtifactEither.right().value();
                     responseWrapper.setInnerElement(buildErrorResponse(responseFormat));
                 } else {

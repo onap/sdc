@@ -278,7 +278,7 @@ public class LifecycleBusinessLogic {
                 log.debug("Resource {} is in Checkout state perform checkin", component.getUniqueId());
                 Either<? extends Component, ResponseFormat> actionResponse = changeState(component, stateTransitions.get(LifeCycleTransitionEnum.CHECKIN.name()), componentType, modifier, changeInfo, inTransaction);
                 if (actionResponse.isRight()) {
-                    log.debug("Failed to check in Resource {} error {}", component.getUniqueId(), actionResponse.right().value());
+                    log.error("Failed to check in Resource {} error {}", component.getUniqueId(), actionResponse.right().value());
                     return actionResponse;
                 }
                 updatedComponent = actionResponse.left().value();
@@ -503,7 +503,7 @@ public class LifecycleBusinessLogic {
             result = Either.right(componentUtils.getResponseFormat(ActionStatus.NOT_ALLOWED));
         }
         if (!isFirstCertification(resource.getVersion())) {
-            log.debug("Failed to perform a force certification of resource{}. Force certification is allowed for the first certification only. ", resource.getName());
+            log.error("Failed to perform a force certification of resource{}. Force certification is allowed for the first certification only. ", resource.getName());
             result = Either.right(componentUtils.getResponseFormat(ActionStatus.NOT_ALLOWED));
         }
         // lock resource
@@ -521,7 +521,7 @@ public class LifecycleBusinessLogic {
                 certifyResourceRes = lifecycleOperation.forceCerificationOfToscaElement(resource.getUniqueId(), user.getUserId(), user.getUserId(), resource.getVersion());
                 if (certifyResourceRes.isRight()) {
                     StorageOperationStatus status = certifyResourceRes.right().value();
-                    log.debug("Failed to perform a force certification of resource {}. The status is {}. ", resource.getName(), status);
+                    log.error("Failed to perform a force certification of resource {}. The status is {}. ", resource.getName(), status);
                     result = Either.right(componentUtils.getResponseFormatByResource(componentUtils.convertFromStorageResponse(status), resource));
                 }
             }

@@ -233,7 +233,7 @@ public abstract class ESTimeBasedDao {
 					hits.add(event);
 				} catch (JSONException e) {
 					log.warn("failed to parse hit from audit index. error: {}", e.getMessage());
-					log.debug("failed to parse hit from audit. hit = {}", hit, e);
+					log.error("failed to parse hit from audit. hit = {}", hit, e);
 				}
 			}
 			return hits;

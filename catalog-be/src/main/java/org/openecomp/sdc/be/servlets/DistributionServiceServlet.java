@@ -90,7 +90,7 @@ public class DistributionServiceServlet extends BeGenericServlet {
 
         } catch (Exception e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Get Distribution list for Service");
-            log.debug("failed to get service distribution statuses", e);
+            log.error("failed to get service distribution statuses", e);
             responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR);
 
             response = buildErrorResponse(responseFormat);
@@ -119,7 +119,7 @@ public class DistributionServiceServlet extends BeGenericServlet {
             if (actionResponse.isRight()) {
 
                 responseFormat = actionResponse.right().value();
-                log.debug("failed to fount statuses for did {} {}", did, responseFormat);
+                log.error("failed to fount statuses for did {} {}", did, responseFormat);
                 response = buildErrorResponse(responseFormat);
             } else {
 
@@ -133,7 +133,7 @@ public class DistributionServiceServlet extends BeGenericServlet {
 
         } catch (Exception e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Get Distribution Status");
-            log.debug("failed to get distribution status ", e);
+            log.error("failed to get distribution status ", e);
             responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR);
 
             response = buildErrorResponse(responseFormat);

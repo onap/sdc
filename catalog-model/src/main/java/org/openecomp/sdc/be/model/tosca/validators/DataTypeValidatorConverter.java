@@ -115,7 +115,7 @@ public class DataTypeValidatorConverter {
                     try {
                         element = jsonParser.parse(convertedValue);
                     } catch (JsonSyntaxException e) {
-                        log.debug("Failed to parse value {} of property {} {}", convertedValue, dataTypeDefinition.getName(), e);
+                        log.error("Failed to parse value {} of property {} {}", convertedValue, dataTypeDefinition.getName(), e);
                         return falseResult;
                     }
 
@@ -187,7 +187,7 @@ public class DataTypeValidatorConverter {
 
                             boolean isValid = validator.isValid(value, innerType, allDataTypes);
                             if (!isValid) {
-                                log.debug("Failed to validate the value {} from type {}", value, propertyType);
+                                log.error("Failed to validate the value {} from type {}", value, propertyType);
                                 return falseResult;
                             }
 
@@ -202,7 +202,7 @@ public class DataTypeValidatorConverter {
                                     try {
                                         element = jsonParser.parse(convertedValue);
                                     } catch (JsonSyntaxException e) {
-                                        log.debug("Failed to parse value {} of type {}", convertedValue, propertyType, e);
+                                        log.error("Failed to parse value {} of type {}", convertedValue, propertyType, e);
                                         return falseResult;
                                     }
                                 }
@@ -220,7 +220,7 @@ public class DataTypeValidatorConverter {
                             ImmutablePair<JsonElement, Boolean> isValid = validateAndUpdate(elementValue, typeDefinition, allDataTypes);
 
                             if (!isValid.getRight().booleanValue()) {
-                                log.debug("Failed in validation of value {} from type {}", (elementValue != null ? elementValue.toString() : null), typeDefinition.getName());
+                                log.error("Failed in validation of value {} from type {}", (elementValue != null ? elementValue.toString() : null), typeDefinition.getName());
                                 return falseResult;
                             }
 
@@ -289,7 +289,7 @@ public class DataTypeValidatorConverter {
         try {
             jsonElement = jsonParser.parse(value);
         } catch (JsonSyntaxException e) {
-            log.debug("Failed to parse the value {} from type {}", value, dataTypeDefinition, e);
+            log.error("Failed to parse the value {} from type {}", value, dataTypeDefinition, e);
             return false;
         }
 
@@ -397,7 +397,7 @@ public class DataTypeValidatorConverter {
 
                             boolean isValid = validator.isValid(value, innerType, allDataTypes);
                             if (!isValid) {
-                                log.debug("Failed to validate the value {} from type {}", value, propertyType);
+                                log.error("Failed to validate the value {} from type {}", value, propertyType);
                                 return false;
                             }
 
@@ -412,7 +412,7 @@ public class DataTypeValidatorConverter {
                             boolean isValid = isValid(elementValue, typeDefinition, allDataTypes);
 
                             if (!isValid) {
-                                log.debug("Failed in validation of value {} from type {}", (elementValue != null ? elementValue.toString() : null), typeDefinition.getName());
+                                log.error("Failed in validation of value {} from type {}", (elementValue != null ? elementValue.toString() : null), typeDefinition.getName());
                                 return false;
                             }
 
