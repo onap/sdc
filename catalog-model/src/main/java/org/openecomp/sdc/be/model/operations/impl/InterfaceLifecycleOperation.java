@@ -548,7 +548,7 @@ public class InterfaceLifecycleOperation implements IInterfaceLifecycleOperation
         InterfaceData updatedInterfaceData = new InterfaceData(newInterfaceInfo);
         Either<InterfaceData, TitanOperationStatus> createStatus = createInterfaceNodeAndRelation(interfaceName, resourceId, updatedInterfaceData, resourceData);
         if (createStatus.isRight()) {
-            log.debug("failed to create interface node  {} on resource  {}", interfaceName,  resourceId);
+            log.error("failed to create interface node  {} on resource  {}", interfaceName,  resourceId);
             return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(createStatus.right().value()));
         }
 
@@ -733,13 +733,13 @@ public class InterfaceLifecycleOperation implements IInterfaceLifecycleOperation
                             ArtifactData arData = artifactRes.left().value().getKey();
                             arStatus = artifactOperation.removeArifactFromResource((String) operationPairEdge.getLeft().getUniqueId(), (String) arData.getUniqueId(), NodeTypeEnum.InterfaceOperation, true, true);
                             if (arStatus.isRight()) {
-                                log.debug("failed to delete artifact {}", arData.getUniqueId());
+                                log.error("failed to delete artifact {}", arData.getUniqueId());
                                 return Either.right(TitanOperationStatus.INVALID_ID);
                             }
                         }
                         Either<OperationData, TitanOperationStatus> deleteOpStatus = titanGenericDao.deleteNode(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.InterfaceOperation), opData.getUniqueId(), OperationData.class);
                         if (deleteOpStatus.isRight()) {
-                            log.debug("failed to delete operation {}", opData.getUniqueId());
+                            log.error("failed to delete operation {}", opData.getUniqueId());
                             return Either.right(TitanOperationStatus.INVALID_ID);
                         }
                         opData = deleteOpStatus.left().value();
@@ -750,7 +750,7 @@ public class InterfaceLifecycleOperation implements IInterfaceLifecycleOperation
                         if (operations.size() <= 1) {
                             Either<InterfaceData, TitanOperationStatus> deleteInterfaceStatus = titanGenericDao.deleteNode(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.Interface), interfaceDataNode.left.getUniqueId(), InterfaceData.class);
                             if (deleteInterfaceStatus.isRight()) {
-                                log.debug("failed to delete interface {}", interfaceDataNode.left.getUniqueId());
+                                log.error("failed to delete interface {}", interfaceDataNode.left.getUniqueId());
                                 return Either.right(TitanOperationStatus.INVALID_ID);
                             }
 

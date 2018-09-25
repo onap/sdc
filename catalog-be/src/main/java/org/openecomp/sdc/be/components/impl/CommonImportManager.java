@@ -118,7 +118,7 @@ public class CommonImportManager {
         try {
             toscaJson = (Map<String, Object>) new Yaml().load(elementTypesYml);
         } catch (Exception e) {
-            log.debug("Failed to yaml file {}", elementTypesYml, e);
+            log.error("Failed to yaml file {}", elementTypesYml, e);
         }
         return toscaJson;
     }
@@ -310,7 +310,7 @@ public class CommonImportManager {
         Either<ActionStatus, ResponseFormat> validateElementType = validator.apply(elementType);
         if (validateElementType.isRight()) {
             ResponseFormat responseFormat = validateElementType.right().value();
-            log.debug("Failed in validation of element type: {}. Response is {}", elementType, responseFormat.getFormattedMessage());
+            log.error("Failed in validation of element type: {}. Response is {}", elementType, responseFormat.getFormattedMessage());
             return Either.right(responseFormat);
         }
 
@@ -346,7 +346,7 @@ public class CommonImportManager {
         
         if (dataModelResponse.isRight()) {
             BeEcompErrorManager.getInstance().logBeFailedAddingNodeTypeError("Create {}", elementTypeEnum.name());
-            log.debug("failed to create {}: {}", elementTypeEnum, elementName);
+            log.error("failed to create {}: {}", elementTypeEnum, elementName);
             if (dataModelResponse.right().value() != StorageOperationStatus.OK) {
                 ResponseFormat responseFormat = getResponseFormatForElementType(convertFromStorageResponseForElementType(dataModelResponse.right().value(), elementTypeEnum), elementTypeEnum, elementType);
                 

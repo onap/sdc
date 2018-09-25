@@ -40,7 +40,7 @@ public class SerializationUtils {
 			out.writeObject(object);
 			return Either.left(bos.toByteArray());
 		} catch (Exception e) {
-			log.debug("Failed to serialize object", e);
+			log.error("Failed to serialize object", e);
 			return Either.right(false);
 		}
 	}
@@ -50,7 +50,7 @@ public class SerializationUtils {
 		try (ByteArrayInputStream bis = new ByteArrayInputStream(bytes); ObjectInput in = new ObjectInputStream(bis)) {
 			return Either.left(in.readObject());
 		} catch (Exception e) {
-			log.debug("Failed to deserialize object", e);
+			log.error("Failed to deserialize object", e);
 			return Either.right(false);
 		}
 	}
@@ -70,7 +70,7 @@ public class SerializationUtils {
 			T castObject = clazz.cast(object);
 			return Either.left(castObject);
 		} catch (Exception e) {
-			log.debug("Failed to deserialize object of type {} and uid {}",clazz,componentName, e);
+			log.error("Failed to deserialize object of type {} and uid {}",clazz,componentName, e);
 			BeEcompErrorManager.getInstance().logInternalUnexpectedError("DeserializeObjectFromCache", "Failed to deserialize object of type " + clazz, ErrorSeverity.WARNING);
 			return Either.right(false);
 		}

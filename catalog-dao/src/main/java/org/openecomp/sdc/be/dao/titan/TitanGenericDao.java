@@ -111,12 +111,12 @@ public class TitanGenericDao {
 				return Either.left(newNode);
 
 			} catch (Exception e) {
-				log.debug("Failed to create Node for ID [{}]", node.getKeyValueId(), e);
+				log.error("Failed to create Node for ID [{}]", node.getKeyValueId(), e);
 				return Either.right(TitanGraphClient.handleTitanException(e));
 			}
 
 		} else {
-			log.debug("Failed to create Node for ID [{}]  {}", node.getKeyValueId(), graph.right().value());
+			log.error("Failed to create Node for ID [{}]  {}", node.getKeyValueId(), graph.right().value());
 			return Either.right(graph.right().value());
 		}
 	}
@@ -140,12 +140,12 @@ public class TitanGenericDao {
 				return Either.left(vertex);
 
 			} catch (Exception e) {
-				log.debug("Failed to create Node for ID [{}]", node.getKeyValueId(), e);
+				log.error("Failed to create Node for ID [{}]", node.getKeyValueId(), e);
 				return Either.right(TitanGraphClient.handleTitanException(e));
 			}
 
 		} else {
-			log.debug("Failed to create Node for ID [{}]  {}", node.getKeyValueId(), graph.right().value());
+			log.error("Failed to create Node for ID [{}]  {}", node.getKeyValueId(), graph.right().value());
 			return Either.right(graph.right().value());
 		}
 	}
@@ -210,11 +210,11 @@ public class TitanGenericDao {
 
 				return Either.left(newRelation);
 			} catch (Exception e) {
-				log.debug("Failed to create edge from [{}] to [{}]", from, to, e);
+				log.error("Failed to create edge from [{}] to [{}]", from, to, e);
 				return Either.right(TitanGraphClient.handleTitanException(e));
 			}
 		} else {
-			log.debug("Failed to create edge from [{}] to [{}]   {}", from, to, graph.right().value());
+			log.error("Failed to create edge from [{}] to [{}]   {}", from, to, graph.right().value());
 			return Either.right(graph.right().value());
 		}
 	}
@@ -223,7 +223,7 @@ public class TitanGenericDao {
 		try {
 			Edge edge = addEdge(vertexOut, vertexIn, type, properties);
 		} catch (Exception e) {
-			log.debug("Failed to create edge from [{}] to [{}]", vertexOut, vertexIn, e);
+			log.error("Failed to create edge from [{}] to [{}]", vertexOut, vertexIn, e);
 			return TitanGraphClient.handleTitanException(e);
 		}
 		return TitanOperationStatus.OK;
@@ -260,7 +260,7 @@ public class TitanGenericDao {
 			Edge edge = addEdge(vertexOut, vertexIn, type, properties);
 			return Either.left(edge);
 		} catch (Exception e) {
-			log.debug("Failed to create edge from [{}] to [{}]", vertexOut, vertexIn, e);
+			log.error("Failed to create edge from [{}] to [{}]", vertexOut, vertexIn, e);
 			return Either.right(TitanGraphClient.handleTitanException(e));
 		}
 
@@ -336,11 +336,11 @@ public class TitanGenericDao {
 				T node = GraphElementFactory.createElement((String) properties.get(GraphPropertiesDictionary.LABEL.getProperty()), GraphElementTypeEnum.Node, properties, clazz);
 				return Either.left(node);
 			} catch (Exception e) {
-				log.debug("Failed to get node for key [{}] with value [{}] ", keyName, keyValue, e);
+				log.error("Failed to get node for key [{}] with value [{}] ", keyName, keyValue, e);
 				return Either.right(TitanGraphClient.handleTitanException(e));
 			}
 		} else {
-			log.debug("Failed to get node for key [{}] with value [{}]  ", keyName, keyValue, vertexByProperty.right().value());
+			log.error("Failed to get node for key [{}] with value [{}]  ", keyName, keyValue, vertexByProperty.right().value());
 			return Either.right(vertexByProperty.right().value());
 		}
 	}
@@ -363,11 +363,11 @@ public class TitanGenericDao {
 				GraphRelation relation = GraphElementFactory.createRelation(label.getProperty(), properties, from, to);
 				return Either.left(relation);
 			} catch (Exception e) {
-				log.debug("Failed to get  get relation from [{}] to [{}]", from.getKeyValueId(), to.getKeyValueId(), e);
+				log.error("Failed to get  get relation from [{}] to [{}]", from.getKeyValueId(), to.getKeyValueId(), e);
 				return Either.right(TitanGraphClient.handleTitanException(e));
 			}
 		} else {
-			log.debug("Failed to get  get relation from [{}] to [{}]   {}", from.getKeyValueId(), to.getKeyValueId(), edge.right().value());
+			log.error("Failed to get  get relation from [{}] to [{}]   {}", from.getKeyValueId(), to.getKeyValueId(), edge.right().value());
 			return Either.right(edge.right().value());
 		}
 	}
@@ -395,12 +395,12 @@ public class TitanGenericDao {
 				GraphRelation relation = GraphElementFactory.createRelation(label.getProperty(), properties, nodeFrom, to);
 				return Either.left(relation);
 			} else {
-				log.debug("failed to get graph");
+				log.error("failed to get graph");
 				return Either.right(graph.right().value());
 			}
 
 		} else {
-			log.debug("failed to find edge {} to {}", label.getProperty(), to.getUniqueId());
+			log.error("failed to find edge {} to {}", label.getProperty(), to.getUniqueId());
 			return Either.right(edgeByCriteria.right().value());
 		}
 
@@ -420,12 +420,12 @@ public class TitanGenericDao {
 				GraphRelation relation = GraphElementFactory.createRelation(label.getProperty(), properties, nodeFrom, to);
 				return Either.left(relation);
 			} else {
-				log.debug("failed to get graph");
+				log.error("failed to get graph");
 				return Either.right(graph.right().value());
 			}
 
 		} else {
-			log.debug("failed to find edge {} to {}", label.getProperty(), to.getUniqueId());
+			log.error("failed to find edge {} to {}", label.getProperty(), to.getUniqueId());
 			return Either.right(edgeByCriteria.right().value());
 		}
 
@@ -488,7 +488,7 @@ public class TitanGenericDao {
 				log.debug("No relation in graph from [{}={}] to [{}={}]", keyNameFrom, keyValueFrom, keyNameTo, keyValueTo);
 				return Either.right(TitanOperationStatus.NOT_FOUND);
 			} catch (Exception e) {
-				log.debug("Failed to get  get relation from [{}={}] to [{}={}]", keyNameFrom, keyValueFrom, keyNameTo, keyValueTo, e);
+				log.error("Failed to get  get relation from [{}={}] to [{}={}]", keyNameFrom, keyValueFrom, keyNameTo, keyValueTo, e);
 				return Either.right(TitanGraphClient.handleTitanException(e));
 			}
 		} else {
@@ -576,13 +576,13 @@ public class TitanGenericDao {
 				return Either.left(newRelation);
 			} catch (Exception e) {
 				if (log.isDebugEnabled()) {
-					log.debug("Failed to update relation from [{}] to [{}] ", from, to, e);
+					log.error("Failed to update relation from [{}] to [{}] ", from, to, e);
 				}
 				return Either.right(TitanGraphClient.handleTitanException(e));
 			}
 		} else {
 			if (log.isDebugEnabled()) {
-				log.debug("Failed to update relation from [{}] to [{}] {}", from, to, edgeS.right().value());
+				log.error("Failed to update relation from [{}] to [{}] {}", from, to, edgeS.right().value());
 			}
 			return Either.right(edgeS.right().value());
 		}
@@ -625,7 +625,7 @@ public class TitanGenericDao {
 				return Either.right(TitanOperationStatus.NOT_FOUND);
 			} catch (Exception e) {
 				if (log.isDebugEnabled()) {
-					log.debug("Failed to get vertex in graph for key ={} and value = {} label = {}",name,value,label);
+					log.error("Failed to get vertex in graph for key ={} and value = {} label = {}",name,value,label);
 				}
 				return Either.right(TitanGraphClient.handleTitanException(e));
 			}
@@ -666,7 +666,7 @@ public class TitanGenericDao {
 				}
 			} catch (Exception e) {
 				if (log.isDebugEnabled()) {
-					log.debug("Failed to get vertex in graph for key = {} and value = ", name, value);
+					log.error("Failed to get vertex in graph for key = {} and value = ", name, value);
 				}
 				return Either.right(TitanGraphClient.handleTitanException(e));
 			}
@@ -723,14 +723,14 @@ public class TitanGenericDao {
 				return Either.left(result);
 			} catch (Exception e) {
 				if (log.isDebugEnabled()) {
-					log.debug("Failed  get by  criteria for type = {}", type, e);
+					log.error("Failed  get by  criteria for type = {}", type, e);
 				}
 				return Either.right(TitanGraphClient.handleTitanException(e));
 			}
 
 		} else {
 			if (log.isDebugEnabled()) {
-				log.debug("Failed  get by  criteria for type ={}  error : {}", type, graph.right().value());
+				log.error("Failed  get by  criteria for type ={}  error : {}", type, graph.right().value());
 			}
 			return Either.right(graph.right().value());
 		}
@@ -774,14 +774,14 @@ public class TitanGenericDao {
 				return Either.left(result);
 			} catch (Exception e) {
 				if (log.isDebugEnabled()) {
-					log.debug("Failed  get by  criteria for type = {}", type, e);
+					log.error("Failed  get by  criteria for type = {}", type, e);
 				}
 				return Either.right(TitanGraphClient.handleTitanException(e));
 			}
 
 		} else {
 			if (log.isDebugEnabled()) {
-				log.debug("Failed  get by  criteria for type ={}  error : {}", type, graph.right().value());
+				log.error("Failed  get by  criteria for type ={}  error : {}", type, graph.right().value());
 			}
 			return Either.right(graph.right().value());
 		}
@@ -827,14 +827,14 @@ public class TitanGenericDao {
 				return Either.left(result);
 			} catch (Exception e) {
 				if (log.isDebugEnabled()) {
-					log.debug("Failed  get by  criteria for type = {} and properties = {}", type, props, e);
+					log.error("Failed  get by  criteria for type = {} and properties = {}", type, props, e);
 				}
 				return Either.right(TitanGraphClient.handleTitanException(e));
 			}
 
 		} else {
 			if (log.isDebugEnabled()) {
-				log.debug("Failed  get by  criteria for type ={} and properties = {} error : {}", type, props, graph.right().value());
+				log.error("Failed  get by  criteria for type ={} and properties = {} error : {}", type, props, graph.right().value());
 			}
 			return Either.right(graph.right().value());
 		}
@@ -882,14 +882,14 @@ public class TitanGenericDao {
 				return Either.left(result);
 			} catch (Exception e) {
 				if (log.isDebugEnabled()) {
-					log.debug("Failed  get by  criteria for type = {} and properties = {}", type, props, e);
+					log.error("Failed  get by  criteria for type = {} and properties = {}", type, props, e);
 				}
 				return Either.right(TitanGraphClient.handleTitanException(e));
 			}
 
 		} else {
 			if (log.isDebugEnabled()) {
-				log.debug("Failed  get by  criteria for type = {} and properties = {} error : {}", type, props, graph.right().value());
+				log.error("Failed  get by  criteria for type = {} and properties = {} error : {}", type, props, graph.right().value());
 			}
 			return Either.right(graph.right().value());
 		}
@@ -933,13 +933,13 @@ public class TitanGenericDao {
 				}
 			} catch (Exception e) {
 				if (log.isDebugEnabled()) {
-					log.debug("Failed to update node for {}", node.getKeyValueId(), e);
+					log.error("Failed to update node for {}", node.getKeyValueId(), e);
 				}
 				return Either.right(TitanGraphClient.handleTitanException(e));
 			}
 		} else {
 			if (log.isDebugEnabled()) {
-				log.debug("Failed to update node for {} error :{}", node.getKeyValueId(), vertexByProperty.right().value());
+				log.error("Failed to update node for {} error :{}", node.getKeyValueId(), vertexByProperty.right().value());
 			}
 			return Either.right(vertexByProperty.right().value());
 		}
@@ -960,7 +960,7 @@ public class TitanGenericDao {
 
 		} catch (Exception e) {
 			if (log.isDebugEnabled()) {
-				log.debug("Failed to update node for {}", node.getKeyValueId(), e);
+				log.error("Failed to update node for {}", node.getKeyValueId(), e);
 			}
 			return TitanGraphClient.handleTitanException(e);
 		}
@@ -1010,19 +1010,19 @@ public class TitanGenericDao {
 						return Either.left(node);
 					} else {
 						if (log.isDebugEnabled()) {
-							log.debug("Failed to delete node for {} = {} Missing label property on node", keyName, keyValue);
+							log.error("Failed to delete node for {} = {} Missing label property on node", keyName, keyValue);
 						}
 						return Either.right(TitanOperationStatus.MISSING_NODE_LABEL);
 					}
 				} else {
 					if (log.isDebugEnabled()) {
-						log.debug("Failed to delete node for {} = {} Missing label property on node", keyName, keyValue);
+						log.error("Failed to delete node for {} = {} Missing label property on node", keyName, keyValue);
 					}
 					return Either.right(TitanOperationStatus.MISSING_NODE_LABEL);
 				}
 			} catch (Exception e) {
 				if (log.isDebugEnabled()) {
-					log.debug("Failed to delete node for {} = {}", keyName, keyValue, e);
+					log.error("Failed to delete node for {} = {}", keyName, keyValue, e);
 				}
 				return Either.right(TitanGraphClient.handleTitanException(e));
 			}
@@ -1077,20 +1077,20 @@ public class TitanGenericDao {
 					;
 				} else {
 					if (log.isDebugEnabled()) {
-						log.debug("Failed to delete relation {} from {}  to {} error : {}",type,fromKeyId,toKeyId,graph.right().value());
+						log.error("Failed to delete relation {} from {}  to {} error : {}",type,fromKeyId,toKeyId,graph.right().value());
 					}
 					return Either.right(graph.right().value());
 				}
 				return Either.left(newRelation);
 			} catch (Exception e) {
 				if (log.isDebugEnabled()) {
-					log.debug("Failed to delete relation {} from {}  to {}", type, fromKeyId, toKeyId, e);
+					log.error("Failed to delete relation {} from {}  to {}", type, fromKeyId, toKeyId, e);
 				}
 				return Either.right(TitanGraphClient.handleTitanException(e));
 			}
 		} else {
 			if (log.isDebugEnabled()) {
-				log.debug("Failed to delete relation {} from {}  to {} error : {}", type, fromKeyId, toKeyId, edgeS.right().value());
+				log.error("Failed to delete relation {} from {}  to {} error : {}", type, fromKeyId, toKeyId, edgeS.right().value());
 			}
 			return Either.right(edgeS.right().value());
 		}
@@ -1277,12 +1277,12 @@ public class TitanGenericDao {
 				log.debug("Lock node created for {}", lockNode.getUniqueIdKey());
 				return titanClient.commit();
 			} else {
-				log.debug("Failed Lock node for {} .  Commit transacton for deleted previous vertex .", lockNode.getUniqueIdKey());
+				log.error("Failed Lock node for {} .  Commit transacton for deleted previous vertex .", lockNode.getUniqueIdKey());
 				titanClient.commit();
 				status = checkLockError(lockNode.getUniqueIdKey(), lockNodeNew);
 			}
 		} else {
-			log.debug("Failed Lock node for {}  rollback transacton", lockNode.getUniqueIdKey());
+			log.error("Failed Lock node for {}  rollback transacton", lockNode.getUniqueIdKey());
 			titanClient.rollback();
 			status = checkLockError(lockNode.getUniqueIdKey(), lockNodeNew);
 		}
@@ -1381,7 +1381,7 @@ public class TitanGenericDao {
 	private TitanOperationStatus checkLockError(String lockId, Either<GraphNodeLock, TitanOperationStatus> lockNodeNew) {
 		TitanOperationStatus status;
 		TitanOperationStatus error = lockNodeNew.right().value();
-		log.debug("Failed to Lock node for {}  error = {}", lockId, error);
+		log.error("Failed to Lock node for {}  error = {}", lockId, error);
 		if (error.equals(TitanOperationStatus.TITAN_SCHEMA_VIOLATION) || error.equals(TitanOperationStatus.ILLEGAL_ARGUMENT)) {
 			status = TitanOperationStatus.ALREADY_LOCKED;
 		} else {
@@ -1411,7 +1411,7 @@ public class TitanGenericDao {
 		} else {
 			titanClient.rollback();
 			TitanOperationStatus error = lockNodeNew.right().value();
-			log.debug("Failed to Release node for lock id {} error = {}", lockId, error);
+			log.error("Failed to Release node for lock id {} error = {}", lockId, error);
 			return error;
 		}
 	}
@@ -1510,7 +1510,7 @@ public class TitanGenericDao {
 		Either<List<ImmutablePair<T, GraphEdge>>, TitanOperationStatus> parentNodesRes = this.getParentNodes(key, uniqueId, edgeType, nodeTypeEnum, clazz);
 
 		if (parentNodesRes.isRight()) {
-			log.debug("failed to get edge key:{} uniqueId:{} edgeType {} nodeTypeEnum: {}, reason:{}", key, uniqueId, edgeType, nodeTypeEnum, parentNodesRes.right().value());
+			log.error("failed to get edge key:{} uniqueId:{} edgeType {} nodeTypeEnum: {}, reason:{}", key, uniqueId, edgeType, nodeTypeEnum, parentNodesRes.right().value());
 			return Either.right(parentNodesRes.right().value());
 		}
 

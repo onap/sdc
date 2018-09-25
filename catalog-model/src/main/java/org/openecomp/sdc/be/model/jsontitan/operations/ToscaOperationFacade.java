@@ -248,7 +248,7 @@ public class ToscaOperationFacade {
         }
         Either<ToscaElement, StorageOperationStatus> deleteElement = deleteToscaElement(getVertexEither.left().value());
         if (deleteElement.isRight()) {
-            log.debug("Failed to delete component with and unique id {}, error: {}", componentId, deleteElement.right().value());
+            log.error("Failed to delete component with and unique id {}, error: {}", componentId, deleteElement.right().value());
             return Either.right(deleteElement.right().value());
         }
         T dataModel = ModelConverter.convertFromToscaElement(deleteElement.left().value());
@@ -309,7 +309,7 @@ public class ToscaOperationFacade {
             if (resources.right().value() == TitanOperationStatus.NOT_FOUND) {
                 return StorageOperationStatus.OK;
             } else {
-                log.debug("failed to get resources from graph with property name: {}", csarUUID);
+                log.error("failed to get resources from graph with property name: {}", csarUUID);
                 return DaoStatusConverter.convertTitanStatusToStorageStatus(resources.right().value());
             }
         }
@@ -416,7 +416,7 @@ public class ToscaOperationFacade {
         Either<List<GraphVertex>, TitanOperationStatus> resources = titanDao.getByCriteria(null, properties, JsonParseFlagEnum.ParseMetadata);
 
         if (resources.isRight() && resources.right().value() != TitanOperationStatus.NOT_FOUND) {
-            log.debug("failed to get resources from graph with property name: {}", name);
+            log.error("failed to get resources from graph with property name: {}", name);
             return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(resources.right().value()));
         }
         List<GraphVertex> resourceList = (resources.isLeft() ? resources.left().value() : null);
@@ -523,7 +523,7 @@ public class ToscaOperationFacade {
         ToscaElement toscaElementToUpdate = ModelConverter.convertToToscaElement(componentToUpdate);
         Either<ToscaElement, StorageOperationStatus> updateToscaElement = toscaElementOperation.updateToscaElement(toscaElementToUpdate, elementV, filterResult);
         if (updateToscaElement.isRight()) {
-            log.debug("Failed to update tosca element {} error {}", componentId, updateToscaElement.right().value());
+            log.error("Failed to update tosca element {} error {}", componentId, updateToscaElement.right().value());
             return Either.right(updateToscaElement.right().value());
         }
         return Either.left(ModelConverter.convertFromToscaElement(updateToscaElement.left().value()));
@@ -547,7 +547,7 @@ public class ToscaOperationFacade {
         Either<List<GraphVertex>, TitanOperationStatus> highestResources = titanDao.getByCriteria(null, propertiesToMatch, propertiesNotToMatch, parseFlag);
         if (highestResources.isRight()) {
             TitanOperationStatus status = highestResources.right().value();
-            log.debug("failed to find resource with name {}. status={} ", nodeName, status);
+            log.error("failed to find resource with name {}. status={} ", nodeName, status);
             result = Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
             return result;
         }
@@ -590,7 +590,7 @@ public class ToscaOperationFacade {
         Either<List<GraphVertex>, TitanOperationStatus> getComponentsRes = titanDao.getByCriteria(null, propertiesToMatch, propertiesNotToMatch, JsonParseFlagEnum.ParseAll);
         if (getComponentsRes.isRight()) {
             TitanOperationStatus status = getComponentsRes.right().value();
-            log.debug("Failed to fetch the component with system name {}. Status is {} ", systemName, status);
+            log.error("Failed to fetch the component with system name {}. Status is {} ", systemName, status);
             result = Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
         }
         if (result == null) {
@@ -598,7 +598,7 @@ public class ToscaOperationFacade {
             for (GraphVertex componentVertex : componentVertices) {
                 getComponentRes = getToscaElementByOperation(componentVertex);
                 if (getComponentRes.isRight()) {
-                    log.debug("Failed to get the component {}. Status is {} ", componentVertex.getJsonMetadataField(JsonPresentationFields.NAME), getComponentRes.right().value());
+                    log.error("Failed to get the component {}. Status is {} ", componentVertex.getJsonMetadataField(JsonPresentationFields.NAME), getComponentRes.right().value());
                     result = Either.right(getComponentRes.right().value());
                     break;
                 }
@@ -632,7 +632,7 @@ public class ToscaOperationFacade {
         Either<List<GraphVertex>, TitanOperationStatus> getResourceRes = titanDao.getByCriteria(null, hasProperties, hasNotProperties, parseFlag);
         if (getResourceRes.isRight()) {
             TitanOperationStatus status = getResourceRes.right().value();
-            log.debug("failed to find resource with name {}, version {}. Status is {} ", name, version, status);
+            log.error("failed to find resource with name {}, version {}. Status is {} ", name, version, status);
             result = Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
             return result;
         }
@@ -722,7 +722,7 @@ public class ToscaOperationFacade {
             if (isAllowedToDelete) {
                 Either<ToscaElement, StorageOperationStatus> deleteToscaElement = deleteToscaElement(elementV);
                 if (deleteToscaElement.isRight()) {
-                    log.debug("Failed to delete marked element UniqueID {}, Name {}, error {}", elementV.getUniqueId(), elementV.getMetadataProperties().get(GraphPropertyEnum.NAME), deleteToscaElement.right().value());
+                    log.error("Failed to delete marked element UniqueID {}, Name {}, error {}", elementV.getUniqueId(), elementV.getMetadataProperties().get(GraphPropertyEnum.NAME), deleteToscaElement.right().value());
                     continue;
                 }
                 deleted.add(elementV.getUniqueId());
@@ -1046,7 +1046,7 @@ public class ToscaOperationFacade {
             pathKeysPerInst.add(inputsPerIntance.getKey());
             status = topologyTemplateOperation.updateToscaDataDeepElementsOfToscaElement(componentId, EdgeLabelEnum.INST_INPUTS, VertexTypeEnum.INST_INPUTS, toscaDataListPerInst, pathKeysPerInst, JsonPresentationFields.NAME);
             if (status != StorageOperationStatus.OK) {
-                log.debug("Failed to update component instance inputs for instance {} in component {} edge type {} error {}", inputsPerIntance.getKey(), componentId, EdgeLabelEnum.INST_INPUTS, status);
+                log.error("Failed to update component instance inputs for instance {} in component {} edge type {} error {}", inputsPerIntance.getKey(), componentId, EdgeLabelEnum.INST_INPUTS, status);
                 return Either.right(status);
             }
         }
@@ -1068,7 +1068,7 @@ public class ToscaOperationFacade {
             pathKeysPerInst.add(propsPerIntance.getKey());
             status = topologyTemplateOperation.updateToscaDataDeepElementsOfToscaElement(componentId, EdgeLabelEnum.INST_PROPERTIES, VertexTypeEnum.INST_PROPERTIES, toscaDataListPerInst, pathKeysPerInst, JsonPresentationFields.NAME);
             if (status != StorageOperationStatus.OK) {
-                log.debug("Failed to update component instance inputs for instance {} in component {} edge type {} error {}", propsPerIntance.getKey(), componentId, EdgeLabelEnum.INST_PROPERTIES, status);
+                log.error("Failed to update component instance inputs for instance {} in component {} edge type {} error {}", propsPerIntance.getKey(), componentId, EdgeLabelEnum.INST_PROPERTIES, status);
                 return Either.right(status);
             }
         }
@@ -1126,7 +1126,7 @@ public class ToscaOperationFacade {
                         status = addComponentInstanceInput(containerComponent, componentInstanceId, property);
                     }
                     if (status != StorageOperationStatus.OK) {
-                        log.debug("Failed to update instance input {} for instance {} error {} ", property, componentInstanceId, status);
+                        log.error("Failed to update instance input {} for instance {} error {} ", property, componentInstanceId, status);
                         return Either.right(status);
                     } else {
                         log.trace("instance input {} for instance {} updated", property, componentInstanceId);
@@ -1155,7 +1155,7 @@ public class ToscaOperationFacade {
                         status = addComponentInstanceProperty(containerComponent, componentInstanceId, property);
                     }
                     if (status != StorageOperationStatus.OK) {
-                        log.debug("Failed to update instance property {} for instance {} error {} ", property, componentInstanceId, status);
+                        log.error("Failed to update instance property {} for instance {} error {} ", property, componentInstanceId, status);
                         return Either.right(status);
                     }
                 }
@@ -1327,7 +1327,7 @@ public class ToscaOperationFacade {
         if (internalComponentType != null && internalComponentType.toLowerCase().trim().equals(SERVICE) && VertexTypeEnum.NODE_TYPE == vertexType) {
             Either<List<Service>, StorageOperationStatus> result = getLatestVersionNonCheckoutServicesMetadataOnly(new EnumMap<>(GraphPropertyEnum.class), new EnumMap<>(GraphPropertyEnum.class));
             if (result.isRight()) {
-                log.debug("Failed to fetch services for");
+                log.error("Failed to fetch services for");
                 return Either.right(result.right().value());
             }
             services = result.left().value();
@@ -1341,7 +1341,7 @@ public class ToscaOperationFacade {
         for (GraphVertex vertexComponent : getRes.left().value()) {
             Either<ToscaElement, StorageOperationStatus> componentRes = topologyTemplateOperation.getLightComponent(vertexComponent, componentTypeEnum, params);
             if (componentRes.isRight()) {
-                log.debug("Failed to fetch light element for {} error {}", vertexComponent.getUniqueId(), componentRes.right().value());
+                log.error("Failed to fetch light element for {} error {}", vertexComponent.getUniqueId(), componentRes.right().value());
                 return Either.right(componentRes.right().value());
             } else {
                 Component component = ModelConverter.convertFromToscaElement(componentRes.left().value());
@@ -1410,7 +1410,7 @@ public class ToscaOperationFacade {
                 }
                 Either<ToscaElement, StorageOperationStatus> getToscaElementRes = nodeTemplateOperation.getToscaElementOperation(componentTypeEnum).getLightComponent(componentUid, componentTypeEnum, componentParametersView);
                 if (getToscaElementRes.isRight()) {
-                    log.debug("Failed to fetch resource for error is {}", getToscaElementRes.right().value());
+                    log.error("Failed to fetch resource for error is {}", getToscaElementRes.right().value());
                     return Either.right(getToscaElementRes.right().value());
                 }
                 Component component = ModelConverter.convertFromToscaElement(getToscaElementRes.left().value());
@@ -1475,7 +1475,7 @@ public class ToscaOperationFacade {
 
         Either<List<GraphVertex>, TitanOperationStatus> vertexEither = titanDao.getByCriteria(vertexType, properties, JsonParseFlagEnum.NoParse);
         if (vertexEither.isRight() && vertexEither.right().value() != TitanOperationStatus.NOT_FOUND) {
-            log.debug("failed to get vertex from graph with property normalizedName: {}", normalizedName);
+            log.error("failed to get vertex from graph with property normalizedName: {}", normalizedName);
             return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(vertexEither.right().value()));
         }
         List<GraphVertex> vertexList = vertexEither.isLeft() ? vertexEither.left().value() : null;
@@ -1687,7 +1687,7 @@ public class ToscaOperationFacade {
         Either<List<GraphVertex>, TitanOperationStatus> getResourcesRes = titanDao.getByCriteria(null, propertiesToMatch, propertiesNotToMatch, JsonParseFlagEnum.ParseAll);
 
         if (getResourcesRes.isRight()) {
-            log.debug("Failed to fetch all certified resources. Status is {}", getResourcesRes.right().value());
+            log.error("Failed to fetch all certified resources. Status is {}", getResourcesRes.right().value());
             return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(getResourcesRes.right().value()));
         }
         List<GraphVertex> resourceVerticies = getResourcesRes.left().value();
@@ -1716,7 +1716,7 @@ public class ToscaOperationFacade {
         Either<List<GraphVertex>, TitanOperationStatus> getResourceRes = titanDao.getByCriteria(null, hasProperties, hasNotProperties, parseFlag);
         if (getResourceRes.isRight()) {
             TitanOperationStatus status = getResourceRes.right().value();
-            log.debug("failed to find resource with name {}, version {}. Status is {} ", name, version, status);
+            log.error("failed to find resource with name {}, version {}. Status is {} ", name, version, status);
             result = Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
             return result;
         }
@@ -2286,7 +2286,7 @@ public class ToscaOperationFacade {
 
         Either<ToscaElement, StorageOperationStatus> shouldUpdateDerivedVersion = nodeTypeOperation.shouldUpdateDerivedVersion(toscaElementToUpdate, nodeTypeV);
         if (shouldUpdateDerivedVersion.isRight() && StorageOperationStatus.OK != shouldUpdateDerivedVersion.right().value()) {
-            log.debug("Failed to update derived version for node type {} derived {}, error: {}", componentId, clonedResource.getDerivedFrom().get(0), shouldUpdateDerivedVersion.right().value());
+            log.error("Failed to update derived version for node type {} derived {}, error: {}", componentId, clonedResource.getDerivedFrom().get(0), shouldUpdateDerivedVersion.right().value());
             return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(getVertexEither.right().value()));
         }
         if (shouldUpdateDerivedVersion.isLeft()) {

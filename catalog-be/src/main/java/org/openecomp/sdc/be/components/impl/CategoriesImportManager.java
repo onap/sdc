@@ -119,11 +119,11 @@ public class CategoriesImportManager {
                 String groupingId = UniqueIdBuilder.buildGroupingUid(grouping.getUniqueId(), grouping.getNormalizedName());
                 createdGrouping = elementOperation.getGroupingUniqueForType(nodeTypeGroup, groupingId);
                 if (createdGrouping.isRight()) {
-                    log.debug("failed to get grouping that exists groupingId: {} type: {}", groupingId, nodeTypeGroup);
+                    log.error("failed to get grouping that exists groupingId: {} type: {}", groupingId, nodeTypeGroup);
                     return Either.right(componentsUtils.getResponseFormat(createdGrouping.right().value()));
                 }
             }
-            log.debug("Failed to create groupingcategory for {}  category {} subcategory {} grouping {} error {}", entry.getKey(),
+            log.error("Failed to create groupingcategory for {}  category {} subcategory {} grouping {} error {}", entry.getKey(),
                     category.getName(), subcategory.getName(), grouping != null ? grouping.getName() : null,
                             createdGrouping != null && createdGrouping.right() != null ? createdGrouping.right().value() : null);
 
@@ -144,11 +144,11 @@ public class CategoriesImportManager {
                 String subCategoryId = UniqueIdBuilder.buildSubCategoryUid(newcategory.getUniqueId(), subcategory.getNormalizedName());
                 createdSubCategory = elementOperation.getSubCategory(nodeTypeSubCategory, subCategoryId);
                 if (createdSubCategory.isRight()) {
-                    log.debug("failed to get sub category that exists subCategoryId: {} type: {}", subCategoryId, nodeTypeSubCategory);
+                    log.error("failed to get sub category that exists subCategoryId: {} type: {}", subCategoryId, nodeTypeSubCategory);
                     return Either.right(componentsUtils.getResponseFormat(createdSubCategory.right().value()));
                 }
             } else {
-                log.debug("Failed to create subcategory for {}  category: {} subcategory: {} error {}", entry.getKey(), newcategory.getName(), subcategory.getName(), createdSubCategory.right().value());
+                log.error("Failed to create subcategory for {}  category: {} subcategory: {} error {}", entry.getKey(), newcategory.getName(), subcategory.getName(), createdSubCategory.right().value());
                 return Either.right(componentsUtils.getResponseFormat(createdSubCategory.right().value()));
             }
         } else {
@@ -161,7 +161,7 @@ public class CategoriesImportManager {
         log.debug("createCategorieDeo: creating category {}", category);
         Either<CategoryDefinition, ActionStatus> createdCategory = elementOperation.createCategory(category, nodeTypeCategory);
         if (createdCategory.isRight()) {
-            log.debug("Failed to create category for {}  {} error {}", entry.getKey(), category.getName(), createdCategory.right().value());
+            log.error("Failed to create category for {}  {} error {}", entry.getKey(), category.getName(), createdCategory.right().value());
             if (!ActionStatus.COMPONENT_CATEGORY_ALREADY_EXISTS.equals(createdCategory.right().value())) {
                 return Either.right(componentsUtils.getResponseFormat(createdCategory.right().value()));
             } else {
@@ -169,7 +169,7 @@ public class CategoriesImportManager {
                 String categoryId = UniqueIdBuilder.buildCategoryUid(category.getNormalizedName(), nodeTypeCategory);
                 createdCategory = elementOperation.getCategory(nodeTypeCategory, categoryId);
                 if (createdCategory.isRight()) {
-                    log.debug("failed to get category that exists categoryId: {} type: {}", categoryId, nodeTypeCategory);
+                    log.error("failed to get category that exists categoryId: {} type: {}", categoryId, nodeTypeCategory);
                     return Either.right(componentsUtils.getResponseFormat(createdCategory.right().value()));
                 }
             }

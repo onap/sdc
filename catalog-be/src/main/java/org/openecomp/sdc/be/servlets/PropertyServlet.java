@@ -181,7 +181,7 @@ public class PropertyServlet extends BeGenericServlet {
             PropertyBusinessLogic businessLogic = getPropertyBL(context);
             Either<Entry<String, PropertyDefinition>, ResponseFormat> status = businessLogic.deleteProperty(resourceId, propertyId, userId);
             if (status.isRight()) {
-                log.debug("Failed to delete Property. Reason - ", status.right().value());
+                log.error("Failed to delete Property. Reason - ", status.right().value());
                 return buildErrorResponse(status.right().value());
             }
             Entry<String, PropertyDefinition> property = status.left().value();
@@ -312,7 +312,7 @@ public class PropertyServlet extends BeGenericServlet {
             return (JSONObject) new JSONParser().parse(value);
         } catch (ParseException e) {
             log.info("failed to convert input to json");
-            log.debug("failed to convert to json", e);
+            log.error("failed to convert to json", e);
             return new JSONObject();
         }
 
@@ -333,7 +333,7 @@ public class PropertyServlet extends BeGenericServlet {
         } catch (Exception e) {
             // INVALID JSON
             log.info("failed to convert from json");
-            log.debug("failed to convert from json", e);
+            log.error("failed to convert from json", e);
             return Either.right(ActionStatus.INVALID_CONTENT);
         }
         return Either.left(t);
@@ -354,7 +354,7 @@ public class PropertyServlet extends BeGenericServlet {
         } catch (Exception e) {
             // INVALID JSON
             log.info("failed to convert to json");
-            log.debug("failed to convert fto json", e);
+            log.error("failed to convert fto json", e);
             return Either.right(ActionStatus.INVALID_CONTENT);
         }
 

@@ -58,9 +58,9 @@ public abstract class Job<E> {
         if (metaDataRes.isRight()) {
             // in case we cant find the component on graph exit
             if (StorageOperationStatus.NOT_FOUND.equals(metaDataRes.right().value())) {
-                log.debug("failed to locate component:{} on graph status:{}", componentId, metaDataRes.right().value());
+                log.error("failed to locate component:{} on graph status:{}", componentId, metaDataRes.right().value());
             } else {
-                log.debug("failed to get component:{} from graph status:{}", componentId, metaDataRes.right().value());
+                log.error("failed to get component:{} from graph status:{}", componentId, metaDataRes.right().value());
             }
         }
         return metaDataRes;

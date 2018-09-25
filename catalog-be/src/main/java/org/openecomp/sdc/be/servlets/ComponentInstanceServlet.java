@@ -797,7 +797,7 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
             Either<GroupDefinitionInfo, ResponseFormat> actionResponse = businessLogic.getGroupInstWithArtifactsById(componentTypeEnum, componentId, componentInstanceId, groupInstId, userId, false);
 
             if (actionResponse.isRight()) {
-                log.debug("failed to get all non abstract {}", containerComponentType);
+                log.error("failed to get all non abstract {}", containerComponentType);
                 return buildErrorResponse(actionResponse.right().value());
             }
 
@@ -1152,7 +1152,7 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
         } catch (Exception e) {
             // INVALID JSON
             BeEcompErrorManager.getInstance().logBeInvalidJsonInput("convertJsonToObject");
-            log.debug("failed to convert from json", e);
+            log.error("failed to convert from json", e);
             return Either.right(ActionStatus.INVALID_CONTENT);
         }
     }

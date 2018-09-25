@@ -610,14 +610,14 @@ public class ComponentCache {
                 }
 
             } catch (IOException e) {
-                log.debug("Failed to prepare component {} of type {} for cache", componentUid,
+                log.error("Failed to prepare component {} of type {} for cache", componentUid,
                         nodeTypeEnum.name().toLowerCase());
                 if (log.isTraceEnabled()) {
                     log.trace("Failed to prepare component {} of type {} for cache",componentUid,nodeTypeEnum.name().toLowerCase());
                 }
             }
         } else {
-            log.debug("Failed to serialize component {} of type {} for cache", componentUid,
+            log.error("Failed to serialize component {} of type {} for cache", componentUid,
                     nodeTypeEnum.name().toLowerCase());
         }
         return result;
