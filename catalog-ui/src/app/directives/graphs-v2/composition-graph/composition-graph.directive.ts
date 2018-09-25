@@ -35,7 +35,7 @@ import {
     NodesFactory,
     Point
 } from "app/models";
-import { ComponentInstanceFactory, ComponentFactory, GRAPH_EVENTS, GraphColors } from "app/utils";
+import { ComponentInstanceFactory, ComponentFactory, GRAPH_EVENTS, GraphColors, GraphUIObjects, ModalsHandler } from "app/utils";
 import { EventListenerService, LoaderService } from "app/services";
 import { CompositionGraphLinkUtils } from "./utils/composition-graph-links-utils";
 import { CompositionGraphGeneralUtils } from "./utils/composition-graph-general-utils";
@@ -127,13 +127,20 @@ export interface ICompositionGraphScope extends ng.IScope {
     deletePathsOnCy(): void;
     drawPathOnCy(data: ForwardingPath): void;
     selectedPathId: string;
+
+    copyComponentInstance(): void;
+    pasteComponentInstance(event: IDragDropEvent): void;
+
+    origComponentId: string;
 }
 
 export class CompositionGraph implements ng.IDirective {
     private _cy: Cy.Instance;
     private _currentlyCLickedNodePosition: Cy.Position;
+    // private $document:JQuery = $(document);
     private dragElement: JQuery;
     private dragComponent: ComponentInstance;
+    private cyBackgroundClickEvent: any;
 
     constructor(private $q: ng.IQService,
         private $log: ng.ILogService,
@@ -154,7 +161,8 @@ export class CompositionGraph implements ng.IDirective {
         private ModalServiceNg2: ModalService,
         private ConnectionWizardServiceNg2: ConnectionWizardService,
         private ComponentInstanceServiceNg2: ComponentInstanceServiceNg2,
-        private servicePathGraphUtils: ServicePathGraphUtils) {
+        private servicePathGraphUtils: ServicePathGraphUtils,
+        private ModalsHandler: ModalsHandler) {
 
     }
 
@@ -669,6 +677,8 @@ export class CompositionGraph implements ng.IDirective {
 
     }
 
+
+
     private registerCytoscapeGraphEvents(scope: ICompositionGraphScope) {
 
         this._cy.on('addedgemouseup', (event, data) => {
@@ -769,6 +779,8 @@ export class CompositionGraph implements ng.IDirective {
                     }
                     this.eventListenerService.notifyObservers(GRAPH_EVENTS.ON_GRAPH_BACKGROUND_CLICKED);
                 }
+                this.cyBackgroundClickEvent = event;
+                //console.log(this.cyBackgroundClickEvent);
                 scope.hideRelationMenu();
             }
 
@@ -888,7 +900,6 @@ export class CompositionGraph implements ng.IDirective {
         });
     }
 
-
     private initDropZone(scope: ICompositionGraphScope) {
 
         if (scope.isViewOnly) {
@@ -1002,7 +1013,30 @@ export class CompositionGraph implements ng.IDirective {
             }
         };
     };
+    private isComponentPasteValid(scope: ICompositionGraphScope, cy: Cy.Instance, event: IDragDropEvent, offsetPosition: Cy.Position, origSelectedInstance: ComponentInstance) {
+        let bbox = this._getNodeBBox(cy, event, origSelectedInstance, offsetPosition);
 
+        if (this.GeneralGraphUtils.isPaletteDropValid(cy, bbox, origSelectedInstance)) {
+            scope.pasteValid = true;
+        } else {
+            scope.pasteValid = false;
+        }
+    }
+
+    private _getNodeBBox(cy: Cy.Instance, event: IDragDropEvent, origSelectedInstance: ComponentInstance, position?: Cy.Position) {
+        let bbox = <Cy.BoundingBox>{};
+        if (!position) {
+            position = this.commonGraphUtils.getCytoscapeNodePosition(cy, event);
+        }
+        let cushionWidth: number = 40;
+        let cushionHeight: number = 40;
+
+        bbox.x1 = position.x - cushionWidth / 2;
+        bbox.y1 = position.y - cushionHeight / 2;
+        bbox.x2 = position.x + cushionWidth / 2;
+        bbox.y2 = position.y + cushionHeight / 2;
+        return bbox;
+    }
 
     public static factory = ($q,
         $log,
@@ -1023,7 +1057,8 @@ export class CompositionGraph implements ng.IDirective {
         ModalService,
         ConnectionWizardService,
         ComponentInstanceServiceNg2,
-        ServicePathGraphUtils) => {
+        ServicePathGraphUtils,
+        ModalsHandler) => {
         return new CompositionGraph(
             $q,
             $log,
@@ -1044,7 +1079,8 @@ export class CompositionGraph implements ng.IDirective {
             ModalService,
             ConnectionWizardService,
             ComponentInstanceServiceNg2,
-            ServicePathGraphUtils);
+            ServicePathGraphUtils,
+            ModalsHandler);
     }
 }
 
@@ -1068,5 +1104,6 @@ CompositionGraph.factory.$inject = [
     'ModalServiceNg2',
     'ConnectionWizardServiceNg2',
     'ComponentInstanceServiceNg2',
-    'ServicePathGraphUtils'
+    'ServicePathGraphUtils',
+    'ModalsHandler'
 ];
