@@ -461,13 +461,11 @@ const SDC_MENU_CONFIG = {
             {"text": "General", "action": "onMenuItemPressed", "state": "workspace.general"},
             {"text": "Deployment Artifact", "action": "onMenuItemPressed", "state": "workspace.deployment_artifacts"},
             {"text": "Information Artifact", "action": "onMenuItemPressed", "state": "workspace.information_artifacts"},
-            {"text": "TOSCA Artifacts", "action": "onMenuItemPressed", "state": "workspace.tosca_artifacts"},
-            // {"text":"Properties", "action":"onMenuItemPressed", "state": "workspace.properties"},
+            {"text": "TOSCA Artifacts", "action": "onMenuItemPressed", "state": "workspace.tosca_artifacts"},            
             {"text": "Composition", "action": "onMenuItemPressed", "state": "workspace.composition.details"},
             {"text":"Operation", "action":"onMenuItemPressed", "state": "workspace.interface_operation"},
             {"text": "Activity Log", "action": "onMenuItemPressed", "state": "workspace.activity_log"},
-            {"text": "Deployment", "action": "onMenuItemPressed", "state": "workspace.deployment"},
-            // {"text":"Inputs", "action":"onMenuItemPressed", "state": "workspace.resource_inputs"},
+            {"text": "Deployment", "action": "onMenuItemPressed", "state": "workspace.deployment"},            
             {"text": "Properties Assignment", "action": "onMenuItemPressed", "state": "workspace.properties_assignment"}
         ],
         "PNF": [
@@ -496,8 +494,7 @@ const SDC_MENU_CONFIG = {
             {"text": "Management Workflow", "action": "onMenuItemPressed", "state": "workspace.management_workflow"},
             {"text": "Network Call Flow ", "action": "onMenuItemPressed", "state": "workspace.network_call_flow"},
             {"text": "Distribution","action": "onMenuItemPressed","state": "workspace.distribution","disabledRoles": ["ADMIN", "TESTER", "GOVERNOR", "DESIGNER"]},
-            {"text": "Deployment", "action": "onMenuItemPressed", "state": "workspace.deployment"},
-            // {"text":"Inputs", "action":"onMenuItemPressed", "state": "workspace.service_inputs"},
+            {"text": "Deployment", "action": "onMenuItemPressed", "state": "workspace.deployment"},            
             {"text": "Properties Assignment", "action": "onMenuItemPressed", "state": "workspace.properties_assignment"}
         ]
     }
