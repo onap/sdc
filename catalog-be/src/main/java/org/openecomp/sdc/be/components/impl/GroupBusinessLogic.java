@@ -258,7 +258,7 @@ public class GroupBusinessLogic extends BaseBusinessLogic {
         Either<GroupDefinition, ResponseFormat> result = validateAndUpdateGroupMetadata(currentGroup, updatedGroup);
 
         if (result.isRight()) {
-            log.debug("Failed to validate a metadata of the group {} on component {}. ", updatedGroup.getName(), component.getName());
+            log.error("Failed to validate a metadata of the group {} on component {}. ", updatedGroup.getName(), component.getName());
         }
         if (result.isLeft()) {
             result = updateGroup(component, currentGroup, currentGroupName);
@@ -272,18 +272,18 @@ public class GroupBusinessLogic extends BaseBusinessLogic {
         if (updatedGroup.getName().equals(currentGroupName)) {
             handleGroupRes = groupsOperation.updateGroup(component, updatedGroup);
             if (handleGroupRes.isRight()) {
-                log.debug("Failed to update a metadata of the group {} on component {}. ", updatedGroup.getName(), component.getName());
+                log.error("Failed to update a metadata of the group {} on component {}. ", updatedGroup.getName(), component.getName());
                 result = Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(handleGroupRes.right().value())));
             }
         } else {
             StorageOperationStatus deleteStatus = groupsOperation.deleteGroup(component, currentGroupName);
             if (deleteStatus != StorageOperationStatus.OK) {
-                log.debug("Failed to delete the group {} from component {}. ", updatedGroup.getName(), component.getName());
+                log.error("Failed to delete the group {} from component {}. ", updatedGroup.getName(), component.getName());
                 result = Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(deleteStatus)));
             }
             handleGroupRes = groupsOperation.addGroup(component, updatedGroup);
             if (handleGroupRes.isRight()) {
-                log.debug("Failed to add the group {} to component {}. ", updatedGroup.getName(), component.getName());
+                log.error("Failed to add the group {} to component {}. ", updatedGroup.getName(), component.getName());
                 result = Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(handleGroupRes.right().value())));
             }
         }
@@ -454,7 +454,7 @@ public class GroupBusinessLogic extends BaseBusinessLogic {
             if (artifactsIds != null && !artifactsIds.isEmpty()) {
                 for (String id : artifactsIds) {
                     if (deploymentArtifacts == null || !deploymentArtifacts.containsKey(id)) {
-                        log.debug("Failed to get artifact {} . Status is {} ", id, StorageOperationStatus.NOT_FOUND);
+                        log.error("Failed to get artifact {} . Status is {} ", id, StorageOperationStatus.NOT_FOUND);
                         ResponseFormat responseFormat = componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(StorageOperationStatus.NOT_FOUND));
                         result = Either.right(responseFormat);
                         return result;
@@ -566,7 +566,7 @@ public class GroupBusinessLogic extends BaseBusinessLogic {
                 }
                 newGroupNameRes = validateGenerateVfModuleGroupName(resourceSystemName, description, counter);
                 if (newGroupNameRes.isRight()) {
-                    log.debug("Failed to generate new vf module group name. Status is {} ", newGroupNameRes.right().value());
+                    log.error("Failed to generate new vf module group name. Status is {} ", newGroupNameRes.right().value());
                     result = Either.right(newGroupNameRes.right().value());
                     break;
                 }
@@ -610,7 +610,7 @@ public class GroupBusinessLogic extends BaseBusinessLogic {
                 counter = Integer.parseInt(group.getName().split(Constants.MODULE_NAME_DELIMITER)[1]);
                 newGroupNameRes = validateGenerateVfModuleGroupName(component.getSystemName(), group.getDescription(), counter);
                 if (newGroupNameRes.isRight()) {
-                    log.debug("Failed to generate new vf module group name. Status is {} ", newGroupNameRes.right().value());
+                    log.error("Failed to generate new vf module group name. Status is {} ", newGroupNameRes.right().value());
                     result = Either.right(newGroupNameRes.right().value());
                     break;
                 }
@@ -651,7 +651,7 @@ public class GroupBusinessLogic extends BaseBusinessLogic {
             Either<ImmutablePair<ComponentInstance, GroupInstance>, StorageOperationStatus> findComponentInstanceAndGroupInstanceRes = findComponentInstanceAndGroupInstanceOnComponent(component, componentInstanceId, groupInstId);
 
             if (findComponentInstanceAndGroupInstanceRes.isRight()) {
-                log.debug("Failed to get group {} . Status is {} ", groupInstId, findComponentInstanceAndGroupInstanceRes.right().value());
+                log.error("Failed to get group {} . Status is {} ", groupInstId, findComponentInstanceAndGroupInstanceRes.right().value());
                 ResponseFormat responseFormat = componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(findComponentInstanceAndGroupInstanceRes.right().value()));
                 result = Either.right(responseFormat);
                 return result;
@@ -821,14 +821,14 @@ public class GroupBusinessLogic extends BaseBusinessLogic {
         Either<GroupInstance, StorageOperationStatus> updateGroupInstanceResult = null;
         Either<List<GroupInstanceProperty>, ResponseFormat> validateRes = validateReduceGroupInstancePropertiesBeforeUpdate(oldGroupInstance, newProperties);
         if (validateRes.isRight()) {
-            log.debug("Failed to validate group instance {} properties before update. ", oldGroupInstance.getName());
+            log.error("Failed to validate group instance {} properties before update. ", oldGroupInstance.getName());
             actionResult = Either.right(validateRes.right().value());
         }
         if (actionResult == null) {
             List<GroupInstanceProperty> validatedReducedNewProperties = validateRes.left().value();
             updateGroupInstanceResult = groupsOperation.updateGroupInstancePropertyValuesOnGraph(componentId, instanceId, oldGroupInstance, validatedReducedNewProperties);
             if (updateGroupInstanceResult.isRight()) {
-                log.debug("Failed to update group instance {} property values. ", oldGroupInstance.getName());
+                log.error("Failed to update group instance {} property values. ", oldGroupInstance.getName());
                 actionResult = Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(updateGroupInstanceResult.right().value())));
             }
         }
@@ -851,7 +851,7 @@ public class GroupBusinessLogic extends BaseBusinessLogic {
                 currPropertyName = currNewProperty.getName();
                 validationRes = handleAndAddProperty(reducedProperties, newPropertyValues, currNewProperty, existingProperties.get(currPropertyName));
                 if (validationRes.isRight()) {
-                    log.debug("Failed to handle property {} of group instance {}. ", currPropertyName, oldGroupInstance.getName());
+                    log.error("Failed to handle property {} of group instance {}. ", currPropertyName, oldGroupInstance.getName());
                     break;
                 }
             }
@@ -894,7 +894,7 @@ public class GroupBusinessLogic extends BaseBusinessLogic {
             } else if (isUpdatable(propertyName)) {
                 validationRes = validateAndUpdatePropertyValue(currNewProperty, currExistingProperty);
                 if (validationRes.isRight()) {
-                    log.debug("Failed to validate property value {} of property {}. ", currNewProperty.getValue(), currPropertyName);
+                    log.error("Failed to validate property value {} of property {}. ", currNewProperty.getValue(), currPropertyName);
                 } else {
                     addPropertyUpdatedValues(reducedProperties, propertyName, newPropertyValues, currNewProperty, currExistingProperty);
                 }
@@ -960,7 +960,7 @@ public class GroupBusinessLogic extends BaseBusinessLogic {
         }
         StorageOperationStatus status = groupOperation.validateAndUpdatePropertyValue(newProperty);
         if (status != StorageOperationStatus.OK) {
-            log.debug("Failed to validate property value {} of property with name {}. Status is {}. ", newProperty.getValue(), newProperty.getName(), status);
+            log.error("Failed to validate property value {} of property with name {}. Status is {}. ", newProperty.getValue(), newProperty.getName(), status);
             validationRes = Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(status)));
         }
         if (validationRes == null) {

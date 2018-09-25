@@ -159,7 +159,7 @@ public class ListConverter implements PropertyValueConverter {
             }
 
         } catch (JsonParseException e) {
-            log.debug("Failed to parse json : {}", value, e);
+            log.error("Failed to parse json : {}", value, e);
             BeEcompErrorManager.getInstance().logBeInvalidJsonInput("List Converter");
             return Either.right(false);
         }
@@ -200,7 +200,7 @@ public class ListConverter implements PropertyValueConverter {
                 }
             }
         } catch (Exception e) {
-            log.debug("Failed to parse the value {} of list parameter.", value);
+            log.error("Failed to parse the value {} of list parameter.", value);
             return Either.right(false);
         }
         value = gson.toJson(newList);

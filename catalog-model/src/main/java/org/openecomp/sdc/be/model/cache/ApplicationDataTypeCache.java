@@ -306,7 +306,7 @@ public class ApplicationDataTypeCache implements ApplicationCache<DataTypeDefini
 
         if (allDataTypes.isRight()) {
             TitanOperationStatus status = allDataTypes.right().value();
-            log.debug("Failed to fetch all data types from db. Status is {}", status);
+            log.error("Failed to fetch all data types from db. Status is {}", status);
         } else {
 
             try {

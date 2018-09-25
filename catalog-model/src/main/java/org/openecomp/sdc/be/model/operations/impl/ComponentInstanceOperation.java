@@ -95,7 +95,7 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
             }
             Either<TitanVertex, TitanOperationStatus> vertexService = titanGenericDao.getVertexByProperty(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.ResourceInstance), resourceInstanceId);
             if (vertexService.isRight()) {
-                log.debug("failed to fetch vertex of resource instance for id = {}", resourceInstanceId);
+                log.error("failed to fetch vertex of resource instance for id = {}", resourceInstanceId);
                 TitanOperationStatus status = vertexService.right().value();
                 if (status == TitanOperationStatus.NOT_FOUND) {
                     status = TitanOperationStatus.INVALID_ID;
@@ -660,7 +660,7 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
     public StorageOperationStatus updateCustomizationUUID(String componentInstanceId) {
         Either<TitanVertex, TitanOperationStatus> vertexByProperty = titanGenericDao.getVertexByProperty(GraphPropertiesDictionary.UNIQUE_ID.getProperty(), componentInstanceId);
         if (vertexByProperty.isRight()) {
-            log.debug("Failed to fetch component instance by id {} error {}", componentInstanceId, vertexByProperty.right().value());
+            log.error("Failed to fetch component instance by id {} error {}", componentInstanceId, vertexByProperty.right().value());
             return DaoStatusConverter.convertTitanStatusToStorageStatus(vertexByProperty.right().value());
         }
         UUID uuid = UUID.randomUUID();
