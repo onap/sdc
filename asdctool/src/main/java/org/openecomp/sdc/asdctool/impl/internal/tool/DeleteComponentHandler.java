@@ -158,7 +158,7 @@ public class DeleteComponentHandler extends CommonInternalTool{
             //exist edge move to prev version
             Either<GraphVertex, TitanOperationStatus> catalog = titanDao.getVertexByLabel(vertexlabel);
             if (catalog.isRight()) {
-                log.debug("Failed to fetch {} vertex, error {}", vertexlabel, catalog.right().value());
+                log.error("Failed to fetch {} vertex, error {}", vertexlabel, catalog.right().value());
                 return catalog.right().value();
             }
             GraphVertex catalogV = catalog.left().value();      

@@ -31,7 +31,7 @@ public class UpgradeOperation extends BaseOperation {
     public Either<List<ComponentDependency>, StorageOperationStatus> getComponentDependencies(String componentId) {
         Either<GraphVertex, TitanOperationStatus> vertexById = titanDao.getVertexById(componentId);
         if (vertexById.isRight()) {
-            log.debug("Failed to fetch vertex with id {} error {}", componentId, vertexById.right().value());
+            log.error("Failed to fetch vertex with id {} error {}", componentId, vertexById.right().value());
             return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(vertexById.right().value()));
         }
         List<ComponentDependency> dependencies = new ArrayList<>();
@@ -86,7 +86,7 @@ public class UpgradeOperation extends BaseOperation {
             for (EdgeLabelEnum label : dependList) {
                 status = fillDependenciesByLabel(componentId, vertex, dependency, label);
                 if (status != StorageOperationStatus.OK) {
-                    log.debug("Failed to create dependencies for component {} and label {} status {}", componentId, label, status);
+                    log.error("Failed to create dependencies for component {} and label {} status {}", componentId, label, status);
                     break;
                 }
             }
@@ -105,7 +105,7 @@ public class UpgradeOperation extends BaseOperation {
     private StorageOperationStatus fillDependenciesByLabel(String componentId, GraphVertex vertex, ComponentDependency dependency, EdgeLabelEnum label) {
         Either<List<GraphVertex>, TitanOperationStatus> parentVertecies = titanDao.getParentVertecies(vertex, label, JsonParseFlagEnum.ParseAll);
         if (parentVertecies.isRight() && parentVertecies.right().value() != TitanOperationStatus.NOT_FOUND) {
-            log.debug("Failed to fetch parent verticies by label INSTANCE_OF for vertex with id {} error {}", componentId, parentVertecies.right().value());
+            log.error("Failed to fetch parent verticies by label INSTANCE_OF for vertex with id {} error {}", componentId, parentVertecies.right().value());
             return DaoStatusConverter.convertTitanStatusToStorageStatus(parentVertecies.right().value());
         }
         if (parentVertecies.isLeft()) {

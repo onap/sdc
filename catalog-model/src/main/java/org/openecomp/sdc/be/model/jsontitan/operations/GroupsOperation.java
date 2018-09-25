@@ -283,7 +283,7 @@ public class GroupsOperation extends BaseOperation {
 
             StorageOperationStatus updateDataRes = updateToscaDataOfToscaElement(componentVertex, EdgeLabelEnum.GROUPS, VertexTypeEnum.GROUPS, group, JsonPresentationFields.NAME);
             if (updateDataRes != StorageOperationStatus.OK) {
-                log.debug("Failed to update properties for group {} error {}", group.getName(), updateDataRes);
+                log.error("Failed to update properties for group {} error {}", group.getName(), updateDataRes);
                 result = Either.right(updateDataRes);
             }
         }
@@ -387,7 +387,7 @@ public class GroupsOperation extends BaseOperation {
         pathKeys.add(instanceId);
         StorageOperationStatus updateDataRes = updateToscaDataDeepElementOfToscaElement(componentId, EdgeLabelEnum.INST_GROUPS, VertexTypeEnum.INST_GROUPS, groupInstanceDataDefinition, pathKeys, JsonPresentationFields.NAME);
         if (updateDataRes != StorageOperationStatus.OK) {
-            log.debug("Failed to update properties for group instance {} error {}", oldGroupInstance.getName(), updateDataRes);
+            log.error("Failed to update properties for group instance {} error {}", oldGroupInstance.getName(), updateDataRes);
             return Either.right(updateDataRes);
         }
         return Either.left(oldGroupInstance);

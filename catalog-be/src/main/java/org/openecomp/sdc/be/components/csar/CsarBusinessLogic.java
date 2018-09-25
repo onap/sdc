@@ -44,12 +44,12 @@ public class CsarBusinessLogic extends BaseBusinessLogic {
         // exists
         StorageOperationStatus status = toscaOperationFacade.validateCsarUuidUniqueness(csarUUID);
         if(status == StorageOperationStatus.ENTITY_ALREADY_EXISTS){
-            log.debug("Failed to create resource {}, csarUUID {} already exist for a different VF ",
+            log.error("Failed to create resource {}, csarUUID {} already exist for a different VF ",
                     resource.getSystemName(), csarUUID);
             auditAndThrowException(resource, user, auditingAction, ActionStatus.VSP_ALREADY_EXISTS,
                     csarUUID);
         } else if (status != StorageOperationStatus.OK) {
-            log.debug("Failed to validate uniqueness of CsarUUID {} for resource", csarUUID,
+            log.error("Failed to validate uniqueness of CsarUUID {} for resource", csarUUID,
                     resource.getSystemName());
             throw new ComponentException(componentsUtils.convertFromStorageResponse(status));
         }

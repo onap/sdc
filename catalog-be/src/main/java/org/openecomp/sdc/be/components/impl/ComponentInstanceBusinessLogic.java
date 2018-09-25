@@ -253,14 +253,14 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
                 if (originType == OriginTypeEnum.ServiceProxy) {
                     Either<Component, StorageOperationStatus> serviceProxyOrigin = toscaOperationFacade.getLatestByName("serviceProxy");
                     if (serviceProxyOrigin.isRight()) {
-                        log.debug("Failed to fetch normative service proxy resource by tosca name, error {}", serviceProxyOrigin.right().value());
+                        log.error("Failed to fetch normative service proxy resource by tosca name, error {}", serviceProxyOrigin.right().value());
                         return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(serviceProxyOrigin.right().value())));
                     }
                     origComponent = serviceProxyOrigin.left().value();
 
                     StorageOperationStatus fillProxyRes = fillProxyInstanceData(resourceInstance, origComponent);
                     if (fillProxyRes != StorageOperationStatus.OK) {
-                        log.debug("Failed to fill service proxy resource data with data from service, error {}", fillProxyRes);
+                        log.error("Failed to fill service proxy resource data with data from service, error {}", fillProxyRes);
                         return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(fillProxyRes)));
 
                     }
@@ -376,7 +376,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 
             Either<ComponentInstance, ResponseFormat> result = createComponentInstanceOnGraph(containerComponent, origComponent, resourceInstance, user);
             if (result.isRight()) {
-                log.debug("Failed to create resource instance {}", containerComponentId);
+                log.error("Failed to create resource instance {}", containerComponentId);
                 resultOp = Either.right(result.right().value());
                 return resultOp;
 
@@ -422,7 +422,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         Either<Component, ResponseFormat> eitherResponse;
         Either<Component, StorageOperationStatus> eitherComponent = toscaOperationFacade.getToscaFullElement(origComponetId);
         if (eitherComponent.isRight()) {
-            log.debug("Failed to get origin component with id {} for component instance {} ", origComponetId, componentInstanceName);
+            log.error("Failed to get origin component with id {} for component instance {} ", origComponetId, componentInstanceName);
             eitherResponse = Either.right(componentsUtils.getResponseFormatForResourceInstance(componentsUtils.convertFromStorageResponse(eitherComponent.right().value(), ComponentTypeEnum.RESOURCE), "", null));
         } else {
             eitherResponse = Either.left(eitherComponent.left().value());
@@ -436,7 +436,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         Either<ImmutablePair<Component, String>, StorageOperationStatus> result = toscaOperationFacade.addComponentInstanceToTopologyTemplate(containerComponent, originComponent, componentInstance, false, user);
 
         if (result.isRight()) {
-            log.debug("Failed to create entry on graph for component instance {}", componentInstance.getName());
+            log.error("Failed to create entry on graph for component instance {}", componentInstance.getName());
             resultOp = Either.right(componentsUtils.getResponseFormatForResourceInstance(componentsUtils.convertFromStorageResponseForResourceInstance(result.right().value(), true), "", null));
             return resultOp;
         }
@@ -447,14 +447,14 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         // TODO existingEnvVersions ??
         Either<ActionStatus, ResponseFormat> addComponentInstanceArtifacts = addComponentInstanceArtifacts(updatedComponent, componentInstance, originComponent, user, existingEnvVersions);
         if (addComponentInstanceArtifacts.isRight()) {
-            log.debug("Failed to create component instance {}", componentInstance.getName());
+            log.error("Failed to create component instance {}", componentInstance.getName());
             resultOp = Either.right(addComponentInstanceArtifacts.right().value());
             return resultOp;
         }
 
         Optional<ComponentInstance> updatedInstanceOptional = updatedComponent.getComponentInstances().stream().filter(ci -> ci.getUniqueId().equals(result.left().value().getRight())).findFirst();
         if (!updatedInstanceOptional.isPresent()) {
-            log.debug("Failed to fetch new added component instance {} from component {}", componentInstance.getName(), containerComponent.getName());
+            log.error("Failed to fetch new added component instance {} from component {}", componentInstance.getName(), containerComponent.getName());
             resultOp = Either.right(componentsUtils.getResponseFormat(ActionStatus.COMPONENT_INSTANCE_NOT_FOUND_ON_CONTAINER, componentInstance.getName()));
             return resultOp;
         }
@@ -529,13 +529,13 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
             }
             artStatus = toscaOperationFacade.addDeploymentArtifactsToInstance(containerComponent.getUniqueId(), componentInstance, finalDeploymentArtifacts);
             if (artStatus != StorageOperationStatus.OK) {
-                log.debug("Failed to add instance deployment artifacts for instance {} in conatiner {} error {}", componentInstance.getUniqueId(), containerComponent.getUniqueId(), artStatus);
+                log.error("Failed to add instance deployment artifacts for instance {} in conatiner {} error {}", componentInstance.getUniqueId(), containerComponent.getUniqueId(), artStatus);
                 return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponseForResourceInstance(artStatus, false)));
 
             }
             StorageOperationStatus result = toscaOperationFacade.addGroupInstancesToComponentInstance(containerComponent, componentInstance, filteredGroups, groupInstancesArtifacts);
             if (result != StorageOperationStatus.OK) {
-                log.debug("failed to update group instance for component instance {}", componentInstance.getUniqueId());
+                log.error("failed to update group instance for component instance {}", componentInstance.getUniqueId());
                 return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(result)));
             }
             componentInstance.setDeploymentArtifacts(finalDeploymentArtifacts);
@@ -543,7 +543,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 
         artStatus = toscaOperationFacade.addInformationalArtifactsToInstance(containerComponent.getUniqueId(), componentInstance, originComponent.getArtifacts());
         if (artStatus != StorageOperationStatus.OK) {
-            log.debug("Failed to add informational artifacts to the instance {} belonging to the conatiner {}. Status is {}", componentInstance.getUniqueId(), containerComponent.getUniqueId(), artStatus);
+            log.error("Failed to add informational artifacts to the instance {} belonging to the conatiner {}. Status is {}", componentInstance.getUniqueId(), containerComponent.getUniqueId(), artStatus);
             return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponseForResourceInstance(artStatus, false)));
 
         }
@@ -558,7 +558,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         if (getResourceDeploymentArtifacts.isRight()) {
             StorageOperationStatus status = getResourceDeploymentArtifacts.right().value();
             if (!status.equals(StorageOperationStatus.NOT_FOUND)) {
-                log.debug("Failed to fetch resource: {} artifacts. status is {}", resourceInstance.getComponentUid(), status);
+                log.error("Failed to fetch resource: {} artifacts. status is {}", resourceInstance.getComponentUid(), status);
                 return componentsUtils.convertFromStorageResponseForResourceInstance(status, true);
             }
         } else {
@@ -610,7 +610,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         ComponentTypeEnum instanceType = getComponentType(containerComponentType);
         Either<Boolean, StorageOperationStatus> validateParentStatus = toscaOperationFacade.validateComponentExists(componentInstance.getComponentUid());
         if (validateParentStatus.isRight()) {
-            log.debug("Failed to get component instance {} on service {}", componentInstanceId, containerComponentId);
+            log.error("Failed to get component instance {} on service {}", componentInstanceId, containerComponentId);
             resultOp = Either.right(componentsUtils.getResponseFormat(ActionStatus.COMPONENT_INSTANCE_NOT_FOUND, componentInstance.getName(), instanceType.getValue().toLowerCase()));
             return resultOp;
         }
@@ -808,7 +808,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
             Optional<ComponentInstance> updatedInstanceOptional = updateRes.left().value().getLeft().getComponentInstances().stream().filter(ci -> ci.getUniqueId().equals(newInstanceId)).findFirst();
 
             if (!updatedInstanceOptional.isPresent()) {
-                log.debug("Failed to update metadata of component instance {} of container component {}", componentInstance.getName(), containerComponent.getName());
+                log.error("Failed to update metadata of component instance {} of container component {}", componentInstance.getName(), containerComponent.getName());
                 resultOp = Either.right(componentsUtils.getResponseFormat(ActionStatus.COMPONENT_INSTANCE_NOT_FOUND_ON_CONTAINER, componentInstance.getName()));
             } else {
                 resultOp = Either.left(updatedInstanceOptional.get());
@@ -955,7 +955,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         Either<ImmutablePair<Component, String>, StorageOperationStatus> deleteRes = toscaOperationFacade.deleteComponentInstanceFromTopologyTemplate(containerComponent, componentInstanceId);
 
         if (deleteRes.isRight()) {
-            log.debug("Failed to delete entry on graph for resourceInstance {}", componentInstanceId);
+            log.error("Failed to delete entry on graph for resourceInstance {}", componentInstanceId);
             ActionStatus status = componentsUtils.convertFromStorageResponse(deleteRes.right().value(), containerComponentType);
             resultOp = Either.right(componentsUtils.getResponseFormat(status, componentInstanceId));
         }
@@ -975,7 +975,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
             }
             Either<List<GroupDefinition>, StorageOperationStatus> updateGroupsRes = toscaOperationFacade.updateGroupsOnComponent(containerComponent, groupsToUpdate);
             if (updateGroupsRes.isRight()) {
-                log.debug("Failed to delete component instance {} from group members. ", componentInstanceId);
+                log.error("Failed to delete component instance {} from group members. ", componentInstanceId);
                 ActionStatus status = componentsUtils.convertFromStorageResponse(updateGroupsRes.right().value(), containerComponentType);
                 resultOp = Either.right(componentsUtils.getResponseFormat(status, componentInstanceId));
             }
@@ -985,7 +985,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
             if (CollectionUtils.isNotEmpty(inputsToDelete)) {
                 StorageOperationStatus deleteInputsRes = toscaOperationFacade.deleteComponentInstanceInputsFromTopologyTemplate(containerComponent, inputsToDelete);
                 if (deleteInputsRes != StorageOperationStatus.OK) {
-                    log.debug("Failed to delete inputs of the component instance {} from container component. ", componentInstanceId);
+                    log.error("Failed to delete inputs of the component instance {} from container component. ", componentInstanceId);
                     resultOp = Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(deleteInputsRes, containerComponentType), componentInstanceId));
                 }
             }
@@ -1071,7 +1071,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
             return resultOp;
 
         } else {
-            log.debug("Failed to associate node: {} with node {}", requirementDef.getFromNode(), requirementDef.getToNode());
+            log.error("Failed to associate node: {} with node {}", requirementDef.getFromNode(), requirementDef.getToNode());
             String fromNameOrId = "";
             String toNameOrId = "";
             Either<ComponentInstance, StorageOperationStatus> fromResult = getResourceInstanceById(containerComponent, requirementDef.getFromNode());
@@ -1123,7 +1123,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 
             } else {
 
-                log.debug("Failed to dissocaite node  {} from node {}", requirementDef.getFromNode(), requirementDef.getToNode());
+                log.error("Failed to dissocaite node  {} from node {}", requirementDef.getFromNode(), requirementDef.getToNode());
                 String fromNameOrId = "";
                 String toNameOrId = "";
                 Either<ComponentInstance, StorageOperationStatus> fromResult = getResourceInstanceById(containerComponent, requirementDef.getFromNode());
@@ -1297,7 +1297,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
             result = Either.left(instanceAttribute);
 
         } else {
-            log.debug("Failed to update attribute value {} in resource instance {}", attribute, resourceInstanceId);
+            log.error("Failed to update attribute value {} in resource instance {}", attribute, resourceInstanceId);
 
             ActionStatus actionStatus = componentsUtils.convertFromStorageResponseForResourceInstanceProperty(eitherAttribute.right().value());
 
@@ -1325,7 +1325,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
                 result = Either.left(instanceAttribute);
 
             } else {
-                log.debug("Failed to add attribute value {}  to resource instance {}", attribute, resourceInstanceId);
+                log.error("Failed to add attribute value {}  to resource instance {}", attribute, resourceInstanceId);
 
                 ActionStatus actionStatus = componentsUtils.convertFromStorageResponseForResourceInstanceProperty(eitherAttribute.right().value());
                 result = Either.right(componentsUtils.getResponseFormatForResourceInstanceProperty(actionStatus, ""));
@@ -1433,7 +1433,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         Either<Component, StorageOperationStatus> getResourceResult = toscaOperationFacade.getToscaElement(componentId, JsonParseFlagEnum.ParseAll);
 
         if (getResourceResult.isRight()) {
-            log.debug("Failed to retrieve component, component id {}", componentId);
+            log.error("Failed to retrieve component, component id {}", componentId);
             resultOp = Either.right(componentsUtils.getResponseFormat(ActionStatus.RESTRICTED_OPERATION));
             return resultOp;
         }
@@ -1459,7 +1459,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         // lock resource
         StorageOperationStatus lockStatus = graphLockOperation.lockComponent(componentId, componentTypeEnum.getNodeType());
         if (lockStatus != StorageOperationStatus.OK) {
-            log.debug("Failed to lock service {}", componentId);
+            log.error("Failed to lock service {}", componentId);
             resultOp = Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(lockStatus)));
             return resultOp;
         }
@@ -1632,7 +1632,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         Either<Component, StorageOperationStatus> getResourceResult = toscaOperationFacade.getToscaElement(componentId, JsonParseFlagEnum.ParseAll);
 
         if (getResourceResult.isRight()) {
-            log.debug("Failed to retrieve component, component id {}", componentId);
+            log.error("Failed to retrieve component, component id {}", componentId);
             resultOp = Either.right(componentsUtils.getResponseFormat(ActionStatus.RESTRICTED_OPERATION));
             return resultOp;
         }
@@ -1654,7 +1654,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         // lock resource
         StorageOperationStatus lockStatus = graphLockOperation.lockComponent(componentId, componentTypeEnum.getNodeType());
         if (lockStatus != StorageOperationStatus.OK) {
-            log.debug("Failed to lock service {}", componentId);
+            log.error("Failed to lock service {}", componentId);
             resultOp = Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(lockStatus)));
             return resultOp;
         }
@@ -1708,7 +1708,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         // lock resource
         StorageOperationStatus lockStatus = graphLockOperation.lockComponent(componentId, componentTypeEnum.getNodeType());
         if (lockStatus != StorageOperationStatus.OK) {
-            log.debug("Failed to lock service {}", componentId);
+            log.error("Failed to lock service {}", componentId);
             resultOp = Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(lockStatus)));
             return resultOp;
         }
@@ -1735,7 +1735,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
                     resultOp = Either.left(instanceProperty);
 
                 } else {
-                    log.debug("Failed to add property value: {} to resource instance {}", property, resourceInstanceId);
+                    log.error("Failed to add property value: {} to resource instance {}", property, resourceInstanceId);
 
                     ActionStatus actionStatus = componentsUtils.convertFromStorageResponseForResourceInstanceProperty(result.right().value());
 
@@ -1752,7 +1752,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
                     resultOp = Either.left(instanceProperty);
 
                 } else {
-                    log.debug("Failed to update property value: {}, in resource instance {}", property, resourceInstanceId);
+                    log.error("Failed to update property value: {}, in resource instance {}", property, resourceInstanceId);
 
                     ActionStatus actionStatus = componentsUtils.convertFromStorageResponseForResourceInstanceProperty(result.right().value());
 
@@ -1802,7 +1802,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         // lock resource
         StorageOperationStatus lockStatus = graphLockOperation.lockComponent(componentId, componentTypeEnum.getNodeType());
         if (lockStatus != StorageOperationStatus.OK) {
-            log.debug("Failed to lock service {}", componentId);
+            log.error("Failed to lock service {}", componentId);
             resultOp = Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(lockStatus)));
             return resultOp;
         }
@@ -1829,7 +1829,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
                     return resultOp;
 
                 } else {
-                    log.debug("Failed to add input value {} to resource instance {}", inputProperty, resourceInstanceId);
+                    log.error("Failed to add input value {} to resource instance {}", inputProperty, resourceInstanceId);
 
                     ActionStatus actionStatus = componentsUtils.convertFromStorageResponseForResourceInstanceProperty(result.right().value());
 
@@ -1849,7 +1849,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
                     return resultOp;
 
                 } else {
-                    log.debug("Failed to update property value {} in resource instance {}", inputProperty, resourceInstanceId);
+                    log.error("Failed to update property value {} in resource instance {}", inputProperty, resourceInstanceId);
 
                     ActionStatus actionStatus = componentsUtils.convertFromStorageResponseForResourceInstanceProperty(result.right().value());
 
@@ -1891,7 +1891,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         // lock resource
         StorageOperationStatus lockStatus = graphLockOperation.lockComponent(serviceId, componentTypeEnum.getNodeType());
         if (lockStatus != StorageOperationStatus.OK) {
-            log.debug("Failed to lock service {}", serviceId);
+            log.error("Failed to lock service {}", serviceId);
             resultOp = Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(lockStatus)));
             return resultOp;
         }
@@ -1906,7 +1906,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
                 return resultOp;
 
             } else {
-                log.debug("Failed to remove property value {} in resource instance {}", propertyValueId, resourceInstanceId);
+                log.error("Failed to remove property value {} in resource instance {}", propertyValueId, resourceInstanceId);
 
                 ActionStatus actionStatus = componentsUtils.convertFromStorageResponseForResourceInstanceProperty(result.right().value());
 
@@ -1935,7 +1935,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         ResponseFormat errorResponse;
         Either<Component, StorageOperationStatus> getComponentRes = toscaOperationFacade.getToscaFullElement(componentInstance.getComponentUid());
         if (getComponentRes.isRight()) {
-            log.debug("Failed to get the component with id {} for component instance {} creation. ", componentInstance.getComponentUid(), componentInstance.getName());
+            log.error("Failed to get the component with id {} for component instance {} creation. ", componentInstance.getComponentUid(), componentInstance.getName());
             ActionStatus actionStatus = componentsUtils.convertFromStorageResponse(getComponentRes.right().value(), componentType);
             errorResponse = componentsUtils.getResponseFormat(actionStatus, Constants.EMPTY_STRING);
             eitherResponse = Either.right(errorResponse);
@@ -1989,7 +1989,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         String resourceId = newComponentInstance.getComponentUid();
         Either<Boolean, StorageOperationStatus> componentExistsRes = toscaOperationFacade.validateComponentExists(resourceId);
         if (componentExistsRes.isRight()) {
-          log.debug("Failed to find resource ", resourceId);
+          log.error("Failed to find resource ", resourceId);
           resultOp = Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse
               (componentExistsRes.right().value()), resourceId));
           return resultOp;
@@ -2094,7 +2094,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 
             Either<Boolean, StorageOperationStatus> componentExistsRes = toscaOperationFacade.validateComponentExists(resourceId);
             if (componentExistsRes.isRight()) {
-                log.debug("Failed to validate existing of the component {}. Status is {} ", resourceId);
+                log.error("Failed to validate existing of the component {}. Status is {} ", resourceId);
                 resultOp = Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(componentExistsRes.right().value()), resourceId));
                 return resultOp;
             } else if (!componentExistsRes.left().value()) {
@@ -2112,7 +2112,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
             DataForMergeHolder dataHolder = compInstMergeDataBL.saveAllDataBeforeDeleting(containerComponent, currentResourceInstance, eitherOriginComponent.left().value());
             resultOp = deleteComponentInstance(containerComponent, componentInstanceId, containerComponentType);
             if (resultOp.isRight()) {
-                log.debug("failed to delete resource instance {}", resourceId);
+                log.error("failed to delete resource instance {}", resourceId);
                 return resultOp;
             }
             ComponentInstance resResourceInfo = resultOp.left().value();
@@ -2121,7 +2121,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
             if (originType == OriginTypeEnum.ServiceProxy) {
                 Either<Component, StorageOperationStatus> serviceProxyOrigin = toscaOperationFacade.getLatestByName("serviceProxy");
                 if (serviceProxyOrigin.isRight()) {
-                    log.debug("Failed to fetch normative service proxy resource by tosca name, error {}", serviceProxyOrigin.right().value());
+                    log.error("Failed to fetch normative service proxy resource by tosca name, error {}", serviceProxyOrigin.right().value());
                     return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(serviceProxyOrigin.right().value())));
                 }
                 origComponent = serviceProxyOrigin.left().value();
@@ -2129,7 +2129,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
                 StorageOperationStatus fillProxyRes = fillProxyInstanceData(newComponentInstance, origComponent);
 
                 if (fillProxyRes != StorageOperationStatus.OK) {
-                    log.debug("Failed to fill service proxy resource data with data from service, error {}", fillProxyRes);
+                    log.error("Failed to fill service proxy resource data with data from service, error {}", fillProxyRes);
                     return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(fillProxyRes)));
 
                 }
@@ -2157,13 +2157,13 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
             resultOp = createComponentInstanceOnGraph(containerComponent, origComponent, newComponentInstance, user);
 
             if (resultOp.isRight()) {
-                log.debug("failed to create resource instance {}", resourceId);
+                log.error("failed to create resource instance {}", resourceId);
                 return resultOp;
             }
 
             ComponentInstance updatedComponentInstance = resultOp.left().value();
             if (resultOp.isRight()) {
-                log.debug("failed to create resource instance {}", resourceId);
+                log.error("failed to create resource instance {}", resourceId);
                 return resultOp;
             }
 
@@ -2267,7 +2267,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         Either<ComponentInstanceData, StorageOperationStatus> updateComponentInstanceRes = componentInstanceOperation.updateComponentInstanceModificationTimeAndCustomizationUuidOnGraph(componentInstance, componentInstanceType, modificationTime,
                 inTransaction);
         if (updateComponentInstanceRes.isRight()) {
-            log.debug("Failed to update component instance {} with new last update date and mofifier. Status is {}. ", componentInstance.getName(), updateComponentInstanceRes.right().value());
+            log.error("Failed to update component instance {} with new last update date and mofifier. Status is {}. ", componentInstance.getName(), updateComponentInstanceRes.right().value());
             result = Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(updateComponentInstanceRes.right().value())));
         } else {
             result = Either.left(updateComponentInstanceRes.left().value());
@@ -2493,7 +2493,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         Either<Component, StorageOperationStatus> getResourceResult = toscaOperationFacade.getToscaFullElement(containerComponentId);
 
         if (getResourceResult.isRight()) {
-            log.debug("Failed to retrieve component, component id {}", containerComponentId);
+            log.error("Failed to retrieve component, component id {}", containerComponentId);
             return Either.right(componentsUtils.getResponseFormat(ActionStatus.RESTRICTED_OPERATION));
         }
         Component containerComponent = getResourceResult.left().value();
@@ -2510,7 +2510,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         // lock resource
         StorageOperationStatus lockStatus = graphLockOperation.lockComponent(containerComponentId, componentTypeEnum.getNodeType());
         if (lockStatus != StorageOperationStatus.OK) {
-            log.debug("Failed to lock component {}", containerComponentId);
+            log.error("Failed to lock component {}", containerComponentId);
             return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(lockStatus)));
         }
 
@@ -2562,7 +2562,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         Either<Component, StorageOperationStatus> getResourceResult = toscaOperationFacade.getToscaFullElement(containerComponentId);
 
         if (getResourceResult.isRight()) {
-            log.debug("Failed to retrieve component, component id {}", containerComponentId);
+            log.error("Failed to retrieve component, component id {}", containerComponentId);
             return Either.right(componentsUtils.getResponseFormat(ActionStatus.RESTRICTED_OPERATION));
         }
         Component containerComponent = getResourceResult.left().value();
@@ -2579,7 +2579,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         // lock resource
         StorageOperationStatus lockStatus = graphLockOperation.lockComponent(containerComponentId, componentTypeEnum.getNodeType());
         if (lockStatus != StorageOperationStatus.OK) {
-            log.debug("Failed to lock component {}", containerComponentId);
+            log.error("Failed to lock component {}", containerComponentId);
             return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(lockStatus)));
         }
 
