@@ -244,9 +244,9 @@ public class ResourceImportManager {
             }
 
             // currently import VF isn't supported. In future will be supported
-            // import VF only with CSER file!!
+            // import VF only with CSAR file!!
             if (ResourceTypeEnum.VF.equals(resource.getResourceType())) {
-                log.debug("Now import VF isn't supported. It will be supported in future with CSER file only");
+                log.debug("Now import VF isn't supported. It will be supported in future with CSAR file only");
                 return Either.right(componentsUtils.getResponseFormat(ActionStatus.RESTRICTED_OPERATION));
             }
 
