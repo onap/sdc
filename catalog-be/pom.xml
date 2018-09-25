@@ -1,5 +1,5 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>catalog-be</artifactId>
@@ -35,26 +35,6 @@
             <artifactId>security-utils</artifactId>
             <version>${project.version}</version>
             <scope>compile</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.tinkerpop.blueprints</groupId>
-            <artifactId>blueprints-sail-graph</artifactId>
-            <version>2.5.0</version>
-            <optional>true</optional>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-log4j12</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-        <dependency>
-            <groupId>com.tinkerpop.blueprints</groupId>
-            <artifactId>blueprints-graph-sail</artifactId>
-            <version>2.5.0</version>
-            <optional>true</optional>
         </dependency>
 
         <!-- Swagger Dependencies Start -->
@@ -392,7 +372,6 @@
             <version>${aspectjrt.version}</version>
             <scope>compile</scope>
         </dependency>
-
 
 
         <!-- CAMBRIA CLIENT for U-EB -->
@@ -778,10 +757,13 @@
                             <goal>copy-resources</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>${project.parent.basedir}/catalog-be/sdc-backend/chef-repo/cookbooks/sdc-catalog-be/files/default</outputDirectory>
+                            <outputDirectory>
+                                ${project.parent.basedir}/catalog-be/sdc-backend/chef-repo/cookbooks/sdc-catalog-be/files/default
+                            </outputDirectory>
                             <resources>
                                 <resource>
-                                    <directory>${project.parent.basedir}/catalog-be/src/main/resources/config</directory>
+                                    <directory>${project.parent.basedir}/catalog-be/src/main/resources/config
+                                    </directory>
                                     <includes>
                                         <include>Artifact-Generator.properties</include>
                                         <include>error-configuration.yaml</include>
@@ -803,7 +785,8 @@
                             <outputDirectory>${project.parent.basedir}/asdctool/tosca</outputDirectory>
                             <resources>
                                 <resource>
-                                    <directory>${project.parent.basedir}/catalog-be/src/main/resources/import/tosca</directory>
+                                    <directory>${project.parent.basedir}/catalog-be/src/main/resources/import/tosca
+                                    </directory>
                                     <filtering>true</filtering>
                                 </resource>
                             </resources>
@@ -935,7 +918,9 @@
                                     <goal>copy-resources</goal>
                                 </goals>
                                 <configuration>
-                                    <outputDirectory>sdc-backend-init/chef-repo/cookbooks/sdc-catalog-be-setup/files/default</outputDirectory>
+                                    <outputDirectory>
+                                        sdc-backend-init/chef-repo/cookbooks/sdc-catalog-be-setup/files/default
+                                    </outputDirectory>
                                     <resources>
                                         <resource>
                                             <directory>${project.parent.basedir}/catalog-be/target</directory>
@@ -971,7 +956,9 @@
                                         <dockerFileDir>${project.basedir}/sdc-backend</dockerFileDir>
                                         <tags>
                                             <tag>${docker.tag}</tag>
-                                            <tag>${parsedVersion.majorVersion}.${parsedVersion.minorVersion}-STAGING-latest</tag>
+                                            <tag>
+                                                ${parsedVersion.majorVersion}.${parsedVersion.minorVersion}-STAGING-latest
+                                            </tag>
                                         </tags>
                                     </build>
                                 </image>
@@ -984,7 +971,9 @@
                                         <dockerFileDir>${project.basedir}/sdc-backend-init</dockerFileDir>
                                         <tags>
                                             <tag>${docker.tag}</tag>
-                                            <tag>${parsedVersion.majorVersion}.${parsedVersion.minorVersion}-STAGING-latest</tag>
+                                            <tag>
+                                                ${parsedVersion.majorVersion}.${parsedVersion.minorVersion}-STAGING-latest
+                                            </tag>
                                         </tags>
                                     </build>
                                 </image>
