@@ -175,7 +175,7 @@ BE-configuration.yaml
     # Catalog backend ssl port
     beSslPort: <%= @ssl_port %>
 
-    # Catalog backend configuration vesrion
+    # Catalog backend configuration version
     version: 1.1.0
 
     # Catalog backend configuration release date
@@ -190,7 +190,7 @@ BE-configuration.yaml
     # Titan configuration file location
     titanCfgFile: /var/lib/jetty/config/catalog-be/titan.properties
 
-    # Does titan holds the persistency data in memory
+    # Does titan holds the persistence data in memory
     titanInMemoryGraph: false
 
     # The timeout for titan to lock on an object in a transaction
@@ -208,7 +208,7 @@ BE-configuration.yaml
     # The interval to try and reconnect to UEB health check when it is down during SDC startup
     uebHealthCheckReconnectIntervalInSeconds: 15
 
-    # The read timeout towards UEB when helath check is invoked
+    # The read timeout towards UEB when health check is invoked
     uebHealthCheckReadTimeout: 4
 
     # Protocols being used in SDC
@@ -258,7 +258,7 @@ BE-configuration.yaml
         # Username for accessing Cassandra
         username: asdc_user
 
-        # Password for accessing Cassnadra
+        # Password for accessing Cassandra
         password: {{cassandra_password}}
 
         # Does an ssl should be used
@@ -494,7 +494,7 @@ BE-configuration.yaml
             displayName: Testing
             type: OTHER
 
-    # The maximum number of keys permited for additional information on service
+    # The maximum number of keys permitted for additional information on service
     additionalInformationMaxNumberOfKeys: 50
 
     # Collect process statistics
@@ -787,10 +787,10 @@ BE-configuration.yaml
     # Resource informational deployment artifact placeholder
     resourceInformationalDeployedArtifacts:
 
-    # Requirements needed to be fulfilled before certificattion
+    # Requirements needed to be fulfilled before certification
     requirementsToFulfillBeforeCert:
 
-    # Capabillities needed to be fulfilled before certificattion
+    # Capabilities needed to be fulfilled before certification
     capabilitiesToConsumeBeforeCert:
 
     # Urls that should not be logged
@@ -831,6 +831,7 @@ BE-configuration.yaml
 
         # Url for onboarding health check
         healthCheckUri: "/onboarding-api/v1.0/healthcheck"
+		
     dcae:
         # The ip of the onboarding docker
         host: <%= @dcae_be_vip %>
@@ -843,7 +844,7 @@ BE-configuration.yaml
 
 
     #GSS IDNS
-    # Switchover configuration is used for geo redundency to provide automatic failovers
+    # Switchover configuration is used for Geo redundancy to provide automatic failovers
     switchoverDetector:
         gBeFqdn:
         gFeFqdn:
@@ -903,7 +904,7 @@ BE-configuration.yaml
             forBaseModule: Base
             forNonBaseModule: Expansion
 
-    # For each generic node type defining it's coresponding class
+    # For each generic node type defining it's corresponding class
     genericAssetNodeTypes:
         VFC: org.openecomp.resource.abstract.nodes.VFC
         CVFC: org.openecomp.resource.abstract.nodes.VFC
@@ -962,7 +963,7 @@ BE-configuration.yaml
     dmeConfiguration:
         dme2Search: DME2SEARCH
         dme2Resolve: DME2RESOLVE
-    # definition for policys types that cannot by created by api
+    # definition for policies types that cannot by created by api
     excludedPolicyTypesMapping:
        # VF:
         #  - a.b.c
@@ -1013,10 +1014,10 @@ BE-distribution-engine-configuration.yaml
     # Topic name for distribution status
     distributionStatusTopicName: SDC-DISTR-STATUS-TOPIC
 
-    # Distibution initializtion retry interval time
+    # Distribution initialization retry interval time
     initRetryIntervalSec: 5
 
-    # Distribution initializtion maximum interval time
+    # Distribution initialization maximum interval time
     initMaxIntervalSec: 60
 
     # Deprecated. Will be removed in future releases
@@ -1148,7 +1149,7 @@ BE-titan.properties
     # How long in milliseconds should the cache keep entries before flushing them
     cache.db-cache-clean-wait = 20
 
-    # Default experation time in milliseconds for entries in the cache
+    # Default expiration time in milliseconds for entries in the cache
     cache.db-cache-time = 180000
 
     # Size of titan database cache
@@ -1192,7 +1193,7 @@ BE-onboarding-configuration.yaml
         # Backend onboarding notifications selection size
         selectionSize: 100
 
-        # Backend onboarding norifications backend hostname
+        # Backend onboarding notifications backend hostname
         beHost: <%= @catalog_ip %>
 
         # Backend onboarding notifications backend http port
@@ -1217,7 +1218,7 @@ vnfrepo-configuration.yaml
 
 ::
 
-    # The port on which the vnfsdk is lisening on
+    # The port on which the vnfsdk is licensing on
     vnfRepoPort: <port>
     # The ip where vnfdk is deployed
     vnfRepoHost: <ip>
@@ -1365,7 +1366,7 @@ FE-onboarding-configuration.yaml
         # Frontend onboarding notifications selection size
         selectionSize: 100
 
-        # Frontend onboarding norifications backend hostname
+        # Frontend onboarding notifications backend hostname
         beHost: <%= @catalog_ip %>
 
         # Frontend onboarding notifications backend http port

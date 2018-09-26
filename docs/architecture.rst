@@ -25,7 +25,7 @@ The SDC architecture uses the Jetty server as an application server.
    
   Every request originating from the GUI is passed to the Jetty front-end server before it is executed.
 
-- The **Jetty back end** containes all the logic for the SDC.
+- The **Jetty back end** containers all the logic for the SDC.
 
 SDC uses two storage components: Elastic Search(ES) and Cassandra
 
