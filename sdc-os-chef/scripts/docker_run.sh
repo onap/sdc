@@ -20,7 +20,7 @@ RUNTESTS=false
 BE_DEBUG_PORT="--publish 4000:4000"
 FE_DEBUG_PORT="--publish 6000:6000"
 ONBOARD_DEBUG_PORT="--publish 4001:4000"
-
+GIT_BRANCH="$(git symbolic-ref --short -q HEAD)"
 
 # Java Options:
 BE_JAVA_OPTIONS="-Xdebug -agentlib:jdwp=transport=dt_socket,address=4000,server=y,suspend=n -Xmx1536m -Xms1536m"
@@ -89,10 +89,24 @@ function dir_perms {
 	mkdir -p ${WORKSPACE}/data/logs/sdc-ui-tests/target
 	mkdir -p ${WORKSPACE}/data/logs/docker_logs
 	mkdir -p ${WORKSPACE}/data/logs/WS
+    mkdir -p ${WORKSPACE}/data/environments
+    mkdir -p ${WORKSPACE}/opt/config
     chmod -R 777 ${WORKSPACE}/data/logs
 }
 #
 
+function generate_env_file {
+    curl https://git.onap.org/sdc/plain/sdc-os-chef/environments/Template.json?h=${GIT_BRANCH} > ${WORKSPACE}/data/environments/${DEP_ENV}.json
+    sed -i "s/xxx/AUTO/g" ${WORKSPACE}/data/environments/${DEP_ENV}.json
+    sed -i "s/yyy/${IP}/g" ${WORKSPACE}/data/environments/${DEP_ENV}.json
+}
+
+function generate_config {
+    echo "nexus3.onap.org:10001" > ${WORKSPACE}/opt/config/nexus_docker_repo.txt
+    echo "docker" > ${WORKSPACE}/opt/config/nexus_password.txt
+    echo "https://nexus.onap.org/content/sites/raw" > ${WORKSPACE}/opt/config/nexus_repo.txt
+    echo "docker" > ${WORKSPACE}/opt/config/nexus_username.txt
+}
 
 function docker_logs {
     docker logs $1 > ${WORKSPACE}/data/logs/docker_logs/$1_docker.log
@@ -695,6 +709,8 @@ echo ""
 if [ -z "${DOCKER}" ]; then
     cleanup all
 	dir_perms
+        generate_env_file
+        generate_config
 	sdc-es
 	sdc-init-es
 	sdc-cs
