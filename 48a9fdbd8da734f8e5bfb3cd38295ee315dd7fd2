@@ -73,6 +73,30 @@
     },
     {
       "key": {
+        "uuid": "1a76adc5_25c3f08b",
+        "filename": "catalog-be/src/main/resources/import/tosca/data-types/dataTypes.yml",
+        "patchSetId": 27
+      },
+      "lineNbr": 1401,
+      "author": {
+        "id": 309
+      },
+      "writtenOn": "2018-09-26T01:12:56Z",
+      "side": 0,
+      "message": "Yes, in order to make it possible for vendor be able to \u0027not  populate the value\u0027, we have to change this property from mandatory to optional, please see https://gerrit.onap.org/r/#/c/59103/31/catalog-be/src/main/resources/import/tosca/data-types/dataTypes.yml@a1402",
+      "parentUuid": "1a76adc5_d201a507",
+      "range": {
+        "startLine": 1400,
+        "startChar": 3,
+        "endLine": 1401,
+        "endChar": 39
+      },
+      "revId": "48a9fdbd8da734f8e5bfb3cd38295ee315dd7fd2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1a76adc5_f056305b",
         "filename": "catalog-be/src/main/resources/import/tosca/data-types/dataTypes.yml",
         "patchSetId": 27
@@ -132,6 +156,30 @@
       "side": 0,
       "message": "same as above",
       "parentUuid": "1a76adc5_3043486d",
+      "range": {
+        "startLine": 1425,
+        "startChar": 0,
+        "endLine": 1427,
+        "endChar": 21
+      },
+      "revId": "48a9fdbd8da734f8e5bfb3cd38295ee315dd7fd2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_e5bc1809",
+        "filename": "catalog-be/src/main/resources/import/tosca/data-types/dataTypes.yml",
+        "patchSetId": 27
+      },
+      "lineNbr": 1427,
+      "author": {
+        "id": 309
+      },
+      "writtenOn": "2018-09-26T01:12:56Z",
+      "side": 0,
+      "message": "yes, since this property is optional, we doesn\u0027t change it in latest patchset https://gerrit.onap.org/r/#/c/59103/31/catalog-be/src/main/resources/import/tosca/data-types/dataTypes.yml",
+      "parentUuid": "1a76adc5_9503170d",
       "range": {
         "startLine": 1425,
         "startChar": 0,

@@ -96,6 +96,30 @@
     },
     {
       "key": {
+        "uuid": "1a76adc5_a53620b3",
+        "filename": "catalog-be/src/main/resources/import/tosca/data-types/dataTypes.yml",
+        "patchSetId": 27
+      },
+      "lineNbr": 1446,
+      "author": {
+        "id": 309
+      },
+      "writtenOn": "2018-09-26T01:12:56Z",
+      "side": 1,
+      "message": "According to tosca spec section 5.3.1, http://docs.oasis-open.org/tosca/TOSCA-Simple-Profile-YAML/v1.1/os/TOSCA-Simple-Profile-YAML-v1.1-os.html#_Toc489606733, \"tosca.datatypes.Root is the default (root) TOSCA Root Type definition that all complex TOSCA Data Types derive from\". That being said, i have no objection to not specifying the \u0027derived_from\u0027 here, the final result is the same.",
+      "parentUuid": "1a76adc5_f5112b54",
+      "range": {
+        "startLine": 1446,
+        "startChar": 2,
+        "endLine": 1446,
+        "endChar": 36
+      },
+      "revId": "96fe2fc807bd5733d413e561c7e1fc93d4657555",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1a76adc5_d04774a1",
         "filename": "catalog-be/src/main/resources/import/tosca/interface-lifecycle-types/interfaceLifecycleTypes.yml",
         "patchSetId": 27
