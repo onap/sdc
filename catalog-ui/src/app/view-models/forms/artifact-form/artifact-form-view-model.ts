@@ -236,7 +236,7 @@ export class ArtifactResourceFormViewModel {
                 this.$scope.editArtifactResourceModel.artifactResource.timeout = this.$scope.defaultHeatTimeout;
             }
 
-            if (this.$scope.editArtifactResourceModel.artifactFile.filename) {
+            if (this.$scope.editArtifactResourceModel.artifactFile && this.$scope.editArtifactResourceModel.artifactFile.filename) {
                 this.$scope.editArtifactResourceModel.artifactFile = {};
                 this.$scope.forms.editForm.myArtifactFile.$setValidity('required', false);
             }
