@@ -89,10 +89,24 @@ function dir_perms {
 	mkdir -p ${WORKSPACE}/data/logs/sdc-ui-tests/target
 	mkdir -p ${WORKSPACE}/data/logs/docker_logs
 	mkdir -p ${WORKSPACE}/data/logs/WS
+    mkdir -p ${WORKSPACE}/data/environments
+    mkdir -p ${WORKSPACE}/opt/config
     chmod -R 777 ${WORKSPACE}/data/logs
 }
 #
 
+function generate_env_file {
+    cp ./sdc-os-chef/environments/Template.json ${WORKSPACE}/data/environments/${DEP_ENV}.json
+    sed -i "s/xxx/AUTO/g" ${WORKSPACE}/data/environments/${DEP_ENV}.json
+    sed -i "s/yyy/${IP}/g" ${WORKSPACE}/data/environments/${DEP_ENV}.json
+}
+
+function generate_config {
+    echo "nexus3.onap.org:10001" > ${WORKSPACE}/opt/config/nexus_docker_repo.txt
+    echo "docker" > ${WORKSPACE}/opt/config/nexus_password.txt
+    echo "https://nexus.onap.org/content/sites/raw" > ${WORKSPACE}/opt/config/nexus_repo.txt
+    echo "docker" > ${WORKSPACE}/opt/config/nexus_username.txt
+}
 
 function docker_logs {
     docker logs $1 > ${WORKSPACE}/data/logs/docker_logs/$1_docker.log
@@ -671,7 +685,7 @@ while [ $# -gt 0 ]; do
 done
 
 
-#Prefix those with WORKSPACE so it can be set to something other then /opt
+#Prefix those with WORKSPACE so it can be set to something other than /opt
 [ -f ${WORKSPACE}/opt/config/env_name.txt ] && DEP_ENV=$(cat ${WORKSPACE}/opt/config/env_name.txt) || echo ${DEP_ENV}
 [ -f ${WORKSPACE}/opt/config/nexus_username.txt ] && NEXUS_USERNAME=$(cat ${WORKSPACE}/opt/config/nexus_username.txt)    || NEXUS_USERNAME=release
 [ -f ${WORKSPACE}/opt/config/nexus_password.txt ] && NEXUS_PASSWD=$(cat ${WORKSPACE}/opt/config/nexus_password.txt)      || NEXUS_PASSWD=sfWU3DFVdBr7GVxB85mTYgAW
@@ -695,6 +709,8 @@ echo ""
 if [ -z "${DOCKER}" ]; then
     cleanup all
 	dir_perms
+        generate_env_file
+        generate_config
 	sdc-es
 	sdc-init-es
 	sdc-cs
