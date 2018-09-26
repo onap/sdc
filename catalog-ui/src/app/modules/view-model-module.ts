@@ -74,9 +74,6 @@ import {downgradeComponent} from "@angular/upgrade/static";
 import {ConformanceLevelModalViewModel} from "../view-models/modals/conformance-level-modal/conformance-level-modal-view-model";
 import {PluginsTabViewModel} from "../view-models/plugins/plugins-tab-view-model";
 import {PluginsContextViewModel} from "../view-models/workspace/tabs/plugins/plugins-context-view-model";
-// import {NG2ExampleComponent} from "../ng2/view-ng2/ng2.example.component/ng2.example.component";
-// import {upgradeAdapter} from "../ng2/app.module";
-// import { UpgradeAdapter } from '@angular/upgrade';
 let moduleName:string = 'Sdc.ViewModels';
 let viewModelModule:ng.IModule = angular.module(moduleName, []);
 
