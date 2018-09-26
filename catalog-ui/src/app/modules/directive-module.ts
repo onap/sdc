@@ -64,7 +64,6 @@ import {LinksFactory} from "../models/graph/graph-links/links-factory";
 import {ImageCreatorService} from "../directives/graphs-v2/image-creator/image-creator.service";
 import {Palette} from "../directives/graphs-v2/palette/palette.directive";
 import {CompositionGraph} from "../directives/graphs-v2/composition-graph/composition-graph.directive";
-// import {RelationMenuDirective} from "../directives/graphs-v2/relation-menu/relation-menu";
 import {DeploymentGraph} from "../directives/graphs-v2/deployment-graph/deployment-graph.directive";
 import {CommonGraphUtils} from "../directives/graphs-v2/common/common-graph-utils";
 import {CompositionGraphNodesUtils} from "../directives/graphs-v2/composition-graph/utils/composition-graph-nodes-utils";
@@ -146,8 +145,7 @@ directiveModule.service('ImageCreatorService', ImageCreatorService);
 // //composition
 directiveModule.directive('palette', Palette.factory);
 directiveModule.directive('compositionGraph', CompositionGraph.factory);
-// directiveModule.directive('relationMenu', RelationMenuDirective.factory);
-    //directiveModule.directive('assetPopover', AssetPopoverDirective.factory);
+
 //
 // //deployment
 directiveModule.directive('deploymentGraph', DeploymentGraph.factory);
