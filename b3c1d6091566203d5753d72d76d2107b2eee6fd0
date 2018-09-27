@@ -1,0 +1,136 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_6ec6a04b",
+        "filename": "utils/webseal-simulator/sdc-simulator/Dockerfile",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-27T12:43:37Z",
+      "side": 1,
+      "message": "please remove the commented out line",
+      "range": {
+        "startLine": 7,
+        "startChar": 0,
+        "endLine": 7,
+        "endChar": 89
+      },
+      "revId": "b3c1d6091566203d5753d72d76d2107b2eee6fd0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_0ec36c39",
+        "filename": "utils/webseal-simulator/src/main/java/org/openecomp/sdc/webseal/simulator/SdcProxy.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-27T12:43:37Z",
+      "side": 1,
+      "message": "we now have the ability to log let\u0027s use it instead of printstack :)\nor throw the exception.",
+      "range": {
+        "startLine": 72,
+        "startChar": 12,
+        "endLine": 72,
+        "endChar": 32
+      },
+      "revId": "b3c1d6091566203d5753d72d76d2107b2eee6fd0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_8ee69ce7",
+        "filename": "utils/webseal-simulator/src/main/java/org/openecomp/sdc/webseal/simulator/SdcProxy.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 145,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-27T12:43:37Z",
+      "side": 1,
+      "message": "we can use close with resources it will be cleaner",
+      "range": {
+        "startLine": 144,
+        "startChar": 12,
+        "endLine": 145,
+        "endChar": 46
+      },
+      "revId": "b3c1d6091566203d5753d72d76d2107b2eee6fd0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_aeeb58af",
+        "filename": "utils/webseal-simulator/src/main/java/org/openecomp/sdc/webseal/simulator/SdcProxy.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 203,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-27T12:43:37Z",
+      "side": 1,
+      "message": "remove commented out line.",
+      "range": {
+        "startLine": 203,
+        "startChar": 18,
+        "endLine": 203,
+        "endChar": 81
+      },
+      "revId": "b3c1d6091566203d5753d72d76d2107b2eee6fd0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_4ed084f7",
+        "filename": "utils/webseal-simulator/src/main/java/org/openecomp/sdc/webseal/simulator/SdcProxy.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 255,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-27T12:43:37Z",
+      "side": 1,
+      "message": "remove commented out line.",
+      "range": {
+        "startLine": 255,
+        "startChar": 7,
+        "endLine": 255,
+        "endChar": 54
+      },
+      "revId": "b3c1d6091566203d5753d72d76d2107b2eee6fd0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_6ecd405d",
+        "filename": "utils/webseal-simulator/src/main/resources/logback.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-27T12:43:37Z",
+      "side": 1,
+      "message": "we do not use the logback so it can be removed no?",
+      "revId": "b3c1d6091566203d5753d72d76d2107b2eee6fd0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
