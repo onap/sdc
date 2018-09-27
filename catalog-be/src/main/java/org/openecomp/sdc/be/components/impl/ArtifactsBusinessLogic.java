@@ -3145,7 +3145,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
 
         Operation operation = optionalOperation.get();
         ArtifactDefinition implementationArtifact =  operation.getImplementationArtifact();
-        implementationArtifact.setArtifactName(artifactInfo.getArtifactName());
+        implementationArtifact.setArtifactName(operation.getName() + "_" + artifactInfo.getArtifactName());
         implementationArtifact.setDescription(artifactInfo.getDescription());
         implementationArtifact.setArtifactType(artifactInfo.getArtifactType());
         operation.setImplementation(implementationArtifact);
