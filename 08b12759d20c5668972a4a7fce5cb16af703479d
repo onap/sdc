@@ -1,0 +1,1619 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_314a49ad",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/csar/CsarArtifactsAndGroupsBusinessLogic.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-27T15:53:19Z",
+      "side": 1,
+      "message": "the log level was set by design to not overload the log please revert the change.",
+      "revId": "08b12759d20c5668972a4a7fce5cb16af703479d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_d1c67516",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/csar/CsarBusinessLogic.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-27T15:53:19Z",
+      "side": 1,
+      "message": "the log level was set by design to not overload the log please revert the change.",
+      "revId": "08b12759d20c5668972a4a7fce5cb16af703479d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_f1cb711c",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/csar/CsarInfo.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-27T15:53:19Z",
+      "side": 1,
+      "message": "the log level was set by design to not overload the log please revert the change.",
+      "revId": "08b12759d20c5668972a4a7fce5cb16af703479d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_51da65ea",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/distribution/engine/CambriaHandler.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-27T15:53:19Z",
+      "side": 1,
+      "message": "the log level was set by design to not overload the log please revert the change.",
+      "revId": "08b12759d20c5668972a4a7fce5cb16af703479d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_d1ed1590",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ArtifactsBusinessLogic.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-27T15:53:19Z",
+      "side": 1,
+      "message": "the log level was set by design to not overload the log please revert the change.",
+      "revId": "08b12759d20c5668972a4a7fce5cb16af703479d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_f1f2916e",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/BaseBusinessLogic.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-27T15:53:19Z",
+      "side": 1,
+      "message": "the log level was set by design to not overload the log please revert the change.",
+      "revId": "08b12759d20c5668972a4a7fce5cb16af703479d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_51010538",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/CategoriesImportManager.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-27T15:53:19Z",
+      "side": 1,
+      "message": "the log level was set by design to not overload the log please revert the change.",
+      "revId": "08b12759d20c5668972a4a7fce5cb16af703479d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_71fe813a",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/CommonImportManager.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-27T15:53:19Z",
+      "side": 1,
+      "message": "the log level was set by design to not overload the log please revert the change.",
+      "revId": "08b12759d20c5668972a4a7fce5cb16af703479d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_11fb8d48",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentBusinessLogic.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-27T15:53:19Z",
+      "side": 1,
+      "message": "the log level was set by design to not overload the log please revert the change.",
+      "revId": "08b12759d20c5668972a4a7fce5cb16af703479d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_31f80949",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-27T15:53:19Z",
+      "side": 1,
+      "message": "the log level was set by design to not overload the log please revert the change.",
+      "revId": "08b12759d20c5668972a4a7fce5cb16af703479d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_d19435ea",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ConsumerBusinessLogic.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-27T15:53:19Z",
+      "side": 1,
+      "message": "the log level was set by design to not overload the log please revert the change.",
+      "revId": "08b12759d20c5668972a4a7fce5cb16af703479d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_919ebd06",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/GroupBusinessLogic.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-27T15:53:19Z",
+      "side": 1,
+      "message": "the log level was set by design to not overload the log please revert the change.",
+      "revId": "08b12759d20c5668972a4a7fce5cb16af703479d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_718521ac",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/InputsBusinessLogic.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-27T15:53:19Z",
+      "side": 1,
+      "message": "the log level was set by design to not overload the log please revert the change.",
+      "revId": "08b12759d20c5668972a4a7fce5cb16af703479d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_1192adf6",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ProductBusinessLogic.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-27T15:53:19Z",
+      "side": 1,
+      "message": "the log level was set by design to not overload the log please revert the change.",
+      "revId": "08b12759d20c5668972a4a7fce5cb16af703479d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_d1bbd573",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ResourceBusinessLogic.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-27T15:53:19Z",
+      "side": 1,
+      "message": "the log level was set by design to not overload the log please revert the change.",
+      "revId": "08b12759d20c5668972a4a7fce5cb16af703479d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_f1c051e2",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceBusinessLogic.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-27T15:53:19Z",
+      "side": 1,
+      "message": "the log level was set by design to not overload the log please revert the change.",
+      "revId": "08b12759d20c5668972a4a7fce5cb16af703479d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_91b55d80",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/generic/GenericTypeBusinessLogic.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-27T15:53:19Z",
+      "side": 1,
+      "message": "the log level was set by design to not overload the log please revert the change.",
+      "revId": "08b12759d20c5668972a4a7fce5cb16af703479d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_b1bad96c",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/lifecycle/LifecycleBusinessLogic.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-27T15:53:19Z",
+      "side": 1,
+      "message": "the log level was set by design to not overload the log please revert the change.",
+      "revId": "08b12759d20c5668972a4a7fce5cb16af703479d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_11a94d24",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/merge/instance/ComponentCapabilitiesPropertiesMergeBL.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-27T15:53:19Z",
+      "side": 1,
+      "message": "the log level was set by design to not overload the log please revert the change.",
+      "revId": "08b12759d20c5668972a4a7fce5cb16af703479d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_31a6c954",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/merge/instance/ComponentInstanceForwardingPathMerge.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-27T15:53:19Z",
+      "side": 1,
+      "message": "the log level was set by design to not overload the log please revert the change.",
+      "revId": "08b12759d20c5668972a4a7fce5cb16af703479d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_d162f515",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/merge/instance/ComponentInstanceRelationMerge.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-27T15:53:19Z",
+      "side": 1,
+      "message": "the log level was set by design to not overload the log please revert the change.",
+      "revId": "08b12759d20c5668972a4a7fce5cb16af703479d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_f167f123",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/scheduledtasks/ComponentsCleanBusinessLogic.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-27T15:53:19Z",
+      "side": 1,
+      "message": "the log level was set by design to not overload the log please revert the change.",
+      "revId": "08b12759d20c5668972a4a7fce5cb16af703479d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_5176e5d9",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/externalapi/servlet/ArtifactExternalServlet.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-27T15:53:19Z",
+      "side": 1,
+      "message": "this not needed it will just overload the log",
+      "revId": "08b12759d20c5668972a4a7fce5cb16af703479d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_7173e1e7",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/externalapi/servlet/CrudExternalServlet.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-27T15:53:19Z",
+      "side": 1,
+      "message": "not needed",
+      "revId": "08b12759d20c5668972a4a7fce5cb16af703479d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_11806d8a",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/externalapi/servlet/ServiceActivationServlet.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-27T15:53:19Z",
+      "side": 1,
+      "message": "not needed",
+      "revId": "08b12759d20c5668972a4a7fce5cb16af703479d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_91431d6c",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/impl/ComponentsUtils.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-27T15:53:19Z",
+      "side": 1,
+      "message": "the log level was set by design to not overload the log please revert the change.",
+      "revId": "08b12759d20c5668972a4a7fce5cb16af703479d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_b1489988",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/impl/DownloadArtifactLogic.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-27T15:53:19Z",
+      "side": 1,
+      "message": "the log level was set by design to not overload the log please revert the change.",
+      "revId": "08b12759d20c5668972a4a7fce5cb16af703479d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_515d8547",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/AbstractValidationsServlet.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-27T15:53:19Z",
+      "side": 1,
+      "message": "not needed",
+      "revId": "08b12759d20c5668972a4a7fce5cb16af703479d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_715a0152",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/AttributeServlet.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-27T15:53:19Z",
+      "side": 1,
+      "message": "not needed",
+      "revId": "08b12759d20c5668972a4a7fce5cb16af703479d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_31548920",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/BeMonitoringServlet.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-27T15:53:19Z",
+      "side": 1,
+      "message": "not needed",
+      "revId": "08b12759d20c5668972a4a7fce5cb16af703479d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_913a3de6",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/ComponentInstanceServlet.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-27T15:53:19Z",
+      "side": 1,
+      "message": "not needed",
+      "revId": "08b12759d20c5668972a4a7fce5cb16af703479d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_5124a5c5",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/ComponentServlet.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-27T15:53:19Z",
+      "side": 1,
+      "message": "not needed",
+      "revId": "08b12759d20c5668972a4a7fce5cb16af703479d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_7121a1b3",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/ConsumerServlet.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-27T15:53:19Z",
+      "side": 1,
+      "message": "not needed",
+      "revId": "08b12759d20c5668972a4a7fce5cb16af703479d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_112e2da6",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/DistributionServiceServlet.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-27T15:53:19Z",
+      "side": 1,
+      "message": "not needed",
+      "revId": "08b12759d20c5668972a4a7fce5cb16af703479d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_312b2996",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/ElementServlet.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-27T15:53:19Z",
+      "side": 1,
+      "message": "not needed",
+      "revId": "08b12759d20c5668972a4a7fce5cb16af703479d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_f11cd179",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/GroupServlet.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-27T15:53:19Z",
+      "side": 1,
+      "message": "not needed",
+      "revId": "08b12759d20c5668972a4a7fce5cb16af703479d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_9111dd5f",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/InputsServlet.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-27T15:53:19Z",
+      "side": 1,
+      "message": "not needed",
+      "revId": "08b12759d20c5668972a4a7fce5cb16af703479d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_b1165954",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/LifecycleServlet.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-27T15:53:19Z",
+      "side": 1,
+      "message": "not needed",
+      "revId": "08b12759d20c5668972a4a7fce5cb16af703479d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_510b452b",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/ProductServlet.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-27T15:53:19Z",
+      "side": 1,
+      "message": "not needed",
+      "revId": "08b12759d20c5668972a4a7fce5cb16af703479d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_7108c12d",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/PropertyServlet.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-27T15:53:19Z",
+      "side": 1,
+      "message": "not needed",
+      "revId": "08b12759d20c5668972a4a7fce5cb16af703479d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_3102490c",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/RepresentationUtils.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-27T15:53:19Z",
+      "side": 1,
+      "message": "not needed",
+      "revId": "08b12759d20c5668972a4a7fce5cb16af703479d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_c4feb505",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/ResourcesServlet.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-27T15:53:19Z",
+      "side": 1,
+      "message": "not needed",
+      "revId": "08b12759d20c5668972a4a7fce5cb16af703479d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_e403b10b",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/ServiceForwardingPathServlet.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-27T15:53:19Z",
+      "side": 1,
+      "message": "not needed",
+      "revId": "08b12759d20c5668972a4a7fce5cb16af703479d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_8408bd29",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/ServiceServlet.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-27T15:53:19Z",
+      "side": 1,
+      "message": "not needed",
+      "revId": "08b12759d20c5668972a4a7fce5cb16af703479d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_a40db939",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/TypesUploadServlet.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-27T15:53:19Z",
+      "side": 1,
+      "message": "not needed",
+      "revId": "08b12759d20c5668972a4a7fce5cb16af703479d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_4412a559",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/UserAdminServlet.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-27T15:53:19Z",
+      "side": 1,
+      "message": "not needed",
+      "revId": "08b12759d20c5668972a4a7fce5cb16af703479d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_640fa12f",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/CsarUtils.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-27T15:53:19Z",
+      "side": 1,
+      "message": "not needed",
+      "revId": "08b12759d20c5668972a4a7fce5cb16af703479d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_041cad69",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/ToscaExportHandler.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-27T15:53:19Z",
+      "side": 1,
+      "message": "not needed",
+      "revId": "08b12759d20c5668972a4a7fce5cb16af703479d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_e42ad17d",
+        "filename": "catalog-dao/src/main/java/org/openecomp/sdc/be/dao/impl/AuditingDao.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-27T15:53:19Z",
+      "side": 1,
+      "message": "the log level was set by design to not overload the log please revert the change.",
+      "revId": "08b12759d20c5668972a4a7fce5cb16af703479d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_841f5d5b",
+        "filename": "catalog-dao/src/main/java/org/openecomp/sdc/be/dao/impl/ESTimeBasedDao.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-27T15:53:19Z",
+      "side": 1,
+      "message": "the log level was set by design to not overload the log please revert the change.",
+      "revId": "08b12759d20c5668972a4a7fce5cb16af703479d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_443945d7",
+        "filename": "catalog-dao/src/main/java/org/openecomp/sdc/be/dao/jsongraph/utils/JsonParserUtils.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-27T15:53:19Z",
+      "side": 1,
+      "message": "the log level was set by design to not overload the log please revert the change.",
+      "revId": "08b12759d20c5668972a4a7fce5cb16af703479d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_04334df7",
+        "filename": "catalog-dao/src/main/java/org/openecomp/sdc/be/dao/titan/TitanGenericDao.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-27T15:53:19Z",
+      "side": 1,
+      "message": "the log level was set by design to not overload the log please revert the change.",
+      "revId": "08b12759d20c5668972a4a7fce5cb16af703479d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_2430c9e7",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/cache/ApplicationDataTypeCache.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-27T15:53:19Z",
+      "side": 1,
+      "message": "the log level was set by design to not overload the log please revert the change.",
+      "revId": "08b12759d20c5668972a4a7fce5cb16af703479d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_c44c7579",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/cache/ComponentCache.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-27T15:53:19Z",
+      "side": 1,
+      "message": "the log level was set by design to not overload the log please revert the change.",
+      "revId": "08b12759d20c5668972a4a7fce5cb16af703479d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_84567d05",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/cache/jobs/CheckAndUpdateJob.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-27T15:53:19Z",
+      "side": 1,
+      "message": "the log level was set by design to not overload the log please revert the change.",
+      "revId": "08b12759d20c5668972a4a7fce5cb16af703479d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_44406535",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/cache/jobs/DeleteJob.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-27T15:53:19Z",
+      "side": 1,
+      "message": "the log level was set by design to not overload the log please revert the change.",
+      "revId": "08b12759d20c5668972a4a7fce5cb16af703479d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_643d61bb",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/cache/jobs/Job.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-27T15:53:19Z",
+      "side": 1,
+      "message": "the log level was set by design to not overload the log please revert the change.",
+      "revId": "08b12759d20c5668972a4a7fce5cb16af703479d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_044a6d55",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/cache/jobs/OverrideJob.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-27T15:53:19Z",
+      "side": 1,
+      "message": "the log level was set by design to not overload the log please revert the change.",
+      "revId": "08b12759d20c5668972a4a7fce5cb16af703479d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_c47315b3",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/cache/jobs/StoreJob.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-27T15:53:19Z",
+      "side": 1,
+      "message": "the log level was set by design to not overload the log please revert the change.",
+      "revId": "08b12759d20c5668972a4a7fce5cb16af703479d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_e4789191",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/cache/workers/SyncWorker.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-27T15:53:19Z",
+      "side": 1,
+      "message": "the log level was set by design to not overload the log please revert the change.",
+      "revId": "08b12759d20c5668972a4a7fce5cb16af703479d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_a47299ab",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsontitan/operations/ArtifactsOperations.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-27T15:53:19Z",
+      "side": 1,
+      "message": "the log level was set by design to not overload the log please revert the change.",
+      "revId": "08b12759d20c5668972a4a7fce5cb16af703479d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_446705eb",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsontitan/operations/BaseOperation.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-27T15:53:19Z",
+      "side": 1,
+      "message": "the log level was set by design to not overload the log please revert the change.",
+      "revId": "08b12759d20c5668972a4a7fce5cb16af703479d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_04610dd3",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsontitan/operations/CategoryOperation.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-27T15:53:19Z",
+      "side": 1,
+      "message": "the log level was set by design to not overload the log please revert the change.",
+      "revId": "08b12759d20c5668972a4a7fce5cb16af703479d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_e49f31b3",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsontitan/operations/GroupsOperation.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-27T15:53:19Z",
+      "side": 1,
+      "message": "the log level was set by design to not overload the log please revert the change.",
+      "revId": "08b12759d20c5668972a4a7fce5cb16af703479d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_84a43d09",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsontitan/operations/NodeTemplateOperation.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-27T15:53:19Z",
+      "side": 1,
+      "message": "the log level was set by design to not overload the log please revert the change.",
+      "revId": "08b12759d20c5668972a4a7fce5cb16af703479d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_a4a939e1",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsontitan/operations/NodeTypeOperation.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-27T15:53:19Z",
+      "side": 1,
+      "message": "the log level was set by design to not overload the log please revert the change.",
+      "revId": "08b12759d20c5668972a4a7fce5cb16af703479d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_44ae25e9",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsontitan/operations/TopologyTemplateOperation.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-27T15:53:19Z",
+      "side": 1,
+      "message": "the log level was set by design to not overload the log please revert the change.",
+      "revId": "08b12759d20c5668972a4a7fce5cb16af703479d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_64ab21d7",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsontitan/operations/ToscaElementOperation.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-27T15:53:19Z",
+      "side": 1,
+      "message": "the log level was set by design to not overload the log please revert the change.",
+      "revId": "08b12759d20c5668972a4a7fce5cb16af703479d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_04b82d29",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsontitan/operations/ToscaOperationFacade.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-27T15:53:19Z",
+      "side": 1,
+      "message": "the log level was set by design to not overload the log please revert the change.",
+      "revId": "08b12759d20c5668972a4a7fce5cb16af703479d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_24b52931",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsontitan/operations/UpgradeOperation.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-27T15:53:19Z",
+      "side": 1,
+      "message": "the log level was set by design to not overload the log please revert the change.",
+      "revId": "08b12759d20c5668972a4a7fce5cb16af703479d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_e4865165",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/operations/impl/AdditionalInformationOperation.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-27T15:53:19Z",
+      "side": 1,
+      "message": "the log level was set by design to not overload the log please revert the change.",
+      "revId": "08b12759d20c5668972a4a7fce5cb16af703479d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_847bdd7a",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/operations/impl/ArtifactOperation.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-27T15:53:19Z",
+      "side": 1,
+      "message": "the log level was set by design to not overload the log please revert the change.",
+      "revId": "08b12759d20c5668972a4a7fce5cb16af703479d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_4495c586",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/operations/impl/ComponentInstanceOperation.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-27T15:53:19Z",
+      "side": 1,
+      "message": "the log level was set by design to not overload the log please revert the change.",
+      "revId": "08b12759d20c5668972a4a7fce5cb16af703479d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_048fcd76",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/operations/impl/ElementOperation.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-27T15:53:19Z",
+      "side": 1,
+      "message": "the log level was set by design to not overload the log please revert the change.",
+      "revId": "08b12759d20c5668972a4a7fce5cb16af703479d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_248c497f",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/operations/impl/GroupInstanceOperation.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-27T15:53:19Z",
+      "side": 1,
+      "message": "the log level was set by design to not overload the log please revert the change.",
+      "revId": "08b12759d20c5668972a4a7fce5cb16af703479d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_e4edf126",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/operations/impl/GroupOperation.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-27T15:53:19Z",
+      "side": 1,
+      "message": "the log level was set by design to not overload the log please revert the change.",
+      "revId": "08b12759d20c5668972a4a7fce5cb16af703479d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_84f2fd04",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/operations/impl/GroupTypeOperation.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-27T15:53:19Z",
+      "side": 1,
+      "message": "the log level was set by design to not overload the log please revert the change.",
+      "revId": "08b12759d20c5668972a4a7fce5cb16af703479d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_a4f7f9f4",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/operations/impl/HeatParametersOperation.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-27T15:53:19Z",
+      "side": 1,
+      "message": "the log level was set by design to not overload the log please revert the change.",
+      "revId": "08b12759d20c5668972a4a7fce5cb16af703479d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_44dce574",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/operations/impl/InterfaceLifecycleOperation.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-27T15:53:19Z",
+      "side": 1,
+      "message": "the log level was set by design to not overload the log please revert the change.",
+      "revId": "08b12759d20c5668972a4a7fce5cb16af703479d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_64d9e182",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/operations/impl/PropertyOperation.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-27T15:53:19Z",
+      "side": 1,
+      "message": "the log level was set by design to not overload the log please revert the change.",
+      "revId": "08b12759d20c5668972a4a7fce5cb16af703479d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_04e6ed44",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/operations/impl/UserAdminOperation.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-27T15:53:19Z",
+      "side": 1,
+      "message": "the log level was set by design to not overload the log please revert the change.",
+      "revId": "08b12759d20c5668972a4a7fce5cb16af703479d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_24e3e934",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/operations/utils/ComponentValidationUtils.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-27T15:53:19Z",
+      "side": 1,
+      "message": "the log level was set by design to not overload the log please revert the change.",
+      "revId": "08b12759d20c5668972a4a7fce5cb16af703479d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_c4cf95b2",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/tosca/converters/ListConverter.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-27T15:53:19Z",
+      "side": 1,
+      "message": "the log level was set by design to not overload the log please revert the change.",
+      "revId": "08b12759d20c5668972a4a7fce5cb16af703479d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_84c99dae",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/tosca/converters/MapConverter.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-27T15:53:19Z",
+      "side": 1,
+      "message": "the log level was set by design to not overload the log please revert the change.",
+      "revId": "08b12759d20c5668972a4a7fce5cb16af703479d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_a4ce19b3",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/tosca/converters/ToscaListValueConverter.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-27T15:53:19Z",
+      "side": 1,
+      "message": "the log level was set by design to not overload the log please revert the change.",
+      "revId": "08b12759d20c5668972a4a7fce5cb16af703479d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_44c3858a",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/tosca/converters/ToscaMapValueConverter.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-27T15:53:19Z",
+      "side": 1,
+      "message": "the log level was set by design to not overload the log please revert the change.",
+      "revId": "08b12759d20c5668972a4a7fce5cb16af703479d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_64c0017d",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/tosca/validators/DataTypeValidatorConverter.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-27T15:53:19Z",
+      "side": 1,
+      "message": "the log level was set by design to not overload the log please revert the change.",
+      "revId": "08b12759d20c5668972a4a7fce5cb16af703479d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_04bd8d02",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/tosca/validators/ListValidator.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-27T15:53:19Z",
+      "side": 1,
+      "message": "the log level was set by design to not overload the log please revert the change.",
+      "revId": "08b12759d20c5668972a4a7fce5cb16af703479d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_24ba090b",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/tosca/validators/MapValidator.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-27T15:53:19Z",
+      "side": 1,
+      "message": "the log level was set by design to not overload the log please revert the change.",
+      "revId": "08b12759d20c5668972a4a7fce5cb16af703479d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_c436b5b4",
+        "filename": "common-app-api/src/main/java/org/openecomp/sdc/common/util/SerializationUtils.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-27T15:53:19Z",
+      "side": 1,
+      "message": "the log level was set by design to not overload the log please revert the change.",
+      "revId": "08b12759d20c5668972a4a7fce5cb16af703479d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_8440bd08",
+        "filename": "common-app-api/src/main/java/org/openecomp/sdc/common/util/YamlToObjectConverter.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-27T15:53:19Z",
+      "side": 1,
+      "message": "the log level was set by design to not overload the log please revert the change.",
+      "revId": "08b12759d20c5668972a4a7fce5cb16af703479d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_6447a11e",
+        "filename": "test-apis-ci/src/main/java/org/openecomp/sdc/ci/tests/execute/imports/ImportGenericResourceCITest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-27T15:53:19Z",
+      "side": 1,
+      "message": "not needed",
+      "revId": "08b12759d20c5668972a4a7fce5cb16af703479d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_0454adc8",
+        "filename": "test-apis-ci/src/main/java/org/openecomp/sdc/ci/tests/utils/ToscaParserUtils.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-27T15:53:19Z",
+      "side": 1,
+      "message": "not needed",
+      "revId": "08b12759d20c5668972a4a7fce5cb16af703479d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_2451a9d8",
+        "filename": "test-apis-ci/src/main/java/org/openecomp/sdc/ci/tests/utils/ToscaTypesDefinitionUtils.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-27T15:53:19Z",
+      "side": 1,
+      "message": "not needed",
+      "revId": "08b12759d20c5668972a4a7fce5cb16af703479d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_c45d55ee",
+        "filename": "test-apis-ci/src/main/java/org/openecomp/sdc/ci/tests/utils/rest/ImportRestUtils.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-27T15:53:19Z",
+      "side": 1,
+      "message": "not needed",
+      "revId": "08b12759d20c5668972a4a7fce5cb16af703479d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
