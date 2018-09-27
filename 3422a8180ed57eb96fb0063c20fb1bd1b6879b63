@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_2ed748ef",
+        "filename": "common-app-api/src/main/java/org/openecomp/sdc/common/util/ZipUtil.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-27T12:45:53Z",
+      "side": 1,
+      "message": "we do not use this form please correct this to the regular format.",
+      "range": {
+        "startLine": 27,
+        "startChar": 0,
+        "endLine": 27,
+        "endChar": 17
+      },
+      "revId": "3422a8180ed57eb96fb0063c20fb1bd1b6879b63",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_ce033475",
+        "filename": "common-app-api/src/main/java/org/openecomp/sdc/common/util/ZipUtil.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-27T12:45:53Z",
+      "side": 1,
+      "message": "if you want to print the exception {} is not needed",
+      "range": {
+        "startLine": 49,
+        "startChar": 47,
+        "endLine": 49,
+        "endChar": 51
+      },
+      "revId": "3422a8180ed57eb96fb0063c20fb1bd1b6879b63",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_ee087093",
+        "filename": "common-app-api/src/main/java/org/openecomp/sdc/common/util/ZipUtil.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 81,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-09-27T12:45:53Z",
+      "side": 1,
+      "message": "please remove as it has no effect",
+      "range": {
+        "startLine": 81,
+        "startChar": 40,
+        "endLine": 81,
+        "endChar": 42
+      },
+      "revId": "3422a8180ed57eb96fb0063c20fb1bd1b6879b63",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
