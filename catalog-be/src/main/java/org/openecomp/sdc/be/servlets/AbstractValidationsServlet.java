@@ -169,9 +169,8 @@ public abstract class AbstractValidationsServlet extends BeGenericServlet {
 
     }
 
-    protected void validateZip(Wrapper<Response> responseWrapper, File file, String payloadName) throws FileNotFoundException {
-        InputStream fileInputStream = new FileInputStream(file);
-        Map<String, byte[]> unzippedFolder = ZipUtil.readZip(new ZipInputStream(fileInputStream));
+    protected void validateZip(Wrapper<Response> responseWrapper, File file, String payloadName) {
+        Map<String, byte[]> unzippedFolder = ZipUtil.readZip(file);
         if (payloadName == null || payloadName.isEmpty() || !unzippedFolder.containsKey(payloadName)) {
             log.info("Invalid json was received. payloadName should be yml file name");
             Response errorResponse = buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.INVALID_CONTENT));
@@ -179,9 +178,8 @@ public abstract class AbstractValidationsServlet extends BeGenericServlet {
         }
 
     }
-    protected void validateCsar(Wrapper<Response> responseWrapper, File file, String payloadName) throws FileNotFoundException {
-        InputStream fileInputStream = new FileInputStream(file);
-        Map<String, byte[]> unzippedFolder = ZipUtil.readZip(new ZipInputStream(fileInputStream));
+    protected void validateCsar(Wrapper<Response> responseWrapper, File file, String payloadName) {
+        Map<String, byte[]> unzippedFolder = ZipUtil.readZip(file);
         if (payloadName == null || payloadName.isEmpty() || unzippedFolder.isEmpty()) {
             log.info("Invalid json was received. payloadName should be yml file name");
             Response errorResponse = buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.INVALID_CONTENT));
@@ -190,20 +188,18 @@ public abstract class AbstractValidationsServlet extends BeGenericServlet {
 
     }
 
-    protected void fillZipContents(Wrapper<String> yamlStringWrapper, File file) throws FileNotFoundException {
+    protected void fillZipContents(Wrapper<String> yamlStringWrapper, File file) {
         extractZipContents(yamlStringWrapper, file);
     }
 
-    public static void extractZipContents(Wrapper<String> yamlStringWrapper, File file) throws FileNotFoundException {
-        InputStream fileInputStream = new FileInputStream(file);
-        Map<String, byte[]> unzippedFolder = ZipUtil.readZip(new ZipInputStream(fileInputStream));
+    public static void extractZipContents(Wrapper<String> yamlStringWrapper, File file) {
+        Map<String, byte[]> unzippedFolder = ZipUtil.readZip(file);
         String ymlName = unzippedFolder.keySet().iterator().next();
         fillToscaTemplateFromZip(yamlStringWrapper, ymlName, file);
     }
 
-    private static void fillToscaTemplateFromZip(Wrapper<String> yamlStringWrapper, String payloadName, File file) throws FileNotFoundException {
-        InputStream fileInputStream = new FileInputStream(file);
-        Map<String, byte[]> unzippedFolder = ZipUtil.readZip(new ZipInputStream(fileInputStream));
+    private static void fillToscaTemplateFromZip(Wrapper<String> yamlStringWrapper, String payloadName, File file) {
+        Map<String, byte[]> unzippedFolder = ZipUtil.readZip(file);
         byte[] yamlFileInBytes = unzippedFolder.get(payloadName);
         String yamlAsString = new String(yamlFileInBytes, StandardCharsets.UTF_8);
         log.debug("received yaml: {}", yamlAsString);
