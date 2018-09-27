@@ -43,7 +43,7 @@ class Application extends React.Component {
     render() {
         return (
             <Provider store={store}>
-                <div>
+                <div data-onboardingroot="">
                     <GlobalModal />
                     <Notifications />
                     {this.props.children}

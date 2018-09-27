@@ -43,7 +43,7 @@ const PointerInput = ({
     );
 };
 
-PointerInput.PropTypes = {
+PointerInput.propTypes = {
     label: PropTypes.string,
     value: PropTypes.string
 };
