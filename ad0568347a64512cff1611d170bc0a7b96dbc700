@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "1a76adc5_fdefc0e7",
+        "filename": "sdc-os-chef/scripts/docker_run.sh",
+        "patchSetId": 3
+      },
+      "lineNbr": 93,
+      "author": {
+        "id": 2737
+      },
+      "writtenOn": "2018-09-28T01:29:28Z",
+      "side": 1,
+      "message": "Hi, Michael\nfor a developer or a user, especially a newcomer(like me), \"it should be there\" sometimes may make them a little bit confused, this modification is just to reduce the manual jobs",
+      "parentUuid": "1a76adc5_8e81bcfd",
+      "range": {
+        "startLine": 92,
+        "startChar": 0,
+        "endLine": 93,
+        "endChar": 36
+      },
+      "revId": "ad0568347a64512cff1611d170bc0a7b96dbc700",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1a76adc5_2e72e849",
         "filename": "sdc-os-chef/scripts/docker_run.sh",
         "patchSetId": 3
@@ -36,6 +60,30 @@
       "writtenOn": "2018-09-27T12:35:18Z",
       "side": 1,
       "message": "this is a manual step that works difrently in our vagrant deployment and the heat based deployment where this script is used.",
+      "range": {
+        "startLine": 98,
+        "startChar": 0,
+        "endLine": 109,
+        "endChar": 1
+      },
+      "revId": "ad0568347a64512cff1611d170bc0a7b96dbc700",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_1deddcef",
+        "filename": "sdc-os-chef/scripts/docker_run.sh",
+        "patchSetId": 3
+      },
+      "lineNbr": 109,
+      "author": {
+        "id": 2737
+      },
+      "writtenOn": "2018-09-28T01:29:28Z",
+      "side": 1,
+      "message": "Hi, Michael\ncould you elaborate the vagrant scenario, so that I can see if I can refine the patch.",
+      "parentUuid": "1a76adc5_2e72e849",
       "range": {
         "startLine": 98,
         "startChar": 0,
