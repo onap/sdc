@@ -20,11 +20,11 @@
 
 package org.openecomp.sdc.common.util;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -41,20 +41,20 @@ public class ZipUtil {
 	private ZipUtil() {
 	}
 
+	public static Map<String, byte[]> readZip(File file) {
+        try(InputStream fileInputStream = new FileInputStream(file)){
+	        return readZip(IOUtils.toByteArray(fileInputStream));
+        } catch (IOException e) {
+            log.info("close File stream failed - {}" , e);
+            return null;
+        }
+    }
+
 	public static Map<String, byte[]> readZip(byte[] zipAsBytes) {
-
-		ZipInputStream zis = null;
-		zis = new ZipInputStream(new ByteArrayInputStream(zipAsBytes));
-
-		return readZip(zis);
-	}
-
-	public static Map<String, byte[]> readZip(ZipInputStream zis) {
-
 		Map<String, byte[]> fileNameToByteArray = new HashMap<>();
-
 		byte[] buffer = new byte[1024];
-		try {
+        try(ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(zipAsBytes);
+			ZipInputStream zis = new ZipInputStream(byteArrayInputStream)) {
 			// get the zipped file list entry
 			ZipEntry ze = zis.getNextEntry();
 
@@ -75,25 +75,10 @@ public class ZipUtil {
 					}
 				}
 				ze = zis.getNextEntry();
-
 			}
-
-			zis.closeEntry();
-			zis.close();
-
 		} catch (IOException ex) {
-			log.info("close Byte stream failed - {}" , ex);
+			log.info("close Byte stream failed" , ex);
 			return null;
-		} finally {
-			if (zis != null) {
-				try {
-					zis.closeEntry();
-					zis.close();
-				} catch (IOException e) {
-					log.info("Close ZipInputStream failed - {}" , e);
-				}
-
-			}
 		}
 
 		return fileNameToByteArray;
@@ -115,7 +100,7 @@ public class ZipUtil {
 			ZipUtil.readZip(zipAsBytes);
 
 		} catch (IOException e) {
-			log.info("close Byte stream failed - {}" , e);
+			log.info("close Byte stream failed" , e);
 		}
 
 	}
