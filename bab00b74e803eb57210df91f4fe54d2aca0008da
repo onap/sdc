@@ -1,0 +1,61 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bada0100_731d5a73",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 2609,
+      "author": {
+        "id": 4217
+      },
+      "writtenOn": "2018-10-01T02:38:07Z",
+      "side": 1,
+      "message": "Should be {} without space",
+      "revId": "bab00b74e803eb57210df91f4fe54d2aca0008da",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_3317d253",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 2626,
+      "author": {
+        "id": 4217
+      },
+      "writtenOn": "2018-10-01T02:38:07Z",
+      "side": 1,
+      "message": "copyComponentInstance() method already calls getToscaElement(containerComponentId), and passes it into this method as sourceComponent, so isn\u0027t sourceComponent and destComponent the very same object?",
+      "revId": "bab00b74e803eb57210df91f4fe54d2aca0008da",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_d63994d9",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/ComponentInstanceServlet.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 1229,
+      "author": {
+        "id": 4217
+      },
+      "writtenOn": "2018-10-01T02:38:07Z",
+      "side": 1,
+      "message": "Could get rid of \"final String CNTAINER_CMPT_TYPE\", and also do not need to look it up using \"ComponentTypeEnum.findByParamName(CNTAINER_CMPT_TYPE), instead just use:\nlog.debug(UNSUPPORTED_COMPONENT_TYPE, ComponentTypeEnum.SERVICE_PARAM_NAME",
+      "range": {
+        "startLine": 1229,
+        "startChar": 54,
+        "endLine": 1229,
+        "endChar": 71
+      },
+      "revId": "bab00b74e803eb57210df91f4fe54d2aca0008da",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
