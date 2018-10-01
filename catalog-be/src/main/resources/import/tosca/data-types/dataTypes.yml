@@ -1449,7 +1449,6 @@ tosca.datatypes.nfv.L3AddressData:
         type: string
       required: false
 tosca.datatypes.nfv.AddressData:
-  derived_from: tosca.datatypes.Root
   properties: 
     address_type: 
       constraints: 
