@@ -480,6 +480,16 @@
             <scope>test</scope>
         </dependency>
         <!-- testing end -->
+
+		<dependency>
+			<groupId>io.netty</groupId>
+			<artifactId>netty-all</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>io.netty</groupId>
+			<artifactId>netty-handler</artifactId>
+		</dependency>
 	</dependencies>
 
 	<build>

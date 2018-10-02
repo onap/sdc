@@ -584,6 +584,11 @@
             <artifactId>groovy</artifactId>
             <version>2.4.8</version>
         </dependency>
+
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-handler</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
