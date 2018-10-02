@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bada0100_aa4d83c6",
+        "filename": "catalog-ui/src/app/view-models/workspace/tabs/inputs/resource-input/resource-inputs-view-model.ts",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1341
+      },
+      "writtenOn": "2018-10-02T10:53:05Z",
+      "side": 1,
+      "message": "Please remove this file",
+      "revId": "798f8641e63c43abb9b17c0fa7e449b0614412d6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_ca4a47ac",
+        "filename": "catalog-ui/src/app/view-models/workspace/tabs/inputs/service-input/service-inputs-view-model.ts",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1341
+      },
+      "writtenOn": "2018-10-02T10:53:05Z",
+      "side": 1,
+      "message": "Please remove this file",
+      "revId": "798f8641e63c43abb9b17c0fa7e449b0614412d6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
