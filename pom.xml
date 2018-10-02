@@ -44,6 +44,8 @@ Modifications copyright (c) 2018 Nokia
         <wire-mock.version>2.18.0</wire-mock.version>
         <ecomp.version>1.1.0</ecomp.version>
         <cassandra.unit.version>3.5.0.1</cassandra.unit.version>
+        <netty-all.version>4.0.45.Final</netty-all.version>
+        <netty-handler.version>4.0.45.Final</netty-handler.version>
 
         <!-- Elastic Search mapper (reference the elastic search version actually). -->
         <elastic-search.version>2.4.0</elastic-search.version>
