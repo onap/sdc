@@ -2,6 +2,121 @@
   "comments": [
     {
       "key": {
+        "uuid": "1a76adc5_619d5d59",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-10-02T10:31:43Z",
+      "side": 1,
+      "message": "please use the onap format and revert this.",
+      "range": {
+        "startLine": 40,
+        "startChar": 44,
+        "endLine": 40,
+        "endChar": 49
+      },
+      "revId": "bab00b74e803eb57210df91f4fe54d2aca0008da",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_219f6552",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-10-02T10:31:43Z",
+      "side": 1,
+      "message": "same as above",
+      "range": {
+        "startLine": 46,
+        "startChar": 32,
+        "endLine": 46,
+        "endChar": 36
+      },
+      "revId": "bab00b74e803eb57210df91f4fe54d2aca0008da",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_c1ab1174",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-10-02T10:31:43Z",
+      "side": 1,
+      "message": "same as above",
+      "range": {
+        "startLine": 70,
+        "startChar": 0,
+        "endLine": 71,
+        "endChar": 16
+      },
+      "revId": "bab00b74e803eb57210df91f4fe54d2aca0008da",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_6a8f9b24",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 2586,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-10-02T10:31:43Z",
+      "side": 1,
+      "message": "vlidations are done in the createInstance \nin addition before making any change to the component it needs to be locked\nlockComponent\nwhy are you returning list?\nyou are changing one instance.",
+      "range": {
+        "startLine": 2585,
+        "startChar": 16,
+        "endLine": 2586,
+        "endChar": 79
+      },
+      "revId": "bab00b74e803eb57210df91f4fe54d2aca0008da",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_4a9e5758",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 2600,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-10-02T10:31:43Z",
+      "side": 1,
+      "message": "this call will puch the vertex to the graph if we fail later then the vertex will not be removed the whole operation should be in a single transaction",
+      "range": {
+        "startLine": 2600,
+        "startChar": 67,
+        "endLine": 2600,
+        "endChar": 90
+      },
+      "revId": "bab00b74e803eb57210df91f4fe54d2aca0008da",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "bada0100_731d5a73",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
         "patchSetId": 11
@@ -19,6 +134,29 @@
     },
     {
       "key": {
+        "uuid": "bada0100_aaaca38d",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 2618,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-10-02T10:31:43Z",
+      "side": 1,
+      "message": "the deep copy should return the updated instnace right now you are returning the old instance before the deep copy",
+      "range": {
+        "startLine": 2618,
+        "startChar": 8,
+        "endLine": 2618,
+        "endChar": 66
+      },
+      "revId": "bab00b74e803eb57210df91f4fe54d2aca0008da",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "bada0100_3317d253",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
         "patchSetId": 11
@@ -30,6 +168,443 @@
       "writtenOn": "2018-10-01T02:38:07Z",
       "side": 1,
       "message": "copyComponentInstance() method already calls getToscaElement(containerComponentId), and passes it into this method as sourceComponent, so isn\u0027t sourceComponent and destComponent the very same object?",
+      "revId": "bab00b74e803eb57210df91f4fe54d2aca0008da",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_8abbdfc3",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 2665,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-10-02T10:31:43Z",
+      "side": 1,
+      "message": "change to debug",
+      "range": {
+        "startLine": 2665,
+        "startChar": 8,
+        "endLine": 2665,
+        "endChar": 16
+      },
+      "revId": "bab00b74e803eb57210df91f4fe54d2aca0008da",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_2ab0b3dc",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 2671,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-10-02T10:31:43Z",
+      "side": 1,
+      "message": "change to debug level",
+      "range": {
+        "startLine": 2671,
+        "startChar": 12,
+        "endLine": 2671,
+        "endChar": 20
+      },
+      "revId": "bab00b74e803eb57210df91f4fe54d2aca0008da",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_4ab5f7cb",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 2676,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-10-02T10:31:43Z",
+      "side": 1,
+      "message": "change to debug level",
+      "range": {
+        "startLine": 2676,
+        "startChar": 8,
+        "endLine": 2676,
+        "endChar": 16
+      },
+      "revId": "bab00b74e803eb57210df91f4fe54d2aca0008da",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_2ae753e6",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 2676,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-10-02T10:31:43Z",
+      "side": 1,
+      "message": "please use {} in log insted of +",
+      "range": {
+        "startLine": 2676,
+        "startChar": 35,
+        "endLine": 2676,
+        "endChar": 50
+      },
+      "revId": "bab00b74e803eb57210df91f4fe54d2aca0008da",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_eac94b5b",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 2680,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-10-02T10:31:43Z",
+      "side": 1,
+      "message": "change to debug",
+      "range": {
+        "startLine": 2680,
+        "startChar": 12,
+        "endLine": 2680,
+        "endChar": 21
+      },
+      "revId": "bab00b74e803eb57210df91f4fe54d2aca0008da",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_0ac7ef46",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 2687,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-10-02T10:31:43Z",
+      "side": 1,
+      "message": "change to debug",
+      "range": {
+        "startLine": 2687,
+        "startChar": 12,
+        "endLine": 2687,
+        "endChar": 20
+      },
+      "revId": "bab00b74e803eb57210df91f4fe54d2aca0008da",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_cac0072d",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 2694,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-10-02T10:31:43Z",
+      "side": 1,
+      "message": "change to debug",
+      "range": {
+        "startLine": 2694,
+        "startChar": 20,
+        "endLine": 2694,
+        "endChar": 29
+      },
+      "revId": "bab00b74e803eb57210df91f4fe54d2aca0008da",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_6add5b14",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 2697,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-10-02T10:31:43Z",
+      "side": 1,
+      "message": "change to debug",
+      "range": {
+        "startLine": 2697,
+        "startChar": 24,
+        "endLine": 2697,
+        "endChar": 32
+      },
+      "revId": "bab00b74e803eb57210df91f4fe54d2aca0008da",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_8ae2ffd3",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 2710,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-10-02T10:31:43Z",
+      "side": 1,
+      "message": "change to debug",
+      "range": {
+        "startLine": 2710,
+        "startChar": 20,
+        "endLine": 2710,
+        "endChar": 28
+      },
+      "revId": "bab00b74e803eb57210df91f4fe54d2aca0008da",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_0ace0f5b",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 2714,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-10-02T10:31:43Z",
+      "side": 1,
+      "message": "change to debug\nplease change the log message set by man????",
+      "range": {
+        "startLine": 2714,
+        "startChar": 28,
+        "endLine": 2714,
+        "endChar": 36
+      },
+      "revId": "bab00b74e803eb57210df91f4fe54d2aca0008da",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_cad7a7ec",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 2717,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-10-02T10:31:43Z",
+      "side": 1,
+      "message": "change to debug",
+      "range": {
+        "startLine": 2717,
+        "startChar": 24,
+        "endLine": 2717,
+        "endChar": 32
+      },
+      "revId": "bab00b74e803eb57210df91f4fe54d2aca0008da",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_caeec7b4",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 2726,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-10-02T10:31:43Z",
+      "side": 1,
+      "message": "this object is not used\nwhay do you use this format exactly?",
+      "range": {
+        "startLine": 2725,
+        "startChar": 28,
+        "endLine": 2726,
+        "endChar": 48
+      },
+      "revId": "bab00b74e803eb57210df91f4fe54d2aca0008da",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_0a3ccf2e",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 2764,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-10-02T10:31:43Z",
+      "side": 1,
+      "message": "please clirify the flow ands why the is find atribute is needed?",
+      "range": {
+        "startLine": 2764,
+        "startChar": 15,
+        "endLine": 2764,
+        "endChar": 48
+      },
+      "revId": "bab00b74e803eb57210df91f4fe54d2aca0008da",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_2a351346",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 2769,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-10-02T10:31:43Z",
+      "side": 1,
+      "message": "this will not be printed please add {}",
+      "range": {
+        "startLine": 2769,
+        "startChar": 82,
+        "endLine": 2769,
+        "endChar": 101
+      },
+      "revId": "bab00b74e803eb57210df91f4fe54d2aca0008da",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_6a2b1bec",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 2770,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-10-02T10:31:43Z",
+      "side": 1,
+      "message": "please use the unique id builder",
+      "range": {
+        "startLine": 2770,
+        "startChar": 44,
+        "endLine": 2770,
+        "endChar": 56
+      },
+      "revId": "bab00b74e803eb57210df91f4fe54d2aca0008da",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_ca1c87c4",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 2806,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-10-02T10:31:43Z",
+      "side": 1,
+      "message": "additione infiormation is not conected to instance and does not need to be copyed",
+      "range": {
+        "startLine": 2806,
+        "startChar": 52,
+        "endLine": 2806,
+        "endChar": 76
+      },
+      "revId": "bab00b74e803eb57210df91f4fe54d2aca0008da",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_6a123bb6",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 2864,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-10-02T10:31:43Z",
+      "side": 1,
+      "message": "thsi method has duplicate logic that was already done before clean it up",
+      "range": {
+        "startLine": 2864,
+        "startChar": 62,
+        "endLine": 2864,
+        "endChar": 102
+      },
+      "revId": "bab00b74e803eb57210df91f4fe54d2aca0008da",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_aa4823cd",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 2872,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-10-02T10:31:43Z",
+      "side": 1,
+      "message": "whay is this needed here? you already did this validation?",
+      "range": {
+        "startLine": 2872,
+        "startChar": 8,
+        "endLine": 2872,
+        "endChar": 26
+      },
+      "revId": "bab00b74e803eb57210df91f4fe54d2aca0008da",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_0af5af82",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 3021,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-10-02T10:31:43Z",
+      "side": 1,
+      "message": "this is not needed\nplease change to debug\nthsi case is not an erro at all",
+      "range": {
+        "startLine": 3021,
+        "startChar": 64,
+        "endLine": 3021,
+        "endChar": 67
+      },
       "revId": "bab00b74e803eb57210df91f4fe54d2aca0008da",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
