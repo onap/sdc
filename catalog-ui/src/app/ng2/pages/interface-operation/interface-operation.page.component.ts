@@ -1,5 +1,5 @@
 import * as _ from "lodash";
-import {Component, Input, ComponentRef, Inject} from '@angular/core';
+import {Component, Input, Output, ComponentRef, Inject} from '@angular/core';
 import {Component as IComponent} from 'app/models/components/component';
 
 import {SdcConfigToken, ISdcConfig} from "app/ng2/config/sdc-config.config";
@@ -32,9 +32,12 @@ export class InterfaceOperationComponent {
 
     @Input() component: IComponent;
     @Input() readonly: boolean;
+    @Input() enableMenuItems: Function;
+    @Input() disableMenuItems: Function;
 
     constructor(
-        @Inject(SdcConfigToken) sdcConfig: ISdcConfig,
+        @Inject(SdcConfigToken) private sdcConfig: ISdcConfig,
+        @Inject("$state") private $state: ng.ui.IStateService,
         private ComponentServiceNg2: ComponentServiceNg2,
         private WorkflowServiceNg2: WorkflowServiceNg2,
         private ModalServiceNg2: ModalService,
@@ -44,17 +47,24 @@ export class InterfaceOperationComponent {
 
     ngOnInit(): void {
         this.isLoading = true;
+        let gotOperations = false;
+        let gotInputs = false;
+
         this.ComponentServiceNg2.getInterfaceOperations(this.component).subscribe((response: ComponentGenericResponse) => {
-            if (this.inputs) {
+            if (gotInputs) {
                 this.isLoading = false;
+            } else {
+                gotOperations = true;
             }
-            let {interfaceOperations} = response;
-            this.component.interfaceOperations = interfaceOperations;
-            this.operationList = _.toArray(interfaceOperations).sort((a, b) => a.operationType.localeCompare(b.operationType));
+            this.component.interfaceOperations = response.interfaceOperations;
+            this.operationList = _.toArray(response.interfaceOperations).sort((a, b) => a.operationType.localeCompare(b.operationType));
         });
+
         this.ComponentServiceNg2.getComponentInputs(this.component).subscribe((response: ComponentGenericResponse) => {
-            if (this.component.interfaceOperations) {
+            if (gotOperations) {
                 this.isLoading = false;
+            } else {
+                gotInputs = true;
             }
             this.inputs = response.inputs;
         });
@@ -99,7 +109,7 @@ export class InterfaceOperationComponent {
             modalData.saveBtnText,
             'blue',
             () => {
-                this.modalInstance.instance.dynamicContent.instance.createInputParamList();
+                this.modalInstance.instance.dynamicContent.instance.createParamLists();
                 this.ModalServiceNg2.closeCurrentModal();
 
                 const {operation, isAssociateWorkflow} = this.modalInstance.instance.dynamicContent.instance;
@@ -180,6 +190,8 @@ export class InterfaceOperationComponent {
                 const versionId = response.workflowVersionId;
                 const artifactId = response.artifactUUID;
                 this.WorkflowServiceNg2.associateWorkflowArtifact(resourceId, operationId, workflowId, versionId, artifactId).subscribe();
+            } else {
+                this.$state.go('workspace.plugins', { path: 'workflowDesigner' });
             }
         });
     }

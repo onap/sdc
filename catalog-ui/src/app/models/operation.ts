@@ -31,14 +31,6 @@ export class OperationModel {
     workflowId: string;
     workflowVersionId: string;
 
-    protected OperationTypeEnum: Array<String> = [
-        'Create',
-        'Delete',
-        'Instantiate',
-        'Start',
-        'Stop'
-    ];
-
     constructor(operation?: any) {
         if (operation) {
             this.description = operation.description;
@@ -59,7 +51,11 @@ export class OperationModel {
 
     public createOutputParamsList(outputParams: Array<OperationParameter>): void {
         this.outputParams = {
-            listToscaDataDefinition: outputParams
+            listToscaDataDefinition: _.map(outputParams, output => {
+                const newOutput = {...output};
+                delete newOutput.property;
+                return newOutput;
+            })
         };
     }
 }

@@ -36,7 +36,7 @@
     <span *ngIf="isAssociateWorkflow">{{param.type}}</span>
 </div>
 
-<div class="cell field-property">
+<div class="cell field-property" *ngIf="isInputParam">
     <ui-element-dropdown
         data-tests-id="paramProperty"
         [values]="filteredInputProps"
