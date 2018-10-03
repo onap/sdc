@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bada0100_4ba5f602",
+        "filename": "openecomp-be/lib/openecomp-sdc-datatypes-lib/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-10-03T14:51:51Z",
+      "side": 1,
+      "message": "The version is redundant because it\u0027s defined in the dependencyManagement of a parent POM.",
+      "revId": "5dbe9d78d319b5fc3261abbd51a5e6c4d579c2e0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_ebb5ca31",
+        "filename": "openecomp-be/lib/openecomp-sdc-datatypes-lib/src/main/java/org/openecomp/sdc/datatypes/error/ErrorMessage.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-10-03T14:51:51Z",
+      "side": 1,
+      "message": "This can be probably replaced with Lombok\u0027s @EqualsAndHashCode",
+      "range": {
+        "startLine": 40,
+        "startChar": 1,
+        "endLine": 60,
+        "endChar": 3
+      },
+      "revId": "5dbe9d78d319b5fc3261abbd51a5e6c4d579c2e0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
