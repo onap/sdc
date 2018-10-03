@@ -1,0 +1,188 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bada0100_30201d9b",
+        "filename": "asdctool/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 487,
+      "author": {
+        "id": 1343
+      },
+      "writtenOn": "2018-10-03T11:30:28Z",
+      "side": 1,
+      "message": "Please remove these and add it to version control in main pom",
+      "range": {
+        "startLine": 487,
+        "startChar": 3,
+        "endLine": 487,
+        "endChar": 42
+      },
+      "revId": "5af0b70dab81f889bb7c4efdcf00f13ad2227065",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_5025a1a9",
+        "filename": "asdctool/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 493,
+      "author": {
+        "id": 1343
+      },
+      "writtenOn": "2018-10-03T11:30:28Z",
+      "side": 1,
+      "message": "Please remove these and add it to version control in main pom",
+      "range": {
+        "startLine": 493,
+        "startChar": 3,
+        "endLine": 493,
+        "endChar": 46
+      },
+      "revId": "5af0b70dab81f889bb7c4efdcf00f13ad2227065",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_103719e5",
+        "filename": "catalog-be/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 591,
+      "author": {
+        "id": 1343
+      },
+      "writtenOn": "2018-10-03T11:30:28Z",
+      "side": 1,
+      "message": "Please remove these and add it to version control in main pom",
+      "range": {
+        "startLine": 591,
+        "startChar": 12,
+        "endLine": 591,
+        "endChar": 55
+      },
+      "revId": "5af0b70dab81f889bb7c4efdcf00f13ad2227065",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_7026a5bc",
+        "filename": "catalog-model/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 266,
+      "author": {
+        "id": 1343
+      },
+      "writtenOn": "2018-10-03T11:30:28Z",
+      "side": 1,
+      "message": "Please remove these and add it to version control in main pom",
+      "range": {
+        "startLine": 266,
+        "startChar": 3,
+        "endLine": 266,
+        "endChar": 42
+      },
+      "revId": "5af0b70dab81f889bb7c4efdcf00f13ad2227065",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_902b0982",
+        "filename": "catalog-model/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 272,
+      "author": {
+        "id": 1343
+      },
+      "writtenOn": "2018-10-03T11:30:28Z",
+      "side": 1,
+      "message": "Please remove these and add it to version control in main pom",
+      "range": {
+        "startLine": 272,
+        "startChar": 3,
+        "endLine": 272,
+        "endChar": 46
+      },
+      "revId": "5af0b70dab81f889bb7c4efdcf00f13ad2227065",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_d030b1ea",
+        "filename": "test-apis-ci/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 389,
+      "author": {
+        "id": 1343
+      },
+      "writtenOn": "2018-10-03T11:30:28Z",
+      "side": 1,
+      "message": "Please remove these and add it to version control in main pom",
+      "range": {
+        "startLine": 389,
+        "startChar": 12,
+        "endLine": 389,
+        "endChar": 51
+      },
+      "revId": "5af0b70dab81f889bb7c4efdcf00f13ad2227065",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_b033adf5",
+        "filename": "test-apis-ci/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 395,
+      "author": {
+        "id": 1343
+      },
+      "writtenOn": "2018-10-03T11:30:28Z",
+      "side": 1,
+      "message": "Please remove these and add it to version control in main pom",
+      "range": {
+        "startLine": 395,
+        "startChar": 12,
+        "endLine": 395,
+        "endChar": 55
+      },
+      "revId": "5af0b70dab81f889bb7c4efdcf00f13ad2227065",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_704d4572",
+        "filename": "ui-ci/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 263,
+      "author": {
+        "id": 1343
+      },
+      "writtenOn": "2018-10-03T11:30:28Z",
+      "side": 1,
+      "message": "Please remove these and add it to version control in main pom",
+      "range": {
+        "startLine": 263,
+        "startChar": 3,
+        "endLine": 263,
+        "endChar": 46
+      },
+      "revId": "5af0b70dab81f889bb7c4efdcf00f13ad2227065",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
