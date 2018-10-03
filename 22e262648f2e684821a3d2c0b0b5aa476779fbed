@@ -1,0 +1,67 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bada0100_10239906",
+        "filename": "openecomp-be/lib/openecomp-core-lib/openecomp-session-lib/src/main/java/org/openecomp/sdc/common/session/impl/SessionContextProviderFactoryImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-10-03T13:46:38Z",
+      "side": 1,
+      "message": "This format is incorrect. Please see other files with AT\u0026T but without the dashed lines.",
+      "revId": "22e262648f2e684821a3d2c0b0b5aa476779fbed",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_b01f2db7",
+        "filename": "openecomp-be/lib/openecomp-core-lib/openecomp-session-lib/src/test/java/org/openecomp/sdc/common/session/impl/AsdcSessionContextProviderTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-10-03T13:46:38Z",
+      "side": 1,
+      "message": "Mistake. If you\u0027re using a code template, please fix it.",
+      "range": {
+        "startLine": 17,
+        "startChar": 0,
+        "endLine": 18,
+        "endChar": 3
+      },
+      "revId": "22e262648f2e684821a3d2c0b0b5aa476779fbed",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_d01c31c4",
+        "filename": "openecomp-be/lib/openecomp-core-lib/openecomp-session-lib/src/test/java/org/openecomp/sdc/common/session/impl/SessionContextProviderFactoryImplTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-10-03T13:46:38Z",
+      "side": 1,
+      "message": "Same mistake.",
+      "range": {
+        "startLine": 17,
+        "startChar": 0,
+        "endLine": 18,
+        "endChar": 3
+      },
+      "revId": "22e262648f2e684821a3d2c0b0b5aa476779fbed",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
