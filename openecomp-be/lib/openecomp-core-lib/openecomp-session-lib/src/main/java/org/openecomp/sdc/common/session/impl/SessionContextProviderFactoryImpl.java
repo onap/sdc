@@ -1,4 +1,4 @@
-/*-
+/*
  * ============LICENSE_START=======================================================
  * SDC
  * ================================================================================
@@ -24,10 +24,11 @@ import org.openecomp.sdc.common.session.SessionContextProvider;
 import org.openecomp.sdc.common.session.SessionContextProviderFactory;
 
 public class SessionContextProviderFactoryImpl extends SessionContextProviderFactory {
-  private static final SessionContextProvider INSTANCE = new AsdcSessionContextProvider();
 
-  @Override
-  public SessionContextProvider createInterface() {
-    return INSTANCE;
-  }
+    private static final SessionContextProvider INSTANCE = new AsdcSessionContextProvider();
+
+    @Override
+    public SessionContextProvider createInterface() {
+        return INSTANCE;
+    }
 }
