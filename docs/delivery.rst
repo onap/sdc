@@ -40,7 +40,7 @@ Below is a diagram of the SDC project docker containers and the connections betw
         sdc-ui-sanity -> sdc-frontend;
         group deploy_group {
             color = green;
-            label = "Aplication Layer"
+            label = "Application Layer"
             sdc-backend; sdc-onboarding-backend; sdc-kibana; sdc-frontend;sdc-elasticsearch; sdc-cassandra; sdc-cassandra-Config; sdc-elasticsearch-config; sdc-backend-config; sdc-onboarding-init;
         }
         group testing_group {
