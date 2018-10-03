@@ -283,7 +283,7 @@ BE-configuration.yaml
 
         # Mapping of index prefix to time-based frame. For example, if below is configured:
         #
-        # - indexPrefix: auditingevents
+        # - indexPrefix: auditing events
         #    creationPeriod: minute
         #
         # then ES object of type which is mapped to "auditingevents-*" template, and created on 2015-12-23 13:24:54, will enter "auditingevents-2015-12-23-13-24" index.
@@ -882,7 +882,7 @@ BE-configuration.yaml
             waitOnShutDownInMinutes: 10
             numberOfCacheWorkers: 4
 
-    # Validators for tosca properties
+    # Validators for Tosca properties
     toscaValidators:
         stringMaxLength: 2500
 

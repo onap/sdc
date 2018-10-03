@@ -17,6 +17,6 @@ SDC allows the user to choose packages from VNF-SDK and start the onboarding fro
    * - URL
      - Description
    * - /onapapi/vnfsdk-marketplace/v1/PackageResource/csars
-     - get all avilable csar pckage data
+     - get all available csar package data
    * - /onapapi/vnfsdk-marketplace/v1/PackageResource/csars/{id}/files
      - Download CSAR by id
