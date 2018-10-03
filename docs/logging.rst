@@ -8,8 +8,8 @@ Logging
 Where to Access Information
 ---------------------------
 the logs for the application are available in the docker it self at /var/lib/jetty/logs/
-in Heat deployment the dockers are maped into /data/logs on the vm where the application is running.
-In OOM you can use the logging project to accses the logging collected from the applications.
+in Heat deployment the dockers are mapped into /data/logs on the vm where the application is running.
+In OOM you can use the logging project to access the logging collected from the applications.
 
 
 +-------------------------------+------------------------------------------+---------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+---------------------+
@@ -17,29 +17,29 @@ In OOM you can use the logging project to accses the logging collected from the 
 +===============================+==========================================+=====================+===========================================================================================================================================================================================+=====================+
 | BE catalog and onboarding     | /data/logs/BE/2017_03_10.stderrout.log   | Jetty server log    | The log describes info regarding Jetty startup and execution                                                                                                                              | the log rolls daily |
 +                               +------------------------------------------+---------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+---------------------+
-|                               | /data/logs/BE/SDC/SDC-BE/audit.log       | application audit   | An audit record is created for each operation in SDC                                                                                                                                      | rolls at 20 mb      |
+|                               | /data/logs/BE/SDC/SDC-BE/audit.log       | application audit   | An audit record is created for each operation in SDC                                                                                                                                      | rolls at 20 MB      |
 +                               +------------------------------------------+---------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+---------------------+
-|                               | /data/logs/BE/SDC/SDC-BE/debug.log       | application logging | We can enable higher logging on demand by editing the logback.xml inside the server docker.                                                                                               | rolls at 20 mb      |
+|                               | /data/logs/BE/SDC/SDC-BE/debug.log       | application logging | We can enable higher logging on demand by editing the logback.xml inside the server docker.                                                                                               | rolls at 20 MB      |
 |                               |                                          |                     | The file is located under:,config/catalog-be/logback.xml.                                                                                                                                 |                     |
 |                               |                                          |                     | This log holds the debug and trace level output of the application.                                                                                                                       |                     |
 +                               +------------------------------------------+---------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+---------------------+
-|                               | /data/logs/BE/SDC/SDC-BE/error.log       | application logging | This log holds the info and error level output of the application.                                                                                                                        | rolls at 20 mb      |
+|                               | /data/logs/BE/SDC/SDC-BE/error.log       | application logging | This log holds the info and error level output of the application.                                                                                                                        | rolls at 20 MB      |
 +                               +------------------------------------------+---------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+---------------------+
-|                               | /data/logs/BE/SDC/SDC-BE/transaction.log | application logging | Not currently in use. will be used in future relases.                                                                                                                                     | rolls at 20 mb      |
+|                               | /data/logs/BE/SDC/SDC-BE/transaction.log | application logging | Not currently in use. will be used in future releases.                                                                                                                                     | rolls at 20 MB      |
 +                               +------------------------------------------+---------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+---------------------+
-|                               | /data/logs/BE/SDC/SDC-BE/all.log         | application logging | On demand, we can enable log aggregation into one file for easier debugging. This is done by editing the logback.xml inside the server docker.                                            | rolls at 20 mb      |
+|                               | /data/logs/BE/SDC/SDC-BE/all.log         | application logging | On demand, we can enable log aggregation into one file for easier debugging. This is done by editing the logback.xml inside the server docker.                                            | rolls at 20 MB      |
 |                               |                                          |                     | The file is located under:,config/catalog-be/logback.xml.                                                                                                                                 |                     |
 |                               |                                          |                     | To allow this logger, set the value for this property to true This log holds all logging output of the application.                                                                       |                     |
 +-------------------------------+------------------------------------------+---------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+---------------------+
 | FE                            | /data/logs/FE/2017_03_10.stderrout.log   |  Jetty server log   | The log describes info regarding the Jetty startup and execution                                                                                                                          | the log rolls daily |
 +                               +------------------------------------------+---------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+---------------------+
-|                               | /data/logs/FE/SDC/SDC-FE/debug.log       | application logging | We can enable higher logging on demand by editing the logback.xml inside the server docker.                                                                                               | rolls at 20 mb      |
+|                               | /data/logs/FE/SDC/SDC-FE/debug.log       | application logging | We can enable higher logging on demand by editing the logback.xml inside the server docker.                                                                                               | rolls at 20 MB      |
 |                               |                                          |                     | The file is located,under: config/catalog-fe/logback.xml.                                                                                                                                 |                     |
 |                               |                                          |                     | This log holds the debug and trace level output of the application.                                                                                                                       |                     |
 +                               +------------------------------------------+---------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+---------------------+
-|                               | /data/logs/FE/SDC/SDC-FE/error.log       | application logging | This log holds the Info and Error level output of the application.                                                                                                                        | rolls at 20 mb      |
+|                               | /data/logs/FE/SDC/SDC-FE/error.log       | application logging | This log holds the Info and Error level output of the application.                                                                                                                        | rolls at 20 MB      |
 +                               +------------------------------------------+---------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+---------------------+
-|                               | /data/logs/FE/SDC/SDC-FE/all.log         | application logging | On demand we can enable log aggregation into one file for easier debuging, by editing the logback.xml inside the server docker.The file is located under: config/catalog-fe/logback.xml.  | rolls               |
+|                               | /data/logs/FE/SDC/SDC-FE/all.log         | application logging | On demand we can enable log aggregation into one file for easier debugging, by editing the logback.xml inside the server docker.The file is located under: config/catalog-fe/logback.xml.  | rolls               |
 |                               |                                          |                     | To allow this logger set this property to true                                                                                                                                            |                     |
 |                               |                                          |                     | This log holds all the logging output of the application.                                                                                                                                 |                     |
 +-------------------------------+------------------------------------------+---------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+---------------------+
@@ -48,7 +48,7 @@ In OOM you can use the logging project to accses the logging collected from the 
 Error / Warning Messages
 ------------------------
 
-Respone Types
+Response Types
 =============
 
 ::
@@ -159,7 +159,7 @@ Respone Types
 ---------SVC4003------------------------------
 ==============================================
 
-- %1 - Users's ID
+- %1 - User's ID
 
 ::
 
@@ -172,7 +172,7 @@ Respone Types
 ---------SVC4004-----------------------------
 =============================================
 
-- %1 - Users's email address
+- %1 - User's email address
 
 ::
 
@@ -198,7 +198,7 @@ Respone Types
 ---------SVC4006------------------------------
 ==============================================
 
-- %1 - Users's USER_ID
+- %1 - User's USER_ID
 
 ::
 
@@ -222,7 +222,7 @@ Respone Types
 ---------SVC4008-----------------------------
 =============================================
 
-- %1 - Users's USER_ID 
+- %1 - User's USER_ID 
 
 ::
 
@@ -958,7 +958,7 @@ Respone Types
 
 - %1-resource/service
 - %2-artifact/artifacts
-- %3-semicolomn separated list of artifact
+- %3-semicolon separated list of artifact
 
 ::
 
@@ -1403,7 +1403,7 @@ Respone Types
 
     ADDITIONAL_INFORMATION_VALUE_NOT_ALLOWED_CHARACTERS: {
         code: 400,
-        message: 'Error: Invalid Content. Additional information contains non-english characters.',
+        message: 'Error: Invalid Content. Additional information contains non-English characters.',
         messageId: "SVC4525"
     }
 
@@ -2093,7 +2093,7 @@ Respone Types
 ==============================================
 
 - %1 - Product
-- %2 - Aabbreviated/Full"
+- %2 - Abbreviated/Full"
 
 ::
 
@@ -2624,7 +2624,7 @@ Respone Types
 
     FAILED_RETRIVE_ARTIFACTS_TYPES: {
         code: 400,
-        message: "Error: Failed to retrieve list of suported artifact types.",
+        message: "Error: Failed to retrieve list of supported artifact types.",
         messageId: "SVC4620"
     }
 
@@ -3252,7 +3252,7 @@ Respone Types
 
     INVALID_SERVICE_TYPE: {
         code: 400,
-        message: 'Error: Invalid Content. Serivce type is not allowed to contain characters like <>:"\/|?* and space characters other than regular space.',
+        message: 'Error: Invalid Content. Service type is not allowed to contain characters like <>:"\/|?* and space characters other than regular space.',
         messageId: "SVC4666"
     }
 
