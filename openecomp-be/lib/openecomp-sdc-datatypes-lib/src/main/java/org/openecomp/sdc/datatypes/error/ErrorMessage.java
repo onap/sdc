@@ -25,8 +25,11 @@ import org.apache.commons.collections4.CollectionUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import lombok.Getter;
+import lombok.EqualsAndHashCode;
 
-
+@Getter
+@EqualsAndHashCode
 public class ErrorMessage {
   private final ErrorLevel level;
   private final String message;
@@ -34,36 +37,6 @@ public class ErrorMessage {
   public ErrorMessage(ErrorLevel level, String message) {
     this.level = level;
     this.message = message;
-  }
-
-  public ErrorLevel getLevel() {
-    return level;
-  }
-
-  public String getMessage() {
-    return message;
-  }
-
-  @Override
-  public int hashCode() {
-    int result = level.hashCode();
-    result = 31 * result + message.hashCode();
-    return result;
-  }
-
-  @Override
-  public boolean equals(Object object) {
-    if (this == object) {
-      return true;
-    }
-    if (object == null || getClass() != object.getClass()) {
-      return false;
-    }
-
-    ErrorMessage that = (ErrorMessage) object;
-
-    return level == that.level && message.equals(that.message);
-
   }
 
   public static class ErrorMessageUtil {

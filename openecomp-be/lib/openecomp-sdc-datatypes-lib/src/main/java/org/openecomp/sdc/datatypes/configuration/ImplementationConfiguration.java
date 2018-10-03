@@ -23,12 +23,16 @@ package org.openecomp.sdc.datatypes.configuration;
 import org.onap.config.api.Config;
 
 import java.util.Map;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * @author shiria
  * @since November 30, 2016.
  */
 @Config(key = "")
+@Getter
+@Setter
 public class ImplementationConfiguration {
   @Config(key = "enable")
   Boolean enable = true;
@@ -39,25 +43,5 @@ public class ImplementationConfiguration {
 
   public Boolean isEnable() {
     return enable;
-  }
-
-  public void setEnable(Boolean enable) {
-    this.enable = enable;
-  }
-
-  public String getImplementationClass() {
-    return implementationClass;
-  }
-
-  public void setImplementationClass(String implementationClass) {
-    this.implementationClass = implementationClass;
-  }
-
-  public Map<String, Object> getProperties() {
-    return properties;
-  }
-
-  public void setProperties(Map<String, Object> properties) {
-    this.properties = properties;
   }
 }
