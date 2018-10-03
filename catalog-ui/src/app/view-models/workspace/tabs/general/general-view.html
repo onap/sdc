@@ -401,25 +401,6 @@
                     </div>
                     <!--------------------- Service Role -------------------->
 
-                    <!-------------------- ENVIRONMENT CONTEXT  ----------------->
-
-                    <div  ng-if="component.isService()" class="i-sdc-form-item">
-                        <loader data-display="!environmentContextObj && !initEnvironmentContext()" relative="true"></loader>
-                        <label class="i-sdc-form-label">Environment Context</label>
-                        <select class="i-sdc-form-select"
-                                name="environmentContext"
-                                data-ng-class="{'view-mode': isViewMode()}"
-                                data-ng-model="component.environmentContext"
-                                data-tests-id="environmentContext"
-                        >
-                            <option data-ng-repeat="environmentContextVal in (environmentContextObj.validValues) | orderBy"
-                                    value="{{environmentContextVal}}"
-                                    data-tests-id="{{environmentContextVal}}">{{environmentContextVal}}</option>
-                        </select>
-
-                    </div>
-                    <!--------------------- ENVIRONMENT CONTEXT ------------------>
-
                     <!--------------------- Instantiation Type -------------------->
                     <div class="i-sdc-form-item" data-ng-if="component.isService() && instantiationTypes">
                         <label class="i-sdc-form-label">Instantiation Type</label>
