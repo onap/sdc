@@ -24,9 +24,9 @@ import org.openecomp.core.factory.api.AbstractComponentFactory;
 import org.openecomp.core.factory.api.AbstractFactory;
 
 public abstract class SessionContextProviderFactory
-    extends AbstractComponentFactory<SessionContextProvider> {
+        extends AbstractComponentFactory<SessionContextProvider> {
 
-  public static SessionContextProviderFactory getInstance() {
-    return AbstractFactory.getInstance(SessionContextProviderFactory.class);
-  }
+    public static SessionContextProviderFactory getInstance() {
+        return AbstractFactory.getInstance(SessionContextProviderFactory.class);
+    }
 }
