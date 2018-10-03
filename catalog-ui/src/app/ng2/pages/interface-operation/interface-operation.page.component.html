@@ -1,4 +1,6 @@
 <div class="interface-operation">
+    <loader [display]="isLoading" [size]="'large'" [relative]="true"></loader>
+
     <div
         class="add-btn"
         [ngClass]="{'disabled': readonly}"
@@ -8,8 +10,6 @@
     </div>
 
     <div class="operation-list">
-
-        <loader [display]="isLoading" [size]="'large'" [relative]="true"></loader>
 
         <div
             class="operation-row"

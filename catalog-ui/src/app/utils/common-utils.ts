@@ -145,11 +145,13 @@ export class CommonUtils {
 
             return acc.concat(
                 _.map(interf.operations,
-                    ({description, name, uniqueId, inputs, outputs}) => {
+                    ({description, name, uniqueId, inputs, outputs, workflowId, workflowVersionId}) => {
                         const operation = new OperationModel({
                             description,
                             operationType: name,
-                            uniqueId
+                            uniqueId,
+                            workflowId,
+                            workflowVersionId
                         });
                         if (inputs) {
                             const inputParams = _.map(inputs.listToscaDataDefinition, (input:any) => {

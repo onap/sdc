@@ -1,3 +1,8 @@
 <div class="workspace-interface-operation">
-    <ng2-interface-operation [component]="component" [readonly]="isViewMode() || !isDesigner()"></ng2-interface-operation>
+    <ng2-interface-operation
+        [component]="component"
+        [readonly]="isViewMode() || !isDesigner()"
+        [disableMenuItems]="disableMenuItems"
+        [enableMenuItems]="enableMenuItems">
+    </ng2-interface-operation>
 </div>

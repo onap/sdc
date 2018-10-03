@@ -17,6 +17,7 @@ export class ParamRowComponent {
     @Input() onRemoveParam: Function;
     @Input() isAssociateWorkflow: boolean;
     @Input() readonly: boolean;
+    @Input() isInputParam: boolean;
 
     propTypeEnum: Array<String> = [];
     filteredInputProps: Array<DropdownValue> = [];

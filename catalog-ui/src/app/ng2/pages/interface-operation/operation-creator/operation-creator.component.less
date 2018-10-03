@@ -17,6 +17,10 @@
     .side-by-side {
         display: flex;
 
+        &.association-options {
+            margin-top: 5px;
+        }
+
         .i-sdc-form-item {
             flex-basis: 100%;
 
@@ -33,9 +37,9 @@
     }
 
     .separator-buttons {
-        margin: 10px 0;
         display: flex;
         justify-content: space-between;
+        margin-top: 10px;
 
         .add-param-link {
             &:not(.disabled):hover {
@@ -46,6 +50,8 @@
 
     .generic-table {
         max-height: 233px;
+        min-height: 91px;
+        background: @main_color_p;
 
         .header-row .header-cell {
             &.remove {
@@ -54,12 +60,9 @@
             .info-icon {
                 float: right;
             }
-            .tooltip-inner {
-                &.tooltip-inner {
-                    &.tooltip-inner {
-                        max-width: 230px;
-                    }
-                }
+            /deep/ .tooltip-inner {
+                max-width: 280px;
+                font-size: 11px;
             }
         }
 
@@ -79,7 +82,7 @@
                 flex-direction: column;
                 justify-content: center;
                 align-items: center;
-                padding: 11px 0;
+                padding: 14px;
             }
         }
 
@@ -101,6 +104,7 @@
 
             &.remove {
                 min-width: 40px;
+                max-width: 40px;
             }
         }
 

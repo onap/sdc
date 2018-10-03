@@ -15,7 +15,7 @@
                     [ngClass]="{'disabled':isEditMode}" />
             </div>
 
-            <div class="i-sdc-form-item" >
+            <div class="i-sdc-form-item">
                 <label class="i-sdc-form-label">Description</label>
                 <input
                     type="text"
@@ -27,17 +27,20 @@
             </div>
         </div>
 
-        <div class="i-sdc-form-item" *ngIf="enableWorkflowAssociation">
-            <checkbox
-                [label]="'Assign Workflow'"
-                [(checked)]="isAssociateWorkflow"
-                (checkedChange)="toggleAssociateWorkflow()"
-                [ngClass]="{'disabled': readonly}"
-                data-tests-id="checkbox-assign-workflow">
-            </checkbox>
+        <div class="side-by-side association-options">
+            <div class="i-sdc-form-item" *ngIf="enableWorkflowAssociation">
+                <label class="i-sdc-form-label">Workflow Assignment</label>
+                <ui-element-dropdown
+                    [(value)]="workflowAssociationType"
+                    [values]="associationOptions"
+                    (valueChange)="toggleAssociateWorkflow()"
+                    [readonly]="readonly">
+                </ui-element-dropdown>
+            </div>
+            <div></div>
         </div>
 
-        <div class="side-by-side" *ngIf="isAssociateWorkflow">
+        <div class="side-by-side" *ngIf="workflowAssociationType == WORKFLOW_ASSOCIATION_OPTIONS.EXISTING">
             <div class="i-sdc-form-item">
                 <label class="i-sdc-form-label required">Workflow</label>
                 <ui-element-dropdown
@@ -62,35 +65,38 @@
         </div>
 
         <div class="separator-buttons">
-            <span class="input-param-title">Input Parameters</span>
+            <tabs #propertyInputTabs tabStyle="round-tabs" (tabChanged)="tabChanged($event)" [hideIndicationOnTabChange]="true">
+                <tab tabTitle="Inputs"></tab>
+                <tab tabTitle="Outputs"></tab>
+            </tabs>
             <a
                 class="add-param-link add-btn"
-                *ngIf="!isAssociateWorkflow && !readonly"
+                *ngIf="workflowAssociationType != WORKFLOW_ASSOCIATION_OPTIONS.EXISTING && !readonly"
                 data-tests-id="addInputParameter"
                 [ngClass]="{'disabled':!isParamsValid()}"
-                (click)="addParam()">Add Input Parameter</a>
+                (click)="addParam()">Add Parameter</a>
         </div>
 
         <div class="generic-table">
             <div class="header-row table-row">
                 <span class="cell header-cell field-name">Name</span>
                 <span class="cell header-cell field-type">Type</span>
-                <span class="cell header-cell field-property">
+                <span class="cell header-cell field-property" *ngIf="currentTab == TYPE_INPUT">
                     Property
                     <span
-                        *ngIf="!isAssociateWorkflow"
+                        *ngIf="workflowAssociationType != WORKFLOW_ASSOCIATION_OPTIONS.EXISTING"
                         class="sprite-new info-icon"
                         tooltip="{{propertyTooltipText}}"
                         tooltipDelay="0">
                     </span>
                 </span>
-                <span class="cell header-cell field-mandatory" *ngIf="!isAssociateWorkflow">Mandatory</span>
-                <span class="cell header-cell remove" *ngIf="!isAssociateWorkflow && !readonly">●●●</span>
+                <span class="cell header-cell field-mandatory" *ngIf="workflowAssociationType != WORKFLOW_ASSOCIATION_OPTIONS.EXISTING">Mandatory</span>
+                <span class="cell header-cell remove" *ngIf="workflowAssociationType != WORKFLOW_ASSOCIATION_OPTIONS.EXISTING && !readonly">●●●</span>
             </div>
 
-            <div class="empty-msg data-row" *ngIf="inputParameters.length === 0">
+            <div class="empty-msg data-row" *ngIf="tableParameters.length === 0">
                 <div>NO PARAMETERS TO SHOW</div>
-                <div *ngIf="isAssociateWorkflow && !operation.workflowVersionId">
+                <div *ngIf="workflowAssociationType == WORKFLOW_ASSOCIATION_OPTIONS.EXISTING && !operation.workflowVersionId">
                     <div *ngIf="workflows.length">
                         <span class="bold-message">Select Workflow and Workflow Version above</span>
                         <span>in order to see the parameters</span>
@@ -102,9 +108,10 @@
             </div>
 
             <param-row
-                *ngFor="let param of inputParameters"
+                *ngFor="let param of tableParameters"
                 class="data-row"
-                [isAssociateWorkflow]="isAssociateWorkflow"
+                [isInputParam]="currentTab == TYPE_INPUT"
+                [isAssociateWorkflow]="workflowAssociationType == WORKFLOW_ASSOCIATION_OPTIONS.EXISTING"
                 [param]="param"
                 [inputProps]="inputProperties"
                 [propTypes]="inputPropertyTypes"
