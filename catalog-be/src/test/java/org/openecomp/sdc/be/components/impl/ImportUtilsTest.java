@@ -21,13 +21,17 @@
 package org.openecomp.sdc.be.components.impl;
 
 import fj.data.Either;
+import mockit.Mock;
 import org.junit.Test;
+import org.mockito.Mockito;
 import org.openecomp.sdc.be.components.impl.ImportUtils.ResultStatusEnum;
 import org.openecomp.sdc.be.components.impl.ImportUtils.ToscaElementTypeEnum;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
 import org.openecomp.sdc.be.model.HeatParameterDefinition;
+import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.PropertyDefinition;
+import org.openecomp.sdc.be.model.operations.impl.AnnotationTypeOperations;
 import org.openecomp.sdc.be.utils.TypeUtils;
 import org.openecomp.sdc.common.api.ArtifactTypeEnum;
 import org.yaml.snakeyaml.Yaml;
@@ -48,6 +52,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 public class ImportUtilsTest {
+
+
     @Test
     public void testStringTypeFindToscaElements() throws IOException {
         Either<List<Object>, ResultStatusEnum> toscaElements = ImportUtils.findToscaElements((Map<String, Object>) loadJsonFromFile("normative-types-string-list-test.yml"), "stringTestTag", ToscaElementTypeEnum.STRING, new ArrayList<>());
@@ -295,6 +301,21 @@ public class ImportUtilsTest {
 
     }
 
+    @Test
+    public void testGetInputsFromYml() throws IOException {
+
+        Map<String, Object> toscaJson = (Map<String, Object>) loadJsonFromFile("importToscaInputs.yml");
+
+        AnnotationTypeOperations annotationTypeOperations= Mockito.mock(AnnotationTypeOperations.class);
+        Mockito.when(annotationTypeOperations.getLatestType(Mockito.anyString())).thenReturn(null);
+
+        Either<Map<String, InputDefinition>, ResultStatusEnum> actualInputs = ImportUtils.getInputs(toscaJson,annotationTypeOperations);
+        assertTrue(actualInputs.isLeft());
+        Map<String, Map<String, Object>> expectedProperties = getElements(toscaJson, TypeUtils.ToscaTagNamesEnum.INPUTS);
+        compareProperties(expectedProperties, actualInputs.left().value());
+
+    }
+
     private void compareAttributes(Map<String, Map<String, Object>> expected, Map<String, PropertyDefinition> actual) {
 
         Map<String, Object> singleExpectedAttribute;
@@ -322,11 +343,11 @@ public class ImportUtilsTest {
 
     }
 
-    private void compareProperties(Map<String, Map<String, Object>> expected, Map<String, PropertyDefinition> actual) {
+    private  void compareProperties(Map<String, Map<String, Object>> expected, Map<String, ? extends PropertyDefinition > actual) {
 
         Map<String, Object> singleExpectedProperty;
         PropertyDefinition actualProperty, expectedPropertyModel;
-        // attributes of resource
+
         for (Map.Entry<String, Map<String, Object>> expectedProperty : expected.entrySet()) {
 
             singleExpectedProperty = expectedProperty.getValue();

@@ -1,0 +1,887 @@
+tosca_definitions_version: tosca_simple_yaml_1_1
+metadata:
+  invariantUUID: 064cc5e7-303a-4eee-8a10-5e6a0310dcba
+  UUID: 8c2fb792-5092-4c1c-ab15-c507b4e4ee11
+  name: ciResVFOnboarded-base_vfw-aa8dcbff-nodes.vpgCvfc
+  description: Complex node type that is used as nested type in VF
+  type: CVFC
+  category: Generic
+  subcategory: Abstract
+  resourceVendor: ciLicensec891e89e
+  resourceVendorRelease: 1.0.0.wd03
+  resourceVendorModelNumber: '666'
+imports:
+- nodes:
+    file: nodes.yml
+- datatypes:
+    file: data.yml
+- capabilities:
+    file: capabilities.yml
+- relationships:
+    file: relationships.yml
+- groups:
+    file: groups.yml
+- policies:
+    file: policies.yml
+- annotations:
+    file: annotations.yml
+- resource-ciResVFOnboarded-base_vfw-aa8dcbff-nodes.vpgCvfc-interface:
+    file: resource-CiresvfonboardedBaseVfwAa8dcbffNodesVpgcvfc-template-interface.yml
+- resource-CiresvfonboardedBaseVfwAa8dcbff.compute.nodes.heat.vpg:
+    file: resource-Ciresvfonboardedbasevfwaa8dcbffComputeNodesHeatVpg-template.yml
+- resource-NeutronPort:
+    file: resource-Neutronport-template.yml
+- resource-extNeutronCP:
+    file: resource-Extneutroncp-template.yml
+topology_template:
+  inputs:
+    port_vpg_private_1_port_network:
+      type: list
+      required: false
+      entry_schema:
+        type: string
+    port_vpg_private_1_port_network_role:
+      type: string
+      required: false
+    port_vpg_private_1_port_exCP_naming:
+      default:
+        ecomp_generated_naming: true
+      type: org.openecomp.datatypes.Naming
+      required: false
+    port_vpg_private_1_port_vlan_requirements:
+      type: list
+      required: false
+      entry_schema:
+        type: org.openecomp.datatypes.network.VlanRequirements
+    port_vpg_private_0_port_network:
+      type: list
+      required: false
+      entry_schema:
+        type: string
+    nfc_naming:
+      default:
+        ecomp_generated_naming: true
+      type: org.openecomp.datatypes.Naming
+      description: vfc naming
+      required: false
+    port_vpg_private_1_port_ip_requirements:
+      type: list
+      required: false
+      entry_schema:
+        type: org.openecomp.datatypes.network.IpRequirements
+    vm_flavor_name:
+      type: string
+      required: false
+    port_vpg_private_0_port_exCP_naming:
+      default:
+        ecomp_generated_naming: true
+      type: org.openecomp.datatypes.Naming
+      required: false
+    port_vpg_private_0_port_subnetpoolid:
+      type: string
+      required: false
+    port_vpg_private_1_port_order:
+      type: integer
+      required: false
+    port_vpg_private_1_port_network_role_tag:
+      type: string
+      required: false
+    service_template_filter:
+      default:
+        index_value: 0
+        count: '1'
+        scaling_enabled: true
+        mandatory: true
+      type: org.openecomp.datatypes.heat.substitution.SubstitutionFiltering
+      description: Substitution Filter
+      required: true
+    vm_image_name:
+      type: string
+      required: false
+    compute_vpg_name:
+      type: list
+      required: false
+      entry_schema:
+        type: string
+    vm_type_tag:
+      type: string
+      description: vm type based on naming Convention
+      required: false
+    high_availablity:
+      type: string
+      description: high_availablity
+      required: false
+    compute_vpg_user_data_format:
+      type: list
+      required: false
+      entry_schema:
+        type: string
+    compute_vpg_key_name:
+      type: list
+      required: false
+      entry_schema:
+        type: string
+    port_vpg_private_1_port_subnetpoolid:
+      type: string
+      required: false
+    nfc_naming_code:
+      type: string
+      description: nfc code for instance naming
+      required: false
+    port_vpg_private_0_port_related_networks:
+      type: list
+      required: false
+      entry_schema:
+        type: org.openecomp.datatypes.network.RelatedNetworksAssignments
+    port_vpg_private_0_port_network_role_tag:
+      type: string
+      required: false
+    nfc_function:
+      type: string
+      required: false
+    compute_vpg_metadata:
+      type: list
+      required: false
+      entry_schema:
+        type: json
+    port_vpg_private_0_port_vlan_requirements:
+      type: list
+      required: false
+      entry_schema:
+        type: org.openecomp.datatypes.network.VlanRequirements
+    index_value:
+      default: 0
+      type: integer
+      description: Index value of this substitution service template runtime instance
+      required: false
+    max_instances:
+      type: integer
+      description: Maximum number of VFC Instances
+      required: false
+    port_vpg_private_0_port_fixed_ips:
+      type: list
+      required: false
+      entry_schema:
+        type: org.openecomp.datatypes.heat.neutron.port.FixedIps
+    port_vpg_private_0_port_network_role:
+      type: string
+      required: false
+    port_vpg_private_1_port_mac_requirements:
+      default:
+        mac_count_required:
+          is_required: false
+      type: org.openecomp.datatypes.network.MacRequirements
+      required: false
+    port_vpg_private_0_port_ip_requirements:
+      type: list
+      required: false
+      entry_schema:
+        type: org.openecomp.datatypes.network.IpRequirements
+    port_vpg_private_1_port_related_networks:
+      type: list
+      required: false
+      entry_schema:
+        type: org.openecomp.datatypes.network.RelatedNetworksAssignments
+    min_instances:
+      default: 0
+      type: integer
+      description: Minimum number of VFC Instances
+      required: false
+    port_vpg_private_1_port_fixed_ips:
+      type: list
+      required: false
+      entry_schema:
+        type: org.openecomp.datatypes.heat.neutron.port.FixedIps
+    port_vpg_private_0_port_mac_requirements:
+      default:
+        mac_count_required:
+          is_required: false
+      type: org.openecomp.datatypes.network.MacRequirements
+      required: false
+    port_vpg_private_0_port_order:
+      type: integer
+      required: false
+  node_templates:
+    vpg_vpg_private_0_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      metadata:
+        invariantUUID: b2b303b1-eab0-48a0-88f6-f335f5e01abf
+        UUID: 068e214e-6eb5-4663-843e-007e0bae9870
+        customizationUUID: 8b636bd0-db43-4938-a471-6fab142f9d55
+        version: '1.0'
+        name: NeutronPort
+        description: Represents a logical entity that associates between Compute and Network normative types.
+        type: CP
+        category: Generic
+        subcategory: Network Elements
+        resourceVendor: ATT (Tosca)
+        resourceVendorRelease: 1.0.0.wd03
+        resourceVendorModelNumber: ''
+      properties:
+        subnetpoolid:
+          get_input: port_vpg_private_0_port_subnetpoolid
+        is_default: false
+        related_networks:
+          get_input: port_vpg_private_0_port_related_networks
+        network:
+          get_input:
+          - port_vpg_private_0_port_network
+          - index_value
+        replacement_policy: AUTO
+        ip_requirements:
+          get_input: port_vpg_private_0_port_ip_requirements
+        network_role:
+          get_input: port_vpg_private_0_port_network_role
+        fixed_ips:
+          get_input:
+          - port_vpg_private_0_port_fixed_ips
+          - index_value
+        subinterface_indicator: false
+        mac_requirements:
+          get_input: port_vpg_private_0_port_mac_requirements
+        admin_state_up: true
+        exCP_naming:
+          get_input: port_vpg_private_0_port_exCP_naming
+        vlan_requirements:
+          get_input: port_vpg_private_0_port_vlan_requirements
+        network_role_tag:
+          get_input: port_vpg_private_0_port_network_role_tag
+        order:
+          get_input: port_vpg_private_0_port_order
+      requirements:
+      - binding:
+          capability: binding
+          node: vpg
+      capabilities:
+        network.outgoing.bytes.rate_vpg_vpg_private_0_port:
+          properties:
+            unit: B/s
+            description: Average rate of outgoing bytes
+            type: Gauge
+            category: network
+        network.outgoing.bytes_vpg_vpg_private_0_port:
+          properties:
+            unit: B
+            description: Number of outgoing bytes
+            type: Cumulative
+            category: network
+        network.incoming.packets.rate_vpg_vpg_private_0_port:
+          properties:
+            unit: packet/s
+            description: Average rate of incoming packets
+            type: Gauge
+            category: network
+        network.incoming.bytes.rate_vpg_vpg_private_0_port:
+          properties:
+            unit: B/s
+            description: Average rate of incoming bytes
+            type: Gauge
+            category: network
+        network.outpoing.packets_vpg_vpg_private_0_port:
+          properties:
+            unit: packet
+            description: Number of outgoing packets
+            type: Cumulative
+            category: network
+        network.outgoing.packets.rate_vpg_vpg_private_0_port:
+          properties:
+            unit: packet/s
+            description: Average rate of outgoing packets
+            type: Gauge
+            category: network
+        network.incoming.bytes_vpg_vpg_private_0_port:
+          properties:
+            unit: B
+            description: Number of incoming bytes
+            type: Cumulative
+            category: network
+        network.incoming.packets_vpg_vpg_private_0_port:
+          properties:
+            unit: packet
+            description: Number of incoming packets
+            type: Cumulative
+            category: network
+    vpg_vpg_private_1_port:
+      type: org.openecomp.resource.cp.v2.extNeutronCP
+      metadata:
+        invariantUUID: eee9a985-8e7e-4304-8d6c-3064fbb8f362
+        UUID: 358c373c-6bb0-4a8c-a554-f83cc52fb317
+        customizationUUID: 04986d31-b354-4ec0-b33f-01d3faf63076
+        version: '1.0'
+        name: extNeutronCP
+        description: The AT&T Connection Point base type all other CP derive from
+        type: CP
+        category: Generic
+        subcategory: Network Elements
+        resourceVendor: ATT (Tosca)
+        resourceVendorRelease: 1.0.0.wd03
+        resourceVendorModelNumber: ''
+      properties:
+        subnetpoolid:
+          get_input: port_vpg_private_1_port_subnetpoolid
+        is_default: false
+        related_networks:
+          get_input: port_vpg_private_1_port_related_networks
+        network:
+          get_input:
+          - port_vpg_private_1_port_network
+          - index_value
+        replacement_policy: AUTO
+        ip_requirements:
+          get_input: port_vpg_private_1_port_ip_requirements
+        network_role:
+          get_input: port_vpg_private_1_port_network_role
+        fixed_ips:
+          get_input:
+          - port_vpg_private_1_port_fixed_ips
+          - index_value
+        subinterface_indicator: false
+        mac_requirements:
+          get_input: port_vpg_private_1_port_mac_requirements
+        admin_state_up: true
+        exCP_naming:
+          get_input: port_vpg_private_1_port_exCP_naming
+        vlan_requirements:
+          get_input: port_vpg_private_1_port_vlan_requirements
+        network_role_tag:
+          get_input: port_vpg_private_1_port_network_role_tag
+        order:
+          get_input: port_vpg_private_1_port_order
+      requirements:
+      - binding:
+          capability: binding
+          node: vpg
+      capabilities:
+        network.incoming.bytes.rate_vpg_vpg_private_1_port:
+          properties:
+            unit: B/s
+            description: Average rate of incoming bytes
+            type: Gauge
+            category: network
+        port_mirroring_vpg_vpg_private_1_port:
+          properties:
+            connection_point:
+              network_role:
+                get_input: port_vpg_private_1_port_network_role
+              nfc_naming_code: vpg
+        network.outgoing.bytes_vpg_vpg_private_1_port:
+          properties:
+            unit: B
+            description: Number of outgoing bytes
+            type: Cumulative
+            category: network
+        network.incoming.packets_vpg_vpg_private_1_port:
+          properties:
+            unit: packet
+            description: Number of incoming packets
+            type: Cumulative
+            category: network
+        network.outgoing.packets.rate_vpg_vpg_private_1_port:
+          properties:
+            unit: packet/s
+            description: Average rate of outgoing packets
+            type: Gauge
+            category: network
+        network.incoming.packets.rate_vpg_vpg_private_1_port:
+          properties:
+            unit: packet/s
+            description: Average rate of incoming packets
+            type: Gauge
+            category: network
+        network.outgoing.bytes.rate_vpg_vpg_private_1_port:
+          properties:
+            unit: B/s
+            description: Average rate of outgoing bytes
+            type: Gauge
+            category: network
+        network.outpoing.packets_vpg_vpg_private_1_port:
+          properties:
+            unit: packet
+            description: Number of outgoing packets
+            type: Cumulative
+            category: network
+        network.incoming.bytes_vpg_vpg_private_1_port:
+          properties:
+            unit: B
+            description: Number of incoming bytes
+            type: Cumulative
+            category: network
+    vpg:
+      type: org.openecomp.resource.vfc.CiresvfonboardedBaseVfwAa8dcbff.abstract.compute.nodes.heat.vpg
+      metadata:
+        invariantUUID: 439baeb0-bf1a-41ef-a7e7-935730b46e38
+        UUID: 522f21aa-43f0-46da-8815-add1195beea3
+        customizationUUID: 765f2ea7-a6c5-470e-a09b-7dd9481b519f
+        version: '1.0'
+        name: CiresvfonboardedBaseVfwAa8dcbff.compute.nodes.heat.vpg
+        description: Not reusable inner VFC
+        type: VFC
+        category: Generic
+        subcategory: Abstract
+        resourceVendor: ciLicensec891e89e
+        resourceVendorRelease: 1.0.0.wd03
+        resourceVendorModelNumber: ''
+      properties:
+        flavor:
+          get_input: vm_flavor_name
+        key_name:
+          get_input:
+          - compute_vpg_key_name
+          - index_value
+        image:
+          get_input: vm_image_name
+        image_update_policy: REBUILD
+        metadata:
+          get_input:
+          - compute_vpg_metadata
+          - index_value
+        software_config_transport: POLL_SERVER_CFN
+        contrail_service_instance_ind: false
+        user_data_format:
+          get_input:
+          - compute_vpg_user_data_format
+          - index_value
+        user_data_update_policy: REPLACE
+        name:
+          get_input:
+          - compute_vpg_name
+          - index_value
+        flavor_update_policy: RESIZE
+      capabilities:
+        disk.read.bytes_vpg:
+          properties:
+            unit: B
+            description: Volume of reads
+            type: Cumulative
+            category: compute
+        disk.ephemeral.size_vpg:
+          properties:
+            unit: GB
+            description: Size of ephemeral disk
+            type: Gauge
+            category: compute
+        disk.write.requests.rate_vpg:
+          properties:
+            unit: request/s
+            description: Average rate of write requests
+            type: Gauge
+            category: compute
+        disk.write.bytes.rate_vpg:
+          properties:
+            unit: B/s
+            description: Average rate of writes
+            type: Gauge
+            category: compute
+        disk.device.iops_vpg:
+          properties:
+            unit: count/s
+            description: Average disk iops per device
+            type: Gauge
+            category: disk
+        disk.allocation_vpg:
+          properties:
+            unit: B
+            description: The amount of disk occupied by the instance on the host machine
+            type: Gauge
+            category: disk
+        disk.device.capacity_vpg:
+          properties:
+            unit: B
+            description: The amount of disk per device that the instance can see
+            type: Gauge
+            category: disk
+        instance_vpg:
+          properties:
+            unit: instance
+            description: Existence of instance
+            type: Gauge
+            category: compute
+        disk.device.read.requests_vpg:
+          properties:
+            unit: request
+            description: Number of read requests
+            type: Cumulative
+            category: disk
+        endpoint_vpg:
+          properties:
+            secure: true
+        cpu_vpg:
+          properties:
+            unit: ns
+            description: CPU time used
+            type: Cumulative
+            category: compute
+        disk.device.read.bytes.rate_vpg:
+          properties:
+            unit: B/s
+            description: Average rate of reads
+            type: Gauge
+            category: disk
+        disk.device.write.bytes.rate_vpg:
+          properties:
+            unit: B/s
+            description: Average rate of writes
+            type: Gauge
+            category: disk
+        cpu_util_vpg:
+          properties:
+            unit: '%'
+            description: Average CPU utilization
+            type: Gauge
+            category: compute
+        memory.usage_vpg:
+          properties:
+            unit: MB
+            description: Volume of RAM used by the instance from the amount of its allocated memory
+            type: Gauge
+            category: compute
+        disk.iops_vpg:
+          properties:
+            unit: count/s
+            description: Average disk iops
+            type: Gauge
+            category: disk
+        disk.usage_vpg:
+          properties:
+            unit: B
+            description: The physical size in bytes of the image container on the host
+            type: Gauge
+            category: disk
+        disk.device.usage_vpg:
+          properties:
+            unit: B
+            description: The physical size in bytes of the image container on the host per device
+            type: Gauge
+            category: disk
+        disk.device.read.bytes_vpg:
+          properties:
+            unit: B
+            description: Volume of reads
+            type: Cumulative
+            category: disk
+        disk.device.read.requests.rate_vpg:
+          properties:
+            unit: request/s
+            description: Average rate of read requests
+            type: Gauge
+            category: disk
+        disk.read.requests_vpg:
+          properties:
+            unit: request
+            description: Number of read requests
+            type: Cumulative
+            category: compute
+        disk.write.requests_vpg:
+          properties:
+            unit: request
+            description: Number of write requests
+            type: Cumulative
+            category: compute
+        disk.device.write.bytes_vpg:
+          properties:
+            unit: B
+            description: Volume of writes
+            type: Cumulative
+            category: disk
+        cpu.delta_vpg:
+          properties:
+            unit: ns
+            description: CPU time used since previous datapoint
+            type: Delta
+            category: compute
+        disk.capacity_vpg:
+          properties:
+            unit: B
+            description: The amount of disk that the instance can see
+            type: Gauge
+            category: disk
+        disk.write.bytes_vpg:
+          properties:
+            unit: B
+            description: Volume of writes
+            type: Cumulative
+            category: compute
+        disk.device.write.requests.rate_vpg:
+          properties:
+            unit: request/s
+            description: Average rate of write requests
+            type: Gauge
+            category: disk
+        vcpus_vpg:
+          properties:
+            unit: vcpu
+            description: Number of virtual CPUs allocated to the instance
+            type: Gauge
+            category: compute
+        disk.device.latency_vpg:
+          properties:
+            unit: ms
+            description: Average disk latency per device
+            type: Gauge
+            category: disk
+        scalable_vpg:
+          properties:
+            max_instances: 1
+            min_instances: 1
+        disk.root.size_vpg:
+          properties:
+            unit: GB
+            description: Size of root disk
+            type: Gauge
+            category: compute
+        disk.device.write.requests_vpg:
+          properties:
+            unit: request
+            description: Number of write requests
+            type: Cumulative
+            category: disk
+        memory_vpg:
+          properties:
+            unit: MB
+            description: Volume of RAM allocated to the instance
+            type: Gauge
+            category: compute
+        memory.resident_vpg:
+          properties:
+            unit: MB
+            description: Volume of RAM used by the instance on the physical machine
+            type: Gauge
+            category: compute
+        disk.read.bytes.rate_vpg:
+          properties:
+            unit: B/s
+            description: Average rate of reads
+            type: Gauge
+            category: compute
+        disk.device.allocation_vpg:
+          properties:
+            unit: B
+            description: The amount of disk per device occupied by the instance on the host machine
+            type: Gauge
+            category: disk
+        disk.latency_vpg:
+          properties:
+            unit: ms
+            description: Average disk latency
+            type: Gauge
+            category: disk
+  substitution_mappings:
+    node_type: org.openecomp.resource.vfc.CiresvfonboardedBaseVfwAa8dcbffcvfc.abstract.nodes.vpg
+    capabilities:
+      network.incoming.bytes.rate_vpg_vpg_private_1_port:
+      - vpg_vpg_private_1_port
+      - network.incoming.bytes.rate
+      disk.read.bytes_vpg:
+      - vpg
+      - disk.read.bytes
+      binding_vpg_vpg_private_1_port:
+      - vpg_vpg_private_1_port
+      - binding
+      network.outgoing.bytes.rate_vpg_vpg_private_0_port:
+      - vpg_vpg_private_0_port
+      - network.outgoing.bytes.rate
+      forwarder_vpg_vpg_private_0_port:
+      - vpg_vpg_private_0_port
+      - forwarder
+      disk.allocation_vpg:
+      - vpg
+      - disk.allocation
+      network.incoming.bytes_vpg_vpg_private_1_port:
+      - vpg_vpg_private_1_port
+      - network.incoming.bytes
+      attachment_vpg_vpg_private_0_port:
+      - vpg_vpg_private_0_port
+      - attachment
+      endpoint_vpg:
+      - vpg
+      - endpoint
+      cpu_vpg:
+      - vpg
+      - cpu
+      disk.device.read.bytes.rate_vpg:
+      - vpg
+      - disk.device.read.bytes.rate
+      network.outgoing.bytes.rate_vpg_vpg_private_1_port:
+      - vpg_vpg_private_1_port
+      - network.outgoing.bytes.rate
+      feature_vpg_vpg_private_1_port:
+      - vpg_vpg_private_1_port
+      - feature
+      disk.device.write.bytes.rate_vpg:
+      - vpg
+      - disk.device.write.bytes.rate
+      attachment_vpg_vpg_private_1_port:
+      - vpg_vpg_private_1_port
+      - attachment
+      disk.iops_vpg:
+      - vpg
+      - disk.iops
+      disk.usage_vpg:
+      - vpg
+      - disk.usage
+      disk.device.usage_vpg:
+      - vpg
+      - disk.device.usage
+      disk.device.read.bytes_vpg:
+      - vpg
+      - disk.device.read.bytes
+      disk.device.write.bytes_vpg:
+      - vpg
+      - disk.device.write.bytes
+      disk.write.requests_vpg:
+      - vpg
+      - disk.write.requests
+      feature_vpg:
+      - vpg
+      - feature
+      disk.capacity_vpg:
+      - vpg
+      - disk.capacity
+      disk.device.latency_vpg:
+      - vpg
+      - disk.device.latency
+      disk.device.write.requests.rate_vpg:
+      - vpg
+      - disk.device.write.requests.rate
+      feature_vpg_vpg_private_0_port:
+      - vpg_vpg_private_0_port
+      - feature
+      forwarder_vpg_vpg_private_1_port:
+      - vpg_vpg_private_1_port
+      - forwarder
+      network.outgoing.packets.rate_vpg_vpg_private_1_port:
+      - vpg_vpg_private_1_port
+      - network.outgoing.packets.rate
+      network.incoming.packets.rate_vpg_vpg_private_1_port:
+      - vpg_vpg_private_1_port
+      - network.incoming.packets.rate
+      binding_vpg:
+      - vpg
+      - binding
+      disk.device.allocation_vpg:
+      - vpg
+      - disk.device.allocation
+      network.incoming.bytes_vpg_vpg_private_0_port:
+      - vpg_vpg_private_0_port
+      - network.incoming.bytes
+      disk.ephemeral.size_vpg:
+      - vpg
+      - disk.ephemeral.size
+      network.outgoing.bytes_vpg_vpg_private_1_port:
+      - vpg_vpg_private_1_port
+      - network.outgoing.bytes
+      network.incoming.packets_vpg_vpg_private_1_port:
+      - vpg_vpg_private_1_port
+      - network.incoming.packets
+      disk.write.requests.rate_vpg:
+      - vpg
+      - disk.write.requests.rate
+      disk.write.bytes.rate_vpg:
+      - vpg
+      - disk.write.bytes.rate
+      disk.device.iops_vpg:
+      - vpg
+      - disk.device.iops
+      host_vpg:
+      - vpg
+      - host
+      network.outpoing.packets_vpg_vpg_private_0_port:
+      - vpg_vpg_private_0_port
+      - network.outpoing.packets
+      instance_vpg:
+      - vpg
+      - instance
+      disk.device.capacity_vpg:
+      - vpg
+      - disk.device.capacity
+      disk.device.read.requests_vpg:
+      - vpg
+      - disk.device.read.requests
+      cpu_util_vpg:
+      - vpg
+      - cpu_util
+      memory.usage_vpg:
+      - vpg
+      - memory.usage
+      disk.device.read.requests.rate_vpg:
+      - vpg
+      - disk.device.read.requests.rate
+      disk.read.requests_vpg:
+      - vpg
+      - disk.read.requests
+      cpu.delta_vpg:
+      - vpg
+      - cpu.delta
+      network.incoming.packets.rate_vpg_vpg_private_0_port:
+      - vpg_vpg_private_0_port
+      - network.incoming.packets.rate
+      network.incoming.bytes.rate_vpg_vpg_private_0_port:
+      - vpg_vpg_private_0_port
+      - network.incoming.bytes.rate
+      disk.write.bytes_vpg:
+      - vpg
+      - disk.write.bytes
+      network.outgoing.packets.rate_vpg_vpg_private_0_port:
+      - vpg_vpg_private_0_port
+      - network.outgoing.packets.rate
+      scalable_vpg:
+      - vpg
+      - scalable
+      vcpus_vpg:
+      - vpg
+      - vcpus
+      port_mirroring_vpg_vpg_private_1_port:
+      - vpg_vpg_private_1_port
+      - port_mirroring
+      disk.root.size_vpg:
+      - vpg
+      - disk.root.size
+      disk.device.write.requests_vpg:
+      - vpg
+      - disk.device.write.requests
+      network.outgoing.bytes_vpg_vpg_private_0_port:
+      - vpg_vpg_private_0_port
+      - network.outgoing.bytes
+      memory_vpg:
+      - vpg
+      - memory
+      network.outpoing.packets_vpg_vpg_private_1_port:
+      - vpg_vpg_private_1_port
+      - network.outpoing.packets
+      os_vpg:
+      - vpg
+      - os
+      binding_vpg_vpg_private_0_port:
+      - vpg_vpg_private_0_port
+      - binding
+      disk.read.bytes.rate_vpg:
+      - vpg
+      - disk.read.bytes.rate
+      memory.resident_vpg:
+      - vpg
+      - memory.resident
+      disk.latency_vpg:
+      - vpg
+      - disk.latency
+      network.incoming.packets_vpg_vpg_private_0_port:
+      - vpg_vpg_private_0_port
+      - network.incoming.packets
+    requirements:
+      link_vpg_vpg_private_0_port:
+      - vpg_vpg_private_0_port
+      - link
+      dependency_vpg:
+      - vpg
+      - dependency
+      dependency_vpg_vpg_private_0_port:
+      - vpg_vpg_private_0_port
+      - dependency
+      local_storage_vpg:
+      - vpg
+      - local_storage
+      dependency_vpg_vpg_private_1_port:
+      - vpg_vpg_private_1_port
+      - dependency
+      link_vpg_vpg_private_1_port:
+      - vpg_vpg_private_1_port
+      - link

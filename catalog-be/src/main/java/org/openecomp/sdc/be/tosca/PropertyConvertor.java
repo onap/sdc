@@ -110,8 +110,8 @@ public class PropertyConvertor {
         prop.setDescription(property.getDescription());
         if (isCapabiltyProperty) {
             prop.setStatus(property.getStatus());
-            prop.setRequired(property.isRequired());
         }
+        prop.setRequired(property.isRequired());
         return prop;
     }
     

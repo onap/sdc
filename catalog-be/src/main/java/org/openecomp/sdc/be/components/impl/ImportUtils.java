@@ -62,12 +62,10 @@ import static org.openecomp.sdc.be.datatypes.elements.Annotation.setAnnotationsN
 
 
 public final class ImportUtils {
-    private ImportUtils() {
 
-    }
 
-    private static CustomResolver customResolver = new CustomResolver();
-    private static Yaml strictYamlLoader =  new YamlLoader().getStrictYamlLoader();
+    private static final CustomResolver customResolver = new CustomResolver();
+    private static final Yaml strictYamlLoader =  new YamlLoader().getStrictYamlLoader();
 
     @Autowired
     protected static ComponentsUtils componentsUtils;
@@ -76,6 +74,10 @@ public final class ImportUtils {
     private ExceptionUtils exceptionUtils;
 
     private static final Logger log = Logger.getLogger(ImportUtils.class);
+
+    private ImportUtils() {
+
+    }
 
     private static class CustomResolver extends Resolver {
         @Override
@@ -202,12 +204,7 @@ public final class ImportUtils {
     }
 
     private static void findAllToscaElementsInList(List<Object> list, String elementName, ToscaElementTypeEnum elementType, List<Object> returnedList) {
-        Iterator<Object> listItr = list.iterator();
-        while (listItr.hasNext()) {
-            Object elementValue = listItr.next();
-            handleElementNameNotFound(elementName, elementValue, elementType, returnedList);
-        }
-
+        list.forEach(elementValue -> handleElementNameNotFound(elementName, elementValue, elementType, returnedList));
     }
 
     public static Either<Object, ResultStatusEnum> findToscaElement(Map<String, Object> toscaJson, TypeUtils.ToscaTagNamesEnum elementName, ToscaElementTypeEnum elementType) {
@@ -234,6 +231,7 @@ public final class ImportUtils {
         if (toscaJson.containsKey(elementName)) {
             skipKey = handleFoundElement(toscaJson, elementName, elementType, returnedList);
         }
+
 
         Iterator<Entry<String, Object>> keyValItr = toscaJson.entrySet().iterator();
         while (keyValItr.hasNext()) {
@@ -326,13 +324,13 @@ public final class ImportUtils {
 
         PropertyDefinition propertyDef = new PropertyDefinition();
         setField(propertyValue, TypeUtils.ToscaTagNamesEnum.TYPE, propertyDef::setType);
-        setPropertyFieldRequired(propertyValue, propertyDef);
+        setFieldBoolean(propertyValue, ToscaTagNamesEnum.REQUIRED, req -> propertyDef.setRequired(Boolean.parseBoolean(req)));
         setField(propertyValue, TypeUtils.ToscaTagNamesEnum.DESCRIPTION, propertyDef::setDescription);
 
         setJsonStringField(propertyValue, TypeUtils.ToscaTagNamesEnum.DEFAULT_VALUE, propertyDef.getType(), propertyDef::setDefaultValue);
         setJsonStringField(propertyValue, TypeUtils.ToscaTagNamesEnum.VALUE, propertyDef.getType(), propertyDef::setValue);
 
-        setField(propertyValue, TypeUtils.ToscaTagNamesEnum.IS_PASSWORD, pass -> propertyDef.setPassword(Boolean.parseBoolean(pass)));
+        setFieldBoolean(propertyValue, TypeUtils.ToscaTagNamesEnum.IS_PASSWORD, pass -> propertyDef.setPassword(Boolean.parseBoolean(pass)));
         setField(propertyValue, TypeUtils.ToscaTagNamesEnum.STATUS, propertyDef::setStatus);
         setScheme(propertyValue, propertyDef);
         setPropertyConstraints(propertyValue, propertyDef);
@@ -374,7 +372,7 @@ public final class ImportUtils {
                 for (Entry<String, PropertyDefinition> entry : value.entrySet()) {
                     String name = entry.getKey();
                     if (!PROPERTY_NAME_PATTERN_IGNORE_LENGTH.matcher(name).matches()) {
-                        log.debug("The property with invalid name {} occured upon import resource {}. ", name, annotation.getName());
+                        log.debug("The property with invalid name {} occurred upon import resource {}. ", name, annotation.getName());
                         result = Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromResultStatusEnum(ResultStatusEnum.INVALID_PROPERTY_NAME, JsonPresentationFields.PROPERTY)));
                     }
                     PropertyDefinition propertyDefinition = entry.getValue();
@@ -397,17 +395,16 @@ public final class ImportUtils {
 
         InputDefinition inputDef = new InputDefinition();
         ImportUtils.setField(inputValue, TypeUtils.ToscaTagNamesEnum.TYPE, inputDef::setType);
-        ImportUtils.setField(inputValue, TypeUtils.ToscaTagNamesEnum.REQUIRED, req -> inputDef.setRequired(Boolean.parseBoolean(req)));
+        ImportUtils.setFieldBoolean(inputValue, ToscaTagNamesEnum.REQUIRED, req -> inputDef.setRequired(Boolean.parseBoolean(req)));
         ImportUtils.setField(inputValue, TypeUtils.ToscaTagNamesEnum.DESCRIPTION, inputDef::setDescription);
 
         setJsonStringField(inputValue, TypeUtils.ToscaTagNamesEnum.DEFAULT_VALUE, inputDef.getType(), inputDef::setDefaultValue);
 
-        ImportUtils.setField(inputValue, TypeUtils.ToscaTagNamesEnum.IS_PASSWORD, pass -> inputDef.setPassword(Boolean.parseBoolean(pass)));
+        ImportUtils.setFieldBoolean(inputValue, TypeUtils.ToscaTagNamesEnum.IS_PASSWORD, pass -> inputDef.setPassword(Boolean.parseBoolean(pass)));
         ImportUtils.setField(inputValue, TypeUtils.ToscaTagNamesEnum.STATUS, inputDef::setStatus);
         ImportUtils.setField(inputValue, TypeUtils.ToscaTagNamesEnum.LABEL, inputDef::setLabel);
-        ImportUtils.setField(inputValue, TypeUtils.ToscaTagNamesEnum.HIDDEN, hidden -> inputDef.setHidden(Boolean.parseBoolean(hidden)));
-        ImportUtils.setField(inputValue, TypeUtils.ToscaTagNamesEnum.HIDDEN, immutable -> inputDef.setImmutable(Boolean.parseBoolean(immutable)));
-        ImportUtils.setField(inputValue, TypeUtils.ToscaTagNamesEnum.LABEL, inputDef::setLabel);
+        ImportUtils.setFieldBoolean(inputValue, TypeUtils.ToscaTagNamesEnum.HIDDEN, hidden -> inputDef.setHidden(Boolean.parseBoolean(hidden)));
+        ImportUtils.setFieldBoolean(inputValue, TypeUtils.ToscaTagNamesEnum.IMMUTABLE, immutable -> inputDef.setImmutable(Boolean.parseBoolean(immutable)));
 
         ImportUtils.setScheme(inputValue, inputDef);
         ImportUtils.setPropertyConstraints(inputValue, inputDef);
@@ -487,12 +484,14 @@ public final class ImportUtils {
 
     }
 
-    private static void setPropertyFieldRequired(Map<String, Object> propertyValue, PropertyDefinition dataDefinition) {
-        Either<String, ResultStatusEnum> propertyFieldRequired = findFirstToscaBooleanElement(propertyValue, TypeUtils.ToscaTagNamesEnum.REQUIRED);
-        if (propertyFieldRequired.isLeft()) {
-            dataDefinition.setRequired(Boolean.parseBoolean(propertyFieldRequired.left().value()));
+    public static void setFieldBoolean(Map<String, Object> toscaJson, TypeUtils.ToscaTagNamesEnum tagName, Consumer<String> setter) {
+        Either<String, ResultStatusEnum> fieldStringValue = findFirstToscaBooleanElement(toscaJson, tagName);
+        if (fieldStringValue.isLeft()) {
+            setter.accept(fieldStringValue.left().value());
         }
+
     }
+
 
     public static Either<Map<String, PropertyDefinition>, ResultStatusEnum> getProperties(Map<String, Object> toscaJson) {
         Function<String, PropertyDefinition> elementGenByName = ImportUtils::createProperties;
