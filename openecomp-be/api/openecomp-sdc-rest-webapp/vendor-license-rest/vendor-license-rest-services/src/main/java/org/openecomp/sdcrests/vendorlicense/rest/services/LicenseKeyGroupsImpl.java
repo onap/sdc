@@ -20,6 +20,9 @@
 
 package org.openecomp.sdcrests.vendorlicense.rest.services;
 
+import java.util.Comparator;
+import javax.inject.Named;
+import javax.ws.rs.core.Response;
 import org.openecomp.sdc.vendorlicense.VendorLicenseManager;
 import org.openecomp.sdc.vendorlicense.VendorLicenseManagerFactory;
 import org.openecomp.sdc.vendorlicense.dao.types.LicenseKeyGroupEntity;
@@ -34,10 +37,6 @@ import org.openecomp.sdcrests.wrappers.StringWrapperResponse;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
-
-import javax.inject.Named;
-import javax.ws.rs.core.Response;
-import java.util.Collection;
 
 @Named
 @Service("licenseKeyGroups")
@@ -56,15 +55,15 @@ public class LicenseKeyGroupsImpl implements LicenseKeyGroups {
    * @return the response
    */
   public Response listLicenseKeyGroups(String vlmId, String versionId, String user) {
-    Collection<LicenseKeyGroupEntity> licenseKeyGroups =
-        vendorLicenseManager.listLicenseKeyGroups(vlmId, new Version(versionId));
 
     GenericCollectionWrapper<LicenseKeyGroupEntityDto> result = new GenericCollectionWrapper<>();
     MapLicenseKeyGroupEntityToLicenseKeyGroupEntityDto outputMapper =
-        new MapLicenseKeyGroupEntityToLicenseKeyGroupEntityDto();
-    for (LicenseKeyGroupEntity ep : licenseKeyGroups) {
-      result.add(outputMapper.applyMapping(ep, LicenseKeyGroupEntityDto.class));
-    }
+            new MapLicenseKeyGroupEntityToLicenseKeyGroupEntityDto();
+
+    vendorLicenseManager.listLicenseKeyGroups(vlmId, new Version(versionId)).stream()
+                        .sorted(Comparator.comparing(LicenseKeyGroupEntity::getName))
+                        .forEach(item -> result.add(outputMapper.applyMapping(item, LicenseKeyGroupEntityDto.class)));
+
     return Response.ok(result).build();
   }
 

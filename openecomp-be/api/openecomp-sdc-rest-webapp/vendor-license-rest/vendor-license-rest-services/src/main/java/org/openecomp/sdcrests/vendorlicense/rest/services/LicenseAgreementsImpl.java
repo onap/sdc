@@ -20,12 +20,10 @@
 
 package org.openecomp.sdcrests.vendorlicense.rest.services;
 
-import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashSet;
-
 import javax.inject.Named;
 import javax.ws.rs.core.Response;
-
 import org.apache.commons.collections4.CollectionUtils;
 import org.openecomp.sdc.vendorlicense.VendorLicenseManager;
 import org.openecomp.sdc.vendorlicense.VendorLicenseManagerFactory;
@@ -64,19 +62,19 @@ public class LicenseAgreementsImpl implements LicenseAgreements {
      * @return the response
      */
     public Response listLicenseAgreements(String vlmId, String versionId, String user) {
-        Collection<LicenseAgreementEntity> licenseAgreements =
-                vendorLicenseManager.listLicenseAgreements(vlmId, new Version(versionId));
 
         GenericCollectionWrapper<LicenseAgreementEntityDto> results = new GenericCollectionWrapper<>();
         MapLicenseAgreementEntityToLicenseAgreementDescriptorDto outputMapper =
                 new MapLicenseAgreementEntityToLicenseAgreementDescriptorDto();
-        for (LicenseAgreementEntity lae : licenseAgreements) {
+        vendorLicenseManager.listLicenseAgreements(vlmId, new Version(versionId)).stream()
+                            .sorted(Comparator.comparing(LicenseAgreementEntity::getName)).forEach(lae -> {
             LicenseAgreementEntityDto laeDto = new LicenseAgreementEntityDto();
             laeDto.setId(lae.getId());
             laeDto.setFeatureGroupsIds(lae.getFeatureGroupIds());
             outputMapper.doMapping(lae, laeDto);
             results.add(laeDto);
-        }
+        });
+
         return Response.ok(results).build();
     }
 

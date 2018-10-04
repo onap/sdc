@@ -20,6 +20,9 @@
 
 package org.openecomp.sdcrests.vendorlicense.rest.services;
 
+import java.util.Comparator;
+import javax.inject.Named;
+import javax.ws.rs.core.Response;
 import org.openecomp.sdc.vendorlicense.VendorLicenseManager;
 import org.openecomp.sdc.vendorlicense.VendorLicenseManagerFactory;
 import org.openecomp.sdc.vendorlicense.dao.types.EntitlementPoolEntity;
@@ -33,10 +36,6 @@ import org.openecomp.sdcrests.wrappers.GenericCollectionWrapper;
 import org.openecomp.sdcrests.wrappers.StringWrapperResponse;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
-
-import javax.inject.Named;
-import javax.ws.rs.core.Response;
-import java.util.Collection;
 
 @Named
 @Service("entitlementPools")
@@ -54,15 +53,15 @@ public class EntitlementPoolsImpl implements EntitlementPools {
    * @return the response
    */
   public Response listEntitlementPools(String vlmId, String versionId, String user) {
-    Collection<EntitlementPoolEntity> entitlementPools =
-        vendorLicenseManager.listEntitlementPools(vlmId, new Version(versionId));
 
     GenericCollectionWrapper<EntitlementPoolEntityDto> result = new GenericCollectionWrapper<>();
     MapEntitlementPoolEntityToEntitlementPoolEntityDto outputMapper =
-        new MapEntitlementPoolEntityToEntitlementPoolEntityDto();
-    for (EntitlementPoolEntity ep : entitlementPools) {
-      result.add(outputMapper.applyMapping(ep, EntitlementPoolEntityDto.class));
-    }
+            new MapEntitlementPoolEntityToEntitlementPoolEntityDto();
+
+    vendorLicenseManager.listEntitlementPools(vlmId, new Version(versionId)).stream()
+                        .sorted(Comparator.comparing(EntitlementPoolEntity::getName))
+                        .forEach(item -> result.add(outputMapper.applyMapping(item, EntitlementPoolEntityDto.class)));
+
     return Response.ok(result).build();
   }
 

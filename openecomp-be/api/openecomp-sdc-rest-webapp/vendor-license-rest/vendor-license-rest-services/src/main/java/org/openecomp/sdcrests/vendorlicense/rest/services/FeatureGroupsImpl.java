@@ -20,12 +20,10 @@
 
 package org.openecomp.sdcrests.vendorlicense.rest.services;
 
-import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashSet;
-
 import javax.inject.Named;
 import javax.ws.rs.core.Response;
-
 import org.apache.commons.collections4.CollectionUtils;
 import org.openecomp.sdc.vendorlicense.VendorLicenseManager;
 import org.openecomp.sdc.vendorlicense.VendorLicenseManagerFactory;
@@ -60,14 +58,13 @@ public class FeatureGroupsImpl implements FeatureGroups {
 
     @Override
     public Response listFeatureGroups(String vlmId, String versionId, String user) {
-        Collection<FeatureGroupEntity> featureGroupEntities =
-                vendorLicenseManager.listFeatureGroups(vlmId, new Version(versionId));
 
         MapFeatureGroupEntityToFeatureGroupDescriptorDto outputMapper =
                 new MapFeatureGroupEntityToFeatureGroupDescriptorDto();
         GenericCollectionWrapper<FeatureGroupEntityDto> results = new GenericCollectionWrapper<>();
 
-        for (FeatureGroupEntity fg : featureGroupEntities) {
+        vendorLicenseManager.listFeatureGroups(vlmId, new Version(versionId)).stream()
+                            .sorted(Comparator.comparing(FeatureGroupEntity::getName)).forEach(fg -> {
             FeatureGroupEntityDto fgDto = new FeatureGroupEntityDto();
             fgDto.setId(fg.getId());
             fgDto.setLicenseKeyGroupsIds(fg.getLicenseKeyGroupIds());
@@ -75,7 +72,8 @@ public class FeatureGroupsImpl implements FeatureGroups {
             fgDto.setReferencingLicenseAgreements(fg.getReferencingLicenseAgreements());
             outputMapper.doMapping(fg, fgDto);
             results.add(fgDto);
-        }
+        });
+
         return Response.ok(results).build();
     }
 
