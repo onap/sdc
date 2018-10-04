@@ -1,0 +1,279 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bada0100_dca9aa7c",
+        "filename": "catalog-ui/src/app/ng2/pages/interface-operation/interface-operation.page.component.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 4739
+      },
+      "writtenOn": "2018-10-04T12:07:08Z",
+      "side": 1,
+      "message": "If this loader is on the entire screen please use the onap-ui service loader this.loaderService.deactivate()/activate()\nno need to put this in the html",
+      "range": {
+        "startLine": 2,
+        "startChar": 34,
+        "endLine": 2,
+        "endChar": 35
+      },
+      "revId": "b08f5563deba71ac45dff0d21ce7da8f155d6dc3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_1cc73247",
+        "filename": "catalog-ui/src/app/ng2/pages/interface-operation/interface-operation.page.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 4739
+      },
+      "writtenOn": "2018-10-04T12:07:08Z",
+      "side": 1,
+      "message": "Please use Promise.all !!!\nalso please use activate() and deactivate() from onap ui service loader",
+      "range": {
+        "startLine": 50,
+        "startChar": 0,
+        "endLine": 68,
+        "endChar": 13
+      },
+      "revId": "b08f5563deba71ac45dff0d21ce7da8f155d6dc3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_7cdd1e14",
+        "filename": "catalog-ui/src/app/ng2/pages/interface-operation/operation-creator/operation-creator.component.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 4739
+      },
+      "writtenOn": "2018-10-04T12:07:08Z",
+      "side": 1,
+      "message": "please use onap-ui dropdown",
+      "revId": "b08f5563deba71ac45dff0d21ce7da8f155d6dc3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_dcc0ca2c",
+        "filename": "catalog-ui/src/app/ng2/pages/interface-operation/operation-creator/operation-creator.component.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 4739
+      },
+      "writtenOn": "2018-10-04T12:07:08Z",
+      "side": 1,
+      "message": "Please use onap-ui tabs",
+      "range": {
+        "startLine": 68,
+        "startChar": 24,
+        "endLine": 68,
+        "endChar": 25
+      },
+      "revId": "b08f5563deba71ac45dff0d21ce7da8f155d6dc3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_3ce796e6",
+        "filename": "catalog-ui/src/app/ng2/pages/interface-operation/operation-creator/operation-creator.component.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 93,
+      "author": {
+        "id": 4739
+      },
+      "writtenOn": "2018-10-04T12:07:08Z",
+      "side": 1,
+      "message": "please put this check in a function, you use it to many times in the html",
+      "range": {
+        "startLine": 93,
+        "startChar": 64,
+        "endLine": 93,
+        "endChar": 134
+      },
+      "revId": "b08f5563deba71ac45dff0d21ce7da8f155d6dc3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_fcd02ef9",
+        "filename": "catalog-ui/src/app/ng2/pages/interface-operation/operation-creator/operation-creator.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 4739
+      },
+      "writtenOn": "2018-10-04T12:07:08Z",
+      "side": 1,
+      "message": "please put this in the language file",
+      "range": {
+        "startLine": 60,
+        "startChar": 13,
+        "endLine": 64,
+        "endChar": 5
+      },
+      "revId": "b08f5563deba71ac45dff0d21ce7da8f155d6dc3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_fc3eee28",
+        "filename": "catalog-ui/src/app/ng2/pages/interface-operation/operation-creator/operation-creator.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 195,
+      "author": {
+        "id": 4739
+      },
+      "writtenOn": "2018-10-04T12:07:08Z",
+      "side": 1,
+      "message": "Please change your constructor to get 4 params and not the object. or add a second constructor \nthan just do new OperationParameter (name, type, property, mandatory)",
+      "revId": "b08f5563deba71ac45dff0d21ce7da8f155d6dc3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_3c355646",
+        "filename": "catalog-ui/src/app/ng2/pages/interface-operation/operation-creator/operation-creator.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 223,
+      "author": {
+        "id": 4739
+      },
+      "writtenOn": "2018-10-04T12:07:08Z",
+      "side": 1,
+      "message": "use the function, this check appears to much",
+      "revId": "b08f5563deba71ac45dff0d21ce7da8f155d6dc3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_fcf7ce8a",
+        "filename": "catalog-ui/src/app/ng2/pages/interface-operation/operation-creator/operation-creator.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 268,
+      "author": {
+        "id": 4739
+      },
+      "writtenOn": "2018-10-04T12:07:08Z",
+      "side": 1,
+      "message": "we do not use for loops like this. please use _.foreach",
+      "range": {
+        "startLine": 261,
+        "startChar": 0,
+        "endLine": 268,
+        "endChar": 9
+      },
+      "revId": "b08f5563deba71ac45dff0d21ce7da8f155d6dc3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_dcd76aec",
+        "filename": "catalog-ui/src/app/ng2/pages/interface-operation/operation-creator/operation-creator.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 285,
+      "author": {
+        "id": 4739
+      },
+      "writtenOn": "2018-10-04T12:07:08Z",
+      "side": 1,
+      "message": "Please change your constructor to get 4 params and not the object. or add a second constructor \nthan just do new OperationParameter (name, type, property, mandatory)",
+      "range": {
+        "startLine": 280,
+        "startChar": 11,
+        "endLine": 285,
+        "endChar": 13
+      },
+      "revId": "b08f5563deba71ac45dff0d21ce7da8f155d6dc3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_7c043e7e",
+        "filename": "catalog-ui/src/app/ng2/pages/interface-operation/operation-creator/operation-creator.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 293,
+      "author": {
+        "id": 4739
+      },
+      "writtenOn": "2018-10-04T12:07:08Z",
+      "side": 1,
+      "message": "Please change your constructor to get 4 params and not the object. or add a second constructor \nthan just do new OperationParameter (name, type, property, mandatory)",
+      "range": {
+        "startLine": 287,
+        "startChar": 7,
+        "endLine": 293,
+        "endChar": 13
+      },
+      "revId": "b08f5563deba71ac45dff0d21ce7da8f155d6dc3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_3cfeb66c",
+        "filename": "catalog-ui/src/app/ng2/pages/interface-operation/operation-creator/operation-creator.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 299,
+      "author": {
+        "id": 4739
+      },
+      "writtenOn": "2018-10-04T12:07:08Z",
+      "side": 1,
+      "message": "same here, to many times this check appear. put this in a function with boolean return value",
+      "range": {
+        "startLine": 299,
+        "startChar": 14,
+        "endLine": 299,
+        "endChar": 87
+      },
+      "revId": "b08f5563deba71ac45dff0d21ce7da8f155d6dc3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_1c3c122f",
+        "filename": "catalog-ui/src/app/view-models/workspace/tabs/interface-operation/interface-operation-view.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 4739
+      },
+      "writtenOn": "2018-10-04T12:07:08Z",
+      "side": 1,
+      "message": "you don\u0027t need to use ng2 if there is no interface-operation in angular1.",
+      "revId": "b08f5563deba71ac45dff0d21ce7da8f155d6dc3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
