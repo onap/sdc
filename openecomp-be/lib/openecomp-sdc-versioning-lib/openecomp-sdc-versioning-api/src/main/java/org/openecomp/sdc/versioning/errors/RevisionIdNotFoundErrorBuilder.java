@@ -28,7 +28,7 @@ import org.openecomp.sdc.common.errors.ErrorCategory;
  */
 public class RevisionIdNotFoundErrorBuilder extends BaseErrorBuilder {
 
-  private static final String REVISION_ID_NOT_FOUND_MSG =
+   static final String REVISION_ID_NOT_FOUND_MSG =
       "Mandatory field revision id missing";
 
   /**

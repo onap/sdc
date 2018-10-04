@@ -28,7 +28,7 @@ import org.openecomp.sdc.common.errors.ErrorCategory;
  */
 public class CheckinOnEntityLockedByOtherErrorBuilder extends BaseErrorBuilder {
 
-  private static final String CHECKIN_ON_ENTITY_LOCKED_BY_OTHER_USER_MSG =
+   static final String CHECKIN_ON_ENTITY_LOCKED_BY_OTHER_USER_MSG =
       "Can not check in versionable entity %s with id %s since it is checked out by other "
           + "user: %s.";
 

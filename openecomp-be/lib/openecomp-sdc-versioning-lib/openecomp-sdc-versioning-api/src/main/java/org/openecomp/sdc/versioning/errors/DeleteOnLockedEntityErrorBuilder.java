@@ -28,7 +28,7 @@ import org.openecomp.sdc.common.errors.ErrorCategory;
  */
 public class DeleteOnLockedEntityErrorBuilder extends BaseErrorBuilder {
 
-  private static final String DELETE_ON_LOCKED_ENTITY_MSG =
+   static final String DELETE_ON_LOCKED_ENTITY_MSG =
       "Can not delete versionable entity %s with id %s since it is checked out by other user: %s.";
 
   /**

@@ -28,7 +28,7 @@ import org.openecomp.sdc.common.errors.ErrorCategory;
  */
 public class CheckinOnUnlockedEntityErrorBuilder extends BaseErrorBuilder {
 
-  private static final String CHECKIN_ON_UNLOCKED_ENTITY_MSG =
+   static final String CHECKIN_ON_UNLOCKED_ENTITY_MSG =
       "Can not check in versionable entity %s with id %s since it is not checked out.";
 
   /**

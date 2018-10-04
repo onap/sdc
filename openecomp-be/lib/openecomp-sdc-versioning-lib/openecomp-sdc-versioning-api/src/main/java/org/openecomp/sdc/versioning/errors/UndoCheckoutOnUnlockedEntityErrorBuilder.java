@@ -28,7 +28,7 @@ import org.openecomp.sdc.common.errors.ErrorCategory;
  */
 public class UndoCheckoutOnUnlockedEntityErrorBuilder extends BaseErrorBuilder {
 
-  private static final String UNDO_CHECKOUT_ON_UNLOCKED_ENTITY_MSG =
+   static final String UNDO_CHECKOUT_ON_UNLOCKED_ENTITY_MSG =
       "Can not undo checkout on versionable entity %s with id %s since it is not checked out.";
 
   /**
