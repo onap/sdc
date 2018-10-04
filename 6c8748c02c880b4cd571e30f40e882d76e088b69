@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bada0100_21ad3132",
+        "filename": "catalog-be/pom.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 521,
+      "author": {
+        "id": 1343
+      },
+      "writtenOn": "2018-10-04T09:04:50Z",
+      "side": 1,
+      "message": "Please remove the comment",
+      "range": {
+        "startLine": 516,
+        "startChar": 8,
+        "endLine": 521,
+        "endChar": 28
+      },
+      "revId": "6c8748c02c880b4cd571e30f40e882d76e088b69",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_e1a64953",
+        "filename": "ui-ci/pom.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 1343
+      },
+      "writtenOn": "2018-10-04T09:04:50Z",
+      "side": 1,
+      "message": "please remove this",
+      "range": {
+        "startLine": 41,
+        "startChar": 3,
+        "endLine": 41,
+        "endChar": 36
+      },
+      "revId": "6c8748c02c880b4cd571e30f40e882d76e088b69",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
