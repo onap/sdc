@@ -28,7 +28,7 @@ import org.openecomp.sdc.common.errors.ErrorCategory;
  */
 public class EntityNotExistErrorBuilder extends BaseErrorBuilder {
 
-  private static final String VERSIONABLE_ENTITY_NOT_EXIST_MSG =
+   static final String VERSIONABLE_ENTITY_NOT_EXIST_MSG =
       "Versionable entity %s with id %s does not exist.";
 
   /**

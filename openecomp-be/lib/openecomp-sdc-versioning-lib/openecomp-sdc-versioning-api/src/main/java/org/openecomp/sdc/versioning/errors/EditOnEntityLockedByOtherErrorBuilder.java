@@ -28,7 +28,7 @@ import org.openecomp.sdc.common.errors.ErrorCategory;
  */
 public class EditOnEntityLockedByOtherErrorBuilder extends BaseErrorBuilder {
 
-  private static final String EDIT_ON_ENTITY_LOCKED_BY_OTHER_USER_MSG =
+   static final String EDIT_ON_ENTITY_LOCKED_BY_OTHER_USER_MSG =
       "Versionable entity %s with id %s can not be edited since it is locked by other user %s.";
 
   /**
