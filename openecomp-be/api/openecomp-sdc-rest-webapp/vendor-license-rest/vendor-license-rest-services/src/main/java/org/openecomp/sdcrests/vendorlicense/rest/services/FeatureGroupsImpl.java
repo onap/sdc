@@ -20,12 +20,11 @@
 
 package org.openecomp.sdcrests.vendorlicense.rest.services;
 
-import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashSet;
-
+import java.util.stream.Collectors;
 import javax.inject.Named;
 import javax.ws.rs.core.Response;
-
 import org.apache.commons.collections4.CollectionUtils;
 import org.openecomp.sdc.vendorlicense.VendorLicenseManager;
 import org.openecomp.sdc.vendorlicense.VendorLicenseManagerFactory;
@@ -60,22 +59,15 @@ public class FeatureGroupsImpl implements FeatureGroups {
 
     @Override
     public Response listFeatureGroups(String vlmId, String versionId, String user) {
-        Collection<FeatureGroupEntity> featureGroupEntities =
-                vendorLicenseManager.listFeatureGroups(vlmId, new Version(versionId));
 
         MapFeatureGroupEntityToFeatureGroupDescriptorDto outputMapper =
                 new MapFeatureGroupEntityToFeatureGroupDescriptorDto();
-        GenericCollectionWrapper<FeatureGroupEntityDto> results = new GenericCollectionWrapper<>();
 
-        for (FeatureGroupEntity fg : featureGroupEntities) {
-            FeatureGroupEntityDto fgDto = new FeatureGroupEntityDto();
-            fgDto.setId(fg.getId());
-            fgDto.setLicenseKeyGroupsIds(fg.getLicenseKeyGroupIds());
-            fgDto.setEntitlementPoolsIds(fg.getEntitlementPoolIds());
-            fgDto.setReferencingLicenseAgreements(fg.getReferencingLicenseAgreements());
-            outputMapper.doMapping(fg, fgDto);
-            results.add(fgDto);
-        }
+        GenericCollectionWrapper<FeatureGroupEntityDto> results = new GenericCollectionWrapper<>(
+                vendorLicenseManager.listFeatureGroups(vlmId, new Version(versionId)).stream()
+                                    .sorted(Comparator.comparing(FeatureGroupEntity::getName))
+                                    .map(fg -> getFeatureGroupEntityDto(outputMapper,fg)).collect(Collectors.toList()));
+
         return Response.ok(results).build();
     }
 
@@ -166,6 +158,16 @@ public class FeatureGroupsImpl implements FeatureGroups {
         fgInput.setId(featureGroupId);
         vendorLicenseManager.deleteFeatureGroup(fgInput);
         return Response.ok().build();
+    }
+
+    private FeatureGroupEntityDto getFeatureGroupEntityDto(MapFeatureGroupEntityToFeatureGroupDescriptorDto mapper,FeatureGroupEntity fg) {
+        FeatureGroupEntityDto fgDto = new FeatureGroupEntityDto();
+        fgDto.setId(fg.getId());
+        fgDto.setLicenseKeyGroupsIds(fg.getLicenseKeyGroupIds());
+        fgDto.setEntitlementPoolsIds(fg.getEntitlementPoolIds());
+        fgDto.setReferencingLicenseAgreements(fg.getReferencingLicenseAgreements());
+        mapper.doMapping(fg, fgDto);
+        return fgDto;
     }
 
 }

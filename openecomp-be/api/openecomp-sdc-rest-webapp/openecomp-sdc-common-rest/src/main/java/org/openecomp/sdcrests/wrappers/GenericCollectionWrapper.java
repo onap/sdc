@@ -44,6 +44,9 @@ public class GenericCollectionWrapper<T> implements Serializable {
       this.results = list;
       this.listCount = list.size();
     }
+    else {
+      this.results = new ArrayList<>();
+    }
   }
 
   public List<T> getResults() {

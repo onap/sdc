@@ -20,12 +20,11 @@
 
 package org.openecomp.sdcrests.vendorlicense.rest.services;
 
-import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashSet;
-
+import java.util.stream.Collectors;
 import javax.inject.Named;
 import javax.ws.rs.core.Response;
-
 import org.apache.commons.collections4.CollectionUtils;
 import org.openecomp.sdc.vendorlicense.VendorLicenseManager;
 import org.openecomp.sdc.vendorlicense.VendorLicenseManagerFactory;
@@ -64,21 +63,19 @@ public class LicenseAgreementsImpl implements LicenseAgreements {
      * @return the response
      */
     public Response listLicenseAgreements(String vlmId, String versionId, String user) {
-        Collection<LicenseAgreementEntity> licenseAgreements =
-                vendorLicenseManager.listLicenseAgreements(vlmId, new Version(versionId));
 
-        GenericCollectionWrapper<LicenseAgreementEntityDto> results = new GenericCollectionWrapper<>();
         MapLicenseAgreementEntityToLicenseAgreementDescriptorDto outputMapper =
                 new MapLicenseAgreementEntityToLicenseAgreementDescriptorDto();
-        for (LicenseAgreementEntity lae : licenseAgreements) {
-            LicenseAgreementEntityDto laeDto = new LicenseAgreementEntityDto();
-            laeDto.setId(lae.getId());
-            laeDto.setFeatureGroupsIds(lae.getFeatureGroupIds());
-            outputMapper.doMapping(lae, laeDto);
-            results.add(laeDto);
-        }
+
+        GenericCollectionWrapper<LicenseAgreementEntityDto> results = new GenericCollectionWrapper<>(
+                vendorLicenseManager.listLicenseAgreements(vlmId, new Version(versionId)).stream()
+                                    .sorted(Comparator.comparing(LicenseAgreementEntity::getName))
+                                    .map(lae -> getLicenseAgreementEntityDto(outputMapper, lae))
+                                    .collect(Collectors.toList()));
+
         return Response.ok(results).build();
     }
+
 
     /**
      * Create license agreement response.
@@ -183,5 +180,14 @@ public class LicenseAgreementsImpl implements LicenseAgreements {
                                            String user) {
         vendorLicenseManager.deleteLicenseAgreement(vlmId, new Version(versionId), licenseAgreementId);
         return Response.ok().build();
+    }
+
+    private LicenseAgreementEntityDto getLicenseAgreementEntityDto(
+            MapLicenseAgreementEntityToLicenseAgreementDescriptorDto mapper, LicenseAgreementEntity lae) {
+        LicenseAgreementEntityDto laeDto = new LicenseAgreementEntityDto();
+        laeDto.setId(lae.getId());
+        laeDto.setFeatureGroupsIds(lae.getFeatureGroupIds());
+        mapper.doMapping(lae, laeDto);
+        return laeDto;
     }
 }

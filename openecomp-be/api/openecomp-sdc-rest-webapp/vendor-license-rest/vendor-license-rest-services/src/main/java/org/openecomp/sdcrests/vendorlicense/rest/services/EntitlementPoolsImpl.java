@@ -20,6 +20,10 @@
 
 package org.openecomp.sdcrests.vendorlicense.rest.services;
 
+import java.util.Comparator;
+import java.util.stream.Collectors;
+import javax.inject.Named;
+import javax.ws.rs.core.Response;
 import org.openecomp.sdc.vendorlicense.VendorLicenseManager;
 import org.openecomp.sdc.vendorlicense.VendorLicenseManagerFactory;
 import org.openecomp.sdc.vendorlicense.dao.types.EntitlementPoolEntity;
@@ -33,10 +37,6 @@ import org.openecomp.sdcrests.wrappers.GenericCollectionWrapper;
 import org.openecomp.sdcrests.wrappers.StringWrapperResponse;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
-
-import javax.inject.Named;
-import javax.ws.rs.core.Response;
-import java.util.Collection;
 
 @Named
 @Service("entitlementPools")
@@ -54,17 +54,18 @@ public class EntitlementPoolsImpl implements EntitlementPools {
    * @return the response
    */
   public Response listEntitlementPools(String vlmId, String versionId, String user) {
-    Collection<EntitlementPoolEntity> entitlementPools =
-        vendorLicenseManager.listEntitlementPools(vlmId, new Version(versionId));
 
-    GenericCollectionWrapper<EntitlementPoolEntityDto> result = new GenericCollectionWrapper<>();
-    MapEntitlementPoolEntityToEntitlementPoolEntityDto outputMapper =
-        new MapEntitlementPoolEntityToEntitlementPoolEntityDto();
-    for (EntitlementPoolEntity ep : entitlementPools) {
-      result.add(outputMapper.applyMapping(ep, EntitlementPoolEntityDto.class));
+        MapEntitlementPoolEntityToEntitlementPoolEntityDto outputMapper =
+                new MapEntitlementPoolEntityToEntitlementPoolEntityDto();
+
+        GenericCollectionWrapper<EntitlementPoolEntityDto> result = new GenericCollectionWrapper<>(
+                vendorLicenseManager.listEntitlementPools(vlmId, new Version(versionId)).stream()
+                                    .sorted(Comparator.comparing(EntitlementPoolEntity::getName))
+                                    .map(item -> outputMapper.applyMapping(item, EntitlementPoolEntityDto.class))
+                                    .collect(Collectors.toList()));
+
+        return Response.ok(result).build();
     }
-    return Response.ok(result).build();
-  }
 
   /**
    * Create entitlement pool response.
