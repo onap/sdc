@@ -28,7 +28,7 @@ import org.openecomp.sdc.common.errors.ErrorCategory;
  */
 public class SubmitLockedEntityNotAllowedErrorBuilder extends BaseErrorBuilder {
 
-  private static final String SUBMIT_LOCKED_ENTITY_NOT_ALLOWED_MSG =
+   static final String SUBMIT_LOCKED_ENTITY_NOT_ALLOWED_MSG =
       "Versionable entity %s with id %s can not be submitted since it is currently"
           + " locked by user %s.";
 

@@ -32,9 +32,9 @@ import java.util.List;
  */
 public class VersionableSubEntityNotFoundErrorBuilder extends BaseErrorBuilder {
 
-  private static final String SUB_ENTITY_NOT_FOUND_MSG =
+   static final String SUB_ENTITY_NOT_FOUND_MSG =
       "%s with Id %s does not exist for %s with id %s and version %s";
-  private static final String SUB_ENTITIES_NOT_FOUND_MSG =
+   static final String SUB_ENTITIES_NOT_FOUND_MSG =
       "%ss with Ids %s do not exist for %s with id %s and version %s";
 
   /**

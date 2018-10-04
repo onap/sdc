@@ -27,7 +27,7 @@ import org.openecomp.sdc.common.errors.ErrorCategory;
  * The type Requested version invalid error builder.
  */
 public class RequestedVersionInvalidErrorBuilder extends BaseErrorBuilder {
-  private static final String REQUESTED_VERSION_INVALID_MSG = "Invalid requested version.";
+   static final String REQUESTED_VERSION_INVALID_MSG = "Invalid requested version.";
 
   /**
    * Instantiates a new Requested version invalid error builder.

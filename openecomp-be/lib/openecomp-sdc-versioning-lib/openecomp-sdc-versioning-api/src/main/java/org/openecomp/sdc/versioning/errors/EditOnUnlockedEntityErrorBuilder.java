@@ -30,7 +30,7 @@ import static org.openecomp.sdc.versioning.errors.VersioningErrorCodes.EDIT_ON_U
  */
 public class EditOnUnlockedEntityErrorBuilder extends BaseErrorBuilder {
 
-  private static final String EDIT_ON_UNLOCKED_ENTITY_MSG =
+   static final String EDIT_ON_UNLOCKED_ENTITY_MSG =
       "Can not edit versionable entity %s with id %s since it is not checked out.";
 
   /**
