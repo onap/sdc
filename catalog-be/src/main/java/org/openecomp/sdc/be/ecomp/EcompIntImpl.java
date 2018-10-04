@@ -21,10 +21,10 @@
 package org.openecomp.sdc.be.ecomp;
 
 import fj.data.Either;
-import org.openecomp.portalsdk.core.onboarding.crossapi.IPortalRestAPIService;
-import org.openecomp.portalsdk.core.onboarding.exception.PortalAPIException;
-import org.openecomp.portalsdk.core.restful.domain.EcompRole;
-import org.openecomp.portalsdk.core.restful.domain.EcompUser;
+import org.onap.portalsdk.core.onboarding.crossapi.IPortalRestAPIService;
+import org.onap.portalsdk.core.onboarding.exception.PortalAPIException;
+import org.onap.portalsdk.core.restful.domain.EcompRole;
+import org.onap.portalsdk.core.restful.domain.EcompUser;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.config.BeEcompErrorManager.ErrorSeverity;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
@@ -42,6 +42,7 @@ import org.springframework.web.context.ContextLoader;
 import javax.servlet.http.HttpServletRequest;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 
 public class EcompIntImpl implements IPortalRestAPIService {
@@ -264,8 +265,9 @@ public class EcompIntImpl implements IPortalRestAPIService {
         }
     }
 
+    //TODO Tal G check for what the argument String is for
     @Override
-    public List<EcompRole> getAvailableRoles() throws PortalAPIException {
+    public List<EcompRole> getAvailableRoles(String requestedLoginId) throws PortalAPIException {
         log.debug("Start handle request of ECOMP getAvailableRoles");
         try {
             List<EcompRole> ecompRolesList = new LinkedList<>();
@@ -414,5 +416,18 @@ public class EcompIntImpl implements IPortalRestAPIService {
     @Override
     public String getUserId(HttpServletRequest request) throws PortalAPIException {
         return request.getHeader(Constants.USER_ID_HEADER);
+    }
+
+    //TODO for what the following method stands for
+    @Override
+    public Map<String, String> getCredentials() throws PortalAPIException {
+        Map<String, String> credentialsMap = new HashMap<>();
+        String username = appProperties.getProperty(DemoAppProperties.USERNAME);
+        String password = appProperties.getProperty(DemoAppProperties.PASSWORD);
+        String appName = appProperties.getProperty(DemoAppProperties.APPNAME);
+        credentialsMap.put("username", username);
+        credentialsMap.put("password", password);
+        credentialsMap.put("appName", appName);
+        return credentialsMap;
     }
 }
