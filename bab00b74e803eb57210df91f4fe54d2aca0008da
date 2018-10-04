@@ -94,6 +94,30 @@
     },
     {
       "key": {
+        "uuid": "bada0100_3c6eb6ca",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 2586,
+      "author": {
+        "id": 897
+      },
+      "writtenOn": "2018-10-04T10:35:43Z",
+      "side": 1,
+      "message": "Component lock will be added.\nThe current return map has only a single instance, the response is a Either to notify in case of any error.",
+      "parentUuid": "bada0100_6a8f9b24",
+      "range": {
+        "startLine": 2585,
+        "startChar": 16,
+        "endLine": 2586,
+        "endChar": 79
+      },
+      "revId": "bab00b74e803eb57210df91f4fe54d2aca0008da",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "bada0100_4a9e5758",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
         "patchSetId": 11
@@ -105,6 +129,30 @@
       "writtenOn": "2018-10-02T10:31:43Z",
       "side": 1,
       "message": "this call will puch the vertex to the graph if we fail later then the vertex will not be removed the whole operation should be in a single transaction",
+      "range": {
+        "startLine": 2600,
+        "startChar": 67,
+        "endLine": 2600,
+        "endChar": 90
+      },
+      "revId": "bab00b74e803eb57210df91f4fe54d2aca0008da",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_5c737ab1",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 2600,
+      "author": {
+        "id": 897
+      },
+      "writtenOn": "2018-10-04T10:35:43Z",
+      "side": 1,
+      "message": "Not sure how to do in a single transaction. Could you please give an example of this.",
+      "parentUuid": "bada0100_4a9e5758",
       "range": {
         "startLine": 2600,
         "startChar": 67,
@@ -145,6 +193,30 @@
       "writtenOn": "2018-10-02T10:31:43Z",
       "side": 1,
       "message": "the deep copy should return the updated instnace right now you are returning the old instance before the deep copy",
+      "range": {
+        "startLine": 2618,
+        "startChar": 8,
+        "endLine": 2618,
+        "endChar": 66
+      },
+      "revId": "bab00b74e803eb57210df91f4fe54d2aca0008da",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_1c65f2e0",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 2618,
+      "author": {
+        "id": 897
+      },
+      "writtenOn": "2018-10-04T10:35:43Z",
+      "side": 1,
+      "message": "This is actually correct, the return object is only a response object while the destComponentInstance is a pass by reference",
+      "parentUuid": "bada0100_aaaca38d",
       "range": {
         "startLine": 2618,
         "startChar": 8,
@@ -565,6 +637,30 @@
     },
     {
       "key": {
+        "uuid": "bada0100_7c82fe53",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 2864,
+      "author": {
+        "id": 897
+      },
+      "writtenOn": "2018-10-04T10:35:43Z",
+      "side": 1,
+      "message": "This comment is not clear yet...\nCould you please clarify which part is duplicate",
+      "parentUuid": "bada0100_6a123bb6",
+      "range": {
+        "startLine": 2864,
+        "startChar": 62,
+        "endLine": 2864,
+        "endChar": 102
+      },
+      "revId": "bab00b74e803eb57210df91f4fe54d2aca0008da",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "bada0100_aa4823cd",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
         "patchSetId": 11
@@ -599,6 +695,30 @@
       "writtenOn": "2018-10-02T10:31:43Z",
       "side": 1,
       "message": "this is not needed\nplease change to debug\nthsi case is not an erro at all",
+      "range": {
+        "startLine": 3021,
+        "startChar": 64,
+        "endLine": 3021,
+        "endChar": 67
+      },
+      "revId": "bab00b74e803eb57210df91f4fe54d2aca0008da",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_9c87a261",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 3021,
+      "author": {
+        "id": 897
+      },
+      "writtenOn": "2018-10-04T10:35:43Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "bada0100_0af5af82",
       "range": {
         "startLine": 3021,
         "startChar": 64,
