@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "1a76adc5_b84d119c",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 897
+      },
+      "writtenOn": "2018-10-04T10:35:43Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1a76adc5_22d33d05",
+      "revId": "13ff9ca40e70416bac573717dbb8842405cb68ca",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1a76adc5_bbfad940",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
         "patchSetId": 1
