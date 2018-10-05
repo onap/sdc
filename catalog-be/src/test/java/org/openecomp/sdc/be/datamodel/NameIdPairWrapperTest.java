@@ -20,6 +20,15 @@ public class NameIdPairWrapperTest {
 	}
 
 	@Test
+	public void testInitWithObject() throws Exception {
+		NameIdPairWrapper testSubject;
+		NameIdPair nameIdPair = new NameIdPair("mock", "mock");
+
+		// default test
+		testSubject = new NameIdPairWrapper(nameIdPair);
+	}
+
+	@Test
 	public void testGetId() throws Exception {
 		NameIdPairWrapper testSubject;
 		String result;
