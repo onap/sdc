@@ -21,6 +21,16 @@ public class NameIdPairTest {
 	}
 
 	@Test
+	public void testConstructorWith3Parameters() throws Exception {
+		NameIdPair testSubject;
+		String result;
+
+		// default test
+		testSubject =  new NameIdPair("", "","");
+		result = testSubject.getOwnerId();
+	}
+
+	@Test
 	public void testSetName() throws Exception {
 		NameIdPair testSubject;
 		String name = "";
