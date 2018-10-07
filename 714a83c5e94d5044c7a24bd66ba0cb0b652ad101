@@ -189,6 +189,57 @@
     },
     {
       "key": {
+        "uuid": "bada0100_97c77412",
+        "filename": "common/onap-tosca-datatype/src/main/java/org/onap/sdc/tosca/services/DataModelCloneUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 175,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-10-07T08:01:51Z",
+      "side": 1,
+      "message": "cloneStringOperationTemplateMap and cloneStringOperationDefinitionTypeMap are almost identical. Can we write one function instead of 2?",
+      "revId": "714a83c5e94d5044c7a24bd66ba0cb0b652ad101",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_b7ccf836",
+        "filename": "common/onap-tosca-datatype/src/main/java/org/onap/sdc/tosca/services/DataModelCloneUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 228,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-10-07T08:01:51Z",
+      "side": 1,
+      "message": "mapEntry.value().clone() ??",
+      "revId": "714a83c5e94d5044c7a24bd66ba0cb0b652ad101",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_57d10ccc",
+        "filename": "common/onap-tosca-datatype/src/main/java/org/onap/sdc/tosca/services/DataModelCloneUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 240,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-10-07T08:01:51Z",
+      "side": 1,
+      "message": "function cloneConstraint and cloneValidSourceTypes also clones a list. Maybe it can be just one function?",
+      "revId": "714a83c5e94d5044c7a24bd66ba0cb0b652ad101",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1a76adc5_2ad0b4c7",
         "filename": "openecomp-be/lib/openecomp-tosca-lib/src/main/java/org/openecomp/sdc/tosca/services/impl/ToscaAnalyzerServiceImpl.java",
         "patchSetId": 1
