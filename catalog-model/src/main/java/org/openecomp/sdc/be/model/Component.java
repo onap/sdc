@@ -66,6 +66,7 @@ public abstract class Component {
     private String derivedFromGenericVersion;
     private String toscaType;
     protected List<AdditionalInformationDefinition> additionalInformation;
+  protected List<PropertyDefinition> properties;
     private Map<String, InterfaceDefinition> interfaces;
 
     public Map<String, InterfaceDefinition> getInterfaces() {
@@ -524,6 +525,14 @@ public abstract class Component {
         }
         groups.addAll(groupsToAdd);
     }
+
+  public List<PropertyDefinition> getProperties() {
+    return properties;
+  }
+
+  public void setProperties(List<PropertyDefinition> properties) {
+    this.properties = properties;
+  }
 
     public Map<String, PolicyDefinition> getPolicies() {
         return policies;

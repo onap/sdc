@@ -41,5 +41,8 @@ export class ParamRowComponent {
         this.filteredInputProps = _.filter(this.inputProps, prop => {
             return this.propTypes[prop.value] === this.param.type;
         });
+        if (this.propTypes[this.param.property] !== this.param.type) {
+            this.param.property = undefined;
+        }
     }
 }

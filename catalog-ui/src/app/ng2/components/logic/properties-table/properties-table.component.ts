@@ -23,6 +23,8 @@ import { Component, Input, Output, EventEmitter} from "@angular/core";
 import {PropertyFEModel, DerivedFEProperty, InstanceFePropertiesMap} from "app/models";
 import {PropertiesService} from "../../../services/properties.service";
 import { InstanceFeDetails } from "../../../../models/instance-fe-details";
+import {InputFEModel} from "../../../../models";
+import {ModalService} from "../../../services/modal.service";
 
 @Component({
     selector: 'properties-table',
@@ -40,10 +42,13 @@ export class PropertiesTableComponent {
     @Input() isLoading:boolean;
     @Input() hasDeclareOption:boolean;
     @Input() hidePropertyType:boolean;
-    
+    @Input() showDelete:boolean;
+
     @Output('propertyChanged') emitter: EventEmitter<PropertyFEModel> = new EventEmitter<PropertyFEModel>();
     @Output() selectPropertyRow: EventEmitter<PropertyRowSelectedEvent> = new EventEmitter<PropertyRowSelectedEvent>();
-    @Output() updateCheckedPropertyCount: EventEmitter<boolean> = new EventEmitter<boolean>();//only for hasDeclareOption
+    @Output() updateCheckedPropertyCount: EventEmitter<boolean> = new EventEmitter<boolean>();
+    @Output() deleteProperty: EventEmitter<PropertyFEModel> = new EventEmitter<PropertyFEModel>();
+    private selectedPropertyToDelete: PropertyFEModel;
 
     sortBy: String;
     reverse: boolean;
@@ -57,7 +62,10 @@ export class PropertiesTableComponent {
         this.path = sortBy.split('.');
     }
 
-    constructor (private propertiesService:PropertiesService ){
+    //only for hasDeclareOption
+
+    constructor (private propertiesService:PropertiesService,
+                 private modalService: ModalService){
     }
     
     ngOnInit() {
@@ -90,6 +98,17 @@ export class PropertiesTableComponent {
             this.propertiesService.disableRelatedProperties(prop, childPropName);
         }
         this.updateCheckedPropertyCount.emit(isChecked);
+    }
+
+    onDeleteProperty = () => {
+        this.deleteProperty.emit(this.selectedPropertyToDelete);
+        this.modalService.closeCurrentModal();
+    };
+
+    openDeleteModal = (property:PropertyFEModel) => {
+        this.selectedPropertyToDelete = property;
+        this.modalService.createActionModal("Delete Property", "Are you sure you want to delete this property?",
+            "Delete", this.onDeleteProperty, "Close").instance.open();
     }
 
 }

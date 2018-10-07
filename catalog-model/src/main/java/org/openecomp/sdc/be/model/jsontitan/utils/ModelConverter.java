@@ -131,9 +131,11 @@ public class ModelConverter {
 
         convertGroups(topologyTemplate, service);
 
-		setCapabilitiesToComponentAndGroups(topologyTemplate, service);
+		    setCapabilitiesToComponentAndGroups(topologyTemplate, service);
 
-        convertPolicies(topologyTemplate, service);
+        convertProperties(topologyTemplate, service);
+
+		    convertPolicies(topologyTemplate, service);
 
         convertRelations(topologyTemplate, service);
 
@@ -547,6 +549,8 @@ public class ModelConverter {
         component.setDerivedFromGenericType(toscaElement.getDerivedFromGenericType());
         component.setDerivedFromGenericVersion(toscaElement.getDerivedFromGenericVersion());
 
+        Map<String, PropertyDataDefinition> properties = toscaElement.getProperties();
+
         //archive
         component.setArchived(toscaElement.isArchived() == null ? false : toscaElement.isArchived());
 
@@ -567,6 +571,11 @@ public class ModelConverter {
             } else {
                 resource.setResourceVendorModelNumber("");
             }
+
+          if(MapUtils.isNotEmpty(properties)) {
+            List<PropertyDefinition> propertiesMap = properties.values().stream().map(x -> new PropertyDefinition(x)).collect(Collectors.toList());
+            resource.setProperties(propertiesMap);
+          }
         } else if (component.getComponentType() == ComponentTypeEnum.SERVICE) {
             Service service = (Service) component;
             if (((String) toscaElement.getMetadataValue(JsonPresentationFields.SERVICE_TYPE)) != null){
@@ -589,12 +598,6 @@ public class ModelConverter {
         component.setUUID((String) toscaElement.getMetadataValue(JsonPresentationFields.UUID));
         component.setIsDeleted((Boolean) toscaElement.getMetadataValue(JsonPresentationFields.IS_DELETED));
 
-
-        Map<String, PropertyDataDefinition> properties = toscaElement.getProperties();
-        if (properties != null && !properties.isEmpty()) {
-			List<PropertyDefinition> propertiesMap = properties.values().stream().map(PropertyDefinition::new).collect(Collectors.toList());
-            ((Resource) component).setProperties(propertiesMap);
-        }
 
         component.setToscaType(toscaElement.getToscaType().getValue());
     }
@@ -1135,6 +1138,16 @@ public class ModelConverter {
             component.setComponentInstancesAttributes(attributes);
         }
     }
+
+  private static void convertProperties(TopologyTemplate topologyTemplate, Service service) {
+    Map<String, PropertyDataDefinition> proeprtiesMap = topologyTemplate.getProperties();
+    if (proeprtiesMap != null && !proeprtiesMap.isEmpty()) {
+      Map<String, PropertyDefinition> copy = proeprtiesMap.entrySet().stream()
+          .collect(Collectors.toMap(entry -> entry.getKey(), entry -> new PropertyDefinition
+              (entry.getValue())));
+      service.setProperties(new ArrayList<>(copy.values()));
+    }
+  }
 
     private static void setComponentInstancesRequirementsToComponent(TopologyTemplate topologyTemplate, Component component) {
 

@@ -13,12 +13,16 @@
                             [readonly]="isReadonly || resourceIsReadonly"
                             [isLoading]="loadingProperties || savingChangedData"
                             [hasDeclareOption]="true"
+                            [showDelete]="!isReadOnly && isSelf()"
                             (propertyChanged)="dataChanged($event)"
                             (propertySelected)="propertySelected($event)"
                             (selectPropertyRow)="selectPropertyRow($event)"
                             (selectChildProperty)="selectChildProperty($event)"
                             (updateCheckedPropertyCount)="updateCheckedPropertyCount($event)"
-                            (selectInstanceRow)="selectInstanceRow($event)">
+                            (selectInstanceRow)="selectInstanceRow($event)"
+                            (deleteProperty)="deleteProperty($event)">
+
+
                         </properties-table>
                     </tab>
                     <tab tabTitle="Inputs">
@@ -47,8 +51,10 @@
                 <button class="tlv-btn blue declare-button" [disabled]="!checkedPropertiesCount || isReadonly || hasChangedData" (click)="declareProperties()" data-tests-id="declare-button">Declare</button>
             </div>
         </div>
-        <div class="right-column gray-border">
-            <tabs #hierarchyNavTabs tabStyle="simple-tabs">
+        <div class="right-column">
+            <div *ngIf="!isReadonly" class="add-btn"
+                 (click)="addProperty()" [ngClass]="{'disabled': selectedInstanceData.uniqueId != component.uniqueId}">Add Property</div>
+            <tabs #hierarchyNavTabs tabStyle="simple-tabs" class="gray-border">
                 <tab tabTitle="Composition">
                     <div class="hierarchy-nav-container">
                         <loader [display]="loadingInstances" [size]="'medium'" [relative]="true" [loaderDelay]="500"></loader>

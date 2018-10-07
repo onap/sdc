@@ -4,6 +4,7 @@ import fj.data.Either;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.utils.ExceptionUtils;
 import org.openecomp.sdc.be.datatypes.elements.Annotation;
+import org.openecomp.sdc.be.datatypes.elements.PropertiesOwner;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.*;
@@ -71,9 +72,10 @@ public class ComponentInstanceInputPropertyDeclarator extends DefaultPropertyDec
     }
 
     @Override
-    InputDefinition createInputFromProperty(String componentId, ComponentInstance propertiesOwner, String inputName, ComponentInstancePropInput propInput, PropertyDataDefinition prop) {
+    protected InputDefinition createInputFromProperty(String componentId, PropertiesOwner propertiesOwner,
+                                             String inputName, ComponentInstancePropInput propInput, PropertyDataDefinition prop) {
         InputDefinition inputFromProperty = super.createInputFromProperty(componentId, propertiesOwner, inputName, propInput, prop);
-        Component propertiesOwnerNodeType = getInstanceOriginType(propertiesOwner);
+        Component propertiesOwnerNodeType = getInstanceOriginType((ComponentInstance) propertiesOwner);
         enrichInputWithAnnotations(prop, inputFromProperty, propertiesOwnerNodeType);
         return inputFromProperty;
     }

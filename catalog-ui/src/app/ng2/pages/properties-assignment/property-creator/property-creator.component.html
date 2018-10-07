@@ -1,0 +1,38 @@
+<div class="property-creator">
+    <loader [display]="isLoading" [size]="'large'" [relative]="true" [loaderDelay]="500"></loader>
+    <form class="w-sdc-form">
+
+        <div class="side-by-side">
+            <div class="i-sdc-form-item">
+                <label class="i-sdc-form-label required">Name</label>
+                <input class="i-sdc-form-input"
+                       type="text"
+                       name="propertyName"
+                       data-tests-id="propertyName"
+                       [(ngModel)]="propertyModel.name"
+                       [ngModelOptions]="{ debounce: 200 }"
+                       autofocus/>
+            </div>
+            <!-- Type -->
+            <div class="i-sdc-form-item">
+                <label class="i-sdc-form-label required">Type</label>
+                <ui-element-dropdown data-tests-id="propertyType"
+                                      class="cell link-selector"
+                                     [values]="typesProperties"
+                                     [(value)]="propertyModel.type"></ui-element-dropdown>
+            </div>
+        </div>
+        <!-- Description -->
+        <div class="i-sdc-form-item">
+            <label class="i-sdc-form-label">Description</label>
+            <textarea  class="i-sdc-form-textarea"
+                       [pattern]="commentValidationPattern"
+                       name="description"
+                       [(ngModel)]="propertyModel.description"
+                       [ngModelOptions]="{ debounce: 200 }"
+                       data-tests-id="description"
+            ></textarea>
+        </div>
+
+    </form>
+</div>

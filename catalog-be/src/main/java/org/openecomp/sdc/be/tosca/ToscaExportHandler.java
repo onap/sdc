@@ -24,6 +24,7 @@ import static org.openecomp.sdc.be.tosca.utils.InterfacesOperationsToscaUtil.add
 import static org.openecomp.sdc.be.tosca.utils.InterfacesOperationsToscaUtil.addInterfaceTypeElement;
 
 import fj.data.Either;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
@@ -32,6 +33,7 @@ import org.openecomp.sdc.be.components.impl.exceptions.SdcResourceNotFoundExcept
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
 import org.openecomp.sdc.be.datatypes.components.ResourceMetadataDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
@@ -560,18 +562,33 @@ public class ToscaExportHandler {
         Map<String, DataTypeDefinition> dataTypes = dataTypesEither.left().value();
 
         List<InputDefinition> inputDef = component.getInputs();
-        Map<String, ToscaProperty> inputs = new HashMap<>();
+        Map<String, ToscaProperty> mergedProperties = new HashMap<>();
         addInterfaceDefinitionElement(component, toscaNodeType);
         if (inputDef != null) {
-            inputDef.forEach(i -> {
-                ToscaProperty property = propertyConvertor.convertProperty(dataTypes, i, false);
-                inputs.put(i.getName(), property);
-            });
-            if (!inputs.isEmpty()) {
-                toscaNodeType.setProperties(inputs);
-            }
+            addInputsToProperties(dataTypes, inputDef, mergedProperties);
         }
-        return convertReqCapAndTypeName(componentsCache, component, toscaNode, nodeTypes, toscaNodeType, dataTypes);
+
+        if(component instanceof Service && CollectionUtils.isNotEmpty(component.getProperties())) {
+            List<PropertyDefinition> properties = component.getProperties();
+            mergedProperties = properties.stream().collect(Collectors.toMap(
+                PropertyDataDefinition::getName,
+                property -> propertyConvertor.convertProperty(dataTypes, property, false)));
+        }
+        if (!mergedProperties.isEmpty()) {
+            toscaNodeType.setProperties(mergedProperties);
+        }
+        // Extracted to method for code reuse
+        return convertReqCapAndTypeName(componentsCache, component, toscaNode, nodeTypes,
+            toscaNodeType, dataTypes);
+    }
+
+        private void addInputsToProperties(Map<String, DataTypeDefinition> dataTypes,
+                                       List<InputDefinition> inputDef,
+                                       Map<String, ToscaProperty> mergedProperties) {
+        for(InputDefinition input : inputDef) {
+            ToscaProperty property = propertyConvertor.convertProperty(dataTypes, input, false);
+            mergedProperties.put(input.getName(), property);
+        }
     }
 
     private Either<ToscaTemplate, ToscaError> convertReqCapAndTypeName(Map<String, Component> componentsCache, Component component, ToscaTemplate toscaNode,

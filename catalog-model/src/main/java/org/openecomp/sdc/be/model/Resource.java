@@ -38,7 +38,7 @@ public class Resource extends Component {
 
     private List<String> derivedList;
 
-    private List<PropertyDefinition> properties;
+//    private List<PropertyDefinition> properties;
 
     private List<PropertyDefinition> attributes;
 
@@ -85,13 +85,13 @@ public class Resource extends Component {
         this.derivedList = derivedList;
     }
 
-    public List<PropertyDefinition> getProperties() {
-        return properties;
-    }
-
-    public void setProperties(List<PropertyDefinition> properties) {
-        this.properties = properties;
-    }
+//    public List<PropertyDefinition> getProperties() {
+//        return properties;
+//    }
+//
+//    public void setProperties(List<PropertyDefinition> properties) {
+//        this.properties = properties;
+//    }
 
     public List<PropertyDefinition> getAttributes() {
         return attributes;
@@ -147,7 +147,7 @@ public class Resource extends Component {
         result = prime * result + ((attributes == null) ? 0 : attributes.hashCode());
         result = prime * result + ((defaultCapabilities == null) ? 0 : defaultCapabilities.hashCode());
         result = prime * result + ((derivedFrom == null) ? 0 : derivedFrom.hashCode());
-        result = prime * result + ((properties == null) ? 0 : properties.hashCode());
+//        result = prime * result + ((properties == null) ? 0 : properties.hashCode());
         result = prime * result + ((derivedList == null) ? 0 : derivedList.hashCode());
         return result;
     }
@@ -182,17 +182,18 @@ public class Resource extends Component {
                 return false;
         } else if (!derivedList.equals(other.derivedList))
             return false;
-        if (properties == null) {
-            if (other.properties != null)
-                return false;
-        } else if (!properties.equals(other.properties))
-            return false;
+//        if (properties == null) {
+//            if (other.properties != null)
+//                return false;
+//        } else if (!properties.equals(other.properties))
+//            return false;
         return super.equals(obj);
     }
 
     @Override
     public String toString() {
-        return "Resource [derivedFrom=" + derivedFrom + ", properties=" + properties + ", attributes=" + attributes
+        return "Resource [derivedFrom=" + derivedFrom + ", properties=" + super.properties + ", " +
+            "attributes=" + attributes
                 + ", defaultCapabilities=" + defaultCapabilities + ", additionalInformation=" + additionalInformation
                 + "Metadata [" + getComponentMetadataDefinition().getMetadataDataDefinition().toString() + "]";
     }

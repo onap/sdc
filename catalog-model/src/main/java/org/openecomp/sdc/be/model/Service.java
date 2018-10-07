@@ -24,14 +24,16 @@ import org.apache.commons.lang.StringUtils;
 import org.openecomp.sdc.be.datatypes.components.ComponentMetadataDataDefinition;
 import org.openecomp.sdc.be.datatypes.components.ServiceMetadataDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ForwardingPathDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.PropertiesOwner;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.InstantiationTypes;
 import org.openecomp.sdc.be.model.jsontitan.datamodel.ToscaElementTypeEnum;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-public class Service extends Component {
+public class Service extends Component implements PropertiesOwner {
 
     public Service() {
         super(new ServiceMetadataDefinition());
@@ -50,7 +52,6 @@ public class Service extends Component {
 
 	private Map<String, ArtifactDefinition> serviceApiArtifacts;
 	private Map<String, ForwardingPathDataDefinition> forwardingPaths;
-
 
 	public Map<String, ArtifactDefinition> getServiceApiArtifacts() {
 		return serviceApiArtifacts;

@@ -1,5 +1,5 @@
 <!--
-  ~ Copyright © 2016-2018 European Support Limited
+  ~ Copyright ï¿½ 2016-2018 European Support Limited
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -13,8 +13,8 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
- 
-<div class="cell field-name">
+
+<div class="cell">
     <ui-element-input
         *ngIf="!isAssociateWorkflow"
         data-tests-id="paramName"
@@ -45,19 +45,26 @@
     </ui-element-dropdown>
 </div>
 
-<div class="cell field-mandatory" *ngIf="!isAssociateWorkflow">
+<ui-element-dropdown
+        class="cell"
+        data-tests-id="inputParamProperty"
+        [values]="inputProps"
+        [(value)]="param.paramId">
+</ui-element-dropdown>
+
+<!--div class="cell field-mandatory" *ngIf="!isAssociateWorkflow">
     <checkbox
         *ngIf="!isAssociateWorkflow"
         data-tests-id="paramMandatory"
         [(checked)]="param.mandatory"
         [ngClass]="{'disabled':readonly}">
     </checkbox>
-</div>
+</div-->
 
-<div class="cell remove" *ngIf="!isAssociateWorkflow && !readonly">
-    <span
+<div class="cell remove">
+    <!--span
         class="sprite-new delete-item-icon"
         data-tests-id="removeInputParam"
         (click)="onRemoveParam(param)">
-    </span>
+    </span-->
 </div>

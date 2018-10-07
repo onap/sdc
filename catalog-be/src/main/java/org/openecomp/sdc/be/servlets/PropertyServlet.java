@@ -260,110 +260,110 @@ public class PropertyServlet extends BeGenericServlet {
         }
     }
 
-    private Either<Map<String, PropertyDefinition>, ActionStatus> getPropertyModel(String resourceId, String data) {
-        JSONParser parser = new JSONParser();
-        JSONObject root;
-        try {
-            Map<String, PropertyDefinition> properties = new HashMap<>();
-            root = (JSONObject) parser.parse(data);
-
-            Set entrySet = root.entrySet();
-            Iterator iterator = entrySet.iterator();
-            while (iterator.hasNext()) {
-                Entry next = (Entry) iterator.next();
-                String propertyName = (String) next.getKey();
-                JSONObject value = (JSONObject) next.getValue();
-                String jsonString = value.toJSONString();
-                Either<PropertyDefinition, ActionStatus> convertJsonToObject = convertJsonToObject(jsonString, PropertyDefinition.class);
-                if (convertJsonToObject.isRight()) {
-                    return Either.right(convertJsonToObject.right().value());
-                }
-                PropertyDefinition propertyDefinition = convertJsonToObject.left().value();
-                String uniqueId = UniqueIdBuilder.buildPropertyUniqueId(resourceId, (String) propertyName);
-                propertyDefinition.setUniqueId(uniqueId);
-                properties.put(propertyName, propertyDefinition);
-            }
-
-            return Either.left(properties);
-        } catch (ParseException e) {
-            log.info("Property conetnt is invalid - {}", data);
-            return Either.right(ActionStatus.INVALID_CONTENT);
-        }
-    }
-
-    private String propertyToJson(Map.Entry<String, PropertyDefinition> property) {
-        JSONObject root = new JSONObject();
-        String propertyName = property.getKey();
-        PropertyDefinition propertyDefinition = property.getValue();
-        JSONObject propertyDefinitionO = getPropertyDefinitionJSONObject(propertyDefinition);
-        root.put(propertyName, propertyDefinitionO);
-        propertyDefinition.getType();
-        return root.toString();
-    }
-
-    private JSONObject getPropertyDefinitionJSONObject(PropertyDefinition propertyDefinition) {
-
-        Either<String, ActionStatus> either = convertObjectToJson(propertyDefinition);
-        if (either.isRight()) {
-            return new JSONObject();
-        }
-        String value = either.left().value();
-        try {
-            return (JSONObject) new JSONParser().parse(value);
-        } catch (ParseException e) {
-            log.info("failed to convert input to json");
-            log.debug("failed to convert to json", e);
-            return new JSONObject();
-        }
-
-    }
-
-    private <T> Either<T, ActionStatus> convertJsonToObject(String data, Class<T> clazz) {
-        T t = null;
-        Type constraintType = new TypeToken<PropertyConstraint>() {
-        }.getType();
-        Gson gson = new GsonBuilder().registerTypeAdapter(constraintType, new PropertyConstraintDeserialiser()).create();
-        try {
-            log.trace("convert json to object. json=\n {}", data);
-            t = gson.fromJson(data, clazz);
-            if (t == null) {
-                log.info("object is null after converting from json");
-                return Either.right(ActionStatus.INVALID_CONTENT);
-            }
-        } catch (Exception e) {
-            // INVALID JSON
-            log.info("failed to convert from json");
-            log.debug("failed to convert from json", e);
-            return Either.right(ActionStatus.INVALID_CONTENT);
-        }
-        return Either.left(t);
-    }
-
-    private <T> Either<String, ActionStatus> convertObjectToJson(PropertyDefinition propertyDefinition) {
-        Type constraintType = new TypeToken<PropertyConstraint>() {
-        }.getType();
-        Gson gson = new GsonBuilder().registerTypeAdapter(constraintType, new PropertyConstraintSerialiser()).create();
-        try {
-            log.trace("convert object to json. propertyDefinition= {}", propertyDefinition);
-            String json = gson.toJson(propertyDefinition);
-            if (json == null) {
-                log.info("object is null after converting to json");
-                return Either.right(ActionStatus.INVALID_CONTENT);
-            }
-            return Either.left(json);
-        } catch (Exception e) {
-            // INVALID JSON
-            log.info("failed to convert to json");
-            log.debug("failed to convert fto json", e);
-            return Either.right(ActionStatus.INVALID_CONTENT);
-        }
-
-    }
-
-    private PropertyBusinessLogic getPropertyBL(ServletContext context) {
-        WebAppContextWrapper webApplicationContextWrapper = (WebAppContextWrapper) context.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR);
-        WebApplicationContext webApplicationContext = webApplicationContextWrapper.getWebAppContext(context);
-        return webApplicationContext.getBean(PropertyBusinessLogic.class);
-    }
+//    private Either<Map<String, PropertyDefinition>, ActionStatus> getPropertyModel(String resourceId, String data) {
+//        JSONParser parser = new JSONParser();
+//        JSONObject root;
+//        try {
+//            Map<String, PropertyDefinition> properties = new HashMap<>();
+//            root = (JSONObject) parser.parse(data);
+//
+//            Set entrySet = root.entrySet();
+//            Iterator iterator = entrySet.iterator();
+//            while (iterator.hasNext()) {
+//                Entry next = (Entry) iterator.next();
+//                String propertyName = (String) next.getKey();
+//                JSONObject value = (JSONObject) next.getValue();
+//                String jsonString = value.toJSONString();
+//                Either<PropertyDefinition, ActionStatus> convertJsonToObject = convertJsonToObject(jsonString, PropertyDefinition.class);
+//                if (convertJsonToObject.isRight()) {
+//                    return Either.right(convertJsonToObject.right().value());
+//                }
+//                PropertyDefinition propertyDefinition = convertJsonToObject.left().value();
+//                String uniqueId = UniqueIdBuilder.buildPropertyUniqueId(resourceId, (String) propertyName);
+//                propertyDefinition.setUniqueId(uniqueId);
+//                properties.put(propertyName, propertyDefinition);
+//            }
+//
+//            return Either.left(properties);
+//        } catch (ParseException e) {
+//            log.info("Property conetnt is invalid - {}", data);
+//            return Either.right(ActionStatus.INVALID_CONTENT);
+//        }
+//    }
+//
+//    private String propertyToJson(Map.Entry<String, PropertyDefinition> property) {
+//        JSONObject root = new JSONObject();
+//        String propertyName = property.getKey();
+//        PropertyDefinition propertyDefinition = property.getValue();
+//        JSONObject propertyDefinitionO = getPropertyDefinitionJSONObject(propertyDefinition);
+//        root.put(propertyName, propertyDefinitionO);
+//        propertyDefinition.getType();
+//        return root.toString();
+//    }
+//
+//    private JSONObject getPropertyDefinitionJSONObject(PropertyDefinition propertyDefinition) {
+//
+//        Either<String, ActionStatus> either = convertObjectToJson(propertyDefinition);
+//        if (either.isRight()) {
+//            return new JSONObject();
+//        }
+//        String value = either.left().value();
+//        try {
+//            return (JSONObject) new JSONParser().parse(value);
+//        } catch (ParseException e) {
+//            log.info("failed to convert input to json");
+//            log.debug("failed to convert to json", e);
+//            return new JSONObject();
+//        }
+//
+//    }
+//
+//    private <T> Either<T, ActionStatus> convertJsonToObject(String data, Class<T> clazz) {
+//        T t = null;
+//        Type constraintType = new TypeToken<PropertyConstraint>() {
+//        }.getType();
+//        Gson gson = new GsonBuilder().registerTypeAdapter(constraintType, new PropertyConstraintDeserialiser()).create();
+//        try {
+//            log.trace("convert json to object. json=\n {}", data);
+//            t = gson.fromJson(data, clazz);
+//            if (t == null) {
+//                log.info("object is null after converting from json");
+//                return Either.right(ActionStatus.INVALID_CONTENT);
+//            }
+//        } catch (Exception e) {
+//            // INVALID JSON
+//            log.info("failed to convert from json");
+//            log.debug("failed to convert from json", e);
+//            return Either.right(ActionStatus.INVALID_CONTENT);
+//        }
+//        return Either.left(t);
+//    }
+//
+//    private <T> Either<String, ActionStatus> convertObjectToJson(PropertyDefinition propertyDefinition) {
+//        Type constraintType = new TypeToken<PropertyConstraint>() {
+//        }.getType();
+//        Gson gson = new GsonBuilder().registerTypeAdapter(constraintType, new PropertyConstraintSerialiser()).create();
+//        try {
+//            log.trace("convert object to json. propertyDefinition= {}", propertyDefinition);
+//            String json = gson.toJson(propertyDefinition);
+//            if (json == null) {
+//                log.info("object is null after converting to json");
+//                return Either.right(ActionStatus.INVALID_CONTENT);
+//            }
+//            return Either.left(json);
+//        } catch (Exception e) {
+//            // INVALID JSON
+//            log.info("failed to convert to json");
+//            log.debug("failed to convert fto json", e);
+//            return Either.right(ActionStatus.INVALID_CONTENT);
+//        }
+//
+//    }
+//
+//    private PropertyBusinessLogic getPropertyBL(ServletContext context) {
+//        WebAppContextWrapper webApplicationContextWrapper = (WebAppContextWrapper) context.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR);
+//        WebApplicationContext webApplicationContext = webApplicationContextWrapper.getWebAppContext(context);
+//        return webApplicationContext.getBean(PropertyBusinessLogic.class);
+//    }
 
 }
