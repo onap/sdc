@@ -86,21 +86,45 @@ public abstract class DefaultPropertyDeclarator<PROPERTYOWNER extends Properties
         return inputDefinition;
     }
 
-    private InputDefinition createInput(String componentId, PROPERTYOWNER propertiesOwner, ComponentInstancePropInput propInput, PropertyDataDefinition prop) {
-        String generatedInputName = generateInputName(propertiesOwner.getNormalizedName(), propInput);
+    private InputDefinition createInput(String componentId, PropertiesOwner propertiesOwner, ComponentInstancePropInput propInput, PropertyDataDefinition prop) {
+        String generatedInputName = generateInputName(propertiesOwner instanceof
+                Service ? null : propertiesOwner.getNormalizedName(),
+            propInput);
         return createInputFromProperty(componentId, propertiesOwner, generatedInputName, propInput, prop);
     }
 
     private String generateInputName(String inputName, ComponentInstancePropInput propInput) {
+        String declaredInputName = inputName;
         String[] parsedPropNames = propInput.getParsedPropNames();
+
         if(parsedPropNames != null){
-            for(String str: parsedPropNames){
-                inputName += "_"  + str;
-            }
+            declaredInputName = handleInputName(inputName, parsedPropNames);
         } else {
-            inputName += "_"  + propInput.getName();
+            String[] propName = {propInput.getName()};
+            declaredInputName = handleInputName(inputName, propName);
         }
-        return inputName;
+
+        return declaredInputName;
+    }
+
+    private String handleInputName(String inputName, String[] parsedPropNames) {
+        String prefix;
+        int startingIndex;
+
+        if(Objects.isNull(inputName)) {
+            prefix = parsedPropNames[0];
+            startingIndex = 1;
+        } else {
+            prefix = inputName;
+            startingIndex = 0;
+        }
+
+        while(startingIndex < parsedPropNames.length){
+            prefix += "_"  + parsedPropNames[startingIndex];
+            startingIndex ++;
+        }
+
+        return prefix;
     }
 
     private PropertyDataDefinition resolveProperty(List<PROPERTYTYPE> propertiesToCreate, ComponentInstancePropInput propInput) {
@@ -110,7 +134,8 @@ public abstract class DefaultPropertyDeclarator<PROPERTYOWNER extends Properties
         return resolvedProperty.isPresent() ? resolvedProperty.get() : propInput;
     }
 
-    InputDefinition createInputFromProperty(String componentId, PROPERTYOWNER propertiesOwner, String inputName, ComponentInstancePropInput propInput, PropertyDataDefinition prop) {
+    protected InputDefinition createInputFromProperty(String componentId, PropertiesOwner
+        propertiesOwner, String inputName, ComponentInstancePropInput propInput, PropertyDataDefinition prop) {
         String propertiesName = propInput.getPropertiesName() ;
         PropertyDefinition selectedProp = propInput.getInput();
         String[] parsedPropNames = propInput.getParsedPropNames();
@@ -119,26 +144,30 @@ public abstract class DefaultPropertyDeclarator<PROPERTYOWNER extends Properties
         if(propertiesName != null && !propertiesName.isEmpty() && selectedProp != null){
             complexProperty = true;
             input = new InputDefinition(selectedProp);
-            input.setDefaultValue(selectedProp.getValue());
         }else{
             input = new InputDefinition(prop);
-            input.setDefaultValue(prop.getValue());
         }
+        input.setDefaultValue(prop.getValue());
         input.setName(inputName);
         input.setUniqueId(UniqueIdBuilder.buildPropertyUniqueId(componentId, input.getName()));
         input.setInputPath(propertiesName);
         input.setInstanceUniqueId(propertiesOwner.getUniqueId());
         input.setPropertyId(propInput.getUniqueId());
-        input.setValue(null);
         changePropertyValueToGetInputValue(inputName, parsedPropNames, input, prop, complexProperty);
-        ((IComponentInstanceConnectedElement)prop).setComponentInstanceId(propertiesOwner.getUniqueId());
-        ((IComponentInstanceConnectedElement)prop).setComponentInstanceName(propertiesOwner.getName());
+
+        if(prop instanceof IComponentInstanceConnectedElement) {
+            ((IComponentInstanceConnectedElement) prop)
+                .setComponentInstanceId(propertiesOwner.getUniqueId());
+            ((IComponentInstanceConnectedElement) prop)
+                .setComponentInstanceName(propertiesOwner.getName());
+        }
         return input;
     }
 
     private void changePropertyValueToGetInputValue(String inputName, String[] parsedPropNames, InputDefinition input, PropertyDataDefinition prop, boolean complexProperty) {
         JSONObject jobject = new JSONObject();
-        if(prop.getValue() == null || prop.getValue().isEmpty()){
+        String value = (String) prop.getValue();
+        if(value == null || value.isEmpty()){
             if(complexProperty){
 
                 jobject = createJSONValueForProperty(parsedPropNames.length -1, parsedPropNames, jobject, inputName);
@@ -153,7 +182,7 @@ public abstract class DefaultPropertyDeclarator<PROPERTYOWNER extends Properties
 
         }else{
 
-            String value = prop.getValue();
+            //String value = value;
             Object objValue =  new Yaml().load(value);
             if( objValue instanceof Map || objValue  instanceof List){
                 if(!complexProperty){
@@ -298,7 +327,8 @@ public abstract class DefaultPropertyDeclarator<PROPERTYOWNER extends Properties
         }
         inputValue.setGetInputValues(getInputsValues);
 
-        Either<String, TitanOperationStatus> findDefaultValue = propertyOperation.findDefaultValueFromSecondPosition(pathOfComponentInstances, inputValue.getUniqueId(), inputValue.getDefaultValue());
+        Either<String, TitanOperationStatus> findDefaultValue = propertyOperation.findDefaultValueFromSecondPosition(pathOfComponentInstances, inputValue.getUniqueId(),
+            (String) inputValue.getDefaultValue());
         if (findDefaultValue.isRight()) {
             deleteEither = Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(DaoStatusConverter.convertTitanStatusToStorageStatus(findDefaultValue.right().value()))));
             return deleteEither;
@@ -351,8 +381,11 @@ public abstract class DefaultPropertyDeclarator<PROPERTYOWNER extends Properties
      *        @return mutated @param toscaElement , where empty maps are deleted , return null for empty map.
      **/
     private Object cleanEmptyNestedValuesInMap(Object toscaElement , short loopProtectionLevel ){
+        //region - Stop if map is empty
         if (loopProtectionLevel<=0 || toscaElement==null || !(toscaElement instanceof  Map))
             return toscaElement;
+        //endregion
+        //region - Remove empty map entries & return null iff empty map
         if ( MapUtils.isNotEmpty( (Map)toscaElement ) ) {
             Object ret;
             Set<Object> keysToRemove = new HashSet<>();                                                                 // use different set to avoid ConcurrentModificationException
@@ -366,9 +399,10 @@ public abstract class DefaultPropertyDeclarator<PROPERTYOWNER extends Properties
             if (CollectionUtils.isNotEmpty(set))
                 set.removeAll(keysToRemove);
 
-            if ( isEmptyNestedMap(toscaElement) )
+            if ( isEmptyNestedMap(toscaElement) )                                                                         // similar to < if ( MapUtils.isEmpty( (Map)toscaElement ) ) > ,but adds nested map check
                 return null;
         }
+        //endregion
         else
             return null;
         return toscaElement;

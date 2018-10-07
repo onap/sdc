@@ -22,14 +22,22 @@ public class PropertyDeclarationOrchestrator {
     private ComponentInstancePropertyDeclarator componentInstancePropertyDeclarator;
     private PolicyPropertyDeclarator policyPropertyDeclarator;
     private GroupPropertyDeclarator groupPropertyDeclarator;
+    private ServicePropertyDeclerator servicePropertyDeclerator;
     private List<PropertyDeclarator> propertyDeclarators;
 
-    public PropertyDeclarationOrchestrator(ComponentInstanceInputPropertyDeclarator componentInstanceInputPropertyDeclarator, ComponentInstancePropertyDeclarator componentInstancePropertyDeclarator, PolicyPropertyDeclarator policyPropertyDeclarator, GroupPropertyDeclarator groupPropertyDeclarator) {
+    public PropertyDeclarationOrchestrator(ComponentInstanceInputPropertyDeclarator
+                                               componentInstanceInputPropertyDeclarator,
+                                           ComponentInstancePropertyDeclarator
+                                               componentInstancePropertyDeclarator,
+                                           PolicyPropertyDeclarator policyPropertyDeclarator,
+                                           GroupPropertyDeclarator groupPropertyDeclarator,
+                                           ServicePropertyDeclerator servicePropertyDeclerator) {
         this.componentInstanceInputPropertyDeclarator = componentInstanceInputPropertyDeclarator;
         this.componentInstancePropertyDeclarator = componentInstancePropertyDeclarator;
         this.policyPropertyDeclarator = policyPropertyDeclarator;
         this.groupPropertyDeclarator = groupPropertyDeclarator;
-        propertyDeclarators = Arrays.asList(componentInstanceInputPropertyDeclarator, componentInstancePropertyDeclarator, policyPropertyDeclarator, groupPropertyDeclarator);
+        this.servicePropertyDeclerator = servicePropertyDeclerator;
+        propertyDeclarators = Arrays.asList(componentInstanceInputPropertyDeclarator, componentInstancePropertyDeclarator, policyPropertyDeclarator, groupPropertyDeclarator, servicePropertyDeclerator);
     }
 
     public Either<List<InputDefinition>, StorageOperationStatus> declarePropertiesToInputs(Component component, ComponentInstInputsMap componentInstInputsMap) {
@@ -63,6 +71,9 @@ public class PropertyDeclarationOrchestrator {
         }
         if (isNotEmpty(componentInstInputsMap.getGroupProperties())) {
             return groupPropertyDeclarator;
+        }
+        if(isNotEmpty(componentInstInputsMap.getServiceProperties())) {
+            return servicePropertyDeclerator;
         }
         throw new IllegalStateException("there are no properties selected for declaration");
 

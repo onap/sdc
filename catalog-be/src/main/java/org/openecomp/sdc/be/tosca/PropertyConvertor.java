@@ -46,6 +46,7 @@ import java.io.StringReader;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Supplier;
 
 public class PropertyConvertor {
@@ -102,7 +103,12 @@ public class PropertyConvertor {
 
     private ToscaProperty getToscaProperty(Map<String, DataTypeDefinition> dataTypes, PropertyDataDefinition property, boolean isCapabiltyProperty, ToscaProperty prop, String innerType) {
         log.trace("try to convert property {} from type {} with default value [{}]", property.getName(), property.getType(), property.getDefaultValue());
-        Object convertedObj = convertToToscaObject(property.getType(), property.getDefaultValue(), innerType, dataTypes, false);
+      String defaultValue = property.getDefaultValue();
+      if(Objects.isNull(defaultValue)) {
+        defaultValue = property.getValue();
+      }
+      Object convertedObj =
+          convertToToscaObject(property.getType(), defaultValue, innerType, dataTypes, false);
         if (convertedObj != null) {
             prop.setDefaultp(convertedObj);
         }

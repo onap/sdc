@@ -15,20 +15,18 @@
   -->
   
 <div class="operation-creator">
-    <loader [display]="isLoading" [size]="'large'" [relative]="true"></loader>
-
     <form class="w-sdc-form">
 
         <div class="side-by-side">
             <div class="i-sdc-form-item">
-                <label class="i-sdc-form-label" [ngClass]="{'required': !isEditMode}">Operation Name</label>
+                <label class="i-sdc-form-label">Operation Type</label>
                 <input
                     type="text"
-                    name="type"
                     data-tests-id="operationType"
+                    name="operationType"
                     [(ngModel)]="operation.operationType"
                     [attr.maxLength]="200"
-                    [ngClass]="{'disabled':isEditMode}" />
+                    [disabled]="isEditMode" />
             </div>
 
             <div class="i-sdc-form-item" >
@@ -83,8 +81,10 @@
                 class="add-param-link add-btn"
                 *ngIf="!isAssociateWorkflow && !readonly"
                 data-tests-id="addInputParameter"
-                [ngClass]="{'disabled':!isParamsValid()}"
-                (click)="addParam()">Add Input Parameter</a>
+                [ngClass]="{'disabled':!isAddAllowed()}"
+                (click)="addParam()">
+                Add Input Parameter
+            </a>
         </div>
 
         <div class="generic-table">
@@ -104,23 +104,13 @@
                 <span class="cell header-cell remove" *ngIf="!isAssociateWorkflow && !readonly">●●●</span>
             </div>
 
-            <div class="empty-msg data-row" *ngIf="inputParameters.length === 0">
-                <div>NO PARAMETERS TO SHOW</div>
-                <div *ngIf="isAssociateWorkflow && !operation.workflowVersionId">
-                    <div *ngIf="workflows.length">
-                        <span class="bold-message">Select Workflow and Workflow Version above</span>
-                        <span>in order to see the parameters</span>
-                    </div>
-                    <div *ngIf="!workflows.length">
-                        Only <span class="bold-message">certified</span> workflow versions can be assigned to an operation
-                    </div>
-                </div>
+            <div class="empty-msg data-row" *ngIf="inputParams.length === 0">
+                No data to display.
             </div>
 
             <param-row
                 *ngFor="let param of inputParameters"
                 class="data-row"
-                [isAssociateWorkflow]="isAssociateWorkflow"
                 [param]="param"
                 [inputProps]="inputProperties"
                 [propTypes]="inputPropertyTypes"

@@ -24,7 +24,8 @@ import {Observable} from 'rxjs/Observable';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/toPromise';
 import {Response, URLSearchParams} from '@angular/http';
-import { Component, InputBEModel, InstancePropertiesAPIMap, FilterPropertiesAssignmentData, OperationModel, CreateOperationResponse} from "app/models";
+import { Component, InputBEModel, InstancePropertiesAPIMap, FilterPropertiesAssignmentData,
+    OperationModel, CreateOperationResponse, PropertyModel} from "app/models";
 import {downgradeInjectable} from '@angular/upgrade/static';
 import {COMPONENT_FIELDS} from "app/utils";
 import {ComponentGenericResponse} from "../responses/component-generic-response";
@@ -36,6 +37,8 @@ import {SdcConfigToken, ISdcConfig} from "../../config/sdc-config.config";
 import {IDependenciesServerResponse} from "../responses/dependencies-server-response";
 import {AutomatedUpgradeGenericResponse} from "../responses/automated-upgrade-response";
 import {IAutomatedUpgradeRequestObj} from "../../pages/automated-upgrade/automated-upgrade.service";
+import {PropertyBEModel} from "../../../models";
+import {CommonUtils} from "../../../utils";
 
 declare var angular:angular.IAngularStatic;
 
@@ -172,8 +175,9 @@ export class ComponentServiceNg2 {
         return this.getComponentDataByFieldsName(component.componentType, component.uniqueId, [COMPONENT_FIELDS.COMPONENT_INSTANCES_RELATION, COMPONENT_FIELDS.COMPONENT_INSTANCES, COMPONENT_FIELDS.COMPONENT_GROUPS]);
     }
 
-    createInput(component:Component, inputsToCreate:InstancePropertiesAPIMap):Observable<any> {
-        return this.http.post(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/create/inputs', inputsToCreate)
+    createInput(component:Component, inputsToCreate:InstancePropertiesAPIMap, isSelf:boolean):Observable<any> {
+        let inputs = (isSelf) ? { serviceProperties: inputsToCreate.componentInstanceProperties} : inputsToCreate;
+        return this.http.post(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/create/inputs', inputs)
             .map(res => {
                 return res.json();
             })
@@ -229,5 +233,45 @@ export class ComponentServiceNg2 {
                 return res.json();
             });
     }
+
+    createServiceProperty(component: Component, propertyModel:PropertyBEModel): Observable<PropertyBEModel> {
+        let serverObject = {};
+        serverObject[propertyModel.name] = propertyModel;
+        return this.http.post(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/properties', serverObject)
+            .map(res => {
+                let property:PropertyBEModel = new PropertyBEModel(res.json());
+                return property;
+            })
+    }
+    getServiceProperties(component: Component): Observable<Array<PropertyBEModel>> {
+
+        return this.http.get(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/properties')
+            .map((res: Response) => {
+                if (!res.text()){
+                   return new Array<PropertyBEModel>();
+                }
+                return CommonUtils.initBeProperties(res.json());
+            })
+    }
+
+    updateServiceProperties(component: Component, properties: PropertyBEModel[]) {
+
+        return this.http.put( this.baseUrl + component.getTypeUrl() + component.uniqueId + '/properties', properties)
+            .map((res: Response) => {
+                const resJson = res.json();
+                return _.map(resJson,
+                    (resValue:PropertyBEModel) => new PropertyBEModel(resValue));
+            });
+    }
+
+    deleteServiceProperty(component:Component, property:PropertyBEModel):Observable<string> {
+
+        return this.http.delete(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/properties/' + property.uniqueId )
+            .map((res:Response) => {
+                return property.uniqueId;
+            })
+    }
+
+
 }
 

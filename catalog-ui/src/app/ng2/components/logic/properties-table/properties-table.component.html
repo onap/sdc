@@ -58,6 +58,9 @@
                     </div>
                     <span *ngIf="property.description" class="property-description-icon sprite-new show-desc" tooltip="{{property.description}}"
                         tooltipDelay="0"></span>
+                    <div class="delete-button-container">
+                        <span *ngIf="showDelete" class="sprite-new delete-btn" [ngClass]="{'disabled' : property.isDisabled || property.isDeclared}" (click)="openDeleteModal(property)" data-tests-id="delete-input-button"></span>
+                    </div>
                 </div>
                 <div class="table-cell col2" *ngIf="!hidePropertyType">
                     <div class="inner-cell-div" tooltip="{{property.type | contentAfterLastDot}}">
@@ -85,6 +88,7 @@
                         (checkProperty)="propertyChecked(property, $event)"
                         >
                     </dynamic-property>
+
 
                 </div>
             </div>

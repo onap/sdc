@@ -4,10 +4,9 @@ import {Component as IComponent} from 'app/models/components/component';
 
 import {SdcConfigToken, ISdcConfig} from "app/ng2/config/sdc-config.config";
 
-import {ModalComponent} from 'app/ng2/components/ui/modal/modal.component';
 import {ModalService} from 'app/ng2/services/modal.service';
 import {ModalModel, ButtonModel, InputBEModel, OperationModel, CreateOperationResponse} from 'app/models';
-
+import {ModalComponent} from 'app/ng2/components/ui/modal/modal.component';
 import {ComponentServiceNg2} from 'app/ng2/services/component-services/component.service';
 import {ComponentGenericResponse} from 'app/ng2/services/responses/component-generic-response';
 import {WorkflowServiceNg2} from 'app/ng2/services/workflow.service';
@@ -34,6 +33,7 @@ export class InterfaceOperationComponent {
     @Input() readonly: boolean;
 
     constructor(
+        @Inject('$state') private $state:ng.ui.IStateService,
         @Inject(SdcConfigToken) sdcConfig: ISdcConfig,
         private ComponentServiceNg2: ComponentServiceNg2,
         private WorkflowServiceNg2: WorkflowServiceNg2,

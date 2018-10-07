@@ -31,6 +31,7 @@ public class ComponentInstInputsMap {
 
     private Map<String, List<ComponentInstancePropInput>> componentInstanceInputsMap;
     private Map<String, List<ComponentInstancePropInput>> componentInstanceProperties;
+    private Map<String, List<ComponentInstancePropInput>> serviceProperties;
     private Map<String, List<ComponentInstancePropInput>> policyProperties;
     private Map<String, List<ComponentInstancePropInput>> groupProperties;
 
@@ -43,6 +44,9 @@ public class ComponentInstInputsMap {
         }
         if (isNotEmpty(policyProperties)) {
             return singleMapEntry(policyProperties);
+        }
+        if (isNotEmpty(serviceProperties)) {
+          return singleMapEntry(serviceProperties);
         }
         if (isNotEmpty(groupProperties)) {
             return singleMapEntry(groupProperties);
@@ -77,6 +81,15 @@ public class ComponentInstInputsMap {
 
     public void setPolicyProperties(Map<String, List<ComponentInstancePropInput>> policyProperties) {
         this.policyProperties = policyProperties;
+    }
+
+    public Map<String, List<ComponentInstancePropInput>> getServiceProperties() {
+      return serviceProperties;
+    }
+
+    public void setServiceProperties(
+        Map<String, List<ComponentInstancePropInput>> serviceProperties) {
+      this.serviceProperties = serviceProperties;
     }
 
     public Map<String, List<ComponentInstancePropInput>> getGroupProperties() {

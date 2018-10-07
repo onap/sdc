@@ -21,7 +21,16 @@
 import * as _ from "lodash";
 import {Component, ViewChild, Inject, TemplateRef} from "@angular/core";
 import { PropertiesService } from "../../services/properties.service";
-import { PropertyFEModel, InstanceFePropertiesMap, InstanceBePropertiesMap, InstancePropertiesAPIMap, Component as ComponentData, FilterPropertiesAssignmentData, ModalModel, ButtonModel } from "app/models";
+import {
+    PropertyFEModel,
+    InstanceFePropertiesMap,
+    InstanceBePropertiesMap,
+    InstancePropertiesAPIMap,
+    Component as ComponentData,
+    FilterPropertiesAssignmentData,
+    ModalModel,
+    ButtonModel
+} from "app/models";
 import { ResourceType } from "app/utils";
 import {ComponentServiceNg2} from "../../services/component-services/component.service";
 import {ComponentInstanceServiceNg2} from "../../services/component-instance-services/component-instance.service"
@@ -38,12 +47,14 @@ import {ComponentModeService} from "../../services/component-services/component-
 import {ModalService} from "../../services/modal.service";
 import {Tabs, Tab} from "../../components/ui/tabs/tabs.component";
 import {InputsUtils} from "./services/inputs.utils";
+import {PropertyCreatorComponent} from "./property-creator/property-creator.component";
 import { InstanceFeDetails } from "../../../models/instance-fe-details";
 import { SdcUiComponents } from "sdc-ui/lib/angular";
 //import { ModalService as ModalServiceSdcUI} from "sdc-ui/lib/angular/modals/modal.service";
 import { IModalButtonComponent } from "sdc-ui/lib/angular/modals/models/modal-config";
 import { UnsavedChangesComponent } from "app/ng2/components/ui/forms/unsaved-changes/unsaved-changes.component";
 
+const SERVICE_SELF_TITLE = "SELF";
 @Component({
     templateUrl: './properties-assignment.page.component.html',
     styleUrls: ['./properties-assignment.page.component.less']
@@ -84,6 +95,7 @@ export class PropertiesAssignmentComponent {
     isValidChangedData:boolean;
     savingChangedData:boolean;
     stateChangeStartUnregister:Function;
+    serviceBePropertiesMap: InstanceBePropertiesMap;
 
     @ViewChild('hierarchyNavTabs') hierarchyNavTabs: Tabs;
     @ViewChild('propertyInputTabs') propertyInputTabs: Tabs;
@@ -140,6 +152,11 @@ export class PropertiesAssignmentComponent {
                 this.instances.push(...response.componentInstances);
                 this.instances.push(...response.groupInstances);
                 this.instances.push(...response.policies);
+                // add the service self instance to the top of the list.
+                const serviceInstance = new ComponentInstance();
+                serviceInstance.name = SERVICE_SELF_TITLE;
+                serviceInstance.uniqueId = this.component.uniqueId;
+                this.instances.unshift(serviceInstance);
 
                 _.forEach(this.instances, (instance) => {
                     this.instancesNavigationData.push(instance);
@@ -181,6 +198,23 @@ export class PropertiesAssignmentComponent {
     onCheckout = (component:ComponentData) => {
         this.component = component;
         this.updateViewMode();
+    };
+
+    isSelf():boolean{
+        return this.selectedInstanceData.uniqueId == this.component.uniqueId;
+    }
+
+    getServiceProperties(){
+        this.componentServiceNg2
+            .getServiceProperties(this.component)
+            .subscribe(response => {
+                this.serviceBePropertiesMap = new InstanceBePropertiesMap();
+                this.serviceBePropertiesMap[this.component.uniqueId] = response;
+                this.processInstancePropertiesResponse(this.serviceBePropertiesMap, false);
+                this.loadingProperties = false;
+            }, error => {
+                this.loadingProperties = false;
+            }); //ignore error
     }
 
 
@@ -210,6 +244,8 @@ export class PropertiesAssignmentComponent {
                         this.loadingProperties = false;
                     }, error => {
                     }); //ignore error
+            } else if( this.isSelf()){
+                this.getServiceProperties();
             } else {
                 this.componentInstanceServiceNg2
                     .getComponentInstanceProperties(this.component, instance.uniqueId)
@@ -391,7 +427,7 @@ export class PropertiesAssignmentComponent {
         let inputsToCreate: InstancePropertiesAPIMap = new InstancePropertiesAPIMap(selectedComponentInstancesInputs, selectedComponentInstancesProperties, selectedGroupInstancesProperties, selectedPolicyInstancesProperties);
 
         this.componentServiceNg2
-            .createInput(this.component, inputsToCreate)
+            .createInput(this.component, inputsToCreate, this.isSelf())
             .subscribe(response => {
                 this.setInputTabIndication(response.length);
                 this.checkedPropertiesCount = 0;
@@ -419,12 +455,37 @@ export class PropertiesAssignmentComponent {
             let request;
             let handleSuccess, handleError;
             if (this.isPropertiesTabSelected) {
-                const changedProperties: PropertyBEModel[] = this.changedData.map((changedProp) => {
-                    changedProp = <PropertyFEModel>changedProp;
-                    const propBE = new PropertyBEModel(changedProp);
-                    propBE.value = changedProp.getJSONValue();
-                    return propBE;
-                });
+                ({ request, handleSuccess } = this.handelSaveInstanceProperties(resolve));
+            } else if (this.isInputsTabSelected) {
+                ({ request, handleSuccess } = this.handelSaveChangedInput());
+
+            }
+            this.savingChangedData = true;
+            request.subscribe(
+                (response) => {
+                    this.savingChangedData = false;
+                    handleSuccess && handleSuccess(response);
+                    this.updateHasChangedData();
+                    resolve(response);
+                },
+                (error) => {
+                    this.savingChangedData = false;
+                    handleError && handleError(error);
+                    this.updateHasChangedData();
+                    reject(error);
+                }
+            );
+        });
+    };
+
+    handelSaveInstanceProperties(resolve){
+        let request,handleSuccess;
+        const changedProperties: PropertyBEModel[] = this.changedData.map((changedProp) => {
+            changedProp = <PropertyFEModel>changedProp;
+            const propBE = new PropertyBEModel(changedProp);
+            propBE.value = changedProp.getJSONValue();
+            return propBE;
+        });
 
                 if (this.selectedInstanceData instanceof ComponentInstance) {
                     if (this.isInput(this.selectedInstanceData.originType)) {
@@ -475,8 +536,7 @@ export class PropertiesAssignmentComponent {
                         resolve(response);
                         console.log("updated policy instance properties: ", response);
                     };
-                }
-            } else if (this.isInputsTabSelected) {
+                } else if (this.isInputsTabSelected) {
                 const changedInputs: InputBEModel[] = this.changedData.map((changedInput) => {
                     changedInput = <InputFEModel>changedInput;
                     const inputBE = new InputBEModel(changedInput);
@@ -494,24 +554,47 @@ export class PropertiesAssignmentComponent {
                     console.log("updated the component inputs and got this response: ", response);
                 }
             }
+        return {request, handleSuccess} ;
 
-            this.savingChangedData = true;
-            request.subscribe(
-                (response) => {
-                    this.savingChangedData = false;
-                    handleSuccess && handleSuccess(response);
-                    this.updateHasChangedData();
-                    resolve(response);
-                },
-                (error) => {
-                    this.savingChangedData = false;
-                    handleError && handleError(error);
-                    this.updateHasChangedData();
-                    reject(error);
-                }
-            );
+            // this.savingChangedData = true;
+            // request.subscribe(
+            //     (response) => {
+            //         this.savingChangedData = false;
+            //         handleSuccess && handleSuccess(response);
+            //         this.updateHasChangedData();
+            //         resolve(response);
+            //     },
+            //     (error) => {
+            //         this.savingChangedData = false;
+            //         handleError && handleError(error);
+            //         this.updateHasChangedData();
+            //         reject(error);
+            //     }
+            // );
+        };
+    // };
+
+    handelSaveChangedInput(){
+        let request;
+        let handleSuccess;
+        const changedInputs: InputBEModel[] = this.changedData.map((changedInput) => {
+            changedInput = <InputFEModel>changedInput;
+            const inputBE = new InputBEModel(changedInput);
+            inputBE.defaultValue = changedInput.getJSONDefaultValue();
+            return inputBE;
         });
-    };
+        request = this.componentServiceNg2
+            .updateComponentInputs(this.component, changedInputs);
+        handleSuccess = (response) => {
+            // reset each changed property with new value and remove it from changed properties list
+            response.forEach((resInput) => {
+                const changedInput = <InputFEModel>this.changedData.shift();
+                this.inputsUtils.resetInputDefaultValue(changedInput, resInput.defaultValue);
+            });
+            console.log("updated the component inputs and got this response: ", response);
+        };
+        return {request, handleSuccess};
+    }
 
     reverseChangedData = ():void => {
         // make reverse item handler
@@ -589,7 +672,7 @@ export class PropertiesAssignmentComponent {
             }, UnsavedChangesComponent, {isValidChangedData: this.isValidChangedData});
         });
 
-    }
+    };
 
     updatePropertyValueAfterDeclare = (input: InputFEModel) => {
         if (this.instanceFePropertiesMap[input.instanceUniqueId]) {

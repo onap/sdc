@@ -35,6 +35,7 @@ import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.WebAppContextWrapper;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.Resource;
+import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.IPropertyOperation;
@@ -87,6 +88,7 @@ public class PropertyBusinessLogicTest {
     private PropertyBusinessLogic bl = new PropertyBusinessLogic();
     private User user = null;
     private String resourceId = "resourceforproperty.0.1";
+    private String serviceId = "serviceForProperty.0.1";
 
     @Before
     public void setup() {
@@ -158,6 +160,37 @@ public class PropertyBusinessLogicTest {
         Either<Map.Entry<String, PropertyDefinition>, ResponseFormat> foundProperty = bl.getProperty(resourceId, property1.getUniqueId(), user.getUserId());
         assertTrue(foundProperty.isLeft());
         assertEquals(foundProperty.left().value().getValue().getUniqueId(), property1.getUniqueId());
+    }
+
+    @Test
+    public void testGetPropertyFromService() {
+      Service service = new Service();
+      service.setUniqueId(serviceId);
+
+      PropertyDefinition property1 = createPropertyObject("someProperty", null);
+      service.setProperties(Arrays.asList(property1));
+
+      Mockito.when(toscaOperationFacade.getToscaElement(serviceId)).thenReturn(Either.left(service));
+      Either<Map.Entry<String, PropertyDefinition>, ResponseFormat> serviceProperty =
+          bl.getServiceProperty(serviceId, property1.getUniqueId(), user.getUserId());
+
+      assertTrue(serviceProperty.isLeft());
+      assertEquals(serviceProperty.left().value().getValue().getUniqueId(), property1.getUniqueId());
+    }
+
+    @Test
+    public void testPropertyNotFoundOnService() {
+      Service service = new Service();
+      service.setUniqueId(serviceId);
+
+      PropertyDefinition property1 = createPropertyObject("someProperty", null);
+      service.setProperties(Arrays.asList(property1));
+
+      Mockito.when(toscaOperationFacade.getToscaElement(serviceId)).thenReturn(Either.left(service));
+      Either<Map.Entry<String, PropertyDefinition>, ResponseFormat> serviceProperty =
+          bl.getServiceProperty(serviceId, "notExistingPropId", user.getUserId());
+
+      assertTrue(serviceProperty.isRight());
     }
 
     private PropertyDefinition createPropertyObject(String propertyName, String resourceId) {

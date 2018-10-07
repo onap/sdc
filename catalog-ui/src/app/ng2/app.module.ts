@@ -27,6 +27,7 @@ import { UpgradeAdapter } from '@angular/upgrade';
 import { UpgradeModule } from '@angular/upgrade/static';
 import { SdcUiComponentsModule, SdcUiComponents } from "sdc-ui/lib/angular";
 import { PropertiesAssignmentModule } from './pages/properties-assignment/properties-assignment.module';
+import {PropertyCreatorModule} from './pages/properties-assignment/property-creator/property-creator.module';
 import {
     DataTypesServiceProvider, SharingServiceProvider, CookieServiceProvider, StateServiceFactory,
     StateParamsServiceFactory, CacheServiceProvider, EventListenerServiceProvider, ScopeServiceFactory,
@@ -102,6 +103,7 @@ export function configServiceFactory(config: ConfigService) {
         //We need to import them here since we use them in angular1
         ConnectionWizardModule,
         PropertiesAssignmentModule,
+        PropertyCreatorModule,
         PluginFrameModule,
         InterfaceOperationModule,
         OperationCreatorModule,

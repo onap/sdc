@@ -53,8 +53,18 @@ import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.common.util.ValidationUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
+import java.util.Set;
 import java.util.function.BiPredicate;
 import java.util.stream.Collectors;
 
@@ -971,6 +981,34 @@ public class ToscaOperationFacade {
         return Either.right(status);
 
     }
+
+  public Either<List<InputDefinition>, StorageOperationStatus> getComponentInputs(String componentId) {
+
+    Either<GraphVertex, TitanOperationStatus> getVertexEither = titanDao.getVertexById(componentId, JsonParseFlagEnum.NoParse);
+    if (getVertexEither.isRight()) {
+      log.debug("Couldn't fetch component with and unique id {}, error: {}", componentId, getVertexEither.right().value());
+      return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(getVertexEither.right().value()));
+
+    }
+
+    Either<ToscaElement, StorageOperationStatus> toscaElement =
+        topologyTemplateOperation.getToscaElement(componentId);
+    if(toscaElement.isRight()) {
+      return Either.right(toscaElement.right().value());
+    }
+
+    TopologyTemplate topologyTemplate = (TopologyTemplate) toscaElement.left().value();
+
+    Map<String, PropertyDataDefinition> inputsMap = topologyTemplate.getInputs();
+
+    List<InputDefinition> inputs = new ArrayList<>();
+    if(MapUtils.isNotEmpty(inputsMap)) {
+      inputs =
+          inputsMap.values().stream().map(p -> new InputDefinition(p)).collect(Collectors.toList());
+    }
+
+    return Either.left(inputs);
+  }
 
     public Either<List<InputDefinition>, StorageOperationStatus> updateInputsToComponent(List<InputDefinition> inputs, String componentId) {
 
@@ -2027,9 +2065,58 @@ public class ToscaOperationFacade {
         return result;
     }
 
+  public Either<PropertyDefinition, StorageOperationStatus> addPropertyToService(String propertyName,
+                                                                                 PropertyDefinition newPropertyDefinition,
+                                                                                 Service service) {
+
+    Either<PropertyDefinition, StorageOperationStatus> result = null;
+    Either<Component, StorageOperationStatus> getUpdatedComponentRes = null;
+    newPropertyDefinition.setName(propertyName);
+
+    StorageOperationStatus status = getToscaElementOperation(service)
+        .addToscaDataToToscaElement(service.getUniqueId(), EdgeLabelEnum.PROPERTIES, VertexTypeEnum.PROPERTIES, newPropertyDefinition, JsonPresentationFields.NAME);
+    if (status != StorageOperationStatus.OK) {
+      CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to add the property {} to the resource {}. Status is {}. ", propertyName, service.getName(), status);
+      result = Either.right(status);
+    }
+    if (result == null) {
+      ComponentParametersView filter = new ComponentParametersView(true);
+      filter.setIgnoreProperties(false);
+      filter.setIgnoreInputs(false);
+      getUpdatedComponentRes = getToscaElement(service.getUniqueId(), filter);
+      if (getUpdatedComponentRes.isRight()) {
+        CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to get updated resource {}. Status is {}. ", service.getUniqueId(), getUpdatedComponentRes.right().value());
+        result = Either.right(status);
+      }
+    }
+    if (result == null) {
+      PropertyDefinition newProperty = null;
+      List<PropertyDefinition> properties =
+          ((Service) getUpdatedComponentRes.left().value()).getProperties();
+      if (CollectionUtils.isNotEmpty(properties)) {
+        Optional<PropertyDefinition> propertyOptional = properties.stream().filter(
+            propertyEntry -> propertyEntry.getName().equals(propertyName)).findAny();
+        if (propertyOptional.isPresent()) {
+          newProperty = propertyOptional.get();
+        }
+      }
+      if (newProperty == null) {
+        CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to find recently added property {} on the resource {}. Status is {}. ", propertyName, service.getUniqueId(), StorageOperationStatus.NOT_FOUND);
+        result = Either.right(StorageOperationStatus.NOT_FOUND);
+      } else {
+        result = Either.left(newProperty);
+      }
+    }
+    return result;
+  }
+
     public StorageOperationStatus deletePropertyOfResource(Resource resource, String propertyName) {
         return getToscaElementOperation(resource).deleteToscaDataElement(resource.getUniqueId(), EdgeLabelEnum.PROPERTIES, VertexTypeEnum.PROPERTIES, propertyName, JsonPresentationFields.NAME);
     }
+
+  public StorageOperationStatus deletePropertyOfService(Service service, String propertyName) {
+    return getToscaElementOperation(service).deleteToscaDataElement(service.getUniqueId(), EdgeLabelEnum.PROPERTIES, VertexTypeEnum.PROPERTIES, propertyName, JsonPresentationFields.NAME);
+  }
 
     public StorageOperationStatus deleteAttributeOfResource(Component component, String attributeName) {
         return getToscaElementOperation(component).deleteToscaDataElement(component.getUniqueId(), EdgeLabelEnum.ATTRIBUTES, VertexTypeEnum.ATTRIBUTES, attributeName, JsonPresentationFields.NAME);
@@ -2068,6 +2155,38 @@ public class ToscaOperationFacade {
         }
         return result;
     }
+
+  public Either<PropertyDefinition, StorageOperationStatus> updatePropertyOfService(Service service,
+                                                                                    PropertyDefinition newPropertyDefinition) {
+
+    Either<Component, StorageOperationStatus> getUpdatedComponentRes = null;
+    Either<PropertyDefinition, StorageOperationStatus> result = null;
+    StorageOperationStatus status = getToscaElementOperation(service).updateToscaDataOfToscaElement(service.getUniqueId(), EdgeLabelEnum.PROPERTIES, VertexTypeEnum.PROPERTIES, newPropertyDefinition, JsonPresentationFields.NAME);
+    if (status != StorageOperationStatus.OK) {
+      CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to add the property {} to the resource {}. Status is {}. ", newPropertyDefinition.getName(), service.getName(), status);
+      result = Either.right(status);
+    }
+    if (result == null) {
+      ComponentParametersView filter = new ComponentParametersView(true);
+      filter.setIgnoreProperties(false);
+      getUpdatedComponentRes = getToscaElement(service.getUniqueId(), filter);
+      if (getUpdatedComponentRes.isRight()) {
+        CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to get updated resource {}. Status is {}. ", service.getUniqueId(), getUpdatedComponentRes.right().value());
+        result = Either.right(status);
+      }
+    }
+    if (result == null) {
+      Optional<PropertyDefinition> newProperty = ((Service) getUpdatedComponentRes.left().value())
+          .getProperties().stream().filter(p -> p.getName().equals(newPropertyDefinition.getName())).findAny();
+      if (newProperty.isPresent()) {
+        result = Either.left(newProperty.get());
+      } else {
+        CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to find recently added property {} on the resource {}. Status is {}. ", newPropertyDefinition.getName(), service.getUniqueId(), StorageOperationStatus.NOT_FOUND);
+        result = Either.right(StorageOperationStatus.NOT_FOUND);
+      }
+    }
+    return result;
+  }
 
     public Either<PropertyDefinition, StorageOperationStatus> addAttributeOfResource(Component component, PropertyDefinition newAttributeDef) {
 

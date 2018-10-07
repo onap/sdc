@@ -103,10 +103,10 @@ public class TypesFetchServlet extends AbstractValidationsServlet {
         }
     }
 
-    private PropertyBusinessLogic getPropertyBL(ServletContext context) {
-        WebAppContextWrapper webApplicationContextWrapper = (WebAppContextWrapper) context.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR);
-        WebApplicationContext webApplicationContext = webApplicationContextWrapper.getWebAppContext(context);
-        return webApplicationContext.getBean(PropertyBusinessLogic.class);
-    }
+//    protected PropertyBusinessLogic getPropertyBL(ServletContext context) {
+//        WebAppContextWrapper webApplicationContextWrapper = (WebAppContextWrapper) context.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR);
+//        WebApplicationContext webApplicationContext = webApplicationContextWrapper.getWebAppContext(context);
+//        return webApplicationContext.getBean(PropertyBusinessLogic.class);
+//    }
 
 }
