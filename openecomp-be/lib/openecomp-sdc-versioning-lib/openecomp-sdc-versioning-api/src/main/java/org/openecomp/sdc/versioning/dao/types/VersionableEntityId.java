@@ -21,33 +21,17 @@
 package org.openecomp.sdc.versioning.dao.types;
 
 import com.datastax.driver.mapping.annotations.UDT;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @UDT(name = "versionable_entity_id", keyspace = "dox")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class VersionableEntityId {
   private String type;
   private String id;
-
-  public VersionableEntityId() {
-  }
-
-  public VersionableEntityId(String type, String id) {
-    this.type = type;
-    this.id = id;
-  }
-
-  public String getType() {
-    return type;
-  }
-
-  public void setType(String type) {
-    this.type = type;
-  }
-
-  public String getId() {
-    return id;
-  }
-
-  public void setId(String id) {
-    this.id = id;
-  }
 }
