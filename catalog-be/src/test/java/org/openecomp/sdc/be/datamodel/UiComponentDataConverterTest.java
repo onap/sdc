@@ -45,6 +45,8 @@ import org.openecomp.sdc.be.model.PolicyDefinition;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.ui.model.UiComponentDataTransfer;
+import org.openecomp.sdc.be.ui.model.UiComponentMetadata;
+import org.openecomp.sdc.be.ui.model.UiServiceDataTransfer;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -60,6 +62,11 @@ public class UiComponentDataConverterTest {
 
     private PolicyDefinition policy1, policy2;
     private GroupDefinition group1, group2;
+    private InputDefinition input1;
+    private PropertyDefinition propertyDef;
+    private InterfaceDefinition interfaceDef;
+
+
     private static GroupTypeBusinessLogic groupTypeBusinessLogic;
     private static PolicyTypeBusinessLogic policyTypeBusinessLogic;
     private static UiComponentDataConverter uiComponentDataConverter;
@@ -94,11 +101,27 @@ public class UiComponentDataConverterTest {
                 .setName("Group 2")
                 .setType("b")
                 .build();
+
+        input1 = InputsBuilder.create()
+                .setName("input1")
+                .setPropertyId("inputid")
+                .build();
+
+        propertyDef = new PropertyDataDefinitionBuilder()
+                .setName("propety1")
+                .setValue("true")
+                .setType("boolean")
+                .setUniqueId("property1")
+                .build();
+
+
     }
 
     @Test
     public void getUiDataTransferFromResourceByParams_groups_allGroups() {
         Resource resourceWithGroups = buildResourceWithGroups();
+        UiComponentDataTransfer componentDTO1 = uiComponentDataConverter.getUiDataTransferFromResourceByParams(resourceWithGroups, Collections.singletonList("PROPERTIES"));
+        UiComponentDataTransfer componentDTO2 = uiComponentDataConverter.getUiDataTransferFromResourceByParams(resourceWithGroups, Collections.singletonList("properties"));
         UiComponentDataTransfer componentDTO = uiComponentDataConverter.getUiDataTransferFromResourceByParams(resourceWithGroups, Collections.singletonList("groups"));
         assertThat(componentDTO.getGroups()).isEqualTo(resourceWithGroups.getGroups());
     }
@@ -120,9 +143,69 @@ public class UiComponentDataConverterTest {
     }
 
     @Test
+    public void getUiDataTransferFromResourceByParams_All() {
+        Resource resourceWithGroups = buildResourceWithGroups();
+        Resource resourceWithInputs = buildResourceWithInputs();
+
+        UiComponentDataTransfer componentDTO1 = uiComponentDataConverter.getUiDataTransferFromResourceByParams(resourceWithGroups, Collections.singletonList("PROPERTIES"));
+        UiComponentDataTransfer componentDTO2 = uiComponentDataConverter.getUiDataTransferFromResourceByParams(resourceWithGroups, Collections.singletonList("properties"));
+        UiComponentDataTransfer componentDTO3 = uiComponentDataConverter.getUiDataTransferFromResourceByParams(resourceWithGroups, Collections.singletonList("interfaces"));
+        UiComponentDataTransfer componentDTO4 = uiComponentDataConverter.getUiDataTransferFromResourceByParams(resourceWithGroups, Collections.singletonList("attributes"));
+        UiComponentDataTransfer componentDTO5 = uiComponentDataConverter.getUiDataTransferFromResourceByParams(resourceWithGroups, Collections.singletonList("metadata"));
+        UiComponentDataTransfer componentDTO6 = uiComponentDataConverter.getUiDataTransferFromResourceByParams(resourceWithGroups, Collections.singletonList("derivedFrom"));
+        UiComponentDataTransfer componentDTO7 = uiComponentDataConverter.getUiDataTransferFromResourceByParams(resourceWithGroups, Collections.singletonList("additionalInformation"));
+
+        UiComponentDataTransfer componentDTO8 = uiComponentDataConverter.getUiDataTransferFromResourceByParams(resourceWithGroups, Collections.singletonList("inputs"));
+        UiComponentDataTransfer componentDTO81 = uiComponentDataConverter.getUiDataTransferFromResourceByParams(resourceWithInputs, Collections.singletonList("inputs"));
+
+        UiComponentDataTransfer componentDTO9 = uiComponentDataConverter.getUiDataTransferFromResourceByParams(resourceWithGroups, Collections.singletonList("users"));
+        UiComponentDataTransfer componentDTO10 = uiComponentDataConverter.getUiDataTransferFromResourceByParams(resourceWithGroups, Collections.singletonList("componentInstances"));
+        UiComponentDataTransfer componentDTO11 = uiComponentDataConverter.getUiDataTransferFromResourceByParams(resourceWithGroups, Collections.singletonList("componentInstancesProperties"));
+        UiComponentDataTransfer componentDTO12 = uiComponentDataConverter.getUiDataTransferFromResourceByParams(resourceWithGroups, Collections.singletonList("capabilities"));
+        UiComponentDataTransfer componentDTO13 = uiComponentDataConverter.getUiDataTransferFromResourceByParams(resourceWithGroups, Collections.singletonList("requirements"));
+        UiComponentDataTransfer componentDTO14 = uiComponentDataConverter.getUiDataTransferFromResourceByParams(resourceWithGroups, Collections.singletonList("allVersions"));
+        UiComponentDataTransfer componentDTO15 = uiComponentDataConverter.getUiDataTransferFromResourceByParams(resourceWithGroups, Collections.singletonList("artifacts"));
+
+        UiComponentDataTransfer componentDTO16 = uiComponentDataConverter.getUiDataTransferFromResourceByParams(resourceWithGroups, Collections.singletonList("interfaces"));
+        UiComponentDataTransfer componentDTO17 = uiComponentDataConverter.getUiDataTransferFromResourceByParams(resourceWithGroups, Collections.singletonList("componentInstancesAttributes"));
+        UiComponentDataTransfer componentDTO18= uiComponentDataConverter.getUiDataTransferFromResourceByParams(resourceWithGroups, Collections.singletonList("componentInstancesInputs"));
+        UiComponentDataTransfer componentDTO19 = uiComponentDataConverter.getUiDataTransferFromResourceByParams(resourceWithGroups, Collections.singletonList("toscaArtifacts"));
+
+        UiComponentDataTransfer componentDTO21= uiComponentDataConverter.getUiDataTransferFromResourceByParams(resourceWithGroups, Collections.singletonList("componentInstancesRelations"));
+        UiComponentDataTransfer componentDTO20 = uiComponentDataConverter.getUiDataTransferFromResourceByParams(resourceWithGroups, Collections.singletonList("deploymentArtifacts"));
+
+        UiComponentDataTransfer componentDTO = uiComponentDataConverter.getUiDataTransferFromResourceByParams(resourceWithGroups, Collections.singletonList("groups"));
+        assertThat(componentDTO.getGroups()).isEqualTo(resourceWithGroups.getGroups());
+    }
+
+    @Test
     public void getUiDataTransferFromServiceByParams_policies_noPoliciesForResource() {
         UiComponentDataTransfer componentDTO = uiComponentDataConverter.getUiDataTransferFromServiceByParams(new Service(), Collections.singletonList("policies"));
         assertThat(componentDTO.getPolicies()).isEmpty();
+    }
+
+    @Test
+    public void getUiDataTransferFromServiceByParams_SERVICE_API_ARTIFACTS() {
+        UiComponentDataTransfer componentDTO = uiComponentDataConverter.getUiDataTransferFromServiceByParams(new Service(), Collections.singletonList("serviceApiArtifacts"));
+        assertThat(componentDTO.getArtifacts()).isNull();
+    }
+
+    @Test
+    public void getUiDataTransferFromServiceByParams_FORWARDING_PATHS() {
+        UiServiceDataTransfer componentDTO = (UiServiceDataTransfer) uiComponentDataConverter.getUiDataTransferFromServiceByParams(new Service(), Collections.singletonList("forwardingPaths"));
+        assertThat(componentDTO.getForwardingPaths()).isEmpty();
+    }
+
+    @Test
+    public void getUiDataTransferFromServiceByParams_METADATA() {
+        UiServiceDataTransfer componentDTO = (UiServiceDataTransfer) uiComponentDataConverter.getUiDataTransferFromServiceByParams(new Service(), Collections.singletonList("metadata"));
+        assertThat(componentDTO.getMetadata().getNamingPolicy()).isEqualTo("");
+    }
+
+    @Test
+    public void getUiDataTransferFromServiceByParams_INTERFACES() {
+        UiServiceDataTransfer componentDTO = (UiServiceDataTransfer) uiComponentDataConverter.getUiDataTransferFromServiceByParams(new Service(), Collections.singletonList("interfaces"));
+        assertThat(componentDTO.getInterfaces()).isEmpty();
     }
 
     @Test
@@ -150,6 +233,23 @@ public class UiComponentDataConverterTest {
     }
 
     @Test
+    public void convertToUiComponentMetadataTestResource() {
+        Resource resourceWithPolicies = buildResourceWithPolicies();
+        when(policyTypeBusinessLogic.getExcludedPolicyTypes("VFC")).thenReturn(buildExcludedTypesList());
+        UiComponentMetadata componentMd = uiComponentDataConverter.convertToUiComponentMetadata(resourceWithPolicies);
+        assertThat(componentMd.getComponentType().getValue()).isEqualTo("Resource");
+
+    }
+
+    @Test
+    public void convertToUiComponentMetadataTestService() {
+        Service resourceWithPolicies = buildServiceWithPolicies();
+        when(policyTypeBusinessLogic.getExcludedPolicyTypes("VFC")).thenReturn(buildExcludedTypesList());
+        UiComponentMetadata componentMd = uiComponentDataConverter.convertToUiComponentMetadata(resourceWithPolicies);
+        assertThat(componentMd.getComponentType().getValue()).isEqualTo("Service");
+
+    }
+    @Test
     public void getResourceWithoutGroupsAndPolicies_returnsEmptyLists() {
         Resource resource = new ResourceBuilder().build();
         UiComponentDataTransfer componentDTO = uiComponentDataConverter.getUiDataTransferFromResourceByParams(resource, Arrays.asList("nonExcludedPolicies", "nonExcludedGroups"));
@@ -163,6 +263,31 @@ public class UiComponentDataConverterTest {
         return new ResourceBuilder()
                 .addGroup(group1)
                 .addGroup(group2)
+                .build();
+    }
+
+    private Resource buildResourceWithInputs() {
+        return new ResourceBuilder()
+                .addInput(input1)
+                .build();
+    }
+
+    private Resource buildResourceWithParameter(String field) {
+        ResourceBuilder res =  new ResourceBuilder();
+        switch(field){
+            case "inputs":
+                res.addInput(input1);
+                break;
+            case "properties":
+                //res.addProperty(propertyDef);
+                break;
+
+
+        }
+
+
+        return new ResourceBuilder()
+                .addInput(input1)
                 .build();
     }
 
