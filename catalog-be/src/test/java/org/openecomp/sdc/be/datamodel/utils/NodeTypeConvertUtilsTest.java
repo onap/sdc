@@ -14,5 +14,6 @@ public class NodeTypeConvertUtilsTest {
 				NodeTypeConvertUtils.getCategoryNodeTypeByComponentParam(comp, cat);
 			}
 		}
+
 	}
 }
