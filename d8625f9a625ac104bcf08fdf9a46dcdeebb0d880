@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bada0100_297e70af",
+        "filename": "common/onap-tosca-datatype/src/main/java/org/onap/sdc/tosca/services/CommonUtil.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-10-08T11:15:50Z",
+      "side": 1,
+      "message": "This can be static no need to rebuild each time.",
+      "revId": "d8625f9a625ac104bcf08fdf9a46dcdeebb0d880",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
