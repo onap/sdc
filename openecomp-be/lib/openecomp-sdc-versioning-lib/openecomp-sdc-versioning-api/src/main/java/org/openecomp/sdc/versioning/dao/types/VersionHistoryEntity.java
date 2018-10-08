@@ -24,8 +24,14 @@ import com.datastax.driver.mapping.annotations.Column;
 import com.datastax.driver.mapping.annotations.Frozen;
 import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Table(keyspace = "dox", name = "version_history")
+@Getter
+@Setter
+@NoArgsConstructor
 public class VersionHistoryEntity {
 
   @PartitionKey
@@ -41,56 +47,7 @@ public class VersionHistoryEntity {
   private String description;
   private VersionType type;
 
-  /**
-   * Every entity class must have a default constructor according to
-   * <a href="http://docs.datastax.com/en/developer/java-driver/2.1/manual/object_mapper/creating/">
-   * Definition of mapped classes</a>.
-   */
-  public VersionHistoryEntity() {
-    // Don't delete! Default constructor is required by DataStax driver
-  }
-
   public VersionHistoryEntity(VersionableEntityId entityId) {
     this.entityId = entityId;
-  }
-
-  public VersionableEntityId getEntityId() {
-    return entityId;
-  }
-
-  public void setEntityId(VersionableEntityId entityId) {
-    this.entityId = entityId;
-  }
-
-  public Version getVersion() {
-    return version;
-  }
-
-  public void setVersion(Version version) {
-    this.version = version;
-  }
-
-  public String getUser() {
-    return user;
-  }
-
-  public void setUser(String user) {
-    this.user = user;
-  }
-
-  public String getDescription() {
-    return description;
-  }
-
-  public void setDescription(String description) {
-    this.description = description;
-  }
-
-  public VersionType getType() {
-    return type;
-  }
-
-  public void setType(VersionType type) {
-    this.type = type;
   }
 }

@@ -22,35 +22,19 @@ package org.openecomp.sdc.versioning.dao.types;
 
 import com.datastax.driver.mapping.annotations.Frozen;
 import com.datastax.driver.mapping.annotations.UDT;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @UDT(name = "user_candidate_version", keyspace = "dox")
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class UserCandidateVersion {
-
   @Frozen
-  private Version version;
   private String user;
-
-  public UserCandidateVersion() {
-  }
-
-  public UserCandidateVersion(String user, Version candidateVersion) {
-    this.user = user;
-    this.version = candidateVersion;
-  }
-
-  public Version getVersion() {
-    return version;
-  }
-
-  public void setVersion(Version version) {
-    this.version = version;
-  }
-
-  public String getUser() {
-    return user;
-  }
-
-  public void setUser(String user) {
-    this.user = user;
-  }
+  private Version version;
 }
+
