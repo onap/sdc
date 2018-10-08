@@ -26,11 +26,17 @@ import com.datastax.driver.mapping.annotations.Frozen;
 import com.datastax.driver.mapping.annotations.FrozenValue;
 import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.HashSet;
 import java.util.Set;
 
 @Table(keyspace = "dox", name = "version_info_deleted")
+@Getter
+@Setter
+@NoArgsConstructor
 public class VersionInfoDeletedEntity {
 
   @PartitionKey
@@ -58,73 +64,9 @@ public class VersionInfoDeletedEntity {
   @Frozen
   private Version latestFinalVersion;
 
-  /**
-   * Every entity class must have a default constructor according to
-   * <a href="http://docs.datastax.com/en/developer/java-driver/2.1/manual/object_mapper/creating/">
-   * Definition of mapped classes</a>.
-   */
-  public VersionInfoDeletedEntity() {
-    // Don't delete! Default constructor is required by DataStax driver
-  }
-
   public VersionInfoDeletedEntity(String entityType, String entityId) {
     this.entityType = entityType;
     this.entityId = entityId;
   }
 
-  public String getEntityType() {
-    return entityType;
-  }
-
-  public void setEntityType(String entityType) {
-    this.entityType = entityType;
-  }
-
-  public String getEntityId() {
-    return entityId;
-  }
-
-  public void setEntityId(String entityId) {
-    this.entityId = entityId;
-  }
-
-  public Version getActiveVersion() {
-    return activeVersion;
-  }
-
-  public void setActiveVersion(Version activeVersion) {
-    this.activeVersion = activeVersion;
-  }
-
-  public VersionStatus getStatus() {
-    return status;
-  }
-
-  public void setStatus(VersionStatus status) {
-    this.status = status;
-  }
-
-  public UserCandidateVersion getCandidate() {
-    return candidate;
-  }
-
-  public void setCandidate(UserCandidateVersion candidate) {
-    this.candidate = candidate;
-  }
-
-  public Set<Version> getViewableVersions() {
-    return viewableVersions;
-  }
-
-  public void setViewableVersions(Set<Version> viewableVersions) {
-    this.viewableVersions = viewableVersions;
-  }
-
-  public Version getLatestFinalVersion() {
-    return latestFinalVersion;
-  }
-
-  public void setLatestFinalVersion(Version latestFinalVersion) {
-    this.latestFinalVersion = latestFinalVersion;
-  }
 }

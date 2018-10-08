@@ -22,11 +22,17 @@ package org.openecomp.sdc.versioning.dao.types;
 
 import com.datastax.driver.mapping.annotations.Transient;
 import com.datastax.driver.mapping.annotations.UDT;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.Date;
 import java.util.Map;
 
 @UDT(name = "version", keyspace = "dox")
+@Getter
+@Setter
+@NoArgsConstructor
 public class Version {
   public static final String VERSION_STRING_VIOLATION_MSG =
       "Version string must be in the format of: {integer}.{integer}";
@@ -51,9 +57,6 @@ public class Version {
   private VersionState state;
   @Transient
   private Map<String, Object> additionalInfo;
-
-  public Version() {
-  }
 
   public Version(String id) {
     this.id = id;
@@ -88,87 +91,6 @@ public class Version {
 
     return version;
   }
-
-  public int getMajor() {
-    return major;
-  }
-
-  public void setMajor(int major) {
-    this.major = major;
-  }
-
-  public int getMinor() {
-    return minor;
-  }
-
-  public void setMinor(int minor) {
-    this.minor = minor;
-  }
-
-  public String getId() {
-    return id;
-  }
-
-  public void setId(String id) {
-    this.id = id;
-  }
-
-  public String getName() {
-    return name;
-  }
-
-  public void setName(String name) {
-    this.name = name;
-  }
-
-  public String getDescription() {
-    return description;
-  }
-
-  public void setDescription(String description) {
-    this.description = description;
-  }
-
-  public String getBaseId() {
-    return baseId;
-  }
-
-  public void setBaseId(String baseId) {
-    this.baseId = baseId;
-  }
-
-  public Date getCreationTime() {
-    return creationTime;
-  }
-
-  public void setCreationTime(Date creationTime) {
-    this.creationTime = creationTime;
-  }
-
-  public Date getModificationTime() {
-    return modificationTime;
-  }
-
-  public void setModificationTime(Date modificationTime) {
-    this.modificationTime = modificationTime;
-  }
-
-  public VersionStatus getStatus() {
-    return status;
-  }
-
-  public void setStatus(VersionStatus status) {
-    this.status = status;
-  }
-
-  public VersionState getState() {
-    return state;
-  }
-
-  public void setState(VersionState state) {
-    this.state = state;
-  }
-
   public Version calculateNextCandidate() {
     return new Version(major, minor + 1);
   }
@@ -180,14 +102,6 @@ public class Version {
   @Transient
   public boolean isFinal() {
     return major != 0 && minor == 0;
-  }
-
-  public Map<String, Object> getAdditionalInfo() {
-    return additionalInfo;
-  }
-
-  public void setAdditionalInfo(Map<String, Object> additionalInfo) {
-    this.additionalInfo = additionalInfo;
   }
 
   @Override
