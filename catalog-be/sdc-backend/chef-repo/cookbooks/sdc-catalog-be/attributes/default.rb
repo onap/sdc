@@ -36,3 +36,6 @@ default['Pair_EnvName'] = ""
 
 #DmaapConsumer
 default['DMAAP']['active'] = false
+
+#Portal
+default['ECompP']['ecomp_cipher_key'] = "AGLDdG4D04BKm2IxIWEr8o=="

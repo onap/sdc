@@ -20,7 +20,7 @@
 
 package org.openecomp.sdc.be.ecomp.converters;
 
-import org.openecomp.portalsdk.core.restful.domain.EcompRole;
+import org.onap.portalsdk.core.restful.domain.EcompRole;
 import org.openecomp.sdc.be.user.Role;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 
