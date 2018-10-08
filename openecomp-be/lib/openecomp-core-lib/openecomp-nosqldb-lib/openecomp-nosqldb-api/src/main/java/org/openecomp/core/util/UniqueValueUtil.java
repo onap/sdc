@@ -28,120 +28,120 @@ import org.openecomp.sdc.common.errors.ErrorCode;
 
 public class UniqueValueUtil {
 
-  private static final String UNIQUE_VALUE_VIOLATION = "UNIQUE_VALUE_VIOLATION";
-  private static final String UNIQUE_VALUE_VIOLATION_MSG = "%s with the value '%s' already exists.";
-  private static final char FORMATTED_UNIQUE_VALUE_SEPARATOR = '_';
+    private static final String UNIQUE_VALUE_VIOLATION = "UNIQUE_VALUE_VIOLATION";
+    private static final String UNIQUE_VALUE_VIOLATION_MSG = "%s with the value '%s' already exists.";
+    private static final char FORMATTED_UNIQUE_VALUE_SEPARATOR = '_';
 
-  private final UniqueValueDao uniqueValueDao;
+    private final UniqueValueDao uniqueValueDao;
 
-  public UniqueValueUtil(UniqueValueDao uniqueValueDao) {
-    this.uniqueValueDao = uniqueValueDao;
-  }
-
-  /**
-   * Create unique value.
-   *
-   * @param type              the type
-   * @param uniqueCombination the unique combination
-   */
-  public void createUniqueValue(String type, String... uniqueCombination) {
-    String originalEntityName = null;
-    if (ArrayUtils.isNotEmpty(uniqueCombination)) {
-      originalEntityName = uniqueCombination[uniqueCombination.length - 1];
+    public UniqueValueUtil(UniqueValueDao uniqueValueDao) {
+        this.uniqueValueDao = uniqueValueDao;
     }
 
-    Optional<String> formattedValue = formatValue(uniqueCombination);
-    if (formattedValue.isPresent()) {
-      validateUniqueValue(type, formattedValue.get(), originalEntityName);
-      uniqueValueDao.create(new UniqueValueEntity(type, formattedValue.get()));
-    }
-  }
+    /**
+     * Create unique value.
+     *
+     * @param type              the type
+     * @param uniqueCombination the unique combination
+     */
+    public void createUniqueValue(String type, String... uniqueCombination) {
+        String originalEntityName = null;
+        if (ArrayUtils.isNotEmpty(uniqueCombination)) {
+            originalEntityName = uniqueCombination[uniqueCombination.length - 1];
+        }
 
-  /**
-   * Delete unique value.
-   *
-   * @param type              the type
-   * @param uniqueCombination the unique combination
-   */
-  public void deleteUniqueValue(String type, String... uniqueCombination) {
-    formatValue(uniqueCombination).ifPresent(
-        formattedValue -> uniqueValueDao.delete(new UniqueValueEntity(type, formattedValue)));
-
-  }
-
-  /**
-   * Update unique value.
-   *
-   * @param type          the type
-   * @param oldValue      the old value
-   * @param newValue      the new value
-   * @param uniqueContext the unique context
-   */
-  public void updateUniqueValue(String type, String oldValue, String newValue,
-                                String... uniqueContext) {
-    if (newValue == null || oldValue == null || !newValue.equalsIgnoreCase(oldValue)) {
-      createUniqueValue(type, CommonMethods.concat(uniqueContext, new String[]{newValue}));
-      deleteUniqueValue(type, CommonMethods.concat(uniqueContext, new String[]{oldValue}));
-    }
-  }
-
-  /**
-   * Validate unique value.
-   *
-   * @param type              the type
-   * @param uniqueCombination the unique combination
-   */
-  public void validateUniqueValue(String type, String... uniqueCombination) {
-    String originalEntityName = null;
-    if (ArrayUtils.isNotEmpty(uniqueCombination)) {
-      originalEntityName = uniqueCombination[uniqueCombination.length - 1];
+        Optional<String> formattedValue = formatValue(uniqueCombination);
+        if (formattedValue.isPresent()) {
+            validateUniqueValue(type, formattedValue.get(), originalEntityName);
+            uniqueValueDao.create(new UniqueValueEntity(type, formattedValue.get()));
+        }
     }
 
-    Optional<String> formattedValue = formatValue(uniqueCombination);
-    if (formattedValue.isPresent()) {
-      validateUniqueValue(type, formattedValue.get(), originalEntityName);
-    }
-  }
+    /**
+     * Delete unique value.
+     *
+     * @param type              the type
+     * @param uniqueCombination the unique combination
+     */
+    public void deleteUniqueValue(String type, String... uniqueCombination) {
+        formatValue(uniqueCombination).ifPresent(
+                formattedValue -> uniqueValueDao.delete(new UniqueValueEntity(type, formattedValue)));
 
-  /**
-   * Checks if a unique value is taken.
-   *
-   * @return true if the unique value is occupied, false otherwise
-   */
-  public boolean isUniqueValueOccupied(String type, String... uniqueCombination) {
-    return formatValue(uniqueCombination)
-        .map(formattedValue -> isUniqueValueOccupied(type, formattedValue))
-        .orElse(false);
-  }
-
-  private void validateUniqueValue(String type, String formattedValue, String originalEntityName) {
-    if (isUniqueValueOccupied(type, formattedValue)) {
-      throw new CoreException(new ErrorCode.ErrorCodeBuilder()
-          .withCategory(ErrorCategory.APPLICATION)
-          .withId(UNIQUE_VALUE_VIOLATION)
-          .withMessage(String
-              .format(UNIQUE_VALUE_VIOLATION_MSG, type, originalEntityName))
-          .build());
-    }
-  }
-
-  private boolean isUniqueValueOccupied(String type, String formattedValue) {
-    return uniqueValueDao.get(new UniqueValueEntity(type, formattedValue)) != null;
-  }
-
-  private static Optional<String> formatValue(String[] uniqueCombination) {
-    if (uniqueCombination == null || uniqueCombination.length == 0
-        || getValueWithoutContext(uniqueCombination) == null) {
-      return Optional.empty();
     }
 
-    uniqueCombination[uniqueCombination.length - 1] =
-        getValueWithoutContext(uniqueCombination).toLowerCase();
-    return Optional.of(CommonMethods
-        .arrayToSeparatedString(uniqueCombination, FORMATTED_UNIQUE_VALUE_SEPARATOR));
-  }
+    /**
+     * Update unique value.
+     *
+     * @param type          the type
+     * @param oldValue      the old value
+     * @param newValue      the new value
+     * @param uniqueContext the unique context
+     */
+    public void updateUniqueValue(String type, String oldValue, String newValue,
+                                  String... uniqueContext) {
+        if (newValue == null || !newValue.equalsIgnoreCase(oldValue)) {
+            createUniqueValue(type, CommonMethods.concat(uniqueContext, new String[] {newValue}));
+            deleteUniqueValue(type, CommonMethods.concat(uniqueContext, new String[] {oldValue}));
+        }
+    }
 
-  private static String getValueWithoutContext(String... uniqueCombination) {
-    return uniqueCombination[uniqueCombination.length - 1];
-  }
+    /**
+     * Validate unique value.
+     *
+     * @param type              the type
+     * @param uniqueCombination the unique combination
+     */
+    public void validateUniqueValue(String type, String... uniqueCombination) {
+        String originalEntityName = null;
+        if (ArrayUtils.isNotEmpty(uniqueCombination)) {
+            originalEntityName = uniqueCombination[uniqueCombination.length - 1];
+        }
+
+        Optional<String> formattedValue = formatValue(uniqueCombination);
+        if (formattedValue.isPresent()) {
+            validateUniqueValue(type, formattedValue.get(), originalEntityName);
+        }
+    }
+
+    private void validateUniqueValue(String type, String formattedValue, String originalEntityName) {
+        if (isUniqueValueOccupied(type, formattedValue)) {
+            throw new CoreException(new ErrorCode.ErrorCodeBuilder()
+                    .withCategory(ErrorCategory.APPLICATION)
+                    .withId(UNIQUE_VALUE_VIOLATION)
+                    .withMessage(String
+                            .format(UNIQUE_VALUE_VIOLATION_MSG, type, originalEntityName))
+                    .build());
+        }
+    }
+
+    /**
+     * Checks if a unique value is taken.
+     *
+     * @return true if the unique value is occupied, false otherwise
+     */
+    public boolean isUniqueValueOccupied(String type, String... uniqueCombination) {
+        return formatValue(uniqueCombination)
+                .map(formattedValue -> isUniqueValueOccupied(type, formattedValue))
+                .orElse(false);
+    }
+
+    private boolean isUniqueValueOccupied(String type, String formattedValue) {
+        return uniqueValueDao.get(new UniqueValueEntity(type, formattedValue)) != null;
+    }
+
+    private static Optional<String> formatValue(String[] uniqueCombination) {
+        if (uniqueCombination == null || uniqueCombination.length == 0
+                || getValueWithoutContext(uniqueCombination) == null) {
+            return Optional.empty();
+        }
+
+        uniqueCombination[uniqueCombination.length - 1] =
+                getValueWithoutContext(uniqueCombination).toLowerCase();
+        return Optional.of(CommonMethods
+                .arrayToSeparatedString(uniqueCombination, FORMATTED_UNIQUE_VALUE_SEPARATOR));
+    }
+
+    private static String getValueWithoutContext(String... uniqueCombination) {
+        return uniqueCombination[uniqueCombination.length - 1];
+    }
 }
