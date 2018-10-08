@@ -70,6 +70,7 @@ public class ToscaConstants {
     public static final String HEAT_NODE_TYPE_SUFFIX = "heat.";
     public static final String CAPABILITY = "capability";
     public static final String REQUIREMENT = "requirement";
+    public static final String SERVICE_TEMPLATE_FILE_POSTFIX = "ServiceTemplate.yaml";
 
     private ToscaConstants() {
         //Hiding the implicit public constructor
