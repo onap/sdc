@@ -2,6 +2,7 @@ package org.openecomp.sdc.be.datamodel.utils;
 
 import org.junit.Test;
 import org.openecomp.sdc.be.datamodel.api.CategoryTypeEnum;
+import org.openecomp.sdc.be.datamodel.api.HighestFilterEnum;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 
 public class NodeTypeConvertUtilsTest {
@@ -14,5 +15,6 @@ public class NodeTypeConvertUtilsTest {
 				NodeTypeConvertUtils.getCategoryNodeTypeByComponentParam(comp, cat);
 			}
 		}
+
 	}
 }
