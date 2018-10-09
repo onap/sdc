@@ -2,6 +2,7 @@ import {Component, Inject, Input, Output, OnInit, EventEmitter} from "@angular/c
 import {URLSearchParams} from '@angular/http';
 import {Plugin} from "app/models";
 import {EventBusService} from "../../../services/event-bus.service";
+import {PluginsService} from "../../../services/plugins.service";
 
 @Component({
     selector: 'plugin-frame',
@@ -17,17 +18,26 @@ export class PluginFrameComponent implements OnInit {
     pluginUrl: string;
     private urlSearchParams: URLSearchParams;
     private isClosed: boolean;
+    private isPluginCheckDone: boolean;
 
     constructor(private eventBusService: EventBusService,
+                private pluginsService: PluginsService,
                 @Inject('$scope') private $scope: ng.IScope,
                 @Inject('$state') private $state: ng.ui.IStateService) {
         this.urlSearchParams = new URLSearchParams();
+        this.isPluginCheckDone = false;
     }
 
     ngOnInit(): void {
-        if (this.plugin.isOnline) {
-            this.initPlugin();
-        }
+        this.pluginsService.isPluginOnline(this.plugin.pluginId).subscribe(isPluginOnline => {
+            this.plugin.isOnline = isPluginOnline;
+            this.isPluginCheckDone = true;
+
+            if (this.plugin.isOnline) {
+                this.initPlugin();
+            }
+        })
+
     }
 
     private initPlugin() {
