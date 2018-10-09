@@ -1,0 +1,141 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bada0100_ae4d7e74",
+        "filename": "openecomp-be/lib/openecomp-item-permissions-lib/openecomp-item-permissions-core/src/test/java/org/openecomp/sdc/itempermissions/dao/impl/PermissionsServicesImplTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-10-09T14:20:24Z",
+      "side": 1,
+      "message": "Please add a copyright header.",
+      "revId": "30bcbe8f02ea5fec868d0986c0b5185f8af7a5c7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_4e3732e4",
+        "filename": "openecomp-be/lib/openecomp-item-permissions-lib/openecomp-item-permissions-core/src/test/java/org/openecomp/sdc/itempermissions/dao/impl/PermissionsServicesImplTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 167,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-10-09T14:20:24Z",
+      "side": 1,
+      "message": "There are formatting issues- incorrect indentation, missing spaces before \"{\".",
+      "range": {
+        "startLine": 148,
+        "startChar": 0,
+        "endLine": 167,
+        "endChar": 0
+      },
+      "revId": "30bcbe8f02ea5fec868d0986c0b5185f8af7a5c7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_ce524213",
+        "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-core/src/test/java/org/openecomp/sdc/vendorsoftwareproduct/dao/errors/OrchestrationTemplateFileExtensionErrorBuilderTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-10-09T14:20:24Z",
+      "side": 1,
+      "message": "Please add a copyright header.",
+      "revId": "30bcbe8f02ea5fec868d0986c0b5185f8af7a5c7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_8e5c3a27",
+        "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-core/src/test/java/org/openecomp/sdc/vendorsoftwareproduct/dao/errors/OrchestrationTemplateFileExtensionErrorBuilderTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-10-09T14:20:24Z",
+      "side": 1,
+      "message": "I think for the single test method you could have used a local variable instead of this complex initialization.",
+      "range": {
+        "startLine": 13,
+        "startChar": 0,
+        "endLine": 18,
+        "endChar": 5
+      },
+      "revId": "30bcbe8f02ea5fec868d0986c0b5185f8af7a5c7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_4e3e52ba",
+        "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-core/src/test/java/org/openecomp/sdc/vendorsoftwareproduct/dao/errors/VendorSoftwareProductCreationFailedBuilderTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-10-09T14:20:24Z",
+      "side": 1,
+      "message": "Please add a copyright header.",
+      "revId": "30bcbe8f02ea5fec868d0986c0b5185f8af7a5c7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_ee4aa654",
+        "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-core/src/test/java/org/openecomp/sdc/vendorsoftwareproduct/dao/errors/VendorSoftwareProductNotFoundErrorBuilderTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-10-09T14:20:24Z",
+      "side": 1,
+      "message": "Please add a copyright header.",
+      "revId": "30bcbe8f02ea5fec868d0986c0b5185f8af7a5c7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_ae749e9c",
+        "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-core/src/test/java/org/openecomp/sdc/vendorsoftwareproduct/dao/errors/VendorSoftwareProductNotFoundErrorBuilderTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-10-09T14:20:24Z",
+      "side": 1,
+      "message": "You don\u0027t have to use a constant for a string that is used only once in a test.",
+      "range": {
+        "startLine": 13,
+        "startChar": 32,
+        "endLine": 13,
+        "endChar": 38
+      },
+      "revId": "30bcbe8f02ea5fec868d0986c0b5185f8af7a5c7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
