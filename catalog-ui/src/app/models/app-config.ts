@@ -54,6 +54,7 @@ export interface IApi {
     GET_activity_log:string;
     GET_configuration_ui:string;
     GET_plugins_configuration:string;
+    GET_plugin_online_state:string;
     GET_service:string;
     GET_ecomp_menu_items:string;
     GET_service_validate_name:string;

@@ -80,14 +80,6 @@ public class PluginsConfiguration extends BasicConfiguration {
             this.pluginDisplayOptions = pluginDisplayOptions;
         }
 
-        public boolean isOnline() {
-            return isOnline;
-        }
-
-        public void setOnline(boolean online) {
-            isOnline = online;
-        }
-
     }
 
     public static class PluginDisplayOptions {

@@ -24,7 +24,6 @@ public class PluginStatusBL {
 	private final Gson gson;
 	private final CloseableHttpClient client;
 	private final PluginsConfiguration pluginsConfiguration;
-	private Integer connectionTimeout;
 	private RequestConfig requestConfig;
 
 	public PluginStatusBL() {
@@ -41,7 +40,7 @@ public class PluginStatusBL {
 				
 	}
 
-	public String checkPluginsListAvailability() {
+	public String getPluginsList() {
 		String result = null;
 
 		if (pluginsConfiguration == null || pluginsConfiguration.getPluginsList() == null) {
@@ -50,20 +49,36 @@ public class PluginStatusBL {
 
 		} else {
 			log.debug("The value returned from getConfig is {}", pluginsConfiguration);
-			connectionTimeout = pluginsConfiguration.getConnectionTimeout();
+
+			result = gson.toJson(pluginsConfiguration.getPluginsList());
+		}
+		return result;
+	}
+
+	public String getPluginAvailability(String pluginId) {
+		String result = null;
+
+		if (pluginsConfiguration == null || pluginsConfiguration.getPluginsList() == null) {
+			log.warn("Configuration of type {} was not found", PluginsConfiguration.class);
+			throw new InvalidArgumentException("the plugin configuration was not read successfully.");
+
+		} else {
+			log.debug("The value returned from getConfig is {}", pluginsConfiguration);
+			Integer connectionTimeout = pluginsConfiguration.getConnectionTimeout();
 			this.requestConfig = RequestConfig.custom()
 					.setSocketTimeout(connectionTimeout)
 					.setConnectTimeout(connectionTimeout)
 					.setConnectionRequestTimeout(connectionTimeout).build();
 
-			List<Plugin> availablePluginsList = new ArrayList<>();
 
-			pluginsConfiguration.getPluginsList().forEach(plugin -> {
-				plugin.setOnline(checkPluginAvailability(plugin));
+			Plugin wantedPlugin = pluginsConfiguration.getPluginsList().stream()
+					.filter(plugin -> plugin.getPluginId().equals(pluginId))
+					.findAny()
+					.orElse(null);
 
-				availablePluginsList.add(plugin);
-			});
-			result = gson.toJson(availablePluginsList);
+			if (wantedPlugin != null) {
+				result = gson.toJson(checkPluginAvailability(wantedPlugin));
+			}
 		}
 		return result;
 	}

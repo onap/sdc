@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
@@ -63,7 +64,22 @@ public class PluginStatusBLTest {
 	}
 
 	@Test
-	public void TestOfflinePluginBeingReturnedWithIsOnlineValueFalse() throws ClientProtocolException, IOException {
+	public void TestPluginsConfigurationListReturnsWithWantedPlugins() {
+		testPluginsList.add(offlinePlugin);
+		testPluginsList.add(onlinePlugin);
+		when(pluginsConfiguration.getPluginsList()).thenReturn(testPluginsList);
+
+		assertPluginList.add(offlinePlugin);
+		assertPluginList.add(onlinePlugin);
+
+		String result = gson.toJson(assertPluginList);
+		String actualResult = pluginStatusBL.getPluginsList();
+
+		assertEquals(actualResult, result);
+	}
+
+	@Test
+	public void TestGetPluginAvailabilityShouldReturnFalseWhenPluginIsOffline() throws ClientProtocolException, IOException {
 		testPluginsList.add(offlinePlugin);
 		when(pluginsConfiguration.getPluginsList()).thenReturn(testPluginsList);
 		
@@ -71,16 +87,10 @@ public class PluginStatusBLTest {
 		when(httpResponse.getStatusLine()).thenReturn(statusLine);		
 		when(httpClient.execute(Mockito.any(HttpHead.class))).thenReturn(httpResponse);
 
-		offlinePlugin.setOnline(false);
-		assertPluginList.add(offlinePlugin);
+		String result = gson.toJson(false);
+		String actualResult = pluginStatusBL.getPluginAvailability(offlinePlugin.getPluginId());
 
-		String result = gson.toJson(assertPluginList);
-		String actualResult = pluginStatusBL.checkPluginsListAvailability();
-
-		System.out.println(result);
-		System.out.println(actualResult);
-		
-		assertTrue(pluginStatusBL.checkPluginsListAvailability().equals(result));
+		assertEquals(actualResult, result);
 	}
 	
 	@Test
@@ -92,13 +102,9 @@ public class PluginStatusBLTest {
 		when(httpResponse.getStatusLine()).thenReturn(statusLine);		
 		when(httpClient.execute(Mockito.any())).thenReturn(httpResponse);
 
-		onlinePlugin.setOnline(true);
-		assertPluginList.add(onlinePlugin);
+		String result = gson.toJson(true);
+		String actualResult = pluginStatusBL.getPluginAvailability(onlinePlugin.getPluginId());
 
-		String result = gson.toJson(assertPluginList);
-		
-		assertTrue(pluginStatusBL.checkPluginsListAvailability().equals(result));
-		
+		assertEquals(actualResult, result);
 	}
-
 }
