@@ -1,12 +1,10 @@
 package org.openecomp.sdc.be.ecomp.converters;
 
 import fj.data.Either;
-import fj.data.Either;
 import org.junit.Test;
-import org.openecomp.portalsdk.core.restful.domain.EcompRole;
-import org.openecomp.portalsdk.core.restful.domain.EcompUser;
+import org.onap.portalsdk.core.restful.domain.EcompRole;
+import org.onap.portalsdk.core.restful.domain.EcompUser;
 import org.openecomp.sdc.be.model.User;
-
 
 import java.util.Collections;
 

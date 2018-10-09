@@ -278,3 +278,6 @@ utils/DmaapPublisher/logs/*
 
 asdctool/*.csv
 asdctool/test-output/*
+
+asdctool/report_delete_1538046694389.json
+asdctool/report_test_1538046722484.json
