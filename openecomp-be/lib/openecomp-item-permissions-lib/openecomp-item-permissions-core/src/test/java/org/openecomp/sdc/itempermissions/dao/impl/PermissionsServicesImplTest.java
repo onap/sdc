@@ -48,7 +48,7 @@ public class PermissionsServicesImplTest {
     @Mock
     private UserPermissionsDao userPermissionsDao;  // do not delete. needed for permissionService
     @Mock
-    private PermissionsRules permissionsRules;
+    private PermissionsRules permissionsRulesMock;
     @InjectMocks
     @Spy
     private PermissionsServicesImpl permissionsServices;
@@ -72,11 +72,11 @@ public class PermissionsServicesImplTest {
 
     @Test
     public void testExecute() {
-        Mockito.doNothing().when(permissionsRules).executeAction(anyString(), anyString(), anyString());
+        Mockito.doNothing().when(permissionsRulesMock).executeAction(anyString(), anyString(), anyString());
 
         permissionsServices.execute(ITEM1_ID, USER1_ID, PERMISSION);
 
-        Mockito.verify(permissionsRules, times(1)).executeAction(anyString(), anyString(), anyString());
+        Mockito.verify(permissionsRulesMock, times(1)).executeAction(anyString(), anyString(), anyString());
     }
 
     @Test
@@ -123,27 +123,47 @@ public class PermissionsServicesImplTest {
     @Test
     public void testIsAllowed() {
         when(permissionsDaoMock.getUserItemPermission(ITEM1_ID, USER1_ID)).thenReturn(Optional.of(PERMISSION));
-        when(permissionsRules.isAllowed(PERMISSION, ACTION_SUBMIT)).thenReturn(true);
+        when(permissionsRulesMock.isAllowed(PERMISSION, ACTION_SUBMIT)).thenReturn(true);
 
         boolean result = permissionsServices.isAllowed(ITEM1_ID, USER1_ID, ACTION_SUBMIT);
 
         Assert.assertTrue(result);
 
-    }
+  }
 
-    @Test
-    public void testUpdatePermissions() {
+  @Test
+  public void shouldUpdatePermissions(){
 
         Set<String> addedUsers = new HashSet<>();
         addedUsers.add(USER2_ID);
 
         permissionsServices.updateItemPermissions(ITEM1_ID, PERMISSION, addedUsers, new HashSet<>());
 
-        verify(permissionsRules).executeAction(ITEM1_ID, USER1_ID, CHANGE_PERMISSIONS);
-        verify(permissionsRules).updatePermission(ITEM1_ID, USER1_ID, PERMISSION, addedUsers, new HashSet<>());
+        verify(permissionsRulesMock).executeAction(ITEM1_ID, USER1_ID, CHANGE_PERMISSIONS);
+        verify(permissionsRulesMock).updatePermission(ITEM1_ID, USER1_ID, PERMISSION, addedUsers, new HashSet<>());
         verify(permissionsDaoMock).updateItemPermissions(ITEM1_ID, PERMISSION, addedUsers, new
                 HashSet<>());
     }
+
+  @Test
+  public void shouldExecutePermissionRules(){
+    permissionsServices.execute(ITEM1_ID,USER1_ID,ACTION_SUBMIT);
+    verify(permissionsRulesMock).executeAction(ITEM1_ID,USER1_ID,ACTION_SUBMIT);
+  }
+
+  @Test
+  public void shouldReturnUserItemPermission(){
+    doReturn(Optional.of(PERMISSION)).when(permissionsDaoMock).getUserItemPermission(ITEM1_ID, USER1_ID);
+    Optional<String> actual = permissionsServices.getUserItemPermission(ITEM1_ID, USER1_ID);
+    Assert.assertTrue(actual.isPresent());
+    Assert.assertEquals(actual.get(), PERMISSION);
+  }
+
+  @Test
+  public void shouldDeleteItemPermissions(){
+   permissionsServices.deleteItemPermissions(ITEM1_ID);
+    verify(permissionsDaoMock).deleteItemPermissions(ITEM1_ID);
+  }
 
 
     private static ItemPermissionsEntity createPermissionEntity(String itemId, String
