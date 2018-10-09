@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bada0100_7883dccc",
+        "filename": "openecomp-be/lib/openecomp-core-lib/openecomp-nosqldb-lib/openecomp-nosqldb-api/pom.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-10-09T07:59:42Z",
+      "side": 1,
+      "message": "Since these dependencies are declared in a parent POM\u0027s dependencyManagement, I believe \u003cversion\u003e has no effect and should be removed.",
+      "range": {
+        "startLine": 48,
+        "startChar": 0,
+        "endLine": 64,
+        "endChar": 21
+      },
+      "revId": "9dfe518345aa9e38a0d3367fdc82c843dd3f3415",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
