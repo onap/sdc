@@ -1,16 +1,31 @@
 package org.openecomp.sdc.be.datamodel.utils;
 
+
 import org.junit.Test;
 import org.openecomp.sdc.be.info.ArtifactTemplateInfo;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
+import org.openecomp.sdc.be.model.HeatParameterDefinition;
+import org.openecomp.sdc.be.model.operations.impl.ArtifactOperation;
 import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+
+import static org.junit.Assert.assertTrue;
 
 public class ArtifactUtilsTest {
+
+	private static final String ARTIFACT_NAME = "myHeatArtifact";
+
+
+	@javax.annotation.Resource
+	private ArtifactOperation artifactOperation;
+
+
+	private static String RESOURCE_ID = "resourceId";
+
+	private static String USER_ID = "muUserId";
+	private static String CATEGORY_NAME = "category/mycategory";
+
 
 	private ArtifactUtils createTestSubject() {
 		return new ArtifactUtils();
@@ -18,13 +33,28 @@ public class ArtifactUtilsTest {
 
 	@Test
 	public void testFindMasterArtifact() throws Exception {
-		Map<String, ArtifactDefinition> deplymentArtifact = new HashMap<>();
+		Map<String, ArtifactDefinition> deploymentArtifact = new HashMap<>();
 		List<ArtifactDefinition> artifacts = new LinkedList<>();
 		List<String> artifactsList = new LinkedList<>();
 		ArtifactDefinition result;
 
 		// default test
-		result = ArtifactUtils.findMasterArtifact(deplymentArtifact, artifacts, artifactsList);
+		result = ArtifactUtils.findMasterArtifact(deploymentArtifact, artifacts, artifactsList);
+	}
+
+	@Test
+	public void testFindMasterArtifactWithArtifactDef() throws Exception {
+		ArtifactDefinition artifactWithHeat = createResourceWithHeat();
+		Map<String, ArtifactDefinition> deploymentArtifact = new HashMap<>();
+		deploymentArtifact.put("artifactId",artifactWithHeat);
+		List<ArtifactDefinition> artifacts = new LinkedList<>();
+		artifacts.add(artifactWithHeat);
+		List<String> artifactsList = new LinkedList<>();
+		artifactsList.add("artifactId");
+		ArtifactDefinition result;
+
+		// default test
+		result = ArtifactUtils.findMasterArtifact(deploymentArtifact, artifacts, artifactsList);
 	}
 
 	@Test
@@ -68,4 +98,57 @@ public class ArtifactUtilsTest {
 		// default test
 		result = ArtifactUtils.findArtifactInList(createdArtifacts, artifactId);
 	}
+
+    @Test
+    public void testFindArtifactInListwithArtifactList() throws Exception {
+        ArtifactDefinition artifactWithHeat = createResourceWithHeat();
+        List<ArtifactDefinition> createdArtifacts = new LinkedList<>();
+        createdArtifacts.add(artifactWithHeat);
+        String artifactId = "artifactId";
+        ArtifactDefinition result;
+
+        // default test
+        result = ArtifactUtils.findArtifactInList(createdArtifacts, artifactId);
+    }
+
+	public ArtifactDefinition createResourceWithHeat() {
+		ArtifactDefinition artifactDefinition = createArtifactDefinition(USER_ID, RESOURCE_ID, ARTIFACT_NAME);
+		artifactDefinition.setArtifactType("HEAT");
+		artifactDefinition.setArtifactGroupType(ArtifactGroupTypeEnum.DEPLOYMENT);
+
+		List<HeatParameterDefinition> heatParams = new ArrayList<>();
+		HeatParameterDefinition heatParam = new HeatParameterDefinition();
+		heatParam.setCurrentValue("11");
+		heatParam.setDefaultValue("22");
+		heatParam.setDescription("desc");
+		heatParam.setName("myParam");
+		heatParam.setType("number");
+		heatParams.add(heatParam);
+		artifactDefinition.setListHeatParameters(heatParams);
+		return artifactDefinition;
+
+	}
+
+
+	private ArtifactDefinition createArtifactDefinition(String userId, String serviceId, String artifactName) {
+		ArtifactDefinition artifactInfo = new ArtifactDefinition();
+
+		artifactInfo.setArtifactName(artifactName + ".sh");
+		artifactInfo.setArtifactType("SHELL");
+		artifactInfo.setDescription("hdkfhskdfgh");
+		artifactInfo.setArtifactChecksum("UEsDBAoAAAAIAAeLb0bDQz");
+
+		artifactInfo.setUserIdCreator(userId);
+		String fullName = "Jim H";
+		artifactInfo.setUpdaterFullName(fullName);
+		long time = System.currentTimeMillis();
+		artifactInfo.setCreatorFullName(fullName);
+		artifactInfo.setCreationDate(time);
+		artifactInfo.setLastUpdateDate(time);
+		artifactInfo.setUserIdLastUpdater(userId);
+		artifactInfo.setArtifactLabel(artifactName);
+		artifactInfo.setUniqueId("artifactId");
+		return artifactInfo;
+	}
+
 }
