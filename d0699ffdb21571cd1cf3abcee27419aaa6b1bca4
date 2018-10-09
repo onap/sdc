@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bada0100_d868c8f7",
+        "filename": "openecomp-be/lib/openecomp-sdc-versioning-lib/openecomp-sdc-versioning-api/src/test/java/org/openecomp/sdc/versioning/dao/types/VersionTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-10-09T09:18:38Z",
+      "side": 1,
+      "message": "It looks like your code template is broken.",
+      "range": {
+        "startLine": 17,
+        "startChar": 0,
+        "endLine": 18,
+        "endChar": 3
+      },
+      "revId": "d0699ffdb21571cd1cf3abcee27419aaa6b1bca4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
