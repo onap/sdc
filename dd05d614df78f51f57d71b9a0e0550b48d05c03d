@@ -271,6 +271,24 @@
       "revId": "dd05d614df78f51f57d71b9a0e0550b48d05c03d",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_a6acbeee",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogicTest.java",
+        "patchSetId": 19
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 897
+      },
+      "writtenOn": "2018-10-10T14:43:27Z",
+      "side": 1,
+      "message": "My Pleasure :)",
+      "parentUuid": "bada0100_7b774fd5",
+      "revId": "dd05d614df78f51f57d71b9a0e0550b48d05c03d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
