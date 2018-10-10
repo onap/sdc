@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bada0100_46e71241",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/datamodel/utils/ArtifactUtilsTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-10-10T14:53:31Z",
+      "side": 1,
+      "message": "please do not use wild card for imports",
+      "range": {
+        "startLine": 11,
+        "startChar": 15,
+        "endLine": 11,
+        "endChar": 19
+      },
+      "revId": "c14bfe36dacb875a3bd48933825ed7ff35da2bb1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
