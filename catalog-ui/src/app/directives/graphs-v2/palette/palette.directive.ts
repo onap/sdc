@@ -18,68 +18,68 @@
  * ============LICENSE_END=========================================================
  */
 import * as _ from "lodash";
-import {Component, IAppMenu, LeftPanelModel, NodesFactory, LeftPaletteComponent, CompositionCiNodeBase, ComponentInstance, Point} from "app/models";
-import {CompositionGraphGeneralUtils} from "../composition-graph/utils/composition-graph-general-utils";
-import {EventListenerService} from "app/services";
-import {ResourceType, GRAPH_EVENTS, EVENTS, ComponentInstanceFactory, ModalsHandler} from "app/utils";
+import { Component, IAppMenu, LeftPanelModel, NodesFactory, LeftPaletteComponent, CompositionCiNodeBase, ComponentInstance, Point } from "app/models";
+import { CompositionGraphGeneralUtils } from "../composition-graph/utils/composition-graph-general-utils";
+import { EventListenerService } from "app/services";
+import { ResourceType, GRAPH_EVENTS, EVENTS, ComponentInstanceFactory, ModalsHandler } from "app/utils";
 import 'sdc-angular-dragdrop';
-import {LeftPaletteLoaderService} from "../../../services/components/utils/composition-left-palette-service";
-import {Resource} from "app/models/components/resource";
-import {ComponentType} from "app/utils/constants";
-import {LeftPaletteMetadataTypes} from "../../../models/components/displayComponent";
+import { LeftPaletteLoaderService } from "../../../services/components/utils/composition-left-palette-service";
+import { Resource } from "app/models/components/resource";
+import { ComponentType } from "app/utils/constants";
+import { LeftPaletteMetadataTypes } from "../../../models/components/displayComponent";
 import { IDirectiveLinkFn, IScope } from "angular";
 
 
-interface IPaletteScope extends IScope{
-    components:Array<LeftPaletteComponent>;
-    currentComponent:Component;
-    model:any;
-    displaySortedCategories:any;
-    expandedSection:string;
-    dragElement:JQuery;
-    dragbleNode:{
-        event:JQueryEventObject,
-        components:LeftPaletteComponent,
-        ui:any
+interface IPaletteScope extends IScope {
+    components: Array<LeftPaletteComponent>;
+    currentComponent: Component;
+    model: any;
+    displaySortedCategories: any;
+    expandedSection: string;
+    dragElement: JQuery;
+    dragbleNode: {
+        event: JQueryEventObject,
+        components: LeftPaletteComponent,
+        ui: any
     }
 
-    addInstanceClick: ()=>void; // added code
-    onPopupMouseOver: ()=>void  // added code
-    onPopupMouseOut: ()=>void   // added code
+    addInstanceClick: () => void; // added code
+    onPopupMouseOver: () => void  // added code
+    onPopupMouseOut: () => void   // added code
 
-    sectionClick:(section:string)=>void;
-    searchComponents:(searchText:string)=>void;
-    onMouseOver:(displayComponent:LeftPaletteComponent, elem: HTMLElement)=>void;
-    onMouseOut:(displayComponent:LeftPaletteComponent)=>void;
+    sectionClick: (section: string) => void;
+    searchComponents: (searchText: string) => void;
+    onMouseOver: (displayComponent: LeftPaletteComponent, elem: HTMLElement) => void;
+    onMouseOut: (displayComponent: LeftPaletteComponent) => void;
 
-    dragStartCallback:(event:JQueryEventObject, ui, displayComponent:LeftPaletteComponent)=>void;
-    dragStopCallback:()=>void;
-    onDragCallback:(event:JQueryEventObject) => void;
+    dragStartCallback: (event: JQueryEventObject, ui, displayComponent: LeftPaletteComponent) => void;
+    dragStopCallback: () => void;
+    onDragCallback: (event: JQueryEventObject) => void;
 
-    setElementTemplate:(e:JQueryEventObject)=>void;
+    setElementTemplate: (e: JQueryEventObject) => void;
 
-    isOnDrag:boolean;
-    isDragable:boolean;
-    isLoading:boolean;
-    isViewOnly:boolean;
+    isOnDrag: boolean;
+    isDragable: boolean;
+    isLoading: boolean;
+    isViewOnly: boolean;
 }
 
 export class Palette implements ng.IDirective {
-    constructor(private $log:ng.ILogService,
-                private LeftPaletteLoaderService: LeftPaletteLoaderService,
-                private sdcConfig,
-                private ComponentFactory,
-                private ComponentInstanceFactory:ComponentInstanceFactory,
-                private NodesFactory:NodesFactory,
-                private CompositionGraphGeneralUtils:CompositionGraphGeneralUtils,
-                private EventListenerService:EventListenerService,
-                private sdcMenu:IAppMenu,
-                private ModalsHandler:ModalsHandler
-            ) {
+    constructor(private $log: ng.ILogService,
+        private LeftPaletteLoaderService: LeftPaletteLoaderService,
+        private sdcConfig,
+        private ComponentFactory,
+        private ComponentInstanceFactory: ComponentInstanceFactory,
+        private NodesFactory: NodesFactory,
+        private CompositionGraphGeneralUtils: CompositionGraphGeneralUtils,
+        private EventListenerService: EventListenerService,
+        private sdcMenu: IAppMenu,
+        private ModalsHandler: ModalsHandler
+    ) {
     }
 
-    private fetchingComponentFromServer:boolean = false;
-    private nodeHtmlSubstitute:JQuery;
+    private fetchingComponentFromServer: boolean = false;
+    private nodeHtmlSubstitute: JQuery;
 
     scope = {
         currentComponent: '=',
@@ -89,7 +89,7 @@ export class Palette implements ng.IDirective {
     restrict = 'E';
     template = require('./palette.html');
 
-    link:IDirectiveLinkFn = (scope:IPaletteScope, el:JQuery) => {
+    link: IDirectiveLinkFn = (scope: IPaletteScope, el: JQuery) => {
         this.LeftPaletteLoaderService.loadLeftPanel(scope.currentComponent);
         this.nodeHtmlSubstitute = $('<div class="node-substitute"><span></span><img /></div>');
         el.append(this.nodeHtmlSubstitute);
@@ -99,31 +99,31 @@ export class Palette implements ng.IDirective {
         this.initEvents(scope);
         this.initDragEvents(scope);
         this._initExpandedSection(scope, '');
-        el.on('$destroy', ()=> {
+        el.on('$destroy', () => {
             //remove listener of download event
             this.unRegisterEventListenerForLeftPalette(scope);
         });
     };
 
 
-    private registerEventListenerForLeftPalette = (scope:IPaletteScope):void => {
+    private registerEventListenerForLeftPalette = (scope: IPaletteScope): void => {
         this.EventListenerService.registerObserverCallback(EVENTS.LEFT_PALETTE_UPDATE_EVENT, () => {
             this.updateLeftPanelDisplay(scope);
         });
     };
 
-    private unRegisterEventListenerForLeftPalette = (scope:IPaletteScope):void => {
+    private unRegisterEventListenerForLeftPalette = (scope: IPaletteScope): void => {
         this.EventListenerService.unRegisterObserver(EVENTS.LEFT_PALETTE_UPDATE_EVENT);
     };
 
-    private leftPanelResourceFilter(resourcesNotAbstract:Array<LeftPaletteComponent>, resourceFilterTypes:Array<string>):Array<LeftPaletteComponent> {
+    private leftPanelResourceFilter(resourcesNotAbstract: Array<LeftPaletteComponent>, resourceFilterTypes: Array<string>): Array<LeftPaletteComponent> {
         let filterResources = _.filter(resourcesNotAbstract, (component) => {
             return resourceFilterTypes.indexOf(component.getComponentSubType()) > -1;
         });
         return filterResources;
     }
 
-    private initLeftPanel(leftPanelComponents:Array<LeftPaletteComponent>, resourceFilterTypes:Array<string>):LeftPanelModel {
+    private initLeftPanel(leftPanelComponents: Array<LeftPaletteComponent>, resourceFilterTypes: Array<string>): LeftPanelModel {
         let leftPanelModel = new LeftPanelModel();
 
         if (resourceFilterTypes && resourceFilterTypes.length) {
@@ -133,7 +133,7 @@ export class Palette implements ng.IDirective {
 
         if (leftPanelComponents && leftPanelComponents.length) {
 
-            let categories:any = _.groupBy(leftPanelComponents, 'mainCategory');
+            let categories: any = _.groupBy(leftPanelComponents, 'mainCategory');
             for (let category in categories)
                 categories[category] = _.groupBy(categories[category], 'subCategory');
 
@@ -143,9 +143,8 @@ export class Palette implements ng.IDirective {
     }
 
 
-    private initEvents(scope:IPaletteScope) {
-
-        scope.sectionClick = (section:string) => {
+    private initEvents(scope: IPaletteScope) {
+        scope.sectionClick = (section: string) => {
             if (section === scope.expandedSection) {
                 scope.expandedSection = '';
                 return;
@@ -153,7 +152,7 @@ export class Palette implements ng.IDirective {
             scope.expandedSection = section;
         };
 
-        scope.onMouseOver = (displayComponent:LeftPaletteComponent, sectionElem: HTMLElement) => {
+        scope.onMouseOver = (displayComponent: LeftPaletteComponent, sectionElem: HTMLElement) => {
             if (this.isGroupOrPolicy(displayComponent)) {
                 this.EventListenerService.notifyObservers(GRAPH_EVENTS.ON_PALETTE_COMPONENT_SHOW_POPUP_PANEL, scope.currentComponent, displayComponent, sectionElem);
             } else {
@@ -167,8 +166,8 @@ export class Palette implements ng.IDirective {
 
         };
 
-        scope.onMouseOut = (displayComponent:LeftPaletteComponent) => {
-            if(this.isGroupOrPolicy(displayComponent)) {
+        scope.onMouseOut = (displayComponent: LeftPaletteComponent) => {
+            if (this.isGroupOrPolicy(displayComponent)) {
                 this.EventListenerService.notifyObservers(GRAPH_EVENTS.ON_PALETTE_COMPONENT_HIDE_POPUP_PANEL);
             } else {
                 scope.isOnDrag = false;
@@ -177,8 +176,8 @@ export class Palette implements ng.IDirective {
         };
     }
 
-    private isGroupOrPolicy(component:LeftPaletteComponent): boolean {
-        if(component &&
+    private isGroupOrPolicy(component: LeftPaletteComponent): boolean {
+        if (component &&
             (component.categoryType === LeftPaletteMetadataTypes.Group ||
                 component.categoryType === LeftPaletteMetadataTypes.Policy)) {
             return true;
@@ -186,8 +185,8 @@ export class Palette implements ng.IDirective {
         return false;
     }
 
-    private initComponents(scope:IPaletteScope) {
-        scope.searchComponents = (searchText:any):void => {
+    private initComponents(scope: IPaletteScope) {
+        scope.searchComponents = (searchText: any): void => {
             scope.displaySortedCategories = this._searchComponents(searchText, scope.model.sortedCategories);
             this._initExpandedSection(scope, searchText);
         };
@@ -196,10 +195,10 @@ export class Palette implements ng.IDirective {
         this.updateLeftPanelDisplay(scope);
     }
 
-    private updateLeftPanelDisplay(scope:IPaletteScope) {
-        let entityType:string = scope.currentComponent.componentType.toLowerCase();
-        let resourceFilterTypes:Array<string> = this.sdcConfig.resourceTypesFilter[entityType];
-         scope.components = this.LeftPaletteLoaderService.getLeftPanelComponentsForDisplay(scope.currentComponent);
+    private updateLeftPanelDisplay(scope: IPaletteScope) {
+        let entityType: string = scope.currentComponent.componentType.toLowerCase();
+        let resourceFilterTypes: Array<string> = this.sdcConfig.resourceTypesFilter[entityType];
+        scope.components = this.LeftPaletteLoaderService.getLeftPanelComponentsForDisplay(scope.currentComponent);
         //remove the container component  from the list
         let componentTempToDisplay = angular.copy(scope.components);
         componentTempToDisplay = _.remove(componentTempToDisplay, function (leftPalettecomponent) {
@@ -209,10 +208,10 @@ export class Palette implements ng.IDirective {
         scope.displaySortedCategories = angular.copy(scope.model.sortedCategories);
     };
 
-    private _initExpandedSection(scope:IPaletteScope, searchText:string):void {
+    private _initExpandedSection(scope: IPaletteScope, searchText: string): void {
         if (searchText == '') {
-            let isContainingCategory:boolean = false;
-            let categoryToExpand:string;
+            let isContainingCategory: boolean = false;
+            let categoryToExpand: string;
             if (scope.currentComponent && scope.currentComponent.categories && scope.currentComponent.categories[0]) {
                 categoryToExpand = this.sdcMenu.categoriesDictionary[scope.currentComponent.categories[0].name];
                 for (let category in scope.model.sortedCategories) {
@@ -229,13 +228,13 @@ export class Palette implements ng.IDirective {
         }
     };
 
-    private initDragEvents(scope:IPaletteScope) {
-        scope.dragStartCallback = (event:IDragDropEvent, ui, displayComponent:LeftPaletteComponent):void => {
+    private initDragEvents(scope: IPaletteScope) {
+        scope.dragStartCallback = (event: IDragDropEvent, ui, displayComponent: LeftPaletteComponent): void => {
             if (scope.isLoading || !scope.isDragable || scope.isViewOnly || this.isGroupOrPolicy(displayComponent)) {
                 return;
             }
 
-            let component = _.find(this.LeftPaletteLoaderService.getLeftPanelComponentsForDisplay(scope.currentComponent), (componentFullData:LeftPaletteComponent) => {
+            let component = _.find(this.LeftPaletteLoaderService.getLeftPanelComponentsForDisplay(scope.currentComponent), (componentFullData: LeftPaletteComponent) => {
                 return displayComponent.uniqueId === componentFullData.uniqueId;
             });
             this.EventListenerService.notifyObservers(GRAPH_EVENTS.ON_PALETTE_COMPONENT_DRAG_START, scope.dragElement, component);
@@ -251,16 +250,16 @@ export class Palette implements ng.IDirective {
             scope.isOnDrag = false;
         };
 
-        scope.onDragCallback = (event:IDragDropEvent):void => {
+        scope.onDragCallback = (event: IDragDropEvent): void => {
             this.EventListenerService.notifyObservers(GRAPH_EVENTS.ON_PALETTE_COMPONENT_DRAG_ACTION, event);
         };
         scope.setElementTemplate = (e) => {
-            let dragComponent:LeftPaletteComponent = _.find(this.LeftPaletteLoaderService.getLeftPanelComponentsForDisplay(scope.currentComponent),
-                (fullComponent:LeftPaletteComponent) => {
+            let dragComponent: LeftPaletteComponent = _.find(this.LeftPaletteLoaderService.getLeftPanelComponentsForDisplay(scope.currentComponent),
+                (fullComponent: LeftPaletteComponent) => {
                     return (<any>angular.element(e.currentTarget).scope()).component.uniqueId === fullComponent.uniqueId;
                 });
-            let componentInstance:ComponentInstance = this.ComponentInstanceFactory.createComponentInstanceFromComponent(dragComponent);
-            let node:CompositionCiNodeBase = this.NodesFactory.createNode(componentInstance);
+            let componentInstance: ComponentInstance = this.ComponentInstanceFactory.createComponentInstanceFromComponent(dragComponent);
+            let node: CompositionCiNodeBase = this.NodesFactory.createNode(componentInstance);
 
             // myDiagram.dragFromPalette = node;
             this.nodeHtmlSubstitute.find("img").attr('src', node.img);
@@ -270,16 +269,16 @@ export class Palette implements ng.IDirective {
         };
     }
 
-    private _searchComponents = (searchText:string, categories:any):void => {
+    private _searchComponents = (searchText: string, categories: any): void => {
         let displaySortedCategories = angular.copy(categories);
         if (searchText != '') {
-            angular.forEach(categories, function (category:any, categoryKey) {
+            angular.forEach(categories, function (category: any, categoryKey) {
 
-                angular.forEach(category, function (subcategory:Array<LeftPaletteComponent>, subcategoryKey) {
+                angular.forEach(category, function (subcategory: Array<LeftPaletteComponent>, subcategoryKey) {
                     let filteredResources = [];
-                    angular.forEach(subcategory, function (component:LeftPaletteComponent) {
+                    angular.forEach(subcategory, function (component: LeftPaletteComponent) {
 
-                        let resourceFilterTerm:string = component.searchFilterTerms.toLowerCase();
+                        let resourceFilterTerm: string = component.searchFilterTerms.toLowerCase();
                         if (resourceFilterTerm.indexOf(searchText.toLowerCase()) >= 0) {
                             filteredResources.push(component);
                         }
@@ -288,11 +287,11 @@ export class Palette implements ng.IDirective {
                         displaySortedCategories[categoryKey][subcategoryKey] = filteredResources;
                     }
                     else {
-                        delete  displaySortedCategories[categoryKey][subcategoryKey];
+                        delete displaySortedCategories[categoryKey][subcategoryKey];
                     }
                 });
                 if (!(Object.keys(displaySortedCategories[categoryKey]).length > 0)) {
-                    delete  displaySortedCategories[categoryKey];
+                    delete displaySortedCategories[categoryKey];
                 }
 
             });
@@ -301,16 +300,16 @@ export class Palette implements ng.IDirective {
     };
 
     public static factory = ($log,
-                             LeftPaletteLoaderService,
-                             sdcConfig,
-                             ComponentFactory,
-                             ComponentInstanceFactory,
-                             NodesFactory,
-                             CompositionGraphGeneralUtils,
-                             EventListenerService,
-                             sdcMenu,
-                             ModalsHandler
-                            ) => {
+        LeftPaletteLoaderService,
+        sdcConfig,
+        ComponentFactory,
+        ComponentInstanceFactory,
+        NodesFactory,
+        CompositionGraphGeneralUtils,
+        EventListenerService,
+        sdcMenu,
+        ModalsHandler
+    ) => {
         return new Palette($log,
             LeftPaletteLoaderService,
             sdcConfig,
