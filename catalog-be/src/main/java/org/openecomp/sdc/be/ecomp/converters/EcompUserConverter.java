@@ -21,8 +21,9 @@
 package org.openecomp.sdc.be.ecomp.converters;
 
 import fj.data.Either;
-import org.openecomp.portalsdk.core.restful.domain.EcompRole;
-import org.openecomp.portalsdk.core.restful.domain.EcompUser;
+
+import org.onap.portalsdk.core.restful.domain.EcompRole;
+import org.onap.portalsdk.core.restful.domain.EcompUser;
 import org.openecomp.sdc.be.dao.utils.UserStatusEnum;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.user.Role;

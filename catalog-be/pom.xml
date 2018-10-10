@@ -424,7 +424,7 @@
 
         <!-- Inserted for ECOMP Portal Integration -->
         <dependency>
-            <groupId>org.openecomp.ecompsdkos</groupId>
+            <groupId>org.onap.portal.sdk</groupId>
             <artifactId>epsdk-fw</artifactId>
             <version>${ecomp.version}</version>
             <scope>compile</scope>
