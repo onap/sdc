@@ -28,7 +28,7 @@ import { ModulesNodesStyle } from "../common/style/module-node-style";
 import { GRAPH_EVENTS } from "app/utils";
 import { EventListenerService } from "app/services";
 import '@bardit/cytoscape-expand-collapse';
-import {AngularJSBridge} from "../../../services/angular-js-bridge-service";
+import { AngularJSBridge } from "../../../services/angular-js-bridge-service";
 
 interface IDeploymentGraphScope extends ng.IScope {
     component: Component;
