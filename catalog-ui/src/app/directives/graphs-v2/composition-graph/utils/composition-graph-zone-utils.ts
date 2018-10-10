@@ -1,26 +1,26 @@
-import {PolicyInstance} from "app/models/graph/zones/policy-instance";
-import {ZoneInstance, ZoneInstanceType, ZoneInstanceAssignmentType} from "app/models/graph/zones/zone-instance";
-import {Zone} from "app/models/graph/zones/zone";
-import {DynamicComponentService} from "app/ng2/services/dynamic-component.service";
-import {PaletteAnimationComponent} from "app/ng2/components/ui/palette-animation/palette-animation.component";
-import {Point, LeftPaletteMetadataTypes, Component} from "../../../../models";
-import {CanvasHandleTypes} from "app/utils";
-import {PoliciesService} from "../../../../ng2/services/policies.service";
-import {Observable} from "rxjs";
-import {GroupsService} from "../../../../ng2/services/groups.service";
-import {GroupInstance} from "app/models/graph/zones/group-instance";
+import { PolicyInstance } from "app/models/graph/zones/policy-instance";
+import { ZoneInstance, ZoneInstanceType, ZoneInstanceAssignmentType } from "app/models/graph/zones/zone-instance";
+import { Zone } from "app/models/graph/zones/zone";
+import { DynamicComponentService } from "app/ng2/services/dynamic-component.service";
+import { PaletteAnimationComponent } from "app/ng2/components/ui/palette-animation/palette-animation.component";
+import { Point, LeftPaletteMetadataTypes, Component } from "../../../../models";
+import { CanvasHandleTypes } from "app/utils";
+import { PoliciesService } from "../../../../ng2/services/policies.service";
+import { Observable } from "rxjs";
+import { GroupsService } from "../../../../ng2/services/groups.service";
+import { GroupInstance } from "app/models/graph/zones/group-instance";
 
 
 export class CompositionGraphZoneUtils {
 
-    constructor(private dynamicComponentService:DynamicComponentService,
-                private policiesService:PoliciesService,
-                private groupsService:GroupsService) {
+    constructor(private dynamicComponentService: DynamicComponentService,
+        private policiesService: PoliciesService,
+        private groupsService: GroupsService) {
     }
 
 
-    public createCompositionZones = ():Array<Zone> => {
-        let zones:Array<Zone> = [];
+    public createCompositionZones = (): Array<Zone> => {
+        let zones: Array<Zone> = [];
 
         zones[ZoneInstanceType.POLICY] = new Zone('Policies', 'P', ZoneInstanceType.POLICY);
         zones[ZoneInstanceType.GROUP] = new Zone('Groups', 'G', ZoneInstanceType.GROUP);
@@ -28,12 +28,12 @@ export class CompositionGraphZoneUtils {
         return zones;
     }
 
-    public showZone = (zone:Zone):void => {
+    public showZone = (zone: Zone): void => {
         zone.visible = true;
         zone.minimized = false;
     }
 
-    public getZoneTypeForPaletteComponent = (componentCategory:LeftPaletteMetadataTypes) => {
+    public getZoneTypeForPaletteComponent = (componentCategory: LeftPaletteMetadataTypes) => {
         if (componentCategory == LeftPaletteMetadataTypes.Group) {
             return ZoneInstanceType.GROUP;
         } else if (componentCategory == LeftPaletteMetadataTypes.Policy) {
@@ -41,10 +41,10 @@ export class CompositionGraphZoneUtils {
         }
     };
 
-    public initZoneInstances(zones:Array<Zone>, component:Component) {
+    public initZoneInstances(zones: Array<Zone>, component: Component) {
         if (component.groupInstances && component.groupInstances.length) {
             this.showZone(zones[ZoneInstanceType.GROUP]);
-            _.forEach(component.groupInstances, (group:GroupInstance) => {
+            _.forEach(component.groupInstances, (group: GroupInstance) => {
                 let newInstance = new ZoneInstance(group, component);
                 this.addInstanceToZone(zones[ZoneInstanceType.GROUP], newInstance);
             });
@@ -52,7 +52,7 @@ export class CompositionGraphZoneUtils {
 
         if (component.policies && component.policies.length) {
             this.showZone(zones[ZoneInstanceType.POLICY]);
-            _.forEach(component.policies, (policy:PolicyInstance) => {
+            _.forEach(component.policies, (policy: PolicyInstance) => {
                 let newInstance = new ZoneInstance(policy, component);
                 this.addInstanceToZone(zones[ZoneInstanceType.POLICY], newInstance);
 
@@ -60,19 +60,19 @@ export class CompositionGraphZoneUtils {
         }
     }
 
-    public findAndUpdateZoneInstanceData (zones: Array<Zone>, instanceData:PolicyInstance | GroupInstance) {
-        _.forEach(zones, (zone:Zone) => {
-            _.forEach(zone.instances, (zoneInstance:ZoneInstance) => {
-                if(zoneInstance.instanceData.uniqueId === instanceData.uniqueId){
+    public findAndUpdateZoneInstanceData(zones: Array<Zone>, instanceData: PolicyInstance | GroupInstance) {
+        _.forEach(zones, (zone: Zone) => {
+            _.forEach(zone.instances, (zoneInstance: ZoneInstance) => {
+                if (zoneInstance.instanceData.uniqueId === instanceData.uniqueId) {
                     zoneInstance.updateInstanceData(instanceData);
                 }
             });
         });
     }
 
-    public updateTargetsOrMembersOnCanvasDelete = (canvasNodeID:string, zones:Array<Zone>, type:ZoneInstanceAssignmentType):void => {
+    public updateTargetsOrMembersOnCanvasDelete = (canvasNodeID: string, zones: Array<Zone>, type: ZoneInstanceAssignmentType): void => {
         _.forEach(zones, (zone) => {
-            _.forEach(zone.instances, (zoneInstance:ZoneInstance) => {
+            _.forEach(zone.instances, (zoneInstance: ZoneInstance) => {
                 if (zoneInstance.isAlreadyAssigned(canvasNodeID)) {
                     zoneInstance.addOrRemoveAssignment(canvasNodeID, type);
                     //remove it from our list of BE targets and members as well (so that it will not be sent in future calls to BE).
@@ -82,7 +82,7 @@ export class CompositionGraphZoneUtils {
         });
     };
 
-    public createZoneInstanceFromLeftPalette = (zoneType:ZoneInstanceType, component:Component, paletteComponentType:string):Observable<ZoneInstance> => {
+    public createZoneInstanceFromLeftPalette = (zoneType: ZoneInstanceType, component: Component, paletteComponentType: string): Observable<ZoneInstance> => {
         if (zoneType === ZoneInstanceType.POLICY) {
             return this.policiesService.createPolicyInstance(component.componentType, component.uniqueId, paletteComponentType).map(response => {
                 let newInstance = new PolicyInstance(response);
@@ -98,16 +98,16 @@ export class CompositionGraphZoneUtils {
         }
     }
 
-    public addInstanceToZone(zone:Zone, instance:ZoneInstance, hide?:boolean) {
-        if(hide){
+    public addInstanceToZone(zone: Zone, instance: ZoneInstance, hide?: boolean) {
+        if (hide) {
             instance.hidden = true;
         }
         zone.instances.push(instance);
 
     };
 
-    private findZoneCoordinates(zoneType):Point {
-        let point:Point = new Point(0, 0);
+    private findZoneCoordinates(zoneType): Point {
+        let point: Point = new Point(0, 0);
         let zone = angular.element(document.querySelector('.' + zoneType + '-zone'));
         let wrapperZone = zone.offsetParent();
         point.x = zone.prop('offsetLeft') + wrapperZone.prop('offsetLeft');
@@ -115,7 +115,7 @@ export class CompositionGraphZoneUtils {
         return point;
     }
 
-    public createPaletteToZoneAnimation = (startPoint:Point, zoneType:ZoneInstanceType, newInstance:ZoneInstance) => {
+    public createPaletteToZoneAnimation = (startPoint: Point, zoneType: ZoneInstanceType, newInstance: ZoneInstance) => {
         let zoneTypeName = ZoneInstanceType[zoneType].toLowerCase();
         let paletteToZoneAnimation = this.dynamicComponentService.createDynamicComponent(PaletteAnimationComponent);
         paletteToZoneAnimation.instance.from = startPoint;
@@ -126,56 +126,56 @@ export class CompositionGraphZoneUtils {
         paletteToZoneAnimation.instance.runAnimation();
     }
 
-    public startCyTagMode = (cy:Cy.Instance) => {
+    public startCyTagMode = (cy: Cy.Instance) => {
         cy.autolock(true);
         cy.nodes().unselectify();
         cy.emit('tagstart'); //dont need to show handles because they're already visible bcz of hover event
 
     };
 
-    public endCyTagMode = (cy:Cy.Instance) => {
+    public endCyTagMode = (cy: Cy.Instance) => {
         cy.emit('tagend');
         cy.nodes().selectify();
         cy.autolock(false);
     };
 
-    public handleTagClick = (cy:Cy.Instance, zoneInstance:ZoneInstance, nodeId:string) => {
+    public handleTagClick = (cy: Cy.Instance, zoneInstance: ZoneInstance, nodeId: string) => {
         zoneInstance.addOrRemoveAssignment(nodeId, ZoneInstanceAssignmentType.COMPONENT_INSTANCES);
         this.showZoneTagIndicationForNode(nodeId, zoneInstance, cy);
     };
 
-    public showGroupZoneIndications = (groupInstances:Array<ZoneInstance>, policyInstance:ZoneInstance) => {
-        groupInstances.forEach((groupInstance:ZoneInstance)=> {
-            let handle:string = this.getCorrectHandleForNode(groupInstance.instanceData.uniqueId, policyInstance);
+    public showGroupZoneIndications = (groupInstances: Array<ZoneInstance>, policyInstance: ZoneInstance) => {
+        groupInstances.forEach((groupInstance: ZoneInstance) => {
+            let handle: string = this.getCorrectHandleForNode(groupInstance.instanceData.uniqueId, policyInstance);
             groupInstance.showHandle(handle);
         })
     };
 
-    public hideGroupZoneIndications = (instances:Array<ZoneInstance>) => {
+    public hideGroupZoneIndications = (instances: Array<ZoneInstance>) => {
         instances.forEach((instance) => {
             instance.hideHandle();
         })
     }
 
-    public showZoneTagIndications = (cy:Cy.Instance, zoneInstance:ZoneInstance) => {
+    public showZoneTagIndications = (cy: Cy.Instance, zoneInstance: ZoneInstance) => {
 
         cy.nodes().forEach(node => {
-            let handleType:string = this.getCorrectHandleForNode(node.id(), zoneInstance);
+            let handleType: string = this.getCorrectHandleForNode(node.id(), zoneInstance);
             cy.emit('showhandle', [node, handleType]);
         });
     };
 
-    public showZoneTagIndicationForNode = (nodeId:string, zoneInstance:ZoneInstance, cy:Cy.Instance) => {
+    public showZoneTagIndicationForNode = (nodeId: string, zoneInstance: ZoneInstance, cy: Cy.Instance) => {
         let node = cy.getElementById(nodeId);
-        let handleType:string = this.getCorrectHandleForNode(nodeId, zoneInstance);
+        let handleType: string = this.getCorrectHandleForNode(nodeId, zoneInstance);
         cy.emit('showhandle', [node, handleType]);
     }
 
-    public hideZoneTagIndications = (cy:Cy.Instance) => {
+    public hideZoneTagIndications = (cy: Cy.Instance) => {
         cy.emit('hidehandles');
     };
 
-    public getCorrectHandleForNode = (nodeId:string, zoneInstance:ZoneInstance):string => {
+    public getCorrectHandleForNode = (nodeId: string, zoneInstance: ZoneInstance): string => {
         if (zoneInstance.isAlreadyAssigned(nodeId)) {
             if (zoneInstance.type == ZoneInstanceType.POLICY) {
                 return CanvasHandleTypes.TAGGED_POLICY;
