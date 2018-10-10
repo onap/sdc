@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bada0100_c6ca22a1",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/datamodel/UiComponentDataConverterTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-10-10T14:55:57Z",
+      "side": 1,
+      "message": "please remove the use of wild card import",
+      "range": {
+        "startLine": 38,
+        "startChar": 42,
+        "endLine": 38,
+        "endChar": 47
+      },
+      "revId": "3c93fe54a51612cae42b19bffd316d07e34ad29e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_26d68e50",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/datamodel/UiComponentDataConverterTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-10-10T14:55:57Z",
+      "side": 1,
+      "message": "please remove the use of wild card import",
+      "range": {
+        "startLine": 40,
+        "startChar": 30,
+        "endLine": 40,
+        "endChar": 36
+      },
+      "revId": "3c93fe54a51612cae42b19bffd316d07e34ad29e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
