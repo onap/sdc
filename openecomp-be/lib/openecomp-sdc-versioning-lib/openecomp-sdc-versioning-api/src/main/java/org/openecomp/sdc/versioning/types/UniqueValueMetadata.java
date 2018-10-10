@@ -20,30 +20,15 @@
 
 package org.openecomp.sdc.versioning.types;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 import java.util.List;
 
+@Getter
+@Setter
+@AllArgsConstructor
 public class UniqueValueMetadata {
   private String type;
   private List<String> uniqueConstraintIdentifiers;
-
-  public UniqueValueMetadata(String type, List<String> contextIdentifierNames) {
-    this.type = type;
-    this.uniqueConstraintIdentifiers = contextIdentifierNames;
-  }
-
-  public String getType() {
-    return type;
-  }
-
-  public void setType(String type) {
-    this.type = type;
-  }
-
-  public List<String> getUniqueConstraintIdentifiers() {
-    return uniqueConstraintIdentifiers;
-  }
-
-  public void setUniqueConstraintIdentifiers(List<String> uniqueConstraintIdentifiers) {
-    this.uniqueConstraintIdentifiers = uniqueConstraintIdentifiers;
-  }
 }
