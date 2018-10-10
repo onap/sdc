@@ -405,6 +405,12 @@
             <artifactId>gremlin-groovy</artifactId>
             <version>3.0.1-incubating</version>
             <scope>compile</scope>
+            <exclusions>
+                <exclusion>
+                    <artifactId>groovy</artifactId>
+                    <groupId>org.codehaus.groovy</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- CASSANDRA -->
