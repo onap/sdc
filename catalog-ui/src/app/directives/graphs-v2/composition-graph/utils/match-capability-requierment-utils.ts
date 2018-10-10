@@ -23,7 +23,7 @@ import {
     Requirement, CompositionCiLinkBase, CapabilitiesGroup, RequirementsGroup, Match,
     CompositionCiNodeBase, Component, Capability
 } from "app/models";
-import {ComponentInstance} from "../../../../models/componentsInstances/componentInstance";
+import { ComponentInstance } from "../../../../models/componentsInstances/componentInstance";
 /**
  * Created by obarda on 1/1/2017.
  */
@@ -35,8 +35,8 @@ export class MatchCapabilitiesRequirementsUtils {
      * @param filteredNodesData
      * @param cy
      */
-    public highlightMatchingComponents(filteredNodesData, cy:Cy.Instance) {
-        _.each(filteredNodesData, (data:any) => {
+    public highlightMatchingComponents(filteredNodesData, cy: Cy.Instance) {
+        _.each(filteredNodesData, (data: any) => {
             let node = cy.getElementById(data.id);
             cy.emit('showhandle', [node]);
         });
@@ -49,16 +49,16 @@ export class MatchCapabilitiesRequirementsUtils {
      * @param cy
      * @param hoveredNodeData
      */
-    public fadeNonMachingComponents(filteredNodesData, nodesData, cy:Cy.Instance, hoveredNodeData?) {
+    public fadeNonMachingComponents(filteredNodesData, nodesData, cy: Cy.Instance, hoveredNodeData?) {
         let fadeNodes = _.xorWith(nodesData, filteredNodesData, (node1, node2) => {
             return node1.id === node2.id;
         });
         if (hoveredNodeData) {
             _.remove(fadeNodes, hoveredNodeData);
         }
-        cy.batch(()=> {
+        cy.batch(() => {
             _.each(fadeNodes, (node) => {
-                cy.getElementById(node.id).style({'background-image-opacity': 0.4});
+                cy.getElementById(node.id).style({ 'background-image-opacity': 0.4 });
             });
         })
     }
@@ -67,21 +67,21 @@ export class MatchCapabilitiesRequirementsUtils {
      * Resets all nodes to regular opacity
      * @param cy
      */
-    public resetFadedNodes(cy:Cy.Instance) {
-        cy.batch(()=> {
-            cy.nodes().style({'background-image-opacity': 1});
+    public resetFadedNodes(cy: Cy.Instance) {
+        cy.batch(() => {
+            cy.nodes().style({ 'background-image-opacity': 1 });
         })
     }
 
-    private static isRequirementFulfilled(fromNodeId:string, requirement:any, links:Array<CompositionCiLinkBase>):boolean {
-        if(requirement.maxOccurrences === 'UNBOUNDED'){
+    private static isRequirementFulfilled(fromNodeId: string, requirement: any, links: Array<CompositionCiLinkBase>): boolean {
+        if (requirement.maxOccurrences === 'UNBOUNDED') {
             return false;
         }
-        let linksWithThisReq:Array<CompositionCiLinkBase> = _.filter(links, {
+        let linksWithThisReq: Array<CompositionCiLinkBase> = _.filter(links, {
             'relation': {
                 'fromNode': fromNodeId,
                 'relationships': [{
-                    'relation':{
+                    'relation': {
                         'requirementOwnerId': requirement.ownerId,
                         'requirement': requirement.name,
                         'relationship': {
@@ -95,7 +95,7 @@ export class MatchCapabilitiesRequirementsUtils {
         return linksWithThisReq.length == requirement.maxOccurrences;
     };
 
-    private static isMatch(requirement:Requirement, capability:Capability):boolean {
+    private static isMatch(requirement: Requirement, capability: Capability): boolean {
         if (capability.type === requirement.capability) {
             if (requirement.node) {
                 if (_.includes(capability.capabilitySources, requirement.node)) {
@@ -108,15 +108,15 @@ export class MatchCapabilitiesRequirementsUtils {
         return false;
     };
 
-    public getMatchedRequirementsCapabilities(fromComponentInstance:ComponentInstance,
-                                              toComponentInstance:ComponentInstance,
-                                              links:Array<CompositionCiLinkBase>):Array<Match> {
-        let fromToMatches:Array<Match> = this.getMatches(fromComponentInstance.requirements,
+    public getMatchedRequirementsCapabilities(fromComponentInstance: ComponentInstance,
+        toComponentInstance: ComponentInstance,
+        links: Array<CompositionCiLinkBase>): Array<Match> {
+        let fromToMatches: Array<Match> = this.getMatches(fromComponentInstance.requirements,
             toComponentInstance.capabilities,
             links,
             fromComponentInstance.uniqueId,
             toComponentInstance.uniqueId, true);
-        let toFromMatches:Array<Match> = this.getMatches(toComponentInstance.requirements,
+        let toFromMatches: Array<Match> = this.getMatches(toComponentInstance.requirements,
             fromComponentInstance.capabilities,
             links,
             fromComponentInstance.uniqueId,
@@ -127,16 +127,16 @@ export class MatchCapabilitiesRequirementsUtils {
 
     /***** REFACTORED FUNCTIONS START HERE *****/
 
-    public getMatches(requirements:RequirementsGroup, capabilities:CapabilitiesGroup, links:Array<CompositionCiLinkBase>,
-                      fromId:string, toId:string, isFromTo: boolean):Array<Match> {
-        let matches:Array<Match> = [];
+    public getMatches(requirements: RequirementsGroup, capabilities: CapabilitiesGroup, links: Array<CompositionCiLinkBase>,
+        fromId: string, toId: string, isFromTo: boolean): Array<Match> {
+        let matches: Array<Match> = [];
         let unfulfilledReqs = this.getUnfulfilledRequirements(fromId, requirements, links);
-        _.forEach(unfulfilledReqs, (req)=> {
-            _.forEach(_.flatten(_.values(capabilities)), (capability:Capability)=> {
+        _.forEach(unfulfilledReqs, (req) => {
+            _.forEach(_.flatten(_.values(capabilities)), (capability: Capability) => {
                 if (MatchCapabilitiesRequirementsUtils.isMatch(req, capability)) {
-                    if(isFromTo) {
+                    if (isFromTo) {
                         matches.push(new Match(req, capability, isFromTo, fromId, toId));
-                    } else{
+                    } else {
                         matches.push(new Match(req, capability, isFromTo, toId, fromId));
                     }
                 }
@@ -145,10 +145,10 @@ export class MatchCapabilitiesRequirementsUtils {
         return matches;
     }
 
-    public getUnfulfilledRequirements = (fromNodeId:string, requirements:RequirementsGroup, links:Array<CompositionCiLinkBase>):Array<Requirement>=> {
+    public getUnfulfilledRequirements = (fromNodeId: string, requirements: RequirementsGroup, links: Array<CompositionCiLinkBase>): Array<Requirement> => {
 
-        let requirementArray:Array<Requirement> = [];
-        _.forEach(_.flatten(_.values(requirements)), (requirement:Requirement)=> {
+        let requirementArray: Array<Requirement> = [];
+        _.forEach(_.flatten(_.values(requirements)), (requirement: Requirement) => {
             if (requirement.name !== 'dependency' && requirement.parentName !== 'dependency' && !MatchCapabilitiesRequirementsUtils.isRequirementFulfilled(fromNodeId, requirement, links)) {
                 requirementArray.push(requirement);
             }
@@ -163,9 +163,9 @@ export class MatchCapabilitiesRequirementsUtils {
      * @param capabilities
      * @returns {boolean}
      */
-    public containsMatch = (requirements:Array<Requirement>, capabilities:CapabilitiesGroup):boolean => {
-        return _.some(requirements, (req:Requirement)=> {
-            return _.some(_.flatten(_.values(capabilities)), (capability:Capability) => {
+    public containsMatch = (requirements: Array<Requirement>, capabilities: CapabilitiesGroup): boolean => {
+        return _.some(requirements, (req: Requirement) => {
+            return _.some(_.flatten(_.values(capabilities)), (capability: Capability) => {
                 return MatchCapabilitiesRequirementsUtils.isMatch(req, capability);
             });
         });
@@ -178,11 +178,11 @@ export class MatchCapabilitiesRequirementsUtils {
      * 2. node has an unfulfilled requirement that matches the component's capabilities
      * 3. vl is passed in which has the capability to fulfill requirement from component and requirement on node.
      */
-    public findMatchingNodes(component:Component, nodeDataArray:Array<CompositionCiNodeBase>,
-                             links:Array<CompositionCiLinkBase>):Array<any> //TODO allow for VL array and TEST
+    public findMatchingNodes(component: Component, nodeDataArray: Array<CompositionCiNodeBase>,
+        links: Array<CompositionCiLinkBase>): Array<any> //TODO allow for VL array and TEST
     {
-        let componentRequirements:Array<Requirement> = this.getUnfulfilledRequirements(component.uniqueId, component.requirements, links);
-        return _.filter(nodeDataArray, (node:any)=> {
+        let componentRequirements: Array<Requirement> = this.getUnfulfilledRequirements(component.uniqueId, component.requirements, links);
+        return _.filter(nodeDataArray, (node: any) => {
             if (node && node.componentInstance) {
 
                 //Check if component has an unfulfilled requirement that can be met by one of nodes's capabilities (#1)
@@ -190,7 +190,7 @@ export class MatchCapabilitiesRequirementsUtils {
                     return true;
 
                 } else { //Check if node has unfulfilled requirement that can be filled by component (#2)
-                    let nodeRequirements:Array<Requirement> = this.getUnfulfilledRequirements(node.componentInstance.uniqueId, node.componentInstance.requirements, links);
+                    let nodeRequirements: Array<Requirement> = this.getUnfulfilledRequirements(node.componentInstance.uniqueId, node.componentInstance.requirements, links);
                     if (!nodeRequirements.length) return false;
                     if (this.containsMatch(nodeRequirements, component.capabilities)) {
                         return true;
