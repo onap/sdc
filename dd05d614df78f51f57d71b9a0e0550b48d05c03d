@@ -1,0 +1,228 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bada0100_3b4ea7c2",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
+        "patchSetId": 19
+      },
+      "lineNbr": 2621,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-10-10T14:12:44Z",
+      "side": 1,
+      "message": "you are copying a single instance why do you need a map and not just the one instance?",
+      "range": {
+        "startLine": 2621,
+        "startChar": 11,
+        "endLine": 2621,
+        "endChar": 48
+      },
+      "revId": "dd05d614df78f51f57d71b9a0e0550b48d05c03d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_1b664352",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
+        "patchSetId": 19
+      },
+      "lineNbr": 2663,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-10-10T14:12:44Z",
+      "side": 1,
+      "message": "the unlock need to be done in the end of the logic since thsi will alow another call to interfer with the logic",
+      "range": {
+        "startLine": 2650,
+        "startChar": 8,
+        "endLine": 2663,
+        "endChar": 9
+      },
+      "revId": "dd05d614df78f51f57d71b9a0e0550b48d05c03d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_dbd67bc5",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
+        "patchSetId": 19
+      },
+      "lineNbr": 2798,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-10-10T14:12:44Z",
+      "side": 1,
+      "message": "why is this needed it is never used?",
+      "range": {
+        "startLine": 2798,
+        "startChar": 28,
+        "endLine": 2798,
+        "endChar": 48
+      },
+      "revId": "dd05d614df78f51f57d71b9a0e0550b48d05c03d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_3be547a8",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
+        "patchSetId": 19
+      },
+      "lineNbr": 2841,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-10-10T14:12:44Z",
+      "side": 1,
+      "message": "we have a utility class for thsi UniqueIdBuilder do not create uniqid by yourself",
+      "range": {
+        "startLine": 2841,
+        "startChar": 44,
+        "endLine": 2841,
+        "endChar": 56
+      },
+      "revId": "dd05d614df78f51f57d71b9a0e0550b48d05c03d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_bbe8577d",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
+        "patchSetId": 19
+      },
+      "lineNbr": 2864,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-10-10T14:12:44Z",
+      "side": 1,
+      "message": "why do you need to copy additnel info it does not exist on the instanc level nor is it used.",
+      "range": {
+        "startLine": 2864,
+        "startChar": 43,
+        "endLine": 2864,
+        "endChar": 82
+      },
+      "revId": "dd05d614df78f51f57d71b9a0e0550b48d05c03d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_5bf92b4c",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
+        "patchSetId": 19
+      },
+      "lineNbr": 2893,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-10-10T14:12:44Z",
+      "side": 1,
+      "message": "your are doing it twice store it in avariable",
+      "range": {
+        "startLine": 2893,
+        "startChar": 61,
+        "endLine": 2893,
+        "endChar": 104
+      },
+      "revId": "dd05d614df78f51f57d71b9a0e0550b48d05c03d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_1bf4035a",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
+        "patchSetId": 19
+      },
+      "lineNbr": 2895,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-10-10T14:12:44Z",
+      "side": 1,
+      "message": "use UniqueIdBuilder do not create auniq ide your self",
+      "range": {
+        "startLine": 2895,
+        "startChar": 31,
+        "endLine": 2895,
+        "endChar": 47
+      },
+      "revId": "dd05d614df78f51f57d71b9a0e0550b48d05c03d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_dba43b59",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
+        "patchSetId": 19
+      },
+      "lineNbr": 2950,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-10-10T14:12:44Z",
+      "side": 1,
+      "message": "you alread did thsi vlidation in the beging why do you need it again?",
+      "range": {
+        "startLine": 2946,
+        "startChar": 7,
+        "endLine": 2950,
+        "endChar": 9
+      },
+      "revId": "dd05d614df78f51f57d71b9a0e0550b48d05c03d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_db72fbe4",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/ComponentInstanceServlet.java",
+        "patchSetId": 19
+      },
+      "lineNbr": 1243,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-10-10T14:12:44Z",
+      "side": 1,
+      "message": "this will couse the loger not to print the stack trace plese remove the {} and put e",
+      "range": {
+        "startLine": 1243,
+        "startChar": 77,
+        "endLine": 1243,
+        "endChar": 89
+      },
+      "revId": "dd05d614df78f51f57d71b9a0e0550b48d05c03d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_7b774fd5",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogicTest.java",
+        "patchSetId": 19
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-10-10T14:12:44Z",
+      "side": 1,
+      "message": "thank you for adding the ut",
+      "revId": "dd05d614df78f51f57d71b9a0e0550b48d05c03d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
