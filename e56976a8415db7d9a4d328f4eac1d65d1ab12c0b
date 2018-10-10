@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bada0100_469f1260",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 3200,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-10-10T15:28:28Z",
+      "side": 1,
+      "message": "this needs to happen only on success not always.",
+      "range": {
+        "startLine": 3200,
+        "startChar": 12,
+        "endLine": 3200,
+        "endChar": 37
+      },
+      "revId": "e56976a8415db7d9a4d328f4eac1d65d1ab12c0b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_86ce5a82",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/ComponentInstanceServlet.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1326,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-10-10T15:28:28Z",
+      "side": 1,
+      "message": "this logic should not be in the servlet move it to the business logic",
+      "range": {
+        "startLine": 1305,
+        "startChar": 3,
+        "endLine": 1326,
+        "endChar": 71
+      },
+      "revId": "e56976a8415db7d9a4d328f4eac1d65d1ab12c0b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_66c5765a",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/ComponentInstanceServlet.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1327,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-10-10T15:28:28Z",
+      "side": 1,
+      "message": "the delete operation can succeed or faile there is no in between.",
+      "range": {
+        "startLine": 1327,
+        "startChar": 12,
+        "endLine": 1327,
+        "endChar": 66
+      },
+      "revId": "e56976a8415db7d9a4d328f4eac1d65d1ab12c0b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_26a76ebf",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/ComponentInstanceServlet.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1387,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-10-10T15:28:28Z",
+      "side": 1,
+      "message": "thsi needs to be done in the business logic",
+      "range": {
+        "startLine": 1379,
+        "startChar": 12,
+        "endLine": 1387,
+        "endChar": 13
+      },
+      "revId": "e56976a8415db7d9a4d328f4eac1d65d1ab12c0b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
