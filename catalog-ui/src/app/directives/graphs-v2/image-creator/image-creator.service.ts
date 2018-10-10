@@ -29,9 +29,9 @@ export interface ICanvasImage {
 'use strict';
 export class ImageCreatorService {
     static '$inject' = ['$q'];
-    private _canvas:HTMLCanvasElement;
+    private _canvas: HTMLCanvasElement;
 
-    constructor(private $q:ng.IQService) {
+    constructor(private $q: ng.IQService) {
         this._canvas = <HTMLCanvasElement>$('<canvas>')[0];
         this._canvas.setAttribute('style', 'display:none');
 
@@ -46,10 +46,10 @@ export class ImageCreatorService {
      * @param canvasHeight 
      * returns a PROMISE
      */
-    getMultiLayerBase64Image(canvasImages: ICanvasImage[], canvasWidth?:number, canvasHeight?:number):ng.IPromise<string> {
+    getMultiLayerBase64Image(canvasImages: ICanvasImage[], canvasWidth?: number, canvasHeight?: number): ng.IPromise<string> {
         const deferred = this.$q.defer<string>();
 
-        if(canvasImages && canvasImages.length === 0){
+        if (canvasImages && canvasImages.length === 0) {
             return null;
         }
 
@@ -61,7 +61,7 @@ export class ImageCreatorService {
         let imagesLoaded = 0;
         const onImageLoaded = () => {
             imagesLoaded++;
-            if(imagesLoaded < canvasImages.length){
+            if (imagesLoaded < canvasImages.length) {
                 return;
             }
             this._canvas.setAttribute('width', canvasWidth.toString());
