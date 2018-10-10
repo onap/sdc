@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "bada0100_5b036b0f",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
+        "patchSetId": 19
+      },
+      "lineNbr": 2621,
+      "author": {
+        "id": 897
+      },
+      "writtenOn": "2018-10-10T14:27:04Z",
+      "side": 1,
+      "message": "This is just to provide a place holder for multiple copy pastes, we are finally pushing only one value to this.",
+      "parentUuid": "bada0100_3b4ea7c2",
+      "range": {
+        "startLine": 2621,
+        "startChar": 11,
+        "endLine": 2621,
+        "endChar": 48
+      },
+      "revId": "dd05d614df78f51f57d71b9a0e0550b48d05c03d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "bada0100_1b664352",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
         "patchSetId": 19
@@ -36,6 +60,30 @@
       "writtenOn": "2018-10-10T14:12:44Z",
       "side": 1,
       "message": "the unlock need to be done in the end of the logic since thsi will alow another call to interfer with the logic",
+      "range": {
+        "startLine": 2650,
+        "startChar": 8,
+        "endLine": 2663,
+        "endChar": 9
+      },
+      "revId": "dd05d614df78f51f57d71b9a0e0550b48d05c03d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_e60e4634",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
+        "patchSetId": 19
+      },
+      "lineNbr": 2663,
+      "author": {
+        "id": 897
+      },
+      "writtenOn": "2018-10-10T14:27:04Z",
+      "side": 1,
+      "message": "This is a erroneous condition, when we find the issue is with the action response, so we unlock the locked component and return the response.",
+      "parentUuid": "bada0100_1b664352",
       "range": {
         "startLine": 2650,
         "startChar": 8,
