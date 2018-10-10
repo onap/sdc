@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "bada0100_c620e29d",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/pom.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-10-10T14:26:05Z",
+      "side": 1,
+      "message": "Why junit and testng? Should we work just with junit?",
+      "parentUuid": "bada0100_7b5e6f47",
+      "revId": "f5fb778bfbec421387fd1b07969d4a5480e25468",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "bada0100_3b2f87a3",
         "filename": "openecomp-be/lib/openecomp-item-permissions-lib/openecomp-item-permissions-core/src/test/java/org/openecomp/sdc/itempermissions/dao/impl/PermissionsServicesImplTest.java",
         "patchSetId": 2
