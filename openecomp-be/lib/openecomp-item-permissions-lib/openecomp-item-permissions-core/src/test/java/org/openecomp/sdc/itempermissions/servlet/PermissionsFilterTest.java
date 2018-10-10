@@ -33,8 +33,9 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
 import org.openecomp.sdc.itempermissions.PermissionsServices;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
+import org.junit.Test;
+import org.junit.Before;
+
 
 public class PermissionsFilterTest {
 
@@ -45,7 +46,7 @@ public class PermissionsFilterTest {
     @Spy
     private PermissionsFilter permissionsFilter;
 
-    @BeforeMethod
+    @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
     }
