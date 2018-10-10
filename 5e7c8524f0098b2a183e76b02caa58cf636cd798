@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bada0100_00057279",
+        "filename": "openecomp-be/lib/openecomp-sdc-notification-lib/openecomp-sdc-notification-api/src/main/java/org/openecomp/sdc/notification/dao/types/LastSeenNotificationEntity.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-10-10T09:28:40Z",
+      "side": 1,
+      "message": "I think not including lastEventId in toString() was just the programmer\u0027s mistake.",
+      "revId": "5e7c8524f0098b2a183e76b02caa58cf636cd798",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
