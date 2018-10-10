@@ -182,8 +182,6 @@ public class SdcProxy extends HttpServlet {
         ServletInputStream inputStream = null;
         InputStreamEntity entity = null;
 
-        String contentType = request.getContentType();
-        ContentType myContent = ContentType.create(contentType);
         switch (methodEnum) {
             case GET:
                 proxyMethod = new HttpGet(uri);
@@ -191,13 +189,13 @@ public class SdcProxy extends HttpServlet {
             case POST:
                 proxyMethod = new HttpPost(uri);
                 inputStream = request.getInputStream();
-                entity = new InputStreamEntity(inputStream, myContent);
+                entity = new InputStreamEntity(inputStream, getContentType(request));
                 ((HttpPost) proxyMethod).setEntity(entity);
                 break;
             case PUT:
                 proxyMethod = new HttpPut(uri);
                 inputStream = request.getInputStream();
-                entity = new InputStreamEntity(inputStream, myContent);
+                entity = new InputStreamEntity(inputStream, getContentType(request));
                 ((HttpPut) proxyMethod).setEntity(entity);
                 break;
             case DELETE:
@@ -205,6 +203,11 @@ public class SdcProxy extends HttpServlet {
                 break;
         }
         return proxyMethod;
+    }
+
+    private ContentType getContentType(HttpServletRequest request) {
+        ContentType contentType = ContentType.parse(request.getContentType());
+        return ContentType.create(contentType.getMimeType());
     }
 
     private String getUseridFromRequest(HttpServletRequest request) {
