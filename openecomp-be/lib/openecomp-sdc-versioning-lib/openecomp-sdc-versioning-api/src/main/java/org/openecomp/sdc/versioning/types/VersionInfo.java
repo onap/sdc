@@ -20,12 +20,16 @@
 
 package org.openecomp.sdc.versioning.types;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.openecomp.sdc.versioning.dao.types.Version;
 import org.openecomp.sdc.versioning.dao.types.VersionStatus;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Getter
+@Setter
 public class VersionInfo {
   private Version activeVersion;
   private Version latestFinalVersion;
@@ -33,54 +37,6 @@ public class VersionInfo {
   private List<Version> finalVersions = new ArrayList<>();
   private VersionStatus status;
   private String lockingUser;
-
-  public Version getActiveVersion() {
-    return activeVersion;
-  }
-
-  public void setActiveVersion(Version activeVersion) {
-    this.activeVersion = activeVersion;
-  }
-
-  public Version getLatestFinalVersion() {
-    return latestFinalVersion;
-  }
-
-  public void setLatestFinalVersion(Version latestFinalVersion) {
-    this.latestFinalVersion = latestFinalVersion;
-  }
-
-  public List<Version> getViewableVersions() {
-    return viewableVersions;
-  }
-
-  public void setViewableVersions(List<Version> viewableVersions) {
-    this.viewableVersions = viewableVersions;
-  }
-
-  public List<Version> getFinalVersions() {
-    return finalVersions;
-  }
-
-  public void setFinalVersions(List<Version> finalVersions) {
-    this.finalVersions = finalVersions;
-  }
-
-  public VersionStatus getStatus() {
-    return status;
-  }
-
-  public void setStatus(VersionStatus status) {
-    this.status = status;
-  }
-
-  public String getLockingUser() {
-    return lockingUser;
-  }
-
-  public void setLockingUser(String lockingUser) {
-    this.lockingUser = lockingUser;
-  }
 
   @Override
   public String toString() {

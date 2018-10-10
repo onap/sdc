@@ -1,5 +1,7 @@
 package org.openecomp.sdc.versioning.types;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.openecomp.sdc.versioning.dao.types.VersionStatus;
 
 import java.util.Date;
@@ -7,6 +9,8 @@ import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 
+@Getter
+@Setter
 public class Item {
   private String id;
   private String type;
@@ -19,72 +23,8 @@ public class Item {
   private Date creationTime;
   private Date modificationTime;
 
-  public String getId() {
-    return id;
-  }
-
-  public void setId(String id) {
-    this.id = id;
-  }
-
-  public String getType() {
-    return type;
-  }
-
-  public void setType(String type) {
-    this.type = type;
-  }
-
-  public String getName() {
-    return name;
-  }
-
-  public void setName(String name) {
-    this.name = name;
-  }
-
-  public String getOwner() {
-    return owner;
-  }
-
-  public void setOwner(String owner) {
-    this.owner = owner;
-  }
-
-  public ItemStatus getStatus() {
-    return status;
-  }
-
-  public void setStatus(ItemStatus status) {
-    this.status = status;
-  }
-
-  public String getDescription() {
-    return description;
-  }
-
-  public void setDescription(String description) {
-    this.description = description;
-  }
-
-  public Map<String, Object> getProperties() {
-    return properties;
-  }
-
   public void addProperty(String key, Object value) {
     properties.put(key, value);
-  }
-
-  public void setProperties(Map<String, Object> properties) {
-    this.properties = properties;
-  }
-
-  public Map<VersionStatus, Integer> getVersionStatusCounters() {
-    return versionStatusCounters;
-  }
-
-  public void setVersionStatusCounters(Map<VersionStatus, Integer> versionStatusCounters) {
-    this.versionStatusCounters = versionStatusCounters;
   }
 
   public void addVersionStatus(VersionStatus versionStatus) {
@@ -102,21 +42,5 @@ public class Item {
         versionStatusCounters.put(versionStatus, counter - 1);
       }
     }
-  }
-
-  public Date getCreationTime() {
-    return creationTime;
-  }
-
-  public void setCreationTime(Date creationTime) {
-    this.creationTime = creationTime;
-  }
-
-  public Date getModificationTime() {
-    return modificationTime;
-  }
-
-  public void setModificationTime(Date modificationTime) {
-    this.modificationTime = modificationTime;
   }
 }
