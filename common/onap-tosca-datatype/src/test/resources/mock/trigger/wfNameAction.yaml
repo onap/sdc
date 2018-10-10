@@ -1,0 +1,27 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+
+topology_template:
+  description: topology template descroption
+
+  policies:
+    policyA:
+      type: tosca.policies.threshold
+      description: my description
+      targets: [ nodeA ]
+      triggers:
+        triggerA:
+          description: triggering event based on CPU
+          event_type: eventTypeA
+          schedule:
+            start_time: 2016-04-08T21:59:43.10-06:00
+            end_time: 2002-12-14
+          target_filter:
+            node: nodeA
+            requirement: reqA
+          condition:
+            constraint:
+              attName: { greater_than: 80 }
+            period: 1200 s
+            evaluations: 6
+            method: avg
+          action: deployment_workflow

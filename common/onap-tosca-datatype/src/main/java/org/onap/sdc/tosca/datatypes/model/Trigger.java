@@ -2,96 +2,101 @@ package org.onap.sdc.tosca.datatypes.model;
 
 public class Trigger {
 
-  private String description;
-  private String event_type;
-  private TimeInterval schedule;
-  private EventFilter target_filter;
-  private Constraint condition;
-  private Constraint constraint;
-  private String period;
-  private int evaluations;
-  private String method;
-  //action - String or operation?
-  private Object action;
+    private String description;
+    private String event_type;
+    private TimeInterval schedule;
+    private EventFilter target_filter;
+    private Condition condition;
+    private Object action;
 
+    @Override
+    public int hashCode() {
+        int result = getDescription() != null ? getDescription().hashCode() : 0;
+        result = 31 * result + getEvent_type().hashCode();
+        result = 31 * result + (getSchedule() != null ? getSchedule().hashCode() : 0);
+        result = 31 * result + (getTarget_filter() != null ? getTarget_filter().hashCode() : 0);
+        result = 31 * result + (getCondition() != null ? getCondition().hashCode() : 0);
+        result = 31 * result + getAction().hashCode();
+        return result;
+    }
 
-  public String getDescription() {
-    return description;
-  }
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Trigger)) {
+            return false;
+        }
 
-  public void setDescription(String description) {
-    this.description = description;
-  }
+        Trigger trigger = (Trigger) o;
 
-  public String getEvent_type() {
-    return event_type;
-  }
+        if (getDescription() != null ? !getDescription().equals(trigger.getDescription()) :
+                    trigger.getDescription() != null) {
+            return false;
+        }
+        if (!getEvent_type().equals(trigger.getEvent_type())) {
+            return false;
+        }
+        if (getSchedule() != null ? !getSchedule().equals(trigger.getSchedule()) : trigger.getSchedule() != null) {
+            return false;
+        }
+        if (getTarget_filter() != null ? !getTarget_filter().equals(trigger.getTarget_filter()) :
+                    trigger.getTarget_filter() != null) {
+            return false;
+        }
+        if (getCondition() != null ? !getCondition().equals(trigger.getCondition()) : trigger.getCondition() != null) {
+            return false;
+        }
+        return getAction().equals(trigger.getAction());
+    }
 
-  public void setEvent_type(String event_type) {
-    this.event_type = event_type;
-  }
+    public String getDescription() {
+        return description;
+    }
 
-  public TimeInterval getSchedule() {
-    return schedule;
-  }
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-  public void setSchedule(TimeInterval schedule) {
-    this.schedule = schedule;
-  }
+    public String getEvent_type() {
+        return event_type;
+    }
 
-  public EventFilter getTarget_filter() {
-    return target_filter;
-  }
+    public void setEvent_type(String eventType) {
+        this.event_type = eventType;
+    }
 
-  public void setTarget_filter(EventFilter target_filter) {
-    this.target_filter = target_filter;
-  }
+    public TimeInterval getSchedule() {
+        return schedule;
+    }
 
-  public Constraint getCondition() {
-    return condition;
-  }
+    public void setSchedule(TimeInterval schedule) {
+        this.schedule = schedule;
+    }
 
-  public void setCondition(Constraint condition) {
-    this.condition = condition;
-  }
+    public EventFilter getTarget_filter() {
+        return target_filter;
+    }
 
-  public Constraint getConstraint() {
-    return constraint;
-  }
+    public void setTarget_filter(EventFilter targetFilter) {
+        this.target_filter = targetFilter;
+    }
 
-  public void setConstraint(Constraint constraint) {
-    this.constraint = constraint;
-  }
+    public Condition getCondition() {
+        return condition;
+    }
 
-  public String getPeriod() {
-    return period;
-  }
+    public void setCondition(Condition condition) {
+        this.condition = condition;
+    }
 
-  public void setPeriod(String period) {
-    this.period = period;
-  }
+    public Object getAction() {
 
-  public int getEvaluations() {
-    return evaluations;
-  }
+        return action;
+    }
 
-  public void setEvaluations(int evaluations) {
-    this.evaluations = evaluations;
-  }
-
-  public String getMethod() {
-    return method;
-  }
-
-  public void setMethod(String method) {
-    this.method = method;
-  }
-
-  public Object getAction() {
-    return action;
-  }
-
-  public void setAction(Object action) {
-    this.action = action;
-  }
+    public void setAction(Object action) {
+        this.action = action;
+    }
 }
