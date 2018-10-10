@@ -19,7 +19,7 @@
  */
 
 import * as _ from "lodash";
-import {Module} from "app/models";
+import { Module } from "app/models";
 /**
  * Created by obarda on 12/21/2016.
  */
@@ -30,8 +30,8 @@ export class DeploymentGraphGeneralUtils {
 
     }
 
-    public findInstanceModule = (groupsArray:Array<Module>, componentInstanceId:string):string => {
-        let parentGroup:Module = _.find(groupsArray, (group:Module) => {
+    public findInstanceModule = (groupsArray: Array<Module>, componentInstanceId: string): string => {
+        let parentGroup: Module = _.find(groupsArray, (group: Module) => {
             return _.find((<any>Object).values(group.members), (member: string) => {
                 return member === componentInstanceId;
             });
