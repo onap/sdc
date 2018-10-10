@@ -1,3 +1,19 @@
+/*
+ * Copyright © 2016-2018 European Support Limited
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.openecomp.sdc.itempermissions.dao.impl;
 
 import static org.mockito.Matchers.anyObject;
@@ -91,7 +107,7 @@ public class PermissionsServicesImplTest {
     @Test
     public void testGetUserItemPermission() {
         Mockito.when(permissionsDaoMock.getUserItemPermission(anyString(), anyString()))
-                .thenReturn(Optional.of(PERMISSION));
+               .thenReturn(Optional.of(PERMISSION));
 
         Optional<String> permission = permissionsServices.getUserItemPermission(ITEM1_ID, USER1_ID);
 
@@ -101,21 +117,18 @@ public class PermissionsServicesImplTest {
 
     @Test
     public void testListItemPermissionsWhenNone() {
-        Collection<ItemPermissionsEntity> permissions =
-                permissionsServices.listItemPermissions(ITEM1_ID);
+        Collection<ItemPermissionsEntity> permissions = permissionsServices.listItemPermissions(ITEM1_ID);
         Assert.assertEquals(permissions.size(), 0);
     }
 
 
     @Test
     public void testListItemPermissions() {
-        doReturn(Arrays.asList(
-                createPermissionEntity(ITEM1_ID, USER1_ID, PERMISSION),
-                createPermissionEntity(ITEM1_ID, USER2_ID, PERMISSION)))
-                .when(permissionsDaoMock).listItemPermissions(anyObject());
+        doReturn(Arrays.asList(createPermissionEntity(ITEM1_ID, USER1_ID, PERMISSION),
+                createPermissionEntity(ITEM1_ID, USER2_ID, PERMISSION))).when(permissionsDaoMock)
+                                                                        .listItemPermissions(anyObject());
 
-        Collection<ItemPermissionsEntity> actual =
-                permissionsServices.listItemPermissions(ITEM1_ID);
+        Collection<ItemPermissionsEntity> actual = permissionsServices.listItemPermissions(ITEM1_ID);
         Assert.assertEquals(actual.size(), 2);
     }
 
@@ -129,10 +142,10 @@ public class PermissionsServicesImplTest {
 
         Assert.assertTrue(result);
 
-  }
+    }
 
-  @Test
-  public void shouldUpdatePermissions(){
+    @Test
+    public void shouldUpdatePermissions() {
 
         Set<String> addedUsers = new HashSet<>();
         addedUsers.add(USER2_ID);
@@ -141,33 +154,31 @@ public class PermissionsServicesImplTest {
 
         verify(permissionsRulesMock).executeAction(ITEM1_ID, USER1_ID, CHANGE_PERMISSIONS);
         verify(permissionsRulesMock).updatePermission(ITEM1_ID, USER1_ID, PERMISSION, addedUsers, new HashSet<>());
-        verify(permissionsDaoMock).updateItemPermissions(ITEM1_ID, PERMISSION, addedUsers, new
-                HashSet<>());
+        verify(permissionsDaoMock).updateItemPermissions(ITEM1_ID, PERMISSION, addedUsers, new HashSet<>());
     }
 
-  @Test
-  public void shouldExecutePermissionRules(){
-    permissionsServices.execute(ITEM1_ID,USER1_ID,ACTION_SUBMIT);
-    verify(permissionsRulesMock).executeAction(ITEM1_ID,USER1_ID,ACTION_SUBMIT);
-  }
+    @Test
+    public void shouldExecutePermissionRules() {
+        permissionsServices.execute(ITEM1_ID, USER1_ID, ACTION_SUBMIT);
+        verify(permissionsRulesMock).executeAction(ITEM1_ID, USER1_ID, ACTION_SUBMIT);
+    }
 
-  @Test
-  public void shouldReturnUserItemPermission(){
-    doReturn(Optional.of(PERMISSION)).when(permissionsDaoMock).getUserItemPermission(ITEM1_ID, USER1_ID);
-    Optional<String> actual = permissionsServices.getUserItemPermission(ITEM1_ID, USER1_ID);
-    Assert.assertTrue(actual.isPresent());
-    Assert.assertEquals(actual.get(), PERMISSION);
-  }
+    @Test
+    public void shouldReturnUserItemPermission() {
+        doReturn(Optional.of(PERMISSION)).when(permissionsDaoMock).getUserItemPermission(ITEM1_ID, USER1_ID);
+        Optional<String> actual = permissionsServices.getUserItemPermission(ITEM1_ID, USER1_ID);
+        Assert.assertTrue(actual.isPresent());
+        Assert.assertEquals(actual.get(), PERMISSION);
+    }
 
-  @Test
-  public void shouldDeleteItemPermissions(){
-   permissionsServices.deleteItemPermissions(ITEM1_ID);
-    verify(permissionsDaoMock).deleteItemPermissions(ITEM1_ID);
-  }
+    @Test
+    public void shouldDeleteItemPermissions() {
+        permissionsServices.deleteItemPermissions(ITEM1_ID);
+        verify(permissionsDaoMock).deleteItemPermissions(ITEM1_ID);
+    }
 
 
-    private static ItemPermissionsEntity createPermissionEntity(String itemId, String
-            userId, String permission) {
+    private static ItemPermissionsEntity createPermissionEntity(String itemId, String userId, String permission) {
         ItemPermissionsEntity permissionsEntity = new ItemPermissionsEntity();
         permissionsEntity.setItemId(itemId);
         permissionsEntity.setUserId(userId);
