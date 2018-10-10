@@ -1,7 +1,7 @@
 package org.openecomp.sdc.be.ecomp.converters;
 
 import org.junit.Test;
-import org.openecomp.portalsdk.core.restful.domain.EcompRole;
+import org.onap.portalsdk.core.restful.domain.EcompRole;
 import org.openecomp.sdc.be.user.Role;
 
 public class EcompRoleConverterTest {
