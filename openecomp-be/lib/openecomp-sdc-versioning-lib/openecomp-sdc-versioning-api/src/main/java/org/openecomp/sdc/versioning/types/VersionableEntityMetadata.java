@@ -20,9 +20,13 @@
 
 package org.openecomp.sdc.versioning.types;
 
+import lombok.Getter;
+import lombok.Setter;
 import java.util.ArrayList;
 import java.util.List;
 
+@Getter
+@Setter
 public class VersionableEntityMetadata {
 
   private VersionableEntityStoreType storeType;
@@ -44,43 +48,4 @@ public class VersionableEntityMetadata {
     this.versionIdentifierName = versionIdentifierName;
   }
 
-  public VersionableEntityStoreType getStoreType() {
-    return storeType;
-  }
-
-  public void setStoreType(VersionableEntityStoreType storeType) {
-    this.storeType = storeType;
-  }
-
-  public String getName() {
-    return name;
-  }
-
-  public void setName(String name) {
-    this.name = name;
-  }
-
-  public String getIdentifierName() {
-    return identifierName;
-  }
-
-  public void setIdentifierName(String idColumnName) {
-    this.identifierName = idColumnName;
-  }
-
-  public String getVersionIdentifierName() {
-    return versionIdentifierName;
-  }
-
-  public void setVersionIdentifierName(String versionColumnName) {
-    this.versionIdentifierName = versionColumnName;
-  }
-
-  public List<UniqueValueMetadata> getUniqueValuesMetadata() {
-    return uniqueValuesMetadata;
-  }
-
-  public void setUniqueValuesMetadata(List<UniqueValueMetadata> uniqueValuesMetadata) {
-    this.uniqueValuesMetadata = uniqueValuesMetadata;
-  }
 }
