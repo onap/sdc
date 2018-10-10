@@ -20,11 +20,15 @@ import com.datastax.driver.mapping.annotations.Column;
 import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
 
-import java.util.Objects;
 import java.util.Set;
 
-import static java.util.Objects.hash;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(keyspace = "dox", name = "notification_subscribers")
 public class SubscribersEntity {
 
@@ -34,56 +38,4 @@ public class SubscribersEntity {
 
     @Column(name = "subscribers")
     private Set<String> subscribers;
-
-    /**
-     * Every entity class must have a default constructor according to
-     * <a href="http://docs.datastax.com/en/developer/java-driver/2.1/manual/object_mapper/creating/">
-     * Definition of mapped classes</a>.
-     */
-    public SubscribersEntity() {
-        // Don't delete! Default constructor is required by DataStax driver
-    }
-
-    public SubscribersEntity(String entityId, Set<String> subscribers) {
-        this.entityId = entityId;
-        this.subscribers = subscribers;
-    }
-
-    public String getEntityId() {
-        return entityId;
-    }
-
-    public void setEntityId(String entityId) {
-        this.entityId = entityId;
-    }
-
-    public Set<String> getSubscribers() {
-        return subscribers;
-    }
-
-    public void setSubscribers(Set<String> subscribers) {
-        this.subscribers = subscribers;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        SubscribersEntity that = (SubscribersEntity) o;
-        return Objects.equals(entityId, that.entityId) &&
-                Objects.equals(subscribers, that.subscribers);
-    }
-
-    @Override
-    public int hashCode() {
-        return hash(entityId, subscribers);
-    }
-
-    @Override
-    public String toString() {
-        return "SubscribersEntity{" +
-                "entityId='" + entityId + '\'' +
-                ", subscribers=" + subscribers +
-                '}';
-    }
 }

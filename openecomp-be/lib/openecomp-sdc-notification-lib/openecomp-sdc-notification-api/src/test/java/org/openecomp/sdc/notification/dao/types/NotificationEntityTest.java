@@ -16,11 +16,12 @@
 
 package org.openecomp.sdc.notification.dao.types;
 
-import org.testng.annotations.Test;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotEquals;
 
 import java.util.UUID;
 
-import static org.testng.Assert.*;
+import org.testng.annotations.Test;
 
 /**
  * @author EVITALIY
@@ -94,7 +95,7 @@ public class NotificationEntityTest {
     }
 
     private NotificationEntity createNotificationEntity(UUID random) {
-        return new NotificationEntity("owner-" + random, random, "type-" + random,
-                "originator-" + random, true, "attributes-" + random);
+        return new NotificationEntity("owner-" + random, true, random, "type-" + random, "attributes-" + random,
+                "originator-" + random);
     }
 }
