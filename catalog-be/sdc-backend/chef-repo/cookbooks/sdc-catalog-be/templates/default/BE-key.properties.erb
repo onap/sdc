@@ -33,35 +33,9 @@
 #
 # ============LICENSE_END============================================
 #
-#
+# 
 ###
-# Properties read by ECOMP Framework library, ecompFW.jar
 
-##########################################################################
-# The following properties should NOT be changed by partner applications.
-##########################################################################
+# Properties read by the ECOMP Framework library (epsdk-fw)
 
-portal.api.prefix = /api
-max.idle.time = 5
-user.attribute.name = user_attribute
-
-#Use REST API instead of UEB to fetch the functional menu data
-use_rest_for_functional_menu=true
-
-
-##########################################################################
-# The following properties MUST be changed by partner applications.
-##########################################################################
-
-# Name of java class that implements the OnBoardingApiService interface.
-portal.api.impl.class = org.openecomp.sdc.be.ecomp.EcompIntImpl
-
-# URL of the Portal where this app is onboarded
-ecomp_redirect_url = <%= @ecomp_redirect_url %>
-
-# URL of the ECOMP Portal REST API
-ecomp_rest_url = <%= @ecomp_rest_url %>
-#Portal user & key
-portal_user = <%= @ecomp_portal_user %>
-portal_pass = <%= @ecomp_portal_pass %>
-
+cipher.enc.key = <%= @cipher_key %>

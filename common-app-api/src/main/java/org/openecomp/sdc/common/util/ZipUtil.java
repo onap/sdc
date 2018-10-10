@@ -86,11 +86,8 @@ public class ZipUtil {
 	}
 
 	public static void main(String[] args) {
-
 		String zipFileName = "/src/test/resources/config/config.zip";
-
 		zipFileName = "C:\\Git_work\\D2-SDnC\\catalog-be\\src\\test\\resources\\config\\config.zip";
-
 		Path path = Paths.get(zipFileName);
 
 		try {
@@ -102,7 +99,6 @@ public class ZipUtil {
 		} catch (IOException e) {
 			log.info("close Byte stream failed" , e);
 		}
-
 	}
 
 	public static byte[] zipBytes(byte[] input) throws IOException {
@@ -131,5 +127,4 @@ public class ZipUtil {
 			throw new IllegalStateException("Can't unzip input stream", e);
 		}
 	}
-
 }
