@@ -2,9 +2,9 @@ package org.openecomp.sdc.be.ecomp;
 
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.openecomp.portalsdk.core.onboarding.exception.PortalAPIException;
-import org.openecomp.portalsdk.core.restful.domain.EcompRole;
-import org.openecomp.portalsdk.core.restful.domain.EcompUser;
+import org.onap.portalsdk.core.onboarding.exception.PortalAPIException;
+import org.onap.portalsdk.core.restful.domain.EcompRole;
+import org.onap.portalsdk.core.restful.domain.EcompUser;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -64,10 +64,10 @@ public class EcompIntImplTest {
 
         // default test
         testSubject = createTestSubject();
-        result = testSubject.getAvailableRoles();
+        result = testSubject.getAvailableRoles("Mock");
     }
 
-    @Test(expected=PortalAPIException.class)
+    @Test(expected= PortalAPIException.class)
     public void testGetUserRoles() throws Exception {
         EcompIntImpl testSubject;
         String loginId = "";

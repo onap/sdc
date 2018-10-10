@@ -151,7 +151,7 @@
 	<!-- ECOMP Portal -->
 	<servlet>
 		<servlet-name>ECOMPServlet</servlet-name>
-		<servlet-class>org.openecomp.portalsdk.core.onboarding.crossapi.PortalRestAPIProxy</servlet-class>
+		<servlet-class>org.onap.portalsdk.core.onboarding.crossapi.PortalRestAPIProxy</servlet-class>
 		<load-on-startup>3</load-on-startup>
 		<async-supported>true</async-supported>
 	</servlet>

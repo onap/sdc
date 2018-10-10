@@ -23,13 +23,10 @@
         },
 		"ECompP": {
 		    "ecomp_rest_url": "http://portal.api.simpledemo.onap.org:8989/ONAPPORTAL/auxapi",
-            "ueb_url_list": "10.0.11.1,10.0.11.1",
-            "app_secret": "XftIATw9Jr3VzAcPqt3NnJOu",
-            "app_key": "x9UfO7JsDn8BESVX",
-            "inbox_name": "ECOMP-PORTAL-INBOX",
             "ecomp_redirect_url": "http://portal.api.simpledemo.openecomp.org:8989/ECOMPPORTAL/login.htm",
-            "app_topic_name": "ECOMP-PORTAL-OUTBOX-SDC1",
-			"decryption_key": "AGLDdG4D04BKm2IxIWEr8o=="
+            "cipher_key": "AGLDdG4D04BKm2IxIWEr8o==",
+            "portal_user": "Ipwxi2oLvDxctMA1royaRw1W0jhucLx+grHzci3ePIA=",
+            "portal_pass": "j85yNhyIs7zKYbR1VlwEfNhS6b7Om4l0Gx5O8931sCI="
         },
         "UEB": {
             "PublicKey": "iPIxkpAMI8qTcQj8",

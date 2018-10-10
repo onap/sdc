@@ -20,9 +20,9 @@
 
 package org.openecomp.sdc.fe.servlets;
 
-import org.openecomp.portalsdk.core.onboarding.util.CipherUtil;
-import org.openecomp.portalsdk.core.onboarding.util.PortalApiConstants;
-import org.openecomp.portalsdk.core.onboarding.util.PortalApiProperties;
+import org.onap.portalsdk.core.onboarding.util.CipherUtil;
+import org.onap.portalsdk.core.onboarding.util.PortalApiConstants;
+import org.onap.portalsdk.core.onboarding.util.PortalApiProperties;
 import org.openecomp.sdc.common.impl.MutableHttpServletRequest;
 import org.openecomp.sdc.fe.Constants;
 import org.openecomp.sdc.fe.config.Configuration;
@@ -283,8 +283,10 @@ public class PortalServlet extends HttpServlet {
 				if (cookie.getName().equals(Constants.ECOMP_PORTAL_COOKIE))
 					userIdcookie = cookie;
 		if (userIdcookie != null) {
-			userId = CipherUtil.decrypt(userIdcookie.getValue(),
-					PortalApiProperties.getProperty(PortalApiConstants.Decryption_Key));
+			CipherUtil.decryptPKC(userIdcookie.getValue());
+			//Todo Remove after smoke test & review
+			/*userId = CipherUtil.decrypt(userIdcookie.getValue(),
+					PortalApiProperties.getProperty(PortalApiConstants.CSP_GATE_KEEPER_PROD_KEY));*/
 		}
 		return userId;
 
