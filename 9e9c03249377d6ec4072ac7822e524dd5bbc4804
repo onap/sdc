@@ -1,0 +1,95 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bada0100_75267e18",
+        "filename": "openecomp-be/lib/openecomp-sdc-versioning-lib/openecomp-sdc-versioning-api/src/main/java/org/openecomp/sdc/versioning/types/Item.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-10-10T06:02:36Z",
+      "side": 1,
+      "message": "Please add a copyright header.",
+      "revId": "9e9c03249377d6ec4072ac7822e524dd5bbc4804",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_756d1e32",
+        "filename": "openecomp-be/lib/openecomp-sdc-versioning-lib/openecomp-sdc-versioning-api/src/test/java/org/openecomp/sdc/versioning/VersioningUtilTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-10-10T06:02:36Z",
+      "side": 1,
+      "message": "Please inspect the return values whenever possible, not just assert that they are not null.",
+      "revId": "9e9c03249377d6ec4072ac7822e524dd5bbc4804",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_551d7abc",
+        "filename": "openecomp-be/lib/openecomp-sdc-versioning-lib/openecomp-sdc-versioning-api/src/test/java/org/openecomp/sdc/versioning/VersioningUtilTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-10-10T06:02:36Z",
+      "side": 1,
+      "message": "This assertion is meaningless because the test expects a CoreException to be thrown.",
+      "range": {
+        "startLine": 82,
+        "startChar": 15,
+        "endLine": 82,
+        "endChar": 28
+      },
+      "revId": "9e9c03249377d6ec4072ac7822e524dd5bbc4804",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_75543e54",
+        "filename": "openecomp-be/lib/openecomp-sdc-versioning-lib/openecomp-sdc-versioning-api/src/test/java/org/openecomp/sdc/versioning/dao/types/VersionInfoDaoImplTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-10-10T06:02:36Z",
+      "side": 1,
+      "message": "Please move this class to the test where it\u0027s being used. It\u0027s confusing to have a *Test.java that\u0027s actually a stub and doesn\u0027t test anything. You might have also used Mockito to achieve the same.",
+      "revId": "9e9c03249377d6ec4072ac7822e524dd5bbc4804",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_9551a264",
+        "filename": "openecomp-be/lib/openecomp-sdc-versioning-lib/openecomp-sdc-versioning-api/src/test/java/org/openecomp/sdc/versioning/dao/types/VersionableEntityImplTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2018-10-10T06:02:36Z",
+      "side": 1,
+      "message": "Please move this class to the test where it\u0027s being used. It\u0027s confusing to have a *Test.java that\u0027s actually a stub and doesn\u0027t test anything. You may also use Mockito. Another option is to rename the class to something like VersionableEntityStub.",
+      "revId": "9e9c03249377d6ec4072ac7822e524dd5bbc4804",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
