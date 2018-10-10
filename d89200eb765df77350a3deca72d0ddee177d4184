@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bada0100_1b0ba3d7",
+        "filename": "common/onap-tosca-datatype/src/main/java/org/onap/sdc/tosca/datatypes/model/Condition.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-10-10T14:10:31Z",
+      "side": 1,
+      "message": "Why not lombok @data",
+      "revId": "d89200eb765df77350a3deca72d0ddee177d4184",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_db143bf7",
+        "filename": "common/onap-tosca-datatype/src/main/java/org/onap/sdc/tosca/datatypes/model/PolicyDefinition.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-10-10T14:10:31Z",
+      "side": 1,
+      "message": "Why not Lombok @Data",
+      "revId": "d89200eb765df77350a3deca72d0ddee177d4184",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_7bf98fc7",
+        "filename": "common/onap-tosca-datatype/src/main/java/org/onap/sdc/tosca/datatypes/model/PolicyType.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-10-10T14:10:31Z",
+      "side": 1,
+      "message": "Lombok @Data",
+      "revId": "d89200eb765df77350a3deca72d0ddee177d4184",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
