@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bada0100_16f135cd",
+        "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/model/CombinationTest.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-10-11T06:18:40Z",
+      "side": 1,
+      "message": "this is a pojo please remove this and use bean matcher we have in the code example :GroupTemplateInfoTest",
+      "revId": "6f0a6fb9d56501243ec6e57fb47cd54f838d454f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
