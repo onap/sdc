@@ -14,10 +14,11 @@
  * permissions and limitations under the License.
  */
 import { connect } from 'react-redux';
+import sortByStringProperty from 'nfvo-utils/sortByStringProperty.js';
 import LicenseAgreementActionHelper from './LicenseAgreementActionHelper.js';
 import LicenseAgreementEditorView from './LicenseAgreementEditorView.jsx';
 import ValidationHelper from 'sdc-app/common/helpers/ValidationHelper.js';
-
+import { SORTING_PROPERTY_NAME } from 'sdc-app/onboarding/licenseModel/LicenseModelConstants.js';
 export const mapStateToProps = ({
     licenseModel: { licenseAgreement, featureGroup }
 }) => {
@@ -60,7 +61,10 @@ export const mapStateToProps = ({
         data,
         previousData,
         selectedTab,
-        featureGroupsList,
+        featureGroupsList: sortByStringProperty(
+            featureGroupsList,
+            SORTING_PROPERTY_NAME
+        ),
         LANames,
         genericFieldInfo,
         isFormValid,

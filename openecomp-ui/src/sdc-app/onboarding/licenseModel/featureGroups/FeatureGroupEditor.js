@@ -14,10 +14,11 @@
  * permissions and limitations under the License.
  */
 import { connect } from 'react-redux';
-
+import sortByStringProperty from 'nfvo-utils/sortByStringProperty.js';
 import FeatureGroupsActionHelper from './FeatureGroupsActionHelper.js';
 import FeatureGroupEditorView from './FeatureGroupEditorView.jsx';
 import ValidationHelper from 'sdc-app/common/helpers/ValidationHelper.js';
+import { SORTING_PROPERTY_NAME } from 'sdc-app/onboarding/licenseModel/LicenseModelConstants.js';
 
 export const mapStateToProps = ({
     licenseModel: { featureGroup, entitlementPool, licenseKeyGroup }
@@ -58,8 +59,14 @@ export const mapStateToProps = ({
         data,
         previousData,
         selectedTab,
-        entitlementPoolsList,
-        licenseKeyGroupsList,
+        entitlementPoolsList: sortByStringProperty(
+            entitlementPoolsList,
+            SORTING_PROPERTY_NAME
+        ),
+        licenseKeyGroupsList: sortByStringProperty(
+            licenseKeyGroupsList,
+            SORTING_PROPERTY_NAME
+        ),
         isFormValid,
         formReady,
         genericFieldInfo,
