@@ -4786,7 +4786,8 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
             resourceCommonInfo.setResourceName(componentName);
         }
         if (errorWrapper.isEmpty()) {
-            actionResult = handleArtifactRequest(componentId, userId, componentType, operation, null, artifactInfo, origMd5, data, null, null, null, null);
+            Optional<Either<Either<ArtifactDefinition, Operation>, ResponseFormat>> actionResultOp = Optional.ofNullable(handleArtifactRequest(componentId, userId, componentType, operation, null, artifactInfo, origMd5, data, null, null, null, null));
+            actionResult = actionResultOp.get();
             if (actionResult.isRight()) {
                 log.debug(FAILED_UPLOAD_ARTIFACT_TO_COMPONENT, componentType, componentUuid, actionResult
                         .right()
