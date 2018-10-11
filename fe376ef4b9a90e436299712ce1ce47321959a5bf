@@ -1,0 +1,515 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bada0100_361d59be",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/CombinationBusinessLogic.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-10-11T08:00:25Z",
+      "side": 1,
+      "message": "please do not use the wiled card",
+      "range": {
+        "startLine": 41,
+        "startChar": 0,
+        "endLine": 41,
+        "endChar": 19
+      },
+      "revId": "fe376ef4b9a90e436299712ce1ce47321959a5bf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_56db3ded",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/CombinationBusinessLogic.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-10-11T08:00:25Z",
+      "side": 1,
+      "message": "thsi is invalide use COMPONENT_NAME_ALREADY_EXIST",
+      "range": {
+        "startLine": 67,
+        "startChar": 77,
+        "endLine": 67,
+        "endChar": 103
+      },
+      "revId": "fe376ef4b9a90e436299712ce1ce47321959a5bf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_76d8c1ef",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/CombinationBusinessLogic.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 108,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-10-11T08:00:25Z",
+      "side": 1,
+      "message": "uniq id should be an id not a name.",
+      "range": {
+        "startLine": 108,
+        "startChar": 8,
+        "endLine": 108,
+        "endChar": 48
+      },
+      "revId": "fe376ef4b9a90e436299712ce1ce47321959a5bf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_16e5b5a7",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/CombinationBusinessLogic.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 122,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-10-11T08:00:25Z",
+      "side": 1,
+      "message": "add the exception to the log.",
+      "range": {
+        "startLine": 122,
+        "startChar": 12,
+        "endLine": 122,
+        "endChar": 58
+      },
+      "revId": "fe376ef4b9a90e436299712ce1ce47321959a5bf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_f6f35171",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/CombinationBusinessLogic.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 131,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-10-11T08:00:25Z",
+      "side": 1,
+      "message": "method name does not represent the functionalty",
+      "range": {
+        "startLine": 131,
+        "startChar": 55,
+        "endLine": 131,
+        "endChar": 79
+      },
+      "revId": "fe376ef4b9a90e436299712ce1ce47321959a5bf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_96b0c5de",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/CombinationServlet.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-10-11T08:00:25Z",
+      "side": 1,
+      "message": "please do not use wiled cards",
+      "revId": "fe376ef4b9a90e436299712ce1ce47321959a5bf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_b6b5c9ce",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/CombinationServlet.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-10-11T08:00:25Z",
+      "side": 1,
+      "message": "please do not use wiled cards",
+      "revId": "fe376ef4b9a90e436299712ce1ce47321959a5bf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_56d1fdf9",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/CombinationServlet.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-10-11T08:00:25Z",
+      "side": 1,
+      "message": "thsi is not used any where. and in genral the sdc logic does not inject operations into servlets",
+      "range": {
+        "startLine": 64,
+        "startChar": 4,
+        "endLine": 64,
+        "endChar": 56
+      },
+      "revId": "fe376ef4b9a90e436299712ce1ce47321959a5bf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_b6ece9c8",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/CombinationServlet.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-10-11T08:00:25Z",
+      "side": 1,
+      "message": "please explain when is this api called and what it does?\nand what is the difrance between this and the instance create?",
+      "range": {
+        "startLine": 66,
+        "startChar": 3,
+        "endLine": 73,
+        "endChar": 56
+      },
+      "revId": "fe376ef4b9a90e436299712ce1ce47321959a5bf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_96fe856a",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/CombinationServlet.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 96,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-10-11T08:00:25Z",
+      "side": 1,
+      "message": "why is this if needed are you importing a csar?",
+      "range": {
+        "startLine": 90,
+        "startChar": 9,
+        "endLine": 96,
+        "endChar": 18
+      },
+      "revId": "fe376ef4b9a90e436299712ce1ce47321959a5bf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_b6038972",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/CombinationServlet.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 105,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-10-11T08:00:25Z",
+      "side": 1,
+      "message": "thsi needs to be in business logic",
+      "range": {
+        "startLine": 100,
+        "startChar": 15,
+        "endLine": 105,
+        "endChar": 17
+      },
+      "revId": "fe376ef4b9a90e436299712ce1ce47321959a5bf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_36c1d92e",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/CombinationServlet.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 167,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-10-11T08:00:25Z",
+      "side": 1,
+      "message": "why is this needed?",
+      "revId": "fe376ef4b9a90e436299712ce1ce47321959a5bf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_76f52182",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/CombinationServlet.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 178,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-10-11T08:00:25Z",
+      "side": 1,
+      "message": "why is this part of the combination?",
+      "range": {
+        "startLine": 144,
+        "startChar": 4,
+        "endLine": 178,
+        "endChar": 5
+      },
+      "revId": "fe376ef4b9a90e436299712ce1ce47321959a5bf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_763c4130",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/CombinationServlet.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 187,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-10-11T08:00:25Z",
+      "side": 1,
+      "message": "please clarify the purpose of the api?",
+      "range": {
+        "startLine": 180,
+        "startChar": 4,
+        "endLine": 187,
+        "endChar": 45
+      },
+      "revId": "fe376ef4b9a90e436299712ce1ce47321959a5bf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_3646b9c0",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/CombinationServlet.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 215,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-10-11T08:00:25Z",
+      "side": 1,
+      "message": "this is not the courect way you are not returning types but returning all combinations pleasee change the name accordingly.\nchange to /combinations",
+      "range": {
+        "startLine": 215,
+        "startChar": 12,
+        "endLine": 215,
+        "endChar": 30
+      },
+      "revId": "fe376ef4b9a90e436299712ce1ce47321959a5bf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_164935d0",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/CombinationServlet.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 218,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-10-11T08:00:25Z",
+      "side": 1,
+      "message": "this is not what the api does....",
+      "range": {
+        "startLine": 216,
+        "startChar": 34,
+        "endLine": 218,
+        "endChar": 52
+      },
+      "revId": "fe376ef4b9a90e436299712ce1ce47321959a5bf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_d612cdb3",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/CombinationServlet.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 226,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-10-11T08:00:25Z",
+      "side": 1,
+      "message": "this is an incorect error masage",
+      "range": {
+        "startLine": 226,
+        "startChar": 19,
+        "endLine": 226,
+        "endChar": 58
+      },
+      "revId": "fe376ef4b9a90e436299712ce1ce47321959a5bf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_f617d1a1",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/CombinationServlet.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 231,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-10-11T08:00:25Z",
+      "side": 1,
+      "message": "this is not correct you did not create anything.",
+      "range": {
+        "startLine": 231,
+        "startChar": 11,
+        "endLine": 231,
+        "endChar": 117
+      },
+      "revId": "fe376ef4b9a90e436299712ce1ce47321959a5bf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_960c4596",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/CombinationServlet.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 235,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-10-11T08:00:25Z",
+      "side": 1,
+      "message": "this will not not print the stack trace please fixe it.",
+      "range": {
+        "startLine": 235,
+        "startChar": 12,
+        "endLine": 235,
+        "endChar": 47
+      },
+      "revId": "fe376ef4b9a90e436299712ce1ce47321959a5bf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_b61149ae",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/CombinationServlet.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 247,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-10-11T08:00:25Z",
+      "side": 1,
+      "message": "fix the documintation to represents the api",
+      "range": {
+        "startLine": 245,
+        "startChar": 22,
+        "endLine": 247,
+        "endChar": 201
+      },
+      "revId": "fe376ef4b9a90e436299712ce1ce47321959a5bf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_5626dd17",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/CombinationServlet.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 263,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-10-11T08:00:25Z",
+      "side": 1,
+      "message": "this output is misledding",
+      "range": {
+        "startLine": 263,
+        "startChar": 20,
+        "endLine": 263,
+        "endChar": 47
+      },
+      "revId": "fe376ef4b9a90e436299712ce1ce47321959a5bf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_7623e105",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/CombinationServlet.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 267,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-10-11T08:00:25Z",
+      "side": 1,
+      "message": "out put is misleding",
+      "range": {
+        "startLine": 267,
+        "startChar": 27,
+        "endLine": 267,
+        "endChar": 51
+      },
+      "revId": "fe376ef4b9a90e436299712ce1ce47321959a5bf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_162055f6",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/CombinationServlet.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 275,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-10-11T08:00:25Z",
+      "side": 1,
+      "message": "out put is misleding",
+      "range": {
+        "startLine": 275,
+        "startChar": 70,
+        "endLine": 275,
+        "endChar": 87
+      },
+      "revId": "fe376ef4b9a90e436299712ce1ce47321959a5bf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
