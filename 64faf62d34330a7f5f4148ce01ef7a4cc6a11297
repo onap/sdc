@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bada0100_3600f9a9",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/datamodel/utils/NodeTypeConvertUtilsTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2018-10-11T06:13:25Z",
+      "side": 1,
+      "message": "why is this import needed?",
+      "range": {
+        "startLine": 5,
+        "startChar": 1,
+        "endLine": 5,
+        "endChar": 41
+      },
+      "revId": "64faf62d34330a7f5f4148ce01ef7a4cc6a11297",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
