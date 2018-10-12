@@ -63,20 +63,28 @@ import static org.openecomp.sdc.versioning.dao.types.Version.VERSION_STRING_VIOL
  */
 public class ActionManagerImpl implements ActionManager {
 
-  private static final ActionDao actionDao = ActionDaoFactory.getInstance().createInterface();
-  private static final ActionVersioningManager versioningManager =
-      ActionVersioningManagerFactory.getInstance().createInterface();
-  private static final ActionArtifactDao actionArtifactDao =
-      ActionArtifactDaoFactory.getInstance().createInterface();
-  private static VersionInfoDao versionInfoDao =
-      VersionInfoDaoFactory.getInstance().createInterface();
+  private   final ActionDao actionDao;
+  private   final ActionVersioningManager versioningManager;
+  private  final ActionArtifactDao actionArtifactDao;
+  private  final VersionInfoDao versionInfoDao;
 
   private final Logger log = (Logger) LoggerFactory.getLogger(this.getClass().getName());
 
   public ActionManagerImpl() {
+    actionDao = ActionDaoFactory.getInstance().createInterface();
+    versioningManager = ActionVersioningManagerFactory.getInstance().createInterface();
+    actionArtifactDao = ActionArtifactDaoFactory.getInstance().createInterface();
+    versionInfoDao = VersionInfoDaoFactory.getInstance().createInterface();
     actionDao.registerVersioning(ACTION_VERSIONABLE_TYPE);
   }
 
+  public ActionManagerImpl(ActionDao actionDao, ActionVersioningManager versioningManager,
+                           ActionArtifactDao actionArtifactDao, VersionInfoDao versionInfoDao) {
+    this.actionDao = actionDao;
+    this.versioningManager = versioningManager;
+    this.actionArtifactDao = actionArtifactDao;
+    this.versionInfoDao = versionInfoDao;
+  }
   /**
    * List All Major, Last Minor and Candidate version (if any) for Given Action Invariant UUID
    *
