@@ -283,7 +283,7 @@ public class PortalServlet extends HttpServlet {
 				if (cookie.getName().equals(Constants.ECOMP_PORTAL_COOKIE))
 					userIdcookie = cookie;
 		if (userIdcookie != null) {
-			CipherUtil.decryptPKC(userIdcookie.getValue());
+			CipherUtil.decrypt(userIdcookie.getValue());
 			//Todo Remove after smoke test & review
 			/*userId = CipherUtil.decrypt(userIdcookie.getValue(),
 					PortalApiProperties.getProperty(PortalApiConstants.CSP_GATE_KEEPER_PROD_KEY));*/
