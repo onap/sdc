@@ -2,7 +2,7 @@
 
 export class OperationParameter {
     name: string;
-    type: string;
+    type: String;
     property: string;
     mandatory: boolean;
 
@@ -20,6 +20,12 @@ export interface IOperationParamsList {
     listToscaDataDefinition: Array<OperationParameter>;
 }
 
+export class WORKFLOW_ASSOCIATION_OPTIONS {
+    static NONE = 'NONE';
+    static NEW = 'NEW';
+    static EXISTING = 'EXISTING';
+}
+
 export class OperationModel {
     operationType: string;
     description: string;
@@ -28,16 +34,20 @@ export class OperationModel {
     inputParams: IOperationParamsList;
     outputParams: IOperationParamsList;
 
+    workflowAssociationType: string;
     workflowId: string;
     workflowVersionId: string;
 
     constructor(operation?: any) {
         if (operation) {
-            this.description = operation.description;
-            this.inputParams = operation.inputParams;
             this.operationType = operation.operationType;
-            this.outputParams = operation.outputParams;
+            this.description = operation.description;
             this.uniqueId = operation.uniqueId;
+
+            this.inputParams = operation.inputParams;
+            this.outputParams = operation.outputParams;
+
+            this.workflowAssociationType = operation.workflowAssociationType;
             this.workflowId = operation.workflowId;
             this.workflowVersionId = operation.workflowVersionId;
         }
