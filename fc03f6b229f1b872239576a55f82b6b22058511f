@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bada0100_441380b8",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/licenseModel/featureGroups/FeatureGroupEditor.js",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1921
+      },
+      "writtenOn": "2018-10-14T05:56:26Z",
+      "side": 1,
+      "message": "I notice licensing is incorrect in this file, can you please fix it",
+      "revId": "fc03f6b229f1b872239576a55f82b6b22058511f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_641804d4",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/licenseModel/licenseAgreement/LicenseAgreementEditor.js",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1921
+      },
+      "writtenOn": "2018-10-14T05:56:26Z",
+      "side": 1,
+      "message": "same here",
+      "revId": "fc03f6b229f1b872239576a55f82b6b22058511f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
