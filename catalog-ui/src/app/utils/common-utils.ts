@@ -145,11 +145,12 @@ export class CommonUtils {
 
             return acc.concat(
                 _.map(interf.operations,
-                    ({description, name, uniqueId, inputs, outputs, workflowId, workflowVersionId}) => {
+                    ({description, name, uniqueId, inputs, outputs, workflowId, workflowVersionId, workflowAssociationType}) => {
                         const operation = new OperationModel({
                             description,
                             operationType: name,
                             uniqueId,
+                            workflowAssociationType,
                             workflowId,
                             workflowVersionId
                         });

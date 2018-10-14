@@ -4,9 +4,11 @@ import {Component as IComponent} from 'app/models/components/component';
 
 import {SdcConfigToken, ISdcConfig} from "app/ng2/config/sdc-config.config";
 
+import {Observable} from "rxjs/Observable";
+
 import {ModalComponent} from 'app/ng2/components/ui/modal/modal.component';
 import {ModalService} from 'app/ng2/services/modal.service';
-import {ModalModel, ButtonModel, InputBEModel, OperationModel, CreateOperationResponse} from 'app/models';
+import {ModalModel, ButtonModel, InputBEModel, OperationModel, CreateOperationResponse, WORKFLOW_ASSOCIATION_OPTIONS} from 'app/models';
 
 import {ComponentServiceNg2} from 'app/ng2/services/component-services/component.service';
 import {ComponentGenericResponse} from 'app/ng2/services/responses/component-generic-response';
@@ -47,26 +49,14 @@ export class InterfaceOperationComponent {
 
     ngOnInit(): void {
         this.isLoading = true;
-        let gotOperations = false;
-        let gotInputs = false;
-
-        this.ComponentServiceNg2.getInterfaceOperations(this.component).subscribe((response: ComponentGenericResponse) => {
-            if (gotInputs) {
-                this.isLoading = false;
-            } else {
-                gotOperations = true;
-            }
-            this.component.interfaceOperations = response.interfaceOperations;
-            this.operationList = _.toArray(response.interfaceOperations).sort((a, b) => a.operationType.localeCompare(b.operationType));
-        });
-
-        this.ComponentServiceNg2.getComponentInputs(this.component).subscribe((response: ComponentGenericResponse) => {
-            if (gotOperations) {
-                this.isLoading = false;
-            } else {
-                gotInputs = true;
-            }
-            this.inputs = response.inputs;
+        Observable.forkJoin(
+            this.ComponentServiceNg2.getInterfaceOperations(this.component),
+            this.ComponentServiceNg2.getComponentInputs(this.component)
+        ).subscribe((response) => {
+            this.isLoading = false;
+            this.component.interfaceOperations = response[0].interfaceOperations;
+            this.operationList = _.toArray(response[0].interfaceOperations).sort((a, b) => a.operationType.localeCompare(b.operationType));
+            this.inputs = response[1].inputs;
         });
     }
 
@@ -183,14 +173,14 @@ export class InterfaceOperationComponent {
             this.operationList.push(new OperationModel(response));
             this.operationList.sort((a, b) => a.operationType.localeCompare(b.operationType));
 
-            if (response.workflowId) {
+            if (response.workflowId && operation.workflowAssociationType === 'EXISTING') {
                 const resourceId = this.component.uuid;
                 const operationId = response.uniqueId;
                 const workflowId = response.workflowId;
                 const versionId = response.workflowVersionId;
                 const artifactId = response.artifactUUID;
                 this.WorkflowServiceNg2.associateWorkflowArtifact(resourceId, operationId, workflowId, versionId, artifactId).subscribe();
-            } else {
+            } else if (operation.workflowAssociationType === WORKFLOW_ASSOCIATION_OPTIONS.NEW) {
                 this.$state.go('workspace.plugins', { path: 'workflowDesigner' });
             }
         });
