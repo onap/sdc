@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bada0100_a4efccaf",
+        "filename": "openecomp-be/lib/openecomp-tosca-lib/src/main/java/org/openecomp/sdc/tosca/services/ToscaUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-10-14T04:41:54Z",
+      "side": 1,
+      "message": "Add private constructor or @NoArgsConstructor(access \u003d AccessLevel.PRIVATE)",
+      "revId": "f8467821cdfcc54260efabf9ad60e79d0ca24dab",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_442ce002",
+        "filename": "openecomp-be/lib/openecomp-tosca-lib/src/main/java/org/openecomp/sdc/tosca/services/ToscaUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-10-14T04:41:54Z",
+      "side": 1,
+      "message": "\"ServiceTemplate.yaml\" is duplicated in few places. Please make it a constant.",
+      "revId": "f8467821cdfcc54260efabf9ad60e79d0ca24dab",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_6431e459",
+        "filename": "openecomp-be/lib/openecomp-tosca-lib/src/main/java/org/openecomp/sdc/tosca/services/ToscaUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 128,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-10-14T04:41:54Z",
+      "side": 1,
+      "message": "Code style remark \n\nOverload methods should not be split. Previous overloaded method located at line \u002762\u0027. (128:0) [OverloadMethodsDeclarationOrderCheck]",
+      "revId": "f8467821cdfcc54260efabf9ad60e79d0ca24dab",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
