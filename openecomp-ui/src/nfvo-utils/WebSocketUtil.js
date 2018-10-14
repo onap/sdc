@@ -17,9 +17,11 @@
 import store from 'sdc-app/AppStore.js';
 import Configuration from 'sdc-app/config/Configuration.js';
 import { actionTypes } from 'sdc-app/onboarding/userNotifications/UserNotificationsConstants.js';
+import WorkerUtil from 'nfvo-utils/WorkerUtil';
 
 export const websocketUrl =
-    'ws://' +
+    Configuration.get('websocketProtocol') +
+    '://' +
     window.location.hostname +
     ':' +
     Configuration.get('websocketPort') +
@@ -30,7 +32,7 @@ export const websocketUrl =
  * Websocket is treated like a singleton. only need one for the application.
  */
 var websocket;
-
+const workerUtil = new WorkerUtil();
 export default {
     open(url, { lastScanned }) {
         if (
@@ -53,7 +55,9 @@ export default {
                     this.open(websocketUrl, { lastScanned });
                 }
             };
-            websocket.onerror = event => console.log(event);
+            websocket.onerror = () => {
+                workerUtil.open();
+            };
         }
     },
 
@@ -61,5 +65,7 @@ export default {
         if (websocket !== undefined) {
             websocket.close();
         }
+
+        workerUtil.close();
     }
 };

@@ -39,7 +39,7 @@ const STORAGE_AUTH_KEY = 'sdc-auth-token';
 const REQUEST_ID_HEADER = 'X-ECOMP-RequestID';
 const CONTENT_MD5_HEADER = 'Content-MD5';
 
-function applySecurity(options, data) {
+export function applySecurity(options, data) {
     let headers = options.headers || (options.headers = {});
     if (options.isAnonymous) {
         return;

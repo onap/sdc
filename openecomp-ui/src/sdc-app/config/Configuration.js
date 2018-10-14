@@ -60,10 +60,21 @@ const configuration = new Configuration();
     if (DEBUG) {
         websocketPort = configuration.get('defaultDebugWebsocketPort');
     }
+    configuration.set(
+        'websocketProtocol',
+        configuration.get('defaultWebsocketProtocol')
+    );
     configuration.set('websocketPort', websocketPort);
     configuration.set(
         'websocketPath',
         configuration.get('defaultWebsocketPath')
+    );
+})(configuration);
+
+(function setDefaultNotificationsWorkerConfig(configuration) {
+    configuration.set(
+        'notificationsWorkerUpdateMillisecond',
+        configuration.get('defaultNotificationsWorkerUpdateMillisecond')
     );
 })(configuration);
 
