@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bada0100_e4f5d483",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/pom.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-10-14T04:27:10Z",
+      "side": 1,
+      "message": "no need for junit.version",
+      "revId": "7a44142e2f5d52e3d2f1eb86b3f9ef3076b13f57",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_c4f8d07e",
+        "filename": "openecomp-be/lib/openecomp-item-permissions-lib/openecomp-item-permissions-core/pom.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2018-10-14T04:27:10Z",
+      "side": 1,
+      "message": "no need to write junit.version. Weget it from dependency management.",
+      "revId": "7a44142e2f5d52e3d2f1eb86b3f9ef3076b13f57",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
