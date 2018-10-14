@@ -138,7 +138,7 @@ public final class ImportUtils {
 
     public static class Constants {
         public static final String FIRST_NON_CERTIFIED_VERSION = "0.1";
-        public static final String VENDOR_NAME = "ATT (Tosca)";
+        public static final String VENDOR_NAME = "ONAP (Tosca)";
         public static final String VENDOR_RELEASE = "1.0.0.wd03";
         public static final LifecycleStateEnum NORMATIVE_TYPE_LIFE_CYCLE = LifecycleStateEnum.CERTIFIED;
         public static final LifecycleStateEnum NORMATIVE_TYPE_LIFE_CYCLE_NOT_CERTIFIED_CHECKOUT = LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT;

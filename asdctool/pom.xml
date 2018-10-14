@@ -127,6 +127,13 @@
 			<scope>compile</scope>
 		</dependency>
 
+		<dependency>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-util</artifactId>
+			<version>${jetty.version}</version>
+			<scope>compile</scope>
+		</dependency>
+
 		<!-- listen to file changes -->
 		<dependency>
 			<groupId>org.apache.commons</groupId>
