@@ -25,6 +25,7 @@ import GridSection from 'nfvo-components/grid/GridSection.jsx';
 import GridItem from 'nfvo-components/grid/GridItem.jsx';
 import SoftwareProductCategoriesHelper from 'sdc-app/onboarding/softwareProduct/SoftwareProductCategoriesHelper.js';
 import { forms } from 'sdc-app/onboarding/softwareProduct/SoftwareProductConstants.js';
+import { versionStatus } from 'sdc-app/common/helpers/ItemsHelperConstants.js';
 
 const DeprecatedVlmInfo = ({ vendorName, onVendorRemove }) => {
     return (
@@ -623,10 +624,12 @@ class SoftwareProductDetails extends Component {
         ];
 
         return licensingVersionsListItems.concat(
-            licensingVersionsList.map(version => ({
-                enum: version.id,
-                title: version.name
-            }))
+            licensingVersionsList
+                .filter(item => item.status === versionStatus.CERTIFIED)
+                .map(version => ({
+                    enum: version.id,
+                    title: version.name
+                }))
         );
     }
 
