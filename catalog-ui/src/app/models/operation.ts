@@ -2,7 +2,7 @@
 
 export class OperationParameter {
     name: string;
-    type: string;
+    type: String;
     property: string;
     mandatory: boolean;
 

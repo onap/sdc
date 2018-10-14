@@ -47,6 +47,7 @@
             <div class="i-sdc-form-item" *ngIf="enableWorkflowAssociation">
                 <label class="i-sdc-form-label">Workflow Assignment</label>
                 <ui-element-dropdown
+                    data-tests-id="association-type"
                     [(value)]="workflowAssociationType"
                     [values]="associationOptions"
                     (valueChange)="toggleAssociateWorkflow()"
@@ -56,7 +57,7 @@
             <div></div>
         </div>
 
-        <div class="side-by-side" *ngIf="workflowAssociationType == WORKFLOW_ASSOCIATION_OPTIONS.EXISTING">
+        <div class="side-by-side" *ngIf="isUsingExistingWF()">
             <div class="i-sdc-form-item">
                 <label class="i-sdc-form-label required">Workflow</label>
                 <ui-element-dropdown
@@ -87,7 +88,7 @@
             </tabs>
             <a
                 class="add-param-link add-btn"
-                *ngIf="workflowAssociationType != WORKFLOW_ASSOCIATION_OPTIONS.EXISTING && !readonly"
+                *ngIf="!isUsingExistingWF() && !readonly"
                 data-tests-id="addInputParameter"
                 [ngClass]="{'disabled':!isParamsValid()}"
                 (click)="addParam()">Add Parameter</a>
@@ -100,19 +101,19 @@
                 <span class="cell header-cell field-property" *ngIf="currentTab == TYPE_INPUT">
                     Property
                     <span
-                        *ngIf="workflowAssociationType != WORKFLOW_ASSOCIATION_OPTIONS.EXISTING"
+                        *ngIf="!isUsingExistingWF()"
                         class="sprite-new info-icon"
                         tooltip="{{propertyTooltipText}}"
                         tooltipDelay="0">
                     </span>
                 </span>
-                <span class="cell header-cell field-mandatory" *ngIf="workflowAssociationType != WORKFLOW_ASSOCIATION_OPTIONS.EXISTING">Mandatory</span>
-                <span class="cell header-cell remove" *ngIf="workflowAssociationType != WORKFLOW_ASSOCIATION_OPTIONS.EXISTING && !readonly">●●●</span>
+                <span class="cell header-cell field-mandatory" *ngIf="!isUsingExistingWF()">Mandatory</span>
+                <span class="cell header-cell remove" *ngIf="!isUsingExistingWF() && !readonly">●●●</span>
             </div>
 
             <div class="empty-msg data-row" *ngIf="tableParameters.length === 0">
                 <div>NO PARAMETERS TO SHOW</div>
-                <div *ngIf="workflowAssociationType == WORKFLOW_ASSOCIATION_OPTIONS.EXISTING && !operation.workflowVersionId">
+                <div *ngIf="isUsingExistingWF() && !operation.workflowVersionId">
                     <div *ngIf="workflows.length">
                         <span class="bold-message">Select Workflow and Workflow Version above</span>
                         <span>in order to see the parameters</span>
@@ -127,7 +128,7 @@
                 *ngFor="let param of tableParameters"
                 class="data-row"
                 [isInputParam]="currentTab == TYPE_INPUT"
-                [isAssociateWorkflow]="workflowAssociationType == WORKFLOW_ASSOCIATION_OPTIONS.EXISTING"
+                [isAssociateWorkflow]="isUsingExistingWF()"
                 [param]="param"
                 [inputProps]="inputProperties"
                 [propTypes]="inputPropertyTypes"

@@ -179,26 +179,19 @@ export class OperationCreatorComponent {
                     versions, version => version.state === this.workflowServiceNg2.VERSION_STATE_CERTIFIED
                 ).sort((a, b) => a.name.localeCompare(b.name)),
                 (version: any) => {
-                    if (!this.assignInputParameters[this.operation.workflowId][version.id]) {
-                        this.assignInputParameters[this.operation.workflowId][version.id] = _.map(version.inputs, (input: any) => {
-                            return new OperationParameter({
-                                name: input.name,
-                                type: input.type && input.type.toLowerCase(),
-                                property: null,
-                                mandatory: input.mandatory,
-                            });
+                    if (!this.assignInputParameters[this.operation.workflowId][version.id] && !selectedVersionId) {
+                        this.assignInputParameters[this.operation.workflowId][version.id] = _.map(version.inputs, (input: OperationParameter) => {
+                            return new OperationParameter({...input, type: input.type.toLowerCase()});
                         })
                         .sort((a, b) => a.name.localeCompare(b.name));
 
-                        this.assignOutputParameters[this.operation.workflowId][version.id] = _.map(version.outputs, (output: any) => {
-                            return new OperationParameter({
-                                name: output.name,
-                                type: output.type && output.type.toLowerCase(),
-                                property: null,
-                                mandatory: output.mandatory,
-                            });
+                        this.assignOutputParameters[this.operation.workflowId][version.id] = _.map(version.outputs, (output: OperationParameter) => {
+                            return new OperationParameter({...output, type: output.type.toLowerCase()});
                         })
                         .sort((a, b) => a.name.localeCompare(b.name));
+                    } else if (selectedVersionId) {
+                        this.assignInputParameters[this.operation.workflowId][version.id] = [];
+                        this.assignOutputParameters[this.operation.workflowId][version.id] = [];
                     }
                     return new DropdownValue(version.id, `V ${version.name}`);
                 }
@@ -207,6 +200,7 @@ export class OperationCreatorComponent {
             if (!selectedVersionId && this.workflowVersions.length) {
                 this.operation.workflowVersionId = _.last(this.workflowVersions).value;
             }
+
             this.changeWorkflowVersion();
         });
 
@@ -220,7 +214,7 @@ export class OperationCreatorComponent {
 
     toggleAssociateWorkflow() {
 
-        if (this.workflowAssociationType !== this.WORKFLOW_ASSOCIATION_OPTIONS.EXISTING) {
+        if (!this.isUsingExistingWF()) {
             this.inputParameters = this.noAssignInputParameters;
             this.outputParameters = this.noAssignOutputParameters;
         } else {
@@ -258,16 +252,13 @@ export class OperationCreatorComponent {
     }
 
     isParamsValid(): boolean {
-
-        for (let ctr=0; ctr<this.tableParameters.length; ctr++) {
-            if (!this.tableParameters[ctr].name ||
-                (this.currentTab == this.TYPE_INPUT && !this.tableParameters[ctr].property)
-            ) {
-                return false;
+        let valid = true;
+        _.forEach(this.tableParameters, param => {
+            if (!param.name || (this.currentTab == this.TYPE_INPUT && !param.property)) {
+                valid = false;
             }
-        }
-        return true;
-
+        });
+        return valid;
     }
 
     onRemoveParam = (param: OperationParameter): void => {
@@ -276,27 +267,21 @@ export class OperationCreatorComponent {
     }
 
     createParamLists(): void {
-        this.operation.createInputParamsList(_.map(this.inputParameters, input => {
-            return {
-                name: input.name,
-                type: input.type,
-                property: input.property,
-                mandatory: Boolean(input.mandatory)
-            }
-        }));
-        this.operation.createOutputParamsList(_.map(this.outputParameters, output => {
-            return {
-                name: output.name,
-                type: output.type,
-                property: output.property,
-                mandatory: Boolean(output.mandatory)
-            }
-        }));
+        this.operation.createInputParamsList(this.inputParameters);
+        this.operation.createOutputParamsList(this.outputParameters);
+    }
+
+    isUsingExistingWF(): boolean {
+        return this.workflowAssociationType === this.WORKFLOW_ASSOCIATION_OPTIONS.EXISTING;
+    }
+
+    shouldCreateWF(): boolean {
+        return this.workflowAssociationType === this.WORKFLOW_ASSOCIATION_OPTIONS.NEW;
     }
 
     checkFormValidForSubmit(): boolean {
         return this.operation.operationType &&
-            (this.workflowAssociationType !== this.WORKFLOW_ASSOCIATION_OPTIONS.EXISTING || this.operation.workflowVersionId) &&
+            (!this.isUsingExistingWF() || this.operation.workflowVersionId) &&
             this.isParamsValid();
     }
 
