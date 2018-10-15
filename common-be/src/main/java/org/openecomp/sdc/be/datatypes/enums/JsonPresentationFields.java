@@ -220,6 +220,7 @@ public enum JsonPresentationFields {
 	IO_PROPERTY("property", null),
 	IO_WORKFLOW_ID("workflowId", null),
 	IO_WORKFLOW_VERSION_ID("workflowVersionId", null),
+    IO_WORKFLOW_ASSOCIATION_TYPE("workflowAssociationType", null),
 
     //Interface
     INTERFACE ("interface", null),
