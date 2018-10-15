@@ -65,6 +65,7 @@ public class InterfaceUIDataConverter {
     operationData.setOutputs(outputs);
     operationData.setWorkflowId(interfaceOperation.getWorkflowId());
     operationData.setWorkflowVersionId(interfaceOperation.getWorkflowVersionId());
+    operationData.setWorkflowAssociationType(interfaceOperation.getWorkflowAssociationType());
 
     return operationData;
   }
@@ -97,6 +98,7 @@ public class InterfaceUIDataConverter {
     interfaceOperationDataDefinition.setArtifactUUID(operationData.getImplementation().getArtifactUUID());
     interfaceOperationDataDefinition.setWorkflowId(operationData.getWorkflowId());
     interfaceOperationDataDefinition.setWorkflowVersionId(operationData.getWorkflowVersionId());
+    interfaceOperationDataDefinition.setWorkflowAssociationType(operationData.getWorkflowAssociationType());
 
     return interfaceOperationDataDefinition;
   }
