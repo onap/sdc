@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bada0100_db6e66c9",
+        "filename": "catalog-fe/src/main/java/org/openecomp/sdc/fe/servlets/PortalServlet.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 289,
+      "author": {
+        "id": 137
+      },
+      "writtenOn": "2018-10-16T17:16:57Z",
+      "side": 1,
+      "message": "this is breaking Portal communication with SDC...",
+      "range": {
+        "startLine": 286,
+        "startChar": 0,
+        "endLine": 289,
+        "endChar": 85
+      },
+      "revId": "7d05e16f0ab24ba8918bd4466d50a9fb77571552",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
