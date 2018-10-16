@@ -27,11 +27,6 @@ const GET = 'GET';
 const POST = 'POST';
 const PUT = 'PUT';
 const DELETE = 'DELETE';
-
-// content-types
-const APPLICATION_JSON = 'application/json';
-const MULTIPART_FORM_DATA = 'multipart/form-data';
-
 const BINARY = 'binary';
 
 const AUTHORIZATION_HEADER = 'X-AUTH-TOKEN';
@@ -78,20 +73,8 @@ function handleSuccess(responseHeaders, requestHeaders) {
 }
 
 class RestAPIUtil {
-    handleRequest(url, type, options = {}, data) {
+    handleRequest(url, type, options = {}, data = {}) {
         applySecurity(options, data);
-
-        // TODO see ig necessary or in transformrequest funtion
-        if (type === POST || type === PUT) {
-            if (data instanceof FormData) {
-                options.headers.contentType = MULTIPART_FORM_DATA;
-            } else {
-                options.headers.contentType = APPLICATION_JSON;
-                //				config.data = JSON.stringify(data);
-            }
-        } else {
-            data = null;
-        }
 
         let config = {
             method: type,
