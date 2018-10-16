@@ -499,7 +499,7 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
 
   private Collection<ErrorCode> validateLicensingData(VspDetails vspDetails) {
     if (vspDetails.getVendorId() != null) {
-      Optional<ErrorCode> errorCode = vendorLicenseFacade.validateVendorForUsage(vspDetails.getVendorId());
+      Optional<ErrorCode> errorCode = vendorLicenseFacade.validateVendorForUsage(vspDetails.getVendorId(),vspDetails.getVlmVersion());
       if (errorCode.isPresent()) {
         return Collections.singleton(errorCode.get());
       }

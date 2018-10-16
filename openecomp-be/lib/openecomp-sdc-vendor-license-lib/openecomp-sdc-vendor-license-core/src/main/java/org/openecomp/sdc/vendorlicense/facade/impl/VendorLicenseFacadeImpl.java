@@ -64,6 +64,7 @@ import org.openecomp.sdc.vendorlicense.facade.VendorLicenseFacade;
 import org.openecomp.sdc.versioning.ItemManagerFactory;
 import org.openecomp.sdc.versioning.VersioningUtil;
 import org.openecomp.sdc.versioning.dao.types.Version;
+import org.openecomp.sdc.versioning.dao.types.VersionStatus;
 import org.openecomp.sdc.versioning.errors.VersionableSubEntityNotFoundErrorBuilder;
 import org.openecomp.sdc.versioning.types.Item;
 import org.openecomp.sdc.versioning.types.ItemStatus;
@@ -89,6 +90,10 @@ public class VendorLicenseFacadeImpl implements VendorLicenseFacade {
   private static final ErrorCode USED_VLM_ARCHIVE_ERROR =
           new ErrorCode.ErrorCodeBuilder().withCategory(ErrorCategory.APPLICATION).withId(FIELD_VALIDATION_ERROR_ERR_ID)
                   .withMessage("The supplied vendor is archived and therefore cannot be used").build();
+  private static final ErrorCode USED_VLM_IS_DRAFT_ERROR =
+          new ErrorCode.ErrorCodeBuilder().withCategory(ErrorCategory.APPLICATION).withId(FIELD_VALIDATION_ERROR_ERR_ID)
+                                          .withMessage("The supplied vendor version is draft and therefor can not be used").build();
+
 
   /**
    * Instantiates a new Vendor license facade.
@@ -324,13 +329,21 @@ public class VendorLicenseFacadeImpl implements VendorLicenseFacade {
   }
 
   @Override
-  public Optional<ErrorCode> validateVendorForUsage(String vlmId) {
+  public Optional<ErrorCode> validateVendorForUsage(String vlmId, Version version) {
     Item vlm = ItemManagerFactory.getInstance().createInterface().get(vlmId);
-    return vlm == null
-                   ? Optional.of(USED_VLM_NOT_EXIST_ERROR)
-                   : ItemStatus.ARCHIVED == vlm.getStatus()
-                             ? Optional.of(USED_VLM_ARCHIVE_ERROR)
-                             : Optional.empty();
+    if(vlm == null) {
+      return Optional.of(USED_VLM_NOT_EXIST_ERROR);
+    }
+
+    if (ItemStatus.ARCHIVED == vlm.getStatus()){
+      return  Optional.of(USED_VLM_ARCHIVE_ERROR);
+    }
+
+   if(VersionStatus.Draft.equals(version.getStatus())){
+     return Optional.of(USED_VLM_IS_DRAFT_ERROR);
+    }
+
+    return Optional.empty();
   }
 
   @Override
