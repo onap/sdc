@@ -109,6 +109,10 @@ module.exports = (env, argv) => {
                         ),
                         path.join(__dirname, 'node_modules/sdc-ui/')
                     ]
+                },
+                {
+                    test: /\.worker\.js$/,
+                    use: { loader: 'worker-loader' }
                 }
             ]
         },
@@ -129,6 +133,7 @@ module.exports = (env, argv) => {
               ]
     };
     if (DEV) {
+        webpackConfig.output.globalObject = 'this';
         webpackConfig.entry['punch-outs'].push('react-hot-loader/patch');
         webpackConfig.entry['punch-outs'].push(
             'webpack-dev-server/client?http://localhost:' + devPort

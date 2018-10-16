@@ -1,12 +1,14 @@
 {
-	"pageSize": 25,
-	"version": "9.4",
-	"build": "dev",
-	"appContextPath" : "/onboarding",
-	"defaultRestPrefix": "/onboarding-api",
-	"defaultRestCatalogPrefix": "/sdc1/feProxy/rest",
-	"defaultWebsocketPort" : "8181",
-	"defaultDebugWebsocketPort" : "9000",
-	"defaultWebsocketPath" : "notification-api/ws/notificationHandler",
-	"showBrowseVNF" : true
+    "pageSize": 25,
+    "version": "9.4",
+    "build": "dev",
+    "appContextPath": "/onboarding",
+    "defaultRestPrefix": "/onboarding-api",
+    "defaultRestCatalogPrefix": "/sdc1/feProxy/rest",
+    "defaultWebsocketProtocol": "wss",
+    "defaultWebsocketPort": "8181",
+    "defaultDebugWebsocketPort": "9000",
+    "defaultWebsocketPath": "notification-api/ws/notificationHandler",
+    "defaultNotificationsWorkerUpdateMillisecond": 10000,
+    "showBrowseVNF": true
 }

@@ -1,25 +1,27 @@
-/*!
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
- * or implied. See the License for the specific language governing
- * permissions and limitations under the License.
- */
+/*
+* Copyright © 2018 European Support Limited
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http: //www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
 
 import store from 'sdc-app/AppStore.js';
 import Configuration from 'sdc-app/config/Configuration.js';
 import { actionTypes } from 'sdc-app/onboarding/userNotifications/UserNotificationsConstants.js';
+import WorkerUtil from 'nfvo-utils/WorkerUtil';
 
 export const websocketUrl =
-    'ws://' +
+    Configuration.get('websocketProtocol') +
+    '://' +
     window.location.hostname +
     ':' +
     Configuration.get('websocketPort') +
@@ -29,8 +31,8 @@ export const websocketUrl =
 /***
  * Websocket is treated like a singleton. only need one for the application.
  */
-var websocket;
-
+let websocket;
+const workerUtil = new WorkerUtil();
 export default {
     open(url, { lastScanned }) {
         if (
@@ -53,7 +55,9 @@ export default {
                     this.open(websocketUrl, { lastScanned });
                 }
             };
-            websocket.onerror = event => console.log(event);
+            websocket.onerror = () => {
+                workerUtil.open();
+            };
         }
     },
 
@@ -61,5 +65,7 @@ export default {
         if (websocket !== undefined) {
             websocket.close();
         }
+
+        workerUtil.close();
     }
 };
