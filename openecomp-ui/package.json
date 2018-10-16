@@ -100,7 +100,8 @@
         "url-loader": "^0.5.7",
         "webpack": "^4.5.0",
         "webpack-cli": "^2.0.14",
-        "webpack-dev-server": "^3.1.3"
+        "webpack-dev-server": "^3.1.3",
+        "worker-loader": "^2.0.0"
     },
     "engines": {
         "node": ">=8.0.0",
@@ -111,6 +112,7 @@
         "moduleNameMapper": {
             "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/test-utils/fileMock.js",
             "\\.(css|scss)$": "<rootDir>/test-utils/styleMock.js",
+            "\\.worker\\.js$": "<rootDir>/test-utils/workerMock.js",
             "^nfvo-utils/RestAPIUtil.js$": "<rootDir>/test-utils/MockRest.js",
             "^sdc-ui/lib/react/SVGIcon.js$": "<rootDir>/test-utils/MockSVGIcon.js",
             "^react-show-more$": "<rootDir>/test-utils/ShowMore.js",
