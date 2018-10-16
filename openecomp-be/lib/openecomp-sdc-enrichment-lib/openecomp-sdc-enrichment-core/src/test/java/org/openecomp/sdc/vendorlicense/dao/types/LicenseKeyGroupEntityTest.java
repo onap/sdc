@@ -54,7 +54,7 @@ public class LicenseKeyGroupEntityTest {
 
     @Test
     public void testThresholdValue() {
-        assertEquals(licenseKeyGroupEntity.getThresholdValue(), new Integer(1));
+        assertEquals(licenseKeyGroupEntity.getThresholdValue(), new Integer(10));
     }
 
     @Test
