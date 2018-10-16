@@ -102,10 +102,10 @@ export class InterfaceOperationComponent {
                 this.modalInstance.instance.dynamicContent.instance.createParamLists();
                 this.ModalServiceNg2.closeCurrentModal();
 
-                const {operation, isAssociateWorkflow} = this.modalInstance.instance.dynamicContent.instance;
+                const {operation, isUsingExistingWF} = this.modalInstance.instance.dynamicContent.instance;
                 this.openOperation = {...operation};
 
-                if (!this.enableWorkflowAssociation && !isAssociateWorkflow) {
+                if (this.enableWorkflowAssociation && !isUsingExistingWF()) {
                     operation.workflowId = null;
                     operation.workflowVersionId = null;
                 }
@@ -167,13 +167,13 @@ export class InterfaceOperationComponent {
         this.modalInstance.instance.open();
     }
 
-    private createOperation = (operation: OperationModel): any => {
+    private createOperation = (operation: OperationModel): void => {
         this.ComponentServiceNg2.createInterfaceOperation(this.component, operation).subscribe((response: CreateOperationResponse) => {
             this.openOperation = null;
             this.operationList.push(new OperationModel(response));
             this.operationList.sort((a, b) => a.operationType.localeCompare(b.operationType));
 
-            if (response.workflowId && operation.workflowAssociationType === 'EXISTING') {
+            if (response.workflowId && operation.workflowAssociationType === WORKFLOW_ASSOCIATION_OPTIONS.EXISTING) {
                 const resourceId = this.component.uuid;
                 const operationId = response.uniqueId;
                 const workflowId = response.workflowId;
@@ -186,7 +186,7 @@ export class InterfaceOperationComponent {
         });
     }
 
-    private updateOperation = (operation: OperationModel): any => {
+    private updateOperation = (operation: OperationModel): void => {
         this.ComponentServiceNg2.updateInterfaceOperation(this.component, operation).subscribe(newOperation => {
             this.openOperation = null;
             const index = _.findIndex(this.operationList, el => el.uniqueId === operation.uniqueId);

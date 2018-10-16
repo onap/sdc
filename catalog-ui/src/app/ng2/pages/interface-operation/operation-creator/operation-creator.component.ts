@@ -92,7 +92,9 @@ export class OperationCreatorComponent {
 
         const inputOperation = this.input.operation;
         this.operation = new OperationModel(inputOperation || {});
-        this.operation.workflowAssociationType = inputOperation ? inputOperation.workflowAssociationType : WORKFLOW_ASSOCIATION_OPTIONS.NONE;
+        if (!inputOperation) {
+            this.operation.workflowAssociationType = WORKFLOW_ASSOCIATION_OPTIONS.NONE;
+        }
 
         if (this.enableWorkflowAssociation) {
             this.isLoading = true;
@@ -118,7 +120,6 @@ export class OperationCreatorComponent {
                 this.buildParams();
                 this.updateTable();
             } else {
-                this.operation.workflowAssociationType = WORKFLOW_ASSOCIATION_OPTIONS.EXISTING;
                 this.onSelectWorkflow(inputOperation.workflowVersionId).add(() => {
                     this.buildParams();
                     this.updateTable();
@@ -172,7 +173,7 @@ export class OperationCreatorComponent {
                     versions, version => version.state === this.workflowServiceNg2.VERSION_STATE_CERTIFIED
                 ).sort((a, b) => a.name.localeCompare(b.name)),
                 (version: any) => {
-                    if (!this.assignInputParameters[this.operation.workflowId][version.id] && !selectedVersionId) {
+                    if (!this.assignInputParameters[this.operation.workflowId][version.id] && version.id !== selectedVersionId) {
                         this.assignInputParameters[this.operation.workflowId][version.id] = _.map(version.inputs, (input: OperationParameter) => {
                             return new OperationParameter({...input, type: input.type.toLowerCase()});
                         })
@@ -182,14 +183,15 @@ export class OperationCreatorComponent {
                             return new OperationParameter({...output, type: output.type.toLowerCase()});
                         })
                         .sort((a, b) => a.name.localeCompare(b.name));
-                    } else if (selectedVersionId) {
-                        this.assignInputParameters[this.operation.workflowId][version.id] = [];
-                        this.assignOutputParameters[this.operation.workflowId][version.id] = [];
                     }
                     return new DropdownValue(version.id, `V ${version.name}`);
                 }
             );
 
+            if (selectedVersionId) {
+                this.assignInputParameters[this.operation.workflowId][selectedVersionId] = [];
+                this.assignOutputParameters[this.operation.workflowId][selectedVersionId] = [];
+            }
             if (!selectedVersionId && this.workflowVersions.length) {
                 this.operation.workflowVersionId = _.last(this.workflowVersions).value;
             }
@@ -264,7 +266,7 @@ export class OperationCreatorComponent {
         this.operation.createOutputParamsList(this.outputParameters);
     }
 
-    isUsingExistingWF(): boolean {
+    isUsingExistingWF = (): boolean => {
         return this.operation.workflowAssociationType === WORKFLOW_ASSOCIATION_OPTIONS.EXISTING;
     }
 
