@@ -33,5 +33,5 @@ SDC uses two storage components: Elastic Search(ES) and Cassandra
 
   This information can then be analyzed with Kibana. The **Kibana server** enables statistical analysis of the operations done, according to the business logic.
   
-- **Cassandra** is used to store auditing data, artifacts and data model objects.
+- **Cassandra** is used to store audit data, artifacts and data model objects.
 

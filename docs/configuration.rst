@@ -345,8 +345,8 @@ BE-configuration.yaml
     #Deployment resource artifacts placeHolder
     deploymentResourceArtifacts:
 
-    # Deployment resource instance artifacts placeholders
-    # For each artifact the following properties exists:
+    # Deployment resource instance artifact placeholders
+    # For each artifact the following properties exist:
     #
     # displayName - The display name of the artifact
     # type - The type of the artifact
