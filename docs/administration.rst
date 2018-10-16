@@ -8,7 +8,7 @@ Administration
 Administration Links
 ====================
 
-Here are some links to our administration pages found in the ONAP Services websites
+Here are some links to our administration pages found in the ONAP Service websites
 
 - `SDC Jira <https://jira.onap.org/projects/SDC/issues/>`_
 - `SDC Jenkins <https://jenkins.onap.org/view/sdc/>`_
