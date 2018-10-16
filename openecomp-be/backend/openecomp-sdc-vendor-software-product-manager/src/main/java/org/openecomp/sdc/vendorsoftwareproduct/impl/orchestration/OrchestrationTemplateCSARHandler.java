@@ -12,6 +12,7 @@ import org.openecomp.sdc.datatypes.error.ErrorMessage;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.OrchestrationTemplateCandidateData;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
 import org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.OnboardingManifest;
+import org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.OnboardingToscaMetadata;
 import org.openecomp.sdc.vendorsoftwareproduct.services.filedatastructuremodule.CandidateService;
 import org.openecomp.sdc.vendorsoftwareproduct.types.UploadFileResponse;
 
@@ -27,7 +28,7 @@ import static org.openecomp.core.validation.errors.ErrorMessagesFormatBuilder.ge
 import static org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.CSARConstants.*;
 
 public class OrchestrationTemplateCSARHandler extends BaseOrchestrationTemplateHandler
-    implements OrchestrationTemplateFileHandler {
+        implements OrchestrationTemplateFileHandler {
 
 
   @Override
@@ -37,16 +38,16 @@ public class OrchestrationTemplateCSARHandler extends BaseOrchestrationTemplateH
     List<String> folderList = new ArrayList<>();
     try {
       Pair<FileContentHandler, List<String>> fileContentMapFromOrchestrationCandidateZip =
-          CommonUtil.getFileContentMapFromOrchestrationCandidateZip(uploadedFileData);
+              CommonUtil.getFileContentMapFromOrchestrationCandidateZip(uploadedFileData);
       contentMap = fileContentMapFromOrchestrationCandidateZip.getKey();
       folderList = fileContentMapFromOrchestrationCandidateZip.getRight();
     } catch (IOException exception) {
       uploadFileResponse.addStructureError(
-          SdcCommon.UPLOAD_FILE,
-          new ErrorMessage(ErrorLevel.ERROR, Messages.INVALID_CSAR_FILE.getErrorMessage()));
+              SdcCommon.UPLOAD_FILE,
+              new ErrorMessage(ErrorLevel.ERROR, Messages.INVALID_CSAR_FILE.getErrorMessage()));
     } catch (CoreException coreException) {
       uploadFileResponse.addStructureError(
-          SdcCommon.UPLOAD_FILE, new ErrorMessage(ErrorLevel.ERROR, coreException.getMessage()));
+              SdcCommon.UPLOAD_FILE, new ErrorMessage(ErrorLevel.ERROR, coreException.getMessage()));
     }
     validateContent(uploadFileResponse, contentMap, folderList);
     return Optional.ofNullable(contentMap);
@@ -54,10 +55,30 @@ public class OrchestrationTemplateCSARHandler extends BaseOrchestrationTemplateH
 
   private void validateContent(UploadFileResponse uploadFileResponse, FileContentHandler contentMap,
                                List<String> folderList) {
+
     validateManifest(uploadFileResponse, contentMap);
-    validateFileExist(uploadFileResponse, contentMap, MAIN_SERVICE_TEMPLATE_YAML_FILE_NAME);
+    if (!validateTOSCAYamlFileInRootExist(uploadFileResponse, contentMap, MAIN_SERVICE_TEMPLATE_YAML_FILE_NAME)) {
+      try (InputStream metaFileContent = contentMap.getFileContent(TOSCA_META_PATH_FILE_NAME)) {
+
+        OnboardingToscaMetadata onboardingToscaMetadata  = new OnboardingToscaMetadata(metaFileContent);
+        String entryDefinitionsPath = onboardingToscaMetadata.getEntryDefinitionsPath();
+        if(entryDefinitionsPath!=null){
+          validateFileExist(uploadFileResponse, contentMap, entryDefinitionsPath);
+        }
+        else{
+          uploadFileResponse.addStructureError(
+                  SdcCommon.UPLOAD_FILE, new ErrorMessage(ErrorLevel.ERROR,Messages.METADATA_NO_ENTRY_DEFINITIONS.getErrorMessage()));
+
+        }
+      } catch (IOException e) {
+
+        throw new RuntimeException("Failed to validate metadata file", e);
+      }
+    }
     validateNoExtraFiles(uploadFileResponse, contentMap);
     validateFolders(uploadFileResponse, folderList);
+
+
   }
 
   private void validateManifest(UploadFileResponse uploadFileResponse,
@@ -72,7 +93,7 @@ public class OrchestrationTemplateCSARHandler extends BaseOrchestrationTemplateH
       OnboardingManifest onboardingManifest = new OnboardingManifest(fileContent);
       if (!onboardingManifest.isValid()) {
         onboardingManifest.getErrors().forEach(error -> uploadFileResponse.addStructureError(
-            SdcCommon.UPLOAD_FILE, new ErrorMessage(ErrorLevel.ERROR, error)));
+                SdcCommon.UPLOAD_FILE, new ErrorMessage(ErrorLevel.ERROR, error)));
       }
 
     } catch (IOException e) {
@@ -84,25 +105,25 @@ public class OrchestrationTemplateCSARHandler extends BaseOrchestrationTemplateH
   private void validateNoExtraFiles(UploadFileResponse uploadFileResponse,
                                     FileContentHandler contentMap) {
     List<String> unwantedFiles = contentMap.getFileList().stream()
-        .filter(this::filterFiles).collect(Collectors.toList());
+            .filter(this::filterFiles).collect(Collectors.toList());
     if (!unwantedFiles.isEmpty()) {
       unwantedFiles.stream().filter(this::filterFiles).forEach(unwantedFile ->
-          uploadFileResponse.addStructureError(
-              SdcCommon.UPLOAD_FILE, new ErrorMessage(ErrorLevel.ERROR,
-                  getErrorWithParameters(Messages.CSAR_FILES_NOT_ALLOWED.getErrorMessage(),
-                      unwantedFile))));
+              uploadFileResponse.addStructureError(
+                      SdcCommon.UPLOAD_FILE, new ErrorMessage(ErrorLevel.ERROR,
+                              getErrorWithParameters(Messages.CSAR_FILES_NOT_ALLOWED.getErrorMessage(),
+                                      unwantedFile))));
     }
   }
 
   private void validateFolders(UploadFileResponse uploadFileResponse, List<String> folderList) {
     List<String> filterResult =
-        folderList.stream().filter(this::filterFolders).collect(Collectors.toList());
+            folderList.stream().filter(this::filterFolders).collect(Collectors.toList());
     if (!filterResult.isEmpty()) {
       folderList.stream().filter(this::filterFolders).forEach(unwantedFolder ->
-          uploadFileResponse.addStructureError(
-              SdcCommon.UPLOAD_FILE, new ErrorMessage(ErrorLevel.ERROR,
-                  getErrorWithParameters(Messages.CSAR_DIRECTORIES_NOT_ALLOWED.getErrorMessage(),
-                      unwantedFolder))));
+              uploadFileResponse.addStructureError(
+                      SdcCommon.UPLOAD_FILE, new ErrorMessage(ErrorLevel.ERROR,
+                              getErrorWithParameters(Messages.CSAR_DIRECTORIES_NOT_ALLOWED.getErrorMessage(),
+                                      unwantedFolder))));
 
     }
   }
@@ -116,14 +137,26 @@ public class OrchestrationTemplateCSARHandler extends BaseOrchestrationTemplateH
     return ELIGBLE_FOLDERS.stream().noneMatch(fileName::startsWith);
   }
 
+
+  private boolean validateTOSCAYamlFileInRootExist(UploadFileResponse uploadFileResponse,
+                                                   FileContentHandler contentMap, String fileName) {
+
+    boolean containsFile = contentMap.containsFile(fileName);
+    return containsFile;
+  }
+
+
   private boolean validateFileExist(UploadFileResponse uploadFileResponse,
                                     FileContentHandler contentMap, String fileName) {
 
     boolean containsFile = contentMap.containsFile(fileName);
     if (!containsFile) {
+
       uploadFileResponse.addStructureError(
-          SdcCommon.UPLOAD_FILE, new ErrorMessage(ErrorLevel.ERROR,
-              getErrorWithParameters(Messages.CSAR_FILE_NOT_FOUND.getErrorMessage(), fileName)));
+              SdcCommon.UPLOAD_FILE, new ErrorMessage(ErrorLevel.ERROR,
+                      getErrorWithParameters(Messages.CSAR_FILE_NOT_FOUND.getErrorMessage(), fileName)));
+
+
     }
     return containsFile;
   }
@@ -136,13 +169,13 @@ public class OrchestrationTemplateCSARHandler extends BaseOrchestrationTemplateH
                                         UploadFileResponse uploadFileResponse) {
     try {
       candidateService.updateCandidateUploadData(vspDetails.getId(), vspDetails.getVersion(),
-          new OrchestrationTemplateCandidateData(ByteBuffer.wrap(uploadedFileData), "", fileSuffix,
-              networkPackageName));
+              new OrchestrationTemplateCandidateData(ByteBuffer.wrap(uploadedFileData), "", fileSuffix,
+                      networkPackageName));
     } catch (Exception exception) {
       logger.error(getErrorWithParameters(Messages.FILE_CONTENT_MAP.getErrorMessage(),
-          getHandlerType().toString()), exception);
+              getHandlerType().toString()), exception);
       uploadFileResponse.addStructureError(SdcCommon.UPLOAD_FILE,
-          new ErrorMessage(ErrorLevel.ERROR, exception.getMessage()));
+              new ErrorMessage(ErrorLevel.ERROR, exception.getMessage()));
       return true;
     }
     return false;
