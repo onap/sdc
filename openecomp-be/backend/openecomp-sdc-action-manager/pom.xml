@@ -37,6 +37,12 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
+            <groupId>com.google.code.bean-matchers</groupId>
+            <artifactId>bean-matchers</artifactId>
+            <version>${bean-matcher.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>org.openecomp.sdc</groupId>
             <artifactId>openecomp-sdc-validation-core</artifactId>
             <version>${project.version}</version>
