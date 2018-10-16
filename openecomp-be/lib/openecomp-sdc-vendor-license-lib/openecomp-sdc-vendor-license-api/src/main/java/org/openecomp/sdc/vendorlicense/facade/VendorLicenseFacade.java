@@ -70,7 +70,7 @@ public interface VendorLicenseFacade {
                                               String licenseAgreementId,
                                               Collection<String> featureGroupIds);
 
-  Optional<ErrorCode> validateVendorForUsage(String vlmId);
+  Optional<ErrorCode> validateVendorForUsage(String vlmId, Version version);
 
   void validate(String vendorLicenseModelId, Version version);
 }
