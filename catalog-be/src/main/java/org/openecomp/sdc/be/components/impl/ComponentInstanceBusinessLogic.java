@@ -1094,10 +1094,82 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 
     }
 
-    public Either<RequirementCapabilityRelDef, ResponseFormat> dissociateRIFromRI(String componentId, String userId, RequirementCapabilityRelDef requirementDef, ComponentTypeEnum componentTypeEnum) {
+    /**
+     * @param componentId
+     * @param userId
+     * @param requirementDefList
+     * @param componentTypeEnum
+     * @return
+     */
+    public List<RequirementCapabilityRelDef> batchDissociateRIFromRI(
+            String componentId,
+            String userId,
+            List<RequirementCapabilityRelDef> requirementDefList,
+            ComponentTypeEnum componentTypeEnum) {
+
+        List<RequirementCapabilityRelDef> delOkResult = new ArrayList<>();
+        Either<Component, ResponseFormat> validateResponse = validateDissociateRI(componentId, userId, componentTypeEnum);
+        if (validateResponse.isRight()) {
+
+            return delOkResult;
+        }
+        Component containerComponent = validateResponse.left().value();
+        Either<Boolean, ResponseFormat> lockComponent = lockComponent(containerComponent, "associateRIToRI");
+        if (lockComponent.isRight()) {
+            return delOkResult;
+        }
+        try {
+            for (RequirementCapabilityRelDef requirementDef : requirementDefList) {
+                Either<RequirementCapabilityRelDef, ResponseFormat> actionResponse = dissociateRIFromRI(
+                        componentId, requirementDef, containerComponent);
+
+                if (actionResponse.isLeft()) {
+                    delOkResult.add(actionResponse.left().value());
+                }
+            }
+        } finally {
+            // success scenario, unlock and commit - any failures returned before hand
+            unlockComponent(validateResponse, containerComponent);
+            log.debug("Success trasaction commit");
+            titanDao.commit();
+        }
+        return delOkResult;
+    }
+
+    public Either<RequirementCapabilityRelDef, ResponseFormat> dissociateRIFromRI(
+            String componentId, String userId, RequirementCapabilityRelDef requirementDef, ComponentTypeEnum componentTypeEnum) {
+        Either<Component, ResponseFormat> validateResponse = validateDissociateRI(componentId,  userId,  componentTypeEnum);
+        if(validateResponse.isRight())
+        {
+            return Either.right(validateResponse.right().value());
+        }
+        Either<RequirementCapabilityRelDef, ResponseFormat> actionResponse = null;
+        Component containerComponent = validateResponse.left().value();
+        Either<Boolean, ResponseFormat> lockComponent = lockComponent(containerComponent, "associateRIToRI");
+        if (lockComponent.isRight()) {
+            return Either.right(lockComponent.right().value());
+        }
+        try {
+            actionResponse = dissociateRIFromRI(
+                    componentId, requirementDef,containerComponent);
+        } finally {
+            unlockComponent(validateResponse, containerComponent);
+            if (actionResponse == null || actionResponse.isRight()) {
+                titanDao.rollback();
+                log.error("Failed to dissociate RI from RI");
+            } else {
+                log.debug("Success trasaction commit");
+                titanDao.commit();
+            }
+        }
+        return actionResponse;
+    }
+
+    private Either<Component, ResponseFormat> validateDissociateRI(
+            String componentId, String userId, ComponentTypeEnum componentTypeEnum) {
         validateUserExists(userId, "dissociate RI From RI", false);
 
-        Either<RequirementCapabilityRelDef, ResponseFormat> resultOp = null;
+
         Either<org.openecomp.sdc.be.model.Component, ResponseFormat> validateComponentExists = validateComponentExists(componentId, componentTypeEnum, null);
         if (validateComponentExists.isRight()) {
             return Either.right(validateComponentExists.right().value());
@@ -1108,45 +1180,49 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         if (validateCanWorkOnComponent.isRight()) {
             return Either.right(validateCanWorkOnComponent.right().value());
         }
-        Either<Boolean, ResponseFormat> lockComponent = lockComponent(containerComponent, "associateRIToRI");
+        return Either.left(containerComponent);
 
-        if (lockComponent.isRight()) {
-            return Either.right(lockComponent.right().value());
-        }
-        try {
-            log.debug("Try to create entry on graph");
-            Either<RequirementCapabilityRelDef, StorageOperationStatus> result = toscaOperationFacade.dissociateResourceInstances(componentId, requirementDef);
-            if (result.isLeft()) {
-                log.debug("Enty on graph is created.");
-                RequirementCapabilityRelDef requirementCapabilityRelDef = result.left().value();
-                resultOp = Either.left(requirementCapabilityRelDef);
-                return resultOp;
+    }
+    private Either<RequirementCapabilityRelDef, ResponseFormat> dissociateRIFromRI(
+            String componentId, RequirementCapabilityRelDef requirementDef, Component containerComponent) {
 
-            } else {
+        Either<RequirementCapabilityRelDef, ResponseFormat> resultOp = null;
+        log.debug("Try to create entry on graph");
+        Either<RequirementCapabilityRelDef, StorageOperationStatus> result = toscaOperationFacade.dissociateResourceInstances(
+                componentId, requirementDef);
+        if (result.isLeft()) {
+            log.debug("Enty on graph is created.");
+            RequirementCapabilityRelDef requirementCapabilityRelDef = result.left().value();
+            resultOp = Either.left(requirementCapabilityRelDef);
+            return resultOp;
 
-                log.debug("Failed to dissocaite node  {} from node {}", requirementDef.getFromNode(), requirementDef.getToNode());
-                String fromNameOrId = "";
-                String toNameOrId = "";
-                Either<ComponentInstance, StorageOperationStatus> fromResult = getResourceInstanceById(containerComponent, requirementDef.getFromNode());
-                Either<ComponentInstance, StorageOperationStatus> toResult = getResourceInstanceById(containerComponent, requirementDef.getToNode());
+        } else {
 
-                toNameOrId = requirementDef.getFromNode();
-                fromNameOrId = requirementDef.getFromNode();
-                if (fromResult.isLeft()) {
-                    fromNameOrId = fromResult.left().value().getName();
-                }
-                if (toResult.isLeft()) {
-                    toNameOrId = toResult.left().value().getName();
-                }
+            log.debug("Failed to dissocaite node  {} from node {}", requirementDef.getFromNode(), requirementDef.getToNode());
+            String fromNameOrId = "";
+            String toNameOrId = "";
+            Either<ComponentInstance, StorageOperationStatus> fromResult = getResourceInstanceById(
+                    containerComponent, requirementDef.getFromNode());
+            Either<ComponentInstance, StorageOperationStatus> toResult = getResourceInstanceById(
+                    containerComponent, requirementDef.getToNode());
 
-                resultOp = Either
-                        .right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponseForResourceInstance(result.right().value(), true), fromNameOrId, toNameOrId, requirementDef.getRelationships().get(0).getRelation().getRequirement()));
-                return resultOp;
+            toNameOrId = requirementDef.getFromNode();
+            fromNameOrId = requirementDef.getFromNode();
+            if (fromResult.isLeft()) {
+                fromNameOrId = fromResult.left().value().getName();
             }
-        } finally {
-            unlockComponent(resultOp, containerComponent);
+            if (toResult.isLeft()) {
+                toNameOrId = toResult.left().value().getName();
+            }
+
+            resultOp = Either
+                    .right(componentsUtils.getResponseFormat(
+                            componentsUtils.convertFromStorageResponseForResourceInstance(
+                                    result.right().value(), true), fromNameOrId, toNameOrId, requirementDef.getRelationships().get(0).getRelation().getRequirement()));
+            return resultOp;
         }
     }
+
     /**
      * Allows to get relation contained in specified component according to received Id
      * @param componentId
@@ -2820,7 +2896,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 
                             sourceAttribute.setUniqueId(
                                     UniqueIdBuilder.buildResourceInstanceUniuqeId(
-                                    "attribute" , destComponentInstanceId.split("\\.")[1] , sourceAttributeName));
+                                            "attribute" , destComponentInstanceId.split("\\.")[1] , sourceAttributeName));
 
                             Either<ComponentInstanceProperty, ResponseFormat> updateAttributeValueEither =
                                     createOrUpdateAttributeValueForCopyPaste(ComponentTypeEnum.SERVICE,
@@ -2988,5 +3064,101 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         log.error("The input's default value with id {} is not found", inputId);
         return Either.right(componentsUtils.getResponseFormat(
                 ActionStatus.USER_DEFINED, "Failed to paste component instance to the canvas"));
+    }
+
+    /**
+     * Method to delete selected nodes and edges on composition page
+     * @param containerComponentType
+     * @param componentId
+     * @param componentInstanceIdList
+     * @param userId
+     * @return
+     */
+    public Map<String, List<String>> batchDeleteComponentInstance(String containerComponentType,
+                                                                  String componentId,
+                                                                  List<String> componentInstanceIdList,
+                                                                  String userId) {
+
+        List<String> deleteErrorIds = new ArrayList<>();
+        Map<String, List<String>> deleteErrorMap = new HashMap<>();
+        Either<Component, ResponseFormat> validateResponse = validateUser(containerComponentType, componentId, userId);
+        if (validateResponse.isRight()) {
+            deleteErrorMap.put("deleteFailedIds", componentInstanceIdList);
+            return deleteErrorMap;
+        }
+        Component containerComponent = validateResponse.left().value();
+
+        Either<Boolean, ResponseFormat> lockComponent = lockComponent(
+                containerComponent, "batchDeleteComponentInstance");
+        if (lockComponent.isRight()) {
+            log.error("Failed to lockComponent containerComponent");
+            deleteErrorMap.put("deleteFailedIds", componentInstanceIdList);
+            return deleteErrorMap;
+        }
+
+        try {
+            for (String eachInstanceId : componentInstanceIdList) {
+                Either<ComponentInstance, ResponseFormat> actionResponse = batchDeleteComponentInstance(
+                        containerComponent, containerComponentType, componentId, eachInstanceId);
+                log.debug("batchDeleteResourceInstances actionResponse is {}", actionResponse);
+                if (actionResponse.isRight()) {
+                    log.error("Failed to delete ComponentInstance [{}]", eachInstanceId);
+                    deleteErrorIds.add(eachInstanceId);
+                }
+            }
+            //sending the ids of the error nodes that were not deleted to UI
+            deleteErrorMap.put("deleteFailedIds", deleteErrorIds);
+            return deleteErrorMap;
+        } finally {
+            //Batch Delete success - unlock annd commit, failure scenarios returned before hand
+            unlockComponent(validateResponse, containerComponent);
+            log.debug("Success trasaction commit");
+            titanDao.commit();
+        }
+    }
+
+    private Either<Component, ResponseFormat> validateUser(String containerComponentParam,
+                                                           String containerComponentId,
+                                                           String userId) {
+        validateUserExists(userId, "delete Component Instance", false);
+        Either<ComponentTypeEnum, ResponseFormat> validateComponentType = validateComponentType(containerComponentParam);
+        if (validateComponentType.isRight()) {
+            log.error("ComponentType[{}] doesn't support", containerComponentParam);
+            return Either.right(validateComponentType.right().value());
+        }
+
+        final ComponentTypeEnum containerComponentType = validateComponentType.left().value();
+        Either<Component, ResponseFormat> validateComponentExists = validateComponentExists(
+                containerComponentId, containerComponentType, null);
+        if (validateComponentExists.isRight()) {
+            log.error("Component Id[{}] doesn't exist", containerComponentId);
+            return Either.right(validateComponentExists.right().value());
+        }
+
+        Component containerComponent = validateComponentExists.left().value();
+        Either<Boolean, ResponseFormat> validateCanWorkOnComponent = validateCanWorkOnComponent(containerComponent, userId);
+        if (validateCanWorkOnComponent.isRight()) {
+            return Either.right(validateCanWorkOnComponent.right().value());
+        }
+        return Either.left(containerComponent);
+    }
+
+    private Either<ComponentInstance, ResponseFormat> batchDeleteComponentInstance(Component containerComponent,
+                                                                                   String containerComponentType,
+                                                                                   String containerComponentId,
+                                                                                   String componentInstanceId) {
+
+        Either<ComponentInstance, ResponseFormat> resultOp;
+        final ComponentTypeEnum containerComponentTypeEnum = ComponentTypeEnum.findByParamName(containerComponentType);
+
+        resultOp = deleteComponentInstance(containerComponent, componentInstanceId, containerComponentTypeEnum);
+
+        if (resultOp.isRight()) {
+            log.error("Failed to deleteComponentInstance with instanceId[{}]", componentInstanceId);
+            return Either.right(resultOp.right().value());
+        }
+
+        log.info("Successfully deleted instance with id " + componentInstanceId);
+        return Either.left(resultOp.left().value());
     }
 }
