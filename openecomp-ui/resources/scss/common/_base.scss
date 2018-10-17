@@ -8,7 +8,6 @@ body {
   scrollbar-face-color: $scroll-bar-color;
   scrollbar-track-color: $scroll-bar-color;
   height: 100%;
-  @extend %noselect;
 }
 
 $scrollbar-width: 8px;
