@@ -1094,6 +1094,31 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 
     }
 
+    /**
+     * @param componentId
+     * @param userId
+     * @param requirementDefList
+     * @param componentTypeEnum
+     * @return
+     */
+    public List<RequirementCapabilityRelDef> dissociateRIFromRI(
+            String componentId,
+            String userId,
+            List<RequirementCapabilityRelDef> requirementDefList,
+            ComponentTypeEnum componentTypeEnum) {
+
+        List<RequirementCapabilityRelDef> delOkResult = new ArrayList<>();
+        for (RequirementCapabilityRelDef requirementDef : requirementDefList) {
+            Either<RequirementCapabilityRelDef, ResponseFormat> actionResponse = dissociateRIFromRI(
+                    componentId, userId, requirementDef, componentTypeEnum);
+
+            if (actionResponse.isLeft()) {
+                delOkResult.add(actionResponse.left().value());
+            }
+        }
+        return delOkResult;
+    }
+
     public Either<RequirementCapabilityRelDef, ResponseFormat> dissociateRIFromRI(String componentId, String userId, RequirementCapabilityRelDef requirementDef, ComponentTypeEnum componentTypeEnum) {
         validateUserExists(userId, "dissociate RI From RI", false);
 
@@ -2988,5 +3013,84 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         log.error("The input's default value with id {} is not found", inputId);
         return Either.right(componentsUtils.getResponseFormat(
                 ActionStatus.USER_DEFINED, "Failed to paste component instance to the canvas"));
+    }
+
+    /**
+     * Method to delete selected nodes and edges on composition page
+     * @param containerComponentType
+     * @param componentId
+     * @param componentInstanceIdList
+     * @param userId
+     * @return
+     */
+    public Map<String, List<String>> batchDeleteComponentInstance(String containerComponentType,
+                                                                  String componentId,
+                                                                  List<String> componentInstanceIdList,
+                                                                  String userId) {
+
+        List<String> deleteErrorIds = new ArrayList<>();
+        Map<String, List<String>> deleteErrorMap = new HashMap<>();
+
+        for (String eachInstanceId : componentInstanceIdList) {
+            Either<ComponentInstance, ResponseFormat> actionResponse = batchDeleteComponentInstance(
+                    containerComponentType, componentId, eachInstanceId, userId);
+            log.debug("batchDeleteResourceInstances actionResponse is {}", actionResponse);
+            if (actionResponse.isRight()) {
+                log.error("Failed to delete ComponentInstance [{}]", eachInstanceId);
+                deleteErrorIds.add(eachInstanceId);
+            }
+        }
+        //sending the ids of the error nodes that were not deleted to UI
+        deleteErrorMap.put("deleteFailedIds", deleteErrorIds);
+        return deleteErrorMap;
+    }
+
+    private Either<ComponentInstance, ResponseFormat> batchDeleteComponentInstance(String containerComponentParam,
+                                                                                   String containerComponentId,
+                                                                                   String componentInstanceId,
+                                                                                   String userId) {
+        validateUserExists(userId, "delete Component Instance", false);
+        Either<ComponentTypeEnum, ResponseFormat> validateComponentType = validateComponentType(containerComponentParam);
+        if (validateComponentType.isRight()) {
+            log.error("ComponentType[{}] doesn't support", containerComponentParam);
+            return Either.right(validateComponentType.right().value());
+        }
+
+        final ComponentTypeEnum containerComponentType = validateComponentType.left().value();
+        Either<Component, ResponseFormat> validateComponentExists = validateComponentExists(containerComponentId, containerComponentType, null);
+        if (validateComponentExists.isRight()) {
+            log.error("Component Id[{}] doesn't exist", containerComponentId);
+            return Either.right(validateComponentExists.right().value());
+        }
+
+        Component containerComponent = validateComponentExists.left().value();
+        Either<Boolean, ResponseFormat> validateCanWorkOnComponent = validateCanWorkOnComponent(containerComponent, userId);
+        if (validateCanWorkOnComponent.isRight()) {
+            return Either.right(validateCanWorkOnComponent.right().value());
+        }
+
+        Either<ComponentInstance, ResponseFormat> resultOp = null;
+
+        try {
+            Either<Boolean, ResponseFormat> lockComponent = lockComponent(containerComponent, "batchDeleteComponentInstance");
+            if (lockComponent.isRight()) {
+                return Either.right(lockComponent.right().value());
+            }
+
+            resultOp = deleteComponentInstance(containerComponent, componentInstanceId, containerComponentType);
+
+            if (resultOp.isRight()) {
+                log.error("Failed to deleteComponentInstance with instanceId[{}]", componentInstanceId);
+                return Either.right(resultOp.right().value());
+            }
+
+            containerComponent = toscaOperationFacade.getToscaElement(containerComponentId, new ComponentParametersView()).left().value();
+            log.info("Successfully deleted instance with id " + componentInstanceId);
+
+            return Either.left(resultOp.left().value());
+
+        } finally {
+            unlockComponent(resultOp, containerComponent);
+        }
     }
 }

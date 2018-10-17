@@ -1,3 +1,22 @@
+/*-
+ * ============LICENSE_START=======================================================
+ * SDC
+ * ================================================================================
+ * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * ================================================================================
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ============LICENSE_END=========================================================
+ */
 package org.openecomp.sdc.be.components.impl;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -47,12 +66,10 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anySet;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.when;
 
 /**
  * The test suite designed for test functionality of ComponentInstanceBusinessLogic class
@@ -1267,6 +1284,169 @@ public class ComponentInstanceBusinessLogicTest {
         service.setInputs(oldInputs);
 
         assertEquals(result.left().value(), defaultValue);
+    }
+
+    @Test
+    public void testBatchDeleteComponentInstanceFailureWrongType() {
+        Map<String, List<String>> result;
+        List<String> componentInstanceIdList = new ArrayList<>();
+        String containerComponentParam = "WRONG_TYPE";
+        String containerComponentId = "containerComponentId";
+        String componentInstanceId = "componentInstanceId";
+        componentInstanceIdList.add(componentInstanceId);
+        String userId = USER_ID;
+        Map<String, List<String>> deleteErrorMap = new HashMap<>();
+        List<String> deleteErrorIds = new ArrayList<>();
+        deleteErrorIds.add(componentInstanceId);
+        deleteErrorMap.put("deleteFailedIds", deleteErrorIds);
+
+        result = componentInstanceBusinessLogic
+                .batchDeleteComponentInstance(containerComponentParam, containerComponentId, componentInstanceIdList,
+                        userId);
+
+        assertEquals(deleteErrorMap, result);
+    }
+
+    @Test
+    public void testBatchDeleteComponentInstanceFailureCompIds() {
+        Map<String, List<String>> result;
+        String containerComponentParam = ComponentTypeEnum.SERVICE_PARAM_NAME;
+        String containerComponentId = "containerComponentId";
+        String componentInstanceId = "componentInstanceId";
+        List<String> componentInstanceIdList = new ArrayList<>();
+        componentInstanceIdList.add(componentInstanceId);
+        String userId = USER_ID;
+        Map<String, List<String>> deleteErrorMap = new HashMap<>();
+        List<String> deleteErrorIds = new ArrayList<>();
+        deleteErrorIds.add(componentInstanceId);
+        deleteErrorMap.put("deleteFailedIds", deleteErrorIds);
+
+        Either<Component, StorageOperationStatus> err = Either.right(StorageOperationStatus.GENERAL_ERROR);
+        when(toscaOperationFacade.getToscaElement(eq(containerComponentId), any(ComponentParametersView.class)))
+                .thenReturn(err);
+
+        result = componentInstanceBusinessLogic
+                .batchDeleteComponentInstance(containerComponentParam, containerComponentId, componentInstanceIdList,
+                        userId);
+
+        assertEquals(deleteErrorMap, result);
+    }
+
+    @Test
+    public void testBatchDeleteComponentInstanceSuccess() {
+        Map<String, List<String>> result;
+        String containerComponentParam = ComponentTypeEnum.SERVICE_PARAM_NAME;
+        LifecycleStateEnum oldLifeCycleState = service.getLifecycleState();
+        String oldLastUpdatedUserId = service.getLastUpdaterUserId();
+        service.setLastUpdaterUserId(USER_ID);
+        service.setLifecycleState(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
+        String containerComponentId = service.getUniqueId();
+        String componentInstanceId = TO_INSTANCE_ID;
+        String userId = USER_ID;
+        List<String> componentInstanceIdList = new ArrayList<>();
+        componentInstanceIdList.add(componentInstanceId);
+        Map<String, List<String>> deleteErrorMap = new HashMap<>();
+        List<String> deleteErrorIds = new ArrayList<>();
+        deleteErrorMap.put("deleteFailedIds", deleteErrorIds);
+
+        Either<Component, StorageOperationStatus> cont = Either.left(service);
+        when(graphLockOperation.unlockComponent(Mockito.anyString(), eq(NodeTypeEnum.Service)))
+                .thenReturn(StorageOperationStatus.OK);
+        when(graphLockOperation.lockComponent(Mockito.anyString(), eq(NodeTypeEnum.Service)))
+                .thenReturn(StorageOperationStatus.OK);
+        ImmutablePair<Component, String> pair = new ImmutablePair<>(resource, TO_INSTANCE_ID);
+        Either<ImmutablePair<Component, String>, StorageOperationStatus> result2 = Either.left(pair);
+        when(toscaOperationFacade.deleteComponentInstanceFromTopologyTemplate(service, componentInstanceId))
+                .thenReturn(result2);
+        when(toscaOperationFacade.getToscaElement(eq(service.getUniqueId()), any(ComponentParametersView.class)))
+                .thenReturn(cont);
+        when(titanDao.commit()).thenReturn(TitanOperationStatus.OK);
+
+        result = componentInstanceBusinessLogic
+                .batchDeleteComponentInstance(containerComponentParam, containerComponentId, componentInstanceIdList, userId);
+
+        service.setLastUpdaterUserId(oldLastUpdatedUserId);
+        service.setLifecycleState(oldLifeCycleState);
+        assertEquals(deleteErrorMap,result);
+    }
+
+    @Test
+    public void testDissociateRIFromRIFailDissociate() {
+
+        List<RequirementCapabilityRelDef> result;
+        RequirementCapabilityRelDef ref = new RequirementCapabilityRelDef();
+        ref.setFromNode(FROM_INSTANCE_ID);
+        ref.setToNode(TO_INSTANCE_ID);
+        List<CapabilityRequirementRelationship> relationships = new ArrayList<>();
+        CapabilityRequirementRelationship relationship = new CapabilityRequirementRelationship();
+        RelationshipInfo ri = new RelationshipInfo();
+        ri.setRequirement(REQUIREMENT_NAME);
+        relationship.setRelation(ri);
+        relationships.add(relationship);
+        ref.setRelationships(relationships);
+        List<RequirementCapabilityRelDef> requirementDefList = new ArrayList<RequirementCapabilityRelDef>();
+        requirementDefList.add(ref);
+        ComponentTypeEnum componentTypeEnum = service.getComponentType();
+        String componentId = service.getUniqueId();
+        String userId = USER_ID;
+        LifecycleStateEnum oldLifeCycleState = service.getLifecycleState();
+        String oldLastUpdatedUserId = service.getLastUpdaterUserId();
+        service.setLastUpdaterUserId(USER_ID);
+        service.setLifecycleState(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
+
+        Either<Component, StorageOperationStatus> cont = Either.left(service);
+        when(toscaOperationFacade.getToscaElement(eq(service.getUniqueId()), any(ComponentParametersView.class)))
+                .thenReturn(cont);
+        when(graphLockOperation.unlockComponent(Mockito.anyString(), eq(NodeTypeEnum.Service)))
+                .thenReturn(StorageOperationStatus.OK);
+        when(graphLockOperation.lockComponent(Mockito.anyString(), eq(NodeTypeEnum.Service)))
+                .thenReturn(StorageOperationStatus.OK);
+        Either<RequirementCapabilityRelDef, StorageOperationStatus> resultEither;
+        resultEither = Either.right(StorageOperationStatus.OK);
+        when(toscaOperationFacade.dissociateResourceInstances(componentId, ref)).thenReturn(resultEither);
+
+        result = componentInstanceBusinessLogic
+                .dissociateRIFromRI(componentId, userId, requirementDefList, componentTypeEnum);
+
+        service.setLastUpdaterUserId(oldLastUpdatedUserId);
+        service.setLifecycleState(oldLifeCycleState);
+
+        assertEquals(new ArrayList<>(), result);
+    }
+
+    @Test
+    public void testDissociateRIFromRISuccess() {
+
+        List<RequirementCapabilityRelDef> result;
+        RequirementCapabilityRelDef ref = new RequirementCapabilityRelDef();
+        List<RequirementCapabilityRelDef> requirementDefList = new ArrayList<RequirementCapabilityRelDef>();
+        requirementDefList.add(ref);
+        ComponentTypeEnum componentTypeEnum = service.getComponentType();
+        String componentId = service.getUniqueId();
+        String userId = USER_ID;
+        LifecycleStateEnum oldLifeCycleState = service.getLifecycleState();
+        String oldLastUpdatedUserId = service.getLastUpdaterUserId();
+        service.setLastUpdaterUserId(USER_ID);
+        service.setLifecycleState(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
+
+        Either<Component, StorageOperationStatus> cont = Either.left(service);
+        when(toscaOperationFacade.getToscaElement(eq(service.getUniqueId()), any(ComponentParametersView.class)))
+                .thenReturn(cont);
+        when(graphLockOperation.unlockComponent(Mockito.anyString(), eq(NodeTypeEnum.Service)))
+                .thenReturn(StorageOperationStatus.OK);
+        when(graphLockOperation.lockComponent(Mockito.anyString(), eq(NodeTypeEnum.Service)))
+                .thenReturn(StorageOperationStatus.OK);
+        Either<RequirementCapabilityRelDef, StorageOperationStatus> resultEither;
+        resultEither = Either.left(ref);
+        when(toscaOperationFacade.dissociateResourceInstances(componentId, ref)).thenReturn(resultEither);
+
+        result = componentInstanceBusinessLogic
+                .dissociateRIFromRI(componentId, userId, requirementDefList, componentTypeEnum);
+
+        service.setLastUpdaterUserId(oldLastUpdatedUserId);
+        service.setLifecycleState(oldLifeCycleState);
+
+        assertEquals(requirementDefList, result);
     }
 
     private ComponentInstance createComponetInstanceFromComponent(Component component) {
