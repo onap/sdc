@@ -95,7 +95,8 @@ public class InterfacesOperationsToscaUtil {
      * @param component to work on
      * @param nodeType  to which the interfaces element will be added
      */
-    public static void addInterfaceDefinitionElement(Component component, ToscaNodeType nodeType) {
+    public static void addInterfaceDefinitionElement(Component component, ToscaNodeType nodeType,
+                                                     boolean isAssociatedResourceComponent) {
         if (component instanceof Product) {
             return;
         }
@@ -116,9 +117,8 @@ public class InterfacesOperationsToscaUtil {
                 ToscaLifecycleOperationDefinition toscaOperation = new ToscaLifecycleOperationDefinition();
                 if (isArtifactPresent(operationEntry)) {
                     operationArtifactPath = OperationArtifactUtil
-                                                    .createOperationArtifactPath(component.getNormalizedName(),
-                                                            interfaceDefinition.getToscaResourceName(),
-                                                            operationEntry.getValue());
+                            .createOperationArtifactPath(component, operationEntry.getValue(),
+                                    isAssociatedResourceComponent);
                     toscaOperation.setImplementation(operationArtifactPath);
                 }
                 toscaOperation.setDescription(operationEntry.getValue().getDescription());

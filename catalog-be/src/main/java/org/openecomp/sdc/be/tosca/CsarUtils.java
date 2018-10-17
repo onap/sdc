@@ -23,6 +23,7 @@ package org.openecomp.sdc.be.tosca;
 
 import fj.data.Either;
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.commons.lang.WordUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -35,7 +36,6 @@ import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.cassandra.ArtifactCassandraDao;
 import org.openecomp.sdc.be.dao.cassandra.CassandraOperationStatus;
 import org.openecomp.sdc.be.dao.cassandra.SdcSchemaFilesCassandraDao;
-import org.openecomp.sdc.be.datatypes.elements.OperationDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.*;
@@ -94,8 +94,6 @@ public class CsarUtils {
 	public static final String RESOURCES_PATH = "Resources/";
 	public static final String INFORMATIONAL_ARTIFACTS = "Informational/";
 	public static final String DEPLOYMENT_ARTIFACTS = "Deployment/";
-	public static final String WORKFLOW_ARTIFACT_DIR = "Workflows" + File.separator + "BPMN" + File.separator;
-	public static final String DEPLOYMENT_ARTIFACTS_DIR = "Deployment" + File.separator;
 
 	public static final String DEFINITIONS_PATH = "Definitions/";
 	private static final String CSAR_META_VERSION = "1.0";
@@ -249,7 +247,7 @@ public class CsarUtils {
 		// US798487 - Abstraction of complex types
 		if (!ModelConverter.isAtomicComponent(component)) {
 			log.debug("Component {} is complex - generating abstract type for it..", component.getName());
-			writeComponentInterface(component, zip, fileName);
+			writeComponentInterface(component, zip, fileName, false);
 		}
 
 		if (dependencies == null) {
@@ -308,7 +306,7 @@ public class CsarUtils {
 
 				// add component interface to zip
 				if (!ModelConverter.isAtomicComponent(innerComponent)) {
-					writeComponentInterface(innerComponent, zip, icFileName);
+					writeComponentInterface(innerComponent, zip, icFileName, true);
 				}
 			}
 		}
@@ -433,10 +431,10 @@ public class CsarUtils {
 	}
 
 	private Either<ZipOutputStream, ResponseFormat> writeComponentInterface(Component component, ZipOutputStream zip,
-			String fileName) {
+			String fileName, boolean isAssociatedResourceComponent) {
 		try {
 			Either<ToscaRepresentation, ToscaError> componentInterface = toscaExportUtils
-					.exportComponentInterface(component);
+					.exportComponentInterface(component, isAssociatedResourceComponent);
 			ToscaRepresentation componentInterfaceYaml = componentInterface.left().value();
 			String mainYaml = componentInterfaceYaml.getMainYaml();
 			String interfaceFileName = DEFINITIONS_PATH + ToscaExportHandler.getInterfaceFilename(fileName);
@@ -858,72 +856,7 @@ public class CsarUtils {
 				return Either.right(writeComponentArtifactsToSpecifiedPath.right().value());
 			}
 		}
-		writeComponentArtifactsToSpecifiedPath = writeOperationsArtifactsToCsar(mainComponent, zipstream);
-
-		if (writeComponentArtifactsToSpecifiedPath.isRight()) {
-			return Either.right(writeComponentArtifactsToSpecifiedPath.right().value());
-		}
 		return Either.left(zipstream);
-	}
-
-	private Either<ZipOutputStream, ResponseFormat> writeOperationsArtifactsToCsar(Component component,
-			ZipOutputStream zipstream) {
-		if (component instanceof Service) {
-			return Either.left(zipstream);
-		}
-		if (Objects.isNull(((Resource) component).getInterfaces())) {
-			log.debug("Component Name {}- no interfaces found", component.getNormalizedName());
-			return Either.left(zipstream);
-		}
-		final Map<String, InterfaceDefinition> interfaces = ((Resource) component).getInterfaces();
-
-		for (Map.Entry<String, InterfaceDefinition> interfaceEntry : interfaces.entrySet()) {
-			for (OperationDataDefinition operation : interfaceEntry.getValue().getOperations().values()) {
-				try {
-					if (Objects.isNull(operation.getImplementation())) {
-						log.debug(
-								"Component Name {}, Interface Id {}, Operation Name {} - no Operation Implementation found",
-								component.getNormalizedName(), interfaceEntry.getValue().getUniqueId(),
-								operation.getName());
-						continue;
-					}
-					if (Objects.isNull(operation.getImplementation().getArtifactName())) {
-						log.debug("Component Name {}, Interface Id {}, Operation Name {} - no artifact found",
-								component.getNormalizedName(), interfaceEntry.getValue().getUniqueId(),
-								operation.getName());
-						continue;
-					}
-
-					final String artifactUUID = operation.getImplementation().getArtifactUUID();
-
-					final Either<byte[], ActionStatus> artifactFromCassandra = getFromCassandra(artifactUUID);
-					final String artifactName = operation.getImplementation().getArtifactName();
-					if (artifactFromCassandra.isRight()) {
-						log.error("ArtifactName {}, unique ID {}", artifactName, artifactUUID);
-						log.error("Failed to get {} payload from DB reason: {}", artifactName,
-								artifactFromCassandra.right().value());
-						return Either.right(componentsUtils.getResponseFormat(
-								ActionStatus.ARTIFACT_PAYLOAD_NOT_FOUND_DURING_CSAR_CREATION, "Resource",
-								component.getUniqueId(), artifactName, artifactUUID));
-					}
-
-					final byte[] payloadData = artifactFromCassandra.left().value();
-					zipstream.putNextEntry(new ZipEntry(
-							OperationArtifactUtil.createOperationArtifactPath(component.getNormalizedName(),
-									interfaceEntry.getValue().getToscaResourceName(), operation)));
-					zipstream.write(payloadData);
-
-				} catch (IOException | NullPointerException e) {
-					log.error("Component Name {},  Interface Name {}, Operation Name {}", component.getNormalizedName(),
-							interfaceEntry.getKey(), operation.getName());
-					log.error("Error while writing the operation's artifacts to the CSAR " + "{}", e);
-					return Either.right(componentsUtils.getResponseFormat(ActionStatus.ERROR_DURING_CSAR_CREATION,
-							"Resource", component.getUniqueId()));
-				}
-			}
-		}
-		return Either.left(zipstream);
-
 	}
 
 	private Either<ZipOutputStream, ResponseFormat> writeComponentArtifactsToSpecifiedPath(Component mainComponent,
@@ -958,14 +891,17 @@ public class CsarUtils {
 		Set<ArtifactGroupTypeEnum> groupTypeEnumKeySet = artifactsInfo.keySet();
 
 		for (ArtifactGroupTypeEnum artifactGroupTypeEnum : groupTypeEnumKeySet) {
-			String groupTypeFolder = path + WordUtils.capitalizeFully(artifactGroupTypeEnum.getType()) + "/";
+			String groupTypeFolder = path + WordUtils.capitalizeFully(artifactGroupTypeEnum.getType()) + File.separator;
 
 			Map<ArtifactTypeEnum, List<ArtifactDefinition>> artifactTypesMap = artifactsInfo.get(artifactGroupTypeEnum);
 			Set<ArtifactTypeEnum> artifactTypeEnumKeySet = artifactTypesMap.keySet();
 
 			for (ArtifactTypeEnum artifactTypeEnum : artifactTypeEnumKeySet) {
 				List<ArtifactDefinition> artifactDefinitionList = artifactTypesMap.get(artifactTypeEnum);
-				String artifactTypeFolder = groupTypeFolder + artifactTypeEnum.toString() + "/";
+				String artifactTypeFolder = groupTypeFolder + artifactTypeEnum.toString() + File.separator;
+				if (artifactTypeEnum == ArtifactTypeEnum.WORKFLOW) {
+					artifactTypeFolder += OperationArtifactUtil.BPMN_ARTIFACT_PATH + File.separator;
+				}
 
 				Either<ZipOutputStream, ResponseFormat> writeArtifactDefinition = writeArtifactDefinition(mainComponent,
 						zip, artifactDefinitionList, artifactTypeFolder, isInCertificationRequest);
@@ -1046,7 +982,15 @@ public class CsarUtils {
 
 		public void addArtifactsToGroup(ArtifactGroupTypeEnum artifactGroup,
 				Map<ArtifactTypeEnum, List<ArtifactDefinition>> artifactsDefinition) {
-			artifactsInfoField.put(artifactGroup, artifactsDefinition);
+			if (artifactsInfoField.get(artifactGroup) == null) {
+				artifactsInfoField.put(artifactGroup, artifactsDefinition);
+			} else {
+				Map<ArtifactTypeEnum, List<ArtifactDefinition>> artifactTypeEnumListMap =
+						artifactsInfoField.get(artifactGroup);
+				artifactTypeEnumListMap.putAll(artifactsDefinition);
+				artifactsInfoField.put(artifactGroup, artifactTypeEnumListMap);
+			}
+
 		}
 
 		public boolean isEmpty() {
@@ -1356,12 +1300,20 @@ public class CsarUtils {
 		Map<String, ArtifactDefinition> deploymentArtifacts = component.getDeploymentArtifacts();
 		Map<ArtifactTypeEnum, List<ArtifactDefinition>> deploymentArtifactsByType = collectGroupArtifacts(
 				deploymentArtifacts);
+		Map<String, ArtifactDefinition> interfaceOperationArtifacts =
+				OperationArtifactUtil.getDistinctInterfaceOperationArtifactsByName(component);
+		Map<ArtifactTypeEnum, List<ArtifactDefinition>> interfaceOperationArtifactsByType = collectGroupArtifacts(
+				interfaceOperationArtifacts);
 		ArtifactsInfo artifactsInfo = new ArtifactsInfo();
 		if (!informationalArtifactsByType.isEmpty()) {
 			artifactsInfo.addArtifactsToGroup(ArtifactGroupTypeEnum.INFORMATIONAL, informationalArtifactsByType);
 		}
 		if (!deploymentArtifactsByType.isEmpty()) {
 			artifactsInfo.addArtifactsToGroup(ArtifactGroupTypeEnum.DEPLOYMENT, deploymentArtifactsByType);
+		}
+		//Add component interface operation artifacts
+		if(MapUtils.isNotEmpty(interfaceOperationArtifacts)) {
+			artifactsInfo.addArtifactsToGroup(ArtifactGroupTypeEnum.DEPLOYMENT, interfaceOperationArtifactsByType);
 		}
 
 		return artifactsInfo;
